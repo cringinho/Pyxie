@@ -450,12 +450,8 @@
             </div>
 
             <div class="reward-box">
-              <span>✨ <strong>Recompensa entregue:</strong> 1x Ampulheta Mágica (2h) ⏳ + 150 Moedas 💰</span>
+              <span>✨ <strong>Recompensa:</strong> 1x Ampulheta Mágica (2h) ⏳ + 150 Moedas 💰</span>
             </div>
-
-            <a id="sponsorBtn" href="https://omg10.com/4/11793877" target="_blank" class="btn-sponsor">
-              👉 Apoiar Servidor com Patrocinador
-            </a>
           </div>
 
           <!-- Native Adsterra Banner Container -->
@@ -523,7 +519,6 @@
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
-      const MONETAG_LINK = 'https://omg10.com/4/11793877';
 
       let timeLeft = 10;
       const totalTime = 10;
@@ -566,13 +561,6 @@
 
       async function claimBonusReward() {
         if (!token) return;
-
-        // 1. Abre o link da Monetag diretamente no evento de clique do usuário
-        try {
-          if (MONETAG_LINK) {
-            window.open(MONETAG_LINK, '_blank');
-          }
-        } catch (_) {}
 
         statusLabelEl.innerText = '🔄 Creditando bônus no seu inventário...';
         btnClaimEl.style.display = 'none';

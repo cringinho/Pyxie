@@ -7,8 +7,6 @@ const { addCoins } = require('./economy');
 const BONUS_SECRET = process.env.BONUS_SECRET || 'pyxie_magic_bonus_secret_key_2026';
 const MIN_WAIT_SECONDS = 8; // Mínimo de 8-10s no servidor para evitar trapaça
 const TOKEN_MAX_AGE_MS = 15 * 60 * 1000; // Válido por 15 minutos
-const MONETAG_DIRECT_LINK = process.env.MONETAG_DIRECT_LINK || 'https://omg10.com/4/11793877';
-
 // Cache em memória para prevenção de resgate duplicado (anti-replay)
 const claimedTokens = new Set();
 
@@ -31,7 +29,6 @@ function createBonusSession(userId, action = 'item_bonus', metadata = {}) {
     userId,
     action,
     createdAt,
-    monetagLink: MONETAG_DIRECT_LINK,
   };
 }
 
@@ -145,7 +142,6 @@ function verifyAndClaimBonus(token) {
 module.exports = {
   BONUS_SECRET,
   MIN_WAIT_SECONDS,
-  MONETAG_DIRECT_LINK,
   createBonusSession,
   verifyAndClaimBonus,
 };
