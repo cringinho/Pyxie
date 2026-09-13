@@ -1,4 +1,4 @@
-$host.UI.RawUI.WindowTitle = "KUROMIGA Control Panel"
+$host.UI.RawUI.WindowTitle = "PYXIE Control Panel"
 
 # Guarda o processo do bot em execução para monitorar o status da aplicação.
 $script:BotProcess = $null
@@ -6,7 +6,7 @@ $script:BotProcess = $null
 function ShowHeader {
     Write-Host ""
     Write-Host "===============================================" -ForegroundColor Cyan
-    Write-Host "          KUROMIGA - SUA AMIGA CRINGE          " -ForegroundColor Magenta
+    Write-Host "           PYXIE - REINO ENCANTADO             " -ForegroundColor Magenta
     Write-Host "===============================================" -ForegroundColor Cyan
     Write-Host ""
 }

@@ -1,6 +1,6 @@
 # 📚 Manual Oficial de Comandos — Pyxie
 
-A **Pyxie** suporta comandos modernos via **Slash Commands (`/`)** padronizados internacionalmente em inglês e comandos tradicionais de texto com prefixos **`py!`** ou **`ku!`** (aceitando nomes em português e inglês).
+A **Pyxie** suporta comandos modernos via **Slash Commands (`/`)** padronizados internacionalmente em inglês e comandos tradicionais de texto com o prefixo oficial **`py!`** (aceitando nomes em português e inglês).
 
 ---
 
