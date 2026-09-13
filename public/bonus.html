@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pyxie • Bônus Mágico Encantado</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Adsterra Native Banner Script -->
+    <script async="async" data-cfasync="false" src="https://pl31327644.profitableratecpmnetwork.com/7a9f4ad7bc8255eb6288ff86ed6ec5f7/invoke.js"></script>
     <style>
       :root {
         --bg-dark: #0d0a17;
-        --bg-card: rgba(23, 17, 42, 0.85);
+        --bg-card: rgba(23, 17, 42, 0.9);
         --purple-main: #9333ea;
         --purple-bright: #c084fc;
         --cyan-glow: #38bdf8;
@@ -31,21 +33,89 @@
         color: var(--text-white);
         min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 20px;
+        padding: 16px 12px;
         overflow-x: hidden;
+      }
+
+      .main-layout {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        width: 100%;
+        max-width: 1300px;
+        margin: 0 auto;
+      }
+
+      .sidebar-ad {
+        display: none;
+        width: 160px;
+        min-height: 600px;
+        background: rgba(23, 17, 42, 0.4);
+        border: 1px solid rgba(192, 132, 252, 0.2);
+        border-radius: 16px;
+        overflow: hidden;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      @media (min-width: 1200px) {
+        .sidebar-ad {
+          display: flex;
+        }
+      }
+
+      .center-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 560px;
+        gap: 16px;
+      }
+
+      .ad-banner-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(23, 17, 42, 0.5);
+        border: 1px solid rgba(192, 132, 252, 0.2);
+        border-radius: 16px;
+        padding: 6px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        max-width: 100%;
+      }
+
+      .ad-desktop-only {
+        display: none;
+      }
+
+      .ad-mobile-only {
+        display: flex;
+      }
+
+      @media (min-width: 768px) {
+        .ad-desktop-only {
+          display: flex;
+        }
+        .ad-mobile-only {
+          display: none;
+        }
       }
 
       .bonus-container {
         width: 100%;
-        max-width: 540px;
         background: var(--bg-card);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border: 2px solid rgba(192, 132, 252, 0.3);
+        border: 2px solid rgba(192, 132, 252, 0.35);
         border-radius: 28px;
-        padding: 36px 28px;
+        padding: 30px 24px;
         text-align: center;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(147, 51, 234, 0.25);
         position: relative;
@@ -58,15 +128,15 @@
       }
 
       .mascot-badge {
-        width: 90px;
-        height: 90px;
-        margin: 0 auto 16px auto;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 14px auto;
         border-radius: 50%;
         background: linear-gradient(135deg, #a855f7, #ec4899);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 46px;
+        font-size: 42px;
         box-shadow: 0 0 30px rgba(192, 132, 252, 0.6);
         animation: float 3s ease-in-out infinite;
       }
@@ -78,37 +148,37 @@
 
       h1 {
         font-family: 'Fredoka', sans-serif;
-        font-size: 1.9rem;
+        font-size: 1.85rem;
         font-weight: 700;
         background: linear-gradient(135deg, #f3e8ff, #c084fc, #38bdf8);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
       }
 
       .subtitle {
         color: var(--text-muted);
-        font-size: 0.95rem;
-        margin-bottom: 24px;
+        font-size: 0.92rem;
+        margin-bottom: 20px;
       }
 
       /* Timer Box */
       .timer-card {
-        background: rgba(13, 10, 23, 0.7);
+        background: rgba(13, 10, 23, 0.75);
         border: 1px solid rgba(192, 132, 252, 0.25);
         border-radius: 20px;
-        padding: 24px 20px;
-        margin-bottom: 24px;
+        padding: 20px 16px;
+        margin-bottom: 18px;
       }
 
       .countdown-number {
         font-family: 'Fredoka', sans-serif;
-        font-size: 4.5rem;
+        font-size: 4.2rem;
         font-weight: 700;
         line-height: 1;
         color: var(--gold-glow);
         text-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
-        margin-bottom: 12px;
+        margin-bottom: 10px;
       }
 
       .progress-bar-wrap {
@@ -118,7 +188,7 @@
         border-radius: 10px;
         overflow: hidden;
         position: relative;
-        margin-bottom: 16px;
+        margin-bottom: 14px;
       }
 
       .progress-bar-fill {
@@ -131,9 +201,20 @@
       }
 
       .status-label {
-        font-size: 1rem;
+        font-size: 0.98rem;
         font-weight: 600;
         color: #e2e8f0;
+      }
+
+      /* Native Ad Container */
+      .native-ad-section {
+        width: 100%;
+        margin: 14px 0;
+        border-radius: 16px;
+        overflow: hidden;
+        background: rgba(13, 10, 23, 0.4);
+        border: 1px solid rgba(192, 132, 252, 0.15);
+        padding: 4px;
       }
 
       /* Botão e Feedback */
@@ -163,8 +244,8 @@
         background: rgba(34, 197, 94, 0.15);
         border: 1px solid var(--emerald-glow);
         border-radius: 18px;
-        padding: 20px;
-        margin-top: 15px;
+        padding: 18px;
+        margin-top: 14px;
         animation: pop 0.4s ease-out;
       }
 
@@ -174,7 +255,7 @@
         border: 1px solid var(--pink-neon);
         border-radius: 18px;
         padding: 16px;
-        margin-top: 15px;
+        margin-top: 14px;
         color: #fca5a5;
         font-size: 0.95rem;
       }
@@ -185,48 +266,132 @@
       }
 
       .sponsor-badge {
-        margin-top: 20px;
+        margin-top: 16px;
         font-size: 0.8rem;
-        color: #64748b;
-      }
-
-      .sponsor-link {
-        color: var(--purple-bright);
-        text-decoration: none;
-        font-weight: 600;
-      }
-
-      .sponsor-link:hover {
-        text-decoration: underline;
+        color: #94a3b8;
       }
     </style>
   </head>
   <body>
-    <div class="bonus-container">
-      <div class="mascot-badge">✨</div>
-      <h1>Pyxie Bot • Bônus Mágico</h1>
-      <p class="subtitle">Aguarde a canalização da energia para desbloquear seu bônus no Discord!</p>
+    <div class="main-layout">
+      <!-- Lateral Esquerda (Desktop 160x600 Skyscraper) -->
+      <aside class="sidebar-ad">
+        <script>
+          atOptions = {
+            'key' : '7c82d433d2b42a845e3297548a37ef0a',
+            'format' : 'iframe',
+            'height' : 600,
+            'width' : 160,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/7c82d433d2b42a845e3297548a37ef0a/invoke.js"></script>
+      </aside>
 
-      <div class="timer-card">
-        <div id="countdown" class="countdown-number">10</div>
-        <div class="progress-bar-wrap">
-          <div id="progressBar" class="progress-bar-fill"></div>
+      <!-- Coluna Central -->
+      <main class="center-column">
+        <!-- Banner Topo Desktop (728x90) -->
+        <div class="ad-banner-box ad-desktop-only">
+          <script>
+            atOptions = {
+              'key' : 'f06217a0fb0ce124bea818a1f7149750',
+              'format' : 'iframe',
+              'height' : 90,
+              'width' : 728,
+              'params' : {}
+            };
+          </script>
+          <script src="https://www.highrevenueformat.com/f06217a0fb0ce124bea818a1f7149750/invoke.js"></script>
         </div>
-        <div id="statusLabel" class="status-label">⚡ Canalizando energia mágica...</div>
-      </div>
 
-      <button id="btnClaim" class="btn-claim" onclick="claimBonusReward()">🎁 Resgatar Bônus Agora</button>
+        <!-- Banner Topo Mobile (320x50) -->
+        <div class="ad-banner-box ad-mobile-only">
+          <script>
+            atOptions = {
+              'key' : 'cdfa7ccbd6a3c392493b5d23d4324d94',
+              'format' : 'iframe',
+              'height' : 50,
+              'width' : 320,
+              'params' : {}
+            };
+          </script>
+          <script src="https://www.highrevenueformat.com/cdfa7ccbd6a3c392493b5d23d4324d94/invoke.js"></script>
+        </div>
 
-      <div id="successBox" class="success-box">
-        <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.3rem; color: #4ade80; margin-bottom: 6px;">🎉 Bônus Mágico Creditado!</h3>
-        <p id="successMessage" style="font-size: 0.95rem; color: #f1f5f9;">Seu bônus já está ativo na sua conta! Você já pode voltar para o Discord.</p>
-      </div>
+        <!-- Card Principal da Pyxie -->
+        <div class="bonus-container">
+          <div class="mascot-badge">✨</div>
+          <h1>Pyxie Bot • Bônus Mágico</h1>
+          <p class="subtitle">Aguarde a canalização da energia para desbloquear seu bônus no Discord!</p>
 
-      <div id="errorBox" class="error-box"></div>
+          <div class="timer-card">
+            <div id="countdown" class="countdown-number">10</div>
+            <div class="progress-bar-wrap">
+              <div id="progressBar" class="progress-bar-fill"></div>
+            </div>
+            <div id="statusLabel" class="status-label">⚡ Canalizando energia mágica...</div>
+          </div>
 
-      <div class="sponsor-badge">
-        Patrocinado com amor para a comunidade Pyxie 🐾
-      </div>
+          <!-- Native Adsterra Banner Container -->
+          <div class="native-ad-section">
+            <div id="container-7a9f4ad7bc8255eb6288ff86ed6ec5f7"></div>
+          </div>
+
+          <button id="btnClaim" class="btn-claim" onclick="claimBonusReward()">🎁 Resgatar Bônus Agora</button>
+
+          <div id="successBox" class="success-box">
+            <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.3rem; color: #4ade80; margin-bottom: 6px;">🎉 Bônus Mágico Creditado!</h3>
+            <p id="successMessage" style="font-size: 0.95rem; color: #f1f5f9;">Seu bônus já está ativo na sua conta! Você já pode voltar para o Discord.</p>
+          </div>
+
+          <div id="errorBox" class="error-box"></div>
+
+          <div class="sponsor-badge">
+            Patrocinado com amor para a comunidade Pyxie 🐾
+          </div>
+        </div>
+
+        <!-- Banner Rodapé (468x60 no Desktop / 320x50 no Mobile) -->
+        <div class="ad-banner-box ad-desktop-only">
+          <script>
+            atOptions = {
+              'key' : 'd8236966f4baa809f61121d591558b1e',
+              'format' : 'iframe',
+              'height' : 60,
+              'width' : 468,
+              'params' : {}
+            };
+          </script>
+          <script src="https://www.highrevenueformat.com/d8236966f4baa809f61121d591558b1e/invoke.js"></script>
+        </div>
+
+        <div class="ad-banner-box ad-mobile-only">
+          <script>
+            atOptions = {
+              'key' : 'cdfa7ccbd6a3c392493b5d23d4324d94',
+              'format' : 'iframe',
+              'height' : 50,
+              'width' : 320,
+              'params' : {}
+            };
+          </script>
+          <script src="https://www.highrevenueformat.com/cdfa7ccbd6a3c392493b5d23d4324d94/invoke.js"></script>
+        </div>
+      </main>
+
+      <!-- Lateral Direita (Desktop 160x600 Skyscraper) -->
+      <aside class="sidebar-ad">
+        <script>
+          atOptions = {
+            'key' : '7c82d433d2b42a845e3297548a37ef0a',
+            'format' : 'iframe',
+            'height' : 600,
+            'width' : 160,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/7c82d433d2b42a845e3297548a37ef0a/invoke.js"></script>
+      </aside>
     </div>
 
     <script>
@@ -251,7 +416,7 @@
         errorBoxEl.style.background = 'rgba(147, 51, 234, 0.15)';
         errorBoxEl.style.borderColor = 'rgba(192, 132, 252, 0.4)';
         errorBoxEl.style.color = '#e2e8f0';
-        errorBoxEl.innerHTML = 'Para creditar **Ampulhetas Mágicas (2h) ⏳** e **Moedas 🪙** na sua conta, gere seu link exclusivo usando <code>/py-bonus</code>, <code>/py-daily</code> ou <code>/py-inventory</code> no Discord!<br><br><a href="' + MONETAG_LINK + '" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">👉 Clique aqui para apoiar com o patrocinador Monetag</a>';
+        errorBoxEl.innerHTML = 'Para creditar **Ampulhetas Mágicas (2h) ⏳** e **Moedas 🪙** na sua conta, gere seu link exclusivo usando <code>/py-bonus</code>, <code>/py-daily</code> ou <code>/py-inventory</code> no Discord!<br><br><a href="' + MONETAG_LINK + '" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">👉 Clique aqui para apoiar com o patrocinador</a>';
       } else {
         // Inicia a contagem regressiva de 10 segundos
         const timer = setInterval(() => {
@@ -265,7 +430,7 @@
           if (timeLeft === 0) {
             clearInterval(timer);
             countdownEl.innerText = '✨';
-            statusLabelEl.innerHTML = '🌟 **Energia Pronta!** Clique abaixo para resgatar:';
+            statusLabelEl.innerHTML = '🌟 <strong>Energia Pronta!</strong> Clique abaixo para resgatar:';
             btnClaimEl.style.display = 'block';
           }
         }, 1000);
@@ -274,7 +439,7 @@
       async function claimBonusReward() {
         if (!token) return;
 
-        // 1. Abre a Monetag diretamente no evento de clique do usuário para NÃO ser bloqueado pelo navegador
+        // 1. Abre o link da Monetag diretamente no evento de clique do usuário
         try {
           if (MONETAG_LINK) {
             window.open(MONETAG_LINK, '_blank');
@@ -319,4 +484,3 @@
     </script>
   </body>
 </html>
-

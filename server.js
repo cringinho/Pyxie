@@ -283,7 +283,7 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, HOST, () => {
-  const publicUrl = process.env.PANEL_PUBLIC_URL || `http://136.113.26.120:${PORT}`;
+  const publicUrl = process.env.PANEL_PUBLIC_URL || `http://pyxie.duckdns.org:${PORT}`;
   addLog(`Painel web da Pyxie iniciado em ${publicUrl}`);
   console.log(`Painel da Pyxie rodando em ${publicUrl}`);
   startBot();
