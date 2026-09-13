@@ -8,7 +8,7 @@ const { getLanguage, t } = require('../utils/i18n');
 const MODULE_METADATA = {
   todos: { id: 'todos', label: 'Visão Geral / Todos', emoji: '📖', desc: 'Visão geral e índice de todas as categorias' },
   pymons: { id: 'pymons', label: 'Pymons & RPG', emoji: '🐾', desc: 'Dex, cuidados, chocadeira, masmorras, boss, duelos e expedições' },
-  economia: { id: 'economia', label: 'Economia & Carreiras', emoji: '🪙', desc: 'Moedinhas, trabalho, profissões, rankings e cofres' },
+  economia: { id: 'economia', label: 'Economia & Carreiras', emoji: '💰', desc: 'Moedinhas, trabalho, profissões, rankings e cofres' },
   loja: { id: 'loja', label: 'Loja & Mochila', emoji: '🎒', desc: 'Comidas, poções, ninho, baús e inventário' },
   tarot: { id: 'tarot', label: 'Tarot Místico', emoji: '🔮', desc: 'Tiragens diárias, 78 arcanos e oráculo do destino' },
   social: { id: 'social', label: 'Social & Casamentos', emoji: '💑', desc: 'Casamentos, divórcios, perfil de aventureiro e afinidade' },
@@ -19,7 +19,7 @@ const MODULE_KEYS = ['todos', 'pymons', 'economia', 'loja', 'tarot', 'social', '
 const MODULE_EMOJIS = {
   todos: '📖',
   pymons: '🐾',
-  economia: '🪙',
+  economia: '💰',
   loja: '🎒',
   tarot: '🔮',
   social: '💑',

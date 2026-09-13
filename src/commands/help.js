@@ -44,7 +44,7 @@ module.exports = {
   executeButton,
   data: new SlashCommandBuilder()
     .setName(HELP)
-    .setDescription('Interactive help center categorized by modules / Central de ajuda.')
+    .setDescription('Interactive help center categorized by modules and utilities.')
     .setDescriptionLocalizations({
       'pt-BR': 'Central de ajuda interativa categorizada por módulos e utilidades.',
     })
