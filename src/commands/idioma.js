@@ -78,21 +78,19 @@ async function handleLanguageInteraction(interaction) {
   await interaction.update(view);
 }
 
-const commandName = LANGUAGE || 'py-idioma';
+const commandName = LANGUAGE || 'py-language';
 
 module.exports = {
   name: commandName,
-  aliases: ['idioma', 'language', 'lang', 'py-language', 'py-lang'],
+  aliases: ['language', 'idioma', 'py-idioma', 'lang', 'py-language', 'py-lang'],
   buildLanguageView,
   isLanguageInteraction,
   handleLanguageInteraction,
   data: new SlashCommandBuilder()
     .setName(commandName)
-    .setDescription('Configure o idioma do bot no servidor / Set bot server language')
+    .setDescription('Configure the bot language for this server.')
     .setDescriptionLocalizations({
-      'en-US': 'Configure the bot language for this server',
-      'en-GB': 'Configure the bot language for this server',
-      'pt-BR': 'Configure o idioma do bot no servidor',
+      'pt-BR': 'Configura o idioma do bot no servidor.',
     })
     .addStringOption((option) =>
       option

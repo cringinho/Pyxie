@@ -26,7 +26,7 @@ function buildReply(target, amount, source = null) {
 
 module.exports = {
   name: SET_ECONOMY,
-  aliases: ['seteconomy', 'setareconomia'],
+  aliases: ['seteco', 'seteconomy', 'setareconomia', 'py-setareconomia', 'py-seteco'],
   data: new SlashCommandBuilder()
     .setName(SET_ECONOMY)
     .setDescription('Set a user\'s Coins balance.')

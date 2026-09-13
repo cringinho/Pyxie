@@ -195,7 +195,7 @@ async function handleExpeditionInteraction(interaction) {
 
 module.exports = {
   name: EXPEDITION,
-  aliases: ['expedicao', 'expedition', 'afk', 'exploracaoafk'],
+  aliases: ['expedition', 'expedicao', 'py-expedicao', 'py-expedition', 'afk', 'exploracaoafk'],
   buildExpeditionView,
   isExpeditionInteraction,
   handleExpeditionInteraction,

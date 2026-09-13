@@ -69,7 +69,7 @@ function buildUsage(source = null) {
 
 module.exports = {
   name: AGENDA,
-  aliases: ['automacoes', 'schedule'],
+  aliases: ['schedule', 'agenda', 'py-agenda', 'py-schedule', 'automacoes'],
   buildAgendaEmbed,
   data: new SlashCommandBuilder()
     .setName(AGENDA)

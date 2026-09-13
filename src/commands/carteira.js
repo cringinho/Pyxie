@@ -9,6 +9,7 @@ function getTargetUser(source) {
 
 module.exports = {
   name: WALLET,
+  aliases: ['wallet', 'carteira', 'py-carteira', 'saldo', 'bal', 'coins', 'py-wallet'],
   data: new SlashCommandBuilder()
     .setName(WALLET)
     .setDescription('View wallet balance of coins and magic beans / Exibe o saldo da carteira.')

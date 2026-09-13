@@ -38,7 +38,7 @@ function getModuleChoices() {
 
 module.exports = {
   name: HELP,
-  aliases: ['help', 'comandos', 'manual'],
+  aliases: ['help', 'ajuda', 'py-ajuda', 'comandos', 'manual'],
   ephemeral: true,
   isHelpButton,
   executeButton,

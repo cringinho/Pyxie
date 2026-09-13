@@ -28,14 +28,14 @@ A **Pyxie** é uma aplicação completa de entretenimento, economia virtual e RP
 - **Expedições Passivas (AFK):** Envie seu Pymon em missões de **2h, 4h ou 8h** para coletar XP, moedas e itens enquanto você estuda ou trabalha.
 
 ### ⚔️ 3. Coliseu de Duelos & World Boss Semanal
-- **Duelos Entre Jogadores (`/py-duelo`):** Combates por turnos com apostas opcionais, vantagens elementais e limite balanceado de 3 duelos diários.
+- **Duelos Entre Jogadores (`/py-duel`):** Combates por turnos com apostas opcionais, vantagens elementais e limite balanceado de 3 duelos diários.
 - **World Boss Semanal ALPHA (`/py-boss`):** Titã colossal enfrentado coletivamente por todos os servidores; o maior causador de dano (**MVP**) recebe o próprio Boss na versão **ALPHA 🔴**.
 
-### 🪙 4. Economia Mágica, Profissões & Recompensas
-- **Sistema Monetário:** Moedinhas Mágicas 🪙 e Feijões Mágicos 🌱 (moeda nobre rara).
-- **Mini-games de Trabalho (`/py-trabalho`):** Escolha sua profissão e participe de desafios interativos.
-- **Mercado & Trocas Seguras (`/py-trocar`):** Sistema com confirmação bilateral e cooldown de 30 minutos.
-- **Votação Top.gg (`/py-votar`):** Resgate de moedas e itens com bônus dobrado nos fins de semana.
+### 💰 4. Economia Mágica, Profissões & Recompensas
+- **Sistema Monetário:** Moedinhas Mágicas e Feijões Mágicos 🌱 (moeda nobre rara).
+- **Mini-games de Trabalho (`/py-work`):** Escolha sua profissão e participe de desafios interativos.
+- **Mercado & Trocas Seguras (`/py-trade`):** Sistema com confirmação bilateral e cooldown de 30 minutos.
+- **Votação Top.gg (`/py-vote`):** Resgate de moedas e itens com bônus dobrado nos fins de semana.
 
 ### 👑 5. Customização & Tarot
 - **Personalização de Perfil:** Títulos raros e temas visuais coloridos (*Ouro Real, Esmeralda, Nebulosa, Rosa Neon*) compráveis com Feijões Mágicos.

@@ -37,7 +37,7 @@ async function executeDivorce(source, reply) {
 
 module.exports = {
   name: DIVORCE,
-  aliases: ['divorcio', 'divorce', 'separar'],
+  aliases: ['divorce', 'divorcio', 'py-divorcio', 'py-divorce', 'separar'],
   DIVORCE_COST,
   data: new SlashCommandBuilder()
     .setName(DIVORCE)

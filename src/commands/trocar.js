@@ -117,7 +117,7 @@ function buildOfferDescription(offer, source = null) {
 
 module.exports = {
   name: TRADE,
-  aliases: ['trocar', 'trade', 'troca'],
+  aliases: ['trade', 'trocar', 'py-trocar', 'py-trade', 'troca'],
   isTradeInteraction,
   handleTradeInteraction,
   data: new SlashCommandBuilder()

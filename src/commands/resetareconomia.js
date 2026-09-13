@@ -14,7 +14,7 @@ function getTargetUser(source, args = []) {
 
 module.exports = {
   name: RESET_ECONOMY,
-  aliases: ['reseteconomia', 'resetareconomia'],
+  aliases: ['reseteco', 'reseteconomy', 'reseteconomia', 'resetareconomia', 'py-resetareconomia', 'py-reseteco'],
   data: new SlashCommandBuilder()
     .setName(RESET_ECONOMY)
     .setDescription('Reset a user\'s Coins and daily cooldown.')

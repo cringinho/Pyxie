@@ -85,7 +85,7 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
 
 module.exports = {
   name: DAILY,
-  aliases: ['daily', 'diaria'],
+  aliases: ['daily', 'diario', 'py-diario', 'diaria', 'py-daily'],
   buildDailyView,
   data: new SlashCommandBuilder()
     .setName(DAILY)

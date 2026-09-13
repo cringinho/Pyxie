@@ -35,7 +35,7 @@ function buildReply(result, source = null) {
 
 module.exports = {
   name: SELL,
-  aliases: ['sell', 'vender'],
+  aliases: ['sell', 'vender', 'py-vender', 'py-sell'],
   buildReply,
   data: new SlashCommandBuilder()
     .setName(SELL)

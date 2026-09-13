@@ -54,12 +54,14 @@ function buildInviteEmbed(client, guildOrSource = null) {
   return { embeds: [embed], components: [buttonRow] };
 }
 
+const { INVITE } = require('./commandNames');
+
 module.exports = {
-  name: 'py-convite',
-  aliases: ['convite', 'invite', 'py-invite', 'adicionar'],
+  name: INVITE,
+  aliases: ['invite', 'convite', 'py-convite', 'py-invite', 'adicionar'],
   buildInviteEmbed,
   data: new SlashCommandBuilder()
-    .setName('py-convite')
+    .setName(INVITE)
     .setDescription('Get Pyxie official invite link to add to your server.')
     .setDescriptionLocalizations({
       'pt-BR': 'Obtenha o link oficial de convite da Pyxie para seu servidor.',

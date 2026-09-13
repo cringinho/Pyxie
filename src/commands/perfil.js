@@ -450,6 +450,7 @@ async function handleProfileInteraction(interaction) {
 
 module.exports = {
   name: PROFILE,
+  aliases: ['profile', 'perfil', 'py-perfil', 'py-profile'],
   buildProfileView,
   buildTitlesView,
   buildThemesView,

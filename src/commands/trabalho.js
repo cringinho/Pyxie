@@ -651,11 +651,15 @@ async function runWork(source, reply) {
 
 module.exports = {
   name: WORK,
+  aliases: ['work', 'trabalho', 'py-trabalho', 'py-work', 'trampo', 'job'],
   isWorkInteraction,
   handleWorkInteraction,
   data: new SlashCommandBuilder()
     .setName(WORK)
-    .setDescription('Inicia um minigame interativo da sua profissão para receber Moedinhas e Feijões Mágicos.'),
+    .setDescription('Start a career shift minigame to earn coins and magic beans.')
+    .setDescriptionLocalizations({
+      'pt-BR': 'Inicia um minigame interativo da sua profissão para receber moedas e Feijões Mágicos.',
+    }),
   async executePrefix({ message }) {
     await runWork(message, (payload) => message.reply(payload));
   },

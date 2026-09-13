@@ -111,7 +111,7 @@ async function handleRankingInteraction(interaction) {
 
 module.exports = {
   name: RANKING,
-  aliases: ['placar', 'top', 'rank'],
+  aliases: ['rank', 'ranking', 'py-ranking', 'py-rank', 'placar', 'top', 'leaderboard'],
   buildRankingView,
   isRankingInteraction,
   handleRankingInteraction,

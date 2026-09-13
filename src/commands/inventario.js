@@ -305,7 +305,7 @@ module.exports = {
     .setDescriptionLocalizations({
       'pt-BR': 'Visualiza e gerencia a sua mochila de itens e ovos.',
     }),
-  aliases: ['mochila', 'inv', 'bag'],
+  aliases: ['inventory', 'inventario', 'py-inventario', 'py-inventory', 'mochila', 'inv', 'bag'],
   isInventoryInteraction,
   handleInventoryInteraction,
   buildInventoryEmbed,

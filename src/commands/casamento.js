@@ -112,7 +112,7 @@ async function executeButton({ interaction }) {
 
 module.exports = {
   name: MARRIAGE,
-  aliases: ['casamento', 'marry', 'marriage', 'casar', 'propose'],
+  aliases: ['marriage', 'marry', 'casamento', 'py-casamento', 'py-marriage', 'py-marry', 'casar', 'propose'],
   MARRIAGE_COST,
   isMarriageButton,
   executeButton,

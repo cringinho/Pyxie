@@ -7,7 +7,7 @@ const { getLanguage } = require('../utils/i18n');
 
 module.exports = {
   name: PET_EXPLORE,
-  aliases: ['dungeon', 'explorar', 'expedicao', 'aventura', 'explore'],
+  aliases: ['explore', 'explorar', 'py-explorar', 'py-explore', 'dungeon', 'aventura'],
   data: new SlashCommandBuilder()
     .setName(PET_EXPLORE)
     .setDescription('Explore procedural 2D dungeons with your active Pymon.')

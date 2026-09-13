@@ -26,7 +26,7 @@ function buildReply(config, source = null) {
 
 module.exports = {
   name: ECONOMY_CONFIG,
-  aliases: ['economyconfig', 'configeconomia'],
+  aliases: ['ecoconfig', 'economyconfig', 'configeconomia', 'py-configeconomia', 'py-ecoconfig'],
   data: new SlashCommandBuilder()
     .setName(ECONOMY_CONFIG)
     .setDescription('Configure daily minimum and maximum Coins rewards.')

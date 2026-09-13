@@ -208,7 +208,7 @@ module.exports = {
           { name: '🏡 Melhorias & Ninhos / Upgrades & Nests', value: 'melhoria' }
         )
     ),
-  aliases: ['lojinha', 'mercado', 'mercadinho', 'shop', 'store'],
+  aliases: ['shop', 'loja', 'py-loja', 'py-shop', 'lojinha', 'mercado', 'mercadinho', 'store'],
   isShopInteraction,
   handleShopInteraction,
   buildShopEmbed,

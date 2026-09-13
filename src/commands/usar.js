@@ -48,7 +48,7 @@ function buildReply(result, source = null) {
 
 module.exports = {
   name: USE,
-  aliases: ['use', 'consumir', 'usar'],
+  aliases: ['use', 'usar', 'py-usar', 'py-use', 'consumir'],
   buildReply,
   data: new SlashCommandBuilder()
     .setName(USE)

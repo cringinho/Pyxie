@@ -33,7 +33,7 @@ try {
 
   const help = getCommandList();
   assert.ok(Array.isArray(help), 'A lista de comandos deve existir.');
-  assert.ok(help.some((item) => item.name === '/ajuda' || item.name === '/py-ajuda'), 'O comando de ajuda deve estar na lista.');
+  assert.ok(help.some((item) => item.name === '/py-help' || item.name === '/help' || item.name === '/ajuda' || item.name === '/py-ajuda'), 'O comando de ajuda deve estar na lista.');
 
   const helpPage1 = buildHelpMessage('todos', 'user-123');
   assert.ok(helpPage1.embed, 'O embed do menu de ajuda deve ser gerado.');
@@ -60,6 +60,7 @@ try {
 
   // Verificação de Internacionalização (i18n):
   const { getLanguage, setGuildLanguage, CRINGELANDIA_GUILD_ID, t, getCanvasStrings } = require('../src/utils/i18n');
+  assert.equal(getLanguage(CRINGELANDIA_GUILD_ID), 'pt', 'Servidor Cringelândia deve ter Português como padrão.');
   assert.equal(getLanguage(CRINGELANDIA_GUILD_ID), 'pt', 'Servidor Cringelândia deve ter Português como padrão quando não configurado.');
   assert.equal(getLanguage('outro-servidor-qualquer'), 'en', 'Servidores externos devem ter Inglês como padrão.');
   

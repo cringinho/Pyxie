@@ -158,7 +158,7 @@ function formatDuelError(challengeRes, target, source = null) {
 
 module.exports = {
   name: PET_DUEL,
-  aliases: ['duelo', 'batalha', 'combate', 'duel'],
+  aliases: ['duel', 'duelo', 'py-duelo', 'py-duel', 'batalha', 'combate', 'petduelo'],
   data: new SlashCommandBuilder()
     .setName(PET_DUEL)
     .setDescription('Challenge another player to a Pymon RPG duel in the Colosseum (Max 3/day).')

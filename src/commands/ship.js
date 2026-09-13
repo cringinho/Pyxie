@@ -183,7 +183,7 @@ async function runShipInteraction(interaction) {
 
 module.exports = {
   name: SHIP,
-  aliases: ['ship'],
+  aliases: ['ship', 'casal', 'py-casal', 'py-ship', 'couple', 'love'],
   data: new SlashCommandBuilder()
     .setName(SHIP)
     .setDescription('Calculate love affinity between two users or draw a random couple.')

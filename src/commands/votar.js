@@ -55,7 +55,7 @@ const commandName = VOTE || 'py-votar';
 
 module.exports = {
   name: commandName,
-  aliases: ['votar', 'vote', 'py-vote'],
+  aliases: ['vote', 'votar', 'py-votar', 'py-vote'],
   ephemeral: false,
   data: new SlashCommandBuilder()
     .setName(commandName)

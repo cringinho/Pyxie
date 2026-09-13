@@ -5,7 +5,7 @@ const { t } = require('../utils/i18n');
 
 module.exports = {
   name: WELCOME,
-  aliases: ['setwelcome', 'boasvindas', 'welcome'],
+  aliases: ['welcome', 'boasvindas', 'py-boasvindas', 'py-welcome', 'setwelcome'],
   data: new SlashCommandBuilder()
     .setName(WELCOME)
     .setDescription('Sets the channel where welcome messages are sent.')

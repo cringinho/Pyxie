@@ -39,7 +39,7 @@ async function execute(source, reply, value) {
 
 module.exports = {
   name: PROFESSION,
-  aliases: ['profissão', 'career', 'job', 'profession', 'profissao'],
+  aliases: ['profession', 'profissao', 'profissão', 'py-profissao', 'py-profession', 'career', 'job'],
   resolveProfession,
   data: new SlashCommandBuilder()
     .setName(PROFESSION)
