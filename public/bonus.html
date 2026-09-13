@@ -10,7 +10,7 @@
     <style>
       :root {
         --bg-dark: #0d0a17;
-        --bg-card: rgba(23, 17, 42, 0.9);
+        --bg-card: rgba(23, 17, 42, 0.92);
         --purple-main: #9333ea;
         --purple-bright: #c084fc;
         --cyan-glow: #38bdf8;
@@ -28,7 +28,7 @@
       }
 
       body {
-        font-family: 'Quicksand', sans-serif;
+        font-family: 'Quicksand', 'Segoe UI', system-ui, -apple-system, sans-serif;
         background: radial-gradient(circle at top, #231244 0%, #0d0a17 100%);
         color: var(--text-white);
         min-height: 100vh;
@@ -115,7 +115,7 @@
         -webkit-backdrop-filter: blur(16px);
         border: 2px solid rgba(192, 132, 252, 0.35);
         border-radius: 28px;
-        padding: 30px 24px;
+        padding: 32px 24px;
         text-align: center;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(147, 51, 234, 0.25);
         position: relative;
@@ -158,8 +158,9 @@
 
       .subtitle {
         color: var(--text-muted);
-        font-size: 0.92rem;
+        font-size: 0.94rem;
         margin-bottom: 20px;
+        line-height: 1.4;
       }
 
       /* Timer Box */
@@ -206,6 +207,80 @@
         color: #e2e8f0;
       }
 
+      /* Guia de Instruções (Quando acessa sem token) */
+      .instructions-card {
+        display: none;
+        background: rgba(13, 10, 23, 0.8);
+        border: 1px solid rgba(192, 132, 252, 0.3);
+        border-radius: 20px;
+        padding: 22px 18px;
+        text-align: left;
+        margin-bottom: 20px;
+      }
+
+      .instructions-title {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.15rem;
+        color: var(--purple-bright);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .step-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-size: 0.92rem;
+        color: #e2e8f0;
+      }
+
+      .step-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        line-height: 1.45;
+      }
+
+      .step-num {
+        background: linear-gradient(135deg, var(--purple-main), var(--cyan-glow));
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.8rem;
+        min-width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2px;
+      }
+
+      .command-badge {
+        background: rgba(192, 132, 252, 0.18);
+        border: 1px solid rgba(192, 132, 252, 0.4);
+        padding: 2px 7px;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.88rem;
+        color: #38bdf8;
+        font-weight: 600;
+      }
+
+      .reward-box {
+        background: rgba(250, 204, 21, 0.1);
+        border: 1px solid rgba(250, 204, 21, 0.3);
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #fef08a;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
       /* Native Ad Container */
       .native-ad-section {
         width: 100%;
@@ -239,6 +314,27 @@
         box-shadow: 0 12px 30px rgba(16, 185, 129, 0.6);
       }
 
+      .btn-sponsor {
+        display: inline-block;
+        width: 100%;
+        padding: 14px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--purple-main), #6366f1);
+        color: #ffffff;
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 20px rgba(147, 51, 234, 0.4);
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .btn-sponsor:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(147, 51, 234, 0.6);
+      }
+
       .success-box {
         display: none;
         background: rgba(34, 197, 94, 0.15);
@@ -266,8 +362,8 @@
       }
 
       .sponsor-badge {
-        margin-top: 16px;
-        font-size: 0.8rem;
+        margin-top: 18px;
+        font-size: 0.82rem;
         color: #94a3b8;
       }
     </style>
@@ -321,15 +417,45 @@
         <!-- Card Principal da Pyxie -->
         <div class="bonus-container">
           <div class="mascot-badge">✨</div>
-          <h1>Pyxie Bot • Bônus Mágico</h1>
-          <p class="subtitle">Aguarde a canalização da energia para desbloquear seu bônus no Discord!</p>
+          <h1 id="pageTitle">Pyxie Bot • Bônus Mágico</h1>
+          <p id="pageSubtitle" class="subtitle">Aguarde a canalização da energia para desbloquear seu bônus no Discord!</p>
 
-          <div class="timer-card">
+          <!-- Card com o Cronômetro (Exibido quando há token) -->
+          <div id="timerCard" class="timer-card">
             <div id="countdown" class="countdown-number">10</div>
             <div class="progress-bar-wrap">
               <div id="progressBar" class="progress-bar-fill"></div>
             </div>
             <div id="statusLabel" class="status-label">⚡ Canalizando energia mágica...</div>
+          </div>
+
+          <!-- Card de Instruções Amigável (Exibido quando acessa sem token direto pela URL) -->
+          <div id="instructionsCard" class="instructions-card">
+            <div class="instructions-title">
+              <span>🎁 Como resgatar suas recompensas:</span>
+            </div>
+            <div class="step-list">
+              <div class="step-item">
+                <span class="step-num">1</span>
+                <span>No Discord, digite o comando <span class="command-badge">/py-bonus</span> (ou clique no botão em <span class="command-badge">/py-daily</span> ou <span class="command-badge">/py-inventory</span>).</span>
+              </div>
+              <div class="step-item">
+                <span class="step-num">2</span>
+                <span>Clique no link mágico gerado exclusivamente para a sua conta.</span>
+              </div>
+              <div class="step-item">
+                <span class="step-num">3</span>
+                <span>Aguarde os 10 segundos na tela e clique em <strong>Resgatar Bônus</strong>!</span>
+              </div>
+            </div>
+
+            <div class="reward-box">
+              <span>✨ <strong>Recompensa entregue:</strong> 1x Ampulheta Mágica (2h) ⏳ + 150 Moedas 💰</span>
+            </div>
+
+            <a id="sponsorBtn" href="https://omg10.com/4/11793877" target="_blank" class="btn-sponsor">
+              👉 Apoiar Servidor com Patrocinador
+            </a>
           </div>
 
           <!-- Native Adsterra Banner Container -->
@@ -347,7 +473,7 @@
           <div id="errorBox" class="error-box"></div>
 
           <div class="sponsor-badge">
-            Patrocinado com amor para a comunidade Pyxie 🐾
+            Patrocinado com carinho para a comunidade Pyxie 🐾
           </div>
         </div>
 
@@ -404,19 +530,21 @@
       const countdownEl = document.getElementById('countdown');
       const progressBarEl = document.getElementById('progressBar');
       const statusLabelEl = document.getElementById('statusLabel');
+      const timerCardEl = document.getElementById('timerCard');
+      const instructionsCardEl = document.getElementById('instructionsCard');
+      const pageTitleEl = document.getElementById('pageTitle');
+      const pageSubtitleEl = document.getElementById('pageSubtitle');
       const btnClaimEl = document.getElementById('btnClaim');
       const successBoxEl = document.getElementById('successBox');
       const errorBoxEl = document.getElementById('errorBox');
       const successMessageEl = document.getElementById('successMessage');
 
       if (!token) {
-        countdownEl.innerText = '🎁';
-        statusLabelEl.innerText = '✨ Bem-vindo ao Bônus Mágico da Pyxie!';
-        errorBoxEl.style.display = 'block';
-        errorBoxEl.style.background = 'rgba(147, 51, 234, 0.15)';
-        errorBoxEl.style.borderColor = 'rgba(192, 132, 252, 0.4)';
-        errorBoxEl.style.color = '#e2e8f0';
-        errorBoxEl.innerHTML = 'Para creditar **Ampulhetas Mágicas (2h) ⏳** e **Moedas 🪙** na sua conta, gere seu link exclusivo usando <code>/py-bonus</code>, <code>/py-daily</code> ou <code>/py-inventory</code> no Discord!<br><br><a href="' + MONETAG_LINK + '" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">👉 Clique aqui para apoiar com o patrocinador</a>';
+        // Acesso direto sem token: Exibe o card explicativo e botões formatados
+        timerCardEl.style.display = 'none';
+        instructionsCardEl.style.display = 'block';
+        pageTitleEl.innerText = 'Pyxie Bot • Portal de Bônus';
+        pageSubtitleEl.innerText = 'Gere seu link exclusivo dentro do Discord para creditar itens na sua conta!';
       } else {
         // Inicia a contagem regressiva de 10 segundos
         const timer = setInterval(() => {
