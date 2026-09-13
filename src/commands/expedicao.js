@@ -23,13 +23,22 @@ function buildExpeditionView(userId, source = null) {
 
   // 1. Expedição concluída (Pronta para coletar)
   if (exp && exp.completed) {
-    const desc = t('expedition.completedDesc', source, {
+    const isEn = getLanguage(source) === 'en';
+    const isDoubled = Boolean(exp.doubled);
+
+    let desc = t('expedition.completedDesc', source, {
       pet: `${exp.petEmoji} ${exp.petName}`,
       hours: exp.durationHours,
     });
 
+    if (isDoubled) {
+      desc += isEn
+        ? '\n\n✨ **MAGIC BONUS ACTIVE:** Rewards will be **DOUBLED (2x)** upon claim!'
+        : '\n\n✨ **BÔNUS MÁGICO ATIVO:** As recompensas serão **DOBRADAS (2x)** ao coletar!';
+    }
+
     const embed = new EmbedBuilder()
-      .setColor(PYXIE_COLORS.green || '#22c55e')
+      .setColor(isDoubled ? (PYXIE_COLORS.gold || '#facc15') : (PYXIE_COLORS.green || '#22c55e'))
       .setTitle(t('expedition.completedTitle', source))
       .setDescription(desc)
       .setFooter({ text: pyxieFooter(t('expedition.btnClaim', source)) })
@@ -38,10 +47,20 @@ function buildExpeditionView(userId, source = null) {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId(`expedition_claim:${userId}`)
-        .setLabel(t('expedition.btnClaim', source))
+        .setLabel(isDoubled ? (isEn ? '🎁 Claim 2x Rewards' : '🎁 Coletar Dobrado (2x)') : t('expedition.btnClaim', source))
         .setEmoji('🎁')
         .setStyle(ButtonStyle.Success)
     );
+
+    if (!isDoubled) {
+      row.addComponents(
+        new ButtonBuilder()
+          .setCustomId(`expedition_double_link:${userId}`)
+          .setLabel(isEn ? '💎 Double 2x (10s)' : '💎 Dobro 2x (10s)')
+          .setEmoji('💎')
+          .setStyle(ButtonStyle.Primary)
+      );
+    }
 
     return { embeds: [embed], components: [row] };
   }
@@ -109,6 +128,7 @@ function isExpeditionInteraction(interaction) {
   return typeof interaction.customId === 'string' && (
     interaction.customId.startsWith('expedition_start:') ||
     interaction.customId.startsWith('expedition_claim:') ||
+    interaction.customId.startsWith('expedition_double_link:') ||
     interaction.customId.startsWith('expedition_refresh:')
   );
 }
@@ -129,6 +149,42 @@ async function handleExpeditionInteraction(interaction) {
   if (action === 'expedition_refresh') {
     const view = buildExpeditionView(targetId, interaction);
     return interaction.update(view);
+  }
+
+  if (action === 'expedition_double_link') {
+    const { createBonusSession } = require('../services/bonusTimer');
+    const session = createBonusSession(targetId, 'expedition_double');
+    const isEn = getLanguage(interaction) === 'en';
+
+    const doubleEmbed = new EmbedBuilder()
+      .setColor(PYXIE_COLORS.gold || '#facc15')
+      .setTitle(isEn ? '💎  ✦  Double Expedition Rewards (2x)' : '💎  ✦  Dobrar Recompensas da Expedição (2x)')
+      .setDescription(
+        isEn
+          ? 'Want **2x XP**, **2x Coins**, and doubled item drops?\n\n' +
+            '1️⃣ Click the **💎 Double Rewards (10s)** button below.\n' +
+            '2️⃣ Wait **10 seconds** on the magic page.\n' +
+            '3️⃣ Return here and click **Claim** to collect your doubled loot!'
+          : 'Quer receber **o dobro de XP**, **o dobro de Moedas** e drops duplicados?\n\n' +
+            '1️⃣ Clique no botão **💎 Dobrar Recompensas (10s)** abaixo.\n' +
+            '2️⃣ Aguarde a barra de **10 segundos** carregar na página mágica.\n' +
+            '3️⃣ Retorne aqui e clique em **Coletar Dobrado (2x)**!'
+      )
+      .setFooter({ text: pyxieFooter('Pyxie Expedition') })
+      .setTimestamp();
+
+    const linkRow = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel(isEn ? '💎 Double Rewards (10s)' : '💎 Dobrar Recompensas (10s)')
+        .setStyle(ButtonStyle.Link)
+        .setURL(session.url)
+    );
+
+    return interaction.reply({
+      embeds: [doubleEmbed],
+      components: [linkRow],
+      flags: 64,
+    });
   }
 
   if (action === 'expedition_start') {

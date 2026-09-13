@@ -128,6 +128,7 @@ function registerSlashCommands() {
 }
 
 const { processTopggVote, verifyWebhookAuth } = require('./src/services/topgg');
+const { verifyAndClaimBonus } = require('./src/services/bonusTimer');
 
 function requireAdminAuth(req, res, next) {
   const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
@@ -169,7 +170,24 @@ app.post('/api/topgg/webhook', (req, res) => {
   return res.status(200).json({ status: 'success', data: result });
 });
 
-// 3. Rotas administrativas protegidas
+// 3. Sistema de Bônus de Recompensas (Página de Espera 10s da Pyxie)
+app.get('/bonus', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'bonus.html'));
+});
+
+app.post('/api/bonus/claim', (req, res) => {
+  const { token } = req.body || {};
+  const result = verifyAndClaimBonus(token);
+  if (!result.success) {
+    addLog(`[Bônus] Tentativa de resgate rejeitada: ${result.error}`);
+    return res.status(400).json(result);
+  }
+
+  addLog(`[Bônus] Resgate concluído para o usuário ${result.userId} (Ação: ${result.action})`);
+  return res.json(result);
+});
+
+// 4. Rotas administrativas protegidas
 app.post('/api/start', requireAdminAuth, (req, res) => {
   res.json(startBot());
 });
@@ -264,7 +282,7 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, HOST, () => {
-  const publicUrl = `http://34.173.207.172:${PORT}`;
+  const publicUrl = process.env.PANEL_PUBLIC_URL || `http://136.113.26.120:${PORT}`;
   addLog(`Painel web da Pyxie iniciado em ${publicUrl}`);
   console.log(`Painel da Pyxie rodando em ${publicUrl}`);
   startBot();

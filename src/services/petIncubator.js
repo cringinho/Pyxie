@@ -311,6 +311,47 @@ function expandIncubator(userId, userRecord, scheduleSaveFn) {
   };
 }
 
+/**
+ * Acelera todos os ovos em incubação na chocadeira por uma quantidade de horas (ex: 2h).
+ */
+function speedupIncubatorSlots(userId, userRecord, hours = 2, scheduleSaveFn) {
+  const incubator = ensureUserIncubator(userRecord);
+  const now = Date.now();
+  const activeEggs = incubator.slots.filter((s) => s && s.chocaEm > now);
+
+  if (activeEggs.length === 0) {
+    return {
+      success: false,
+      reason: 'no_incubating_eggs',
+      message: 'Não há nenhum ovo aguardando eclosão na sua chocadeira.',
+    };
+  }
+
+  const reduceMs = hours * 3600000;
+  const updatedEggs = [];
+
+  for (const egg of activeEggs) {
+    egg.chocaEm = Math.max(now, egg.chocaEm - reduceMs);
+    const minsLeft = Math.max(0, Math.ceil((egg.chocaEm - now) / 60000));
+    updatedEggs.push({
+      slotIndex: egg.slotIndex,
+      eggName: egg.eggName,
+      emoji: egg.emoji,
+      minsLeft,
+      ready: minsLeft === 0,
+    });
+  }
+
+  if (scheduleSaveFn) scheduleSaveFn();
+
+  return {
+    success: true,
+    reducedHours: hours,
+    eggsUpdated: updatedEggs,
+    message: `⚡ Tempo de eclosão reduzido em **${hours} horas** em ${updatedEggs.length} ovo(s)!`,
+  };
+}
+
 module.exports = {
   DEFAULT_INCUBATOR_SLOTS,
   MAX_INCUBATOR_SLOTS,
@@ -320,5 +361,6 @@ module.exports = {
   hatchSlotEgg,
   applyHourglass,
   expandIncubator,
+  speedupIncubatorSlots,
 };
 

@@ -322,6 +322,7 @@ function buildIncubatorTab(userId, userTag) {
 
   // Botões de ação da chocadeira
   const readySlots = incubator.slots.filter((s) => !s.empty && s.ready);
+  const incubatingSlots = incubator.slots.filter((s) => !s.empty && !s.ready);
   const actionRow = new ActionRowBuilder();
 
   if (readySlots.length > 0) {
@@ -334,6 +335,16 @@ function buildIncubatorTab(userId, userTag) {
           .setStyle(ButtonStyle.Success)
       );
     }
+  }
+
+  if (incubatingSlots.length > 0) {
+    actionRow.addComponents(
+      new ButtonBuilder()
+        .setCustomId(`hub_speedup_incubator:${userId}`)
+        .setLabel('Acelerar (-2h)')
+        .setEmoji('⚡')
+        .setStyle(ButtonStyle.Primary)
+    );
   }
 
   if (incubator.maxSlots < 5) {
@@ -1030,6 +1041,37 @@ async function handleHubInteraction(interaction) {
     }
     const view = buildIncubatorTab(userId, userTag);
     return interaction.update(view);
+  }
+
+  // 8.1. Chocadeira: Acelerar eclosão com página mágica (-2h)
+  if (action === 'hub_speedup_incubator') {
+    const { createBonusSession } = require('../services/bonusTimer');
+    const session = createBonusSession(userId, 'incubator_boost');
+
+    const speedupEmbed = new EmbedBuilder()
+      .setColor(PYXIE_COLORS.emerald || '#10b981')
+      .setTitle('⚡  ✦  Acelerar Chocadeira Encantada (-2h)')
+      .setDescription(
+        'Para canalizar a energia mágica e adiantar **2 horas** de eclosão de todos os seus ovos:\n\n' +
+        '1️⃣ Clique no botão **⚡ Acelerar Agora (10s)** abaixo.\n' +
+        '2️⃣ Aguarde a barra de **10 segundos** carregar na página mágica.\n' +
+        '3️⃣ Seu bônus será creditado instantaneamente na sua chocadeira!'
+      )
+      .setFooter({ text: 'Pyxie Bonus' })
+      .setTimestamp();
+
+    const linkRow = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('⚡ Acelerar Agora (10s)')
+        .setStyle(ButtonStyle.Link)
+        .setURL(session.url)
+    );
+
+    return interaction.reply({
+      embeds: [speedupEmbed],
+      components: [linkRow],
+      flags: 64,
+    });
   }
 
   // 9. Dungeons: Iniciar expedição

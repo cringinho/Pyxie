@@ -114,30 +114,33 @@ function claimExpedition(userId) {
   const durationConfig = DURATIONS[exp.durationHours] || DURATIONS[2];
 
   // Cálculo de recompensas
-  const xpGained = Math.floor(durationConfig.xpMin + Math.random() * (durationConfig.xpMax - durationConfig.xpMin));
-  const coinsGained = Math.floor(durationConfig.coinsMin + Math.random() * (durationConfig.coinsMax - durationConfig.coinsMin));
+  const isDoubled = Boolean(exp.doubled || options.doubled);
+  const baseMultiplier = isDoubled ? 2 : 1;
+
+  let xpGained = Math.floor(durationConfig.xpMin + Math.random() * (durationConfig.xpMax - durationConfig.xpMin)) * baseMultiplier;
+  let coinsGained = Math.floor(durationConfig.coinsMin + Math.random() * (durationConfig.coinsMax - durationConfig.coinsMin)) * baseMultiplier;
   let magicBeansGained = 0;
   let itemsGained = [];
 
   // Chances especiais
   if (exp.durationHours === 2) {
-    addItem(userId, 'maca_doce', 1);
-    itemsGained.push('1x Maçã Doce 🍎');
+    addItem(userId, 'maca_doce', isDoubled ? 2 : 1);
+    itemsGained.push(`${isDoubled ? '2x' : '1x'} Maçã Doce 🍎`);
   } else if (exp.durationHours === 4) {
-    addItem(userId, 'pocao_energia', 1);
-    itemsGained.push('1x Poção de Energia ⚡');
-    if (Math.random() < 0.15) {
+    addItem(userId, 'pocao_energia', isDoubled ? 2 : 1);
+    itemsGained.push(`${isDoubled ? '2x' : '1x'} Poção de Energia ⚡`);
+    if (Math.random() < (isDoubled ? 0.30 : 0.15)) {
       addItem(userId, 'ovo_comum', 1);
       itemsGained.push('1x Ovo Comum 🥚');
     }
   } else if (exp.durationHours === 8) {
-    addItem(userId, 'banquete_real', 1);
-    itemsGained.push('1x Banquete Real 🍖');
-    if (Math.random() < 0.10) {
-      addMagicBeans(userId, 1);
-      magicBeansGained = 1;
+    addItem(userId, 'banquete_real', isDoubled ? 2 : 1);
+    itemsGained.push(`${isDoubled ? '2x' : '1x'} Banquete Real 🍖`);
+    if (Math.random() < (isDoubled ? 0.20 : 0.10)) {
+      addMagicBeans(userId, isDoubled ? 2 : 1);
+      magicBeansGained = isDoubled ? 2 : 1;
     }
-    if (Math.random() < 0.25) {
+    if (Math.random() < (isDoubled ? 0.45 : 0.25)) {
       addItem(userId, 'ovo_raro', 1);
       itemsGained.push('1x Ovo Raro 🥚✨');
     }
@@ -164,7 +167,19 @@ function claimExpedition(userId) {
     coinsGained,
     magicBeansGained,
     itemsGained,
+    doubled: isDoubled,
   };
+}
+
+function markExpeditionDoubled(userId) {
+  const all = readExpeditions();
+  const exp = all[userId];
+  if (!exp) {
+    return { success: false, reason: 'no_expedition', message: 'Nenhuma expedição ativa encontrada.' };
+  }
+  exp.doubled = true;
+  writeExpeditions(all);
+  return { success: true, expedition: exp, message: 'Recompensas da expedição dobradas com sucesso!' };
 }
 
 function isPetOnExpedition(userId, targetPetId = null) {
@@ -183,5 +198,6 @@ module.exports = {
   isPetOnExpedition,
   startExpedition,
   claimExpedition,
+  markExpeditionDoubled,
 };
 

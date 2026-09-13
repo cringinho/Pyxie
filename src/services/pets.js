@@ -11,6 +11,7 @@ const {
   hatchSlotEgg,
   applyHourglass,
   expandIncubator,
+  speedupIncubatorSlots,
 } = require('./petIncubator');
 
 const dataDir = path.join(__dirname, '..', '..', 'data');
@@ -759,6 +760,11 @@ function expandUserIncubator(userId) {
   return expandIncubator(userId, record, schedulePetsSave);
 }
 
+function speedupUserIncubator(userId, hours = 2) {
+  const record = getUserPetRecord(userId);
+  return speedupIncubatorSlots(userId, record, hours, schedulePetsSave);
+}
+
 function getTopPets(limit = 10) {
   const all = getFullPetsMap();
   return Object.entries(all)
@@ -869,6 +875,7 @@ module.exports = {
   hatchIncubatorEgg,
   useHourglassOnIncubator,
   expandUserIncubator,
+  speedupUserIncubator,
   getUserDex,
   recordDexEntry,
   transferPet,
