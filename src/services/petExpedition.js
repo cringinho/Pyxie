@@ -95,7 +95,7 @@ function startExpedition(userId, durationHours = 2) {
   };
 }
 
-function claimExpedition(userId) {
+function claimExpedition(userId, options = {}) {
   const exp = getActiveExpedition(userId);
   if (!exp) {
     return { success: false, reason: 'no_expedition', message: 'Você não tem nenhuma expedição ativa no momento.' };
@@ -117,8 +117,8 @@ function claimExpedition(userId) {
   const isDoubled = Boolean(exp.doubled || options.doubled);
   const baseMultiplier = isDoubled ? 2 : 1;
 
-  let xpGained = Math.floor(durationConfig.xpMin + Math.random() * (durationConfig.xpMax - durationConfig.xpMin)) * baseMultiplier;
-  let coinsGained = Math.floor(durationConfig.coinsMin + Math.random() * (durationConfig.coinsMax - durationConfig.coinsMin)) * baseMultiplier;
+  const xpGained = Math.floor(durationConfig.xpMin + Math.random() * (durationConfig.xpMax - durationConfig.xpMin)) * baseMultiplier;
+  const coinsGained = Math.floor(durationConfig.coinsMin + Math.random() * (durationConfig.coinsMax - durationConfig.coinsMin)) * baseMultiplier;
   let magicBeansGained = 0;
   let itemsGained = [];
 

@@ -170,6 +170,7 @@ app.post('/api/topgg/webhook', (req, res) => {
   return res.status(200).json({ status: 'success', data: result });
 });
 
+// 3. Rotas administrativas protegidas
 // 3. Sistema de Bônus de Recompensas (Página de Espera 10s da Pyxie)
 app.get('/bonus', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'bonus.html'));
@@ -282,6 +283,11 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, HOST, () => {
+  const publicUrl = `http://34.173.207.172:${PORT}`;
+  addLog(`Painel web do Kuromiga iniciado em ${publicUrl}`);
+  console.log(`Painel do Kuromiga rodando em ${publicUrl}`);
+  addLog(`Painel web do Pyxie iniciado em ${publicUrl}`);
+  console.log(`Painel do Pyxie rodando em ${publicUrl}`);
   const publicUrl = process.env.PANEL_PUBLIC_URL || `http://136.113.26.120:${PORT}`;
   addLog(`Painel web da Pyxie iniciado em ${publicUrl}`);
   console.log(`Painel da Pyxie rodando em ${publicUrl}`);

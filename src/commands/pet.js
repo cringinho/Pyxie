@@ -277,11 +277,8 @@ function buildIncubatorTab(userId, userTag) {
   });
 
   const desc = [
-    `*Chocadeira mágica com taxa elevada de criaturas **SHINY (15% a 20%)**!*`,
-    '> *Chocadeira mágica com taxa elevada de criaturas **SHINY (15% a 20%)**!*',
     '*Chocadeira mágica com taxa elevada de criaturas **SHINY (15% a 20%)**!*',
     '',
-    `🏡 **Capacidade:** **${incubator.activeCount}/${incubator.maxSlots} ninhos ocupados**`,
     '🏡 **CAPACIDADE DA CHOCADEIRA**',
     `> 🪺 **Ocupação:** **${incubator.activeCount}/${incubator.maxSlots} ninhos ocupados**`,
     '',

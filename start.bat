@@ -1,8 +1,10 @@
 @echo off
+title KUROMIGA - Painel Web Control
 title PYXIE - Painel Web Control
 cd /d "%~dp0"
 
 echo ===============================================
+echo      KUROMIGA - SUA AMIGA CRINGE
 echo        PYXIE - REINO ENCANTADO
 echo ===============================================
 echo.
