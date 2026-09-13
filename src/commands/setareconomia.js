@@ -42,7 +42,10 @@ module.exports = {
           'en-GB': 'user',
           'pt-BR': 'usuario',
         })
-        .setDescription('Target user / Usuário')
+        .setDescription('User to update balance for.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Usuário que terá o saldo alterado.',
+        })
         .setRequired(true)
     )
     .addIntegerOption((option) =>
@@ -53,7 +56,10 @@ module.exports = {
           'en-GB': 'amount',
           'pt-BR': 'quantidade',
         })
-        .setDescription('New balance / Novo saldo')
+        .setDescription('New balance amount.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Nova quantia de saldo.',
+        })
         .setMinValue(0)
         .setRequired(true)
     ),

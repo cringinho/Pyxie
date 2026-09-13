@@ -134,7 +134,10 @@ module.exports = {
           'en-GB': 'user',
           'pt-BR': 'usuario',
         })
-        .setDescription('User you want to trade with / Usuário com quem deseja negociar')
+        .setDescription('User you want to trade with')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Usuário com quem deseja negociar',
+        })
         .setRequired(true)
     )
     .addStringOption((opt) =>
@@ -145,12 +148,15 @@ module.exports = {
           'en-GB': 'type',
           'pt-BR': 'tipo',
         })
-        .setDescription('Offer type / Tipo de oferta')
+        .setDescription('Offer type')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Tipo de oferta da troca',
+        })
         .setRequired(true)
         .addChoices(
-          { name: '📦 Item do Inventário / Inventory Item', value: 'item' },
-          { name: '🐾 Pymon Ativo / Active Pymon', value: 'pet' },
-          { name: '🪙 Moedas Mágicas / Magic Coins', value: 'coins' }
+          { name: '📦 Item do Inventário', value: 'item' },
+          { name: '🐾 Pymon Ativo', value: 'pet' },
+          { name: '💰 Moedinhas', value: 'coins' }
         )
     )
     .addStringOption((opt) =>
@@ -161,7 +167,10 @@ module.exports = {
           'en-GB': 'identifier',
           'pt-BR': 'identificador',
         })
-        .setDescription('Item ID or "ativo" for pet / ID do Item ou "ativo"')
+        .setDescription('Item ID or "ativo" for pet')
+        .setDescriptionLocalizations({
+          'pt-BR': 'ID do Item da mochila ou "ativo" para o pet',
+        })
         .setRequired(false)
     )
     .addIntegerOption((opt) =>
@@ -172,7 +181,10 @@ module.exports = {
           'en-GB': 'amount',
           'pt-BR': 'quantidade',
         })
-        .setDescription('Quantity of items or coins / Quantidade')
+        .setDescription('Quantity of items or coins')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Quantidade de itens ou moedas',
+        })
         .setRequired(false)
     ),
   async executeSlash({ interaction }) {

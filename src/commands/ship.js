@@ -198,7 +198,10 @@ module.exports = {
           'en-GB': 'person1',
           'pt-BR': 'pessoa1',
         })
-        .setDescription('First person of the couple / Primeira pessoa')
+        .setDescription('First person of the couple.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Primeira pessoa do casal.',
+        })
         .setRequired(false)
     )
     .addUserOption((option) =>
@@ -209,7 +212,10 @@ module.exports = {
           'en-GB': 'person2',
           'pt-BR': 'pessoa2',
         })
-        .setDescription('Second person of the couple / Segunda pessoa')
+        .setDescription('Second person of the couple.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Segunda pessoa do casal.',
+        })
         .setRequired(false)
     ),
   runShipPrefix,

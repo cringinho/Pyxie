@@ -1232,22 +1232,23 @@ async function handleHubInteraction(interaction) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(PYMONS)
-    .setDescription('Abre o painel Tamagotchi dos seus Pymons, Dungeons e Mochila.')
-    .addSubcommand((sub) =>
-      sub
-        .setName('painel')
-        .setDescription('Abre o painel principal do seu Pymon ativo.')
-    )
-    .addSubcommand((sub) =>
-      sub
+    .setDescription('Open your Pymon Tamagotchi panel, Dungeons and Inventory.')
+    .setDescriptionLocalizations({
+      'pt-BR': 'Abre o painel Tamagotchi dos seus Pymons, Dungeons e Mochila.',
+    })
+    .addStringOption((opt) =>
+      opt
         .setName('renomear')
-        .setDescription('Altera o nome do seu Pymon ativo.')
-        .addStringOption((opt) =>
-          opt
-            .setName('novo_nome')
-            .setDescription('O novo nome para seu companheiro')
-            .setRequired(true)
-        )
+        .setNameLocalizations({
+          'pt-BR': 'renomear',
+          'en-US': 'rename',
+          'en-GB': 'rename',
+        })
+        .setDescription('Optional: Rename your active Pymon')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Opcional: Altera o nome do seu Pymon ativo',
+        })
+        .setRequired(false)
     ),
   name: PYMONS,
   aliases: [PIXELMONSTERS, PET, 'pet', 'pymon'],
@@ -1255,10 +1256,9 @@ module.exports = {
   async executeSlash({ interaction }) {
     const userId = interaction.user.id;
     const userTag = interaction.user.displayName || interaction.user.username;
-    const sub = interaction.options.getSubcommand(false);
+    const newName = interaction.options.getString('renomear') || interaction.options.getString('rename');
 
-    if (sub === 'renomear') {
-      const newName = interaction.options.getString('novo_nome');
+    if (newName) {
       const res = renamePet(userId, newName);
       if (!res.success) {
         return interaction.editReply({ content: `❌ ${res.message}` });

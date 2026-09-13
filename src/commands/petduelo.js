@@ -173,7 +173,10 @@ module.exports = {
           'en-GB': 'opponent',
           'pt-BR': 'oponente',
         })
-        .setDescription('User you want to challenge / Usuário a desafiar')
+        .setDescription('User you want to challenge')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Usuário que você deseja desafiar',
+        })
         .setRequired(true)
     )
     .addIntegerOption((opt) =>
@@ -184,7 +187,10 @@ module.exports = {
           'en-GB': 'bet',
           'pt-BR': 'aposta',
         })
-        .setDescription('Amount of coins to bet (optional) / Moedas a apostar')
+        .setDescription('Amount of coins to bet (optional)')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Quantidade de moedas a apostar (opcional)',
+        })
         .setMinValue(0)
         .setMaxValue(50000)
         .setRequired(false)

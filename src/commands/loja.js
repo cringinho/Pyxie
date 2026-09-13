@@ -186,7 +186,7 @@ module.exports = {
   name: SHOP,
   data: new SlashCommandBuilder()
     .setName(SHOP)
-    .setDescription('Open creature & items shop / Abre a Lojinha de Mascotes e Itens de Pyxie.')
+    .setDescription('Open creature & items shop.')
     .setDescriptionLocalizations({
       'pt-BR': 'Abre a Lojinha de Mascotes e Itens de Pyxie.',
     })
@@ -198,14 +198,17 @@ module.exports = {
           'en-GB': 'category',
           'pt-BR': 'categoria',
         })
-        .setDescription('Category of the shop / Categoria da loja para abrir')
+        .setDescription('Category of the shop to open')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Categoria da loja para abrir',
+        })
         .setRequired(false)
         .addChoices(
-          { name: '🍖 Comidas / Food', value: 'comida' },
-          { name: '🩹 Cura & Estamina / Healing & Energy', value: 'cura' },
-          { name: '⏳ Utilitários / Utilities', value: 'utilitario' },
-          { name: '📦 Baús / Mystery Chests', value: 'bau' },
-          { name: '🏡 Melhorias & Ninhos / Upgrades & Nests', value: 'melhoria' }
+          { name: '🍖 Comidas', value: 'comida' },
+          { name: '🩹 Cura & Estamina', value: 'cura' },
+          { name: '⏳ Utilitários', value: 'utilitario' },
+          { name: '📦 Baús Misteriosos', value: 'bau' },
+          { name: '🏡 Melhorias & Ninhos', value: 'melhoria' }
         )
     ),
   aliases: ['shop', 'loja', 'py-loja', 'py-shop', 'lojinha', 'mercado', 'mercadinho', 'store'],

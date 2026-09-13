@@ -42,7 +42,10 @@ module.exports = {
           'en-GB': 'minimum',
           'pt-BR': 'minimo',
         })
-        .setDescription('Minimum value / Valor mínimo')
+        .setDescription('Minimum value for daily coins')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Valor mínimo para o diário',
+        })
         .setMinValue(0)
         .setRequired(true)
     )
@@ -54,7 +57,10 @@ module.exports = {
           'en-GB': 'maximum',
           'pt-BR': 'maximo',
         })
-        .setDescription('Maximum value / Valor máximo')
+        .setDescription('Maximum value for daily coins')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Valor máximo para o diário',
+        })
         .setMinValue(0)
         .setRequired(true)
     ),

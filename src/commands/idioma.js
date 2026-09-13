@@ -100,16 +100,16 @@ module.exports = {
           'en-GB': 'language',
           'pt-BR': 'idioma',
         })
-        .setDescription('Escolha o idioma / Choose language')
+        .setDescription('Choose the server language.')
         .setDescriptionLocalizations({
-          'en-US': 'Choose language',
-          'en-GB': 'Choose language',
-          'pt-BR': 'Escolha o idioma',
+          'en-US': 'Choose the server language.',
+          'en-GB': 'Choose the server language.',
+          'pt-BR': 'Escolha o idioma do servidor.',
         })
         .setRequired(false)
         .addChoices(
-          { name: 'English 🇺🇸', value: 'en' },
-          { name: 'Português 🇧🇷', value: 'pt' }
+          { name: 'English 🇺🇸', nameLocalizations: { 'pt-BR': 'Inglês 🇺🇸' }, value: 'en' },
+          { name: 'Portuguese 🇧🇷', nameLocalizations: { 'pt-BR': 'Português 🇧🇷' }, value: 'pt' }
         )
     ),
   async executePrefix({ message, args }) {

@@ -195,35 +195,14 @@ module.exports = {
   handleBossInteraction,
   buildBossView,
   buildBossStatusEmbed,
-  buildBossComponents,
   data: new SlashCommandBuilder()
     .setName(BOSS)
-    .setDescription('Battle the weekly ALPHA World Boss with all servers / Enfrente o World Boss.')
+    .setDescription('Battle the weekly ALPHA World Boss with all servers.')
     .setDescriptionLocalizations({
       'pt-BR': 'Enfrente o World Boss Semanal ALPHA junto com todos os servidores!',
-    })
-    .addSubcommand((sub) =>
-      sub
-        .setName('status')
-        .setDescription('Shows current World Boss status / Exibe status do World Boss')
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('atacar')
-        .setNameLocalizations({
-          'en-US': 'attack',
-          'en-GB': 'attack',
-          'pt-BR': 'atacar',
-        })
-        .setDescription('Attack the World Boss / Atacar World Boss')
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('ranking')
-        .setDescription('Show damage leaderboard / Exibe maiores causadores de dano')
-    ),
+    }),
   async executeSlash({ interaction }) {
-    const sub = interaction.options.getSubcommand() || 'status';
+    const sub = interaction.options.getSubcommand(false);
 
     if (sub === 'atacar' || sub === 'attack') {
       const result = attackWorldBoss(interaction.user.id);

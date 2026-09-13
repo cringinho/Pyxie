@@ -12,7 +12,7 @@ module.exports = {
   aliases: ['wallet', 'carteira', 'py-carteira', 'saldo', 'bal', 'coins', 'py-wallet'],
   data: new SlashCommandBuilder()
     .setName(WALLET)
-    .setDescription('View wallet balance of coins and magic beans / Exibe o saldo da carteira.')
+    .setDescription('View wallet balance of coins and magic beans.')
     .setDescriptionLocalizations({
       'pt-BR': 'Exibe a quantidade de Moedinhas e Feijões Mágicos de um usuário.',
     })
@@ -24,7 +24,10 @@ module.exports = {
           'en-GB': 'user',
           'pt-BR': 'usuario',
         })
-        .setDescription('User to check wallet / Usuário para consultar')
+        .setDescription('User to check wallet balance')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Usuário para consultar a carteira',
+        })
         .setRequired(false)
     ),
   async executePrefix({ message }) {

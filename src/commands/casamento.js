@@ -130,7 +130,10 @@ module.exports = {
           'en-GB': 'user',
           'pt-BR': 'usuario',
         })
-        .setDescription('User to propose to / Usuário para pedir em casamento')
+        .setDescription('User to propose to')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Usuário para pedir em casamento',
+        })
         .setRequired(true)
     ),
   async executePrefix({ message }) {

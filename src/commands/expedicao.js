@@ -257,7 +257,7 @@ module.exports = {
   handleExpeditionInteraction,
   data: new SlashCommandBuilder()
     .setName(EXPEDITION)
-    .setDescription('Send your Pymon on an AFK expedition for 2h, 4h, or 8h / Expedição passiva.')
+    .setDescription('Send your Pymon on an AFK expedition for 2h, 4h, or 8h.')
     .setDescriptionLocalizations({
       'pt-BR': 'Envia seu Pymon em uma expedição passiva (AFK) de 2h, 4h ou 8h para coletar recursos.',
     })
@@ -269,12 +269,15 @@ module.exports = {
           'en-GB': 'duration',
           'pt-BR': 'duracao',
         })
-        .setDescription('Expedition duration in hours / Duração em horas')
+        .setDescription('Expedition duration in hours')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Duração da expedição em horas',
+        })
         .setRequired(false)
         .addChoices(
-          { name: '🟢 2 Horas / 2 Hours', value: 2 },
-          { name: '🟡 4 Horas / 4 Hours', value: 4 },
-          { name: '🟣 8 Horas / 8 Hours', value: 8 }
+          { name: '🟢 2 Hours', nameLocalizations: { 'pt-BR': '🟢 2 Horas' }, value: 2 },
+          { name: '🟡 4 Hours', nameLocalizations: { 'pt-BR': '🟡 4 Horas' }, value: 4 },
+          { name: '🟣 8 Hours', nameLocalizations: { 'pt-BR': '🟣 8 Horas' }, value: 8 }
         )
     ),
   async executeSlash({ interaction }) {

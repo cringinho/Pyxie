@@ -22,13 +22,16 @@ module.exports = {
           'en-GB': 'zone',
           'pt-BR': 'zona',
         })
-        .setDescription('Dungeon zone / Zona da masmorra')
+        .setDescription('Dungeon zone to explore.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Zona da masmorra para explorar.',
+        })
         .setRequired(false)
         .addChoices(
-          { name: '🌲 Bosque dos Guizos (Nv. 1+)', value: 'bosque' },
-          { name: '💧 Recifes Cantantes (Nv. 2+)', value: 'recife' },
-          { name: '🪶 Colinas do Vento Doce (Nv. 3+)', value: 'colina' },
-          { name: '🏰 Castelo Travesso de Pyxie (Nv. 5+)', value: 'castelo' }
+          { name: '🌲 Chime Woods (Lv. 1+)', nameLocalizations: { 'pt-BR': '🌲 Bosque dos Guizos (Nv. 1+)' }, value: 'bosque' },
+          { name: '💧 Singing Reefs (Lv. 2+)', nameLocalizations: { 'pt-BR': '💧 Recifes Cantantes (Nv. 2+)' }, value: 'recife' },
+          { name: '🪶 Sweet Wind Hills (Lv. 3+)', nameLocalizations: { 'pt-BR': '🪶 Colinas do Vento Doce (Nv. 3+)' }, value: 'colina' },
+          { name: '🏰 Pyxie Mischief Castle (Lv. 5+)', nameLocalizations: { 'pt-BR': '🏰 Castelo Travesso de Pyxie (Nv. 5+)' }, value: 'castelo' }
         )
     ),
   async executeSlash({ interaction }) {

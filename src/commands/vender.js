@@ -39,14 +39,17 @@ module.exports = {
   buildReply,
   data: new SlashCommandBuilder()
     .setName(SELL)
-    .setDescription('Sell items from your backpack for coins / Vende itens da mochila por moedas.')
+    .setDescription('Sell items from your backpack for coins.')
     .setDescriptionLocalizations({
       'pt-BR': 'Vende itens da sua mochila por moedinhas.',
     })
     .addStringOption((opt) =>
       opt
         .setName('item')
-        .setDescription('Item you want to sell / Item que deseja vender')
+        .setDescription('Item you want to sell')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Item que você deseja vender',
+        })
         .setRequired(true)
         .addChoices(...getItemChoices())
     )
@@ -58,7 +61,10 @@ module.exports = {
           'en-GB': 'amount',
           'pt-BR': 'quantidade',
         })
-        .setDescription('Quantity to sell / Quantidade a vender')
+        .setDescription('Quantity to sell')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Quantidade a vender',
+        })
         .setMinValue(1)
         .setMaxValue(99)
         .setRequired(false)

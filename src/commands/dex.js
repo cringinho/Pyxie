@@ -270,7 +270,7 @@ async function handleDexInteraction(interaction) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(DEX)
-    .setDescription('Official Pymon Dex with shiny forms and silhouettes / Consulte a Dex oficial.')
+    .setDescription('Official Pymon Dex with shiny forms and silhouettes.')
     .setDescriptionLocalizations({
       'pt-BR': 'Consulte a Dex oficial com todos os Pymons, formas Shiny e silhuetas de criaturas.',
     })
@@ -282,7 +282,10 @@ module.exports = {
           'en-GB': 'pymon',
           'pt-BR': 'pymon',
         })
-        .setDescription('Name or key of the Pymon / Nome ou chave do Pymon na Dex')
+        .setDescription('Name or key of the Pymon')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Nome ou chave do Pymon na Dex',
+        })
         .setRequired(false)
     ),
   name: DEX,

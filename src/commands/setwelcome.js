@@ -21,7 +21,10 @@ module.exports = {
           'en-GB': 'channel',
           'pt-BR': 'canal',
         })
-        .setDescription('Text channel for welcomes / Canal de texto')
+        .setDescription('Text channel for welcome messages.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Canal de texto para envio de boas-vindas.',
+        })
         .addChannelTypes([0])
         .setRequired(true)
     ),

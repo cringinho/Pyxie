@@ -129,13 +129,16 @@ module.exports = {
           'en-GB': 'category',
           'pt-BR': 'categoria',
         })
-        .setDescription('Ranking category / Categoria do ranking')
+        .setDescription('Ranking category to display.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Categoria do ranking para exibir.',
+        })
         .setRequired(false)
         .addChoices(
-          { name: '🪙 Coins / Moedas', value: 'coins' },
-          { name: '🌱 Magic Beans / Feijões', value: 'beans' },
-          { name: '🐾 Pymon Levels / Pets', value: 'pets' },
-          { name: '📖 Dex Collection / Coleção', value: 'dex' }
+          { name: '🪙 Coins', nameLocalizations: { 'pt-BR': '🪙 Moedas' }, value: 'coins' },
+          { name: '🌱 Magic Beans', nameLocalizations: { 'pt-BR': '🌱 Feijões Mágicos' }, value: 'beans' },
+          { name: '🐾 Pymon Levels', nameLocalizations: { 'pt-BR': '🐾 Níveis de Pymons' }, value: 'pets' },
+          { name: '📖 Pymon Dex', nameLocalizations: { 'pt-BR': '📖 Coleção Dex' }, value: 'dex' }
         )
     ),
   async executePrefix({ message, args }) {

@@ -470,7 +470,10 @@ module.exports = {
           'en-GB': 'user',
           'pt-BR': 'usuario',
         })
-        .setDescription('User to inspect / Usuário para consultar')
+        .setDescription('User to inspect profile')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Usuário para consultar o perfil',
+        })
         .setRequired(false)
     ),
   async executePrefix({ message }) {

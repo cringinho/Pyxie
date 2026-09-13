@@ -52,14 +52,17 @@ module.exports = {
   buildReply,
   data: new SlashCommandBuilder()
     .setName(USE)
-    .setDescription('Use an item from your backpack on your active Pymon / Usa item no pet.')
+    .setDescription('Use an item from your backpack on your active Pymon.')
     .setDescriptionLocalizations({
       'pt-BR': 'Utiliza um item da sua mochila no seu pet ativo.',
     })
     .addStringOption((opt) =>
       opt
         .setName('item')
-        .setDescription('Item to be used / Item a ser utilizado')
+        .setDescription('Item to be used on your pet')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Item a ser utilizado no pet',
+        })
         .setRequired(true)
         .addChoices(...getItemChoices())
     ),

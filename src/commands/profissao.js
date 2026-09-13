@@ -55,7 +55,10 @@ module.exports = {
           'en-GB': 'profession',
           'pt-BR': 'profissao',
         })
-        .setDescription('Desired profession / Profissão desejada')
+        .setDescription('Desired profession to choose.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Profissão desejada para escolher.',
+        })
         .setRequired(true)
         .addChoices(...getProfessionChoices())
     ),

@@ -30,7 +30,10 @@ module.exports = {
           'en-GB': 'user',
           'pt-BR': 'usuario',
         })
-        .setDescription('Target user / Usuário')
+        .setDescription('User whose economy data will be reset.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Usuário que terá os dados de economia resetados.',
+        })
         .setRequired(true)
     ),
   async executePrefix({ message, args }) {

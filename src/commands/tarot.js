@@ -218,7 +218,7 @@ module.exports = {
   logTarotToPublicChannel,
   data: new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Draw a daily Tarot card rendered in Canvas / Tiragem do Tarot.')
+    .setDescription('Draw a daily Tarot card rendered with special artwork.')
     .setDescriptionLocalizations({
       'pt-BR': 'Receba uma tiragem privada do Tarot da Cringelândia renderizada na hora.',
     }),

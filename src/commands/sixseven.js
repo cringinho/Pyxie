@@ -7,7 +7,10 @@ module.exports = {
   name: SIXSEVEN,
   data: new SlashCommandBuilder()
     .setName(SIXSEVEN)
-    .setDescription('Envia a imagem do sixseven no chat.'),
+    .setDescription('Sends the sixseven image in the chat.')
+    .setDescriptionLocalizations({
+      'pt-BR': 'Envia a imagem do sixseven no chat.',
+    }),
   async executePrefix({ message }) {
     await message.channel.send(SIXSEVEN_IMAGE_URL);
   },
