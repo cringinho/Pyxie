@@ -251,9 +251,9 @@
         errorBoxEl.style.background = 'rgba(147, 51, 234, 0.15)';
         errorBoxEl.style.borderColor = 'rgba(192, 132, 252, 0.4)';
         errorBoxEl.style.color = '#e2e8f0';
-        errorBoxEl.innerHTML = 'Para creditar **Ampulhetas Mágicas (2h) ⏳** e **Moedas 🪙** na sua conta, gere seu link exclusivo usando <code>/py-bonus</code>, <code>/py-daily</code> ou <code>/py-inventory</code> no Discord!';
+        errorBoxEl.innerHTML = 'Para creditar **Ampulhetas Mágicas (2h) ⏳** e **Moedas 🪙** na sua conta, gere seu link exclusivo usando <code>/py-bonus</code>, <code>/py-daily</code> ou <code>/py-inventory</code> no Discord!<br><br><a href="' + MONETAG_LINK + '" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">👉 Clique aqui para apoiar com o patrocinador Monetag</a>';
       } else {
-        // Inicia a contagem regressiva
+        // Inicia a contagem regressiva de 10 segundos
         const timer = setInterval(() => {
           timeLeft--;
           if (timeLeft < 0) timeLeft = 0;
@@ -264,8 +264,9 @@
 
           if (timeLeft === 0) {
             clearInterval(timer);
-            statusLabelEl.innerHTML = '🌟 **Energia Pronta!** Resgatando bônus...';
-            claimBonusReward();
+            countdownEl.innerText = '✨';
+            statusLabelEl.innerHTML = '🌟 **Energia Pronta!** Clique abaixo para resgatar:';
+            btnClaimEl.style.display = 'block';
           }
         }, 1000);
       }
@@ -273,7 +274,14 @@
       async function claimBonusReward() {
         if (!token) return;
 
-        statusLabelEl.innerText = '🔄 Validando no servidor...';
+        // 1. Abre a Monetag diretamente no evento de clique do usuário para NÃO ser bloqueado pelo navegador
+        try {
+          if (MONETAG_LINK) {
+            window.open(MONETAG_LINK, '_blank');
+          }
+        } catch (_) {}
+
+        statusLabelEl.innerText = '🔄 Creditando bônus no seu inventário...';
         btnClaimEl.style.display = 'none';
 
         try {
@@ -293,12 +301,6 @@
             if (data.message) {
               successMessageEl.innerHTML = data.message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             }
-            // Abre o link do patrocinador suavemente após validação
-            try {
-              if (MONETAG_LINK) {
-                window.open(MONETAG_LINK, '_blank');
-              }
-            } catch (_) {}
           } else {
             countdownEl.innerText = '⚠️';
             statusLabelEl.innerText = 'Falha ao validar bônus.';
