@@ -6,8 +6,9 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require('discord.js');
-const { getUserInventory, getItemDefinition, sellItem, openChest, formatItemEffects } = require('../services/inventory');
-const { useItemOnActivePet, getActivePet, hasClaimedStarterKit, putEggInIncubator, getIncubator } = require('../services/pets');
+const { getUserInventory, getItemDefinition, sellItem, openChest, formatItemEffects, removeItem } = require('../services/inventory');
+const { useItemOnActivePet, getActivePet, hasClaimedStarterKit, putEggInIncubator, getIncubator, speedupUserIncubator } = require('../services/pets');
+const { createBonusSession } = require('../services/bonusTimer');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { formatCoins, t } = require('../utils/i18n');
 const { INVENTORY } = require('./commandNames');
@@ -122,6 +123,14 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null) 
             .setEmoji('🪺')
             .setStyle(ButtonStyle.Success)
         );
+      } else if (item.effects && item.effects.isHourglass) {
+        actionRow.addComponents(
+          new ButtonBuilder()
+            .setCustomId(`inv_use_hourglass:${selectedItemId}:${userId}`)
+            .setLabel('Usar na Chocadeira (-2h)')
+            .setEmoji('⏳')
+            .setStyle(ButtonStyle.Success)
+        );
       } else {
         actionRow.addComponents(
           new ButtonBuilder()
@@ -169,6 +178,8 @@ function isInventoryInteraction(interaction) {
   return (
     interaction.customId.startsWith('inv_item_select') ||
     interaction.customId.startsWith('inv_use_item') ||
+    interaction.customId.startsWith('inv_use_hourglass') ||
+    interaction.customId.startsWith('inv_claim_bonus') ||
     interaction.customId.startsWith('inv_open_chest') ||
     interaction.customId.startsWith('inv_place_egg') ||
     interaction.customId.startsWith('inv_sell_item')
@@ -293,6 +304,66 @@ async function handleInventoryInteraction(interaction) {
       content: t('inventory.soldSuccess', interaction, { item: sellRes.item.name, coins: formatCoins(sellRes.totalCoins, interaction) }),
       embeds: [embed],
       components,
+    });
+  }
+
+  // 6. Usar Ampulheta Mágica na Chocadeira (-2h)
+  if (action === 'inv_use_hourglass') {
+    const incubator = getIncubator(userId);
+    const incubatingSlots = incubator.slots.filter((s) => !s.empty && !s.ready);
+
+    if (incubatingSlots.length === 0) {
+      return interaction.reply({
+        content: '⚠️ Você não possui nenhum ovo em processo de choco na Chocadeira! Sua Ampulheta Mágica está guardada na mochila. Coloque um ovo para poder acelerar.',
+        flags: 64,
+      });
+    }
+
+    const speedRes = speedupUserIncubator(userId, 2);
+    if (!speedRes.success) {
+      return interaction.reply({
+        content: `❌ ${speedRes.message || 'Não foi possível acelerar a chocadeira.'}`,
+        flags: 64,
+      });
+    }
+
+    removeItem(userId, 'ampulheta_tempo_2h', 1);
+    const embed = buildInventoryEmbed(userId, userTag, null, interaction);
+    const components = buildInventoryComponents(userId, null, interaction);
+
+    return interaction.update({
+      content: '⏳ **Efeito Temporal:** Você usou **1x Ampulheta Mágica (2h)** e adiantou 2 horas de choco na Chocadeira com sucesso!',
+      embeds: [embed],
+      components,
+    });
+  }
+
+  // 7. Gerar link de Bônus Web
+  if (action === 'inv_claim_bonus') {
+    const session = createBonusSession(userId, 'item_bonus');
+    const bonusEmbed = new EmbedBuilder()
+      .setColor(PYXIE_COLORS.gold || '#facc15')
+      .setTitle('🎁  ✦  Resgatar Bônus Web (10s)')
+      .setDescription(
+        'Acesse a página patrocinada e aguarde **10 segundos** para resgatar gratuitamente:\n\n' +
+        '> ⏳ **1x Ampulheta Mágica (2h)** para guardar na mochila\n' +
+        '> 🪙 **+150 Moedas** instantâneas'
+      )
+      .setFooter({ text: 'Pyxie Bonus' })
+      .setTimestamp();
+
+    const linkRow = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('⚡ Abrir Página de Bônus (10s)')
+        .setStyle(ButtonStyle.Link)
+        .setURL(session.url)
+        .setEmoji('🎁')
+    );
+
+    return interaction.reply({
+      embeds: [bonusEmbed],
+      components: [linkRow],
+      flags: 64,
     });
   }
 }

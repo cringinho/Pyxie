@@ -34,6 +34,7 @@ const commands = [
   require('./boss'),
   require('./votar'),
   require('./idioma'),
+  require('./bonus'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');

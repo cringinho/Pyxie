@@ -93,6 +93,10 @@ const COMMAND_CATEGORY_MAP = {
   'py-reseteco': 'economia',
   resetareconomia: 'economia',
   'py-resetareconomia': 'economia',
+  bonus: 'economia',
+  'py-bonus': 'economia',
+  recompensa: 'economia',
+  'py-recompensa': 'economia',
 
   // Loja & Mochila
   shop: 'loja',

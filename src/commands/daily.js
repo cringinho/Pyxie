@@ -7,6 +7,7 @@ const {
 } = require('discord.js');
 const { claimDaily } = require('../services/economy');
 const { getVoteUrl } = require('../services/topgg');
+const { createBonusSession } = require('../services/bonusTimer');
 const { t, formatCoins, formatRemaining } = require('../utils/i18n');
 const { DAILY } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
@@ -20,6 +21,7 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
   const result = claimDaily(userId);
   const voteUrl = getVoteUrl(clientId);
   const weekend = isWeekend();
+  const bonusSession = createBonusSession(userId, 'item_bonus');
 
   const voteBonusText = weekend
     ? t('daily.voteWeekendBonus', guildOrSource)
@@ -46,7 +48,12 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
         .setLabel(t('daily.btnLabelCooldown', guildOrSource))
         .setEmoji('🗳️')
         .setStyle(ButtonStyle.Link)
-        .setURL(voteUrl)
+        .setURL(voteUrl),
+      new ButtonBuilder()
+        .setLabel('⚡ Bônus Web (+150🪙 & ⏳)')
+        .setStyle(ButtonStyle.Link)
+        .setURL(bonusSession.url)
+        .setEmoji('🎁')
     );
 
     return { embeds: [embed], components: [row] };
@@ -77,7 +84,12 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
       .setLabel(t('daily.btnLabel', guildOrSource))
       .setEmoji('🗳️')
       .setStyle(ButtonStyle.Link)
-      .setURL(voteUrl)
+      .setURL(voteUrl),
+    new ButtonBuilder()
+      .setLabel('⚡ Bônus Web (+150🪙 & ⏳)')
+      .setStyle(ButtonStyle.Link)
+      .setURL(bonusSession.url)
+      .setEmoji('🎁')
   );
 
   return { embeds: [embed], components: [buttonRow] };

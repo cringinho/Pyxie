@@ -37,5 +37,6 @@ module.exports = {
   TAROT: 'py-tarot',
   VOTE: 'py-vote',
   LANGUAGE: 'py-language',
+  BONUS: 'py-bonus',
 };
 

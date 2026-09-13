@@ -1,6 +1,8 @@
 const crypto = require('node:crypto');
 const { speedupUserIncubator } = require('./pets');
 const { markExpeditionDoubled } = require('./petExpedition');
+const { addItem } = require('./inventory');
+const { addCoins } = require('./economy');
 
 const BONUS_SECRET = process.env.BONUS_SECRET || 'pyxie_magic_bonus_secret_key_2026';
 const MIN_WAIT_SECONDS = 8; // Mínimo de 8-10s no servidor para evitar trapaça
@@ -13,7 +15,7 @@ const claimedTokens = new Set();
 /**
  * Cria uma nova sessão de bônus assinada com HMAC.
  */
-function createBonusSession(userId, action, metadata = {}) {
+function createBonusSession(userId, action = 'item_bonus', metadata = {}) {
   const createdAt = Date.now();
   const nonce = crypto.randomBytes(8).toString('hex');
   const payload = JSON.stringify({ userId, action, metadata, createdAt, nonce });
@@ -90,33 +92,50 @@ function verifyAndClaimBonus(token) {
     claimedTokens.clear();
   }
 
-  // 1. Aceleração de Chocadeira
-  if (data.action === 'incubator_boost') {
-    const result = speedupUserIncubator(data.userId, 2);
-    if (!result.success) {
-      return { success: false, error: result.message || 'Não há ovos para acelerar.' };
+  // 1. Aceleração de Chocadeira & Item de Ampulheta
+  if (data.action === 'incubator_boost' || data.action === 'item_bonus' || data.action === 'hourglass_bonus') {
+    // Adiciona o item à mochila
+    addItem(data.userId, 'ampulheta_tempo_2h', 1);
+    // Adiciona moedas de recompensa
+    addCoins(data.userId, 150);
+
+    // Se o usuário tiver ovos chocando e for a ação incubator_boost, também adianta direto
+    let directSpeedup = false;
+    if (data.action === 'incubator_boost') {
+      const speedRes = speedupUserIncubator(data.userId, 2);
+      if (speedRes.success) {
+        directSpeedup = true;
+      }
     }
+
+    const boostMsg = directSpeedup
+      ? '⚡ Sua Chocadeira foi adiantada em **2 horas** E você recebeu **+1 Ampulheta Mágica (2h) ⏳** + **150 Moedas 🪙** na mochila!'
+      : '🎁 Você recebeu **1x Ampulheta Mágica (2h) ⏳** e **+150 Moedas 🪙** na sua mochila! Use na Chocadeira quando quiser.';
+
     return {
       success: true,
-      action: 'incubator_boost',
+      action: data.action,
       userId: data.userId,
-      result,
-      message: '⚡ Chocadeira adiantada em **2 horas** com sucesso!',
+      itemAwarded: 'ampulheta_tempo_2h',
+      coinsAwarded: 150,
+      directSpeedup,
+      message: boostMsg,
     };
   }
 
   // 2. Dobro de Recompensas na Expedição
   if (data.action === 'expedition_double') {
     const result = markExpeditionDoubled(data.userId);
-    if (!result.success) {
-      return { success: false, error: result.message || 'Nenhuma expedição ativa para dobrar.' };
-    }
+    // Também concede moedas de bônus
+    addCoins(data.userId, 100);
+    addItem(data.userId, 'ampulheta_tempo_2h', 1);
+
     return {
       success: true,
       action: 'expedition_double',
       userId: data.userId,
       result,
-      message: '💎 Bônus de **Recompensas em Dobro (2x)** ativado com sucesso!',
+      message: '💎 Bônus de **Recompensas em Dobro (2x)** ativado com sucesso! (+1 Ampulheta ⏳ e +100 Moedas 🪙 creditadas)',
     };
   }
 

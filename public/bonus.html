@@ -245,10 +245,13 @@
       const successMessageEl = document.getElementById('successMessage');
 
       if (!token) {
-        countdownEl.innerText = '❌';
-        statusLabelEl.innerText = 'Token inválido ou não informado!';
+        countdownEl.innerText = '🎁';
+        statusLabelEl.innerText = '✨ Bem-vindo ao Bônus Mágico da Pyxie!';
         errorBoxEl.style.display = 'block';
-        errorBoxEl.innerText = 'Por favor, gere o link de bônus diretamente dentro do Discord no bot Pyxie.';
+        errorBoxEl.style.background = 'rgba(147, 51, 234, 0.15)';
+        errorBoxEl.style.borderColor = 'rgba(192, 132, 252, 0.4)';
+        errorBoxEl.style.color = '#e2e8f0';
+        errorBoxEl.innerHTML = 'Para creditar **Ampulhetas Mágicas (2h) ⏳** e **Moedas 🪙** na sua conta, gere seu link exclusivo usando <code>/py-bonus</code>, <code>/py-daily</code> ou <code>/py-inventory</code> no Discord!';
       } else {
         // Inicia a contagem regressiva
         const timer = setInterval(() => {

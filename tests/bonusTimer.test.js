@@ -77,12 +77,33 @@ try {
   assert.equal(claimFinal.doubled, true, 'Resultado deve indicar que as recompensas foram dobradas.');
   assert.ok(claimFinal.xpGained >= 300, 'XP deve refletir o multiplicador de 2x.');
 
-  // 7. Teste de token adulterado
+  // 7. Teste de item_bonus universal (adiciona Ampulheta e Moedas mesmo sem ovo)
+  const userNoEgg = `user_no_egg_${testRunId}`;
+  const pastItemCreatedAt = Date.now() - 10000;
+  const itemNonce = crypto.randomBytes(8).toString('hex');
+  const itemPayload = JSON.stringify({ userId: userNoEgg, action: 'item_bonus', metadata: {}, createdAt: pastItemCreatedAt, nonce: itemNonce });
+  const itemHmac = crypto.createHmac('sha256', BONUS_SECRET).update(itemPayload).digest('hex');
+  const validItemToken = Buffer.from(JSON.stringify({ payload: itemPayload, sig: itemHmac })).toString('base64url');
+
+  const { getUserInventory } = require('../src/services/inventory');
+  const { getUserAccount } = require('../src/services/economy');
+
+  const claimItemRes = verifyAndClaimBonus(validItemToken);
+  assert.equal(claimItemRes.success, true, 'Resgate universal de item deve funcionar mesmo sem ovo.');
+  assert.equal(claimItemRes.itemAwarded, 'ampulheta_tempo_2h', 'Item concedido deve ser ampulheta_tempo_2h.');
+
+  const invUser = getUserInventory(userNoEgg);
+  assert.equal(invUser.ampulheta_tempo_2h, 1, 'Mochila do usuário deve conter 1x Ampulheta Mágica.');
+
+  const accUser = getUserAccount(userNoEgg);
+  assert.equal(accUser.coins, 150, 'Usuário deve ter recebido 150 moedas.');
+
+  // 8. Teste de token adulterado
   const fakeToken = 'eyJmb28iOiJiYXIifQ';
   const fakeRes = verifyAndClaimBonus(fakeToken);
   assert.equal(fakeRes.success, false, 'Token inválido deve ser rejeitado.');
 
-  console.log('Verificação da Página de Bônus da Pyxie (HMAC, Timer 10s, Chocadeira -2h e Expedição 2x): OK');
+  console.log('Verificação da Página de Bônus da Pyxie (HMAC, Timer 10s, Ampulheta Item, Chocadeira -2h e Expedição 2x): OK');
 } finally {
   const cleanFiles = [
     path.join(__dirname, '..', 'data', 'pets.json'),

@@ -320,6 +320,8 @@ function buildIncubatorTab(userId, userTag) {
   // Botões de ação da chocadeira
   const readySlots = incubator.slots.filter((s) => !s.empty && s.ready);
   const incubatingSlots = incubator.slots.filter((s) => !s.empty && !s.ready);
+  const inv = getUserInventory(userId);
+  const hourglassCount = inv.ampulheta_tempo_2h || 0;
   const actionRow = new ActionRowBuilder();
 
   if (readySlots.length > 0) {
@@ -334,15 +336,23 @@ function buildIncubatorTab(userId, userTag) {
     }
   }
 
-  if (incubatingSlots.length > 0) {
+  if (incubatingSlots.length > 0 && hourglassCount > 0) {
     actionRow.addComponents(
       new ButtonBuilder()
-        .setCustomId(`hub_speedup_incubator:${userId}`)
-        .setLabel('Acelerar (-2h)')
-        .setEmoji('⚡')
-        .setStyle(ButtonStyle.Primary)
+        .setCustomId(`hub_use_hourglass:${userId}`)
+        .setLabel(`Usar Ampulheta (-2h) (x${hourglassCount})`)
+        .setEmoji('⏳')
+        .setStyle(ButtonStyle.Success)
     );
   }
+
+  actionRow.addComponents(
+    new ButtonBuilder()
+      .setCustomId(`hub_speedup_incubator:${userId}`)
+      .setLabel('Ganhar Ampulheta (10s)')
+      .setEmoji('🎁')
+      .setStyle(ButtonStyle.Primary)
+  );
 
   if (incubator.maxSlots < 5) {
     actionRow.addComponents(
@@ -751,6 +761,8 @@ function isHubInteraction(interaction) {
     interaction.customId.startsWith('hub_support_info:') ||
     interaction.customId.startsWith('hub_incubator_place_egg:') ||
     interaction.customId.startsWith('hub_hatch_egg:') ||
+    interaction.customId.startsWith('hub_use_hourglass:') ||
+    interaction.customId.startsWith('hub_speedup_incubator:') ||
     interaction.customId.startsWith('hub_expand_incubator:') ||
     interaction.customId.startsWith('hub_dungeon_start_zone:') ||
     interaction.customId.startsWith('hub_dungeon_start_fast:') ||
@@ -1040,28 +1052,57 @@ async function handleHubInteraction(interaction) {
     return interaction.update(view);
   }
 
-  // 8.1. Chocadeira: Acelerar eclosão com página mágica (-2h)
+  // 8.0. Chocadeira: Usar Ampulheta da Mochila (-2h)
+  if (action === 'hub_use_hourglass') {
+    const inv = getUserInventory(userId);
+    if (!inv.ampulheta_tempo_2h || inv.ampulheta_tempo_2h <= 0) {
+      return interaction.reply({
+        content: '❌ Você não possui nenhuma **Ampulheta Mágica (2h)** na mochila! Use o botão **⚡ Ganhar Ampulheta (10s)** para resgatar.',
+        flags: 64,
+      });
+    }
+
+    const speedRes = speedupUserIncubator(userId, 2);
+    if (!speedRes.success) {
+      return interaction.reply({
+        content: `❌ ${speedRes.message || 'Não há ovos para acelerar no momento.'}`,
+        flags: 64,
+      });
+    }
+
+    const { removeItem } = require('../services/inventory');
+    removeItem(userId, 'ampulheta_tempo_2h', 1);
+
+    const view = buildIncubatorTab(userId, userTag);
+    return interaction.update({
+      content: '⏳ Você usou **1x Ampulheta Mágica (2h)** e adiantou 2 horas na sua Chocadeira com sucesso!',
+      ...view,
+    });
+  }
+
+  // 8.1. Chocadeira: Ganhar Ampulheta / Bônus com página mágica (10s)
   if (action === 'hub_speedup_incubator') {
     const { createBonusSession } = require('../services/bonusTimer');
-    const session = createBonusSession(userId, 'incubator_boost');
+    const session = createBonusSession(userId, 'item_bonus');
 
     const speedupEmbed = new EmbedBuilder()
-      .setColor(PYXIE_COLORS.emerald || '#10b981')
-      .setTitle('⚡  ✦  Acelerar Chocadeira Encantada (-2h)')
+      .setColor(PYXIE_COLORS.gold || '#facc15')
+      .setTitle('🎁  ✦  Resgatar Ampulheta Mágica & Moedas (10s)')
       .setDescription(
-        'Para canalizar a energia mágica e adiantar **2 horas** de eclosão de todos os seus ovos:\n\n' +
-        '1️⃣ Clique no botão **⚡ Acelerar Agora (10s)** abaixo.\n' +
-        '2️⃣ Aguarde a barra de **10 segundos** carregar na página mágica.\n' +
-        '3️⃣ Seu bônus será creditado instantaneamente na sua chocadeira!'
+        'Acesse a página patrocinada e aguarde **10 segundos** para resgatar gratuitamente:\n\n' +
+        '> ⏳ **1x Ampulheta Mágica (2h)** para guardar na mochila\n' +
+        '> 🪙 **+150 Moedas** instantâneas\n\n' +
+        '✨ *Você pode usar a Ampulheta quando quiser para acelerar o choco de qualquer ovo!*'
       )
       .setFooter({ text: 'Pyxie Bonus' })
       .setTimestamp();
 
     const linkRow = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setLabel('⚡ Acelerar Agora (10s)')
+        .setLabel('⚡ Abrir Página de Bônus (10s)')
         .setStyle(ButtonStyle.Link)
         .setURL(session.url)
+        .setEmoji('🎁')
     );
 
     return interaction.reply({
