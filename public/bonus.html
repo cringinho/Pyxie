@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pyxie • Bônus Mágico Encantado</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Adsterra Native Banner Script -->
-    <script async="async" data-cfasync="false" src="https://pl31327644.profitableratecpmnetwork.com/7a9f4ad7bc8255eb6288ff86ed6ec5f7/invoke.js"></script>
     <style>
       :root {
         --bg-dark: #0d0a17;
@@ -452,11 +450,10 @@
             <div class="reward-box">
               <span>✨ <strong>Recompensa:</strong> 1x Ampulheta Mágica (2h) ⏳ + 150 Moedas 💰</span>
             </div>
-          </div>
 
-          <!-- Native Adsterra Banner Container -->
-          <div class="native-ad-section">
-            <div id="container-7a9f4ad7bc8255eb6288ff86ed6ec5f7"></div>
+            <a id="sponsorBtn" href="https://www.profitableratecpmnetwork.com/bzdc0dtq5?key=aece6072dc92d95726e1223cf45171dd" target="_blank" class="btn-sponsor">
+              👉 Apoiar Servidor com Patrocinador
+            </a>
           </div>
 
           <button id="btnClaim" class="btn-claim" onclick="claimBonusReward()">🎁 Resgatar Bônus Agora</button>
@@ -519,6 +516,7 @@
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
+      const SMARTLINK_URL = 'https://www.profitableratecpmnetwork.com/bzdc0dtq5?key=aece6072dc92d95726e1223cf45171dd';
 
       let timeLeft = 10;
       const totalTime = 10;
@@ -561,6 +559,13 @@
 
       async function claimBonusReward() {
         if (!token) return;
+
+        // Abre o SmartLink do Adsterra no clique do usuário para monetização máxima
+        try {
+          if (SMARTLINK_URL) {
+            window.open(SMARTLINK_URL, '_blank');
+          }
+        } catch (_) {}
 
         statusLabelEl.innerText = '🔄 Creditando bônus no seu inventário...';
         btnClaimEl.style.display = 'none';
