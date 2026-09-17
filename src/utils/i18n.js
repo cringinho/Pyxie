@@ -329,6 +329,7 @@ const TRANSLATIONS = {
       voteWeekdayBonus: '<a:qbgifts48:1548444204202459136> **BÔNUS EXTRA NO TOP.GG (A CADA 12H):**\n> Vote no **Top.gg** e ganhe **+100 Moedas**, **🥣 1x Ração da Floresta** e **+50 XP** *(com dobro nos fins de semana!)*',
       btnLabel: 'Resgatar Bônus no Top.gg',
       btnLabelCooldown: 'Votar no Top.gg (Recompensa Extra)',
+      btnWebBonus: '⚡ Bônus Web (+150🪙 & ⏳)',
       footer: 'Recompensa renovada a cada 24 horas',
       footerCooldown: 'Voto no Top.gg disponível a cada 12 horas',
     },
@@ -878,6 +879,7 @@ const TRANSLATIONS = {
       voteWeekdayBonus: '<a:qbgifts48:1548444204202459136> **EXTRA TOP.GG BONUS (EVERY 12H):**\n> Vote on **Top.gg** and get **+100 Coins**, **🥣 1x Forest Ration** and **+50 XP** *(with double on weekends!)*',
       btnLabel: 'Claim Bonus on Top.gg',
       btnLabelCooldown: 'Vote on Top.gg (Extra Reward)',
+      btnWebBonus: '⚡ Web Bonus (+150🪙 & ⏳)',
       footer: 'Reward resets every 24 hours',
       footerCooldown: 'Top.gg voting available every 12 hours',
     },
@@ -1374,32 +1376,41 @@ const TRANSLATIONS = {
   },
 };
 
-/**
- * Traduz uma chave para o idioma do contexto/servidor.
- */
 function t(pathKey, source = null, replacements = {}) {
   const lang = getLanguage(source);
   const keys = pathKey.split('.');
 
   let current = TRANSLATIONS[lang] || TRANSLATIONS.en;
+  let resolved = true;
   for (const k of keys) {
     if (current && typeof current === 'object' && k in current) {
       current = current[k];
     } else {
-      let fallback = TRANSLATIONS.en;
-      for (const fk of keys) {
-        if (fallback && typeof fallback === 'object' && fk in fallback) {
-          fallback = fallback[fk];
-        } else {
-          return pathKey;
-        }
-      }
-      current = fallback;
+      resolved = false;
       break;
     }
   }
 
-  if (typeof current !== 'string') return pathKey;
+  // Fallback bidirecional inteligente: se faltar no idioma ativo, busca no outro (PT <-> EN)
+  if (!resolved || typeof current !== 'string') {
+    const fallbackLang = lang === 'pt' ? 'en' : 'pt';
+    let fallback = TRANSLATIONS[fallbackLang];
+    let fallbackResolved = true;
+    for (const fk of keys) {
+      if (fallback && typeof fallback === 'object' && fk in fallback) {
+        fallback = fallback[fk];
+      } else {
+        fallbackResolved = false;
+        break;
+      }
+    }
+
+    if (fallbackResolved && typeof fallback === 'string') {
+      current = fallback;
+    } else {
+      return pathKey;
+    }
+  }
 
   let text = current;
   for (const [k, v] of Object.entries(replacements)) {

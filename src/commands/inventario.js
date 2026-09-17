@@ -341,21 +341,26 @@ async function handleInventoryInteraction(interaction) {
   // 7. Gerar link de Bônus Web
   if (action === 'inv_claim_bonus') {
     const lang = getLanguage(interaction);
+    const isEn = lang === 'en';
     const session = createBonusSession(userId, 'item_bonus', {}, lang);
     const bonusEmbed = new EmbedBuilder()
       .setColor(PYXIE_COLORS.gold || '#facc15')
-      .setTitle('🎁  ✦  Resgatar Bônus Web (10s)')
+      .setTitle(isEn ? '🎁  ✦  Claim Web Bonus (10s)' : '🎁  ✦  Resgatar Bônus Web (10s)')
       .setDescription(
-        'Acesse a página patrocinada e aguarde **10 segundos** para resgatar gratuitamente:\n\n' +
-        '> ⏳ **1x Ampulheta Mágica (2h)** para guardar na mochila\n' +
-        '> 🪙 **+150 Moedas** instantâneas'
+        isEn
+          ? 'Visit the sponsored web page and wait **10 seconds** to claim for free:\n\n' +
+            '> ⏳ **1x Magic Hourglass (2h)** added to your backpack\n' +
+            '> 🪙 **+150 Coins** instantly'
+          : 'Acesse a página patrocinada e aguarde **10 segundos** para resgatar gratuitamente:\n\n' +
+            '> ⏳ **1x Ampulheta Mágica (2h)** para guardar na mochila\n' +
+            '> 🪙 **+150 Moedas** instantâneas'
       )
-      .setFooter({ text: 'Pyxie Bonus' })
+      .setFooter({ text: isEn ? 'Pyxie Bonus' : 'Bônus Pyxie' })
       .setTimestamp();
 
     const linkRow = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setLabel('⚡ Abrir Página de Bônus (10s)')
+        .setLabel(isEn ? '⚡ Open 10s Bonus Page' : '⚡ Abrir Página de Bônus (10s)')
         .setStyle(ButtonStyle.Link)
         .setURL(session.url)
         .setEmoji('🎁')

@@ -51,7 +51,7 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
         .setStyle(ButtonStyle.Link)
         .setURL(voteUrl),
       new ButtonBuilder()
-        .setLabel('⚡ Bônus Web (+150🪙 & ⏳)')
+        .setLabel(t('daily.btnWebBonus', guildOrSource))
         .setStyle(ButtonStyle.Link)
         .setURL(bonusSession.url)
         .setEmoji('🎁')
@@ -87,7 +87,7 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
       .setStyle(ButtonStyle.Link)
       .setURL(voteUrl),
     new ButtonBuilder()
-      .setLabel('⚡ Bônus Web (+150🪙 & ⏳)')
+      .setLabel(t('daily.btnWebBonus', guildOrSource))
       .setStyle(ButtonStyle.Link)
       .setURL(bonusSession.url)
       .setEmoji('🎁')

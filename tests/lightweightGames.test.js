@@ -107,6 +107,7 @@ assert.ok(inviteUrl.includes('client_id=1543650200718155897'), 'URL de convite d
 assert.ok(inviteUrl.includes('permissions='), 'URL de convite deve conter permissões.');
 assert.ok(inviteUrl.includes('scope=bot%20applications.commands'), 'URL de convite deve conter os escopos bot e applications.commands.');
 
+console.log('Verificação dos comandos leves e convite bilíngue (Biscoito, Jokenpô, Provável, Dados, Coinflip, Convite e Bônus Web): OK');
 // 10. Teste do Comando de Trabalho Bilíngue e Bônus Web por Idioma
 const trabalhoCommand = require('../src/commands/trabalho');
 const { PROFESSION_MINIGAMES } = trabalhoCommand;

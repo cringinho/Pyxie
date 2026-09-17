@@ -113,12 +113,9 @@ function verifyAndClaimBonus(token) {
 
   // 1. Aceleração de Chocadeira & Item de Ampulheta
   if (data.action === 'incubator_boost' || data.action === 'item_bonus' || data.action === 'hourglass_bonus') {
-    // Adiciona o item à mochila
     addItem(data.userId, 'ampulheta_tempo_2h', 1);
-    // Adiciona moedas de recompensa
     addCoins(data.userId, 150);
 
-    // Se o usuário tiver ovos chocando e for a ação incubator_boost, também adianta direto
     let directSpeedup = false;
     if (data.action === 'incubator_boost') {
       const speedRes = speedupUserIncubator(data.userId, 2);
@@ -152,7 +149,6 @@ function verifyAndClaimBonus(token) {
   // 2. Dobro de Recompensas na Expedição
   if (data.action === 'expedition_double') {
     const result = markExpeditionDoubled(data.userId);
-    // Também concede moedas de bônus
     addCoins(data.userId, 100);
     addItem(data.userId, 'ampulheta_tempo_2h', 1);
 
