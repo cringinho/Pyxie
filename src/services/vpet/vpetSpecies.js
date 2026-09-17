@@ -26,6 +26,7 @@ const VPET_SPECIES = {
   slime: {
     key: 'slime',
     name: { pt: 'Slime', en: 'Slime' },
+    name: { pt: 'Gellux', en: 'Gellux' },
     stage: STAGES.BABY_1,
     element: 'ORVALHO',
     emoji: '💧',
@@ -33,6 +34,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 40, atk: 8, def: 8, spd: 10 },
     descriptions: {
       pt: 'Pequena gota gelatinosa translúcida recém-saída do ovo. Bouncy, dócil e cheia de curiosidade.',
+      pt: 'Pequena gota mágica translúcida e elástica. Dócil, curiosa e cheia de vitalidade.',
       en: 'A tiny translucent gelatinous drop newly hatched from an egg. Bouncy, docile, and curious.',
     },
     evolutions: [
@@ -43,6 +45,7 @@ const VPET_SPECIES = {
   mushroom: {
     key: 'mushroom',
     name: { pt: 'Spore Mushroom', en: 'Spore Mushroom' },
+    name: { pt: 'Esporito', en: 'Esporito' },
     stage: STAGES.BABY_2,
     element: 'SILVESTRE',
     emoji: '🍄',
@@ -50,6 +53,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 55, atk: 11, def: 12, spd: 11 },
     descriptions: {
       pt: 'Cogumelinho saltitante das colinas com esporos cintilantes. Muito carismático e guloso por frutas.',
+      pt: 'Cogumelinho saltitante com chapéu salpicado de esporos cintilantes. Muito carismático e guloso.',
       en: 'A bouncy little mushroom from the hills with sparkling spores. Very charismatic and loves treats.',
     },
     evolutions: [
@@ -60,6 +64,7 @@ const VPET_SPECIES = {
   turtle: {
     key: 'turtle',
     name: { pt: 'Mini Turtle', en: 'Mini Turtle' },
+    name: { pt: 'Cascorval', en: 'Cascorval' },
     stage: STAGES.BABY_2,
     element: 'ORVALHO',
     emoji: '🐢',
@@ -67,6 +72,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 60, atk: 9, def: 16, spd: 8 },
     descriptions: {
       pt: 'Pequena tartaruguinha de carapaça resistente. Muito calma, paciente e resistente a doenças.',
+      pt: 'Tartaruguinha serena das marés com couraça resistente de cristal dágua. Muito paciente e protetora.',
       en: 'A tiny turtle with a sturdy shell. Extremely calm, patient, and naturally resilient.',
     },
     evolutions: [
@@ -77,6 +83,7 @@ const VPET_SPECIES = {
   dino: {
     key: 'dino',
     name: { pt: 'Forest Dino', en: 'Forest Dino' },
+    name: { pt: 'Brotonte', en: 'Brotonte' },
     stage: STAGES.ROOKIE,
     element: 'SILVESTRE',
     emoji: '🦖',
@@ -95,6 +102,7 @@ const VPET_SPECIES = {
   bat: {
     key: 'bat',
     name: { pt: 'Night Bat', en: 'Night Bat' },
+    name: { pt: 'Vesperim', en: 'Vesperim' },
     stage: STAGES.ROOKIE,
     element: 'TRAVESSURA',
     emoji: '🦇',
@@ -102,6 +110,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 68, atk: 19, def: 12, spd: 22 },
     descriptions: {
       pt: 'Morceguinho ágil das cavernas noturnas. Voa rápido, esquiva de golpes e prefere treinar à noite.',
+      pt: 'Morceguinho ágil das cavernas noturnas com asas púrpuras. Voa rápido e esquiva de golpes com destreza.',
       en: 'An agile little bat from midnight caverns. Flies fast, dodges attacks, and loves night training.',
     },
     evolutions: [
@@ -112,6 +121,7 @@ const VPET_SPECIES = {
   ghost: {
     key: 'ghost',
     name: { pt: 'Spirit Ghost', en: 'Spirit Ghost' },
+    name: { pt: 'Espectril', en: 'Espectril' },
     stage: STAGES.ROOKIE,
     element: 'CHARME',
     emoji: '👻',
@@ -119,6 +129,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 70, atk: 20, def: 14, spd: 18 },
     descriptions: {
       pt: 'Espírito translúcido que flutua suavemente. Muito brincalhão e resistente a ataques físicos.',
+      pt: 'Espírito translúcido que flutua suavemente em névoa cintilante. Brincalhão e resistente a ataques físicos.',
       en: 'A translucent playful spirit floating gently. Highly mischievous and resistant to physical blows.',
     },
     evolutions: [
@@ -129,6 +140,7 @@ const VPET_SPECIES = {
   reptile: {
     key: 'reptile',
     name: { pt: 'Reptile Warrior', en: 'Reptile Warrior' },
+    name: { pt: 'Saurival', en: 'Saurival' },
     stage: STAGES.CHAMPION,
     element: 'SILVESTRE',
     emoji: '🦎',
@@ -136,6 +148,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 120, atk: 32, def: 28, spd: 26 },
     descriptions: {
       pt: 'Guerreiro réptil disciplinado que empunha uma cimitarra afiada. Linhagem nobre fruto de rigoroso treino.',
+      pt: 'Guerreiro réptil disciplinado que empunha lâminas de escama reluzente. Veloz e temível em combate.',
       en: 'A disciplined reptile swordsman wielding a sharp scimitar. A noble line forged through intense training.',
     },
     evolutions: [
@@ -145,6 +158,7 @@ const VPET_SPECIES = {
   boar: {
     key: 'boar',
     name: { pt: 'Iron Boar', en: 'Iron Boar' },
+    name: { pt: 'Bravodon', en: 'Bravodon' },
     stage: STAGES.CHAMPION,
     element: 'BRISA',
     emoji: '🐗',
@@ -152,6 +166,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 135, atk: 35, def: 30, spd: 20 },
     descriptions: {
       pt: 'Javali de batalha musculoso com presas de ferro. Investe contra os adversários com força bruta.',
+      pt: 'Javali de batalha musculoso com presas afiadas e crina selvagem. Investe com força bruta e bravura.',
       en: 'A muscular battle boar with iron tusks. Charges at opponents with raw, unstoppable strength.',
     },
     evolutions: [
@@ -161,6 +176,7 @@ const VPET_SPECIES = {
   snake: {
     key: 'snake',
     name: { pt: 'Shadow Snake', en: 'Shadow Snake' },
+    name: { pt: 'Vipera', en: 'Vipera' },
     stage: STAGES.CHAMPION,
     element: 'TRAVESSURA',
     emoji: '🐍',
@@ -168,6 +184,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 110, atk: 36, def: 24, spd: 32 },
     descriptions: {
       pt: 'Serpente astuta camuflada nas trevas. Ataca num piscar de olhos e desorienta os inimigos com veneno.',
+      pt: 'Serpente astuta camuflada nas sombras da floresta. Ataca num piscar de olhos com precisão letal.',
       en: 'A cunning serpent shrouded in shadow. Strikes in the blink of an eye with venomous fangs.',
     },
     evolutions: [
@@ -177,6 +194,7 @@ const VPET_SPECIES = {
   mimic: {
     key: 'mimic',
     name: { pt: 'Tricky Mimic', en: 'Tricky Mimic' },
+    name: { pt: 'Mordisquinho', en: 'Mordisquinho' },
     stage: STAGES.CHAMPION,
     element: 'TRAVESSURA',
     emoji: '📦',
@@ -184,6 +202,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 100, atk: 28, def: 35, spd: 15 },
     descriptions: {
       pt: 'Baú vivo e travesso resultante de muitos erros de cuidado. Cômico, teimoso, mas com grande potencial.',
+      pt: 'Baú vivo travesso com grandes dentes dourados. Cômico, teimoso e louco por tesouros e moedas.',
       en: 'A mischievous living chest born from care mistakes. Comical and stubborn, yet full of surprise potential.',
     },
     evolutions: [
@@ -193,6 +212,7 @@ const VPET_SPECIES = {
   tyranno: {
     key: 'tyranno',
     name: { pt: 'Primal Tyranno', en: 'Primal Tyranno' },
+    name: { pt: 'Furiassauro', en: 'Furiassauro' },
     stage: STAGES.ULTIMATE,
     element: 'BRISA',
     emoji: '🦖',
@@ -200,6 +220,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 180, atk: 52, def: 42, spd: 36 },
     descriptions: {
       pt: 'Predador ápice pré-histórico com rugido ensurdecedor. Domina a arena de sparring com ferocidade titânica.',
+      pt: 'Predador ápice carnívoro de rugido ensurdecedor e mandíbulas esmagadoras. Campeão supremo de arena.',
       en: 'A prehistoric apex predator with a deafening roar. Dominates the sparring arena with titanic ferocity.',
     },
     evolutions: [
@@ -209,6 +230,7 @@ const VPET_SPECIES = {
   giant: {
     key: 'giant',
     name: { pt: 'Ancient Titan', en: 'Ancient Titan' },
+    name: { pt: 'Colosso', en: 'Colossus' },
     stage: STAGES.ULTIMATE,
     element: 'SILVESTRE',
     emoji: '🗿',
@@ -216,6 +238,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 210, atk: 48, def: 55, spd: 22 },
     descriptions: {
       pt: 'Colosso ancião feito de pedra viva e runas. Sua defesa é impenetrável e seus punhos abalam montanhas.',
+      pt: 'Colosso ancião esculpido em pedra viva e runas cintilantes. Sua defesa é impenetrável como montanhas.',
       en: 'An ancient colossus of living stone and runes. Possesses an impenetrable defense and mountain-shattering fists.',
     },
     evolutions: [
@@ -225,6 +248,7 @@ const VPET_SPECIES = {
   dragon: {
     key: 'dragon',
     name: { pt: 'Infernal Dragon', en: 'Infernal Dragon' },
+    name: { pt: 'Pyxiedraco', en: 'Pyxiedraco' },
     stage: STAGES.MEGA,
     element: 'CHARME',
     emoji: '🐉',
@@ -232,6 +256,7 @@ const VPET_SPECIES = {
     baseStats: { hp: 280, atk: 70, def: 60, spd: 48 },
     descriptions: {
       pt: 'A lendária forma extrema de dragão ancestral alado. Cospe labaredas sagradas e reina supremo no Hall da Fama.',
+      pt: 'O dragão ancestral sagrado do reino de Pyxie. Cospe labaredas estelares e reina glorioso no Hall da Fama.',
       en: 'The legendary pinnacle dragon form. Breathes sacred dragonflame and reigns supreme in the Hall of Fame.',
     },
     evolutions: [],
@@ -305,6 +330,7 @@ function resolveSpeciesKey(key) {
 }
 
 function getVpetSpecies(key) {
+  return VPET_SPECIES[key] || VPET_SPECIES.slime;
   const resolved = resolveSpeciesKey(key);
   return VPET_SPECIES[resolved] || VPET_SPECIES.slime;
 }
@@ -316,6 +342,7 @@ function getVpetSpriteUrl(speciesKey, state = 'idle', isSleeping = false, lightO
   const resolved = resolveSpeciesKey(speciesKey);
   const validStates = ['idle', 'attack', 'hit'];
   const anim = validStates.includes(state) ? state : 'idle';
+  return `${BASE_SPRITE_URL}/sprites/vpet/pets/${speciesKey}_${anim}.gif`;
   return `${BASE_SPRITE_URL}/sprites/vpet/pets/${resolved}_${anim}.gif`;
 }
 

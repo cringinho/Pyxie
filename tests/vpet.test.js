@@ -113,7 +113,7 @@ assert.ok(embed.data.title.includes('Geleinha'));
 assert.ok(embed.data.thumbnail.url.length > 0);
 
 const buttons = buildVpetActionRows(active, 'pt');
-assert.equal(buttons.length, 2, 'Deve ter 2 linhas de botões interativos');
+assert.equal(buttons.length, 3, 'Deve ter 3 linhas de botões interativos (Abas do Hub + Cuidados + RPG)');
 
 // 13. Cálculo Preguiçoso de Delta-Time
 const now = Date.now();

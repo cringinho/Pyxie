@@ -14,6 +14,7 @@ const {
 } = require('../proceduralExplorer');
 const { getActiveVpet } = require('./vpetCore');
 const { getLanguage } = require('../../utils/i18n');
+const { buildPymonHubHeader } = require('./vpetHub');
 
 function renderDungeonGridText(run, pet) {
   const grid = run.grid;
@@ -62,6 +63,7 @@ function renderDungeonGridText(run, pet) {
 
 function buildDungeonTab(userId, userTag, context = null) {
   const lang = getLanguage(context);
+  const headerRow = buildPymonHubHeader(userId, 'dungeon', context);
   const pet = getActiveVpet(userId);
 
   if (!pet) {
@@ -73,7 +75,7 @@ function buildDungeonTab(userId, userTag, context = null) {
           ? 'Você precisa ter um Pymon para explorar masmorras! Use `/py-pymons` para adotar um.'
           : 'You need a Pymon to explore dungeons! Use `/py-pymons` to adopt one.'
       );
-    return { embeds: [embed], components: [], files: [] };
+    return { embeds: [embed], components: [headerRow], files: [] };
   }
 
   const run = getProceduralRun(userId);
@@ -111,7 +113,7 @@ function buildDungeonTab(userId, userTag, context = null) {
       .setDescription(desc)
       .setFooter({ text: lang === 'pt' ? 'Selecione uma zona para iniciar a expedição' : 'Select a zone to start expedition' });
 
-    return { embeds: [embed], components: [zoneButtons], files: [] };
+    return { embeds: [embed], components: [headerRow, zoneButtons], files: [] };
   }
 
   // Masmorra Ativa
@@ -146,7 +148,7 @@ function buildDungeonTab(userId, userTag, context = null) {
     .setDescription(desc)
     .setFooter({ text: lang === 'pt' ? 'Pymons • Masmorras em Grade 2D' : 'Pymons • 2D Grid Dungeons' });
 
-  return { embeds: [embed], components: [dpadRow, actionsRow], files: [] };
+  return { embeds: [embed], components: [headerRow, dpadRow, actionsRow], files: [] };
 }
 
 module.exports = {

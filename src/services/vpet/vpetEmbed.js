@@ -7,6 +7,7 @@ const {
 const { STAGE_NAMES, getVpetSpecies, getVpetSpriteUrl, STAGES } = require('./vpetSpecies');
 const { getVpetDialogue } = require('./vpetDialogues');
 const { checkEvolution } = require('./vpetCore');
+const { buildPymonHubHeader } = require('./vpetHub');
 
 const ELEMENT_COLORS = {
   ORVALHO: '#00f5d4',
@@ -80,14 +81,16 @@ function buildVpetEmbed(pet, user, lang = 'pt', options = {}) {
     .setThumbnail(spriteUrl)
     .setFooter({
       text: lang === 'pt'
-        ? `Pyxie Pymons • Virtual Pet • ID: ${pet.id}`
-        : `Pyxie Pymons • Virtual Pet • ID: ${pet.id}`,
+        ? `Pyxie Pymons • ID: ${pet.id}`
+        : `Pyxie Pymons • ID: ${pet.id}`,
     });
 
   return embed;
 }
 
-function buildVpetActionRows(pet, lang = 'pt') {
+function buildVpetActionRows(pet, lang = 'pt', userId = null) {
+  const uid = userId || pet.userId || pet.ownerId || pet.id || 'me';
+  const headerRow = buildPymonHubHeader(uid, 'pet', lang);
   const evoCheck = checkEvolution(pet);
 
   const row1 = new ActionRowBuilder().addComponents(
@@ -153,7 +156,7 @@ function buildVpetActionRows(pet, lang = 'pt') {
       .setStyle(ButtonStyle.Secondary)
   );
 
-  return [row1, row2];
+  return [headerRow, row1, row2];
 }
 
 function buildTrainingChoiceRow(lang = 'pt') {

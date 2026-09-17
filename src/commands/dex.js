@@ -13,38 +13,13 @@ const {
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { t, getLanguage, ELEMENT_NAMES, RARITY_NAMES, PET_DESCRIPTIONS_EN } = require('../utils/i18n');
 const { DEX } = require('./commandNames');
+const { buildPymonHubHeader } = require('../services/vpet/vpetHub');
 
 /**
  * Constrói a linha padrão de navegação do Hub para a Dex.
  */
 function buildDexHubHeaderRow(userId, context = null) {
-  return new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setCustomId(`hub_tab:pet:${userId}`)
-      .setLabel(t('hub.pet', context))
-      .setEmoji('🐾')
-      .setStyle(ButtonStyle.Secondary),
-    new ButtonBuilder()
-      .setCustomId(`hub_tab:incubator:${userId}`)
-      .setLabel(t('hub.incubator', context))
-      .setEmoji('🥚')
-      .setStyle(ButtonStyle.Secondary),
-    new ButtonBuilder()
-      .setCustomId(`hub_tab:dungeon:${userId}`)
-      .setLabel(t('hub.dungeon', context))
-      .setEmoji('🗺️')
-      .setStyle(ButtonStyle.Secondary),
-    new ButtonBuilder()
-      .setCustomId(`hub_tab:dex:${userId}`)
-      .setLabel(t('hub.dex', context))
-      .setEmoji('📖')
-      .setStyle(ButtonStyle.Primary),
-    new ButtonBuilder()
-      .setCustomId(`hub_tab:inventory:${userId}`)
-      .setLabel(t('hub.backpack', context))
-      .setEmoji('🎒')
-      .setStyle(ButtonStyle.Secondary)
-  );
+  return buildPymonHubHeader(userId, 'dex', context);
 }
 
 /**

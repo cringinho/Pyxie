@@ -213,6 +213,16 @@ const PET_DESCRIPTIONS_EN = {
   nekoterra: 'Mystic cat guardian of earth crystals. Its firm paws cause micro-tremors and locate underground gold veins.',
   rionator: 'Feathered baby dragon of storm skies. Slices through gales at extreme speed and strikes with arcane lightning.',
   spiromuffin: 'Sweet spirit baked in Pyxie’s secret kitchen. With vanilla aroma and sugar frosting, heals and cheers any party.',
+  cinna: 'A translucent, sparkling magical water droplet of enchanted essence. Playful and bouncy, it emits a soft stellar aura beside its tamer.',
+  bonorka: 'Serene coral turtle of pure tides with an armored shell sculpted from water crystal. Calm, patient, and highly resilient.',
+  pomcorin: 'Agile young forest dino with a swift tail and mystic leaves. Loves dashing through canopies and defending its tamer with bravery.',
+  bakuphant: 'Tiny nocturnal bat with velvety purple wings and gleaming fangs. Flies in absolute silence and casts playful illusory charms.',
+  clovis: 'Fierce charging boar with curved tusks and sturdy steps. Dashing through dungeons, it sniffs out hidden treasures and secret paths.',
+  kerobola: 'Swift scaled lizard warrior from aquatic depths. Shoots sparkling water blasts and dodges strikes with formidable agility.',
+  nekomandra: 'Floating ethereal spirit enveloped in wispy blue ghost-fire. Playful and unpredictable, it misleads dungeon traps with light tricks.',
+  nekoterra: 'Sleek emerald serpent with amber eyes. Glides noiselessly through earth crevices and detects underground precious ores.',
+  rionator: 'Prehistoric apex carnivore titan with thunderous roar and crushing jaws. Slices across arenas at brutal speed with colossal strikes.',
+  spiromuffin: 'Majestic winged dragon blessed with the sacred flame of Pyxie’s realm. Its incandescent wings protect allies and reign supreme.',
 };
 
 const ELEMENT_NAMES = {
@@ -285,6 +295,14 @@ const TRANSLATIONS = {
       magicBeans: 'Feijões Mágicos',
       ranking: 'Ranking',
       unranked: 'Ainda sem colocação',
+    },
+    hub: {
+      pet: 'Mascote',
+      dungeon: 'Masmorra',
+      incubator: 'Chocadeira',
+      dex: 'Pymon Dex',
+      arena: 'Arena',
+      backpack: 'Mochila',
     },
     status: {
       title: '🌸  ✦  Status do Sistema — Online',
@@ -840,6 +858,14 @@ const TRANSLATIONS = {
       magicBeans: 'Magic Beans',
       ranking: 'Leaderboard',
       unranked: 'Not ranked yet',
+    },
+    hub: {
+      pet: 'Pet',
+      dungeon: 'Dungeon',
+      incubator: 'Incubator',
+      dex: 'Pymon Dex',
+      arena: 'Arena',
+      backpack: 'Backpack',
     },
     status: {
       title: '🌸  ✦  System Status — Online',

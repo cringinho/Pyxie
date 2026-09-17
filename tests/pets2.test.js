@@ -91,7 +91,7 @@ async function runPetTests() {
 
     const activeA = getActivePet(USER_A);
     assert.ok(activeA, 'Usuário A deve ter um pet ativo.');
-    assert.equal(activeA.species, 'Bonorka');
+    assert.equal(activeA.species, 'Cascorval');
     assert.equal(activeA.level, 1);
 
     // 2. Bloqueio de adoção para quem já possui starter
