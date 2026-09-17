@@ -6,7 +6,6 @@ const {
   SlashCommandBuilder,
 } = require('discord.js');
 const { createTradeProposal, confirmTrade, cancelTrade, getTradeSession } = require('../services/trade');
-const { getActivePet } = require('../services/pets');
 const { getItemDefinition } = require('../services/inventory');
 const { formatCoins } = require('./economyHelpers');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
@@ -106,9 +105,6 @@ function buildOfferDescription(offer, source = null) {
       name: def?.name || offer.id,
     });
   }
-  if (offer.type === 'pet') {
-    return t('trade.activePetOffer', source, { id: offer.id });
-  }
   if (offer.type === 'coins') {
     return `💰 **${formatCoins(offer.amount, source)}**`;
   }
@@ -122,9 +118,9 @@ module.exports = {
   handleTradeInteraction,
   data: new SlashCommandBuilder()
     .setName(TRADE)
-    .setDescription('Safe trade proposal for Pymons, Items or Coins (Cooldown: 30m).')
+    .setDescription('Safe trade proposal for Items or Coins (Cooldown: 30m).')
     .setDescriptionLocalizations({
-      'pt-BR': 'Inicia uma proposta de troca segura de Pymons, itens ou moedas (Cooldown: 30m).',
+      'pt-BR': 'Inicia uma proposta de troca segura de itens ou moedas (Cooldown: 30m).',
     })
     .addUserOption((opt) =>
       opt
@@ -155,7 +151,6 @@ module.exports = {
         .setRequired(true)
         .addChoices(
           { name: '📦 Item do Inventário', value: 'item' },
-          { name: '🐾 Pymon Ativo', value: 'pet' },
           { name: '💰 Moedinhas', value: 'coins' }
         )
     )
@@ -167,9 +162,9 @@ module.exports = {
           'en-GB': 'identifier',
           'pt-BR': 'identificador',
         })
-        .setDescription('Item ID or "ativo" for pet')
+        .setDescription('Item ID (e.g. bau_madeira)')
         .setDescriptionLocalizations({
-          'pt-BR': 'ID do Item da mochila ou "ativo" para o pet',
+          'pt-BR': 'ID do item da mochila (ex: bau_madeira)',
         })
         .setRequired(false)
     )
@@ -181,26 +176,19 @@ module.exports = {
           'en-GB': 'amount',
           'pt-BR': 'quantidade',
         })
-        .setDescription('Quantity of items or coins')
+        .setDescription('Amount of items or coins to send')
         .setDescriptionLocalizations({
-          'pt-BR': 'Quantidade de itens ou moedas',
+          'pt-BR': 'Quantidade de itens ou moedas ofertadas',
         })
         .setRequired(false)
     ),
   async executeSlash({ interaction }) {
     const target = interaction.options.getUser('usuario') || interaction.options.getUser('user');
     const tipo = interaction.options.getString('tipo') || interaction.options.getString('type');
-    const id = interaction.options.getString('identificador') || interaction.options.getString('identifier') || 'ativo';
+    const id = interaction.options.getString('identificador') || interaction.options.getString('identifier') || '';
     const amount = interaction.options.getInteger('quantidade') || interaction.options.getInteger('amount') || 1;
 
-    let offer = { type: tipo, id, amount };
-    if (tipo === 'pet') {
-      const activePet = getActivePet(interaction.user.id);
-      if (!activePet) {
-        return interaction.editReply({ content: t('trade.needActivePet', interaction) });
-      }
-      offer.id = activePet.id;
-    }
+    const offer = { type: tipo, id, amount };
 
     const proposal = createTradeProposal(interaction.user.id, target.id, offer);
     if (!proposal.success) {
@@ -236,25 +224,17 @@ module.exports = {
   async executePrefix({ message, args }) {
     const target = message.mentions.users.first();
     if (!target) {
-      return message.reply('❌ Mencione o jogador para negociar. Ex: `py!trocar @amigo item maca 2` ou `py!trocar @amigo moedas 500` ou `py!trocar @amigo pet`.');
+      return message.reply('❌ Mencione o jogador para negociar. Ex: `py!trocar @amigo item bau_madeira 1` ou `py!trocar @amigo moedas 500`.');
     }
 
     const tipoRaw = String(args[1] || '').toLowerCase();
     let tipo = 'item';
-    if (tipoRaw.includes('pet') || tipoRaw.includes('pymon')) tipo = 'pet';
-    else if (tipoRaw.includes('moeda') || tipoRaw.includes('coin')) tipo = 'coins';
+    if (tipoRaw.includes('moeda') || tipoRaw.includes('coin')) tipo = 'coins';
 
-    const id = args[2] || 'ativo';
+    const id = args[2] || '';
     const amount = Number(args[3]) || (tipo === 'coins' ? Number(args[2]) || 100 : 1);
 
-    let offer = { type: tipo, id, amount };
-    if (tipo === 'pet') {
-      const activePet = getActivePet(message.author.id);
-      if (!activePet) {
-        return message.reply(t('trade.needActivePet', message));
-      }
-      offer.id = activePet.id;
-    }
+    const offer = { type: tipo, id, amount };
 
     const proposal = createTradeProposal(message.author.id, target.id, offer);
     if (!proposal.success) {

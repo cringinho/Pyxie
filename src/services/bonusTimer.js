@@ -1,13 +1,10 @@
 const crypto = require('node:crypto');
-const { speedupUserIncubator } = require('./pets');
-const { markExpeditionDoubled } = require('./petExpedition');
 const { addItem } = require('./inventory');
-const { addCoins } = require('./economy');
+const { addCoins, addMagicBeans } = require('./economy');
 
 const BONUS_SECRET = process.env.BONUS_SECRET || 'pyxie_magic_bonus_secret_key_2026';
 const MIN_WAIT_SECONDS = 8; // Mínimo de 8-10s no servidor para evitar trapaça
 const TOKEN_MAX_AGE_MS = 15 * 60 * 1000; // Válido por 15 minutos
-// Cache em memória para prevenção de resgate duplicado (anti-replay)
 const claimedTokens = new Set();
 
 /**
@@ -111,80 +108,32 @@ function verifyAndClaimBonus(token) {
     claimedTokens.clear();
   }
 
-  // 1. Aceleração de Chocadeira & Item de Ampulheta
-  if (data.action === 'incubator_boost' || data.action === 'item_bonus' || data.action === 'hourglass_bonus') {
-    // Adiciona o item à mochila
-    addItem(data.userId, 'ampulheta_tempo_2h', 1);
-    // Adiciona moedas de recompensa
-    addCoins(data.userId, 150);
+  // 1. Recompensa padrão de moedas e baú
+  addCoins(data.userId, 200);
+  addMagicBeans(data.userId, 1);
+  addItem(data.userId, 'bau_madeira', 1);
 
-    // Se o usuário tiver ovos chocando e for a ação incubator_boost, também adianta direto
-    let directSpeedup = false;
-    if (data.action === 'incubator_boost') {
-      const speedRes = speedupUserIncubator(data.userId, 2);
-      if (speedRes.success) {
-        directSpeedup = true;
-      }
-    }
-
-    let boostMsg;
-    if (isEn) {
-      boostMsg = directSpeedup
-        ? '⚡ Your Incubator was sped up by **2 hours** AND you received **+1 Magic Hourglass (2h) ⏳** + **150 Coins 🪙** in your inventory!'
-        : '🎁 You received **1x Magic Hourglass (2h) ⏳** and **+150 Coins 🪙** in your inventory! Use in Chocadeira whenever you want.';
-    } else {
-      boostMsg = directSpeedup
-        ? '⚡ Sua Chocadeira foi adiantada em **2 horas** E você recebeu **+1 Ampulheta Mágica (2h) ⏳** + **150 Moedas 🪙** na mochila!'
-        : '🎁 Você recebeu **1x Ampulheta Mágica (2h) ⏳** e **+150 Moedas 🪙** na sua mochila! Use na Chocadeira quando quiser.';
-    }
-
-    return {
-      success: true,
-      action: data.action,
-      userId: data.userId,
-      itemAwarded: 'ampulheta_tempo_2h',
-      coinsAwarded: 150,
-      directSpeedup,
-      message: boostMsg,
-    };
-  }
-
-  // 2. Dobro de Recompensas na Expedição
-  if (data.action === 'expedition_double') {
-    const result = markExpeditionDoubled(data.userId);
-    // Também concede moedas de bônus
-    addCoins(data.userId, 100);
-    addItem(data.userId, 'ampulheta_tempo_2h', 1);
-
-    return {
-      success: true,
-      action: 'expedition_double',
-      userId: data.userId,
-      result,
-      message: isEn
-        ? '💎 **Double Rewards (2x)** activated successfully! (+1 Hourglass ⏳ and +100 Coins 🪙 credited)'
-        : '💎 Bônus de **Recompensas em Dobro (2x)** ativado com sucesso! (+1 Ampulheta ⏳ e +100 Moedas 🪙 creditadas)',
-    };
-  }
-
-  // 3. Bônus de Biscoito da Sorte Extra
+  let message;
   if (data.action === 'cookie_bonus') {
     const { grantExtraCookie } = require('./cookie');
     grantExtraCookie(data.userId);
-    addCoins(data.userId, 100);
-    addItem(data.userId, 'ampulheta_tempo_2h', 1);
-
-    return {
-      success: true,
-      action: 'cookie_bonus',
-      userId: data.userId,
-      message: isEn
-        ? '🥠 **Extra Fortune Cookie Unlocked!** You earned 1 extra cookie opening (+1 Hourglass ⏳ and +100 Coins 🪙). Use `/py-cookie` to open now!'
-        : '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você ganhou 1 abertura extra de biscoito (+1 Ampulheta ⏳ e +100 Moedas 🪙). Use `/py-biscoito` para abrir agora!',
-    };
+    message = isEn
+      ? '🥠 **Extra Fortune Cookie Unlocked!** You received **+200 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦**!'
+      : '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você recebeu **+200 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦**!';
+  } else {
+    message = isEn
+      ? '🎁 **Bonus Claimed!** You received **+200 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦** in your inventory!'
+      : '🎁 **Bônus Resgatado com Sucesso!** Você recebeu **+200 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦** na sua mochila!';
   }
 
-  return { success: false, error: isEn ? 'Unknown bonus action.' : 'Ação de bônus desconhecida.' };
+  return {
+    success: true,
+    action: data.action,
+    userId: data.userId,
+    coinsAwarded: 200,
+    beansAwarded: 1,
+    message,
+  };
 }
 
 module.exports = {

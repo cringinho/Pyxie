@@ -1,113 +1,68 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
 
 const { createBonusSession, verifyAndClaimBonus, BONUS_SECRET } = require('../src/services/bonusTimer');
-const { putEggInIncubator, getIncubator, adoptPet } = require('../src/services/pets');
-const { addItem } = require('../src/services/inventory');
-const { startExpedition, getActiveExpedition, claimExpedition, markExpeditionDoubled } = require('../src/services/petExpedition');
+const { getUserInventory } = require('../src/services/inventory');
+const { getUserAccount } = require('../src/services/economy');
 
 const testRunId = Date.now();
 const testUserBonus = `user_bonus_${testRunId}`;
 
 try {
-  // 1. Setup inicial
-  adoptPet(testUserBonus, 'cinna');
-  addItem(testUserBonus, 'ovo_silvestre', 2);
-  const placeRes = putEggInIncubator(testUserBonus, 'ovo_silvestre', 0);
-  assert.equal(placeRes.success, true, 'Ovo deve ser colocado na chocadeira.');
-
-  // 2. Teste de criação de sessão
-  const session = createBonusSession(testUserBonus, 'incubator_boost');
+  // 1. Teste de criação de sessão
+  const session = createBonusSession(testUserBonus, 'item_bonus');
   assert.ok(session.token, 'Sessão deve gerar um token.');
   assert.ok(session.url.includes('/bonus?token='), 'URL deve apontar para /bonus.');
-  assert.equal(session.action, 'incubator_boost', 'Ação deve ser incubator_boost.');
+  assert.equal(session.action, 'item_bonus', 'Ação deve ser item_bonus.');
 
-  // 3. Teste de rejeição por tempo prematuro (< 8s)
+  // 2. Teste de rejeição por tempo prematuro (< 8s)
   const prematureClaim = verifyAndClaimBonus(session.token);
   assert.equal(prematureClaim.success, false, 'Resgate prematuro (<8s) deve ser rejeitado pelo servidor.');
   assert.ok(prematureClaim.error.includes('Aguarde os 10 segundos'), 'Mensagem deve instruir aguardar o tempo.');
 
-  // 4. Teste de resgate válido com token forjado no passado para simular 10s decorridos
-  const crypto = require('node:crypto');
-  const pastCreatedAt = Date.now() - 10000; // 10 segundos atrás
+  // 3. Teste de resgate válido com token gerado no passado (simulando 10s decorridos)
+  const pastCreatedAt = Date.now() - 10000;
   const nonce = crypto.randomBytes(8).toString('hex');
-  const payload = JSON.stringify({ userId: testUserBonus, action: 'incubator_boost', metadata: {}, createdAt: pastCreatedAt, nonce });
+  const payload = JSON.stringify({ userId: testUserBonus, action: 'item_bonus', metadata: {}, createdAt: pastCreatedAt, nonce, lang: 'pt' });
   const hmac = crypto.createHmac('sha256', BONUS_SECRET).update(payload).digest('hex');
   const validToken = Buffer.from(JSON.stringify({ payload, sig: hmac })).toString('base64url');
 
-  const incubatorBefore = getIncubator(testUserBonus);
-  const eggSlotBefore = incubatorBefore.slots.find((s) => s.slotIndex === 0);
-  const timeBeforeMs = eggSlotBefore.tempoRestanteMs;
-
   const claimRes = verifyAndClaimBonus(validToken);
   assert.equal(claimRes.success, true, 'Resgate com tempo válido deve ser aprovado.');
-  assert.equal(claimRes.action, 'incubator_boost', 'Ação confirmada deve ser incubator_boost.');
+  assert.equal(claimRes.coinsAwarded, 200, 'Deve conceder 200 moedas.');
+  assert.equal(claimRes.beansAwarded, 1, 'Deve conceder 1 feijão mágico.');
 
-  const incubatorAfter = getIncubator(testUserBonus);
-  const eggSlotAfter = incubatorAfter.slots.find((s) => s.slotIndex === 0);
-  assert.ok(eggSlotAfter.tempoRestanteMs < timeBeforeMs, 'Tempo restante do ovo deve ter sido reduzido.');
+  const invUser = getUserInventory(testUserBonus);
+  assert.equal(invUser.bau_madeira, 1, 'Mochila do usuário deve conter 1x Baú Rústico.');
 
-  // 5. Teste de anti-replay (não permite reutilizar o mesmo token)
+  const accUser = getUserAccount(testUserBonus);
+  assert.equal(accUser.coins, 200, 'Usuário deve ter recebido 200 moedas.');
+  assert.equal(accUser.magicBeans, 1, 'Usuário deve ter recebido 1 feijão mágico.');
+
+  // 4. Teste de anti-replay (não permite reutilizar o mesmo token)
   const doubleClaim = verifyAndClaimBonus(validToken);
   assert.equal(doubleClaim.success, false, 'Reutilizar o mesmo token deve ser rejeitado (anti-replay).');
 
-  // 6. Teste de Expedição com Bônus Dobro (2x)
-  startExpedition(testUserBonus, 2);
-  const pastExpCreatedAt = Date.now() - 10000;
-  const expNonce = crypto.randomBytes(8).toString('hex');
-  const expPayload = JSON.stringify({ userId: testUserBonus, action: 'expedition_double', metadata: {}, createdAt: pastExpCreatedAt, nonce: expNonce });
-  const expHmac = crypto.createHmac('sha256', BONUS_SECRET).update(expPayload).digest('hex');
-  const validExpToken = Buffer.from(JSON.stringify({ payload: expPayload, sig: expHmac })).toString('base64url');
+  // 5. Teste de bônus de biscoito da sorte (cookie_bonus)
+  const userCookie = `user_cookie_${testRunId}`;
+  const cookiePayload = JSON.stringify({ userId: userCookie, action: 'cookie_bonus', metadata: {}, createdAt: pastCreatedAt, nonce: crypto.randomBytes(8).toString('hex'), lang: 'pt' });
+  const cookieHmac = crypto.createHmac('sha256', BONUS_SECRET).update(cookiePayload).digest('hex');
+  const validCookieToken = Buffer.from(JSON.stringify({ payload: cookiePayload, sig: cookieHmac })).toString('base64url');
 
-  const claimExpRes = verifyAndClaimBonus(validExpToken);
-  assert.equal(claimExpRes.success, true, 'Resgate de bônus de expedição deve ser aprovado.');
+  const claimCookieRes = verifyAndClaimBonus(validCookieToken);
+  assert.equal(claimCookieRes.success, true, 'Resgate de cookie_bonus deve ser aprovado.');
+  assert.ok(claimCookieRes.message.includes('Biscoito da Sorte Extra Desbloqueado'), 'Mensagem de biscoito deve constar.');
 
-  const expData = getActiveExpedition(testUserBonus);
-  assert.equal(expData.doubled, true, 'Expedição deve estar marcada como doubled.');
-
-  // Forçar expedição como concluída para testar claim
-  const expFile = path.join(__dirname, '..', 'data', 'expeditions.json');
-  const allExp = JSON.parse(fs.readFileSync(expFile, 'utf8'));
-  allExp[testUserBonus].finishAt = Date.now() - 1000;
-  fs.writeFileSync(expFile, JSON.stringify(allExp, null, 2), 'utf8');
-
-  const claimFinal = claimExpedition(testUserBonus);
-  assert.equal(claimFinal.success, true, 'Resgate da expedição deve funcionar.');
-  assert.equal(claimFinal.doubled, true, 'Resultado deve indicar que as recompensas foram dobradas.');
-  assert.ok(claimFinal.xpGained >= 300, 'XP deve refletir o multiplicador de 2x.');
-
-  // 7. Teste de item_bonus universal (adiciona Ampulheta e Moedas mesmo sem ovo)
-  const userNoEgg = `user_no_egg_${testRunId}`;
-  const pastItemCreatedAt = Date.now() - 10000;
-  const itemNonce = crypto.randomBytes(8).toString('hex');
-  const itemPayload = JSON.stringify({ userId: userNoEgg, action: 'item_bonus', metadata: {}, createdAt: pastItemCreatedAt, nonce: itemNonce });
-  const itemHmac = crypto.createHmac('sha256', BONUS_SECRET).update(itemPayload).digest('hex');
-  const validItemToken = Buffer.from(JSON.stringify({ payload: itemPayload, sig: itemHmac })).toString('base64url');
-
-  const { getUserInventory } = require('../src/services/inventory');
-  const { getUserAccount } = require('../src/services/economy');
-
-  const claimItemRes = verifyAndClaimBonus(validItemToken);
-  assert.equal(claimItemRes.success, true, 'Resgate universal de item deve funcionar mesmo sem ovo.');
-  assert.equal(claimItemRes.itemAwarded, 'ampulheta_tempo_2h', 'Item concedido deve ser ampulheta_tempo_2h.');
-
-  const invUser = getUserInventory(userNoEgg);
-  assert.equal(invUser.ampulheta_tempo_2h, 1, 'Mochila do usuário deve conter 1x Ampulheta Mágica.');
-
-  const accUser = getUserAccount(userNoEgg);
-  assert.equal(accUser.coins, 150, 'Usuário deve ter recebido 150 moedas.');
-
-  // 8. Teste de token adulterado
+  // 6. Teste de token adulterado
   const fakeToken = 'eyJmb28iOiJiYXIifQ';
   const fakeRes = verifyAndClaimBonus(fakeToken);
   assert.equal(fakeRes.success, false, 'Token inválido deve ser rejeitado.');
 
-  console.log('Verificação da Página de Bônus da Pyxie (HMAC, Timer 10s, Ampulheta Item, Chocadeira -2h e Expedição 2x): OK');
+  console.log('Verificação da Página de Bônus da Pyxie (HMAC, Timer 10s, Moedas, Feijão e Baú): OK');
 } finally {
   const cleanFiles = [
-    path.join(__dirname, '..', 'data', 'pets.json'),
-    path.join(__dirname, '..', 'data', 'expeditions.json'),
     path.join(__dirname, '..', 'data', 'inventory.json'),
     path.join(__dirname, '..', 'data', 'economy.json'),
   ];
@@ -116,6 +71,7 @@ try {
       try {
         const data = JSON.parse(fs.readFileSync(file, 'utf8'));
         delete data[testUserBonus];
+        delete data[`user_cookie_${testRunId}`];
         fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
       } catch (_) {}
     }

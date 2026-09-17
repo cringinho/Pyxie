@@ -1,7 +1,6 @@
 const crypto = require('node:crypto');
 const { checkCooldown, setCooldown } = require('../utils/cooldown');
-const { getActivePet, getUserPets, transferPet } = require('./pets');
-const { hasItem, removeItem, addItem, getItemDefinition, getUserInventory } = require('./inventory');
+const { hasItem, removeItem, addItem } = require('./inventory');
 const { getBalance, spendCoins, addCoins } = require('./economy');
 
 const TRADE_COOLDOWN_MS = 30 * 60 * 1000; // 30 minutos
@@ -42,23 +41,13 @@ function createTradeProposal(senderId, receiverId, offer) {
     if (!hasItem(senderId, id, qty)) {
       return { success: false, reason: 'sender_missing_item', message: `Você não possui **${qty}x** do item ofertado.` };
     }
-  } else if (type === 'pet') {
-    const { isPetOnExpedition } = require('./petExpedition');
-    if (isPetOnExpedition(senderId)) {
-      return { success: false, reason: 'pet_on_expedition', message: '🧭 Seu Pymon está em uma expedição e não pode ser negociado!' };
-    }
-    const pets = getUserPets(senderId);
-    const pet = pets.find((p) => p.id === id || p.key === id);
-    if (!pet) {
-      return { success: false, reason: 'sender_missing_pet', message: 'Pymon ofertado não encontrado na sua coleção.' };
-    }
   } else if (type === 'coins') {
     const qty = Math.max(1, Number(amount) || 0);
     if (getBalance(senderId) < qty) {
       return { success: false, reason: 'sender_missing_coins', message: 'Você não possui essa quantia de Moedas.' };
     }
   } else {
-    return { success: false, reason: 'invalid_offer_type', message: 'Tipo de oferta inválido.' };
+    return { success: false, reason: 'invalid_offer_type', message: 'Tipo de oferta inválido (use item ou moedas).' };
   }
 
   const tradeId = `trade_${crypto.randomUUID().slice(0, 8)}`;
@@ -67,7 +56,7 @@ function createTradeProposal(senderId, receiverId, offer) {
     senderId,
     receiverId,
     senderOffer: offer,
-    receiverOffer: null, // Será preenchido ou confirmado pelo receptor
+    receiverOffer: null,
     senderConfirmed: false,
     receiverConfirmed: false,
     createdAt: Date.now(),
@@ -108,17 +97,6 @@ function confirmTrade(tradeId, userId) {
       }
       removeItem(session.senderId, offer.id, qty);
       addItem(session.receiverId, offer.id, qty);
-    } else if (offer.type === 'pet') {
-      const { isPetOnExpedition } = require('./petExpedition');
-      if (isPetOnExpedition(session.senderId) || isPetOnExpedition(session.receiverId)) {
-        activeTradeSessions.delete(tradeId);
-        return { success: false, reason: 'pet_on_expedition', message: '🧭 Um dos Pymons está em expedição e não pode ser transferido!' };
-      }
-      const transferRes = transferPet(session.senderId, session.receiverId, offer.id);
-      if (!transferRes.success) {
-        activeTradeSessions.delete(tradeId);
-        return { success: false, reason: 'pet_transfer_failed', message: 'Não foi possível transferir o Pymon (Limite de pets atingido pelo receptor).' };
-      }
     } else if (offer.type === 'coins') {
       const qty = Math.max(1, Number(offer.amount) || 0);
       if (getBalance(session.senderId) < qty) {
@@ -141,7 +119,7 @@ function confirmTrade(tradeId, userId) {
       senderId: session.senderId,
       receiverId: session.receiverId,
       offer,
-      message: '🎉 **Troca concluída com sucesso entre os dois treinadores!**',
+      message: '🎉 **Troca concluída com sucesso entre os membros!**',
     };
   }
 
@@ -168,4 +146,3 @@ module.exports = {
   cancelTrade,
   getTradeSession,
 };
-

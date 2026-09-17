@@ -25,7 +25,6 @@ const {
   setUserBio,
 } = require('../services/economy');
 const { getSpouseId } = require('../services/marriage');
-const { getActivePet, getUserDex } = require('../services/pets');
 const professions = require('../services/professions');
 const { buildProfileEmbed } = require('./economyHelpers');
 const { PROFILE } = require('./commandNames');
@@ -41,19 +40,8 @@ function buildProfileView(targetUser, viewerId, source = null) {
   const account = getUserAccount(targetUser.id);
   const spouseId = getSpouseId(targetUser.id);
   const rank = getUserRank(targetUser.id);
-  const activePet = getActivePet(targetUser.id);
-  const userDex = getUserDex(targetUser.id);
   const titlesCatalog = getTitlesCatalog();
   const equippedTitle = account.equippedTitle ? titlesCatalog[account.equippedTitle] : null;
-
-  const dexValues = Object.values(userDex || {});
-  const unlockedCount = dexValues.filter((e) => e.discovered).length;
-  const shiniesCount = dexValues.filter((e) => e.shinyDiscovered).length;
-  const dexStats = {
-    totalUnlocked: unlockedCount,
-    totalSpecies: dexValues.length || 10,
-    totalShinies: shiniesCount,
-  };
 
   const professionKey = account.profession;
   const professionLabel = professionKey
@@ -66,8 +54,6 @@ function buildProfileView(targetUser, viewerId, source = null) {
     spouse: spouseId ? `<@${spouseId}>` : null,
     rankPosition: rank?.position || null,
     professionLabel,
-    activePet,
-    dexStats,
     equippedTitle,
     source,
   });
@@ -460,7 +446,7 @@ module.exports = {
     .setName(PROFILE)
     .setDescription('Display your adventurer profile with custom titles, themes, and stats.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Exibe seu perfil com títulos e temas customizáveis, Pymon ativo, moedas e Feijões Mágicos.',
+      'pt-BR': 'Exibe seu perfil com títulos e temas customizáveis, vocação, moedas e Feijões Mágicos.',
     })
     .addUserOption((option) =>
       option

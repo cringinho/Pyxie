@@ -1,4 +1,4 @@
-# 🌸 Pyxie — O Universo Encantado de Pymons & RPG para Discord
+# 🌸 Pyxie — Bot Mágico de Economia, Lazer & Comunidade para Discord
 
 <p align="center">
   <img src="https://img.shields.io/badge/Node.js-18%2B-blue?style=for-the-badge&logo=node.js" alt="Node Version">
@@ -7,39 +7,41 @@
   <img src="https://img.shields.io/badge/Licença-Source--Available-pink?style=for-the-badge" alt="License">
 </p>
 
-A **Pyxie** é uma aplicação completa de entretenimento, economia virtual e RPG de criaturas mágicas (**Pymons**) para comunidades no Discord. Com mecânicas de Tamagotchi em tempo real, masmorras procedurais em 2D, batalhas multiplayer, sistema de Tarot e painel de controle web em tempo real, o projeto foi projetado para alta escalabilidade e retenção de usuários.
+A **Pyxie** é uma aplicação completa de entretenimento, economia virtual, lazer e integração comunitária para o Discord. Com carreiras e profissões interativas, sistema monetário dinâmico, trocas seguras de itens, Tarot místico com 78 arcanos ilustrados em Canvas, matrimônio e painel de controle web em tempo real, o projeto foi projetado para alta escalabilidade e retenção de usuários.
 
 > ⚖️ **Aviso Legal & Propriedade Intelectual:**  
-> A Pyxie é uma obra 100% original e proprietária. Embora concebida sob inspiração visual da estética *kawaii* e da cultura de mascotes carismáticos, **todas as ilustrações, criaturas (Pymons), nomes, sistemas, diálogos e códigos-fonte são criações autorais exclusivas**, sem vínculo, afiliação ou infração de direitos de marcas comerciais de terceiros.
+> A Pyxie é uma obra 100% original e proprietária. Todas as ilustrações, temas, sistemas, diálogos e códigos-fonte são criações autorais exclusivas, sem vínculo, afiliação ou infração de direitos de terceiros.
 
 ---
 
 ## ✨ Recursos em Destaque
 
-### 🐾 1. Tamagotchi & Criação de Pymons
-- **10 Espécies Oficiais:** Do companheiro inicial ao misterioso *Bakuphant* e *Kerobola*.
-- **Cuidados em Tempo Real:** Fome, energia e humor atualizados dinamicamente via *delta-time*.
-- **Chocadeira de Ovos:** Choque ovos comuns, raros e ancestrais com aceleradores temporais.
-- **Formas Raras:** Versões **Shiny** (douradas/cintilantes) e **ALPHA** (com aura avermelhada).
-- **Compêndio / Dex:** Galeria visual com silhuetas sombreadas para criaturas ainda não descobertas.
+### 💼 1. Economia Viva, Carreiras & Vocações
+- **Sistema Monetário:** Moedinhas Mágicas 🪙 e Feijões Mágicos 🌱 (moeda nobre rara).
+- **Mini-games de Trabalho (`/py-work`):** Escolha sua profissão e participe de desafios interativos para subir de nível e faturar moedas.
+- **Recompensas Diárias (`/py-daily`):** Resgate de moedas com chances de bônus épico de Feijões Mágicos.
+- **Rankings Globais (`/py-rank`):** Classificação em tempo real de riqueza em Moedinhas e Feijões.
 
-### 🧭 2. Dungeons Procedurais & Expedições AFK
-- **Masmorras 2D:** Mapas procedurais exploráveis por botões direcionais (D-Pad) com consumo de estamina.
-- **Expedições Passivas (AFK):** Envie seu Pymon em missões de **2h, 4h ou 8h** para coletar XP, moedas e itens enquanto você estuda ou trabalha.
+### 🎒 2. Lojinha Mágica & Baús Misteriosos
+- **Catálogo de Itens (`/py-shop`):** Adquira Baús Rústicos, Prateados ou Lendários, além de cafés revigorantes e relíquias raras.
+- **Mochila & Inventário (`/py-inventory`):** Abra baús com surpresas de moedas e relíquias, ou venda itens sobressalentes.
+- **Mercado & Trocas Seguras (`/py-trade`):** Sistema com confirmação bilateral atômica e cooldown de 30 minutos.
 
-### ⚔️ 3. Coliseu de Duelos & World Boss Semanal
-- **Duelos Entre Jogadores (`/py-duel`):** Combates por turnos com apostas opcionais, vantagens elementais e limite balanceado de 3 duelos diários.
-- **World Boss Semanal ALPHA (`/py-boss`):** Titã colossal enfrentado coletivamente por todos os servidores; o maior causador de dano (**MVP**) recebe o próprio Boss na versão **ALPHA 🔴**.
+### 🎲 3. Minigames Rápidos & Integração Social
+- **Jokenpô PvP (`/py-jokenpo`):** Desafie amigos com botões e apostas opcionais de moedas.
+- **Biscoito da Sorte (`/py-cookie`):** Previsões diárias com números da sorte e bônus web.
+- **Quem é Mais Provável (`/py-likely`):** Enquetes ao vivo de 60 segundos com votação interativa.
+- **Dados de RPG (`/py-dice`):** Rola dados poliédricos (d4 a d100) com destaque de acertos críticos.
+- **Cara ou Coroa (`/py-coinflip`):** Dobre suas moedas na sorte pura contra a Pyxie.
 
-### 💰 4. Economia Mágica, Profissões & Recompensas
-- **Sistema Monetário:** Moedinhas Mágicas e Feijões Mágicos 🌱 (moeda nobre rara).
-- **Mini-games de Trabalho (`/py-work`):** Escolha sua profissão e participe de desafios interativos.
-- **Mercado & Trocas Seguras (`/py-trade`):** Sistema com confirmação bilateral e cooldown de 30 minutos.
-- **Votação Top.gg (`/py-vote`):** Resgate de moedas e itens com bônus dobrado nos fins de semana.
+### 🔮 4. Tarot Místico, Amor & Casamentos
+- **Tarot Místico (`/py-tarot`):** 78 cartas arcanas ilustradas com renderização nativa em Canvas e interpretações diretas e invertidas.
+- **Calculadora de Afinidade (`/py-ship`):** Meça a compatibilidade de romance e amizade entre membros com artes exclusivas.
+- **Matrimônio no Servidor (`/py-marriage`):** Pedidos oficiais de casamento e divórcio com registro no perfil.
 
-### 👑 5. Customização & Tarot
-- **Personalização de Perfil:** Títulos raros e temas visuais coloridos (*Ouro Real, Esmeralda, Nebulosa, Rosa Neon*) compráveis com Feijões Mágicos.
-- **Tarot Místico:** 78 arcanos ilustrados com renderização gráfica nativa em Canvas de alto desempenho.
+### 👑 5. Customização de Perfil & Cosméticos
+- **Personalização de Perfil (`/py-profile`):** Títulos raros e temas visuais coloridos (*Ouro Real, Esmeralda Mística, Nebulosa Cósmica, Rosa Neon, Fogo Carmesim*) compráveis com Feijões Mágicos.
+- **Bilinguismo Nativo (PT-BR & EN):** Suporte completo e bidirecional com detecção automática de servidor e usuário.
 
 ---
 
@@ -79,7 +81,7 @@ PORT=3000
 ## 📂 Estrutura do Repositório
 
 ```text
-botMelody/
+kuromi/
 ├── index.js                  # Ponto de entrada do Bot no Discord (eventos e inicialização)
 ├── server.js                 # Servidor Express do Painel Web e Webhooks (Top.gg)
 ├── package.json              # Dependências e scripts npm
@@ -89,29 +91,28 @@ botMelody/
 ├── src/                      # Código-fonte principal
 │   ├── config.js             # Configurações de ambiente e constantes
 │   ├── registerSlashCommands.js # Publicador de comandos slash na API do Discord
-│   ├── commands/             # Todos os comandos modulares (/py-duelo, /py-boss, /py-trocar, etc.)
-│   ├── services/             # Lógica de negócios (Pymons, Duelos, Economia, Tarot, Boss, Top.gg)
-│   ├── data/                 # Catálogos estáticos (Pymons, Itens, Tarot)
-│   ├── pets/                 # Sprites e ilustrações em Pixel Art dos Pymons
+│   ├── commands/             # Comandos modulares (/py-work, /py-tarot, /py-trocar, etc.)
+│   ├── services/             # Lógica de negócios (Economia, Tarot, Trocas, Top.gg)
+│   ├── data/                 # Catálogos estáticos (Itens, Tarot)
 │   └── utils/                # Cooldowns, formatação de voz, i18n e lock de processo
 │
-├── public/                   # Frontend do painel web administrativo
+├── public/                   # Frontend do painel web e página de bônus
 ├── data/                     # Banco de dados local em formato JSON
 ├── docs/                     # Manuais técnicos detalhados
 │   ├── COMANDOS.md           # Guia completo de comandos e parâmetros
 │   └── VM-ATUALIZACAO.md     # Manual de deploy na VM e configuração de Swap
 │
-└── tests/                    # Suíte completa de 7 arquivos de testes automatizados
+└── tests/                    # Suíte completa de testes automatizados com paridade i18n
 ```
 
 ---
 
 ## 🔒 Arquitetura & Segurança
 
-- **Menor Privilégio no Convite:** Permissões estritas (`378880`) sem solicitação de *Administrador*.
-- **Isolamento por Servidor:** Configurações de canal de boas-vindas e faixas econômicas armazenadas por `guild_id`.
-- **Painel Web Protegido:** Endpoints administrativos no Express (`server.js`) protegidos por autenticação de token (`API_SECRET_TOKEN`).
-- **Otimizado para Nuvem Gratuita:** Consumo estável de apenas **~49 MB de RAM**, perfeito para instâncias `e2-micro` no **Google Cloud Platform (GCP Always Free Tier)**.
+- **Menor Privilégio no Convite:** Permissões estritas sem necessidade de permissões perigosas.
+- **Isolamento por Servidor:** Configurações e faixas econômicas armazenadas por `guild_id`.
+- **Painel Web Protegido:** Endpoints administrativos no Express protegidos por HMAC Magic Tokens e IP Allowlist.
+- **Otimizado para Nuvem:** Consumo estável e leve de memória RAM, ideal para instâncias no Google Cloud Platform.
 
 ---
 
@@ -120,5 +121,3 @@ botMelody/
 Este projeto é disponibilizado sob a **Custom Source-Available License**.
 - ✅ **Permitido:** Leitura, auditoria de segurança, estudo educacional e testes em instâncias locais/privadas.
 - ❌ **Proibido:** Hospedagem pública concorrente no Discord, cobrança financeira de usuários, criação de bots derivados para fins comerciais ou distribuição não autorizada.
-
-Consulte o arquivo [LICENSE](LICENSE) para os termos jurídicos completos.

@@ -76,8 +76,8 @@ function buildInviteEmbed(client, guildOrSource = null, adminOnly = false) {
     .setDescription(t('invite.desc', guildOrSource))
     .addFields(
       {
-        name: t('invite.petsTitle', guildOrSource),
-        value: t('invite.petsDesc', guildOrSource),
+        name: t('invite.careersTitle', guildOrSource),
+        value: t('invite.careersDesc', guildOrSource),
         inline: false,
       },
       {

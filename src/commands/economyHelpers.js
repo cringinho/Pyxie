@@ -57,16 +57,6 @@ function buildProfileEmbed({ user, account, spouse, rankPosition, professionLabe
         ? t('profile.dedicationVeteran', source)
         : (workVal >= 5 ? t('profile.dedicationPractitioner', source) : t('profile.dedicationNovice', source)));
 
-  const petDisplay = activePet
-    ? `> ${activePet.emoji || '🐾'} **${activePet.name}** (${lang === 'en' ? 'Lv.' : 'Nv.'} ${activePet.level || 1}) ${activePet.shiny ? '✨ *(Shiny)*' : ''}\n` +
-      `> ❤️ **HP:** ${activePet.stats?.hp || 55}/${activePet.stats?.maxHp || 55}  •  ⚡ **${lang === 'en' ? 'Energy' : 'Energia'}:** ${activePet.energy || 100}%  •  🍖 **${lang === 'en' ? 'Hunger' : 'Fome'}:** ${activePet.hunger || 100}%\n` +
-      `> 🧭 **${lang === 'en' ? 'Expeditions' : 'Expedições'}:** ${activePet.totalExploracoes || 0}  •  ⚔️ **${lang === 'en' ? 'Duels' : 'Duelos'}:** ${activePet.duelosVencidos || 0}W / ${activePet.duelosPerdidos || 0}L`
-    : t('profile.noPet', source);
-
-  const dexDisplay = dexStats
-    ? t('profile.dexProgress', source, { unlocked: dexStats.totalUnlocked, total: dexStats.totalSpecies, shinies: dexStats.totalShinies })
-    : `> 📖 **0/10** ${lang === 'en' ? 'Species' : 'Espécies'}`;
-
   const marriageDisplay = spouse
     ? t('profile.marriedTo', source, { spouse })
     : t('profile.single', source);
@@ -92,12 +82,6 @@ function buildProfileEmbed({ user, account, spouse, rankPosition, professionLabe
     t('profile.profession', source, { profession: professionLabel || t('profile.noProfession', source) }),
     t('profile.workCount', source, { count: workVal }),
     t('profile.dedication', source, { level: dedicationLevel }),
-    '',
-    t('profile.pymonHeader', source),
-    petDisplay,
-    '',
-    t('profile.dexHeader', source),
-    dexDisplay,
     '',
     t('profile.socialHeader', source),
     marriageDisplay,

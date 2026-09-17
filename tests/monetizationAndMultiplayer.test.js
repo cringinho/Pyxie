@@ -2,11 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { createDuelChallenge, resolveDuelChallenge, buildDuelGuideEmbed } = require('../src/services/petDuels');
 const { createTradeProposal, confirmTrade, cancelTrade } = require('../src/services/trade');
-const { startExpedition, claimExpedition, getActiveExpedition } = require('../src/services/petExpedition');
-const { getWorldBoss, attackWorldBoss, getBossRanking } = require('../src/services/worldBoss');
-const { adoptPet, getUserPets } = require('../src/services/pets');
 const { getBalance, addCoins, addMagicBeans, buyTheme, equipTheme, getUserAccount } = require('../src/services/economy');
 const { addItem, hasItem } = require('../src/services/inventory');
 const { processTopggVote, verifyWebhookAuth } = require('../src/services/topgg');
@@ -20,22 +16,10 @@ try {
   addCoins(testUserA, 2000);
   addCoins(testUserB, 2000);
   addMagicBeans(testUserA, 10);
-  adoptPet(testUserA, 'cinna');
-  adoptPet(testUserB, 'bonorka');
 
-  // 2. Teste Duelos (Máx 3x ao dia)
-  const duelChallenge = createDuelChallenge(testUserA, testUserB, 100);
-  assert.equal(duelChallenge.success, true, 'Desafio de duelo válido deve ser criado.');
-  const duelRes = resolveDuelChallenge(duelChallenge.challenge.id, testUserB, true);
-  assert.equal(duelRes.success, true, 'Duelo aceito deve simular combate e entregar recompensas.');
-  assert.ok(duelRes.battleLogs.length > 0, 'Relatório de combate deve conter logs.');
-
-  const guideEmbed = buildDuelGuideEmbed();
-  assert.ok(guideEmbed.data.title.includes('Guia'), 'Guia de combate deve ser gerado.');
-
-  // 3. Teste de Trocas Seguras
-  addItem(testUserA, 'racao_cringe', 3);
-  const tradeProp = createTradeProposal(testUserA, testUserB, { type: 'item', id: 'racao_cringe', amount: 1 });
+  // 2. Teste de Trocas Seguras (Itens e Moedas)
+  addItem(testUserA, 'cafe_expresso', 3);
+  const tradeProp = createTradeProposal(testUserA, testUserB, { type: 'item', id: 'cafe_expresso', amount: 1 });
   assert.equal(tradeProp.success, true, 'Proposta de troca válida deve ser criada.');
 
   const confirm1 = confirmTrade(tradeProp.session.id, testUserA);
@@ -43,74 +27,54 @@ try {
 
   const confirm2 = confirmTrade(tradeProp.session.id, testUserB);
   assert.equal(confirm2.completed, true, 'Após ambas as confirmações, a troca deve ser concluída.');
-  assert.ok(hasItem(testUserB, 'racao_cringe', 1), 'O receptor deve ter recebido o item.');
+  assert.ok(hasItem(testUserB, 'cafe_expresso', 1), 'O receptor deve ter recebido o item.');
 
-  // 4. Teste de Expedição Passiva AFK
-  const expRes = startExpedition(testUserA, 2);
-  assert.equal(expRes.success, true, 'Expedição de 2h deve ser iniciada.');
-  const activeExp = getActiveExpedition(testUserA);
-  assert.ok(activeExp, 'Expedição ativa deve ser encontrada.');
+  // Teste de cancelamento de troca
+  const testUserC = `user_test_c_${testRunId}`;
+  const testUserD = `user_test_d_${testRunId}`;
+  addItem(testUserC, 'cafe_expresso', 2);
+  const cancelProp = createTradeProposal(testUserC, testUserD, { type: 'item', id: 'cafe_expresso', amount: 1 });
+  assert.equal(cancelProp.success, true);
+  const cancelRes = cancelTrade(cancelProp.session.id, testUserC);
+  assert.equal(cancelRes.success, true, 'Cancelamento da proposta de troca deve funcionar.');
 
-  // Bloqueio de ação enquanto em expedição
-  const blockedAttack = attackWorldBoss(testUserA);
-  assert.equal(blockedAttack.success, false, 'Pet em expedição não deve poder atacar o World Boss.');
-  assert.equal(blockedAttack.reason, 'on_expedition', 'Motivo deve ser on_expedition.');
-
-  // 5. Teste World Boss ALPHA com usuário com pet livre
-  const boss = getWorldBoss();
-  assert.ok(boss, 'World Boss deve estar disponível.');
-  assert.equal(boss.title, 'ALPHA', 'World Boss deve possuir o título ALPHA.');
-  assert.equal(boss.level, '???', 'Nível do Boss deve ser ???.');
-
-  const attackRes = attackWorldBoss(testUserB);
-  assert.equal(attackRes.success, true, 'Ataque ao Boss pelo pet livre deve ser computado com sucesso.');
-  assert.ok(attackRes.damage > 0, 'Dano causado deve ser maior que zero.');
-
-  // 6. Teste de Temas Visuais com Feijões Mágicos
+  // 3. Teste de Temas Visuais com Feijões Mágicos
   const themeBuy = buyTheme(testUserA, 'ouro');
   assert.equal(themeBuy.success, true, 'Compra de tema com Feijões Mágicos deve ter sucesso.');
   const userAcc = getUserAccount(testUserA);
   assert.equal(userAcc.equippedTheme, 'ouro', 'Tema Ouro deve estar equipado no perfil.');
 
-  // 7. Teste de Votos Top.gg (Recompensas e Bônus Fim de Semana)
+  // 4. Teste de Votos Top.gg (Recompensas e Bônus Fim de Semana)
   assert.equal(verifyWebhookAuth('teste'), true, 'Sem secret configurado deve validar webhook.');
 
   const voteNormal = processTopggVote({ user: testUserA, isWeekend: false });
   assert.equal(voteNormal.success, true, 'Voto comum no Top.gg deve ser processado.');
   assert.equal(voteNormal.coins, 100, 'Recompensa comum deve ser 100 moedas.');
-  assert.equal(hasItem(testUserA, 'racao_cringe', 1), true, 'Usuário deve receber 1x Ração da Floresta.');
+  assert.equal(hasItem(testUserA, 'cafe_expresso', 2), true, 'Usuário deve receber 1x Café Encantado.');
 
   const voteWeekend = processTopggVote({ user: testUserB, isWeekend: true });
   assert.equal(voteWeekend.success, true, 'Voto no fim de semana no Top.gg deve ser processado.');
   assert.equal(voteWeekend.coins, 200, 'Recompensa de fim de semana deve ser 200 moedas (2x).');
-  assert.equal(hasItem(testUserB, 'pocao_vida', 1), true, 'Usuário deve receber 1x Poção Revitalizante.');
+  assert.equal(hasItem(testUserB, 'pocao_brilho', 1), true, 'Usuário deve receber 1x Elixir de Estrelas.');
+  const accB = getUserAccount(testUserB);
+  assert.equal(accB.magicBeans, 1, 'Fim de semana deve conceder 1 Feijão Mágico.');
 
-  console.log('Verificação de Top.gg, Duelos, Trocas, Expedições AFK, World Boss ALPHA e Temas: OK');
+  console.log('Verificação de Top.gg, Trocas Seguras e Temas Visuais com Feijões Mágicos: OK');
 } finally {
-  // Limpeza rigorosa de dados de teste para não poluir rankings nem produção
   const cleanFiles = [
     path.join(__dirname, '..', 'data', 'economy.json'),
-    path.join(__dirname, '..', 'data', 'pets.json'),
-    path.join(__dirname, '..', 'data', 'world_boss.json'),
-    path.join(__dirname, '..', 'data', 'expeditions.json'),
     path.join(__dirname, '..', 'data', 'inventory.json'),
+    path.join(__dirname, '..', 'data', 'trades.json'),
   ];
 
   for (const file of cleanFiles) {
     if (fs.existsSync(file)) {
       try {
         const data = JSON.parse(fs.readFileSync(file, 'utf8'));
-        if (file.endsWith('world_boss.json')) {
-          if (data.participants) {
-            delete data.participants[testUserA];
-            delete data.participants[testUserB];
-          }
-        } else {
-          delete data[testUserA];
-          delete data[testUserB];
-        }
+        delete data[testUserA];
+        delete data[testUserB];
         fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
-      } catch (e) {}
+      } catch (_) {}
     }
   }
 }

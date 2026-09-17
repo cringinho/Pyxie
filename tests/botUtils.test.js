@@ -76,67 +76,12 @@ try {
 
   assert.ok(t('vote.title', 'pt').includes('Vote na Pyxie'), 'Tradução pt deve funcionar');
   assert.ok(t('vote.title', 'en').includes('Vote for Pyxie'), 'Tradução en deve funcionar');
-  assert.equal(getCanvasStrings('pt').pet.level, 'Nível');
-  assert.equal(getCanvasStrings('en').pet.level, 'Level');
+  assert.ok(getCanvasStrings('pt').ship.person1);
+  assert.ok(getCanvasStrings('en').ship.person1);
 
   // Testes de renderização Canvas em múltiplos idiomas:
-  const { renderPetCard, renderDexCard, renderExpeditionMap } = require('../src/services/petRenderer');
   const { renderShipCard } = require('../src/services/shipRenderer');
   const { renderTarotCard } = require('../src/services/tarotRenderer');
-
-  const mockPet = {
-    id: 'test-pet-1',
-    key: 'cinna',
-    name: 'Cinna',
-    element: 'CHARME',
-    species: 'Cinna',
-    level: 5,
-    hunger: 80,
-    happiness: 90,
-    energy: 100,
-    xp: 50,
-    xpToNext: 200,
-    stats: { hp: 60, maxHp: 60, atk: 15, def: 12, spd: 20 },
-  };
-
-  const petCardPt = renderPetCard(mockPet, 'pt');
-  const petCardEn = renderPetCard(mockPet, 'en');
-  assert.ok(Buffer.isBuffer(petCardPt) && petCardPt.length > 1000, 'Pet card PT deve renderizar buffer válido');
-  assert.ok(Buffer.isBuffer(petCardEn) && petCardEn.length > 1000, 'Pet card EN deve renderizar buffer válido');
-
-  const mockMonsterDef = {
-    key: 'cinna',
-    name: 'Cinna',
-    element: 'CHARME',
-    rarity: 'INICIAL',
-    description: 'Coelhinha mística.',
-    baseStats: { hp: 55, atk: 12, def: 10, spd: 18 },
-  };
-  const dexCardPt = renderDexCard(mockMonsterDef, false, true, false, 'pt');
-  const dexCardEn = renderDexCard(mockMonsterDef, false, true, false, 'en');
-  const dexCardLockedEn = renderDexCard(mockMonsterDef, false, false, false, 'en');
-  const dexCardShinyLockedEn = renderDexCard(mockMonsterDef, true, true, false, 'en');
-  assert.ok(Buffer.isBuffer(dexCardPt) && dexCardPt.length > 1000);
-  assert.ok(Buffer.isBuffer(dexCardEn) && dexCardEn.length > 1000);
-  assert.ok(Buffer.isBuffer(dexCardLockedEn) && dexCardLockedEn.length > 1000);
-  assert.ok(Buffer.isBuffer(dexCardShinyLockedEn) && dexCardShinyLockedEn.length > 1000);
-
-  const mockRun = {
-    zone: { id: 'bosque', name: 'Bosque dos Guizos' },
-    coinsAccumulated: 250,
-    chestsFound: [{}],
-    eggsFound: [{}],
-    step: 8,
-    playerPos: { x: 1, y: 2 },
-    exitPos: { x: 4, y: 4 },
-    grid: [
-      [{ revealed: true, visited: true, eventType: 'EMPTY' }, { revealed: true, visited: false, eventType: 'CHEST' }],
-    ],
-  };
-  const mapPt = renderExpeditionMap(mockRun, mockPet, 'pt');
-  const mapEn = renderExpeditionMap(mockRun, mockPet, 'en');
-  assert.ok(Buffer.isBuffer(mapPt) && mapPt.length > 1000);
-  assert.ok(Buffer.isBuffer(mapEn) && mapEn.length > 1000);
 
   const mockMemberA = { id: 'userA', displayName: 'Hero' };
   const mockMemberB = { id: 'userB', displayName: 'Companion' };
@@ -221,26 +166,12 @@ try {
   const agendaEmbedEn = agendaCmd.buildAgendaEmbed(null, Date.now(), 'en');
   assert.ok(agendaEmbedPt.data.title.includes('Agenda de Automações'), 'Agenda PT ok');
   assert.ok(agendaEmbedEn.data.title.includes('Automation Schedule'), 'Agenda EN ok');
-  // 8. Pet Duelo, Boss, Expedição, Loja, Inventário, Adoção e Dex:
-  const petdueloCmd = require('../src/commands/petduelo');
-  const bossCmd = require('../src/commands/boss');
-  const expedicaoCmd = require('../src/commands/expedicao');
+  // 8. Loja e Inventário:
   const lojaCmd = require('../src/commands/loja');
   const inventarioCmd = require('../src/commands/inventario');
-  const adocaoCmd = require('../src/commands/adocao');
-  const dexCmd = require('../src/commands/dex');
 
-  assert.ok(t('duel.embedTitle', 'pt').includes('Coliseu de Pymons'), 'Duelo PT ok');
-  assert.ok(t('duel.embedTitle', 'en').includes('Colosseum'), 'Duelo EN ok');
-
-  assert.ok(t('boss.title', 'pt', { name: 'Titã' }).includes('World Boss Semanal'), 'Boss PT ok');
-  assert.ok(t('boss.title', 'en', { name: 'Titan' }).includes('Weekly World Boss'), 'Boss EN ok');
-
-  assert.ok(t('expedition.availableTitle', 'pt').includes('Expedições Passivas'), 'Expedição PT ok');
-  assert.ok(t('expedition.availableTitle', 'en').includes('Passive Pymon Expeditions'), 'Expedição EN ok');
-
-  const shopEmbedPt = lojaCmd.buildShopEmbed('comida', 'pt');
-  const shopEmbedEn = lojaCmd.buildShopEmbed('comida', 'en');
+  const shopEmbedPt = lojaCmd.buildShopEmbed('bau', 'pt');
+  const shopEmbedEn = lojaCmd.buildShopEmbed('bau', 'en');
   assert.ok(shopEmbedPt.data.title.includes('Lojinha'), 'Loja PT ok');
   assert.ok(shopEmbedEn.data.title.includes('Shop'), 'Loja EN ok');
 
@@ -248,16 +179,6 @@ try {
   const invEmbedEn = inventarioCmd.buildInventoryEmbed('user-1', 'Adventurer', null, 'en');
   assert.ok(invEmbedPt.data.title.includes('Mochila'), 'Inventario PT ok');
   assert.ok(invEmbedEn.data.title.includes('Backpack'), 'Inventario EN ok');
-
-  const adocaoEmbedPt = adocaoCmd.buildDexEmbed('cinna', 'pt');
-  const adocaoEmbedEn = adocaoCmd.buildDexEmbed('cinna', 'en');
-  assert.ok(adocaoEmbedPt.data.title.includes('Escolha seu Inicial'), 'Adoção PT ok');
-  assert.ok(adocaoEmbedEn.data.title.includes('Choose Your Starter'), 'Adoção EN ok');
-
-  const dexEmbedPt = dexCmd.buildDexView('user-1', 'Explorador', 'cinna', false, 'pt');
-  const dexEmbedEn = dexCmd.buildDexView('user-1', 'Explorer', 'cinna', false, 'en');
-  assert.ok(dexEmbedPt.embeds[0].data.description.includes('COMPÊNDIO'), 'Dex PT ok');
-  assert.ok(dexEmbedEn.embeds[0].data.description.includes('COMPENDIUM'), 'Dex EN ok');
 
   releaseBotLock();
   assert.equal(fs.existsSync(lockFile), false, 'O lock deve ser removido ao encerrar.');

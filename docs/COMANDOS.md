@@ -5,52 +5,15 @@ A **Pyxie** suporta comandos modernos via **Slash Commands (`/`)** padronizados 
 ---
 
 ## 🧭 Sumário de Módulos
-1. [🐾 Pymons, Tamagotchi & Masmorras](#-1-pymons-tamagotchi--masmorras)
-2. [💰 Economia, Lojinha & Profissões](#-2-economia-lojinha--profissões)
+1. [💰 Economia, Lojinha & Profissões](#-1-economia-lojinha--profissões)
+2. [🎲 Jogos Rápidos & Minigames Sociais](#-2-jogos-rápidos--minigames-sociais)
 3. [🔮 Tarot, Amor & Social](#-3-tarot-amor--social)
 4. [👑 Perfil, Títulos & Cosméticos](#-4-perfil-títulos--cosméticos)
 5. [⚙️ Utilidades & Administração](#-5-utilidades--administração)
 
 ---
 
-## 🐾 1. Pymons, Tamagotchi & Masmorras
-
-### `/py-pymons` (ou `py!pymons`)
-Abre o painel central Tamagotchi do seu Pymon ativo. Permite:
-- **Cuidar:** Alimentar, dar carinho, colocar para dormir e recuperar energia.
-- **Chocadeira:** Chocar ovos em ninhos temporais com cálculo delta-time.
-- **Mochila & Loja:** Utilizar itens consumíveis, rações e poções diretamente no pet.
-- **Subcomandos:** `/py-pymons painel` e `/py-pymons renomear [novo_nome]`.
-
-### `/py-dex` (ou `py!dex`)
-Exibe o compêndio completo de todas as 10 espécies oficiais de Pymons. Criaturas já descobertas aparecem coloridas com dados de raridade e elemento; espécies ainda não possuídas ficam em silhueta misteriosa. Permite inspecionar versões normais, Shiny e ALPHA.
-
-### `/py-explore [zone]` (ou `py!explore` / `py!explorar`)
-Inicia uma expedição em masmorras procedurais 2D onde você controla seu Pymon usando botões direcionais (D-Pad) em busca de baús de tesouro, combates contra monstros e ovos raros.
-
-### `/py-expedition [duration]` (ou `py!expedition` / `py!expedicao [2|4|8]`)
-Envia seu Pymon em uma expedição passiva (AFK) enquanto você estuda, trabalha ou joga:
-- 🟢 **2 Horas:** 150-300 XP • 200-400 Moedas • Comida
-- 🟡 **4 Horas:** 400-700 XP • 500-900 Moedas • Poção + 15% Chance de Ovo
-- 🟣 **8 Horas:** 900-1600 XP • 1200-2200 Moedas • Banquete + 10% Feijão 🌱 + 25% Ovo Raro 🥚✨
-
-### `/py-duel [opponent] [bet]` (ou `py!duel` / `py!duelo @usuario [aposta]`)
-Desafia outro treinador para uma batalha RPG por turnos na arena:
-- **Limite:** Até 3 duelos por dia por jogador.
-- **Aposta:** Opcional (0 a 50.000 moedas).
-- **Atributos:** ATK, DEF e VEL influenciam no dano e na chance de esquiva.
-- **Vantagens Elementais:** Causam +25% de dano e reduzem em 20% o dano recebido.
-
-### `/py-boss [subcommand]` (ou `py!boss`)
-Enfrente o **World Boss Semanal ALPHA** em cooperação com todos os servidores do Discord:
-- `/py-boss status`: Mostra a barra de vida, elemento, aura avermelhada e ranking de dano atual.
-- `/py-boss atacar`: Desfere um ataque poderoso com seu Pymon ativo (Cooldown: 10 min).
-- `/py-boss ranking`: Lista os maiores causadores de dano contra o titã.
-- 🎁 **Recompensa do MVP:** O jogador #1 em dano recebe o próprio **Pymon versão ALPHA (🔴 Aura Avermelhada)** + 3 🌱 Feijões Mágicos + 3.000 Moedas.
-
----
-
-## 💰 2. Economia, Lojinha & Profissões
+## 💰 1. Economia, Lojinha & Profissões
 
 ### `/py-daily` (ou `py!daily` / `py!diario`)
 Resgata sua recompensa diária em Moedinhas (com 1% de chance de obter 1 Feijão Mágico 🌱).
@@ -60,15 +23,15 @@ Resgata sua recompensa diária em Moedinhas (com 1% de chance de obter 1 Feijão
 Consulta seus saldos de Moedinhas, Feijões Mágicos e sua posição no ranking de riqueza.
 
 ### `/py-rank [category]` (ou `py!rank` / `py!ranking`)
-Exibe a classificação global e do servidor nas categorias de Moedas, Feijões Mágicos e Nível de Pymons.
+Exibe a classificação global e do servidor nas categorias de Moedinhas e Feijões Mágicos.
 
-### `/py-shop`, `/py-buy [item]`, `/py-sell [item]`, `/py-inventory`, `/py-use [item]`
-(Prefixos: `py!shop`, `py!loja`, `py!buy`, `py!comprar`, `py!sell`, `py!vender`, `py!inventory`, `py!inventario`, `py!use`, `py!usar`)  
-Gerencie seu inventário de itens, compre rações e poções na loja, venda itens coletados em dungeons ou consuma itens no seu Pymon ativo.
+### `/py-shop`, `/py-buy [item]`, `/py-sell [item]`, `/py-inventory`
+(Prefixos: `py!shop`, `py!loja`, `py!buy`, `py!comprar`, `py!sell`, `py!vender`, `py!inventory`, `py!inventario`)  
+Gerencie seu inventário de itens, compre baús de tesouro e relíquias na loja, ou venda itens armazenados na mochila.
 
 ### `/py-trade [user] [type] [identifier] [amount]` (ou `py!trade` / `py!trocar @usuario`)
-Inicia uma proposta de troca segura e bilateral de itens, moedas ou Pymons com outro membro:
-- **Segurança:** Ambos os jogadores devem clicar em "Confirmar Troca" para a transferência ocorrer.
+Inicia uma proposta de troca segura e bilateral de itens ou moedas com outro membro:
+- **Segurança:** Ambos os usuários devem clicar em "Confirmar Troca" para a transferência ocorrer.
 - **Cooldown:** 30 minutos após cada troca concluída.
 
 ### `/py-profession [profession]` (ou `py!profession` / `py!profissao`)
@@ -78,7 +41,26 @@ Escolha sua vocação (Programador, Alquimista, Músico, Explorador, Cozinheiro,
 Mini-game interativo de decisões técnicas relacionadas à sua carreira (a cada 3 horas), com remuneração em Moedinhas e 2% de chance de bônus em Feijão Mágico 🌱.
 
 ### `/py-vote` (ou `py!vote` / `py!votar`)
-Exibe o link oficial de votação no Top.gg para resgatar Moedinhas gratuitas, Rações e XP a cada 12 horas (recompensas em dobro no fim de semana).
+Exibe o link oficial de votação no Top.gg para resgatar Moedinhas gratuitas e itens a cada 12 horas (recompensas em dobro com Feijão Mágico no fim de semana).
+
+---
+
+## 🎲 2. Jogos Rápidos & Minigames Sociais
+
+### `/py-jokenpo <oponente> [aposta]` (ou `py!jokenpo` / `py!ppt`)
+Desafie outro membro para uma partida de Pedra, Papel e Tesoura com botões e aposta opcional de moedas.
+
+### `/py-cookie` (ou `py!biscoito` / `py!sorte`)
+Quebre seu biscoito da sorte mágico (1x ao dia). Revela previsões místicas, números da sorte e chances de encontrar moedas. Se já abriu no dia, oferece o botão de **Bônus Web (10s)** para desbloquear um biscoito extra.
+
+### `/py-likely [membro1] [membro2] [situacao]` (ou `py!provavel` / `py!votacao`)
+Inicia uma votação interativa de 60 segundos para eleger quem do servidor é mais provável de cometer uma situação engraçada.
+
+### `/py-dice [lados] [quantidade]` (ou `py!dado` / `py!rolar`)
+Rola dados poliédricos de RPG (d4 a d100) com soma e destaques de Acerto Crítico (Nat 20) e Falha Crítica (Nat 1).
+
+### `/py-coinflip <lado> <aposta>` (ou `py!coinflip` / `py!caraoucoroa`)
+Aposta moedas contra a Pyxie em Cara ou Coroa com 50% de chance de dobrar o valor ou perder.
 
 ---
 
@@ -101,7 +83,7 @@ Mini-game casual da comunidade.
 ## 👑 4. Perfil, Títulos & Cosméticos
 
 ### `/py-profile [user]` (ou `py!profile` / `py!perfil [@usuario]`)
-Exibe o cartão completo de aventureiro com seu companheiro Pymon, cônjuge, saldos, carreira e compêndio:
+Exibe o cartão completo de aventureiro com cônjuge, saldos, vocação e dedicação de trabalho:
 - **Títulos de Prestígio:** Compre e equipe títulos raros usando Feijões Mágicos 🌱.
 - **Temas & Cores Visuais:** Desbloqueie temas de cores (*Ouro Real, Esmeralda Mística, Nebulosa Cósmica, Rosa Neon, Fogo Carmesim*).
 
@@ -138,22 +120,3 @@ Exibe as próximas tarefas agendadas e automações em execução.
 
 ### `/py-emojis` *(Admin)*
 Exporta um catálogo em JSON com todos os emojis customizados do servidor.
-
----
-
-## 🎲 6. Jogos Rápidos & Comunidade (Impacto Zero)
-
-### `/py-jokenpo <oponente> [aposta]` (ou `py!jokenpo` / `py!ppt`)
-Desafie outro membro para uma partida de Pedra, Papel e Tesoura com botões e aposta opcional de moedas.
-
-### `/py-cookie` (ou `py!biscoito` / `py!sorte`)
-Quebre seu biscoito da sorte mágico (1x ao dia). Revela previsões místicas, números da sorte e chances de encontrar moedas. Se já abriu no dia, oferece o botão de **Bônus Web (10s)** para desbloquear um biscoito extra.
-
-### `/py-likely [membro1] [membro2] [situacao]` (ou `py!provavel` / `py!votacao`)
-Inicia uma votação interativa de 60 segundos para eleger quem do servidor é mais provável de cometer uma situação engraçada.
-
-### `/py-dice [lados] [quantidade]` (ou `py!dado` / `py!rolar`)
-Rola dados poliédricos de RPG (d4 a d100) com soma e destaques de Acerto Crítico (Nat 20) e Falha Crítica (Nat 1).
-
-### `/py-coinflip <lado> <aposta>` (ou `py!coinflip` / `py!caraoucoroa`)
-Aposta moedas contra a Pyxie em Cara ou Coroa com 50% de chance de dobrar o valor ou perder.

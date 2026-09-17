@@ -6,9 +6,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require('discord.js');
-const { getUserInventory, getItemDefinition, sellItem, openChest, formatItemEffects, removeItem } = require('../services/inventory');
-const { useItemOnActivePet, getActivePet, hasClaimedStarterKit, putEggInIncubator, getIncubator, speedupUserIncubator } = require('../services/pets');
-const { createBonusSession } = require('../services/bonusTimer');
+const { getUserInventory, getItemDefinition, sellItem, openChest, formatItemEffects } = require('../services/inventory');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { formatCoins, t } = require('../utils/i18n');
 const { INVENTORY } = require('./commandNames');
@@ -16,11 +14,6 @@ const { INVENTORY } = require('./commandNames');
 function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = null) {
   const inv = getUserInventory(userId);
   const entries = Object.entries(inv).filter(([, count]) => count > 0);
-  const activePet = getActivePet(userId);
-
-  const petLine = activePet
-    ? `> ${activePet.emoji} **${activePet.name}** (Nv. ${activePet.level})`
-    : t('inventory.noActivePet', source);
 
   const itemLines = entries.length === 0
     ? [t('inventory.emptyBackpack', source)]
@@ -35,9 +28,6 @@ function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = nu
       });
 
   const desc = [
-    t('inventory.activePetHeader', source),
-    petLine,
-    '',
     t('inventory.storedItemsHeader', source),
     '',
     itemLines.join('\n\n'),
@@ -49,7 +39,7 @@ function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = nu
     .setColor(PYXIE_COLORS.magenta || '#e60067')
     .setTitle(t('inventory.backpackTitle', source, { user: userTag }))
     .setDescription(desc)
-    .setFooter({ text: t('common.footer', source) })
+    .setFooter({ text: 'Pyxie' })
     .setTimestamp();
 }
 
@@ -63,23 +53,8 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null) 
         .setCustomId(`hub_tab:shop:${userId}`)
         .setLabel(t('inventory.btnVisitShop', source))
         .setEmoji('🛒')
-        .setStyle(ButtonStyle.Primary),
-      new ButtonBuilder()
-        .setCustomId(`hub_tab:dungeon:${userId}`)
-        .setLabel(t('inventory.btnExploreDungeons', source))
-        .setEmoji('🧭')
         .setStyle(ButtonStyle.Primary)
     );
-
-    if (!hasClaimedStarterKit(userId)) {
-      emptyRow.addComponents(
-        new ButtonBuilder()
-          .setCustomId(`hub_claim_kit:${userId}`)
-          .setLabel(t('inventory.btnClaimKit', source))
-          .setEmoji('🎁')
-          .setStyle(ButtonStyle.Success)
-      );
-    }
 
     return [emptyRow];
   }
@@ -115,30 +90,6 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null) 
             .setEmoji('🔓')
             .setStyle(ButtonStyle.Success)
         );
-      } else if (item.effects && item.effects.isEgg) {
-        actionRow.addComponents(
-          new ButtonBuilder()
-            .setCustomId(`inv_place_egg:${selectedItemId}:${userId}`)
-            .setLabel(t('inventory.placeEgg', source))
-            .setEmoji('🪺')
-            .setStyle(ButtonStyle.Success)
-        );
-      } else if (item.effects && item.effects.isHourglass) {
-        actionRow.addComponents(
-          new ButtonBuilder()
-            .setCustomId(`inv_use_hourglass:${selectedItemId}:${userId}`)
-            .setLabel('Usar na Chocadeira (-2h)')
-            .setEmoji('⏳')
-            .setStyle(ButtonStyle.Success)
-        );
-      } else {
-        actionRow.addComponents(
-          new ButtonBuilder()
-            .setCustomId(`inv_use_item:${selectedItemId}:${userId}`)
-            .setLabel(t('inventory.useOnPet', source))
-            .setEmoji('✨')
-            .setStyle(ButtonStyle.Success)
-        );
       }
 
       if (item.sellPrice) {
@@ -164,9 +115,9 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null) 
 
   actionRow.addComponents(
     new ButtonBuilder()
-      .setCustomId(`hub_tab:pet:${userId}`)
-      .setLabel(t('inventory.btnPet', source))
-      .setEmoji('🐾')
+      .setCustomId(`hub_tab:shop:${userId}`)
+      .setLabel(t('inventory.btnVisitShop', source))
+      .setEmoji('🛒')
       .setStyle(ButtonStyle.Primary)
   );
 
@@ -177,11 +128,7 @@ function isInventoryInteraction(interaction) {
   if (!interaction.customId) return false;
   return (
     interaction.customId.startsWith('inv_item_select') ||
-    interaction.customId.startsWith('inv_use_item') ||
-    interaction.customId.startsWith('inv_use_hourglass') ||
-    interaction.customId.startsWith('inv_claim_bonus') ||
     interaction.customId.startsWith('inv_open_chest') ||
-    interaction.customId.startsWith('inv_place_egg') ||
     interaction.customId.startsWith('inv_sell_item')
   );
 }
@@ -209,60 +156,7 @@ async function handleInventoryInteraction(interaction) {
     return interaction.update({ embeds: [embed], components });
   }
 
-  // 2. Usar Item no pet ativo
-  if (action === 'inv_use_item') {
-    const itemId = parts[1];
-    const result = useItemOnActivePet(userId, itemId);
-
-    if (!result.success) {
-      if (result.reason === 'no_active_pet') {
-        return interaction.reply({
-          content: t('useCmd.noPet', interaction),
-          flags: 64,
-        });
-      }
-      return interaction.reply({
-        content: `❌ ${result.message || t('common.error', interaction)}`,
-        flags: 64,
-      });
-    }
-
-    const embed = buildInventoryEmbed(userId, userTag, null, interaction);
-    const components = buildInventoryComponents(userId, null, interaction);
-    const fxSummary = result.effectsSummary ? ` (${result.effectsSummary})` : '';
-
-    return interaction.update({
-      content: t('inventory.usedOnPet', interaction, { item: result.item ? result.item.name : itemId, fx: fxSummary }),
-      embeds: [embed],
-      components,
-    });
-  }
-
-  // 3. Colocar ovo na chocadeira
-  if (action === 'inv_place_egg') {
-    const eggId = parts[1];
-    const incubator = getIncubator(userId);
-    const emptySlot = incubator.slots.find((s) => s.empty);
-    if (!emptySlot) {
-      return interaction.reply({
-        content: t('inventory.noIncubatorSlot', interaction),
-        flags: 64,
-      });
-    }
-    const res = putEggInIncubator(userId, eggId, emptySlot.slotIndex);
-    if (!res.success) {
-      return interaction.reply({ content: `❌ ${res.message}`, flags: 64 });
-    }
-    const embed = buildInventoryEmbed(userId, userTag, null, interaction);
-    const components = buildInventoryComponents(userId, null, interaction);
-    return interaction.update({
-      content: res.message,
-      embeds: [embed],
-      components,
-    });
-  }
-
-  // 4. Abrir Baú
+  // 2. Abrir Baú
   if (action === 'inv_open_chest') {
     const chestId = parts[1];
     const openRes = openChest(userId, chestId);
@@ -285,7 +179,7 @@ async function handleInventoryInteraction(interaction) {
     });
   }
 
-  // 5. Vender Item
+  // 3. Vender Item
   if (action === 'inv_sell_item') {
     const itemId = parts[1];
     const sellRes = sellItem(userId, itemId, 1);
@@ -306,99 +200,29 @@ async function handleInventoryInteraction(interaction) {
       components,
     });
   }
-
-  // 6. Usar Ampulheta Mágica na Chocadeira (-2h)
-  if (action === 'inv_use_hourglass') {
-    const incubator = getIncubator(userId);
-    const incubatingSlots = incubator.slots.filter((s) => !s.empty && !s.ready);
-
-    if (incubatingSlots.length === 0) {
-      return interaction.reply({
-        content: '⚠️ Você não possui nenhum ovo em processo de choco na Chocadeira! Sua Ampulheta Mágica está guardada na mochila. Coloque um ovo para poder acelerar.',
-        flags: 64,
-      });
-    }
-
-    const speedRes = speedupUserIncubator(userId, 2);
-    if (!speedRes.success) {
-      return interaction.reply({
-        content: `❌ ${speedRes.message || 'Não foi possível acelerar a chocadeira.'}`,
-        flags: 64,
-      });
-    }
-
-    removeItem(userId, 'ampulheta_tempo_2h', 1);
-    const embed = buildInventoryEmbed(userId, userTag, null, interaction);
-    const components = buildInventoryComponents(userId, null, interaction);
-
-    return interaction.update({
-      content: '⏳ **Efeito Temporal:** Você usou **1x Ampulheta Mágica (2h)** e adiantou 2 horas de choco na Chocadeira com sucesso!',
-      embeds: [embed],
-      components,
-    });
-  }
-
-  // 7. Gerar link de Bônus Web
-  if (action === 'inv_claim_bonus') {
-    const lang = getLanguage(interaction);
-    const isEn = lang === 'en';
-    const session = createBonusSession(userId, 'item_bonus', {}, lang);
-    const bonusEmbed = new EmbedBuilder()
-      .setColor(PYXIE_COLORS.gold || '#facc15')
-      .setTitle(isEn ? '🎁  ✦  Claim Web Bonus (10s)' : '🎁  ✦  Resgatar Bônus Web (10s)')
-      .setDescription(
-        isEn
-          ? 'Visit the sponsored web page and wait **10 seconds** to claim for free:\n\n' +
-            '> ⏳ **1x Magic Hourglass (2h)** added to your backpack\n' +
-            '> 🪙 **+150 Coins** instantly'
-          : 'Acesse a página patrocinada e aguarde **10 segundos** para resgatar gratuitamente:\n\n' +
-            '> ⏳ **1x Ampulheta Mágica (2h)** para guardar na mochila\n' +
-            '> 🪙 **+150 Moedas** instantâneas'
-      )
-      .setFooter({ text: isEn ? 'Pyxie Bonus' : 'Bônus Pyxie' })
-      .setTimestamp();
-
-    const linkRow = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setLabel(isEn ? '⚡ Open 10s Bonus Page' : '⚡ Abrir Página de Bônus (10s)')
-        .setStyle(ButtonStyle.Link)
-        .setURL(session.url)
-        .setEmoji('🎁')
-    );
-
-    return interaction.reply({
-      embeds: [bonusEmbed],
-      components: [linkRow],
-      flags: 64,
-    });
-  }
 }
 
 module.exports = {
   name: INVENTORY,
-  data: new SlashCommandBuilder()
-    .setName(INVENTORY)
-    .setDescription('View and manage your backpack of items and eggs.')
-    .setDescriptionLocalizations({
-      'pt-BR': 'Visualiza e gerencia a sua mochila de itens e ovos.',
-    }),
-  aliases: ['inventory', 'inventario', 'py-inventario', 'py-inventory', 'mochila', 'inv', 'bag'],
-  isInventoryInteraction,
-  handleInventoryInteraction,
+  aliases: ['inventory', 'inventario', 'py-inventory', 'py-inventario', 'mochila'],
   buildInventoryEmbed,
   buildInventoryComponents,
-  async executeSlash({ interaction }) {
-    const userId = interaction.user.id;
-    const userTag = interaction.user.displayName || interaction.user.username;
-    const embed = buildInventoryEmbed(userId, userTag, null, interaction);
-    const components = buildInventoryComponents(userId, null, interaction);
-    await interaction.editReply({ embeds: [embed], components });
-  },
+  isInventoryInteraction,
+  handleInventoryInteraction,
+  data: new SlashCommandBuilder()
+    .setName(INVENTORY)
+    .setDescription('Open your backpack to view and manage stored items.')
+    .setDescriptionLocalizations({
+      'pt-BR': 'Abre sua mochila para visualizar e gerenciar itens guardados.',
+    }),
   async executePrefix({ message }) {
-    const userId = message.author.id;
-    const userTag = message.author.displayName || message.author.username;
-    const embed = buildInventoryEmbed(userId, userTag, null, message);
-    const components = buildInventoryComponents(userId, null, message);
+    const embed = buildInventoryEmbed(message.author.id, message.author.displayName || message.author.username, null, message);
+    const components = buildInventoryComponents(message.author.id, null, message);
     await message.reply({ embeds: [embed], components });
+  },
+  async executeSlash({ interaction }) {
+    const embed = buildInventoryEmbed(interaction.user.id, interaction.user.displayName || interaction.user.username, null, interaction);
+    const components = buildInventoryComponents(interaction.user.id, null, interaction);
+    await interaction.editReply({ embeds: [embed], components });
   },
 };

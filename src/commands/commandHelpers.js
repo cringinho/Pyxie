@@ -7,18 +7,16 @@ const { getLanguage, t } = require('../utils/i18n');
 
 const MODULE_METADATA = {
   todos: { id: 'todos', label: 'Visão Geral', emoji: '📖', desc: 'Visão geral e índice de todas as categorias' },
-  pymons: { id: 'pymons', label: 'Pymons & RPG', emoji: '🐾', desc: 'Dex, cuidados, chocadeira, masmorras, boss, duelos e expedições' },
-  economia: { id: 'economia', label: 'Economia & Carreiras', emoji: '🪙', desc: 'Moedinhas, trabalho, profissões, rankings e cofres' },
-  loja: { id: 'loja', label: 'Loja & Mochila', emoji: '🎒', desc: 'Comidas, poções, ninho, baús e inventário' },
+  economia: { id: 'economia', label: 'Economia & Carreiras', emoji: '🪙', desc: 'Moedinhas, trabalho, profissões, rankings, trocas e cofres' },
+  loja: { id: 'loja', label: 'Loja & Mochila', emoji: '🎒', desc: 'Baús misteriosos, itens e inventário' },
   tarot: { id: 'tarot', label: 'Tarot Místico', emoji: '🔮', desc: 'Tiragens diárias, 78 arcanos e oráculo do destino' },
   social: { id: 'social', label: 'Social & Casamentos', emoji: '💑', desc: 'Casamentos, divórcios, perfil de aventureiro e afinidade' },
   utilidades: { id: 'utilidades', label: 'Utilidades & Sistema', emoji: '⚙️', desc: 'Status operacional, ping, convite, agenda, idioma e configurações' },
 };
 
-const MODULE_KEYS = ['todos', 'pymons', 'economia', 'loja', 'tarot', 'social', 'utilidades'];
+const MODULE_KEYS = ['todos', 'economia', 'loja', 'tarot', 'social', 'utilidades'];
 const MODULE_EMOJIS = {
   todos: '📖',
-  pymons: '🐾',
   economia: '🪙',
   loja: '🎒',
   tarot: '🔮',
@@ -27,43 +25,11 @@ const MODULE_EMOJIS = {
 };
 
 const COMMAND_CATEGORY_MAP = {
-  // Pymons & RPG
-  vpet: 'pymons',
-  'py-vpet': 'pymons',
-  tamagotchi: 'pymons',
-  'py-tamagotchi': 'pymons',
-  mascote: 'pymons',
-  pet: 'pymons',
-  'py-pet': 'pymons',
-  pymons: 'pymons',
-  'py-pymons': 'pymons',
-  explore: 'pymons',
-  'py-explore': 'pymons',
-  petexplorar: 'pymons',
-  'py-explorar': 'pymons',
-  explorar: 'pymons',
-  duel: 'pymons',
-  'py-duel': 'pymons',
-  petduelo: 'pymons',
-  'py-duelo': 'pymons',
-  duelo: 'pymons',
-  boss: 'pymons',
-  'py-boss': 'pymons',
-  expedition: 'pymons',
-  'py-expedition': 'pymons',
-  expedicao: 'pymons',
-  'py-expedicao': 'pymons',
-  trade: 'pymons',
-  'py-trade': 'pymons',
-  trocar: 'pymons',
-  'py-trocar': 'pymons',
-  dex: 'pymons',
-  'py-dex': 'pymons',
-  adocao: 'pymons',
-  adopt: 'pymons',
-  'py-adopt': 'pymons',
-
   // Economia & Carreiras
+  trade: 'economia',
+  'py-trade': 'economia',
+  trocar: 'economia',
+  'py-trocar': 'economia',
   daily: 'economia',
   'py-daily': 'economia',
   diario: 'economia',
@@ -122,10 +88,6 @@ const COMMAND_CATEGORY_MAP = {
   'py-sell': 'loja',
   vender: 'loja',
   'py-vender': 'loja',
-  use: 'loja',
-  'py-use': 'loja',
-  usar: 'loja',
-  'py-usar': 'loja',
 
   // Tarot Místico
   tarot: 'tarot',
@@ -224,7 +186,6 @@ function getHelpModules(customCommands = null, source = null) {
   const isEn = getLanguage(source) === 'en';
 
   const moduleCommands = {
-    pymons: [],
     economia: [],
     loja: [],
     tarot: [],

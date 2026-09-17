@@ -13,11 +13,9 @@ const { SHOP } = require('./commandNames');
 const { getLanguage, t } = require('../utils/i18n');
 
 const CATEGORY_KEYS = [
-  { key: 'comida', emoji: '🍖' },
-  { key: 'cura', emoji: '🩹' },
-  { key: 'utilitario', emoji: '⏳' },
   { key: 'bau', emoji: '📦' },
-  { key: 'melhoria', emoji: '🏡' },
+  { key: 'reliquia', emoji: '💎' },
+  { key: 'utilitario', emoji: '☕' },
 ];
 
 function getCategories(source = null) {
@@ -29,7 +27,7 @@ function getCategories(source = null) {
   }));
 }
 
-function buildShopEmbed(category = 'comida', source = null) {
+function buildShopEmbed(category = 'bau', source = null) {
   const isEn = getLanguage(source) === 'en';
   const categories = getCategories(source);
   const items = getItemsByCategory(category);
@@ -40,7 +38,7 @@ function buildShopEmbed(category = 'comida', source = null) {
     : items.map((item) => {
         const priceTag = item.buyPrice
           ? `🪙 **${formatCoins(item.buyPrice, source)}**`
-          : (isEn ? '*Rare dungeon item*' : '*Item raro de dungeon*');
+          : (isEn ? '*Special item*' : '*Item especial*');
         const fxText = formatItemEffects(item);
         const effectLabel = isEn ? 'Effect' : 'Efeito';
         const fxLine = fxText ? `\n> 📊 **${effectLabel}:** ${fxText}` : '';
@@ -65,7 +63,7 @@ function buildShopEmbed(category = 'comida', source = null) {
     .setTimestamp();
 }
 
-function buildShopComponents(currentCategory = 'comida', userId = '', source = null) {
+function buildShopComponents(currentCategory = 'bau', userId = '', source = null) {
   const categories = getCategories(source);
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId(`shop_category_select:${userId}`)
@@ -103,12 +101,7 @@ function buildShopComponents(currentCategory = 'comida', userId = '', source = n
       .setCustomId(`hub_tab:inventory:${userId}`)
       .setLabel(t('shop.btnBackpack', source))
       .setEmoji('🎒')
-      .setStyle(ButtonStyle.Primary),
-    new ButtonBuilder()
-      .setCustomId(`hub_tab:pet:${userId}`)
-      .setLabel(t('shop.btnPet', source))
-      .setEmoji('🐾')
-      .setStyle(ButtonStyle.Secondary)
+      .setStyle(ButtonStyle.Primary)
   );
 
   components.push(buttonsRow);
@@ -139,96 +132,90 @@ async function handleShopInteraction(interaction) {
   const userId = interaction.user.id;
 
   if (action === 'shop_category_select') {
-    const selectedCategory = interaction.values[0];
-    const embed = buildShopEmbed(selectedCategory, interaction);
-    const components = buildShopComponents(selectedCategory, userId, interaction);
+    const chosenCat = interaction.values[0];
+    const embed = buildShopEmbed(chosenCat, interaction);
+    const components = buildShopComponents(chosenCat, userId, interaction);
     return interaction.update({ embeds: [embed], components });
   }
 
   if (action === 'shop_buy_select') {
     const itemId = interaction.values[0];
-    const buyResult = buyItem(userId, itemId, 1);
+    const res = buyItem(userId, itemId, 1);
 
-    if (!buyResult.success) {
-      if (buyResult.reason === 'insufficient_coins') {
+    if (!res.success) {
+      if (res.reason === 'insufficient_funds') {
         return interaction.reply({
           content: t('shop.insufficientCoins', interaction, {
-            needed: formatCoins(buyResult.price, interaction),
-            current: formatCoins(buyResult.currentCoins, interaction),
+            needed: formatCoins(res.cost, interaction),
+            current: formatCoins(res.balance, interaction),
           }),
           flags: 64,
         });
       }
       return interaction.reply({
-        content: `❌ ${buyResult.message || 'Falha ao comprar o item.'}`,
+        content: `❌ ${res.message || t('common.error', interaction)}`,
         flags: 64,
       });
     }
 
-    const itemDef = getItemDefinition(itemId);
-    const embed = buildShopEmbed(itemDef ? itemDef.category : 'comida', interaction);
-    const components = buildShopComponents(itemDef ? itemDef.category : 'comida', userId, interaction);
-
-    return interaction.update({
+    const item = getItemDefinition(itemId);
+    return interaction.reply({
       content: t('shop.buySuccess', interaction, {
-        emoji: itemDef ? itemDef.emoji : '📦',
-        name: itemDef ? itemDef.name : itemId,
-        cost: formatCoins(buyResult.totalCost, interaction),
-        balance: formatCoins(buyResult.remainingCoins, interaction),
+        emoji: item ? item.emoji : '📦',
+        name: item ? item.name : itemId,
+        cost: formatCoins(res.cost, interaction),
+        balance: formatCoins(res.newBalance, interaction),
       }),
-      embeds: [embed],
-      components,
+      flags: 64,
     });
   }
 }
 
 module.exports = {
   name: SHOP,
+  aliases: ['shop', 'loja', 'py-shop', 'py-loja', 'mercado', 'comprar'],
+  buildShopEmbed,
+  buildShopComponents,
+  isShopInteraction,
+  handleShopInteraction,
   data: new SlashCommandBuilder()
     .setName(SHOP)
-    .setDescription('Open creature & items shop.')
+    .setDescription('Open the store to buy mystery chests, relics and items.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Abre a Lojinha de Mascotes e Itens de Pyxie.',
+      'pt-BR': 'Abre a lojinha para comprar baús misteriosos, relíquias e itens.',
     })
-    .addStringOption((option) =>
-      option
+    .addStringOption((opt) =>
+      opt
         .setName('categoria')
         .setNameLocalizations({
           'en-US': 'category',
           'en-GB': 'category',
           'pt-BR': 'categoria',
         })
-        .setDescription('Category of the shop to open')
+        .setDescription('Initial category to open')
         .setDescriptionLocalizations({
-          'pt-BR': 'Categoria da loja para abrir',
+          'pt-BR': 'Categoria inicial da lojinha',
         })
         .setRequired(false)
         .addChoices(
-          { name: '🍖 Comidas', value: 'comida' },
-          { name: '🩹 Cura & Estamina', value: 'cura' },
-          { name: '⏳ Utilitários', value: 'utilitario' },
           { name: '📦 Baús Misteriosos', value: 'bau' },
-          { name: '🏡 Melhorias & Ninhos', value: 'melhoria' }
+          { name: '💎 Relíquias & Colecionáveis', value: 'reliquia' },
+          { name: '☕ Utilitários & Guloseimas', value: 'utilitario' }
         )
     ),
-  aliases: ['shop', 'loja', 'py-loja', 'py-shop', 'lojinha', 'mercado', 'mercadinho', 'store'],
-  isShopInteraction,
-  handleShopInteraction,
-  buildShopEmbed,
-  buildShopComponents,
-  async executeSlash({ interaction }) {
-    const userId = interaction.user.id;
-    const directCat = interaction.options?.getString('categoria') || interaction.options?.getString('category') || 'comida';
-    const embed = buildShopEmbed(directCat, interaction);
-    const components = buildShopComponents(directCat, userId, interaction);
-    await interaction.editReply({ embeds: [embed], components });
-  },
   async executePrefix({ message, args }) {
-    const userId = message.author.id;
-    const cat = args && args[0] ? args[0].toLowerCase() : 'comida';
-    const validCat = CATEGORY_KEYS.some((c) => c.key === cat) ? cat : 'comida';
-    const embed = buildShopEmbed(validCat, message);
-    const components = buildShopComponents(validCat, userId, message);
+    const requestedCat = args[0]?.toLowerCase() || 'bau';
+    const validCategory = ['bau', 'reliquia', 'utilitario'].includes(requestedCat)
+      ? requestedCat
+      : 'bau';
+    const embed = buildShopEmbed(validCategory, message);
+    const components = buildShopComponents(validCategory, message.author.id, message);
     await message.reply({ embeds: [embed], components });
+  },
+  async executeSlash({ interaction }) {
+    const category = interaction.options.getString('categoria') || interaction.options.getString('category') || 'bau';
+    const embed = buildShopEmbed(category, interaction);
+    const components = buildShopComponents(category, interaction.user.id, interaction);
+    await interaction.editReply({ embeds: [embed], components });
   },
 };

@@ -21,17 +21,17 @@ const TITLES_CATALOG = {
   },
   explorador: {
     id: 'explorador',
-    name: 'Conquistador de Masmorras',
-    emoji: '⚔️',
+    name: 'Explorador dos Reinos',
+    emoji: '🧭',
     cost: 2,
-    desc: 'Desbravador intrépido dos labirintos procedurais.',
+    desc: 'Desbravador intrépido dos recantos de Cringelândia.',
   },
   shinychaser: {
     id: 'shinychaser',
-    name: 'Caçador de Shinies',
-    emoji: '✨',
+    name: 'Caçador de Tesouros',
+    emoji: '💎',
     cost: 3,
-    desc: 'Colecionador obstinado de criaturas radiantes.',
+    desc: 'Colecionador obstinado de relíquias radiantes.',
   },
   soberano: {
     id: 'soberano',
@@ -50,9 +50,9 @@ const TITLES_CATALOG = {
   lendaviva: {
     id: 'lendaviva',
     name: 'Lenda Viva',
-    emoji: '🌌',
-    cost: 10,
-    desc: 'Seu nome ecoa com prestígio em todos os reinos.',
+    emoji: '⚡',
+    cost: 6,
+    desc: 'Seu nome ecoa por todo o reino com reverência e glória.',
   },
   magnata: {
     id: 'magnata',
@@ -66,7 +66,7 @@ const TITLES_CATALOG = {
 const THEMES_CATALOG = {
   default: { id: 'default', name: 'Padrão Pyxie', emoji: '🌸', color: '#e60067', cost: 0, desc: 'O clássico magenta da Pyxie.' },
   ouro: { id: 'ouro', name: 'Ouro Real', emoji: '👑', color: '#facc15', cost: 2, desc: 'Dourado brilhante para os mais prósperos.' },
-  esmeralda: { id: 'esmeralda', name: 'Esmeralda Mística', emoji: '🌲', color: '#10b981', cost: 2, desc: 'Verde vibrante das florestas dos Pymons.' },
+  esmeralda: { id: 'esmeralda', name: 'Esmeralda Mística', emoji: '🌲', color: '#10b981', cost: 2, desc: 'Verde vibrante das florestas de Cringelândia.' },
   galaxia: { id: 'galaxia', name: 'Nebulosa Cósmica', emoji: '🌌', color: '#8b5cf6', cost: 3, desc: 'Violeta estelar profundo e misterioso.' },
   cyberpunk: { id: 'cyberpunk', name: 'Rosa Neon', emoji: '⚡', color: '#ff1493', cost: 3, desc: 'Brilho neon intenso e futurista.' },
   chama: { id: 'chama', name: 'Fogo Carmesim', emoji: '🔥', color: '#ef4444', cost: 4, desc: 'Vermelho flamejante de pura bravura.' },

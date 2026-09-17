@@ -625,20 +625,15 @@ const PROFESSION_MINIGAMES = {
 
   fotografo: [
     {
-      scenario: '📸 **Fotografia de Ação em Movimento!**\nVocê quer congelar o salto de um Pymon sem borrões. Como ajustar o obturador?',
+      scenario: '📸 **Fotografia de Ação em Movimento!**\nVocê quer congelar o salto de um gato veloz sem borrões. Como ajustar o obturador?',
       correct: 'Velocidade alta (1/1000s ou mais rápida)',
-      scenario: '📸 **Ambiente Escuro!**\nVocê vai tirar uma foto num quarto escuro e quase não dá para enxergar nada. O que você usa?',
-      correct: 'O flash da câmera ou acender as luzes',
       wrongs: [
         'Longa exposição de 10 segundos',
         'Desligar o foco automático e tampar a lente',
         'Diminuir a velocidade para 1/2s',
-        'Tampar a lente com a mão',
-        'Apagar a única lâmpada acesa',
-        'Fechar os olhos bem forte',
       ],
       pt: {
-        scenario: '📸 **Fotografia de Ação em Movimento!**\nVocê quer congelar o salto veloz de um Pymon sem nenhum borrão de movimento. Como regular o obturador?',
+        scenario: '📸 **Fotografia de Ação em Movimento!**\nVocê quer congelar o salto veloz de um gato sem nenhum borrão de movimento. Como regular o obturador?',
         correct: 'Velocidade alta do obturador (1/1000s ou mais rápida)',
         wrongs: [
           'Longa exposição noturna de 15 segundos',
@@ -647,7 +642,7 @@ const PROFESSION_MINIGAMES = {
         ],
       },
       en: {
-        scenario: '📸 **High-Speed Action Photography!**\nYou want to freeze the agile leap of a Pymon with crisp sharpness and no motion blur. How do you set the shutter speed?',
+        scenario: '📸 **High-Speed Action Photography!**\nYou want to freeze the agile leap of a swift cat with crisp sharpness and no motion blur. How do you set the shutter speed?',
         correct: 'Fast shutter speed (1/1000s or faster)',
         wrongs: [
           '15-second long night exposure',

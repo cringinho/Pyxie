@@ -109,8 +109,8 @@ try {
   equipTitle('beans-user', 'cultivador');
   assert.equal(getUserAccount('beans-user').equippedTitle, 'cultivador', 'Equipar título possuído deve funcionar.');
 
-  setUserBio('beans-user', 'Colecionador de Pymons e mestre das masmorras.');
-  assert.equal(getUserAccount('beans-user').bio, 'Colecionador de Pymons e mestre das masmorras.', 'Biografia deve ser salva corretamente.');
+  setUserBio('beans-user', 'Colecionador de riquezas e mestre dos negócios.');
+  assert.equal(getUserAccount('beans-user').bio, 'Colecionador de riquezas e mestre dos negócios.', 'Biografia deve ser salva corretamente.');
   setUserBio('beans-user', '   ');
   assert.equal(getUserAccount('beans-user').bio, null, 'Biografia vazia deve ser redefinida para null.');
 

@@ -26,7 +26,7 @@ function buildVoteView(guildOrSource = null, clientOrBotId = null) {
     t('vote.rewardsTitle', guildOrSource),
     t('vote.rewardCoins', guildOrSource),
     t('vote.rewardItem', guildOrSource),
-    t('vote.rewardXp', guildOrSource),
+    t('vote.rewardBean', guildOrSource),
     '',
     weekend ? t('vote.weekendActive', guildOrSource) : t('vote.weekendTip', guildOrSource),
     '',
@@ -59,9 +59,9 @@ module.exports = {
   ephemeral: false,
   data: new SlashCommandBuilder()
     .setName(commandName)
-    .setDescription('Vote for Pyxie on Top.gg to claim free Coins, Rations, and XP.')
+    .setDescription('Vote for Pyxie on Top.gg to claim free Coins, Items, and Magic Beans.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Vote na Pyxie no Top.gg e ganhe Moedinhas, Rações e XP!',
+      'pt-BR': 'Vote na Pyxie no Top.gg e ganhe Moedinhas, Itens e Feijões Mágicos!',
     }),
   async executePrefix({ message, client }) {
     const view = buildVoteView(message, client?.user?.id);

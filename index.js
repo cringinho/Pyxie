@@ -21,17 +21,10 @@ const tarotCommand = require('./src/commands/tarot');
 const helpCommand = require('./src/commands/help');
 const shopCommand = require('./src/commands/loja');
 const inventoryCommand = require('./src/commands/inventario');
-const petCommand = require('./src/commands/pet');
-const adoptionCommand = require('./src/commands/adocao');
-const dungeonCommand = require('./src/commands/petexplorar');
-const duelCommand = require('./src/commands/petduelo');
-const dexCommand = require('./src/commands/dex');
 const profileCommand = require('./src/commands/perfil');
 const workCommand = require('./src/commands/trabalho');
 const dailyCommand = require('./src/commands/daily');
 const tradeCommand = require('./src/commands/trocar');
-const expeditionCommand = require('./src/commands/expedicao');
-const bossCommand = require('./src/commands/boss');
 const rankingCommand = require('./src/commands/ranking');
 const idiomaCommand = require('./src/commands/idioma');
 const jokenpoCommand = require('./src/commands/jokenpo');
@@ -57,7 +50,6 @@ const {
 } = require('./src/config');
 const { incrementCommand, incrementMessages, recordUniqueUser, flushSync } = require('./src/services/logging');
 const { flushInventorySync } = require('./src/services/inventory');
-const { flushPetsSync } = require('./src/services/pets');
 const { getBrasiliaDate, resetDailyDraws } = require('./src/services/tarot');
 const { getAnimatedEmoji } = require('./src/utils/serverEmojis');
 
@@ -126,17 +118,17 @@ async function sendStartupAnnouncement() {
   const startupEmbed = new EmbedBuilder()
     .setColor('#5E2B8C')
     .setTitle(`🧚  ✦  Pyxie Entrou em Cena`)
-    .setDescription('Estou online, monitorando o reino encantado de Pymons e pronta para novas aventuras!')
+    .setDescription('Estou online, monitorando o reino encantado de Cringelândia e pronta para novas aventuras!')
     .addFields(
       { name: '📍 Servidor', value: channel.guild?.name || 'Comunidade', inline: true },
       { name: '✅ Status', value: '100% Operacional', inline: true },
       {
         name: '📚 Comandos em Destaque',
         value: [
-          '> 🐾 **/pymons** — Adote, alimente e evolua mascotes',
+          '> 💼 **/py-trabalho** — Cumpra expedientes diários e suba na carreira',
           '> 👤 **/perfil** — Customize títulos, temas e biografia',
-          '> 🐉 **/boss** — Enfrente o World Boss Semanal ALPHA',
-          '> ⚔️ **/duelo** — Batalhe na arena com vantagens elementais',
+          '> 🔮 **/tarot** — Tire cartas de tarot com artes exclusivas',
+          '> 🤝 **/py-trocar** — Negocie itens e moedas com outros membros',
           '> 🪙 **/diario** — Resgate moedas diárias e bônus patrocinado',
           '> 📖 **/ajuda** — Menu interativo com todos os comandos',
         ].join('\n'),
@@ -361,7 +353,7 @@ client.once('ready', async () => {
   console.log(`Pyxie conectada como ${client.user.tag}`);
 
   client.user.setPresence({
-    activities: [{ name: 'Pymons no Reino Encantado', type: ActivityType.Watching }],
+    activities: [{ name: 'Cringelândia no Reino Encantado', type: ActivityType.Watching }],
     status: 'online',
   });
 
@@ -515,41 +507,6 @@ client.on('interactionCreate', async (interaction) => {
       return;
     }
 
-    if (typeof petCommand?.isPetInteraction === 'function' && petCommand.isPetInteraction(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await petCommand.handlePetInteraction(interaction);
-      return;
-    }
-
-    if (typeof dexCommand?.isDexInteraction === 'function' && dexCommand.isDexInteraction(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await dexCommand.handleDexInteraction(interaction);
-      return;
-    }
-
-    if (typeof adoptionCommand?.isAdoptionInteraction === 'function' && adoptionCommand.isAdoptionInteraction(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await adoptionCommand.handleAdoptionInteraction(interaction);
-      return;
-    }
-
-    if (typeof dungeonCommand?.isDungeonInteraction === 'function' && dungeonCommand.isDungeonInteraction(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await dungeonCommand.handleDungeonInteraction(interaction);
-      return;
-    }
-
-    if (typeof duelCommand?.isDuelInteraction === 'function' && duelCommand.isDuelInteraction(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await duelCommand.handleDuelInteraction(interaction);
-      return;
-    }
-
     if (typeof profileCommand?.isProfileInteraction === 'function' && profileCommand.isProfileInteraction(interaction)) {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
@@ -568,20 +525,6 @@ client.on('interactionCreate', async (interaction) => {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
       await tradeCommand.handleTradeInteraction(interaction);
-      return;
-    }
-
-    if (typeof expeditionCommand?.isExpeditionInteraction === 'function' && expeditionCommand.isExpeditionInteraction(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await expeditionCommand.handleExpeditionInteraction(interaction);
-      return;
-    }
-
-    if (typeof bossCommand?.isBossInteraction === 'function' && bossCommand.isBossInteraction(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await bossCommand.handleBossInteraction(interaction);
       return;
     }
 

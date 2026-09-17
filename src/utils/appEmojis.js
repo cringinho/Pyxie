@@ -15,24 +15,9 @@ const EMOJI_DEFINITIONS = {
   BAG: { name: 'mochila', fallback: '🎒' },
   TROPHY: { name: 'trofeu', fallback: '🏆' },
   CROWN: { name: 'coroa', fallback: '👑' },
-
-  // Pymons & Elementos
-  PET: { name: 'pymon', fallback: '🐾' },
-  SHINY: { name: 'shiny_star', fallback: '✨' },
-  EGG: { name: 'pymon_egg', fallback: '🥚' },
-  DEX: { name: 'dex_book', fallback: '📖' },
   HEART: { name: 'coracao', fallback: '💖' },
-  ENERGY: { name: 'energia', fallback: '⚡' },
-  HUNGER: { name: 'comida', fallback: '🍖' },
-
-  // Dungeons & Navegação
-  COMPASS: { name: 'bussola', fallback: '🧭' },
-  SWORD: { name: 'espada', fallback: '⚔️' },
-  SHIELD: { name: 'escudo', fallback: '🛡️' },
+  STAR: { name: 'estrela', fallback: '⭐' },
   CHEST: { name: 'bau', fallback: '📦' },
-  PORTAL: { name: 'portal', fallback: '🚩' },
-  FOUNTAIN: { name: 'fonte', fallback: '⛲' },
-  TRAP: { name: 'armadilha', fallback: '🪤' },
 
   // UI & Notificações
   CHECK: { name: 'check_mark', fallback: '✅' },
