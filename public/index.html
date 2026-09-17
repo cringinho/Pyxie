@@ -978,6 +978,7 @@
       });
 
       if (commandsToDisplay.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-dim);">Nenhum comando encontrado.</div>`;
         grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-dim);">${dict['catalog.empty'] || 'Nenhum comando encontrado.'}</div>`;
         return;
       }
@@ -1018,6 +1019,9 @@
     }
 
     function copyCommand(cmdName) {
+      navigator.clipboard.writeText(cmdName).then(() => {
+        const toast = document.getElementById('toast');
+        const dict = I18N[currentLang] || I18N.pt;
       const toast = document.getElementById('toast');
       const dict = I18N[currentLang] || I18N.pt;
       const showToast = () => {
@@ -1025,6 +1029,7 @@
         toast.textContent = dict['toast.copied'] || 'Comando copiado!';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 2000);
+      });
       };
 
       if (navigator.clipboard && navigator.clipboard.writeText) {

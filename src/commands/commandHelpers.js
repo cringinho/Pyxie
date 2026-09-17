@@ -173,6 +173,38 @@ function setLoadedCommands(cmds) {
   _loadedCommands = cmds;
 }
 
+const OWNER_ONLY_COMMANDS = new Set([
+  'py-seteco',
+  'seteco',
+  'py-setareconomia',
+  'setareconomia',
+  'py-reseteco',
+  'reseteco',
+  'py-resetareconomia',
+  'resetareconomia',
+  'py-ecoconfig',
+  'ecoconfig',
+  'py-configeconomia',
+  'configeconomia',
+  'py-admin',
+  'admin',
+]);
+
+const { OWNER_SNOWFLAKE } = require('../services/adminAuth');
+
+function isOwnerUser(source) {
+  if (!source) return false;
+  if (typeof source === 'object') {
+    if (source.isOwner === true) return true;
+    const uid = source.user?.id || source.author?.id || source.userId;
+    if (uid === OWNER_SNOWFLAKE) return true;
+  }
+  if (typeof source === 'string' && source === OWNER_SNOWFLAKE) {
+    return true;
+  }
+  return false;
+}
+
 function getHelpModules(customCommands = null, source = null) {
   let commandsList = customCommands || _loadedCommands;
   if (!commandsList) {
@@ -184,6 +216,7 @@ function getHelpModules(customCommands = null, source = null) {
   }
 
   const isEn = getLanguage(source) === 'en';
+  const isOwner = isOwnerUser(source);
 
   const moduleCommands = {
     economia: [],
@@ -198,6 +231,11 @@ function getHelpModules(customCommands = null, source = null) {
     const name = cmd.data?.name || cmd.name;
     if (!name || seen.has(name)) continue;
     seen.add(name);
+
+    const bareName = name.startsWith('py-') ? name.slice(3) : name;
+    if (!isOwner && (OWNER_ONLY_COMMANDS.has(name) || OWNER_ONLY_COMMANDS.has(bareName))) {
+      continue;
+    }
 
     let desc = '';
     if (isEn) {
@@ -281,10 +319,11 @@ function buildModularHelpEmbed(moduleId = 'todos', guildName = '', source = null
 }
 
 function buildModularHelpComponents(currentModuleId = 'todos', userId = '', source = null) {
-  const modules = getHelpModules(null, source);
+  const ctx = source || (userId ? { userId } : null);
+  const modules = getHelpModules(null, ctx);
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId(`help_module_select:${userId}`)
-    .setPlaceholder(t('help.selectPlaceholder', source))
+    .setPlaceholder(t('help.selectPlaceholder', ctx))
     .addOptions(
       modules.map((m) => ({
         label: m.label,

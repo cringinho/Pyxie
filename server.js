@@ -189,7 +189,10 @@ app.get('/api/status', (req, res) => {
 // 2. Catálogo Dinâmico de Comandos da Pyxie (Sincronizado diretamente com help.js)
 app.get('/api/commands', (req, res) => {
   const lang = req.query.lang === 'en' ? 'en' : 'pt';
-  const modules = getHelpModules(null, lang);
+  const sessionCookie = getCookie(req, 'pyxie_admin_session');
+  const isOwner = (sessionCookie && isValidAdminSession(sessionCookie)) ||
+    (req.query.token && isMasterSecretValid(req.query.token));
+  const modules = getHelpModules(null, { lang, isOwner: !!isOwner });
   res.json({
     success: true,
     lang,

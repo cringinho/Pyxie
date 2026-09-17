@@ -1,6 +1,7 @@
-const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 const { getEconomyConfig, setEconomyConfig } = require('../services/database');
 const { ECONOMY_CONFIG } = require('./commandNames');
+const { OWNER_SNOWFLAKE } = require('../services/adminAuth');
 const { t } = require('../utils/i18n');
 
 function parseValues(minimum, maximum) {
@@ -12,8 +13,9 @@ function parseValues(minimum, maximum) {
   return { minimum: parsedMinimum, maximum: parsedMaximum };
 }
 
-function isManager(source) {
-  return source.member?.permissions?.has(PermissionFlagsBits.ManageGuild);
+function isOwner(source) {
+  const userId = source.user?.id || source.author?.id;
+  return userId === OWNER_SNOWFLAKE;
 }
 
 function buildReply(config, source = null) {
@@ -33,7 +35,7 @@ module.exports = {
     .setDescriptionLocalizations({
       'pt-BR': 'Configura a quantidade de Moedinhas do diário.',
     })
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+    .setDefaultMemberPermissions(0n)
     .addIntegerOption((option) =>
       option
         .setName('minimo')
@@ -65,13 +67,17 @@ module.exports = {
         .setRequired(true)
     ),
   async executePrefix({ message, args }) {
-    if (!isManager(message)) return message.reply(t('admin.noPermission', message));
+    if (!isOwner(message)) {
+      return message.reply(t('admin.onlyOwner', message, { owner: `<@${OWNER_SNOWFLAKE}>` }));
+    }
     const values = parseValues(args[0], args[1]);
     if (!values) return message.reply(t('admin.economyConfigInvalid', message));
     await message.reply(buildReply(setEconomyConfig(values.minimum, values.maximum), message));
   },
   async executeSlash({ interaction }) {
-    if (!isManager(interaction)) return interaction.editReply(t('admin.noPermission', interaction));
+    if (!isOwner(interaction)) {
+      return interaction.editReply(t('admin.onlyOwner', interaction, { owner: `<@${OWNER_SNOWFLAKE}>` }));
+    }
     const minVal = interaction.options.getInteger('minimo') ?? interaction.options.getInteger('minimum');
     const maxVal = interaction.options.getInteger('maximo') ?? interaction.options.getInteger('maximum');
     const values = parseValues(minVal, maxVal);

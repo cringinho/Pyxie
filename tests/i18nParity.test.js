@@ -186,10 +186,31 @@ const ptCmdCount = ptModules.reduce((acc, m) => acc + (m.commands?.length || 0),
 const enCmdCount = enModules.reduce((acc, m) => acc + (m.commands?.length || 0), 0);
 assert.equal(ptCmdCount, enCmdCount, 'Quantidade de comandos nos módulos do Help/Web deve ser idêntica em PT e EN');
 assert(ptCmdCount > 0, 'Deve haver comandos catalogados');
-console.log(`✅ Sincronização Dinâmica Web/Help validada: ${ptCmdCount} comandos ativos em ${ptModules.length} módulos.`);
+
+// 6.1 Verificação de Ocultação de Comandos do Criador para Não-Donos
+const publicCmdNames = ptModules.flatMap((m) => m.commands || []).map((c) => c.name);
+const ownerRestrictedNames = ['/py-seteco', '/py-reseteco', '/py-ecoconfig', '/py-admin'];
+for (const restricted of ownerRestrictedNames) {
+  assert(
+    !publicCmdNames.includes(restricted),
+    `Comando exclusivo do dono (${restricted}) NÃO deve ser exibido para o público ou não-donos!`
+  );
+}
+
+// 6.2 Verificação de Exibição de Comandos do Criador para o Dono
+const { OWNER_SNOWFLAKE, createOwnerMagicToken, verifyMagicToken, isIpAllowed } = require('../src/services/adminAuth');
+const ownerModules = getHelpModules(null, { lang: 'pt', userId: OWNER_SNOWFLAKE });
+const ownerCmdNames = ownerModules.flatMap((m) => m.commands || []).map((c) => c.name);
+for (const restricted of ownerRestrictedNames) {
+  assert(
+    ownerCmdNames.includes(restricted),
+    `Comando exclusivo do dono (${restricted}) DEVE ser exibido na central quando o dono solicitar!`
+  );
+}
+assert.equal(ownerCmdNames.length, 35, 'Dono deve ver todos os 35 comandos na central');
+console.log(`✅ Sincronização Dinâmica Web/Help validada: ${ptCmdCount} comandos públicos e ${ownerCmdNames.length} comandos de dono em ${ptModules.length} módulos.`);
 
 // 7. Validação de Segurança do Dono (Snowflake 214153735281180673 & HMAC)
-const { OWNER_SNOWFLAKE, createOwnerMagicToken, verifyMagicToken, isIpAllowed } = require('../src/services/adminAuth');
 assert.equal(OWNER_SNOWFLAKE, '214153735281180673', 'Snowflake do dono deve ser estritamente 214153735281180673');
 
 const forbiddenRes = createOwnerMagicToken('999999999999999999');
@@ -209,7 +230,31 @@ assert.equal(replayRes.valid, false, 'Anti-replay: token consumido não pode ser
 assert.equal(isIpAllowed({ ip: '127.0.0.1', headers: {} }), true, 'Localhost deve ser autorizado');
 assert.equal(isIpAllowed({ ip: '179.153.90.39', headers: {} }), true, 'IP do criador deve ser autorizado');
 assert.equal(isIpAllowed({ ip: '198.51.100.23', headers: {} }), false, 'IP desconhecido deve ser bloqueado');
-console.log('✅ Segurança do Dono validada: Snowflake, HMAC Magic Tokens e IP Allowlist operando perfeitamente.');
+
+// 7.1 Validação de Bloqueio em Comandos de Economia por Não-Donos
+const setecoCmd = require('../src/commands/setareconomia');
+const resetecoCmd = require('../src/commands/resetareconomia');
+const ecoconfigCmd = require('../src/commands/economyconfig');
+
+let repliedMsg = '';
+const fakeAdminMessage = {
+  author: { id: '999999999999999999' },
+  member: { permissions: { has: () => true } }, // Admin normal de servidor
+  reply: (msg) => { repliedMsg = typeof msg === 'string' ? msg : msg.content; },
+};
+
+setecoCmd.executePrefix({ message: fakeAdminMessage, args: [] });
+assert(repliedMsg.includes('Acesso Restrito') || repliedMsg.includes('Restricted Access'), 'seteco deve bloquear administrador que não seja o dono');
+
+repliedMsg = '';
+resetecoCmd.executePrefix({ message: fakeAdminMessage, args: [] });
+assert(repliedMsg.includes('Acesso Restrito') || repliedMsg.includes('Restricted Access'), 'reseteco deve bloquear administrador que não seja o dono');
+
+repliedMsg = '';
+ecoconfigCmd.executePrefix({ message: fakeAdminMessage, args: [] });
+assert(repliedMsg.includes('Acesso Restrito') || repliedMsg.includes('Restricted Access'), 'ecoconfig deve bloquear administrador que não seja o dono');
+
+console.log('✅ Segurança do Dono validada: Snowflake, HMAC Magic Tokens, IP Allowlist e Comandos de Economia operando perfeitamente.');
 
 console.log('Auditoria de Paridade i18n e Catálogo concluída com 100% de sucesso!');
 

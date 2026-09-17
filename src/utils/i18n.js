@@ -27,6 +27,11 @@ function getLanguage(source) {
     return 'en';
   }
 
+  if (source && typeof source === 'object' && source.lang) {
+    if (source.lang === 'pt' || source.lang === 'pt-BR') return 'pt';
+    if (source.lang === 'en' || source.lang === 'en-US' || source.lang === 'en-GB') return 'en';
+  }
+
   const guildId =
     source?.guild?.id ||
     source?.guildId ||

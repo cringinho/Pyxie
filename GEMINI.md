@@ -59,5 +59,8 @@ Sempre que uma nova feature, comando, botão, minigame, desafio, embed, item de 
   - O cálculo de `uptime` recebido de `/api/status` ou `/api/stats` é retornado em **milissegundos** e DEVE ser convertido para segundos (`Math.floor(data.uptime / 1000)`) antes de extrair dias, horas e minutos.
   - O catálogo de abas deve suportar busca textual (`filterCommands`), seleção de abas (`selectCategory`), estado de carregamento e mensagens localizadas de lista vazia (`catalog.empty`).
 - **Quality Gate Automatizado**: O teste `tests/i18nParity.test.js` audita se 100% dos comandos exportados em `src/commands/index.js` estão mapeados em `COMMAND_CATEGORY_MAP`. Se um comando estiver fora do catálogo, o comando `npm test` falha imediatamente.
+- **Comandos de Manipulação de Economia Restritos ao Criador**:
+  - Comandos que alteram saldo, resetam dados econômicos ou configuram parâmetros de economia (`/py-seteco`, `/py-reseteco`, `/py-ecoconfig`, `/py-admin`) são estritamente exclusivos do Criador da Pyxie (`OWNER_SNOWFLAKE = '214153735281180673'`). Administradores de servidor NÃO possuem permissão para executá-los.
+  - Esses comandos são filtrados dinamicamente na Central de Ajuda (`/py-help`) e na Web (`/api/commands`), sendo exibidos exclusivamente quando solicitados pelo snowflake do dono (`214153735281180673`) ou sessão administrativa autenticada.
 
 
