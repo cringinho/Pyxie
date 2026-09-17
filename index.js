@@ -343,7 +343,6 @@ async function handleCringePhrase(message) {
   cringePhraseCooldowns.set(message.author.id, Date.now());
 
   await message.react('🌈').catch(() => null);
-  await message.reply('https://klipy.com/gifs/gacha-life-gacha-boy');
   
   const localGifPath = path.join(__dirname, 'assets', 'cringe_small.gif');
   if (fs.existsSync(localGifPath)) {
@@ -351,8 +350,7 @@ async function handleCringePhrase(message) {
       files: [new AttachmentBuilder(localGifPath, { name: 'gacha_boy.gif' })]
     });
   } else {
-    await message.reply('https://static2.klipy.com/ii/4e7bea9f7a3371424e6c16ebc93252fe/18/bb/YE2nvMxdxoJAADGlru.gif');
-    await message.reply('https://static2.klipy.com/ii/4e7bea9f7a3371424e6c16ebc93252fe/18/bb/PUzq4QPWVloOa.gif');
+    await message.reply('https://klipy.com/gifs/gacha-life-gacha-boy');
   }
   return true;
 }
