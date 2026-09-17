@@ -10,7 +10,6 @@ const {
   getPetsCatalog,
   getUserDex,
 } = require('../services/pets');
-const { createDexAttachment } = require('../services/petRenderer');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { t, getLanguage, ELEMENT_NAMES, RARITY_NAMES, PET_DESCRIPTIONS_EN } = require('../utils/i18n');
 const { DEX } = require('./commandNames');
@@ -87,6 +86,11 @@ function buildDexView(userId, userTag, selectedKey = 'cinna', viewShiny = false,
     ? (colorMap[monsterDef.element] || PYXIE_COLORS.lilac)
     : PYXIE_COLORS.lilac;
 
+  const { getVpetSpriteUrl } = require('../services/vpet/vpetSpecies');
+  const spriteUrl = isUnlocked
+    ? getVpetSpriteUrl(monsterDef.key, 'idle')
+    : `${process.env.PUBLIC_URL || 'http://pyxie.duckdns.org:3000'}/sprites/vpet/eggs/egg_mystic.png`;
+
   const embed = new EmbedBuilder()
     .setColor(themeColor)
     .setTitle(
@@ -94,7 +98,7 @@ function buildDexView(userId, userTag, selectedKey = 'cinna', viewShiny = false,
         ? `${monsterDef.emoji}  ✦  Dex #${currentIndex + 1} — ${monsterDef.name}${currentViewShiny ? ' ✨ (Shiny)' : ''}`
         : `🔒  ✦  Dex #${currentIndex + 1} — ${t('dexCmd.mysteryCreature', context)}`
     )
-    .setImage('attachment://dex_entry.png')
+    .setThumbnail(spriteUrl)
     .setFooter({ text: t('common.footer', context) })
     .setTimestamp();
 
@@ -206,12 +210,10 @@ function buildDexView(userId, userTag, selectedKey = 'cinna', viewShiny = false,
     navRow,
   ];
 
-  const attachment = createDexAttachment(monsterDef, currentViewShiny, isUnlocked, isShinyUnlocked, context);
-
   return {
     embeds: [embed],
     components,
-    files: [attachment],
+    files: [],
   };
 }
 

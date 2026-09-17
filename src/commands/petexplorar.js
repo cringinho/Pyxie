@@ -79,8 +79,48 @@ module.exports = {
     const view = buildDungeonTab(userId, userTag, message);
     await message.reply(view);
   },
-  isDungeonInteraction() {
-    return false;
+  isDungeonInteraction(interaction) {
+    if (!interaction.customId) return false;
+    return (
+      interaction.customId.startsWith('dungeon_start:') ||
+      interaction.customId.startsWith('dungeon_move:') ||
+      interaction.customId.startsWith('dungeon_retreat:') ||
+      interaction.customId.startsWith('dungeon_flee:')
+    );
   },
-  async handleDungeonInteraction() {},
+  async handleDungeonInteraction(interaction) {
+    const parts = interaction.customId.split(':');
+    const action = parts[0];
+    const targetUserId = parts[parts.length - 1];
+
+    if (targetUserId && targetUserId !== interaction.user.id) {
+      return interaction.reply({
+        content: '⚠️ Esta masmorra não pertence a você!',
+        ephemeral: true,
+      });
+    }
+
+    const userId = interaction.user.id;
+    const userTag = interaction.user.displayName || interaction.user.username;
+    const { awardPetXp } = require('../services/pets');
+    const activePet = getActivePet(userId);
+
+    if (action === 'dungeon_start') {
+      const zoneId = parts[1];
+      startProceduralRun(userId, zoneId, activePet);
+    } else if (action === 'dungeon_move') {
+      const direction = parts[1];
+      const { movePlayer } = require('../services/proceduralExplorer');
+      movePlayer(userId, direction, activePet, awardPetXp);
+    } else if (action === 'dungeon_retreat') {
+      const { retreatRun } = require('../services/proceduralExplorer');
+      retreatRun(userId, activePet, awardPetXp);
+    } else if (action === 'dungeon_flee') {
+      const { panicFlee } = require('../services/proceduralExplorer');
+      panicFlee(userId, activePet);
+    }
+
+    const view = buildDungeonTab(userId, userTag, interaction);
+    await interaction.update(view);
+  },
 };

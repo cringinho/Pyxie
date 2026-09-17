@@ -10,7 +10,6 @@ const {
   getStarters,
   getUserPets,
 } = require('../services/pets');
-const { createPetAttachment, createDexAttachment } = require('../services/petRenderer');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { t, getLanguage, PET_DESCRIPTIONS_EN, ELEMENT_NAMES } = require('../utils/i18n');
 
@@ -47,7 +46,6 @@ function buildDexEmbed(selectedKey = 'cinna', source = null) {
     .setColor(colorMap[starter.element] || PYXIE_COLORS.lilac)
     .setTitle(t('adoption.dexTitle', source))
     .setDescription(desc)
-    .setImage('attachment://dex_entry.png')
     .setFooter({ text: 'Pyxie' })
     .setTimestamp();
 

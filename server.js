@@ -137,6 +137,7 @@ const {
   isMasterSecretValid,
 } = require('./src/services/adminAuth');
 const { getHelpModules } = require('./src/commands/commandHelpers');
+const { VPET_SPECIES, VPET_EGGS, VPET_ITEMS, STAGE_NAMES } = require('./src/services/vpet/vpetSpecies');
 
 function getCookie(req, name) {
   const cookieHeader = req.headers.cookie;
@@ -194,6 +195,49 @@ app.get('/api/commands', (req, res) => {
     success: true,
     lang,
     modules,
+  });
+});
+
+// 2.1. Catálogo Dinâmico de Pymons (V-Pet CC0 Sprites, Estágios e Elementos)
+app.get('/api/pymons', (req, res) => {
+  const lang = req.query.lang === 'en' ? 'en' : 'pt';
+  const speciesList = Object.values(VPET_SPECIES).map((sp) => ({
+    key: sp.key,
+    name: sp.name[lang] || sp.name.pt,
+    stage: sp.stage,
+    stageName: STAGE_NAMES[sp.stage]?.[lang] || STAGE_NAMES[sp.stage]?.pt,
+    element: sp.element,
+    emoji: sp.emoji,
+    minWeight: sp.minWeight,
+    baseStats: sp.baseStats,
+    description: sp.descriptions[lang] || sp.descriptions.pt,
+    sprites: {
+      idle: `/sprites/vpet/pets/${sp.key}_idle.gif`,
+      attack: `/sprites/vpet/pets/${sp.key}_attack.gif`,
+      hit: `/sprites/vpet/pets/${sp.key}_hit.gif`,
+    },
+    evolutions: sp.evolutions,
+  }));
+
+  const eggsList = Object.values(VPET_EGGS).map((egg) => ({
+    key: egg.key,
+    name: egg.name[lang] || egg.name.pt,
+    element: egg.element,
+    emoji: egg.emoji,
+    sprite: `/sprites/vpet/eggs/${egg.key}.png`,
+  }));
+
+  const itemsList = Object.entries(VPET_ITEMS).map(([itemKey]) => ({
+    key: itemKey,
+    sprite: `/sprites/vpet/items/${itemKey}.png`,
+  }));
+
+  res.json({
+    success: true,
+    lang,
+    species: speciesList,
+    eggs: eggsList,
+    items: itemsList,
   });
 });
 

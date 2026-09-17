@@ -405,6 +405,379 @@
       line-height: 1.55;
     }
 
+    /* Pymons Showcase Section */
+    .pymons-section {
+      margin-bottom: 85px;
+    }
+
+    .pixel-art {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    .pymon-showcase-box {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(14px);
+      border-radius: 28px;
+      padding: 36px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    .vpet-display-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .ms-bubble {
+      background: #ffffff;
+      color: #1e1b4b;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      font-weight: 700;
+      padding: 12px 20px;
+      border-radius: 18px;
+      border: 2px solid var(--purple-glow);
+      box-shadow: 0 8px 24px rgba(167, 139, 250, 0.35);
+      position: relative;
+      margin-bottom: 22px;
+      max-width: 90%;
+      text-align: center;
+      animation: floatBubble 3s ease-in-out infinite;
+    }
+
+    .ms-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid #ffffff;
+    }
+
+    @keyframes floatBubble {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .vpet-pedestal {
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.28) 0%, rgba(23, 12, 46, 0.85) 68%, transparent 100%);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 50px rgba(168, 85, 247, 0.25);
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .vpet-sprite-img {
+      width: 136px;
+      height: 136px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
+      transition: transform 0.2s ease;
+    }
+
+    .vpet-sprite-img:hover {
+      transform: scale(1.1);
+    }
+
+    .vpet-anim-toggles {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .anim-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-glass);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all 0.2s ease;
+    }
+
+    .anim-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+    }
+
+    .anim-btn.active {
+      background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+    }
+
+    .vpet-info-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .vpet-name-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .vpet-title {
+      font-family: var(--font-title);
+      font-size: 1.85rem;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .vpet-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .vpet-badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-family: var(--font-body);
+    }
+
+    .badge-stage {
+      background: rgba(168, 85, 247, 0.2);
+      border: 1px solid var(--purple-glow);
+      color: #e9d5ff;
+    }
+
+    .badge-elem {
+      background: rgba(56, 189, 248, 0.2);
+      border: 1px solid var(--cyan-neon);
+      color: #bae6fd;
+    }
+
+    .badge-weight {
+      background: rgba(250, 204, 21, 0.2);
+      border: 1px solid var(--gold-accent);
+      color: #fef08a;
+    }
+
+    .vpet-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .vpet-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: rgba(9, 5, 20, 0.6);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .vpet-stat-item .stat-k {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .vpet-stat-item .stat-v {
+      font-family: var(--font-title);
+      font-size: 1.15rem;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .species-picker-title {
+      font-family: var(--font-title);
+      font-size: 1rem;
+      color: var(--purple-glow);
+      margin-top: 4px;
+    }
+
+    .species-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+      gap: 8px;
+      max-height: 160px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .species-grid::-webkit-scrollbar {
+      width: 5px;
+    }
+    .species-grid::-webkit-scrollbar-thumb {
+      background: rgba(167, 139, 250, 0.35);
+      border-radius: 10px;
+    }
+
+    .species-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 6px 2px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .species-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--purple-glow);
+      transform: translateY(-2px);
+    }
+
+    .species-card.active {
+      background: rgba(236, 72, 153, 0.25);
+      border-color: var(--pink-neon);
+      box-shadow: 0 0 12px rgba(236, 72, 153, 0.35);
+    }
+
+    .species-mini-sprite {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      margin: 0 auto 2px;
+      display: block;
+    }
+
+    .species-mini-name {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pymon-features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .pymon-feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 24px;
+      transition: transform 0.2s ease;
+    }
+
+    .pymon-feature-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--purple-glow);
+    }
+
+    .feature-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .feature-card-title {
+      font-family: var(--font-title);
+      font-size: 1.15rem;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .eggs-row {
+      display: flex;
+      justify-content: space-around;
+      gap: 6px;
+      margin: 16px 0 10px;
+    }
+
+    .egg-item {
+      text-align: center;
+    }
+
+    .egg-img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      transition: transform 0.2s ease;
+    }
+
+    .egg-img:hover {
+      transform: scale(1.18) rotate(6deg);
+    }
+
+    .egg-name {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    .care-items-row {
+      display: flex;
+      justify-content: space-around;
+      gap: 6px;
+      margin: 16px 0 10px;
+    }
+
+    .care-item {
+      text-align: center;
+    }
+
+    .care-img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      transition: transform 0.2s ease;
+    }
+
+    .care-img:hover {
+      transform: scale(1.2);
+    }
+
+    .care-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    @media (max-width: 860px) {
+      .pymon-showcase-box {
+        grid-template-columns: 1fr;
+        padding: 22px;
+      }
+    }
+
     /* Commands Section */
     .catalog-section {
       margin-bottom: 80px;
@@ -626,6 +999,7 @@
 
       <div class="nav-menu">
         <a href="#pilares" class="nav-link" data-i18n="nav.features">Recursos</a>
+        <a href="#pymons" class="nav-link" data-i18n="nav.pymons">Pymons</a>
         <a href="#comandos" class="nav-link" data-i18n="nav.commands">Comandos</a>
         <a href="https://top.gg/bot/1463644930080637140/vote" target="_blank" rel="noopener" class="nav-link" data-i18n="nav.vote">Top.gg</a>
         <a href="/bonus" class="nav-link" data-i18n="nav.bonus">Bônus Web (10s)</a>
@@ -703,7 +1077,7 @@
         <div class="pillar-card">
           <span class="pillar-icon">🐾</span>
           <h3 class="pillar-title" data-i18n="pillars.p1Title">Pymons Virtuais</h3>
-          <p class="pillar-text" data-i18n="pillars.p1Desc">Cuide de bichinhos estilo Tamagotchi, alimente, choque ovos em tempo real e desbloqueie formas Shiny raras com silhuetas na Pokédex.</p>
+          <p class="pillar-text" data-i18n="pillars.p1Desc">Cuide de bichinhos estilo Tamagotchi, alimente, choque ovos em tempo real e desbloqueie formas Shiny raras com silhuetas na Pymon Dex.</p>
         </div>
 
         <div class="pillar-card">
@@ -722,6 +1096,137 @@
           <span class="pillar-icon">🔮</span>
           <h3 class="pillar-title" data-i18n="pillars.p4Title">Tarot Místico & Casal</h3>
           <p class="pillar-text" data-i18n="pillars.p4Desc">Tire cartas dos 78 arcanos ilustrados com arte em Canvas, calcule afinidade amorosa com o /py-ship e celebre casamentos na comunidade.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pymons Interactive Showcase Section -->
+    <section id="pymons" class="pymons-section">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <div class="status-badge" style="background: rgba(236, 72, 153, 0.12); border-color: rgba(236, 72, 153, 0.35); color: #f472b6;">
+          <span class="pulse-dot" style="background: #ec4899; box-shadow: 0 0 10px #ec4899;"></span>
+          <span data-i18n="pymons.sectionBadge">🐾 V-Pet Retrô & Pixel Art</span>
+        </div>
+        <h2 class="section-title" data-i18n="pymons.sectionTitle">Conheça os Pymons Virtuais</h2>
+        <p class="section-desc" data-i18n="pymons.sectionDesc">Inspirados em clássicos dos bichinhos virtuais e no charme de MapleStory: sem lag, com animações suaves e personalidade vibrante.</p>
+      </div>
+
+      <!-- Main Showcase Box -->
+      <div class="pymon-showcase-box">
+        <!-- Display Column -->
+        <div class="vpet-display-col">
+          <div class="ms-bubble" id="vpetBubble">💬 "*nhac nhac* Você é meu melhor amigo! 💕"</div>
+          <div class="vpet-pedestal">
+            <img id="vpetSprite" class="vpet-sprite-img pixel-art" src="/sprites/vpet/pets/slime_idle.gif" alt="Pymon Sprite" />
+          </div>
+          <div class="vpet-anim-toggles">
+            <button class="anim-btn active" data-anim="idle" onclick="setVpetAnim('idle')" data-i18n="pymons.animIdle">💤 Descanso</button>
+            <button class="anim-btn" data-anim="attack" onclick="setVpetAnim('attack')" data-i18n="pymons.animAttack">⚔️ Ataque</button>
+            <button class="anim-btn" data-anim="hit" onclick="setVpetAnim('hit')" data-i18n="pymons.animHit">💥 Dano</button>
+          </div>
+        </div>
+
+        <!-- Info Column -->
+        <div class="vpet-info-col">
+          <div class="vpet-name-header">
+            <h3 id="vpetName" class="vpet-title">Slime 💧</h3>
+            <div class="vpet-badges">
+              <span id="vpetStage" class="vpet-badge badge-stage">Bebê I</span>
+              <span id="vpetElement" class="vpet-badge badge-elem">💧 Orvalho</span>
+              <span id="vpetWeight" class="vpet-badge badge-weight">⚖️ 5 kg</span>
+            </div>
+          </div>
+
+          <p id="vpetDesc" class="vpet-desc">Pequena gota gelatinosa translúcida recém-saída do ovo. Bouncy, dócil e cheia de curiosidade.</p>
+
+          <div class="vpet-stats-grid">
+            <div class="vpet-stat-item">
+              <div class="stat-k">HP</div>
+              <div id="vpetHp" class="stat-v">40</div>
+            </div>
+            <div class="vpet-stat-item">
+              <div class="stat-k">ATK</div>
+              <div id="vpetAtk" class="stat-v">8</div>
+            </div>
+            <div class="vpet-stat-item">
+              <div class="stat-k">DEF</div>
+              <div id="vpetDef" class="stat-v">8</div>
+            </div>
+            <div class="vpet-stat-item">
+              <div class="stat-k">SPD</div>
+              <div id="vpetSpd" class="stat-v">10</div>
+            </div>
+          </div>
+
+          <div class="species-picker-title" data-i18n="pymons.speciesTitle">Escolha um Pymon para inspecionar:</div>
+          <div id="speciesGrid" class="species-grid">
+            <!-- Gerado dinamicamente via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Highlight Cards (Eggs & Care) -->
+      <div class="pymon-features-grid">
+        <div class="pymon-feature-card">
+          <div class="feature-card-header">
+            <span style="font-size: 1.8rem;">🥚</span>
+            <div>
+              <div class="feature-card-title" data-i18n="pymons.eggsTitle">Ovos & Chocadeira Elemental</div>
+              <div style="font-size: 0.8rem; color: var(--purple-glow);">Incubação Delta-Time</div>
+            </div>
+          </div>
+          <p class="pillar-text" data-i18n="pymons.eggsDesc">Choque ovos com afinidades de Fogo, Água, Floresta, Místico e Dourado. Acelere 2h no portal de bônus web.</p>
+          <div class="eggs-row">
+            <div class="egg-item">
+              <img src="/sprites/vpet/eggs/egg_water.png" class="egg-img" alt="Água" />
+              <div class="egg-name" data-i18n="pymons.eggWater">Marés</div>
+            </div>
+            <div class="egg-item">
+              <img src="/sprites/vpet/eggs/egg_grass.png" class="egg-img" alt="Floresta" />
+              <div class="egg-name" data-i18n="pymons.eggGrass">Floresta</div>
+            </div>
+            <div class="egg-item">
+              <img src="/sprites/vpet/eggs/egg_fire.png" class="egg-img" alt="Fogo" />
+              <div class="egg-name" data-i18n="pymons.eggFire">Vulcânico</div>
+            </div>
+            <div class="egg-item">
+              <img src="/sprites/vpet/eggs/egg_mystic.png" class="egg-img" alt="Místico" />
+              <div class="egg-name" data-i18n="pymons.eggMystic">Místico</div>
+            </div>
+            <div class="egg-item">
+              <img src="/sprites/vpet/eggs/egg_golden.png" class="egg-img" alt="Dourado" />
+              <div class="egg-name" data-i18n="pymons.eggGolden">Dourado</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pymon-feature-card">
+          <div class="feature-card-header">
+            <span style="font-size: 1.8rem;">🥩</span>
+            <div>
+              <div class="feature-card-title" data-i18n="pymons.careTitle">Mecânicas Autênticas de V-Pet</div>
+              <div style="font-size: 0.8rem; color: #34d399;">Zero Canvas • 0% CPU Idle</div>
+            </div>
+          </div>
+          <p class="pillar-text" data-i18n="pymons.careDesc">Sem Canvas no servidor para zero consumo de RAM. A Pyxie calcula tudo matematicamente com lazy delta-time.</p>
+          <div class="care-items-row">
+            <div class="care-item">
+              <img src="/sprites/vpet/items/meat.png" class="care-img" alt="Alimentação" />
+              <div class="care-label" data-i18n="pymons.careFeed">Alimentação</div>
+            </div>
+            <div class="care-item">
+              <img src="/sprites/vpet/items/clean.png" class="care-img" alt="Higiene" />
+              <div class="care-label" data-i18n="pymons.careClean">Higiene & Banho</div>
+            </div>
+            <div class="care-item">
+              <img src="/sprites/vpet/items/sleep.png" class="care-img" alt="Sono" />
+              <div class="care-label" data-i18n="pymons.careSleep">Luz & Sono</div>
+            </div>
+            <div class="care-item">
+              <img src="/sprites/vpet/items/pill.png" class="care-img" alt="Treino" />
+              <div class="care-label" data-i18n="pymons.careTrain">Treino & Força</div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -766,17 +1271,54 @@
     let currentLang = 'pt';
     let allModules = [];
     let activeCategory = 'todos';
+    let allPymons = [];
+    let currentPymonIndex = 0;
+    let currentAnim = 'idle';
+
+    const PYMON_SPEECH = {
+      pt: [
+        '*nhac nhac* Você é meu melhor amigo! 💕',
+        'Vamos treinar juntos na masmorra? ⚔️',
+        'Estou me sentindo super forte hoje! ✨',
+        '*bocejo* Que soninho gostoso... 💤',
+        'Cuida bem de mim que eu viro um Mega! 🧬',
+        'Olha minhas asinhas batendo! 🦇',
+        'Buuu! Assustei você? Hehehe 👻',
+        'Casco firme e coração valente! 🐢',
+        'Grrrr! O rugido mais fofo das florestas! 🦖',
+        'A couraça está brilhando pronta para batalha! 🐗',
+        'Sssss... Sou ágil e veloz como o raio! 🐍',
+        'Surpresa! O que será que tem dentro do baú? 📦',
+        'Chamas ancestrais ardem em meu peito! 🐉'
+      ],
+      en: [
+        '*nom nom* You are my best friend! 💕',
+        'Shall we train in the dungeon together? ⚔️',
+        'I feel super energized and strong today! ✨',
+        '*yawn* Time for a cozy nap... 💤',
+        'Take good care of me and I will reach Mega! 🧬',
+        'Look at my little wings flutter! 🦇',
+        'Boo! Did I spook you? Hehehe 👻',
+        'Sturdy shell and brave heart! 🐢',
+        'Rawr! The cutest roar in the entire forest! 🦖',
+        'Armor polished and ready for battle! 🐗',
+        'Sssss... Swift and silent like lightning! 🐍',
+        'Surprise! What treasures lie within the chest? 📦',
+        'Ancient dragon flames burn inside my heart! 🐉'
+      ]
+    };
 
     const I18N = {
       pt: {
         'nav.features': 'Recursos',
+        'nav.pymons': 'Pymons',
         'nav.commands': 'Comandos',
         'nav.vote': 'Top.gg',
         'nav.bonus': 'Bônus Web (10s)',
         'nav.add': 'Adicionar',
         'hero.status': '🟢 Online & Operacional • Discord.js v14',
         'hero.title': 'Sua Fada Companheira no Discord',
-        'hero.subtitle': 'Bichinhos virtuais Pymons com Tamagotchi completo, Masmorras 2D Interativas, 10 Carreiras com Minigames, Economia Viva e Tarot Místico com arte em Canvas.',
+        'hero.subtitle': 'Bichinhos virtuais Pymons com evolução ramificada e pixel art animada, Masmorras 2D Interativas, 10 Carreiras com Minigames, Economia Viva e Tarot Místico com arte em Canvas.',
         'hero.btnInvite': '✨ Adicionar ao Discord',
         'hero.btnVote': '⭐ Votar no Top.gg (+Bônus)',
         'hero.btnBonus': '🎁 Bônus Web (10s)',
@@ -788,13 +1330,33 @@
         'pillars.title': 'Explore o Universo da Pyxie',
         'pillars.desc': 'Desenvolvida para transformar servidores do Discord em comunidades ativas, divertidas e engajadas.',
         'pillars.p1Title': 'Pymons Virtuais',
-        'pillars.p1Desc': 'Cuide de bichinhos estilo Tamagotchi, alimente, choque ovos em tempo real e desbloqueie formas Shiny raras com silhuetas na Pokédex.',
+        'pillars.p1Desc': 'Cuide de bichinhos estilo Tamagotchi, alimente, choque ovos em tempo real e desbloqueie formas Shiny raras com silhuetas na Pymon Dex.',
         'pillars.p2Title': 'Masmorras 2D & Boss',
         'pillars.p2Desc': 'Navegue por labirintos procedurais usando um D-Pad interativo, enfrente monstros e participe de batalhas cooperativas contra o World Boss ALPHA.',
         'pillars.p3Title': '10 Carreiras & Economia',
         'pillars.p3Desc': 'Escolha sua profissão, resolva minigames temáticos nos turnos de trabalho, desafie amigos no Jokenpô com apostas e suba no ranking global.',
         'pillars.p4Title': 'Tarot Místico & Casal',
         'pillars.p4Desc': 'Tire cartas dos 78 arcanos ilustrados com arte em Canvas, calcule afinidade amorosa com o /py-ship e celebre casamentos na comunidade.',
+        'pymons.sectionBadge': '🐾 V-Pet Retrô & Pixel Art',
+        'pymons.sectionTitle': 'Conheça os Pymons Virtuais',
+        'pymons.sectionDesc': 'Inspirados em clássicos dos bichinhos virtuais e no charme de MapleStory: sem lag, com animações suaves e personalidade vibrante.',
+        'pymons.animIdle': '💤 Descanso',
+        'pymons.animAttack': '⚔️ Ataque',
+        'pymons.animHit': '💥 Dano',
+        'pymons.speciesTitle': 'Escolha um Pymon para inspecionar:',
+        'pymons.careTitle': 'Mecânicas Autênticas de V-Pet',
+        'pymons.careDesc': 'Sem Canvas no servidor para zero consumo de RAM. A Pyxie calcula tudo matematicamente com lazy delta-time.',
+        'pymons.careFeed': 'Alimentação',
+        'pymons.careClean': 'Higiene & Banho',
+        'pymons.careSleep': 'Luz & Sono',
+        'pymons.careTrain': 'Treino & Força',
+        'pymons.eggsTitle': 'Ovos & Chocadeira Elemental',
+        'pymons.eggsDesc': 'Choque ovos com afinidades de Fogo, Água, Floresta, Místico e Dourado. Acelere 2h no portal de bônus web.',
+        'pymons.eggWater': 'Marés',
+        'pymons.eggGrass': 'Floresta',
+        'pymons.eggFire': 'Vulcânico',
+        'pymons.eggMystic': 'Místico',
+        'pymons.eggGolden': 'Dourado',
         'catalog.title': 'Guia Interativo de Comandos',
         'catalog.desc': 'Consulte a biblioteca completa sincronizada diretamente com o bot em tempo real.',
         'catalog.search': '🔍 Buscar comando ou funcionalidade...',
@@ -803,13 +1365,14 @@
       },
       en: {
         'nav.features': 'Features',
+        'nav.pymons': 'Pymons',
         'nav.commands': 'Commands',
         'nav.vote': 'Top.gg',
         'nav.bonus': 'Web Bonus (10s)',
         'nav.add': 'Add Pyxie',
         'hero.status': '🟢 Online & Operational • Discord.js v14',
         'hero.title': 'Your Fairy Companion on Discord',
-        'hero.subtitle': 'Pymon Virtual Pets with full Tamagotchi care, Interactive 2D Dungeons, 10 Careers with Minigames, Living Economy, and Mystic Canvas Tarot.',
+        'hero.subtitle': 'Pymon Virtual Pets with branching evolution and animated pixel art, Interactive 2D Dungeons, 10 Careers with Minigames, Living Economy, and Mystic Canvas Tarot.',
         'hero.btnInvite': '✨ Add to Discord',
         'hero.btnVote': '⭐ Vote on Top.gg (+Bonus)',
         'hero.btnBonus': '🎁 Web Bonus (10s)',
@@ -821,13 +1384,33 @@
         'pillars.title': 'Discover the World of Pyxie',
         'pillars.desc': 'Built to transform Discord servers into vibrant, entertaining, and deeply engaged communities.',
         'pillars.p1Title': 'Virtual Pymons',
-        'pillars.p1Desc': 'Nurture Tamagotchi-style companions, feed them, hatch eggs in real-time, and unlock rare Shiny forms with Pokédex silhouettes.',
+        'pillars.p1Desc': 'Nurture Tamagotchi-style companions, feed them, hatch eggs in real-time, and unlock rare Shiny forms with Pymon Dex silhouettes.',
         'pillars.p2Title': '2D Dungeons & Boss',
         'pillars.p2Desc': 'Traverse procedural mazes with an interactive D-Pad, battle monsters, and join cooperative raids against the weekly World Boss ALPHA.',
         'pillars.p3Title': '10 Careers & Economy',
         'pillars.p3Desc': 'Choose your profession, solve shift minigames, challenge friends to coin-bet Rock-Paper-Scissors, and climb global leaderboards.',
         'pillars.p4Title': 'Mystic Tarot & Love',
         'pillars.p4Desc': 'Draw from 78 illustrated tarot arcana in Canvas art, compute romance affinity with /py-ship, and marry community members.',
+        'pymons.sectionBadge': '🐾 Retro V-Pet & Pixel Art',
+        'pymons.sectionTitle': 'Meet the Virtual Pymons',
+        'pymons.sectionDesc': 'Inspired by classic virtual pets and MapleStory charm: zero runtime Canvas, ultra-lightweight, and vibrant animations.',
+        'pymons.animIdle': '💤 Idle',
+        'pymons.animAttack': '⚔️ Attack',
+        'pymons.animHit': '💥 Hit',
+        'pymons.speciesTitle': 'Select a Pymon to inspect:',
+        'pymons.careTitle': 'Authentic V-Pet Mechanics',
+        'pymons.careDesc': 'Zero runtime Canvas on server for zero RAM spikes. Pyxie calculates all states mathematically with lazy delta-time.',
+        'pymons.careFeed': 'Feeding',
+        'pymons.careClean': 'Hygiene & Clean',
+        'pymons.careSleep': 'Lights & Sleep',
+        'pymons.careTrain': 'Training & Sparring',
+        'pymons.eggsTitle': 'Elemental Eggs & Incubator',
+        'pymons.eggsDesc': 'Hatch eggs with Fire, Water, Forest, Mystic, and Golden affinities. Speed up by 2h using the web bonus portal.',
+        'pymons.eggWater': 'Tides',
+        'pymons.eggGrass': 'Forest',
+        'pymons.eggFire': 'Volcano',
+        'pymons.eggMystic': 'Mystic',
+        'pymons.eggGolden': 'Golden',
         'catalog.title': 'Interactive Commands Guide',
         'catalog.desc': 'Browse the complete commands library dynamically synchronized with the bot.',
         'catalog.search': '🔍 Search commands or features...',
@@ -873,6 +1456,85 @@
       });
 
       fetchCommands(lang);
+      fetchPymons(lang);
+    }
+
+    async function fetchPymons(lang) {
+      try {
+        const res = await fetch(`/api/pymons?lang=${lang}`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.species)) {
+          allPymons = data.species;
+          renderSpeciesGrid();
+          updatePymonDisplay();
+        }
+      } catch (err) {
+        console.error('Erro ao carregar pymons:', err);
+      }
+    }
+
+    function selectPymon(index) {
+      currentPymonIndex = index;
+      renderSpeciesGrid();
+      updatePymonDisplay();
+    }
+
+    function setVpetAnim(anim) {
+      currentAnim = anim;
+      document.querySelectorAll('.anim-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-anim') === anim);
+      });
+      updatePymonDisplay();
+    }
+
+    function updatePymonDisplay() {
+      if (!allPymons || allPymons.length === 0) return;
+      const p = allPymons[currentPymonIndex] || allPymons[0];
+      const spriteImg = document.getElementById('vpetSprite');
+      if (spriteImg) {
+        spriteImg.src = p.sprites[currentAnim] || p.sprites.idle;
+      }
+      const nameEl = document.getElementById('vpetName');
+      if (nameEl) nameEl.textContent = `${p.name} ${p.emoji}`;
+
+      const stageEl = document.getElementById('vpetStage');
+      if (stageEl) stageEl.textContent = p.stageName;
+
+      const elemEl = document.getElementById('vpetElement');
+      if (elemEl) elemEl.textContent = `${p.emoji} ${p.element}`;
+
+      const weightEl = document.getElementById('vpetWeight');
+      if (weightEl) weightEl.textContent = `⚖️ ${p.minWeight} kg`;
+
+      const descEl = document.getElementById('vpetDesc');
+      if (descEl) descEl.textContent = p.description;
+
+      const hpEl = document.getElementById('vpetHp');
+      if (hpEl) hpEl.textContent = p.baseStats.hp;
+      const atkEl = document.getElementById('vpetAtk');
+      if (atkEl) atkEl.textContent = p.baseStats.atk;
+      const defEl = document.getElementById('vpetDef');
+      if (defEl) defEl.textContent = p.baseStats.def;
+      const spdEl = document.getElementById('vpetSpd');
+      if (spdEl) spdEl.textContent = p.baseStats.spd;
+
+      const bubbleEl = document.getElementById('vpetBubble');
+      if (bubbleEl) {
+        const speechList = PYMON_SPEECH[currentLang] || PYMON_SPEECH.pt;
+        const speech = speechList[currentPymonIndex % speechList.length];
+        bubbleEl.textContent = `💬 "${speech}"`;
+      }
+    }
+
+    function renderSpeciesGrid() {
+      const grid = document.getElementById('speciesGrid');
+      if (!grid || !allPymons) return;
+      grid.innerHTML = allPymons.map((p, idx) => `
+        <div class="species-card ${idx === currentPymonIndex ? 'active' : ''}" onclick="selectPymon(${idx})">
+          <img src="${p.sprites.idle}" class="species-mini-sprite pixel-art" alt="${p.name}" />
+          <div class="species-mini-name">${p.name}</div>
+        </div>
+      `).join('');
     }
 
     async function fetchStats() {

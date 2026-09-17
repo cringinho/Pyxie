@@ -18,6 +18,7 @@ module.exports = {
   PROFESSION: 'py-profession',
   WORK: 'py-work',
   PET_EXPLORE: 'py-explore',
+  VPET: 'py-pymons',
   PYMONS: 'py-pymons',
   PIXELMONSTERS: 'py-pymons',
   PET: 'py-pymons',

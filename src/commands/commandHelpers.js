@@ -28,6 +28,13 @@ const MODULE_EMOJIS = {
 
 const COMMAND_CATEGORY_MAP = {
   // Pymons & RPG
+  vpet: 'pymons',
+  'py-vpet': 'pymons',
+  tamagotchi: 'pymons',
+  'py-tamagotchi': 'pymons',
+  mascote: 'pymons',
+  pet: 'pymons',
+  'py-pet': 'pymons',
   pymons: 'pymons',
   'py-pymons': 'pymons',
   explore: 'pymons',
