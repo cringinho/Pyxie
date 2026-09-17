@@ -81,6 +81,8 @@ function buildVpetEmbed(pet, user, lang = 'pt', options = {}) {
     .setThumbnail(spriteUrl)
     .setFooter({
       text: lang === 'pt'
+        ? `Pyxie Pymons • Virtual Pet • ID: ${pet.id}`
+        : `Pyxie Pymons • Virtual Pet • ID: ${pet.id}`,
         ? `Pyxie Pymons • ID: ${pet.id}`
         : `Pyxie Pymons • ID: ${pet.id}`,
     });
@@ -88,6 +90,7 @@ function buildVpetEmbed(pet, user, lang = 'pt', options = {}) {
   return embed;
 }
 
+function buildVpetActionRows(pet, lang = 'pt') {
 function buildVpetActionRows(pet, lang = 'pt', userId = null) {
   const uid = userId || pet.userId || pet.ownerId || pet.id || 'me';
   const headerRow = buildPymonHubHeader(uid, 'pet', lang);
@@ -156,6 +159,7 @@ function buildVpetActionRows(pet, lang = 'pt', userId = null) {
       .setStyle(ButtonStyle.Secondary)
   );
 
+  return [row1, row2];
   return [headerRow, row1, row2];
 }
 
