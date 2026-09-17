@@ -57,23 +57,20 @@ function buildVpetEmbed(pet, user, lang = 'pt', options = {}) {
 
   const spriteUrl = getVpetSpriteUrl(pet.key, animState, pet.isSleeping, pet.lightOff);
 
-  const titleHeader = lang === 'pt'
-    ? `${pet.emoji} ${pet.name}  •  [ 🐾 Pymon Estágio: ${stageName} ]`
-    : `${pet.emoji} ${pet.name}  •  [ 🐾 Pymon Stage: ${stageName} ]`;
+  const titleHeader = `${pet.emoji} ${pet.name}  •  🐾 ${stageName}`;
 
   const descriptionLines = [
-    `🍁 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 🍁`,
-    `💬 *"${dialogue}"*`,
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-    `🍖 **${lang === 'pt' ? 'Fome' : 'Hunger'}**: \`[ ${hungerBar} ]\`   ⚖️ **${lang === 'pt' ? 'Peso' : 'Weight'}**: \`${pet.weight}g\``,
-    `⚡ **${lang === 'pt' ? 'Força' : 'Strength'}**: \`[ ${strengthBar} ]\`   ⚠️ **${lang === 'pt' ? 'Falhas' : 'Mistakes'}**: \`${pet.careMistakes || 0}\``,
-    `🧹 **${lang === 'pt' ? 'Higiene' : 'Hygiene'}**: ${hygieneText}   💤 **${lang === 'pt' ? 'Sono' : 'Sleep'}**: ${sleepText}`,
-    `⚔️ **Sparring**: \`${pet.battlesWon || 0}V / ${battles}L (${winRate}%)\`   🏋️ **${lang === 'pt' ? 'Treinos' : 'Trains'}**: \`${pet.trainCount || 0}\``,
+    `> 💬 *"${dialogue}"*`,
+    '',
+    `🍖 **${lang === 'pt' ? 'Fome' : 'Hunger'}:** \`[ ${hungerBar} ]\`  •  ⚖️ **${lang === 'pt' ? 'Peso' : 'Weight'}:** \`${pet.weight}g\``,
+    `⚡ **${lang === 'pt' ? 'Força' : 'Strength'}:** \`[ ${strengthBar} ]\`  •  ⚠️ **${lang === 'pt' ? 'Falhas' : 'Mistakes'}:** \`${pet.careMistakes || 0}\``,
+    `🧹 **${lang === 'pt' ? 'Higiene' : 'Hygiene'}:** ${hygieneText}  •  💤 **${lang === 'pt' ? 'Sono' : 'Sleep'}:** ${sleepText}`,
+    `⚔️ **Sparring:** \`${pet.battlesWon || 0}V/${battles}L (${winRate}%)\`  •  🏋️ **${lang === 'pt' ? 'Treino' : 'Train'}:** \`${pet.trainCount || 0}\``,
   ];
 
   if (actionNotice) {
-    descriptionLines.push(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-    descriptionLines.push(`📢 **${actionNotice}**`);
+    descriptionLines.push('');
+    descriptionLines.push(`> 📢 **${actionNotice}**`);
   }
 
   const embed = new EmbedBuilder()
@@ -83,8 +80,8 @@ function buildVpetEmbed(pet, user, lang = 'pt', options = {}) {
     .setThumbnail(spriteUrl)
     .setFooter({
       text: lang === 'pt'
-        ? `Pyxie Pymons • Virtual Pet estilo MapleStory 1 • ID: ${pet.id}`
-        : `Pyxie Pymons • Virtual Pet MapleStory 1 Style • ID: ${pet.id}`,
+        ? `Pyxie Pymons • Virtual Pet • ID: ${pet.id}`
+        : `Pyxie Pymons • Virtual Pet • ID: ${pet.id}`,
     });
 
   return embed;
@@ -96,13 +93,13 @@ function buildVpetActionRows(pet, lang = 'pt') {
   const row1 = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId('vpet_meat')
-      .setLabel(lang === 'pt' ? 'Carne' : 'Meat')
+      .setLabel(lang === 'pt' ? 'Comer' : 'Feed')
       .setEmoji('🍖')
       .setStyle(ButtonStyle.Success)
       .setDisabled(pet.isSleeping && pet.lightOff),
     new ButtonBuilder()
       .setCustomId('vpet_pill')
-      .setLabel(lang === 'pt' ? 'Pílula' : 'Pill')
+      .setLabel(lang === 'pt' ? 'Vitamina' : 'Pill')
       .setEmoji('💊')
       .setStyle(ButtonStyle.Primary)
       .setDisabled(pet.isSleeping && pet.lightOff),
@@ -114,7 +111,7 @@ function buildVpetActionRows(pet, lang = 'pt') {
       .setDisabled(pet.poopCount === 0),
     new ButtonBuilder()
       .setCustomId('vpet_light')
-      .setLabel(lang === 'pt' ? (pet.lightOff ? 'Acender Luz' : 'Apagar Luz') : (pet.lightOff ? 'Lights On' : 'Lights Off'))
+      .setLabel(lang === 'pt' ? (pet.lightOff ? 'Acender' : 'Apagar') : (pet.lightOff ? 'Light On' : 'Light Off'))
       .setEmoji('💡')
       .setStyle(pet.lightOff ? ButtonStyle.Secondary : ButtonStyle.Primary),
     new ButtonBuilder()
@@ -134,7 +131,7 @@ function buildVpetActionRows(pet, lang = 'pt') {
       .setDisabled((pet.isSleeping && pet.lightOff) || pet.isSick),
     new ButtonBuilder()
       .setCustomId('vpet_spar')
-      .setLabel(lang === 'pt' ? 'Sparring' : 'Sparring')
+      .setLabel(lang === 'pt' ? 'Batalha' : 'Spar')
       .setEmoji('⚔️')
       .setStyle(ButtonStyle.Danger)
       .setDisabled((pet.isSleeping && pet.lightOff) || pet.isSick),
@@ -146,12 +143,12 @@ function buildVpetActionRows(pet, lang = 'pt') {
       .setDisabled(!evoCheck.canEvolve),
     new ButtonBuilder()
       .setCustomId('vpet_talk')
-      .setLabel(lang === 'pt' ? 'Conversar' : 'Talk')
+      .setLabel(lang === 'pt' ? 'Carinho' : 'Pet')
       .setEmoji('💬')
       .setStyle(ButtonStyle.Secondary),
     new ButtonBuilder()
       .setCustomId('vpet_new')
-      .setLabel(lang === 'pt' ? 'Novo Ovo' : 'New Egg')
+      .setLabel(lang === 'pt' ? 'Novo' : 'New')
       .setEmoji('🥚')
       .setStyle(ButtonStyle.Secondary)
   );

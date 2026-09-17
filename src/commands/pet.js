@@ -52,8 +52,7 @@ module.exports = {
     const embed = buildVpetEmbed(pet, user, lang);
     const components = buildVpetActionRows(pet, lang);
 
-    const message = await interaction.editReply({ embeds: [embed], components });
-    createVpetInteractionCollector(message, user.id, lang);
+    await interaction.editReply({ embeds: [embed], components });
   },
 
   async executePrefix({ message, args = [] }) {
@@ -69,8 +68,7 @@ module.exports = {
     const embed = buildVpetEmbed(pet, user, lang);
     const components = buildVpetActionRows(pet, lang);
 
-    const replyMsg = await message.channel.send({ embeds: [embed], components });
-    createVpetInteractionCollector(replyMsg, user.id, lang);
+    await message.channel.send({ embeds: [embed], components });
   },
 
   async execute(context, args = []) {
@@ -94,28 +92,30 @@ module.exports = {
  * Processa qualquer ação de botão do Pymon (seja via coletor local ou despachante global)
  */
 async function processVpetInteraction(interaction) {
-  const userId = interaction.user.id;
-  const lang = getLanguage(interaction);
-  const customId = interaction.customId;
-  let pet = getActiveVpet(userId);
+  try {
+    if (!interaction || !interaction.customId) return;
+    const userId = interaction.user.id;
+    const lang = getLanguage(interaction);
+    const customId = interaction.customId;
+    let pet = getActiveVpet(userId);
 
-  if (!pet) {
-    if (customId.startsWith('vpet_egg_')) {
-      const eggKey = customId.replace('vpet_', '');
-      const newPet = createNewVpet(userId, 'slime', eggKey);
-      const successNotice = lang === 'pt'
-        ? `🎉 O ovo chocou! Nasceu uma adorável gotinha gelatinosa **${newPet.name}**!`
-        : `🎉 The egg hatched! A cute little bouncy **${newPet.name}** was born!`;
-      const petEmbed = buildVpetEmbed(newPet, interaction.user, lang, {
-        actionNotice: successNotice,
-        animState: 'attack',
-        dialogueState: 'happy',
-      });
-      const petRows = buildVpetActionRows(newPet, lang);
-      return interaction.update({ embeds: [petEmbed], components: petRows });
+    if (!pet) {
+      if (customId.startsWith('vpet_egg_')) {
+        const eggKey = customId.replace('vpet_', '');
+        const newPet = createNewVpet(userId, 'slime', eggKey);
+        const successNotice = lang === 'pt'
+          ? `🎉 O ovo chocou! Nasceu uma adorável gotinha gelatinosa **${newPet.name}**!`
+          : `🎉 The egg hatched! A cute little bouncy **${newPet.name}** was born!`;
+        const petEmbed = buildVpetEmbed(newPet, interaction.user, lang, {
+          actionNotice: successNotice,
+          animState: 'attack',
+          dialogueState: 'happy',
+        });
+        const petRows = buildVpetActionRows(newPet, lang);
+        return await safeUpdateInteraction(interaction, { embeds: [petEmbed], components: petRows });
+      }
+      return await handleNewPetOnboarding(interaction, interaction.user, lang, true);
     }
-    return handleNewPetOnboarding(interaction, interaction.user, lang, true);
-  }
 
   let actionNotice = null;
   let animState = 'idle';
@@ -176,95 +176,90 @@ async function processVpetInteraction(interaction) {
     }
   } else if (customId === 'vpet_train') {
     const choiceRow = buildTrainingChoiceRow(lang);
-    const notice = lang === 'pt'
-      ? '🥊 Escolha a direção do golpe de treino:'
-      : '🥊 Choose the strike direction for training:';
-    const trainEmbed = buildVpetEmbed(pet, interaction.user, lang, { actionNotice: notice });
-    return interaction.update({ embeds: [trainEmbed], components: [choiceRow] });
-  } else if (customId.startsWith('vpet_train_')) {
-    const dir = customId.replace('vpet_train_', '');
-    const res = trainPet(userId, dir);
-    if (res.success) {
-      if (res.win) {
+      const notice = lang === 'pt'
+        ? '🥊 Escolha a direção do golpe de treino:'
+        : '🥊 Choose strike direction for training:';
+      const trainEmbed = buildVpetEmbed(pet, interaction.user, lang, { actionNotice: notice });
+      return await safeUpdateInteraction(interaction, { embeds: [trainEmbed], components: [choiceRow] });
+    } else if (customId.startsWith('vpet_train_')) {
+      const dir = customId.replace('vpet_train_', '');
+      const res = trainPet(userId, dir);
+      if (res.success) {
+        if (res.win) {
+          actionNotice = lang === 'pt'
+            ? `🥊 Treino Perfeito! Acertou o golpe! (+1 Força, -2g Peso)`
+            : `🥊 Perfect Training! Strike landed! (+1 Strength, -2g Weight)`;
+          animState = 'attack';
+          dialogueState = 'happy';
+        } else {
+          actionNotice = lang === 'pt'
+            ? `⚠️ O Pymon errou o tempo do golpe (alvo era ${res.targetDirection}). (-1g Peso)`
+            : `⚠️ Pymon mistimed the strike (target was ${res.targetDirection}). (-1g Weight)`;
+          animState = 'hit';
+        }
+      }
+    } else if (customId === 'vpet_spar') {
+      const sparRes = resolveSparring(pet, null, lang);
+      pet.battlesCount = (pet.battlesCount || 0) + 1;
+      if (sparRes.victory) {
+        pet.battlesWon = (pet.battlesWon || 0) + 1;
+        pet.weight = Math.max(10, pet.weight - 2);
+        actionNotice = sparRes.log;
+        animState = 'attack';
+        dialogueState = 'happy';
+      } else {
+        pet.weight = Math.max(10, pet.weight - 1);
+        actionNotice = sparRes.log;
+        animState = 'hit';
+        dialogueState = 'sick';
+      }
+    } else if (customId === 'vpet_evolve') {
+      const evoRes = evolvePet(userId);
+      if (evoRes.success) {
         actionNotice = lang === 'pt'
-          ? `🥊 Treino Perfeito! Acertou o golpe ${dir}! (+1 Força, -2g Peso)`
-          : `🥊 Perfect Training! Landed the ${dir} strike! (+1 Strength, -2g Weight)`;
+          ? `🧬 INCRÍVEL! Seu Pymon evoluiu para **${evoRes.pet.species}**!`
+          : `🧬 INCREDIBLE! Your Pymon evolved into **${evoRes.pet.species}**!`;
         animState = 'attack';
         dialogueState = 'happy';
       } else {
         actionNotice = lang === 'pt'
-          ? `⚠️ O Pymon errou o tempo do golpe (alvo era ${res.targetDirection}). (-1g Peso)`
-          : `⚠️ Pymon mistimed the strike (target was ${res.targetDirection}). (-1g Weight)`;
-        animState = 'hit';
+          ? '🧬 Seu Pymon ainda não cumpre todos os requisitos de evolução.'
+          : '🧬 Your Pymon does not yet meet all evolution requirements.';
       }
-    }
-  } else if (customId === 'vpet_spar') {
-    const sparRes = resolveSparring(pet, null, lang);
-    pet.battlesCount = (pet.battlesCount || 0) + 1;
-    if (sparRes.victory) {
-      pet.battlesWon = (pet.battlesWon || 0) + 1;
-      pet.weight = Math.max(10, pet.weight - 2);
-      actionNotice = sparRes.log;
-      animState = 'attack';
+    } else if (customId === 'vpet_talk') {
+      actionNotice = lang === 'pt' ? '💬 Você fez carinho e conversou com seu Pymon!' : '💬 You stroked and chatted with your Pymon!';
       dialogueState = 'happy';
-    } else {
-      pet.weight = Math.max(10, pet.weight - 1);
-      actionNotice = sparRes.log;
-      animState = 'hit';
-      dialogueState = 'sick';
+    } else if (customId === 'vpet_new') {
+      return await handleNewPetOnboarding(interaction, interaction.user, lang, true);
+    } else if (customId === 'vpet_back') {
+      // Volta para tela principal
     }
-  } else if (customId === 'vpet_evolve') {
-    const evoRes = evolvePet(userId);
-    if (evoRes.success) {
-      actionNotice = lang === 'pt'
-        ? `🧬 INCRÍVEL! Seu Pymon evoluiu para **${evoRes.pet.species}**! Parabéns, tutor!`
-        : `🧬 INCREDIBLE! Your Pymon evolved into **${evoRes.pet.species}**! Congratulations!`;
-      animState = 'attack';
-      dialogueState = 'happy';
-    } else {
-      actionNotice = lang === 'pt'
-        ? '🧬 Seu Pymon ainda não cumpre todos os requisitos de evolução (treinos, maturidade e vitórias).'
-        : '🧬 Your Pymon does not yet meet all evolution requirements (training, maturity, and victories).';
-    }
-  } else if (customId === 'vpet_talk') {
-    actionNotice = lang === 'pt' ? '💬 Você fez carinho e conversou com seu Pymon!' : '💬 You stroked and chatted with your Pymon!';
-    dialogueState = 'happy';
-  } else if (customId === 'vpet_new') {
-    return handleNewPetOnboarding(interaction, interaction.user, lang, true);
-  } else if (customId === 'vpet_back') {
-    // Volta para tela principal
+
+    pet = getActiveVpet(userId);
+    const updatedEmbed = buildVpetEmbed(pet, interaction.user, lang, {
+      dialogueState,
+      actionNotice,
+      animState,
+    });
+    const updatedComponents = buildVpetActionRows(pet, lang);
+
+    await safeUpdateInteraction(interaction, { embeds: [updatedEmbed], components: updatedComponents });
+  } catch (err) {
+    if (err.code === 10062 || err.code === 40060) return;
+    console.error('[vpet] Error in processVpetInteraction:', err);
   }
-
-  pet = getActiveVpet(userId);
-  const updatedEmbed = buildVpetEmbed(pet, interaction.user, lang, {
-    dialogueState,
-    actionNotice,
-    animState,
-  });
-  const updatedComponents = buildVpetActionRows(pet, lang);
-
-  await interaction.update({ embeds: [updatedEmbed], components: updatedComponents });
 }
 
-function createVpetInteractionCollector(message, userId, initialLang) {
-  const collector = message.createMessageComponentCollector({
-    componentType: ComponentType.Button,
-    time: 15 * 60 * 1000,
-  });
-
-  collector.on('collect', async (interaction) => {
-    if (interaction.user.id !== userId) {
-      const errTxt = initialLang === 'pt'
-        ? '⚠️ Este não é o seu Pymon! Use `/py-pymons` para abrir o seu.'
-        : '⚠️ This is not your Pymon! Use `/py-pymons` to open yours.';
-      return interaction.reply({ content: errTxt, ephemeral: true });
+async function safeUpdateInteraction(interaction, options) {
+  try {
+    if (interaction.replied || interaction.deferred) {
+      return await interaction.editReply(options);
     }
-    await processVpetInteraction(interaction);
-  });
-
-  collector.on('end', () => {
-    message.edit({ components: [] }).catch(() => {});
-  });
+    return await interaction.update(options);
+  } catch (err) {
+    if (err.code === 10062 || err.code === 40060) return;
+    console.error('[vpet] safeUpdateInteraction error:', err);
+  }
 }
 
 /**
