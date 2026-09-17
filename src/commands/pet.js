@@ -40,6 +40,10 @@ module.exports = {
     }),
   buildDungeonTab,
 
+  async execute(context, args = []) {
+    const isInteraction = typeof context.isCommand === 'function' && context.isCommand();
+    const user = isInteraction ? context.user : context.author;
+    const lang = getLanguage(context);
   async executeSlash({ interaction }) {
     const user = interaction.user;
     const lang = getLanguage(interaction);
@@ -61,17 +65,23 @@ module.exports = {
     const lang = getLanguage(message);
     let pet = getActiveVpet(user.id);
 
+    // Se o usuário ainda não tiver um pet, exibe a tela de escolha de ovo inicial
     if (!pet) {
+      return handleNewPetOnboarding(context, user, lang);
       return handleNewPetOnboarding(message, user, lang, false);
     }
 
     const embed = buildVpetEmbed(pet, user, lang);
     const components = buildVpetActionRows(pet, lang);
 
+    const message = isInteraction
+      ? await context.reply({ embeds: [embed], components, fetchReply: true })
+      : await context.channel.send({ embeds: [embed], components });
     const replyMsg = await message.channel.send({ embeds: [embed], components });
     createVpetInteractionCollector(replyMsg, user.id, lang);
   },
 
+    createVpetInteractionCollector(message, user.id, lang);
   async execute(context, args = []) {
     const isInteraction = typeof context.isCommand === 'function' && context.isCommand();
     if (isInteraction) {
@@ -293,6 +303,10 @@ async function handleNewPetOnboarding(context, user, lang, isUpdate = false) {
     footer: { text: lang === 'pt' ? 'Toque em um botão para chocar o ovo' : 'Tap a button to hatch your egg' },
   };
 
+  const replyOptions = { embeds: [embed], components: [rows], fetchReply: true };
+  const msg = isInteraction
+    ? (isUpdate ? await context.update(replyOptions) : await context.reply(replyOptions))
+    : await context.channel.send(replyOptions);
   const replyOptions = { embeds: [embed], components: [rows] };
   let msg;
   if (isInteraction) {

@@ -305,6 +305,7 @@ function resolveSpeciesKey(key) {
 }
 
 function getVpetSpecies(key) {
+  return VPET_SPECIES[key] || VPET_SPECIES.slime;
   const resolved = resolveSpeciesKey(key);
   return VPET_SPECIES[resolved] || VPET_SPECIES.slime;
 }
@@ -316,6 +317,7 @@ function getVpetSpriteUrl(speciesKey, state = 'idle', isSleeping = false, lightO
   const resolved = resolveSpeciesKey(speciesKey);
   const validStates = ['idle', 'attack', 'hit'];
   const anim = validStates.includes(state) ? state : 'idle';
+  return `${BASE_SPRITE_URL}/sprites/vpet/pets/${speciesKey}_${anim}.gif`;
   return `${BASE_SPRITE_URL}/sprites/vpet/pets/${resolved}_${anim}.gif`;
 }
 
