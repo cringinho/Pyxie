@@ -61,7 +61,7 @@ function buildDiceEmbed(user, result, source = null) {
     .setColor(color)
     .setTitle(title)
     .setDescription(desc)
-    .setFooter(pyxieFooter(`Total: ${result.total}`))
+    .setFooter({ text: `Total: ${result.total}` })
     .setTimestamp();
 }
 

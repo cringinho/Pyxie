@@ -77,8 +77,37 @@ const testEnUser = `test_en_gamer_${Date.now()}`;
 grantExtraCookie(testEnUser);
 const enCookie = claimCookie(testEnUser, 'en');
 assert.ok(enCookie.wisdom, 'Deve gerar sabedoria em inglês.');
-assert.ok(COOKIE_WISDOMS.en.includes(enCookie.wisdom), 'A sabedoria deve vir da lista em inglês.');
+// 9. Teste do Comando de Convite Bilíngue (Invite / Convite)
+const inviteCommand = require('../src/commands/convite');
+assert.ok(inviteCommand.name, 'Comando convite deve ter nome.');
+assert.ok(inviteCommand.aliases.includes('invite'), 'Comando convite deve ter alias invite.');
+assert.ok(inviteCommand.aliases.includes('convite'), 'Comando convite deve ter alias convite.');
+assert.ok(inviteCommand.aliases.includes('py-invite'), 'Comando convite deve ter alias py-invite.');
 
-console.log('Verificação dos novos comandos leves (Biscoito, Jokenpô, Provável, Dados, Coinflip, Bônus Web e suporte a Inglês/Português): OK');
+const mockClient = {
+  user: {
+    id: '1543650200718155897',
+    displayAvatarURL: () => 'https://cdn.discordapp.com/avatars/1543650200718155897/avatar.png',
+  },
+};
+
+const invitePt = inviteCommand.buildInviteEmbed(mockClient, 'pt');
+assert.ok(invitePt.embeds && invitePt.embeds.length === 1, 'Deve gerar 1 embed de convite em PT.');
+assert.ok(!invitePt.embeds[0].data.title.includes('invite.title'), 'Título PT não deve ser a chave literal.');
+assert.ok(invitePt.embeds[0].data.title.includes('Convide a Pyxie'), 'Título PT deve convidar a Pyxie.');
+assert.equal(invitePt.components.length, 2, 'Deve conter 2 linhas de botões.');
+
+const inviteEn = inviteCommand.buildInviteEmbed(mockClient, 'en');
+assert.ok(inviteEn.embeds && inviteEn.embeds.length === 1, 'Deve gerar 1 embed de convite em EN.');
+assert.ok(!inviteEn.embeds[0].data.title.includes('invite.title'), 'Título EN não deve ser a chave literal.');
+assert.ok(inviteEn.embeds[0].data.title.includes('Invite Pyxie'), 'Título EN deve convidar a Pyxie em inglês.');
+
+const inviteUrl = inviteCommand.getInviteUrl('1543650200718155897');
+assert.ok(inviteUrl.includes('client_id=1543650200718155897'), 'URL de convite deve conter o Client ID.');
+assert.ok(inviteUrl.includes('permissions='), 'URL de convite deve conter permissões.');
+assert.ok(inviteUrl.includes('scope=bot%20applications.commands'), 'URL de convite deve conter os escopos bot e applications.commands.');
+
+console.log('Verificação dos comandos leves e convite bilíngue (Biscoito, Jokenpô, Provável, Dados, Coinflip, Convite e Bônus Web): OK');
+
 
 

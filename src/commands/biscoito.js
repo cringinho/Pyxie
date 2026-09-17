@@ -32,7 +32,7 @@ function buildCookieView(userId, source = null) {
       .setColor(PYXIE_COLORS.purple)
       .setTitle(cooldownTitle)
       .setDescription(cooldownDesc)
-      .setFooter(pyxieFooter(isEn ? 'Daily Fortune Cookie' : 'Biscoito da Sorte Diário'))
+      .setFooter({ text: isEn ? 'Daily Fortune Cookie' : 'Biscoito da Sorte Diário' })
       .setTimestamp();
 
     const row = new ActionRowBuilder().addComponents(
@@ -68,7 +68,7 @@ function buildCookieView(userId, source = null) {
         inline: false,
       }
     )
-    .setFooter(pyxieFooter(footerText))
+    .setFooter({ text: footerText })
     .setTimestamp();
 
   if (result.hasPrize) {

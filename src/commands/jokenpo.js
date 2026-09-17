@@ -106,7 +106,7 @@ function buildJokenpoEmbed(game, lang = 'pt') {
         inline: true,
       }
     )
-    .setFooter(pyxieFooter(isEn ? 'Time limit: 60 seconds' : 'Tempo limite: 60 segundos'))
+    .setFooter({ text: isEn ? 'Time limit: 60 seconds' : 'Tempo limite: 60 segundos' })
     .setTimestamp();
 }
 
@@ -266,7 +266,7 @@ async function handleJokenpoInteraction(interaction) {
             inline: true,
           }
         )
-        .setFooter(pyxieFooter(isEn ? 'Friendly tie' : 'Empate amigável'));
+        .setFooter({ text: isEn ? 'Friendly tie' : 'Empate amigável' });
     } else {
       const challengerWins = pickA.beats === game.opponentChoice;
       const winnerId = challengerWins ? game.challengerId : game.opponentId;
@@ -305,7 +305,7 @@ async function handleJokenpoInteraction(interaction) {
             inline: true,
           }
         )
-        .setFooter(pyxieFooter(isEn ? 'Legendary duel' : 'Duelo lendário'));
+        .setFooter({ text: isEn ? 'Legendary duel' : 'Duelo lendário' });
     }
 
     await interaction.message.edit({

@@ -136,7 +136,7 @@ function buildPollEmbed(poll, lang = 'pt') {
         inline: true,
       }
     )
-    .setFooter(pyxieFooter(footerText))
+    .setFooter({ text: footerText })
     .setTimestamp();
 }
 
@@ -226,7 +226,7 @@ function startLikelyPoll({ guild, candidateA, candidateB, scenario, channel, lan
       .setColor('#facc15')
       .setTitle(title)
       .setDescription(desc)
-      .setFooter(pyxieFooter(isEn ? `Voting concluded with ${total} participant(s)` : `Votação finalizada com ${total} participante(s)`))
+      .setFooter({ text: isEn ? `Voting concluded with ${total} participant(s)` : `Votação finalizada com ${total} participante(s)` })
       .setTimestamp();
 
     if (finishedPoll.message) {

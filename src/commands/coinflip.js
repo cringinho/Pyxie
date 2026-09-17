@@ -42,7 +42,7 @@ function flipCoin(userChoice, bet, userId, source = null) {
 
   const embed = new EmbedBuilder()
     .setTimestamp()
-    .setFooter(pyxieFooter(isEn ? `Bet: ${safeBet} Coins • Heads or Tails` : `Aposta: ${safeBet} Moedas • Cara ou Coroa`));
+    .setFooter({ text: isEn ? `Bet: ${safeBet} Coins • Heads or Tails` : `Aposta: ${safeBet} Moedas • Cara ou Coroa` });
 
   if (won) {
     embed
