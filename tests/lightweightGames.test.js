@@ -49,20 +49,36 @@ setUserBalance(testUserId, 500);
 const coinflipCommand = require('../src/commands/coinflip');
 assert.ok(coinflipCommand.name, 'Comando coinflip deve ter nome.');
 assert.ok(coinflipCommand.aliases.includes('caraoucoroa'), 'Comando coinflip deve ter alias caraoucoroa.');
+assert.ok(coinflipCommand.aliases.includes('coinflip'), 'Comando coinflip deve ter alias coinflip.');
+assert.ok(coinflipCommand.aliases.includes('flip'), 'Comando coinflip deve ter alias flip.');
 
 // 5. Teste de Jokenpô
 const jokenpoCommand = require('../src/commands/jokenpo');
 assert.ok(jokenpoCommand.name, 'Comando jokenpo deve ter nome.');
 assert.ok(jokenpoCommand.aliases.includes('ppt'), 'Comando jokenpo deve ter alias ppt.');
+assert.ok(jokenpoCommand.aliases.includes('rps'), 'Comando jokenpo deve ter alias rps.');
 
 // 6. Teste de Quem é Mais Provável
 const likelyCommand = require('../src/commands/provavel');
 assert.ok(likelyCommand.name, 'Comando provavel deve ter nome.');
 assert.ok(likelyCommand.aliases.includes('provavel'), 'Comando provavel deve ter alias provavel.');
+assert.ok(likelyCommand.aliases.includes('likely'), 'Comando provavel deve ter alias likely.');
 
 // 7. Teste de Dados
 const dadoCommand = require('../src/commands/dado');
 assert.ok(dadoCommand.name, 'Comando dado deve ter nome.');
 assert.ok(dadoCommand.aliases.includes('dado'), 'Comando dado deve ter alias dado.');
+assert.ok(dadoCommand.aliases.includes('dice'), 'Comando dado deve ter alias dice.');
 
-console.log('Verificação dos novos comandos leves (Biscoito, Jokenpô, Provável, Dados, Coinflip e Bônus Web): OK');
+// 8. Teste de Suporte a Inglês no Biscoito (Wisdoms em EN)
+assert.ok(Array.isArray(COOKIE_WISDOMS.en), 'Deve possuir lista de sabedoria em inglês.');
+assert.ok(COOKIE_WISDOMS.en.length > 30, 'Deve possuir mais de 30 frases em inglês.');
+const testEnUser = `test_en_gamer_${Date.now()}`;
+grantExtraCookie(testEnUser);
+const enCookie = claimCookie(testEnUser, 'en');
+assert.ok(enCookie.wisdom, 'Deve gerar sabedoria em inglês.');
+assert.ok(COOKIE_WISDOMS.en.includes(enCookie.wisdom), 'A sabedoria deve vir da lista em inglês.');
+
+console.log('Verificação dos novos comandos leves (Biscoito, Jokenpô, Provável, Dados, Coinflip, Bônus Web e suporte a Inglês/Português): OK');
+
+

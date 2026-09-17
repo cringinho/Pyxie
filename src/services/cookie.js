@@ -2,7 +2,7 @@ const { getUserAccount, updateUserAccount, addCoins } = require('./economy');
 
 const COOKIE_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 horas
 
-const COOKIE_WISDOMS = [
+const COOKIE_WISDOMS_PT = [
   'A magia não está nas respostas que você procura, mas na coragem de fazer perguntas.',
   'Hoje um Pymon selvagem pode cruzar o seu caminho trazendo boas notícias. Fique atento!',
   'Mesmo a menor das fadas pode causar uma grande tempestade no momento certo.',
@@ -57,6 +57,65 @@ const COOKIE_WISDOMS = [
   'Você tem a bênção dos espíritos da floresta hoje. Que a sorte te acompanhe!'
 ];
 
+const COOKIE_WISDOMS_EN = [
+  'Magic is not found in the answers you seek, but in the courage to ask questions.',
+  'A wild Pymon may cross your path today bringing good news. Keep your eyes open!',
+  'Even the smallest fairy can stir a great tempest when the time is right.',
+  'Your fortune is glowing like a magical bean under full moonlight.',
+  'Be like Cinna: sweet on the outside, but fierce in heart when battle calls.',
+  'Great enchanted journeys begin with a single courageous step.',
+  'Patience is a bitter potion, but its fruits are the sweetest in the realm.',
+  'Someone on the server is thinking fondly of you right now.',
+  'Never hoard kindness or smiles; both multiply wondrously when shared.',
+  'A golden egg brings wealth, but true treasure lies in the companions beside you.',
+  'The universe conspires in favor of those who persist after the first stumble.',
+  'A small mystery will soon unravel. Open your heart to the unexpected.',
+  'When things feel overwhelming, take a deep breath and enjoy a warm pastry.',
+  'Your natural charm has a 99% affinity with success today.',
+  'Never underestimate the power of a warm cup of tea and ten quiet minutes.',
+  'Destiny loves those who dare to laugh in the face of danger (and bugs).',
+  'An unexpected message will bring a smile to your face before sunset.',
+  'Even the darkest midnight yields to the radiant brilliance of the dawn.',
+  'True strength comes not from brawn, but from the kindness you scatter.',
+  'You are stronger than you realize and far more incredible than you know.',
+  'Positive energy attracts golden opportunities. Keep your chin held high!',
+  'The secret to happiness is cherishing even the humble stepping stones of the path.',
+  'If you find a crossroads today, follow the trail that has the most flowers.',
+  'A friend’s gentle advice will be worth more than a hundred gold coins this week.',
+  'Do not fear starting over; every sunrise is a fresh, magical blank page.',
+  'Your aura is glowing bright! Use that light to brighten someone else’s day.',
+  'Warm coffee and optimistic thoughts solve 90% of all enchanted troubles.',
+  'Fortune favors the bold... and those who feed their pets every single day!',
+  'In the middle of the storm, remember: even ancient dragons land to rest.',
+  'Marvelous surprises frequently arrive in humble, modest packages.',
+  'Trust the process. The caterpillar needed time before spreading enchanted wings.',
+  'If life hands you sour lemons, brew a sparkling potion and sell it for 50 coins.',
+  'Those who plant warmth in their community will harvest loyalty and laughter.',
+  'Your creative energy is peaking today. Create something new and amaze everyone!',
+  'Yesterday is history, tomorrow is mystery, but today is a wondrous gift.',
+  'A generous deed performed in secret will return to you multiplied tenfold.',
+  'Beware of those who promise easy shortcuts through the dungeons of life.',
+  'Smile! Your smile has the rare power to break gloomy curses.',
+  'The intuition of a kind heart is seldom wrong. Listen to your inner voice.',
+  'A moment of rest today prevents heavy exhaustion tomorrow. Honor your pace.',
+  'True friendship is like an elixir of legends: priceless and everlasting.',
+  'You were born to shine, not to dwell in the shadows of others.',
+  'Never compare your Chapter 1 with someone else’s Chapter 20.',
+  'Pyxie’s realm celebrates your presence here today! You are truly valued.',
+  'When you share your inner light, the entire world becomes brighter.',
+  'Even on overcast days, the sun shines steadily above the clouds.',
+  'A victory that once seemed out of reach is closer than you dare to dream.',
+  'Embrace your quirks; they are the unique magic that makes you unforgettable.',
+  'Value simple, heartfelt moments far above grand and hollow illusions.',
+  'Today is a splendid day to try something you have always been curious about.',
+  'Life is far too short not to send a cute meme to someone you care about.',
+  'You carry the blessings of the woodland spirits today. May good fortune walk with you!'
+];
+
+const COOKIE_WISDOMS = COOKIE_WISDOMS_PT;
+COOKIE_WISDOMS.pt = COOKIE_WISDOMS_PT;
+COOKIE_WISDOMS.en = COOKIE_WISDOMS_EN;
+
 function generateLuckyNumbers(count = 6, max = 60) {
   const numbers = new Set();
   while (numbers.size < count) {
@@ -81,7 +140,7 @@ function getCookieStatus(userId) {
   };
 }
 
-function claimCookie(userId) {
+function claimCookie(userId, lang = 'pt') {
   const status = getCookieStatus(userId);
   if (!status.canOpen) {
     return {
@@ -100,8 +159,9 @@ function claimCookie(userId) {
     }
   });
 
-  // Escolhe frase mística aleatória
-  const wisdom = COOKIE_WISDOMS[Math.floor(Math.random() * COOKIE_WISDOMS.length)];
+  // Escolhe frase mística aleatória conforme o idioma
+  const wisdomPool = lang === 'en' ? COOKIE_WISDOMS_EN : COOKIE_WISDOMS_PT;
+  const wisdom = wisdomPool[Math.floor(Math.random() * wisdomPool.length)];
   const luckyNumbers = generateLuckyNumbers();
 
   // 15% de chance de achar um bilhete premiado de moedas
@@ -132,8 +192,11 @@ function grantExtraCookie(userId) {
 module.exports = {
   COOKIE_COOLDOWN_MS,
   COOKIE_WISDOMS,
+  COOKIE_WISDOMS_PT,
+  COOKIE_WISDOMS_EN,
   generateLuckyNumbers,
   getCookieStatus,
   claimCookie,
   grantExtraCookie,
 };
+
