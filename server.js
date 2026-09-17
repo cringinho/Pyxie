@@ -170,7 +170,15 @@ function requireAdminAuth(req, res, next) {
 }
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: '1d' }));
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    } else {
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+  }
+}));
 
 // 1. Healthcheck e status público
 app.get('/api/status', (req, res) => {
