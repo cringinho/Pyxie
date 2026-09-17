@@ -40,6 +40,7 @@ const commands = [
   require('./provavel'),
   require('./dado'),
   require('./coinflip'),
+  require('./admin'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');

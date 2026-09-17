@@ -194,6 +194,8 @@ const COMMAND_CATEGORY_MAP = {
   'py-idioma': 'utilidades',
   sixseven: 'utilidades',
   'py-sixseven': 'utilidades',
+  admin: 'utilidades',
+  'py-admin': 'utilidades',
 };
 
 let _loadedCommands = null;
@@ -336,6 +338,7 @@ function buildHelpMessage(requestedModule = 'todos', userId = '', source = null)
 
 module.exports = {
   MODULE_METADATA,
+  COMMAND_CATEGORY_MAP,
   get HELP_MODULES() {
     return getHelpModules();
   },

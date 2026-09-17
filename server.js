@@ -129,10 +129,36 @@ function registerSlashCommands() {
 
 const { processTopggVote, verifyWebhookAuth } = require('./src/services/topgg');
 const { verifyAndClaimBonus } = require('./src/services/bonusTimer');
+const {
+  OWNER_SNOWFLAKE,
+  isIpAllowed,
+  verifyMagicToken,
+  isValidAdminSession,
+  isMasterSecretValid,
+} = require('./src/services/adminAuth');
+const { getHelpModules } = require('./src/commands/commandHelpers');
+
+function getCookie(req, name) {
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) return null;
+  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 function requireAdminAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const queryToken = req.query.token || req.headers['x-api-key'];
+  const sessionCookie = getCookie(req, 'pyxie_admin_session');
+
+  if (bearerToken && isMasterSecretValid(bearerToken)) return next();
+  if (queryToken && isMasterSecretValid(queryToken)) return next();
+  if (sessionCookie && isValidAdminSession(sessionCookie)) return next();
+  if (bearerToken && isValidAdminSession(bearerToken)) return next();
+
   const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
   if (!secret) {
+  if (!secret && isIpAllowed(req)) {
     return next();
   }
 
@@ -144,6 +170,7 @@ function requireAdminAuth(req, res, next) {
   }
 
   next();
+  return res.status(401).json({ error: 'Acesso administrativo não autorizado.' });
 }
 
 app.use(express.json());
@@ -155,6 +182,80 @@ app.get('/api/status', (req, res) => {
 });
 
 // 2. Webhook do Top.gg (Votos e Recompensas a cada 12h)
+// 2. Catálogo Dinâmico de Comandos da Pyxie (Sincronizado diretamente com help.js)
+app.get('/api/commands', (req, res) => {
+  const lang = req.query.lang === 'en' ? 'en' : 'pt';
+  const modules = getHelpModules(null, lang);
+  res.json({
+    success: true,
+    lang,
+    modules,
+  });
+});
+
+// 3. Painel Administrativo do Proprietário (Restrito a IP Allowlist e Snowflake 214153735281180673)
+app.get('/admin', (req, res) => {
+  if (!isIpAllowed(req)) {
+    return res.status(403).send(`<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Forbidden • Pyxie</title>
+  </head>
+  <body style="background:#090514;color:#ef4444;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;padding:20px;">
+    <div style="text-align:center;max-width:440px;padding:32px;border:1px solid rgba(239,68,68,0.3);border-radius:20px;background:#130b24;box-shadow:0 10px 40px rgba(0,0,0,0.6);">
+      <div style="font-size:48px;margin-bottom:12px;">🛡️</div>
+      <h1 style="font-size:24px;margin-bottom:8px;color:#ffffff;">403 Forbidden</h1>
+      <p style="color:#cbd5e1;font-size:14px;line-height:1.5;">Acesso restrito exclusivamente ao proprietário autorizado da Pyxie.</p>
+    </div>
+  </body>
+</html>`);
+  }
+
+  const tokenParam = req.query.token;
+  if (tokenParam) {
+    const verifyResult = verifyMagicToken(tokenParam);
+    if (verifyResult.valid) {
+      res.setHeader('Set-Cookie', `pyxie_admin_session=${verifyResult.sessionToken}; HttpOnly; SameSite=Lax; Max-Age=43200; Path=/`);
+      return res.redirect('/admin');
+    }
+  }
+
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+app.post('/api/admin/verify', (req, res) => {
+  if (!isIpAllowed(req)) {
+    return res.status(403).json({ success: false, message: 'IP não autorizado.' });
+  }
+
+  const { token, secret } = req.body || {};
+  if (token) {
+    const magic = verifyMagicToken(token);
+    if (magic.valid) {
+      res.setHeader('Set-Cookie', `pyxie_admin_session=${magic.sessionToken}; HttpOnly; SameSite=Lax; Max-Age=43200; Path=/`);
+      return res.json({ success: true, sessionToken: magic.sessionToken });
+    }
+    return res.status(401).json({ success: false, message: magic.error });
+  }
+
+  if (secret && isMasterSecretValid(secret)) {
+    const crypto = require('node:crypto');
+    const sessionToken = crypto.randomBytes(32).toString('hex');
+    res.setHeader('Set-Cookie', `pyxie_admin_session=${sessionToken}; HttpOnly; SameSite=Lax; Max-Age=43200; Path=/`);
+    return res.json({ success: true, sessionToken });
+  }
+
+  const sessionCookie = getCookie(req, 'pyxie_admin_session');
+  if (sessionCookie && isValidAdminSession(sessionCookie)) {
+    return res.json({ success: true, sessionToken: sessionCookie });
+  }
+
+  return res.status(401).json({ success: false, message: 'Credenciais inválidas ou sessão expirada.' });
+});
+
+// 4. Webhook do Top.gg (Votos e Recompensas a cada 12h)
 app.post('/api/topgg/webhook', (req, res) => {
   const authHeader = req.headers.authorization;
   if (!verifyWebhookAuth(authHeader)) {
@@ -172,6 +273,7 @@ app.post('/api/topgg/webhook', (req, res) => {
 
 // 3. Rotas administrativas protegidas
 // 3. Sistema de Bônus de Recompensas (Página de Espera 10s da Pyxie)
+// 5. Sistema de Bônus de Recompensas (Página de Espera 10s da Pyxie)
 app.get('/bonus', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'bonus.html'));
 });

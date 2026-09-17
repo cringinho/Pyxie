@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Painel Cringelândia • Seu lugar de ser você</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Pyxie • Bot de Discord Oficial</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧚</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
       :root {
         /* Paleta de cores principal */
@@ -23,6 +26,20 @@
         /* Variáveis de estilo */
         --font-title: 'Fredoka', sans-serif;
         --font-text: 'Quicksand', sans-serif;
+        --bg-dark: #090514;
+        --bg-card: rgba(20, 11, 40, 0.85);
+        --bg-card-hover: rgba(30, 17, 60, 0.95);
+        --purple-main: #8b5cf6;
+        --purple-glow: #a78bfa;
+        --pink-neon: #ec4899;
+        --pink-glow: #f472b6;
+        --cyan-neon: #38bdf8;
+        --gold-glow: #facc15;
+        --emerald-glow: #10b981;
+        --text-white: #ffffff;
+        --text-muted: #cbd5e1;
+        --text-dim: #94a3b8;
+        --border-glass: rgba(167, 139, 250, 0.22);
       }
 
       * {
@@ -34,6 +51,8 @@
       html, body {
         width: 100%;
         height: 100%;
+      html {
+        scroll-behavior: smooth;
       }
 
       body {
@@ -43,8 +62,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        font-family: 'Quicksand', sans-serif;
+        background: radial-gradient(circle at 50% 0%, #200f3f 0%, #0d061e 45%, #090514 100%);
+        color: var(--text-white);
         min-height: 100vh;
         padding: 20px;
+        overflow-x: hidden;
+        line-height: 1.6;
       }
 
       .panel {
@@ -58,9 +82,25 @@
         box-shadow: 0 20px 60px rgba(230, 0, 103, 0.2), 0 0 40px rgba(127, 0, 255, 0.1);
         max-height: 95vh;
         overflow-y: auto;
+      .container {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 20px;
       }
 
       .header {
+      /* Navbar */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(9, 5, 20, 0.85);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border-glass);
+        padding: 14px 0;
+      }
+
+      .nav-container {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -70,9 +110,13 @@
       }
 
       .brand {
+      .nav-brand {
         display: flex;
         align-items: center;
         gap: 20px;
+        gap: 12px;
+        text-decoration: none;
+        color: #fff;
       }
 
       .logo {
@@ -80,20 +124,30 @@
         height: 80px;
         border-radius: 20px;
         background: linear-gradient(135deg, var(--pink-hot), var(--purple-bright));
+      .brand-logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 40px;
         font-weight: 700;
         box-shadow: 0 10px 30px rgba(230, 0, 103, 0.4);
+        font-size: 26px;
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
       }
 
       .brand-text h1 {
         font-family: var(--font-title);
         font-size: 2.5em;
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.45rem;
         font-weight: 700;
         margin-bottom: 5px;
         background: linear-gradient(135deg, var(--pink-hot), var(--purple-light));
+        background: linear-gradient(135deg, #ffffff 40%, var(--pink-glow));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -107,6 +161,7 @@
       }
 
       .status-badge {
+      .nav-links {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -116,6 +171,7 @@
         border-radius: 15px;
         font-weight: 600;
         font-size: 0.9em;
+        gap: 24px;
       }
 
       .status-dot {
@@ -124,11 +180,19 @@
         border-radius: 50%;
         background: var(--pink-hot);
         animation: pulse 2s infinite;
+      .nav-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: color 0.2s;
       }
 
       @keyframes pulse {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.5; }
+      .nav-link:hover {
+        color: var(--pink-glow);
       }
 
       .stats-grid {
@@ -136,6 +200,24 @@
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
         margin-bottom: 40px;
+      .lang-btn {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--border-glass);
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-family: 'Quicksand', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+      }
+      .lang-btn:hover {
+        background: rgba(255, 255, 255, 0.16);
+        border-color: var(--purple-glow);
       }
 
       .stat-card {
@@ -146,6 +228,10 @@
         backdrop-filter: blur(5px);
         transition: all 0.3s ease;
         cursor: help;
+      /* Hero Section */
+      .hero {
+        padding: 70px 0 50px;
+        text-align: center;
         position: relative;
       }
 
@@ -153,6 +239,18 @@
         border-color: var(--pink-hot);
         box-shadow: 0 10px 30px rgba(230, 0, 103, 0.2);
         transform: translateY(-5px);
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(139, 92, 246, 0.15);
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--purple-glow);
+        margin-bottom: 24px;
       }
 
       .stat-tooltip {
@@ -172,10 +270,20 @@
         margin-bottom: 10px;
         border: 1px solid var(--pink-hot);
         z-index: 10;
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--emerald-glow);
+        box-shadow: 0 0 10px var(--emerald-glow);
+        animation: pulse 2s infinite;
       }
 
       .stat-card:hover .stat-tooltip {
         opacity: 1;
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.85); }
       }
 
       .stat-label {
@@ -191,14 +299,28 @@
       .stat-value {
         font-family: var(--font-title);
         font-size: 2em;
+      .hero-title {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 3.4rem;
         font-weight: 700;
         color: var(--white);
         margin-bottom: 5px;
+        line-height: 1.15;
+        margin-bottom: 18px;
+        background: linear-gradient(135deg, #ffffff 20%, var(--pink-glow) 70%, var(--purple-glow) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
 
       .stat-subtext {
         font-size: 0.8em;
         color: var(--purple-pale);
+      .hero-subtitle {
+        font-size: 1.18rem;
+        color: var(--text-muted);
+        max-width: 680px;
+        margin: 0 auto 36px;
+        font-weight: 500;
       }
 
       .controls {
@@ -206,10 +328,28 @@
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         gap: 15px;
         margin-bottom: 40px;
+      .hero-ctas {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 48px;
       }
 
       button {
         padding: 14px 20px;
+      .btn {
+        font-family: 'Quicksand', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 14px 28px;
+        border-radius: 16px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.25s ease;
         border: none;
         border-radius: 15px;
         font-family: var(--font-title);
@@ -239,40 +379,69 @@
         letter-spacing: 0;
         font-weight: 400;
         z-index: 20;
+      .btn-discord {
+        background: linear-gradient(135deg, #5865F2, #8b5cf6);
+        color: #fff;
+        box-shadow: 0 6px 25px rgba(88, 101, 242, 0.4);
       }
 
       .btn-primary {
         background: linear-gradient(135deg, var(--pink-hot), var(--purple-bright));
         color: var(--white);
         box-shadow: 0 8px 20px rgba(230, 0, 103, 0.3);
+      .btn-discord:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(88, 101, 242, 0.6);
       }
 
       .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 12px 30px rgba(230, 0, 103, 0.4);
+      .btn-topgg {
+        background: linear-gradient(135deg, #ff3366, var(--pink-neon));
+        color: #fff;
+        box-shadow: 0 6px 25px rgba(236, 72, 153, 0.35);
       }
 
       .btn-secondary {
         background: rgba(147, 112, 219, 0.1);
         color: var(--purple-light);
         border: 1px solid rgba(147, 112, 219, 0.3);
+      .btn-topgg:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.55);
       }
 
       .btn-secondary:hover {
         background: rgba(147, 112, 219, 0.2);
         border-color: var(--purple-light);
         transform: translateY(-2px);
+      .btn-bonus {
+        background: linear-gradient(135deg, #f59e0b, #eab308);
+        color: #000;
+        font-weight: 800;
+        box-shadow: 0 6px 25px rgba(245, 158, 11, 0.35);
+      }
+      .btn-bonus:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.55);
       }
 
       .btn-accent {
         background: rgba(230, 0, 103, 0.1);
         color: var(--pink-hot);
         border: 1px solid rgba(230, 0, 103, 0.3);
+      .btn-community {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--border-glass);
+        color: #fff;
       }
 
       .btn-accent:hover {
         background: rgba(230, 0, 103, 0.2);
         border-color: var(--pink-hot);
+      .btn-community:hover {
+        background: rgba(255, 255, 255, 0.14);
         transform: translateY(-2px);
       }
 
@@ -283,6 +452,12 @@
         border-bottom: 2px solid rgba(230, 0, 103, 0.2);
         padding-bottom: 15px;
         overflow-x: auto;
+      /* Stats Counter Row */
+      .stats-counter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 18px;
+        margin: 20px 0 60px;
       }
 
       .tab-btn {
@@ -297,23 +472,60 @@
         border-bottom: 3px solid transparent;
         transition: all 0.3s ease;
         white-space: nowrap;
+      .stat-counter-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 24px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        transition: transform 0.2s, border-color 0.2s;
+      }
+      .stat-counter-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--purple-glow);
       }
 
       .tab-btn:hover {
         color: var(--purple-light);
+      .stat-counter-num {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #ffffff, var(--cyan-neon));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 4px;
       }
 
       .tab-btn.active {
         color: var(--pink-hot);
         border-bottom-color: var(--pink-hot);
         box-shadow: 0 2px 10px rgba(230, 0, 103, 0.2);
+      .stat-counter-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
       .tab-content {
         display: none;
+      /* Section Headers */
+      .section-header {
+        text-align: center;
+        margin-bottom: 42px;
       }
 
       .tab-content.active {
+      .section-tag {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--pink-neon);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 8px;
         display: block;
         animation: fadeIn 0.3s ease;
       }
@@ -321,6 +533,11 @@
       @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
+      .section-title {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 2.4rem;
+        font-weight: 700;
+        color: #fff;
       }
 
       .content-card {
@@ -329,6 +546,12 @@
         border-radius: 20px;
         padding: 30px;
         margin-bottom: 20px;
+      /* Pillars Showcase Grid */
+      .pillars-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        gap: 24px;
+        margin-bottom: 80px;
       }
 
       .logs-box {
@@ -342,6 +565,22 @@
         font-size: 0.9em;
         color: var(--purple-light);
         line-height: 1.6;
+      .pillar-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 24px;
+        padding: 32px 24px;
+        backdrop-filter: blur(12px);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        transition: all 0.3s ease;
+      }
+      .pillar-card:hover {
+        background: var(--bg-card-hover);
+        transform: translateY(-6px);
+        border-color: var(--pink-neon);
+        box-shadow: 0 15px 35px rgba(236, 72, 153, 0.15);
       }
 
       .log-entry {
@@ -349,15 +588,33 @@
         padding: 5px;
         border-left: 3px solid var(--purple-bright);
         padding-left: 10px;
+      .pillar-icon {
+        font-size: 42px;
+        width: 68px;
+        height: 68px;
+        border-radius: 18px;
+        background: rgba(139, 92, 246, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(139, 92, 246, 0.3);
       }
 
       .log-time {
         color: var(--pink-hot);
+      .pillar-card h3 {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.35rem;
         font-weight: 600;
+        color: #fff;
       }
 
       .form-group {
         margin-bottom: 20px;
+      .pillar-card p {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        line-height: 1.55;
       }
 
       .form-group label {
@@ -370,6 +627,14 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
         position: relative;
+      /* Dynamic Interactive Command Guide */
+      .commands-section {
+        background: rgba(13, 7, 26, 0.6);
+        border: 1px solid var(--border-glass);
+        border-radius: 30px;
+        padding: 40px 30px;
+        margin-bottom: 80px;
+        backdrop-filter: blur(16px);
       }
 
       .form-group label .help-icon {
@@ -384,6 +649,9 @@
         font-size: 0.8em;
         margin-left: 5px;
         cursor: help;
+      .search-wrapper {
+        max-width: 460px;
+        margin: 0 auto 30px;
         position: relative;
       }
 
@@ -407,6 +675,7 @@
       }
 
       .form-group input, .form-group textarea, .form-group select {
+      .search-input {
         width: 100%;
         padding: 12px 15px;
         background: rgba(0, 0, 0, 0.3);
@@ -424,31 +693,59 @@
       }
 
       .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 12px 20px;
+        color: #fff;
+        font-family: 'Quicksand', sans-serif;
+        font-size: 0.95rem;
         outline: none;
         border-color: var(--pink-hot);
         box-shadow: 0 0 15px rgba(230, 0, 103, 0.2);
         background: rgba(0, 0, 0, 0.4);
+        transition: border-color 0.2s, box-shadow 0.2s;
       }
 
       .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
+      .search-input:focus {
+        border-color: var(--pink-neon);
+        box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
       }
 
       .form-row.full {
         grid-template-columns: 1fr;
+      .module-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 32px;
       }
 
       .section-title {
         font-family: var(--font-title);
         font-size: 1.3em;
+      .tab-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-glass);
+        color: var(--text-muted);
+        padding: 10px 18px;
+        border-radius: 14px;
+        font-family: 'Quicksand', sans-serif;
         font-weight: 700;
         margin-bottom: 20px;
         color: var(--white);
+        font-size: 0.88rem;
+        cursor: pointer;
         display: flex;
         align-items: center;
         gap: 10px;
+        gap: 8px;
+        transition: all 0.2s ease;
       }
 
       .section-title::before {
@@ -457,6 +754,9 @@
         height: 25px;
         background: linear-gradient(135deg, var(--pink-hot), var(--purple-bright));
         border-radius: 2px;
+      .tab-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
       }
 
       .cmd-info {
@@ -466,11 +766,20 @@
         border-radius: 10px;
         margin-bottom: 15px;
         font-size: 0.9em;
+      .tab-btn.active {
+        background: linear-gradient(135deg, var(--purple-main), var(--pink-neon));
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35);
       }
 
       .cmd-info strong {
         color: var(--pink-hot);
         font-family: var(--font-title);
+      .commands-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 16px;
       }
 
       .cmd-info code {
@@ -479,12 +788,26 @@
         border-radius: 4px;
         color: var(--purple-light);
         font-family: 'Courier New', monospace;
+      .cmd-card {
+        background: rgba(25, 14, 48, 0.7);
+        border: 1px solid rgba(139, 92, 246, 0.18);
+        border-radius: 16px;
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: all 0.2s;
+        cursor: pointer;
       }
 
       .small-btn {
         padding: 8px 12px;
         font-size: 0.8em;
         border-radius: 8px;
+      .cmd-card:hover {
+        background: rgba(35, 20, 68, 0.85);
+        border-color: var(--purple-glow);
+        transform: translateY(-2px);
       }
 
       .embed-preview {
@@ -494,20 +817,31 @@
         border-radius: 10px;
         padding: 20px;
         margin-top: 20px;
+      .cmd-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
 
       .embed-preview-title {
         color: var(--pink-hot);
         font-family: var(--font-title);
+      .cmd-name {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.95rem;
         font-weight: 700;
         margin-bottom: 10px;
         font-size: 1.2em;
+        color: var(--pink-glow);
       }
 
       .embed-preview-desc {
         color: var(--white);
         margin-bottom: 15px;
         line-height: 1.5;
+      .cmd-copy-hint {
+        font-size: 0.75rem;
+        color: var(--text-dim);
       }
 
       .embed-field {
@@ -515,6 +849,10 @@
         padding: 10px;
         border-radius: 8px;
         margin-bottom: 10px;
+      .cmd-desc {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        line-height: 1.45;
       }
 
       .embed-field-name {
@@ -522,11 +860,23 @@
         font-weight: 600;
         font-size: 0.9em;
         margin-bottom: 5px;
+      .cmd-aliases {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
       }
 
       .embed-field-value {
         color: var(--white);
         font-size: 0.85em;
+      .cmd-tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.72rem;
+        background: rgba(255, 255, 255, 0.06);
+        padding: 2px 8px;
+        border-radius: 6px;
+        color: var(--cyan-neon);
       }
 
       @media (max-width: 768px) {
@@ -560,32 +910,67 @@
         .form-row {
           grid-template-columns: 1fr;
         }
+      /* Footer */
+      .footer {
+        border-top: 1px solid var(--border-glass);
+        padding: 40px 0 30px;
+        text-align: center;
       }
 
       /* Scrollbar customizado */
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 20px;
       }
 
       ::-webkit-scrollbar-track {
         background: rgba(230, 0, 103, 0.05);
         border-radius: 10px;
+      .footer-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
       }
 
       ::-webkit-scrollbar-thumb {
         background: linear-gradient(135deg, var(--pink-hot), var(--purple-bright));
         border-radius: 10px;
+      .footer-link:hover {
+        color: var(--pink-neon);
       }
 
       ::-webkit-scrollbar-thumb:hover {
         background: linear-gradient(135deg, var(--pink-hot), var(--purple-light));
+      .footer-copy {
+        font-size: 0.82rem;
+        color: var(--text-dim);
       }
 
       .color-picker-wrapper {
         display: flex;
         gap: 10px;
         align-items: center;
+      /* Responsive */
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 2.4rem;
+        }
+        .hero-subtitle {
+          font-size: 1rem;
+        }
+        .nav-links .nav-link {
+          display: none;
+        }
+        .commands-section {
+          padding: 24px 16px;
+        }
       }
 
       .color-picker-wrapper input[type="color"] {
@@ -613,16 +998,32 @@
       <div class="header">
         <div class="brand">
           <div class="logo">🧚</div>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="/" class="nav-brand">
+          <div class="brand-logo">🧚</div>
           <div class="brand-text">
             <h1>Pyxie</h1>
             <p>O Universo Encantado de Pymons & RPG</p>
           </div>
+        </a>
+        <div class="nav-links">
+          <a href="#features" class="nav-link" id="navFeatures">Recursos</a>
+          <a href="#commands" class="nav-link" id="navCommands">Comandos</a>
+          <a href="https://top.gg/bot/1453888365618270331/vote" target="_blank" class="nav-link" id="navTopgg">Top.gg</a>
+          <a href="/bonus" class="nav-link" id="navBonus">Bônus Web (10s)</a>
+          <button class="lang-btn" id="langToggleBtn" title="Mudar Idioma / Switch Language">
+            <span id="langFlag">🇧🇷</span>
+            <span id="langCode">PT-BR</span>
+          </button>
         </div>
         <div class="status-badge">
           <div class="status-dot" id="statusDot"></div>
           <span id="statusText">Offline</span>
         </div>
       </div>
+    </nav>
 
       <!-- Stats Grid -->
       <div class="stats-grid">
@@ -631,24 +1032,58 @@
           <div class="stat-label">Status</div>
           <div class="stat-value" id="statusValue">Offline</div>
           <div class="stat-subtext">Estado do Bot</div>
+    <!-- Main Container -->
+    <main class="container">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-badge">
+          <div class="pulse-dot"></div>
+          <span id="heroStatusText">🟢 Online & Operacional • Discord.js v14</span>
         </div>
         <div class="stat-card">
           <div class="stat-tooltip">Tempo que o bot está ligado</div>
           <div class="stat-label">Tempo Online</div>
           <div class="stat-value" id="uptimeValue">00:00:00</div>
           <div class="stat-subtext">Uptime</div>
+        <h1 class="hero-title" id="heroTitle">Sua Fada Companheira no Discord</h1>
+        <p class="hero-subtitle" id="heroSubtitle">
+          Bichinhos virtuais Pymons com Tamagotchi completo, Masmorras 2D interativas, 10 Carreiras com Minigames, Economia Viva e Tarot Místico com arte em Canvas.
+        </p>
+        <div class="hero-ctas">
+          <a href="https://discord.com/oauth2/authorize?client_id=1543650200718155897&permissions=277025770560&scope=bot%20applications.commands" target="_blank" class="btn btn-discord" id="btnInvite">
+            <span>✨</span> <span id="btnInviteText">Adicionar ao Discord</span>
+          </a>
+          <a href="https://top.gg/bot/1453888365618270331/vote" target="_blank" class="btn btn-topgg" id="btnVote">
+            <span>⭐</span> <span id="btnVoteText">Votar no Top.gg (+Bônus)</span>
+          </a>
+          <a href="/bonus" class="btn btn-bonus" id="btnWebBonus">
+            <span>🎁</span> <span id="btnWebBonusText">Bônus Web (10s)</span>
+          </a>
+          <a href="https://disboard.org/pt-br/server/1453890868980482090" target="_blank" class="btn btn-community" id="btnCommunity">
+            <span>🏰</span> <span id="btnCommunityText">Comunidade Cringelândia</span>
+          </a>
         </div>
         <div class="stat-card">
           <div class="stat-tooltip">Número de comandos executados</div>
           <div class="stat-label">Comandos</div>
           <div class="stat-value" id="commandsValue">0</div>
           <div class="stat-subtext">Executados</div>
+      </section>
+
+      <!-- Live Stats Row -->
+      <section class="stats-counter-grid">
+        <div class="stat-counter-card">
+          <div class="stat-counter-num" id="statCommands">0</div>
+          <div class="stat-counter-label" id="labelStatCommands">Comandos Executados</div>
         </div>
         <div class="stat-card">
           <div class="stat-tooltip">Usuários únicos que interagiram</div>
           <div class="stat-label">Usuários</div>
           <div class="stat-value" id="usersValue">0</div>
           <div class="stat-subtext">Engajados</div>
+        <div class="stat-counter-card">
+          <div class="stat-counter-num" id="statUsers">0</div>
+          <div class="stat-counter-label" id="labelStatUsers">Aventureiros Ativos</div>
         </div>
       </div>
 
@@ -685,7 +1120,15 @@
               <div style="font-size: 2em; font-weight: 700; color: var(--purple-light);" id="statsUsers">0</div>
             </div>
           </div>
+        <div class="stat-counter-card">
+          <div class="stat-counter-num" id="statMessages">0</div>
+          <div class="stat-counter-label" id="labelStatMessages">Mensagens Processadas</div>
         </div>
+        <div class="stat-counter-card">
+          <div class="stat-counter-num" id="statUptime">00:00:00</div>
+          <div class="stat-counter-label" id="labelStatUptime">Tempo de Atividade (Uptime)</div>
+        </div>
+      </section>
 
         <div class="section-title">Logs Recentes</div>
         <div class="logs-box" id="logsBox">Carregando logs...</div>
@@ -697,6 +1140,11 @@
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
           <button class="btn-secondary small-btn" id="refreshLogsBtn" data-tooltip="Carregar logs mais recentes">🔄 Atualizar</button>
           <button class="btn-secondary small-btn" id="clearLogsBtn" data-tooltip="Deletar todos os logs registrados">🗑️ Limpar Tudo</button>
+      <!-- Pillars Showcase Section -->
+      <section id="features" style="padding-top: 20px;">
+        <div class="section-header">
+          <span class="section-tag" id="tagFeatures">PILHARES DA PYXIE</span>
+          <h2 class="section-title" id="titleFeatures">Uma Experiência Viva & Encantadora</h2>
         </div>
         <div class="logs-box" id="persistentLogs">Carregando logs persistentes...</div>
       </div>
@@ -760,9 +1208,42 @@
             <div class="embed-preview-title" id="previewTitle">Título do Embed</div>
             <div class="embed-preview-desc" id="previewDesc">Descrição aparecerá aqui...</div>
             <div id="previewFields"></div>
+        <div class="pillars-grid">
+          <!-- Pillar 1 -->
+          <div class="pillar-card">
+            <div class="pillar-icon">🐾</div>
+            <h3 id="p1Title">Pymons & Bichinhos Virtuais</h3>
+            <p id="p1Desc">
+              Colete e cuide de espécies exclusivas com atributos de fome, energia e afeto. Choque ovos misteriosos na chocadeira com aceleradores e descubra variantes Shiny ultra raras.
+            </p>
+          </div>
+          <!-- Pillar 2 -->
+          <div class="pillar-card">
+            <div class="pillar-icon">🗺️</div>
+            <h3 id="p2Title">Masmorras 2D & World Boss</h3>
+            <p id="p2Desc">
+              Explore labirintos procedurais diretamente pelo chat usando o controle D-Pad virtual. Lute contra monstros, colete baús e reúna a guilda para enfrentar o Titã ALPHA semanal.
+            </p>
+          </div>
+          <!-- Pillar 3 -->
+          <div class="pillar-card">
+            <div class="pillar-icon">💼</div>
+            <h3 id="p3Title">10 Carreiras & Economia Viva</h3>
+            <p id="p3Desc">
+              Minigames de trabalho dinâmicos (Programador, Alquimista, Mago...), duelos PvP de Jokenpô com apostas em moedas, sistema de baús, feijões mágicos e loja interativa.
+            </p>
+          </div>
+          <!-- Pillar 4 -->
+          <div class="pillar-card">
+            <div class="pillar-icon">🔮</div>
+            <h3 id="p4Title">Tarot Místico & Casamentos</h3>
+            <p id="p4Desc">
+              Tiragem diária de 78 cartas arcanas geradas com arte em Canvas, calculadora de compatibilidade de romance (ship) e sistema de matrimônio para membros do servidor.
+            </p>
           </div>
         </div>
       </div>
+      </section>
 
       <!-- Config Tab -->
       <div id="config" class="tab-content">
@@ -776,9 +1257,17 @@
               </label>
               <input id="channelInput" type="text" placeholder="ID, menção (#canal) ou link" />
             </div>
+      <!-- Dynamic Interactive Command Guide -->
+      <section id="commands" class="commands-section">
+        <div class="section-header" style="margin-bottom: 28px;">
+          <span class="section-tag" id="tagCommands">GUIA DINÂMICO</span>
+          <h2 class="section-title" id="titleCommands">Catálogo de Comandos da Pyxie</h2>
+        </div>
 
             <button type="submit" class="btn-primary" style="width: 100%;">💾 Salvar Configurações</button>
           </form>
+        <div class="search-wrapper">
+          <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar comando por nome ou descrição..." />
         </div>
 
         <div class="section-title">Comandos Disponíveis</div>
@@ -797,6 +1286,9 @@
           <code>py!tarot</code> — Leitura de cartas de Tarot em Canvas<br>
           <code>py!loja</code> / <code>py!inventario</code> — Mercado de itens e rações<br>
           <code>py!votar</code> — Votação no Top.gg com recompensas em dobro
+        <!-- Abas de Categorias Geradas Dinamicamente via /api/commands -->
+        <div class="module-tabs" id="moduleTabs">
+          <button class="tab-btn active" data-module="todos"><span>📖</span> <span class="tab-label">Todos</span></button>
         </div>
 
         <div class="cmd-info">
@@ -811,14 +1303,33 @@
           <code>/py-tarot</code> — Tiragem mística de 78 cartas<br>
           <code>/py-profile</code> — Cartão de aventureiro com temas<br>
           <code>/py-help</code> — Menu interativo com todos os comandos
+        <!-- Grid de Cards de Comandos Gerados Dinamicamente -->
+        <div class="commands-grid" id="commandsGrid">
+          <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 30px;">
+            Carregando catálogo de comandos da Pyxie...
+          </div>
         </div>
+      </section>
+    </main>
 
         <div class="cmd-info" style="background: rgba(230, 0, 103, 0.1); border-left-color: var(--purple-light);">
           <strong>ℹ️ Sobre o Painel:</strong><br>
           Este painel controla o bot local em tempo real. O bot permanece ativo mesmo se você fechar esta página. Use os botões acima para gerenciar o processo. Todos os logs e estatísticas são persistentes.
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-links">
+          <a href="https://discord.com/oauth2/authorize?client_id=1543650200718155897&permissions=277025770560&scope=bot%20applications.commands" target="_blank" class="footer-link" id="ftInvite">Adicionar Bot</a>
+          <a href="https://top.gg/bot/1453888365618270331/vote" target="_blank" class="footer-link" id="ftVote">Votar no Top.gg</a>
+          <a href="/bonus" class="footer-link" id="ftBonus">Bônus Web (10s)</a>
+          <a href="https://disboard.org/pt-br/server/1453890868980482090" target="_blank" class="footer-link" id="ftCommunity">Cringelândia</a>
         </div>
+        <p class="footer-copy" id="footerCopy">
+          © 2026 Pyxie Bot • Desenvolvido para a Comunidade Cringelândia & Servidores Globais do Discord.
+        </p>
       </div>
     </div>
+    </footer>
 
     <script>
       const statusValue = document.getElementById('statusValue');
@@ -830,6 +1341,83 @@
       const logsBox = document.getElementById('logsBox');
       const persistentLogs = document.getElementById('persistentLogs');
       const channelInput = document.getElementById('channelInput');
+      // Dicionário de Traduções Bilíngue do Front-end (PT-BR & EN)
+      const I18N = {
+        pt: {
+          navFeatures: 'Recursos',
+          navCommands: 'Comandos',
+          navBonus: 'Bônus Web (10s)',
+          heroBadge: '🟢 Online & Operacional • Discord.js v14',
+          heroTitle: 'Sua Fada Companheira no Discord',
+          heroSubtitle: 'Bichinhos virtuais Pymons com Tamagotchi completo, Masmorras 2D interativas, 10 Carreiras com Minigames, Economia Viva e Tarot Místico com arte em Canvas.',
+          btnInviteText: 'Adicionar ao Discord',
+          btnVoteText: 'Votar no Top.gg (+Bônus)',
+          btnWebBonusText: 'Bônus Web (10s)',
+          btnCommunityText: 'Comunidade Cringelândia',
+          labelStatCommands: 'Comandos Executados',
+          labelStatUsers: 'Aventureiros Ativos',
+          labelStatMessages: 'Mensagens Processadas',
+          labelStatUptime: 'Tempo de Atividade (Uptime)',
+          tagFeatures: 'PILHARES DA PYXIE',
+          titleFeatures: 'Uma Experiência Viva & Encantadora',
+          p1Title: 'Pymons & Bichinhos Virtuais',
+          p1Desc: 'Colete e cuide de espécies exclusivas com atributos de fome, energia e afeto. Choque ovos misteriosos na chocadeira com aceleradores e descubra variantes Shiny ultra raras.',
+          p2Title: 'Masmorras 2D & World Boss',
+          p2Desc: 'Explore labirintos procedurais diretamente pelo chat usando o controle D-Pad virtual. Lute contra monstros, colete baús e reúna a guilda para enfrentar o Titã ALPHA semanal.',
+          p3Title: '10 Carreiras & Economia Viva',
+          p3Desc: 'Minigames de trabalho dinâmicos (Programador, Alquimista, Mago...), duelos PvP de Jokenpô com apostas em moedas, sistema de baús, feijões mágicos e loja interativa.',
+          p4Title: 'Tarot Místico & Casamentos',
+          p4Desc: 'Tiragem diária de 78 cartas arcanas geradas com arte em Canvas, calculadora de compatibilidade de romance (ship) e sistema de matrimônio para membros do servidor.',
+          tagCommands: 'GUIA DINÂMICO',
+          titleCommands: 'Catálogo de Comandos da Pyxie',
+          searchPlaceholder: '🔍 Buscar comando por nome ou descrição...',
+          allTab: 'Todos',
+          copyHint: 'Clique para copiar',
+          copiedHint: 'Copiado!',
+          ftInvite: 'Adicionar Bot',
+          ftVote: 'Votar no Top.gg',
+          ftBonus: 'Bônus Web (10s)',
+          ftCommunity: 'Cringelândia',
+          footerCopy: '© 2026 Pyxie Bot • Desenvolvido para a Comunidade Cringelândia & Servidores Globais do Discord.'
+        },
+        en: {
+          navFeatures: 'Features',
+          navCommands: 'Commands',
+          navBonus: 'Web Bonus (10s)',
+          heroBadge: '🟢 100% Online & Operational • Discord.js v14',
+          heroTitle: 'Your Magical Companion on Discord',
+          heroSubtitle: 'Virtual Pymons pet RPG with full Tamagotchi care, interactive 2D Dungeons, 10 Careers with minigames, living economy, and mystical Canvas tarot spreads.',
+          btnInviteText: 'Add to Discord',
+          btnVoteText: 'Vote on Top.gg (+Bonus)',
+          btnWebBonusText: 'Web Bonus (10s)',
+          btnCommunityText: 'Community Server',
+          labelStatCommands: 'Commands Executed',
+          labelStatUsers: 'Active Adventurers',
+          labelStatMessages: 'Messages Processed',
+          labelStatUptime: 'Operational Uptime',
+          tagFeatures: 'CORE PILLARS',
+          titleFeatures: 'A Lively & Enchanting Experience',
+          p1Title: 'Pymons & Virtual Pets',
+          p1Desc: 'Collect and care for unique creatures with hunger, energy, and affection bars. Hatch mysterious eggs in the incubator with boosters and find rare Shiny variants.',
+          p2Title: '2D Dungeons & World Boss',
+          p2Desc: 'Explore procedural dungeons in Discord chat using responsive D-Pad buttons. Slay monsters, collect loot crates, and unite the server against the weekly ALPHA Boss.',
+          p3Title: '10 Careers & Living Economy',
+          p3Desc: 'Dynamic career shifts with skill challenges (Programmer, Alchemist, Mage...), PvP Rock-Paper-Scissors with coin bets, chests, magic beans, and item shop.',
+          p4Title: 'Mystic Tarot & Relationships',
+          p4Desc: 'Full 78-card tarot spreads with rendered canvas artwork, romantic love compatibility meter (ship), and community marriage system.',
+          tagCommands: 'DYNAMIC GUIDE',
+          titleCommands: 'Pyxie Command Catalog',
+          searchPlaceholder: '🔍 Search command by name or description...',
+          allTab: 'All',
+          copyHint: 'Click to copy',
+          copiedHint: 'Copied!',
+          ftInvite: 'Add Bot',
+          ftVote: 'Vote on Top.gg',
+          ftBonus: 'Web Bonus (10s)',
+          ftCommunity: 'Community Server',
+          footerCopy: '© 2026 Pyxie Bot • Crafted for Cringelândia & Global Discord Communities.'
+        }
+      };
 
       let currentStatus = { running: false };
       let embedFieldCount = 0;
@@ -840,6 +1428,14 @@
           ...options,
         });
         return response.json();
+      // Gerenciador de Idioma
+      function getInitialLang() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlLang = urlParams.get('lang');
+        if (urlLang === 'pt' || urlLang === 'en') return urlLang;
+        const stored = localStorage.getItem('pyxie_lang');
+        if (stored === 'pt' || stored === 'en') return stored;
+        return navigator.language && navigator.language.toLowerCase().startsWith('pt') ? 'pt' : 'en';
       }
 
       function formatUptime(ms) {
@@ -847,12 +1443,19 @@
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
+      let currentLang = getInitialLang();
+      let modulesData = [];
+      let currentActiveModule = 'todos';
 
         if (days > 0) return `${days}d ${hours % 24}h ${minutes % 60}m`;
         if (hours > 0) return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
         if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
         return `${seconds}s`;
       }
+      function applyLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('pyxie_lang', lang);
+        document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
 
       function renderStatus(data) {
         currentStatus = data;
@@ -861,6 +1464,9 @@
         statusText.textContent = running ? 'Online' : 'Offline';
         statusDot.style.background = running ? '#E60067' : '#9370DB';
         statusDot.style.opacity = running ? '1' : '0.5';
+        // Atualiza botão
+        document.getElementById('langFlag').textContent = lang === 'pt' ? '🇧🇷' : '🇺🇸';
+        document.getElementById('langCode').textContent = lang === 'pt' ? 'PT-BR' : 'EN';
 
         const toggleBtn = document.getElementById('toggleBotBtn');
         if (running) {
@@ -872,10 +1478,47 @@
           toggleBtn.classList.add('btn-primary');
           toggleBtn.classList.remove('btn-secondary');
         }
+        // Atualiza textos estáticos
+        const t = I18N[lang];
+        document.getElementById('navFeatures').textContent = t.navFeatures;
+        document.getElementById('navCommands').textContent = t.navCommands;
+        document.getElementById('navBonus').textContent = t.navBonus;
+        document.getElementById('heroStatusText').textContent = t.heroBadge;
+        document.getElementById('heroTitle').textContent = t.heroTitle;
+        document.getElementById('heroSubtitle').textContent = t.heroSubtitle;
+        document.getElementById('btnInviteText').textContent = t.btnInviteText;
+        document.getElementById('btnVoteText').textContent = t.btnVoteText;
+        document.getElementById('btnWebBonusText').textContent = t.btnWebBonusText;
+        document.getElementById('btnCommunityText').textContent = t.btnCommunityText;
+        document.getElementById('labelStatCommands').textContent = t.labelStatCommands;
+        document.getElementById('labelStatUsers').textContent = t.labelStatUsers;
+        document.getElementById('labelStatMessages').textContent = t.labelStatMessages;
+        document.getElementById('labelStatUptime').textContent = t.labelStatUptime;
+        document.getElementById('tagFeatures').textContent = t.tagFeatures;
+        document.getElementById('titleFeatures').textContent = t.titleFeatures;
+        document.getElementById('p1Title').textContent = t.p1Title;
+        document.getElementById('p1Desc').textContent = t.p1Desc;
+        document.getElementById('p2Title').textContent = t.p2Title;
+        document.getElementById('p2Desc').textContent = t.p2Desc;
+        document.getElementById('p3Title').textContent = t.p3Title;
+        document.getElementById('p3Desc').textContent = t.p3Desc;
+        document.getElementById('p4Title').textContent = t.p4Title;
+        document.getElementById('p4Desc').textContent = t.p4Desc;
+        document.getElementById('tagCommands').textContent = t.tagCommands;
+        document.getElementById('titleCommands').textContent = t.titleCommands;
+        document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+        document.getElementById('ftInvite').textContent = t.ftInvite;
+        document.getElementById('ftVote').textContent = t.ftVote;
+        document.getElementById('ftBonus').textContent = t.ftBonus;
+        document.getElementById('ftCommunity').textContent = t.ftCommunity;
+        document.getElementById('footerCopy').textContent = t.footerCopy;
 
         if (data.uptime) {
           uptimeValue.textContent = formatUptime(data.uptime);
         }
+        // Recarrega comandos na nova língua
+        loadDynamicCommands();
+      }
 
         if (data.stats) {
           commandsValue.textContent = data.stats.commandsExecuted || 0;
@@ -884,6 +1527,9 @@
           document.getElementById('statsMessages').textContent = data.stats.messagesProcessed || 0;
           document.getElementById('statsUsers').textContent = data.stats.usersEngaged || 0;
         }
+      document.getElementById('langToggleBtn').addEventListener('click', () => {
+        applyLanguage(currentLang === 'pt' ? 'en' : 'pt');
+      });
 
         if (data.logs && data.logs.length) {
           logsBox.innerHTML = data.logs.map((log) => {
@@ -893,10 +1539,24 @@
           }).join('');
         }
       }
+      // Busca Estatísticas em Tempo Real (/api/status)
+      async function fetchLiveStats() {
+        try {
+          const res = await fetch('/api/status');
+          const data = await res.json();
+          document.getElementById('statCommands').textContent = (data.stats?.commands || 0).toLocaleString();
+          document.getElementById('statUsers').textContent = (data.stats?.uniqueUsers || 0).toLocaleString();
+          document.getElementById('statMessages').textContent = (data.stats?.messages || 0).toLocaleString();
 
       async function loadStatus() {
         const data = await fetchJson('/api/status');
         renderStatus(data);
+          const ms = data.uptime || 0;
+          const s = Math.floor(ms / 1000) % 60;
+          const m = Math.floor(ms / (1000 * 60)) % 60;
+          const h = Math.floor(ms / (1000 * 60 * 60));
+          document.getElementById('statUptime').textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        } catch (_) {}
       }
 
       async function loadConfig() {
@@ -914,6 +1574,18 @@
           }).join('');
         } else {
           persistentLogs.innerHTML = '<div style="text-align: center; color: var(--purple-mid);">Nenhum log registrado.</div>';
+      // Carrega Catálogo Dinâmico de Comandos (/api/commands)
+      async function loadDynamicCommands() {
+        try {
+          const res = await fetch(`/api/commands?lang=${currentLang}`);
+          const data = await res.json();
+          if (data.success && Array.isArray(data.modules)) {
+            modulesData = data.modules;
+            renderModuleTabs();
+            renderCommandsGrid();
+          }
+        } catch (err) {
+          console.error('Falha ao carregar comandos dinâmicos:', err);
         }
       }
 
@@ -922,15 +1594,34 @@
         btn.addEventListener('click', () => {
           document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
           document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
+      function renderModuleTabs() {
+        const tabsContainer = document.getElementById('moduleTabs');
+        tabsContainer.innerHTML = '';
 
           btn.classList.add('active');
           document.getElementById(btn.dataset.tab).classList.add('active');
+        // Aba Todos
+        const allBtn = document.createElement('button');
+        allBtn.className = `tab-btn ${currentActiveModule === 'todos' ? 'active' : ''}`;
+        allBtn.dataset.module = 'todos';
+        allBtn.innerHTML = `<span>📖</span> <span>${I18N[currentLang].allTab}</span>`;
+        allBtn.addEventListener('click', () => switchModule('todos'));
+        tabsContainer.appendChild(allBtn);
 
           if (btn.dataset.tab === 'logs') {
             loadPersistentLogs();
           }
+        modulesData.forEach((mod) => {
+          if (mod.id === 'todos') return;
+          const btn = document.createElement('button');
+          btn.className = `tab-btn ${currentActiveModule === mod.id ? 'active' : ''}`;
+          btn.dataset.module = mod.id;
+          btn.innerHTML = `<span>${mod.emoji || '✨'}</span> <span>${mod.label}</span>`;
+          btn.addEventListener('click', () => switchModule(mod.id));
+          tabsContainer.appendChild(btn);
         });
       });
+      }
 
       // Toggle Bot Button
       document.getElementById('toggleBotBtn').addEventListener('click', async () => {
@@ -943,18 +1634,35 @@
         }
         await loadStatus();
       });
+      function switchModule(moduleId) {
+        currentActiveModule = moduleId;
+        document.querySelectorAll('.tab-btn').forEach((b) => {
+          b.classList.toggle('active', b.dataset.module === moduleId);
+        });
+        renderCommandsGrid();
+      }
 
       document.getElementById('restartBtn').addEventListener('click', async () => {
         const response = await fetchJson('/api/restart', { method: 'POST' });
         alert(response.message || 'Bot reiniciando...');
         await loadStatus();
       });
+      function renderCommandsGrid() {
+        const grid = document.getElementById('commandsGrid');
+        const filterText = document.getElementById('searchInput').value.toLowerCase().trim();
 
       document.getElementById('registerBtn').addEventListener('click', async () => {
         const response = await fetchJson('/api/register', { method: 'POST' });
         alert(response.output || 'Slash commands registrados.');
         await loadStatus();
       });
+        let allCmds = [];
+        modulesData.forEach((mod) => {
+          if (mod.id === 'todos' || !Array.isArray(mod.commands)) return;
+          if (currentActiveModule === 'todos' || currentActiveModule === mod.id) {
+            mod.commands.forEach((c) => allCmds.push({ ...c, moduleId: mod.id }));
+          }
+        });
 
       document.getElementById('refreshLogsBtn').addEventListener('click', loadPersistentLogs);
 
@@ -972,6 +1680,20 @@
         await fetchJson('/api/config/welcome-channel', {
           method: 'POST',
           body: JSON.stringify({ channelId }),
+        // Deduplica por nome
+        const seen = new Set();
+        let filtered = [];
+        allCmds.forEach((c) => {
+          if (seen.has(c.name)) return;
+          seen.add(c.name);
+          if (
+            !filterText ||
+            c.name.toLowerCase().includes(filterText) ||
+            c.desc.toLowerCase().includes(filterText) ||
+            (c.aliases || []).some((a) => a.toLowerCase().includes(filterText))
+          ) {
+            filtered.push(c);
+          }
         });
 
         alert('Configurações salvas com sucesso!');
@@ -988,12 +1710,19 @@
         if (e.target.value.length === 6) {
           document.getElementById('embedColorPicker').value = '#' + e.target.value;
           updateEmbedPreview();
+        grid.innerHTML = '';
+        if (filtered.length === 0) {
+          grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:30px;">${currentLang === 'pt' ? 'Nenhum comando encontrado com esse filtro.' : 'No commands matched your search.'}</div>`;
+          return;
         }
       });
 
       // Embed form listeners for preview
       document.getElementById('embedTitle').addEventListener('input', updateEmbedPreview);
       document.getElementById('embedDescription').addEventListener('input', updateEmbedPreview);
+        filtered.forEach((cmd) => {
+          const card = document.createElement('div');
+          card.className = 'cmd-card';
 
       function updateEmbedPreview() {
         const title = document.getElementById('embedTitle').value || 'Título do Embed';
@@ -1001,11 +1730,27 @@
         
         document.getElementById('previewTitle').textContent = title;
         document.getElementById('previewDesc').textContent = desc;
+          const prefixSyntax = `py!${cmd.name.replace(/^\//, '').replace(/^py-/, '')}`;
+          const aliasesHtml = (cmd.aliases || [])
+            .slice(0, 3)
+            .map((a) => `<span class="cmd-tag">py!${a}</span>`)
+            .join('');
 
         if (title || desc) {
           document.getElementById('embedPreview').style.display = 'block';
         }
       }
+          card.innerHTML = `
+            <div class="cmd-top">
+              <div class="cmd-name">${cmd.name}</div>
+              <span class="cmd-copy-hint">${I18N[currentLang].copyHint}</span>
+            </div>
+            <div class="cmd-desc">${cmd.desc}</div>
+            <div class="cmd-aliases">
+              <span class="cmd-tag" style="color:var(--gold-glow);">${prefixSyntax}</span>
+              ${aliasesHtml}
+            </div>
+          `;
 
       document.getElementById('addFieldBtn').addEventListener('click', () => {
         embedFieldCount++;
@@ -1025,6 +1770,16 @@
         `;
         container.appendChild(fieldDiv);
       });
+          card.addEventListener('click', () => {
+            navigator.clipboard.writeText(cmd.name);
+            const hint = card.querySelector('.cmd-copy-hint');
+            hint.textContent = I18N[currentLang].copiedHint;
+            hint.style.color = 'var(--emerald-glow)';
+            setTimeout(() => {
+              hint.textContent = I18N[currentLang].copyHint;
+              hint.style.color = 'var(--text-dim)';
+            }, 1800);
+          });
 
       document.getElementById('resetEmbedBtn').addEventListener('click', () => {
         document.getElementById('embedForm').reset();
@@ -1060,12 +1815,15 @@
           if (name && value) {
             fields.push({ name, value });
           }
+          grid.appendChild(card);
         });
+      }
 
         const response = await fetchJson('/api/embed/send', {
           method: 'POST',
           body: JSON.stringify({ channelId, title, description, color, fields }),
         });
+      document.getElementById('searchInput').addEventListener('input', renderCommandsGrid);
 
         if (response.success) {
           alert('Embed enviado com sucesso!');
@@ -1080,6 +1838,10 @@
       loadStatus();
       loadConfig();
       setInterval(loadStatus, 3000);
+      // Inicialização
+      applyLanguage(currentLang);
+      fetchLiveStats();
+      setInterval(fetchLiveStats, 8000);
     </script>
   </body>
 </html>

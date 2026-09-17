@@ -43,5 +43,6 @@ module.exports = {
   LIKELY: 'py-likely',
   DICE: 'py-dice',
   COINFLIP: 'py-coinflip',
+  ADMIN: 'py-admin',
 };
 

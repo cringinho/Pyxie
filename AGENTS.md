@@ -45,3 +45,15 @@ Sempre que uma nova feature, comando, botão, minigame, desafio, embed, item de 
   npm test
   ```
 - O comando executa todos os 10 arquivos de testes, incluindo `tests/i18nParity.test.js` que audita recursivamente todas as chaves e comandos.
+
+---
+
+## 3. Política de Paridade Dinâmica: Comandos Web & Central de Ajuda (`help.js`)
+- **Fonte Única da Verdade**: A lista oficial de módulos e categorização de comandos reside estritamente em `src/commands/commandHelpers.js` (`MODULE_METADATA` e `COMMAND_CATEGORY_MAP`) e no comando central `src/commands/help.js`.
+- **Regra Obrigatória para Novos Comandos**: Sempre que um novo comando for criado ou alterado no bot:
+  1. O nome e todos os aliases DEVEM ser registrados em `COMMAND_CATEGORY_MAP` vinculado à sua categoria correspondente em `MODULE_METADATA`.
+  2. As descrições e títulos DEVEM ser fornecidos em pares idênticos (`PT` e `EN`) no `src/utils/i18n.js`.
+- **Proibição de Listas Estáticas Isoladas**: É terminantemente proibido manter listas manuais "hardcoded" de comandos em arquivos HTML do front-end. O website DEVE consumir a API `/api/commands` para renderizar as abas e cartões de comandos em tempo de execução.
+- **Quality Gate Automatizado**: O teste `tests/i18nParity.test.js` audita se 100% dos comandos exportados em `src/commands/index.js` estão mapeados em `COMMAND_CATEGORY_MAP`. Se um comando estiver fora do catálogo, o comando `npm test` falha imediatamente.
+
+

@@ -151,3 +151,65 @@ const fallbackTestEn = t('test.non.existent.key', 'en');
 assert.equal(fallbackTestEn, 'test.non.existent.key', 'Chave inexistente deve retornar a chave original sem quebrar.');
 
 console.log('Auditoria de Paridade i18n concluída com 100% de sucesso!');
+// 5. Auditoria de Paridade Dinâmica: Comandos do Bot vs Catálogo de Ajuda (COMMAND_CATEGORY_MAP)
+const { COMMAND_CATEGORY_MAP, getHelpModules } = require('../src/commands/commandHelpers');
+const allBotCommands = require('../src/commands/index').commands;
+
+const unmappedCommands = [];
+for (const cmd of allBotCommands) {
+  const name = cmd.name || cmd.data?.name;
+  if (!name) continue;
+  const bareName = name.startsWith('py-') ? name.slice(3) : name;
+  const prefixedName = name.startsWith('py-') ? name : `py-${name}`;
+
+  if (!COMMAND_CATEGORY_MAP[name] && !COMMAND_CATEGORY_MAP[bareName] && !COMMAND_CATEGORY_MAP[prefixedName]) {
+    unmappedCommands.push(name);
+  }
+}
+
+if (unmappedCommands.length > 0) {
+  console.error('❌ Comandos registrados no bot que não possuem categoria em COMMAND_CATEGORY_MAP:\n', unmappedCommands);
+}
+assert.equal(
+  unmappedCommands.length,
+  0,
+  `Existem ${unmappedCommands.length} comandos não mapeados na central de ajuda e catálogo web!`
+);
+console.log(`✅ Catálogo do Help & Web validado: 100% dos ${allBotCommands.length} comandos estão categorizados.`);
+
+// 6. Verificação do Endpoint Dinâmico de Comandos (/api/commands)
+const ptModules = getHelpModules(null, 'pt');
+const enModules = getHelpModules(null, 'en');
+assert(Array.isArray(ptModules) && ptModules.length > 0, 'Módulos em PT devem ser gerados');
+assert(Array.isArray(enModules) && enModules.length > 0, 'Módulos em EN devem ser gerados');
+const ptCmdCount = ptModules.reduce((acc, m) => acc + (m.commands?.length || 0), 0);
+const enCmdCount = enModules.reduce((acc, m) => acc + (m.commands?.length || 0), 0);
+assert.equal(ptCmdCount, enCmdCount, 'Quantidade de comandos nos módulos do Help/Web deve ser idêntica em PT e EN');
+assert(ptCmdCount > 0, 'Deve haver comandos catalogados');
+console.log(`✅ Sincronização Dinâmica Web/Help validada: ${ptCmdCount} comandos ativos em ${ptModules.length} módulos.`);
+
+// 7. Validação de Segurança do Dono (Snowflake 214153735281180673 & HMAC)
+const { OWNER_SNOWFLAKE, createOwnerMagicToken, verifyMagicToken, isIpAllowed } = require('../src/services/adminAuth');
+assert.equal(OWNER_SNOWFLAKE, '214153735281180673', 'Snowflake do dono deve ser estritamente 214153735281180673');
+
+const forbiddenRes = createOwnerMagicToken('999999999999999999');
+assert.equal(forbiddenRes.success, false, 'Usuário aleatório não pode gerar token de admin');
+
+const ownerRes = createOwnerMagicToken(OWNER_SNOWFLAKE);
+assert.equal(ownerRes.success, true, 'Proprietário deve conseguir gerar token mágico HMAC');
+assert(ownerRes.token && ownerRes.token.length > 20, 'Token HMAC deve ser gerado');
+
+const verifyRes = verifyMagicToken(ownerRes.token);
+assert.equal(verifyRes.valid, true, 'Token HMAC recém-gerado deve ser válido');
+assert.equal(verifyRes.userId, OWNER_SNOWFLAKE);
+
+const replayRes = verifyMagicToken(ownerRes.token);
+assert.equal(replayRes.valid, false, 'Anti-replay: token consumido não pode ser reutilizado');
+
+assert.equal(isIpAllowed({ ip: '127.0.0.1', headers: {} }), true, 'Localhost deve ser autorizado');
+assert.equal(isIpAllowed({ ip: '179.153.90.39', headers: {} }), true, 'IP do criador deve ser autorizado');
+assert.equal(isIpAllowed({ ip: '198.51.100.23', headers: {} }), false, 'IP desconhecido deve ser bloqueado');
+console.log('✅ Segurança do Dono validada: Snowflake, HMAC Magic Tokens e IP Allowlist operando perfeitamente.');
+
+console.log('Auditoria de Paridade i18n e Catálogo concluída com 100% de sucesso!');
+

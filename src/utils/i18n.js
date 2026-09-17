@@ -783,6 +783,11 @@ const TRANSLATIONS = {
       agendaTitle: '📅  ✦  Agenda de Automações{server}',
       agendaDesc: 'Próximas tarefas automáticas e verificações agendadas:',
       onlyServer: '❌ Este comando precisa ser usado dentro de um servidor.',
+      onlyOwner: '❌ **Acesso Restrito:** Apenas o criador da Pyxie ({owner}) pode executar este comando.',
+      title: '🛡️  ✦  Painel de Administração do Dono',
+      desc: 'Olá criador! Seu link seguro de acesso ao painel foi gerado.\n\n> 🔐 **Autenticação:** Criptografada via HMAC-SHA256\n> ⏳ **Validade:** 15 minutos (uso único)\n> 🌐 **Rede:** Restrito aos seus IPs autorizados\n\n*Clique no botão abaixo para abrir seu console administrativo:*',
+      btnOpen: '⚡ Acessar Painel do Dono',
+      footer: 'Painel Confidencial da Pyxie • Protegido por Snowflake & IP',
     },
     workMinigame: {
       noProfession: '❌ Você ainda não possui uma profissão registrada! Use `/profissao` para escolher sua vocação antes de trabalhar.',
@@ -1333,6 +1338,11 @@ const TRANSLATIONS = {
       agendaTitle: '📅  ✦  Automation Schedule{server}',
       agendaDesc: 'Upcoming automated tasks and scheduled checks:',
       onlyServer: '❌ This command must be used within a server.',
+      onlyOwner: '❌ **Restricted Access:** Only Pyxie\'s owner ({owner}) can execute this command.',
+      title: '🛡️  ✦  Owner Administration Panel',
+      desc: 'Hello creator! Your secure panel access link has been generated.\n\n> 🔐 **Authentication:** Encrypted via HMAC-SHA256\n> ⏳ **Validity:** 15 minutes (single-use)\n> 🌐 **Network:** Restricted to your authorized IPs\n\n*Click the button below to open your administrative console:*',
+      btnOpen: '⚡ Access Owner Dashboard',
+      footer: 'Pyxie Confidential Panel • Protected by Snowflake & IP',
     },
     workMinigame: {
       noProfession: '❌ You do not have a registered profession yet! Use `/profissao` to choose a career before working.',
@@ -1376,6 +1386,9 @@ const TRANSLATIONS = {
   },
 };
 
+/**
+ * Traduz uma chave para o idioma do contexto/servidor.
+ */
 function t(pathKey, source = null, replacements = {}) {
   const lang = getLanguage(source);
   const keys = pathKey.split('.');
@@ -1411,6 +1424,8 @@ function t(pathKey, source = null, replacements = {}) {
       return pathKey;
     }
   }
+
+  if (typeof current !== 'string') return pathKey;
 
   let text = current;
   for (const [k, v] of Object.entries(replacements)) {
