@@ -599,7 +599,6 @@ client.on('error', (error) => {
 function handleAppShutdown() {
   flushSync();
   flushInventorySync();
-  flushPetsSync();
   releaseBotLock();
 }
 

@@ -44,6 +44,31 @@ assert.ok(statusAfterBonus.extraCookies >= 1, 'Deve possuir crédito de biscoito
 const extraOpen = claimCookie(testUserId);
 assert.equal(extraOpen.success, true, 'Biscoito extra deve ser aberto com sucesso.');
 
+// 3.1 Teste de Execução do Comando Biscoito (Prefix e Slash com Cooldown)
+const biscoitoCommand = require('../src/commands/biscoito');
+let prefixReplyResult = null;
+biscoitoCommand.executePrefix({
+  message: {
+    author: { id: testUserId },
+    reply: (payload) => {
+      prefixReplyResult = payload;
+    },
+  },
+});
+assert.ok(prefixReplyResult && prefixReplyResult.embeds.length > 0, 'Comando biscoito em cooldown deve responder embed.');
+assert.ok(prefixReplyResult.components.length > 0, 'Comando biscoito em cooldown deve oferecer botão de bônus.');
+
+let slashReplyResult = null;
+biscoitoCommand.executeSlash({
+  interaction: {
+    user: { id: testUserId },
+    editReply: (payload) => {
+      slashReplyResult = payload;
+    },
+  },
+});
+assert.ok(slashReplyResult && slashReplyResult.embeds.length > 0, 'Slash py-cookie em cooldown deve responder embed.');
+
 // 4. Teste de Coinflip (Cara ou Coroa)
 setUserBalance(testUserId, 500);
 const coinflipCommand = require('../src/commands/coinflip');

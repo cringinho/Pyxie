@@ -29,7 +29,7 @@ function buildCookieView(userId, source = null) {
         `Acesse nosso portal patrocinado, aguarde 10 segundos e ganhe **1 Biscoito Extra 🥠** + **100 Moedas 💰** + **1 Ampulheta ⏳**!`;
 
     const cooldownEmbed = new EmbedBuilder()
-      .setColor(PYXIE_COLORS.purple)
+      .setColor(PYXIE_COLORS.purple || '#9b5de5')
       .setTitle(cooldownTitle)
       .setDescription(cooldownDesc)
       .setFooter({ text: isEn ? 'Daily Fortune Cookie' : 'Biscoito da Sorte Diário' })

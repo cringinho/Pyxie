@@ -1,6 +1,8 @@
 const PYXIE_COLORS = {
   lilac: '#5e2b8c',
   violet: '#8a2be2',
+  purple: '#9b5de5',
+  crimson: '#ef4444',
   emerald: '#10b981',
   neonPink: '#ff1493',
   magenta: '#e60067',

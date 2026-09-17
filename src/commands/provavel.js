@@ -121,7 +121,7 @@ function buildPollEmbed(poll, lang = 'pt') {
     : `Total de votos registrados: ${total} • Votação aberta`;
 
   return new EmbedBuilder()
-    .setColor(PYXIE_COLORS.purple)
+    .setColor(PYXIE_COLORS.purple || '#9b5de5')
     .setTitle(title)
     .setDescription(desc)
     .addFields(

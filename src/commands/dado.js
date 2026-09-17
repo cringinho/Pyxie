@@ -31,7 +31,7 @@ function buildDiceEmbed(user, result, source = null) {
   const isNat1 = isD20 && result.rolls[0] === 1;
 
   let highlight = '';
-  let color = PYXIE_COLORS.purple;
+  let color = PYXIE_COLORS.purple || '#9b5de5';
 
   if (isNat20) {
     color = '#facc15'; // Dourado

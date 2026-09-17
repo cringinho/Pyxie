@@ -91,7 +91,7 @@ function buildJokenpoEmbed(game, lang = 'pt') {
   const thinkingText = isEn ? '⏳ Thinking of a move...' : '⏳ Pensando na jogada...';
 
   return new EmbedBuilder()
-    .setColor(PYXIE_COLORS.purple)
+    .setColor(PYXIE_COLORS.purple || '#9b5de5')
     .setTitle(title)
     .setDescription(desc)
     .addFields(
