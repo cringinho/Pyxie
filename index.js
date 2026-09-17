@@ -34,6 +34,8 @@ const expeditionCommand = require('./src/commands/expedicao');
 const bossCommand = require('./src/commands/boss');
 const rankingCommand = require('./src/commands/ranking');
 const idiomaCommand = require('./src/commands/idioma');
+const jokenpoCommand = require('./src/commands/jokenpo');
+const likelyCommand = require('./src/commands/provavel');
 const { syncApplicationEmojis } = require('./src/utils/appEmojis');
 const { registerAutomation, updateAutomation } = require('./src/services/automationSchedule');
 const {
@@ -601,6 +603,20 @@ client.on('interactionCreate', async (interaction) => {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
       await workCommand.handleWorkInteraction(interaction);
+      return;
+    }
+
+    if (typeof jokenpoCommand?.isJokenpoInteraction === 'function' && jokenpoCommand.isJokenpoInteraction(interaction)) {
+      incrementCommand();
+      recordUniqueUser(interaction.user.id);
+      await jokenpoCommand.handleJokenpoInteraction(interaction);
+      return;
+    }
+
+    if (typeof likelyCommand?.isLikelyInteraction === 'function' && likelyCommand.isLikelyInteraction(interaction)) {
+      incrementCommand();
+      recordUniqueUser(interaction.user.id);
+      await likelyCommand.handleLikelyInteraction(interaction);
       return;
     }
 

@@ -136,6 +136,21 @@ function verifyAndClaimBonus(token) {
     };
   }
 
+  // 3. Bônus de Biscoito da Sorte Extra
+  if (data.action === 'cookie_bonus') {
+    const { grantExtraCookie } = require('./cookie');
+    grantExtraCookie(data.userId);
+    addCoins(data.userId, 100);
+    addItem(data.userId, 'ampulheta_tempo_2h', 1);
+
+    return {
+      success: true,
+      action: 'cookie_bonus',
+      userId: data.userId,
+      message: '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você ganhou 1 abertura extra de biscoito (+1 Ampulheta ⏳ e +100 Moedas 🪙). Use `/py-biscoito` para abrir agora!',
+    };
+  }
+
   return { success: false, error: 'Ação de bônus desconhecida.' };
 }
 

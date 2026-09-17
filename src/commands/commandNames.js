@@ -38,5 +38,10 @@ module.exports = {
   VOTE: 'py-vote',
   LANGUAGE: 'py-language',
   BONUS: 'py-bonus',
+  JOKENPO: 'py-jokenpo',
+  COOKIE: 'py-cookie',
+  LIKELY: 'py-likely',
+  DICE: 'py-dice',
+  COINFLIP: 'py-coinflip',
 };
 

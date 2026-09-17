@@ -35,6 +35,11 @@ const commands = [
   require('./votar'),
   require('./idioma'),
   require('./bonus'),
+  require('./jokenpo'),
+  require('./biscoito'),
+  require('./provavel'),
+  require('./dado'),
+  require('./coinflip'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');

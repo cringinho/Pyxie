@@ -138,3 +138,22 @@ Exibe as próximas tarefas agendadas e automações em execução.
 
 ### `/py-emojis` *(Admin)*
 Exporta um catálogo em JSON com todos os emojis customizados do servidor.
+
+---
+
+## 🎲 6. Jogos Rápidos & Comunidade (Impacto Zero)
+
+### `/py-jokenpo <oponente> [aposta]` (ou `py!jokenpo` / `py!ppt`)
+Desafie outro membro para uma partida de Pedra, Papel e Tesoura com botões e aposta opcional de moedas.
+
+### `/py-cookie` (ou `py!biscoito` / `py!sorte`)
+Quebre seu biscoito da sorte mágico (1x ao dia). Revela previsões místicas, números da sorte e chances de encontrar moedas. Se já abriu no dia, oferece o botão de **Bônus Web (10s)** para desbloquear um biscoito extra.
+
+### `/py-likely [membro1] [membro2] [situacao]` (ou `py!provavel` / `py!votacao`)
+Inicia uma votação interativa de 60 segundos para eleger quem do servidor é mais provável de cometer uma situação engraçada.
+
+### `/py-dice [lados] [quantidade]` (ou `py!dado` / `py!rolar`)
+Rola dados poliédricos de RPG (d4 a d100) com soma e destaques de Acerto Crítico (Nat 20) e Falha Crítica (Nat 1).
+
+### `/py-coinflip <lado> <aposta>` (ou `py!coinflip` / `py!caraoucoroa`)
+Aposta moedas contra a Pyxie em Cara ou Coroa com 50% de chance de dobrar o valor ou perder.
