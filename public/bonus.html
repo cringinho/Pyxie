@@ -429,25 +429,25 @@
 
           <!-- Card de Instruções Amigável (Exibido quando acessa sem token direto pela URL) -->
           <div id="instructionsCard" class="instructions-card">
-            <div class="instructions-title">
+            <div id="instructionsTitle" class="instructions-title">
               <span>🎁 Como resgatar suas recompensas:</span>
             </div>
-            <div class="step-list">
+            <div id="stepList" class="step-list">
               <div class="step-item">
                 <span class="step-num">1</span>
-                <span>No Discord, digite o comando <span class="command-badge">/py-bonus</span> (ou clique no botão em <span class="command-badge">/py-daily</span> ou <span class="command-badge">/py-inventory</span>).</span>
+                <span id="step1Text">No Discord, digite o comando <span class="command-badge">/py-bonus</span> (ou clique no botão em <span class="command-badge">/py-daily</span> ou <span class="command-badge">/py-inventory</span>).</span>
               </div>
               <div class="step-item">
                 <span class="step-num">2</span>
-                <span>Clique no link mágico gerado exclusivamente para a sua conta.</span>
+                <span id="step2Text">Clique no link mágico gerado exclusivamente para a sua conta.</span>
               </div>
               <div class="step-item">
                 <span class="step-num">3</span>
-                <span>Aguarde os 10 segundos na tela e clique em <strong>Resgatar Bônus</strong>!</span>
+                <span id="step3Text">Aguarde os 10 segundos na tela e clique em <strong>Resgatar Bônus</strong>!</span>
               </div>
             </div>
 
-            <div class="reward-box">
+            <div id="rewardBox" class="reward-box">
               <span>✨ <strong>Recompensa:</strong> 1x Ampulheta Mágica (2h) ⏳ + 150 Moedas 💰</span>
             </div>
 
@@ -459,13 +459,13 @@
           <button id="btnClaim" class="btn-claim" onclick="claimBonusReward()">🎁 Resgatar Bônus Agora</button>
 
           <div id="successBox" class="success-box">
-            <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.3rem; color: #4ade80; margin-bottom: 6px;">🎉 Bônus Mágico Creditado!</h3>
+            <h3 id="successTitle" style="font-family: 'Fredoka', sans-serif; font-size: 1.3rem; color: #4ade80; margin-bottom: 6px;">🎉 Bônus Mágico Creditado!</h3>
             <p id="successMessage" style="font-size: 0.95rem; color: #f1f5f9;">Seu bônus já está ativo na sua conta! Você já pode voltar para o Discord.</p>
           </div>
 
           <div id="errorBox" class="error-box"></div>
 
-          <div class="sponsor-badge">
+          <div id="sponsorBadge" class="sponsor-badge">
             Patrocinado com carinho para a comunidade Pyxie 🐾
           </div>
         </div>
@@ -516,7 +516,61 @@
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
+      const langParam = urlParams.get('lang');
       const SMARTLINK_URL = 'https://www.profitableratecpmnetwork.com/bzdc0dtq5?key=aece6072dc92d95726e1223cf45171dd';
+
+      const I18N = {
+        pt: {
+          metaTitle: 'Pyxie • Bônus Mágico Encantado',
+          pageTitleWithToken: 'Pyxie Bot • Bônus Mágico',
+          pageTitleNoToken: 'Pyxie Bot • Portal de Bônus',
+          pageSubtitleWithToken: 'Aguarde a canalização da energia para desbloquear seu bônus no Discord!',
+          pageSubtitleNoToken: 'Gere seu link exclusivo dentro do Discord para creditar itens na sua conta!',
+          statusChanneling: '⚡ Canalizando energia mágica...',
+          statusReady: '🌟 <strong>Energia Pronta!</strong> Clique abaixo para resgatar:',
+          statusClaiming: '🔄 Creditando bônus no seu inventário...',
+          statusFailed: 'Falha ao validar bônus.',
+          statusConnError: 'Erro de conexão com o servidor.',
+          btnClaim: '🎁 Resgatar Bônus Agora',
+          successTitle: '🎉 Bônus Mágico Creditado!',
+          successDefaultMsg: 'Seu bônus já está ativo na sua conta! Você já pode voltar para o Discord.',
+          instructionsTitle: '<span>🎁 Como resgatar suas recompensas:</span>',
+          step1: 'No Discord, digite o comando <span class="command-badge">/py-bonus</span> (ou clique no botão em <span class="command-badge">/py-daily</span> ou <span class="command-badge">/py-inventory</span>).',
+          step2: 'Clique no link mágico gerado exclusivamente para a sua conta.',
+          step3: 'Aguarde os 10 segundos na tela e clique em <strong>Resgatar Bônus</strong>!',
+          rewardBox: '<span>✨ <strong>Recompensa:</strong> 1x Ampulheta Mágica (2h) ⏳ + 150 Moedas 💰</span>',
+          sponsorBtn: '👉 Apoiar Servidor com Patrocinador',
+          sponsorBadge: 'Patrocinado com carinho para a comunidade Pyxie 🐾',
+          connErrorMsg: 'Erro de conexão. Verifique sua internet e tente novamente.',
+        },
+        en: {
+          metaTitle: 'Pyxie • Enchanted Magic Bonus',
+          pageTitleWithToken: 'Pyxie Bot • Magical Bonus',
+          pageTitleNoToken: 'Pyxie Bot • Bonus Portal',
+          pageSubtitleWithToken: 'Wait for the magical energy to channel and unlock your bonus on Discord!',
+          pageSubtitleNoToken: 'Generate your personal link on Discord to receive items in your account!',
+          statusChanneling: '⚡ Channeling magical energy...',
+          statusReady: '🌟 <strong>Energy Ready!</strong> Click below to claim:',
+          statusClaiming: '🔄 Crediting bonus to your inventory...',
+          statusFailed: 'Failed to validate bonus.',
+          statusConnError: 'Connection error with server.',
+          btnClaim: '🎁 Claim Bonus Now',
+          successTitle: '🎉 Magical Bonus Credited!',
+          successDefaultMsg: 'Your bonus is now active on your account! You can return to Discord.',
+          instructionsTitle: '<span>🎁 How to claim your rewards:</span>',
+          step1: 'On Discord, type the command <span class="command-badge">/py-bonus</span> (or click the button in <span class="command-badge">/py-daily</span> or <span class="command-badge">/py-inventory</span>).',
+          step2: 'Click the magical link generated exclusively for your account.',
+          step3: 'Wait 10 seconds on the page and click <strong>Claim Bonus</strong>!',
+          rewardBox: '<span>✨ <strong>Reward:</strong> 1x Magic Hourglass (2h) ⏳ + 150 Coins 💰</span>',
+          sponsorBtn: '👉 Support Server via Sponsor',
+          sponsorBadge: 'Sponsored with love for the Pyxie community 🐾',
+          connErrorMsg: 'Connection error. Please check your internet connection and try again.',
+        }
+      };
+
+      const userLang = (langParam === 'en' || (!langParam && !navigator.language?.toLowerCase().startsWith('pt'))) ? 'en' : 'pt';
+      const S = I18N[userLang];
+      document.title = S.metaTitle;
 
       let timeLeft = 10;
       const totalTime = 10;
@@ -531,14 +585,37 @@
       const successBoxEl = document.getElementById('successBox');
       const errorBoxEl = document.getElementById('errorBox');
       const successMessageEl = document.getElementById('successMessage');
+      const successTitleEl = document.getElementById('successTitle');
+      const sponsorBadgeEl = document.getElementById('sponsorBadge');
+      const instructionsTitleEl = document.getElementById('instructionsTitle');
+      const step1TextEl = document.getElementById('step1Text');
+      const step2TextEl = document.getElementById('step2Text');
+      const step3TextEl = document.getElementById('step3Text');
+      const rewardBoxEl = document.getElementById('rewardBox');
+      const sponsorBtnEl = document.getElementById('sponsorBtn');
+
+      btnClaimEl.innerText = S.btnClaim;
+      successTitleEl.innerText = S.successTitle;
+      successMessageEl.innerText = S.successDefaultMsg;
+      sponsorBadgeEl.innerText = S.sponsorBadge;
+      instructionsTitleEl.innerHTML = S.instructionsTitle;
+      step1TextEl.innerHTML = S.step1;
+      step2TextEl.innerHTML = S.step2;
+      step3TextEl.innerHTML = S.step3;
+      rewardBoxEl.innerHTML = S.rewardBox;
+      sponsorBtnEl.innerText = S.sponsorBtn;
 
       if (!token) {
         // Acesso direto sem token: Exibe o card explicativo e botões formatados
         timerCardEl.style.display = 'none';
         instructionsCardEl.style.display = 'block';
-        pageTitleEl.innerText = 'Pyxie Bot • Portal de Bônus';
-        pageSubtitleEl.innerText = 'Gere seu link exclusivo dentro do Discord para creditar itens na sua conta!';
+        pageTitleEl.innerText = S.pageTitleNoToken;
+        pageSubtitleEl.innerText = S.pageSubtitleNoToken;
       } else {
+        pageTitleEl.innerText = S.pageTitleWithToken;
+        pageSubtitleEl.innerText = S.pageSubtitleWithToken;
+        statusLabelEl.innerText = S.statusChanneling;
+
         // Inicia a contagem regressiva de 10 segundos
         const timer = setInterval(() => {
           timeLeft--;
@@ -551,7 +628,7 @@
           if (timeLeft === 0) {
             clearInterval(timer);
             countdownEl.innerText = '✨';
-            statusLabelEl.innerHTML = '🌟 <strong>Energia Pronta!</strong> Clique abaixo para resgatar:';
+            statusLabelEl.innerHTML = S.statusReady;
             btnClaimEl.style.display = 'block';
           }
         }, 1000);
@@ -567,7 +644,7 @@
           }
         } catch (_) {}
 
-        statusLabelEl.innerText = '🔄 Creditando bônus no seu inventário...';
+        statusLabelEl.innerText = S.statusClaiming;
         btnClaimEl.style.display = 'none';
 
         try {
@@ -589,16 +666,16 @@
             }
           } else {
             countdownEl.innerText = '⚠️';
-            statusLabelEl.innerText = 'Falha ao validar bônus.';
+            statusLabelEl.innerText = S.statusFailed;
             errorBoxEl.style.display = 'block';
-            errorBoxEl.innerText = data.error || 'Não foi possível resgatar o bônus.';
+            errorBoxEl.innerText = data.error || S.statusFailed;
             btnClaimEl.style.display = 'block';
           }
         } catch (err) {
           countdownEl.innerText = '⚠️';
-          statusLabelEl.innerText = 'Erro de conexão com o servidor.';
+          statusLabelEl.innerText = S.statusConnError;
           errorBoxEl.style.display = 'block';
-          errorBoxEl.innerText = 'Erro de conexão. Verifique sua internet e tente novamente.';
+          errorBoxEl.innerText = S.connErrorMsg;
           btnClaimEl.style.display = 'block';
         }
       }

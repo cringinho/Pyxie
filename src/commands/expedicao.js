@@ -152,9 +152,9 @@ async function handleExpeditionInteraction(interaction) {
   }
 
   if (action === 'expedition_double_link') {
-    const { createBonusSession } = require('../services/bonusTimer');
-    const session = createBonusSession(targetId, 'expedition_double');
-    const isEn = getLanguage(interaction) === 'en';
+    const lang = getLanguage(interaction);
+    const session = createBonusSession(targetId, 'expedition_double', {}, lang);
+    const isEn = lang === 'en';
 
     const doubleEmbed = new EmbedBuilder()
       .setColor(PYXIE_COLORS.gold || '#facc15')

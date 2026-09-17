@@ -107,7 +107,50 @@ assert.ok(inviteUrl.includes('client_id=1543650200718155897'), 'URL de convite d
 assert.ok(inviteUrl.includes('permissions='), 'URL de convite deve conter permissões.');
 assert.ok(inviteUrl.includes('scope=bot%20applications.commands'), 'URL de convite deve conter os escopos bot e applications.commands.');
 
-console.log('Verificação dos comandos leves e convite bilíngue (Biscoito, Jokenpô, Provável, Dados, Coinflip, Convite e Bônus Web): OK');
+// 10. Teste do Comando de Trabalho Bilíngue e Bônus Web por Idioma
+const trabalhoCommand = require('../src/commands/trabalho');
+const { PROFESSION_MINIGAMES } = trabalhoCommand;
+const professionsDef = require('../src/services/professions');
+const { t } = require('../src/utils/i18n');
+const bonusTimer = require('../src/services/bonusTimer');
+
+const activeProfessions = Object.keys(professionsDef);
+assert.equal(activeProfessions.length, 10, 'Devem existir 10 profissões no sistema.');
+
+for (const profKey of activeProfessions) {
+  const games = PROFESSION_MINIGAMES[profKey];
+  assert.ok(Array.isArray(games) && games.length >= 3, `A profissão ${profKey} deve ter pelo menos 3 minigames.`);
+
+  // Testar labels de profissão em PT e EN
+  const labelPt = t(`profession.labels.${profKey}`, 'pt');
+  const labelEn = t(`profession.labels.${profKey}`, 'en');
+  assert.ok(labelPt && !labelPt.startsWith('profession.labels'), `Label PT de ${profKey} deve existir.`);
+  assert.ok(labelEn && !labelEn.startsWith('profession.labels'), `Label EN de ${profKey} deve existir.`);
+
+  games.forEach((game, idx) => {
+    // Validação em Português
+    assert.ok(game.pt, `Minigame #${idx} de ${profKey} deve ter versão PT.`);
+    assert.ok(typeof game.pt.scenario === 'string' && game.pt.scenario.length > 10, `Cenário PT de ${profKey} #${idx} deve ser válido.`);
+    assert.ok(typeof game.pt.correct === 'string' && game.pt.correct.length > 3, `Resposta correta PT de ${profKey} #${idx} deve ser válida.`);
+    assert.ok(Array.isArray(game.pt.wrongs) && game.pt.wrongs.length === 3, `Respostas incorretas PT de ${profKey} #${idx} devem ser exatamente 3.`);
+    assert.ok(!game.pt.wrongs.includes(game.pt.correct), `Resposta correta PT não deve estar entre os wrongs em ${profKey} #${idx}.`);
+
+    // Validação em Inglês
+    assert.ok(game.en, `Minigame #${idx} de ${profKey} deve ter versão EN.`);
+    assert.ok(typeof game.en.scenario === 'string' && game.en.scenario.length > 10, `Cenário EN de ${profKey} #${idx} deve ser válido.`);
+    assert.ok(typeof game.en.correct === 'string' && game.en.correct.length > 3, `Resposta correta EN de ${profKey} #${idx} deve ser válida.`);
+    assert.ok(Array.isArray(game.en.wrongs) && game.en.wrongs.length === 3, `Respostas incorretas EN de ${profKey} #${idx} devem ser exatamente 3.`);
+    assert.ok(!game.en.wrongs.includes(game.en.correct), `Resposta correta EN não deve estar entre os wrongs em ${profKey} #${idx}.`);
+  });
+}
+
+// Validação da Sessão de Bônus Web Bilíngue
+const sessionPt = bonusTimer.createBonusSession('test-user-pt', 'pt');
+assert.ok(sessionPt.url.includes('lang=pt'), 'URL do bônus PT deve conter lang=pt');
+const sessionEn = bonusTimer.createBonusSession('test-user-en', 'en');
+assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=en');
+
+console.log('Verificação dos comandos leves, convite bilíngue e desafios de trabalho em PT/EN: OK');
 
 
 

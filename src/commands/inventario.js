@@ -340,7 +340,8 @@ async function handleInventoryInteraction(interaction) {
 
   // 7. Gerar link de Bônus Web
   if (action === 'inv_claim_bonus') {
-    const session = createBonusSession(userId, 'item_bonus');
+    const lang = getLanguage(interaction);
+    const session = createBonusSession(userId, 'item_bonus', {}, lang);
     const bonusEmbed = new EmbedBuilder()
       .setColor(PYXIE_COLORS.gold || '#facc15')
       .setTitle('🎁  ✦  Resgatar Bônus Web (10s)')

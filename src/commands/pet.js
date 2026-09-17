@@ -1083,23 +1083,30 @@ async function handleHubInteraction(interaction) {
   // 8.1. Chocadeira: Ganhar Ampulheta / Bônus com página mágica (10s)
   if (action === 'hub_speedup_incubator') {
     const { createBonusSession } = require('../services/bonusTimer');
-    const session = createBonusSession(userId, 'item_bonus');
+    const lang = getLanguage(interaction);
+    const isEn = lang === 'en';
+    const session = createBonusSession(userId, 'item_bonus', {}, lang);
 
     const speedupEmbed = new EmbedBuilder()
       .setColor(PYXIE_COLORS.gold || '#facc15')
-      .setTitle('🎁  ✦  Resgatar Ampulheta Mágica & Moedas (10s)')
+      .setTitle(isEn ? '🎁  ✦  Claim Magic Hourglass & Coins (10s)' : '🎁  ✦  Resgatar Ampulheta Mágica & Moedas (10s)')
       .setDescription(
-        'Acesse a página patrocinada e aguarde **10 segundos** para resgatar gratuitamente:\n\n' +
-        '> ⏳ **1x Ampulheta Mágica (2h)** para guardar na mochila\n' +
-        '> 🪙 **+150 Moedas** instantâneas\n\n' +
-        '✨ *Você pode usar a Ampulheta quando quiser para acelerar o choco de qualquer ovo!*'
+        isEn
+          ? 'Visit the sponsored web page and wait **10 seconds** to claim for free:\n\n' +
+            '> ⏳ **1x Magic Hourglass (2h)** added to your backpack\n' +
+            '> 🪙 **+150 Coins** instantly\n\n' +
+            '✨ *You can use the Hourglass whenever you want to speed up any egg incubation!*'
+          : 'Acesse a página patrocinada e aguarde **10 segundos** para resgatar gratuitamente:\n\n' +
+            '> ⏳ **1x Ampulheta Mágica (2h)** para guardar na mochila\n' +
+            '> 🪙 **+150 Moedas** instantâneas\n\n' +
+            '✨ *Você pode usar a Ampulheta quando quiser para acelerar o choco de qualquer ovo!*'
       )
-      .setFooter({ text: 'Pyxie Bonus' })
+      .setFooter({ text: isEn ? 'Pyxie Bonus' : 'Bônus Pyxie' })
       .setTimestamp();
 
     const linkRow = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setLabel('⚡ Abrir Página de Bônus (10s)')
+        .setLabel(isEn ? '⚡ Open 10s Bonus Page' : '⚡ Abrir Página de Bônus (10s)')
         .setStyle(ButtonStyle.Link)
         .setURL(session.url)
         .setEmoji('🎁')

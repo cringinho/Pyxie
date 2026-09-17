@@ -66,12 +66,14 @@ module.exports = {
       'pt-BR': 'Resgata Ampulhetas Mágicas e Moedas gratuitas através do link de 10s.',
     }),
   async executeSlash({ interaction }) {
-    const session = createBonusSession(interaction.user.id, 'item_bonus');
+    const lang = getLanguage(interaction);
+    const session = createBonusSession(interaction.user.id, 'item_bonus', {}, lang);
     const view = buildBonusEmbed(interaction.user.id, session.url, interaction);
     await interaction.editReply(view);
   },
   async executePrefix({ message }) {
-    const session = createBonusSession(message.author.id, 'item_bonus');
+    const lang = getLanguage(message);
+    const session = createBonusSession(message.author.id, 'item_bonus', {}, lang);
     const view = buildBonusEmbed(message.author.id, session.url, message);
     await message.reply(view);
   },

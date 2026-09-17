@@ -17,7 +17,7 @@ function buildCookieView(userId, source = null) {
   const status = getCookieStatus(userId);
 
   if (!status.canOpen) {
-    const bonusSession = createBonusSession(userId, 'cookie_bonus');
+    const bonusSession = createBonusSession(userId, 'cookie_bonus', {}, lang);
 
     const cooldownTitle = isEn ? '⏳ ✦ Cookie Already Opened Today' : '⏳ ✦ Biscoito Já Quebrado Hoje';
     const cooldownDesc = isEn

@@ -13,21 +13,35 @@ const claimedTokens = new Set();
 /**
  * Cria uma nova sessão de bônus assinada com HMAC.
  */
-function createBonusSession(userId, action = 'item_bonus', metadata = {}) {
+function createBonusSession(userId, action = 'item_bonus', metadata = {}, lang = 'pt') {
+  let finalAction = action;
+  let finalMeta = metadata;
+  let finalLang = lang;
+
+  if (finalAction === 'pt' || finalAction === 'en') {
+    finalLang = finalAction;
+    finalAction = 'item_bonus';
+  } else if (typeof metadata === 'string') {
+    finalLang = metadata;
+    finalMeta = {};
+  }
+  finalLang = finalLang === 'en' ? 'en' : 'pt';
+
   const createdAt = Date.now();
   const nonce = crypto.randomBytes(8).toString('hex');
-  const payload = JSON.stringify({ userId, action, metadata, createdAt, nonce });
+  const payload = JSON.stringify({ userId, action: finalAction, metadata: finalMeta, createdAt, nonce, lang: finalLang });
   const hmac = crypto.createHmac('sha256', BONUS_SECRET).update(payload).digest('hex');
   const token = Buffer.from(JSON.stringify({ payload, sig: hmac })).toString('base64url');
 
   const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org:3000';
-  const url = `${baseUrl.replace(/\/$/, '')}/bonus?token=${token}`;
+  const url = `${baseUrl.replace(/\/$/, '')}/bonus?token=${token}&lang=${finalLang}`;
 
   return {
     token,
     url,
     userId,
-    action,
+    action: finalAction,
+    lang: finalLang,
     createdAt,
   };
 }
@@ -70,17 +84,25 @@ function verifyAndClaimBonus(token) {
     return { success: false, error: 'Payload de dados ilegível.' };
   }
 
+  const isEn = data.lang === 'en' || data.metadata?.lang === 'en';
   const now = Date.now();
   const elapsedSeconds = (now - data.createdAt) / 1000;
 
   if (now - data.createdAt > TOKEN_MAX_AGE_MS) {
-    return { success: false, error: 'Esta sessão expirou! Gere um novo link no Discord.' };
+    return {
+      success: false,
+      error: isEn
+        ? 'This session has expired! Please generate a new link on Discord.'
+        : 'Esta sessão expirou! Gere um novo link no Discord.',
+    };
   }
 
   if (elapsedSeconds < MIN_WAIT_SECONDS) {
     return {
       success: false,
-      error: `Aguarde os 10 segundos completos na página antes de resgatar! (Tempo decorrido: ${Math.floor(elapsedSeconds)}s)`,
+      error: isEn
+        ? `Please wait the full 10 seconds on the page before claiming! (Elapsed: ${Math.floor(elapsedSeconds)}s)`
+        : `Aguarde os 10 segundos completos na página antes de resgatar! (Tempo decorrido: ${Math.floor(elapsedSeconds)}s)`,
     };
   }
 
@@ -105,9 +127,16 @@ function verifyAndClaimBonus(token) {
       }
     }
 
-    const boostMsg = directSpeedup
-      ? '⚡ Sua Chocadeira foi adiantada em **2 horas** E você recebeu **+1 Ampulheta Mágica (2h) ⏳** + **150 Moedas 🪙** na mochila!'
-      : '🎁 Você recebeu **1x Ampulheta Mágica (2h) ⏳** e **+150 Moedas 🪙** na sua mochila! Use na Chocadeira quando quiser.';
+    let boostMsg;
+    if (isEn) {
+      boostMsg = directSpeedup
+        ? '⚡ Your Incubator was sped up by **2 hours** AND you received **+1 Magic Hourglass (2h) ⏳** + **150 Coins 🪙** in your inventory!'
+        : '🎁 You received **1x Magic Hourglass (2h) ⏳** and **+150 Coins 🪙** in your inventory! Use in Chocadeira whenever you want.';
+    } else {
+      boostMsg = directSpeedup
+        ? '⚡ Sua Chocadeira foi adiantada em **2 horas** E você recebeu **+1 Ampulheta Mágica (2h) ⏳** + **150 Moedas 🪙** na mochila!'
+        : '🎁 Você recebeu **1x Ampulheta Mágica (2h) ⏳** e **+150 Moedas 🪙** na sua mochila! Use na Chocadeira quando quiser.';
+    }
 
     return {
       success: true,
@@ -132,7 +161,9 @@ function verifyAndClaimBonus(token) {
       action: 'expedition_double',
       userId: data.userId,
       result,
-      message: '💎 Bônus de **Recompensas em Dobro (2x)** ativado com sucesso! (+1 Ampulheta ⏳ e +100 Moedas 🪙 creditadas)',
+      message: isEn
+        ? '💎 **Double Rewards (2x)** activated successfully! (+1 Hourglass ⏳ and +100 Coins 🪙 credited)'
+        : '💎 Bônus de **Recompensas em Dobro (2x)** ativado com sucesso! (+1 Ampulheta ⏳ e +100 Moedas 🪙 creditadas)',
     };
   }
 
@@ -147,11 +178,13 @@ function verifyAndClaimBonus(token) {
       success: true,
       action: 'cookie_bonus',
       userId: data.userId,
-      message: '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você ganhou 1 abertura extra de biscoito (+1 Ampulheta ⏳ e +100 Moedas 🪙). Use `/py-biscoito` para abrir agora!',
+      message: isEn
+        ? '🥠 **Extra Fortune Cookie Unlocked!** You earned 1 extra cookie opening (+1 Hourglass ⏳ and +100 Coins 🪙). Use `/py-cookie` to open now!'
+        : '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você ganhou 1 abertura extra de biscoito (+1 Ampulheta ⏳ e +100 Moedas 🪙). Use `/py-biscoito` para abrir agora!',
     };
   }
 
-  return { success: false, error: 'Ação de bônus desconhecida.' };
+  return { success: false, error: isEn ? 'Unknown bonus action.' : 'Ação de bônus desconhecida.' };
 }
 
 module.exports = {

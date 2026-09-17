@@ -8,7 +8,7 @@ const {
 const { claimDaily } = require('../services/economy');
 const { getVoteUrl } = require('../services/topgg');
 const { createBonusSession } = require('../services/bonusTimer');
-const { t, formatCoins, formatRemaining } = require('../utils/i18n');
+const { t, getLanguage, formatCoins, formatRemaining } = require('../utils/i18n');
 const { DAILY } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 
@@ -20,8 +20,9 @@ function isWeekend() {
 function buildDailyView(userId, guildOrSource = null, clientId = null) {
   const result = claimDaily(userId);
   const voteUrl = getVoteUrl(clientId);
+  const lang = getLanguage(guildOrSource);
   const weekend = isWeekend();
-  const bonusSession = createBonusSession(userId, 'item_bonus');
+  const bonusSession = createBonusSession(userId, 'item_bonus', {}, lang);
 
   const voteBonusText = weekend
     ? t('daily.voteWeekendBonus', guildOrSource)
