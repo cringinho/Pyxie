@@ -6,7 +6,7 @@ Este manual orienta como publicar atualizações com total segurança na máquin
 
 ## 🔒 Regra de Ouro da Produção
 > **Nunca copie a pasta `data/` nem o arquivo `.env` do computador local para a VM.**  
-> Os dados de saldo, Pymons, casamentos e transações de produção vivem exclusivamente na VM. O script de deploy cuida de fazer backup e preservar todos os dados automaticamente.
+> Os dados de saldo, casamentos, inventário e transações de produção vivem exclusivamente na VM. O script de deploy cuida de fazer backup e preservar todos os dados automaticamente.
 
 ---
 

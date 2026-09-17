@@ -42,7 +42,7 @@ function buildWalletEmbed(user, currencies, position, source = null) {
 /**
  * Constrói o Embed de perfil com layout exuberante, espaçamento generoso e dados integrados.
  */
-function buildProfileEmbed({ user, account, spouse, rankPosition, professionLabel, activePet, dexStats, equippedTitle, source = null }) {
+function buildProfileEmbed({ user, account, spouse, rankPosition, professionLabel, equippedTitle, source = null }) {
   const lang = getLanguage(source);
   const titlePrefix = equippedTitle ? `[${equippedTitle.emoji} ${equippedTitle.name}] ` : '';
   const coinsVal = Number(account?.coins) || 0;
