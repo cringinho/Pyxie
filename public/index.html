@@ -805,6 +805,9 @@
         'catalog.desc': 'Consulte a biblioteca completa sincronizada diretamente com o bot em tempo real.',
         'catalog.search': '🔍 Buscar comando ou funcionalidade...',
         'catalog.all': 'Todos',
+        'catalog.empty': 'Nenhum comando encontrado.',
+        'catalog.loading': 'Carregando catálogo de comandos...',
+        'catalog.error': 'Erro ao carregar comandos. Verifique se o servidor está ativo.',
         'toast.copied': 'Comando copiado para a área de transferência!'
       },
       en: {
@@ -838,6 +841,9 @@
         'catalog.desc': 'Browse the complete commands library dynamically synchronized with the bot.',
         'catalog.search': '🔍 Search commands or features...',
         'catalog.all': 'All',
+        'catalog.empty': 'No commands found.',
+        'catalog.loading': 'Loading commands catalog...',
+        'catalog.error': 'Error loading commands. Make sure the server is online.',
         'toast.copied': 'Command copied to clipboard!'
       }
     };
@@ -878,6 +884,7 @@
         if (dict[key]) el.placeholder = dict[key];
       });
 
+      fetchCommands(lang);
     }
 
     async function fetchStats() {
@@ -889,10 +896,14 @@
           document.getElementById('statUsers').textContent = Number(data.stats.usersEngaged || 0).toLocaleString();
           document.getElementById('statMessages').textContent = Number(data.stats.messagesProcessed || 0).toLocaleString();
         }
-        if (data.uptime) {
-          const hours = Math.floor(data.uptime / 3600);
-          const mins = Math.floor((data.uptime % 3600) / 60);
-          document.getElementById('statUptime').textContent = `${hours}h ${mins}m`;
+        if (typeof data.uptime === 'number' && data.uptime >= 0) {
+          const totalSeconds = Math.floor(data.uptime / 1000);
+          const days = Math.floor(totalSeconds / 86400);
+          const hours = Math.floor((totalSeconds % 86400) / 3600);
+          const mins = Math.floor((totalSeconds % 3600) / 60);
+          document.getElementById('statUptime').textContent = days > 0
+            ? `${days}d ${hours}h ${mins}m`
+            : `${hours}h ${mins}m`;
         }
       } catch (err) {
         console.error('Erro ao buscar status:', err);
@@ -900,6 +911,12 @@
     }
 
     async function fetchCommands(lang) {
+      const grid = document.getElementById('commandsGrid');
+      const dict = I18N[lang] || I18N.pt;
+      if (grid && (!allModules || allModules.length === 0)) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-dim);">${dict['catalog.loading'] || 'Carregando catálogo de comandos...'}</div>`;
+      }
+
       try {
         const res = await fetch(`/api/commands?lang=${lang}`);
         const data = await res.json();
@@ -910,6 +927,9 @@
         }
       } catch (err) {
         console.error('Erro ao carregar comandos:', err);
+        if (grid) {
+          grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #ef4444;">${dict['catalog.error'] || 'Erro ao carregar comandos.'}</div>`;
+        }
       }
     }
 
@@ -934,6 +954,7 @@
     function renderCommands() {
       const grid = document.getElementById('commandsGrid');
       const search = (document.getElementById('cmdSearch')?.value || '').toLowerCase().trim();
+      const dict = I18N[currentLang] || I18N.pt;
       if (!grid) return;
 
       let commandsToDisplay = [];
@@ -958,6 +979,7 @@
 
       if (commandsToDisplay.length === 0) {
         grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-dim);">Nenhum comando encontrado.</div>`;
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-dim);">${dict['catalog.empty'] || 'Nenhum comando encontrado.'}</div>`;
         return;
       }
 
@@ -985,14 +1007,40 @@
       renderCommands();
     }
 
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta);
+    }
+
     function copyCommand(cmdName) {
       navigator.clipboard.writeText(cmdName).then(() => {
         const toast = document.getElementById('toast');
         const dict = I18N[currentLang] || I18N.pt;
+      const toast = document.getElementById('toast');
+      const dict = I18N[currentLang] || I18N.pt;
+      const showToast = () => {
+        if (!toast) return;
         toast.textContent = dict['toast.copied'] || 'Comando copiado!';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 2000);
       });
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(cmdName).then(showToast).catch(() => {
+          fallbackCopy(cmdName);
+          showToast();
+        });
+      } else {
+        fallbackCopy(cmdName);
+        showToast();
+      }
     }
 
     // Inicialização
