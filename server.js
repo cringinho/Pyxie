@@ -157,19 +157,15 @@ function requireAdminAuth(req, res, next) {
   if (bearerToken && isValidAdminSession(bearerToken)) return next();
 
   const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
-  if (!secret) {
   if (!secret && isIpAllowed(req)) {
     return next();
   }
 
-  const authHeader = req.headers.authorization;
-  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : (req.query.token || req.headers['x-api-key']);
-
-  if (token !== secret) {
-    return res.status(401).json({ error: 'Acesso administrativo não autorizado.' });
+  const token = bearerToken || queryToken;
+  if (secret && token === secret) {
+    return next();
   }
 
-  next();
   return res.status(401).json({ error: 'Acesso administrativo não autorizado.' });
 }
 
