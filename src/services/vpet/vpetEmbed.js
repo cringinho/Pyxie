@@ -4,7 +4,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require('discord.js');
-const { STAGE_NAMES, getVpetSpecies, getVpetSpriteUrl, STAGES } = require('./vpetSpecies');
+const { STAGE_NAMES, getVpetSpecies, getVpetSpriteUrl } = require('./vpetSpecies');
 const { getVpetDialogue } = require('./vpetDialogues');
 const { checkEvolution } = require('./vpetCore');
 const { buildPymonHubHeader } = require('./vpetHub');
@@ -52,21 +52,20 @@ function buildVpetEmbed(pet, user, lang = 'pt', options = {}) {
 
   const sleepText = pet.isSleeping
     ? (pet.lightOff 
-        ? (lang === 'pt' ? '🌙 Dormindo (Luz Apagada)' : '🌙 Sleeping (Lights Out)')
-        : (lang === 'pt' ? '💤 Dormindo (Luz Acesa ⚠️)' : '💤 Sleeping (Lights On ⚠️)'))
+        ? (lang === 'pt' ? '🌙 Dormindo' : '🌙 Sleeping')
+        : (lang === 'pt' ? '💤 Dormindo (Luz ⚠️)' : '💤 Sleeping (Light ⚠️)'))
     : (lang === 'pt' ? '☀️ Acordado' : '☀️ Awake');
 
   const spriteUrl = getVpetSpriteUrl(pet.key, animState, pet.isSleeping, pet.lightOff);
-
   const titleHeader = `${pet.emoji} ${pet.name}  •  🐾 ${stageName}`;
 
   const descriptionLines = [
     `> 💬 *"${dialogue}"*`,
     '',
-    `🍖 **${lang === 'pt' ? 'Fome' : 'Hunger'}:** \`[ ${hungerBar} ]\`  •  ⚖️ **${lang === 'pt' ? 'Peso' : 'Weight'}:** \`${pet.weight}g\``,
-    `⚡ **${lang === 'pt' ? 'Força' : 'Strength'}:** \`[ ${strengthBar} ]\`  •  ⚠️ **${lang === 'pt' ? 'Falhas' : 'Mistakes'}:** \`${pet.careMistakes || 0}\``,
-    `🧹 **${lang === 'pt' ? 'Higiene' : 'Hygiene'}:** ${hygieneText}  •  💤 **${lang === 'pt' ? 'Sono' : 'Sleep'}:** ${sleepText}`,
-    `⚔️ **Sparring:** \`${pet.battlesWon || 0}V/${battles}L (${winRate}%)\`  •  🏋️ **${lang === 'pt' ? 'Treino' : 'Train'}:** \`${pet.trainCount || 0}\``,
+    `🍖 **${lang === 'pt' ? 'Fome' : 'Hunger'}:** \`[ ${hungerBar} ]\` • ⚖️ **${lang === 'pt' ? 'Peso' : 'Weight'}:** \`${pet.weight}g\``,
+    `⚡ **${lang === 'pt' ? 'Força' : 'Strength'}:** \`[ ${strengthBar} ]\` • ⚠️ **${lang === 'pt' ? 'Falhas' : 'Mistakes'}:** \`${pet.careMistakes || 0}\``,
+    `🧹 **${lang === 'pt' ? 'Higiene' : 'Hygiene'}:** ${hygieneText} • 💤 **${lang === 'pt' ? 'Sono' : 'Sleep'}:** ${sleepText}`,
+    `⚔️ **Sparring:** \`${pet.battlesWon || 0}V/${battles}L (${winRate}%)\` • 🏋️ **${lang === 'pt' ? 'Treino' : 'Train'}:** \`${pet.trainCount || 0}\``,
   ];
 
   if (actionNotice) {
@@ -80,17 +79,12 @@ function buildVpetEmbed(pet, user, lang = 'pt', options = {}) {
     .setDescription(descriptionLines.join('\n'))
     .setThumbnail(spriteUrl)
     .setFooter({
-      text: lang === 'pt'
-        ? `Pyxie Pymons • Virtual Pet • ID: ${pet.id}`
-        : `Pyxie Pymons • Virtual Pet • ID: ${pet.id}`,
-        ? `Pyxie Pymons • ID: ${pet.id}`
-        : `Pyxie Pymons • ID: ${pet.id}`,
+      text: `Pyxie Pymons • ID: ${pet.id}`,
     });
 
   return embed;
 }
 
-function buildVpetActionRows(pet, lang = 'pt') {
 function buildVpetActionRows(pet, lang = 'pt', userId = null) {
   const uid = userId || pet.userId || pet.ownerId || pet.id || 'me';
   const headerRow = buildPymonHubHeader(uid, 'pet', lang);
@@ -137,7 +131,7 @@ function buildVpetActionRows(pet, lang = 'pt', userId = null) {
       .setDisabled((pet.isSleeping && pet.lightOff) || pet.isSick),
     new ButtonBuilder()
       .setCustomId('vpet_spar')
-      .setLabel(lang === 'pt' ? 'Batalha' : 'Spar')
+      .setLabel(lang === 'pt' ? 'Sparring' : 'Spar')
       .setEmoji('⚔️')
       .setStyle(ButtonStyle.Danger)
       .setDisabled((pet.isSleeping && pet.lightOff) || pet.isSick),
@@ -159,7 +153,6 @@ function buildVpetActionRows(pet, lang = 'pt', userId = null) {
       .setStyle(ButtonStyle.Secondary)
   );
 
-  return [row1, row2];
   return [headerRow, row1, row2];
 }
 
@@ -167,15 +160,15 @@ function buildTrainingChoiceRow(lang = 'pt') {
   return new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId('vpet_train_high')
-      .setLabel(lang === 'pt' ? '⬆️ Golpe Alto' : '⬆️ High Strike')
+      .setLabel(lang === 'pt' ? '⬆️ Alto' : '⬆️ High')
       .setStyle(ButtonStyle.Primary),
     new ButtonBuilder()
       .setCustomId('vpet_train_mid')
-      .setLabel(lang === 'pt' ? '➡️ Golpe Médio' : '➡️ Mid Strike')
+      .setLabel(lang === 'pt' ? '➡️ Médio' : '➡️ Mid')
       .setStyle(ButtonStyle.Primary),
     new ButtonBuilder()
       .setCustomId('vpet_train_low')
-      .setLabel(lang === 'pt' ? '⬇️ Golpe Baixo' : '⬇️ Low Strike')
+      .setLabel(lang === 'pt' ? '⬇️ Baixo' : '⬇️ Low')
       .setStyle(ButtonStyle.Primary),
     new ButtonBuilder()
       .setCustomId('vpet_back')
@@ -189,4 +182,3 @@ module.exports = {
   buildVpetActionRows,
   buildTrainingChoiceRow,
 };
-

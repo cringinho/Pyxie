@@ -298,6 +298,7 @@ const TRANSLATIONS = {
     },
     hub: {
       pet: 'Mascote',
+      box: 'PC Box',
       dungeon: 'Masmorra',
       incubator: 'Chocadeira',
       dex: 'Pymon Dex',
@@ -861,6 +862,7 @@ const TRANSLATIONS = {
     },
     hub: {
       pet: 'Pet',
+      box: 'PC Box',
       dungeon: 'Dungeon',
       incubator: 'Incubator',
       dex: 'Pymon Dex',

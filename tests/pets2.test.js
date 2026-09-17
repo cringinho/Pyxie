@@ -38,7 +38,7 @@ const {
 const { createDuelChallenge, resolveDuelChallenge } = require('../src/services/petDuels');
 const { renderPetCard, renderDexCard, renderExpeditionMap } = require('../src/services/petRenderer');
 const { addItem } = require('../src/services/inventory');
-const { updateUserAccount } = require('../src/services/economy');
+const { updateUserAccount, getUserAccount } = require('../src/services/economy');
 
 const petsFile = path.join(__dirname, '..', 'data', 'pets.json');
 const inventoryFile = path.join(__dirname, '..', 'data', 'inventory.json');
@@ -241,18 +241,48 @@ async function runPetTests() {
     assert.ok(Buffer.isBuffer(lockedDexBuffer), 'Renderizador deve gerar buffer PNG com silhueta misteriosa para Pymon não descoberto.');
 
     // 10. Teste de Release de Pet e Limite de 3 Pets
-    const { releasePet } = require('../src/services/pets');
+    const { releasePet, expandPetStorage, BOX_SLOT_COSTS } = require('../src/services/pets');
     // Usuário B tem 1 pet (Cinna), não pode soltar o único pet
     const petB = getActivePet(USER_B);
     const releaseOnly = releasePet(USER_B, petB.id);
     assert.equal(releaseOnly.success, false, 'Não deve permitir soltar o único pet.');
     assert.equal(releaseOnly.reason, 'only_one_pet');
 
-    // 11. Flush Síncrono
+    // 11. Teste de PC Storage e Expansão de Slots com Moedinhas
+    updateUserAccount(USER_B, (acc) => { acc.coins = 500; });
+    const failExpand = expandPetStorage(USER_B);
+    assert.equal(failExpand.success, false, 'Não deve permitir expandir slot sem saldo suficiente.');
+    assert.equal(failExpand.reason, 'insufficient_coins');
+
+    updateUserAccount(USER_B, (acc) => { acc.coins = 10000; });
+    const successExpand = expandPetStorage(USER_B);
+    assert.equal(successExpand.success, true, 'Deve expandir slot com sucesso.');
+    assert.equal(successExpand.newSlots, 4, 'Novo limite deve ser 4 slots.');
+    assert.equal(getUserAccount(USER_B).coins, 10000 - 1500, 'Deve ter debitado 1.500 moedas.');
+
+    const { buildBoxTab } = require('../src/services/vpet/vpetHub');
+    const boxView = buildBoxTab(USER_B, 'Treinador', 'pt');
+    assert.ok(boxView.embeds.length > 0, 'Deve gerar embed da PC Box.');
+    assert.ok(boxView.components.length >= 1, 'Deve conter componentes de navegação e ações.');
+
+    // 12. Teste de Recompensas de Minigames (Treino e Sparring)
+    const { trainPet } = require('../src/services/vpet/vpetCore');
+    const { resolveSparring } = require('../src/services/vpet/vpetCombat');
+    const coinsBeforeTrain = getUserAccount(USER_A).coins;
+    const trainResult = trainPet(USER_A, 'mid');
+    assert.equal(trainResult.success, true, 'Treino deve ser executado.');
+    assert.ok(trainResult.coinsWon > 0, 'Treino deve conceder moedinhas.');
+    assert.equal(getUserAccount(USER_A).coins, coinsBeforeTrain + trainResult.coinsWon, 'Moedinhas do treino devem ser adicionadas à carteira.');
+
+    const sparResult = resolveSparring(activeA, 0, 'pt');
+    assert.ok(sparResult.coinsWon > 0, 'Sparring deve conceder moedas.');
+    assert.ok(sparResult.xpWon > 0, 'Sparring deve conceder XP.');
+
+    // 13. Flush Síncrono
     flushPetsSync();
     assert.ok(fs.existsSync(petsFile), 'Arquivo pets.json deve existir.');
 
-    console.log('Verificação do Módulo Completo de Pyxie (10 Pymons Oficiais, Dex Dinâmica, Silhueta Sombreada, Mapa Procedural 2D, D-Pad, Duelos NPC, Chocadeira Delta-Time, Pixel Art Canvas, Soltar Pets): OK');
+    console.log('Verificação do Módulo Completo de Pyxie (10 Pymons Oficiais, Dex Dinâmica, PC Storage Box, Slots por Moedas, Rewards de Minigame, Silhueta Sombreada, Mapa Procedural 2D, D-Pad, Duelos NPC, Chocadeira Delta-Time, Pixel Art Canvas, Soltar Pets): OK');
   } finally {
     fs.writeFileSync(petsFile, originalPets, 'utf8');
     fs.writeFileSync(inventoryFile, originalInventory, 'utf8');

@@ -1,43 +1,20 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { VPET_SPECIES, VPET_EGGS, STAGES, getVpetSpecies } = require('./vpetSpecies');
-
-const DATA_DIR = path.join(__dirname, '..', '..', '..', 'data');
-const PETS_FILE = path.join(DATA_DIR, 'pets.json');
+const { getFullPetsMap, schedulePetsSave, awardPetXp } = require('../pets');
+const { updateUserAccount } = require('../economy');
 
 const HUNGER_DECAY_MS = 2.5 * 60 * 60 * 1000; // 2.5 hours per heart
 const STRENGTH_DECAY_MS = 3.5 * 60 * 60 * 1000; // 3.5 hours per heart
 const POOP_INTERVAL_MS = 3 * 60 * 60 * 1000; // 3 hours per poop
 const CARE_MISTAKE_TIMEOUT_MS = 15 * 60 * 1000; // 15 mins unanswered call
 
-let petsMemoryCache = null;
-
 function loadAllPets() {
-  if (petsMemoryCache) return petsMemoryCache;
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(PETS_FILE)) {
-    fs.writeFileSync(PETS_FILE, JSON.stringify({}, null, 2), 'utf8');
-    petsMemoryCache = {};
-    return petsMemoryCache;
-  }
-  try {
-    const raw = fs.readFileSync(PETS_FILE, 'utf8');
-    petsMemoryCache = JSON.parse(raw);
-  } catch {
-    petsMemoryCache = {};
-  }
-  return petsMemoryCache;
+  return getFullPetsMap();
 }
 
 function saveAllPets() {
-  if (!petsMemoryCache) return;
-  try {
-    fs.writeFileSync(PETS_FILE, JSON.stringify(petsMemoryCache, null, 2), 'utf8');
-  } catch (err) {
-    console.error('[vpetCore] Error saving pets.json:', err);
-  }
+  schedulePetsSave();
 }
 
 function migrateOldPet(pet) {
@@ -319,14 +296,26 @@ function trainPet(userId, playerDirection) {
   const spec = getVpetSpecies(pet.key);
   pet.trainCount = (pet.trainCount || 0) + 1;
 
+  let coinsWon = 0;
+  let xpWon = 0;
+
   if (win) {
     pet.strengthHearts = Math.min(4, (pet.strengthHearts || 0) + 1);
     pet.weight = Math.max(spec.minWeight, pet.weight - 2);
     pet.lastTrainedAt = Date.now();
+    coinsWon = 25;
+    xpWon = 15;
   } else {
     pet.weight = Math.max(spec.minWeight, pet.weight - 1);
+    coinsWon = 5;
+    xpWon = 5;
   }
 
+  updateUserAccount(userId, (acc) => {
+    acc.coins = (Number(acc.coins) || 0) + coinsWon;
+  });
+
+  awardPetXp(userId, xpWon);
   saveAllPets();
 
   return {
@@ -336,6 +325,8 @@ function trainPet(userId, playerDirection) {
     trainCount: pet.trainCount,
     strengthHearts: pet.strengthHearts,
     weight: pet.weight,
+    coinsWon,
+    xpWon,
     pet,
   };
 }

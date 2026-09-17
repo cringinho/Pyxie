@@ -21,6 +21,14 @@ const PETS_FLUSH_INTERVAL_MS = 10 * 1000;
 const CARINHO_COOLDOWN_MS = 60 * 60 * 1000; // 1 hora
 const SLEEP_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 horas
 const DEFAULT_MAX_PETS = 3;
+const MAX_BOX_SLOTS = 8;
+const BOX_SLOT_COSTS = {
+  4: 1500,
+  5: 3500,
+  6: 7000,
+  7: 12000,
+  8: 20000,
+};
 
 let cachedPetsData = null;
 let petsDirty = false;
@@ -763,6 +771,44 @@ function speedupUserIncubator(userId, hours = 2) {
   return speedupIncubatorSlots(userId, record, hours, schedulePetsSave);
 }
 
+function expandPetStorage(userId) {
+  const record = getUserPetRecord(userId);
+  const currentSlots = record.maxPets || DEFAULT_MAX_PETS;
+  if (currentSlots >= MAX_BOX_SLOTS) {
+    return {
+      success: false,
+      reason: 'max_capacity',
+      message: `Você já atingiu a capacidade máxima de ${MAX_BOX_SLOTS} slots na sua PC Box!`,
+    };
+  }
+
+  const nextSlot = currentSlots + 1;
+  const cost = BOX_SLOT_COSTS[nextSlot] || (nextSlot * 2500);
+
+  const payment = spendCoins(userId, cost);
+  if (!payment.spent) {
+    const userAcc = getUserAccount(userId);
+    const balance = userAcc ? userAcc.coins : 0;
+    return {
+      success: false,
+      reason: 'insufficient_coins',
+      cost,
+      balance,
+      message: `Moedinhas insuficientes! O Slot #${nextSlot} custa ${cost.toLocaleString('pt-BR')} moedas (Você possui ${balance.toLocaleString('pt-BR')}).`,
+    };
+  }
+
+  record.maxPets = nextSlot;
+  schedulePetsSave();
+
+  return {
+    success: true,
+    newSlots: nextSlot,
+    cost,
+    message: `🎉 Parabéns! Você desbloqueou o **Slot #${nextSlot}** da sua PC Box por ${cost.toLocaleString('pt-BR')} moedinhas!`,
+  };
+}
+
 function getTopPets(limit = 10) {
   const all = getFullPetsMap();
   return Object.entries(all)
@@ -853,6 +899,11 @@ module.exports = {
   CARINHO_COOLDOWN_MS,
   SLEEP_COOLDOWN_MS,
   DEFAULT_MAX_PETS,
+  MAX_BOX_SLOTS,
+  BOX_SLOT_COSTS,
+  getFullPetsMap,
+  getUserPetRecord,
+  expandPetStorage,
   getActivePet,
   getUserPets,
   setActivePet,

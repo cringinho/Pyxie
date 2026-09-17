@@ -127,7 +127,7 @@ function buildDungeonTab(userId, userTag, context = null) {
   const desc = [
     `\`\`\`\n${gridText}\n\`\`\``,
     `🐾 **${pet.name}** (${pet.emoji})  •  ⚡ **${lang === 'pt' ? 'Energia' : 'Energy'}**: ${run.energy}/${run.maxEnergy}`,
-    `🎒 **${lang === 'pt' ? 'Tesouros' : 'Loot'}**: ${run.loot?.length || 0} itens  •  🪙 **${lang === 'pt' ? 'Moedas' : 'Coins'}**: ${run.coinsCollected || 0}`,
+    `🎒 **${lang === 'pt' ? 'Tesouros' : 'Loot'}**: ${(run.chestsFound?.length || 0) + (run.eggsFound?.length || 0)} itens  •  🪙 **${lang === 'pt' ? 'Moedas' : 'Coins'}**: ${run.coinsAccumulated || 0}`,
     '',
     run.lastEventMessage ? `> 📢 ${run.lastEventMessage}` : (lang === 'pt' ? '> 🚶 Use o D-Pad para explorar.' : '> 🚶 Use the D-Pad to explore.'),
   ].join('\n');

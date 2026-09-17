@@ -21,24 +21,31 @@ function resolveSparring(pet, enemyIndex = null, lang = 'pt') {
   const victory = petPower >= enemyPower;
   const enemyName = enemy.name[lang] || enemy.name.pt;
 
+  const coinsWon = victory ? 60 : 15;
+  const xpWon = victory ? 35 : 10;
+
   const rounds = [];
   if (lang === 'pt') {
-    rounds.push(`🥊 **Round 1**: Seu pet e **${enemyName}** se encaram na arena de sparring!`);
+    rounds.push(`🥊 **Round 1**: Seu Pymon e **${enemyName}** se encaram na arena!`);
     if (victory) {
-      rounds.push(`⚡ **Round 2**: Seu pet esquiva com agilidade e desfecha uma sequência certeira!`);
-      rounds.push(`🏆 **Round Final**: Golpe decisivo! **${enemyName}** recua derrotado! Vitória!`);
+      rounds.push(`⚡ **Round 2**: Seu Pymon esquiva com agilidade e acerta um combo!`);
+      rounds.push(`🏆 **Final**: Golpe decisivo! **${enemyName}** foi derrotado!`);
+      rounds.push(`🪙 **Recompensa**: +${coinsWon} Moedinhas  •  🐾 +${xpWon} XP`);
     } else {
       rounds.push(`💥 **Round 2**: **${enemyName}** surpreende com uma investida pesada!`);
-      rounds.push(`⚠️ **Round Final**: Seu pet lutou bravamente, mas precisa de mais treinos.`);
+      rounds.push(`⚠️ **Final**: Seu Pymon lutou bravamente! Mais treinos o fortalecerão.`);
+      rounds.push(`🪙 **Incentivo**: +${coinsWon} Moedinhas  •  🐾 +${xpWon} XP`);
     }
   } else {
-    rounds.push(`🥊 **Round 1**: Your pet and **${enemyName}** clash in the sparring ring!`);
+    rounds.push(`🥊 **Round 1**: Your Pymon and **${enemyName}** clash in the ring!`);
     if (victory) {
-      rounds.push(`⚡ **Round 2**: Your pet dodges gracefully and lands a crisp combo!`);
-      rounds.push(`🏆 **Final Round**: Decisive strike! **${enemyName}** falls back! Victory!`);
+      rounds.push(`⚡ **Round 2**: Your Pymon dodges gracefully and lands a crisp combo!`);
+      rounds.push(`🏆 **Final**: Decisive strike! **${enemyName}** was defeated!`);
+      rounds.push(`🪙 **Reward**: +${coinsWon} Coins  •  🐾 +${xpWon} XP`);
     } else {
       rounds.push(`💥 **Round 2**: **${enemyName}** counters with a powerful surge!`);
-      rounds.push(`⚠️ **Final Round**: Your pet fought with heart, but needs more training.`);
+      rounds.push(`⚠️ **Final**: Your Pymon fought with heart! More training will help.`);
+      rounds.push(`🪙 **Consolation**: +${coinsWon} Coins  •  🐾 +${xpWon} XP`);
     }
   }
 
@@ -46,6 +53,8 @@ function resolveSparring(pet, enemyIndex = null, lang = 'pt') {
     victory,
     enemy,
     rounds,
+    coinsWon,
+    xpWon,
     log: rounds.join('\n'),
     petSpriteState: victory ? 'attack' : 'hit',
   };
