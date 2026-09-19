@@ -1,3 +1,4 @@
+const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('discord.js');
 const { getEconomyConfig, setEconomyConfig } = require('../services/database');
 const { ECONOMY_CONFIG } = require('./commandNames');
@@ -13,6 +14,8 @@ function parseValues(minimum, maximum) {
   return { minimum: parsedMinimum, maximum: parsedMaximum };
 }
 
+function isManager(source) {
+  return source.member?.permissions?.has(PermissionFlagsBits.ManageGuild);
 function isOwner(source) {
   const userId = source.user?.id || source.author?.id;
   return userId === OWNER_SNOWFLAKE;
@@ -35,6 +38,7 @@ module.exports = {
     .setDescriptionLocalizations({
       'pt-BR': 'Configura a quantidade de Moedinhas do diário.',
     })
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .setDefaultMemberPermissions(0n)
     .addIntegerOption((option) =>
       option
@@ -67,6 +71,7 @@ module.exports = {
         .setRequired(true)
     ),
   async executePrefix({ message, args }) {
+    if (!isManager(message)) return message.reply(t('admin.noPermission', message));
     if (!isOwner(message)) {
       return message.reply(t('admin.onlyOwner', message, { owner: `<@${OWNER_SNOWFLAKE}>` }));
     }
@@ -75,6 +80,7 @@ module.exports = {
     await message.reply(buildReply(setEconomyConfig(values.minimum, values.maximum), message));
   },
   async executeSlash({ interaction }) {
+    if (!isManager(interaction)) return interaction.editReply(t('admin.noPermission', interaction));
     if (!isOwner(interaction)) {
       return interaction.editReply(t('admin.onlyOwner', interaction, { owner: `<@${OWNER_SNOWFLAKE}>` }));
     }

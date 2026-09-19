@@ -319,10 +319,12 @@ function buildModularHelpEmbed(moduleId = 'todos', guildName = '', source = null
 }
 
 function buildModularHelpComponents(currentModuleId = 'todos', userId = '', source = null) {
+  const modules = getHelpModules(null, source);
   const ctx = source || (userId ? { userId } : null);
   const modules = getHelpModules(null, ctx);
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId(`help_module_select:${userId}`)
+    .setPlaceholder(t('help.selectPlaceholder', source))
     .setPlaceholder(t('help.selectPlaceholder', ctx))
     .addOptions(
       modules.map((m) => ({

@@ -186,6 +186,7 @@ const ptCmdCount = ptModules.reduce((acc, m) => acc + (m.commands?.length || 0),
 const enCmdCount = enModules.reduce((acc, m) => acc + (m.commands?.length || 0), 0);
 assert.equal(ptCmdCount, enCmdCount, 'Quantidade de comandos nos módulos do Help/Web deve ser idêntica em PT e EN');
 assert(ptCmdCount > 0, 'Deve haver comandos catalogados');
+console.log(`✅ Sincronização Dinâmica Web/Help validada: ${ptCmdCount} comandos ativos em ${ptModules.length} módulos.`);
 
 // 6.1 Verificação de Ocultação de Comandos do Criador para Não-Donos
 const publicCmdNames = ptModules.flatMap((m) => m.commands || []).map((c) => c.name);
@@ -211,6 +212,7 @@ assert.equal(ownerCmdNames.length, 35, 'Dono deve ver todos os 35 comandos na ce
 console.log(`✅ Sincronização Dinâmica Web/Help validada: ${ptCmdCount} comandos públicos e ${ownerCmdNames.length} comandos de dono em ${ptModules.length} módulos.`);
 
 // 7. Validação de Segurança do Dono (Snowflake 214153735281180673 & HMAC)
+const { OWNER_SNOWFLAKE, createOwnerMagicToken, verifyMagicToken, isIpAllowed } = require('../src/services/adminAuth');
 assert.equal(OWNER_SNOWFLAKE, '214153735281180673', 'Snowflake do dono deve ser estritamente 214153735281180673');
 
 const forbiddenRes = createOwnerMagicToken('999999999999999999');
@@ -230,6 +232,7 @@ assert.equal(replayRes.valid, false, 'Anti-replay: token consumido não pode ser
 assert.equal(isIpAllowed({ ip: '127.0.0.1', headers: {} }), true, 'Localhost deve ser autorizado');
 assert.equal(isIpAllowed({ ip: '179.153.90.39', headers: {} }), true, 'IP do criador deve ser autorizado');
 assert.equal(isIpAllowed({ ip: '198.51.100.23', headers: {} }), false, 'IP desconhecido deve ser bloqueado');
+console.log('✅ Segurança do Dono validada: Snowflake, HMAC Magic Tokens e IP Allowlist operando perfeitamente.');
 
 // 7.1 Validação de Bloqueio em Comandos de Economia por Não-Donos
 const setecoCmd = require('../src/commands/setareconomia');
