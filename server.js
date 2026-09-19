@@ -67,6 +67,7 @@ function startBot() {
   addLog('Iniciando bot Pyxie...');
   botProcess = spawn('node', ['--max-old-space-size=192', 'index.js'], {
     cwd: appRoot,
+    detached: true,
     stdio: ['pipe', 'pipe', 'pipe'],
     env: process.env,
   });
@@ -99,6 +100,7 @@ async function stopBot() {
   }
 
   addLog('Encerrando bot Pyxie...');
+  botProcess.kill('SIGTERM');
   try {
     botProcess.kill('SIGTERM');
   } catch (_) {}
@@ -112,7 +114,7 @@ async function stopBot() {
       botStartTime = null;
       cleanupOrphanBotProcess();
       resolve({ running: false, message: 'Bot parado com sucesso.' });
-    }, 2500);
+    }, 3000);
 
     botProcess.once('exit', () => {
       clearTimeout(timeout);
@@ -201,6 +203,35 @@ app.use(express.static(path.join(__dirname, 'public'), {
     }
   }
 }));
+app.use('/assets', express.static(path.join(__dirname, 'assets'), {
+  maxAge: '1d',
+}));
+
+const OFFICIAL_APP_EMOJIS = {
+  fairy: { name: 'fairy', id: '1548443951596306552', animated: false, url: 'https://cdn.discordapp.com/emojis/1548443951596306552.webp' },
+  tree: { name: 'emojitree38', id: '1548443941144109181', animated: true, url: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif' },
+  portal: { name: 'portalframe98', id: '1548444170488778954', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444170488778954.gif' },
+  ghost: { name: 'pinkghost', id: '1548444152549867620', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444152549867620.gif' },
+  coin: { name: 'shineygoldcoinsi', id: '1548444230588956683', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif' },
+  coin_purple: { name: 'gifggpurplecoin5', id: '1548443977429028955', animated: true, url: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif' },
+  magic_bean: { name: 'peakmagicbean', id: '1548444140532928642', animated: false, url: 'https://cdn.discordapp.com/emojis/1548444140532928642.webp' },
+  chest: { name: 'rarecrate', id: '1548444209328033913', animated: false, url: 'https://cdn.discordapp.com/emojis/1548444209328033913.webp' },
+  moon: { name: 'pixdreamsmooncha', id: '1548444158245736481', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444158245736481.gif' },
+  controller: { name: 'ykawaiicontrolle', id: '1548444319730499664', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif' },
+  heart: { name: 'purpleheartdrip2', id: '1548444199970545756', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444199970545756.gif' },
+  sparkles: { name: 'purplesparkles', id: '1548444202621214840', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444202621214840.gif' },
+  rocket: { name: 'slrocket', id: '1548444237442322432', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444237442322432.gif' },
+  trophy: { name: 'win', id: '1548444305507487754', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444305507487754.gif' },
+  book: { name: 'book2716', id: '1548443830653554708', animated: true, url: 'https://cdn.discordapp.com/emojis/1548443830653554708.gif' },
+  backpack: { name: 'a1backpack', id: '1548443778359103579', animated: false, url: 'https://cdn.discordapp.com/emojis/1548443778359103579.webp' },
+  witch: { name: 'witchwumpus', id: '1548444308401684530', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444308401684530.gif' },
+  skull: { name: 'kikskull', id: '1548444054071804056', animated: false, url: 'https://cdn.discordapp.com/emojis/1548444054071804056.webp' },
+  shield: { name: 'shieldsuccess22', id: '1548444229007835206', animated: false, url: 'https://cdn.discordapp.com/emojis/1548444229007835206.webp' },
+  zap: { name: 'zap65', id: '1548444326621741096', animated: false, url: 'https://cdn.discordapp.com/emojis/1548444326621741096.webp' },
+  coding: { name: 'coding41', id: '1548443878615547904', animated: false, url: 'https://cdn.discordapp.com/emojis/1548443878615547904.webp' },
+  gift: { name: 'qbgifts48', id: '1548444204202459136', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif' },
+  crown: { name: 'Crown', id: '1548443887025266739', animated: true, url: 'https://cdn.discordapp.com/emojis/1548443887025266739.gif' },
+};
 
 // 0. Redirecionamentos amigáveis oficiais da Pyxie
 app.get('/invite', (req, res) => {
@@ -220,6 +251,14 @@ app.get('/vote', (req, res) => {
 // 1. Healthcheck e status público
 app.get('/api/status', (req, res) => {
   res.json(getBotStatus());
+});
+
+// 1.1 Emojis oficiais da aplicação (Discord Dev Portal)
+app.get('/api/emojis', (req, res) => {
+  res.json({
+    success: true,
+    emojis: OFFICIAL_APP_EMOJIS,
+  });
 });
 
 // 2. Catálogo Dinâmico de Comandos da Pyxie (Sincronizado diretamente com help.js)
@@ -453,6 +492,7 @@ function handleServerShutdown() {
 
 process.on('SIGINT', handleServerShutdown);
 process.on('SIGTERM', handleServerShutdown);
+process.on('exit', () => { flushSync(); });
 process.on('exit', () => {
   flushSync();
   if (botProcess && !botProcess.killed) {

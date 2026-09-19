@@ -6,25 +6,41 @@
 
 const APP_EMOJI_CACHE = new Map();
 
-// Mapeamento padrão de identificadores para emojis Unicode e nomes de assets da aplicação
+// Mapeamento padrão de identificadores para emojis oficiais da aplicação (Discord Dev Portal) e fallbacks Unicode
 const EMOJI_DEFINITIONS = {
   // Moedas & Economia
-  COIN: { name: 'moedinha', fallback: '🪙' },
-  MAGIC_BEAN: { name: 'feijao_magico', fallback: '🌱' },
+  COIN: { name: 'shineygoldcoinsi', fallback: '🪙' },
+  COIN_PURPLE: { name: 'gifggpurplecoin5', fallback: '🪙' },
+  MAGIC_BEAN: { name: 'peakmagicbean', fallback: '🌱' },
   DIAMOND: { name: 'diamante', fallback: '💎' },
-  BAG: { name: 'mochila', fallback: '🎒' },
-  TROPHY: { name: 'trofeu', fallback: '🏆' },
-  CROWN: { name: 'coroa', fallback: '👑' },
-  HEART: { name: 'coracao', fallback: '💖' },
-  STAR: { name: 'estrela', fallback: '⭐' },
-  CHEST: { name: 'bau', fallback: '📦' },
+  BAG: { name: 'a1backpack', fallback: '🎒' },
+  TROPHY: { name: 'win', fallback: '🏆' },
+  CROWN: { name: 'Crown', fallback: '👑' },
+  HEART: { name: 'purpleheartdrip2', fallback: '💖' },
+  STAR: { name: 'pastelstarturn60', fallback: '⭐' },
+  CHEST: { name: 'rarecrate', fallback: '📦' },
+
+  // Bosque da Pyxie & RPG
+  TREE: { name: 'emojitree38', fallback: '🌲' },
+  PORTAL: { name: 'portalframe98', fallback: '🌀' },
+  GHOST: { name: 'pinkghost', fallback: '👻' },
+  SKULL: { name: 'kikskull', fallback: '💀' },
+  WITCH: { name: 'witchwumpus', fallback: '🧙' },
+  BOOK: { name: 'book2716', fallback: '📖' },
+  SHIELD: { name: 'shieldsuccess22', fallback: '🛡️' },
+  ZAP: { name: 'zap65', fallback: '⚡' },
+  CONTROLLER: { name: 'ykawaiicontrolle', fallback: '🎮' },
+  CODING: { name: 'coding41', fallback: '💼' },
 
   // UI & Notificações
-  CHECK: { name: 'check_mark', fallback: '✅' },
-  CROSS: { name: 'cross_mark', fallback: '❌' },
+  CHECK: { name: 'shieldsuccess22', fallback: '✅' },
+  CROSS: { name: 'x_', fallback: '❌' },
   HOURGLASS: { name: 'ampulheta', fallback: '⏳' },
-  GIFT: { name: 'presente', fallback: '🎁' },
-  SPARKLES: { name: 'brilhos', fallback: '✨' },
+  GIFT: { name: 'qbgifts48', fallback: '🎁' },
+  SPARKLES: { name: 'purplesparkles', fallback: '✨' },
+  ROCKET: { name: 'slrocket', fallback: '🚀' },
+  MOON: { name: 'pixdreamsmooncha', fallback: '🌙' },
+  FAIRY: { name: 'fairy', fallback: '🧚' },
 };
 
 /**

@@ -5,14 +5,24 @@ const {
 } = require('discord.js');
 const { getLanguage, t } = require('../utils/i18n');
 
+const MODULE_ICONS = {
+  todos: 'https://cdn.discordapp.com/emojis/1548443830653554708.gif', // book2716
+  bosque: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif', // emojitree38
+  economia: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif', // shineygoldcoinsi
+  loja: 'https://cdn.discordapp.com/emojis/1548443778359103579.webp', // a1backpack
+  tarot: 'https://cdn.discordapp.com/emojis/1548444158245736481.gif', // pixdreamsmooncha
+  social: 'https://cdn.discordapp.com/emojis/1548444199970545756.gif', // purpleheartdrip2
+  utilidades: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif', // ykawaiicontrolle
+};
+
 const MODULE_METADATA = {
-  todos: { id: 'todos', label: 'Visão Geral', emoji: '📖', desc: 'Visão geral e índice de todas as categorias' },
-  bosque: { id: 'bosque', label: 'Bosque da Pyxie', emoji: '🌲', desc: 'Exploração de cenários pixel, espíritos, fusão de almas e chefão comunitário' },
-  economia: { id: 'economia', label: 'Economia & Carreiras', emoji: '🪙', desc: 'Moedinhas, trabalho, profissões, rankings, trocas e cofres' },
-  loja: { id: 'loja', label: 'Loja & Mochila', emoji: '🎒', desc: 'Baús misteriosos, itens e inventário' },
-  tarot: { id: 'tarot', label: 'Tarot Místico', emoji: '🔮', desc: 'Tiragens diárias, 78 arcanos e oráculo do destino' },
-  social: { id: 'social', label: 'Social & Casamentos', emoji: '💑', desc: 'Casamentos, divórcios, perfil de aventureiro e afinidade' },
-  utilidades: { id: 'utilidades', label: 'Utilidades & Sistema', emoji: '⚙️', desc: 'Status operacional, ping, convite, agenda, idioma e configurações' },
+  todos: { id: 'todos', label: 'Visão Geral', emoji: '📖', iconUrl: MODULE_ICONS.todos, desc: 'Visão geral e índice de todas as categorias' },
+  bosque: { id: 'bosque', label: 'Bosque da Pyxie', emoji: '🌲', iconUrl: MODULE_ICONS.bosque, desc: 'Exploração de cenários pixel, espíritos, fusão de almas e chefão comunitário' },
+  economia: { id: 'economia', label: 'Economia & Carreiras', emoji: '🪙', iconUrl: MODULE_ICONS.economia, desc: 'Moedinhas, trabalho, profissões, rankings, trocas e cofres' },
+  loja: { id: 'loja', label: 'Loja & Mochila', emoji: '🎒', iconUrl: MODULE_ICONS.loja, desc: 'Baús misteriosos, itens e inventário' },
+  tarot: { id: 'tarot', label: 'Tarot Místico', emoji: '🔮', iconUrl: MODULE_ICONS.tarot, desc: 'Tiragens diárias, 78 arcanos e oráculo do destino' },
+  social: { id: 'social', label: 'Social & Casamentos', emoji: '💑', iconUrl: MODULE_ICONS.social, desc: 'Casamentos, divórcios, perfil de aventureiro e afinidade' },
+  utilidades: { id: 'utilidades', label: 'Utilidades & Sistema', emoji: '⚙️', iconUrl: MODULE_ICONS.utilidades, desc: 'Status operacional, ping, convite, agenda, idioma e configurações' },
 };
 
 const MODULE_KEYS = ['todos', 'bosque', 'economia', 'loja', 'tarot', 'social', 'utilidades'];
@@ -283,10 +293,11 @@ function getHelpModules(customCommands = null, source = null) {
     const label = t(`help.categories.${key}.label`, source) || MODULE_METADATA[key]?.label || key;
     const desc = t(`help.categories.${key}.desc`, source) || MODULE_METADATA[key]?.desc || '';
     const emoji = MODULE_EMOJIS[key] || '📖';
+    const iconUrl = MODULE_ICONS[key] || MODULE_METADATA[key]?.iconUrl || null;
     if (key === 'todos') {
-      return { id: key, label, emoji, desc };
+      return { id: key, label, emoji, iconUrl, desc };
     }
-    return { id: key, label, emoji, desc, commands: moduleCommands[key] || [] };
+    return { id: key, label, emoji, iconUrl, desc, commands: moduleCommands[key] || [] };
   });
 }
 
