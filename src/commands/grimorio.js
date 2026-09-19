@@ -59,7 +59,7 @@ function buildGrimoireView(userId, source = null, feedbackMessage = '') {
       `${t('gloom.grimoire.collectedHeader', source, { count: collected.length })}\n` +
       `${collectedText}`
     )
-    .setFooter({ text: isEn ? 'Gloom Grimoire • Pyxie' : 'Grimório de Sombras • Pyxie' })
+    .setFooter({ text: isEn ? "Pyxie's Grove • Pyxie" : 'Bosque da Pyxie • Pyxie' })
     .setTimestamp();
 
   const components = [];

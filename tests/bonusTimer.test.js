@@ -55,6 +55,25 @@ try {
   assert.equal(claimCookieRes.success, true, 'Resgate de cookie_bonus deve ser aprovado.');
   assert.ok(claimCookieRes.message.includes('Biscoito da Sorte Extra Desbloqueado'), 'Mensagem de biscoito deve constar.');
 
+  // 5.1 Teste de bônus do Chefão do Bosque (gloom_boss)
+  const userGloomBoss = `user_gboss_${testRunId}`;
+  const gloomBossPayload = JSON.stringify({ userId: userGloomBoss, action: 'gloom_boss', metadata: {}, createdAt: pastCreatedAt, nonce: crypto.randomBytes(8).toString('hex'), lang: 'pt' });
+  const gloomBossHmac = crypto.createHmac('sha256', BONUS_SECRET).update(gloomBossPayload).digest('hex');
+  const validGloomBossToken = Buffer.from(JSON.stringify({ payload: gloomBossPayload, sig: gloomBossHmac })).toString('base64url');
+
+  const claimGloomBossRes = verifyAndClaimBonus(validGloomBossToken);
+  assert.equal(claimGloomBossRes.success, true, 'Resgate de gloom_boss deve ser aprovado.');
+  assert.equal(claimGloomBossRes.phantomCoinsAwarded, 50, 'Deve conceder 50 Phantom Coins.');
+  assert.ok(claimGloomBossRes.message.includes('Investida Extra Desbloqueada'), 'Mensagem deve ser exclusiva da investida extra.');
+  assert.ok(!claimGloomBossRes.message.includes('Moedinhas'), 'Não deve mencionar Moedinhas no minigame.');
+  assert.ok(!claimGloomBossRes.message.includes('Feijão Mágico'), 'Não deve mencionar Feijão Mágico.');
+
+  const invBossUser = getUserInventory(userGloomBoss);
+  assert.equal(invBossUser.bau_madeira || 0, 0, 'Não deve dar Baú de Madeira no bônus do minigame.');
+
+  const accBossUser = getUserAccount(userGloomBoss);
+  assert.equal(accBossUser.coins, 0, 'Não deve dar moedas comuns no bônus do minigame.');
+
   // 6. Teste de token adulterado
   const fakeToken = 'eyJmb28iOiJiYXIifQ';
   const fakeRes = verifyAndClaimBonus(fakeToken);
@@ -65,6 +84,7 @@ try {
   const cleanFiles = [
     path.join(__dirname, '..', 'data', 'inventory.json'),
     path.join(__dirname, '..', 'data', 'economy.json'),
+    path.join(__dirname, '..', 'data', 'gloom.json'),
   ];
   for (const file of cleanFiles) {
     if (fs.existsSync(file)) {
@@ -72,6 +92,8 @@ try {
         const data = JSON.parse(fs.readFileSync(file, 'utf8'));
         delete data[testUserBonus];
         delete data[`user_cookie_${testRunId}`];
+        if (data.users) delete data.users[`user_gboss_${testRunId}`];
+        if (data.worldBoss?.participants) delete data.worldBoss.participants[`user_gboss_${testRunId}`];
         fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
       } catch (_) {}
     }

@@ -65,7 +65,7 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
       `${t('gloom.explore.tracesHeader', source)}\n${tracesText}`
     )
     .setImage(`attachment://${location.image}`)
-    .setFooter({ text: isEn ? 'Chronicles of Gloom • Pyxie' : 'Crônicas da Penumbra • Pyxie' })
+    .setFooter({ text: isEn ? "Pyxie's Grove • Pyxie" : 'Bosque da Pyxie • Pyxie' })
     .setTimestamp();
 
   // Linha 1: Ações Principais
@@ -187,21 +187,28 @@ function buildBossView(userId, source = null, feedbackMessage = '') {
   const buttons = [];
 
   if (canFreeAttack) {
+    const attackLabel = participant.extraUnlocked
+      ? t('gloom.boss.btnAttackExtra', source)
+      : t('gloom.boss.btnAttack', source);
     buttons.push(
       new ButtonBuilder()
         .setCustomId(`gloom:boss_attack:${userId}`)
-        .setLabel(t('gloom.boss.btnAttack', source))
+        .setLabel(attackLabel)
         .setStyle(ButtonStyle.Danger)
     );
   } else {
-    // Botão web de 10s via bonusTimer
+    // Botão web de 10s via bonusTimer + Botão de atualizar após assistir
     const { createBonusSession } = require('../services/bonusTimer');
     const session = createBonusSession(userId, 'gloom_boss', {}, lang);
     buttons.push(
       new ButtonBuilder()
         .setLabel(t('gloom.boss.btnWebBonus', source))
         .setStyle(ButtonStyle.Link)
-        .setURL(session.url)
+        .setURL(session.url),
+      new ButtonBuilder()
+        .setCustomId(`gloom:boss_refresh:${userId}`)
+        .setLabel(t('gloom.boss.btnRefresh', source))
+        .setStyle(ButtonStyle.Success)
     );
   }
 
@@ -361,8 +368,8 @@ async function handleGloomInteraction(interaction) {
     return interaction.editReply(grimView);
   }
 
-  // 8. Visualização do Boss
-  if (action === 'boss') {
+  // 8. Visualização / Atualização do Boss
+  if (action === 'boss' || action === 'boss_refresh') {
     await interaction.deferUpdate();
     const bossView = buildBossView(interaction.user.id, interaction);
     return interaction.editReply(bossView);
@@ -496,12 +503,12 @@ async function handleGloomInteraction(interaction) {
 
 module.exports = {
   name: EXPLORE,
-  aliases: ['explorar', 'explore', 'gloom', 'py-explorar', 'py-gloom'],
+  aliases: ['explorar', 'explore', 'gloom', 'py-explorar', 'py-gloom', 'bosque', 'py-bosque'],
   data: new SlashCommandBuilder()
     .setName(EXPLORE)
-    .setDescription('Explore the gothic pixel realms of the Gloom and negotiate with spirits.')
+    .setDescription("Explore the gothic pixel realms of Pyxie's Grove and negotiate with spirits.")
     .setDescriptionLocalizations({
-      'pt-BR': 'Explore os cenários pixel góticos da Penumbra e negocie com espíritos.',
+      'pt-BR': 'Explore os cenários pixel góticos do Bosque da Pyxie e negocie com espíritos.',
     }),
   async executeSlash({ interaction }) {
     const guildId = interaction.guildId || 'global';

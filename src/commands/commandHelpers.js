@@ -7,7 +7,7 @@ const { getLanguage, t } = require('../utils/i18n');
 
 const MODULE_METADATA = {
   todos: { id: 'todos', label: 'Visão Geral', emoji: '📖', desc: 'Visão geral e índice de todas as categorias' },
-  penumbra: { id: 'penumbra', label: 'Crônicas da Penumbra', emoji: '🌙', desc: 'Exploração de cenários pixel, espíritos, fusão de almas e chefão comunitário' },
+  bosque: { id: 'bosque', label: 'Bosque da Pyxie', emoji: '🌲', desc: 'Exploração de cenários pixel, espíritos, fusão de almas e chefão comunitário' },
   economia: { id: 'economia', label: 'Economia & Carreiras', emoji: '🪙', desc: 'Moedinhas, trabalho, profissões, rankings, trocas e cofres' },
   loja: { id: 'loja', label: 'Loja & Mochila', emoji: '🎒', desc: 'Baús misteriosos, itens e inventário' },
   tarot: { id: 'tarot', label: 'Tarot Místico', emoji: '🔮', desc: 'Tiragens diárias, 78 arcanos e oráculo do destino' },
@@ -15,10 +15,10 @@ const MODULE_METADATA = {
   utilidades: { id: 'utilidades', label: 'Utilidades & Sistema', emoji: '⚙️', desc: 'Status operacional, ping, convite, agenda, idioma e configurações' },
 };
 
-const MODULE_KEYS = ['todos', 'penumbra', 'economia', 'loja', 'tarot', 'social', 'utilidades'];
+const MODULE_KEYS = ['todos', 'bosque', 'economia', 'loja', 'tarot', 'social', 'utilidades'];
 const MODULE_EMOJIS = {
   todos: '📖',
-  penumbra: '🌙',
+  bosque: '🌲',
   economia: '🪙',
   loja: '🎒',
   tarot: '🔮',
@@ -27,17 +27,19 @@ const MODULE_EMOJIS = {
 };
 
 const COMMAND_CATEGORY_MAP = {
-  // Crônicas da Penumbra
-  explore: 'penumbra',
-  'py-explore': 'penumbra',
-  explorar: 'penumbra',
-  'py-explorar': 'penumbra',
-  gloom: 'penumbra',
-  'py-gloom': 'penumbra',
-  grimorio: 'penumbra',
-  'py-grimorio': 'penumbra',
-  grimoire: 'penumbra',
-  'py-grimoire': 'penumbra',
+  // Bosque da Pyxie
+  explore: 'bosque',
+  'py-explore': 'bosque',
+  explorar: 'bosque',
+  'py-explorar': 'bosque',
+  gloom: 'bosque',
+  'py-gloom': 'bosque',
+  bosque: 'bosque',
+  'py-bosque': 'bosque',
+  grimorio: 'bosque',
+  'py-grimorio': 'bosque',
+  grimoire: 'bosque',
+  'py-grimoire': 'bosque',
 
   // Economia & Carreiras
   trade: 'economia',
@@ -233,7 +235,7 @@ function getHelpModules(customCommands = null, source = null) {
   const isOwner = isOwnerUser(source);
 
   const moduleCommands = {
-    penumbra: [],
+    bosque: [],
     economia: [],
     loja: [],
     tarot: [],

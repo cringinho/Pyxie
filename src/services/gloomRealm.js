@@ -584,13 +584,18 @@ function ensureGloomStorage() {
   }
 }
 
+let gloomMtime = 0;
+
 function readGloomData() {
   ensureGloomStorage();
-  if (gloomCache) return gloomCache;
-
   try {
+    const stat = fs.statSync(gloomFile);
+    if (gloomCache && stat.mtimeMs <= gloomMtime) {
+      return gloomCache;
+    }
     const raw = fs.readFileSync(gloomFile, 'utf8');
     gloomCache = raw ? JSON.parse(raw) : null;
+    gloomMtime = stat.mtimeMs;
   } catch (error) {
     try {
       const backup = fs.readFileSync(gloomBackupFile, 'utf8');
@@ -624,6 +629,11 @@ function writeGloomData(data) {
     throw error;
   }
   gloomCache = data;
+  try {
+    gloomMtime = fs.statSync(gloomFile).mtimeMs;
+  } catch (_) {
+    gloomMtime = Date.now();
+  }
 }
 
 // 4. Grafo de Navegação (Inspirado em graphlib / graph-data-structure)
@@ -1160,13 +1170,17 @@ function unlockBossExtraAttack(userId) {
   participant.extraUnlocked = true;
   boss.participants[userId] = participant;
 
-  const user = getGloomUser(userId);
-  user.phantomCoins += 50; // Brinde por ver o anúncio
+  data.users = data.users || {};
+  if (!data.users[userId]) {
+    getGloomUser(userId);
+  }
+  const user = data.users[userId];
+  if (user) {
+    user.phantomCoins = (user.phantomCoins || 0) + 50;
+  }
 
   writeGloomData(data);
-  updateGloomUser(userId, user);
-
-  return { success: true, phantomCoins: user.phantomCoins };
+  return { success: true, phantomCoins: user ? user.phantomCoins : 50 };
 }
 
 module.exports = {

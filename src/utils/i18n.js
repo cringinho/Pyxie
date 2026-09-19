@@ -240,8 +240,8 @@ const TRANSLATIONS = {
           "label": "Visão Geral / Todos",
           "desc": "Visão geral e índice de todas as categorias"
         },
-        "penumbra": {
-          "label": "Crônicas da Penumbra",
+        "bosque": {
+          "label": "Bosque da Pyxie",
           "desc": "Exploração de cenários pixel, espíritos, fusão de almas e chefão comunitário"
         },
         "economia": {
@@ -568,10 +568,12 @@ const TRANSLATIONS = {
         "title": "💀  ✦  Chefão Comunitário — {name}",
         "desc": "Um colosso sombrio que desafia todo o reino. Cada investida enfraquece a entidade coletivamente!",
         "hpBar": "🩸 **Vontade do Colosso:** `{currentHp}/{maxHp}` ({percent}%)",
-        "btnAttack": "⚔️ Investida da Penumbra (1x Grátis)",
+        "btnAttack": "⚔️ Investida no Chefão (1x Grátis)",
+        "btnAttackExtra": "⚔️ Investida Extra Desbloqueada!",
         "btnWebBonus": "📺 Assistir Bônus 10s (Investida Extra)",
+        "btnRefresh": "🔄 Já assisti / Atualizar",
         "attackSuccess": "💥 Você desferiu um ataque sombrio causando **{damage} de dano** e ganhou **+{coins} Phantom Coins 👻**!",
-        "cooldown": "⏳ Você já realizou sua investida neste ciclo de 6 horas!\n\n✨ **Deseja apaziguar o Colosso novamente agora?**\nAssista ao bônus patrocinado de 10 segundos no portal web para liberar **+1 Investida Extra** e **50 Phantom Coins 👻**!",
+        "cooldown": "⏳ Você já realizou sua investida neste ciclo de 6 horas!\n\n✨ **Deseja atacar o Colosso novamente agora?**\nAssista ao bônus patrocinado de 10 segundos no portal web para liberar **+1 Investida Extra** e **50 Phantom Coins 👻**!",
         "defeated": "🏆 **O COLOSSO FOI APACIGUADO!** A Sombra Ancestral foi vencida e o reino celebra sua vitória!"
       }
     }
@@ -665,8 +667,8 @@ const TRANSLATIONS = {
           "label": "Overview / All",
           "desc": "Overview and index of all command categories"
         },
-        "penumbra": {
-          "label": "Chronicles of Gloom",
+        "bosque": {
+          "label": "Pyxie's Grove",
           "desc": "Pixel scenery exploration, spirit negotiation, soul fusion, and community boss"
         },
         "economia": {
@@ -993,8 +995,10 @@ const TRANSLATIONS = {
         "title": "💀  ✦  Community Boss — {name}",
         "desc": "A shadowy behemoth threatening the balance of the Gloom Realm. All adventurers share this challenge!",
         "hpBar": "🩸 **Behemoth Willpower:** `{currentHp}/{maxHp}` ({percent}%)",
-        "btnAttack": "⚔️ Gloom Strike (1x Free)",
+        "btnAttack": "⚔️ Boss Strike (1x Free)",
+        "btnAttackExtra": "⚔️ Extra Strike Ready!",
         "btnWebBonus": "📺 Watch 10s Bonus (Extra Strike)",
+        "btnRefresh": "🔄 I've watched / Refresh",
         "attackSuccess": "💥 You launched a shadow strike dealing **{damage} damage** and earned **+{coins} Phantom Coins 👻**!",
         "cooldown": "⏳ You already struck during this 6-hour cycle!\n\n✨ **Wish to strike the Behemoth again right now?**\nWatch the sponsored 10-second web bonus portal to unlock **+1 Extra Strike** and **50 Phantom Coins 👻**!",
         "defeated": "🏆 **THE BEHEMOTH HAS BEEN PACIFIED!** The Ancient Shadow was conquered and the realm celebrates your triumph!"

@@ -519,49 +519,77 @@
       const langParam = urlParams.get('lang');
       const SMARTLINK_URL = 'https://www.profitableratecpmnetwork.com/bzdc0dtq5?key=aece6072dc92d95726e1223cf45171dd';
 
+      const actionParam = urlParams.get('action');
+      let tokenAction = actionParam || null;
+      if (token && !tokenAction) {
+        try {
+          const b64 = token.replace(/-/g, '+').replace(/_/g, '/');
+          const json = JSON.parse(decodeURIComponent(escape(atob(b64))));
+          const payload = JSON.parse(json.payload);
+          tokenAction = payload.action;
+        } catch (_) {}
+      }
+      const isGloomBoss = tokenAction === 'gloom_boss';
+
       const I18N = {
         pt: {
-          metaTitle: 'Pyxie • Bônus Mágico Encantado',
-          pageTitleWithToken: 'Pyxie Bot • Bônus Mágico',
+          metaTitle: isGloomBoss ? 'Pyxie • Bosque da Pyxie • Investida Extra' : 'Pyxie • Bônus Mágico Encantado',
+          pageTitleWithToken: isGloomBoss ? 'Pyxie Bot • Bosque da Pyxie' : 'Pyxie Bot • Bônus Mágico',
           pageTitleNoToken: 'Pyxie Bot • Portal de Bônus',
-          pageSubtitleWithToken: 'Aguarde a canalização da energia para desbloquear seu bônus no Discord!',
+          pageSubtitleWithToken: isGloomBoss
+            ? 'Aguarde a canalização da névoa espectral para liberar sua investida extra contra o Chefão!'
+            : 'Aguarde a canalização da energia para desbloquear seu bônus no Discord!',
           pageSubtitleNoToken: 'Gere seu link exclusivo dentro do Discord para creditar itens na sua conta!',
-          statusChanneling: '⚡ Canalizando energia mágica...',
-          statusReady: '🌟 <strong>Energia Pronta!</strong> Clique abaixo para resgatar:',
-          statusClaiming: '🔄 Creditando bônus no seu inventário...',
+          statusChanneling: isGloomBoss ? '🌙 Canalizando névoa espectral...' : '⚡ Canalizando energia mágica...',
+          statusReady: isGloomBoss
+            ? '⚔️ <strong>Névoa Pronta!</strong> Clique abaixo para liberar seu ataque:'
+            : '🌟 <strong>Energia Pronta!</strong> Clique abaixo para resgatar:',
+          statusClaiming: isGloomBoss ? '🔄 Liberando investida extra e moedas...' : '🔄 Creditando bônus no seu inventário...',
           statusFailed: 'Falha ao validar bônus.',
           statusConnError: 'Erro de conexão com o servidor.',
-          btnClaim: '🎁 Resgatar Bônus Agora',
-          successTitle: '🎉 Bônus Mágico Creditado!',
-          successDefaultMsg: 'Seu bônus já está ativo na sua conta! Você já pode voltar para o Discord.',
+          btnClaim: isGloomBoss ? '⚔️ Liberar Investida Extra Agora' : '🎁 Resgatar Bônus Agora',
+          successTitle: isGloomBoss ? '⚔️ Investida Extra Desbloqueada!' : '🎉 Bônus Mágico Creditado!',
+          successDefaultMsg: isGloomBoss
+            ? 'Sua investida extra no Bosque da Pyxie já está liberada! Você recebeu +50 Phantom Coins 👻. Volte ao Discord para atacar!'
+            : 'Seu bônus já está ativo na sua conta! Você já pode voltar para o Discord.',
           instructionsTitle: '<span>🎁 Como resgatar suas recompensas:</span>',
           step1: 'No Discord, digite o comando <span class="command-badge">/py-bonus</span> (ou clique no botão em <span class="command-badge">/py-daily</span> ou <span class="command-badge">/py-inventory</span>).',
           step2: 'Clique no link mágico gerado exclusivamente para a sua conta.',
           step3: 'Aguarde os 10 segundos na tela e clique em <strong>Resgatar Bônus</strong>!',
-          rewardBox: '<span>✨ <strong>Recompensa:</strong> 1x Ampulheta Mágica (2h) ⏳ + 150 Moedas 💰</span>',
+          rewardBox: isGloomBoss
+            ? '<span>🌙 <strong>Recompensa do Bosque:</strong> 1x Investida Extra no Chefão ⚔️ + 50 Phantom Coins 👻</span>'
+            : '<span>✨ <strong>Recompensa:</strong> 1x Ampulheta Mágica (2h) ⏳ + 150 Moedas 💰</span>',
           sponsorBtn: '👉 Apoiar Servidor com Patrocinador',
           sponsorBadge: 'Patrocinado com carinho para a comunidade Pyxie 🐾',
           connErrorMsg: 'Erro de conexão. Verifique sua internet e tente novamente.',
         },
         en: {
-          metaTitle: 'Pyxie • Enchanted Magic Bonus',
-          pageTitleWithToken: 'Pyxie Bot • Magical Bonus',
+          metaTitle: isGloomBoss ? "Pyxie • Pyxie's Grove • Extra Strike" : 'Pyxie • Enchanted Magic Bonus',
+          pageTitleWithToken: isGloomBoss ? "Pyxie Bot • Pyxie's Grove" : 'Pyxie Bot • Magical Bonus',
           pageTitleNoToken: 'Pyxie Bot • Bonus Portal',
-          pageSubtitleWithToken: 'Wait for the magical energy to channel and unlock your bonus on Discord!',
+          pageSubtitleWithToken: isGloomBoss
+            ? 'Wait for the spectral mist to channel and unlock your extra strike against the World Boss!'
+            : 'Wait for the magical energy to channel and unlock your bonus on Discord!',
           pageSubtitleNoToken: 'Generate your personal link on Discord to receive items in your account!',
-          statusChanneling: '⚡ Channeling magical energy...',
-          statusReady: '🌟 <strong>Energy Ready!</strong> Click below to claim:',
-          statusClaiming: '🔄 Crediting bonus to your inventory...',
+          statusChanneling: isGloomBoss ? '🌙 Channeling spectral mist...' : '⚡ Channeling magical energy...',
+          statusReady: isGloomBoss
+            ? '⚔️ <strong>Mist Ready!</strong> Click below to unlock your strike:'
+            : '🌟 <strong>Energy Ready!</strong> Click below to claim:',
+          statusClaiming: isGloomBoss ? '🔄 Unlocking extra strike and spectral coins...' : '🔄 Crediting bonus to your inventory...',
           statusFailed: 'Failed to validate bonus.',
           statusConnError: 'Connection error with server.',
-          btnClaim: '🎁 Claim Bonus Now',
-          successTitle: '🎉 Magical Bonus Credited!',
-          successDefaultMsg: 'Your bonus is now active on your account! You can return to Discord.',
+          btnClaim: isGloomBoss ? '⚔️ Unlock Extra Strike Now' : '🎁 Claim Bonus Now',
+          successTitle: isGloomBoss ? '⚔️ Extra Strike Unlocked!' : '🎉 Magical Bonus Credited!',
+          successDefaultMsg: isGloomBoss
+            ? "Your extra strike in Pyxie's Grove is ready! You received +50 Phantom Coins 👻. Return to Discord to strike!"
+            : 'Your bonus is now active on your account! You can return to Discord.',
           instructionsTitle: '<span>🎁 How to claim your rewards:</span>',
           step1: 'On Discord, type the command <span class="command-badge">/py-bonus</span> (or click the button in <span class="command-badge">/py-daily</span> or <span class="command-badge">/py-inventory</span>).',
           step2: 'Click the magical link generated exclusively for your account.',
           step3: 'Wait 10 seconds on the page and click <strong>Claim Bonus</strong>!',
-          rewardBox: '<span>✨ <strong>Reward:</strong> 1x Magic Hourglass (2h) ⏳ + 150 Coins 💰</span>',
+          rewardBox: isGloomBoss
+            ? "<span>🌙 <strong>Grove Reward:</strong> 1x Extra Boss Strike ⚔️ + 50 Phantom Coins 👻</span>"
+            : '<span>✨ <strong>Reward:</strong> 1x Magic Hourglass (2h) ⏳ + 150 Coins 💰</span>',
           sponsorBtn: '👉 Support Server via Sponsor',
           sponsorBadge: 'Sponsored with love for the Pyxie community 🐾',
           connErrorMsg: 'Connection error. Please check your internet connection and try again.',

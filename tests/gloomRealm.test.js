@@ -206,4 +206,18 @@ const resBoss3 = attackBoss(uidBoss, 'strike', 'pt');
 assert.equal(resBoss3.success, true, '2ª investida após bônus deve ser executada com sucesso');
 console.log('✅ Chefão Comunitário com investida grátis e bônus patrocinado de 10s validado.');
 
-console.log('\n🎉 Todos os testes de Crônicas da Penumbra (Pyxie\'s Gloom Realm) passaram com 100% de sucesso!');
+// 9. Teste de Invalidação de Cache Multi-Processo via mtimeMs
+const uidCache = `user_cache_${Date.now()}`;
+const userCache = getGloomUser(uidCache);
+assert.equal(userCache.phantomCoins, 50);
+
+const gloomPath = path.join(__dirname, '..', 'data', 'gloom.json');
+const diskData = JSON.parse(fs.readFileSync(gloomPath, 'utf8'));
+diskData.users[uidCache].phantomCoins = 999;
+fs.writeFileSync(gloomPath, JSON.stringify(diskData, null, 2), 'utf8');
+
+const reloadedUser = getGloomUser(uidCache);
+assert.equal(reloadedUser.phantomCoins, 999, 'getGloomUser deve invalidar o cache em memória e recarregar dados novos do disco');
+console.log('✅ Invalidação de cache multi-processo em disco (mtimeMs) validada com sucesso.');
+
+console.log('\n🎉 Todos os testes de Bosque da Pyxie (Pyxie\'s Grove) passaram com 100% de sucesso!');

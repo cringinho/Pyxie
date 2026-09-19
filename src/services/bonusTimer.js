@@ -31,7 +31,7 @@ function createBonusSession(userId, action = 'item_bonus', metadata = {}, lang =
   const token = Buffer.from(JSON.stringify({ payload, sig: hmac })).toString('base64url');
 
   const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org:3000';
-  const url = `${baseUrl.replace(/\/$/, '')}/bonus?token=${token}&lang=${finalLang}`;
+  const url = `${baseUrl.replace(/\/$/, '')}/bonus?token=${token}&lang=${finalLang}&action=${finalAction}`;
 
   return {
     token,
@@ -108,7 +108,24 @@ function verifyAndClaimBonus(token) {
     claimedTokens.clear();
   }
 
-  // 1. Recompensa padrão de moedas e baú
+  // Recompensa específica por tipo de ação
+  if (data.action === 'gloom_boss') {
+    const { unlockBossExtraAttack } = require('./gloomRealm');
+    unlockBossExtraAttack(data.userId);
+    const message = isEn
+      ? '🌙 **Extra Strike Unlocked!** You received **+50 Phantom Coins 👻** and your extra strike in Pyxie\'s Grove is now ready!'
+      : '🌙 **Investida Extra Desbloqueada!** Você recebeu **+50 Phantom Coins 👻** e sua investida no Bosque da Pyxie já está liberada!';
+
+    return {
+      success: true,
+      action: data.action,
+      userId: data.userId,
+      phantomCoinsAwarded: 50,
+      message,
+    };
+  }
+
+  // Recompensas da economia padrão (bônus geral e biscoito da sorte)
   addCoins(data.userId, 200);
   addMagicBeans(data.userId, 1);
   addItem(data.userId, 'bau_madeira', 1);
@@ -120,12 +137,6 @@ function verifyAndClaimBonus(token) {
     message = isEn
       ? '🥠 **Extra Fortune Cookie Unlocked!** You received **+200 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦**!'
       : '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você recebeu **+200 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦**!';
-  } else if (data.action === 'gloom_boss') {
-    const { unlockBossExtraAttack } = require('./gloomRealm');
-    unlockBossExtraAttack(data.userId);
-    message = isEn
-      ? '🌙 **Gloom Boss Extra Strike Unlocked!** You received **+50 Phantom Coins 👻**, **+200 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦**!'
-      : '🌙 **Investida Extra no Boss Desbloqueada!** Você recebeu **+50 Phantom Coins 👻**, **+200 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦**!';
   } else {
     message = isEn
       ? '🎁 **Bonus Claimed!** You received **+200 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦** in your inventory!'
