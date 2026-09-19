@@ -120,6 +120,12 @@ function verifyAndClaimBonus(token) {
     message = isEn
       ? '🥠 **Extra Fortune Cookie Unlocked!** You received **+200 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦**!'
       : '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você recebeu **+200 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦**!';
+  } else if (data.action === 'gloom_boss') {
+    const { unlockBossExtraAttack } = require('./gloomRealm');
+    unlockBossExtraAttack(data.userId);
+    message = isEn
+      ? '🌙 **Gloom Boss Extra Strike Unlocked!** You received **+50 Phantom Coins 👻**, **+200 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦**!'
+      : '🌙 **Investida Extra no Boss Desbloqueada!** Você recebeu **+50 Phantom Coins 👻**, **+200 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦**!';
   } else {
     message = isEn
       ? '🎁 **Bonus Claimed!** You received **+200 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦** in your inventory!'

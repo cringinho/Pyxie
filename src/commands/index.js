@@ -34,6 +34,8 @@ const commands = [
   require('./dado'),
   require('./coinflip'),
   require('./admin'),
+  require('./explore'),
+  require('./grimorio'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');

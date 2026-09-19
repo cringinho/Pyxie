@@ -208,11 +208,10 @@ for (const restricted of ownerRestrictedNames) {
     `Comando exclusivo do dono (${restricted}) DEVE ser exibido na central quando o dono solicitar!`
   );
 }
-assert.equal(ownerCmdNames.length, 35, 'Dono deve ver todos os 35 comandos na central');
+assert.equal(ownerCmdNames.length, 37, 'Dono deve ver todos os 37 comandos na central');
 console.log(`✅ Sincronização Dinâmica Web/Help validada: ${ptCmdCount} comandos públicos e ${ownerCmdNames.length} comandos de dono em ${ptModules.length} módulos.`);
 
 // 7. Validação de Segurança do Dono (Snowflake 214153735281180673 & HMAC)
-const { OWNER_SNOWFLAKE, createOwnerMagicToken, verifyMagicToken, isIpAllowed } = require('../src/services/adminAuth');
 assert.equal(OWNER_SNOWFLAKE, '214153735281180673', 'Snowflake do dono deve ser estritamente 214153735281180673');
 
 const forbiddenRes = createOwnerMagicToken('999999999999999999');

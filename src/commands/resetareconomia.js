@@ -1,4 +1,3 @@
-const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 const { SlashCommandBuilder } = require('discord.js');
 const { resetUserEconomy } = require('../services/economy');
 const { formatCoins } = require('./economyHelpers');
@@ -6,8 +5,6 @@ const { RESET_ECONOMY } = require('./commandNames');
 const { OWNER_SNOWFLAKE } = require('../services/adminAuth');
 const { t } = require('../utils/i18n');
 
-function isManager(source) {
-  return source.member?.permissions?.has(PermissionFlagsBits.ManageGuild);
 function isOwner(source) {
   const userId = source.user?.id || source.author?.id;
   return userId === OWNER_SNOWFLAKE;
@@ -26,7 +23,6 @@ module.exports = {
     .setDescriptionLocalizations({
       'pt-BR': 'Zera as Moedinhas e o cooldown diário de um usuário.',
     })
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .setDefaultMemberPermissions(0n)
     .addUserOption((option) =>
       option
@@ -43,7 +39,6 @@ module.exports = {
         .setRequired(true)
     ),
   async executePrefix({ message, args }) {
-    if (!isManager(message)) return message.reply(t('admin.noPermission', message));
     if (!isOwner(message)) {
       return message.reply(t('admin.onlyOwner', message, { owner: `<@${OWNER_SNOWFLAKE}>` }));
     }
@@ -58,7 +53,6 @@ module.exports = {
     );
   },
   async executeSlash({ interaction }) {
-    if (!isManager(interaction)) return interaction.editReply(t('admin.noPermission', interaction));
     if (!isOwner(interaction)) {
       return interaction.editReply(t('admin.onlyOwner', interaction, { owner: `<@${OWNER_SNOWFLAKE}>` }));
     }

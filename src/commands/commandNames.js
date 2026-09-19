@@ -35,5 +35,7 @@ module.exports = {
   DICE: 'py-dice',
   COINFLIP: 'py-coinflip',
   ADMIN: 'py-admin',
+  EXPLORE: 'py-explore',
+  GRIMOIRE: 'py-grimorio',
 };
 

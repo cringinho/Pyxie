@@ -240,6 +240,10 @@ const TRANSLATIONS = {
           "label": "Visão Geral / Todos",
           "desc": "Visão geral e índice de todas as categorias"
         },
+        "penumbra": {
+          "label": "Crônicas da Penumbra",
+          "desc": "Exploração de cenários pixel, espíritos, fusão de almas e chefão comunitário"
+        },
         "economia": {
           "label": "Economia & Carreiras",
           "desc": "Moedinhas, trabalho, profissões e ranking global"
@@ -500,6 +504,76 @@ const TRANSLATIONS = {
       "timeLimit": "⏱️ **TEMPO DE RESPOSTA: 45 SEGUNDOS**\nEscolha a melhor alternativa nos botões abaixo:",
       "otherUserSession": "❌ Este expediente pertence a outro trabalhador. Use `/trabalho` para iniciar o seu!",
       "expiredSession": "⌛ Este expediente já foi finalizado ou expirou. Use `/trabalho` novamente quando estiver disponível!"
+    },
+    "gloom": {
+      "explore": {
+        "title": "{emoji}  ✦  {name} — {tide}",
+        "stamina": "🔋 **Energia:** `{current}/{max}` (Recarrega 1 a cada 6 min)",
+        "phantomCoins": "👻 **Phantom Coins:** `{coins}`",
+        "tracesHeader": "📜 **Últimos Rastros de Giz Roxo:**",
+        "noTraces": "> *Nenhum rastro gravado aqui recentemente.*",
+        "traceItem": "> ✍️ **{author}:** *\"{message}\"* {offering}",
+        "offeringText": "(🎁 Deixou {coins} 👻!)",
+        "btnForage": "🔍 Farejar (1⚡)",
+        "btnGrimoire": "📖 Grimório ({count})",
+        "btnTrace": "✍️ Deixar Rastro (15👻)",
+        "btnBoss": "💀 Chefão da Penumbra",
+        "btnMove": "Ir para {destination}",
+        "forageSuccessCoins": "✨ Você explorou as sombras e encontrou **+{coins} Phantom Coins 👻**!",
+        "forageSuccessItem": "📦 Você encontrou **1x {item}** escondido entre as pedras!",
+        "forageNoEnergy": "⏳ Você está esgotado pelas trevas! Energia recarrega em **{time}s** (máximo 10/hora).",
+        "portalOpened": "🌀 **PORTAL MÍSTICO REVELADO!** Uma fenda dimensional abriu caminho para o **Jardim das Rosas de Vidro**!",
+        "encounterAlert": "👻 **UMA APARIÇÃO SURGIU DAS SOMBRAS!**",
+        "traceSuccess": "✅ Seu rastro de giz roxo foi gravado na pedra com sucesso!",
+        "travelSuccess": "🚶 Você viajou para: **{destination}**!",
+        "travelLocked": "🔒 Este caminho está bloqueado! {reason}",
+        "reasons": {
+          "locked_tide": "Passagem selada. Requer a Maré da Lua de Sangue Roxo ou uma Lágrima Emo.",
+          "requires_key": "Porta trancada. Requer uma Chave Espectral para abrir.",
+          "insufficient_exploration": "Caminho perigoso. Explore pelo menos 3 locais comuns antes de cruzar o abismo.",
+          "requires_fairy": "Santuário protegido. Requer um familiar com afinidade de Fada equipado ou um portal místico aberto.",
+          "requires_boss": "Acesso negado. Requer ter participado do apaziguamento do Chefão Comunitário no ciclo atual."
+        }
+      },
+      "negotiate": {
+        "title": "💬  ✦  Negociação com {name}",
+        "btnBribe": "💰 Subornar ({cost} 👻)",
+        "btnFlee": "🏃 Fugir",
+        "successWit": "🎉 **Pacto Fechado!** Você impressionou **{spirit}** com sua sagacidade e ganhou **+{coins} Phantom Coins 👻**!",
+        "successBribe": "🤝 **Tributo Aceito!** Você pagou **{cost} Phantom Coins 👻** e **{spirit}** agora obedece ao seu chamado!",
+        "failed": "💨 **A Aparição Desapareceu!** {spirit} zombou da sua resposta e sumiu na bruma roxa!",
+        "alreadyOwned": "ℹ️ Você já possui este espírito no seu Grimório!"
+      },
+      "grimoire": {
+        "title": "📖  ✦  Grimório de Sombras — {user}",
+        "desc": "Espíritos sombrios e familiares vinculados à sua alma.",
+        "phantomCoins": "👻 **Saldo:** `{coins} Phantom Coins`",
+        "equippedHeader": "⚔️ **Familiares Ativos ({count}/{max}):**",
+        "noEquipped": "> *Nenhum familiar equipado. Use os botões abaixo para ativar suas auras passivas!*",
+        "collectedHeader": "📜 **Espíritos Coletados ({count}):**",
+        "noSpirits": "> *Seu grimório está vazio. Explore as salas do reino para negociar com aparições!*",
+        "btnFuse": "⚗️ Caldeirão de Fusão (30👻)",
+        "btnBack": "⬅️ Voltar à Exploração",
+        "equipSuccess": "✨ Você vinculou **{spirit}**! Aura ativa: **{aura}** ({desc})",
+        "unequipSuccess": "💤 Você desvinculou **{spirit}** do seu elo ativo."
+      },
+      "fusion": {
+        "title": "⚗️  ✦  Caldeirão de Fusão de Almas",
+        "desc": "Selecione dois espíritos do seu grimório para fundi-los em uma nova criatura superior!",
+        "selectPlaceholder": "Selecione um espírito para fundir...",
+        "success": "🔮 **FUSÃO CONCLUÍDA!** As almas se fundiram no caldeirão e deram origem a **{spirit}** (Tier {tier})!",
+        "insufficientCoins": "❌ Você precisa de **{cost} Phantom Coins 👻** para realizar este ritual de fusão!"
+      },
+      "boss": {
+        "title": "💀  ✦  Chefão Comunitário — {name}",
+        "desc": "Um colosso sombrio que desafia todo o reino. Cada investida enfraquece a entidade coletivamente!",
+        "hpBar": "🩸 **Vontade do Colosso:** `{currentHp}/{maxHp}` ({percent}%)",
+        "btnAttack": "⚔️ Investida da Penumbra (1x Grátis)",
+        "btnWebBonus": "📺 Assistir Bônus 10s (Investida Extra)",
+        "attackSuccess": "💥 Você desferiu um ataque sombrio causando **{damage} de dano** e ganhou **+{coins} Phantom Coins 👻**!",
+        "cooldown": "⏳ Você já realizou sua investida neste ciclo de 6 horas!\n\n✨ **Deseja apaziguar o Colosso novamente agora?**\nAssista ao bônus patrocinado de 10 segundos no portal web para liberar **+1 Investida Extra** e **50 Phantom Coins 👻**!",
+        "defeated": "🏆 **O COLOSSO FOI APACIGUADO!** A Sombra Ancestral foi vencida e o reino celebra sua vitória!"
+      }
     }
   },
   "en": {
@@ -590,6 +664,10 @@ const TRANSLATIONS = {
         "todos": {
           "label": "Overview / All",
           "desc": "Overview and index of all command categories"
+        },
+        "penumbra": {
+          "label": "Chronicles of Gloom",
+          "desc": "Pixel scenery exploration, spirit negotiation, soul fusion, and community boss"
         },
         "economia": {
           "label": "Economy & Careers",
@@ -851,6 +929,76 @@ const TRANSLATIONS = {
       "timeLimit": "⏱️ **TIME LIMIT: 45 SECONDS**\nChoose the best answer using the buttons below:",
       "otherUserSession": "❌ This shift belongs to another worker. Use `/trabalho` to start your own!",
       "expiredSession": "⌛ This shift has expired or was already completed. Use `/trabalho` again when available!"
+    },
+    "gloom": {
+      "explore": {
+        "title": "{emoji}  ✦  {name} — {tide}",
+        "stamina": "🔋 **Energy:** `{current}/{max}` (Recovers 1 every 6 min)",
+        "phantomCoins": "👻 **Phantom Coins:** `{coins}`",
+        "tracesHeader": "📜 **Recent Purple Chalk Traces:**",
+        "noTraces": "> *No traces have been carved here recently.*",
+        "traceItem": "> ✍️ **{author}:** *\"{message}\"* {offering}",
+        "offeringText": "(🎁 Left {coins} 👻!)",
+        "btnForage": "🔍 Forage (1⚡)",
+        "btnGrimoire": "📖 Grimoire ({count})",
+        "btnTrace": "✍️ Leave Trace (15👻)",
+        "btnBoss": "💀 Gloom Behemoth",
+        "btnMove": "Go to {destination}",
+        "forageSuccessCoins": "✨ You searched the shadows and found **+{coins} Phantom Coins 👻**!",
+        "forageSuccessItem": "📦 You discovered **1x {item}** hidden beneath the stones!",
+        "forageNoEnergy": "⏳ You are exhausted by the shadows! Energy recovers in **{time}s** (max 10/hour).",
+        "portalOpened": "🌀 **MYSTIC PORTAL REVEALED!** A dimensional rift opened the path to the **Glass Rose Garden**!",
+        "encounterAlert": "👻 **AN APPARITION EMERGED FROM THE SHADOWS!**",
+        "traceSuccess": "✅ Your purple chalk trace was permanently etched into the stone!",
+        "travelSuccess": "🚶 You journeyed to: **{destination}**!",
+        "travelLocked": "🔒 This path is sealed! {reason}",
+        "reasons": {
+          "locked_tide": "Passage sealed. Requires the Purple Blood Moon tide or an Emo Tear.",
+          "requires_key": "Door locked. Requires a Spectral Key to unlock.",
+          "insufficient_exploration": "Dangerous path. Explore at least 3 common areas before daring to cross the void.",
+          "requires_fairy": "Protected sanctuary. Requires an equipped Fairy familiar or an active mystic portal.",
+          "requires_boss": "Access denied. Requires participation in the Community Boss pacification this cycle."
+        }
+      },
+      "negotiate": {
+        "title": "💬  ✦  Negotiation with {name}",
+        "btnBribe": "💰 Bribe ({cost} 👻)",
+        "btnFlee": "🏃 Flee",
+        "successWit": "🎉 **Pact Formed!** You impressed **{spirit}** with your wit and earned **+{coins} Phantom Coins 👻**!",
+        "successBribe": "🤝 **Tribute Accepted!** You paid **{cost} Phantom Coins 👻** and **{spirit}** now obeys your call!",
+        "failed": "💨 **The Apparition Vanished!** {spirit} mocked your reply and dissolved into purple mist!",
+        "alreadyOwned": "ℹ️ You already have this spirit bound in your Grimoire!"
+      },
+      "grimoire": {
+        "title": "📖  ✦  Gloom Grimoire — {user}",
+        "desc": "Shadow spirits and familiars bound to your soul.",
+        "phantomCoins": "👻 **Balance:** `{coins} Phantom Coins`",
+        "equippedHeader": "⚔️ **Active Familiars ({count}/{max}):**",
+        "noEquipped": "> *No familiars equipped. Use the buttons below to activate passive auras!*",
+        "collectedHeader": "📜 **Collected Spirits ({count}):**",
+        "noSpirits": "> *Your grimoire is empty. Explore the realm to negotiate with apparitions!*",
+        "btnFuse": "⚗️ Fusion Cauldron (30👻)",
+        "btnBack": "⬅️ Back to Exploration",
+        "equipSuccess": "✨ You bound **{spirit}**! Active aura: **{aura}** ({desc})",
+        "unequipSuccess": "💤 You unbound **{spirit}** from your active bond."
+      },
+      "fusion": {
+        "title": "⚗️  ✦  Soul Fusion Cauldron",
+        "desc": "Select two spirits from your grimoire to fuse them into an ascended superior entity!",
+        "selectPlaceholder": "Choose a spirit to fuse...",
+        "success": "🔮 **FUSION COMPLETE!** The souls coalesced within the cauldron giving rise to **{spirit}** (Tier {tier})!",
+        "insufficientCoins": "❌ You need **{cost} Phantom Coins 👻** to perform this soul fusion ritual!"
+      },
+      "boss": {
+        "title": "💀  ✦  Community Boss — {name}",
+        "desc": "A shadowy behemoth threatening the balance of the Gloom Realm. All adventurers share this challenge!",
+        "hpBar": "🩸 **Behemoth Willpower:** `{currentHp}/{maxHp}` ({percent}%)",
+        "btnAttack": "⚔️ Gloom Strike (1x Free)",
+        "btnWebBonus": "📺 Watch 10s Bonus (Extra Strike)",
+        "attackSuccess": "💥 You launched a shadow strike dealing **{damage} damage** and earned **+{coins} Phantom Coins 👻**!",
+        "cooldown": "⏳ You already struck during this 6-hour cycle!\n\n✨ **Wish to strike the Behemoth again right now?**\nWatch the sponsored 10-second web bonus portal to unlock **+1 Extra Strike** and **50 Phantom Coins 👻**!",
+        "defeated": "🏆 **THE BEHEMOTH HAS BEEN PACIFIED!** The Ancient Shadow was conquered and the realm celebrates your triumph!"
+      }
     }
   }
 };
