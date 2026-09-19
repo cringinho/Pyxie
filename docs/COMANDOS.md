@@ -5,15 +5,34 @@ A **Pyxie** suporta comandos modernos via **Slash Commands (`/`)** padronizados 
 ---
 
 ## 🧭 Sumário de Módulos
-1. [💰 Economia, Lojinha & Profissões](#-1-economia-lojinha--profissões)
-2. [🎲 Jogos Rápidos & Minigames Sociais](#-2-jogos-rápidos--minigames-sociais)
-3. [🔮 Tarot, Amor & Social](#-3-tarot-amor--social)
-4. [👑 Perfil, Títulos & Cosméticos](#-4-perfil-títulos--cosméticos)
-5. [⚙️ Utilidades & Administração](#-5-utilidades--administração)
+1. [🌲 Bosque da Pyxie (RPG, Espíritos & Chefão)](#-1-bosque-da-pyxie-rpg-espíritos--chefão)
+2. [💰 Economia, Lojinha & Profissões](#-2-economia-lojinha--profissões)
+3. [🎲 Jogos Rápidos & Minigames Sociais](#-3-jogos-rápidos--minigames-sociais)
+4. [🔮 Tarot, Amor & Social](#-4-tarot-amor--social)
+5. [👑 Perfil, Títulos & Cosméticos](#-5-perfil-títulos--cosméticos)
+6. [⚙️ Utilidades & Administração](#-6-utilidades--administração)
 
 ---
 
-## 💰 1. Economia, Lojinha & Profissões
+## 🌲 1. Bosque da Pyxie (RPG, Espíritos & Chefão)
+*Guia completo e aprofundado disponível em [BOSQUE_DA_PYXIE.md](BOSQUE_DA_PYXIE.md).*
+
+### `/py-explore` (ou `py!bosque` / `py!explorar` / `py!explore` / `py!gloom`)
+Explora os 10 cenários pixel em arte 16-bit GBA do reino gótico da fadinha emo:
+- **Navegação no Grafo**: Viaje entre portões, cemitérios, pântanos, pontes e santuários secretos com requisitos de acesso.
+- **Farejar Recursos**: Gaste 1 ponto de energia (máx. 10/hora) para coletar **Phantom Coins 👻** e itens raros.
+- **Negociação Atlus/DemiKids**: Encontre aparições e negocie pactos através de diálogo (sagacidade), suborno ou fuga.
+- **Rastros Sociais de Giz Roxo**: Grave avisos e poemas com oferendas que outros aventureiros lerão ao passar pela sala.
+- **Chefão Comunitário**: Enfrente *A Sombra do Tédio Ancestral* coletivamente (1 ataque grátis a cada 6h + investida extra via bônus de 10s).
+
+### `/py-grimorio` (ou `py!grimorio` / `py!grimoire`)
+Gerencia a sua coleção de almas e familiares vinculados:
+- **Auras Passivas**: Equipe até 2 espíritos ativos para receber bônus de moedas, economia de vigor e dano no Chefão.
+- **Caldeirão de Fusão de Almas (30👻)**: Realize fusão pura (2 cópias iguais) ou cruzada (fórmulas híbridas) para criar criaturas de Tiers 3 e 4.
+
+---
+
+## 💰 2. Economia, Lojinha & Profissões
 
 ### `/py-daily` (ou `py!daily` / `py!diario`)
 Resgata sua recompensa diária em Moedinhas (com 1% de chance de obter 1 Feijão Mágico 🌱).
@@ -45,7 +64,7 @@ Exibe o link oficial de votação no Top.gg para resgatar Moedinhas gratuitas e 
 
 ---
 
-## 🎲 2. Jogos Rápidos & Minigames Sociais
+## 🎲 3. Jogos Rápidos & Minigames Sociais
 
 ### `/py-jokenpo <oponente> [aposta]` (ou `py!jokenpo` / `py!ppt`)
 Desafie outro membro para uma partida de Pedra, Papel e Tesoura com botões e aposta opcional de moedas.
@@ -64,7 +83,7 @@ Aposta moedas contra a Pyxie em Cara ou Coroa com 50% de chance de dobrar o valo
 
 ---
 
-## 🔮 3. Tarot, Amor & Social
+## 🔮 4. Tarot, Amor & Social
 
 ### `/py-tarot` (ou `py!tarot`)
 Realize uma tiragem mística diária privada com renderização visual nativa em Canvas de 78 cartas arcanas (Maiores e Menores), com interpretações diretas e invertidas.
@@ -80,7 +99,7 @@ Mini-game casual da comunidade.
 
 ---
 
-## 👑 4. Perfil, Títulos & Cosméticos
+## 👑 5. Perfil, Títulos & Cosméticos
 
 ### `/py-profile [user]` (ou `py!profile` / `py!perfil [@usuario]`)
 Exibe o cartão completo de aventureiro com cônjuge, saldos, vocação e dedicação de trabalho:
@@ -92,7 +111,7 @@ Altera o idioma de exibição do bot para o servidor atual (Inglês ou Portuguê
 
 ---
 
-## ⚙️ 5. Utilidades & Administração
+## ⚙️ 6. Utilidades & Administração
 
 ### `/py-ping` e `/py-status`
 Verifica a latência da conexão e o status operacional da Pyxie.
