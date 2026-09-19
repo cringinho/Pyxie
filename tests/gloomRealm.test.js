@@ -241,6 +241,7 @@ const gloomPath = path.join(__dirname, '..', 'data', 'gloom.json');
 const diskDataCycle = JSON.parse(fs.readFileSync(gloomPath, 'utf8'));
 diskDataCycle.worldBoss.cycleStart = Date.now() - (7 * 60 * 60 * 1000); // 7 horas atrás
 fs.writeFileSync(gloomPath, JSON.stringify(diskDataCycle, null, 2), 'utf8');
+try { fs.utimesSync(gloomPath, new Date(Date.now() + 2000), new Date(Date.now() + 2000)); } catch (_) {}
 
 // Ao consultar o status do boss, o ciclo é resetado e a permissão revogada para o novo ciclo
 getBossStatus();
@@ -258,6 +259,7 @@ assert.equal(userCache.phantomCoins, 50);
 const diskData = JSON.parse(fs.readFileSync(gloomPath, 'utf8'));
 diskData.users[uidCache].phantomCoins = 999;
 fs.writeFileSync(gloomPath, JSON.stringify(diskData, null, 2), 'utf8');
+try { fs.utimesSync(gloomPath, new Date(Date.now() + 4000), new Date(Date.now() + 4000)); } catch (_) {}
 
 const reloadedUser = getGloomUser(uidCache);
 assert.equal(reloadedUser.phantomCoins, 999, 'getGloomUser deve invalidar o cache em memória e recarregar dados novos do disco');

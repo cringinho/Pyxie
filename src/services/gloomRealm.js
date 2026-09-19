@@ -882,6 +882,11 @@ function readGloomData() {
   return gloomCache;
 }
 
+function invalidateGloomCache() {
+  gloomCache = null;
+  gloomMtime = 0;
+}
+
 function writeGloomData(data) {
   ensureGloomStorage();
   const temporaryFile = `${gloomFile}.${process.pid}.${Date.now()}.tmp`;
@@ -1552,5 +1557,6 @@ module.exports = {
   getBossStatus,
   attackBoss,
   unlockBossExtraAttack,
+  invalidateGloomCache,
 };
 
