@@ -58,6 +58,10 @@ const { getAnimatedEmoji } = require('./src/utils/serverEmojis');
 const welcomeHeartReactions = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🩷', '🩵', '🖤', '🤍', '🤎'];
 const CRINGE_PHRASE_COOLDOWN_MS = 60 * 1000;
 const cringePhraseCooldowns = new Map();
+const processedCringeMessageIds = new Set();
+const recentWelcomes = new Map();
+const processedMessageIds = new Map();
+const processedInteractionIds = new Map();
 
 function getRandomWelcomeHeart() {
   return welcomeHeartReactions[Math.floor(Math.random() * welcomeHeartReactions.length)];
@@ -330,13 +334,25 @@ function startTarotScheduler() {
 async function handleCringePhrase(message) {
   if (!/\bviadinho\s+fofinho\b/i.test(message.content)) return false;
 
+  // Deduplicação estrita: a mesma mensagem nunca é processada duas vezes
+  if (processedCringeMessageIds.has(message.id)) {
+    return true;
+  }
+  processedCringeMessageIds.add(message.id);
+  if (processedCringeMessageIds.size > 500) {
+    const ids = Array.from(processedCringeMessageIds).slice(0, 200);
+    ids.forEach((id) => processedCringeMessageIds.delete(id));
+  }
+
+  const now = Date.now();
   const lastTriggeredAt = cringePhraseCooldowns.get(message.author.id) || 0;
-  if (Date.now() - lastTriggeredAt < CRINGE_PHRASE_COOLDOWN_MS) {
+  if (now - lastTriggeredAt < CRINGE_PHRASE_COOLDOWN_MS) {
     await message.react('🍅').catch(() => null);
     return true;
   }
 
-  cringePhraseCooldowns.set(message.author.id, Date.now());
+  // Registra o cooldown imediatamente para prevenir race conditions com mensagens simultâneas
+  cringePhraseCooldowns.set(message.author.id, now);
 
   await message.react('🌈').catch(() => null);
   
@@ -344,9 +360,9 @@ async function handleCringePhrase(message) {
   if (fs.existsSync(localGifPath)) {
     await message.reply({
       files: [new AttachmentBuilder(localGifPath, { name: 'gacha_boy.gif' })]
-    });
+    }).catch(() => null);
   } else {
-    await message.reply('https://klipy.com/gifs/gacha-life-gacha-boy');
+    await message.reply('https://klipy.com/gifs/gacha-life-gacha-boy').catch(() => null);
   }
   return true;
 }
@@ -432,7 +448,23 @@ client.on('guildMemberAdd', async (member) => {
   updateLiveStats();
 
   // Não processa boas-vindas para bots
-  if (member.user.bot) return;
+  if (member.user?.bot) return;
+
+  // Deduplicação de boas-vindas: ignora re-disparos do gateway em até 5 minutos
+  const welcomeKey = `${member.guild?.id || 'unknown'}:${member.id}`;
+  const lastWelcomedAt = recentWelcomes.get(welcomeKey) || 0;
+  if (Date.now() - lastWelcomedAt < 5 * 60 * 1000) {
+    console.log(`[guildMemberAdd] Ignorando evento duplicado de boas-vindas para ${member.user?.tag || member.id}`);
+    return;
+  }
+  recentWelcomes.set(welcomeKey, Date.now());
+
+  if (recentWelcomes.size > 500) {
+    const cutoff = Date.now() - 10 * 60 * 1000;
+    for (const [k, time] of recentWelcomes.entries()) {
+      if (time < cutoff) recentWelcomes.delete(k);
+    }
+  }
 
   const isCringelandia = member.guild.id === '1453890868980482090';
   const configuredWelcomeChannelId = getWelcomeChannel(member.guild.id);
@@ -513,7 +545,17 @@ client.on('guildMemberAdd', async (member) => {
 
 // Procura o comando na pasta commands e mantém o index focado na infraestrutura.
 client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
+  if (message.author?.bot) return;
+
+  // Deduplicação de eventos de mensagem do Discord Gateway
+  if (processedMessageIds.has(message.id)) return;
+  processedMessageIds.set(message.id, Date.now());
+  if (processedMessageIds.size > 1000) {
+    const cutoff = Date.now() - 60 * 1000;
+    for (const [id, ts] of processedMessageIds.entries()) {
+      if (ts < cutoff) processedMessageIds.delete(id);
+    }
+  }
 
   incrementMessages();
   recordUniqueUser(message.author.id);
@@ -542,6 +584,16 @@ client.on('messageCreate', async (message) => {
 
 // O registro compartilhado também encaminha cada slash command ao próprio arquivo.
 client.on('interactionCreate', async (interaction) => {
+  // Deduplicação de eventos de interação do Discord Gateway
+  if (processedInteractionIds.has(interaction.id)) return;
+  processedInteractionIds.set(interaction.id, Date.now());
+  if (processedInteractionIds.size > 1000) {
+    const cutoff = Date.now() - 60 * 1000;
+    for (const [id, ts] of processedInteractionIds.entries()) {
+      if (ts < cutoff) processedInteractionIds.delete(id);
+    }
+  }
+
   try {
     if (tarotCommand.isTarotButton(interaction)) {
       incrementCommand();
@@ -774,6 +826,33 @@ if (process.stdin) {
     }
   });
 }
+
+function handleBotShutdown() {
+  try { releaseBotLock(); } catch (_) {}
+  try { flushSync(); } catch (_) {}
+  try { flushInventorySync(); } catch (_) {}
+  try {
+    if (client && typeof client.destroy === 'function') {
+      client.destroy();
+    }
+  } catch (_) {}
+}
+
+process.on('SIGTERM', () => {
+  console.log('Recebido SIGTERM. Encerrando Pyxie com segurança...');
+  handleBotShutdown();
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('Recebido SIGINT. Encerrando Pyxie com segurança...');
+  handleBotShutdown();
+  process.exit(0);
+});
+
+process.on('exit', () => {
+  handleBotShutdown();
+});
 
 client.login(DISCORD_TOKEN).catch((error) => {
   console.error('Falha ao conectar com o Discord:', error.message);

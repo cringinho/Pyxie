@@ -190,6 +190,12 @@ try {
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'server.js')]);
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'index.js')]);
 
+  const { lockFilePath: exportedLockPath, isProcessAlive } = require('../src/utils/botUtils');
+  assert.equal(exportedLockPath, lockFile, 'lockFilePath exportado deve apontar para .botmelody.lock');
+  assert.equal(isProcessAlive(process.pid), true, 'O processo atual deve ser detectado como vivo.');
+  assert.equal(isProcessAlive(-1), false, 'PID inválido deve ser detectado como não vivo.');
+  assert.equal(isProcessAlive(99999999), false, 'PID inexistente deve ser detectado como não vivo.');
+
   releaseBotLock();
   assert.equal(fs.existsSync(lockFile), false, 'O lock deve ser removido ao encerrar.');
 

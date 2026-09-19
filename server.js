@@ -1,8 +1,10 @@
 const express = require('express');
+const fs = require('node:fs');
 const path = require('node:path');
 const { spawn, execFile } = require('node:child_process');
 const { setWelcomeChannel, getWelcomeChannel, normalizeChannelValue, getEconomyConfig, setEconomyConfig } = require('./src/services/database');
 const { addLog: savePersistentLog, getLogs, getStats, updateStats, resetStats, clearLogs, flushSync } = require('./src/services/logging');
+const { lockFilePath, isProcessAlive } = require('./src/utils/botUtils');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -12,6 +14,22 @@ const appRoot = __dirname;
 let botProcess = null;
 let botLogs = [];
 let botStartTime = null;
+
+function cleanupOrphanBotProcess() {
+  try {
+    if (fs.existsSync(lockFilePath)) {
+      const existingPid = Number(fs.readFileSync(lockFilePath, 'utf8').trim());
+      if (Number.isInteger(existingPid) && existingPid > 0 && existingPid !== process.pid) {
+        if (isProcessAlive(existingPid)) {
+          console.log(`[Supervisor] Encerrando processo anterior da Pyxie (PID ${existingPid})...`);
+          try { process.kill(existingPid, 'SIGTERM'); } catch (_) {}
+          try { process.kill(existingPid, 'SIGKILL'); } catch (_) {}
+        }
+      }
+      try { fs.unlinkSync(lockFilePath); } catch (_) {}
+    }
+  } catch (_) {}
+}
 
 function addLog(message) {
   const timestamp = new Date().toLocaleTimeString('pt-BR');
@@ -43,11 +61,12 @@ function startBot() {
     return { running: true, message: 'O bot já está em execução.' };
   }
 
+  cleanupOrphanBotProcess();
+
   botStartTime = Date.now();
   addLog('Iniciando bot Pyxie...');
   botProcess = spawn('node', ['--max-old-space-size=192', 'index.js'], {
     cwd: appRoot,
-    detached: true,
     stdio: ['pipe', 'pipe', 'pipe'],
     env: process.env,
   });
@@ -75,26 +94,31 @@ async function stopBot() {
   if (!botProcess || botProcess.killed || botProcess.exitCode !== null) {
     botProcess = null;
     botStartTime = null;
+    cleanupOrphanBotProcess();
     return { running: false, message: 'O bot já está offline.' };
   }
 
   addLog('Encerrando bot Pyxie...');
-  botProcess.kill('SIGTERM');
+  try {
+    botProcess.kill('SIGTERM');
+  } catch (_) {}
 
   return new Promise((resolve) => {
     const timeout = setTimeout(() => {
       if (botProcess && !botProcess.killed) {
-        botProcess.kill('SIGKILL');
+        try { botProcess.kill('SIGKILL'); } catch (_) {}
       }
       botProcess = null;
       botStartTime = null;
+      cleanupOrphanBotProcess();
       resolve({ running: false, message: 'Bot parado com sucesso.' });
-    }, 3000);
+    }, 2500);
 
     botProcess.once('exit', () => {
       clearTimeout(timeout);
       botProcess = null;
       botStartTime = null;
+      cleanupOrphanBotProcess();
       resolve({ running: false, message: 'Bot parado com sucesso.' });
     });
   });
@@ -421,10 +445,18 @@ function handleServerShutdown() {
   flushSync();
   if (botProcess && !botProcess.killed) {
     try { botProcess.kill('SIGTERM'); } catch (_) {}
+    try { botProcess.kill('SIGKILL'); } catch (_) {}
   }
+  cleanupOrphanBotProcess();
   process.exit(0);
 }
 
 process.on('SIGINT', handleServerShutdown);
 process.on('SIGTERM', handleServerShutdown);
-process.on('exit', () => { flushSync(); });
+process.on('exit', () => {
+  flushSync();
+  if (botProcess && !botProcess.killed) {
+    try { botProcess.kill('SIGKILL'); } catch (_) {}
+  }
+  cleanupOrphanBotProcess();
+});

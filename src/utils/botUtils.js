@@ -117,4 +117,6 @@ module.exports = {
   releaseBotLock,
   getCommandList,
   getPrefix,
+  lockFilePath,
+  isProcessAlive,
 };
