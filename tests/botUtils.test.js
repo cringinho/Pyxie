@@ -180,10 +180,14 @@ try {
   assert.ok(invEmbedPt.data.title.includes('Mochila'), 'Inventario PT ok');
   assert.ok(invEmbedEn.data.title.includes('Backpack'), 'Inventario EN ok');
 
+  const { execFileSync } = require('node:child_process');
+  execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'server.js')]);
+  execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'index.js')]);
+
   releaseBotLock();
   assert.equal(fs.existsSync(lockFile), false, 'O lock deve ser removido ao encerrar.');
 
-  console.log('Verificação do lock, banco, prefixo padrão, internacionalização (i18n) e ajuda: OK');
+  console.log('Verificação do lock, banco, prefixo padrão, sintaxe do servidor, internacionalização (i18n) e ajuda: OK');
 } finally {
   if (fs.existsSync(lockFile)) {
     fs.unlinkSync(lockFile);

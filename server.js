@@ -185,11 +185,9 @@ app.get('/api/status', (req, res) => {
   res.json(getBotStatus());
 });
 
-// 2. Webhook do Top.gg (Votos e Recompensas a cada 12h)
 // 2. Catálogo Dinâmico de Comandos da Pyxie (Sincronizado diretamente com help.js)
 app.get('/api/commands', (req, res) => {
   const lang = req.query.lang === 'en' ? 'en' : 'pt';
-  const modules = getHelpModules(null, lang);
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
   const isOwner = (sessionCookie && isValidAdminSession(sessionCookie)) ||
     (req.query.token && isMasterSecretValid(req.query.token));
@@ -392,11 +390,18 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   const publicUrl = process.env.PANEL_PUBLIC_URL || `http://pyxie.duckdns.org:${PORT}`;
   addLog(`Painel web da Pyxie iniciado em ${publicUrl}`);
   console.log(`Painel da Pyxie rodando em ${publicUrl}`);
   startBot();
+});
+
+server.on('clientError', (err, socket) => {
+  if (err.code === 'ECONNRESET' || !socket.writable) {
+    return socket.destroy();
+  }
+  socket.end('HTTP/1.1 400 Bad Request\r\nConnection: close\r\n\r\n');
 });
 
 function handleServerShutdown() {
