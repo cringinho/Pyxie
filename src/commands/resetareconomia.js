@@ -11,7 +11,7 @@ function isOwner(source) {
 }
 
 function getTargetUser(source, args = []) {
-  return source.options?.getUser('usuario') || source.options?.getUser('user') || source.mentions.users.first() || source.guild?.members.cache.get(args[0])?.user;
+  return source.options?.getUser('user') || source.options?.getUser('usuario') || source.mentions.users.first() || source.guild?.members.cache.get(args[0])?.user;
 }
 
 module.exports = {
@@ -26,7 +26,7 @@ module.exports = {
     .setDefaultMemberPermissions(0n)
     .addUserOption((option) =>
       option
-        .setName('usuario')
+        .setName('user')
         .setNameLocalizations({
           'en-US': 'user',
           'en-GB': 'user',

@@ -94,7 +94,7 @@ module.exports = {
     })
     .addStringOption((option) =>
       option
-        .setName('idioma')
+        .setName('language')
         .setNameLocalizations({
           'en-US': 'language',
           'en-GB': 'language',
@@ -132,7 +132,7 @@ module.exports = {
     if (!interaction.guild) {
       return interaction.editReply({ content: 'This command must be run inside a server.' });
     }
-    const chosen = interaction.options.getString('idioma');
+    const chosen = interaction.options.getString('language') || interaction.options.getString('idioma');
     if (chosen) {
       if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) {
         return interaction.editReply({

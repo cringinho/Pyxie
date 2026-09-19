@@ -11,7 +11,7 @@ const CRINGELANDIA_GUILD_ID = '1453890868980482090';
  * 4. Padrão para todos os outros servidores/usuários -> 'en' (Inglês).
  */
 function getLanguage(source) {
-  if (!source) return 'pt';
+  if (!source) return 'en';
 
   if (typeof source === 'string') {
     if (source === 'pt' || source === 'pt-BR') return 'pt';
@@ -24,6 +24,7 @@ function getLanguage(source) {
     // 2. Servidor Cringelândia é PT por padrão
     if (source === CRINGELANDIA_GUILD_ID) return 'pt';
 
+    // 3. Qualquer outro servidor é EN por padrão
     return 'en';
   }
 
@@ -43,21 +44,24 @@ function getLanguage(source) {
     if (settings && settings.lang) {
       return settings.lang;
     }
+
+    // 2. Cringelândia é PT por padrão se não houver escolha explícita do admin
+    if (guildId === CRINGELANDIA_GUILD_ID) {
+      return 'pt';
+    }
+
+    // 3. REGRA MANDATÓRIA: Qualquer outro servidor do Discord é ESTRITAMENTE 'en' por padrão!
+    return 'en';
   }
 
-  // 2. Cringelândia é PT por padrão se não houver escolha explícita do admin
-  if (guildId === CRINGELANDIA_GUILD_ID) {
-    return 'pt';
-  }
-
-  // 3. Detecção automática pelo locale do cliente do Discord (interaction.locale / interaction.guildLocale)
-  const locale = source?.locale || source?.guildLocale;
+  // 4. Detecção automática para mensagens diretas (DMs, fora de servidores)
+  const locale = source?.locale;
   if (locale && typeof locale === 'string') {
     if (locale.toLowerCase().startsWith('pt')) return 'pt';
     if (locale.toLowerCase().startsWith('en')) return 'en';
   }
 
-  // 4. Padrão internacional para servidores e DMs externos
+  // 5. Padrão internacional para servidores e DMs externos
   return 'en';
 }
 

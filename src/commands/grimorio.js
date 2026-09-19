@@ -146,6 +146,9 @@ module.exports = {
   aliases: ['grimorio', 'grimoire', 'py-grimorio', 'py-grimoire'],
   data: new SlashCommandBuilder()
     .setName(GRIMOIRE)
+    .setNameLocalizations({
+      'pt-BR': 'py-grimorio',
+    })
     .setDescription('View your collected spirits, equipped familiars and perform soul fusion.')
     .setDescriptionLocalizations({
       'pt-BR': 'Veja seus espíritos coletados, familiares equipados e faça fusão de almas.',

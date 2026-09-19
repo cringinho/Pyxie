@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pyxie • Bot Mágico de Economia, Lazer & Comunidade no Discord</title>
+  <meta name="description" content="Pyxie é uma fada mágica para o Discord com Carreiras Interativas, Economia Viva, Tarot Místico e Minigames Sociais." />
   <title>Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord</title>
   <meta name="description" content="Pyxie é uma fada mágica para o Discord com o Bosque da Pyxie, Carreiras Interativas, Economia Viva, Tarot Místico e Minigames Sociais." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧚</text></svg>" />
@@ -640,6 +642,7 @@
       <div class="nav-menu">
         <a href="#pilares" class="nav-link" data-i18n="nav.features">Recursos</a>
         <a href="#comandos" class="nav-link" data-i18n="nav.commands">Comandos</a>
+        <a href="https://top.gg/bot/1463644930080637140/vote" target="_blank" rel="noopener" class="nav-link" data-i18n="nav.vote">Top.gg</a>
         <a href="/vote" target="_blank" rel="noopener" class="nav-link" data-i18n="nav.vote">Top.gg</a>
         <a href="/bonus" class="nav-link" data-i18n="nav.bonus">Bônus Web (10s)</a>
       </div>
@@ -648,6 +651,7 @@
         <button id="langToggle" class="lang-btn" onclick="toggleLanguage()">
           <span>🇧🇷</span> <span>PT-BR</span>
         </button>
+        <a href="https://discord.com/oauth2/authorize?client_id=1463644930080637140&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener" class="nav-cta" data-i18n="nav.add">
         <a href="/invite" target="_blank" rel="noopener" class="nav-cta" data-i18n="nav.add">
           Adicionar
         </a>
@@ -668,19 +672,24 @@
       </h1>
 
       <p class="hero-subtitle" data-i18n="hero.subtitle">
+        Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames, Tarot Místico dos 78 Arcanos em Canvas, Calculadora de Afinidade amorosa e Entretenimento completo para sua comunidade.
         Bosque Místico com 10 Cenários Pixel Art, Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.
       </p>
 
       <div class="hero-actions">
+        <a href="https://discord.com/oauth2/authorize?client_id=1463644930080637140&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener" class="btn btn-primary" data-i18n="hero.btnInvite">
         <a href="/invite" target="_blank" rel="noopener" class="btn btn-primary" data-i18n="hero.btnInvite">
           ✨ Adicionar ao Discord
         </a>
+        <a href="https://top.gg/bot/1463644930080637140/vote" target="_blank" rel="noopener" class="btn btn-accent" data-i18n="hero.btnVote">
         <a href="/vote" target="_blank" rel="noopener" class="btn btn-accent" data-i18n="hero.btnVote">
           ⭐ Votar no Top.gg (+Bônus)
         </a>
         <a href="/bonus" class="btn btn-secondary" data-i18n="hero.btnBonus">
           🎁 Bônus Web (10s)
         </a>
+        <a href="https://discord.gg/cringelandia" target="_blank" rel="noopener" class="btn btn-cyan" data-i18n="hero.btnGuild">
+          🏰 Comunidade Cringelândia
         <a href="/discord" target="_blank" rel="noopener" class="btn btn-cyan" data-i18n="hero.btnGuild">
           🏰 Comunidade Oficial
         </a>
@@ -694,6 +703,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-num" id="statUsers">0</div>
+          <div class="stat-label" data-i18n="stats.users">Aventureiros Ativos</div>
           <div class="stat-label" data-i18n="stats.users">Aventureiros na Comunidade</div>
         </div>
         <div class="stat-card">
@@ -701,12 +711,14 @@
           <div class="stat-label" data-i18n="stats.messages">Mensagens Processadas</div>
         </div>
         <div class="stat-card">
+          <div class="stat-num" id="statUptime">0h 0m</div>
           <div class="stat-num" id="statUptime">0m</div>
           <div class="stat-label" data-i18n="stats.uptime">Tempo Online</div>
         </div>
       </div>
     </section>
 
+    <!-- 4 Pillars Section -->
     <!-- 5 Pillars Section -->
     <section id="pilares">
       <h2 class="section-title" data-i18n="pillars.title">Explore o Universo da Pyxie</h2>
@@ -726,6 +738,7 @@
         </div>
 
         <div class="pillar-card">
+          <span class="pillar-icon">🪙</span>
           <span class="pillar-icon">💰</span>
           <h3 class="pillar-title" data-i18n="pillars.p2Title">Economia & Moedinhas</h3>
           <p class="pillar-text" data-i18n="pillars.p2Desc">Acumule Moedinhas no cofre diário, cultive Feijões Mágicos raros, abra baús de tesouro e negocie itens com seus amigos.</p>
@@ -740,6 +753,7 @@
         <div class="pillar-card">
           <span class="pillar-icon">💖</span>
           <h3 class="pillar-title" data-i18n="pillars.p4Title">Social, Ship & Casamentos</h3>
+          <p class="pillar-text" data-i18n="pillars.p4Desc">Calcule afinidade amorosa com o /py-ship, celebre casamentos na comunidade, customize títulos e equipe temas visuais no perfil.</p>
           <p class="pillar-text" data-i18n="pillars.p4Desc">Calcule afinidade amorosa com o /py-ship, celebre casamentos na comunidade, dispute Jokenpô e customize títulos e temas visuais no perfil.</p>
         </div>
       </div>

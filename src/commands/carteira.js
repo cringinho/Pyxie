@@ -4,7 +4,7 @@ const { buildWalletEmbed } = require('./economyHelpers');
 const { WALLET } = require('./commandNames');
 
 function getTargetUser(source) {
-  return source.options?.getUser('usuario') || source.options?.getUser('user') || source.user || source.author;
+  return source.options?.getUser('user') || source.options?.getUser('usuario') || source.user || source.author;
 }
 
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
     })
     .addUserOption((option) =>
       option
-        .setName('usuario')
+        .setName('user')
         .setNameLocalizations({
           'en-US': 'user',
           'en-GB': 'user',

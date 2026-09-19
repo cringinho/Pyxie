@@ -186,7 +186,7 @@ module.exports = {
     })
     .addStringOption((opt) =>
       opt
-        .setName('categoria')
+        .setName('category')
         .setNameLocalizations({
           'en-US': 'category',
           'en-GB': 'category',
@@ -198,9 +198,9 @@ module.exports = {
         })
         .setRequired(false)
         .addChoices(
-          { name: '📦 Baús Misteriosos', value: 'bau' },
-          { name: '💎 Relíquias & Colecionáveis', value: 'reliquia' },
-          { name: '☕ Utilitários & Guloseimas', value: 'utilitario' }
+          { name: '📦 Mystery Chests', nameLocalizations: { 'pt-BR': '📦 Baús Misteriosos' }, value: 'bau' },
+          { name: '💎 Relics & Collectibles', nameLocalizations: { 'pt-BR': '💎 Relíquias & Colecionáveis' }, value: 'reliquia' },
+          { name: '☕ Utilities & Treats', nameLocalizations: { 'pt-BR': '☕ Utilitários & Guloseimas' }, value: 'utilitario' }
         )
     ),
   async executePrefix({ message, args }) {
@@ -213,7 +213,7 @@ module.exports = {
     await message.reply({ embeds: [embed], components });
   },
   async executeSlash({ interaction }) {
-    const category = interaction.options.getString('categoria') || interaction.options.getString('category') || 'bau';
+    const category = interaction.options.getString('category') || interaction.options.getString('categoria') || 'bau';
     const embed = buildShopEmbed(category, interaction);
     const components = buildShopComponents(category, interaction.user.id, interaction);
     await interaction.editReply({ embeds: [embed], components });

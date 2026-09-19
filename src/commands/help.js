@@ -50,7 +50,7 @@ module.exports = {
     })
     .addStringOption((option) =>
       option
-        .setName('modulo')
+        .setName('module')
         .setNameLocalizations({
           'en-US': 'module',
           'en-GB': 'module',
@@ -71,7 +71,7 @@ module.exports = {
     await message.reply({ embeds: [embed], components });
   },
   async executeSlash({ interaction }) {
-    const mod = interaction.options.getString('modulo') || interaction.options.getString('module') || 'todos';
+    const mod = interaction.options.getString('module') || interaction.options.getString('modulo') || 'todos';
     const guildName = interaction.guild?.name || '';
     const embed = buildModularHelpEmbed(mod, guildName, interaction);
     const components = buildModularHelpComponents(mod, interaction.user.id, interaction);

@@ -50,6 +50,7 @@ const {
   KUROMI_STARTUP_EMOJI,
 } = require('./src/config');
 const { incrementCommand, incrementMessages, recordUniqueUser, updateStats, flushSync } = require('./src/services/logging');
+const { setGuildLanguage } = require('./src/utils/i18n');
 const { flushInventorySync } = require('./src/services/inventory');
 const { getBrasiliaDate, resetDailyDraws } = require('./src/services/tarot');
 const { getAnimatedEmoji } = require('./src/utils/serverEmojis');
@@ -374,18 +375,76 @@ client.once('ready', async () => {
 });
 
 // Atualizações dinâmicas de contagem de membros e servidores
-client.on('guildCreate', () => updateLiveStats());
+client.on('guildCreate', async (guild) => {
+  updateLiveStats();
+
+  // Em servidores externos, define explicitamente o idioma padrão como inglês
+  if (guild.id !== '1453890868980482090') {
+    setGuildLanguage(guild.id, 'en');
+  }
+
+  // Envia mensagem introdutória oficial no canal padrão do servidor
+  const targetChannel =
+    guild.systemChannel ||
+    guild.channels.cache.find(
+      (c) =>
+        c.isTextBased() &&
+        c.permissionsFor(guild.members.me || client.user)?.has(['ViewChannel', 'SendMessages', 'EmbedLinks'])
+    );
+
+  if (targetChannel) {
+    const isEn = guild.id !== '1453890868980482090';
+    const embed = new EmbedBuilder()
+      .setColor('#8b5cf6')
+      .setTitle(isEn ? '🧚  ✦  Hello! I am Pyxie!' : '🧚  ✦  Olá! Eu sou a Pyxie!')
+      .setDescription(
+        isEn
+          ? `Thank you for inviting me to **${guild.name}**!\n\n` +
+            `🌐 **Default Language:** \`English\`.\n` +
+            `You can change the server language anytime with </py-language:0> (or \`py!language\`).\n\n` +
+            `✨ **Get Started:**\n` +
+            `> 🌲 </py-explore:0> — Adventure in **Pyxie's Grove**, negotiate with 14 spirits & battle the World Boss\n` +
+            `> 💼 </py-work:0> — Choose from 10 professions and solve job shift minigames\n` +
+            `> 🪙 </py-daily:0> — Claim your daily coins\n` +
+            `> 🔮 </py-tarot:0> — Draw your illustrated daily Tarot card\n` +
+            `> 📖 </py-help:0> — Browse the full interactive command guide`
+          : `Obrigada por me adicionar a **${guild.name}**!\n\n` +
+            `🌐 **Idioma do Servidor:** \`Português (pt-BR)\`.\n` +
+            `Altere a qualquer momento com </py-language:0>.\n\n` +
+            `✨ **Comece agora:**\n` +
+            `> 🌲 </py-explore:0> — Explore o **Bosque da Pyxie**, negocie com espíritos e enfrente o Chefão\n` +
+            `> 💼 </py-work:0> — Escolha uma profissão e trabalhe nos turnos\n` +
+            `> 🪙 </py-daily:0> — Colete suas moedinhas diárias\n` +
+            `> 🔮 </py-tarot:0> — Tire sua carta do Tarot\n` +
+            `> 📖 </py-help:0> — Veja a lista completa de comandos`
+      )
+      .setFooter({ text: isEn ? 'Pyxie • Ready for adventure!' : 'Pyxie • Pronta para novas aventuras!' })
+      .setTimestamp();
+
+    await targetChannel.send({ embeds: [embed] }).catch(() => null);
+  }
+});
 client.on('guildDelete', () => updateLiveStats());
 client.on('guildMemberRemove', () => updateLiveStats());
 
 // Mensagem de boas-vindas ao entrar no servidor.
 client.on('guildMemberAdd', async (member) => {
   updateLiveStats();
+
+  // Não processa boas-vindas para bots
+  if (member.user.bot) return;
+
+  const isCringelandia = member.guild.id === '1453890868980482090';
   const configuredWelcomeChannelId = getWelcomeChannel(member.guild.id);
+
+  // Servidores externos só recebem boas-vindas se configuraram um canal explicitamente com /py-welcome
+  if (!isCringelandia && !configuredWelcomeChannelId) {
+    return;
+  }
+
   const targetChannelId =
     configuredWelcomeChannelId ||
-    getWelcomeChannel('global') ||
-    WELCOME_CHANNEL_ID;
+    (isCringelandia ? (getWelcomeChannel('global') || WELCOME_CHANNEL_ID) : null);
 
   let welcomeChannel = null;
   if (targetChannelId) {
@@ -394,15 +453,17 @@ client.on('guildMemberAdd', async (member) => {
       (await member.guild.channels.fetch(targetChannelId).catch(() => null));
   }
 
-  if (!welcomeChannel) {
+  if (!welcomeChannel && isCringelandia) {
     welcomeChannel =
-      member.guild.channels.cache.get(member.guild.systemChannelId) ||
+      member.guild.systemChannelId ||
       member.guild.channels.cache.find(
         (channel) =>
           channel.isTextBased() &&
           ['welcome', 'bem-vindos', 'entrada', 'chat-geral'].includes(channel.name)
       );
   }
+
+  if (!welcomeChannel) return;
 
   const guildName = member.guild?.name || 'nosso servidor';
   const welcomeEmbed = new EmbedBuilder()
@@ -429,22 +490,24 @@ client.on('guildMemberAdd', async (member) => {
     .setTimestamp();
 
   try {
-    if (welcomeChannel) {
-      const welcomeMessage = await welcomeChannel.send({
-        content: `${member} chegou! <@&${WELCOME_ROLE_ID}>, recebam nossa nova pessoa com carinho 💗`,
-        embeds: [welcomeEmbed],
-        allowedMentions: {
-          users: [member.id],
-          roles: [WELCOME_ROLE_ID],
-        },
-      });
+    const welcomeMessage = await welcomeChannel.send({
+      content: isCringelandia
+        ? `${member} chegou! <@&${WELCOME_ROLE_ID}>, recebam nossa nova pessoa com carinho 💗`
+        : `Welcome ${member} to **${guildName}**! ✨`,
+      embeds: isCringelandia ? [welcomeEmbed] : [],
+      allowedMentions: {
+        users: [member.id],
+        roles: isCringelandia ? [WELCOME_ROLE_ID] : [],
+      },
+    });
 
+    if (isCringelandia) {
       await welcomeMessage.react(getRandomWelcomeHeart()).catch((error) => {
         console.warn('Não foi possível reagir à mensagem de boas-vindas:', error.message);
       });
     }
-  } catch (error) {
-    console.error('Erro ao enviar mensagem de boas-vindas:', error);
+  } catch (err) {
+    console.warn('Falha ao enviar mensagem de boas-vindas:', err.message);
   }
 });
 

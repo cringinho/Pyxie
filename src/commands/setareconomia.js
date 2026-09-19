@@ -11,7 +11,7 @@ function isOwner(source) {
 }
 
 function getTargetUser(source, args = []) {
-  return source.options?.getUser('usuario') || source.options?.getUser('user') || source.mentions.users.first() || source.guild?.members.cache.get(args[0])?.user;
+  return source.options?.getUser('user') || source.options?.getUser('usuario') || source.mentions.users.first() || source.guild?.members.cache.get(args[0])?.user;
 }
 
 function parseAmount(value) {
@@ -38,7 +38,7 @@ module.exports = {
     .setDefaultMemberPermissions(0n)
     .addUserOption((option) =>
       option
-        .setName('usuario')
+        .setName('user')
         .setNameLocalizations({
           'en-US': 'user',
           'en-GB': 'user',
@@ -52,7 +52,7 @@ module.exports = {
     )
     .addIntegerOption((option) =>
       option
-        .setName('quantidade')
+        .setName('amount')
         .setNameLocalizations({
           'en-US': 'amount',
           'en-GB': 'amount',
@@ -80,7 +80,7 @@ module.exports = {
       return interaction.editReply(t('admin.onlyOwner', interaction, { owner: `<@${OWNER_SNOWFLAKE}>` }));
     }
     const target = getTargetUser(interaction);
-    const amount = interaction.options.getInteger('quantidade') ?? interaction.options.getInteger('amount');
+    const amount = interaction.options.getInteger('amount') ?? interaction.options.getInteger('quantidade');
     setUserBalance(target.id, amount);
     await interaction.editReply(buildReply(target, amount, interaction));
   },

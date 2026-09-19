@@ -88,7 +88,7 @@ module.exports = {
     })
     .addStringOption((opt) =>
       opt
-        .setName('categoria')
+        .setName('category')
         .setNameLocalizations({
           'en-US': 'category',
           'en-GB': 'category',
@@ -111,7 +111,7 @@ module.exports = {
     await message.reply(view);
   },
   async executeSlash({ interaction }) {
-    const cat = interaction.options.getString('categoria') || interaction.options.getString('category') || 'coins';
+    const cat = interaction.options.getString('category') || interaction.options.getString('categoria') || 'coins';
     const view = await buildRankingView(interaction, interaction.user.id, cat);
     await interaction.editReply(view);
   },

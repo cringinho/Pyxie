@@ -114,8 +114,8 @@ function buildShipEmbed(memberA, memberB, percent, lang = 'pt') {
 function getSelectedUsers(source) {
   if (source.options) {
     return [
-      source.options.getUser('pessoa1') || source.options.getUser('person1'),
-      source.options.getUser('pessoa2') || source.options.getUser('person2'),
+      source.options.getUser('person1') || source.options.getUser('pessoa1'),
+      source.options.getUser('person2') || source.options.getUser('pessoa2'),
     ].filter(Boolean);
   }
   return [...source.mentions.users.values()];
@@ -192,7 +192,7 @@ module.exports = {
     })
     .addUserOption((option) =>
       option
-        .setName('pessoa1')
+        .setName('person1')
         .setNameLocalizations({
           'en-US': 'person1',
           'en-GB': 'person1',
@@ -206,7 +206,7 @@ module.exports = {
     )
     .addUserOption((option) =>
       option
-        .setName('pessoa2')
+        .setName('person2')
         .setNameLocalizations({
           'en-US': 'person2',
           'en-GB': 'person2',

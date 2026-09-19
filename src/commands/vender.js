@@ -55,7 +55,7 @@ module.exports = {
     )
     .addIntegerOption((opt) =>
       opt
-        .setName('quantidade')
+        .setName('amount')
         .setNameLocalizations({
           'en-US': 'amount',
           'en-GB': 'amount',
@@ -80,7 +80,7 @@ module.exports = {
   },
   async executeSlash({ interaction }) {
     const itemId = interaction.options.getString('item');
-    const amount = interaction.options.getInteger('quantidade') || interaction.options.getInteger('amount') || 1;
+    const amount = interaction.options.getInteger('amount') || interaction.options.getInteger('quantidade') || 1;
     await interaction.editReply(buildReply(sellItem(interaction.user.id, itemId, amount), interaction));
   },
 };

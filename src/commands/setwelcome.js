@@ -15,7 +15,7 @@ module.exports = {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addChannelOption((option) =>
       option
-        .setName('canal')
+        .setName('channel')
         .setNameLocalizations({
           'en-US': 'channel',
           'en-GB': 'channel',
@@ -50,7 +50,7 @@ module.exports = {
       return;
     }
 
-    const channel = interaction.options.getChannel('canal') || interaction.options.getChannel('channel');
+    const channel = interaction.options.getChannel('channel') || interaction.options.getChannel('canal');
 
     if (!channel || !channel.isTextBased()) {
       await interaction.editReply({ content: t('admin.welcomeNeedChannel', interaction) });

@@ -19,7 +19,7 @@ const MARRIAGE_COST = 1000;
 const BUTTON_PREFIX = `${MARRIAGE}:`;
 
 function getTargetUser(source) {
-  return source.options?.getUser('usuario') || source.options?.getUser('user') || source.mentions?.users?.first();
+  return source.options?.getUser('user') || source.options?.getUser('usuario') || source.mentions?.users?.first();
 }
 
 function buildButtons(requestId, source = null) {
@@ -124,7 +124,7 @@ module.exports = {
     })
     .addUserOption((option) =>
       option
-        .setName('usuario')
+        .setName('user')
         .setNameLocalizations({
           'en-US': 'user',
           'en-GB': 'user',

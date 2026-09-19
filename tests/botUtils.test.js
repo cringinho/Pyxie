@@ -74,6 +74,12 @@ try {
   setGuildLanguage('servidor-customizado', 'pt');
   assert.equal(getLanguage('servidor-customizado'), 'pt', 'Servidor customizado deve salvar idioma escolhido.');
 
+  assert.equal(
+    getLanguage({ guild: { id: 'servidor-sem-config' }, locale: 'pt-BR' }),
+    'en',
+    'Interação com locale pt-BR em servidor externo sem config DEVE retornar en.'
+  );
+
   assert.ok(t('vote.title', 'pt').includes('Vote na Pyxie'), 'Tradução pt deve funcionar');
   assert.ok(t('vote.title', 'en').includes('Vote for Pyxie'), 'Tradução en deve funcionar');
   assert.ok(getCanvasStrings('pt').ship.person1);

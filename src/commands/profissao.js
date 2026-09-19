@@ -49,7 +49,7 @@ module.exports = {
     })
     .addStringOption((option) =>
       option
-        .setName('profissao')
+        .setName('profession')
         .setNameLocalizations({
           'en-US': 'profession',
           'en-GB': 'profession',
@@ -66,7 +66,7 @@ module.exports = {
     await execute(message, (content) => message.reply(content), args[0]);
   },
   async executeSlash({ interaction }) {
-    const chosen = interaction.options.getString('profissao') || interaction.options.getString('profession');
+    const chosen = interaction.options.getString('profession') || interaction.options.getString('profissao');
     await execute(interaction, (content) => interaction.editReply(content), chosen);
   },
 };

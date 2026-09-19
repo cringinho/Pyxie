@@ -33,7 +33,7 @@ const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { getLanguage, t } = require('../utils/i18n');
 
 function getTargetUser(source) {
-  return source.options?.getUser('usuario') || source.options?.getUser('user') || source.user || source.author;
+  return source.options?.getUser('user') || source.options?.getUser('usuario') || source.user || source.author;
 }
 
 function buildProfileView(targetUser, viewerId, source = null) {
@@ -450,7 +450,7 @@ module.exports = {
     })
     .addUserOption((option) =>
       option
-        .setName('usuario')
+        .setName('user')
         .setNameLocalizations({
           'en-US': 'user',
           'en-GB': 'user',

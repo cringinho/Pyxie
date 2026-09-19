@@ -36,6 +36,6 @@ module.exports = {
   COINFLIP: 'py-coinflip',
   ADMIN: 'py-admin',
   EXPLORE: 'py-explore',
-  GRIMOIRE: 'py-grimorio',
+  GRIMOIRE: 'py-grimoire',
 };
 

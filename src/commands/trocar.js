@@ -124,7 +124,7 @@ module.exports = {
     })
     .addUserOption((opt) =>
       opt
-        .setName('usuario')
+        .setName('user')
         .setNameLocalizations({
           'en-US': 'user',
           'en-GB': 'user',
@@ -138,7 +138,7 @@ module.exports = {
     )
     .addStringOption((opt) =>
       opt
-        .setName('tipo')
+        .setName('type')
         .setNameLocalizations({
           'en-US': 'type',
           'en-GB': 'type',
@@ -150,13 +150,13 @@ module.exports = {
         })
         .setRequired(true)
         .addChoices(
-          { name: '📦 Item do Inventário', value: 'item' },
-          { name: '💰 Moedinhas', value: 'coins' }
+          { name: '📦 Inventory Item', nameLocalizations: { 'pt-BR': '📦 Item do Inventário' }, value: 'item' },
+          { name: '💰 Coins', nameLocalizations: { 'pt-BR': '💰 Moedinhas' }, value: 'coins' }
         )
     )
     .addStringOption((opt) =>
       opt
-        .setName('identificador')
+        .setName('identifier')
         .setNameLocalizations({
           'en-US': 'identifier',
           'en-GB': 'identifier',
@@ -170,7 +170,7 @@ module.exports = {
     )
     .addIntegerOption((opt) =>
       opt
-        .setName('quantidade')
+        .setName('amount')
         .setNameLocalizations({
           'en-US': 'amount',
           'en-GB': 'amount',
@@ -183,10 +183,10 @@ module.exports = {
         .setRequired(false)
     ),
   async executeSlash({ interaction }) {
-    const target = interaction.options.getUser('usuario') || interaction.options.getUser('user');
-    const tipo = interaction.options.getString('tipo') || interaction.options.getString('type');
-    const id = interaction.options.getString('identificador') || interaction.options.getString('identifier') || '';
-    const amount = interaction.options.getInteger('quantidade') || interaction.options.getInteger('amount') || 1;
+    const target = interaction.options.getUser('user') || interaction.options.getUser('usuario');
+    const tipo = interaction.options.getString('type') || interaction.options.getString('tipo');
+    const id = interaction.options.getString('identifier') || interaction.options.getString('identificador') || '';
+    const amount = interaction.options.getInteger('amount') || interaction.options.getInteger('quantidade') || 1;
 
     const offer = { type: tipo, id, amount };
 

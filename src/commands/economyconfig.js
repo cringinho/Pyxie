@@ -38,7 +38,7 @@ module.exports = {
     .setDefaultMemberPermissions(0n)
     .addIntegerOption((option) =>
       option
-        .setName('minimo')
+        .setName('minimum')
         .setNameLocalizations({
           'en-US': 'minimum',
           'en-GB': 'minimum',
@@ -53,7 +53,7 @@ module.exports = {
     )
     .addIntegerOption((option) =>
       option
-        .setName('maximo')
+        .setName('maximum')
         .setNameLocalizations({
           'en-US': 'maximum',
           'en-GB': 'maximum',
@@ -78,8 +78,8 @@ module.exports = {
     if (!isOwner(interaction)) {
       return interaction.editReply(t('admin.onlyOwner', interaction, { owner: `<@${OWNER_SNOWFLAKE}>` }));
     }
-    const minVal = interaction.options.getInteger('minimo') ?? interaction.options.getInteger('minimum');
-    const maxVal = interaction.options.getInteger('maximo') ?? interaction.options.getInteger('maximum');
+    const minVal = interaction.options.getInteger('minimum') ?? interaction.options.getInteger('minimo');
+    const maxVal = interaction.options.getInteger('maximum') ?? interaction.options.getInteger('maximo');
     const values = parseValues(minVal, maxVal);
     if (!values) return interaction.editReply(t('admin.economyConfigInvalid', interaction));
     await interaction.editReply(buildReply(setEconomyConfig(values.minimum, values.maximum), interaction));
