@@ -518,14 +518,15 @@ const TRANSLATIONS = {
         "noTraces": "> *Nenhum rastro gravado aqui recentemente.*",
         "traceItem": "> ✍️ **{author}:** *\"{message}\"* {offering}",
         "offeringText": "(🎁 Deixou {coins} 👻!)",
-        "btnForage": "🔍 Farejar (1⚡)",
+        "btnForage": "🔍 Vasculhar (1⚡)",
         "btnGrimoire": "📖 Grimório ({count})",
         "btnTrace": "✍️ Deixar Rastro (15👻)",
         "btnBoss": "💀 Chefão da Penumbra",
         "btnMove": "Ir para {destination}",
-        "forageSuccessCoins": "✨ Você explorou as sombras e encontrou **+{coins} Phantom Coins 👻**!",
-        "forageSuccessItem": "📦 Você encontrou **1x {item}** escondido entre as pedras!",
+        "forageSuccessCoins": "✨ Você vasculhou as sombras e encontrou **+{coins} Phantom Coins 👻**!",
+        "forageSuccessItem": "📦 Você vasculhou os escombros e encontrou **1x {item}**!",
         "forageNoEnergy": "⏳ Você está esgotado pelas trevas! Energia recarrega em **{time}s** (máximo 10/hora).",
+        "roomBanned": "🚫 Os espíritos expulsaram você desta sala! Retorne em {time} min após recuperar a compostura.",
         "portalOpened": "🌀 **PORTAL MÍSTICO REVELADO!** Uma fenda dimensional abriu caminho para o **Jardim das Rosas de Vidro**!",
         "encounterAlert": "👻 **UMA APARIÇÃO SURGIU DAS SOMBRAS!**",
         "traceSuccess": "✅ Seu rastro de giz roxo foi gravado na pedra com sucesso!",
@@ -536,7 +537,8 @@ const TRANSLATIONS = {
           "requires_key": "Porta trancada. Requer uma Chave Espectral para abrir.",
           "insufficient_exploration": "Caminho perigoso. Explore pelo menos 3 locais comuns antes de cruzar o abismo.",
           "requires_fairy": "Santuário protegido. Requer um familiar com afinidade de Fada equipado ou um portal místico aberto.",
-          "requires_boss": "Acesso negado. Requer ter participado do apaziguamento do Chefão Comunitário no ciclo atual."
+          "requires_boss": "Acesso negado. Requer ter participado do apaziguamento do Chefão Comunitário no ciclo atual.",
+          "banned": "Você está banido desta sala por insultar as entidades locais. Tempo restante: {time} min."
         }
       },
       "negotiate": {
@@ -546,7 +548,31 @@ const TRANSLATIONS = {
         "successWit": "🎉 **Pacto Fechado!** Você impressionou **{spirit}** com sua sagacidade e ganhou **+{coins} Phantom Coins 👻**!",
         "successBribe": "🤝 **Tributo Aceito!** Você pagou **{cost} Phantom Coins 👻** e **{spirit}** agora obedece ao seu chamado!",
         "failed": "💨 **A Aparição Desapareceu!** {spirit} zombou da sua resposta e sumiu na bruma roxa!",
+        "criticalFailure": "💀 **FALHA CRÍTICA!** As sombras foram insultadas pela sua resposta patética! Você foi expulso e banido de {location} por {time} minutos!",
         "alreadyOwned": "ℹ️ Você já possui este espírito no seu Grimório!"
+      },
+      "merchant": {
+        "title": "🛒  ✦  O Comerciante de Relíquias",
+        "desc": "Um contrabandista encapuzado emerge das sombras oferecendo relíquias raras por Phantom Coins 👻.",
+        "phantomCoins": "👻 **Seu Saldo:** `{coins} Phantom Coins`",
+        "stockHeader": "🏺 **RELÍQUIAS DISPONÍVEIS:**",
+        "buySuccess": "✨ Você adquiriu **{item}** por **{cost} Phantom Coins 👻**!",
+        "insufficientCoins": "❌ Você precisa de **{cost} Phantom Coins 👻** para comprar esta relíquia.",
+        "btnBuy": "Comprar {item} ({cost}👻)",
+        "btnBack": "⬅️ Voltar à Exploração"
+      },
+      "engineer": {
+        "title": "🛠️  ✦  O Engenheiro de Relíquias",
+        "desc": "Um artesão excêntrico com runas e solda violeta oferece fusão de relíquias por Phantom Coins 👻.",
+        "phantomCoins": "👻 **Seu Saldo:** `{coins} Phantom Coins`",
+        "recipesHeader": "⚗️ **BANCADA DE FUSÃO RÚNICA:**",
+        "recipeLine": "> 🔹 **Tier {tier} ➔ Tier {nextTier}:** 2x Relíquias T{tier} + {cost}👻 (Sucesso: {rate}%)",
+        "success": "🔮 **Aprimoramento Perfeito!** As relíquias se fundiram com sucesso em **{item}** (Tier {tier})!",
+        "failure": "💥 **DESASTRE NA FORJA!** {quote}\nAs 2 relíquias sacrificadas foram destruídas para sempre!",
+        "insufficientMaterials": "❌ Você precisa de pelo menos 2x relíquias de Tier {tier} para aprimorar.",
+        "insufficientCoins": "❌ O serviço do engenheiro custa **{cost} Phantom Coins 👻**.",
+        "btnUpgrade": "Fundir 2x T{tier} ({cost}👻)",
+        "btnBack": "⬅️ Voltar à Exploração"
       },
       "grimoire": {
         "title": "📖  ✦  Grimório de Sombras — {user}",
@@ -945,7 +971,7 @@ const TRANSLATIONS = {
         "noTraces": "> *No traces have been carved here recently.*",
         "traceItem": "> ✍️ **{author}:** *\"{message}\"* {offering}",
         "offeringText": "(🎁 Left {coins} 👻!)",
-        "btnForage": "🔍 Forage (1⚡)",
+        "btnForage": "🔍 Scavenge (1⚡)",
         "btnGrimoire": "📖 Grimoire ({count})",
         "btnTrace": "✍️ Leave Trace (15👻)",
         "btnBoss": "💀 Gloom Behemoth",
@@ -953,6 +979,7 @@ const TRANSLATIONS = {
         "forageSuccessCoins": "✨ You searched the shadows and found **+{coins} Phantom Coins 👻**!",
         "forageSuccessItem": "📦 You discovered **1x {item}** hidden beneath the stones!",
         "forageNoEnergy": "⏳ You are exhausted by the shadows! Energy recovers in **{time}s** (max 10/hour).",
+        "roomBanned": "🚫 The spirits expelled you from this room! Return in {time} min after regaining your composure.",
         "portalOpened": "🌀 **MYSTIC PORTAL REVEALED!** A dimensional rift opened the path to the **Glass Rose Garden**!",
         "encounterAlert": "👻 **AN APPARITION EMERGED FROM THE SHADOWS!**",
         "traceSuccess": "✅ Your purple chalk trace was permanently etched into the stone!",
@@ -963,7 +990,8 @@ const TRANSLATIONS = {
           "requires_key": "Door locked. Requires a Spectral Key to unlock.",
           "insufficient_exploration": "Dangerous path. Explore at least 3 common areas before daring to cross the void.",
           "requires_fairy": "Protected sanctuary. Requires an equipped Fairy familiar or an active mystic portal.",
-          "requires_boss": "Access denied. Requires participation in the Community Boss pacification this cycle."
+          "requires_boss": "Access denied. Requires participation in the Community Boss pacification this cycle.",
+          "banned": "You are barred from this room for insulting local entities. Remaining time: {time} min."
         }
       },
       "negotiate": {
@@ -973,7 +1001,31 @@ const TRANSLATIONS = {
         "successWit": "🎉 **Pact Formed!** You impressed **{spirit}** with your wit and earned **+{coins} Phantom Coins 👻**!",
         "successBribe": "🤝 **Tribute Accepted!** You paid **{cost} Phantom Coins 👻** and **{spirit}** now obeys your call!",
         "failed": "💨 **The Apparition Vanished!** {spirit} mocked your reply and dissolved into purple mist!",
+        "criticalFailure": "💀 **CRITICAL FAILURE!** The shadows were insulted by your pathetic response! You were cast out and barred from {location} for {time} minutes!",
         "alreadyOwned": "ℹ️ You already have this spirit bound in your Grimoire!"
+      },
+      "merchant": {
+        "title": "🛒  ✦  The Relic Merchant",
+        "desc": "A hooded smuggler emerges from the shadows offering rare relics for Phantom Coins 👻.",
+        "phantomCoins": "👻 **Your Balance:** `{coins} Phantom Coins`",
+        "stockHeader": "🏺 **AVAILABLE RELICS:**",
+        "buySuccess": "✨ You purchased **{item}** for **{cost} Phantom Coins 👻**!",
+        "insufficientCoins": "❌ You need **{cost} Phantom Coins 👻** to buy this relic.",
+        "btnBuy": "Buy {item} ({cost}👻)",
+        "btnBack": "⬅️ Back to Exploration"
+      },
+      "engineer": {
+        "title": "🛠️  ✦  The Relic Engineer",
+        "desc": "An eccentric craftsman with runes and violet solder offers relic fusion for Phantom Coins 👻.",
+        "phantomCoins": "👻 **Your Balance:** `{coins} Phantom Coins`",
+        "recipesHeader": "⚗️ **RUNIC FUSION WORKBENCH:**",
+        "recipeLine": "> 🔹 **Tier {tier} ➔ Tier {nextTier}:** 2x Relics T{tier} + {cost}👻 (Success: {rate}%)",
+        "success": "🔮 **Flawless Upgrade!** The relics successfully fused into **{item}** (Tier {tier})!",
+        "failure": "💥 **FORGE DISASTER!** {quote}\nThe 2 sacrificed relics were permanently destroyed!",
+        "insufficientMaterials": "❌ You need at least 2x Tier {tier} relics to upgrade.",
+        "insufficientCoins": "❌ The engineer's service costs **{cost} Phantom Coins 👻**.",
+        "btnUpgrade": "Fuse 2x T{tier} ({cost}👻)",
+        "btnBack": "⬅️ Back to Exploration"
       },
       "grimoire": {
         "title": "📖  ✦  Gloom Grimoire — {user}",

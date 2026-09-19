@@ -14,6 +14,7 @@ const TIDE_CYCLE_MS = 6 * 60 * 60 * 1000; // 6 horas
 const LOCATIONS = {
   portao_penumbra: {
     id: 'portao_penumbra',
+    tier: 1,
     rarity: 'common',
     name: { pt: 'Portão das Fadas Decaídas', en: 'Gates of the Fallen' },
     desc: {
@@ -31,6 +32,7 @@ const LOCATIONS = {
   },
   cemiterio_espinhos: {
     id: 'cemiterio_espinhos',
+    tier: 1,
     rarity: 'common',
     name: { pt: 'Cemitério dos Cravos Roxos', en: 'Thorn Graveyard' },
     desc: {
@@ -49,6 +51,7 @@ const LOCATIONS = {
   },
   floresta_sussurros: {
     id: 'floresta_sussurros',
+    tier: 1,
     rarity: 'common',
     name: { pt: 'Floresta dos Sussurros', en: 'Whispering Woods' },
     desc: {
@@ -66,6 +69,7 @@ const LOCATIONS = {
   },
   pantano_lagrimas: {
     id: 'pantano_lagrimas',
+    tier: 1,
     rarity: 'common',
     name: { pt: 'Pântano das Lágrimas Secas', en: 'Swamp of Dry Tears' },
     desc: {
@@ -83,6 +87,7 @@ const LOCATIONS = {
   },
   mausoleu_ancestral: {
     id: 'mausoleu_ancestral',
+    tier: 3,
     rarity: 'common',
     name: { pt: 'Mausoléu da Melancolia', en: 'Mausoleum of Melancholy' },
     desc: {
@@ -100,6 +105,7 @@ const LOCATIONS = {
   },
   biblioteca_esquecida: {
     id: 'biblioteca_esquecida',
+    tier: 3,
     rarity: 'uncommon',
     name: { pt: 'Biblioteca dos Manuscritos', en: 'Forgotten Archives' },
     desc: {
@@ -119,6 +125,7 @@ const LOCATIONS = {
   },
   ponte_abismo: {
     id: 'ponte_abismo',
+    tier: 3,
     rarity: 'uncommon',
     name: { pt: 'Ponte dos Suspiros', en: 'Bridge of Sighs' },
     desc: {
@@ -137,6 +144,7 @@ const LOCATIONS = {
   },
   catacumba_sangue_roxo: {
     id: 'catacumba_sangue_roxo',
+    tier: 4,
     rarity: 'rare',
     name: { pt: 'Catacumbas do Sangue Púrpura', en: 'Purple Blood Catacombs' },
     desc: {
@@ -156,6 +164,7 @@ const LOCATIONS = {
   },
   jardim_fadas_negras: {
     id: 'jardim_fadas_negras',
+    tier: 4,
     rarity: 'rare',
     name: { pt: 'Jardim das Rosas de Vidro', en: 'Glass Rose Garden' },
     desc: {
@@ -175,6 +184,7 @@ const LOCATIONS = {
   },
   santuario_touca_preta: {
     id: 'santuario_touca_preta',
+    tier: 5,
     rarity: 'legendary',
     name: { pt: 'Santuário Secreto de Pyxie', en: 'Pyxie\'s Obsidian Haven' },
     desc: {
@@ -208,9 +218,9 @@ const SPIRITS = {
         en: 'Existence is a heavy burden... Do you also feel everything is meaningless or are you just bored?',
       },
       choices: [
-        { id: 'c1', label: { pt: '🖤 O vazio cósmico dói, mas me acostumei', en: '🖤 The cosmic void aches, but I got used to it' }, success: true },
-        { id: 'c2', label: { pt: '🎧 Prefiro colocar um som e esquecer', en: '🎧 I rather put headphones on and forget' }, success: true },
-        { id: 'c3', label: { pt: '💀 Para de drama e passa suas moedas', en: '💀 Stop the drama and hand over coins' }, success: false },
+        { id: 'c1', label: { pt: '🖤 O vazio cósmico dói, mas me acostumei', en: '🖤 The cosmic void aches, but I got used to it' }, success: true, score: 1 },
+        { id: 'c2', label: { pt: '🎧 Prefiro colocar um som e esquecer', en: '🎧 I rather put headphones on and forget' }, success: true, score: 1 },
+        { id: 'c3', label: { pt: '💀 Para de drama e passa suas moedas', en: '💀 Stop the drama and hand over coins' }, success: false, score: -2, criticalFailure: true },
       ],
       bribeCost: 15,
     },
@@ -233,9 +243,9 @@ const SPIRITS = {
         en: 'I could attack you right now... but pretending to be stone is so much easier. What if we just do nothing today?',
       },
       choices: [
-        { id: 'c1', label: { pt: '🪨 Apoio totalmente, deitar e procrastinar', en: '🪨 Fully support that, lay down and procrastinate' }, success: true },
-        { id: 'c2', label: { pt: '☕ Uma pausa rápida antes de continuar', en: '☕ Just a quick break before continuing' }, success: true },
-        { id: 'c3', label: { pt: '⚡ Levanta daí e vai trabalhar!', en: '⚡ Get up from there and do some work!' }, success: false },
+        { id: 'c1', label: { pt: '🪨 Apoio totalmente, deitar e procrastinar', en: '🪨 Fully support that, lay down and procrastinate' }, success: true, score: 1 },
+        { id: 'c2', label: { pt: '☕ Uma pausa rápida antes de continuar', en: '☕ Just a quick break before continuing' }, success: true, score: 1 },
+        { id: 'c3', label: { pt: '⚡ Levanta daí e vai trabalhar!', en: '⚡ Get up from there and do some work!' }, success: false, score: -2, criticalFailure: true },
       ],
       bribeCost: 15,
     },
@@ -559,6 +569,267 @@ const FUSION_RECIPES = [
   { a: 'cavaleiro_nevoa', b: 'quimera_madrugada', result: 'fenix_cinzas' },
 ];
 
+// 3.1 Durabilidade e Tempos de Banimento por Tier de Sala (Falha Crítica -2)
+const ROOM_BAN_DURATIONS_MS = {
+  1: 30 * 60 * 1000, // 30 minutos
+  2: 60 * 60 * 1000, // 1 hora
+  3: 120 * 60 * 1000, // 2 horas
+  4: 180 * 60 * 1000, // 3 horas
+  5: 240 * 60 * 1000, // 4 horas
+};
+
+// 3.2 Catálogo de Relíquias Místicas (Tiers 1 a 5)
+const RELICS = {
+  amuleto_osso: {
+    id: 'amuleto_osso',
+    tier: 1,
+    name: { pt: 'Amuleto de Osso Quebrado', en: 'Cracked Bone Amulet' },
+    desc: { pt: 'Um pequeno amuleto rústico entalhado em osso de corvo.', en: 'A small rustic amulet carved from raven bone.' },
+    cost: 30,
+  },
+  pedra_lunar_opaca: {
+    id: 'pedra_lunar_opaca',
+    tier: 1,
+    name: { pt: 'Pedra Lunar Opaca', en: 'Dull Moonstone' },
+    desc: { pt: 'Pedra opaca que reflete fracamente a luz violeta.', en: 'An opaque stone faintly reflecting violet light.' },
+    cost: 35,
+  },
+  relogio_quebrado: {
+    id: 'relogio_quebrado',
+    tier: 2,
+    name: { pt: 'Relógio de Bolso Parado', en: 'Frozen Pocketwatch' },
+    desc: { pt: 'Os ponteiros congelaram para sempre na hora do crepúsculo.', en: 'The clock hands froze forever at twilight hour.' },
+    cost: 75,
+  },
+  pingente_obsidiana: {
+    id: 'pingente_obsidiana',
+    tier: 2,
+    name: { pt: 'Pingente de Obsidiana', en: 'Obsidian Pendant' },
+    desc: { pt: 'Cristal polido com emanações de calma melancólica.', en: 'Polished crystal pulsing with calm melancholy.' },
+    cost: 85,
+  },
+  calice_lagrimas: {
+    id: 'calice_lagrimas',
+    tier: 3,
+    name: { pt: 'Cálice de Lágrimas Roxas', en: 'Chalice of Purple Tears' },
+    desc: { pt: 'Taça de prata envelhecida banhada em essência espectral.', en: 'Aged silver chalice washed in spectral essence.' },
+    cost: 160,
+  },
+  orbe_crepusculo: {
+    id: 'orbe_crepusculo',
+    tier: 3,
+    name: { pt: 'Orbe do Crepúsculo', en: 'Twilight Orb' },
+    desc: { pt: 'Esfera vítrea contendo névoa viva em rotação hipnótica.', en: 'Glassy sphere encapsulating living rotating mist.' },
+    cost: 180,
+  },
+  coroa_espinhos_sombria: {
+    id: 'coroa_espinhos_sombria',
+    tier: 4,
+    name: { pt: 'Coroa de Espinhos da Meia-Noite', en: 'Midnight Thorn Crown' },
+    desc: { pt: 'Diadema forjado com espinhos etéreos e magia proibida.', en: 'Diadem wrought with ethereal thorns and forbidden magic.' },
+    cost: 350,
+  },
+  espelho_almas: {
+    id: 'espelho_almas',
+    tier: 4,
+    name: { pt: 'Espelho das Almas Esquecidas', en: 'Mirror of Forgotten Souls' },
+    desc: { pt: 'Reflete sombras do passado com brilho púrpura.', en: 'Reflects shadows of the past with purple radiance.' },
+    cost: 400,
+  },
+  lagrima_deusa_touca: {
+    id: 'lagrima_deusa_touca',
+    tier: 5,
+    name: { pt: 'Lágrima Eterna da Fadinha Emo', en: 'Eternal Tear of the Emo Fairy' },
+    desc: { pt: 'A mais pura cristalização do sentimento cósmico gótico. O ápice do Bosque.', en: 'Pure crystallization of gothic emotion. Apex of the Grove.' },
+    cost: 800,
+  },
+};
+
+const ENGINEER_RECIPES = {
+  1: { cost: 25, successRate: 1.0, targetTier: 2 },
+  2: { cost: 50, successRate: 1.0, targetTier: 3 },
+  3: { cost: 100, successRate: 0.75, targetTier: 4 },
+  4: { cost: 200, successRate: 0.50, targetTier: 5 },
+};
+
+const ENGINEER_SARCASTIC_QUOTES = {
+  pt: [
+    'Puff! Virou cinzas roxas. Parabéns, você conseguiu estragar relíquias ancestrais com maestria.',
+    'Ops! A solda rúnica colapsou e seus materiais evaporaram no éter. Que desastre fascinante!',
+    'Minha bancada agradece o espetáculo pirotécnico... suas relíquias, no entanto, viraram fumaça.',
+  ],
+  en: [
+    'Poof! Turned into purple ashes. Congratulations, you masterfully ruined ancient relics.',
+    'Oops! The runic solder collapsed and your materials evaporated into the ether. What a fascinating disaster!',
+    'My workbench appreciates the pyrotechnics... your relics, however, are now smoke.',
+  ],
+};
+
+function isLocationBanned(user, locationId) {
+  if (!user || !user.roomBans || !user.roomBans[locationId]) {
+    return { banned: false, remainingMs: 0, remainingSec: 0, remainingMinutes: 0 };
+  }
+  const now = Date.now();
+  const expiresAt = user.roomBans[locationId];
+  if (expiresAt > now) {
+    const remainingMs = expiresAt - now;
+    const remainingSec = Math.ceil(remainingMs / 1000);
+    const remainingMinutes = Math.max(1, Math.ceil(remainingMs / 60000));
+    return { banned: true, remainingMs, remainingSec, remainingMinutes };
+  }
+  return { banned: false, remainingMs: 0, remainingSec: 0, remainingMinutes: 0 };
+}
+
+function banUserFromLocation(userId, locationId) {
+  const user = getGloomUser(userId);
+  const loc = LOCATIONS[locationId] || LOCATIONS.portao_penumbra;
+  const tier = loc.tier || 1;
+  const durationMs = ROOM_BAN_DURATIONS_MS[tier] || ROOM_BAN_DURATIONS_MS[1];
+  const expiresAt = Date.now() + durationMs;
+
+  user.roomBans = user.roomBans || {};
+  user.roomBans[locationId] = expiresAt;
+
+  let ejectedLocation = user.currentLocation;
+  if (user.currentLocation === locationId) {
+    user.currentLocation = 'portao_penumbra';
+    ejectedLocation = 'portao_penumbra';
+  }
+
+  updateGloomUser(userId, user);
+  return {
+    banned: true,
+    locationId,
+    tier,
+    durationMs,
+    remainingMinutes: Math.round(durationMs / 60000),
+    ejectedLocation,
+  };
+}
+
+function generateMerchantStock() {
+  const allRelics = Object.values(RELICS);
+  const getWeight = (r) => {
+    if (r.tier === 1) return 50;
+    if (r.tier === 2) return 30;
+    if (r.tier === 3) return 15;
+    if (r.tier === 4) return 4;
+    return 1;
+  };
+
+  const selected = [];
+  const candidates = [...allRelics];
+
+  while (selected.length < 3 && candidates.length > 0) {
+    const totalWeight = candidates.reduce((sum, r) => sum + getWeight(r), 0);
+    let roll = Math.random() * totalWeight;
+    let chosenIndex = 0;
+    for (let i = 0; i < candidates.length; i++) {
+      const w = getWeight(candidates[i]);
+      if (roll < w) {
+        chosenIndex = i;
+        break;
+      }
+      roll -= w;
+    }
+    selected.push(candidates[chosenIndex]);
+    candidates.splice(chosenIndex, 1);
+  }
+  return selected;
+}
+
+function buyMerchantRelic(userId, relicId) {
+  const user = getGloomUser(userId);
+  const relic = RELICS[relicId];
+  if (!relic) return { success: false, reason: 'invalid_relic' };
+
+  if (user.phantomCoins < relic.cost) {
+    return { success: false, reason: 'insufficient_coins', cost: relic.cost };
+  }
+
+  user.phantomCoins -= relic.cost;
+  user.inventory = user.inventory || {};
+  user.inventory[relicId] = (user.inventory[relicId] || 0) + 1;
+
+  updateGloomUser(userId, user);
+  return {
+    success: true,
+    relic,
+    remainingCoins: user.phantomCoins,
+  };
+}
+
+function upgradeRelicsWithEngineer(userId, sourceTier, forceRoll = null, lang = 'pt') {
+  const user = getGloomUser(userId);
+  const recipe = ENGINEER_RECIPES[sourceTier];
+  if (!recipe) return { success: false, reason: 'invalid_tier' };
+
+  if (user.phantomCoins < recipe.cost) {
+    return { success: false, reason: 'insufficient_coins', cost: recipe.cost };
+  }
+
+  user.inventory = user.inventory || {};
+  const matchingRelics = Object.entries(user.inventory).filter(([itemId, count]) => {
+    return count > 0 && RELICS[itemId] && RELICS[itemId].tier === sourceTier;
+  });
+
+  const totalMatching = matchingRelics.reduce((sum, [, count]) => sum + count, 0);
+  if (totalMatching < 2) {
+    return { success: false, reason: 'insufficient_materials', tier: sourceTier };
+  }
+
+  let toRemove = 2;
+  const consumed = [];
+  for (const [itemId] of matchingRelics) {
+    while (user.inventory[itemId] > 0 && toRemove > 0) {
+      user.inventory[itemId] -= 1;
+      consumed.push(itemId);
+      toRemove -= 1;
+      if (user.inventory[itemId] <= 0) {
+        delete user.inventory[itemId];
+      }
+    }
+    if (toRemove === 0) break;
+  }
+
+  user.phantomCoins -= recipe.cost;
+  const isSuccess = forceRoll !== null ? forceRoll : Math.random() < recipe.successRate;
+
+  if (!isSuccess) {
+    updateGloomUser(userId, user);
+    const quotes = ENGINEER_SARCASTIC_QUOTES[lang] || ENGINEER_SARCASTIC_QUOTES.pt;
+    const sarcasticQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    return {
+      success: true,
+      upgraded: false,
+      destroyed: true,
+      cost: recipe.cost,
+      sourceTier,
+      remainingCoins: user.phantomCoins,
+      consumed,
+      sarcasticQuote,
+    };
+  }
+
+  const targetRelics = Object.values(RELICS).filter((r) => r.tier === recipe.targetTier);
+  const targetRelic = targetRelics[Math.floor(Math.random() * targetRelics.length)] || targetRelics[0];
+
+  user.inventory[targetRelic.id] = (user.inventory[targetRelic.id] || 0) + 1;
+  updateGloomUser(userId, user);
+
+  return {
+    success: true,
+    upgraded: true,
+    destroyed: false,
+    cost: recipe.cost,
+    sourceTier,
+    targetTier: recipe.targetTier,
+    targetRelic,
+    remainingCoins: user.phantomCoins,
+    consumed,
+  };
+}
+
 let gloomCache = null;
 
 function ensureGloomStorage() {
@@ -700,10 +971,18 @@ class GloomGraph {
         reason = 'requires_boss';
       }
 
+      // Condição de Banimento de Sala (Falha Crítica em Negociação)
+      const banInfo = isLocationBanned(user, neighborId);
+      if (banInfo.banned) {
+        canEnter = false;
+        reason = 'banned';
+      }
+
       available.push({
         location: nLoc,
         canEnter,
         reason,
+        banRemainingMinutes: banInfo.remainingMinutes,
       });
     }
 
@@ -769,6 +1048,7 @@ function getGloomUser(userId) {
         cravo_negro: 2,
         lagrima_emo: 1,
       },
+      roomBans: {}, // locationId -> expiresAt timestamp
       visitedLocations: ['portao_penumbra'],
       totalForaged: 0,
       negotiationsWon: 0,
@@ -778,6 +1058,7 @@ function getGloomUser(userId) {
   }
 
   const user = data.users[userId];
+  user.roomBans = user.roomBans || {};
 
   // Recarga de Energia a cada 6 minutos
   if (user.energy < MAX_ENERGY) {
@@ -806,11 +1087,21 @@ function updateGloomUser(userId, changes) {
   return data.users[userId];
 }
 
-// 7. Forrageamento nos Cenários
+// 7. Vasculhar / Forrageamento nos Cenários
 function forage(userId, locationId) {
   const user = getGloomUser(userId);
   const location = LOCATIONS[locationId] || LOCATIONS.portao_penumbra;
   const tide = getGloomTide();
+
+  // 1. Verificar se a sala atual possui banimento temporário por falha crítica
+  const banInfo = isLocationBanned(user, location.id);
+  if (banInfo.banned) {
+    return {
+      success: false,
+      reason: 'room_banned',
+      banRemainingMinutes: banInfo.remainingMinutes,
+    };
+  }
 
   if (user.energy <= 0) {
     const nextRegenSec = Math.ceil((ENERGY_REGEN_MS - (Date.now() - (user.lastEnergyUpdate || Date.now()))) / 1000);
@@ -827,6 +1118,22 @@ function forage(userId, locationId) {
   });
 
   const nextEnergy = saveEnergy ? user.energy : user.energy - 1;
+
+  // 2. Chance de Evento Raro de Exploração (4% de chance: Comerciante ou Engenheiro de Relíquias)
+  let rareEvent = null;
+  if (Math.random() < 0.04) {
+    const isMerchant = Math.random() < 0.5;
+    if (isMerchant) {
+      rareEvent = {
+        type: 'relic_merchant',
+        stock: generateMerchantStock(),
+      };
+    } else {
+      rareEvent = {
+        type: 'relic_engineer',
+      };
+    }
+  }
 
   // Cálculo de Loot
   let totalWeight = location.loot.reduce((sum, item) => sum + item.weight, 0);
@@ -872,7 +1179,7 @@ function forage(userId, locationId) {
 
   // Chance de encontro com espírito (35% de chance)
   let encounteredSpirit = null;
-  if (Math.random() < 0.35 && location.spirits?.length) {
+  if (!rareEvent && Math.random() < 0.35 && location.spirits?.length) {
     const spiritId = location.spirits[Math.floor(Math.random() * location.spirits.length)];
     encounteredSpirit = SPIRITS[spiritId];
   }
@@ -894,6 +1201,7 @@ function forage(userId, locationId) {
     rewardItem,
     encounteredSpirit,
     openedRarePortal,
+    rareEvent,
     phantomCoins: user.phantomCoins,
   };
 }
@@ -953,11 +1261,24 @@ function negotiateSpirit(userId, spiritId, choiceId, usedBribe = false) {
       method: 'wit',
     };
   } else {
+    // Verificar se é falha crítica (score: -2 ou criticalFailure: true)
+    const isCritical = choice.criticalFailure === true || choice.score === -2;
+    let banDetails = null;
+
+    if (isCritical) {
+      banDetails = banUserFromLocation(userId, user.currentLocation);
+    }
+
     return {
       success: true,
       recruited: false,
       spirit,
       escaped: true,
+      criticalFailure: isCritical,
+      roomBanned: isCritical,
+      bannedLocation: isCritical ? banDetails?.locationId : null,
+      banDurationMinutes: isCritical ? banDetails?.remainingMinutes : 0,
+      ejectedTo: isCritical ? banDetails?.ejectedLocation : null,
     };
   }
 }
@@ -1187,11 +1508,21 @@ module.exports = {
   LOCATIONS,
   SPIRITS,
   FUSION_RECIPES,
+  RELICS,
+  ENGINEER_RECIPES,
+  ROOM_BAN_DURATIONS_MS,
   gloomGraph,
   getGloomTide,
   getGloomUser,
   updateGloomUser,
   forage,
+  scavengeLocation: forage,
+  scavenge: forage,
+  isLocationBanned,
+  banUserFromLocation,
+  generateMerchantStock,
+  buyMerchantRelic,
+  upgradeRelicsWithEngineer,
   negotiateSpirit,
   fuseSpirits,
   equipFamiliar,

@@ -5,11 +5,20 @@ const {
   LOCATIONS,
   SPIRITS,
   FUSION_RECIPES,
+  RELICS,
+  ENGINEER_RECIPES,
+  ROOM_BAN_DURATIONS_MS,
   gloomGraph,
   getGloomTide,
   getGloomUser,
   updateGloomUser,
   forage,
+  scavengeLocation,
+  isLocationBanned,
+  banUserFromLocation,
+  generateMerchantStock,
+  buyMerchantRelic,
+  upgradeRelicsWithEngineer,
   negotiateSpirit,
   fuseSpirits,
   equipFamiliar,
@@ -219,5 +228,118 @@ fs.writeFileSync(gloomPath, JSON.stringify(diskData, null, 2), 'utf8');
 const reloadedUser = getGloomUser(uidCache);
 assert.equal(reloadedUser.phantomCoins, 999, 'getGloomUser deve invalidar o cache em memória e recarregar dados novos do disco');
 console.log('✅ Invalidação de cache multi-processo em disco (mtimeMs) validada com sucesso.');
+
+// 10. Validação de Tiers de Sala (1 a 5) e Duração dos Banimentos (ROOM_BAN_DURATIONS_MS)
+for (const [locId, loc] of Object.entries(LOCATIONS)) {
+  assert([1, 2, 3, 4, 5].includes(loc.tier), `Cenário ${locId} deve possuir Tier entre 1 e 5 (possui: ${loc.tier})`);
+}
+assert.equal(LOCATIONS.portao_penumbra.tier, 1, 'Portão das Fadas Decaídas deve ser Tier 1');
+assert.equal(LOCATIONS.cemiterio_espinhos.tier, 1, 'Cemitério dos Cravos Roxos deve ser Tier 1');
+assert.equal(LOCATIONS.mausoleu_ancestral.tier, 3, 'Mausoléu da Melancolia deve ser Tier 3');
+assert.equal(LOCATIONS.biblioteca_esquecida.tier, 3, 'Biblioteca dos Manuscritos deve ser Tier 3');
+assert.equal(LOCATIONS.catacumba_sangue_roxo.tier, 4, 'Catacumbas do Sangue Púrpura deve ser Tier 4');
+assert.equal(LOCATIONS.jardim_fadas_negras.tier, 4, 'Jardim das Rosas de Vidro deve ser Tier 4');
+assert.equal(LOCATIONS.santuario_touca_preta.tier, 5, 'Santuário Secreto de Pyxie deve ser Tier 5');
+
+assert.equal(ROOM_BAN_DURATIONS_MS[1], 30 * 60 * 1000, 'Tier 1 deve ter banimento de 30 minutos');
+assert.equal(ROOM_BAN_DURATIONS_MS[2], 60 * 60 * 1000, 'Tier 2 deve ter banimento de 1 hora');
+assert.equal(ROOM_BAN_DURATIONS_MS[3], 120 * 60 * 1000, 'Tier 3 deve ter banimento de 2 horas');
+assert.equal(ROOM_BAN_DURATIONS_MS[4], 180 * 60 * 1000, 'Tier 4 deve ter banimento de 3 horas');
+assert.equal(ROOM_BAN_DURATIONS_MS[5], 240 * 60 * 1000, 'Tier 5 deve ter banimento de 4 horas');
+console.log('✅ Tiers de dificuldade das 10 salas e durações de banimento validados.');
+
+// 11. Teste de Falha Crítica na Negociação, Banimento de Sala e Ejeção
+const uidBan = `user_ban_${Date.now()}`;
+const userBan = getGloomUser(uidBan);
+userBan.currentLocation = 'cemiterio_espinhos';
+updateGloomUser(uidBan, userBan);
+
+// Escolha ofensiva (score: -2 / criticalFailure: true)
+const resCrit = negotiateSpirit(uidBan, 'gargula_procrastinador', 'c3');
+assert.equal(resCrit.success, true);
+assert.equal(resCrit.criticalFailure, true, 'Insulto deve gerar falha crítica');
+assert.equal(resCrit.roomBanned, true, 'Falha crítica deve acionar banimento da sala');
+assert.equal(resCrit.bannedLocation, 'cemiterio_espinhos', 'Local banido deve ser a sala atual');
+assert.equal(resCrit.banDurationMinutes, 30, 'Tier 1 deve ter 30 minutos de banimento');
+
+const userAfterCrit = getGloomUser(uidBan);
+assert.equal(userAfterCrit.currentLocation, 'portao_penumbra', 'Jogador expulso deve ser ejetado para o Portão');
+const banCheck = isLocationBanned(userAfterCrit, 'cemiterio_espinhos');
+assert.equal(banCheck.banned, true, 'isLocationBanned deve retornar true para sala banida');
+assert(banCheck.remainingMinutes > 0, 'Deve informar tempo restante');
+
+// Tentar vasculhar na sala banida deve ser bloqueado
+userAfterCrit.currentLocation = 'cemiterio_espinhos';
+updateGloomUser(uidBan, userAfterCrit);
+const resScavengeBanned = scavengeLocation(uidBan, 'cemiterio_espinhos');
+assert.equal(resScavengeBanned.success, false);
+assert.equal(resScavengeBanned.reason, 'room_banned', 'Vasculhar em sala banida deve falhar com reason room_banned');
+
+// Grafo deve marcar vizinho banido como canEnter: false e reason: 'banned'
+const neighborsOfPortao = gloomGraph.getAvailableNeighbors('portao_penumbra', userAfterCrit, getGloomTide());
+const thornNeighbor = neighborsOfPortao.find((n) => n.location.id === 'cemiterio_espinhos');
+assert.equal(thornNeighbor.canEnter, false, 'Cemitério dos Espinhos banido não pode ser acessível');
+assert.equal(thornNeighbor.reason, 'banned', 'Razão de bloqueio deve ser banned');
+console.log('✅ Falha crítica na negociação, banimento temporário por tier e ejeção validados.');
+
+// 12. Teste do Comerciante de Relíquias (Relic Merchant)
+const uidMerchant = `user_merch_${Date.now()}`;
+const userMerchant = getGloomUser(uidMerchant);
+userMerchant.phantomCoins = 500;
+updateGloomUser(uidMerchant, userMerchant);
+
+// Catálogo de relíquias T1 a T5
+const relicKeys = Object.keys(RELICS);
+assert(relicKeys.length >= 8, 'Devem existir pelo menos 8 relíquias cadastradas');
+for (const [rId, relic] of Object.entries(RELICS)) {
+  assert(relic.name.pt && relic.name.en, `Relíquia ${rId} deve ter nome bilíngue`);
+  assert(relic.desc.pt && relic.desc.en, `Relíquia ${rId} deve ter descrição bilíngue`);
+  assert([1, 2, 3, 4, 5].includes(relic.tier), `Relíquia ${rId} deve ter tier válido`);
+  assert(relic.cost > 0, `Relíquia ${rId} deve ter custo em Phantom Coins`);
+}
+
+// Geração de estoque dinâmico
+const stock = generateMerchantStock();
+assert.equal(stock.length, 3, 'Estoque do comerciante deve ter exatamente 3 itens');
+
+// Compra de relíquia
+const resBuy = buyMerchantRelic(uidMerchant, 'amuleto_osso');
+assert.equal(resBuy.success, true);
+assert.equal(resBuy.relic.id, 'amuleto_osso');
+const userAfterBuy = getGloomUser(uidMerchant);
+assert.equal(userAfterBuy.inventory.amuleto_osso, 1, 'Item comprado deve estar no inventário');
+assert.equal(userAfterBuy.phantomCoins, 500 - RELICS.amuleto_osso.cost, 'Phantom Coins devem ser debitadas');
+console.log('✅ Comerciante de Relíquias e economia de Phantom Coins validados.');
+
+// 13. Teste do Engenheiro de Relíquias (Fusão, Risco de Falha e Destruição de Materiais)
+const uidEngineer = `user_eng_${Date.now()}`;
+const userEngineer = getGloomUser(uidEngineer);
+userEngineer.phantomCoins = 300;
+userEngineer.inventory = {
+  amuleto_osso: 2, // 2x Tier 1
+  calice_lagrimas: 2, // 2x Tier 3
+};
+updateGloomUser(uidEngineer, userEngineer);
+
+// Upgrade 100% de Tier 1 para Tier 2 (Custo: 25👻)
+const resUpgradeT1 = upgradeRelicsWithEngineer(uidEngineer, 1);
+assert.equal(resUpgradeT1.success, true);
+assert.equal(resUpgradeT1.upgraded, true);
+assert.equal(resUpgradeT1.targetTier, 2);
+const userAfterT1 = getGloomUser(uidEngineer);
+assert.equal(userAfterT1.inventory.amuleto_osso || 0, 0, '2x Tier 1 devem ser consumidos');
+assert.equal(userAfterT1.phantomCoins, 275, '25 Phantom Coins devem ser debitadas');
+assert(Object.keys(userAfterT1.inventory).some((k) => RELICS[k]?.tier === 2), 'Nova relíquia Tier 2 deve ser criada');
+
+// Teste de Fracasso Forçado (Tier 3 -> Tier 4, Risco de Falha com destruição total)
+const resFailUpgrade = upgradeRelicsWithEngineer(uidEngineer, 3, false, 'pt');
+assert.equal(resFailUpgrade.success, true);
+assert.equal(resFailUpgrade.upgraded, false);
+assert.equal(resFailUpgrade.destroyed, true, 'Falha no aprimoramento deve destruir os materiais');
+assert(resFailUpgrade.sarcasticQuote && resFailUpgrade.sarcasticQuote.length > 5, 'Deve retornar deboche do engenheiro');
+const userAfterFail = getGloomUser(uidEngineer);
+assert.equal(userAfterFail.inventory.calice_lagrimas || 0, 0, 'Materiais sacrificados devem ser perdidos para sempre');
+assert.equal(userAfterFail.phantomCoins, 175, '100 Phantom Coins da tentativa devem ser debitadas');
+console.log('✅ Engenheiro de Relíquias (aprimoramento e destruição permanente de materiais) validado.');
 
 console.log('\n🎉 Todos os testes de Bosque da Pyxie (Pyxie\'s Grove) passaram com 100% de sucesso!');

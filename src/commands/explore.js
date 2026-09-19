@@ -14,6 +14,8 @@ const { EXPLORE } = require('./commandNames');
 const {
   LOCATIONS,
   SPIRITS,
+  RELICS,
+  ENGINEER_RECIPES,
   gloomGraph,
   getGloomTide,
   getGloomUser,
@@ -23,6 +25,9 @@ const {
   getTraces,
   getBossStatus,
   attackBoss,
+  isLocationBanned,
+  buyMerchantRelic,
+  upgradeRelicsWithEngineer,
 } = require('../services/gloomRealm');
 const { getLanguage, t } = require('../utils/i18n');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
@@ -100,7 +105,11 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
       .setStyle(n.canEnter ? ButtonStyle.Success : ButtonStyle.Secondary)
       .setDisabled(!n.canEnter);
 
-    if (!n.canEnter) {
+    if (n.reason === 'banned') {
+      btn.setEmoji('🚫');
+      btn.setStyle(ButtonStyle.Danger);
+      btn.setLabel(`${destName.slice(0, 20)} (${n.banRemainingMinutes}m)`);
+    } else if (!n.canEnter) {
       btn.setEmoji('🔒');
     } else {
       btn.setEmoji('🚶');
@@ -222,6 +231,109 @@ function buildBossView(userId, source = null, feedbackMessage = '') {
   return { embeds: [embed], components: [new ActionRowBuilder().addComponents(buttons)] };
 }
 
+function buildMerchantView(userId, stock, source = null, feedbackMessage = '') {
+  const user = getGloomUser(userId);
+  const lang = getLanguage(source);
+  const isEn = lang === 'en';
+
+  const embed = new EmbedBuilder()
+    .setColor('#f59e0b')
+    .setTitle(t('gloom.merchant.title', source))
+    .setDescription(
+      `${feedbackMessage ? `**${feedbackMessage}**\n\n` : ''}` +
+      `${t('gloom.merchant.desc', source)}\n\n` +
+      `${t('gloom.merchant.phantomCoins', source, { coins: user.phantomCoins })}\n\n` +
+      `${t('gloom.merchant.stockHeader', source)}\n` +
+      stock.map((relic) => {
+        const rName = isEn ? relic.name.en : relic.name.pt;
+        const rDesc = isEn ? relic.desc.en : relic.desc.pt;
+        return `> 🏺 **${rName}** (Tier ${relic.tier}) — \`${relic.cost}👻\`\n> *« ${rDesc} »*`;
+      }).join('\n\n')
+    )
+    .setFooter({ text: isEn ? "Pyxie's Grove • Relic Merchant" : 'Bosque da Pyxie • Comerciante de Relíquias' })
+    .setTimestamp();
+
+  const buyButtons = stock.map((relic) => {
+    const rName = isEn ? relic.name.en : relic.name.pt;
+    return new ButtonBuilder()
+      .setCustomId(`gloom:merchant_buy:${userId}:${relic.id}`)
+      .setLabel(t('gloom.merchant.btnBuy', source, { item: rName.slice(0, 18), cost: relic.cost }))
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(user.phantomCoins < relic.cost);
+  });
+
+  const row1 = new ActionRowBuilder().addComponents(buyButtons);
+  const row2 = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`gloom:view:${userId}`)
+      .setLabel(t('gloom.merchant.btnBack', source))
+      .setStyle(ButtonStyle.Secondary)
+  );
+
+  return { embeds: [embed], components: [row1, row2] };
+}
+
+function buildEngineerView(userId, source = null, feedbackMessage = '') {
+  const user = getGloomUser(userId);
+  const lang = getLanguage(source);
+  const isEn = lang === 'en';
+
+  user.inventory = user.inventory || {};
+  const countsByTier = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  for (const [itemId, count] of Object.entries(user.inventory)) {
+    if (count > 0 && RELICS[itemId]) {
+      countsByTier[RELICS[itemId].tier] = (countsByTier[RELICS[itemId].tier] || 0) + count;
+    }
+  }
+
+  const rates = { 1: 100, 2: 100, 3: 75, 4: 50 };
+  const recipeLines = [1, 2, 3, 4].map((tier) => {
+    const nextTier = tier + 1;
+    const cost = ENGINEER_RECIPES[tier].cost;
+    const rate = rates[tier];
+    return t('gloom.engineer.recipeLine', source, { tier, nextTier, cost, rate });
+  }).join('\n');
+
+  const myRelicsText = isEn
+    ? `📦 **Your Relics by Tier:** T1: \`${countsByTier[1]}\` | T2: \`${countsByTier[2]}\` | T3: \`${countsByTier[3]}\` | T4: \`${countsByTier[4]}\` | T5: \`${countsByTier[5]}\``
+    : `📦 **Suas Relíquias por Tier:** T1: \`${countsByTier[1]}\` | T2: \`${countsByTier[2]}\` | T3: \`${countsByTier[3]}\` | T4: \`${countsByTier[4]}\` | T5: \`${countsByTier[5]}\``;
+
+  const embed = new EmbedBuilder()
+    .setColor('#8b5cf6')
+    .setTitle(t('gloom.engineer.title', source))
+    .setDescription(
+      `${feedbackMessage ? `**${feedbackMessage}**\n\n` : ''}` +
+      `${t('gloom.engineer.desc', source)}\n\n` +
+      `${t('gloom.engineer.phantomCoins', source, { coins: user.phantomCoins })}\n` +
+      `${myRelicsText}\n\n` +
+      `${t('gloom.engineer.recipesHeader', source)}\n` +
+      recipeLines
+    )
+    .setFooter({ text: isEn ? "Pyxie's Grove • Relic Engineer" : 'Bosque da Pyxie • Engenheiro de Relíquias' })
+    .setTimestamp();
+
+  const upgradeButtons = [1, 2, 3, 4].map((tier) => {
+    const cost = ENGINEER_RECIPES[tier].cost;
+    const canAfford = user.phantomCoins >= cost;
+    const hasMaterials = countsByTier[tier] >= 2;
+    return new ButtonBuilder()
+      .setCustomId(`gloom:engineer_upgrade:${userId}:${tier}`)
+      .setLabel(t('gloom.engineer.btnUpgrade', source, { tier, cost }))
+      .setStyle(tier >= 3 ? ButtonStyle.Danger : ButtonStyle.Primary)
+      .setDisabled(!canAfford || !hasMaterials);
+  });
+
+  const row1 = new ActionRowBuilder().addComponents(upgradeButtons);
+  const row2 = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`gloom:view:${userId}`)
+      .setLabel(t('gloom.engineer.btnBack', source))
+      .setStyle(ButtonStyle.Secondary)
+  );
+
+  return { embeds: [embed], components: [row1, row2] };
+}
+
 function isGloomInteraction(interaction) {
   return typeof interaction.customId === 'string' && interaction.customId.startsWith('gloom:');
 }
@@ -242,16 +354,34 @@ async function handleGloomInteraction(interaction) {
 
   const guildId = interaction.guildId || 'global';
 
-  // 1. Forrageamento
+  // 1. Forrageamento / Vasculhar
   if (action === 'forage') {
     const user = getGloomUser(interaction.user.id);
     const result = forage(interaction.user.id, user.currentLocation);
 
     if (!result.success) {
+      if (result.reason === 'room_banned') {
+        return interaction.reply({
+          content: t('gloom.explore.roomBanned', interaction, { time: result.banRemainingMinutes }),
+          ephemeral: true,
+        });
+      }
       return interaction.reply({
         content: t('gloom.explore.forageNoEnergy', interaction, { time: result.timeRemainingSec }),
         ephemeral: true,
       });
+    }
+
+    // Eventos Raros ao Vasculhar (3% a 5% de chance)
+    if (result.rareEvent) {
+      await interaction.deferUpdate();
+      if (result.rareEvent.type === 'relic_merchant') {
+        const merchView = buildMerchantView(interaction.user.id, result.rareEvent.stock, interaction);
+        return interaction.editReply(merchView);
+      } else {
+        const engView = buildEngineerView(interaction.user.id, interaction);
+        return interaction.editReply(engView);
+      }
     }
 
     if (result.encounteredSpirit) {
@@ -287,7 +417,9 @@ async function handleGloomInteraction(interaction) {
 
     if (!targetNeighbor || !targetNeighbor.canEnter) {
       const reasonKey = targetNeighbor?.reason || 'locked_tide';
-      const reasonText = t(`gloom.explore.reasons.${reasonKey}`, interaction) || 'Bloqueado.';
+      const reasonText = reasonKey === 'banned'
+        ? t('gloom.explore.reasons.banned', interaction, { time: targetNeighbor?.banRemainingMinutes || 30 })
+        : (t(`gloom.explore.reasons.${reasonKey}`, interaction) || 'Bloqueado.');
       return interaction.reply({
         content: t('gloom.explore.travelLocked', interaction, { reason: reasonText }),
         ephemeral: true,
@@ -319,6 +451,10 @@ async function handleGloomInteraction(interaction) {
     let text = '';
     if (result.recruited) {
       text = t('gloom.negotiate.successWit', interaction, { spirit: spiritName, coins: result.rewardCoins });
+    } else if (result.criticalFailure) {
+      const loc = LOCATIONS[result.bannedLocation] || LOCATIONS.portao_penumbra;
+      const locName = isEn ? loc.name.en : loc.name.pt;
+      text = t('gloom.negotiate.criticalFailure', interaction, { location: locName, time: result.banDurationMinutes });
     } else {
       text = t('gloom.negotiate.failed', interaction, { spirit: spiritName });
     }
@@ -326,6 +462,42 @@ async function handleGloomInteraction(interaction) {
     await interaction.deferUpdate();
     const locView = buildLocationView(interaction.user.id, guildId, interaction, text);
     return interaction.editReply(locView);
+  }
+
+  // 3.1 Compra com o Comerciante de Relíquias
+  if (action === 'merchant_buy') {
+    const relicId = parts[3];
+    const result = buyMerchantRelic(interaction.user.id, relicId);
+    let feedback = '';
+    if (result.success) {
+      const rName = isEn ? result.relic.name.en : result.relic.name.pt;
+      feedback = t('gloom.merchant.buySuccess', interaction, { item: rName, cost: result.relic.cost });
+    } else {
+      feedback = t('gloom.merchant.insufficientCoins', interaction, { cost: result.cost || 0 });
+    }
+    await interaction.deferUpdate();
+    const locView = buildLocationView(interaction.user.id, guildId, interaction, feedback);
+    return interaction.editReply(locView);
+  }
+
+  // 3.2 Aprimoramento com o Engenheiro de Relíquias
+  if (action === 'engineer_upgrade') {
+    const sourceTier = parseInt(parts[3], 10);
+    const result = upgradeRelicsWithEngineer(interaction.user.id, sourceTier, null, lang);
+    let feedback = '';
+    if (result.upgraded) {
+      const rName = isEn ? result.targetRelic.name.en : result.targetRelic.name.pt;
+      feedback = t('gloom.engineer.success', interaction, { item: rName, tier: result.targetTier });
+    } else if (result.destroyed) {
+      feedback = t('gloom.engineer.failure', interaction, { quote: result.sarcasticQuote });
+    } else if (result.reason === 'insufficient_materials') {
+      feedback = t('gloom.engineer.insufficientMaterials', interaction, { tier: sourceTier });
+    } else if (result.reason === 'insufficient_coins') {
+      feedback = t('gloom.engineer.insufficientCoins', interaction, { cost: result.cost });
+    }
+    await interaction.deferUpdate();
+    const engView = buildEngineerView(interaction.user.id, interaction, feedback);
+    return interaction.editReply(engView);
   }
 
   // 4. Suborno de Espírito
@@ -503,7 +675,7 @@ async function handleGloomInteraction(interaction) {
 
 module.exports = {
   name: EXPLORE,
-  aliases: ['explorar', 'explore', 'gloom', 'py-explorar', 'py-gloom', 'bosque', 'py-bosque'],
+  aliases: ['explorar', 'explore', 'gloom', 'py-explorar', 'py-gloom', 'bosque', 'py-bosque', 'vasculhar', 'py-vasculhar', 'scavenge', 'py-scavenge'],
   data: new SlashCommandBuilder()
     .setName(EXPLORE)
     .setDescription("Explore the gothic pixel realms of Pyxie's Grove and negotiate with spirits.")
@@ -523,5 +695,7 @@ module.exports = {
   isGloomInteraction,
   handleGloomInteraction,
   buildLocationView,
+  buildMerchantView,
+  buildEngineerView,
   buildBossView,
 };

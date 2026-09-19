@@ -1,0 +1,409 @@
+{
+  "batch_metadata": {
+    "temperament": "caotico",
+    "tier": 1,
+    "batch_size": 10
+  },
+  "encounters": [
+    {
+      "id": "enc_t1_01",
+      "tier": 1,
+      "creature_concept": "Fadinha de Lampião Quebrado com asas de celofane roxo",
+      "situational_context": "vulneravel",
+      "text_box_scene": "Uma faísca violeta estala num lampião tombado entre musgos. Uma minúscula silhueta tenta desentalar o vestido de uma engrenagem enferrujada.",
+      "mood_note": "Bate as asas furiosamente emitindo faíscas frias que cheiram a fósforo queimado.",
+      "monster_dialogue": "Ei! Não fica aí parado como um espantalho gótico! Puxa essa engrenagem ou joga querosene logo!",
+      "options": [
+        {
+          "id": "opt_1",
+          "text": "Chutar o lampião com força para soltar a engrenagem de vez.",
+          "tone": "chaotic",
+          "success_chance_modifier": 1,
+          "success_dialogue": "Hahaha! Funcionou! Amassou meu sapato, mas pelo menos quebrou a trava. Gostei da selvageria!",
+          "failure_dialogue": "Você quase arrancou minha perna, seu animal sem delicadeza!"
+        },
+        {
+          "id": "opt_2",
+          "text": "Examinar com calma os dentes da engrenagem e usar uma vareta de metal.",
+          "tone": "rational",
+          "success_chance_modifier": 0,
+          "success_dialogue": "Demorou uma eternidade, mas admito que foi eficiente. Não conte pra ninguém que fiquei presa.",
+          "failure_dialogue": "Muito metódico pro meu gosto... bocejei três vezes enquanto você olhava."
+        },
+        {
+          "id": "opt_3",
+          "text": "Rir alto da situação patética e apontar o dedo pro vestido preso.",
+          "tone": "arrogant",
+          "success_chance_modifier": -2,
+          "success_dialogue": "Engraçadinho... ri agora pra ver se eu não queimo seu nariz com óleo fervente!",
+          "failure_dialogue": "Insolente! Queime na fumaça roxa e suma do meu raio de visão antes que eu exploda este lampião!"
+        }
+      ],
+      "extortion_phase": {
+        "demand_type": "food",
+        "amount_or_item": "Um torrão de açúcar embebido em chá preto",
+        "demand_dialogue": "Se quiser que eu te acompanhe e ilumine suas sombras, passe um doce amargo agora!"
+      }
+    },
+    {
+      "id": "enc_t1_02",
+      "tier": 1,
+      "creature_concept": "Demônio de Cera Gotejante empoleirado sobre lápides",
+      "situational_context": "flagrado",
+      "text_box_scene": "Um boneco de cera violeta mastiga restos de pavio sobre a cruz de pedra. Gotas quentes escorrem de seus olhos esbugalhados.",
+      "mood_note": "Gira a cabeça em 180 graus enquanto o queixo derretido pinga suavemente no chão úmido.",
+      "monster_dialogue": "Nheco... nheco... pavio frio tem gosto de saudade velha. Veio assoprar minha chama ou me trazer cera nova?",
+      "options": [
+        {
+          "id": "opt_1",
+          "text": "Comer um pedaço do pavio junto dele pra ver que gosto tem.",
+          "tone": "chaotic",
+          "success_chance_modifier": 2,
+          "success_dialogue": "Glup! Você é lelé da cuca igualzinho a mim! Mastiga devagar que amarga a língua!",
+          "failure_dialogue": "Cospe isso! Você nem sabe mastigar pavio com elegância!"
+        },
+        {
+          "id": "opt_2",
+          "text": "Oferecer uma moeda polida refletindo a luz da chama.",
+          "tone": "bribe",
+          "success_chance_modifier": 1,
+          "success_dialogue": "Oooh... brilha roxo! Adoro moedas frias pra esfriar minha nuca quente!",
+          "failure_dialogue": "Moeda dura não se come... isso machuca meus dentes moles!"
+        },
+        {
+          "id": "opt_3",
+          "text": "Dizer que ele é uma abominação suja que vai derreter ao amanhecer.",
+          "tone": "arrogant",
+          "success_chance_modifier": -2,
+          "success_dialogue": "Derreter é a melhor parte da vida, mortal tolo...",
+          "failure_dialogue": "Vá derreter no fogo do inferno então! Não tolero viajante metido na minha lápide!"
+        }
+      ],
+      "extortion_phase": {
+        "demand_type": "item",
+        "amount_or_item": "3x Fósforos riscados não queimados",
+        "demand_dialogue": "Passe uns palitos secos pra eu riscar na minha unha ou vou embora de ré!"
+      }
+    },
+    {
+      "id": "enc_t1_03",
+      "tier": 1,
+      "creature_concept": "Corvo de Três Olhos com coleira de tachas punk",
+      "situational_context": "espreita",
+      "text_box_scene": "Empoleirado num galho contorcido, um corvo de penas azul-metálicas fita você com três pupilas que piscam fora de sincronia.",
+      "mood_note": "Abre as asas sacudindo pó de prata e emite um grasnido estridente no ritmo de uma bateria.",
+      "monster_dialogue": "Cróóó! O terceiro olho viu você tropeçando na raiz lá atrás! Patético, patético, patético!",
+      "options": [
+        {
+          "id": "opt_1",
+          "text": "Imitar o tropeço fazendo uma dancinha desengonçada e ridícula.",
+          "tone": "chaotic",
+          "success_chance_modifier": 2,
+          "success_dialogue": "KAAAKAA! Isso foi ridículo demais! Você não tem vergonha na cara, adorei!",
+          "failure_dialogue": "Que dança sem ritmo... até minha avó despenada faria melhor."
+        },
+        {
+          "id": "opt_2",
+          "text": "Perguntar o que o terceiro olho enxerga no futuro imediato.",
+          "tone": "rational",
+          "success_chance_modifier": 0,
+          "success_dialogue": "Vejo você pagando pedágio pra mim nos próximos dez segundos. Olha que clarividente!",
+          "failure_dialogue": "Vejo tédio cósmico e você fazendo perguntas chatas de cartomante barata."
+        },
+        {
+          "id": "opt_3",
+          "text": "Atirar uma pedra no galho pra calar a boca da ave intrometida.",
+          "tone": "arrogant",
+          "success_chance_modifier": -2,
+          "success_dialogue": "Errou por um palmo, míope!",
+          "failure_dialogue": "Crááá! Atacar plumagem sagrada dá azar eterno! Fique cego na névoa e suma daqui!"
+        }
+      ],
+      "extortion_phase": {
+        "demand_type": "gold",
+        "amount_or_item": "12 Phantom Coins reluzentes",
+        "demand_dialogue": "Dá cá doze moedinhas pra eu guardar no oco da árvore ou vou bicar seus cadarços!"
+      }
+    },
+    {
+      "id": "enc_t1_04",
+      "tier": 1,
+      "creature_concept": "Gato Espectral de Duas Caudas enrolado num cachecol listrado",
+      "situational_context": "flagrado",
+      "text_box_scene": "Um felino arroxeado e semitransparente lambe as patas traseiras sobre um toco podre, ignorando solenemente o mundo.",
+      "mood_note": "Balança as duas caudas em direções opostas enquanto solta um ronrom com timbre de baixo distorcido.",
+      "monster_dialogue": "Prrr... mais um bipede fedendo a ansiedade e perfume barato. Se veio me fazer carinho, já aviso que arranho.",
+      "options": [
+        {
+          "id": "opt_1",
+          "text": "Ignorar o gato e deitar no chão fingindo estar dormindo também.",
+          "tone": "submissive",
+          "success_chance_modifier": 1,
+          "success_dialogue": "Miau... sabe respeitar a preguiça alheia. Talvez eu deite em cima da sua cara mais tarde.",
+          "failure_dialogue": "Que criatura espaçosa... arrume sua própria cova pra dormir!"
+        },
+        {
+          "id": "opt_2",
+          "text": "Passar a mão rápido entre as orelhas arriscando tomar uma patada.",
+          "tone": "chaotic",
+          "success_chance_modifier": 1,
+          "success_dialogue": "SSSHH! ...hmm, na dobra da orelha não é ruim. Mas não se acostume!",
+          "failure_dialogue": "GLAFT! Avisei que arranhava! Leve essa marca roxa na bochecha de brinde!"
+        },
+        {
+          "id": "opt_3",
+          "text": "Fazer barulho de 'pspsps' agudo e estalar os dedos na cara dele.",
+          "tone": "arrogant",
+          "success_chance_modifier": -2,
+          "success_dialogue": "Humano vulgar...",
+          "failure_dialogue": "Pspsps é a mãe! Tome um jato de ectoplasma nas ventas e aprenda a ter compostura!"
+        }
+      ],
+      "extortion_phase": {
+        "demand_type": "food",
+        "amount_or_item": "Um pedaço de peixe defumado em bruma roxa",
+        "demand_dialogue": "Tô com fome de coisa salgada. Arruma um petisco bom ou finjo que nunca te vi."
+      }
+    },
+    {
+      "id": "enc_t1_05",
+      "tier": 1,
+      "creature_concept": "Crânio de Cogumelo com esporos luminescentes",
+      "situational_context": "vulneravel",
+      "text_box_scene": "Um crânio humano brotado de micélio ciano está preso entre duas raízes espessas, cuspindo fumaça tóxica a cada fungada.",
+      "mood_note": "A mandíbula bate descompassada como castanholas de madeira velha.",
+      "monster_dialogue": "Cof, cof! Se meus dentes caírem no lodo, você vai ter que catar um por um com a pinça!",
+      "options": [
+        {
+          "id": "opt_1",
+          "text": "Inalar a fumaça de esporos com vontade pra ver alucinações.",
+          "tone": "chaotic",
+          "success_chance_modifier": 2,
+          "success_dialogue": "Hahaha! Sua cara ficou roxa! Você é dos meus, pura loucura fúngica!",
+          "failure_dialogue": "Engasgou todo, seu fraco! Nem pra respirar esporo você serve!"
+        },
+        {
+          "id": "opt_2",
+          "text": "Usar uma faca com calma para afrouxar a raiz sem quebrar o crânio.",
+          "tone": "rational",
+          "success_chance_modifier": 1,
+          "success_dialogue": "Ufa... libertou minha calota craniana! Já tava sentindo cãibra nos maxilares.",
+          "failure_dialogue": "Cuidado com essa lâmina cega, você quase rachou minha têmpora!"
+        },
+        {
+          "id": "opt_3",
+          "text": "Chutar o crânio feito bola de futebol rindo da cara dele.",
+          "tone": "arrogant",
+          "success_chance_modifier": -2,
+          "success_dialogue": "Belo chute, mas errou o gol!",
+          "failure_dialogue": "Maldito vândalo! Minha maldição de fungo vai apodrecer suas botas! Fora daqui!"
+        }
+      ],
+      "extortion_phase": {
+        "demand_type": "item",
+        "amount_or_item": "Um punhado de terra úmida de cemitério",
+        "demand_dialogue": "Joga um adubo fresquinho nas minhas raízes pra eu ficar viçoso no pacto!"
+      }
+    },
+    {
+      "id": "enc_t1_06",
+      "tier": 1,
+      "creature_concept": "Morcego Sonâmbulo enrolado num gorro de lã desfiado",
+      "situational_context": "flagrado",
+      "text_box_scene": "Pendurado de cabeça para baixo num galho fino, um morcego rechonchudo ronca com a ponta da língua lilás de fora.",
+      "mood_note": "Abre um único olho vidrado e resmunga enquanto estica uma asa membrânica preguiçosa.",
+      "monster_dialogue": "Zzz... meia-noite já passou ou ainda dá tempo de dormir mais cinco minutinhos de tédio?",
+      "options": [
+        {
+          "id": "opt_1",
+          "text": "Gritar 'ACORDA QUE O MUNDO ACABOU!' batendo palmas altas.",
+          "tone": "chaotic",
+          "success_chance_modifier": 1,
+          "success_dialogue": "WAAAAH! Cai do galho! ...espera, o mundo acabou mesmo? Ah, que alívio, não tenho mais compromisso!",
+          "failure_dialogue": "Que susto desnecessário! Quase tive uma parada nas minhas asinhas sensíveis!"
+        },
+        {
+          "id": "opt_2",
+          "text": "Sussurrar baixinho que ele pode dormir mais cem anos em paz.",
+          "tone": "submissive",
+          "success_chance_modifier": 1,
+          "success_dialogue": "Ai, que anjo de pessoa... vou até te dar uma carona espiritual no meu gorro.",
+          "failure_dialogue": "Não fala com essa voz melosa que me dá nos nervos..."
+        },
+        {
+          "id": "opt_3",
+          "text": "Puxar o gorro dele com força e jogar na lama.",
+          "tone": "arrogant",
+          "success_chance_modifier": -2,
+          "success_dialogue": "Meu gorro vintage... você vai pagar caro!",
+          "failure_dialogue": "MEU GORRO DE 2004! Seu monstro sem coração! Morra nas trevas e nunca mais volte!"
+        }
+      ],
+      "extortion_phase": {
+        "demand_type": "favor",
+        "amount_or_item": "Promessa solene de não fazer barulho por 1 hora",
+        "demand_dialogue": "Jura pela sua honra que não vai bater panela perto de mim hoje e estamos fechados."
+      }
+    },
+    {
+      "id": "enc_t1_07",
+      "tier": 1,
+      "creature_concept": "Espírito de Boneca de Pano com alfinetes coloridos",
+      "situational_context": "espreita",
+      "text_box_scene": "Uma boneca gótica costurada com retalhos roxos espia por trás de uma lápide inclinada. Seus olhos de botão preto não piscam.",
+      "mood_note": "A cabeça gira em estalos secos de costura arrebentando enquanto ela aperta um alfinete enferrujado.",
+      "monster_dialogue": "Você tem cara de quem perde o sono pensando se trancou a porta. Quer brincar de espetar medos?",
+      "options": [
+        {
+          "id": "opt_1",
+          "text": "Pegar um alfinete e espetar o próprio braço rindo com deboche.",
+          "tone": "chaotic",
+          "success_chance_modifier": 2,
+          "success_dialogue": "Hihihi! Nem sentiu dor? Você é mais estranho que eu, gostei muito!",
+          "failure_dialogue": "Espetou no lugar errado, seu desajeitado! Nem pra brincar serve!"
+        },
+        {
+          "id": "opt_2",
+          "text": "Dizer que bonecas velhas pertencem ao sótão de casas assombradas.",
+          "tone": "rational",
+          "success_chance_modifier": 0,
+          "success_dialogue": "Sótãos têm cheiro de mofo bom, admito. Mas este cemitério é bem mais espaçoso.",
+          "failure_dialogue": "Que observação sem graça... esperava mais imaginação de um invasor."
+        },
+        {
+          "id": "opt_3",
+          "text": "Chamar a boneca de lixo velho e ameaçar atear fogo nos retalhos.",
+          "tone": "arrogant",
+          "success_chance_modifier": -2,
+          "success_dialogue": "Fogo machuca... mas eu volto!",
+          "failure_dialogue": "Fogo?! Insolente desprezível! Os alfinetes da discórdia vão furar sua alma! Fora!"
+        }
+      ],
+      "extortion_phase": {
+        "demand_type": "item",
+        "amount_or_item": "Um carretel de linha preta reforçada",
+        "demand_dialogue": "Me passa um carretel de linha forte pra eu remendar meu braço frouxo e eu vou com você."
+      }
+    },
+    {
+      "id": "enc_t1_08",
+      "tier": 1,
+      "creature_concept": "Sapo Cururu Espectral com coroa torta de espinhos",
+      "situational_context": "flagrado",
+      "text_box_scene": "Um sapo gigante translúcido flutua sobre uma poça lamacenta de águas roxas, soltando bolhas ácidas que estouram em suspiros.",
+      "mood_note": "Infla o papo fosforescente expelindo um cheiro doce de uva fermentada.",
+      "monster_dialogue": "Croac! Dizem que se beijar sapo ele vira príncipe. Se você tentar me beijar, eu viro um vômito roxo na sua cara.",
+      "options": [
+        {
+          "id": "opt_1",
+          "text": "Mandar um beijo no ar com bico estalado fazendo barulho.",
+          "tone": "chaotic",
+          "success_chance_modifier": 1,
+          "success_dialogue": "CROAC! Eca, que audácia asquerosa! Hahaha, quase vomitei mesmo, você tem coragem!",
+          "failure_dialogue": "Tira esse beiço nojento da minha frente antes que eu te engula com lodo e tudo!"
+        },
+        {
+          "id": "opt_2",
+          "text": "Elogiar o porte real da coroa torta de espinhos dele.",
+          "tone": "flattery",
+          "success_chance_modifier": 1,
+          "success_dialogue": "Croac... finalmente alguém que repara no meu requinte heráldico do pântano.",
+          "failure_dialogue": "Bajulação barata não cola na pele úmida de um nobre anfíbio!"
+        },
+        {
+          "id": "opt_3",
+          "text": "Dizer que sapo cururu só serve pra servir de isca de pesca.",
+          "tone": "arrogant",
+          "success_chance_modifier": -2,
+          "success_dialogue": "Isca? Eu como anzol no café da manhã!",
+          "failure_dialogue": "Isca é o seu nariz! Tome uma borrifada de lodo ácido e seja expulso deste charco!"
+        }
+      ],
+      "extortion_phase": {
+        "demand_type": "gold",
+        "amount_or_item": "15 Phantom Coins cobertas de lodo",
+        "demand_dialogue": "Joga quinze moedas no fundo da minha poça pra dourar o lodo e o pacto tá selado."
+      }
+    },
+    {
+      "id": "enc_t1_09",
+      "tier": 1,
+      "creature_concept": "Gárgula Mirim de Jardim com óculos escuros quebrados",
+      "situational_context": "espreita",
+      "text_box_scene": "Um gárgula de pedra do tamanho de um cachorro pequeno equilibra-se num pilar quebrado, mascando cascalho com tédio infinito.",
+      "mood_note": "Ajusta os óculos com uma garra de granito enquanto bate as asinhas de cimento.",
+      "monster_dialogue": "A vida de estátua é punk, irmão. Ninguém traz um café gelado, só trazem folhas secas de túmulo.",
+      "options": [
+        {
+          "id": "opt_1",
+          "text": "Oferecer um café preto com muito gelo tirado da mochila.",
+          "tone": "bribe",
+          "success_chance_modifier": 2,
+          "success_dialogue": "CARAMBA! Café gelado de verdade! Você salvou meu expediente de pedra, parceiro!",
+          "failure_dialogue": "Isso tá morno e ralo... odeio café aguado de viajante sem capricho."
+        },
+        {
+          "id": "opt_2",
+          "text": "Dizer que pedra não deveria ter estômago nem reclamar de sede.",
+          "tone": "rational",
+          "success_chance_modifier": -1,
+          "success_dialogue": "Pedra também tem sentimentos minerais, seu insensível...",
+          "failure_dialogue": "Lógica barata de quem não entende nada da estética gótica! Some daqui!"
+        },
+        {
+          "id": "opt_3",
+          "text": "Empurrar o pilar pra derrubar a estátua no chão de pedra.",
+          "tone": "arrogant",
+          "success_chance_modifier": -2,
+          "success_dialogue": "Opa! Caí em pé, sou gato de pedra!",
+          "failure_dialogue": "Vândalo imbecil! Tentou quebrar meu rabinho de cimento! Rua! Bloqueado pra sempre!"
+        }
+      ],
+      "extortion_phase": {
+        "demand_type": "item",
+        "amount_or_item": "1x Pedaço de giz roxo para rabiscar a coluna",
+        "demand_dialogue": "Me passa uma pedrinha de giz pra eu desenhar uma caveira no pilar antes de partir."
+      }
+    },
+    {
+      "id": "enc_t1_10",
+      "tier": 1,
+      "creature_concept": "Livro de Feitiços com dentes de vampiro e fecho de couro",
+      "situational_context": "vulneravel",
+      "text_box_scene": "Um grimório antigo arfando como bicho vivo tenta morder uma folha seca caida no chão de pedra, preso por uma corrente ferrugenta.",
+      "mood_note": "As páginas batem feito brânquias e a boca na lombada saliva gotas de tinta roxa.",
+      "monster_dialogue": "Nham, nham! Tinta gasta dá uma azia desgraçada! Quem mandou você folhear minhas memórias íntimas?",
+      "options": [
+        {
+          "id": "opt_1",
+          "text": "Enfiar a mão inteira entre os dentes do livro pra ver se ele morde de verdade.",
+          "tone": "chaotic",
+          "success_chance_modifier": 2,
+          "success_dialogue": "NHAC! Gostinho de aventura imprudente! Você é biruta mesmo, gostei do seu sangue frio!",
+          "failure_dialogue": "Sua mão tem gosto de sabonete barato, argh! Cospe fora!"
+        },
+        {
+          "id": "opt_2",
+          "text": "Ler em voz alta uma frase sombria gravada na capa de couro.",
+          "tone": "flattery",
+          "success_chance_modifier": 1,
+          "success_dialogue": "Óh, pronunciou o feitiço com sotaque gótico perfeito! Minhas páginas até arrepiaram.",
+          "failure_dialogue": "Errou a métrica do verso! Que leitura horrorosa de aluno da quinta série!"
+        },
+        {
+          "id": "opt_3",
+          "text": "Chamar o livro de caderno de rascunho inútil e ameaçar rasgar uma folha.",
+          "tone": "arrogant",
+          "success_chance_modifier": -2,
+          "success_dialogue": "Rasgar páginas é crime contra o conhecimento profano!",
+          "failure_dialogue": "INCESTO LITERÁRIO! Morder suas canelas é pouco! Saia deste santuário antes que eu devore sua alma!"
+        }
+      ],
+      "extortion_phase": {
+        "demand_type": "soul_vow",
+        "amount_or_item": "Juramento de jamais escrever poesia com rimas pobres",
+        "demand_dialogue": "Jure pela rainha das trevas que nunca vai rimar 'amor' com 'dor' no meu papel e serei seu guia!"
+      }
+    }
+  ]
+}

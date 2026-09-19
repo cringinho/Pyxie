@@ -40,6 +40,10 @@ const COMMAND_CATEGORY_MAP = {
   'py-grimorio': 'bosque',
   grimoire: 'bosque',
   'py-grimoire': 'bosque',
+  vasculhar: 'bosque',
+  'py-vasculhar': 'bosque',
+  scavenge: 'bosque',
+  'py-scavenge': 'bosque',
 
   // Economia & Carreiras
   trade: 'economia',
