@@ -64,6 +64,7 @@ Exibe o link oficial de votação no Top.gg para resgatar Moedinhas gratuitas e 
 
 ---
 
+## 🎲 2. Jogos Rápidos & Minigames Sociais
 ## 🎲 3. Jogos Rápidos & Minigames Sociais
 
 ### `/py-jokenpo <oponente> [aposta]` (ou `py!jokenpo` / `py!ppt`)
@@ -83,6 +84,7 @@ Aposta moedas contra a Pyxie em Cara ou Coroa com 50% de chance de dobrar o valo
 
 ---
 
+## 🔮 3. Tarot, Amor & Social
 ## 🔮 4. Tarot, Amor & Social
 
 ### `/py-tarot` (ou `py!tarot`)
@@ -99,6 +101,7 @@ Mini-game casual da comunidade.
 
 ---
 
+## 👑 4. Perfil, Títulos & Cosméticos
 ## 👑 5. Perfil, Títulos & Cosméticos
 
 ### `/py-profile [user]` (ou `py!profile` / `py!perfil [@usuario]`)
@@ -111,6 +114,7 @@ Altera o idioma de exibição do bot para o servidor atual (Inglês ou Portuguê
 
 ---
 
+## ⚙️ 5. Utilidades & Administração
 ## ⚙️ 6. Utilidades & Administração
 
 ### `/py-ping` e `/py-status`

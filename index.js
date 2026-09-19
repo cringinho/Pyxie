@@ -49,7 +49,7 @@ const {
   TAROT_ROLE_ID,
   KUROMI_STARTUP_EMOJI,
 } = require('./src/config');
-const { incrementCommand, incrementMessages, recordUniqueUser, flushSync } = require('./src/services/logging');
+const { incrementCommand, incrementMessages, recordUniqueUser, updateStats, flushSync } = require('./src/services/logging');
 const { flushInventorySync } = require('./src/services/inventory');
 const { getBrasiliaDate, resetDailyDraws } = require('./src/services/tarot');
 const { getAnimatedEmoji } = require('./src/utils/serverEmojis');
@@ -350,22 +350,37 @@ async function handleCringePhrase(message) {
   return true;
 }
 
+function updateLiveStats() {
+  try {
+    const totalMembers = client.guilds.cache.reduce((acc, g) => acc + (g.memberCount || 0), 0);
+    const guildsCount = client.guilds.cache.size;
+    updateStats({ totalMembers, guildsCount });
+  } catch (_) {}
+}
+
 client.once('ready', async () => {
   console.log(`Pyxie conectada como ${client.user.tag}`);
 
   client.user.setPresence({
-    activities: [{ name: 'Cringelândia no Reino Encantado', type: ActivityType.Watching }],
+    activities: [{ name: 'Bosque da Pyxie • /py-help', type: ActivityType.Playing }],
     status: 'online',
   });
 
+  updateLiveStats();
   await sendStartupAnnouncement();
   await syncApplicationEmojis(client).catch(() => null);
   startBumpGuideScheduler();
   startTarotScheduler();
 });
 
+// Atualizações dinâmicas de contagem de membros e servidores
+client.on('guildCreate', () => updateLiveStats());
+client.on('guildDelete', () => updateLiveStats());
+client.on('guildMemberRemove', () => updateLiveStats());
+
 // Mensagem de boas-vindas ao entrar no servidor.
 client.on('guildMemberAdd', async (member) => {
+  updateLiveStats();
   const configuredWelcomeChannelId = getWelcomeChannel(member.guild.id);
   const targetChannelId =
     configuredWelcomeChannelId ||

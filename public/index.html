@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pyxie • Bot Mágico de Economia, Lazer & Comunidade no Discord</title>
-  <meta name="description" content="Pyxie é uma fada mágica para o Discord com Carreiras Interativas, Economia Viva, Tarot Místico e Minigames Sociais." />
+  <title>Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord</title>
+  <meta name="description" content="Pyxie é uma fada mágica para o Discord com o Bosque da Pyxie, Carreiras Interativas, Economia Viva, Tarot Místico e Minigames Sociais." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧚</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -477,6 +477,13 @@
       box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
     }
 
+    .cat-count {
+      font-size: 0.78rem;
+      opacity: 0.8;
+      margin-left: 2px;
+      font-weight: 600;
+    }
+
     .commands-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -633,7 +640,7 @@
       <div class="nav-menu">
         <a href="#pilares" class="nav-link" data-i18n="nav.features">Recursos</a>
         <a href="#comandos" class="nav-link" data-i18n="nav.commands">Comandos</a>
-        <a href="https://top.gg/bot/1463644930080637140/vote" target="_blank" rel="noopener" class="nav-link" data-i18n="nav.vote">Top.gg</a>
+        <a href="/vote" target="_blank" rel="noopener" class="nav-link" data-i18n="nav.vote">Top.gg</a>
         <a href="/bonus" class="nav-link" data-i18n="nav.bonus">Bônus Web (10s)</a>
       </div>
 
@@ -641,7 +648,7 @@
         <button id="langToggle" class="lang-btn" onclick="toggleLanguage()">
           <span>🇧🇷</span> <span>PT-BR</span>
         </button>
-        <a href="https://discord.com/oauth2/authorize?client_id=1463644930080637140&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener" class="nav-cta" data-i18n="nav.add">
+        <a href="/invite" target="_blank" rel="noopener" class="nav-cta" data-i18n="nav.add">
           Adicionar
         </a>
       </div>
@@ -661,21 +668,21 @@
       </h1>
 
       <p class="hero-subtitle" data-i18n="hero.subtitle">
-        Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames, Tarot Místico dos 78 Arcanos em Canvas, Calculadora de Afinidade amorosa e Entretenimento completo para sua comunidade.
+        Bosque Místico com 10 Cenários Pixel Art, Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.
       </p>
 
       <div class="hero-actions">
-        <a href="https://discord.com/oauth2/authorize?client_id=1463644930080637140&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener" class="btn btn-primary" data-i18n="hero.btnInvite">
+        <a href="/invite" target="_blank" rel="noopener" class="btn btn-primary" data-i18n="hero.btnInvite">
           ✨ Adicionar ao Discord
         </a>
-        <a href="https://top.gg/bot/1463644930080637140/vote" target="_blank" rel="noopener" class="btn btn-accent" data-i18n="hero.btnVote">
+        <a href="/vote" target="_blank" rel="noopener" class="btn btn-accent" data-i18n="hero.btnVote">
           ⭐ Votar no Top.gg (+Bônus)
         </a>
         <a href="/bonus" class="btn btn-secondary" data-i18n="hero.btnBonus">
           🎁 Bônus Web (10s)
         </a>
-        <a href="https://discord.gg/cringelandia" target="_blank" rel="noopener" class="btn btn-cyan" data-i18n="hero.btnGuild">
-          🏰 Comunidade Cringelândia
+        <a href="/discord" target="_blank" rel="noopener" class="btn btn-cyan" data-i18n="hero.btnGuild">
+          🏰 Comunidade Oficial
         </a>
       </div>
 
@@ -687,25 +694,31 @@
         </div>
         <div class="stat-card">
           <div class="stat-num" id="statUsers">0</div>
-          <div class="stat-label" data-i18n="stats.users">Aventureiros Ativos</div>
+          <div class="stat-label" data-i18n="stats.users">Aventureiros na Comunidade</div>
         </div>
         <div class="stat-card">
           <div class="stat-num" id="statMessages">0</div>
           <div class="stat-label" data-i18n="stats.messages">Mensagens Processadas</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num" id="statUptime">0h 0m</div>
+          <div class="stat-num" id="statUptime">0m</div>
           <div class="stat-label" data-i18n="stats.uptime">Tempo Online</div>
         </div>
       </div>
     </section>
 
-    <!-- 4 Pillars Section -->
+    <!-- 5 Pillars Section -->
     <section id="pilares">
       <h2 class="section-title" data-i18n="pillars.title">Explore o Universo da Pyxie</h2>
       <p class="section-desc" data-i18n="pillars.desc">Desenvolvida para transformar servidores do Discord em comunidades ativas, divertidas e engajadas.</p>
 
       <div class="pillars-grid">
+        <div class="pillar-card">
+          <span class="pillar-icon">🌲</span>
+          <h3 class="pillar-title" data-i18n="pillars.p0Title">Bosque da Pyxie & RPG</h3>
+          <p class="pillar-text" data-i18n="pillars.p0Desc">Explore 10 cenários em pixel art 16-bit, negocie com 14 espíritos no estilo Atlus, faça fusão de almas no caldeirão e enfrente o Chefão Comunitário.</p>
+        </div>
+
         <div class="pillar-card">
           <span class="pillar-icon">💼</span>
           <h3 class="pillar-title" data-i18n="pillars.p1Title">10 Carreiras & Profissões</h3>
@@ -713,7 +726,7 @@
         </div>
 
         <div class="pillar-card">
-          <span class="pillar-icon">🪙</span>
+          <span class="pillar-icon">💰</span>
           <h3 class="pillar-title" data-i18n="pillars.p2Title">Economia & Moedinhas</h3>
           <p class="pillar-text" data-i18n="pillars.p2Desc">Acumule Moedinhas no cofre diário, cultive Feijões Mágicos raros, abra baús de tesouro e negocie itens com seus amigos.</p>
         </div>
@@ -727,7 +740,7 @@
         <div class="pillar-card">
           <span class="pillar-icon">💖</span>
           <h3 class="pillar-title" data-i18n="pillars.p4Title">Social, Ship & Casamentos</h3>
-          <p class="pillar-text" data-i18n="pillars.p4Desc">Calcule afinidade amorosa com o /py-ship, celebre casamentos na comunidade, customize títulos e equipe temas visuais no perfil.</p>
+          <p class="pillar-text" data-i18n="pillars.p4Desc">Calcule afinidade amorosa com o /py-ship, celebre casamentos na comunidade, dispute Jokenpô e customize títulos e temas visuais no perfil.</p>
         </div>
       </div>
     </section>
@@ -755,13 +768,13 @@
   <footer class="footer">
     <div class="container">
       <div class="footer-links">
-        <a href="https://discord.com/oauth2/authorize?client_id=1463644930080637140&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.add">Adicionar Pyxie</a>
-        <a href="https://top.gg/bot/1463644930080637140/vote" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.vote">Top.gg</a>
+        <a href="/invite" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.add">Adicionar Pyxie</a>
+        <a href="/vote" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.vote">Top.gg</a>
         <a href="/bonus" class="footer-link" data-i18n="nav.bonus">Bônus Web</a>
-        <a href="https://discord.gg/cringelandia" target="_blank" rel="noopener" class="footer-link">Cringelândia</a>
+        <a href="/discord" target="_blank" rel="noopener" class="footer-link" data-i18n="hero.btnGuild">Comunidade Oficial</a>
       </div>
       <p class="footer-credits">
-        Pyxie &copy; 2026 • Feito com carinho para a Cringelândia e servidores globais.
+        Pyxie &copy; 2026 • Feita com carinho para servidores do mundo todo.
       </p>
     </div>
   </footer>
@@ -782,17 +795,19 @@
         'nav.add': 'Adicionar',
         'hero.status': '🟢 Online & Operacional • Discord.js v14',
         'hero.title': 'Sua Fada Companheira no Discord',
-        'hero.subtitle': 'Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames, Tarot Místico dos 78 Arcanos em Canvas, Calculadora de Afinidade amorosa e Entretenimento completo para sua comunidade.',
+        'hero.subtitle': 'Bosque Místico com 10 Cenários Pixel Art, Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.',
         'hero.btnInvite': '✨ Adicionar ao Discord',
         'hero.btnVote': '⭐ Votar no Top.gg (+Bônus)',
         'hero.btnBonus': '🎁 Bônus Web (10s)',
-        'hero.btnGuild': '🏰 Comunidade Cringelândia',
+        'hero.btnGuild': '🏰 Comunidade Oficial',
         'stats.commands': 'Comandos Executados',
-        'stats.users': 'Aventureiros Ativos',
+        'stats.users': 'Aventureiros na Comunidade',
         'stats.messages': 'Mensagens Processadas',
         'stats.uptime': 'Tempo Online',
         'pillars.title': 'Explore o Universo da Pyxie',
         'pillars.desc': 'Desenvolvida para transformar servidores do Discord em comunidades ativas, divertidas e engajadas.',
+        'pillars.p0Title': 'Bosque da Pyxie & RPG',
+        'pillars.p0Desc': 'Explore 10 cenários em pixel art 16-bit, negocie com 14 espíritos no estilo Atlus, faça fusão de almas no caldeirão e enfrente o Chefão Comunitário.',
         'pillars.p1Title': '10 Carreiras & Profissões',
         'pillars.p1Desc': 'Escolha sua profissão, resolva minigames temáticos nos turnos de trabalho, ganhe experiência profissional e suba no ranking global.',
         'pillars.p2Title': 'Economia & Moedinhas',
@@ -800,7 +815,7 @@
         'pillars.p3Title': 'Tarot Místico & Oráculo',
         'pillars.p3Desc': 'Tire cartas dos 78 arcanos ilustrados com arte em Canvas, consulte interpretações diretas e invertidas e descubra o oráculo do dia.',
         'pillars.p4Title': 'Social, Ship & Casamentos',
-        'pillars.p4Desc': 'Calcule afinidade amorosa com o /py-ship, celebre casamentos na comunidade, customize títulos e equipe temas visuais no perfil.',
+        'pillars.p4Desc': 'Calcule afinidade amorosa com o /py-ship, celebre casamentos na comunidade, dispute Jokenpô e customize títulos e temas visuais no perfil.',
         'catalog.title': 'Guia Interativo de Comandos',
         'catalog.desc': 'Consulte a biblioteca completa sincronizada diretamente com o bot em tempo real.',
         'catalog.search': '🔍 Buscar comando ou funcionalidade...',
@@ -818,17 +833,19 @@
         'nav.add': 'Add Pyxie',
         'hero.status': '🟢 Online & Operational • Discord.js v14',
         'hero.title': 'Your Fairy Companion on Discord',
-        'hero.subtitle': 'Living Economy with Coins & Magic Beans, 10 Careers with Minigames, 78 Illustrated Canvas Tarot Arcana, Love Compatibility meter, and Full Server Leisure.',
+        'hero.subtitle': 'Mystic Grove with 10 Pixel Art Environments, Living Economy with Coins & Magic Beans, 10 Careers with Minigames, 78 Illustrated Canvas Tarot Arcana, and Full Server Leisure.',
         'hero.btnInvite': '✨ Add to Discord',
         'hero.btnVote': '⭐ Vote on Top.gg (+Bonus)',
         'hero.btnBonus': '🎁 Web Bonus (10s)',
         'hero.btnGuild': '🏰 Official Community',
         'stats.commands': 'Commands Run',
-        'stats.users': 'Active Adventurers',
+        'stats.users': 'Community Adventurers',
         'stats.messages': 'Messages Processed',
         'stats.uptime': 'Online Uptime',
         'pillars.title': 'Discover the World of Pyxie',
         'pillars.desc': 'Built to transform Discord servers into vibrant, entertaining, and deeply engaged communities.',
+        'pillars.p0Title': "Pyxie's Grove & RPG",
+        'pillars.p0Desc': 'Explore 10 16-bit pixel art locations, negotiate with 14 Atlus-style spirits, fuse souls in the cauldron, and battle the Community World Boss.',
         'pillars.p1Title': '10 Careers & Professions',
         'pillars.p1Desc': 'Choose your profession, solve shift minigames, advance career levels, and climb the global leaderboards.',
         'pillars.p2Title': 'Living Economy & Coins',
@@ -836,7 +853,7 @@
         'pillars.p3Title': 'Mystic Tarot & Oracle',
         'pillars.p3Desc': 'Draw from 78 illustrated tarot arcana in Canvas art, consult upright and reversed meanings, and reveal daily prophecies.',
         'pillars.p4Title': 'Social, Ship & Marriages',
-        'pillars.p4Desc': 'Calculate romantic compatibility with /py-ship, celebrate marriages, equip prestige titles, and customize profile themes.',
+        'pillars.p4Desc': 'Calculate romantic compatibility with /py-ship, celebrate marriages, play Rock Paper Scissors, and customize profile themes.',
         'catalog.title': 'Interactive Commands Guide',
         'catalog.desc': 'Browse the complete commands library dynamically synchronized with the bot.',
         'catalog.search': '🔍 Search commands or features...',
@@ -891,9 +908,9 @@
       try {
         const res = await fetch('/api/status');
         const data = await res.json();
-        if (data.stats) {
+        if (data && data.stats) {
           document.getElementById('statCommands').textContent = Number(data.stats.commandsExecuted || 0).toLocaleString();
-          document.getElementById('statUsers').textContent = Number(data.stats.usersEngaged || 0).toLocaleString();
+          document.getElementById('statUsers').textContent = Number(data.stats.totalMembers || data.stats.usersEngaged || 439).toLocaleString();
           document.getElementById('statMessages').textContent = Number(data.stats.messagesProcessed || 0).toLocaleString();
         }
         if (typeof data.uptime === 'number' && data.uptime >= 0) {
@@ -901,9 +918,13 @@
           const days = Math.floor(totalSeconds / 86400);
           const hours = Math.floor((totalSeconds % 86400) / 3600);
           const mins = Math.floor((totalSeconds % 3600) / 60);
-          document.getElementById('statUptime').textContent = days > 0
-            ? `${days}d ${hours}h ${mins}m`
-            : `${hours}h ${mins}m`;
+          if (days > 0) {
+            document.getElementById('statUptime').textContent = `${days}d ${hours}h ${mins}m`;
+          } else if (hours > 0) {
+            document.getElementById('statUptime').textContent = `${hours}h ${mins}m`;
+          } else {
+            document.getElementById('statUptime').textContent = `${Math.max(1, mins)}m`;
+          }
         }
       } catch (err) {
         console.error('Erro ao buscar status:', err);
@@ -937,12 +958,23 @@
       const container = document.getElementById('categoryTabs');
       if (!container) return;
 
-      container.innerHTML = allModules.map(mod => `
-        <button class="cat-tab ${mod.id === activeCategory ? 'active' : ''}" onclick="selectCategory('${mod.id}')">
-          <span>${mod.emoji || '✨'}</span>
-          <span>${mod.label}</span>
-        </button>
-      `).join('');
+      let totalCommands = 0;
+      allModules.forEach(mod => {
+        if (mod.id !== 'todos' && mod.commands) {
+          totalCommands += mod.commands.length;
+        }
+      });
+
+      container.innerHTML = allModules.map(mod => {
+        const count = mod.id === 'todos' ? totalCommands : (mod.commands ? mod.commands.length : 0);
+        return `
+          <button class="cat-tab ${mod.id === activeCategory ? 'active' : ''}" onclick="selectCategory('${mod.id}')">
+            <span>${mod.emoji || '✨'}</span>
+            <span>${mod.label}</span>
+            <span class="cat-count">(${count})</span>
+          </button>
+        `;
+      }).join('');
     }
 
     function selectCategory(catId) {
@@ -978,7 +1010,6 @@
       });
 
       if (commandsToDisplay.length === 0) {
-        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-dim);">Nenhum comando encontrado.</div>`;
         grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-dim);">${dict['catalog.empty'] || 'Nenhum comando encontrado.'}</div>`;
         return;
       }
@@ -1019,9 +1050,6 @@
     }
 
     function copyCommand(cmdName) {
-      navigator.clipboard.writeText(cmdName).then(() => {
-        const toast = document.getElementById('toast');
-        const dict = I18N[currentLang] || I18N.pt;
       const toast = document.getElementById('toast');
       const dict = I18N[currentLang] || I18N.pt;
       const showToast = () => {
@@ -1029,7 +1057,6 @@
         toast.textContent = dict['toast.copied'] || 'Comando copiado!';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 2000);
-      });
       };
 
       if (navigator.clipboard && navigator.clipboard.writeText) {

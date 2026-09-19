@@ -130,6 +130,8 @@ function normalizeStats(stats = {}) {
     commandsExecuted: Number(stats.commandsExecuted || 0),
     messagesProcessed: Number(stats.messagesProcessed || 0),
     usersEngaged: Number(stats.usersEngaged || 0),
+    totalMembers: Number(stats.totalMembers || stats.usersEngaged || 0),
+    guildsCount: Number(stats.guildsCount || 1),
     uniqueUsers: Array.isArray(stats.uniqueUsers)
       ? stats.uniqueUsers.join(',')
       : typeof stats.uniqueUsers === 'string'
@@ -146,6 +148,8 @@ function getStats() {
       commandsExecuted: 0,
       messagesProcessed: 0,
       usersEngaged: 0,
+      totalMembers: 0,
+      guildsCount: 1,
       uniqueUsers: '',
       uptimeMs: 0,
     });

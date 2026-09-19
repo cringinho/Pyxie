@@ -285,3 +285,4 @@ Todas as mecânicas descritas neste guia são verificadas e auditadas por testes
 - `tests/gloomRealm.test.js`: Validação dos 10 cenários, nós do grafo, 14 espíritos, negociação Atlus, caldeirão de fusão, taxa de regeneração de energia, rastros de giz roxo, vida do Chefão e invalidação de cache `mtimeMs`.
 - `tests/bonusTimer.test.js`: Auditoria de HMAC, anti-replay, tempo mínimo de 10s e garantia de que o bônus de `gloom_boss` não afeta moedas da economia padrão.
 - `tests/i18nParity.test.js`: Auditoria recursiva de paridade bilíngue estrita (PT/EN) em 100% das chaves e parâmetros dinâmicos do módulo `bosque`.
+

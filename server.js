@@ -44,7 +44,6 @@ function startBot() {
   }
 
   botStartTime = Date.now();
-  addLog('Iniciando bot Kuromiga...');
   addLog('Iniciando bot Pyxie...');
   botProcess = spawn('node', ['--max-old-space-size=192', 'index.js'], {
     cwd: appRoot,
@@ -79,7 +78,6 @@ async function stopBot() {
     return { running: false, message: 'O bot já está offline.' };
   }
 
-  addLog('Encerrando bot Kuromiga...');
   addLog('Encerrando bot Pyxie...');
   botProcess.kill('SIGTERM');
 
@@ -179,6 +177,21 @@ app.use(express.static(path.join(__dirname, 'public'), {
     }
   }
 }));
+
+// 0. Redirecionamentos amigáveis oficiais da Pyxie
+app.get('/invite', (req, res) => {
+  const clientId = process.env.DISCORD_CLIENT_ID || '1543650200718155897';
+  res.redirect(`https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot%20applications.commands`);
+});
+
+app.get('/discord', (req, res) => {
+  res.redirect('https://discord.gg/b3uZK3ssfX');
+});
+
+app.get('/vote', (req, res) => {
+  const botId = process.env.TOPGG_BOT_ID || '1453888365618270331';
+  res.redirect(`https://top.gg/bot/${botId}/vote`);
+});
 
 // 1. Healthcheck e status público
 app.get('/api/status', (req, res) => {
