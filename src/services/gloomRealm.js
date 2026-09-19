@@ -965,10 +965,14 @@ class GloomGraph {
         }
       }
 
-      // Condição de Altar do Santuário
-      if (nLoc.requiresBossParticipation && !user.bossPacifiedInCycle) {
-        canEnter = false;
-        reason = 'requires_boss';
+      // Condição de Altar do Santuário (Chefão Comunitário no ciclo atual)
+      if (nLoc.requiresBossParticipation) {
+        const boss = readGloomData().worldBoss;
+        const participatedInCycle = (boss?.participants?.[user.userId]?.count || 0) >= 1;
+        if (!participatedInCycle) {
+          canEnter = false;
+          reason = 'requires_boss';
+        }
       }
 
       // Condição de Banimento de Sala (Falha Crítica em Negociação)
@@ -1425,13 +1429,29 @@ function getTraces(guildId, locationId) {
 }
 
 // 12. Chefão Comunitário (World Bounty) com Bônus Patrocinado de 10s
+function checkAndResetBossCycle(data) {
+  const boss = data.worldBoss;
+  if (!boss) return false;
+  const now = Date.now();
+  if (!boss.cycleStart || now - boss.cycleStart >= TIDE_CYCLE_MS) {
+    boss.cycleStart = now;
+    boss.participants = {};
+    return true;
+  }
+  return false;
+}
+
 function getBossStatus() {
   const data = readGloomData();
+  if (checkAndResetBossCycle(data)) {
+    writeGloomData(data);
+  }
   return data.worldBoss;
 }
 
 function attackBoss(userId, method = 'familiar', lang = 'pt') {
   const data = readGloomData();
+  checkAndResetBossCycle(data);
   const boss = data.worldBoss;
   const user = getGloomUser(userId);
 
@@ -1485,6 +1505,7 @@ function attackBoss(userId, method = 'familiar', lang = 'pt') {
 
 function unlockBossExtraAttack(userId) {
   const data = readGloomData();
+  checkAndResetBossCycle(data);
   const boss = data.worldBoss;
   boss.participants = boss.participants || {};
   const participant = boss.participants[userId] || { count: 0, extraUnlocked: false, damageDealt: 0 };

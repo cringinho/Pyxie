@@ -532,6 +532,7 @@ const TRANSLATIONS = {
         "traceSuccess": "✅ Seu rastro de giz roxo foi gravado na pedra com sucesso!",
         "travelSuccess": "🚶 Você viajou para: **{destination}**!",
         "travelLocked": "🔒 Este caminho está bloqueado! {reason}",
+        "insufficientCoins": "❌ Saldo insuficiente! Requer **{cost} Phantom Coins 👻**.",
         "reasons": {
           "locked_tide": "Passagem selada. Requer a Maré da Lua de Sangue Roxo ou uma Lágrima Emo.",
           "requires_key": "Porta trancada. Requer uma Chave Espectral para abrir.",
@@ -584,6 +585,8 @@ const TRANSLATIONS = {
         "noSpirits": "> *Seu grimório está vazio. Explore as salas do reino para negociar com aparições!*",
         "btnFuse": "⚗️ Caldeirão de Fusão (30👻)",
         "btnBack": "⬅️ Voltar à Exploração",
+        "btnBind": "Vincular {spirit}",
+        "btnUnbind": "Desvincular {spirit}",
         "equipSuccess": "✨ Você vinculou **{spirit}**! Aura ativa: **{aura}** ({desc})",
         "unequipSuccess": "💤 Você desvinculou **{spirit}** do seu elo ativo."
       },
@@ -591,8 +594,10 @@ const TRANSLATIONS = {
         "title": "⚗️  ✦  Caldeirão de Fusão de Almas",
         "desc": "Selecione dois espíritos do seu grimório para fundi-los em uma nova criatura superior!",
         "selectPlaceholder": "Selecione um espírito para fundir...",
+        "ritualCost": "🪙 **Custo do Ritual:** `{cost} Phantom Coins`",
         "success": "🔮 **FUSÃO CONCLUÍDA!** As almas se fundiram no caldeirão e deram origem a **{spirit}** (Tier {tier})!",
-        "insufficientCoins": "❌ Você precisa de **{cost} Phantom Coins 👻** para realizar este ritual de fusão!"
+        "insufficientCoins": "❌ Você precisa de **{cost} Phantom Coins 👻** para realizar este ritual de fusão!",
+        "cannotFuse": "❌ Não foi possível fundir estes espíritos."
       },
       "boss": {
         "title": "💀  ✦  Chefão Comunitário — {name}",
@@ -985,6 +990,7 @@ const TRANSLATIONS = {
         "traceSuccess": "✅ Your purple chalk trace was permanently etched into the stone!",
         "travelSuccess": "🚶 You journeyed to: **{destination}**!",
         "travelLocked": "🔒 This path is sealed! {reason}",
+        "insufficientCoins": "❌ Insufficient balance! Requires **{cost} Phantom Coins 👻**.",
         "reasons": {
           "locked_tide": "Passage sealed. Requires the Purple Blood Moon tide or an Emo Tear.",
           "requires_key": "Door locked. Requires a Spectral Key to unlock.",
@@ -1037,6 +1043,8 @@ const TRANSLATIONS = {
         "noSpirits": "> *Your grimoire is empty. Explore the realm to negotiate with apparitions!*",
         "btnFuse": "⚗️ Fusion Cauldron (30👻)",
         "btnBack": "⬅️ Back to Exploration",
+        "btnBind": "Bind {spirit}",
+        "btnUnbind": "Unbind {spirit}",
         "equipSuccess": "✨ You bound **{spirit}**! Active aura: **{aura}** ({desc})",
         "unequipSuccess": "💤 You unbound **{spirit}** from your active bond."
       },
@@ -1044,8 +1052,10 @@ const TRANSLATIONS = {
         "title": "⚗️  ✦  Soul Fusion Cauldron",
         "desc": "Select two spirits from your grimoire to fuse them into an ascended superior entity!",
         "selectPlaceholder": "Choose a spirit to fuse...",
+        "ritualCost": "🪙 **Ritual Cost:** `{cost} Phantom Coins`",
         "success": "🔮 **FUSION COMPLETE!** The souls coalesced within the cauldron giving rise to **{spirit}** (Tier {tier})!",
-        "insufficientCoins": "❌ You need **{cost} Phantom Coins 👻** to perform this soul fusion ritual!"
+        "insufficientCoins": "❌ You need **{cost} Phantom Coins 👻** to perform this soul fusion ritual!",
+        "cannotFuse": "❌ Could not fuse these spirits."
       },
       "boss": {
         "title": "💀  ✦  Community Boss — {name}",

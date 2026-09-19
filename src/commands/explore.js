@@ -34,6 +34,15 @@ const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 
 function buildLocationView(userId, guildId, source = null, feedbackMessage = '') {
   const user = getGloomUser(userId);
+  const banStatus = isLocationBanned(user, user.currentLocation);
+  if (banStatus.banned) {
+    user.currentLocation = 'portao_penumbra';
+    const { updateGloomUser } = require('../services/gloomRealm');
+    updateGloomUser(userId, { currentLocation: 'portao_penumbra' });
+    const banMsg = t('gloom.explore.roomBanned', source, { time: banStatus.remainingMinutes });
+    feedbackMessage = feedbackMessage ? `${banMsg}\n\n${feedbackMessage}` : banMsg;
+  }
+
   const location = gloomGraph.getLocation(user.currentLocation);
   const tide = getGloomTide();
   const lang = getLanguage(source);
@@ -235,6 +244,7 @@ function buildMerchantView(userId, stock, source = null, feedbackMessage = '') {
   const user = getGloomUser(userId);
   const lang = getLanguage(source);
   const isEn = lang === 'en';
+  const stockIds = stock.map((relic) => relic.id).join(',');
 
   const embed = new EmbedBuilder()
     .setColor('#f59e0b')
@@ -256,7 +266,7 @@ function buildMerchantView(userId, stock, source = null, feedbackMessage = '') {
   const buyButtons = stock.map((relic) => {
     const rName = isEn ? relic.name.en : relic.name.pt;
     return new ButtonBuilder()
-      .setCustomId(`gloom:merchant_buy:${userId}:${relic.id}`)
+      .setCustomId(`gloom:merchant_buy:${userId}:${relic.id}:${stockIds}`)
       .setLabel(t('gloom.merchant.btnBuy', source, { item: rName.slice(0, 18), cost: relic.cost }))
       .setStyle(ButtonStyle.Success)
       .setDisabled(user.phantomCoins < relic.cost);
@@ -372,14 +382,27 @@ async function handleGloomInteraction(interaction) {
       });
     }
 
+    // Feedback de loot (moedas ou itens vasculhados)
+    let lootFeedback = '';
+    if (result.rewardCoins > 0) {
+      lootFeedback = t('gloom.explore.forageSuccessCoins', interaction, { coins: result.rewardCoins });
+    } else if (result.rewardItem) {
+      const itemName = isEn ? result.rewardItem.name.en : result.rewardItem.name.pt;
+      lootFeedback = t('gloom.explore.forageSuccessItem', interaction, { item: itemName });
+    }
+
+    if (result.openedRarePortal) {
+      lootFeedback += `\n${t('gloom.explore.portalOpened', interaction)}`;
+    }
+
     // Eventos Raros ao Vasculhar (3% a 5% de chance)
     if (result.rareEvent) {
       await interaction.deferUpdate();
       if (result.rareEvent.type === 'relic_merchant') {
-        const merchView = buildMerchantView(interaction.user.id, result.rareEvent.stock, interaction);
+        const merchView = buildMerchantView(interaction.user.id, result.rareEvent.stock, interaction, lootFeedback);
         return interaction.editReply(merchView);
       } else {
-        const engView = buildEngineerView(interaction.user.id, interaction);
+        const engView = buildEngineerView(interaction.user.id, interaction, lootFeedback);
         return interaction.editReply(engView);
       }
     }
@@ -390,20 +413,8 @@ async function handleGloomInteraction(interaction) {
       return interaction.editReply(negView);
     }
 
-    let feedback = '';
-    if (result.rewardCoins > 0) {
-      feedback = t('gloom.explore.forageSuccessCoins', interaction, { coins: result.rewardCoins });
-    } else if (result.rewardItem) {
-      const itemName = isEn ? result.rewardItem.name.en : result.rewardItem.name.pt;
-      feedback = t('gloom.explore.forageSuccessItem', interaction, { item: itemName });
-    }
-
-    if (result.openedRarePortal) {
-      feedback += `\n${t('gloom.explore.portalOpened', interaction)}`;
-    }
-
     await interaction.deferUpdate();
-    const locView = buildLocationView(interaction.user.id, guildId, interaction, feedback);
+    const locView = buildLocationView(interaction.user.id, guildId, interaction, lootFeedback);
     return interaction.editReply(locView);
   }
 
@@ -467,6 +478,7 @@ async function handleGloomInteraction(interaction) {
   // 3.1 Compra com o Comerciante de Relíquias
   if (action === 'merchant_buy') {
     const relicId = parts[3];
+    const encodedStock = parts[4] || '';
     const result = buyMerchantRelic(interaction.user.id, relicId);
     let feedback = '';
     if (result.success) {
@@ -476,6 +488,15 @@ async function handleGloomInteraction(interaction) {
       feedback = t('gloom.merchant.insufficientCoins', interaction, { cost: result.cost || 0 });
     }
     await interaction.deferUpdate();
+
+    const remainingStockIds = encodedStock.split(',').filter((id) => id && id !== relicId);
+    const remainingStock = remainingStockIds.map((id) => RELICS[id]).filter(Boolean);
+
+    if (result.success && remainingStock.length > 0) {
+      const merchView = buildMerchantView(interaction.user.id, remainingStock, interaction, feedback);
+      return interaction.editReply(merchView);
+    }
+
     const locView = buildLocationView(interaction.user.id, guildId, interaction, feedback);
     return interaction.editReply(locView);
   }
@@ -510,7 +531,7 @@ async function handleGloomInteraction(interaction) {
     if (result.success) {
       text = t('gloom.negotiate.successBribe', interaction, { spirit: spiritName, cost: result.spirit.dialogue.bribeCost });
     } else {
-      text = `❌ Saldo insuficiente! Requer ${result.cost} Phantom Coins 👻.`;
+      text = t('gloom.explore.insufficientCoins', interaction, { cost: result.cost });
     }
 
     await interaction.deferUpdate();
@@ -614,7 +635,7 @@ async function handleGloomInteraction(interaction) {
     await interaction.deferUpdate();
     const feedback = result.success
       ? t('gloom.explore.traceSuccess', interaction)
-      : `❌ Phantom Coins insuficientes! Requer ${result.cost} 👻.`;
+      : t('gloom.explore.insufficientCoins', interaction, { cost: result.cost });
 
     const locView = buildLocationView(interaction.user.id, guildId, interaction, feedback);
     return interaction.editReply(locView);
@@ -665,7 +686,7 @@ async function handleGloomInteraction(interaction) {
     } else if (res.reason === 'insufficient_coins') {
       feedback = t('gloom.fusion.insufficientCoins', interaction, { cost: res.cost });
     } else {
-      feedback = '❌ Não foi possível fundir estes espíritos.';
+      feedback = t('gloom.fusion.cannotFuse', interaction);
     }
 
     const grimView = buildGrimoireView(interaction.user.id, interaction, feedback);

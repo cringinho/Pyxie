@@ -193,6 +193,12 @@ const userBoss = getGloomUser(uidBoss);
 userBoss.phantomCoins = 0;
 updateGloomUser(uidBoss, userBoss);
 
+// Garantir que o Boss tenha HP suficiente para não resetar ciclo por morte durante o teste
+const currentBoss = getBossStatus();
+if (currentBoss.currentHp < 500) {
+  currentBoss.currentHp = currentBoss.maxHp;
+}
+
 // 1ª Investida Gratuita
 const resBoss1 = attackBoss(uidBoss, 'strike', 'pt');
 assert.equal(resBoss1.success, true);
@@ -215,12 +221,40 @@ const resBoss3 = attackBoss(uidBoss, 'strike', 'pt');
 assert.equal(resBoss3.success, true, '2ª investida após bônus deve ser executada com sucesso');
 console.log('✅ Chefão Comunitário com investida grátis e bônus patrocinado de 10s validado.');
 
+// Teste de Acesso ao Santuário Secreto (Requer ter atacado o boss no ciclo atual)
+const uidSanctuary = `user_sanc_${Date.now()}`;
+const userSanctuary = getGloomUser(uidSanctuary);
+const tideTest = getGloomTide();
+const neighborsBeforeAttack = gloomGraph.getAvailableNeighbors('mausoleu_ancestral', userSanctuary, tideTest);
+const sancNeighborBefore = neighborsBeforeAttack.find((n) => n.location.id === 'santuario_touca_preta');
+assert.equal(sancNeighborBefore.canEnter, false, 'Não deve entrar no Santuário Secreto antes de participar do Chefão');
+assert.equal(sancNeighborBefore.reason, 'requires_boss');
+
+// Usuário ataca o Chefão
+attackBoss(uidSanctuary, 'strike', 'pt');
+const neighborsAfterAttack = gloomGraph.getAvailableNeighbors('mausoleu_ancestral', userSanctuary, tideTest);
+const sancNeighborAfter = neighborsAfterAttack.find((n) => n.location.id === 'santuario_touca_preta');
+assert.equal(sancNeighborAfter.canEnter, true, 'Deve poder entrar no Santuário Secreto após participar do Chefão');
+
+// Simulação de expiração de 6 horas do ciclo
+const gloomPath = path.join(__dirname, '..', 'data', 'gloom.json');
+const diskDataCycle = JSON.parse(fs.readFileSync(gloomPath, 'utf8'));
+diskDataCycle.worldBoss.cycleStart = Date.now() - (7 * 60 * 60 * 1000); // 7 horas atrás
+fs.writeFileSync(gloomPath, JSON.stringify(diskDataCycle, null, 2), 'utf8');
+
+// Ao consultar o status do boss, o ciclo é resetado e a permissão revogada para o novo ciclo
+getBossStatus();
+const neighborsNewCycle = gloomGraph.getAvailableNeighbors('mausoleu_ancestral', userSanctuary, tideTest);
+const sancNeighborNewCycle = neighborsNewCycle.find((n) => n.location.id === 'santuario_touca_preta');
+assert.equal(sancNeighborNewCycle.canEnter, false, 'Acesso ao Santuário deve expirar com o novo ciclo de 6 horas');
+assert.equal(sancNeighborNewCycle.reason, 'requires_boss');
+console.log('✅ Ciclo de 6 horas do Chefão e acesso temporário ao Santuário Secreto validados.');
+
 // 9. Teste de Invalidação de Cache Multi-Processo via mtimeMs
 const uidCache = `user_cache_${Date.now()}`;
 const userCache = getGloomUser(uidCache);
 assert.equal(userCache.phantomCoins, 50);
 
-const gloomPath = path.join(__dirname, '..', 'data', 'gloom.json');
 const diskData = JSON.parse(fs.readFileSync(gloomPath, 'utf8'));
 diskData.users[uidCache].phantomCoins = 999;
 fs.writeFileSync(gloomPath, JSON.stringify(diskData, null, 2), 'utf8');

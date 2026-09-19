@@ -42,7 +42,7 @@ function buildGrimoireView(userId, source = null, feedbackMessage = '') {
     ? collected.map((sp) => {
         const spName = isEn ? sp.name.en : sp.name.pt;
         const isEq = (user.equippedFamiliars || []).includes(sp.id);
-        const tag = isEq ? ' `[ATIVO]`' : '';
+        const tag = isEq ? (isEn ? ' `[ACTIVE]`' : ' `[ATIVO]`') : '';
         return `> • **${spName}** (Tier ${sp.tier} — ${sp.rarity.toUpperCase()})${tag}`;
       }).join('\n')
     : t('gloom.grimoire.noSpirits', source);
@@ -69,9 +69,12 @@ function buildGrimoireView(userId, source = null, feedbackMessage = '') {
     const equipButtons = collected.slice(0, 5).map((sp) => {
       const spName = isEn ? sp.name.en : sp.name.pt;
       const isEq = (user.equippedFamiliars || []).includes(sp.id);
+      const btnText = isEq
+        ? t('gloom.grimoire.btnUnbind', source, { spirit: spName })
+        : t('gloom.grimoire.btnBind', source, { spirit: spName });
       return new ButtonBuilder()
         .setCustomId(`gloom:equip:${userId}:${sp.id}`)
-        .setLabel(`${isEq ? 'Desvincular' : 'Vincular'} ${spName}`.slice(0, 80))
+        .setLabel(btnText.slice(0, 80))
         .setStyle(isEq ? ButtonStyle.Danger : ButtonStyle.Success);
     });
 
@@ -107,7 +110,7 @@ function buildFusionMenuView(userId, source = null, feedbackMessage = '') {
     .setDescription(
       `${feedbackMessage ? `**${feedbackMessage}**\n\n` : ''}` +
       `${t('gloom.fusion.desc', source)}\n\n` +
-      `🪙 **Custo do Ritual:** \`30 Phantom Coins\`\n` +
+      `${t('gloom.fusion.ritualCost', source, { cost: 30 })}\n` +
       `👻 ${t('gloom.grimoire.phantomCoins', source, { coins: user.phantomCoins })}`
     )
     .setFooter({ text: isEn ? 'DemiKids Soul Fusion • Pyxie' : 'Caldeirão de Fusão • Pyxie' })
