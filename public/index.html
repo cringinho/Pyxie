@@ -485,21 +485,23 @@
 
     .pillar-title {
       font-family: var(--font-title);
-      font-size: 1.35rem;
-      margin-bottom: 10px;
       font-size: 1.25rem;
       color: #ffffff;
       font-weight: 700;
+      margin-bottom: 10px;
     }
 
     .pillar-text {
       color: var(--text-muted);
-      font-size: 0.92rem;
       font-size: 0.9rem;
       line-height: 1.55;
     }
 
     .pixel-art {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
     /* ==========================================================
        NOVA SEÇÃO DEDICADA: BOSQUE DA PYXIE (PYXIE'S GROVE)
        ========================================================== */
@@ -934,7 +936,6 @@
   <header class="navbar">
     <div class="container nav-wrapper">
       <a href="/" class="nav-brand">
-        <div class="brand-icon">🧚</div>
         <div class="brand-icon">
           <img src="https://cdn.discordapp.com/emojis/1548443951596306552.webp" alt="Pyxie" class="emoji-icon-lg" />
         </div>
@@ -942,28 +943,23 @@
       </a>
 
       <div class="nav-menu">
-        <a href="#pilares" class="nav-link" data-i18n="nav.features">Recursos</a>
-        <a href="#comandos" class="nav-link" data-i18n="nav.commands">Comandos</a>
-        <a href="https://top.gg/bot/1463644930080637140/vote" target="_blank" rel="noopener" class="nav-link" data-i18n="nav.vote">Top.gg</a>
-        <a href="/vote" target="_blank" rel="noopener" class="nav-link" data-i18n="nav.vote">Top.gg</a>
-        <a href="/bonus" class="nav-link" data-i18n="nav.bonus">Bônus Web (10s)</a>
-        <a href="#pilares" class="nav-link" data-i18n="nav.features">
+        <a href="#pilares" class="nav-link">
           <img src="https://cdn.discordapp.com/emojis/1548444202621214840.gif" class="emoji-icon" alt="sparkles" />
           <span data-i18n-text="nav.features">Recursos</span>
         </a>
-        <a href="#bosque" class="nav-link" data-i18n="nav.grove">
+        <a href="#bosque" class="nav-link">
           <img src="https://cdn.discordapp.com/emojis/1548443941144109181.gif" class="emoji-icon" alt="grove" />
           <span data-i18n-text="nav.grove">Bosque da Pyxie</span>
         </a>
-        <a href="#comandos" class="nav-link" data-i18n="nav.commands">
+        <a href="#comandos" class="nav-link">
           <img src="https://cdn.discordapp.com/emojis/1548443830653554708.gif" class="emoji-icon" alt="book" />
           <span data-i18n-text="nav.commands">Comandos</span>
         </a>
-        <a href="/vote" target="_blank" rel="noopener" class="nav-link" data-i18n="nav.vote">
+        <a href="/vote" target="_blank" rel="noopener" class="nav-link">
           <img src="https://cdn.discordapp.com/emojis/1548444237442322432.gif" class="emoji-icon" alt="rocket" />
           <span data-i18n-text="nav.vote">Top.gg</span>
         </a>
-        <a href="/bonus" class="nav-link" data-i18n="nav.bonus">
+        <a href="/bonus" class="nav-link">
           <img src="https://cdn.discordapp.com/emojis/1548444204202459136.gif" class="emoji-icon" alt="gift" />
           <span data-i18n-text="nav.bonus">Bônus Web (10s)</span>
         </a>
@@ -973,9 +969,7 @@
         <button id="langToggle" class="lang-btn" onclick="toggleLanguage()">
           <span>🇧🇷</span> <span>PT-BR</span>
         </button>
-        <a href="https://discord.com/oauth2/authorize?client_id=1463644930080637140&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener" class="nav-cta" data-i18n="nav.add">
-        <a href="/invite" target="_blank" rel="noopener" class="nav-cta" data-i18n="nav.add">
-          Adicionar
+        <a href="/invite" target="_blank" rel="noopener" class="nav-cta">
           <img src="https://cdn.discordapp.com/emojis/1548444170488778954.gif" class="emoji-icon" alt="portal" />
           <span data-i18n-text="nav.add">Adicionar</span>
         </a>
@@ -1541,6 +1535,7 @@
         if (dict[key]) el.placeholder = dict[key];
       });
 
+      renderLocationPills();
       renderLocationViewer(selectedLocationIndex);
       fetchCommands(lang);
     }
