@@ -15,95 +15,6 @@ const MODULE_ICONS = {
   utilidades: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif', // ykawaiicontrolle (Controle Gamer Kawaii)
 };
 
-const COMMAND_ICONS = {
-  // Bosque da Pyxie
-  explore: 'https://cdn.discordapp.com/emojis/1548444170488778954.gif',
-  explorar: 'https://cdn.discordapp.com/emojis/1548444170488778954.gif',
-  gloom: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif',
-  bosque: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif',
-  grimorio: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
-  grimoire: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
-  vasculhar: 'https://cdn.discordapp.com/emojis/1548443807694069760.gif',
-  scavenge: 'https://cdn.discordapp.com/emojis/1548443807694069760.gif',
-  wiki: 'https://cdn.discordapp.com/emojis/1551356435521339452.gif',
-
-  // Economia & Carreiras
-  trade: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
-  trocar: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
-  daily: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
-  diario: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
-  wallet: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  carteira: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  profession: 'https://cdn.discordapp.com/emojis/1551356441112084641.gif',
-  profissao: 'https://cdn.discordapp.com/emojis/1551356441112084641.gif',
-  work: 'https://cdn.discordapp.com/emojis/1548444173747621918.gif',
-  trabalho: 'https://cdn.discordapp.com/emojis/1548444173747621918.gif',
-  rank: 'https://cdn.discordapp.com/emojis/1548443887025266739.gif',
-  ranking: 'https://cdn.discordapp.com/emojis/1548443887025266739.gif',
-  vote: 'https://cdn.discordapp.com/emojis/1551356493050413159.gif',
-  votar: 'https://cdn.discordapp.com/emojis/1551356493050413159.gif',
-  bonus: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
-  recompensa: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
-  seteco: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
-  setareconomia: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
-  reseteco: 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
-  resetareconomia: 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
-  ecoconfig: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
-  configeconomia: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
-
-  // Loja & Mochila
-  shop: 'https://cdn.discordapp.com/emojis/1548444209328033913.png',
-  loja: 'https://cdn.discordapp.com/emojis/1548444209328033913.png',
-  inventory: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
-  inventario: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
-  mochila: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
-  buy: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  comprar: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  sell: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
-  vender: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
-
-  // Tarot Místico
-  tarot: 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
-
-  // Social & Casamentos & Minigames
-  ship: 'https://cdn.discordapp.com/emojis/1548444199970545756.gif',
-  casal: 'https://cdn.discordapp.com/emojis/1548444199970545756.gif',
-  marriage: 'https://cdn.discordapp.com/emojis/1551355484131299439.gif',
-  marry: 'https://cdn.discordapp.com/emojis/1551355484131299439.gif',
-  casamento: 'https://cdn.discordapp.com/emojis/1551355484131299439.gif',
-  divorce: 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
-  divorcio: 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
-  profile: 'https://cdn.discordapp.com/emojis/1551356277194625224.gif',
-  perfil: 'https://cdn.discordapp.com/emojis/1551356277194625224.gif',
-  cookie: 'https://cdn.discordapp.com/emojis/1551356672260444220.gif',
-  biscoito: 'https://cdn.discordapp.com/emojis/1551356672260444220.gif',
-  jokenpo: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
-  likely: 'https://cdn.discordapp.com/emojis/1548444134443065446.gif',
-  provavel: 'https://cdn.discordapp.com/emojis/1548444134443065446.gif',
-  dados: 'https://cdn.discordapp.com/emojis/1551356333272596572.gif',
-  dice: 'https://cdn.discordapp.com/emojis/1551356333272596572.gif',
-  coinflip: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  moeda: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-
-  // Utilidades & Sistema
-  help: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
-  ajuda: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
-  ping: 'https://cdn.discordapp.com/emojis/1548444326621741096.png',
-  info: 'https://cdn.discordapp.com/emojis/1551355784124825731.gif',
-  invite: 'https://cdn.discordapp.com/emojis/1548444149785694238.gif',
-  convite: 'https://cdn.discordapp.com/emojis/1548444149785694238.gif',
-  welcome: 'https://cdn.discordapp.com/emojis/1548443766799732837.gif',
-  boasvindas: 'https://cdn.discordapp.com/emojis/1548443766799732837.gif',
-  setwelcome: 'https://cdn.discordapp.com/emojis/1548443766799732837.gif',
-  schedule: 'https://cdn.discordapp.com/emojis/1548444158245736481.gif',
-  agenda: 'https://cdn.discordapp.com/emojis/1548444158245736481.gif',
-  emojis: 'https://cdn.discordapp.com/emojis/1548444202621214840.gif',
-  language: 'https://cdn.discordapp.com/emojis/1551356365065166998.gif',
-  idioma: 'https://cdn.discordapp.com/emojis/1551356365065166998.gif',
-  sixseven: 'https://cdn.discordapp.com/emojis/1551356116481482754.gif',
-  admin: 'https://cdn.discordapp.com/emojis/1551356439736352878.png',
-};
-
 const MODULE_METADATA = {
   todos: { id: 'todos', label: 'Visão Geral', emoji: '📖', iconUrl: MODULE_ICONS.todos, desc: 'Visão geral e índice de todas as categorias' },
   bosque: { id: 'bosque', label: 'Bosque da Pyxie', emoji: '🌲', iconUrl: MODULE_ICONS.bosque, desc: 'Exploração de cenários pixel, espíritos, fusão de almas e chefão comunitário' },
@@ -374,12 +285,15 @@ function getHelpModules(customCommands = null, source = null) {
 
     const category = cmd.category || COMMAND_CATEGORY_MAP[name] || 'utilidades';
     const targetBucket = moduleCommands[category] || moduleCommands.utilidades;
-    const iconUrl = COMMAND_ICONS[bareName] || COMMAND_ICONS[name] || MODULE_ICONS[category] || null;
+    const iconUrl = MODULE_ICONS[category] || MODULE_ICONS.utilidades || null;
+    const emoji = MODULE_EMOJIS[category] || '⚙️';
 
     targetBucket.push({
       name: `/${name}`,
       desc,
       aliases: cmd.aliases || [],
+      category,
+      emoji,
       iconUrl,
     });
   }
