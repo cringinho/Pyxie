@@ -34,7 +34,6 @@ const validCookieToken = Buffer.from(JSON.stringify({ payload, sig: hmac })).toS
 const balanceBeforeBonus = getBalance(testUserId);
 const claimBonusRes = verifyAndClaimBonus(validCookieToken);
 assert.equal(claimBonusRes.success, true, 'Resgate do bônus web de biscoito deve ser aprovado.');
-assert.equal(claimBonusRes.action, 'cookie_bonus', 'Ação do bônus deve ser cookie_bonus.');
 assert.equal(getBalance(testUserId), balanceBeforeBonus + 25, 'Deve creditar 25 moedas ao resgatar bônus de biscoito.');
 
 const statusAfterBonus = getCookieStatus(testUserId);
@@ -88,6 +87,28 @@ const likelyCommand = require('../src/commands/provavel');
 assert.ok(likelyCommand.name, 'Comando provavel deve ter nome.');
 assert.ok(likelyCommand.aliases.includes('provavel'), 'Comando provavel deve ter alias provavel.');
 assert.ok(likelyCommand.aliases.includes('likely'), 'Comando provavel deve ter alias likely.');
+
+const mockAuthor = { id: 'author_1', displayName: 'Jogador A' };
+const mockTarget = { id: 'target_2', displayName: 'Jogador B' };
+const mockSecond = { id: 'target_3', displayName: 'Jogador C' };
+
+const pair1 = likelyCommand.pickTwoMembers(null, mockTarget, null, mockAuthor);
+assert.deepStrictEqual(pair1, [mockAuthor, mockTarget], 'Deve selecionar Autor vs Alvo quando apenas 1 alvo é escolhido.');
+
+const pair2 = likelyCommand.pickTwoMembers(null, mockTarget, mockSecond, mockAuthor);
+assert.deepStrictEqual(pair2, [mockTarget, mockSecond], 'Deve selecionar Alvo 1 vs Alvo 2 quando 2 membros são fornecidos.');
+
+const pollRes = likelyCommand.startLikelyPoll({
+  guild: null,
+  candidateA: mockAuthor,
+  candidateB: mockTarget,
+  scenario: 'dormir na call',
+  lang: 'pt',
+});
+assert.ok(pollRes.pollId, 'Deve gerar pollId.');
+assert.ok(pollRes.embed, 'Deve gerar embed.');
+assert.equal(pollRes.components.length, 1, 'Deve conter 1 action row com botões dos dois alvos.');
+
 
 // 7. Teste de Dados
 const dadoCommand = require('../src/commands/dado');

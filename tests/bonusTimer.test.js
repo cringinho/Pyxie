@@ -42,6 +42,9 @@ try {
   assert.equal(accUser.magicBeans || 0, 0, 'Usuário não deve ter recebido feijão mágico.');
   assert.ok(accUser.lastWebBonusAt, 'Data do último bônus web deve ser registrada.');
 
+  // 4. Teste de anti-replay (não permite reutilizar o mesmo token)
+  const doubleClaim = verifyAndClaimBonus(validToken);
+  assert.equal(doubleClaim.success, false, 'Reutilizar o mesmo token deve ser rejeitado (anti-replay).');
   // 4. Teste de Cooldown de 24h para o Bônus Web Diário
   const cooldownStatus = getWebBonusStatus(testUserBonus);
   assert.equal(cooldownStatus.available, false, 'Bônus web deve entrar em cooldown de 24h após resgate.');

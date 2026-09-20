@@ -140,25 +140,47 @@ function buildPollEmbed(poll, lang = 'pt') {
     .setTimestamp();
 }
 
-function pickTwoMembers(guild, customA = null, customB = null) {
+function pickTwoMembers(guild, customA = null, customB = null, authorMember = null) {
   if (customA && customB && customA.id !== customB.id) {
     return [customA, customB];
   }
 
-  const humans = guild.members.cache.filter((m) => !m.user.bot && (!customA || m.id !== customA.id));
-  if (humans.size < 2) {
-    return null;
+  if (customA && authorMember && customA.id !== authorMember.id) {
+    return [authorMember, customA];
   }
 
-  const list = [...humans.values()];
-  const memberA = customA || list[Math.floor(Math.random() * list.length)];
-  let memberB = customB;
-
-  while (!memberB || memberB.id === memberA.id) {
-    memberB = list[Math.floor(Math.random() * list.length)];
+  if (customA && !authorMember) {
+    const humans = guild?.members?.cache?.filter((m) => !m.user?.bot && m.id !== customA.id);
+    if (humans && humans.size > 0) {
+      const list = [...humans.values()];
+      return [customA, list[Math.floor(Math.random() * list.length)]];
+    }
   }
 
-  return [memberA, memberB];
+  if (!customA && authorMember) {
+    const humans = guild?.members?.cache?.filter((m) => !m.user?.bot && m.id !== authorMember.id);
+    if (humans && humans.size > 0) {
+      const list = [...humans.values()];
+      return [authorMember, list[Math.floor(Math.random() * list.length)]];
+    }
+  }
+
+  const allHumans = guild?.members?.cache?.filter((m) => !m.user?.bot);
+  if (allHumans && allHumans.size >= 2) {
+    const list = [...allHumans.values()];
+    const idxA = Math.floor(Math.random() * list.length);
+    let idxB = Math.floor(Math.random() * list.length);
+    while (idxB === idxA && list.length > 1) {
+      idxB = Math.floor(Math.random() * list.length);
+    }
+    return [list[idxA], list[idxB]];
+  }
+
+  if (customA && authorMember) {
+    return [authorMember, customA];
+  }
+
+  return null;
 }
 
 function startLikelyPoll({ guild, candidateA, candidateB, scenario, channel, lang = 'pt' }) {
@@ -179,7 +201,7 @@ function startLikelyPoll({ guild, candidateA, candidateB, scenario, channel, lan
   activePolls.set(pollId, poll);
 
   // Encerramento em 60 segundos
-  setTimeout(async () => {
+  const timer = setTimeout(async () => {
     const finishedPoll = activePolls.get(pollId);
     if (!finishedPoll) return;
     activePolls.delete(pollId);
@@ -197,30 +219,33 @@ function startLikelyPoll({ guild, candidateA, candidateB, scenario, channel, lan
     if (countA > countB) {
       winner = finishedPoll.candidateA;
       winnerText = isEn
-        ? `👑 **${winner.displayName}** was elected with **${countA} votes**!`
-        : `👑 **${winner.displayName}** foi eleito(a) com **${countA} votos**!`;
+        ? `👑 **${winner.displayName || winner.username}** was elected with **${countA} votes**!`
+        : `👑 **${winner.displayName || winner.username}** foi eleito(a) com **${countA} votos**!`;
     } else if (countB > countA) {
       winner = finishedPoll.candidateB;
       winnerText = isEn
-        ? `👑 **${winner.displayName}** was elected with **${countB} votes**!`
-        : `👑 **${winner.displayName}** foi eleito(a) com **${countB} votos**!`;
+        ? `👑 **${winner.displayName || winner.username}** was elected with **${countB} votes**!`
+        : `👑 **${winner.displayName || winner.username}** foi eleito(a) com **${countB} votos**!`;
     }
 
     const title = isEn
       ? '🏆 ✦ Voting Closed: Who is most likely?'
       : '🏆 ✦ Votação Encerrada: Quem é mais provável?';
 
+    const nameA = finishedPoll.candidateA.displayName || finishedPoll.candidateA.username || 'Membro A';
+    const nameB = finishedPoll.candidateB.displayName || finishedPoll.candidateB.username || 'Membro B';
+
     const desc = isEn
       ? `The community has spoken on who is most likely to:\n> **"...${finishedPoll.scenario}?"**\n\n` +
         `### ${winnerText}\n\n` +
         `📊 **Final Tally:**\n` +
-        `• **${finishedPoll.candidateA.displayName}:** ${countA} vote(s)\n` +
-        `• **${finishedPoll.candidateB.displayName}:** ${countB} vote(s)`
+        `• **${nameA}:** ${countA} vote(s)\n` +
+        `• **${nameB}:** ${countB} vote(s)`
       : `A comunidade decidiu sobre quem é mais provável de:\n> **"...${finishedPoll.scenario}"**\n\n` +
         `### ${winnerText}\n\n` +
         `📊 **Placar Final:**\n` +
-        `• **${finishedPoll.candidateA.displayName}:** ${countA} voto(s)\n` +
-        `• **${finishedPoll.candidateB.displayName}:** ${countB} voto(s)`;
+        `• **${nameA}:** ${countA} voto(s)\n` +
+        `• **${nameB}:** ${countB} voto(s)`;
 
     const endEmbed = new EmbedBuilder()
       .setColor('#facc15')
@@ -236,6 +261,10 @@ function startLikelyPoll({ guild, candidateA, candidateB, scenario, channel, lan
       }).catch(() => null);
     }
   }, 60000);
+
+  if (timer && typeof timer.unref === 'function') {
+    timer.unref();
+  }
 
   return {
     pollId,
@@ -264,13 +293,14 @@ async function handleLikelyInteraction(interaction) {
 
   const candidateIdx = Number(rawIndex);
   const candidate = candidateIdx === 0 ? poll.candidateA : poll.candidateB;
+  const candidateName = candidate.displayName || candidate.username || 'Membro';
 
   poll.votes.set(interaction.user.id, candidateIdx);
 
   await interaction.reply({
     content: isEn
-      ? `🗳️ Your vote for **${candidate.displayName}** has been registered!`
-      : `🗳️ Seu voto foi registrado em **${candidate.displayName}**!`,
+      ? `🗳️ Your vote for **${candidateName}** has been registered!`
+      : `🗳️ Seu voto foi registrado em **${candidateName}**!`,
     ephemeral: true,
   });
 
@@ -285,35 +315,35 @@ module.exports = {
   aliases: ['provavel', 'py-provavel', 'quememaisprovavel', 'votacao', 'likely', 'py-likely', 'whois', 'mostlikely'],
   data: new SlashCommandBuilder()
     .setName(LIKELY)
-    .setDescription('Start a "Who is most likely to..." voting poll with two server members.')
+    .setDescription('Start a "Who is most likely to..." voting poll with a target member.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Inicie uma votação divertida de "Quem é mais provável de..." com dois membros.',
+      'pt-BR': 'Inicie uma votação divertida de "Quem é mais provável de..." escolhendo o alvo.',
     })
     .addUserOption((option) =>
       option
-        .setName('member1')
+        .setName('target')
         .setNameLocalizations({
-          'en-US': 'member1',
-          'en-GB': 'member1',
-          'pt-BR': 'membro1',
+          'en-US': 'target',
+          'en-GB': 'target',
+          'pt-BR': 'alvo',
         })
-        .setDescription('Optional first member for the poll.')
+        .setDescription('Target member for the voting poll.')
         .setDescriptionLocalizations({
-          'pt-BR': 'Primeiro membro opcional da votação.',
+          'pt-BR': 'Membro ou alvo da votação.',
         })
-        .setRequired(false)
+        .setRequired(true)
     )
     .addUserOption((option) =>
       option
-        .setName('member2')
+        .setName('second_member')
         .setNameLocalizations({
-          'en-US': 'member2',
-          'en-GB': 'member2',
-          'pt-BR': 'membro2',
+          'en-US': 'second_member',
+          'en-GB': 'second_member',
+          'pt-BR': 'segundo_membro',
         })
-        .setDescription('Optional second member for the poll.')
+        .setDescription('Optional second member (default: you).')
         .setDescriptionLocalizations({
-          'pt-BR': 'Segundo membro opcional da votação.',
+          'pt-BR': 'Segundo membro opcional (padrão: você).',
         })
         .setRequired(false)
     )
@@ -333,12 +363,22 @@ module.exports = {
     ),
   isLikelyInteraction,
   handleLikelyInteraction,
+  pickTwoMembers,
+  startLikelyPoll,
   async executePrefix({ message, args }) {
     const lang = getLanguage(message);
     const isEn = lang === 'en';
 
     const mentions = [...message.mentions.members.values()];
-    const candidates = pickTwoMembers(message.guild, mentions[0] || null, mentions[1] || null);
+    const targetMember = mentions[0] || null;
+    const secondMember = mentions[1] || null;
+
+    const customScenario = args
+      ?.filter((a) => !a.startsWith('<@') && !a.startsWith('<!@'))
+      ?.join(' ')
+      ?.trim() || null;
+
+    const candidates = pickTwoMembers(message.guild, targetMember, secondMember, message.member);
 
     if (!candidates) {
       return message.reply(
@@ -352,6 +392,7 @@ module.exports = {
       guild: message.guild,
       candidateA: candidates[0],
       candidateB: candidates[1],
+      scenario: customScenario,
       channel: message.channel,
       lang,
     });
@@ -363,20 +404,25 @@ module.exports = {
     const lang = getLanguage(interaction);
     const isEn = lang === 'en';
 
-    const user1 =
+    const targetUser =
+      interaction.options.getUser('target') ||
+      interaction.options.getUser('alvo') ||
       interaction.options.getUser('member1') ||
       interaction.options.getUser('membro1');
-    const user2 =
+    const secondUser =
+      interaction.options.getUser('second_member') ||
+      interaction.options.getUser('segundo_membro') ||
       interaction.options.getUser('member2') ||
       interaction.options.getUser('membro2');
     const situation =
       interaction.options.getString('situation') ||
       interaction.options.getString('situacao');
 
-    const member1 = user1 ? await interaction.guild.members.fetch(user1.id).catch(() => null) : null;
-    const member2 = user2 ? await interaction.guild.members.fetch(user2.id).catch(() => null) : null;
+    const targetMember = targetUser ? await interaction.guild.members.fetch(targetUser.id).catch(() => null) : null;
+    const secondMember = secondUser ? await interaction.guild.members.fetch(secondUser.id).catch(() => null) : null;
+    const authorMember = interaction.member;
 
-    const candidates = pickTwoMembers(interaction.guild, member1, member2);
+    const candidates = pickTwoMembers(interaction.guild, targetMember, secondMember, authorMember);
     if (!candidates) {
       return interaction.editReply(
         isEn

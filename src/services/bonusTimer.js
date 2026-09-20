@@ -1,5 +1,6 @@
 const crypto = require('node:crypto');
-const { addCoins } = require('./economy');
+const { addItem } = require('./inventory');
+const { addCoins, addMagicBeans } = require('./economy');
 
 const BONUS_SECRET = process.env.BONUS_SECRET || 'pyxie_magic_bonus_secret_key_2026';
 const MIN_WAIT_SECONDS = 8; // Mínimo de 8-10s no servidor para evitar trapaça
@@ -119,11 +120,13 @@ function verifyAndClaimBonus(token) {
     };
   }
 
+  claimedTokens.add(token);
+  if (claimedTokens.size > 5000) {
+    claimedTokens.clear();
+  }
+
   // 1. Recompensa do Chefão do Bosque (gloom_boss)
   if (data.action === 'gloom_boss') {
-    claimedTokens.add(token);
-    if (claimedTokens.size > 5000) claimedTokens.clear();
-
     const { unlockBossExtraAttack } = require('./gloomRealm');
     unlockBossExtraAttack(data.userId);
     const message = isEn
@@ -141,9 +144,6 @@ function verifyAndClaimBonus(token) {
 
   // 2. Recompensa do Biscoito da Sorte (cookie_bonus)
   if (data.action === 'cookie_bonus') {
-    claimedTokens.add(token);
-    if (claimedTokens.size > 5000) claimedTokens.clear();
-
     const { grantExtraCookie } = require('./cookie');
     grantExtraCookie(data.userId);
     addCoins(data.userId, 25);
@@ -171,9 +171,6 @@ function verifyAndClaimBonus(token) {
         : 'Você já resgatou seu bônus diário na web hoje! Aguarde 24 horas.',
     };
   }
-
-  claimedTokens.add(token);
-  if (claimedTokens.size > 5000) claimedTokens.clear();
 
   addCoins(data.userId, 75);
   const { updateUserAccount } = require('./economy');
