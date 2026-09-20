@@ -35,7 +35,7 @@ const balanceBeforeBonus = getBalance(testUserId);
 const claimBonusRes = verifyAndClaimBonus(validCookieToken);
 assert.equal(claimBonusRes.success, true, 'Resgate do bônus web de biscoito deve ser aprovado.');
 assert.equal(claimBonusRes.action, 'cookie_bonus', 'Ação do bônus deve ser cookie_bonus.');
-assert.equal(getBalance(testUserId), balanceBeforeBonus + 200, 'Deve creditar 200 moedas ao resgatar bônus de biscoito.');
+assert.equal(getBalance(testUserId), balanceBeforeBonus + 75, 'Deve creditar 75 moedas ao resgatar bônus de biscoito.');
 
 const statusAfterBonus = getCookieStatus(testUserId);
 assert.equal(statusAfterBonus.canOpen, true, 'Após o bônus, o usuário deve poder abrir um biscoito extra.');

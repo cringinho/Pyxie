@@ -21,8 +21,8 @@ const {
 const { WORK } = require('./commandNames');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 
-const WORK_MINIMUM = 20;
-const WORK_MAXIMUM = 65;
+const WORK_MINIMUM = 15;
+const WORK_MAXIMUM = 40;
 const WORK_TIMEOUT_MS = 45 * 1000;
 
 // Sessões ativas de minigames em RAM

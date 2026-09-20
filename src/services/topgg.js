@@ -31,7 +31,7 @@ function processTopggVote(payload) {
   }
 
   const isWeekend = Boolean(payload.isWeekend);
-  const coinsReward = isWeekend ? 200 : 100;
+  const coinsReward = isWeekend ? 100 : 50;
   const itemRewardId = isWeekend ? 'esmeralda' : 'ametista';
   const itemName = isWeekend ? '🟢 1x Esmeralda Nobre' : '🟣 1x Ametista Reluzente';
 

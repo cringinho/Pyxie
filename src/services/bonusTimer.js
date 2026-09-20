@@ -126,7 +126,7 @@ function verifyAndClaimBonus(token) {
   }
 
   // Recompensas da economia padrão (bônus geral e biscoito da sorte)
-  addCoins(data.userId, 200);
+  addCoins(data.userId, 75);
   addMagicBeans(data.userId, 1);
   addItem(data.userId, 'bau_madeira', 1);
 
@@ -135,19 +135,19 @@ function verifyAndClaimBonus(token) {
     const { grantExtraCookie } = require('./cookie');
     grantExtraCookie(data.userId);
     message = isEn
-      ? '🥠 **Extra Fortune Cookie Unlocked!** You received **+200 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦**!'
-      : '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você recebeu **+200 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦**!';
+      ? '🥠 **Extra Fortune Cookie Unlocked!** You received **+75 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦**!'
+      : '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você recebeu **+75 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦**!';
   } else {
     message = isEn
-      ? '🎁 **Bonus Claimed!** You received **+200 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦** in your inventory!'
-      : '🎁 **Bônus Resgatado com Sucesso!** Você recebeu **+200 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦** na sua mochila!';
+      ? '🎁 **Bonus Claimed!** You received **+75 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦** in your inventory!'
+      : '🎁 **Bônus Resgatado com Sucesso!** Você recebeu **+75 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦** na sua mochila!';
   }
 
   return {
     success: true,
     action: data.action,
     userId: data.userId,
-    coinsAwarded: 200,
+    coinsAwarded: 75,
     beansAwarded: 1,
     message,
   };

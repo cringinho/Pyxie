@@ -139,8 +139,8 @@ function setGlobalPrefix(prefix) {
 function getEconomyConfig(guildId = 'global') {
   const settings = guildId && guildId !== 'global' ? getGuildSettings(guildId) : getGlobalSettings();
   const economy = settings.economy || getGlobalSettings().economy || {};
-  const minimum = Number.isFinite(Number(economy.minimum)) ? Math.max(0, Math.floor(Number(economy.minimum))) : 0;
-  const maximum = Number.isFinite(Number(economy.maximum)) ? Math.max(minimum, Math.floor(Number(economy.maximum))) : 100;
+  const minimum = Number.isFinite(Number(economy.minimum)) ? Math.max(0, Math.floor(Number(economy.minimum))) : 25;
+  const maximum = Number.isFinite(Number(economy.maximum)) ? Math.max(minimum, Math.floor(Number(economy.maximum))) : 60;
 
   return { minimum, maximum };
 }

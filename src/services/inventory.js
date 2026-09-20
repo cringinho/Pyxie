@@ -57,37 +57,11 @@ function scheduleInventorySave() {
   }
 }
 
-const LEGACY_ITEM_MIGRATION = {
-  racao_cringe: 'ametista',
-  cafe_expresso: 'ametista',
-  cha_camomila: 'ametista',
-  pocao_energia: 'ametista',
-  curativo_fofo: 'opala',
-  pocao_vida: 'opala',
-  amuleto_sorte: 'opala',
-  ampulheta_tempo_2h: 'opala',
-  pocao_brilho: 'esmeralda',
-  pergaminho_antigo: 'esmeralda',
-  cristal_arcano: 'rubi',
-  anel_compromisso: 'diamante',
-};
-
-function migrateInventory(inv) {
-  if (!inv || typeof inv !== 'object') return inv;
+function sanitizeInventory(inv) {
+  if (!inv || typeof inv !== 'object') return false;
   let changed = false;
-  for (const [key, targetKey] of Object.entries(LEGACY_ITEM_MIGRATION)) {
-    if (inv[key] && Number(inv[key]) > 0) {
-      inv[targetKey] = (Number(inv[targetKey]) || 0) + Number(inv[key]);
-      delete inv[key];
-      changed = true;
-    } else if (inv[key] !== undefined) {
-      delete inv[key];
-      changed = true;
-    }
-  }
-  // Remove any obsolete keys not present in catalog
   for (const key of Object.keys(inv)) {
-    if (!itemsCatalog[key]) {
+    if (!itemsCatalog[key] || Number(inv[key]) <= 0) {
       delete inv[key];
       changed = true;
     }
@@ -107,7 +81,7 @@ function getFullInventoryMap() {
     cachedInventory = readJsonFile(inventoryFile, {});
     let dirty = false;
     for (const userId of Object.keys(cachedInventory)) {
-      if (migrateInventory(cachedInventory[userId])) {
+      if (sanitizeInventory(cachedInventory[userId])) {
         dirty = true;
       }
     }
@@ -122,7 +96,7 @@ function getUserInventory(userId) {
   const all = getFullInventoryMap();
   if (!all[userId]) {
     all[userId] = {};
-  } else if (migrateInventory(all[userId])) {
+  } else if (sanitizeInventory(all[userId])) {
     scheduleInventorySave();
   }
   return all[userId];

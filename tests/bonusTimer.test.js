@@ -31,14 +31,14 @@ try {
 
   const claimRes = verifyAndClaimBonus(validToken);
   assert.equal(claimRes.success, true, 'Resgate com tempo válido deve ser aprovado.');
-  assert.equal(claimRes.coinsAwarded, 200, 'Deve conceder 200 moedas.');
+  assert.equal(claimRes.coinsAwarded, 75, 'Deve conceder 75 moedas.');
   assert.equal(claimRes.beansAwarded, 1, 'Deve conceder 1 feijão mágico.');
 
   const invUser = getUserInventory(testUserBonus);
   assert.equal(invUser.bau_madeira, 1, 'Mochila do usuário deve conter 1x Baú Rústico.');
 
   const accUser = getUserAccount(testUserBonus);
-  assert.equal(accUser.coins, 200, 'Usuário deve ter recebido 200 moedas.');
+  assert.equal(accUser.coins, 75, 'Usuário deve ter recebido 75 moedas.');
   assert.equal(accUser.magicBeans, 1, 'Usuário deve ter recebido 1 feijão mágico.');
 
   // 4. Teste de anti-replay (não permite reutilizar o mesmo token)

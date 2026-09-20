@@ -49,12 +49,12 @@ try {
 
   const voteNormal = processTopggVote({ user: testUserA, isWeekend: false });
   assert.equal(voteNormal.success, true, 'Voto comum no Top.gg deve ser processado.');
-  assert.equal(voteNormal.coins, 100, 'Recompensa comum deve ser 100 moedas.');
+  assert.equal(voteNormal.coins, 50, 'Recompensa comum deve ser 50 moedas.');
   assert.equal(hasItem(testUserA, 'ametista', 3), true, 'Usuário deve receber 1x Ametista Reluzente.');
 
   const voteWeekend = processTopggVote({ user: testUserB, isWeekend: true });
   assert.equal(voteWeekend.success, true, 'Voto no fim de semana no Top.gg deve ser processado.');
-  assert.equal(voteWeekend.coins, 200, 'Recompensa de fim de semana deve ser 200 moedas (2x).');
+  assert.equal(voteWeekend.coins, 100, 'Recompensa de fim de semana deve ser 100 moedas (2x).');
   assert.equal(hasItem(testUserB, 'esmeralda', 1), true, 'Usuário deve receber 1x Esmeralda Nobre.');
   const accB = getUserAccount(testUserB);
   assert.equal(accB.magicBeans, 1, 'Fim de semana deve conceder 1 Feijão Mágico.');
