@@ -28,42 +28,47 @@ const TEST_USER = `test_inv_user_${Date.now()}`;
 try {
   // 1. Catálogo de Itens
   const allItems = getAllItems();
-  assert.ok(allItems.length >= 10, 'O catálogo deve conter ao menos 10 itens.');
+  assert.ok(allItems.length >= 9, 'O catálogo deve conter ao menos 9 itens (baús e joias).');
 
-  const utilitarios = getItemsByCategory('utilitario');
-  assert.ok(utilitarios.length >= 2, 'Deve haver ao menos 2 itens utilitários.');
+  const joias = getItemsByCategory('joia');
+  assert.ok(joias.length === 6, 'Deve haver exatamente 6 joias preciosas.');
 
-  const cafe = getItemDefinition('cafe_expresso');
-  assert.ok(cafe, 'Café Encantado deve existir no catálogo.');
-  assert.equal(cafe.category, 'utilitario');
+  const ametista = getItemDefinition('ametista');
+  assert.ok(ametista, 'Ametista Reluzente deve existir no catálogo.');
+  assert.equal(ametista.category, 'joia');
+  assert.equal(ametista.sellPrice, 100);
+
+  const jade = getItemDefinition('jade_imperial');
+  assert.ok(jade, 'Jade Imperial deve existir no catálogo.');
+  assert.equal(jade.sellPrice, 10000);
 
   // 2. Adicionar e Remover itens
   updateUserAccount(TEST_USER, (acc) => {
-    acc.coins = 1000;
+    acc.coins = 2000;
   });
 
-  addItem(TEST_USER, 'cafe_expresso', 3);
-  assert.equal(hasItem(TEST_USER, 'cafe_expresso', 3), true, 'Usuário deve ter 3 cafés.');
-  assert.equal(hasItem(TEST_USER, 'cafe_expresso', 4), false, 'Usuário não deve ter 4 cafés.');
+  addItem(TEST_USER, 'ametista', 3);
+  assert.equal(hasItem(TEST_USER, 'ametista', 3), true, 'Usuário deve ter 3 ametistas.');
+  assert.equal(hasItem(TEST_USER, 'ametista', 4), false, 'Usuário não deve ter 4 ametistas.');
 
-  removeItem(TEST_USER, 'cafe_expresso', 1);
-  assert.equal(hasItem(TEST_USER, 'cafe_expresso', 2), true, 'Usuário deve ter 2 cafés restantes.');
+  removeItem(TEST_USER, 'ametista', 1);
+  assert.equal(hasItem(TEST_USER, 'ametista', 2), true, 'Usuário deve ter 2 ametistas restantes.');
 
-  // 3. Compra de Itens na Loja
-  const buyRes = buyItem(TEST_USER, 'cha_camomila', 1);
-  assert.equal(buyRes.success, true, 'Compra de chá deve ser bem-sucedida.');
-  assert.equal(hasItem(TEST_USER, 'cha_camomila', 1), true, 'Chá deve estar na mochila.');
+  // 3. Compra de Itens na Loja (Opala = 600 moedas)
+  const buyRes = buyItem(TEST_USER, 'opala', 1);
+  assert.equal(buyRes.success, true, 'Compra de opala deve ser bem-sucedida.');
+  assert.equal(hasItem(TEST_USER, 'opala', 1), true, 'Opala deve estar na mochila.');
 
   const accAfterBuy = getUserAccount(TEST_USER);
-  assert.equal(accAfterBuy.coins, 1000 - 120, 'Saldo de moedas deve ser debitado.');
+  assert.equal(accAfterBuy.coins, 2000 - 600, 'Saldo de moedas deve ser debitado.');
 
-  // 4. Venda de Itens
-  const sellRes = sellItem(TEST_USER, 'cha_camomila', 1);
-  assert.equal(sellRes.success, true, 'Venda de chá deve ter sucesso.');
-  assert.equal(hasItem(TEST_USER, 'cha_camomila', 1), false, 'Chá deve ter sido removido da mochila.');
+  // 4. Venda de Itens (Opala = 250 moedas)
+  const sellRes = sellItem(TEST_USER, 'opala', 1);
+  assert.equal(sellRes.success, true, 'Venda de opala deve ter sucesso.');
+  assert.equal(hasItem(TEST_USER, 'opala', 1), false, 'Opala deve ter sido removida da mochila.');
 
   const accAfterSell = getUserAccount(TEST_USER);
-  assert.equal(accAfterSell.coins, (1000 - 120) + 40, 'Moedas da venda devem ser creditadas.');
+  assert.equal(accAfterSell.coins, (2000 - 600) + 250, 'Moedas da venda devem ser creditadas.');
 
   // 5. Abertura de Baús
   addItem(TEST_USER, 'bau_madeira', 1);
@@ -78,9 +83,8 @@ try {
   flushInventorySync();
   assert.ok(fs.existsSync(inventoryFile), 'Arquivo inventory.json deve existir.');
 
-  console.log('Verificação do Inventário, Loja, Baús e Transações: OK');
+  console.log('Verificação do Inventário, Joias, Loja, Baús e Transações: OK');
 } finally {
   fs.writeFileSync(inventoryFile, originalInventory, 'utf8');
   fs.writeFileSync(economyFile, originalEconomy, 'utf8');
 }
-

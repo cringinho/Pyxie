@@ -18,8 +18,8 @@ try {
   addMagicBeans(testUserA, 10);
 
   // 2. Teste de Trocas Seguras (Itens e Moedas)
-  addItem(testUserA, 'cafe_expresso', 3);
-  const tradeProp = createTradeProposal(testUserA, testUserB, { type: 'item', id: 'cafe_expresso', amount: 1 });
+  addItem(testUserA, 'ametista', 3);
+  const tradeProp = createTradeProposal(testUserA, testUserB, { type: 'item', id: 'ametista', amount: 1 });
   assert.equal(tradeProp.success, true, 'Proposta de troca válida deve ser criada.');
 
   const confirm1 = confirmTrade(tradeProp.session.id, testUserA);
@@ -27,13 +27,13 @@ try {
 
   const confirm2 = confirmTrade(tradeProp.session.id, testUserB);
   assert.equal(confirm2.completed, true, 'Após ambas as confirmações, a troca deve ser concluída.');
-  assert.ok(hasItem(testUserB, 'cafe_expresso', 1), 'O receptor deve ter recebido o item.');
+  assert.ok(hasItem(testUserB, 'ametista', 1), 'O receptor deve ter recebido o item.');
 
   // Teste de cancelamento de troca
   const testUserC = `user_test_c_${testRunId}`;
   const testUserD = `user_test_d_${testRunId}`;
-  addItem(testUserC, 'cafe_expresso', 2);
-  const cancelProp = createTradeProposal(testUserC, testUserD, { type: 'item', id: 'cafe_expresso', amount: 1 });
+  addItem(testUserC, 'ametista', 2);
+  const cancelProp = createTradeProposal(testUserC, testUserD, { type: 'item', id: 'ametista', amount: 1 });
   assert.equal(cancelProp.success, true);
   const cancelRes = cancelTrade(cancelProp.session.id, testUserC);
   assert.equal(cancelRes.success, true, 'Cancelamento da proposta de troca deve funcionar.');
@@ -50,12 +50,12 @@ try {
   const voteNormal = processTopggVote({ user: testUserA, isWeekend: false });
   assert.equal(voteNormal.success, true, 'Voto comum no Top.gg deve ser processado.');
   assert.equal(voteNormal.coins, 100, 'Recompensa comum deve ser 100 moedas.');
-  assert.equal(hasItem(testUserA, 'cafe_expresso', 2), true, 'Usuário deve receber 1x Café Encantado.');
+  assert.equal(hasItem(testUserA, 'ametista', 3), true, 'Usuário deve receber 1x Ametista Reluzente.');
 
   const voteWeekend = processTopggVote({ user: testUserB, isWeekend: true });
   assert.equal(voteWeekend.success, true, 'Voto no fim de semana no Top.gg deve ser processado.');
   assert.equal(voteWeekend.coins, 200, 'Recompensa de fim de semana deve ser 200 moedas (2x).');
-  assert.equal(hasItem(testUserB, 'pocao_brilho', 1), true, 'Usuário deve receber 1x Elixir de Estrelas.');
+  assert.equal(hasItem(testUserB, 'esmeralda', 1), true, 'Usuário deve receber 1x Esmeralda Nobre.');
   const accB = getUserAccount(testUserB);
   assert.equal(accB.magicBeans, 1, 'Fim de semana deve conceder 1 Feijão Mágico.');
 

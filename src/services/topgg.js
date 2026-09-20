@@ -32,8 +32,8 @@ function processTopggVote(payload) {
 
   const isWeekend = Boolean(payload.isWeekend);
   const coinsReward = isWeekend ? 200 : 100;
-  const itemRewardId = isWeekend ? 'pocao_brilho' : 'cafe_expresso';
-  const itemName = isWeekend ? '🧪 1x Elixir de Estrelas' : '☕ 1x Café Encantado';
+  const itemRewardId = isWeekend ? 'esmeralda' : 'ametista';
+  const itemName = isWeekend ? '🟢 1x Esmeralda Nobre' : '🟣 1x Ametista Reluzente';
 
   // 1. Entregar Moedas
   addCoins(userId, coinsReward);

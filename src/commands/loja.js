@@ -14,8 +14,7 @@ const { getLanguage, t } = require('../utils/i18n');
 
 const CATEGORY_KEYS = [
   { key: 'bau', emoji: '📦' },
-  { key: 'reliquia', emoji: '💎' },
-  { key: 'utilitario', emoji: '☕' },
+  { key: 'joia', emoji: '💎' },
 ];
 
 function getCategories(source = null) {
@@ -180,9 +179,9 @@ module.exports = {
   handleShopInteraction,
   data: new SlashCommandBuilder()
     .setName(SHOP)
-    .setDescription('Open the store to buy mystery chests, relics and items.')
+    .setDescription('Open the store to buy mystery chests and precious gems.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Abre a lojinha para comprar baús misteriosos, relíquias e itens.',
+      'pt-BR': 'Abre a lojinha para comprar baús misteriosos e gemas preciosas.',
     })
     .addStringOption((opt) =>
       opt
@@ -199,13 +198,12 @@ module.exports = {
         .setRequired(false)
         .addChoices(
           { name: '📦 Mystery Chests', nameLocalizations: { 'pt-BR': '📦 Baús Misteriosos' }, value: 'bau' },
-          { name: '💎 Relics & Collectibles', nameLocalizations: { 'pt-BR': '💎 Relíquias & Colecionáveis' }, value: 'reliquia' },
-          { name: '☕ Utilities & Treats', nameLocalizations: { 'pt-BR': '☕ Utilitários & Guloseimas' }, value: 'utilitario' }
+          { name: '💎 Precious Gems & Jewels', nameLocalizations: { 'pt-BR': '💎 Joias & Gemas Preciosas' }, value: 'joia' }
         )
     ),
   async executePrefix({ message, args }) {
     const requestedCat = args[0]?.toLowerCase() || 'bau';
-    const validCategory = ['bau', 'reliquia', 'utilitario'].includes(requestedCat)
+    const validCategory = ['bau', 'joia'].includes(requestedCat)
       ? requestedCat
       : 'bau';
     const embed = buildShopEmbed(validCategory, message);

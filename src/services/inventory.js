@@ -57,6 +57,32 @@ function scheduleInventorySave() {
   }
 }
 
+const LEGACY_ITEM_MIGRATION = {
+  racao_cringe: 'ametista',
+  cafe_expresso: 'ametista',
+  cha_camomila: 'ametista',
+  curativo_fofo: 'opala',
+  pocao_vida: 'opala',
+  amuleto_sorte: 'opala',
+  pocao_brilho: 'esmeralda',
+  pergaminho_antigo: 'esmeralda',
+  cristal_arcano: 'rubi',
+  anel_compromisso: 'diamante',
+};
+
+function migrateInventory(inv) {
+  if (!inv || typeof inv !== 'object') return inv;
+  let changed = false;
+  for (const [key, targetKey] of Object.entries(LEGACY_ITEM_MIGRATION)) {
+    if (inv[key] && inv[key] > 0) {
+      inv[targetKey] = (Number(inv[targetKey]) || 0) + Number(inv[key]);
+      delete inv[key];
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 function flushInventorySync() {
   if (inventoryDirty && cachedInventory) {
     writeJsonFile(inventoryFile, cachedInventory);
@@ -67,6 +93,15 @@ function flushInventorySync() {
 function getFullInventoryMap() {
   if (!cachedInventory) {
     cachedInventory = readJsonFile(inventoryFile, {});
+    let dirty = false;
+    for (const userId of Object.keys(cachedInventory)) {
+      if (migrateInventory(cachedInventory[userId])) {
+        dirty = true;
+      }
+    }
+    if (dirty) {
+      inventoryDirty = true;
+    }
   }
   return cachedInventory;
 }
@@ -75,6 +110,8 @@ function getUserInventory(userId) {
   const all = getFullInventoryMap();
   if (!all[userId]) {
     all[userId] = {};
+  } else if (migrateInventory(all[userId])) {
+    scheduleInventorySave();
   }
   return all[userId];
 }

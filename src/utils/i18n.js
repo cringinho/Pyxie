@@ -184,9 +184,9 @@ const TRANSLATIONS = {
       "desc": "Apoie o crescimento do bot votando no **Top.gg** a cada 12 horas e receba recompensas exclusivas instantaneamente!",
       "rewardsTitle": "🎁 **RECOMPENSAS POR VOTO:**",
       "rewardCoins": "> 🪙 **+100 Moedinhas** no cofre",
-      "rewardItem": "> ☕ **+1x Café Encantado** no inventário",
-      "weekendActive": "🔥 **BÔNUS DE FIM DE SEMANA ATIVO (2X):**\n> 🌟 *Todos os votos durante o fim de semana entregam o **DOBRO**! (+200 Moedas, 🧪 1x Elixir de Estrelas e +1 Feijão Mágico 🌱)!*",
-      "weekendTip": "✨ **DICA DE FIM DE SEMANA (2X):**\n> *De Sexta a Domingo, todos os votos entregam o **DOBRO** (+200 Moedas, 🧪 1x Elixir de Estrelas e +1 Feijão Mágico 🌱)!*",
+      "rewardItem": "> 🟣 **+1x Ametista Reluzente** no inventário",
+      "weekendActive": "🔥 **BÔNUS DE FIM DE SEMANA ATIVO (2X):**\n> 🌟 *Todos os votos durante o fim de semana entregam o **DOBRO**! (+200 Moedas, 🟢 1x Esmeralda Nobre e +1 Feijão Mágico 🌱)!*",
+      "weekendTip": "✨ **DICA DE FIM DE SEMANA (2X):**\n> *De Sexta a Domingo, todos os votos entregam o **DOBRO** (+200 Moedas, 🟢 1x Esmeralda Nobre e +1 Feijão Mágico 🌱)!*",
       "cta": "👉 *Clique no botão abaixo para abrir a página de votação:*",
       "btnLabel": "Votar no Top.gg (12h)",
       "footerText": "Recompensas entregues automaticamente em segundos!",
@@ -201,8 +201,8 @@ const TRANSLATIONS = {
       "magicBean": "> ✨ **SORTE ÉPICA (1% de Chance):** **+1x Feijão Mágico <:peakmagicbean:1548444143431323719>** (Total: **{total} <:peakmagicbean:1548444143431323719>**)",
       "titleCooldown": "<:rarecrate:1548444209328033913>  ✦  Baú Diário em Cooldown",
       "descCooldown": "⏳ Você já coletou seu baú diário hoje. Espere **{time}** para abrir novamente!",
-      "voteWeekendBonus": "🔥 **BÔNUS DE FIM DE SEMANA ATIVO (2X):**\n> Vote no **Top.gg** e ganhe **+200 Moedas**, **🧪 1x Elixir de Estrelas** e **+1 Feijão Mágico 🌱**!",
-      "voteWeekdayBonus": "<a:qbgifts48:1548444204202459136> **BÔNUS EXTRA NO TOP.GG (A CADA 12H):**\n> Vote no **Top.gg** e ganhe **+100 Moedas** e **☕ 1x Café Encantado** *(com dobro nos fins de semana!)*",
+      "voteWeekendBonus": "🔥 **BÔNUS DE FIM DE SEMANA ATIVO (2X):**\n> Vote no **Top.gg** e ganhe **+200 Moedas**, **🟢 1x Esmeralda Nobre** e **+1 Feijão Mágico 🌱**!",
+      "voteWeekdayBonus": "<a:qbgifts48:1548444204202459136> **BÔNUS EXTRA NO TOP.GG (A CADA 12H):**\n> Vote no **Top.gg** e ganhe **+100 Moedas** e **🟣 1x Ametista Reluzente** *(com dobro nos fins de semana!)*",
       "btnLabel": "Resgatar Bônus no Top.gg",
       "btnLabelCooldown": "Votar no Top.gg (Recompensa Extra)",
       "btnWebBonus": "⚡ Bônus Web (+200🪙 & 📦)",
@@ -373,15 +373,11 @@ const TRANSLATIONS = {
       "categories": {
         "bau": {
           "label": "Baús Misteriosos",
-          "desc": "Baús com moedas e relíquias raras"
+          "desc": "Baús com moedas e gemas preciosas"
         },
-        "reliquia": {
-          "label": "Relíquias & Amuletos",
-          "desc": "Itens de prestígio, sorte e romance"
-        },
-        "utilitario": {
-          "label": "Utilitários & Bebidas",
-          "desc": "Cafés e elixires revigorantes"
+        "joia": {
+          "label": "Joias & Gemas Preciosas",
+          "desc": "Gemas raras para comércio, coleção e prestígio"
         }
       }
     },
@@ -704,9 +700,9 @@ const TRANSLATIONS = {
       "desc": "Support the bot on **Top.gg** every 12 hours and claim exclusive instant rewards!",
       "rewardsTitle": "🎁 **VOTE REWARDS:**",
       "rewardCoins": "> 🪙 **+100 Coins** in your vault",
-      "rewardItem": "> ☕ **+1x Enchanted Coffee** in your backpack",
-      "weekendActive": "🔥 **WEEKEND BONUS ACTIVE (2X):**\n> 🌟 *All votes during the weekend deliver **DOUBLE**! (+200 Coins, 🧪 1x Star Elixir, and +1 Magic Bean 🌱)!*",
-      "weekendTip": "✨ **WEEKEND TIP (2X):**\n> *From Friday to Sunday, all votes deliver **DOUBLE** (+200 Coins, 🧪 1x Star Elixir, and +1 Magic Bean 🌱)!*",
+      "rewardItem": "> 🟣 **+1x Shimmering Amethyst** in your backpack",
+      "weekendActive": "🔥 **WEEKEND BONUS ACTIVE (2X):**\n> 🌟 *All votes during the weekend deliver **DOUBLE**! (+200 Coins, 🟢 1x Noble Emerald, and +1 Magic Bean 🌱)!*",
+      "weekendTip": "✨ **WEEKEND TIP (2X):**\n> *From Friday to Sunday, all votes deliver **DOUBLE** (+200 Coins, 🟢 1x Noble Emerald, and +1 Magic Bean 🌱)!*",
       "cta": "👉 *Click the button below to open the voting page:*",
       "btnLabel": "Vote on Top.gg (12h)",
       "footerText": "Rewards delivered automatically in seconds!",
@@ -721,8 +717,8 @@ const TRANSLATIONS = {
       "magicBean": "> ✨ **EPIC LUCK (1% Chance):** **+1x Magic Bean <:peakmagicbean:1548444143431323719>** (Total: **{total} <:peakmagicbean:1548444143431323719>**)",
       "titleCooldown": "<:rarecrate:1548444209328033913>  ✦  Daily Crate on Cooldown",
       "descCooldown": "⏳ You already claimed your daily crate today. Please wait **{time}** before claiming again!",
-      "voteWeekendBonus": "🔥 **WEEKEND BONUS ACTIVE (2X):**\n> Vote on **Top.gg** and get **+200 Coins**, **🧪 1x Star Elixir**, and **+1 Magic Bean 🌱**!",
-      "voteWeekdayBonus": "<a:qbgifts48:1548444204202459136> **EXTRA TOP.GG BONUS (EVERY 12H):**\n> Vote on **Top.gg** and get **+100 Coins** and **☕ 1x Enchanted Coffee** *(doubled on weekends!)*",
+      "voteWeekendBonus": "🔥 **WEEKEND BONUS ACTIVE (2X):**\n> Vote on **Top.gg** and get **+200 Coins**, **🟢 1x Noble Emerald**, and **+1 Magic Bean 🌱**!",
+      "voteWeekdayBonus": "<a:qbgifts48:1548444204202459136> **EXTRA TOP.GG BONUS (EVERY 12H):**\n> Vote on **Top.gg** and get **+100 Coins** and **🟣 1x Shimmering Amethyst** *(doubled on weekends!)*",
       "btnLabel": "Claim Bonus on Top.gg",
       "btnLabelCooldown": "Vote on Top.gg (Extra Reward)",
       "btnWebBonus": "⚡ Web Bonus (+200🪙 & 📦)",
@@ -893,15 +889,11 @@ const TRANSLATIONS = {
       "categories": {
         "bau": {
           "label": "Mystery Chests",
-          "desc": "Chests containing coins and rare relics"
+          "desc": "Chests containing coins and rare precious gems"
         },
-        "reliquia": {
-          "label": "Relics & Amulets",
-          "desc": "Items of prestige, fortune, and romance"
-        },
-        "utilitario": {
-          "label": "Utilities & Drinks",
-          "desc": "Energizing coffees and refreshing elixirs"
+        "joia": {
+          "label": "Precious Gems & Jewels",
+          "desc": "Rare gems for trade, collection, and prestige"
         }
       }
     },

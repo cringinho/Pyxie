@@ -12,7 +12,7 @@
       "isChest": true,
       "minCoins": 150,
       "maxCoins": 600,
-      "possibleItems": ["cafe_expresso", "amuleto_sorte"]
+      "possibleItems": ["ametista", "opala"]
     }
   },
   "bau_prata": {
@@ -28,7 +28,7 @@
       "isChest": true,
       "minCoins": 800,
       "maxCoins": 2200,
-      "possibleItems": ["pocao_brilho", "cristal_arcano"]
+      "possibleItems": ["esmeralda", "rubi"]
     }
   },
   "bau_caos": {
@@ -44,84 +44,73 @@
       "isChest": true,
       "minCoins": 2000,
       "maxCoins": 6000,
-      "possibleItems": ["anel_compromisso", "cristal_arcano"]
+      "possibleItems": ["diamante", "jade_imperial"]
     }
   },
-  "cafe_expresso": {
-    "id": "cafe_expresso",
-    "name": "Café Encantado",
-    "category": "utilitario",
+  "ametista": {
+    "id": "ametista",
+    "name": "Ametista Reluzente",
+    "category": "joia",
     "rarity": "COMUM",
-    "emoji": "☕",
-    "buyPrice": 80,
-    "sellPrice": 25,
-    "description": "Bebida aromática que dá disposição para o expediente de trabalho.",
+    "emoji": "🟣",
+    "buyPrice": 250,
+    "sellPrice": 100,
+    "description": "Gema cristalina arroxeada extraída de geodos ancestrais. Excelente para comércio e coleção.",
     "effects": {}
   },
-  "pocao_brilho": {
-    "id": "pocao_brilho",
-    "name": "Elixir de Estrelas",
-    "category": "utilitario",
+  "opala": {
+    "id": "opala",
+    "name": "Opala Mística",
+    "category": "joia",
     "rarity": "INCOMUM",
-    "emoji": "🧪",
-    "buyPrice": 350,
-    "sellPrice": 120,
-    "description": "Guloseima efervescente com pó estelar da Cringelândia.",
-    "effects": {}
-  },
-  "amuleto_sorte": {
-    "id": "amuleto_sorte",
-    "name": "Amuleto da Sorte",
-    "category": "reliquia",
-    "rarity": "INCOMUM",
-    "emoji": "🍀",
-    "buyPrice": 500,
-    "sellPrice": 200,
-    "description": "Amuleto brilhante que atrai bons ventos para quem o carrega.",
-    "effects": {}
-  },
-  "cristal_arcano": {
-    "id": "cristal_arcano",
-    "name": "Cristal Arcano",
-    "category": "reliquia",
-    "rarity": "RARO",
     "emoji": "🔮",
-    "buyPrice": 1500,
-    "sellPrice": 600,
-    "description": "Cristal violeta cintilante lapidado nos recantos místicos de Pyxie.",
+    "buyPrice": 600,
+    "sellPrice": 250,
+    "description": "Pedra iridescente que refrata a luz em tons espectrais fascinantes.",
     "effects": {}
   },
-  "anel_compromisso": {
-    "id": "anel_compromisso",
-    "name": "Anel do Destino",
-    "category": "reliquia",
-    "rarity": "EPICO",
-    "emoji": "💍",
-    "buyPrice": 3000,
-    "sellPrice": 1200,
-    "description": "Jóia finamente decorada, símbolo de prestígio e amor eterno.",
-    "effects": {}
-  },
-  "pergaminho_antigo": {
-    "id": "pergaminho_antigo",
-    "name": "Pergaminho dos Mistérios",
-    "category": "reliquia",
+  "esmeralda": {
+    "id": "esmeralda",
+    "name": "Esmeralda Nobre",
+    "category": "joia",
     "rarity": "RARO",
-    "emoji": "📜",
-    "buyPrice": 750,
-    "sellPrice": 280,
-    "description": "Manuscrito ancestral contendo charadas e lendas de Cringelândia.",
+    "emoji": "🟢",
+    "buyPrice": 1400,
+    "sellPrice": 600,
+    "description": "Gema verdejante de pureza estonteante, cobiçada por mercadores e nobres.",
     "effects": {}
   },
-  "cha_camomila": {
-    "id": "cha_camomila",
-    "name": "Infusão Serenidade",
-    "category": "utilitario",
-    "rarity": "COMUM",
-    "emoji": "🍵",
-    "buyPrice": 120,
-    "sellPrice": 40,
-    "description": "Chá perfumado para relaxar a mente após um longo dia de jogatina.",
+  "rubi": {
+    "id": "rubi",
+    "name": "Rubi Escarlate",
+    "category": "joia",
+    "rarity": "EPICO",
+    "emoji": "🔴",
+    "buyPrice": 3500,
+    "sellPrice": 1500,
+    "description": "Pedra preciosa de tom vermelho profundo pulsando com resplendor luxuoso.",
+    "effects": {}
+  },
+  "diamante": {
+    "id": "diamante",
+    "name": "Diamante Real",
+    "category": "joia",
+    "rarity": "LENDARIO",
+    "emoji": "💎",
+    "buyPrice": 9000,
+    "sellPrice": 4000,
+    "description": "Gema indestrutível lapidada com perfeição impecável de brilho eterno.",
+    "effects": {}
+  },
+  "jade_imperial": {
+    "id": "jade_imperial",
+    "name": "Jade Imperial",
+    "category": "joia",
+    "rarity": "MITICO",
+    "emoji": "👑",
+    "buyPrice": 22000,
+    "sellPrice": 10000,
+    "description": "A joia suprema das eras míticas. Símbolo absoluto de soberania, fortuna e prestígio celestial.",
     "effects": {}
   }
 }
