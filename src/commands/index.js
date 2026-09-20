@@ -36,6 +36,7 @@ const commands = [
   require('./admin'),
   require('./explore'),
   require('./grimorio'),
+  require('./wiki'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');

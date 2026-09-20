@@ -701,6 +701,14 @@ client.on('interactionCreate', async (interaction) => {
       return;
     }
 
+    const wikiCommand = commandsByName.get('py-wiki');
+    if (typeof wikiCommand?.isWikiInteraction === 'function' && wikiCommand.isWikiInteraction(interaction)) {
+      incrementCommand();
+      recordUniqueUser(interaction.user.id);
+      await wikiCommand.handleWikiInteraction(interaction);
+      return;
+    }
+
     if (!interaction.isChatInputCommand()) return;
 
     incrementCommand();

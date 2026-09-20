@@ -10,6 +10,96 @@ const ENERGY_REGEN_MS = 6 * 60 * 1000; // 1 energia a cada 6 minutos (10 por hor
 const TRACE_BASE_COST = 15;
 const TIDE_CYCLE_MS = 6 * 60 * 60 * 1000; // 6 horas
 
+// Matriz de Afinidade Psicológica Atlus SMT (Temperamento x Tom de Resposta)
+const PSYCHOLOGY_MATRIX = {
+  caotico: {
+    chaotic: 2,
+    arrogant: 1,
+    rational: -1,
+    empathetic: -2,
+    flattery: -2,
+    submissive: -2,
+    pragmatic: -1,
+    bribe: 0,
+  },
+  sadico: {
+    arrogant: 1,
+    chaotic: 1,
+    rational: 0,
+    empathetic: -2,
+    flattery: -2,
+    submissive: -2,
+    pragmatic: 0,
+    bribe: 0,
+  },
+  orgulhoso: {
+    arrogant: 1,
+    rational: 1,
+    chaotic: -1,
+    empathetic: -1,
+    flattery: -2,
+    submissive: -2,
+    pragmatic: 0,
+    bribe: -1,
+  },
+  pragmatico: {
+    pragmatic: 2,
+    rational: 2,
+    bribe: 1,
+    arrogant: 0,
+    chaotic: -2,
+    empathetic: -1,
+    flattery: -1,
+    submissive: 0,
+  },
+  timido: {
+    empathetic: 2,
+    submissive: 1,
+    rational: 1,
+    arrogant: -2,
+    chaotic: -2,
+    flattery: 0,
+    pragmatic: 0,
+    bribe: 0,
+  },
+  ganancioso: {
+    bribe: 2,
+    pragmatic: 2,
+    rational: 1,
+    submissive: 1,
+    arrogant: -1,
+    chaotic: -1,
+    empathetic: -1,
+    flattery: 0,
+  },
+};
+
+const PERSONALITY_TO_TEMPERAMENT = {
+  melancholic: 'timido',
+  lazy: 'caotico',
+  sarcastic: 'sadico',
+  gothic_rock: 'caotico',
+  shadow_merchant: 'ganancioso',
+  ironic_specter: 'sadico',
+  cold_sentinel: 'orgulhoso',
+  glutton_alchemist: 'pragmatico',
+  nihilist_lord: 'orgulhoso',
+  phoenix_scholar: 'pragmatico',
+  blood_succubus: 'sadico',
+  abyssal_chimera: 'caotico',
+  ancient_shadow: 'orgulhoso',
+  relic_mimic: 'ganancioso',
+};
+
+// Regras e Metas Rígidas de Negociação por Tier (SMT V3 Hardcore)
+const TIER_NEGOTIATION_RULES = {
+  1: { rounds: 2, targetScore: 2, maxSingleScore: 2, baseBribe: 90 },
+  2: { rounds: 3, targetScore: 3, maxSingleScore: 2, baseBribe: 325 },
+  3: { rounds: 3, targetScore: 3, maxSingleScore: 2, baseBribe: 900, requiresRelicTier: 2 },
+  4: { rounds: 4, targetScore: 4, maxSingleScore: 2, baseBribe: 2650, energyCost: 3 },
+  5: { rounds: 4, targetScore: 4, maxSingleScore: 1, baseBribe: 5000, drainsAllEnergy: true, requiresRelicTier: 4 },
+};
+
 // 1. Definição dos 10 Cenários do Reino da Penumbra
 const LOCATIONS = {
   portao_penumbra: {
@@ -1275,46 +1365,76 @@ function forage(userId, locationId) {
   };
 }
 
-// 8. Negociação de Espírito (Atlus DemiKids V2 com Encounters)
-function negotiateSpirit(userId, spiritId, choiceId, usedBribe = false, encounterId = null) {
+// 8. Negociação de Espírito (Atlus SMT V3 Hardcore Engine)
+function negotiateSpirit(
+  userId,
+  spiritId,
+  choiceId,
+  usedBribe = false,
+  encounterId = null,
+  phase = 1,
+  currentScore = 0,
+  neutralsCount = 0,
+  isBailout = false
+) {
   const user = getGloomUser(userId);
-  const spirit = SPIRITS[spiritId] || null;
+  const spirit = spiritId ? SPIRITS[spiritId] || null : null;
   const encounter = encounterId ? getEncounterById(encounterId) : getEncounterForSpirit(spiritId);
   const tide = getGloomTide();
 
   if (!spirit && !encounter) return { success: false, reason: 'invalid_spirit' };
 
-  // Suborno / Tributo direto
-  if (usedBribe) {
-    let cost = spirit?.dialogue?.bribeCost || 25;
-    if (encounter?.extortion_phase) {
-      const ext = encounter.extortion_phase;
-      if (ext.demand_type === 'phantom_coins') {
-        cost = typeof ext.amount_or_item === 'number' ? ext.amount_or_item : cost;
-        if (tide.id === 'emo_moon') cost = Math.round(cost * 0.75);
-        if (user.phantomCoins < cost) {
-          return { success: false, reason: 'insufficient_coins', cost };
-        }
-        user.phantomCoins -= cost;
-      } else if (ext.demand_type === 'energy') {
-        const energyCost = typeof ext.amount_or_item === 'number' ? ext.amount_or_item : 1;
-        if (user.energy < energyCost) {
-          return { success: false, reason: 'insufficient_energy', cost: energyCost };
-        }
-        user.energy -= energyCost;
-      } else if (ext.demand_type === 'relic') {
-        const relicId = ext.amount_or_item;
-        if (!user.inventory || !user.inventory[relicId] || user.inventory[relicId] <= 0) {
-          return { success: false, reason: 'insufficient_relic', relicId };
-        }
-        user.inventory[relicId]--;
+  const tier = encounter?.tier || spirit?.tier || 1;
+  const rules = TIER_NEGOTIATION_RULES[tier] || TIER_NEGOTIATION_RULES[1];
+  const temperament = encounter?.temperament || (spirit?.personality ? PERSONALITY_TO_TEMPERAMENT[spirit.personality] : null) || 'caotico';
+
+  // Suborno / Tributo direto / Resgate Extorsivo
+  if (usedBribe || isBailout) {
+    let cost = rules.baseBribe;
+    if (isBailout) {
+      cost = rules.baseBribe * 3;
+    } else if (encounter?.extortion_phase?.amount_or_item && typeof encounter.extortion_phase.amount_or_item === 'number') {
+      cost = Math.max(encounter.extortion_phase.amount_or_item, rules.baseBribe);
+    } else if (spirit?.dialogue?.bribeCost) {
+      cost = Math.max(spirit.dialogue.bribeCost, rules.baseBribe);
+    }
+
+    if (tide.id === 'emo_moon') cost = Math.round(cost * 0.75);
+
+    // Verificação de Vigor (Tier 4 exige 3, Tier 5 drena 100%)
+    if (tier === 4 && !isBailout) {
+      if ((user.energy || 0) < 3) {
+        return { success: false, reason: 'insufficient_energy', requiredEnergy: 3, cost };
       }
-    } else {
-      if (tide.id === 'emo_moon') cost = Math.round(cost * 0.75);
-      if (user.phantomCoins < cost) {
-        return { success: false, reason: 'insufficient_coins', cost };
+    }
+
+    // Verificação de Relíquia (Tier 5: exige relic T4 ou T5)
+    let consumedRelic = null;
+    if (tier === 5 && !isBailout) {
+      user.inventory = user.inventory || {};
+      const relicT4orT5 = Object.keys(user.inventory).find(
+        (rId) => (user.inventory[rId] > 0) && (RELICS[rId]?.tier === 4 || RELICS[rId]?.tier === 5)
+      );
+      if (!relicT4orT5) {
+        return { success: false, reason: 'missing_relic_t4_t5', cost };
       }
-      user.phantomCoins -= cost;
+      consumedRelic = relicT4orT5;
+    }
+
+    // Verificação de Phantom Coins
+    if (user.phantomCoins < cost) {
+      return { success: false, reason: 'insufficient_coins', cost };
+    }
+
+    // Debitar recursos
+    user.phantomCoins -= cost;
+    if (tier === 4 && !isBailout) {
+      user.energy = Math.max(0, (user.energy || 0) - 3);
+    } else if (tier === 5 && !isBailout) {
+      user.energy = 0;
+      if (consumedRelic) {
+        user.inventory[consumedRelic]--;
+      }
     }
 
     if (spiritId && SPIRITS[spiritId]) {
@@ -1330,14 +1450,23 @@ function negotiateSpirit(userId, spiritId, choiceId, usedBribe = false, encounte
       recruited: true,
       spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
       encounter,
+      cost,
       remainingCoins: user.phantomCoins,
-      method: 'bribe',
+      consumedEnergy: tier === 4 && !isBailout ? 3 : (tier === 5 && !isBailout ? 'all' : 0),
+      consumedRelic,
+      method: isBailout ? 'bailout' : 'bribe',
     };
   }
 
-  // Escolha de Diálogo (Encounter ou Spirit)
+  // Escolha de Diálogo
   let choice = null;
-  if (encounter && Array.isArray(encounter.options)) {
+  if (encounter && Array.isArray(encounter.phases) && encounter.phases[phase - 1]) {
+    const currentPhaseObj = encounter.phases[phase - 1];
+    if (Array.isArray(currentPhaseObj.options)) {
+      choice = currentPhaseObj.options.find((o) => o.id === choiceId);
+    }
+  }
+  if (!choice && encounter && Array.isArray(encounter.options)) {
     choice = encounter.options.find((o) => o.id === choiceId);
   }
   if (!choice && spirit?.dialogue?.choices) {
@@ -1345,15 +1474,134 @@ function negotiateSpirit(userId, spiritId, choiceId, usedBribe = false, encounte
   }
   if (!choice) return { success: false, reason: 'invalid_choice' };
 
-  const modifier = typeof choice.success_chance_modifier === 'number'
-    ? choice.success_chance_modifier
-    : (choice.score ?? (choice.success ? 1 : -1));
+  // 1. Cálculo da Afinidade Psicológica (Matriz SMT)
+  const tone = choice.tone || 'rational';
+  let matrixScore = 0;
+  if (PSYCHOLOGY_MATRIX[temperament] && PSYCHOLOGY_MATRIX[temperament][tone] !== undefined) {
+    matrixScore = PSYCHOLOGY_MATRIX[temperament][tone];
+  } else {
+    matrixScore = typeof choice.success_chance_modifier === 'number'
+      ? choice.success_chance_modifier
+      : (choice.score ?? (choice.success ? 1 : -1));
+  }
 
-  const isSuccess = modifier >= 1 || choice.success === true;
-  const isCritical = modifier === -2 || choice.criticalFailure === true || choice.score === -2;
+  // 2. Taxa de Desacato por Bajulação (submissive ou flattery contra orgulhoso ou sadico)
+  let theftCoins = 0;
+  const isSycophancy = (tone === 'submissive' || tone === 'flattery') && (temperament === 'orgulhoso' || temperament === 'sadico');
+  if (isSycophancy) {
+    matrixScore = -2;
+    theftCoins = Math.min(user.phantomCoins, Math.floor(Math.random() * 201) + 100);
+    user.phantomCoins -= theftCoins;
+  }
 
-  if (isSuccess) {
-    let coinsReward = Math.floor(Math.random() * 20) + 15;
+  // 3. Decaimento por Hesitação (Tier >= 3): 2 respostas neutras = -2 automático
+  let newNeutrals = neutralsCount;
+  let hesitationDecay = false;
+  if (matrixScore === 0) {
+    newNeutrals += 1;
+    if (tier >= 3 && newNeutrals >= 2) {
+      matrixScore = -2;
+      hesitationDecay = true;
+    }
+  }
+
+  // 4. Modificadores por Tier & Maré
+  if (tier === 5 && matrixScore > 1) {
+    matrixScore = 1; // No Tier 5, respostas perfeitas dão máx +1
+  }
+  if (tier === 1 && matrixScore === -2 && !choice.criticalFailure && !isSycophancy && choice.score !== -2) {
+    matrixScore = -1; // Tier 1 é tolerante
+  }
+  if (tide.id === 'purple_moon' && tone === 'chaotic') matrixScore += 1;
+  if (tide.id === 'blood_mist' && tone === 'arrogant') matrixScore += 1;
+  if (tide.id === 'emo_moon' && (tone === 'empathetic' || tone === 'rational')) matrixScore += 1;
+  if (tide.id === 'eclipse') matrixScore -= 1;
+
+  // 5. Avaliação de Falha Crítica
+  const isCritical = matrixScore <= -2 || choice.criticalFailure === true || choice.score === -2;
+
+  if (isCritical) {
+    // Multa de Ejeção: 10% do saldo total de Phantom Coins
+    const ejectionFine = Math.floor(user.phantomCoins * 0.10);
+    user.phantomCoins = Math.max(0, user.phantomCoins - ejectionFine);
+
+    const banDetails = banUserFromLocation(userId, user.currentLocation);
+    updateGloomUser(userId, user);
+
+    return {
+      success: true,
+      recruited: false,
+      spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
+      encounter,
+      escaped: true,
+      criticalFailure: true,
+      roomBanned: true,
+      bannedLocation: banDetails?.locationId || user.currentLocation,
+      banDurationMinutes: banDetails?.remainingMinutes || 30,
+      ejectedTo: banDetails?.ejectedLocation || 'portao_penumbra',
+      choice,
+      theftCoins,
+      ejectionFine,
+      hesitationDecay,
+      isSycophancy,
+      matrixScore,
+    };
+  }
+
+  // Somar à pontuação acumulada
+  const totalRounds = encounterId ? rules.rounds : 1;
+  const targetScore = encounterId ? rules.targetScore : 1;
+  const newScore = currentScore + matrixScore;
+
+  // Se a pontuação acumulada despencar para <= -2, vira falha crítica imediata
+  if (newScore <= -2) {
+    const ejectionFine = Math.floor(user.phantomCoins * 0.10);
+    user.phantomCoins = Math.max(0, user.phantomCoins - ejectionFine);
+    const banDetails = banUserFromLocation(userId, user.currentLocation);
+    updateGloomUser(userId, user);
+
+    return {
+      success: true,
+      recruited: false,
+      spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
+      encounter,
+      escaped: true,
+      criticalFailure: true,
+      roomBanned: true,
+      bannedLocation: banDetails?.locationId || user.currentLocation,
+      banDurationMinutes: banDetails?.remainingMinutes || 30,
+      ejectedTo: banDetails?.ejectedLocation || 'portao_penumbra',
+      choice,
+      theftCoins,
+      ejectionFine,
+      matrixScore,
+      finalScore: newScore,
+    };
+  }
+
+  // Rodada intermediária (ainda restam fases)
+  if (phase < totalRounds) {
+    updateGloomUser(userId, user);
+    return {
+      success: true,
+      recruited: false,
+      inProgress: true,
+      nextPhase: phase + 1,
+      currentPhase: phase,
+      totalRounds,
+      currentScore: newScore,
+      targetScore,
+      neutralsCount: newNeutrals,
+      choice,
+      matrixScore,
+      spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
+      encounter,
+    };
+  }
+
+  // Rodada final concluída
+  if (newScore >= targetScore || choice.success === true) {
+    let coinsReward = Math.floor(Math.random() * 25) + 15;
     user.phantomCoins += coinsReward;
     if (spiritId && SPIRITS[spiritId] && !user.grimoire.includes(spiritId)) {
       user.grimoire.push(spiritId);
@@ -1370,25 +1618,42 @@ function negotiateSpirit(userId, spiritId, choiceId, usedBribe = false, encounte
       remainingCoins: user.phantomCoins,
       method: 'wit',
       choice,
+      finalScore: newScore,
+      targetScore,
+      matrixScore,
     };
-  } else {
-    let banDetails = null;
-    if (isCritical) {
-      banDetails = banUserFromLocation(userId, user.currentLocation);
-    }
+  } else if (newScore === targetScore - 1) {
+    // Bateu na trave: Suborno de Resgate Extorsivo (3x o pedágio base)
+    const bailoutCost = rules.baseBribe * 3;
+    updateGloomUser(userId, user);
 
     return {
       success: true,
       recruited: false,
+      canBailout: true,
+      bailoutCost,
+      finalScore: newScore,
+      targetScore,
+      choice,
       spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
       encounter,
+      matrixScore,
+    };
+  } else {
+    // Negociação Falhou Comum (Sem ban, espírito recua com desdém)
+    updateGloomUser(userId, user);
+
+    return {
+      success: true,
+      recruited: false,
       escaped: true,
-      criticalFailure: isCritical,
-      roomBanned: isCritical,
-      bannedLocation: isCritical ? banDetails?.locationId : null,
-      banDurationMinutes: isCritical ? banDetails?.remainingMinutes : 0,
-      ejectedTo: isCritical ? banDetails?.ejectedLocation : null,
+      criticalFailure: false,
       choice,
+      finalScore: newScore,
+      targetScore,
+      spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
+      encounter,
+      matrixScore,
     };
   }
 }
@@ -1663,5 +1928,8 @@ module.exports = {
   getEncounterById,
   getEncounterForSpirit,
   getRandomEncounter,
+  PSYCHOLOGY_MATRIX,
+  PERSONALITY_TO_TEMPERAMENT,
+  TIER_NEGOTIATION_RULES,
 };
 

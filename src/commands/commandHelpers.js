@@ -54,6 +54,8 @@ const COMMAND_CATEGORY_MAP = {
   'py-vasculhar': 'bosque',
   scavenge: 'bosque',
   'py-scavenge': 'bosque',
+  wiki: 'bosque',
+  'py-wiki': 'bosque',
 
   // Economia & Carreiras
   trade: 'economia',
@@ -118,6 +120,8 @@ const COMMAND_CATEGORY_MAP = {
   'py-sell': 'loja',
   vender: 'loja',
   'py-vender': 'loja',
+  mochila: 'loja',
+  'py-mochila': 'loja',
 
   // Tarot Místico
   tarot: 'tarot',

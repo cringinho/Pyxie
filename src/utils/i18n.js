@@ -387,9 +387,15 @@ const TRANSLATIONS = {
     },
     "inventory": {
       "backpackTitle": "🎒  ✦  Mochila de {user}",
+      "tabBosque": "🌲 Bosque & Relíquias",
+      "tabSocial": "📦 Social & Baús",
+      "tabTodos": "🎒 Todos",
       "emptyBackpack": "> *Sua mochila está vazia! Visite a `/loja` para adquirir baús e itens mágicos.*",
+      "emptyRelics": "> *Você ainda não possui relíquias do Bosque. Explore o mapa com `/py-explorar` e vasculhe para encontrá-las!*",
       "itemsCount": "🎒 **Itens Guardados:** {count}",
+      "phantomCoinsLabel": "👻 **Phantom Coins:** **{coins}**",
       "storedItemsHeader": "📦 **ITENS GUARDADOS NA MOCHILA**",
+      "relicsHeader": "🏺 **RELÍQUIAS DO BOSQUE (TIERS 1 A 5)**",
       "tipSelect": "💡 *Selecione um item no menu suspenso abaixo para usá-lo ou vendê-lo:*",
       "effect": "Efeito",
       "category": "Categoria",
@@ -543,7 +549,8 @@ const TRANSLATIONS = {
           "requires_fairy": "Santuário protegido. Requer um familiar com afinidade de Fada equipado ou um portal místico aberto.",
           "requires_boss": "Acesso negado. Requer ter participado do apaziguamento do Chefão Comunitário no ciclo atual.",
           "banned": "Você está banido desta sala por insultar as entidades locais. Tempo restante: {time} min."
-        }
+        },
+        "dangerLevel": "⚡ **Perigo:** Tier {tier} • Penalidade por Falha Crítica: Ban de {banMinutes}m"
       },
       "negotiate": {
         "title": "💬  ✦  Negociação com {name}",
@@ -553,9 +560,15 @@ const TRANSLATIONS = {
         "demandEnergy": "⚡ Doar Vigor ({amount}⚡)",
         "demandRelic": "🏺 Entregar {relic}",
         "btnBribe": "💰 Subornar ({cost} 👻)",
+        "btnBailout": "💸 Resgate Extorsivo ({cost} 👻)",
         "btnFlee": "🏃 Fugir",
         "successWit": "🎉 **Pacto Fechado!** Você impressionou **{spirit}** com sua sagacidade e ganhou **+{coins} Phantom Coins 👻**!",
         "successBribe": "🤝 **Tributo Aceito!** Você pagou **{cost} Phantom Coins 👻** e **{spirit}** agora obedece ao seu chamado!",
+        "bailoutSuccess": "🤝 **Resgate Aceito!** Vendo que você estava quase lá, você pagou a extorsão de **{cost} Phantom Coins 👻** e **{spirit}** aceitou o pacto!",
+        "bailoutOffer": "> 🎭 *« Quase me convenceu, mortal... Mas se quiser que eu esqueça seu tropeço final, vai ter que pagar o triplo pelo meu silêncio! »*\n\n🪙 **Custo do Resgate:** **{cost} Phantom Coins 👻**",
+        "sycophancyPenalty": "💢 **Taxa de Desacato por Bajulação!** O espírito repugnou sua subserviência e surrupiou **-{stolen} Phantom Coins 👻** da sua bolsa antes de te expulsar!",
+        "hesitationPenalty": "⏳ **Pena por Hesitação!** Você hesitou demais em um reino hostil. A criatura perdeu a paciência!",
+        "ejectionFine": "💸 **Multa de Ejeção:** Você perdeu **-{fine} Phantom Coins 👻** (10% do seu saldo) na fuga apressada!",
         "failed": "💨 **A Aparição Desapareceu!** {spirit} zombou da sua resposta e sumiu na bruma roxa!",
         "criticalFailure": "💀 **FALHA CRÍTICA!** As sombras foram insultadas pela sua resposta patética! Você foi expulso e banido de {location} por {time} minutos!",
         "alreadyOwned": "ℹ️ Você já possui este espírito no seu Grimório!"
@@ -626,6 +639,29 @@ const TRANSLATIONS = {
         "cooldown": "⏳ Você já realizou sua investida neste ciclo de 6 horas!\n\n✨ **Deseja atacar o Colosso novamente agora?**\nAssista ao bônus patrocinado de 10 segundos no portal web para liberar **+1 Investida Extra** e **50 Phantom Coins 👻**!",
         "defeated": "🏆 **O COLOSSO FOI APACIGUADO!** A Sombra Ancestral foi vencida e o reino celebra sua vitória!"
       }
+    },
+    "wiki": {
+      "title": "📖  ✦  Wiki Oficial da Pyxie & Bosque da Penumbra",
+      "desc": "Explore a enciclopédia oficial de mecânicas, regras de navegação, matriz de negociação Atlus, relíquias e sistemas da Pyxie.",
+      "footer": "Wiki Oficial • Pyxie",
+      "btnOpenWeb": "🌐 Abrir Wiki Completa na Web",
+      "categoryPlaceholder": "Selecione um tópico da enciclopédia...",
+      "optBosque": "🌲 Bosque da Penumbra & Mapas",
+      "optBosqueDesc": "Guia dos 10 cenários, Tiers de perigo, regras de navegação e marés.",
+      "optSmt": "🧠 Negociação SMT & Temperamentos",
+      "optSmtDesc": "Matriz de 7 tons de resposta, extorsão e regras de afinidade.",
+      "optRelics": "🏺 Relíquias & Fusão de Almas",
+      "optRelicsDesc": "Tiers de relíquias T1 a T5, Engenheiro e Caldeirão de Fusão.",
+      "optEco": "🪙 Economia & Moedas Fantasma",
+      "optEcoDesc": "Phantom coins, vigor, chefão comunitário e loja.",
+      "topicBosqueTitle": "🌲 Bosque da Penumbra — Cenários e Tiers",
+      "topicBosqueDesc": "O Bosque é composto por 10 cenários conectados em grafo direcionado, variando do Tier 1 ao Tier 5. Falhas críticas expulsam o explorador de volta ao Portão da Penumbra e aplicam bloqueio temporário (de 30m no T1 até 240m no T5). Certas salas exigem marés específicas (ex: Maré da Lua Roxa) ou itens especiais (Chave Espectral, Familiar com afinidade Fada).",
+      "topicSmtTitle": "🧠 Negociação SMT V3 — Matriz Psicológica",
+      "topicSmtDesc": "Monstros e aparições possuem temperamentos específicos (Caótico, Sádico, Orgulhoso, Melancólico, Intelectual, Ingenuo, Cínico). Respostas subservientes contra demônios orgulhosos geram Taxa de Desacato (-2 e roubo de 100-300 Phantom Coins). No Tier 3+, duas respostas neutras acionam Pena de Hesitação (-2 imediato). Respostas óbvias não funcionam: adapte o tom psicológico ao temperamento.",
+      "topicRelicsTitle": "🏺 Relíquias & Caldeirão de Fusão",
+      "topicRelicsDesc": "Relíquias são obtidas vasculhando o Bosque ou comprando com o Comerciante Errante (Tiers 1 a 5). No Engenheiro de Relíquias, você pode aprimorar 3 materiais de mesmo tier para tentar forjar um tier superior (há chance de destruição!). No Caldeirão de Fusão, combine dois espíritos para gerar uma nova criatura com habilidades e auras mais poderosas.",
+      "topicEcoTitle": "🪙 Economia Arcana & Chefão Comunitário",
+      "topicEcoDesc": "Phantom Coins (👻) são moedas do além usadas para subornos, resgates extorsivos e compra de relíquias. A cada 6 horas, o Chefão Comunitário desperta em um cenário aleatório; todos os exploradores recebem uma investida grátis para derrotá-lo e compartilhar a recompensa lendária."
     }
   },
   "en": {
@@ -860,9 +896,15 @@ const TRANSLATIONS = {
     },
     "inventory": {
       "backpackTitle": "🎒  ✦  {user}’s Backpack",
+      "tabBosque": "🌲 Grove & Relics",
+      "tabSocial": "📦 Social & Chests",
+      "tabTodos": "🎒 All",
       "emptyBackpack": "> *Your backpack is empty! Visit `/shop` to acquire chests and magical items.*",
+      "emptyRelics": "> *You do not possess any Grove relics yet. Explore the realm with `/py-explore` and forage to find them!*",
       "itemsCount": "🎒 **Stored Items:** {count}",
+      "phantomCoinsLabel": "👻 **Phantom Coins:** **{coins}**",
       "storedItemsHeader": "📦 **ITEMS STORED IN BACKPACK**",
+      "relicsHeader": "🏺 **GROVE RELICS (TIERS 1 TO 5)**",
       "tipSelect": "💡 *Select an item in the dropdown below to use or sell it:*",
       "effect": "Effect",
       "category": "Category",
@@ -1016,7 +1058,8 @@ const TRANSLATIONS = {
           "requires_fairy": "Protected sanctuary. Requires an equipped Fairy familiar or an active mystic portal.",
           "requires_boss": "Access denied. Requires participation in the Community Boss pacification this cycle.",
           "banned": "You are barred from this room for insulting local entities. Remaining time: {time} min."
-        }
+        },
+        "dangerLevel": "⚡ **Danger:** Tier {tier} • Critical Failure Penalty: {banMinutes}m Room Ban"
       },
       "negotiate": {
         "title": "💬  ✦  Negotiation with {name}",
@@ -1026,9 +1069,15 @@ const TRANSLATIONS = {
         "demandEnergy": "⚡ Donate Stamina ({amount}⚡)",
         "demandRelic": "🏺 Hand over {relic}",
         "btnBribe": "💰 Bribe ({cost} 👻)",
+        "btnBailout": "💸 Extortive Bailout ({cost} 👻)",
         "btnFlee": "🏃 Flee",
         "successWit": "🎉 **Pact Formed!** You impressed **{spirit}** with your wit and earned **+{coins} Phantom Coins 👻**!",
         "successBribe": "🤝 **Tribute Accepted!** You paid **{cost} Phantom Coins 👻** and **{spirit}** now obeys your call!",
+        "bailoutSuccess": "🤝 **Bailout Accepted!** Seeing you were almost worthy, you paid the extortion of **{cost} Phantom Coins 👻** and **{spirit}** accepted the pact!",
+        "bailoutOffer": "> 🎭 *« You almost convinced me, mortal... But if you want me to forget your final stumble, you must pay triple for my silence! »*\n\n🪙 **Bailout Cost:** **{cost} Phantom Coins 👻**",
+        "sycophancyPenalty": "💢 **Contempt Fee for Sycophancy!** The spirit loathed your subservience and snatched **-{stolen} Phantom Coins 👻** from your pouch before casting you out!",
+        "hesitationPenalty": "⏳ **Hesitation Penalty!** You hesitated too much in a hostile realm. The creature lost all patience!",
+        "ejectionFine": "💸 **Ejection Fine:** You lost **-{fine} Phantom Coins 👻** (10% of your balance) during the hasty retreat!",
         "failed": "💨 **The Apparition Vanished!** {spirit} mocked your reply and dissolved into purple mist!",
         "criticalFailure": "💀 **CRITICAL FAILURE!** The shadows were insulted by your pathetic response! You were cast out and barred from {location} for {time} minutes!",
         "alreadyOwned": "ℹ️ You already have this spirit bound in your Grimoire!"
@@ -1099,6 +1148,29 @@ const TRANSLATIONS = {
         "cooldown": "⏳ You already struck during this 6-hour cycle!\n\n✨ **Wish to strike the Behemoth again right now?**\nWatch the sponsored 10-second web bonus portal to unlock **+1 Extra Strike** and **50 Phantom Coins 👻**!",
         "defeated": "🏆 **THE BEHEMOTH HAS BEEN PACIFIED!** The Ancient Shadow was conquered and the realm celebrates your triumph!"
       }
+    },
+    "wiki": {
+      "title": "📖  ✦  Official Pyxie & Gloom Realm Wiki",
+      "desc": "Explore the official encyclopedia of mechanics, navigation rules, Atlus negotiation matrix, relics, and Pyxie systems.",
+      "footer": "Official Wiki • Pyxie",
+      "btnOpenWeb": "🌐 Open Full Web Wiki",
+      "categoryPlaceholder": "Select an encyclopedia topic...",
+      "optBosque": "🌲 Gloom Realm & Maps",
+      "optBosqueDesc": "Guide to the 10 locations, danger tiers, travel rules, and tides.",
+      "optSmt": "🧠 SMT Negotiation & Temperaments",
+      "optSmtDesc": "7-tone response matrix, extortion, and affinity rules.",
+      "optRelics": "🏺 Relics & Soul Fusion",
+      "optRelicsDesc": "Relic tiers T1 to T5, Engineer, and Fusion Cauldron.",
+      "optEco": "🪙 Economy & Phantom Coins",
+      "optEcoDesc": "Phantom coins, stamina, community boss, and shop.",
+      "topicBosqueTitle": "🌲 Gloom Realm — Locations and Tiers",
+      "topicBosqueDesc": "The Realm consists of 10 interconnected locations in a directed graph ranging from Tier 1 to Tier 5. Critical failures expel explorers back to the Gloom Gate and apply room bans (from 30m at T1 up to 240m at T5). Some rooms require specific tides (e.g., Purple Moon Tide) or special requirements (Spectral Key, Fairy familiar).",
+      "topicSmtTitle": "🧠 SMT V3 Negotiation — Psychological Matrix",
+      "topicSmtDesc": "Spirits possess distinct temperaments (Chaotic, Sadistic, Proud, Melancholic, Intellectual, Naive, Cynical). Flattery or submissive replies against proud entities trigger a Contempt Fee (-2 and theft of 100-300 Phantom Coins). In Tier 3+, two neutral answers trigger Hesitation Decay (instant -2). Adapting tone to temperament is mandatory.",
+      "topicRelicsTitle": "🏺 Relics & Fusion Cauldron",
+      "topicRelicsDesc": "Relics are obtained by foraging or buying from the Wandering Merchant (Tiers 1 to 5). At the Relic Engineer, you can fuse 3 materials of equal tier to forge a higher tier (with risk of destruction!). In the Fusion Cauldron, combine two spirits to spawn a new entity with stronger passives and auras.",
+      "topicEcoTitle": "🪙 Arcane Economy & Community Boss",
+      "topicEcoDesc": "Phantom Coins (👻) are ethereal currency used for tributes, extortive bailouts, and relic purchasing. Every 6 hours, the Community Boss stirs in a random location; all explorers receive a free strike to overcome it and share the legendary bounty."
     }
   }
 };

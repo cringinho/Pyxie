@@ -37,5 +37,6 @@ module.exports = {
   ADMIN: 'py-admin',
   EXPLORE: 'py-explore',
   GRIMOIRE: 'py-grimoire',
+  WIKI: 'py-wiki',
 };
 

@@ -16,6 +16,7 @@ const {
   SPIRITS,
   RELICS,
   ENGINEER_RECIPES,
+  TIER_NEGOTIATION_RULES,
   gloomGraph,
   getGloomTide,
   getGloomUser,
@@ -31,6 +32,20 @@ const {
 } = require('../services/gloomRealm');
 const { getLanguage, t } = require('../utils/i18n');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
+const { getEmoji } = require('../utils/appEmojis');
+
+const LOCATION_EMOJIS = {
+  portao_penumbra: 'PORTAL',
+  floresta_sussurros: 'TREE',
+  cemiterio_espinhos: 'SKULL',
+  pantano_lagrimas: 'MUSHROOM',
+  biblioteca_esquecida: 'BOOK',
+  mausoleu_ancestral: 'BAT',
+  ponte_abismo: 'ARROW',
+  catacumba_sangue_roxo: 'ZOMBIE',
+  jardim_fadas_negras: 'FAIRY',
+  santuario_touca_preta: 'CROWN',
+};
 
 function buildLocationView(userId, guildId, source = null, feedbackMessage = '') {
   const user = getGloomUser(userId);
@@ -67,12 +82,18 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
       }).join('\n')
     : t('gloom.explore.noTraces', source);
 
+  const dangerText = t('gloom.explore.dangerLevel', source, {
+    tier: location.tier || 1,
+    banMinutes: location.banMinutes || 30,
+  });
+
   const embed = new EmbedBuilder()
     .setColor(tide.color || PYXIE_COLORS.purple)
     .setTitle(t('gloom.explore.title', source, { emoji: '🌙', name: locationName, tide: tideName }))
     .setDescription(
       `${feedbackMessage ? `**${feedbackMessage}**\n\n` : ''}` +
       `*« ${locationDesc} »*\n\n` +
+      `${dangerText}\n` +
       `${t('gloom.explore.stamina', source, { current: user.energy, max: 10 })}\n` +
       `${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}\n` +
       `${t('gloom.explore.tideLabel', source, { tide: tideName })}\n\n` +
@@ -87,41 +108,45 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
     new ButtonBuilder()
       .setCustomId(`gloom:forage:${userId}`)
       .setLabel(t('gloom.explore.btnForage', source, { cost: 1 }))
+      .setEmoji(getEmoji('MUSHROOM'))
       .setStyle(ButtonStyle.Primary)
       .setDisabled(user.energy <= 0),
     new ButtonBuilder()
       .setCustomId(`gloom:grimoire:${userId}`)
       .setLabel(t('gloom.explore.btnGrimoire', source, { count: (user.grimoire || []).length }))
+      .setEmoji(getEmoji('BOOK'))
       .setStyle(ButtonStyle.Secondary),
     new ButtonBuilder()
       .setCustomId(`gloom:trace_prompt:${userId}`)
       .setLabel(t('gloom.explore.btnTrace', source))
+      .setEmoji('✍️')
       .setStyle(ButtonStyle.Secondary)
       .setDisabled(user.phantomCoins < 15),
     new ButtonBuilder()
       .setCustomId(`gloom:boss:${userId}`)
       .setLabel(t('gloom.explore.btnBoss', source))
+      .setEmoji(getEmoji('SKULL'))
       .setStyle(ButtonStyle.Danger)
   );
 
-  // Linha 2: Botões Direcionais de Navegação
+  // Linha 2: Botões Direcionais de Navegação com Emojis Contextuais e Tiers
   const neighbors = gloomGraph.getAvailableNeighbors(location.id, user, tide);
   const navButtons = neighbors.slice(0, 5).map((n) => {
     const destName = isEn ? n.location.name.en : n.location.name.pt;
+    const locEmojiKey = LOCATION_EMOJIS[n.location.id] || 'PORTAL';
     const btn = new ButtonBuilder()
       .setCustomId(`gloom:move:${userId}:${n.location.id}`)
-      .setLabel(destName.slice(0, 30))
+      .setLabel(`${destName.slice(0, 24)} (T${n.location.tier})`)
       .setStyle(n.canEnter ? ButtonStyle.Success : ButtonStyle.Secondary)
-      .setDisabled(!n.canEnter);
+      .setDisabled(!n.canEnter)
+      .setEmoji(getEmoji(locEmojiKey));
 
     if (n.reason === 'banned') {
-      btn.setEmoji('🚫');
+      btn.setEmoji(getEmoji('ALERT'));
       btn.setStyle(ButtonStyle.Danger);
-      btn.setLabel(`${destName.slice(0, 20)} (${n.banRemainingMinutes}m)`);
+      btn.setLabel(`${destName.slice(0, 18)} (T${n.location.tier}) [${n.banRemainingMinutes}m]`);
     } else if (!n.canEnter) {
       btn.setEmoji('🔒');
-    } else {
-      btn.setEmoji('🚶');
     }
     return btn;
   });
@@ -134,7 +159,18 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
   return { embeds: [embed], files: [attachment], components };
 }
 
-function buildNegotiationView(userId, spirit, source = null, encounter = null) {
+function buildNegotiationView(
+  userId,
+  spirit,
+  source = null,
+  encounter = null,
+  phase = 1,
+  currentScore = 0,
+  neutralsCount = 0,
+  lastReaction = null,
+  canBailout = false,
+  bailoutCost = 0
+) {
   const lang = getLanguage(source);
   const isEn = lang === 'en';
   const user = getGloomUser(userId);
@@ -143,9 +179,56 @@ function buildNegotiationView(userId, spirit, source = null, encounter = null) {
     ? (isEn ? encounter.creature_concept?.en : encounter.creature_concept?.pt)
     : (isEn ? spirit?.name?.en : spirit?.name?.pt);
 
-  const question = encounter
+  const tier = encounter?.tier || spirit?.tier || 1;
+  const rules = TIER_NEGOTIATION_RULES[tier] || TIER_NEGOTIATION_RULES[1];
+  const totalRounds = encounter ? rules.rounds : 1;
+  const targetScore = encounter ? rules.targetScore : 1;
+
+  const encounterTag = encounter?.id || 'none';
+  const spiritTag = spirit?.id || 'errante';
+
+  // Se for o caso especial de Resgate Extorsivo (Bailout)
+  if (canBailout) {
+    const descParts = [];
+    if (lastReaction) {
+      descParts.push(`> 🗣️ *« "${lastReaction}" »*\n`);
+    }
+    descParts.push(t('gloom.negotiate.bailoutOffer', source, { cost: bailoutCost }));
+    descParts.push(`\n🪙 ${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}`);
+
+    const embed = new EmbedBuilder()
+      .setColor(PYXIE_COLORS.gold || '#f59e0b')
+      .setTitle(`💸  ✦  ${t('gloom.negotiate.btnBailout', source, { cost: bailoutCost })}`)
+      .setDescription(descParts.join('\n'))
+      .setFooter({ text: t('gloom.negotiate.footer', source) })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`gloom:bailout:${userId}:${encounterTag}:${spiritTag}:${bailoutCost}`)
+        .setLabel(t('gloom.negotiate.btnBailout', source, { cost: bailoutCost }))
+        .setEmoji(getEmoji('COIN_PURPLE'))
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(user.phantomCoins < bailoutCost),
+      new ButtonBuilder()
+        .setCustomId(`gloom:flee:${userId}`)
+        .setLabel(t('gloom.negotiate.btnFlee', source))
+        .setStyle(ButtonStyle.Danger)
+    );
+
+    return { embeds: [embed], components: [row] };
+  }
+
+  // Diálogo & Cenário da Fase Atual
+  let question = encounter
     ? (isEn ? encounter.monster_dialogue?.en : encounter.monster_dialogue?.pt)
     : (isEn ? spirit?.dialogue?.question?.en : spirit?.dialogue?.question?.pt);
+
+  if (encounter && Array.isArray(encounter.phases) && encounter.phases[phase - 1]) {
+    const ph = encounter.phases[phase - 1];
+    const phQ = isEn ? (ph.question?.en || ph.monster_dialogue?.en) : (ph.question?.pt || ph.monster_dialogue?.pt);
+    if (phQ) question = phQ;
+  }
 
   const sceneText = encounter
     ? (isEn ? encounter.text_box_scene?.en : encounter.text_box_scene?.pt)
@@ -156,6 +239,9 @@ function buildNegotiationView(userId, spirit, source = null, encounter = null) {
     : null;
 
   const descParts = [];
+  if (lastReaction) {
+    descParts.push(`> 🗣️ *« "${lastReaction}" »*\n`);
+  }
   if (sceneText) {
     descParts.push(`*« ${sceneText} »*\n`);
   }
@@ -163,7 +249,14 @@ function buildNegotiationView(userId, spirit, source = null, encounter = null) {
   if (moodNote) {
     descParts.push(`> 🎭 *${moodNote}*`);
   }
-  descParts.push(`\n🪙 ${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}`);
+
+  const tensionBoxes = [];
+  for (let i = 1; i <= targetScore; i++) {
+    tensionBoxes.push(currentScore >= i ? '🟩' : '⬜');
+  }
+  const tensionLine = `🎭 **Tensão & Afinidade:** [${tensionBoxes.join('')}] (${currentScore}/${targetScore} pts) • **Fase ${phase}/${totalRounds}** (T${tier})`;
+  descParts.push(`\n${tensionLine}`);
+  descParts.push(`🪙 ${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}`);
 
   const embed = new EmbedBuilder()
     .setColor(PYXIE_COLORS.neonPink)
@@ -172,62 +265,54 @@ function buildNegotiationView(userId, spirit, source = null, encounter = null) {
     .setFooter({ text: t('gloom.negotiate.footer', source) })
     .setTimestamp();
 
-  // Opções de Diálogo (Encounter ou Spirit)
-  const choices = (encounter && Array.isArray(encounter.options))
+  // Opções de Diálogo da Fase
+  let choices = (encounter && Array.isArray(encounter.options))
     ? encounter.options
     : (spirit?.dialogue?.choices || []);
+  if (encounter && Array.isArray(encounter.phases) && encounter.phases[phase - 1]?.options) {
+    choices = encounter.phases[phase - 1].options;
+  }
 
-  const encounterTag = encounter?.id || 'none';
-  const spiritTag = spirit?.id || 'errante';
-
-  const choiceButtons = choices.map((c) => {
+  const choiceButtons = choices.slice(0, 3).map((c) => {
     const rawLabel = isEn ? (c.text?.en || c.label?.en) : (c.text?.pt || c.label?.pt);
     const label = (rawLabel || '...').slice(0, 60);
     return new ButtonBuilder()
-      .setCustomId(`gloom:choice:${userId}:${spiritTag}:${c.id}:${encounterTag}`)
+      .setCustomId(`gloom:c:${userId}:${encounterTag}:${spiritTag}:${c.id}:${phase}:${currentScore}:${neutralsCount}`)
       .setLabel(label)
       .setStyle(ButtonStyle.Primary);
   });
 
-  const row1 = new ActionRowBuilder().addComponents(choiceButtons.slice(0, 3));
+  const row1 = new ActionRowBuilder().addComponents(choiceButtons);
 
-  // Botão de Extorsão / Suborno
+  // Botão de Extorsão / Tributo Hardcore
   let bribeBtn;
-  if (encounter?.extortion_phase) {
-    const ext = encounter.extortion_phase;
-    if (ext.demand_type === 'phantom_coins') {
-      const cost = typeof ext.amount_or_item === 'number' ? ext.amount_or_item : 25;
-      bribeBtn = new ButtonBuilder()
-        .setCustomId(`gloom:bribe:${userId}:${spiritTag}:${encounterTag}`)
-        .setLabel(t('gloom.negotiate.demandCoins', source, { cost }))
-        .setStyle(ButtonStyle.Success)
-        .setDisabled(user.phantomCoins < cost);
-    } else if (ext.demand_type === 'energy') {
-      const amount = typeof ext.amount_or_item === 'number' ? ext.amount_or_item : 1;
-      bribeBtn = new ButtonBuilder()
-        .setCustomId(`gloom:bribe:${userId}:${spiritTag}:${encounterTag}`)
-        .setLabel(t('gloom.negotiate.demandEnergy', source, { amount }))
-        .setStyle(ButtonStyle.Success)
-        .setDisabled(user.energy < amount);
-    } else if (ext.demand_type === 'relic') {
-      const relicId = ext.amount_or_item;
-      const relicName = isEn ? (RELICS[relicId]?.name?.en || relicId) : (RELICS[relicId]?.name?.pt || relicId);
-      const hasRelic = Boolean(user.inventory && user.inventory[relicId] > 0);
-      bribeBtn = new ButtonBuilder()
-        .setCustomId(`gloom:bribe:${userId}:${spiritTag}:${encounterTag}`)
-        .setLabel(t('gloom.negotiate.demandRelic', source, { relic: relicName.slice(0, 20) }))
-        .setStyle(ButtonStyle.Success)
-        .setDisabled(!hasRelic);
-    }
-  }
+  const bribeCost = rules.baseBribe;
 
-  if (!bribeBtn) {
-    const cost = spirit?.dialogue?.bribeCost || 25;
+  if (tier === 4) {
     bribeBtn = new ButtonBuilder()
       .setCustomId(`gloom:bribe:${userId}:${spiritTag}:${encounterTag}`)
-      .setLabel(t('gloom.negotiate.btnBribe', source, { cost }))
+      .setLabel(`${t('gloom.negotiate.demandCoins', source, { cost: bribeCost })} + 3⚡`)
+      .setEmoji(getEmoji('COIN_PURPLE'))
       .setStyle(ButtonStyle.Success)
-      .setDisabled(user.phantomCoins < cost);
+      .setDisabled(user.phantomCoins < bribeCost || (user.energy || 0) < 3);
+  } else if (tier === 5) {
+    const hasT4orT5Relic = user.inventory && Object.keys(user.inventory).some(
+      (rId) => (user.inventory[rId] > 0) && (RELICS[rId]?.tier === 4 || RELICS[rId]?.tier === 5)
+    );
+    const relicLabel = isEn ? 'Relic T4/T5' : 'Relíquia T4/T5';
+    bribeBtn = new ButtonBuilder()
+      .setCustomId(`gloom:bribe:${userId}:${spiritTag}:${encounterTag}`)
+      .setLabel(`${t('gloom.negotiate.demandCoins', source, { cost: bribeCost })} + 100%⚡ + ${relicLabel}`)
+      .setEmoji(getEmoji('COIN_PURPLE'))
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(user.phantomCoins < bribeCost || !hasT4orT5Relic);
+  } else {
+    bribeBtn = new ButtonBuilder()
+      .setCustomId(`gloom:bribe:${userId}:${spiritTag}:${encounterTag}`)
+      .setLabel(t('gloom.negotiate.btnBribe', source, { cost: bribeCost }))
+      .setEmoji(getEmoji('COIN_PURPLE'))
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(user.phantomCoins < bribeCost);
   }
 
   const row2 = new ActionRowBuilder().addComponents(
@@ -520,13 +605,38 @@ async function handleGloomInteraction(interaction) {
     return interaction.editReply(locView);
   }
 
-  // 3. Escolha de Diálogo na Negociação
-  if (action === 'choice') {
-    const spiritId = parts[3];
-    const choiceId = parts[4];
-    const encounterTag = parts[5] && parts[5] !== 'none' ? parts[5] : null;
-    const result = negotiateSpirit(interaction.user.id, spiritId, choiceId, false, encounterTag);
-    const spiritName = isEn ? (result.spirit?.name?.en || result.spirit?.name) : (result.spirit?.name?.pt || result.spirit?.name);
+  // 3. Escolha de Diálogo na Negociação SMT Hardcore
+  if (action === 'c' || action === 'choice') {
+    let encounterTag, spiritTag, choiceId, phase, currentScore, neutralsCount;
+    if (action === 'c') {
+      encounterTag = parts[3] !== '0' && parts[3] !== 'none' ? parts[3] : null;
+      spiritTag = parts[4] !== '0' && parts[4] !== 'errante' ? parts[4] : null;
+      choiceId = parts[5];
+      phase = parseInt(parts[6], 10) || 1;
+      currentScore = parseInt(parts[7], 10) || 0;
+      neutralsCount = parseInt(parts[8], 10) || 0;
+    } else {
+      spiritTag = parts[3] !== '0' && parts[3] !== 'errante' ? parts[3] : null;
+      choiceId = parts[4];
+      encounterTag = parts[5] && parts[5] !== 'none' ? parts[5] : null;
+      phase = 1;
+      currentScore = 0;
+      neutralsCount = 0;
+    }
+
+    const result = negotiateSpirit(
+      interaction.user.id,
+      spiritTag,
+      choiceId,
+      false,
+      encounterTag,
+      phase,
+      currentScore,
+      neutralsCount
+    );
+    const spiritName = isEn
+      ? (result.spirit?.name?.en || result.spirit?.name)
+      : (result.spirit?.name?.pt || result.spirit?.name);
 
     const reactionObj = result.recruited
       ? (result.choice?.success_dialogue || result.choice?.monster_reaction)
@@ -536,13 +646,55 @@ async function handleGloomInteraction(interaction) {
       : null;
     const reactionPrefix = rawReaction ? `> 🗣️ *« "${rawReaction}" »*\n\n` : '';
 
+    if (result.inProgress) {
+      await interaction.deferUpdate();
+      const nextView = buildNegotiationView(
+        interaction.user.id,
+        result.spirit,
+        interaction,
+        result.encounter,
+        result.nextPhase,
+        result.currentScore,
+        result.neutralsCount,
+        rawReaction
+      );
+      return interaction.editReply(nextView);
+    }
+
+    if (result.canBailout) {
+      await interaction.deferUpdate();
+      const bailoutView = buildNegotiationView(
+        interaction.user.id,
+        result.spirit,
+        interaction,
+        result.encounter,
+        result.targetScore,
+        result.finalScore,
+        0,
+        rawReaction,
+        true,
+        result.bailoutCost
+      );
+      return interaction.editReply(bailoutView);
+    }
+
     let text = '';
     if (result.recruited) {
       text = reactionPrefix + t('gloom.negotiate.successWit', interaction, { spirit: spiritName, coins: result.rewardCoins });
     } else if (result.criticalFailure) {
       const loc = LOCATIONS[result.bannedLocation] || LOCATIONS.portao_penumbra;
       const locName = isEn ? loc.name.en : loc.name.pt;
-      text = reactionPrefix + t('gloom.negotiate.criticalFailure', interaction, { location: locName, time: result.banDurationMinutes });
+      text = reactionPrefix;
+      if (result.isSycophancy) {
+        text += t('gloom.negotiate.sycophancyPenalty', interaction, { stolen: result.theftCoins }) + '\n\n';
+      }
+      if (result.hesitationDecay) {
+        text += t('gloom.negotiate.hesitationPenalty', interaction) + '\n\n';
+      }
+      text += t('gloom.negotiate.criticalFailure', interaction, { location: locName, time: result.banDurationMinutes });
+      if (result.ejectionFine > 0) {
+        text += `\n${t('gloom.negotiate.ejectionFine', interaction, { fine: result.ejectionFine })}`;
+      }
     } else {
       text = reactionPrefix + t('gloom.negotiate.failed', interaction, { spirit: spiritName });
     }
@@ -598,21 +750,41 @@ async function handleGloomInteraction(interaction) {
     return interaction.editReply(engView);
   }
 
-  // 4. Suborno de Espírito
+  // 4. Suborno / Extorsão de Espírito
   if (action === 'bribe') {
-    const spiritId = parts[3];
-    const encounterTag = parts[4] && parts[4] !== 'none' ? parts[4] : null;
-    const result = negotiateSpirit(interaction.user.id, spiritId, null, true, encounterTag);
+    const spiritTag = parts[3] !== '0' && parts[3] !== 'errante' ? parts[3] : null;
+    const encounterTag = parts[4] && parts[4] !== 'none' && parts[4] !== '0' ? parts[4] : null;
+    const result = negotiateSpirit(interaction.user.id, spiritTag, null, true, encounterTag);
     const spiritName = isEn ? (result.spirit?.name?.en || result.spirit?.name) : (result.spirit?.name?.pt || result.spirit?.name);
 
     let text = '';
-    if (result.success) {
-      const cost = result.encounter?.extortion_phase?.demand_type === 'phantom_coins'
-        ? (result.encounter.extortion_phase.amount_or_item || 25)
-        : (result.spirit?.dialogue?.bribeCost || 25);
-      text = t('gloom.negotiate.successBribe', interaction, { spirit: spiritName, cost });
+    if (result.success && result.recruited) {
+      text = t('gloom.negotiate.successBribe', interaction, { spirit: spiritName, cost: result.cost });
+    } else if (result.reason === 'insufficient_energy') {
+      text = isEn ? `⚡ Insufficient stamina! Requires ${result.requiredEnergy} stamina.` : `⚡ Vigor insuficiente! Requer ${result.requiredEnergy} pontos de vigor.`;
+    } else if (result.reason === 'missing_relic_t4_t5') {
+      text = isEn ? '🏺 Extortion failed! You must possess at least one Tier 4 or Tier 5 relic.' : '🏺 Extorsão falhou! Você precisa possuir pelo menos uma Relíquia Tier 4 ou Tier 5.';
     } else {
       text = t('gloom.explore.insufficientCoins', interaction, { cost: result.cost || 25 });
+    }
+
+    await interaction.deferUpdate();
+    const locView = buildLocationView(interaction.user.id, guildId, interaction, text);
+    return interaction.editReply(locView);
+  }
+
+  // 4.1 Resgate Extorsivo (Bailout)
+  if (action === 'bailout') {
+    const encounterTag = parts[3] !== '0' && parts[3] !== 'none' ? parts[3] : null;
+    const spiritTag = parts[4] !== '0' && parts[4] !== 'errante' ? parts[4] : null;
+    const result = negotiateSpirit(interaction.user.id, spiritTag, null, false, encounterTag, 1, 0, 0, true);
+    const spiritName = isEn ? (result.spirit?.name?.en || result.spirit?.name) : (result.spirit?.name?.pt || result.spirit?.name);
+
+    let text = '';
+    if (result.success && result.recruited) {
+      text = t('gloom.negotiate.bailoutSuccess', interaction, { spirit: spiritName, cost: result.cost });
+    } else {
+      text = t('gloom.explore.insufficientCoins', interaction, { cost: result.cost || 100 });
     }
 
     await interaction.deferUpdate();

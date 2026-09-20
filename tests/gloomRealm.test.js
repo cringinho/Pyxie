@@ -488,4 +488,104 @@ assert(
 
 console.log('✅ Armazenamento atômico de room_cooldowns, bloqueio irônico de movimento e vasculhar validados.');
 
+// 16. Teste de Negociação Multi-Fases SMT V3 e Resgate Extorsivo (Bailout)
+const uidSmt = `user_smt_${Date.now()}`;
+const userSmt = getGloomUser(uidSmt);
+userSmt.phantomCoins = 1000;
+updateGloomUser(uidSmt, userSmt);
+
+// Encontro de Tier 1 (2 rounds, target 2)
+const encT1 = getRandomEncounter(1);
+assert(encT1, 'Deve encontrar encontro T1');
+// Fase 1: escolha que dê +1
+const optT1_1 = encT1.options[0];
+const resSmtT1_1 = negotiateSpirit(uidSmt, null, optT1_1.id, false, encT1.id, 1, 0, 0);
+assert.equal(resSmtT1_1.inProgress, true, 'Rodada 1 de 2 deve retornar inProgress: true');
+assert.equal(resSmtT1_1.nextPhase, 2, 'Próxima fase deve ser 2');
+
+// 17. Teste de Taxa de Desacato por Bajulação (Roubo de 100-300 👻)
+const uidSycophant = `user_syco_${Date.now()}`;
+const userSyco = getGloomUser(uidSycophant);
+userSyco.phantomCoins = 500;
+updateGloomUser(uidSycophant, userSyco);
+
+// enc_t2_corvo_poeta é temperamento orgulhoso, opt_2 tem tom flattery
+const resSyco = negotiateSpirit(uidSycophant, null, 'opt_2', false, 'enc_t2_corvo_poeta', 1, 0, 0);
+assert.equal(resSyco.isSycophancy, true, 'Bajulação contra temperamento sádico/orgulhoso deve acionar isSycophancy');
+assert(resSyco.theftCoins >= 100 && resSyco.theftCoins <= 300, `Demônio deve roubar 100-300 moedas (roubou: ${resSyco.theftCoins})`);
+assert.equal(resSyco.criticalFailure, true, 'Bajulação deve disparar falha crítica');
+
+// 18. Teste de Pena de Hesitação (2 escolhas neutras no Tier 3+)
+const uidHesitate = `user_hesitate_${Date.now()}`;
+const userHesitate = getGloomUser(uidHesitate);
+userHesitate.phantomCoins = 300;
+updateGloomUser(uidHesitate, userHesitate);
+
+// enc_t3_sucubo_tedio é temperamento sadico, opt_2 tem tom rational (0 na matriz)
+// 1ª neutra: não gera falha crítica
+const resHes1 = negotiateSpirit(uidHesitate, null, 'opt_3', false, 'enc_t3_automato_musica', 1, 0, 0);
+assert.equal(resHes1.matrixScore, 0, '1ª resposta deve pontuar 0');
+assert(!resHes1.hesitationDecay, '1ª neutra não deve causar decaimento por hesitação');
+
+// 2ª neutra (neutralsCount = 1): no Tier 3 gera falha crítica por hesitação
+const resHes2 = negotiateSpirit(uidHesitate, null, 'opt_3', false, 'enc_t3_automato_musica', 2, 0, 1);
+assert.equal(resHes2.hesitationDecay, true, '2ª neutra consecutiva no Tier 3 deve acionar hesitação');
+assert.equal(resHes2.criticalFailure, true, 'Hesitação excessiva no Tier 3 deve resultar em falha crítica');
+
+// 19. Teste de Multa de Ejeção (10% de Phantom Coins deduzidos)
+const uidFine = `user_fine_${Date.now()}`;
+const userFine = getGloomUser(uidFine);
+userFine.phantomCoins = 1000;
+updateGloomUser(uidFine, userFine);
+
+// enc_t2_banshee_descarregada (temp: caotico, opt_1: submissive -> -2 na matriz)
+const resFine = negotiateSpirit(uidFine, null, 'opt_1', false, 'enc_t2_banshee_descarregada', 1, 0, 0);
+assert.equal(resFine.criticalFailure, true);
+assert.equal(resFine.ejectionFine, 100, 'Multa de ejeção deve deduzir exatamente 10% (100 de 1000 moedas)');
+const userFineAfter = getGloomUser(uidFine);
+assert.equal(userFineAfter.phantomCoins, 900, 'Saldo deve ter diminuído para 900 moedas');
+
+// 20. Teste de Resgate Extorsivo (Bailout a 3x do pedágio base quando a 1 ponto da meta)
+const uidBailout = `user_bail_${Date.now()}`;
+const userBailout = getGloomUser(uidBailout);
+userBailout.phantomCoins = 2000;
+updateGloomUser(uidBailout, userBailout);
+
+// enc_t2_espantalho_veludo (tier: 2, rounds: 3, target: 3), opt_3 (tone: arrogant dá 0)
+// Na rodada 3 com score acumulado 2, falta 1 para o target 3
+const resBailCheck = negotiateSpirit(uidBailout, null, 'opt_3', false, 'enc_t2_espantalho_veludo', 3, 2, 0);
+assert.equal(resBailCheck.canBailout, true, 'Ao faltar 1 ponto na rodada final, canBailout deve ser true');
+assert(resBailCheck.bailoutCost > 0, 'Custo de resgate deve ser calculado');
+
+// Executar o resgate extorsivo com isBailout = true
+const resBailPaid = negotiateSpirit(uidBailout, null, null, false, 'enc_t2_espantalho_veludo', 1, 0, 0, true);
+assert.equal(resBailPaid.success, true);
+assert.equal(resBailPaid.recruited, true);
+assert.equal(resBailPaid.method, 'bailout');
+assert(resBailPaid.cost > 0);
+const userBailAfter = getGloomUser(uidBailout);
+assert(userBailAfter.phantomCoins < 2000, 'Saldo deve ter sido debitado pelo resgate');
+
+// 21. Teste da Mochila Modular (buildInventoryEmbed e buildInventoryComponents)
+const { buildInventoryEmbed, buildInventoryComponents } = require('../src/commands/inventario');
+const uidMochila = `user_bag_${Date.now()}`;
+const uBag = getGloomUser(uidMochila);
+uBag.inventory = { amuleto_osso: 2, lagrima_deusa_touca: 1 };
+uBag.phantomCoins = 350;
+updateGloomUser(uidMochila, uBag);
+
+// Aba Bosque (com contexto do servidor oficial para garantir pt-BR)
+const officialGuildSource = { guild: { id: '1453890868980482090' } };
+const embedBosque = buildInventoryEmbed(uidMochila, 'Tester', null, officialGuildSource, 'bosque');
+assert(embedBosque.data.description.includes('RELÍQUIAS DO BOSQUE'), 'Aba bosque deve exibir cabeçalho de relíquias');
+assert(embedBosque.data.description.includes('Phantom Coins') && embedBosque.data.description.includes('350'), 'Aba bosque deve exibir saldo de Phantom Coins');
+assert(embedBosque.data.description.includes('Amuleto de Osso Quebrado'), 'Aba bosque deve listar o Amuleto de Osso Quebrado');
+assert(embedBosque.data.description.includes('Lágrima Eterna da Fadinha Emo'), 'Aba bosque deve listar a Lágrima Eterna');
+
+const compsBosque = buildInventoryComponents(uidMochila, null, officialGuildSource, 'bosque');
+assert.equal(compsBosque.length, 2, 'Aba bosque deve conter 2 linhas de componentes');
+assert(compsBosque[0].components.some((b) => b.data.custom_id.includes('inv_tab:bosque')), 'Deve conter botão da aba Bosque');
+
+console.log('✅ SMT V3 Hardcore (multi-fases, taxa de desacato, pena de hesitação, multa de ejeção, resgate extorsivo e mochila modular) validados com sucesso.');
+
 console.log('\n🎉 Todos os testes de Bosque da Pyxie (Pyxie\'s Grove) passaram com 100% de sucesso!');

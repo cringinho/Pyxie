@@ -248,6 +248,10 @@ app.get('/vote', (req, res) => {
   res.redirect(`https://top.gg/bot/${botId}/vote`);
 });
 
+app.get('/wiki', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'wiki.html'));
+});
+
 // 1. Healthcheck e status público
 app.get('/api/status', (req, res) => {
   res.json(getBotStatus());
