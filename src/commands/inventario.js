@@ -6,7 +6,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require('discord.js');
-const { getUserInventory, getItemDefinition, sellItem, openChest, formatItemEffects } = require('../services/inventory');
+const { getUserInventory, getItemDefinition, sellItem, openChest, useTravelItem, formatItemEffects } = require('../services/inventory');
 const { getGloomUser, RELICS, sellRelic } = require('../services/gloomRealm');
 const { getEmoji } = require('../utils/appEmojis');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
@@ -226,6 +226,16 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
         );
       }
 
+      if (item.effects && item.effects.isTravelBuff) {
+        actionRow.addComponents(
+          new ButtonBuilder()
+            .setCustomId(`inv_use_travel:${selectedItemId}:social:${userId}`)
+            .setLabel(isEn ? `Use ${item.name}` : `Usar ${item.name}`)
+            .setEmoji(item.emoji || '🐎')
+            .setStyle(ButtonStyle.Success)
+        );
+      }
+
       if (item.sellPrice) {
         actionRow.addComponents(
           new ButtonBuilder()
@@ -266,6 +276,7 @@ function isInventoryInteraction(interaction) {
     interaction.customId.startsWith('inv_item_select') ||
     interaction.customId.startsWith('inv_relic_select') ||
     interaction.customId.startsWith('inv_open_chest') ||
+    interaction.customId.startsWith('inv_use_travel') ||
     interaction.customId.startsWith('inv_sell_item') ||
     interaction.customId.startsWith('inv_sell_relic')
   );
@@ -332,6 +343,32 @@ async function handleInventoryInteraction(interaction) {
 
     return interaction.update({
       content: t('inventory.chestOpened', interaction, { coins: formatCoins(openRes.coinsWon, interaction), items: itemsWonStr }),
+      embeds: [embed],
+      components,
+    });
+  }
+
+  // 3.1 Usar Item de Montaria / Viagem Rápida
+  if (action === 'inv_use_travel') {
+    const itemId = parts[1];
+    const currentTab = parts[2] === 'bosque' ? 'bosque' : 'social';
+    const useRes = useTravelItem(userId, itemId);
+
+    if (!useRes.success) {
+      return interaction.reply({
+        content: t('common.error', interaction),
+        flags: 64,
+      });
+    }
+
+    const embed = buildInventoryEmbed(userId, userTag, null, interaction, currentTab);
+    const components = buildInventoryComponents(userId, null, interaction, currentTab);
+
+    return interaction.update({
+      content: t('inventory.travelBuffUsed', interaction, {
+        item: useRes.item.name,
+        hours: useRes.durationHours,
+      }),
       embeds: [embed],
       components,
     });

@@ -205,6 +205,7 @@ const TRANSLATIONS = {
       "voteWeekdayBonus": "<a:qbgifts48:1548444204202459136> **BÔNUS EXTRA NO TOP.GG (A CADA 12H):**\n> Vote no **Top.gg** e ganhe **+50 Moedas** e **🟣 1x Ametista Reluzente** *(com dobro nos fins de semana!)*",
       "btnLabel": "Resgatar Bônus no Top.gg",
       "btnLabelCooldown": "Votar no Top.gg (Recompensa Extra)",
+      "btnWebBonus": "⚡ Bônus Web (+75🪙 & 📦)",
       "btnWebBonus": "⚡ Bônus Web (+75🪙)",
       "footer": "Recompensa renovada a cada 24 horas",
       "footerCooldown": "Voto no Top.gg disponível a cada 12 horas"
@@ -310,8 +311,8 @@ const TRANSLATIONS = {
       "emptyCoins": "*Nenhum registro de moedas ainda.*",
       "emptyBeans": "*Nenhum feijão cultivado ainda.*",
       "footer": "Atualizado em tempo real • Use os botões para alternar",
-      "btnCoins": "🪙 Moedas",
-      "btnBeans": "🌱 Feijões",
+      "btnCoins": "Moedas",
+      "btnBeans": "Feijões",
       "viewerPlacement": "👤 Sua Colocação Atual",
       "viewerLine": "> 🏅 **Posição #{position}** com **{amount}**"
     },
@@ -383,9 +384,9 @@ const TRANSLATIONS = {
     },
     "inventory": {
       "backpackTitle": "🎒  ✦  Mochila de {user}",
-      "tabBosque": "🌲 Bosque & Relíquias",
-      "tabSocial": "📦 Social & Baús",
-      "tabTodos": "🎒 Todos",
+      "tabBosque": "Bosque & Relíquias",
+      "tabSocial": "Social & Baús",
+      "tabTodos": "Todos",
       "emptyBackpack": "> *Sua mochila está vazia! Visite a `/loja` para adquirir baús e itens mágicos.*",
       "emptyRelics": "> *Você ainda não possui relíquias do Bosque. Explore o mapa com `/py-explorar` e vasculhe para encontrá-las!*",
       "itemsCount": "🎒 **Itens Guardados:** {count}",
@@ -406,8 +407,9 @@ const TRANSLATIONS = {
       "chestOpened": "🔓 **Baú Aberto!** Você encontrou **+{coins}**{items}!",
       "soldSuccess": "🪙 Você vendeu 1x **{item}** por **+{coins}**!",
       "selectRelicPlaceholder": "🏺 Selecione uma relíquia para inspecionar ou vender...",
-      "sellRelic": "🪙 Vender ({coins} 👻)",
-      "relicSoldSuccess": "✨ Você vendeu 1x **{relic}** e recebeu **+{coins} Phantom Coins 👻**!"
+      "sellRelic": "Vender ({coins} 👻)",
+      "relicSoldSuccess": "✨ Você vendeu 1x **{relic}** e recebeu **+{coins} Phantom Coins 👻**!",
+      "travelBuffUsed": "🐎 **Montaria Equipada!** Você usou **{item}**! O cooldown de 10 min entre mapas foi anulado por **{hours} horas**!"
     },
     "buy": {
       "insufficientFunds": "❌ Você precisa de **{cost}**, mas seu saldo atual é de apenas **{balance}**. Sem dinheiro, sem item.",
@@ -721,6 +723,7 @@ const TRANSLATIONS = {
       "voteWeekdayBonus": "<a:qbgifts48:1548444204202459136> **EXTRA TOP.GG BONUS (EVERY 12H):**\n> Vote on **Top.gg** and get **+50 Coins** and **🟣 1x Shimmering Amethyst** *(doubled on weekends!)*",
       "btnLabel": "Claim Bonus on Top.gg",
       "btnLabelCooldown": "Vote on Top.gg (Extra Reward)",
+      "btnWebBonus": "⚡ Web Bonus (+75🪙 & 📦)",
       "btnWebBonus": "⚡ Web Bonus (+75🪙)",
       "footer": "Reward resets every 24 hours",
       "footerCooldown": "Top.gg voting available every 12 hours"
@@ -826,8 +829,8 @@ const TRANSLATIONS = {
       "emptyCoins": "*No coin records yet.*",
       "emptyBeans": "*No magic beans cultivated yet.*",
       "footer": "Updated in real-time • Use buttons to switch",
-      "btnCoins": "🪙 Coins",
-      "btnBeans": "🌱 Beans",
+      "btnCoins": "Coins",
+      "btnBeans": "Beans",
       "viewerPlacement": "👤 Your Current Placement",
       "viewerLine": "> 🏅 **Rank #{position}** with **{amount}**"
     },
@@ -899,9 +902,9 @@ const TRANSLATIONS = {
     },
     "inventory": {
       "backpackTitle": "🎒  ✦  {user}’s Backpack",
-      "tabBosque": "🌲 Grove & Relics",
-      "tabSocial": "📦 Social & Chests",
-      "tabTodos": "🎒 All",
+      "tabBosque": "Grove & Relics",
+      "tabSocial": "Social & Chests",
+      "tabTodos": "All",
       "emptyBackpack": "> *Your backpack is empty! Visit `/shop` to acquire chests and magical items.*",
       "emptyRelics": "> *You do not possess any Grove relics yet. Explore the realm with `/py-explore` and forage to find them!*",
       "itemsCount": "🎒 **Stored Items:** {count}",
@@ -922,8 +925,9 @@ const TRANSLATIONS = {
       "chestOpened": "🔓 **Chest Opened!** You found **+{coins}**{items}!",
       "soldSuccess": "🪙 You sold 1x **{item}** for **+{coins}**!",
       "selectRelicPlaceholder": "🏺 Select a relic to inspect or sell...",
-      "sellRelic": "🪙 Sell ({coins} 👻)",
-      "relicSoldSuccess": "✨ You sold 1x **{relic}** and received **+{coins} Phantom Coins 👻**!"
+      "sellRelic": "Sell ({coins} 👻)",
+      "relicSoldSuccess": "✨ You sold 1x **{relic}** and received **+{coins} Phantom Coins 👻**!",
+      "travelBuffUsed": "🐎 **Mount Equipped!** You used **{item}**! The 10-minute cooldown between maps has been nullified for **{hours} hours**!"
     },
     "buy": {
       "insufficientFunds": "❌ You need **{cost}**, but your current balance is only **{balance}**.",

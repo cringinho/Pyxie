@@ -1,0 +1,66 @@
+{
+  "description": "Tabela de probabilidades configuráveis para ações do botão 'Vasculhar' no Bosque da Pyxie.",
+  "forage_event_weights": {
+    "wild_horse_saddle": {
+      "name": "Cavalo Selvagem (Sela de Montaria T2)",
+      "chance_percentage": 3.0,
+      "reward_item": "sela_cavalo",
+      "reward_quantity": 1,
+      "description": {
+        "pt": "Um cavalo selvagem surge entre os arbustos ancestrais e concede uma Sela de Cavalo que anula o cooldown de viagem por 2h.",
+        "en": "A wild horse emerges from ancient groves and leaves a Horse Saddle that removes travel cooldown for 2h."
+      }
+    },
+    "relic_merchant": {
+      "name": "Mercador Ambulante de Relíquias",
+      "chance_percentage": 7.0,
+      "stock_size": 3,
+      "description": {
+        "pt": "Um mercador espectral oferece relíquias arcanas em troca de Phantom Coins.",
+        "en": "A spectral merchant offers arcane relics in exchange for Phantom Coins."
+      }
+    },
+    "relic_engineer": {
+      "name": "Engenheiro Forjador de Relíquias",
+      "chance_percentage": 7.0,
+      "description": {
+        "pt": "Um engenheiro das sombras aprimora duas relíquias do mesmo tier para um tier superior.",
+        "en": "A shadow engineer upgrades two relics of the same tier into a higher tier."
+      }
+    },
+    "spirit_encounter": {
+      "name": "Encontro com Espírito da Penumbra (Negociação SMT)",
+      "chance_percentage": 30.0,
+      "description": {
+        "pt": "Um espírito da câmara surge para uma negociação tensa de 3 posturas existenciais.",
+        "en": "A chamber spirit appears for an existential 3-stance negotiation."
+      }
+    },
+    "spectral_cache": {
+      "name": "Baú Espectral Oculto",
+      "chance_percentage": 18.0,
+      "min_phantom_coins": 15,
+      "max_phantom_coins": 50,
+      "description": {
+        "pt": "Encontra um baú secreto contendo Phantom Coins puras.",
+        "en": "Discovers a hidden cache containing pure Phantom Coins."
+      }
+    },
+    "chalk_trace": {
+      "name": "Rastro Místico de Giz Roxo",
+      "chance_percentage": 10.0,
+      "description": {
+        "pt": "Encontra mensagens gravadas em giz roxo por outros aventureiros.",
+        "en": "Finds purple chalk messages written by fellow adventurers."
+      }
+    },
+    "materials_forage": {
+      "name": "Forrageamento de Materiais do Cenário",
+      "chance_percentage": 25.0,
+      "description": {
+        "pt": "Coleta materiais de artesanato específicos do cenário atual.",
+        "en": "Gathers chamber-specific crafting materials."
+      }
+    }
+  }
+}

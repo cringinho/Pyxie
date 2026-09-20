@@ -47,14 +47,17 @@ async function buildRankingView(source, viewerId, category = 'coins') {
     .setFooter({ text: pyxieFooter(t('ranking.footer', source)) })
     .setTimestamp();
 
+  const { getEmoji } = require('../utils/appEmojis');
   const buttonRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId(`ranking_cat:coins:${viewerId}`)
       .setLabel(t('ranking.btnCoins', source))
+      .setEmoji(getEmoji('COIN'))
       .setStyle(category === 'coins' ? ButtonStyle.Success : ButtonStyle.Secondary),
     new ButtonBuilder()
       .setCustomId(`ranking_cat:beans:${viewerId}`)
       .setLabel(t('ranking.btnBeans', source))
+      .setEmoji(getEmoji('MAGIC_BEAN'))
       .setStyle(category === 'beans' ? ButtonStyle.Success : ButtonStyle.Secondary)
   );
 

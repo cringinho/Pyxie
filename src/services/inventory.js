@@ -237,6 +237,37 @@ function openChest(userId, chestId) {
   };
 }
 
+function useTravelItem(userId, itemId) {
+  const item = getItemDefinition(itemId);
+  if (!item || !item.effects?.isTravelBuff) {
+    return { success: false, reason: 'not_a_travel_item' };
+  }
+
+  if (!removeItem(userId, itemId, 1)) {
+    return { success: false, reason: 'no_item' };
+  }
+
+  const durationHours = item.effects.durationHours || 2;
+  const durationMs = durationHours * 60 * 60 * 1000;
+
+  const { getGloomUser, updateGloomUser } = require('./gloomRealm');
+  const user = getGloomUser(userId);
+  const now = Date.now();
+  const currentExpiry = user.mapTravelBuffExpiresAt && user.mapTravelBuffExpiresAt > now
+    ? user.mapTravelBuffExpiresAt
+    : now;
+
+  user.mapTravelBuffExpiresAt = currentExpiry + durationMs;
+  updateGloomUser(userId, user);
+
+  return {
+    success: true,
+    item,
+    durationHours,
+    expiresAt: user.mapTravelBuffExpiresAt,
+  };
+}
+
 function formatItemEffects(item) {
   if (!item || !item.effects) return '';
   const fx = item.effects;
@@ -244,6 +275,9 @@ function formatItemEffects(item) {
 
   if (fx.isChest) {
     return `🎁 Contém ${fx.minCoins} a ${fx.maxCoins} moedas + chance de itens raros`;
+  }
+  if (fx.isTravelBuff) {
+    return `🐎 Anula o cooldown de 10 min de troca de mapas por ${fx.durationHours || 2} horas`;
   }
   if (fx.isSlotExpansion) {
     return `🏠 +${fx.slots || 2} vagas de pets na mochila`;
@@ -268,6 +302,7 @@ module.exports = {
   buyItem,
   sellItem,
   openChest,
+  useTravelItem,
   formatItemEffects,
   flushInventorySync,
 };

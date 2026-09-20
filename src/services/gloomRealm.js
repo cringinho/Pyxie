@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { createBonusSession, verifyBonusSession } = require('./bonusTimer');
+const EXPLORATION_EVENTS_CONFIG = require('../data/explorationEvents.json');
 
 const gloomFile = path.join(__dirname, '..', '..', 'data', 'gloom.json');
 const gloomBackupFile = `${gloomFile}.bak`;
@@ -9,6 +10,7 @@ const MAX_ENERGY = 10;
 const ENERGY_REGEN_MS = 6 * 60 * 1000; // 1 energia a cada 6 minutos (10 por hora)
 const TRACE_BASE_COST = 15;
 const TIDE_CYCLE_MS = 6 * 60 * 60 * 1000; // 6 horas
+const MAP_MOVE_COOLDOWN_MS = 10 * 60 * 1000; // 10 minutos para troca de mapa
 
 // Matriz de Afinidade Psicológica Atlus SMT (Temperamento x Tom de Resposta)
 const PSYCHOLOGY_MATRIX = {
@@ -827,6 +829,38 @@ function isLocationBanned(user, locationId) {
   return { banned: false, remainingMs: 0, remainingSec: 0, remainingMinutes: 0 };
 }
 
+function checkMapTravelCooldown(user) {
+  if (!user) return { canTravel: true, remainingMs: 0, remainingMinutes: 0, hasBuff: false };
+  const now = Date.now();
+
+  // Se o usuário possui buff ativo de Sela de Cavalo / Asas, o cooldown é 0
+  if (user.mapTravelBuffExpiresAt && user.mapTravelBuffExpiresAt > now) {
+    const buffRemainingMs = user.mapTravelBuffExpiresAt - now;
+    return {
+      canTravel: true,
+      remainingMs: 0,
+      remainingMinutes: 0,
+      hasBuff: true,
+      buffRemainingMinutes: Math.ceil(buffRemainingMs / 60000),
+    };
+  }
+
+  const lastMove = user.lastMapMoveAt || 0;
+  const elapsed = now - lastMove;
+  if (elapsed < MAP_MOVE_COOLDOWN_MS) {
+    const remainingMs = MAP_MOVE_COOLDOWN_MS - elapsed;
+    const remainingMinutes = Math.max(1, Math.ceil(remainingMs / 60000));
+    return {
+      canTravel: false,
+      remainingMs,
+      remainingMinutes,
+      hasBuff: false,
+    };
+  }
+
+  return { canTravel: true, remainingMs: 0, remainingMinutes: 0, hasBuff: false };
+}
+
 function banUserFromLocation(userId, locationId) {
   const user = getGloomUser(userId);
   const loc = LOCATIONS[locationId] || LOCATIONS.portao_penumbra;
@@ -1292,19 +1326,38 @@ function forage(userId, locationId) {
 
   const nextEnergy = saveEnergy ? user.energy : user.energy - 1;
 
-  // 2. Chance de Evento Raro de Exploração (4% de chance: Comerciante ou Engenheiro de Relíquias)
+  // 2. Chance de Evento Raro de Exploração (configurado via explorationEvents.json)
   let rareEvent = null;
-  if (Math.random() < 0.04) {
-    const isMerchant = Math.random() < 0.5;
-    if (isMerchant) {
+  const rollRare = Math.random() * 100;
+  let accumulated = 0;
+
+  const horseChance = EXPLORATION_EVENTS_CONFIG?.forage_event_weights?.wild_horse_saddle?.chance_percentage ?? 3.0;
+  accumulated += horseChance;
+
+  if (rollRare < accumulated) {
+    const { addItem } = require('./inventory');
+    addItem(userId, 'sela_cavalo', 1);
+    rareEvent = {
+      type: 'wild_horse_saddle',
+      item: 'sela_cavalo',
+      message: EXPLORATION_EVENTS_CONFIG?.forage_event_weights?.wild_horse_saddle?.description,
+    };
+  } else {
+    const merchantChance = EXPLORATION_EVENTS_CONFIG?.forage_event_weights?.relic_merchant?.chance_percentage ?? 7.0;
+    accumulated += merchantChance;
+    if (rollRare < accumulated) {
       rareEvent = {
         type: 'relic_merchant',
         stock: generateMerchantStock(),
       };
     } else {
-      rareEvent = {
-        type: 'relic_engineer',
-      };
+      const engineerChance = EXPLORATION_EVENTS_CONFIG?.forage_event_weights?.relic_engineer?.chance_percentage ?? 7.0;
+      accumulated += engineerChance;
+      if (rollRare < accumulated) {
+        rareEvent = {
+          type: 'relic_engineer',
+        };
+      }
     }
   }
 
@@ -1962,6 +2015,8 @@ module.exports = {
   scavenge: forage,
   isLocationBanned,
   banUserFromLocation,
+  checkMapTravelCooldown,
+  MAP_MOVE_COOLDOWN_MS,
   generateMerchantStock,
   buyMerchantRelic,
   sellRelic,

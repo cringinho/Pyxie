@@ -112,5 +112,50 @@
     "sellPrice": 10000,
     "description": "A joia suprema das eras míticas. Símbolo absoluto de soberania, fortuna e prestígio celestial.",
     "effects": {}
+  },
+  "sela_cavalo": {
+    "id": "sela_cavalo",
+    "name": "Sela de Cavalo",
+    "category": "montaria",
+    "rarity": "INCOMUM",
+    "tier": 2,
+    "emoji": "🐎",
+    "buyPrice": 0,
+    "sellPrice": 250,
+    "description": "Sela resistente encontrada em cavalos selvagens do Bosque. Anula o cooldown de 10 min de troca de mapas por 2 horas.",
+    "effects": {
+      "isTravelBuff": true,
+      "durationHours": 2
+    }
+  },
+  "asas_fada": {
+    "id": "asas_fada",
+    "name": "Asas de Fada",
+    "category": "montaria",
+    "rarity": "RARO",
+    "tier": 3,
+    "emoji": "🧚",
+    "buyPrice": 0,
+    "sellPrice": 750,
+    "description": "Par de asas etéreas brilhantes. Anula o cooldown de troca de mapas entre câmaras por 4 horas.",
+    "effects": {
+      "isTravelBuff": true,
+      "durationHours": 4
+    }
+  },
+  "asas_grifo": {
+    "id": "asas_grifo",
+    "name": "Asas de Grifo",
+    "category": "montaria",
+    "rarity": "LENDARIO",
+    "tier": 5,
+    "emoji": "🦅",
+    "buyPrice": 0,
+    "sellPrice": 2500,
+    "description": "Asas majestosas forjadas na tempestade. Concedidas apenas aos aventureiros mais dedicados. Anulam o cooldown de troca de mapas por 8 horas.",
+    "effects": {
+      "isTravelBuff": true,
+      "durationHours": 8
+    }
   }
 }

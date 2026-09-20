@@ -61,16 +61,16 @@ function buildBonusEmbed(userId, sessionUrl, source = null) {
     .setTitle(isEn ? '🎁  ✦  Pyxie Magic Bonus & Rewards' : '🎁  ✦  Bônus Mágico & Recompensas da Pyxie')
     .setTitle(isEn ? '🎁  ✦  Pyxie Daily Web Bonus' : '🎁  ✦  Bônus Web Diário da Pyxie')
     .setDescription(desc)
-    .setFooter({ text: pyxieFooter(isEn ? 'Rewards sponsored by Monetag' : 'Recompensas patrocinadas com amor') })
     .setFooter({ text: pyxieFooter(isEn ? 'Rewards sponsored by Monetag (24h cooldown)' : 'Recompensa diária patrocinada (Cooldown de 24h)') })
     .setTimestamp();
 
+  const { getEmoji } = require('../utils/appEmojis');
   const buttonRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setLabel(isEn ? '⚡ Open 10s Bonus Page' : '⚡ Abrir Página de Bônus (10s)')
+      .setLabel(isEn ? 'Open 10s Bonus Page' : 'Abrir Página de Bônus (10s)')
       .setURL(sessionUrl)
       .setStyle(ButtonStyle.Link)
-      .setEmoji('🎁')
+      .setEmoji(getEmoji('GIFT'))
   );
 
   return { embeds: [embed], components: [buttonRow] };
@@ -83,7 +83,6 @@ module.exports = {
   buildBonusCooldownEmbed,
   data: new SlashCommandBuilder()
     .setName(BONUS)
-    .setDescription('Claim free Coins, Magic Beans, and Mystery Chests via a 10s sponsored link.')
     .setDescription('Claim 75 free daily Coins via a 10s sponsored link.')
     .setDescriptionLocalizations({
       'pt-BR': 'Resgata Moedas, Feijões Mágicos e Baús Misteriosos gratuitos através do link de 10s.',

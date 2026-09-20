@@ -35,9 +35,11 @@ function buildCookieView(userId, source = null) {
       .setFooter({ text: isEn ? 'Daily Fortune Cookie' : 'Biscoito da Sorte Diário' })
       .setTimestamp();
 
+    const { getEmoji } = require('../utils/appEmojis');
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setLabel(isEn ? '✨ Open Extra Cookie (10s Web)' : '✨ Abrir Biscoito Extra (10s Web)')
+        .setLabel(isEn ? 'Open Extra Cookie (10s Web)' : 'Abrir Biscoito Extra (10s Web)')
+        .setEmoji(getEmoji('SPARKLES'))
         .setStyle(ButtonStyle.Link)
         .setURL(bonusSession.url)
     );

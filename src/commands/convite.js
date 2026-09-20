@@ -27,37 +27,38 @@ function getInviteUrl(clientId = null, permissions = RECOMMENDED_PERMISSIONS) {
 }
 
 function buildInviteComponents(clientId, isEn = false) {
+  const { getEmoji } = require('../utils/appEmojis');
   const recommendedUrl = getInviteUrl(clientId, RECOMMENDED_PERMISSIONS);
   const adminUrl = getInviteUrl(clientId, ADMIN_PERMISSIONS);
   const voteUrl = `https://top.gg/bot/${TOPGG_BOT_ID}/vote`;
 
   const row1 = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setLabel(isEn ? '✨ Add Pyxie (Recommended)' : '✨ Adicionar Pyxie (Recomendado)')
-      .setEmoji('✨')
+      .setLabel(isEn ? 'Add Pyxie (Recommended)' : 'Adicionar Pyxie (Recomendado)')
+      .setEmoji(getEmoji('SPARKLES'))
       .setStyle(ButtonStyle.Link)
       .setURL(recommendedUrl),
     new ButtonBuilder()
-      .setLabel(isEn ? '👑 Admin Invite' : '👑 Convite Administrador')
-      .setEmoji('👑')
+      .setLabel(isEn ? 'Admin Invite' : 'Convite Administrador')
+      .setEmoji(getEmoji('CROWN'))
       .setStyle(ButtonStyle.Link)
       .setURL(adminUrl)
   );
 
   const row2 = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setLabel(isEn ? '🏰 Community Server' : '🏰 Servidor da Comunidade')
+      .setLabel(isEn ? 'Community Server' : 'Servidor da Comunidade')
       .setEmoji('🏰')
       .setStyle(ButtonStyle.Link)
       .setURL(COMMUNITY_SERVER_URL),
     new ButtonBuilder()
-      .setLabel(isEn ? '⭐ Vote on Top.gg' : '⭐ Votar no Top.gg')
-      .setEmoji('⭐')
+      .setLabel(isEn ? 'Vote on Top.gg' : 'Votar no Top.gg')
+      .setEmoji(getEmoji('STAR'))
       .setStyle(ButtonStyle.Link)
       .setURL(voteUrl),
     new ButtonBuilder()
-      .setLabel(isEn ? '🎁 Web Bonus (10s)' : '🎁 Bônus Web (10s)')
-      .setEmoji('🎁')
+      .setLabel(isEn ? 'Web Bonus (10s)' : 'Bônus Web (10s)')
+      .setEmoji(getEmoji('GIFT'))
       .setStyle(ButtonStyle.Link)
       .setURL(WEB_BONUS_URL)
   );

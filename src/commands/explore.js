@@ -27,6 +27,7 @@ const {
   getBossStatus,
   attackBoss,
   isLocationBanned,
+  checkMapTravelCooldown,
   buyMerchantRelic,
   upgradeRelicsWithEngineer,
 } = require('../services/gloomRealm');
@@ -273,7 +274,17 @@ function buildNegotiationView(
     choices = encounter.phases[phase - 1].options;
   }
 
-  const choiceButtons = choices.slice(0, 3).map((c) => {
+  function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
+  const shuffledChoices = shuffleArray(choices.slice(0, 3));
+  const choiceButtons = shuffledChoices.map((c) => {
     const rawLabel = isEn ? (c.text?.en || c.label?.en) : (c.text?.pt || c.label?.pt);
     const label = (rawLabel || '...').slice(0, 60);
     return new ButtonBuilder()
@@ -556,13 +567,19 @@ async function handleGloomInteraction(interaction) {
       lootFeedback += `\n${t('gloom.explore.portalOpened', interaction)}`;
     }
 
-    // Eventos Raros ao Vasculhar (3% a 5% de chance)
+    // Eventos Raros ao Vasculhar (configurados em explorationEvents.json)
     if (result.rareEvent) {
-      await interaction.deferUpdate();
-      if (result.rareEvent.type === 'relic_merchant') {
+      if (result.rareEvent.type === 'wild_horse_saddle') {
+        const horseMsg = isEn
+          ? '🐎 **Wild Horse Encounter!** You encountered a wild horse in the grove and received a **Horse Saddle (T2) 🐎** in your backpack!'
+          : '🐎 **Cavalo Selvagem Encontrado!** Você se deparou com um cavalo no bosque e recebeu uma **Sela de Cavalo (T2) 🐎** na sua mochila!';
+        lootFeedback = lootFeedback ? `${horseMsg}\n\n${lootFeedback}` : horseMsg;
+      } else if (result.rareEvent.type === 'relic_merchant') {
+        await interaction.deferUpdate();
         const merchView = buildMerchantView(interaction.user.id, result.rareEvent.stock, interaction, lootFeedback);
         return interaction.editReply(merchView);
-      } else {
+      } else if (result.rareEvent.type === 'relic_engineer') {
+        await interaction.deferUpdate();
         const engView = buildEngineerView(interaction.user.id, interaction, lootFeedback);
         return interaction.editReply(engView);
       }
@@ -598,7 +615,19 @@ async function handleGloomInteraction(interaction) {
       });
     }
 
+    // Validação de Cooldown de Viagem de 10 min
+    const travelStatus = checkMapTravelCooldown(user);
+    if (!travelStatus.canTravel) {
+      return interaction.reply({
+        content: isEn
+          ? `⏳ **Travel Fatigue!** Please wait **${travelStatus.remainingMinutes} min** before changing maps again, or use a **Horse Saddle 🐎 / Wings 🪽** in your backpack to bypass this cooldown!`
+          : `⏳ **Fadiga de Viagem!** Aguarde **${travelStatus.remainingMinutes} min** para trocar de mapa novamente, ou use uma **Sela de Cavalo 🐎 / Asas 🪽** na sua mochila para anular este tempo!`,
+        ephemeral: true,
+      });
+    }
+
     user.currentLocation = destId;
+    user.lastMapMoveAt = Date.now();
     user.visitedLocations = user.visitedLocations || [];
     if (!user.visitedLocations.includes(destId)) {
       user.visitedLocations.push(destId);
@@ -1012,7 +1041,19 @@ function handleDirectMove(userId, guildId, source, destinationInput) {
     return { content: t('gloom.explore.travelLocked', source, { reason: reasonText }) };
   }
 
+  // Validação de Cooldown de Viagem de 10 min
+  const travelStatus = checkMapTravelCooldown(user);
+  if (!travelStatus.canTravel) {
+    const isEn = getLanguage(source) === 'en';
+    return {
+      content: isEn
+        ? `⏳ **Travel Fatigue!** Please wait **${travelStatus.remainingMinutes} min** before changing maps again, or use a **Horse Saddle 🐎 / Wings 🪽** in your backpack to bypass this cooldown!`
+        : `⏳ **Fadiga de Viagem!** Aguarde **${travelStatus.remainingMinutes} min** para trocar de mapa novamente, ou use uma **Sela de Cavalo 🐎 / Asas 🪽** na sua mochila para anular este tempo!`,
+    };
+  }
+
   user.currentLocation = targetLocId;
+  user.lastMapMoveAt = Date.now();
   user.visitedLocations = user.visitedLocations || [];
   if (!user.visitedLocations.includes(targetLocId)) {
     user.visitedLocations.push(targetLocId);
