@@ -321,8 +321,9 @@
     <ul class="nav-links">
       <li><a href="/" data-i18n="navHome">Início</a></li>
       <li><a href="#bosque" onclick="switchTab('bosque')" data-i18n="navBosque">Bosque</a></li>
-      <li><a href="#smt" onclick="switchTab('smt')" data-i18n="navSmt">Negociação SMT</a></li>
+      <li><a href="#espectral" onclick="switchTab('espectral')" data-i18n="navEspectral">Sintonia Espectral</a></li>
       <li><a href="#relics" onclick="switchTab('relics')" data-i18n="navRelics">Relíquias & Fusão</a></li>
+      <li><a href="#bestiary" onclick="switchTab('bestiary')" data-i18n="navBestiary">Bestiário</a></li>
       <li><a href="#eco" onclick="switchTab('eco')" data-i18n="navEco">Economia</a></li>
     </ul>
     <div class="nav-actions">
@@ -335,13 +336,14 @@
   <header class="hero">
     <div class="hero-badge" data-i18n="heroBadge">📖 Enciclopédia & Guia Estratégico</div>
     <h1 data-i18n="heroTitle">Crônicas do Bosque da Penumbra</h1>
-    <p data-i18n="heroDesc">Explore as mecânicas arcanas da Pyxie: grafo de 10 cenários, escalonamento por Tiers de perigo, matriz de compatibilidade psicológica Atlus SMT V3 e economia de Phantom Coins.</p>
+    <p data-i18n="heroDesc">Explore as mecânicas arcanas da Pyxie: grafo de 10 cenários, escalonamento por Tiers de perigo, Matriz de Sintonia Espectral, Fusão Arcana de Almas e economia de Phantom Coins.</p>
 
     <!-- Interactive Tab Buttons -->
     <div class="tabs-bar">
       <button class="tab-btn active" onclick="switchTab('bosque')" id="tab-btn-bosque" data-i18n="tabBosque">🌲 Bosque & Cenários</button>
-      <button class="tab-btn" onclick="switchTab('smt')" id="tab-btn-smt" data-i18n="tabSmt">🧠 Matriz SMT V3 & Psicologia</button>
+      <button class="tab-btn" onclick="switchTab('espectral')" id="tab-btn-espectral" data-i18n="tabEspectral">🧠 Sintonia Espectral</button>
       <button class="tab-btn" onclick="switchTab('relics')" id="tab-btn-relics" data-i18n="tabRelics">🏺 Relíquias, Forja & Fusão</button>
+      <button class="tab-btn" onclick="switchTab('bestiary')" id="tab-btn-bestiary" data-i18n="tabBestiary">📜 Bestiário da Penumbra</button>
       <button class="tab-btn" onclick="switchTab('eco')" id="tab-btn-eco" data-i18n="tabEco">🪙 Economia & Chefão Mundial</button>
     </div>
   </header>
@@ -473,8 +475,8 @@
       </div>
     </section>
 
-    <!-- 2. Aba: Matriz SMT V3 & Psicologia -->
-    <section id="tab-smt" class="tab-content">
+    <!-- 2. Aba: Matriz de Sintonia Espectral & Psicologia -->
+    <section id="tab-espectral" class="tab-content">
       <div class="grid-2">
         <div class="card">
           <h3 class="card-title">💢 Taxa de Desacato por Bajulação</h3>
@@ -495,7 +497,7 @@
       </div>
 
       <div class="table-container">
-        <h3 style="font-family: var(--font-title); margin-bottom: 12px; color: var(--purple-glow);">📊 Matriz de Compatibilidade Psicológica Atlus SMT</h3>
+        <h3 style="font-family: var(--font-title); margin-bottom: 12px; color: var(--purple-glow);" data-i18n="matrixTableTitle">📊 Matriz de Compatibilidade Psicológica da Penumbra</h3>
         <table>
           <thead>
             <tr>
@@ -590,11 +592,11 @@
       <div class="grid-2">
         <div class="card">
           <h3 class="card-title">🛠️ O Engenheiro de Relíquias</h3>
-          <p data-i18n="relicsEngDesc">Um artesão excêntrico com runas e solda violeta. Você pode aprimorar <strong>2 ou 3 relíquias do mesmo tier</strong> para tentar forjar uma relíquia de tier superior. Cuidado: falhas na forja destroem permanentemente os materiais sacrificados!</p>
+          <p data-i18n="relicsEngDesc">Um artesão excêntrico com runas e solda violeta. Você pode aprimorar <strong>2 relíquias do mesmo tier</strong> para forjar uma relíquia de tier superior. Cuidado: falhas na forja destroem permanentemente os materiais sacrificados!</p>
         </div>
         <div class="card">
-          <h3 class="card-title">⚗️ Caldeirão de Fusão de Almas</h3>
-          <p data-i18n="relicsCauldronDesc">Inspirado na clássica fusão DemiKids, combine dois espíritos recrutados do seu Grimório para invocar entidades superiores com auras passivas de exploração (como recuperar energia mais rápido ou iluminar névoas seladas).</p>
+          <h3 class="card-title">⚗️ Caldeirão de Fusão Arcana de Almas</h3>
+          <p data-i18n="relicsCauldronDesc">Através da antiga arte da Fusão Arcana de Almas, combine dois espíritos recrutados do seu Grimório para invocar entidades superiores com auras passivas de exploração (como recuperar energia mais rápido ou iluminar névoas seladas).</p>
         </div>
       </div>
 
@@ -637,7 +639,166 @@
       </div>
     </section>
 
-    <!-- 4. Aba: Economia & Chefão Mundial -->
+    <!-- 4. Aba: Bestiário da Penumbra -->
+    <section id="tab-bestiary" class="tab-content">
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">👻 Espectro do Baixo Astral</h4>
+            <span class="badge badge-t1">Tier 1 • Melancólico</span>
+          </div>
+          <p>Um vulto triste envolto em brumas roxas que se alimenta do vazio cósmico existencial.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Aura da Apatia Rentável (+5% Phantom Coins)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">🪨 Gárgula Procrastinador</h4>
+            <span class="badge badge-t1">Tier 1 • Caótico</span>
+          </div>
+          <p>Prefere fingir que é pedra para não ter que trabalhar ou atacar exploradores.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Inércia Protetora (10% chance de não gastar Vigor)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">🧚 Fada Desencantada</h4>
+            <span class="badge badge-t1">Tier 1 • Sádico</span>
+          </div>
+          <p>Rímel borrado, asas púrpuras e sarcasmo afiado. Despreza fadas doces e coloridas.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Faro Obscuro (+5% chance de relíquias raras)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">🦇 Morcego do Shoegaze</h4>
+            <span class="badge badge-t1">Tier 1 • Caótico</span>
+          </div>
+          <p>Navega pelas cavernas sintonizando ecos de guitarra distorcida em tom menor.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Ecolocalização Sombria (Alerta contra armadilhas)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">📜 Corvo Poeta Nihilista</h4>
+            <span class="badge badge-t2">Tier 2 • Intelectual</span>
+          </div>
+          <p>Recita versos sobre a futilidade da existência enquanto observa túmulos góticos.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Riqueza dos Versos Tristes (+10% Phantom Coins)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">🎧 Banshee Descarregada</h4>
+            <span class="badge badge-t2">Tier 2 • Caótico</span>
+          </div>
+          <p>Grita histericamente porque seu fone ficou sem bateria no meio da sua playlist triste.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Eco da Economia (Reduz custo de rastros em 20%)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">🐺 Lobisomem Introvertido</h4>
+            <span class="badge badge-t2">Tier 2 • Melancólico</span>
+          </div>
+          <p>Uiva baixinho no próprio quarto escuro para não chamar a atenção de ninguém.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Resiliência Silenciosa (Imunidade a névoa ácida)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">🎸 Esqueleto de All-Star</h4>
+            <span class="badge badge-t2">Tier 2 • Caótico</span>
+          </div>
+          <p>Fã incondicional do rock dos anos 2000. Seus ossos doem de tanto bater cabeça.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Mochila de Rebeldia (+1 slot de familiar ativo)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">👑 Lorde da Apatia</h4>
+            <span class="badge badge-t3">Tier 3 • Orgulhoso</span>
+          </div>
+          <p>Soberano entediado que governa sobre montanhas de desilusão e drama humano.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Soberania da Serenidade (+20% Phantom Coins)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">🌌 Quimera da Madrugada</h4>
+            <span class="badge badge-t3">Tier 3 • Caótico</span>
+          </div>
+          <p>Alimenta-se das preocupações e pensamentos das 3 da manhã que causam insônia.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Passagem Noturna (+15% chance de portais raros)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">⚔️ Cavaleiro da Névoa</h4>
+            <span class="badge badge-t3">Tier 3 • Orgulhoso</span>
+          </div>
+          <p>Guardião leal cujos votos silenciosos protegem os viajantes perdidos no abismo.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Baluarte Violeta (Absorve penalidades de dano)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">🥀 Súcubo do Tédio</h4>
+            <span class="badge badge-t3">Tier 3 • Sádico</span>
+          </div>
+          <p>Oferece a doce tentação de nunca mais responder mensagens ou sair da cama.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Paz Profunda (Dobra itens colhidos nos Arquivos)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">❄️ Fênix de Cinzas Frias</h4>
+            <span class="badge badge-t4">Tier 4 • Lendário</span>
+          </div>
+          <p>Renasce em chamas gélidas e violetas quando todo fio de esperança parece perdido.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Chama Eterna (+3 Vigor a cada troca de maré)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">🖤 Sombra Ancestral</h4>
+            <span class="badge badge-t5">Tier 5 • Soberano</span>
+          </div>
+          <p>A mais antiga manifestação da Meia-Noite Eterna. Exige respeito absoluto.</p>
+          <div class="card-meta">
+            <span>✨ <strong>Aura:</strong> Domínio da Meia-Noite (+30% Phantom Coins geral)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Aba: Economia & Chefão Mundial -->
     <section id="tab-eco" class="tab-content">
       <div class="grid-2">
         <div class="card">
@@ -671,23 +832,26 @@
       pt: {
         navHome: "Início",
         navBosque: "Bosque",
-        navSmt: "Negociação SMT",
+        navEspectral: "Sintonia Espectral",
         navRelics: "Relíquias & Fusão",
+        navBestiary: "Bestiário",
         navEco: "Economia",
         btnInvite: "Adicionar Bot",
         heroBadge: "📖 Enciclopédia & Guia Estratégico",
         heroTitle: "Crônicas do Bosque da Penumbra",
-        heroDesc: "Explore as mecânicas arcanas da Pyxie: grafo de 10 cenários, escalonamento por Tiers de perigo, matriz de compatibilidade psicológica Atlus SMT V3 e economia de Phantom Coins.",
+        heroDesc: "Explore as mecânicas arcanas da Pyxie: grafo de 10 cenários, escalonamento por Tiers de perigo, Matriz de Sintonia Espectral, Fusão Arcana de Almas e economia de Phantom Coins.",
         tabBosque: "🌲 Bosque & Cenários",
-        tabSmt: "🧠 Matriz SMT V3 & Psicologia",
+        tabEspectral: "🧠 Sintonia Espectral",
         tabRelics: "🏺 Relíquias, Forja & Fusão",
+        tabBestiary: "📜 Bestiário da Penumbra",
         tabEco: "🪙 Economia & Chefão Mundial",
+        matrixTableTitle: "📊 Matriz de Compatibilidade Psicológica da Penumbra",
         smtDesacatoDesc: "Entidades do tipo <strong>Orgulhoso</strong> e <strong>Sádico</strong> desprezam bajulação barata ou subserviência covarde. Escolher tons subservientes contra elas aplica <strong>-2 pontos imediatos</strong> e o demônio <strong>rouba de 100 a 300 Phantom Coins 👻</strong> da sua bolsa antes de te ejetar!",
         smtHesitacaoDesc: "A partir do <strong>Tier 3</strong>, escolher 2 respostas neutras (0 pontos) irrita profundamente a criatura, acionando a <strong>Pena por Hesitação</strong> (-2 pontos automáticos e falha crítica imediata).",
         smtBailoutDesc: "Se na rodada final sua pontuação ficar a <strong>apenas 1 ponto da aprovação</strong>, o monstro não te ignora de imediato: ele oferece uma chance de comprar o pacto pelo <strong>triplo do pedágio base</strong>!",
         smtMultaDesc: "Qualquer <strong>Falha Crítica (-2)</strong> ejeta você sumariamente de volta ao Portão da Penumbra, aplica <strong>banimento temporário na sala (30m a 240m)</strong> e confisca <strong>10% de todas as suas Phantom Coins</strong>!",
-        relicsEngDesc: "Um artesão excêntrico com runas e solda violeta. Você pode aprimorar <strong>2 ou 3 relíquias do mesmo tier</strong> para tentar forjar uma relíquia de tier superior. Cuidado: falhas na forja destroem permanentemente os materiais sacrificados!",
-        relicsCauldronDesc: "Inspirado na clássica fusão DemiKids, combine dois espíritos recrutados do seu Grimório para invocar entidades superiores com auras passivas de exploração (como recuperar energia mais rápido ou iluminar névoas seladas).",
+        relicsEngDesc: "Um artesão excêntrico com runas e solda violeta. Você pode aprimorar <strong>2 relíquias do mesmo tier</strong> para forjar uma relíquia de tier superior. Cuidado: falhas na forja destroem permanentemente os materiais sacrificados!",
+        relicsCauldronDesc: "Através da antiga arte da Fusão Arcana de Almas, combine dois espíritos recrutados do seu Grimório para invocar entidades superiores com auras passivas de exploração (como recuperar energia mais rápido ou iluminar névoas seladas).",
         ecoCoinsDesc: "A moeda corrente do outro lado. Obtida através de forrageamento, vitórias na negociação com aparições e investidas no Chefão. Usada para subornos, compra de relíquias com o mercador errante e pagamento de taxas de descarte.",
         ecoStaminaDesc: "Cada vasculhada consome 1 ponto de energia (máximo de 10). A energia regenera naturalmente a cada 6 minutos (10 pontos por hora). Criaturas de Tier 4 e 5 podem exigir drenagem punitiva de vigor como tributo de entrada.",
         ecoBossDesc: "A cada 6 horas, um Colosso Ancestral desperta em uma sala aleatória do reino. Todos os jogadores do servidor compartilham a barra de vida do chefe. Cada explorador ganha 1 investida grátis por ciclo.",
@@ -696,23 +860,26 @@
       en: {
         navHome: "Home",
         navBosque: "Gloom Realm",
-        navSmt: "SMT Negotiation",
+        navEspectral: "Spectral Resonance",
         navRelics: "Relics & Fusion",
+        navBestiary: "Bestiary",
         navEco: "Economy",
         btnInvite: "Add Bot",
         heroBadge: "📖 Encyclopedia & Strategy Guide",
         heroTitle: "Chronicles of Pyxie's Gloom Realm",
-        heroDesc: "Master the arcane mechanics of Pyxie: 10-node directed map, danger tiers, Atlus SMT V3 psychological compatibility matrix, and Phantom Coins economy.",
+        heroDesc: "Master the arcane mechanics of Pyxie: 10-node directed map, danger tiers, Spectral Resonance psychological matrix, Arcane Soul Fusion, and Phantom Coins economy.",
         tabBosque: "🌲 Realm & Locations",
-        tabSmt: "🧠 SMT V3 Matrix & Psychology",
+        tabEspectral: "🧠 Spectral Resonance",
         tabRelics: "🏺 Relics, Forge & Fusion",
+        tabBestiary: "📜 Gloom Bestiary",
         tabEco: "🪙 Economy & World Boss",
+        matrixTableTitle: "📊 Gloom Psychological Compatibility Matrix",
         smtDesacatoDesc: "Entities of <strong>Proud</strong> and <strong>Sadistic</strong> temperaments despise cheap sycophancy. Choosing submissive replies triggers <strong>-2 immediate points</strong> and the demon <strong>steals 100 to 300 Phantom Coins 👻</strong> from your pouch before casting you out!",
         smtHesitacaoDesc: "Starting from <strong>Tier 3</strong>, picking 2 neutral replies (0 pts) infuriates the entity, triggering the <strong>Hesitation Penalty</strong> (instant -2 critical failure).",
         smtBailoutDesc: "If in the final round your score is <strong>just 1 point away from approval</strong>, the spirit offers a one-time buyout pact at <strong>triple the base tribute toll</strong>!",
         smtMultaDesc: "Any <strong>Critical Failure (-2)</strong> expels you to the Gloom Gate, applies a <strong>temporary room ban (30m to 240m)</strong>, and deducts <strong>10% of your total Phantom Coins</strong>!",
-        relicsEngDesc: "An eccentric craftsman with runes and violet solder. You can upgrade <strong>2 or 3 relics of equal tier</strong> to forge a higher tier relic. Warning: forge failures permanently incinerate the sacrificed items!",
-        relicsCauldronDesc: "Inspired by classic DemiKids fusion, combine two recruited spirits from your Grimoire to summon superior entities with passive realm auras (such as accelerated stamina recovery).",
+        relicsEngDesc: "An eccentric craftsman with runes and violet solder. You can upgrade <strong>2 relics of equal tier</strong> to forge a higher tier relic. Warning: forge failures permanently incinerate the sacrificed items!",
+        relicsCauldronDesc: "Through the ancient art of Arcane Soul Fusion, combine two recruited spirits from your Grimoire to summon superior entities with passive realm auras (such as accelerated stamina recovery).",
         ecoCoinsDesc: "The currency of the beyond. Forage shadowy ruins, win psychological encounters, or strike the World Boss. Used for tributes, extortive bailouts, and relic purchasing.",
         ecoStaminaDesc: "Each scavenging attempt uses 1 stamina point (max 10). Stamina recovers naturally every 6 minutes (10 per hour). Tier 4 and 5 entities may demand punitive stamina drains.",
         ecoBossDesc: "Every 6 hours, an Ancient Behemoth awakens in a random room. All players share its health bar. Each explorer gets 1 free strike per cycle.",
@@ -759,8 +926,8 @@
 
       if (window.location.hash) {
         const h = window.location.hash.replace('#', '');
-        if (['bosque', 'smt', 'relics', 'eco'].includes(h)) {
-          switchTab(h);
+        if (['bosque', 'espectral', 'smt', 'relics', 'bestiary', 'eco'].includes(h)) {
+          switchTab(h === 'smt' ? 'espectral' : h);
         }
       }
     });

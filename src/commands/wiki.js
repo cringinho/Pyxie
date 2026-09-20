@@ -25,12 +25,15 @@ function buildWikiView(source = null, selectedTopic = null) {
   if (selectedTopic === 'bosque') {
     title = t('wiki.topicBosqueTitle', source);
     description = t('wiki.topicBosqueDesc', source);
-  } else if (selectedTopic === 'smt') {
+  } else if (selectedTopic === 'espectral' || selectedTopic === 'smt') {
     title = t('wiki.topicSmtTitle', source);
     description = t('wiki.topicSmtDesc', source);
   } else if (selectedTopic === 'relics') {
     title = t('wiki.topicRelicsTitle', source);
     description = t('wiki.topicRelicsDesc', source);
+  } else if (selectedTopic === 'bestiary') {
+    title = t('wiki.topicBestiaryTitle', source);
+    description = t('wiki.topicBestiaryDesc', source);
   } else if (selectedTopic === 'eco') {
     title = t('wiki.topicEcoTitle', source);
     description = t('wiki.topicEcoDesc', source);
@@ -53,10 +56,10 @@ function buildWikiView(source = null, selectedTopic = null) {
     },
     {
       label: t('wiki.optSmt', source),
-      value: 'smt',
+      value: 'espectral',
       description: t('wiki.optSmtDesc', source).slice(0, 100),
       emoji: '🧠',
-      default: selectedTopic === 'smt',
+      default: selectedTopic === 'espectral' || selectedTopic === 'smt',
     },
     {
       label: t('wiki.optRelics', source),
@@ -64,6 +67,13 @@ function buildWikiView(source = null, selectedTopic = null) {
       description: t('wiki.optRelicsDesc', source).slice(0, 100),
       emoji: '🏺',
       default: selectedTopic === 'relics',
+    },
+    {
+      label: t('wiki.optBestiary', source),
+      value: 'bestiary',
+      description: t('wiki.optBestiaryDesc', source).slice(0, 100),
+      emoji: '📜',
+      default: selectedTopic === 'bestiary',
     },
     {
       label: t('wiki.optEco', source),

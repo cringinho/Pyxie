@@ -583,8 +583,9 @@ assert(embedBosque.data.description.includes('Amuleto de Osso Quebrado'), 'Aba b
 assert(embedBosque.data.description.includes('Lágrima Eterna da Fadinha Emo'), 'Aba bosque deve listar a Lágrima Eterna');
 
 const compsBosque = buildInventoryComponents(uidMochila, null, officialGuildSource, 'bosque');
-assert.equal(compsBosque.length, 2, 'Aba bosque deve conter 2 linhas de componentes');
+assert(compsBosque.length >= 2, 'Aba bosque deve conter linhas de componentes para navegação e relíquias');
 assert(compsBosque[0].components.some((b) => b.data.custom_id.includes('inv_tab:bosque')), 'Deve conter botão da aba Bosque');
+assert(compsBosque.some((row) => row.components.some((c) => c.data.custom_id.includes('inv_relic_select'))), 'Deve conter menu de seleção de relíquias');
 
 console.log('✅ SMT V3 Hardcore (multi-fases, taxa de desacato, pena de hesitação, multa de ejeção, resgate extorsivo e mochila modular) validados com sucesso.');
 

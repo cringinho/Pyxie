@@ -1897,6 +1897,28 @@ function unlockBossExtraAttack(userId) {
   return { success: true, phantomCoins: user ? user.phantomCoins : 50 };
 }
 
+function sellRelic(userId, relicId, count = 1) {
+  const user = getGloomUser(userId);
+  const userRelics = user.inventory || {};
+  const available = userRelics[relicId] || 0;
+  if (available < count) {
+    return { success: false, reason: 'insufficient_relics' };
+  }
+  const def = RELICS[relicId];
+  const sellPrice = Math.max(5, Math.floor((def?.cost || 20) * 0.5));
+  const totalCoins = sellPrice * count;
+
+  userRelics[relicId] -= count;
+  if (userRelics[relicId] <= 0) {
+    delete userRelics[relicId];
+  }
+  user.inventory = userRelics;
+  user.phantomCoins = (user.phantomCoins || 0) + totalCoins;
+
+  updateGloomUser(userId, user);
+  return { success: true, relic: def, totalCoins, sellPrice, remaining: userRelics[relicId] || 0 };
+}
+
 module.exports = {
   LOCATIONS,
   SPIRITS,
@@ -1915,6 +1937,7 @@ module.exports = {
   banUserFromLocation,
   generateMerchantStock,
   buyMerchantRelic,
+  sellRelic,
   upgradeRelicsWithEngineer,
   negotiateSpirit,
   fuseSpirits,

@@ -95,7 +95,75 @@
           "pt": "Dê-me 15 Phantom Coins para eu comprar paz temporária.",
           "en": "Give me 15 Phantom Coins so I may buy fleeting peace."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "A existência é um fardo pesado... Você também acha tudo sem sentido?",
+            "en": "Existence is heavy... Do you also find it meaningless?"
+          },
+          "options": [
+            {
+              "id": "p1_opt_1",
+              "text": {
+                "pt": "🖤 O vazio dói, mas me acostumei com a dor.",
+                "en": "🖤 The void aches, but I got used to it."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p1_opt_2",
+              "text": {
+                "pt": "🎧 Coloque uma música triste e esqueça o mundo.",
+                "en": "🎧 Play a sad track and forget the world."
+              },
+              "tone": "submissive"
+            },
+            {
+              "id": "p1_opt_3",
+              "text": {
+                "pt": "💀 Para de drama e passa logo suas moedas!",
+                "en": "💀 Stop the drama and hand over coins!"
+              },
+              "tone": "arrogant"
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Se eu te acompanhar nas sombras, você vai me forçar a ser produtivo ou me deixará definhar em paz?",
+            "en": "If I accompany you through the shadows, will you force me to be productive or let me languish in peace?"
+          },
+          "options": [
+            {
+              "id": "p2_opt_1",
+              "text": {
+                "pt": "🛋️ Cada um no seu canto, sem cobranças fúteis.",
+                "en": "🛋️ To each their own space, no shallow demands."
+              },
+              "tone": "empathetic"
+            },
+            {
+              "id": "p2_opt_2",
+              "text": {
+                "pt": "⚡ Aqui no bando todo mundo trabalha duro!",
+                "en": "⚡ In this squad everyone hustles hard!"
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_opt_3",
+              "text": {
+                "pt": "☕ Um café frio e silêncio absoluto bastam.",
+                "en": "☕ Cold coffee and absolute silence are plenty."
+              },
+              "tone": "rational"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t1_gargula_procrastinador",
@@ -180,7 +248,75 @@
           "pt": "Passe 15 Phantom Coins e eu continuo fingindo que durmo.",
           "en": "Hand over 15 Phantom Coins and I will pretend to sleep."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Eu deveria te espantar... mas fingir que sou pedra dá bem menos trabalho. O que você quer?",
+            "en": "I should chase you away... but pretending to be stone is far less work. What do you want?"
+          },
+          "options": [
+            {
+              "id": "p1_opt_1",
+              "text": {
+                "pt": "🪨 Só uma pausa rápida para esticar as pernas.",
+                "en": "🪨 Just a quick break to stretch my legs."
+              },
+              "tone": "chaotic"
+            },
+            {
+              "id": "p1_opt_2",
+              "text": {
+                "pt": "👑 Ó grande guardião, sua postura é admirável!",
+                "en": "👑 O great guardian, your posture is admirable!"
+              },
+              "tone": "flattery"
+            },
+            {
+              "id": "p1_opt_3",
+              "text": {
+                "pt": "⏰ Acorda, gárgula preguiçoso! A hora passa!",
+                "en": "⏰ Wake up, lazy gargoyle! Time is ticking!"
+              },
+              "tone": "rational"
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Se você me convencer a levantar, o que eu ganho além de dor nas costas de calcário?",
+            "en": "If you convince me to get up, what do I get besides limestone backaches?"
+          },
+          "options": [
+            {
+              "id": "p2_opt_1",
+              "text": {
+                "pt": "💤 A garantia de que você pode dormir 20 horas por dia.",
+                "en": "💤 The guarantee that you can sleep 20 hours a day."
+              },
+              "tone": "chaotic"
+            },
+            {
+              "id": "p2_opt_2",
+              "text": {
+                "pt": "💰 Muitas moedas e riquezas para acumular.",
+                "en": "💰 Plenty of coins and riches to hoard."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p2_opt_3",
+              "text": {
+                "pt": "🦴 Disciplina militar e treino diário!",
+                "en": "🦴 Military discipline and daily drills!"
+              },
+              "tone": "arrogant"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t1_fada_desencantada",
@@ -265,7 +401,75 @@
           "pt": "Pague 20 Phantom Coins pro meu delineador ou suma!",
           "en": "Pay 20 Phantom Coins for my eyeliner or get lost!"
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Achou que ia ver glitter e pozinho mágico? Meu rímel tá borrado e meu humor pior ainda.",
+            "en": "Thought you'd see glitter and fairy dust? My mascara is smeared and my mood is worse."
+          },
+          "options": [
+            {
+              "id": "p1_opt_1",
+              "text": {
+                "pt": "🖤 Rímel borrado e estética gótica dão de dez em fada fofa.",
+                "en": "🖤 Smeared mascara and gothic aesthetic beat cute fairies any day."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p1_opt_2",
+              "text": {
+                "pt": "✨ Você é tão linda e perfeita, fadinha das trevas!",
+                "en": "✨ You are so lovely and flawless, dark fairy!"
+              },
+              "tone": "flattery"
+            },
+            {
+              "id": "p1_opt_3",
+              "text": {
+                "pt": "🧚‍♀️ Fada de verdade não usa preto nem chora.",
+                "en": "🧚‍♀️ Real fairies do not wear black nor weep."
+              },
+              "tone": "rational"
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Se eu me juntar a você, não espere que eu realize seus desejos fúteis de mortal. Entendido?",
+            "en": "If I join you, do not expect me to grant your shallow mortal wishes. Understood?"
+          },
+          "options": [
+            {
+              "id": "p2_opt_1",
+              "text": {
+                "pt": "🦇 Só quero sua acidez para afastar gente chata.",
+                "en": "🦇 I only want your acidity to keep annoying folks away."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_opt_2",
+              "text": {
+                "pt": "🙇 Sim, senhora! Farei tudo o que você mandar!",
+                "en": "🙇 Yes, mistress! I will obey your every command!"
+              },
+              "tone": "submissive"
+            },
+            {
+              "id": "p2_opt_3",
+              "text": {
+                "pt": "🎲 Cada um faz o que quiser na hora que quiser.",
+                "en": "🎲 Everyone does as they please whenever they want."
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t1_morcego_shoegaze",
@@ -350,7 +554,75 @@
           "pt": "Deixe 15 Phantom Coins para afinar minhas guitarras.",
           "en": "Leave 15 Phantom Coins to tune my spectral guitars."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "As cavernas ressoam uma frequência em ré menor... Você sente a vibração ou só ouve barulho?",
+            "en": "The caves resonate in D-minor frequency... Do you feel the vibration or just noise?"
+          },
+          "options": [
+            {
+              "id": "p1_opt_1",
+              "text": {
+                "pt": "🎵 A melancolia do eco acalma a mente cansada.",
+                "en": "🎵 The melancholy of the echo calms a weary mind."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p1_opt_2",
+              "text": {
+                "pt": "🦇 Guie meus passos através dessas frequências.",
+                "en": "🦇 Guide my footsteps through these frequencies."
+              },
+              "tone": "empathetic"
+            },
+            {
+              "id": "p1_opt_3",
+              "text": {
+                "pt": "🔊 Que barulheira insuportável de morcego!",
+                "en": "🔊 What an insufferable bat screech!"
+              },
+              "tone": "arrogant"
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Quando o silêncio finalmente cai, o que você escuta no fundo do seu peito?",
+            "en": "When the silence finally falls, what do you hear deep in your chest?"
+          },
+          "options": [
+            {
+              "id": "p2_opt_1",
+              "text": {
+                "pt": "🌌 O eco distante de memórias que nunca vivi.",
+                "en": "🌌 The distant echo of memories I never lived."
+              },
+              "tone": "empathetic"
+            },
+            {
+              "id": "p2_opt_2",
+              "text": {
+                "pt": "💸 O tilintar das moedas que ainda vou acumular.",
+                "en": "💸 The clinking of coins I have yet to hoard."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p2_opt_3",
+              "text": {
+                "pt": "🎧 Distorção pesada e pedais de guitarra.",
+                "en": "🎧 Heavy fuzz distortion and guitar pedals."
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t1_fadinha_lampiao",
@@ -435,7 +707,75 @@
           "pt": "Doe 1 ponto de Vigor para recarregar meu filamento.",
           "en": "Donate 1 Stamina point to reignite my filament."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Meu lampião brilha roxo para espantar os chatos. Você é chato?",
+            "en": "My lantern glows purple to keep bores away. Are you a bore?"
+          },
+          "options": [
+            {
+              "id": "p1_opt_1",
+              "text": {
+                "pt": "🎲 Chato nunca, imprevisível e meio doido sempre.",
+                "en": "🎲 Never boring, always unpredictable and a bit crazy."
+              },
+              "tone": "chaotic"
+            },
+            {
+              "id": "p1_opt_2",
+              "text": {
+                "pt": "📜 Depende da sua definição empírica de tédio.",
+                "en": "📜 Depends on your empirical definition of boredom."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p1_opt_3",
+              "text": {
+                "pt": "👑 Eu sou a criatura mais incrível que você já viu!",
+                "en": "👑 I am the most amazing creature you have ever seen!"
+              },
+              "tone": "arrogant"
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Se eu te mostrar um atalho secreto, você jura que vai pisar em todas as poças de lama?",
+            "en": "If I show you a secret shortcut, do you swear to stomp on every puddle of mud?"
+          },
+          "options": [
+            {
+              "id": "p2_opt_1",
+              "text": {
+                "pt": "💦 Vou espirrar lama roxa em todo mundo!",
+                "en": "💦 I will splash purple mud on everyone!"
+              },
+              "tone": "chaotic"
+            },
+            {
+              "id": "p2_opt_2",
+              "text": {
+                "pt": "👞 Minhas botas de couro custaram caro demais.",
+                "en": "👞 My leather boots were far too expensive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p2_opt_3",
+              "text": {
+                "pt": "🙇 Farei exatamente o que sua majestade ordenar!",
+                "en": "🙇 I will do exactly what your highness commands!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t1_demonio_cera",
@@ -520,7 +860,75 @@
           "pt": "Dê-me 12 Phantom Coins para amaciar minha cera endurecida.",
           "en": "Grant me 12 Phantom Coins to soften my hardened wax."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "A cera quente pinga... Cada gota é uma alma que tentou me pechinchar. Quanto você acha que vale a minha chama?",
+            "en": "Hot wax drips... Each drop is a soul that tried to haggle with me. How much is my flame worth?"
+          },
+          "options": [
+            {
+              "id": "p1_opt_1",
+              "text": {
+                "pt": "🪙 Vale o que o mercado arcano estiver disposto a pagar.",
+                "en": "🪙 Worth whatever the arcane market is willing to pay."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p1_opt_2",
+              "text": {
+                "pt": "🕯️ Sua chama ilumina a própria escuridão eterna!",
+                "en": "🕯️ Your flame illuminates the very eternal darkness!"
+              },
+              "tone": "flattery"
+            },
+            {
+              "id": "p1_opt_3",
+              "text": {
+                "pt": "💨 Um sopro meu apaga essa velinha de bolo.",
+                "en": "💨 A single puff of mine puts out that birthday candle."
+              },
+              "tone": "arrogant"
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Negócios são negócios. Se fecharmos o pacto, o que eu levo em troca além de cera derretida?",
+            "en": "Business is business. If we seal the pact, what do I get besides melted wax?"
+          },
+          "options": [
+            {
+              "id": "p2_opt_1",
+              "text": {
+                "pt": "💰 Participação justa em todos os saques da tumba.",
+                "en": "💰 Fair percentage in all tomb scavenges."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p2_opt_2",
+              "text": {
+                "pt": "🔥 Fogo descontrolado e caos por onde passarmos!",
+                "en": "🔥 Wild uncontrolled fire and chaos wherever we tread!"
+              },
+              "tone": "chaotic"
+            },
+            {
+              "id": "p2_opt_3",
+              "text": {
+                "pt": "🖤 Apenas minha profunda gratidão de alma.",
+                "en": "🖤 Just my deepest soul gratitude."
+              },
+              "tone": "empathetic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t2_corvo_poeta",
@@ -605,7 +1013,135 @@
           "pt": "Pague 25 Phantom Coins para custear meu próximo poema.",
           "en": "Pay 25 Phantom Coins to fund my upcoming sonnet."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Nunca mais... Por que busca tesouros se o tempo consome tudo?",
+            "en": "Nevermore... Why seek spoils when time devours all?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "📜 Pela beleza efêmera da jornada poética.",
+                "en": "📜 For the fleeting grace of the poetic quest."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Um mortal com fibra de bardo... aprecio sua métrica.",
+                "en": "A mortal with a bardic heart... I value your meter."
+              },
+              "failure_dialogue": {
+                "pt": "Romantismo vazio para disfarçar o nada absoluto.",
+                "en": "Hollow romanticism masking pure emptiness."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "🖤 Porque mesmo na poeira há brilho prateado.",
+                "en": "🖤 Because even in dust a silver glint survives."
+              },
+              "tone": "flattery",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Cróóó! As cinzas guardam os melhores versos.",
+                "en": "Cawww! The ashes hold the finest verses."
+              },
+              "failure_dialogue": {
+                "pt": "Rimas fáceis não curam o desgosto das eras.",
+                "en": "Shallow rhymes cannot mend the ache of eons."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "💰 Porque moedas compram coisas melhores que poesia!",
+                "en": "💰 Because coins buy far better things than poems!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "O ouro corrompe até o mais puro dos abutres...",
+                "en": "Gold corrupts even the purest of scavengers..."
+              },
+              "failure_dialogue": {
+                "pt": "Materialista vulgar! Perca-se no labirinto das sombras!",
+                "en": "Vulgar materialist! Lose yourself in shadowy mazes!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Você ousa me encarar como um igual? Diga-me qual é a sua real ambição diante de mim!",
+            "en": "You dare look upon me as an equal? State your true ambition before my presence!"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Não sou servo de ninguém, mas sei reconhecer poder genuíno.",
+                "en": "I am no servant to anyone, yet I recognize genuine power."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Sua determinação quase me impressiona. Mas você juraria lealdade sem hesitar quando o reino desabar?",
+            "en": "Your resolve almost impresses me. But would you swear unyielding allegiance when the realm falls?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t2_banshee_descarregada",
@@ -690,7 +1226,135 @@
           "pt": "Pague 25 Phantom Coins para eu comprar um carregador novo.",
           "en": "Pay 25 Phantom Coins so I can buy a replacement charger."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Meu cabo quebrou na dobra e fiquei a 0%! Você me entende?!",
+            "en": "My cord frayed and died at 0%! Do you understand?!"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "😭 Essa é a maior tragédia da era moderna!",
+                "en": "😭 That is the greatest sorrow of our modern age!"
+              },
+              "tone": "submissive",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "SIM! Finalmente alguém empático com a minha dor!",
+                "en": "YES! Finally someone attuned to my anguish!"
+              },
+              "failure_dialogue": {
+                "pt": "Dramatização barata... você não sabe nada!",
+                "en": "Cheap theatrics... you know nothing at all!"
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "🔌 Toma um cabo reserva reforçado, acalme-se.",
+                "en": "🔌 Take a braided backup cable, rest your soul."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Cabo trançado? Que alívio divino para a minha alma.",
+                "en": "Braided nylon? Heavenly relief for my restless soul."
+              },
+              "failure_dialogue": {
+                "pt": "Entrada errada! Meu conector é de outro século!",
+                "en": "Wrong port! My connector hails from another century!"
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "📢 Para de berrar no meu ouvido por causa de bobagem!",
+                "en": "📢 Stop shrieking in my ear over trivial junk!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Bobagem?! Eu vou gritar até seus ossos quebrarem...",
+                "en": "Trivial?! I shall wail until your bones shatter..."
+              },
+              "failure_dialogue": {
+                "pt": "Surdo insensível! Desapareça com meu grito de dor!",
+                "en": "Heartless deaf fool! Be blown away by my agony!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "O vento sopra cinzas antigas... Você sabe o que realmente significa perder tudo?",
+            "en": "The wind scatters ancient ashes... Do you truly comprehend the weight of loss?"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Calculo cada passo friamente antes de dar o próximo movimento.",
+                "en": "I calculate every step cold-bloodedly before making my move."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Viver no limite do abismo é a única forma divertida de existir!",
+                "en": "Living on the brink of the abyss is the only fun way to exist!"
+              },
+              "tone": "chaotic"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "A névoa está se fechando... Você está pronto para aceitar o peso das escolhas que faremos juntos?",
+            "en": "The mist is closing in... Are you prepared to bear the weight of the choices we shall make together?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t2_lobisomem_introvertido",
@@ -775,7 +1439,135 @@
           "pt": "Passe 25 Phantom Coins para eu comprar mantas quentes.",
           "en": "Provide 25 Phantom Coins for my heavy warm blankets."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Não me faça uivar na frente de todos... Pode falar baixo?",
+            "en": "Do not make me howl in public... Can you whisper?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "🤫 *Sussurrando*: Fique tranquilo, silêncio sagrado.",
+                "en": "🤫 *Whispering*: Rest easy, quietness is sacred."
+              },
+              "tone": "submissive",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Obrigado... odeio multidões e vozes altas.",
+                "en": "Thank you... I despise crowds and loud shouting."
+              },
+              "failure_dialogue": {
+                "pt": "Seu sussurro ainda soa muito perto de mim...",
+                "en": "Your whisper still sounds far too close to me..."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "🛋️ Entendo perfeitamente o conforto de ficar na sua.",
+                "en": "🛋️ I completely respect the comfort of solitude."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Alguém que entende a paz do isolamento social.",
+                "en": "Someone who truly respects solitary peace."
+              },
+              "failure_dialogue": {
+                "pt": "Muita conversa para quem diz entender o silêncio.",
+                "en": "Far too many words for one who claims silence."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🗣️ UIVA LOGO PRA EU GRAVAR UM VÍDEO PRO STATUS!",
+                "en": "🗣️ HOWL RIGHT NOW SO I CAN RECORD A CLIP!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Gravar?! Nunca me senti tão violado e exposto...",
+                "en": "Record?! I have never felt so exposed and cornered..."
+              },
+              "failure_dialogue": {
+                "pt": "Sem noção! Rosno feroz e portões fechados para você!",
+                "en": "Clueless brute! A fierce snarl and gates shut to you!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "O vento sopra cinzas antigas... Você sabe o que realmente significa perder tudo?",
+            "en": "The wind scatters ancient ashes... Do you truly comprehend the weight of loss?"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Calculo cada passo friamente antes de dar o próximo movimento.",
+                "en": "I calculate every step cold-bloodedly before making my move."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "A névoa está se fechando... Você está pronto para aceitar o peso das escolhas que faremos juntos?",
+            "en": "The mist is closing in... Are you prepared to bear the weight of the choices we shall make together?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t2_esqueleto_allstar",
@@ -860,7 +1652,135 @@
           "pt": "Passe 25 Phantom Coins para eu comprar cordas de aço.",
           "en": "Deliver 25 Phantom Coins so I can buy steel strings."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "2004 foi ontem, cara. Você ainda ouve rock triste?",
+            "en": "2004 was yesterday, man. Still blast sad punk rock?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "🎸 Todo santo dia, rock melancólico na veia!",
+                "en": "🎸 Every single day, sad guitar riffs forever!"
+              },
+              "tone": "chaotic",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Isso aí! O emo revival vive para a eternidade!",
+                "en": "Hell yeah! The emo revival shall live forever!"
+              },
+              "failure_dialogue": {
+                "pt": "Poser... aposto que você só conhece três músicas.",
+                "en": "Poser... bet you only know three popular tracks."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "👟 Tênis cano alto rabiscado é patrimônio cultural.",
+                "en": "👟 Doodled high-tops are sacred cultural heritage."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Falou a linguagem sagrada da rebeldia juvenil!",
+                "en": "You speak the sacred scripture of youth rebellion!"
+              },
+              "failure_dialogue": {
+                "pt": "Muito discurso, pouca atitude suja de garagem.",
+                "en": "Too much talking, lacking true garage attitude."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "📻 Isso é coisa de fóssil mofado, vira a página!",
+                "en": "📻 That is dusty fossil junk, move on already!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Fóssil? Meus acordes vão assombrar seus ouvidos...",
+                "en": "Fossil? My power chords shall haunt your sleep..."
+              },
+              "failure_dialogue": {
+                "pt": "Sem alma! Leve uma palhetada fantasma nos dentes e saia!",
+                "en": "Soulless pest! Take a ghost guitar pick to the teeth!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "O vento sopra cinzas antigas... Você sabe o que realmente significa perder tudo?",
+            "en": "The wind scatters ancient ashes... Do you truly comprehend the weight of loss?"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Calculo cada passo friamente antes de dar o próximo movimento.",
+                "en": "I calculate every step cold-bloodedly before making my move."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Viver no limite do abismo é a única forma divertida de existir!",
+                "en": "Living on the brink of the abyss is the only fun way to exist!"
+              },
+              "tone": "chaotic"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "A névoa está se fechando... Você está pronto para aceitar o peso das escolhas que faremos juntos?",
+            "en": "The mist is closing in... Are you prepared to bear the weight of the choices we shall make together?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t2_espantalho_veludo",
@@ -945,7 +1865,135 @@
           "pt": "Entregue 1x Amuleto de Osso para reforçar minhas costelas.",
           "en": "Deliver 1x Bone Amulet to reinforce my ribcage."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Corvos têm medo de mim, mas você não parece pássaro.",
+            "en": "Ravens fear my form, yet you seem no winged beast."
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "🪡 Elogiar o corte impecável do seu casaco fúnebre.",
+                "en": "🪡 Compliment the sharp tailoring of its dark coat."
+              },
+              "tone": "flattery",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Alfaiataria fúnebre exige olhos clínicos. Agradeço.",
+                "en": "Funeral couture demands refined eyes. My thanks."
+              },
+              "failure_dialogue": {
+                "pt": "Bajular minha lã não evita que eu te espete.",
+                "en": "Flattering my wool will not prevent sharp stabs."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "🌾 Oferecer palha seca de trigo para reforçar o peito.",
+                "en": "🌾 Offer dry wheat straw to bolster its inner chest."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Pragmático. Enchimento novo previne deformações.",
+                "en": "Pragmatic. Fresh filling preserves proper posture."
+              },
+              "failure_dialogue": {
+                "pt": "Essa palha tem ácaros... que presente insultante.",
+                "en": "That straw is infested... what an insulting gift."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🔥 Ameaçar queimar o poste de madeira com fogo.",
+                "en": "🔥 Threaten to torch the wooden pole with fire."
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Fogo purifica a palha e consome viajantes tolos...",
+                "en": "Fire cleanses dry straw and devours foolish pilgrims..."
+              },
+              "failure_dialogue": {
+                "pt": "Ameaça vil! Espinhos de veludo te expulsam da clareira!",
+                "en": "Vile threat! Velvet thorns cast you from this glade!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Palavras bonitas não compram relíquias. Mostre-me qual é o seu plano de sobrevivência.",
+            "en": "Pretty words do not buy relics. Show me your tangible plan for survival."
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Calculo cada passo friamente antes de dar o próximo movimento.",
+                "en": "I calculate every step cold-bloodedly before making my move."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Chegamos ao cerne do pacto. Se encontrarmos um tesouro ancestral, qual será a divisão exata?",
+            "en": "We arrive at the core of the pact. If we find an ancient hoard, what is the exact split?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t2_espectro_pendulo",
@@ -1030,7 +2078,135 @@
           "pt": "Pague 28 Phantom Coins pelo aluguel do meu tempo.",
           "en": "Pay 28 Phantom Coins for renting my precious time."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Tique... taque... Cada passo seu desperdiça segundos.",
+            "en": "Tick... tock... Each of your paces squanders seconds."
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "⏳ O tempo na penumbra é uma ilusão que controlamos.",
+                "en": "⏳ Time in this realm is an illusion we command."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Perspicaz... o tempo aqui flui em círculos roxos.",
+                "en": "Perceptive... time here bends in dark circles."
+              },
+              "failure_dialogue": {
+                "pt": "Filosofia barata para quem está com os minutos contados.",
+                "en": "Cheap platitudes for one whose minutes are numbered."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "⚙️ Oferecer óleo de engrenagem para silenciar o atrito.",
+                "en": "⚙️ Offer fine machine oil to hush noisy friction."
+              },
+              "tone": "bribe",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Silêncio mecânico... que alívio aos meus ouvidos.",
+                "en": "Mechanical silence... sweet bliss to my ears."
+              },
+              "failure_dialogue": {
+                "pt": "Óleo rançoso! Vai travar meu escapamento!",
+                "en": "Rancid oil! It will choke my escapement wheels!"
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🔨 Bater no pêndulo para parar o barulho irritante.",
+                "en": "🔨 Strike the pendulum to halt the annoying ticking."
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Você quebrou o ritmo... agora o abismo te cobra.",
+                "en": "You fractured rhythm... now the abyss claims you."
+              },
+              "failure_dialogue": {
+                "pt": "Sacrilégio contra a métrica temporal! Fora daqui!",
+                "en": "Sacrilege against chronometry! Begone at once!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Palavras bonitas não compram relíquias. Mostre-me qual é o seu plano de sobrevivência.",
+            "en": "Pretty words do not buy relics. Show me your tangible plan for survival."
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Calculo cada passo friamente antes de dar o próximo movimento.",
+                "en": "I calculate every step cold-bloodedly before making my move."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Chegamos ao cerne do pacto. Se encontrarmos um tesouro ancestral, qual será a divisão exata?",
+            "en": "We arrive at the core of the pact. If we find an ancient hoard, what is the exact split?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t3_lorde_apatia",
@@ -1115,7 +2291,135 @@
           "pt": "Deposite 50 Phantom Coins para selar o pacto fúnebre.",
           "en": "Deposit 50 Phantom Coins to seal our somber pact."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Mares de drama já se afogaram aqui. O que você quer?",
+            "en": "Oceans of drama drowned here. What do you seek?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "👑 Compartilhar o inevitável silêncio com elegância.",
+                "en": "👑 Share the inevitable stillness with quiet grace."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Raro encontrar postura nobre entre os andarilhos.",
+                "en": "Rare to encounter noble composure among wanderers."
+              },
+              "failure_dialogue": {
+                "pt": "Afetação teatral. Sua elegância é puro verniz.",
+                "en": "Theatrical posturing. Your poise is mere varnish."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "☕ Não vim barganhar, apenas saudar sua serenidade.",
+                "en": "☕ I came not to haggle, merely to honor your calm."
+              },
+              "tone": "flattery",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "A serenidade é a única virtude que resiste ao túmulo.",
+                "en": "Serenity is the sole virtue surviving the grave."
+              },
+              "failure_dialogue": {
+                "pt": "Lisonja vazia... volte quando tiver substância.",
+                "en": "Hollow flattery... return when you possess weight."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🗡️ Renda-se ou eu destruo seu trono de tédio!",
+                "en": "🗡️ Surrender or I smash your throne of boredom!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Destruir? Nada aqui pode ser quebrado duas vezes.",
+                "en": "Smash? Nothing here can be broken twice over."
+              },
+              "failure_dialogue": {
+                "pt": "Insolência bárbara! Saia da minha corte espectral!",
+                "en": "Barbaric insolence! Cleave yourself from my court!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Você ousa me encarar como um igual? Diga-me qual é a sua real ambição diante de mim!",
+            "en": "You dare look upon me as an equal? State your true ambition before my presence!"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Não sou servo de ninguém, mas sei reconhecer poder genuíno.",
+                "en": "I am no servant to anyone, yet I recognize genuine power."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Sua determinação quase me impressiona. Mas você juraria lealdade sem hesitar quando o reino desabar?",
+            "en": "Your resolve almost impresses me. But would you swear unyielding allegiance when the realm falls?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t3_quimera_madrugada",
@@ -1200,7 +2504,135 @@
           "pt": "Entregue 50 Phantom Coins para aplacar minha fome insone.",
           "en": "Deliver 50 Phantom Coins to pacify my sleepless appetite."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Devoro pensamentos das 3h da manhã. Qual sua insônia?",
+            "en": "I feed on 3 AM thoughts. What keeps you awake?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "🌌 O tamanho assustador do universo infinito.",
+                "en": "🌌 The terrifying vastness of the infinite cosmos."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Sabor amargo e estelar... um banquete de respeito.",
+                "en": "A bitter, starry savor... a feast worthy of awe."
+              },
+              "failure_dialogue": {
+                "pt": "Clichê cósmico. Falta angústia íntima aí dentro.",
+                "en": "Cosmic cliché. You lack intimate private dread."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "💭 Aquela frase constrangedora que falei anos atrás.",
+                "en": "💭 That cringe phrase I blurted out years ago."
+              },
+              "tone": "submissive",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Delicioso arrependimento vintage! Mastigo com gosto!",
+                "en": "Exquisite vintage regret! I savor every morsel!"
+              },
+              "failure_dialogue": {
+                "pt": "Vergonha alheia comum demais... não sacia minha fome.",
+                "en": "Pedestrian embarrassment... does not sate my hunger."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "😴 Durmo como pedra, não perco tempo com bobagens.",
+                "en": "😴 I sleep like a log, wasting no time on nonsense."
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Quem dorme sem sonhar já está morto por dentro...",
+                "en": "Those who sleep dreamless are already dead within..."
+              },
+              "failure_dialogue": {
+                "pt": "Mente estéril! O vácuo da meia-noite te devora agora!",
+                "en": "Barren mind! The midnight vacuum expels you whole!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "O vento sopra cinzas antigas... Você sabe o que realmente significa perder tudo?",
+            "en": "The wind scatters ancient ashes... Do you truly comprehend the weight of loss?"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Calculo cada passo friamente antes de dar o próximo movimento.",
+                "en": "I calculate every step cold-bloodedly before making my move."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Viver no limite do abismo é a única forma divertida de existir!",
+                "en": "Living on the brink of the abyss is the only fun way to exist!"
+              },
+              "tone": "chaotic"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "A névoa está se fechando... Você está pronto para aceitar o peso das escolhas que faremos juntos?",
+            "en": "The mist is closing in... Are you prepared to bear the weight of the choices we shall make together?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t3_cavaleiro_nevoa",
@@ -1285,7 +2717,135 @@
           "pt": "Entregue 1x Orbe Violeta para consagrar nossa vigília.",
           "en": "Deliver 1x Violet Orb to consecrate our eternal vigil."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Minha lâmina guarda o bosque. Jurará lealdade às trevas?",
+            "en": "My blade guards the grove. Will you swear fealty to mist?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "🛡️ Juro pela honra da penumbra e das fadas decaídas.",
+                "en": "🛡️ I swear upon the honor of gloom and fallen pixies."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Votos nobres ecoam forte nesta catedral sem teto.",
+                "en": "Noble vows ring strong in this roofless sanctuary."
+              },
+              "failure_dialogue": {
+                "pt": "Falso cavaleiro! Sua língua não carrega honra de aço.",
+                "en": "False knight! Your tongue bears no steel honor."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "⚔️ Nossa aliança guardará cada rastro esquecido.",
+                "en": "⚔️ Our pact will guard every forgotten ancient trace."
+              },
+              "tone": "flattery",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Dois escudos valem mais que cem palavras vãs.",
+                "en": "Two stalwart shields outshine a hundred vain words."
+              },
+              "failure_dialogue": {
+                "pt": "Alianças exigem sangue, não apenas cumprimentos.",
+                "en": "Pacts demand shed blood, not polite greetings."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🤷 Só vim buscar saques fáceis e sair fora.",
+                "en": "🤷 I only came for easy loot and quick escape."
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Saques? As tumbas devolvem apenas poeira e lâminas.",
+                "en": "Loot? Tombs return nothing save ashes and sharp blades."
+              },
+              "failure_dialogue": {
+                "pt": "Saqueador sem escrúpulos! Minha espada bane sua alma!",
+                "en": "Mercenary scum! My blade banishes your wretched soul!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Você ousa me encarar como um igual? Diga-me qual é a sua real ambição diante de mim!",
+            "en": "You dare look upon me as an equal? State your true ambition before my presence!"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Não sou servo de ninguém, mas sei reconhecer poder genuíno.",
+                "en": "I am no servant to anyone, yet I recognize genuine power."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Sua determinação quase me impressiona. Mas você juraria lealdade sem hesitar quando o reino desabar?",
+            "en": "Your resolve almost impresses me. But would you swear unyielding allegiance when the realm falls?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t3_sucubo_tedio",
@@ -1370,7 +2930,135 @@
           "pt": "Entregue 50 Phantom Coins para comprar seda importada.",
           "en": "Yield 50 Phantom Coins to procure imported dark silk."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Prometo o maior prazer: nunca mais sair da cama. Aceita?",
+            "en": "I offer ultimate joy: never leaving bed again. Accept?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "🛌 O sonho de qualquer alma cansada. Fechado!",
+                "en": "🛌 Dream of every exhausted wanderer. Deal struck!"
+              },
+              "tone": "submissive",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Deite-se nas sombras e esqueça os prazos terrenos.",
+                "en": "Sink into quiet shades and forget all mortal deadlines."
+              },
+              "failure_dialogue": {
+                "pt": "Você hesitou por um segundo... perdeu o colchão.",
+                "en": "You hesitated for a heartbeat... missed your spot."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "🔕 Modo Não Perturbe ativado para todo o sempre.",
+                "en": "🔕 Do Not Disturb mode turned on for all eternity."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Zero notificações... que êxtase supremo.",
+                "en": "Zero alerts ringing... sheer divine ecstasy."
+              },
+              "failure_dialogue": {
+                "pt": "Ainda ouço a vibração do seu celular fantasma.",
+                "en": "I still hear phantom vibrations humming in your pocket."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🏃 Tenho trabalho e prazos hoje, levanta dessa cama!",
+                "en": "🏃 I have duties and urgent deadlines, get up now!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Prazos? O tempo não manda nas minhas almofadas.",
+                "en": "Deadlines? Time holds no dominion over my down."
+              },
+              "failure_dialogue": {
+                "pt": "Workaholic neurótico! Saia do meu santuário de sono!",
+                "en": "Neurotic workaholic! Begone from my sleeping sanctum!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Ver você suar frio me diverte... mas quero ver se sua língua é tão afiada quanto sua coragem.",
+            "en": "Watching you squirm is amusing... but tell me if your tongue is as sharp as your spine."
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Não sou servo de ninguém, mas sei reconhecer poder genuíno.",
+                "en": "I am no servant to anyone, yet I recognize genuine power."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "A névoa está se fechando... Você está pronto para aceitar o peso das escolhas que faremos juntos?",
+            "en": "The mist is closing in... Are you prepared to bear the weight of the choices we shall make together?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t3_poltergeist_espelho",
@@ -1455,7 +3143,135 @@
           "pt": "Entregue 1x Orbe Violeta para consertar meu reflexo.",
           "en": "Surrender 1x Violet Orb to polish my reflective plane."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Quem é você quando ninguém está olhando no escuro?",
+            "en": "Who are you when no eyes observe in the pitch dark?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "🪞 Sou a mesma sombra que habita o verso do espelho.",
+                "en": "🪞 I am the identical shade haunting the back mirror."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Você compreende a dualidade da prata... curioso.",
+                "en": "You grasp the duality of silver... fascinating."
+              },
+              "failure_dialogue": {
+                "pt": "Tentativa fraca de soar enigmático. Quebre-se!",
+                "en": "Weak attempt at mystery. Shatter into pieces!"
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "💎 Alguém que não tem medo das próprias rachaduras.",
+                "en": "💎 One who does not fear their own inner fissures."
+              },
+              "tone": "flattery",
+              "success_chance_modifier": 0,
+              "success_dialogue": {
+                "pt": "Cacos afiados constroem os melhores mosaicos.",
+                "en": "Sharp fragments assemble the finest mosaics."
+              },
+              "failure_dialogue": {
+                "pt": "Palavras polidas não escondem sua feiura interna.",
+                "en": "Polished prose cannot conceal inward deformities."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🔨 Um viajante prestes a estilhaçar esse vidro velho!",
+                "en": "🔨 A wanderer poised to smash this brittle glass!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Sete anos de maldição para cada fragmento que cair...",
+                "en": "Seven years of sorrow for every fragment hitting dirt..."
+              },
+              "failure_dialogue": {
+                "pt": "Vidro quebrado corta fundo! Expulso pela tempestade!",
+                "en": "Shattered glass bites deep! Cleansed by the storm!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Ver você suar frio me diverte... mas quero ver se sua língua é tão afiada quanto sua coragem.",
+            "en": "Watching you squirm is amusing... but tell me if your tongue is as sharp as your spine."
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Não sou servo de ninguém, mas sei reconhecer poder genuíno.",
+                "en": "I am no servant to anyone, yet I recognize genuine power."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "A névoa está se fechando... Você está pronto para aceitar o peso das escolhas que faremos juntos?",
+            "en": "The mist is closing in... Are you prepared to bear the weight of the choices we shall make together?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t3_automato_musica",
@@ -1540,7 +3356,135 @@
           "pt": "Pague 2 pontos de Vigor para carregar a corda principal.",
           "en": "Yield 2 Stamina points to recharge the primary coil."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Corda no fim... Sem música, a poeira me engole.",
+            "en": "Wind-down imminent... Without song, dust claims me."
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "🗝️ Dar corda com cuidado respeitando a métrica da valsa.",
+                "en": "🗝️ Wind the brass key gently in rhythm with the waltz."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Tensão restabelecida. As notas voltam a fluir puras.",
+                "en": "Spring tension restored. The notes flow pristine once more."
+              },
+              "failure_dialogue": {
+                "pt": "Você girou no sentido errado! A mola quase partiu!",
+                "en": "You spun it backwards! The mainspring nearly snapped!"
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "🎻 Cantarolar a harmonia perdida para guiar os pinos.",
+                "en": "🎻 Hum the missing harmony to guide the tiny brass pins."
+              },
+              "tone": "flattery",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Frequência sonora compatível. Mecanismo sincronizado.",
+                "en": "Acoustic pitch matched. Mechanisms recalibrated."
+              },
+              "failure_dialogue": {
+                "pt": "Tom desafinado... causou curto em minhas engrenagens.",
+                "en": "Discordant pitch... caused a short in my gears."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🪓 Arrancar a caixinha de música para vender o ouro.",
+                "en": "🪓 Tear out the music cylinder to sell the gold pins."
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Vandalismo material não calará meu compasso eterno.",
+                "en": "Brute vandalism cannot mute my perpetual tempo."
+              },
+              "failure_dialogue": {
+                "pt": "Ladrão de relíquias! Molas afiadas te ejetam da câmara!",
+                "en": "Relic thief! Tensioned springs eject you from this vault!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Palavras bonitas não compram relíquias. Mostre-me qual é o seu plano de sobrevivência.",
+            "en": "Pretty words do not buy relics. Show me your tangible plan for survival."
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Calculo cada passo friamente antes de dar o próximo movimento.",
+                "en": "I calculate every step cold-bloodedly before making my move."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Chegamos ao cerne do pacto. Se encontrarmos um tesouro ancestral, qual será a divisão exata?",
+            "en": "We arrive at the core of the pact. If we find an ancient hoard, what is the exact split?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t4_fenix_cinzas",
@@ -1625,7 +3569,168 @@
           "pt": "Entregue 1x Crânio de Cristal para selar o pacto glacial.",
           "en": "Deliver 1x Crystal Skull to seal our glacial covenant."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Renasço quando a esperança morre. Aceita o frio eterno?",
+            "en": "I rise when hope dies. Do you accept the cold eternal?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "❄️ Renascer do gelo é a maior vitória da alma.",
+                "en": "❄️ Rebirth from ice is the soul’s greatest triumph."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Poucos compreendem que o frio preserva o que o fogo queima.",
+                "en": "Few comprehend that cold preserves where fire destroys."
+              },
+              "failure_dialogue": {
+                "pt": "Palavras tépidas não sobrevivem à minha geada.",
+                "en": "Tepid words wither beneath my merciless frost."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "💜 Que as brasas roxas me envolvam na travessia.",
+                "en": "💜 Let the violet embers shelter my pilgrimage."
+              },
+              "tone": "submissive",
+              "success_chance_modifier": 0,
+              "success_dialogue": {
+                "pt": "Minha asa glacial guiará seu passo nas nevascas.",
+                "en": "My glacial wing shall shield your steps in blizzards."
+              },
+              "failure_dialogue": {
+                "pt": "Submissão cega atrai cinzas, não alianças soberanas.",
+                "en": "Blind fealty earns ashes, not sovereign camaraderie."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🔥 Fogo frio é farsa, prefiro calor de verdade!",
+                "en": "🔥 Cold flame is a sham, I demand honest heat!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "O calor mortal se apaga num piscar de olhos...",
+                "en": "Mortal warmth extinguishes in the blink of an eye..."
+              },
+              "failure_dialogue": {
+                "pt": "Blasfêmia ignorante! Congela-te e sai da minha vista!",
+                "en": "Ignorant blasphemy! Freeze in place and begone!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Você ousa me encarar como um igual? Diga-me qual é a sua real ambição diante de mim!",
+            "en": "You dare look upon me as an equal? State your true ambition before my presence!"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Não sou servo de ninguém, mas sei reconhecer poder genuíno.",
+                "en": "I am no servant to anyone, yet I recognize genuine power."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Sua determinação quase me impressiona. Mas você juraria lealdade sem hesitar quando o reino desabar?",
+            "en": "Your resolve almost impresses me. But would you swear unyielding allegiance when the realm falls?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        },
+        {
+          "phase": 4,
+          "question": {
+            "pt": "Diante dos portões do infinito, este é o último teste da sua mente. Qual é a sua verdade final?",
+            "en": "Before the gates of infinity, this is the final trial of your intellect. What is your definitive truth?"
+          },
+          "options": [
+            {
+              "id": "p4_o1",
+              "text": {
+                "pt": "Minha essência é a própria penumbra; o pacto apenas formaliza o que já sou.",
+                "en": "My essence is the gloom itself; the pact merely formalizes what I already am."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p4_o2",
+              "text": {
+                "pt": "Eu conquistei o direito de estar aqui pelo meu próprio mérito e coragem!",
+                "en": "I conquered the right to stand here through my own merit and courage!"
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p4_o3",
+              "text": {
+                "pt": "Por favor, tenha piedade de mim, sou apenas um pobre mortal insignificante!",
+                "en": "Please have mercy on me, I am merely an insignificant mortal!"
+              },
+              "tone": "submissive"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t4_sombra_ancestral",
@@ -1710,7 +3815,168 @@
           "pt": "Pague 100 Phantom Coins para que a noite não te consuma.",
           "en": "Offer 100 Phantom Coins lest the night consume you whole."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Vi impérios virarem pó. Qual seu juramento à Meia-Noite?",
+            "en": "I watched empires crumble to dust. What is your oath?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "🌌 Lealdade à noite sem fim e à melancolia soberana.",
+                "en": "🌌 Fealty to the endless night and sovereign gloom."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Seu juramento foi gravado no tecido do firmamento.",
+                "en": "Your pledge is engraved onto the fabric of the heavens."
+              },
+              "failure_dialogue": {
+                "pt": "Votos humanos são frágeis como teias de aranha.",
+                "en": "Mortal vows are fragile as autumnal cobwebs."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "🖤 Carregar a chama roxa por todas as encruzilhadas.",
+                "en": "🖤 Carry the purple beacon across all crossroads."
+              },
+              "tone": "submissive",
+              "success_chance_modifier": 0,
+              "success_dialogue": {
+                "pt": "Que a chama não vacile quando o vento do abismo soprar.",
+                "en": "Let not the beacon falter when abyss winds rise."
+              },
+              "failure_dialogue": {
+                "pt": "Você treme diante da primeira rajada de névoa.",
+                "en": "You shiver before the very first gust of mist."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "👑 Me dê seus poderes que eu governo melhor que você!",
+                "en": "👑 Hand me your dominion, I rule far better than you!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Governar o nada exige ombros que você não possui...",
+                "en": "Ruling the void requires shoulders you do not bear..."
+              },
+              "failure_dialogue": {
+                "pt": "Arrogância infantil! Seja engolido pela noite eterna!",
+                "en": "Childish hubris! Swallow down eternal night and vanish!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Você ousa me encarar como um igual? Diga-me qual é a sua real ambição diante de mim!",
+            "en": "You dare look upon me as an equal? State your true ambition before my presence!"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Não sou servo de ninguém, mas sei reconhecer poder genuíno.",
+                "en": "I am no servant to anyone, yet I recognize genuine power."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Sua determinação quase me impressiona. Mas você juraria lealdade sem hesitar quando o reino desabar?",
+            "en": "Your resolve almost impresses me. But would you swear unyielding allegiance when the realm falls?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        },
+        {
+          "phase": 4,
+          "question": {
+            "pt": "Diante dos portões do infinito, este é o último teste da sua mente. Qual é a sua verdade final?",
+            "en": "Before the gates of infinity, this is the final trial of your intellect. What is your definitive truth?"
+          },
+          "options": [
+            {
+              "id": "p4_o1",
+              "text": {
+                "pt": "Minha essência é a própria penumbra; o pacto apenas formaliza o que já sou.",
+                "en": "My essence is the gloom itself; the pact merely formalizes what I already am."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p4_o2",
+              "text": {
+                "pt": "Eu conquistei o direito de estar aqui pelo meu próprio mérito e coragem!",
+                "en": "I conquered the right to stand here through my own merit and courage!"
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p4_o3",
+              "text": {
+                "pt": "Por favor, tenha piedade de mim, sou apenas um pobre mortal insignificante!",
+                "en": "Please have mercy on me, I am merely an insignificant mortal!"
+              },
+              "tone": "submissive"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t4_devorador_memorias",
@@ -1795,7 +4061,168 @@
           "pt": "Entregue 1x Cálice das Sombras para conter as memórias.",
           "en": "Deliver 1x Chalice of Shadows to cradle the memories."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Lembranças são deliciosas. Qual memória você me entrega?",
+            "en": "Remembrances taste divine. Which memory will you feed me?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "🧠 Minha primeira desilusão amarga com o mundo real.",
+                "en": "🧠 My bitter first heartbreak with the waking world."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Doçura acre e nostálgica... um petisco esplêndido.",
+                "en": "Bitter nostalgia with hints of youth... magnificent."
+              },
+              "failure_dialogue": {
+                "pt": "Draminha comum. Isso não alimenta um leviatã.",
+                "en": "Commonplace angst. Insufficient for a leviathan."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "📖 Oferecer o pergaminho com segredos de outras eras.",
+                "en": "📖 Offer an ancient scroll brimming with lost secrets."
+              },
+              "tone": "bribe",
+              "success_chance_modifier": 0,
+              "success_dialogue": {
+                "pt": "Tinta fresca em papel antigo... aprecio o sabor.",
+                "en": "Fresh ink on ancient vellum... an acquired taste."
+              },
+              "failure_dialogue": {
+                "pt": "Pergaminho rasurado! Não tolero arquivos corrompidos.",
+                "en": "Scratched vellum! I tolerate no corrupted records."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🛡️ Minhas memórias são minhas, criatura parasita!",
+                "en": "🛡️ My thoughts belong to me alone, parasite fiend!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "O que você guarda com tanta força apodrece mais rápido.",
+                "en": "What you guard with iron fists decays all the faster."
+              },
+              "failure_dialogue": {
+                "pt": "Vontade teimosa! Seus pensamentos são ejetados da sala!",
+                "en": "Stubborn mind! Your thoughts are blasted from the hall!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Ver você suar frio me diverte... mas quero ver se sua língua é tão afiada quanto sua coragem.",
+            "en": "Watching you squirm is amusing... but tell me if your tongue is as sharp as your spine."
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Não sou servo de ninguém, mas sei reconhecer poder genuíno.",
+                "en": "I am no servant to anyone, yet I recognize genuine power."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "A névoa está se fechando... Você está pronto para aceitar o peso das escolhas que faremos juntos?",
+            "en": "The mist is closing in... Are you prepared to bear the weight of the choices we shall make together?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        },
+        {
+          "phase": 4,
+          "question": {
+            "pt": "Diante dos portões do infinito, este é o último teste da sua mente. Qual é a sua verdade final?",
+            "en": "Before the gates of infinity, this is the final trial of your intellect. What is your definitive truth?"
+          },
+          "options": [
+            {
+              "id": "p4_o1",
+              "text": {
+                "pt": "Minha essência é a própria penumbra; o pacto apenas formaliza o que já sou.",
+                "en": "My essence is the gloom itself; the pact merely formalizes what I already am."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p4_o2",
+              "text": {
+                "pt": "Eu conquistei o direito de estar aqui pelo meu próprio mérito e coragem!",
+                "en": "I conquered the right to stand here through my own merit and courage!"
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p4_o3",
+              "text": {
+                "pt": "Por favor, tenha piedade de mim, sou apenas um pobre mortal insignificante!",
+                "en": "Please have mercy on me, I am merely an insignificant mortal!"
+              },
+              "tone": "submissive"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t4_valquiria_vidro",
@@ -1880,7 +4307,168 @@
           "pt": "Entregue 90 Phantom Coins para polir minhas asas de vidro.",
           "en": "Hand over 90 Phantom Coins to polish my obsidian wings."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Apenas os inquebráveis cruzam meu jardim. Você se parte?",
+            "en": "Only the unbreakable cross my court. Will you shatter?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "💎 Fui forjado na adversidade, vidro nenhum me corta.",
+                "en": "💎 Forged in hardship, no shattered glass pierces me."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Determinação de diamante... concedo minha passagem.",
+                "en": "Diamond resolve... you earn safe passage."
+              },
+              "failure_dialogue": {
+                "pt": "Blefe tolo. Vejo microfissuras em seu coração.",
+                "en": "Foolish bluff. I spot hairline fractures in your heart."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "🛡️ Apresentar escudo imbuído de lodo e sombras.",
+                "en": "🛡️ Present a battle shield soaked in gloom and slime."
+              },
+              "tone": "bribe",
+              "success_chance_modifier": 0,
+              "success_dialogue": {
+                "pt": "Armadura pesada... aprecio preparação de guerreiro.",
+                "en": "Heavy armament... I respect warrior preparation."
+              },
+              "failure_dialogue": {
+                "pt": "Ferrugem e lama não têm lugar no meu jardim límpido.",
+                "en": "Rust and muck have no station in my pristine garden."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🪓 Vidro quebra fácil, sua armadura é piada diante de mim!",
+                "en": "🪓 Glass shatters fast, your armor is a laughing stock!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "A piada sangrará quando meus fragmentos voarem...",
+                "en": "The joke will bleed when my black shards take flight..."
+              },
+              "failure_dialogue": {
+                "pt": "Insolência fatal! Minhas asas de obsidiana te banem!",
+                "en": "Fatal impudence! My obsidian blades expel you instantly!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Você ousa me encarar como um igual? Diga-me qual é a sua real ambição diante de mim!",
+            "en": "You dare look upon me as an equal? State your true ambition before my presence!"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Não sou servo de ninguém, mas sei reconhecer poder genuíno.",
+                "en": "I am no servant to anyone, yet I recognize genuine power."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Sua determinação quase me impressiona. Mas você juraria lealdade sem hesitar quando o reino desabar?",
+            "en": "Your resolve almost impresses me. But would you swear unyielding allegiance when the realm falls?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        },
+        {
+          "phase": 4,
+          "question": {
+            "pt": "Diante dos portões do infinito, este é o último teste da sua mente. Qual é a sua verdade final?",
+            "en": "Before the gates of infinity, this is the final trial of your intellect. What is your definitive truth?"
+          },
+          "options": [
+            {
+              "id": "p4_o1",
+              "text": {
+                "pt": "Minha essência é a própria penumbra; o pacto apenas formaliza o que já sou.",
+                "en": "My essence is the gloom itself; the pact merely formalizes what I already am."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p4_o2",
+              "text": {
+                "pt": "Eu conquistei o direito de estar aqui pelo meu próprio mérito e coragem!",
+                "en": "I conquered the right to stand here through my own merit and courage!"
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p4_o3",
+              "text": {
+                "pt": "Por favor, tenha piedade de mim, sou apenas um pobre mortal insignificante!",
+                "en": "Please have mercy on me, I am merely an insignificant mortal!"
+              },
+              "tone": "submissive"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t5_arquiteto_vazio",
@@ -1965,7 +4553,168 @@
           "pt": "Sacrifique 1x Coroa da Penumbra para balancear a equação.",
           "en": "Sacrifice 1x Gloom Crown to balance the grand equation."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Sua existência é um erro de cálculo. Justifique sua forma.",
+            "en": "Your existence is a rounding error. Justify your form."
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "📐 A beleza do cosmos reside nas imperfeições orgânicas.",
+                "en": "📐 The beauty of the cosmos lies in organic flaws."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Variável caótica aceita... o cálculo tolera seu rastro.",
+                "en": "Chaotic variable tolerated... the math permits your path."
+              },
+              "failure_dialogue": {
+                "pt": "Falácia sentimental. Entropia deve ser purgada.",
+                "en": "Sentimental fallacy. Entropy must be expunged."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "🌌 Sou apenas um vetor buscando convergência no abismo.",
+                "en": "🌌 I am merely a vector seeking convergence in void."
+              },
+              "tone": "submissive",
+              "success_chance_modifier": 0,
+              "success_dialogue": {
+                "pt": "Vetor registrado. Prossiga sem desviar sua trajetória.",
+                "en": "Vector logged. Advance without altering your trajectory."
+              },
+              "failure_dialogue": {
+                "pt": "Trajetória nula. Não há convergência para parasitas.",
+                "en": "Null trajectory. There is no convergence for noise."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "💥 Geometria é frescura de quem tem medo da carne!",
+                "en": "💥 Geometry is cowardice for those terrified of flesh!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "A carne se desfaz em segundos; a fórmula é eterna.",
+                "en": "Flesh rots in moments; equations endure forever."
+              },
+              "failure_dialogue": {
+                "pt": "Erro crítico insolúvel! O vácuo colapsa sua presença!",
+                "en": "Unsolvable critical error! The void collapses your form!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Palavras bonitas não compram relíquias. Mostre-me qual é o seu plano de sobrevivência.",
+            "en": "Pretty words do not buy relics. Show me your tangible plan for survival."
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Calculo cada passo friamente antes de dar o próximo movimento.",
+                "en": "I calculate every step cold-bloodedly before making my move."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Chegamos ao cerne do pacto. Se encontrarmos um tesouro ancestral, qual será a divisão exata?",
+            "en": "We arrive at the core of the pact. If we find an ancient hoard, what is the exact split?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        },
+        {
+          "phase": 4,
+          "question": {
+            "pt": "Você atingiu o limiar definitivo. Para selar este vínculo soberano com Kuromi, você sacrificaria sua própria essência mortal?",
+            "en": "You have reached the ultimate threshold. To seal this sovereign bond with Kuromi, would you surrender your mortal essence?"
+          },
+          "options": [
+            {
+              "id": "p4_o1",
+              "text": {
+                "pt": "Minha essência é a própria penumbra; o pacto apenas formaliza o que já sou.",
+                "en": "My essence is the gloom itself; the pact merely formalizes what I already am."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p4_o2",
+              "text": {
+                "pt": "Eu conquistei o direito de estar aqui pelo meu próprio mérito e coragem!",
+                "en": "I conquered the right to stand here through my own merit and courage!"
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p4_o3",
+              "text": {
+                "pt": "Por favor, tenha piedade de mim, sou apenas um pobre mortal insignificante!",
+                "en": "Please have mercy on me, I am merely an insignificant mortal!"
+              },
+              "tone": "submissive"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "enc_t5_deusa_engrenagens",
@@ -2050,7 +4799,168 @@
           "pt": "Entregue 200 Phantom Coins como tributo ao fado mecânico.",
           "en": "Yield 200 Phantom Coins as tribute to mechanical fate."
         }
-      }
+      },
+      "phases": [
+        {
+          "phase": 1,
+          "question": {
+            "pt": "Eu governo o pulsar das eras. O que um grão de poeira ousa pedir?",
+            "en": "I rule the pulse of eons. What does a speck of dust dare ask?"
+          },
+          "options": [
+            {
+              "id": "opt_1",
+              "text": {
+                "pt": "⚙️ Não peço nada, apenas reverencio a mecânica do fado.",
+                "en": "⚙️ I ask nothing, merely revere the clockwork of fate."
+              },
+              "tone": "submissive",
+              "success_chance_modifier": 1,
+              "success_dialogue": {
+                "pt": "Reverência justa. As engrenagens poupam seu passo.",
+                "en": "Due reverence. The clockwork spares your fragile step."
+              },
+              "failure_dialogue": {
+                "pt": "Reverência vazia de quem apenas teme a destruição.",
+                "en": "Empty reverence from one who merely fears annihilation."
+              }
+            },
+            {
+              "id": "opt_2",
+              "text": {
+                "pt": "🕰️ Até os deuses do destino precisam de agentes.",
+                "en": "🕰️ Fate is vast, yet even gods require agents."
+              },
+              "tone": "rational",
+              "success_chance_modifier": 0,
+              "success_dialogue": {
+                "pt": "Pequenos dentes movem engrenagens imensas. Prossiga.",
+                "en": "Tiny teeth drive colossal gears. Advance cautiously."
+              },
+              "failure_dialogue": {
+                "pt": "Pretensioso. Meu maquinário não depende de poeira.",
+                "en": "Pretentious. My machinery needs no speck of dust."
+              }
+            },
+            {
+              "id": "opt_3",
+              "text": {
+                "pt": "🔨 Deuses mecânicos enferrujam, o livre-arbítrio reina!",
+                "en": "🔨 Clockwork gods rust away, true free will reigns supreme!"
+              },
+              "tone": "arrogant",
+              "success_chance_modifier": -2,
+              "success_dialogue": {
+                "pt": "Livre-arbítrio é a ilusão mais tola dos autômatos de carne.",
+                "en": "Free will is the silliest illusion of meat machines."
+              },
+              "failure_dialogue": {
+                "pt": "Pecado imperdoável! O ponteiro do juízo expulsa seu ser!",
+                "en": "Unforgivable hubris! Judgment hands expel your spirit!"
+              }
+            }
+          ]
+        },
+        {
+          "phase": 2,
+          "question": {
+            "pt": "Você ousa me encarar como um igual? Diga-me qual é a sua real ambição diante de mim!",
+            "en": "You dare look upon me as an equal? State your true ambition before my presence!"
+          },
+          "options": [
+            {
+              "id": "p2_o1",
+              "text": {
+                "pt": "Não sou servo de ninguém, mas sei reconhecer poder genuíno.",
+                "en": "I am no servant to anyone, yet I recognize genuine power."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p2_o2",
+              "text": {
+                "pt": "Seja o que for, eu tomo à força se for necessário.",
+                "en": "Whatever it is, I shall take it by force if necessary."
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p2_o3",
+              "text": {
+                "pt": "Oh, vossa grandeza é absoluta! Me prostro diante de sua soberania!",
+                "en": "Oh, your greatness is absolute! I bow before your supreme sovereignty!"
+              },
+              "tone": "flattery"
+            }
+          ]
+        },
+        {
+          "phase": 3,
+          "question": {
+            "pt": "Sua determinação quase me impressiona. Mas você juraria lealdade sem hesitar quando o reino desabar?",
+            "en": "Your resolve almost impresses me. But would you swear unyielding allegiance when the realm falls?"
+          },
+          "options": [
+            {
+              "id": "p3_o1",
+              "text": {
+                "pt": "Metade para quem encontrar, metade para quem mantiver ambos vivos.",
+                "en": "Half to whoever finds it, half to whoever keeps us both alive."
+              },
+              "tone": "pragmatic"
+            },
+            {
+              "id": "p3_o2",
+              "text": {
+                "pt": "Não faço juramentos vazios; minhas ações na batalha falarão por mim.",
+                "en": "I make no empty oaths; my deeds in battle shall speak for me."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p3_o3",
+              "text": {
+                "pt": "Vou ficar com tudo e dar risada na sua cara!",
+                "en": "I will keep everything and laugh straight in your face!"
+              },
+              "tone": "chaotic"
+            }
+          ]
+        },
+        {
+          "phase": 4,
+          "question": {
+            "pt": "Você atingiu o limiar definitivo. Para selar este vínculo soberano com Kuromi, você sacrificaria sua própria essência mortal?",
+            "en": "You have reached the ultimate threshold. To seal this sovereign bond with Kuromi, would you surrender your mortal essence?"
+          },
+          "options": [
+            {
+              "id": "p4_o1",
+              "text": {
+                "pt": "Minha essência é a própria penumbra; o pacto apenas formaliza o que já sou.",
+                "en": "My essence is the gloom itself; the pact merely formalizes what I already am."
+              },
+              "tone": "rational"
+            },
+            {
+              "id": "p4_o2",
+              "text": {
+                "pt": "Eu conquistei o direito de estar aqui pelo meu próprio mérito e coragem!",
+                "en": "I conquered the right to stand here through my own merit and courage!"
+              },
+              "tone": "arrogant"
+            },
+            {
+              "id": "p4_o3",
+              "text": {
+                "pt": "Por favor, tenha piedade de mim, sou apenas um pobre mortal insignificante!",
+                "en": "Please have mercy on me, I am merely an insignificant mortal!"
+              },
+              "tone": "submissive"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
