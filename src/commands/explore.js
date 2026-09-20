@@ -353,7 +353,15 @@ function buildBossView(userId, source = null, feedbackMessage = '') {
 
   const buttons = [];
 
-  if (canFreeAttack) {
+  if (boss.defeatedInCycle || boss.currentHp <= 0) {
+    buttons.push(
+      new ButtonBuilder()
+        .setCustomId(`gloom:boss_defeated_btn:${userId}`)
+        .setLabel(isEn ? '🏆 Behemoth Pacified!' : '🏆 Colosso Apaziguado!')
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(true)
+    );
+  } else if (canFreeAttack) {
     const attackLabel = participant.extraUnlocked
       ? t('gloom.boss.btnAttackExtra', source)
       : t('gloom.boss.btnAttack', source);
@@ -827,7 +835,11 @@ async function handleGloomInteraction(interaction) {
     let feedback = '';
 
     if (!result.success) {
-      feedback = t('gloom.boss.cooldown', interaction);
+      if (result.reason === 'already_defeated') {
+        feedback = t('gloom.boss.alreadyDefeated', interaction);
+      } else {
+        feedback = t('gloom.boss.cooldown', interaction);
+      }
     } else {
       feedback = t('gloom.boss.attackSuccess', interaction, { damage: result.damage, coins: result.rewardCoins });
       if (result.defeated) {

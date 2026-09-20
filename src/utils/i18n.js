@@ -551,6 +551,9 @@ const TRANSLATIONS = {
           "insufficient_exploration": "Caminho perigoso. Explore pelo menos 3 locais comuns antes de cruzar o abismo.",
           "requires_fairy": "Santuário protegido. Requer um familiar com afinidade de Fada equipado ou um portal místico aberto.",
           "requires_boss": "Acesso negado. Requer ter participado do apaziguamento do Chefão Comunitário no ciclo atual.",
+          "requires_boss_defeated": "Acesso negado. O Santuário só se abre quando o Chefão Comunitário for derrotado no ciclo atual com sua participação ativa na batalha.",
+          "requires_grimoire_spirits": "O trono de obsidiana rejeita sua alma. Requer pelo menos 3 espíritos recrutados no seu Grimório.",
+          "requires_t4_relic": "Santuário selado. Requer carregar pelo menos uma Relíquia de Tier 4 ou 5 (nobreza da penumbra) no inventário.",
           "banned": "Você está banido desta sala por insultar as entidades locais. Tempo restante: {time} min."
         },
         "dangerLevel": "⚡ **Perigo:** Tier {tier} • Penalidade por Falha Crítica: Ban de {banMinutes}m"
@@ -640,7 +643,8 @@ const TRANSLATIONS = {
         "btnRefresh": "🔄 Já assisti / Atualizar",
         "attackSuccess": "💥 Você desferiu um ataque sombrio causando **{damage} de dano** e ganhou **+{coins} Phantom Coins 👻**!",
         "cooldown": "⏳ Você já realizou sua investida neste ciclo de 6 horas!\n\n✨ **Deseja atacar o Colosso novamente agora?**\nAssista ao bônus patrocinado de 10 segundos no portal web para liberar **+1 Investida Extra** e **50 Phantom Coins 👻**!",
-        "defeated": "🏆 **O COLOSSO FOI APACIGUADO!** A Sombra Ancestral foi vencida e o reino celebra sua vitória!"
+        "defeated": "🏆 **O COLOSSO FOI APACIGUADO!** A Sombra Ancestral foi vencida e o reino celebra sua vitória!",
+        "alreadyDefeated": "🏆 O Colosso Ancestral já foi apaziguado neste ciclo de 6 horas! O Santuário de Pyxie permanece aberto para os valorosos guerreiros."
       }
     },
     "wiki": {
@@ -1067,6 +1071,9 @@ const TRANSLATIONS = {
           "insufficient_exploration": "Dangerous path. Explore at least 3 common areas before daring to cross the void.",
           "requires_fairy": "Protected sanctuary. Requires an equipped Fairy familiar or an active mystic portal.",
           "requires_boss": "Access denied. Requires participation in the Community Boss pacification this cycle.",
+          "requires_boss_defeated": "Access denied. The Haven only unseals when the Community Boss is defeated this cycle with your active battle participation.",
+          "requires_grimoire_spirits": "The obsidian throne rejects your soul. Requires at least 3 recruited spirits in your Grimoire.",
+          "requires_t4_relic": "Sanctuary sealed. Requires carrying at least one Tier 4 or 5 Relic (gloom nobility) in your inventory.",
           "banned": "You are barred from this room for insulting local entities. Remaining time: {time} min."
         },
         "dangerLevel": "⚡ **Danger:** Tier {tier} • Critical Failure Penalty: {banMinutes}m Room Ban"
@@ -1156,7 +1163,8 @@ const TRANSLATIONS = {
         "btnRefresh": "🔄 I've watched / Refresh",
         "attackSuccess": "💥 You launched a shadow strike dealing **{damage} damage** and earned **+{coins} Phantom Coins 👻**!",
         "cooldown": "⏳ You already struck during this 6-hour cycle!\n\n✨ **Wish to strike the Behemoth again right now?**\nWatch the sponsored 10-second web bonus portal to unlock **+1 Extra Strike** and **50 Phantom Coins 👻**!",
-        "defeated": "🏆 **THE BEHEMOTH HAS BEEN PACIFIED!** The Ancient Shadow was conquered and the realm celebrates your triumph!"
+        "defeated": "🏆 **THE BEHEMOTH HAS BEEN PACIFIED!** The Ancient Shadow was conquered and the realm celebrates your triumph!",
+        "alreadyDefeated": "🏆 The Ancient Behemoth has already been pacified in this 6-hour cycle! Pyxie's Haven remains unsealed for valiant warriors."
       }
     },
     "wiki": {

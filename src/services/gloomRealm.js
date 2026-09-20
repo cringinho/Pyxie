@@ -282,6 +282,7 @@ const LOCATIONS = {
       en: 'The obsidian throne of the Emo Fairy. A mystic fusion cauldron bubbles purple vapors while black candles burn.',
     },
     image: 'santuario_touca_preta.png',
+    requiresHardcoreSanctuary: true,
     requiresBossParticipation: true,
     altarFee: 50,
     neighbors: ['mausoleu_ancestral'],
@@ -1117,13 +1118,29 @@ class GloomGraph {
         }
       }
 
-      // Condição de Altar do Santuário (Chefão Comunitário no ciclo atual)
-      if (nLoc.requiresBossParticipation) {
+      // Condição Hardcore do Santuário Secreto (Tier 5):
+      // 1. Chefão Derrotado no ciclo atual + Participação ativa
+      // 2. Grimório com pelo menos 3 espíritos recrutados
+      // 3. Carregar pelo menos 1 Relíquia de Tier 4 ou 5
+      if (nLoc.requiresHardcoreSanctuary || nLoc.requiresBossParticipation) {
         const boss = readGloomData().worldBoss;
+        const bossDefeated = boss?.defeatedInCycle === true || (boss?.currentHp || 0) <= 0;
         const participatedInCycle = (boss?.participants?.[user.userId]?.count || 0) >= 1;
-        if (!participatedInCycle) {
+        const grimoireCount = (user.grimoire || []).length;
+        const userRelics = user.inventory || {};
+        const hasT4OrT5Relic = Object.entries(userRelics).some(
+          ([id, count]) => count > 0 && (RELICS[id]?.tier || 1) >= 4
+        );
+
+        if (!bossDefeated || !participatedInCycle) {
           canEnter = false;
-          reason = 'requires_boss';
+          reason = 'requires_boss_defeated';
+        } else if (grimoireCount < 3) {
+          canEnter = false;
+          reason = 'requires_grimoire_spirits';
+        } else if (!hasT4OrT5Relic) {
+          canEnter = false;
+          reason = 'requires_t4_relic';
         }
       }
 
@@ -1808,6 +1825,8 @@ function checkAndResetBossCycle(data) {
   if (!boss.cycleStart || now - boss.cycleStart >= TIDE_CYCLE_MS) {
     boss.cycleStart = now;
     boss.participants = {};
+    boss.defeatedInCycle = false;
+    boss.currentHp = boss.maxHp || 3000;
     return true;
   }
   return false;
@@ -1826,6 +1845,14 @@ function attackBoss(userId, method = 'familiar', lang = 'pt') {
   checkAndResetBossCycle(data);
   const boss = data.worldBoss;
   const user = getGloomUser(userId);
+
+  if (boss.defeatedInCycle) {
+    return {
+      success: false,
+      reason: 'already_defeated',
+      boss,
+    };
+  }
 
   boss.participants = boss.participants || {};
   const participant = boss.participants[userId] || { count: 0, extraUnlocked: false, damageDealt: 0 };
@@ -1855,10 +1882,10 @@ function attackBoss(userId, method = 'familiar', lang = 'pt') {
   let defeated = false;
   if (boss.currentHp <= 0) {
     defeated = true;
-    boss.level += 1;
+    boss.defeatedInCycle = true;
+    boss.currentHp = 0;
+    boss.level = (boss.level || 1) + 1;
     boss.maxHp = 3000 + boss.level * 500;
-    boss.currentHp = boss.maxHp;
-    boss.participants = {}; // Reset de ciclo
   }
 
   writeGloomData(data);

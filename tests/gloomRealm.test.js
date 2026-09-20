@@ -198,11 +198,10 @@ const userBoss = getGloomUser(uidBoss);
 userBoss.phantomCoins = 0;
 updateGloomUser(uidBoss, userBoss);
 
-// Garantir que o Boss tenha HP suficiente para não resetar ciclo por morte durante o teste
+// Garantir que o Boss esteja ativo e com HP suficiente para não resetar ciclo por morte durante o teste
 const currentBoss = getBossStatus();
-if (currentBoss.currentHp < 500) {
-  currentBoss.currentHp = currentBoss.maxHp;
-}
+currentBoss.defeatedInCycle = false;
+currentBoss.currentHp = currentBoss.maxHp || 3000;
 
 // 1ª Investida Gratuita
 const resBoss1 = attackBoss(uidBoss, 'strike', 'pt');
@@ -226,23 +225,51 @@ const resBoss3 = attackBoss(uidBoss, 'strike', 'pt');
 assert.equal(resBoss3.success, true, '2ª investida após bônus deve ser executada com sucesso');
 console.log('✅ Chefão Comunitário com investida grátis e bônus patrocinado de 10s validado.');
 
-// Teste de Acesso ao Santuário Secreto (Requer ter atacado o boss no ciclo atual)
+// Teste de Acesso ao Santuário Secreto (Modo Hardcore: Boss Derrotado + Participação + 3 Espíritos + Relíquia T4+)
 const uidSanctuary = `user_sanc_${Date.now()}`;
 const userSanctuary = getGloomUser(uidSanctuary);
 const tideTest = getGloomTide();
 const neighborsBeforeAttack = gloomGraph.getAvailableNeighbors('mausoleu_ancestral', userSanctuary, tideTest);
 const sancNeighborBefore = neighborsBeforeAttack.find((n) => n.location.id === 'santuario_touca_preta');
-assert.equal(sancNeighborBefore.canEnter, false, 'Não deve entrar no Santuário Secreto antes de participar do Chefão');
-assert.equal(sancNeighborBefore.reason, 'requires_boss');
+assert.equal(sancNeighborBefore.canEnter, false, 'Não deve entrar no Santuário Secreto antes de cumprir os requisitos');
+assert.equal(sancNeighborBefore.reason, 'requires_boss_defeated');
 
-// Usuário ataca o Chefão
+// 1. Usuário ataca o Chefão (participou), mas o boss ainda está vivo
 attackBoss(uidSanctuary, 'strike', 'pt');
-const neighborsAfterAttack = gloomGraph.getAvailableNeighbors('mausoleu_ancestral', userSanctuary, tideTest);
-const sancNeighborAfter = neighborsAfterAttack.find((n) => n.location.id === 'santuario_touca_preta');
-assert.equal(sancNeighborAfter.canEnter, true, 'Deve poder entrar no Santuário Secreto após participar do Chefão');
+const neighborsOnlyAttacked = gloomGraph.getAvailableNeighbors('mausoleu_ancestral', userSanctuary, tideTest);
+const sancNeighborOnlyAttacked = neighborsOnlyAttacked.find((n) => n.location.id === 'santuario_touca_preta');
+assert.equal(sancNeighborOnlyAttacked.canEnter, false, 'Não deve entrar se o Chefão ainda não foi derrotado');
+assert.equal(sancNeighborOnlyAttacked.reason, 'requires_boss_defeated');
 
-// Simulação de expiração de 6 horas do ciclo
+// 2. Boss é derrotado no ciclo, mas o usuário não tem 3 espíritos no grimório
 const gloomPath = path.join(__dirname, '..', 'data', 'gloom.json');
+const diskDataBoss = JSON.parse(fs.readFileSync(gloomPath, 'utf8'));
+diskDataBoss.worldBoss.defeatedInCycle = true;
+diskDataBoss.worldBoss.currentHp = 0;
+fs.writeFileSync(gloomPath, JSON.stringify(diskDataBoss, null, 2), 'utf8');
+try { fs.utimesSync(gloomPath, new Date(Date.now() + 2000), new Date(Date.now() + 2000)); } catch (_) {}
+
+const neighborsNoSpirits = gloomGraph.getAvailableNeighbors('mausoleu_ancestral', userSanctuary, tideTest);
+const sancNeighborNoSpirits = neighborsNoSpirits.find((n) => n.location.id === 'santuario_touca_preta');
+assert.equal(sancNeighborNoSpirits.canEnter, false, 'Não deve entrar sem 3 espíritos no grimório');
+assert.equal(sancNeighborNoSpirits.reason, 'requires_grimoire_spirits');
+
+// 3. Usuário tem 3 espíritos no grimório, mas não tem Relíquia Tier 4 ou 5
+userSanctuary.grimoire = ['fada_desencantada', 'corvo_poeta', 'morcego_shoegaze'];
+updateGloomUser(uidSanctuary, userSanctuary);
+const neighborsNoRelic = gloomGraph.getAvailableNeighbors('mausoleu_ancestral', userSanctuary, tideTest);
+const sancNeighborNoRelic = neighborsNoRelic.find((n) => n.location.id === 'santuario_touca_preta');
+assert.equal(sancNeighborNoRelic.canEnter, false, 'Não deve entrar sem Relíquia Tier 4 ou 5');
+assert.equal(sancNeighborNoRelic.reason, 'requires_t4_relic');
+
+// 4. Cumprimento total dos 3 requisitos hardcore: Boss Derrotado + 3 Espíritos + Relíquia T4
+userSanctuary.inventory = { coroa_espinhos_sombria: 1 };
+updateGloomUser(uidSanctuary, userSanctuary);
+const neighborsAfterAll = gloomGraph.getAvailableNeighbors('mausoleu_ancestral', userSanctuary, tideTest);
+const sancNeighborAfter = neighborsAfterAll.find((n) => n.location.id === 'santuario_touca_preta');
+assert.equal(sancNeighborAfter.canEnter, true, 'Deve poder entrar no Santuário Secreto após cumprir a Tríplice Hardcore');
+
+// 5. Simulação de expiração de 6 horas do ciclo
 const diskDataCycle = JSON.parse(fs.readFileSync(gloomPath, 'utf8'));
 diskDataCycle.worldBoss.cycleStart = Date.now() - (7 * 60 * 60 * 1000); // 7 horas atrás
 fs.writeFileSync(gloomPath, JSON.stringify(diskDataCycle, null, 2), 'utf8');
@@ -253,8 +280,8 @@ getBossStatus();
 const neighborsNewCycle = gloomGraph.getAvailableNeighbors('mausoleu_ancestral', userSanctuary, tideTest);
 const sancNeighborNewCycle = neighborsNewCycle.find((n) => n.location.id === 'santuario_touca_preta');
 assert.equal(sancNeighborNewCycle.canEnter, false, 'Acesso ao Santuário deve expirar com o novo ciclo de 6 horas');
-assert.equal(sancNeighborNewCycle.reason, 'requires_boss');
-console.log('✅ Ciclo de 6 horas do Chefão e acesso temporário ao Santuário Secreto validados.');
+assert.equal(sancNeighborNewCycle.reason, 'requires_boss_defeated');
+console.log('✅ Ciclo de 6 horas do Chefão e Modo Hardcore do Santuário Secreto validados.');
 
 // 9. Teste de Invalidação de Cache Multi-Processo via mtimeMs
 const uidCache = `user_cache_${Date.now()}`;
