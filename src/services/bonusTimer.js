@@ -1,11 +1,27 @@
 const crypto = require('node:crypto');
-const { addItem } = require('./inventory');
-const { addCoins, addMagicBeans } = require('./economy');
+const { addCoins } = require('./economy');
 
 const BONUS_SECRET = process.env.BONUS_SECRET || 'pyxie_magic_bonus_secret_key_2026';
 const MIN_WAIT_SECONDS = 8; // Mínimo de 8-10s no servidor para evitar trapaça
 const TOKEN_MAX_AGE_MS = 15 * 60 * 1000; // Válido por 15 minutos
+const WEB_BONUS_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 1 vez ao dia (24h)
 const claimedTokens = new Set();
+
+/**
+ * Retorna o status de disponibilidade do bônus diário na web (24h).
+ */
+function getWebBonusStatus(userId, now = Date.now()) {
+  const { getUserAccount } = require('./economy');
+  const account = getUserAccount(userId);
+  const lastWebBonusAt = account.lastWebBonusAt ? new Date(account.lastWebBonusAt).getTime() : 0;
+  const remainingMs = Math.max(0, WEB_BONUS_COOLDOWN_MS - (now - lastWebBonusAt));
+
+  return {
+    available: remainingMs === 0,
+    remainingMs,
+    nextBonusAt: remainingMs ? new Date(now + remainingMs).toISOString() : null,
+  };
+}
 
 /**
  * Cria uma nova sessão de bônus assinada com HMAC.
@@ -103,13 +119,11 @@ function verifyAndClaimBonus(token) {
     };
   }
 
-  claimedTokens.add(token);
-  if (claimedTokens.size > 5000) {
-    claimedTokens.clear();
-  }
-
-  // Recompensa específica por tipo de ação
+  // 1. Recompensa do Chefão do Bosque (gloom_boss)
   if (data.action === 'gloom_boss') {
+    claimedTokens.add(token);
+    if (claimedTokens.size > 5000) claimedTokens.clear();
+
     const { unlockBossExtraAttack } = require('./gloomRealm');
     unlockBossExtraAttack(data.userId);
     const message = isEn
@@ -125,30 +139,58 @@ function verifyAndClaimBonus(token) {
     };
   }
 
-  // Recompensas da economia padrão (bônus geral e biscoito da sorte)
-  addCoins(data.userId, 75);
-  addMagicBeans(data.userId, 1);
-  addItem(data.userId, 'bau_madeira', 1);
-
-  let message;
+  // 2. Recompensa do Biscoito da Sorte (cookie_bonus)
   if (data.action === 'cookie_bonus') {
+    claimedTokens.add(token);
+    if (claimedTokens.size > 5000) claimedTokens.clear();
+
     const { grantExtraCookie } = require('./cookie');
     grantExtraCookie(data.userId);
-    message = isEn
-      ? '🥠 **Extra Fortune Cookie Unlocked!** You received **+75 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦**!'
-      : '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você recebeu **+75 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦**!';
-  } else {
-    message = isEn
-      ? '🎁 **Bonus Claimed!** You received **+75 Coins 🪙**, **+1 Magic Bean 🌱** and **1x Rustic Chest 📦** in your inventory!'
-      : '🎁 **Bônus Resgatado com Sucesso!** Você recebeu **+75 Moedinhas 🪙**, **+1 Feijão Mágico 🌱** e **1x Baú Rústico 📦** na sua mochila!';
+    addCoins(data.userId, 25);
+    const message = isEn
+      ? '🥠 **Extra Fortune Cookie Unlocked!** You received **+25 Coins 🪙** and 1 extra fortune cookie spin!'
+      : '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você recebeu **+25 Moedinhas 🪙** e 1 giro adicional no biscoito!';
+
+    return {
+      success: true,
+      action: data.action,
+      userId: data.userId,
+      coinsAwarded: 25,
+      beansAwarded: 0,
+      message,
+    };
   }
+
+  // 3. Bônus Diário Web Padrão (item_bonus) — 1 vez ao dia (24h), apenas moedas
+  const status = getWebBonusStatus(data.userId, now);
+  if (!status.available) {
+    return {
+      success: false,
+      error: isEn
+        ? 'You have already claimed your daily web bonus today! Please wait 24 hours.'
+        : 'Você já resgatou seu bônus diário na web hoje! Aguarde 24 horas.',
+    };
+  }
+
+  claimedTokens.add(token);
+  if (claimedTokens.size > 5000) claimedTokens.clear();
+
+  addCoins(data.userId, 75);
+  const { updateUserAccount } = require('./economy');
+  updateUserAccount(data.userId, (acc) => {
+    acc.lastWebBonusAt = new Date(now).toISOString();
+  });
+
+  const message = isEn
+    ? '🎁 **Daily Web Bonus Claimed!** You received **+75 Coins 🪙** in your vault!'
+    : '🎁 **Bônus Diário Web Resgatado!** Você recebeu **+75 Moedinhas 🪙** no seu cofre!';
 
   return {
     success: true,
     action: data.action,
     userId: data.userId,
     coinsAwarded: 75,
-    beansAwarded: 1,
+    beansAwarded: 0,
     message,
   };
 }
@@ -156,6 +198,8 @@ function verifyAndClaimBonus(token) {
 module.exports = {
   BONUS_SECRET,
   MIN_WAIT_SECONDS,
+  WEB_BONUS_COOLDOWN_MS,
+  getWebBonusStatus,
   createBonusSession,
   verifyAndClaimBonus,
 };

@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 
-const { createBonusSession, verifyAndClaimBonus, BONUS_SECRET } = require('../src/services/bonusTimer');
+const { createBonusSession, verifyAndClaimBonus, getWebBonusStatus, BONUS_SECRET } = require('../src/services/bonusTimer');
 const { getUserInventory } = require('../src/services/inventory');
 const { getUserAccount } = require('../src/services/economy');
 
@@ -32,18 +32,28 @@ try {
   const claimRes = verifyAndClaimBonus(validToken);
   assert.equal(claimRes.success, true, 'Resgate com tempo válido deve ser aprovado.');
   assert.equal(claimRes.coinsAwarded, 75, 'Deve conceder 75 moedas.');
-  assert.equal(claimRes.beansAwarded, 1, 'Deve conceder 1 feijão mágico.');
+  assert.equal(claimRes.beansAwarded, 0, 'Não deve conceder feijão mágico.');
 
   const invUser = getUserInventory(testUserBonus);
-  assert.equal(invUser.bau_madeira, 1, 'Mochila do usuário deve conter 1x Baú Rústico.');
+  assert.equal(invUser.bau_madeira || 0, 0, 'Mochila não deve receber baú de brinde.');
 
   const accUser = getUserAccount(testUserBonus);
   assert.equal(accUser.coins, 75, 'Usuário deve ter recebido 75 moedas.');
-  assert.equal(accUser.magicBeans, 1, 'Usuário deve ter recebido 1 feijão mágico.');
+  assert.equal(accUser.magicBeans || 0, 0, 'Usuário não deve ter recebido feijão mágico.');
+  assert.ok(accUser.lastWebBonusAt, 'Data do último bônus web deve ser registrada.');
 
-  // 4. Teste de anti-replay (não permite reutilizar o mesmo token)
-  const doubleClaim = verifyAndClaimBonus(validToken);
-  assert.equal(doubleClaim.success, false, 'Reutilizar o mesmo token deve ser rejeitado (anti-replay).');
+  // 4. Teste de Cooldown de 24h para o Bônus Web Diário
+  const cooldownStatus = getWebBonusStatus(testUserBonus);
+  assert.equal(cooldownStatus.available, false, 'Bônus web deve entrar em cooldown de 24h após resgate.');
+
+  const nextNonce = crypto.randomBytes(8).toString('hex');
+  const nextPayload = JSON.stringify({ userId: testUserBonus, action: 'item_bonus', metadata: {}, createdAt: pastCreatedAt, nonce: nextNonce, lang: 'pt' });
+  const nextHmac = crypto.createHmac('sha256', BONUS_SECRET).update(nextPayload).digest('hex');
+  const nextToken = Buffer.from(JSON.stringify({ payload: nextPayload, sig: nextHmac })).toString('base64url');
+
+  const cooldownClaim = verifyAndClaimBonus(nextToken);
+  assert.equal(cooldownClaim.success, false, 'Tentativa de resgate em cooldown deve ser rejeitada.');
+  assert.ok(cooldownClaim.error.includes('já resgatou seu bônus diário'), 'Mensagem de erro deve alertar cooldown.');
 
   // 5. Teste de bônus de biscoito da sorte (cookie_bonus)
   const userCookie = `user_cookie_${testRunId}`;
@@ -79,7 +89,7 @@ try {
   const fakeRes = verifyAndClaimBonus(fakeToken);
   assert.equal(fakeRes.success, false, 'Token inválido deve ser rejeitado.');
 
-  console.log('Verificação da Página de Bônus da Pyxie (HMAC, Timer 10s, Moedas, Feijão e Baú): OK');
+  console.log('Verificação da Página de Bônus da Pyxie (HMAC, Timer 10s, Cooldown 24h, Apenas Moedas): OK');
 } finally {
   const cleanFiles = [
     path.join(__dirname, '..', 'data', 'inventory.json'),

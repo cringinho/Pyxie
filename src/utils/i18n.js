@@ -205,7 +205,7 @@ const TRANSLATIONS = {
       "voteWeekdayBonus": "<a:qbgifts48:1548444204202459136> **BÔNUS EXTRA NO TOP.GG (A CADA 12H):**\n> Vote no **Top.gg** e ganhe **+50 Moedas** e **🟣 1x Ametista Reluzente** *(com dobro nos fins de semana!)*",
       "btnLabel": "Resgatar Bônus no Top.gg",
       "btnLabelCooldown": "Votar no Top.gg (Recompensa Extra)",
-      "btnWebBonus": "⚡ Bônus Web (+75🪙 & 📦)",
+      "btnWebBonus": "⚡ Bônus Web (+75🪙)",
       "footer": "Recompensa renovada a cada 24 horas",
       "footerCooldown": "Voto no Top.gg disponível a cada 12 horas"
     },
@@ -721,7 +721,7 @@ const TRANSLATIONS = {
       "voteWeekdayBonus": "<a:qbgifts48:1548444204202459136> **EXTRA TOP.GG BONUS (EVERY 12H):**\n> Vote on **Top.gg** and get **+50 Coins** and **🟣 1x Shimmering Amethyst** *(doubled on weekends!)*",
       "btnLabel": "Claim Bonus on Top.gg",
       "btnLabelCooldown": "Vote on Top.gg (Extra Reward)",
-      "btnWebBonus": "⚡ Web Bonus (+75🪙 & 📦)",
+      "btnWebBonus": "⚡ Web Bonus (+75🪙)",
       "footer": "Reward resets every 24 hours",
       "footerCooldown": "Top.gg voting available every 12 hours"
     },
