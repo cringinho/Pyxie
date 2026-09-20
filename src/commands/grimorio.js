@@ -119,7 +119,7 @@ function buildFusionMenuView(userId, source = null, feedbackMessage = '') {
   const options = collected.map((sp) => {
     const spName = isEn ? sp.name.en : sp.name.pt;
     return {
-      label: spName.slice(0, 25),
+      label: spName.slice(0, 100),
       value: sp.id,
       description: `Tier ${sp.tier} • ${sp.rarity.toUpperCase()}`,
       emoji: '🔮',

@@ -86,8 +86,8 @@ function buildShopComponents(currentCategory = 'bau', userId = '', source = null
       .setPlaceholder(t('shop.buySelectPlaceholder', source))
       .addOptions(
         items.map((i) => ({
-          label: `${i.name} (${formatCoins(i.buyPrice, source)})`,
-          description: (i.description || '').slice(0, 45),
+          label: `${i.name} (${formatCoins(i.buyPrice, source)})`.slice(0, 100),
+          description: (i.description || '').slice(0, 100),
           value: i.id,
           emoji: i.emoji,
         }))

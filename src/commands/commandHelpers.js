@@ -365,7 +365,7 @@ function buildModularHelpComponents(currentModuleId = 'todos', userId = '', sour
         label: m.label,
         value: m.id,
         emoji: m.emoji,
-        description: (m.desc || '').slice(0, 50),
+        description: (m.desc || '').slice(0, 100),
         default: m.id === currentModuleId,
       }))
     );

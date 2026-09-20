@@ -120,9 +120,9 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
         const rName = rDef ? (isEn ? rDef.name.en : rDef.name.pt) : relicId;
         const rDesc = rDef ? (isEn ? rDef.desc.en : rDef.desc.pt) : '';
         return {
-          label: `${rName} (x${count})`,
+          label: `${rName} (x${count})`.slice(0, 100),
           value: `${relicId}:bosque`,
-          description: rDesc.slice(0, 50),
+          description: rDesc.slice(0, 100),
           emoji: '🏺',
           default: relicId === selectedItemId,
         };
@@ -196,9 +196,9 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
   const selectOptions = socialEntries.slice(0, 25).map(([itemId, count]) => {
     const item = getItemDefinition(itemId);
     return {
-      label: `${item ? item.name : itemId} (x${count})`,
+      label: `${item ? item.name : itemId} (x${count})`.slice(0, 100),
       value: `${itemId}:social`,
-      description: item ? item.description.slice(0, 50) : `Quantidade: ${count}`,
+      description: item ? (item.description || '').slice(0, 100) : `Quantidade: ${count}`,
       emoji: item ? item.emoji : '📦',
       default: itemId === selectedItemId,
     };

@@ -136,7 +136,7 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
     const locEmojiKey = LOCATION_EMOJIS[n.location.id] || 'PORTAL';
     const btn = new ButtonBuilder()
       .setCustomId(`gloom:move:${userId}:${n.location.id}`)
-      .setLabel(`${destName.slice(0, 24)} (T${n.location.tier})`)
+      .setLabel(`${destName} (T${n.location.tier})`.slice(0, 80))
       .setStyle(n.canEnter ? ButtonStyle.Success : ButtonStyle.Secondary)
       .setDisabled(!n.canEnter)
       .setEmoji(getEmoji(locEmojiKey));
@@ -144,7 +144,7 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
     if (n.reason === 'banned') {
       btn.setEmoji(getEmoji('ALERT'));
       btn.setStyle(ButtonStyle.Danger);
-      btn.setLabel(`${destName.slice(0, 18)} (T${n.location.tier}) [${n.banRemainingMinutes}m]`);
+      btn.setLabel(`${destName} (T${n.location.tier}) [${n.banRemainingMinutes}m]`.slice(0, 80));
     } else if (!n.canEnter) {
       btn.setEmoji('🔒');
     }
@@ -424,7 +424,7 @@ function buildMerchantView(userId, stock, source = null, feedbackMessage = '') {
     const rName = isEn ? relic.name.en : relic.name.pt;
     return new ButtonBuilder()
       .setCustomId(`gloom:merchant_buy:${userId}:${relic.id}:${stockIds}`)
-      .setLabel(t('gloom.merchant.btnBuy', source, { item: rName.slice(0, 18), cost: relic.cost }))
+      .setLabel(t('gloom.merchant.btnBuy', source, { item: rName.slice(0, 50), cost: relic.cost }).slice(0, 80))
       .setStyle(ButtonStyle.Success)
       .setDisabled(user.phantomCoins < relic.cost);
   });
