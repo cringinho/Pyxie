@@ -148,66 +148,97 @@ O Tier define exclusivamente o intelecto, a intolerância a erros e a gravidade 
 - **-1**: Desagrado leve / perda de paciência.  
 - **-2**: Falha crítica / insulto imperdoável (abandono do encontro ou retaliação).
 
-### 5.7. Esquema de Saída (STRICT JSON ONLY)
+### 5.7. Esquema Implementado em Produção (Schema V2 — Bilíngue PT/EN)
 
-Você DEVE retornar exclusivamente código JSON estruturado conforme o schema abaixo, sem formatações Markdown adicionais, explicações prévias ou comentários posteriores:
+O arquivo de dados estático em produção (`src/data/encounters.json` e `data/encounters.json`) implementa a especificação final V2 com **100% de paridade bilíngue** e restrições estritas de tamanho e economia:
 
 ```json
 {
   "batch_metadata": {
-    "temperament": "string",
-    "tier": 1,
-    "batch_size": 10
+    "version": "2.0",
+    "total_encounters": 24,
+    "tiers": [1, 2, 3, 4, 5],
+    "generated_at": "2026-09-20T14:11:33.455Z"
   },
   "encounters": [
     {
-      "id": "enc_t1_01",
+      "id": "enc_t1_espectro_baixo_astral",
       "tier": 1,
-      "creature_concept": "Conceito livre da criatura (ex: fadinha mecânica, demônio de lampião, olho flutuante)",
-      "situational_context": "vulneravel | espreita | flagrado",
-      "text_box_scene": "Caixa de texto descritiva estilo RPG Maker/Pokémon (máx 140 chars).",
-      "mood_note": "Ação corporal, olhar ou pulso de energia imediato.",
-      "monster_dialogue": "Fala ácida/marcante da criatura no balão de texto.",
+      "is_cataloged": true,
+      "monster_id": "espectro_baixo_astral",
+      "creature_concept": {
+        "pt": "Espectro melancólico envolto em névoa cinzenta e fones de ouvido",
+        "en": "Melancholic wraith draped in grey mist and vintage headphones"
+      },
+      "temperament": "timido",
+      "situational_context": "flagrado",
+      "text_box_scene": {
+        "pt": "Uma névoa fria se condensa sobre uma lápide quebrada. Uma figura translúcida escuta estática.",
+        "en": "Cold mist settles upon a shattered tombstone. A translucent figure listens to white noise."
+      },
+      "mood_note": {
+        "pt": "Suspira profundamente e ajusta os fones desgastados.",
+        "en": "Heaves a deep sigh and adjusts worn headphones."
+      },
+      "monster_dialogue": {
+        "pt": "A existência pesa... Você também acha tudo sem sentido?",
+        "en": "Existence is heavy... Do you also find it meaningless?"
+      },
       "options": [
         {
           "id": "opt_1",
-          "text": "Texto do botão de escolha do jogador (máx 80 chars).",
-          "tone": "rational | arrogant | flattery | chaotic | submissive | bribe",
+          "text": {
+            "pt": "🖤 O vazio dói, mas me acostumei com a dor.",
+            "en": "🖤 The void aches, but I got used to it."
+          },
+          "tone": "rational",
           "success_chance_modifier": 1,
-          "success_dialogue": "Resposta da criatura caso a atitude agrade.",
-          "failure_dialogue": "Resposta da criatura caso reprove a atitude."
-        },
-        {
-          "id": "opt_2",
-          "text": "Texto do segundo botão (máx 80 chars).",
-          "tone": "rational | arrogant | flattery | chaotic | submissive | bribe",
-          "success_chance_modifier": -1,
-          "success_dialogue": "...",
-          "failure_dialogue": "..."
-        },
-        {
-          "id": "opt_3",
-          "text": "Texto do terceiro botão (máx 80 chars).",
-          "tone": "rational | arrogant | flattery | chaotic | submissive | bribe",
-          "success_chance_modifier": 0,
-          "success_dialogue": "...",
-          "failure_dialogue": "..."
+          "success_dialogue": {
+            "pt": "Pelo menos alguém entende o peso do silêncio...",
+            "en": "At least someone understands the weight of silence..."
+          },
+          "failure_dialogue": {
+            "pt": "Palavras vazias... você nem sabe o que é dor.",
+            "en": "Empty words... you do not know real pain."
+          }
         }
       ],
       "extortion_phase": {
-        "demand_type": "gold | item | food | favor | soul_vow",
-        "amount_or_item": "Exigência calibrada rigorosamente ao Tier.",
-        "demand_dialogue": "Fala exigindo o tributo na caixa de texto para formalizar o pacto."
+        "demand_type": "phantom_coins",
+        "amount_or_item": 20,
+        "demand_dialogue": {
+          "pt": "Se quer minha presença melancólica, deixe 20 Phantom Coins para minhas fitas...",
+          "en": "If you seek my sorrowful presence, spare 20 Phantom Coins for my tapes..."
+        }
       }
     }
   ]
 }
 ```
 
-### 5.8. Guia Operacional de Solicitação (User Prompt Template)
+---
 
-Para acionar a geração de lotes no chat, utilize comandos estruturados neste padrão:
+## 6. Resumo Operacional do Módulo em Produção
 
-**Solicitação de Exemplo:**
+### 6.1. Tabela de 24 Encontros Estáticos
+- **14 Espíritos Catalogados**: Mapeados 1:1 com os 14 monstros oficiais do Grimório (`espectro_baixo_astral`, `gargula_procrastinador`, `fada_desencantada`, `morcego_shoegaze`, `corvo_poeta`, `banshee_descarregada`, `lobisomem_introvertido`, `esqueleto_allstar`, `lorde_apatia`, `quimera_madrugada`, `cavaleiro_nevoa`, `sucubo_tedio`, `fenix_cinzas`, `sombra_ancestral`).
+- **10 Criaturas Errantes**: Distribuídas entre Tiers 1 e 5 (incluindo soberanos de Tier 5 como o `enc_t5_arquiteto_vazio` e `enc_t5_deusa_engrenagens`).
+- **Rótulos de Botão**: Validados rigorosamente com `<= 60 caracteres` em português e inglês para evitar cortes ou quebras no cliente Discord.
+- **Tributos / Extorsão**: Restritos estritamente ao isolamento econômico (`phantom_coins`, `energy` ou `relic`).
 
-*"Gere um lote de 10 encontros de Tier [1 a 5] com temperamento [orgulhoso / sadico / timido / caotico / pragmatico / ganancioso]. Alterne as situações de encontro e explore conceitos livres de criaturas compatíveis com a dificuldade do Tier."*
+### 6.2. Armazenamento Atômico de Banimentos de Sala
+- Armazenado no perfil do usuário em `data/gloom.json` sob a chave atômica `user.room_cooldowns[locationId] = expiresAt` (com ponte compatível em `user.roomBans`).
+- **Duração por Tier**: Tier 1: 30min | Tier 2: 1h | Tier 3: 2h | Tier 4: 3h | Tier 5: 4h.
+- **Bloqueio de Movimento**: Ao tentar entrar em uma sala bloqueada (via botão, slash `/py-explore destination:<sala>` ou prefixo `py!explorar <sala>`), o usuário recebe um aviso sarcástico informando o tempo restante.
+- **Bloqueio de Vasculhar**: Se forçado a vasculhar na sala banida, o comando rejeita a ação e exibe mensagem de expulsão imediata.
+
+### 6.3. Eventos Raros ao Vasculhar (3% a 5%)
+- **Comerciante de Relíquias**: Apresenta estoque dinâmico de 3 relíquias (Tiers 1 a 5) compráveis por Phantom Coins 👻.
+- **Engenheiro de Relíquias**: Permite fusão de 2 relíquias idênticas para subir de Tier, com 25% de falha no Tier 4 e 50% no Tier 5 (destruindo os materiais sacrificados com frases de deboche).
+
+### 6.4. Comandos Diretos
+- `/py-explore` ou `py!explorar`: Abre a visualização interativa do cenário atual com botões e imagem anexada.
+- `/py-explore destination:<sala>` ou `py!explorar <sala>`: Tenta movimentação direta verificando adjacência no grafo, marés e banimentos.
+- `py!vasculhar` ou `py!scavenge`: Executa diretamente a busca por recursos, itens e encontros sem necessidade de navegar pelo menu.
+- `/py-grimoire` ou `py!grimorio`: Abre a gestão de familiares equipados, auras ativas e caldeirão de fusão de almas.
+

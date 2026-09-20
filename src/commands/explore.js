@@ -75,11 +75,11 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
       `*« ${locationDesc} »*\n\n` +
       `${t('gloom.explore.stamina', source, { current: user.energy, max: 10 })}\n` +
       `${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}\n` +
-      `🌊 **${isEn ? 'Gloom Tide:' : 'Maré da Penumbra:'}** \`${tideName}\`\n\n` +
+      `${t('gloom.explore.tideLabel', source, { tide: tideName })}\n\n` +
       `${t('gloom.explore.tracesHeader', source)}\n${tracesText}`
     )
     .setImage(`attachment://${location.image}`)
-    .setFooter({ text: isEn ? "Pyxie's Grove • Pyxie" : 'Bosque da Pyxie • Pyxie' })
+    .setFooter({ text: t('gloom.footer', source) })
     .setTimestamp();
 
   // Linha 1: Ações Principais
@@ -134,40 +134,104 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
   return { embeds: [embed], files: [attachment], components };
 }
 
-function buildNegotiationView(userId, spirit, source = null) {
+function buildNegotiationView(userId, spirit, source = null, encounter = null) {
   const lang = getLanguage(source);
   const isEn = lang === 'en';
-  const spiritName = isEn ? spirit.name.en : spirit.name.pt;
-  const question = isEn ? spirit.dialogue.question.en : spirit.dialogue.question.pt;
   const user = getGloomUser(userId);
+
+  const spiritName = encounter
+    ? (isEn ? encounter.creature_concept?.en : encounter.creature_concept?.pt)
+    : (isEn ? spirit?.name?.en : spirit?.name?.pt);
+
+  const question = encounter
+    ? (isEn ? encounter.monster_dialogue?.en : encounter.monster_dialogue?.pt)
+    : (isEn ? spirit?.dialogue?.question?.en : spirit?.dialogue?.question?.pt);
+
+  const sceneText = encounter
+    ? (isEn ? encounter.text_box_scene?.en : encounter.text_box_scene?.pt)
+    : null;
+
+  const moodNote = encounter
+    ? (isEn ? encounter.mood_note?.en : encounter.mood_note?.pt)
+    : null;
+
+  const descParts = [];
+  if (sceneText) {
+    descParts.push(`*« ${sceneText} »*\n`);
+  }
+  descParts.push(`> 💬 **"${question}"**`);
+  if (moodNote) {
+    descParts.push(`> 🎭 *${moodNote}*`);
+  }
+  descParts.push(`\n🪙 ${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}`);
 
   const embed = new EmbedBuilder()
     .setColor(PYXIE_COLORS.neonPink)
     .setTitle(t('gloom.negotiate.title', source, { name: spiritName }))
-    .setDescription(
-      `> 💬 **"${question}"**\n\n` +
-      `🪙 ${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}`
-    )
-    .setFooter({ text: isEn ? 'Atlus Spirit Negotiation • Pyxie' : 'Negociação de Almas • Pyxie' })
+    .setDescription(descParts.join('\n'))
+    .setFooter({ text: t('gloom.negotiate.footer', source) })
     .setTimestamp();
 
-  // Botões com as escolhas de diálogo
-  const choiceButtons = spirit.dialogue.choices.map((c) => {
-    const label = isEn ? c.label.en : c.label.pt;
+  // Opções de Diálogo (Encounter ou Spirit)
+  const choices = (encounter && Array.isArray(encounter.options))
+    ? encounter.options
+    : (spirit?.dialogue?.choices || []);
+
+  const encounterTag = encounter?.id || 'none';
+  const spiritTag = spirit?.id || 'errante';
+
+  const choiceButtons = choices.map((c) => {
+    const rawLabel = isEn ? (c.text?.en || c.label?.en) : (c.text?.pt || c.label?.pt);
+    const label = (rawLabel || '...').slice(0, 60);
     return new ButtonBuilder()
-      .setCustomId(`gloom:choice:${userId}:${spirit.id}:${c.id}`)
-      .setLabel(label.slice(0, 80))
+      .setCustomId(`gloom:choice:${userId}:${spiritTag}:${c.id}:${encounterTag}`)
+      .setLabel(label)
       .setStyle(ButtonStyle.Primary);
   });
 
   const row1 = new ActionRowBuilder().addComponents(choiceButtons.slice(0, 3));
 
-  const row2 = new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setCustomId(`gloom:bribe:${userId}:${spirit.id}`)
-      .setLabel(t('gloom.negotiate.btnBribe', source, { cost: spirit.dialogue.bribeCost }))
+  // Botão de Extorsão / Suborno
+  let bribeBtn;
+  if (encounter?.extortion_phase) {
+    const ext = encounter.extortion_phase;
+    if (ext.demand_type === 'phantom_coins') {
+      const cost = typeof ext.amount_or_item === 'number' ? ext.amount_or_item : 25;
+      bribeBtn = new ButtonBuilder()
+        .setCustomId(`gloom:bribe:${userId}:${spiritTag}:${encounterTag}`)
+        .setLabel(t('gloom.negotiate.demandCoins', source, { cost }))
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(user.phantomCoins < cost);
+    } else if (ext.demand_type === 'energy') {
+      const amount = typeof ext.amount_or_item === 'number' ? ext.amount_or_item : 1;
+      bribeBtn = new ButtonBuilder()
+        .setCustomId(`gloom:bribe:${userId}:${spiritTag}:${encounterTag}`)
+        .setLabel(t('gloom.negotiate.demandEnergy', source, { amount }))
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(user.energy < amount);
+    } else if (ext.demand_type === 'relic') {
+      const relicId = ext.amount_or_item;
+      const relicName = isEn ? (RELICS[relicId]?.name?.en || relicId) : (RELICS[relicId]?.name?.pt || relicId);
+      const hasRelic = Boolean(user.inventory && user.inventory[relicId] > 0);
+      bribeBtn = new ButtonBuilder()
+        .setCustomId(`gloom:bribe:${userId}:${spiritTag}:${encounterTag}`)
+        .setLabel(t('gloom.negotiate.demandRelic', source, { relic: relicName.slice(0, 20) }))
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(!hasRelic);
+    }
+  }
+
+  if (!bribeBtn) {
+    const cost = spirit?.dialogue?.bribeCost || 25;
+    bribeBtn = new ButtonBuilder()
+      .setCustomId(`gloom:bribe:${userId}:${spiritTag}:${encounterTag}`)
+      .setLabel(t('gloom.negotiate.btnBribe', source, { cost }))
       .setStyle(ButtonStyle.Success)
-      .setDisabled(user.phantomCoins < spirit.dialogue.bribeCost),
+      .setDisabled(user.phantomCoins < cost);
+  }
+
+  const row2 = new ActionRowBuilder().addComponents(
+    bribeBtn,
     new ButtonBuilder()
       .setCustomId(`gloom:flee:${userId}`)
       .setLabel(t('gloom.negotiate.btnFlee', source))
@@ -196,10 +260,10 @@ function buildBossView(userId, source = null, feedbackMessage = '') {
       `${feedbackMessage ? `**${feedbackMessage}**\n\n` : ''}` +
       `${t('gloom.boss.desc', source)}\n\n` +
       `${t('gloom.boss.hpBar', source, { currentHp: boss.currentHp, maxHp: boss.maxHp, percent })}\n\n` +
-      `🛡️ **${isEn ? 'Your Damage Dealt:' : 'Seu Dano Total:'}** \`${participant.damageDealt}\`\n` +
+      `${t('gloom.boss.yourDamage', source, { damage: participant.damageDealt })}\n` +
       `🪙 ${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}`
     )
-    .setFooter({ text: isEn ? 'Community World Boss • Pyxie' : 'Chefão Comunitário • Pyxie' })
+    .setFooter({ text: t('gloom.boss.footer', source) })
     .setTimestamp();
 
   const buttons = [];
@@ -260,7 +324,7 @@ function buildMerchantView(userId, stock, source = null, feedbackMessage = '') {
         return `> 🏺 **${rName}** (Tier ${relic.tier}) — \`${relic.cost}👻\`\n> *« ${rDesc} »*`;
       }).join('\n\n')
     )
-    .setFooter({ text: isEn ? "Pyxie's Grove • Relic Merchant" : 'Bosque da Pyxie • Comerciante de Relíquias' })
+    .setFooter({ text: t('gloom.merchant.footer', source) })
     .setTimestamp();
 
   const buyButtons = stock.map((relic) => {
@@ -304,9 +368,13 @@ function buildEngineerView(userId, source = null, feedbackMessage = '') {
     return t('gloom.engineer.recipeLine', source, { tier, nextTier, cost, rate });
   }).join('\n');
 
-  const myRelicsText = isEn
-    ? `📦 **Your Relics by Tier:** T1: \`${countsByTier[1]}\` | T2: \`${countsByTier[2]}\` | T3: \`${countsByTier[3]}\` | T4: \`${countsByTier[4]}\` | T5: \`${countsByTier[5]}\``
-    : `📦 **Suas Relíquias por Tier:** T1: \`${countsByTier[1]}\` | T2: \`${countsByTier[2]}\` | T3: \`${countsByTier[3]}\` | T4: \`${countsByTier[4]}\` | T5: \`${countsByTier[5]}\``;
+  const myRelicsText = t('gloom.engineer.myRelics', source, {
+    t1: countsByTier[1],
+    t2: countsByTier[2],
+    t3: countsByTier[3],
+    t4: countsByTier[4],
+    t5: countsByTier[5],
+  });
 
   const embed = new EmbedBuilder()
     .setColor('#8b5cf6')
@@ -319,7 +387,7 @@ function buildEngineerView(userId, source = null, feedbackMessage = '') {
       `${t('gloom.engineer.recipesHeader', source)}\n` +
       recipeLines
     )
-    .setFooter({ text: isEn ? "Pyxie's Grove • Relic Engineer" : 'Bosque da Pyxie • Engenheiro de Relíquias' })
+    .setFooter({ text: t('gloom.engineer.footer', source) })
     .setTimestamp();
 
   const upgradeButtons = [1, 2, 3, 4].map((tier) => {
@@ -409,7 +477,7 @@ async function handleGloomInteraction(interaction) {
 
     if (result.encounteredSpirit) {
       await interaction.deferUpdate();
-      const negView = buildNegotiationView(interaction.user.id, result.encounteredSpirit, interaction);
+      const negView = buildNegotiationView(interaction.user.id, result.encounteredSpirit, interaction, result.encounteredEncounter);
       return interaction.editReply(negView);
     }
 
@@ -456,18 +524,27 @@ async function handleGloomInteraction(interaction) {
   if (action === 'choice') {
     const spiritId = parts[3];
     const choiceId = parts[4];
-    const result = negotiateSpirit(interaction.user.id, spiritId, choiceId, false);
-    const spiritName = isEn ? result.spirit.name.en : result.spirit.name.pt;
+    const encounterTag = parts[5] && parts[5] !== 'none' ? parts[5] : null;
+    const result = negotiateSpirit(interaction.user.id, spiritId, choiceId, false, encounterTag);
+    const spiritName = isEn ? (result.spirit?.name?.en || result.spirit?.name) : (result.spirit?.name?.pt || result.spirit?.name);
+
+    const reactionObj = result.recruited
+      ? (result.choice?.success_dialogue || result.choice?.monster_reaction)
+      : (result.choice?.failure_dialogue || result.choice?.monster_reaction);
+    const rawReaction = reactionObj
+      ? (isEn ? (reactionObj.en || reactionObj.pt) : (reactionObj.pt || reactionObj.en))
+      : null;
+    const reactionPrefix = rawReaction ? `> 🗣️ *« "${rawReaction}" »*\n\n` : '';
 
     let text = '';
     if (result.recruited) {
-      text = t('gloom.negotiate.successWit', interaction, { spirit: spiritName, coins: result.rewardCoins });
+      text = reactionPrefix + t('gloom.negotiate.successWit', interaction, { spirit: spiritName, coins: result.rewardCoins });
     } else if (result.criticalFailure) {
       const loc = LOCATIONS[result.bannedLocation] || LOCATIONS.portao_penumbra;
       const locName = isEn ? loc.name.en : loc.name.pt;
-      text = t('gloom.negotiate.criticalFailure', interaction, { location: locName, time: result.banDurationMinutes });
+      text = reactionPrefix + t('gloom.negotiate.criticalFailure', interaction, { location: locName, time: result.banDurationMinutes });
     } else {
-      text = t('gloom.negotiate.failed', interaction, { spirit: spiritName });
+      text = reactionPrefix + t('gloom.negotiate.failed', interaction, { spirit: spiritName });
     }
 
     await interaction.deferUpdate();
@@ -524,14 +601,18 @@ async function handleGloomInteraction(interaction) {
   // 4. Suborno de Espírito
   if (action === 'bribe') {
     const spiritId = parts[3];
-    const result = negotiateSpirit(interaction.user.id, spiritId, null, true);
-    const spiritName = isEn ? result.spirit.name.en : result.spirit.name.pt;
+    const encounterTag = parts[4] && parts[4] !== 'none' ? parts[4] : null;
+    const result = negotiateSpirit(interaction.user.id, spiritId, null, true, encounterTag);
+    const spiritName = isEn ? (result.spirit?.name?.en || result.spirit?.name) : (result.spirit?.name?.pt || result.spirit?.name);
 
     let text = '';
     if (result.success) {
-      text = t('gloom.negotiate.successBribe', interaction, { spirit: spiritName, cost: result.spirit.dialogue.bribeCost });
+      const cost = result.encounter?.extortion_phase?.demand_type === 'phantom_coins'
+        ? (result.encounter.extortion_phase.amount_or_item || 25)
+        : (result.spirit?.dialogue?.bribeCost || 25);
+      text = t('gloom.negotiate.successBribe', interaction, { spirit: spiritName, cost });
     } else {
-      text = t('gloom.explore.insufficientCoins', interaction, { cost: result.cost });
+      text = t('gloom.explore.insufficientCoins', interaction, { cost: result.cost || 25 });
     }
 
     await interaction.deferUpdate();
@@ -542,7 +623,7 @@ async function handleGloomInteraction(interaction) {
   // 5. Fugir da negociação
   if (action === 'flee') {
     await interaction.deferUpdate();
-    const locView = buildLocationView(interaction.user.id, guildId, interaction, isEn ? '🏃 You slipped away into the shadows.' : '🏃 Você se esgueirou de volta pelas sombras.');
+    const locView = buildLocationView(interaction.user.id, guildId, interaction, t('gloom.negotiate.fled', interaction));
     return interaction.editReply(locView);
   }
 
@@ -694,6 +775,112 @@ async function handleGloomInteraction(interaction) {
   }
 }
 
+function resolveLocationId(input) {
+  if (!input) return null;
+  const clean = String(input).toLowerCase().trim().replace(/^py-/, '').replace(/\s+/g, '_');
+  if (LOCATIONS[clean]) return clean;
+  for (const [key, loc] of Object.entries(LOCATIONS)) {
+    if (key.toLowerCase() === clean) return key;
+    if (loc.name.pt.toLowerCase() === input.toLowerCase().trim() ||
+        loc.name.en.toLowerCase() === input.toLowerCase().trim() ||
+        loc.name.pt.toLowerCase().replace(/\s+/g, '_') === clean ||
+        loc.name.en.toLowerCase().replace(/\s+/g, '_') === clean) {
+      return key;
+    }
+  }
+  return null;
+}
+
+function handleDirectMove(userId, guildId, source, destinationInput) {
+  const targetLocId = resolveLocationId(destinationInput);
+  if (!targetLocId) {
+    return { content: t('gloom.explore.directMoveNotFound', source, { destination: destinationInput }) };
+  }
+
+  const user = getGloomUser(userId);
+  if (user.currentLocation === targetLocId) {
+    return buildLocationView(userId, guildId, source);
+  }
+
+  // 1. Verifica banimento temporário na sala de destino
+  const banStatus = isLocationBanned(user, targetLocId);
+  if (banStatus.banned) {
+    const reasonText = t('gloom.explore.reasons.banned', source, { time: banStatus.remainingMinutes });
+    return { content: t('gloom.explore.travelLocked', source, { reason: reasonText }) };
+  }
+
+  // 2. Verifica vizinhança e marés
+  const tide = getGloomTide();
+  const neighbors = gloomGraph.getAvailableNeighbors(user.currentLocation, user, tide);
+  const targetNeighbor = neighbors.find((n) => n.location.id === targetLocId);
+
+  if (!targetNeighbor) {
+    const isEn = getLanguage(source) === 'en';
+    const notAdj = isEn ? 'This chamber is not directly adjacent to your current location.' : 'Esta câmara não é adjacente à sua localização atual.';
+    return { content: t('gloom.explore.travelLocked', source, { reason: notAdj }) };
+  }
+
+  if (!targetNeighbor.canEnter) {
+    const reasonKey = targetNeighbor.reason || 'locked_tide';
+    const reasonText = reasonKey === 'banned'
+      ? t('gloom.explore.reasons.banned', source, { time: targetNeighbor.banRemainingMinutes || 30 })
+      : (t(`gloom.explore.reasons.${reasonKey}`, source) || 'Bloqueado.');
+    return { content: t('gloom.explore.travelLocked', source, { reason: reasonText }) };
+  }
+
+  user.currentLocation = targetLocId;
+  user.visitedLocations = user.visitedLocations || [];
+  if (!user.visitedLocations.includes(targetLocId)) {
+    user.visitedLocations.push(targetLocId);
+  }
+  user.temporaryPortalOpen = false;
+
+  const { updateGloomUser } = require('../services/gloomRealm');
+  updateGloomUser(userId, user);
+
+  return buildLocationView(userId, guildId, source);
+}
+
+function handleDirectVasculhar(userId, guildId, source) {
+  const user = getGloomUser(userId);
+  const result = forage(userId, user.currentLocation);
+  const lang = getLanguage(source);
+  const isEn = lang === 'en';
+
+  if (!result.success) {
+    if (result.reason === 'room_banned') {
+      return { content: t('gloom.explore.roomBanned', source, { time: result.banRemainingMinutes }) };
+    }
+    return { content: t('gloom.explore.forageNoEnergy', source, { time: result.timeRemainingSec }) };
+  }
+
+  let lootFeedback = '';
+  if (result.rewardCoins > 0) {
+    lootFeedback = t('gloom.explore.forageSuccessCoins', source, { coins: result.rewardCoins });
+  } else if (result.rewardItem) {
+    const itemName = isEn ? result.rewardItem.name.en : result.rewardItem.name.pt;
+    lootFeedback = t('gloom.explore.forageSuccessItem', source, { item: itemName });
+  }
+
+  if (result.openedRarePortal) {
+    lootFeedback += `\n${t('gloom.explore.portalOpened', source)}`;
+  }
+
+  if (result.rareEvent) {
+    if (result.rareEvent.type === 'relic_merchant') {
+      return buildMerchantView(userId, result.rareEvent.stock, source, lootFeedback);
+    } else {
+      return buildEngineerView(userId, source, lootFeedback);
+    }
+  }
+
+  if (result.encounteredSpirit) {
+    return buildNegotiationView(userId, result.encounteredSpirit, source, result.encounteredEncounter);
+  }
+
+  return buildLocationView(userId, guildId, source, lootFeedback);
+}
+
 module.exports = {
   name: EXPLORE,
   aliases: ['explorar', 'explore', 'gloom', 'py-explorar', 'py-gloom', 'bosque', 'py-bosque', 'vasculhar', 'py-vasculhar', 'scavenge', 'py-scavenge'],
@@ -702,14 +889,38 @@ module.exports = {
     .setDescription("Explore the gothic pixel realms of Pyxie's Grove and negotiate with spirits.")
     .setDescriptionLocalizations({
       'pt-BR': 'Explore os cenários pixel góticos do Bosque da Pyxie e negocie com espíritos.',
-    }),
+    })
+    .addStringOption((option) =>
+      option
+        .setName('destination')
+        .setDescription('Specific room or chamber to travel directly to')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Sala ou câmara específica para onde deseja viajar diretamente',
+        })
+        .setRequired(false)
+    ),
   async executeSlash({ interaction }) {
     const guildId = interaction.guildId || 'global';
+    const dest = interaction.options.getString('destination');
+    if (dest) {
+      const view = handleDirectMove(interaction.user.id, guildId, interaction, dest);
+      return interaction.editReply(view);
+    }
     const view = buildLocationView(interaction.user.id, guildId, interaction);
     await interaction.editReply(view);
   },
-  async executePrefix({ message }) {
+  async executePrefix({ message, args = [], prefix = 'py!' }) {
     const guildId = message.guildId || 'global';
+    const invoked = message.content.slice(prefix.length).trim().split(/\s+/)[0]?.toLowerCase();
+    if (['vasculhar', 'py-vasculhar', 'scavenge', 'py-scavenge'].includes(invoked)) {
+      const view = handleDirectVasculhar(message.author.id, guildId, message);
+      return message.reply(view);
+    }
+    if (args.length > 0) {
+      const dest = args.join(' ');
+      const view = handleDirectMove(message.author.id, guildId, message, dest);
+      return message.reply(view);
+    }
     const view = buildLocationView(message.author.id, guildId, message);
     await message.reply(view);
   },
@@ -719,4 +930,6 @@ module.exports = {
   buildMerchantView,
   buildEngineerView,
   buildBossView,
+  handleDirectMove,
+  handleDirectVasculhar,
 };

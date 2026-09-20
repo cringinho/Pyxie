@@ -42,7 +42,7 @@ function buildGrimoireView(userId, source = null, feedbackMessage = '') {
     ? collected.map((sp) => {
         const spName = isEn ? sp.name.en : sp.name.pt;
         const isEq = (user.equippedFamiliars || []).includes(sp.id);
-        const tag = isEq ? (isEn ? ' `[ACTIVE]`' : ' `[ATIVO]`') : '';
+        const tag = isEq ? ` ${t('gloom.grimoire.activeTag', source)}` : '';
         return `> • **${spName}** (Tier ${sp.tier} — ${sp.rarity.toUpperCase()})${tag}`;
       }).join('\n')
     : t('gloom.grimoire.noSpirits', source);
@@ -59,7 +59,7 @@ function buildGrimoireView(userId, source = null, feedbackMessage = '') {
       `${t('gloom.grimoire.collectedHeader', source, { count: collected.length })}\n` +
       `${collectedText}`
     )
-    .setFooter({ text: isEn ? "Pyxie's Grove • Pyxie" : 'Bosque da Pyxie • Pyxie' })
+    .setFooter({ text: t('gloom.footer', source) })
     .setTimestamp();
 
   const components = [];
@@ -113,7 +113,7 @@ function buildFusionMenuView(userId, source = null, feedbackMessage = '') {
       `${t('gloom.fusion.ritualCost', source, { cost: 30 })}\n` +
       `👻 ${t('gloom.grimoire.phantomCoins', source, { coins: user.phantomCoins })}`
     )
-    .setFooter({ text: isEn ? 'DemiKids Soul Fusion • Pyxie' : 'Caldeirão de Fusão • Pyxie' })
+    .setFooter({ text: t('gloom.fusion.footer', source) })
     .setTimestamp();
 
   const options = collected.map((sp) => {

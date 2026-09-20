@@ -27,7 +27,12 @@ const {
   getBossStatus,
   attackBoss,
   unlockBossExtraAttack,
+  getEncounters,
+  getEncounterById,
+  getEncounterForSpirit,
+  getRandomEncounter,
 } = require('../src/services/gloomRealm');
+const { handleDirectMove, handleDirectVasculhar } = require('../src/commands/explore');
 
 console.log('Iniciando suíte de testes de Crônicas da Penumbra (Pyxie\'s Gloom Realm)...');
 
@@ -377,5 +382,110 @@ const userAfterFail = getGloomUser(uidEngineer);
 assert.equal(userAfterFail.inventory.calice_lagrimas || 0, 0, 'Materiais sacrificados devem ser perdidos para sempre');
 assert.equal(userAfterFail.phantomCoins, 175, '100 Phantom Coins da tentativa devem ser debitadas');
 console.log('✅ Engenheiro de Relíquias (aprimoramento e destruição permanente de materiais) validado.');
+ 
+// 14. Validação da Tabela de Encontros Atlus SMT V2 (src/data/encounters.json)
+const encounters = getEncounters();
+assert(Array.isArray(encounters), 'Tabela de encontros deve ser uma lista');
+assert.equal(encounters.length, 24, 'Devem existir exatamente 24 encontros catalogados (14 fixos + 10 errantes)');
+
+const catalogedEncounters = encounters.filter((e) => e.is_cataloged === true);
+const wandererEncounters = encounters.filter((e) => e.is_cataloged === false);
+assert.equal(catalogedEncounters.length, 14, 'Devem existir exatamente 14 espíritos catalogados na tabela');
+assert.equal(wandererEncounters.length, 10, 'Devem existir exatamente 10 criaturas errantes na tabela');
+
+for (const enc of encounters) {
+  assert(enc.id && typeof enc.id === 'string', `Encontro deve possuir ID válido: ${JSON.stringify(enc)}`);
+  assert([1, 2, 3, 4, 5].includes(enc.tier), `Encontro ${enc.id} deve ter tier válido entre 1 e 5`);
+  assert(enc.creature_concept?.pt && enc.creature_concept?.en, `Encontro ${enc.id} deve ter conceito bilíngue`);
+  assert(enc.text_box_scene?.pt && enc.text_box_scene?.en, `Encontro ${enc.id} deve ter cena descritiva bilíngue`);
+  assert(enc.monster_dialogue?.pt && enc.monster_dialogue?.en, `Encontro ${enc.id} deve ter diálogo inicial bilíngue`);
+  assert(enc.mood_note?.pt && enc.mood_note?.en, `Encontro ${enc.id} deve ter nota de humor bilíngue`);
+
+  if (enc.is_cataloged) {
+    assert(enc.monster_id && SPIRITS[enc.monster_id], `Encontro catalogado ${enc.id} deve mapear para monstro válido em SPIRITS`);
+  } else {
+    assert.equal(enc.monster_id, null, `Encontro errante ${enc.id} deve ter monster_id nulo`);
+  }
+
+  assert(Array.isArray(enc.options) && enc.options.length >= 2, `Encontro ${enc.id} deve ter no mínimo 2 opções de resposta`);
+  for (const opt of enc.options) {
+    assert(opt.id && typeof opt.id === 'string', `Opção em ${enc.id} deve ter ID`);
+    assert(opt.text?.pt && opt.text?.en, `Opção em ${enc.id} deve ter texto bilíngue`);
+    assert(opt.text.pt.length <= 60, `Botão PT em ${enc.id} não pode exceder 60 caracteres: "${opt.text.pt}"`);
+    assert(opt.text.en.length <= 60, `Botão EN em ${enc.id} não pode exceder 60 caracteres: "${opt.text.en}"`);
+    assert(opt.success_dialogue?.pt && opt.success_dialogue?.en, `Opção em ${enc.id} deve ter diálogo de sucesso bilíngue`);
+    assert(opt.failure_dialogue?.pt && opt.failure_dialogue?.en, `Opção em ${enc.id} deve ter diálogo de fracasso bilíngue`);
+    assert([-2, -1, 0, 1, 2].includes(opt.success_chance_modifier), `Opção em ${enc.id} deve ter modificador válido`);
+  }
+
+  assert(enc.extortion_phase, `Encontro ${enc.id} deve ter fase de extorsão`);
+  assert(['phantom_coins', 'energy', 'relic'].includes(enc.extortion_phase.demand_type), `Tipo de tributo em ${enc.id} deve ser phantom_coins, energy ou relic`);
+}
+
+// Helpers de encontro
+const encFada = getEncounterForSpirit('fada_desencantada');
+assert(encFada, 'Deve encontrar encontro para fada_desencantada');
+assert.equal(encFada.monster_id, 'fada_desencantada');
+assert.equal(encFada.is_cataloged, true);
+
+const encById = getEncounterById('enc_t5_arquiteto_vazio');
+assert(encById, 'Deve encontrar encontro do Tier 5 por ID');
+assert.equal(encById.tier, 5);
+assert.equal(encById.is_cataloged, false);
+
+const encRandom = getRandomEncounter(2);
+assert(encRandom && encRandom.tier === 2, 'getRandomEncounter deve retornar encontro do tier solicitado');
+console.log('✅ Tabela de Encontros Atlus SMT V2 (24 encontros, limites de botão <= 60 chars, tributos estritos) validada.');
+
+// 15. Teste de Armazenamento Atômico de room_cooldowns e Bloqueio de Comandos Diretos
+const uidDirect = `user_direct_${Date.now()}`;
+const userDirect = getGloomUser(uidDirect);
+userDirect.currentLocation = 'portao_penumbra';
+userDirect.phantomCoins = 200;
+userDirect.energy = 5;
+updateGloomUser(uidDirect, userDirect);
+
+// Aplicar banimento na Floresta dos Sussurros
+banUserFromLocation(uidDirect, 'floresta_sussurros');
+const userAfterBanDirect = getGloomUser(uidDirect);
+assert(userAfterBanDirect.room_cooldowns, 'user.room_cooldowns deve existir no perfil');
+assert(userAfterBanDirect.room_cooldowns['floresta_sussurros'] > Date.now(), 'Cooldown da sala deve estar registrado no futuro');
+
+// Tentar movimentação direta para sala banida deve retornar mensagem irônica
+const moveBlockedResult = handleDirectMove(uidDirect, 'guild_test', { user: { id: uidDirect } }, 'floresta_sussurros');
+assert(moveBlockedResult.content, 'Deve retornar mensagem de bloqueio');
+assert(
+  moveBlockedResult.content.includes('bloqueado') ||
+  moveBlockedResult.content.includes('sealed') ||
+  moveBlockedResult.content.includes('locked'),
+  'Mensagem deve indicar bloqueio'
+);
+assert(
+  moveBlockedResult.content.includes('banido') ||
+  moveBlockedResult.content.includes('barred') ||
+  moveBlockedResult.content.includes('banned'),
+  'Mensagem deve citar o banimento da sala'
+);
+
+// Movimentação para sala válida não banida
+const moveAllowedResult = handleDirectMove(uidDirect, 'guild_test', { user: { id: uidDirect } }, 'cemiterio_espinhos');
+assert(moveAllowedResult.embeds, 'Movimentação permitida deve retornar Embed da localidade');
+const userMoved = getGloomUser(uidDirect);
+assert.equal(userMoved.currentLocation, 'cemiterio_espinhos', 'Jogador deve ter se movido para o Cemitério');
+
+// Tentar vasculhar em sala banida via comando direto
+userMoved.currentLocation = 'floresta_sussurros';
+updateGloomUser(uidDirect, userMoved);
+const scavengeBlocked = handleDirectVasculhar(uidDirect, 'guild_test', { user: { id: uidDirect } });
+assert(scavengeBlocked.content, 'Vasculhar em sala banida deve retornar mensagem');
+assert(
+  scavengeBlocked.content.includes('banido') ||
+  scavengeBlocked.content.includes('expulsaram') ||
+  scavengeBlocked.content.includes('expelled') ||
+  scavengeBlocked.content.includes('banned'),
+  'Mensagem deve avisar que está banido da câmara'
+);
+
+console.log('✅ Armazenamento atômico de room_cooldowns, bloqueio irônico de movimento e vasculhar validados.');
 
 console.log('\n🎉 Todos os testes de Bosque da Pyxie (Pyxie\'s Grove) passaram com 100% de sucesso!');

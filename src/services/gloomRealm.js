@@ -204,6 +204,58 @@ const LOCATIONS = {
   },
 };
 
+// 1.1 Carregador de Encontros SMT V2 (src/data/encounters.json)
+const ENCOUNTERS_MAP = new Map();
+let ENCOUNTERS_LIST = [];
+
+function loadEncounters() {
+  try {
+    const encPath = path.join(__dirname, '..', 'data', 'encounters.json');
+    const fallbackPath = path.join(__dirname, '..', '..', 'data', 'encounters.json');
+    const targetPath = fs.existsSync(encPath) ? encPath : fallbackPath;
+    if (fs.existsSync(targetPath)) {
+      const data = JSON.parse(fs.readFileSync(targetPath, 'utf-8'));
+      ENCOUNTERS_LIST = data.encounters || [];
+      ENCOUNTERS_MAP.clear();
+      for (const enc of ENCOUNTERS_LIST) {
+        ENCOUNTERS_MAP.set(enc.id, enc);
+        if (enc.is_cataloged && enc.monster_id) {
+          ENCOUNTERS_MAP.set(`monster:${enc.monster_id}`, enc);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('[gloomRealm] Aviso ao carregar encounters.json:', err.message);
+  }
+}
+loadEncounters();
+
+function getEncounters() {
+  if (ENCOUNTERS_LIST.length === 0) loadEncounters();
+  return ENCOUNTERS_LIST;
+}
+
+function getEncounterById(encounterId) {
+  if (ENCOUNTERS_MAP.size === 0) loadEncounters();
+  return ENCOUNTERS_MAP.get(encounterId) || null;
+}
+
+function getEncounterForSpirit(spiritId) {
+  if (ENCOUNTERS_MAP.size === 0) loadEncounters();
+  return ENCOUNTERS_MAP.get(`monster:${spiritId}`) || null;
+}
+
+function getRandomEncounter(tier = 1, context = null) {
+  if (ENCOUNTERS_LIST.length === 0) loadEncounters();
+  let candidates = ENCOUNTERS_LIST.filter((e) => e.tier === tier);
+  if (context) {
+    const byContext = candidates.filter((e) => e.situational_context === context);
+    if (byContext.length > 0) candidates = byContext;
+  }
+  if (candidates.length === 0) candidates = ENCOUNTERS_LIST;
+  return candidates[Math.floor(Math.random() * candidates.length)] || null;
+}
+
 // 2. Roster de 14 Espíritos / Sombras com Personalidade e Diálogos Atlus/DemiKids
 const SPIRITS = {
   espectro_baixo_astral: {
@@ -666,11 +718,15 @@ const ENGINEER_SARCASTIC_QUOTES = {
 };
 
 function isLocationBanned(user, locationId) {
-  if (!user || !user.roomBans || !user.roomBans[locationId]) {
+  if (!user) {
+    return { banned: false, remainingMs: 0, remainingSec: 0, remainingMinutes: 0 };
+  }
+  const cooldowns = user.room_cooldowns || user.roomBans;
+  if (!cooldowns || !cooldowns[locationId]) {
     return { banned: false, remainingMs: 0, remainingSec: 0, remainingMinutes: 0 };
   }
   const now = Date.now();
-  const expiresAt = user.roomBans[locationId];
+  const expiresAt = cooldowns[locationId];
   if (expiresAt > now) {
     const remainingMs = expiresAt - now;
     const remainingSec = Math.ceil(remainingMs / 1000);
@@ -687,8 +743,9 @@ function banUserFromLocation(userId, locationId) {
   const durationMs = ROOM_BAN_DURATIONS_MS[tier] || ROOM_BAN_DURATIONS_MS[1];
   const expiresAt = Date.now() + durationMs;
 
-  user.roomBans = user.roomBans || {};
-  user.roomBans[locationId] = expiresAt;
+  user.room_cooldowns = user.room_cooldowns || user.roomBans || {};
+  user.room_cooldowns[locationId] = expiresAt;
+  user.roomBans = user.room_cooldowns; // compatibilidade retroativa com testes legados
 
   let ejectedLocation = user.currentLocation;
   if (user.currentLocation === locationId) {
@@ -1188,9 +1245,11 @@ function forage(userId, locationId) {
 
   // Chance de encontro com espírito (35% de chance)
   let encounteredSpirit = null;
+  let encounteredEncounter = null;
   if (!rareEvent && Math.random() < 0.35 && location.spirits?.length) {
     const spiritId = location.spirits[Math.floor(Math.random() * location.spirits.length)];
     encounteredSpirit = SPIRITS[spiritId];
+    encounteredEncounter = getEncounterForSpirit(spiritId) || getRandomEncounter(location.tier || 1);
   }
 
   // Chance de abrir portal para Jardim de Vidro
@@ -1209,32 +1268,59 @@ function forage(userId, locationId) {
     rewardCoins,
     rewardItem,
     encounteredSpirit,
+    encounteredEncounter,
     openedRarePortal,
     rareEvent,
     phantomCoins: user.phantomCoins,
   };
 }
 
-// 8. Negociação de Espírito (Atlus DemiKids)
-function negotiateSpirit(userId, spiritId, choiceId, usedBribe = false) {
+// 8. Negociação de Espírito (Atlus DemiKids V2 com Encounters)
+function negotiateSpirit(userId, spiritId, choiceId, usedBribe = false, encounterId = null) {
   const user = getGloomUser(userId);
-  const spirit = SPIRITS[spiritId];
+  const spirit = SPIRITS[spiritId] || null;
+  const encounter = encounterId ? getEncounterById(encounterId) : getEncounterForSpirit(spiritId);
   const tide = getGloomTide();
 
-  if (!spirit) return { success: false, reason: 'invalid_spirit' };
+  if (!spirit && !encounter) return { success: false, reason: 'invalid_spirit' };
 
-  // Suborno direto
+  // Suborno / Tributo direto
   if (usedBribe) {
-    let cost = spirit.dialogue.bribeCost;
-    if (tide.id === 'emo_moon') cost = Math.round(cost * 0.75);
-
-    if (user.phantomCoins < cost) {
-      return { success: false, reason: 'insufficient_coins', cost };
+    let cost = spirit?.dialogue?.bribeCost || 25;
+    if (encounter?.extortion_phase) {
+      const ext = encounter.extortion_phase;
+      if (ext.demand_type === 'phantom_coins') {
+        cost = typeof ext.amount_or_item === 'number' ? ext.amount_or_item : cost;
+        if (tide.id === 'emo_moon') cost = Math.round(cost * 0.75);
+        if (user.phantomCoins < cost) {
+          return { success: false, reason: 'insufficient_coins', cost };
+        }
+        user.phantomCoins -= cost;
+      } else if (ext.demand_type === 'energy') {
+        const energyCost = typeof ext.amount_or_item === 'number' ? ext.amount_or_item : 1;
+        if (user.energy < energyCost) {
+          return { success: false, reason: 'insufficient_energy', cost: energyCost };
+        }
+        user.energy -= energyCost;
+      } else if (ext.demand_type === 'relic') {
+        const relicId = ext.amount_or_item;
+        if (!user.inventory || !user.inventory[relicId] || user.inventory[relicId] <= 0) {
+          return { success: false, reason: 'insufficient_relic', relicId };
+        }
+        user.inventory[relicId]--;
+      }
+    } else {
+      if (tide.id === 'emo_moon') cost = Math.round(cost * 0.75);
+      if (user.phantomCoins < cost) {
+        return { success: false, reason: 'insufficient_coins', cost };
+      }
+      user.phantomCoins -= cost;
     }
 
-    user.phantomCoins -= cost;
-    if (!user.grimoire.includes(spiritId)) {
-      user.grimoire.push(spiritId);
+    if (spiritId && SPIRITS[spiritId]) {
+      if (!user.grimoire.includes(spiritId)) {
+        user.grimoire.push(spiritId);
+      }
     }
     user.negotiationsWon = (user.negotiationsWon || 0) + 1;
     updateGloomUser(userId, user);
@@ -1242,20 +1328,34 @@ function negotiateSpirit(userId, spiritId, choiceId, usedBribe = false) {
     return {
       success: true,
       recruited: true,
-      spirit,
+      spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
+      encounter,
       remainingCoins: user.phantomCoins,
       method: 'bribe',
     };
   }
 
-  // Escolha de Diálogo
-  const choice = spirit.dialogue.choices.find((c) => c.id === choiceId);
+  // Escolha de Diálogo (Encounter ou Spirit)
+  let choice = null;
+  if (encounter && Array.isArray(encounter.options)) {
+    choice = encounter.options.find((o) => o.id === choiceId);
+  }
+  if (!choice && spirit?.dialogue?.choices) {
+    choice = spirit.dialogue.choices.find((c) => c.id === choiceId);
+  }
   if (!choice) return { success: false, reason: 'invalid_choice' };
 
-  if (choice.success) {
+  const modifier = typeof choice.success_chance_modifier === 'number'
+    ? choice.success_chance_modifier
+    : (choice.score ?? (choice.success ? 1 : -1));
+
+  const isSuccess = modifier >= 1 || choice.success === true;
+  const isCritical = modifier === -2 || choice.criticalFailure === true || choice.score === -2;
+
+  if (isSuccess) {
     let coinsReward = Math.floor(Math.random() * 20) + 15;
     user.phantomCoins += coinsReward;
-    if (!user.grimoire.includes(spiritId)) {
+    if (spiritId && SPIRITS[spiritId] && !user.grimoire.includes(spiritId)) {
       user.grimoire.push(spiritId);
     }
     user.negotiationsWon = (user.negotiationsWon || 0) + 1;
@@ -1264,16 +1364,15 @@ function negotiateSpirit(userId, spiritId, choiceId, usedBribe = false) {
     return {
       success: true,
       recruited: true,
-      spirit,
+      spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
+      encounter,
       rewardCoins: coinsReward,
       remainingCoins: user.phantomCoins,
       method: 'wit',
+      choice,
     };
   } else {
-    // Verificar se é falha crítica (score: -2 ou criticalFailure: true)
-    const isCritical = choice.criticalFailure === true || choice.score === -2;
     let banDetails = null;
-
     if (isCritical) {
       banDetails = banUserFromLocation(userId, user.currentLocation);
     }
@@ -1281,13 +1380,15 @@ function negotiateSpirit(userId, spiritId, choiceId, usedBribe = false) {
     return {
       success: true,
       recruited: false,
-      spirit,
+      spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
+      encounter,
       escaped: true,
       criticalFailure: isCritical,
       roomBanned: isCritical,
       bannedLocation: isCritical ? banDetails?.locationId : null,
       banDurationMinutes: isCritical ? banDetails?.remainingMinutes : 0,
       ejectedTo: isCritical ? banDetails?.ejectedLocation : null,
+      choice,
     };
   }
 }
@@ -1558,5 +1659,9 @@ module.exports = {
   attackBoss,
   unlockBossExtraAttack,
   invalidateGloomCache,
+  getEncounters,
+  getEncounterById,
+  getEncounterForSpirit,
+  getRandomEncounter,
 };
 

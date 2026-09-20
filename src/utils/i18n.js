@@ -510,8 +510,10 @@ const TRANSLATIONS = {
       "expiredSession": "⌛ Este expediente já foi finalizado ou expirou. Use `/trabalho` novamente quando estiver disponível!"
     },
     "gloom": {
+      "footer": "Bosque da Pyxie • Pyxie",
       "explore": {
         "title": "{emoji}  ✦  {name} — {tide}",
+        "tideLabel": "🌊 **Maré da Penumbra:** `{tide}`",
         "stamina": "🔋 **Energia:** `{current}/{max}` (Recarrega 1 a cada 6 min)",
         "phantomCoins": "👻 **Phantom Coins:** `{coins}`",
         "tracesHeader": "📜 **Últimos Rastros de Giz Roxo:**",
@@ -523,6 +525,7 @@ const TRANSLATIONS = {
         "btnTrace": "✍️ Deixar Rastro (15👻)",
         "btnBoss": "💀 Chefão da Penumbra",
         "btnMove": "Ir para {destination}",
+        "directMoveNotFound": "❌ Não encontrei nenhum caminho para **{destination}**. Verifique os cenários vizinhos disponíveis!",
         "forageSuccessCoins": "✨ Você vasculhou as sombras e encontrou **+{coins} Phantom Coins 👻**!",
         "forageSuccessItem": "📦 Você vasculhou os escombros e encontrou **1x {item}**!",
         "forageNoEnergy": "⏳ Você está esgotado pelas trevas! Energia recarrega em **{time}s** (máximo 10/hora).",
@@ -544,6 +547,11 @@ const TRANSLATIONS = {
       },
       "negotiate": {
         "title": "💬  ✦  Negociação com {name}",
+        "footer": "Negociação de Almas • Pyxie",
+        "fled": "🏃 Você se esgueirou de volta pelas sombras sem fazer barulho.",
+        "demandCoins": "💰 Pagar Tributo ({cost} 👻)",
+        "demandEnergy": "⚡ Doar Vigor ({amount}⚡)",
+        "demandRelic": "🏺 Entregar {relic}",
         "btnBribe": "💰 Subornar ({cost} 👻)",
         "btnFlee": "🏃 Fugir",
         "successWit": "🎉 **Pacto Fechado!** Você impressionou **{spirit}** com sua sagacidade e ganhou **+{coins} Phantom Coins 👻**!",
@@ -554,6 +562,7 @@ const TRANSLATIONS = {
       },
       "merchant": {
         "title": "🛒  ✦  O Comerciante de Relíquias",
+        "footer": "Comerciante de Relíquias • Pyxie",
         "desc": "Um contrabandista encapuzado emerge das sombras oferecendo relíquias raras por Phantom Coins 👻.",
         "phantomCoins": "👻 **Seu Saldo:** `{coins} Phantom Coins`",
         "stockHeader": "🏺 **RELÍQUIAS DISPONÍVEIS:**",
@@ -564,8 +573,10 @@ const TRANSLATIONS = {
       },
       "engineer": {
         "title": "🛠️  ✦  O Engenheiro de Relíquias",
+        "footer": "Engenheiro de Relíquias • Pyxie",
         "desc": "Um artesão excêntrico com runas e solda violeta oferece fusão de relíquias por Phantom Coins 👻.",
         "phantomCoins": "👻 **Seu Saldo:** `{coins} Phantom Coins`",
+        "myRelics": "📦 **Suas Relíquias por Tier:** T1: `{t1}` | T2: `{t2}` | T3: `{t3}` | T4: `{t4}` | T5: `{t5}`",
         "recipesHeader": "⚗️ **BANCADA DE FUSÃO RÚNICA:**",
         "recipeLine": "> 🔹 **Tier {tier} ➔ Tier {nextTier}:** 2x Relíquias T{tier} + {cost}👻 (Sucesso: {rate}%)",
         "success": "🔮 **Aprimoramento Perfeito!** As relíquias se fundiram com sucesso em **{item}** (Tier {tier})!",
@@ -583,6 +594,7 @@ const TRANSLATIONS = {
         "noEquipped": "> *Nenhum familiar equipado. Use os botões abaixo para ativar suas auras passivas!*",
         "collectedHeader": "📜 **Espíritos Coletados ({count}):**",
         "noSpirits": "> *Seu grimório está vazio. Explore as salas do reino para negociar com aparições!*",
+        "tagActive": " `[ATIVO]`",
         "btnFuse": "⚗️ Caldeirão de Fusão (30👻)",
         "btnBack": "⬅️ Voltar à Exploração",
         "btnBind": "Vincular {spirit}",
@@ -592,6 +604,7 @@ const TRANSLATIONS = {
       },
       "fusion": {
         "title": "⚗️  ✦  Caldeirão de Fusão de Almas",
+        "footer": "Caldeirão de Fusão • Pyxie",
         "desc": "Selecione dois espíritos do seu grimório para fundi-los em uma nova criatura superior!",
         "selectPlaceholder": "Selecione um espírito para fundir...",
         "ritualCost": "🪙 **Custo do Ritual:** `{cost} Phantom Coins`",
@@ -601,6 +614,8 @@ const TRANSLATIONS = {
       },
       "boss": {
         "title": "💀  ✦  Chefão Comunitário — {name}",
+        "footer": "Chefão Comunitário • Pyxie",
+        "yourDamage": "🛡️ **Seu Dano Total:** `{damage}`",
         "desc": "Um colosso sombrio que desafia todo o reino. Cada investida enfraquece a entidade coletivamente!",
         "hpBar": "🩸 **Vontade do Colosso:** `{currentHp}/{maxHp}` ({percent}%)",
         "btnAttack": "⚔️ Investida no Chefão (1x Grátis)",
@@ -968,8 +983,10 @@ const TRANSLATIONS = {
       "expiredSession": "⌛ This shift has expired or was already completed. Use `/trabalho` again when available!"
     },
     "gloom": {
+      "footer": "Pyxie's Grove • Pyxie",
       "explore": {
         "title": "{emoji}  ✦  {name} — {tide}",
+        "tideLabel": "🌊 **Gloom Tide:** `{tide}`",
         "stamina": "🔋 **Energy:** `{current}/{max}` (Recovers 1 every 6 min)",
         "phantomCoins": "👻 **Phantom Coins:** `{coins}`",
         "tracesHeader": "📜 **Recent Purple Chalk Traces:**",
@@ -981,6 +998,7 @@ const TRANSLATIONS = {
         "btnTrace": "✍️ Leave Trace (15👻)",
         "btnBoss": "💀 Gloom Behemoth",
         "btnMove": "Go to {destination}",
+        "directMoveNotFound": "❌ Could not find a path to **{destination}**. Check available neighboring locations!",
         "forageSuccessCoins": "✨ You searched the shadows and found **+{coins} Phantom Coins 👻**!",
         "forageSuccessItem": "📦 You discovered **1x {item}** hidden beneath the stones!",
         "forageNoEnergy": "⏳ You are exhausted by the shadows! Energy recovers in **{time}s** (max 10/hour).",
@@ -1002,6 +1020,11 @@ const TRANSLATIONS = {
       },
       "negotiate": {
         "title": "💬  ✦  Negotiation with {name}",
+        "footer": "Atlus Spirit Negotiation • Pyxie",
+        "fled": "🏃 You slipped back into the shadows without making a sound.",
+        "demandCoins": "💰 Pay Tribute ({cost} 👻)",
+        "demandEnergy": "⚡ Donate Stamina ({amount}⚡)",
+        "demandRelic": "🏺 Hand over {relic}",
         "btnBribe": "💰 Bribe ({cost} 👻)",
         "btnFlee": "🏃 Flee",
         "successWit": "🎉 **Pact Formed!** You impressed **{spirit}** with your wit and earned **+{coins} Phantom Coins 👻**!",
@@ -1012,6 +1035,7 @@ const TRANSLATIONS = {
       },
       "merchant": {
         "title": "🛒  ✦  The Relic Merchant",
+        "footer": "Relic Merchant • Pyxie",
         "desc": "A hooded smuggler emerges from the shadows offering rare relics for Phantom Coins 👻.",
         "phantomCoins": "👻 **Your Balance:** `{coins} Phantom Coins`",
         "stockHeader": "🏺 **AVAILABLE RELICS:**",
@@ -1022,8 +1046,10 @@ const TRANSLATIONS = {
       },
       "engineer": {
         "title": "🛠️  ✦  The Relic Engineer",
+        "footer": "Relic Engineer • Pyxie",
         "desc": "An eccentric craftsman with runes and violet solder offers relic fusion for Phantom Coins 👻.",
         "phantomCoins": "👻 **Your Balance:** `{coins} Phantom Coins`",
+        "myRelics": "📦 **Your Relics by Tier:** T1: `{t1}` | T2: `{t2}` | T3: `{t3}` | T4: `{t4}` | T5: `{t5}`",
         "recipesHeader": "⚗️ **RUNIC FUSION WORKBENCH:**",
         "recipeLine": "> 🔹 **Tier {tier} ➔ Tier {nextTier}:** 2x Relics T{tier} + {cost}👻 (Success: {rate}%)",
         "success": "🔮 **Flawless Upgrade!** The relics successfully fused into **{item}** (Tier {tier})!",
@@ -1041,6 +1067,7 @@ const TRANSLATIONS = {
         "noEquipped": "> *No familiars equipped. Use the buttons below to activate passive auras!*",
         "collectedHeader": "📜 **Collected Spirits ({count}):**",
         "noSpirits": "> *Your grimoire is empty. Explore the realm to negotiate with apparitions!*",
+        "tagActive": " `[ACTIVE]`",
         "btnFuse": "⚗️ Fusion Cauldron (30👻)",
         "btnBack": "⬅️ Back to Exploration",
         "btnBind": "Bind {spirit}",
@@ -1050,6 +1077,7 @@ const TRANSLATIONS = {
       },
       "fusion": {
         "title": "⚗️  ✦  Soul Fusion Cauldron",
+        "footer": "DemiKids Soul Fusion • Pyxie",
         "desc": "Select two spirits from your grimoire to fuse them into an ascended superior entity!",
         "selectPlaceholder": "Choose a spirit to fuse...",
         "ritualCost": "🪙 **Ritual Cost:** `{cost} Phantom Coins`",
@@ -1059,6 +1087,8 @@ const TRANSLATIONS = {
       },
       "boss": {
         "title": "💀  ✦  Community Boss — {name}",
+        "footer": "Community World Boss • Pyxie",
+        "yourDamage": "🛡️ **Your Damage Dealt:** `{damage}`",
         "desc": "A shadowy behemoth threatening the balance of the Gloom Realm. All adventurers share this challenge!",
         "hpBar": "🩸 **Behemoth Willpower:** `{currentHp}/{maxHp}` ({percent}%)",
         "btnAttack": "⚔️ Boss Strike (1x Free)",
