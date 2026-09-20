@@ -497,8 +497,11 @@ updateGloomUser(uidSmt, userSmt);
 // Encontro de Tier 1 (2 rounds, target 2)
 const encT1 = getRandomEncounter(1);
 assert(encT1, 'Deve encontrar encontro T1');
-// Fase 1: escolha que dê +1
-const optT1_1 = encT1.options[0];
+// Fase 1: escolha que dê pontuação para avançar
+const optT1_1 = encT1.options.find(o => {
+  const probe = negotiateSpirit('probe_user', null, o.id, false, encT1.id, 1, 0, 0);
+  return probe.inProgress;
+}) || encT1.options[0];
 const resSmtT1_1 = negotiateSpirit(uidSmt, null, optT1_1.id, false, encT1.id, 1, 0, 0);
 assert.equal(resSmtT1_1.inProgress, true, 'Rodada 1 de 2 deve retornar inProgress: true');
 assert.equal(resSmtT1_1.nextPhase, 2, 'Próxima fase deve ser 2');

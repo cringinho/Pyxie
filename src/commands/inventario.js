@@ -13,7 +13,7 @@ const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { formatCoins, getLanguage, t } = require('../utils/i18n');
 const { INVENTORY } = require('./commandNames');
 
-function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = null, currentTab = 'todos') {
+function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = null, currentTab = 'social') {
   const lang = getLanguage(source);
   const isEn = lang === 'en';
   const inv = getUserInventory(userId);
@@ -24,8 +24,8 @@ function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = nu
 
   const descSections = [];
 
-  // Tab: Bosque & Relíquias
-  if (currentTab === 'bosque' || currentTab === 'todos') {
+  // 1. Aba: Bosque & Relíquias (Módulo do Minigame)
+  if (currentTab === 'bosque') {
     const relicLines = [];
     if (relicEntries.length === 0) {
       relicLines.push(t('inventory.emptyRelics', source));
@@ -52,10 +52,12 @@ function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = nu
       '',
       relicLines.join('\n'),
     ].join('\n'));
-  }
 
-  // Tab: Social & Baús
-  if (currentTab === 'social' || currentTab === 'todos') {
+    if (relicEntries.length > 0) {
+      descSections.push(t('inventory.tipSelect', source));
+    }
+  } else {
+    // 2. Aba: Social & Baús (Módulo Social do Discord — Padrão)
     const socialLines = socialEntries.length === 0
       ? [t('inventory.emptyBackpack', source)]
       : socialEntries.map(([itemId, count]) => {
@@ -73,49 +75,44 @@ function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = nu
       '',
       socialLines.join('\n\n'),
     ].join('\n'));
-  }
 
-  if (currentTab !== 'bosque' || relicEntries.length > 0) {
-    descSections.push(t('inventory.tipSelect', source));
+    if (socialEntries.length > 0) {
+      descSections.push(t('inventory.tipSelect', source));
+    }
   }
 
   return new EmbedBuilder()
     .setColor(currentTab === 'bosque' ? (PYXIE_COLORS.purple || '#8b5cf6') : (PYXIE_COLORS.magenta || '#e60067'))
     .setTitle(t('inventory.backpackTitle', source, { user: userTag }))
     .setDescription(descSections.join('\n\n───────────────\n\n'))
-    .setFooter({ text: 'Pyxie • Mochila Modular' })
+    .setFooter({ text: isEn ? 'Pyxie • Modular Backpack' : 'Pyxie • Mochila Modular' })
     .setTimestamp();
 }
 
-function buildInventoryComponents(userId, selectedItemId = null, source = null, currentTab = 'todos') {
+function buildInventoryComponents(userId, selectedItemId = null, source = null, currentTab = 'social') {
   const isEn = getLanguage(source) === 'en';
   const inv = getUserInventory(userId);
   const gUser = getGloomUser(userId);
   const socialEntries = Object.entries(inv).filter(([, count]) => count > 0);
   const relicEntries = Object.entries(gUser.inventory || {}).filter(([, count]) => count > 0);
 
-  // Linha 1: Abas Modulares de Filtragem
+  // Linha 1: Abas Modulares Otimizadas para Mobile (Apenas 2 botões grandes)
   const tabRow = new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setCustomId(`inv_tab:todos:${userId}`)
-      .setLabel(t('inventory.tabTodos', source))
-      .setEmoji('🎒')
-      .setStyle(currentTab === 'todos' ? ButtonStyle.Primary : ButtonStyle.Secondary),
-    new ButtonBuilder()
-      .setCustomId(`inv_tab:bosque:${userId}`)
-      .setLabel(t('inventory.tabBosque', source))
-      .setEmoji(getEmoji('TREE'))
-      .setStyle(currentTab === 'bosque' ? ButtonStyle.Primary : ButtonStyle.Secondary),
     new ButtonBuilder()
       .setCustomId(`inv_tab:social:${userId}`)
       .setLabel(t('inventory.tabSocial', source))
       .setEmoji(getEmoji('CHEST'))
-      .setStyle(currentTab === 'social' ? ButtonStyle.Primary : ButtonStyle.Secondary)
+      .setStyle(currentTab === 'social' ? ButtonStyle.Primary : ButtonStyle.Secondary),
+    new ButtonBuilder()
+      .setCustomId(`inv_tab:bosque:${userId}`)
+      .setLabel(t('inventory.tabBosque', source))
+      .setEmoji(getEmoji('TREE'))
+      .setStyle(currentTab === 'bosque' ? ButtonStyle.Primary : ButtonStyle.Secondary)
   );
 
   const components = [tabRow];
 
-  // Se estiver na aba Bosque: suporte a seleção e venda de relíquias por Phantom Coins
+  // Aba Bosque: Relíquias & Ações do Reino
   if (currentTab === 'bosque') {
     if (relicEntries.length > 0) {
       const relicOptions = relicEntries.slice(0, 25).map(([relicId, count]) => {
@@ -183,7 +180,7 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
     return components;
   }
 
-  // Abas Social & Todos: Menu de seleção de itens sociais (baús, vendas)
+  // Aba Social: Itens Normais, Baús e Bebidas
   if (socialEntries.length === 0) {
     const emptyRow = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
@@ -200,7 +197,7 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
     const item = getItemDefinition(itemId);
     return {
       label: `${item ? item.name : itemId} (x${count})`,
-      value: `${itemId}:${currentTab}`,
+      value: `${itemId}:social`,
       description: item ? item.description.slice(0, 50) : `Quantidade: ${count}`,
       emoji: item ? item.emoji : '📦',
       default: itemId === selectedItemId,
@@ -222,7 +219,7 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
       if (item.effects && item.effects.isChest) {
         actionRow.addComponents(
           new ButtonBuilder()
-            .setCustomId(`inv_open_chest:${selectedItemId}:${currentTab}:${userId}`)
+            .setCustomId(`inv_open_chest:${selectedItemId}:social:${userId}`)
             .setLabel(t('inventory.openChest', source, { name: item.name }))
             .setEmoji('🔓')
             .setStyle(ButtonStyle.Success)
@@ -232,7 +229,7 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
       if (item.sellPrice) {
         actionRow.addComponents(
           new ButtonBuilder()
-            .setCustomId(`inv_sell_item:${selectedItemId}:${currentTab}:${userId}`)
+            .setCustomId(`inv_sell_item:${selectedItemId}:social:${userId}`)
             .setLabel(t('inventory.sellOne', source, { coins: formatCoins(item.sellPrice, source) }))
             .setEmoji('🪙')
             .setStyle(ButtonStyle.Secondary)
@@ -290,9 +287,9 @@ async function handleInventoryInteraction(interaction) {
   const userTag = interaction.user.displayName || interaction.user.username;
   const isEn = getLanguage(interaction) === 'en';
 
-  // 1. Alternar Aba Modular
+  // 1. Alternar Aba Modular (Social vs Bosque)
   if (action === 'inv_tab') {
-    const selectedTab = parts[1] || 'todos';
+    const selectedTab = parts[1] === 'bosque' ? 'bosque' : 'social';
     const embed = buildInventoryEmbed(userId, userTag, null, interaction, selectedTab);
     const components = buildInventoryComponents(userId, null, interaction, selectedTab);
     return interaction.update({ embeds: [embed], components });
@@ -301,27 +298,25 @@ async function handleInventoryInteraction(interaction) {
   // 2. Selecionar Item social no menu
   if (action === 'inv_item_select') {
     const rawVal = interaction.values[0];
-    const [selectedItemId, tabFromVal] = rawVal.split(':');
-    const currentTab = tabFromVal || 'todos';
-    const embed = buildInventoryEmbed(userId, userTag, selectedItemId, interaction, currentTab);
-    const components = buildInventoryComponents(userId, selectedItemId, interaction, currentTab);
+    const [selectedItemId] = rawVal.split(':');
+    const embed = buildInventoryEmbed(userId, userTag, selectedItemId, interaction, 'social');
+    const components = buildInventoryComponents(userId, selectedItemId, interaction, 'social');
     return interaction.update({ embeds: [embed], components });
   }
 
   // 2.1 Selecionar Relíquia no menu do Bosque
   if (action === 'inv_relic_select') {
     const rawVal = interaction.values[0];
-    const [selectedRelicId, tabFromVal] = rawVal.split(':');
-    const currentTab = tabFromVal || 'bosque';
-    const embed = buildInventoryEmbed(userId, userTag, selectedRelicId, interaction, currentTab);
-    const components = buildInventoryComponents(userId, selectedRelicId, interaction, currentTab);
+    const [selectedRelicId] = rawVal.split(':');
+    const embed = buildInventoryEmbed(userId, userTag, selectedRelicId, interaction, 'bosque');
+    const components = buildInventoryComponents(userId, selectedRelicId, interaction, 'bosque');
     return interaction.update({ embeds: [embed], components });
   }
 
   // 3. Abrir Baú
   if (action === 'inv_open_chest') {
     const chestId = parts[1];
-    const currentTab = parts[2] || 'todos';
+    const currentTab = parts[2] === 'bosque' ? 'bosque' : 'social';
     const openRes = openChest(userId, chestId);
 
     if (!openRes.success) {
@@ -345,7 +340,7 @@ async function handleInventoryInteraction(interaction) {
   // 4. Vender Item Social
   if (action === 'inv_sell_item') {
     const itemId = parts[1];
-    const currentTab = parts[2] || 'todos';
+    const currentTab = parts[2] === 'bosque' ? 'bosque' : 'social';
     const sellRes = sellItem(userId, itemId, 1);
 
     if (!sellRes.success) {
@@ -368,7 +363,6 @@ async function handleInventoryInteraction(interaction) {
   // 5. Vender Relíquia do Bosque por Phantom Coins
   if (action === 'inv_sell_relic') {
     const relicId = parts[1];
-    const currentTab = parts[2] || 'bosque';
     const sellRes = sellRelic(userId, relicId, 1);
 
     if (!sellRes.success) {
@@ -379,8 +373,8 @@ async function handleInventoryInteraction(interaction) {
     }
 
     const rName = sellRes.relic ? (isEn ? sellRes.relic.name.en : sellRes.relic.name.pt) : relicId;
-    const embed = buildInventoryEmbed(userId, userTag, null, interaction, currentTab);
-    const components = buildInventoryComponents(userId, null, interaction, currentTab);
+    const embed = buildInventoryEmbed(userId, userTag, null, interaction, 'bosque');
+    const components = buildInventoryComponents(userId, null, interaction, 'bosque');
 
     return interaction.update({
       content: t('inventory.relicSoldSuccess', interaction, { relic: rName, coins: sellRes.totalCoins }),
@@ -404,13 +398,13 @@ module.exports = {
       'pt-BR': 'Abre sua mochila modular para filtrar itens, relíquias e baús.',
     }),
   async executePrefix({ message }) {
-    const embed = buildInventoryEmbed(message.author.id, message.author.displayName || message.author.username, null, message, 'todos');
-    const components = buildInventoryComponents(message.author.id, null, message, 'todos');
+    const embed = buildInventoryEmbed(message.author.id, message.author.displayName || message.author.username, null, message, 'social');
+    const components = buildInventoryComponents(message.author.id, null, message, 'social');
     await message.reply({ embeds: [embed], components });
   },
   async executeSlash({ interaction }) {
-    const embed = buildInventoryEmbed(interaction.user.id, interaction.user.displayName || interaction.user.username, null, interaction, 'todos');
-    const components = buildInventoryComponents(interaction.user.id, null, interaction, 'todos');
+    const embed = buildInventoryEmbed(interaction.user.id, interaction.user.displayName || interaction.user.username, null, interaction, 'social');
+    const components = buildInventoryComponents(interaction.user.id, null, interaction, 'social');
     await interaction.editReply({ embeds: [embed], components });
   },
 };

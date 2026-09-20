@@ -486,3 +486,4 @@ for (const enc of ALL_ENCOUNTERS) {
 fs.writeFileSync(srcFile, JSON.stringify(raw, null, 2), 'utf8');
 fs.writeFileSync(dataFile, JSON.stringify(raw, null, 2), 'utf8');
 console.log('Successfully updated encounters.json with multi-phase unpredictable negotiation data!');
+
