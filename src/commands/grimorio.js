@@ -42,7 +42,7 @@ function buildGrimoireView(userId, source = null, feedbackMessage = '') {
     ? collected.map((sp) => {
         const spName = isEn ? sp.name.en : sp.name.pt;
         const isEq = (user.equippedFamiliars || []).includes(sp.id);
-        const tag = isEq ? ` ${t('gloom.grimoire.activeTag', source)}` : '';
+        const tag = isEq ? ` ${t('gloom.grimoire.tagActive', source)}` : '';
         return `> • **${spName}** (Tier ${sp.tier} — ${sp.rarity.toUpperCase()})${tag}`;
       }).join('\n')
     : t('gloom.grimoire.noSpirits', source);

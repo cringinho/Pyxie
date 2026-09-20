@@ -19,9 +19,9 @@ function buildBonusEmbed(userId, sessionUrl, source = null) {
         '',
         'Click the button below to open your personalized bonus link. After waiting **10 seconds** on the web page, you will automatically receive:',
         '',
-        '> ⏳ **1x Magic Hourglass (2h)** (`ampulheta_tempo_2h`)',
-        '> *Use anytime in `/py-inventory` or Chocadeira to speed up eggs by 2 hours!*',
-        '> 🪙 **+150 Coins** added directly to your account',
+        '> 🪙 **+200 Coins** added directly to your account',
+        '> 🌱 **+1 Magic Bean** to customize your profile themes',
+        '> 📦 **1x Rustic Mystery Chest** stored in your backpack (`/py-inventory`)',
         '',
         '🔒 *Your link is securely signed and valid for 15 minutes.*',
       ].join('\n')
@@ -30,9 +30,9 @@ function buildBonusEmbed(userId, sessionUrl, source = null) {
         '',
         'Clique no botão abaixo para abrir seu link exclusivo. Ao aguardar **10 segundos** na página, você receberá automaticamente:',
         '',
-        '> ⏳ **1x Ampulheta Mágica (2h)** (`ampulheta_tempo_2h`)',
-        '> *Guarde na mochila (`/py-inventory`) para acelerar qualquer ovo na chocadeira quando quiser!*',
-        '> 🪙 **+150 Moedas** creditadas na sua conta',
+        '> 🪙 **+200 Moedas** creditadas na sua conta',
+        '> 🌱 **+1 Feijão Mágico** para comprar temas no perfil',
+        '> 📦 **1x Baú Rústico Misterioso** guardado na mochila (`/py-inventario`)',
         '',
         '🔒 *Seu link é seguro, pessoal e válido por 15 minutos.*',
       ].join('\n');
@@ -61,9 +61,9 @@ module.exports = {
   buildBonusEmbed,
   data: new SlashCommandBuilder()
     .setName(BONUS)
-    .setDescription('Claim free Magic Hourglasses and Coins via a 10s sponsored link.')
+    .setDescription('Claim free Coins, Magic Beans, and Mystery Chests via a 10s sponsored link.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Resgata Ampulhetas Mágicas e Moedas gratuitas através do link de 10s.',
+      'pt-BR': 'Resgata Moedas, Feijões Mágicos e Baús Misteriosos gratuitos através do link de 10s.',
     }),
   async executeSlash({ interaction }) {
     const lang = getLanguage(interaction);

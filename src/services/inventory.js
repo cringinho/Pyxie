@@ -61,9 +61,11 @@ const LEGACY_ITEM_MIGRATION = {
   racao_cringe: 'ametista',
   cafe_expresso: 'ametista',
   cha_camomila: 'ametista',
+  pocao_energia: 'ametista',
   curativo_fofo: 'opala',
   pocao_vida: 'opala',
   amuleto_sorte: 'opala',
+  ampulheta_tempo_2h: 'opala',
   pocao_brilho: 'esmeralda',
   pergaminho_antigo: 'esmeralda',
   cristal_arcano: 'rubi',
@@ -74,8 +76,18 @@ function migrateInventory(inv) {
   if (!inv || typeof inv !== 'object') return inv;
   let changed = false;
   for (const [key, targetKey] of Object.entries(LEGACY_ITEM_MIGRATION)) {
-    if (inv[key] && inv[key] > 0) {
+    if (inv[key] && Number(inv[key]) > 0) {
       inv[targetKey] = (Number(inv[targetKey]) || 0) + Number(inv[key]);
+      delete inv[key];
+      changed = true;
+    } else if (inv[key] !== undefined) {
+      delete inv[key];
+      changed = true;
+    }
+  }
+  // Remove any obsolete keys not present in catalog
+  for (const key of Object.keys(inv)) {
+    if (!itemsCatalog[key]) {
       delete inv[key];
       changed = true;
     }
