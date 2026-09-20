@@ -4,19 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pyxie • Bônus Mágico Encantado</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://cdn.discordapp.com/emojis/1548443951596306552.webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
       :root {
-        --bg-dark: #0d0a17;
-        --bg-card: rgba(23, 17, 42, 0.92);
+        --bg-dark: #07040d;
+        --bg-card: rgba(22, 13, 42, 0.8);
         --purple-main: #9333ea;
-        --purple-bright: #c084fc;
-        --cyan-glow: #38bdf8;
-        --gold-glow: #facc15;
-        --emerald-glow: #22c55e;
+        --purple-neon: #a855f7;
+        --purple-glow: #c084fc;
         --pink-neon: #f43f5e;
+        --pink-bright: #ec4899;
+        --pink-glow: #f472b6;
+        --cyan-neon: #38bdf8;
+        --gold-glow: #fbbf24;
+        --emerald-glow: #34d399;
         --text-white: #ffffff;
         --text-muted: #cbd5e1;
+        --border-glass: rgba(192, 132, 252, 0.22);
       }
 
       * {
@@ -26,16 +33,31 @@
       }
 
       body {
-        font-family: 'Quicksand', 'Segoe UI', system-ui, -apple-system, sans-serif;
-        background: radial-gradient(circle at top, #231244 0%, #0d0a17 100%);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-dark);
+        background-image: 
+          radial-gradient(circle at 50% -10%, #3b1464 0%, rgba(14, 7, 26, 0.95) 50%, #07040d 100%),
+          radial-gradient(circle at 15% 45%, rgba(244, 63, 94, 0.1) 0%, transparent 40%),
+          radial-gradient(circle at 85% 55%, rgba(147, 51, 234, 0.12) 0%, transparent 45%);
         color: var(--text-white);
         min-height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 16px 12px;
+        padding: 20px 14px;
         overflow-x: hidden;
+        position: relative;
+      }
+
+      #particles-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 0;
       }
 
       .main-layout {
@@ -46,19 +68,22 @@
         width: 100%;
         max-width: 1300px;
         margin: 0 auto;
+        position: relative;
+        z-index: 1;
       }
 
       .sidebar-ad {
         display: none;
         width: 160px;
         min-height: 600px;
-        background: rgba(23, 17, 42, 0.4);
-        border: 1px solid rgba(192, 132, 252, 0.2);
-        border-radius: 16px;
+        background: rgba(22, 13, 42, 0.45);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
         overflow: hidden;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(14px);
       }
 
       @media (min-width: 1200px) {
@@ -80,13 +105,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(23, 17, 42, 0.5);
-        border: 1px solid rgba(192, 132, 252, 0.2);
-        border-radius: 16px;
+        background: rgba(22, 13, 42, 0.45);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
         padding: 6px;
         overflow: hidden;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         max-width: 100%;
+        backdrop-filter: blur(14px);
       }
 
       .ad-desktop-only {
@@ -109,15 +135,27 @@
       .bonus-container {
         width: 100%;
         background: var(--bg-card);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 2px solid rgba(192, 132, 252, 0.35);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
         border-radius: 28px;
-        padding: 32px 24px;
+        padding: 36px 26px;
         text-align: center;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(147, 51, 234, 0.25);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(147, 51, 234, 0.2);
         position: relative;
-        animation: fadeIn 0.8s ease-out;
+        animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
+      }
+
+      .bonus-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 10%;
+        right: 10%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--pink-glow), var(--purple-glow), transparent);
+        opacity: 0.8;
       }
 
       @keyframes fadeIn {
@@ -126,63 +164,72 @@
       }
 
       .mascot-badge {
-        width: 80px;
-        height: 80px;
-        margin: 0 auto 14px auto;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #a855f7, #ec4899);
+        width: 84px;
+        height: 84px;
+        margin: 0 auto 16px auto;
+        border-radius: 26px;
+        background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 42px;
-        box-shadow: 0 0 30px rgba(192, 132, 252, 0.6);
+        box-shadow: 0 8px 30px rgba(244, 63, 94, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
         animation: float 3s ease-in-out infinite;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+
+      .mascot-badge img {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
       }
 
       @keyframes float {
         0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-8px); }
+        50% { transform: translateY(-7px); }
       }
 
       h1 {
-        font-family: 'Fredoka', sans-serif;
-        font-size: 1.85rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #f3e8ff, #c084fc, #38bdf8);
+        font-family: 'Outfit', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ffffff 30%, var(--pink-glow) 70%, var(--purple-glow) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
       }
 
       .subtitle {
         color: var(--text-muted);
-        font-size: 0.94rem;
-        margin-bottom: 20px;
-        line-height: 1.4;
+        font-size: 0.95rem;
+        margin-bottom: 22px;
+        line-height: 1.55;
       }
 
       /* Timer Box */
       .timer-card {
-        background: rgba(13, 10, 23, 0.75);
+        background: rgba(10, 5, 20, 0.75);
         border: 1px solid rgba(192, 132, 252, 0.25);
-        border-radius: 20px;
-        padding: 20px 16px;
-        margin-bottom: 18px;
+        border-radius: 22px;
+        padding: 24px 18px;
+        margin-bottom: 20px;
+        box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
       }
 
       .countdown-number {
-        font-family: 'Fredoka', sans-serif;
-        font-size: 4.2rem;
-        font-weight: 700;
+        font-family: 'Outfit', sans-serif;
+        font-size: 4.5rem;
+        font-weight: 900;
         line-height: 1;
         color: var(--gold-glow);
-        text-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
-        margin-bottom: 10px;
+        text-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+        margin-bottom: 14px;
+        letter-spacing: -0.03em;
       }
 
       .progress-bar-wrap {
         width: 100%;
-        height: 14px;
+        height: 12px;
         background: rgba(255, 255, 255, 0.08);
         border-radius: 10px;
         overflow: hidden;
@@ -193,34 +240,35 @@
       .progress-bar-fill {
         height: 100%;
         width: 0%;
-        background: linear-gradient(90deg, var(--purple-main), var(--cyan-glow), var(--gold-glow));
+        background: linear-gradient(90deg, var(--purple-main), var(--cyan-neon), var(--gold-glow));
         border-radius: 10px;
         transition: width 1s linear;
         box-shadow: 0 0 15px rgba(56, 189, 248, 0.8);
       }
 
       .status-label {
-        font-size: 0.98rem;
+        font-size: 0.96rem;
         font-weight: 600;
         color: #e2e8f0;
       }
 
-      /* Guia de Instruções (Quando acessa sem token) */
+      /* Instructions Card */
       .instructions-card {
         display: none;
-        background: rgba(13, 10, 23, 0.8);
-        border: 1px solid rgba(192, 132, 252, 0.3);
-        border-radius: 20px;
-        padding: 22px 18px;
+        background: rgba(10, 5, 20, 0.75);
+        border: 1px solid rgba(192, 132, 252, 0.25);
+        border-radius: 22px;
+        padding: 24px 20px;
         text-align: left;
         margin-bottom: 20px;
       }
 
       .instructions-title {
-        font-family: 'Fredoka', sans-serif;
+        font-family: 'Outfit', sans-serif;
         font-size: 1.15rem;
-        color: var(--purple-bright);
-        margin-bottom: 12px;
+        font-weight: 700;
+        color: var(--purple-glow);
+        margin-bottom: 14px;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -229,7 +277,7 @@
       .step-list {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         font-size: 0.92rem;
         color: #e2e8f0;
       }
@@ -238,118 +286,108 @@
         display: flex;
         align-items: flex-start;
         gap: 10px;
-        line-height: 1.45;
+        line-height: 1.5;
       }
 
       .step-num {
-        background: linear-gradient(135deg, var(--purple-main), var(--cyan-glow));
+        background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
         color: #fff;
-        font-weight: 700;
-        font-size: 0.8rem;
+        font-weight: 800;
+        font-size: 0.78rem;
         min-width: 24px;
         height: 24px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-top: 2px;
+        margin-top: 1px;
       }
 
       .command-badge {
-        background: rgba(192, 132, 252, 0.18);
-        border: 1px solid rgba(192, 132, 252, 0.4);
+        background: rgba(192, 132, 252, 0.16);
+        border: 1px solid rgba(192, 132, 252, 0.35);
         padding: 2px 7px;
         border-radius: 6px;
-        font-family: monospace;
-        font-size: 0.88rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85rem;
         color: #38bdf8;
-        font-weight: 600;
+        font-weight: 700;
       }
 
       .reward-box {
-        background: rgba(250, 204, 21, 0.1);
-        border: 1px solid rgba(250, 204, 21, 0.3);
-        border-radius: 12px;
-        padding: 10px 14px;
-        margin-top: 10px;
-        font-size: 0.9rem;
+        background: rgba(251, 191, 36, 0.1);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        border-radius: 14px;
+        padding: 12px 16px;
+        margin-top: 12px;
+        font-size: 0.92rem;
         color: #fef08a;
         display: flex;
         align-items: center;
         gap: 8px;
       }
 
-      /* Native Ad Container */
-      .native-ad-section {
-        width: 100%;
-        margin: 14px 0;
-        border-radius: 16px;
-        overflow: hidden;
-        background: rgba(13, 10, 23, 0.4);
-        border: 1px solid rgba(192, 132, 252, 0.15);
-        padding: 4px;
-      }
-
-      /* Botão e Feedback */
       .btn-claim {
         display: none;
         width: 100%;
         padding: 16px;
         border: none;
-        border-radius: 18px;
+        border-radius: 20px;
         background: linear-gradient(135deg, #10b981, #059669);
         color: #ffffff;
-        font-family: 'Fredoka', sans-serif;
+        font-family: 'Outfit', sans-serif;
         font-size: 1.25rem;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
-        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
-        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.45);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1px solid rgba(255, 255, 255, 0.25);
       }
 
       .btn-claim:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(16, 185, 129, 0.6);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 14px 38px rgba(16, 185, 129, 0.65);
       }
 
       .btn-sponsor {
         display: inline-block;
         width: 100%;
         padding: 14px;
-        border-radius: 16px;
-        background: linear-gradient(135deg, var(--purple-main), #6366f1);
+        border-radius: 18px;
+        background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
         color: #ffffff;
-        font-family: 'Fredoka', sans-serif;
-        font-size: 1.1rem;
-        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.05rem;
+        font-weight: 700;
         text-decoration: none;
-        box-shadow: 0 8px 20px rgba(147, 51, 234, 0.4);
+        box-shadow: 0 8px 24px rgba(244, 63, 94, 0.4);
         transition: all 0.3s ease;
-        margin-top: 10px;
+        margin-top: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
       }
 
       .btn-sponsor:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 25px rgba(147, 51, 234, 0.6);
+        box-shadow: 0 12px 30px rgba(244, 63, 94, 0.6);
       }
 
       .success-box {
         display: none;
         background: rgba(34, 197, 94, 0.15);
         border: 1px solid var(--emerald-glow);
-        border-radius: 18px;
-        padding: 18px;
-        margin-top: 14px;
-        animation: pop 0.4s ease-out;
+        border-radius: 20px;
+        padding: 20px;
+        margin-top: 16px;
+        animation: pop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .error-box {
         display: none;
         background: rgba(244, 63, 94, 0.15);
         border: 1px solid var(--pink-neon);
-        border-radius: 18px;
-        padding: 16px;
-        margin-top: 14px;
+        border-radius: 20px;
+        padding: 18px;
+        margin-top: 16px;
         color: #fca5a5;
         font-size: 0.95rem;
       }
@@ -360,13 +398,15 @@
       }
 
       .sponsor-badge {
-        margin-top: 18px;
+        margin-top: 20px;
         font-size: 0.82rem;
         color: #94a3b8;
       }
     </style>
   </head>
   <body>
+    <canvas id="particles-canvas"></canvas>
+
     <div class="main-layout">
       <!-- Lateral Esquerda (Desktop 160x600 Skyscraper) -->
       <aside class="sidebar-ad">
@@ -414,7 +454,9 @@
 
         <!-- Card Principal da Pyxie -->
         <div class="bonus-container">
-          <div class="mascot-badge">✨</div>
+          <div class="mascot-badge">
+            <img src="https://cdn.discordapp.com/emojis/1548443951596306552.webp" alt="Pyxie" />
+          </div>
           <h1 id="pageTitle">Pyxie Bot • Bônus Mágico</h1>
           <p id="pageSubtitle" class="subtitle">Aguarde a canalização da energia para desbloquear seu bônus no Discord!</p>
 
@@ -435,7 +477,7 @@
             <div id="stepList" class="step-list">
               <div class="step-item">
                 <span class="step-num">1</span>
-                <span id="step1Text">No Discord, digite o comando <span class="command-badge">/py-bonus</span> (ou clique no botão em <span class="command-badge">/py-daily</span> ou <span class="command-badge">/py-inventory</span>).</span>
+                <span id="step1Text">No Discord, digite o comando <span class="command-badge">/py-bonus</span> (ou clique no botão em <span class="command-badge">/py-daily</span>).</span>
               </div>
               <div class="step-item">
                 <span class="step-num">2</span>
@@ -448,7 +490,7 @@
             </div>
 
             <div id="rewardBox" class="reward-box">
-              <span>✨ <strong>Recompensa:</strong> 1x Ampulheta Mágica (2h) ⏳ + 150 Moedas 💰</span>
+              <span>✨ <strong>Recompensa:</strong> +75 Moedinhas 🪙 no cofre</span>
             </div>
 
             <a id="sponsorBtn" href="https://www.profitableratecpmnetwork.com/bzdc0dtq5?key=aece6072dc92d95726e1223cf45171dd" target="_blank" class="btn-sponsor">
@@ -459,7 +501,7 @@
           <button id="btnClaim" class="btn-claim" onclick="claimBonusReward()">🎁 Resgatar Bônus Agora</button>
 
           <div id="successBox" class="success-box">
-            <h3 id="successTitle" style="font-family: 'Fredoka', sans-serif; font-size: 1.3rem; color: #4ade80; margin-bottom: 6px;">🎉 Bônus Mágico Creditado!</h3>
+            <h3 id="successTitle" style="font-family: 'Outfit', sans-serif; font-size: 1.3rem; color: #4ade80; margin-bottom: 6px;">🎉 Bônus Mágico Creditado!</h3>
             <p id="successMessage" style="font-size: 0.95rem; color: #f1f5f9;">Seu bônus já está ativo na sua conta! Você já pode voltar para o Discord.</p>
           </div>
 
@@ -514,6 +556,69 @@
     </div>
 
     <script>
+      // Particle Canvas Animation
+      (function initParticles() {
+        const canvas = document.getElementById('particles-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let width = (canvas.width = window.innerWidth);
+        let height = (canvas.height = window.innerHeight);
+
+        window.addEventListener('resize', () => {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        });
+
+        const particleCount = 35;
+        const particles = [];
+        const colors = ['#c084fc', '#f472b6', '#38bdf8', '#fbbf24', '#ffffff'];
+
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 1.6 + 0.6,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: -Math.random() * 0.4 - 0.1,
+            alpha: Math.random() * 0.6 + 0.2,
+            pulse: Math.random() * 0.03 + 0.01,
+          });
+        }
+
+        function render() {
+          ctx.clearRect(0, 0, width, height);
+
+          for (let i = 0; i < particleCount; i++) {
+            const p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha += Math.sin(Date.now() * p.pulse) * 0.015;
+
+            if (p.y < -10) {
+              p.y = height + 10;
+              p.x = Math.random() * width;
+            }
+            if (p.x < -10) p.x = width + 10;
+            if (p.x > width + 10) p.x = -10;
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = Math.max(0.1, Math.min(0.85, p.alpha));
+            ctx.shadowBlur = p.radius * 4;
+            ctx.shadowColor = p.color;
+            ctx.fill();
+            ctx.restore();
+          }
+
+          requestAnimationFrame(render);
+        }
+
+        render();
+      })();
+
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
       const langParam = urlParams.get('lang');
@@ -539,12 +644,12 @@
           pageSubtitleWithToken: isGloomBoss
             ? 'Aguarde a canalização da névoa espectral para liberar sua investida extra contra o Chefão!'
             : 'Aguarde a canalização da energia para desbloquear seu bônus no Discord!',
-          pageSubtitleNoToken: 'Gere seu link exclusivo dentro do Discord para creditar itens na sua conta!',
+          pageSubtitleNoToken: 'Gere seu link exclusivo dentro do Discord para creditar moedas na sua conta!',
           statusChanneling: isGloomBoss ? '🌙 Canalizando névoa espectral...' : '⚡ Canalizando energia mágica...',
           statusReady: isGloomBoss
             ? '⚔️ <strong>Névoa Pronta!</strong> Clique abaixo para liberar seu ataque:'
             : '🌟 <strong>Energia Pronta!</strong> Clique abaixo para resgatar:',
-          statusClaiming: isGloomBoss ? '🔄 Liberando investida extra e moedas...' : '🔄 Creditando bônus no seu inventário...',
+          statusClaiming: isGloomBoss ? '🔄 Liberando investida extra e moedas...' : '🔄 Creditando bônus no seu cofre...',
           statusFailed: 'Falha ao validar bônus.',
           statusConnError: 'Erro de conexão com o servidor.',
           btnClaim: isGloomBoss ? '⚔️ Liberar Investida Extra Agora' : '🎁 Resgatar Bônus Agora',
@@ -553,12 +658,11 @@
             ? 'Sua investida extra no Bosque da Pyxie já está liberada! Você recebeu +50 Phantom Coins 👻. Volte ao Discord para atacar!'
             : 'Seu bônus já está ativo na sua conta! Você já pode voltar para o Discord.',
           instructionsTitle: '<span>🎁 Como resgatar suas recompensas:</span>',
-          step1: 'No Discord, digite o comando <span class="command-badge">/py-bonus</span> (ou clique no botão em <span class="command-badge">/py-daily</span> ou <span class="command-badge">/py-inventory</span>).',
+          step1: 'No Discord, digite o comando <span class="command-badge">/py-bonus</span> (ou clique no botão em <span class="command-badge">/py-daily</span>).',
           step2: 'Clique no link mágico gerado exclusivamente para a sua conta.',
           step3: 'Aguarde os 10 segundos na tela e clique em <strong>Resgatar Bônus</strong>!',
           rewardBox: isGloomBoss
             ? '<span>🌙 <strong>Recompensa do Bosque:</strong> 1x Investida Extra no Chefão ⚔️ + 50 Phantom Coins 👻</span>'
-            : '<span>✨ <strong>Recompensa:</strong> 1x Baú Rústico 📦 + 1x Feijão Mágico 🌱 + 200 Moedinhas 🪙</span>',
             : '<span>✨ <strong>Recompensa:</strong> +75 Moedinhas 🪙 no cofre</span>',
           sponsorBtn: '👉 Apoiar Servidor com Patrocinador',
           sponsorBadge: 'Patrocinado com carinho para a comunidade Pyxie 🐾',
@@ -571,13 +675,12 @@
           pageSubtitleWithToken: isGloomBoss
             ? 'Wait for the spectral mist to channel and unlock your extra strike against the World Boss!'
             : 'Wait for the magical energy to channel and unlock your bonus on Discord!',
-          pageSubtitleNoToken: 'Generate your personal link on Discord to receive items in your account!',
+          pageSubtitleNoToken: 'Generate your personal link on Discord to receive coins in your account!',
           statusChanneling: isGloomBoss ? '🌙 Channeling spectral mist...' : '⚡ Channeling magical energy...',
           statusReady: isGloomBoss
             ? '⚔️ <strong>Mist Ready!</strong> Click below to unlock your strike:'
             : '🌟 <strong>Energy Ready!</strong> Click below to claim:',
-          statusClaiming: isGloomBoss ? '🔄 Unlocking extra strike and spectral coins...' : '🔄 Crediting bonus to your inventory...',
-          statusClaiming: isGloomBoss ? '🔄 Unlocking extra strike and spectral coins...' : '🔄 Crediting bonus to your account...',
+          statusClaiming: isGloomBoss ? '🔄 Unlocking extra strike and spectral coins...' : '🔄 Crediting bonus to your vault...',
           statusFailed: 'Failed to validate bonus.',
           statusConnError: 'Connection error with server.',
           btnClaim: isGloomBoss ? '⚔️ Unlock Extra Strike Now' : '🎁 Claim Bonus Now',
@@ -586,13 +689,11 @@
             ? "Your extra strike in Pyxie's Grove is ready! You received +50 Phantom Coins 👻. Return to Discord to strike!"
             : 'Your bonus is now active on your account! You can return to Discord.',
           instructionsTitle: '<span>🎁 How to claim your rewards:</span>',
-          step1: 'On Discord, type the command <span class="command-badge">/py-bonus</span> (or click the button in <span class="command-badge">/py-daily</span> or <span class="command-badge">/py-inventory</span>).',
           step1: 'On Discord, type the command <span class="command-badge">/py-bonus</span> (or click the button in <span class="command-badge">/py-daily</span>).',
           step2: 'Click the magical link generated exclusively for your account.',
           step3: 'Wait 10 seconds on the page and click <strong>Claim Bonus</strong>!',
           rewardBox: isGloomBoss
             ? "<span>🌙 <strong>Grove Reward:</strong> 1x Extra Boss Strike ⚔️ + 50 Phantom Coins 👻</span>"
-            : '<span>✨ <strong>Reward:</strong> 1x Rustic Chest 📦 + 1x Magic Bean 🌱 + 200 Coins 🪙</span>',
             : '<span>✨ <strong>Reward:</strong> +75 Coins 🪙 in your vault</span>',
           sponsorBtn: '👉 Support Server via Sponsor',
           sponsorBadge: 'Sponsored with love for the Pyxie community 🐾',
@@ -638,7 +739,7 @@
       sponsorBtnEl.innerText = S.sponsorBtn;
 
       if (!token) {
-        // Acesso direto sem token: Exibe o card explicativo e botões formatados
+        // Acesso direto sem token
         timerCardEl.style.display = 'none';
         instructionsCardEl.style.display = 'block';
         pageTitleEl.innerText = S.pageTitleNoToken;
@@ -648,7 +749,6 @@
         pageSubtitleEl.innerText = S.pageSubtitleWithToken;
         statusLabelEl.innerText = S.statusChanneling;
 
-        // Inicia a contagem regressiva de 10 segundos
         const timer = setInterval(() => {
           timeLeft--;
           if (timeLeft < 0) timeLeft = 0;
@@ -669,7 +769,6 @@
       async function claimBonusReward() {
         if (!token) return;
 
-        // Abre o SmartLink do Adsterra no clique do usuário para monetização máxima
         try {
           if (SMARTLINK_URL) {
             window.open(SMARTLINK_URL, '_blank');
