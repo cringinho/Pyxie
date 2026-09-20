@@ -6,18 +6,38 @@
 
 const APP_EMOJI_CACHE = new Map();
 
+// Pré-carrega todos os 1.182 Discord Application Emojis catalogados
+try {
+  const data = require('../data/discordAppEmojis.json');
+  const items = Array.isArray(data) ? data : (data.items || []);
+  for (const item of items) {
+    if (item.name && item.id) {
+      const formatted = item.animated ? `<a:${item.name}:${item.id}>` : `<:${item.name}:${item.id}>`;
+      APP_EMOJI_CACHE.set(item.name.toLowerCase(), formatted);
+    }
+  }
+} catch (_) {}
+
 // Mapeamento padrão de identificadores para emojis oficiais da aplicação (Discord Dev Portal) e fallbacks Unicode
 const EMOJI_DEFINITIONS = {
+  // Asas & Identidade da Pyxie
+  WINGS: { name: 'pinkeing', aliases: ['asas', 'wings', 'pinkwings'], fallback: '🪽' },
+  WINGS_PURPLE: { name: '9194purplewing', aliases: ['asas_roxas', 'purplewing'], fallback: '🪽' },
+  BUTTERFLY: { name: '5056purplebutterfly', aliases: ['borboleta', 'butterfly', 'purplebutterfy', '255208butterfly'], fallback: '🦋' },
+  ANGEL: { name: 'Angel', aliases: ['anjo', 'angel', '3138angelheart'], fallback: '👼' },
+  MELODY: { name: '6735mymelodycuteeyes', aliases: ['melody', 'mymelody', '13038mymelody'], fallback: '🐰' },
+  SPELLBOOK: { name: '6449spellbook', aliases: ['grimorio', 'livro_feiticos', '42985spellbook', 'enchantedbook'], fallback: '📖' },
+
   // Moedas & Economia
   COIN: { name: 'shineygoldcoinsi', aliases: ['moedinha', 'coin'], fallback: '🪙' },
   COIN_PURPLE: { name: 'gifggpurplecoin5', aliases: ['phantom_coin', 'purplecoin'], fallback: '🪙' },
   MAGIC_BEAN: { name: 'peakmagicbean', aliases: ['feijao_magico', 'magic_bean'], fallback: '🌱' },
-  DIAMOND: { name: 'diamante', aliases: ['diamond'], fallback: '💎' },
+  DIAMOND: { name: 'diamante', aliases: ['diamond', '9862_holo_diamond'], fallback: '💎' },
   BAG: { name: 'a1backpack', aliases: ['mochila', 'backpack'], fallback: '🎒' },
   TROPHY: { name: 'win', aliases: ['trofeu', 'trophy'], fallback: '🏆' },
   CROWN: { name: 'Crown', aliases: ['coroa', 'crown'], fallback: '👑' },
-  HEART: { name: 'purpleheartdrip2', aliases: ['coracao', 'heart'], fallback: '💖' },
-  STAR: { name: 'pastelstarturn60', aliases: ['estrela', 'star'], fallback: '⭐' },
+  HEART: { name: 'purpleheartdrip2', aliases: ['coracao', 'heart', '7420_Animated_pink_heart'], fallback: '💖' },
+  STAR: { name: 'pastelstarturn60', aliases: ['estrela', 'star', '8881shootingstars', '86300hangingstars'], fallback: '⭐' },
   CHEST: { name: 'rarecrate', aliases: ['bau', 'chest'], fallback: '📦' },
 
   // Bosque da Pyxie & RPG
@@ -26,35 +46,35 @@ const EMOJI_DEFINITIONS = {
   GHOST: { name: 'pinkghost', aliases: ['fantasma', 'ghost'], fallback: '👻' },
   SKULL: { name: 'kikskull', aliases: ['caveira', 'skull'], fallback: '💀' },
   WITCH: { name: 'witchwumpus', aliases: ['bruxa', 'witch'], fallback: '🧙' },
-  BOOK: { name: 'book2716', aliases: ['livro', 'book'], fallback: '📖' },
+  BOOK: { name: '6449spellbook', aliases: ['livro', 'book', 'book2716'], fallback: '📖' },
   SHIELD: { name: 'shieldsuccess22', aliases: ['escudo', 'shield'], fallback: '🛡️' },
   ZAP: { name: 'zap65', aliases: ['energia', 'zap'], fallback: '⚡' },
   CONTROLLER: { name: 'ykawaiicontrolle', aliases: ['controle', 'game'], fallback: '🎮' },
   CODING: { name: 'coding41', aliases: ['trabalho', 'work'], fallback: '💼' },
 
   // UI & Notificações
-  CHECK: { name: 'shieldsuccess22', aliases: ['check_mark', 'check'], fallback: '✅' },
+  CHECK: { name: 'shieldsuccess22', aliases: ['check_mark', 'check', '6586_TickYes_RainbowGif', '9434purpleverification'], fallback: '✅' },
   CROSS: { name: 'x_', aliases: ['cross_mark', 'cross', 'erro'], fallback: '❌' },
   HOURGLASS: { name: 'ampulheta', aliases: ['hourglass'], fallback: '⏳' },
   GIFT: { name: 'qbgifts48', aliases: ['presente', 'gift', 'acgift70'], fallback: '🎁' },
-  SPARKLES: { name: 'purplesparkles', aliases: ['brilhos', 'sparkles'], fallback: '✨' },
+  SPARKLES: { name: 'purplesparkles', aliases: ['brilhos', 'sparkles', '3679pinksparkles', '5802kuromisparkles'], fallback: '✨' },
   ROCKET: { name: 'slrocket', aliases: ['foguete', 'rocket'], fallback: '🚀' },
-  MOON: { name: 'pixdreamsmooncha', aliases: ['lua', 'moon'], fallback: '🌙' },
-  FAIRY: { name: 'fairy', aliases: ['fada', 'fairybadge34'], fallback: '🧚' },
+  MOON: { name: 'pixdreamsmooncha', aliases: ['lua', 'moon', '8144bluecrystalmoon', '8212crystalmoon', '68511catmoon'], fallback: '🌙' },
+  FAIRY: { name: 'fairy', aliases: ['fada', 'fairybadge34', '6461strawberryfairybunny'], fallback: '🧚' },
   MUSHROOM: { name: 'awmushroom5', aliases: ['cogumelo', 'mushroom'], fallback: '🍄' },
   ZOMBIE: { name: 'ardiscordzombie', aliases: ['zumbi', 'zombie'], fallback: '🧟' },
-  BAT: { name: 'battybk', aliases: ['morcego', 'bat', 'bat22'], fallback: '🦇' },
+  BAT: { name: '6391purplebat', aliases: ['morcego', 'bat', 'battybk', '18726purplebat', '826348purplebat'], fallback: '🦇' },
   PURPLE_FLAME: { name: 'purpleflame', aliases: ['chama_roxa', 'purple_flame', 'pinkflame'], fallback: '🔥' },
   RING: { name: 'anelrosa', aliases: ['anel', 'ring', 'anelonly', 'pinkanel15'], fallback: '💍' },
-  POTION: { name: 'galaxybottle', aliases: ['pocao', 'potion', 'frasco'], fallback: '🧪' },
+  POTION: { name: 'galaxybottle', aliases: ['pocao', 'potion', 'frasco', '35541queerpotion'], fallback: '🧪' },
   ALERT: { name: 'PurpleAlert', aliases: ['alerta', 'alert'], fallback: '⚠️' },
   HAMMER: { name: 'banhammer39', aliases: ['martelo', 'hammer', 'bancute'], fallback: '🔨' },
   PLEAD: { name: 'z3qcprideplead', aliases: ['plead', 'porfavor'], fallback: '🥺' },
   RAGE: { name: '1mzraging', aliases: ['rage', 'furia'], fallback: '💢' },
   BOMB: { name: 'bomb', aliases: ['bomba'], fallback: '💣' },
   MONSTER: { name: 'alienmonsterani', aliases: ['monstro', 'monster'], fallback: '👾' },
-  ARROW: { name: 'purplearrow', aliases: ['seta', 'arrow', 'ahaestheticarrow'], fallback: '➡️' },
-  KUROMI: { name: 'kuromiwitch', aliases: ['kuromi', 'witchwumpus'], fallback: '🖤' },
+  ARROW: { name: '2353arrowrightglow', aliases: ['seta', 'arrow', 'purplearrow', '8857pinkarrow', '9037arrowpink'], fallback: '➡️' },
+  KUROMI: { name: '9733kuromiheart', aliases: ['kuromi', 'kuromiwitch', '1014kuromimaid', '5802kuromisparkles'], fallback: '🖤' },
 };
 
 /**

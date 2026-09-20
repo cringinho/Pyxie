@@ -1,4 +1,9 @@
 const APP_EMOJIS = {
+  WINGS: '<a:pinkeing:1548444149785694238>',
+  WINGS_PURPLE: '<:9194purplewing:1551356206684307556>',
+  BUTTERFLY: '<a:5056purplebutterfly:1551355688612143134>',
+  SPELLBOOK: '<a:6449spellbook:1551355882447704124>',
+  HEART: '<a:purpleheartdrip2:1548444199970545756>',
   COIN: '<a:shineygoldcoinsi:1548444230588956683>',
   COIN_PURPLE: '<a:gifggpurplecoin5:1548443977429028955>',
   COIN_STATIC: '<:goldcoin:1548443982483292261>',
@@ -11,6 +16,8 @@ const APP_EMOJIS = {
   PORTAL: '<a:portalframe98:1548444170488778954>',
   CONTROLLER: '<a:ykawaiicontrolle:1548444319730499664>',
   WIN: '<a:win:1548444305507487754>',
+  ARROW: '<a:2353arrowrightglow:1551355397208805446>',
+  KUROMI: '<a:9733kuromiheart:1551356277194625224>',
 };
 
 function getAnimatedEmoji(guild, preferredNames = [], fallback = '✨') {
