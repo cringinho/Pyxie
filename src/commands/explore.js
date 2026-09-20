@@ -331,6 +331,7 @@ function buildNegotiationView(
     new ButtonBuilder()
       .setCustomId(`gloom:flee:${userId}`)
       .setLabel(t('gloom.negotiate.btnFlee', source))
+      .setEmoji('🏃')
       .setStyle(ButtonStyle.Danger)
   );
 
@@ -368,7 +369,8 @@ function buildBossView(userId, source = null, feedbackMessage = '') {
     buttons.push(
       new ButtonBuilder()
         .setCustomId(`gloom:boss_defeated_btn:${userId}`)
-        .setLabel(isEn ? '🏆 Behemoth Pacified!' : '🏆 Colosso Apaziguado!')
+        .setLabel(isEn ? 'Behemoth Pacified!' : 'Colosso Apaziguado!')
+        .setEmoji(getEmoji('TROPHY'))
         .setStyle(ButtonStyle.Success)
         .setDisabled(true)
     );
@@ -380,6 +382,7 @@ function buildBossView(userId, source = null, feedbackMessage = '') {
       new ButtonBuilder()
         .setCustomId(`gloom:boss_attack:${userId}`)
         .setLabel(attackLabel)
+        .setEmoji(getEmoji('PURPLE_FLAME'))
         .setStyle(ButtonStyle.Danger)
     );
   } else {
@@ -389,11 +392,13 @@ function buildBossView(userId, source = null, feedbackMessage = '') {
     buttons.push(
       new ButtonBuilder()
         .setLabel(t('gloom.boss.btnWebBonus', source))
+        .setEmoji(getEmoji('GIFT'))
         .setStyle(ButtonStyle.Link)
         .setURL(session.url),
       new ButtonBuilder()
         .setCustomId(`gloom:boss_refresh:${userId}`)
         .setLabel(t('gloom.boss.btnRefresh', source))
+        .setEmoji('🔄')
         .setStyle(ButtonStyle.Success)
     );
   }
@@ -402,6 +407,7 @@ function buildBossView(userId, source = null, feedbackMessage = '') {
     new ButtonBuilder()
       .setCustomId(`gloom:view:${userId}`)
       .setLabel(t('gloom.grimoire.btnBack', source))
+      .setEmoji('⬅️')
       .setStyle(ButtonStyle.Secondary)
   );
 
@@ -436,6 +442,7 @@ function buildMerchantView(userId, stock, source = null, feedbackMessage = '') {
     return new ButtonBuilder()
       .setCustomId(`gloom:merchant_buy:${userId}:${relic.id}:${stockIds}`)
       .setLabel(t('gloom.merchant.btnBuy', source, { item: rName.slice(0, 50), cost: relic.cost }).slice(0, 80))
+      .setEmoji(getEmoji('COIN_PURPLE'))
       .setStyle(ButtonStyle.Success)
       .setDisabled(user.phantomCoins < relic.cost);
   });
@@ -445,6 +452,7 @@ function buildMerchantView(userId, stock, source = null, feedbackMessage = '') {
     new ButtonBuilder()
       .setCustomId(`gloom:view:${userId}`)
       .setLabel(t('gloom.merchant.btnBack', source))
+      .setEmoji('⬅️')
       .setStyle(ButtonStyle.Secondary)
   );
 
@@ -501,6 +509,7 @@ function buildEngineerView(userId, source = null, feedbackMessage = '') {
     return new ButtonBuilder()
       .setCustomId(`gloom:engineer_upgrade:${userId}:${tier}`)
       .setLabel(t('gloom.engineer.btnUpgrade', source, { tier, cost }))
+      .setEmoji(getEmoji('SPARKLES'))
       .setStyle(tier >= 3 ? ButtonStyle.Danger : ButtonStyle.Primary)
       .setDisabled(!canAfford || !hasMaterials);
   });
@@ -510,6 +519,7 @@ function buildEngineerView(userId, source = null, feedbackMessage = '') {
     new ButtonBuilder()
       .setCustomId(`gloom:view:${userId}`)
       .setLabel(t('gloom.engineer.btnBack', source))
+      .setEmoji('⬅️')
       .setStyle(ButtonStyle.Secondary)
   );
 

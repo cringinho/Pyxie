@@ -13,7 +13,7 @@
     },
     "relic_merchant": {
       "name": "Mercador Ambulante de Relíquias",
-      "chance_percentage": 7.0,
+      "chance_percentage": 5.0,
       "stock_size": 3,
       "description": {
         "pt": "Um mercador espectral oferece relíquias arcanas em troca de Phantom Coins.",
@@ -22,7 +22,7 @@
     },
     "relic_engineer": {
       "name": "Engenheiro Forjador de Relíquias",
-      "chance_percentage": 7.0,
+      "chance_percentage": 5.0,
       "description": {
         "pt": "Um engenheiro das sombras aprimora duas relíquias do mesmo tier para um tier superior.",
         "en": "A shadow engineer upgrades two relics of the same tier into a higher tier."
@@ -30,7 +30,7 @@
     },
     "spirit_encounter": {
       "name": "Encontro com Espírito da Penumbra (Negociação SMT)",
-      "chance_percentage": 30.0,
+      "chance_percentage": 20.0,
       "description": {
         "pt": "Um espírito da câmara surge para uma negociação tensa de 3 posturas existenciais.",
         "en": "A chamber spirit appears for an existential 3-stance negotiation."
@@ -38,8 +38,8 @@
     },
     "spectral_cache": {
       "name": "Baú Espectral Oculto",
-      "chance_percentage": 18.0,
-      "min_phantom_coins": 15,
+      "chance_percentage": 10.0,
+      "min_phantom_coins": 20,
       "max_phantom_coins": 50,
       "description": {
         "pt": "Encontra um baú secreto contendo Phantom Coins puras.",
@@ -64,3 +64,4 @@
     }
   }
 }
+

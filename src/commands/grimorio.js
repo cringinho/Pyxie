@@ -81,16 +81,19 @@ function buildGrimoireView(userId, source = null, feedbackMessage = '') {
     components.push(new ActionRowBuilder().addComponents(equipButtons.slice(0, 5)));
   }
 
+  const { getEmoji } = require('../utils/appEmojis');
   // Linha de Navegação: Fusão e Voltar
   const navRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId(`gloom:fusion_menu:${userId}`)
       .setLabel(t('gloom.grimoire.btnFuse', source))
+      .setEmoji(getEmoji('POTION') || '⚗️')
       .setStyle(ButtonStyle.Primary)
       .setDisabled(collected.length < 2 || user.phantomCoins < 30),
     new ButtonBuilder()
       .setCustomId(`gloom:view:${userId}`)
       .setLabel(t('gloom.grimoire.btnBack', source))
+      .setEmoji('⬅️')
       .setStyle(ButtonStyle.Secondary)
   );
   components.push(navRow);
