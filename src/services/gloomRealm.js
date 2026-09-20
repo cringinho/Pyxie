@@ -1379,7 +1379,7 @@ function negotiateSpirit(
 ) {
   const user = getGloomUser(userId);
   const spirit = spiritId ? SPIRITS[spiritId] || null : null;
-  const encounter = encounterId ? getEncounterById(encounterId) : getEncounterForSpirit(spiritId);
+  const encounter = encounterId ? getEncounterById(encounterId) : (spiritId ? getEncounterForSpirit(spiritId) : null);
   const tide = getGloomTide();
 
   if (!spirit && !encounter) return { success: false, reason: 'invalid_spirit' };
@@ -1458,7 +1458,7 @@ function negotiateSpirit(
     };
   }
 
-  // Escolha de Diálogo
+  // Escolha de Diálogo (Encounter ou Spirit)
   let choice = null;
   if (encounter && Array.isArray(encounter.phases) && encounter.phases[phase - 1]) {
     const currentPhaseObj = encounter.phases[phase - 1];
@@ -1648,6 +1648,7 @@ function negotiateSpirit(
       recruited: false,
       escaped: true,
       criticalFailure: false,
+      roomBanned: false,
       choice,
       finalScore: newScore,
       targetScore,

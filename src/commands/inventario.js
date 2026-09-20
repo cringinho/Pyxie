@@ -78,7 +78,7 @@ function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = nu
   }
 
   return new EmbedBuilder()
-    .setColor(currentTab === 'bosque' ? PYXIE_COLORS.purple : PYXIE_COLORS.magenta)
+    .setColor(currentTab === 'bosque' ? (PYXIE_COLORS.purple || '#8b5cf6') : (PYXIE_COLORS.magenta || '#e60067'))
     .setTitle(t('inventory.backpackTitle', source, { user: userTag }))
     .setDescription(descSections.join('\n\n───────────────\n\n'))
     .setFooter({ text: 'Pyxie • Mochila Modular' })
@@ -87,7 +87,6 @@ function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = nu
 
 function buildInventoryComponents(userId, selectedItemId = null, source = null, currentTab = 'todos') {
   const inv = getUserInventory(userId);
-  const gUser = getGloomUser(userId);
   const socialEntries = Object.entries(inv).filter(([, count]) => count > 0);
 
   // Linha 1: Abas Modulares de Filtragem
@@ -111,7 +110,7 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
 
   const components = [tabRow];
 
-  // Se estiver na aba Bosque: opções para ir à exploração ou ao Engenheiro
+  // Se estiver na aba Bosque: botões para ir à exploração ou ao Engenheiro
   if (currentTab === 'bosque') {
     const gloomRow = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
