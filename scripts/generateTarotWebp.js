@@ -143,8 +143,8 @@ function generateLockedCard() {
     '"Esta página ainda repousa em mistério."',
     '',
     'Realize tiragens diárias no comando /py-tarot',
-    'para desbloquear esta carta e registrá-la',
-    'em seu Álbum de Tarot da Pyxie!'
+    'para revelar esta carta e expandir',
+    'sua coleção mágica no Álbum da Pyxie!'
   ];
   descLines.forEach((l, i) => {
     ctx.fillText(l, cx, boxY + 38 + i * 26);
@@ -153,7 +153,7 @@ function generateLockedCard() {
   // Rodapé
   ctx.fillStyle = '#c084fc';
   ctx.font = 'bold 12px sans-serif';
-  ctx.fillText('✦ Álbum de Tarot da Pyxie ✦', cx, 978);
+  ctx.fillText('• Álbum de Tarot da Pyxie •', cx, 978);
 
   const lockedPath = path.join(dirUi, 'card_locked.webp');
   fs.writeFileSync(lockedPath, canvas.toBuffer('image/webp'));
@@ -248,13 +248,13 @@ function generateAlbumCover() {
   ctx.fillStyle = '#e2e8f0';
   ctx.font = '15px sans-serif';
   const coverLines = [
-    'Complete o baralho místico da Pyxie!',
+    'Colecione as 78 cartas lendárias da Pyxie!',
     '',
-    '• 22 Arcanos Maiores (O Louco ao Mundo)',
-    '• 56 Arcanos Menores (Paus, Copas, Espadas, Ouros)',
-    '• 7 Conquistas Místicas com milhares de Moedas!',
+    '• 22 Arcanos Maiores — Os Grandes Mistérios do Destino',
+    '• 56 Arcanos Menores — Naipes de Paus, Copas, Espadas e Ouros',
+    '• 7 Conquistas Místicas para os Mestres do Oráculo',
     '',
-    'Use /py-album para folhear suas cartas.'
+    'Use /py-album para folhear seu acervo.'
   ];
   coverLines.forEach((l, i) => {
     ctx.fillText(l, cx, boxY + 32 + i * 24);
@@ -263,7 +263,7 @@ function generateAlbumCover() {
   // Rodapé
   ctx.fillStyle = '#fbbf24';
   ctx.font = 'bold 12px sans-serif';
-  ctx.fillText('✦ Pyxie • Bot Mágico de RPG, Economia & Comunidade ✦', cx, 978);
+  ctx.fillText('• Pyxie • O Seu Guia Místico de Tarot & Coleção •', cx, 978);
 
   const coverPath = path.join(dirUi, 'album_cover.webp');
   fs.writeFileSync(coverPath, canvas.toBuffer('image/webp'));
