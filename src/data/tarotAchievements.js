@@ -122,6 +122,7 @@ function evaluateAndSortAchievements(discoveredCards = [], claimedAchievements =
     return {
       id: ach.id,
       name: lang === 'en' ? ach.nameEn : ach.namePt,
+      description: lang === 'en' ? ach.descEn : ach.descPt,
       desc,
       description: desc,
       rewardCoins: ach.rewardCoins,

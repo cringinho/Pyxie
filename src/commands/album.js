@@ -96,16 +96,17 @@ function buildCardsView(userId, pageNumber, source = null) {
     ].join('\n');
   }
 
+  const fileName = `card_${String(page).padStart(2, '0')}.webp`;
+  const assetPath = isDiscovered ? getCardAssetPath(page) : getLockedAssetPath();
+  const attachment = new AttachmentBuilder(assetPath, { name: fileName });
+
   const embed = new EmbedBuilder()
     .setColor(embedColor)
     .setTitle(`${albumEmoji}  ✦  ${t('album.title', source)}`)
     .setDescription(`${collectorHeader}\n\n${cardFieldsDesc}`)
-    .setImage('attachment://card.webp')
+    .setImage(`attachment://${fileName}`)
     .setFooter({ text: `Pyxie • Carta #${page} de ${TOTAL_CARDS}` })
     .setTimestamp();
-
-  const assetPath = isDiscovered ? getCardAssetPath(page) : getLockedAssetPath();
-  const attachment = new AttachmentBuilder(assetPath, { name: 'card.webp' });
 
   // Linha 1: Navegação de Páginas
   const navRow = new ActionRowBuilder().addComponents(
@@ -291,6 +292,7 @@ async function handleAlbumInteraction(interaction) {
     await interaction.update({
       embeds: view.embeds,
       files: view.files,
+      attachments: [],
       components: view.components,
     });
     return;
@@ -370,6 +372,7 @@ async function handleAlbumInteraction(interaction) {
     await interaction.message.edit({
       embeds: updatedView.embeds,
       files: updatedView.files,
+      attachments: [],
       components: updatedView.components,
     });
     return;
@@ -381,6 +384,7 @@ async function handleAlbumInteraction(interaction) {
     await interaction.update({
       embeds: view.embeds,
       files: view.files,
+      attachments: [],
       components: view.components,
     });
     return;
@@ -392,6 +396,7 @@ async function handleAlbumInteraction(interaction) {
     await interaction.update({
       embeds: view.embeds,
       files: view.files,
+      attachments: [],
       components: view.components,
     });
     return;
@@ -408,6 +413,7 @@ async function handleAlbumInteraction(interaction) {
   await interaction.update({
     embeds: view.embeds,
     files: view.files,
+    attachments: [],
     components: view.components,
   });
 }

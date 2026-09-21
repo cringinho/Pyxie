@@ -110,3 +110,4 @@ const unknownData = getThemeEmojiData('non_existent_key', { fallback: '💎' });
 assert.equal(unknownData.format, '💎', 'Fallback personalizado deve ser respeitado');
 
 console.log('🎉 Todos os testes de Padronização de Emojis Temáticos passaram com 100% de sucesso!');
+

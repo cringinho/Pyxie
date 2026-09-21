@@ -15,31 +15,26 @@ const HEIGHT = 1024;
 
 console.log('--- Iniciando geração dos assets estáticos em WebP do Tarot ---');
 
-// 1. Gera as 78 cartas em WebP
-cards.forEach((card, idx) => {
-  const num = idx + 1;
-  const pad = String(num).padStart(2, '0');
-  const targetPath = path.join(dirCards, `card_${pad}.webp`);
+// 1. Gera as 78 cartas em WebP de alta qualidade
+async function generateAllCards() {
+  const { loadImage } = require('@napi-rs/canvas');
+  for (let idx = 0; idx < cards.length; idx++) {
+    const card = cards[idx];
+    const num = idx + 1;
+    const pad = String(num).padStart(2, '0');
+    const targetPath = path.join(dirCards, `card_${pad}.webp`);
 
-  // Gera o buffer em PNG a partir do renderer e salva em WebP
-  // Para converter direto em WebP de alta performance:
-  const pngBuffer = renderTarotCard(card, 'UPRIGHT', 'pt');
-  
-  // Cria canvas temporário para exportar em WebP
-  const canvas = createCanvas(WIDTH, HEIGHT);
-  const ctx = canvas.getContext('2d');
-  
-  // Usamos a imagem renderizada
-  const { Image } = require('@napi-rs/canvas');
-  const img = new Image();
-  img.src = pngBuffer;
-  ctx.drawImage(img, 0, 0);
-  
-  const webpBuffer = canvas.toBuffer('image/webp');
-  fs.writeFileSync(targetPath, webpBuffer);
-});
+    const pngBuffer = renderTarotCard(card, 'UPRIGHT', 'pt');
+    const img = await loadImage(pngBuffer);
+    const canvas = createCanvas(WIDTH, HEIGHT);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
 
-console.log('✅ 78 cartas WebP geradas em assets/tarot/cards/');
+    const webpBuffer = canvas.toBuffer('image/webp');
+    fs.writeFileSync(targetPath, webpBuffer);
+  }
+  console.log('✅ 78 cartas WebP geradas em assets/tarot/cards/');
+}
 
 // 2. Gera card_locked.webp
 function generateLockedCard() {
@@ -270,8 +265,11 @@ function generateAlbumCover() {
   console.log('✅ assets/tarot/ui/album_cover.webp gerado com sucesso.');
 }
 
-generateLockedCard();
-generateAlbumCover();
+(async () => {
+  await generateAllCards();
+  generateLockedCard();
+  generateAlbumCover();
+  console.log('--- Processo concluído com 100% de sucesso! ---');
+})();
 
-console.log('--- Processo concluído com 100% de sucesso! ---');
 
