@@ -87,6 +87,14 @@ const TAROT_ACHIEVEMENTS = [
 
 const ACHIEVEMENTS_BY_ID = new Map(TAROT_ACHIEVEMENTS.map((a) => [a.id, a]));
 
+function makeProgressBar(current, target, length = 8) {
+  if (target <= 0) return '░'.repeat(length);
+  const ratio = Math.min(1, Math.max(0, current / target));
+  const filled = Math.round(ratio * length);
+  const empty = length - filled;
+  return '█'.repeat(filled) + '░'.repeat(empty);
+}
+
 function getAchievementById(id) {
   return ACHIEVEMENTS_BY_ID.get(id) || null;
 }
@@ -108,11 +116,14 @@ function evaluateAndSortAchievements(discoveredCards = [], claimedAchievements =
     const isReady = !isClaimed && current >= target;
     const progressRatio = target > 0 ? current / target : 0;
     const remaining = Math.max(0, target - current);
+    const desc = lang === 'en' ? ach.descEn : ach.descPt;
+    const progressBar = makeProgressBar(current, target, 8);
 
     return {
       id: ach.id,
       name: lang === 'en' ? ach.nameEn : ach.namePt,
-      description: lang === 'en' ? ach.descEn : ach.descPt,
+      desc,
+      description: desc,
       rewardCoins: ach.rewardCoins,
       current,
       target,
@@ -121,6 +132,7 @@ function evaluateAndSortAchievements(discoveredCards = [], claimedAchievements =
       isReady,
       isClaimed,
       percent: Math.min(100, Math.floor(progressRatio * 100)),
+      progressBar,
     };
   });
 

@@ -191,7 +191,7 @@ function buildAchievementsView(userId, pageNumber, source = null) {
   }).join('\n\n');
 
   const desc = [
-    `📊 **${summary}**`,
+    `📊 ${summary}`,
     '',
     achievementsList,
   ].join('\n');
