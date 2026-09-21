@@ -2,6 +2,7 @@ const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const { SHIP } = require('./commandNames');
 const { createShipAttachment } = require('../services/shipRenderer');
 const { getCanvasStrings, getLanguage, t } = require('../utils/i18n');
+const { getThemeEmoji } = require('../utils/themeEmojis');
 
 // Junta os nomes dos dois usuários formando um nome de casal.
 function buildShipName(nameA, nameB) {
@@ -28,12 +29,13 @@ function isSpecialCouple(memberA, memberB) {
 function getShipVerdict(percent, isSpecial = false, lang = 'pt') {
   const langKey = getLanguage(lang);
   const cStrs = getCanvasStrings(langKey).ship;
+  const themeShipEmoji = getThemeEmoji('ship');
 
   if (isSpecial) {
     return {
       message: cStrs.verdictSpecial,
       color: '#E60067',
-      emoji: '💖',
+      emoji: themeShipEmoji,
       isSpecial: true,
     };
   }
@@ -41,7 +43,7 @@ function getShipVerdict(percent, isSpecial = false, lang = 'pt') {
     return { message: cStrs.verdictLow, color: '#F43F5E', emoji: '💔' };
   }
   if (percent < 70) {
-    return { message: cStrs.verdictMid, color: '#EC4899', emoji: '💖' };
+    return { message: cStrs.verdictMid, color: '#EC4899', emoji: themeShipEmoji };
   }
   return { message: cStrs.verdictHigh, color: '#8B5CF6', emoji: '💜' };
 }
@@ -70,6 +72,7 @@ function buildShipEmbed(memberA, memberB, percent, lang = 'pt') {
   const isSpecial = isSpecialCouple(memberA, memberB);
   const verdict = getShipVerdict(percent, isSpecial, langKey);
   const shipName = buildShipName(nameA, nameB);
+  const shipEmoji = getThemeEmoji('ship');
 
   const embed = new EmbedBuilder()
     .setColor(verdict.color)
@@ -81,10 +84,10 @@ function buildShipEmbed(memberA, memberB, percent, lang = 'pt') {
       `**${nameA}**  ✦  **${nameB}**`,
       '',
       t('ship.specialCoupleName', lang),
-      `> 💖 **${shipName}**`,
+      `> ${shipEmoji} **${shipName}**`,
       '',
       t('ship.specialCompatibility', lang),
-      `> ✧ ✦ 💖 **${verdict.message}** 💖 ✦ ✧`,
+      `> ✧ ✦ ${shipEmoji} **${verdict.message}** ${shipEmoji} ✦ ✧`,
     ].join('\n');
 
     embed

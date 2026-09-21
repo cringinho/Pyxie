@@ -1,0 +1,126 @@
+{
+  "_comment": "Arquivo Central de Padronização de Emojis por Assunto, Módulo e Área da Pyxie. Modifique os IDs de acordo com a prioridade desejada.",
+  "themes": {
+    "coins": {
+      "name": "Moedinhas da Pyxie",
+      "description": "Emoji padrão para moedinhas, economia, saldos e transações financeiras",
+      "primaryId": "1548443880066777098",
+      "secondaryIds": [
+        "1548444230588956683"
+      ],
+      "fallback": "🪙"
+    },
+    "weekendBonus": {
+      "name": "Bônus de Fim de Semana",
+      "description": "Emoji padrão para bônus e eventos especiais de final de semana (2X)",
+      "primaryId": "1548443947079049256",
+      "secondaryIds": [],
+      "fallback": "🔥"
+    },
+    "dailyBonus": {
+      "name": "Bônus Diário & Web 10s",
+      "description": "Emoji padrão para recompensa diária, baú e bônus web de 10 segundos",
+      "primaryId": "1548443978414817331",
+      "secondaryIds": [
+        "1548444204202459136"
+      ],
+      "fallback": "🎁"
+    },
+    "tarot": {
+      "name": "Sistema de Tarot da Pyxie",
+      "description": "Emoji padrão para o sistema de Tarot místico e suas dependências",
+      "primaryId": "1548444111319605330",
+      "secondaryIds": [
+        "1551355296113238187",
+        "1551355287829749820",
+        "1551355603505520731",
+        "1551355640939806860",
+        "1551356681185796286"
+      ],
+      "fallback": "🔮"
+    },
+    "tarotAlbum": {
+      "name": "Álbum de Tarot da Pyxie",
+      "description": "Emoji padrão para o álbum de tarot, catálogo de cartas e conquistas",
+      "primaryId": "1551355436890857512",
+      "secondaryIds": [
+        "1551356087611957269"
+      ],
+      "fallback": "📖"
+    },
+    "helpCommands": {
+      "name": "Central de Ajuda & Aba Comandos",
+      "description": "Emoji padrão para a aba de comandos do website e comando de ajuda /py-help",
+      "primaryId": "1548444173747621918",
+      "secondaryIds": [
+        "1551355882447704124"
+      ],
+      "fallback": "📖"
+    },
+    "economyCareers": {
+      "name": "Economia & Carreiras",
+      "description": "Emoji padrão para o módulo de economia, trabalho e profissões",
+      "primaryId": "1548444230588956683",
+      "secondaryIds": [
+        "1548443880066777098",
+        "1551356441112084641"
+      ],
+      "fallback": "🪙"
+    },
+    "dice": {
+      "name": "Sistema de Dados (Dice)",
+      "description": "Emoji padrão para o sistema de rolagem de dados e minigames de sorte",
+      "primaryId": "1551355542700822538",
+      "secondaryIds": [
+        "1551356333272596572"
+      ],
+      "fallback": "🎲"
+    },
+    "userProfile": {
+      "name": "Menção de Usuário & Perfil Roxo",
+      "description": "Emoji padrão para quando o usuário é mencionado em embeds ou perfil de aventureiro",
+      "primaryId": "1551355544185344112",
+      "secondaryIds": [
+        "1551355728378335282"
+      ],
+      "fallback": "👤"
+    },
+    "grimorio": {
+      "name": "Grimório & Magias da Penumbra",
+      "description": "Emoji padrão para o grimório, feitiços, caldeirão de fusão e alquimia",
+      "primaryId": "1551355602297430016",
+      "secondaryIds": [
+        "1551355882447704124"
+      ],
+      "fallback": "📖"
+    },
+    "ship": {
+      "name": "Ship & Casamentos",
+      "description": "Emoji padrão para calculadora de afinidade (ship), casamentos e romance",
+      "primaryId": "1551355720874725386",
+      "secondaryIds": [
+        "1548444199970545756",
+        "1551355484131299439"
+      ],
+      "fallback": "💖"
+    },
+    "websiteHome": {
+      "name": "Website Home & Favicon",
+      "description": "Emoji padrão para o ícone principal, logo e página inicial (Home) do website",
+      "primaryId": "1551356640782057502",
+      "secondaryIds": [
+        "1548444149785694238"
+      ],
+      "fallback": "🦋"
+    },
+    "websiteSocial": {
+      "name": "Aba Social do Website",
+      "description": "Emoji padrão para a aba de comunidade social do website e módulo social",
+      "primaryId": "1551355541148667954",
+      "secondaryIds": [
+        "1551356415543742554"
+      ],
+      "fallback": "💑"
+    }
+  }
+}

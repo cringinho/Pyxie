@@ -2,6 +2,7 @@ const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const { DICE } = require('./commandNames');
 const { getLanguage } = require('../utils/i18n');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
+const { getThemeEmoji } = require('../utils/themeEmojis');
 
 function rollDice(sides = 6, count = 1) {
   const safeSides = Math.min(100, Math.max(2, Number(sides) || 6));
@@ -49,9 +50,10 @@ function buildDiceEmbed(user, result, source = null) {
     ? `\`${result.rolls.join('` + `')}\` = **${result.total}**`
     : `**${result.total}**`;
 
+  const diceEmoji = getThemeEmoji('dice');
   const title = isEn
-    ? `🎲 ✦ Roll Dice — d${result.sides}`
-    : `🎲 ✦ Rolar Dados — d${result.sides}`;
+    ? `${diceEmoji} ✦ Roll Dice — d${result.sides}`
+    : `${diceEmoji} ✦ Rolar Dados — d${result.sides}`;
 
   const desc = isEn
     ? `**${user.displayName || user.username}** shook the pouch and rolled **${result.count}d${result.sides}**!\n\n### 🎯 Result: ${rollsStr}${highlight}`

@@ -106,6 +106,11 @@ assert.equal(sorted1[1].isReady, true, 'Segunda conquista deve estar pronta para
 assert.equal(sorted1[0].isClaimed, false);
 assert.equal(sorted1[1].isClaimed, false);
 
+// As 5 seguintes devem estar em progresso (Nível 2)
+for (let i = 2; i < 7; i++) {
+  assert.equal(sorted1[i].isReady, false, `Conquista índice ${i} não deve estar pronta`);
+  assert.equal(sorted1[i].isClaimed, false, `Conquista índice ${i} não deve estar resgatada`);
+}
 // Validação de integridade dos campos (name, desc, progressBar)
 for (const ach of sorted1) {
   assert(ach.name && typeof ach.name === 'string', `Conquista ${ach.id} deve ter name definido`);
@@ -113,6 +118,7 @@ for (const ach of sorted1) {
   assert(ach.progressBar && typeof ach.progressBar === 'string', `Conquista ${ach.id} deve ter progressBar definida`);
 }
 
+console.log('✅ Ordenação dinâmica de conquistas por prioridade (Pronta -> Progresso -> Resgatada) validada.');
 console.log('✅ Ordenação dinâmica e campos (name, desc, progressBar) validados.');
 
 // 4. Resgate de Conquistas & Prevenção de Double-Claim

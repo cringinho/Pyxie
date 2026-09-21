@@ -22,6 +22,7 @@ const {
 } = require('../services/tarotAlbumService');
 const { t, getLanguage, formatCoins } = require('../utils/i18n');
 const { getAnimatedEmoji } = require('../utils/serverEmojis');
+const { getThemeEmoji, getUserProfileBadge } = require('../utils/themeEmojis');
 
 const name = 'py-album';
 const aliases = ['album', 'albumdetarot', 'py-albumdetarot', 'tarot-album', 'py-tarot-album'];
@@ -62,13 +63,15 @@ function buildCardsView(userId, pageNumber, source = null) {
   let embedColor = isDiscovered ? '#9b5de5' : '#475569';
   if (isDiscovered && card.suit === 'major') embedColor = '#E60067';
 
-  const collectorHeader = t('album.collector', source, {
+  const userBadge = getUserProfileBadge();
+  const collectorHeader = `${userBadge} ${t('album.collector', source, {
     user: userId,
     discovered: stats.discoveredCount,
     percent: stats.percent,
-  });
+  })}`;
 
   const suitName = isEn ? card.suitNameEn : card.suitNamePt;
+  const albumEmoji = getThemeEmoji('tarotAlbum');
 
   let cardFieldsDesc = '';
   if (isDiscovered) {
@@ -95,7 +98,7 @@ function buildCardsView(userId, pageNumber, source = null) {
 
   const embed = new EmbedBuilder()
     .setColor(embedColor)
-    .setTitle(`${getAnimatedEmoji(guild, ['book', 'tarot', 'magic'], '📖')}  ✦  ${t('album.title', source)}`)
+    .setTitle(`${albumEmoji}  ✦  ${t('album.title', source)}`)
     .setDescription(`${collectorHeader}\n\n${cardFieldsDesc}`)
     .setImage('attachment://card.webp')
     .setFooter({ text: `Pyxie • Carta #${page} de ${TOTAL_CARDS}` })
@@ -191,14 +194,15 @@ function buildAchievementsView(userId, pageNumber, source = null) {
   }).join('\n\n');
 
   const desc = [
-    `📊 ${summary}`,
+    `📊 **${summary}**`,
     '',
     achievementsList,
   ].join('\n');
 
+  const albumEmoji = getThemeEmoji('tarotAlbum');
   const embed = new EmbedBuilder()
     .setColor(stats.readyToClaimCount > 0 ? '#10b981' : '#f59e0b')
-    .setTitle(`${getAnimatedEmoji(guild, ['trophy', 'star', 'magic'], '🏆')}  ✦  ${t('album.achievementsTitle', source)}`)
+    .setTitle(`${albumEmoji}  ✦  ${t('album.achievementsTitle', source)}`)
     .setDescription(desc)
     .setFooter({ text: 'Pyxie • Sistema de Conquistas do Tarot' })
     .setTimestamp();

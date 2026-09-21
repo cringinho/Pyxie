@@ -4,15 +4,16 @@ const {
   StringSelectMenuBuilder,
 } = require('discord.js');
 const { getLanguage, t } = require('../utils/i18n');
+const { getThemeEmojiUrl } = require('../utils/themeEmojis');
 
 const MODULE_ICONS = {
-  todos: 'https://cdn.discordapp.com/emojis/1548444149785694238.gif', // pinkeing (Asas Mágicas Animadas)
+  todos: getThemeEmojiUrl('websiteHome') || 'https://cdn.discordapp.com/emojis/1551356640782057502.gif', // 255208butterfly (Home / Visão Geral)
   bosque: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif', // emojitree38 (Árvore Mística Animada)
-  economia: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif', // shineygoldcoinsi (Moedinha Dourada Brilhante)
+  economia: getThemeEmojiUrl('economyCareers') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif', // shineygoldcoinsi (Moedinha Dourada Brilhante)
   loja: 'https://cdn.discordapp.com/emojis/1551356299500064858.gif', // 9862_holo_diamond (Diamante Holográfico)
-  tarot: 'https://cdn.discordapp.com/emojis/1551356087611957269.gif', // 8212crystalmoon (Lua de Cristal Animada)
-  social: 'https://cdn.discordapp.com/emojis/1551356415543742554.gif', // 37775purplecrystalheart (Coração de Cristal Roxo)
-  utilidades: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif', // ykawaiicontrolle (Controle Gamer Kawaii)
+  tarot: getThemeEmojiUrl('tarot') || 'https://cdn.discordapp.com/emojis/1548444111319605330.gif', // Moon (Tarot padrão)
+  social: getThemeEmojiUrl('websiteSocial') || 'https://cdn.discordapp.com/emojis/1551355541148667954.gif', // 3849purplebutterflies (Aba Social)
+  utilidades: getThemeEmojiUrl('helpCommands') || 'https://cdn.discordapp.com/emojis/1548444173747621918.gif', // prcomputer (Central de Ajuda & Aba Comandos)
 };
 
 const COMMAND_ICONS = {
@@ -21,29 +22,29 @@ const COMMAND_ICONS = {
   explorar: 'https://cdn.discordapp.com/emojis/1548444170488778954.gif',
   gloom: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif',
   bosque: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif',
-  grimorio: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
-  grimoire: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
+  grimorio: getThemeEmojiUrl('grimorio') || 'https://cdn.discordapp.com/emojis/1551355602297430016.png',
+  grimoire: getThemeEmojiUrl('grimorio') || 'https://cdn.discordapp.com/emojis/1551355602297430016.png',
   vasculhar: 'https://cdn.discordapp.com/emojis/1548443807694069760.gif',
   scavenge: 'https://cdn.discordapp.com/emojis/1548443807694069760.gif',
   wiki: 'https://cdn.discordapp.com/emojis/1551356435521339452.gif',
 
   // Economia & Carreiras
-  trade: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
-  trocar: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
-  daily: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
-  diario: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
-  wallet: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  carteira: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  profession: 'https://cdn.discordapp.com/emojis/1551356441112084641.gif',
-  profissao: 'https://cdn.discordapp.com/emojis/1551356441112084641.gif',
-  work: 'https://cdn.discordapp.com/emojis/1548444173747621918.gif',
-  trabalho: 'https://cdn.discordapp.com/emojis/1548444173747621918.gif',
+  trade: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
+  trocar: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
+  daily: getThemeEmojiUrl('dailyBonus') || 'https://cdn.discordapp.com/emojis/1548443978414817331.png',
+  diario: getThemeEmojiUrl('dailyBonus') || 'https://cdn.discordapp.com/emojis/1548443978414817331.png',
+  wallet: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
+  carteira: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
+  profession: getThemeEmojiUrl('economyCareers') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
+  profissao: getThemeEmojiUrl('economyCareers') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
+  work: getThemeEmojiUrl('economyCareers') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
+  trabalho: getThemeEmojiUrl('economyCareers') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
   rank: 'https://cdn.discordapp.com/emojis/1548443887025266739.gif',
   ranking: 'https://cdn.discordapp.com/emojis/1548443887025266739.gif',
   vote: 'https://cdn.discordapp.com/emojis/1551356493050413159.gif',
   votar: 'https://cdn.discordapp.com/emojis/1551356493050413159.gif',
-  bonus: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
-  recompensa: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
+  bonus: getThemeEmojiUrl('dailyBonus') || 'https://cdn.discordapp.com/emojis/1548443978414817331.png',
+  recompensa: getThemeEmojiUrl('dailyBonus') || 'https://cdn.discordapp.com/emojis/1548443978414817331.png',
   seteco: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
   setareconomia: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
   reseteco: 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
@@ -57,41 +58,41 @@ const COMMAND_ICONS = {
   inventory: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
   inventario: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
   mochila: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
-  buy: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  comprar: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  sell: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
-  vender: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
+  buy: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
+  comprar: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
+  sell: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
+  vender: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
 
   // Tarot Místico & Álbum
-  tarot: 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
-  album: 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
-  'py-album': 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
-  albumdetarot: 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
-  'py-albumdetarot': 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
+  tarot: getThemeEmojiUrl('tarot') || 'https://cdn.discordapp.com/emojis/1548444111319605330.gif',
+  album: getThemeEmojiUrl('tarotAlbum') || 'https://cdn.discordapp.com/emojis/1551355436890857512.gif',
+  'py-album': getThemeEmojiUrl('tarotAlbum') || 'https://cdn.discordapp.com/emojis/1551355436890857512.gif',
+  albumdetarot: getThemeEmojiUrl('tarotAlbum') || 'https://cdn.discordapp.com/emojis/1551355436890857512.gif',
+  'py-albumdetarot': getThemeEmojiUrl('tarotAlbum') || 'https://cdn.discordapp.com/emojis/1551355436890857512.gif',
 
   // Social & Casamentos & Minigames
-  ship: 'https://cdn.discordapp.com/emojis/1548444199970545756.gif',
-  casal: 'https://cdn.discordapp.com/emojis/1548444199970545756.gif',
-  marriage: 'https://cdn.discordapp.com/emojis/1551355484131299439.gif',
-  marry: 'https://cdn.discordapp.com/emojis/1551355484131299439.gif',
-  casamento: 'https://cdn.discordapp.com/emojis/1551355484131299439.gif',
+  ship: getThemeEmojiUrl('ship') || 'https://cdn.discordapp.com/emojis/1551355720874725386.gif',
+  casal: getThemeEmojiUrl('ship') || 'https://cdn.discordapp.com/emojis/1551355720874725386.gif',
+  marriage: getThemeEmojiUrl('ship') || 'https://cdn.discordapp.com/emojis/1551355720874725386.gif',
+  marry: getThemeEmojiUrl('ship') || 'https://cdn.discordapp.com/emojis/1551355720874725386.gif',
+  casamento: getThemeEmojiUrl('ship') || 'https://cdn.discordapp.com/emojis/1551355720874725386.gif',
   divorce: 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
   divorcio: 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
-  profile: 'https://cdn.discordapp.com/emojis/1551356277194625224.gif',
-  perfil: 'https://cdn.discordapp.com/emojis/1551356277194625224.gif',
+  profile: getThemeEmojiUrl('userProfile') || 'https://cdn.discordapp.com/emojis/1551355544185344112.png',
+  perfil: getThemeEmojiUrl('userProfile') || 'https://cdn.discordapp.com/emojis/1551355544185344112.png',
   cookie: 'https://cdn.discordapp.com/emojis/1551356672260444220.gif',
   biscoito: 'https://cdn.discordapp.com/emojis/1551356672260444220.gif',
   jokenpo: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
   likely: 'https://cdn.discordapp.com/emojis/1548444134443065446.gif',
   provavel: 'https://cdn.discordapp.com/emojis/1548444134443065446.gif',
-  dados: 'https://cdn.discordapp.com/emojis/1551356333272596572.gif',
-  dice: 'https://cdn.discordapp.com/emojis/1551356333272596572.gif',
-  coinflip: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  moeda: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
+  dados: getThemeEmojiUrl('dice') || 'https://cdn.discordapp.com/emojis/1551355542700822538.png',
+  dice: getThemeEmojiUrl('dice') || 'https://cdn.discordapp.com/emojis/1551355542700822538.png',
+  coinflip: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
+  moeda: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
 
   // Utilidades & Sistema
-  help: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
-  ajuda: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
+  help: getThemeEmojiUrl('helpCommands') || 'https://cdn.discordapp.com/emojis/1548444173747621918.gif',
+  ajuda: getThemeEmojiUrl('helpCommands') || 'https://cdn.discordapp.com/emojis/1548444173747621918.gif',
   ping: 'https://cdn.discordapp.com/emojis/1548444326621741096.png',
   info: 'https://cdn.discordapp.com/emojis/1551355784124825731.gif',
   invite: 'https://cdn.discordapp.com/emojis/1548444149785694238.gif',
