@@ -42,11 +42,37 @@ function buildBribeRow(source = null) {
   );
 }
 
+const { recordCardDiscovery, getAlbumStats } = require('../services/tarotAlbumService');
+
 function buildTarotEmbed(result, guildOrSource) {
-  const { card, orientation, paid } = result;
+  const { card, orientation, paid, discovery } = result;
   const isReversed = orientation === 'REVERSED';
   const guild = guildOrSource?.guild || (guildOrSource?.name ? guildOrSource : null);
   const guildName = guild?.name || '';
+  const userId = guildOrSource?.user?.id || guildOrSource?.author?.id || result.userId || '';
+
+  const percent = discovery
+    ? Number(((discovery.totalDiscovered / 78) * 100).toFixed(1))
+    : 0;
+
+  const albumProgressLine = discovery
+    ? t('tarot.albumProgress', guildOrSource, {
+        discovered: discovery.totalDiscovered,
+        percent,
+      })
+    : '';
+
+  const newDiscoveryNotice = discovery?.isNew
+    ? [
+        '',
+        `> **${t('tarot.newDiscoveryTitle', guildOrSource)}**`,
+        `> ${t('tarot.newDiscoveryDesc', guildOrSource, {
+          user: userId,
+          card: card.name,
+          number: String(discovery.card?.number || '').padStart(2, '0'),
+        })}`,
+      ].join('\n')
+    : '';
 
   const desc = [
     `🔮 **${t('tarot.cardLabel', guildOrSource)}:** **${card.num ? `${card.num}. ` : ''}${card.name}**  (\`${getDisplayOrientation(orientation, guildOrSource)}\`)`,
@@ -56,10 +82,14 @@ function buildTarotEmbed(result, guildOrSource) {
     '',
     `📜 **${t('tarot.destinyMessage', guildOrSource)}**`,
     `> "${isReversed ? card.reversed : card.upright}"`,
+    '',
+    `📖 ${albumProgressLine}${newDiscoveryNotice}`,
   ].join('\n');
 
+  const embedColor = discovery?.isNew ? '#E60067' : (isReversed ? '#f43f5e' : '#c084fc');
+
   const embed = new EmbedBuilder()
-    .setColor(isReversed ? '#f43f5e' : '#c084fc')
+    .setColor(embedColor)
     .setTitle(`${getAnimatedEmoji(guild, ['moon', 'tarot', 'magic'], '🌙')}  ✦  ${t('tarot.title', guildOrSource)}${guildName ? ` — ${guildName}` : ''}`)
     .setDescription(desc)
     .setImage('attachment://tarot_cringelandia.png')
@@ -102,16 +132,34 @@ async function logTarotToPublicChannel(client, { user, result, guild }) {
       ? t('tarot.publicHumor', guild)
       : '';
 
+    const discovery = result.discovery;
+    const isNew = discovery?.isNew;
+    const totalDiscovered = discovery?.totalDiscovered || 1;
+    const percent = Number(((totalDiscovered / 78) * 100).toFixed(1));
+
+    const progressLine = t('tarot.albumProgress', guild, {
+      discovered: totalDiscovered,
+      percent,
+    });
+
+    const newDiscoveryLine = isNew
+      ? `\n\n> **${t('tarot.newDiscoveryTitle', guild)}**\n> ${t('tarot.newDiscoveryDesc', guild, {
+          user: user.id,
+          card: result.card.name,
+          number: String(discovery.card?.number || '').padStart(2, '0'),
+        })}`
+      : '';
+
     const publicEmbed = new EmbedBuilder()
-      .setColor(result.paid ? '#8b5cf6' : (isReversed ? '#f43f5e' : '#c084fc'))
+      .setColor(isNew ? '#E60067' : (result.paid ? '#8b5cf6' : (isReversed ? '#f43f5e' : '#c084fc')))
       .setTitle(t('tarot.publicTitle', guild, { guild: guildName ? ` — ${guildName}` : '' }))
       .setDescription(
-        t('tarot.publicDesc', guild, {
+        `${t('tarot.publicDesc', guild, {
           humor: prefixHumor,
           user: user.id,
           card: result.card.name,
           orientation: getDisplayOrientation(result.orientation, guild),
-        })
+        })}\n\n📖 ${progressLine}${newDiscoveryLine}`
       )
       .setImage('attachment://tarot_cringelandia.png')
       .setFooter({ text: 'Pyxie' })
@@ -162,6 +210,10 @@ async function executeButton({ interaction, logTarotResult }) {
       return;
     }
 
+    const discovery = recordCardDiscovery(interaction.user.id, result.card.id);
+    result.discovery = discovery;
+    result.userId = interaction.user.id;
+
     const attachment = createTarotAttachment(result.card, result.orientation, interaction);
     const embed = buildTarotEmbed(result, interaction);
 
@@ -191,6 +243,10 @@ async function executeButton({ interaction, logTarotResult }) {
       return;
     }
 
+    const discovery = recordCardDiscovery(interaction.user.id, result.card.id);
+    result.discovery = discovery;
+    result.userId = interaction.user.id;
+
     const attachment = createTarotAttachment(result.card, result.orientation, interaction);
     const embed = buildTarotEmbed(result, interaction);
 
@@ -206,7 +262,7 @@ async function executeButton({ interaction, logTarotResult }) {
 
 module.exports = {
   name,
-  aliases: ['tarot'],
+  aliases: ['tarot', 'py-tarot'],
   ephemeral: true,
   isTarotButton,
   executeButton,
@@ -234,6 +290,10 @@ module.exports = {
       return;
     }
 
+    const discovery = recordCardDiscovery(interaction.user.id, result.card.id);
+    result.discovery = discovery;
+    result.userId = interaction.user.id;
+
     const attachment = createTarotAttachment(result.card, result.orientation, interaction);
     const embed = buildTarotEmbed(result, interaction);
 
@@ -244,5 +304,32 @@ module.exports = {
     });
 
     await logTarotToPublicChannel(interaction.client, { user: interaction.user, result, guild: interaction.guild });
+  },
+  async executeText({ message }) {
+    const result = drawTarot(message.author.id);
+
+    if (!result.drawn) {
+      const remaining = getTimeUntilMidnight();
+      await message.reply({
+        embeds: [buildAlreadyDrawnEmbed(remaining, message)],
+        components: [buildBribeRow(message)],
+      });
+      return;
+    }
+
+    const discovery = recordCardDiscovery(message.author.id, result.card.id);
+    result.discovery = discovery;
+    result.userId = message.author.id;
+
+    const attachment = createTarotAttachment(result.card, result.orientation, message);
+    const embed = buildTarotEmbed(result, message);
+
+    await message.reply({
+      embeds: [embed],
+      files: [attachment],
+      components: [buildBribeRow(message)],
+    });
+
+    await logTarotToPublicChannel(message.client, { user: message.author, result, guild: message.guild });
   },
 };

@@ -709,6 +709,14 @@ client.on('interactionCreate', async (interaction) => {
       return;
     }
 
+    const albumCommand = commandsByName.get('py-album') || commandsByName.get('album');
+    if (typeof albumCommand?.isAlbumInteraction === 'function' && albumCommand.isAlbumInteraction(interaction)) {
+      incrementCommand();
+      recordUniqueUser(interaction.user.id);
+      await albumCommand.handleAlbumInteraction(interaction);
+      return;
+    }
+
     if (!interaction.isChatInputCommand()) return;
 
     incrementCommand();

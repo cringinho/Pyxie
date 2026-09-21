@@ -21,6 +21,7 @@ const commands = [
   require('./vender'),
   require('./inventario'),
   require('./tarot'),
+  require('./album'),
   require('./agenda'),
   require('./emojis'),
   require('./convite'),
