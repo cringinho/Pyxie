@@ -92,7 +92,7 @@ const CANVAS_STRINGS = {
       arcana: 'ARCANOS',
       uprightBadge: '✦ POSIÇÃO DIRETA ✦',
       reversedBadge: '✦ POSIÇÃO INVERTIDA ✦',
-      footer: 'TAROT • ORÁCULO DE CRINGELÂNDIA',
+      footer: 'TAROT • ORÁCULO DA PYXIE',
     },
   },
   en: {
@@ -478,7 +478,7 @@ const TRANSLATIONS = {
       "newDiscoveryDesc": "<@{user}> conseguiu uma carta inédita para sua coleção! A carta **{card}** foi registrada na posição **#{number}** do **Álbum**!"
     },
     "album": {
-      "title": "ÁLBUM DA CRINGELÂNDIA — PYXIE",
+      "title": "ÁLBUM DE TAROT DA PYXIE",
       "collector": "Colecionador: <@{user}> • Progresso: **{discovered}/78** descobertas ({percent}%)",
       "position": "Posição",
       "name": "Nome",
@@ -495,7 +495,7 @@ const TRANSLATIONS = {
       "btnLast": "78",
       "btnAchievements": "🏆 Conquistas & Moedas",
       "btnBackToAlbum": "📖 Folhear Cartas",
-      "achievementsTitle": "🏆 Conquistas do Álbum da Cringelândia",
+      "achievementsTitle": "🏆 Conquistas do Álbum da Pyxie",
       "achievementsSummary": "Conquistas Resgatadas: **{claimed}/7** • Prontas para Resgate: **{ready}**",
       "claimBtn": "Resgatar {coins} 🪙",
       "claimedBadge": "✅ Resgatada",
@@ -1029,7 +1029,7 @@ const TRANSLATIONS = {
       "newDiscoveryDesc": "<@{user}> obtained an unprecedented card for their collection! Card **{card}** was registered at position **#{number}** of the **Album**!"
     },
     "album": {
-      "title": "CRINGELÂNDIA ALBUM — PYXIE",
+      "title": "PYXIE TAROT ALBUM",
       "collector": "Collector: <@{user}> • Progress: **{discovered}/78** discoveries ({percent}%)",
       "position": "Position",
       "name": "Name",
@@ -1046,7 +1046,7 @@ const TRANSLATIONS = {
       "btnLast": "78",
       "btnAchievements": "🏆 Achievements & Coins",
       "btnBackToAlbum": "📖 Browse Cards",
-      "achievementsTitle": "🏆 Cringelândia Album Achievements",
+      "achievementsTitle": "🏆 Pyxie Album Achievements",
       "achievementsSummary": "Claimed Achievements: **{claimed}/7** • Ready to Claim: **{ready}**",
       "claimBtn": "Claim {coins} 🪙",
       "claimedBadge": "✅ Claimed",

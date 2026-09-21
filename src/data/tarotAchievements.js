@@ -3,8 +3,8 @@ const TAROT_ACHIEVEMENTS = [
     id: 'first_card',
     namePt: 'Primeiro Vislumbre',
     nameEn: 'First Glimpse',
-    descPt: 'Cole sua 1ª carta no Álbum da Cringelândia.',
-    descEn: 'Paste your 1st card in the Cringelândia Album.',
+    descPt: 'Cole sua 1ª carta no Álbum de Tarot da Pyxie.',
+    descEn: 'Paste your 1st card into the Pyxie Tarot Album.',
     rewardCoins: 100,
     check: (cards) => ({ current: Math.min(cards.length, 1), target: 1 }),
   },
@@ -78,8 +78,8 @@ const TAROT_ACHIEVEMENTS = [
     id: 'full_deck_78',
     namePt: 'Soberano do Oráculo',
     nameEn: 'Sovereign of the Oracle',
-    descPt: 'Complete integralmente as 78 cartas do Álbum da Cringelândia.',
-    descEn: 'Complete all 78 cards of the Cringelândia Album.',
+    descPt: 'Complete integralmente as 78 cartas do Álbum de Tarot da Pyxie.',
+    descEn: 'Complete all 78 cards of the Pyxie Tarot Album.',
     rewardCoins: 15000,
     check: (cards) => ({ current: cards.length, target: 78 }),
   },
@@ -152,3 +152,4 @@ module.exports = {
   getAchievementById,
   evaluateAndSortAchievements,
 };
+

@@ -75,7 +75,7 @@ function generateLockedCard() {
   // Cabeçalho
   ctx.fillStyle = '#a855f7';
   ctx.font = 'bold 16px sans-serif';
-  ctx.fillText('🔮  CRINGELÂNDIA TAROT  🔮', WIDTH / 2, 70);
+  ctx.fillText('🔮  PYXIE TAROT  🔮', WIDTH / 2, 70);
 
   // Portal Místico de Bloqueio (Círculo com brilho)
   const cx = WIDTH / 2;
@@ -144,7 +144,7 @@ function generateLockedCard() {
     '',
     'Realize tiragens diárias no comando /py-tarot',
     'para desbloquear esta carta e registrá-la',
-    'em seu Álbum da Cringelândia!'
+    'em seu Álbum de Tarot da Pyxie!'
   ];
   descLines.forEach((l, i) => {
     ctx.fillText(l, cx, boxY + 38 + i * 26);
@@ -153,7 +153,7 @@ function generateLockedCard() {
   // Rodapé
   ctx.fillStyle = '#c084fc';
   ctx.font = 'bold 12px sans-serif';
-  ctx.fillText('✦ Álbum de Tarot da Cringelândia • Pyxie ✦', cx, 978);
+  ctx.fillText('✦ Álbum de Tarot da Pyxie ✦', cx, 978);
 
   const lockedPath = path.join(dirUi, 'card_locked.webp');
   fs.writeFileSync(lockedPath, canvas.toBuffer('image/webp'));
@@ -221,7 +221,7 @@ function generateAlbumCover() {
 
   ctx.fillStyle = '#fbbf24';
   ctx.font = 'bold 20px sans-serif';
-  ctx.fillText('CRINGELÂNDIA • 78 ARCANOS', cx, 660);
+  ctx.fillText('PYXIE TAROT • 78 ARCANOS', cx, 660);
 
   // Divisória
   ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
@@ -248,10 +248,10 @@ function generateAlbumCover() {
   ctx.fillStyle = '#e2e8f0';
   ctx.font = '15px sans-serif';
   const coverLines = [
-    'Complete o baralho místico da Cringelândia!',
+    'Complete o baralho místico da Pyxie!',
     '',
     '• 22 Arcanos Maiores (O Louco ao Mundo)',
-    '• 56 Arcanos Menores (Paus, Espadas, Copas, Ouros)',
+    '• 56 Arcanos Menores (Paus, Copas, Espadas, Ouros)',
     '• 7 Conquistas Místicas com milhares de Moedas!',
     '',
     'Use /py-album para folhear suas cartas.'
@@ -274,3 +274,4 @@ generateLockedCard();
 generateAlbumCover();
 
 console.log('--- Processo concluído com 100% de sucesso! ---');
+

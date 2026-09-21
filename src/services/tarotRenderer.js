@@ -522,7 +522,7 @@ function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
  */
 function createTarotAttachment(card, orientation = 'UPRIGHT', lang = 'pt') {
   const buffer = renderTarotCard(card, orientation, lang);
-  return new AttachmentBuilder(buffer, { name: 'tarot_cringelandia.png' });
+  return new AttachmentBuilder(buffer, { name: 'tarot_pyxie.png' });
 }
 
 module.exports = {

@@ -23,7 +23,7 @@ const {
 } = require('../src/services/tarotAlbumService');
 const { getBalance, setUserBalance } = require('../src/services/economy');
 
-console.log('🔮 Iniciando suíte de testes do Álbum de Tarot & Conquistas da Cringelândia...');
+console.log('🔮 Iniciando suíte de testes do Álbum de Tarot & Conquistas da Pyxie...');
 
 // 1. Catálogo Canônico de 78 Cartas
 assert.equal(TOTAL_CARDS, 78, 'Total de cartas deve ser exatamente 78');

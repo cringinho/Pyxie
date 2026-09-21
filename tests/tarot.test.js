@@ -45,7 +45,7 @@ try {
   assert.ok(reversedBuf.length > 10000, 'O buffer invertido deve ter tamanho válido.');
 
   const attachment = createTarotAttachment(sampleCard, 'UPRIGHT');
-  assert.equal(attachment.name, 'tarot_cringelandia.png', 'O anexo deve ter o nome correto.');
+  assert.equal(attachment.name, 'tarot_pyxie.png', 'O anexo deve ter o nome correto.');
 
   // 3. Validar sorteio diário e ciclo
   const testUser = 'user-tarot-test-123';
@@ -87,7 +87,7 @@ try {
   const remaining = getTimeUntilMidnight();
   assert.ok(remaining.totalMinutes >= 0 && remaining.totalMinutes <= 1440, 'Minutos restantes devem estar entre 0 e 1440.');
 
-  console.log('Verificação do Tarot Cringelândia (78 cartas, Canvas, Sorteio, Suborno): OK');
+  console.log('Verificação do Tarot da Pyxie (78 cartas, Canvas, Sorteio, Suborno): OK');
 } finally {
   if (originalState !== null) {
     fs.writeFileSync(stateFile, originalState, 'utf8');

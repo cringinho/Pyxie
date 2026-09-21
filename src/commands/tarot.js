@@ -92,7 +92,7 @@ function buildTarotEmbed(result, guildOrSource) {
     .setColor(embedColor)
     .setTitle(`${getAnimatedEmoji(guild, ['moon', 'tarot', 'magic'], '🌙')}  ✦  ${t('tarot.title', guildOrSource)}${guildName ? ` — ${guildName}` : ''}`)
     .setDescription(desc)
-    .setImage('attachment://tarot_cringelandia.png')
+    .setImage('attachment://tarot_pyxie.png')
     .setFooter({ text: 'Pyxie' })
     .setTimestamp();
 
@@ -161,7 +161,7 @@ async function logTarotToPublicChannel(client, { user, result, guild }) {
           orientation: getDisplayOrientation(result.orientation, guild),
         })}\n\n📖 ${progressLine}${newDiscoveryLine}`
       )
-      .setImage('attachment://tarot_cringelandia.png')
+      .setImage('attachment://tarot_pyxie.png')
       .setFooter({ text: 'Pyxie' })
       .setTimestamp();
 
@@ -276,7 +276,7 @@ module.exports = {
     .setName(name)
     .setDescription('Draw a daily Tarot card rendered with special artwork.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Receba uma tiragem privada do Tarot da Cringelândia renderizada na hora.',
+      'pt-BR': 'Receba uma tiragem privada do Tarot da Pyxie renderizada na hora.',
     }),
   async executeSlash({ interaction }) {
     const result = drawTarot(interaction.user.id);
