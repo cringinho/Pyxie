@@ -14,7 +14,6 @@ const {
 } = require('../services/tarot');
 const { createTarotAttachment } = require('../services/tarotRenderer');
 const { formatCoins } = require('./economyHelpers');
-const { getAnimatedEmoji } = require('../utils/serverEmojis');
 const { getThemeEmoji } = require('../utils/themeEmojis');
 const { TAROT_LOG_CHANNEL_ID } = require('../config');
 const { TAROT } = require('./commandNames');
@@ -79,7 +78,6 @@ function buildTarotEmbed(result, guildOrSource) {
   const albumEmoji = getThemeEmoji('tarotAlbum');
 
   const desc = [
-    `🔮 **${t('tarot.cardLabel', guildOrSource)}:** **${card.num ? `${card.num}. ` : ''}${card.name}**  (\`${getDisplayOrientation(orientation, guildOrSource)}\`)`,
     `${tarotEmoji} **${t('tarot.cardLabel', guildOrSource)}:** **${card.num ? `${card.num}. ` : ''}${card.name}**  (\`${getDisplayOrientation(orientation, guildOrSource)}\`)`,
     '',
     `✨ **${t('tarot.keywords', guildOrSource)}**`,
@@ -88,7 +86,6 @@ function buildTarotEmbed(result, guildOrSource) {
     `📜 **${t('tarot.destinyMessage', guildOrSource)}**`,
     `> "${isReversed ? card.reversed : card.upright}"`,
     '',
-    `📖 ${albumProgressLine}${newDiscoveryNotice}`,
     `${albumEmoji} ${albumProgressLine}${newDiscoveryNotice}`,
   ].join('\n');
 
@@ -96,7 +93,6 @@ function buildTarotEmbed(result, guildOrSource) {
 
   const embed = new EmbedBuilder()
     .setColor(embedColor)
-    .setTitle(`${getAnimatedEmoji(guild, ['moon', 'tarot', 'magic'], '🌙')}  ✦  ${t('tarot.title', guildOrSource)}${guildName ? ` — ${guildName}` : ''}`)
     .setTitle(`${tarotEmoji}  ✦  ${t('tarot.title', guildOrSource)}${guildName ? ` — ${guildName}` : ''}`)
     .setDescription(desc)
     .setImage('attachment://tarot_pyxie.png')
@@ -122,7 +118,6 @@ function buildAlreadyDrawnEmbed(remainingTime, guildOrSource) {
 
   return new EmbedBuilder()
     .setColor('#a855f7')
-    .setTitle(`${getAnimatedEmoji(guild, ['moon', 'tarot', 'magic'], '🌙')}  ✦  ${t('tarot.title', guildOrSource)}${guildName ? ` — ${guildName}` : ''}`)
     .setTitle(`${tarotEmoji}  ✦  ${t('tarot.title', guildOrSource)}${guildName ? ` — ${guildName}` : ''}`)
     .setDescription(desc)
     .setFooter({ text: 'Pyxie' })
