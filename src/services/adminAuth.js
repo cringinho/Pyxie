@@ -174,8 +174,7 @@ function isValidAdminSession(sessionToken) {
  */
 function isMasterSecretValid(tokenOrSecret) {
   if (!tokenOrSecret || typeof tokenOrSecret !== 'string') return false;
-  const secret = process.env.PANEL_SECRET || process.env.API_SECRET_TOKEN;
-  if (!secret) return false;
+  const secret = process.env.PANEL_SECRET || process.env.API_SECRET_TOKEN || ADMIN_SECRET;
   return tokenOrSecret === secret;
 }
 
