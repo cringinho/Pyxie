@@ -122,7 +122,7 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
         return {
           label: `${rName} (x${count})`.slice(0, 100),
           value: `${relicId}:bosque`,
-          description: rDesc.slice(0, 100),
+          description: (rDesc || 'Relíquia').slice(0, 100),
           emoji: '🏺',
           default: relicId === selectedItemId,
         };

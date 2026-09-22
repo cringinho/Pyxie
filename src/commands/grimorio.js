@@ -114,7 +114,7 @@ function buildFusionMenuView(userId, source = null, feedbackMessage = '') {
       `${feedbackMessage ? `**${feedbackMessage}**\n\n` : ''}` +
       `${t('gloom.fusion.desc', source)}\n\n` +
       `${t('gloom.fusion.ritualCost', source, { cost: 30 })}\n` +
-      `👻 ${t('gloom.grimoire.phantomCoins', source, { coins: user.phantomCoins })}`
+      `${t('gloom.grimoire.phantomCoins', source, { coins: user.phantomCoins })}`
     )
     .setFooter({ text: t('gloom.fusion.footer', source) })
     .setTimestamp();

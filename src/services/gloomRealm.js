@@ -725,6 +725,13 @@ const ROOM_BAN_DURATIONS_MS = {
 
 // 3.2 Catálogo de Relíquias Místicas (Tiers 1 a 5)
 const RELICS = {
+  spectral_key: {
+    id: 'spectral_key',
+    tier: 1,
+    name: { pt: 'Chave Espectral', en: 'Spectral Key' },
+    desc: { pt: 'Uma chave translúcida que emite um brilho frio.', en: 'A translucent key emitting a cold glow.' },
+    cost: 50,
+  },
   amuleto_osso: {
     id: 'amuleto_osso',
     tier: 1,
