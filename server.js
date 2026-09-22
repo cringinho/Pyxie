@@ -336,7 +336,28 @@ app.get('/admin/emojis', async (req, res) => {
     return res.status(401).send('401 Unauthorized');
   }
 
-  const { FALLBACKS } = require('./src/utils/emojiResolver');
+  const SLOT_METADATA = {
+    phantom_coin: { title: 'Phantom Coins', fallback: '👻', category: 'economy', themeKey: 'coins' },
+    coins: { title: 'Moedas Gerais da Pyxie', fallback: '🪙', category: 'economy', themeKey: 'coins' },
+    magic_bean: { title: 'Feijões Mágicos (Bônus & Loja)', fallback: '🌱', category: 'economy', themeKey: 'dailyBonus' },
+    vigor_energy: { title: 'Energia & Stamina (Penumbra)', fallback: '⚡', category: 'gloom', themeKey: null },
+    tarot_card: { title: 'Carta de Tarot (Místico)', fallback: '🔮', category: 'gloom', themeKey: 'tarot' },
+    tarotAlbum: { title: 'Álbum de Tarot (Coleção)', fallback: '📖', category: 'gloom', themeKey: 'tarotAlbum' },
+    ship_heart: { title: 'Coração de Ship & Romance', fallback: '💖', category: 'gloom', themeKey: 'ship' },
+    grimorio: { title: 'Grimório & Alquimia', fallback: '📖', category: 'gloom', themeKey: 'grimorio' },
+    relic_t1: { title: 'Relíquia Tier 1 (Comum)', fallback: '🪨', category: 'gloom', themeKey: null },
+    relic_t2: { title: 'Relíquia Tier 2 (Incomum)', fallback: '🌿', category: 'gloom', themeKey: null },
+    relic_t3: { title: 'Relíquia Tier 3 (Rara)', fallback: '💎', category: 'gloom', themeKey: null },
+    relic_t4: { title: 'Relíquia Tier 4 (Épica)', fallback: '🔮', category: 'gloom', themeKey: null },
+    relic_t5: { title: 'Relíquia Tier 5 (Lendária)', fallback: '👑', category: 'gloom', themeKey: null },
+    userProfile: { title: 'Badge de Perfil do Usuário', fallback: '👤', category: 'system', themeKey: 'userProfile' },
+    websiteHome: { title: 'Logo & Ícone Home do Site', fallback: '🦋', category: 'system', themeKey: 'websiteHome' },
+    helpCommands: { title: 'Ajuda & Comandos do Site', fallback: '📖', category: 'system', themeKey: 'helpCommands' },
+    dice: { title: 'Dado & Minigames de Sorte', fallback: '🎲', category: 'system', themeKey: 'dice' },
+    status_success: { title: 'Indicador de Sucesso (OK)', fallback: '✅', category: 'system', themeKey: null },
+    status_fail: { title: 'Indicador de Erro / Falha', fallback: '❌', category: 'system', themeKey: null }
+  };
+
   const emojisPath = path.join(__dirname, 'src/data/emojis.json');
   let currentConfig = {};
   try {
@@ -345,7 +366,15 @@ app.get('/admin/emojis', async (req, res) => {
     }
   } catch (_) {}
 
-  // Carregar catálogo de emojis da aplicação (JSON local ou Discord client)
+  const themePath = path.join(__dirname, 'src/data/themeEmojis.json');
+  let currentThemeConfig = {};
+  try {
+    if (fs.existsSync(themePath)) {
+      const parsed = JSON.parse(fs.readFileSync(themePath, 'utf8'));
+      currentThemeConfig = parsed.themes || {};
+    }
+  } catch (_) {}
+
   let appEmojis = [];
   try {
     const catalogPath = path.join(__dirname, 'src/data/discordAppEmojis.json');
@@ -356,54 +385,64 @@ app.get('/admin/emojis', async (req, res) => {
     }
   } catch (_) {}
 
-  const slots = Object.keys(FALLBACKS);
+  const simplifiedAppEmojis = appEmojis.map(e => ({
+    id: String(e.id),
+    name: e.name || 'emoji',
+    animated: Boolean(e.animated),
+    url: `https://cdn.discordapp.com/emojis/${e.id}.${e.animated ? 'gif' : 'png'}`
+  }));
+
   const isSaved = req.query.saved === 'true';
 
   let rowsHtml = '';
-  for (const slot of slots) {
-    const fallback = FALLBACKS[slot] || '✨';
-    const selectedId = currentConfig[slot] || '';
+  for (const [slot, meta] of Object.entries(SLOT_METADATA)) {
+    const fallback = meta.fallback || '✨';
+    let selectedId = currentConfig[slot] || '';
+    if (!selectedId && meta.themeKey && currentThemeConfig[meta.themeKey]) {
+      selectedId = currentThemeConfig[meta.themeKey].primaryId || '';
+    }
 
-    const selectedEmojiObj = appEmojis.find(e => String(e.id) === String(selectedId));
-    let previewHtml = `<span style="font-size:24px;">${fallback}</span>`;
+    const selectedEmojiObj = simplifiedAppEmojis.find(e => String(e.id) === String(selectedId));
+    let previewHtml = `<span style="font-size:26px;">${fallback}</span>`;
     let statusBadge = '<span class="badge badge-fallback">Unicode</span>';
-    if (selectedId) {
-      const ext = selectedEmojiObj?.animated ? 'gif' : 'png';
-      const imgUrl = `https://cdn.discordapp.com/emojis/${selectedId}.${ext}`;
-      previewHtml = `<img src="${imgUrl}" alt="${slot}" style="width:28px;height:28px;vertical-align:middle;" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${selectedId}.png';" />`;
-      statusBadge = selectedEmojiObj?.animated 
+    let currentLabel = `Padrão (Unicode: ${fallback})`;
+
+    if (selectedId && selectedEmojiObj) {
+      previewHtml = `<img src="${selectedEmojiObj.url}" alt="${slot}" style="width:34px;height:34px;vertical-align:middle;object-fit:contain;" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${selectedId}.png';" />`;
+      statusBadge = selectedEmojiObj.animated
         ? '<span class="badge badge-animated">GIF Animado</span>'
         : '<span class="badge badge-static">PNG Estático</span>';
+      currentLabel = `${selectedEmojiObj.animated ? '✨ ' : ''}${selectedEmojiObj.name} (${selectedId})`;
+    } else if (selectedId) {
+      const fallbackUrl = `https://cdn.discordapp.com/emojis/${selectedId}.png`;
+      previewHtml = `<img src="${fallbackUrl}" alt="${slot}" style="width:34px;height:34px;vertical-align:middle;object-fit:contain;" />`;
+      statusBadge = '<span class="badge badge-static">Customizado</span>';
+      currentLabel = `ID: ${selectedId}`;
     }
-
-    let optionsHtml = `<option value="" data-animated="false" data-fallback="${fallback}">Padrão (Unicode: ${fallback})</option>`;
-    for (const e of appEmojis) {
-      const isSelected = String(e.id) === String(selectedId) ? 'selected' : '';
-      optionsHtml += `<option value="${e.id}" data-name="${e.name}" data-animated="${e.animated ? 'true' : 'false'}" ${isSelected}>${e.animated ? '✨ ' : ''}${e.name} (${e.id})</option>`;
-    }
-
-    let category = 'system';
-    if (slot.includes('coin') || slot.includes('bean')) category = 'economy';
-    else if (slot.includes('relic') || slot.includes('vigor') || slot.includes('tarot') || slot.includes('ship')) category = 'gloom';
 
     rowsHtml += `
-      <div class="slot-card" data-slot="${slot}" data-category="${category}" style="background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.2);border-radius:14px;padding:16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;transition:all 0.2s ease;">
-        <div style="display:flex;align-items:center;gap:14px;min-width:240px;">
-          <div id="box-${slot}" class="preview-box" style="width:44px;height:44px;background:rgba(0,0,0,0.4);border:1px solid rgba(139,92,246,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;">
+      <div class="slot-card" data-slot="${slot}" data-category="${meta.category}" style="background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.25);border-radius:16px;padding:18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;transition:all 0.2s ease;">
+        <div style="display:flex;align-items:center;gap:16px;min-width:260px;">
+          <div id="box-${slot}" class="preview-box" onclick="openPicker('${slot}')" title="Clique para trocar emoji visualmente" style="width:52px;height:52px;background:rgba(0,0,0,0.5);border:1px solid rgba(236,72,153,0.4);border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s, border-color 0.2s;box-shadow:0 4px 15px rgba(0,0,0,0.4);">
             ${previewHtml}
           </div>
           <div>
-            <div style="font-weight:700;color:#c084fc;font-family:monospace;font-size:15px;display:flex;align-items:center;gap:8px;">
-              <span>${slot}</span>
+            <div style="font-weight:700;color:#ec4899;font-size:16px;font-family:'Fredoka',sans-serif;display:flex;align-items:center;gap:8px;">
+              <span>${meta.title}</span>
               <span id="badge-${slot}">${statusBadge}</span>
             </div>
-            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">Fallback: <strong>${fallback}</strong></div>
+            <div style="font-size:12px;color:#c084fc;font-family:monospace;margin-top:2px;">Slot: <strong>${slot}</strong></div>
+            <div id="label-${slot}" style="font-size:12px;color:#94a3b8;margin-top:3px;">${currentLabel}</div>
           </div>
         </div>
-        <div style="flex:1;min-width:260px;">
-          <select name="${slot}" id="select-${slot}" class="emoji-select" data-slot="${slot}" style="width:100%;background:#090514;color:#ffffff;border:1px solid rgba(139,92,246,0.4);border-radius:10px;padding:10px;font-size:14px;outline:none;cursor:pointer;">
-            ${optionsHtml}
-          </select>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <input type="hidden" name="${slot}" id="input-${slot}" value="${selectedId}" />
+          <button type="button" class="btn-picker-trigger" onclick="openPicker('${slot}')" style="background:linear-gradient(135deg, rgba(139,92,246,0.35), rgba(236,72,153,0.35));border:1px solid rgba(236,72,153,0.5);color:#fff;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;">
+            🎨 Escolher Emoji
+          </button>
+          <button type="button" onclick="clearSlot('${slot}')" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:10px;padding:10px 14px;font-weight:600;font-size:13px;cursor:pointer;transition:all 0.2s;">
+            ❌ Resetar
+          </button>
         </div>
       </div>
     `;
@@ -411,8 +450,8 @@ app.get('/admin/emojis', async (req, res) => {
 
   const queryTokenParam = token ? `?token=${encodeURIComponent(token)}` : '';
   const alertHtml = isSaved ? `
-    <div style="background:rgba(16,185,129,0.15);border:1px solid #10b981;color:#10b981;padding:12px 16px;border-radius:10px;margin-bottom:20px;font-weight:600;display:flex;align-items:center;gap:8px;">
-      ✨ Configuração de emojis salva com sucesso! O bot utilizará os novos assets imediatamente.
+    <div style="background:rgba(16,185,129,0.15);border:1px solid #10b981;color:#10b981;padding:14px 18px;border-radius:12px;margin-bottom:20px;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 4px 15px rgba(16,185,129,0.2);">
+      ✨ Configuração de emojis salva e sincronizada com sucesso em toda a aplicação!
     </div>
   ` : '';
 
@@ -421,191 +460,365 @@ app.get('/admin/emojis', async (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de Emojis • Pyxie Admin</title>
+  <title>Painel Visual de Emojis • Pyxie Admin</title>
   <link rel="icon" href="https://cdn.discordapp.com/emojis/1548444149785694238.gif" />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
-    body { background: #090514; color: #ffffff; font-family: 'Quicksand', sans-serif; margin: 0; padding: 24px; min-height: 100vh; }
-    .container { max-width: 900px; margin: 0 auto; background: rgba(19, 11, 36, 0.95); border: 1px solid rgba(139,92,246,0.3); border-radius: 20px; padding: 32px; box-shadow: 0 15px 50px rgba(0,0,0,0.6); }
-    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
-    h1 { margin: 0; color: #ec4899; font-family: 'Fredoka', sans-serif; font-size: 24px; display: flex; align-items: center; gap: 10px; }
+    * { box-sizing: border-box; }
+    body { background: #090514; color: #ffffff; font-family: 'Quicksand', sans-serif; margin: 0; padding: 24px; padding-bottom: 100px; min-height: 100vh; }
+    .container { max-width: 960px; margin: 0 auto; background: rgba(19, 11, 36, 0.95); border: 1px solid rgba(139,92,246,0.3); border-radius: 24px; padding: 32px; box-shadow: 0 15px 50px rgba(0,0,0,0.6); }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+    h1 { margin: 0; color: #ec4899; font-family: 'Fredoka', sans-serif; font-size: 26px; display: flex; align-items: center; gap: 10px; }
     p.subtitle { color: #94a3b8; font-size: 14px; line-height: 1.5; margin-bottom: 24px; }
     
-    .badge { font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 700; text-transform: uppercase; font-family: 'Quicksand', sans-serif; }
+    .badge { font-size: 10px; padding: 3px 8px; border-radius: 12px; font-weight: 700; text-transform: uppercase; font-family: 'Quicksand', sans-serif; }
     .badge-animated { background: rgba(236,72,153,0.2); border: 1px solid rgba(236,72,153,0.5); color: #f472b6; }
     .badge-static { background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.5); color: #38bdf8; }
     .badge-fallback { background: rgba(148,163,184,0.15); border: 1px solid rgba(148,163,184,0.3); color: #94a3b8; }
 
-    /* Floating Live Preview Banner */
-    .live-hero {
-      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.15));
-      border: 1px solid rgba(236,72,153,0.3);
-      border-radius: 16px;
-      padding: 16px 20px;
-      margin-bottom: 24px;
+    /* Controls Row */
+    .controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+    .search-input { flex: 1; min-width: 220px; background: rgba(0,0,0,0.4); border: 1px solid rgba(139,92,246,0.35); border-radius: 12px; padding: 12px 16px; color: #fff; outline: none; font-family: 'Quicksand', sans-serif; font-size: 14px; }
+    .search-input:focus { border-color: #ec4899; box-shadow: 0 0 15px rgba(236,72,153,0.3); }
+
+    .cat-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; border-radius: 12px; padding: 10px 16px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .cat-btn.active, .cat-btn:hover { background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(236,72,153,0.3)); border-color: #ec4899; color: #fff; }
+
+    .btn-picker-trigger:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(236,72,153,0.4); }
+    .preview-box:hover { transform: scale(1.05); border-color: #ec4899 !important; }
+
+    /* Sticky Bottom Bar */
+    .sticky-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(12, 7, 27, 0.96);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(236,72,153,0.4);
+      padding: 16px 32px;
+      z-index: 1000;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 16px;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
+      flex-wrap: wrap;
     }
-    .hero-avatar {
-      width: 56px;
-      height: 56px;
-      background: rgba(0,0,0,0.5);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(236,72,153,0.4);
-    }
-    .hero-info h3 { margin: 0; font-size: 16px; color: #fff; font-family: 'Fredoka', sans-serif; }
-    .hero-info p { margin: 4px 0 0 0; font-size: 13px; color: #94a3b8; }
+    .sticky-info { color: #cbd5e1; font-size: 14px; font-weight: 600; }
+    .btn-save { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; border: none; padding: 14px 28px; font-size: 16px; font-weight: 700; border-radius: 12px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 20px rgba(236,72,153,0.4); font-family: 'Fredoka', sans-serif; }
+    .btn-save:hover { opacity: 0.95; transform: translateY(-2px); box-shadow: 0 6px 25px rgba(236,72,153,0.6); }
 
-    /* Filter Tabs & Search */
-    .controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-    .search-input { flex: 1; min-width: 200px; background: rgba(0,0,0,0.4); border: 1px solid rgba(139,92,246,0.3); border-radius: 10px; padding: 10px 14px; color: #fff; outline: none; font-family: 'Quicksand', sans-serif; font-size: 14px; }
-    .search-input:focus { border-color: #ec4899; }
-
-    .cat-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; border-radius: 10px; padding: 8px 14px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
-    .cat-btn.active, .cat-btn:hover { background: rgba(139,92,246,0.25); border-color: #8b5cf6; color: #fff; }
-
-    .btn-save { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; border: none; padding: 14px 28px; font-size: 16px; font-weight: 700; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 16px; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 20px rgba(236,72,153,0.3); }
-    .btn-save:hover { opacity: 0.95; transform: translateY(-2px); box-shadow: 0 6px 25px rgba(236,72,153,0.5); }
-    .btn-back { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+    .btn-back { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
     .btn-back:hover { color: #fff; background: rgba(255,255,255,0.1); }
 
-    @keyframes pop {
-      0% { transform: scale(0.8); opacity: 0.5; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .pop-anim { animation: pop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    /* Pagination */
+    .pagination-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; background: rgba(0,0,0,0.3); border: 1px solid rgba(139,92,246,0.2); border-radius: 14px; padding: 12px 18px; }
+    .page-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 10px; padding: 8px 16px; font-weight: 700; cursor: pointer; }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Picker Filter Buttons */
+    .picker-filter-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .picker-filter-btn.active { background: #ec4899; color: #fff; border-color: #ec4899; }
+
+    /* Emoji Grid Card */
+    .emoji-grid-card { background: rgba(0,0,0,0.5); border: 1px solid rgba(139,92,246,0.3); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.2s; position: relative; }
+    .emoji-grid-card:hover { transform: scale(1.1); border-color: #ec4899; background: rgba(236,72,153,0.15); box-shadow: 0 4px 15px rgba(236,72,153,0.3); }
+    .emoji-grid-card img { width: 36px; height: 36px; object-fit: contain; }
+    .emoji-grid-card .emoji-name-text { font-size: 10px; color: #cbd5e1; font-family: monospace; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .emoji-grid-card .anim-badge { position: absolute; top: 3px; right: 3px; font-size: 8px; background: rgba(236,72,153,0.8); color: #fff; padding: 1px 4px; border-radius: 4px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header-bar">
-      <h1>🔮 Mapeamento de Emojis do Bot</h1>
+      <h1>🔮 Mapeamento Visual de Emojis</h1>
       <a href="/admin" class="btn-back">⬅️ Console do Dono</a>
     </div>
-    <p class="subtitle">Selecione e pré-visualize em tempo real a renderização dos emojis customizados registrados na sua aplicação Discord antes de salvar.</p>
+    <p class="subtitle">Selecione e pré-visualize visualmente os emojis registrados na sua aplicação Discord. Clique em qualquer caixa ou botão para abrir a galeria visual em grade.</p>
     
     ${alertHtml}
 
-    <!-- Live Preview Banner -->
-    <div class="live-hero" id="heroBanner">
-      <div class="hero-avatar" id="heroIcon">
-        <span style="font-size: 32px;">✨</span>
-      </div>
-      <div class="hero-info">
-        <h3 id="heroTitle">Selecione um emoji na lista abaixo</h3>
-        <p id="heroDesc">Ao alterar qualquer scroller, a pré-visualização ao vivo será atualizada instantaneamente.</p>
-      </div>
-    </div>
-
     <!-- Controls Row -->
     <div class="controls-row">
-      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Filtrar slots por nome (ex: coin, relic, status)..." />
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Filtrar slots por nome (ex: coin, tarot, relic)..." />
       <button class="cat-btn active" data-cat="all">Todos os Slots</button>
-      <button class="cat-btn" data-cat="economy">Economia</button>
-      <button class="cat-btn" data-cat="gloom">Santuário / RPG</button>
-      <button class="cat-btn" data-cat="system">Sistema</button>
+      <button class="cat-btn" data-cat="economy">💰 Economia</button>
+      <button class="cat-btn" data-cat="gloom">🔮 Santuário / RPG</button>
+      <button class="cat-btn" data-cat="system">⚙️ Sistema</button>
     </div>
 
-    <form method="POST" action="/admin/emojis${queryTokenParam}">
+    <form method="POST" action="/admin/emojis${queryTokenParam}" id="emojisForm">
       <div id="slotsContainer">
         ${rowsHtml}
       </div>
-      <button type="submit" class="btn-save">💾 Salvar Configuração de Emojis</button>
+
+      <!-- Pagination -->
+      <div class="pagination-bar">
+        <button type="button" id="prevPageBtn" class="page-btn">◀ Anterior</button>
+        <div id="pageIndicator" style="font-weight: 700; color: #c084fc;">Página 1 de 1</div>
+        <button type="button" id="nextPageBtn" class="page-btn">Próximo ▶</button>
+      </div>
+
+      <!-- Sticky Bottom Save Bar -->
+      <div class="sticky-bar">
+        <div class="sticky-info" id="stickySummary">
+          📊 Carregando estatísticas...
+        </div>
+        <button type="submit" class="btn-save">💾 Salvar Configurações de Emojis</button>
+      </div>
     </form>
   </div>
 
+  <!-- WhatsApp / Discord Style Visual Emoji Picker Modal -->
+  <div id="emojiPickerModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.82); backdrop-filter:blur(10px); z-index:2000; align-items:center; justify-content:center; padding:16px;">
+    <div style="max-width:720px; width:100%; max-height:85vh; background:#120b24; border:1px solid rgba(236,72,153,0.5); border-radius:20px; display:flex; flex-direction:column; box-shadow:0 25px 70px rgba(0,0,0,0.9); overflow:hidden;">
+      <!-- Modal Header -->
+      <div style="padding:18px 24px; background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(139,92,246,0.2); display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h2 style="margin:0; font-size:18px; color:#ec4899; font-family:'Fredoka',sans-serif;">✨ Galeria Visual de Emojis do Discord</h2>
+          <div style="font-size:13px; color:#94a3b8; margin-top:2px;">Mapeando para: <strong id="modalSlotTitle" style="color:#c084fc;">-</strong></div>
+        </div>
+        <button type="button" onclick="closePicker()" style="background:none; border:none; color:#94a3b8; font-size:28px; cursor:pointer; padding:0 8px; line-height:1;">&times;</button>
+      </div>
+      <!-- Modal Controls -->
+      <div style="padding:14px 20px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <input type="text" id="pickerSearch" placeholder="🔍 Pesquisar emoji pelo nome (ex: coin, heart, kuromi)..." style="flex:1; min-width:200px; background:rgba(0,0,0,0.5); border:1px solid rgba(139,92,246,0.4); border-radius:10px; padding:10px 14px; color:#fff; font-size:14px; outline:none;" />
+        <button type="button" class="picker-filter-btn active" data-type="all">Todos (<span id="countAll">0</span>)</button>
+        <button type="button" class="picker-filter-btn" data-type="animated">Animados ✨ (<span id="countAnim">0</span>)</button>
+        <button type="button" class="picker-filter-btn" data-type="static">Estáticos 📄 (<span id="countStatic">0</span>)</button>
+      </div>
+      <!-- Modal Grid -->
+      <div id="pickerGrid" style="flex:1; overflow-y:auto; padding:20px; display:grid; grid-template-columns:repeat(auto-fill, minmax(76px, 1fr)); gap:10px;">
+      </div>
+      <!-- Modal Footer -->
+      <div style="padding:14px 20px; background:rgba(0,0,0,0.3); border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center;">
+        <button type="button" onclick="selectEmojiForSlot('')" style="background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4); color:#fca5a5; border-radius:10px; padding:8px 16px; font-weight:700; cursor:pointer;">🚫 Resetar para Padrão Unicode</button>
+        <button type="button" onclick="closePicker()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:10px; padding:8px 16px; font-weight:600; cursor:pointer;">Fechar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const selects = document.querySelectorAll('.emoji-select');
-    const heroIcon = document.getElementById('heroIcon');
-    const heroTitle = document.getElementById('heroTitle');
-    const heroDesc = document.getElementById('heroDesc');
+    const ALL_DISCORD_EMOJIS = ${JSON.stringify(simplifiedAppEmojis)};
+    const SLOT_METADATA = ${JSON.stringify(SLOT_METADATA)};
+
+    const PAGE_SIZE = 8;
+    let currentPage = 1;
+    let visibleCards = [];
+    let currentSlotForPicker = null;
+    let activePickerFilter = 'all';
+
     const searchInput = document.getElementById('searchInput');
     const catBtns = document.querySelectorAll('.cat-btn');
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+    const pageIndicator = document.getElementById('pageIndicator');
+    const pickerSearch = document.getElementById('pickerSearch');
+    const pickerFilterBtns = document.querySelectorAll('.picker-filter-btn');
 
-    function updateSlotPreview(selectEl) {
-      const slot = selectEl.getAttribute('data-slot');
-      const box = document.getElementById('box-' + slot);
-      const badge = document.getElementById('badge-' + slot);
-      const opt = selectEl.options[selectEl.selectedIndex];
-      
-      const emojiId = selectEl.value;
-      const isAnimated = opt.getAttribute('data-animated') === 'true';
-      const fallback = opt.getAttribute('data-fallback') || '✨';
-      const emojiName = opt.getAttribute('data-name') || '';
-
-      if (!emojiId) {
-        box.innerHTML = '<span style="font-size:24px;">' + fallback + '</span>';
-        badge.innerHTML = '<span class="badge badge-fallback">Unicode</span>';
-        updateHero(slot, fallback, 'Fallback Unicode', false);
-      } else {
-        const ext = isAnimated ? 'gif' : 'png';
-        const imgUrl = 'https://cdn.discordapp.com/emojis/' + emojiId + '.' + ext;
-        const imgHtml = '<img src="' + imgUrl + '" alt="' + slot + '" class="pop-anim" style="width:28px;height:28px;vertical-align:middle;" onerror="this.onerror=null;this.src=\'https://cdn.discordapp.com/emojis/' + emojiId + '.png\';" />';
-        box.innerHTML = imgHtml;
-        badge.innerHTML = isAnimated 
-          ? '<span class="badge badge-animated">GIF Animado</span>' 
-          : '<span class="badge badge-static">PNG Estático</span>';
-        
-        updateHero(slot, imgUrl, (isAnimated ? '✨ Animado: ' : '📄 Estático: ') + emojiName + ' (' + emojiId + ')', true);
-      }
-
-      box.classList.remove('pop-anim');
-      void box.offsetWidth;
-      box.classList.add('pop-anim');
+    function init() {
+      filterSlots();
+      updateStickySummary();
+      setupEventListeners();
     }
 
-    function updateHero(slot, iconSource, labelText, isUrl) {
-      if (isUrl) {
-        heroIcon.innerHTML = '<img src="' + iconSource + '" class="pop-anim" style="width:36px;height:36px;" />';
-      } else {
-        heroIcon.innerHTML = '<span style="font-size:32px;" class="pop-anim">' + iconSource + '</span>';
-      }
-      heroTitle.textContent = 'Pré-visualização: ' + slot;
-      heroDesc.textContent = labelText;
-    }
+    function setupEventListeners() {
+      searchInput.addEventListener('input', () => { currentPage = 1; filterSlots(); });
 
-    // Attach immediate listeners to all dropdown selects for scroller & select updates
-    selects.forEach(sel => {
-      sel.addEventListener('change', () => updateSlotPreview(sel));
-      sel.addEventListener('input', () => updateSlotPreview(sel));
-      sel.addEventListener('focus', () => updateSlotPreview(sel));
-    });
-
-    // Search filter
-    searchInput.addEventListener('input', filterSlots);
-
-    // Category buttons
-    catBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        catBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        filterSlots();
+      catBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          catBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentPage = 1;
+          filterSlots();
+        });
       });
-    });
+
+      prevPageBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderPage();
+        }
+      });
+
+      nextPageBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(visibleCards.length / PAGE_SIZE) || 1;
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderPage();
+        }
+      });
+
+      pickerSearch.addEventListener('input', renderPickerGrid);
+
+      pickerFilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          pickerFilterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activePickerFilter = btn.getAttribute('data-type');
+          renderPickerGrid();
+        });
+      });
+    }
 
     function filterSlots() {
       const q = searchInput.value.toLowerCase().trim();
       const activeCat = document.querySelector('.cat-btn.active')?.getAttribute('data-cat') || 'all';
-      const cards = document.querySelectorAll('.slot-card');
+      const allCards = Array.from(document.querySelectorAll('.slot-card'));
 
-      cards.forEach(card => {
+      visibleCards = allCards.filter(card => {
         const slot = card.getAttribute('data-slot').toLowerCase();
         const cat = card.getAttribute('data-category');
-        const matchesQuery = !q || slot.includes(q);
-        const matchesCat = activeCat === 'all' || cat === activeCat;
+        const meta = SLOT_METADATA[slot] || {};
+        const title = (meta.title || '').toLowerCase();
 
-        if (matchesQuery && matchesCat) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
+        const matchesQuery = !q || slot.includes(q) || title.includes(q);
+        const matchesCat = activeCat === 'all' || cat === activeCat;
+        return matchesQuery && matchesCat;
+      });
+
+      renderPage();
+    }
+
+    function renderPage() {
+      const allCards = document.querySelectorAll('.slot-card');
+      allCards.forEach(c => c.style.display = 'none');
+
+      const totalPages = Math.ceil(visibleCards.length / PAGE_SIZE) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageItems = visibleCards.slice(start, start + PAGE_SIZE);
+
+      pageItems.forEach(card => card.style.display = 'flex');
+
+      pageIndicator.textContent = 'Página ' + currentPage + ' de ' + totalPages + ' (' + visibleCards.length + ' slots)';
+      prevPageBtn.disabled = currentPage <= 1;
+      nextPageBtn.disabled = currentPage >= totalPages;
+    }
+
+    function openPicker(slot) {
+      currentSlotForPicker = slot;
+      const meta = SLOT_METADATA[slot] || { title: slot, fallback: '✨' };
+      document.getElementById('modalSlotTitle').textContent = meta.title + ' (' + slot + ')';
+      pickerSearch.value = '';
+      activePickerFilter = 'all';
+      pickerFilterBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-type') === 'all'));
+      renderPickerGrid();
+      document.getElementById('emojiPickerModal').style.display = 'flex';
+    }
+
+    function closePicker() {
+      document.getElementById('emojiPickerModal').style.display = 'none';
+      currentSlotForPicker = null;
+    }
+
+    function renderPickerGrid() {
+      const q = pickerSearch.value.toLowerCase().trim();
+      const grid = document.getElementById('pickerGrid');
+      grid.innerHTML = '';
+
+      let items = ALL_DISCORD_EMOJIS;
+      if (activePickerFilter === 'animated') items = items.filter(e => e.animated);
+      else if (activePickerFilter === 'static') items = items.filter(e => !e.animated);
+
+      if (q) items = items.filter(e => e.name.toLowerCase().includes(q) || String(e.id).includes(q));
+
+      document.getElementById('countAll').textContent = ALL_DISCORD_EMOJIS.length;
+      document.getElementById('countAnim').textContent = ALL_DISCORD_EMOJIS.filter(e => e.animated).length;
+      document.getElementById('countStatic').textContent = ALL_DISCORD_EMOJIS.filter(e => !e.animated).length;
+
+      if (items.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:#94a3b8;">Nenhum emoji encontrado para "' + q + '".</div>';
+        return;
+      }
+
+      items.forEach(emoji => {
+        const card = document.createElement('div');
+        card.className = 'emoji-grid-card';
+        card.title = emoji.name + ' (' + emoji.id + ')';
+        card.onclick = () => selectEmojiForSlot(emoji.id);
+
+        const img = document.createElement('img');
+        img.src = emoji.url;
+        img.alt = emoji.name;
+        img.onerror = () => { img.src = 'https://cdn.discordapp.com/emojis/' + emoji.id + '.png'; };
+
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'emoji-name-text';
+        nameDiv.textContent = emoji.name;
+
+        if (emoji.animated) {
+          const animBadge = document.createElement('span');
+          animBadge.className = 'anim-badge';
+          animBadge.textContent = 'GIF';
+          card.appendChild(animBadge);
         }
+
+        card.appendChild(img);
+        card.appendChild(nameDiv);
+        grid.appendChild(card);
       });
     }
+
+    function selectEmojiForSlot(emojiId) {
+      if (!currentSlotForPicker) return;
+      const slot = currentSlotForPicker;
+      document.getElementById('input-' + slot).value = emojiId;
+      updateSlotCardUI(slot, emojiId);
+      closePicker();
+      updateStickySummary();
+    }
+
+    function clearSlot(slot) {
+      document.getElementById('input-' + slot).value = '';
+      updateSlotCardUI(slot, '');
+      updateStickySummary();
+    }
+
+    function updateSlotCardUI(slot, emojiId) {
+      const box = document.getElementById('box-' + slot);
+      const badge = document.getElementById('badge-' + slot);
+      const label = document.getElementById('label-' + slot);
+      const meta = SLOT_METADATA[slot] || { fallback: '✨' };
+
+      const emojiObj = ALL_DISCORD_EMOJIS.find(e => String(e.id) === String(emojiId));
+
+      if (!emojiId) {
+        box.innerHTML = '<span style="font-size:26px;">' + meta.fallback + '</span>';
+        badge.innerHTML = '<span class="badge badge-fallback">Unicode</span>';
+        label.textContent = 'Padrão (Unicode: ' + meta.fallback + ')';
+      } else if (emojiObj) {
+        box.innerHTML = '<img src="' + emojiObj.url + '" alt="' + slot + '" style="width:34px;height:34px;vertical-align:middle;object-fit:contain;" />';
+        badge.innerHTML = emojiObj.animated
+          ? '<span class="badge badge-animated">GIF Animado</span>'
+          : '<span class="badge badge-static">PNG Estático</span>';
+        label.textContent = (emojiObj.animated ? '✨ ' : '') + emojiObj.name + ' (' + emojiId + ')';
+      } else {
+        const fallbackUrl = 'https://cdn.discordapp.com/emojis/' + emojiId + '.png';
+        box.innerHTML = '<img src="' + fallbackUrl + '" alt="' + slot + '" style="width:34px;height:34px;vertical-align:middle;object-fit:contain;" />';
+        badge.innerHTML = '<span class="badge badge-static">Customizado</span>';
+        label.textContent = 'ID: ' + emojiId;
+      }
+    }
+
+    function updateStickySummary() {
+      const inputs = document.querySelectorAll('input[type="hidden"]');
+      let customCount = 0;
+      let fallbackCount = 0;
+
+      inputs.forEach(inp => {
+        if (inp.value && inp.value.trim()) customCount++;
+        else fallbackCount++;
+      });
+
+      document.getElementById('stickySummary').innerHTML =
+        '📊 <strong>' + customCount + '</strong> Customizados • <strong>' + fallbackCount + '</strong> Unicode Fallback';
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>`;
@@ -627,16 +840,46 @@ app.post('/admin/emojis', (req, res) => {
     return res.status(401).send('401 Unauthorized');
   }
 
-  const { FALLBACKS } = require('./src/utils/emojiResolver');
-  const validSlots = Object.keys(FALLBACKS);
-  const emojisData = {};
+  const SLOT_METADATA = {
+    phantom_coin: { themeKey: 'coins' },
+    coins: { themeKey: 'coins' },
+    magic_bean: { themeKey: 'dailyBonus' },
+    tarot_card: { themeKey: 'tarot' },
+    tarotAlbum: { themeKey: 'tarotAlbum' },
+    ship_heart: { themeKey: 'ship' },
+    grimorio: { themeKey: 'grimorio' },
+    userProfile: { themeKey: 'userProfile' },
+    websiteHome: { themeKey: 'websiteHome' },
+    helpCommands: { themeKey: 'helpCommands' },
+    dice: { themeKey: 'dice' },
+  };
 
-  for (const slot of validSlots) {
-    emojisData[slot] = req.body && req.body[slot] ? String(req.body[slot]).trim() : '';
+  const emojisData = {};
+  for (const slot of Object.keys(req.body || {})) {
+    emojisData[slot] = req.body[slot] ? String(req.body[slot]).trim() : '';
   }
 
+  // 1. Save src/data/emojis.json
   const dataPath = path.join(__dirname, 'src/data/emojis.json');
   fs.writeFileSync(dataPath, JSON.stringify(emojisData, null, 2), 'utf8');
+
+  // 2. Sync with src/data/themeEmojis.json
+  try {
+    const themePath = path.join(__dirname, 'src/data/themeEmojis.json');
+    if (fs.existsSync(themePath)) {
+      const themeContent = JSON.parse(fs.readFileSync(themePath, 'utf8'));
+      if (themeContent && themeContent.themes) {
+        for (const [slot, meta] of Object.entries(SLOT_METADATA)) {
+          if (meta.themeKey && themeContent.themes[meta.themeKey] && emojisData[slot]) {
+            themeContent.themes[meta.themeKey].primaryId = emojisData[slot];
+          }
+        }
+        fs.writeFileSync(themePath, JSON.stringify(themeContent, null, 2), 'utf8');
+      }
+    }
+  } catch (err) {
+    console.error('Error syncing themeEmojis.json:', err);
+  }
 
   const redirectToken = token ? `?token=${encodeURIComponent(token)}&saved=true` : '?saved=true';
   return res.redirect(`/admin/emojis${redirectToken}`);
