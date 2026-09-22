@@ -9,7 +9,7 @@ const { getThemeEmojiUrl } = require('../utils/themeEmojis');
 const MODULE_ICONS = {
   todos: 'https://cdn.discordapp.com/emojis/1548444149785694238.gif', // pinkeing (Asas Mágicas Animadas)
   todos: getThemeEmojiUrl('websiteHome') || 'https://cdn.discordapp.com/emojis/1551356640782057502.gif', // 255208butterfly (Home / Visão Geral)
-  bosque: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif', // emojitree38 (Árvore Mística Animada)
+  bosque: 'https://cdn.discordapp.com/emojis/1551356435521339452.png', // emojitree38 (Árvore Mística Animada)
   economia: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif', // shineygoldcoinsi (Moedinha Dourada Brilhante)
   economia: getThemeEmojiUrl('economyCareers') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif', // shineygoldcoinsi (Moedinha Dourada Brilhante)
   loja: 'https://cdn.discordapp.com/emojis/1551356299500064858.gif', // 9862_holo_diamond (Diamante Holográfico)
@@ -23,8 +23,8 @@ const MODULE_ICONS = {
 
 const COMMAND_ICONS = {
   // Bosque da Pyxie
-  explore: 'https://cdn.discordapp.com/emojis/1548444170488778954.gif',
-  explorar: 'https://cdn.discordapp.com/emojis/1548444170488778954.gif',
+  explore: 'https://cdn.discordapp.com/emojis/1551356273918746724.png',
+  explorar: 'https://cdn.discordapp.com/emojis/1551356273918746724.png',
   gloom: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif',
   bosque: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif',
   grimorio: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',

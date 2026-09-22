@@ -70,7 +70,7 @@
     "dice": {
       "name": "Sistema de Dados (Dice)",
       "description": "Emoji padrão para o sistema de rolagem de dados e minigames de sorte",
-      "primaryId": "1551355542700822538",
+      "primaryId": "1551356619647094814",
       "secondaryIds": [
         "1551356333272596572"
       ],
@@ -97,7 +97,7 @@
     "ship": {
       "name": "Ship & Casamentos",
       "description": "Emoji padrão para calculadora de afinidade (ship), casamentos e romance",
-      "primaryId": "1551355720874725386",
+      "primaryId": "1551744119670575124",
       "secondaryIds": [
         "1548444199970545756",
         "1551355484131299439"
@@ -124,4 +124,3 @@
     }
   }
 }
-

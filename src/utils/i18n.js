@@ -590,7 +590,7 @@ const TRANSLATIONS = {
           "requires_t4_relic": "Santuário selado. Requer carregar pelo menos uma Relíquia de Tier 4 ou 5 (nobreza da penumbra) no inventário.",
           "banned": "Você está banido desta sala por insultar as entidades locais. Tempo restante: {time} min."
         },
-        "dangerLevel": "⚡ **Perigo:** Tier {tier} • Penalidade por Falha Crítica: Ban de {banMinutes}m"
+        "dangerLevel": "⚡ **Perigo:** {tier} • Penalidade por Falha Crítica: Ban de {banMinutes}m"
       },
       "negotiate": {
         "title": "💬  ✦  Negociação com {name}",
@@ -1144,7 +1144,7 @@ const TRANSLATIONS = {
           "requires_t4_relic": "Sanctuary sealed. Requires carrying at least one Tier 4 or 5 Relic (gloom nobility) in your inventory.",
           "banned": "You are barred from this room for insulting local entities. Remaining time: {time} min."
         },
-        "dangerLevel": "⚡ **Danger:** Tier {tier} • Critical Failure Penalty: {banMinutes}m Room Ban"
+        "dangerLevel": "⚡ **Danger:** {tier} • Critical Failure Penalty: {banMinutes}m Room Ban"
       },
       "negotiate": {
         "title": "💬  ✦  Negotiation with {name}",

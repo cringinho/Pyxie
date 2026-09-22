@@ -2005,7 +2005,7 @@
 
       if (img) img.src = loc.image;
       if (tier) {
-        tier.textContent = loc.tierLabel[currentLang] || loc.tierLabel.pt;
+        tier.innerHTML = 'T' + loc.tier + ' ' + '<img src="https://cdn.discordapp.com/emojis/1551356384451493968.png" style="width: 1em; vertical-align: text-bottom;">'.repeat(loc.tier);
         tier.className = `loc-tier-badge ${loc.tierClass}`;
       }
       if (name) name.textContent = loc.name[currentLang] || loc.name.pt;

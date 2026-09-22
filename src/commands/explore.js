@@ -84,7 +84,7 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
     : t('gloom.explore.noTraces', source);
 
   const dangerText = t('gloom.explore.dangerLevel', source, {
-    tier: location.tier || 1,
+    tier: 'T' + (location.tier || 1) + ' ' + '<:skull:1551356384451493968>'.repeat(location.tier || 1),
     banMinutes: location.banMinutes || 30,
   });
 
@@ -134,7 +134,7 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
   const neighbors = gloomGraph.getAvailableNeighbors(location.id, user, tide);
   const navButtons = neighbors.slice(0, 5).map((n) => {
     const destName = isEn ? n.location.name.en : n.location.name.pt;
-    const locEmojiKey = LOCATION_EMOJIS[n.location.id] || 'PORTAL';
+    const locEmojiKey = 'MAP';
     const btn = new ButtonBuilder()
       .setCustomId(`gloom:move:${userId}:${n.location.id}`)
       .setLabel(`${destName} (T${n.location.tier})`.slice(0, 80))

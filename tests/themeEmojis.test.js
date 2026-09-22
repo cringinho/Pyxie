@@ -54,10 +54,10 @@ const EXPECTED_MAPPINGS = {
   tarotAlbum: { primaryId: '1551355436890857512', name: '2663tarotcards', animated: true },
   helpCommands: { primaryId: '1548444173747621918', name: 'prcomputer', animated: true },
   economyCareers: { primaryId: '1548444230588956683', name: 'shineygoldcoinsi', animated: true },
-  dice: { primaryId: '1551355542700822538', name: '3857nat1', animated: false },
+  dice: { primaryId: '1551356619647094814', name: '96959prided20', animated: false },
   userProfile: { primaryId: '1551355544185344112', name: '3861memberpurple', animated: false },
   grimorio: { primaryId: '1551355602297430016', name: '4353_Pentacle', animated: false },
-  ship: { primaryId: '1551355720874725386', name: '5407rainbowheart', animated: true },
+  ship: { primaryId: '1551744119670575124', name: 'emoji_1551744119670575124', animated: false },
   websiteHome: { primaryId: '1551356640782057502', name: '255208butterfly', animated: true },
   websiteSocial: { primaryId: '1551355541148667954', name: '3849purplebutterflies', animated: true },
 };
