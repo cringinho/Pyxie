@@ -194,6 +194,7 @@ function requireAdminAuth(req, res, next) {
 }
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.html')) {
@@ -287,7 +288,19 @@ app.get('/api/commands', (req, res) => {
 
 // 3. Painel Administrativo do Proprietário (Restrito a IP Allowlist e Snowflake 214153735281180673)
 app.get('/admin', (req, res) => {
-  if (!isIpAllowed(req)) {
+  const tokenParam = req.query.token;
+  if (tokenParam) {
+    const verifyResult = verifyMagicToken(tokenParam);
+    if (verifyResult.valid) {
+      res.setHeader('Set-Cookie', `pyxie_admin_session=${verifyResult.sessionToken}; HttpOnly; SameSite=Lax; Max-Age=43200; Path=/`);
+      return res.redirect('/admin');
+    }
+  }
+
+  const sessionCookie = getCookie(req, 'pyxie_admin_session');
+  const hasValidSession = sessionCookie && isValidAdminSession(sessionCookie);
+
+  if (!hasValidSession && !isIpAllowed(req)) {
     return res.status(403).send(`<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -305,16 +318,151 @@ app.get('/admin', (req, res) => {
 </html>`);
   }
 
-  const tokenParam = req.query.token;
-  if (tokenParam) {
-    const verifyResult = verifyMagicToken(tokenParam);
-    if (verifyResult.valid) {
-      res.setHeader('Set-Cookie', `pyxie_admin_session=${verifyResult.sessionToken}; HttpOnly; SameSite=Lax; Max-Age=43200; Path=/`);
-      return res.redirect('/admin');
-    }
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+// Rota Visual de Mapeamento de Emojis (/admin/emojis)
+app.get('/admin/emojis', async (req, res) => {
+  const token = req.query.token;
+  const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
+  const sessionCookie = getCookie(req, 'pyxie_admin_session');
+
+  const isAuth =
+    (token && ((secret && token === secret) || isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid)) ||
+    (sessionCookie && isValidAdminSession(sessionCookie)) ||
+    (!secret && isIpAllowed(req));
+
+  if (!isAuth) {
+    return res.status(401).send('401 Unauthorized');
   }
 
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+  const { FALLBACKS } = require('./src/utils/emojiResolver');
+  const emojisPath = path.join(__dirname, 'src/data/emojis.json');
+  let currentConfig = {};
+  try {
+    if (fs.existsSync(emojisPath)) {
+      currentConfig = JSON.parse(fs.readFileSync(emojisPath, 'utf8'));
+    }
+  } catch (_) {}
+
+  // Carregar catálogo de emojis da aplicação (JSON local ou Discord client)
+  let appEmojis = [];
+  try {
+    const catalogPath = path.join(__dirname, 'src/data/discordAppEmojis.json');
+    if (fs.existsSync(catalogPath)) {
+      const raw = fs.readFileSync(catalogPath, 'utf8');
+      const parsed = JSON.parse(raw);
+      appEmojis = Array.isArray(parsed) ? parsed : (parsed.items || []);
+    }
+  } catch (_) {}
+
+  const slots = Object.keys(FALLBACKS);
+  const isSaved = req.query.saved === 'true';
+
+  let rowsHtml = '';
+  for (const slot of slots) {
+    const fallback = FALLBACKS[slot] || '✨';
+    const selectedId = currentConfig[slot] || '';
+
+    const selectedEmojiObj = appEmojis.find(e => String(e.id) === String(selectedId));
+    let previewHtml = `<span style="font-size:24px;">${fallback}</span>`;
+    if (selectedId) {
+      const ext = selectedEmojiObj?.animated ? 'gif' : 'png';
+      const imgUrl = `https://cdn.discordapp.com/emojis/${selectedId}.${ext}`;
+      previewHtml = `<img src="${imgUrl}" alt="${slot}" style="width:28px;height:28px;vertical-align:middle;" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${selectedId}.png';" />`;
+    }
+
+    let optionsHtml = `<option value="">Padrão (Unicode: ${fallback})</option>`;
+    for (const e of appEmojis) {
+      const isSelected = String(e.id) === String(selectedId) ? 'selected' : '';
+      optionsHtml += `<option value="${e.id}" ${isSelected}>${e.name} (${e.id})</option>`;
+    }
+
+    rowsHtml += `
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.2);border-radius:12px;padding:16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:12px;min-width:220px;">
+          <div style="width:40px;height:40px;background:rgba(0,0,0,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+            ${previewHtml}
+          </div>
+          <div>
+            <div style="font-weight:700;color:#8b5cf6;font-family:monospace;font-size:15px;">${slot}</div>
+            <div style="font-size:12px;color:#94a3b8;">Fallback: ${fallback}</div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:240px;">
+          <select name="${slot}" style="width:100%;background:#090514;color:#ffffff;border:1px solid rgba(139,92,246,0.4);border-radius:8px;padding:10px;font-size:14px;outline:none;">
+            ${optionsHtml}
+          </select>
+        </div>
+      </div>
+    `;
+  }
+
+  const queryTokenParam = token ? `?token=${encodeURIComponent(token)}` : '';
+  const alertHtml = isSaved ? `
+    <div style="background:rgba(16,185,129,0.15);border:1px solid #10b981;color:#10b981;padding:12px 16px;border-radius:10px;margin-bottom:20px;font-weight:600;">
+      ✅ Configuração de emojis salva com sucesso!
+    </div>
+  ` : '';
+
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Emojis • Pyxie Admin</title>
+  <style>
+    body { background: #1a1a1a; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 24px; }
+    .container { max-width: 800px; margin: 0 auto; background: #130b24; border: 1px solid rgba(139,92,246,0.3); border-radius: 16px; padding: 28px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+    h1 { margin-top: 0; color: #e60067; font-size: 24px; display: flex; align-items: center; gap: 10px; }
+    p { color: #cbd5e1; font-size: 14px; line-height: 1.5; margin-bottom: 24px; }
+    .btn-save { background: linear-gradient(135deg, #8b5cf6, #e60067); color: #fff; border: none; padding: 14px 28px; font-size: 16px; font-weight: 700; border-radius: 10px; cursor: pointer; width: 100%; margin-top: 16px; transition: transform 0.1s; }
+    .btn-save:hover { opacity: 0.95; transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔮 Painel Visual de Mapeamento de Emojis</h1>
+    <p>Vincule os slots visuais do bot Pyxie aos Application Emojis oficiais da sua aplicação Discord.</p>
+    ${alertHtml}
+    <form method="POST" action="/admin/emojis${queryTokenParam}">
+      ${rowsHtml}
+      <button type="submit" class="btn-save">💾 Salvar Configuração</button>
+    </form>
+  </div>
+</body>
+</html>`;
+
+  return res.send(html);
+});
+
+app.post('/admin/emojis', (req, res) => {
+  const token = req.query.token;
+  const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
+  const sessionCookie = getCookie(req, 'pyxie_admin_session');
+
+  const isAuth =
+    (token && ((secret && token === secret) || isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid)) ||
+    (sessionCookie && isValidAdminSession(sessionCookie)) ||
+    (!secret && isIpAllowed(req));
+
+  if (!isAuth) {
+    return res.status(401).send('401 Unauthorized');
+  }
+
+  const { FALLBACKS } = require('./src/utils/emojiResolver');
+  const validSlots = Object.keys(FALLBACKS);
+  const emojisData = {};
+
+  for (const slot of validSlots) {
+    emojisData[slot] = req.body && req.body[slot] ? String(req.body[slot]).trim() : '';
+  }
+
+  const dataPath = path.join(__dirname, 'src/data/emojis.json');
+  fs.writeFileSync(dataPath, JSON.stringify(emojisData, null, 2), 'utf8');
+
+  const redirectToken = token ? `?token=${encodeURIComponent(token)}&saved=true` : '?saved=true';
+  return res.redirect(`/admin/emojis${redirectToken}`);
 });
 
 app.post('/api/admin/verify', (req, res) => {

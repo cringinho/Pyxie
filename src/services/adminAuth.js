@@ -14,6 +14,7 @@ const DEFAULT_ALLOWED_IPS = new Set([
   '179.153.90.39',  // IP Público Oficial do Dono
   '26.194.245.13',  // Radmin VPN
   '192.168.0.81',   // Rede Local LAN
+  '192.168.15.17',  // Rede Local LAN Atual
 ]);
 
 // Sessões administrativas ativas em memória (Session Token -> Dados)
