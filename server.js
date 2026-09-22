@@ -466,10 +466,6 @@ app.post('/admin/emojis', (req, res) => {
 });
 
 app.post('/api/admin/verify', (req, res) => {
-  if (!isIpAllowed(req)) {
-    return res.status(403).json({ success: false, message: 'IP não autorizado.' });
-  }
-
   const { token, secret } = req.body || {};
   if (token) {
     const magic = verifyMagicToken(token);
@@ -490,6 +486,10 @@ app.post('/api/admin/verify', (req, res) => {
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
   if (sessionCookie && isValidAdminSession(sessionCookie)) {
     return res.json({ success: true, sessionToken: sessionCookie });
+  }
+
+  if (!isIpAllowed(req)) {
+    return res.status(403).json({ success: false, message: 'IP não autorizado.' });
   }
 
   return res.status(401).json({ success: false, message: 'Credenciais inválidas ou sessão expirada.' });
