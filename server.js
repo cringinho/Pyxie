@@ -328,9 +328,9 @@ app.get('/admin/emojis', async (req, res) => {
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
 
   const isAuth =
-    (token && ((secret && token === secret) || isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid)) ||
+    isIpAllowed(req) ||
     (sessionCookie && isValidAdminSession(sessionCookie)) ||
-    (!secret && isIpAllowed(req));
+    (token && ((secret && token === secret) || isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
 
   if (!isAuth) {
     return res.status(401).send('401 Unauthorized');
@@ -442,9 +442,9 @@ app.post('/admin/emojis', (req, res) => {
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
 
   const isAuth =
-    (token && ((secret && token === secret) || isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid)) ||
+    isIpAllowed(req) ||
     (sessionCookie && isValidAdminSession(sessionCookie)) ||
-    (!secret && isIpAllowed(req));
+    (token && ((secret && token === secret) || isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
 
   if (!isAuth) {
     return res.status(401).send('401 Unauthorized');
