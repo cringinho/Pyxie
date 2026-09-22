@@ -366,31 +366,42 @@ app.get('/admin/emojis', async (req, res) => {
 
     const selectedEmojiObj = appEmojis.find(e => String(e.id) === String(selectedId));
     let previewHtml = `<span style="font-size:24px;">${fallback}</span>`;
+    let statusBadge = '<span class="badge badge-fallback">Unicode</span>';
     if (selectedId) {
       const ext = selectedEmojiObj?.animated ? 'gif' : 'png';
       const imgUrl = `https://cdn.discordapp.com/emojis/${selectedId}.${ext}`;
       previewHtml = `<img src="${imgUrl}" alt="${slot}" style="width:28px;height:28px;vertical-align:middle;" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${selectedId}.png';" />`;
+      statusBadge = selectedEmojiObj?.animated 
+        ? '<span class="badge badge-animated">GIF Animado</span>'
+        : '<span class="badge badge-static">PNG Estático</span>';
     }
 
-    let optionsHtml = `<option value="">Padrão (Unicode: ${fallback})</option>`;
+    let optionsHtml = `<option value="" data-animated="false" data-fallback="${fallback}">Padrão (Unicode: ${fallback})</option>`;
     for (const e of appEmojis) {
       const isSelected = String(e.id) === String(selectedId) ? 'selected' : '';
-      optionsHtml += `<option value="${e.id}" ${isSelected}>${e.name} (${e.id})</option>`;
+      optionsHtml += `<option value="${e.id}" data-name="${e.name}" data-animated="${e.animated ? 'true' : 'false'}" ${isSelected}>${e.animated ? '✨ ' : ''}${e.name} (${e.id})</option>`;
     }
 
+    let category = 'system';
+    if (slot.includes('coin') || slot.includes('bean')) category = 'economy';
+    else if (slot.includes('relic') || slot.includes('vigor') || slot.includes('tarot') || slot.includes('ship')) category = 'gloom';
+
     rowsHtml += `
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.2);border-radius:12px;padding:16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:12px;min-width:220px;">
-          <div style="width:40px;height:40px;background:rgba(0,0,0,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+      <div class="slot-card" data-slot="${slot}" data-category="${category}" style="background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.2);border-radius:14px;padding:16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;transition:all 0.2s ease;">
+        <div style="display:flex;align-items:center;gap:14px;min-width:240px;">
+          <div id="box-${slot}" class="preview-box" style="width:44px;height:44px;background:rgba(0,0,0,0.4);border:1px solid rgba(139,92,246,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;">
             ${previewHtml}
           </div>
           <div>
-            <div style="font-weight:700;color:#8b5cf6;font-family:monospace;font-size:15px;">${slot}</div>
-            <div style="font-size:12px;color:#94a3b8;">Fallback: ${fallback}</div>
+            <div style="font-weight:700;color:#c084fc;font-family:monospace;font-size:15px;display:flex;align-items:center;gap:8px;">
+              <span>${slot}</span>
+              <span id="badge-${slot}">${statusBadge}</span>
+            </div>
+            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">Fallback: <strong>${fallback}</strong></div>
           </div>
         </div>
-        <div style="flex:1;min-width:240px;">
-          <select name="${slot}" style="width:100%;background:#090514;color:#ffffff;border:1px solid rgba(139,92,246,0.4);border-radius:8px;padding:10px;font-size:14px;outline:none;">
+        <div style="flex:1;min-width:260px;">
+          <select name="${slot}" id="select-${slot}" class="emoji-select" data-slot="${slot}" style="width:100%;background:#090514;color:#ffffff;border:1px solid rgba(139,92,246,0.4);border-radius:10px;padding:10px;font-size:14px;outline:none;cursor:pointer;">
             ${optionsHtml}
           </select>
         </div>
@@ -400,8 +411,8 @@ app.get('/admin/emojis', async (req, res) => {
 
   const queryTokenParam = token ? `?token=${encodeURIComponent(token)}` : '';
   const alertHtml = isSaved ? `
-    <div style="background:rgba(16,185,129,0.15);border:1px solid #10b981;color:#10b981;padding:12px 16px;border-radius:10px;margin-bottom:20px;font-weight:600;">
-      ✅ Configuração de emojis salva com sucesso!
+    <div style="background:rgba(16,185,129,0.15);border:1px solid #10b981;color:#10b981;padding:12px 16px;border-radius:10px;margin-bottom:20px;font-weight:600;display:flex;align-items:center;gap:8px;">
+      ✨ Configuração de emojis salva com sucesso! O bot utilizará os novos assets imediatamente.
     </div>
   ` : '';
 
@@ -411,25 +422,191 @@ app.get('/admin/emojis', async (req, res) => {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel de Emojis • Pyxie Admin</title>
+  <link rel="icon" href="https://cdn.discordapp.com/emojis/1548444149785694238.gif" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
-    body { background: #1a1a1a; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 24px; }
-    .container { max-width: 800px; margin: 0 auto; background: #130b24; border: 1px solid rgba(139,92,246,0.3); border-radius: 16px; padding: 28px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-    h1 { margin-top: 0; color: #e60067; font-size: 24px; display: flex; align-items: center; gap: 10px; }
-    p { color: #cbd5e1; font-size: 14px; line-height: 1.5; margin-bottom: 24px; }
-    .btn-save { background: linear-gradient(135deg, #8b5cf6, #e60067); color: #fff; border: none; padding: 14px 28px; font-size: 16px; font-weight: 700; border-radius: 10px; cursor: pointer; width: 100%; margin-top: 16px; transition: transform 0.1s; }
-    .btn-save:hover { opacity: 0.95; transform: translateY(-1px); }
+    body { background: #090514; color: #ffffff; font-family: 'Quicksand', sans-serif; margin: 0; padding: 24px; min-height: 100vh; }
+    .container { max-width: 900px; margin: 0 auto; background: rgba(19, 11, 36, 0.95); border: 1px solid rgba(139,92,246,0.3); border-radius: 20px; padding: 32px; box-shadow: 0 15px 50px rgba(0,0,0,0.6); }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    h1 { margin: 0; color: #ec4899; font-family: 'Fredoka', sans-serif; font-size: 24px; display: flex; align-items: center; gap: 10px; }
+    p.subtitle { color: #94a3b8; font-size: 14px; line-height: 1.5; margin-bottom: 24px; }
+    
+    .badge { font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 700; text-transform: uppercase; font-family: 'Quicksand', sans-serif; }
+    .badge-animated { background: rgba(236,72,153,0.2); border: 1px solid rgba(236,72,153,0.5); color: #f472b6; }
+    .badge-static { background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.5); color: #38bdf8; }
+    .badge-fallback { background: rgba(148,163,184,0.15); border: 1px solid rgba(148,163,184,0.3); color: #94a3b8; }
+
+    /* Floating Live Preview Banner */
+    .live-hero {
+      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.15));
+      border: 1px solid rgba(236,72,153,0.3);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-avatar {
+      width: 56px;
+      height: 56px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(236,72,153,0.4);
+    }
+    .hero-info h3 { margin: 0; font-size: 16px; color: #fff; font-family: 'Fredoka', sans-serif; }
+    .hero-info p { margin: 4px 0 0 0; font-size: 13px; color: #94a3b8; }
+
+    /* Filter Tabs & Search */
+    .controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .search-input { flex: 1; min-width: 200px; background: rgba(0,0,0,0.4); border: 1px solid rgba(139,92,246,0.3); border-radius: 10px; padding: 10px 14px; color: #fff; outline: none; font-family: 'Quicksand', sans-serif; font-size: 14px; }
+    .search-input:focus { border-color: #ec4899; }
+
+    .cat-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; border-radius: 10px; padding: 8px 14px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .cat-btn.active, .cat-btn:hover { background: rgba(139,92,246,0.25); border-color: #8b5cf6; color: #fff; }
+
+    .btn-save { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; border: none; padding: 14px 28px; font-size: 16px; font-weight: 700; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 16px; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 20px rgba(236,72,153,0.3); }
+    .btn-save:hover { opacity: 0.95; transform: translateY(-2px); box-shadow: 0 6px 25px rgba(236,72,153,0.5); }
+    .btn-back { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+    .btn-back:hover { color: #fff; background: rgba(255,255,255,0.1); }
+
+    @keyframes pop {
+      0% { transform: scale(0.8); opacity: 0.5; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .pop-anim { animation: pop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🔮 Painel Visual de Mapeamento de Emojis</h1>
-    <p>Vincule os slots visuais do bot Pyxie aos Application Emojis oficiais da sua aplicação Discord.</p>
+    <div class="header-bar">
+      <h1>🔮 Mapeamento de Emojis do Bot</h1>
+      <a href="/admin" class="btn-back">⬅️ Console do Dono</a>
+    </div>
+    <p class="subtitle">Selecione e pré-visualize em tempo real a renderização dos emojis customizados registrados na sua aplicação Discord antes de salvar.</p>
+    
     ${alertHtml}
+
+    <!-- Live Preview Banner -->
+    <div class="live-hero" id="heroBanner">
+      <div class="hero-avatar" id="heroIcon">
+        <span style="font-size: 32px;">✨</span>
+      </div>
+      <div class="hero-info">
+        <h3 id="heroTitle">Selecione um emoji na lista abaixo</h3>
+        <p id="heroDesc">Ao alterar qualquer scroller, a pré-visualização ao vivo será atualizada instantaneamente.</p>
+      </div>
+    </div>
+
+    <!-- Controls Row -->
+    <div class="controls-row">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Filtrar slots por nome (ex: coin, relic, status)..." />
+      <button class="cat-btn active" data-cat="all">Todos os Slots</button>
+      <button class="cat-btn" data-cat="economy">Economia</button>
+      <button class="cat-btn" data-cat="gloom">Santuário / RPG</button>
+      <button class="cat-btn" data-cat="system">Sistema</button>
+    </div>
+
     <form method="POST" action="/admin/emojis${queryTokenParam}">
-      ${rowsHtml}
-      <button type="submit" class="btn-save">💾 Salvar Configuração</button>
+      <div id="slotsContainer">
+        ${rowsHtml}
+      </div>
+      <button type="submit" class="btn-save">💾 Salvar Configuração de Emojis</button>
     </form>
   </div>
+
+  <script>
+    const selects = document.querySelectorAll('.emoji-select');
+    const heroIcon = document.getElementById('heroIcon');
+    const heroTitle = document.getElementById('heroTitle');
+    const heroDesc = document.getElementById('heroDesc');
+    const searchInput = document.getElementById('searchInput');
+    const catBtns = document.querySelectorAll('.cat-btn');
+
+    function updateSlotPreview(selectEl) {
+      const slot = selectEl.getAttribute('data-slot');
+      const box = document.getElementById('box-' + slot);
+      const badge = document.getElementById('badge-' + slot);
+      const opt = selectEl.options[selectEl.selectedIndex];
+      
+      const emojiId = selectEl.value;
+      const isAnimated = opt.getAttribute('data-animated') === 'true';
+      const fallback = opt.getAttribute('data-fallback') || '✨';
+      const emojiName = opt.getAttribute('data-name') || '';
+
+      if (!emojiId) {
+        box.innerHTML = '<span style="font-size:24px;">' + fallback + '</span>';
+        badge.innerHTML = '<span class="badge badge-fallback">Unicode</span>';
+        updateHero(slot, fallback, 'Fallback Unicode', false);
+      } else {
+        const ext = isAnimated ? 'gif' : 'png';
+        const imgUrl = 'https://cdn.discordapp.com/emojis/' + emojiId + '.' + ext;
+        const imgHtml = '<img src="' + imgUrl + '" alt="' + slot + '" class="pop-anim" style="width:28px;height:28px;vertical-align:middle;" onerror="this.onerror=null;this.src=\'https://cdn.discordapp.com/emojis/' + emojiId + '.png\';" />';
+        box.innerHTML = imgHtml;
+        badge.innerHTML = isAnimated 
+          ? '<span class="badge badge-animated">GIF Animado</span>' 
+          : '<span class="badge badge-static">PNG Estático</span>';
+        
+        updateHero(slot, imgUrl, (isAnimated ? '✨ Animado: ' : '📄 Estático: ') + emojiName + ' (' + emojiId + ')', true);
+      }
+
+      box.classList.remove('pop-anim');
+      void box.offsetWidth;
+      box.classList.add('pop-anim');
+    }
+
+    function updateHero(slot, iconSource, labelText, isUrl) {
+      if (isUrl) {
+        heroIcon.innerHTML = '<img src="' + iconSource + '" class="pop-anim" style="width:36px;height:36px;" />';
+      } else {
+        heroIcon.innerHTML = '<span style="font-size:32px;" class="pop-anim">' + iconSource + '</span>';
+      }
+      heroTitle.textContent = 'Pré-visualização: ' + slot;
+      heroDesc.textContent = labelText;
+    }
+
+    // Attach immediate listeners to all dropdown selects for scroller & select updates
+    selects.forEach(sel => {
+      sel.addEventListener('change', () => updateSlotPreview(sel));
+      sel.addEventListener('input', () => updateSlotPreview(sel));
+      sel.addEventListener('focus', () => updateSlotPreview(sel));
+    });
+
+    // Search filter
+    searchInput.addEventListener('input', filterSlots);
+
+    // Category buttons
+    catBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        catBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterSlots();
+      });
+    });
+
+    function filterSlots() {
+      const q = searchInput.value.toLowerCase().trim();
+      const activeCat = document.querySelector('.cat-btn.active')?.getAttribute('data-cat') || 'all';
+      const cards = document.querySelectorAll('.slot-card');
+
+      cards.forEach(card => {
+        const slot = card.getAttribute('data-slot').toLowerCase();
+        const cat = card.getAttribute('data-category');
+        const matchesQuery = !q || slot.includes(q);
+        const matchesCat = activeCat === 'all' || cat === activeCat;
+
+        if (matchesQuery && matchesCat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
 </body>
 </html>`;
 

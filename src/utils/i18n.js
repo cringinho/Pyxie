@@ -528,10 +528,9 @@ const TRANSLATIONS = {
       "title": "🛡️  ✦  Painel de Administração do Dono",
       "desc": "Olá criador! Seu link seguro de acesso ao painel foi gerado.\n\n> 🔐 **Autenticação:** Criptografada via HMAC-SHA256\n> ⏳ **Validade:** 15 minutos (uso único)\n> 🌐 **Rede:** Restrito aos seus IPs autorizados\n\n*Clique no botão abaixo para abrir seu console administrativo:*",
       "btnOpen": "Acessar Painel do Dono",
-      "footer": "Painel Confidencial da Pyxie • Protegido por Snowflake & IP"
       "footer": "Painel Confidencial da Pyxie • Protegido por Snowflake & IP",
       "emojiSelectLabel": "Selecione um emoji para pré‑visualizar",
-      "emojiPreviewFooter": "Use o menu acima para escolher um emoji",
+      "emojiPreviewFooter": "Use the menu acima para escolher um emoji",
       "paginationPrev": "Anterior",
       "paginationNext": "Próximo",
       "emojiFieldName": "Nome",
@@ -1094,7 +1093,18 @@ const TRANSLATIONS = {
       "title": "🛡️  ✦  Owner Administration Panel",
       "desc": "Hello creator! Your secure panel access link has been generated.\n\n> 🔐 **Authentication:** Encrypted via HMAC-SHA256\n> ⏳ **Validity:** 15 minutes (single-use)\n> 🌐 **Network:** Restricted to your authorized IPs\n\n*Click the button below to open your administrative console:*",
       "btnOpen": "Access Owner Dashboard",
-      "footer": "Pyxie Confidential Panel • Protected by Snowflake & IP"
+      "footer": "Pyxie Confidential Panel • Protected by Snowflake & IP",
+      "emojiSelectLabel": "Select an emoji to preview",
+      "emojiPreviewFooter": "Use the menu above to choose an emoji",
+      "paginationPrev": "Previous",
+      "paginationNext": "Next",
+      "emojiFieldName": "Name",
+      "emojiFieldId": "ID",
+      "emojiFieldAnimated": "Animated",
+      "emojiFieldURL": "URL",
+      "themeUtility": "Utilities",
+      "themeReaction": "Reactions",
+      "themeOther": "Others"
     },
     "workMinigame": {
       "noProfession": "❌ You do not have a registered profession yet! Use `/profissao` to choose a career before working.",

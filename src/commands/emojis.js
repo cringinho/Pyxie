@@ -1,7 +1,5 @@
-const { AttachmentBuilder, PermissionFlagsBits, EmbedBuilder, SlashCommandBuilder } = require('discord.js');
-const { serializeGuildEmojis } = require('../utils/serverEmojis');
 const { AttachmentBuilder, PermissionFlagsBits, EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
-const { serializeGuildEmojis, groupEmojisByTheme, createEmojiOption, getAnimatedEmoji, getEmojiUrl, APP_EMOJIS } = require('../utils/serverEmojis');
+const { serializeGuildEmojis, createEmojiOption } = require('../utils/serverEmojis');
 const { EMOJIS } = require('./commandNames');
 const { getLanguage, t } = require('../utils/i18n');
 
@@ -44,7 +42,6 @@ function buildUsage(source = null) {
   return t('admin.noPermission', source);
 }
 
-async function sendExport(source, reply) {
 /** Build an embed that previews a single emoji */
 function buildEmojiPreview(guild, emoji) {
   const embed = new EmbedBuilder()
@@ -129,8 +126,8 @@ async function handlePreviewAndExport(source, reply) {
       } else if (interaction.customId === 'next_page' && currentPage < totalPages - 1) {
         currentPage++;
       } else if (interaction.customId === 'export_json') {
-        const result = buildFile(source.guild);
-        await interaction.reply({ files: [result.file], ephemeral: true });
+        const fileResult = buildFile(source.guild);
+        await interaction.reply({ files: [fileResult.file], ephemeral: true });
         return;
       }
       const newSelect = buildSelectMenu(emojis, currentPage);
@@ -142,7 +139,6 @@ async function handlePreviewAndExport(source, reply) {
 }
 
 async function sendExport(source, reply) {
-  // Show preview UI then allow export
   await handlePreviewAndExport(source, reply);
 }
 
@@ -153,7 +149,6 @@ module.exports = {
   serializeGuildEmojis,
   data: new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Download this server\'s custom emojis as a JSON file.')
     .setDescription("Download this server's custom emojis as a JSON file.")
     .setDescriptionLocalizations({
       'pt-BR': 'Baixa a lista de emojis customizados deste servidor em JSON.',

@@ -28,8 +28,7 @@ const { getSpouseId } = require('../services/marriage');
 const professions = require('../services/professions');
 const { buildProfileEmbed } = require('./economyHelpers');
 const { PROFILE } = require('./commandNames');
-const { KUROMI_COLORS } = require('../utils/kuromiVoice');
-const { PYXIE_COLORS } = require('../utils/pyxieVoice');
+const { PYXIE_COLORS, KUROMI_COLORS } = require('../utils/pyxieVoice');
 const { getLanguage, t } = require('../utils/i18n');
 
 function getTargetUser(source) {

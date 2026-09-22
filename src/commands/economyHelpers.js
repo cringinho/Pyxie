@@ -1,6 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-const { KUROMI_COLORS } = require('../utils/kuromiVoice');
-const { PYXIE_COLORS } = require('../utils/pyxieVoice');
+const { PYXIE_COLORS, KUROMI_COLORS } = require('../utils/pyxieVoice');
 const { getLanguage, t, formatCoins, formatRemaining } = require('../utils/i18n');
 
 function buildCurrencyFields(currencies, source = null) {

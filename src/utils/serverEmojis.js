@@ -127,7 +127,6 @@ function groupEmojisByTheme(emojis) {
   return groups;
 }
 
-module.exports = { APP_EMOJIS, getAnimatedEmoji, serializeGuildEmojis, getEmojiUrl, groupEmojisByTheme };
 module.exports = {
   APP_EMOJIS,
   getAnimatedEmoji,
