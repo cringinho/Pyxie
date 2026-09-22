@@ -539,7 +539,8 @@ const TRANSLATIONS = {
       "emojiFieldURL": "URL",
       "themeUtility": "Utilitários",
       "themeReaction": "Reações",
-      "themeOther": "Outros"
+      "themeOther": "Outros",
+      "emojiSearchEmpty": "❌ Nenhum emoji customizado foi encontrado com a busca \"**{query}**\"."
     },
     "workMinigame": {
       "noProfession": "❌ Você ainda não possui uma profissão registrada! Use `/profissao` para escolher sua vocação antes de trabalhar.",
@@ -1104,7 +1105,8 @@ const TRANSLATIONS = {
       "emojiFieldURL": "URL",
       "themeUtility": "Utilities",
       "themeReaction": "Reactions",
-      "themeOther": "Others"
+      "themeOther": "Others",
+      "emojiSearchEmpty": "❌ No custom emojis found matching \"**{query}**\"."
     },
     "workMinigame": {
       "noProfession": "❌ You do not have a registered profession yet! Use `/profissao` to choose a career before working.",

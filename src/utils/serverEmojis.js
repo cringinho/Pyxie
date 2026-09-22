@@ -19,9 +19,10 @@ function loadEmojiGroupConfig() {
 /** Helper to create a select menu option for an emoji */
 function createEmojiOption(emoji) {
   return {
-    label: `${emoji.name}${emoji.animated ? ' (animado)' : ''}`.slice(0, 100),
+    label: `${emoji.name}`.slice(0, 100),
     value: emoji.id,
     description: emoji.animated ? 'Animado' : 'Estático',
+    emoji: emoji.id ? { id: emoji.id, animated: Boolean(emoji.animated) } : undefined,
   };
 }
 

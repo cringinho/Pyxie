@@ -186,6 +186,18 @@ try {
   assert.ok(invEmbedPt.data.title.includes('Mochila'), 'Inventario PT ok');
   assert.ok(invEmbedEn.data.title.includes('Backpack'), 'Inventario EN ok');
 
+  // 9. Emojis preview e busca:
+  const emojisCmd = require('../src/commands/emojis');
+  const { createEmojiOption } = require('../src/utils/serverEmojis');
+  const mockEmojiObj = { id: '1548444149785694238', name: 'pinkeing', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444149785694238.gif' };
+  const optionRes = createEmojiOption(mockEmojiObj);
+  assert.equal(optionRes.emoji.id, '1548444149785694238', 'Select menu option deve conter ID do emoji customizado');
+  assert.equal(optionRes.emoji.animated, true, 'Select menu option deve preservar flag animated');
+
+  const previewEmbed = emojisCmd.buildEmojiPreview(null, mockEmojiObj, 'pt');
+  assert.ok(previewEmbed.data.description.includes('<a:pinkeing:1548444149785694238>'), 'Preview embed deve renderizar o emoji formatado no corpo');
+  assert.equal(previewEmbed.data.thumbnail.url, mockEmojiObj.url, 'Preview embed deve definir o thumbnail com a URL do emoji');
+
   const { execFileSync } = require('node:child_process');
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'server.js')]);
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'index.js')]);
