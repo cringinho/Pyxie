@@ -15,6 +15,9 @@ const DEFAULT_ALLOWED_IPS = new Set([
   '26.194.245.13',  // Radmin VPN
   '192.168.0.81',   // Rede Local LAN
   '192.168.15.17',  // Rede Local LAN Atual
+  '2804:7f0:34:227e:838b:b87c:4df8:db14',
+  '2804:7f0:34:227e:a5aa:777d:77c2:cc57',
+  '2804:7f0:34:227e:f8ea:cc85:a81b:c205',
 ]);
 
 // Sessões administrativas ativas em memória (Session Token -> Dados)
@@ -48,6 +51,9 @@ function isIpAllowed(req) {
 
   // Permite IPs explícitos configurados
   if (DEFAULT_ALLOWED_IPS.has(ip)) return true;
+
+  // Permite prefixo do IPv6 da rede do proprietário
+  if (ip.startsWith('2804:7f0:34:227e:')) return true;
 
   // Permite IPs definidos no ambiente (.env)
   if (process.env.ADMIN_ALLOWED_IPS) {
