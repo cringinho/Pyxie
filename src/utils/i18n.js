@@ -529,6 +529,18 @@ const TRANSLATIONS = {
       "desc": "Olá criador! Seu link seguro de acesso ao painel foi gerado.\n\n> 🔐 **Autenticação:** Criptografada via HMAC-SHA256\n> ⏳ **Validade:** 15 minutos (uso único)\n> 🌐 **Rede:** Restrito aos seus IPs autorizados\n\n*Clique no botão abaixo para abrir seu console administrativo:*",
       "btnOpen": "Acessar Painel do Dono",
       "footer": "Painel Confidencial da Pyxie • Protegido por Snowflake & IP"
+      "footer": "Painel Confidencial da Pyxie • Protegido por Snowflake & IP",
+      "emojiSelectLabel": "Selecione um emoji para pré‑visualizar",
+      "emojiPreviewFooter": "Use o menu acima para escolher um emoji",
+      "paginationPrev": "Anterior",
+      "paginationNext": "Próximo",
+      "emojiFieldName": "Nome",
+      "emojiFieldId": "ID",
+      "emojiFieldAnimated": "Animado",
+      "emojiFieldURL": "URL",
+      "themeUtility": "Utilitários",
+      "themeReaction": "Reações",
+      "themeOther": "Outros"
     },
     "workMinigame": {
       "noProfession": "❌ Você ainda não possui uma profissão registrada! Use `/profissao` para escolher sua vocação antes de trabalhar.",

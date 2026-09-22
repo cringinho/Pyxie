@@ -1,0 +1,5 @@
+{
+  "utility": ["badge", "icon", "bot", "logo", "menu"],
+  "reaction": ["heart", "thumb", "smile", "cry", "laugh", "wink"]
+}
+
