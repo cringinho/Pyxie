@@ -337,10 +337,12 @@ app.get('/admin/emojis', async (req, res) => {
   }
 
   const SLOT_METADATA = {
+    phantom_coin: { title: 'Phantom Coins', fallback: '👻', category: 'economy', themeKey: 'coins' },
     // 💰 Economia & Loja
     coins: { title: 'Moedas Gerais da Pyxie', fallback: '🪙', category: 'economy', themeKey: 'coins' },
     phantom_coin: { title: 'Phantom Coins (Penumbra)', fallback: '👻', category: 'economy', themeKey: 'coins' },
     magic_bean: { title: 'Feijões Mágicos (Bônus & Loja)', fallback: '🌱', category: 'economy', themeKey: 'dailyBonus' },
+    vigor_energy: { title: 'Energia & Stamina (Penumbra)', fallback: '⚡', category: 'gloom', themeKey: null },
     daily_bonus: { title: 'Bônus Diário & Recompensa Web', fallback: '🎁', category: 'economy', themeKey: 'dailyBonus' },
     weekend_bonus: { title: 'Bônus de Fim de Semana (2X)', fallback: '🔥', category: 'economy', themeKey: 'weekendBonus' },
     work_career: { title: 'Trabalho & Expedientes', fallback: '💼', category: 'economy', themeKey: 'economyCareers' },
@@ -349,6 +351,8 @@ app.get('/admin/emojis', async (req, res) => {
 
     // 🔮 Santuário & RPG (Gloom Realm)
     tarot_card: { title: 'Carta de Tarot (Místico)', fallback: '🔮', category: 'gloom', themeKey: 'tarot' },
+    tarotAlbum: { title: 'Álbum de Tarot (Coleção)', fallback: '📖', category: 'gloom', themeKey: 'tarotAlbum' },
+    ship_heart: { title: 'Coração de Ship & Romance', fallback: '💖', category: 'gloom', themeKey: 'ship' },
     tarotAlbum: { title: 'Álbum de Tarot & Coleção', fallback: '📖', category: 'gloom', themeKey: 'tarotAlbum' },
     grimorio: { title: 'Grimório & Alquimia', fallback: '📖', category: 'gloom', themeKey: 'grimorio' },
     vigor_energy: { title: 'Energia & Stamina (Penumbra)', fallback: '⚡', category: 'gloom', themeKey: null },
@@ -358,6 +362,7 @@ app.get('/admin/emojis', async (req, res) => {
     relic_t3: { title: 'Relíquia Tier 3 (Rara)', fallback: '💎', category: 'gloom', themeKey: null },
     relic_t4: { title: 'Relíquia Tier 4 (Épica)', fallback: '🔮', category: 'gloom', themeKey: null },
     relic_t5: { title: 'Relíquia Tier 5 (Lendária)', fallback: '👑', category: 'gloom', themeKey: null },
+    userProfile: { title: 'Badge de Perfil do Usuário', fallback: '👤', category: 'system', themeKey: 'userProfile' },
 
     // 💑 Social & Romance
     ship_heart: { title: 'Calculadora de Afinidade & Ship', fallback: '💖', category: 'social', themeKey: 'ship' },
@@ -376,6 +381,7 @@ app.get('/admin/emojis', async (req, res) => {
     websiteHome: { title: 'Logo & Ícone Home do Site', fallback: '🦋', category: 'system', themeKey: 'websiteHome' },
     websiteSocial: { title: 'Aba Social do Website', fallback: '💑', category: 'system', themeKey: 'websiteSocial' },
     helpCommands: { title: 'Ajuda & Comandos do Site', fallback: '📖', category: 'system', themeKey: 'helpCommands' },
+    dice: { title: 'Dado & Minigames de Sorte', fallback: '🎲', category: 'system', themeKey: 'dice' },
     userProfile: { title: 'Badge de Perfil do Usuário', fallback: '👤', category: 'system', themeKey: 'userProfile' },
     ranking: { title: 'Top Ranking & Placar', fallback: '🏆', category: 'system', themeKey: null },
     agenda: { title: 'Agenda de Automações', fallback: '📅', category: 'system', themeKey: null },
@@ -566,8 +572,12 @@ app.get('/admin/emojis', async (req, res) => {
 
     <!-- Controls Row -->
     <div class="controls-row">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Filtrar slots por nome (ex: coin, tarot, relic)..." />
       <input type="text" id="searchInput" class="search-input" placeholder="🔍 Filtrar slots por nome (ex: coin, tarot, relic, ship)..." />
       <button class="cat-btn active" data-cat="all">Todos os Slots</button>
+      <button class="cat-btn" data-cat="economy">💰 Economia</button>
+      <button class="cat-btn" data-cat="gloom">🔮 Santuário / RPG</button>
+      <button class="cat-btn" data-cat="system">⚙️ Sistema</button>
       <button class="cat-btn" data-cat="economy">💰 Economia & Loja</button>
       <button class="cat-btn" data-cat="gloom">🔮 Santuário & RPG</button>
       <button class="cat-btn" data-cat="social">💑 Social & Romance</button>
@@ -870,6 +880,7 @@ app.post('/admin/emojis', (req, res) => {
   const SLOT_METADATA = {
     coins: { themeKey: 'coins' },
     phantom_coin: { themeKey: 'coins' },
+    coins: { themeKey: 'coins' },
     magic_bean: { themeKey: 'dailyBonus' },
     daily_bonus: { themeKey: 'dailyBonus' },
     weekend_bonus: { themeKey: 'weekendBonus' },
@@ -878,11 +889,13 @@ app.post('/admin/emojis', (req, res) => {
     tarotAlbum: { themeKey: 'tarotAlbum' },
     grimorio: { themeKey: 'grimorio' },
     ship_heart: { themeKey: 'ship' },
+    grimorio: { themeKey: 'grimorio' },
     dice: { themeKey: 'dice' },
     userProfile: { themeKey: 'userProfile' },
     websiteHome: { themeKey: 'websiteHome' },
     websiteSocial: { themeKey: 'websiteSocial' },
     helpCommands: { themeKey: 'helpCommands' },
+    dice: { themeKey: 'dice' },
   };
 
   const emojisData = {};

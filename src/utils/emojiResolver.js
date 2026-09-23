@@ -19,6 +19,8 @@ const FALLBACKS = {
   tarotAlbum: '📖',
   grimorio: '📖',
   vigor_energy: '⚡',
+  tarot_card: '🔮',
+  ship_heart: '💖',
   boss_behemoth: '👹',
   relic_t1: '🪨',
   relic_t2: '🌿',
@@ -47,6 +49,7 @@ const FALLBACKS = {
   ranking: '🏆',
   agenda: '📅',
   status_success: '✅',
+  status_fail: '❌'
   status_fail: '❌',
 };
 
