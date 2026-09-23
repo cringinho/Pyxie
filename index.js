@@ -390,6 +390,11 @@ client.once('ready', async () => {
   startTarotScheduler();
 });
 
+// Atualização automática de catálogo de emojis quando novos emojis forem adicionados/editados/removidos
+client.on('emojiCreate', () => syncApplicationEmojis(client));
+client.on('emojiDelete', () => syncApplicationEmojis(client));
+client.on('emojiUpdate', () => syncApplicationEmojis(client));
+
 // Atualizações dinâmicas de contagem de membros e servidores
 client.on('guildCreate', async (guild) => {
   updateLiveStats();

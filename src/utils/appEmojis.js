@@ -84,14 +84,53 @@ const EMOJI_DEFINITIONS = {
  */
 async function syncApplicationEmojis(client) {
   try {
-    if (!client?.application) return;
-    const appEmojis = await client.application.emojis.fetch();
-    APP_EMOJI_CACHE.clear();
-    for (const [id, emoji] of appEmojis) {
-      APP_EMOJI_CACHE.set(emoji.name.toLowerCase(), emoji.toString());
+    if (!client) return;
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const emojiMap = new Map();
+
+    // 1. Fetch Application Emojis directly from Discord API
+    if (client.application?.emojis) {
+      try {
+        const appEmojis = await client.application.emojis.fetch();
+        APP_EMOJI_CACHE.clear();
+        for (const [id, emoji] of appEmojis) {
+          APP_EMOJI_CACHE.set(emoji.name.toLowerCase(), emoji.toString());
+          emojiMap.set(String(id), {
+            id: String(id),
+            name: emoji.name,
+            animated: Boolean(emoji.animated),
+          });
+        }
+      } catch (e) {
+        console.warn('[appEmojis] Erro ao buscar Application Emojis:', e.message);
+      }
+    }
+
+    // 2. Collect Guild Emojis from client cache
+    if (client.emojis?.cache) {
+      for (const [id, emoji] of client.emojis.cache) {
+        if (!APP_EMOJI_CACHE.has(emoji.name.toLowerCase())) {
+          APP_EMOJI_CACHE.set(emoji.name.toLowerCase(), emoji.toString());
+        }
+        if (!emojiMap.has(String(id))) {
+          emojiMap.set(String(id), {
+            id: String(id),
+            name: emoji.name,
+            animated: Boolean(emoji.animated),
+          });
+        }
+      }
+    }
+
+    // 3. Persist updated catalog to src/data/discordAppEmojis.json
+    if (emojiMap.size > 0) {
+      const catalogPath = path.join(__dirname, '..', 'data', 'discordAppEmojis.json');
+      const payload = { items: Array.from(emojiMap.values()) };
+      fs.writeFileSync(catalogPath, JSON.stringify(payload, null, 2), 'utf8');
     }
   } catch (error) {
-    // Caso o bot não tenha permissões ou a feature não esteja configurada, usa fallbacks silenciosamente
+    console.warn('[appEmojis] Aviso ao sincronizar emojis:', error.message);
   }
 }
 
