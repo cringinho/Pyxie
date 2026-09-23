@@ -4,18 +4,50 @@ const path = require('path');
 const EMOJI_PATH = path.join(__dirname, '../data/emojis.json');
 
 const FALLBACKS = {
+  // 1. Economia & Loja
+  coins: '🪙',
   phantom_coin: '👻',
   magic_bean: '🌱',
-  vigor_energy: '⚡',
+  daily_bonus: '🎁',
+  weekend_bonus: '🔥',
+  work_career: '💼',
+  shop_chest: '📦',
+  shop_gem: '💎',
+
+  // 2. Santuário & RPG (Gloom Realm)
   tarot_card: '🔮',
-  ship_heart: '💖',
+  tarotAlbum: '📖',
+  grimorio: '📖',
+  vigor_energy: '⚡',
+  boss_behemoth: '👹',
   relic_t1: '🪨',
   relic_t2: '🌿',
   relic_t3: '💎',
   relic_t4: '🔮',
   relic_t5: '👑',
+
+  // 3. Social & Romance
+  ship_heart: '💖',
+  marriage_ring: '💍',
+  divorce: '💔',
+  trade: '🤝',
+
+  // 4. Jogos & Sorte
+  fortune_cookie: '🥠',
+  dice: '🎲',
+  jokenpo: '✂️',
+  coinflip: '🪙',
+  likely: '❓',
+
+  // 5. Sistema & Utilidades
+  websiteHome: '🦋',
+  websiteSocial: '💑',
+  helpCommands: '📖',
+  userProfile: '👤',
+  ranking: '🏆',
+  agenda: '📅',
   status_success: '✅',
-  status_fail: '❌'
+  status_fail: '❌',
 };
 
 function getEmojiConfig() {
