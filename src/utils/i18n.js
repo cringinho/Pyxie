@@ -287,7 +287,7 @@ const TRANSLATIONS = {
       "ranking": "> 🏆 **Ranking:** {rank}",
       "careerHeader": "💼 **CARREIRA & VOCAÇÃO**",
       "profession": "> 🔨 **Profissão:** {profession}",
-      "noProfession": "Nenhuma (Use `/profissao`)",
+      "noProfession": "Nenhuma (Use `/py-profession`)",
       "workCount": "> 📈 **Expedientes:** {count} trabalhos concluídos",
       "dedication": "> ⭐ **Dedicação:** {level}",
       "socialHeader": "💍 **VÍNCULO SOCIAL**",
@@ -386,7 +386,7 @@ const TRANSLATIONS = {
       "tabBosque": "Bosque & Relíquias",
       "tabSocial": "Social & Baús",
       "tabTodos": "Todos",
-      "emptyBackpack": "> *Sua mochila está vazia! Visite a `/loja` para adquirir baús e itens mágicos.*",
+      "emptyBackpack": "> *Sua mochila está vazia! Visite a `/py-shop` para adquirir baús e itens mágicos.*",
       "emptyRelics": "> *Você ainda não possui relíquias do Bosque. Explore o mapa com `/py-explorar` e vasculhe para encontrá-las!*",
       "itemsCount": "🎒 **Itens Guardados:** {count}",
       "phantomCoinsLabel": "👻 **Phantom Coins:** **{coins}**",
@@ -402,7 +402,7 @@ const TRANSLATIONS = {
       "openChest": "Abrir {name}",
       "sellOne": "Vender 1x ({coins})",
       "hintSelect": "Selecione um item acima",
-      "otherUserBackpack": "❌ Esta mochila pertence a outro aventureiro. Use `/inventario` para abrir a sua!",
+      "otherUserBackpack": "❌ Esta mochila pertence a outro aventureiro. Use `/py-inventory` para abrir a sua!",
       "chestOpened": "🔓 **Baú Aberto!** Você encontrou **+{coins}**{items}!",
       "soldSuccess": "🪙 Você vendeu 1x **{item}** por **+{coins}**!",
       "selectRelicPlaceholder": "🏺 Selecione uma relíquia para inspecionar ou vender...",
@@ -543,7 +543,7 @@ const TRANSLATIONS = {
       "emojiSearchEmpty": "❌ Nenhum emoji customizado foi encontrado com a busca \"**{query}**\"."
     },
     "workMinigame": {
-      "noProfession": "❌ Você ainda não possui uma profissão registrada! Use `/profissao` para escolher sua vocação antes de trabalhar.",
+      "noProfession": "❌ Você ainda não possui uma profissão registrada! Use `/py-profession` para escolher sua vocação antes de trabalhar.",
       "cooldown": "⏳ Você já trabalhou recentemente! Aguarde **{time}** para iniciar um novo expediente.",
       "wrongTitle": "❌  ✦  Expediente de {profession} Falhou",
       "wrongMistake": "Você cometeu um equívoco na sua tomada de decisão profissional!",
@@ -561,8 +561,8 @@ const TRANSLATIONS = {
       "epicBeanDesc": "> 🌱 Você recebeu **+1 Feijão Mágico** pelo serviço impecável! (Saldo: **{beans} 🌱**)",
       "minigameTitle": "💼  ✦  Expediente de {profession} — Minigame",
       "timeLimit": "⏱️ **TEMPO DE RESPOSTA: 45 SEGUNDOS**\nEscolha a melhor alternativa nos botões abaixo:",
-      "otherUserSession": "❌ Este expediente pertence a outro trabalhador. Use `/trabalho` para iniciar o seu!",
-      "expiredSession": "⌛ Este expediente já foi finalizado ou expirou. Use `/trabalho` novamente quando estiver disponível!"
+      "otherUserSession": "❌ Este expediente pertence a outro trabalhador. Use `/py-work` para iniciar o seu!",
+      "expiredSession": "⌛ Este expediente já foi finalizado ou expirou. Use `/py-work` novamente quando estiver disponível!"
     },
     "gloom": {
       "footer": "Bosque da Pyxie • Pyxie",
@@ -853,7 +853,7 @@ const TRANSLATIONS = {
       "ranking": "> 🏆 **Leaderboard:** {rank}",
       "careerHeader": "💼 **CAREER & VOCATION**",
       "profession": "> 🔨 **Profession:** {profession}",
-      "noProfession": "None (Use `/profissao`)",
+      "noProfession": "None (Use `/py-profession`)",
       "workCount": "> 📈 **Shifts:** {count} completed work shifts",
       "dedication": "> ⭐ **Dedication:** {level}",
       "socialHeader": "💍 **SOCIAL BOND**",
@@ -952,7 +952,7 @@ const TRANSLATIONS = {
       "tabBosque": "Grove & Relics",
       "tabSocial": "Social & Chests",
       "tabTodos": "All",
-      "emptyBackpack": "> *Your backpack is empty! Visit `/shop` to acquire chests and magical items.*",
+      "emptyBackpack": "> *Your backpack is empty! Visit `/py-shop` to acquire chests and magical items.*",
       "emptyRelics": "> *You do not possess any Grove relics yet. Explore the realm with `/py-explore` and forage to find them!*",
       "itemsCount": "🎒 **Stored Items:** {count}",
       "phantomCoinsLabel": "👻 **Phantom Coins:** **{coins}**",
@@ -968,7 +968,7 @@ const TRANSLATIONS = {
       "openChest": "Open {name}",
       "sellOne": "Sell 1x ({coins})",
       "hintSelect": "Select an item above",
-      "otherUserBackpack": "❌ This backpack belongs to another adventurer. Use `/inventario` to open yours!",
+      "otherUserBackpack": "❌ This backpack belongs to another adventurer. Use `/py-inventory` to open yours!",
       "chestOpened": "🔓 **Chest Opened!** You found **+{coins}**{items}!",
       "soldSuccess": "🪙 You sold 1x **{item}** for **+{coins}**!",
       "selectRelicPlaceholder": "🏺 Select a relic to inspect or sell...",
@@ -1109,7 +1109,7 @@ const TRANSLATIONS = {
       "emojiSearchEmpty": "❌ No custom emojis found matching \"**{query}**\"."
     },
     "workMinigame": {
-      "noProfession": "❌ You do not have a registered profession yet! Use `/profissao` to choose a career before working.",
+      "noProfession": "❌ You do not have a registered profession yet! Use `/py-profession` to choose a career before working.",
       "cooldown": "⏳ You worked recently! Please wait **{time}** before starting another work shift.",
       "wrongTitle": "❌  ✦  {profession} Shift Failed",
       "wrongMistake": "You made a mistake in your professional decision!",
@@ -1127,8 +1127,8 @@ const TRANSLATIONS = {
       "epicBeanDesc": "> 🌱 You received **+1 Magic Bean** for stellar work! (Balance: **{beans} 🌱**)",
       "minigameTitle": "💼  ✦  {profession} Shift — Minigame",
       "timeLimit": "⏱️ **TIME LIMIT: 45 SECONDS**\nChoose the best answer using the buttons below:",
-      "otherUserSession": "❌ This shift belongs to another worker. Use `/trabalho` to start your own!",
-      "expiredSession": "⌛ This shift has expired or was already completed. Use `/trabalho` again when available!"
+      "otherUserSession": "❌ This shift belongs to another worker. Use `/py-work` to start your own!",
+      "expiredSession": "⌛ This shift has expired or was already completed. Use `/py-work` again when available!"
     },
     "gloom": {
       "footer": "Pyxie's Grove • Pyxie",
