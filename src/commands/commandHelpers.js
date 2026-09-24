@@ -6,20 +6,29 @@ const {
 const { getLanguage, t } = require('../utils/i18n');
 const { getThemeEmojiUrl } = require('../utils/themeEmojis');
 
-const MODULE_ICONS = {
-  todos: 'https://cdn.discordapp.com/emojis/1548444149785694238.gif', // pinkeing (Asas Mágicas Animadas)
-  todos: getThemeEmojiUrl('websiteHome') || 'https://cdn.discordapp.com/emojis/1551356640782057502.gif', // 255208butterfly (Home / Visão Geral)
-  bosque: 'https://cdn.discordapp.com/emojis/1551356435521339452.png', // emojitree38 (Árvore Mística Animada)
-  economia: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif', // shineygoldcoinsi (Moedinha Dourada Brilhante)
-  economia: getThemeEmojiUrl('economyCareers') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif', // shineygoldcoinsi (Moedinha Dourada Brilhante)
-  loja: 'https://cdn.discordapp.com/emojis/1551356299500064858.gif', // 9862_holo_diamond (Diamante Holográfico)
-  tarot: 'https://cdn.discordapp.com/emojis/1551356087611957269.gif', // 8212crystalmoon (Lua de Cristal Animada)
-  social: 'https://cdn.discordapp.com/emojis/1551356415543742554.gif', // 37775purplecrystalheart (Coração de Cristal Roxo)
-  utilidades: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif', // ykawaiicontrolle (Controle Gamer Kawaii)
-  tarot: getThemeEmojiUrl('tarot') || 'https://cdn.discordapp.com/emojis/1548444111319605330.gif', // Moon (Tarot padrão)
-  social: getThemeEmojiUrl('websiteSocial') || 'https://cdn.discordapp.com/emojis/1551355541148667954.gif', // 3849purplebutterflies (Aba Social)
-  utilidades: getThemeEmojiUrl('helpCommands') || 'https://cdn.discordapp.com/emojis/1548444173747621918.gif', // prcomputer (Central de Ajuda & Aba Comandos)
-};
+function getModuleIconUrl(categoryKey) {
+  switch (categoryKey) {
+    case 'todos':
+      return getThemeEmojiUrl('websiteHome') || 'https://cdn.discordapp.com/emojis/1551356640782057502.gif';
+    case 'bosque':
+      return getThemeEmojiUrl('grimorio') || 'https://cdn.discordapp.com/emojis/1551356435521339452.png';
+    case 'economia':
+      return getThemeEmojiUrl('economyCareers') || getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif';
+    case 'loja':
+      return getThemeEmojiUrl('dailyBonus') || 'https://cdn.discordapp.com/emojis/1551356299500064858.gif';
+    case 'tarot':
+      return getThemeEmojiUrl('tarot') || 'https://cdn.discordapp.com/emojis/1551356087611957269.gif';
+    case 'social':
+      return getThemeEmojiUrl('websiteSocial') || getThemeEmojiUrl('ship') || 'https://cdn.discordapp.com/emojis/1551356415543742554.gif';
+    case 'utilidades':
+    default:
+      return getThemeEmojiUrl('helpCommands') || 'https://cdn.discordapp.com/emojis/1548444319730499664.gif';
+  }
+}
+
+const MODULE_ICONS = new Proxy({}, {
+  get: (_target, prop) => getModuleIconUrl(prop),
+});
 
 const COMMAND_ICONS = {
   // Bosque da Pyxie
@@ -426,7 +435,7 @@ function getHelpModules(customCommands = null, source = null) {
 
     const category = cmd.category || COMMAND_CATEGORY_MAP[name] || 'utilidades';
     const targetBucket = moduleCommands[category] || moduleCommands.utilidades;
-    const iconUrl = COMMAND_ICONS[bareName] || COMMAND_ICONS[name] || MODULE_ICONS[category] || MODULE_ICONS.utilidades || null;
+    const iconUrl = getModuleIconUrl(category) || null;
     const emoji = MODULE_EMOJIS[category] || '⚙️';
 
     targetBucket.push({
