@@ -357,6 +357,7 @@ const SPIRITS = {
     rarity: 'common',
     name: { pt: 'Espectro do Baixo Astral', en: 'Low Astral Wraith' },
     personality: 'melancholic',
+    image: '/assets/spirits/espectro_baixo_astral.gif',
     dialogue: {
       question: {
         pt: 'A existência é um fardo pesado... Você também sente que nada tem sentido ou só está entediado?',
@@ -382,6 +383,7 @@ const SPIRITS = {
     rarity: 'common',
     name: { pt: 'Gárgula Procrastinador', en: 'Sloth Gargoyle' },
     personality: 'lazy',
+    image: '/assets/spirits/gargula_procrastinador.gif',
     dialogue: {
       question: {
         pt: 'Eu poderia te atacar agora... mas fingir que sou pedra é tão mais confortável. O que você acha de não fazermos nada hoje?',
@@ -407,6 +409,7 @@ const SPIRITS = {
     rarity: 'common',
     name: { pt: 'Fada Desencantada', en: 'Disenchanted Pixie' },
     personality: 'sarcastic',
+    image: '/assets/spirits/fada_desencantada.gif',
     dialogue: {
       question: {
         pt: 'Esperava pozinho mágico e purpurina? Meu rímel borrado e minhas asas roxas têm mais história que qualquer fada de conto de fadas.',
@@ -433,6 +436,7 @@ const SPIRITS = {
     rarity: 'common',
     name: { pt: 'Morcego do Shoegaze', en: 'Shoegaze Bat' },
     personality: 'aerial',
+    image: '/assets/spirits/morcego_shoegaze.gif',
     dialogue: {
       question: {
         pt: 'As paredes dessas cavernas reverberam um eco em tom menor... Você consegue ouvir o som ou sua mente está cheia de ruído?',
