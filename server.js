@@ -207,6 +207,9 @@ app.use(express.static(path.join(__dirname, 'public'), {
 app.use('/assets', express.static(path.join(__dirname, 'assets'), {
   maxAge: '1d',
 }));
+app.use('/assets', express.static(path.join(__dirname, 'public', 'assets'), {
+  maxAge: '1d',
+}));
 
 const OFFICIAL_APP_EMOJIS = {
   wings: { name: 'pinkeing', id: '1548444149785694238', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444149785694238.gif' },
