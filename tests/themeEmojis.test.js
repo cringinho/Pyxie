@@ -99,10 +99,10 @@ console.log(`✅ Paleta dinâmica de variações de Tarot validada (${sampledVar
 
 // 4. Funções Específicas de Apoio
 const userBadge = getUserProfileBadge();
-assert.equal(userBadge, '<:3861memberpurple:1551355544185344112>', 'Badge de perfil deve resolver corretamente');
+assert.equal(userBadge, getThemeEmoji('userProfile'), 'Badge de perfil deve resolver corretamente');
 
 const formattedCoins = formatThemedCoins(1500);
-assert.equal(formattedCoins, '1.500 <a:coin:1548443880066777098>', 'Formatação temática de moedas deve ser precisa');
+assert.equal(formattedCoins, `1.500 ${getThemeEmoji('coins')}`, 'Formatação temática de moedas deve ser precisa');
 
 // 5. Fallback Seguro para Chave Inexistente
 const unknownData = getThemeEmojiData('non_existent_key', { fallback: '💎' });
