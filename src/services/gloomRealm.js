@@ -462,6 +462,7 @@ const SPIRITS = {
     rarity: 'uncommon',
     name: { pt: 'Corvo Poeta Nihilista', en: 'Nihilist Raven' },
     personality: 'poetic',
+    image: '/assets/spirits/corvo_poeta.gif',
     dialogue: {
       question: {
         pt: 'Nunca mais... ou talvez amanhã de novo? Por que os mortais buscam tesouros quando o tempo consome tudo em poeira?',
@@ -487,6 +488,7 @@ const SPIRITS = {
     rarity: 'uncommon',
     name: { pt: 'Banshee do Fone Descarregado', en: 'Dead Phone Banshee' },
     personality: 'screamer',
+    image: '/assets/spirits/banshee_descarregada.gif',
     dialogue: {
       question: {
         pt: 'Meu grito primordial não é por ódio... é porque meu cabo quebrou bem na dobra e eu fiquei sem bateria no metrô! Você me entende?!',
@@ -512,6 +514,7 @@ const SPIRITS = {
     rarity: 'uncommon',
     name: { pt: 'Lobisomem Introvertido', en: 'Introvert Werewolf' },
     personality: 'timid',
+    image: '/assets/spirits/lobisomem_introvertido.gif',
     dialogue: {
       question: {
         pt: 'Por favor, não me faça uivar na frente de todo mundo... Eu prefiro uivar baixinho no meu quarto escuro. Você pode falar baixo?',
@@ -537,6 +540,7 @@ const SPIRITS = {
     rarity: 'uncommon',
     name: { pt: 'Esqueleto de All-Star', en: 'Retro Punk Skeleton' },
     personality: 'punk',
+    image: '/assets/spirits/esqueleto_allstar.gif',
     dialogue: {
       question: {
         pt: 'Ano 2004 foi ontem, cara. Meus ossos doem de tanto bater cabeça ouvindo rock triste. Você ainda ouve guitarras com distorção?',
