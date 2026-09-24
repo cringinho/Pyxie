@@ -1,4 +1,5 @@
 const path = require('node:path');
+const fs = require('node:fs');
 const {
   ActionRowBuilder,
   AttachmentBuilder,
@@ -188,6 +189,47 @@ function buildNegotiationView(
   const encounterTag = encounter?.id || 'none';
   const spiritTag = spirit?.id || 'errante';
 
+  // Resolução da Imagem / GIF do Monstro
+  const candidateIds = [
+    spirit?.id,
+    spiritTag,
+    encounter?.monster_id,
+    encounter?.id,
+  ].filter(Boolean);
+
+  let spiritImageName = null;
+  if (spirit && spirit.image) {
+    spiritImageName = path.basename(spirit.image);
+  }
+
+  if (!spiritImageName) {
+    for (const cid of candidateIds) {
+      if (SPIRITS[cid]?.image) {
+        spiritImageName = path.basename(SPIRITS[cid].image);
+        break;
+      }
+      if (cid && cid !== 'errante' && cid !== 'none') {
+        const potentialName = cid.endsWith('.gif') ? cid : `${cid}.gif`;
+        const p1 = path.join(__dirname, '..', '..', 'assets', 'spirits', potentialName);
+        const p2 = path.join(__dirname, '..', '..', 'public', 'assets', 'spirits', potentialName);
+        if (fs.existsSync(p1) || fs.existsSync(p2)) {
+          spiritImageName = potentialName;
+          break;
+        }
+      }
+    }
+  }
+
+  let spiritAttachment = null;
+  if (spiritImageName) {
+    const p1 = path.join(__dirname, '..', '..', 'assets', 'spirits', spiritImageName);
+    const p2 = path.join(__dirname, '..', '..', 'public', 'assets', 'spirits', spiritImageName);
+    const imagePath = fs.existsSync(p1) ? p1 : (fs.existsSync(p2) ? p2 : null);
+    if (imagePath) {
+      spiritAttachment = new AttachmentBuilder(imagePath, { name: spiritImageName });
+    }
+  }
+
   // Se for o caso especial de Resgate Extorsivo (Bailout)
   if (canBailout) {
     const descParts = [];
@@ -204,6 +246,10 @@ function buildNegotiationView(
       .setFooter({ text: t('gloom.negotiate.footer', source) })
       .setTimestamp();
 
+    if (spiritAttachment) {
+      embed.setThumbnail(`attachment://${spiritImageName}`);
+    }
+
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId(`gloom:bailout:${userId}:${encounterTag}:${spiritTag}:${bailoutCost}`)
@@ -217,7 +263,7 @@ function buildNegotiationView(
         .setStyle(ButtonStyle.Danger)
     );
 
-    return { embeds: [embed], components: [row] };
+    return { embeds: [embed], components: [row], files: spiritAttachment ? [spiritAttachment] : [] };
   }
 
   // Diálogo & Cenário da Fase Atual
@@ -265,6 +311,10 @@ function buildNegotiationView(
     .setDescription(descParts.join('\n'))
     .setFooter({ text: t('gloom.negotiate.footer', source) })
     .setTimestamp();
+
+  if (spiritAttachment) {
+    embed.setThumbnail(`attachment://${spiritImageName}`);
+  }
 
   // Opções de Diálogo da Fase
   let choices = (encounter && Array.isArray(encounter.options))
@@ -335,7 +385,7 @@ function buildNegotiationView(
       .setStyle(ButtonStyle.Danger)
   );
 
-  return { embeds: [embed], components: [row1, row2] };
+  return { embeds: [embed], components: [row1, row2], files: spiritAttachment ? [spiritAttachment] : [] };
 }
 
 function buildBossView(userId, source = null, feedbackMessage = '') {
