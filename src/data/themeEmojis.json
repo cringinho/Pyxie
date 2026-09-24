@@ -121,6 +121,16 @@
         "1551356415543742554"
       ],
       "fallback": "💑"
+    },
+    "shop": {
+      "name": "Loja & Mochila da Pyxie",
+      "description": "Emoji padrão para a loja de baús, compras, vendas e inventário",
+      "primaryId": "1551356299500064858",
+      "secondaryIds": [
+        "1548443778359103579",
+        "1548444209328033913"
+      ],
+      "fallback": "🎒"
     }
   }
 }

@@ -16,7 +16,7 @@ function getModuleIconUrl(categoryKey) {
     case 'economia':
       return getThemeEmojiUrl('economyCareers') || getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif';
     case 'loja':
-      return getThemeEmojiUrl('dailyBonus') || 'https://cdn.discordapp.com/emojis/1551356299500064858.gif';
+      return getThemeEmojiUrl('shop') || getThemeEmojiUrl('loja') || 'https://cdn.discordapp.com/emojis/1551356299500064858.gif';
     case 'tarot':
       return getThemeEmojiUrl('tarot') || 'https://cdn.discordapp.com/emojis/1551356087611957269.gif';
     case 'social':

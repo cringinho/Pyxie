@@ -34,6 +34,7 @@ const EXPECTED_THEMES = [
   'ship',
   'websiteHome',
   'websiteSocial',
+  'shop',
 ];
 
 for (const themeKey of EXPECTED_THEMES) {
@@ -75,7 +76,7 @@ for (const key of EXPECTED_THEMES) {
   const url = getThemeEmojiUrl(key);
   assert(url && url.startsWith('https://cdn.discordapp.com/emojis/'), `URL CDN para ${key} incorreta`);
 }
-console.log('✅ Resolução canônica de todos os 13 temas com identificadores, nomes e URLs validados.');
+console.log(`✅ Resolução canônica de todos os ${EXPECTED_THEMES.length} temas com identificadores, nomes e URLs validados.`);
 
 // 3. Variações Dinâmicas de Paleta (Tarot e Variações Aleatórias)
 const tarotPool = [
