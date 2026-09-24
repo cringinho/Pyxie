@@ -6,6 +6,7 @@ const {
 const { getLanguage, t } = require('../utils/i18n');
 const { getThemeEmojiUrl } = require('../utils/themeEmojis');
 
+
 function getModuleIconUrl(categoryKey) {
   switch (categoryKey) {
     case 'todos':
