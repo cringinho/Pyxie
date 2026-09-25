@@ -82,7 +82,7 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
   ],
-  // Otimização de memória e cache para execução em nuvem (Oracle Cloud / PM2)
+  // Otimização severa de memória para ambientes restritos (GCP e2-micro 1GB RAM)
   makeCache: Options.cacheWithLimits({
     MessageManager: 25, // Mantém apenas 25 mensagens recentes por canal
     StageInstanceManager: 0,
@@ -119,7 +119,7 @@ async function sendStartupAnnouncement() {
     return;
   }
 
-  const panelUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
+  const panelUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org:3000';
 
   const startupEmbed = new EmbedBuilder()
     .setColor('#5E2B8C')

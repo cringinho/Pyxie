@@ -34,11 +34,6 @@ const {
 } = require('../src/services/gloomRealm');
 const { handleDirectMove, handleDirectVasculhar } = require('../src/commands/explore');
 
-const gloomPath = path.join(__dirname, '..', 'data', 'gloom.json');
-const originalGloom = fs.existsSync(gloomPath) ? fs.readFileSync(gloomPath, 'utf8') : null;
-
-try {
-
 console.log('Iniciando suíte de testes de Crônicas da Penumbra (Pyxie\'s Gloom Realm)...');
 
 // 1. Validação dos 10 Cenários e Imagens Estáticas no Disco
@@ -625,10 +620,3 @@ assert(compsBosque.some((row) => row.components.some((c) => c.data.custom_id.inc
 console.log('✅ SMT V3 Hardcore (multi-fases, taxa de desacato, pena de hesitação, multa de ejeção, resgate extorsivo e mochila modular) validados com sucesso.');
 
 console.log('\n🎉 Todos os testes de Bosque da Pyxie (Pyxie\'s Grove) passaram com 100% de sucesso!');
-} finally {
-  if (originalGloom === null) {
-    if (fs.existsSync(gloomPath)) fs.unlinkSync(gloomPath);
-  } else {
-    fs.writeFileSync(gloomPath, originalGloom, 'utf8');
-  }
-}

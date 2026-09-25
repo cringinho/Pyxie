@@ -23,11 +23,6 @@ const {
 } = require('../src/services/tarotAlbumService');
 const { getBalance, setUserBalance } = require('../src/services/economy');
 
-const economyFile = path.join(__dirname, '..', 'data', 'economy.json');
-const albumFile = path.join(__dirname, '..', 'data', 'tarot_album.json');
-const originalEconomy = fs.existsSync(economyFile) ? fs.readFileSync(economyFile, 'utf8') : '{}';
-const originalAlbum = fs.existsSync(albumFile) ? fs.readFileSync(albumFile, 'utf8') : null;
-
 console.log('🔮 Iniciando suíte de testes do Álbum de Tarot & Conquistas da Pyxie...');
 
 // 1. Catálogo Canônico de 78 Cartas
@@ -64,17 +59,15 @@ for (let i = 1; i <= 78; i++) {
 }
 console.log('✅ Catálogo canônico de 78 cartas e assets WebP validados com sucesso.');
 
-(async () => {
-  try {
-    // 2. Registro e Persistência de Descobertas
-    const testUserId = `test_tarot_user_${Date.now()}`;
-    setUserBalance(testUserId, 0);
+// 2. Registro e Persistência de Descobertas
+const testUserId = `test_tarot_user_${Date.now()}`;
+setUserBalance(testUserId, 0);
 
-    const initialAlbum = getUserAlbum(testUserId);
-    assert.equal(initialAlbum.discoveredCards.length, 0, 'Álbum inicial deve estar vazio');
+const initialAlbum = getUserAlbum(testUserId);
+assert.equal(initialAlbum.discoveredCards.length, 0, 'Álbum inicial deve estar vazio');
 
-    // Descoberta 1: Carta #1 (O Louco)
-    const disc1 = recordCardDiscovery(testUserId, 1);
+// Descoberta 1: Carta #1 (O Louco)
+const disc1 = recordCardDiscovery(testUserId, 1);
 assert.equal(disc1.isNew, true, 'Primeira descoberta deve marcar isNew: true');
 assert.equal(disc1.totalDiscovered, 1, 'Total descoberto deve ser 1');
 assert(disc1.discoveredCards.includes(1), 'Carta #1 deve estar na lista');
@@ -129,6 +122,7 @@ console.log('✅ Ordenação dinâmica de conquistas por prioridade (Pronta -> P
 console.log('✅ Ordenação dinâmica e campos (name, desc, progressBar) validados.');
 
 // 4. Resgate de Conquistas & Prevenção de Double-Claim
+(async () => {
   // Tentativa de resgate de conquista incompleta (queens_court)
   const failClaim = await claimAchievement(testUserId, 'queens_court', 'pt');
   assert.equal(failClaim.success, false, 'Não deve permitir resgate de conquista não cumprida');
@@ -165,12 +159,4 @@ console.log('✅ Ordenação dinâmica e campos (name, desc, progressBar) valida
 
   console.log('✅ Resgate de conquistas com adição de moedas e prevenção contra double-claim validados com sucesso!');
   console.log('🎉 Todos os testes do Álbum de Tarot passaram com 100% de integridade!');
-} finally {
-  fs.writeFileSync(economyFile, originalEconomy, 'utf8');
-  if (originalAlbum === null) {
-    if (fs.existsSync(albumFile)) fs.unlinkSync(albumFile);
-  } else {
-    fs.writeFileSync(albumFile, originalAlbum, 'utf8');
-  }
-}
 })();

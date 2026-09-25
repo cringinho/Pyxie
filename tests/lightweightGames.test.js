@@ -1,14 +1,8 @@
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { getCookieStatus, claimCookie, grantExtraCookie, COOKIE_WISDOMS } = require('../src/services/cookie');
 const { createBonusSession, verifyAndClaimBonus, BONUS_SECRET } = require('../src/services/bonusTimer');
 const { getBalance, addCoins, spendCoins, setUserBalance } = require('../src/services/economy');
 
-const economyFile = path.join(__dirname, '..', 'data', 'economy.json');
-const originalEconomy = fs.existsSync(economyFile) ? fs.readFileSync(economyFile, 'utf8') : '{}';
-
-try {
 const testUserId = `test_gamer_${Date.now()}`;
 setUserBalance(testUserId, 1000);
 
@@ -204,9 +198,6 @@ const sessionEn = bonusTimer.createBonusSession('test-user-en', 'en');
 assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=en');
 
 console.log('Verificação dos comandos leves, convite bilíngue e desafios de trabalho em PT/EN: OK');
-} finally {
-  fs.writeFileSync(economyFile, originalEconomy, 'utf8');
-}
 
 
 

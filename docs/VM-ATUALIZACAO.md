@@ -1,6 +1,6 @@
 # ☁️ Guia de Atualização & Manutenção da VM (Produção)
 
-Este manual orienta como publicar atualizações com total segurança na máquina virtual (VM) de produção na **Oracle Cloud Infrastructure (OCI)** sem risco de perda de dados do banco de dados em produção. Para detalhes da topologia completa da VM, consulte [INFRAESTRUTURA-ORACLE.md](INFRAESTRUTURA-ORACLE.md).
+Este manual orienta como publicar atualizações com total segurança na máquina virtual (VM) do **Google Cloud Platform (GCP)** sem risco de perda de dados do banco de dados em produção.
 
 ---
 
@@ -28,7 +28,7 @@ git push origin main
 ---
 
 ### 2️⃣ Conectar na VM e Executar o Deploy
-Abra o terminal SSH conectado à VM (`ssh oracle` ou `ssh ubuntu@150.136.249.229`) e execute:
+Abra o terminal SSH conectado à VM e execute:
 
 ```bash
 cd ~/kuromi
@@ -73,8 +73,8 @@ pm2 logs pyxie --lines 50
 
 ---
 
-## 🛠️ Otimização de Memória na VM (Swap)
-A instância oficial na Oracle Cloud (`VM.Standard.A1.Flex`) conta com 24 GB de RAM nativa. Caso esteja configurando uma nova VM ou queira garantir uma salvaguarda adicional de Swap, execute **uma única vez** na VM:
+## 🛠️ Otimização de Memória na VM (Swap de 2 GB)
+Caso esteja configurando uma nova VM ou queira garantir que a máquina gratuita (`e2-micro`) nunca sofra quedas por falta de memória (OOM), execute **uma única vez** na VM:
 
 ```bash
 # 1. Cria e ativa um arquivo de Swap de 2GB

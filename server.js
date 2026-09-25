@@ -160,7 +160,6 @@ const {
   verifyMagicToken,
   isValidAdminSession,
   isMasterSecretValid,
-  createMasterAdminSession,
 } = require('./src/services/adminAuth');
 const { getHelpModules } = require('./src/commands/commandHelpers');
 
@@ -243,53 +242,6 @@ const OFFICIAL_APP_EMOJIS = {
   melody: { name: '6735mymelodycuteeyes', id: '1551355930157781184', animated: true, url: 'https://cdn.discordapp.com/emojis/1551355930157781184.gif' },
   kuromi: { name: '9733kuromiheart', id: '1551356277194625224', animated: true, url: 'https://cdn.discordapp.com/emojis/1551356277194625224.gif' },
   arrow: { name: '2353arrowrightglow', id: '1551355397208805446', animated: true, url: 'https://cdn.discordapp.com/emojis/1551355397208805446.gif' },
-};
-
-const SLOT_METADATA = {
-  // 💰 Economia & Loja
-  coins: { title: 'Moedas Gerais da Pyxie', fallback: '🪙', category: 'economy', themeKey: 'coins' },
-  phantom_coin: { title: 'Phantom Coins (Penumbra)', fallback: '👻', category: 'economy', themeKey: 'coins' },
-  magic_bean: { title: 'Feijões Mágicos (Bônus & Loja)', fallback: '🌱', category: 'economy', themeKey: 'dailyBonus' },
-  daily_bonus: { title: 'Bônus Diário & Recompensa Web', fallback: '🎁', category: 'economy', themeKey: 'dailyBonus' },
-  weekend_bonus: { title: 'Bônus de Fim de Semana (2X)', fallback: '🔥', category: 'economy', themeKey: 'weekendBonus' },
-  work_career: { title: 'Trabalho & Expedientes', fallback: '💼', category: 'economy', themeKey: 'economyCareers' },
-  shop_chest: { title: 'Baús & Lojinha da Pyxie', fallback: '📦', category: 'economy', themeKey: null },
-  shop_gem: { title: 'Joias & Gemas Preciosas', fallback: '💎', category: 'economy', themeKey: null },
-
-  // 🔮 Santuário & RPG (Gloom Realm)
-  vigor_energy: { title: 'Energia & Stamina (Penumbra)', fallback: '⚡', category: 'gloom', themeKey: null },
-  tarot_card: { title: 'Carta de Tarot (Místico)', fallback: '🔮', category: 'gloom', themeKey: 'tarot' },
-  tarotAlbum: { title: 'Álbum de Tarot & Coleção', fallback: '📖', category: 'gloom', themeKey: 'tarotAlbum' },
-  grimorio: { title: 'Grimório & Alquimia', fallback: '📖', category: 'gloom', themeKey: 'grimorio' },
-  boss_behemoth: { title: 'Chefão Comunitário da Penumbra', fallback: '👹', category: 'gloom', themeKey: null },
-  relic_t1: { title: 'Relíquia Tier 1 (Comum)', fallback: '🪨', category: 'gloom', themeKey: null },
-  relic_t2: { title: 'Relíquia Tier 2 (Incomum)', fallback: '🌿', category: 'gloom', themeKey: null },
-  relic_t3: { title: 'Relíquia Tier 3 (Rara)', fallback: '💎', category: 'gloom', themeKey: null },
-  relic_t4: { title: 'Relíquia Tier 4 (Épica)', fallback: '🔮', category: 'gloom', themeKey: null },
-  relic_t5: { title: 'Relíquia Tier 5 (Lendária)', fallback: '👑', category: 'gloom', themeKey: null },
-
-  // 💑 Social & Romance
-  ship_heart: { title: 'Calculadora de Afinidade & Ship', fallback: '💖', category: 'social', themeKey: 'ship' },
-  marriage_ring: { title: 'Casamentos & Cerimônias', fallback: '💍', category: 'social', themeKey: null },
-  divorce: { title: 'Divórcio & Separação', fallback: '💔', category: 'social', themeKey: null },
-  trade: { title: 'Trocas Seguras entre Jogadores', fallback: '🤝', category: 'social', themeKey: null },
-
-  // 🎲 Jogos & Sorte
-  fortune_cookie: { title: 'Biscoito da Sorte', fallback: '🥠', category: 'minigames', themeKey: null },
-  dice: { title: 'Dado & Minigames de Sorte', fallback: '🎲', category: 'minigames', themeKey: 'dice' },
-  jokenpo: { title: 'Jokenpô / Pedra-Papel-Tesoura', fallback: '✂️', category: 'minigames', themeKey: null },
-  coinflip: { title: 'Cara ou Coroa', fallback: '🪙', category: 'minigames', themeKey: null },
-  likely: { title: 'Jogo do Mais Provável', fallback: '❓', category: 'minigames', themeKey: null },
-
-  // ⚙️ Sistema & Utilidades
-  userProfile: { title: 'Badge de Perfil do Usuário', fallback: '👤', category: 'system', themeKey: 'userProfile' },
-  websiteHome: { title: 'Logo & Ícone Home do Site', fallback: '🦋', category: 'system', themeKey: 'websiteHome' },
-  websiteSocial: { title: 'Aba Social do Website', fallback: '💑', category: 'system', themeKey: 'websiteSocial' },
-  helpCommands: { title: 'Ajuda & Comandos do Site', fallback: '📖', category: 'system', themeKey: 'helpCommands' },
-  ranking: { title: 'Top Ranking & Placar', fallback: '🏆', category: 'system', themeKey: null },
-  agenda: { title: 'Agenda de Automações', fallback: '📅', category: 'system', themeKey: null },
-  status_success: { title: 'Indicador de Sucesso (OK)', fallback: '✅', category: 'system', themeKey: null },
-  status_fail: { title: 'Indicador de Erro / Falha', fallback: '❌', category: 'system', themeKey: null }
 };
 
 // 0. Redirecionamentos amigáveis oficiais da Pyxie
@@ -387,6 +339,59 @@ app.get('/admin/emojis', async (req, res) => {
   if (!isAuth) {
     return res.status(401).send('401 Unauthorized');
   }
+
+  const SLOT_METADATA = {
+    phantom_coin: { title: 'Phantom Coins', fallback: '👻', category: 'economy', themeKey: 'coins' },
+    // 💰 Economia & Loja
+    coins: { title: 'Moedas Gerais da Pyxie', fallback: '🪙', category: 'economy', themeKey: 'coins' },
+    phantom_coin: { title: 'Phantom Coins (Penumbra)', fallback: '👻', category: 'economy', themeKey: 'coins' },
+    magic_bean: { title: 'Feijões Mágicos (Bônus & Loja)', fallback: '🌱', category: 'economy', themeKey: 'dailyBonus' },
+    vigor_energy: { title: 'Energia & Stamina (Penumbra)', fallback: '⚡', category: 'gloom', themeKey: null },
+    daily_bonus: { title: 'Bônus Diário & Recompensa Web', fallback: '🎁', category: 'economy', themeKey: 'dailyBonus' },
+    weekend_bonus: { title: 'Bônus de Fim de Semana (2X)', fallback: '🔥', category: 'economy', themeKey: 'weekendBonus' },
+    work_career: { title: 'Trabalho & Expedientes', fallback: '💼', category: 'economy', themeKey: 'economyCareers' },
+    shop_chest: { title: 'Baús & Lojinha da Pyxie', fallback: '📦', category: 'economy', themeKey: null },
+    shop_gem: { title: 'Joias & Gemas Preciosas', fallback: '💎', category: 'economy', themeKey: null },
+
+    // 🔮 Santuário & RPG (Gloom Realm)
+    tarot_card: { title: 'Carta de Tarot (Místico)', fallback: '🔮', category: 'gloom', themeKey: 'tarot' },
+    tarotAlbum: { title: 'Álbum de Tarot (Coleção)', fallback: '📖', category: 'gloom', themeKey: 'tarotAlbum' },
+    ship_heart: { title: 'Coração de Ship & Romance', fallback: '💖', category: 'gloom', themeKey: 'ship' },
+    tarotAlbum: { title: 'Álbum de Tarot & Coleção', fallback: '📖', category: 'gloom', themeKey: 'tarotAlbum' },
+    grimorio: { title: 'Grimório & Alquimia', fallback: '📖', category: 'gloom', themeKey: 'grimorio' },
+    vigor_energy: { title: 'Energia & Stamina (Penumbra)', fallback: '⚡', category: 'gloom', themeKey: null },
+    boss_behemoth: { title: 'Chefão Comunitário da Penumbra', fallback: '👹', category: 'gloom', themeKey: null },
+    relic_t1: { title: 'Relíquia Tier 1 (Comum)', fallback: '🪨', category: 'gloom', themeKey: null },
+    relic_t2: { title: 'Relíquia Tier 2 (Incomum)', fallback: '🌿', category: 'gloom', themeKey: null },
+    relic_t3: { title: 'Relíquia Tier 3 (Rara)', fallback: '💎', category: 'gloom', themeKey: null },
+    relic_t4: { title: 'Relíquia Tier 4 (Épica)', fallback: '🔮', category: 'gloom', themeKey: null },
+    relic_t5: { title: 'Relíquia Tier 5 (Lendária)', fallback: '👑', category: 'gloom', themeKey: null },
+    userProfile: { title: 'Badge de Perfil do Usuário', fallback: '👤', category: 'system', themeKey: 'userProfile' },
+
+    // 💑 Social & Romance
+    ship_heart: { title: 'Calculadora de Afinidade & Ship', fallback: '💖', category: 'social', themeKey: 'ship' },
+    marriage_ring: { title: 'Casamentos & Cerimônias', fallback: '💍', category: 'social', themeKey: null },
+    divorce: { title: 'Divórcio & Separação', fallback: '💔', category: 'social', themeKey: null },
+    trade: { title: 'Trocas Seguras entre Jogadores', fallback: '🤝', category: 'social', themeKey: null },
+
+    // 🎲 Jogos & Sorte
+    fortune_cookie: { title: 'Biscoito da Sorte', fallback: '🥠', category: 'minigames', themeKey: null },
+    dice: { title: 'Dado & Minigames de Sorte', fallback: '🎲', category: 'minigames', themeKey: 'dice' },
+    jokenpo: { title: 'Jokenpô / Pedra-Papel-Tesoura', fallback: '✂️', category: 'minigames', themeKey: null },
+    coinflip: { title: 'Cara ou Coroa', fallback: '🪙', category: 'minigames', themeKey: null },
+    likely: { title: 'Jogo do Mais Provável', fallback: '❓', category: 'minigames', themeKey: null },
+
+    // ⚙️ Sistema & Utilidades
+    websiteHome: { title: 'Logo & Ícone Home do Site', fallback: '🦋', category: 'system', themeKey: 'websiteHome' },
+    websiteSocial: { title: 'Aba Social do Website', fallback: '💑', category: 'system', themeKey: 'websiteSocial' },
+    helpCommands: { title: 'Ajuda & Comandos do Site', fallback: '📖', category: 'system', themeKey: 'helpCommands' },
+    dice: { title: 'Dado & Minigames de Sorte', fallback: '🎲', category: 'system', themeKey: 'dice' },
+    userProfile: { title: 'Badge de Perfil do Usuário', fallback: '👤', category: 'system', themeKey: 'userProfile' },
+    ranking: { title: 'Top Ranking & Placar', fallback: '🏆', category: 'system', themeKey: null },
+    agenda: { title: 'Agenda de Automações', fallback: '📅', category: 'system', themeKey: null },
+    status_success: { title: 'Indicador de Sucesso (OK)', fallback: '✅', category: 'system', themeKey: null },
+    status_fail: { title: 'Indicador de Erro / Falha', fallback: '❌', category: 'system', themeKey: null }
+  };
 
   const emojisPath = path.join(__dirname, 'src/data/emojis.json');
   let currentConfig = {};
@@ -876,6 +881,27 @@ app.post('/admin/emojis', (req, res) => {
     return res.status(401).send('401 Unauthorized');
   }
 
+  const SLOT_METADATA = {
+    coins: { themeKey: 'coins' },
+    phantom_coin: { themeKey: 'coins' },
+    coins: { themeKey: 'coins' },
+    magic_bean: { themeKey: 'dailyBonus' },
+    daily_bonus: { themeKey: 'dailyBonus' },
+    weekend_bonus: { themeKey: 'weekendBonus' },
+    work_career: { themeKey: 'economyCareers' },
+    tarot_card: { themeKey: 'tarot' },
+    tarotAlbum: { themeKey: 'tarotAlbum' },
+    grimorio: { themeKey: 'grimorio' },
+    ship_heart: { themeKey: 'ship' },
+    grimorio: { themeKey: 'grimorio' },
+    dice: { themeKey: 'dice' },
+    userProfile: { themeKey: 'userProfile' },
+    websiteHome: { themeKey: 'websiteHome' },
+    websiteSocial: { themeKey: 'websiteSocial' },
+    helpCommands: { themeKey: 'helpCommands' },
+    dice: { themeKey: 'dice' },
+  };
+
   const emojisData = {};
   for (const slot of Object.keys(req.body || {})) {
     emojisData[slot] = req.body[slot] ? String(req.body[slot]).trim() : '';
@@ -919,7 +945,8 @@ app.post('/api/admin/verify', (req, res) => {
   }
 
   if (secret && isMasterSecretValid(secret)) {
-    const sessionToken = createMasterAdminSession();
+    const crypto = require('node:crypto');
+    const sessionToken = crypto.randomBytes(32).toString('hex');
     res.setHeader('Set-Cookie', `pyxie_admin_session=${sessionToken}; HttpOnly; SameSite=Lax; Max-Age=43200; Path=/`);
     return res.json({ success: true, sessionToken });
   }
@@ -1066,7 +1093,7 @@ app.use((req, res) => {
 });
 
 const server = app.listen(PORT, HOST, () => {
-  const publicUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
+  const publicUrl = process.env.PANEL_PUBLIC_URL || `http://pyxie.duckdns.org:${PORT}`;
   addLog(`Painel web da Pyxie iniciado em ${publicUrl}`);
   console.log(`Painel da Pyxie rodando em ${publicUrl}`);
   startBot();

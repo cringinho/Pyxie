@@ -100,8 +100,7 @@ kuromi/
 ├── data/                     # Banco de dados local em formato JSON
 ├── docs/                     # Manuais técnicos detalhados
 │   ├── COMANDOS.md           # Guia completo de comandos e parâmetros
-│   ├── INFRAESTRUTURA-ORACLE.md # Topologia completa da VM na Oracle Cloud (OCI)
-│   └── VM-ATUALIZACAO.md     # Manual de deploy na VM e rotinas de manutenção
+│   └── VM-ATUALIZACAO.md     # Manual de deploy na VM e configuração de Swap
 │
 └── tests/                    # Suíte completa de testes automatizados com paridade i18n
 ```
@@ -113,7 +112,7 @@ kuromi/
 - **Menor Privilégio no Convite:** Permissões estritas sem necessidade de permissões perigosas.
 - **Isolamento por Servidor:** Configurações e faixas econômicas armazenadas por `guild_id`.
 - **Painel Web Protegido:** Endpoints administrativos no Express protegidos por HMAC Magic Tokens e IP Allowlist.
-- **Otimizado para Nuvem:** Consumo estável e leve de memória RAM, executando em produção na Oracle Cloud Infrastructure (OCI).
+- **Otimizado para Nuvem:** Consumo estável e leve de memória RAM, ideal para instâncias no Google Cloud Platform.
 
 ---
 

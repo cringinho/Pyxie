@@ -14,9 +14,7 @@ const { getWelcomeChannel, setWelcomeChannel } = require('../src/services/databa
 const lockFile = path.join(__dirname, '..', '.botmelody.lock');
 const prefixFile = path.join(__dirname, '..', 'prefix.json');
 const settingsFile = path.join(__dirname, '..', 'data', 'settings.json');
-const economyFile = path.join(__dirname, '..', 'data', 'economy.json');
 const originalSettings = fs.existsSync(settingsFile) ? fs.readFileSync(settingsFile, 'utf8') : '{}';
-const originalEconomy = fs.existsSync(economyFile) ? fs.readFileSync(economyFile, 'utf8') : '{}';
 
 if (fs.existsSync(lockFile)) {
   fs.unlinkSync(lockFile);
@@ -224,5 +222,4 @@ try {
   }
 
   fs.writeFileSync(settingsFile, originalSettings, 'utf8');
-  fs.writeFileSync(economyFile, originalEconomy, 'utf8');
 }

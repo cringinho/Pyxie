@@ -58,8 +58,7 @@ Host pyxie-oracle
 - **Portal de Bônus (10s)**: [http://pyxie.duckdns.org/bonus](http://pyxie.duckdns.org/bonus)
 - **Enciclopédia & Wiki**: [http://pyxie.duckdns.org/wiki](http://pyxie.duckdns.org/wiki)
 - **API de Status**: [http://pyxie.duckdns.org/api/status](http://pyxie.duckdns.org/api/status)
-- **Painel Administrativo do Criador**: [http://pyxie.duckdns.org/admin](http://pyxie.duckdns.org/admin) *(requer Magic Token HMAC gerado via `/py-admin` ou chave mestra)*
-- **Mapeamento Visual de Emojis**: [http://pyxie.duckdns.org/admin/emojis](http://pyxie.duckdns.org/admin/emojis) *(galeria visual de slots de emojis)*
+- **Painel Administrativo do Criador**: [http://pyxie.duckdns.org/admin/login.html](http://pyxie.duckdns.org/admin/login.html) *(requer Magic Token HMAC gerado via `/py-admin`)*
 
 ---
 

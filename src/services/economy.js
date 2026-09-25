@@ -400,12 +400,7 @@ function setProfession(userId, profession, cost = 50) {
 }
 
 function isTestUser(userId) {
-  return (
-    !userId ||
-    /^(user_)?test[_-]/i.test(userId) ||
-    /^user_no_egg/i.test(userId) ||
-    userId === 'user_123'
-  );
+  return !userId || /^(user_)?test_/i.test(userId) || userId === 'user_123';
 }
 
 function startWork(userId, data = {}, now = Date.now()) {
