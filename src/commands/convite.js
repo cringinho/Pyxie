@@ -19,7 +19,10 @@ const ADMIN_PERMISSIONS = 8;
 const DEFAULT_BOT_ID = '1543650200718155897';
 const TOPGG_BOT_ID = '1453888365618270331';
 const COMMUNITY_SERVER_URL = 'https://disboard.org/pt-br/server/1453890868980482090';
-const WEB_BONUS_URL = 'http://pyxie.duckdns.org:3000/bonus';
+function getWebBonusUrl() {
+  const base = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org:3000';
+  return `${base.replace(/\/$/, '')}/bonus`;
+}
 
 function getInviteUrl(clientId = null, permissions = RECOMMENDED_PERMISSIONS) {
   const id = clientId || process.env.DISCORD_CLIENT_ID || DEFAULT_BOT_ID;
@@ -60,7 +63,7 @@ function buildInviteComponents(clientId, isEn = false) {
       .setLabel(isEn ? 'Web Bonus (10s)' : 'Bônus Web (10s)')
       .setEmoji(getEmoji('GIFT'))
       .setStyle(ButtonStyle.Link)
-      .setURL(WEB_BONUS_URL)
+      .setURL(getWebBonusUrl())
   );
 
   return [row1, row2];
@@ -114,6 +117,7 @@ module.exports = {
   name: INVITE,
   aliases: ['invite', 'convite', 'py-convite', 'py-invite', 'adicionar', 'addbot', 'botinvite'],
   getInviteUrl,
+  getWebBonusUrl,
   buildInviteEmbed,
   data: new SlashCommandBuilder()
     .setName(INVITE)
