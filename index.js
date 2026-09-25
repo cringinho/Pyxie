@@ -119,6 +119,19 @@ async function sendStartupAnnouncement() {
     return;
   }
 
+  // Limpeza automática de avisos de inicialização anteriores do bot para evitar duplicações e mensagens obsoletas
+  try {
+    const recentMessages = await channel.messages.fetch({ limit: 10 }).catch(() => null);
+    if (recentMessages) {
+      const oldStartupMessages = recentMessages.filter(
+        (m) => m.author.id === client.user?.id && m.embeds.some((e) => e.title?.includes('Pyxie Entrou em Cena'))
+      );
+      for (const oldMsg of oldStartupMessages.values()) {
+        await oldMsg.delete().catch(() => null);
+      }
+    }
+  } catch (_) {}
+
   const panelUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
 
   const startupEmbed = new EmbedBuilder()
