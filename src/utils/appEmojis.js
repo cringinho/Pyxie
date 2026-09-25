@@ -42,7 +42,7 @@ const EMOJI_DEFINITIONS = {
 
   // Bosque da Pyxie & RPG
   TREE: { name: 'bosque', aliases: ['tree', 'arvore'], fallback: '<:tree:1551356435521339452>' },
-  PORTAL: { name: 'mapa', aliases: ['map', 'portao'], fallback: '🌀' },
+  PORTAL: { name: 'mapa', aliases: ['map', 'portao'], fallback: '<:map:1551355962974273546>' },
   MAP: { name: 'mapa', aliases: ['map'], fallback: '<:map:1551355962974273546>' },
   GHOST: { name: 'pinkghost', aliases: ['fantasma', 'ghost'], fallback: '👻' },
   SKULL: { name: 'kikskull', aliases: ['caveira', 'skull'], fallback: '💀' },

@@ -326,70 +326,6 @@
     td.neutral { color: var(--text-dim); }
     td.negative { color: var(--red-danger); font-weight: 700; }
 
-    /* Pyxie Promo & Support Banner */
-    .pyxie-promo-banner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      max-width: 520px;
-      margin: 35px auto 15px;
-      padding: 12px 18px;
-      background: linear-gradient(135deg, rgba(147, 51, 234, 0.16), rgba(244, 63, 94, 0.14));
-      border: 1px solid rgba(192, 132, 252, 0.35);
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      cursor: pointer;
-    }
-    .pyxie-promo-banner:hover {
-      transform: translateY(-2px);
-      border-color: rgba(244, 114, 182, 0.6);
-      box-shadow: 0 8px 30px rgba(244, 63, 94, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-    .pyxie-promo-banner .promo-icon {
-      font-size: 26px;
-      line-height: 1;
-      flex-shrink: 0;
-      filter: drop-shadow(0 0 10px rgba(244, 114, 182, 0.5));
-    }
-    .pyxie-promo-banner .promo-content {
-      flex: 1;
-      text-align: left;
-      min-width: 0;
-    }
-    .pyxie-promo-banner .promo-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .pyxie-promo-banner .promo-desc {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.3;
-    }
-    .pyxie-promo-banner .promo-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 14px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #f43f5e, #9333ea);
-      color: #ffffff;
-      font-size: 0.82rem;
-      font-weight: 700;
-      white-space: nowrap;
-      flex-shrink: 0;
-      box-shadow: 0 2px 10px rgba(244, 63, 94, 0.4);
-    }
-
     /* Footer */
     footer {
       text-align: center;
@@ -939,15 +875,19 @@
       </div>
     </section>
 
-    <!-- Banner Promocional da Pyxie (Apoio & Bônus) -->
-    <a href="https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813" target="_blank" rel="noopener" class="pyxie-promo-banner">
-      <span class="promo-icon">🎁</span>
-      <div class="promo-content">
-        <div class="promo-title" data-i18n="promoTitle">Apoie a Pyxie & Ganhe Bônus</div>
-        <div class="promo-desc" data-i18n="promoDesc">Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!</div>
-      </div>
-      <span class="promo-cta" data-i18n="promoBtn">Apoiar ✦</span>
-    </a>
+    <!-- Adsterra Banner Rodapé (468x60 / 300x250) -->
+    <div style="text-align: center; margin: 35px auto 10px; max-width: 468px; overflow: hidden; border-radius: 10px;">
+      <script>
+        atOptions = {
+          'key' : 'fbb18d996650a174db4ff64b5fba394f',
+          'format' : 'iframe',
+          'height' : 60,
+          'width' : 468,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highrevenueformat.com/fbb18d996650a174db4ff64b5fba394f/invoke.js"></script>
+    </div>
   </main>
 
   <footer>
@@ -989,9 +929,6 @@
         ecoBossDesc: "A cada 6 horas, um Colosso Ancestral desperta em uma sala aleatória do reino. Todos os jogadores do servidor compartilham a barra de vida do chefe. Cada explorador ganha 1 investida grátis por ciclo.",
         ecoBonusDesc: "Caso já tenha usado sua investida gratuita, você pode assistir a um bônus patrocinado de 10 segundos no portal web oficial para desbloquear <strong>+1 Investida Imediata</strong> e <strong>+50 Phantom Coins 👻</strong>!",
         locSantuarioReq: "💀 <strong>Requisito:</strong> Chefão Derrotado (com sua participação) + Grimório com 3+ Espíritos + Relíquia Tier 4 ou 5",
-        promoTitle: "Apoie a Pyxie & Ganhe Bônus",
-        promoDesc: "Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!",
-        promoBtn: "Apoiar ✦",
         relicsTradeRuleDesc: "🏺 <strong>Relíquias Sombrias não podem ser vendidas na loja!</strong> Por sua natureza misteriosa, elas são destinadas ao aprimoramento no Engenheiro, sacrifício na Fusão Arcana ou escambo direto com outros aventureiros via <code>/py-trade</code>.<br><br>🔨 <strong>Lojinha em Reformas Arcanas:</strong> O bazar convencional da Cringelândia está temporariamente fechado para expansão mágica do catálogo. Aventureiros devem focar em explorar o Bosque via <code>/py-explore</code>, trabalhar em suas profissões via <code>/py-work</code> e negociar diretamente!"
       },
       en: {
@@ -1022,9 +959,6 @@
         ecoBossDesc: "Every 6 hours, an Ancient Behemoth awakens in a random room. All players share its health bar. Each explorer gets 1 free strike per cycle.",
         ecoBonusDesc: "If you used your free strike, watch a sponsored 10-second web bonus to unlock <strong>+1 Immediate Extra Strike</strong> and <strong>+50 Phantom Coins 👻</strong>!",
         locSantuarioReq: "💀 <strong>Requirement:</strong> Boss Defeated (with your participation) + Grimoire with 3+ Spirits + Tier 4 or 5 Relic",
-        promoTitle: "Support Pyxie & Earn Bonus",
-        promoDesc: "Support the Cringelândia community and unlock magical rewards!",
-        promoBtn: "Support ✦",
         relicsTradeRuleDesc: "🏺 <strong>Dark Relics cannot be sold in the shop!</strong> Due to their supernatural nature, they are strictly reserved for Engineer upgrades, Arcane Soul Fusion sacrifices, or direct peer-to-peer bartering via <code>/py-trade</code>.<br><br>🔨 <strong>Arcane Shop Renovations:</strong> The conventional boutique is temporarily closed while magical catalog upgrades are prepared. Explorers should delve into the Grove via <code>/py-explore</code>, complete shifts via <code>/py-work</code>, and trade directly!"
       }
     };

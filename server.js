@@ -218,7 +218,7 @@ const OFFICIAL_APP_EMOJIS = {
   butterfly: { name: '5056purplebutterfly', id: '1551355688612143134', animated: true, url: 'https://cdn.discordapp.com/emojis/1551355688612143134.gif' },
   fairy: { name: 'fairy', id: '1548443951596306552', animated: false, url: 'https://cdn.discordapp.com/emojis/1548443951596306552.png' },
   tree: { name: 'emojitree38', id: '1548443941144109181', animated: true, url: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif' },
-  portal: { name: 'portalframe98', id: '1548444170488778954', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444170488778954.gif' },
+  portal: { name: 'mapa', id: '1551355962974273546', animated: false, url: 'https://cdn.discordapp.com/emojis/1551355962974273546.png' },
   ghost: { name: 'pinkghost', id: '1548444152549867620', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444152549867620.gif' },
   coin: { name: 'shineygoldcoinsi', id: '1548444230588956683', animated: true, url: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif' },
   coin_purple: { name: 'gifggpurplecoin5', id: '1548443977429028955', animated: true, url: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif' },

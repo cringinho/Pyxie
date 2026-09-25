@@ -63,4 +63,13 @@ Sempre que uma nova feature, comando, botão, minigame, desafio, embed, item de 
   - Comandos que alteram saldo, resetam dados econômicos ou configuram parâmetros de economia (`/py-seteco`, `/py-reseteco`, `/py-ecoconfig`, `/py-admin`) são estritamente exclusivos do Criador da Pyxie (`OWNER_SNOWFLAKE = '214153735281180673'`). Administradores de servidor NÃO possuem permissão para executá-los.
   - Esses comandos são filtrados dinamicamente na Central de Ajuda (`/py-help`) e na Web (`/api/commands`), sendo exibidos exclusivamente quando solicitados pelo snowflake do dono (`214153735281180673`) ou sessão administrativa autenticada.
 
+---
+
+## 4. Política Visual de Emojis: Proibição Estrita do Portal de Minecraft (`portalframe98`)
+- **Regra de Estilo Visual**: É expressamente PROIBIDO utilizar o emoji do portal do Minecraft (`portalframe98`, ID `1548444170488778954`) em qualquer parte do ecossistema da Pyxie (Discord, embeds, website, wiki ou portal de bônus).
+- **Substituto Canônico Obrigatório**: Para ilustrar cenários, navegação, viagens entre locais, portais arcanos e exploração do Bosque da Penumbra, deve-se utilizar estritamente o emoji oficial de mapas / galáxia violeta da Pyxie:
+  - **Discord**: `<:map:1551355962974273546>` ou alias `MAP` / `PORTAL` via `getEmoji('MAP')` em `src/utils/appEmojis.js`.
+  - **Web / Front-end**: `https://cdn.discordapp.com/emojis/1551355962974273546.png`.
+
+
 
