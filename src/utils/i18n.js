@@ -389,7 +389,7 @@ const TRANSLATIONS = {
       "tabSocial": "Social & Baús",
       "tabTodos": "Todos",
       "emptyBackpack": "> *Sua mochila está vazia! Visite a `/py-shop` para adquirir baús e itens mágicos.*",
-      "emptyRelics": "> *Você ainda não possui relíquias do Bosque. Explore o mapa com `/py-explorar` e vasculhe para encontrá-las!*",
+      "emptyRelics": "> *Você ainda não possui relíquias do Bosque. Explore o mapa com `/py-explore` e vasculhe para encontrá-las!*",
       "itemsCount": "🎒 **Itens Guardados:** {count}",
       "phantomCoinsLabel": "👻 **Phantom Coins:** **{coins}**",
       "storedItemsHeader": "📦 **ITENS GUARDADOS NA MOCHILA**",

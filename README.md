@@ -91,7 +91,7 @@ kuromi/
 ├── src/                      # Código-fonte principal
 │   ├── config.js             # Configurações de ambiente e constantes
 │   ├── registerSlashCommands.js # Publicador de comandos slash na API do Discord
-│   ├── commands/             # Comandos modulares (/py-work, /py-tarot, /py-trocar, etc.)
+│   ├── commands/             # Comandos modulares (/py-work, /py-tarot, /py-trade, etc.)
 │   ├── services/             # Lógica de negócios (Economia, Tarot, Trocas, Top.gg)
 │   ├── data/                 # Catálogos estáticos (Itens, Tarot)
 │   └── utils/                # Cooldowns, formatação de voz, i18n e lock de processo

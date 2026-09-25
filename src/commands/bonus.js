@@ -49,7 +49,7 @@ function buildBonusEmbed(userId, sessionUrl, source = null) {
         '',
         '> 🪙 **+75 Moedas** creditadas na sua conta',
         '> 🌱 **+1 Feijão Mágico** para comprar temas no perfil',
-        '> 📦 **1x Baú Rústico Misterioso** guardado na mochila (`/py-inventario`)',
+        '> 📦 **1x Baú Rústico Misterioso** guardado na mochila (`/py-inventory`)',
         '> 🪙 **+75 Moedas** creditadas diretamente na sua conta',
         '',
         '🔒 *Seu link é seguro, pessoal e válido por 15 minutos.*',

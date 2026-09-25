@@ -131,19 +131,15 @@ async function sendStartupAnnouncement() {
       {
         name: '📚 Comandos em Destaque',
         value: [
-          '> 💼 **/py-trabalho** — Cumpra expedientes diários e suba na carreira',
-          '> 👤 **/perfil** — Customize títulos, temas e biografia',
-          '> 🔮 **/tarot** — Tire cartas de tarot com artes exclusivas',
-          '> 🤝 **/py-trocar** — Negocie itens e moedas com outros membros',
-          '> 🪙 **/diario** — Resgate moedas diárias e bônus patrocinado',
-          '> 📖 **/ajuda** — Menu interativo com todos os comandos',
           '> 🌲 **/py-explore** — Aventure-se pelo Bosque Encantado e capture espíritos',
+          '> 📖 **/py-grimoire** — Gerencie familiares, auras e caldeirão de fusão',
           '> 💼 **/py-work** — Cumpra expedientes diários e suba na carreira',
           '> 👤 **/py-profile** — Customize títulos, temas e biografia',
           '> 🔮 **/py-tarot** — Tire cartas de tarot com artes exclusivas',
           '> 🤝 **/py-trade** — Negocie itens e moedas com outros membros',
           '> 🪙 **/py-daily** — Resgate moedas diárias e bônus patrocinado',
-          '> 📖 **/py-help** — Menu interativo com todos os comandos',
+          '> 🎒 **/py-inventory** — Visualize sua mochila, baús e relíquias',
+          '> ❓ **/py-help** — Menu interativo com todos os comandos',
         ].join('\n'),
         inline: false,
       }
@@ -280,7 +276,7 @@ function buildTarotDailyEmbed(guild) {
     .setTitle(`${getAnimatedEmoji(guild, ['moon', 'tarot', 'magic'], '🌙')}  ✦  Tarot Diário${guildName ? ` — ${guildName}` : ''}  ✦`)
     .setDescription(
       'Uma carta por dia para iluminar seus caminhos. A leitura é privada e renderizada especialmente para você!\n\n' +
-      'Clique no botão abaixo ou use `/tarot` para receber a sua tiragem de hoje.'
+      'Clique no botão abaixo ou use `/py-tarot` (ou `py!tarot`) para receber a sua tiragem de hoje.'
     )
     .setFooter({ text: 'Tarot Diário • Pyxie supervisiona • Conecte-se com as energias do dia' })
     .setTimestamp();

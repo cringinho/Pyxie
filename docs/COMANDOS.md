@@ -25,7 +25,7 @@ Explora os 10 cenários pixel em arte 16-bit GBA do reino gótico da fadinha emo
 - **Rastros Sociais de Giz Roxo**: Grave avisos e poemas com oferendas que outros aventureiros lerão ao passar pela sala.
 - **Chefão Comunitário**: Enfrente *A Sombra do Tédio Ancestral* coletivamente (1 ataque grátis a cada 6h + investida extra via bônus de 10s).
 
-### `/py-grimorio` (ou `py!grimorio` / `py!grimoire`)
+### `/py-grimoire` (ou `py!grimorio` / `py!grimoire`)
 Gerencia a sua coleção de almas e familiares vinculados:
 - **Auras Passivas**: Equipe até 2 espíritos ativos para receber bônus de moedas, economia de vigor e dano no Chefão.
 - **Caldeirão de Fusão de Almas (30👻)**: Realize fusão pura (2 cópias iguais) ou cruzada (fórmulas híbridas) para criar criaturas de Tiers 3 e 4.
