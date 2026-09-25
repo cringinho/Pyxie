@@ -188,6 +188,7 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
   const locationDesc = isEn ? location.desc.en : location.desc.pt;
   const tideName = isEn ? tide.name.en : tide.name.pt;
 
+
   const dangerText = t('gloom.explore.dangerLevel', source, {
     tier: 'T' + (location.tier || 1) + ' ' + '<:skull:1551356384451493968>'.repeat(location.tier || 1),
     banMinutes: location.banMinutes || 30,
@@ -197,6 +198,7 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
     .setColor(tide.color || PYXIE_COLORS.purple)
     .setTitle(t('gloom.explore.title', source, { emoji: '🌙', name: locationName, tide: tideName }))
     .setDescription(
+      `${feedbackMessage ? `**${feedbackMessage}**\n\n` : ''}` +
       `*« ${locationDesc} »*\n\n` +
       `${dangerText}\n\n` +
       `${t('gloom.explore.stamina', source, { current: user.energy, max: 10 })}\n\n` +
@@ -422,6 +424,9 @@ function buildNegotiationView(
     tensionBoxes.push(currentScore >= i ? '🟩' : '⬜');
   }
   const tensionLine = `🎭 **Tensão & Afinidade:** [${tensionBoxes.join('')}] (${currentScore}/${targetScore} pts) • **Fase ${phase}/${totalRounds}** (T${tier})`;
+  descParts.push(`\n${tensionLine}`);
+  descParts.push(`🪙 ${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}`);
+
   // Opções de Diálogo da Fase
   let choices = (encounter && Array.isArray(encounter.options))
     ? encounter.options
@@ -452,7 +457,6 @@ function buildNegotiationView(
   const embed = new EmbedBuilder()
     .setColor(PYXIE_COLORS.neonPink)
     .setTitle(t('gloom.negotiate.title', source, { name: spiritName }))
-    .setDescription(descParts.join('\n'))
     .setFooter({ text: pyxieFooter(t('gloom.negotiate.footer', source), source) })
     .setTimestamp();
 

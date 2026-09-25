@@ -178,8 +178,7 @@ function buildRenovationEmbed(source = null) {
   return new EmbedBuilder()
     .setColor(PYXIE_COLORS.purple || '#9b5de5')
     .setTitle(title)
-    .setDescription(desc)
-    .setFooter(pyxieFooter(isEn ? 'Arcane Renovations' : 'Reformas Arcanas', source))
+    .setFooter({ text: pyxieFooter(isEn ? 'Arcane Renovations' : 'Reformas Arcanas', source) })
     .setTimestamp();
 }
 

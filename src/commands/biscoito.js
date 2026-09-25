@@ -54,6 +54,7 @@ function buildCookieView(userId, source = null) {
     ? `*You crack open the crispy shell and find a scented golden scroll:*\n\n> 📜 **"${result.wisdom}"**\n`
     : `*Você quebra a casquinha crocante e encontra um pequeno pergaminho perfumado:*\n\n> 📜 **"${result.wisdom}"**\n`;
 
+  const luckyNumbersTitle = isEn ? '🍀 Your Lucky Numbers Today' : '🍀 Seus Números da Sorte de Hoje';
   const footerText = isEn
     ? (result.remainingExtra > 0 ? `You still have ${result.remainingExtra} extra cookie(s)!` : 'Come back tomorrow for more cosmic wisdom')
     : (result.remainingExtra > 0 ? `Você ainda tem ${result.remainingExtra} biscoito(s) extra(s)!` : 'Volte amanhã para mais sabedoria cósmica');
@@ -64,23 +65,23 @@ function buildCookieView(userId, source = null) {
     .setColor(embedColor)
     .setTitle(title)
     .setDescription(intro)
-    .setFooter(pyxieFooter(footerText, source))
+    .setFooter({ text: pyxieFooter(footerText, source) })
     .setTimestamp();
 
   if (result.fortuneType === 'positive') {
     embed.addFields({
       name: isEn ? '✨ ✦ Astral Blessing!' : '✨ ✦ Bênção Astral!',
       value: isEn
-        ? `🌟 Fortune smiles upon you! You received **+15 Coins 💰**!`
-        : `🌟 A sorte sorriu para você! Você recebeu **+15 Moedas 💰**!`,
+        ? '🌟 Fortune smiles upon you! You received **+15 Coins 💰**!'
+        : '🌟 A sorte sorriu para você! Você recebeu **+15 Moedas 💰**!',
       inline: false,
     });
   } else {
     embed.addFields({
       name: isEn ? '🌑 ✦ Cosmic Stumble...' : '🌑 ✦ Tropeço Cósmico...',
       value: isEn
-        ? `🍂 An unpredictable cosmic wind drained **15 Coins 💰** from your pouch.`
-        : `🍂 Uma ventania cósmica levou embora **15 Moedas 💰** da sua bolsa. Cuidado onde pisa!`,
+        ? '🍂 An unpredictable cosmic wind drained **15 Coins 💰** from your pouch.'
+        : '🍂 Uma ventania cósmica levou embora **15 Moedas 💰** da sua bolsa. Cuidado onde pisa!',
       inline: false,
     });
   }

@@ -64,6 +64,7 @@ function buildGrimoireView(userId, source = null, feedbackMessage = '') {
 
   const components = [];
 
+  // Botões de Equipar/Desequipar (até 5 espíritos da coleção)
   // Menu de Seleção de Espíritos para Equipar/Desequipar (até 25 espíritos)
   if (collected.length > 0) {
     const selectOptions = collected.slice(0, 25).map((sp) => {
