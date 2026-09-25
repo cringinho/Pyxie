@@ -46,6 +46,7 @@ function buildAdminView(userId, guildOrSource = null) {
 
 module.exports = {
   name: ADMIN,
+  ephemeral: true,
   aliases: ['admin', 'painel', 'py-admin', 'dashboard', 'paineldono', 'owner'],
   buildAdminView,
   data: new SlashCommandBuilder()

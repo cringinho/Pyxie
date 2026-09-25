@@ -394,6 +394,7 @@ async function handleInventoryInteraction(interaction) {
 
 module.exports = {
   name: INVENTORY,
+  ephemeral: true,
   aliases: ['inventory', 'inventario', 'py-inventory', 'py-inventario', 'mochila', 'py-mochila'],
   buildInventoryEmbed,
   buildInventoryComponents,

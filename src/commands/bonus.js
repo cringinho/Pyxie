@@ -78,6 +78,7 @@ function buildBonusEmbed(userId, sessionUrl, source = null) {
 
 module.exports = {
   name: BONUS,
+  ephemeral: true,
   aliases: ['bonus', 'recompensa', 'py-bonus', 'py-recompensa', 'patrocinio', 'reward'],
   buildBonusEmbed,
   buildBonusCooldownEmbed,
@@ -85,7 +86,6 @@ module.exports = {
     .setName(BONUS)
     .setDescription('Claim 75 free daily Coins via a 10s sponsored link.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Resgata Moedas, Feijões Mágicos e Baús Misteriosos gratuitos através do link de 10s.',
       'pt-BR': 'Resgata 75 Moedas diárias gratuitas através do link de 10s.',
     }),
   async executeSlash({ interaction }) {

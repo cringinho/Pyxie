@@ -743,13 +743,19 @@ client.on('interactionCreate', async (interaction) => {
     incrementCommand();
     recordUniqueUser(interaction.user.id);
 
-    const command = commandsByName.get(interaction.commandName);
+    const ephemeralCommands = new Set([
+      'tarot', 'py-tarot',
+      'ajuda', 'help', 'py-help',
+      'inventario', 'inventory', 'py-inventory',
+      'admin', 'py-admin',
+      'bonus', 'py-bonus',
+      'biscoito', 'cookie', 'py-cookie',
+    ]);
+
     const isEphemeral = Boolean(
       command?.ephemeral ||
-      command?.name === 'tarot' ||
-      command?.name === 'ajuda' ||
-      command?.name === 'inventario'
-      ['tarot', 'py-tarot', 'ajuda', 'help', 'py-help', 'inventario', 'inventory', 'py-inventory'].includes(command?.name)
+      ephemeralCommands.has(command?.name) ||
+      ephemeralCommands.has(interaction.commandName)
     );
     await interaction.deferReply({ flags: isEphemeral ? MessageFlags.Ephemeral : undefined });
     if (!command || typeof command.executeSlash !== 'function') {
