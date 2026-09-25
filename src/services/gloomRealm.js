@@ -357,7 +357,6 @@ const SPIRITS = {
     rarity: 'common',
     name: { pt: 'Espectro do Baixo Astral', en: 'Low Astral Wraith' },
     personality: 'melancholic',
-    image: '/assets/spirits/espectro_baixo_astral.gif',
     dialogue: {
       question: {
         pt: 'A existência é um fardo pesado... Você também sente que nada tem sentido ou só está entediado?',
@@ -383,7 +382,6 @@ const SPIRITS = {
     rarity: 'common',
     name: { pt: 'Gárgula Procrastinador', en: 'Sloth Gargoyle' },
     personality: 'lazy',
-    image: '/assets/spirits/gargula_procrastinador.gif',
     dialogue: {
       question: {
         pt: 'Eu poderia te atacar agora... mas fingir que sou pedra é tão mais confortável. O que você acha de não fazermos nada hoje?',
@@ -409,7 +407,6 @@ const SPIRITS = {
     rarity: 'common',
     name: { pt: 'Fada Desencantada', en: 'Disenchanted Pixie' },
     personality: 'sarcastic',
-    image: '/assets/spirits/fada_desencantada.gif',
     dialogue: {
       question: {
         pt: 'Esperava pozinho mágico e purpurina? Meu rímel borrado e minhas asas roxas têm mais história que qualquer fada de conto de fadas.',
@@ -436,7 +433,6 @@ const SPIRITS = {
     rarity: 'common',
     name: { pt: 'Morcego do Shoegaze', en: 'Shoegaze Bat' },
     personality: 'aerial',
-    image: '/assets/spirits/morcego_shoegaze.gif',
     dialogue: {
       question: {
         pt: 'As paredes dessas cavernas reverberam um eco em tom menor... Você consegue ouvir o som ou sua mente está cheia de ruído?',
@@ -462,7 +458,6 @@ const SPIRITS = {
     rarity: 'uncommon',
     name: { pt: 'Corvo Poeta Nihilista', en: 'Nihilist Raven' },
     personality: 'poetic',
-    image: '/assets/spirits/corvo_poeta.gif',
     dialogue: {
       question: {
         pt: 'Nunca mais... ou talvez amanhã de novo? Por que os mortais buscam tesouros quando o tempo consome tudo em poeira?',
@@ -488,7 +483,6 @@ const SPIRITS = {
     rarity: 'uncommon',
     name: { pt: 'Banshee do Fone Descarregado', en: 'Dead Phone Banshee' },
     personality: 'screamer',
-    image: '/assets/spirits/banshee_descarregada.gif',
     dialogue: {
       question: {
         pt: 'Meu grito primordial não é por ódio... é porque meu cabo quebrou bem na dobra e eu fiquei sem bateria no metrô! Você me entende?!',
@@ -514,7 +508,6 @@ const SPIRITS = {
     rarity: 'uncommon',
     name: { pt: 'Lobisomem Introvertido', en: 'Introvert Werewolf' },
     personality: 'timid',
-    image: '/assets/spirits/lobisomem_introvertido.gif',
     dialogue: {
       question: {
         pt: 'Por favor, não me faça uivar na frente de todo mundo... Eu prefiro uivar baixinho no meu quarto escuro. Você pode falar baixo?',
@@ -540,7 +533,6 @@ const SPIRITS = {
     rarity: 'uncommon',
     name: { pt: 'Esqueleto de All-Star', en: 'Retro Punk Skeleton' },
     personality: 'punk',
-    image: '/assets/spirits/esqueleto_allstar.gif',
     dialogue: {
       question: {
         pt: 'Ano 2004 foi ontem, cara. Meus ossos doem de tanto bater cabeça ouvindo rock triste. Você ainda ouve guitarras com distorção?',
@@ -1534,9 +1526,15 @@ function negotiateSpirit(
       }
     }
 
+    let isDuplicate = false;
+    let duplicateBonus = 0;
     if (spiritId && SPIRITS[spiritId]) {
       if (!user.grimoire.includes(spiritId)) {
         user.grimoire.push(spiritId);
+      } else {
+        isDuplicate = true;
+        duplicateBonus = (SPIRITS[spiritId]?.tier || 1) * 35;
+        user.phantomCoins += duplicateBonus;
       }
     }
     user.negotiationsWon = (user.negotiationsWon || 0) + 1;
@@ -1545,6 +1543,8 @@ function negotiateSpirit(
     return {
       success: true,
       recruited: true,
+      isDuplicate,
+      duplicateBonus,
       spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
       encounter,
       cost,
@@ -1700,8 +1700,16 @@ function negotiateSpirit(
   if (newScore >= targetScore || choice.success === true) {
     let coinsReward = Math.floor(Math.random() * 25) + 15;
     user.phantomCoins += coinsReward;
-    if (spiritId && SPIRITS[spiritId] && !user.grimoire.includes(spiritId)) {
-      user.grimoire.push(spiritId);
+    let isDuplicate = false;
+    let duplicateBonus = 0;
+    if (spiritId && SPIRITS[spiritId]) {
+      if (!user.grimoire.includes(spiritId)) {
+        user.grimoire.push(spiritId);
+      } else {
+        isDuplicate = true;
+        duplicateBonus = (SPIRITS[spiritId]?.tier || 1) * 35;
+        user.phantomCoins += duplicateBonus;
+      }
     }
     user.negotiationsWon = (user.negotiationsWon || 0) + 1;
     updateGloomUser(userId, user);
@@ -1709,6 +1717,8 @@ function negotiateSpirit(
     return {
       success: true,
       recruited: true,
+      isDuplicate,
+      duplicateBonus,
       spirit: spirit || { id: encounter.id, name: encounter.creature_concept },
       encounter,
       rewardCoins: coinsReward,
@@ -1804,8 +1814,14 @@ function fuseSpirits(userId, spiritAId, spiritBId) {
     user.grimoire = user.grimoire.filter((id) => id !== spiritAId);
   }
 
+  let isDuplicate = false;
+  let duplicateBonus = 0;
   if (!user.grimoire.includes(resultSpirit.id)) {
     user.grimoire.push(resultSpirit.id);
+  } else {
+    isDuplicate = true;
+    duplicateBonus = (resultSpirit.tier || 1) * 60;
+    user.phantomCoins += duplicateBonus;
   }
 
   updateGloomUser(userId, user);
@@ -1813,6 +1829,8 @@ function fuseSpirits(userId, spiritAId, spiritBId) {
   return {
     success: true,
     resultSpirit,
+    isDuplicate,
+    duplicateBonus,
     remainingCoins: user.phantomCoins,
   };
 }

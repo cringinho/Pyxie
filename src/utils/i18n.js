@@ -195,7 +195,7 @@ const TRANSLATIONS = {
     "daily": {
       "titleClaimed": "<:rarecrate:1548444209328033913>  ✦  Recompensa Diária Coletada!",
       "descClaimed": "Sua recompensa diária foi entregue com sucesso no seu cofre!",
-      "summaryTitle": "<a:coin:1548443880066777098> **RESUMO DA RECOMPENSA**",
+      "summaryTitle": "🎁 **RESUMO DA RECOMPENSA**",
       "collected": "> <a:coin:1548443880066777098> **Moedas Coletadas:** **+{amount}**",
       "balance": "> 🏦 **Saldo Atual:** **{balance}**",
       "magicBean": "> ✨ **SORTE ÉPICA (1% de Chance):** **+1x Feijão Mágico <:peakmagicbean:1548444143431323719>** (Total: **{total} <:peakmagicbean:1548444143431323719>**)",
@@ -379,7 +379,9 @@ const TRANSLATIONS = {
           "label": "Joias & Gemas Preciosas",
           "desc": "Gemas raras para comércio, coleção e prestígio"
         }
-      }
+      },
+      "renovationTitle": "✨  ✦  Lojinha em Reformas Arcanas!",
+      "renovationDesc": "*« A artesã da Cringelândia pendurou uma placa rústica na porta encantada do bazar... »*\n\n🔨 **Estamos remodelando nossas prateleiras mágicas!**\nNo momento, as compras diretas de baús e joias estão pausadas enquanto expandimos o catálogo com novos artefatos, consumíveis e relíquias raras.\n\n💡 **Enquanto isso, você pode:**\n• Aventurar-se nas profundezas sombrias com **/py-explore** para encontrar Phantom Coins e Relíquias;\n• Trabalhar na taverna com **/py-work** para acumular moedas de ouro;\n• Negociar gemas e itens com outros aventureiros via **/py-trade**!"
     },
     "inventory": {
       "backpackTitle": "🎒  ✦  Mochila de {user}",
@@ -408,6 +410,7 @@ const TRANSLATIONS = {
       "selectRelicPlaceholder": "🏺 Selecione uma relíquia para inspecionar ou vender...",
       "sellRelic": "Vender ({coins} 👻)",
       "relicSoldSuccess": "✨ Você vendeu 1x **{relic}** e recebeu **+{coins} Phantom Coins 👻**!",
+      "relicNoSell": "🏺 Relíquias sombrias não podem ser vendidas na loja! Você pode aprimorá-las no Engenheiro ou negociá-las com outros jogadores via /py-trade.",
       "travelBuffUsed": "🐎 **Montaria Equipada!** Você usou **{item}**! O cooldown de 10 min entre mapas foi anulado por **{hours} horas**!"
     },
     "buy": {
@@ -578,6 +581,7 @@ const TRANSLATIONS = {
         "btnForage": "Vasculhar (1⚡)",
         "btnGrimoire": "Grimório ({count})",
         "btnTrace": "Deixar Rastro (15👻)",
+        "btnRelics": "Relíquias",
         "btnBoss": "Chefão da Penumbra",
         "btnMove": "Ir para {destination}",
         "directMoveNotFound": "❌ Não encontrei nenhum caminho para **{destination}**. Verifique os cenários vizinhos disponíveis!",
@@ -623,7 +627,8 @@ const TRANSLATIONS = {
         "ejectionFine": "💸 **Multa de Ejeção:** Você perdeu **-{fine} Phantom Coins 👻** (10% do seu saldo) na fuga apressada!",
         "failed": "💨 **A Aparição Desapareceu!** {spirit} zombou da sua resposta e sumiu na bruma roxa!",
         "criticalFailure": "💀 **FALHA CRÍTICA!** As sombras foram insultadas pela sua resposta patética! Você foi expulso e banido de {location} por {time} minutos!",
-        "alreadyOwned": "ℹ️ Você já possui este espírito no seu Grimório!"
+        "alreadyOwned": "ℹ️ Você já possui este espírito no seu Grimório!",
+        "duplicateEssence": "👻 **Essência Duplicada Convertida!** Como você já possuía este espírito em seu Grimório, a essência foi convertida em **+{coins} Phantom Coins 👻**!"
       },
       "merchant": {
         "title": "🛒  ✦  O Comerciante de Relíquias",
@@ -675,7 +680,8 @@ const TRANSLATIONS = {
         "ritualCost": "🪙 **Custo do Ritual:** `{cost} Phantom Coins`",
         "success": "🔮 **FUSÃO CONCLUÍDA!** As almas se fundiram no caldeirão e deram origem a **{spirit}** (Tier {tier})!",
         "insufficientCoins": "❌ Você precisa de **{cost} Phantom Coins 👻** para realizar este ritual de fusão!",
-        "cannotFuse": "❌ Não foi possível fundir estes espíritos."
+        "cannotFuse": "❌ Não foi possível fundir estes espíritos.",
+        "duplicateEssence": "✨ **Essência de Fusão Duplicada!** Você já possuía este espírito; a essência resultante foi convertida em **+{coins} Phantom Coins 👻**!"
       },
       "boss": {
         "title": "💀  ✦  Chefão Comunitário — {name}",
@@ -761,7 +767,7 @@ const TRANSLATIONS = {
     "daily": {
       "titleClaimed": "<:rarecrate:1548444209328033913>  ✦  Daily Reward Collected!",
       "descClaimed": "Your daily reward has been safely deposited into your vault!",
-      "summaryTitle": "<a:coin:1548443880066777098> **REWARD SUMMARY**",
+      "summaryTitle": "🎁 **REWARD SUMMARY**",
       "collected": "> <a:coin:1548443880066777098> **Coins Collected:** **+{amount}**",
       "balance": "> 🏦 **Current Balance:** **{balance}**",
       "magicBean": "> ✨ **EPIC LUCK (1% Chance):** **+1x Magic Bean <:peakmagicbean:1548444143431323719>** (Total: **{total} <:peakmagicbean:1548444143431323719>**)",
@@ -945,7 +951,9 @@ const TRANSLATIONS = {
           "label": "Precious Gems & Jewels",
           "desc": "Rare gems for trade, collection, and prestige"
         }
-      }
+      },
+      "renovationTitle": "✨  ✦  Arcane Renovations Underway!",
+      "renovationDesc": "*« The boutique crafter has hung an ornate rustic sign on the shop's enchanted gate... »*\n\n🔨 **We are remodeling our magical shelves!**\nDirect purchases of chests and jewels are temporarily paused while we expand our catalog with brand-new rare artifacts, consumables, and relics.\n\n💡 **In the meantime, you can:**\n• Delve into the dark grove with **/py-explore** to uncover Phantom Coins and Relics;\n• Work at the tavern with **/py-work** to accumulate gold coins;\n• Trade gems and items directly with other adventurers via **/py-trade**!"
     },
     "inventory": {
       "backpackTitle": "🎒  ✦  {user}’s Backpack",
@@ -974,6 +982,7 @@ const TRANSLATIONS = {
       "selectRelicPlaceholder": "🏺 Select a relic to inspect or sell...",
       "sellRelic": "Sell ({coins} 👻)",
       "relicSoldSuccess": "✨ You sold 1x **{relic}** and received **+{coins} Phantom Coins 👻**!",
+      "relicNoSell": "🏺 Dark relics cannot be sold in the shop! You can upgrade them at the Engineer or trade them with other players via /py-trade.",
       "travelBuffUsed": "🐎 **Mount Equipped!** You used **{item}**! The 10-minute cooldown between maps has been nullified for **{hours} hours**!"
     },
     "buy": {
@@ -1144,6 +1153,7 @@ const TRANSLATIONS = {
         "btnForage": "Scavenge (1⚡)",
         "btnGrimoire": "Grimoire ({count})",
         "btnTrace": "Leave Trace (15👻)",
+        "btnRelics": "Relics",
         "btnBoss": "Gloom Behemoth",
         "btnMove": "Go to {destination}",
         "directMoveNotFound": "❌ Could not find a path to **{destination}**. Check available neighboring locations!",
@@ -1189,7 +1199,8 @@ const TRANSLATIONS = {
         "ejectionFine": "💸 **Ejection Fine:** You lost **-{fine} Phantom Coins 👻** (10% of your balance) during the hasty retreat!",
         "failed": "💨 **The Apparition Vanished!** {spirit} mocked your reply and dissolved into purple mist!",
         "criticalFailure": "💀 **CRITICAL FAILURE!** The shadows were insulted by your pathetic response! You were cast out and barred from {location} for {time} minutes!",
-        "alreadyOwned": "ℹ️ You already have this spirit bound in your Grimoire!"
+        "alreadyOwned": "ℹ️ You already have this spirit bound in your Grimoire!",
+        "duplicateEssence": "👻 **Duplicate Essence Converted!** Since you already possess this spirit in your Grimoire, its essence was converted into **+{coins} Phantom Coins 👻**!"
       },
       "merchant": {
         "title": "🛒  ✦  The Relic Merchant",
@@ -1241,7 +1252,8 @@ const TRANSLATIONS = {
         "ritualCost": "🪙 **Ritual Cost:** `{cost} Phantom Coins`",
         "success": "🔮 **FUSION COMPLETE!** The souls coalesced within the cauldron giving rise to **{spirit}** (Tier {tier})!",
         "insufficientCoins": "❌ You need **{cost} Phantom Coins 👻** to perform this soul fusion ritual!",
-        "cannotFuse": "❌ Could not fuse these spirits."
+        "cannotFuse": "❌ Could not fuse these spirits.",
+        "duplicateEssence": "✨ **Duplicate Fusion Essence!** You already possessed this spirit; the resulting essence was converted into **+{coins} Phantom Coins 👻**!"
       },
       "boss": {
         "title": "💀  ✦  Community Boss — {name}",

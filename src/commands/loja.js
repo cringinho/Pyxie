@@ -7,7 +7,7 @@ const {
   ButtonStyle,
 } = require('discord.js');
 const { getItemsByCategory, getItemDefinition, buyItem, formatItemEffects } = require('../services/inventory');
-const { PYXIE_COLORS } = require('../utils/pyxieVoice');
+const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 const { formatCoins } = require('./economyHelpers');
 const { SHOP } = require('./commandNames');
 const { getLanguage, t } = require('../utils/i18n');
@@ -170,11 +170,37 @@ async function handleShopInteraction(interaction) {
   }
 }
 
+function buildRenovationEmbed(source = null) {
+  const isEn = getLanguage(source) === 'en';
+  const title = t('shop.renovationTitle', source);
+  const desc = t('shop.renovationDesc', source);
+
+  return new EmbedBuilder()
+    .setColor(PYXIE_COLORS.purple || '#9b5de5')
+    .setTitle(title)
+    .setDescription(desc)
+    .setFooter(pyxieFooter(isEn ? 'Arcane Renovations' : 'Reformas Arcanas', source))
+    .setTimestamp();
+}
+
+function buildRenovationComponents(userId = '', source = null) {
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`hub_tab:inventory:${userId}`)
+      .setLabel(t('shop.btnBackpack', source))
+      .setEmoji('🎒')
+      .setStyle(ButtonStyle.Primary)
+  );
+  return [row];
+}
+
 module.exports = {
   name: SHOP,
   aliases: ['shop', 'loja', 'py-shop', 'py-loja', 'mercado', 'comprar'],
   buildShopEmbed,
   buildShopComponents,
+  buildRenovationEmbed,
+  buildRenovationComponents,
   isShopInteraction,
   handleShopInteraction,
   data: new SlashCommandBuilder()
@@ -201,19 +227,14 @@ module.exports = {
           { name: '💎 Precious Gems & Jewels', nameLocalizations: { 'pt-BR': '💎 Joias & Gemas Preciosas' }, value: 'joia' }
         )
     ),
-  async executePrefix({ message, args }) {
-    const requestedCat = args[0]?.toLowerCase() || 'bau';
-    const validCategory = ['bau', 'joia'].includes(requestedCat)
-      ? requestedCat
-      : 'bau';
-    const embed = buildShopEmbed(validCategory, message);
-    const components = buildShopComponents(validCategory, message.author.id, message);
+  async executePrefix({ message }) {
+    const embed = buildRenovationEmbed(message);
+    const components = buildRenovationComponents(message.author.id, message);
     await message.reply({ embeds: [embed], components });
   },
   async executeSlash({ interaction }) {
-    const category = interaction.options.getString('category') || interaction.options.getString('categoria') || 'bau';
-    const embed = buildShopEmbed(category, interaction);
-    const components = buildShopComponents(category, interaction.user.id, interaction);
+    const embed = buildRenovationEmbed(interaction);
+    const components = buildRenovationComponents(interaction.user.id, interaction);
     await interaction.editReply({ embeds: [embed], components });
   },
 };

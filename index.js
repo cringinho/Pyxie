@@ -119,7 +119,7 @@ async function sendStartupAnnouncement() {
     return;
   }
 
-  const panelUrl = process.env.PANEL_PUBLIC_URL || 'http://34.173.207.172:3000';
+  const panelUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org:3000';
 
   const startupEmbed = new EmbedBuilder()
     .setColor('#5E2B8C')
@@ -131,12 +131,13 @@ async function sendStartupAnnouncement() {
       {
         name: '📚 Comandos em Destaque',
         value: [
-          '> 💼 **/py-trabalho** — Cumpra expedientes diários e suba na carreira',
-          '> 👤 **/perfil** — Customize títulos, temas e biografia',
-          '> 🔮 **/tarot** — Tire cartas de tarot com artes exclusivas',
-          '> 🤝 **/py-trocar** — Negocie itens e moedas com outros membros',
-          '> 🪙 **/diario** — Resgate moedas diárias e bônus patrocinado',
-          '> 📖 **/ajuda** — Menu interativo com todos os comandos',
+          '> 🌲 **/py-explore** — Aventure-se pelo Bosque Encantado e capture espíritos',
+          '> 💼 **/py-work** — Cumpra expedientes diários e suba na carreira',
+          '> 👤 **/py-profile** — Customize títulos, temas e biografia',
+          '> 🔮 **/py-tarot** — Tire cartas de tarot com artes exclusivas',
+          '> 🤝 **/py-trade** — Negocie itens e moedas com outros membros',
+          '> 🪙 **/py-daily** — Resgate moedas diárias e bônus patrocinado',
+          '> 📖 **/py-help** — Menu interativo com todos os comandos',
         ].join('\n'),
         inline: false,
       }
@@ -730,9 +731,7 @@ client.on('interactionCreate', async (interaction) => {
     const command = commandsByName.get(interaction.commandName);
     const isEphemeral = Boolean(
       command?.ephemeral ||
-      command?.name === 'tarot' ||
-      command?.name === 'ajuda' ||
-      command?.name === 'inventario'
+      ['tarot', 'py-tarot', 'ajuda', 'help', 'py-help', 'inventario', 'inventory', 'py-inventory'].includes(command?.name)
     );
     await interaction.deferReply({ flags: isEphemeral ? MessageFlags.Ephemeral : undefined });
     if (!command || typeof command.executeSlash !== 'function') {

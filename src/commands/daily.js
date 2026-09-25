@@ -13,8 +13,10 @@ const { DAILY } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 
 function isWeekend() {
-  const day = new Date().getUTCDay();
-  return day === 0 || day === 5 || day === 6;
+  const now = new Date();
+  const brDateStr = now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' });
+  const day = new Date(brDateStr).getDay();
+  return day === 0 || day === 6;
 }
 
 function buildDailyView(userId, guildOrSource = null, clientId = null) {

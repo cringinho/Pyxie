@@ -10,15 +10,22 @@ const { t } = require('../utils/i18n');
 const { VOTE } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 
+const { createBonusSession } = require('../services/bonusTimer');
+
 function isWeekend() {
-  const day = new Date().getUTCDay();
-  return day === 0 || day === 5 || day === 6;
+  const now = new Date();
+  const brDateStr = now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' });
+  const day = new Date(brDateStr).getDay();
+  return day === 0 || day === 6;
 }
 
 function buildVoteView(guildOrSource = null, clientOrBotId = null) {
   const botId = clientOrBotId || '1453888365618270331';
   const voteUrl = getVoteUrl(botId);
   const weekend = isWeekend();
+  const lang = (typeof guildOrSource?.locale === 'string' && guildOrSource.locale.startsWith('pt')) ? 'pt' : 'en';
+  const userId = guildOrSource?.user?.id || guildOrSource?.author?.id || 'guest';
+  const bonusSession = createBonusSession(userId, 'vote_bonus', {}, lang);
 
   const desc = [
     t('vote.desc', guildOrSource),
@@ -37,7 +44,7 @@ function buildVoteView(guildOrSource = null, clientOrBotId = null) {
     .setColor(weekend ? PYXIE_COLORS.gold || '#facc15' : PYXIE_COLORS.magenta || '#e60067')
     .setTitle(t('vote.title', guildOrSource))
     .setDescription(desc)
-    .setFooter({ text: pyxieFooter(t('vote.footerText', guildOrSource)) })
+    .setFooter({ text: pyxieFooter(t('vote.footerText', guildOrSource), guildOrSource) })
     .setTimestamp();
 
   const row = new ActionRowBuilder().addComponents(
@@ -45,7 +52,12 @@ function buildVoteView(guildOrSource = null, clientOrBotId = null) {
       .setLabel(t('vote.btnLabel', guildOrSource))
       .setEmoji('🗳️')
       .setStyle(ButtonStyle.Link)
-      .setURL(voteUrl)
+      .setURL(voteUrl),
+    new ButtonBuilder()
+      .setLabel(t('daily.btnWebBonus', guildOrSource))
+      .setEmoji('🎁')
+      .setStyle(ButtonStyle.Link)
+      .setURL(bonusSession.url)
   );
 
   return { embeds: [embed], components: [row] };

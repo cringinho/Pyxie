@@ -16,8 +16,47 @@ const PYXIE_COLORS = {
 
 const PYXIE_FOOTER = 'Pyxie';
 
-function pyxieFooter() {
-  return PYXIE_FOOTER;
+const ROTATING_TIPS = {
+  pt: [
+    '💡 Dica: Use /py-daily todos os dias para acumular moedas e feijões mágicos.',
+    '💡 Dica: Negocie relíquias raras com outros jogadores usando /py-trade.',
+    '💡 Dica: Você pode personalizar títulos e temas no seu /py-profile.',
+    '💡 Dica: No Bosque (/py-explore), espíritos recrutados concedem auras passivas.',
+    '💡 Dica: Experimente o Tarot diário (/py-tarot) para prever seu dia.',
+    '💡 Dica: Quebre o biscoito da sorte diário em /py-cookie para ganhar moedas.',
+    '💡 Dica: Trabalhe diariamente em /py-work para subir na carreira.',
+    '💡 Dica: Relíquias não podem ser vendidas na loja, apenas trocadas.',
+  ],
+  en: [
+    '💡 Tip: Use /py-daily every day to accumulate coins and magic beans.',
+    '💡 Tip: Trade rare relics with other players using /py-trade.',
+    '💡 Tip: Customize your titles and visual themes in /py-profile.',
+    '💡 Tip: In the Grove (/py-explore), recruited spirits grant unique passive auras.',
+    '💡 Tip: Draw a daily Tarot reading (/py-tarot) to foresee your fortune.',
+    '💡 Tip: Crack open your daily fortune cookie in /py-cookie for coins.',
+    '💡 Tip: Complete shifts in /py-work to advance your professional career.',
+    '💡 Tip: Relics cannot be sold in the shop, only traded.',
+  ],
+};
+
+function getRandomTip(source = null) {
+  let lang = 'pt';
+  try {
+    const { getLanguage } = require('./i18n');
+    lang = getLanguage(source);
+  } catch (e) {
+    lang = 'pt';
+  }
+  const list = ROTATING_TIPS[lang] || ROTATING_TIPS.pt;
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function pyxieFooter(baseText = null, source = null) {
+  const tip = getRandomTip(source);
+  if (baseText && typeof baseText === 'string') {
+    return `${baseText} • ${tip}`;
+  }
+  return `Pyxie • ${tip}`;
 }
 
 const PYXIE_PHRASES = {

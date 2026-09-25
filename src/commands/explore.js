@@ -33,7 +33,7 @@ const {
   upgradeRelicsWithEngineer,
 } = require('../services/gloomRealm');
 const { getLanguage, t } = require('../utils/i18n');
-const { PYXIE_COLORS } = require('../utils/pyxieVoice');
+const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 const { getEmoji } = require('../utils/appEmojis');
 
 const LOCATION_EMOJIS = {
@@ -48,6 +48,122 @@ const LOCATION_EMOJIS = {
   jardim_fadas_negras: 'FAIRY',
   santuario_touca_preta: 'CROWN',
 };
+
+const FORAGE_COIN_MESSAGES = {
+  pt: [
+    '✨ Entre raízes orvalhadas e musgo violeta, você desencavou **+{coins} Phantom Coins 👻**!',
+    '🍃 Uma rajada de vento gélido soprou as folhas secas, revelando **+{coins} Phantom Coins 👻**!',
+    '🪵 Ao investigar o interior de um tronco oco carcomido, você resgatou **+{coins} Phantom Coins 👻**!',
+    '🔮 Sussurros etéreos guiaram seus passos até uma fenda úmida com **+{coins} Phantom Coins 👻**!',
+    '🪦 Você removeu uma lápide tombada e encontrou um brilho arroxeado: **+{coins} Phantom Coins 👻**!',
+    '🍄 Debaixo de um círculo de cogumelos luminescentes, repousavam **+{coins} Phantom Coins 👻**!',
+    '👣 Seguindo pegadas fantasmagóricas no lodo, você desenterrou **+{coins} Phantom Coins 👻**!',
+    '🌫️ Uma bruma repentina se dissipou, deixando para trás **+{coins} Phantom Coins 👻** cintilantes!',
+    '🌿 Você tateou entre pedras frias cobertas de hera e pescou **+{coins} Phantom Coins 👻**!',
+    '🗝️ Gotas de orvalho caíram sobre um cofre enferrujado contendo **+{coins} Phantom Coins 👻**!',
+    '🪶 Um corvo de olhos violeta bicou o solo e voou, abandonando **+{coins} Phantom Coins 👻**!',
+    '👢 Remexendo a terra escura com a ponta da bota, você topou com **+{coins} Phantom Coins 👻**!',
+    '🥀 Atrás de uma cortina de trepadeiras com espinhos negros, você achou **+{coins} Phantom Coins 👻**!',
+    '💧 Ao iluminar o fundo de uma poça de água estagnada, você pescou **+{coins} Phantom Coins 👻**!',
+    '🌙 Um aroma doce de flores noturnas revelou uma fresta com **+{coins} Phantom Coins 👻**!',
+  ],
+  en: [
+    '✨ Between dewy roots and violet moss, you unearthed **+{coins} Phantom Coins 👻**!',
+    '🍃 A chill gust swept dry leaves aside, unveiling **+{coins} Phantom Coins 👻**!',
+    '🪵 Peering into a hollow rotted log, you retrieved **+{coins} Phantom Coins 👻**!',
+    '🔮 Ethereal whispers guided your steps to a damp crevice containing **+{coins} Phantom Coins 👻**!',
+    '🪦 Prying away a fallen tombstone, you found a purple gleam: **+{coins} Phantom Coins 👻**!',
+    '🍄 Beneath a fairy ring of glowing mushrooms lay **+{coins} Phantom Coins 👻**!',
+    '👣 Tracking spectral footprints in the mud, you dug up **+{coins} Phantom Coins 👻**!',
+    '🌫️ A sudden fog dissolved, leaving behind **+{coins} glittering Phantom Coins 👻**!',
+    '🌿 Groping between cold ivy-clad stones, you fished out **+{coins} Phantom Coins 👻**!',
+    '🗝️ Dewdrops dripped over a rusted lockbox holding **+{coins} Phantom Coins 👻**!',
+    '🪶 A violet-eyed raven pecked the dirt and took flight, abandoning **+{coins} Phantom Coins 👻**!',
+    '👢 Stirring the dark loam with your boot tip, you kicked up **+{coins} Phantom Coins 👻**!',
+    '🥀 Behind a curtain of black-thorn vines, you discovered **+{coins} Phantom Coins 👻**!',
+    '💧 Shining light into a still, brackish puddle, you scooped up **+{coins} Phantom Coins 👻**!',
+    '🌙 A sweet scent of nightshade revealed a forgotten hollow containing **+{coins} Phantom Coins 👻**!',
+  ],
+};
+
+const FORAGE_ITEM_MESSAGES = {
+  pt: [
+    '📦 Você vasculhou os escombros e encontrou **1x {item}**!',
+    '🎒 Preso entre galhos retorcidos, você resgatou **1x {item}**!',
+    '🏺 No fundo de uma cavidade sombria repousava **1x {item}**!',
+  ],
+  en: [
+    '📦 You searched through the rubble and discovered **1x {item}**!',
+    '🎒 Tangled among twisted briars, you retrieved **1x {item}**!',
+    '🏺 Resting at the bottom of a shadowy recess was **1x {item}**!',
+  ],
+};
+
+function getForageSuccessCoinsText(coins, source = null) {
+  const lang = getLanguage(source);
+  const list = FORAGE_COIN_MESSAGES[lang] || FORAGE_COIN_MESSAGES.en;
+  const tpl = list[Math.floor(Math.random() * list.length)];
+  return tpl.replace('{coins}', coins);
+}
+
+function getForageSuccessItemText(itemName, source = null) {
+  const lang = getLanguage(source);
+  const list = FORAGE_ITEM_MESSAGES[lang] || FORAGE_ITEM_MESSAGES.en;
+  const tpl = list[Math.floor(Math.random() * list.length)];
+  return tpl.replace('{item}', itemName);
+}
+
+function buildRelicsView(userId, source = null) {
+  const user = getGloomUser(userId);
+  const lang = getLanguage(source);
+  const isEn = lang === 'en';
+
+  const userRelics = Object.entries(user.inventory || {})
+    .filter(([id, count]) => count > 0 && RELICS[id]);
+
+  let desc = '';
+  if (userRelics.length === 0) {
+    desc = isEn
+      ? '🏺 *You have not acquired any dark relics yet. Scavenge the Grove or visit the traveling merchant to unearth ancient artifacts!*'
+      : '🏺 *Você ainda não possui relíquias sombrias. Vasculhe o Bosque ou encontre o mercador para desenterrar artefatos ancestrais!*';
+  } else {
+    const lines = [];
+    for (let tier = 1; tier <= 5; tier++) {
+      const items = userRelics.filter(([id]) => (RELICS[id]?.tier || 1) === tier);
+      if (items.length > 0) {
+        lines.push(`**⭐ Tier ${tier}:**`);
+        for (const [id, count] of items) {
+          const r = RELICS[id];
+          const name = isEn ? r.name.en : r.name.pt;
+          const rDesc = isEn ? r.desc.en : r.desc.pt;
+          lines.push(`> • 🏺 **${name}** (x${count})\n>   *« ${rDesc} »*`);
+        }
+      }
+    }
+    desc = lines.join('\n');
+  }
+
+  const tip = isEn
+    ? '\n\n💡 *Relics cannot be sold in the shop. They can be traded with other players via `/py-trade` or upgraded at the Relic Engineer!*'
+    : '\n\n💡 *Relíquias não podem ser vendidas na loja. Elas podem ser negociadas com outros jogadores via `/py-trade` ou aprimoradas no Engenheiro de Relíquias!*';
+
+  const embed = new EmbedBuilder()
+    .setColor('#a855f7')
+    .setTitle(isEn ? '🏺  ✦  Grove Relics Collection' : '🏺  ✦  Coleção de Relíquias do Bosque')
+    .setDescription(desc + tip)
+    .setFooter({ text: pyxieFooter(isEn ? 'Pyxie • Relic Vault' : 'Pyxie • Cofre de Relíquias', source) })
+    .setTimestamp();
+
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`gloom:view:${userId}`)
+      .setLabel(isEn ? 'Back to Grove' : 'Voltar ao Bosque')
+      .setEmoji('⬅️')
+      .setStyle(ButtonStyle.Secondary)
+  );
+
+  return { embeds: [embed], components: [row] };
+}
 
 function buildLocationView(userId, guildId, source = null, feedbackMessage = '') {
   const user = getGloomUser(userId);
@@ -72,18 +188,6 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
   const locationDesc = isEn ? location.desc.en : location.desc.pt;
   const tideName = isEn ? tide.name.en : tide.name.pt;
 
-  const traces = getTraces(guildId, location.id);
-  const tracesText = traces.length > 0
-    ? traces.map((tr) => {
-        const offeringStr = tr.offering > 0 ? t('gloom.explore.offeringText', source, { coins: tr.offering }) : '';
-        return t('gloom.explore.traceItem', source, {
-          author: tr.authorName,
-          message: tr.message,
-          offering: offeringStr,
-        });
-      }).join('\n')
-    : t('gloom.explore.noTraces', source);
-
   const dangerText = t('gloom.explore.dangerLevel', source, {
     tier: 'T' + (location.tier || 1) + ' ' + '<:skull:1551356384451493968>'.repeat(location.tier || 1),
     banMinutes: location.banMinutes || 30,
@@ -93,17 +197,23 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
     .setColor(tide.color || PYXIE_COLORS.purple)
     .setTitle(t('gloom.explore.title', source, { emoji: '🌙', name: locationName, tide: tideName }))
     .setDescription(
-      `${feedbackMessage ? `**${feedbackMessage}**\n\n` : ''}` +
       `*« ${locationDesc} »*\n\n` +
-      `${dangerText}\n` +
-      `${t('gloom.explore.stamina', source, { current: user.energy, max: 10 })}\n` +
-      `${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}\n` +
-      `${t('gloom.explore.tideLabel', source, { tide: tideName })}\n\n` +
-      `${t('gloom.explore.tracesHeader', source)}\n${tracesText}`
+      `${dangerText}\n\n` +
+      `${t('gloom.explore.stamina', source, { current: user.energy, max: 10 })}\n\n` +
+      `${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}\n\n` +
+      `${t('gloom.explore.tideLabel', source, { tide: tideName })}`
     )
     .setImage(`attachment://${location.image}`)
-    .setFooter({ text: t('gloom.footer', source) })
+    .setFooter({ text: pyxieFooter(t('gloom.footer', source), source) })
     .setTimestamp();
+
+  if (feedbackMessage) {
+    embed.addFields({
+      name: isEn ? '🔍 Exploration & Search Result' : '🔍 Resultado da Exploração',
+      value: feedbackMessage,
+      inline: false,
+    });
+  }
 
   // Linha 1: Ações Principais
   const actionRow = new ActionRowBuilder().addComponents(
@@ -119,21 +229,20 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
       .setEmoji(getEmoji('BOOK'))
       .setStyle(ButtonStyle.Secondary),
     new ButtonBuilder()
-      .setCustomId(`gloom:trace_prompt:${userId}`)
-      .setLabel(t('gloom.explore.btnTrace', source))
-      .setEmoji('✍️')
-      .setStyle(ButtonStyle.Secondary)
-      .setDisabled(user.phantomCoins < 15),
+      .setCustomId(`gloom:relics:${userId}`)
+      .setLabel(t('gloom.explore.btnRelics', source))
+      .setEmoji('🏺')
+      .setStyle(ButtonStyle.Secondary),
     new ButtonBuilder()
       .setCustomId(`gloom:boss:${userId}`)
       .setLabel(t('gloom.explore.btnBoss', source))
-      .setEmoji(getEmoji('SKULL'))
+      .setEmoji('☠️')
       .setStyle(ButtonStyle.Danger)
   );
 
   // Linha 2: Botões Direcionais de Navegação com Emojis Contextuais e Tiers
   const neighbors = gloomGraph.getAvailableNeighbors(location.id, user, tide);
-  const navButtons = neighbors.slice(0, 5).map((n) => {
+  const navButtons = neighbors.slice(0, 4).map((n) => {
     const destName = isEn ? n.location.name.en : n.location.name.pt;
     const locEmojiKey = 'MAP';
     const btn = new ButtonBuilder()
@@ -152,6 +261,17 @@ function buildLocationView(userId, guildId, source = null, feedbackMessage = '')
     }
     return btn;
   });
+
+  // Inclui acesso direto à Câmara do Colosso (Chefe) na linha de locomoção
+  if (navButtons.length < 5) {
+    navButtons.push(
+      new ButtonBuilder()
+        .setCustomId(`gloom:boss:${userId}`)
+        .setLabel(isEn ? 'Boss Chamber' : 'Câmara do Colosso')
+        .setEmoji('☠️')
+        .setStyle(ButtonStyle.Danger)
+    );
+  }
 
   const components = [actionRow];
   if (navButtons.length > 0) {
@@ -302,20 +422,6 @@ function buildNegotiationView(
     tensionBoxes.push(currentScore >= i ? '🟩' : '⬜');
   }
   const tensionLine = `🎭 **Tensão & Afinidade:** [${tensionBoxes.join('')}] (${currentScore}/${targetScore} pts) • **Fase ${phase}/${totalRounds}** (T${tier})`;
-  descParts.push(`\n${tensionLine}`);
-  descParts.push(`🪙 ${t('gloom.explore.phantomCoins', source, { coins: user.phantomCoins })}`);
-
-  const embed = new EmbedBuilder()
-    .setColor(PYXIE_COLORS.neonPink)
-    .setTitle(t('gloom.negotiate.title', source, { name: spiritName }))
-    .setDescription(descParts.join('\n'))
-    .setFooter({ text: t('gloom.negotiate.footer', source) })
-    .setTimestamp();
-
-  if (spiritAttachment) {
-    embed.setThumbnail(`attachment://${spiritImageName}`);
-  }
-
   // Opções de Diálogo da Fase
   let choices = (encounter && Array.isArray(encounter.options))
     ? encounter.options
@@ -334,12 +440,30 @@ function buildNegotiationView(
   }
 
   const shuffledChoices = shuffleArray(choices.slice(0, 3));
-  const choiceButtons = shuffledChoices.map((c) => {
+  const letters = ['A', 'B', 'C'];
+
+  const choicesText = shuffledChoices.map((c, i) => {
     const rawLabel = isEn ? (c.text?.en || c.label?.en) : (c.text?.pt || c.label?.pt);
-    const label = (rawLabel || '...').slice(0, 60);
+    return `**[ ${letters[i]} ]** 💬 *« ${rawLabel || '...'} »*`;
+  }).join('\n\n');
+
+  descParts.push(`\n${choicesText}`);
+
+  const embed = new EmbedBuilder()
+    .setColor(PYXIE_COLORS.neonPink)
+    .setTitle(t('gloom.negotiate.title', source, { name: spiritName }))
+    .setDescription(descParts.join('\n'))
+    .setFooter({ text: pyxieFooter(t('gloom.negotiate.footer', source), source) })
+    .setTimestamp();
+
+  if (spiritAttachment) {
+    embed.setThumbnail(`attachment://${spiritImageName}`);
+  }
+
+  const choiceButtons = shuffledChoices.map((c, i) => {
     return new ButtonBuilder()
       .setCustomId(`gloom:c:${userId}:${encounterTag}:${spiritTag}:${c.id}:${phase}:${currentScore}:${neutralsCount}`)
-      .setLabel(label)
+      .setLabel(`[ ${letters[i]} ]`)
       .setStyle(ButtonStyle.Primary);
   });
 
@@ -617,10 +741,10 @@ async function handleGloomInteraction(interaction) {
     // Feedback de loot (moedas ou itens vasculhados)
     let lootFeedback = '';
     if (result.rewardCoins > 0) {
-      lootFeedback = t('gloom.explore.forageSuccessCoins', interaction, { coins: result.rewardCoins });
+      lootFeedback = getForageSuccessCoinsText(result.rewardCoins, interaction);
     } else if (result.rewardItem) {
       const itemName = isEn ? result.rewardItem.name.en : result.rewardItem.name.pt;
-      lootFeedback = t('gloom.explore.forageSuccessItem', interaction, { item: itemName });
+      lootFeedback = getForageSuccessItemText(itemName, interaction);
     }
 
     if (result.openedRarePortal) {
@@ -778,6 +902,9 @@ async function handleGloomInteraction(interaction) {
     let text = '';
     if (result.recruited) {
       text = reactionPrefix + t('gloom.negotiate.successWit', interaction, { spirit: spiritName, coins: result.rewardCoins });
+      if (result.isDuplicate) {
+        text += '\n\n' + t('gloom.negotiate.duplicateEssence', interaction, { coins: result.duplicateBonus });
+      }
     } else if (result.criticalFailure) {
       const loc = LOCATIONS[result.bannedLocation] || LOCATIONS.portao_penumbra;
       const locName = isEn ? loc.name.en : loc.name.pt;
@@ -857,6 +984,9 @@ async function handleGloomInteraction(interaction) {
     let text = '';
     if (result.success && result.recruited) {
       text = t('gloom.negotiate.successBribe', interaction, { spirit: spiritName, cost: result.cost });
+      if (result.isDuplicate) {
+        text += '\n\n' + t('gloom.negotiate.duplicateEssence', interaction, { coins: result.duplicateBonus });
+      }
     } else if (result.reason === 'insufficient_energy') {
       text = isEn ? `⚡ Insufficient stamina! Requires ${result.requiredEnergy} stamina.` : `⚡ Vigor insuficiente! Requer ${result.requiredEnergy} pontos de vigor.`;
     } else if (result.reason === 'missing_relic_t4_t5') {
@@ -880,6 +1010,9 @@ async function handleGloomInteraction(interaction) {
     let text = '';
     if (result.success && result.recruited) {
       text = t('gloom.negotiate.bailoutSuccess', interaction, { spirit: spiritName, cost: result.cost });
+      if (result.isDuplicate) {
+        text += '\n\n' + t('gloom.negotiate.duplicateEssence', interaction, { coins: result.duplicateBonus });
+      }
     } else {
       text = t('gloom.explore.insufficientCoins', interaction, { cost: result.cost || 100 });
     }
@@ -901,6 +1034,36 @@ async function handleGloomInteraction(interaction) {
     await interaction.deferUpdate();
     const locView = buildLocationView(interaction.user.id, guildId, interaction);
     return interaction.editReply(locView);
+  }
+
+  // 6.1 Visualização das Relíquias do Bosque
+  if (action === 'relics') {
+    await interaction.deferUpdate();
+    const relicsView = buildRelicsView(interaction.user.id, interaction);
+    return interaction.editReply(relicsView);
+  }
+
+  // 6.2 Seleção de Familiar no Select Menu do Grimório
+  if (action === 'select_familiar') {
+    const spiritId = interaction.values?.[0];
+    const { equipFamiliar } = require('../services/gloomRealm');
+    const { buildGrimoireView } = require('./grimorio');
+    const result = equipFamiliar(interaction.user.id, spiritId);
+    let msg = '';
+    const sp = SPIRITS[spiritId];
+    const spName = isEn ? sp?.name?.en : sp?.name?.pt;
+    if (result.success) {
+      if (result.action === 'unequipped') {
+        msg = t('gloom.grimoire.unbindSuccess', interaction, { spirit: spName });
+      } else {
+        msg = t('gloom.grimoire.bindSuccess', interaction, { spirit: spName });
+      }
+    } else {
+      msg = t('gloom.grimoire.maxSlots', interaction);
+    }
+    await interaction.deferUpdate();
+    const grimView = buildGrimoireView(interaction.user.id, interaction, msg);
+    return interaction.editReply(grimView);
   }
 
   // 7. Abertura do Grimório a partir da exploração
@@ -1037,6 +1200,9 @@ async function handleGloomInteraction(interaction) {
     if (res.success) {
       const resName = isEn ? res.resultSpirit?.name?.en : res.resultSpirit?.name?.pt;
       feedback = t('gloom.fusion.success', interaction, { spirit: resName, tier: res.resultSpirit?.tier || 3 });
+      if (res.isDuplicate) {
+        feedback += '\n\n' + t('gloom.fusion.duplicateEssence', interaction, { coins: res.duplicateBonus });
+      }
     } else if (res.reason === 'insufficient_coins') {
       feedback = t('gloom.fusion.insufficientCoins', interaction, { cost: res.cost });
     } else {
@@ -1174,23 +1340,9 @@ module.exports = {
     .setDescription("Explore the gothic pixel realms of Pyxie's Grove and negotiate with spirits.")
     .setDescriptionLocalizations({
       'pt-BR': 'Explore os cenários pixel góticos do Bosque da Pyxie e negocie com espíritos.',
-    })
-    .addStringOption((option) =>
-      option
-        .setName('destination')
-        .setDescription('Specific room or chamber to travel directly to')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Sala ou câmara específica para onde deseja viajar diretamente',
-        })
-        .setRequired(false)
-    ),
+    }),
   async executeSlash({ interaction }) {
     const guildId = interaction.guildId || 'global';
-    const dest = interaction.options.getString('destination');
-    if (dest) {
-      const view = handleDirectMove(interaction.user.id, guildId, interaction, dest);
-      return interaction.editReply(view);
-    }
     const view = buildLocationView(interaction.user.id, guildId, interaction);
     await interaction.editReply(view);
   },
@@ -1212,6 +1364,7 @@ module.exports = {
   isGloomInteraction,
   handleGloomInteraction,
   buildLocationView,
+  buildRelicsView,
   buildMerchantView,
   buildEngineerView,
   buildBossView,

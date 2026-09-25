@@ -133,21 +133,7 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
         .setPlaceholder(t('inventory.selectRelicPlaceholder', source))
         .addOptions(relicOptions);
 
-      const gloomActionRow = new ActionRowBuilder();
-
-      if (selectedItemId && RELICS[selectedItemId] && (gUser.inventory?.[selectedItemId] || 0) > 0) {
-        const rDef = RELICS[selectedItemId];
-        const sellVal = Math.max(5, Math.floor((rDef.cost || 20) * 0.5));
-        gloomActionRow.addComponents(
-          new ButtonBuilder()
-            .setCustomId(`inv_sell_relic:${selectedItemId}:bosque:${userId}`)
-            .setLabel(t('inventory.sellRelic', source, { coins: sellVal }))
-            .setEmoji('🪙')
-            .setStyle(ButtonStyle.Secondary)
-        );
-      }
-
-      gloomActionRow.addComponents(
+      const gloomActionRow = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId(`gloom:view:${userId}`)
           .setLabel(isEn ? 'Explore Gloom Realm' : 'Explorar Bosque')
@@ -397,26 +383,11 @@ async function handleInventoryInteraction(interaction) {
     });
   }
 
-  // 5. Vender Relíquia do Bosque por Phantom Coins
+  // 5. Relíquias não podem ser vendidas
   if (action === 'inv_sell_relic') {
-    const relicId = parts[1];
-    const sellRes = sellRelic(userId, relicId, 1);
-
-    if (!sellRes.success) {
-      return interaction.reply({
-        content: `❌ ${sellRes.message || t('common.error', interaction)}`,
-        flags: 64,
-      });
-    }
-
-    const rName = sellRes.relic ? (isEn ? sellRes.relic.name.en : sellRes.relic.name.pt) : relicId;
-    const embed = buildInventoryEmbed(userId, userTag, null, interaction, 'bosque');
-    const components = buildInventoryComponents(userId, null, interaction, 'bosque');
-
-    return interaction.update({
-      content: t('inventory.relicSoldSuccess', interaction, { relic: rName, coins: sellRes.totalCoins }),
-      embeds: [embed],
-      components,
+    return interaction.reply({
+      content: t('inventory.relicNoSell', interaction),
+      flags: 64,
     });
   }
 }

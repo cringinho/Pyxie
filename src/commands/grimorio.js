@@ -64,21 +64,30 @@ function buildGrimoireView(userId, source = null, feedbackMessage = '') {
 
   const components = [];
 
-  // Botões de Equipar/Desequipar (até 5 espíritos da coleção)
+  // Menu de Seleção de Espíritos para Equipar/Desequipar (até 25 espíritos)
   if (collected.length > 0) {
-    const equipButtons = collected.slice(0, 5).map((sp) => {
+    const selectOptions = collected.slice(0, 25).map((sp) => {
       const spName = isEn ? sp.name.en : sp.name.pt;
       const isEq = (user.equippedFamiliars || []).includes(sp.id);
-      const btnText = isEq
-        ? t('gloom.grimoire.btnUnbind', source, { spirit: spName })
-        : t('gloom.grimoire.btnBind', source, { spirit: spName });
-      return new ButtonBuilder()
-        .setCustomId(`gloom:equip:${userId}:${sp.id}`)
-        .setLabel(btnText.slice(0, 80))
-        .setStyle(isEq ? ButtonStyle.Danger : ButtonStyle.Success);
+      const auraName = isEn ? sp.aura?.name?.en : sp.aura?.name?.pt;
+      const actionHint = isEq
+        ? (isEn ? 'Click to unbind' : 'Clique para desequipar')
+        : (isEn ? 'Click to bind' : 'Clique para equipar');
+      return {
+        label: `${isEq ? '⭐ ' : ''}${spName} (T${sp.tier})`.slice(0, 100),
+        value: sp.id,
+        description: `${auraName || 'Aura'} • ${actionHint}`.slice(0, 100),
+        emoji: isEq ? '⭐' : '🔮',
+        default: false,
+      };
     });
 
-    components.push(new ActionRowBuilder().addComponents(equipButtons.slice(0, 5)));
+    const familiarSelect = new StringSelectMenuBuilder()
+      .setCustomId(`gloom:select_familiar:${userId}`)
+      .setPlaceholder(isEn ? '🔮 Select a familiar to bind or unbind...' : '🔮 Escolha um espírito para equipar ou desequipar...')
+      .addOptions(selectOptions);
+
+    components.push(new ActionRowBuilder().addComponents(familiarSelect));
   }
 
   const { getEmoji } = require('../utils/appEmojis');
