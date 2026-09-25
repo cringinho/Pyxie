@@ -92,7 +92,7 @@ function createOwnerMagicToken(userId) {
   const sig = crypto.createHmac('sha256', ADMIN_SECRET).update(payload).digest('hex');
   const token = Buffer.from(JSON.stringify({ payload, sig })).toString('base64url');
 
-  const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org:3000';
+  const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
   const url = `${baseUrl.replace(/\/$/, '')}/admin?token=${token}`;
 
   return {
@@ -101,6 +101,19 @@ function createOwnerMagicToken(userId) {
     url,
     expiresAt,
   };
+}
+
+/**
+ * Cria uma sessão administrativa de 12h para login com chave mestra (PANEL_SECRET).
+ */
+function createMasterAdminSession() {
+  const sessionToken = crypto.randomBytes(32).toString('hex');
+  activeAdminSessions.set(sessionToken, {
+    userId: OWNER_SNOWFLAKE,
+    createdAt: Date.now(),
+    expiresAt: Date.now() + SESSION_TTL_MS,
+  });
+  return sessionToken;
 }
 
 /**
@@ -184,6 +197,7 @@ module.exports = {
   normalizeClientIp,
   isIpAllowed,
   createOwnerMagicToken,
+  createMasterAdminSession,
   verifyMagicToken,
   isValidAdminSession,
   isMasterSecretValid,
