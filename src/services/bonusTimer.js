@@ -47,7 +47,7 @@ function createBonusSession(userId, action = 'item_bonus', metadata = {}, lang =
   const hmac = crypto.createHmac('sha256', BONUS_SECRET).update(payload).digest('hex');
   const token = Buffer.from(JSON.stringify({ payload, sig: hmac })).toString('base64url');
 
-  const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org:3000';
+  const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
   const url = `${baseUrl.replace(/\/$/, '')}/bonus?token=${token}&lang=${finalLang}&action=${finalAction}`;
 
   return {

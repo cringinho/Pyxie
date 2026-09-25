@@ -386,6 +386,70 @@
         font-size: 0.82rem;
         color: #94a3b8;
       }
+
+      /* Pyxie Promo & Support Banner */
+      .pyxie-promo-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        max-width: 520px;
+        margin: 20px auto 0;
+        padding: 12px 18px;
+        background: linear-gradient(135deg, rgba(147, 51, 234, 0.16), rgba(244, 63, 94, 0.14));
+        border: 1px solid rgba(192, 132, 252, 0.35);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: pointer;
+      }
+      .pyxie-promo-banner:hover {
+        transform: translateY(-2px);
+        border-color: rgba(244, 114, 182, 0.6);
+        box-shadow: 0 8px 30px rgba(244, 63, 94, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+      .pyxie-promo-banner .promo-icon {
+        font-size: 26px;
+        line-height: 1;
+        flex-shrink: 0;
+        filter: drop-shadow(0 0 10px rgba(244, 114, 182, 0.5));
+      }
+      .pyxie-promo-banner .promo-content {
+        flex: 1;
+        text-align: left;
+        min-width: 0;
+      }
+      .pyxie-promo-banner .promo-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .pyxie-promo-banner .promo-desc {
+        font-size: 0.78rem;
+        color: #cbd5e1;
+        line-height: 1.3;
+      }
+      .pyxie-promo-banner .promo-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #f43f5e, #9333ea);
+        color: #ffffff;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+        flex-shrink: 0;
+        box-shadow: 0 2px 10px rgba(244, 63, 94, 0.4);
+      }
     </style>
   </head>
   <body>
@@ -496,19 +560,15 @@
           </div>
         </div>
 
-        <!-- Banner Rodapé (468x60 no Desktop / 320x50 no Mobile) -->
-        <div class="ad-banner-box ad-desktop-only">
-          <script>
-            atOptions = {
-              'key' : 'fbb18d996650a174db4ff64b5fba394f',
-              'format' : 'iframe',
-              'height' : 60,
-              'width' : 468,
-              'params' : {}
-            };
-          </script>
-          <script src="https://www.highrevenueformat.com/fbb18d996650a174db4ff64b5fba394f/invoke.js"></script>
-        </div>
+        <!-- Banner Promocional da Pyxie (Apoio & Bônus) -->
+        <a href="https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813" target="_blank" rel="noopener" class="pyxie-promo-banner ad-desktop-only">
+          <span class="promo-icon">🎁</span>
+          <div class="promo-content">
+            <div class="promo-title" id="promoTitle">Apoie a Pyxie & Ganhe Bônus</div>
+            <div class="promo-desc" id="promoDesc">Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!</div>
+          </div>
+          <span class="promo-cta" id="promoBtn">Apoiar ✦</span>
+        </a>
 
         <div class="ad-banner-box ad-mobile-only">
           <script>
@@ -651,6 +711,9 @@
           sponsorBtn: '👉 Apoiar Servidor com Patrocinador',
           sponsorBadge: 'Patrocinado com carinho para a comunidade Pyxie 🐾',
           connErrorMsg: 'Erro de conexão. Verifique sua internet e tente novamente.',
+          promoTitle: 'Apoie a Pyxie & Ganhe Bônus',
+          promoDesc: 'Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!',
+          promoBtn: 'Apoiar ✦',
         },
         en: {
           metaTitle: isGloomBoss ? "Pyxie • Pyxie's Grove • Extra Strike" : 'Pyxie • Enchanted Magic Bonus',
@@ -682,6 +745,9 @@
           sponsorBtn: '👉 Support Server via Sponsor',
           sponsorBadge: 'Sponsored with love for the Pyxie community 🐾',
           connErrorMsg: 'Connection error. Please check your internet connection and try again.',
+          promoTitle: 'Support Pyxie & Earn Bonus',
+          promoDesc: 'Support the Cringelândia community and unlock magical rewards!',
+          promoBtn: 'Support ✦',
         }
       };
 
@@ -721,6 +787,13 @@
       step3TextEl.innerHTML = S.step3;
       rewardBoxEl.innerHTML = S.rewardBox;
       sponsorBtnEl.innerText = S.sponsorBtn;
+
+      const promoTitleEl = document.getElementById('promoTitle');
+      if (promoTitleEl) promoTitleEl.innerText = S.promoTitle;
+      const promoDescEl = document.getElementById('promoDesc');
+      if (promoDescEl) promoDescEl.innerText = S.promoDesc;
+      const promoBtnEl = document.getElementById('promoBtn');
+      if (promoBtnEl) promoBtnEl.innerText = S.promoBtn;
 
       if (!token) {
         timerCardEl.style.display = 'none';
