@@ -236,6 +236,17 @@ try {
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'server.js')]);
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'index.js')]);
 
+  // 13. Teste do Terminal Operacional de Logs e Telemetria
+  const adminHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'admin.html'), 'utf8');
+  assert.ok(adminHtml.includes('telemetry-grid'), 'admin.html deve conter a grade de telemetria HUD');
+  assert.ok(adminHtml.includes('terminal-window'), 'admin.html deve conter a janela do terminal operacional');
+  assert.ok(adminHtml.includes('terminal-cli-bar'), 'admin.html deve conter o prompt interativo de CLI');
+  assert.ok(!adminHtml.includes('terminal.innerText = data.logs.join'), 'admin.html não pode utilizar join direto de objetos de logs');
+
+  const serverSource = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+  assert.ok(serverSource.includes('/api/admin/terminal/exec'), 'server.js deve implementar o endpoint de execução CLI do terminal');
+  assert.ok(serverSource.includes('getSystemTelemetry'), 'server.js deve implementar a telemetria do sistema');
+
   const { lockFilePath: exportedLockPath, isProcessAlive } = require('../src/utils/botUtils');
   assert.equal(exportedLockPath, lockFile, 'lockFilePath exportado deve apontar para .botmelody.lock');
   assert.equal(isProcessAlive(process.pid), true, 'O processo atual deve ser detectado como vivo.');

@@ -787,20 +787,492 @@
         gap: 8px;
       }
 
-      /* Terminal Logs */
-      .terminal-wrap {
-        background: #040209;
-        border: 1px solid rgba(139, 92, 246, 0.3);
+      /* ==========================================================
+         TELEMETRIA & TERMINAL OPERACIONAL DE LOGS (TAB 4)
+         ========================================================== */
+      .telemetry-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+
+      .telemetry-card {
+        background: rgba(18, 10, 36, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(139, 92, 246, 0.25);
         border-radius: 16px;
-        padding: 16px;
-        height: 440px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: all 0.25s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .telemetry-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--purple-accent), transparent);
+        opacity: 0.7;
+      }
+
+      .telemetry-card:hover {
+        border-color: rgba(192, 132, 252, 0.5);
+        box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15);
+      }
+
+      .telemetry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+
+      .telemetry-val {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+      }
+
+      .telemetry-sub {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        line-height: 1.4;
+      }
+
+      .mem-bar-wrap {
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 4px;
+      }
+
+      .mem-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #10b981, #38bdf8);
+        border-radius: 999px;
+        transition: width 0.4s ease, background 0.4s ease;
+      }
+
+      .mem-bar-fill.warn {
+        background: linear-gradient(90deg, #f59e0b, #ef4444);
+      }
+
+      .mem-bar-fill.danger {
+        background: linear-gradient(90deg, #ef4444, #dc2626);
+      }
+
+      /* Control Toolbar */
+      .terminal-toolbar {
+        background: rgba(15, 8, 30, 0.85);
+        border: 1px solid rgba(139, 92, 246, 0.25);
+        border-radius: 16px;
+        padding: 12px 16px;
+        margin-bottom: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .toolbar-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .search-box-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 12px;
+        padding: 6px 12px;
+        flex: 1;
+        min-width: 240px;
+        max-width: 420px;
+      }
+
+      .search-box-wrap input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #fff;
+        font-size: 0.82rem;
+        font-family: 'JetBrains Mono', monospace;
+        width: 100%;
+      }
+
+      .filter-pills {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .filter-pill {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 4px 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all 0.2s ease;
+        user-select: none;
+      }
+
+      .filter-pill:hover {
+        background: rgba(139, 92, 246, 0.2);
+        color: #fff;
+      }
+
+      .filter-pill.active {
+        background: var(--purple-accent);
+        border-color: var(--purple-glow);
+        color: #fff;
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+      }
+
+      .filter-pill.pill-error.active {
+        background: #ef4444;
+        border-color: #f87171;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+      }
+
+      .filter-pill.pill-warn.active {
+        background: #f59e0b;
+        border-color: #fbbf24;
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+      }
+
+      .filter-pill.pill-success.active {
+        background: #10b981;
+        border-color: #34d399;
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+      }
+
+      .filter-pill.pill-cmd.active {
+        background: #0284c7;
+        border-color: #38bdf8;
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+      }
+
+      .filter-pill.pill-system.active {
+        background: #7c3aed;
+        border-color: #a855f7;
+        box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+      }
+
+      .toolbar-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .ctrl-select {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 10px;
+        padding: 6px 10px;
+        color: #cbd5e1;
+        font-size: 0.75rem;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .ctrl-select:focus {
+        border-color: var(--purple-glow);
+      }
+
+      .btn-autoscroll {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        color: #34d399;
+        border-radius: 10px;
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .btn-autoscroll.paused {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.4);
+        color: #f87171;
+      }
+
+      /* Terminal Window Frame */
+      .terminal-window {
+        background: #05020c;
+        border: 1px solid rgba(139, 92, 246, 0.35);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .terminal-chrome {
+        background: linear-gradient(90deg, #100820 0%, #170d2e 100%);
+        border-bottom: 1px solid rgba(139, 92, 246, 0.25);
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .terminal-dots {
+        display: flex;
+        gap: 6px;
+      }
+
+      .terminal-dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+      }
+
+      .dot-red { background: #ef4444; }
+      .dot-yellow { background: #eab308; }
+      .dot-green { background: #22c55e; }
+
+      .terminal-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .live-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(34, 197, 94, 0.15);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #4ade80;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      .live-pulse {
+        width: 6px;
+        height: 6px;
+        background: #22c55e;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.3; transform: scale(0.8); }
+      }
+
+      /* Terminal Logs Screen */
+      .terminal-screen {
+        height: 460px;
         overflow-y: auto;
+        padding: 12px 14px;
         font-family: 'JetBrains Mono', monospace;
         font-size: 0.78rem;
-        line-height: 1.55;
-        color: #a7f3d0;
-        white-space: pre-wrap;
+        line-height: 1.6;
+        color: #cbd5e1;
+        scroll-behavior: smooth;
+      }
+
+      .terminal-screen::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .terminal-screen::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+      }
+
+      .terminal-screen::-webkit-scrollbar-thumb {
+        background: rgba(139, 92, 246, 0.3);
+        border-radius: 4px;
+      }
+
+      .terminal-screen::-webkit-scrollbar-thumb:hover {
+        background: rgba(139, 92, 246, 0.6);
+      }
+
+      .log-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 3px 6px;
+        border-radius: 6px;
+        transition: background 0.15s ease;
+      }
+
+      .log-row:hover {
+        background: rgba(139, 92, 246, 0.08);
+      }
+
+      .log-row.cli-entry {
+        background: rgba(56, 189, 248, 0.08);
+        border-left: 3px solid #38bdf8;
+        padding-left: 10px;
+      }
+
+      .log-num {
+        width: 32px;
+        text-align: right;
+        color: rgba(148, 163, 184, 0.3);
+        font-size: 0.7rem;
+        user-select: none;
+        flex-shrink: 0;
+      }
+
+      .log-time {
+        color: #64748b;
+        font-size: 0.72rem;
+        flex-shrink: 0;
+      }
+
+      .log-badge {
+        font-size: 0.66rem;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 4px;
+        letter-spacing: 0.5px;
+        flex-shrink: 0;
+      }
+
+      .badge-error {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.4);
+      }
+
+      .badge-warn {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.4);
+      }
+
+      .badge-success {
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+
+      .badge-cmd {
+        background: rgba(56, 189, 248, 0.2);
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.4);
+      }
+
+      .badge-system {
+        background: rgba(168, 85, 247, 0.2);
+        color: #c084fc;
+        border: 1px solid rgba(168, 85, 247, 0.4);
+      }
+
+      .badge-info {
+        background: rgba(100, 116, 139, 0.2);
+        color: #cbd5e1;
+        border: 1px solid rgba(100, 116, 139, 0.3);
+      }
+
+      .log-msg {
+        flex: 1;
         word-break: break-all;
+        white-space: pre-wrap;
+      }
+
+      .empty-logs {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        min-height: 200px;
+        color: var(--text-muted);
+        gap: 12px;
+        text-align: center;
+      }
+
+      /* Interactive Terminal CLI Prompt */
+      .terminal-cli-bar {
+        background: rgba(7, 3, 16, 0.95);
+        border-top: 1px solid rgba(139, 92, 246, 0.25);
+        padding: 8px 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .cli-prompt {
+        color: #34d399;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+        font-weight: 700;
+        user-select: none;
+        white-space: nowrap;
+      }
+
+      .cli-input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #38bdf8;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.82rem;
+        width: 100%;
+      }
+
+      .cli-input::placeholder {
+        color: rgba(148, 163, 184, 0.4);
+        font-style: italic;
+      }
+
+      .cli-send-btn {
+        background: var(--purple-accent);
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        padding: 4px 12px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+      }
+
+      .cli-send-btn:hover {
+        background: var(--purple-glow);
       }
 
       /* Toast Notification */
@@ -1049,16 +1521,143 @@
         </div>
       </section>
 
-      <!-- TAB 4: TERMINAL DE LOGS -->
+      <!-- TAB 4: TERMINAL DE LOGS & TELEMETRIA OPERACIONAL -->
       <section id="tab-logs" class="tab-panel">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-          <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.15rem;">📜 Registros Operacionais em Tempo Real</h3>
-          <div style="display: flex; gap: 10px;">
-            <button onclick="fetchLogs()" class="btn btn-secondary">🔄 Atualizar</button>
-            <button onclick="clearLogs()" class="btn btn-danger">🗑 Limpar</button>
+        <!-- Telemetry HUD Cards -->
+        <div class="telemetry-grid">
+          <!-- Card 1: Servidor & Plataforma -->
+          <div class="telemetry-card">
+            <div class="telemetry-header">
+              <span>🖥️ Plataforma & CPU</span>
+              <span id="badgeNodeVer" class="live-badge" style="color: #cbd5e1; border-color: rgba(255,255,255,0.2);">Node ...</span>
+            </div>
+            <div class="telemetry-val" id="teleCpuModel">Carregando...</div>
+            <div class="telemetry-sub" id="telePlatform">OS: ...</div>
+            <div class="telemetry-sub" id="teleLoadAvg">Load Avg: [0, 0, 0]</div>
+          </div>
+
+          <!-- Card 2: Memória RAM -->
+          <div class="telemetry-card">
+            <div class="telemetry-header">
+              <span>⚡ Memória RAM (RSS / Heap)</span>
+              <span id="teleMemPercent">0%</span>
+            </div>
+            <div class="telemetry-val" id="teleMemRss">0.0 <span style="font-size: 0.85rem; color: var(--text-muted);">MB</span></div>
+            <div class="mem-bar-wrap">
+              <div id="memBarFill" class="mem-bar-fill"></div>
+            </div>
+            <div class="telemetry-sub" id="teleHeapStats">Heap: 0MB / 0MB</div>
+            <div class="telemetry-sub" id="teleSysMem">Sistema: 0MB livres de 0MB</div>
+          </div>
+
+          <!-- Card 3: Uptime & Processos -->
+          <div class="telemetry-card">
+            <div class="telemetry-header">
+              <span>⏱️ Status & Uptime</span>
+              <span id="teleBotBadge" class="live-badge">ONLINE</span>
+            </div>
+            <div class="telemetry-val" id="teleServerUptime">0h 0m 0s</div>
+            <div class="telemetry-sub" id="teleBotUptime">Bot Uptime: 0h 0m</div>
+            <div class="telemetry-sub" id="telePidInfo">PID Web: ... | Bot: ...</div>
+          </div>
+
+          <!-- Card 4: Operação & Tráfego -->
+          <div class="telemetry-card">
+            <div class="telemetry-header">
+              <span>📊 Tráfego Discord</span>
+              <span style="color: var(--cyan-neon); font-size: 0.72rem; font-weight: 700;">LIVE</span>
+            </div>
+            <div class="telemetry-val" id="teleCommandsCount">0 <span style="font-size: 0.85rem; color: var(--text-muted);">cmds</span></div>
+            <div class="telemetry-sub" id="teleMsgsCount">Mensagens: 0</div>
+            <div class="telemetry-sub" id="teleUsersCount">Usuários únicos: 0</div>
           </div>
         </div>
-        <div id="terminalLogs" class="terminal-wrap">Carregando logs do sistema...</div>
+
+        <!-- Control Toolbar -->
+        <div class="terminal-toolbar">
+          <div class="toolbar-row">
+            <!-- Search & Counter -->
+            <div class="search-box-wrap">
+              <span>🔍</span>
+              <input type="text" id="logSearchInput" placeholder="Filtrar logs por texto ou regex (ex: error, interaction, /guild/i)..." oninput="applyLogFilters()" />
+              <button type="button" onclick="clearLogSearch()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem;" title="Limpar busca">✕</button>
+            </div>
+            <span id="logCounterBadge" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-muted);">0 / 0 linhas</span>
+
+            <!-- Filter Pills -->
+            <div class="filter-pills">
+              <span class="filter-pill active" data-level="ALL" onclick="setLogLevelFilter('ALL')">TODOS</span>
+              <span class="filter-pill pill-error" data-level="ERROR" onclick="setLogLevelFilter('ERROR')">ERROR</span>
+              <span class="filter-pill pill-warn" data-level="WARN" onclick="setLogLevelFilter('WARN')">WARN</span>
+              <span class="filter-pill pill-success" data-level="SUCCESS" onclick="setLogLevelFilter('SUCCESS')">SUCCESS</span>
+              <span class="filter-pill pill-cmd" data-level="CMD" onclick="setLogLevelFilter('CMD')">CMD</span>
+              <span class="filter-pill pill-system" data-level="SYSTEM" onclick="setLogLevelFilter('SYSTEM')">SYSTEM</span>
+            </div>
+          </div>
+
+          <div class="toolbar-row">
+            <!-- Playback & Speed Controls -->
+            <div class="toolbar-controls">
+              <button id="btnAutoScroll" type="button" class="btn-autoscroll" onclick="toggleAutoScroll()">
+                <span>📜 Auto-Scroll: ATIVO</span>
+              </button>
+              <select id="selectRefreshInterval" class="ctrl-select" onchange="changeRefreshInterval(this.value)">
+                <option value="1000">⚡ Atualização: 1s</option>
+                <option value="2000" selected>🔄 Atualização: 2s</option>
+                <option value="5000">⏱ Atualização: 5s</option>
+                <option value="0">⏸ Pausado</option>
+              </select>
+              <select id="selectLogLimit" class="ctrl-select" onchange="changeLogLimit(this.value)">
+                <option value="50">50 linhas</option>
+                <option value="100">100 linhas</option>
+                <option value="150" selected>150 linhas</option>
+                <option value="300">300 linhas</option>
+              </select>
+            </div>
+
+            <!-- Export & Action Buttons -->
+            <div class="toolbar-controls">
+              <button type="button" onclick="copyLogsToClipboard()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.75rem;" title="Copiar linhas visíveis">📋 Copiar</button>
+              <button type="button" onclick="exportLogsTxt()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.75rem;" title="Baixar relatório de logs em TXT">💾 Exportar .TXT</button>
+              <button type="button" onclick="fetchLogs()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.75rem;">🔄 Atualizar</button>
+              <button type="button" onclick="clearLogsServer()" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.75rem;">🗑 Limpar do Servidor</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminal Window Frame -->
+        <div class="terminal-window">
+          <div class="terminal-chrome">
+            <div class="terminal-dots">
+              <span class="terminal-dot dot-red"></span>
+              <span class="terminal-dot dot-yellow"></span>
+              <span class="terminal-dot dot-green"></span>
+            </div>
+            <div class="terminal-title">
+              <span>pyxie@oracle-cloud: /var/log/pyxie.log</span>
+            </div>
+            <div class="live-badge">
+              <span class="live-pulse"></span>
+              <span>LIVE STREAM</span>
+            </div>
+          </div>
+
+          <!-- Logs Screen -->
+          <div id="terminalScreen" class="terminal-screen">
+            <div class="empty-logs">
+              <span>⏳ Conectando aos fluxos de telemetria da Pyxie...</span>
+            </div>
+          </div>
+          <!-- Hidden fallback element for any backward compatibility -->
+          <div id="terminalLogs" style="display: none;"></div>
+
+          <!-- Terminal Interactive CLI Bar -->
+          <form class="terminal-cli-bar" onsubmit="handleTerminalCliSubmit(event)">
+            <span class="cli-prompt">pyxie@oracle:~$</span>
+            <input type="text" id="cliCommandInput" class="cli-input" placeholder="Digite um comando (ex: help, status, shopee, eco, ping, clear)..." autocomplete="off" onkeydown="handleCliKeyDown(event)" />
+            <button type="submit" class="cli-send-btn">Executar ↵</button>
+          </form>
+        </div>
       </section>
     </div>
 
@@ -1174,7 +1773,12 @@
         if (targetBtn) targetBtn.classList.add('active');
         if (targetPanel) targetPanel.classList.add('active');
 
-        if (tabId === 'logs') fetchLogs();
+        if (tabId === 'logs') {
+          fetchLogs();
+          startLogPolling();
+        } else {
+          stopLogPolling();
+        }
         if (tabId === 'emojis') fetchEmojisData();
         if (tabId === 'bot') loadBotConfig();
         if (tabId === 'shopee') fetchShopeeData();
@@ -1458,27 +2062,518 @@
         } catch (_) {}
       }
 
-      async function fetchLogs() {
-        const terminal = document.getElementById('terminalLogs');
+      /* ==========================================================
+         TERMINAL DE LOGS & TELEMETRIA OPERACIONAL (TAB 4)
+         ========================================================== */
+      let cachedRawLogs = [];
+      let activeLogLevelFilter = 'ALL';
+      let autoScrollActive = true;
+      let logPollIntervalMs = 2000;
+      let logPollTimer = null;
+      let selectedLogLimit = 150;
+      let isFetchingLogs = false;
+      let cliCommandHistory = [];
+      let cliHistoryCursor = -1;
+      let cliEntries = [];
+
+      function escapeLogHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function detectLogLevel(message) {
+        const m = (message || '').toUpperCase();
+        if (m.includes('[ERROR]') || m.includes('ERR_') || m.includes('EXCEPTION') || m.includes('REJECTION') || m.includes('FAILED')) {
+          return 'ERROR';
+        }
+        if (m.includes('[WARN]') || m.includes('WARNING') || m.includes('TIMEOUT') || m.includes('DEPRECATED')) {
+          return 'WARN';
+        }
+        if (m.includes('[SUCCESS]') || m.includes('CONECTADA') || m.includes('READY') || m.includes('SUCESSO') || m.includes('OPERACIONAL')) {
+          return 'SUCCESS';
+        }
+        if (m.includes('[CMD]') || m.includes('[COMMAND]') || m.includes('INTERACTION') || m.includes('SLASH') || m.includes('EXECUTADO')) {
+          return 'CMD';
+        }
+        if (m.includes('[SYSTEM]') || m.includes('[DIAGNOSTIC]') || m.includes('INICIANDO') || m.includes('TELEMETRIA') || m.includes('PM2')) {
+          return 'SYSTEM';
+        }
+        return 'INFO';
+      }
+
+      function formatLogTimestamp(ts) {
+        if (!ts) return '--:--:--.---';
         try {
-          const res = await fetch('/api/logs?limit=150');
-          const data = await res.json();
-          if (data.logs) {
-            terminal.innerText = data.logs.join('\n');
-            terminal.scrollTop = terminal.scrollHeight;
-          }
+          const d = new Date(ts);
+          if (isNaN(d.getTime())) return String(ts);
+          const h = String(d.getHours()).padStart(2, '0');
+          const m = String(d.getMinutes()).padStart(2, '0');
+          const s = String(d.getSeconds()).padStart(2, '0');
+          const ms = String(d.getMilliseconds()).padStart(3, '0');
+          return `${h}:${m}:${s}.${ms}`;
         } catch (_) {
-          terminal.innerText = 'Falha ao sincronizar logs.';
+          return String(ts);
         }
       }
 
-      async function clearLogs() {
-        try {
-          await fetch('/api/logs/clear', { method: 'POST' });
-          document.getElementById('terminalLogs').innerText = 'Logs limpos.';
-          showToast('Terminal limpo.', '🧹');
-        } catch (_) {}
+      function updateTelemetryUI(telemetry) {
+        if (!telemetry) return;
+
+        // Platform & CPU
+        const nodeEl = document.getElementById('badgeNodeVer');
+        if (nodeEl) nodeEl.innerText = telemetry.nodeVersion ? `Node ${telemetry.nodeVersion}` : 'Node.js';
+
+        const cpuModelEl = document.getElementById('teleCpuModel');
+        if (cpuModelEl) {
+          const model = telemetry.cpuModel ? telemetry.cpuModel.split('@')[0].trim() : 'Standard CPU';
+          cpuModelEl.innerText = `${telemetry.cpuCount || 1}x ${model}`;
+        }
+
+        const platEl = document.getElementById('telePlatform');
+        if (platEl) platEl.innerText = `OS: ${telemetry.platform || 'Linux'}`;
+
+        const loadEl = document.getElementById('teleLoadAvg');
+        if (loadEl && Array.isArray(telemetry.loadAvg)) {
+          loadEl.innerText = `Load: [${telemetry.loadAvg.join(', ')}]`;
+        }
+
+        // Memory
+        const rss = Number(telemetry.processMemRssMb || 0);
+        const memRssEl = document.getElementById('teleMemRss');
+        if (memRssEl) {
+          memRssEl.innerHTML = `${rss.toFixed(1)} <span style="font-size: 0.85rem; color: var(--text-muted);">MB RSS</span>`;
+        }
+
+        const pct = Math.min(100, Math.round((rss / 160) * 100));
+        const memPctEl = document.getElementById('teleMemPercent');
+        if (memPctEl) memPctEl.innerText = `${pct}%`;
+
+        const barFill = document.getElementById('memBarFill');
+        if (barFill) {
+          barFill.style.width = `${pct}%`;
+          barFill.className = 'mem-bar-fill' + (pct > 80 ? ' danger' : pct > 60 ? ' warn' : '');
+        }
+
+        const heapEl = document.getElementById('teleHeapStats');
+        if (heapEl) heapEl.innerText = `Heap: ${telemetry.heapUsedMb || 0}MB / ${telemetry.heapTotalMb || 0}MB`;
+
+        const sysEl = document.getElementById('teleSysMem');
+        if (sysEl) sysEl.innerText = `Sistema: ${telemetry.freeMemMb || 0}MB livres de ${telemetry.totalMemMb || 0}MB`;
+
+        // Uptime & Status
+        const botBadge = document.getElementById('teleBotBadge');
+        if (botBadge) {
+          if (telemetry.botRunning) {
+            botBadge.innerText = 'ONLINE';
+            botBadge.style.color = '#4ade80';
+            botBadge.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+          } else {
+            botBadge.innerText = 'OFFLINE';
+            botBadge.style.color = '#f87171';
+            botBadge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+          }
+        }
+
+        const sSec = telemetry.serverUptimeSec || 0;
+        const sH = Math.floor(sSec / 3600);
+        const sM = Math.floor((sSec % 3600) / 60);
+        const sS = sSec % 60;
+        const sUptimeEl = document.getElementById('teleServerUptime');
+        if (sUptimeEl) sUptimeEl.innerText = `${sH}h ${sM}m ${sS}s`;
+
+        const bSec = telemetry.botUptimeSec || 0;
+        const bH = Math.floor(bSec / 3600);
+        const bM = Math.floor((bSec % 3600) / 60);
+        const bUptimeEl = document.getElementById('teleBotUptime');
+        if (bUptimeEl) bUptimeEl.innerText = `Bot Uptime: ${bH}h ${bM}m`;
+
+        const pidEl = document.getElementById('telePidInfo');
+        if (pidEl) pidEl.innerText = `PID Web: ${telemetry.pid} | Bot: ${telemetry.botPid || 'PM2'}`;
+
+        // Discord Traffic
+        const cmdsEl = document.getElementById('teleCommandsCount');
+        if (cmdsEl && telemetry.stats) {
+          cmdsEl.innerHTML = `${telemetry.stats.commands || 0} <span style="font-size: 0.85rem; color: var(--text-muted);">cmds</span>`;
+        }
+
+        const msgsEl = document.getElementById('teleMsgsCount');
+        if (msgsEl && telemetry.stats) {
+          msgsEl.innerText = `Mensagens: ${telemetry.stats.messages || 0}`;
+        }
+
+        const usersEl = document.getElementById('teleUsersCount');
+        if (usersEl && telemetry.stats) {
+          usersEl.innerText = `Usuários únicos: ${telemetry.stats.uniqueUsersCount || telemetry.stats.users || 0}`;
+        }
       }
+
+      async function fetchLogs() {
+        if (isFetchingLogs) return;
+        isFetchingLogs = true;
+
+        try {
+          const res = await fetch(`/api/logs?limit=${selectedLogLimit}`);
+          if (res.status === 401 || res.status === 403) {
+            window.location.href = '/admin';
+            return;
+          }
+          const data = await res.json();
+          if (data && Array.isArray(data.logs)) {
+            // Data logs are newest-first from server; reverse for chronological flow in terminal
+            cachedRawLogs = [...data.logs].reverse();
+            if (data.telemetry) {
+              updateTelemetryUI(data.telemetry);
+            }
+            renderLogsScreen();
+          }
+        } catch (err) {
+          console.error('Erro ao buscar logs:', err);
+        } finally {
+          isFetchingLogs = false;
+        }
+      }
+
+      function renderLogsScreen() {
+        const screen = document.getElementById('terminalScreen');
+        if (!screen) return;
+
+        const searchVal = (document.getElementById('logSearchInput')?.value || '').trim();
+        let regex = null;
+        if (searchVal) {
+          if (searchVal.startsWith('/') && searchVal.lastIndexOf('/') > 0) {
+            try {
+              const lastSlash = searchVal.lastIndexOf('/');
+              const pattern = searchVal.slice(1, lastSlash);
+              const flags = searchVal.slice(lastSlash + 1);
+              regex = new RegExp(pattern, flags);
+            } catch (_) {
+              regex = new RegExp(searchVal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+            }
+          } else {
+            regex = new RegExp(searchVal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+          }
+        }
+
+        // Filter logs
+        const filtered = cachedRawLogs.filter((entry) => {
+          const rawMsg = typeof entry === 'object' && entry !== null ? (entry.message || '') : String(entry || '');
+          const level = detectLogLevel(rawMsg);
+
+          if (activeLogLevelFilter !== 'ALL' && level !== activeLogLevelFilter) {
+            return false;
+          }
+
+          if (regex && !regex.test(rawMsg)) {
+            return false;
+          }
+
+          return true;
+        });
+
+        // Update counter badge
+        const counterBadge = document.getElementById('logCounterBadge');
+        if (counterBadge) {
+          counterBadge.innerText = `${filtered.length} / ${cachedRawLogs.length} linhas`;
+        }
+
+        if (filtered.length === 0 && cliEntries.length === 0) {
+          screen.innerHTML = `
+            <div class="empty-logs">
+              <span>🔍 Nenhum registro encontrado para os filtros selecionados.</span>
+              <button type="button" onclick="resetLogFilters()" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 10px;">Resetar Filtros</button>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        let lineIdx = 1;
+
+        filtered.forEach((entry) => {
+          const rawMsg = typeof entry === 'object' && entry !== null ? (entry.message || '') : String(entry || '');
+          const time = typeof entry === 'object' && entry !== null ? entry.timestamp : null;
+          const formattedTime = formatLogTimestamp(time);
+          const level = detectLogLevel(rawMsg);
+          const badgeClass = `badge-${level.toLowerCase()}`;
+
+          // Syntax formatting
+          let safeMsg = escapeLogHtml(rawMsg);
+          safeMsg = safeMsg.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: #38bdf8; text-decoration: underline;">$1</a>');
+
+          html += `
+            <div class="log-row">
+              <span class="log-num">${lineIdx++}</span>
+              <span class="log-time">[${formattedTime}]</span>
+              <span class="log-badge ${badgeClass}">${level}</span>
+              <span class="log-msg">${safeMsg}</span>
+            </div>
+          `;
+        });
+
+        // Render any recent local CLI entries
+        cliEntries.forEach((c) => {
+          html += `
+            <div class="log-row cli-entry">
+              <span class="log-num">CLI</span>
+              <span class="log-time">[${c.time}]</span>
+              <span class="log-badge badge-cmd">EXEC</span>
+              <div class="log-msg" style="color: #38bdf8;">
+                <div><strong>pyxie@oracle:~$</strong> ${escapeLogHtml(c.cmd)}</div>
+                <div style="color: #e2e8f0; margin-top: 4px; white-space: pre-wrap;">${escapeLogHtml(c.output)}</div>
+              </div>
+            </div>
+          `;
+        });
+
+        screen.innerHTML = html;
+
+        if (autoScrollActive) {
+          screen.scrollTop = screen.scrollHeight;
+        }
+      }
+
+      function applyLogFilters() {
+        renderLogsScreen();
+      }
+
+      function clearLogSearch() {
+        const input = document.getElementById('logSearchInput');
+        if (input) input.value = '';
+        renderLogsScreen();
+      }
+
+      function setLogLevelFilter(level) {
+        activeLogLevelFilter = level;
+        document.querySelectorAll('.filter-pill').forEach((pill) => {
+          if (pill.getAttribute('data-level') === level) {
+            pill.classList.add('active');
+          } else {
+            pill.classList.remove('active');
+          }
+        });
+        renderLogsScreen();
+      }
+
+      function resetLogFilters() {
+        clearLogSearch();
+        setLogLevelFilter('ALL');
+      }
+
+      function toggleAutoScroll() {
+        autoScrollActive = !autoScrollActive;
+        updateAutoScrollButtonUI();
+        if (autoScrollActive) {
+          const screen = document.getElementById('terminalScreen');
+          if (screen) screen.scrollTop = screen.scrollHeight;
+        }
+      }
+
+      function updateAutoScrollButtonUI() {
+        const btn = document.getElementById('btnAutoScroll');
+        if (!btn) return;
+        if (autoScrollActive) {
+          btn.className = 'btn-autoscroll';
+          btn.innerHTML = '<span>📜 Auto-Scroll: ATIVO</span>';
+        } else {
+          btn.className = 'btn-autoscroll paused';
+          btn.innerHTML = '<span>⏸ Auto-Scroll: PAUSADO</span>';
+        }
+      }
+
+      function changeRefreshInterval(val) {
+        logPollIntervalMs = parseInt(val, 10);
+        if (logPollTimer) {
+          clearInterval(logPollTimer);
+          logPollTimer = null;
+        }
+        if (logPollIntervalMs > 0) {
+          logPollTimer = setInterval(fetchLogs, logPollIntervalMs);
+          showToast(`Atualização configurada para ${logPollIntervalMs / 1000}s.`, '⏱');
+        } else {
+          showToast('Atualização automática pausada.', '⏸');
+        }
+      }
+
+      function changeLogLimit(val) {
+        selectedLogLimit = parseInt(val, 10) || 150;
+        showToast(`Limite ajustado para ${selectedLogLimit} linhas.`, '📜');
+        fetchLogs();
+      }
+
+      function startLogPolling() {
+        if (!logPollTimer && logPollIntervalMs > 0) {
+          logPollTimer = setInterval(fetchLogs, logPollIntervalMs);
+        }
+      }
+
+      function stopLogPolling() {
+        if (logPollTimer) {
+          clearInterval(logPollTimer);
+          logPollTimer = null;
+        }
+      }
+
+      function copyLogsToClipboard() {
+        const screen = document.getElementById('terminalScreen');
+        if (!screen) return;
+        const rows = screen.querySelectorAll('.log-row');
+        if (!rows || rows.length === 0) {
+          showToast('Nenhum log visível para copiar.', '⚠️');
+          return;
+        }
+
+        const lines = [];
+        rows.forEach((r) => {
+          const time = r.querySelector('.log-time')?.innerText || '';
+          const badge = r.querySelector('.log-badge')?.innerText || '';
+          const msg = r.querySelector('.log-msg')?.innerText || '';
+          lines.push(`${time} [${badge}] ${msg}`);
+        });
+
+        navigator.clipboard.writeText(lines.join('\n')).then(() => {
+          showToast(`${lines.length} linhas de log copiadas!`, '📋');
+        }).catch(() => {
+          showToast('Falha ao copiar para a área de transferência.', '⚠️');
+        });
+      }
+
+      function exportLogsTxt() {
+        if (!cachedRawLogs || cachedRawLogs.length === 0) {
+          showToast('Nenhum log disponível para exportação.', '⚠️');
+          return;
+        }
+
+        const now = new Date();
+        const stamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        const header = [
+          '======================================================================',
+          '⚡ PYXIE OPERATIONAL & TELEMETRY LOGS DUMP',
+          `Data da Exportação: ${now.toLocaleString('pt-BR')}`,
+          `Total de Registros: ${cachedRawLogs.length}`,
+          '======================================================================\n',
+        ].join('\n');
+
+        const body = cachedRawLogs.map((e) => {
+          const t = e.timestamp || now.toISOString();
+          const m = typeof e === 'object' ? e.message : e;
+          return `[${t}] ${m}`;
+        }).join('\n');
+
+        const blob = new Blob([header + body], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pyxie-logs-${stamp}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('Logs exportados em pyxie-logs.txt!', '💾');
+      }
+
+      async function clearLogsServer() {
+        if (!confirm('Deseja realmente apagar o histórico de logs do servidor? Esta ação limpará o buffer operacional.')) {
+          return;
+        }
+        try {
+          const res = await fetch('/api/logs/clear', { method: 'POST' });
+          const data = await res.json();
+          if (data.success) {
+            cachedRawLogs = [];
+            cliEntries = [];
+            renderLogsScreen();
+            showToast('Logs do servidor apagados com sucesso.', '🧹');
+          }
+        } catch (_) {
+          showToast('Erro ao comunicar com o servidor.', '⚠️');
+        }
+      }
+
+      function clearLogs() {
+        clearLogsServer();
+      }
+
+      /* Terminal CLI Interactions */
+      async function handleTerminalCliSubmit(e) {
+        e.preventDefault();
+        const input = document.getElementById('cliCommandInput');
+        const cmd = (input.value || '').trim();
+        if (!cmd) return;
+
+        cliCommandHistory.push(cmd);
+        cliHistoryCursor = cliCommandHistory.length;
+        input.value = '';
+
+        if (cmd.toLowerCase() === 'clear') {
+          cliEntries = [];
+          renderLogsScreen();
+          showToast('Terminal limpo.', '🧹');
+          return;
+        }
+
+        const entry = {
+          time: formatLogTimestamp(new Date()),
+          cmd,
+          output: 'Executando comando no backend...',
+        };
+        cliEntries.push(entry);
+        renderLogsScreen();
+
+        try {
+          const res = await fetch('/api/admin/terminal/exec', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ command: cmd }),
+          });
+          const data = await res.json();
+          if (data.clear) {
+            cliEntries = [];
+            renderLogsScreen();
+          } else {
+            entry.output = data.output || (data.success ? 'Comando executado com sucesso.' : 'Falha na execução.');
+            renderLogsScreen();
+          }
+        } catch (err) {
+          entry.output = `Erro de comunicação: ${err.message}`;
+          renderLogsScreen();
+        }
+      }
+
+      function handleCliKeyDown(e) {
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (cliCommandHistory.length === 0) return;
+          if (cliHistoryCursor > 0) {
+            cliHistoryCursor--;
+            e.target.value = cliCommandHistory[cliHistoryCursor];
+          }
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (cliHistoryCursor < cliCommandHistory.length - 1) {
+            cliHistoryCursor++;
+            e.target.value = cliCommandHistory[cliHistoryCursor];
+          } else {
+            cliHistoryCursor = cliCommandHistory.length;
+            e.target.value = '';
+          }
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const screen = document.getElementById('terminalScreen');
+        if (screen) {
+          screen.addEventListener('scroll', () => {
+            const distanceFromBottom = screen.scrollHeight - screen.scrollTop - screen.clientHeight;
+            if (distanceFromBottom > 50 && autoScrollActive) {
+              autoScrollActive = false;
+              updateAutoScrollButtonUI();
+            }
+          });
+        }
+      });
 
       async function handleLogout() {
         try {
