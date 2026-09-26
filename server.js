@@ -437,10 +437,45 @@ app.post('/api/admin/shopee/check', requireAdminAuth, async (req, res) => {
   }
 });
 
-app.post('/api/admin/shopee/add', requireAdminAuth, (req, res) => {
+app.post('/api/admin/shopee/add', requireAdminAuth, async (req, res) => {
   try {
-    const result = shopeeManager.addItem(req.body || {});
+    const result = await shopeeManager.addItem(req.body || {});
     return res.json(result);
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/admin/shopee/sync-image', requireAdminAuth, async (req, res) => {
+  try {
+    const { id } = req.body || {};
+    if (!id) return res.status(400).json({ success: false, error: 'ID do anúncio obrigatório' });
+    const result = await shopeeManager.syncItemImage(id);
+    return res.json({ ...result, stats: shopeeManager.getSummaryStats() });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/admin/shopee/sync-all-images', requireAdminAuth, async (req, res) => {
+  try {
+    const { force } = req.body || {};
+    const result = await shopeeManager.syncAllItemImages({ force: !!force });
+    return res.json({ ...result, stats: shopeeManager.getSummaryStats(), items: shopeeManager.getAllItems() });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/admin/shopee/preview-link', requireAdminAuth, async (req, res) => {
+  try {
+    const { url } = req.body || {};
+    if (!url) return res.status(400).json({ success: false, error: 'URL obrigatória' });
+    const meta = await shopeeManager.extractShopeeMetadata(url);
+    if (!meta) {
+      return res.json({ success: false, message: 'Não foi possível extrair prévia automática do link' });
+    }
+    return res.json({ success: true, ...meta });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }

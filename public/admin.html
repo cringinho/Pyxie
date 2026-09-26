@@ -1398,7 +1398,11 @@
             </select>
 
             <button onclick="checkAllShopeeLinks()" id="btnCheckAll" class="btn btn-secondary">
-              <span>🔄 Verificar Todos os Links</span>
+              <span>🔄 Verificar Links</span>
+            </button>
+
+            <button onclick="syncAllShopeeImages()" id="btnSyncAllImages" class="btn btn-secondary" title="Buscar automaticamente fotos oficiais da Shopee para todos os links">
+              <span>📸 Sincronizar Fotos dos Links</span>
             </button>
 
             <button onclick="openAddModal()" class="btn btn-primary">
@@ -1670,6 +1674,21 @@
         </div>
         <form onsubmit="handleAddNewShopee(event)" class="modal-form">
           <div class="form-field">
+            <label>Seu Link de Afiliado (Shopee):</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="url" id="addLink" placeholder="https://s.shopee.com.br/..." required onchange="handleLinkInputAutoPreview(this.value)" />
+              <button type="button" onclick="autoDetectLinkDetails()" class="btn btn-secondary" style="white-space: nowrap; font-size: 0.78rem; padding: 6px 12px;">✨ Auto-Preencher</button>
+            </div>
+            <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Cole o link para buscar automaticamente a foto oficial e o título direto da Shopee.</p>
+          </div>
+          <div id="addPreviewBox" style="display: none; align-items: center; gap: 12px; padding: 8px 12px; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.35); border-radius: 12px; margin-bottom: 12px;">
+            <img id="addPreviewImg" src="" alt="Foto Shopee" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-glass);" />
+            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: #34d399;">✅ Foto Oficial Detectada!</div>
+              <div id="addPreviewTitle" style="font-size: 0.72rem; color: #cbd5e1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></div>
+            </div>
+          </div>
+          <div class="form-field">
             <label>Título do Produto:</label>
             <input type="text" id="addTitulo" placeholder="Ex: Pelúcia Kuromi Dark 25cm" required />
           </div>
@@ -1703,12 +1722,8 @@
             </div>
           </div>
           <div class="form-field">
-            <label>Seu Link de Afiliado (Offer Link):</label>
-            <input type="url" id="addLink" placeholder="https://s.shopee.com.br/..." required />
-          </div>
-          <div class="form-field">
-            <label>URL da Imagem (Thumbnail):</label>
-            <input type="url" id="addImagem" placeholder="https://..." />
+            <label>URL da Imagem (Preenchida automaticamente pelo link ou customizada):</label>
+            <input type="url" id="addImagem" placeholder="https://down-br.img.susercontent.com/file/..." />
           </div>
           <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px;">
             <button type="button" onclick="closeAddModal()" class="btn btn-secondary">Cancelar</button>
@@ -1877,6 +1892,9 @@
                   </div>
 
                   <div class="card-btn-links">
+                    <button onclick="syncSingleImage('${item.id}')" title="Buscar e atualizar foto oficial do link da Shopee" class="btn btn-secondary btn-mini" id="btn-sync-img-${item.id}">
+                      <span>📸 Foto</span>
+                    </button>
                     <button onclick="checkItemStatus('${item.id}')" title="Testar se o anúncio continua ativo na Shopee" class="btn btn-secondary btn-mini">
                       <span>🔍 Testar</span>
                     </button>
@@ -1985,8 +2003,121 @@
           showToast('Erro durante a verificação em lote.', '⚠️');
         } finally {
           btn.disabled = false;
-          btn.innerHTML = '<span>🔄 Verificar Todos os Links</span>';
+          btn.innerHTML = '<span>🔄 Verificar Links</span>';
         }
+      }
+
+      async function syncSingleImage(id) {
+        const btn = document.getElementById(`btn-sync-img-${id}`);
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span>⏳...</span>';
+        }
+        showToast('Buscando foto oficial da Shopee...', '📸');
+
+        try {
+          const res = await fetch('/api/admin/shopee/sync-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id }),
+          });
+          const data = await res.json();
+          if (data.success && data.image) {
+            const idx = allShopeeItems.findIndex((i) => i.id === String(id));
+            if (idx !== -1) {
+              allShopeeItems[idx].imagem = data.image;
+              if (data.title) allShopeeItems[idx].titulo = data.title;
+            }
+            // Atualiza thumbnail do card diretamente no DOM
+            const cardImg = document.querySelector(`#card-${id} .card-thumb`);
+            if (cardImg) cardImg.src = data.image;
+            showToast('Foto oficial da Shopee atualizada!', '📸');
+          } else {
+            showToast(data.error || 'Não foi possível extrair a foto deste link.', '⚠️');
+          }
+        } catch (_) {
+          showToast('Erro ao sincronizar foto do anúncio.', '⚠️');
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>📸 Foto</span>';
+          }
+        }
+      }
+
+      async function syncAllShopeeImages() {
+        const btn = document.getElementById('btnSyncAllImages');
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ Sincronizando Fotos...</span>';
+        showToast('Iniciando sincronização de fotos oficiais direto da Shopee...', '📸');
+
+        try {
+          const res = await fetch('/api/admin/shopee/sync-all-images', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ force: true }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            if (data.items) {
+              allShopeeItems = data.items;
+              filterShopeeItems();
+            } else {
+              await fetchShopeeData();
+            }
+            showToast(`Sucesso! ${data.updatedCount || 0} fotos oficiais sincronizadas!`, '🎉');
+          } else {
+            showToast('Erro ao sincronizar fotos em lote.', '⚠️');
+          }
+        } catch (_) {
+          showToast('Erro na conexão durante sincronização de fotos.', '⚠️');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<span>📸 Sincronizar Fotos dos Links</span>';
+        }
+      }
+
+      async function autoDetectLinkDetails() {
+        const link = (document.getElementById('addLink')?.value || '').trim();
+        if (!link) {
+          showToast('Cole o link do anúncio primeiro.', '⚠️');
+          return;
+        }
+        await handleLinkInputAutoPreview(link);
+      }
+
+      async function handleLinkInputAutoPreview(url) {
+        if (!url || !url.startsWith('http')) return;
+        showToast('Buscando dados e foto oficial da Shopee...', '⏳');
+
+        try {
+          const res = await fetch('/api/admin/shopee/preview-link', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url }),
+          });
+          const data = await res.json();
+          if (data.success && data.image) {
+            const imgInput = document.getElementById('addImagem');
+            const titInput = document.getElementById('addTitulo');
+            const previewBox = document.getElementById('addPreviewBox');
+            const previewImg = document.getElementById('addPreviewImg');
+            const previewTitle = document.getElementById('addPreviewTitle');
+
+            if (imgInput) imgInput.value = data.image;
+            if (titInput && (!titInput.value || titInput.value.includes('Pelúcia Kuromi'))) {
+              titInput.value = data.title || '';
+            }
+
+            if (previewBox && previewImg) {
+              previewImg.src = data.image;
+              if (previewTitle) previewTitle.innerText = data.title || 'Foto oficial detectada';
+              previewBox.style.display = 'flex';
+            }
+
+            showToast('Foto e título detectados com sucesso!', '✨');
+          }
+        } catch (_) {}
       }
 
       function copyLink(link) {

@@ -186,14 +186,173 @@ function toggleItemActive(id, activeState) {
 }
 
 /**
- * Adiciona um novo anúncio customizado à vitrine.
+ * Extrai imagem oficial (CDN da Shopee) e título a partir do link do produto.
  */
-function addItem(data) {
+async function extractShopeeMetadata(url) {
+  if (!url || typeof url !== 'string' || !url.startsWith('http')) return null;
+
+  const userAgents = [
+    'WhatsApp/2.21.12.21 N',
+    'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
+    'Twitterbot/1.0',
+  ];
+
+  for (const ua of userAgents) {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          'User-Agent': ua,
+          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+        },
+        redirect: 'follow',
+        signal: AbortSignal.timeout(6500),
+      });
+
+      if (!res.ok) continue;
+
+      const text = await res.text();
+      const ogImage =
+        text.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
+        text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+
+      const twImage =
+        text.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ||
+        text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i);
+
+      const titleMatch =
+        text.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i) ||
+        text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:title["']/i) ||
+        text.match(/<title[^>]*>([^<]+)<\/title>/i);
+
+      const image = ogImage ? ogImage[1] : twImage ? twImage[1] : null;
+      let title = titleMatch ? titleMatch[1].trim() : null;
+      if (title) {
+        title = title.replace(/\s*\|\s*Shopee.*$/i, '').trim();
+      }
+
+      if (image && (image.includes('susercontent.com') || image.includes('shopee.com') || image.startsWith('http'))) {
+        return {
+          image,
+          title,
+          url: res.url,
+        };
+      }
+    } catch (_) {}
+  }
+
+  return null;
+}
+
+/**
+ * Busca e atualiza a imagem oficial de um produto pelo seu link.
+ */
+async function syncItemImage(id) {
   const items = getAllItems();
+  const item = items.find((i) => i.id === String(id));
+  if (!item) return { success: false, error: 'Item não encontrado' };
+
+  let meta = null;
+  if (item.link) {
+    meta = await extractShopeeMetadata(item.link);
+  }
+  if (!meta && item.productLink) {
+    meta = await extractShopeeMetadata(item.productLink);
+  }
+
+  if (meta && meta.image) {
+    item.imagem = meta.image;
+    if (meta.title && (!item.titulo || item.titulo.includes('Achadinho'))) {
+      item.titulo = meta.title;
+    }
+    item.lastChecked = Date.now();
+    saveItems(items);
+    return { success: true, item, image: meta.image, title: meta.title };
+  }
+
+  return { success: false, error: 'Não foi possível extrair a imagem do link' };
+}
+
+/**
+ * Sincroniza em lote as imagens oficiais de todos os produtos cadastrados.
+ */
+async function syncAllItemImages({ concurrency = 3, force = false } = {}) {
+  const items = getAllItems();
+  const targets = force
+    ? items
+    : items.filter((i) => !i.imagem || i.imagem.includes('unsplash.com') || i.imagem.includes('via.placeholder'));
+
+  let updatedCount = 0;
+  const results = [];
+
+  for (let i = 0; i < targets.length; i += concurrency) {
+    const chunk = targets.slice(i, i + concurrency);
+    const chunkResults = await Promise.all(
+      chunk.map(async (item) => {
+        let meta = null;
+        if (item.link) meta = await extractShopeeMetadata(item.link);
+        if (!meta && item.productLink) meta = await extractShopeeMetadata(item.productLink);
+
+        if (meta && meta.image) {
+          item.imagem = meta.image;
+          if (meta.title && (!item.titulo || item.titulo.includes('Achadinho'))) {
+            item.titulo = meta.title;
+          }
+          item.lastChecked = Date.now();
+          updatedCount++;
+          return { id: item.id, success: true, image: meta.image };
+        }
+        return { id: item.id, success: false };
+      })
+    );
+    results.push(...chunkResults);
+    await new Promise((r) => setTimeout(r, 200));
+  }
+
+  if (updatedCount > 0) {
+    saveItems(items);
+  }
+
+  return {
+    success: true,
+    total: targets.length,
+    updatedCount,
+    results,
+  };
+}
+
+/**
+ * Adiciona um novo anúncio customizado à vitrine com auto-detecção de imagem se omitida.
+ */
+async function addItem(data) {
+  const items = getAllItems();
+  let imagem = data.imagem || '';
+  let titulo = data.titulo || '';
+
+  // Auto-detecta imagem e título a partir do link se omitidos ou se forem placeholder
+  if (!imagem || imagem.includes('unsplash.com') || !titulo) {
+    const targetUrl = data.link || data.offerLink || data.productLink;
+    if (targetUrl) {
+      const meta = await extractShopeeMetadata(targetUrl);
+      if (meta) {
+        if (!imagem || imagem.includes('unsplash.com')) {
+          imagem = meta.image || imagem;
+        }
+        if (!titulo && meta.title) {
+          titulo = meta.title;
+        }
+      }
+    }
+  }
+
+  if (!imagem) {
+    imagem = 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400';
+  }
+
   const newItem = {
     id: data.id ? String(data.id) : String(Date.now()),
-    titulo: data.titulo || 'Achadinho Pyxie',
-    titulo_en: data.titulo_en || data.titulo || 'Pyxie Find',
+    titulo: titulo || 'Achadinho Pyxie',
+    titulo_en: data.titulo_en || titulo || 'Pyxie Find',
     preco: data.preco || 'R$ 29,90',
     preco_en: data.preco_en || '$5.50',
     tag: data.tag || 'Achadinho',
@@ -204,7 +363,7 @@ function addItem(data) {
     comissao: data.comissao || 'R$ 3,00',
     productLink: data.productLink || '',
     link: data.link || data.offerLink || '',
-    imagem: data.imagem || 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400',
+    imagem,
     active: true,
     status: 'active',
     lastChecked: Date.now(),
@@ -274,6 +433,9 @@ module.exports = {
   getActiveItems,
   checkItemStatus,
   checkAllItems,
+  extractShopeeMetadata,
+  syncItemImage,
+  syncAllItemImages,
   toggleItemActive,
   addItem,
   deleteItem,
