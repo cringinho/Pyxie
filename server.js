@@ -6,7 +6,6 @@ const { spawn, execFile } = require('node:child_process');
 const { setWelcomeChannel, getWelcomeChannel, normalizeChannelValue, getEconomyConfig, setEconomyConfig } = require('./src/services/database');
 const { addLog: savePersistentLog, getLogs, getStats, updateStats, resetStats, clearLogs, flushSync } = require('./src/services/logging');
 const { lockFilePath, isProcessAlive } = require('./src/utils/botUtils');
-const shopeeManager = require('./src/services/shopeeManager');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -339,26 +338,8 @@ app.get('/api/commands', (req, res) => {
   });
 });
 
-// 2b. Vitrine Nativa de Achadinhos da Pyxie (Monetização contextual, anti-adblock e rotação dinâmica)
-app.get('/api/showcase', (req, res) => {
-  try {
-    const items = shopeeManager.getActiveItems({ shuffle: true, limit: 12 });
-    res.setHeader('Cache-Control', 'public, max-age=60');
-    return res.json({ success: true, items });
-  } catch (err) {
-    console.error('Erro ao ler vitrine Shopee:', err.message);
-    return res.status(500).json({ success: false, error: 'Falha ao carregar vitrine' });
-  }
-});
-
-// 3. Painel Administrativo do Proprietário (Restrito ao Snowflake 214153735281180673 e Chave Mestra)
+// 3. Painel Administrativo do Proprietário (Restrito a IP Allowlist e Snowflake 214153735281180673)
 app.get('/admin', (req, res) => {
-  // Ignora crawlers de redes sociais (Discordbot, etc.) para não queimar tokens ou quebrar visualização
-  const ua = (req.headers['user-agent'] || '').toLowerCase();
-  if (/discordbot|twitterbot|facebookexternalhit|whatsapp|telegrambot/.test(ua)) {
-    return res.send(`<!DOCTYPE html><html><head><title>Pyxie Console • Painel do Dono</title><meta property="og:title" content="Pyxie Console • Área do Proprietário"/><meta property="og:description" content="Painel confidencial exclusivo do criador da Pyxie."/><link rel="icon" href="https://cdn.discordapp.com/emojis/1548444149785694238.gif"/></head><body style="background:#07040e;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;"><h3>Pyxie Console</h3></body></html>`);
-  }
-
   const tokenParam = req.query.token;
   if (tokenParam) {
     const verifyResult = verifyMagicToken(tokenParam);
@@ -369,88 +350,27 @@ app.get('/admin', (req, res) => {
   }
 
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
-  const hasValidSession = (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
+  const hasValidSession = sessionCookie && isValidAdminSession(sessionCookie);
 
-  if (!hasValidSession) {
-    return res.sendFile(path.join(__dirname, 'public', 'admin_login.html'));
+  if (!hasValidSession && !isIpAllowed(req)) {
+    return res.status(403).send(`<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Forbidden • Pyxie</title>
+  </head>
+  <body style="background:#090514;color:#ef4444;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;padding:20px;">
+    <div style="text-align:center;max-width:440px;padding:32px;border:1px solid rgba(239,68,68,0.3);border-radius:20px;background:#130b24;box-shadow:0 10px 40px rgba(0,0,0,0.6);">
+      <div style="font-size:48px;margin-bottom:12px;">🛡️</div>
+      <h1 style="font-size:24px;margin-bottom:8px;color:#ffffff;">403 Forbidden</h1>
+      <p style="color:#cbd5e1;font-size:14px;line-height:1.5;">Acesso restrito exclusivamente ao proprietário autorizado da Pyxie.</p>
+    </div>
+  </body>
+</html>`);
   }
 
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
-
-// Autenticação direta por Senha Mestra (PANEL_SECRET)
-app.post('/api/admin/login', (req, res) => {
-  const { password, secret } = req.body || {};
-  const token = password || secret;
-  if (!token || typeof token !== 'string') {
-    return res.status(400).json({ success: false, error: 'Chave mestra é obrigatória.' });
-  }
-
-  if (isMasterSecretValid(token.trim())) {
-    const sessionToken = createMasterAdminSession();
-    res.setHeader('Set-Cookie', `pyxie_admin_session=${sessionToken}; HttpOnly; SameSite=Lax; Max-Age=43200; Path=/`);
-    return res.json({ success: true, sessionToken });
-  }
-
-  return res.status(401).json({ success: false, error: 'Chave mestra incorreta.' });
-});
-
-app.post('/api/admin/logout', (req, res) => {
-  res.setHeader('Set-Cookie', 'pyxie_admin_session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/');
-  return res.json({ success: true });
-});
-
-// APIs de Controle e Gestão da Shopee para o Dono
-app.get('/api/admin/shopee', requireAdminAuth, (req, res) => {
-  try {
-    const items = shopeeManager.getAllItems();
-    const stats = shopeeManager.getSummaryStats();
-    return res.json({ success: true, items, stats });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.post('/api/admin/shopee/toggle', requireAdminAuth, (req, res) => {
-  try {
-    const { id, active } = req.body || {};
-    const result = shopeeManager.toggleItemActive(id, active);
-    return res.json(result);
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.post('/api/admin/shopee/check', requireAdminAuth, async (req, res) => {
-  try {
-    const { id, checkAll } = req.body || {};
-    if (checkAll) {
-      const results = await shopeeManager.checkAllItems();
-      return res.json({ success: true, checked: results.length, results, stats: shopeeManager.getSummaryStats() });
-    }
-    const result = await shopeeManager.checkItemStatus(id);
-    return res.json({ success: true, result, stats: shopeeManager.getSummaryStats() });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.post('/api/admin/shopee/add', requireAdminAuth, (req, res) => {
-  try {
-    const result = shopeeManager.addItem(req.body || {});
-    return res.json(result);
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.delete('/api/admin/shopee/:id', requireAdminAuth, (req, res) => {
-  try {
-    const result = shopeeManager.deleteItem(req.params.id);
-    return res.json(result);
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
 });
 
 // Rota Visual de Mapeamento de Emojis (/admin/emojis)

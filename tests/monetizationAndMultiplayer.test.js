@@ -59,40 +59,7 @@ try {
   const accB = getUserAccount(testUserB);
   assert.equal(accB.magicBeans, 1, 'Fim de semana deve conceder 1 Feijão Mágico.');
 
-  // 5. Teste do Gerenciador de Afiliados Shopee & Smartlink
-  const shopeeManager = require('../src/services/shopeeManager');
-  const allShopeeItems = shopeeManager.getAllItems();
-  assert.ok(allShopeeItems.length >= 50, `Deve haver pelo menos 50 produtos cadastrados (atual: ${allShopeeItems.length})`);
-
-  const activeShopeeItems = shopeeManager.getActiveItems({ shuffle: false });
-  assert.ok(activeShopeeItems.length > 0, 'Deve haver produtos ativos para a vitrine');
-  activeShopeeItems.forEach(item => {
-    assert.equal(item.active, true, 'getActiveItems só deve retornar itens ativos');
-    assert.ok(item.link && item.link.startsWith('https://s.shopee.com.br/'), 'Link de afiliado deve ser válido');
-  });
-
-  const sampleItems = shopeeManager.getActiveItems({ shuffle: true, limit: 10 });
-  assert.equal(sampleItems.length, Math.min(10, activeShopeeItems.length), 'Amostragem com limite deve respeitar tamanho');
-
-  const stats = shopeeManager.getSummaryStats();
-  assert.equal(stats.total, allShopeeItems.length, 'Estatísticas de total devem bater');
-  assert.ok(stats.activeCount > 0, 'Deve haver contagem de ativos');
-
-  // Teste de alternância (toggle) de status
-  const firstItem = allShopeeItems[0];
-  const originalState = firstItem.active;
-  shopeeManager.toggleItemActive(firstItem.id, false);
-  assert.equal(shopeeManager.getItemById(firstItem.id).active, false, 'Item deve ter ficado inativo');
-  shopeeManager.toggleItemActive(firstItem.id, originalState);
-  assert.equal(shopeeManager.getItemById(firstItem.id).active, originalState, 'Item deve ter voltado ao estado original');
-
-  // Verificação de Smartlink Canônico no bonus.html
-  const bonusHtmlPath = path.join(__dirname, '..', 'public', 'bonus.html');
-  const bonusHtml = fs.readFileSync(bonusHtmlPath, 'utf8');
-  assert.ok(bonusHtml.includes('https://s.shopee.com.br/BU6Bod6Sw'), 'bonus.html deve conter o smartlink correto');
-  assert.ok(!bonusHtml.includes('alwingulla.com'), 'bonus.html não pode conter scripts externos de anúncio');
-
-  console.log('Verificação de Top.gg, Trocas Seguras, Temas Visuais e Afiliados Shopee: OK');
+  console.log('Verificação de Top.gg, Trocas Seguras e Temas Visuais com Feijões Mágicos: OK');
 } finally {
   const cleanFiles = [
     path.join(__dirname, '..', 'data', 'economy.json'),

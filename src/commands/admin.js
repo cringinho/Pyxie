@@ -29,7 +29,7 @@ function buildAdminView(userId, guildOrSource = null) {
   const embed = new EmbedBuilder()
     .setColor(PYXIE_COLORS.crimson || '#ef4444')
     .setTitle(t('admin.title', guildOrSource))
-    .setDescription(`${t('admin.desc', guildOrSource)}\n\n🔗 **Link de Acesso Direto:**\n[Abrir Painel Administrativo](${tokenResult.url})\n*(Válido por 15 minutos • Sessão de 12h)*`)
+    .setDescription(t('admin.desc', guildOrSource))
     .setFooter({ text: pyxieFooter(t('admin.footer', guildOrSource)) })
     .setTimestamp();
 

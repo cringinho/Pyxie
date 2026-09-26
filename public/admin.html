@@ -3,27 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pyxie Console • Painel do Dono</title>
+    <title>Pyxie Console • Área do Proprietário</title>
     <link rel="icon" href="https://cdn.discordapp.com/emojis/1548444149785694238.gif" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
       :root {
-        --bg-main: #07040e;
-        --bg-card: rgba(18, 10, 34, 0.94);
-        --bg-card-hover: rgba(26, 15, 48, 0.98);
+        --bg-main: #090514;
+        --bg-card: rgba(19, 11, 36, 0.95);
         --purple-accent: #8b5cf6;
-        --purple-glow: #c084fc;
-        --pink-neon: #f43f5e;
-        --pink-bright: #ec4899;
-        --cyan-neon: #38bdf8;
-        --green-neon: #10b981;
-        --yellow-neon: #fbbf24;
-        --red-neon: #ef4444;
+        --pink-accent: #ec4899;
+        --cyan-accent: #38bdf8;
+        --green-accent: #10b981;
+        --red-accent: #ef4444;
         --text-white: #ffffff;
         --text-muted: #94a3b8;
-        --border-glass: rgba(192, 132, 252, 0.22);
+        --border-glass: rgba(139, 92, 246, 0.25);
       }
 
       * {
@@ -33,23 +27,19 @@
       }
 
       body {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: var(--bg-main);
-        background-image: 
-          radial-gradient(circle at top right, #250d44 0%, #07040e 100%),
-          radial-gradient(circle at 10% 40%, rgba(244, 63, 94, 0.08) 0%, transparent 40%),
-          radial-gradient(circle at 90% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+        font-family: 'Quicksand', sans-serif;
+        background: radial-gradient(circle at top right, #1b0c36 0%, #090514 100%);
         color: var(--text-white);
         min-height: 100vh;
-        padding: 20px 16px 40px;
+        padding: 24px 16px;
       }
 
       .container {
-        max-width: 1240px;
+        max-width: 1200px;
         margin: 0 auto;
       }
 
-      /* Top Navbar */
+      /* Navbar / Top Bar */
       .topbar {
         display: flex;
         justify-content: space-between;
@@ -57,41 +47,39 @@
         background: var(--bg-card);
         border: 1px solid var(--border-glass);
         border-radius: 20px;
-        padding: 14px 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(16px);
+        padding: 16px 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       }
 
       .brand {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
       }
 
       .brand-icon {
-        font-size: 26px;
-        background: linear-gradient(135deg, var(--purple-accent), var(--pink-neon));
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
+        font-size: 32px;
+        background: linear-gradient(135deg, var(--purple-accent), var(--pink-accent));
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4);
       }
 
       .brand-title h1 {
         font-family: 'Fredoka', sans-serif;
-        font-size: 1.25rem;
+        font-size: 1.35rem;
         font-weight: 700;
-        background: linear-gradient(to right, #ffffff, var(--purple-glow));
+        background: linear-gradient(to right, #ffffff, var(--pink-accent));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
 
       .brand-title p {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         color: var(--text-muted);
       }
 
@@ -99,1223 +87,506 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: rgba(244, 63, 94, 0.14);
-        border: 1px solid rgba(244, 63, 94, 0.35);
-        color: #fca5a5;
-        font-size: 0.72rem;
-        padding: 3px 9px;
+        background: rgba(236, 72, 153, 0.15);
+        border: 1px solid rgba(236, 72, 153, 0.4);
+        color: var(--pink-accent);
+        font-size: 0.75rem;
+        padding: 4px 10px;
         border-radius: 20px;
-        font-weight: 700;
+        font-weight: 600;
       }
 
       .top-actions {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
       }
 
       .btn {
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-family: 'Quicksand', sans-serif;
         font-weight: 700;
-        font-size: 0.82rem;
-        padding: 9px 15px;
+        font-size: 0.85rem;
+        padding: 10px 18px;
         border-radius: 12px;
         border: none;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         transition: all 0.2s ease;
-        text-decoration: none;
       }
 
       .btn-primary {
-        background: linear-gradient(135deg, var(--purple-accent), var(--pink-neon));
+        background: linear-gradient(135deg, var(--purple-accent), var(--pink-accent));
         color: #fff;
-        box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
       }
       .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(244, 63, 94, 0.5);
-      }
-
-      .btn-secondary {
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        color: #fff;
-      }
-      .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.14);
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
       }
 
       .btn-danger {
         background: rgba(239, 68, 68, 0.15);
-        border: 1px solid rgba(239, 68, 68, 0.35);
-        color: #fca5a5;
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: var(--red-accent);
       }
       .btn-danger:hover {
         background: rgba(239, 68, 68, 0.25);
       }
 
-      .btn-success {
-        background: rgba(16, 185, 129, 0.2);
-        border: 1px solid rgba(16, 185, 129, 0.4);
-        color: #6ee7b7;
-      }
-      .btn-success:hover {
-        background: rgba(16, 185, 129, 0.3);
-      }
-
-      /* Navigation Tabs */
-      .nav-tabs {
-        display: flex;
-        gap: 8px;
-        background: rgba(14, 7, 26, 0.75);
-        border: 1px solid var(--border-glass);
-        border-radius: 16px;
-        padding: 6px;
-        margin-bottom: 22px;
-        overflow-x: auto;
-      }
-
-      .tab-btn {
-        background: transparent;
-        border: none;
-        color: var(--text-muted);
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 700;
-        padding: 10px 18px;
-        border-radius: 12px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.2s ease;
-        white-space: nowrap;
-      }
-
-      .tab-btn:hover {
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         color: #fff;
-        background: rgba(255, 255, 255, 0.05);
+      }
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.12);
       }
 
-      .tab-btn.active {
-        background: linear-gradient(135deg, rgba(139, 92, 246, 0.35), rgba(244, 63, 94, 0.25));
-        border: 1px solid rgba(192, 132, 252, 0.4);
-        color: #ffffff;
-        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-      }
-
-      /* Tab Content Panels */
-      .tab-panel {
-        display: none;
-      }
-      .tab-panel.active {
-        display: block;
-        animation: fadeIn 0.25s ease;
-      }
-
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(6px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      /* Stats Overview Cards */
+      /* Stats Row */
       .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 14px;
-        margin-bottom: 22px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
       }
 
       .stat-card {
         background: var(--bg-card);
         border: 1px solid var(--border-glass);
-        border-radius: 18px;
-        padding: 16px 18px;
+        border-radius: 16px;
+        padding: 20px;
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        gap: 6px;
       }
 
       .stat-label {
-        font-size: 0.74rem;
+        font-size: 0.8rem;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 1px;
         color: var(--text-muted);
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+        font-weight: 600;
       }
 
       .stat-val {
         font-family: 'Fredoka', sans-serif;
-        font-size: 1.6rem;
+        font-size: 1.8rem;
         font-weight: 700;
         color: #fff;
       }
 
-      /* Shopee Management Specifics */
-      .shopee-toolbar {
-        background: var(--bg-card);
-        border: 1px solid var(--border-glass);
-        border-radius: 18px;
-        padding: 16px 20px;
-        margin-bottom: 20px;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-      }
-
-      .search-box {
-        position: relative;
-        flex: 1;
-        min-width: 240px;
-      }
-
-      .search-input {
-        width: 100%;
-        background: #090514;
-        border: 1px solid rgba(192, 132, 252, 0.25);
-        border-radius: 12px;
-        padding: 9px 12px 9px 36px;
-        color: #fff;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.85rem;
-        outline: none;
-      }
-      .search-input:focus {
-        border-color: var(--purple-glow);
-      }
-      .search-icon {
-        position: absolute;
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        pointer-events: none;
-      }
-
-      .filter-group {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-
-      .filter-select {
-        background: #090514;
-        border: 1px solid rgba(192, 132, 252, 0.25);
-        border-radius: 12px;
-        padding: 9px 12px;
-        color: #fff;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.82rem;
-        outline: none;
-        cursor: pointer;
-      }
-
-      /* Shopee Cards Grid */
-      .shopee-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 16px;
-      }
-
-      .shopee-item-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-glass);
-        border-radius: 18px;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        transition: all 0.25s ease;
-        position: relative;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-      }
-
-      .shopee-item-card:hover {
-        transform: translateY(-3px);
-        background: var(--bg-card-hover);
-        border-color: rgba(192, 132, 252, 0.45);
-        box-shadow: 0 10px 28px rgba(139, 92, 246, 0.25);
-      }
-
-      .shopee-item-card.is-paused {
-        opacity: 0.65;
-        border-style: dashed;
-      }
-
-      .card-top-row {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-      }
-
-      .card-thumb-wrap {
-        width: 68px;
-        height: 68px;
-        border-radius: 12px;
-        overflow: hidden;
-        background: #090514;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        flex-shrink: 0;
-        position: relative;
-      }
-
-      .card-thumb {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .card-info {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .card-badge-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 6px;
-        margin-bottom: 4px;
-      }
-
-      .card-tag {
-        font-size: 0.68rem;
-        font-weight: 700;
-        background: rgba(139, 92, 246, 0.18);
-        border: 1px solid rgba(139, 92, 246, 0.35);
-        color: var(--purple-glow);
-        padding: 2px 6px;
-        border-radius: 6px;
-        white-space: nowrap;
-      }
-
-      .card-status-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 0.68rem;
-        font-weight: 700;
-        padding: 2px 7px;
-        border-radius: 10px;
-        white-space: nowrap;
-      }
-
-      .card-status-pill.status-active {
-        background: rgba(16, 185, 129, 0.18);
-        border: 1px solid rgba(16, 185, 129, 0.4);
-        color: #34d399;
-      }
-
-      .card-status-pill.status-paused {
-        background: rgba(251, 191, 36, 0.18);
-        border: 1px solid rgba(251, 191, 36, 0.4);
-        color: #fbbf24;
-      }
-
-      .card-status-pill.status-out_of_stock {
-        background: rgba(239, 68, 68, 0.18);
-        border: 1px solid rgba(239, 68, 68, 0.4);
-        color: #f87171;
-      }
-
-      .card-title {
-        font-size: 0.84rem;
-        font-weight: 600;
-        color: #f1f5f9;
-        line-height: 1.35;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .card-store {
-        font-size: 0.72rem;
-        color: var(--text-muted);
-        margin-top: 2px;
-      }
-
-      .card-financials {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(10, 5, 20, 0.65);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 10px;
-        padding: 8px 12px;
-      }
-
-      .price-box {
-        display: flex;
-        flex-direction: column;
-      }
-      .price-sub {
-        font-size: 0.65rem;
-        color: var(--text-muted);
-        text-transform: uppercase;
-      }
-      .price-main {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: #38bdf8;
-      }
-
-      .commission-box {
-        display: flex;
-        flex-direction: column;
-        text-align: right;
-      }
-      .comm-sub {
-        font-size: 0.65rem;
-        color: var(--text-muted);
-        text-transform: uppercase;
-      }
-      .comm-main {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: #34d399;
-      }
-
-      .card-actions-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 6px;
-        padding-top: 8px;
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
-      }
-
-      .switch-wrap {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.75rem;
-        font-weight: 700;
-      }
-
-      .switch {
-        position: relative;
-        display: inline-block;
-        width: 38px;
-        height: 20px;
-      }
-      .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-      }
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-color: rgba(255, 255, 255, 0.2);
-        transition: .3s;
-        border-radius: 20px;
-      }
-      .slider:before {
-        position: absolute;
-        content: "";
-        height: 14px;
-        width: 14px;
-        left: 3px;
-        bottom: 3px;
-        background-color: white;
-        transition: .3s;
-        border-radius: 50%;
-      }
-      input:checked + .slider {
-        background-color: #10b981;
-      }
-      input:checked + .slider:before {
-        transform: translateX(18px);
-      }
-
-      .card-btn-links {
-        display: flex;
-        gap: 4px;
-      }
-
-      .btn-mini {
-        padding: 5px 9px;
-        font-size: 0.72rem;
-        border-radius: 8px;
-      }
-
-      /* Modal and Add Product Form */
-      .modal-backdrop {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(8px);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-      .modal-backdrop.open {
-        display: flex;
-      }
-
-      .modal-box {
-        background: #120924;
-        border: 1px solid var(--border-glass);
-        border-radius: 24px;
-        padding: 24px;
-        width: 100%;
-        max-width: 520px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 18px;
-      }
-      .modal-header h3 {
-        font-family: 'Fredoka', sans-serif;
-        font-size: 1.2rem;
-      }
-
-      .modal-form {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .form-row {
+      /* Main Grid: Logs & Embeds */
+      .content-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 24px;
       }
 
-      .form-field {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        text-align: left;
-      }
-      .form-field label {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: var(--text-muted);
-      }
-      .form-field input, .form-field select {
-        background: #090514;
-        border: 1px solid rgba(192, 132, 252, 0.3);
-        border-radius: 10px;
-        padding: 9px 12px;
-        color: #fff;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.85rem;
-        outline: none;
-      }
-
-      /* Emojis Tab */
-      .emojis-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 14px;
-      }
-
-      .emoji-slot-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-glass);
-        border-radius: 16px;
-        padding: 14px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .emoji-preview-box {
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
-        background: #090514;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-      .emoji-preview-box img {
-        width: 36px;
-        height: 36px;
-        object-fit: contain;
-      }
-
-      .emoji-slot-info {
-        flex: 1;
-        min-width: 0;
-      }
-      .emoji-slot-key {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: var(--purple-glow);
-      }
-      .emoji-slot-desc {
-        font-size: 0.72rem;
-        color: var(--text-muted);
-      }
-
-      /* Bot Control Tab */
-      .control-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-      }
-      @media (max-width: 850px) {
-        .control-grid {
+      @media (max-width: 900px) {
+        .content-grid {
           grid-template-columns: 1fr;
         }
       }
 
-      .control-card {
+      .panel-card {
         background: var(--bg-card);
         border: 1px solid var(--border-glass);
         border-radius: 20px;
-        padding: 22px;
+        padding: 24px;
         display: flex;
         flex-direction: column;
-        gap: 14px;
+        gap: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       }
 
-      .control-card h3 {
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding-bottom: 12px;
+      }
+
+      .card-header h2 {
         font-family: 'Fredoka', sans-serif;
-        font-size: 1.1rem;
+        font-size: 1.15rem;
+        font-weight: 600;
         display: flex;
         align-items: center;
         gap: 8px;
       }
 
-      /* Terminal Logs */
-      .terminal-wrap {
-        background: #040209;
+      /* Logs Terminal */
+      .terminal {
+        background: #040208;
         border: 1px solid rgba(139, 92, 246, 0.3);
-        border-radius: 16px;
-        padding: 16px;
-        height: 440px;
+        border-radius: 12px;
+        padding: 14px;
+        height: 380px;
         overflow-y: auto;
         font-family: 'JetBrains Mono', monospace;
         font-size: 0.78rem;
-        line-height: 1.55;
+        line-height: 1.5;
         color: #a7f3d0;
         white-space: pre-wrap;
         word-break: break-all;
       }
 
-      /* Toast Notification */
-      .toast {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        background: #1c0f38;
-        border: 1px solid var(--purple-glow);
-        color: #fff;
-        padding: 12px 20px;
-        border-radius: 14px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      /* Forms */
+      .form-group {
         display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        z-index: 9999;
-        transform: translateY(100px);
-        opacity: 0;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        flex-direction: column;
+        gap: 6px;
       }
-      .toast.show {
-        transform: translateY(0);
-        opacity: 1;
+
+      .form-group label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .form-control {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: #fff;
+        font-family: 'Quicksand', sans-serif;
+        font-size: 0.9rem;
+      }
+      .form-control:focus {
+        outline: none;
+        border-color: var(--purple-accent);
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+      }
+
+      textarea.form-control {
+        min-height: 85px;
+        resize: vertical;
+      }
+
+      /* Auth Modal */
+      .auth-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(9, 5, 20, 0.96);
+        backdrop-filter: blur(12px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 16px;
+      }
+
+      .auth-box {
+        background: #130b24;
+        border: 1px solid rgba(236, 72, 153, 0.4);
+        border-radius: 24px;
+        padding: 32px;
+        max-width: 440px;
+        width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
+      }
+
+      .auth-box h2 {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.4rem;
+        color: #fff;
+      }
+
+      .auth-box p {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.5;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <!-- Topbar Header -->
-      <header class="topbar">
-        <div class="brand">
-          <div class="brand-icon">🛡️</div>
-          <div class="brand-title">
-            <h1>Pyxie Console</h1>
-            <p>Painel Administrativo do Criador <span class="owner-badge">👑 Dono (214153735281180673)</span></p>
-          </div>
+    <!-- Modal de Autenticação para quando a sessão não existir -->
+    <div id="authOverlay" class="auth-overlay">
+      <div class="auth-box">
+        <div style="font-size: 44px;">🛡️</div>
+        <h2>Acesso do Proprietário</h2>
+        <p>Este console é de acesso restrito ao criador (ID: <code>214153735281180673</code>). Para autenticar, use o comando <code>/py-admin</code> no Discord ou informe sua chave mestra:</p>
+        <div class="form-group" style="text-align: left;">
+          <input type="password" id="secretInput" class="form-control" placeholder="Chave Mestra (PANEL_SECRET)..." />
         </div>
-        <div class="top-actions">
-          <a href="/bonus" target="_blank" class="btn btn-secondary">
-            <span>🎁 Ver Página de Bônus</span>
-          </a>
-          <button onclick="handleLogout()" class="btn btn-danger">
-            <span>🚪 Sair</span>
-          </button>
-        </div>
-      </header>
-
-      <!-- Navigation Tabs -->
-      <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('shopee')">
-          <span>🛍️ Afiliados Shopee</span>
-        </button>
-        <button class="tab-btn" onclick="switchTab('emojis')">
-          <span>✨ Mapeamento de Emojis</span>
-        </button>
-        <button class="tab-btn" onclick="switchTab('bot')">
-          <span>⚡ Controle do Bot</span>
-        </button>
-        <button class="tab-btn" onclick="switchTab('logs')">
-          <span>📜 Terminal de Logs</span>
-        </button>
-      </nav>
-
-      <!-- TAB 1: AFILIADOS SHOPEE -->
-      <section id="tab-shopee" class="tab-panel active">
-        <!-- Stats Summary -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <span class="stat-label">📦 Total de Produtos</span>
-            <span id="shopeeTotal" class="stat-val">0</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">🟢 Ativos no Bot</span>
-            <span id="shopeeActive" class="stat-val" style="color: #34d399">0</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">🟡 Pausados Manualmente</span>
-            <span id="shopeePaused" class="stat-val" style="color: #fbbf24">0</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">💰 Maior Comissão</span>
-            <span id="shopeeMaxComm" class="stat-val" style="color: #c084fc">R$ 0,00</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">📈 Comissão Média</span>
-            <span id="shopeeAvgRate" class="stat-val" style="color: #38bdf8">0%</span>
-          </div>
-        </div>
-
-        <!-- Toolbar & Filters -->
-        <div class="shopee-toolbar">
-          <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input
-              type="text"
-              id="shopeeSearch"
-              class="search-input"
-              placeholder="Buscar por nome, loja ou categoria..."
-              oninput="filterShopeeItems()"
-            />
-          </div>
-
-          <div class="filter-group">
-            <select id="statusFilter" class="filter-select" onchange="filterShopeeItems()">
-              <option value="all">Todos os Status</option>
-              <option value="active">🟢 Apenas Ativos</option>
-              <option value="paused">🟡 Apenas Pausados</option>
-              <option value="out_of_stock">🔴 Esgotados / Alerta</option>
-            </select>
-
-            <select id="tagFilter" class="filter-select" onchange="filterShopeeItems()">
-              <option value="all">Todas as Categorias</option>
-              <option value="Pelúcia Sanrio">Pelúcias Sanrio</option>
-              <option value="Moda & Estilo">Moda & Estilo</option>
-              <option value="Acessório Goth">Acessórios Goth</option>
-              <option value="Geek & Anime">Geek & Anime</option>
-              <option value="Chaveiro & Pin">Chaveiros & Pins</option>
-              <option value="Colecionável Raro">Colecionáveis</option>
-              <option value="Papelaria Fofa">Papelaria Fofa</option>
-            </select>
-
-            <button onclick="checkAllShopeeLinks()" id="btnCheckAll" class="btn btn-secondary">
-              <span>🔄 Verificar Todos os Links</span>
-            </button>
-
-            <button onclick="openAddModal()" class="btn btn-primary">
-              <span>➕ Novo Anúncio</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Products Cards Grid -->
-        <div id="shopeeGrid" class="shopee-grid">
-          <!-- Rendered dynamically via JavaScript -->
-        </div>
-      </section>
-
-      <!-- TAB 2: MAPEAMENTO DE EMOJIS -->
-      <section id="tab-emojis" class="tab-panel">
-        <div class="shopee-toolbar" style="margin-bottom: 20px;">
-          <div>
-            <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.15rem; margin-bottom: 4px;">🎨 Personalizador de Emojis do Bot</h3>
-            <p style="font-size: 0.8rem; color: var(--text-muted)">Configure os emojis oficiais utilizados nas respostas, embeds e comandos.</p>
-          </div>
-          <a href="/admin/emojis" target="_blank" class="btn btn-primary">
-            <span>⚙️ Abrir Mapeador Completo</span>
-          </a>
-        </div>
-        <div id="emojisListGrid" class="emojis-grid">
-          <!-- Rendered dynamically -->
-        </div>
-      </section>
-
-      <!-- TAB 3: CONTROLE DO BOT -->
-      <section id="tab-bot" class="tab-panel">
-        <div class="control-grid">
-          <div class="control-card">
-            <h3>⚡ Ações de Gerenciamento</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted)">Controle o ciclo de vida do processo Node.js da Pyxie na máquina da Oracle.</p>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <button onclick="controlBot('start')" class="btn btn-success">▶ Iniciar Bot</button>
-              <button onclick="controlBot('restart')" class="btn btn-primary">🔄 Reiniciar Processo</button>
-              <button onclick="controlBot('stop')" class="btn btn-danger">⏹ Parar Bot</button>
-              <button onclick="registerSlashCommands()" class="btn btn-secondary">📜 Registrar Slash Commands</button>
-            </div>
-          </div>
-
-          <div class="control-card">
-            <h3>🪙 Configurações Econômicas</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted)">Ajuste limites de ganhos de trabalho e daily.</p>
-            <div style="display: flex; gap: 12px;">
-              <div class="form-field" style="flex: 1;">
-                <label>Ganho Mínimo:</label>
-                <input type="number" id="ecoMin" value="50" />
-              </div>
-              <div class="form-field" style="flex: 1;">
-                <label>Ganho Máximo:</label>
-                <input type="number" id="ecoMax" value="300" />
-              </div>
-            </div>
-            <button onclick="saveEconomy()" class="btn btn-primary" style="align-self: flex-start;">Salvar Economia</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 4: TERMINAL DE LOGS -->
-      <section id="tab-logs" class="tab-panel">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-          <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.15rem;">📜 Registros Operacionais em Tempo Real</h3>
-          <div style="display: flex; gap: 10px;">
-            <button onclick="fetchLogs()" class="btn btn-secondary">🔄 Atualizar</button>
-            <button onclick="clearLogs()" class="btn btn-danger">🗑 Limpar</button>
-          </div>
-        </div>
-        <div id="terminalLogs" class="terminal-wrap">Carregando logs do sistema...</div>
-      </section>
-    </div>
-
-    <!-- Modal Adicionar Novo Anúncio -->
-    <div id="addModal" class="modal-backdrop">
-      <div class="modal-box">
-        <div class="modal-header">
-          <h3>➕ Adicionar Novo Anúncio da Shopee</h3>
-          <button onclick="closeAddModal()" class="btn btn-secondary" style="padding: 4px 8px;">✕</button>
-        </div>
-        <form onsubmit="handleAddNewShopee(event)" class="modal-form">
-          <div class="form-field">
-            <label>Título do Produto:</label>
-            <input type="text" id="addTitulo" placeholder="Ex: Pelúcia Kuromi Dark 25cm" required />
-          </div>
-          <div class="form-row">
-            <div class="form-field">
-              <label>Preço (R$):</label>
-              <input type="text" id="addPreco" placeholder="Ex: R$ 38,90" required />
-            </div>
-            <div class="form-field">
-              <label>Categoria / Tag:</label>
-              <select id="addTag">
-                <option value="Pelúcia Sanrio">Pelúcia Sanrio</option>
-                <option value="Moda & Estilo">Moda & Estilo</option>
-                <option value="Acessório Goth">Acessório Goth</option>
-                <option value="Geek & Anime">Geek & Anime</option>
-                <option value="Chaveiro & Pin">Chaveiro & Pin</option>
-                <option value="Colecionável Raro">Colecionável Raro</option>
-                <option value="Papelaria Fofa">Papelaria Fofa</option>
-                <option value="Achadinho">Achadinho Geral</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-field">
-              <label>Nome da Loja:</label>
-              <input type="text" id="addLoja" placeholder="Ex: Sanrio Store" />
-            </div>
-            <div class="form-field">
-              <label>Comissão Estimada:</label>
-              <input type="text" id="addComissao" placeholder="Ex: R$ 5,00 (12%)" />
-            </div>
-          </div>
-          <div class="form-field">
-            <label>Seu Link de Afiliado (Offer Link):</label>
-            <input type="url" id="addLink" placeholder="https://s.shopee.com.br/..." required />
-          </div>
-          <div class="form-field">
-            <label>URL da Imagem (Thumbnail):</label>
-            <input type="url" id="addImagem" placeholder="https://..." />
-          </div>
-          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px;">
-            <button type="button" onclick="closeAddModal()" class="btn btn-secondary">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Salvar Anúncio</button>
-          </div>
-        </form>
+        <button class="btn btn-primary" id="btnAuth" style="width: 100%; justify-content: center;">Desbloquear Console</button>
+        <div id="authError" style="color: var(--red-accent); font-size: 0.8rem; display: none;"></div>
       </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">
-      <span id="toastIcon">✨</span>
-      <span id="toastMsg">Operação realizada com sucesso!</span>
+    <div class="container" id="mainDashboard">
+      <!-- Top Bar -->
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-icon">
+            <img src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" alt="Pyxie" style="width: 100%; height: 100%; object-fit: contain;" />
+          </div>
+          <div class="brand-title">
+            <h1>Pyxie • Console do Dono</h1>
+            <p>Sessão Autenticada • Snowflake: <code>214153735281180673</code></p>
+          </div>
+          <span class="owner-badge">👑 PROPRIETÁRIO</span>
+        </div>
+        <div class="top-actions">
+          <a href="/admin/emojis" class="btn btn-secondary" style="text-decoration:none;" title="Painel de Mapeamento de Emojis">🔮 Emojis App</a>
+          <button class="btn btn-primary" id="btnRestart" title="Reiniciar processo da Pyxie">🔄 Reiniciar Bot</button>
+          <button class="btn btn-secondary" id="btnRegisterSlash" title="Registrar Slash Commands globalmente">⚡ Slash Cmds</button>
+          <button class="btn btn-danger" id="btnLogout" title="Sair do painel">Sair</button>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Status Operacional</span>
+          <div class="stat-val" id="valStatus" style="color: var(--green-accent);">Online</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Uptime do Processo</span>
+          <div class="stat-val" id="valUptime">00:00:00</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Comandos Executados</span>
+          <div class="stat-val" id="valCommands">0</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Usuários Engajados</span>
+          <div class="stat-val" id="valUsers">0</div>
+        </div>
+      </div>
+
+      <!-- Grid Content -->
+      <div class="content-grid">
+        <!-- Terminal de Logs -->
+        <div class="panel-card">
+          <div class="card-header">
+            <h2>📜 Console de Logs em Tempo Real</h2>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary" id="btnRefreshLogs" style="padding: 6px 12px; font-size: 0.75rem;">🔄 Atualizar</button>
+              <button class="btn btn-danger" id="btnClearLogs" style="padding: 6px 12px; font-size: 0.75rem;">🗑️ Limpar</button>
+            </div>
+          </div>
+          <div class="terminal" id="terminalBox">Carregando logs do sistema...</div>
+        </div>
+
+        <!-- Postador de Embeds do Dono -->
+        <div class="panel-card">
+          <div class="card-header">
+            <h2>📢 Disparador de Embeds & Comunicados</h2>
+          </div>
+          <form id="embedForm" style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="form-group">
+              <label>ID do Canal de Destino</label>
+              <input type="text" id="embChannel" class="form-control" placeholder="ID numérico ou #canal..." required />
+            </div>
+            <div class="form-group">
+              <label>Título do Embed</label>
+              <input type="text" id="embTitle" class="form-control" placeholder="Título do comunicado..." required />
+            </div>
+            <div class="form-group">
+              <label>Cor Hexadecimal</label>
+              <input type="text" id="embColor" class="form-control" value="#8b5cf6" />
+            </div>
+            <div class="form-group">
+              <label>Descrição do Comunicado</label>
+              <textarea id="embDesc" class="form-control" placeholder="Escreva a mensagem oficial..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 8px; justify-content: center;">📤 Disparar no Discord</button>
+          </form>
+          <div id="embedFeedback" style="font-size: 0.85rem; font-weight: 600; display: none;"></div>
+        </div>
+      </div>
     </div>
 
     <script>
-      let allShopeeItems = [];
+      const authOverlay = document.getElementById('authOverlay');
+      const secretInput = document.getElementById('secretInput');
+      const btnAuth = document.getElementById('btnAuth');
+      const authError = document.getElementById('authError');
+      const terminalBox = document.getElementById('terminalBox');
+      const btnRefreshLogs = document.getElementById('btnRefreshLogs');
+      const btnClearLogs = document.getElementById('btnClearLogs');
+      const btnRestart = document.getElementById('btnRestart');
+      const btnRegisterSlash = document.getElementById('btnRegisterSlash');
+      const btnLogout = document.getElementById('btnLogout');
+      const embedForm = document.getElementById('embedForm');
+      const embedFeedback = document.getElementById('embedFeedback');
 
-      function showToast(msg, icon = '✨') {
-        const toast = document.getElementById('toast');
-        document.getElementById('toastIcon').innerText = icon;
-        document.getElementById('toastMsg').innerText = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
+      let authToken = sessionStorage.getItem('pyxie_admin_token') || '';
+
+      function getAuthHeaders() {
+        const headers = { 'Content-Type': 'application/json' };
+        if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+        return headers;
       }
 
-      function switchTab(tabId) {
-        document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach((p) => p.classList.remove('active'));
-
-        const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find((b) =>
-          b.getAttribute('onclick')?.includes(tabId)
-        );
-        const targetPanel = document.getElementById(`tab-${tabId}`);
-
-        if (targetBtn) targetBtn.classList.add('active');
-        if (targetPanel) targetPanel.classList.add('active');
-
-        if (tabId === 'logs') fetchLogs();
-      }
-
-      async function fetchShopeeData() {
+      async function verifyAccess() {
         try {
-          const res = await fetch('/api/admin/shopee');
-          if (res.status === 401 || res.status === 403) {
-            window.location.href = '/admin';
-            return;
-          }
+          const res = await fetch('/api/admin/verify', {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ secret: authToken })
+          });
           const data = await res.json();
           if (data.success) {
-            allShopeeItems = data.items || [];
-            updateStatsUI(data.stats);
-            renderShopeeCards(allShopeeItems);
+            authOverlay.style.display = 'none';
+            if (data.sessionToken) authToken = data.sessionToken;
+            initDashboard();
+          } else {
+            authOverlay.style.display = 'flex';
+          }
+        } catch (_) {
+          authOverlay.style.display = 'flex';
+        }
+      }
+
+      btnAuth.addEventListener('click', async () => {
+        const secret = secretInput.value.trim();
+        if (!secret) return;
+        try {
+          const res = await fetch('/api/admin/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ secret })
+          });
+          const data = await res.json();
+          if (data.success) {
+            authToken = secret;
+            sessionStorage.setItem('pyxie_admin_token', secret);
+            authOverlay.style.display = 'none';
+            initDashboard();
+          } else {
+            authError.style.display = 'block';
+            authError.textContent = data.message || 'Chave incorreta ou IP não autorizado.';
           }
         } catch (err) {
-          console.error('Erro ao carregar dados Shopee:', err);
+          authError.style.display = 'block';
+          authError.textContent = 'Erro de conexão com o servidor.';
         }
-      }
+      });
 
-      function updateStatsUI(stats) {
-        if (!stats) return;
-        document.getElementById('shopeeTotal').innerText = stats.total || '0';
-        document.getElementById('shopeeActive').innerText = stats.activeCount || '0';
-        document.getElementById('shopeePaused').innerText = stats.pausedCount || '0';
-        document.getElementById('shopeeMaxComm').innerText = stats.maxCommission || 'R$ 0,00';
-        document.getElementById('shopeeAvgRate').innerText = stats.avgCommissionRate || '0%';
-      }
+      btnLogout.addEventListener('click', () => {
+        sessionStorage.removeItem('pyxie_admin_token');
+        document.cookie = 'pyxie_admin_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        window.location.href = '/';
+      });
 
-      function renderShopeeCards(items) {
-        const grid = document.getElementById('shopeeGrid');
-        if (!items || items.length === 0) {
-          grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Nenhum anúncio encontrado com os filtros selecionados.</div>';
-          return;
-        }
-
-        grid.innerHTML = items
-          .map((item) => {
-            const isPaused = item.active === false;
-            let statusPillClass = 'status-active';
-            let statusIcon = '🟢';
-            let statusText = 'Ativo no Bot';
-
-            if (isPaused) {
-              statusPillClass = 'status-paused';
-              statusIcon = '🟡';
-              statusText = 'Pausado';
-            } else if (item.status === 'out_of_stock' || item.status === 'inactive') {
-              statusPillClass = 'status-out_of_stock';
-              statusIcon = '🔴';
-              statusText = 'Esgotado / Alerta';
-            }
-
-            const img = item.imagem || 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400';
-            const comm = item.comissao ? `R$ ${item.comissao.replace(/[^0-9,]/g, '')}` : (item.taxa_comissao || 'Comissão');
-
-            return `
-              <div class="shopee-item-card ${isPaused ? 'is-paused' : ''}" id="card-${item.id}">
-                <div class="card-top-row">
-                  <div class="card-thumb-wrap">
-                    <img src="${img}" alt="${item.titulo}" class="card-thumb" loading="lazy" />
-                  </div>
-                  <div class="card-info">
-                    <div class="card-badge-row">
-                      <span class="card-tag">${item.tag || 'Achadinho'}</span>
-                      <span class="card-status-pill ${statusPillClass}" id="status-pill-${item.id}">
-                        ${statusIcon} ${statusText}
-                      </span>
-                    </div>
-                    <h4 class="card-title" title="${item.titulo}">${item.titulo}</h4>
-                    <p class="card-store">🏪 ${item.loja || 'Shopee'} • ${item.vendas || '0'} vendidos</p>
-                  </div>
-                </div>
-
-                <div class="card-financials">
-                  <div class="price-box">
-                    <span class="price-sub">Preço</span>
-                    <span class="price-main">${item.preco || 'R$ 29,90'}</span>
-                  </div>
-                  <div class="commission-box">
-                    <span class="comm-sub">Sua Comissão (${item.taxa_comissao || '10%'})</span>
-                    <span class="comm-main">${comm}</span>
-                  </div>
-                </div>
-
-                <div class="card-actions-bar">
-                  <div class="switch-wrap">
-                    <label class="switch">
-                      <input type="checkbox" ${item.active !== false ? 'checked' : ''} onchange="toggleItem('${item.id}', this.checked)" />
-                      <span class="slider"></span>
-                    </label>
-                    <span>${item.active !== false ? 'Exibir' : 'Oculto'}</span>
-                  </div>
-
-                  <div class="card-btn-links">
-                    <button onclick="checkItemStatus('${item.id}')" title="Testar se o anúncio continua ativo na Shopee" class="btn btn-secondary btn-mini">
-                      <span>🔍 Testar</span>
-                    </button>
-                    <a href="${item.link}" target="_blank" rel="noopener noreferrer" title="Abrir anúncio na Shopee" class="btn btn-secondary btn-mini">
-                      <span>↗ Ver</span>
-                    </a>
-                    <button onclick="copyLink('${item.link}')" title="Copiar link de afiliado" class="btn btn-secondary btn-mini">
-                      <span>📋 Copiar</span>
-                    </button>
-                    <button onclick="deleteShopeeItem('${item.id}')" title="Remover da vitrine" class="btn btn-danger btn-mini">
-                      <span>🗑</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            `;
-          })
-          .join('');
-      }
-
-      function filterShopeeItems() {
-        const search = (document.getElementById('shopeeSearch').value || '').toLowerCase().trim();
-        const statusFilter = document.getElementById('statusFilter').value;
-        const tagFilter = document.getElementById('tagFilter').value;
-
-        const filtered = allShopeeItems.filter((item) => {
-          const matchSearch =
-            !search ||
-            (item.titulo && item.titulo.toLowerCase().includes(search)) ||
-            (item.loja && item.loja.toLowerCase().includes(search)) ||
-            (item.tag && item.tag.toLowerCase().includes(search));
-
-          let matchStatus = true;
-          if (statusFilter === 'active') matchStatus = item.active !== false && item.status === 'active';
-          if (statusFilter === 'paused') matchStatus = item.active === false;
-          if (statusFilter === 'out_of_stock') matchStatus = item.status === 'out_of_stock' || item.status === 'inactive';
-
-          let matchTag = true;
-          if (tagFilter !== 'all') matchTag = item.tag === tagFilter;
-
-          return matchSearch && matchStatus && matchTag;
-        });
-
-        renderShopeeCards(filtered);
-      }
-
-      async function toggleItem(id, active) {
+      async function fetchStatus() {
         try {
-          const res = await fetch('/api/admin/shopee/toggle', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, active }),
-          });
+          const res = await fetch('/api/status');
           const data = await res.json();
-          if (data.success) {
-            const idx = allShopeeItems.findIndex((i) => i.id === String(id));
-            if (idx !== -1) allShopeeItems[idx].active = active;
-            filterShopeeItems();
-            showToast(active ? 'Anúncio ativado no bot!' : 'Anúncio pausado.', active ? '🟢' : '🟡');
-          }
-        } catch (_) {}
-      }
+          document.getElementById('valStatus').textContent = data.running ? '🟢 Online' : '🔴 Offline';
+          document.getElementById('valStatus').style.color = data.running ? 'var(--green-accent)' : 'var(--red-accent)';
+          document.getElementById('valCommands').textContent = data.stats?.commands || 0;
+          document.getElementById('valUsers').textContent = data.stats?.uniqueUsers || 0;
 
-      async function checkItemStatus(id) {
-        showToast('Verificando status do link na Shopee...', '⏳');
-        try {
-          const res = await fetch('/api/admin/shopee/check', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id }),
-          });
-          const data = await res.json();
-          if (data.success && data.result) {
-            const idx = allShopeeItems.findIndex((i) => i.id === String(id));
-            if (idx !== -1) {
-              allShopeeItems[idx].status = data.result.status;
-            }
-            if (data.stats) updateStatsUI(data.stats);
-            filterShopeeItems();
-            const isOk = data.result.status === 'active';
-            showToast(isOk ? 'Anúncio 100% ativo na Shopee!' : 'Aviso: Anúncio indisponível/esgotado.', isOk ? '✅' : '🔴');
-          }
-        } catch (_) {
-          showToast('Erro ao testar o link.', '⚠️');
-        }
-      }
-
-      async function checkAllShopeeLinks() {
-        const btn = document.getElementById('btnCheckAll');
-        btn.disabled = true;
-        btn.innerHTML = '<span>⏳ Testando links...</span>';
-        showToast('Iniciando verificação de todos os links...', '🔄');
-
-        try {
-          const res = await fetch('/api/admin/shopee/check', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ checkAll: true }),
-          });
-          const data = await res.json();
-          if (data.success) {
-            await fetchShopeeData();
-            showToast(`Verificação concluída! ${data.checked} links testados.`, '🎉');
-          }
-        } catch (_) {
-          showToast('Erro durante a verificação em lote.', '⚠️');
-        } finally {
-          btn.disabled = false;
-          btn.innerHTML = '<span>🔄 Verificar Todos os Links</span>';
-        }
-      }
-
-      function copyLink(link) {
-        navigator.clipboard.writeText(link);
-        showToast('Link de afiliado copiado para a área de transferência!', '📋');
-      }
-
-      async function deleteShopeeItem(id) {
-        if (!confirm('Tem certeza de que deseja remover este anúncio da vitrine?')) return;
-
-        try {
-          const res = await fetch(`/api/admin/shopee/${id}`, { method: 'DELETE' });
-          const data = await res.json();
-          if (data.success) {
-            allShopeeItems = allShopeeItems.filter((i) => i.id !== String(id));
-            filterShopeeItems();
-            showToast('Produto removido com sucesso!', '🗑');
-          }
-        } catch (_) {}
-      }
-
-      function openAddModal() {
-        document.getElementById('addModal').classList.add('open');
-      }
-      function closeAddModal() {
-        document.getElementById('addModal').classList.remove('open');
-      }
-
-      async function handleAddNewShopee(e) {
-        e.preventDefault();
-        const payload = {
-          titulo: document.getElementById('addTitulo').value,
-          preco: document.getElementById('addPreco').value,
-          tag: document.getElementById('addTag').value,
-          loja: document.getElementById('addLoja').value,
-          comissao: document.getElementById('addComissao').value,
-          link: document.getElementById('addLink').value,
-          imagem: document.getElementById('addImagem').value,
-        };
-
-        try {
-          const res = await fetch('/api/admin/shopee/add', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          const data = await res.json();
-          if (data.success) {
-            closeAddModal();
-            showToast('Novo anúncio adicionado à vitrine!', '🎉');
-            await fetchShopeeData();
-          }
-        } catch (_) {
-          showToast('Erro ao cadastrar novo anúncio.', '⚠️');
-        }
-      }
-
-      async function controlBot(action) {
-        showToast(`Executando ${action}...`, '⚡');
-        try {
-          const res = await fetch(`/api/${action}`, { method: 'POST' });
-          const data = await res.json();
-          showToast(`Ação ${action} concluída!`, '✅');
-          fetchLogs();
-        } catch (_) {}
-      }
-
-      async function registerSlashCommands() {
-        showToast('Registrando slash commands no Discord...', '📜');
-        try {
-          const res = await fetch('/api/register', { method: 'POST' });
-          showToast('Slash commands sincronizados!', '✅');
+          const ms = data.uptime || 0;
+          const s = Math.floor(ms / 1000) % 60;
+          const m = Math.floor(ms / (1000 * 60)) % 60;
+          const h = Math.floor(ms / (1000 * 60 * 60));
+          document.getElementById('valUptime').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
         } catch (_) {}
       }
 
       async function fetchLogs() {
-        const terminal = document.getElementById('terminalLogs');
         try {
-          const res = await fetch('/api/logs?limit=150');
+          const res = await fetch('/api/logs?limit=150', { headers: getAuthHeaders() });
+          if (!res.ok) throw new Error('Não autorizado');
           const data = await res.json();
-          if (data.logs) {
-            terminal.innerText = data.logs.join('\n');
-            terminal.scrollTop = terminal.scrollHeight;
-          }
-        } catch (_) {
-          terminal.innerText = 'Falha ao sincronizar logs.';
+          const logs = data.logs || [];
+          terminalBox.textContent = logs.join('\n') || 'Nenhum log registrado ainda.';
+          terminalBox.scrollTop = terminalBox.scrollHeight;
+        } catch (err) {
+          terminalBox.textContent = 'Acesso não autorizado aos logs do sistema.';
         }
       }
 
-      async function clearLogs() {
+      btnRefreshLogs.addEventListener('click', fetchLogs);
+
+      btnClearLogs.addEventListener('click', async () => {
+        if (!confirm('Deseja realmente limpar todos os logs da Pyxie?')) return;
+        await fetch('/api/logs/clear', { method: 'POST', headers: getAuthHeaders() });
+        fetchLogs();
+      });
+
+      btnRestart.addEventListener('click', async () => {
+        if (!confirm('Reiniciar o processo do bot agora?')) return;
+        btnRestart.disabled = true;
+        btnRestart.textContent = '⏳ Reiniciando...';
+        await fetch('/api/restart', { method: 'POST', headers: getAuthHeaders() });
+        setTimeout(() => {
+          btnRestart.disabled = false;
+          btnRestart.textContent = '🔄 Reiniciar Bot';
+          fetchStatus();
+        }, 3000);
+      });
+
+      btnRegisterSlash.addEventListener('click', async () => {
+        btnRegisterSlash.disabled = true;
+        btnRegisterSlash.textContent = '⏳ Registrando...';
+        const res = await fetch('/api/register', { method: 'POST', headers: getAuthHeaders() });
+        const data = await res.json();
+        alert(data.output || 'Slash commands sincronizados!');
+        btnRegisterSlash.disabled = false;
+        btnRegisterSlash.textContent = '⚡ Slash Cmds';
+      });
+
+      embedForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        embedFeedback.style.display = 'block';
+        embedFeedback.style.color = 'var(--text-muted)';
+        embedFeedback.textContent = 'Enviando embed oficial...';
+
+        const payload = {
+          channelId: document.getElementById('embChannel').value.trim(),
+          title: document.getElementById('embTitle').value.trim(),
+          color: document.getElementById('embColor').value.trim(),
+          description: document.getElementById('embDesc').value.trim(),
+        };
+
         try {
-          await fetch('/api/logs/clear', { method: 'POST' });
-          document.getElementById('terminalLogs').innerText = 'Logs limpos.';
-          showToast('Terminal limpo.', '🧹');
-        } catch (_) {}
+          const res = await fetch('/api/embed/send', {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (data.success) {
+            embedFeedback.style.color = 'var(--green-accent)';
+            embedFeedback.textContent = '✅ Embed enviado com sucesso!';
+            embedForm.reset();
+            document.getElementById('embColor').value = '#8b5cf6';
+          } else {
+            embedFeedback.style.color = 'var(--red-accent)';
+            embedFeedback.textContent = '❌ ' + (data.message || 'Falha ao enviar embed.');
+          }
+        } catch (err) {
+          embedFeedback.style.color = 'var(--red-accent)';
+          embedFeedback.textContent = 'Erro ao conectar à API.';
+        }
+      });
+
+      function initDashboard() {
+        fetchStatus();
+        fetchLogs();
+        setInterval(fetchStatus, 5000);
+        setInterval(fetchLogs, 4000);
       }
 
-      async function handleLogout() {
-        try {
-          await fetch('/api/admin/logout', { method: 'POST' });
-        } catch (_) {}
-        window.location.href = '/admin';
-      }
-
-      // Inicialização da página
-      fetchShopeeData();
+      // Inicia validação ao carregar
+      verifyAccess();
     </script>
   </body>
 </html>
+
