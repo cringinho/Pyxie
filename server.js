@@ -338,6 +338,23 @@ app.get('/api/commands', (req, res) => {
   });
 });
 
+// 2b. Vitrine Nativa de Achadinhos da Pyxie (Monetização contextual e anti-adblock)
+app.get('/api/showcase', (req, res) => {
+  try {
+    const shopeePath = path.join(__dirname, 'src', 'data', 'shopee.json');
+    if (fs.existsSync(shopeePath)) {
+      const raw = fs.readFileSync(shopeePath, 'utf8');
+      const items = JSON.parse(raw);
+      res.setHeader('Cache-Control', 'public, max-age=300');
+      return res.json({ success: true, items });
+    }
+    return res.json({ success: true, items: [] });
+  } catch (err) {
+    console.error('Erro ao ler vitrine shopee.json:', err.message);
+    return res.status(500).json({ success: false, error: 'Falha ao carregar vitrine' });
+  }
+});
+
 // 3. Painel Administrativo do Proprietário (Restrito a IP Allowlist e Snowflake 214153735281180673)
 app.get('/admin', (req, res) => {
   const tokenParam = req.query.token;

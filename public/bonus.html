@@ -450,6 +450,204 @@
         flex-shrink: 0;
         box-shadow: 0 2px 10px rgba(244, 63, 94, 0.4);
       }
+
+      /* Vitrine Nativa de Achadinhos (Carrossel Discreto no Bônus de 10s) */
+      .showcase-container {
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px dashed rgba(192, 132, 252, 0.22);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
+      .showcase-header {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .showcase-intro {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        line-height: 1.35;
+        font-weight: 500;
+      }
+
+      .showcase-card-wrapper {
+        width: 100%;
+        position: relative;
+        min-height: 82px;
+      }
+
+      .showcase-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(14, 7, 26, 0.88);
+        border: 1px solid rgba(192, 132, 252, 0.28);
+        border-radius: 16px;
+        padding: 10px 14px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .showcase-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(244, 114, 182, 0.65);
+        box-shadow: 0 8px 24px rgba(147, 51, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      }
+
+      .showcase-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(244, 63, 94, 0.08), rgba(147, 51, 234, 0.08));
+        pointer-events: none;
+      }
+
+      .showcase-thumb-wrap {
+        width: 62px;
+        height: 62px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: #0a0514;
+        position: relative;
+      }
+
+      .showcase-thumb {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .showcase-card:hover .showcase-thumb {
+        transform: scale(1.08);
+      }
+
+      .showcase-body {
+        flex: 1;
+        min-width: 0;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 3px;
+      }
+
+      .showcase-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+
+      .showcase-badge {
+        font-size: 0.68rem;
+        font-weight: 700;
+        background: rgba(244, 63, 94, 0.18);
+        border: 1px solid rgba(244, 63, 94, 0.4);
+        color: #fca5a5;
+        padding: 2px 7px;
+        border-radius: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+
+      .showcase-price {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #34d399;
+        white-space: nowrap;
+      }
+
+      .showcase-title {
+        font-size: 0.83rem;
+        font-weight: 600;
+        color: #f1f5f9;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .showcase-action {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 3px;
+      }
+
+      .showcase-brand {
+        font-size: 0.72rem;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .showcase-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(147, 51, 234, 0.4), rgba(244, 63, 94, 0.4));
+        border: 1px solid rgba(244, 114, 182, 0.4);
+        color: #ffffff;
+        font-size: 0.74rem;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+      }
+
+      .showcase-card:hover .showcase-cta {
+        background: linear-gradient(135deg, #9333ea, #f43f5e);
+        box-shadow: 0 2px 10px rgba(244, 63, 94, 0.5);
+      }
+
+      .showcase-dots {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .showcase-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .showcase-dot.active {
+        width: 18px;
+        border-radius: 8px;
+        background: var(--purple-glow);
+        box-shadow: 0 0 8px rgba(192, 132, 252, 0.6);
+      }
     </style>
   </head>
   <body>
@@ -515,6 +713,15 @@
               <div id="progressBar" class="progress-bar-fill"></div>
             </div>
             <div id="statusLabel" class="status-label">⚡ Canalizando energia mágica...</div>
+
+            <!-- Vitrine Nativa de Achadinhos (Carrossel Discreto de 10s) -->
+            <div class="showcase-container" id="showcaseTimerCard">
+              <div class="showcase-header">
+                <span class="showcase-intro" id="showcaseIntro">✨ Enquanto a fadinha canaliza energia para o bônus, dê uma olhada no achadinho de hoje:</span>
+              </div>
+              <div class="showcase-card-wrapper" id="showcaseCardWrapper"></div>
+              <div class="showcase-dots" id="showcaseDots"></div>
+            </div>
           </div>
 
           <!-- Card de Instruções Amigável (Exibido quando acessa sem token direto pela URL) -->
@@ -539,6 +746,15 @@
 
             <div id="rewardBox" class="reward-box">
               <span>✨ <strong>Recompensa:</strong> +75 Moedinhas 🪙 no cofre</span>
+            </div>
+
+            <!-- Vitrine Nativa de Achadinhos nas Instruções -->
+            <div class="showcase-container" id="showcaseInstCard">
+              <div class="showcase-header">
+                <span class="showcase-intro" id="showcaseIntroInst">✨ Achadinhos Mágicos da Comunidade:</span>
+              </div>
+              <div class="showcase-card-wrapper" id="showcaseCardWrapperInst"></div>
+              <div class="showcase-dots" id="showcaseDotsInst"></div>
             </div>
 
             <a id="sponsorBtn" href="https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813" target="_blank" class="btn-sponsor">
@@ -714,6 +930,10 @@
           promoTitle: 'Apoie a Pyxie & Ganhe Bônus',
           promoDesc: 'Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!',
           promoBtn: 'Apoiar ✦',
+          showcaseIntro: 'Enquanto a fadinha canaliza energia para o bônus, dê uma olhada no achadinho de hoje:',
+          showcaseIntroInst: 'Achadinhos Mágicos da Comunidade:',
+          showcaseBtn: 'Ver na Shopee ➔',
+          showcaseBrand: '🛍️ Achadinho Recomendado',
         },
         en: {
           metaTitle: isGloomBoss ? "Pyxie • Pyxie's Grove • Extra Strike" : 'Pyxie • Enchanted Magic Bonus',
@@ -748,6 +968,10 @@
           promoTitle: 'Support Pyxie & Earn Bonus',
           promoDesc: 'Support the Cringelândia community and unlock magical rewards!',
           promoBtn: 'Support ✦',
+          showcaseIntro: "While the fairy channels bonus energy, check out today's find:",
+          showcaseIntroInst: 'Magical Community Finds:',
+          showcaseBtn: 'View on Shopee ➔',
+          showcaseBrand: '🛍️ Recommended Find',
         }
       };
 
@@ -794,6 +1018,167 @@
       if (promoDescEl) promoDescEl.innerText = S.promoDesc;
       const promoBtnEl = document.getElementById('promoBtn');
       if (promoBtnEl) promoBtnEl.innerText = S.promoBtn;
+
+      const showcaseIntroEl = document.getElementById('showcaseIntro');
+      if (showcaseIntroEl) showcaseIntroEl.innerText = `✨ ${S.showcaseIntro}`;
+      const showcaseIntroInstEl = document.getElementById('showcaseIntroInst');
+      if (showcaseIntroInstEl) showcaseIntroInstEl.innerText = `✨ ${S.showcaseIntroInst}`;
+
+      // Dados de contingência nativa da vitrine (Shopee Afiliados)
+      const DEFAULT_SHOWCASE_ITEMS = [
+        {
+          id: "prod_01",
+          titulo: "Pelúcia Kuromi Goth / Dark Fairy 25cm",
+          titulo_en: "Gothic Kuromi / Dark Fairy Plush 25cm",
+          preco: "R$ 38,90",
+          preco_en: "$7.50",
+          tag: "Mais Vendido",
+          tag_en: "Best Seller",
+          imagem: "https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400&auto=format&fit=crop&q=80",
+          link: "https://s.shopee.com.br/seu_link_afiliado"
+        },
+        {
+          id: "prod_02",
+          titulo: "Kit 7 Dados Poliédricos RPG Roxo & Preto Translúcido",
+          titulo_en: "7 Polyhedral RPG Dice Set Translucent Purple & Black",
+          preco: "R$ 22,50",
+          preco_en: "$4.20",
+          tag: "Item do Bosque",
+          tag_en: "Grove Relic",
+          imagem: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=400&auto=format&fit=crop&q=80",
+          link: "https://s.shopee.com.br/seu_link_afiliado"
+        },
+        {
+          id: "prod_03",
+          titulo: "Luminária Mística Lua de Cristal 3D LED RGB",
+          titulo_en: "Mystic 3D Crystal Moon LED RGB Lamp",
+          preco: "R$ 44,90",
+          preco_en: "$8.90",
+          tag: "Alquimia Arcana",
+          tag_en: "Arcane Alchemy",
+          imagem: "https://images.unsplash.com/photo-1532767153582-b1a0e5145009?w=400&auto=format&fit=crop&q=80",
+          link: "https://s.shopee.com.br/seu_link_afiliado"
+        },
+        {
+          id: "prod_04",
+          titulo: "Mousepad Gamer Gothic Dark Fairy XXL (80x30cm)",
+          titulo_en: "Gothic Dark Fairy XXL Gaming Mousepad (80x30cm)",
+          preco: "R$ 34,90",
+          preco_en: "$6.80",
+          tag: "Setup Emo",
+          tag_en: "Goth Setup",
+          imagem: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=400&auto=format&fit=crop&q=80",
+          link: "https://s.shopee.com.br/seu_link_afiliado"
+        },
+        {
+          id: "prod_05",
+          titulo: "Anel Vintage Gótico Coração Alado Ajustável",
+          titulo_en: "Vintage Gothic Winged Heart Adjustable Ring",
+          preco: "R$ 15,90",
+          preco_en: "$3.10",
+          tag: "Acessório Raro",
+          tag_en: "Rare Accessory",
+          imagem: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&auto=format&fit=crop&q=80",
+          link: "https://s.shopee.com.br/seu_link_afiliado"
+        }
+      ];
+
+      let showcaseItems = DEFAULT_SHOWCASE_ITEMS;
+      let currentShowcaseIdx = 0;
+      let showcaseInterval = null;
+      let isShowcaseHovered = false;
+
+      function renderShowcaseCard(idx) {
+        if (!showcaseItems || showcaseItems.length === 0) return;
+        const item = showcaseItems[idx % showcaseItems.length];
+        const isPt = userLang === 'pt';
+        const title = (isPt ? item.titulo : (item.titulo_en || item.titulo));
+        const price = (isPt ? item.preco : (item.preco_en || item.preco));
+        const tag = (isPt ? item.tag : (item.tag_en || item.tag));
+        const link = item.link || '#';
+        const img = item.imagem || 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400';
+
+        const html = `
+          <a href="${link}" target="_blank" rel="noopener noreferrer" class="showcase-card" title="${title}">
+            <div class="showcase-thumb-wrap">
+              <img src="${img}" alt="${title}" class="showcase-thumb" loading="lazy" />
+            </div>
+            <div class="showcase-body">
+              <div class="showcase-meta">
+                <span class="showcase-badge">${tag}</span>
+                <span class="showcase-price">${price}</span>
+              </div>
+              <div class="showcase-title">${title}</div>
+              <div class="showcase-action">
+                <span class="showcase-brand">${S.showcaseBrand}</span>
+                <span class="showcase-cta">${S.showcaseBtn}</span>
+              </div>
+            </div>
+          </a>
+        `;
+
+        const wrapperTimer = document.getElementById('showcaseCardWrapper');
+        if (wrapperTimer) wrapperTimer.innerHTML = html;
+        const wrapperInst = document.getElementById('showcaseCardWrapperInst');
+        if (wrapperInst) wrapperInst.innerHTML = html;
+
+        updateShowcaseDots(idx);
+      }
+
+      function updateShowcaseDots(activeIdx) {
+        ['showcaseDots', 'showcaseDotsInst'].forEach(dotsId => {
+          const container = document.getElementById(dotsId);
+          if (!container) return;
+          container.innerHTML = '';
+          showcaseItems.forEach((_, i) => {
+            const dot = document.createElement('span');
+            dot.className = `showcase-dot ${i === activeIdx ? 'active' : ''}`;
+            dot.addEventListener('click', (e) => {
+              e.stopPropagation();
+              currentShowcaseIdx = i;
+              renderShowcaseCard(currentShowcaseIdx);
+            });
+            container.appendChild(dot);
+          });
+        });
+      }
+
+      function startShowcaseRotation() {
+        if (showcaseInterval) clearInterval(showcaseInterval);
+        showcaseInterval = setInterval(() => {
+          if (!isShowcaseHovered && showcaseItems.length > 1) {
+            currentShowcaseIdx = (currentShowcaseIdx + 1) % showcaseItems.length;
+            renderShowcaseCard(currentShowcaseIdx);
+          }
+        }, 3500);
+      }
+
+      function setupShowcaseHover() {
+        ['showcaseCardWrapper', 'showcaseCardWrapperInst'].forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.addEventListener('mouseenter', () => { isShowcaseHovered = true; });
+          el.addEventListener('mouseleave', () => { isShowcaseHovered = false; });
+        });
+      }
+
+      async function initShowcase() {
+        try {
+          const res = await fetch('/api/showcase');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.success && Array.isArray(data.items) && data.items.length > 0) {
+              showcaseItems = data.items;
+            }
+          }
+        } catch (_) {}
+
+        renderShowcaseCard(currentShowcaseIdx);
+        startShowcaseRotation();
+        setupShowcaseHover();
+      }
+
+      initShowcase();
 
       if (!token) {
         timerCardEl.style.display = 'none';

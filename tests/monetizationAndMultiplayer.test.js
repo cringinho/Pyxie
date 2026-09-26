@@ -59,7 +59,28 @@ try {
   const accB = getUserAccount(testUserB);
   assert.equal(accB.magicBeans, 1, 'Fim de semana deve conceder 1 Feijão Mágico.');
 
-  console.log('Verificação de Top.gg, Trocas Seguras e Temas Visuais com Feijões Mágicos: OK');
+  // 5. Teste da Vitrine Nativa de Achadinhos (Monetização Contextual Shopee)
+  const shopeeFilePath = path.join(__dirname, '..', 'src', 'data', 'shopee.json');
+  assert.ok(fs.existsSync(shopeeFilePath), 'Arquivo src/data/shopee.json deve existir.');
+  const shopeeData = JSON.parse(fs.readFileSync(shopeeFilePath, 'utf8'));
+  assert.ok(Array.isArray(shopeeData) && shopeeData.length >= 3, 'A vitrine deve conter pelo menos 3 itens curados.');
+  for (const item of shopeeData) {
+    assert.ok(item.id, 'Item da vitrine deve conter ID.');
+    assert.ok(item.titulo && item.titulo_en, 'Item da vitrine deve conter títulos bilíngues (PT e EN).');
+    assert.ok(item.preco && item.preco_en, 'Item da vitrine deve conter preços formatados (PT e EN).');
+    assert.ok(item.tag && item.tag_en, 'Item da vitrine deve conter tags bilíngues.');
+    assert.ok(item.imagem && item.imagem.startsWith('http'), 'Item deve conter URL de imagem válida.');
+    assert.ok(item.link && item.link.startsWith('http'), 'Item deve conter link de afiliado válido.');
+  }
+
+  // Verificação de integração no HTML da tela de bônus de 10s
+  const bonusHtmlPath = path.join(__dirname, '..', 'public', 'bonus.html');
+  const bonusHtml = fs.readFileSync(bonusHtmlPath, 'utf8');
+  assert.ok(bonusHtml.includes('showcase-container'), 'bonus.html deve conter a classe .showcase-container.');
+  assert.ok(bonusHtml.includes('showcaseTimerCard'), 'bonus.html deve conter a vitrine embutida no timerCard de 10s.');
+  assert.ok(bonusHtml.includes('initShowcase'), 'bonus.html deve conter a função initShowcase para rotação automática.');
+
+  console.log('Verificação de Top.gg, Trocas Seguras, Temas Visuais e Vitrine de Achadinhos: OK');
 } finally {
   const cleanFiles = [
     path.join(__dirname, '..', 'data', 'economy.json'),

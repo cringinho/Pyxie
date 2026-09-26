@@ -1,0 +1,57 @@
+[
+  {
+    "id": "prod_01",
+    "titulo": "Pelúcia Kuromi Goth / Dark Fairy 25cm",
+    "titulo_en": "Gothic Kuromi / Dark Fairy Plush 25cm",
+    "preco": "R$ 38,90",
+    "preco_en": "$7.50",
+    "tag": "Mais Vendido",
+    "tag_en": "Best Seller",
+    "imagem": "https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400&auto=format&fit=crop&q=80",
+    "link": "https://s.shopee.com.br/seu_link_afiliado"
+  },
+  {
+    "id": "prod_02",
+    "titulo": "Kit 7 Dados Poliédricos RPG Roxo & Preto Translúcido",
+    "titulo_en": "7 Polyhedral RPG Dice Set Translucent Purple & Black",
+    "preco": "R$ 22,50",
+    "preco_en": "$4.20",
+    "tag": "Item do Bosque",
+    "tag_en": "Grove Relic",
+    "imagem": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=400&auto=format&fit=crop&q=80",
+    "link": "https://s.shopee.com.br/seu_link_afiliado"
+  },
+  {
+    "id": "prod_03",
+    "titulo": "Luminária Mística Lua de Cristal 3D LED RGB",
+    "titulo_en": "Mystic 3D Crystal Moon LED RGB Lamp",
+    "preco": "R$ 44,90",
+    "preco_en": "$8.90",
+    "tag": "Alquimia Arcana",
+    "tag_en": "Arcane Alchemy",
+    "imagem": "https://images.unsplash.com/photo-1532767153582-b1a0e5145009?w=400&auto=format&fit=crop&q=80",
+    "link": "https://s.shopee.com.br/seu_link_afiliado"
+  },
+  {
+    "id": "prod_04",
+    "titulo": "Mousepad Gamer Gothic Dark Fairy XXL (80x30cm)",
+    "titulo_en": "Gothic Dark Fairy XXL Gaming Mousepad (80x30cm)",
+    "preco": "R$ 34,90",
+    "preco_en": "$6.80",
+    "tag": "Setup Emo",
+    "tag_en": "Goth Setup",
+    "imagem": "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=400&auto=format&fit=crop&q=80",
+    "link": "https://s.shopee.com.br/seu_link_afiliado"
+  },
+  {
+    "id": "prod_05",
+    "titulo": "Anel Vintage Gótico Coração Alado Ajustável",
+    "titulo_en": "Vintage Gothic Winged Heart Adjustable Ring",
+    "preco": "R$ 15,90",
+    "preco_en": "$3.10",
+    "tag": "Acessório Raro",
+    "tag_en": "Rare Accessory",
+    "imagem": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&auto=format&fit=crop&q=80",
+    "link": "https://s.shopee.com.br/seu_link_afiliado"
+  }
+]
