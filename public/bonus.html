@@ -7,13 +7,11 @@
     <link rel="icon" href="https://cdn.discordapp.com/emojis/1548443951596306552.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Adsterra Social Bar -->
-    <script src="https://pl31498302.profitableratecpmnetwork.com/fc/32/b6/fc32b6f4190b83669638678c36cf9c90.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
     <style>
       :root {
         --bg-dark: #07040d;
-        --bg-card: rgba(22, 13, 42, 0.85);
+        --bg-card: rgba(22, 13, 42, 0.88);
         --purple-main: #9333ea;
         --purple-neon: #a855f7;
         --purple-glow: #c084fc;
@@ -26,7 +24,7 @@
         --emerald-glow: #34d399;
         --text-white: #ffffff;
         --text-muted: #cbd5e1;
-        --border-glass: rgba(192, 132, 252, 0.22);
+        --border-glass: rgba(192, 132, 252, 0.24);
       }
 
       * {
@@ -48,7 +46,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 20px 14px;
+        padding: 24px 14px;
         overflow-x: hidden;
         position: relative;
       }
@@ -67,32 +65,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 24px;
         width: 100%;
-        max-width: 1300px;
+        max-width: 540px;
         margin: 0 auto;
         position: relative;
         z-index: 1;
-      }
-
-      .sidebar-ad {
-        display: none;
-        width: 160px;
-        min-height: 600px;
-        background: rgba(22, 13, 42, 0.45);
-        border: 1px solid var(--border-glass);
-        border-radius: 20px;
-        overflow: hidden;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(14px);
-      }
-
-      @media (min-width: 1200px) {
-        .sidebar-ad {
-          display: flex;
-        }
       }
 
       .center-column {
@@ -100,35 +77,64 @@
         flex-direction: column;
         align-items: center;
         width: 100%;
-        max-width: 520px;
       }
 
-      .ad-banner-box {
+      /* Native Top Banner Shopee */
+      .shopee-top-banner {
+        width: 100%;
         margin-bottom: 18px;
+        padding: 10px 16px;
+        background: linear-gradient(135deg, rgba(147, 51, 234, 0.22), rgba(244, 63, 94, 0.2));
+        border: 1px solid rgba(192, 132, 252, 0.35);
+        border-radius: 16px;
         display: flex;
-        justify-content: center;
         align-items: center;
-        overflow: hidden;
-        border-radius: 14px;
-        background: rgba(22, 13, 42, 0.45);
-        border: 1px solid var(--border-glass);
+        justify-content: space-between;
+        gap: 12px;
+        text-decoration: none;
+        color: inherit;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        transition: all 0.25s ease;
       }
-
-      .ad-desktop-only {
-        display: none;
+      .shopee-top-banner:hover {
+        transform: translateY(-2px);
+        border-color: rgba(244, 114, 182, 0.65);
+        box-shadow: 0 8px 25px rgba(244, 63, 94, 0.35);
       }
-      .ad-mobile-only {
-        display: flex;
+      .shopee-top-icon {
+        font-size: 24px;
+        flex-shrink: 0;
       }
-
-      @media (min-width: 768px) {
-        .ad-desktop-only {
-          display: flex;
-        }
-        .ad-mobile-only {
-          display: none;
-        }
+      .shopee-top-text {
+        flex: 1;
+        min-width: 0;
+        text-align: left;
+      }
+      .shopee-top-title {
+        display: block;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: #ffffff;
+      }
+      .shopee-top-desc {
+        display: block;
+        font-size: 0.74rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .shopee-top-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 12px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--purple-main), var(--pink-neon));
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
 
       /* Card Principal */
@@ -194,7 +200,7 @@
         background: rgba(10, 5, 20, 0.75);
         border: 1px solid rgba(192, 132, 252, 0.25);
         border-radius: 22px;
-        padding: 24px 18px;
+        padding: 24px 18px 20px;
         margin-bottom: 20px;
         box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
       }
@@ -233,6 +239,193 @@
         font-size: 0.96rem;
         font-weight: 600;
         color: #e2e8f0;
+      }
+
+      /* Vitrine Nativa de Achadinhos (Carrossel Discreto de 10s) */
+      .showcase-container {
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px dashed rgba(192, 132, 252, 0.22);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
+      .showcase-header {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .showcase-intro {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        line-height: 1.35;
+        font-weight: 500;
+      }
+
+      .showcase-card-wrapper {
+        width: 100%;
+        position: relative;
+        min-height: 82px;
+      }
+
+      .showcase-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(14, 7, 26, 0.88);
+        border: 1px solid rgba(192, 132, 252, 0.28);
+        border-radius: 16px;
+        padding: 10px 14px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .showcase-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(244, 114, 182, 0.65);
+        box-shadow: 0 8px 24px rgba(147, 51, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      }
+
+      .showcase-thumb-wrap {
+        width: 62px;
+        height: 62px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: #0a0514;
+        position: relative;
+      }
+
+      .showcase-thumb {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .showcase-card:hover .showcase-thumb {
+        transform: scale(1.08);
+      }
+
+      .showcase-body {
+        flex: 1;
+        min-width: 0;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 3px;
+      }
+
+      .showcase-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+
+      .showcase-badge {
+        font-size: 0.68rem;
+        font-weight: 700;
+        background: rgba(244, 63, 94, 0.18);
+        border: 1px solid rgba(244, 63, 94, 0.4);
+        color: #fca5a5;
+        padding: 2px 7px;
+        border-radius: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+
+      .showcase-price {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #34d399;
+        white-space: nowrap;
+      }
+
+      .showcase-title {
+        font-size: 0.83rem;
+        font-weight: 600;
+        color: #f1f5f9;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .showcase-action {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 3px;
+      }
+
+      .showcase-brand {
+        font-size: 0.72rem;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .showcase-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(147, 51, 234, 0.4), rgba(244, 63, 94, 0.4));
+        border: 1px solid rgba(244, 114, 182, 0.4);
+        color: #ffffff;
+        font-size: 0.74rem;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+      }
+
+      .showcase-card:hover .showcase-cta {
+        background: linear-gradient(135deg, #9333ea, #f43f5e);
+        box-shadow: 0 2px 10px rgba(244, 63, 94, 0.5);
+      }
+
+      .showcase-dots {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .showcase-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .showcase-dot.active {
+        width: 18px;
+        border-radius: 8px;
+        background: var(--purple-glow);
+        box-shadow: 0 0 8px rgba(192, 132, 252, 0.6);
       }
 
       /* Instructions Card */
@@ -311,7 +504,7 @@
         gap: 8px;
       }
 
-      /* Botão e Feedback */
+      /* Buttons & Status */
       .btn-claim {
         display: none;
         width: 100%;
@@ -393,10 +586,11 @@
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        max-width: 520px;
+        width: 100%;
+        max-width: 540px;
         margin: 20px auto 0;
         padding: 12px 18px;
-        background: linear-gradient(135deg, rgba(147, 51, 234, 0.16), rgba(244, 63, 94, 0.14));
+        background: linear-gradient(135deg, rgba(147, 51, 234, 0.18), rgba(244, 63, 94, 0.16));
         border: 1px solid rgba(192, 132, 252, 0.35);
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -456,49 +650,17 @@
     <canvas id="particles-canvas"></canvas>
 
     <div class="main-layout">
-      <!-- Lateral Esquerda (Desktop 160x600 Skyscraper) -->
-      <aside class="sidebar-ad">
-        <script>
-          atOptions = {
-            'key' : 'd9b7c704cc9d72eed445cd7653b5293a',
-            'format' : 'iframe',
-            'height' : 600,
-            'width' : 160,
-            'params' : {}
-          };
-        </script>
-        <script src="https://www.highrevenueformat.com/d9b7c704cc9d72eed445cd7653b5293a/invoke.js"></script>
-      </aside>
-
       <!-- Coluna Central -->
       <main class="center-column">
-        <!-- Banner Topo Desktop (728x90) -->
-        <div class="ad-banner-box ad-desktop-only">
-          <script>
-            atOptions = {
-              'key' : '41e0bc4d8d00e3372806459e6e5d7d01',
-              'format' : 'iframe',
-              'height' : 90,
-              'width' : 728,
-              'params' : {}
-            };
-          </script>
-          <script src="https://www.highrevenueformat.com/41e0bc4d8d00e3372806459e6e5d7d01/invoke.js"></script>
-        </div>
-
-        <!-- Banner Topo Mobile (320x50) -->
-        <div class="ad-banner-box ad-mobile-only">
-          <script>
-            atOptions = {
-              'key' : '19b31b89721bd9c729a7a2c8ca25d949',
-              'format' : 'iframe',
-              'height' : 50,
-              'width' : 320,
-              'params' : {}
-            };
-          </script>
-          <script src="https://www.highrevenueformat.com/19b31b89721bd9c729a7a2c8ca25d949/invoke.js"></script>
-        </div>
+        <!-- Banner Topo Shopee Afiliados -->
+        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-top-banner">
+          <span class="shopee-top-icon">🛍️</span>
+          <div class="shopee-top-text">
+            <span class="shopee-top-title" id="bannerTopTitle">Achadinhos da Pyxie na Shopee ✦ Ofertas Secretas</span>
+            <span class="shopee-top-desc" id="bannerTopDesc">Descontos especiais em pelúcias, moda goth e itens Sanrio!</span>
+          </div>
+          <span class="shopee-top-btn" id="bannerTopBtn">Conferir ➔</span>
+        </a>
 
         <!-- Card Principal da Pyxie -->
         <div class="bonus-container">
@@ -515,6 +677,15 @@
               <div id="progressBar" class="progress-bar-fill"></div>
             </div>
             <div id="statusLabel" class="status-label">⚡ Canalizando energia mágica...</div>
+
+            <!-- Vitrine Nativa de Achadinhos (Carrossel Discreto de 10s) -->
+            <div class="showcase-container" id="showcaseTimerCard">
+              <div class="showcase-header">
+                <span class="showcase-intro" id="showcaseIntro">✨ Enquanto a fadinha canaliza energia para o bônus, dê uma olhada no achadinho de hoje:</span>
+              </div>
+              <div class="showcase-card-wrapper" id="showcaseCardWrapper"></div>
+              <div class="showcase-dots" id="showcaseDots"></div>
+            </div>
           </div>
 
           <!-- Card de Instruções Amigável (Exibido quando acessa sem token direto pela URL) -->
@@ -541,8 +712,17 @@
               <span>✨ <strong>Recompensa:</strong> +75 Moedinhas 🪙 no cofre</span>
             </div>
 
-            <a id="sponsorBtn" href="https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813" target="_blank" class="btn-sponsor">
-              👉 Apoiar Servidor com Patrocinador
+            <!-- Vitrine Nativa de Achadinhos nas Instruções -->
+            <div class="showcase-container" id="showcaseInstCard">
+              <div class="showcase-header">
+                <span class="showcase-intro" id="showcaseIntroInst">✨ Achadinhos Mágicos da Comunidade:</span>
+              </div>
+              <div class="showcase-card-wrapper" id="showcaseCardWrapperInst"></div>
+              <div class="showcase-dots" id="showcaseDotsInst"></div>
+            </div>
+
+            <a id="sponsorBtn" href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" class="btn-sponsor">
+              🛍️ Ver Achadinhos & Ofertas na Shopee
             </a>
           </div>
 
@@ -556,47 +736,20 @@
           <div id="errorBox" class="error-box"></div>
 
           <div id="sponsorBadge" class="sponsor-badge">
-            Patrocinado com carinho para a comunidade Pyxie 🐾
+            Achadinhos selecionados com carinho para a comunidade Pyxie 🐾
           </div>
         </div>
 
-        <!-- Banner Promocional da Pyxie (Apoio & Bônus) -->
-        <a href="https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813" target="_blank" rel="noopener" class="pyxie-promo-banner ad-desktop-only">
-          <span class="promo-icon">🎁</span>
+        <!-- Banner Promocional da Pyxie (Shopee Afiliados) -->
+        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener" class="pyxie-promo-banner">
+          <span class="promo-icon">🛍️</span>
           <div class="promo-content">
-            <div class="promo-title" id="promoTitle">Apoie a Pyxie & Ganhe Bônus</div>
-            <div class="promo-desc" id="promoDesc">Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!</div>
+            <div class="promo-title" id="promoTitle">Achadinhos da Pyxie na Shopee</div>
+            <div class="promo-desc" id="promoDesc">Pelúcias, moda goth e itens mágicos com descontos imperdíveis!</div>
           </div>
-          <span class="promo-cta" id="promoBtn">Apoiar ✦</span>
+          <span class="promo-cta" id="promoBtn">Ver Ofertas ✦</span>
         </a>
-
-        <div class="ad-banner-box ad-mobile-only">
-          <script>
-            atOptions = {
-              'key' : '19b31b89721bd9c729a7a2c8ca25d949',
-              'format' : 'iframe',
-              'height' : 50,
-              'width' : 320,
-              'params' : {}
-            };
-          </script>
-          <script src="https://www.highrevenueformat.com/19b31b89721bd9c729a7a2c8ca25d949/invoke.js"></script>
-        </div>
       </main>
-
-      <!-- Lateral Direita (Desktop 160x600 Skyscraper) -->
-      <aside class="sidebar-ad">
-        <script>
-          atOptions = {
-            'key' : 'd9b7c704cc9d72eed445cd7653b5293a',
-            'format' : 'iframe',
-            'height' : 600,
-            'width' : 160,
-            'params' : {}
-          };
-        </script>
-        <script src="https://www.highrevenueformat.com/d9b7c704cc9d72eed445cd7653b5293a/invoke.js"></script>
-      </aside>
     </div>
 
     <script>
@@ -666,7 +819,7 @@
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
       const langParam = urlParams.get('lang');
-      const SMARTLINK_URL = 'https://www.profitableratecpmnetwork.com/bzdc0dtq5?key=aece6072dc92d95726e1223cf45171dd';
+      const SMARTLINK_URL = 'https://s.shopee.com.br/BU6Bod6Sw';
 
       const actionParam = urlParams.get('action');
       let tokenAction = actionParam || null;
@@ -708,12 +861,19 @@
           rewardBox: isGloomBoss
             ? '<span>🌙 <strong>Recompensa do Bosque:</strong> 1x Investida Extra no Chefão ⚔️ + 50 Phantom Coins 👻</span>'
             : '<span>✨ <strong>Recompensa:</strong> +75 Moedinhas 🪙 no cofre</span>',
-          sponsorBtn: '👉 Apoiar Servidor com Patrocinador',
-          sponsorBadge: 'Patrocinado com carinho para a comunidade Pyxie 🐾',
+          sponsorBtn: '🛍️ Ver Achadinhos & Ofertas na Shopee',
+          sponsorBadge: 'Achadinhos selecionados com carinho para a comunidade Pyxie 🐾',
           connErrorMsg: 'Erro de conexão. Verifique sua internet e tente novamente.',
-          promoTitle: 'Apoie a Pyxie & Ganhe Bônus',
-          promoDesc: 'Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!',
-          promoBtn: 'Apoiar ✦',
+          promoTitle: 'Achadinhos da Pyxie na Shopee',
+          promoDesc: 'Pelúcias, moda goth e itens mágicos com descontos imperdíveis!',
+          promoBtn: 'Ver Ofertas ✦',
+          bannerTopTitle: 'Achadinhos da Pyxie na Shopee ✦ Ofertas Secretas',
+          bannerTopDesc: 'Descontos especiais em pelúcias, moda goth e itens Sanrio!',
+          bannerTopBtn: 'Conferir ➔',
+          showcaseIntro: 'Enquanto a fadinha canaliza energia para o bônus, dê uma olhada no achadinho de hoje:',
+          showcaseIntroInst: 'Achadinhos Mágicos da Comunidade:',
+          showcaseBtn: 'Ver na Shopee ➔',
+          showcaseBrand: '🛍️ Shopee Afiliados',
         },
         en: {
           metaTitle: isGloomBoss ? "Pyxie • Pyxie's Grove • Extra Strike" : 'Pyxie • Enchanted Magic Bonus',
@@ -742,12 +902,19 @@
           rewardBox: isGloomBoss
             ? "<span>🌙 <strong>Grove Reward:</strong> 1x Extra Boss Strike ⚔️ + 50 Phantom Coins 👻</span>"
             : '<span>✨ <strong>Reward:</strong> +75 Coins 🪙 in your vault</span>',
-          sponsorBtn: '👉 Support Server via Sponsor',
-          sponsorBadge: 'Sponsored with love for the Pyxie community 🐾',
+          sponsorBtn: '🛍️ View Shopee Finds & Deals',
+          sponsorBadge: 'Curated with love for the Pyxie community 🐾',
           connErrorMsg: 'Connection error. Please check your internet connection and try again.',
-          promoTitle: 'Support Pyxie & Earn Bonus',
-          promoDesc: 'Support the Cringelândia community and unlock magical rewards!',
-          promoBtn: 'Support ✦',
+          promoTitle: 'Pyxie Finds on Shopee',
+          promoDesc: 'Plushes, goth fashion, and magical items with special discounts!',
+          promoBtn: 'View Deals ✦',
+          bannerTopTitle: 'Pyxie Finds on Shopee ✦ Secret Deals',
+          bannerTopDesc: 'Special discounts on plushes, goth fashion, and Sanrio items!',
+          bannerTopBtn: 'Check Out ➔',
+          showcaseIntro: "While the fairy channels bonus energy, check out today's find:",
+          showcaseIntroInst: 'Magical Community Finds:',
+          showcaseBtn: 'View on Shopee ➔',
+          showcaseBrand: '🛍️ Shopee Affiliate',
         }
       };
 
@@ -776,6 +943,9 @@
       const step3TextEl = document.getElementById('step3Text');
       const rewardBoxEl = document.getElementById('rewardBox');
       const sponsorBtnEl = document.getElementById('sponsorBtn');
+      const bannerTopTitleEl = document.getElementById('bannerTopTitle');
+      const bannerTopDescEl = document.getElementById('bannerTopDesc');
+      const bannerTopBtnEl = document.getElementById('bannerTopBtn');
 
       btnClaimEl.innerText = S.btnClaim;
       successTitleEl.innerText = S.successTitle;
@@ -788,12 +958,177 @@
       rewardBoxEl.innerHTML = S.rewardBox;
       sponsorBtnEl.innerText = S.sponsorBtn;
 
+      if (bannerTopTitleEl) bannerTopTitleEl.innerText = S.bannerTopTitle;
+      if (bannerTopDescEl) bannerTopDescEl.innerText = S.bannerTopDesc;
+      if (bannerTopBtnEl) bannerTopBtnEl.innerText = S.bannerTopBtn;
+
       const promoTitleEl = document.getElementById('promoTitle');
       if (promoTitleEl) promoTitleEl.innerText = S.promoTitle;
       const promoDescEl = document.getElementById('promoDesc');
       if (promoDescEl) promoDescEl.innerText = S.promoDesc;
       const promoBtnEl = document.getElementById('promoBtn');
       if (promoBtnEl) promoBtnEl.innerText = S.promoBtn;
+
+      const showcaseIntroEl = document.getElementById('showcaseIntro');
+      if (showcaseIntroEl) showcaseIntroEl.innerText = `✨ ${S.showcaseIntro}`;
+      const showcaseIntroInstEl = document.getElementById('showcaseIntroInst');
+      if (showcaseIntroInstEl) showcaseIntroInstEl.innerText = `✨ ${S.showcaseIntroInst}`;
+
+      // Dados de contingência nativa da vitrine (Shopee Afiliados)
+      const DEFAULT_SHOWCASE_ITEMS = [
+        {
+          id: "23798670825",
+          titulo: "Kuromi Sanrio Boneca de pelúcia fofa 25cm",
+          titulo_en: "Kuromi Sanrio Cute Plush Doll 25cm",
+          preco: "R$ 55,99",
+          preco_en: "$10.77",
+          tag: "Pelúcia Sanrio",
+          tag_en: "Sanrio Plush",
+          imagem: "https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400",
+          link: "https://s.shopee.com.br/1BMdNQEU79"
+        },
+        {
+          id: "28812198611",
+          titulo: "Vintage Goth Espinhos Casal Anéis Abertura Punk",
+          titulo_en: "Vintage Goth Thorns Couple Rings Punk",
+          preco: "R$ 12,06",
+          preco_en: "$2.32",
+          tag: "Acessório Goth",
+          tag_en: "Goth Jewelry",
+          imagem: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400",
+          link: "https://s.shopee.com.br/LnWNtHeo2"
+        },
+        {
+          id: "23099667422",
+          titulo: "Kit Chaveiros Hollow Knight e Hornet 3D Geek",
+          titulo_en: "Hollow Knight & Hornet 3D Keychain Set",
+          preco: "R$ 27,97",
+          preco_en: "$5.38",
+          tag: "Geek & Anime",
+          tag_en: "Geek & Anime",
+          imagem: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=400",
+          link: "https://s.shopee.com.br/2BFAZGAg5R"
+        },
+        {
+          id: "58212898323",
+          titulo: "Anel Gótico Camafeu Roxo Pedra Oval Vintage",
+          titulo_en: "Gothic Cameo Purple Stone Vintage Ring",
+          preco: "R$ 29,90",
+          preco_en: "$5.75",
+          tag: "Acessório Goth",
+          tag_en: "Goth Jewelry",
+          imagem: "https://images.unsplash.com/photo-1532767153582-b1a0e5145009?w=400",
+          link: "https://s.shopee.com.br/W6waCH1T5"
+        },
+        {
+          id: "58265449372",
+          titulo: "Camiseta Feminina Premium Hello Kitty Kuromi Algodão",
+          titulo_en: "Hello Kitty Kuromi Premium Cotton T-Shirt",
+          preco: "R$ 34,90",
+          preco_en: "$6.71",
+          tag: "Moda & Estilo",
+          tag_en: "Fashion & Goth",
+          imagem: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=400",
+          link: "https://s.shopee.com.br/1AfzHIvTw"
+        }
+      ];
+
+      let showcaseItems = DEFAULT_SHOWCASE_ITEMS;
+      let currentShowcaseIdx = 0;
+      let showcaseInterval = null;
+      let isShowcaseHovered = false;
+
+      function renderShowcaseCard(idx) {
+        if (!showcaseItems || showcaseItems.length === 0) return;
+        const item = showcaseItems[idx % showcaseItems.length];
+        const isPt = userLang === 'pt';
+        const title = (isPt ? item.titulo : (item.titulo_en || item.titulo));
+        const price = (isPt ? item.preco : (item.preco_en || item.preco));
+        const tag = (isPt ? item.tag : (item.tag_en || item.tag));
+        const link = item.link || 'https://s.shopee.com.br/BU6Bod6Sw';
+        const img = item.imagem || 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400';
+
+        const html = `
+          <a href="${link}" target="_blank" rel="noopener noreferrer" class="showcase-card" title="${title}">
+            <div class="showcase-thumb-wrap">
+              <img src="${img}" alt="${title}" class="showcase-thumb" loading="lazy" />
+            </div>
+            <div class="showcase-body">
+              <div class="showcase-meta">
+                <span class="showcase-badge">${tag}</span>
+                <span class="showcase-price">${price}</span>
+              </div>
+              <div class="showcase-title">${title}</div>
+              <div class="showcase-action">
+                <span class="showcase-brand">${S.showcaseBrand}</span>
+                <span class="showcase-cta">${S.showcaseBtn}</span>
+              </div>
+            </div>
+          </a>
+        `;
+
+        const wrapperTimer = document.getElementById('showcaseCardWrapper');
+        if (wrapperTimer) wrapperTimer.innerHTML = html;
+        const wrapperInst = document.getElementById('showcaseCardWrapperInst');
+        if (wrapperInst) wrapperInst.innerHTML = html;
+
+        updateShowcaseDots(idx);
+      }
+
+      function updateShowcaseDots(activeIdx) {
+        ['showcaseDots', 'showcaseDotsInst'].forEach(dotsId => {
+          const container = document.getElementById(dotsId);
+          if (!container) return;
+          container.innerHTML = '';
+          showcaseItems.forEach((_, i) => {
+            const dot = document.createElement('span');
+            dot.className = `showcase-dot ${i === activeIdx ? 'active' : ''}`;
+            dot.addEventListener('click', (e) => {
+              e.stopPropagation();
+              currentShowcaseIdx = i;
+              renderShowcaseCard(currentShowcaseIdx);
+            });
+            container.appendChild(dot);
+          });
+        });
+      }
+
+      function startShowcaseRotation() {
+        if (showcaseInterval) clearInterval(showcaseInterval);
+        showcaseInterval = setInterval(() => {
+          if (!isShowcaseHovered && showcaseItems.length > 1) {
+            currentShowcaseIdx = (currentShowcaseIdx + 1) % showcaseItems.length;
+            renderShowcaseCard(currentShowcaseIdx);
+          }
+        }, 3500);
+      }
+
+      function setupShowcaseHover() {
+        ['showcaseCardWrapper', 'showcaseCardWrapperInst'].forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.addEventListener('mouseenter', () => { isShowcaseHovered = true; });
+          el.addEventListener('mouseleave', () => { isShowcaseHovered = false; });
+        });
+      }
+
+      async function initShowcase() {
+        try {
+          const res = await fetch('/api/showcase');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.success && Array.isArray(data.items) && data.items.length > 0) {
+              showcaseItems = data.items;
+            }
+          }
+        } catch (_) {}
+
+        renderShowcaseCard(currentShowcaseIdx);
+        startShowcaseRotation();
+        setupShowcaseHover();
+      }
+
+      initShowcase();
 
       if (!token) {
         timerCardEl.style.display = 'none';

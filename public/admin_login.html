@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pyxie Console • Acesso do Proprietário</title>
+    <link rel="icon" href="https://cdn.discordapp.com/emojis/1548444149785694238.gif" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg-dark: #07040e;
+        --card-bg: rgba(18, 10, 34, 0.92);
+        --purple-main: #8b5cf6;
+        --purple-glow: #c084fc;
+        --pink-neon: #f43f5e;
+        --text-white: #ffffff;
+        --text-muted: #94a3b8;
+        --border-glass: rgba(192, 132, 252, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-dark);
+        background-image: 
+          radial-gradient(circle at 50% 0%, #351358 0%, rgba(12, 6, 24, 0.98) 55%, #07040e 100%),
+          radial-gradient(circle at 20% 60%, rgba(244, 63, 94, 0.12) 0%, transparent 40%),
+          radial-gradient(circle at 80% 60%, rgba(139, 92, 246, 0.14) 0%, transparent 40%);
+        color: var(--text-white);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .login-box {
+        background: var(--card-bg);
+        border: 1px solid var(--border-glass);
+        border-radius: 28px;
+        padding: clamp(28px, 6vw, 42px) clamp(22px, 5vw, 36px);
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        text-align: center;
+      }
+
+      .badge-mascot {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 16px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        box-shadow: 0 8px 30px rgba(244, 63, 94, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+
+      h1 {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        background: linear-gradient(to right, #ffffff, var(--purple-glow));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 6px;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 0.88rem;
+        line-height: 1.45;
+        margin-bottom: 24px;
+      }
+
+      .discord-tag {
+        display: inline-block;
+        background: rgba(139, 92, 246, 0.15);
+        border: 1px solid rgba(139, 92, 246, 0.35);
+        color: var(--purple-glow);
+        padding: 2px 8px;
+        border-radius: 8px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+
+      .form-group {
+        text-align: left;
+        margin-bottom: 18px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #e2e8f0;
+        margin-bottom: 8px;
+      }
+
+      .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 14px;
+        font-size: 18px;
+        pointer-events: none;
+      }
+
+      .form-control {
+        width: 100%;
+        background: #090514;
+        border: 1px solid rgba(192, 132, 252, 0.3);
+        border-radius: 14px;
+        padding: 13px 14px 13px 44px;
+        color: #fff;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.95rem;
+        outline: none;
+        transition: all 0.25s ease;
+      }
+
+      .form-control:focus {
+        border-color: var(--purple-glow);
+        box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.25);
+      }
+
+      .btn-submit {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--purple-main), var(--pink-neon));
+        color: #fff;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 6px 20px rgba(147, 51, 234, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 26px rgba(244, 63, 94, 0.5);
+      }
+
+      .error-alert {
+        display: none;
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: #fca5a5;
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        margin-bottom: 16px;
+      }
+
+      .discord-tip {
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        line-height: 1.4;
+      }
+
+      .discord-tip strong {
+        color: #e2e8f0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-box">
+      <div class="badge-mascot">🛡️</div>
+      <h1>Área do Proprietário</h1>
+      <p class="subtitle">
+        Painel confidencial exclusivo para o Criador da Pyxie <span class="discord-tag">214153735281180673</span>
+      </p>
+
+      <div id="errorAlert" class="error-alert"></div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="password">Chave Mestra do Dono (PANEL_SECRET):</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔑</span>
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              placeholder="Digite sua senha mestra..."
+              required
+              autofocus
+            />
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmit" class="btn-submit">
+          <span>🔓 Entrar no Console</span>
+        </button>
+      </form>
+
+      <div class="discord-tip">
+        💡 <strong>Dica de Acesso Rápido:</strong><br />
+        No Discord, basta digitar o comando <span class="discord-tag">/py-admin</span> e clicar no botão para entrar sem precisar digitar senha.
+      </div>
+    </div>
+
+    <script>
+      async function handleLogin(e) {
+        e.preventDefault();
+        const pwdInput = document.getElementById('password');
+        const btn = document.getElementById('btnSubmit');
+        const alertEl = document.getElementById('errorAlert');
+        const password = pwdInput.value.trim();
+
+        if (!password) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ Validando...</span>';
+        alertEl.style.display = 'none';
+
+        try {
+          const res = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password }),
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            window.location.href = '/admin';
+          } else {
+            alertEl.innerText = data.error || 'Senha mestra incorreta.';
+            alertEl.style.display = 'block';
+            pwdInput.focus();
+            pwdInput.select();
+          }
+        } catch (err) {
+          alertEl.innerText = 'Falha na conexão com o servidor.';
+          alertEl.style.display = 'block';
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<span>🔓 Entrar no Console</span>';
+        }
+      }
+    </script>
+  </body>
+</html>
