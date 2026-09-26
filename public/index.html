@@ -6,8 +6,6 @@
   <title>Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord</title>
   <meta name="description" content="Pyxie é uma fada mágica para o Discord com o Bosque da Pyxie, Carreiras Interativas, Economia Viva, Tarot Místico e Minigames Sociais." />
   <link rel="icon" href="https://cdn.discordapp.com/emojis/1548443951596306552.webp" />
-  <!-- Adsterra Social Bar -->
-  <script src="https://pl31498302.profitableratecpmnetwork.com/fc/32/b6/fc32b6f4190b83669638678c36cf9c90.js"></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1274,6 +1272,263 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Native Pyxie & Shopee Feature Banner */
+    .pyxie-native-banner-container {
+      max-width: 860px;
+      margin: 15px auto 40px;
+      padding: 0 16px;
+      width: 100%;
+    }
+    .pyxie-native-banner {
+      position: relative;
+      display: block;
+      width: 100%;
+      min-height: 100px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      box-shadow: 0 8px 32px rgba(10, 5, 20, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .pyxie-native-banner:hover {
+      transform: translateY(-3px) scale(1.008);
+      border-color: rgba(244, 114, 182, 0.7);
+      box-shadow: 0 14px 40px rgba(147, 51, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .pyxie-native-banner .banner-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center 30%;
+      transform: scale(1.02);
+      transition: transform 0.5s ease;
+    }
+    .pyxie-native-banner:hover .banner-bg {
+      transform: scale(1.06);
+    }
+    .pyxie-native-banner .banner-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(10, 4, 20, 0.94) 0%, rgba(18, 9, 36, 0.88) 45%, rgba(10, 4, 20, 0.75) 100%);
+      backdrop-filter: blur(2px);
+    }
+    .pyxie-native-banner .banner-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 24px;
+    }
+    .pyxie-native-banner .banner-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(244, 63, 94, 0.2);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: #fca5a5;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .pyxie-native-banner .banner-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .pyxie-native-banner .banner-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 4px 0 2px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+    }
+    .pyxie-native-banner .banner-desc {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.35;
+      margin: 0;
+    }
+    .pyxie-native-banner .banner-action {
+      flex-shrink: 0;
+    }
+    .pyxie-native-banner .banner-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f43f5e, #9333ea);
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4);
+      transition: all 0.2s ease;
+    }
+    .pyxie-native-banner:hover .banner-btn {
+      background: linear-gradient(135deg, #fb7185, #a855f7);
+      box-shadow: 0 6px 20px rgba(244, 63, 94, 0.6);
+      transform: scale(1.04);
+    }
+    @media (max-width: 768px) {
+      .pyxie-native-banner .banner-content {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+        gap: 12px;
+      }
+      .pyxie-native-banner .banner-action {
+        width: 100%;
+      }
+      .pyxie-native-banner .banner-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* Assistente Flutuante da Pyxie (Child-Safe & Elegante) */
+    .pyxie-floating-tip {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      max-width: 360px;
+      background: rgba(18, 9, 36, 0.94);
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      border-radius: 20px;
+      padding: 16px 18px 16px 72px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(168, 85, 247, 0.25);
+      backdrop-filter: blur(14px);
+      animation: tipSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes tipSlideIn {
+      from { transform: translateY(40px) scale(0.95); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .tip-close-btn {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #cbd5e1;
+      font-size: 13px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .tip-close-btn:hover {
+      background: rgba(244, 63, 94, 0.3);
+      color: #fff;
+    }
+    .tip-mascot-wrap {
+      position: absolute;
+      bottom: 10px;
+      left: -14px;
+      width: 78px;
+      height: 92px;
+      pointer-events: none;
+    }
+    .tip-mascot-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 12px rgba(168, 85, 247, 0.5));
+    }
+    .tip-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .tip-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .tip-badge {
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: rgba(147, 51, 234, 0.25);
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      color: #d8b4fe;
+      font-weight: 600;
+    }
+    .tip-text {
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+    .tip-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .tip-btn-primary {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .tip-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+    .tip-btn-secondary {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .tip-btn-secondary:hover {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: rgba(244, 63, 94, 0.4);
+    }
+    @media (max-width: 600px) {
+      .pyxie-floating-tip {
+        bottom: 16px;
+        right: 14px;
+        left: 14px;
+        max-width: none;
+        padding-left: 65px;
+      }
+      .tip-mascot-wrap {
+        left: -8px;
+        width: 68px;
+        height: 80px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1446,18 +1701,25 @@
       </div>
     </section>
 
-    <!-- Adsterra Banner Topo -->
-    <div style="text-align: center; margin: 10px auto 45px; max-width: 728px; overflow: hidden; border-radius: 14px;">
-      <script>
-        atOptions = {
-          'key' : '41e0bc4d8d00e3372806459e6e5d7d01',
-          'format' : 'iframe',
-          'height' : 90,
-          'width' : 728,
-          'params' : {}
-        };
-      </script>
-      <script src="https://www.highrevenueformat.com/41e0bc4d8d00e3372806459e6e5d7d01/invoke.js"></script>
+    <!-- Vitrine Nativa de Achadinhos da Pyxie & Setup -->
+    <div class="pyxie-native-banner-container">
+      <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="pyxie-native-banner">
+        <div class="banner-bg" style="background-image: url('/assets/pyxie/pyxie_space_banner.jpg');"></div>
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <div class="banner-tag">
+            <span class="banner-badge-sparkle">✦</span>
+            <span data-i18n="banner.tag">Achadinhos da Pyxie</span>
+          </div>
+          <div class="banner-info">
+            <h3 class="banner-title" data-i18n="banner.title">Vitrine Mágica de Pelúcias, Sanrio & Setup RPG</h3>
+            <p class="banner-desc" data-i18n="banner.desc">Descubra itens fofos e góticos curados para a comunidade com os melhores descontos na Shopee!</p>
+          </div>
+          <div class="banner-action">
+            <span class="banner-btn" data-i18n="banner.btn">Conferir Ofertas ➔</span>
+          </div>
+        </div>
+      </a>
     </div>
 
     <!-- 5 Pillars Section -->
@@ -1536,7 +1798,7 @@
       <div class="grove-features-grid">
         <div class="grove-feat-card">
           <h4 class="grove-feat-title">
-            <img src="https://cdn.discordapp.com/emojis/1548444170488778954.gif" class="emoji-icon" alt="portal" />
+            <img src="https://cdn.discordapp.com/emojis/1551355962974273546.png" class="emoji-icon" alt="portal" />
             <span data-i18n="grove.f0Title">10 Cenários em Grafo</span>
           </h4>
           <p class="grove-feat-desc" data-i18n="grove.f0Desc">Caminhe por 10 localidades góticas conectadas por nós direcionados, com rotas que abrem conforme ciclos de maré (6h) e chaves espectrais.</p>
@@ -1629,7 +1891,7 @@
     </section>
 
     <!-- Banner Promocional da Pyxie (Apoio & Bônus) -->
-    <a href="https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813" target="_blank" rel="noopener" class="pyxie-promo-banner">
+    <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="pyxie-promo-banner">
       <span class="promo-icon">🎁</span>
       <div class="promo-content">
         <div class="promo-title" data-i18n="promo.title">Apoie a Pyxie & Ganhe Bônus</div>
@@ -1646,7 +1908,7 @@
         <a href="/invite" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.add">Adicionar Pyxie</a>
         <a href="/vote" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.vote">Top.gg</a>
         <a href="/bonus" class="footer-link" data-i18n="nav.bonus">Bônus Web (10s)</a>
-        <a href="https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813" target="_blank" rel="noopener" class="footer-link" style="color: var(--pink-glow);">🎁 Apoiar Servidor</a>
+        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="footer-link" style="color: var(--pink-glow);">🛍️ Achadinhos Shopee</a>
         <a href="/discord" target="_blank" rel="noopener" class="footer-link" data-i18n="hero.btnGuild">Comunidade Oficial</a>
       </div>
       <p class="footer-credits" data-i18n="footer.credits">
@@ -1979,6 +2241,14 @@
         'promo.title': 'Apoie a Pyxie & Ganhe Bônus',
         'promo.desc': 'Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!',
         'promo.btn': 'Apoiar ✦',
+        'banner.tag': 'Achadinhos da Pyxie',
+        'banner.title': 'Vitrine Mágica de Pelúcias, Sanrio & Setup RPG',
+        'banner.desc': 'Descubra itens fofos e góticos curados para a comunidade com os melhores descontos na Shopee!',
+        'banner.btn': 'Conferir Ofertas ➔',
+        'tip.badge': 'Dica Arcana',
+        'tip.text': 'Já resgatou seu bônus diário hoje? Ganhe moedinhas extras e apoie a comunidade!',
+        'tip.btnBonus': 'Resgatar Bônus ✨',
+        'tip.btnShopee': 'Achadinhos 🛍️',
         'footer.credits': 'Pyxie © 2026 • Feita com carinho para servidores do mundo todo.'
       },
       en: {
@@ -2037,6 +2307,14 @@
         'promo.title': 'Support Pyxie & Earn Bonus',
         'promo.desc': 'Support the Cringelândia community and unlock magical rewards!',
         'promo.btn': 'Support ✦',
+        'banner.tag': "Pyxie's Finds",
+        'banner.title': 'Magical Showcase of Plushies, Sanrio & RPG Setup',
+        'banner.desc': 'Discover cute & goth items curated for the community with best deals on Shopee!',
+        'banner.btn': 'Check Deals ➔',
+        'tip.badge': 'Arcane Tip',
+        'tip.text': 'Have you claimed your daily bonus today? Earn extra coins and support the community!',
+        'tip.btnBonus': 'Claim Bonus ✨',
+        'tip.btnShopee': 'Shopee Finds 🛍️',
         'footer.credits': 'Pyxie © 2026 • Crafted with love for servers worldwide.'
       }
     };
@@ -2309,11 +2587,48 @@
       }
     }
 
+    function initPyxieTip() {
+      const dismissed = localStorage.getItem('pyxie_tip_dismissed');
+      if (dismissed && Date.now() - Number(dismissed) < 12 * 3600 * 1000) {
+        return;
+      }
+      setTimeout(() => {
+        const tipEl = document.getElementById('pyxieFloatingTip');
+        if (tipEl) tipEl.style.display = 'block';
+      }, 3000);
+    }
+
+    function dismissPyxieTip() {
+      const tipEl = document.getElementById('pyxieFloatingTip');
+      if (tipEl) tipEl.style.display = 'none';
+      localStorage.setItem('pyxie_tip_dismissed', Date.now().toString());
+    }
+
     // Inicialização
     renderLocationPills();
     initLang();
     fetchStats();
     setInterval(fetchStats, 15000);
+    initPyxieTip();
   </script>
+
+  <!-- Assistente Flutuante da Pyxie (Child-Safe & Elegante) -->
+  <div id="pyxieFloatingTip" class="pyxie-floating-tip" style="display: none;">
+    <button class="tip-close-btn" onclick="dismissPyxieTip()" title="Fechar">✕</button>
+    <div class="tip-mascot-wrap">
+      <img src="/assets/pyxie/pyxie_mascot.png" alt="Pyxie" class="tip-mascot-img" />
+    </div>
+    <div class="tip-body">
+      <div class="tip-header">
+        <span class="tip-title">Pyxie ✨</span>
+        <span class="tip-badge" data-i18n="tip.badge">Dica Arcana</span>
+      </div>
+      <p class="tip-text" data-i18n="tip.text">Já resgatou seu bônus diário hoje? Ganhe moedinhas extras e apoie a comunidade!</p>
+      <div class="tip-actions">
+        <a href="/bonus" class="tip-btn-primary" data-i18n="tip.btnBonus">Resgatar Bônus ✨</a>
+        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tip.btnShopee">Achadinhos 🛍️</a>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
