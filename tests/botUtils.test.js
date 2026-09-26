@@ -221,6 +221,17 @@ try {
   assert.equal(readEco.minimum, 80, 'Economia mínima deve ser lida do banco');
   assert.equal(readEco.maximum, 500, 'Economia máxima deve ser lida do banco');
 
+  // 12. Teste de Resolução de Comandos Slash e Prevenção de ReferenceError
+  const indexSource = fs.readFileSync(path.join(__dirname, '..', 'index.js'), 'utf8');
+  assert.ok(
+    indexSource.includes('const command = commandsByName.get(interaction.commandName);'),
+    'index.js deve definir a variável command a partir de commandsByName.get(interaction.commandName)'
+  );
+  const { commandsByName } = require('../src/commands');
+  assert.ok(commandsByName.get('py-tarot'), 'commandsByName deve resolver py-tarot');
+  assert.ok(commandsByName.get('py-admin'), 'commandsByName deve resolver py-admin');
+  assert.ok(commandsByName.get('py-wiki'), 'commandsByName deve resolver py-wiki');
+
   const { execFileSync } = require('node:child_process');
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'server.js')]);
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'index.js')]);
