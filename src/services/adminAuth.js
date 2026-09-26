@@ -24,6 +24,8 @@ const DEFAULT_ALLOWED_IPS = new Set([
 const activeAdminSessions = new Map();
 // Cache de tokens mágicos de uso único já consumidos (anti-replay)
 const consumedMagicTokens = new Set();
+// Mapeamento de Magic Tokens para Sessões Ativas (previne cancelamento prematuro por pre-fetch do Discord)
+const magicTokenToSession = new Map();
 
 /**
  * Normaliza endereços IP recebidos pelo Express (trata IPv6-mapped IPv4 e proxies).
@@ -146,10 +148,12 @@ function verifyMagicToken(token) {
       return { valid: false, error: 'Este link de acesso expirou. Solicite um novo no Discord.' };
     }
 
-    // Marca como consumido (anti-replay)
-    consumedMagicTokens.add(token);
-    if (consumedMagicTokens.size > 500) {
-      consumedMagicTokens.clear();
+    // Se o token já gerou uma sessão recentemente (ex: pre-fetch do Discord), reutiliza a sessão válida
+    if (magicTokenToSession.has(token)) {
+      const existingSession = magicTokenToSession.get(token);
+      if (isValidAdminSession(existingSession)) {
+        return { valid: true, sessionToken: existingSession, userId: data.userId };
+      }
     }
 
     // Cria sessão administrativa de 12h
@@ -159,6 +163,17 @@ function verifyMagicToken(token) {
       createdAt: Date.now(),
       expiresAt: Date.now() + SESSION_TTL_MS,
     });
+
+    magicTokenToSession.set(token, sessionToken);
+    if (magicTokenToSession.size > 500) {
+      magicTokenToSession.clear();
+    }
+
+    // Marca o token como consumido (anti-replay)
+    consumedMagicTokens.add(token);
+    if (consumedMagicTokens.size > 2000) {
+      consumedMagicTokens.clear();
+    }
 
     return { valid: true, sessionToken, userId: data.userId };
   } catch (err) {

@@ -7,13 +7,11 @@
     <link rel="icon" href="https://cdn.discordapp.com/emojis/1548443951596306552.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Adsterra Social Bar -->
-    <script src="https://pl31498302.profitableratecpmnetwork.com/fc/32/b6/fc32b6f4190b83669638678c36cf9c90.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
     <style>
       :root {
         --bg-dark: #07040d;
-        --bg-card: rgba(22, 13, 42, 0.85);
+        --bg-card: rgba(22, 13, 42, 0.88);
         --purple-main: #9333ea;
         --purple-neon: #a855f7;
         --purple-glow: #c084fc;
@@ -26,7 +24,7 @@
         --emerald-glow: #34d399;
         --text-white: #ffffff;
         --text-muted: #cbd5e1;
-        --border-glass: rgba(192, 132, 252, 0.22);
+        --border-glass: rgba(192, 132, 252, 0.24);
       }
 
       * {
@@ -48,7 +46,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 20px 14px;
+        padding: 24px 14px;
         overflow-x: hidden;
         position: relative;
       }
@@ -67,32 +65,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 24px;
         width: 100%;
-        max-width: 1300px;
+        max-width: 540px;
         margin: 0 auto;
         position: relative;
         z-index: 1;
-      }
-
-      .sidebar-ad {
-        display: none;
-        width: 160px;
-        min-height: 600px;
-        background: rgba(22, 13, 42, 0.45);
-        border: 1px solid var(--border-glass);
-        border-radius: 20px;
-        overflow: hidden;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(14px);
-      }
-
-      @media (min-width: 1200px) {
-        .sidebar-ad {
-          display: flex;
-        }
       }
 
       .center-column {
@@ -100,35 +77,64 @@
         flex-direction: column;
         align-items: center;
         width: 100%;
-        max-width: 520px;
       }
 
-      .ad-banner-box {
+      /* Native Top Banner Shopee */
+      .shopee-top-banner {
+        width: 100%;
         margin-bottom: 18px;
+        padding: 10px 16px;
+        background: linear-gradient(135deg, rgba(147, 51, 234, 0.22), rgba(244, 63, 94, 0.2));
+        border: 1px solid rgba(192, 132, 252, 0.35);
+        border-radius: 16px;
         display: flex;
-        justify-content: center;
         align-items: center;
-        overflow: hidden;
-        border-radius: 14px;
-        background: rgba(22, 13, 42, 0.45);
-        border: 1px solid var(--border-glass);
+        justify-content: space-between;
+        gap: 12px;
+        text-decoration: none;
+        color: inherit;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        transition: all 0.25s ease;
       }
-
-      .ad-desktop-only {
-        display: none;
+      .shopee-top-banner:hover {
+        transform: translateY(-2px);
+        border-color: rgba(244, 114, 182, 0.65);
+        box-shadow: 0 8px 25px rgba(244, 63, 94, 0.35);
       }
-      .ad-mobile-only {
-        display: flex;
+      .shopee-top-icon {
+        font-size: 24px;
+        flex-shrink: 0;
       }
-
-      @media (min-width: 768px) {
-        .ad-desktop-only {
-          display: flex;
-        }
-        .ad-mobile-only {
-          display: none;
-        }
+      .shopee-top-text {
+        flex: 1;
+        min-width: 0;
+        text-align: left;
+      }
+      .shopee-top-title {
+        display: block;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: #ffffff;
+      }
+      .shopee-top-desc {
+        display: block;
+        font-size: 0.74rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .shopee-top-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 12px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--purple-main), var(--pink-neon));
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
 
       /* Card Principal */
@@ -194,7 +200,7 @@
         background: rgba(10, 5, 20, 0.75);
         border: 1px solid rgba(192, 132, 252, 0.25);
         border-radius: 22px;
-        padding: 24px 18px;
+        padding: 24px 18px 20px;
         margin-bottom: 20px;
         box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
       }
@@ -235,223 +241,7 @@
         color: #e2e8f0;
       }
 
-      /* Instructions Card */
-      .instructions-card {
-        display: none;
-        background: rgba(10, 5, 20, 0.75);
-        border: 1px solid rgba(192, 132, 252, 0.25);
-        border-radius: 22px;
-        padding: 24px 20px;
-        text-align: left;
-        margin-bottom: 20px;
-      }
-
-      .instructions-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: var(--purple-glow);
-        margin-bottom: 14px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .step-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        font-size: 0.92rem;
-        color: #e2e8f0;
-      }
-
-      .step-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        line-height: 1.5;
-      }
-
-      .step-num {
-        background: var(--purple-main);
-        color: #fff;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 0.8rem;
-        flex-shrink: 0;
-        margin-top: 1px;
-      }
-
-      .command-badge {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 2px 6px;
-        border-radius: 6px;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.85rem;
-        color: #38bdf8;
-        font-weight: 700;
-      }
-
-      .reward-box {
-        background: rgba(251, 191, 36, 0.1);
-        border: 1px solid rgba(251, 191, 36, 0.3);
-        border-radius: 14px;
-        padding: 12px 16px;
-        margin-top: 12px;
-        font-size: 0.92rem;
-        color: #fef08a;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      /* Botão e Feedback */
-      .btn-claim {
-        display: none;
-        width: 100%;
-        padding: 16px;
-        border: none;
-        border-radius: 20px;
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: #ffffff;
-        font-family: 'Outfit', sans-serif;
-        font-size: 1.25rem;
-        font-weight: 700;
-        cursor: pointer;
-        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.45);
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-      }
-
-      .btn-claim:hover {
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 14px 38px rgba(16, 185, 129, 0.65);
-      }
-
-      .btn-sponsor {
-        display: inline-block;
-        width: 100%;
-        padding: 14px;
-        margin-top: 14px;
-        border-radius: 16px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border-glass);
-        color: #fff;
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 0.95rem;
-        transition: all 0.25s ease;
-      }
-
-      .btn-sponsor:hover {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: var(--purple-glow);
-        transform: translateY(-2px);
-      }
-
-      .success-box {
-        display: none;
-        background: rgba(16, 185, 129, 0.15);
-        border: 1px solid #10b981;
-        border-radius: 20px;
-        padding: 18px;
-        margin-top: 16px;
-        animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      }
-
-      .error-box {
-        display: none;
-        background: rgba(244, 63, 94, 0.15);
-        border: 1px solid var(--pink-neon);
-        border-radius: 20px;
-        padding: 18px;
-        margin-top: 16px;
-        color: #fca5a5;
-        font-size: 0.95rem;
-      }
-
-      @keyframes pop {
-        0% { transform: scale(0.9); opacity: 0; }
-        100% { transform: scale(1); opacity: 1; }
-      }
-
-      .sponsor-badge {
-        margin-top: 20px;
-        font-size: 0.82rem;
-        color: #94a3b8;
-      }
-
-      /* Pyxie Promo & Support Banner */
-      .pyxie-promo-banner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        max-width: 520px;
-        margin: 20px auto 0;
-        padding: 12px 18px;
-        background: linear-gradient(135deg, rgba(147, 51, 234, 0.16), rgba(244, 63, 94, 0.14));
-        border: 1px solid rgba(192, 132, 252, 0.35);
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(12px);
-        text-decoration: none;
-        color: inherit;
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        cursor: pointer;
-      }
-      .pyxie-promo-banner:hover {
-        transform: translateY(-2px);
-        border-color: rgba(244, 114, 182, 0.6);
-        box-shadow: 0 8px 30px rgba(244, 63, 94, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      }
-      .pyxie-promo-banner .promo-icon {
-        font-size: 26px;
-        line-height: 1;
-        flex-shrink: 0;
-        filter: drop-shadow(0 0 10px rgba(244, 114, 182, 0.5));
-      }
-      .pyxie-promo-banner .promo-content {
-        flex: 1;
-        text-align: left;
-        min-width: 0;
-      }
-      .pyxie-promo-banner .promo-title {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: #ffffff;
-        margin-bottom: 2px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .pyxie-promo-banner .promo-desc {
-        font-size: 0.78rem;
-        color: #cbd5e1;
-        line-height: 1.3;
-      }
-      .pyxie-promo-banner .promo-cta {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 7px 14px;
-        border-radius: 20px;
-        background: linear-gradient(135deg, #f43f5e, #9333ea);
-        color: #ffffff;
-        font-size: 0.82rem;
-        font-weight: 700;
-        white-space: nowrap;
-        flex-shrink: 0;
-        box-shadow: 0 2px 10px rgba(244, 63, 94, 0.4);
-      }
-
-      /* Vitrine Nativa de Achadinhos (Carrossel Discreto no Bônus de 10s) */
+      /* Vitrine Nativa de Achadinhos (Carrossel Discreto de 10s) */
       .showcase-container {
         margin-top: 16px;
         padding-top: 14px;
@@ -505,17 +295,6 @@
         transform: translateY(-2px);
         border-color: rgba(244, 114, 182, 0.65);
         box-shadow: 0 8px 24px rgba(147, 51, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      }
-
-      .showcase-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, rgba(244, 63, 94, 0.08), rgba(147, 51, 234, 0.08));
-        pointer-events: none;
       }
 
       .showcase-thumb-wrap {
@@ -648,55 +427,240 @@
         background: var(--purple-glow);
         box-shadow: 0 0 8px rgba(192, 132, 252, 0.6);
       }
+
+      /* Instructions Card */
+      .instructions-card {
+        display: none;
+        background: rgba(10, 5, 20, 0.75);
+        border: 1px solid rgba(192, 132, 252, 0.25);
+        border-radius: 22px;
+        padding: 24px 20px;
+        text-align: left;
+        margin-bottom: 20px;
+      }
+
+      .instructions-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--purple-glow);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .step-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        font-size: 0.92rem;
+        color: #e2e8f0;
+      }
+
+      .step-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        line-height: 1.5;
+      }
+
+      .step-num {
+        background: var(--purple-main);
+        color: #fff;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .command-badge {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85rem;
+        color: #38bdf8;
+        font-weight: 700;
+      }
+
+      .reward-box {
+        background: rgba(251, 191, 36, 0.1);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        border-radius: 14px;
+        padding: 12px 16px;
+        margin-top: 12px;
+        font-size: 0.92rem;
+        color: #fef08a;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* Buttons & Status */
+      .btn-claim {
+        display: none;
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #ffffff;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.45);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+
+      .btn-claim:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 14px 38px rgba(16, 185, 129, 0.65);
+      }
+
+      .btn-sponsor {
+        display: inline-block;
+        width: 100%;
+        padding: 14px;
+        margin-top: 14px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-glass);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.95rem;
+        transition: all 0.25s ease;
+      }
+
+      .btn-sponsor:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: var(--purple-glow);
+        transform: translateY(-2px);
+      }
+
+      .success-box {
+        display: none;
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid #10b981;
+        border-radius: 20px;
+        padding: 18px;
+        margin-top: 16px;
+        animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .error-box {
+        display: none;
+        background: rgba(244, 63, 94, 0.15);
+        border: 1px solid var(--pink-neon);
+        border-radius: 20px;
+        padding: 18px;
+        margin-top: 16px;
+        color: #fca5a5;
+        font-size: 0.95rem;
+      }
+
+      @keyframes pop {
+        0% { transform: scale(0.9); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+
+      .sponsor-badge {
+        margin-top: 20px;
+        font-size: 0.82rem;
+        color: #94a3b8;
+      }
+
+      /* Pyxie Promo & Support Banner */
+      .pyxie-promo-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        width: 100%;
+        max-width: 540px;
+        margin: 20px auto 0;
+        padding: 12px 18px;
+        background: linear-gradient(135deg, rgba(147, 51, 234, 0.18), rgba(244, 63, 94, 0.16));
+        border: 1px solid rgba(192, 132, 252, 0.35);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: pointer;
+      }
+      .pyxie-promo-banner:hover {
+        transform: translateY(-2px);
+        border-color: rgba(244, 114, 182, 0.6);
+        box-shadow: 0 8px 30px rgba(244, 63, 94, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+      .pyxie-promo-banner .promo-icon {
+        font-size: 26px;
+        line-height: 1;
+        flex-shrink: 0;
+        filter: drop-shadow(0 0 10px rgba(244, 114, 182, 0.5));
+      }
+      .pyxie-promo-banner .promo-content {
+        flex: 1;
+        text-align: left;
+        min-width: 0;
+      }
+      .pyxie-promo-banner .promo-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .pyxie-promo-banner .promo-desc {
+        font-size: 0.78rem;
+        color: #cbd5e1;
+        line-height: 1.3;
+      }
+      .pyxie-promo-banner .promo-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #f43f5e, #9333ea);
+        color: #ffffff;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+        flex-shrink: 0;
+        box-shadow: 0 2px 10px rgba(244, 63, 94, 0.4);
+      }
     </style>
   </head>
   <body>
     <canvas id="particles-canvas"></canvas>
 
     <div class="main-layout">
-      <!-- Lateral Esquerda (Desktop 160x600 Skyscraper) -->
-      <aside class="sidebar-ad">
-        <script>
-          atOptions = {
-            'key' : 'd9b7c704cc9d72eed445cd7653b5293a',
-            'format' : 'iframe',
-            'height' : 600,
-            'width' : 160,
-            'params' : {}
-          };
-        </script>
-        <script src="https://www.highrevenueformat.com/d9b7c704cc9d72eed445cd7653b5293a/invoke.js"></script>
-      </aside>
-
       <!-- Coluna Central -->
       <main class="center-column">
-        <!-- Banner Topo Desktop (728x90) -->
-        <div class="ad-banner-box ad-desktop-only">
-          <script>
-            atOptions = {
-              'key' : '41e0bc4d8d00e3372806459e6e5d7d01',
-              'format' : 'iframe',
-              'height' : 90,
-              'width' : 728,
-              'params' : {}
-            };
-          </script>
-          <script src="https://www.highrevenueformat.com/41e0bc4d8d00e3372806459e6e5d7d01/invoke.js"></script>
-        </div>
-
-        <!-- Banner Topo Mobile (320x50) -->
-        <div class="ad-banner-box ad-mobile-only">
-          <script>
-            atOptions = {
-              'key' : '19b31b89721bd9c729a7a2c8ca25d949',
-              'format' : 'iframe',
-              'height' : 50,
-              'width' : 320,
-              'params' : {}
-            };
-          </script>
-          <script src="https://www.highrevenueformat.com/19b31b89721bd9c729a7a2c8ca25d949/invoke.js"></script>
-        </div>
+        <!-- Banner Topo Shopee Afiliados -->
+        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-top-banner">
+          <span class="shopee-top-icon">🛍️</span>
+          <div class="shopee-top-text">
+            <span class="shopee-top-title" id="bannerTopTitle">Achadinhos da Pyxie na Shopee ✦ Ofertas Secretas</span>
+            <span class="shopee-top-desc" id="bannerTopDesc">Descontos especiais em pelúcias, moda goth e itens Sanrio!</span>
+          </div>
+          <span class="shopee-top-btn" id="bannerTopBtn">Conferir ➔</span>
+        </a>
 
         <!-- Card Principal da Pyxie -->
         <div class="bonus-container">
@@ -757,8 +721,8 @@
               <div class="showcase-dots" id="showcaseDotsInst"></div>
             </div>
 
-            <a id="sponsorBtn" href="https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813" target="_blank" class="btn-sponsor">
-              👉 Apoiar Servidor com Patrocinador
+            <a id="sponsorBtn" href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" class="btn-sponsor">
+              🛍️ Ver Achadinhos & Ofertas na Shopee
             </a>
           </div>
 
@@ -772,47 +736,20 @@
           <div id="errorBox" class="error-box"></div>
 
           <div id="sponsorBadge" class="sponsor-badge">
-            Patrocinado com carinho para a comunidade Pyxie 🐾
+            Achadinhos selecionados com carinho para a comunidade Pyxie 🐾
           </div>
         </div>
 
-        <!-- Banner Promocional da Pyxie (Apoio & Bônus) -->
-        <a href="https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813" target="_blank" rel="noopener" class="pyxie-promo-banner ad-desktop-only">
-          <span class="promo-icon">🎁</span>
+        <!-- Banner Promocional da Pyxie (Shopee Afiliados) -->
+        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener" class="pyxie-promo-banner">
+          <span class="promo-icon">🛍️</span>
           <div class="promo-content">
-            <div class="promo-title" id="promoTitle">Apoie a Pyxie & Ganhe Bônus</div>
-            <div class="promo-desc" id="promoDesc">Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!</div>
+            <div class="promo-title" id="promoTitle">Achadinhos da Pyxie na Shopee</div>
+            <div class="promo-desc" id="promoDesc">Pelúcias, moda goth e itens mágicos com descontos imperdíveis!</div>
           </div>
-          <span class="promo-cta" id="promoBtn">Apoiar ✦</span>
+          <span class="promo-cta" id="promoBtn">Ver Ofertas ✦</span>
         </a>
-
-        <div class="ad-banner-box ad-mobile-only">
-          <script>
-            atOptions = {
-              'key' : '19b31b89721bd9c729a7a2c8ca25d949',
-              'format' : 'iframe',
-              'height' : 50,
-              'width' : 320,
-              'params' : {}
-            };
-          </script>
-          <script src="https://www.highrevenueformat.com/19b31b89721bd9c729a7a2c8ca25d949/invoke.js"></script>
-        </div>
       </main>
-
-      <!-- Lateral Direita (Desktop 160x600 Skyscraper) -->
-      <aside class="sidebar-ad">
-        <script>
-          atOptions = {
-            'key' : 'd9b7c704cc9d72eed445cd7653b5293a',
-            'format' : 'iframe',
-            'height' : 600,
-            'width' : 160,
-            'params' : {}
-          };
-        </script>
-        <script src="https://www.highrevenueformat.com/d9b7c704cc9d72eed445cd7653b5293a/invoke.js"></script>
-      </aside>
     </div>
 
     <script>
@@ -882,7 +819,7 @@
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
       const langParam = urlParams.get('lang');
-      const SMARTLINK_URL = 'https://www.profitableratecpmnetwork.com/bzdc0dtq5?key=aece6072dc92d95726e1223cf45171dd';
+      const SMARTLINK_URL = 'https://s.shopee.com.br/BU6Bod6Sw';
 
       const actionParam = urlParams.get('action');
       let tokenAction = actionParam || null;
@@ -924,16 +861,19 @@
           rewardBox: isGloomBoss
             ? '<span>🌙 <strong>Recompensa do Bosque:</strong> 1x Investida Extra no Chefão ⚔️ + 50 Phantom Coins 👻</span>'
             : '<span>✨ <strong>Recompensa:</strong> +75 Moedinhas 🪙 no cofre</span>',
-          sponsorBtn: '👉 Apoiar Servidor com Patrocinador',
-          sponsorBadge: 'Patrocinado com carinho para a comunidade Pyxie 🐾',
+          sponsorBtn: '🛍️ Ver Achadinhos & Ofertas na Shopee',
+          sponsorBadge: 'Achadinhos selecionados com carinho para a comunidade Pyxie 🐾',
           connErrorMsg: 'Erro de conexão. Verifique sua internet e tente novamente.',
-          promoTitle: 'Apoie a Pyxie & Ganhe Bônus',
-          promoDesc: 'Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!',
-          promoBtn: 'Apoiar ✦',
+          promoTitle: 'Achadinhos da Pyxie na Shopee',
+          promoDesc: 'Pelúcias, moda goth e itens mágicos com descontos imperdíveis!',
+          promoBtn: 'Ver Ofertas ✦',
+          bannerTopTitle: 'Achadinhos da Pyxie na Shopee ✦ Ofertas Secretas',
+          bannerTopDesc: 'Descontos especiais em pelúcias, moda goth e itens Sanrio!',
+          bannerTopBtn: 'Conferir ➔',
           showcaseIntro: 'Enquanto a fadinha canaliza energia para o bônus, dê uma olhada no achadinho de hoje:',
           showcaseIntroInst: 'Achadinhos Mágicos da Comunidade:',
           showcaseBtn: 'Ver na Shopee ➔',
-          showcaseBrand: '🛍️ Achadinho Recomendado',
+          showcaseBrand: '🛍️ Shopee Afiliados',
         },
         en: {
           metaTitle: isGloomBoss ? "Pyxie • Pyxie's Grove • Extra Strike" : 'Pyxie • Enchanted Magic Bonus',
@@ -962,16 +902,19 @@
           rewardBox: isGloomBoss
             ? "<span>🌙 <strong>Grove Reward:</strong> 1x Extra Boss Strike ⚔️ + 50 Phantom Coins 👻</span>"
             : '<span>✨ <strong>Reward:</strong> +75 Coins 🪙 in your vault</span>',
-          sponsorBtn: '👉 Support Server via Sponsor',
-          sponsorBadge: 'Sponsored with love for the Pyxie community 🐾',
+          sponsorBtn: '🛍️ View Shopee Finds & Deals',
+          sponsorBadge: 'Curated with love for the Pyxie community 🐾',
           connErrorMsg: 'Connection error. Please check your internet connection and try again.',
-          promoTitle: 'Support Pyxie & Earn Bonus',
-          promoDesc: 'Support the Cringelândia community and unlock magical rewards!',
-          promoBtn: 'Support ✦',
+          promoTitle: 'Pyxie Finds on Shopee',
+          promoDesc: 'Plushes, goth fashion, and magical items with special discounts!',
+          promoBtn: 'View Deals ✦',
+          bannerTopTitle: 'Pyxie Finds on Shopee ✦ Secret Deals',
+          bannerTopDesc: 'Special discounts on plushes, goth fashion, and Sanrio items!',
+          bannerTopBtn: 'Check Out ➔',
           showcaseIntro: "While the fairy channels bonus energy, check out today's find:",
           showcaseIntroInst: 'Magical Community Finds:',
           showcaseBtn: 'View on Shopee ➔',
-          showcaseBrand: '🛍️ Recommended Find',
+          showcaseBrand: '🛍️ Shopee Affiliate',
         }
       };
 
@@ -1000,6 +943,9 @@
       const step3TextEl = document.getElementById('step3Text');
       const rewardBoxEl = document.getElementById('rewardBox');
       const sponsorBtnEl = document.getElementById('sponsorBtn');
+      const bannerTopTitleEl = document.getElementById('bannerTopTitle');
+      const bannerTopDescEl = document.getElementById('bannerTopDesc');
+      const bannerTopBtnEl = document.getElementById('bannerTopBtn');
 
       btnClaimEl.innerText = S.btnClaim;
       successTitleEl.innerText = S.successTitle;
@@ -1011,6 +957,10 @@
       step3TextEl.innerHTML = S.step3;
       rewardBoxEl.innerHTML = S.rewardBox;
       sponsorBtnEl.innerText = S.sponsorBtn;
+
+      if (bannerTopTitleEl) bannerTopTitleEl.innerText = S.bannerTopTitle;
+      if (bannerTopDescEl) bannerTopDescEl.innerText = S.bannerTopDesc;
+      if (bannerTopBtnEl) bannerTopBtnEl.innerText = S.bannerTopBtn;
 
       const promoTitleEl = document.getElementById('promoTitle');
       if (promoTitleEl) promoTitleEl.innerText = S.promoTitle;
@@ -1027,59 +977,59 @@
       // Dados de contingência nativa da vitrine (Shopee Afiliados)
       const DEFAULT_SHOWCASE_ITEMS = [
         {
-          id: "prod_01",
-          titulo: "Pelúcia Kuromi Goth / Dark Fairy 25cm",
-          titulo_en: "Gothic Kuromi / Dark Fairy Plush 25cm",
-          preco: "R$ 38,90",
-          preco_en: "$7.50",
-          tag: "Mais Vendido",
-          tag_en: "Best Seller",
-          imagem: "https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400&auto=format&fit=crop&q=80",
-          link: "https://s.shopee.com.br/seu_link_afiliado"
+          id: "23798670825",
+          titulo: "Kuromi Sanrio Boneca de pelúcia fofa 25cm",
+          titulo_en: "Kuromi Sanrio Cute Plush Doll 25cm",
+          preco: "R$ 55,99",
+          preco_en: "$10.77",
+          tag: "Pelúcia Sanrio",
+          tag_en: "Sanrio Plush",
+          imagem: "https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400",
+          link: "https://s.shopee.com.br/1BMdNQEU79"
         },
         {
-          id: "prod_02",
-          titulo: "Kit 7 Dados Poliédricos RPG Roxo & Preto Translúcido",
-          titulo_en: "7 Polyhedral RPG Dice Set Translucent Purple & Black",
-          preco: "R$ 22,50",
-          preco_en: "$4.20",
-          tag: "Item do Bosque",
-          tag_en: "Grove Relic",
-          imagem: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=400&auto=format&fit=crop&q=80",
-          link: "https://s.shopee.com.br/seu_link_afiliado"
+          id: "28812198611",
+          titulo: "Vintage Goth Espinhos Casal Anéis Abertura Punk",
+          titulo_en: "Vintage Goth Thorns Couple Rings Punk",
+          preco: "R$ 12,06",
+          preco_en: "$2.32",
+          tag: "Acessório Goth",
+          tag_en: "Goth Jewelry",
+          imagem: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400",
+          link: "https://s.shopee.com.br/LnWNtHeo2"
         },
         {
-          id: "prod_03",
-          titulo: "Luminária Mística Lua de Cristal 3D LED RGB",
-          titulo_en: "Mystic 3D Crystal Moon LED RGB Lamp",
-          preco: "R$ 44,90",
-          preco_en: "$8.90",
-          tag: "Alquimia Arcana",
-          tag_en: "Arcane Alchemy",
-          imagem: "https://images.unsplash.com/photo-1532767153582-b1a0e5145009?w=400&auto=format&fit=crop&q=80",
-          link: "https://s.shopee.com.br/seu_link_afiliado"
+          id: "23099667422",
+          titulo: "Kit Chaveiros Hollow Knight e Hornet 3D Geek",
+          titulo_en: "Hollow Knight & Hornet 3D Keychain Set",
+          preco: "R$ 27,97",
+          preco_en: "$5.38",
+          tag: "Geek & Anime",
+          tag_en: "Geek & Anime",
+          imagem: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=400",
+          link: "https://s.shopee.com.br/2BFAZGAg5R"
         },
         {
-          id: "prod_04",
-          titulo: "Mousepad Gamer Gothic Dark Fairy XXL (80x30cm)",
-          titulo_en: "Gothic Dark Fairy XXL Gaming Mousepad (80x30cm)",
+          id: "58212898323",
+          titulo: "Anel Gótico Camafeu Roxo Pedra Oval Vintage",
+          titulo_en: "Gothic Cameo Purple Stone Vintage Ring",
+          preco: "R$ 29,90",
+          preco_en: "$5.75",
+          tag: "Acessório Goth",
+          tag_en: "Goth Jewelry",
+          imagem: "https://images.unsplash.com/photo-1532767153582-b1a0e5145009?w=400",
+          link: "https://s.shopee.com.br/W6waCH1T5"
+        },
+        {
+          id: "58265449372",
+          titulo: "Camiseta Feminina Premium Hello Kitty Kuromi Algodão",
+          titulo_en: "Hello Kitty Kuromi Premium Cotton T-Shirt",
           preco: "R$ 34,90",
-          preco_en: "$6.80",
-          tag: "Setup Emo",
-          tag_en: "Goth Setup",
-          imagem: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=400&auto=format&fit=crop&q=80",
-          link: "https://s.shopee.com.br/seu_link_afiliado"
-        },
-        {
-          id: "prod_05",
-          titulo: "Anel Vintage Gótico Coração Alado Ajustável",
-          titulo_en: "Vintage Gothic Winged Heart Adjustable Ring",
-          preco: "R$ 15,90",
-          preco_en: "$3.10",
-          tag: "Acessório Raro",
-          tag_en: "Rare Accessory",
-          imagem: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&auto=format&fit=crop&q=80",
-          link: "https://s.shopee.com.br/seu_link_afiliado"
+          preco_en: "$6.71",
+          tag: "Moda & Estilo",
+          tag_en: "Fashion & Goth",
+          imagem: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=400",
+          link: "https://s.shopee.com.br/1AfzHIvTw"
         }
       ];
 
@@ -1095,7 +1045,7 @@
         const title = (isPt ? item.titulo : (item.titulo_en || item.titulo));
         const price = (isPt ? item.preco : (item.preco_en || item.preco));
         const tag = (isPt ? item.tag : (item.tag_en || item.tag));
-        const link = item.link || '#';
+        const link = item.link || 'https://s.shopee.com.br/BU6Bod6Sw';
         const img = item.imagem || 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400';
 
         const html = `
