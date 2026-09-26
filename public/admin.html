@@ -488,13 +488,80 @@
         color: #34d399;
       }
 
-      .card-actions-bar {
+      /* Shopee Card Actions (2-Tier Ergonomic Layout) */
+      .card-actions-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .card-actions-primary {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 8px;
+      }
+
+      .card-actions-primary .card-btn-links {
+        display: flex;
         gap: 6px;
-        padding-top: 8px;
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .card-actions-secondary {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+      }
+
+      .card-actions-secondary button {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 6px 4px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        border: none;
+      }
+
+      .card-actions-secondary .btn-tool-photo {
+        background: rgba(139, 92, 246, 0.15);
+        border: 1px solid rgba(139, 92, 246, 0.35);
+        color: #c084fc;
+      }
+      .card-actions-secondary .btn-tool-photo:hover {
+        background: rgba(139, 92, 246, 0.3);
+        border-color: #c084fc;
+        color: #fff;
+      }
+
+      .card-actions-secondary .btn-tool-test {
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        color: #38bdf8;
+      }
+      .card-actions-secondary .btn-tool-test:hover {
+        background: rgba(56, 189, 248, 0.25);
+        border-color: #38bdf8;
+        color: #fff;
+      }
+
+      .card-actions-secondary .btn-tool-delete {
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #f87171;
+      }
+      .card-actions-secondary .btn-tool-delete:hover {
+        background: rgba(239, 68, 68, 0.25);
+        border-color: #f87171;
+        color: #fff;
       }
 
       .switch-wrap {
@@ -1882,30 +1949,35 @@
                   </div>
                 </div>
 
-                <div class="card-actions-bar">
-                  <div class="switch-wrap">
-                    <label class="switch">
-                      <input type="checkbox" ${item.active !== false ? 'checked' : ''} onchange="toggleItem('${item.id}', this.checked)" />
-                      <span class="slider"></span>
-                    </label>
-                    <span>${item.active !== false ? 'Exibir' : 'Oculto'}</span>
+                <div class="card-actions-wrap">
+                  <div class="card-actions-primary">
+                    <div class="switch-wrap">
+                      <label class="switch">
+                        <input type="checkbox" ${item.active !== false ? 'checked' : ''} onchange="toggleItem('${item.id}', this.checked)" />
+                        <span class="slider"></span>
+                      </label>
+                      <span>${item.active !== false ? 'Exibir no Bot' : 'Pausado'}</span>
+                    </div>
+
+                    <div class="card-btn-links">
+                      <a href="${item.link}" target="_blank" rel="noopener noreferrer" title="Abrir anúncio na Shopee" class="btn btn-secondary btn-mini">
+                        <span>↗ Ver</span>
+                      </a>
+                      <button onclick="copyLink('${item.link}')" title="Copiar link de afiliado" class="btn btn-secondary btn-mini">
+                        <span>📋 Copiar</span>
+                      </button>
+                    </div>
                   </div>
 
-                  <div class="card-btn-links">
-                    <button onclick="syncSingleImage('${item.id}')" title="Buscar e atualizar foto oficial do link da Shopee" class="btn btn-secondary btn-mini" id="btn-sync-img-${item.id}">
+                  <div class="card-actions-secondary">
+                    <button onclick="syncSingleImage('${item.id}')" title="Buscar e atualizar foto oficial do link da Shopee" class="btn-tool-photo" id="btn-sync-img-${item.id}">
                       <span>📸 Foto</span>
                     </button>
-                    <button onclick="checkItemStatus('${item.id}')" title="Testar se o anúncio continua ativo na Shopee" class="btn btn-secondary btn-mini">
+                    <button onclick="checkItemStatus('${item.id}')" title="Testar se o anúncio continua ativo na Shopee" class="btn-tool-test">
                       <span>🔍 Testar</span>
                     </button>
-                    <a href="${item.link}" target="_blank" rel="noopener noreferrer" title="Abrir anúncio na Shopee" class="btn btn-secondary btn-mini">
-                      <span>↗ Ver</span>
-                    </a>
-                    <button onclick="copyLink('${item.link}')" title="Copiar link de afiliado" class="btn btn-secondary btn-mini">
-                      <span>📋 Copiar</span>
-                    </button>
-                    <button onclick="deleteShopeeItem('${item.id}')" title="Remover da vitrine" class="btn btn-danger btn-mini">
-                      <span>🗑</span>
+                    <button onclick="deleteShopeeItem('${item.id}')" title="Remover da vitrine" class="btn-tool-delete">
+                      <span>🗑 Excluir</span>
                     </button>
                   </div>
                 </div>
