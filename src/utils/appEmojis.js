@@ -56,7 +56,7 @@ const EMOJI_DEFINITIONS = {
   // UI & Notificações
   CHECK: { name: 'shieldsuccess22', aliases: ['check_mark', 'check', '6586_TickYes_RainbowGif', '9434purpleverification'], fallback: '✅' },
   CROSS: { name: 'x_', aliases: ['cross_mark', 'cross', 'erro'], fallback: '❌' },
-  HOURGLASS: { name: 'ampulheta', aliases: ['hourglass'], fallback: '⏳' },
+  HOURGLASS: { name: '48390wizardhourglass', aliases: ['ampulheta', 'hourglass'], fallback: '⏳' },
   GIFT: { name: 'qbgifts48', aliases: ['presente', 'gift', 'acgift70'], fallback: '🎁' },
   SPARKLES: { name: 'purplesparkles', aliases: ['brilhos', 'sparkles', '3679pinksparkles', '5802kuromisparkles'], fallback: '✨' },
   ROCKET: { name: 'slrocket', aliases: ['foguete', 'rocket'], fallback: '🚀' },

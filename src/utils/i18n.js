@@ -193,21 +193,23 @@ const TRANSLATIONS = {
       "rewardBean": "> 🌱 **+1 Feijão Mágico** nos fins de semana"
     },
     "daily": {
-      "titleClaimed": "<:rarecrate:1548444209328033913>  ✦  Recompensa Diária Coletada!",
+      "titleClaimed": "<:gift62:1548443978414817331>  ✦  Recompensa Diária Coletada!",
       "descClaimed": "Sua recompensa diária foi entregue com sucesso no seu cofre!",
       "summaryTitle": "🎁 **RESUMO DA RECOMPENSA**",
       "collected": "> <a:coin:1548443880066777098> **Moedas Coletadas:** **+{amount}**",
       "balance": "> 🏦 **Saldo Atual:** **{balance}**",
       "magicBean": "> ✨ **SORTE ÉPICA (1% de Chance):** **+1x Feijão Mágico <:peakmagicbean:1548444143431323719>** (Total: **{total} <:peakmagicbean:1548444143431323719>**)",
-      "titleCooldown": "<:rarecrate:1548444209328033913>  ✦  Baú Diário em Cooldown",
-      "descCooldown": "⏳ Você já coletou seu baú diário hoje. Espere **{time}** para abrir novamente!",
+      "titleCooldown": "<:gift62:1548443978414817331>  ✦  Baú Diário em Cooldown",
+      "descCooldown": "<a:48390wizardhourglass:1551356465120415885> Você já coletou seu baú diário hoje. Espere **{time}** para abrir novamente!",
       "voteWeekendBonus": "<:event45:1548443947079049256> **BÔNUS DE FIM DE SEMANA ATIVO (2X):**\n> Vote no **Top.gg** e ganhe **+100 Moedas**, **🟢 1x Esmeralda Nobre** e **+1 Feijão Mágico 🌱**!",
       "voteWeekdayBonus": "<:gift62:1548443978414817331> **BÔNUS EXTRA NO TOP.GG (A CADA 12H):**\n> Vote no **Top.gg** e ganhe **+50 Moedas** e **🟣 1x Ametista Reluzente** *(com dobro nos fins de semana!)*",
+      "webBonusTitle": "<:gift62:1548443978414817331> **BÔNUS WEB (DISPONÍVEL AGORA):**\n> Acesse a página web da Pyxie, espere 10 segundos e resgate **+75 Moedas** extras para o seu cofre!",
       "btnLabel": "Resgatar Bônus no Top.gg",
       "btnLabelCooldown": "Votar no Top.gg (Recompensa Extra)",
       "btnWebBonus": "Bônus Web (+75🪙)",
       "footer": "Recompensa renovada a cada 24 horas",
-      "footerCooldown": "Voto no Top.gg disponível a cada 12 horas"
+      "footerCooldown": "Voto no Top.gg disponível a cada 12 horas",
+      "footerWebBonus": "Recompensa diária renovada a cada 24 horas • Bônus Web disponível"
     },
     "invite": {
       "title": "✨  ✦  Convide a Pyxie para o seu Servidor!",
@@ -765,21 +767,23 @@ const TRANSLATIONS = {
       "rewardBean": "> 🌱 **+1 Magic Bean** on weekends"
     },
     "daily": {
-      "titleClaimed": "<:rarecrate:1548444209328033913>  ✦  Daily Reward Collected!",
+      "titleClaimed": "<:gift62:1548443978414817331>  ✦  Daily Reward Collected!",
       "descClaimed": "Your daily reward has been safely deposited into your vault!",
       "summaryTitle": "🎁 **REWARD SUMMARY**",
       "collected": "> <a:coin:1548443880066777098> **Coins Collected:** **+{amount}**",
       "balance": "> 🏦 **Current Balance:** **{balance}**",
       "magicBean": "> ✨ **EPIC LUCK (1% Chance):** **+1x Magic Bean <:peakmagicbean:1548444143431323719>** (Total: **{total} <:peakmagicbean:1548444143431323719>**)",
-      "titleCooldown": "<:rarecrate:1548444209328033913>  ✦  Daily Crate on Cooldown",
-      "descCooldown": "⏳ You already claimed your daily crate today. Please wait **{time}** before claiming again!",
+      "titleCooldown": "<:gift62:1548443978414817331>  ✦  Daily Crate on Cooldown",
+      "descCooldown": "<a:48390wizardhourglass:1551356465120415885> You already claimed your daily crate today. Please wait **{time}** before claiming again!",
       "voteWeekendBonus": "<:event45:1548443947079049256> **WEEKEND BONUS ACTIVE (2X):**\n> Vote on **Top.gg** and get **+100 Coins**, **🟢 1x Noble Emerald**, and **+1 Magic Bean 🌱**!",
       "voteWeekdayBonus": "<:gift62:1548443978414817331> **EXTRA TOP.GG BONUS (EVERY 12H):**\n> Vote on **Top.gg** and get **+50 Coins** and **🟣 1x Shimmering Amethyst** *(doubled on weekends!)*",
+      "webBonusTitle": "<:gift62:1548443978414817331> **WEB BONUS (AVAILABLE NOW):**\n> Visit Pyxie's web portal, wait 10 seconds, and claim **+75 Extra Coins** for your vault!",
       "btnLabel": "Claim Bonus on Top.gg",
       "btnLabelCooldown": "Vote on Top.gg (Extra Reward)",
       "btnWebBonus": "Web Bonus (+75🪙)",
       "footer": "Reward resets every 24 hours",
-      "footerCooldown": "Top.gg voting available every 12 hours"
+      "footerCooldown": "Top.gg voting available every 12 hours",
+      "footerWebBonus": "Daily reward resets every 24 hours • Web Bonus available"
     },
     "invite": {
       "title": "✨  ✦  Invite Pyxie to your Discord Server!",
