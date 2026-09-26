@@ -7,8 +7,8 @@ module.exports = {
       exec_mode: 'fork',
       autorestart: true,
       watch: false,
-      max_memory_restart: '180M',
-      node_args: '--max-old-space-size=160',
+      max_memory_restart: '1G',
+      node_args: '--max-old-space-size=768',
       env: {
         NODE_ENV: 'production',
       },

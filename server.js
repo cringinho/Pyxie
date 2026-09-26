@@ -70,7 +70,7 @@ function startBot() {
 
   botStartTime = Date.now();
   addLog('Iniciando bot Pyxie...');
-  botProcess = spawn('node', ['--max-old-space-size=192', 'index.js'], {
+  botProcess = spawn('node', ['--max-old-space-size=768', 'index.js'], {
     cwd: appRoot,
     detached: true,
     stdio: ['pipe', 'pipe', 'pipe'],
@@ -198,6 +198,56 @@ function requireAdminAuth(req, res, next) {
 
   return res.status(401).json({ error: 'Acesso administrativo não autorizado.' });
 }
+
+app.disable('x-powered-by');
+
+// Security & Hardening Headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+
+// Lightweight In-Memory Sliding Window Rate Limiter
+function createRateLimiter({ windowMs = 60 * 1000, max = 120, message = 'Muitas requisições. Tente novamente em instantes.' } = {}) {
+  const store = new Map();
+  const cleanupTimer = setInterval(() => {
+    const now = Date.now();
+    for (const [key, record] of store.entries()) {
+      if (now - record.startTime > windowMs) {
+        store.delete(key);
+      }
+    }
+  }, 5 * 60 * 1000);
+  if (cleanupTimer.unref) cleanupTimer.unref();
+
+  return (req, res, next) => {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket?.remoteAddress || req.ip || '127.0.0.1';
+    const now = Date.now();
+    const record = store.get(ip);
+
+    if (!record || now - record.startTime > windowMs) {
+      store.set(ip, { count: 1, startTime: now });
+      return next();
+    }
+
+    record.count++;
+    if (record.count > max) {
+      const retryAfterSec = Math.ceil((windowMs - (now - record.startTime)) / 1000);
+      res.setHeader('Retry-After', retryAfterSec);
+      return res.status(429).json({ error: message });
+    }
+
+    next();
+  };
+}
+
+const publicApiLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 120 });
+const sensitiveRouteLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 20, message: 'Limite de tentativas atingido. Aguarde 1 minuto.' });
+
+app.use('/api/', publicApiLimiter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -382,7 +432,7 @@ app.get('/admin', (req, res) => {
 });
 
 // Autenticação direta por Senha Mestra (PANEL_SECRET)
-app.post('/api/admin/login', (req, res) => {
+app.post('/api/admin/login', sensitiveRouteLimiter, (req, res) => {
   const { password, secret } = req.body || {};
   const token = password || secret;
   if (!token || typeof token !== 'string') {
@@ -1192,7 +1242,7 @@ app.get('/bonus', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'bonus.html'));
 });
 
-app.post('/api/bonus/claim', (req, res) => {
+app.post('/api/bonus/claim', sensitiveRouteLimiter, (req, res) => {
   const { token } = req.body || {};
   const result = verifyAndClaimBonus(token);
   if (!result.success) {

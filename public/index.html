@@ -1406,11 +1406,11 @@
       bottom: 24px;
       right: 24px;
       z-index: 1000;
-      max-width: 360px;
-      background: rgba(18, 9, 36, 0.94);
+      max-width: 390px;
+      background: rgba(18, 9, 36, 0.95);
       border: 1px solid rgba(168, 85, 247, 0.45);
-      border-radius: 20px;
-      padding: 16px 18px 16px 72px;
+      border-radius: 22px;
+      padding: 16px 18px 16px 88px;
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(168, 85, 247, 0.25);
       backdrop-filter: blur(14px);
       animation: tipSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1442,11 +1442,15 @@
     }
     .tip-mascot-wrap {
       position: absolute;
-      bottom: 10px;
-      left: -14px;
-      width: 78px;
-      height: 92px;
+      top: 50%;
+      left: 14px;
+      transform: translateY(-50%);
+      width: 64px;
+      height: 76px;
       pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .tip-mascot-img {
       width: 100%;
@@ -1521,12 +1525,14 @@
         right: 14px;
         left: 14px;
         max-width: none;
-        padding-left: 65px;
+        padding: 14px 14px 14px 76px;
       }
       .tip-mascot-wrap {
-        left: -8px;
-        width: 68px;
-        height: 80px;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 54px;
+        height: 64px;
       }
     }
   </style>

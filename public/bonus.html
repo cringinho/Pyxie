@@ -79,7 +79,7 @@
         width: 100%;
       }
 
-      /* Native Top Banner Shopee */
+      /* Native Top Banner Shopee com Produto Real */
       .shopee-top-banner {
         width: 100%;
         margin-bottom: 18px;
@@ -90,7 +90,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
+        gap: 14px;
         text-decoration: none;
         color: inherit;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
@@ -101,24 +101,68 @@
         border-color: rgba(244, 114, 182, 0.65);
         box-shadow: 0 8px 25px rgba(244, 63, 94, 0.35);
       }
-      .shopee-top-icon {
-        font-size: 24px;
+      .shopee-top-thumb-wrap {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        overflow: hidden;
         flex-shrink: 0;
+        border: 1px solid rgba(192, 132, 252, 0.4);
+        background: rgba(0, 0, 0, 0.3);
+      }
+      .shopee-top-thumb {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+      }
+      .shopee-top-banner:hover .shopee-top-thumb {
+        transform: scale(1.08);
       }
       .shopee-top-text {
         flex: 1;
         min-width: 0;
         text-align: left;
       }
+      .shopee-top-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 3px;
+      }
+      .shopee-top-tag {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: rgba(147, 51, 234, 0.3);
+        border: 1px solid rgba(192, 132, 252, 0.45);
+        color: #d8b4fe;
+      }
+      .shopee-top-price {
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 8px;
+        background: rgba(16, 185, 129, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.45);
+        color: #6ee7b7;
+      }
       .shopee-top-title {
         display: block;
-        font-size: 0.86rem;
+        font-size: 0.88rem;
         font-weight: 700;
         color: #ffffff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .shopee-top-desc {
         display: block;
-        font-size: 0.74rem;
+        font-size: 0.73rem;
         color: var(--text-muted);
         white-space: nowrap;
         overflow: hidden;
@@ -127,7 +171,7 @@
       .shopee-top-btn {
         display: inline-flex;
         align-items: center;
-        padding: 5px 12px;
+        padding: 6px 14px;
         border-radius: 10px;
         background: linear-gradient(135deg, var(--purple-main), var(--pink-neon));
         color: #fff;
@@ -135,6 +179,7 @@
         font-weight: 700;
         white-space: nowrap;
         flex-shrink: 0;
+        box-shadow: 0 2px 10px rgba(244, 63, 94, 0.3);
       }
 
       /* Card Principal */
@@ -580,17 +625,17 @@
         color: #94a3b8;
       }
 
-      /* Pyxie Promo & Support Banner */
+      /* Pyxie Promo & Support Banner com Produto Real */
       .pyxie-promo-banner {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
+        gap: 14px;
         width: 100%;
         max-width: 540px;
         margin: 20px auto 0;
-        padding: 12px 18px;
-        background: linear-gradient(135deg, rgba(147, 51, 234, 0.18), rgba(244, 63, 94, 0.16));
+        padding: 12px 16px;
+        background: linear-gradient(135deg, rgba(147, 51, 234, 0.22), rgba(244, 63, 94, 0.2));
         border: 1px solid rgba(192, 132, 252, 0.35);
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -602,47 +647,118 @@
       }
       .pyxie-promo-banner:hover {
         transform: translateY(-2px);
-        border-color: rgba(244, 114, 182, 0.6);
+        border-color: rgba(244, 114, 182, 0.65);
         box-shadow: 0 8px 30px rgba(244, 63, 94, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
-      .pyxie-promo-banner .promo-icon {
-        font-size: 26px;
-        line-height: 1;
+      .promo-thumb-wrap {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        overflow: hidden;
         flex-shrink: 0;
-        filter: drop-shadow(0 0 10px rgba(244, 114, 182, 0.5));
+        border: 1px solid rgba(192, 132, 252, 0.4);
+        background: rgba(0, 0, 0, 0.3);
       }
-      .pyxie-promo-banner .promo-content {
+      .promo-thumb-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+      }
+      .pyxie-promo-banner:hover .promo-thumb-img {
+        transform: scale(1.08);
+      }
+      .promo-content {
         flex: 1;
         text-align: left;
         min-width: 0;
       }
-      .pyxie-promo-banner .promo-title {
-        font-size: 0.95rem;
+      .promo-header-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 3px;
+      }
+      .promo-badge {
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: rgba(147, 51, 234, 0.3);
+        border: 1px solid rgba(192, 132, 252, 0.45);
+        color: #d8b4fe;
+      }
+      .promo-price {
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 8px;
+        background: rgba(16, 185, 129, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.45);
+        color: #6ee7b7;
+      }
+      .promo-title {
+        font-size: 0.88rem;
         font-weight: 700;
         color: #ffffff;
         margin-bottom: 2px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      .pyxie-promo-banner .promo-desc {
-        font-size: 0.78rem;
+      .promo-desc {
+        font-size: 0.74rem;
         color: #cbd5e1;
-        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      .pyxie-promo-banner .promo-cta {
+      .promo-cta {
         display: inline-flex;
         align-items: center;
         gap: 6px;
         padding: 7px 14px;
-        border-radius: 20px;
+        border-radius: 12px;
         background: linear-gradient(135deg, #f43f5e, #9333ea);
         color: #ffffff;
-        font-size: 0.82rem;
+        font-size: 0.78rem;
         font-weight: 700;
         white-space: nowrap;
         flex-shrink: 0;
         box-shadow: 0 2px 10px rgba(244, 63, 94, 0.4);
+      }
+      @media (max-width: 600px) {
+        .shopee-top-banner {
+          padding: 8px 12px;
+          gap: 10px;
+        }
+        .shopee-top-thumb-wrap {
+          width: 44px;
+          height: 44px;
+        }
+        .shopee-top-desc {
+          display: none;
+        }
+        .shopee-top-btn {
+          padding: 5px 10px;
+          font-size: 0.72rem;
+        }
+        .pyxie-promo-banner {
+          padding: 10px 12px;
+          gap: 10px;
+        }
+        .promo-thumb-wrap {
+          width: 48px;
+          height: 48px;
+        }
+        .promo-desc {
+          display: none;
+        }
+        .promo-cta {
+          padding: 6px 10px;
+          font-size: 0.74rem;
+        }
       }
     </style>
   </head>
@@ -652,11 +768,17 @@
     <div class="main-layout">
       <!-- Coluna Central -->
       <main class="center-column">
-        <!-- Banner Topo Shopee Afiliados -->
-        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-top-banner">
-          <span class="shopee-top-icon">🛍️</span>
+        <!-- Banner Topo Shopee Afiliados com Produto Real -->
+        <a id="bannerTopLink" href="https://s.shopee.com.br/1BMdNQEU79" target="_blank" rel="noopener noreferrer" class="shopee-top-banner">
+          <div class="shopee-top-thumb-wrap">
+            <img id="bannerTopImg" src="https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400" alt="Produto Destaque" class="shopee-top-thumb" />
+          </div>
           <div class="shopee-top-text">
-            <span class="shopee-top-title" id="bannerTopTitle">Achadinhos da Pyxie na Shopee ✦ Ofertas Secretas</span>
+            <div class="shopee-top-meta">
+              <span class="shopee-top-tag" id="bannerTopTag">Pelúcia Sanrio</span>
+              <span class="shopee-top-price" id="bannerTopPrice">R$ 55,99</span>
+            </div>
+            <span class="shopee-top-title" id="bannerTopTitle">Kuromi Sanrio Boneca de pelúcia fofa 25cm</span>
             <span class="shopee-top-desc" id="bannerTopDesc">Descontos especiais em pelúcias, moda goth e itens Sanrio!</span>
           </div>
           <span class="shopee-top-btn" id="bannerTopBtn">Conferir ➔</span>
@@ -740,14 +862,20 @@
           </div>
         </div>
 
-        <!-- Banner Promocional da Pyxie (Shopee Afiliados) -->
-        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener" class="pyxie-promo-banner">
-          <span class="promo-icon">🛍️</span>
+        <!-- Banner Promocional da Pyxie com Produto Real -->
+        <a id="promoBannerLink" href="https://s.shopee.com.br/LnWNtHeo2" target="_blank" rel="noopener noreferrer" class="pyxie-promo-banner">
+          <div class="promo-thumb-wrap">
+            <img id="promoThumbImg" src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400" alt="Achadinho Recomendado" class="promo-thumb-img" />
+          </div>
           <div class="promo-content">
-            <div class="promo-title" id="promoTitle">Achadinhos da Pyxie na Shopee</div>
+            <div class="promo-header-row">
+              <span class="promo-badge" id="promoBadge">Acessório Goth</span>
+              <span class="promo-price" id="promoPrice">R$ 12,06</span>
+            </div>
+            <div class="promo-title" id="promoTitle">Vintage Goth Espinhos Casal Anéis Abertura Punk</div>
             <div class="promo-desc" id="promoDesc">Pelúcias, moda goth e itens mágicos com descontos imperdíveis!</div>
           </div>
-          <span class="promo-cta" id="promoBtn">Ver Ofertas ✦</span>
+          <span class="promo-cta" id="promoBtn">Ver Oferta ✦</span>
         </a>
       </main>
     </div>
@@ -958,14 +1086,7 @@
       rewardBoxEl.innerHTML = S.rewardBox;
       sponsorBtnEl.innerText = S.sponsorBtn;
 
-      if (bannerTopTitleEl) bannerTopTitleEl.innerText = S.bannerTopTitle;
-      if (bannerTopDescEl) bannerTopDescEl.innerText = S.bannerTopDesc;
       if (bannerTopBtnEl) bannerTopBtnEl.innerText = S.bannerTopBtn;
-
-      const promoTitleEl = document.getElementById('promoTitle');
-      if (promoTitleEl) promoTitleEl.innerText = S.promoTitle;
-      const promoDescEl = document.getElementById('promoDesc');
-      if (promoDescEl) promoDescEl.innerText = S.promoDesc;
       const promoBtnEl = document.getElementById('promoBtn');
       if (promoBtnEl) promoBtnEl.innerText = S.promoBtn;
 
@@ -1037,6 +1158,7 @@
       let currentShowcaseIdx = 0;
       let showcaseInterval = null;
       let isShowcaseHovered = false;
+      updateProductBanners(showcaseItems, userLang);
 
       function renderShowcaseCard(idx) {
         if (!showcaseItems || showcaseItems.length === 0) return;
@@ -1093,12 +1215,121 @@
         });
       }
 
+      function updateProductBanners(items, lang) {
+        if (!items || items.length === 0) return;
+        const isPt = lang === 'pt';
+        
+        // Produto 1 para o Top Banner
+        const topItem = items[0];
+        const topTitle = (isPt ? topItem.titulo : (topItem.titulo_en || topItem.titulo));
+        const topPrice = (isPt ? topItem.preco : (topItem.preco_en || topItem.preco));
+        const topTag = (isPt ? topItem.tag : (topItem.tag_en || topItem.tag));
+        const topLink = topItem.link || 'https://s.shopee.com.br/BU6Bod6Sw';
+        const topImg = topItem.imagem || 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=400';
+
+        const bannerTopLink = document.getElementById('bannerTopLink');
+        const bannerTopImg = document.getElementById('bannerTopImg');
+        const bannerTopTag = document.getElementById('bannerTopTag');
+        const bannerTopPrice = document.getElementById('bannerTopPrice');
+        const bannerTopTitle = document.getElementById('bannerTopTitle');
+        const bannerTopDesc = document.getElementById('bannerTopDesc');
+
+        if (bannerTopLink) bannerTopLink.href = topLink;
+        if (bannerTopImg) {
+          bannerTopImg.src = topImg;
+          bannerTopImg.alt = topTitle;
+        }
+        if (bannerTopTag) bannerTopTag.innerText = topTag;
+        if (bannerTopPrice) bannerTopPrice.innerText = topPrice;
+        if (bannerTopTitle) bannerTopTitle.innerText = topTitle;
+        if (bannerTopDesc) bannerTopDesc.innerText = isPt ? 'Achadinho com desconto exclusivo para a comunidade Pyxie!' : 'Exclusive discount curated for the Pyxie community!';
+
+        // Produto 2 para o Promo Banner
+        const promoItem = items.length > 1 ? items[1] : items[0];
+        const promoTitle = (isPt ? promoItem.titulo : (promoItem.titulo_en || promoItem.titulo));
+        const promoPrice = (isPt ? promoItem.preco : (promoItem.preco_en || promoItem.preco));
+        const promoTag = (isPt ? promoItem.tag : (promoItem.tag_en || promoItem.tag));
+        const promoLink = promoItem.link || 'https://s.shopee.com.br/BU6Bod6Sw';
+        const promoImg = promoItem.imagem || 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400';
+
+        const promoBannerLink = document.getElementById('promoBannerLink');
+        const promoThumbImg = document.getElementById('promoThumbImg');
+        const promoBadge = document.getElementById('promoBadge');
+        const promoPriceEl = document.getElementById('promoPrice');
+        const promoTitleEl = document.getElementById('promoTitle');
+        const promoDescEl = document.getElementById('promoDesc');
+
+        if (promoBannerLink) promoBannerLink.href = promoLink;
+        if (promoThumbImg) {
+          promoThumbImg.src = promoImg;
+          promoThumbImg.alt = promoTitle;
+        }
+        if (promoBadge) promoBadge.innerText = promoTag;
+        if (promoPriceEl) promoPriceEl.innerText = promoPrice;
+        if (promoTitleEl) promoTitleEl.innerText = promoTitle;
+        if (promoDescEl) promoDescEl.innerText = isPt ? 'Achadinho selecionado com carinho para a comunidade ✨' : 'Curated find with love for the Pyxie community ✨';
+      }
+
+      function rotateBannerProducts(idx) {
+        if (!showcaseItems || showcaseItems.length === 0) return;
+        const isPt = userLang === 'pt';
+        
+        // Rotaciona o Top Banner com item (idx % len)
+        const topItem = showcaseItems[idx % showcaseItems.length];
+        const topTitle = (isPt ? topItem.titulo : (topItem.titulo_en || topItem.titulo));
+        const topPrice = (isPt ? topItem.preco : (topItem.preco_en || topItem.preco));
+        const topTag = (isPt ? topItem.tag : (topItem.tag_en || topItem.tag));
+        const topLink = topItem.link || 'https://s.shopee.com.br/BU6Bod6Sw';
+        const topImg = topItem.imagem;
+
+        const bannerTopLink = document.getElementById('bannerTopLink');
+        const bannerTopImg = document.getElementById('bannerTopImg');
+        const bannerTopTag = document.getElementById('bannerTopTag');
+        const bannerTopPrice = document.getElementById('bannerTopPrice');
+        const bannerTopTitle = document.getElementById('bannerTopTitle');
+
+        if (bannerTopLink) bannerTopLink.href = topLink;
+        if (bannerTopImg && topImg) {
+          bannerTopImg.src = topImg;
+          bannerTopImg.alt = topTitle;
+        }
+        if (bannerTopTag) bannerTopTag.innerText = topTag;
+        if (bannerTopPrice) bannerTopPrice.innerText = topPrice;
+        if (bannerTopTitle) bannerTopTitle.innerText = topTitle;
+
+        // Rotaciona o Promo Banner com item ((idx + 2) % len)
+        const promoItem = showcaseItems[(idx + 2) % showcaseItems.length];
+        const promoTitle = (isPt ? promoItem.titulo : (promoItem.titulo_en || promoItem.titulo));
+        const promoPrice = (isPt ? promoItem.preco : (promoItem.preco_en || promoItem.preco));
+        const promoTag = (isPt ? promoItem.tag : (promoItem.tag_en || promoItem.tag));
+        const promoLink = promoItem.link || 'https://s.shopee.com.br/BU6Bod6Sw';
+        const promoImg = promoItem.imagem;
+
+        const promoBannerLink = document.getElementById('promoBannerLink');
+        const promoThumbImg = document.getElementById('promoThumbImg');
+        const promoBadge = document.getElementById('promoBadge');
+        const promoPriceEl = document.getElementById('promoPrice');
+        const promoTitleEl = document.getElementById('promoTitle');
+
+        if (promoBannerLink) promoBannerLink.href = promoLink;
+        if (promoThumbImg && promoImg) {
+          promoThumbImg.src = promoImg;
+          promoThumbImg.alt = promoTitle;
+        }
+        if (promoBadge) promoBadge.innerText = promoTag;
+        if (promoPriceEl) promoPriceEl.innerText = promoPrice;
+        if (promoTitleEl) promoTitleEl.innerText = promoTitle;
+      }
+
       function startShowcaseRotation() {
         if (showcaseInterval) clearInterval(showcaseInterval);
         showcaseInterval = setInterval(() => {
           if (!isShowcaseHovered && showcaseItems.length > 1) {
             currentShowcaseIdx = (currentShowcaseIdx + 1) % showcaseItems.length;
             renderShowcaseCard(currentShowcaseIdx);
+            if (currentShowcaseIdx % 2 === 0) {
+              rotateBannerProducts(currentShowcaseIdx);
+            }
           }
         }, 3500);
       }
@@ -1123,6 +1354,7 @@
           }
         } catch (_) {}
 
+        updateProductBanners(showcaseItems, userLang);
         renderShowcaseCard(currentShowcaseIdx);
         startShowcaseRotation();
         setupShowcaseHover();
