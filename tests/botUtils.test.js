@@ -204,6 +204,15 @@ try {
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'server.js')]);
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'index.js')]);
 
+  // 10. Validação de resolução de comandos slash e executeSlash
+  const { commandsByName } = require('../src/commands');
+  const sampleSlashCmds = ['tarot', 'py-tarot', 'admin', 'py-admin', 'help', 'py-help', 'trabalho', 'py-work', 'daily', 'py-daily'];
+  for (const cmdName of sampleSlashCmds) {
+    const cmd = commandsByName.get(cmdName);
+    assert.ok(cmd, `Comando ${cmdName} deve ser resolvido em commandsByName`);
+    assert.equal(typeof cmd.executeSlash, 'function', `Comando ${cmdName} deve ter executeSlash`);
+  }
+
   const { lockFilePath: exportedLockPath, isProcessAlive } = require('../src/utils/botUtils');
   assert.equal(exportedLockPath, lockFile, 'lockFilePath exportado deve apontar para .botmelody.lock');
   assert.equal(isProcessAlive(process.pid), true, 'O processo atual deve ser detectado como vivo.');

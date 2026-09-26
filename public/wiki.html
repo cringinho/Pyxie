@@ -52,14 +52,26 @@
     .navbar {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 10000;
       backdrop-filter: blur(16px);
-      background: rgba(9, 5, 20, 0.85);
+      background: rgba(9, 5, 20, 0.92);
       border-bottom: 1px solid var(--border-glass);
       padding: 14px 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    /* Proteção contra widgets flutuantes sobrepondo o cabeçalho */
+    body > div[style*="fixed"][style*="top: 0"],
+    body > div[style*="fixed"][style*="top:0"],
+    body > div[style*="fixed"][style*="top: 10px"],
+    body > div[style*="fixed"][style*="top:10px"],
+    body > div[style*="fixed"][style*="top: 15px"],
+    body > div[style*="fixed"][style*="top: 20px"] {
+      top: auto !important;
+      bottom: 24px !important;
+      right: 20px !important;
     }
     .nav-brand {
       display: flex;
