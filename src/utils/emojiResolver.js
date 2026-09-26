@@ -47,9 +47,7 @@ const FALLBACKS = {
   helpCommands: '📖',
   userProfile: '👤',
   ranking: '🏆',
-  agenda: '📅',
   status_success: '✅',
-  status_fail: '❌'
   status_fail: '❌',
 };
 

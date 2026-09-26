@@ -627,7 +627,7 @@
       /* Emojis Tab */
       .emojis-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 14px;
       }
 
@@ -635,22 +635,39 @@
         background: var(--bg-card);
         border: 1px solid var(--border-glass);
         border-radius: 16px;
-        padding: 14px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: transform 0.2s, border-color 0.2s;
+      }
+      .emoji-slot-card:hover {
+        border-color: rgba(236, 72, 153, 0.4);
+      }
+
+      .emoji-slot-top {
         display: flex;
         align-items: center;
         gap: 12px;
       }
 
       .emoji-preview-box {
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
         background: #090514;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(236, 72, 153, 0.35);
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+        cursor: pointer;
+        transition: transform 0.15s, border-color 0.15s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      }
+      .emoji-preview-box:hover {
+        transform: scale(1.08);
+        border-color: var(--pink-hover);
       }
       .emoji-preview-box img {
         width: 36px;
@@ -662,15 +679,82 @@
         flex: 1;
         min-width: 0;
       }
+      .emoji-slot-title {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 2px;
+      }
       .emoji-slot-key {
         font-family: 'JetBrains Mono', monospace;
-        font-size: 0.8rem;
-        font-weight: 700;
+        font-size: 0.72rem;
         color: var(--purple-glow);
       }
-      .emoji-slot-desc {
+      .emoji-slot-label {
         font-size: 0.72rem;
         color: var(--text-muted);
+        margin-top: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .emoji-slot-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+      }
+
+      /* Emoji Picker Modal Grid */
+      .emoji-picker-card {
+        background: rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(139, 92, 246, 0.25);
+        border-radius: 12px;
+        padding: 8px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        cursor: pointer;
+        transition: all 0.18s ease;
+        position: relative;
+      }
+      .emoji-picker-card:hover {
+        transform: scale(1.12);
+        border-color: var(--pink-hover);
+        background: rgba(236, 72, 153, 0.15);
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35);
+      }
+      .emoji-picker-card img {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+      }
+      .emoji-picker-name {
+        font-size: 9px;
+        color: var(--text-muted);
+        font-family: 'JetBrains Mono', monospace;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: center;
+      }
+      .emoji-picker-badge {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        font-size: 7px;
+        background: var(--pink-hover);
+        color: #fff;
+        padding: 1px 3px;
+        border-radius: 3px;
+        font-weight: bold;
       }
 
       /* Bot Control Tab */
@@ -859,21 +943,69 @@
 
       <!-- TAB 2: MAPEAMENTO DE EMOJIS -->
       <section id="tab-emojis" class="tab-panel">
-        <div class="shopee-toolbar" style="margin-bottom: 20px;">
+        <div class="shopee-toolbar" style="margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
           <div>
             <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.15rem; margin-bottom: 4px;">🎨 Personalizador de Emojis do Bot</h3>
-            <p style="font-size: 0.8rem; color: var(--text-muted)">Configure os emojis oficiais utilizados nas respostas, embeds e comandos.</p>
+            <p style="font-size: 0.8rem; color: var(--text-muted)">Configure visualmente os emojis oficiais utilizados nas respostas, embeds e comandos do bot.</p>
           </div>
-          <a href="/admin/emojis" target="_blank" class="btn btn-primary">
-            <span>⚙️ Abrir Mapeador Completo</span>
-          </a>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button onclick="saveAllEmojis()" id="btnSaveEmojis" class="btn btn-primary">
+              <span>💾 Salvar Todos os Emojis</span>
+            </button>
+            <a href="/admin/emojis" target="_blank" class="btn btn-secondary">
+              <span>↗ Mapeador em Nova Aba</span>
+            </a>
+          </div>
         </div>
+
+        <!-- Emoji Stats -->
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 20px;">
+          <div class="stat-card">
+            <span class="stat-label">✨ Total de Slots</span>
+            <span id="emojiSlotsTotal" class="stat-val">35</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">🎨 Customizados</span>
+            <span id="emojiSlotsCustom" class="stat-val" style="color: #c084fc">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">🔤 Padrão / Fallback</span>
+            <span id="emojiSlotsFallback" class="stat-val" style="color: #94a3b8">0</span>
+          </div>
+        </div>
+
+        <!-- Emoji Filters & Search -->
+        <div class="shopee-toolbar" style="margin-bottom: 20px;">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              id="emojiSearch"
+              class="search-input"
+              placeholder="Buscar slot por nome ou categoria..."
+              oninput="filterEmojiSlots()"
+            />
+          </div>
+          <div class="filter-group">
+            <select id="emojiCategoryFilter" class="filter-select" onchange="filterEmojiSlots()">
+              <option value="all">Todas as Categorias</option>
+              <option value="economy">💰 Economia & Loja</option>
+              <option value="gloom">🔮 Santuário & RPG</option>
+              <option value="social">💑 Social & Romance</option>
+              <option value="minigames">🎲 Jogos & Sorte</option>
+              <option value="system">⚙️ Sistema & Status</option>
+            </select>
+          </div>
+        </div>
+
         <div id="emojisListGrid" class="emojis-grid">
-          <!-- Rendered dynamically -->
+          <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+            Carregando catálogo de slots e emojis...
+          </div>
         </div>
       </section>
 
-      <!-- TAB 3: CONTROLE DO BOT -->
+      <!-- TAB 3: CONTROLE DO BOT & ECONOMIA -->
       <section id="tab-bot" class="tab-panel">
         <div class="control-grid">
           <div class="control-card">
@@ -889,18 +1021,30 @@
 
           <div class="control-card">
             <h3>🪙 Configurações Econômicas</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted)">Ajuste limites de ganhos de trabalho e daily.</p>
+            <p style="font-size: 0.82rem; color: var(--text-muted)">Ajuste limites de ganhos de trabalho e daily (salvo de forma permanente no banco de dados).</p>
             <div style="display: flex; gap: 12px;">
               <div class="form-field" style="flex: 1;">
-                <label>Ganho Mínimo:</label>
-                <input type="number" id="ecoMin" value="50" />
+                <label>Ganho Mínimo (Moedas):</label>
+                <input type="number" id="ecoMin" min="0" value="50" />
               </div>
               <div class="form-field" style="flex: 1;">
-                <label>Ganho Máximo:</label>
-                <input type="number" id="ecoMax" value="300" />
+                <label>Ganho Máximo (Moedas):</label>
+                <input type="number" id="ecoMax" min="1" value="300" />
               </div>
             </div>
-            <button onclick="saveEconomy()" class="btn btn-primary" style="align-self: flex-start;">Salvar Economia</button>
+            <button onclick="saveEconomy()" id="btnSaveEconomy" class="btn btn-primary" style="align-self: flex-start;">💾 Salvar Economia</button>
+          </div>
+
+          <div class="control-card">
+            <h3>📢 Canal de Boas-Vindas Global</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted)">Defina o ID do canal padrão para mensagens e cards de boas-vindas da Pyxie.</p>
+            <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+              <div class="form-field" style="flex: 1; min-width: 200px;">
+                <label>ID do Canal (Snowflake):</label>
+                <input type="text" id="welcomeChannelId" placeholder="Ex: 123456789012345678" />
+              </div>
+              <button onclick="saveWelcomeChannel()" id="btnSaveWelcome" class="btn btn-secondary">💾 Salvar Canal</button>
+            </div>
           </div>
         </div>
       </section>
@@ -975,6 +1119,32 @@
       </div>
     </div>
 
+    <!-- Modal Picker de Emojis Discord -->
+    <div id="emojiPickerModal" class="modal-backdrop">
+      <div class="modal-box" style="max-width: 680px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+        <div class="modal-header" style="padding: 18px 24px; border-bottom: 1px solid var(--border-glass); margin-bottom: 0;">
+          <div>
+            <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.15rem; margin: 0; color: var(--pink-hover);">✨ Galeria Visual de Emojis</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 3px 0 0 0;">Configurando slot: <strong id="modalSlotTitle" style="color: #c084fc;">-</strong></p>
+          </div>
+          <button onclick="closeEmojiPicker()" class="btn btn-secondary" style="padding: 4px 8px;">✕</button>
+        </div>
+        <div style="padding: 12px 20px; border-bottom: 1px solid var(--border-glass); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; background: rgba(0,0,0,0.2);">
+          <input type="text" id="pickerSearchInput" placeholder="🔍 Filtrar emoji por nome..." class="search-input" style="flex: 1; min-width: 180px;" oninput="filterPickerGrid()" />
+          <button type="button" onclick="setPickerFilter('all')" id="btnPickAll" class="btn btn-secondary btn-mini active">Todos (<span id="pickCountAll">0</span>)</button>
+          <button type="button" onclick="setPickerFilter('animated')" id="btnPickAnim" class="btn btn-secondary btn-mini">GIFs ✨ (<span id="pickCountAnim">0</span>)</button>
+          <button type="button" onclick="setPickerFilter('static')" id="btnPickStatic" class="btn btn-secondary btn-mini">PNGs 📄 (<span id="pickCountStatic">0</span>)</button>
+        </div>
+        <div id="pickerGridContainer" style="flex: 1; overflow-y: auto; padding: 18px; display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 10px;">
+          <!-- Emoji cards rendered dynamically -->
+        </div>
+        <div style="padding: 12px 20px; background: rgba(0,0,0,0.35); border-top: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center;">
+          <button type="button" onclick="selectEmojiForSlot('')" class="btn btn-danger btn-mini">🚫 Resetar para Unicode Padrão</button>
+          <button type="button" onclick="closeEmojiPicker()" class="btn btn-secondary btn-mini">Fechar</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast" class="toast">
       <span id="toastIcon">✨</span>
@@ -1005,6 +1175,9 @@
         if (targetPanel) targetPanel.classList.add('active');
 
         if (tabId === 'logs') fetchLogs();
+        if (tabId === 'emojis') fetchEmojisData();
+        if (tabId === 'bot') loadBotConfig();
+        if (tabId === 'shopee') fetchShopeeData();
       }
 
       async function fetchShopeeData() {
@@ -1314,8 +1487,345 @@
         window.location.href = '/admin';
       }
 
+      /* ==========================================================
+         GERENCIAMENTO E CUSTOMIZAÇÃO DE EMOJIS (TAB 2)
+         ========================================================== */
+      let allEmojisData = { currentConfig: {}, themeConfig: {}, appEmojis: [], slots: {} };
+      let pendingEmojiChanges = {};
+      let currentEditingSlot = null;
+      let activePickerFilter = 'all';
+
+      async function fetchEmojisData() {
+        try {
+          const res = await fetch('/api/admin/emojis');
+          if (res.status === 401 || res.status === 403) {
+            window.location.href = '/admin';
+            return;
+          }
+          const data = await res.json();
+          if (data.success) {
+            allEmojisData = data;
+            pendingEmojiChanges = { ...(data.currentConfig || {}) };
+            updateEmojiStats();
+            renderEmojiSlotsGrid();
+          }
+        } catch (err) {
+          console.error('Erro ao carregar dados de emojis:', err);
+          const grid = document.getElementById('emojisListGrid');
+          if (grid) {
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #f87171;">⚠️ Falha ao comunicar com a API de emojis.</div>';
+          }
+        }
+      }
+
+      function updateEmojiStats() {
+        const slots = Object.keys(allEmojisData.slots || {});
+        let customCount = 0;
+        let fallbackCount = 0;
+
+        slots.forEach((s) => {
+          if (pendingEmojiChanges[s] && String(pendingEmojiChanges[s]).trim()) customCount++;
+          else fallbackCount++;
+        });
+
+        const totalEl = document.getElementById('emojiSlotsTotal');
+        const customEl = document.getElementById('emojiSlotsCustom');
+        const fallbackEl = document.getElementById('emojiSlotsFallback');
+
+        if (totalEl) totalEl.innerText = slots.length;
+        if (customEl) customEl.innerText = customCount;
+        if (fallbackEl) fallbackEl.innerText = fallbackCount;
+      }
+
+      function filterEmojiSlots() {
+        renderEmojiSlotsGrid();
+      }
+
+      function renderEmojiSlotsGrid() {
+        const grid = document.getElementById('emojisListGrid');
+        if (!grid) return;
+
+        const slots = allEmojisData.slots || {};
+        const appEmojis = allEmojisData.appEmojis || [];
+        const search = (document.getElementById('emojiSearch')?.value || '').toLowerCase().trim();
+        const catFilter = document.getElementById('emojiCategoryFilter')?.value || 'all';
+
+        const filteredSlots = Object.entries(slots).filter(([slot, meta]) => {
+          const title = (meta.title || '').toLowerCase();
+          const category = meta.category || 'system';
+          const matchSearch = !search || slot.toLowerCase().includes(search) || title.includes(search);
+          const matchCat = catFilter === 'all' || category === catFilter;
+          return matchSearch && matchCat;
+        });
+
+        if (filteredSlots.length === 0) {
+          grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Nenhum slot encontrado para os filtros atuais.</div>';
+          return;
+        }
+
+        grid.innerHTML = filteredSlots
+          .map(([slot, meta]) => {
+            const fallback = meta.fallback || '✨';
+            let selectedId = pendingEmojiChanges[slot] || '';
+
+            if (!selectedId && meta.themeKey && allEmojisData.themeConfig && allEmojisData.themeConfig[meta.themeKey]) {
+              selectedId = allEmojisData.themeConfig[meta.themeKey].primaryId || '';
+            }
+
+            const emojiObj = appEmojis.find((e) => String(e.id) === String(selectedId));
+            let previewContent = `<span style="font-size: 26px;">${fallback}</span>`;
+            let badgeClass = 'status-paused';
+            let badgeText = 'Unicode Fallback';
+            let currentLabel = `Padrão (${fallback})`;
+
+            if (selectedId && emojiObj) {
+              previewContent = `<img src="${emojiObj.url}" alt="${slot}" loading="lazy" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${selectedId}.png';" />`;
+              badgeClass = emojiObj.animated ? 'status-active' : 'status-paused';
+              badgeText = emojiObj.animated ? '✨ GIF Animado' : '📄 PNG Estático';
+              currentLabel = `${emojiObj.name} (${selectedId})`;
+            } else if (selectedId) {
+              const url = `https://cdn.discordapp.com/emojis/${selectedId}.png`;
+              previewContent = `<img src="${url}" alt="${slot}" loading="lazy" />`;
+              badgeClass = 'status-active';
+              badgeText = 'Customizado';
+              currentLabel = `ID: ${selectedId}`;
+            }
+
+            return `
+              <div class="emoji-slot-card" id="slot-card-${slot}">
+                <div class="emoji-slot-top">
+                  <div class="emoji-preview-box" onclick="openEmojiPicker('${slot}')" title="Clique para escolher emoji">
+                    ${previewContent}
+                  </div>
+                  <div class="emoji-slot-info">
+                    <div class="emoji-slot-title">
+                      <span>${meta.title}</span>
+                    </div>
+                    <div style="display: flex; gap: 6px; align-items: center; margin-top: 2px;">
+                      <span class="emoji-slot-key">${slot}</span>
+                      <span class="card-status-pill ${badgeClass}" style="font-size: 9px; padding: 1px 6px;">${badgeText}</span>
+                    </div>
+                    <div class="emoji-slot-label" title="${currentLabel}">${currentLabel}</div>
+                  </div>
+                </div>
+                <div class="emoji-slot-actions">
+                  <button type="button" onclick="openEmojiPicker('${slot}')" class="btn btn-secondary btn-mini" style="flex: 1;">
+                    <span>🎨 Escolher Emoji</span>
+                  </button>
+                  <button type="button" onclick="resetEmojiSlot('${slot}')" class="btn btn-danger btn-mini" title="Restaurar para padrão Unicode">
+                    <span>❌ Resetar</span>
+                  </button>
+                </div>
+              </div>
+            `;
+          })
+          .join('');
+      }
+
+      function openEmojiPicker(slot) {
+        currentEditingSlot = slot;
+        const meta = (allEmojisData.slots && allEmojisData.slots[slot]) || { title: slot, fallback: '✨' };
+        document.getElementById('modalSlotTitle').innerText = `${meta.title} (${slot})`;
+        document.getElementById('pickerSearchInput').value = '';
+        activePickerFilter = 'all';
+        updatePickerFilterButtons();
+        renderPickerGrid();
+        document.getElementById('emojiPickerModal').classList.add('open');
+      }
+
+      function closeEmojiPicker() {
+        document.getElementById('emojiPickerModal').classList.remove('open');
+        currentEditingSlot = null;
+      }
+
+      function setPickerFilter(type) {
+        activePickerFilter = type;
+        updatePickerFilterButtons();
+        renderPickerGrid();
+      }
+
+      function updatePickerFilterButtons() {
+        ['all', 'animated', 'static'].forEach((t) => {
+          const btn = document.getElementById(
+            t === 'all' ? 'btnPickAll' : t === 'animated' ? 'btnPickAnim' : 'btnPickStatic'
+          );
+          if (btn) btn.classList.toggle('active', activePickerFilter === t);
+        });
+      }
+
+      function filterPickerGrid() {
+        renderPickerGrid();
+      }
+
+      function renderPickerGrid() {
+        const container = document.getElementById('pickerGridContainer');
+        if (!container) return;
+
+        const allEmojis = allEmojisData.appEmojis || [];
+        const q = (document.getElementById('pickerSearchInput')?.value || '').toLowerCase().trim();
+
+        let items = allEmojis;
+        if (activePickerFilter === 'animated') items = items.filter((e) => e.animated);
+        else if (activePickerFilter === 'static') items = items.filter((e) => !e.animated);
+
+        if (q) items = items.filter((e) => e.name.toLowerCase().includes(q) || String(e.id).includes(q));
+
+        document.getElementById('pickCountAll').innerText = allEmojis.length;
+        document.getElementById('pickCountAnim').innerText = allEmojis.filter((e) => e.animated).length;
+        document.getElementById('pickCountStatic').innerText = allEmojis.filter((e) => !e.animated).length;
+
+        if (items.length === 0) {
+          container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">Nenhum emoji encontrado para "${q}".</div>`;
+          return;
+        }
+
+        container.innerHTML = items
+          .map((emoji) => {
+            const badge = emoji.animated ? '<span class="emoji-picker-badge">GIF</span>' : '';
+            return `
+              <div class="emoji-picker-card" onclick="selectEmojiForSlot('${emoji.id}')" title="${emoji.name} (${emoji.id})">
+                ${badge}
+                <img src="${emoji.url}" alt="${emoji.name}" loading="lazy" onerror="this.src='https://cdn.discordapp.com/emojis/${emoji.id}.png';" />
+                <span class="emoji-picker-name">${emoji.name}</span>
+              </div>
+            `;
+          })
+          .join('');
+      }
+
+      function selectEmojiForSlot(emojiId) {
+        if (!currentEditingSlot) return;
+        pendingEmojiChanges[currentEditingSlot] = emojiId;
+        closeEmojiPicker();
+        updateEmojiStats();
+        renderEmojiSlotsGrid();
+        showToast('Emoji selecionado! Clique em "Salvar Todos os Emojis" para persistir.', '✨');
+      }
+
+      function resetEmojiSlot(slot) {
+        pendingEmojiChanges[slot] = '';
+        updateEmojiStats();
+        renderEmojiSlotsGrid();
+        showToast(`Slot "${slot}" redefinido para o padrão Unicode.`, '🔄');
+      }
+
+      async function saveAllEmojis() {
+        const btn = document.getElementById('btnSaveEmojis');
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ Salvando Emojis...</span>';
+        showToast('Gravando mapeamento de emojis no servidor...', '⏳');
+
+        try {
+          const res = await fetch('/api/admin/emojis', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ emojis: pendingEmojiChanges }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            allEmojisData.currentConfig = { ...pendingEmojiChanges };
+            showToast('✨ Todos os emojis foram salvos e sincronizados com sucesso!', '💾');
+            updateEmojiStats();
+            renderEmojiSlotsGrid();
+          } else {
+            showToast(data.error || 'Erro ao salvar configurações de emojis.', '⚠️');
+          }
+        } catch (err) {
+          showToast('Erro de comunicação ao salvar emojis.', '⚠️');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<span>💾 Salvar Todos os Emojis</span>';
+        }
+      }
+
+      /* ==========================================================
+         CONTROLE DO BOT, ECONOMIA E BOAS-VINDAS (TAB 3)
+         ========================================================== */
+      async function loadBotConfig() {
+        try {
+          const res = await fetch('/api/config');
+          if (res.status === 401 || res.status === 403) return;
+          const data = await res.json();
+
+          if (data.economy) {
+            const minEl = document.getElementById('ecoMin');
+            const maxEl = document.getElementById('ecoMax');
+            if (minEl && data.economy.minimum !== undefined) minEl.value = data.economy.minimum;
+            if (maxEl && data.economy.maximum !== undefined) maxEl.value = data.economy.maximum;
+          }
+
+          if (data.welcomeChannelId) {
+            const welcomeEl = document.getElementById('welcomeChannelId');
+            if (welcomeEl) welcomeEl.value = data.welcomeChannelId;
+          }
+        } catch (err) {
+          console.error('Erro ao carregar configurações do bot:', err);
+        }
+      }
+
+      async function saveEconomy() {
+        const minVal = parseInt(document.getElementById('ecoMin').value, 10);
+        const maxVal = parseInt(document.getElementById('ecoMax').value, 10);
+
+        if (isNaN(minVal) || isNaN(maxVal) || minVal < 0 || maxVal < minVal) {
+          showToast('Valores inválidos: o ganho mínimo deve ser >= 0 e o máximo >= mínimo.', '⚠️');
+          return;
+        }
+
+        const btn = document.getElementById('btnSaveEconomy');
+        btn.disabled = true;
+        btn.innerText = 'Salvando...';
+
+        try {
+          const res = await fetch('/api/config/economy', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ minimum: minVal, maximum: maxVal }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`Configurações de economia salvas! (Mín: ${minVal} | Máx: ${maxVal})`, '🪙');
+          } else {
+            showToast(data.message || 'Erro ao salvar economia.', '⚠️');
+          }
+        } catch (_) {
+          showToast('Erro ao comunicar com o servidor.', '⚠️');
+        } finally {
+          btn.disabled = false;
+          btn.innerText = '💾 Salvar Economia';
+        }
+      }
+
+      async function saveWelcomeChannel() {
+        const channelId = (document.getElementById('welcomeChannelId').value || '').trim();
+        const btn = document.getElementById('btnSaveWelcome');
+        btn.disabled = true;
+        btn.innerText = 'Salvando...';
+
+        try {
+          const res = await fetch('/api/config/welcome-channel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ channelId }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(channelId ? `Canal de boas-vindas definido para ${channelId}!` : 'Canal de boas-vindas removido.', '📢');
+          } else {
+            showToast('Erro ao atualizar canal de boas-vindas.', '⚠️');
+          }
+        } catch (_) {
+          showToast('Erro ao salvar canal.', '⚠️');
+        } finally {
+          btn.disabled = false;
+          btn.innerText = '💾 Salvar Canal';
+        }
+      }
+
       // Inicialização da página
       fetchShopeeData();
+      fetchEmojisData();
+      loadBotConfig();
     </script>
   </body>
 </html>

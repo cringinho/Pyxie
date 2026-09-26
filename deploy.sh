@@ -17,7 +17,9 @@ fi
 cp -a data "$BACKUP/"
 [ -f .env ] && cp -a .env "$BACKUP/"
 [ -f prefix.json ] && cp -a prefix.json "$BACKUP/"
-[ -f src/data/emojis.json ] && cp -a src/data/emojis.json "$BACKUP/emojis.json"
+[ -f src/data/emojis.json ] && cp -a src/data/emojis.json "$BACKUP/"
+[ -f src/data/shopee.json ] && cp -a src/data/shopee.json "$BACKUP/"
+[ -f src/data/themeEmojis.json ] && cp -a src/data/themeEmojis.json "$BACKUP/"
 echo "Backup criado em $BACKUP"
 
 # A VM e a fonte de verdade dos dados. Guarde qualquer estado local antes do pull;
@@ -33,6 +35,8 @@ cp -a "$BACKUP/data" data
 [ -f "$BACKUP/.env" ] && cp -a "$BACKUP/.env" .env
 [ -f "$BACKUP/prefix.json" ] && cp -a "$BACKUP/prefix.json" prefix.json
 [ -f "$BACKUP/emojis.json" ] && cp -a "$BACKUP/emojis.json" src/data/emojis.json
+[ -f "$BACKUP/shopee.json" ] && cp -a "$BACKUP/shopee.json" src/data/shopee.json
+[ -f "$BACKUP/themeEmojis.json" ] && cp -a "$BACKUP/themeEmojis.json" src/data/themeEmojis.json
 
 npm ci --omit=dev
 node src/registerSlashCommands.js || echo "Aviso: falha ao registrar slash commands"

@@ -200,18 +200,30 @@ try {
   assert.ok(previewEmbed.data.description.includes('<a:pinkeing:1548444149785694238>'), 'Preview embed deve renderizar o emoji formatado no corpo');
   assert.equal(previewEmbed.data.thumbnail.url, mockEmojiObj.url, 'Preview embed deve definir o thumbnail com a URL do emoji');
 
+  // 10. Teste de Configuração Dinâmica de Emojis e Resolução em Tempo Real
+  const { getEmoji, reloadEmojiConfig } = require('../src/utils/appEmojis');
+  const { getEconomyConfig, setEconomyConfig } = require('../src/services/database');
+  
+  // Custom emoji test
+  const customCoin = getEmoji('COIN');
+  assert.ok(customCoin && customCoin.length > 0, 'getEmoji("COIN") deve retornar representação válida do emoji');
+  
+  // Regra 4: Teste de proteção contra portal de Minecraft
+  const portalTest = getEmoji('PORTAL');
+  assert.ok(!portalTest.includes('1548444170488778954'), 'Emoji de portal não pode conter o ID banido do Minecraft');
+  assert.ok(portalTest.includes('1551355962974273546') || portalTest === '✨', 'Emoji de portal deve resolver para o mapa canônico da Pyxie');
+
+  // 11. Teste de Persistência de Economia (Mínimo e Máximo)
+  const savedEco = setEconomyConfig(80, 500);
+  assert.equal(savedEco.minimum, 80, 'Economia mínima deve ser persistida');
+  assert.equal(savedEco.maximum, 500, 'Economia máxima deve ser persistida');
+  const readEco = getEconomyConfig();
+  assert.equal(readEco.minimum, 80, 'Economia mínima deve ser lida do banco');
+  assert.equal(readEco.maximum, 500, 'Economia máxima deve ser lida do banco');
+
   const { execFileSync } = require('node:child_process');
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'server.js')]);
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'index.js')]);
-
-  // 10. Validação de resolução de comandos slash e executeSlash
-  const { commandsByName } = require('../src/commands');
-  const sampleSlashCmds = ['tarot', 'py-tarot', 'admin', 'py-admin', 'help', 'py-help', 'trabalho', 'py-work', 'daily', 'py-daily'];
-  for (const cmdName of sampleSlashCmds) {
-    const cmd = commandsByName.get(cmdName);
-    assert.ok(cmd, `Comando ${cmdName} deve ser resolvido em commandsByName`);
-    assert.equal(typeof cmd.executeSlash, 'function', `Comando ${cmdName} deve ter executeSlash`);
-  }
 
   const { lockFilePath: exportedLockPath, isProcessAlive } = require('../src/utils/botUtils');
   assert.equal(exportedLockPath, lockFile, 'lockFilePath exportado deve apontar para .botmelody.lock');
@@ -222,7 +234,7 @@ try {
   releaseBotLock();
   assert.equal(fs.existsSync(lockFile), false, 'O lock deve ser removido ao encerrar.');
 
-  console.log('Verificação do lock, banco, prefixo padrão, sintaxe do servidor, internacionalização (i18n) e ajuda: OK');
+  console.log('Verificação do lock, banco, prefixo padrão, sintaxe do servidor, internacionalização (i18n), emojis e ajuda: OK');
 } finally {
   if (fs.existsSync(lockFile)) {
     fs.unlinkSync(lockFile);

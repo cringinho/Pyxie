@@ -743,8 +743,6 @@ client.on('interactionCreate', async (interaction) => {
     incrementCommand();
     recordUniqueUser(interaction.user.id);
 
-    const command = commandsByName.get(interaction.commandName);
-
     const ephemeralCommands = new Set([
       'tarot', 'py-tarot',
       'ajuda', 'help', 'py-help',

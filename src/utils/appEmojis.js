@@ -4,7 +4,25 @@
  * (até 2.000 emojis) sem depender de servidores externos ou Nitro, com fallbacks automáticos em Unicode.
  */
 
+const fs = require('node:fs');
+const path = require('node:path');
+
 const APP_EMOJI_CACHE = new Map();
+const APP_EMOJI_BY_ID = new Map();
+const CUSTOM_EMOJIS_FILE = path.join(__dirname, '..', 'data', 'emojis.json');
+let customEmojiConfig = {};
+
+function reloadEmojiConfig() {
+  try {
+    if (fs.existsSync(CUSTOM_EMOJIS_FILE)) {
+      customEmojiConfig = JSON.parse(fs.readFileSync(CUSTOM_EMOJIS_FILE, 'utf8'));
+    } else {
+      customEmojiConfig = {};
+    }
+  } catch (_) {
+    customEmojiConfig = {};
+  }
+}
 
 // Pré-carrega todos os 1.182 Discord Application Emojis catalogados
 try {
@@ -14,9 +32,55 @@ try {
     if (item.name && item.id) {
       const formatted = item.animated ? `<a:${item.name}:${item.id}>` : `<:${item.name}:${item.id}>`;
       APP_EMOJI_CACHE.set(item.name.toLowerCase(), formatted);
+      APP_EMOJI_BY_ID.set(String(item.id), {
+        id: String(item.id),
+        name: item.name,
+        animated: Boolean(item.animated),
+        format: formatted,
+      });
     }
   }
 } catch (_) {}
+
+reloadEmojiConfig();
+
+const KEY_TO_SLOT_MAP = {
+  COIN: 'coins',
+  COIN_PURPLE: 'phantom_coin',
+  MAGIC_BEAN: 'magic_bean',
+  DIAMOND: 'shop_gem',
+  CHEST: 'shop_chest',
+  HEART: 'ship_heart',
+  RING: 'marriage_ring',
+  GIFT: 'daily_bonus',
+  ZAP: 'vigor_energy',
+  CODING: 'work_career',
+  TROPHY: 'ranking',
+  CHECK: 'status_success',
+  CROSS: 'status_fail',
+  BOOK: 'grimorio',
+  SPELLBOOK: 'grimorio',
+  TAROT: 'tarot_card',
+  TAROT_ALBUM: 'tarotAlbum',
+  DICE: 'dice',
+  USER_PROFILE: 'userProfile',
+  SHIP: 'ship_heart',
+  WEEKEND_BONUS: 'weekend_bonus',
+  HELP: 'helpCommands',
+  DIVORCE: 'divorce',
+  TRADE: 'trade',
+  FORTUNE_COOKIE: 'fortune_cookie',
+  JOKENPO: 'jokenpo',
+  COINFLIP: 'coinflip',
+  LIKELY: 'likely',
+  AGENDA: 'agenda',
+  BOSS: 'boss_behemoth',
+  RELIC_T1: 'relic_t1',
+  RELIC_T2: 'relic_t2',
+  RELIC_T3: 'relic_t3',
+  RELIC_T4: 'relic_t4',
+  RELIC_T5: 'relic_t5',
+};
 
 // Mapeamento padrão de identificadores para emojis oficiais da aplicação (Discord Dev Portal) e fallbacks Unicode
 const EMOJI_DEFINITIONS = {
@@ -56,7 +120,7 @@ const EMOJI_DEFINITIONS = {
   // UI & Notificações
   CHECK: { name: 'shieldsuccess22', aliases: ['check_mark', 'check', '6586_TickYes_RainbowGif', '9434purpleverification'], fallback: '✅' },
   CROSS: { name: 'x_', aliases: ['cross_mark', 'cross', 'erro'], fallback: '❌' },
-  HOURGLASS: { name: '48390wizardhourglass', aliases: ['ampulheta', 'hourglass'], fallback: '⏳' },
+  HOURGLASS: { name: 'ampulheta', aliases: ['hourglass'], fallback: '⏳' },
   GIFT: { name: 'qbgifts48', aliases: ['presente', 'gift', 'acgift70'], fallback: '🎁' },
   SPARKLES: { name: 'purplesparkles', aliases: ['brilhos', 'sparkles', '3679pinksparkles', '5802kuromisparkles'], fallback: '✨' },
   ROCKET: { name: 'slrocket', aliases: ['foguete', 'rocket'], fallback: '🚀' },
@@ -140,6 +204,24 @@ async function syncApplicationEmojis(client) {
  * @returns {string}
  */
 function getEmoji(emojiKey) {
+  if (!emojiKey) return '✨';
+
+  // 1. Resolução prioritária a partir da customização do dono (src/data/emojis.json)
+  const slot = KEY_TO_SLOT_MAP[emojiKey] || KEY_TO_SLOT_MAP[String(emojiKey).toUpperCase()] || String(emojiKey).toLowerCase();
+  let customId = customEmojiConfig && customEmojiConfig[slot] ? String(customEmojiConfig[slot]).trim() : '';
+
+  // Regra de Ouro Mandatória 4: Proibição estrita do portal de Minecraft (1548444170488778954)
+  if (customId === '1548444170488778954') {
+    customId = '1551355962974273546';
+  }
+
+  if (customId) {
+    const cachedObj = APP_EMOJI_BY_ID.get(customId);
+    if (cachedObj) return cachedObj.format;
+    return `<:emoji_${customId}:${customId}>`;
+  }
+
+  // 2. Resolução padrão via EMOJI_DEFINITIONS e catálogo da aplicação
   const def = EMOJI_DEFINITIONS[emojiKey];
   if (!def) {
     if (typeof emojiKey === 'string') {
@@ -162,5 +244,7 @@ module.exports = {
   EMOJI_DEFINITIONS,
   syncApplicationEmojis,
   getEmoji,
+  reloadEmojiConfig,
+  getCustomEmojiConfig: () => ({ ...customEmojiConfig }),
 };
 

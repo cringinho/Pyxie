@@ -6,6 +6,7 @@ const { spawn, execFile } = require('node:child_process');
 const { setWelcomeChannel, getWelcomeChannel, normalizeChannelValue, getEconomyConfig, setEconomyConfig } = require('./src/services/database');
 const { addLog: savePersistentLog, getLogs, getStats, updateStats, resetStats, clearLogs, flushSync } = require('./src/services/logging');
 const { lockFilePath, isProcessAlive } = require('./src/utils/botUtils');
+const { reloadEmojiConfig } = require('./src/utils/appEmojis');
 const shopeeManager = require('./src/services/shopeeManager');
 
 const app = express();
@@ -651,12 +652,8 @@ app.get('/admin/emojis', async (req, res) => {
 
     <!-- Controls Row -->
     <div class="controls-row">
-      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Filtrar slots por nome (ex: coin, tarot, relic)..." />
       <input type="text" id="searchInput" class="search-input" placeholder="🔍 Filtrar slots por nome (ex: coin, tarot, relic, ship)..." />
       <button class="cat-btn active" data-cat="all">Todos os Slots</button>
-      <button class="cat-btn" data-cat="economy">💰 Economia</button>
-      <button class="cat-btn" data-cat="gloom">🔮 Santuário / RPG</button>
-      <button class="cat-btn" data-cat="system">⚙️ Sistema</button>
       <button class="cat-btn" data-cat="economy">💰 Economia & Loja</button>
       <button class="cat-btn" data-cat="gloom">🔮 Santuário & RPG</button>
       <button class="cat-btn" data-cat="social">💑 Social & Romance</button>
@@ -979,12 +976,110 @@ app.post('/admin/emojis', (req, res) => {
         fs.writeFileSync(themePath, JSON.stringify(themeContent, null, 2), 'utf8');
       }
     }
+    reloadEmojiConfig();
   } catch (err) {
     console.error('Error syncing themeEmojis.json:', err);
   }
 
   const redirectToken = token ? `?token=${encodeURIComponent(token)}&saved=true` : '?saved=true';
   return res.redirect(`/admin/emojis${redirectToken}`);
+});
+
+// API de Leitura dos Emojis para o Console Administrativo
+app.get('/api/admin/emojis', requireAdminAuth, (req, res) => {
+  try {
+    const emojisPath = path.join(__dirname, 'src/data/emojis.json');
+    let currentConfig = {};
+    if (fs.existsSync(emojisPath)) {
+      currentConfig = JSON.parse(fs.readFileSync(emojisPath, 'utf8'));
+    }
+
+    const themePath = path.join(__dirname, 'src/data/themeEmojis.json');
+    let currentThemeConfig = {};
+    if (fs.existsSync(themePath)) {
+      const parsed = JSON.parse(fs.readFileSync(themePath, 'utf8'));
+      currentThemeConfig = parsed.themes || {};
+    }
+
+    let appEmojis = [];
+    const catalogPath = path.join(__dirname, 'src/data/discordAppEmojis.json');
+    if (fs.existsSync(catalogPath)) {
+      const raw = fs.readFileSync(catalogPath, 'utf8');
+      const parsed = JSON.parse(raw);
+      appEmojis = Array.isArray(parsed) ? parsed : (parsed.items || []);
+    }
+
+    const simplifiedAppEmojis = appEmojis.map((e) => ({
+      id: String(e.id),
+      name: e.name || 'emoji',
+      animated: Boolean(e.animated),
+      url: `https://cdn.discordapp.com/emojis/${e.id}.${e.animated ? 'gif' : 'png'}`,
+    }));
+
+    return res.json({
+      success: true,
+      currentConfig,
+      themeConfig: currentThemeConfig,
+      appEmojis: simplifiedAppEmojis,
+      slots: SLOT_METADATA,
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API de Salvamento dos Emojis (AJAX assíncrono para o console)
+app.post('/api/admin/emojis', requireAdminAuth, (req, res) => {
+  try {
+    const incoming = req.body?.emojis || req.body || {};
+    const emojisData = {};
+
+    for (const [slot, meta] of Object.entries(SLOT_METADATA)) {
+      let val = incoming[slot] !== undefined ? incoming[slot] : '';
+      val = val ? String(val).trim() : '';
+
+      // Regra 4: Proibição estrita do portal de Minecraft
+      if (val === '1548444170488778954') {
+        val = '1551355962974273546';
+      }
+
+      emojisData[slot] = val;
+    }
+
+    // 1. Salva src/data/emojis.json
+    const dataPath = path.join(__dirname, 'src/data/emojis.json');
+    fs.writeFileSync(dataPath, JSON.stringify(emojisData, null, 2), 'utf8');
+
+    // 2. Sincroniza com src/data/themeEmojis.json
+    try {
+      const themePath = path.join(__dirname, 'src/data/themeEmojis.json');
+      if (fs.existsSync(themePath)) {
+        const themeContent = JSON.parse(fs.readFileSync(themePath, 'utf8'));
+        if (themeContent && themeContent.themes) {
+          for (const [slot, meta] of Object.entries(SLOT_METADATA)) {
+            if (meta.themeKey && themeContent.themes[meta.themeKey] && emojisData[slot]) {
+              themeContent.themes[meta.themeKey].primaryId = emojisData[slot];
+            }
+          }
+          fs.writeFileSync(themePath, JSON.stringify(themeContent, null, 2), 'utf8');
+        }
+      }
+    } catch (syncErr) {
+      console.error('Erro ao sincronizar themeEmojis.json:', syncErr.message);
+    }
+
+    // 3. Atualiza cache em memória do bot imediatamente
+    reloadEmojiConfig();
+
+    return res.json({
+      success: true,
+      count: Object.keys(emojisData).length,
+      message: 'Configurações de emojis salvas e aplicadas em tempo real com sucesso!',
+      emojis: emojisData,
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.post('/api/admin/verify', (req, res) => {
