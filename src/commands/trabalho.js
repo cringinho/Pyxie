@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const {
   ActionRowBuilder,
   ButtonBuilder,
@@ -20,6 +22,17 @@ const {
 } = require('../utils/i18n');
 const { WORK } = require('./commandNames');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
+
+const GENERATED_FILE = path.join(__dirname, '../data/generated_work_minigames.json');
+
+function loadGeneratedMinigames() {
+  if (fs.existsSync(GENERATED_FILE)) {
+    try {
+      return JSON.parse(fs.readFileSync(GENERATED_FILE, 'utf8'));
+    } catch (_) {}
+  }
+  return {};
+}
 
 const WORK_MINIMUM = 15;
 const WORK_MAXIMUM = 40;
@@ -1132,13 +1145,20 @@ async function runWork(source, reply) {
   const profDef = professions[professionKey];
   const professionLabel = t(`profession.labels.${professionKey}`, lang) || profDef?.label || professionKey;
 
-  const minigames = PROFESSION_MINIGAMES[professionKey] || PROFESSION_MINIGAMES.programador;
+  const generatedMinigames = loadGeneratedMinigames();
+  const defaultList = PROFESSION_MINIGAMES[professionKey] || PROFESSION_MINIGAMES.programador;
+  const generatedList = (generatedMinigames && generatedMinigames[professionKey]) || [];
+  const minigames = [...defaultList, ...generatedList];
+
   const chosenGame = minigames[Math.floor(Math.random() * minigames.length)];
   const gameData = chosenGame[lang] || chosenGame.en || chosenGame.pt;
 
+  const wrongsPool = Array.isArray(gameData.wrongs) ? gameData.wrongs : [];
+  const sampledWrongs = shuffleArray(wrongsPool).slice(0, 3);
+
   const allChoices = [
     { text: gameData.correct, correct: true },
-    ...gameData.wrongs.map((w) => ({ text: w, correct: false })),
+    ...sampledWrongs.map((w) => ({ text: w, correct: false })),
   ];
 
   const shuffledChoices = shuffleArray(allChoices);

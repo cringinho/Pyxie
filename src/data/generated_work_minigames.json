@@ -1,0 +1,847 @@
+{
+  "programador": [
+    {
+      "scenario": "O servidor Node.js está vazando memória ao processar websockets em alta carga.",
+      "correct": "Implementar backpressure e limitar o buffer de eventos.",
+      "wrongs": [
+        "Aumentar o heap máximo do NodeJS via flag --max-old-space-size.",
+        "Trocar o protocolo HTTP por gRPC para reduzir overhead.",
+        "Desabilitar o GC manualmente para evitar pausas.",
+        "Usar Streams para leitura, mas manter tudo em memória.",
+        "Trocar o motor do banco de dados para um NoSQL mais rápido."
+      ],
+      "pt": {
+        "scenario": "O servidor Node.js está vazando memória ao processar websockets em alta carga.",
+        "correct": "Implementar backpressure e limitar o buffer de eventos.",
+        "wrongs": [
+          "Aumentar o heap máximo do NodeJS via flag --max-old-space-size.",
+          "Trocar o protocolo HTTP por gRPC para reduzir overhead.",
+          "Desabilitar o GC manualmente para evitar pausas.",
+          "Usar Streams para leitura, mas manter tudo em memória.",
+          "Trocar o motor do banco de dados para um NoSQL mais rápido."
+        ]
+      },
+      "en": {
+        "scenario": "The Node.js server is leaking memory while handling high-load websockets.",
+        "correct": "Implement backpressure and limit the event buffer size.",
+        "wrongs": [
+          "Increase NodeJS max heap via --max-old-space-size flag.",
+          "Switch from HTTP protocol to gRPC to reduce overhead.",
+          "Manually disable GC to avoid pause interruptions.",
+          "Use Streams for reading but keep all data in memory.",
+          "Switch database engine to a faster NoSQL solution."
+        ]
+      }
+    },
+    {
+      "scenario": "A consulta SQL está lenta ao fazer um JOIN em uma tabela com 10M de linhas.",
+      "correct": "Criar um índice composto nas colunas de JOIN e filtro.",
+      "wrongs": [
+        "Adicionar um HINT de NOLOCK para ignorar locks de transação.",
+        "Usar SELECT * para obter todas as colunas necessárias.",
+        "Aumentar o tamanho do buffer pool do banco de dados.",
+        "Dividir a tabela em duas para reduzir a profundidade do B-Tree.",
+        "Converter a tabela para um formato de arquivo CSV externo."
+      ],
+      "pt": {
+        "scenario": "A consulta SQL está lenta ao fazer um JOIN em uma tabela com 10M de linhas.",
+        "correct": "Criar um índice composto nas colunas de JOIN e filtro.",
+        "wrongs": [
+          "Adicionar um HINT de NOLOCK para ignorar locks de transação.",
+          "Usar SELECT * para obter todas as colunas necessárias.",
+          "Aumentar o tamanho do buffer pool do banco de dados.",
+          "Dividir a tabela em duas para reduzir a profundidade do B-Tree.",
+          "Converter a tabela para um formato de arquivo CSV externo."
+        ]
+      },
+      "en": {
+        "scenario": "SQL query is slow when performing a JOIN on a table with 10M rows.",
+        "correct": "Create a composite index on the JOIN and filter columns.",
+        "wrongs": [
+          "Add a NOLOCK hint to ignore transaction locks.",
+          "Use SELECT * to retrieve all necessary columns.",
+          "Increase the database buffer pool size.",
+          "Split the table into two to reduce B-Tree depth.",
+          "Convert the table into an external CSV file format."
+        ]
+      }
+    },
+    {
+      "scenario": "O deploy está falhando porque o container Docker não encontra o banco de dados.",
+      "correct": "Verificar se a rede do Docker está configurada para DNS interno.",
+      "wrongs": [
+        "Usar o IP 127.0.0.1 para conectar ao banco no mesmo host.",
+        "Reiniciar o docker-compose.yml sem alterar a configuração.",
+        "Hardcodar o IP do host da máquina no arquivo de configuração.",
+        "Instalar o driver do banco dentro do container de aplicação.",
+        "Aumentar o timeout de conexão para 300 segundos."
+      ],
+      "pt": {
+        "scenario": "O deploy está falhando porque o container Docker não encontra o banco de dados.",
+        "correct": "Verificar se a rede do Docker está configurada para DNS interno.",
+        "wrongs": [
+          "Usar o IP 127.0.0.1 para conectar ao banco no mesmo host.",
+          "Reiniciar o docker-compose.yml sem alterar a configuração.",
+          "Hardcodar o IP do host da máquina no arquivo de configuração.",
+          "Instalar o driver do banco dentro do container de aplicação.",
+          "Aumentar o timeout de conexão para 300 segundos."
+        ]
+      },
+      "en": {
+        "scenario": "Deployment fails because the Docker container cannot find the database.",
+        "correct": "Check if the Docker network is configured for internal DNS.",
+        "wrongs": [
+          "Use 127.0.0.1 IP to connect to the database on the same host.",
+          "Restart docker-compose.yml without changing configuration.",
+          "Hardcode the machine's host IP in the config file.",
+          "Install the database driver inside the application container.",
+          "Increase the connection timeout to 300 seconds."
+        ]
+      }
+    },
+    {
+      "scenario": "A API REST está retornando 502 Bad Gateway sob picos de tráfego.",
+      "correct": "Configurar filas de espera e rate limiting no load balancer.",
+      "wrongs": [
+        "Aumentar o número de threads do servidor web para 500.",
+        "Desativar a compressão gzip para reduzir o uso de CPU.",
+        "Trocar o protocolo TLS 1.2 por TLS 1.0 para maior velocidade.",
+        "Remover o cache de objetos para evitar inconsistências.",
+        "Usar HTTP/1.0 em vez de HTTP/2 para simplificar o parsing."
+      ],
+      "pt": {
+        "scenario": "A API REST está retornando 502 Bad Gateway sob picos de tráfego.",
+        "correct": "Configurar filas de espera e rate limiting no load balancer.",
+        "wrongs": [
+          "Aumentar o número de threads do servidor web para 500.",
+          "Desativar a compressão gzip para reduzir o uso de CPU.",
+          "Trocar o protocolo TLS 1.2 por TLS 1.0 para maior velocidade.",
+          "Remover o cache de objetos para evitar inconsistências.",
+          "Usar HTTP/1.0 em vez de HTTP/2 para simplificar o parsing."
+        ]
+      },
+      "en": {
+        "scenario": "REST API is returning 502 Bad Gateway under traffic spikes.",
+        "correct": "Configure wait queues and rate limiting on the load balancer.",
+        "wrongs": [
+          "Increase web server thread count to 500 threads.",
+          "Disable gzip compression to reduce CPU usage.",
+          "Switch from TLS 1.2 to TLS 1.0 for faster handshake.",
+          "Remove object cache to avoid data inconsistencies.",
+          "Use HTTP/1.0 instead of HTTP/2 to simplify parsing."
+        ]
+      }
+    },
+    {
+      "scenario": "O código Python está travando ao processar uma lista gigante de logs.",
+      "correct": "Usar um gerador (yield) para processar itens iterativamente.",
+      "wrongs": [
+        "Converter a lista para um dict para acesso O(1) por chave.",
+        "Usar threads para processar cada item da lista em paralelo.",
+        "Aumentar o tamanho máximo da pilha de execução do Python.",
+        "Carregar os logs em um DataFrame do Pandas e filtrar tudo.",
+        "Usar uma lista encadeada em vez de uma lista nativa."
+      ],
+      "pt": {
+        "scenario": "O código Python está travando ao processar uma lista gigante de logs.",
+        "correct": "Usar um gerador (yield) para processar itens iterativamente.",
+        "wrongs": [
+          "Converter a lista para um dict para acesso O(1) por chave.",
+          "Usar threads para processar cada item da lista em paralelo.",
+          "Aumentar o tamanho máximo da pilha de execução do Python.",
+          "Carregar os logs em um DataFrame do Pandas e filtrar tudo.",
+          "Usar uma lista encadeada em vez de uma lista nativa."
+        ]
+      },
+      "en": {
+        "scenario": "Python code freezes while processing a huge list of logs.",
+        "correct": "Use a generator (yield) to process items iteratively.",
+        "wrongs": [
+          "Convert the list to a dict for O(1) access by key.",
+          "Use threads to process each list item in parallel.",
+          "Increase the maximum execution stack size in Python.",
+          "Load logs into a Pandas DataFrame and filter everything.",
+          "Use a linked list instead of a native Python list."
+        ]
+      }
+    },
+    {
+      "scenario": "O servidor Node.js está vazando memória após processar webhooks. O que você inspeciona primeiro?",
+      "correct": "Verificar ciclos de referência em eventos não removidos.",
+      "wrongs": [
+        "Aumentar o heap máximo do Node.js para 8GB.",
+        "Reiniciar o processo automaticamente a cada hora.",
+        "Desativar a minificação do código-fonte.",
+        "Trocar o Node.js por Python para mais estabilidade.",
+        "Usar variáveis globais para cache de respostas."
+      ],
+      "pt": {
+        "scenario": "O servidor Node.js está vazando memória após processar webhooks. O que você inspeciona primeiro?",
+        "correct": "Verificar ciclos de referência em eventos não removidos.",
+        "wrongs": [
+          "Aumentar o heap máximo do Node.js para 8GB.",
+          "Reiniciar o processo automaticamente a cada hora.",
+          "Desativar a minificação do código-fonte.",
+          "Trocar o Node.js por Python para mais estabilidade.",
+          "Usar variáveis globais para cache de respostas."
+        ]
+      },
+      "en": {
+        "scenario": "The Node.js server is leaking memory after processing webhooks. What do you inspect first?",
+        "correct": "Check for reference cycles in unremoved event listeners.",
+        "wrongs": [
+          "Increase the Node.js max heap size to 8GB.",
+          "Automatically restart the process every hour.",
+          "Disable code minification in the source.",
+          "Switch from Node.js to Python for stability.",
+          "Use global variables for response caching."
+        ]
+      }
+    },
+    {
+      "scenario": "O deploy travou em loop infinito de recompilação de dependências. Como resolver?",
+      "correct": "Limpar o cache do pacote e reinstalar as dependências",
+      "wrongs": [
+        "Aumentar a memória RAM do servidor em 4GB",
+        "Reiniciar o servidor duas vezes seguidas",
+        "Comentar todas as linhas do código-fonte",
+        "Trocar o idioma do sistema operacional",
+        "Desligar a internet durante o deploy"
+      ],
+      "pt": {
+        "scenario": "O deploy travou em loop infinito de recompilação de dependências. Como resolver?",
+        "correct": "Limpar o cache do pacote e reinstalar as dependências",
+        "wrongs": [
+          "Aumentar a memória RAM do servidor em 4GB",
+          "Reiniciar o servidor duas vezes seguidas",
+          "Comentar todas as linhas do código-fonte",
+          "Trocar o idioma do sistema operacional",
+          "Desligar a internet durante o deploy"
+        ]
+      },
+      "en": {
+        "scenario": "Deployment stuck in infinite dependency recompilation loop. How to fix?",
+        "correct": "Clear package cache and reinstall dependencies",
+        "wrongs": [
+          "Increase server RAM by 4GB",
+          "Restart the server twice in a row",
+          "Comment out all source code lines",
+          "Change the operating system language",
+          "Turn off the internet during deployment"
+        ]
+      }
+    }
+  ],
+  "cozinheiro": [
+    {
+      "scenario": "Ao finalizar o molho de tomate, ele está excessivamente ácido e amargo. Qual técnica corretiva imediata deve ser aplicada para equilibrar o sabor?",
+      "correct": "Adicionar uma pitada de açúcar e uma pequena quantidade de manteiga.",
+      "wrongs": [
+        "Adicionar mais sal para mascarar o amargor residual.",
+        "Deixar ferver em alta temperatura por mais 30 minutos.",
+        "Misturar leite integral para neutralizar a acidez.",
+        "Adicionar vinagre branco para cortar o sabor amargo.",
+        "Incorporar pimenta-do-reino para realçar os aromas."
+      ],
+      "pt": {
+        "scenario": "Ao finalizar o molho de tomate, ele está excessivamente ácido e amargo. Qual técnica corretiva imediata deve ser aplicada para equilibrar o sabor?",
+        "correct": "Adicionar uma pitada de açúcar e uma pequena quantidade de manteiga.",
+        "wrongs": [
+          "Adicionar mais sal para mascarar o amargor residual.",
+          "Deixar ferver em alta temperatura por mais 30 minutos.",
+          "Misturar leite integral para neutralizar a acidez.",
+          "Adicionar vinagre branco para cortar o sabor amargo.",
+          "Incorporar pimenta-do-reino para realçar os aromas."
+        ]
+      },
+      "en": {
+        "scenario": "The tomato sauce is excessively acidic and bitter upon finishing. What immediate corrective technique should be applied to balance the flavor?",
+        "correct": "Add a pinch of sugar and a small amount of butter.",
+        "wrongs": [
+          "Add more salt to mask the residual bitterness.",
+          "Boil at high heat for an additional 30 minutes.",
+          "Mix in whole milk to neutralize the acidity.",
+          "Add white vinegar to cut the bitter taste.",
+          "Incorporate black pepper to enhance the aromas."
+        ]
+      }
+    },
+    {
+      "scenario": "O óleo de fritura apresenta cheiro rancoso e cor escura após 12h de uso. Qual a ação imediata?",
+      "correct": "Substituir o óleo imediatamente para evitar contaminação e riscos à saúde.",
+      "wrongs": [
+        "Adicionar óleo novo para diluir a cor escura do óleo usado.",
+        "Coar o óleo com café para neutralizar o odor rancoso.",
+        "Aumentar a temperatura para evaporar os compostos voláteis.",
+        "Usar o óleo para saladas, pois o sabor fica mais intenso.",
+        "Continuar usando, basta filtrar com papel toalha após o uso."
+      ],
+      "pt": {
+        "scenario": "O óleo de fritura apresenta cheiro rancoso e cor escura após 12h de uso. Qual a ação imediata?",
+        "correct": "Substituir o óleo imediatamente para evitar contaminação e riscos à saúde.",
+        "wrongs": [
+          "Adicionar óleo novo para diluir a cor escura do óleo usado.",
+          "Coar o óleo com café para neutralizar o odor rancoso.",
+          "Aumentar a temperatura para evaporar os compostos voláteis.",
+          "Usar o óleo para saladas, pois o sabor fica mais intenso.",
+          "Continuar usando, basta filtrar com papel toalha após o uso."
+        ]
+      },
+      "en": {
+        "scenario": "Frying oil has a rancid smell and dark color after 12h of use. What is the immediate action?",
+        "correct": "Replace the oil immediately to prevent contamination and health risks.",
+        "wrongs": [
+          "Add fresh oil to dilute the dark color of the used oil.",
+          "Filter the oil with coffee to neutralize the rancid odor.",
+          "Increase temperature to evaporate volatile compounds.",
+          "Use the oil for salads, as the flavor becomes more intense.",
+          "Continue using, just filter with paper towels after use."
+        ]
+      }
+    }
+  ],
+  "agricultor": [
+    {
+      "scenario": "O solo apresenta pH 4.5 e baixa CEC. Qual correção imediata é necessária?",
+      "correct": "Aplicar calagem (calcário) para elevar o pH e a CEC.",
+      "wrongs": [
+        "Aumentar a adubação nitrogenada para forçar o crescimento.",
+        "Irrigar com água salina para equilibrar a condutividade.",
+        "Plantar cobertura verde com leguminosas imediatamente.",
+        "Aplicar sulfato de amônio para acidificar ainda mais o solo.",
+        "Adicionar areia grossa para melhorar a drenagem superficial."
+      ],
+      "pt": {
+        "scenario": "O solo apresenta pH 4.5 e baixa CEC. Qual correção imediata é necessária?",
+        "correct": "Aplicar calagem (calcário) para elevar o pH e a CEC.",
+        "wrongs": [
+          "Aumentar a adubação nitrogenada para forçar o crescimento.",
+          "Irrigar com água salina para equilibrar a condutividade.",
+          "Plantar cobertura verde com leguminosas imediatamente.",
+          "Aplicar sulfato de amônio para acidificar ainda mais o solo.",
+          "Adicionar areia grossa para melhorar a drenagem superficial."
+        ]
+      },
+      "en": {
+        "scenario": "Soil has pH 4.5 and low CEC. What is the immediate correction needed?",
+        "correct": "Apply liming (agricultural lime) to raise pH and CEC.",
+        "wrongs": [
+          "Increase nitrogen fertilization to force plant growth.",
+          "Irrigate with saline water to balance conductivity.",
+          "Plant leguminous cover crops immediately to fix nitrogen.",
+          "Apply ammonium sulfate to further acidify the soil.",
+          "Add coarse sand to improve surface drainage quickly."
+        ]
+      }
+    },
+    {
+      "scenario": "O solo mostra pH 4.5 e a cultura de soja está com folhas amareladas (clorose). Qual é o correto para corrigir a acidez e melhorar a disponibilidade de nutrientes?",
+      "correct": "Aplicar calcário dolomítico para elevar o pH e fornecer cálcio e magnésio.",
+      "wrongs": [
+        "Adicionar ureia extra para aumentar o nitrogênio imediatamente.",
+        "Usar sulfato de amônio para acidificar ainda mais o solo.",
+        "Regar com água salgada para lavar os sais tóxicos do perfil.",
+        "Aplicar herbicida sistêmico para matar a planta e replantar.",
+        "Cobrir o solo com plástico preto para aquecer a raiz."
+      ],
+      "pt": {
+        "scenario": "O solo mostra pH 4.5 e a cultura de soja está com folhas amareladas (clorose). Qual é o correto para corrigir a acidez e melhorar a disponibilidade de nutrientes?",
+        "correct": "Aplicar calcário dolomítico para elevar o pH e fornecer cálcio e magnésio.",
+        "wrongs": [
+          "Adicionar ureia extra para aumentar o nitrogênio imediatamente.",
+          "Usar sulfato de amônio para acidificar ainda mais o solo.",
+          "Regar com água salgada para lavar os sais tóxicos do perfil.",
+          "Aplicar herbicida sistêmico para matar a planta e replantar.",
+          "Cobrir o solo com plástico preto para aquecer a raiz."
+        ]
+      },
+      "en": {
+        "scenario": "Soil shows pH 4.5 and soybean crop has yellow leaves (chlorosis). What is correct to correct acidity and improve nutrient availability?",
+        "correct": "Apply dolomitic lime to raise pH and provide calcium and magnesium.",
+        "wrongs": [
+          "Add extra urea to increase nitrogen immediately.",
+          "Use ammonium sulfate to acidify the soil further.",
+          "Water with salt water to wash toxic salts from profile.",
+          "Apply systemic herbicide to kill plant and replant.",
+          "Cover soil with black plastic to heat the root."
+        ]
+      }
+    }
+  ],
+  "medico": [
+    {
+      "scenario": "Paciente com hipotensão refratária e acidose metabólica severa pós-choque séptico.",
+      "correct": "Iniciar noradrenalina como vasopressor de primeira linha.",
+      "wrongs": [
+        "Usar dopamina como primeira linha por ser mais segura.",
+        "Aumentar apenas o volume de cristaloides sem vasoativo.",
+        "Administrar adrenalina antes de noradrenalina.",
+        "Usar vasopressina como monoterapia inicial.",
+        "Retirar todos os vasoativos para evitar isquemia."
+      ],
+      "pt": {
+        "scenario": "Paciente com hipotensão refratária e acidose metabólica severa pós-choque séptico.",
+        "correct": "Iniciar noradrenalina como vasopressor de primeira linha.",
+        "wrongs": [
+          "Usar dopamina como primeira linha por ser mais segura.",
+          "Aumentar apenas o volume de cristaloides sem vasoativo.",
+          "Administrar adrenalina antes de noradrenalina.",
+          "Usar vasopressina como monoterapia inicial.",
+          "Retirar todos os vasoativos para evitar isquemia."
+        ]
+      },
+      "en": {
+        "scenario": "Patient with refractory hypotension and severe metabolic acidosis post-septic shock.",
+        "correct": "Start norepinephrine as first-line vasopressor.",
+        "wrongs": [
+          "Use dopamine first-line as it is safer.",
+          "Increase crystalloid volume only without vasoactive.",
+          "Administer epinephrine before norepinephrine.",
+          "Use vasopressin as initial monotherapy.",
+          "Remove all vasopressors to avoid ischemia."
+        ]
+      }
+    },
+    {
+      "scenario": "Paciente com hipotensão refratária e lactato > 4. Qual o próximo passo?",
+      "correct": "Administrar noradrenalina como vasopressor de primeira linha.",
+      "wrongs": [
+        "Usar adrenalina em bolo IV para corrigir a pressão rapidam.",
+        "Aplicar volume de cristaloides em excesso sem monitorar.",
+        "Iniciar dopamina em altas doses como vasopressor inicial.",
+        "Dar furosemida para reduzir a carga de volume do paciente.",
+        "Manter apenas oitocina para sustentar a pressão arterial."
+      ],
+      "pt": {
+        "scenario": "Paciente com hipotensão refratária e lactato > 4. Qual o próximo passo?",
+        "correct": "Administrar noradrenalina como vasopressor de primeira linha.",
+        "wrongs": [
+          "Usar adrenalina em bolo IV para corrigir a pressão rapidam.",
+          "Aplicar volume de cristaloides em excesso sem monitorar.",
+          "Iniciar dopamina em altas doses como vasopressor inicial.",
+          "Dar furosemida para reduzir a carga de volume do paciente.",
+          "Manter apenas oitocina para sustentar a pressão arterial."
+        ]
+      },
+      "en": {
+        "scenario": "Patient with refractory hypotension and lactate > 4. Next step?",
+        "correct": "Administer norepinephrine as first-line vasopressor.",
+        "wrongs": [
+          "Use IV adrenaline bolus to rapidly correct blood pressure.",
+          "Apply excess crystalloid volume without monitoring output.",
+          "Start high-dose dopamine as the initial vasopressor choice.",
+          "Give furosemide to reduce the patient's volume load quickly.",
+          "Rely solely on oxytocin to sustain systemic arterial pressure."
+        ]
+      }
+    }
+  ],
+  "musico": [
+    {
+      "scenario": "Seu microfone está saturando em picos de volume. Qual ajuste resolve?",
+      "correct": "Reduza o ganho de entrada no mixer digital",
+      "wrongs": [
+        "Aumente o ganho para compensar o ruído",
+        "Troque o microfone por um de condensador",
+        "Ative o efeito de reverb no canal",
+        "Aumente a frequência de amostragem",
+        "Usem um cabo de baixo custo para isolar"
+      ],
+      "pt": {
+        "scenario": "Seu microfone está saturando em picos de volume. Qual ajuste resolve?",
+        "correct": "Reduza o ganho de entrada no mixer digital",
+        "wrongs": [
+          "Aumente o ganho para compensar o ruído",
+          "Troque o microfone por um de condensador",
+          "Ative o efeito de reverb no canal",
+          "Aumente a frequência de amostragem",
+          "Usem um cabo de baixo custo para isolar"
+        ]
+      },
+      "en": {
+        "scenario": "Your microphone is clipping on loud peaks. What adjustment fixes it?",
+        "correct": "Lower the input gain on the digital mixer",
+        "wrongs": [
+          "Increase gain to compensate for noise",
+          "Replace mic with a condenser model",
+          "Enable reverb effect on the channel",
+          "Increase the audio sampling rate",
+          "Use a cheap cable to isolate signal"
+        ]
+      }
+    },
+    {
+      "scenario": "O palco está com feedback agudo (zumbido) ao ligar o amplificador. Qual a ação imediata?",
+      "correct": "Ajustar o notch filter ou cortar as frequências de 1-4 kHz no EQ.",
+      "wrongs": [
+        "Aumentar o ganho do pré-amplificador para mascarar o ruído.",
+        "Girar a manopla de presença para o máximo possível.",
+        "Conectar o pedal de distorção antes do amplificador.",
+        "Desligar o equalizador gráfico inteiro para evitar saturação.",
+        "Trocar a cabeça do amplificador por um modelo de válvulas."
+      ],
+      "pt": {
+        "scenario": "O palco está com feedback agudo (zumbido) ao ligar o amplificador. Qual a ação imediata?",
+        "correct": "Ajustar o notch filter ou cortar as frequências de 1-4 kHz no EQ.",
+        "wrongs": [
+          "Aumentar o ganho do pré-amplificador para mascarar o ruído.",
+          "Girar a manopla de presença para o máximo possível.",
+          "Conectar o pedal de distorção antes do amplificador.",
+          "Desligar o equalizador gráfico inteiro para evitar saturação.",
+          "Trocar a cabeça do amplificador por um modelo de válvulas."
+        ]
+      },
+      "en": {
+        "scenario": "The stage has high-pitched feedback (howling) when the amp turns on. Immediate action?",
+        "correct": "Adjust the notch filter or cut 1-4 kHz frequencies on the EQ.",
+        "wrongs": [
+          "Increase preamp gain to mask the noise.",
+          "Turn the presence knob to its maximum setting.",
+          "Connect the distortion pedal before the amplifier.",
+          "Turn off the entire graphic equalizer to prevent clipping.",
+          "Replace the amp head with a tube model."
+        ]
+      }
+    }
+  ],
+  "professor": [
+    {
+      "scenario": "Um aluno com dislexia está travado na leitura de textos longos. Qual recurso pedagógico é mais eficaz?",
+      "correct": "Oferecer audiobook ou texto simplificado com espaçamento amplo.",
+      "wrongs": [
+        "Puni-lo publicamente por não ler rápido o suficiente.",
+        "Exigir que ele decore o texto de memória sem ajuda.",
+        "Ignorar a dificuldade e dar a mesma tarefa a todos.",
+        "Trocar o livro por um jogo de videogame como prêmio.",
+        "Aumentar a fonte para 100pt para assustar o aluno."
+      ],
+      "pt": {
+        "scenario": "Um aluno com dislexia está travado na leitura de textos longos. Qual recurso pedagógico é mais eficaz?",
+        "correct": "Oferecer audiobook ou texto simplificado com espaçamento amplo.",
+        "wrongs": [
+          "Puni-lo publicamente por não ler rápido o suficiente.",
+          "Exigir que ele decore o texto de memória sem ajuda.",
+          "Ignorar a dificuldade e dar a mesma tarefa a todos.",
+          "Trocar o livro por um jogo de videogame como prêmio.",
+          "Aumentar a fonte para 100pt para assustar o aluno."
+        ]
+      },
+      "en": {
+        "scenario": "A student with dyslexia is struggling to read long texts. Which pedagogical resource is most effective?",
+        "correct": "Offer an audiobook or simplified text with wide spacing.",
+        "wrongs": [
+          "Publicly punish him for not reading fast enough.",
+          "Require him to memorize the text without any help.",
+          "Ignore the difficulty and give the same task to all.",
+          "Replace the book with a video game as a reward.",
+          "Increase font size to 100pt to scare the student."
+        ]
+      }
+    },
+    {
+      "scenario": "Um aluno com dislexia apresenta dificuldade em interpretar gráficos complexos em aula de matemática.",
+      "correct": "Oferecer materiais em formato acessível e usar ferramentas de apoio visual.",
+      "wrongs": [
+        "Aumentar a velocidade da explicação para fixar o conteúdo.",
+        "Puni-lo com provas orais surpresa sem aviso prévio.",
+        "Ignorar a solicitação, pois é responsabilidade do aluno.",
+        "Usar apenas giz e lousa, proibindo qualquer recurso digital.",
+        "Transferi-lo para uma sala de contenção isolada."
+      ],
+      "pt": {
+        "scenario": "Um aluno com dislexia apresenta dificuldade em interpretar gráficos complexos em aula de matemática.",
+        "correct": "Oferecer materiais em formato acessível e usar ferramentas de apoio visual.",
+        "wrongs": [
+          "Aumentar a velocidade da explicação para fixar o conteúdo.",
+          "Puni-lo com provas orais surpresa sem aviso prévio.",
+          "Ignorar a solicitação, pois é responsabilidade do aluno.",
+          "Usar apenas giz e lousa, proibindo qualquer recurso digital.",
+          "Transferi-lo para uma sala de contenção isolada."
+        ]
+      },
+      "en": {
+        "scenario": "A student with dyslexia struggles to interpret complex graphs in a math class.",
+        "correct": "Provide accessible materials and use visual support tools.",
+        "wrongs": [
+          "Speed up the explanation to force content retention.",
+          "Punish with unannounced oral exams as a deterrent.",
+          "Ignore the request, as it is the student's responsibility.",
+          "Use only chalk and board, banning any digital resource.",
+          "Transfer them to an isolated containment room."
+        ]
+      }
+    }
+  ],
+  "fotografo": [
+    {
+      "scenario": "Em uma entrevista com luz dura, o cliente apresenta reflexos indesejados nas lentes dos óculos. Qual ajuste técnico resolve o problema?",
+      "correct": "Ajustar o ângulo da fonte de luz ou usar um difusor para espalhar a luz.",
+      "wrongs": [
+        "Aumentar a velocidade do obturador para congelar o reflexo.",
+        "Usar um filtro polarizador no objetivo da câmera.",
+        "Reduzir a abertura do diafragma para f/22.",
+        "Aumentar a ISO para compensar a perda de luz.",
+        "Aplicar uma correção de brancos mais quente."
+      ],
+      "pt": {
+        "scenario": "Em uma entrevista com luz dura, o cliente apresenta reflexos indesejados nas lentes dos óculos. Qual ajuste técnico resolve o problema?",
+        "correct": "Ajustar o ângulo da fonte de luz ou usar um difusor para espalhar a luz.",
+        "wrongs": [
+          "Aumentar a velocidade do obturador para congelar o reflexo.",
+          "Usar um filtro polarizador no objetivo da câmera.",
+          "Reduzir a abertura do diafragma para f/22.",
+          "Aumentar a ISO para compensar a perda de luz.",
+          "Aplicar uma correção de brancos mais quente."
+        ]
+      },
+      "en": {
+        "scenario": "During an interview with hard light, the client shows unwanted reflections on their glasses. Which technical adjustment solves the issue?",
+        "correct": "Adjust the light source angle or use a diffuser to spread the light.",
+        "wrongs": [
+          "Increase the shutter speed to freeze the reflection.",
+          "Use a polarizing filter on the camera lens.",
+          "Reduce the aperture to f/22.",
+          "Increase the ISO to compensate for light loss.",
+          "Apply a warmer white balance correction."
+        ]
+      }
+    },
+    {
+      "scenario": "A imagem está subexposta em um estúdio com luz contínua e você não pode aumentar a potência da fonte.",
+      "correct": "Abrir o diafragma para capturar mais luz.",
+      "wrongs": [
+        "Aumentar o ISO para compensar a falta de luz.",
+        "Reduzir a velocidade do obturador.",
+        "Usar um filtro ND para escurecer a cena.",
+        "Aproximar o flash para intensificar o brilho.",
+        "Mudar a cor do fundo para preto."
+      ],
+      "pt": {
+        "scenario": "A imagem está subexposta em um estúdio com luz contínua e você não pode aumentar a potência da fonte.",
+        "correct": "Abrir o diafragma para capturar mais luz.",
+        "wrongs": [
+          "Aumentar o ISO para compensar a falta de luz.",
+          "Reduzir a velocidade do obturador.",
+          "Usar um filtro ND para escurecer a cena.",
+          "Aproximar o flash para intensificar o brilho.",
+          "Mudar a cor do fundo para preto."
+        ]
+      },
+      "en": {
+        "scenario": "The image is underexposed in a studio with continuous light and you cannot increase the light source power.",
+        "correct": "Open the aperture to capture more light.",
+        "wrongs": [
+          "Increase ISO to compensate for lack of light.",
+          "Reduce the shutter speed.",
+          "Use an ND filter to darken the scene.",
+          "Move the flash closer to intensify brightness.",
+          "Change the background color to black."
+        ]
+      }
+    }
+  ],
+  "mecanico": [
+    {
+      "scenario": "Diagnóstico de falha no sistema de injeção eletrônica de um motor diesel com perda de potência.",
+      "correct": "Verificar a pressão de retorno do combustível e a pressão na linha principal.",
+      "wrongs": [
+        "Substituir o filtro de ar imediatamente sem medir vazão.",
+        "Trocar o óleo do motor para resolver a perda de torque.",
+        "Aumentar a tensão da bateria para forçar o sensor de RPM.",
+        "Lixar o coletor de admissão para melhorar a entrada de ar.",
+        "Reprogramar o ECU para modo de emergência sem diagnóstico."
+      ],
+      "pt": {
+        "scenario": "Diagnóstico de falha no sistema de injeção eletrônica de um motor diesel com perda de potência.",
+        "correct": "Verificar a pressão de retorno do combustível e a pressão na linha principal.",
+        "wrongs": [
+          "Substituir o filtro de ar imediatamente sem medir vazão.",
+          "Trocar o óleo do motor para resolver a perda de torque.",
+          "Aumentar a tensão da bateria para forçar o sensor de RPM.",
+          "Lixar o coletor de admissão para melhorar a entrada de ar.",
+          "Reprogramar o ECU para modo de emergência sem diagnóstico."
+        ]
+      },
+      "en": {
+        "scenario": "Diagnosing fuel injection system failure in a diesel engine with power loss.",
+        "correct": "Check fuel return pressure and main line pressure.",
+        "wrongs": [
+          "Replace air filter immediately without measuring flow.",
+          "Change engine oil to fix torque loss.",
+          "Increase battery voltage to force RPM sensor.",
+          "Sand intake manifold to improve air intake.",
+          "Reprogram ECU to emergency mode without diagnosis."
+        ]
+      }
+    },
+    {
+      "scenario": "O motor apresenta ruído metálico e o teste de compressão mostra queda de 20% no cilindro 3. Qual a causa provável?",
+      "correct": "Anel de pistão gasto ou quebrado, permitindo fuga de gases.",
+      "wrongs": [
+        "Vela de ignição com folga fora da especificação.",
+        "Nível de óleo no cárter abaixo da marca mínima.",
+        "Bomba de combustível com pressão insuficiente.",
+        "Filtro de ar entupido restringindo a admissão.",
+        "Cabo de vela carbonizado causando faísa fraca."
+      ],
+      "pt": {
+        "scenario": "O motor apresenta ruído metálico e o teste de compressão mostra queda de 20% no cilindro 3. Qual a causa provável?",
+        "correct": "Anel de pistão gasto ou quebrado, permitindo fuga de gases.",
+        "wrongs": [
+          "Vela de ignição com folga fora da especificação.",
+          "Nível de óleo no cárter abaixo da marca mínima.",
+          "Bomba de combustível com pressão insuficiente.",
+          "Filtro de ar entupido restringindo a admissão.",
+          "Cabo de vela carbonizado causando faísa fraca."
+        ]
+      },
+      "en": {
+        "scenario": "Engine has metallic noise and compression test shows 20% drop in cylinder 3. What is the likely cause?",
+        "correct": "Worn or broken piston ring allowing gas blow-by.",
+        "wrongs": [
+          "Spark plug gap out of specification.",
+          "Oil level in sump below minimum mark.",
+          "Fuel pump with insufficient pressure.",
+          "Clogged air filter restricting intake.",
+          "Carbonized spark plug wire causing weak spark."
+        ]
+      }
+    }
+  ],
+  "vendedor": [
+    {
+      "scenario": "Um cliente contesta a compra alegando que a mercadoria entregue não corresponde ao catálogo impresso. O que fazer?",
+      "correct": "Verificar o contrato, o ato notarial e as especificações técnicas acordadas.",
+      "wrongs": [
+        "Aceitar o devolução imediata sem verificar o contrato de venda.",
+        "Ignorar a reclamação, pois o catálogo impresso tem prioridade.",
+        "Negociar um desconto verbal sem registrar a alteração por escrito.",
+        "Sugerir que o cliente processe a loja por dano moral imediatamente.",
+        "Trocar a mercadoria por outra do estoque sem checar a disponibilidade."
+      ],
+      "pt": {
+        "scenario": "Um cliente contesta a compra alegando que a mercadoria entregue não corresponde ao catálogo impresso. O que fazer?",
+        "correct": "Verificar o contrato, o ato notarial e as especificações técnicas acordadas.",
+        "wrongs": [
+          "Aceitar o devolução imediata sem verificar o contrato de venda.",
+          "Ignorar a reclamação, pois o catálogo impresso tem prioridade.",
+          "Negociar um desconto verbal sem registrar a alteração por escrito.",
+          "Sugerir que o cliente processe a loja por dano moral imediatamente.",
+          "Trocar a mercadoria por outra do estoque sem checar a disponibilidade."
+        ]
+      },
+      "en": {
+        "scenario": "A customer disputes the purchase, claiming the delivered goods do not match the printed catalog. What to do?",
+        "correct": "Review the sales contract, notarial act, and agreed technical specs.",
+        "wrongs": [
+          "Accept immediate return without checking the sales contract.",
+          "Ignore the complaint as the printed catalog has priority.",
+          "Negotiate a verbal discount without writing down the change.",
+          "Suggest the customer sue the store for moral damages immediately.",
+          "Swap the goods for other stock items without checking availability."
+        ]
+      }
+    },
+    {
+      "scenario": "O estoque físico diverge do sistema por 15 itens após auditoria mensal.",
+      "correct": "Realizar inventário cíclico para identificar o lote com avaria.",
+      "wrongs": [
+        "Zerar o sistema para alinhar com a contagem manual.",
+        "Ignorar a diferença se o valor total for baixo.",
+        "Aumentar o pedido de compra para compensar a perda.",
+        "Descontar os itens diretamente no fim do mês.",
+        "Trocar o responsável pela seção de recebimento."
+      ],
+      "pt": {
+        "scenario": "O estoque físico diverge do sistema por 15 itens após auditoria mensal.",
+        "correct": "Realizar inventário cíclico para identificar o lote com avaria.",
+        "wrongs": [
+          "Zerar o sistema para alinhar com a contagem manual.",
+          "Ignorar a diferença se o valor total for baixo.",
+          "Aumentar o pedido de compra para compensar a perda.",
+          "Descontar os itens diretamente no fim do mês.",
+          "Trocar o responsável pela seção de recebimento."
+        ]
+      },
+      "en": {
+        "scenario": "Physical stock differs from the system by 15 items after monthly audit.",
+        "correct": "Perform cycle counting to identify the damaged lot.",
+        "wrongs": [
+          "Reset the system to match the manual count.",
+          "Ignore the difference if the total value is low.",
+          "Increase the purchase order to compensate for loss.",
+          "Deduct the items directly at the end of the month.",
+          "Replace the person responsible for receiving."
+        ]
+      }
+    }
+  ],
+  "artista": [
+    {
+      "scenario": "O cliente exige que o logotipo escaneado em bitmap seja redimensionado para 10x sem perda de qualidade ou pixelização.",
+      "correct": "Reproduzir o logotipo como vetor usando o traçado de imagem.",
+      "wrongs": [
+        "Aumentar a resolução para 300 DPI e salvar como PNG.",
+        "Usar o filtro de suavização de bordas antes de redimensionar.",
+        "Converter para CMYK e aplicar o ajuste de nítidez.",
+        "Agrupar o bitmap e aplicar a máscara de ajuste.",
+        "Reduzir o tamanho em passos de 10% para evitar artefatos."
+      ],
+      "pt": {
+        "scenario": "O cliente exige que o logotipo escaneado em bitmap seja redimensionado para 10x sem perda de qualidade ou pixelização.",
+        "correct": "Reproduzir o logotipo como vetor usando o traçado de imagem.",
+        "wrongs": [
+          "Aumentar a resolução para 300 DPI e salvar como PNG.",
+          "Usar o filtro de suavização de bordas antes de redimensionar.",
+          "Converter para CMYK e aplicar o ajuste de nítidez.",
+          "Agrupar o bitmap e aplicar a máscara de ajuste.",
+          "Reduzir o tamanho em passos de 10% para evitar artefatos."
+        ]
+      },
+      "en": {
+        "scenario": "The client requires a scanned bitmap logo to be resized to 10x size without quality loss or pixelation.",
+        "correct": "Recreate the logo as a vector using image tracing.",
+        "wrongs": [
+          "Increase resolution to 300 DPI and save as PNG.",
+          "Use the smooth edges filter before resizing.",
+          "Convert to CMYK and apply the sharpen adjustment.",
+          "Group the bitmap and apply the adjustment mask.",
+          "Reduce size in 10% steps to avoid artifacts."
+        ]
+      }
+    },
+    {
+      "scenario": "Ao exportar um vetor complexo do Illustrator para o Figma, os traços aparecem como formas preenchidas e não editáveis. Qual o procedimento correto para corrigir isso?",
+      "correct": "Usar a opção 'Flatten' ao copiar ou converter os traços em contornos antes de colar.",
+      "wrongs": [
+        "Aumentar a opacidade da camada para forçar a renderização correta dos traços.",
+        "Salvar o arquivo original em formato .EPS e reimportar diretamente no Figma.",
+        "Aplicar o efeito 'Expand' na camada raiz do arquivo .AI antes de exportar.",
+        "Reduzir a resolução do canvas para otimizar a conversão dos vetores.",
+        "Desativar a camada de grade para evitar conflitos de alinhamento geométrico."
+      ],
+      "pt": {
+        "scenario": "Ao exportar um vetor complexo do Illustrator para o Figma, os traços aparecem como formas preenchidas e não editáveis. Qual o procedimento correto para corrigir isso?",
+        "correct": "Usar a opção 'Flatten' ao copiar ou converter os traços em contornos antes de colar.",
+        "wrongs": [
+          "Aumentar a opacidade da camada para forçar a renderização correta dos traços.",
+          "Salvar o arquivo original em formato .EPS e reimportar diretamente no Figma.",
+          "Aplicar o efeito 'Expand' na camada raiz do arquivo .AI antes de exportar.",
+          "Reduzir a resolução do canvas para otimizar a conversão dos vetores.",
+          "Desativar a camada de grade para evitar conflitos de alinhamento geométrico."
+        ]
+      },
+      "en": {
+        "scenario": "When exporting a complex vector from Illustrator to Figma, strokes appear as filled shapes and are uneditable. What is the correct procedure to fix this?",
+        "correct": "Use the 'Flatten' option when copying or convert strokes to outlines before pasting.",
+        "wrongs": [
+          "Increase the layer opacity to force the correct rendering of the strokes.",
+          "Save the original file in .EPS format and reimport it directly into Figma.",
+          "Apply the 'Expand' effect to the root layer of the .AI file before exporting.",
+          "Reduce the canvas resolution to optimize the vector conversion process.",
+          "Disable the grid layer to prevent geometric alignment conflicts."
+        ]
+      }
+    }
+  ]
+}
