@@ -1588,6 +1588,31 @@
               </div>
               <button onclick="saveWelcomeChannel()" id="btnSaveWelcome" class="btn btn-secondary">💾 Salvar Canal</button>
             </div>
+          <div class="control-card" style="grid-column: 1 / -1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h3 style="margin-bottom: 4px;">🧠 Gerador IA de Carreiras (Groq Cloud • qwen/qwen3.8-27b)</h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Geração autônoma e rotativa com 10 sub-temas técnicos por carreira. Meta final: 100/carreira (1.000 no total).</p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span id="seederStatusBadge" class="status-pill status-active" style="font-size: 0.75rem;">🤖 Agendador Ativo (A cada 3h)</span>
+                <button onclick="triggerWorkSeederBatch()" id="btnTriggerSeeder" class="btn btn-primary" style="font-size: 0.75rem; padding: 6px 14px;">⚡ Gerar Lote Agora (+10)</button>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; margin-bottom: 6px;">
+                <span id="seederProgressLabel">Progresso Global: Carregando...</span>
+                <span id="seederPercentLabel" style="color: #c084fc;">--%</span>
+              </div>
+              <div style="background: rgba(255,255,255,0.08); border-radius: 999px; height: 10px; overflow: hidden;">
+                <div id="seederProgressBar" style="background: linear-gradient(90deg, #8b5cf6, #ec4899); height: 100%; width: 0%; transition: width 0.4s ease;"></div>
+              </div>
+            </div>
+
+            <div id="seederProfGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 14px;">
+              <!-- Preenchido dinamicamente via JS -->
+            </div>
           </div>
         </div>
       </section>
@@ -3040,6 +3065,7 @@
          CONTROLE DO BOT, ECONOMIA E BOAS-VINDAS (TAB 3)
          ========================================================== */
       async function loadBotConfig() {
+        fetchWorkSeederStatus();
         try {
           const res = await fetch('/api/config');
           if (res.status === 401 || res.status === 403) return;
@@ -3058,6 +3084,90 @@
           }
         } catch (err) {
           console.error('Erro ao carregar configurações do bot:', err);
+        }
+      }
+
+      async function fetchWorkSeederStatus() {
+        try {
+          const res = await fetch('/api/admin/work-seeder/status');
+          const data = await res.json();
+          if (!data.success) return;
+
+          const badge = document.getElementById('seederStatusBadge');
+          const progressLabel = document.getElementById('seederProgressLabel');
+          const percentLabel = document.getElementById('seederPercentLabel');
+          const progressBar = document.getElementById('seederProgressBar');
+          const btnTrigger = document.getElementById('btnTriggerSeeder');
+          const grid = document.getElementById('seederProfGrid');
+
+          if (progressLabel) progressLabel.innerText = `Progresso Global: ${data.currentTotal} / ${data.targetTotal} cenários`;
+          if (percentLabel) percentLabel.innerText = `${data.progressPercentage}%`;
+          if (progressBar) progressBar.style.width = `${data.progressPercentage}%`;
+
+          if (badge) {
+            if (data.isCompleted) {
+              badge.className = 'status-pill status-active';
+              badge.style.background = 'rgba(16, 185, 129, 0.2)';
+              badge.style.color = '#34d399';
+              badge.innerText = '✅ Meta Atingida (1000/1000)';
+            } else if (data.isJobRunning) {
+              badge.className = 'status-pill status-paused';
+              badge.innerText = '⏳ Gerando lote agora...';
+            } else {
+              badge.className = 'status-pill status-active';
+              badge.innerText = '🤖 Agendador Ativo (A cada 3h)';
+            }
+          }
+
+          if (btnTrigger) {
+            btnTrigger.disabled = data.isCompleted || data.isJobRunning;
+          }
+
+          if (grid && data.perProfession) {
+            const icons = {
+              programador: '💻', cozinheiro: '🍳', agricultor: '🌾', medico: '🩺',
+              musico: '🎵', professor: '📚', fotografo: '📸', mecanico: '🔧',
+              vendedor: '💼', artista: '🎨'
+            };
+            grid.innerHTML = Object.entries(data.perProfession).map(([prof, count]) => {
+              const icon = icons[prof] || '💼';
+              const isFull = count >= (data.targetPerProfession || 100);
+              return `
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.76rem; font-weight: 600; text-transform: capitalize;">${icon} ${prof}</span>
+                  <span style="font-size: 0.76rem; font-family: monospace; font-weight: 700; color: ${isFull ? '#34d399' : '#c084fc'};">${count}/${data.targetPerProfession || 100}</span>
+                </div>
+              `;
+            }).join('');
+          }
+        } catch (_) {}
+      }
+
+      async function triggerWorkSeederBatch() {
+        const btn = document.getElementById('btnTriggerSeeder');
+        if (btn) {
+          btn.disabled = true;
+          btn.innerText = '⏳ Disparando lote...';
+        }
+        showToast('Iniciando geração de 1 novo cenário por carreira via Groq...', '⚡');
+        try {
+          const res = await fetch('/api/admin/work-seeder/trigger', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ count: 1 })
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast('Lote iniciado em background! Atualizando status...', '🚀');
+            setTimeout(fetchWorkSeederStatus, 2000);
+          }
+        } catch (_) {
+          showToast('Erro ao disparar gerador.', '⚠️');
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerText = '⚡ Gerar Lote Agora (+10)';
+          }
         }
       }
 
