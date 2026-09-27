@@ -1,122 +1,47 @@
 #!/usr/bin/env bash
-# ==============================================================================
-# Pyxie Bot - Manual Safe Deployment Script
-# Suporta flag '--force' para forçar deploy mesmo sem novos commits.
-# Sem flags: checa se há novos commits antes de rodar o pipeline.
-# ==============================================================================
-
 set -Eeuo pipefail
 
-export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+cd "$HOME/kuromi"
 
-REPO_DIR="${HOME}/kuromi"
-LOG_DIR="${REPO_DIR}/logs"
-LOG_FILE="${LOG_DIR}/deploy.log"
-LOCK_FILE="/tmp/pyxie_autodeploy.lock"
-
-mkdir -p "${LOG_DIR}"
-
-exec 200>"${LOCK_FILE}"
-if ! flock -n 200; then
-  echo "⚠️ Outro processo de deploy já está em execução. Aguarde alguns instantes."
+if [ "$(git branch --show-current)" != "main" ]; then
+  echo "ERRO: a branch atual nao e main."
   exit 1
 fi
 
-cd "${REPO_DIR}"
-
-FORCE_DEPLOY=false
-if [ "${1:-}" = "--force" ] || [ "${1:-}" = "-f" ]; then
-  FORCE_DEPLOY=true
-fi
-
-CURRENT_BRANCH=$(git branch --show-current 2>/dev/null || echo "")
-if [ "${CURRENT_BRANCH}" != "main" ]; then
-  echo "❌ ERRO: A branch atual não é 'main'. Deploy abortado."
+BACKUP="$HOME/backups/kuromi/$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$BACKUP"
+if [ ! -d data ]; then
+  echo "ERRO: a pasta data/ nao existe na VM. Deploy abortado."
   exit 1
 fi
+cp -a data "$BACKUP/"
+[ -f .env ] && cp -a .env "$BACKUP/"
+[ -f prefix.json ] && cp -a prefix.json "$BACKUP/"
+[ -f src/data/emojis.json ] && cp -a src/data/emojis.json "$BACKUP/"
+[ -f src/data/shopee.json ] && cp -a src/data/shopee.json "$BACKUP/"
+[ -f src/data/themeEmojis.json ] && cp -a src/data/themeEmojis.json "$BACKUP/"
+echo "Backup criado em $BACKUP"
 
-echo "🔍 Verificando repositório remoto (origin/main)..."
-git fetch origin main --quiet
+# A VM e a fonte de verdade dos dados. Guarde qualquer estado local antes do pull;
+# ele nao deve impedir a atualizacao nem ser enviado para o repositorio.
+git fetch origin
+git stash push -u -m "deploy-pre-$BACKUP"
 
-LOCAL_REV=$(git rev-parse HEAD)
-REMOTE_REV=$(git rev-parse origin/main)
-
-if [ "${LOCAL_REV}" = "${REMOTE_REV}" ] && [ "${FORCE_DEPLOY}" = false ]; then
-  echo "✅ A branch 'main' já está 100% atualizada (${LOCAL_REV:0:7}). Nada a fazer."
-  echo "Dica: use './deploy.sh --force' para forçar reinstalação/reinício manual."
-  exit 0
-fi
-
-BACKUP_DIR="${HOME}/backups/kuromi/$(date +%Y%m%d-%H%M%S)"
-mkdir -p "${BACKUP_DIR}/src_data"
-
-if [ ! -d "data" ]; then
-  echo "❌ ERRO CRÍTICO: Pasta data/ não encontrada. Deploy cancelado."
-  exit 1
-fi
-
-echo "💾 Criando backup atômico dos bancos e configurações em ${BACKUP_DIR}..."
-cp -a data "${BACKUP_DIR}/"
-[ -f .env ] && cp -a .env "${BACKUP_DIR}/"
-[ -f prefix.json ] && cp -a prefix.json "${BACKUP_DIR}/"
-
-for dynamic_file in generated_work_minigames.json shopee.json emojis.json discordAppEmojis.json themeEmojis.json; do
-  if [ -f "src/data/${dynamic_file}" ]; then
-    cp -a "src/data/${dynamic_file}" "${BACKUP_DIR}/src_data/"
-  fi
-done
-
-TEMP_MINIGAMES="/tmp/live_minigames_$(date +%s).json"
-if [ -f "src/data/generated_work_minigames.json" ]; then
-  cp "src/data/generated_work_minigames.json" "${TEMP_MINIGAMES}"
-fi
-
-git checkout -- src/data/ 2>/dev/null || true
-
-echo "📥 Atualizando código via git pull..."
 git pull --ff-only origin main
 
-if [ -f "${TEMP_MINIGAMES}" ] && [ -f "scripts/merge_minigames.js" ]; then
-  node scripts/merge_minigames.js "${TEMP_MINIGAMES}" "src/data/generated_work_minigames.json" "src/data/generated_work_minigames.json" || true
-  rm -f "${TEMP_MINIGAMES}"
-fi
+# O pull atualiza o codigo, mas os dados continuam sendo os da VM.
+rm -rf data
+cp -a "$BACKUP/data" data
+[ -f "$BACKUP/.env" ] && cp -a "$BACKUP/.env" .env
+[ -f "$BACKUP/prefix.json" ] && cp -a "$BACKUP/prefix.json" prefix.json
+[ -f "$BACKUP/emojis.json" ] && cp -a "$BACKUP/emojis.json" src/data/emojis.json
+[ -f "$BACKUP/shopee.json" ] && cp -a "$BACKUP/shopee.json" src/data/shopee.json
+[ -f "$BACKUP/themeEmojis.json" ] && cp -a "$BACKUP/themeEmojis.json" src/data/themeEmojis.json
 
-[ -f "${BACKUP_DIR}/.env" ] && cp -a "${BACKUP_DIR}/.env" .env
-[ -f "${BACKUP_DIR}/prefix.json" ] && cp -a "${BACKUP_DIR}/prefix.json" prefix.json
-[ -f "${BACKUP_DIR}/src_data/shopee.json" ] && cp -a "${BACKUP_DIR}/src_data/shopee.json" src/data/shopee.json
-[ -f "${BACKUP_DIR}/src_data/themeEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/themeEmojis.json" src/data/themeEmojis.json
-[ -f "${BACKUP_DIR}/src_data/emojis.json" ] && cp -a "${BACKUP_DIR}/src_data/emojis.json" src/data/emojis.json
-[ -f "${BACKUP_DIR}/src_data/discordAppEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/discordAppEmojis.json" src/data/discordAppEmojis.json
-cp -a "${BACKUP_DIR}/data/." data/
+npm ci --omit=dev
+node src/registerSlashCommands.js || echo "Aviso: falha ao registrar slash commands"
+pm2 restart pyxie --update-env || pm2 startOrReload ecosystem.config.js --update-env
+pm2 save
+pm2 status
 
-echo "🧪 Executando Quality Gate (npm test)..."
-if ! npm test; then
-  echo "❌ ERRO: Testes falharam após a atualização! Revertendo..."
-  git reset --hard "${LOCAL_REV}"
-  cp -a "${BACKUP_DIR}/data/." data/
-  [ -f "${BACKUP_DIR}/.env" ] && cp -a "${BACKUP_DIR}/.env" .env
-  [ -f "${BACKUP_DIR}/prefix.json" ] && cp -a "${BACKUP_DIR}/prefix.json" prefix.json
-  echo "🛡️ Rollback finalizado. O bot continua operacional na versão estável."
-  exit 1
-fi
-
-if [ "${FORCE_DEPLOY}" = true ] || git diff "${LOCAL_REV}" "${REMOTE_REV}" --name-only | grep -qE '^package(-lock)?\.json$'; then
-  echo "📦 Instalando dependências..."
-  npm ci --omit=dev
-fi
-
-if [ "${FORCE_DEPLOY}" = true ] || git diff "${LOCAL_REV}" "${REMOTE_REV}" --name-only | grep -qE '^(src/commands|src/registerSlashCommands\.js)'; then
-  echo "📜 Registrando slash commands..."
-  node src/registerSlashCommands.js || echo "Aviso: falha não-fatal ao registrar slash commands."
-fi
-
-echo "🔄 Reiniciando processo no PM2..."
-pm2 reload pyxie --update-env || pm2 restart pyxie --update-env || pm2 startOrReload ecosystem.config.js --update-env
-pm2 save --force 2>/dev/null || true
-
-(cd "${HOME}/backups/kuromi" && ls -dt auto-* 2>/dev/null | tail -n +16 | xargs -r rm -rf) || true
-
-echo "✨ ===================================================="
-echo "🎉 Deploy concluído com sucesso! Backup: ${BACKUP_DIR}"
-echo "✨ ===================================================="
-pm2 status | grep -E 'pyxie|name' || true
+echo "Atualizacao concluida. Backup: $BACKUP"
