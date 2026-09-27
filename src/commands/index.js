@@ -43,6 +43,41 @@ const commands = [
 const { setLoadedCommands } = require('./commandHelpers');
 setLoadedCommands(commands);
 
+// Comandos restritos a contexto de guilda e administração
+const GUILD_ONLY_COMMANDS = new Set([
+  'welcome', 'py-welcome', 'setwelcome', 'py-setwelcome',
+  'schedule', 'py-schedule', 'agenda', 'py-agenda',
+  'admin', 'py-admin',
+  'seteco', 'py-seteco', 'setareconomia', 'py-setareconomia',
+  'reseteco', 'py-reseteco', 'resetareconomia', 'py-resetareconomia',
+  'ecoconfig', 'py-ecoconfig', 'configeconomia', 'py-configeconomia',
+]);
+
+// Suporte nativo a User Apps (Discord Apps v2)
+// Permite que a Pyxie seja instalada na conta do usuário e usada em qualquer servidor, grupo ou DM
+for (const command of commands) {
+  if (command.data) {
+    const cmdName = command.data.name || command.name;
+    const isGuildOnly = GUILD_ONLY_COMMANDS.has(cmdName);
+
+    if (isGuildOnly) {
+      if (typeof command.data.setIntegrationTypes === 'function') {
+        command.data.setIntegrationTypes([0]); // GuildInstall
+      }
+      if (typeof command.data.setContexts === 'function') {
+        command.data.setContexts([0]); // Guild only
+      }
+    } else {
+      if (typeof command.data.setIntegrationTypes === 'function') {
+        command.data.setIntegrationTypes([0, 1]); // GuildInstall + UserInstall
+      }
+      if (typeof command.data.setContexts === 'function') {
+        command.data.setContexts([0, 1, 2]); // Guild + BotDM + PrivateChannel
+      }
+    }
+  }
+}
+
 const commandsByName = new Map(
   commands.flatMap((command) => {
     const mainName = command.name || command.data?.name;

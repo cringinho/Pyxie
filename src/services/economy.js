@@ -4,6 +4,7 @@ const { getEconomyConfig } = require('./database');
 
 const economyFile = path.join(__dirname, '..', '..', 'data', 'economy.json');
 const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+const STREAK_GRACE_MS = 48 * 60 * 60 * 1000;
 const WORK_COOLDOWN_MS = 3 * 60 * 60 * 1000;
 
 const CURRENCY_DEFINITIONS = [
@@ -107,6 +108,7 @@ function normalizeAccount(account) {
     workCount: normalizeNumber(acc.workCount, 0),
     lastWorkAt: acc.lastWorkAt || null,
     lastDailyAt: acc.lastDailyAt || null,
+    dailyStreak: normalizeNumber(acc.dailyStreak, 0),
     titles: Array.isArray(acc.titles) ? acc.titles : [],
     equippedTitle: acc.equippedTitle || null,
     themes: Array.isArray(acc.themes) ? acc.themes : ['default'],
@@ -211,6 +213,7 @@ function resetUserEconomy(userId) {
     acc.coins = 0;
     acc.magicBeans = 0;
     acc.lastDailyAt = null;
+    acc.dailyStreak = 0;
   });
 }
 
@@ -458,15 +461,47 @@ function claimDaily(userId, now = Date.now()) {
   const status = getDailyStatus(userId, now);
   if (!status.available) {
     const acc = getUserAccount(userId);
-    return { claimed: false, amount: 0, balance: acc.coins, magicBeans: acc.magicBeans, magicBeanBonus: false, ...status };
+    return {
+      claimed: false,
+      amount: 0,
+      streak: acc.dailyStreak || 0,
+      streakBonus: 0,
+      totalAmount: 0,
+      balance: acc.coins,
+      magicBeans: acc.magicBeans,
+      magicBeanBonus: false,
+      ...status,
+    };
   }
+
+  const accBefore = getUserAccount(userId);
+  let streak = 1;
+  if (accBefore.lastDailyAt) {
+    const lastDailyTime = new Date(accBefore.lastDailyAt).getTime();
+    const diff = now - lastDailyTime;
+    if (diff <= STREAK_GRACE_MS) {
+      streak = (accBefore.dailyStreak || 0) + 1;
+    } else {
+      streak = 1; // Quebrou a sequência após 48h
+    }
+  }
+
+  // Bônus moderado de streak exclusivamente em moedinhas:
+  // Streak 1: 0 (início)
+  // Streak 2: 4 moedas
+  // Streak 3: 6 moedas
+  // Streak 4: 8 moedas
+  // Streak 5: 10 moedas 🔥
+  // Cap em 25 moedas para manter equilíbrio econômico
+  const streakBonus = streak > 1 ? Math.min(streak * 2, 25) : 0;
 
   const { minimum, maximum } = getEconomyConfig();
   const amount = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
   const wonMagicBean = Math.random() < 0.01; // 1% de chance de Feijão Mágico
 
   const updated = updateUserAccount(userId, (acc) => {
-    acc.coins += amount;
+    acc.coins += (amount + streakBonus);
+    acc.dailyStreak = streak;
     if (wonMagicBean) {
       acc.magicBeans = (acc.magicBeans || 0) + 1;
     }
@@ -476,6 +511,9 @@ function claimDaily(userId, now = Date.now()) {
   return {
     claimed: true,
     amount,
+    streak,
+    streakBonus,
+    totalAmount: amount + streakBonus,
     magicBeanBonus: wonMagicBean,
     balance: updated.coins,
     magicBeans: updated.magicBeans,

@@ -19,6 +19,14 @@ function isWeekend() {
   return day === 0 || day === 6;
 }
 
+function getDailyCompliment(streak, source = null) {
+  if (streak <= 2) return t('daily.complimentTier1', source);
+  if (streak <= 5) return t('daily.complimentTier2', source);
+  if (streak <= 9) return t('daily.complimentTier3', source);
+  if (streak <= 19) return t('daily.complimentTier4', source);
+  return t('daily.complimentTier5', source);
+}
+
 function buildDailyView(userId, guildOrSource = null, clientId = null) {
   const result = claimDaily(userId);
   const voteUrl = getVoteUrl(clientId);
@@ -33,6 +41,7 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
   if (!result.claimed) {
     const desc = [
       t('daily.descCooldown', guildOrSource, { time: formatRemaining(result.remainingMs, guildOrSource) }),
+      ...(result.streak > 0 ? ['', t('daily.streakActive', guildOrSource, { streak: result.streak })] : []),
       '',
       voteBonusText,
       '',
@@ -62,11 +71,24 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
     return { embeds: [embed], components: [row] };
   }
 
+  const compliment = getDailyCompliment(result.streak, guildOrSource);
+  const collectedLine = result.streak > 1
+    ? t('daily.collectedStreak', guildOrSource, {
+        normal: formatCoins(result.amount, guildOrSource),
+        streakBonus: formatCoins(result.streakBonus, guildOrSource),
+        streak: result.streak,
+        compliment,
+      })
+    : t('daily.collected', guildOrSource, {
+        amount: formatCoins(result.amount, guildOrSource),
+        compliment,
+      });
+
   const desc = [
     t('daily.descClaimed', guildOrSource),
     '',
     t('daily.summaryTitle', guildOrSource),
-    t('daily.collected', guildOrSource, { amount: formatCoins(result.amount, guildOrSource) }),
+    collectedLine,
     t('daily.balance', guildOrSource, { balance: formatCoins(result.balance, guildOrSource) }),
     ...(result.magicBeanBonus ? [t('daily.magicBean', guildOrSource, { total: result.magicBeans })] : []),
     '',

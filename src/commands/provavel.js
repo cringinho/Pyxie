@@ -418,6 +418,14 @@ module.exports = {
       interaction.options.getString('situation') ||
       interaction.options.getString('situacao');
 
+    if (!interaction.guild) {
+      return interaction.editReply(
+        isEn
+          ? '❌ This voting poll can only be started inside a server.'
+          : '❌ Esta votação só pode ser iniciada dentro de um servidor.'
+      );
+    }
+
     const targetMember = targetUser ? await interaction.guild.members.fetch(targetUser.id).catch(() => null) : null;
     const secondMember = secondUser ? await interaction.guild.members.fetch(secondUser.id).catch(() => null) : null;
     const authorMember = interaction.member;

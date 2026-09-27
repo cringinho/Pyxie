@@ -131,6 +131,33 @@ try {
   assert.equal(workFinish.bonusBean, true, 'O bônus de feijão mágico deve ser registrado.');
   assert.equal(getMagicBeans('worker'), 1, 'Trabalhador deve ter recebido 1 feijão de bônus.');
 
+  // Teste de Daily Streak
+  setEconomyConfig(20, 20);
+  const sDay1 = claimDaily('streak-user', Date.parse('2026-03-01T12:00:00.000Z'));
+  assert.equal(sDay1.claimed, true);
+  assert.equal(sDay1.streak, 1, 'Primeiro dia deve ter streak 1');
+  assert.equal(sDay1.streakBonus, 0, 'Streak 1 não tem bônus extra');
+  assert.equal(sDay1.totalAmount, 20);
+
+  const sDay2 = claimDaily('streak-user', Date.parse('2026-03-02T13:00:00.000Z'));
+  assert.equal(sDay2.claimed, true);
+  assert.equal(sDay2.streak, 2, 'Segundo dia consecutivo deve ter streak 2');
+  assert.equal(sDay2.streakBonus, 4, 'Streak 2 deve pagar +4 moedas');
+  assert.equal(sDay2.totalAmount, 24);
+
+  const sDay3 = claimDaily('streak-user', Date.parse('2026-03-03T14:00:00.000Z'));
+  assert.equal(sDay3.claimed, true);
+  assert.equal(sDay3.streak, 3, 'Terceiro dia consecutivo deve ter streak 3');
+  assert.equal(sDay3.streakBonus, 6, 'Streak 3 deve pagar +6 moedas');
+  assert.equal(sDay3.totalAmount, 26);
+
+  // Quebra de streak após mais de 48h (perdeu o dia)
+  const sBroken = claimDaily('streak-user', Date.parse('2026-03-06T12:00:00.000Z'));
+  assert.equal(sBroken.claimed, true);
+  assert.equal(sBroken.streak, 1, 'Após mais de 48h sem claim, streak reseta para 1');
+  assert.equal(sBroken.streakBonus, 0);
+  assert.equal(sBroken.totalAmount, 20);
+
   console.log('Verificação da economia, cooldown, ranking, Feijões Mágicos e Títulos: OK');
 } finally {
   fs.writeFileSync(economyFile, originalEconomy, 'utf8');
