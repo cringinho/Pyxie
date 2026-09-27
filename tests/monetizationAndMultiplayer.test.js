@@ -159,6 +159,12 @@ try {
     assert.ok(htmlContent.includes('replaceState'), 'Todas as páginas web devem sincronizar URL query params com history.replaceState');
   });
 
+  // 9. Validação do Footer e Assistente Flutuante (Tradução e Posição Pré-Script)
+  assert.ok(indexHtml.includes('data-i18n="footer.promo"'), 'index.html deve conter data-i18n="footer.promo" no rodapé');
+  assert.ok(wikiHtml.includes('data-i18n="footerPromo"'), 'wiki.html deve conter data-i18n="footerPromo" no rodapé');
+  assert.ok(indexHtml.indexOf('id="pyxieFloatingTip"') < indexHtml.indexOf('function initLang'), '#pyxieFloatingTip deve estar posicionado antes de initLang no index.html para parsing síncrono');
+  assert.ok(wikiHtml.indexOf('id="pyxieFloatingTip"') < wikiHtml.indexOf('function applyLang'), '#pyxieFloatingTip deve estar posicionado antes de applyLang no wiki.html para parsing síncrono');
+
   console.log('Verificação de Top.gg, Trocas Seguras, Temas Visuais e Afiliados Shopee: OK');
 } finally {
   const cleanFiles = [

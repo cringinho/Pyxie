@@ -2112,7 +2112,7 @@
         <a href="/invite" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.add">Adicionar Pyxie</a>
         <a href="/vote" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.vote">Top.gg</a>
         <a href="/bonus" class="footer-link" data-i18n="nav.bonus">Bônus Web (10s)</a>
-        <a href="/promo" target="_blank" rel="noopener noreferrer" class="footer-link" data-hourly-promo="true" style="color: var(--pink-glow);">🛍️ Achadinhos Shopee</a>
+        <a href="/promo" target="_blank" rel="noopener noreferrer" class="footer-link" data-hourly-promo="true" data-i18n="footer.promo" style="color: var(--pink-glow);">🛍️ Achadinhos Shopee</a>
         <a href="/discord" target="_blank" rel="noopener" class="footer-link" data-i18n="hero.btnGuild">Comunidade Oficial</a>
       </div>
       <p class="footer-credits" data-i18n="footer.credits">
@@ -2122,6 +2122,25 @@
   </footer>
 
   <div id="toast" class="toast">Comando copiado!</div>
+
+  <!-- Assistente Flutuante da Pyxie (Child-Safe & Elegante) -->
+  <div id="pyxieFloatingTip" class="pyxie-floating-tip" style="display: none;">
+    <button class="tip-close-btn" onclick="dismissPyxieTip()" title="Fechar">✕</button>
+    <div class="tip-mascot-wrap">
+      <img src="/assets/pyxie/pyxie_mascot.png" alt="Pyxie" class="tip-mascot-img" />
+    </div>
+    <div class="tip-body">
+      <div class="tip-header">
+        <span class="tip-title">Pyxie ✨</span>
+        <span class="tip-badge" data-i18n="tip.badge">Dica Arcana</span>
+      </div>
+      <p class="tip-text" data-i18n="tip.text">Já resgatou seu bônus diário hoje? Ganhe moedinhas extras e apoie a comunidade!</p>
+      <div class="tip-actions">
+        <a href="/bonus" class="tip-btn-primary" data-i18n="tip.btnBonus">Resgatar Bônus ✨</a>
+        <a href="/promo" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tip.btnShopee" data-hourly-promo="true">Achadinhos 🛍️</a>
+      </div>
+    </div>
+  </div>
 
   <script>
     // Particle Canvas Animation
@@ -2433,6 +2452,7 @@
         'tip.text': 'Já resgatou seu bônus diário hoje? Ganhe moedinhas extras e apoie a comunidade!',
         'tip.btnBonus': 'Resgatar Bônus ✨',
         'tip.btnShopee': 'Achadinhos 🛍️',
+        'footer.promo': '🛍️ Achadinhos Shopee',
         'footer.credits': 'Pyxie © 2026 • Feita com carinho para servidores do mundo todo.'
       },
       en: {
@@ -2498,7 +2518,8 @@
         'tip.badge': 'Arcane Tip',
         'tip.text': 'Have you claimed your daily bonus today? Earn extra coins and support the community!',
         'tip.btnBonus': 'Claim Bonus ✨',
-        'tip.btnShopee': 'Shopee Finds 🛍️',
+        'tip.btnShopee': 'Special Deals 🎁',
+        'footer.promo': '🎁 Partner Deals',
         'footer.credits': 'Pyxie © 2026 • Crafted with love for servers worldwide.'
       }
     };
@@ -2819,7 +2840,14 @@
       }
       setTimeout(() => {
         const tipEl = document.getElementById('pyxieFloatingTip');
-        if (tipEl) tipEl.style.display = 'block';
+        if (tipEl) {
+          const dict = I18N[currentLang] || I18N.pt;
+          tipEl.querySelectorAll('[data-i18n]').forEach((el) => {
+            const key = el.getAttribute('data-i18n');
+            if (dict[key]) el.textContent = dict[key];
+          });
+          tipEl.style.display = 'block';
+        }
       }, 3000);
     }
 
@@ -2864,24 +2892,6 @@
     syncHourlyPromoLinks();
   </script>
 
-  <!-- Assistente Flutuante da Pyxie (Child-Safe & Elegante) -->
-  <div id="pyxieFloatingTip" class="pyxie-floating-tip" style="display: none;">
-    <button class="tip-close-btn" onclick="dismissPyxieTip()" title="Fechar">✕</button>
-    <div class="tip-mascot-wrap">
-      <img src="/assets/pyxie/pyxie_mascot.png" alt="Pyxie" class="tip-mascot-img" />
-    </div>
-    <div class="tip-body">
-      <div class="tip-header">
-        <span class="tip-title">Pyxie ✨</span>
-        <span class="tip-badge" data-i18n="tip.badge">Dica Arcana</span>
-      </div>
-      <p class="tip-text" data-i18n="tip.text">Já resgatou seu bônus diário hoje? Ganhe moedinhas extras e apoie a comunidade!</p>
-      <div class="tip-actions">
-        <a href="/bonus" class="tip-btn-primary" data-i18n="tip.btnBonus">Resgatar Bônus ✨</a>
-        <a href="/promo" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tip.btnShopee" data-hourly-promo="true">Achadinhos 🛍️</a>
-      </div>
-    </div>
-  </div>
   <!-- Skyscraper 160x600 Global Sponsor (Wide screens only, English) -->
   <div class="adsterra-skyscraper monetization-en">
     <div style="font-size: 0.65rem; color: #a855f7; text-align: center; padding: 4px 0; background: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.5px;">✦ Sponsor Deals</div>

@@ -1324,13 +1324,32 @@
   </main>
 
   <footer>
-    <p>Pyxie • Bot Oficial de RPG & Comunidade • Desenvolvido com 💜 por zululuga</p>
+    <p data-i18n="footerCredits">Pyxie • Bot Oficial de RPG & Comunidade • Desenvolvido com 💜 por zululuga</p>
     <p style="margin-top: 6px;">
-      <a href="/">Voltar à Página Principal</a> • 
-      <a href="/invite" target="_blank" rel="noopener">Convidar para o Discord</a> • 
-      <a href="/promo" target="_blank" rel="noopener noreferrer" data-hourly-promo="true" style="color: #f472b6;">🛍️ Achadinhos Shopee</a>
+      <a href="/" data-i18n="footerBack">Voltar à Página Principal</a> • 
+      <a href="/invite" target="_blank" rel="noopener" data-i18n="footerInvite">Convidar para o Discord</a> • 
+      <a href="/promo" target="_blank" rel="noopener noreferrer" data-hourly-promo="true" data-i18n="footerPromo" style="color: #f472b6;">🛍️ Achadinhos Shopee</a>
     </p>
   </footer>
+
+  <!-- Assistente Flutuante da Pyxie (Child-Safe & Elegante) -->
+  <div id="pyxieFloatingTip" class="pyxie-floating-tip" style="display: none;">
+    <button class="tip-close-btn" onclick="dismissPyxieTip()" title="Fechar">✕</button>
+    <div class="tip-mascot-wrap">
+      <img src="/assets/pyxie/pyxie_mascot.png" alt="Pyxie" class="tip-mascot-img" />
+    </div>
+    <div class="tip-body">
+      <div class="tip-header">
+        <span class="tip-title">Pyxie ✨</span>
+        <span class="tip-badge" data-i18n="tipBadge">Dica Arcana</span>
+      </div>
+      <p class="tip-text" data-i18n="tipText">Consulte as Crônicas do Bosque e confira nossos achadinhos temáticos na Shopee!</p>
+      <div class="tip-actions">
+        <a href="/bonus" class="tip-btn-primary" data-i18n="tipBtnBonus">Bônus Web ✨</a>
+        <a href="/promo" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tipBtnShopee" data-hourly-promo="true">Achadinhos 🛍️</a>
+      </div>
+    </div>
+  </div>
 
   <script>
     const I18N = {
@@ -1373,6 +1392,20 @@
         tipText: "Consulte as Crônicas do Bosque e confira nossos achadinhos temáticos na Shopee!",
         tipBtnBonus: "Bônus Web ✨",
         tipBtnShopee: "Achadinhos 🛍️",
+        footerCredits: "Pyxie • Bot Oficial de RPG & Comunidade • Desenvolvido com 💜 por zululuga",
+        footerBack: "Voltar à Página Principal",
+        footerInvite: "Convidar para o Discord",
+        footerPromo: "🛍️ Achadinhos Shopee",
+        locPortaoDesc: "O limiar de ferro oxidado e glicínias roxas que divide o mundo desperto da névoa viva.",
+        locFlorestaDesc: "Floresta de pinheiros retorcidos onde a névoa sussurra lembranças e segredos de antigos viajantes.",
+        locCemiterioDesc: "Lápides antigas cobertas de musgo violeta e espinhos sombrios. Silêncio sepulcral e respeito.",
+        locPantanoDesc: "Águas escuras e espelhos d'água onde florescem lírios luminosos sob o céu roxo perpétuo.",
+        locBibliotecaDesc: "Salões infinitos de estantes empoeiradas e tomos proibidos guardados por espectros intelectuais.",
+        locMausoleuDesc: "Criptas profundas de nobres antigos. Exige cuidado extremo e conhecimento das artes espectrais.",
+        locPonteDesc: "Passarela frágil suspensa sobre o vácuo eterno. Exige ter explorado ao menos 3 cenários comuns.",
+        locCatacumbaDesc: "Canais subterrâneos onde corre sangue espectral aquecido por runas de sacrifício.",
+        locJardimDesc: "Rosas de vidro e espinhos venenosos protegidos por fadas caídas de olhar gélido.",
+        locSantuarioDesc: "O altar sagrado de Kuromi, onde as almas mais altivas e intransigentes desafiam o explorador.",
         relicsTradeRuleDesc: "🏺 <strong>Relíquias Sombrias não podem ser vendidas na loja!</strong> Por sua natureza misteriosa, elas são destinadas ao aprimoramento no Engenheiro, sacrifício na Fusão Arcana ou escambo direto com outros aventureiros via <code>/py-trade</code>.<br><br>🔨 <strong>Lojinha em Reformas Arcanas:</strong> O bazar convencional da Cringelândia está temporariamente fechado para expansão mágica do catálogo. Aventureiros devem focar em explorar o Bosque via <code>/py-explore</code>, trabalhar em suas profissões via <code>/py-work</code> e negociar diretamente!"
       },
       en: {
@@ -1411,9 +1444,23 @@
         bannerDesc: "Discover cute & goth items curated for the community with best deals on Shopee!",
         bannerBtn: "Check Deals ➔",
         tipBadge: "Arcane Tip",
-        tipText: "Check the Grove Chronicles and browse our themed community finds on Shopee!",
+        tipText: "Check the Grove Chronicles and claim special web rewards and partner deals!",
         tipBtnBonus: "Web Bonus ✨",
-        tipBtnShopee: "Shopee Finds 🛍️",
+        tipBtnShopee: "Special Deals 🎁",
+        footerCredits: "Pyxie • Official RPG & Community Bot • Crafted with 💜 by zululuga",
+        footerBack: "Back to Home",
+        footerInvite: "Add to Discord",
+        footerPromo: "🎁 Partner Deals",
+        locPortaoDesc: "An oxidized iron gateway draped in purple wisteria dividing the awake world from living mist.",
+        locFlorestaDesc: "Twisted pine forest where the fog whispers memories and secrets of former travelers.",
+        locCemiterioDesc: "Ancient tombstones overgrown with violet moss and dark thorns. Sepulchral silence and reverence.",
+        locPantanoDesc: "Murky waters and still reflective ponds where luminous lilies bloom under perpetual purple dusk.",
+        locBibliotecaDesc: "Endless aisles of dusty shelves and forbidden tomes guarded by intellectual specters.",
+        locMausoleuDesc: "Deep ancestral crypts of ancient nobility. Demands extreme caution and knowledge of spectral arts.",
+        locPonteDesc: "Fragile walkway suspended over eternal void. Requires having explored at least 3 common areas.",
+        locCatacumbaDesc: "Subterranean channels flowing with spectral blood heated by sacrifice runes.",
+        locJardimDesc: "Glass roses and venomous thorns guarded by fallen fairies with frozen gazes.",
+        locSantuarioDesc: "The sacred altar of Kuromi, where the most haughty and uncompromising souls challenge the explorer.",
         relicsTradeRuleDesc: "🏺 <strong>Dark Relics cannot be sold in the shop!</strong> Due to their supernatural nature, they are strictly reserved for Engineer upgrades, Arcane Soul Fusion sacrifices, or direct peer-to-peer bartering via <code>/py-trade</code>.<br><br>🔨 <strong>Arcane Shop Renovations:</strong> The conventional boutique is temporarily closed while magical catalog upgrades are prepared. Explorers should delve into the Grove via <code>/py-explore</code>, complete shifts via <code>/py-work</code>, and trade directly!"
       }
     };
@@ -1504,7 +1551,14 @@
       }
       setTimeout(() => {
         const tipEl = document.getElementById('pyxieFloatingTip');
-        if (tipEl) tipEl.style.display = 'block';
+        if (tipEl) {
+          const dict = I18N[currentLang] || I18N.pt;
+          tipEl.querySelectorAll('[data-i18n]').forEach((el) => {
+            const key = el.getAttribute('data-i18n');
+            if (dict[key]) el.innerHTML = dict[key];
+          });
+          tipEl.style.display = 'block';
+        }
       }, 3000);
     }
 
@@ -1555,25 +1609,6 @@
       syncHourlyPromoLinks();
     });
   </script>
-
-  <!-- Assistente Flutuante da Pyxie (Child-Safe & Elegante) -->
-  <div id="pyxieFloatingTip" class="pyxie-floating-tip" style="display: none;">
-    <button class="tip-close-btn" onclick="dismissPyxieTip()" title="Fechar">✕</button>
-    <div class="tip-mascot-wrap">
-      <img src="/assets/pyxie/pyxie_mascot.png" alt="Pyxie" class="tip-mascot-img" />
-    </div>
-    <div class="tip-body">
-      <div class="tip-header">
-        <span class="tip-title">Pyxie ✨</span>
-        <span class="tip-badge" data-i18n="tipBadge">Dica Arcana</span>
-      </div>
-      <p class="tip-text" data-i18n="tipText">Consulte as Crônicas do Bosque e confira nossos achadinhos temáticos na Shopee!</p>
-      <div class="tip-actions">
-        <a href="/bonus" class="tip-btn-primary" data-i18n="tipBtnBonus">Bônus Web ✨</a>
-        <a href="/promo" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tipBtnShopee" data-hourly-promo="true">Achadinhos 🛍️</a>
-      </div>
-    </div>
-  </div>
 </body>
 </html>
 
