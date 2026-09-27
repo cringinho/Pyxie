@@ -1772,7 +1772,7 @@
 
     <!-- Vitrine Nativa de Achadinhos da Pyxie & Setup -->
     <div class="pyxie-native-banner-container">
-      <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="pyxie-native-banner">
+      <a href="/promo" target="_blank" rel="noopener noreferrer" class="pyxie-native-banner" data-hourly-promo="true">
         <div class="banner-bg" style="background-image: url('/assets/pyxie/pyxie_space_banner.jpg');"></div>
         <div class="banner-overlay"></div>
         <div class="banner-content">
@@ -1959,7 +1959,7 @@
     </section>
 
     <!-- Banner Promocional da Pyxie (Apoio & Bônus) -->
-    <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="pyxie-promo-banner">
+    <a href="/promo" target="_blank" rel="noopener noreferrer" class="pyxie-promo-banner" data-hourly-promo="true">
       <span class="promo-icon">🎁</span>
       <div class="promo-content">
         <div class="promo-title" data-i18n="promo.title">Apoie a Pyxie & Ganhe Bônus</div>
@@ -1976,7 +1976,7 @@
         <a href="/invite" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.add">Adicionar Pyxie</a>
         <a href="/vote" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.vote">Top.gg</a>
         <a href="/bonus" class="footer-link" data-i18n="nav.bonus">Bônus Web (10s)</a>
-        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="footer-link" style="color: var(--pink-glow);">🛍️ Achadinhos Shopee</a>
+        <a href="/promo" target="_blank" rel="noopener noreferrer" class="footer-link" data-hourly-promo="true" style="color: var(--pink-glow);">🛍️ Achadinhos Shopee</a>
         <a href="/discord" target="_blank" rel="noopener" class="footer-link" data-i18n="hero.btnGuild">Comunidade Oficial</a>
       </div>
       <p class="footer-credits" data-i18n="footer.credits">
@@ -2652,12 +2652,30 @@
       localStorage.setItem('pyxie_tip_dismissed', Date.now().toString());
     }
 
+    async function syncHourlyPromoLinks() {
+      try {
+        const res = await fetch('/api/shopee/hourly-promo');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.success && data.promo && data.promo.link) {
+          const promoEls = document.querySelectorAll('[data-hourly-promo="true"]');
+          promoEls.forEach((el) => {
+            el.href = data.promo.link;
+            if (data.promo.name) {
+              el.setAttribute('title', `Shopee: ${data.promo.name} (${data.promo.commission || ''})`);
+            }
+          });
+        }
+      } catch (_) {}
+    }
+
     // Inicialização
     renderLocationPills();
     initLang();
     fetchStats();
     setInterval(fetchStats, 15000);
     initPyxieTip();
+    syncHourlyPromoLinks();
   </script>
 
   <!-- Assistente Flutuante da Pyxie (Child-Safe & Elegante) -->
@@ -2674,7 +2692,7 @@
       <p class="tip-text" data-i18n="tip.text">Já resgatou seu bônus diário hoje? Ganhe moedinhas extras e apoie a comunidade!</p>
       <div class="tip-actions">
         <a href="/bonus" class="tip-btn-primary" data-i18n="tip.btnBonus">Resgatar Bônus ✨</a>
-        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tip.btnShopee">Achadinhos 🛍️</a>
+        <a href="/promo" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tip.btnShopee" data-hourly-promo="true">Achadinhos 🛍️</a>
       </div>
     </div>
   </div>

@@ -693,7 +693,7 @@
   <main class="container">
     <!-- Vitrine Nativa de Achadinhos da Pyxie & Setup -->
     <div class="pyxie-native-banner-container">
-      <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="pyxie-native-banner">
+      <a href="/promo" target="_blank" rel="noopener noreferrer" class="pyxie-native-banner" data-hourly-promo="true">
         <div class="banner-bg" style="background-image: url('/assets/pyxie/pyxie_space_banner.jpg');"></div>
         <div class="banner-overlay"></div>
         <div class="banner-content">
@@ -1198,7 +1198,7 @@
     </section>
 
     <!-- Banner Promocional da Pyxie (Apoio & Bônus) -->
-    <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="pyxie-promo-banner">
+    <a href="/promo" target="_blank" rel="noopener noreferrer" class="pyxie-promo-banner" data-hourly-promo="true">
       <span class="promo-icon">🎁</span>
       <div class="promo-content">
         <div class="promo-title" data-i18n="promoTitle">Apoie a Pyxie & Ganhe Bônus</div>
@@ -1213,7 +1213,7 @@
     <p style="margin-top: 6px;">
       <a href="/">Voltar à Página Principal</a> • 
       <a href="/invite" target="_blank" rel="noopener">Convidar para o Discord</a> • 
-      <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" style="color: #f472b6;">🛍️ Achadinhos Shopee</a>
+      <a href="/promo" target="_blank" rel="noopener noreferrer" data-hourly-promo="true" style="color: #f472b6;">🛍️ Achadinhos Shopee</a>
     </p>
   </footer>
 
@@ -1364,7 +1364,25 @@
         }
       }
 
+      async function syncHourlyPromoLinks() {
+        try {
+          const res = await fetch('/api/shopee/hourly-promo');
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data && data.success && data.promo && data.promo.link) {
+            const promoEls = document.querySelectorAll('[data-hourly-promo="true"]');
+            promoEls.forEach((el) => {
+              el.href = data.promo.link;
+              if (data.promo.name) {
+                el.setAttribute('title', `Shopee: ${data.promo.name} (${data.promo.commission || ''})`);
+              }
+            });
+          }
+        } catch (_) {}
+      }
+
       initPyxieTip();
+      syncHourlyPromoLinks();
     });
   </script>
 
@@ -1382,7 +1400,7 @@
       <p class="tip-text" data-i18n="tipText">Consulte as Crônicas do Bosque e confira nossos achadinhos temáticos na Shopee!</p>
       <div class="tip-actions">
         <a href="/bonus" class="tip-btn-primary" data-i18n="tipBtnBonus">Bônus Web ✨</a>
-        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tipBtnShopee">Achadinhos 🛍️</a>
+        <a href="/promo" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tipBtnShopee" data-hourly-promo="true">Achadinhos 🛍️</a>
       </div>
     </div>
   </div>

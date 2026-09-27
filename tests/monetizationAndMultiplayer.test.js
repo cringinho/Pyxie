@@ -110,6 +110,27 @@ try {
   assert.ok(serverSrc.includes('/api/admin/shopee/sync-all-images'), 'server.js deve implementar rota /api/admin/shopee/sync-all-images');
   assert.ok(serverSrc.includes('/api/admin/shopee/preview-link'), 'server.js deve implementar rota /api/admin/shopee/preview-link');
 
+  // 6. Teste da Rotação Horária de Lojas Parceiras e Links sem Imagem
+  const storePromos = shopeeManager.getStorePromos();
+  assert.ok(Array.isArray(storePromos) && storePromos.length >= 70, `Deve haver pelo menos 70 lojas cadastradas (atual: ${storePromos.length})`);
+  const promoNow = shopeeManager.getHourlyStorePromo();
+  assert.ok(promoNow && promoNow.link && promoNow.link.startsWith('https://s.shopee.com.br/'), 'getHourlyStorePromo deve retornar link Shopee válido');
+  assert.ok(promoNow.name, 'Promoção horária deve ter nome de loja');
+
+  const baseHourTime = 1774656000000; // hora redonda
+  const promoH0 = shopeeManager.getHourlyStorePromo(baseHourTime);
+  const promoH1 = shopeeManager.getHourlyStorePromo(baseHourTime + 3600 * 1000);
+  assert.notEqual(promoH0.id, promoH1.id, 'Lojas devem rotacionar a cada hora');
+
+  assert.ok(serverSrc.includes('/promo'), 'server.js deve implementar rota /promo');
+  assert.ok(serverSrc.includes('/api/shopee/hourly-promo'), 'server.js deve implementar rota /api/shopee/hourly-promo');
+
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
+  const wikiHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'wiki.html'), 'utf8');
+  assert.ok(indexHtml.includes('href="/promo"'), 'index.html deve conter links direcionando para /promo');
+  assert.ok(wikiHtml.includes('href="/promo"'), 'wiki.html deve conter links direcionando para /promo');
+  assert.ok(bonusHtml.includes('href="/promo"'), 'bonus.html deve conter sponsorBtn direcionando para /promo');
+
   console.log('Verificação de Top.gg, Trocas Seguras, Temas Visuais e Afiliados Shopee: OK');
 } finally {
   const cleanFiles = [

@@ -540,6 +540,19 @@ function getUserRank(userId, userIds = null) {
   return index === -1 ? null : { position: index + 1, coins: accounts[index].coins };
 }
 
+function getStreakRanking(limit = 10, userIds = null) {
+  return Object.entries(readEconomy())
+    .filter(([userId]) => (!userIds || userIds.has(userId)) && !isTestUser(userId))
+    .map(([userId, account]) => ({
+      userId,
+      dailyStreak: Number(account.dailyStreak) || 0,
+      coins: Number(account.coins) || 0,
+    }))
+    .filter((entry) => entry.dailyStreak > 0)
+    .sort((left, right) => right.dailyStreak - left.dailyStreak || right.coins - left.coins)
+    .slice(0, limit);
+}
+
 module.exports = {
   DAILY_COOLDOWN_MS,
   WORK_COOLDOWN_MS,
@@ -575,4 +588,5 @@ module.exports = {
   claimDaily,
   getRanking,
   getUserRank,
+  getStreakRanking,
 };

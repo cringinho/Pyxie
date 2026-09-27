@@ -843,7 +843,7 @@
               <div class="showcase-dots" id="showcaseDotsInst"></div>
             </div>
 
-            <a id="sponsorBtn" href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" class="btn-sponsor">
+            <a id="sponsorBtn" href="/promo" data-fallback-link="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" class="btn-sponsor" data-hourly-promo="true">
               🛍️ Ver Achadinhos & Ofertas na Shopee
             </a>
           </div>
@@ -947,7 +947,8 @@
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
       const langParam = urlParams.get('lang');
-      const SMARTLINK_URL = 'https://s.shopee.com.br/BU6Bod6Sw';
+      const SMARTLINK_FALLBACK = 'https://s.shopee.com.br/BU6Bod6Sw';
+      let SMARTLINK_URL = '/promo';
 
       const actionParam = urlParams.get('action');
       let tokenAction = actionParam || null;
@@ -1360,7 +1361,26 @@
         setupShowcaseHover();
       }
 
+      async function syncHourlyPromo() {
+        try {
+          const res = await fetch('/api/shopee/hourly-promo');
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data && data.success && data.promo && data.promo.link) {
+            SMARTLINK_URL = data.promo.link;
+            const sponsorBtnEl = document.getElementById('sponsorBtn');
+            if (sponsorBtnEl) {
+              sponsorBtnEl.href = data.promo.link;
+              if (data.promo.name) {
+                sponsorBtnEl.setAttribute('title', `Shopee: ${data.promo.name} (${data.promo.commission || ''})`);
+              }
+            }
+          }
+        } catch (_) {}
+      }
+
       initShowcase();
+      syncHourlyPromo();
 
       if (!token) {
         timerCardEl.style.display = 'none';

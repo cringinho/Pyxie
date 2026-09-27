@@ -404,6 +404,31 @@ app.get('/api/showcase', (req, res) => {
   }
 });
 
+// 2c. Rotação Horária de Lojas Parceiras e Links de Promoção sem Imagem
+app.get(['/promo', '/api/promo', '/shopee/loja'], (req, res) => {
+  try {
+    const promo = shopeeManager.getHourlyStorePromo();
+    const targetUrl = promo && promo.link ? promo.link : 'https://s.shopee.com.br/BU6Bod6Sw';
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    return res.redirect(302, targetUrl);
+  } catch (err) {
+    console.error('Erro no redirect de promo horária:', err.message);
+    return res.redirect(302, 'https://s.shopee.com.br/BU6Bod6Sw');
+  }
+});
+
+app.get('/api/shopee/hourly-promo', (req, res) => {
+  try {
+    const promo = shopeeManager.getHourlyStorePromo();
+    res.setHeader('Cache-Control', 'public, max-age=60');
+    return res.json({ success: true, promo });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // 3. Painel Administrativo do Proprietário (Restrito ao Snowflake 214153735281180673 e Chave Mestra)
 app.get('/admin', (req, res) => {
   // Ignora crawlers de redes sociais (Discordbot, etc.) para não queimar tokens ou quebrar visualização

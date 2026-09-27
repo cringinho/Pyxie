@@ -5,7 +5,7 @@ const {
   EmbedBuilder,
   SlashCommandBuilder,
 } = require('discord.js');
-const { getRanking } = require('../services/economy');
+const { getRanking, getStreakRanking } = require('../services/economy');
 const { formatCoins } = require('./economyHelpers');
 const { RANKING } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
@@ -15,6 +15,8 @@ async function buildRankingView(source, viewerId, category = 'coins') {
   let title = t('ranking.mainTitle', source);
   let desc = '';
   let color = PYXIE_COLORS.gold || '#facc15';
+
+  const isStreaks = category === 'streaks' || category === 'streak' || category === 'ofensiva';
 
   if (category === 'beans') {
     title = t('ranking.beansTitle', source);
@@ -27,6 +29,20 @@ async function buildRankingView(source, viewerId, category = 'coins') {
         })
       : [t('ranking.emptyBeans', source)];
     desc = [t('ranking.beansDesc', source), '', ...lines].join('\n');
+  } else if (isStreaks) {
+    title = t('ranking.streaksTitle', source);
+    color = '#f97316';
+    const entries = getStreakRanking(10);
+    const lines = entries.length
+      ? entries.map((entry, idx) => {
+          const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `**#${idx + 1}**`;
+          const dayLabel = entry.dailyStreak === 1
+            ? t('ranking.streakSingleDay', source)
+            : t('ranking.streakMultiDays', source);
+          return `${medal} <@${entry.userId}>\n> 🔥 **${entry.dailyStreak} ${dayLabel}**`;
+        })
+      : [t('ranking.emptyStreaks', source)];
+    desc = [t('ranking.streaksDesc', source), '', ...lines].join('\n');
   } else {
     title = t('ranking.coinsTitle', source);
     color = PYXIE_COLORS.gold;
@@ -58,7 +74,12 @@ async function buildRankingView(source, viewerId, category = 'coins') {
       .setCustomId(`ranking_cat:beans:${viewerId}`)
       .setLabel(t('ranking.btnBeans', source))
       .setEmoji(getEmoji('MAGIC_BEAN'))
-      .setStyle(category === 'beans' ? ButtonStyle.Success : ButtonStyle.Secondary)
+      .setStyle(category === 'beans' ? ButtonStyle.Success : ButtonStyle.Secondary),
+    new ButtonBuilder()
+      .setCustomId(`ranking_cat:streaks:${viewerId}`)
+      .setLabel(t('ranking.btnStreaks', source))
+      .setEmoji('🔥')
+      .setStyle(isStreaks ? ButtonStyle.Success : ButtonStyle.Secondary)
   );
 
   return { embeds: [embed], components: [buttonRow] };
@@ -85,9 +106,9 @@ module.exports = {
   handleRankingInteraction,
   data: new SlashCommandBuilder()
     .setName(RANKING)
-    .setDescription('Display global leaderboards for Coins and Magic Beans.')
+    .setDescription('Display global leaderboards for Coins, Magic Beans, and Daily Streaks.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Exibe os rankings globais de Moedas e Feijões Mágicos.',
+      'pt-BR': 'Exibe os rankings globais de Moedas, Feijões e Maiores Streaks.',
     })
     .addStringOption((opt) =>
       opt
@@ -104,12 +125,13 @@ module.exports = {
         .setRequired(false)
         .addChoices(
           { name: '🪙 Coins', nameLocalizations: { 'pt-BR': '🪙 Moedas' }, value: 'coins' },
-          { name: '🌱 Magic Beans', nameLocalizations: { 'pt-BR': '🌱 Feijões Mágicos' }, value: 'beans' }
+          { name: '🌱 Magic Beans', nameLocalizations: { 'pt-BR': '🌱 Feijões Mágicos' }, value: 'beans' },
+          { name: '🔥 Daily Streaks', nameLocalizations: { 'pt-BR': '🔥 Maiores Streaks' }, value: 'streaks' }
         )
     ),
   async executePrefix({ message, args }) {
     const cat = String(args[0] || 'coins').toLowerCase();
-    const validCat = ['coins', 'beans'].includes(cat) ? cat : 'coins';
+    const validCat = ['coins', 'beans', 'streaks', 'streak', 'ofensiva'].includes(cat) ? cat : 'coins';
     const view = await buildRankingView(message, message.author.id, validCat);
     await message.reply(view);
   },

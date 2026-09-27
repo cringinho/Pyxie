@@ -4,6 +4,7 @@ const http = require('http');
 const https = require('https');
 
 const SHOPEE_FILE_PATH = path.join(__dirname, '..', 'data', 'shopee.json');
+const SHOPEE_STORES_FILE_PATH = path.join(__dirname, '..', 'data', 'shopeeStores.json');
 
 /**
  * Lê todos os produtos do arquivo JSON com fallback seguro.
@@ -427,6 +428,43 @@ function getSummaryStats() {
   };
 }
 
+/**
+ * Lê todas as lojas parceiras com promoção do arquivo JSON.
+ */
+function getStorePromos() {
+  try {
+    if (!fs.existsSync(SHOPEE_STORES_FILE_PATH)) {
+      return [];
+    }
+    const raw = fs.readFileSync(SHOPEE_STORES_FILE_PATH, 'utf8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    console.error('Erro ao ler src/data/shopeeStores.json:', err.message);
+    return [];
+  }
+}
+
+/**
+ * Retorna a loja parceira da hora atual (rotaciona a cada hora determinística).
+ * @param {number} [timestamp=Date.now()]
+ */
+function getHourlyStorePromo(timestamp = Date.now()) {
+  const stores = getStorePromos();
+  if (!stores || stores.length === 0) {
+    return {
+      id: 0,
+      name: 'Shopee Brasil',
+      commission: 'up to 40%',
+      offerLink: 'https://shopee.com.br',
+      link: 'https://s.shopee.com.br/BU6Bod6Sw',
+    };
+  }
+  const currentHour = Math.floor(timestamp / (1000 * 60 * 60));
+  const index = Math.abs(currentHour) % stores.length;
+  return stores[index];
+}
+
 module.exports = {
   getAllItems,
   getItemById,
@@ -440,4 +478,7 @@ module.exports = {
   addItem,
   deleteItem,
   getSummaryStats,
+  getStorePromos,
+  getHourlyStorePromo,
 };
+
