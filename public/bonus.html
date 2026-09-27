@@ -922,6 +922,16 @@
 
         <!-- Card Principal da Pyxie -->
         <div class="bonus-container">
+          <!-- Top Utility Nav Row (Language Toggle & Return) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 14px;">
+            <a href="/" id="backHomeLink" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #c084fc; text-decoration: none; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(192,132,252,0.2);">
+              <span>←</span> <span>Início</span>
+            </a>
+            <button id="langToggle" class="lang-btn" onclick="toggleLanguage()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(192,132,252,0.3); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              <span>🇧🇷</span> <span>PT-BR</span>
+            </button>
+          </div>
+
           <div class="mascot-badge">
             <img src="https://cdn.discordapp.com/emojis/1548443951596306552.webp" alt="Pyxie" />
           </div>
@@ -1223,12 +1233,37 @@
         }
       };
 
-      const userLang = (langParam === 'en' || (!langParam && !navigator.language?.toLowerCase().startsWith('pt'))) ? 'en' : 'pt';
-      document.documentElement.lang = userLang === 'pt' ? 'pt-BR' : 'en';
-      document.body.classList.toggle('lang-pt', userLang === 'pt');
-      document.body.classList.toggle('lang-en', userLang === 'en');
-      const S = I18N[userLang];
-      document.title = S.metaTitle;
+      function getSavedLang() {
+        try {
+          return localStorage.getItem('pyxie_lang');
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function setSavedLang(lang) {
+        try {
+          localStorage.setItem('pyxie_lang', lang);
+        } catch (_) {}
+      }
+
+      function resolveInitialLang() {
+        const langParam = urlParams.get('lang');
+        const savedLang = getSavedLang();
+        const browserLang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
+
+        if (langParam === 'pt' || langParam === 'en') {
+          setSavedLang(langParam);
+          return langParam;
+        }
+        if (savedLang === 'pt' || savedLang === 'en') {
+          return savedLang;
+        }
+        return browserLang;
+      }
+
+      let userLang = resolveInitialLang();
+      let S = I18N[userLang];
 
       let timeLeft = 10;
       const totalTime = 10;
@@ -1254,26 +1289,76 @@
       const bannerTopTitleEl = document.getElementById('bannerTopTitle');
       const bannerTopDescEl = document.getElementById('bannerTopDesc');
       const bannerTopBtnEl = document.getElementById('bannerTopBtn');
-
-      btnClaimEl.innerText = S.btnClaim;
-      successTitleEl.innerText = S.successTitle;
-      successMessageEl.innerText = S.successDefaultMsg;
-      sponsorBadgeEl.innerText = S.sponsorBadge;
-      instructionsTitleEl.innerHTML = S.instructionsTitle;
-      step1TextEl.innerHTML = S.step1;
-      step2TextEl.innerHTML = S.step2;
-      step3TextEl.innerHTML = S.step3;
-      rewardBoxEl.innerHTML = S.rewardBox;
-      sponsorBtnEl.innerText = S.sponsorBtn;
-
-      if (bannerTopBtnEl) bannerTopBtnEl.innerText = S.bannerTopBtn;
       const promoBtnEl = document.getElementById('promoBtn');
-      if (promoBtnEl) promoBtnEl.innerText = S.promoBtn;
-
       const showcaseIntroEl = document.getElementById('showcaseIntro');
-      if (showcaseIntroEl) showcaseIntroEl.innerText = `✨ ${S.showcaseIntro}`;
       const showcaseIntroInstEl = document.getElementById('showcaseIntroInst');
-      if (showcaseIntroInstEl) showcaseIntroInstEl.innerText = `✨ ${S.showcaseIntroInst}`;
+
+      function applyLang(lang) {
+        userLang = (lang === 'en' || lang === 'pt') ? lang : 'pt';
+        setSavedLang(userLang);
+        document.documentElement.lang = userLang === 'pt' ? 'pt-BR' : 'en';
+        document.body.classList.toggle('lang-pt', userLang === 'pt');
+        document.body.classList.toggle('lang-en', userLang === 'en');
+        S = I18N[userLang];
+        document.title = S.metaTitle;
+
+        const langToggleBtn = document.getElementById('langToggle');
+        if (langToggleBtn) {
+          langToggleBtn.innerHTML = userLang === 'pt' ? '<span>🇧🇷</span> <span>PT-BR</span>' : '<span>🇺🇸</span> <span>EN</span>';
+        }
+        const backHomeLink = document.getElementById('backHomeLink');
+        if (backHomeLink) {
+          backHomeLink.innerHTML = `<span>←</span> <span>${userLang === 'pt' ? 'Início' : 'Home'}</span>`;
+          backHomeLink.setAttribute('href', `/?lang=${userLang}`);
+        }
+
+        if (btnClaimEl) btnClaimEl.innerText = S.btnClaim;
+        if (successTitleEl) successTitleEl.innerText = S.successTitle;
+        if (successMessageEl) successMessageEl.innerText = S.successDefaultMsg;
+        if (sponsorBadgeEl) sponsorBadgeEl.innerText = S.sponsorBadge;
+        if (instructionsTitleEl) instructionsTitleEl.innerHTML = S.instructionsTitle;
+        if (step1TextEl) step1TextEl.innerHTML = S.step1;
+        if (step2TextEl) step2TextEl.innerHTML = S.step2;
+        if (step3TextEl) step3TextEl.innerHTML = S.step3;
+        if (rewardBoxEl) rewardBoxEl.innerHTML = S.rewardBox;
+        if (sponsorBtnEl) sponsorBtnEl.innerText = S.sponsorBtn;
+        if (bannerTopBtnEl) bannerTopBtnEl.innerText = S.bannerTopBtn;
+        if (promoBtnEl) promoBtnEl.innerText = S.promoBtn;
+
+        if (showcaseIntroEl) showcaseIntroEl.innerText = `✨ ${S.showcaseIntro}`;
+        if (showcaseIntroInstEl) showcaseIntroInstEl.innerText = `✨ ${S.showcaseIntroInst}`;
+
+        if (pageTitleEl) pageTitleEl.innerText = token ? S.pageTitleWithToken : S.pageTitleNoToken;
+        if (pageSubtitleEl) pageSubtitleEl.innerText = token ? S.pageSubtitleWithToken : S.pageSubtitleNoToken;
+
+        if (statusLabelEl) {
+          if (timeLeft === 0) {
+            statusLabelEl.innerHTML = S.statusReady;
+          } else {
+            statusLabelEl.innerText = S.statusChanneling;
+          }
+        }
+
+        if (typeof updateProductBanners === 'function') {
+          updateProductBanners(showcaseItems, userLang);
+        }
+        if (typeof renderShowcaseCard === 'function') {
+          renderShowcaseCard(currentShowcaseIdx);
+        }
+        if (typeof syncHourlyPromo === 'function') {
+          syncHourlyPromo();
+        }
+      }
+
+      function toggleLanguage() {
+        const nextLang = userLang === 'pt' ? 'en' : 'pt';
+        applyLang(nextLang);
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.set('lang', nextLang);
+          window.history.replaceState({}, '', url);
+        } catch (_) {}
+      }
 
       // Dados de contingência nativa da vitrine (Shopee Afiliados)
       const DEFAULT_SHOWCASE_ITEMS = [
@@ -1569,6 +1654,7 @@
         } catch (_) {}
       }
 
+      applyLang(userLang);
       initShowcase();
       syncHourlyPromo();
 

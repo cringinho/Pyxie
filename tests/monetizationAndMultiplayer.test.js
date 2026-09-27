@@ -151,6 +151,14 @@ try {
   assert.ok(bonusHtml.includes(ADSTERRA_KEYS.skyscraper160), 'bonus.html deve conter skyscraper Adsterra 160x600');
   assert.ok(serverSrc.includes(ADSTERRA_KEYS.smartlink), 'server.js deve redirecionar tráfego EN para Adsterra Smartlink');
 
+  // 8. Teste de Persistência Confiável de Idioma (pyxie_lang, URL sync e Cross-page)
+  [indexHtml, wikiHtml, bonusHtml].forEach((htmlContent) => {
+    assert.ok(htmlContent.includes('pyxie_lang'), 'Todas as páginas web devem utilizar a chave local pyxie_lang');
+    assert.ok(htmlContent.includes('resolveInitialLang'), 'Todas as páginas web devem resolver idioma com hierarquia padronizada');
+    assert.ok(htmlContent.includes('toggleLanguage'), 'Todas as páginas web devem fornecer alternador de idioma dinâmico');
+    assert.ok(htmlContent.includes('replaceState'), 'Todas as páginas web devem sincronizar URL query params com history.replaceState');
+  });
+
   console.log('Verificação de Top.gg, Trocas Seguras, Temas Visuais e Afiliados Shopee: OK');
 } finally {
   const cleanFiles = [

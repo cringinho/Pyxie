@@ -1430,18 +1430,58 @@
       if (activeTab) activeTab.classList.add('active');
     }
 
+    function getSavedLang() {
+      try {
+        return localStorage.getItem('pyxie_lang');
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function setSavedLang(lang) {
+      try {
+        localStorage.setItem('pyxie_lang', lang);
+      } catch (_) {}
+    }
+
+    function resolveInitialLang() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlLang = urlParams.get('lang');
+      const savedLang = getSavedLang();
+      const browserLang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
+
+      if (urlLang === 'pt' || urlLang === 'en') {
+        setSavedLang(urlLang);
+        return urlLang;
+      }
+      if (savedLang === 'pt' || savedLang === 'en') {
+        return savedLang;
+      }
+      return browserLang;
+    }
+
     function applyLang(lang) {
-      currentLang = lang;
-      const dict = I18N[lang] || I18N.pt;
+      currentLang = (lang === 'en' || lang === 'pt') ? lang : 'pt';
+      setSavedLang(currentLang);
+      const dict = I18N[currentLang] || I18N.pt;
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (dict[key]) el.innerHTML = dict[key];
       });
-      document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
-      document.body.classList.toggle('lang-pt', lang === 'pt');
-      document.body.classList.toggle('lang-en', lang === 'en');
+      document.documentElement.lang = currentLang === 'en' ? 'en' : 'pt-BR';
+      document.body.classList.toggle('lang-pt', currentLang === 'pt');
+      document.body.classList.toggle('lang-en', currentLang === 'en');
       const btn = document.getElementById('langToggle');
-      if (btn) btn.textContent = lang === 'en' ? 'PT / EN' : 'EN / PT';
+      if (btn) btn.textContent = currentLang === 'en' ? 'PT / EN' : 'EN / PT';
+
+      // Sincroniza links de retorno para a home ou bonus com o idioma atual
+      document.querySelectorAll('a[href="/"], a[href^="/?"]').forEach(link => {
+        link.setAttribute('href', `/?lang=${currentLang}`);
+      });
+      document.querySelectorAll('a[href="/bonus"], a[href^="/bonus?"]').forEach(link => {
+        link.setAttribute('href', `/bonus?lang=${currentLang}`);
+      });
+
       if (typeof syncHourlyPromoLinks === 'function') {
         syncHourlyPromoLinks();
       }
@@ -1450,9 +1490,11 @@
     function toggleLanguage() {
       const next = currentLang === 'pt' ? 'en' : 'pt';
       applyLang(next);
-      const url = new URL(window.location);
-      url.searchParams.set('lang', next);
-      window.history.replaceState({}, '', url);
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('lang', next);
+        window.history.replaceState({}, '', url);
+      } catch (_) {}
     }
 
     function initPyxieTip() {
@@ -1473,8 +1515,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      const requestedLang = params.get('lang') || (navigator.language.startsWith('pt') ? 'pt' : 'en');
+      const requestedLang = resolveInitialLang();
       applyLang(requestedLang);
 
       if (window.location.hash) {
