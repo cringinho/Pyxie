@@ -532,19 +532,19 @@ function buildModularHelpComponents(currentModuleId = 'todos', userId = '', sour
 
   const buttonRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setLabel('Add to Server ➔')
+      .setLabel(t('help.btnInvite', ctx))
       .setStyle(ButtonStyle.Link)
       .setURL('http://pyxie.duckdns.org/invite'),
     new ButtonBuilder()
-      .setLabel('Website 🌐')
+      .setLabel(t('help.btnWebsite', ctx))
       .setStyle(ButtonStyle.Link)
       .setURL('http://pyxie.duckdns.org'),
     new ButtonBuilder()
-      .setLabel('Wiki 📖')
+      .setLabel(t('help.btnWiki', ctx))
       .setStyle(ButtonStyle.Link)
       .setURL('http://pyxie.duckdns.org/wiki'),
     new ButtonBuilder()
-      .setLabel('Support ✨')
+      .setLabel(t('help.btnSupport', ctx))
       .setStyle(ButtonStyle.Link)
       .setURL('https://discord.gg/b3uZK3ssfX')
   );
