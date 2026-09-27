@@ -1,0 +1,13 @@
+[Unit]
+Description=Pyxie Bot Automated Deployment Worker
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/home/ubuntu/kuromi
+Environment=HOME=/home/ubuntu
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/bin/bash /home/ubuntu/kuromi/scripts/auto_deploy.sh
+StandardOutput=journal
+StandardError=journal

@@ -60,6 +60,36 @@ pm2 logs pyxie --lines 50
 
 ---
 
+## 🤖 Auto-Deploy Autônomo (Zero Esforço & Proteção Total)
+
+A VM de produção conta com um **trabalhador autônomo** gerenciado via `systemd` timer (`pyxie-autodeploy.timer`) que verifica a branch `main` no GitHub **a cada 3 minutos**:
+
+### Como Funciona:
+1. **Pré-Checagem Ultra-Leve (< 0.2s)**:
+   - Executa `git fetch origin main --quiet` e compara o hash local com o remoto.
+   - Se **não houver** novos commits, o script encerra imediatamente sem tocar no bot, sem reinstalar dependências e sem gastar CPU ou memória.
+2. **Deploy Seguro e Protegido (Quando há novos commits)**:
+   - **Backup Atômico**: Salva cópia de segurança de `data/`, `.env`, `prefix.json` e arquivos dinâmicos em `~/backups/kuromi/auto-YYYYMMDD-HHMMSS/`.
+   - **Preservação de Dados da IA**: Mescla os cenários de carreiras gerados pelo Groq localmente com os novos do repositório (`scripts/merge_minigames.js`), sem perda nem duplicidade.
+   - **Quality Gate Obrigatório**: Executa `npm test` antes de qualquer alteração no processo.
+   - **Rollback Automático**: Se os testes falharem, reverte o Git imediatamente para a versão estável anterior, restaura o backup e **não** reinicia o bot.
+   - **Build Inteligente**: Só executa `npm ci` se `package.json` mudou, e só registra slash commands se comandos mudaram.
+   - **Reload Gracioso**: Aplica `pm2 reload pyxie --update-env` sem interrupções bruscas.
+
+### Comandos de Monitoramento do Auto-Deploy:
+```bash
+# Ver status do timer e próxima execução
+systemctl list-timers pyxie-autodeploy.timer
+
+# Ver histórico de deploys automáticos
+cat ~/kuromi/logs/autodeploy.log
+
+# Ver logs do serviço via journalctl
+journalctl -u pyxie-autodeploy -n 50 --no-pager
+```
+
+---
+
 ## 🔄 Comandos Úteis do Dia a Dia na VM
 
 | Ação | Comando na VM |

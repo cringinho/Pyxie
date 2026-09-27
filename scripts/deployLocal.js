@@ -37,7 +37,7 @@ try {
 run('git push origin main', '3/4 Enviando alterações para o GitHub (git push origin main)');
 
 // 4. Invocação remota do deploy.sh na VM da Oracle Cloud
-run('ssh oracle "cd ~/kuromi && ./deploy.sh"', '4/4 Executando atualização de produção na Oracle Cloud VM');
+run('ssh oracle "cd ~/kuromi && ./deploy.sh --force"', '4/4 Executando atualização de produção na Oracle Cloud VM');
 
 console.log('\n✨ ====================================================');
 console.log('🎉 Deploy concluído com sucesso! A Pyxie está 100% online.');
