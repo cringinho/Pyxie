@@ -32,6 +32,7 @@ const likelyCommand = require('./src/commands/provavel');
 const exploreCommand = require('./src/commands/explore');
 const { syncApplicationEmojis } = require('./src/utils/appEmojis');
 const { registerAutomation, updateAutomation } = require('./src/services/automationSchedule');
+const { startPresenceRotator } = require('./src/services/presenceRotator');
 const {
   DISCORD_TOKEN,
   STARTUP_CHANNEL_ID,
@@ -394,10 +395,7 @@ function updateLiveStats() {
 client.once('ready', async () => {
   console.log(`Pyxie conectada como ${client.user.tag}`);
 
-  client.user.setPresence({
-    activities: [{ name: 'Bosque da Pyxie • /py-help', type: ActivityType.Playing }],
-    status: 'online',
-  });
+  startPresenceRotator(client);
 
   updateLiveStats();
   await sendStartupAnnouncement();

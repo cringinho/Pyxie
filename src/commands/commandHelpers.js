@@ -1,5 +1,7 @@
 const {
   ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   EmbedBuilder,
   StringSelectMenuBuilder,
 } = require('discord.js');
@@ -526,7 +528,28 @@ function buildModularHelpComponents(currentModuleId = 'todos', userId = '', sour
       }))
     );
 
-  return [new ActionRowBuilder().addComponents(selectMenu)];
+  const selectRow = new ActionRowBuilder().addComponents(selectMenu);
+
+  const buttonRow = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel('Add to Server ➔')
+      .setStyle(ButtonStyle.Link)
+      .setURL('http://pyxie.duckdns.org/invite'),
+    new ButtonBuilder()
+      .setLabel('Website 🌐')
+      .setStyle(ButtonStyle.Link)
+      .setURL('http://pyxie.duckdns.org'),
+    new ButtonBuilder()
+      .setLabel('Wiki 📖')
+      .setStyle(ButtonStyle.Link)
+      .setURL('http://pyxie.duckdns.org/wiki'),
+    new ButtonBuilder()
+      .setLabel('Support ✨')
+      .setStyle(ButtonStyle.Link)
+      .setURL('https://discord.gg/b3uZK3ssfX')
+  );
+
+  return [selectRow, buttonRow];
 }
 
 function buildHelpMessage(requestedModule = 'todos', userId = '', source = null) {
