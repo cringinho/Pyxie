@@ -1047,7 +1047,9 @@
         }
       };
 
-      const userLang = (langParam === 'en' || (!langParam && !navigator.language?.toLowerCase().startsWith('pt'))) ? 'en' : 'pt';
+      const savedLang = localStorage.getItem('pyxie_lang');
+      const browserLang = navigator.language?.toLowerCase().startsWith('pt') ? 'pt' : 'en';
+      const userLang = langParam === 'en' ? 'en' : (langParam === 'pt' ? 'pt' : (savedLang === 'en' ? 'en' : (savedLang === 'pt' ? 'pt' : browserLang)));
       const S = I18N[userLang];
       document.title = S.metaTitle;
 
