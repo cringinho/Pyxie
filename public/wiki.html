@@ -1330,7 +1330,6 @@
     function toggleLanguage() {
       const next = currentLang === 'pt' ? 'en' : 'pt';
       applyLang(next);
-      localStorage.setItem('pyxie_lang', next);
       const url = new URL(window.location);
       url.searchParams.set('lang', next);
       window.history.replaceState({}, '', url);
@@ -1355,11 +1354,8 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
-      const urlLang = params.get('lang');
-      const savedLang = localStorage.getItem('pyxie_lang');
-      const browserLang = navigator.language?.startsWith('pt') ? 'pt' : 'en';
-      const requestedLang = urlLang || savedLang || browserLang;
-      applyLang(requestedLang === 'en' ? 'en' : 'pt');
+      const requestedLang = params.get('lang') || (navigator.language.startsWith('pt') ? 'pt' : 'en');
+      applyLang(requestedLang);
 
       if (window.location.hash) {
         const h = window.location.hash.replace('#', '');
