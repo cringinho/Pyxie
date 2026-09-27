@@ -165,6 +165,14 @@ try {
   assert.ok(indexHtml.indexOf('id="pyxieFloatingTip"') < indexHtml.indexOf('function initLang'), '#pyxieFloatingTip deve estar posicionado antes de initLang no index.html para parsing síncrono');
   assert.ok(wikiHtml.indexOf('id="pyxieFloatingTip"') < wikiHtml.indexOf('function applyLang'), '#pyxieFloatingTip deve estar posicionado antes de applyLang no wiki.html para parsing síncrono');
 
+  // 10. Validação de Verificação de Domínio do Pinterest (Tag nos HTMLs e Arquivo Dedicado)
+  const PINTEREST_VERIFY_TAG = '8da8f2e95821ed9fa6a1b3fce231664f';
+  [indexHtml, wikiHtml, bonusHtml].forEach((htmlContent) => {
+    assert.ok(htmlContent.includes(PINTEREST_VERIFY_TAG), 'Todas as páginas web principais devem conter a tag de verificação do Pinterest');
+  });
+  const pinterestFilePath = path.join(__dirname, '..', 'public', 'pinterest-8da8f2e95821ed9fa6a1b3fce231664f.html');
+  assert.ok(fs.existsSync(pinterestFilePath), 'Arquivo de verificação HTML do Pinterest deve existir');
+
   console.log('Verificação de Top.gg, Trocas Seguras, Temas Visuais e Afiliados Shopee: OK');
 } finally {
   const cleanFiles = [
