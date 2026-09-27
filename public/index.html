@@ -1853,8 +1853,7 @@
           </div>
           <div class="location-info">
             <div class="loc-badge-row">
-              <span id="viewerTier" class="loc-tier-badge tier-1">Tier 1 • Comum</span>
-              <span id="viewerTier" class="loc-tier-badge tier-1">Tier 1 💀</span>
+              <span id="viewerTier" class="loc-tier-badge tier-1">T1 <img src="https://cdn.discordapp.com/emojis/1551356384451493968.png" style="width: 1em; vertical-align: text-bottom;" alt="💀"></span>
               <span class="loot-tag">
                 <img src="https://cdn.discordapp.com/emojis/1548443977429028955.gif" class="emoji-icon" alt="phantom" />
                 Phantom Coins
@@ -2019,8 +2018,6 @@
       {
         id: 'portao_penumbra',
         tier: 1,
-        tierLabel: { pt: 'Tier 1 • Comum', en: 'Tier 1 • Common' },
-        tierLabel: { pt: 'Tier 1 💀', en: 'Tier 1 💀' },
         tierClass: 'tier-1',
         name: { pt: 'Portão das Fadas Decaídas', en: 'Gates of the Fallen' },
         desc: {
@@ -2036,8 +2033,6 @@
       {
         id: 'cemiterio_espinhos',
         tier: 1,
-        tierLabel: { pt: 'Tier 1 • Comum', en: 'Tier 1 • Common' },
-        tierLabel: { pt: 'Tier 1 💀', en: 'Tier 1 💀' },
         tierClass: 'tier-1',
         name: { pt: 'Cemitério dos Cravos Roxos', en: 'Thorn Graveyard' },
         desc: {
@@ -2053,8 +2048,6 @@
       {
         id: 'floresta_sussurros',
         tier: 1,
-        tierLabel: { pt: 'Tier 1 • Comum', en: 'Tier 1 • Common' },
-        tierLabel: { pt: 'Tier 1 💀', en: 'Tier 1 💀' },
         tierClass: 'tier-1',
         name: { pt: 'Floresta dos Sussurros', en: 'Whispering Woods' },
         desc: {
@@ -2070,8 +2063,6 @@
       {
         id: 'pantano_lagrimas',
         tier: 2,
-        tierLabel: { pt: 'Tier 2 • Incomum', en: 'Tier 2 • Uncommon' },
-        tierLabel: { pt: 'Tier 2 💀💀', en: 'Tier 2 💀💀' },
         tierClass: 'tier-2',
         name: { pt: 'Pântano das Lágrimas Secas', en: 'Swamp of Dry Tears' },
         desc: {
@@ -2087,8 +2078,6 @@
       {
         id: 'mausoleu_ancestral',
         tier: 2,
-        tierLabel: { pt: 'Tier 2 • Incomum', en: 'Tier 2 • Uncommon' },
-        tierLabel: { pt: 'Tier 2 💀💀', en: 'Tier 2 💀💀' },
         tierClass: 'tier-2',
         name: { pt: 'Mausoléu da Melancolia', en: 'Ancestral Mausoleum' },
         desc: {
@@ -2104,8 +2093,6 @@
       {
         id: 'biblioteca_esquecida',
         tier: 2,
-        tierLabel: { pt: 'Tier 2 • Incomum', en: 'Tier 2 • Uncommon' },
-        tierLabel: { pt: 'Tier 2 💀💀', en: 'Tier 2 💀💀' },
         tierClass: 'tier-2',
         name: { pt: 'Biblioteca dos Manuscritos', en: 'Forgotten Library' },
         desc: {
@@ -2121,8 +2108,6 @@
       {
         id: 'ponte_abismo',
         tier: 3,
-        tierLabel: { pt: 'Tier 3 • Raro', en: 'Tier 3 • Rare' },
-        tierLabel: { pt: 'Tier 3 💀💀💀', en: 'Tier 3 💀💀💀' },
         tierClass: 'tier-3',
         name: { pt: 'Ponte dos Suspiros', en: 'Bridge of Sighs' },
         desc: {
@@ -2138,8 +2123,6 @@
       {
         id: 'catacumba_sangue_roxo',
         tier: 4,
-        tierLabel: { pt: 'Tier 4 • Épico', en: 'Tier 4 • Epic' },
-        tierLabel: { pt: 'Tier 4 💀💀💀💀', en: 'Tier 4 💀💀💀💀' },
         tierClass: 'tier-4',
         name: { pt: 'Catacumbas do Sangue Púrpura', en: 'Purple Blood Catacombs' },
         desc: {
@@ -2155,8 +2138,6 @@
       {
         id: 'jardim_fadas_negras',
         tier: 4,
-        tierLabel: { pt: 'Tier 4 • Épico', en: 'Tier 4 • Epic' },
-        tierLabel: { pt: 'Tier 4 💀💀💀💀', en: 'Tier 4 💀💀💀💀' },
         tierClass: 'tier-4',
         name: { pt: 'Jardim das Rosas de Vidro', en: 'Glass Rose Garden' },
         desc: {
@@ -2172,8 +2153,6 @@
       {
         id: 'santuario_touca_preta',
         tier: 5,
-        tierLabel: { pt: 'Tier 5 • Lendário', en: 'Tier 5 • Legendary' },
-        tierLabel: { pt: 'Tier 5 💀💀💀💀💀', en: 'Tier 5 💀💀💀💀💀' },
         tierClass: 'tier-5',
         name: { pt: 'Santuário Secreto de Pyxie', en: "Pyxie's Secret Sanctuary" },
         desc: {
@@ -2404,7 +2383,7 @@
 
       if (img) img.src = loc.image;
       if (tier) {
-        tier.innerHTML = 'T' + loc.tier + ' ' + '<img src="https://cdn.discordapp.com/emojis/1551356384451493968.png" style="width: 1em; vertical-align: text-bottom;">'.repeat(loc.tier);
+        tier.innerHTML = 'T' + loc.tier + ' ' + '<img src="https://cdn.discordapp.com/emojis/1551356384451493968.png" style="width: 1em; vertical-align: text-bottom;" alt="💀">'.repeat(loc.tier);
         tier.className = `loc-tier-badge ${loc.tierClass}`;
       }
       if (name) name.textContent = loc.name[currentLang] || loc.name.pt;
