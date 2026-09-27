@@ -93,9 +93,8 @@ if [ -f "src/data/generated_work_minigames.json" ]; then
 fi
 
 # 6. Prepara árvore de trabalho para Fast-Forward seguro
-# Ignora alterações de permissão (chmod) e descarta alterações locais em arquivos rastreados
-git config core.fileMode false 2>/dev/null || true
-git checkout -- . 2>/dev/null || true
+# Descarta alterações locais em arquivos rastreados de src/data para não travar o pull
+git checkout -- src/data/ 2>/dev/null || true
 
 # 7. Executa o git pull Fast-Forward
 if ! git pull --ff-only origin main; then

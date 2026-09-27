@@ -361,6 +361,14 @@ app.get('/vote', (req, res) => {
   res.redirect(`https://top.gg/bot/${botId}/vote`);
 });
 
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain; charset=UTF-8').sendFile(path.join(__dirname, 'public', 'robots.txt'));
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.type('application/xml; charset=UTF-8').sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
+});
+
 app.get('/wiki', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'wiki.html'));
 });
