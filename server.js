@@ -404,9 +404,22 @@ app.get('/api/showcase', (req, res) => {
   }
 });
 
-// 2c. Rotação Horária de Lojas Parceiras e Links de Promoção sem Imagem
+// 2c. Rotação Horária de Lojas Parceiras e Links de Promoção com Segmentação Global (PT = Shopee, EN = Adsterra)
+const ADSTERRA_SMARTLINK = 'https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813';
+
 app.get(['/promo', '/api/promo', '/shopee/loja'], (req, res) => {
   try {
+    const langQuery = (req.query.lang || '').toLowerCase();
+    const acceptLang = (req.headers['accept-language'] || '').toLowerCase();
+    const isEn = langQuery === 'en' || (langQuery !== 'pt' && !acceptLang.startsWith('pt') && langQuery.length > 0);
+
+    if (isEn) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      return res.redirect(302, ADSTERRA_SMARTLINK);
+    }
+
     const promo = shopeeManager.getHourlyStorePromo();
     const targetUrl = promo && promo.link ? promo.link : 'https://s.shopee.com.br/BU6Bod6Sw';
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');

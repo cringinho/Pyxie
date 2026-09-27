@@ -530,23 +530,19 @@ function buildModularHelpComponents(currentModuleId = 'todos', userId = '', sour
 
   const selectRow = new ActionRowBuilder().addComponents(selectMenu);
 
-  const lang = getLanguage(ctx);
-  const isEn = lang === 'en';
-  const baseUrl = (process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org').replace(/\/$/, '');
-
   const buttonRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setLabel(t('help.btnInvite', ctx))
       .setStyle(ButtonStyle.Link)
-      .setURL(`${baseUrl}/invite`),
+      .setURL('http://pyxie.duckdns.org/invite'),
     new ButtonBuilder()
       .setLabel(t('help.btnWebsite', ctx))
       .setStyle(ButtonStyle.Link)
-      .setURL(`${baseUrl}?lang=${isEn ? 'en' : 'pt'}`),
+      .setURL('http://pyxie.duckdns.org'),
     new ButtonBuilder()
       .setLabel(t('help.btnWiki', ctx))
       .setStyle(ButtonStyle.Link)
-      .setURL(`${baseUrl}/wiki?lang=${isEn ? 'en' : 'pt'}`),
+      .setURL('http://pyxie.duckdns.org/wiki'),
     new ButtonBuilder()
       .setLabel(t('help.btnSupport', ctx))
       .setStyle(ButtonStyle.Link)

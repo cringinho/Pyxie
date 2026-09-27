@@ -10,10 +10,9 @@ const { WIKI } = require('./commandNames');
 const { getLanguage, t } = require('../utils/i18n');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 
-function getWikiWebUrl(source = null) {
+function getWikiWebUrl() {
   const base = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
-  const lang = getLanguage(source);
-  return `${base.replace(/\/$/, '')}/wiki?lang=${lang}`;
+  return `${base.replace(/\/$/, '')}/wiki`;
 }
 
 function buildWikiView(source = null, selectedTopic = null) {
@@ -96,7 +95,7 @@ function buildWikiView(source = null, selectedTopic = null) {
     new ButtonBuilder()
       .setLabel(t('wiki.btnOpenWeb', source))
       .setStyle(ButtonStyle.Link)
-      .setURL(getWikiWebUrl(source))
+      .setURL(getWikiWebUrl())
       .setEmoji('🌐')
   );
 

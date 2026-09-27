@@ -19,9 +19,9 @@ const ADMIN_PERMISSIONS = 8;
 const DEFAULT_BOT_ID = '1543650200718155897';
 const TOPGG_BOT_ID = '1453888365618270331';
 const COMMUNITY_SERVER_URL = 'https://disboard.org/pt-br/server/1453890868980482090';
-function getWebBonusUrl(isEn = false) {
+function getWebBonusUrl() {
   const base = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
-  return `${base.replace(/\/$/, '')}/bonus?lang=${isEn ? 'en' : 'pt'}`;
+  return `${base.replace(/\/$/, '')}/bonus`;
 }
 
 function getInviteUrl(clientId = null, permissions = RECOMMENDED_PERMISSIONS) {
@@ -63,7 +63,7 @@ function buildInviteComponents(clientId, isEn = false) {
       .setLabel(isEn ? 'Web Bonus (10s)' : 'Bônus Web (10s)')
       .setEmoji(getEmoji('GIFT'))
       .setStyle(ButtonStyle.Link)
-      .setURL(getWebBonusUrl(isEn))
+      .setURL(getWebBonusUrl())
   );
 
   return [row1, row2];
