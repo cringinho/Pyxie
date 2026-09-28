@@ -10,6 +10,7 @@ const { lockFilePath, isProcessAlive } = require('./src/utils/botUtils');
 const { reloadEmojiConfig } = require('./src/utils/appEmojis');
 const shopeeManager = require('./src/services/shopeeManager');
 const workSeederService = require('./src/services/workSeederService');
+const pinterestCatalogService = require('./src/services/pinterestCatalogService');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -363,6 +364,19 @@ app.get('/vote', (req, res) => {
 
 app.get('/wiki', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'wiki.html'));
+});
+
+// Feed dinâmico de catálogo para o Pinterest (CSV)
+app.get(['/pinterest-catalog.csv', '/catalog.csv', '/api/pinterest/catalog.csv'], (req, res) => {
+  try {
+    const csvData = pinterestCatalogService.generatePinterestCsv();
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.status(200).send('\uFEFF' + csvData);
+  } catch (err) {
+    console.error('Erro ao gerar feed do Pinterest:', err);
+    res.status(500).send('Erro ao gerar catálogo do Pinterest');
+  }
 });
 
 // 1. Healthcheck e status público
@@ -1563,6 +1577,7 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`Painel da Pyxie rodando em ${publicUrl}`);
   startBot();
   workSeederService.startScheduler();
+  pinterestCatalogService.syncPinterestCatalogFile();
 });
 
 server.on('clientError', (err, socket) => {

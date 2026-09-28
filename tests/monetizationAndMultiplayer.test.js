@@ -173,6 +173,15 @@ try {
   const pinterestFilePath = path.join(__dirname, '..', 'public', 'pinterest-8da8f2e95821ed9fa6a1b3fce231664f.html');
   assert.ok(fs.existsSync(pinterestFilePath), 'Arquivo de verificação HTML do Pinterest deve existir');
 
+  // 11. Validação de Catálogo Dinâmico do Pinterest (CSV)
+  const pinterestCatalogService = require('../src/services/pinterestCatalogService');
+  const catalogCsv = pinterestCatalogService.generatePinterestCsv();
+  assert.ok(catalogCsv.includes('id,title,description,link,image_link,price,availability'), 'CSV do Pinterest deve conter todos os cabeçalhos obrigatórios');
+  assert.ok(catalogCsv.includes('bosque_portao_penumbra'), 'CSV deve conter cenários do Bosque');
+  assert.ok(catalogCsv.includes('tarot_card_1'), 'CSV deve conter cartas de Tarot');
+  const catalogFilePath = path.join(__dirname, '..', 'public', 'pinterest-catalog.csv');
+  assert.ok(fs.existsSync(catalogFilePath), 'Arquivo public/pinterest-catalog.csv deve existir');
+
   console.log('Verificação de Top.gg, Trocas Seguras, Temas Visuais e Afiliados Shopee: OK');
 } finally {
   const cleanFiles = [
