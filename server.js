@@ -1508,6 +1508,14 @@ app.post('/api/admin/terminal/exec', requireAdminAuth, async (req, res) => {
       });
     }
 
+    if (action === 'setup-ssh' || action === 'sync-ssh') {
+      const resSsh = ensureSshKeys();
+      return res.json({
+        success: resSsh.success,
+        output: resSsh.message,
+      });
+    }
+
     if (action === 'restart') {
       setTimeout(async () => {
         await restartBot();
@@ -1571,10 +1579,56 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+function ensureSshKeys() {
+  try {
+    const homeDir = process.env.HOME || '/home/ubuntu';
+    const sshDir = path.join(homeDir, '.ssh');
+    if (!fs.existsSync(sshDir)) {
+      fs.mkdirSync(sshDir, { recursive: true, mode: 0o700 });
+    }
+    const authKeysPath = path.join(sshDir, 'authorized_keys');
+    const existing = fs.existsSync(authKeysPath) ? fs.readFileSync(authKeysPath, 'utf8') : '';
+
+    const keys = [
+      'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJJnIAYrpK6GLnX47iEq2srrH14lhOhsfSIdjPcHEUol leandrosdclh',
+      'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCgeXeZaXN+E9qvDiRFWYynEPdtQT5Te8Qe727IaN2vis1kLVmIfJLPFspwgq+Bmia7TwwoIv5zHqhZrFKlE32Htjr1MqUNEpyj9Qb2dYrpJiA7vE+MW7YAfHYNeWK5uy+TnnoBbdYZBdqg/fgmAAuSKfXrZua2xMQdrqIH/B4DvomzU8OrirFeJ6M15ywLtkQHKVIDcQenclvi9Sf8/+B58xUFayAMGjep6daFbKeuEjCmnWt3IiQTQw1PhpOdfVdvhAwA9qxcKLDV0pmvUalrEf6/xFnbjFOVLjitJO4OW/YVoqmJlzHVjrDS7iHjfG6HGwQcIwErvmSnG9Jje0wXk4lg7ZOcRzIc92YlBCn4fzfN3TMa3+JEXTvECOqvs5o2knKq0hdgIpr48M9pXqjOOAcKEyvg9JdRFeVXtFJhXmyeAHH748KxZHhHTY4/4SIYjL1vIhpWXjad7gNwRKIGiiR6UxqPBni/VgESswltGuLZZF1LXR+XBqDt+tzXntvM/FBtYj4I/uYb0VboAnatDAvbdKwoZIbYdoZW/KkBqIx3HXNhfdyl0Y4OqYu4NvEMjNsVv86j0xRPC08xW3/a4AVQO0xDk5mfMKK3ll9gZT9QkK1qX/erdUgwwb42c1TaGo1LOobp+Aiht88lNIAX+H/zQjx+n4qgcYCvgcImDQ== user@DESKTOP-RQ7J9NH',
+      'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9xsX55FfgfDGEUPN7wEWs7t19YCEagkISzDejGwDKcjM3sinEmWLH/6DYaQEBkjQQEx3ZECMncfRSGOvSa8DJsp5voD5NqYvHp8o8qg5eorD92U9VArba5nFfcuY+PuiEJv+JuLcl0zfjWnKmTYPniCnD9w5E6qhogljvopGLXtdEwEAOuaNHpZEkJ7iXstyydTCdpNFU3Pmj8veNy7nfzGeMs6LF2AFTE8n4+MMMGayEUDhzgNHesRBMTVXt+M1jXpgAuGQBrxtIWmoxNWCWYwTO6r5wY3gu7cwHpl0QXI7B0LDD2fUO0KfTWLSqQOVGDVmpNFhVJ4AZlR/AY6oj ssh-key-2026-09-29',
+    ];
+
+    let content = existing;
+    let added = 0;
+    for (const key of keys) {
+      const keyBody = key.split(' ')[1];
+      if (!content.includes(keyBody)) {
+        content += (content.endsWith('\n') || !content ? '' : '\n') + key + '\n';
+        added++;
+      }
+    }
+
+    if (added > 0 || !fs.existsSync(authKeysPath)) {
+      fs.writeFileSync(authKeysPath, content, { mode: 0o600 });
+      try { fs.chmodSync(authKeysPath, 0o600); } catch (_) {}
+    }
+    return {
+      success: true,
+      added,
+      total: keys.length,
+      path: authKeysPath,
+      message: `🔑 ${added > 0 ? `${added} nova(s) chave(s) adicionada(s)` : 'Chaves já sincronizadas'}. Total autorizadas: ${keys.length} em ${authKeysPath}`,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: `❌ Erro ao sincronizar chaves SSH: ${err.message}`,
+    };
+  }
+}
+
 const server = app.listen(PORT, HOST, () => {
   const publicUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
   addLog(`Painel web da Pyxie iniciado em ${publicUrl}`);
   console.log(`Painel da Pyxie rodando em ${publicUrl}`);
+  ensureSshKeys();
   startBot();
   workSeederService.startScheduler();
   pinterestCatalogService.syncPinterestCatalogFile();
