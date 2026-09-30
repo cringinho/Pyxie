@@ -366,7 +366,7 @@ app.get('/wiki', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'wiki.html'));
 });
 
-// Feed dinâmico de catálogo para o Pinterest (CSV)
+// Feed dinâmico de catálogo para o Pinterest (CSV - Catálogo de Produtos / Shopping)
 app.get(['/pinterest-catalog.csv', '/catalog.csv', '/api/pinterest/catalog.csv'], (req, res) => {
   try {
     const csvData = pinterestCatalogService.generatePinterestCsv();
@@ -376,6 +376,32 @@ app.get(['/pinterest-catalog.csv', '/catalog.csv', '/api/pinterest/catalog.csv']
   } catch (err) {
     console.error('Erro ao gerar feed do Pinterest:', err);
     res.status(500).send('Erro ao gerar catálogo do Pinterest');
+  }
+});
+
+// Feed dinâmico para Criação de Pins em Massa (Bulk Create Geral: RPG, Tarot, Mascote e Shopee)
+app.get(['/pinterest-bulk-pins.csv', '/bulk-pins.csv', '/api/pinterest/bulk-pins.csv'], (req, res) => {
+  try {
+    const csvData = pinterestCatalogService.generatePinterestBulkPinsCsv();
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.status(200).send('\uFEFF' + csvData);
+  } catch (err) {
+    console.error('Erro ao gerar CSV de pins em massa:', err);
+    res.status(500).send('Erro ao gerar CSV de pins em massa');
+  }
+});
+
+// Feed dinâmico exclusivo para Criação de Pins em Massa de Produtos da Shopee (Afiliados)
+app.get(['/pinterest-shopee-bulk-pins.csv', '/shopee-bulk-pins.csv', '/api/pinterest/shopee-bulk-pins.csv'], (req, res) => {
+  try {
+    const csvData = pinterestCatalogService.generatePinterestShopeeBulkPinsCsv();
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.status(200).send('\uFEFF' + csvData);
+  } catch (err) {
+    console.error('Erro ao gerar CSV de pins da Shopee:', err);
+    res.status(500).send('Erro ao gerar CSV de pins da Shopee');
   }
 });
 
