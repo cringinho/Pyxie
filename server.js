@@ -11,6 +11,7 @@ const { reloadEmojiConfig } = require('./src/utils/appEmojis');
 const shopeeManager = require('./src/services/shopeeManager');
 const workSeederService = require('./src/services/workSeederService');
 const pinterestCatalogService = require('./src/services/pinterestCatalogService');
+const rssPinGenerator = require('./src/jobs/rssPinGenerator');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -366,7 +367,7 @@ app.get('/wiki', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'wiki.html'));
 });
 
-// Feed dinâmico de catálogo para o Pinterest (CSV - Catálogo de Produtos / Shopping)
+// Feed dinâmico de catálogo para o Pinterest (CSV)
 app.get(['/pinterest-catalog.csv', '/catalog.csv', '/api/pinterest/catalog.csv'], (req, res) => {
   try {
     const csvData = pinterestCatalogService.generatePinterestCsv();
@@ -379,7 +380,7 @@ app.get(['/pinterest-catalog.csv', '/catalog.csv', '/api/pinterest/catalog.csv']
   }
 });
 
-// Feed dinâmico para Criação de Pins em Massa (Bulk Create Geral: RPG, Tarot, Mascote e Shopee)
+// Feed dinâmico para Criação de Pins em Massa (Bulk Create Geral)
 app.get(['/pinterest-bulk-pins.csv', '/bulk-pins.csv', '/api/pinterest/bulk-pins.csv'], (req, res) => {
   try {
     const csvData = pinterestCatalogService.generatePinterestBulkPinsCsv();
@@ -402,6 +403,19 @@ app.get(['/pinterest-shopee-bulk-pins.csv', '/shopee-bulk-pins.csv', '/api/pinte
   } catch (err) {
     console.error('Erro ao gerar CSV de pins da Shopee:', err);
     res.status(500).send('Erro ao gerar CSV de pins da Shopee');
+  }
+});
+
+// Feed RSS 2.0 dinâmico para Auto-Pinning no Pinterest
+app.get(['/rss/pins.xml', '/rss/pins', '/rss/pinterest.xml', '/api/rss/pins.xml'], (req, res) => {
+  try {
+    const xmlData = rssPinGenerator.buildRssXml();
+    res.set('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=1800');
+    return res.status(200).send(xmlData);
+  } catch (err) {
+    console.error('Erro ao gerar feed RSS do Pinterest:', err);
+    return res.status(500).send('<?xml version="1.0" encoding="UTF-8"?><error>Erro ao gerar feed RSS do Pinterest</error>');
   }
 });
 
@@ -1658,6 +1672,7 @@ const server = app.listen(PORT, HOST, () => {
   startBot();
   workSeederService.startScheduler();
   pinterestCatalogService.syncPinterestCatalogFile();
+  rssPinGenerator.startRssScheduler();
 });
 
 server.on('clientError', (err, socket) => {
@@ -1669,6 +1684,7 @@ server.on('clientError', (err, socket) => {
 
 function handleServerShutdown() {
   workSeederService.stopScheduler();
+  rssPinGenerator.stopRssScheduler();
   flushSync();
   if (botProcess && !botProcess.killed) {
     try { botProcess.kill('SIGTERM'); } catch (_) {}
