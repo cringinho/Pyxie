@@ -71,7 +71,7 @@ if [ -f "src/data/generated_work_minigames.json" ]; then
   cp "src/data/generated_work_minigames.json" "${TEMP_MINIGAMES}"
 fi
 
-git checkout -- src/data/ 2>/dev/null || true
+git checkout -- src/data/ public/ 2>/dev/null || true
 
 echo "📥 Atualizando código via git pull..."
 git pull --ff-only origin main
@@ -85,9 +85,41 @@ fi
 [ -f "${BACKUP_DIR}/prefix.json" ] && cp -a "${BACKUP_DIR}/prefix.json" prefix.json
 [ -f "${BACKUP_DIR}/src_data/shopee.json" ] && cp -a "${BACKUP_DIR}/src_data/shopee.json" src/data/shopee.json
 [ -f "${BACKUP_DIR}/src_data/themeEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/themeEmojis.json" src/data/themeEmojis.json
-[ -f "${BACKUP_DIR}/src_data/emojis.json" ] && cp -a "${BACKUP_DIR}/src_data/emojis.json" src/data/emojis.json
+if [ -f "${BACKUP_DIR}/src_data/emojis.json" ]; then
+  node -e "
+    const fs = require('fs');
+    try {
+      const b = JSON.parse(fs.readFileSync(process.argv[1], 'utf8'));
+      const obsolete = ['phantom_coin', 'vigor_energy', 'boss_behemoth', 'relic_t1', 'relic_t2', 'relic_t3', 'relic_t4', 'relic_t5'];
+      obsolete.forEach(k => delete b[k]);
+      const cur = JSON.parse(fs.readFileSync('src/data/emojis.json', 'utf8'));
+      obsolete.forEach(k => delete cur[k]);
+      const merged = Object.assign({}, cur, b);
+      obsolete.forEach(k => delete merged[k]);
+      fs.writeFileSync('src/data/emojis.json', JSON.stringify(merged, null, 2));
+    } catch (e) {}
+  " "${BACKUP_DIR}/src_data/emojis.json" || true
+fi
 [ -f "${BACKUP_DIR}/src_data/discordAppEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/discordAppEmojis.json" src/data/discordAppEmojis.json
 cp -a "${BACKUP_DIR}/data/." data/
+rm -f data/gloom.json data/gloom.json.bak data/encounters.json data/world_boss.json data/stats.json.*.tmp
+if [ -f data/inventory.json ]; then
+  node -e "
+    const fs = require('fs');
+    try {
+      const inv = JSON.parse(fs.readFileSync('data/inventory.json', 'utf8'));
+      let changed = false;
+      for (const u of Object.keys(inv)) {
+        if (inv[u] && typeof inv[u] === 'object') {
+          for (const item of ['sela_cavalo', 'asas_fada', 'asas_grifo']) {
+            if (item in inv[u]) { delete inv[u][item]; changed = true; }
+          }
+        }
+      }
+      if (changed) fs.writeFileSync('data/inventory.json', JSON.stringify(inv, null, 2));
+    } catch (e) {}
+  " || true
+fi
 
 echo "🧪 Executando Quality Gate (npm test)..."
 if ! npm test; then
