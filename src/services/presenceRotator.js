@@ -11,9 +11,9 @@ const PRESENCE_ACTIVITIES = [
     state: 'Add me: pyxie.duckdns.org',
   },
   {
-    name: '10 Pixel Art Maps | /py-explore',
+    name: '78 Tarot Cards Album | /py-album',
     type: ActivityType.Watching,
-    state: 'Gloom Grove Procedural RPG',
+    state: 'Collect cards & achievements',
   },
   {
     name: '78 Canvas Tarot Cards | /py-tarot',
@@ -33,12 +33,12 @@ const PRESENCE_ACTIVITIES = [
   {
     name: 'Official Wiki ✦ pyxie.duckdns.org/wiki',
     type: ActivityType.Watching,
-    state: 'Guides, tiers & spirits',
+    state: 'Guides, economy & jobs',
   },
   {
-    name: 'Bosque da Penumbra ✦ /py-bosque',
+    name: 'Fun Minigames ✦ /py-coinflip',
     type: ActivityType.Playing,
-    state: '14 espíritos & Chefão 3.000 HP',
+    state: 'Jokenpô, Cookie & Coinflip',
   },
 ];
 

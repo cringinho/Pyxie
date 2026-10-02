@@ -46,14 +46,12 @@ reloadEmojiConfig();
 
 const KEY_TO_SLOT_MAP = {
   COIN: 'coins',
-  COIN_PURPLE: 'phantom_coin',
   MAGIC_BEAN: 'magic_bean',
   DIAMOND: 'shop_gem',
   CHEST: 'shop_chest',
   HEART: 'ship_heart',
   RING: 'marriage_ring',
   GIFT: 'daily_bonus',
-  ZAP: 'vigor_energy',
   CODING: 'work_career',
   TROPHY: 'ranking',
   CHECK: 'status_success',
@@ -94,7 +92,7 @@ const EMOJI_DEFINITIONS = {
 
   // Moedas & Economia
   COIN: { name: 'shineygoldcoinsi', aliases: ['moedinha', 'coin'], fallback: '🪙' },
-  COIN_PURPLE: { name: 'gifggpurplecoin5', aliases: ['phantom_coin', 'purplecoin'], fallback: '🪙' },
+  COIN_PURPLE: { name: 'gifggpurplecoin5', aliases: ['purple_coin', 'purplecoin'], fallback: '🪙' },
   MAGIC_BEAN: { name: 'peakmagicbean', aliases: ['feijao_magico', 'magic_bean'], fallback: '🌱' },
   DIAMOND: { name: 'diamante', aliases: ['diamond', '9862_holo_diamond'], fallback: '💎' },
   BAG: { name: 'a1backpack', aliases: ['mochila', 'backpack'], fallback: '🎒' },
@@ -104,8 +102,8 @@ const EMOJI_DEFINITIONS = {
   STAR: { name: 'pastelstarturn60', aliases: ['estrela', 'star', '8881shootingstars', '86300hangingstars'], fallback: '⭐' },
   CHEST: { name: 'bau', aliases: ['chest'], fallback: '<:chest:1551744119670575124>' },
 
-  // Bosque da Pyxie & RPG
-  TREE: { name: 'bosque', aliases: ['tree', 'arvore'], fallback: '<:tree:1551356435521339452>' },
+  // Natureza & Aventura
+  TREE: { name: 'arvore', aliases: ['tree', 'nature'], fallback: '<:tree:1551356435521339452>' },
   PORTAL: { name: 'mapa', aliases: ['map', 'portao'], fallback: '<:map:1551355962974273546>' },
   MAP: { name: 'mapa', aliases: ['map'], fallback: '<:map:1551355962974273546>' },
   GHOST: { name: 'pinkghost', aliases: ['fantasma', 'ghost'], fallback: '👻' },
@@ -126,7 +124,7 @@ const EMOJI_DEFINITIONS = {
   ROCKET: { name: 'slrocket', aliases: ['foguete', 'rocket'], fallback: '🚀' },
   MOON: { name: 'pixdreamsmooncha', aliases: ['lua', 'moon', '8144bluecrystalmoon', '8212crystalmoon', '68511catmoon'], fallback: '🌙' },
   FAIRY: { name: 'fairy', aliases: ['fada', 'fairybadge34', '6461strawberryfairybunny'], fallback: '🧚' },
-  MUSHROOM: { name: 'cogumelo', aliases: ['mushroom', 'explore'], fallback: '<:explore:1551356273918746724>' },
+  MUSHROOM: { name: 'cogumelo', aliases: ['mushroom'], fallback: '<:explore:1551356273918746724>' },
   ZOMBIE: { name: 'ardiscordzombie', aliases: ['zumbi', 'zombie'], fallback: '🧟' },
   BAT: { name: '6391purplebat', aliases: ['morcego', 'bat', 'battybk', '18726purplebat', '826348purplebat'], fallback: '🦇' },
   PURPLE_FLAME: { name: 'purpleflame', aliases: ['chama_roxa', 'purple_flame', 'pinkflame'], fallback: '🔥' },

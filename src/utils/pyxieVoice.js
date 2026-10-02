@@ -19,23 +19,23 @@ const PYXIE_FOOTER = 'Pyxie';
 const ROTATING_TIPS = {
   pt: [
     '💡 Dica: Use /py-daily todos os dias para acumular moedas e feijões mágicos.',
-    '💡 Dica: Negocie relíquias raras com outros jogadores usando /py-trade.',
+    '💡 Dica: Negocie joias e itens com outros jogadores usando /py-trade.',
     '💡 Dica: Você pode personalizar títulos e temas no seu /py-profile.',
-    '💡 Dica: No Bosque (/py-explore), espíritos recrutados concedem auras passivas.',
+    '💡 Dica: Complete seu álbum de 78 cartas de Tarot e resgate conquistas em /py-album.',
     '💡 Dica: Experimente o Tarot diário (/py-tarot) para prever seu dia.',
     '💡 Dica: Quebre o biscoito da sorte diário em /py-cookie para ganhar moedas.',
     '💡 Dica: Trabalhe diariamente em /py-work para subir na carreira.',
-    '💡 Dica: Relíquias não podem ser vendidas na loja, apenas trocadas.',
+    '💡 Dica: Calcule sua afinidade amorosa com seu par usando /py-ship.',
   ],
   en: [
     '💡 Tip: Use /py-daily every day to accumulate coins and magic beans.',
-    '💡 Tip: Trade rare relics with other players using /py-trade.',
+    '💡 Tip: Trade precious jewels and items with other players using /py-trade.',
     '💡 Tip: Customize your titles and visual themes in /py-profile.',
-    '💡 Tip: In the Grove (/py-explore), recruited spirits grant unique passive auras.',
+    '💡 Tip: Complete your 78-card Tarot album and claim achievements in /py-album.',
     '💡 Tip: Draw a daily Tarot reading (/py-tarot) to foresee your fortune.',
     '💡 Tip: Crack open your daily fortune cookie in /py-cookie for coins.',
     '💡 Tip: Complete shifts in /py-work to advance your professional career.',
-    '💡 Tip: Relics cannot be sold in the shop, only traded.',
+    '💡 Tip: Check your romance affinity with your special someone using /py-ship.',
   ],
 };
 

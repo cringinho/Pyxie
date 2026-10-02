@@ -16,27 +16,24 @@ function getWikiWebUrl() {
 }
 
 function buildWikiView(source = null, selectedTopic = null) {
-  const lang = getLanguage(source);
-  const isEn = lang === 'en';
-
   let title = t('wiki.title', source);
   let description = t('wiki.desc', source);
 
-  if (selectedTopic === 'bosque') {
-    title = t('wiki.topicBosqueTitle', source);
-    description = t('wiki.topicBosqueDesc', source);
-  } else if (selectedTopic === 'espectral' || selectedTopic === 'smt') {
-    title = t('wiki.topicSmtTitle', source);
-    description = t('wiki.topicSmtDesc', source);
-  } else if (selectedTopic === 'relics') {
-    title = t('wiki.topicRelicsTitle', source);
-    description = t('wiki.topicRelicsDesc', source);
-  } else if (selectedTopic === 'bestiary') {
-    title = t('wiki.topicBestiaryTitle', source);
-    description = t('wiki.topicBestiaryDesc', source);
-  } else if (selectedTopic === 'eco') {
+  if (selectedTopic === 'eco') {
     title = t('wiki.topicEcoTitle', source);
     description = t('wiki.topicEcoDesc', source);
+  } else if (selectedTopic === 'work') {
+    title = t('wiki.topicWorkTitle', source);
+    description = t('wiki.topicWorkDesc', source);
+  } else if (selectedTopic === 'tarot') {
+    title = t('wiki.topicTarotTitle', source);
+    description = t('wiki.topicTarotDesc', source);
+  } else if (selectedTopic === 'social') {
+    title = t('wiki.topicSocialTitle', source);
+    description = t('wiki.topicSocialDesc', source);
+  } else if (selectedTopic === 'games') {
+    title = t('wiki.topicGamesTitle', source);
+    description = t('wiki.topicGamesDesc', source);
   }
 
   const embed = new EmbedBuilder()
@@ -48,39 +45,39 @@ function buildWikiView(source = null, selectedTopic = null) {
 
   const selectOptions = [
     {
-      label: t('wiki.optBosque', source),
-      value: 'bosque',
-      description: t('wiki.optBosqueDesc', source).slice(0, 100),
-      emoji: '🌲',
-      default: selectedTopic === 'bosque',
-    },
-    {
-      label: t('wiki.optSmt', source),
-      value: 'espectral',
-      description: t('wiki.optSmtDesc', source).slice(0, 100),
-      emoji: '🧠',
-      default: selectedTopic === 'espectral' || selectedTopic === 'smt',
-    },
-    {
-      label: t('wiki.optRelics', source),
-      value: 'relics',
-      description: t('wiki.optRelicsDesc', source).slice(0, 100),
-      emoji: '🏺',
-      default: selectedTopic === 'relics',
-    },
-    {
-      label: t('wiki.optBestiary', source),
-      value: 'bestiary',
-      description: t('wiki.optBestiaryDesc', source).slice(0, 100),
-      emoji: '📜',
-      default: selectedTopic === 'bestiary',
-    },
-    {
       label: t('wiki.optEco', source),
       value: 'eco',
       description: t('wiki.optEcoDesc', source).slice(0, 100),
       emoji: '🪙',
       default: selectedTopic === 'eco',
+    },
+    {
+      label: t('wiki.optWork', source),
+      value: 'work',
+      description: t('wiki.optWorkDesc', source).slice(0, 100),
+      emoji: '💼',
+      default: selectedTopic === 'work',
+    },
+    {
+      label: t('wiki.optTarot', source),
+      value: 'tarot',
+      description: t('wiki.optTarotDesc', source).slice(0, 100),
+      emoji: '🔮',
+      default: selectedTopic === 'tarot',
+    },
+    {
+      label: t('wiki.optSocial', source),
+      value: 'social',
+      description: t('wiki.optSocialDesc', source).slice(0, 100),
+      emoji: '💍',
+      default: selectedTopic === 'social',
+    },
+    {
+      label: t('wiki.optGames', source),
+      value: 'games',
+      description: t('wiki.optGamesDesc', source).slice(0, 100),
+      emoji: '🎲',
+      default: selectedTopic === 'games',
     },
   ];
 
@@ -114,15 +111,15 @@ async function handleWikiInteraction(interaction) {
 
 module.exports = {
   name: WIKI,
-  aliases: ['wiki'],
+  aliases: ['wiki', 'py-wiki'],
   buildWikiView,
   isWikiInteraction,
   handleWikiInteraction,
   data: new SlashCommandBuilder()
     .setName(WIKI)
-    .setDescription('Open the official Pyxie and Gloom Realm encyclopedia and guide.')
+    .setDescription('Open the official Pyxie encyclopedia and systems guide.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Abre a enciclopédia e guia oficial da Pyxie e Bosque da Penumbra.',
+      'pt-BR': 'Abre a enciclopédia e guia oficial dos sistemas da Pyxie.',
     }),
   async executePrefix({ message }) {
     const view = buildWikiView(message);
@@ -133,4 +130,3 @@ module.exports = {
     await interaction.editReply(view);
   },
 };
-

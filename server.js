@@ -303,7 +303,6 @@ const OFFICIAL_APP_EMOJIS = {
 const SLOT_METADATA = {
   // 💰 Economia & Loja
   coins: { title: 'Moedas Gerais da Pyxie', fallback: '🪙', category: 'economy', themeKey: 'coins' },
-  phantom_coin: { title: 'Phantom Coins (Penumbra)', fallback: '👻', category: 'economy', themeKey: 'coins' },
   magic_bean: { title: 'Feijões Mágicos (Bônus & Loja)', fallback: '🌱', category: 'economy', themeKey: 'dailyBonus' },
   daily_bonus: { title: 'Bônus Diário & Recompensa Web', fallback: '🎁', category: 'economy', themeKey: 'dailyBonus' },
   weekend_bonus: { title: 'Bônus de Fim de Semana (2X)', fallback: '🔥', category: 'economy', themeKey: 'weekendBonus' },
@@ -311,17 +310,10 @@ const SLOT_METADATA = {
   shop_chest: { title: 'Baús & Lojinha da Pyxie', fallback: '📦', category: 'economy', themeKey: null },
   shop_gem: { title: 'Joias & Gemas Preciosas', fallback: '💎', category: 'economy', themeKey: null },
 
-  // 🔮 Santuário & RPG (Gloom Realm)
-  vigor_energy: { title: 'Energia & Stamina (Penumbra)', fallback: '⚡', category: 'gloom', themeKey: null },
-  tarot_card: { title: 'Carta de Tarot (Místico)', fallback: '🔮', category: 'gloom', themeKey: 'tarot' },
-  tarotAlbum: { title: 'Álbum de Tarot & Coleção', fallback: '📖', category: 'gloom', themeKey: 'tarotAlbum' },
-  grimorio: { title: 'Grimório & Alquimia', fallback: '📖', category: 'gloom', themeKey: 'grimorio' },
-  boss_behemoth: { title: 'Chefão Comunitário da Penumbra', fallback: '👹', category: 'gloom', themeKey: null },
-  relic_t1: { title: 'Relíquia Tier 1 (Comum)', fallback: '🪨', category: 'gloom', themeKey: null },
-  relic_t2: { title: 'Relíquia Tier 2 (Incomum)', fallback: '🌿', category: 'gloom', themeKey: null },
-  relic_t3: { title: 'Relíquia Tier 3 (Rara)', fallback: '💎', category: 'gloom', themeKey: null },
-  relic_t4: { title: 'Relíquia Tier 4 (Épica)', fallback: '🔮', category: 'gloom', themeKey: null },
-  relic_t5: { title: 'Relíquia Tier 5 (Lendária)', fallback: '👑', category: 'gloom', themeKey: null },
+  // 🔮 Místico & Tarot
+  tarot_card: { title: 'Carta de Tarot (Místico)', fallback: '🔮', category: 'tarot', themeKey: 'tarot' },
+  tarotAlbum: { title: 'Álbum de Tarot & Coleção', fallback: '📖', category: 'tarot', themeKey: 'tarotAlbum' },
+  grimorio: { title: 'Grimório & Alquimia', fallback: '📖', category: 'tarot', themeKey: 'grimorio' },
 
   // 💑 Social & Romance
   ship_heart: { title: 'Calculadora de Afinidade & Ship', fallback: '💖', category: 'social', themeKey: 'ship' },
@@ -815,7 +807,7 @@ app.get('/admin/emojis', async (req, res) => {
       <input type="text" id="searchInput" class="search-input" placeholder="🔍 Filtrar slots por nome (ex: coin, tarot, relic, ship)..." />
       <button class="cat-btn active" data-cat="all">Todos os Slots</button>
       <button class="cat-btn" data-cat="economy">💰 Economia & Loja</button>
-      <button class="cat-btn" data-cat="gloom">🔮 Santuário & RPG</button>
+      <button class="cat-btn" data-cat="tarot">🔮 Tarot & Místico</button>
       <button class="cat-btn" data-cat="social">💑 Social & Romance</button>
       <button class="cat-btn" data-cat="minigames">🎲 Jogos & Sorte</button>
       <button class="cat-btn" data-cat="system">⚙️ Sistema & Status</button>

@@ -35,8 +35,6 @@ const commands = [
   require('./dado'),
   require('./coinflip'),
   require('./admin'),
-  require('./explore'),
-  require('./grimorio'),
   require('./wiki'),
 ];
 

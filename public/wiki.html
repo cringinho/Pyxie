@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wiki Oficial • Pyxie & Bosque da Penumbra</title>
-  <meta name="description" content="Enciclopédia oficial do Bosque da Pyxie, Guia de Tiers, Matriz de Sintonia Espectral, Relíquias e Economia." />
+  <title>Wiki Oficial • Pyxie</title>
+  <meta name="description" content="Enciclopédia oficial da Pyxie: Economia & Moedinhas, 10 Carreiras com Minigames, Tarot dos 78 Arcanos, Social & Casamentos e Minigames Comunitários." />
   <!-- Pinterest Domain Verification -->
   <meta name="p:domain_verify" content="8da8f2e95821ed9fa6a1b3fce231664f" />
   <link rel="icon" href="https://cdn.discordapp.com/emojis/1548443951596306552.webp" />
@@ -746,11 +746,11 @@
     </a>
     <ul class="nav-links">
       <li><a href="/" data-i18n="navHome">Início</a></li>
-      <li><a href="#bosque" onclick="switchTab('bosque')" data-i18n="navBosque">Bosque</a></li>
-      <li><a href="#espectral" onclick="switchTab('espectral')" data-i18n="navEspectral">Sintonia Espectral</a></li>
-      <li><a href="#relics" onclick="switchTab('relics')" data-i18n="navRelics">Relíquias & Fusão</a></li>
-      <li><a href="#bestiary" onclick="switchTab('bestiary')" data-i18n="navBestiary">Bestiário</a></li>
       <li><a href="#eco" onclick="switchTab('eco')" data-i18n="navEco">Economia</a></li>
+      <li><a href="#work" onclick="switchTab('work')" data-i18n="navWork">Carreiras</a></li>
+      <li><a href="#tarot" onclick="switchTab('tarot')" data-i18n="navTarot">Tarot</a></li>
+      <li><a href="#social" onclick="switchTab('social')" data-i18n="navSocial">Social</a></li>
+      <li><a href="#games" onclick="switchTab('games')" data-i18n="navGames">Jogos</a></li>
     </ul>
     <div class="nav-actions">
       <button class="btn btn-lang" id="langToggle" onclick="toggleLanguage()">EN / PT</button>
@@ -760,17 +760,17 @@
 
   <!-- Hero Header -->
   <header class="hero">
-    <div class="hero-badge" data-i18n="heroBadge">📖 Enciclopédia & Guia Estratégico</div>
-    <h1 data-i18n="heroTitle">Crônicas do Bosque da Penumbra</h1>
-    <p data-i18n="heroDesc">Explore as mecânicas arcanas da Pyxie: grafo de 10 cenários, escalonamento por Tiers de perigo, Matriz de Sintonia Espectral, Fusão Arcana de Almas e economia de Phantom Coins.</p>
+    <div class="hero-badge" data-i18n="heroBadge">📖 Enciclopédia & Guia Oficial</div>
+    <h1 data-i18n="heroTitle">Enciclopédia Oficial da Pyxie</h1>
+    <p data-i18n="heroDesc">Conheça todos os módulos da Pyxie: Economia Viva com Moedinhas e Feijões, Carreiras interativas com minigames, Tarot canônico dos 78 Arcanos, Social e Diversão Comunitária.</p>
 
     <!-- Interactive Tab Buttons -->
     <div class="tabs-bar">
-      <button class="tab-btn active" onclick="switchTab('bosque')" id="tab-btn-bosque" data-i18n="tabBosque">🌲 Bosque & Cenários</button>
-      <button class="tab-btn" onclick="switchTab('espectral')" id="tab-btn-espectral" data-i18n="tabEspectral">🧠 Sintonia Espectral</button>
-      <button class="tab-btn" onclick="switchTab('relics')" id="tab-btn-relics" data-i18n="tabRelics">🏺 Relíquias, Forja & Fusão</button>
-      <button class="tab-btn" onclick="switchTab('bestiary')" id="tab-btn-bestiary" data-i18n="tabBestiary">📜 Bestiário da Penumbra</button>
-      <button class="tab-btn" onclick="switchTab('eco')" id="tab-btn-eco" data-i18n="tabEco">🪙 Economia & Chefão Mundial</button>
+      <button class="tab-btn active" onclick="switchTab('eco')" id="tab-btn-eco" data-i18n="tabEco">🪙 Economia & Moedas</button>
+      <button class="tab-btn" onclick="switchTab('work')" id="tab-btn-work" data-i18n="tabWork">💼 Carreiras & Minigames</button>
+      <button class="tab-btn" onclick="switchTab('tarot')" id="tab-btn-tarot" data-i18n="tabTarot">🔮 Tarot (78 Arcanos)</button>
+      <button class="tab-btn" onclick="switchTab('social')" id="tab-btn-social" data-i18n="tabSocial">💍 Social & Casamentos</button>
+      <button class="tab-btn" onclick="switchTab('games')" id="tab-btn-games" data-i18n="tabGames">🎲 Jogos & Diversão</button>
     </div>
   </header>
 
@@ -829,487 +829,187 @@
       </div>
     </div>
 
-    <!-- 1. Aba: Bosque & Cenários -->
-    <section id="tab-bosque" class="tab-content active">
+    <!-- 1. Aba: Economia & Moedas -->
+    <section id="tab-eco" class="tab-content active">
       <div class="grid-2">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">🌀 Portão da Penumbra</h3>
-            <span class="badge badge-t1">Tier 1 💀</span>
+            <h3 class="card-title">🪙 Moedinhas & Recompensas Diárias</h3>
+            <span class="badge badge-t1">Economia</span>
           </div>
-          <p data-i18n="locPortaoDesc">Ruínas esquecidas marcadas por arcos góticos e lanternas violetas que ardem sem combustível. Ponto de repouso seguro.</p>
-          <div class="card-meta">
-            <span>⚡ <strong>Perigo:</strong> Tier 1 • Ban de Falha Crítica: 30m</span>
-            <span>⚡ <strong>Perigo:</strong> Tier 1 💀 • Ban de Falha Crítica: 30m</span>
-            <span>🚶 <strong>Conexões:</strong> Floresta dos Sussurros, Cemitério de Espinhos</span>
-          </div>
+          <p data-i18n="wikiEcoCoinsDesc">As moedinhas são a moeda oficial da Pyxie. Resgate recompensas diárias com <code>/py-daily</code>, ganhe bônus em dobro aos fins de semana e colete bônus adicionais a cada 24 horas.</p>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">🌲 Floresta dos Sussurros</h3>
-            <span class="badge badge-t1">Tier 1 💀</span>
+            <h3 class="card-title">🌱 Feijões Mágicos</h3>
+            <span class="badge badge-t2">Raro</span>
           </div>
-          <p data-i18n="locFlorestaDesc">Árvores contorcidas com folhagem púrpura sussurram segredos e avisos fúteis na bruma eterna.</p>
-          <div class="card-meta">
-            <span>⚡ <strong>Perigo:</strong> Tier 1 • Ban de Falha Crítica: 30m</span>
-            <span>⚡ <strong>Perigo:</strong> Tier 1 💀 • Ban de Falha Crítica: 30m</span>
-            <span>🚶 <strong>Conexões:</strong> Portão da Penumbra, Cemitério de Espinhos, Pântano das Lágrimas</span>
-          </div>
+          <p data-i18n="wikiEcoBeansDesc">Recurso místico de alto valor. Obtido com 2% de chance em turnos de trabalho perfeitos ou através de eventos especiais da comunidade.</p>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">💀 Cemitério de Espinhos</h3>
-            <span class="badge badge-t2">Tier 2 💀💀</span>
+            <h3 class="card-title">🎒 Baús & Lojinha da Pyxie</h3>
+            <span class="badge badge-t3">Loja & Itens</span>
           </div>
-          <p data-i18n="locCemiterioDesc">Túmulos cobertos por espinhos que sangram seiva negra. Aparições vigiam cada passo do viajante.</p>
-          <div class="card-meta">
-            <span>⚡ <strong>Perigo:</strong> Tier 2 • Ban de Falha Crítica: 60m</span>
-            <span>⚡ <strong>Perigo:</strong> Tier 2 💀💀 • Ban de Falha Crítica: 60m</span>
-            <span>🚶 <strong>Conexões:</strong> Floresta dos Sussurros, Mausoléu Ancestral</span>
-          </div>
+          <p data-i18n="wikiEcoShopDesc">Consulte seu saldo com <code>/py-wallet</code> e inspecione sua mochila com <code>/py-inventory</code>. Abra baús de tesouro para ganhar moedas e joias preciosas.</p>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">🍄 Pântano das Lágrimas</h3>
-            <span class="badge badge-t2">Tier 2 💀💀</span>
+            <h3 class="card-title">🤝 Trocas Seguras entre Jogadores</h3>
+            <span class="badge badge-t1">Social</span>
           </div>
-          <p data-i18n="locPantanoDesc">Águas estagnadas e luminescentes onde almas afogadas refletem memórias de quem as encara.</p>
-          <div class="card-meta">
-            <span>⚡ <strong>Perigo:</strong> Tier 2 • Ban de Falha Crítica: 60m</span>
-            <span>⚡ <strong>Perigo:</strong> Tier 2 💀💀 • Ban de Falha Crítica: 60m</span>
-            <span>🚶 <strong>Conexões:</strong> Floresta dos Sussurros, Biblioteca Esquecida</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">📖 Biblioteca Esquecida</h3>
-            <span class="badge badge-t3">Tier 3 💀💀💀</span>
-          </div>
-          <p data-i18n="locBibliotecaDesc">Salões infinitos de estantes empoeiradas e tomos proibidos guardados por espectros intelectuais.</p>
-          <div class="card-meta">
-            <span>⚡ <strong>Perigo:</strong> Tier 3 • Ban de Falha Crítica: 90m</span>
-            <span>⚡ <strong>Perigo:</strong> Tier 3 💀💀💀 • Ban de Falha Crítica: 90m</span>
-            <span>🚶 <strong>Conexões:</strong> Pântano das Lágrimas, Ponte do Abismo</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">🦇 Mausoléu Ancestral</h3>
-            <span class="badge badge-t3">Tier 3 💀💀💀</span>
-          </div>
-          <p data-i18n="locMausoleuDesc">Criptas profundas de nobres antigos. Exige cuidado extremo e conhecimento das artes espectrais.</p>
-          <div class="card-meta">
-            <span>⚡ <strong>Perigo:</strong> Tier 3 • Ban de Falha Crítica: 90m</span>
-            <span>⚡ <strong>Perigo:</strong> Tier 3 💀💀💀 • Ban de Falha Crítica: 90m</span>
-            <span>🚶 <strong>Conexões:</strong> Cemitério de Espinhos, Catacumba do Sangue Roxo</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">➡️ Ponte do Abismo</h3>
-            <span class="badge badge-t4">Tier 4 💀💀💀💀</span>
-          </div>
-          <p data-i18n="locPonteDesc">Passarela frágil suspensa sobre o vácuo eterno. Exige ter explorado ao menos 3 cenários comuns.</p>
-          <div class="card-meta">
-            <span>⚡ <strong>Perigo:</strong> Tier 4 • Ban de Falha Crítica: 120m</span>
-            <span>⚡ <strong>Perigo:</strong> Tier 4 💀💀💀💀 • Ban de Falha Crítica: 120m</span>
-            <span>🔒 <strong>Requisito:</strong> Mínimo 3 salas visitadas</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">🧟 Catacumba do Sangue Roxo</h3>
-            <span class="badge badge-t4">Tier 4 💀💀💀💀</span>
-          </div>
-          <p data-i18n="locCatacumbaDesc">Canais subterrâneos onde corre sangue espectral aquecido por runas de sacrifício.</p>
-          <div class="card-meta">
-            <span>⚡ <strong>Perigo:</strong> Tier 4 • Ban de Falha Crítica: 120m</span>
-            <span>⚡ <strong>Perigo:</strong> Tier 4 💀💀💀💀 • Ban de Falha Crítica: 120m</span>
-            <span>🌊 <strong>Requisito:</strong> Maré da Lua Roxa ativa</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">🧚 Jardim das Fadas Negras</h3>
-            <span class="badge badge-t5">Tier 5 💀💀💀💀💀</span>
-          </div>
-          <p data-i18n="locJardimDesc">Rosas de vidro e espinhos venenosos protegidos por fadas caídas de olhar gélido.</p>
-          <div class="card-meta">
-            <span>⚡ <strong>Perigo:</strong> Tier 5 • Ban de Falha Crítica: 180m</span>
-            <span>⚡ <strong>Perigo:</strong> Tier 5 💀💀💀💀💀 • Ban de Falha Crítica: 180m</span>
-            <span>🔒 <strong>Requisito:</strong> Familiar Fada equipado ou Portal Místico</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">👑 Santuário da Touca Preta</h3>
-            <span class="badge badge-t5">Tier 5 💀💀💀💀💀</span>
-          </div>
-          <p data-i18n="locSantuarioDesc">O altar sagrado de Kuromi, onde as almas mais altivas e intransigentes desafiam o explorador.</p>
-          <div class="card-meta">
-            <span>⚡ <strong>Perigo:</strong> Tier 5 • Ban de Falha Crítica: 240m (4 Horas)</span>
-            <span>⚡ <strong>Perigo:</strong> Tier 5 💀💀💀💀💀 • Ban de Falha Crítica: 240m (4 Horas)</span>
-            <span data-i18n="locSantuarioReq">💀 <strong>Requisito:</strong> Chefão Derrotado (com sua participação) + Grimório com 3+ Espíritos + Relíquia Tier 4 ou 5</span>
-          </div>
+          <p data-i18n="wikiEcoTradeDesc">Negocie joias e itens diretamente com outros membros do servidor com o comando <code>/py-trade</code>, com confirmação bilateral de dois fatores.</p>
         </div>
       </div>
     </section>
 
-    <!-- 2. Aba: Matriz de Sintonia Espectral & Psicologia -->
-    <section id="tab-espectral" class="tab-content">
+    <!-- 2. Aba: Carreiras & Minigames -->
+    <section id="tab-work" class="tab-content">
       <div class="grid-2">
         <div class="card">
-          <h3 class="card-title">💢 Taxa de Desacato por Bajulação</h3>
-          <p data-i18n="smtDesacatoDesc">Entidades do tipo <strong>Orgulhoso</strong> e <strong>Sádico</strong> desprezam bajulação barata ou subserviência covarde. Escolher tons subservientes contra elas aplica <strong>-2 pontos imediatos</strong> e o demônio <strong>rouba de 100 a 300 Phantom Coins 👻</strong> da sua bolsa antes de te ejetar!</p>
+          <div class="card-header">
+            <h3 class="card-title">💼 10 Profissões Únicas</h3>
+            <span class="badge badge-t2">Carreiras</span>
+          </div>
+          <p data-i18n="wikiWorkProfessionsDesc">Escolha sua vocação com <code>/py-profession</code>: Programador, Alquimista, Chef de Cozinha, Detetive, Astrólogo, Jardineiro, Bardo, Barista, Designer ou Ferreiro.</p>
         </div>
-        <div class="card">
-          <h3 class="card-title">⏳ Pena de Hesitação</h3>
-          <p data-i18n="smtHesitacaoDesc">A partir do <strong>Tier 3</strong>, escolher 2 respostas neutras (0 pontos) irrita profundamente a criatura, acionando a <strong>Pena por Hesitação</strong> (-2 pontos automáticos e falha crítica imediata).</p>
-        </div>
-        <div class="card">
-          <h3 class="card-title">💸 Suborno de Resgate Extorsivo (Bailout)</h3>
-          <p data-i18n="smtBailoutDesc">Se na rodada final sua pontuação ficar a <strong>apenas 1 ponto da aprovação</strong>, o monstro não te ignora de imediato: ele oferece uma chance de comprar o pacto pelo <strong>triplo do pedágio base</strong>!</p>
-        </div>
-        <div class="card">
-          <h3 class="card-title">💀 Multa de Ejeção & Ban de Sala</h3>
-          <p data-i18n="smtMultaDesc">Qualquer <strong>Falha Crítica (-2)</strong> ejeta você sumariamente de volta ao Portão da Penumbra, aplica <strong>banimento temporário na sala (30m a 240m)</strong> e confisca <strong>10% de todas as suas Phantom Coins</strong>!</p>
-        </div>
-      </div>
 
-      <div class="table-container">
-        <h3 style="font-family: var(--font-title); margin-bottom: 12px; color: var(--purple-glow);" data-i18n="matrixTableTitle">📊 Matriz de Compatibilidade Psicológica da Penumbra</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Temperamento</th>
-              <th>Racional</th>
-              <th>Arrogante</th>
-              <th>Caótico</th>
-              <th>Empático</th>
-              <th>Bajulação</th>
-              <th>Submisso</th>
-              <th>Pragmático</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Caótico</strong></td>
-              <td class="negative">-1</td>
-              <td class="positive">+1</td>
-              <td class="positive">+2</td>
-              <td class="negative">-1</td>
-              <td class="negative">-2 💢</td>
-              <td class="negative">-1</td>
-              <td class="neutral">0</td>
-            </tr>
-            <tr>
-              <td><strong>Sádico</strong></td>
-              <td class="negative">-1</td>
-              <td class="positive">+1</td>
-              <td class="positive">+1</td>
-              <td class="negative">-2</td>
-              <td class="negative">-2 💢</td>
-              <td class="negative">-2 💢</td>
-              <td class="neutral">0</td>
-            </tr>
-            <tr>
-              <td><strong>Orgulhoso</strong></td>
-              <td class="positive">+1</td>
-              <td class="negative">-1</td>
-              <td class="negative">-1</td>
-              <td class="neutral">0</td>
-              <td class="negative">-2 💢</td>
-              <td class="negative">-2 💢</td>
-              <td class="positive">+2</td>
-            </tr>
-            <tr>
-              <td><strong>Melancólico</strong></td>
-              <td class="neutral">0</td>
-              <td class="negative">-2</td>
-              <td class="negative">-1</td>
-              <td class="positive">+2</td>
-              <td class="neutral">0</td>
-              <td class="positive">+1</td>
-              <td class="neutral">0</td>
-            </tr>
-            <tr>
-              <td><strong>Intelectual</strong></td>
-              <td class="positive">+2</td>
-              <td class="negative">-1</td>
-              <td class="negative">-2</td>
-              <td class="neutral">0</td>
-              <td class="negative">-1</td>
-              <td class="neutral">0</td>
-              <td class="positive">+1</td>
-            </tr>
-            <tr>
-              <td><strong>Ingênuo</strong></td>
-              <td class="neutral">0</td>
-              <td class="negative">-1</td>
-              <td class="positive">+1</td>
-              <td class="positive">+2</td>
-              <td class="positive">+1</td>
-              <td class="positive">+1</td>
-              <td class="neutral">0</td>
-            </tr>
-            <tr>
-              <td><strong>Cínico</strong></td>
-              <td class="positive">+1</td>
-              <td class="negative">-2</td>
-              <td class="positive">+1</td>
-              <td class="negative">-2</td>
-              <td class="negative">-2 💢</td>
-              <td class="negative">-1</td>
-              <td class="positive">+2</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">⏱️ Minigames Interativos de Trabalho</h3>
+            <span class="badge badge-t1">45 Segundos</span>
+          </div>
+          <p data-i18n="wikiWorkMinigameDesc">Trabalhe com <code>/py-work</code> para enfrentar desafios de múltipla escolha com 45s de tempo limite. Respostas certas garantem salário cheio e chances de Feijão Mágico!</p>
+        </div>
 
-    <!-- 3. Aba: Relíquias & Fusão -->
-    <section id="tab-relics" class="tab-content">
-      <div class="card" style="margin-bottom: 24px; border-color: rgba(244, 114, 182, 0.4); background: rgba(30, 15, 55, 0.85);">
-        <h3 class="card-title" style="color: #f472b6;">📜 Regras Arcanas: Comércio & Trocas de Relíquias</h3>
-        <p data-i18n="relicsTradeRuleDesc">🏺 <strong>Relíquias Sombrias não podem ser vendidas na loja!</strong> Por sua natureza misteriosa, elas são destinadas ao aprimoramento no Engenheiro, sacrifício na Fusão Arcana ou escambo direto com outros aventureiros via <code>/py-trade</code>.<br><br>🔨 <strong>Lojinha em Reformas Arcanas:</strong> O bazar convencional da Cringelândia está temporariamente fechado para expansão mágica do catálogo. Aventureiros devem focar em explorar o Bosque via <code>/py-explore</code>, trabalhar em suas profissões via <code>/py-work</code> e negociar diretamente!</p>
-      </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">📈 Progressão & Ranking Global</h3>
+            <span class="badge badge-t3">Ranking</span>
+          </div>
+          <p data-i18n="wikiWorkProgressionDesc">A cada expediente concluído com maestria você acumula turnos trabalhados e sobe nos rankings do servidor e global com <code>/py-ranking</code>.</p>
+        </div>
 
-      <div class="grid-2">
-        <div class="card">
-          <h3 class="card-title">🛠️ O Engenheiro de Relíquias</h3>
-          <p data-i18n="relicsEngDesc">Um artesão excêntrico com runas e solda violeta. Você pode aprimorar <strong>2 relíquias do mesmo tier</strong> para forjar uma relíquia de tier superior. Cuidado: falhas na forja destroem permanentemente os materiais sacrificados!</p>
-        </div>
-        <div class="card">
-          <h3 class="card-title">⚗️ Caldeirão de Fusão Arcana de Almas</h3>
-          <p data-i18n="relicsCauldronDesc">Através da antiga arte da Fusão Arcana de Almas, combine dois espíritos recrutados do seu Grimório para invocar entidades superiores com auras passivas de exploração (como recuperar energia mais rápido ou iluminar névoas seladas).</p>
-        </div>
-      </div>
-
-      <div class="grid-3">
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">Cristal de Bruma Roxa</h4>
-            <span class="badge badge-t1">Tier 1 💀</span>
+            <h3 class="card-title">🌐 Desafios 100% Bilíngues</h3>
+            <span class="badge badge-t1">PT-BR & EN</span>
           </div>
-          <p>Condensado das névoas de entrada. Usado em trocas simples e pequenas oferendas.</p>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">Rosa de Vidro Espinado</h4>
-            <span class="badge badge-t2">Tier 2 💀💀</span>
-          </div>
-          <p>Flor lapidada pelas lágrimas do pântano. Possui leve afinidade romântica e protetora.</p>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">Grimório de Cinzas</h4>
-            <span class="badge badge-t3">Tier 3 💀💀💀</span>
-          </div>
-          <p>Páginas queimadas contendo cânticos de pacto. Requisito frequente em subornos de Tier 3.</p>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">Cálice de Sangue Noturno</h4>
-            <span class="badge badge-t4">Tier 4 💀💀💀💀</span>
-          </div>
-          <p>Cálice de prata oxidada forjado nas catacumbas. Essencial para negociar com soberanos.</p>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">Coroa de Espinhos da Rainha</h4>
-            <span class="badge badge-t5">Tier 5 💀💀💀💀💀</span>
-          </div>
-          <p>A relíquia máxima da Penumbra. O tributo definitivo para fechar pactos lendários.</p>
+          <p data-i18n="wikiWorkBilingualDesc">Todos os minigames de carreira possuem desafios localizados de acordo com o idioma configurado no servidor ou perfil do usuário.</p>
         </div>
       </div>
     </section>
 
-    <!-- 4. Aba: Bestiário da Penumbra -->
-    <section id="tab-bestiary" class="tab-content">
-      <div class="grid-3">
+    <!-- 3. Aba: Tarot (78 Arcanos) -->
+    <section id="tab-tarot" class="tab-content">
+      <div class="grid-2">
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">👻 Espectro do Baixo Astral</h4>
-            <span class="badge badge-t1">Tier 1 💀</span>
+            <h3 class="card-title">🔮 78 Cartas Canônicas</h3>
+            <span class="badge badge-t3">Místico</span>
           </div>
-          <p>Um vulto triste envolto em brumas roxas que se alimenta do vazio cósmico existencial.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Aura da Apatia Rentável (+5% Phantom Coins)</span>
-          </div>
+          <p data-i18n="wikiTarotDeckDesc">O baralho completo da Pyxie conta com 22 Arcanos Maiores e 56 Arcanos Menores (Copas, Paus, Espadas e Ouros), cada uma com arte gerada via Canvas.</p>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">🪨 Gárgula Procrastinador</h4>
-            <span class="badge badge-t1">Tier 1 💀</span>
+            <h3 class="card-title">📖 Tiragem Diária & Interpretação</h3>
+            <span class="badge badge-t1">Oráculo</span>
           </div>
-          <p>Prefere fingir que é pedra para não ter que trabalhar ou atacar exploradores.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Inércia Protetora (10% chance de não gastar Vigor)</span>
-          </div>
+          <p data-i18n="wikiTarotDailyDesc">Tire sua carta do dia com <code>/py-tarot</code>. Descubra sua posição (Normal ou Invertida), conselho do oráculo, palavras-chave e significado profundo.</p>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">🧚 Fada Desencantada</h4>
-            <span class="badge badge-t1">Tier 1 💀</span>
+            <h3 class="card-title">🏆 Álbum de Colecionador & Conquistas</h3>
+            <span class="badge badge-t2">10 Conquistas</span>
           </div>
-          <p>Rímel borrado, asas púrpuras e sarcasmo afiado. Despreza fadas doces e coloridas.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Faro Obscuro (+5% chance de relíquias raras)</span>
-          </div>
+          <p data-i18n="wikiTarotAlbumDesc">Acompanhe sua coleção de cartas com <code>/py-album</code>. Complete marcos do álbum para desbloquear 10 conquistas especiais e ganhar recompensas em moedas!</p>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">🦇 Morcego do Shoegaze</h4>
-            <span class="badge badge-t1">Tier 1 💀</span>
+            <h3 class="card-title">🪙 Suborno do Destino</h3>
+            <span class="badge badge-t2">Mecânica</span>
           </div>
-          <p>Navega pelas cavernas sintonizando ecos de guitarra distorcida em tom menor.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Ecolocalização Sombria (Alerta contra armadilhas)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">📜 Corvo Poeta Nihilista</h4>
-            <span class="badge badge-t2">Tier 2 💀💀</span>
-          </div>
-          <p>Recita versos sobre a futilidade da existência enquanto observa túmulos góticos.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Riqueza dos Versos Tristes (+10% Phantom Coins)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">🎧 Banshee Descarregada</h4>
-            <span class="badge badge-t2">Tier 2 💀💀</span>
-          </div>
-          <p>Grita histericamente porque seu fone ficou sem bateria no meio da sua playlist triste.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Eco Melódico (+10% chance de relíquias raras)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">🐺 Lobisomem Introvertido</h4>
-            <span class="badge badge-t2">Tier 2 💀💀</span>
-          </div>
-          <p>Uiva baixinho no próprio quarto escuro para não chamar a atenção de ninguém.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Resiliência Silenciosa (Imunidade a névoa ácida)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">🎸 Esqueleto de All-Star</h4>
-            <span class="badge badge-t2">Tier 2 💀💀</span>
-          </div>
-          <p>Fã incondicional do rock dos anos 2000. Seus ossos doem de tanto bater cabeça.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Mochila de Rebeldia (+1 slot de familiar ativo)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">👑 Lorde da Apatia</h4>
-            <span class="badge badge-t3">Tier 3 💀💀💀</span>
-          </div>
-          <p>Soberano entediado que governa sobre montanhas de desilusão e drama humano.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Soberania da Serenidade (+20% Phantom Coins)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">🌌 Quimera da Madrugada</h4>
-            <span class="badge badge-t3">Tier 3 💀💀💀</span>
-          </div>
-          <p>Alimenta-se das preocupações e pensamentos das 3 da manhã que causam insônia.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Passagem Noturna (+15% chance de portais raros)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">⚔️ Cavaleiro da Névoa</h4>
-            <span class="badge badge-t3">Tier 3 💀💀💀</span>
-          </div>
-          <p>Guardião leal cujos votos silenciosos protegem os viajantes perdidos no abismo.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Baluarte Violeta (Absorve penalidades de dano)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">🥀 Súcubo do Tédio</h4>
-            <span class="badge badge-t3">Tier 3 💀💀💀</span>
-          </div>
-          <p>Oferece a doce tentação de nunca mais responder mensagens ou sair da cama.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Paz Profunda (Dobra itens colhidos nos Arquivos)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">❄️ Fênix de Cinzas Frias</h4>
-            <span class="badge badge-t4">Tier 4 💀💀💀💀</span>
-          </div>
-          <p>Renasce em chamas gélidas e violetas quando todo fio de esperança parece perdido.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Chama Eterna (+3 Vigor a cada troca de maré)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">🖤 Sombra Ancestral</h4>
-            <span class="badge badge-t5">Tier 5 💀💀💀💀💀</span>
-          </div>
-          <p>A mais antiga manifestação da Meia-Noite Eterna. Exige respeito absoluto.</p>
-          <div class="card-meta">
-            <span>✨ <strong>Aura:</strong> Domínio da Meia-Noite (+30% Phantom Coins geral)</span>
-          </div>
+          <p data-i18n="wikiTarotBribeDesc">Não gostou da sua carta? Pague um suborno em moedinhas para forçar o destino a sortear uma nova lâmina mística!</p>
         </div>
       </div>
     </section>
 
-    <!-- 5. Aba: Economia & Chefão Mundial -->
-    <section id="tab-eco" class="tab-content">
+    <!-- 4. Aba: Social & Casamentos -->
+    <section id="tab-social" class="tab-content">
       <div class="grid-2">
         <div class="card">
-          <h3 class="card-title">👻 Phantom Coins (Moedas Fantasma)</h3>
-          <p data-i18n="ecoCoinsDesc">A moeda corrente do outro lado. Obtida através de forrageamento, vitórias na negociação com aparições e investidas no Chefão. Usada para subornos, compra de relíquias com o mercador errante e pagamento de taxas de descarte.</p>
+          <div class="card-header">
+            <h3 class="card-title">💍 Casamento & Cerimônias</h3>
+            <span class="badge badge-t1">Romance</span>
+          </div>
+          <p data-i18n="wikiSocialMarryDesc">Peça seu par em casamento com <code>/py-marry</code>, celebre o amor no servidor e acompanhe o contador de dias de união no seu perfil.</p>
         </div>
+
         <div class="card">
-          <h3 class="card-title">⚡ Vigor e Ciclo de Energia</h3>
-          <p data-i18n="ecoStaminaDesc">Cada vasculhada consome 1 ponto de energia (máximo de 10). A energia regenera naturalmente a cada 6 minutos (10 pontos por hora). Criaturas de Tier 4 e 5 podem exigir drenagem punitiva de vigor como tributo de entrada.</p>
+          <div class="card-header">
+            <h3 class="card-title">💖 Calculadora de Afinidade (Ship)</h3>
+            <span class="badge badge-t2">Canvas</span>
+          </div>
+          <p data-i18n="wikiSocialShipDesc">Descubra a porcentagem de química entre dois usuários com <code>/py-ship</code>! Imagens exclusivas desenhadas em Canvas com vereditos divertidos.</p>
         </div>
+
         <div class="card">
-          <h3 class="card-title">💀 Chefão da Penumbra (World Boss)</h3>
-          <p data-i18n="ecoBossDesc">A cada 6 horas, um Colosso Ancestral desperta em uma sala aleatória do reino. Todos os jogadores do servidor compartilham a barra de vida do chefe. Cada explorador ganha 1 investida grátis por ciclo.</p>
+          <div class="card-header">
+            <h3 class="card-title">👤 Perfil de Aventureiro</h3>
+            <span class="badge badge-t3">Customização</span>
+          </div>
+          <p data-i18n="wikiSocialProfileDesc">Consulte sua ficha completa com <code>/py-profile</code>. Exiba títulos honoríficos, biografia personalizada, cargo profissional e badges mágicas.</p>
         </div>
+
         <div class="card">
-          <h3 class="card-title">📺 Investida Extra com Bônus Patrocinado</h3>
-          <p data-i18n="ecoBonusDesc">Caso já tenha usado sua investida gratuita, você pode assistir a um bônus patrocinado de 10 segundos no portal web oficial para desbloquear <strong>+1 Investida Imediata</strong> e <strong>+50 Phantom Coins 👻</strong>!</p>
+          <div class="card-header">
+            <h3 class="card-title">💔 Divórcio Pacífico</h3>
+            <span class="badge badge-t1">Social</span>
+          </div>
+          <p data-i18n="wikiSocialDivorceDesc">Se o relacionamento não vingar, use <code>/py-divorce</code> para formalizar a separação amigavelmente com apenas um clique.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Aba: Jogos & Diversão -->
+    <section id="tab-games" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🥠 Biscoito da Sorte</h3>
+            <span class="badge badge-t1">Diversão</span>
+          </div>
+          <p data-i18n="wikiGamesCookieDesc">Quebre um biscoito com <code>/py-cookie</code> para ler provérbios filosóficos, engraçados ou misteriosos selecionados para o seu momento.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🪙 Cara ou Coroa & Dados</h3>
+            <span class="badge badge-t1">Sorte</span>
+          </div>
+          <p data-i18n="wikiGamesLuckDesc">Resolva disputas e apostas rápidas no chat com <code>/py-coinflip</code> e rolagem de dados com <code>/py-dados</code> (d4 a d100).</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">✂️ Jokenpô Interativo</h3>
+            <span class="badge badge-t2">Desafio</span>
+          </div>
+          <p data-i18n="wikiGamesJokenpoDesc">Dispute partidas de Pedra, Papel e Tesoura contra a Pyxie ou outros membros da guilda com <code>/py-jokenpo</code>.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">❓ Quem é Mais Provável</h3>
+            <span class="badge badge-t3">Party Game</span>
+          </div>
+          <p data-i18n="wikiGamesLikelyDesc">Gere perguntas descontraídas para animar a chamada de voz ou o chat de texto com <code>/py-likely</code>.</p>
         </div>
       </div>
     </section>
@@ -1345,7 +1045,7 @@
         <span class="tip-title">Pyxie ✨</span>
         <span class="tip-badge" data-i18n="tipBadge">Dica Arcana</span>
       </div>
-      <p class="tip-text" data-i18n="tipText">Consulte as Crônicas do Bosque e confira nossos achadinhos temáticos na Shopee!</p>
+      <p class="tip-text" data-i18n="tipText">Consulte a Enciclopédia da Pyxie e confira nossos achadinhos na Shopee!</p>
       <div class="tip-actions">
         <a href="/bonus" class="tip-btn-primary" data-i18n="tipBtnBonus">Bônus Web ✨</a>
         <a href="/promo" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tipBtnShopee" data-hourly-promo="true">Achadinhos 🛍️</a>
@@ -1357,113 +1057,107 @@
     const I18N = {
       pt: {
         navHome: "Início",
-        navBosque: "Bosque",
-        navEspectral: "Sintonia Espectral",
-        navRelics: "Relíquias & Fusão",
-        navBestiary: "Bestiário",
         navEco: "Economia",
+        navWork: "Carreiras",
+        navTarot: "Tarot",
+        navSocial: "Social",
+        navGames: "Jogos",
         btnInvite: "Adicionar Bot",
-        heroBadge: "📖 Enciclopédia & Guia Estratégico",
-        heroTitle: "Crônicas do Bosque da Penumbra",
-        heroDesc: "Explore as mecânicas arcanas da Pyxie: grafo de 10 cenários, escalonamento por Tiers de perigo, Matriz de Sintonia Espectral, Fusão Arcana de Almas e economia de Phantom Coins.",
-        tabBosque: "🌲 Bosque & Cenários",
-        tabEspectral: "🧠 Sintonia Espectral",
-        tabRelics: "🏺 Relíquias, Forja & Fusão",
-        tabBestiary: "📜 Bestiário da Penumbra",
-        tabEco: "🪙 Economia & Chefão Mundial",
-        matrixTableTitle: "📊 Matriz de Compatibilidade Psicológica da Penumbra",
-        smtDesacatoDesc: "Entidades do tipo <strong>Orgulhoso</strong> e <strong>Sádico</strong> desprezam bajulação barata ou subserviência covarde. Escolher tons subservientes contra elas aplica <strong>-2 pontos imediatos</strong> e o demônio <strong>rouba de 100 a 300 Phantom Coins 👻</strong> da sua bolsa antes de te ejetar!",
-        smtHesitacaoDesc: "A partir do <strong>Tier 3</strong>, escolher 2 respostas neutras (0 pontos) irrita profundamente a criatura, acionando a <strong>Pena por Hesitação</strong> (-2 pontos automáticos e falha crítica imediata).",
-        smtBailoutDesc: "Se na rodada final sua pontuação ficar a <strong>apenas 1 ponto da aprovação</strong>, o monstro não te ignora de imediato: ele oferece uma chance de comprar o pacto pelo <strong>triplo do pedágio base</strong>!",
-        smtMultaDesc: "Qualquer <strong>Falha Crítica (-2)</strong> ejeta você sumariamente de volta ao Portão da Penumbra, aplica <strong>banimento temporário na sala (30m a 240m)</strong> e confisca <strong>10% de todas as suas Phantom Coins</strong>!",
-        relicsEngDesc: "Um artesão excêntrico com runas e solda violeta. Você pode aprimorar <strong>2 relíquias do mesmo tier</strong> para forjar uma relíquia de tier superior. Cuidado: falhas na forja destroem permanentemente os materiais sacrificados!",
-        relicsCauldronDesc: "Através da antiga arte da Fusão Arcana de Almas, combine dois espíritos recrutados do seu Grimório para invocar entidades superiores com auras passivas de exploração (como recuperar energia mais rápido ou iluminar névoas seladas).",
-        ecoCoinsDesc: "A moeda corrente do outro lado. Obtida através de forrageamento, vitórias na negociação com aparições e investidas no Chefão. Usada para subornos, compra de relíquias com o mercador errante e pagamento de taxas de descarte.",
-        ecoStaminaDesc: "Cada vasculhada consome 1 ponto de energia (máximo de 10). A energia regenera naturalmente a cada 6 minutos (10 pontos por hora). Criaturas de Tier 4 e 5 podem exigir drenagem punitiva de vigor como tributo de entrada.",
-        ecoBossDesc: "A cada 6 horas, um Colosso Ancestral desperta em uma sala aleatória do reino. Todos os jogadores do servidor compartilham a barra de vida do chefe. Cada explorador ganha 1 investida grátis por ciclo.",
-        ecoBonusDesc: "Caso já tenha usado sua investida gratuita, você pode assistir a um bônus patrocinado de 10 segundos no portal web oficial para desbloquear <strong>+1 Investida Imediata</strong> e <strong>+50 Phantom Coins 👻</strong>!",
-        locSantuarioReq: "💀 <strong>Requisito:</strong> Chefão Derrotado (com sua participação) + Grimório com 3+ Espíritos + Relíquia Tier 4 ou 5",
-        promoTitle: "Apoie a Pyxie & Ganhe Bônus",
-        promoDesc: "Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!",
-        promoBtn: "Apoiar ✦",
+        heroBadge: "📖 Enciclopédia & Guia Oficial",
+        heroTitle: "Enciclopédia Oficial da Pyxie",
+        heroDesc: "Conheça todos os módulos da Pyxie: Economia Viva com Moedinhas e Feijões, Carreiras interativas com minigames, Tarot canônico dos 78 Arcanos, Social e Diversão Comunitária.",
+        tabEco: "🪙 Economia & Moedas",
+        tabWork: "💼 Carreiras & Minigames",
+        tabTarot: "🔮 Tarot (78 Arcanos)",
+        tabSocial: "💍 Social & Casamentos",
+        tabGames: "🎲 Jogos & Diversão",
         bannerTag: "Achadinhos da Pyxie",
         bannerTitle: "Vitrine Mágica de Pelúcias, Sanrio & Setup RPG",
         bannerDesc: "Descubra itens fofos e góticos curados para a comunidade com os melhores descontos na Shopee!",
         bannerBtn: "Conferir Ofertas ➔",
-        tipBadge: "Dica Arcana",
-        tipText: "Consulte as Crônicas do Bosque e confira nossos achadinhos temáticos na Shopee!",
+        promoTitle: "Apoie a Pyxie & Ganhe Bônus",
+        promoDesc: "Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!",
+        promoBtn: "Apoiar ✦",
+        tipBadge: "Dica Oficial",
+        tipText: "Consulte a Enciclopédia da Pyxie e confira nossos achadinhos na Shopee!",
         tipBtnBonus: "Bônus Web ✨",
         tipBtnShopee: "Achadinhos 🛍️",
-        footerCredits: "Pyxie • Bot Oficial de RPG & Comunidade • Desenvolvido com 💜 por zululuga",
+        footerCredits: "Pyxie • Bot Oficial de Economia, Tarot & Comunidade • Desenvolvido com 💜 por zululuga",
         footerBack: "Voltar à Página Principal",
         footerInvite: "Convidar para o Discord",
         footerPromo: "🛍️ Achadinhos Shopee",
-        locPortaoDesc: "O limiar de ferro oxidado e glicínias roxas que divide o mundo desperto da névoa viva.",
-        locFlorestaDesc: "Floresta de pinheiros retorcidos onde a névoa sussurra lembranças e segredos de antigos viajantes.",
-        locCemiterioDesc: "Lápides antigas cobertas de musgo violeta e espinhos sombrios. Silêncio sepulcral e respeito.",
-        locPantanoDesc: "Águas escuras e espelhos d'água onde florescem lírios luminosos sob o céu roxo perpétuo.",
-        locBibliotecaDesc: "Salões infinitos de estantes empoeiradas e tomos proibidos guardados por espectros intelectuais.",
-        locMausoleuDesc: "Criptas profundas de nobres antigos. Exige cuidado extremo e conhecimento das artes espectrais.",
-        locPonteDesc: "Passarela frágil suspensa sobre o vácuo eterno. Exige ter explorado ao menos 3 cenários comuns.",
-        locCatacumbaDesc: "Canais subterrâneos onde corre sangue espectral aquecido por runas de sacrifício.",
-        locJardimDesc: "Rosas de vidro e espinhos venenosos protegidos por fadas caídas de olhar gélido.",
-        locSantuarioDesc: "O altar sagrado de Kuromi, onde as almas mais altivas e intransigentes desafiam o explorador.",
-        relicsTradeRuleDesc: "🏺 <strong>Relíquias Sombrias não podem ser vendidas na loja!</strong> Por sua natureza misteriosa, elas são destinadas ao aprimoramento no Engenheiro, sacrifício na Fusão Arcana ou escambo direto com outros aventureiros via <code>/py-trade</code>.<br><br>🔨 <strong>Lojinha em Reformas Arcanas:</strong> O bazar convencional da Cringelândia está temporariamente fechado para expansão mágica do catálogo. Aventureiros devem focar em explorar o Bosque via <code>/py-explore</code>, trabalhar em suas profissões via <code>/py-work</code> e negociar diretamente!"
+        wikiEcoCoinsDesc: "As moedinhas são a moeda oficial da Pyxie. Resgate recompensas diárias com /py-daily, ganhe bônus em dobro aos fins de semana e colete bônus adicionais a cada 24 horas.",
+        wikiEcoBeansDesc: "Recurso místico de alto valor. Obtido com 2% de chance em turnos de trabalho perfeitos ou através de eventos especiais da comunidade.",
+        wikiEcoShopDesc: "Consulte seu saldo com /py-wallet e inspecione sua mochila com /py-inventory. Abra baús de tesouro para ganhar moedas e joias preciosas.",
+        wikiEcoTradeDesc: "Negocie joias e itens diretamente com outros membros do servidor com o comando /py-trade, com confirmação bilateral de dois fatores.",
+        wikiWorkProfessionsDesc: "Escolha sua vocação com /py-profession: Programador, Alquimista, Chef de Cozinha, Detetive, Astrólogo, Jardineiro, Bardo, Barista, Designer ou Ferreiro.",
+        wikiWorkMinigameDesc: "Trabalhe com /py-work para enfrentar desafios de múltipla escolha com 45s de tempo limite. Respostas certas garantem salário cheio e chances de Feijão Mágico!",
+        wikiWorkProgressionDesc: "A cada expediente concluído com maestria você acumula turnos trabalhados e sobe nos rankings do servidor e global com /py-ranking.",
+        wikiWorkBilingualDesc: "Todos os minigames de carreira possuem desafios localizados de acordo com o idioma configurado no servidor ou perfil do usuário.",
+        wikiTarotDeckDesc: "O baralho completo da Pyxie conta com 22 Arcanos Maiores e 56 Arcanos Menores (Copas, Paus, Espadas e Ouros), cada uma com arte gerada via Canvas.",
+        wikiTarotDailyDesc: "Tire sua carta do dia com /py-tarot. Descubra sua posição (Normal ou Invertida), conselho do oráculo, palavras-chave e significado profundo.",
+        wikiTarotAlbumDesc: "Acompanhe sua coleção de cartas com /py-album. Complete marcos do álbum para desbloquear 10 conquistas especiais e ganhar recompensas em moedas!",
+        wikiTarotBribeDesc: "Não gostou da sua carta? Pague um suborno em moedinhas para forçar o destino a sortear uma nova lâmina mística!",
+        wikiSocialMarryDesc: "Peça seu par em casamento com /py-marry, celebre o amor no servidor e acompanhe o contador de dias de união no seu perfil.",
+        wikiSocialShipDesc: "Descubra a porcentagem de química entre dois usuários com /py-ship! Imagens exclusivas desenhadas em Canvas com vereditos divertidos.",
+        wikiSocialProfileDesc: "Consulte sua ficha completa com /py-profile. Exiba títulos honoríficos, biografia personalizada, cargo profissional e badges mágicas.",
+        wikiSocialDivorceDesc: "Se o relacionamento não vingar, use /py-divorce para formalizar a separação amigavelmente com apenas um clique.",
+        wikiGamesCookieDesc: "Quebre um biscoito com /py-cookie para ler provérbios filosóficos, engraçados ou misteriosos selecionados para o seu momento.",
+        wikiGamesLuckDesc: "Resolva disputas e apostas rápidas no chat com /py-coinflip e rolagem de dados com /py-dados (d4 a d100).",
+        wikiGamesJokenpoDesc: "Dispute partidas de Pedra, Papel e Tesoura contra a Pyxie ou outros membros da guilda com /py-jokenpo.",
+        wikiGamesLikelyDesc: "Gere perguntas descontraídas para animar a chamada de voz ou o chat de texto com /py-likely."
       },
       en: {
         navHome: "Home",
-        navBosque: "Gloom Realm",
-        navEspectral: "Spectral Resonance",
-        navRelics: "Relics & Fusion",
-        navBestiary: "Bestiary",
         navEco: "Economy",
+        navWork: "Careers",
+        navTarot: "Tarot",
+        navSocial: "Social",
+        navGames: "Games",
         btnInvite: "Add Bot",
-        heroBadge: "📖 Encyclopedia & Strategy Guide",
-        heroTitle: "Chronicles of Pyxie's Gloom Realm",
-        heroDesc: "Master the arcane mechanics of Pyxie: 10-node directed map, danger tiers, Spectral Resonance psychological matrix, Arcane Soul Fusion, and Phantom Coins economy.",
-        tabBosque: "🌲 Realm & Locations",
-        tabEspectral: "🧠 Spectral Resonance",
-        tabRelics: "🏺 Relics, Forge & Fusion",
-        tabBestiary: "📜 Gloom Bestiary",
-        tabEco: "🪙 Economy & World Boss",
-        matrixTableTitle: "📊 Gloom Psychological Compatibility Matrix",
-        smtDesacatoDesc: "Entities of <strong>Proud</strong> and <strong>Sadistic</strong> temperaments despise cheap sycophancy. Choosing submissive replies triggers <strong>-2 immediate points</strong> and the demon <strong>steals 100 to 300 Phantom Coins 👻</strong> from your pouch before casting you out!",
-        smtHesitacaoDesc: "Starting from <strong>Tier 3</strong>, picking 2 neutral replies (0 pts) infuriates the entity, triggering the <strong>Hesitation Penalty</strong> (instant -2 critical failure).",
-        smtBailoutDesc: "If in the final round your score is <strong>just 1 point away from approval</strong>, the spirit offers a one-time buyout pact at <strong>triple the base tribute toll</strong>!",
-        smtMultaDesc: "Any <strong>Critical Failure (-2)</strong> expels you to the Gloom Gate, applies a <strong>temporary room ban (30m to 240m)</strong>, and deducts <strong>10% of your total Phantom Coins</strong>!",
-        relicsEngDesc: "An eccentric craftsman with runes and violet solder. You can upgrade <strong>2 relics of equal tier</strong> to forge a higher tier relic. Warning: forge failures permanently incinerate the sacrificed items!",
-        relicsCauldronDesc: "Through the ancient art of Arcane Soul Fusion, combine two recruited spirits from your Grimoire to summon superior entities with passive realm auras (such as accelerated stamina recovery).",
-        ecoCoinsDesc: "The currency of the beyond. Forage shadowy ruins, win psychological encounters, or strike the World Boss. Used for tributes, extortive bailouts, and relic purchasing.",
-        ecoStaminaDesc: "Each scavenging attempt uses 1 stamina point (max 10). Stamina recovers naturally every 6 minutes (10 per hour). Tier 4 and 5 entities may demand punitive stamina drains.",
-        ecoBossDesc: "Every 6 hours, an Ancient Behemoth awakens in a random room. All players share its health bar. Each explorer gets 1 free strike per cycle.",
-        ecoBonusDesc: "If you used your free strike, watch a sponsored 10-second web bonus to unlock <strong>+1 Immediate Extra Strike</strong> and <strong>+50 Phantom Coins 👻</strong>!",
-        locSantuarioReq: "💀 <strong>Requirement:</strong> Boss Defeated (with your participation) + Grimoire with 3+ Spirits + Tier 4 or 5 Relic",
-        promoTitle: "Support Pyxie & Earn Bonus",
-        promoDesc: "Support the Cringelândia community and unlock magical rewards!",
+        heroBadge: "📖 Official Encyclopedia & Guide",
+        heroTitle: "Official Pyxie Encyclopedia",
+        heroDesc: "Discover all Pyxie modules: Living Economy with Coins and Magic Beans, Interactive Careers with minigames, canonical 78-Arcana Tarot, Social and Community Games.",
+        tabEco: "🪙 Economy & Coins",
+        tabWork: "💼 Careers & Minigames",
+        tabTarot: "🔮 Tarot (78 Arcana)",
+        tabSocial: "💍 Social & Marriages",
+        tabGames: "🎲 Games & Fun",
+        bannerTag: "Pyxie Finds",
+        bannerTitle: "Magical Showcase: Plushes, Sanrio & Setup RPG",
+        bannerDesc: "Discover cute and goth community-curated items with special partner discounts!",
+        bannerBtn: "View Deals ➔",
+        promoTitle: "Support Pyxie & Earn Bonuses",
+        promoDesc: "Support the community and unlock magical rewards!",
         promoBtn: "Support ✦",
-        bannerTag: "Pyxie's Finds",
-        bannerTitle: "Magical Showcase of Plushies, Sanrio & RPG Setup",
-        bannerDesc: "Discover cute & goth items curated for the community with best deals on Shopee!",
-        bannerBtn: "Check Deals ➔",
-        tipBadge: "Arcane Tip",
-        tipText: "Check the Grove Chronicles and claim special web rewards and partner deals!",
+        tipBadge: "Official Tip",
+        tipText: "Explore Pyxie's Encyclopedia and discover curated deals!",
         tipBtnBonus: "Web Bonus ✨",
         tipBtnShopee: "Special Deals 🎁",
-        footerCredits: "Pyxie • Official RPG & Community Bot • Crafted with 💜 by zululuga",
+        footerCredits: "Pyxie • Official Economy, Tarot & Community Bot • Crafted with 💜 by zululuga",
         footerBack: "Back to Home",
         footerInvite: "Add to Discord",
         footerPromo: "🎁 Partner Deals",
-        locPortaoDesc: "An oxidized iron gateway draped in purple wisteria dividing the awake world from living mist.",
-        locFlorestaDesc: "Twisted pine forest where the fog whispers memories and secrets of former travelers.",
-        locCemiterioDesc: "Ancient tombstones overgrown with violet moss and dark thorns. Sepulchral silence and reverence.",
-        locPantanoDesc: "Murky waters and still reflective ponds where luminous lilies bloom under perpetual purple dusk.",
-        locBibliotecaDesc: "Endless aisles of dusty shelves and forbidden tomes guarded by intellectual specters.",
-        locMausoleuDesc: "Deep ancestral crypts of ancient nobility. Demands extreme caution and knowledge of spectral arts.",
-        locPonteDesc: "Fragile walkway suspended over eternal void. Requires having explored at least 3 common areas.",
-        locCatacumbaDesc: "Subterranean channels flowing with spectral blood heated by sacrifice runes.",
-        locJardimDesc: "Glass roses and venomous thorns guarded by fallen fairies with frozen gazes.",
-        locSantuarioDesc: "The sacred altar of Kuromi, where the most haughty and uncompromising souls challenge the explorer.",
-        relicsTradeRuleDesc: "🏺 <strong>Dark Relics cannot be sold in the shop!</strong> Due to their supernatural nature, they are strictly reserved for Engineer upgrades, Arcane Soul Fusion sacrifices, or direct peer-to-peer bartering via <code>/py-trade</code>.<br><br>🔨 <strong>Arcane Shop Renovations:</strong> The conventional boutique is temporarily closed while magical catalog upgrades are prepared. Explorers should delve into the Grove via <code>/py-explore</code>, complete shifts via <code>/py-work</code>, and trade directly!"
+        wikiEcoCoinsDesc: "Coins are Pyxie's official currency. Claim daily rewards with /py-daily, enjoy double weekend rewards, and collect bonus rewards every 24 hours.",
+        wikiEcoBeansDesc: "High-value mystical resource. Earned with a 2% chance on flawless work shifts or through special community events.",
+        wikiEcoShopDesc: "Check your balance with /py-wallet and inspect your backpack with /py-inventory. Open treasure chests for coins and precious jewels.",
+        wikiEcoTradeDesc: "Trade jewels and items directly with other server members using /py-trade, protected by two-factor bilateral confirmation.",
+        wikiWorkProfessionsDesc: "Choose your career path with /py-profession: Developer, Alchemist, Chef, Detective, Astrologer, Gardener, Bard, Barista, Designer, or Blacksmith.",
+        wikiWorkMinigameDesc: "Work shifts with /py-work featuring 45-second multiple choice challenges. Correct answers yield full salary and Magic Bean drop chances!",
+        wikiWorkProgressionDesc: "Every successful shift counts toward your career record and ranks you up on server and global leaderboards via /py-ranking.",
+        wikiWorkBilingualDesc: "All career minigames feature localized challenges matching the server or user language setting.",
+        wikiTarotDeckDesc: "The complete Pyxie deck features 22 Major Arcana and 56 Minor Arcana (Cups, Wands, Swords, Pentacles), each rendered with Canvas art.",
+        wikiTarotDailyDesc: "Draw your card of the day with /py-tarot. Discover upright or reversed positions, oracle advice, keywords, and in-depth meanings.",
+        wikiTarotAlbumDesc: "Track your card collection with /py-album. Reach deck milestones to unlock 10 special achievements and earn coin bounties!",
+        wikiTarotBribeDesc: "Unsatisfied with your fortune? Bribe destiny with coins to draw a fresh mystical arcana card!",
+        wikiSocialMarryDesc: "Propose to your partner with /py-marry, celebrate your bond in the server, and display your anniversary milestone on your profile.",
+        wikiSocialShipDesc: "Calculate love affinity between two users with /py-ship! Exclusive Canvas illustrations with fun matchmaking verdicts.",
+        wikiSocialProfileDesc: "View your full adventurer card with /py-profile. Showcase honorific titles, custom bio, chosen profession, and earned badges.",
+        wikiSocialDivorceDesc: "If things don't work out, use /py-divorce to peacefully end a marriage with a single click.",
+        wikiGamesCookieDesc: "Crack open a fortune cookie with /py-cookie for inspiring, witty, or enigmatic proverbs tailored for your day.",
+        wikiGamesLuckDesc: "Settle friendly bets quickly in chat with /py-coinflip and roll tabletop dice with /py-dados (d4 to d100).",
+        wikiGamesJokenpoDesc: "Challenge Pyxie or friends to Rock, Paper, Scissors matches with /py-jokenpo.",
+        wikiGamesLikelyDesc: "Spark lively voice call or chat debates with community party questions using /py-likely."
       }
     };
 
@@ -1523,7 +1217,6 @@
       const btn = document.getElementById('langToggle');
       if (btn) btn.textContent = currentLang === 'en' ? 'PT / EN' : 'EN / PT';
 
-      // Sincroniza links de retorno para a home ou bonus com o idioma atual
       document.querySelectorAll('a[href="/"], a[href^="/?"]').forEach(link => {
         link.setAttribute('href', `/?lang=${currentLang}`);
       });
@@ -1576,8 +1269,8 @@
 
       if (window.location.hash) {
         const h = window.location.hash.replace('#', '');
-        if (['bosque', 'espectral', 'smt', 'relics', 'bestiary', 'eco'].includes(h)) {
-          switchTab(h === 'smt' ? 'espectral' : h);
+        if (['eco', 'work', 'tarot', 'social', 'games'].includes(h)) {
+          switchTab(h);
         }
       }
 
@@ -1613,4 +1306,3 @@
   </script>
 </body>
 </html>
-

@@ -5,7 +5,7 @@ const COOKIE_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 horas
 const FORTUNES_PT = [
   // 25 Fortunas Positivas (+15 Moedas)
   { text: 'Um sopro de ventura dourada cruzou seu caminho. As estrelas abençoaram sua jornada!', type: 'positive' },
-  { text: 'Sua generosidade silenciosa finalmente foi notada pelos espíritos guardiões do bosque.', type: 'positive' },
+  { text: 'Sua generosidade silenciosa finalmente foi notada pelos espíritos guardiões do reino.', type: 'positive' },
   { text: 'A Pyxie encontrou uma sacola esquecida de moedas e decidiu que você merecia!', type: 'positive' },
   { text: 'A névoa se abriu revelando um tesouro cintilante sob o luar encantado.', type: 'positive' },
   { text: 'Um feitiço de prosperidade repousou suavemente sobre seus ombros hoje.', type: 'positive' },
@@ -68,7 +68,7 @@ const FORTUNES_EN = [
   { text: 'Your keen intuition guided your steps straight to an oasis of abundance.', type: 'positive' },
   { text: 'Fortune smiles upon those who wander with a light heart and an honest grin.', type: 'positive' },
   { text: 'A messenger raven brought lost celestial coins and dropped them in your hands.', type: 'positive' },
-  { text: 'Gloom blooms blossomed today in honor of your dedication and patience.', type: 'positive' },
+  { text: 'Midnight blooms blossomed today in honor of your dedication and patience.', type: 'positive' },
   { text: 'Even on the dimmest trails, Pyxie\'s lantern illuminates your steps with riches.', type: 'positive' },
   { text: 'You radiated so much positive aura that the cosmos returned it in kind.', type: 'positive' },
   { text: 'An ancient riddle was unraveled in your dreams, revealing hidden treasure.', type: 'positive' },
@@ -92,7 +92,7 @@ const FORTUNES_EN = [
   { text: 'You tripped over an enchanted root and a handful of coins tumbled down the hill.', type: 'negative' },
   { text: 'A cheeky raven pecked your wallet and flew away laughing with some shiny coins.', type: 'negative' },
   { text: 'Good fortune decided to take a heavy nap today. Watch your step carefully!', type: 'negative' },
-  { text: 'A sour rain of gloom drizzled over your belongings, eroding some of your savings.', type: 'negative' },
+  { text: 'A sour rain of bad luck drizzled over your belongings, eroding some of your savings.', type: 'negative' },
   { text: 'You purchased an expired potion from a charlatan goblin. What a waste of coins!', type: 'negative' },
   { text: 'Pyxie demanded a mischief tribute so she wouldn\'t tangle your hair in your sleep.', type: 'negative' },
   { text: 'A mocking specter swooped through and dropped your coin pouch down a grate.', type: 'negative' },

@@ -6,240 +6,100 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require('discord.js');
-const { getUserInventory, getItemDefinition, sellItem, openChest, useTravelItem, formatItemEffects } = require('../services/inventory');
-const { getGloomUser, RELICS, sellRelic } = require('../services/gloomRealm');
+const { getUserInventory, getItemDefinition, sellItem, openChest, formatItemEffects } = require('../services/inventory');
 const { getEmoji } = require('../utils/appEmojis');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { formatCoins, getLanguage, t } = require('../utils/i18n');
 const { INVENTORY } = require('./commandNames');
 
-function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = null, currentTab = 'social') {
+function buildInventoryEmbed(userId, userTag, selectedItemId = null, source = null) {
   const lang = getLanguage(source);
   const isEn = lang === 'en';
   const inv = getUserInventory(userId);
-  const gUser = getGloomUser(userId);
 
-  const socialEntries = Object.entries(inv).filter(([, count]) => count > 0);
-  const relicEntries = Object.entries(gUser.inventory || {}).filter(([, count]) => count > 0);
-
+  const entries = Object.entries(inv).filter(([, count]) => count > 0);
   const descSections = [];
 
-  // 1. Aba: Bosque & Relíquias (Módulo do Minigame)
-  if (currentTab === 'bosque') {
-    const relicLines = [];
-    if (relicEntries.length === 0) {
-      relicLines.push(t('inventory.emptyRelics', source));
-    } else {
-      for (let tier = 1; tier <= 5; tier++) {
-        const tierItems = relicEntries.filter(([id]) => (RELICS[id]?.tier || 1) === tier);
-        if (tierItems.length > 0) {
-          relicLines.push(`**⭐ Tier ${tier}:**`);
-          for (const [relicId, count] of tierItems) {
-            const rDef = RELICS[relicId];
-            const isSelected = relicId === selectedItemId;
-            const pointer = isSelected ? '👉 ' : '';
-            const rName = rDef ? (isEn ? rDef.name.en : rDef.name.pt) : relicId;
-            const rDesc = rDef ? (isEn ? rDef.desc.en : rDef.desc.pt) : '';
-            relicLines.push(`> • ${pointer}🏺 **${rName}** (x${count})\n>   *« ${rDesc} »*`);
-          }
-        }
-      }
-    }
+  const itemsLines = entries.length === 0
+    ? [t('inventory.emptyBackpack', source)]
+    : entries.map(([itemId, count]) => {
+        const item = getItemDefinition(itemId);
+        if (!item) return `> • \`${itemId}\`: **${count}x**`;
+        const isSelected = item.id === selectedItemId;
+        const pointer = isSelected ? '👉 ' : '';
+        const fxText = formatItemEffects(item);
+        const fxLine = fxText ? `\n> 📊 **${t('inventory.effect', source)}:** ${fxText}` : '';
+        return `**${pointer}${item.emoji} ${item.name}** (x${count})\n> *${item.description}*${fxLine}\n> 🏷️ ${t('inventory.category', source)}: \`${item.category}\`  •  🪙 ${t('inventory.sellPrice', source)}: **${formatCoins(item.sellPrice || 0, source)}**`;
+      });
 
-    descSections.push([
-      t('inventory.relicsHeader', source),
-      t('inventory.phantomCoinsLabel', source, { coins: gUser.phantomCoins || 0 }),
-      '',
-      relicLines.join('\n'),
-    ].join('\n'));
+  descSections.push([
+    t('inventory.storedItemsHeader', source),
+    '',
+    itemsLines.join('\n\n'),
+  ].join('\n'));
 
-    if (relicEntries.length > 0) {
-      descSections.push(t('inventory.tipSelect', source));
-    }
-  } else {
-    // 2. Aba: Social & Baús (Módulo Social do Discord — Padrão)
-    const socialLines = socialEntries.length === 0
-      ? [t('inventory.emptyBackpack', source)]
-      : socialEntries.map(([itemId, count]) => {
-          const item = getItemDefinition(itemId);
-          if (!item) return `> • \`${itemId}\`: **${count}x**`;
-          const isSelected = item.id === selectedItemId;
-          const pointer = isSelected ? '👉 ' : '';
-          const fxText = formatItemEffects(item);
-          const fxLine = fxText ? `\n> 📊 **${t('inventory.effect', source)}:** ${fxText}` : '';
-          return `**${pointer}${item.emoji} ${item.name}** (x${count})\n> *${item.description}*${fxLine}\n> 🏷️ ${t('inventory.category', source)}: \`${item.category}\`  •  🪙 ${t('inventory.sellPrice', source)}: **${formatCoins(item.sellPrice || 0, source)}**`;
-        });
-
-    descSections.push([
-      t('inventory.storedItemsHeader', source),
-      '',
-      socialLines.join('\n\n'),
-    ].join('\n'));
-
-    if (socialEntries.length > 0) {
-      descSections.push(t('inventory.tipSelect', source));
-    }
+  if (entries.length > 0) {
+    descSections.push(t('inventory.tipSelect', source));
   }
 
   return new EmbedBuilder()
-    .setColor(currentTab === 'bosque' ? (PYXIE_COLORS.purple || '#8b5cf6') : (PYXIE_COLORS.magenta || '#e60067'))
+    .setColor(PYXIE_COLORS.magenta || '#e60067')
     .setTitle(t('inventory.backpackTitle', source, { user: userTag }))
     .setDescription(descSections.join('\n\n───────────────\n\n'))
-    .setFooter({ text: isEn ? 'Pyxie • Modular Backpack' : 'Pyxie • Mochila Modular' })
+    .setFooter({ text: isEn ? 'Pyxie • Backpack' : 'Pyxie • Mochila' })
     .setTimestamp();
 }
 
-function buildInventoryComponents(userId, selectedItemId = null, source = null, currentTab = 'social') {
-  const isEn = getLanguage(source) === 'en';
+function buildInventoryComponents(userId, selectedItemId = null, source = null) {
   const inv = getUserInventory(userId);
-  const gUser = getGloomUser(userId);
-  const socialEntries = Object.entries(inv).filter(([, count]) => count > 0);
-  const relicEntries = Object.entries(gUser.inventory || {}).filter(([, count]) => count > 0);
+  const entries = Object.entries(inv).filter(([, count]) => count > 0);
+  const components = [];
 
-  // Linha 1: Abas Modulares Otimizadas para Mobile (Apenas 2 botões grandes)
-  const tabRow = new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setCustomId(`inv_tab:social:${userId}`)
-      .setLabel(t('inventory.tabSocial', source))
-      .setEmoji(getEmoji('CHEST'))
-      .setStyle(currentTab === 'social' ? ButtonStyle.Primary : ButtonStyle.Secondary),
-    new ButtonBuilder()
-      .setCustomId(`inv_tab:bosque:${userId}`)
-      .setLabel(t('inventory.tabBosque', source))
-      .setEmoji(getEmoji('TREE'))
-      .setStyle(currentTab === 'bosque' ? ButtonStyle.Primary : ButtonStyle.Secondary)
-  );
+  if (entries.length > 0) {
+    const options = entries.slice(0, 25).map(([itemId, count]) => {
+      const item = getItemDefinition(itemId);
+      const name = item ? item.name : itemId;
+      const desc = item ? item.description : '';
+      return {
+        label: `${name} (x${count})`.slice(0, 100),
+        value: `${itemId}:item`,
+        description: desc.slice(0, 100) || undefined,
+        emoji: item?.emoji || '📦',
+        default: itemId === selectedItemId,
+      };
+    });
 
-  const components = [tabRow];
+    const selectMenu = new StringSelectMenuBuilder()
+      .setCustomId(`inv_select:${userId}`)
+      .setPlaceholder(t('inventory.selectItemPlaceholder', source))
+      .addOptions(options);
 
-  // Aba Bosque: Relíquias & Ações do Reino
-  if (currentTab === 'bosque') {
-    if (relicEntries.length > 0) {
-      const relicOptions = relicEntries.slice(0, 25).map(([relicId, count]) => {
-        const rDef = RELICS[relicId];
-        const rName = rDef ? (isEn ? rDef.name.en : rDef.name.pt) : relicId;
-        const rDesc = rDef ? (isEn ? rDef.desc.en : rDef.desc.pt) : '';
-        return {
-          label: `${rName} (x${count})`.slice(0, 100),
-          value: `${relicId}:bosque`,
-          description: (rDesc || 'Relíquia').slice(0, 100),
-          emoji: '🏺',
-          default: relicId === selectedItemId,
-        };
-      });
-
-      const relicSelectMenu = new StringSelectMenuBuilder()
-        .setCustomId(`inv_relic_select:${userId}`)
-        .setPlaceholder(t('inventory.selectRelicPlaceholder', source))
-        .addOptions(relicOptions);
-
-      const gloomActionRow = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId(`gloom:view:${userId}`)
-          .setLabel(isEn ? 'Explore Gloom Realm' : 'Explorar Bosque')
-          .setEmoji(getEmoji('PORTAL'))
-          .setStyle(ButtonStyle.Success),
-        new ButtonBuilder()
-          .setCustomId(`hub_tab:shop:${userId}`)
-          .setLabel(t('inventory.btnVisitShop', source))
-          .setEmoji('🛒')
-          .setStyle(ButtonStyle.Secondary)
-      );
-
-      components.push(new ActionRowBuilder().addComponents(relicSelectMenu), gloomActionRow);
-      return components;
-    }
-
-    const gloomRow = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId(`gloom:view:${userId}`)
-        .setLabel(isEn ? 'Explore Gloom Realm' : 'Explorar Bosque')
-        .setEmoji(getEmoji('PORTAL'))
-        .setStyle(ButtonStyle.Success),
-      new ButtonBuilder()
-        .setCustomId(`hub_tab:shop:${userId}`)
-        .setLabel(t('inventory.btnVisitShop', source))
-        .setEmoji('🛒')
-        .setStyle(ButtonStyle.Secondary)
-    );
-    components.push(gloomRow);
-    return components;
+    components.push(new ActionRowBuilder().addComponents(selectMenu));
   }
 
-  // Aba Social: Itens Normais, Baús e Bebidas
-  if (socialEntries.length === 0) {
-    const emptyRow = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId(`hub_tab:shop:${userId}`)
-        .setLabel(t('inventory.btnVisitShop', source))
-        .setEmoji('🛒')
-        .setStyle(ButtonStyle.Primary)
-    );
-    components.push(emptyRow);
-    return components;
-  }
-
-  const selectOptions = socialEntries.slice(0, 25).map(([itemId, count]) => {
-    const item = getItemDefinition(itemId);
-    return {
-      label: `${item ? item.name : itemId} (x${count})`.slice(0, 100),
-      value: `${itemId}:social`,
-      description: item ? (item.description || '').slice(0, 100) : `Quantidade: ${count}`,
-      emoji: item ? item.emoji : '📦',
-      default: itemId === selectedItemId,
-    };
-  });
-
-  const selectMenu = new StringSelectMenuBuilder()
-    .setCustomId(`inv_item_select:${userId}`)
-    .setPlaceholder(t('inventory.selectPlaceholder', source))
-    .addOptions(selectOptions);
+  const selectedDef = selectedItemId ? getItemDefinition(selectedItemId) : null;
+  const isChest = selectedDef?.effects?.isChest;
+  const canSell = selectedDef && (selectedDef.sellPrice || 0) > 0;
 
   const actionRow = new ActionRowBuilder();
 
-  if (selectedItemId) {
-    const item = getItemDefinition(selectedItemId);
-    const count = inv[selectedItemId] || 0;
-
-    if (item && count > 0) {
-      if (item.effects && item.effects.isChest) {
-        actionRow.addComponents(
-          new ButtonBuilder()
-            .setCustomId(`inv_open_chest:${selectedItemId}:social:${userId}`)
-            .setLabel(t('inventory.openChest', source, { name: item.name }))
-            .setEmoji('🔓')
-            .setStyle(ButtonStyle.Success)
-        );
-      }
-
-      if (item.effects && item.effects.isTravelBuff) {
-        actionRow.addComponents(
-          new ButtonBuilder()
-            .setCustomId(`inv_use_travel:${selectedItemId}:social:${userId}`)
-            .setLabel(isEn ? `Use ${item.name}` : `Usar ${item.name}`)
-            .setEmoji(item.emoji || '🐎')
-            .setStyle(ButtonStyle.Success)
-        );
-      }
-
-      if (item.sellPrice) {
-        actionRow.addComponents(
-          new ButtonBuilder()
-            .setCustomId(`inv_sell_item:${selectedItemId}:social:${userId}`)
-            .setLabel(t('inventory.sellOne', source, { coins: formatCoins(item.sellPrice, source) }))
-            .setEmoji('🪙')
-            .setStyle(ButtonStyle.Secondary)
-        );
-      }
-    }
-  } else {
+  if (isChest) {
     actionRow.addComponents(
       new ButtonBuilder()
-        .setCustomId(`inv_hint:${userId}`)
-        .setLabel(t('inventory.hintSelect', source))
-        .setEmoji('☝️')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true)
+        .setCustomId(`inv_open_chest:${selectedItemId}:${userId}`)
+        .setLabel(t('inventory.btnOpenChest', source))
+        .setEmoji(getEmoji('CHEST'))
+        .setStyle(ButtonStyle.Success)
+    );
+  }
+
+  if (canSell) {
+    actionRow.addComponents(
+      new ButtonBuilder()
+        .setCustomId(`inv_sell_item:${selectedItemId}:${userId}`)
+        .setLabel(t('inventory.btnSellOne', source))
+        .setEmoji(getEmoji('COIN'))
+        .setStyle(ButtonStyle.Danger)
     );
   }
 
@@ -248,172 +108,204 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null, 
       .setCustomId(`hub_tab:shop:${userId}`)
       .setLabel(t('inventory.btnVisitShop', source))
       .setEmoji('🛒')
-      .setStyle(ButtonStyle.Primary)
+      .setStyle(ButtonStyle.Secondary)
   );
 
-  components.push(new ActionRowBuilder().addComponents(selectMenu), actionRow);
+  components.push(actionRow);
   return components;
 }
 
-function isInventoryInteraction(interaction) {
-  if (!interaction.customId) return false;
-  return (
-    interaction.customId.startsWith('inv_tab') ||
-    interaction.customId.startsWith('inv_item_select') ||
-    interaction.customId.startsWith('inv_relic_select') ||
-    interaction.customId.startsWith('inv_open_chest') ||
-    interaction.customId.startsWith('inv_use_travel') ||
-    interaction.customId.startsWith('inv_sell_item') ||
-    interaction.customId.startsWith('inv_sell_relic')
-  );
-}
-
-async function handleInventoryInteraction(interaction) {
-  const parts = interaction.customId.split(':');
-  const action = parts[0];
-  const targetUserId = parts[parts.length - 1];
-
-  if (targetUserId && targetUserId !== interaction.user.id) {
-    return interaction.reply({
-      content: t('inventory.otherUserBackpack', interaction),
-      flags: 64,
-    });
-  }
-
-  const userId = interaction.user.id;
-  const userTag = interaction.user.displayName || interaction.user.username;
-  const isEn = getLanguage(interaction) === 'en';
-
-  // 1. Alternar Aba Modular (Social vs Bosque)
-  if (action === 'inv_tab') {
-    const selectedTab = parts[1] === 'bosque' ? 'bosque' : 'social';
-    const embed = buildInventoryEmbed(userId, userTag, null, interaction, selectedTab);
-    const components = buildInventoryComponents(userId, null, interaction, selectedTab);
-    return interaction.update({ embeds: [embed], components });
-  }
-
-  // 2. Selecionar Item social no menu
-  if (action === 'inv_item_select') {
-    const rawVal = interaction.values[0];
-    const [selectedItemId] = rawVal.split(':');
-    const embed = buildInventoryEmbed(userId, userTag, selectedItemId, interaction, 'social');
-    const components = buildInventoryComponents(userId, selectedItemId, interaction, 'social');
-    return interaction.update({ embeds: [embed], components });
-  }
-
-  // 2.1 Selecionar Relíquia no menu do Bosque
-  if (action === 'inv_relic_select') {
-    const rawVal = interaction.values[0];
-    const [selectedRelicId] = rawVal.split(':');
-    const embed = buildInventoryEmbed(userId, userTag, selectedRelicId, interaction, 'bosque');
-    const components = buildInventoryComponents(userId, selectedRelicId, interaction, 'bosque');
-    return interaction.update({ embeds: [embed], components });
-  }
-
-  // 3. Abrir Baú
-  if (action === 'inv_open_chest') {
-    const chestId = parts[1];
-    const currentTab = parts[2] === 'bosque' ? 'bosque' : 'social';
-    const openRes = openChest(userId, chestId);
-
-    if (!openRes.success) {
-      return interaction.reply({
-        content: t('common.error', interaction),
-        flags: 64,
-      });
-    }
-
-    const embed = buildInventoryEmbed(userId, userTag, null, interaction, currentTab);
-    const components = buildInventoryComponents(userId, null, interaction, currentTab);
-    const itemsWonStr = openRes.itemsWon.length > 0 ? ` + itens: ${openRes.itemsWon.join(', ')}` : '';
-
-    return interaction.update({
-      content: t('inventory.chestOpened', interaction, { coins: formatCoins(openRes.coinsWon, interaction), items: itemsWonStr }),
-      embeds: [embed],
-      components,
-    });
-  }
-
-  // 3.1 Usar Item de Montaria / Viagem Rápida
-  if (action === 'inv_use_travel') {
-    const itemId = parts[1];
-    const currentTab = parts[2] === 'bosque' ? 'bosque' : 'social';
-    const useRes = useTravelItem(userId, itemId);
-
-    if (!useRes.success) {
-      return interaction.reply({
-        content: t('common.error', interaction),
-        flags: 64,
-      });
-    }
-
-    const embed = buildInventoryEmbed(userId, userTag, null, interaction, currentTab);
-    const components = buildInventoryComponents(userId, null, interaction, currentTab);
-
-    return interaction.update({
-      content: t('inventory.travelBuffUsed', interaction, {
-        item: useRes.item.name,
-        hours: useRes.durationHours,
-      }),
-      embeds: [embed],
-      components,
-    });
-  }
-
-  // 4. Vender Item Social
-  if (action === 'inv_sell_item') {
-    const itemId = parts[1];
-    const currentTab = parts[2] === 'bosque' ? 'bosque' : 'social';
-    const sellRes = sellItem(userId, itemId, 1);
-
-    if (!sellRes.success) {
-      return interaction.reply({
-        content: `❌ ${sellRes.message || t('common.error', interaction)}`,
-        flags: 64,
-      });
-    }
-
-    const embed = buildInventoryEmbed(userId, userTag, null, interaction, currentTab);
-    const components = buildInventoryComponents(userId, null, interaction, currentTab);
-
-    return interaction.update({
-      content: t('inventory.soldSuccess', interaction, { item: sellRes.item.name, coins: formatCoins(sellRes.totalCoins, interaction) }),
-      embeds: [embed],
-      components,
-    });
-  }
-
-  // 5. Relíquias não podem ser vendidas
-  if (action === 'inv_sell_relic') {
-    return interaction.reply({
-      content: t('inventory.relicNoSell', interaction),
-      flags: 64,
-    });
-  }
-}
-
 module.exports = {
-  name: INVENTORY,
-  ephemeral: true,
-  aliases: ['inventory', 'inventario', 'py-inventory', 'py-inventario', 'mochila', 'py-mochila'],
-  buildInventoryEmbed,
-  buildInventoryComponents,
-  isInventoryInteraction,
-  handleInventoryInteraction,
   data: new SlashCommandBuilder()
     .setName(INVENTORY)
-    .setDescription('Open your modular backpack to filter items, relics, and chests.')
+    .setDescription('View and manage your backpack items, chests and gems')
     .setDescriptionLocalizations({
-      'pt-BR': 'Abre sua mochila modular para filtrar itens, relíquias e baús.',
+      'pt-BR': 'Veja e gerencie sua mochila, baús e joias',
     }),
-  async executePrefix({ message }) {
-    const embed = buildInventoryEmbed(message.author.id, message.author.displayName || message.author.username, null, message, 'social');
-    const components = buildInventoryComponents(message.author.id, null, message, 'social');
-    await message.reply({ embeds: [embed], components });
+  name: INVENTORY,
+  aliases: ['inventario', 'py-inventario', 'mochila', 'py-mochila', 'inv', 'py-inv'],
+  description: 'View and manage your backpack items, chests and gems',
+  category: 'loja',
+  buildInventoryEmbed,
+  buildInventoryComponents,
+
+  async execute(interaction) {
+    const userId = interaction.user.id;
+    const userTag = interaction.user.username;
+
+    const embed = buildInventoryEmbed(userId, userTag, null, interaction);
+    const components = buildInventoryComponents(userId, null, interaction);
+
+    const message = await interaction.reply({
+      embeds: [embed],
+      components,
+      fetchReply: true,
+    });
+
+    const collector = message.createMessageComponentCollector({
+      filter: (i) => i.user.id === userId,
+      time: 120000,
+    });
+
+    collector.on('collect', async (i) => {
+      try {
+        if (i.customId.startsWith('inv_select:')) {
+          const rawValue = i.values[0];
+          const [itemId] = rawValue.split(':');
+          const updatedEmbed = buildInventoryEmbed(userId, userTag, itemId, i);
+          const updatedComponents = buildInventoryComponents(userId, itemId, i);
+          await i.update({ embeds: [updatedEmbed], components: updatedComponents });
+          return;
+        }
+
+        if (i.customId.startsWith('inv_open_chest:')) {
+          const [, chestId] = i.customId.split(':');
+          const result = openChest(userId, chestId);
+          if (!result.success) {
+            await i.reply({ content: t('inventory.errorOpenChest', i), ephemeral: true });
+            return;
+          }
+
+          let rewardMsg = t('inventory.chestOpenedSuccess', i, {
+            chest: result.chest.name,
+            coins: formatCoins(result.coinsAwarded, i),
+          });
+          if (result.droppedItem) {
+            rewardMsg += `\n🎁 ${t('inventory.bonusItemFound', i, { item: `${result.droppedItem.emoji} ${result.droppedItem.name}` })}`;
+          }
+
+          const updatedEmbed = buildInventoryEmbed(userId, userTag, null, i);
+          const updatedComponents = buildInventoryComponents(userId, null, i);
+          await i.update({ embeds: [updatedEmbed], components: updatedComponents });
+          await i.followUp({ content: rewardMsg, ephemeral: true });
+          return;
+        }
+
+        if (i.customId.startsWith('inv_sell_item:')) {
+          const [, itemId] = i.customId.split(':');
+          const result = sellItem(userId, itemId, 1);
+          if (!result.success) {
+            await i.reply({ content: t('inventory.errorSellItem', i), ephemeral: true });
+            return;
+          }
+
+          const updatedEmbed = buildInventoryEmbed(userId, userTag, null, i);
+          const updatedComponents = buildInventoryComponents(userId, null, i);
+          await i.update({ embeds: [updatedEmbed], components: updatedComponents });
+          await i.followUp({
+            content: t('inventory.itemSoldSuccess', i, {
+              item: result.item.name,
+              coins: formatCoins(result.earned, i),
+            }),
+            ephemeral: true,
+          });
+          return;
+        }
+
+        if (i.customId.startsWith('hub_tab:shop:')) {
+          await i.reply({
+            content: `🛒 ${t('inventory.shopHint', i)}: </py-shop:0>`,
+            ephemeral: true,
+          });
+          return;
+        }
+      } catch (err) {
+        console.error('[Inventory Interaction Error]', err);
+      }
+    });
+
+    collector.on('end', async () => {
+      try {
+        await interaction.editReply({ components: [] });
+      } catch (_) {}
+    });
   },
-  async executeSlash({ interaction }) {
-    const embed = buildInventoryEmbed(interaction.user.id, interaction.user.displayName || interaction.user.username, null, interaction, 'social');
-    const components = buildInventoryComponents(interaction.user.id, null, interaction, 'social');
-    await interaction.editReply({ embeds: [embed], components });
+
+  async runPrefix(message, args) {
+    const userId = message.author.id;
+    const userTag = message.author.username;
+
+    const embed = buildInventoryEmbed(userId, userTag, null, message);
+    const components = buildInventoryComponents(userId, null, message);
+
+    const msg = await message.reply({ embeds: [embed], components });
+
+    const collector = msg.createMessageComponentCollector({
+      filter: (i) => i.user.id === userId,
+      time: 120000,
+    });
+
+    collector.on('collect', async (i) => {
+      try {
+        if (i.customId.startsWith('inv_select:')) {
+          const rawValue = i.values[0];
+          const [itemId] = rawValue.split(':');
+          const updatedEmbed = buildInventoryEmbed(userId, userTag, itemId, i);
+          const updatedComponents = buildInventoryComponents(userId, itemId, i);
+          await i.update({ embeds: [updatedEmbed], components: updatedComponents });
+          return;
+        }
+
+        if (i.customId.startsWith('inv_open_chest:')) {
+          const [, chestId] = i.customId.split(':');
+          const result = openChest(userId, chestId);
+          if (!result.success) {
+            await i.reply({ content: t('inventory.errorOpenChest', i), ephemeral: true });
+            return;
+          }
+
+          let rewardMsg = t('inventory.chestOpenedSuccess', i, {
+            chest: result.chest.name,
+            coins: formatCoins(result.coinsAwarded, i),
+          });
+          if (result.droppedItem) {
+            rewardMsg += `\n🎁 ${t('inventory.bonusItemFound', i, { item: `${result.droppedItem.emoji} ${result.droppedItem.name}` })}`;
+          }
+
+          const updatedEmbed = buildInventoryEmbed(userId, userTag, null, i);
+          const updatedComponents = buildInventoryComponents(userId, null, i);
+          await i.update({ embeds: [updatedEmbed], components: updatedComponents });
+          await i.followUp({ content: rewardMsg, ephemeral: true });
+          return;
+        }
+
+        if (i.customId.startsWith('inv_sell_item:')) {
+          const [, itemId] = i.customId.split(':');
+          const result = sellItem(userId, itemId, 1);
+          if (!result.success) {
+            await i.reply({ content: t('inventory.errorSellItem', i), ephemeral: true });
+            return;
+          }
+
+          const updatedEmbed = buildInventoryEmbed(userId, userTag, null, i);
+          const updatedComponents = buildInventoryComponents(userId, null, i);
+          await i.update({ embeds: [updatedEmbed], components: updatedComponents });
+          await i.followUp({
+            content: t('inventory.itemSoldSuccess', i, {
+              item: result.item.name,
+              coins: formatCoins(result.earned, i),
+            }),
+            ephemeral: true,
+          });
+          return;
+        }
+
+        if (i.customId.startsWith('hub_tab:shop:')) {
+          await i.reply({
+            content: `🛒 ${t('inventory.shopHint', i)}: py!loja`,
+            ephemeral: true,
+          });
+          return;
+        }
+      } catch (err) {
+        console.error('[Inventory Interaction Error]', err);
+      }
+    });
+
+    collector.on('end', async () => {
+      try {
+        await msg.edit({ components: [] });
+      } catch (_) {}
+    });
   },
 };

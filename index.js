@@ -29,7 +29,6 @@ const rankingCommand = require('./src/commands/ranking');
 const idiomaCommand = require('./src/commands/idioma');
 const jokenpoCommand = require('./src/commands/jokenpo');
 const likelyCommand = require('./src/commands/provavel');
-const exploreCommand = require('./src/commands/explore');
 const { syncApplicationEmojis } = require('./src/utils/appEmojis');
 const { registerAutomation, updateAutomation } = require('./src/services/automationSchedule');
 const { startPresenceRotator } = require('./src/services/presenceRotator');
@@ -145,14 +144,14 @@ async function sendStartupAnnouncement() {
       {
         name: '📚 Comandos em Destaque',
         value: [
-          '> 🌲 **/py-explore** — Aventure-se pelo Bosque Encantado e capture espíritos',
-          '> 📖 **/py-grimoire** — Gerencie familiares, auras e caldeirão de fusão',
+          '> 🔮 **/py-tarot** — Tire cartas de tarot com artes exclusivas',
+          '> 📖 **/py-album** — Colecione 78 arcanos e conquistas do baralho',
           '> 💼 **/py-work** — Cumpra expedientes diários e suba na carreira',
           '> 👤 **/py-profile** — Customize títulos, temas e biografia',
-          '> 🔮 **/py-tarot** — Tire cartas de tarot com artes exclusivas',
+          '> 🎲 **/py-coinflip** — Dispute cara ou coroa com apostas de moedinhas',
           '> 🤝 **/py-trade** — Negocie itens e moedas com outros membros',
           '> 🪙 **/py-daily** — Resgate moedas diárias e bônus patrocinado',
-          '> 🎒 **/py-inventory** — Visualize sua mochila, baús e relíquias',
+          '> 🎒 **/py-inventory** — Visualize sua mochila, baús e gemas',
           '> ❓ **/py-help** — Menu interativo com todos os comandos',
         ].join('\n'),
         inline: false,
@@ -438,7 +437,6 @@ client.on('guildCreate', async (guild) => {
             `🌐 **Default Language:** \`English\`.\n` +
             `You can change the server language anytime with </py-language:0> (or \`py!language\`).\n\n` +
             `✨ **Get Started:**\n` +
-            `> 🌲 </py-explore:0> — Adventure in **Pyxie's Grove**, negotiate with 14 spirits & battle the World Boss\n` +
             `> 💼 </py-work:0> — Choose from 10 professions and solve job shift minigames\n` +
             `> 🪙 </py-daily:0> — Claim your daily coins\n` +
             `> 🔮 </py-tarot:0> — Draw your illustrated daily Tarot card\n` +
@@ -447,7 +445,6 @@ client.on('guildCreate', async (guild) => {
             `🌐 **Idioma do Servidor:** \`Português (pt-BR)\`.\n` +
             `Altere a qualquer momento com </py-language:0>.\n\n` +
             `✨ **Comece agora:**\n` +
-            `> 🌲 </py-explore:0> — Explore o **Bosque da Pyxie**, negocie com espíritos e enfrente o Chefão\n` +
             `> 💼 </py-work:0> — Escolha uma profissão e trabalhe nos turnos\n` +
             `> 🪙 </py-daily:0> — Colete suas moedinhas diárias\n` +
             `> 🔮 </py-tarot:0> — Tire sua carta do Tarot\n` +
@@ -713,12 +710,6 @@ client.on('interactionCreate', async (interaction) => {
       return;
     }
 
-    if (typeof exploreCommand?.isGloomInteraction === 'function' && exploreCommand.isGloomInteraction(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await exploreCommand.handleGloomInteraction(interaction);
-      return;
-    }
 
     const wikiCommand = commandsByName.get('py-wiki');
     if (typeof wikiCommand?.isWikiInteraction === 'function' && wikiCommand.isWikiInteraction(interaction)) {

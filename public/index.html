@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord</title>
-  <meta name="description" content="Pyxie é uma fada mágica para o Discord com o Bosque da Pyxie (exploração em pixel art), 10 Carreiras com minigames técnicos, Economia Viva, Tarot dos 78 Arcanos e Diversão." />
-  <meta name="keywords" content="pyxie, bot discord, bot discord rpg, tarot discord, economia discord, bosque da penumbra, rpg discord bot, bot de empregos discord, cringelandia" />
+  <title>Pyxie • Bot Mágico de Economia, Tarot & Comunidade no Discord</title>
+  <meta name="description" content="Pyxie é uma fada mágica para o Discord com Economia Viva (moedinhas e feijões mágicos), 10 Carreiras com minigames práticos, Tarot dos 78 Arcanos em Canvas e Diversão comunitária." />
+  <meta name="keywords" content="pyxie, bot discord, tarot discord, economia discord, bot de empregos discord, minigames discord, cringelandia" />
   <meta name="author" content="Pyxie Team & Cringelândia" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://pyxie.duckdns.org/" />
@@ -20,8 +20,8 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://pyxie.duckdns.org/" />
   <meta property="og:title" content="Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord" />
-  <meta property="og:description" content="Explore o Bosque da Pyxie com 10 cenários em pixel art, 14 espíritos com negociações Atlus, 10 carreiras com minigames e Tarot dos 78 arcanos." />
-  <meta property="og:image" content="https://pyxie.duckdns.org/assets/locations/portao_penumbra.png" />
+  <meta property="og:description" content="Economia Viva com moedinhas e feijões mágicos, 10 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord." />
+  <meta property="og:image" content="https://pyxie.duckdns.org/assets/pyxie/pyxie_mascot.png" />
   <meta property="og:site_name" content="Pyxie Discord Bot" />
   <meta property="og:locale" content="pt_BR" />
   <meta property="og:locale:alternate" content="en_US" />
@@ -30,8 +30,8 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://pyxie.duckdns.org/" />
   <meta name="twitter:title" content="Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord" />
-  <meta name="twitter:description" content="Explore o Bosque da Pyxie com 10 cenários em pixel art, 14 espíritos com negociações Atlus, 10 carreiras com minigames e Tarot dos 78 arcanos." />
-  <meta name="twitter:image" content="https://pyxie.duckdns.org/assets/locations/portao_penumbra.png" />
+  <meta name="twitter:description" content="Economia Viva com moedinhas e feijões mágicos, 10 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord." />
+  <meta name="twitter:image" content="https://pyxie.duckdns.org/assets/pyxie/pyxie_mascot.png" />
 
   <!-- Schema.org JSON-LD Structured Data for Google Search -->
   <script type="application/ld+json">
@@ -57,10 +57,10 @@
           "price": "0",
           "priceCurrency": "USD"
         },
-        "description": "Fada mágica para o Discord com sistema de RPG e exploração procedural, 10 profissões com minigames de turno, 78 cartas de tarot em Canvas e economia viva com cofres e feijões mágicos.",
+        "description": "Fada mágica para o Discord com economia viva com moedinhas e feijões mágicos, 10 profissões com minigames de turno, 78 cartas de tarot em Canvas e entretenimento comunitário.",
         "url": "https://pyxie.duckdns.org/",
-        "image": "https://pyxie.duckdns.org/assets/locations/portao_penumbra.png",
-        "screenshot": "https://pyxie.duckdns.org/assets/locations/portao_penumbra.png",
+        "image": "https://pyxie.duckdns.org/assets/pyxie/pyxie_mascot.png",
+        "screenshot": "https://pyxie.duckdns.org/assets/pyxie/pyxie_mascot.png",
         "author": {
           "@type": "Organization",
           "name": "Cringelândia",
@@ -833,216 +833,6 @@
       line-height: 1.6;
     }
 
-    /* Section: Bosque da Pyxie */
-    .grove-section {
-      background: radial-gradient(circle at 50% 20%, rgba(88, 28, 135, 0.35) 0%, rgba(14, 7, 26, 0.9) 100%);
-      border: 1px solid rgba(192, 132, 252, 0.25);
-      border-radius: 30px;
-      padding: clamp(24px, 5vw, 50px) clamp(16px, 4vw, 34px);
-      margin-bottom: 85px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-    }
-
-    .grove-features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 18px;
-      margin-bottom: 38px;
-    }
-
-    .grove-feat-card {
-      background: rgba(10, 5, 20, 0.65);
-      border: 1px solid rgba(192, 132, 252, 0.18);
-      border-radius: 18px;
-      padding: 22px;
-      transition: all 0.25s ease;
-    }
-
-    .grove-feat-card:hover {
-      border-color: var(--purple-glow);
-      transform: translateY(-3px);
-      background: rgba(18, 9, 36, 0.85);
-      box-shadow: 0 8px 24px rgba(168, 85, 247, 0.2);
-    }
-
-    .grove-feat-title {
-      font-family: var(--font-title);
-      font-size: 1.12rem;
-      font-weight: 700;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .grove-feat-desc {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      line-height: 1.55;
-    }
-
-    /* Interactive Location Showcase */
-    .locations-showcase {
-      background: rgba(7, 4, 13, 0.75);
-      border: 1px solid var(--border-glass);
-      border-radius: 22px;
-      padding: clamp(16px, 3vw, 26px);
-    }
-
-    .showcase-header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 22px;
-    }
-
-    .showcase-title {
-      font-family: var(--font-title);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .loc-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      max-width: 100%;
-    }
-
-    .loc-pill {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-glass);
-      color: var(--text-muted);
-      padding: 7px 14px;
-      border-radius: 16px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: var(--font-body);
-      white-space: nowrap;
-    }
-
-    .loc-pill:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
-      border-color: var(--purple-glow);
-    }
-
-    .loc-pill.active {
-      background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
-      color: #fff;
-      border-color: transparent;
-      box-shadow: 0 4px 16px rgba(244, 63, 94, 0.4);
-    }
-
-    .location-viewer {
-      display: grid;
-      grid-template-columns: 1fr 1.25fr;
-      gap: 26px;
-      align-items: center;
-      background: rgba(18, 9, 36, 0.6);
-      border: 1px solid rgba(192, 132, 252, 0.18);
-      border-radius: 18px;
-      padding: 22px;
-    }
-
-    .location-img-wrap {
-      width: 100%;
-      height: 270px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 2px solid var(--border-glass);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .location-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      image-rendering: pixelated;
-      image-rendering: -moz-crisp-edges;
-      image-rendering: crisp-edges;
-      transition: transform 0.4s ease;
-    }
-
-    .location-img:hover {
-      transform: scale(1.04);
-    }
-
-    .location-info {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .loc-badge-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .loc-tier-badge {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 6px;
-      text-transform: uppercase;
-    }
-    .tier-1 { background: rgba(56, 189, 248, 0.18); color: var(--cyan-neon); border: 1px solid rgba(56, 189, 248, 0.35); }
-    .tier-2 { background: rgba(52, 211, 153, 0.18); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.35); }
-    .tier-3 { background: rgba(251, 191, 36, 0.18); color: var(--gold-accent); border: 1px solid rgba(251, 191, 36, 0.35); }
-    .tier-4 { background: rgba(244, 63, 94, 0.18); color: var(--pink-glow); border: 1px solid rgba(244, 63, 94, 0.35); }
-    .tier-5 { background: linear-gradient(135deg, rgba(244, 63, 94, 0.4), rgba(147, 51, 234, 0.4)); color: #fff; border: 1px solid var(--purple-glow); }
-
-    .loc-name {
-      font-family: var(--font-title);
-      font-size: clamp(1.3rem, 3vw, 1.6rem);
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .loc-desc {
-      color: var(--text-muted);
-      font-size: 0.94rem;
-      line-height: 1.6;
-    }
-
-    .loc-loot-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .loot-tag {
-      font-size: 0.78rem;
-      font-family: var(--font-mono);
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 6px;
-      padding: 4px 9px;
-      color: var(--text-white);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
     /* Commands Section */
     .catalog-section {
       margin-bottom: 85px;
@@ -1727,10 +1517,6 @@
           <img src="https://cdn.discordapp.com/emojis/1548444202621214840.gif" class="emoji-icon" alt="sparkles" />
           <span data-i18n-text="nav.features">Recursos</span>
         </a>
-        <a href="#bosque" class="nav-link">
-          <img src="https://cdn.discordapp.com/emojis/1548443941144109181.gif" class="emoji-icon" alt="grove" />
-          <span data-i18n-text="nav.grove">Bosque da Pyxie</span>
-        </a>
         <a href="/wiki" class="nav-link">
           <img src="https://cdn.discordapp.com/emojis/1551355882447704124.gif" class="emoji-icon" alt="wiki" />
           <span data-i18n-text="nav.wiki">Wiki Oficial</span>
@@ -1773,10 +1559,6 @@
       <img src="https://cdn.discordapp.com/emojis/1548444202621214840.gif" class="emoji-icon" alt="sparkles" />
       <span data-i18n-text="nav.features">Recursos</span>
     </a>
-    <a href="#bosque" class="nav-link" onclick="closeMobileMenu()">
-      <img src="https://cdn.discordapp.com/emojis/1548443941144109181.gif" class="emoji-icon" alt="grove" />
-      <span data-i18n-text="nav.grove">Bosque da Pyxie</span>
-    </a>
     <a href="/wiki" class="nav-link" onclick="closeMobileMenu()">
       <img src="https://cdn.discordapp.com/emojis/1551355882447704124.gif" class="emoji-icon" alt="wiki" />
       <span data-i18n-text="nav.wiki">Wiki Oficial</span>
@@ -1818,7 +1600,7 @@
       </h1>
 
       <p class="hero-subtitle" data-i18n="hero.subtitle">
-        Bosque Místico com 10 Cenários Pixel Art, Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.
+        Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames práticos, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.
       </p>
 
       <div class="hero-actions">
@@ -1939,15 +1721,6 @@
       </div>
 
       <div class="pillars-grid">
-        <div class="pillar-card">
-          <div class="pillar-top">
-            <div class="pillar-icon-pod">
-              <img src="https://cdn.discordapp.com/emojis/1548443941144109181.gif" class="emoji-icon-xl" alt="grove" />
-            </div>
-            <h3 class="pillar-title" data-i18n="pillars.p0Title">Bosque da Pyxie & RPG</h3>
-          </div>
-          <p class="pillar-text" data-i18n="pillars.p0Desc">Explore 10 cenários em pixel art 16-bit, negocie com 14 espíritos no estilo Atlus, faça fusão de almas no caldeirão e enfrente o Chefão Comunitário.</p>
-        </div>
 
         <div class="pillar-card">
           <div class="pillar-top">
@@ -1991,87 +1764,7 @@
       </div>
     </section>
 
-    <!-- Seção Dedicada: Bosque da Pyxie -->
-    <section id="bosque" class="grove-section">
-      <div class="section-header">
-        <div class="section-badge">
-          <img src="https://cdn.discordapp.com/emojis/1548443941144109181.gif" class="emoji-icon" alt="tree" />
-          <span data-i18n="grove.badge">Módulo de RPG & Exploração</span>
-        </div>
-        <h2 class="section-title" data-i18n="grove.title">Bosque da Pyxie (Pyxie's Grove)</h2>
-        <p class="section-desc" data-i18n="grove.desc">Um ecossistema completo de exploração procedural, negociação Atlus, alquimia de almas no caldeirão e batalhas comunitárias.</p>
-      </div>
-
-      <!-- 4 Pilares do Bosque -->
-      <div class="grove-features-grid">
-        <div class="grove-feat-card">
-          <h4 class="grove-feat-title">
-            <img src="https://cdn.discordapp.com/emojis/1551355962974273546.png" class="emoji-icon" alt="portal" />
-            <span data-i18n="grove.f0Title">10 Cenários em Grafo</span>
-          </h4>
-          <p class="grove-feat-desc" data-i18n="grove.f0Desc">Caminhe por 10 localidades góticas conectadas por nós direcionados, com rotas que abrem conforme ciclos de maré (6h) e chaves espectrais.</p>
-        </div>
-
-        <div class="grove-feat-card">
-          <h4 class="grove-feat-title">
-            <img src="https://cdn.discordapp.com/emojis/1548444152549867620.gif" class="emoji-icon" alt="ghost" />
-            <span data-i18n="grove.f1Title">14 Espíritos & Negociação Atlus</span>
-          </h4>
-          <p class="grove-feat-desc" data-i18n="grove.f1Desc">Encare diálogos com personalidade única. Use Sagacidade para acertar dilemas, pague Suborno com Phantom Coins (👻) ou opte pela Fuga estratégica.</p>
-        </div>
-
-        <div class="grove-feat-card">
-          <h4 class="grove-feat-title">
-            <img src="https://cdn.discordapp.com/emojis/1548444308401684530.gif" class="emoji-icon" alt="witch" />
-            <span data-i18n="grove.f2Title">Caldeirão de Fusão de Almas</span>
-          </h4>
-          <p class="grove-feat-desc" data-i18n="grove.f2Desc">Combine 2 espíritos idênticos para evoluir para o próximo tier (Fusão Pura) ou cruze espécies diferentes para despertar entidades raras e lendárias.</p>
-        </div>
-
-        <div class="grove-feat-card">
-          <h4 class="grove-feat-title">
-            <img src="https://cdn.discordapp.com/emojis/1551356023653138563.gif" class="emoji-icon" alt="boss" />
-            <span data-i18n="grove.f3Title">Chefão Comunitário (3.000 HP)</span>
-          </h4>
-          <p class="grove-feat-desc" data-i18n="grove.f3Desc">A Sombra do Tédio Ancestral desafia o servidor em turnos a cada 6 horas. Ganhe 1 ataque grátis e use o Portal Web de 10s para liberar a investida extra.</p>
-        </div>
-      </div>
-
-      <!-- Vitrine Interativa de Cenários -->
-      <div class="locations-showcase">
-        <div class="showcase-header">
-          <div class="showcase-title">
-            <img src="https://cdn.discordapp.com/emojis/1551356176346783925.gif" class="emoji-icon" alt="sparkles" />
-            <span data-i18n="grove.showcaseTitle">Galeria dos 10 Cenários em Pixel Art</span>
-          </div>
-          <div class="loc-pills" id="locationPills">
-            <!-- Pílulas de cenários injetadas via JS -->
-          </div>
-        </div>
-
-        <div class="location-viewer" id="locationViewer">
-          <div class="location-img-wrap">
-            <img id="viewerImg" class="location-img" src="/assets/locations/portao_penumbra.png" alt="Cenário" />
-          </div>
-          <div class="location-info">
-            <div class="loc-badge-row">
-              <span id="viewerTier" class="loc-tier-badge tier-1">T1 <img src="https://cdn.discordapp.com/emojis/1551356384451493968.png" style="width: 1em; vertical-align: text-bottom;" alt="💀"></span>
-              <span class="loot-tag">
-                <img src="https://cdn.discordapp.com/emojis/1548443977429028955.gif" class="emoji-icon" alt="phantom" />
-                Phantom Coins
-              </span>
-            </div>
-            <h3 id="viewerName" class="loc-name">Portão das Fadas Decaídas</h3>
-            <p id="viewerDesc" class="loc-desc">Portões góticos de ferro batido cercados por névoa lilás e corvos silenciosos. A entrada do reino esquecido.</p>
-            <div class="loc-loot-tags" id="viewerLoot">
-              <span class="loot-tag">👻 Phantom Coins</span>
-              <span class="loot-tag">🌺 Cravo Negro</span>
-              <span class="loot-tag">🪨 Fragmento de Lápide</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    
 
     <!-- Commands Catalog Section -->
     <section id="comandos" class="catalog-section">
@@ -2235,165 +1928,13 @@
     let allModules = [];
     let activeCategory = 'todos';
 
-    const LOCATIONS_DATA = [
-      {
-        id: 'portao_penumbra',
-        tier: 1,
-        tierClass: 'tier-1',
-        name: { pt: 'Portão das Fadas Decaídas', en: 'Gates of the Fallen' },
-        desc: {
-          pt: 'Portões góticos de ferro batido cercados por névoa lilás e corvos silenciosos. A entrada do reino esquecido.',
-          en: 'Gothic wrought-iron gates shrouded in purple mist and silent ravens. The threshold to the forgotten realm.'
-        },
-        image: '/assets/locations/portao_penumbra.png',
-        loot: {
-          pt: ['👻 Phantom Coins', '🌺 Cravo Negro', '🪨 Fragmento de Lápide'],
-          en: ['👻 Phantom Coins', '🌺 Black Carnation', '🪨 Tombstone Shard']
-        }
-      },
-      {
-        id: 'cemiterio_espinhos',
-        tier: 1,
-        tierClass: 'tier-1',
-        name: { pt: 'Cemitério dos Cravos Roxos', en: 'Thorn Graveyard' },
-        desc: {
-          pt: 'Lápides antigas tomadas por trepadeiras espinhosas e cravos arroxeados. O vento sussurra versos melancólicos.',
-          en: 'Ancient tombstones overgrown with thorny vines and purple carnations. The wind whispers melancholic poetry.'
-        },
-        image: '/assets/locations/cemiterio_espinhos.png',
-        loot: {
-          pt: ['👻 Phantom Coins', '💧 Lágrima Emo', '🗝️ Chave Espectral'],
-          en: ['👻 Phantom Coins', '💧 Emo Tear', '🗝️ Spectral Key']
-        }
-      },
-      {
-        id: 'floresta_sussurros',
-        tier: 1,
-        tierClass: 'tier-1',
-        name: { pt: 'Floresta dos Sussurros', en: 'Whispering Woods' },
-        desc: {
-          pt: 'Árvores retorcidas e cogumelos luminescentes que brilham em ciano e roxo. Ecos de guitarras distantes preenchem o ar.',
-          en: 'Twisted ancient trees and glowing bioluminescent fungi. Faint echoes of distant distorted guitars fill the air.'
-        },
-        image: '/assets/locations/floresta_sussurros.png',
-        loot: {
-          pt: ['👻 Phantom Coins', '🍄 Cogumelo Lilás', '🪵 Madeira da Penumbra'],
-          en: ['👻 Phantom Coins', '🍄 Lilac Mushroom', '🪵 Gloom Wood']
-        }
-      },
-      {
-        id: 'pantano_lagrimas',
-        tier: 2,
-        tierClass: 'tier-2',
-        name: { pt: 'Pântano das Lágrimas Secas', en: 'Swamp of Dry Tears' },
-        desc: {
-          pt: 'Águas escuras que refletem céus sem estrelas. Vagalumes púrpuras dançam sobre lírios negros e poças de nostalgia.',
-          en: 'Dark still waters reflecting starless skies. Purple fireflies dance over black lilies and pools of pure nostalgia.'
-        },
-        image: '/assets/locations/pantano_lagrimas.png',
-        loot: {
-          pt: ['👻 Phantom Coins', '💧 Lágrima Emo', '🪷 Lírio Negro'],
-          en: ['👻 Phantom Coins', '💧 Emo Tear', '🪷 Black Water Lily']
-        }
-      },
-      {
-        id: 'mausoleu_ancestral',
-        tier: 2,
-        tierClass: 'tier-2',
-        name: { pt: 'Mausoléu da Melancolia', en: 'Ancestral Mausoleum' },
-        desc: {
-          pt: 'Estrutura colossal de mármore rachado onde descansam antigas memórias e estátuas de anjos com olhos vendados.',
-          en: 'A colossal cracked marble monument holding ancient memories and statues of blindfolded weeping angels.'
-        },
-        image: '/assets/locations/mausoleu_ancestral.png',
-        loot: {
-          pt: ['👻 Phantom Coins', '🪨 Mármore Rachado', '📜 Elegia Antiga'],
-          en: ['👻 Phantom Coins', '🪨 Cracked Marble', '📜 Ancient Elegy']
-        }
-      },
-      {
-        id: 'biblioteca_esquecida',
-        tier: 2,
-        tierClass: 'tier-2',
-        name: { pt: 'Biblioteca dos Manuscritos', en: 'Forgotten Library' },
-        desc: {
-          pt: 'Prateleiras infinitas que alcançam as nuvens, repletas de grimórios proibidos e partituras de shoegaze esquecidas.',
-          en: 'Towering endless bookshelves reaching the clouds, packed with forbidden grimoires and forgotten shoegaze sheet music.'
-        },
-        image: '/assets/locations/biblioteca_esquecida.png',
-        loot: {
-          pt: ['👻 Phantom Coins', '📜 Pergaminho Arcano', '🧪 Tinta Violeta'],
-          en: ['👻 Phantom Coins', '📜 Arcane Parchment', '🧪 Violet Ink']
-        }
-      },
-      {
-        id: 'ponte_abismo',
-        tier: 3,
-        tierClass: 'tier-3',
-        name: { pt: 'Ponte dos Suspiros', en: 'Bridge of Sighs' },
-        desc: {
-          pt: 'Ponte suspensa de correntes góticas sobre um abismo sem fundo. O vento traz ecos de promessas e desabafos.',
-          en: 'A suspension bridge made of gothic chains hanging over a bottomless void. Cold wind carries whispers of broken vows.'
-        },
-        image: '/assets/locations/ponte_abismo.png',
-        loot: {
-          pt: ['👻 Phantom Coins', '⛓️ Elo de Corrente', '💎 Cristal do Abismo'],
-          en: ['👻 Phantom Coins', '⛓️ Chain Link', '💎 Abyss Crystal']
-        }
-      },
-      {
-        id: 'catacumba_sangue_roxo',
-        tier: 4,
-        tierClass: 'tier-4',
-        name: { pt: 'Catacumbas do Sangue Púrpura', en: 'Purple Blood Catacombs' },
-        desc: {
-          pt: 'Corredores subterrâneos iluminados por tochas mágicas de fogo lilás. O ar é denso de mistério ancestral.',
-          en: 'Subterranean corridors lit by magical purple fire torches. The air is thick with the scent of ancient mysticism.'
-        },
-        image: '/assets/locations/catacumba_sangue_roxo.png',
-        loot: {
-          pt: ['👻 Phantom Coins', '🧪 Essência Púrpura', '🗡️ Lâmina Espectral'],
-          en: ['👻 Phantom Coins', '🧪 Purple Essence', '🗡️ Spectral Blade']
-        }
-      },
-      {
-        id: 'jardim_fadas_negras',
-        tier: 4,
-        tierClass: 'tier-4',
-        name: { pt: 'Jardim das Rosas de Vidro', en: 'Glass Rose Garden' },
-        desc: {
-          pt: 'Um labirinto botânico onde rosas de cristal negro crescem sob uma névoa lilás perpétua.',
-          en: 'A botanical labyrinth where obsidian glass roses bloom beneath perpetual violet twilight mist.'
-        },
-        image: '/assets/locations/jardim_fadas_negras.png',
-        loot: {
-          pt: ['👻 Phantom Coins', '🌹 Rosa de Vidro', '✨ Pó de Fada Negra'],
-          en: ['👻 Phantom Coins', '🌹 Glass Rose', '✨ Black Fairy Dust']
-        }
-      },
-      {
-        id: 'santuario_touca_preta',
-        tier: 5,
-        tierClass: 'tier-5',
-        name: { pt: 'Santuário Secreto de Pyxie', en: "Pyxie's Secret Sanctuary" },
-        desc: {
-          pt: 'O coração oculto da Penumbra. O trono supremo exige o Chefão derrotado no ciclo, Grimório com 3+ espíritos e posse de uma Relíquia Tier 4 ou 5.',
-          en: "The secret core of the Gloom. The supreme throne demands the Boss defeated this cycle, a Grimoire with 3+ spirits, and a Tier 4 or 5 Relic."
-        },
-        image: '/assets/locations/santuario_touca_preta.png',
-        loot: {
-          pt: ['👻 Phantom Coins', '👑 Coroa das Sombras', '💎 Orbe Primordial'],
-          en: ['👻 Phantom Coins', '👑 Crown of Shadows', '💎 Primordial Orb']
-        }
-      }
-    ];
+    
 
     let selectedLocationIndex = 0;
 
     const I18N = {
       pt: {
         'nav.features': 'Recursos',
-        'nav.grove': 'Bosque da Pyxie',
         'nav.wiki': 'Wiki Oficial',
         'nav.commands': 'Comandos',
         'nav.vote': 'Top.gg',
@@ -2402,7 +1943,7 @@
         'hero.status': 'Online & Operacional • Discord.js v14',
         'hero.titlePrefix': 'Sua Fada Mágica no',
         'hero.titleHighlight': 'Discord',
-        'hero.subtitle': 'Bosque Místico com 10 Cenários Pixel Art, Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.',
+        'hero.subtitle': 'Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames práticos, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.',
         'hero.btnInvite': 'Adicionar ao Discord',
         'hero.btnVote': 'Votar no Top.gg (+Bônus)',
         'hero.btnBonus': 'Bônus Web (10s)',
@@ -2412,9 +1953,7 @@
         'stats.messages': 'Mensagens Processadas',
         'stats.uptime': 'Tempo Online',
         'pillars.title': 'Explore o Universo da Pyxie',
-        'pillars.desc': 'Desenvolvida para transformar servidores do Discord em comunidades ativas, divertidas e engajadas.',
-        'pillars.p0Title': 'Bosque da Pyxie & RPG',
-        'pillars.p0Desc': 'Explore 10 cenários em pixel art 16-bit, negocie com 14 espíritos no estilo Atlus, faça fusão de almas no caldeirão e enfrente o Chefão Comunitário.',
+        'pillars.desc': 'Desenvolvida para transformar servidores do Discord em comunidades ativas, divertidas e engajadas.', negocie com 14 espíritos no estilo Atlus, faça fusão de almas no caldeirão e enfrente o Chefão Comunitário.',
         'pillars.p1Title': '10 Carreiras & Profissões',
         'pillars.p1Desc': 'Escolha sua profissão, resolva minigames temáticos nos turnos de trabalho, ganhe experiência profissional e suba no ranking global.',
         'pillars.p2Title': 'Economia & Moedinhas',
@@ -2422,19 +1961,7 @@
         'pillars.p3Title': 'Tarot Místico & Oráculo',
         'pillars.p3Desc': 'Tire cartas dos 78 arcanos ilustrados com arte em Canvas, consulte interpretações diretas e invertidas e descubra o oráculo do dia.',
         'pillars.p4Title': 'Social, Ship & Casamentos',
-        'pillars.p4Desc': 'Calcule afinidade amorosa com o /py-ship, celebre casamentos na comunidade, dispute Jokenpô e customize títulos e temas visuais no perfil.',
-        'grove.badge': 'Módulo de RPG & Exploração',
-        'grove.title': "Bosque da Pyxie (Pyxie's Grove)",
-        'grove.desc': 'Um ecossistema completo de exploração procedural, negociação Atlus, alquimia de almas no caldeirão e batalhas comunitárias.',
-        'grove.f0Title': '10 Cenários em Grafo',
-        'grove.f0Desc': 'Caminhe por 10 localidades góticas conectadas por nós direcionados, com rotas que abrem conforme ciclos de maré (6h) e chaves espectrais.',
-        'grove.f1Title': '14 Espíritos & Negociação Atlus',
-        'grove.f1Desc': 'Encare diálogos com personalidade única. Use Sagacidade para acertar dilemas, pague Suborno com Phantom Coins (👻) ou opte pela Fuga estratégica.',
-        'grove.f2Title': 'Caldeirão de Fusão de Almas',
-        'grove.f2Desc': 'Combine 2 espíritos idênticos para evoluir para o próximo tier (Fusão Pura) ou cruze espécies diferentes para despertar entidades raras e lendárias.',
-        'grove.f3Title': 'Chefão Comunitário (3.000 HP)',
-        'grove.f3Desc': 'A Sombra do Tédio Ancestral desafia o servidor em turnos a cada 6 horas. Ganhe 1 ataque grátis e use o Portal Web de 10s para liberar a investida extra.',
-        'grove.showcaseTitle': 'Galeria dos 10 Cenários em Pixel Art',
+        'pillars.p4Desc': 'Calcule afinidade amorosa com o /py-ship, celebre casamentos na comunidade, dispute Jokenpô e customize títulos e temas visuais no perfil.', negociação Atlus, alquimia de almas no caldeirão e batalhas comunitárias.', com rotas que abrem conforme ciclos de maré (6h) e chaves espectrais.', pague Suborno com Phantom Coins (👻) ou opte pela Fuga estratégica.',
         'catalog.badge': 'Catálogo Oficial',
         'catalog.title': 'Guia Interativo de Comandos',
         'catalog.desc': 'Consulte a biblioteca completa sincronizada diretamente com o bot em tempo real.',
@@ -2460,7 +1987,6 @@
       },
       en: {
         'nav.features': 'Features',
-        'nav.grove': "Pyxie's Grove",
         'nav.wiki': 'Official Wiki',
         'nav.commands': 'Commands',
         'nav.vote': 'Top.gg',
@@ -2479,9 +2005,7 @@
         'stats.messages': 'Messages Processed',
         'stats.uptime': 'Online Uptime',
         'pillars.title': 'Discover the World of Pyxie',
-        'pillars.desc': 'Built to transform Discord servers into vibrant, entertaining, and deeply engaged communities.',
-        'pillars.p0Title': "Pyxie's Grove & RPG",
-        'pillars.p0Desc': 'Explore 10 16-bit pixel art locations, negotiate with 14 Atlus-style spirits, fuse souls in the cauldron, and battle the Community World Boss.',
+        'pillars.desc': 'Built to transform Discord servers into vibrant, entertaining, and deeply engaged communities.', negotiate with 14 Atlus-style spirits, fuse souls in the cauldron, and battle the Community World Boss.',
         'pillars.p1Title': '10 Careers & Professions',
         'pillars.p1Desc': 'Choose your profession, solve shift minigames, advance career levels, and climb the global leaderboards.',
         'pillars.p2Title': 'Living Economy & Coins',
@@ -2489,19 +2013,7 @@
         'pillars.p3Title': 'Mystic Tarot & Oracle',
         'pillars.p3Desc': 'Draw from 78 illustrated tarot arcana in Canvas art, consult upright and reversed meanings, and reveal daily prophecies.',
         'pillars.p4Title': 'Social, Ship & Marriages',
-        'pillars.p4Desc': 'Calculate romantic compatibility with /py-ship, celebrate marriages, play Rock Paper Scissors, and customize profile themes.',
-        'grove.badge': 'RPG & Exploration Module',
-        'grove.title': "Pyxie's Grove",
-        'grove.desc': 'A complete ecosystem of procedural exploration, Atlus-style spirit negotiations, soul alchemy in the cauldron, and community raids.',
-        'grove.f0Title': '10 Graph-Connected Environments',
-        'grove.f0Desc': 'Travel across 10 gothic environments connected by directed nodes, unlocked by 6-hour tide cycles and spectral keys.',
-        'grove.f1Title': '14 Spirits & Atlus Negotiations',
-        'grove.f1Desc': 'Encounter creatures with distinct personalities. Use Wit to solve dilemmas, Bribe with Phantom Coins (👻), or choose a tactical Escape.',
-        'grove.f2Title': 'Soul Fusion Cauldron',
-        'grove.f2Desc': 'Fuse 2 identical spirits to rank up into the next tier (Pure Fusion) or cross different species to summon rare and legendary entities.',
-        'grove.f3Title': 'Community World Boss (3,000 HP)',
-        'grove.f3Desc': 'The Ancient Gloom Behemoth challenges the server in 6-hour cycles. Claim 1 free attack and use the 10s Web Portal for the extra strike.',
-        'grove.showcaseTitle': '10 Pixel Art Locations Gallery',
+        'pillars.p4Desc': 'Calculate romantic compatibility with /py-ship, celebrate marriages, play Rock Paper Scissors, and customize profile themes.', Atlus-style spirit negotiations, soul alchemy in the cauldron, and community raids.', unlocked by 6-hour tide cycles and spectral keys.', Bribe with Phantom Coins (👻), or choose a tactical Escape.',000 HP)',
         'catalog.badge': 'Official Catalog',
         'catalog.title': 'Interactive Commands Guide',
         'catalog.desc': 'Browse the complete commands library dynamically synchronized with the bot in real time.',
@@ -2611,55 +2123,11 @@
       document.querySelectorAll('a[href^="/bonus"]').forEach(el => {
         el.setAttribute('href', `/bonus?lang=${currentLang}`);
       });
-
-      renderLocationPills();
-      renderLocationViewer(selectedLocationIndex);
       fetchCommands(currentLang);
       syncHourlyPromoLinks();
     }
 
-    function renderLocationPills() {
-      const container = document.getElementById('locationPills');
-      if (!container) return;
-
-      container.innerHTML = LOCATIONS_DATA.map((loc, idx) => `
-        <button class="loc-pill ${idx === selectedLocationIndex ? 'active' : ''}" onclick="selectLocation(${idx})">
-          ${loc.name[currentLang] || loc.name.pt}
-        </button>
-      `).join('');
-    }
-
-    function selectLocation(idx) {
-      selectedLocationIndex = idx;
-      renderLocationPills();
-      renderLocationViewer(idx);
-    }
-
-    function renderLocationViewer(idx) {
-      const loc = LOCATIONS_DATA[idx];
-      if (!loc) return;
-
-      const img = document.getElementById('viewerImg');
-      const tier = document.getElementById('viewerTier');
-      const name = document.getElementById('viewerName');
-      const desc = document.getElementById('viewerDesc');
-      const lootContainer = document.getElementById('viewerLoot');
-
-      if (img) img.src = loc.image;
-      if (tier) {
-        tier.innerHTML = 'T' + loc.tier + ' ' + '<img src="https://cdn.discordapp.com/emojis/1551356384451493968.png" style="width: 1em; vertical-align: text-bottom;" alt="💀">'.repeat(loc.tier);
-        tier.className = `loc-tier-badge ${loc.tierClass}`;
-      }
-      if (name) name.textContent = loc.name[currentLang] || loc.name.pt;
-      if (desc) desc.textContent = loc.desc[currentLang] || loc.desc.pt;
-
-      if (lootContainer) {
-        const loots = loc.loot[currentLang] || loc.loot.pt;
-        lootContainer.innerHTML = loots.map(item => `<span class="loot-tag">${item}</span>`).join('');
-      }
-    }
-
-    async function fetchStats() {
+        async function fetchStats() {
       try {
         const res = await fetch('/api/status');
         const data = await res.json();
@@ -2887,7 +2355,6 @@
     }
 
     // Inicialização
-    renderLocationPills();
     initLang();
     fetchStats();
     setInterval(fetchStats, 15000);

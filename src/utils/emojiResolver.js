@@ -6,7 +6,6 @@ const EMOJI_PATH = path.join(__dirname, '../data/emojis.json');
 const FALLBACKS = {
   // 1. Economia & Loja
   coins: '🪙',
-  phantom_coin: '👻',
   magic_bean: '🌱',
   daily_bonus: '🎁',
   weekend_bonus: '🔥',
@@ -14,19 +13,10 @@ const FALLBACKS = {
   shop_chest: '📦',
   shop_gem: '💎',
 
-  // 2. Santuário & RPG (Gloom Realm)
+  // 2. Místico & Tarot
   tarot_card: '🔮',
   tarotAlbum: '📖',
   grimorio: '📖',
-  vigor_energy: '⚡',
-  tarot_card: '🔮',
-  ship_heart: '💖',
-  boss_behemoth: '👹',
-  relic_t1: '🪨',
-  relic_t2: '🌿',
-  relic_t3: '💎',
-  relic_t4: '🔮',
-  relic_t5: '👑',
 
   // 3. Social & Romance
   ship_heart: '💖',

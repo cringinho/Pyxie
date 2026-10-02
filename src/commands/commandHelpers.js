@@ -13,8 +13,6 @@ function getModuleIconUrl(categoryKey) {
   switch (categoryKey) {
     case 'todos':
       return getThemeEmojiUrl('websiteHome') || 'https://cdn.discordapp.com/emojis/1551356640782057502.gif';
-    case 'bosque':
-      return getThemeEmojiUrl('grimorio') || 'https://cdn.discordapp.com/emojis/1551356435521339452.png';
     case 'economia':
       return getThemeEmojiUrl('economyCareers') || getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif';
     case 'loja':
@@ -34,18 +32,9 @@ const MODULE_ICONS = new Proxy({}, {
 });
 
 const COMMAND_ICONS = {
-  // Bosque da Pyxie
-  explore: 'https://cdn.discordapp.com/emojis/1551356273918746724.png',
-  explorar: 'https://cdn.discordapp.com/emojis/1551356273918746724.png',
-  gloom: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif',
-  bosque: 'https://cdn.discordapp.com/emojis/1548443941144109181.gif',
-  grimorio: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
-  grimoire: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
-  grimorio: getThemeEmojiUrl('grimorio') || 'https://cdn.discordapp.com/emojis/1551355602297430016.png',
-  grimoire: getThemeEmojiUrl('grimorio') || 'https://cdn.discordapp.com/emojis/1551355602297430016.png',
-  vasculhar: 'https://cdn.discordapp.com/emojis/1548443807694069760.gif',
-  scavenge: 'https://cdn.discordapp.com/emojis/1548443807694069760.gif',
+  // Utilidades & Enciclopédia
   wiki: 'https://cdn.discordapp.com/emojis/1551356435521339452.gif',
+  'py-wiki': 'https://cdn.discordapp.com/emojis/1551356435521339452.gif',
 
   // Economia & Carreiras
   trade: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
@@ -164,7 +153,6 @@ const COMMAND_ICONS = {
 
 const MODULE_METADATA = {
   todos: { id: 'todos', label: 'Visão Geral', emoji: '📖', iconUrl: MODULE_ICONS.todos, desc: 'Visão geral e índice de todas as categorias' },
-  bosque: { id: 'bosque', label: 'Bosque da Pyxie', emoji: '🌲', iconUrl: MODULE_ICONS.bosque, desc: 'Exploração de cenários pixel, espíritos, fusão de almas e chefão comunitário' },
   economia: { id: 'economia', label: 'Economia & Carreiras', emoji: '🪙', iconUrl: MODULE_ICONS.economia, desc: 'Moedinhas, trabalho, profissões, rankings, trocas e cofres' },
   loja: { id: 'loja', label: 'Loja & Mochila', emoji: '🎒', iconUrl: MODULE_ICONS.loja, desc: 'Baús misteriosos, itens e inventário' },
   tarot: { id: 'tarot', label: 'Tarot Místico', emoji: '🔮', iconUrl: MODULE_ICONS.tarot, desc: 'Tiragens diárias, 78 arcanos e oráculo do destino' },
@@ -172,10 +160,9 @@ const MODULE_METADATA = {
   utilidades: { id: 'utilidades', label: 'Utilidades & Sistema', emoji: '⚙️', iconUrl: MODULE_ICONS.utilidades, desc: 'Status operacional, ping, convite, agenda, idioma e configurações' },
 };
 
-const MODULE_KEYS = ['todos', 'bosque', 'economia', 'loja', 'tarot', 'social', 'utilidades'];
+const MODULE_KEYS = ['todos', 'economia', 'loja', 'tarot', 'social', 'utilidades'];
 const MODULE_EMOJIS = {
   todos: '📖',
-  bosque: '🌲',
   economia: '🪙',
   loja: '🎒',
   tarot: '🔮',
@@ -184,26 +171,6 @@ const MODULE_EMOJIS = {
 };
 
 const COMMAND_CATEGORY_MAP = {
-  // Bosque da Pyxie
-  explore: 'bosque',
-  'py-explore': 'bosque',
-  explorar: 'bosque',
-  'py-explorar': 'bosque',
-  gloom: 'bosque',
-  'py-gloom': 'bosque',
-  bosque: 'bosque',
-  'py-bosque': 'bosque',
-  grimorio: 'bosque',
-  'py-grimorio': 'bosque',
-  grimoire: 'bosque',
-  'py-grimoire': 'bosque',
-  vasculhar: 'bosque',
-  'py-vasculhar': 'bosque',
-  scavenge: 'bosque',
-  'py-scavenge': 'bosque',
-  wiki: 'bosque',
-  'py-wiki': 'bosque',
-
   // Economia & Carreiras
   trade: 'economia',
   'py-trade': 'economia',
@@ -352,6 +319,8 @@ const COMMAND_CATEGORY_MAP = {
   'py-sixseven': 'utilidades',
   admin: 'utilidades',
   'py-admin': 'utilidades',
+  wiki: 'utilidades',
+  'py-wiki': 'utilidades',
 };
 
 let _loadedCommands = null;
@@ -406,7 +375,6 @@ function getHelpModules(customCommands = null, source = null) {
   const isOwner = isOwnerUser(source);
 
   const moduleCommands = {
-    bosque: [],
     economia: [],
     loja: [],
     tarot: [],

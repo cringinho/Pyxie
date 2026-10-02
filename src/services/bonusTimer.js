@@ -125,24 +125,7 @@ function verifyAndClaimBonus(token) {
     claimedTokens.clear();
   }
 
-  // 1. Recompensa do Chefão do Bosque (gloom_boss)
-  if (data.action === 'gloom_boss') {
-    const { unlockBossExtraAttack } = require('./gloomRealm');
-    unlockBossExtraAttack(data.userId);
-    const message = isEn
-      ? '🌙 **Extra Strike Unlocked!** You received **+50 Phantom Coins 👻** and your extra strike in Pyxie\'s Grove is now ready!'
-      : '🌙 **Investida Extra Desbloqueada!** Você recebeu **+50 Phantom Coins 👻** e sua investida no Bosque da Pyxie já está liberada!';
-
-    return {
-      success: true,
-      action: data.action,
-      userId: data.userId,
-      phantomCoinsAwarded: 50,
-      message,
-    };
-  }
-
-  // 2. Recompensa do Biscoito da Sorte (cookie_bonus)
+  // 1. Recompensa do Biscoito da Sorte (cookie_bonus)
   if (data.action === 'cookie_bonus') {
     const { grantExtraCookie } = require('./cookie');
     grantExtraCookie(data.userId);

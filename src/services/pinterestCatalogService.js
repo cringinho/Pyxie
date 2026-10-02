@@ -1,6 +1,5 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { LOCATIONS } = require('./gloomRealm');
 const { TAROT_CATALOG } = require('../data/tarotCardsCatalog');
 const shopeeManager = require('./shopeeManager');
 
@@ -35,29 +34,7 @@ function normalizePrice(rawPrice) {
 function getCatalogItems() {
   const items = [];
 
-  // 1. Cenários em Pixel Art do Bosque da Penumbra (Pyxie's Gloom Realm)
-  for (const [id, loc] of Object.entries(LOCATIONS)) {
-    const locNamePt = loc.name?.pt || id;
-    const locDescPt = loc.desc?.pt || 'Cenário misterioso do Bosque da Penumbra na Pyxie.';
-    const imgUrl = `${BASE_URL}/assets/locations/${loc.image}`;
-    const targetLink = `${BASE_URL}/wiki`;
-
-    items.push({
-      id: `bosque_${id}`,
-      title: `Pyxie • ${locNamePt} (Pixel Art & RPG)`,
-      description: `${locDescPt} Explore o Bosque da Penumbra, negocie com espíritos de personalidades Atlus e desvende mistérios no bot Pyxie para Discord.`,
-      link: targetLink,
-      image_link: imgUrl,
-      price: '0.00 BRL',
-      availability: 'in stock',
-      condition: 'new',
-      brand: 'Pyxie',
-      item_group_id: 'cenarios_bosque',
-      google_product_category: 'Arts & Entertainment > Hobbies & Creative Arts > Collectibles',
-    });
-  }
-
-  // 2. Baralho Canônico dos 78 Arcanos do Tarot da Pyxie
+  // 1. Baralho Canônico dos 78 Arcanos do Tarot da Pyxie
   for (const card of TAROT_CATALOG) {
     const suitName = card.suitNamePt || card.suit;
     const meaning = card.upright || (card.keywords && card.keywords.join(', ')) || 'Arcano Místico';
@@ -84,7 +61,7 @@ function getCatalogItems() {
     {
       id: 'pyxie_mascot_art',
       title: 'Pyxie • Mascote Oficial Fada Mágica para Discord',
-      description: 'Pyxie é a fada mágica do Discord com RPG do Bosque da Penumbra, Tarot de 78 Arcanos, Economia viva com feijões mágicos e 10 carreiras interativas.',
+      description: 'Pyxie é a fada mágica do Discord com Tarot de 78 Arcanos, Economia viva com moedinhas e feijões mágicos, minigames e carreiras interativas.',
       link: `${BASE_URL}/`,
       image_link: `${BASE_URL}/assets/pyxie/pyxie_mascot.png`,
       price: '0.00 BRL',
@@ -116,7 +93,7 @@ function getCatalogItems() {
     const title = prod.titulo || 'Achadinho Temático Shopee';
     const desc = `Produto selecionado para a comunidade: ${title}. Categoria: ${prod.tag || 'Sanrio / Moda'}. Disponível na Shopee.`;
     const targetLink = `${BASE_URL}/promo`;
-    const imgUrl = prod.imagem || `${BASE_URL}/assets/locations/portao_penumbra.png`;
+    const imgUrl = prod.imagem || `${BASE_URL}/assets/pyxie/pyxie_mascot.png`;
     const priceFormatted = normalizePrice(prod.preco);
 
     items.push({
