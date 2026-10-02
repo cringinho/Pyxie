@@ -182,6 +182,24 @@ try {
   const catalogFilePath = path.join(__dirname, '..', 'public', 'pinterest-catalog.csv');
   assert.ok(fs.existsSync(catalogFilePath), 'Arquivo public/pinterest-catalog.csv deve existir');
 
+  // 12. Validação Estrita de Sintaxe JavaScript nos Scripts de Páginas Web
+  const vm = require('node:vm');
+  [
+    { name: 'index.html', content: indexHtml },
+    { name: 'wiki.html', content: wikiHtml },
+    { name: 'bonus.html', content: bonusHtml },
+  ].forEach(({ name, content }) => {
+    const scripts = content.match(/<script(?![^>]*src=)>([\s\S]*?)<\/script>/gi) || [];
+    scripts.forEach((tag, idx) => {
+      const code = tag.replace(/<script[^>]*>/i, '').replace(/<\/script>/i, '');
+      try {
+        new vm.Script(code);
+      } catch (err) {
+        assert.fail(`Erro de sintaxe JavaScript em ${name} (script #${idx}): ${err.message}`);
+      }
+    });
+  });
+
   console.log('Verificação de Top.gg, Trocas Seguras, Temas Visuais e Afiliados Shopee: OK');
 } finally {
   const cleanFiles = [
