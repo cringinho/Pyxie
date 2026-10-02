@@ -51,13 +51,18 @@ fi
 LOCAL_REV=$(git rev-parse HEAD)
 REMOTE_REV=$(git rev-parse origin/main)
 
-# Se não houver commits novos, sai imediatamente (zero CPU, zero reinício, zero risco)
-if [ "${LOCAL_REV}" = "${REMOTE_REV}" ]; then
+FORCE_DEPLOY=false
+if [ "${1:-}" = "--force" ] || [ "${1:-}" = "-f" ]; then
+  FORCE_DEPLOY=true
+fi
+
+# Se não houver commits novos e não for forçado, sai imediatamente (zero CPU, zero reinício, zero risco)
+if [ "${LOCAL_REV}" = "${REMOTE_REV}" ] && [ "${FORCE_DEPLOY}" = false ]; then
   exit 0
 fi
 
 # ==============================================================================
-# NOVO COMMIT DETECTADO! Iniciando pipeline de deploy seguro
+# INICIANDO PIPELINE DE DEPLOY SEGURO
 # ==============================================================================
 COMMIT_MSG=$(git log -1 --pretty=format:"%s (%an)" origin/main)
 log "⚡ Novo commit detectado em origin/main: ${REMOTE_REV:0:7} - \"${COMMIT_MSG}\""
