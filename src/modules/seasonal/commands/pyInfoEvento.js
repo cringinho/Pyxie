@@ -129,7 +129,24 @@ function buildInfoEventoView(userId, client) {
 module.exports = {
   name: 'infoevento',
   category: 'economia',
-  aliases: ['py-infoevento', 'info-evento', 'py-info-evento', 'evento', 'py-evento'],
+  aliases: [
+    'py-infoevento',
+    'pyinfoevento',
+    'infoevento',
+    'info-evento',
+    'py-info-evento',
+    'evento',
+    'py-evento',
+    'pyevento',
+    'infoeventos',
+    'py-infoeventos',
+    'pyinfoeventos',
+    'info-eventos',
+    'py-info-eventos',
+    'eventos',
+    'py-eventos',
+    'pyeventos',
+  ],
   data: new SlashCommandBuilder()
     .setName('py-infoevento')
     .setDescription('Complete guide, balance and rules for Cringelândia seasonal event.')

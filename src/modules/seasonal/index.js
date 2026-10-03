@@ -1,5 +1,7 @@
 const seasonalManager = require('./seasonalManager');
 const pyInfoEvento = require('./commands/pyInfoEvento');
+const pyEvento = require('./commands/pyEvento');
+const pyInfoEventos = require('./commands/pyInfoEventos');
 
 /**
  * Módulo Sazonal da Cringelândia (Cog Oficial)
@@ -30,6 +32,8 @@ module.exports = {
   // Comandos fornecidos pelo módulo
   commands: [
     pyInfoEvento,
+    pyEvento,
+    pyInfoEventos,
   ],
 
   // Hook executado quando o módulo é ativado
