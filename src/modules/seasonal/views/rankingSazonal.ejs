@@ -1070,6 +1070,386 @@
         justify-content: center;
       }
     }
+
+    /* =========================================================
+       Sponsorship & Monetization Units (Pyxie Voice & Mascots)
+       ========================================================= */
+    .sponsor-unit {
+      margin-bottom: 3.5rem;
+      position: relative;
+    }
+
+    /* Ad 1: Top Hero Sponsor Ribbon */
+    .sponsor-top-ribbon {
+      background: linear-gradient(135deg, rgba(94, 43, 140, 0.45), rgba(18, 11, 31, 0.88));
+      border: 1px solid rgba(255, 20, 147, 0.4);
+      border-radius: 1.25rem;
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(255, 20, 147, 0.15);
+      transition: all 0.3s ease;
+    }
+    .sponsor-top-ribbon:hover {
+      border-color: rgba(255, 20, 147, 0.7);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45), 0 0 30px rgba(255, 20, 147, 0.25);
+    }
+    .sponsor-top-left {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex: 1;
+    }
+    .sponsor-mascot-thumb {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      border-radius: 1.25rem;
+      background: linear-gradient(135deg, rgba(255, 20, 147, 0.2), rgba(138, 43, 226, 0.3));
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+    .sponsor-mascot-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+    }
+    .sponsor-top-info h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .sponsor-tag-pill {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      background: rgba(255, 20, 147, 0.2);
+      border: 1px solid rgba(255, 20, 147, 0.5);
+      color: #ff70b8;
+    }
+    .sponsor-top-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.4;
+    }
+    .sponsor-btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.4rem;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, #ff1493, #8a2be2);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .sponsor-btn-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
+      color: #fff;
+    }
+
+    /* Ad 2: Mid-Leaderboard Sponsor Showcase */
+    .sponsor-mid-card {
+      background: rgba(18, 11, 31, 0.85);
+      border: 1px solid rgba(138, 43, 226, 0.35);
+      border-radius: 1.5rem;
+      padding: 1.75rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(138, 43, 226, 0.15);
+      backdrop-filter: blur(16px);
+    }
+    .sponsor-mid-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .sponsor-mid-mascot-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .sponsor-mascot-avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff1493, #8a2be2);
+      padding: 3px;
+      box-shadow: 0 4px 15px rgba(255, 20, 147, 0.35);
+      flex-shrink: 0;
+    }
+    .sponsor-mascot-avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #0e0717;
+    }
+    .sponsor-speech-bubble {
+      background: rgba(45, 22, 77, 0.85);
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      border-radius: 1rem;
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+      color: #f1f5f9;
+      position: relative;
+      max-width: 560px;
+      line-height: 1.35;
+    }
+    .sponsor-products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .shopee-item-card {
+      background: rgba(26, 16, 44, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      padding: 0.85rem;
+      display: flex;
+      gap: 0.85rem;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.25s ease;
+    }
+    .shopee-item-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 20, 147, 0.5);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 20, 147, 0.2);
+    }
+    .shopee-item-thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: 0.75rem;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #0a0612;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .shopee-item-details {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .shopee-item-tag {
+      font-size: 0.65rem;
+      color: #ff70b8;
+      font-weight: 700;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .shopee-item-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .shopee-item-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.15rem;
+    }
+    .shopee-item-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #4ade80;
+    }
+    .shopee-item-btn {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #c084fc;
+      background: rgba(139, 92, 246, 0.15);
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    /* Ad 3: Post-Table Action Ribbon */
+    .sponsor-action-ribbon {
+      background: linear-gradient(135deg, rgba(38, 14, 62, 0.85), rgba(14, 7, 26, 0.9));
+      border: 1px solid rgba(0, 245, 212, 0.35);
+      border-radius: 1.25rem;
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 245, 212, 0.12);
+      transition: all 0.3s ease;
+    }
+    .sponsor-action-ribbon:hover {
+      border-color: rgba(0, 245, 212, 0.65);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 245, 212, 0.25);
+    }
+    .sponsor-action-left {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex: 1;
+    }
+    .sponsor-action-btn {
+      background: linear-gradient(135deg, #00f5d4, #059669);
+      color: #0e0717 !important;
+      font-weight: 800;
+      border: none;
+      box-shadow: 0 4px 15px rgba(0, 245, 212, 0.4);
+    }
+    .sponsor-action-btn:hover {
+      box-shadow: 0 6px 20px rgba(0, 245, 212, 0.6);
+      transform: translateY(-2px);
+    }
+
+    /* Ad 4: Pre-Footer Community Lounge */
+    .sponsor-footer-card {
+      background: linear-gradient(135deg, rgba(94, 43, 140, 0.3), rgba(18, 11, 31, 0.95));
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      border-radius: 1.5rem;
+      padding: 2rem 2.25rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-top: 1rem;
+      margin-bottom: 3.5rem;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(139, 92, 246, 0.15);
+    }
+    .sponsor-footer-mascot {
+      width: 105px;
+      height: 105px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 8px 20px rgba(255, 20, 147, 0.4));
+      animation: floatMascot 4s ease-in-out infinite;
+    }
+    @keyframes floatMascot {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .sponsor-footer-content {
+      flex: 1;
+    }
+    .sponsor-footer-content h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+    .sponsor-footer-content p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 1.1rem;
+    }
+    .sponsor-footer-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    /* Widescreen Skyscraper Adsterra (Floating right for screens >= 1440px) */
+    .sponsor-skyscraper-fixed {
+      display: none;
+    }
+    @media (min-width: 1440px) {
+      .sponsor-skyscraper-fixed {
+        display: block;
+        position: fixed;
+        right: 20px;
+        top: 110px;
+        width: 160px;
+        z-index: 90;
+        background: rgba(18, 11, 31, 0.88);
+        border: 1px solid rgba(139, 92, 246, 0.35);
+        border-radius: 1rem;
+        padding: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        text-align: center;
+      }
+      .sponsor-skyscraper-badge {
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: #c084fc;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+        display: block;
+        letter-spacing: 0.04em;
+      }
+    }
+
+    /* Responsive adjustments for ads */
+    @media (max-width: 768px) {
+      .sponsor-top-ribbon, .sponsor-action-ribbon, .sponsor-footer-card {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        padding: 1.25rem;
+      }
+      .sponsor-top-left, .sponsor-action-left {
+        flex-direction: column;
+        text-align: center;
+      }
+      .sponsor-mascot-thumb {
+        margin: 0 auto;
+      }
+      .sponsor-footer-mascot {
+        margin: 0 auto;
+      }
+      .sponsor-footer-content h3 {
+        justify-content: center;
+      }
+      .sponsor-footer-actions {
+        justify-content: center;
+      }
+      .sponsor-btn-cta, .sponsor-action-btn {
+        justify-content: center;
+      }
+      .sponsor-mid-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      .sponsor-mid-mascot-wrap {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1167,6 +1547,60 @@
       </div>
     </section>
 
+    <!-- Ad 1: Top Hero Sponsor Ribbon (Pyxie & Cringelândia Partner) -->
+    <section class="sponsor-unit" id="sponsorTopUnit">
+      <!-- PT-BR: Shopee Community Sponsor -->
+      <div class="sponsor-top-ribbon monetization-pt" style="<%= lang === 'en' ? 'display: none;' : '' %>">
+        <div class="sponsor-top-left">
+          <div class="sponsor-mascot-thumb">
+            <img src="/assets/pyxie/4.png" alt="Pyxie Presenting" />
+          </div>
+          <div class="sponsor-top-info">
+            <h4>
+              <span class="sponsor-tag-pill" data-i18n="sponsor.officialBadge">✦ PARCEIRO OFICIAL • CRINGELÂNDIA</span>
+              <span data-i18n="sponsor.topTitle">Apoie as Premiações do Evento com Achadinhos Shopee!</span>
+            </h4>
+            <p data-i18n="sponsor.topDesc">
+              Pelúcias Sanrio, moda anime e itens gamer com frete grátis. Suas compras ajudam a pagar o Nitro e os prêmios da comunidade!
+            </p>
+          </div>
+        </div>
+        <a href="/promo" target="_blank" rel="noopener noreferrer" class="sponsor-btn-cta" data-hourly-promo="true">
+          <span>🛍️</span> <span data-i18n="sponsor.btnShop">Conferir Achadinhos</span>
+        </a>
+      </div>
+
+      <!-- EN: Adsterra 468x60 / 728x90 Banner -->
+      <div class="sponsor-top-ribbon monetization-en" style="<%= lang === 'en' ? '' : 'display: none;' %>">
+        <div class="sponsor-top-left">
+          <div class="sponsor-mascot-thumb">
+            <img src="/assets/pyxie/4.png" alt="Pyxie Presenting" />
+          </div>
+          <div class="sponsor-top-info">
+            <h4>
+              <span class="sponsor-tag-pill" data-i18n="sponsor.officialBadge">✦ OFFICIAL SPONSOR • CRINGELÂNDIA</span>
+              <span data-i18n="sponsor.topTitle">Support Event Prizes with Curated Partner Deals!</span>
+            </h4>
+            <p data-i18n="sponsor.topDesc">
+              Sanrio plushies, anime merch & gaming gear with special discounts. Direct sponsor clicks empower our prize pools!
+            </p>
+          </div>
+        </div>
+        <div style="flex-shrink: 0; min-width: 250px; text-align: center;">
+          <script>
+            atOptions = {
+              'key' : 'fbb18d996650a174db4ff64b5fba394f',
+              'format' : 'iframe',
+              'height' : 60,
+              'width' : 468,
+              'params' : {}
+            };
+          </script>
+          <script src="https://www.highrevenueformat.com/fbb18d996650a174db4ff64b5fba394f/invoke.js"></script>
+        </div>
+      </div>
+    </section>
+
     <!-- Prizes Showcase Cards -->
     <section class="prizes-container">
       <h2 class="section-title">
@@ -1207,6 +1641,66 @@
       </div>
     </section>
 
+    <!-- Ad 2: Mid-Leaderboard Sponsor Showcase -->
+    <section class="sponsor-unit" id="sponsorMidUnit">
+      <div class="sponsor-mid-card">
+        <div class="sponsor-mid-header">
+          <div class="sponsor-mid-mascot-wrap">
+            <div class="sponsor-mascot-avatar">
+              <img src="/assets/pyxie/1.png" alt="Pyxie Mascot" />
+            </div>
+            <div class="sponsor-speech-bubble">
+              <span data-i18n="sponsor.midBubble">Dica da Pyxie: Nossos prêmios em dinheiro e Nitro são viabilizados por parceiros oficiais! Dê uma olhada nos achadinhos mais populares da comunidade ✨</span>
+            </div>
+          </div>
+          <a href="/promo" target="_blank" rel="noopener noreferrer" class="sponsor-btn-cta" style="padding: 0.55rem 1.1rem; font-size: 0.8rem;" data-hourly-promo="true">
+            <span>✨</span> <span data-i18n="sponsor.midSeeAll">Ver Catálogo Completo</span>
+          </a>
+        </div>
+
+        <!-- PT-BR: Shopee Product Grid -->
+        <div class="monetization-pt" style="<%= lang === 'en' ? 'display: none;' : '' %>">
+          <div class="sponsor-products-grid">
+            <% const featuredShopee = (typeof shopeeProducts !== 'undefined' && Array.isArray(shopeeProducts) && shopeeProducts.length > 0) ? shopeeProducts.slice(0, 4) : [
+              { titulo: 'Pelúcia Sanrio Kuromi Original 25cm', preco: 'R$ 55,99', tag: 'Pelúcia Sanrio', link: 'https://s.shopee.com.br/1BMdNQEU79', imagem: 'https://down-br.img.susercontent.com/file/br-11134207-7r98o-mbe0k65jvlov9d' },
+              { titulo: 'Camiseta Premium Hello Kitty & Kuromi Goth', preco: 'R$ 34,90', tag: 'Moda Alternativa', link: 'https://s.shopee.com.br/BU6Bod6Sw', imagem: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300' },
+              { titulo: 'Anéis Punk Goth Espinhos Casal Ajustável', preco: 'R$ 12,06', tag: 'Acessório Goth', link: 'https://s.shopee.com.br/LnWNtHeo2', imagem: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=300' },
+              { titulo: 'Luminária Lua Galáxia 3D LED Touch', preco: 'R$ 29,90', tag: 'Decoração Gamer', link: 'https://s.shopee.com.br/BU6Bod6Sw', imagem: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=300' }
+            ]; %>
+            <% featuredShopee.forEach(function(item) { %>
+              <a href="<%= item.link || '/promo' %>" target="_blank" rel="noopener noreferrer" class="shopee-item-card" data-hourly-promo="<%= !item.link ? 'true' : 'false' %>">
+                <img src="<%= item.imagem || 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=200' %>" alt="<%= item.titulo %>" class="shopee-item-thumb" loading="lazy" />
+                <div class="shopee-item-details">
+                  <span class="shopee-item-tag"><%= item.tag || 'Achadinho' %></span>
+                  <span class="shopee-item-title" title="<%= item.titulo %>"><%= item.titulo %></span>
+                  <div class="shopee-item-price-row">
+                    <span class="shopee-item-price"><%= item.preco || 'Confira' %></span>
+                    <span class="shopee-item-btn">Ver ✦</span>
+                  </div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+
+        <!-- EN: Adsterra 300x250 Banner -->
+        <div class="monetization-en" style="<%= lang === 'en' ? '' : 'display: none;' %> text-align: center; padding: 1rem 0;">
+          <div style="display: inline-block; border-radius: 12px; overflow: hidden; border: 1px solid rgba(139, 92, 246, 0.3);">
+            <script>
+              atOptions = {
+                'key' : '3057c5e3d039655f3a86a9ee6ae57808',
+                'format' : 'iframe',
+                'height' : 250,
+                'width' : 300,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highrevenueformat.com/3057c5e3d039655f3a86a9ee6ae57808/invoke.js"></script>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Leaderboard Full Table -->
     <section class="table-section">
       <div class="table-header-controls">
@@ -1235,6 +1729,51 @@
       </div>
     </section>
 
+    <!-- Ad 3: Post-Table Action Ribbon -->
+    <section class="sponsor-unit" id="sponsorActionUnit">
+      <!-- PT-BR -->
+      <div class="sponsor-action-ribbon monetization-pt" style="<%= lang === 'en' ? 'display: none;' : '' %>">
+        <div class="sponsor-action-left">
+          <div class="sponsor-mascot-thumb" style="background: linear-gradient(135deg, rgba(0, 245, 212, 0.2), rgba(138, 43, 226, 0.3)); border-color: rgba(0, 245, 212, 0.4);">
+            <img src="/assets/pyxie/3.png" alt="Pyxie Winking" />
+          </div>
+          <div class="sponsor-top-info">
+            <h4>
+              <span class="sponsor-tag-pill" style="background: rgba(0, 245, 212, 0.2); border-color: rgba(0, 245, 212, 0.5); color: #00f5d4;" data-i18n="sponsor.ribbonBadge">✨ ACHADINHOS MÁGICOS</span>
+              <span data-i18n="sponsor.ribbonTitle">Cupons de Desconto & Promoções Relâmpago</span>
+            </h4>
+            <p data-i18n="sponsor.ribbonDesc">
+              Encontre colecionáveis de anime, moda alternativa e acessórios kawaii com desconto exclusivo para membros da Cringelândia.
+            </p>
+          </div>
+        </div>
+        <a href="/promo" target="_blank" rel="noopener noreferrer" class="sponsor-btn-cta sponsor-action-btn" data-hourly-promo="true">
+          <span>🛍️</span> <span data-i18n="sponsor.ribbonBtn">Explorar Catálogo Shopee</span>
+        </a>
+      </div>
+
+      <!-- EN -->
+      <div class="sponsor-action-ribbon monetization-en" style="<%= lang === 'en' ? '' : 'display: none;' %>">
+        <div class="sponsor-action-left">
+          <div class="sponsor-mascot-thumb" style="background: linear-gradient(135deg, rgba(0, 245, 212, 0.2), rgba(138, 43, 226, 0.3)); border-color: rgba(0, 245, 212, 0.4);">
+            <img src="/assets/pyxie/3.png" alt="Pyxie Winking" />
+          </div>
+          <div class="sponsor-top-info">
+            <h4>
+              <span class="sponsor-tag-pill" style="background: rgba(0, 245, 212, 0.2); border-color: rgba(0, 245, 212, 0.5); color: #00f5d4;" data-i18n="sponsor.ribbonBadge">✨ PYXIE SPECIAL PICKS</span>
+              <span data-i18n="sponsor.ribbonTitle">Exclusive Discounts & Flash Partner Deals</span>
+            </h4>
+            <p data-i18n="sponsor.ribbonDesc">
+              Discover trending anime collectibles, room decor, and gaming gear curated exclusively for the community.
+            </p>
+          </div>
+        </div>
+        <a href="/promo" target="_blank" rel="noopener noreferrer" class="sponsor-btn-cta sponsor-action-btn">
+          <span>🛍️</span> <span data-i18n="sponsor.ribbonBtn">Explore Partner Store</span>
+        </a>
+      </div>
+    </section>
+
     <!-- Art Showcase Gallery -->
     <section class="art-section" id="artSection">
       <h2 class="section-title">
@@ -1244,6 +1783,55 @@
         <!-- Inserido dinamicamente -->
       </div>
     </section>
+
+    <!-- Ad 4: Pre-Footer Community Sustainability Lounge -->
+    <section class="sponsor-unit" id="sponsorLoungeUnit">
+      <div class="sponsor-footer-card">
+        <img src="/assets/pyxie/5.png" alt="Pyxie Floating" class="sponsor-footer-mascot" />
+        <div class="sponsor-footer-content">
+          <h3>
+            <span class="sponsor-tag-pill" style="background: rgba(139, 92, 246, 0.25); border-color: rgba(139, 92, 246, 0.6); color: #c084fc;" data-i18n="sponsor.loungeBadge">🤝 SUSTENTABILIDADE & TRANSPARÊNCIA</span>
+            <span data-i18n="sponsor.loungeTitle">Como a Cringelândia Mantém Tudo Online e Gratuito</span>
+          </h3>
+          <p data-i18n="sponsor.loungeDesc">
+            A Cringelândia mantém a Pyxie online 24/7 em servidores de alta capacidade na Oracle Cloud, além de organizar eventos com prêmios reais graças às nossas parcerias transparentes. Nenhuma compra gera custo adicional para você e cada centavo fortalece a nossa comunidade!
+          </p>
+          <div class="sponsor-footer-actions">
+            <a href="/promo" target="_blank" rel="noopener noreferrer" class="sponsor-btn-cta" data-hourly-promo="true">
+              <span>🛍️</span> <span data-i18n="sponsor.loungeBtnShop">Ver Achadinhos da Pyxie</span>
+            </a>
+            <a href="/discord" target="_blank" rel="noopener noreferrer" class="btn-nav btn-discord" style="padding: 0.75rem 1.4rem; font-size: 0.875rem;">
+              <span>💬</span> <span data-i18n="sponsor.loungeBtnDiscord">Entrar no Discord da Cringelândia</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Widescreen Fixed Skyscraper (screens >= 1440px) -->
+    <aside class="sponsor-skyscraper-fixed" aria-label="Sponsor Sidebar">
+      <span class="sponsor-skyscraper-badge">✦ Sponsor</span>
+      <div class="monetization-pt" style="<%= lang === 'en' ? 'display: none;' : '' %>">
+        <a href="/promo" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;" data-hourly-promo="true">
+          <img src="/assets/pyxie/5.png" alt="Pyxie" style="width: 70px; height: 70px; object-fit: contain; margin: 0 auto 6px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));" />
+          <div style="font-size: 0.75rem; font-weight: 800; color: #ff70b8; margin-bottom: 4px;">ACHADINHOS</div>
+          <div style="font-size: 0.7rem; color: #94a3b8; line-height: 1.3; margin-bottom: 8px;">Pelúcias & moda Sanrio na Shopee!</div>
+          <div class="sponsor-btn-cta" style="padding: 0.4rem 0.8rem; font-size: 0.72rem; justify-content: center; width: 100%;">Ver Ofertas</div>
+        </a>
+      </div>
+      <div class="monetization-en" style="<%= lang === 'en' ? '' : 'display: none;' %>">
+        <script>
+          atOptions = {
+            'key' : 'd9b7c704cc9d72eed445cd7653b5293a',
+            'format' : 'iframe',
+            'height' : 600,
+            'width' : 160,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/d9b7c704cc9d72eed445cd7653b5293a/invoke.js"></script>
+      </div>
+    </aside>
   </main>
 
   <!-- Social Share Leaderboard Modal -->
@@ -1357,6 +1945,21 @@
         'share.copied': 'Copiado para a área de transferência!',
         'share.copying': 'Copiando...',
         'share.tweetText': '🏆 Venha conferir o ranking ao vivo do evento na Cringelândia com a fada Pyxie! Participe e dispute prêmios:',
+        'sponsor.officialBadge': '✦ PARCEIRO OFICIAL • CRINGELÂNDIA',
+        'sponsor.topTitle': 'Apoie as Premiações do Evento com Achadinhos Shopee!',
+        'sponsor.topDesc': 'Pelúcias Sanrio, moda anime e itens gamer com frete grátis. Suas compras ajudam a pagar o Nitro e os prêmios da comunidade!',
+        'sponsor.btnShop': 'Conferir Achadinhos',
+        'sponsor.midBubble': 'Dica da Pyxie: Nossos prêmios em dinheiro e Nitro são viabilizados por parceiros oficiais! Dê uma olhada nos achadinhos mais populares da comunidade ✨',
+        'sponsor.midSeeAll': 'Ver Catálogo Completo',
+        'sponsor.ribbonBadge': '✨ ACHADINHOS MÁGICOS',
+        'sponsor.ribbonTitle': 'Cupons de Desconto & Promoções Relâmpago',
+        'sponsor.ribbonDesc': 'Encontre colecionáveis de anime, moda alternativa e acessórios kawaii com desconto exclusivo para membros da Cringelândia.',
+        'sponsor.ribbonBtn': 'Explorar Catálogo Shopee',
+        'sponsor.loungeBadge': '🤝 SUSTENTABILIDADE & TRANSPARÊNCIA',
+        'sponsor.loungeTitle': 'Como a Cringelândia Mantém Tudo Online e Gratuito',
+        'sponsor.loungeDesc': 'A Cringelândia mantém a Pyxie online 24/7 em servidores de alta capacidade na Oracle Cloud, além de organizar eventos com prêmios reais graças às nossas parcerias transparentes. Nenhuma compra gera custo adicional para você e cada centavo fortalece a nossa comunidade!',
+        'sponsor.loungeBtnShop': 'Ver Achadinhos da Pyxie',
+        'sponsor.loungeBtnDiscord': 'Entrar no Discord da Cringelândia',
       },
       en: {
         'nav.back': 'Back to Home',
@@ -1400,6 +2003,21 @@
         'share.copied': 'Copied to clipboard!',
         'share.copying': 'Copying...',
         'share.tweetText': '🏆 Check out the live event leaderboard on Cringelândia with Pyxie! Join and compete for prizes:',
+        'sponsor.officialBadge': '✦ OFFICIAL SPONSOR • CRINGELÂNDIA',
+        'sponsor.topTitle': 'Support Event Prizes with Curated Partner Deals!',
+        'sponsor.topDesc': 'Sanrio plushies, anime merch & gaming gear with special discounts. Direct sponsor clicks empower our prize pools!',
+        'sponsor.btnShop': 'Browse Partner Deals',
+        'sponsor.midBubble': 'Pyxie\'s Tip: Real cash drops and Discord Nitro are made possible by our verified community sponsors! ✨',
+        'sponsor.midSeeAll': 'Browse Full Store',
+        'sponsor.ribbonBadge': '✨ PYXIE SPECIAL PICKS',
+        'sponsor.ribbonTitle': 'Exclusive Discounts & Flash Partner Deals',
+        'sponsor.ribbonDesc': 'Discover trending anime collectibles, room decor, and gaming gear curated exclusively for the community.',
+        'sponsor.ribbonBtn': 'Explore Partner Store',
+        'sponsor.loungeBadge': '🤝 COMMUNITY SUSTAINABILITY',
+        'sponsor.loungeTitle': 'How Cringelândia Keeps Everything Free & Online',
+        'sponsor.loungeDesc': 'Cringelândia keeps Pyxie online 24/7 on Oracle Cloud infrastructure and funds monthly tournament prize pools through transparent sponsorships. No extra fees for members — your support directly empowers our creators!',
+        'sponsor.loungeBtnShop': 'Explore Pyxie Picks',
+        'sponsor.loungeBtnDiscord': 'Join Cringelândia Discord',
       }
     };
 
@@ -1408,6 +2026,13 @@
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (dict[key]) el.textContent = dict[key];
+      });
+      const isEn = currentLang === 'en';
+      document.querySelectorAll('.monetization-pt').forEach(el => {
+        el.style.display = isEn ? 'none' : '';
+      });
+      document.querySelectorAll('.monetization-en').forEach(el => {
+        el.style.display = isEn ? '' : 'none';
       });
       const input = document.getElementById('playerSearchInput');
       if (input && dict['search.placeholder']) input.placeholder = dict['search.placeholder'];
@@ -1747,13 +2372,28 @@
       loop();
     })();
 
+    async function syncHourlyPromoLinks() {
+      try {
+        const res = await fetch('/api/shopee/hourly-promo');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.success && data.promo && data.promo.affiliateLink) {
+          document.querySelectorAll('[data-hourly-promo="true"]').forEach(el => {
+            el.setAttribute('href', data.promo.affiliateLink);
+          });
+        }
+      } catch (_) {}
+    }
+
     // Inicialização
     document.addEventListener('DOMContentLoaded', () => {
       applyTranslations();
       startCountdown();
       fetchRankingLive();
+      syncHourlyPromoLinks();
       // Atualiza automaticamente a cada 15 segundos
       setInterval(fetchRankingLive, 15000);
+      setInterval(syncHourlyPromoLinks, 60000);
     });
   </script>
 </body>

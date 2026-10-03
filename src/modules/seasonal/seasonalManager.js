@@ -649,6 +649,12 @@ function setupWebRoutes(app) {
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
     const currencyEmojiObj = resolveSeasonalEmojiObject(clientRef, config.assets?.emojis?.currency, '🎃');
 
+    let shopeeProducts = [];
+    try {
+      const shopeeManager = require('../../services/shopeeManager');
+      shopeeProducts = shopeeManager.getActiveItems({ shuffle: true, limit: 12 });
+    } catch (_) {}
+
     res.render(path.join(__dirname, 'views', 'rankingSazonal.ejs'), {
       config,
       data,
@@ -657,6 +663,7 @@ function setupWebRoutes(app) {
       currencyEmojiUrl: currencyEmojiObj.url || 'https://cdn.discordapp.com/emojis/1551355734577381447.png',
       currencyEmojiFormatted: currencyEmojiObj.formatted,
       active: true,
+      shopeeProducts,
     });
   });
 
