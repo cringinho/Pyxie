@@ -77,11 +77,26 @@ async function handleArtSubmission(message, client) {
     return false;
   }
 
-  // Previne submissão duplicada da mesma mensagem
+  // Previne submissão duplicada da mesma mensagem ou re-submissão de semanas anteriores
   const data = loadData();
   const currentWeek = data.currentWeekArt || [];
+  const pastTallied = data.history?.talliedArtMessageIds || [];
+
+  if (pastTallied.includes(message.id)) {
+    console.log(`[Seasonal:Art] Mensagem ${message.id} já foi apurada em semanas passadas. Ignorando.`);
+    return false;
+  }
+
   if (currentWeek.some((item) => item.messageId === message.id)) {
     return true;
+  }
+
+  // Previne necro-menções em mensagens antigas de semanas passadas (> 7 dias)
+  const messageTime = message.createdTimestamp || Date.now();
+  const maxAgeMs = 7 * 24 * 60 * 60 * 1000;
+  if (Date.now() - messageTime > maxAgeMs) {
+    console.log(`[Seasonal:Art] Mensagem ${message.id} foi postada há mais de 7 dias. Ignorando arte antiga.`);
+    return false;
   }
 
   // Emoji oficial de contagem da Pyxie
@@ -174,7 +189,14 @@ async function tallyWeeklyArt(client) {
     }
   }
 
-  // Esvazia o ciclo da semana
+  // Registra no histórico de apurações e esvazia o ciclo da semana para nunca reutilizar
+  const talliedIds = submissions.map((s) => s.messageId);
+  data.history = data.history || {};
+  data.history.talliedArtMessageIds = [
+    ...(data.history.talliedArtMessageIds || []),
+    ...talliedIds,
+  ].slice(-300);
+  data.history.lastArtTallyAt = Date.now();
   data.currentWeekArt = [];
   saveData(data);
 

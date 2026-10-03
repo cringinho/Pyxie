@@ -159,7 +159,36 @@ artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted
 
   const dataAfterTally = seasonalManager.loadData();
   assert.equal(dataAfterTally.currentWeekArt.length, 0, 'currentWeekArt deve ser esvaziado após apuração');
-  console.log('✅ Mecânica da Arte da Semana (submissão, votação, prêmio +5 e reset) validada com sucesso.');
+  assert(dataAfterTally.history.talliedArtMessageIds.includes('msg_art_123'), 'ID da mensagem vencedora deve estar arquivado no histórico');
+
+  // Teste de Proteção Anti-Reciclagem / Anti-Artes Passadas:
+  // 5.1 Re-tentativa com a mesma arte da semana passada deve ser sumariamente ignorada
+  const reSubmittedOld = await artHandler.handleArtSubmission(mockArtMessage, mockClient);
+  assert.equal(reSubmittedOld, false, 'Arte já apurada em semanas passadas não pode ser re-submetida');
+
+  // 5.2 Tentativa de necro-menção em mensagem de mais de 7 dias atrás deve ser ignorada
+  const oldDateMessage = {
+    ...mockArtMessage,
+    id: 'msg_old_retro',
+    createdTimestamp: Date.now() - 9 * 24 * 60 * 60 * 1000, // 9 dias atrás
+  };
+  const submittedAncient = await artHandler.handleArtSubmission(oldDateMessage, mockClient);
+  assert.equal(submittedAncient, false, 'Mensagens antigas (> 7 dias) não podem ser submetidas');
+
+  // 5.3 Nova arte genuína da semana atual deve ser aceita normalmente
+  const freshWeekMessage = {
+    ...mockArtMessage,
+    id: 'msg_art_fresh_week2',
+    createdTimestamp: Date.now(),
+  };
+  const submittedFresh = await artHandler.handleArtSubmission(freshWeekMessage, mockClient);
+  assert.equal(submittedFresh, true, 'Nova arte enviada na semana corrente deve ser aceita');
+  assert.equal(seasonalManager.loadData().currentWeekArt.length, 1, 'Fila da nova semana deve conter apenas a nova arte');
+
+  // Limpa para os próximos testes
+  seasonalManager.saveData({ ...seasonalManager.loadData(), currentWeekArt: [] });
+
+  console.log('✅ Mecânica da Arte da Semana (submissão, votação, prêmio +5, reset e proteção contra artes passadas) validada com sucesso.');
 
   // 6. Teste de Drop de Baú Anti-Trapaça (dropHandler)
   let dropSentEmbed = null;

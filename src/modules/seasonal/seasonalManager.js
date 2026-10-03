@@ -68,6 +68,8 @@ const DEFAULT_DATA = {
   history: {
     lastDropMessageId: null,
     lastWinners: null,
+    lastArtTallyAt: null,
+    talliedArtMessageIds: [],
   },
 };
 
