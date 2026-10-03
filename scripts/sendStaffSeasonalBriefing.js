@@ -53,10 +53,9 @@ async function main() {
         {
           name: '🏆 Prêmios para os Melhores (Top 3)',
           value:
-            `🥇 **1º Lugar:** ${config.prizes?.firstPlace || 'A definir recompensa'}\n` +
-            `🥈 **2º Lugar:** ${config.prizes?.secondPlace || 'A definir recompensa'}\n` +
-            `🥉 **3º Lugar:** ${config.prizes?.thirdPlace || 'A definir recompensa'}\n` +
-            `*(Recompensas a serem definidas junto com a moderação!)*`,
+            `🥇 **1º Lugar:** ${config.prizes?.firstPlace || '1 Mês de Discord Nitro + Cargo de Bruxo Supremo'}\n` +
+            `🥈 **2º Lugar:** ${config.prizes?.secondPlace || '5.000 Moedinhas + Cargo de Zumbi da Cringelândia'}\n` +
+            `🥉 **3º Lugar:** ${config.prizes?.thirdPlace || '2.000 Moedinhas'}`,
           inline: false,
         },
         {
@@ -238,7 +237,7 @@ async function main() {
         '• **Onde anunciar o vencedor:** <#1472269616431628408> (`📢┃avisos`) — para os anúncios oficiais.\n\n' +
         '### ❓ Perguntas para a Equipe:\n' +
         '1. **Os horários dos baús (3 vezes nos dias normais e 6 vezes no fim de semana) parecem bons?**\n' +
-        '2. **Quais recompensas vocês acham que devemos dar para o 1º, 2º e 3º lugar? (Recompensas a definir!)**\n' +
+        '2. **Os prêmios (1º Nitro, 2º 5.000 moedas + cargo, 3º 2.000 moedas) estão justos e legais?**\n' +
         '3. **Esses três canais aí em cima estão certinhos?**\n\n' +
         'Votem clicando nas carinhas abaixo e digitem a opinião de vocês aqui no chat!'
       )
