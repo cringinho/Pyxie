@@ -1087,11 +1087,21 @@
 
     <div id="toast"></div>
 
+    <!-- Dados dos Emojis injetados via JSON estruturado (zero erro de sintaxe no editor) -->
+    <script type="application/json" id="appEmojisData"><%- JSON.stringify(appEmojis || []) %></script>
+
     <script>
       let currentTab = 'infoevento';
 
       // Catálogo de Emojis da Pyxie vindo do servidor
-      const ALL_DISCORD_EMOJIS = <%- JSON.stringify(appEmojis || []) %>;
+      let ALL_DISCORD_EMOJIS = [];
+      try {
+        const rawJsonEl = document.getElementById('appEmojisData');
+        ALL_DISCORD_EMOJIS = rawJsonEl ? JSON.parse(rawJsonEl.textContent || '[]') : [];
+      } catch (_) {
+        ALL_DISCORD_EMOJIS = [];
+      }
+
       const emojiMapById = new Map();
       const emojiMapByName = new Map();
 
