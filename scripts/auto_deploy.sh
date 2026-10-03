@@ -171,7 +171,13 @@ do
 done
 chmod 600 "${HOME}/.ssh/authorized_keys"
 
-# 11. Quality Gate: Executa os 13 testes automatizados antes de reiniciar o bot
+# 10.2. Instalação e atualização de dependências
+if git diff --name-only "${LOCAL_REV}" "${REMOTE_REV}" 2>/dev/null | grep -E '^package(-lock)?\.json$' >/dev/null 2>&1 || [ ! -d "node_modules/node-cron" ] || [ ! -d "node_modules/ejs" ]; then
+  log "📦 Atualizando dependências com npm install..."
+  npm install --no-audit --no-fund || true
+fi
+
+# 11. Quality Gate: Executa os testes automatizados antes de reiniciar o bot
 log "🧪 Executando bateria de testes automatizados (npm test)..."
 if ! npm test; then
   log "❌ ERRO: Testes automatizados falharam no commit ${REMOTE_REV:0:7}!"
