@@ -11,8 +11,12 @@ const { reloadEmojiConfig } = require('./src/utils/appEmojis');
 const shopeeManager = require('./src/services/shopeeManager');
 const workSeederService = require('./src/services/workSeederService');
 const pinterestCatalogService = require('./src/services/pinterestCatalogService');
+const seasonalManager = require('./src/modules/seasonal/seasonalManager');
 
 const app = express();
+app.set('view engine', 'ejs');
+seasonalManager.init(null, app);
+
 const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || '0.0.0.0';
 const appRoot = __dirname;

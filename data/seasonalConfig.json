@@ -1,0 +1,52 @@
+{
+  "active": false,
+  "eventName": "Halloween da Cringelândia",
+  "currencyName": "Abóboras",
+  "channels": {
+    "artChannelId": "",
+    "dropsChannelId": "",
+    "announcementsChannelId": ""
+  },
+  "dates": {
+    "endDate": "2026-11-02T23:59:59-03:00",
+    "timezone": "America/Sao_Paulo"
+  },
+  "prizes": {
+    "firstPlace": "1 Mês de Discord Nitro + Cargo de Bruxo Supremo",
+    "secondPlace": "5.000 Moedinhas + Cargo de Zumbi da Cringelândia",
+    "thirdPlace": "2.000 Moedinhas"
+  },
+  "assets": {
+    "chestImageUrl": "https://i.imgur.com/link_do_bau_halloween.png",
+    "emojis": {
+      "currency": "5479_Kindergarten",
+      "dropDecoys": [
+        "82336witchscaul",
+        "4124hellokit",
+        "ardiscordzomb",
+        "purplecandy",
+        "31772purpleween",
+        "witchwumpus"
+      ],
+      "trickOrTreat": [
+        "halloweenpokemon",
+        "halloweentot8"
+      ],
+      "dailyClaim": [
+        "halloween3gif55",
+        "cafehalloweenbat",
+        "halloween47"
+      ],
+      "artOfWeek": [
+        "8320_hallowee",
+        "36577halloween"
+      ]
+    }
+  },
+  "templates": {
+    "announcementText": "🕸️ **O CIRCO DOS HORRORES COMEÇOU NA CRINGELÂNDIA!** 🕸️\n\nAcharam que iam passar o mês sem serem humilhados? O evento **{eventName}** tá liberado!\n\nJuntem **{currencyName}** nos drops do baú e na Arte da Semana. Quem terminar no topo ganha **{firstPrize}**. Quem perder, só passa vergonha mesmo.\n\nUse `/py-infoevento` pra entender antes de chorar no chat geral.",
+    "dropEmbedFooter": "Dica: Use /py-infoevento para entender a pontuação e prazos!",
+    "artOfWeekWinner": "🎨 **ARTE DA SEMANA DEFINIDA!**\n\nOlha só, parece que temos alguém talentoso no meio de tantos rabiscos. Parabéns {author}, sua arte foi a mais votada e você garantiu **+5 {currencyName}**!\n\nConfiram a obra de arte abaixo:"
+  },
+  "testField": "test_1790986766982"
+}

@@ -17,8 +17,25 @@ async function buildRankingView(source, viewerId, category = 'coins') {
   let color = PYXIE_COLORS.gold || '#facc15';
 
   const isStreaks = category === 'streaks' || category === 'streak' || category === 'ofensiva';
+  const isSeasonal = category === 'seasonal' || category === 'sazonal';
 
-  if (category === 'beans') {
+  const { isSeasonalActive, loadConfig, resolveSeasonalEmoji, getTopSeasonalBalances } = require('../modules/seasonal/seasonalManager');
+  const seasonalActive = isSeasonalActive();
+
+  if (isSeasonal && seasonalActive) {
+    const sCfg = loadConfig();
+    const sEmoji = resolveSeasonalEmoji(source?.client || null, sCfg.assets?.emojis?.currency, '🎃');
+    title = `🏆 Placar Sazonal: ${sCfg.eventName}`;
+    color = '#7c3aed';
+    const entries = getTopSeasonalBalances(10);
+    const lines = entries.length
+      ? entries.map((entry, idx) => {
+          const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `**#${idx + 1}**`;
+          return `${medal} <@${entry.userId}>\n> ${sEmoji} **${entry.balance} ${sCfg.currencyName || 'Abóboras'}**`;
+        })
+      : ['Ninguém pontuou no evento sazonal ainda. Abra baús ou envie artes para liderar!'];
+    desc = [`Top 10 aventureiros acumulando **${sCfg.currencyName}**:`, '', ...lines].join('\n');
+  } else if (category === 'beans') {
     title = t('ranking.beansTitle', source);
     color = PYXIE_COLORS.emerald || '#10b981';
     const entries = getRanking(10).sort((a, b) => (b.magicBeans || 0) - (a.magicBeans || 0));
@@ -56,11 +73,15 @@ async function buildRankingView(source, viewerId, category = 'coins') {
     desc = [t('ranking.coinsDesc', source), '', ...lines].join('\n');
   }
 
+  const footerText = (isSeasonal && seasonalActive)
+    ? 'Dica: Use /py-infoevento para entender a pontuação e prazos!'
+    : pyxieFooter(t('ranking.footer', source));
+
   const embed = new EmbedBuilder()
     .setColor(color)
     .setTitle(title)
     .setDescription(desc)
-    .setFooter({ text: pyxieFooter(t('ranking.footer', source)) })
+    .setFooter({ text: footerText })
     .setTimestamp();
 
   const { getEmoji } = require('../utils/appEmojis');
@@ -69,7 +90,7 @@ async function buildRankingView(source, viewerId, category = 'coins') {
       .setCustomId(`ranking_cat:coins:${viewerId}`)
       .setLabel(t('ranking.btnCoins', source))
       .setEmoji(getEmoji('COIN'))
-      .setStyle(category === 'coins' ? ButtonStyle.Success : ButtonStyle.Secondary),
+      .setStyle(category === 'coins' && !isSeasonal ? ButtonStyle.Success : ButtonStyle.Secondary),
     new ButtonBuilder()
       .setCustomId(`ranking_cat:beans:${viewerId}`)
       .setLabel(t('ranking.btnBeans', source))
@@ -81,6 +102,18 @@ async function buildRankingView(source, viewerId, category = 'coins') {
       .setEmoji('🔥')
       .setStyle(isStreaks ? ButtonStyle.Success : ButtonStyle.Secondary)
   );
+
+  if (seasonalActive) {
+    const sCfg = loadConfig();
+    const sEmoji = resolveSeasonalEmoji(source?.client || null, sCfg.assets?.emojis?.currency, '🎃');
+    buttonRow.addComponents(
+      new ButtonBuilder()
+        .setCustomId(`ranking_cat:seasonal:${viewerId}`)
+        .setLabel(sCfg.currencyName || 'Sazonal')
+        .setEmoji(sEmoji)
+        .setStyle(isSeasonal ? ButtonStyle.Success : ButtonStyle.Secondary)
+    );
+  }
 
   return { embeds: [embed], components: [buttonRow] };
 }
@@ -131,7 +164,7 @@ module.exports = {
     ),
   async executePrefix({ message, args }) {
     const cat = String(args[0] || 'coins').toLowerCase();
-    const validCat = ['coins', 'beans', 'streaks', 'streak', 'ofensiva'].includes(cat) ? cat : 'coins';
+    const validCat = ['coins', 'beans', 'streaks', 'streak', 'ofensiva', 'seasonal', 'sazonal'].includes(cat) ? cat : 'coins';
     const view = await buildRankingView(message, message.author.id, validCat);
     await message.reply(view);
   },

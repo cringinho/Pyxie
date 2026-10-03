@@ -16,6 +16,13 @@ const {
 const { acquireBotLock, releaseBotLock, getPrefix } = require('./src/utils/botUtils');
 const { getWelcomeChannel, normalizeChannelValue } = require('./src/services/database');
 const { commandsByName, slashCommands } = require('./src/commands');
+const seasonalManager = require('./src/modules/seasonal/seasonalManager');
+const infoEventoCommand = require('./src/modules/seasonal/commands/pyInfoEvento');
+
+// Registra os comandos sazonais no mapa em memória do bot
+['py-infoevento', 'infoevento', 'info-evento', 'py-info-evento', 'evento', 'py-evento'].forEach((alias) => {
+  commandsByName.set(alias, infoEventoCommand);
+});
 const marriageCommand = require('./src/commands/casamento');
 const tarotCommand = require('./src/commands/tarot');
 const helpCommand = require('./src/commands/help');
@@ -81,6 +88,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessageReactions,
   ],
   // Otimização de memória e cache para execução em nuvem (Oracle Cloud / PM2)
   makeCache: Options.cacheWithLimits({
@@ -91,7 +99,7 @@ const client = new Client({
     GuildScheduledEventManager: 0,
     ThreadMemberManager: 0,
     PresenceManager: 0,
-    ReactionManager: 0,
+    ReactionManager: 25,
   }),
   sweepers: {
     ...Options.DefaultSweeperSettings,
@@ -401,6 +409,7 @@ client.once('ready', async () => {
   await syncApplicationEmojis(client).catch(() => null);
   startBumpGuideScheduler();
   startTarotScheduler();
+  seasonalManager.init(client, null);
 });
 
 // Atualização automática de catálogo de emojis quando novos emojis forem adicionados/editados/removidos

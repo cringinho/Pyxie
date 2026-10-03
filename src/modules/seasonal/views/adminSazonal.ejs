@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pyxie Sazonal • Painel de Eventos da Cringelândia</title>
+    <link rel="icon" href="https://cdn.discordapp.com/emojis/1548444149785694238.gif" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg-main: #07040e;
+        --bg-card: rgba(18, 10, 34, 0.94);
+        --bg-card-hover: rgba(26, 15, 48, 0.98);
+        --purple-accent: #8b5cf6;
+        --purple-glow: #c084fc;
+        --pink-neon: #f43f5e;
+        --pink-bright: #ec4899;
+        --cyan-neon: #38bdf8;
+        --green-neon: #10b981;
+        --yellow-neon: #fbbf24;
+        --red-neon: #ef4444;
+        --text-white: #ffffff;
+        --text-muted: #94a3b8;
+        --border-glass: rgba(192, 132, 252, 0.22);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-main);
+        background-image: 
+          radial-gradient(circle at top right, #2b0f4c 0%, #07040e 100%),
+          radial-gradient(circle at 10% 40%, rgba(244, 63, 94, 0.09) 0%, transparent 40%),
+          radial-gradient(circle at 90% 70%, rgba(139, 92, 246, 0.09) 0%, transparent 40%);
+        color: var(--text-white);
+        min-height: 100vh;
+        padding: 20px 16px 40px;
+      }
+
+      .container {
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 16px 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(16px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-icon {
+        font-size: 28px;
+        background: linear-gradient(135deg, var(--purple-accent), var(--pink-neon));
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4);
+      }
+
+      .brand-title h1 {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        background: linear-gradient(to right, #ffffff, var(--purple-glow));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .brand-title p {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 12px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        border: 1px solid transparent;
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text-white);
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--purple-accent), var(--pink-bright));
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        color: #fff;
+      }
+
+      .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+      }
+
+      .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .status-pill.active {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--green-neon);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+
+      .status-pill.inactive {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--red-neon);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      /* Layout Grid */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 24px;
+      }
+
+      @media (max-width: 1024px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        margin-bottom: 24px;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .card-header h2 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--purple-glow);
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+      }
+
+      input[type="text"],
+      input[type="datetime-local"],
+      textarea,
+      select {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--purple-accent);
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .help-text {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      /* Live Discord Embed Preview */
+      .discord-preview-box {
+        background: #2b2d31;
+        border-radius: 8px;
+        padding: 16px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        border-left: 4px solid #7c3aed;
+        margin-top: 14px;
+      }
+
+      .preview-author {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .preview-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+      }
+
+      .preview-author-name {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #f2f3f5;
+      }
+
+      .preview-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 8px;
+      }
+
+      .preview-desc {
+        font-size: 0.85rem;
+        color: #dbdee1;
+        line-height: 1.4;
+        white-space: pre-wrap;
+        margin-bottom: 12px;
+      }
+
+      .preview-img {
+        max-width: 100%;
+        max-height: 220px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .preview-footer {
+        font-size: 0.72rem;
+        color: #949ba4;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 8px;
+      }
+
+      .tab-buttons {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .tab-btn {
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-muted);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+      }
+
+      .tab-btn.active {
+        background: var(--purple-accent);
+        color: #fff;
+        border-color: var(--purple-accent);
+      }
+
+      /* Toast Notification */
+      #toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: none;
+        z-index: 9999;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      }
+
+      #toast.success {
+        background: #059669;
+        color: #fff;
+      }
+
+      #toast.error {
+        background: #dc2626;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Top Navbar -->
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-icon">🎃</div>
+          <div class="brand-title">
+            <h1>Pyxie Sazonal • Cringelândia</h1>
+            <p>Gerenciamento Desacoplado de Eventos e Competições</p>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <div id="statusBadge" class="status-pill <%= active ? 'active' : 'inactive' %>">
+            <span class="status-dot"></span>
+            <span id="statusText"><%= active ? 'Evento Ativo' : 'Evento Desligado' %></span>
+          </div>
+
+          <a href="/admin" class="btn btn-secondary">
+            ⬅️ Voltar ao Painel
+          </a>
+
+          <% if (active) { %>
+            <button id="toggleBtn" class="btn btn-danger" onclick="toggleEvent(false)">
+              🛑 Encerrar Evento
+            </button>
+          <% } else { %>
+            <button id="toggleBtn" class="btn btn-success" onclick="toggleEvent(true)">
+              🚀 Iniciar Evento
+            </button>
+          <% } %>
+
+          <button class="btn btn-primary" onclick="saveConfiguration()">
+            💾 Salvar Alterações
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Layout -->
+      <div class="main-grid">
+        <!-- Coluna Esquerda: Formulário de Configurações -->
+        <div class="left-col">
+          <!-- Configurações Gerais -->
+          <div class="card">
+            <div class="card-header">
+              <h2>⚙️ Configurações Principais</h2>
+              <span class="help-text">Valores atômicos salvos em seasonalConfig.json</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nome do Evento</label>
+                <input type="text" id="eventName" value="<%= config.eventName %>" oninput="updateLivePreview()" />
+              </div>
+              <div class="form-group">
+                <label>Nome da Moeda Temática</label>
+                <input type="text" id="currencyName" value="<%= config.currencyName %>" oninput="updateLivePreview()" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Data e Hora Limite (Encerramento)</label>
+                <input type="text" id="endDate" value="<%= config.dates?.endDate %>" placeholder="2026-11-02T23:59:59-03:00" oninput="updateLivePreview()" />
+                <p class="help-text">Formato ISO com timezone (ex: 2026-11-02T23:59:59-03:00)</p>
+              </div>
+              <div class="form-group">
+                <label>Fuso Horário</label>
+                <input type="text" id="timezone" value="<%= config.dates?.timezone || 'America/Sao_Paulo' %>" readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Canais do Servidor -->
+          <div class="card">
+            <div class="card-header">
+              <h2>📢 Canais da Cringelândia</h2>
+              <span class="help-text">IDs de canais Discord onde a mágica acontece</span>
+            </div>
+
+            <div class="form-group">
+              <label>Canal de Artes da Semana (artChannelId)</label>
+              <input type="text" id="artChannelId" value="<%= config.channels?.artChannelId || '' %>" placeholder="Ex: 1453890868980482090" />
+              <p class="help-text">Membros marcam @Pyxie com fotos/artes aqui. Bot apura aos domingos às 10:00 BRT.</p>
+            </div>
+
+            <div class="form-group">
+              <label>Canal de Baús e Drops (dropsChannelId)</label>
+              <input type="text" id="dropsChannelId" value="<%= config.channels?.dropsChannelId || '' %>" placeholder="Ex: 1453890868980482090" />
+              <p class="help-text">Canal onde os baús surpresa despencam (3x/dia seg-sex, 6x/dia sab-dom).</p>
+            </div>
+
+            <div class="form-group">
+              <label>Canal de Anúncios Oficiais (announcementsChannelId)</label>
+              <input type="text" id="announcementsChannelId" value="<%= config.channels?.announcementsChannelId || '' %>" placeholder="Ex: 1453890868980482090" />
+              <p class="help-text">Onde o início oficial e encerramento com o pódio dos 3 vencedores são anunciados.</p>
+            </div>
+          </div>
+
+          <!-- Tabela de Premiações -->
+          <div class="card">
+            <div class="card-header">
+              <h2>🏆 Premiação dos Vencedores</h2>
+              <span class="help-text">Exibido no comando /py-infoevento</span>
+            </div>
+
+            <div class="form-group">
+              <label>🥇 1º Lugar (Obrigatório)</label>
+              <input type="text" id="firstPlace" value="<%= config.prizes?.firstPlace || '' %>" oninput="updateLivePreview()" />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>🥈 2º Lugar (Opcional)</label>
+                <input type="text" id="secondPlace" value="<%= config.prizes?.secondPlace || '' %>" oninput="updateLivePreview()" />
+              </div>
+              <div class="form-group">
+                <label>🥉 3º Lugar (Opcional)</label>
+                <input type="text" id="thirdPlace" value="<%= config.prizes?.thirdPlace || '' %>" oninput="updateLivePreview()" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Templates de Texto -->
+          <div class="card">
+            <div class="card-header">
+              <h2>✍️ Templates & Deboche da Pyxie</h2>
+              <span class="help-text">Variáveis: {eventName}, {currencyName}, {firstPrize}, {author}</span>
+            </div>
+
+            <div class="form-group">
+              <label>Texto do Anúncio de Início</label>
+              <textarea id="announcementText" rows="4" oninput="updateLivePreview()"><%= config.templates?.announcementText %></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Rodapé Universal dos Embeds</label>
+              <input type="text" id="dropEmbedFooter" value="<%= config.templates?.dropEmbedFooter %>" oninput="updateLivePreview()" />
+            </div>
+
+            <div class="form-group">
+              <label>Texto do Vencedor da Arte da Semana</label>
+              <textarea id="artOfWeekWinner" rows="3" oninput="updateLivePreview()"><%= config.templates?.artOfWeekWinner %></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna Direita: Live Preview & Disparos Manuais -->
+        <div class="right-col">
+          <!-- Ações Rápidas de Teste -->
+          <div class="card">
+            <div class="card-header">
+              <h2>⚡ Disparos & Testes Imediatos</h2>
+            </div>
+            <p class="help-text" style="margin-bottom: 14px;">Permite testar as mecânicas em tempo real sem esperar o cron da VM.</p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn btn-secondary" onclick="triggerManualDrop()">
+                📦 Disparar Baú Agora
+              </button>
+              <button class="btn btn-secondary" onclick="triggerManualArtTally()">
+                🎨 Apurar Artes Agora
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Discord Embed Preview -->
+          <div class="card">
+            <div class="card-header">
+              <h2>👁️ Live Discord Preview</h2>
+              <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchPreviewTab('announcement')">Anúncio</button>
+                <button class="tab-btn" onclick="switchPreviewTab('drop')">Baú Drop</button>
+                <button class="tab-btn" onclick="switchPreviewTab('art')">Arte Winner</button>
+              </div>
+            </div>
+
+            <div class="discord-preview-box">
+              <div class="preview-author">
+                <img class="preview-avatar" src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" alt="Pyxie" />
+                <span class="preview-author-name">Pyxie [BOT]</span>
+              </div>
+
+              <div id="previewTitle" class="preview-title">🕸️ HALLOWEEN DA CRINGELÂNDIA 🕸️</div>
+              <div id="previewDesc" class="preview-desc">Carregando preview...</div>
+              <img id="previewImg" class="preview-img" src="<%= config.assets?.chestImageUrl || 'https://i.imgur.com/link_do_bau_halloween.png' %>" alt="Chest" />
+              <div id="previewFooter" class="preview-footer">
+                <span>Dica: Use /py-infoevento para entender a pontuação e prazos!</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Histórico Recente -->
+          <div class="card">
+            <div class="card-header">
+              <h2>📊 Estatísticas do Evento</h2>
+            </div>
+            <div style="font-size: 0.88rem; line-height: 1.8;">
+              <p>👥 <strong>Participantes Pontuando:</strong> <%= Object.keys(data.balances || {}).length %></p>
+              <p>🎨 <strong>Artes na Fila Dominical:</strong> <%= (data.currentWeekArt || []).length %></p>
+              <p>📦 <strong>Último Drop ID:</strong> <code><%= data.history?.lastDropMessageId || 'Nenhum' %></code></p>
+              <p>🏆 <strong>Último Pódio Registrado:</strong> <%= data.history?.lastWinners ? (data.history.lastWinners.winners?.length + ' premiados') : 'Nenhum' %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+      let currentTab = 'announcement';
+
+      function showToast(msg, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = type;
+        toast.style.display = 'block';
+        setTimeout(() => {
+          toast.style.display = 'none';
+        }, 3500);
+      }
+
+      function switchPreviewTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        updateLivePreview();
+      }
+
+      function updateLivePreview() {
+        const eventName = document.getElementById('eventName').value || 'Evento Sazonal';
+        const currencyName = document.getElementById('currencyName').value || 'Moedas';
+        const firstPrize = document.getElementById('firstPlace').value || 'Discord Nitro';
+        const footer = document.getElementById('dropEmbedFooter').value || 'Dica: Use /py-infoevento para entender a pontuação e prazos!';
+
+        const titleEl = document.getElementById('previewTitle');
+        const descEl = document.getElementById('previewDesc');
+        const footerEl = document.getElementById('previewFooter');
+
+        footerEl.textContent = footer;
+
+        if (currentTab === 'announcement') {
+          titleEl.textContent = `🕸️ ${eventName.toUpperCase()} 🕸️`;
+          let raw = document.getElementById('announcementText').value;
+          raw = raw.replace(/{eventName}/g, eventName)
+                   .replace(/{currencyName}/g, currencyName)
+                   .replace(/{firstPrize}/g, firstPrize);
+          descEl.textContent = raw;
+        } else if (currentTab === 'drop') {
+          titleEl.textContent = '🎃 BAÚ MISTERIOSO DA PYXIE DESPENCOU! 🎃';
+          descEl.textContent = `Um baú suspeito caiu com tudo no meio da Cringelândia!\n\n⚡ Rápido! Clique na reação 🎃 **Abóbora Maligna** antes dos outros para abrir o baú!\n\n*Apenas o primeiro a acertar leva o saque.*`;
+        } else if (currentTab === 'art') {
+          titleEl.textContent = '🎨 ARTE DA SEMANA DEFINIDA!';
+          let raw = document.getElementById('artOfWeekWinner').value;
+          raw = raw.replace(/{author}/g, '@ArtistaTalentoso')
+                   .replace(/{currencyName}/g, currencyName);
+          descEl.textContent = `${raw}\n\nTotal de Votos: 14 🗳️`;
+        }
+      }
+
+      async function saveConfiguration() {
+        const payload = {
+          eventName: document.getElementById('eventName').value,
+          currencyName: document.getElementById('currencyName').value,
+          channels: {
+            artChannelId: document.getElementById('artChannelId').value.trim(),
+            dropsChannelId: document.getElementById('dropsChannelId').value.trim(),
+            announcementsChannelId: document.getElementById('announcementsChannelId').value.trim(),
+          },
+          dates: {
+            endDate: document.getElementById('endDate').value.trim(),
+            timezone: document.getElementById('timezone').value.trim(),
+          },
+          prizes: {
+            firstPlace: document.getElementById('firstPlace').value,
+            secondPlace: document.getElementById('secondPlace').value,
+            thirdPlace: document.getElementById('thirdPlace').value,
+          },
+          templates: {
+            announcementText: document.getElementById('announcementText').value,
+            dropEmbedFooter: document.getElementById('dropEmbedFooter').value,
+            artOfWeekWinner: document.getElementById('artOfWeekWinner').value,
+          }
+        };
+
+        try {
+          const res = await fetch('/api/admin/sazonal/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const json = await res.json();
+          if (json.success) {
+            showToast('Configurações salvas com sucesso!');
+          } else {
+            showToast('Erro ao salvar: ' + (json.error || 'Desconhecido'), 'error');
+          }
+        } catch (err) {
+          showToast('Erro de conexão ao salvar: ' + err.message, 'error');
+        }
+      }
+
+      async function toggleEvent(start) {
+        let broadcast = false;
+        if (start) {
+          broadcast = confirm('Deseja enviar o anúncio oficial no canal de anúncios do Discord ao iniciar?');
+        } else {
+          if (!confirm('Tem certeza de que deseja encerrar o evento agora? Os crons e coletores serão desligados.')) return;
+        }
+
+        try {
+          const res = await fetch('/api/admin/sazonal/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ active: start, broadcast })
+          });
+          const json = await res.json();
+          if (json.success) {
+            showToast(start ? 'Evento iniciado com sucesso!' : 'Evento encerrado com sucesso!');
+            setTimeout(() => location.reload(), 1000);
+          } else {
+            showToast('Erro: ' + (json.error || 'Falha ao alterar estado'), 'error');
+          }
+        } catch (err) {
+          showToast('Erro: ' + err.message, 'error');
+        }
+      }
+
+      async function triggerManualDrop() {
+        if (!confirm('Deseja disparar um drop de baú de teste imediatamente no canal configurado?')) return;
+        try {
+          const res = await fetch('/api/admin/sazonal/trigger-drop', { method: 'POST' });
+          const json = await res.json();
+          showToast(json.message || 'Drop acionado!', json.success ? 'success' : 'error');
+        } catch (err) {
+          showToast('Erro: ' + err.message, 'error');
+        }
+      }
+
+      async function triggerManualArtTally() {
+        if (!confirm('Deseja apurar as artes da semana cadastradas agora?')) return;
+        try {
+          const res = await fetch('/api/admin/sazonal/trigger-art', { method: 'POST' });
+          const json = await res.json();
+          showToast(json.message || 'Apuração executada!', json.success ? 'success' : 'error');
+        } catch (err) {
+          showToast('Erro: ' + err.message, 'error');
+        }
+      }
+
+      // Inicializa preview
+      updateLivePreview();
+    </script>
+  </body>
+</html>

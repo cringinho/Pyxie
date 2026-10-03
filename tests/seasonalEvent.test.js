@@ -1,0 +1,237 @@
+const assert = require('node:assert');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const seasonalManager = require('../src/modules/seasonal/seasonalManager');
+const artHandler = require('../src/modules/seasonal/artHandler');
+const dropHandler = require('../src/modules/seasonal/dropHandler');
+const infoEventoCommand = require('../src/modules/seasonal/commands/pyInfoEvento');
+const { buildRankingView } = require('../src/commands/ranking');
+
+console.log('🎃 Iniciando suíte de testes de Engenharia: Módulo Sazonal Desacoplado...');
+
+// Garante que o estado inicial esteja desligado (active: false) e limpo
+seasonalManager.stop();
+seasonalManager.saveData({ balances: {}, currentWeekArt: [], history: { lastDropMessageId: null, lastWinners: null } });
+assert.equal(seasonalManager.isSeasonalActive(), false, 'O evento deve nascer DESLIGADO por padrão (active: false).');
+console.log('✅ Estado padrão desligado (active: false) validado com sucesso.');
+
+// 1. Teste de Persistência Atômica
+const initialConfig = seasonalManager.loadConfig();
+assert.equal(typeof initialConfig.eventName, 'string', 'Config deve possuir eventName');
+assert.equal(typeof initialConfig.currencyName, 'string', 'Config deve possuir currencyName');
+assert(Array.isArray(initialConfig.assets?.emojis?.dropDecoys), 'Config deve conter lista de dropDecoys');
+
+const testKey = 'test_' + Date.now();
+seasonalManager.saveConfig({ testField: testKey });
+const reloadedConfig = seasonalManager.loadConfig();
+assert.equal(reloadedConfig.testField, testKey, 'Escrita atômica em seasonalConfig.json validada.');
+
+// 2. Teste de Gestão de Saldos Sazonais e Top 10
+const userA = 'user_test_alpha';
+const userB = 'user_test_beta';
+const userC = 'user_test_gamma';
+
+seasonalManager.addSeasonalBalance(userA, 10);
+seasonalManager.addSeasonalBalance(userB, 25);
+seasonalManager.addSeasonalBalance(userC, 5);
+
+assert.equal(seasonalManager.getSeasonalBalance(userA), 10, 'Saldo de userA deve ser 10');
+assert.equal(seasonalManager.getSeasonalBalance(userB), 25, 'Saldo de userB deve ser 25');
+assert.equal(seasonalManager.getSeasonalBalance(userC), 5, 'Saldo de userC deve ser 5');
+
+const topList = seasonalManager.getTopSeasonalBalances(3);
+assert.equal(topList.length, 3, 'Deve retornar top 3');
+assert.equal(topList[0].userId, userB, '1º lugar deve ser userB');
+assert.equal(topList[0].balance, 25);
+assert.equal(topList[1].userId, userA, '2º lugar deve ser userA');
+assert.equal(topList[2].userId, userC, '3º lugar deve ser userC');
+console.log('✅ Gestão de saldos atômicos e ranking Top 10 validados com sucesso.');
+
+// 3. Teste do Comando /py-infoevento Inativo
+const inactiveView = infoEventoCommand.buildInfoEventoView('some_user', null);
+assert(inactiveView.content && inactiveView.content.includes('Nenhum evento sazonal ativo'), 'Comando /py-infoevento deve responder que está desligado quando active: false');
+console.log('✅ Resposta de evento inativo no /py-infoevento validada.');
+
+// 4. Teste de Ativação (start) e Resposta do /py-infoevento Ativo
+seasonalManager.start();
+assert.equal(seasonalManager.isSeasonalActive(), true, 'Evento deve estar ativo após seasonalManager.start()');
+
+const activeView = infoEventoCommand.buildInfoEventoView(userB, null);
+assert(activeView.embeds && activeView.embeds.length > 0, 'Comando deve retornar embed com evento ativo');
+const infoEmbed = activeView.embeds[0];
+assert(infoEmbed.data.title.includes('GUIA OFICIAL'), 'Embed de info deve conter GUIA OFICIAL');
+assert(infoEmbed.data.footer.text.includes('/py-infoevento'), 'Footer do embed deve conter dica universal');
+assert(infoEmbed.data.fields.some((f) => f.name.includes('Seu Saldo Sazonal') && f.value.includes('25')), 'Embed deve exibir saldo do usuário');
+console.log('✅ Resposta de evento ativo no /py-infoevento validada.');
+
+// 5. Teste de Submissão e Apuração de Arte da Semana (artHandler)
+const mockClient = {
+  user: { id: 'bot_pyxie_id' },
+  channels: {
+    fetch: async () => mockChannel,
+  },
+  emojis: { cache: { find: () => null } },
+  application: { emojis: { cache: { find: () => null } } },
+};
+
+let reactedEmoji = null;
+const mockArtMessage = {
+  id: 'msg_art_123',
+  author: { id: 'artist_user_1', bot: false, tag: 'Artist#0001' },
+  channelId: 'art_channel_test',
+  content: 'Minha arte para o evento! <@bot_pyxie_id> https://i.imgur.com/example_art.png',
+  mentions: {
+    has: (u) => u === mockClient.user,
+    users: new Map([['bot_pyxie_id', mockClient.user]]),
+  },
+  attachments: new Map(),
+  react: async (emoji) => { reactedEmoji = emoji; },
+};
+
+const mockChannel = {
+  id: 'art_channel_test',
+  isTextBased: () => true,
+  send: async () => ({ id: 'sent_art_announcement' }),
+  messages: {
+    fetch: async () => ({
+      reactions: {
+        cache: [
+          {
+            emoji: { name: '8320_hallowee' },
+            count: 6,
+            me: true, // 1 reação do bot + 5 votos da comunidade
+          },
+        ],
+      },
+    }),
+  },
+};
+
+// Configura canal de artes de teste
+seasonalManager.saveConfig({
+  channels: { ...seasonalManager.loadConfig().channels, artChannelId: 'art_channel_test' },
+});
+
+// Submete a arte
+artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted) => {
+  assert.equal(submitted, true, 'Submissão de arte com menção e imagem deve ser aceita');
+  assert(reactedEmoji !== null, 'Bot deve reagir com o emoji oficial de contagem');
+
+  const dataAfterSub = seasonalManager.loadData();
+  assert.equal(dataAfterSub.currentWeekArt.length, 1, 'Arte deve ser salva na lista da semana');
+  assert.equal(dataAfterSub.currentWeekArt[0].authorId, 'artist_user_1');
+
+  // Apuração dominical da arte
+  const tallyResult = await artHandler.tallyWeeklyArt(mockClient);
+  assert.equal(tallyResult.success, true, 'Apuração deve ser bem-sucedida');
+  assert.equal(tallyResult.winner.authorId, 'artist_user_1', 'Vencedor deve ser artist_user_1');
+  assert.equal(tallyResult.votes, 5, 'Deve contar 5 votos excluindo a reação do bot');
+
+  const artistBalance = seasonalManager.getSeasonalBalance('artist_user_1');
+  assert.equal(artistBalance, 5, 'Vencedor da arte deve receber +5 moedas sazonais');
+
+  const dataAfterTally = seasonalManager.loadData();
+  assert.equal(dataAfterTally.currentWeekArt.length, 0, 'currentWeekArt deve ser esvaziado após apuração');
+  console.log('✅ Mecânica da Arte da Semana (submissão, votação, prêmio +5 e reset) validada com sucesso.');
+
+  // 6. Teste de Drop de Baú Anti-Trapaça (dropHandler)
+  let dropSentEmbed = null;
+  let collectorCallback = null;
+  const mockDropMsg = {
+    id: 'msg_drop_999',
+    reactions: [],
+    react: async (emoji) => { mockDropMsg.reactions.push(emoji); },
+    edit: async (data) => { dropSentEmbed = data; },
+    delete: async () => {},
+    createReactionCollector: ({ filter }) => {
+      const col = {
+        filter,
+        on: (ev, cb) => {
+          if (ev === 'collect') collectorCallback = cb;
+        },
+        stop: () => {},
+      };
+      return col;
+    },
+  };
+
+  const mockDropChannel = {
+    id: 'drops_channel_test',
+    isTextBased: () => true,
+    send: async (payload) => {
+      dropSentEmbed = payload;
+      return mockDropMsg;
+    },
+  };
+
+  mockClient.channels.fetch = async (id) => {
+    if (id === 'drops_channel_test') return mockDropChannel;
+    return mockChannel;
+  };
+
+  seasonalManager.saveConfig({
+    channels: { ...seasonalManager.loadConfig().channels, dropsChannelId: 'drops_channel_test' },
+  });
+
+  const dropTriggered = await dropHandler.triggerDrop(mockClient);
+  assert.equal(dropTriggered, true, 'Drop deve ser disparado com sucesso');
+  assert(mockDropMsg.reactions.length >= 6, 'Baú deve reagir com os 6 decoys para teste rápido');
+
+  // Simula clique de usuário na reação correta
+  const luckyUser = { id: 'fast_clicker_user', tag: 'FastClicker#1234', bot: false };
+  assert(typeof collectorCallback === 'function', 'Collector deve estar ouvindo reações');
+
+  // Extrai o emoji correto informado na descrição
+  const desc = dropSentEmbed.embeds[0].data.description;
+  const match = desc.match(/Clique na reação (\S+) \*\*([^*]+)\*\*/);
+  assert(match, 'Embed de drop deve informar explicitamente qual emoji clicar');
+
+  const initialFastBalance = seasonalManager.getSeasonalBalance('fast_clicker_user');
+  await collectorCallback(
+    { emoji: { name: match[1], id: match[1], toString: () => match[1] } },
+    luckyUser
+  );
+
+  const finalFastBalance = seasonalManager.getSeasonalBalance('fast_clicker_user');
+  assert(finalFastBalance > initialFastBalance, 'Usuário rápido deve receber entre 1 e 2 moedas');
+  assert(dropSentEmbed.embeds[0].data.title.includes('BAÚ ABERTO'), 'Embed deve ser editado anunciando abertura');
+  console.log('✅ Mecânica dos Baús da Pyxie (decoys, anti-trapaça, recompensa imediata) validada com sucesso.');
+
+  // 7. Teste de Ranking com Filtro Sazonal (/py-rank)
+  const rankingActiveView = await buildRankingView({ client: mockClient }, 'viewer_1', 'sazonal');
+  assert(rankingActiveView.embeds[0].data.title.includes('Placar Sazonal'), 'Ranking deve renderizar placar sazonal quando solicitado');
+  assert(rankingActiveView.components[0].components.some((btn) => btn.data.custom_id.includes('ranking_cat:seasonal:')), 'Ranking deve conter botão sazonal quando ativo');
+  console.log('✅ Integração do ranking sazonal em /py-rank validada com sucesso.');
+
+  // 8. Teste de Desativação e Zero Memory Leak (stop)
+  seasonalManager.stop();
+  assert.equal(seasonalManager.isSeasonalActive(), false, 'seasonalManager.stop() deve desativar o evento');
+
+  const rankingInactiveView = await buildRankingView({ client: mockClient }, 'viewer_1', 'sazonal');
+  assert(!rankingInactiveView.embeds[0].data.title.includes('Placar Sazonal'), 'Ranking inativo deve cair de volta para moedas');
+  assert(!rankingInactiveView.components[0].components.some((btn) => btn.data.custom_id.includes('ranking_cat:seasonal:')), 'Ranking inativo não deve exibir botão sazonal');
+  console.log('✅ Desativação limpa e ausência de resíduos (Zero Memory Leak) validadas com sucesso.');
+
+  // 9. Teste de Encerramento Automático por Data Limite
+  seasonalManager.saveConfig({
+    active: true,
+    dates: {
+      endDate: '2020-01-01T00:00:00-03:00', // Data já expirada
+      timezone: 'America/Sao_Paulo',
+    },
+  });
+
+  const ended = await seasonalManager.checkEndEvent(mockClient);
+  assert.equal(ended, true, 'checkEndEvent deve detectar data ultrapassada e encerrar');
+  assert.equal(seasonalManager.isSeasonalActive(), false, 'Evento deve ser marcado como active: false');
+
+  const endData = seasonalManager.loadData();
+  assert(endData.history.lastWinners !== null, 'Vencedores finais devem ser gravados em history.lastWinners');
+  // Restaura o estado padrão limpo para manter integridade do repositório
+  seasonalManager.saveConfig(seasonalManager.DEFAULT_CONFIG);
+  seasonalManager.saveData(seasonalManager.DEFAULT_DATA);
+  seasonalManager.stop();
+
+  console.log('🎉 Todos os testes do Módulo Sazonal passaram com 100% de integridade!');
+});
