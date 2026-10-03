@@ -694,6 +694,7 @@ module.exports = {
   start,
   stop,
   reload,
+  setupWebRoutes,
   isSeasonalActive,
   loadConfig,
   saveConfig,

@@ -50,6 +50,8 @@ module.exports = {
 
   // Registro de rotas web do módulo no supervisor Express
   setupWebRoutes(app, ctx) {
-    seasonalManager.setupWebRoutes(app);
+    if (typeof seasonalManager.setupWebRoutes === 'function') {
+      seasonalManager.setupWebRoutes(app);
+    }
   },
 };
