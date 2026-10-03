@@ -19,27 +19,27 @@
   "assets": {
     "chestImageUrl": "https://i.imgur.com/link_do_bau_halloween.png",
     "emojis": {
-      "currency": "5479_Kindergarten",
+      "currency": "1548443994902757427",
       "dropDecoys": [
-        "82336witchscaul",
-        "4124hellokit",
-        "ardiscordzomb",
-        "purplecandy",
-        "31772purpleween",
-        "witchwumpus"
+        "1548443801515720719",
+        "1548444196074033242",
+        "1548443994902757427",
+        "1548444056982655099",
+        "1548443998283235461",
+        "1548443839247818802"
       ],
       "trickOrTreat": [
-        "halloweenpokemon",
-        "halloweentot8"
+        "1548443998283235461",
+        "1548444000120471584"
       ],
       "dailyClaim": [
-        "halloween3gif55",
-        "cafehalloweenbat",
-        "halloween47"
+        "1548443988745261086",
+        "1548443839247818802",
+        "1548443990184169622"
       ],
       "artOfWeek": [
-        "8320_hallowee",
-        "36577halloween"
+        "1548443988745261086",
+        "1548443994902757427"
       ]
     }
   },
@@ -48,8 +48,8 @@
     "dropEmbedFooter": "Dica: Use /py-infoevento para entender a pontuação e prazos!",
     "artOfWeekWinner": "🎨 **ARTE DA SEMANA DEFINIDA!**\n\nOlha só, parece que temos alguém talentoso no meio de tantos rabiscos. Parabéns {author}, sua arte foi a mais votada e você garantiu **+5 {currencyName}**!\n\nConfiram a obra de arte abaixo:",
     "infoEventTitle": "🕸️ {eventName} — GUIA OFICIAL 🕸️",
-    "infoEventDescription": "Bem-vindo(a) ao evento temático oficial da Cringelândia! Participe das atividades, acumule **{currencyName}** e dispute os prêmios no topo do placar.",
-    "infoEventRules": "• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!\n• **Regras Gerais:** Proibido uso de multicontas ou trapaças automatizadas sob pena de desclassificação imediata.",
+    "infoEventDescription": "Bem-vindo(a) ao evento temático oficial da Cringelândia! Acumule **{currencyName}** participando das atividades e dispute o topo do placar.",
+    "infoEventRules": "• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!",
     "infoEventExtra": "> Use **/py-rank** para conferir o placar dos membros mais dedicados!\n> Dúvidas ou choro? Procure a moderação antes de passar vergonha no chat geral."
   }
 }

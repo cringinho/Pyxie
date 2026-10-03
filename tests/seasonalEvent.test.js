@@ -12,6 +12,7 @@ console.log('🎃 Iniciando suíte de testes de Engenharia: Módulo Sazonal Desa
 
 // Garante que o estado inicial esteja desligado (active: false) e limpo
 seasonalManager.stop();
+seasonalManager.saveConfig(seasonalManager.DEFAULT_CONFIG, true);
 seasonalManager.saveData({ balances: {}, currentWeekArt: [], history: { lastDropMessageId: null, lastWinners: null } });
 assert.equal(seasonalManager.isSeasonalActive(), false, 'O evento deve nascer DESLIGADO por padrão (active: false).');
 console.log('✅ Estado padrão desligado (active: false) validado com sucesso.');
@@ -67,6 +68,7 @@ console.log('✅ Resposta de evento ativo no /py-infoevento validada.');
 
 // 4.1 Teste de Customização Completa do /py-infoevento (regras, lore, introdução, banner)
 seasonalManager.saveConfig({
+  channels: { ...seasonalManager.loadConfig().channels, artChannelId: 'art_channel_test' },
   templates: {
     ...seasonalManager.loadConfig().templates,
     infoEventTitle: '⚡ {eventName} — GUIA SUPREMO ⚡',

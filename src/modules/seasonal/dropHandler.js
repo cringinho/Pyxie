@@ -6,6 +6,7 @@ const {
   saveData,
   addSeasonalBalance,
   resolveSeasonalEmoji,
+  resolveSeasonalEmojiObject,
   isSeasonalActive,
 } = require('./seasonalManager');
 
@@ -17,13 +18,18 @@ const DECOY_NAMES = {
   '82336witchscaul': 'Caldeirão da Bruxa',
   '4124hellokit': 'Gatinha Trevosa',
   'ardiscordzomb': 'Zumbi da Cringelândia',
+  'ardiscordzombie': 'Zumbi da Cringelândia',
   'purplecandy': 'Balinha Enfeitiçada',
   '31772purpleween': 'Abóbora Maligna',
+  'halloweenabobora': 'Abóbora de Halloween',
+  'kuromiwitch': 'Kuromi Feiticeira',
   'witchwumpus': 'Wumpus Feiticeiro',
+  'halloweenpokemon': 'Morceguinho Noturno',
+  'cafehalloweenbat': 'Morcego do Café',
 };
 
-function getEmojiDisplayName(identifier, resolved) {
-  const customName = DECOY_NAMES[identifier] || identifier;
+function getEmojiDisplayName(identifier, resolved, name) {
+  const customName = DECOY_NAMES[identifier] || DECOY_NAMES[name] || name || identifier;
   return `${resolved} **${customName}**`;
 }
 
@@ -117,12 +123,21 @@ async function triggerDrop(client) {
 
   const decoys = (config.assets?.emojis?.dropDecoys && config.assets.emojis.dropDecoys.length >= 2)
     ? config.assets.emojis.dropDecoys
-    : ['82336witchscaul', '4124hellokit', 'ardiscordzomb', 'purplecandy', '31772purpleween', 'witchwumpus'];
+    : [
+        '1548443801515720719', // ardiscordzombie
+        '1548444196074033242', // purplecandy
+        '1548443994902757427', // halloweenabobora
+        '1548444056982655099', // kuromiwitch
+        '1548443998283235461', // halloweenpokemon
+        '1548443839247818802', // cafehalloweenbat
+      ];
+
+  // Resolve todos os decoys para objetos estruturados garantindo ID para reações
+  const resolvedDecoyObjects = decoys.map((d) => resolveSeasonalEmojiObject(client, d, '🎃'));
 
   // Sorteia aleatoriamente 1 emoji correto da rodada
-  const targetEmojiIdentifier = decoys[Math.floor(Math.random() * decoys.length)];
-  const resolvedTarget = resolveSeasonalEmoji(client, targetEmojiIdentifier, '🎃');
-  const targetLabel = getEmojiDisplayName(targetEmojiIdentifier, resolvedTarget);
+  const targetObj = resolvedDecoyObjects[Math.floor(Math.random() * resolvedDecoyObjects.length)];
+  const targetLabel = getEmojiDisplayName(targetObj.id || targetObj.name, targetObj.formatted, targetObj.name);
 
   const chestImageUrl = config.assets?.chestImageUrl || 'https://i.imgur.com/link_do_bau_halloween.png';
 
@@ -151,12 +166,12 @@ async function triggerDrop(client) {
   data.history.lastDropMessageId = dropMsg.id;
   saveData(data);
 
-  // Adiciona as 6 reações decoys na mensagem
-  for (const decoy of decoys) {
-    const resolvedDecoy = resolveSeasonalEmoji(client, decoy, '🎃');
+  // Adiciona as 6 reações decoys na mensagem de forma ordenada
+  for (const decoyObj of resolvedDecoyObjects) {
     try {
-      await dropMsg.react(resolvedDecoy);
-    } catch (_) {
+      await dropMsg.react(decoyObj.reactable);
+    } catch (err) {
+      console.warn(`[Seasonal:Drop] Falha ao reagir com ${decoyObj.name} (${decoyObj.reactable}):`, err.message);
       await dropMsg.react('🎃').catch(() => null);
     }
   }
@@ -170,15 +185,16 @@ async function triggerDrop(client) {
   collector.on('collect', async (reaction, user) => {
     if (claimed) return;
 
-    const reactionName = reaction.emoji?.name || '';
-    const reactionId = reaction.emoji?.id || '';
+    const reactionName = (reaction.emoji?.name || '').toLowerCase();
+    const reactionId = String(reaction.emoji?.id || '');
+    const reactionToString = typeof reaction.emoji?.toString === 'function' ? reaction.emoji.toString() : '';
 
-    // Verifica se corresponde ao emoji premiado
+    // Verifica se corresponde com precisão ao emoji premiado (por ID, nome, unicode ou formatted)
     const isTarget =
-      reactionName === targetEmojiIdentifier ||
-      reactionId === targetEmojiIdentifier ||
-      reaction.emoji?.toString() === resolvedTarget ||
-      (resolvedTarget && reactionName === resolvedTarget);
+      (targetObj.id && (reactionId === String(targetObj.id) || reactionId.includes(String(targetObj.id)))) ||
+      (targetObj.name && (reactionName === targetObj.name.toLowerCase() || reactionName.includes(targetObj.name.toLowerCase()))) ||
+      (targetObj.formatted && (reactionToString === targetObj.formatted || reactionId === targetObj.formatted)) ||
+      (targetObj.isUnicode && (reaction.emoji?.name === targetObj.reactable || reactionToString === targetObj.reactable));
 
     if (isTarget) {
       claimed = true;

@@ -44,42 +44,51 @@ function buildInfoEventoView(userId, client) {
   const artChannelMention = config.channels?.artChannelId ? `<#${config.channels.artChannelId}>` : '`#canal-de-artes`';
   const dropsChannelMention = config.channels?.dropsChannelId ? `<#${config.channels.dropsChannelId}>` : '`#canal-de-drops`';
 
-  const defaultTitle = '🕸️ {eventName} — GUIA OFICIAL 🕸️';
-  const infoTitle = (config.templates?.infoEventTitle || defaultTitle)
-    .replace(/{eventName}/g, (config.eventName || 'Evento').toUpperCase());
+  const eventNameUpper = (config.eventName || 'Evento').toUpperCase();
+  const eventName = config.eventName || 'Evento';
+  const currencyName = config.currencyName || 'Abóboras';
+  const firstPrize = config.prizes?.firstPlace || '';
 
-  const defaultDesc =
-    'Bem-vindo(a) ao evento temático oficial da Cringelândia! Participe das atividades, acumule **{currencyName}** e dispute os prêmios no topo do placar.';
-  const infoDesc = (config.templates?.infoEventDescription || defaultDesc)
-    .replace(/{eventName}/g, config.eventName || 'Evento')
-    .replace(/{currencyName}/g, config.currencyName || 'Moedas')
-    .replace(/{firstPrize}/g, config.prizes?.firstPlace || '');
+  // 1. Título Customizável
+  const rawTitle = config.templates?.infoEventTitle || '🕸️ {eventName} — GUIA OFICIAL 🕸️';
+  const title = rawTitle.replace(/{eventName}/g, eventNameUpper);
 
+  // 2. Descrição / Introdução Customizável
+  const defaultDesc = `Bem-vindo(a) ao evento temático oficial da Cringelândia! Acumule **${currencyName}** participando das atividades e dispute o topo do placar.`;
+  const rawDesc = config.templates?.infoEventDescription || defaultDesc;
+  const description = rawDesc
+    .replace(/{eventName}/g, eventName)
+    .replace(/{currencyName}/g, currencyName)
+    .replace(/{firstPrize}/g, firstPrize);
+
+  // 3. Regras / Como Funciona Customizáveis
   const defaultRules =
     `• **Baú da Pyxie (Drops):** Surgem de surpresa em ${dropsChannelMention} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n` +
-    `• **Arte da Semana:** Poste sua arte em ${artChannelMention} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 ${config.currencyName}**!\n` +
-    `• **Regras Gerais:** Proibido uso de multicontas ou trapaças automatizadas sob pena de desclassificação imediata.`;
-
-  const rulesText = (config.templates?.infoEventRules || defaultRules)
-    .replace(/{eventName}/g, config.eventName || 'Evento')
-    .replace(/{currencyName}/g, config.currencyName || 'Moedas')
+    `• **Arte da Semana:** Poste sua arte em ${artChannelMention} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 ${currencyName}**!`;
+  const rawRules = config.templates?.infoEventRules || defaultRules;
+  const rules = rawRules
+    .replace(/{eventName}/g, eventName)
+    .replace(/{currencyName}/g, currencyName)
     .replace(/{dropsChannel}/g, dropsChannelMention)
     .replace(/{artChannel}/g, artChannelMention)
-    .replace(/{firstPrize}/g, config.prizes?.firstPlace || '');
+    .replace(/{firstPrize}/g, firstPrize);
+
+  // 4. Imagem do Banner do Guia
+  const imageUrl = config.assets?.infoEventImageUrl || config.assets?.chestImageUrl || 'https://i.imgur.com/link_do_bau_halloween.png';
 
   const embed = new EmbedBuilder()
     .setColor('#7c3aed')
-    .setTitle(infoTitle)
-    .setDescription(infoDesc)
+    .setTitle(title)
+    .setDescription(description)
     .addFields(
       {
         name: `${currencyEmoji} Seu Saldo Sazonal`,
-        value: `> Atualmente você possui **${userBalance}** ${currencyEmoji} **${config.currencyName}**`,
+        value: `> Atualmente você possui **${userBalance}** ${currencyEmoji} **${currencyName}**`,
         inline: false,
       },
       {
         name: '📖 Como Funciona & Regras do Evento',
-        value: rulesText,
+        value: rules,
         inline: false,
       },
       {
@@ -89,33 +98,30 @@ function buildInfoEventoView(userId, client) {
       }
     );
 
+  // 5. Campo Extra / Lore / Dicas (se preenchido)
   if (config.templates?.infoEventExtra && config.templates.infoEventExtra.trim().length > 0) {
-    const extraText = config.templates.infoEventExtra
-      .replace(/{eventName}/g, config.eventName || 'Evento')
-      .replace(/{currencyName}/g, config.currencyName || 'Moedas')
-      .replace(/{firstPrize}/g, config.prizes?.firstPlace || '');
+    const rawExtra = config.templates.infoEventExtra;
+    const extra = rawExtra
+      .replace(/{eventName}/g, eventName)
+      .replace(/{currencyName}/g, currencyName)
+      .replace(/{firstPrize}/g, firstPrize);
     embed.addFields({
       name: '💡 Informações & Dicas da Pyxie',
-      value: extraText,
+      value: extra,
       inline: false,
     });
   }
 
+  // 6. Prazo de Encerramento
   embed.addFields({
     name: '⏳ Prazo de Encerramento',
     value: `> **${formattedEndDate}**\n> *(Fuso Horário Oficial: ${config.dates?.timezone || 'America/Sao_Paulo'})*`,
     inline: false,
   });
 
-  const bannerImg = config.assets?.infoEventImageUrl || config.assets?.chestImageUrl;
-  if (bannerImg && bannerImg.startsWith('http')) {
-    embed.setImage(bannerImg);
-  }
-
-  embed.setFooter({
-    text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!',
-  });
-  embed.setTimestamp();
+  embed.setImage(imageUrl)
+    .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!' })
+    .setTimestamp();
 
   return { embeds: [embed] };
 }

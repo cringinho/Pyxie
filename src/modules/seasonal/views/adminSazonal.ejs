@@ -395,6 +395,291 @@
         border-color: var(--purple-accent);
       }
 
+      /* Visual Emoji Slots & Chips */
+      .visual-emoji-slot {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-top: 6px;
+      }
+
+      .slot-preview {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      .slot-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .slot-details {
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .slot-name {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .slot-id {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        font-family: monospace;
+      }
+
+      .visual-chips-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 46px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px dashed rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 8px 12px;
+        align-items: center;
+        margin-top: 6px;
+      }
+
+      .emoji-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(124, 58, 237, 0.22);
+        border: 1px solid rgba(139, 92, 246, 0.35);
+        border-radius: 8px;
+        padding: 4px 10px;
+        font-size: 0.8rem;
+        color: #f1f5f9;
+        transition: all 0.2s ease;
+      }
+
+      .emoji-chip:hover {
+        background: rgba(124, 58, 237, 0.38);
+        border-color: rgba(168, 85, 247, 0.6);
+      }
+
+      .emoji-chip img {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+      }
+
+      .emoji-chip .btn-remove-chip {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        font-size: 13px;
+        padding: 0 2px;
+        line-height: 1;
+        transition: color 0.15s;
+      }
+
+      .emoji-chip .btn-remove-chip:hover {
+        color: #ef4444;
+      }
+
+      .badge-count {
+        background: rgba(124, 58, 237, 0.25);
+        color: var(--purple-glow);
+        border: 1px solid rgba(124, 58, 237, 0.45);
+        padding: 2px 9px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      /* Modal Visual de Emojis */
+      .emoji-modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.82);
+        backdrop-filter: blur(12px);
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+
+      .emoji-modal-content {
+        max-width: 760px;
+        width: 100%;
+        max-height: 85vh;
+        background: #110920;
+        border: 1px solid rgba(139, 92, 246, 0.45);
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95);
+        overflow: hidden;
+      }
+
+      .emoji-modal-header {
+        padding: 18px 24px;
+        background: rgba(255, 255, 255, 0.03);
+        border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .emoji-modal-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #ec4899;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .emoji-modal-header p {
+        margin: 2px 0 0 0;
+        font-size: 0.78rem;
+        color: #94a3b8;
+      }
+
+      .emoji-modal-controls {
+        padding: 12px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .emoji-modal-search {
+        flex: 1;
+        min-width: 220px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(139, 92, 246, 0.35);
+        border-radius: 10px;
+        padding: 8px 12px;
+        color: #fff;
+        font-size: 0.85rem;
+        outline: none;
+      }
+
+      .emoji-modal-search:focus {
+        border-color: var(--purple-accent);
+      }
+
+      .picker-filter-btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-muted);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .picker-filter-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+
+      .picker-filter-btn.active {
+        background: var(--purple-accent);
+        color: #fff;
+        border-color: var(--purple-accent);
+      }
+
+      .emoji-grid-box {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+        gap: 10px;
+        max-height: 52vh;
+      }
+
+      .emoji-picker-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        padding: 8px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        position: relative;
+      }
+
+      .emoji-picker-card:hover {
+        background: rgba(124, 58, 237, 0.35);
+        border-color: var(--purple-accent);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.35);
+      }
+
+      .emoji-picker-card img {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+        margin-bottom: 4px;
+      }
+
+      .emoji-picker-card .emoji-picker-name {
+        font-size: 0.65rem;
+        color: var(--text-muted);
+        text-align: center;
+        max-width: 90%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .emoji-picker-card .anim-tag {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        background: #ec4899;
+        color: #fff;
+        font-size: 0.55rem;
+        font-weight: 800;
+        padding: 1px 3px;
+        border-radius: 4px;
+      }
+
+      .emoji-modal-footer {
+        padding: 12px 20px;
+        background: rgba(0, 0, 0, 0.35);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
       /* Toast Notification */
       #toast {
         position: fixed;
@@ -543,49 +828,101 @@
             </div>
           </div>
 
-          <!-- Assets Visuais & Emojis do Evento -->
+          <!-- Assets Visuais & Emojis do Evento (Visual Picker) -->
           <div class="card">
             <div class="card-header">
               <h2>🎨 Assets Visuais & Emojis Temáticos</h2>
-              <span class="help-text">Defina emojis (nomes, IDs ou unicode) e imagens do evento</span>
+              <span class="help-text">Selecione visualmente emojis oficiais da Pyxie para o evento</span>
             </div>
 
             <div class="form-row">
               <div class="form-group">
                 <label>🪙 Emoji da Moeda Sazonal (currency)</label>
-                <input type="text" id="emojiCurrency" value="<%= config.assets?.emojis?.currency || '5479_Kindergarten' %>" placeholder="Ex: 5479_Kindergarten ou 🎃" oninput="updateLivePreview()" />
-                <p class="help-text">Nome/ID do emoji no Discord ou emoji unicode direto (ex: 🎃)</p>
+                <div class="visual-emoji-slot" id="slotCurrencyBox">
+                  <div class="slot-preview" id="slotCurrencyPreview">🎃</div>
+                  <div class="slot-details">
+                    <div class="slot-name" id="slotCurrencyName">Carregando...</div>
+                    <div class="slot-id" id="slotCurrencyId">ID: -</div>
+                  </div>
+                  <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="openPicker('currency', 'single')">
+                      🔍 Galeria
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetCurrencyEmoji()" title="Resetar para Abóbora Padrão">
+                      🎃 Padrão
+                    </button>
+                  </div>
+                </div>
+                <input type="hidden" id="emojiCurrency" value="<%= config.assets?.emojis?.currency || '1548443994902757427' %>" />
+                <p class="help-text">Ícone oficial da moeda exibido no /py-infoevento e no /py-rank.</p>
               </div>
+
               <div class="form-group">
                 <label>🖼️ URL da Imagem / Baú do Evento (chestImageUrl)</label>
                 <input type="text" id="chestImageUrl" value="<%= config.assets?.chestImageUrl || '' %>" placeholder="https://i.imgur.com/..." oninput="updateLivePreview()" />
-                <p class="help-text">Link direto da imagem exibida nos baús e anúncios</p>
+                <p class="help-text">Link direto da imagem exibida nos baús, anúncios e /py-infoevento</p>
               </div>
             </div>
 
-            <div class="form-group">
-              <label>📦 Emojis Decoys do Baú (dropDecoys)</label>
-              <textarea id="dropDecoys" rows="2" placeholder="82336witchscaul, 4124hellokit, ardiscordzomb, purplecandy, 31772purpleween, witchwumpus"><%= (config.assets?.emojis?.dropDecoys || []).join(', ') %></textarea>
-              <p class="help-text">Lista de 6 emojis que a Pyxie usará para reagir nos baús surpresa (separados por vírgula)</p>
+            <!-- Emojis Decoys do Baú -->
+            <div class="form-group" style="margin-top: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="margin: 0;">📦 Emojis Decoys do Baú (dropDecoys)</label>
+                <span id="badgeCountDecoys" class="badge-count">6 Emojis</span>
+              </div>
+              <p class="help-text" style="margin-bottom: 6px;">A Pyxie reagirá com todas essas opções no baú surpresa. Apenas 1 será o correto sorteado para abrir!</p>
+              <div class="visual-chips-container" id="chipsDecoys"></div>
+              <div style="display:flex; gap:8px; margin-top:8px;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openPicker('dropDecoys', 'multi')">
+                  ➕ Adicionar Emoji Decoy da Galeria
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="resetDefaultDecoys()">
+                  🔄 Restaurar 6 Padrões Halloween
+                </button>
+              </div>
+              <input type="hidden" id="dropDecoys" value="<%= (config.assets?.emojis?.dropDecoys || []).join(',') %>" />
             </div>
 
-            <div class="form-row">
+            <!-- Emojis da Arte da Semana -->
+            <div class="form-group" style="margin-top: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="margin: 0;">🎨 Emojis da Arte da Semana (artOfWeek)</label>
+                <span id="badgeCountArt" class="badge-count">0 Emojis</span>
+              </div>
+              <p class="help-text" style="margin-bottom: 6px;">Reações oficiais com que a Pyxie reage nas postagens para a comunidade votar.</p>
+              <div class="visual-chips-container" id="chipsArt"></div>
+              <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="openPicker('artOfWeek', 'multi')">
+                ➕ Adicionar Emoji de Votação
+              </button>
+              <input type="hidden" id="artOfWeek" value="<%= (config.assets?.emojis?.artOfWeek || []).join(',') %>" />
+            </div>
+
+            <div class="form-row" style="margin-top: 14px;">
+              <!-- Gostosuras ou Travessuras -->
               <div class="form-group">
-                <label>🎨 Emojis da Arte da Semana (artOfWeek)</label>
-                <input type="text" id="artOfWeek" value="<%= (config.assets?.emojis?.artOfWeek || []).join(', ') %>" placeholder="8320_hallowee, 36577halloween" />
-                <p class="help-text">Emoji oficial para votação nas artes (separados por vírgula)</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <label style="margin: 0;">🍬 Gostosuras ou Travessuras (trickOrTreat)</label>
+                  <span id="badgeCountTrick" class="badge-count">0</span>
+                </div>
+                <div class="visual-chips-container" id="chipsTrickOrTreat"></div>
+                <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="openPicker('trickOrTreat', 'multi')">
+                  ➕ Adicionar Emoji
+                </button>
+                <input type="hidden" id="trickOrTreat" value="<%= (config.assets?.emojis?.trickOrTreat || []).join(',') %>" />
               </div>
-              <div class="form-group">
-                <label>🍬 Gostosuras ou Travessuras (trickOrTreat)</label>
-                <input type="text" id="trickOrTreat" value="<%= (config.assets?.emojis?.trickOrTreat || []).join(', ') %>" placeholder="halloweenpokemon, halloweentot8" />
-                <p class="help-text">Emojis temáticos extras (separados por vírgula)</p>
-              </div>
-            </div>
 
-            <div class="form-group">
-              <label>🎁 Reivindicação Diária (dailyClaim)</label>
-              <input type="text" id="dailyClaim" value="<%= (config.assets?.emojis?.dailyClaim || []).join(', ') %>" placeholder="halloween3gif55, cafehalloweenbat, halloween47" />
-              <p class="help-text">Emojis para interações sazonais diárias (separados por vírgula)</p>
+              <!-- Reivindicação Diária -->
+              <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <label style="margin: 0;">🎁 Reivindicação Diária (dailyClaim)</label>
+                  <span id="badgeCountDaily" class="badge-count">0</span>
+                </div>
+                <div class="visual-chips-container" id="chipsDailyClaim"></div>
+                <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="openPicker('dailyClaim', 'multi')">
+                  ➕ Adicionar Emoji
+                </button>
+                <input type="hidden" id="dailyClaim" value="<%= (config.assets?.emojis?.dailyClaim || []).join(',') %>" />
+              </div>
             </div>
           </div>
 
@@ -712,12 +1049,418 @@
           </div>
         </div>
       </div>
+    <!-- Modal Seletor de Emojis do Discord da Pyxie -->
+    <div class="emoji-modal-backdrop" id="seasonalEmojiModal" style="display: none;" onclick="handleModalBackdropClick(event)">
+      <div class="emoji-modal" onclick="event.stopPropagation()">
+        <div class="emoji-modal-header">
+          <div>
+            <h3>🎨 Galeria de Emojis da Pyxie</h3>
+            <p id="pickerTargetLabel">Selecione um emoji para o evento</p>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closePicker()">✕</button>
+        </div>
+
+        <div class="emoji-search-box">
+          <div class="input-with-icon">
+            <span class="icon">🔍</span>
+            <input type="text" id="emojiPickerSearch" placeholder="Pesquisar por nome ou ID..." oninput="onPickerSearchInput()" />
+          </div>
+
+          <div class="quick-filters">
+            <button type="button" class="filter-chip active" data-filter="all" onclick="setPickerFilter('all')">Todos (<span id="countAll">0</span>)</button>
+            <button type="button" class="filter-chip" data-filter="halloween" onclick="setPickerFilter('halloween')">🎃 Halloween / Trevas</button>
+            <button type="button" class="filter-chip" data-filter="animated" onclick="setPickerFilter('animated')">✨ Animados</button>
+            <button type="button" class="filter-chip" data-filter="static" onclick="setPickerFilter('static')">🖼️ Estáticos</button>
+          </div>
+        </div>
+
+        <div class="emoji-picker-grid" id="pickerGrid">
+          <!-- Renderizado via Javascript -->
+        </div>
+
+        <div class="emoji-modal-footer">
+          <span style="font-size:0.75rem; color: var(--text-muted);" id="pickerStatusText">Carregando emojis...</span>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closePicker()">Fechar</button>
+        </div>
+      </div>
     </div>
 
     <div id="toast"></div>
 
     <script>
       let currentTab = 'infoevento';
+
+      // Catálogo de Emojis da Pyxie vindo do servidor
+      const ALL_DISCORD_EMOJIS = <%- JSON.stringify(appEmojis || []) %>;
+      const emojiMapById = new Map();
+      const emojiMapByName = new Map();
+
+      for (const e of ALL_DISCORD_EMOJIS) {
+        emojiMapById.set(String(e.id), e);
+        if (e.name) emojiMapByName.set(e.name.toLowerCase(), e);
+      }
+
+      // Estado do Seletor
+      let currentPickerField = null;
+      let currentPickerMode = 'single'; // 'single' ou 'multi'
+      let activePickerFilter = 'all';
+      let pickerSearchQuery = '';
+
+      const DEFAULT_HALLOWEEN_DECOYS = [
+        '1548443801515720719', // ardiscordzombie
+        '1548444196074033242', // purplecandy
+        '1548443994902757427', // halloweenabobora
+        '1548444056982655099', // kuromiwitch
+        '1548443998283235461', // halloweenpokemon
+        '1548443839247818802', // cafehalloweenbat
+      ];
+
+      function getEmojiInfo(idOrName) {
+        if (!idOrName) return { id: '', name: 'Vazio', url: null, isUnicode: false, raw: '' };
+        const str = String(idOrName).trim();
+
+        // 1. Unicode direto
+        if (/\p{Extended_Pictographic}/u.test(str)) {
+          return { id: str, name: str, url: null, isUnicode: true, raw: str };
+        }
+
+        // 2. ID no catálogo de Application Emojis da Pyxie
+        if (emojiMapById.has(str)) {
+          const item = emojiMapById.get(str);
+          return {
+            id: item.id,
+            name: item.name,
+            animated: item.animated,
+            url: item.url || `https://cdn.discordapp.com/emojis/${item.id}.${item.animated ? 'gif' : 'png'}`,
+            isUnicode: false,
+            raw: str,
+          };
+        }
+
+        // 3. Nome no catálogo
+        const lower = str.toLowerCase();
+        if (emojiMapByName.has(lower)) {
+          const item = emojiMapByName.get(lower);
+          return {
+            id: item.id,
+            name: item.name,
+            animated: item.animated,
+            url: item.url || `https://cdn.discordapp.com/emojis/${item.id}.${item.animated ? 'gif' : 'png'}`,
+            isUnicode: false,
+            raw: str,
+          };
+        }
+
+        // 4. Se for número de snowflake
+        if (/^\d{17,21}$/.test(str)) {
+          return {
+            id: str,
+            name: `Emoji (${str.slice(0, 6)}...)`,
+            animated: false,
+            url: `https://cdn.discordapp.com/emojis/${str}.png`,
+            isUnicode: false,
+            raw: str,
+          };
+        }
+
+        // 5. Fallback para nomes textuais antigos
+        const knownFallbacks = {
+          '5479_kindergarten': { name: 'Kindergarten', fallback: '🎃' },
+          '82336witchscaul': { name: 'Caldeirão', fallback: '🍲' },
+          '4124hellokit': { name: 'Hello Kitty', fallback: '🐱' },
+          'ardiscordzomb': { name: 'Zumbi', fallback: '🧟' },
+          'purplecandy': { name: 'Bala Roxa', fallback: '🍬' },
+          '31772purpleween': { name: 'Purpleween', fallback: '🎃' },
+          'witchwumpus': { name: 'Wumpus Bruxo', fallback: '🧙' },
+          '8320_hallowee': { name: 'Halloween Art', fallback: '🎨' },
+          '36577halloween': { name: 'Halloween Frame', fallback: '🖼️' },
+          'halloweenpokemon': { name: 'Halloween Poke', fallback: '🦇' },
+          'halloweentot8': { name: 'Ghost Tot', fallback: '👻' },
+          'halloween3gif55': { name: 'Halloween Web', fallback: '🕸️' },
+          'cafehalloweenbat': { name: 'Cafe Bat', fallback: '🦇' },
+          'halloween47': { name: 'Halloween Candle', fallback: '🕯️' },
+        };
+
+        if (knownFallbacks[lower]) {
+          return {
+            id: str,
+            name: knownFallbacks[lower].name,
+            url: null,
+            fallbackText: knownFallbacks[lower].fallback,
+            isUnicode: true,
+            raw: str,
+          };
+        }
+
+        return { id: str, name: str, url: null, isUnicode: false, raw: str };
+      }
+
+      function renderCurrencySlot() {
+        const val = document.getElementById('emojiCurrency')?.value.trim();
+        const info = getEmojiInfo(val);
+
+        const previewEl = document.getElementById('slotCurrencyPreview');
+        const nameEl = document.getElementById('slotCurrencyName');
+        const idEl = document.getElementById('slotCurrencyId');
+
+        if (previewEl) {
+          if (info.url) {
+            previewEl.innerHTML = `<img src="${info.url}" alt="${info.name}" />`;
+          } else if (info.fallbackText) {
+            previewEl.textContent = info.fallbackText;
+          } else {
+            previewEl.textContent = info.name || '🎃';
+          }
+        }
+
+        if (nameEl) nameEl.textContent = info.name || 'Emoji Padrão';
+        if (idEl) idEl.textContent = info.id ? `ID: ${info.id}` : 'Sem ID vinculado';
+      }
+
+      function renderChips(fieldId) {
+        const input = document.getElementById(fieldId);
+        if (!input) return;
+
+        const containerId = fieldId === 'dropDecoys' ? 'chipsDecoys' :
+                            fieldId === 'artOfWeek' ? 'chipsArt' :
+                            fieldId === 'trickOrTreat' ? 'chipsTrickOrTreat' :
+                            fieldId === 'dailyClaim' ? 'chipsDailyClaim' : null;
+
+        const badgeId = fieldId === 'dropDecoys' ? 'badgeCountDecoys' :
+                        fieldId === 'artOfWeek' ? 'badgeCountArt' :
+                        fieldId === 'trickOrTreat' ? 'badgeCountTrick' :
+                        fieldId === 'dailyClaim' ? 'badgeCountDaily' : null;
+
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const items = (input.value || '')
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+
+        if (badgeId) {
+          const badgeEl = document.getElementById(badgeId);
+          if (badgeEl) badgeEl.textContent = `${items.length} ${items.length === 1 ? 'Emoji' : 'Emojis'}`;
+        }
+
+        if (items.length === 0) {
+          container.innerHTML = `<span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Nenhum emoji selecionado. Clique no botão abaixo para adicionar.</span>`;
+          return;
+        }
+
+        container.innerHTML = items.map(item => {
+          const info = getEmojiInfo(item);
+          const icon = info.url
+            ? `<img src="${info.url}" alt="${info.name}" />`
+            : `<span>${info.fallbackText || (info.isUnicode ? info.name : '❓')}</span>`;
+
+          return `
+            <div class="emoji-chip" title="ID: ${info.id || info.name}">
+              ${icon}
+              <span class="chip-name">${info.name}</span>
+              <button type="button" class="chip-remove" onclick="removeEmojiFromField('${fieldId}', '${item}')" title="Remover este emoji">✕</button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function removeEmojiFromField(fieldId, itemToRemove) {
+        const input = document.getElementById(fieldId);
+        if (!input) return;
+
+        const items = (input.value || '')
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+
+        const filtered = items.filter(x => x !== itemToRemove);
+        input.value = filtered.join(',');
+        renderChips(fieldId);
+        updateLivePreview();
+        showToast('Emoji removido da lista!');
+      }
+
+      function resetCurrencyEmoji() {
+        const input = document.getElementById('emojiCurrency');
+        if (input) {
+          input.value = '1548443994902757427';
+          renderCurrencySlot();
+          updateLivePreview();
+          showToast('Emoji da moeda restaurado para o padrão (halloweenabobora)!');
+        }
+      }
+
+      function resetDefaultDecoys() {
+        const input = document.getElementById('dropDecoys');
+        if (input) {
+          input.value = DEFAULT_HALLOWEEN_DECOYS.join(',');
+          renderChips('dropDecoys');
+          updateLivePreview();
+          showToast('Lista de 6 decoys restaurada para o padrão oficial de Halloween!');
+        }
+      }
+
+      function openPicker(fieldId, mode = 'single') {
+        currentPickerField = fieldId;
+        currentPickerMode = mode;
+        activePickerFilter = 'all';
+        pickerSearchQuery = '';
+
+        const fieldLabels = {
+          currency: 'Moeda Sazonal (currency)',
+          dropDecoys: 'Emojis Decoys do Baú (dropDecoys)',
+          artOfWeek: 'Votação da Arte da Semana (artOfWeek)',
+          trickOrTreat: 'Gostosuras ou Travessuras (trickOrTreat)',
+          dailyClaim: 'Reivindicação Diária (dailyClaim)',
+        };
+
+        const labelEl = document.getElementById('pickerTargetLabel');
+        if (labelEl) {
+          labelEl.textContent = `Configurando: ${fieldLabels[fieldId] || fieldId} • Modo: ${mode === 'single' ? 'Substituição Única' : 'Múltiplos Itens'}`;
+        }
+
+        const searchInput = document.getElementById('emojiPickerSearch');
+        if (searchInput) searchInput.value = '';
+
+        document.querySelectorAll('.filter-chip').forEach(c => {
+          c.classList.toggle('active', c.getAttribute('data-filter') === 'all');
+        });
+
+        const modal = document.getElementById('seasonalEmojiModal');
+        if (modal) modal.style.display = 'flex';
+
+        const countAllEl = document.getElementById('countAll');
+        if (countAllEl) countAllEl.textContent = ALL_DISCORD_EMOJIS.length;
+
+        renderPickerGrid();
+      }
+
+      function closePicker() {
+        const modal = document.getElementById('seasonalEmojiModal');
+        if (modal) modal.style.display = 'none';
+        currentPickerField = null;
+      }
+
+      function handleModalBackdropClick(e) {
+        if (e.target && e.target.id === 'seasonalEmojiModal') {
+          closePicker();
+        }
+      }
+
+      function setPickerFilter(filterName) {
+        activePickerFilter = filterName;
+        document.querySelectorAll('.filter-chip').forEach(c => {
+          c.classList.toggle('active', c.getAttribute('data-filter') === filterName);
+        });
+        renderPickerGrid();
+      }
+
+      function onPickerSearchInput() {
+        pickerSearchQuery = (document.getElementById('emojiPickerSearch')?.value || '').trim().toLowerCase();
+        renderPickerGrid();
+      }
+
+      const HALLOWEEN_KEYWORDS = ['hallow', 'witch', 'bat', 'zomb', 'candy', 'ghost', 'spooky', 'pumpk', 'abobora', 'bone', 'skull', 'knife', 'dark', 'goth', 'kuromi', 'demon', 'blood', 'boo', 'scary', 'spider', 'web'];
+
+      function renderPickerGrid() {
+        const grid = document.getElementById('pickerGrid');
+        const statusEl = document.getElementById('pickerStatusText');
+        if (!grid) return;
+
+        let filtered = ALL_DISCORD_EMOJIS;
+
+        // Filtro por categoria
+        if (activePickerFilter === 'halloween') {
+          filtered = filtered.filter(e => {
+            const nameLower = (e.name || '').toLowerCase();
+            return HALLOWEEN_KEYWORDS.some(kw => nameLower.includes(kw));
+          });
+        } else if (activePickerFilter === 'animated') {
+          filtered = filtered.filter(e => e.animated);
+        } else if (activePickerFilter === 'static') {
+          filtered = filtered.filter(e => !e.animated);
+        }
+
+        // Filtro por busca textual
+        if (pickerSearchQuery) {
+          filtered = filtered.filter(e => {
+            const nameMatch = (e.name || '').toLowerCase().includes(pickerSearchQuery);
+            const idMatch = String(e.id || '').includes(pickerSearchQuery);
+            return nameMatch || idMatch;
+          });
+        }
+
+        const totalResults = filtered.length;
+        if (statusEl) {
+          statusEl.textContent = `Exibindo ${Math.min(totalResults, 200)} de ${totalResults} emojis encontrados • Clique em qualquer um para selecionar`;
+        }
+
+        if (totalResults === 0) {
+          grid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--text-muted);">
+              <div style="font-size: 2.2rem; margin-bottom: 8px;">🕸️</div>
+              <p style="font-weight: 600;">Nenhum emoji encontrado com os filtros atuais.</p>
+              <span style="font-size: 0.8rem;">Tente pesquisar por outro termo ou limpar os filtros.</span>
+            </div>
+          `;
+          return;
+        }
+
+        // Renderiza no máximo 200 por performance instantânea
+        const toRender = filtered.slice(0, 200);
+
+        grid.innerHTML = toRender.map(e => {
+          const animTag = e.animated ? `<span class="anim-tag">GIF</span>` : '';
+          return `
+            <div class="emoji-picker-card" onclick="selectEmojiInPicker('${e.id}')" title="${e.name} (${e.id})">
+              ${animTag}
+              <img src="${e.url}" alt="${e.name}" loading="lazy" />
+              <div class="emoji-picker-name">${e.name}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function selectEmojiInPicker(emojiId) {
+        if (!currentPickerField) return;
+        const info = getEmojiInfo(emojiId);
+
+        if (currentPickerMode === 'single') {
+          const input = document.getElementById(currentPickerField);
+          if (input) {
+            input.value = emojiId;
+          }
+          if (currentPickerField === 'currency' || currentPickerField === 'emojiCurrency') {
+            const currencyInput = document.getElementById('emojiCurrency');
+            if (currencyInput) currencyInput.value = emojiId;
+            renderCurrencySlot();
+          }
+          updateLivePreview();
+          closePicker();
+          showToast(`Emoji "${info.name}" selecionado com sucesso!`);
+        } else {
+          // Multi mode (chips)
+          const input = document.getElementById(currentPickerField);
+          if (input) {
+            const currentItems = (input.value || '')
+              .split(',')
+              .map(s => s.trim())
+              .filter(Boolean);
+
+            if (currentItems.includes(emojiId)) {
+              showToast(`O emoji "${info.name}" já está na lista!`, 'error');
+              return;
+            }
+
+            currentItems.push(emojiId);
+            input.value = currentItems.join(',');
+            renderChips(currentPickerField);
+            updateLivePreview();
+            showToast(`Emoji "${info.name}" adicionado à lista!`);
+          }
+        }
+      }
 
       function showToast(msg, type = 'success') {
         const toast = document.getElementById('toast');
@@ -788,11 +1531,16 @@
           fieldsEl.innerHTML = '';
 
           // 1. Saldo
+          const currInfo = getEmojiInfo(emojiCurrency);
+          const currIconHtml = currInfo.url
+            ? `<img src="${currInfo.url}" alt="${currInfo.name}" style="width:18px;height:18px;vertical-align:middle;object-fit:contain;display:inline-block;margin:0 2px;" />`
+            : (currInfo.fallbackText || (currInfo.isUnicode ? currInfo.name : '🎃'));
+
           const fBalance = document.createElement('div');
           fBalance.className = 'preview-field';
           fBalance.innerHTML = `
             <div class="preview-field-title">🪙 Seu Saldo Sazonal</div>
-            <div class="preview-field-val">&gt; Atualmente você possui <strong>42</strong> ${emojiCurrency} <strong>${currencyName}</strong></div>
+            <div class="preview-field-val">&gt; Atualmente você possui <strong>42</strong> ${currIconHtml} <strong>${currencyName}</strong></div>
           `;
           fieldsEl.appendChild(fBalance);
 
@@ -1012,7 +1760,12 @@
         }
       }
 
-      // Inicializa preview
+      // Inicializa slots, chips e preview
+      renderCurrencySlot();
+      renderChips('dropDecoys');
+      renderChips('artOfWeek');
+      renderChips('trickOrTreat');
+      renderChips('dailyClaim');
       updateLivePreview();
     </script>
   </body>

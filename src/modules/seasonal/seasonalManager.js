@@ -27,27 +27,27 @@ const DEFAULT_CONFIG = {
   assets: {
     chestImageUrl: 'https://i.imgur.com/link_do_bau_halloween.png',
     emojis: {
-      currency: '5479_Kindergarten',
+      currency: '1548443994902757427', // halloweenabobora
       dropDecoys: [
-        '82336witchscaul',
-        '4124hellokit',
-        'ardiscordzomb',
-        'purplecandy',
-        '31772purpleween',
-        'witchwumpus',
+        '1548443801515720719', // ardiscordzombie
+        '1548444196074033242', // purplecandy
+        '1548443994902757427', // halloweenabobora
+        '1548444056982655099', // kuromiwitch
+        '1548443998283235461', // halloweenpokemon
+        '1548443839247818802', // cafehalloweenbat
       ],
       trickOrTreat: [
-        'halloweenpokemon',
-        'halloweentot8',
+        '1548443998283235461', // halloweenpokemon
+        '1548444000120471584', // halloweentot83
       ],
       dailyClaim: [
-        'halloween3gif55',
-        'cafehalloweenbat',
-        'halloween47',
+        '1548443988745261086', // halloween3gif55
+        '1548443839247818802', // cafehalloweenbat
+        '1548443990184169622', // halloween47
       ],
       artOfWeek: [
-        '8320_hallowee',
-        '36577halloween',
+        '1548443988745261086', // halloween3gif55
+        '1548443994902757427', // halloweenabobora
       ],
     },
   },
@@ -56,8 +56,8 @@ const DEFAULT_CONFIG = {
     dropEmbedFooter: 'Dica: Use /py-infoevento para entender a pontuação e prazos!',
     artOfWeekWinner: '🎨 **ARTE DA SEMANA DEFINIDA!**\n\nOlha só, parece que temos alguém talentoso no meio de tantos rabiscos. Parabéns {author}, sua arte foi a mais votada e você garantiu **+5 {currencyName}**!\n\nConfiram a obra de arte abaixo:',
     infoEventTitle: '🕸️ {eventName} — GUIA OFICIAL 🕸️',
-    infoEventDescription: 'Bem-vindo(a) ao evento temático oficial da Cringelândia! Participe das atividades, acumule **{currencyName}** e dispute os prêmios no topo do placar.',
-    infoEventRules: '• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!\n• **Regras Gerais:** Proibido uso de multicontas ou trapaças automatizadas sob pena de desclassificação imediata.',
+    infoEventDescription: 'Bem-vindo(a) ao evento temático oficial da Cringelândia! Acumule **{currencyName}** participando das atividades e dispute o topo do placar.',
+    infoEventRules: '• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!',
     infoEventExtra: '> Use **/py-rank** para conferir o placar dos membros mais dedicados!\n> Dúvidas ou choro? Procure a moderação antes de passar vergonha no chat geral.',
   },
 };
@@ -167,45 +167,158 @@ function isSeasonalActive() {
   return Boolean(cfg.active);
 }
 
-// Resolução inteligente de emojis para Discord e Web
-function resolveSeasonalEmoji(client, emojiKeyOrId, fallback = '🎃') {
-  if (!emojiKeyOrId) return fallback;
+// Catálogo em memória de Application Emojis da Pyxie (1.182 emojis)
+const appEmojisMapByName = new Map();
+const appEmojisMapById = new Map();
+let simplifiedAppEmojisCache = null;
 
-  // Se já for emoji unicode direto
-  if (/\p{Extended_Pictographic}/u.test(emojiKeyOrId)) {
-    return emojiKeyOrId;
+function getSimplifiedAppEmojis() {
+  if (simplifiedAppEmojisCache) return simplifiedAppEmojisCache;
+  try {
+    const catalogPath = path.join(__dirname, '..', '..', 'data', 'discordAppEmojis.json');
+    if (fs.existsSync(catalogPath)) {
+      const raw = fs.readFileSync(catalogPath, 'utf8');
+      const parsed = JSON.parse(raw);
+      const list = Array.isArray(parsed) ? parsed : (parsed.items || []);
+      simplifiedAppEmojisCache = list.map((e) => ({
+        id: String(e.id),
+        name: e.name,
+        animated: Boolean(e.animated),
+        url: `https://cdn.discordapp.com/emojis/${e.id}.${e.animated ? 'gif' : 'png'}`,
+      }));
+      for (const e of simplifiedAppEmojisCache) {
+        appEmojisMapByName.set(e.name.toLowerCase(), e);
+        appEmojisMapById.set(String(e.id), e);
+      }
+      return simplifiedAppEmojisCache;
+    }
+  } catch (err) {
+    console.warn('[Seasonal] Falha ao carregar discordAppEmojis.json:', err.message);
+  }
+  simplifiedAppEmojisCache = [];
+  return simplifiedAppEmojisCache;
+}
+
+// Inicializa catálogo imediatamente
+getSimplifiedAppEmojis();
+
+// Resolução de objeto completo de emoji para Drops, Embeds e Reações
+function resolveSeasonalEmojiObject(client, emojiKeyOrId, fallback = '🎃') {
+  getSimplifiedAppEmojis();
+
+  if (!emojiKeyOrId) {
+    return {
+      id: null,
+      name: 'padrao',
+      animated: false,
+      formatted: fallback,
+      reactable: fallback,
+      url: null,
+      isUnicode: true,
+    };
   }
 
-  // Tenta resolver por ID ou Nome no cache do bot
+  const str = String(emojiKeyOrId).trim();
+
+  // 1. Emoji Unicode direto
+  if (/\p{Extended_Pictographic}/u.test(str)) {
+    return {
+      id: null,
+      name: str,
+      animated: false,
+      formatted: str,
+      reactable: str,
+      url: null,
+      isUnicode: true,
+    };
+  }
+
+  // 2. Busca por Snowflake ID no catálogo de Application Emojis da Pyxie
+  if (appEmojisMapById.has(str)) {
+    const item = appEmojisMapById.get(str);
+    return {
+      id: item.id,
+      name: item.name,
+      animated: item.animated,
+      formatted: item.animated ? `<a:${item.name}:${item.id}>` : `<:${item.name}:${item.id}>`,
+      reactable: item.id,
+      url: item.url,
+      isUnicode: false,
+    };
+  }
+
+  // 3. Busca por Nome no catálogo de Application Emojis da Pyxie
+  const lower = str.toLowerCase();
+  if (appEmojisMapByName.has(lower)) {
+    const item = appEmojisMapByName.get(lower);
+    return {
+      id: item.id,
+      name: item.name,
+      animated: item.animated,
+      formatted: item.animated ? `<a:${item.name}:${item.id}>` : `<:${item.name}:${item.id}>`,
+      reactable: item.id,
+      url: item.url,
+      isUnicode: false,
+    };
+  }
+
+  // 4. Busca no cache da Guild ou do Bot
   if (client) {
     const found =
-      client.emojis?.cache?.find((e) => e.name === emojiKeyOrId || e.id === emojiKeyOrId) ||
-      client.application?.emojis?.cache?.find((e) => e.name === emojiKeyOrId || e.id === emojiKeyOrId);
+      client.emojis?.cache?.find((e) => e.name === str || e.id === str || e.name?.toLowerCase() === lower) ||
+      client.application?.emojis?.cache?.find((e) => e.name === str || e.id === str || e.name?.toLowerCase() === lower);
 
     if (found) {
-      return found.toString();
+      return {
+        id: String(found.id),
+        name: found.name,
+        animated: Boolean(found.animated),
+        formatted: found.toString(),
+        reactable: String(found.id),
+        url: found.url || `https://cdn.discordapp.com/emojis/${found.id}.${found.animated ? 'gif' : 'png'}`,
+        isUnicode: false,
+      };
     }
   }
 
-  // Fallbacks temáticos canônicos caso emoji de servidor não esteja visível
+  // 5. Fallbacks temáticos canônicos caso emoji não esteja no catálogo
   const knownFallbacks = {
-    '5479_Kindergarten': '🎃',
+    '5479_kindergarten': '🎃',
+    'ardiscordzomb': '🧟',
+    'ardiscordzombie': '🧟',
+    'purplecandy': '🍬',
+    'halloweenabobora': '🎃',
+    'kuromiwitch': '🧙',
+    'witchwumpus': '🧙',
     '82336witchscaul': '🍲',
     '4124hellokit': '🐱',
-    'ardiscordzomb': '🧟',
-    'purplecandy': '🍬',
     '31772purpleween': '🎃',
-    'witchwumpus': '🧙',
     '8320_hallowee': '🎨',
     '36577halloween': '🖼️',
     'halloweenpokemon': '🦇',
     'halloweentot8': '👻',
+    'halloweentot83': '👻',
     'halloween3gif55': '🕸️',
     'cafehalloweenbat': '🦇',
     'halloween47': '🕯️',
   };
 
-  return knownFallbacks[emojiKeyOrId] || fallback;
+  const fb = knownFallbacks[lower] || fallback;
+  return {
+    id: null,
+    name: str,
+    animated: false,
+    formatted: fb,
+    reactable: fb,
+    url: null,
+    isUnicode: true,
+  };
+}
+
+// Resolução inteligente de emojis para Discord e Web (retorna string formatada para embeds)
+function resolveSeasonalEmoji(client, emojiKeyOrId, fallback = '🎃') {
+  const obj = resolveSeasonalEmojiObject(client, emojiKeyOrId, fallback);
+  return obj.formatted;
 }
 
 // Manipulação atômica de moedas sazonais
@@ -446,10 +559,18 @@ function setupWebRoutes(app) {
       config,
       data,
       active: config.active,
+      appEmojis: getSimplifiedAppEmojis(),
     });
   });
 
   // APIs do Painel Sazonal
+  app.get('/api/admin/sazonal/emojis', requireAdminAuth, (req, res) => {
+    res.json({
+      success: true,
+      emojis: getSimplifiedAppEmojis(),
+    });
+  });
+
   app.get('/api/admin/sazonal/config', requireAdminAuth, (req, res) => {
     res.json({
       success: true,
@@ -516,6 +637,8 @@ module.exports = {
   getSeasonalBalance,
   getTopSeasonalBalances,
   resolveSeasonalEmoji,
+  resolveSeasonalEmojiObject,
+  getSimplifiedAppEmojis,
   checkEndEvent,
   finalizeAndRewardEvent,
   DEFAULT_CONFIG,

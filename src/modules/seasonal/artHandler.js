@@ -6,6 +6,7 @@ const {
   saveData,
   addSeasonalBalance,
   resolveSeasonalEmoji,
+  resolveSeasonalEmojiObject,
   isSeasonalActive,
 } = require('./seasonalManager');
 
@@ -84,11 +85,11 @@ async function handleArtSubmission(message, client) {
   }
 
   // Emoji oficial de contagem da Pyxie
-  const artEmojiConfig = config.assets?.emojis?.artOfWeek?.[0] || '8320_hallowee';
-  const resolvedEmoji = resolveSeasonalEmoji(client, artEmojiConfig, '🎨');
+  const artEmojiConfig = config.assets?.emojis?.artOfWeek?.[0] || '1548443988745261086';
+  const resolvedArtObj = resolveSeasonalEmojiObject(client, artEmojiConfig, '🎨');
 
   try {
-    await message.react(resolvedEmoji);
+    await message.react(resolvedArtObj.reactable);
   } catch (err) {
     console.warn('[Seasonal:Art] Falha ao reagir com emoji personalizado, usando fallback:', err.message);
     await message.react('🎨').catch(() => null);
@@ -135,7 +136,8 @@ async function tallyWeeklyArt(client) {
     return { success: true, winner: null, message: 'Sem artes submetidas.' };
   }
 
-  const artEmojiConfig = config.assets?.emojis?.artOfWeek?.[0] || '8320_hallowee';
+  const artEmojiConfig = config.assets?.emojis?.artOfWeek?.[0] || '1548443988745261086';
+  const resolvedArtObj = resolveSeasonalEmojiObject(client, artEmojiConfig, '🎨');
   let bestSubmission = null;
   let maxVotes = -1;
 
@@ -147,9 +149,13 @@ async function tallyWeeklyArt(client) {
         const msg = await subChannel.messages.fetch(sub.messageId).catch(() => null);
         if (msg) {
           const reaction = msg.reactions.cache.find((r) => {
-            const name = r.emoji?.name || '';
-            const id = r.emoji?.id || '';
-            return name === artEmojiConfig || id === artEmojiConfig || name === '🎨';
+            const rName = (r.emoji?.name || '').toLowerCase();
+            const rId = String(r.emoji?.id || '');
+            if (resolvedArtObj.id && rId === String(resolvedArtObj.id)) return true;
+            if (resolvedArtObj.name && rName === resolvedArtObj.name.toLowerCase()) return true;
+            if (rId === String(artEmojiConfig) || rName === String(artEmojiConfig).toLowerCase()) return true;
+            if (rName === '🎨' || rName === '8320_hallowee' || rName === '36577halloween') return true;
+            return false;
           });
 
           if (reaction) {
