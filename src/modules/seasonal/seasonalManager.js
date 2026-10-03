@@ -29,12 +29,12 @@ const DEFAULT_CONFIG = {
     emojis: {
       currency: '1548443994902757427', // halloweenabobora
       dropDecoys: [
-        '1548443801515720719', // ardiscordzombie
-        '1548444196074033242', // purplecandy
-        '1548443994902757427', // halloweenabobora
-        '1548444056982655099', // kuromiwitch
-        '1548443998283235461', // halloweenpokemon
-        '1548443839247818802', // cafehalloweenbat
+        { id: '82336witchscaul', label: 'Caldeirão da Bruxa' },
+        { id: '1551355578066931763', label: 'Hello Kitty Aboborada' },
+        { id: '1548443801515720719', label: 'Zumbicord' },
+        { id: '1548444196074033242', label: 'Balinha' },
+        { id: '1551356387475595375', label: 'Gatinho Trevinhas' },
+        { id: '1548444308401684530', label: 'Wumpus Bruxinho' },
       ],
       trickOrTreat: [
         '1548443998283235461', // halloweenpokemon
@@ -249,10 +249,16 @@ function resolveSeasonalEmojiObject(client, emojiKeyOrId, fallback = '🎃') {
     };
   }
 
-  // 3. Busca por Nome no catálogo de Application Emojis da Pyxie
+  // 3. Busca por Nome ou Alias no catálogo de Application Emojis da Pyxie
   const lower = str.toLowerCase();
-  if (appEmojisMapByName.has(lower)) {
-    const item = appEmojisMapByName.get(lower);
+  const aliasNameMap = {
+    '4124hellokit': '4124hellokittypumpkin',
+    'ardiscordzomb': 'ardiscordzombie',
+    '5479_kindergarten': '5479_kindergarten2_pumpkin',
+  };
+  const targetName = aliasNameMap[lower] || lower;
+  if (appEmojisMapByName.has(targetName)) {
+    const item = appEmojisMapByName.get(targetName);
     return {
       id: item.id,
       name: item.name,

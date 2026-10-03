@@ -16,21 +16,55 @@ const activeTimers = new Set();
 
 const DECOY_NAMES = {
   '82336witchscaul': 'Caldeirão da Bruxa',
-  '4124hellokit': 'Gatinha Trevosa',
-  'ardiscordzomb': 'Zumbi da Cringelândia',
-  'ardiscordzombie': 'Zumbi da Cringelândia',
-  'purplecandy': 'Balinha Enfeitiçada',
-  '31772purpleween': 'Abóbora Maligna',
+  '4124hellokit': 'Hello Kitty Aboborada',
+  '4124hellokittypumpkin': 'Hello Kitty Aboborada',
+  '1551355578066931763': 'Hello Kitty Aboborada',
+  'ardiscordzomb': 'Zumbicord',
+  'ardiscordzombie': 'Zumbicord',
+  '1548443801515720719': 'Zumbicord',
+  'purplecandy': 'Balinha',
+  '1548444196074033242': 'Balinha',
+  '31772purpleween': 'Gatinho Trevinhas',
+  '1551356387475595375': 'Gatinho Trevinhas',
+  'witchwumpus': 'Wumpus Bruxinho',
+  '1548444308401684530': 'Wumpus Bruxinho',
   'halloweenabobora': 'Abóbora de Halloween',
-  'kuromiwitch': 'Kuromi Feiticeira',
-  'witchwumpus': 'Wumpus Feiticeiro',
+  '1548443994902757427': 'Abóbora de Halloween',
+  'kuromiwitch': 'Kuromi Bruxa',
+  '1548444056982655099': 'Kuromi Bruxa',
   'halloweenpokemon': 'Morceguinho Noturno',
+  '1548443998283235461': 'Morceguinho Noturno',
   'cafehalloweenbat': 'Morcego do Café',
+  '1548443839247818802': 'Morcego do Café',
 };
 
-function getEmojiDisplayName(identifier, resolved, name) {
-  const customName = DECOY_NAMES[identifier] || DECOY_NAMES[name] || name || identifier;
-  return `${resolved} **${customName}**`;
+function normalizeDecoy(item) {
+  if (!item) return null;
+  if (typeof item === 'object') {
+    const id = String(item.id || item.name || '').trim();
+    if (!id) return null;
+    return {
+      id,
+      label: item.label ? String(item.label).trim() : null,
+    };
+  }
+  const id = String(item).trim();
+  if (!id) return null;
+  return {
+    id,
+    label: null,
+  };
+}
+
+function getEmojiDisplayName(targetItem, resolvedFormatted, targetObj) {
+  const customName =
+    targetItem?.label ||
+    DECOY_NAMES[targetItem?.id] ||
+    DECOY_NAMES[targetObj?.id] ||
+    DECOY_NAMES[targetObj?.name] ||
+    targetObj?.name ||
+    'Emoji Secreto';
+  return `${resolvedFormatted} **${customName}**`;
 }
 
 function start(client) {
@@ -121,23 +155,33 @@ async function triggerDrop(client) {
     return false;
   }
 
-  const decoys = (config.assets?.emojis?.dropDecoys && config.assets.emojis.dropDecoys.length >= 2)
+  const rawDecoys = (config.assets?.emojis?.dropDecoys && config.assets.emojis.dropDecoys.length >= 2)
     ? config.assets.emojis.dropDecoys
     : [
-        '1548443801515720719', // ardiscordzombie
-        '1548444196074033242', // purplecandy
-        '1548443994902757427', // halloweenabobora
-        '1548444056982655099', // kuromiwitch
-        '1548443998283235461', // halloweenpokemon
-        '1548443839247818802', // cafehalloweenbat
+        { id: '82336witchscaul', label: 'Caldeirão da Bruxa' },
+        { id: '1551355578066931763', label: 'Hello Kitty Aboborada' },
+        { id: '1548443801515720719', label: 'Zumbicord' },
+        { id: '1548444196074033242', label: 'Balinha' },
+        { id: '1551356387475595375', label: 'Gatinho Trevinhas' },
+        { id: '1548444308401684530', label: 'Wumpus Bruxinho' },
       ];
 
+  const decoys = rawDecoys.map(normalizeDecoy).filter(Boolean);
+
   // Resolve todos os decoys para objetos estruturados garantindo ID para reações
-  const resolvedDecoyObjects = decoys.map((d) => resolveSeasonalEmojiObject(client, d, '🎃'));
+  const resolvedDecoyObjects = decoys.map((d) => {
+    const resolved = resolveSeasonalEmojiObject(client, d.id, '🎃');
+    const label = d.label || DECOY_NAMES[d.id] || DECOY_NAMES[resolved.id] || DECOY_NAMES[resolved.name] || resolved.name || 'Emoji Secreto';
+    return {
+      ...resolved,
+      rawDecoy: d,
+      label,
+    };
+  });
 
   // Sorteia aleatoriamente 1 emoji correto da rodada
   const targetObj = resolvedDecoyObjects[Math.floor(Math.random() * resolvedDecoyObjects.length)];
-  const targetLabel = getEmojiDisplayName(targetObj.id || targetObj.name, targetObj.formatted, targetObj.name);
+  const targetLabel = getEmojiDisplayName(targetObj.rawDecoy, targetObj.formatted, targetObj);
 
   const chestImageUrl = config.assets?.chestImageUrl || 'https://i.imgur.com/link_do_bau_halloween.png';
 

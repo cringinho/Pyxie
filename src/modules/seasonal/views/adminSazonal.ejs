@@ -525,6 +525,7 @@
         padding: 16px;
       }
 
+      .emoji-modal,
       .emoji-modal-content {
         max-width: 760px;
         width: 100%;
@@ -562,55 +563,98 @@
         color: #94a3b8;
       }
 
-      .emoji-modal-controls {
+      .btn-close-modal {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.3rem;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 6px;
+        line-height: 1;
+        transition: all 0.15s ease;
+      }
+
+      .btn-close-modal:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+
+      .emoji-search-box {
         padding: 12px 20px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         display: flex;
+        flex-direction: column;
         gap: 10px;
-        flex-wrap: wrap;
-        align-items: center;
         background: rgba(0, 0, 0, 0.2);
       }
 
-      .emoji-modal-search {
-        flex: 1;
-        min-width: 220px;
+      .input-with-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .input-with-icon .icon {
+        position: absolute;
+        left: 12px;
+        font-size: 0.95rem;
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .input-with-icon input {
+        width: 100%;
         background: rgba(0, 0, 0, 0.5);
         border: 1px solid rgba(139, 92, 246, 0.35);
         border-radius: 10px;
-        padding: 8px 12px;
+        padding: 8px 12px 8px 36px;
         color: #fff;
         font-size: 0.85rem;
         outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
       }
 
-      .emoji-modal-search:focus {
+      .input-with-icon input:focus {
         border-color: var(--purple-accent);
+        box-shadow: 0 0 8px rgba(124, 58, 237, 0.35);
       }
 
+      .quick-filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .filter-chip,
       .picker-filter-btn {
-        padding: 6px 12px;
-        border-radius: 8px;
+        padding: 5px 12px;
+        border-radius: 20px;
         font-size: 0.75rem;
         font-weight: 700;
         background: rgba(255, 255, 255, 0.05);
         color: var(--text-muted);
         border: 1px solid rgba(255, 255, 255, 0.1);
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all 0.15s ease;
       }
 
+      .filter-chip:hover,
       .picker-filter-btn:hover {
         background: rgba(255, 255, 255, 0.1);
         color: #fff;
       }
 
+      .filter-chip.active,
       .picker-filter-btn.active {
         background: var(--purple-accent);
         color: #fff;
         border-color: var(--purple-accent);
+        box-shadow: 0 2px 10px rgba(124, 58, 237, 0.35);
       }
 
+      .emoji-picker-grid,
       .emoji-grid-box {
         flex: 1;
         overflow-y: auto;
@@ -633,6 +677,7 @@
         cursor: pointer;
         transition: all 0.15s ease;
         position: relative;
+        min-height: 72px;
       }
 
       .emoji-picker-card:hover {
@@ -678,6 +723,122 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+      }
+
+      /* Estilos para a Lista de Decoys com Apelidos Visuais */
+      .decoys-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .decoy-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: border-color 0.2s, background 0.2s;
+      }
+
+      .decoy-card:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(139, 92, 246, 0.35);
+      }
+
+      .decoy-preview {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        background: rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+
+      .decoy-preview img {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+      }
+
+      .decoy-meta {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .decoy-canonical {
+        font-size: 0.74rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .decoy-canonical strong {
+        color: #ec4899;
+      }
+
+      .decoy-label-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .decoy-label-title {
+        font-size: 0.72rem;
+        color: #c4b5fd;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .decoy-input-label {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(139, 92, 246, 0.35);
+        border-radius: 6px;
+        padding: 6px 10px;
+        color: #fff;
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .decoy-input-label:focus {
+        border-color: var(--purple-accent);
+        box-shadow: 0 0 8px rgba(124, 58, 237, 0.35);
+      }
+
+      .btn-remove-decoy {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.15s ease;
+        flex-shrink: 0;
+      }
+
+      .btn-remove-decoy:hover {
+        background: rgba(239, 68, 68, 0.35);
+        color: #fff;
+        transform: scale(1.05);
       }
 
       /* Toast Notification */
@@ -864,23 +1025,29 @@
               </div>
             </div>
 
-            <!-- Emojis Decoys do Baú -->
+            <!-- Emojis Decoys do Baú & Apelidos Visuais -->
             <div class="form-group" style="margin-top: 10px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <label style="margin: 0;">📦 Emojis Decoys do Baú (dropDecoys)</label>
-                <span id="badgeCountDecoys" class="badge-count">6 Emojis</span>
+                <label style="margin: 0;">📦 Emojis Decoys do Baú & Apelidos Visuais (dropDecoys)</label>
+                <span id="badgeCountDecoys" class="badge-count">6 Decoys</span>
               </div>
-              <p class="help-text" style="margin-bottom: 6px;">A Pyxie reagirá com todas essas opções no baú surpresa. Apenas 1 será o correto sorteado para abrir!</p>
-              <div class="visual-chips-container" id="chipsDecoys"></div>
-              <div style="display:flex; gap:8px; margin-top:8px;">
+              <p class="help-text" style="margin-bottom: 8px;">
+                A Pyxie adicionará todas essas reações no baú misterioso. Apenas 1 será a correta sorteada. O bot anunciará o emoji acompanhado do seu <strong>Apelido / Característica Visual</strong> no chat (ex: <code>Wumpus Bruxinho</code>, <code>Caldeirão da Bruxa</code>) para que os usuários saibam exatamente em qual emoji clicar!
+              </p>
+
+              <div id="decoysList" class="decoys-list"></div>
+
+              <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
                 <button type="button" class="btn btn-secondary btn-sm" onclick="openPicker('dropDecoys', 'multi')">
-                  ➕ Adicionar Emoji Decoy da Galeria
+                  ➕ Adicionar da Galeria de Emojis
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="promptCustomDecoy()">
+                  ✨ Adicionar Avulso (ID ou Unicode)
                 </button>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="resetDefaultDecoys()">
-                  🔄 Restaurar 6 Padrões Halloween
+                  🎃 Restaurar 6 Clássicos de Halloween (com Apelidos)
                 </button>
               </div>
-              <input type="hidden" id="dropDecoys" value="<%= (config.assets?.emojis?.dropDecoys || []).join(',') %>" />
             </div>
 
             <!-- Emojis da Arte da Semana -->
@@ -1089,6 +1256,7 @@
 
     <!-- Dados dos Emojis injetados via JSON estruturado (zero erro de sintaxe no editor) -->
     <script type="application/json" id="appEmojisData"><%- JSON.stringify(appEmojis || []) %></script>
+    <script type="application/json" id="initialDecoysData"><%- JSON.stringify(config.assets?.emojis?.dropDecoys || []) %></script>
 
     <script>
       let currentTab = 'infoevento';
@@ -1117,13 +1285,78 @@
       let pickerSearchQuery = '';
 
       const DEFAULT_HALLOWEEN_DECOYS = [
-        '1548443801515720719', // ardiscordzombie
-        '1548444196074033242', // purplecandy
-        '1548443994902757427', // halloweenabobora
-        '1548444056982655099', // kuromiwitch
-        '1548443998283235461', // halloweenpokemon
-        '1548443839247818802', // cafehalloweenbat
+        { id: '82336witchscaul', label: 'Caldeirão da Bruxa' },
+        { id: '1551355578066931763', label: 'Hello Kitty Aboborada' },
+        { id: '1548443801515720719', label: 'Zumbicord' },
+        { id: '1548444196074033242', label: 'Balinha' },
+        { id: '1551356387475595375', label: 'Gatinho Trevinhas' },
+        { id: '1548444308401684530', label: 'Wumpus Bruxinho' },
       ];
+
+      const DECOY_DEFAULT_NAMES = {
+        '82336witchscaul': 'Caldeirão da Bruxa',
+        '4124hellokit': 'Hello Kitty Aboborada',
+        '4124hellokittypumpkin': 'Hello Kitty Aboborada',
+        '1551355578066931763': 'Hello Kitty Aboborada',
+        'ardiscordzomb': 'Zumbicord',
+        'ardiscordzombie': 'Zumbicord',
+        '1548443801515720719': 'Zumbicord',
+        'purplecandy': 'Balinha',
+        '1548444196074033242': 'Balinha',
+        '31772purpleween': 'Gatinho Trevinhas',
+        '1551356387475595375': 'Gatinho Trevinhas',
+        'witchwumpus': 'Wumpus Bruxinho',
+        '1548444308401684530': 'Wumpus Bruxinho',
+        'halloweenabobora': 'Abóbora de Halloween',
+        '1548443994902757427': 'Abóbora de Halloween',
+        'kuromiwitch': 'Kuromi Bruxa',
+        '1548444056982655099': 'Kuromi Bruxa',
+        'halloweenpokemon': 'Morceguinho Noturno',
+        '1548443998283235461': 'Morceguinho Noturno',
+        'cafehalloweenbat': 'Morcego do Café',
+        '1548443839247818802': 'Morcego do Café',
+      };
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function cleanEmojiName(raw) {
+        if (!raw) return 'Item Misterioso';
+        const lower = String(raw).toLowerCase();
+        if (DECOY_DEFAULT_NAMES[lower]) return DECOY_DEFAULT_NAMES[lower];
+        let cleaned = String(raw).replace(/^\d+[_]?/, '');
+        cleaned = cleaned.replace(/_/g, ' ').trim();
+        cleaned = cleaned.replace(/\b\w/g, (c) => c.toUpperCase());
+        return cleaned || raw;
+      }
+
+      let currentDropDecoys = [];
+      try {
+        const decoysEl = document.getElementById('initialDecoysData');
+        const rawDecoys = decoysEl ? JSON.parse(decoysEl.textContent || '[]') : [];
+        if (Array.isArray(rawDecoys) && rawDecoys.length > 0) {
+          currentDropDecoys = rawDecoys.map((item) => {
+            if (typeof item === 'object' && item !== null) {
+              const id = String(item.id || item.name || '').trim();
+              const label = item.label ? String(item.label).trim() : (DECOY_DEFAULT_NAMES[id] || '');
+              return { id, label };
+            }
+            const id = String(item || '').trim();
+            return { id, label: DECOY_DEFAULT_NAMES[id] || '' };
+          }).filter((d) => Boolean(d.id));
+        } else {
+          currentDropDecoys = JSON.parse(JSON.stringify(DEFAULT_HALLOWEEN_DECOYS));
+        }
+      } catch (_) {
+        currentDropDecoys = JSON.parse(JSON.stringify(DEFAULT_HALLOWEEN_DECOYS));
+      }
 
       function getEmojiInfo(idOrName) {
         if (!idOrName) return { id: '', name: 'Vazio', url: null, isUnicode: false, raw: '' };
@@ -1147,10 +1380,16 @@
           };
         }
 
-        // 3. Nome no catálogo
+        // 3. Nome ou alias no catálogo
         const lower = str.toLowerCase();
-        if (emojiMapByName.has(lower)) {
-          const item = emojiMapByName.get(lower);
+        const aliasMap = {
+          '4124hellokit': '4124hellokittypumpkin',
+          'ardiscordzomb': 'ardiscordzombie',
+          '5479_kindergarten': '5479_kindergarten2_pumpkin',
+        };
+        const targetName = aliasMap[lower] || lower;
+        if (emojiMapByName.has(targetName)) {
+          const item = emojiMapByName.get(targetName);
           return {
             id: item.id,
             name: item.name,
@@ -1176,18 +1415,18 @@
         // 5. Fallback para nomes textuais antigos
         const knownFallbacks = {
           '5479_kindergarten': { name: 'Kindergarten', fallback: '🎃' },
-          '82336witchscaul': { name: 'Caldeirão', fallback: '🍲' },
-          '4124hellokit': { name: 'Hello Kitty', fallback: '🐱' },
-          'ardiscordzomb': { name: 'Zumbi', fallback: '🧟' },
-          'purplecandy': { name: 'Bala Roxa', fallback: '🍬' },
-          '31772purpleween': { name: 'Purpleween', fallback: '🎃' },
-          'witchwumpus': { name: 'Wumpus Bruxo', fallback: '🧙' },
+          '82336witchscaul': { name: 'Caldeirão da Bruxa', fallback: '🍲' },
+          '4124hellokit': { name: 'Hello Kitty Aboborada', fallback: '🐱' },
+          'ardiscordzomb': { name: 'Zumbicord', fallback: '🧟' },
+          'purplecandy': { name: 'Balinha', fallback: '🍬' },
+          '31772purpleween': { name: 'Gatinho Trevinhas', fallback: '🎃' },
+          'witchwumpus': { name: 'Wumpus Bruxinho', fallback: '🧙' },
           '8320_hallowee': { name: 'Halloween Art', fallback: '🎨' },
           '36577halloween': { name: 'Halloween Frame', fallback: '🖼️' },
-          'halloweenpokemon': { name: 'Halloween Poke', fallback: '🦇' },
+          'halloweenpokemon': { name: 'Morceguinho Noturno', fallback: '🦇' },
           'halloweentot8': { name: 'Ghost Tot', fallback: '👻' },
           'halloween3gif55': { name: 'Halloween Web', fallback: '🕸️' },
-          'cafehalloweenbat': { name: 'Cafe Bat', fallback: '🦇' },
+          'cafehalloweenbat': { name: 'Morcego do Café', fallback: '🦇' },
           'halloween47': { name: 'Halloween Candle', fallback: '🕯️' },
         };
 
@@ -1301,14 +1540,99 @@
         }
       }
 
-      function resetDefaultDecoys() {
-        const input = document.getElementById('dropDecoys');
-        if (input) {
-          input.value = DEFAULT_HALLOWEEN_DECOYS.join(',');
-          renderChips('dropDecoys');
-          updateLivePreview();
-          showToast('Lista de 6 decoys restaurada para o padrão oficial de Halloween!');
+      function renderDecoysList() {
+        const container = document.getElementById('decoysList');
+        const badge = document.getElementById('badgeCountDecoys');
+        if (!container) return;
+
+        if (badge) {
+          badge.textContent = `${currentDropDecoys.length} ${currentDropDecoys.length === 1 ? 'Decoy' : 'Decoys'}`;
         }
+
+        if (currentDropDecoys.length === 0) {
+          container.innerHTML = `
+            <div style="padding: 16px; text-align: center; background: rgba(0,0,0,0.25); border: 1px dashed rgba(255,255,255,0.15); border-radius: 10px; color: var(--text-muted); font-size: 0.85rem;">
+              🕸️ Nenhum emoji decoy configurado no momento.<br>
+              Clique em <strong>➕ Adicionar da Galeria</strong> ou em <strong>🎃 Restaurar 6 Clássicos de Halloween</strong>.
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = currentDropDecoys.map((decoy, idx) => {
+          const info = getEmojiInfo(decoy.id);
+          const icon = info.url
+            ? `<img src="${info.url}" alt="${escapeHtml(info.name)}" />`
+            : `<span>${escapeHtml(info.fallbackText || (info.isUnicode ? info.name : '❓'))}</span>`;
+
+          const labelVal = decoy.label || '';
+          const suggestedPlaceholder = DECOY_DEFAULT_NAMES[decoy.id] || cleanEmojiName(info.name);
+
+          return `
+            <div class="decoy-card">
+              <div class="decoy-preview" title="Visualização">${icon}</div>
+              <div class="decoy-meta">
+                <div class="decoy-canonical">
+                  <span><strong>${escapeHtml(info.name)}</strong></span>
+                  <span style="opacity: 0.65; margin-left: 6px;">ID: ${escapeHtml(info.id || decoy.id)}</span>
+                </div>
+                <div class="decoy-label-wrap">
+                  <label class="decoy-label-title">Apelido / Característica Visual anunciada no drop:</label>
+                  <input
+                    type="text"
+                    class="decoy-input-label"
+                    value="${escapeHtml(labelVal)}"
+                    placeholder="Ex: ${escapeHtml(suggestedPlaceholder)}..."
+                    oninput="updateDecoyLabel(${idx}, this.value)"
+                  />
+                </div>
+              </div>
+              <button type="button" class="btn-remove-decoy" onclick="removeDecoyAtIndex(${idx})" title="Remover este decoy da lista">✕</button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function updateDecoyLabel(idx, val) {
+        if (currentDropDecoys[idx]) {
+          currentDropDecoys[idx].label = val;
+          updateLivePreview();
+        }
+      }
+
+      function removeDecoyAtIndex(idx) {
+        if (idx >= 0 && idx < currentDropDecoys.length) {
+          const removed = currentDropDecoys.splice(idx, 1)[0];
+          renderDecoysList();
+          updateLivePreview();
+          showToast(`Decoy "${removed.label || removed.id}" removido!`);
+        }
+      }
+
+      function resetDefaultDecoys() {
+        currentDropDecoys = JSON.parse(JSON.stringify(DEFAULT_HALLOWEEN_DECOYS));
+        renderDecoysList();
+        updateLivePreview();
+        showToast('Lista dos 6 decoys clássicos de Halloween restaurada com sucesso!');
+      }
+
+      function promptCustomDecoy() {
+        const idOrUnicode = prompt('Digite o ID do emoji da Pyxie, o nome ou emoji Unicode (ex: 82336witchscaul ou 🍲):');
+        if (!idOrUnicode || !idOrUnicode.trim()) return;
+
+        const rawId = idOrUnicode.trim();
+        const info = getEmojiInfo(rawId);
+        const defaultLabel = DECOY_DEFAULT_NAMES[rawId] || cleanEmojiName(info.name);
+        const customLabel = prompt(`Digite o apelido/característica visual para "${info.name}":`, defaultLabel);
+
+        currentDropDecoys.push({
+          id: rawId,
+          label: (customLabel && customLabel.trim()) ? customLabel.trim() : defaultLabel,
+        });
+
+        renderDecoysList();
+        updateLivePreview();
+        showToast(`Decoy "${info.name}" adicionado com sucesso!`);
       }
 
       function openPicker(fieldId, mode = 'single') {
@@ -1436,6 +1760,23 @@
         if (!currentPickerField) return;
         const info = getEmojiInfo(emojiId);
 
+        if (currentPickerField === 'dropDecoys') {
+          const exists = currentDropDecoys.some(d => String(d.id) === String(emojiId) || (info.name && d.id === info.name));
+          if (exists) {
+            showToast(`O emoji "${info.name}" já está na lista de decoys!`, 'error');
+            return;
+          }
+          const defaultLabel = DECOY_DEFAULT_NAMES[emojiId] || DECOY_DEFAULT_NAMES[info.name] || cleanEmojiName(info.name);
+          currentDropDecoys.push({
+            id: emojiId,
+            label: defaultLabel,
+          });
+          renderDecoysList();
+          updateLivePreview();
+          showToast(`Decoy "${info.name}" adicionado com apelido "${defaultLabel}"!`);
+          return;
+        }
+
         if (currentPickerMode === 'single') {
           const input = document.getElementById(currentPickerField);
           if (input) {
@@ -1450,7 +1791,7 @@
           closePicker();
           showToast(`Emoji "${info.name}" selecionado com sucesso!`);
         } else {
-          // Multi mode (chips)
+          // Multi mode (chips para artOfWeek, trickOrTreat, dailyClaim)
           const input = document.getElementById(currentPickerField);
           if (input) {
             const currentItems = (input.value || '')
@@ -1630,7 +1971,16 @@
             descEl.textContent = raw;
           } else if (currentTab === 'drop') {
             titleEl.textContent = '🎃 BAÚ MISTERIOSO DA PYXIE DESPENCOU! 🎃';
-            descEl.textContent = `Um baú suspeito caiu com tudo no meio da Cringelândia!\n\n⚡ Rápido! Clique na reação 🎃 **Abóbora Maligna** antes dos outros para abrir o baú!\n\n*Apenas o primeiro a acertar leva o saque.*`;
+            const sampleDecoy = currentDropDecoys.length > 0
+              ? currentDropDecoys[0]
+              : { id: 'witchwumpus', label: 'Wumpus Bruxinho' };
+            const info = getEmojiInfo(sampleDecoy.id);
+            const sampleLabel = sampleDecoy.label || DECOY_DEFAULT_NAMES[sampleDecoy.id] || cleanEmojiName(info.name);
+            const emojiPreview = info.url
+              ? `<img src="${info.url}" style="width:20px;height:20px;vertical-align:middle;margin-right:3px;" />`
+              : `${info.fallbackText || (info.isUnicode ? info.name : '🧙')} `;
+
+            descEl.innerHTML = `Um baú suspeito caiu com tudo no meio da Cringelândia!<br><br>⚡ <strong>Rápido! Clique na reação ${emojiPreview}<strong>${escapeHtml(sampleLabel)}</strong> antes dos outros para abrir o baú!</strong><br><br><em>Apenas o primeiro a acertar leva o saque. Reações erradas só dão vergonha alheia.</em>`;
           } else if (currentTab === 'art') {
             titleEl.textContent = '🎨 ARTE DA SEMANA DEFINIDA!';
             let raw = document.getElementById('artOfWeekWinner').value;
@@ -1642,10 +1992,12 @@
       }
 
       async function saveConfiguration() {
-        const dropDecoys = (document.getElementById('dropDecoys')?.value || '')
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean);
+        const dropDecoys = currentDropDecoys
+          .map((d) => ({
+            id: String(d.id || '').trim(),
+            label: String(d.label || '').trim() || (DECOY_DEFAULT_NAMES[d.id] || cleanEmojiName(getEmojiInfo(d.id).name)),
+          }))
+          .filter((d) => Boolean(d.id));
 
         const artOfWeek = (document.getElementById('artOfWeek')?.value || '')
           .split(',')
@@ -1770,9 +2122,9 @@
         }
       }
 
-      // Inicializa slots, chips e preview
+      // Inicializa slots, lista de decoys com apelidos, chips e preview
       renderCurrencySlot();
-      renderChips('dropDecoys');
+      renderDecoysList();
       renderChips('artOfWeek');
       renderChips('trickOrTreat');
       renderChips('dailyClaim');

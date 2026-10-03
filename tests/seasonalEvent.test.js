@@ -253,6 +253,28 @@ artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted
   assert(dropSentEmbed.embeds[0].data.title.includes('BAÚ ABERTO'), 'Embed deve ser editado anunciando abertura');
   console.log('✅ Mecânica dos Baús da Pyxie (decoys, anti-trapaça, recompensa imediata) validada com sucesso.');
 
+  // 6.1 Teste de Decoys com Apelidos Visuais Customizados (ex: Wumpus Bruxinho, Caldeirão da Bruxa)
+  seasonalManager.saveConfig({
+    assets: {
+      ...seasonalManager.loadConfig().assets,
+      emojis: {
+        ...seasonalManager.loadConfig().assets?.emojis,
+        dropDecoys: [
+          { id: 'witchwumpus', label: 'Wumpus Bruxinho Teste' },
+          { id: '82336witchscaul', label: 'Caldeirão Mágico Teste' },
+        ],
+      },
+    },
+  });
+
+  const dropWithLabelsTriggered = await dropHandler.triggerDrop(mockClient);
+  assert.equal(dropWithLabelsTriggered, true);
+  const descLabels = dropSentEmbed.embeds[0].data.description;
+  const matchLabel = descLabels.match(/Clique na reação (\S+) \*\*([^*]+)\*\*/);
+  assert(matchLabel, 'Embed de drop com apelido deve informar explicitamente a reação');
+  assert(['Wumpus Bruxinho Teste', 'Caldeirão Mágico Teste'].includes(matchLabel[2]), 'Apelido customizado deve ser exibido no embed');
+  console.log('✅ Baú da Pyxie com apelidos visuais customizados validado com sucesso.');
+
   // 7. Teste de Ranking com Filtro Sazonal (/py-rank)
   const rankingActiveView = await buildRankingView({ client: mockClient }, 'viewer_1', 'sazonal');
   assert(rankingActiveView.embeds[0].data.title.includes('Placar Sazonal'), 'Ranking deve renderizar placar sazonal quando solicitado');
