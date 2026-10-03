@@ -9,7 +9,7 @@ const DATA_PATH = path.join(__dirname, '..', '..', '..', 'data', 'seasonalData.j
 const DEFAULT_CONFIG = {
   active: false,
   eventName: 'Halloween da Cringelândia',
-  currencyName: 'Abóboras',
+  currencyName: 'Abóbora',
   channels: {
     artChannelId: '',
     dropsChannelId: '',
@@ -20,33 +20,33 @@ const DEFAULT_CONFIG = {
     timezone: 'America/Sao_Paulo',
   },
   prizes: {
-    firstPlace: '1 Mês de Discord Nitro + Cargo de Bruxo Supremo',
-    secondPlace: '5.000 Moedinhas + Cargo de Zumbi da Cringelândia',
-    thirdPlace: '2.000 Moedinhas',
+    firstPlace: '1x Gift Card 25R$',
+    secondPlace: 'Cargo Personalizado [tu escolhe fi]',
+    thirdPlace: 'um beijo do cringinho (na bochecha)',
   },
   assets: {
-    chestImageUrl: 'https://i.imgur.com/link_do_bau_halloween.png',
+    chestImageUrl: 'https://cdn.discordapp.com/attachments/1466787301018308761/1555742275462496316/Copia_de_Sem_nome_256_x_256_px.png?backend=b2&ex=6ac24a26&is=6ac0f8a6&hm=5d16ee2e9f422a9c7aef4e9d294cb33e057da9b0ec07e4194e8480b1a37dcfd0&',
+    infoEventImageUrl: 'https://cdn.discordapp.com/attachments/1466787301018308761/1555968207381209200/pyxie_all_1.png?backend=b2&ex=6ac273d1&is=6ac12251&hm=7bd270ff44a41e2ec992ba37e0485d1725701e4a3e0a8fa3922311fa8ced2506&',
     emojis: {
-      currency: '1548443994902757427', // halloweenabobora
+      currency: '1551355734577381447',
       dropDecoys: [
-        { id: '82336witchscaul', label: 'Caldeirão da Bruxa' },
         { id: '1551355578066931763', label: 'Hello Kitty Aboborada' },
         { id: '1548443801515720719', label: 'Zumbicord' },
         { id: '1548444196074033242', label: 'Balinha' },
         { id: '1551356387475595375', label: 'Gatinho Trevinhas' },
         { id: '1548444308401684530', label: 'Wumpus Bruxinho' },
+        { id: '1552115015199227924', label: 'Caldeirão da Pyxie' },
       ],
       artOfWeek: [
-        '1548443988745261086', // halloween3gif55
-        '1548443994902757427', // halloweenabobora
+        '1548443988745261086',
       ],
     },
   },
   templates: {
-    announcementText: '🕸️ **O CIRCO DOS HORRORES COMEÇOU NA CRINGELÂNDIA!** 🕸️\n\nAcharam que iam passar o mês sem serem humilhados? O evento **{eventName}** tá liberado!\n\nJuntem **{currencyName}** nos drops do baú e na Arte da Semana. Quem terminar no topo ganha **{firstPrize}**. Quem perder, só passa vergonha mesmo.\n\nUse `/py-infoevento` pra entender antes de chorar no chat geral.',
+    announcementText: '🎪 **O CIRCO DOS HORRORES COMEÇOU NA CRINGELÂNDIA!** 🎃\n\nAcharam que iam passar o mês sem serem humilhados? O evento **{eventName}** tá liberado!\n\nJuntem **{currencyName}** nos drops do baú e na Arte da Semana. Quem terminar no topo ganha **{firstPrize}**. Quem perder, só passa vergonha mesmo.\n\nUse `/py-infoevento` pra entender antes de chorar no chat geral.',
     dropEmbedFooter: 'Dica: Use /py-infoevento para entender a pontuação e prazos!',
-    artOfWeekWinner: '🎨 **ARTE DA SEMANA DEFINIDA!**\n\nOlha só, parece que temos alguém talentoso no meio de tantos rabiscos. Parabéns {author}, sua arte foi a mais votada e você garantiu **+5 {currencyName}**!\n\nConfiram a obra de arte abaixo:',
-    infoEventTitle: '🕸️ {eventName} — GUIA OFICIAL 🕸️',
+    artOfWeekWinner: '🎨 **ARTE DA SEMANA DEFINIDA!**\n\nOlha só, parece que temos alguém que agradou nosso coraçãozinho essa semana. Parabéns {author}, sua arte foi a mais votada e você garantiu **+5 {currencyName}**!\n\nConfiram a obra de arte abaixo:',
+    infoEventTitle: '{eventName} — GUIA OFICIAL',
     infoEventDescription: 'Bem-vindo(a) ao evento temático oficial da Cringelândia! Acumule **{currencyName}** participando das atividades e dispute o topo do placar.',
     infoEventRules: '• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!',
     infoEventExtra: '> Use **/py-rank** para conferir o placar dos membros mais dedicados!\n> Dúvidas ou choro? Procure a moderação antes de passar vergonha no chat geral.',
@@ -239,8 +239,21 @@ function resolveSeasonalEmojiObject(client, emojiKeyOrId, fallback = '🎃') {
     };
   }
 
-  // 3. Busca por Nome ou Alias no catálogo de Application Emojis da Pyxie
+  // 2.1 Suporte explícito ao Caldeirão da Pyxie (82336witchscauldron)
   const lower = str.toLowerCase();
+  if (str === '1552115015199227924' || lower === '82336witchscauldron' || lower === '82336witchscaul') {
+    return {
+      id: '1552115015199227924',
+      name: '82336witchscauldron',
+      animated: true,
+      formatted: '<a:82336witchscauldron:1552115015199227924>',
+      reactable: '1552115015199227924',
+      url: 'https://cdn.discordapp.com/emojis/1552115015199227924.gif',
+      isUnicode: false,
+    };
+  }
+
+  // 3. Busca por Nome ou Alias no catálogo de Application Emojis da Pyxie
   const aliasNameMap = {
     '4124hellokit': '4124hellokittypumpkin',
     'ardiscordzomb': 'ardiscordzombie',
