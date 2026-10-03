@@ -36,15 +36,6 @@ const DEFAULT_CONFIG = {
         { id: '1551356387475595375', label: 'Gatinho Trevinhas' },
         { id: '1548444308401684530', label: 'Wumpus Bruxinho' },
       ],
-      trickOrTreat: [
-        '1548443998283235461', // halloweenpokemon
-        '1548444000120471584', // halloweentot83
-      ],
-      dailyClaim: [
-        '1548443988745261086', // halloween3gif55
-        '1548443839247818802', // cafehalloweenbat
-        '1548443990184169622', // halloween47
-      ],
       artOfWeek: [
         '1548443988745261086', // halloween3gif55
         '1548443994902757427', // halloweenabobora
@@ -133,8 +124,6 @@ function saveConfig(updates, overwrite = false) {
         ...(updates.assets?.emojis || {}),
         ...(Array.isArray(updates.assets?.emojis?.dropDecoys) ? { dropDecoys: updates.assets.emojis.dropDecoys } : {}),
         ...(Array.isArray(updates.assets?.emojis?.artOfWeek) ? { artOfWeek: updates.assets.emojis.artOfWeek } : {}),
-        ...(Array.isArray(updates.assets?.emojis?.trickOrTreat) ? { trickOrTreat: updates.assets.emojis.trickOrTreat } : {}),
-        ...(Array.isArray(updates.assets?.emojis?.dailyClaim) ? { dailyClaim: updates.assets.emojis.dailyClaim } : {}),
       },
     },
     templates: { ...(current.templates || {}), ...(updates.templates || {}) },

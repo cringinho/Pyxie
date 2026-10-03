@@ -1063,34 +1063,6 @@
               </button>
               <input type="hidden" id="artOfWeek" value="<%= (config.assets?.emojis?.artOfWeek || []).join(',') %>" />
             </div>
-
-            <div class="form-row" style="margin-top: 14px;">
-              <!-- Gostosuras ou Travessuras -->
-              <div class="form-group">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <label style="margin: 0;">🍬 Gostosuras ou Travessuras (trickOrTreat)</label>
-                  <span id="badgeCountTrick" class="badge-count">0</span>
-                </div>
-                <div class="visual-chips-container" id="chipsTrickOrTreat"></div>
-                <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="openPicker('trickOrTreat', 'multi')">
-                  ➕ Adicionar Emoji
-                </button>
-                <input type="hidden" id="trickOrTreat" value="<%= (config.assets?.emojis?.trickOrTreat || []).join(',') %>" />
-              </div>
-
-              <!-- Reivindicação Diária -->
-              <div class="form-group">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <label style="margin: 0;">🎁 Reivindicação Diária (dailyClaim)</label>
-                  <span id="badgeCountDaily" class="badge-count">0</span>
-                </div>
-                <div class="visual-chips-container" id="chipsDailyClaim"></div>
-                <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="openPicker('dailyClaim', 'multi')">
-                  ➕ Adicionar Emoji
-                </button>
-                <input type="hidden" id="dailyClaim" value="<%= (config.assets?.emojis?.dailyClaim || []).join(',') %>" />
-              </div>
-            </div>
           </div>
 
           <!-- Configuração Completa do /py-infoevento -->
@@ -1470,15 +1442,8 @@
         const input = document.getElementById(fieldId);
         if (!input) return;
 
-        const containerId = fieldId === 'dropDecoys' ? 'chipsDecoys' :
-                            fieldId === 'artOfWeek' ? 'chipsArt' :
-                            fieldId === 'trickOrTreat' ? 'chipsTrickOrTreat' :
-                            fieldId === 'dailyClaim' ? 'chipsDailyClaim' : null;
-
-        const badgeId = fieldId === 'dropDecoys' ? 'badgeCountDecoys' :
-                        fieldId === 'artOfWeek' ? 'badgeCountArt' :
-                        fieldId === 'trickOrTreat' ? 'badgeCountTrick' :
-                        fieldId === 'dailyClaim' ? 'badgeCountDaily' : null;
+        const containerId = fieldId === 'artOfWeek' ? 'chipsArt' : null;
+        const badgeId = fieldId === 'artOfWeek' ? 'badgeCountArt' : null;
 
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -1645,8 +1610,6 @@
           currency: 'Moeda Sazonal (currency)',
           dropDecoys: 'Emojis Decoys do Baú (dropDecoys)',
           artOfWeek: 'Votação da Arte da Semana (artOfWeek)',
-          trickOrTreat: 'Gostosuras ou Travessuras (trickOrTreat)',
-          dailyClaim: 'Reivindicação Diária (dailyClaim)',
         };
 
         const labelEl = document.getElementById('pickerTargetLabel');
@@ -1791,7 +1754,7 @@
           closePicker();
           showToast(`Emoji "${info.name}" selecionado com sucesso!`);
         } else {
-          // Multi mode (chips para artOfWeek, trickOrTreat, dailyClaim)
+          // Multi mode (chips para artOfWeek)
           const input = document.getElementById(currentPickerField);
           if (input) {
             const currentItems = (input.value || '')
@@ -2004,16 +1967,6 @@
           .map((s) => s.trim())
           .filter(Boolean);
 
-        const trickOrTreat = (document.getElementById('trickOrTreat')?.value || '')
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean);
-
-        const dailyClaim = (document.getElementById('dailyClaim')?.value || '')
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean);
-
         const currency = document.getElementById('emojiCurrency')?.value.trim() || '5479_Kindergarten';
         const chestImageUrl = document.getElementById('chestImageUrl')?.value.trim() || '';
         const infoEventImageUrl = document.getElementById('infoEventImageUrl')?.value.trim() || '';
@@ -2042,8 +1995,6 @@
               currency,
               dropDecoys,
               artOfWeek,
-              trickOrTreat,
-              dailyClaim,
             },
           },
           templates: {
@@ -2126,8 +2077,6 @@
       renderCurrencySlot();
       renderDecoysList();
       renderChips('artOfWeek');
-      renderChips('trickOrTreat');
-      renderChips('dailyClaim');
       updateLivePreview();
     </script>
   </body>
