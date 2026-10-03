@@ -3,8 +3,8 @@ const path = require('node:path');
 const cron = require('node-cron');
 const { EmbedBuilder } = require('discord.js');
 
-const CONFIG_PATH = path.join(__dirname, '..', '..', '..', 'data', 'seasonalConfig.json');
-const DATA_PATH = path.join(__dirname, '..', '..', '..', 'data', 'seasonalData.json');
+const CONFIG_PATH = process.env.SEASONAL_CONFIG_PATH || path.join(__dirname, '..', '..', '..', 'data', 'seasonalConfig.json');
+const DATA_PATH = process.env.SEASONAL_DATA_PATH || path.join(__dirname, '..', '..', '..', 'data', 'seasonalData.json');
 
 const DEFAULT_CONFIG = {
   active: false,
