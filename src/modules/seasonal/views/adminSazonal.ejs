@@ -331,6 +331,37 @@
         display: block;
       }
 
+      .preview-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .preview-field {
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 6px;
+        padding: 8px 12px;
+        border-left: 3px solid var(--purple-accent);
+      }
+
+      .preview-field-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #f2f3f5;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .preview-field-val {
+        font-size: 0.78rem;
+        color: #dbdee1;
+        line-height: 1.45;
+        white-space: pre-wrap;
+      }
+
       .preview-footer {
         font-size: 0.72rem;
         color: #949ba4;
@@ -558,6 +589,45 @@
             </div>
           </div>
 
+          <!-- Configuração Completa do /py-infoevento -->
+          <div class="card">
+            <div class="card-header">
+              <h2>📖 Guia & Regras do Evento (/py-infoevento)</h2>
+              <span class="help-text">Edite a explicação completa do evento, regras de participação e deboches</span>
+            </div>
+
+            <div class="form-group">
+              <label>🏷️ Título do Embed Oficial</label>
+              <input type="text" id="infoEventTitle" value="<%= config.templates?.infoEventTitle || '🕸️ {eventName} — GUIA OFICIAL 🕸️' %>" placeholder="🕸️ {eventName} — GUIA OFICIAL 🕸️" oninput="updateLivePreview()" />
+              <p class="help-text">Suporta {eventName} (substituído pelo nome do evento em maiúsculas)</p>
+            </div>
+
+            <div class="form-group">
+              <label>📜 Introdução & Visão Geral do Evento</label>
+              <textarea id="infoEventDescription" rows="3" oninput="updateLivePreview()"><%= config.templates?.infoEventDescription || 'Bem-vindo(a) ao evento temático oficial da Cringelândia! Participe das atividades, acumule **{currencyName}** e dispute os prêmios no topo do placar.' %></textarea>
+              <p class="help-text">Explicativo de introdução do evento. Suporta Markdown, {eventName}, {currencyName}, {firstPrize}</p>
+            </div>
+
+            <div class="form-group">
+              <label>⚔️ Como Funciona & Regras Detalhadas</label>
+              <textarea id="infoEventRules" rows="5" oninput="updateLivePreview()"><%= config.templates?.infoEventRules || '• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!\n• **Regras Gerais:** Proibido uso de multicontas ou trapaças automatizadas sob pena de desclassificação imediata.' %></textarea>
+              <p class="help-text">Explicação dos drops, artes e regras da Cringelândia. Suporta {dropsChannel}, {artChannel}, {currencyName}</p>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>💡 Dicas Extras, Lore & Avisos da Pyxie (Opcional)</label>
+                <textarea id="infoEventExtra" rows="3" oninput="updateLivePreview()"><%= config.templates?.infoEventExtra || '> Use **/py-rank** para conferir o placar dos membros mais dedicados!\n> Dúvidas ou choro? Procure a moderação antes de passar vergonha no chat geral.' %></textarea>
+                <p class="help-text">Aparece em um campo especial no Discord. Deixe vazio se não quiser campo extra.</p>
+              </div>
+              <div class="form-group">
+                <label>🖼️ Banner Específico do Guia (Opcional)</label>
+                <input type="text" id="infoEventImageUrl" value="<%= config.assets?.infoEventImageUrl || '' %>" placeholder="Deixe em branco para usar a imagem do Baú" oninput="updateLivePreview()" />
+                <p class="help-text">URL de imagem personalizada para o /py-infoevento (se vazia, usa a imagem do Baú)</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Templates de Texto -->
           <div class="card">
             <div class="card-header">
@@ -605,9 +675,10 @@
             <div class="card-header">
               <h2>👁️ Live Discord Preview</h2>
               <div class="tab-buttons">
-                <button class="tab-btn active" onclick="switchPreviewTab('announcement')">Anúncio</button>
-                <button class="tab-btn" onclick="switchPreviewTab('drop')">Baú Drop</button>
-                <button class="tab-btn" onclick="switchPreviewTab('art')">Arte Winner</button>
+                <button class="tab-btn active" onclick="switchPreviewTab('infoevento', this)">Guia /py-infoevento</button>
+                <button class="tab-btn" onclick="switchPreviewTab('announcement', this)">Anúncio</button>
+                <button class="tab-btn" onclick="switchPreviewTab('drop', this)">Baú Drop</button>
+                <button class="tab-btn" onclick="switchPreviewTab('art', this)">Arte Winner</button>
               </div>
             </div>
 
@@ -617,9 +688,10 @@
                 <span class="preview-author-name">Pyxie [BOT]</span>
               </div>
 
-              <div id="previewTitle" class="preview-title">🕸️ HALLOWEEN DA CRINGELÂNDIA 🕸️</div>
+              <div id="previewTitle" class="preview-title">🕸️ HALLOWEEN DA CRINGELÂNDIA — GUIA OFICIAL 🕸️</div>
               <div id="previewDesc" class="preview-desc">Carregando preview...</div>
-              <img id="previewImg" class="preview-img" src="<%= config.assets?.chestImageUrl || 'https://i.imgur.com/link_do_bau_halloween.png' %>" alt="Chest" />
+              <div id="previewFields" class="preview-fields"></div>
+              <img id="previewImg" class="preview-img" src="<%= config.assets?.infoEventImageUrl || config.assets?.chestImageUrl || 'https://i.imgur.com/link_do_bau_halloween.png' %>" alt="Banner" />
               <div id="previewFooter" class="preview-footer">
                 <span>Dica: Use /py-infoevento para entender a pontuação e prazos!</span>
               </div>
@@ -645,7 +717,7 @@
     <div id="toast"></div>
 
     <script>
-      let currentTab = 'announcement';
+      let currentTab = 'infoevento';
 
       function showToast(msg, type = 'success') {
         const toast = document.getElementById('toast');
@@ -657,47 +729,157 @@
         }, 3500);
       }
 
-      function switchPreviewTab(tab) {
+      function switchPreviewTab(tab, btn) {
         currentTab = tab;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
+        document.querySelectorAll('.tab-buttons .tab-btn').forEach(b => b.classList.remove('active'));
+        if (btn) {
+          btn.classList.add('active');
+        } else if (window.event && window.event.target) {
+          window.event.target.classList.add('active');
+        }
         updateLivePreview();
       }
 
       function updateLivePreview() {
-        const eventName = document.getElementById('eventName').value || 'Evento Sazonal';
-        const currencyName = document.getElementById('currencyName').value || 'Moedas';
-        const firstPrize = document.getElementById('firstPlace').value || 'Discord Nitro';
-        const footer = document.getElementById('dropEmbedFooter').value || 'Dica: Use /py-infoevento para entender a pontuação e prazos!';
+        const eventName = document.getElementById('eventName')?.value || 'Evento Sazonal';
+        const currencyName = document.getElementById('currencyName')?.value || 'Moedas';
+        const firstPrize = document.getElementById('firstPlace')?.value || 'Discord Nitro';
+        const secondPrize = document.getElementById('secondPlace')?.value || '';
+        const thirdPrize = document.getElementById('thirdPlace')?.value || '';
+        const footer = document.getElementById('dropEmbedFooter')?.value || 'Dica: Use /py-infoevento para entender a pontuação e prazos!';
+        const emojiCurrency = document.getElementById('emojiCurrency')?.value || '🎃';
+        const chestUrl = document.getElementById('chestImageUrl')?.value.trim();
+        const infoUrl = document.getElementById('infoEventImageUrl')?.value.trim();
+        const endDateVal = document.getElementById('endDate')?.value || '';
+        const timezoneVal = document.getElementById('timezone')?.value || 'America/Sao_Paulo';
+        const artChannel = document.getElementById('artChannelId')?.value ? `#${document.getElementById('artChannelId').value}` : '#canal-de-artes';
+        const dropsChannel = document.getElementById('dropsChannelId')?.value ? `#${document.getElementById('dropsChannelId').value}` : '#canal-de-drops';
 
         const titleEl = document.getElementById('previewTitle');
         const descEl = document.getElementById('previewDesc');
+        const fieldsEl = document.getElementById('previewFields');
         const footerEl = document.getElementById('previewFooter');
-
-        footerEl.textContent = footer;
-
-        const chestUrl = document.getElementById('chestImageUrl')?.value.trim();
         const previewImgEl = document.getElementById('previewImg');
-        if (chestUrl && previewImgEl) {
-          previewImgEl.src = chestUrl;
-        }
 
-        if (currentTab === 'announcement') {
-          titleEl.textContent = `🕸️ ${eventName.toUpperCase()} 🕸️`;
-          let raw = document.getElementById('announcementText').value;
-          raw = raw.replace(/{eventName}/g, eventName)
-                   .replace(/{currencyName}/g, currencyName)
-                   .replace(/{firstPrize}/g, firstPrize);
-          descEl.textContent = raw;
-        } else if (currentTab === 'drop') {
-          titleEl.textContent = '🎃 BAÚ MISTERIOSO DA PYXIE DESPENCOU! 🎃';
-          descEl.textContent = `Um baú suspeito caiu com tudo no meio da Cringelândia!\n\n⚡ Rápido! Clique na reação 🎃 **Abóbora Maligna** antes dos outros para abrir o baú!\n\n*Apenas o primeiro a acertar leva o saque.*`;
-        } else if (currentTab === 'art') {
-          titleEl.textContent = '🎨 ARTE DA SEMANA DEFINIDA!';
-          let raw = document.getElementById('artOfWeekWinner').value;
-          raw = raw.replace(/{author}/g, '@ArtistaTalentoso')
-                   .replace(/{currencyName}/g, currencyName);
-          descEl.textContent = `${raw}\n\nTotal de Votos: 14 🗳️`;
+        if (footerEl) footerEl.textContent = footer;
+
+        if (currentTab === 'infoevento') {
+          // Imagem do Guia (usa infoEventImageUrl ou fallback para chestImageUrl)
+          const imgToUse = infoUrl || chestUrl;
+          if (imgToUse && previewImgEl) {
+            previewImgEl.src = imgToUse;
+            previewImgEl.style.display = 'block';
+          } else if (previewImgEl) {
+            previewImgEl.style.display = 'none';
+          }
+
+          // Título
+          let rawTitle = document.getElementById('infoEventTitle')?.value || '🕸️ {eventName} — GUIA OFICIAL 🕸️';
+          titleEl.textContent = rawTitle.replace(/{eventName}/g, eventName.toUpperCase());
+
+          // Descrição
+          let rawDesc = document.getElementById('infoEventDescription')?.value || 'Bem-vindo(a) ao evento temático oficial da Cringelândia! Participe das atividades, acumule **{currencyName}** e dispute os prêmios no topo do placar.';
+          rawDesc = rawDesc.replace(/{eventName}/g, eventName)
+                           .replace(/{currencyName}/g, currencyName)
+                           .replace(/{firstPrize}/g, firstPrize);
+          descEl.textContent = rawDesc;
+
+          // Fields
+          fieldsEl.innerHTML = '';
+
+          // 1. Saldo
+          const fBalance = document.createElement('div');
+          fBalance.className = 'preview-field';
+          fBalance.innerHTML = `
+            <div class="preview-field-title">🪙 Seu Saldo Sazonal</div>
+            <div class="preview-field-val">&gt; Atualmente você possui <strong>42</strong> ${emojiCurrency} <strong>${currencyName}</strong></div>
+          `;
+          fieldsEl.appendChild(fBalance);
+
+          // 2. Como Funciona & Regras
+          let rawRules = document.getElementById('infoEventRules')?.value || '';
+          rawRules = rawRules.replace(/{eventName}/g, eventName)
+                             .replace(/{currencyName}/g, currencyName)
+                             .replace(/{dropsChannel}/g, dropsChannel)
+                             .replace(/{artChannel}/g, artChannel)
+                             .replace(/{firstPrize}/g, firstPrize);
+          const fRules = document.createElement('div');
+          fRules.className = 'preview-field';
+          fRules.innerHTML = `
+            <div class="preview-field-title">📖 Como Funciona & Regras do Evento</div>
+            <div class="preview-field-val">${rawRules}</div>
+          `;
+          fieldsEl.appendChild(fRules);
+
+          // 3. Tabela de Premiações
+          const prizeItems = [];
+          if (firstPrize) prizeItems.push(`🥇 <strong>1º Lugar:</strong> ${firstPrize}`);
+          if (secondPrize) prizeItems.push(`🥈 <strong>2º Lugar:</strong> ${secondPrize}`);
+          if (thirdPrize) prizeItems.push(`🥉 <strong>3º Lugar:</strong> ${thirdPrize}`);
+          const fPrizes = document.createElement('div');
+          fPrizes.className = 'preview-field';
+          fPrizes.innerHTML = `
+            <div class="preview-field-title">🏆 Tabela de Premiações</div>
+            <div class="preview-field-val">${prizeItems.length ? prizeItems.join('<br>') : '&gt; <em>Premiações em definição pela moderação.</em>'}</div>
+          `;
+          fieldsEl.appendChild(fPrizes);
+
+          // 4. Campo Extra (se preenchido)
+          let rawExtra = document.getElementById('infoEventExtra')?.value || '';
+          if (rawExtra.trim().length > 0) {
+            rawExtra = rawExtra.replace(/{eventName}/g, eventName)
+                               .replace(/{currencyName}/g, currencyName)
+                               .replace(/{firstPrize}/g, firstPrize);
+            const fExtra = document.createElement('div');
+            fExtra.className = 'preview-field';
+            fExtra.innerHTML = `
+              <div class="preview-field-title">💡 Informações & Dicas da Pyxie</div>
+              <div class="preview-field-val">${rawExtra}</div>
+            `;
+            fieldsEl.appendChild(fExtra);
+          }
+
+          // 5. Prazo de Encerramento
+          let formattedEnd = endDateVal || 'Em breve';
+          try {
+            const d = new Date(endDateVal);
+            if (!isNaN(d.getTime())) {
+              formattedEnd = d.toLocaleString('pt-BR', { timeZone: timezoneVal, dateStyle: 'full', timeStyle: 'medium' });
+            }
+          } catch (_) {}
+          const fDeadline = document.createElement('div');
+          fDeadline.className = 'preview-field';
+          fDeadline.innerHTML = `
+            <div class="preview-field-title">⏳ Prazo de Encerramento</div>
+            <div class="preview-field-val">&gt; <strong>${formattedEnd}</strong><br>&gt; <em>(Fuso Horário Oficial: ${timezoneVal})</em></div>
+          `;
+          fieldsEl.appendChild(fDeadline);
+
+        } else {
+          // Outras abas (announcement, drop, art)
+          fieldsEl.innerHTML = '';
+          if (chestUrl && previewImgEl) {
+            previewImgEl.src = chestUrl;
+            previewImgEl.style.display = 'block';
+          }
+
+          if (currentTab === 'announcement') {
+            titleEl.textContent = `🕸️ ${eventName.toUpperCase()} 🕸️`;
+            let raw = document.getElementById('announcementText').value;
+            raw = raw.replace(/{eventName}/g, eventName)
+                     .replace(/{currencyName}/g, currencyName)
+                     .replace(/{firstPrize}/g, firstPrize);
+            descEl.textContent = raw;
+          } else if (currentTab === 'drop') {
+            titleEl.textContent = '🎃 BAÚ MISTERIOSO DA PYXIE DESPENCOU! 🎃';
+            descEl.textContent = `Um baú suspeito caiu com tudo no meio da Cringelândia!\n\n⚡ Rápido! Clique na reação 🎃 **Abóbora Maligna** antes dos outros para abrir o baú!\n\n*Apenas o primeiro a acertar leva o saque.*`;
+          } else if (currentTab === 'art') {
+            titleEl.textContent = '🎨 ARTE DA SEMANA DEFINIDA!';
+            let raw = document.getElementById('artOfWeekWinner').value;
+            raw = raw.replace(/{author}/g, '@ArtistaTalentoso')
+                     .replace(/{currencyName}/g, currencyName);
+            descEl.textContent = `${raw}\n\nTotal de Votos: 14 🗳️`;
+          }
         }
       }
 
@@ -724,6 +906,7 @@
 
         const currency = document.getElementById('emojiCurrency')?.value.trim() || '5479_Kindergarten';
         const chestImageUrl = document.getElementById('chestImageUrl')?.value.trim() || '';
+        const infoEventImageUrl = document.getElementById('infoEventImageUrl')?.value.trim() || '';
 
         const payload = {
           eventName: document.getElementById('eventName').value,
@@ -744,6 +927,7 @@
           },
           assets: {
             chestImageUrl,
+            infoEventImageUrl,
             emojis: {
               currency,
               dropDecoys,
@@ -756,6 +940,10 @@
             announcementText: document.getElementById('announcementText').value,
             dropEmbedFooter: document.getElementById('dropEmbedFooter').value,
             artOfWeekWinner: document.getElementById('artOfWeekWinner').value,
+            infoEventTitle: document.getElementById('infoEventTitle')?.value || '',
+            infoEventDescription: document.getElementById('infoEventDescription')?.value || '',
+            infoEventRules: document.getElementById('infoEventRules')?.value || '',
+            infoEventExtra: document.getElementById('infoEventExtra')?.value || '',
           },
         };
 

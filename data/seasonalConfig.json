@@ -46,7 +46,10 @@
   "templates": {
     "announcementText": "🕸️ **O CIRCO DOS HORRORES COMEÇOU NA CRINGELÂNDIA!** 🕸️\n\nAcharam que iam passar o mês sem serem humilhados? O evento **{eventName}** tá liberado!\n\nJuntem **{currencyName}** nos drops do baú e na Arte da Semana. Quem terminar no topo ganha **{firstPrize}**. Quem perder, só passa vergonha mesmo.\n\nUse `/py-infoevento` pra entender antes de chorar no chat geral.",
     "dropEmbedFooter": "Dica: Use /py-infoevento para entender a pontuação e prazos!",
-    "artOfWeekWinner": "🎨 **ARTE DA SEMANA DEFINIDA!**\n\nOlha só, parece que temos alguém talentoso no meio de tantos rabiscos. Parabéns {author}, sua arte foi a mais votada e você garantiu **+5 {currencyName}**!\n\nConfiram a obra de arte abaixo:"
-  },
-  "testField": "test_1790986766982"
+    "artOfWeekWinner": "🎨 **ARTE DA SEMANA DEFINIDA!**\n\nOlha só, parece que temos alguém talentoso no meio de tantos rabiscos. Parabéns {author}, sua arte foi a mais votada e você garantiu **+5 {currencyName}**!\n\nConfiram a obra de arte abaixo:",
+    "infoEventTitle": "🕸️ {eventName} — GUIA OFICIAL 🕸️",
+    "infoEventDescription": "Bem-vindo(a) ao evento temático oficial da Cringelândia! Participe das atividades, acumule **{currencyName}** e dispute os prêmios no topo do placar.",
+    "infoEventRules": "• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!\n• **Regras Gerais:** Proibido uso de multicontas ou trapaças automatizadas sob pena de desclassificação imediata.",
+    "infoEventExtra": "> Use **/py-rank** para conferir o placar dos membros mais dedicados!\n> Dúvidas ou choro? Procure a moderação antes de passar vergonha no chat geral."
+  }
 }

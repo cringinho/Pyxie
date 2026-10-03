@@ -65,6 +65,30 @@ assert(infoEmbed.data.footer.text.includes('/py-infoevento'), 'Footer do embed d
 assert(infoEmbed.data.fields.some((f) => f.name.includes('Seu Saldo Sazonal') && f.value.includes('25')), 'Embed deve exibir saldo do usuário');
 console.log('✅ Resposta de evento ativo no /py-infoevento validada.');
 
+// 4.1 Teste de Customização Completa do /py-infoevento (regras, lore, introdução, banner)
+seasonalManager.saveConfig({
+  templates: {
+    ...seasonalManager.loadConfig().templates,
+    infoEventTitle: '⚡ {eventName} — GUIA SUPREMO ⚡',
+    infoEventDescription: 'Sejam bem-vindos ao submundo da Cringelândia!',
+    infoEventRules: '• Regra 1: Não chore no chat.\n• Regra 2: Drops em {dropsChannel}.',
+    infoEventExtra: 'Dica do criador: Treine seu dedo para os baús.',
+  },
+  assets: {
+    ...seasonalManager.loadConfig().assets,
+    infoEventImageUrl: 'https://i.imgur.com/custom_info_banner.png',
+  },
+});
+
+const customView = infoEventoCommand.buildInfoEventoView(userB, null);
+const customEmbed = customView.embeds[0];
+assert(customEmbed.data.title.includes('GUIA SUPREMO'), 'Embed deve usar título customizado do evento');
+assert(customEmbed.data.description.includes('submundo da Cringelândia'), 'Embed deve usar introdução customizada');
+assert(customEmbed.data.fields.some((f) => f.name.includes('Como Funciona') && f.value.includes('Não chore no chat')), 'Embed deve exibir regras customizadas');
+assert(customEmbed.data.fields.some((f) => f.name.includes('Dicas da Pyxie') && f.value.includes('Treine seu dedo')), 'Embed deve exibir campo extra');
+assert.equal(customEmbed.data.image.url, 'https://i.imgur.com/custom_info_banner.png', 'Embed deve usar imagem customizada de banner');
+console.log('✅ Customização e edição completa do /py-infoevento validadas com sucesso.');
+
 // 5. Teste de Submissão e Apuração de Arte da Semana (artHandler)
 const mockClient = {
   user: { id: 'bot_pyxie_id' },
@@ -229,7 +253,7 @@ artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted
   const endData = seasonalManager.loadData();
   assert(endData.history.lastWinners !== null, 'Vencedores finais devem ser gravados em history.lastWinners');
   // Restaura o estado padrão limpo para manter integridade do repositório
-  seasonalManager.saveConfig(seasonalManager.DEFAULT_CONFIG);
+  seasonalManager.saveConfig(seasonalManager.DEFAULT_CONFIG, true);
   seasonalManager.saveData(seasonalManager.DEFAULT_DATA);
   seasonalManager.stop();
 
