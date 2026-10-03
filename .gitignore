@@ -3,7 +3,6 @@ node_modules/
 npm-debug.log*
 data/*.json
 !data/encounters.json
-!data/seasonalConfig.json
 data/*.bak
 data/backup/
 minhasnote/

@@ -15,7 +15,6 @@ const seasonalManager = require('./src/modules/seasonal/seasonalManager');
 
 const app = express();
 app.set('view engine', 'ejs');
-seasonalManager.init(null, app);
 
 const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || '0.0.0.0';
@@ -24,6 +23,19 @@ const appRoot = __dirname;
 let botProcess = null;
 let botLogs = [];
 let botStartTime = null;
+
+function sendIpcToBot(payload) {
+  if (botProcess && !botProcess.killed && botProcess.exitCode === null && botProcess.stdin) {
+    try {
+      botProcess.stdin.write(JSON.stringify(payload) + '\n');
+      return true;
+    } catch (err) {
+      console.error('[Supervisor] Erro ao enviar comando IPC para o bot:', err.message);
+      return false;
+    }
+  }
+  return false;
+}
 
 function cleanupOrphanBotProcess() {
   try {
@@ -256,6 +268,9 @@ app.use('/api/', publicApiLimiter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Inicializa rotas web do módulo sazonal com body parsers e canal IPC ativo
+seasonalManager.init(null, app, sendIpcToBot);
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.html')) {
@@ -1133,6 +1148,7 @@ app.post('/admin/emojis', (req, res) => {
       }
     }
     reloadEmojiConfig();
+    sendIpcToBot({ type: 'RELOAD_EMOJIS' });
   } catch (err) {
     console.error('Error syncing themeEmojis.json:', err);
   }
@@ -1226,6 +1242,7 @@ app.post('/api/admin/emojis', requireAdminAuth, (req, res) => {
 
     // 3. Atualiza cache em memória do bot imediatamente
     reloadEmojiConfig();
+    sendIpcToBot({ type: 'RELOAD_EMOJIS' });
 
     return res.json({
       success: true,
@@ -1498,6 +1515,7 @@ app.post('/api/admin/terminal/exec', requireAdminAuth, async (req, res) => {
 
     if (action === 'reload-emojis') {
       reloadEmojiConfig();
+      sendIpcToBot({ type: 'RELOAD_EMOJIS' });
       return res.json({
         success: true,
         output: '✨ Configuração de emojis recarregada em tempo real com sucesso!',

@@ -2017,17 +2017,31 @@
           const json = await res.json();
           if (json.success) {
             showToast('Configurações salvas com sucesso!');
+            if (json.config?.assets?.emojis?.dropDecoys) {
+              const decoysEl = document.getElementById('initialDecoysData');
+              if (decoysEl) decoysEl.textContent = JSON.stringify(json.config.assets.emojis.dropDecoys);
+            }
+            return true;
           } else {
             showToast('Erro ao salvar: ' + (json.error || 'Desconhecido'), 'error');
+            return false;
           }
         } catch (err) {
           showToast('Erro de conexão ao salvar: ' + err.message, 'error');
+          return false;
         }
       }
 
       async function toggleEvent(start) {
         let broadcast = false;
         if (start) {
+          // Salva automaticamente o formulário para garantir que canais e emojis não se percam
+          showToast('Salvando configurações antes de iniciar...', 'info');
+          const savedOk = await saveConfiguration();
+          if (!savedOk) {
+            showToast('Não foi possível iniciar o evento devido a erro no salvamento.', 'error');
+            return;
+          }
           broadcast = confirm('Deseja enviar o anúncio oficial no canal de anúncios do Discord ao iniciar?');
         } else {
           if (!confirm('Tem certeza de que deseja encerrar o evento agora? Os crons e coletores serão desligados.')) return;

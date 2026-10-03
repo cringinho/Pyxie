@@ -105,6 +105,13 @@ git checkout -- src/data/ public/ 2>/dev/null || true
 if ! git pull --ff-only origin main; then
   log "❌ ERRO: 'git pull --ff-only origin main' falhou. Restaurando estado anterior..."
   [ -f "${TEMP_MINIGAMES}" ] && rm -f "${TEMP_MINIGAMES}"
+  # Rollback imediato de todos os arquivos dinâmicos e bancos
+  [ -f "${BACKUP_DIR}/src_data/shopee.json" ] && cp -a "${BACKUP_DIR}/src_data/shopee.json" src/data/shopee.json
+  [ -f "${BACKUP_DIR}/src_data/emojis.json" ] && cp -a "${BACKUP_DIR}/src_data/emojis.json" src/data/emojis.json
+  [ -f "${BACKUP_DIR}/src_data/themeEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/themeEmojis.json" src/data/themeEmojis.json
+  [ -f "${BACKUP_DIR}/src_data/discordAppEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/discordAppEmojis.json" src/data/discordAppEmojis.json
+  [ -f "${BACKUP_DIR}/src_data/generated_work_minigames.json" ] && cp -a "${BACKUP_DIR}/src_data/generated_work_minigames.json" src/data/generated_work_minigames.json
+  cp -a "${BACKUP_DIR}/data/." data/
   exit 1
 fi
 
@@ -117,7 +124,48 @@ fi
 # 9. Restaura arquivos de configuração e estado vivo da VM
 [ -f "${BACKUP_DIR}/.env" ] && cp -a "${BACKUP_DIR}/.env" .env
 [ -f "${BACKUP_DIR}/prefix.json" ] && cp -a "${BACKUP_DIR}/prefix.json" prefix.json
-[ -f "${BACKUP_DIR}/src_data/shopee.json" ] && cp -a "${BACKUP_DIR}/src_data/shopee.json" src/data/shopee.json
+
+# Mesclagem inteligente da vitrine Shopee (preserva escolhas de pausa/ativação feitas no painel)
+if [ -f "${BACKUP_DIR}/src_data/shopee.json" ]; then
+  node -e "
+    const fs = require('fs');
+    try {
+      const backupItems = JSON.parse(fs.readFileSync(process.argv[1], 'utf8'));
+      const backupMap = new Map(backupItems.map(i => [String(i.id), i]));
+      const gitItems = fs.existsSync('src/data/shopee.json')
+        ? JSON.parse(fs.readFileSync('src/data/shopee.json', 'utf8'))
+        : [];
+      const gitMap = new Map(gitItems.map(i => [String(i.id), i]));
+
+      const merged = [];
+      const processedIds = new Set();
+
+      for (const bItem of backupItems) {
+        const id = String(bItem.id);
+        processedIds.add(id);
+        const gItem = gitMap.get(id);
+        merged.push({
+          ...(gItem || {}),
+          ...bItem,
+          active: bItem.active !== undefined ? bItem.active : (gItem?.active !== false),
+          status: bItem.status || gItem?.status || 'active',
+          lastChecked: bItem.lastChecked || gItem?.lastChecked || Date.now(),
+        });
+      }
+
+      for (const gItem of gitItems) {
+        const id = String(gItem.id);
+        if (!processedIds.has(id)) {
+          merged.push(gItem);
+        }
+      }
+
+      fs.writeFileSync('src/data/shopee.json', JSON.stringify(merged, null, 2), 'utf8');
+    } catch (e) {
+      try { fs.copyFileSync(process.argv[1], 'src/data/shopee.json'); } catch (_) {}
+    }
+  " "${BACKUP_DIR}/src_data/shopee.json" || true
+fi
 [ -f "${BACKUP_DIR}/src_data/themeEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/themeEmojis.json" src/data/themeEmojis.json
 if [ -f "${BACKUP_DIR}/src_data/emojis.json" ]; then
   node -e "

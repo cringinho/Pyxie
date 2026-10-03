@@ -2054,8 +2054,14 @@
             if (idx !== -1) allShopeeItems[idx].active = active;
             filterShopeeItems();
             showToast(active ? 'Anúncio ativado no bot!' : 'Anúncio pausado.', active ? '🟢' : '🟡');
+          } else {
+            showToast('Erro ao atualizar status: ' + (data.error || 'Falha na requisição'), '🔴');
+            await fetchShopeeData();
           }
-        } catch (_) {}
+        } catch (err) {
+          showToast('Erro de conexão ao atualizar status: ' + err.message, '🔴');
+          await fetchShopeeData();
+        }
       }
 
       async function checkItemStatus(id) {

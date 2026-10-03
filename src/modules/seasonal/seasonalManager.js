@@ -67,6 +67,7 @@ const DEFAULT_DATA = {
 // Referências em tempo de execução
 let clientRef = null;
 let appRef = null;
+let sendIpcRef = null;
 let scheduledJobs = [];
 let artMessageHandler = null;
 
@@ -414,7 +415,11 @@ async function finalizeAndRewardEvent(client = clientRef, reason = 'Fim do perí
 }
 
 // Inicialização e Ciclo de Vida do Plugin
-function init(client, app) {
+function init(client, app, sendIpc = null) {
+  if (sendIpc) {
+    sendIpcRef = sendIpc;
+  }
+
   if (app) {
     appRef = app;
     setupWebRoutes(app);
@@ -428,6 +433,28 @@ function init(client, app) {
     } else {
       stop();
     }
+  }
+}
+
+function reload() {
+  const config = loadConfig();
+  if (config.active) {
+    stopJobsAndListeners();
+    if (clientRef) {
+      const artHandler = require('./artHandler');
+      const dropHandler = require('./dropHandler');
+      artHandler.start(clientRef);
+      dropHandler.start(clientRef);
+
+      artMessageHandler = (message) => {
+        artHandler.handleArtSubmission(message, clientRef).catch((err) => {
+          console.error('[Seasonal] Erro ao processar submissão de arte:', err);
+        });
+      };
+      clientRef.on('messageCreate', artMessageHandler);
+    }
+  } else {
+    stop();
   }
 }
 
@@ -580,6 +607,12 @@ function setupWebRoutes(app) {
     try {
       const updates = req.body || {};
       const saved = saveConfig(updates);
+      if (clientRef) {
+        reload();
+      }
+      if (sendIpcRef) {
+        sendIpcRef({ type: 'SEASONAL_RELOAD' });
+      }
       res.json({ success: true, config: saved });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -589,11 +622,24 @@ function setupWebRoutes(app) {
   app.post('/api/admin/sazonal/toggle', requireAdminAuth, (req, res) => {
     try {
       const { active, broadcast } = req.body || {};
-      if (active) {
-        start(Boolean(broadcast));
-      } else {
-        stop();
+      const shouldActive = Boolean(active);
+      const saved = saveConfig({ active: shouldActive });
+
+      if (clientRef) {
+        if (shouldActive) {
+          start(Boolean(broadcast));
+        } else {
+          stop();
+        }
       }
+
+      if (sendIpcRef) {
+        sendIpcRef({
+          type: shouldActive ? 'SEASONAL_START' : 'SEASONAL_STOP',
+          broadcast: Boolean(broadcast),
+        });
+      }
+
       res.json({ success: true, active: isSeasonalActive() });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
@@ -602,9 +648,20 @@ function setupWebRoutes(app) {
 
   app.post('/api/admin/sazonal/trigger-drop', requireAdminAuth, async (req, res) => {
     try {
-      const dropHandler = require('./dropHandler');
-      const result = await dropHandler.triggerDrop(clientRef);
-      res.json({ success: Boolean(result), message: result ? 'Drop disparado com sucesso!' : 'Falha ao disparar drop.' });
+      if (clientRef) {
+        const dropHandler = require('./dropHandler');
+        const result = await dropHandler.triggerDrop(clientRef);
+        return res.json({ success: Boolean(result), message: result ? 'Drop disparado com sucesso!' : 'Falha ao disparar drop.' });
+      }
+
+      if (sendIpcRef) {
+        const sent = sendIpcRef({ type: 'SEASONAL_TRIGGER_DROP' });
+        if (sent) {
+          return res.json({ success: true, message: 'Comando de drop enviado ao bot Discord!' });
+        }
+      }
+
+      return res.status(400).json({ success: false, error: 'Bot Discord não está online para disparar o drop.' });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -612,9 +669,20 @@ function setupWebRoutes(app) {
 
   app.post('/api/admin/sazonal/trigger-art', requireAdminAuth, async (req, res) => {
     try {
-      const artHandler = require('./artHandler');
-      const result = await artHandler.tallyWeeklyArt(clientRef);
-      res.json({ success: Boolean(result), message: result?.message || 'Apuração realizada com sucesso!' });
+      if (clientRef) {
+        const artHandler = require('./artHandler');
+        const result = await artHandler.tallyWeeklyArt(clientRef);
+        return res.json({ success: Boolean(result), message: result?.message || 'Apuração realizada com sucesso!' });
+      }
+
+      if (sendIpcRef) {
+        const sent = sendIpcRef({ type: 'SEASONAL_TRIGGER_ART' });
+        if (sent) {
+          return res.json({ success: true, message: 'Comando de apuração enviado ao bot Discord!' });
+        }
+      }
+
+      return res.status(400).json({ success: false, error: 'Bot Discord não está online para apurar arte.' });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -625,6 +693,7 @@ module.exports = {
   init,
   start,
   stop,
+  reload,
   isSeasonalActive,
   loadConfig,
   saveConfig,

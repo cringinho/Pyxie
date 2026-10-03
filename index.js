@@ -410,6 +410,53 @@ client.once('ready', async () => {
   startBumpGuideScheduler();
   startTarotScheduler();
   seasonalManager.init(client, null);
+
+  // Watcher ativo para sincronização automática de alterações em seasonalConfig.json
+  try {
+    const seasonalConfigPath = path.join(__dirname, 'data', 'seasonalConfig.json');
+    let seasonalDebounceTimer = null;
+    fs.watchFile(seasonalConfigPath, { interval: 2000 }, (curr, prev) => {
+      if (curr.mtimeMs !== prev.mtimeMs) {
+        if (seasonalDebounceTimer) clearTimeout(seasonalDebounceTimer);
+        seasonalDebounceTimer = setTimeout(() => {
+          try {
+            const cfg = seasonalManager.loadConfig();
+            const isCurrentlyActive = seasonalManager.isSeasonalActive();
+            if (cfg.active && !isCurrentlyActive) {
+              console.log('[Seasonal:Watcher] Alteração detectada no disco: ativando evento sazonal...');
+              seasonalManager.start();
+            } else if (!cfg.active && isCurrentlyActive) {
+              console.log('[Seasonal:Watcher] Alteração detectada no disco: desativando evento sazonal...');
+              seasonalManager.stop();
+            } else if (cfg.active) {
+              console.log('[Seasonal:Watcher] Alteração detectada no disco: recarregando evento sazonal...');
+              seasonalManager.reload();
+            }
+          } catch (err) {
+            console.error('[Seasonal:Watcher] Erro ao sincronizar seasonalConfig:', err.message);
+          }
+        }, 500);
+      }
+    });
+  } catch (_) {}
+
+  // Watcher ativo para sincronização automática de alterações em emojis.json
+  try {
+    const emojisPath = path.join(__dirname, 'src', 'data', 'emojis.json');
+    let emojiDebounceTimer = null;
+    fs.watchFile(emojisPath, { interval: 2000 }, (curr, prev) => {
+      if (curr.mtimeMs !== prev.mtimeMs) {
+        if (emojiDebounceTimer) clearTimeout(emojiDebounceTimer);
+        emojiDebounceTimer = setTimeout(() => {
+          try {
+            const { reloadEmojiConfig } = require('./src/utils/appEmojis');
+            reloadEmojiConfig();
+            console.log('[Emojis:Watcher] Arquivo emojis.json atualizado no disco. Emojis recarregados.');
+          } catch (_) {}
+        }, 500);
+      }
+    });
+  } catch (_) {}
 });
 
 // Atualização automática de catálogo de emojis quando novos emojis forem adicionados/editados/removidos
@@ -862,8 +909,46 @@ if (process.stdin) {
       const trimmed = line.trim();
       if (!trimmed) return;
       const data = JSON.parse(trimmed);
-      if (data && data.type === 'SEND_EMBED') {
-        handleSendEmbedCommand(data);
+      if (data && data.type) {
+        switch (data.type) {
+          case 'SEND_EMBED':
+            handleSendEmbedCommand(data);
+            break;
+          case 'SEASONAL_START':
+            console.log('[IPC:Bot] Comando SEASONAL_START recebido do supervisor.');
+            seasonalManager.start(Boolean(data.broadcast));
+            break;
+          case 'SEASONAL_STOP':
+            console.log('[IPC:Bot] Comando SEASONAL_STOP recebido do supervisor.');
+            seasonalManager.stop();
+            break;
+          case 'SEASONAL_RELOAD':
+            console.log('[IPC:Bot] Comando SEASONAL_RELOAD recebido do supervisor.');
+            seasonalManager.reload();
+            break;
+          case 'SEASONAL_TRIGGER_DROP': {
+            console.log('[IPC:Bot] Comando SEASONAL_TRIGGER_DROP recebido do supervisor.');
+            const dropHandler = require('./src/modules/seasonal/dropHandler');
+            dropHandler.triggerDrop(client).catch((err) => {
+              console.error('[IPC:Bot] Erro ao disparar drop:', err);
+            });
+            break;
+          }
+          case 'SEASONAL_TRIGGER_ART': {
+            console.log('[IPC:Bot] Comando SEASONAL_TRIGGER_ART recebido do supervisor.');
+            const artHandler = require('./src/modules/seasonal/artHandler');
+            artHandler.tallyWeeklyArt(client).catch((err) => {
+              console.error('[IPC:Bot] Erro ao apurar arte:', err);
+            });
+            break;
+          }
+          case 'RELOAD_EMOJIS': {
+            console.log('[IPC:Bot] Comando RELOAD_EMOJIS recebido do supervisor.');
+            const { reloadEmojiConfig } = require('./src/utils/appEmojis');
+            reloadEmojiConfig();
+            break;
+          }
+        }
       }
     } catch (error) {
       // Ignora linhas que não sejam comandos JSON válidos
