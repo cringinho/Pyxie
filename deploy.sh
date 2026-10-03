@@ -132,6 +132,9 @@ if ! npm test; then
   exit 1
 fi
 
+# Proteção Absoluta de Produção: Restaura snapshot de data/ pós-testes para garantia de zero efeitos colaterais
+cp -a "${BACKUP_DIR}/data/." data/
+
 if [ "${FORCE_DEPLOY}" = true ] || git diff "${LOCAL_REV}" "${REMOTE_REV}" --name-only | grep -qE '^package(-lock)?\.json$'; then
   echo "📦 Instalando dependências..."
   npm ci --omit=dev

@@ -2,6 +2,12 @@ const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
 
+// Isola completamente os arquivos de configuração e dados em ambiente de teste
+const testConfigPath = path.join(__dirname, 'seasonalConfig.test.json');
+const testDataPath = path.join(__dirname, 'seasonalData.test.json');
+process.env.SEASONAL_CONFIG_PATH = testConfigPath;
+process.env.SEASONAL_DATA_PATH = testDataPath;
+
 const seasonalManager = require('../src/modules/seasonal/seasonalManager');
 const artHandler = require('../src/modules/seasonal/artHandler');
 const dropHandler = require('../src/modules/seasonal/dropHandler');
@@ -305,10 +311,10 @@ artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted
 
   const endData = seasonalManager.loadData();
   assert(endData.history.lastWinners !== null, 'Vencedores finais devem ser gravados em history.lastWinners');
-  // Restaura o estado padrão limpo para manter integridade do repositório
-  seasonalManager.saveConfig(seasonalManager.DEFAULT_CONFIG, true);
-  seasonalManager.saveData(seasonalManager.DEFAULT_DATA);
-  seasonalManager.stop();
+  // Limpa arquivos de teste e desliga jobs em memória
+  seasonalManager.stop(false);
+  try { if (fs.existsSync(testConfigPath)) fs.unlinkSync(testConfigPath); } catch (_) {}
+  try { if (fs.existsSync(testDataPath)) fs.unlinkSync(testDataPath); } catch (_) {}
 
   console.log('🎉 Todos os testes do Módulo Sazonal passaram com 100% de integridade!');
 });

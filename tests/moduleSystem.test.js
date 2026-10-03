@@ -3,6 +3,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const EventEmitter = require('node:events');
 
+// Isola completamente os arquivos de configuração durante os testes de módulos
+const testModulesConfig = path.join(__dirname, 'modulesConfig.test.json');
+const testSeasonalConfig = path.join(__dirname, 'seasonalConfig.modtest.json');
+const testSeasonalData = path.join(__dirname, 'seasonalData.modtest.json');
+process.env.MODULES_CONFIG_PATH = testModulesConfig;
+process.env.SEASONAL_CONFIG_PATH = testSeasonalConfig;
+process.env.SEASONAL_DATA_PATH = testSeasonalData;
+
 const moduleManager = require('../src/services/moduleManager');
 const { getHelpModules, COMMAND_CATEGORY_MAP } = require('../src/commands/commandHelpers');
 const { OWNER_SNOWFLAKE } = require('../src/services/adminAuth');
@@ -128,6 +136,11 @@ console.log('✅ Formatação de metadados para painel administrativo validada.'
   assert(ownerView.embeds && ownerView.embeds.length > 0, 'Dono deve receber embed com a lista de módulos');
   assert(ownerView.components && ownerView.components.length > 0, 'Dono deve receber botões de alternância de módulos');
   console.log('✅ Segurança e permissões de Dono (/py-admin modulos) validadas.');
+
+  // Limpa arquivos de teste
+  try { if (fs.existsSync(testModulesConfig)) fs.unlinkSync(testModulesConfig); } catch (_) {}
+  try { if (fs.existsSync(testSeasonalConfig)) fs.unlinkSync(testSeasonalConfig); } catch (_) {}
+  try { if (fs.existsSync(testSeasonalData)) fs.unlinkSync(testSeasonalData); } catch (_) {}
 
   console.log('🎉 Todos os testes do Motor Modular de Cogs passaram com 100% de sucesso!');
 })().catch((err) => {

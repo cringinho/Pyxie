@@ -249,6 +249,9 @@ if ! npm test; then
 fi
 log "✅ Quality Gate aprovado: 100% dos testes passaram."
 
+# 11.1. Proteção Absoluta de Produção: Restaura snapshot de data/ pós-testes para garantia de zero efeitos colaterais
+cp -a "${BACKUP_DIR}/data/." data/
+
 # 12. Instalação inteligente de dependências (apenas se package.json mudou)
 if git diff "${LOCAL_REV}" "${REMOTE_REV}" --name-only | grep -qE '^package(-lock)?\.json$'; then
   log "📦 Alterações em dependências detectadas. Executando 'npm ci --omit=dev'..."

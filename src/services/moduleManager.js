@@ -18,7 +18,10 @@ const EventEmitter = require('events');
  */
 
 const MODULES_DIR = path.join(__dirname, '..', 'modules');
-const CONFIG_FILE = path.join(__dirname, '..', '..', 'data', 'modulesConfig.json');
+
+function getModulesConfigFile() {
+  return process.env.MODULES_CONFIG_PATH || path.join(__dirname, '..', '..', 'data', 'modulesConfig.json');
+}
 
 class ModuleManager extends EventEmitter {
   constructor() {
@@ -37,15 +40,16 @@ class ModuleManager extends EventEmitter {
    * Lê a configuração persistida de módulos de data/modulesConfig.json
    */
   loadConfig() {
+    const configFile = getModulesConfigFile();
     try {
-      if (!fs.existsSync(CONFIG_FILE)) {
-        const dir = path.dirname(CONFIG_FILE);
+      if (!fs.existsSync(configFile)) {
+        const dir = path.dirname(configFile);
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
         const initial = { modules: {} };
-        fs.writeFileSync(CONFIG_FILE, JSON.stringify(initial, null, 2), 'utf8');
+        fs.writeFileSync(configFile, JSON.stringify(initial, null, 2), 'utf8');
         return initial;
       }
-      const raw = fs.readFileSync(CONFIG_FILE, 'utf8');
+      const raw = fs.readFileSync(configFile, 'utf8');
       return JSON.parse(raw) || { modules: {} };
     } catch (err) {
       console.error('[ModuleManager] Erro ao ler modulesConfig.json:', err.message);
@@ -57,12 +61,13 @@ class ModuleManager extends EventEmitter {
    * Salva a configuração atualizada de forma atômica
    */
   saveConfig(config) {
+    const configFile = getModulesConfigFile();
     try {
-      const dir = path.dirname(CONFIG_FILE);
+      const dir = path.dirname(configFile);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      const tempPath = `${CONFIG_FILE}.tmp.${Date.now()}`;
+      const tempPath = `${configFile}.tmp.${Date.now()}`;
       fs.writeFileSync(tempPath, JSON.stringify(config, null, 2), 'utf8');
-      fs.renameSync(tempPath, CONFIG_FILE);
+      fs.renameSync(tempPath, configFile);
       return true;
     } catch (err) {
       console.error('[ModuleManager] Erro ao salvar modulesConfig.json:', err.message);
