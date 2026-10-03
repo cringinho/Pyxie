@@ -987,7 +987,9 @@ if (process.stdin) {
           case 'SEASONAL_TRIGGER_DROP': {
             console.log('[IPC:Bot] Comando SEASONAL_TRIGGER_DROP recebido do supervisor.');
             const dropHandler = require('./src/modules/seasonal/dropHandler');
-            dropHandler.triggerDrop(client).catch((err) => {
+            dropHandler.triggerDrop(client, true).then((ok) => {
+              console.log(`[Seasonal:Drop] Disparo manual: ${ok ? 'SUCESSO (Baú enviado ao Discord)' : 'FALHOU (verifique canal ou permissões)'}`);
+            }).catch((err) => {
               console.error('[IPC:Bot] Erro ao disparar drop:', err);
             });
             break;
@@ -995,7 +997,9 @@ if (process.stdin) {
           case 'SEASONAL_TRIGGER_ART': {
             console.log('[IPC:Bot] Comando SEASONAL_TRIGGER_ART recebido do supervisor.');
             const artHandler = require('./src/modules/seasonal/artHandler');
-            artHandler.tallyWeeklyArt(client).catch((err) => {
+            artHandler.tallyWeeklyArt(client).then((res) => {
+              console.log(`[Seasonal:Art] Apuração manual executada: ${res?.message || 'Sucesso'}`);
+            }).catch((err) => {
               console.error('[IPC:Bot] Erro ao apurar arte:', err);
             });
             break;

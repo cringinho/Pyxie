@@ -3,13 +3,8 @@ const path = require('node:path');
 const cron = require('node-cron');
 const { EmbedBuilder } = require('discord.js');
 
-function getConfigPath() {
-  return process.env.SEASONAL_CONFIG_PATH || path.join(__dirname, '..', '..', '..', 'data', 'seasonalConfig.json');
-}
-
-function getDataPath() {
-  return process.env.SEASONAL_DATA_PATH || path.join(__dirname, '..', '..', '..', 'data', 'seasonalData.json');
-}
+const CONFIG_PATH = path.join(__dirname, '..', '..', '..', 'data', 'seasonalConfig.json');
+const DATA_PATH = path.join(__dirname, '..', '..', '..', 'data', 'seasonalData.json');
 
 const DEFAULT_CONFIG = {
   active: false,
@@ -97,13 +92,12 @@ function atomicWriteJson(filePath, data) {
 }
 
 function loadConfig() {
-  const configPath = getConfigPath();
   try {
-    if (!fs.existsSync(configPath)) {
-      atomicWriteJson(configPath, DEFAULT_CONFIG);
+    if (!fs.existsSync(CONFIG_PATH)) {
+      atomicWriteJson(CONFIG_PATH, DEFAULT_CONFIG);
       return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
     }
-    const raw = fs.readFileSync(configPath, 'utf8');
+    const raw = fs.readFileSync(CONFIG_PATH, 'utf8');
     return { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
   } catch (err) {
     console.error('[Seasonal] Falha ao ler seasonalConfig.json, usando padrão:', err);
@@ -112,9 +106,8 @@ function loadConfig() {
 }
 
 function saveConfig(updates, overwrite = false) {
-  const configPath = getConfigPath();
   if (overwrite) {
-    atomicWriteJson(configPath, updates);
+    atomicWriteJson(CONFIG_PATH, updates);
     return updates;
   }
   const current = loadConfig();
@@ -136,18 +129,17 @@ function saveConfig(updates, overwrite = false) {
     },
     templates: { ...(current.templates || {}), ...(updates.templates || {}) },
   };
-  atomicWriteJson(configPath, merged);
+  atomicWriteJson(CONFIG_PATH, merged);
   return merged;
 }
 
 function loadData() {
-  const dataPath = getDataPath();
   try {
-    if (!fs.existsSync(dataPath)) {
-      atomicWriteJson(dataPath, DEFAULT_DATA);
+    if (!fs.existsSync(DATA_PATH)) {
+      atomicWriteJson(DATA_PATH, DEFAULT_DATA);
       return JSON.parse(JSON.stringify(DEFAULT_DATA));
     }
-    const raw = fs.readFileSync(dataPath, 'utf8');
+    const raw = fs.readFileSync(DATA_PATH, 'utf8');
     return { ...DEFAULT_DATA, ...JSON.parse(raw) };
   } catch (err) {
     console.error('[Seasonal] Falha ao ler seasonalData.json, usando padrão:', err);
@@ -156,10 +148,9 @@ function loadData() {
 }
 
 function saveData(updates) {
-  const dataPath = getDataPath();
   const current = loadData();
   const merged = { ...current, ...updates };
-  atomicWriteJson(dataPath, merged);
+  atomicWriteJson(DATA_PATH, merged);
   return merged;
 }
 
@@ -254,6 +245,7 @@ function resolveSeasonalEmojiObject(client, emojiKeyOrId, fallback = '🎃') {
     '4124hellokit': '4124hellokittypumpkin',
     'ardiscordzomb': 'ardiscordzombie',
     '5479_kindergarten': '5479_kindergarten2_pumpkin',
+    '82336witchscaul': '82336witchscauldron',
   };
   const targetName = aliasNameMap[lower] || lower;
   if (appEmojisMapByName.has(targetName)) {
@@ -512,10 +504,8 @@ function start(broadcastAnnouncement = false) {
   console.log('[Seasonal] Módulo sazonal ativado e agendado com sucesso!');
 }
 
-function stop(persist = true) {
-  if (persist) {
-    saveConfig({ active: false });
-  }
+function stop() {
+  saveConfig({ active: false });
   stopJobsAndListeners();
   console.log('[Seasonal] Módulo sazonal desativado e memória limpa.');
 }
@@ -659,16 +649,24 @@ function setupWebRoutes(app) {
 
   app.post('/api/admin/sazonal/trigger-drop', requireAdminAuth, async (req, res) => {
     try {
+      const config = loadConfig();
+      if (!config.channels?.dropsChannelId) {
+        return res.status(400).json({
+          success: false,
+          error: 'Canal de drops não configurado! Preencha o ID do canal em "Canais da Cringelândia" e salve as alterações antes de testar.',
+        });
+      }
+
       if (clientRef) {
         const dropHandler = require('./dropHandler');
-        const result = await dropHandler.triggerDrop(clientRef);
-        return res.json({ success: Boolean(result), message: result ? 'Drop disparado com sucesso!' : 'Falha ao disparar drop.' });
+        const result = await dropHandler.triggerDrop(clientRef, true);
+        return res.json({ success: Boolean(result), message: result ? 'Drop disparado com sucesso no Discord!' : 'Falha ao disparar drop no canal.' });
       }
 
       if (sendIpcRef) {
-        const sent = sendIpcRef({ type: 'SEASONAL_TRIGGER_DROP' });
+        const sent = sendIpcRef({ type: 'SEASONAL_TRIGGER_DROP', force: true });
         if (sent) {
-          return res.json({ success: true, message: 'Comando de drop enviado ao bot Discord!' });
+          return res.json({ success: true, message: 'Baú de teste disparado com sucesso no canal do Discord!' });
         }
       }
 
@@ -680,6 +678,14 @@ function setupWebRoutes(app) {
 
   app.post('/api/admin/sazonal/trigger-art', requireAdminAuth, async (req, res) => {
     try {
+      const config = loadConfig();
+      if (!config.channels?.artChannelId) {
+        return res.status(400).json({
+          success: false,
+          error: 'Canal de artes não configurado! Preencha o ID do canal em "Canais da Cringelândia" e salve as alterações antes de testar.',
+        });
+      }
+
       if (clientRef) {
         const artHandler = require('./artHandler');
         const result = await artHandler.tallyWeeklyArt(clientRef);

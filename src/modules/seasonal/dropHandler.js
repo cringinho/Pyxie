@@ -136,14 +136,20 @@ function stop() {
   activeTimers.clear();
 }
 
-async function triggerDrop(client) {
-  if (!isSeasonalActive()) return false;
-  if (!client) return false;
+async function triggerDrop(client, force = false) {
+  if (!force && !isSeasonalActive()) {
+    console.warn('[Seasonal:Drop] Não é possível disparar drop: evento está inativo (active: false).');
+    return false;
+  }
+  if (!client) {
+    console.warn('[Seasonal:Drop] Client do Discord não fornecido.');
+    return false;
+  }
 
   const config = loadConfig();
   const dropsChannelId = config.channels?.dropsChannelId;
   if (!dropsChannelId) {
-    console.warn('[Seasonal:Drop] Canal de drops não configurado.');
+    console.warn('[Seasonal:Drop] Canal de drops não configurado no seasonalConfig.');
     return false;
   }
 
