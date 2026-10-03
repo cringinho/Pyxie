@@ -206,6 +206,41 @@ function isMasterSecretValid(tokenOrSecret) {
   return tokenOrSecret === secret;
 }
 
+function getCookie(req, name) {
+  const cookieHeader = req.headers?.cookie;
+  if (!cookieHeader) return null;
+  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function requireAdminAuth(req, res, next) {
+  const authHeader = req.headers?.authorization;
+  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const queryToken = req.query?.token || req.headers?.['x-api-key'];
+  const sessionCookie = getCookie(req, 'pyxie_admin_session');
+
+  if (bearerToken && isMasterSecretValid(bearerToken)) return next();
+  if (queryToken && isMasterSecretValid(queryToken)) return next();
+  if (sessionCookie && isValidAdminSession(sessionCookie)) return next();
+  if (bearerToken && isValidAdminSession(bearerToken)) return next();
+
+  const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
+  if (!secret && isIpAllowed(req)) {
+    return next();
+  }
+
+  const token = bearerToken || queryToken;
+  if (secret && token === secret) {
+    return next();
+  }
+
+  if (isIpAllowed(req)) {
+    return next();
+  }
+
+  return res.status(401).json({ error: 'Acesso administrativo não autorizado.' });
+}
+
 module.exports = {
   OWNER_SNOWFLAKE,
   DEFAULT_ALLOWED_IPS,
@@ -216,5 +251,7 @@ module.exports = {
   verifyMagicToken,
   isValidAdminSession,
   isMasterSecretValid,
+  requireAdminAuth,
+  getCookie,
 };
 
