@@ -543,7 +543,14 @@ const TRANSLATIONS = {
       "themeUtility": "Utilitários",
       "themeReaction": "Reações",
       "themeOther": "Outros",
-      "emojiSearchEmpty": "❌ Nenhum emoji customizado foi encontrado com a busca \"**{query}**\"."
+      "emojiSearchEmpty": "❌ Nenhum emoji customizado foi encontrado com a busca \"**{query}**\".",
+      "btnModules": "Módulos & Plugins",
+      "modulesTitle": "🧩  ✦  Gerenciador de Módulos & Plugins",
+      "modulesDesc": "Controle modular da Pyxie com garantia de zero resíduos em memória ao desativar:\n\n{list}",
+      "moduleActive": "Ativo",
+      "moduleInactive": "Inativo",
+      "moduleCommands": "Comandos:",
+      "moduleToggleSuccess": "✅ Módulo **{name}** agora está **{status}**!"
     },
     "workMinigame": {
       "noProfession": "❌ Você ainda não possui uma profissão registrada! Use `/py-profession` para escolher sua vocação antes de trabalhar.",
@@ -983,7 +990,14 @@ const TRANSLATIONS = {
       "themeUtility": "Utilities",
       "themeReaction": "Reactions",
       "themeOther": "Others",
-      "emojiSearchEmpty": "❌ No custom emojis found matching \"**{query}**\"."
+      "emojiSearchEmpty": "❌ No custom emojis found matching \"**{query}**\".",
+      "btnModules": "Modules & Plugins",
+      "modulesTitle": "🧩  ✦  Module & Plugin Manager",
+      "modulesDesc": "Modular control of Pyxie with zero memory residuals guarantee upon deactivation:\n\n{list}",
+      "moduleActive": "Active",
+      "moduleInactive": "Inactive",
+      "moduleCommands": "Commands:",
+      "moduleToggleSuccess": "✅ Module **{name}** is now **{status}**!"
     },
     "workMinigame": {
       "noProfession": "❌ You do not have a registered profession yet! Use `/py-profession` to choose a career before working.",

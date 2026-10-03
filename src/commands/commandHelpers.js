@@ -216,6 +216,12 @@ const COMMAND_CATEGORY_MAP = {
   'py-bonus': 'economia',
   recompensa: 'economia',
   'py-recompensa': 'economia',
+  infoevento: 'economia',
+  'py-infoevento': 'economia',
+  'info-evento': 'economia',
+  'py-info-evento': 'economia',
+  evento: 'economia',
+  'py-evento': 'economia',
 
   // Loja & Mochila
   shop: 'loja',
@@ -369,6 +375,17 @@ function getHelpModules(customCommands = null, source = null) {
     } catch (e) {
       commandsList = [];
     }
+  }
+
+  // Mescla dinamicamente comandos de módulos ativos (Cog Pattern)
+  if (!customCommands) {
+    try {
+      const moduleManager = require('../services/moduleManager');
+      const activeModuleCmds = moduleManager.getActiveCommands();
+      if (Array.isArray(activeModuleCmds) && activeModuleCmds.length > 0) {
+        commandsList = [...commandsList, ...activeModuleCmds];
+      }
+    } catch (_) {}
   }
 
   const isEn = getLanguage(source) === 'en';

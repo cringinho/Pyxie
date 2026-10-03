@@ -128,10 +128,11 @@ function buildInfoEventoView(userId, client) {
 
 module.exports = {
   name: 'infoevento',
+  category: 'economia',
   aliases: ['py-infoevento', 'info-evento', 'py-info-evento', 'evento', 'py-evento'],
   data: new SlashCommandBuilder()
     .setName('py-infoevento')
-    .setDescription('Informações completas, saldo e regras do evento sazonal da Cringelândia.')
+    .setDescription('Complete guide, balance and rules for Cringelândia seasonal event.')
     .setDescriptionLocalizations({
       'pt-BR': 'Informações completas, saldo e regras do evento sazonal da Cringelândia.',
     }),

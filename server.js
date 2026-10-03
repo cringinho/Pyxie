@@ -12,6 +12,7 @@ const shopeeManager = require('./src/services/shopeeManager');
 const workSeederService = require('./src/services/workSeederService');
 const pinterestCatalogService = require('./src/services/pinterestCatalogService');
 const seasonalManager = require('./src/modules/seasonal/seasonalManager');
+const moduleManager = require('./src/services/moduleManager');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -271,6 +272,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Inicializa rotas web do módulo sazonal com body parsers e canal IPC ativo
 seasonalManager.init(null, app, sendIpcToBot);
+moduleManager.init({ app, sendIpc: sendIpcToBot });
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.html')) {
@@ -1250,6 +1252,39 @@ app.post('/api/admin/emojis', requireAdminAuth, (req, res) => {
       message: 'Configurações de emojis salvas e aplicadas em tempo real com sucesso!',
       emojis: emojisData,
     });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/admin/modules', requireAdminAuth, (req, res) => {
+  try {
+    const modules = moduleManager.getAllModules();
+    return res.json({ success: true, modules });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/admin/modules/:id/toggle', requireAdminAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { active } = req.body || {};
+    const shouldEnable = active !== undefined ? Boolean(active) : !moduleManager.isModuleEnabled(id);
+    moduleManager.setModuleConfigState(id, shouldEnable);
+    sendIpcToBot({ type: 'MODULE_TOGGLE', moduleId: id, enabled: shouldEnable });
+    return res.json({ success: true, moduleId: id, enabled: shouldEnable });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/admin/modules/:id/reload', requireAdminAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await moduleManager.reloadModule(id);
+    sendIpcToBot({ type: 'MODULE_RELOAD', moduleId: id });
+    return res.json({ success: true, moduleId: id, message: `Módulo '${id}' recarregado com sucesso!` });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }

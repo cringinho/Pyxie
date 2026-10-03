@@ -38,10 +38,66 @@ function buildAdminView(userId, guildOrSource = null) {
       .setLabel(t('admin.btnOpen', guildOrSource))
       .setEmoji('🛡️')
       .setStyle(ButtonStyle.Link)
-      .setURL(tokenResult.url)
+      .setURL(tokenResult.url),
+    new ButtonBuilder()
+      .setCustomId(`admin_modules_view:${userId}`)
+      .setLabel(t('admin.btnModules', guildOrSource))
+      .setEmoji('🧩')
+      .setStyle(ButtonStyle.Secondary)
   );
 
   return { embeds: [embed], components: [row], ephemeral: true };
+}
+
+function buildModulesView(userId, guildOrSource = null) {
+  if (userId !== OWNER_SNOWFLAKE) {
+    return {
+      content: t('admin.onlyOwner', guildOrSource, { owner: `<@${OWNER_SNOWFLAKE}>` }),
+      ephemeral: true,
+    };
+  }
+
+  const moduleManager = require('../services/moduleManager');
+  const modules = moduleManager.getAllModules();
+  const isEn = getLanguage(guildOrSource) === 'en';
+
+  const lines = modules.map((m) => {
+    const statusText = m.enabled
+      ? `🟢 **${t('admin.moduleActive', guildOrSource)}**`
+      : `⚪ **${t('admin.moduleInactive', guildOrSource)}**`;
+    const name = isEn ? (m.nameLocalized?.en || m.name) : (m.nameLocalized?.['pt-BR'] || m.name);
+    const desc = isEn ? (m.descriptionLocalized?.en || m.description) : (m.descriptionLocalized?.['pt-BR'] || m.description);
+    const cmdList = m.commands.map((c) => `\`${c.name}\``).join(', ') || 'Nenhum';
+    return `${m.icon} **${name}** (v${m.version}) — ${statusText}\n> *${desc}*\n> 🏷️ **Categoria:** \`${m.category}\` • ⌨️ **${t('admin.moduleCommands', guildOrSource)}** ${cmdList}`;
+  });
+
+  const embed = new EmbedBuilder()
+    .setColor('#8b5cf6')
+    .setTitle(t('admin.modulesTitle', guildOrSource))
+    .setDescription(
+      t('admin.modulesDesc', guildOrSource, {
+        list: lines.length > 0 ? lines.join('\n\n') : '*Nenhum módulo encontrado em src/modules/.*',
+      })
+    )
+    .setFooter({ text: pyxieFooter('Pyxie Modular Cog Engine') })
+    .setTimestamp();
+
+  const buttonRows = [];
+  if (modules.length > 0) {
+    const row = new ActionRowBuilder();
+    for (const m of modules.slice(0, 5)) {
+      row.addComponents(
+        new ButtonBuilder()
+          .setCustomId(`admin_mod_toggle:${m.id}:${userId}`)
+          .setLabel(`${m.enabled ? 'Desativar' : 'Ativar'} ${m.name}`)
+          .setEmoji(m.icon || '🧩')
+          .setStyle(m.enabled ? ButtonStyle.Danger : ButtonStyle.Success)
+      );
+    }
+    buttonRows.push(row);
+  }
+
+  return { embeds: [embed], components: buttonRows, ephemeral: true };
 }
 
 module.exports = {
@@ -49,13 +105,19 @@ module.exports = {
   ephemeral: true,
   aliases: ['admin', 'painel', 'py-admin', 'dashboard', 'paineldono', 'owner'],
   buildAdminView,
+  buildModulesView,
   data: new SlashCommandBuilder()
     .setName(ADMIN)
     .setDescription('Access Pyxie\'s secure owner administration dashboard.')
     .setDescriptionLocalizations({
       'pt-BR': 'Acesse o painel seguro de administração exclusivo do criador da Pyxie.',
     }),
-  async executePrefix({ message }) {
+  async executePrefix({ message, args }) {
+    if (args && (args[0] === 'modulos' || args[0] === 'modules')) {
+      const view = buildModulesView(message.author.id, message);
+      await message.reply(view);
+      return;
+    }
     const view = buildAdminView(message.author.id, message);
     await message.reply(view);
   },

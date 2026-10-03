@@ -1404,6 +1404,9 @@
         <button class="tab-btn" onclick="switchTab('logs')">
           <span>📜 Terminal de Logs</span>
         </button>
+        <button class="tab-btn" onclick="switchTab('modules')">
+          <span>🧩 Módulos & Plugins</span>
+        </button>
         <a href="/admin/sazonal" class="tab-btn" style="text-decoration:none; display:inline-flex; align-items:center; color:inherit;">
           <span>🎃 Evento Sazonal</span>
         </a>
@@ -1758,6 +1761,29 @@
           </form>
         </div>
       </section>
+
+      <!-- TAB 5: MÓDULOS & PLUGINS MODULARES -->
+      <section id="tab-modules" class="tab-panel">
+        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2 style="font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+              <span>🧩 Gerenciador de Módulos & Plugins</span>
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
+              Arquitetura modular inspirada no Red-DiscordBot. Ative ou desative extensões em tempo real com isolamento total e zero resíduos em memória.
+            </p>
+          </div>
+          <button class="btn btn-secondary" onclick="fetchModules()">
+            <span>🔄 Atualizar Lista</span>
+          </button>
+        </div>
+
+        <div id="modulesContainer" class="items-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px;">
+          <div style="text-align: center; color: var(--text-muted); padding: 40px; grid-column: 1 / -1;">
+            Carregando módulos instalados...
+          </div>
+        </div>
+      </section>
     </div>
 
     <!-- Modal Adicionar Novo Anúncio -->
@@ -1892,6 +1918,116 @@
         if (tabId === 'emojis') fetchEmojisData();
         if (tabId === 'bot') loadBotConfig();
         if (tabId === 'shopee') fetchShopeeData();
+        if (tabId === 'modules') fetchModules();
+      }
+
+      async function fetchModules() {
+        const container = document.getElementById('modulesContainer');
+        if (!container) return;
+        try {
+          const res = await fetch('/api/admin/modules');
+          const data = await res.json();
+          if (data.success && Array.isArray(data.modules)) {
+            renderModules(data.modules);
+          } else {
+            container.innerHTML = `<div style="text-align: center; color: #f87171; padding: 30px; grid-column: 1 / -1;">❌ Falha ao carregar módulos: ${data.error || 'Erro desconhecido'}</div>`;
+          }
+        } catch (err) {
+          container.innerHTML = `<div style="text-align: center; color: #f87171; padding: 30px; grid-column: 1 / -1;">❌ Erro de conexão ao buscar módulos: ${err.message}</div>`;
+        }
+      }
+
+      function renderModules(modules) {
+        const container = document.getElementById('modulesContainer');
+        if (!container) return;
+        if (!modules || modules.length === 0) {
+          container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px; grid-column: 1 / -1;">Nenhum módulo encontrado em <code>src/modules/</code>.</div>`;
+          return;
+        }
+
+        container.innerHTML = modules.map((mod) => `
+          <div class="item-card" style="display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(18, 14, 30, 0.7); backdrop-filter: blur(12px); padding: 20px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 2rem;">${mod.icon || '🧩'}</span>
+                  <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0;">${mod.name}</h3>
+                    <span style="font-size: 0.72rem; color: var(--purple-glow); font-weight: 600;">v${mod.version} • por ${mod.author}</span>
+                  </div>
+                </div>
+                <span class="card-status-pill ${mod.enabled ? 'status-active' : 'status-paused'}">
+                  ${mod.enabled ? '🟢 Ativo' : '⚪ Inativo'}
+                </span>
+              </div>
+
+              <p style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.4; margin-bottom: 16px;">
+                ${mod.description}
+              </p>
+
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+                <span class="card-tag">🏷️ ${mod.category.toUpperCase()}</span>
+                <span class="card-tag">⚡ ${mod.commandsCount} COMANDOS</span>
+              </div>
+
+              ${mod.commands.length > 0 ? `
+                <div style="background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px; margin-bottom: 16px;">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Comandos Vinculados:</span>
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+                    ${mod.commands.map(c => `<code style="background: rgba(139,92,246,0.2); color: #c4b5fd; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">${c.name}</code>`).join('')}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+              <button class="btn ${mod.enabled ? 'btn-danger' : 'btn-success'}" style="flex: 1; justify-content: center;" onclick="toggleModule('${mod.id}', ${!mod.enabled})">
+                ${mod.enabled ? '⏹️ Desativar Módulo' : '▶️ Ativar Módulo'}
+              </button>
+              <button class="btn btn-secondary" title="Recarregar módulo sem reiniciar o bot" onclick="reloadModule('${mod.id}')">
+                🔄
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      async function toggleModule(id, shouldEnable) {
+        showToast(shouldEnable ? `Ativando módulo ${id}...` : `Desativando módulo ${id}...`, 'info');
+        try {
+          const res = await fetch(`/api/admin/modules/${encodeURIComponent(id)}/toggle`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ active: shouldEnable }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(shouldEnable ? `Módulo ${id} ativado com sucesso!` : `Módulo ${id} desativado! Memória limpa.`, 'success');
+            await fetchModules();
+          } else {
+            showToast(`Erro ao alterar módulo: ${data.error || 'Falha'}`, 'error');
+          }
+        } catch (err) {
+          showToast(`Erro de conexão: ${err.message}`, 'error');
+        }
+      }
+
+      async function reloadModule(id) {
+        showToast(`Recarregando módulo ${id}...`, 'info');
+        try {
+          const res = await fetch(`/api/admin/modules/${encodeURIComponent(id)}/reload`, {
+            method: 'POST',
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`Módulo ${id} recarregado com sucesso!`, 'success');
+            await fetchModules();
+          } else {
+            showToast(`Erro ao recarregar módulo: ${data.error || 'Falha'}`, 'error');
+          }
+        } catch (err) {
+          showToast(`Erro de conexão: ${err.message}`, 'error');
+        }
       }
 
       async function fetchShopeeData() {

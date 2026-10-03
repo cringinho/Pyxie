@@ -16,12 +16,13 @@ const {
 const { acquireBotLock, releaseBotLock, getPrefix } = require('./src/utils/botUtils');
 const { getWelcomeChannel, normalizeChannelValue } = require('./src/services/database');
 const { commandsByName, slashCommands } = require('./src/commands');
+const moduleManager = require('./src/services/moduleManager');
 const seasonalManager = require('./src/modules/seasonal/seasonalManager');
-const infoEventoCommand = require('./src/modules/seasonal/commands/pyInfoEvento');
 
-// Registra os comandos sazonais no mapa em memória do bot
-['py-infoevento', 'infoevento', 'info-evento', 'py-info-evento', 'evento', 'py-evento'].forEach((alias) => {
-  commandsByName.set(alias, infoEventoCommand);
+// Inicializa o gerenciador de módulos modulares com os despachantes em memória do bot
+moduleManager.init({
+  commandsByName,
+  slashCommands,
 });
 const marriageCommand = require('./src/commands/casamento');
 const tarotCommand = require('./src/commands/tarot');
@@ -410,6 +411,40 @@ client.once('ready', async () => {
   startBumpGuideScheduler();
   startTarotScheduler();
   seasonalManager.init(client, null);
+  moduleManager.init({
+    client,
+    commandsByName,
+    slashCommands,
+  });
+
+  // Watcher ativo para sincronização de módulos em data/modulesConfig.json
+  try {
+    const modulesConfigPath = path.join(__dirname, 'data', 'modulesConfig.json');
+    let modulesDebounceTimer = null;
+    fs.watchFile(modulesConfigPath, { interval: 2000 }, (curr, prev) => {
+      if (curr.mtimeMs !== prev.mtimeMs) {
+        if (modulesDebounceTimer) clearTimeout(modulesDebounceTimer);
+        modulesDebounceTimer = setTimeout(() => {
+          try {
+            const cfg = moduleManager.loadConfig();
+            for (const [id, modData] of Object.entries(cfg.modules || {})) {
+              const shouldBeActive = Boolean(modData.enabled);
+              const isCurrentlyActive = moduleManager.activeScopes.has(id);
+              if (shouldBeActive && !isCurrentlyActive) {
+                console.log(`[ModuleManager:Watcher] Ativando módulo '${id}' detectado no disco...`);
+                moduleManager.enableModule(id, false).catch(() => null);
+              } else if (!shouldBeActive && isCurrentlyActive) {
+                console.log(`[ModuleManager:Watcher] Desativando módulo '${id}' detectado no disco...`);
+                moduleManager.disableModule(id, false).catch(() => null);
+              }
+            }
+          } catch (err) {
+            console.error('[ModuleManager:Watcher] Erro ao sincronizar modulesConfig:', err.message);
+          }
+        }, 500);
+      }
+    });
+  } catch (_) {}
 
   // Watcher ativo para sincronização automática de alterações em seasonalConfig.json
   try {
@@ -667,6 +702,29 @@ client.on('interactionCreate', async (interaction) => {
   }
 
   try {
+    // Interações de gerenciamento de módulos exclusivos do Dono
+    if (interaction.isButton() && (interaction.customId.startsWith('admin_modules_view') || interaction.customId.startsWith('admin_mod_toggle:'))) {
+      const adminCmd = require('./src/commands/admin');
+      const { OWNER_SNOWFLAKE } = require('./src/services/adminAuth');
+      if (interaction.user.id !== OWNER_SNOWFLAKE) {
+        return interaction.reply({ content: '❌ Apenas o criador da Pyxie pode gerenciar módulos!', ephemeral: true });
+      }
+      if (interaction.customId.startsWith('admin_modules_view')) {
+        const view = adminCmd.buildModulesView(interaction.user.id, interaction);
+        return interaction.reply(view);
+      }
+      if (interaction.customId.startsWith('admin_mod_toggle:')) {
+        const parts = interaction.customId.split(':');
+        const moduleId = parts[1];
+        await moduleManager.toggleModule(moduleId);
+        const view = adminCmd.buildModulesView(interaction.user.id, interaction);
+        if (interaction.deferred || interaction.replied) {
+          return interaction.editReply(view);
+        }
+        return interaction.update(view);
+      }
+    }
+
     if (tarotCommand.isTarotButton(interaction)) {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
@@ -946,6 +1004,20 @@ if (process.stdin) {
             console.log('[IPC:Bot] Comando RELOAD_EMOJIS recebido do supervisor.');
             const { reloadEmojiConfig } = require('./src/utils/appEmojis');
             reloadEmojiConfig();
+            break;
+          }
+          case 'MODULE_TOGGLE': {
+            console.log(`[IPC:Bot] Comando MODULE_TOGGLE recebido para '${data.moduleId}' (enabled=${data.enabled}).`);
+            moduleManager.toggleModule(data.moduleId, Boolean(data.enabled)).catch((err) => {
+              console.error(`[IPC:Bot] Erro ao alternar módulo '${data.moduleId}':`, err);
+            });
+            break;
+          }
+          case 'MODULE_RELOAD': {
+            console.log(`[IPC:Bot] Comando MODULE_RELOAD recebido para '${data.moduleId}'.`);
+            moduleManager.reloadModule(data.moduleId).catch((err) => {
+              console.error(`[IPC:Bot] Erro ao recarregar módulo '${data.moduleId}':`, err);
+            });
             break;
           }
         }
