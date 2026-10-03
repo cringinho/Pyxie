@@ -17,7 +17,7 @@ async function main() {
     ],
   });
 
-  console.log('🔮 Conectando cliente Discord da Pyxie para envio do briefing...');
+  console.log('🔮 Conectando cliente Discord da Pyxie para envio do briefing simples...');
   await client.login(process.env.DISCORD_TOKEN);
 
   try {
@@ -30,28 +30,28 @@ async function main() {
     const config = loadConfig();
 
     // -------------------------------------------------------------
-    // BLOCO 1: O Chamado & Visão Geral da Arquitetura
+    // BLOCO 1: O Chamado & Visão Geral da Brincadeira
     // -------------------------------------------------------------
     const embedGeral = new EmbedBuilder()
       .setColor('#8b5cf6')
-      .setTitle('🎃 CONSELHO DA CRINGELÂNDIA: BRIEFING OFICIAL DO EVENTO SAZONAL')
+      .setTitle('🎃 CONSELHO DA CRINGELÂNDIA: PROPOSTA DO EVENTO DE HALLOWEEN!')
       .setDescription(
-        'Olha só quem resolveu aparecer no chat de planejamentos... Acharam que iam passar o mês de outubro inteirinho em paz sem eu infernizar o servidor? Achou errado, equipe! 💀\n\n' +
-        'O novo **Subsistema Sazonal Desacoplado** foi concluído e integrado ao meu núcleo. Antes de virarmos a chave oficial no painel web e abrirmos as portas do hospício, preciso que o conselho administrativo audite as regras, entenda a teoria e dê o veredito final.'
+        'Olha só quem resolveu aparecer no chat de planejamentos... Acharam que iam passar o mês das bruxas inteirinho sem doces nem travessuras? Achou errado, equipe! 💀\n\n' +
+        'Eu preparei uma brincadeira super divertida e cheia de prêmios para todo mundo da Cringelândia! Mas antes de começar a valer de verdade no servidor, a staff precisa olhar as regrinhas, ver se os prêmios são legais e decidir se a gente começa agora!'
       )
       .addFields(
         {
-          name: '🏷️ Tema & Moeda Oficial',
-          value: `• **Evento:** \`${config.eventName || 'Halloween da Cringelândia'}\`\n• **Moeda:** <:halloweenabobora:1548443994902757427> **${config.currencyName || 'Abóboras'}** (saldo isolado e atômico)`,
+          name: '🏷️ Nome da Brincadeira & Moeda',
+          value: `• **Evento:** \`${config.eventName || 'Halloween da Cringelândia'}\`\n• **Moeda Especial:** <:halloweenabobora:1548443994902757427> **${config.currencyName || 'Abóboras'}** (só serve durante o Halloween!)`,
           inline: true,
         },
         {
-          name: '⏳ Prazo & Vigência',
-          value: `• **Encerramento:** \`02/11/2026 às 23:59 (BRT)\`\n• **Fuso:** \`${config.dates?.timezone || 'America/Sao_Paulo'}\``,
+          name: '⏳ Até quando dura?',
+          value: '• **Até 02 de Novembro às 23:59**\n• Dá um mês inteirinho para todo mundo juntar abóboras e se divertir!',
           inline: true,
         },
         {
-          name: '🏆 Premiações em Disputa (Top 3)',
+          name: '🏆 Prêmios para os Melhores (Top 3)',
           value:
             `🥇 **1º Lugar:** ${config.prizes?.firstPlace || '1 Mês de Discord Nitro + Cargo de Bruxo Supremo'}\n` +
             `🥈 **2º Lugar:** ${config.prizes?.secondPlace || '5.000 Moedinhas + Cargo de Zumbi da Cringelândia'}\n` +
@@ -59,16 +59,15 @@ async function main() {
           inline: false,
         },
         {
-          name: '🛡️ Engenharia & Zero Memory Leak',
+          name: '🔒 Como o bot está agora?',
           value:
-            '• **100% Desacoplado:** Reside estritamente em `src/modules/seasonal/` sem poluir o bot principal.\n' +
-            '• **Estado Atual:** ⏸️ **DESLIGADO (`active: false`)**. Nenhum cron job ou listener consome RAM na VM até o play oficial.\n' +
-            '• **Painel Web:** Controle em tempo real com preview ao vivo em `/admin/sazonal`.',
+            '• ⏸️ **Pausado e quietinho:** O evento está prontinho, mas desligado. Ele não mexe em nada no servidor até vocês darem permissão!\n' +
+            '• 🎛️ **Fácil de mudar:** Se a gente quiser mudar qualquer data, regra ou prêmio, dá para ajustar tudo pelo nosso site de administrador sem complicação.',
           inline: false,
         }
       )
       .setThumbnail('https://cdn.discordapp.com/emojis/1548444308401684530.gif')
-      .setFooter({ text: 'Pyxie Seasonal System • Cringelândia Staff Briefing' })
+      .setFooter({ text: 'Pyxie • Feito com carinho para a staff da Cringelândia' })
       .setTimestamp();
 
     await channel.send({
@@ -80,31 +79,32 @@ async function main() {
     await new Promise((r) => setTimeout(r, 1500));
 
     // -------------------------------------------------------------
-    // BLOCO 2: Mecânica #1 — Baús da Pyxie (Drops Anti-Trapaça)
+    // BLOCO 2: Mecânica #1 — Baús da Pyxie & Exemplo Real
     // -------------------------------------------------------------
     const embedMecanicaDrops = new EmbedBuilder()
       .setColor('#ff7518')
-      .setTitle('📦 MECÂNICA #1: BAÚS DA PYXIE (DROPS ANTI-BOT)')
+      .setTitle('📦 1ª BRINCADEIRA: BAÚS SURPRESA DA PYXIE')
       .setDescription(
-        'Para manter o chat geral fervendo e recompensar reflexos rápidos (e punir quem usa autoclicker sem cérebro), os baús cairão automaticamente nos seguintes horários:'
+        'De surpresa, vai cair uma caixinha de tesouro no chat! Quem tiver os dedos mais rápidos ganha abóboras, mas tem um joguinho para ninguém tentar trapacear:'
       )
       .addFields(
         {
-          name: '⏰ Cronograma dos Baús',
+          name: '⏰ Que horas os baús caem no chat?',
           value:
-            '• **Segunda a Sexta (3x ao dia):** `09:30`, `15:30` e `21:00` (BRT)\n' +
-            '• **Sábado e Domingo (6x ao dia):** `10:00`, `13:00`, `16:00`, `18:30`, `21:00` e `23:30` (BRT)',
+            '• **De segunda a sexta (3 vezes no dia):** De manhãzinha (`09:30`), de tardinha (`15:30`) e de noitinha (`21:00`).\n' +
+            '• **No sábado e domingo (6 vezes no dia):** Vários horários para todo mundo conseguir pegar! (`10:00`, `13:00`, `16:00`, `18:30`, `21:00` e `23:30`).',
           inline: false,
         },
         {
-          name: '🧩 Sistema de Decoys & Anti-Trapaça',
+          name: '🎯 O Jogo da Carinha Certa (Não vale chutar!)',
           value:
-            'Quando o baú cai, a Pyxie reage **imediatamente com 6 emojis diferentes** na mensagem, mas o embed indica explicitamente qual é o emoji correto sorteado para a rodada.\n' +
-            'Apenas o primeiro membro que reagir no **emoji correto** abre o baú e fatura **+1 a +2 Abóboras**. Quem clicar nos errados só passa vergonha pública.',
+            'Quando o baú cair, a Pyxie vai colocar **6 carinhas (emojis)** nele.\n' +
+            'O recado vai dizer com todas as letras qual é a carinha certa daquela vez (por exemplo: *"Clique no Zumbi!"*).\n' +
+            'Apenas quem clicar na **carinha certa** primeiro leva o prêmio! Quem clicar nas outras não ganha nada e passa vergonha.',
           inline: false,
         },
         {
-          name: '🏷️ Apelidos Visuais Amigáveis (Configurados no Painel)',
+          name: '👀 Os 6 Desenhos que podem aparecer no Baú',
           value:
             '<a:82336witchscauldron:1552115015199227924> `Caldeirão da Bruxa`\n' +
             '<:4124hellokittypumpkin:1551355578066931763> `Hello Kitty Aboborada`\n' +
@@ -115,30 +115,30 @@ async function main() {
           inline: false,
         },
         {
-          name: '🧹 Auto-Destruição Anti-Spam',
-          value: 'O baú é **deletado automaticamente** minutos após ser reivindicado para não deixar mensagens órfãs poluindo o chat.',
+          name: '🍬 Quanto ganha? E o chat não fica bagunçado?',
+          value:
+            '• Quem for mais rápido ganha **+1 ou +2 Abóboras** na hora!\n' +
+            '• Depois que alguém abre o baú, a mensagem dele some sozinha depois de alguns minutinhos para o chat não ficar cheio de mensagens velhas.',
           inline: false,
         }
       )
-      .setFooter({ text: 'Mecânica auditada e coberta por testes automatizados (100% integridade)' });
+      .setFooter({ text: 'Regra simples, rápida e divertida para movimentar o chat' });
 
-    // Exemplo real de drop
     const embedExemploDrop = new EmbedBuilder()
       .setColor('#9333ea')
-      .setTitle('🎃 [EXEMPLO REAL DE DROP] Baú Surpresa da Pyxie!')
+      .setTitle('🎃 [EXEMPLO REAL] Olha como o Baú vai aparecer no chat!')
       .setDescription(
-        'Um baú suspeito caiu com tudo no meio da Cringelândia! 💥\n\n' +
-        '⚡ **Rápido! Clique na reação <:ardiscordzombie:1548443801515720719> Zumbicord antes dos outros para abrir o baú!**\n\n' +
-        '*Apenas o primeiro a acertar leva o saque (+1 ou +2 Abóboras). Reações erradas só dão vergonha alheia.*'
+        'Um baú suspeito caiu com tudo no meio do chat! 💥\n\n' +
+        '⚡ **Rápido! Clique na carinha do <:ardiscordzombie:1548443801515720719> Zumbicord antes de todo mundo para abrir o baú!**\n\n' +
+        '*Apenas o primeiro leva o saque (+1 ou +2 Abóboras). Se clicar nas carinhas erradas, não ganha nada!*'
       )
       .setThumbnail('https://cdn.discordapp.com/emojis/1548444209328033913.png')
-      .setFooter({ text: 'Dica: Use /py-infoevento para entender a pontuação e prazos! • (Exemplo demonstrativo)' });
+      .setFooter({ text: 'Dica: Use /py-infoevento para ver o livrinho de regras! • (Exemplo demonstrativo)' });
 
     const msgDrop = await channel.send({
       embeds: [embedMecanicaDrops, embedExemploDrop],
     });
 
-    // Reage com os 6 decoys no exemplo para a staff ver como fica na prática
     const decoyEmojis = [
       '1552115015199227924',
       '1551355578066931763',
@@ -150,69 +150,68 @@ async function main() {
     for (const id of decoyEmojis) {
       await msgDrop.react(id).catch(() => null);
     }
-    console.log('✅ Bloco 2 enviado com reações de exemplo.');
+    console.log('✅ Bloco 2 enviado.');
 
     await new Promise((r) => setTimeout(r, 1500));
 
     // -------------------------------------------------------------
-    // BLOCO 3: Mecânica #2 — Arte da Semana & Comandos em Produção
+    // BLOCO 3: Mecânica #2 — Arte da Semana & Comandos
     // -------------------------------------------------------------
     const embedMecanicaArtes = new EmbedBuilder()
       .setColor('#ec4899')
-      .setTitle('🎨 MECÂNICA #2: ARTE DA SEMANA (CONCURSO COMUNITÁRIO)')
+      .setTitle('🎨 2ª BRINCADEIRA: DESENHO DA SEMANA')
       .setDescription(
-        'Incentivo orgânico à criatividade dos nossos membros (ou rabiscos cringes que juram que são obras de arte):'
+        'Uma forma bem legal de valorizar todo mundo que adora desenhar no nosso servidor:'
       )
       .addFields(
         {
-          name: '📥 Submissão Descomplicada',
+          name: '📥 Como enviar seu desenho?',
           value:
-            '• O usuário posta o desenho/arte no canal de artes e marca a **@Pyxie**.\n' +
-            '• A Pyxie detecta a imagem e reage automaticamente com a reação oficial de votação: <a:halloween3gif55:1548443988745261086>.\n' +
-            '• Os outros membros votam clicando exatamente nessa reação da Pyxie.',
+            '• O membro posta a foto do desenho no canal de artes e marca a **@Pyxie**.\n' +
+            '• A Pyxie vai colocar uma carinha de votação na foto: <a:halloween3gif55:1548443988745261086>.\n' +
+            '• Todo mundo que gostar do desenho vota clicando nessa mesma carinha!',
           inline: false,
         },
         {
-          name: '🗳️ Apuração Automática (Domingos às 10:00 BRT)',
+          name: '🗳️ Quem ganha e quando?',
           value:
-            '• O cron faz a contagem dos votos nas artes cadastradas da semana.\n' +
-            '• O autor mais votado ganha **+5 <:halloweenabobora:1548443994902757427> Abóboras**.\n' +
-            '• A Pyxie publica um Embed comemorativo exibindo a arte vencedora em destaque.',
+            '• **Todo domingo às 10h da manhã**, a Pyxie conta os votos sozinha.\n' +
+            '• O desenho mais votado vence a semana e o artista ganha **+5 <:halloweenabobora:1548443994902757427> Abóboras**!\n' +
+            '• A Pyxie manda um quadro com a arte campeã no canal de avisos para todo mundo aplaudir.',
           inline: false,
         },
         {
-          name: '🛡️ Blindagem Contra Fraude & Reciclagem',
+          name: '🚫 Regras contra espertinhos',
           value:
-            '• **Histórico Atômico:** Mensagens apuradas são gravadas em `history.lastWinners` e nunca mais podem ser reutilizadas.\n' +
-            '• **Descarte de Imagens Antigas:** Postagens com mais de 7 dias são desconsideradas na apuração.',
+            '• Não vale reenviar desenho que já ganhou em semanas anteriores.\n' +
+            '• Desenhos postados há muito tempo (mais de 7 dias) não contam. Tem que ser arte nova da semana!\n' +
+            '• A Pyxie guarda o nome de quem já venceu para ninguém tentar trapacear.',
           inline: false,
         }
       )
-      .setFooter({ text: 'Sistema testado contra repetições e retroatividade' });
+      .setFooter({ text: 'Incentivo à criatividade dos nossos artistas da Cringelândia' });
 
     const embedComandos = new EmbedBuilder()
       .setColor('#3b82f6')
-      .setTitle('💻 COMANDOS SAZONAIS FUNCIONANDO EM PRODUÇÃO')
-      .setDescription('Dois comandos novos e dinâmicos já estão compilados e disponíveis no bot:')
+      .setTitle('📱 COMANDOS QUE TODO MUNDO PODE USAR')
+      .setDescription('Dois comandos novos e fáceis que já estão prontos no bot:')
       .addFields(
         {
-          name: '📖 `/py-infoevento` (ou `py!infoevento`)',
+          name: '📖 `/py-infoevento`',
           value:
-            'Exibe o guia completo do evento em um embed oficial.\n' +
-            '• **100% Editável via Web:** Título, introdução, regras dos drops, regras de artes, imagem de capa e deboches podem ser alterados no painel web com preview em tempo real!',
+            'Abre um livrinho no chat com o resumo completo do evento, todas as regras, premiações e quanto tempo ainda falta para acabar.',
           inline: false,
         },
         {
-          name: '🏅 `/py-rank sazonal:true` (ou `py!rank sazonal`)',
+          name: '🏅 `/py-rank sazonal:true`',
           value:
-            'Ranking da temporada em tempo real!\n' +
-            '• Exibe o Top 10 membros com mais Abóboras acumuladas, barras visuais de progresso e as posições de liderança.',
+            'Mostra o placar dos 10 membros que têm mais abóboras no servidor, com medalhas de ouro, prata e bronze e quem está na frente!',
           inline: false,
         },
         {
-          name: '⚙️ Painel Web Administrativo (`/admin/sazonal`)',
+          name: '⚙️ Painel Web da Staff',
           value:
-            'Permite ao criador e à staff configurar canais, alterar datas, prêmios, selecionar emojis numa galeria com mais de 1.400 itens e até testar drops manuais em 1 clique.',
+            'Nossa página de administração onde a liderança pode alterar qualquer prêmio, mudar os canais ou até testar um baú com apenas um clique.',
           inline: false,
         }
       );
@@ -225,29 +224,29 @@ async function main() {
     await new Promise((r) => setTimeout(r, 1500));
 
     // -------------------------------------------------------------
-    // BLOCO 4: Canais Sugeridos & Veredito da Staff
+    // BLOCO 4: Sugestão de Canais & Veredito da Staff
     // -------------------------------------------------------------
     const embedVeredito = new EmbedBuilder()
       .setColor('#10b981')
       .setTitle('⚖️ CONSULTA À STAFF: PODEMOS INICIAR O EVENTO?')
       .setDescription(
-        'Tudo está construído, desacoplado e operando com 100% de estabilidade. Agora a decisão é de vocês!\n\n' +
-        '### 📌 Sugestão de Canais para Configuração:\n' +
-        '• **Canal de Drops:** <#1453890870288973825> (`💬┃chati`) — para movimentar o chat geral.\n' +
-        '• **Canal de Artes:** <#1461922359349870815> (`🌸┃artes`) — onde os membros já postam desenhos.\n' +
-        '• **Canal de Anúncios:** <#1472269616431628408> (`📢┃avisos`) — para o anúncio oficial.\n\n' +
-        '### ❓ Perguntas para o Conselho:\n' +
-        '1. **Os horários e a quantidade de baús (3x/dia na semana e 6x/dia no fds) parecem equilibrados?**\n' +
-        '2. **A premiação (1º Nitro, 2º 5k moedas + cargo, 3º 2k moedas) está justa?**\n' +
-        '3. **Os canais sugeridos acima estão aprovados?**\n\n' +
-        'Votem clicando nas reações abaixo e deixem seus comentários aqui no chat!'
+        'Tudo está testado, seguro e pronto para rodar. Agora a decisão é de vocês!\n\n' +
+        '### 📌 Canais sugeridos para a brincadeira:\n' +
+        '• **Onde caem os Baús:** <#1453890870288973825> (`💬┃chati`) — para animar o chat geral.\n' +
+        '• **Onde postar os Desenhos:** <#1461922359349870815> (`🌸┃artes`) — onde os artistas já postam.\n' +
+        '• **Onde anunciar o vencedor:** <#1472269616431628408> (`📢┃avisos`) — para os anúncios oficiais.\n\n' +
+        '### ❓ Perguntas para a Equipe:\n' +
+        '1. **Os horários dos baús (3 vezes nos dias normais e 6 vezes no fim de semana) parecem bons?**\n' +
+        '2. **Os prêmios (1º Nitro, 2º 5.000 moedas + cargo, 3º 2.000 moedas) estão justos e legais?**\n' +
+        '3. **Esses três canais aí em cima estão certinhos?**\n\n' +
+        'Votem clicando nas carinhas abaixo e digitem a opinião de vocês aqui no chat!'
       )
       .addFields(
-        { name: '✅ Sinal Verde', value: 'Evento aprovado! Pode virar a chave no painel e iniciar.', inline: true },
-        { name: '⚠️ Ajustes', value: 'Tenho ressalvas ou sugestões de mudança antes do início.', inline: true },
-        { name: '💬 Dúvida/Ideia', value: 'Gostaria de sugerir algo novo ou tirar uma dúvida.', inline: true }
+        { name: '✅ Sinal Verde', value: 'Adorei! Por mim pode começar agora mesmo.', inline: true },
+        { name: '⚠️ Ajustes', value: 'Tenho alguma sugestão ou quero mudar algo.', inline: true },
+        { name: '💬 Dúvida/Ideia', value: 'Quero perguntar algo ou sugerir uma ideia.', inline: true }
       )
-      .setFooter({ text: 'Votem com as reações abaixo • Pyxie aguarda o comando da staff!' })
+      .setFooter({ text: 'Clique nas reações abaixo para votar • A Pyxie aguarda a decisão de vocês!' })
       .setTimestamp();
 
     const msgVeredito = await channel.send({
@@ -259,10 +258,10 @@ async function main() {
     await msgVeredito.react('💬');
     await msgVeredito.react('🎃');
 
-    console.log('✅ Bloco 4 (Veredito da Staff) enviado com reações!');
-    console.log('🎉 Briefing completo transmitido com sucesso no canal 1461927268397093032!');
+    console.log('✅ Bloco 4 enviado com reações!');
+    console.log('🎉 Briefing simples transmitido com sucesso!');
   } catch (err) {
-    console.error('❌ Erro durante o envio do briefing:', err);
+    console.error('❌ Erro durante o envio:', err);
   } finally {
     client.destroy();
     process.exit(0);
