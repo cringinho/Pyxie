@@ -369,9 +369,9 @@ function getSeasonalLeaderboard(limit = 50) {
       return {
         userId,
         balance: Number(balance) || 0,
-        username: prof.username || `Aventureiro#${shortId}`,
-        displayName: prof.displayName || prof.username || `Aventureiro (${shortId})`,
-        avatarUrl: prof.avatarUrl || `https://cdn.discordapp.com/embed/avatars/${(Number(shortId) || 0) % 5}.png`,
+        username: prof.username || prof.tag || `Aventureiro#${shortId}`,
+        displayName: prof.displayName || prof.username || prof.tag || `Aventureiro (${shortId})`,
+        avatarUrl: prof.avatarUrl || prof.avatar || `https://cdn.discordapp.com/embed/avatars/${(Number(shortId) || 0) % 5}.png`,
       };
     })
     .filter((e) => e.balance > 0)
@@ -700,8 +700,8 @@ function setupWebRoutes(app) {
       currentWeekArt: (data.currentWeekArt || []).map((a) => ({
         messageId: a.messageId,
         authorId: a.authorId,
-        authorName: data.userProfiles?.[a.authorId]?.displayName || a.authorName || 'Artista da Cringelândia',
-        authorAvatar: data.userProfiles?.[a.authorId]?.avatarUrl || a.authorAvatar || `https://cdn.discordapp.com/embed/avatars/${Number(String(a.authorId).slice(-2)) % 5}.png`,
+        authorName: data.userProfiles?.[a.authorId]?.displayName || data.userProfiles?.[a.authorId]?.username || a.authorName || 'Artista da Cringelândia',
+        authorAvatar: data.userProfiles?.[a.authorId]?.avatarUrl || data.userProfiles?.[a.authorId]?.avatar || a.authorAvatar || `https://cdn.discordapp.com/embed/avatars/${Number(String(a.authorId).slice(-2)) % 5}.png`,
         imageUrl: a.imageUrl,
         submittedAt: a.submittedAt,
       })),
