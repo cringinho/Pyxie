@@ -20,9 +20,9 @@ const DEFAULT_CONFIG = {
     timezone: 'America/Sao_Paulo',
   },
   prizes: {
-    firstPlace: '1 Mês de Discord Nitro + Cargo de Bruxo Supremo',
-    secondPlace: '5.000 Moedinhas + Cargo de Zumbi da Cringelândia',
-    thirdPlace: '2.000 Moedinhas',
+    firstPlace: 'A definir recompensa',
+    secondPlace: 'A definir recompensa',
+    thirdPlace: 'A definir recompensa',
   },
   assets: {
     chestImageUrl: 'https://i.imgur.com/link_do_bau_halloween.png',
