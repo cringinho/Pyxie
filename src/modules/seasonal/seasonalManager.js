@@ -109,7 +109,26 @@ function loadConfig() {
 
 function saveConfig(updates) {
   const current = loadConfig();
-  const merged = { ...current, ...updates };
+  const merged = {
+    ...current,
+    ...updates,
+    channels: { ...(current.channels || {}), ...(updates.channels || {}) },
+    dates: { ...(current.dates || {}), ...(updates.dates || {}) },
+    prizes: { ...(current.prizes || {}), ...(updates.prizes || {}) },
+    assets: {
+      ...(current.assets || {}),
+      ...(updates.assets || {}),
+      emojis: {
+        ...(current.assets?.emojis || {}),
+        ...(updates.assets?.emojis || {}),
+        ...(Array.isArray(updates.assets?.emojis?.dropDecoys) ? { dropDecoys: updates.assets.emojis.dropDecoys } : {}),
+        ...(Array.isArray(updates.assets?.emojis?.artOfWeek) ? { artOfWeek: updates.assets.emojis.artOfWeek } : {}),
+        ...(Array.isArray(updates.assets?.emojis?.trickOrTreat) ? { trickOrTreat: updates.assets.emojis.trickOrTreat } : {}),
+        ...(Array.isArray(updates.assets?.emojis?.dailyClaim) ? { dailyClaim: updates.assets.emojis.dailyClaim } : {}),
+      },
+    },
+    templates: { ...(current.templates || {}), ...(updates.templates || {}) },
+  };
   atomicWriteJson(CONFIG_PATH, merged);
   return merged;
 }

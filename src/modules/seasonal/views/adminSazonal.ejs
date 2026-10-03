@@ -512,6 +512,52 @@
             </div>
           </div>
 
+          <!-- Assets Visuais & Emojis do Evento -->
+          <div class="card">
+            <div class="card-header">
+              <h2>🎨 Assets Visuais & Emojis Temáticos</h2>
+              <span class="help-text">Defina emojis (nomes, IDs ou unicode) e imagens do evento</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>🪙 Emoji da Moeda Sazonal (currency)</label>
+                <input type="text" id="emojiCurrency" value="<%= config.assets?.emojis?.currency || '5479_Kindergarten' %>" placeholder="Ex: 5479_Kindergarten ou 🎃" oninput="updateLivePreview()" />
+                <p class="help-text">Nome/ID do emoji no Discord ou emoji unicode direto (ex: 🎃)</p>
+              </div>
+              <div class="form-group">
+                <label>🖼️ URL da Imagem / Baú do Evento (chestImageUrl)</label>
+                <input type="text" id="chestImageUrl" value="<%= config.assets?.chestImageUrl || '' %>" placeholder="https://i.imgur.com/..." oninput="updateLivePreview()" />
+                <p class="help-text">Link direto da imagem exibida nos baús e anúncios</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>📦 Emojis Decoys do Baú (dropDecoys)</label>
+              <textarea id="dropDecoys" rows="2" placeholder="82336witchscaul, 4124hellokit, ardiscordzomb, purplecandy, 31772purpleween, witchwumpus"><%= (config.assets?.emojis?.dropDecoys || []).join(', ') %></textarea>
+              <p class="help-text">Lista de 6 emojis que a Pyxie usará para reagir nos baús surpresa (separados por vírgula)</p>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>🎨 Emojis da Arte da Semana (artOfWeek)</label>
+                <input type="text" id="artOfWeek" value="<%= (config.assets?.emojis?.artOfWeek || []).join(', ') %>" placeholder="8320_hallowee, 36577halloween" />
+                <p class="help-text">Emoji oficial para votação nas artes (separados por vírgula)</p>
+              </div>
+              <div class="form-group">
+                <label>🍬 Gostosuras ou Travessuras (trickOrTreat)</label>
+                <input type="text" id="trickOrTreat" value="<%= (config.assets?.emojis?.trickOrTreat || []).join(', ') %>" placeholder="halloweenpokemon, halloweentot8" />
+                <p class="help-text">Emojis temáticos extras (separados por vírgula)</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>🎁 Reivindicação Diária (dailyClaim)</label>
+              <input type="text" id="dailyClaim" value="<%= (config.assets?.emojis?.dailyClaim || []).join(', ') %>" placeholder="halloween3gif55, cafehalloweenbat, halloween47" />
+              <p class="help-text">Emojis para interações sazonais diárias (separados por vírgula)</p>
+            </div>
+          </div>
+
           <!-- Templates de Texto -->
           <div class="card">
             <div class="card-header">
@@ -630,6 +676,12 @@
 
         footerEl.textContent = footer;
 
+        const chestUrl = document.getElementById('chestImageUrl')?.value.trim();
+        const previewImgEl = document.getElementById('previewImg');
+        if (chestUrl && previewImgEl) {
+          previewImgEl.src = chestUrl;
+        }
+
         if (currentTab === 'announcement') {
           titleEl.textContent = `🕸️ ${eventName.toUpperCase()} 🕸️`;
           let raw = document.getElementById('announcementText').value;
@@ -650,6 +702,29 @@
       }
 
       async function saveConfiguration() {
+        const dropDecoys = (document.getElementById('dropDecoys')?.value || '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+        const artOfWeek = (document.getElementById('artOfWeek')?.value || '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+        const trickOrTreat = (document.getElementById('trickOrTreat')?.value || '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+        const dailyClaim = (document.getElementById('dailyClaim')?.value || '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+        const currency = document.getElementById('emojiCurrency')?.value.trim() || '5479_Kindergarten';
+        const chestImageUrl = document.getElementById('chestImageUrl')?.value.trim() || '';
+
         const payload = {
           eventName: document.getElementById('eventName').value,
           currencyName: document.getElementById('currencyName').value,
@@ -667,11 +742,21 @@
             secondPlace: document.getElementById('secondPlace').value,
             thirdPlace: document.getElementById('thirdPlace').value,
           },
+          assets: {
+            chestImageUrl,
+            emojis: {
+              currency,
+              dropDecoys,
+              artOfWeek,
+              trickOrTreat,
+              dailyClaim,
+            },
+          },
           templates: {
             announcementText: document.getElementById('announcementText').value,
             dropEmbedFooter: document.getElementById('dropEmbedFooter').value,
             artOfWeekWinner: document.getElementById('artOfWeekWinner').value,
-          }
+          },
         };
 
         try {
