@@ -268,18 +268,18 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
 
   // 3.2 Título da Comunidade: CRINGELÂNDIA (Gigante & Escancarado)
   ctx.save();
-  ctx.font = '900 62px sans-serif';
+  ctx.font = '900 52px sans-serif';
   ctx.fillStyle = '#ffffff';
   ctx.shadowColor = 'rgba(168, 85, 247, 0.9)';
   ctx.shadowBlur = 25;
-  ctx.fillText(T.communityName, 70, 150);
+  ctx.fillText(T.communityName, 70, 146);
 
   // 3.3 Subtítulo do Evento
   ctx.font = 'bold 20px sans-serif';
   ctx.fillStyle = PALETTE.gold;
   ctx.shadowColor = 'rgba(251, 191, 36, 0.6)';
   ctx.shadowBlur = 12;
-  ctx.fillText(T.subtitle, 70, 190);
+  ctx.fillText(T.subtitle, 70, 186);
   ctx.restore();
 
   // 4. Mascote Pyxie Escancarada (Top Right)
@@ -298,10 +298,10 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
 
     // Balão de fala charmoso da Pyxie
     ctx.save();
-    const balloonX = mx - 200;
-    const balloonY = 95;
-    const balloonW = 190;
-    const balloonH = 48;
+    const balloonX = mx - 180;
+    const balloonY = 88;
+    const balloonW = 180;
+    const balloonH = 44;
 
     ctx.fillStyle = 'rgba(18, 10, 32, 0.92)';
     ctx.strokeStyle = 'rgba(255, 20, 147, 0.55)';
@@ -310,7 +310,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
     ctx.fill();
     ctx.stroke();
 
-    ctx.font = 'bold 14px sans-serif';
+    ctx.font = 'bold 13px sans-serif';
     ctx.fillStyle = '#fce7f3';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
