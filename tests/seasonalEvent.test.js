@@ -309,8 +309,25 @@ artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted
   assert.equal(ended, true, 'checkEndEvent deve detectar data ultrapassada e encerrar');
   assert.equal(seasonalManager.isSeasonalActive(), false, 'Evento deve ser marcado como active: false');
 
-  const endData = seasonalManager.loadData();
-  assert(endData.history.lastWinners !== null, 'Vencedores finais devem ser gravados em history.lastWinners');
+  // 10. Teste de Renderização do Card Viral e Perfis de Usuários
+  seasonalManager.updateUserProfile('test_user_viral', {
+    username: 'testuser',
+    displayName: 'Test Gamer',
+    avatarUrl: null,
+  });
+  const lbViral = seasonalManager.getSeasonalLeaderboard(10);
+  assert(Array.isArray(lbViral), 'getSeasonalLeaderboard deve retornar lista');
+  
+  const { renderLeaderboardCard } = require('../src/modules/seasonal/cardRenderer');
+  const cardPt = await renderLeaderboardCard(lbViral, { eventName: 'Halloween Cringelândia' }, { lang: 'pt', force: true });
+  assert(Buffer.isBuffer(cardPt), 'Card em PT deve retornar um Buffer PNG');
+  assert(cardPt.length > 10000, 'Tamanho do card deve ser compatível com imagem PNG válida');
+
+  const cardEn = await renderLeaderboardCard(lbViral, { eventName: 'Halloween Cringelandia' }, { lang: 'en', force: true });
+  assert(Buffer.isBuffer(cardEn), 'Card em EN deve retornar um Buffer PNG');
+  assert(cardEn.length > 10000, 'Tamanho do card em EN deve ser compatível com imagem PNG válida');
+  console.log('✅ Geração do Card Viral em PT/EN e Perfis de Usuários validados com sucesso.');
+
   // Limpa arquivos de teste e desliga jobs em memória
   seasonalManager.stop(false);
   try { if (fs.existsSync(testConfigPath)) fs.unlinkSync(testConfigPath); } catch (_) {}

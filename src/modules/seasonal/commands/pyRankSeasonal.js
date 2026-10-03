@@ -21,9 +21,12 @@ function buildSeasonalRankingView(client, viewerId) {
   const lines = top10.length
     ? top10.map((entry, idx) => {
         const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `**#${idx + 1}**`;
-        return `${medal} <@${entry.userId}>\n> ${currencyEmoji} **${entry.balance} ${config.currencyName || 'Abóboras'}**`;
+        const prizeInfo = idx === 0 && config.prizes?.firstPlace ? ` — 🎁 *${config.prizes.firstPlace}*` :
+                          idx === 1 && config.prizes?.secondPlace ? ` — 🎁 *${config.prizes.secondPlace}*` :
+                          idx === 2 && config.prizes?.thirdPlace ? ` — 🎁 *${config.prizes.thirdPlace}*` : '';
+        return `${medal} <@${entry.userId}>${prizeInfo}\n> ${currencyEmoji} **${entry.balance} ${config.currencyName || 'Abóbora'}**`;
       })
-    : ['Ninguém pontuou no evento sazonal ainda. Abra os baús ou envie artes para liderar!'];
+    : ['> *Ninguém pontuou no evento sazonal ainda. Abra os baús ou envie artes para liderar!*'];
 
   const desc = [
     `Top 10 aventureiros acumulando **${config.currencyName}** no evento **${config.eventName}**:`,
@@ -34,8 +37,14 @@ function buildSeasonalRankingView(client, viewerId) {
   const embed = new EmbedBuilder()
     .setColor('#7c3aed')
     .setTitle(`🏆 PLACAR DO EVENTO: ${config.eventName.toUpperCase()}`)
-    .setDescription(desc)
-    .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!' })
+    .setDescription(desc);
+
+  const thumbUrl = config.assets?.chestImageUrl || config.assets?.infoEventImageUrl;
+  if (thumbUrl && thumbUrl.startsWith('http')) {
+    embed.setThumbnail(thumbUrl);
+  }
+
+  embed.setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!' })
     .setTimestamp();
 
   return { embeds: [embed] };

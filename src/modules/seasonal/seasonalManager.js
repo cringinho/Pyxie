@@ -9,7 +9,7 @@ const DATA_PATH = path.join(__dirname, '..', '..', '..', 'data', 'seasonalData.j
 const DEFAULT_CONFIG = {
   active: false,
   eventName: 'Halloween da Cringelândia',
-  currencyName: 'Abóbora',
+  currencyName: 'Abóboras',
   channels: {
     artChannelId: '',
     dropsChannelId: '',
@@ -20,33 +20,33 @@ const DEFAULT_CONFIG = {
     timezone: 'America/Sao_Paulo',
   },
   prizes: {
-    firstPlace: '1x Gift Card 25R$',
-    secondPlace: 'Cargo Personalizado [tu escolhe fi]',
-    thirdPlace: 'um beijo do cringinho (na bochecha)',
+    firstPlace: '1 Mês de Discord Nitro + Cargo de Bruxo Supremo',
+    secondPlace: '5.000 Moedinhas + Cargo de Zumbi da Cringelândia',
+    thirdPlace: '2.000 Moedinhas',
   },
   assets: {
-    chestImageUrl: 'https://cdn.discordapp.com/attachments/1466787301018308761/1555742275462496316/Copia_de_Sem_nome_256_x_256_px.png?backend=b2&ex=6ac24a26&is=6ac0f8a6&hm=5d16ee2e9f422a9c7aef4e9d294cb33e057da9b0ec07e4194e8480b1a37dcfd0&',
-    infoEventImageUrl: 'https://cdn.discordapp.com/attachments/1466787301018308761/1555968207381209200/pyxie_all_1.png?backend=b2&ex=6ac273d1&is=6ac12251&hm=7bd270ff44a41e2ec992ba37e0485d1725701e4a3e0a8fa3922311fa8ced2506&',
+    chestImageUrl: 'https://i.imgur.com/link_do_bau_halloween.png',
     emojis: {
-      currency: '1551355734577381447',
+      currency: '1548443994902757427', // halloweenabobora
       dropDecoys: [
+        { id: '82336witchscaul', label: 'Caldeirão da Bruxa' },
         { id: '1551355578066931763', label: 'Hello Kitty Aboborada' },
         { id: '1548443801515720719', label: 'Zumbicord' },
         { id: '1548444196074033242', label: 'Balinha' },
         { id: '1551356387475595375', label: 'Gatinho Trevinhas' },
         { id: '1548444308401684530', label: 'Wumpus Bruxinho' },
-        { id: '1552115015199227924', label: 'Caldeirão da Pyxie' },
       ],
       artOfWeek: [
-        '1548443988745261086',
+        '1548443988745261086', // halloween3gif55
+        '1548443994902757427', // halloweenabobora
       ],
     },
   },
   templates: {
-    announcementText: '🎪 **O CIRCO DOS HORRORES COMEÇOU NA CRINGELÂNDIA!** 🎃\n\nAcharam que iam passar o mês sem serem humilhados? O evento **{eventName}** tá liberado!\n\nJuntem **{currencyName}** nos drops do baú e na Arte da Semana. Quem terminar no topo ganha **{firstPrize}**. Quem perder, só passa vergonha mesmo.\n\nUse `/py-infoevento` pra entender antes de chorar no chat geral.',
+    announcementText: '🕸️ **O CIRCO DOS HORRORES COMEÇOU NA CRINGELÂNDIA!** 🕸️\n\nAcharam que iam passar o mês sem serem humilhados? O evento **{eventName}** tá liberado!\n\nJuntem **{currencyName}** nos drops do baú e na Arte da Semana. Quem terminar no topo ganha **{firstPrize}**. Quem perder, só passa vergonha mesmo.\n\nUse `/py-infoevento` pra entender antes de chorar no chat geral.',
     dropEmbedFooter: 'Dica: Use /py-infoevento para entender a pontuação e prazos!',
-    artOfWeekWinner: '🎨 **ARTE DA SEMANA DEFINIDA!**\n\nOlha só, parece que temos alguém que agradou nosso coraçãozinho essa semana. Parabéns {author}, sua arte foi a mais votada e você garantiu **+5 {currencyName}**!\n\nConfiram a obra de arte abaixo:',
-    infoEventTitle: '{eventName} — GUIA OFICIAL',
+    artOfWeekWinner: '🎨 **ARTE DA SEMANA DEFINIDA!**\n\nOlha só, parece que temos alguém talentoso no meio de tantos rabiscos. Parabéns {author}, sua arte foi a mais votada e você garantiu **+5 {currencyName}**!\n\nConfiram a obra de arte abaixo:',
+    infoEventTitle: '🕸️ {eventName} — GUIA OFICIAL 🕸️',
     infoEventDescription: 'Bem-vindo(a) ao evento temático oficial da Cringelândia! Acumule **{currencyName}** participando das atividades e dispute o topo do placar.',
     infoEventRules: '• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!',
     infoEventExtra: '> Use **/py-rank** para conferir o placar dos membros mais dedicados!\n> Dúvidas ou choro? Procure a moderação antes de passar vergonha no chat geral.',
@@ -55,6 +55,7 @@ const DEFAULT_CONFIG = {
 
 const DEFAULT_DATA = {
   balances: {},
+  userProfiles: {},
   currentWeekArt: [],
   history: {
     lastDropMessageId: null,
@@ -239,21 +240,8 @@ function resolveSeasonalEmojiObject(client, emojiKeyOrId, fallback = '🎃') {
     };
   }
 
-  // 2.1 Suporte explícito ao Caldeirão da Pyxie (82336witchscauldron)
-  const lower = str.toLowerCase();
-  if (str === '1552115015199227924' || lower === '82336witchscauldron' || lower === '82336witchscaul') {
-    return {
-      id: '1552115015199227924',
-      name: '82336witchscauldron',
-      animated: true,
-      formatted: '<a:82336witchscauldron:1552115015199227924>',
-      reactable: '1552115015199227924',
-      url: 'https://cdn.discordapp.com/emojis/1552115015199227924.gif',
-      isUnicode: false,
-    };
-  }
-
   // 3. Busca por Nome ou Alias no catálogo de Application Emojis da Pyxie
+  const lower = str.toLowerCase();
   const aliasNameMap = {
     '4124hellokit': '4124hellokittypumpkin',
     'ardiscordzomb': 'ardiscordzombie',
@@ -356,6 +344,74 @@ function getTopSeasonalBalances(limit = 10) {
     .map(([userId, balance]) => ({ userId, balance: Number(balance) }))
     .sort((a, b) => b.balance - a.balance)
     .slice(0, limit);
+}
+
+function updateUserProfile(userId, profile) {
+  if (!userId || !profile) return;
+  const data = loadData();
+  data.userProfiles = data.userProfiles || {};
+  data.userProfiles[String(userId)] = {
+    ...(data.userProfiles[String(userId)] || {}),
+    ...profile,
+    updatedAt: Date.now(),
+  };
+  saveData(data);
+}
+
+function getSeasonalLeaderboard(limit = 50) {
+  const data = loadData();
+  const balances = data.balances || {};
+  const profiles = data.userProfiles || {};
+  const entries = Object.entries(balances)
+    .map(([userId, balance]) => {
+      const prof = profiles[userId] || {};
+      const shortId = String(userId).slice(-4);
+      return {
+        userId,
+        balance: Number(balance) || 0,
+        username: prof.username || `Aventureiro#${shortId}`,
+        displayName: prof.displayName || prof.username || `Aventureiro (${shortId})`,
+        avatarUrl: prof.avatarUrl || `https://cdn.discordapp.com/embed/avatars/${(Number(shortId) || 0) % 5}.png`,
+      };
+    })
+    .filter((e) => e.balance > 0)
+    .sort((a, b) => b.balance - a.balance);
+
+  return entries.slice(0, limit).map((e, idx) => ({
+    rank: idx + 1,
+    ...e,
+  }));
+}
+
+async function syncTopUserProfiles(client) {
+  if (!client || !client.users) return;
+  try {
+    const data = loadData();
+    data.userProfiles = data.userProfiles || {};
+    let changed = false;
+    const userIds = Object.keys(data.balances || {});
+    for (const id of userIds) {
+      if (!data.userProfiles[id] || !data.userProfiles[id].avatarUrl) {
+        try {
+          const u = await client.users.fetch(id).catch(() => null);
+          if (u) {
+            data.userProfiles[id] = {
+              username: u.username,
+              displayName: u.displayName || u.username,
+              avatarUrl: u.displayAvatarURL ? u.displayAvatarURL({ extension: 'png', size: 128 }) : null,
+              updatedAt: Date.now(),
+            };
+            changed = true;
+          }
+        } catch (_) {}
+      }
+    }
+    if (changed) {
+      saveData(data);
+    }
+  } catch (err) {
+    console.warn('[Seasonal] Falha ao sincronizar perfis de usuários:', err.message);
+  }
 }
 
 // Verificação de Encerramento e Premiação
@@ -579,6 +635,123 @@ function setupWebRoutes(app) {
   app._seasonalRoutesRegistered = true;
 
   const { requireAdminAuth } = require('../../services/adminAuth');
+  const cardRenderer = require('./cardRenderer');
+
+  // 0. Rotas públicas do Ranking ao Vivo (com isolamento estrito por módulo)
+  app.get(['/evento', '/ranking', '/evento/ranking', '/ranking-sazonal'], (req, res) => {
+    if (!isSeasonalActive()) {
+      return res.status(404).redirect('/');
+    }
+
+    const config = loadConfig();
+    const data = loadData();
+    const leaderboard = getSeasonalLeaderboard(50);
+    const lang = req.query.lang === 'en' ? 'en' : 'pt';
+    const currencyEmojiObj = resolveSeasonalEmojiObject(clientRef, config.assets?.emojis?.currency, '🎃');
+
+    res.render(path.join(__dirname, 'views', 'rankingSazonal.ejs'), {
+      config,
+      data,
+      leaderboard,
+      lang,
+      currencyEmojiUrl: currencyEmojiObj.url || 'https://cdn.discordapp.com/emojis/1551355734577381447.png',
+      currencyEmojiFormatted: currencyEmojiObj.formatted,
+      active: true,
+    });
+  });
+
+  app.get(['/api/sazonal/ranking', '/api/seasonal/ranking'], (req, res) => {
+    if (!isSeasonalActive()) {
+      return res.json({
+        success: false,
+        active: false,
+        leaderboard: [],
+        message: 'Nenhum evento sazonal ativo no momento.',
+      });
+    }
+
+    const config = loadConfig();
+    const data = loadData();
+    const leaderboard = getSeasonalLeaderboard(50);
+    const currencyEmojiObj = resolveSeasonalEmojiObject(clientRef, config.assets?.emojis?.currency, '🎃');
+
+    let totalPumpkins = 0;
+    for (const b of Object.values(data.balances || {})) {
+      totalPumpkins += Number(b) || 0;
+    }
+
+    return res.json({
+      success: true,
+      active: true,
+      eventName: config.eventName,
+      currencyName: config.currencyName,
+      currencyEmojiUrl: currencyEmojiObj.url || 'https://cdn.discordapp.com/emojis/1551355734577381447.png',
+      currencyEmojiFormatted: currencyEmojiObj.formatted,
+      endDate: config.dates?.endDate,
+      timezone: config.dates?.timezone || 'America/Sao_Paulo',
+      prizes: config.prizes,
+      assets: config.assets,
+      stats: {
+        totalPumpkins,
+        totalParticipants: Object.keys(data.balances || {}).length,
+        totalArtSubmissions: (data.currentWeekArt || []).length,
+      },
+      leaderboard,
+      currentWeekArt: (data.currentWeekArt || []).map((a) => ({
+        messageId: a.messageId,
+        authorId: a.authorId,
+        authorName: data.userProfiles?.[a.authorId]?.displayName || a.authorName || 'Artista da Cringelândia',
+        authorAvatar: data.userProfiles?.[a.authorId]?.avatarUrl || a.authorAvatar || `https://cdn.discordapp.com/embed/avatars/${Number(String(a.authorId).slice(-2)) % 5}.png`,
+        imageUrl: a.imageUrl,
+        submittedAt: a.submittedAt,
+      })),
+      updatedAt: Date.now(),
+    });
+  });
+
+  // Card de Imagem Viral para Redes Sociais & OpenGraph / Twitter Cards
+  app.get(['/api/sazonal/card.png', '/api/sazonal/ranking-card.png', '/evento/card.png'], async (req, res) => {
+    if (!isSeasonalActive()) {
+      return res.status(404).send('Evento sazonal inativo');
+    }
+    try {
+      const config = loadConfig();
+      const leaderboard = getSeasonalLeaderboard(5);
+      const lang = req.query.lang === 'en' ? 'en' : 'pt';
+      const force = req.query.force === 'true';
+
+      const pngBuffer = await cardRenderer.renderLeaderboardCard(leaderboard, config, { lang, force });
+
+      res.setHeader('Content-Type', 'image/png');
+      res.setHeader('Cache-Control', 'public, max-age=30');
+      if (req.query.download === 'true') {
+        res.setHeader('Content-Disposition', 'attachment; filename="ranking-cringelandia.png"');
+      }
+      return res.send(pngBuffer);
+    } catch (err) {
+      console.error('[Seasonal:Card] Erro ao gerar imagem do ranking:', err);
+      return res.status(500).send('Erro ao renderizar imagem do ranking');
+    }
+  });
+
+  // Proxy seguro de avatar com CORS habilitado
+  app.get('/api/sazonal/avatar-proxy', async (req, res) => {
+    const avatarUrl = req.query.url;
+    if (!avatarUrl || typeof avatarUrl !== 'string' || !avatarUrl.startsWith('http')) {
+      return res.status(400).send('URL de avatar inválida');
+    }
+    try {
+      const fetchRes = await fetch(avatarUrl);
+      if (!fetchRes.ok) return res.status(fetchRes.status).send('Erro ao buscar avatar');
+      const buffer = Buffer.from(await fetchRes.arrayBuffer());
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Content-Type', fetchRes.headers.get('content-type') || 'image/png');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.send(buffer);
+    } catch (err) {
+      return res.status(500).send(err.message);
+    }
+  });
 
   // Rota de visualização da página administrativa (/admin/sazonal)
   app.get('/admin/sazonal', (req, res) => {
@@ -733,6 +906,9 @@ module.exports = {
   addSeasonalBalance,
   getSeasonalBalance,
   getTopSeasonalBalances,
+  getSeasonalLeaderboard,
+  updateUserProfile,
+  syncTopUserProfiles,
   resolveSeasonalEmoji,
   resolveSeasonalEmojiObject,
   getSimplifiedAppEmojis,

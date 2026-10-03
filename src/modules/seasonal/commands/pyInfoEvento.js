@@ -51,7 +51,7 @@ function buildInfoEventoView(userId, client) {
 
   // 1. Título Customizável
   const rawTitle = config.templates?.infoEventTitle || '🕸️ {eventName} — GUIA OFICIAL 🕸️';
-  const title = rawTitle.replace(/{eventName}/g, eventNameUpper).trim();
+  const title = rawTitle.replace(/{eventName}/g, eventNameUpper);
 
   // 2. Descrição / Introdução Customizável
   const defaultDesc = `Bem-vindo(a) ao evento temático oficial da Cringelândia! Acumule **${currencyName}** participando das atividades e dispute o topo do placar.`;

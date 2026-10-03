@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="<%= lang === 'en' ? 'en' : 'pt-BR' %>">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= config.eventName %> — Placar & Ranking Oficial | Pyxie</title>
+  <meta name="description" content="Acompanhe o ranking em tempo real do evento <%= config.eventName %> na Cringelândia! Veja quem está liderando os baús e artes." />
+  <link rel="icon" type="image/png" href="https://cdn.discordapp.com/emojis/1551355734577381447.png" />
+  
+  <!-- Social Media & OpenGraph Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="<%= config.eventName %> — Placar & Ranking Oficial | Cringelândia" />
+  <meta property="og:description" content="Acompanhe o ranking em tempo real do evento <%= config.eventName %> na Cringelândia com a Pyxie! Veja quem está liderando os baús e artes." />
+  <meta property="og:image" content="https://pyxie.duckdns.org/api/sazonal/card.png?lang=<%= lang %>" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1080" />
+  <meta property="og:image:height" content="1080" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="<%= config.eventName %> — Placar Oficial | Cringelândia" />
+  <meta name="twitter:description" content="Acompanhe o ranking em tempo real do evento <%= config.eventName %> na Cringelândia com a Pyxie!" />
+  <meta name="twitter:image" content="https://pyxie.duckdns.org/api/sazonal/card.png?lang=<%= lang %>" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #0a0612;
+      --bg-surface: rgba(18, 12, 30, 0.75);
+      --bg-surface-card: rgba(26, 18, 44, 0.65);
+      --purple-primary: #8b5cf6;
+      --purple-light: #c084fc;
+      --purple-glow: rgba(139, 92, 246, 0.35);
+      --pumpkin: #ff7b00;
+      --pumpkin-glow: rgba(255, 123, 0, 0.4);
+      --gold: #fbbf24;
+      --silver: #cbd5e1;
+      --bronze: #d97706;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-subtle: rgba(139, 92, 246, 0.2);
+      --border-glow: rgba(255, 123, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    #particlesCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.65;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Top Nav */
+    .header-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(10, 6, 18, 0.82);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.85rem 0;
+    }
+
+    .nav-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+    }
+
+    .nav-brand img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--purple-primary);
+      box-shadow: 0 0 12px var(--purple-glow);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.95rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--purple-light);
+    }
+
+    .btn-lang {
+      background: rgba(139, 92, 246, 0.12);
+      color: var(--purple-light);
+      border: 1px solid var(--border-subtle);
+    }
+    .btn-lang:hover {
+      background: rgba(139, 92, 246, 0.24);
+      color: #fff;
+    }
+
+    .btn-discord {
+      background: linear-gradient(135deg, #7c3aed, #ff7b00);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 14px var(--purple-glow);
+    }
+    .btn-discord:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px var(--pumpkin-glow);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+
+    .badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: rgba(34, 197, 94, 0.12);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      margin-bottom: 1.25rem;
+      box-shadow: 0 0 16px rgba(34, 197, 94, 0.15);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 30%, var(--purple-light) 70%, var(--pumpkin) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      max-width: 680px;
+      margin: 0 auto 2rem;
+    }
+
+    /* Countdown & Quick Info Box */
+    .event-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .glass-card {
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .glass-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-2px);
+    }
+
+    .timer-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--pumpkin);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      justify-content: center;
+    }
+
+    .countdown-display {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .time-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(10, 6, 18, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.75rem;
+      padding: 0.5rem 0.8rem;
+      min-width: 60px;
+    }
+
+    .time-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .time-lbl {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Prize Cards */
+    .prizes-container {
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .prizes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .prize-card {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      border-radius: 1.25rem;
+      padding: 1.25rem;
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .prize-card.gold {
+      border-color: rgba(251, 191, 36, 0.4);
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(26, 18, 44, 0.8));
+    }
+    .prize-card.silver {
+      border-color: rgba(203, 213, 225, 0.35);
+      background: linear-gradient(135deg, rgba(203, 213, 225, 0.06), rgba(26, 18, 44, 0.8));
+    }
+    .prize-card.bronze {
+      border-color: rgba(217, 119, 6, 0.35);
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.06), rgba(26, 18, 44, 0.8));
+    }
+
+    .prize-medal {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+
+    .prize-info h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+
+    .prize-info p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    /* Podium Section */
+    .podium-section {
+      margin-bottom: 3.5rem;
+    }
+
+    .podium-wrapper {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 1.25rem;
+      padding: 2rem 0 1rem;
+      flex-wrap: wrap;
+    }
+
+    .podium-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: var(--bg-surface);
+      border-radius: 1.5rem;
+      padding: 1.75rem 1.25rem;
+      position: relative;
+      width: 270px;
+      border: 1px solid var(--border-subtle);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .podium-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .podium-card.first {
+      order: 2;
+      width: 290px;
+      padding: 2.25rem 1.5rem;
+      border-color: rgba(251, 191, 36, 0.6);
+      background: linear-gradient(180deg, rgba(251, 191, 36, 0.12) 0%, rgba(26, 18, 44, 0.85) 100%);
+      box-shadow: 0 0 35px rgba(251, 191, 36, 0.22);
+      transform: translateY(-12px);
+    }
+    .podium-card.first:hover {
+      transform: translateY(-18px);
+    }
+
+    .podium-card.second {
+      order: 1;
+      border-color: rgba(203, 213, 225, 0.4);
+      box-shadow: 0 0 25px rgba(203, 213, 225, 0.12);
+    }
+
+    .podium-card.third {
+      order: 3;
+      border-color: rgba(217, 119, 6, 0.4);
+      box-shadow: 0 0 25px rgba(217, 119, 6, 0.12);
+    }
+
+    .crown-icon {
+      position: absolute;
+      top: -18px;
+      font-size: 2rem;
+      filter: drop-shadow(0 4px 10px rgba(251, 191, 36, 0.5));
+      animation: float 2.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 86px;
+      height: 86px;
+      margin-bottom: 1rem;
+    }
+
+    .first .avatar-wrap {
+      width: 104px;
+      height: 104px;
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--purple-primary);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .first .avatar-img {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.45);
+    }
+
+    .podium-badge {
+      position: absolute;
+      bottom: -6px;
+      right: -6px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      background: #1e1531;
+      border: 2px solid #fff;
+    }
+
+    .podium-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.25rem;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .first .podium-name {
+      font-size: 1.35rem;
+      color: var(--gold);
+    }
+
+    .podium-tag {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.85rem;
+    }
+
+    .podium-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255, 123, 0, 0.12);
+      border: 1px solid var(--border-glow);
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      font-weight: 800;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .first .podium-score {
+      font-size: 1.15rem;
+      background: rgba(251, 191, 36, 0.15);
+      border-color: rgba(251, 191, 36, 0.4);
+      color: var(--gold);
+    }
+
+    .podium-score img {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Table Section */
+    .table-section {
+      margin-bottom: 3.5rem;
+    }
+
+    .table-header-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      width: 280px;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: rgba(18, 12, 30, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      padding: 0.6rem 1rem 0.6rem 2.4rem;
+      color: #fff;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .search-box input:focus {
+      border-color: var(--purple-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+      font-size: 0.85rem;
+    }
+
+    .table-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1.25rem;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .ranking-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .ranking-table th {
+      background: rgba(26, 18, 44, 0.7);
+      padding: 1rem 1.25rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .ranking-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: middle;
+      font-size: 0.95rem;
+    }
+
+    .ranking-table tr:hover td {
+      background: rgba(139, 92, 246, 0.04);
+    }
+
+    .rank-number {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--text-muted);
+    }
+
+    .rank-number.top {
+      color: var(--purple-light);
+    }
+
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .user-avatar-sm {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(139, 92, 246, 0.4);
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name-text {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .user-subtext {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .score-cell img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-top: 0.35rem;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple-primary), var(--pumpkin));
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+
+    /* Art Gallery Showcase */
+    .art-section {
+      margin-bottom: 4rem;
+    }
+
+    .art-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .art-card {
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1.25rem;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .art-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-glow);
+    }
+
+    .art-img-wrap {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .art-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .art-card:hover .art-img {
+      transform: scale(1.04);
+    }
+
+    .art-info {
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .art-author {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .art-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--purple-primary);
+    }
+
+    .art-author-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    .art-vote-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid var(--border-subtle);
+      padding: 0.3rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--purple-light);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(10, 6, 18, 0.9);
+      padding: 2.5rem 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* Viral Share Leaderboard Card & Modal */
+    .btn-share-trigger {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(139, 92, 246, 0.35));
+      color: #fff;
+      border: 1px solid rgba(236, 72, 153, 0.5);
+      box-shadow: 0 0 15px rgba(236, 72, 153, 0.25);
+    }
+    .btn-share-trigger:hover {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.45), rgba(139, 92, 246, 0.55));
+      border-color: rgba(236, 72, 153, 0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(236, 72, 153, 0.45);
+    }
+
+    .share-promo-banner {
+      background: linear-gradient(135deg, rgba(38, 14, 62, 0.85), rgba(94, 43, 140, 0.55));
+      border: 1px solid rgba(236, 72, 153, 0.45);
+      border-radius: 1.25rem;
+      padding: 1.1rem 1.5rem;
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(139, 92, 246, 0.2);
+    }
+    .share-promo-banner:hover {
+      transform: translateY(-2px);
+      border-color: rgba(236, 72, 153, 0.75);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 30px rgba(236, 72, 153, 0.35);
+    }
+    .share-promo-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-align: left;
+    }
+    .share-promo-icon {
+      font-size: 2.2rem;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.6));
+    }
+    .share-promo-text h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .share-promo-text p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    .btn-share-promo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, var(--pumpkin), #ea580c);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.875rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 123, 0, 0.4);
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .btn-share-promo:hover {
+      transform: scale(1.04);
+      box-shadow: 0 6px 20px rgba(255, 123, 0, 0.6);
+    }
+
+    /* Modal de Compartilhamento */
+    .share-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .share-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 4, 16, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .share-modal-dialog {
+      position: relative;
+      max-width: 660px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: linear-gradient(135deg, rgba(26, 16, 46, 0.98), rgba(15, 8, 28, 0.98));
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      border-radius: 1.5rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 45px rgba(139, 92, 246, 0.3);
+      padding: 1.5rem;
+      z-index: 1;
+    }
+    .share-modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.85rem;
+    }
+    .share-modal-titles h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .share-modal-titles p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    .share-modal-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-muted);
+      font-size: 1.4rem;
+      line-height: 1;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .share-modal-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+    .share-card-preview-wrap {
+      position: relative;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      background: #0c0617;
+      border: 1px solid rgba(255, 123, 0, 0.35);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+      margin-bottom: 1.25rem;
+      text-align: center;
+      min-height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(12, 6, 23, 0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: var(--purple-light);
+      font-size: 0.85rem;
+      font-weight: 600;
+      z-index: 2;
+    }
+    .card-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(139, 92, 246, 0.3);
+      border-top-color: var(--purple-light);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .share-card-img {
+      width: 100%;
+      height: auto;
+      max-height: 380px;
+      object-fit: contain;
+      display: block;
+      border-radius: 1.25rem;
+    }
+    .share-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 0.75rem;
+    }
+    .btn-share-act {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.85rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+    .btn-download-act {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    .btn-download-act:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+    .btn-copy-act {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+    .btn-copy-act:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+    }
+    .btn-twitter-act {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .btn-twitter-act:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: translateY(-2px);
+    }
+    .btn-whatsapp-act {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+    }
+    .btn-whatsapp-act:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+    }
+    .btn-invite-act {
+      background: linear-gradient(135deg, #5865f2, #4752c4);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+    }
+    .btn-invite-act:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5);
+    }
+
+    .share-toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(16, 185, 129, 0.95);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      pointer-events: none;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, 10px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    @media (max-width: 768px) {
+      .podium-wrapper {
+        flex-direction: column;
+        align-items: center;
+      }
+      .podium-card, .podium-card.first {
+        width: 100%;
+        order: initial !important;
+        transform: none !important;
+      }
+      .nav-brand span {
+        display: none;
+      }
+      .share-promo-banner {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .share-promo-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      .btn-share-promo {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particlesCanvas"></canvas>
+
+  <!-- Sticky Top Navigation -->
+  <header class="header-nav">
+    <div class="container nav-content">
+      <a href="/" class="nav-brand">
+        <img src="https://cdn.discordapp.com/emojis/1548443951596306552.webp" alt="Pyxie" />
+        <span>Pyxie • Cringelândia</span>
+      </a>
+
+      <div class="nav-actions">
+        <button type="button" class="btn-nav btn-share-trigger" onclick="openShareModal()" id="btnShareNav">
+          <span>📸</span> <span data-i18n="share.btnNav">Compartilhar</span>
+        </button>
+        <a href="/" class="btn-nav btn-back" id="btnBack">
+          <span>←</span> <span data-i18n="nav.back">Voltar ao Início</span>
+        </a>
+        <button class="btn-nav btn-lang" onclick="toggleLang()" id="btnLang">
+          <span><%= lang === 'en' ? '🇺🇸 EN' : '🇧🇷 PT-BR' %></span>
+        </button>
+        <a href="/discord" target="_blank" rel="noopener" class="btn-nav btn-discord">
+          <span data-i18n="nav.join">Cringelândia</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="badge-live">
+        <span class="pulse-dot"></span>
+        <span data-i18n="hero.badge">AO VIVO • ATUALIZAÇÃO AUTOMÁTICA</span>
+      </div>
+
+      <h1 class="hero-title"><%= config.eventName %></h1>
+      <p class="hero-desc" data-i18n="hero.desc">
+        Acumule <%= config.currencyName %> pegando os baús surpresa em #chati e participando da Arte da Semana em #artes. Acompanhe a liderança da Cringelândia em tempo real!
+      </p>
+
+      <!-- Event Meta & Countdown Timer -->
+      <div class="event-meta-grid">
+        <div class="glass-card">
+          <div class="timer-title">
+            <span>⏳</span> <span data-i18n="timer.title">TEMPO RESTANTE</span>
+          </div>
+          <div class="countdown-display" id="countdownBox">
+            <div class="time-unit">
+              <span class="time-num" id="dNum">--</span>
+              <span class="time-lbl" data-i18n="timer.days">DIAS</span>
+            </div>
+            <div class="time-unit">
+              <span class="time-num" id="hNum">--</span>
+              <span class="time-lbl" data-i18n="timer.hours">HORAS</span>
+            </div>
+            <div class="time-unit">
+              <span class="time-num" id="mNum">--</span>
+              <span class="time-lbl" data-i18n="timer.mins">MIN</span>
+            </div>
+            <div class="time-unit">
+              <span class="time-num" id="sNum">--</span>
+              <span class="time-lbl" data-i18n="timer.secs">SEG</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card" style="text-align: left; display: flex; flex-direction: column; justify-content: center;">
+          <div class="timer-title" style="justify-content: flex-start;">
+            <span>🎃</span> <span data-i18n="rules.title">COMO PONTUAR NO DISCORD</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">
+            📦 <strong>Drops:</strong> Clicar na reação certa do baú no chat geral (3x/dia seg-sex, 6x/dia fins de semana).
+          </p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            🎨 <strong>Arte:</strong> Postar desenho em #artes marcando @Pyxie (+5 <%= config.currencyName %> aos domingos).
+          </p>
+        </div>
+      </div>
+
+      <!-- Viral Share Banner -->
+      <div class="share-promo-banner" onclick="openShareModal()">
+        <div class="share-promo-content">
+          <div class="share-promo-icon">📸</div>
+          <div class="share-promo-text">
+            <h3 data-i18n="share.bannerTitle">Divulgue o Placar da Cringelândia</h3>
+            <p data-i18n="share.bannerDesc">Gere uma imagem personalizada com a Pyxie e o convite oficial para postar nas redes sociais!</p>
+          </div>
+        </div>
+        <button type="button" class="btn-share-promo" onclick="event.stopPropagation(); openShareModal()">
+          <span>✨</span> <span data-i18n="share.bannerBtn">Gerar Card Viral</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Prizes Showcase Cards -->
+    <section class="prizes-container">
+      <h2 class="section-title">
+        <span>🎁</span> <span data-i18n="prizes.title">Premiações do Top 3</span>
+      </h2>
+      <div class="prizes-grid">
+        <div class="prize-card gold">
+          <div class="prize-medal">🥇</div>
+          <div class="prize-info">
+            <h4 data-i18n="prizes.p1">1º Lugar</h4>
+            <p><%= config.prizes?.firstPlace || 'A definir recompensa' %></p>
+          </div>
+        </div>
+        <div class="prize-card silver">
+          <div class="prize-medal">🥈</div>
+          <div class="prize-info">
+            <h4 data-i18n="prizes.p2">2º Lugar</h4>
+            <p><%= config.prizes?.secondPlace || 'A definir recompensa' %></p>
+          </div>
+        </div>
+        <div class="prize-card bronze">
+          <div class="prize-medal">🥉</div>
+          <div class="prize-info">
+            <h4 data-i18n="prizes.p3">3º Lugar</h4>
+            <p><%= config.prizes?.thirdPlace || 'A definir recompensa' %></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Podium Component (Top 3) -->
+    <section class="podium-section">
+      <h2 class="section-title">
+        <span>👑</span> <span data-i18n="podium.title">Pódio dos Líderes</span>
+      </h2>
+      <div class="podium-wrapper" id="podiumContainer">
+        <!-- Renderizado dinamicamente via JS e atualizado a cada 15s -->
+      </div>
+    </section>
+
+    <!-- Leaderboard Full Table -->
+    <section class="table-section">
+      <div class="table-header-controls">
+        <h2 class="section-title" style="margin-bottom: 0;">
+          <span>📋</span> <span data-i18n="table.title">Classificação Completa</span>
+        </h2>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="playerSearchInput" placeholder="Buscar aventureiro..." oninput="filterTable()" />
+        </div>
+      </div>
+
+      <div class="table-card">
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;" data-i18n="table.rank">POSIÇÃO</th>
+              <th data-i18n="table.user">AVENTUREIRO(A)</th>
+              <th style="width: 200px;" data-i18n="table.score">SALDO ACUMULADO</th>
+            </tr>
+          </thead>
+          <tbody id="rankingTableBody">
+            <!-- Linhas inseridas dinamicamente via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Art Showcase Gallery -->
+    <section class="art-section" id="artSection">
+      <h2 class="section-title">
+        <span>🎨</span> <span data-i18n="art.title">Artes da Semana Concorrendo</span>
+      </h2>
+      <div class="art-grid" id="artGalleryGrid">
+        <!-- Inserido dinamicamente -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Social Share Leaderboard Modal -->
+  <div id="shareModal" class="share-modal" style="display: none;">
+    <div class="share-modal-backdrop" onclick="closeShareModal()"></div>
+    <div class="share-modal-dialog">
+      <div class="share-modal-header">
+        <div class="share-modal-titles">
+          <h3 data-i18n="share.modalTitle">📸 Compartilhar Placar Oficial</h3>
+          <p data-i18n="share.modalSub">Cringelândia & Pyxie • Imagem pronta para Stories, Twitter/X, Discord e WhatsApp</p>
+        </div>
+        <button type="button" class="share-modal-close" onclick="closeShareModal()">&times;</button>
+      </div>
+
+      <div class="share-modal-body">
+        <div class="share-card-preview-wrap">
+          <div class="card-loading-overlay" id="cardLoadingOverlay">
+            <div class="card-spinner"></div>
+            <span data-i18n="share.loading">Carregando imagem em alta resolução...</span>
+          </div>
+          <img id="shareCardImg" class="share-card-img" src="/api/sazonal/card.png?lang=<%= lang %>" alt="Card do Ranking Cringelândia" onload="onCardImgLoaded()" />
+        </div>
+
+        <div class="share-actions-grid">
+          <button type="button" class="btn-share-act btn-download-act" onclick="downloadCard()">
+            <span class="act-icon">📥</span>
+            <span data-i18n="share.btnDownload">Baixar Imagem (PNG)</span>
+          </button>
+          <button type="button" class="btn-share-act btn-copy-act" onclick="copyCard()">
+            <span class="act-icon">📋</span>
+            <span id="copyBtnText" data-i18n="share.btnCopy">Copiar Imagem</span>
+          </button>
+          <button type="button" class="btn-share-act btn-twitter-act" onclick="shareTwitter()">
+            <span class="act-icon">🐦</span>
+            <span data-i18n="share.btnTwitter">Postar no Twitter/X</span>
+          </button>
+          <button type="button" class="btn-share-act btn-whatsapp-act" onclick="shareWhatsApp()">
+            <span class="act-icon">💬</span>
+            <span data-i18n="share.btnWhatsApp">Enviar no WhatsApp</span>
+          </button>
+          <button type="button" class="btn-share-act btn-invite-act" onclick="copyDiscordInvite()">
+            <span class="act-icon">🔗</span>
+            <span id="inviteBtnText" data-i18n="share.btnInvite">Copiar Convite (Discord)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="shareToast" class="share-toast" style="display: none;"></div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-brand">
+        <img src="https://cdn.discordapp.com/emojis/1548443951596306552.webp" width="24" height="24" style="border-radius: 50%;" alt="Pyxie" />
+        <span>Pyxie • Sistema Modular de Eventos</span>
+      </div>
+      <p data-i18n="footer.desc">Cringelândia © 2026. Todos os direitos reservados. Atualização em tempo real sincronizada via Supervisor Express.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Configurações e Estado Inicial
+    const END_DATE_ISO = "<%= config.dates?.endDate || '2026-11-02T23:59:59-03:00' %>";
+    const CURRENCY_NAME = "<%= config.currencyName || 'Abóbora' %>";
+    const CURRENCY_EMOJI_URL = "<%= currencyEmojiUrl || 'https://cdn.discordapp.com/emojis/1551355734577381447.png' %>";
+    
+    let currentLang = "<%= lang === 'en' ? 'en' : 'pt' %>";
+    let liveData = null;
+
+    const I18N = {
+      pt: {
+        'nav.back': 'Voltar ao Início',
+        'nav.join': 'Cringelândia',
+        'hero.badge': 'AO VIVO • ATUALIZAÇÃO AUTOMÁTICA',
+        'hero.desc': 'Acumule ' + CURRENCY_NAME + ' pegando os baús surpresa em #chati e participando da Arte da Semana em #artes. Acompanhe a liderança da Cringelândia em tempo real!',
+        'timer.title': 'TEMPO RESTANTE',
+        'timer.days': 'DIAS',
+        'timer.hours': 'HORAS',
+        'timer.mins': 'MIN',
+        'timer.secs': 'SEG',
+        'rules.title': 'COMO PONTUAR NO DISCORD',
+        'prizes.title': 'Premiações do Top 3',
+        'prizes.p1': '1º Lugar',
+        'prizes.p2': '2º Lugar',
+        'prizes.p3': '3º Lugar',
+        'podium.title': 'Pódio dos Líderes',
+        'table.title': 'Classificação Completa',
+        'table.rank': 'POSIÇÃO',
+        'table.user': 'AVENTUREIRO(A)',
+        'table.score': 'SALDO ACUMULADO',
+        'art.title': 'Artes da Semana Concorrendo',
+        'art.voting': 'Votação Aberta até Domingo às 10h',
+        'empty.podium': 'Aguardando aventureiro(a)',
+        'empty.table': 'Nenhum participante pontuou ainda. Abra um baú para aparecer aqui!',
+        'empty.art': 'Nenhuma arte enviada esta semana ainda. Poste seu desenho em #artes marcando @Pyxie!',
+        'footer.desc': 'Cringelândia © 2026. Todos os direitos reservados. Atualização em tempo real sincronizada via Supervisor Express.',
+        'search.placeholder': 'Buscar aventureiro...',
+        'share.btnNav': 'Compartilhar',
+        'share.bannerTitle': 'Divulgue o Placar da Cringelândia',
+        'share.bannerDesc': 'Gere uma imagem personalizada com a Pyxie e o convite oficial para postar nas redes sociais!',
+        'share.bannerBtn': 'Gerar Card Viral',
+        'share.modalTitle': '📸 Compartilhar Placar Oficial',
+        'share.modalSub': 'Cringelândia & Pyxie • Imagem pronta para Stories, Twitter/X, Discord e WhatsApp',
+        'share.loading': 'Carregando imagem em alta resolução...',
+        'share.btnDownload': 'Baixar Imagem (PNG)',
+        'share.btnCopy': 'Copiar Imagem',
+        'share.btnTwitter': 'Postar no Twitter/X',
+        'share.btnWhatsApp': 'Enviar no WhatsApp',
+        'share.btnInvite': 'Copiar Convite (Discord)',
+        'share.copied': 'Copiado para a área de transferência!',
+        'share.copying': 'Copiando...',
+        'share.tweetText': '🏆 Venha conferir o ranking ao vivo do evento na Cringelândia com a fada Pyxie! Participe e dispute prêmios:',
+      },
+      en: {
+        'nav.back': 'Back to Home',
+        'nav.join': 'Join Server',
+        'hero.badge': 'LIVE • AUTO-REFRESHING',
+        'hero.desc': 'Collect ' + CURRENCY_NAME + ' by opening mystery drop chests in #chati and submitting artworks in #artes. Watch the real-time leaderboard!',
+        'timer.title': 'TIME REMAINING',
+        'timer.days': 'DAYS',
+        'timer.hours': 'HOURS',
+        'timer.mins': 'MIN',
+        'timer.secs': 'SEC',
+        'rules.title': 'HOW TO SCORE ON DISCORD',
+        'prizes.title': 'Top 3 Prizes',
+        'prizes.p1': '1st Place',
+        'prizes.p2': '2nd Place',
+        'prizes.p3': '3rd Place',
+        'podium.title': 'Leaders Podium',
+        'table.title': 'Full Leaderboard',
+        'table.rank': 'RANK',
+        'table.user': 'ADVENTURER',
+        'table.score': 'ACCUMULATED BALANCE',
+        'art.title': 'Weekly Contest Artworks',
+        'art.voting': 'Voting Open until Sunday 10:00 BRT',
+        'empty.podium': 'Waiting for player',
+        'empty.table': 'No participants have scored yet. Open a chest to claim the lead!',
+        'empty.art': 'No artworks submitted this week yet. Post your art in #artes mentioning @Pyxie!',
+        'footer.desc': 'Cringelândia © 2026. All rights reserved. Real-time updates synced via Express Supervisor.',
+        'search.placeholder': 'Search player...',
+        'share.btnNav': 'Share Card',
+        'share.bannerTitle': 'Share the Cringelândia Leaderboard',
+        'share.bannerDesc': 'Generate a custom graphic with mascot Pyxie and the official invite to post on social media!',
+        'share.bannerBtn': 'Generate Viral Card',
+        'share.modalTitle': '📸 Share Official Leaderboard',
+        'share.modalSub': 'Cringelândia & Pyxie • Ready for Stories, Twitter/X, Discord & WhatsApp',
+        'share.loading': 'Loading high-res card...',
+        'share.btnDownload': 'Download Image (PNG)',
+        'share.btnCopy': 'Copy Image',
+        'share.btnTwitter': 'Post on Twitter/X',
+        'share.btnWhatsApp': 'Share on WhatsApp',
+        'share.btnInvite': 'Copy Discord Invite',
+        'share.copied': 'Copied to clipboard!',
+        'share.copying': 'Copying...',
+        'share.tweetText': '🏆 Check out the live event leaderboard on Cringelândia with Pyxie! Join and compete for prizes:',
+      }
+    };
+
+    function applyTranslations() {
+      const dict = I18N[currentLang] || I18N.pt;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+      });
+      const input = document.getElementById('playerSearchInput');
+      if (input && dict['search.placeholder']) input.placeholder = dict['search.placeholder'];
+      const btnLang = document.getElementById('btnLang');
+      if (btnLang) btnLang.innerHTML = currentLang === 'en' ? '<span>🇺🇸 EN</span>' : '<span>🇧🇷 PT-BR</span>';
+    }
+
+    function toggleLang() {
+      currentLang = currentLang === 'pt' ? 'en' : 'pt';
+      applyTranslations();
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('lang', currentLang);
+        window.history.replaceState({}, '', url);
+      } catch (_) {}
+      renderUI();
+
+      // Atualiza card preview se o modal estiver aberto
+      const cardImg = document.getElementById('shareCardImg');
+      if (cardImg) {
+        const overlay = document.getElementById('cardLoadingOverlay');
+        if (overlay) overlay.style.display = 'flex';
+        cardImg.src = `/api/sazonal/card.png?lang=${currentLang}&t=${Date.now()}`;
+      }
+    }
+
+    // Modal de Compartilhamento Viral
+    function openShareModal() {
+      const modal = document.getElementById('shareModal');
+      const img = document.getElementById('shareCardImg');
+      const overlay = document.getElementById('cardLoadingOverlay');
+      if (!modal) return;
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      const targetSrc = `/api/sazonal/card.png?lang=${currentLang}&t=${Date.now()}`;
+      if (img) {
+        if (overlay) overlay.style.display = 'flex';
+        img.src = targetSrc;
+      }
+    }
+
+    function closeShareModal() {
+      const modal = document.getElementById('shareModal');
+      if (modal) modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function onCardImgLoaded() {
+      const overlay = document.getElementById('cardLoadingOverlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
+    function downloadCard() {
+      const link = document.createElement('a');
+      link.href = `/api/sazonal/card.png?lang=${currentLang}&download=true&t=${Date.now()}`;
+      link.download = 'ranking-cringelandia.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showShareToast(I18N[currentLang]['share.copied'] || 'Download iniciado!');
+    }
+
+    async function copyCard() {
+      const btn = document.getElementById('copyBtnText');
+      const dict = I18N[currentLang] || I18N.pt;
+      const originalText = dict['share.btnCopy'];
+      try {
+        if (btn) btn.textContent = dict['share.copying'];
+        const res = await fetch(`/api/sazonal/card.png?lang=${currentLang}`);
+        const blob = await res.blob();
+        if (navigator.clipboard && navigator.clipboard.write) {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]);
+          showShareToast(dict['share.copied']);
+        } else {
+          showShareToast(dict['share.copied']);
+        }
+      } catch (err) {
+        console.warn('Erro ao copiar imagem:', err);
+        downloadCard();
+      } finally {
+        if (btn) btn.textContent = originalText;
+      }
+    }
+
+    function shareTwitter() {
+      const dict = I18N[currentLang] || I18N.pt;
+      const text = encodeURIComponent(dict['share.tweetText']);
+      const url = encodeURIComponent('https://pyxie.duckdns.org/evento?lang=' + currentLang);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}&hashtags=Cringelandia,PyxieBot,Discord`, '_blank');
+    }
+
+    function shareWhatsApp() {
+      const dict = I18N[currentLang] || I18N.pt;
+      const text = encodeURIComponent(dict['share.tweetText'] + ' https://pyxie.duckdns.org/evento?lang=' + currentLang + ' (Convite: https://discord.gg/b3uZK3ssfX)');
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    async function copyDiscordInvite() {
+      const inviteUrl = 'https://discord.gg/b3uZK3ssfX';
+      try {
+        await navigator.clipboard.writeText(inviteUrl);
+        showShareToast('Convite do Discord copiado!');
+      } catch (_) {
+        const inp = document.createElement('input');
+        inp.value = inviteUrl;
+        document.body.appendChild(inp);
+        inp.select();
+        document.execCommand('copy');
+        document.body.removeChild(inp);
+        showShareToast('Convite do Discord copiado!');
+      }
+    }
+
+    function showShareToast(message) {
+      const toast = document.getElementById('shareToast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // Countdown Timer
+    function startCountdown() {
+      const targetDate = new Date(END_DATE_ISO).getTime();
+      function update() {
+        const now = Date.now();
+        const diff = Math.max(0, targetDate - now);
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const mins = Math.floor((diff / (1000 * 60)) % 60);
+        const secs = Math.floor((diff / 1000) % 60);
+
+        document.getElementById('dNum').textContent = String(days).padStart(2, '0');
+        document.getElementById('hNum').textContent = String(hours).padStart(2, '0');
+        document.getElementById('mNum').textContent = String(mins).padStart(2, '0');
+        document.getElementById('sNum').textContent = String(secs).padStart(2, '0');
+      }
+      update();
+      setInterval(update, 1000);
+    }
+
+    // Renderização dos Componentes
+    function renderUI() {
+      if (!liveData) return;
+      const dict = I18N[currentLang] || I18N.pt;
+      const lb = liveData.leaderboard || [];
+      const maxScore = lb.length > 0 ? (lb[0].balance || 1) : 1;
+
+      // 1. Pódio (Top 3)
+      const podiumEl = document.getElementById('podiumContainer');
+      const first = lb[0] || null;
+      const second = lb[1] || null;
+      const third = lb[2] || null;
+
+      function createPodiumCard(entry, posClass, medal, rankNum) {
+        if (!entry) {
+          return `
+            <div class="podium-card ${posClass}">
+              <div class="avatar-wrap">
+                <img class="avatar-img" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Empty" style="opacity: 0.35;" />
+                <span class="podium-badge">${medal}</span>
+              </div>
+              <div class="podium-name" style="opacity: 0.5;">${dict['empty.podium']}</div>
+              <div class="podium-tag">#${rankNum}</div>
+              <div class="podium-score" style="opacity: 0.4;">
+                <img src="${CURRENCY_EMOJI_URL}" alt="pumpkin" /> 0
+              </div>
+            </div>
+          `;
+        }
+        return `
+          <div class="podium-card ${posClass}">
+            ${posClass === 'first' ? '<span class="crown-icon">👑</span>' : ''}
+            <div class="avatar-wrap">
+              <img class="avatar-img" src="${entry.avatarUrl}" alt="${entry.displayName}" />
+              <span class="podium-badge">${medal}</span>
+            </div>
+            <div class="podium-name" title="${entry.displayName}">${entry.displayName}</div>
+            <div class="podium-tag">${entry.username}</div>
+            <div class="podium-score">
+              <img src="${CURRENCY_EMOJI_URL}" alt="pumpkin" />
+              <span>${entry.balance} ${CURRENCY_NAME}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      podiumEl.innerHTML = 
+        createPodiumCard(second, 'second', '🥈', 2) +
+        createPodiumCard(first, 'first', '🥇', 1) +
+        createPodiumCard(third, 'third', '🥉', 3);
+
+      // 2. Tabela de Classificação
+      renderTable(lb, maxScore);
+
+      // 3. Galeria de Artes da Semana
+      const artGrid = document.getElementById('artGalleryGrid');
+      const arts = liveData.currentWeekArt || [];
+      if (arts.length === 0) {
+        artGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">${dict['empty.art']}</div>`;
+      } else {
+        artGrid.innerHTML = arts.map(art => `
+          <div class="art-card">
+            <div class="art-img-wrap">
+              <img class="art-img" src="${art.imageUrl}" alt="${art.authorName}" loading="lazy" />
+            </div>
+            <div class="art-info">
+              <div class="art-author">
+                <img class="art-avatar" src="${art.authorAvatar}" alt="${art.authorName}" />
+                <span class="art-author-name">${art.authorName}</span>
+              </div>
+              <div class="art-vote-badge">
+                <img src="https://cdn.discordapp.com/emojis/1548443988745261086.gif" width="16" height="16" alt="vote" />
+                <span>${dict['art.voting']}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderTable(list, maxScore) {
+      const tbody = document.getElementById('rankingTableBody');
+      const dict = I18N[currentLang] || I18N.pt;
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 2.5rem;">${dict['empty.table']}</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map((item, idx) => {
+        const pct = Math.min(100, Math.max(12, Math.round((item.balance / maxScore) * 100)));
+        const rankMedal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+        return `
+          <tr data-username="${item.displayName.toLowerCase()} ${item.username.toLowerCase()}">
+            <td>
+              <span class="rank-number ${idx < 3 ? 'top' : ''}">${rankMedal}</span>
+            </td>
+            <td>
+              <div class="user-cell">
+                <img class="user-avatar-sm" src="${item.avatarUrl}" alt="${item.displayName}" />
+                <div class="user-details">
+                  <span class="user-name-text">${item.displayName}</span>
+                  <span class="user-subtext">${item.username}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="score-cell">
+                <img src="${CURRENCY_EMOJI_URL}" alt="pumpkin" />
+                <span>${item.balance} ${CURRENCY_NAME}</span>
+              </div>
+              <div class="bar-container">
+                <div class="bar-fill" style="width: ${pct}%;"></div>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterTable() {
+      const query = (document.getElementById('playerSearchInput')?.value || '').toLowerCase().trim();
+      document.querySelectorAll('#rankingTableBody tr').forEach(row => {
+        const text = row.getAttribute('data-username') || '';
+        if (!query || text.includes(query)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Polling Automático em Tempo Real (Live Fetch)
+    async function fetchRankingLive() {
+      try {
+        const res = await fetch('/api/sazonal/ranking');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.success) {
+          liveData = data;
+          renderUI();
+        }
+      } catch (err) {
+        console.warn('Erro ao atualizar ranking:', err);
+      }
+    }
+
+    // Spooky Floating Particle Canvas
+    (function initParticles() {
+      const canvas = document.getElementById('particlesCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const particles = Array.from({ length: 42 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 2.2 + 0.6,
+        dx: (Math.random() - 0.5) * 0.45,
+        dy: (Math.random() - 0.5) * 0.45,
+        alpha: Math.random() * 0.6 + 0.2,
+        color: Math.random() > 0.4 ? '#8b5cf6' : '#ff7b00'
+      }));
+
+      function loop() {
+        ctx.clearRect(0, 0, width, height);
+        for (const p of particles) {
+          p.x += p.dx;
+          p.y += p.dy;
+          if (p.x < 0) p.x = width;
+          if (p.x > width) p.x = 0;
+          if (p.y < 0) p.y = height;
+          if (p.y > height) p.y = 0;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.shadowBlur = p.r * 3;
+          ctx.shadowColor = p.color;
+          ctx.fill();
+        }
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTranslations();
+      startCountdown();
+      fetchRankingLive();
+      // Atualiza automaticamente a cada 15 segundos
+      setInterval(fetchRankingLive, 15000);
+    });
+  </script>
+</body>
+</html>

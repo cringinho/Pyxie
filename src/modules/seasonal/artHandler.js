@@ -5,6 +5,7 @@ const {
   loadData,
   saveData,
   addSeasonalBalance,
+  updateUserProfile,
   resolveSeasonalEmoji,
   resolveSeasonalEmojiObject,
   isSeasonalActive,
@@ -121,6 +122,14 @@ async function handleArtSubmission(message, client) {
 
   data.currentWeekArt = currentWeek;
   saveData(data);
+
+  if (message.author) {
+    updateUserProfile(message.author.id, {
+      username: message.author.username,
+      displayName: message.author.displayName || message.author.username,
+      avatarUrl: typeof message.author.displayAvatarURL === 'function' ? message.author.displayAvatarURL({ extension: 'png', size: 128 }) : null,
+    });
+  }
 
   console.log(`[Seasonal:Art] Nova arte submetida por ${message.author.tag} (${message.author.id})`);
   return true;
