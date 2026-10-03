@@ -16,6 +16,8 @@ const activeTimers = new Set();
 
 const DECOY_NAMES = {
   '82336witchscaul': 'Caldeirão da Bruxa',
+  '82336witchscauldron': 'Caldeirão da Bruxa',
+  '1552115015199227924': 'Caldeirão da Bruxa',
   '4124hellokit': 'Hello Kitty Aboborada',
   '4124hellokittypumpkin': 'Hello Kitty Aboborada',
   '1551355578066931763': 'Hello Kitty Aboborada',
