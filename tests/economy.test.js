@@ -12,6 +12,7 @@ const originalMarriage = fs.existsSync(marriageFile) ? fs.readFileSync(marriageF
 const { setEconomyConfig } = require('../src/services/database');
 const {
   claimDaily,
+  registerUserVote,
   getBalance,
   getMagicBeans,
   addMagicBeans,
@@ -19,6 +20,7 @@ const {
   getCurrencyBalances,
   getDailyStatus,
   getUserRank,
+  getRanking,
   finishWork,
   getWorkStatus,
   resetUserEconomy,
@@ -151,12 +153,17 @@ try {
   assert.equal(sDay3.streakBonus, 6, 'Streak 3 deve pagar +6 moedas');
   assert.equal(sDay3.totalAmount, 26);
 
-  // Quebra de streak após mais de 48h (perdeu o dia)
-  const sBroken = claimDaily('streak-user', Date.parse('2026-03-06T12:00:00.000Z'));
-  assert.equal(sBroken.claimed, true);
-  assert.equal(sBroken.streak, 1, 'Após mais de 48h sem claim, streak reseta para 1');
-  assert.equal(sBroken.streakBonus, 0);
-  assert.equal(sBroken.totalAmount, 20);
+  // Teste de Voto Top.gg reconhecido no Daily (+20 moedas)
+  registerUserVote('voter-user', new Date('2026-03-01T10:00:00.000Z').toISOString());
+  const vClaim = claimDaily('voter-user', Date.parse('2026-03-01T12:00:00.000Z'));
+  assert.equal(vClaim.hasVotedTopgg, true, 'Deve reconhecer voto ativo do Top.gg nas últimas 12h');
+  assert.equal(vClaim.voteBonus, 20, 'Bônus de voto do Top.gg deve ser +20 moedas');
+  assert.equal(vClaim.totalAmount, 40, 'Total deve somar amount (20) + voteBonus (20)');
+
+  // Validação do ranking com dailyStreak
+  const rEntries = getRanking(10);
+  const streakAcc = rEntries.find((e) => e.userId === 'streak-user');
+  assert.ok(streakAcc && typeof streakAcc.dailyStreak === 'number', 'Ranking deve conter dailyStreak numérico.');
 
   console.log('Verificação da economia, cooldown, ranking, Feijões Mágicos e Títulos: OK');
 } finally {

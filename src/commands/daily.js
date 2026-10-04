@@ -39,9 +39,13 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
     : t('daily.voteWeekdayBonus', guildOrSource);
 
   if (!result.claimed) {
+    const streakCooldownLine = result.streak > 0
+      ? t('daily.streakCooldown', guildOrSource, { streak: result.streak })
+      : '';
+
     const desc = [
       t('daily.descCooldown', guildOrSource, { time: formatRemaining(result.remainingMs, guildOrSource) }),
-      ...(result.streak > 0 ? ['', t('daily.streakActive', guildOrSource, { streak: result.streak })] : []),
+      ...(streakCooldownLine ? ['', streakCooldownLine] : []),
       '',
       voteBonusText,
       '',
@@ -72,26 +76,39 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
   }
 
   const compliment = getDailyCompliment(result.streak, guildOrSource);
+  const streakLine = t('daily.streakLine', guildOrSource, {
+    streak: result.streak,
+    compliment,
+  });
+
   const collectedLine = result.streak > 1
     ? t('daily.collectedStreak', guildOrSource, {
         normal: formatCoins(result.amount, guildOrSource),
         streakBonus: formatCoins(result.streakBonus, guildOrSource),
-        streak: result.streak,
-        compliment,
       })
     : t('daily.collected', guildOrSource, {
         amount: formatCoins(result.amount, guildOrSource),
-        compliment,
       });
+
+  const voteBonusActiveLine = result.voteBonus > 0
+    ? t('daily.topggVoteBonusActive', guildOrSource, { amount: formatCoins(result.voteBonus, guildOrSource) })
+    : null;
+
+  const voteBonusPromptLine = result.voteBonus === 0
+    ? t('daily.topggVoteBonusPrompt', guildOrSource)
+    : null;
 
   const desc = [
     t('daily.descClaimed', guildOrSource),
     '',
     t('daily.summaryTitle', guildOrSource),
+    streakLine,
     collectedLine,
+    ...(voteBonusActiveLine ? [voteBonusActiveLine] : []),
     t('daily.balance', guildOrSource, { balance: formatCoins(result.balance, guildOrSource) }),
     ...(result.magicBeanBonus ? [t('daily.magicBean', guildOrSource, { total: result.magicBeans })] : []),
     '',
+    ...(voteBonusPromptLine ? [voteBonusPromptLine, ''] : []),
     voteBonusText,
     '',
     t('vote.cta', guildOrSource),

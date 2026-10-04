@@ -1,4 +1,4 @@
-const { addCoins, addMagicBeans } = require('./economy');
+const { addCoins, addMagicBeans, registerUserVote, getUserAccount } = require('./economy');
 const { addItem } = require('./inventory');
 const { addLog } = require('./logging');
 
@@ -23,6 +23,16 @@ function verifyWebhookAuth(authHeader) {
 }
 
 /**
+ * Verifica se o usuário possui voto ativo nas últimas 12 horas.
+ */
+function hasActiveVote(userId, now = Date.now()) {
+  const account = getUserAccount(userId);
+  if (!account?.lastVotedAt) return false;
+  const lastVotedTime = new Date(account.lastVotedAt).getTime();
+  return (now - lastVotedTime) <= (12 * 60 * 60 * 1000);
+}
+
+/**
  * Processa a entrega de recompensas quando um voto é recebido do Top.gg.
  * @param {Object} payload { bot, user, type, isWeekend, query }
  */
@@ -43,14 +53,18 @@ function processTopggVote(payload) {
   // 2. Entregar Item
   addItem(userId, itemRewardId, 1);
 
-  // 3. Bônus de fim de semana: +1 Feijão Mágico
+  // 3. Registrar voto na conta do usuário (desbloqueia +20 moedas em /py-daily por 12h)
+  registerUserVote(userId);
+
+  // 4. Bônus de fim de semana: +1 Feijão Mágico
   if (isWeekend) {
     addMagicBeans(userId, 1);
   }
 
   addLog(
     `[Top.gg Voto] Usuário ${userId} votou no bot! Recompensa: +${coinsReward} 🪙, ${itemName}` +
-      (isWeekend ? ' + 1 🌱 Feijão Mágico (Bônus Fim de Semana 2x Ativo!)' : '')
+      (isWeekend ? ' + 1 🌱 Feijão Mágico (Bônus Fim de Semana 2x Ativo!)' : '') +
+      ' [Bônus de +20 moedas no /py-daily liberado por 12h!]'
   );
 
   return {
@@ -66,6 +80,7 @@ function processTopggVote(payload) {
 module.exports = {
   getVoteUrl,
   verifyWebhookAuth,
+  hasActiveVote,
   processTopggVote,
   DEFAULT_BOT_ID,
 };

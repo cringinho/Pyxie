@@ -108,6 +108,7 @@ function normalizeAccount(account) {
     workCount: normalizeNumber(acc.workCount, 0),
     lastWorkAt: acc.lastWorkAt || null,
     lastDailyAt: acc.lastDailyAt || null,
+    lastVotedAt: acc.lastVotedAt || null,
     dailyStreak: normalizeNumber(acc.dailyStreak, 0),
     titles: Array.isArray(acc.titles) ? acc.titles : [],
     equippedTitle: acc.equippedTitle || null,
@@ -495,12 +496,17 @@ function claimDaily(userId, now = Date.now()) {
   // Cap em 25 moedas para manter equilíbrio econômico
   const streakBonus = streak > 1 ? Math.min(streak * 2, 25) : 0;
 
+  // Bônus de Voto no Top.gg (ativo se votou nas últimas 12h: +20 moedas):
+  const lastVotedTime = accBefore.lastVotedAt ? new Date(accBefore.lastVotedAt).getTime() : 0;
+  const hasVotedTopgg = Boolean(lastVotedTime && (now - lastVotedTime) <= (12 * 60 * 60 * 1000));
+  const voteBonus = hasVotedTopgg ? 20 : 0;
+
   const { minimum, maximum } = getEconomyConfig();
   const amount = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
   const wonMagicBean = Math.random() < 0.01; // 1% de chance de Feijão Mágico
 
   const updated = updateUserAccount(userId, (acc) => {
-    acc.coins += (amount + streakBonus);
+    acc.coins += (amount + streakBonus + voteBonus);
     acc.dailyStreak = streak;
     if (wonMagicBean) {
       acc.magicBeans = (acc.magicBeans || 0) + 1;
@@ -513,7 +519,9 @@ function claimDaily(userId, now = Date.now()) {
     amount,
     streak,
     streakBonus,
-    totalAmount: amount + streakBonus,
+    voteBonus,
+    hasVotedTopgg,
+    totalAmount: amount + streakBonus + voteBonus,
     magicBeanBonus: wonMagicBean,
     balance: updated.coins,
     magicBeans: updated.magicBeans,
@@ -522,10 +530,21 @@ function claimDaily(userId, now = Date.now()) {
   };
 }
 
+function registerUserVote(userId, votedAt = new Date().toISOString()) {
+  return updateUserAccount(userId, (acc) => {
+    acc.lastVotedAt = votedAt;
+  });
+}
+
 function getRanking(limit = 10, userIds = null) {
   return Object.entries(readEconomy())
     .filter(([userId]) => (!userIds || userIds.has(userId)) && !isTestUser(userId))
-    .map(([userId, account]) => ({ userId, coins: Number(account.coins) || 0, magicBeans: Number(account.magicBeans) || 0 }))
+    .map(([userId, account]) => ({
+      userId,
+      coins: Number(account.coins) || 0,
+      magicBeans: Number(account.magicBeans) || 0,
+      dailyStreak: Number(account.dailyStreak) || 0,
+    }))
     .sort((left, right) => right.coins - left.coins)
     .slice(0, limit);
 }
@@ -586,6 +605,7 @@ module.exports = {
   finishWork,
   getDailyStatus,
   claimDaily,
+  registerUserVote,
   getRanking,
   getUserRank,
   getStreakRanking,

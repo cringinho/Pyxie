@@ -19,7 +19,10 @@ function buildWikiView(source = null, selectedTopic = null) {
   let title = t('wiki.title', source);
   let description = t('wiki.desc', source);
 
-  if (selectedTopic === 'eco') {
+  if (selectedTopic === 'about') {
+    title = t('wiki.topicAboutTitle', source);
+    description = t('wiki.topicAboutDesc', source);
+  } else if (selectedTopic === 'eco') {
     title = t('wiki.topicEcoTitle', source);
     description = t('wiki.topicEcoDesc', source);
   } else if (selectedTopic === 'work') {
@@ -44,6 +47,13 @@ function buildWikiView(source = null, selectedTopic = null) {
     .setTimestamp();
 
   const selectOptions = [
+    {
+      label: t('wiki.optAbout', source),
+      value: 'about',
+      description: t('wiki.optAboutDesc', source).slice(0, 100),
+      emoji: '🌺',
+      default: selectedTopic === 'about',
+    },
     {
       label: t('wiki.optEco', source),
       value: 'eco',
