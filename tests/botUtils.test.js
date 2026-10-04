@@ -116,17 +116,11 @@ try {
   const tarotCmd = require('../src/commands/tarot');
   const shipCmd = require('../src/commands/ship');
   const perfilCmd = require('../src/commands/perfil');
-  const trocarCmd = require('../src/commands/trocar');
   const dailyCmd = require('../src/commands/daily');
   const votarCmd = require('../src/commands/votar');
   const agendaCmd = require('../src/commands/agenda');
 
-  // 1. Trocar
-  assert.ok(trocarCmd.data.description.length <= 100, 'Descrição do slash /trocar deve ter <= 100 caracteres');
-  assert.ok(t('trade.proposalTitle', 'pt').includes('Proposta de Troca'), 'Trocar PT ok');
-  assert.ok(t('trade.proposalTitle', 'en').includes('Trade Proposal'), 'Trocar EN ok');
-
-  // 2. Trabalho
+  // 1. Trabalho
   assert.ok(trabalhoCmd.data.description.length <= 100, 'Descrição do slash /trabalho deve ter <= 100 caracteres');
   assert.ok(t('workMinigame.successTitle', 'pt', { profession: 'Programador' }).includes('Concluído'), 'Trabalho PT ok');
   assert.ok(t('workMinigame.successTitle', 'en', { profession: 'Programmer' }).includes('Completed'), 'Trabalho EN ok');

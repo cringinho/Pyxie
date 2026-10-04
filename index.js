@@ -32,7 +32,6 @@ const inventoryCommand = require('./src/commands/inventario');
 const profileCommand = require('./src/commands/perfil');
 const workCommand = require('./src/commands/trabalho');
 const dailyCommand = require('./src/commands/daily');
-const tradeCommand = require('./src/commands/trocar');
 const rankingCommand = require('./src/commands/ranking');
 const idiomaCommand = require('./src/commands/idioma');
 const jokenpoCommand = require('./src/commands/jokenpo');
@@ -161,7 +160,6 @@ async function sendStartupAnnouncement() {
           '> 💼 **/py-work** — Cumpra expedientes diários e suba na carreira',
           '> 👤 **/py-profile** — Customize títulos, temas e biografia',
           '> 🎲 **/py-coinflip** — Dispute cara ou coroa com apostas de moedinhas',
-          '> 🤝 **/py-trade** — Negocie itens e moedas com outros membros',
           '> 🪙 **/py-daily** — Resgate moedas diárias e bônus patrocinado',
           '> 🎒 **/py-inventory** — Visualize sua mochila, baús e gemas',
           '> ❓ **/py-help** — Menu interativo com todos os comandos',
@@ -796,13 +794,6 @@ client.on('interactionCreate', async (interaction) => {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
       await dailyCommand.handleDailyInteraction(interaction);
-      return;
-    }
-
-    if (typeof tradeCommand?.isTradeInteraction === 'function' && tradeCommand.isTradeInteraction(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await tradeCommand.handleTradeInteraction(interaction);
       return;
     }
 

@@ -24,7 +24,6 @@ module.exports = {
   AGENDA: 'py-schedule',
   EMOJIS: 'py-emojis',
   INVITE: 'py-invite',
-  TRADE: 'py-trade',
   TAROT: 'py-tarot',
   VOTE: 'py-vote',
   LANGUAGE: 'py-language',

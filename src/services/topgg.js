@@ -4,11 +4,13 @@ const { addLog } = require('./logging');
 
 const DEFAULT_BOT_ID = '1453888365618270331';
 
+const CRINGELANDIA_VOTE_URL = 'https://top.gg/discord/servers/874440609402134528/vote';
+
 /**
- * Retorna o link oficial de votação no Top.gg para o bot.
+ * Retorna o link oficial de votação no Top.gg para o servidor da Cringelândia.
  */
-function getVoteUrl(botId = DEFAULT_BOT_ID) {
-  return `https://top.gg/bot/${botId}/vote`;
+function getVoteUrl() {
+  return process.env.TOPGG_VOTE_URL || CRINGELANDIA_VOTE_URL;
 }
 
 /**

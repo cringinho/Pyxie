@@ -85,15 +85,6 @@
       ],
       "fallback": "👤"
     },
-    "grimorio": {
-      "name": "Grimório & Magias da Penumbra",
-      "description": "Emoji padrão para o grimório, feitiços, caldeirão de fusão e alquimia",
-      "primaryId": "1551355602297430016",
-      "secondaryIds": [
-        "1551355882447704124"
-      ],
-      "fallback": "📖"
-    },
     "ship": {
       "name": "Ship & Casamentos",
       "description": "Emoji padrão para calculadora de afinidade (ship), casamentos e romance",

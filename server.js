@@ -10,7 +10,6 @@ const { lockFilePath, isProcessAlive } = require('./src/utils/botUtils');
 const { reloadEmojiConfig } = require('./src/utils/appEmojis');
 const shopeeManager = require('./src/services/shopeeManager');
 const workSeederService = require('./src/services/workSeederService');
-const pinterestCatalogService = require('./src/services/pinterestCatalogService');
 const seasonalManager = require('./src/modules/seasonal/seasonalManager');
 const moduleManager = require('./src/services/moduleManager');
 
@@ -340,7 +339,6 @@ const SLOT_METADATA = {
   ship_heart: { title: 'Calculadora de Afinidade & Ship', fallback: '💖', category: 'social', themeKey: 'ship' },
   marriage_ring: { title: 'Casamentos & Cerimônias', fallback: '💍', category: 'social', themeKey: null },
   divorce: { title: 'Divórcio & Separação', fallback: '💔', category: 'social', themeKey: null },
-  trade: { title: 'Trocas Seguras entre Jogadores', fallback: '🤝', category: 'social', themeKey: null },
 
   // 🎲 Jogos & Sorte
   fortune_cookie: { title: 'Biscoito da Sorte', fallback: '🥠', category: 'minigames', themeKey: null },
@@ -371,25 +369,11 @@ app.get('/discord', (req, res) => {
 });
 
 app.get('/vote', (req, res) => {
-  const botId = process.env.TOPGG_BOT_ID || '1453888365618270331';
-  res.redirect(`https://top.gg/bot/${botId}/vote`);
+  res.redirect('https://top.gg/discord/servers/874440609402134528/vote');
 });
 
 app.get('/wiki', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'wiki.html'));
-});
-
-// Feed dinâmico de catálogo para o Pinterest (CSV)
-app.get(['/pinterest-catalog.csv', '/catalog.csv', '/api/pinterest/catalog.csv'], (req, res) => {
-  try {
-    const csvData = pinterestCatalogService.generatePinterestCsv();
-    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
-    res.status(200).send('\uFEFF' + csvData);
-  } catch (err) {
-    console.error('Erro ao gerar feed do Pinterest:', err);
-    res.status(500).send('Erro ao gerar catálogo do Pinterest');
-  }
 });
 
 // 1. Healthcheck e status público
@@ -1680,7 +1664,6 @@ const server = app.listen(PORT, HOST, () => {
   ensureSshKeys();
   startBot();
   workSeederService.startScheduler();
-  pinterestCatalogService.syncPinterestCatalogFile();
 });
 
 server.on('clientError', (err, socket) => {

@@ -25,7 +25,6 @@ const commands = [
   require('./agenda'),
   require('./emojis'),
   require('./convite'),
-  require('./trocar'),
   require('./votar'),
   require('./idioma'),
   require('./bonus'),

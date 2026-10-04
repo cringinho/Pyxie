@@ -2,7 +2,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { createTradeProposal, confirmTrade, cancelTrade } = require('../src/services/trade');
 const { getBalance, addCoins, addMagicBeans, buyTheme, equipTheme, getUserAccount } = require('../src/services/economy');
 const { addItem, hasItem } = require('../src/services/inventory');
 const { processTopggVote, verifyWebhookAuth } = require('../src/services/topgg');
@@ -17,28 +16,7 @@ try {
   addCoins(testUserB, 2000);
   addMagicBeans(testUserA, 10);
 
-  // 2. Teste de Trocas Seguras (Itens e Moedas)
-  addItem(testUserA, 'ametista', 3);
-  const tradeProp = createTradeProposal(testUserA, testUserB, { type: 'item', id: 'ametista', amount: 1 });
-  assert.equal(tradeProp.success, true, 'Proposta de troca válida deve ser criada.');
-
-  const confirm1 = confirmTrade(tradeProp.session.id, testUserA);
-  assert.equal(confirm1.completed, false, 'Apenas 1 confirmação não deve concluir a troca.');
-
-  const confirm2 = confirmTrade(tradeProp.session.id, testUserB);
-  assert.equal(confirm2.completed, true, 'Após ambas as confirmações, a troca deve ser concluída.');
-  assert.ok(hasItem(testUserB, 'ametista', 1), 'O receptor deve ter recebido o item.');
-
-  // Teste de cancelamento de troca
-  const testUserC = `user_test_c_${testRunId}`;
-  const testUserD = `user_test_d_${testRunId}`;
-  addItem(testUserC, 'ametista', 2);
-  const cancelProp = createTradeProposal(testUserC, testUserD, { type: 'item', id: 'ametista', amount: 1 });
-  assert.equal(cancelProp.success, true);
-  const cancelRes = cancelTrade(cancelProp.session.id, testUserC);
-  assert.equal(cancelRes.success, true, 'Cancelamento da proposta de troca deve funcionar.');
-
-  // 3. Teste de Temas Visuais com Feijões Mágicos
+  // 2. Teste de Temas Visuais com Feijões Mágicos
   const themeBuy = buyTheme(testUserA, 'ouro');
   assert.equal(themeBuy.success, true, 'Compra de tema com Feijões Mágicos deve ter sucesso.');
   const userAcc = getUserAccount(testUserA);

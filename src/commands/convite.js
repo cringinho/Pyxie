@@ -17,7 +17,6 @@ const RECOMMENDED_PERMISSIONS = 277025770560n;
 const ADMIN_PERMISSIONS = 8;
 
 const DEFAULT_BOT_ID = '1543650200718155897';
-const TOPGG_BOT_ID = '1453888365618270331';
 const COMMUNITY_SERVER_URL = 'https://disboard.org/pt-br/server/1453890868980482090';
 function getWebBonusUrl() {
   const base = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
@@ -32,8 +31,8 @@ function getInviteUrl(clientId = null, permissions = RECOMMENDED_PERMISSIONS) {
 function buildInviteComponents(clientId, isEn = false) {
   const { getEmoji } = require('../utils/appEmojis');
   const recommendedUrl = getInviteUrl(clientId, RECOMMENDED_PERMISSIONS);
-  const adminUrl = getInviteUrl(clientId, ADMIN_PERMISSIONS);
-  const voteUrl = `https://top.gg/bot/${TOPGG_BOT_ID}/vote`;
+  const { getVoteUrl } = require('../services/topgg');
+  const voteUrl = getVoteUrl();
 
   const row1 = new ActionRowBuilder().addComponents(
     new ButtonBuilder()

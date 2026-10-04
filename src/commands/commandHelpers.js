@@ -37,8 +37,6 @@ const COMMAND_ICONS = {
   'py-wiki': 'https://cdn.discordapp.com/emojis/1551356435521339452.gif',
 
   // Economia & Carreiras
-  trade: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
-  trocar: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
   daily: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
   diario: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
   wallet: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
@@ -47,8 +45,6 @@ const COMMAND_ICONS = {
   profissao: 'https://cdn.discordapp.com/emojis/1551356441112084641.gif',
   work: 'https://cdn.discordapp.com/emojis/1548444173747621918.gif',
   trabalho: 'https://cdn.discordapp.com/emojis/1548444173747621918.gif',
-  trade: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
-  trocar: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
   daily: getThemeEmojiUrl('dailyBonus') || 'https://cdn.discordapp.com/emojis/1548443978414817331.png',
   diario: getThemeEmojiUrl('dailyBonus') || 'https://cdn.discordapp.com/emojis/1548443978414817331.png',
   wallet: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
@@ -172,10 +168,6 @@ const MODULE_EMOJIS = {
 
 const COMMAND_CATEGORY_MAP = {
   // Economia & Carreiras
-  trade: 'economia',
-  'py-trade': 'economia',
-  trocar: 'economia',
-  'py-trocar': 'economia',
   daily: 'economia',
   'py-daily': 'economia',
   diario: 'economia',
