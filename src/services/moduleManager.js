@@ -463,6 +463,38 @@ class ModuleManager extends EventEmitter {
   }
 
   /**
+   * Verifica se um comando está habilitado com base no estado do seu módulo
+   */
+  isCommandEnabled(commandName) {
+    const bare = commandName.startsWith('py-') ? commandName.slice(3) : commandName;
+    for (const [id, mod] of this.modules.entries()) {
+      if (Array.isArray(mod.commands)) {
+        for (const cmd of mod.commands) {
+          const mainName = cmd.name || cmd.data?.name;
+          const mainBare = mainName?.startsWith('py-') ? mainName.slice(3) : mainName;
+          let matches = (mainName === commandName || mainBare === bare);
+          if (!matches && Array.isArray(cmd.aliases)) {
+            for (const alias of cmd.aliases) {
+              const aliasBare = alias.startsWith('py-') ? alias.slice(3) : alias;
+              if (alias === commandName || aliasBare === bare) {
+                matches = true;
+                break;
+              }
+            }
+          }
+          if (matches) {
+            if (this.activeScopes.size > 0) {
+              return this.activeScopes.has(id);
+            }
+            return this.isModuleEnabled(id);
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
    * Retorna metadados de todos os módulos instalados para exibição no painel administrativo
    */
   getAllModules() {

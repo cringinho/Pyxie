@@ -29,11 +29,19 @@ class MockDiscordClient extends EventEmitter {
 // 1. Teste de Descoberta Automática de Módulos
 const discovered = moduleManager.discoverModules();
 assert(discovered.has('seasonal'), 'O módulo oficial "seasonal" deve ser descoberto em src/modules/seasonal');
+assert(discovered.has('tarot'), 'O módulo oficial "tarot" deve ser descoberto em src/modules/tarot');
 const seasonalMod = discovered.get('seasonal');
 assert.equal(seasonalMod.id, 'seasonal', 'ID do módulo deve ser seasonal');
 assert.equal(seasonalMod.category, 'economia', 'Categoria nativa do módulo seasonal deve ser economia');
 assert(Array.isArray(seasonalMod.commands), 'Módulo deve exportar lista de comandos');
 assert(seasonalMod.commands.length > 0, 'Módulo seasonal deve conter ao menos 1 comando');
+
+const tarotMod = discovered.get('tarot');
+assert.equal(tarotMod.id, 'tarot', 'ID do módulo deve ser tarot');
+assert.equal(tarotMod.category, 'tarot', 'Categoria nativa do módulo tarot deve ser tarot');
+assert.equal(tarotMod.defaultEnabled, true, 'Módulo tarot deve ser ativado por padrão');
+assert(Array.isArray(tarotMod.commands), 'Módulo deve exportar lista de comandos');
+assert.equal(tarotMod.commands.length, 2, 'Módulo tarot deve conter 2 comandos (tarot e album)');
 console.log(`✅ Descoberta de módulos validada: ${discovered.size} módulo(s) encontrado(s) em src/modules/.`);
 
 // 2. Teste de Metadados e Formatação Administrativa
@@ -44,6 +52,12 @@ assert(seasonalMeta, 'Metadados de seasonal devem ser retornados');
 assert.equal(seasonalMeta.category, 'economia');
 assert.equal(typeof seasonalMeta.commandsCount, 'number');
 assert(seasonalMeta.commandsCount >= 1, 'commandsCount deve ser pelo menos 1');
+
+const tarotMeta = allModules.find((m) => m.id === 'tarot');
+assert(tarotMeta, 'Metadados de tarot devem ser retornados');
+assert.equal(tarotMeta.category, 'tarot');
+assert.equal(tarotMeta.commandsCount, 2);
+assert.equal(tarotMeta.enabled, true);
 console.log('✅ Formatação de metadados para painel administrativo validada.');
 
 (async () => {
@@ -56,7 +70,20 @@ console.log('✅ Formatação de metadados para painel administrativo validada.'
     commandsByName: mockCommandsByName,
   });
 
-  // Garante início limpo e desativado
+  // Valida que o módulo tarot foi ativado por padrão na inicialização
+  assert.equal(moduleManager.isModuleEnabled('tarot'), true, 'Módulo tarot deve estar habilitado por padrão');
+  assert.equal(mockCommandsByName.has('tarot') || mockCommandsByName.has('py-tarot'), true, 'py-tarot deve estar em commandsByName');
+  assert.equal(mockCommandsByName.has('album') || mockCommandsByName.has('py-album'), true, 'py-album deve estar em commandsByName');
+
+  // Testa ciclo de desativação e reativação do Tarot com Zero Memory Leak
+  await moduleManager.disableModule('tarot', false);
+  assert.equal(mockCommandsByName.has('tarot'), false, 'tarot deve ser removido ao desativar módulo');
+  assert.equal(mockCommandsByName.has('album'), false, 'album deve ser removido ao desativar módulo');
+  await moduleManager.enableModule('tarot', false);
+  assert.equal(mockCommandsByName.has('tarot'), true, 'tarot deve ser restaurado ao reativar módulo');
+  assert.equal(mockCommandsByName.has('album'), true, 'album deve ser restaurado ao reativar módulo');
+
+  // Garante início limpo e desativado para seasonal
   await moduleManager.disableModule('seasonal', false);
   assert.equal(mockCommandsByName.has('infoevento'), false, 'Comando não deve existir antes de ativar o módulo');
   assert.equal(mockCommandsByName.has('py-infoevento'), false, 'Alias py-infoevento não deve existir');
