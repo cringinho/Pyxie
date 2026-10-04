@@ -124,7 +124,7 @@ async function handleArtSubmission(message, client) {
         'Assim a galera da Cringelândia consegue votar individualmente na sua obra favorita.\n\n' +
         'Se você deseja concorrer, poste a sua arte preferida sozinha aqui no canal! 🎨'
       )
-      .setFooter({ text: 'Dica da Pyxie • Você pode fechar este aviso a qualquer momento' })
+      .setFooter({ text: 'Dica da Pyxie • Some em 30 segundos ou clique em Entendido' })
       .setTimestamp();
 
     const row = new ActionRowBuilder().addComponents(
@@ -136,22 +136,28 @@ async function handleArtSubmission(message, client) {
     );
 
     try {
-      const noticeMsg = await targetChannel.send({
+      const replyOptions = {
         embeds: [noticeEmbed],
         components: [row],
-      });
+        allowedMentions: { repliedUser: false },
+      };
+      const noticeMsg = typeof message.reply === 'function'
+        ? await message.reply(replyOptions).catch(() => targetChannel.send(replyOptions))
+        : await targetChannel.send(replyOptions);
 
-      // Auto-delete após 10 minutos
+      // Auto-delete após 30 segundos para despoluir rapidamente o canal de artes
       const timer = setTimeout(async () => {
         try {
           if (noticeMsg && typeof noticeMsg.delete === 'function') {
             await noticeMsg.delete().catch(() => null);
           }
         } catch (_) {}
-      }, 10 * 60 * 1000);
+      }, 30 * 1000);
       if (timer && typeof timer.unref === 'function') timer.unref();
 
-      activePromptTimers.set(`notice_${noticeMsg.id}`, timer);
+      if (noticeMsg?.id) {
+        activePromptTimers.set(`notice_${noticeMsg.id}`, timer);
+      }
     } catch (err) {
       console.warn('[Seasonal:Art] Falha ao enviar aviso de múltiplas imagens:', err.message);
     }
@@ -224,23 +230,28 @@ async function handleArtSubmission(message, client) {
   );
 
   try {
-    const promptMsg = await targetChannel.send({
+    const promptOptions = {
       content: `<@${message.author.id}>`,
       embeds: [promptEmbed],
       components: [confirmRow],
-    });
+    };
+    const promptMsg = typeof message.reply === 'function'
+      ? await message.reply(promptOptions).catch(() => targetChannel.send(promptOptions))
+      : await targetChannel.send(promptOptions);
 
-    // Auto-delete do prompt caso fique sem resposta por 24 horas
+    // Auto-delete do prompt caso fique sem resposta por 2 minutos para não poluir o canal
     const promptTimer = setTimeout(async () => {
       try {
         if (promptMsg && typeof promptMsg.delete === 'function') {
           await promptMsg.delete().catch(() => null);
         }
       } catch (_) {}
-    }, 24 * 60 * 60 * 1000);
+    }, 2 * 60 * 1000);
     if (promptTimer && typeof promptTimer.unref === 'function') promptTimer.unref();
 
-    activePromptTimers.set(`prompt_${promptMsg.id}`, promptTimer);
+    if (promptMsg?.id) {
+      activePromptTimers.set(`prompt_${promptMsg.id}`, promptTimer);
+    }
   } catch (err) {
     console.error('[Seasonal:Art] Falha ao enviar pergunta ao autor da arte:', err);
   }
@@ -259,6 +270,9 @@ async function handleButtonInteraction(interaction) {
   // 1. Fechar aviso de múltiplas artes (qualquer um pode clicar para despoluir)
   if (customId.startsWith('seasonal_multi_art_dismiss:')) {
     try {
+      if (typeof interaction.deferUpdate === 'function') {
+        await interaction.deferUpdate().catch(() => null);
+      }
       if (interaction.message && typeof interaction.message.delete === 'function') {
         await interaction.message.delete().catch(() => null);
       }
