@@ -10,3 +10,6 @@ minhasnote/
 prefix.json
 public/uploads/*
 !public/uploads/.gitkeep
+
+# Outros aplicativos e projetos isolados
+meus outros app/
