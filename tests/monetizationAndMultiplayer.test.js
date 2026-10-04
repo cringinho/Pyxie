@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { getBalance, addCoins, addMagicBeans, buyTheme, equipTheme, getUserAccount } = require('../src/services/economy');
+const { getBalance, addCoins, addMagicBeans, buyTheme, equipTheme, getUserAccount, hasActiveVote } = require('../src/services/economy');
 const { addItem, hasItem } = require('../src/services/inventory');
 const { processTopggVote, verifyWebhookAuth } = require('../src/services/topgg');
 
@@ -16,7 +16,7 @@ try {
   addCoins(testUserB, 2000);
   addMagicBeans(testUserA, 10);
 
-  // 2. Teste de Temas Visuais com Feijões Mágicos
+  // 3. Teste de Temas Visuais com Feijões Mágicos
   const themeBuy = buyTheme(testUserA, 'ouro');
   assert.equal(themeBuy.success, true, 'Compra de tema com Feijões Mágicos deve ter sucesso.');
   const userAcc = getUserAccount(testUserA);
@@ -28,12 +28,12 @@ try {
   const voteNormal = processTopggVote({ user: testUserA, isWeekend: false });
   assert.equal(voteNormal.success, true, 'Voto comum no Top.gg deve ser processado.');
   assert.equal(voteNormal.coins, 50, 'Recompensa comum deve ser 50 moedas.');
-  assert.equal(hasItem(testUserA, 'ametista', 1), true, 'Usuário deve receber 1x Ametista Reluzente.');
+  assert.equal(hasActiveVote(testUserA), true, 'Usuário deve ter status de votante ativo para bônus diário.');
 
   const voteWeekend = processTopggVote({ user: testUserB, isWeekend: true });
   assert.equal(voteWeekend.success, true, 'Voto no fim de semana no Top.gg deve ser processado.');
   assert.equal(voteWeekend.coins, 100, 'Recompensa de fim de semana deve ser 100 moedas (2x).');
-  assert.equal(hasItem(testUserB, 'esmeralda', 1), true, 'Usuário deve receber 1x Esmeralda Nobre.');
+  assert.equal(hasActiveVote(testUserB), true, 'Usuário B deve ter status de votante ativo.');
   const accB = getUserAccount(testUserB);
   assert.equal(accB.magicBeans, 1, 'Fim de semana deve conceder 1 Feijão Mágico.');
 

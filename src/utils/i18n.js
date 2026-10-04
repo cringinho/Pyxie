@@ -181,12 +181,12 @@ const TRANSLATIONS = {
     },
     "vote": {
       "title": "🗳️  ✦  Vote na Pyxie no Top.gg",
-      "desc": "Apoie o crescimento do bot votando no **Top.gg** a cada 12 horas e receba recompensas exclusivas instantaneamente!",
+      "desc": "Apoie o crescimento da nossa comunidade votando no **Top.gg** a cada 12 horas e receba recompensas exclusivas instantaneamente!",
       "rewardsTitle": "🎁 **RECOMPENSAS POR VOTO:**",
-      "rewardCoins": "> <a:coin:1548443880066777098> **+50 Moedinhas** no cofre",
-      "rewardItem": "> 🟣 **+1x Ametista Reluzente** no inventário",
-      "weekendActive": "<:event45:1548443947079049256> **BÔNUS DE FIM DE SEMANA ATIVO (2X):**\n> 🌟 *Todos os votos durante o fim de semana entregam o **DOBRO**! (+100 Moedas, 🟢 1x Esmeralda Nobre e +1 Feijão Mágico 🌱)!*",
-      "weekendTip": "✨ **DICA DE FIM DE SEMANA (2X):**\n> *De Sexta a Domingo, todos os votos entregam o **DOBRO** (+100 Moedas, 🟢 1x Esmeralda Nobre e +1 Feijão Mágico 🌱)!*",
+      "rewardCoins": "> <a:coin:1548443880066777098> **+50 Moedinhas** no cofre (+100 nos fins de semana!)",
+      "rewardDailyBonus": "> 🌟 **+20 Moedas Extras** no **/py-daily** durante 12 horas!",
+      "weekendActive": "<:event45:1548443947079049256> **BÔNUS DE FIM DE SEMANA ATIVO (2X):**\n> 🌟 *Todos os votos durante o fim de semana entregam o **DOBRO**! (+100 Moedas e +1 Feijão Mágico 🌱)!*",
+      "weekendTip": "✨ **DICA DE FIM DE SEMANA (2X):**\n> *De Sexta a Domingo, todos os votos entregam o **DOBRO** (+100 Moedas e +1 Feijão Mágico 🌱)!*",
       "cta": "👉 *Clique no botão abaixo para abrir a página de votação:*",
       "btnLabel": "Votar no Top.gg (12h)",
       "footerText": "Recompensas entregues automaticamente em segundos!",
@@ -204,7 +204,7 @@ const TRANSLATIONS = {
       "complimentTier4": "*(Mestre da consistência! Quase imparável!)*",
       "complimentTier5": "*(Lendário! Uma verdadeira lenda viva da Pyxie!)*",
       "collected": "> <a:coin:1548443880066777098> **Moedas Coletadas:** **+{amount}**",
-      "collectedStreak": "> <a:coin:1548443880066777098> **Moedas Coletadas:** **+{normal}** *(+ {streakBonus} bônus de streak)*",
+      "collectedStreak": "> <a:coin:1548443880066777098> **Moedas Coletadas:** **+{normal}** *(+ {streakBonus} bônus de sequência)*",
       "streakActive": "> 🔥 **Sequência Ativa:** **x{streak}** dias seguidos!",
       "topggVoteBonusActive": "> 🗳️ **Bônus de Voto Top.gg:** **+{amount}** *(voto ativo na Cringelândia!)*",
       "topggVoteBonusPrompt": "💡 *Dica: Vote na Cringelândia no Top.gg para desbloquear **+20 moedas extras** em cada diário!*",
@@ -212,8 +212,8 @@ const TRANSLATIONS = {
       "magicBean": "> ✨ **SORTE ÉPICA (1% de Chance):** **+1x Feijão Mágico <:peakmagicbean:1548444143431323719>** (Total: **{total} <:peakmagicbean:1548444143431323719>**)",
       "titleCooldown": "<:rarecrate:1548444209328033913>  ✦  Baú Diário em Cooldown",
       "descCooldown": "⏳ Você já coletou seu baú diário hoje. Espere **{time}** para abrir novamente!",
-      "voteWeekendBonus": "<:event45:1548443947079049256> **BÔNUS DE FIM DE SEMANA ATIVO (2X):**\n> Vote no **Top.gg** e ganhe **+100 Moedas**, **🟢 1x Esmeralda Nobre** e **+1 Feijão Mágico 🌱**!",
-      "voteWeekdayBonus": "<:gift62:1548443978414817331> **BÔNUS EXTRA NO TOP.GG (A CADA 12H):**\n> Vote no **Top.gg** e ganhe **+50 Moedas** e **🟣 1x Ametista Reluzente** *(com dobro nos fins de semana!)*",
+      "voteWeekendBonus": "<:event45:1548443947079049256> **BÔNUS DE FIM DE SEMANA ATIVO (2X):**\n> Vote no **Top.gg** e ganhe **+100 Moedas** e **+1 Feijão Mágico 🌱**!",
+      "voteWeekdayBonus": "<:gift62:1548443978414817331> **BÔNUS EXTRA NO TOP.GG (A CADA 12H):**\n> Vote no **Top.gg** e ganhe **+50 Moedas** *(com dobro e Feijão Mágico nos fins de semana!)*",
       "btnLabel": "Resgatar Bônus no Top.gg",
       "btnLabelCooldown": "Votar no Top.gg (Recompensa Extra)",
       "btnWebBonus": "Bônus Web (+75🪙)",
@@ -386,7 +386,7 @@ const TRANSLATIONS = {
       "categories": {
         "bau": {
           "label": "Baús Misteriosos",
-          "desc": "Baús com moedas e gemas preciosas"
+          "desc": "Baús com moedas e recompensas especiais"
         },
         "joia": {
           "label": "Joias & Gemas Preciosas",
@@ -394,7 +394,7 @@ const TRANSLATIONS = {
         }
       },
       "renovationTitle": "✨  ✦  Lojinha em Reformas Arcanas!",
-      "renovationDesc": "*« A artesã da Cringelândia pendurou uma placa rústica na porta encantada do bazar... »*\n\n🔨 **Estamos remodelando nossas prateleiras mágicas!**\nNo momento, as compras diretas de baús e joias estão pausadas enquanto expandimos o catálogo com novos itens mágicos e colecionáveis.\n\n💡 **Enquanto isso, você pode:**\n• Trabalhar em sua profissão com **/py-work** para acumular moedinhas;\n• Abrir suas cartas diárias de tarot com **/py-tarot**;\n• Explorar sua mochila e itens com **/py-inventory**!"
+      "renovationDesc": "*« A artesã da Cringelândia pendurou uma placa rústica na porta encantada do bazar... »*\n\n🔨 **Estamos remodelando nossas prateleiras mágicas!**\nNo momento, as compras diretas de baús e itens estão pausadas enquanto expandimos o catálogo com novos itens mágicos e colecionáveis.\n\n💡 **Enquanto isso, você pode:**\n• Trabalhar em sua profissão com **/py-work** para acumular moedinhas;\n• Abrir suas cartas diárias de tarot com **/py-tarot**;\n• Explorar sua mochila e itens com **/py-inventory**!"
     },
     "inventory": {
       "backpackTitle": "🎒  ✦  Mochila de {user}",
@@ -574,10 +574,6 @@ const TRANSLATIONS = {
       "footer": "Wiki Oficial • Pyxie",
       "btnOpenWeb": "Abrir Wiki Completa na Web",
       "categoryPlaceholder": "Selecione um tópico da enciclopédia...",
-      "optAbout": "🌺 Cringelândia & Acolhimento",
-      "optAboutDesc": "Santuário para mentes neurodivergentes, apoio autista e comunidade acolhedora.",
-      "topicAboutTitle": "🌺 Cringelândia & Santuário Neurodivergente",
-      "topicAboutDesc": "A Cringelândia é o lar acolhedor da Pyxie, fundado com carinho para mentes neurodivergentes (TEA, TDAH, Bipolaridade e diversidade mental). Um espaço livre de preconceito e bullying, com empatia a hiperfocos, apoio a artistas criadores e convivência harmoniosa.",
       "optEco": "🪙 Economia & Moedas",
       "optEcoDesc": "Moedinhas diárias, bônus de voto, transações seguras, baús e cofre.",
       "topicEcoTitle": "🪙 Economia, Moedas & Recompensas",
@@ -626,12 +622,12 @@ const TRANSLATIONS = {
     },
     "vote": {
       "title": "🗳️  ✦  Vote for Pyxie on Top.gg",
-      "desc": "Support the bot on **Top.gg** every 12 hours and claim exclusive instant rewards!",
+      "desc": "Support our community on **Top.gg** every 12 hours and claim exclusive instant rewards!",
       "rewardsTitle": "🎁 **VOTE REWARDS:**",
-      "rewardCoins": "> <a:coin:1548443880066777098> **+50 Coins** in your vault",
-      "rewardItem": "> 🟣 **+1x Shimmering Amethyst** in your backpack",
-      "weekendActive": "<:event45:1548443947079049256> **WEEKEND BONUS ACTIVE (2X):**\n> 🌟 *All votes during the weekend deliver **DOUBLE**! (+100 Coins, 🟢 1x Noble Emerald, and +1 Magic Bean 🌱)!*",
-      "weekendTip": "✨ **WEEKEND TIP (2X):**\n> *From Friday to Sunday, all votes deliver **DOUBLE** (+100 Coins, 🟢 1x Noble Emerald, and +1 Magic Bean 🌱)!*",
+      "rewardCoins": "> <a:coin:1548443880066777098> **+50 Coins** in your vault (+100 on weekends!)",
+      "rewardDailyBonus": "> 🌟 **+20 Extra Coins** on **/py-daily** for 12 hours!",
+      "weekendActive": "<:event45:1548443947079049256> **WEEKEND BONUS ACTIVE (2X):**\n> 🌟 *All votes during the weekend deliver **DOUBLE**! (+100 Coins and +1 Magic Bean 🌱)!*",
+      "weekendTip": "✨ **WEEKEND TIP (2X):**\n> *From Friday to Sunday, all votes deliver **DOUBLE** (+100 Coins and +1 Magic Bean 🌱)!*",
       "cta": "👉 *Click the button below to open the voting page:*",
       "btnLabel": "Vote on Top.gg (12h)",
       "footerText": "Rewards delivered automatically in seconds!",
@@ -657,8 +653,8 @@ const TRANSLATIONS = {
       "magicBean": "> ✨ **EPIC LUCK (1% Chance):** **+1x Magic Bean <:peakmagicbean:1548444143431323719>** (Total: **{total} <:peakmagicbean:1548444143431323719>**)",
       "titleCooldown": "<:rarecrate:1548444209328033913>  ✦  Daily Crate on Cooldown",
       "descCooldown": "⏳ You already claimed your daily crate today. Please wait **{time}** before claiming again!",
-      "voteWeekendBonus": "<:event45:1548443947079049256> **WEEKEND BONUS ACTIVE (2X):**\n> Vote on **Top.gg** and get **+100 Coins**, **🟢 1x Noble Emerald**, and **+1 Magic Bean 🌱**!",
-      "voteWeekdayBonus": "<:gift62:1548443978414817331> **EXTRA TOP.GG BONUS (EVERY 12H):**\n> Vote on **Top.gg** and get **+50 Coins** and **🟣 1x Shimmering Amethyst** *(doubled on weekends!)*",
+      "voteWeekendBonus": "<:event45:1548443947079049256> **WEEKEND BONUS ACTIVE (2X):**\n> Vote on **Top.gg** and get **+100 Coins** and **+1 Magic Bean 🌱**!",
+      "voteWeekdayBonus": "<:gift62:1548443978414817331> **EXTRA TOP.GG BONUS (EVERY 12H):**\n> Vote on **Top.gg** and get **+50 Coins** *(doubled with Magic Bean on weekends!)*",
       "btnLabel": "Claim Bonus on Top.gg",
       "btnLabelCooldown": "Vote on Top.gg (Extra Reward)",
       "btnWebBonus": "Web Bonus (+75🪙)",
@@ -831,7 +827,7 @@ const TRANSLATIONS = {
       "categories": {
         "bau": {
           "label": "Mystery Chests",
-          "desc": "Chests containing coins and rare precious gems"
+          "desc": "Chests containing coins and special rewards"
         },
         "joia": {
           "label": "Precious Gems & Jewels",
@@ -839,7 +835,7 @@ const TRANSLATIONS = {
         }
       },
       "renovationTitle": "✨  ✦  Arcane Renovations Underway!",
-      "renovationDesc": "*« The boutique crafter has hung an ornate rustic sign on the shop's enchanted gate... »*\n\n🔨 **We are remodeling our magical shelves!**\nDirect purchases of chests and jewels are temporarily paused while we expand our catalog with brand-new magical items and collectibles.\n\n💡 **In the meantime, you can:**\n• Work at your profession with **/py-work** to accumulate coins;\n• Draw your daily tarot card with **/py-tarot**;\n• Explore your backpack and items with **/py-inventory**!"
+      "renovationDesc": "*« The boutique crafter has hung an ornate rustic sign on the shop's enchanted gate... »*\n\n🔨 **We are remodeling our magical shelves!**\nDirect purchases from the shop are temporarily paused while we prepare fresh items and collectibles.\n\n💡 **In the meantime, you can:**\n• Work at your profession with **/py-work** to accumulate coins;\n• Draw your daily tarot card with **/py-tarot**;\n• Explore your backpack and items with **/py-inventory**!"
     },
     "inventory": {
       "backpackTitle": "🎒  ✦  {user}’s Backpack",
@@ -1019,10 +1015,6 @@ const TRANSLATIONS = {
           "footer": "Official Wiki • Pyxie",
           "btnOpenWeb": "Open Full Web Wiki",
           "categoryPlaceholder": "Select an encyclopedia topic...",
-          "optAbout": "🌺 Cringelândia & Sanctuary",
-          "optAboutDesc": "Sanctuary for neurodivergent minds, autism support, and welcoming community.",
-          "topicAboutTitle": "🌺 Cringelândia & Neurodivergent Sanctuary",
-          "topicAboutDesc": "Cringelândia is the warm home of Pyxie, founded with love for neurodivergent minds (Autism, ADHD, Bipolarity, and mental diversity). A safe space free of prejudice and bullying, celebrating hyperfocus, supporting visual artists, and promoting harmony.",
           "optEco": "🪙 Economy & Currency",
           "optEcoDesc": "Daily coins, vote bonuses, secure transactions, chests, and vault.",
           "topicEcoTitle": "🪙 Economy, Coins & Rewards",

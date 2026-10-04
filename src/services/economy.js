@@ -458,6 +458,21 @@ function getDailyStatus(userId, now = Date.now()) {
   };
 }
 
+const VOTE_VALIDITY_MS = 12 * 60 * 60 * 1000; // 12 horas
+
+function registerUserVote(userId, votedAt = Date.now()) {
+  return updateUserAccount(userId, (acc) => {
+    acc.lastVotedAt = new Date(votedAt).toISOString();
+  });
+}
+
+function hasActiveVote(userId, now = Date.now()) {
+  const account = getUserAccount(userId);
+  if (!account.lastVotedAt) return false;
+  const voteTime = new Date(account.lastVotedAt).getTime();
+  return (now - voteTime) < VOTE_VALIDITY_MS;
+}
+
 function claimDaily(userId, now = Date.now()) {
   const status = getDailyStatus(userId, now);
   if (!status.available) {
@@ -467,6 +482,8 @@ function claimDaily(userId, now = Date.now()) {
       amount: 0,
       streak: acc.dailyStreak || 0,
       streakBonus: 0,
+      voteBonus: 0,
+      hasVoted: hasActiveVote(userId, now),
       totalAmount: 0,
       balance: acc.coins,
       magicBeans: acc.magicBeans,
@@ -496,10 +513,9 @@ function claimDaily(userId, now = Date.now()) {
   // Cap em 25 moedas para manter equilíbrio econômico
   const streakBonus = streak > 1 ? Math.min(streak * 2, 25) : 0;
 
-  // Bônus de Voto no Top.gg (ativo se votou nas últimas 12h: +20 moedas):
-  const lastVotedTime = accBefore.lastVotedAt ? new Date(accBefore.lastVotedAt).getTime() : 0;
-  const hasVotedTopgg = Boolean(lastVotedTime && (now - lastVotedTime) <= (12 * 60 * 60 * 1000));
-  const voteBonus = hasVotedTopgg ? 20 : 0;
+  // Reconhecimento do voto no Top.gg (+20 moedas extras)
+  const hasVoted = hasActiveVote(userId, now);
+  const voteBonus = hasVoted ? 20 : 0;
 
   const { minimum, maximum } = getEconomyConfig();
   const amount = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
@@ -520,7 +536,7 @@ function claimDaily(userId, now = Date.now()) {
     streak,
     streakBonus,
     voteBonus,
-    hasVotedTopgg,
+    hasVoted,
     totalAmount: amount + streakBonus + voteBonus,
     magicBeanBonus: wonMagicBean,
     balance: updated.coins,
@@ -528,12 +544,6 @@ function claimDaily(userId, now = Date.now()) {
     nextClaimAt: new Date(now + DAILY_COOLDOWN_MS).toISOString(),
     remainingMs: DAILY_COOLDOWN_MS,
   };
-}
-
-function registerUserVote(userId, votedAt = new Date().toISOString()) {
-  return updateUserAccount(userId, (acc) => {
-    acc.lastVotedAt = votedAt;
-  });
 }
 
 function getRanking(limit = 10, userIds = null) {
@@ -605,8 +615,10 @@ module.exports = {
   finishWork,
   getDailyStatus,
   claimDaily,
-  registerUserVote,
   getRanking,
   getUserRank,
   getStreakRanking,
+  registerUserVote,
+  hasActiveVote,
+  VOTE_VALIDITY_MS,
 };

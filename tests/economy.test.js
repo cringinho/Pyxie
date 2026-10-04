@@ -12,7 +12,6 @@ const originalMarriage = fs.existsSync(marriageFile) ? fs.readFileSync(marriageF
 const { setEconomyConfig } = require('../src/services/database');
 const {
   claimDaily,
-  registerUserVote,
   getBalance,
   getMagicBeans,
   addMagicBeans,
@@ -20,7 +19,6 @@ const {
   getCurrencyBalances,
   getDailyStatus,
   getUserRank,
-  getRanking,
   finishWork,
   getWorkStatus,
   resetUserEconomy,
@@ -35,6 +33,9 @@ const {
   unequipTitle,
   setUserBio,
   getUserAccount,
+  getRanking,
+  registerUserVote,
+  hasActiveVote,
 } = require('../src/services/economy');
 const { createMarriageRequest, endMarriage, getSpouseId, resolveMarriageRequest } = require('../src/services/marriage');
 
@@ -153,17 +154,27 @@ try {
   assert.equal(sDay3.streakBonus, 6, 'Streak 3 deve pagar +6 moedas');
   assert.equal(sDay3.totalAmount, 26);
 
-  // Teste de Voto Top.gg reconhecido no Daily (+20 moedas)
-  registerUserVote('voter-user', new Date('2026-03-01T10:00:00.000Z').toISOString());
-  const vClaim = claimDaily('voter-user', Date.parse('2026-03-01T12:00:00.000Z'));
-  assert.equal(vClaim.hasVotedTopgg, true, 'Deve reconhecer voto ativo do Top.gg nas últimas 12h');
-  assert.equal(vClaim.voteBonus, 20, 'Bônus de voto do Top.gg deve ser +20 moedas');
-  assert.equal(vClaim.totalAmount, 40, 'Total deve somar amount (20) + voteBonus (20)');
+  // Testes de Voto no Top.gg e Bônus no /py-daily
+  const voteTime = Date.parse('2026-04-01T10:00:00.000Z');
+  assert.equal(hasActiveVote('voter-daily-user', voteTime), false, 'Usuário novo não tem voto ativo');
+  registerUserVote('voter-daily-user', voteTime);
+  assert.equal(hasActiveVote('voter-daily-user', voteTime), true, 'Usuário deve ter voto ativo após registrar');
+  assert.equal(hasActiveVote('voter-daily-user', voteTime + 11 * 3600 * 1000), true, 'Voto deve ser válido dentro de 12 horas');
+  assert.equal(hasActiveVote('voter-daily-user', voteTime + 13 * 3600 * 1000), false, 'Voto deve expirar após 12 horas');
 
-  // Validação do ranking com dailyStreak
-  const rEntries = getRanking(10);
-  const streakAcc = rEntries.find((e) => e.userId === 'streak-user');
-  assert.ok(streakAcc && typeof streakAcc.dailyStreak === 'number', 'Ranking deve conter dailyStreak numérico.');
+  // Claim diário com bônus de voto (+20 moedas)
+  setEconomyConfig(15, 15);
+  const voteClaim = claimDaily('voter-daily-user', voteTime);
+  assert.equal(voteClaim.claimed, true);
+  assert.equal(voteClaim.hasVoted, true, 'Claim diário deve reconhecer o voto no Top.gg');
+  assert.equal(voteClaim.voteBonus, 20, 'Claim diário deve conceder +20 moedas de bônus pelo voto');
+  assert.equal(voteClaim.totalAmount, 35, 'Total deve somar base (15) + voto (20) = 35');
+
+  // Teste de ranking com dailyStreak exposto
+  const rankList = getRanking(10);
+  const streakRankEntry = rankList.find(e => e.userId === 'streak-user');
+  assert.ok(streakRankEntry, 'streak-user deve estar presente no ranking');
+  assert.equal(typeof streakRankEntry.dailyStreak, 'number', 'dailyStreak deve ser um número no ranking');
 
   console.log('Verificação da economia, cooldown, ranking, Feijões Mágicos e Títulos: OK');
 } finally {

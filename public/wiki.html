@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wiki & Guia da Comunidade • Pyxie & Cringelândia</title>
-  <meta name="description" content="Enciclopédia e Guia da Comunidade da Pyxie e Cringelândia. Conheça o santuário para mentes neurodivergentes, economia viva, 78 cartas de tarot, carreiras e minigames." />
+  <title>Wiki Oficial • Pyxie</title>
+  <meta name="description" content="Enciclopédia oficial da Pyxie: Economia & Moedinhas, 10 Carreiras com Minigames, Tarot dos 78 Arcanos, Social & Casamentos e Minigames Comunitários." />
   <link rel="icon" href="https://cdn.discordapp.com/emojis/1548443951596306552.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Quicksand:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --bg-canvas: #090514;
+      --bg-dark: #090514;
       --bg-surface: #120924;
-      --bg-sidebar: #0e071c;
-      --bg-card: rgba(22, 11, 44, 0.75);
+      --bg-card: rgba(23, 12, 46, 0.75);
       --bg-card-hover: rgba(35, 18, 70, 0.95);
       --purple-main: #8b5cf6;
       --purple-glow: #a78bfa;
@@ -26,366 +25,503 @@
       --gold-accent: #facc15;
       --emerald-glow: #10b981;
       --red-danger: #ef4444;
-      --text-main: #f8fafc;
+      --text-white: #ffffff;
       --text-muted: #cbd5e1;
       --text-dim: #94a3b8;
-      --border-color: rgba(167, 139, 250, 0.18);
+      --border-glass: rgba(167, 139, 250, 0.18);
       --border-hover: rgba(236, 72, 153, 0.45);
       --font-title: 'Fredoka', sans-serif;
       --font-body: 'Quicksand', sans-serif;
-      --font-doc: 'Inter', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: var(--font-doc);
-      background: radial-gradient(circle at 50% -10%, #29104f 0%, #120924 40%, #090514 100%);
-      color: var(--text-main);
+      font-family: var(--font-body);
+      background: radial-gradient(circle at 50% -10%, #29104f 0%, #120924 45%, #090514 100%);
+      color: var(--text-white);
       min-height: 100vh;
-      line-height: 1.65;
       overflow-x: hidden;
+      line-height: 1.6;
     }
 
     /* Navbar */
-    .wiki-nav {
+    .navbar {
       position: sticky;
       top: 0;
       z-index: 100;
       backdrop-filter: blur(16px);
-      background: rgba(10, 5, 22, 0.88);
-      border-bottom: 1px solid var(--border-color);
-      padding: 12px 24px;
+      background: rgba(9, 5, 20, 0.85);
+      border-bottom: 1px solid var(--border-glass);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-white);
+      font-family: var(--font-title);
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .nav-brand img { width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(244, 63, 94, 0.4)); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--pink-glow); }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .btn-lang {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--purple-glow);
+      border-color: var(--border-glass);
+    }
+    .btn-lang:hover { background: rgba(139, 92, 246, 0.3); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple-main), var(--pink-neon));
+      color: white;
+      box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid var(--border-glass);
+      color: var(--purple-glow);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-family: var(--font-title);
+      font-size: 40px;
+      line-height: 1.2;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #ffffff 30%, var(--purple-glow) 70%, var(--pink-glow) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 680px;
+      margin: 0 auto 30px;
+    }
+
+    /* Tab Navigation */
+    .tabs-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .tab-btn {
+      padding: 10px 22px;
+      border-radius: 12px;
+      background: rgba(23, 12, 46, 0.7);
+      border: 1px solid var(--border-glass);
+      color: var(--text-muted);
+      font-family: var(--font-title);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      background: rgba(35, 18, 70, 0.9);
+      color: var(--text-white);
+      border-color: var(--border-hover);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3));
+      border-color: var(--pink-neon);
+      color: var(--text-white);
+      box-shadow: 0 0 15px rgba(236, 72, 153, 0.25);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Grid & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-hover);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-family: var(--font-title);
+      font-size: 18px;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+    .badge-t1 { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-t2 { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+    .badge-t3 { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.4); }
+    .badge-t4 { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); }
+    .badge-t5 { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    .spirit-sprite-wrap {
+      width: 100%;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(147, 51, 234, 0.2) 0%, rgba(7, 4, 13, 0.5) 80%);
+      border-radius: 12px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(192, 132, 252, 0.18);
+      overflow: hidden;
+    }
+    .spirit-sprite {
+      height: 95px;
+      width: auto;
+      object-fit: contain;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+      transition: transform 0.3s ease;
+    }
+    .card:hover .spirit-sprite {
+      transform: scale(1.08);
+    }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .card-meta {
+      font-size: 12px;
+      color: var(--text-dim);
+      border-top: 1px solid rgba(167, 139, 250, 0.1);
+      padding-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* Psychology Matrix Table */
+    .table-container {
+      overflow-x: auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: center;
+    }
+    th, td {
+      padding: 10px 12px;
+      border: 1px solid rgba(167, 139, 250, 0.1);
+    }
+    th {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--purple-glow);
+      font-family: var(--font-title);
+      font-weight: 600;
+    }
+    td.positive { color: var(--emerald-glow); font-weight: 700; }
+    td.neutral { color: var(--text-dim); }
+    td.negative { color: var(--red-danger); font-weight: 700; }
+
+    /* Pyxie Promo & Support Banner */
+    .pyxie-promo-banner {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-    }
-    .wiki-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      max-width: 520px;
+      margin: 35px auto 15px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, rgba(147, 51, 234, 0.16), rgba(244, 63, 94, 0.14));
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
       text-decoration: none;
-      color: #fff;
-      font-family: var(--font-title);
-      font-size: 19px;
-      font-weight: 700;
-    }
-    .wiki-brand img {
-      width: 34px;
-      height: 34px;
-      object-fit: contain;
-      filter: drop-shadow(0 2px 8px rgba(236, 72, 153, 0.5));
-    }
-    .wiki-brand-badge {
-      font-size: 11px;
-      background: rgba(139, 92, 246, 0.25);
-      border: 1px solid var(--border-color);
-      color: var(--purple-glow);
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-family: var(--font-mono);
-      font-weight: 600;
-    }
-    .nav-search-wrap {
-      flex: 1;
-      max-width: 440px;
-      position: relative;
-    }
-    .nav-search-input {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 7px 12px 7px 34px;
-      color: #fff;
-      font-size: 13px;
-      font-family: var(--font-doc);
-      outline: none;
-      transition: all 0.2s;
-    }
-    .nav-search-input:focus {
-      border-color: var(--pink-glow);
-      background: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 0 12px rgba(236, 72, 153, 0.25);
-    }
-    .nav-search-icon {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 13px;
-      opacity: 0.6;
-      pointer-events: none;
-    }
-    .wiki-nav-links {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .btn-nav {
-      font-size: 13px;
-      font-weight: 600;
-      padding: 6px 14px;
-      border-radius: 8px;
-      text-decoration: none;
-      color: var(--text-muted);
-      transition: all 0.2s;
-      border: 1px solid transparent;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-nav:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .btn-nav-primary {
-      background: linear-gradient(135deg, var(--purple-main), var(--pink-neon));
-      color: #fff;
-      box-shadow: 0 2px 10px rgba(236, 72, 153, 0.35);
-    }
-    .btn-nav-primary:hover {
-      color: #fff;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(236, 72, 153, 0.5);
-    }
-    .btn-lang {
-      background: rgba(139, 92, 246, 0.12);
-      border: 1px solid var(--border-color);
-      color: var(--purple-glow);
+      color: inherit;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
     }
-    .btn-lang:hover {
-      background: rgba(139, 92, 246, 0.25);
-      color: #fff;
+    .pyxie-promo-banner:hover {
+      transform: translateY(-2px);
+      border-color: rgba(244, 114, 182, 0.6);
+      box-shadow: 0 8px 30px rgba(244, 63, 94, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
-
-    /* Wiki Wrapper: Sidebar + Content + TOC */
-    .wiki-layout {
-      display: flex;
-      max-width: 1480px;
-      margin: 0 auto;
-      min-height: calc(100vh - 65px);
-    }
-
-    /* Sidebar Left */
-    .wiki-sidebar {
-      width: 290px;
+    .pyxie-promo-banner .promo-icon {
+      font-size: 26px;
+      line-height: 1;
       flex-shrink: 0;
-      background: rgba(14, 7, 28, 0.7);
-      border-right: 1px solid var(--border-color);
-      padding: 24px 16px;
-      position: sticky;
-      top: 61px;
-      height: calc(100vh - 61px);
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: var(--purple-deep) transparent;
+      filter: drop-shadow(0 0 10px rgba(244, 114, 182, 0.5));
     }
-    .wiki-sidebar::-webkit-scrollbar { width: 5px; }
-    .wiki-sidebar::-webkit-scrollbar-thumb { background: var(--purple-deep); border-radius: 4px; }
-
-    .sidebar-section {
-      margin-bottom: 22px;
+    .pyxie-promo-banner .promo-content {
+      flex: 1;
+      text-align: left;
+      min-width: 0;
     }
-    .sidebar-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--purple-glow);
+    .pyxie-promo-banner .promo-title {
+      font-size: 0.95rem;
       font-weight: 700;
-      margin-bottom: 8px;
-      padding-left: 10px;
+      color: #ffffff;
+      margin-bottom: 2px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .sidebar-nav {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .sidebar-link {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 10px;
-      border-radius: 8px;
+    .pyxie-promo-banner .promo-desc {
+      font-size: 0.78rem;
       color: var(--text-muted);
-      text-decoration: none;
-      font-size: 13.5px;
-      font-weight: 500;
-      transition: all 0.15s ease;
+      line-height: 1.3;
     }
-    .sidebar-link:hover {
-      color: #fff;
-      background: rgba(139, 92, 246, 0.12);
-      transform: translateX(2px);
-    }
-    .sidebar-link.active {
-      color: #fff;
-      background: linear-gradient(90deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.15));
-      border-left: 3px solid var(--pink-neon);
-      font-weight: 600;
-    }
-    .sidebar-badge-new {
-      font-size: 9px;
-      background: rgba(236, 72, 153, 0.3);
-      color: var(--pink-glow);
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-weight: 700;
-      margin-left: auto;
-    }
-
-    /* Main Article Pane */
-    .wiki-article {
-      flex: 1;
-      min-width: 0;
-      padding: 36px 48px 80px;
-    }
-
-    /* Breadcrumbs */
-    .breadcrumbs {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12.5px;
-      color: var(--text-dim);
-      margin-bottom: 16px;
-    }
-    .breadcrumbs a {
-      color: var(--purple-glow);
-      text-decoration: none;
-    }
-    .breadcrumbs a:hover { text-decoration: underline; }
-
-    /* Article Hero */
-    .article-header {
-      margin-bottom: 32px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border-color);
-    }
-    .article-header h1 {
-      font-family: var(--font-title);
-      font-size: 34px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 10px;
-      line-height: 1.25;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .article-header p.lead {
-      font-size: 16px;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-    .article-meta {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-top: 14px;
-      font-size: 12px;
-      color: var(--text-dim);
-    }
-    .article-meta span {
+    .pyxie-promo-banner .promo-cta {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-    }
-
-    /* Content Typography & GitHub Wiki Styles */
-    .wiki-content h2 {
-      font-family: var(--font-title);
-      font-size: 24px;
-      color: #fff;
-      margin: 36px 0 16px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(167, 139, 250, 0.15);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      scroll-margin-top: 80px;
-    }
-    .wiki-content h3 {
-      font-family: var(--font-title);
-      font-size: 19px;
-      color: var(--purple-glow);
-      margin: 24px 0 12px;
-      scroll-margin-top: 80px;
-    }
-    .wiki-content p {
-      font-size: 15px;
-      color: var(--text-muted);
-      margin-bottom: 16px;
-      line-height: 1.7;
-    }
-    .wiki-content ul, .wiki-content ol {
-      margin: 0 0 18px 24px;
-      color: var(--text-muted);
-      font-size: 14.5px;
-    }
-    .wiki-content li {
-      margin-bottom: 6px;
-    }
-
-    /* GitHub Style Callout / Admonitions */
-    .callout {
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin: 20px 0;
-      border-left: 4px solid;
-      background: rgba(22, 11, 44, 0.8);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    .callout-title {
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #f43f5e, #9333ea);
+      color: #ffffff;
+      font-size: 0.82rem;
       font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(244, 63, 94, 0.4);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border-glass);
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+    footer a { color: var(--purple-glow); text-decoration: none; }
+
+    /* Native Pyxie & Shopee Feature Banner */
+    .pyxie-native-banner-container {
+      max-width: 860px;
+      margin: 0 auto 30px;
+      padding: 0;
+      width: 100%;
+    }
+    .pyxie-native-banner {
+      position: relative;
+      display: block;
+      width: 100%;
+      min-height: 100px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      box-shadow: 0 8px 30px rgba(9, 5, 20, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .pyxie-native-banner:hover {
+      transform: translateY(-2px);
+      border-color: rgba(236, 72, 153, 0.7);
+      box-shadow: 0 12px 35px rgba(139, 92, 246, 0.35);
+    }
+    .pyxie-native-banner .banner-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center 30%;
+      transform: scale(1.02);
+      transition: transform 0.5s ease;
+    }
+    .pyxie-native-banner:hover .banner-bg {
+      transform: scale(1.06);
+    }
+    .pyxie-native-banner .banner-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(9, 5, 20, 0.94) 0%, rgba(18, 9, 36, 0.88) 50%, rgba(9, 5, 20, 0.78) 100%);
+      backdrop-filter: blur(2px);
+    }
+    .pyxie-native-banner .banner-content {
+      position: relative;
+      z-index: 2;
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-      font-size: 14.5px;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 16px 22px;
     }
-    .callout-note {
-      border-color: var(--purple-main);
-      background: rgba(139, 92, 246, 0.08);
-      color: #e2e8f0;
-    }
-    .callout-note .callout-title { color: var(--purple-glow); }
-    .callout-tip {
-      border-color: var(--emerald-glow);
-      background: rgba(16, 185, 129, 0.08);
-      color: #e2e8f0;
-    }
-    .callout-tip .callout-title { color: #34d399; }
-    .callout-important {
-      border-color: var(--pink-neon);
-      background: rgba(236, 72, 153, 0.08);
-      color: #e2e8f0;
-    }
-    .callout-important .callout-title { color: var(--pink-glow); }
-    .callout-warning {
-      border-color: var(--gold-accent);
-      background: rgba(250, 204, 21, 0.08);
-      color: #e2e8f0;
-    }
-    .callout-warning .callout-title { color: var(--gold-accent); }
-
-    /* Chips and Code */
-    code {
-      font-family: var(--font-mono);
-      background: rgba(255, 255, 255, 0.08);
+    .pyxie-native-banner .banner-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(236, 72, 153, 0.2);
+      border: 1px solid rgba(236, 72, 153, 0.4);
       color: #f472b6;
-      padding: 2px 7px;
-      border-radius: 6px;
-      font-size: 13px;
-      border: 1px solid rgba(244, 114, 182, 0.2);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .pyxie-native-banner .banner-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .pyxie-native-banner .banner-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 4px 0 2px;
+    }
+    .pyxie-native-banner .banner-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      margin: 0;
+    }
+    .pyxie-native-banner .banner-action {
+      flex-shrink: 0;
+    }
+    .pyxie-native-banner .banner-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
+      color: #ffffff;
+      font-size: 0.84rem;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35);
+      transition: all 0.2s ease;
+    }
+    .pyxie-native-banner:hover .banner-btn {
+      transform: scale(1.04);
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.55);
+    }
+    @media (max-width: 768px) {
+      .pyxie-native-banner .banner-content {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px;
+        gap: 12px;
+      }
+      .pyxie-native-banner .banner-action {
+        width: 100%;
+      }
+      .pyxie-native-banner .banner-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
     /* Segmentação de Monetização Bilíngue (PT = Shopee BR, EN = Adsterra Global) */
     .monetization-pt {
       display: block;
@@ -425,7 +561,6 @@
       text-align: center;
       box-sizing: border-box;
       overflow: hidden;
-      margin: 20px 0;
     }
     .adsterra-header {
       display: flex;
@@ -454,163 +589,22 @@
       width: 100%;
       overflow: hidden;
     }
-
-    /* Cards Grid */
-    .wiki-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-      gap: 18px;
-      margin: 20px 0 28px;
-    }
-    .wiki-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 20px;
-      transition: all 0.2s ease;
-      backdrop-filter: blur(8px);
-    }
-    .wiki-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-2px);
-      background: var(--bg-card-hover);
-      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
-    }
-    .wiki-card-icon {
-      font-size: 28px;
-      margin-bottom: 12px;
-      display: inline-block;
-    }
-    .wiki-card-title {
-      font-family: var(--font-title);
-      font-size: 17px;
-      color: #fff;
-      margin-bottom: 8px;
+    .adsterra-desktop-468 {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
-    .wiki-card-text {
-      font-size: 13.5px;
-      color: var(--text-muted);
-      line-height: 1.5;
+    .adsterra-mobile-300 {
+      display: none;
     }
-
-    /* Tables */
-    .wiki-table-wrap {
-      overflow-x: auto;
-      margin: 20px 0 28px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-    }
-    .wiki-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13.5px;
-      text-align: left;
-    }
-    .wiki-table th {
-      background: rgba(25, 12, 50, 0.85);
-      color: var(--purple-glow);
-      font-family: var(--font-title);
-      font-weight: 600;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border-color);
-    }
-    .wiki-table td {
-      padding: 12px 16px;
-      border-bottom: 1px solid rgba(167, 139, 250, 0.1);
-      color: var(--text-muted);
-    }
-    .wiki-table tr:last-child td { border-bottom: none; }
-    .wiki-table tr:hover td { background: rgba(139, 92, 246, 0.05); }
-
-    /* Mascot Visual Banner */
-    .mascot-banner {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      background: linear-gradient(135deg, rgba(35, 15, 75, 0.7), rgba(18, 9, 36, 0.9));
-      border: 1px solid rgba(236, 72, 153, 0.35);
-      border-radius: 16px;
-      padding: 22px 28px;
-      margin: 28px 0;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    }
-    .mascot-banner img {
-      width: 105px;
-      height: 105px;
-      object-fit: contain;
-      filter: drop-shadow(0 4px 14px rgba(236, 72, 153, 0.4));
-      flex-shrink: 0;
-    }
-    .mascot-banner-text h4 {
-      font-family: var(--font-title);
-      font-size: 18px;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-    .mascot-banner-text p {
-      font-size: 13.5px;
-      color: var(--text-muted);
-      margin: 0;
-      line-height: 1.5;
+    @media (max-width: 520px) {
+      .adsterra-desktop-468 {
+        display: none !important;
+      }
+      .adsterra-mobile-300 {
+        display: flex !important;
+      }
     }
 
-    /* Right TOC */
-    .wiki-toc {
-      width: 230px;
-      flex-shrink: 0;
-      padding: 36px 16px 20px;
-      position: sticky;
-      top: 61px;
-      height: calc(100vh - 61px);
-      overflow-y: auto;
-    }
-    .toc-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-dim);
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-    .toc-nav {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .toc-link {
-      color: var(--text-dim);
-      text-decoration: none;
-      font-size: 12.5px;
-      transition: color 0.15s;
-      display: block;
-      line-height: 1.4;
-    }
-    .toc-link:hover, .toc-link.active {
-      color: var(--pink-glow);
-    }
-
-    /* Footer */
-    .wiki-footer {
-      border-top: 1px solid var(--border-color);
-      padding: 36px 24px;
-      text-align: center;
-      color: var(--text-dim);
-      font-size: 13px;
-      background: rgba(10, 5, 22, 0.95);
-    }
-    .wiki-footer a {
-      color: var(--purple-glow);
-      text-decoration: none;
-    }
-    .wiki-footer a:hover {
-      text-decoration: underline;
-    }
-
-    /* Floating Tip (Must keep id="pyxieFloatingTip" for test gates) */
+    /* Assistente Flutuante da Pyxie (Child-Safe & Elegante) */
     .pyxie-floating-tip {
       position: fixed;
       bottom: 24px;
@@ -623,6 +617,11 @@
       padding: 16px 18px 16px 72px;
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(139, 92, 246, 0.25);
       backdrop-filter: blur(14px);
+      animation: tipSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes tipSlideIn {
+      from { transform: translateY(40px) scale(0.95); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
     }
     .tip-close-btn {
       position: absolute;
@@ -639,9 +638,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
-    .tip-close-btn:hover { background: rgba(236, 72, 153, 0.3); color: #fff; }
+    .tip-close-btn:hover {
+      background: rgba(236, 72, 153, 0.3);
+      color: #fff;
+    }
     .tip-mascot-wrap {
       position: absolute;
       bottom: 10px;
@@ -662,7 +664,11 @@
       gap: 8px;
       margin-bottom: 4px;
     }
-    .tip-title { font-size: 0.92rem; font-weight: 700; color: #fff; }
+    .tip-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
     .tip-badge {
       font-size: 0.68rem;
       padding: 2px 8px;
@@ -672,8 +678,17 @@
       color: #d8b4fe;
       font-weight: 600;
     }
-    .tip-text { font-size: 0.78rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 10px; }
-    .tip-actions { display: flex; gap: 8px; align-items: center; }
+    .tip-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+    .tip-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
     .tip-btn-primary {
       font-size: 0.75rem;
       font-weight: 700;
@@ -682,7 +697,11 @@
       background: linear-gradient(135deg, #10b981, #059669);
       color: #fff;
       text-decoration: none;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+    }
+    .tip-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
     }
     .tip-btn-secondary {
       font-size: 0.75rem;
@@ -693,566 +712,327 @@
       border: 1px solid rgba(255, 255, 255, 0.15);
       color: #fff;
       text-decoration: none;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
-
-    /* Mobile Responsive */
-    @media (max-width: 1024px) {
-      .wiki-toc { display: none; }
-      .wiki-article { padding: 24px 20px; }
+    .tip-btn-secondary:hover {
+      background: rgba(236, 72, 153, 0.2);
+      border-color: rgba(236, 72, 153, 0.4);
     }
-    @media (max-width: 768px) {
-      .wiki-layout { flex-direction: column; }
-      .wiki-sidebar {
-        width: 100%;
-        height: auto;
-        position: static;
-        border-right: none;
-        border-bottom: 1px solid var(--border-color);
-        max-height: 320px;
+    @media (max-width: 600px) {
+      .pyxie-floating-tip {
+        bottom: 16px;
+        right: 14px;
+        left: 14px;
+        max-width: none;
+        padding-left: 65px;
       }
-      .wiki-nav-links { display: none; }
-      .article-header h1 { font-size: 26px; }
-      .mascot-banner { flex-direction: column; text-align: center; }
+      .tip-mascot-wrap {
+        left: -8px;
+        width: 68px;
+        height: 80px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Navbar -->
-  <header class="wiki-nav">
-    <a href="/" class="wiki-brand">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="/" class="nav-brand">
       <img src="/assets/pyxie/pyxie_pixelart_face.png" alt="Pyxie" />
       <span>Pyxie Wiki</span>
-      <span class="wiki-brand-badge">Docs</span>
     </a>
-
-    <div class="nav-search-wrap">
-      <span class="nav-search-icon">🔍</span>
-      <input type="text" id="wikiSearch" class="nav-search-input" placeholder="Pesquisar tópicos, comandos e regras..." oninput="handleSearch(this.value)" />
+    <ul class="nav-links">
+      <li><a href="/" data-i18n="navHome">Início</a></li>
+      <li><a href="#eco" onclick="switchTab('eco')" data-i18n="navEco">Economia</a></li>
+      <li><a href="#work" onclick="switchTab('work')" data-i18n="navWork">Carreiras</a></li>
+      <li><a href="#tarot" onclick="switchTab('tarot')" data-i18n="navTarot">Tarot</a></li>
+      <li><a href="#social" onclick="switchTab('social')" data-i18n="navSocial">Social</a></li>
+      <li><a href="#games" onclick="switchTab('games')" data-i18n="navGames">Jogos</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn btn-lang" id="langToggle" onclick="toggleLanguage()">EN / PT</button>
+      <a href="/invite" class="btn btn-primary" target="_blank" data-i18n="btnInvite">Adicionar Bot</a>
     </div>
+  </nav>
 
-    <div class="wiki-nav-links">
-      <a href="/" class="btn-nav" data-i18n="navHome">Início</a>
-      <a href="/bonus" class="btn-nav" data-i18n="navBonus">Bônus Web</a>
-      <a href="/vote" target="_blank" rel="noopener noreferrer" class="btn-nav" data-i18n="navVote">Votar Top.gg</a>
-      <a href="https://discord.gg/874440609402134528" target="_blank" rel="noopener noreferrer" class="btn-nav btn-nav-primary" data-i18n="navDiscord">Servidor Cringelândia</a>
-      <button class="btn-nav btn-lang" id="langToggle" onclick="toggleLanguage()">EN / PT</button>
+  <!-- Hero Header -->
+  <header class="hero">
+    <div class="hero-badge" data-i18n="heroBadge">📖 Enciclopédia & Guia Oficial</div>
+    <h1 data-i18n="heroTitle">Enciclopédia Oficial da Pyxie</h1>
+    <p data-i18n="heroDesc">Conheça todos os módulos da Pyxie: Economia Viva com Moedinhas e Feijões, Carreiras interativas com minigames, Tarot canônico dos 78 Arcanos, Social e Diversão Comunitária.</p>
+
+    <!-- Interactive Tab Buttons -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('eco')" id="tab-btn-eco" data-i18n="tabEco">🪙 Economia & Moedas</button>
+      <button class="tab-btn" onclick="switchTab('work')" id="tab-btn-work" data-i18n="tabWork">💼 Carreiras & Minigames</button>
+      <button class="tab-btn" onclick="switchTab('tarot')" id="tab-btn-tarot" data-i18n="tabTarot">🔮 Tarot (78 Arcanos)</button>
+      <button class="tab-btn" onclick="switchTab('social')" id="tab-btn-social" data-i18n="tabSocial">💍 Social & Casamentos</button>
+      <button class="tab-btn" onclick="switchTab('games')" id="tab-btn-games" data-i18n="tabGames">🎲 Jogos & Diversão</button>
     </div>
   </header>
 
-  <!-- Layout Container -->
-  <div class="wiki-layout">
-
-    <!-- Left Sidebar: Documentation Hierarchy -->
-    <aside class="wiki-sidebar">
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-i18n="sideSecCommunity">🌺 Cringelândia & Acolhimento</div>
-        <ul class="sidebar-nav">
-          <li><a href="#sobre-cringelandia" class="sidebar-link active" data-i18n="sideAbout">Santuário Neurodivergente</a></li>
-          <li><a href="#diretrizes-leis" class="sidebar-link" data-i18n="sideGuidelines">Diretrizes & Ambiente Seguro</a></li>
-          <li><a href="#cargos-identidade" class="sidebar-link" data-i18n="sideRoles">Cargos & Identidade</a></li>
-          <li><a href="#apoie-o-servidor" class="sidebar-link" data-i18n="sideSupport">Apoie no Top.gg (+20🪙) <span class="sidebar-badge-new">Novo</span></a></li>
-        </ul>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-i18n="sideSecEconomy">🪙 Economia Mágica</div>
-        <ul class="sidebar-nav">
-          <li><a href="#eco-moedas-daily" class="sidebar-link" data-i18n="sideDaily">Moedinhas & Recompensas Diárias</a></li>
-          <li><a href="#eco-feijoes" class="sidebar-link" data-i18n="sideBeans">Feijões Mágicos & Relíquias</a></li>
-          <li><a href="#eco-bolsa-loja" class="sidebar-link" data-i18n="sideShop">Mochila, Cofre & Baús</a></li>
-        </ul>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-i18n="sideSecWork">💼 Carreiras & Trabalho</div>
-        <ul class="sidebar-nav">
-          <li><a href="#trabalho-profissoes" class="sidebar-link" data-i18n="sideProfessions">As 10 Vocações Únicas</a></li>
-          <li><a href="#trabalho-expedientes" class="sidebar-link" data-i18n="sideShifts">Expedientes & Minigames</a></li>
-        </ul>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-i18n="sideSecTarot">🔮 Tarot dos 78 Arcanos</div>
-        <ul class="sidebar-nav">
-          <li><a href="#tarot-oraculo" class="sidebar-link" data-i18n="sideTarotRead">Tiragem Diária & Cartas</a></li>
-          <li><a href="#tarot-album" class="sidebar-link" data-i18n="sideTarotAlbum">Álbum de Conquistas & Suborno</a></li>
-        </ul>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-i18n="sideSecSocial">💍 Social, Laços & Jogos</div>
-        <ul class="sidebar-nav">
-          <li><a href="#social-perfil" class="sidebar-link" data-i18n="sideProfile">Perfil, Biografia & Títulos</a></li>
-          <li><a href="#social-casamento-ship" class="sidebar-link" data-i18n="sideMarriage">Casamentos & Medidor Ship</a></li>
-          <li><a href="#jogos-comunidade" class="sidebar-link" data-i18n="sideGames">Minigames Sociais & Biscoito</a></li>
-        </ul>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-i18n="sideSecSeasonal">🏆 Temporadas & Rankings</div>
-        <ul class="sidebar-nav">
-          <li><a href="#temporadas-sazonal" class="sidebar-link" data-i18n="sideSeasonal">Eventos Sazonais & Arte</a></li>
-          <li><a href="#placar-rank" class="sidebar-link" data-i18n="sideLeaderboard">Placar dos Líderes (/py-rank)</a></li>
-        </ul>
-      </div>
-    </aside>
-
-    <!-- Center Main Documentation Content -->
-    <main class="wiki-article">
-      <!-- Breadcrumbs -->
-      <nav class="breadcrumbs">
-        <a href="/" data-i18n="navHome">Início</a>
-        <span>/</span>
-        <span data-i18n="breadWiki">Wiki Oficial</span>
-        <span>/</span>
-        <span id="breadcrumbCurrent" data-i18n="breadCurrent">Cringelândia & Acolhimento</span>
-      </nav>
-
-      <!-- Article Header -->
-      <div class="article-header">
-        <h1 id="pageTitle" data-i18n="wikiMainTitle">Enciclopédia & Guia Oficial da Comunidade</h1>
-        <p class="lead" data-i18n="wikiMainLead">O guia definitivo da Pyxie e do servidor Cringelândia: um santuário para mentes neurodivergentes, artistas e criadores, integrado a um ecossistema mágico de lazer, economia viva, tarot e minigames comunitários.</p>
-        <div class="article-meta">
-          <span>✨ <strong data-i18n="metaMascot">Mascote:</strong> Pyxie</span>
-          <span>🌺 <strong data-i18n="metaGuild">Servidor Oficial:</strong> Cringelândia</span>
-          <span>📖 <strong data-i18n="metaDocStatus">Guia da Comunidade</strong></span>
-        </div>
-      </div>
-
-      <!-- Mascot Banner -->
-      <div class="mascot-banner">
-        <img src="/assets/pyxie/pyxie_fullart_hd.png" alt="Pyxie" />
-        <div class="mascot-banner-text">
-          <h4 data-i18n="mascotBannerTitle">Quem é a Pyxie?</h4>
-          <p data-i18n="mascotBannerDesc">Nascida nas clareiras encantadas de um reino misterioso, a Pyxie é a guardiã oficial da Cringelândia. Ela tem um sorrisinho malicioso e adora uma piadinha sarcástica, mas possui um coração imenso de ouro e zela com afinco pela segurança, inclusão e bem-estar de cada membro da nossa comunidade.</p>
-        </div>
-      </div>
-
-      <!-- Article Body -->
-      <div class="wiki-content">
-
-        <!-- SECTION: SOBRE A CRINGELÂNDIA -->
-        <section id="sobre-cringelandia">
-          <h2 data-i18n="h2AboutCringelandia">🌺 Cringelândia: Um Santuário para Mentes Neurodivergentes</h2>
-          <p data-i18n="pAboutCringelandia1">A <strong>Cringelândia</strong> é o servidor original, oficial e coração pulsante de todo o projeto da Pyxie. Criada com o propósito primordial de ser um refúgio acolhedor, nossa comunidade foi construída para dar voz e espaço a <strong>mentes neurodivergentes</strong> — acolhendo pessoas no Espectro Autista (TEA), TDAH, Bipolaridade e diversas outras formas singulares de sentir e perceber o mundo.</p>
-
-          <div class="callout callout-important">
-            <div class="callout-title">
-              <span>🧠</span> <span data-i18n="calloutTeaTitle">Apoio & Respeito Incondicional à Causa Autista</span>
-            </div>
-            <p data-i18n="calloutTeaText">Membros neurodivergentes muitas vezes possuem hiperfocos apaixonantes, formas literais de comunicação ou ritmos próprios de socialização. Na Cringelândia, hiperfocos são celebrados, o diálogo empático é a nossa regra número um e qualquer deboche ou preconceito contra pessoas com deficiência ou condições mentais resulta em <strong>banimento imediato e irreversível</strong>.</p>
+  <main class="container">
+    <!-- Vitrine Nativa de Achadinhos da Pyxie & Setup (Bilingue: Shopee BR / Adsterra EN) -->
+    <div class="pyxie-native-banner-container">
+      <!-- PT: Vitrine Nativa Shopee Brasil -->
+      <a href="/promo" target="_blank" rel="noopener noreferrer" class="pyxie-native-banner monetization-pt" data-hourly-promo="true">
+        <div class="banner-bg" style="background-image: url('/assets/pyxie/pyxie_space_banner.jpg');"></div>
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <div class="banner-tag">
+            <span class="banner-badge-sparkle">✦</span>
+            <span data-i18n="bannerTag">Achadinhos da Pyxie</span>
           </div>
-
-          <p data-i18n="pAboutCringelandia2">Além de um espaço seguro de saúde mental e amizade, somos uma efervescente comunidade de <strong>artistas visuais, gamers e escritores</strong>. Valorizamos cada desenho, cada projeto autoral e cada vitória compartilhada nos nossos canais de convivência.</p>
-        </section>
-
-        <!-- SECTION: DIRETRIZES & LEIS -->
-        <section id="diretrizes-leis">
-          <h2 data-i18n="h2Guidelines">⚖️ Diretrizes & Regras de Ouro de Convivência</h2>
-          <p data-i18n="pGuidelinesIntro">Para preservar nossa atmosfera saudável e acolhedora, a moderação da Cringelândia atua com rigor e transparência nas seguintes diretrizes essenciais:</p>
-
-          <div class="wiki-grid">
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🚫</span>
-              <div class="wiki-card-title"><span data-i18n="ruleZeroPrejudice">Tolerância Zero a Preconceito</span></div>
-              <p class="wiki-card-text" data-i18n="ruleZeroPrejudiceDesc">Discriminação de raça, sexualidade, identidade de gênero, religião ou capacitismo acarreta banimento imediato sem advertência prévia.</p>
-            </div>
-
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🫂</span>
-              <div class="wiki-card-title"><span data-i18n="ruleNoBullying">Sem Panelinhas ou Hostilidade</span></div>
-              <p class="wiki-card-text" data-i18n="ruleNoBullyingDesc">É expressamente proibida a criação de grupos com intuito de isolar, falar mal pelas costas ou difamar qualquer outro membro.</p>
-            </div>
-
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🎨</span>
-              <div class="wiki-card-title"><span data-i18n="ruleArtists">Proteção aos Artistas</span></div>
-              <p class="wiki-card-text" data-i18n="ruleArtistsDesc">É proibido salvar ou utilizar artes e imagens autorais de membros sem consentimento prévio. Artistas podem divulgar comissões livremente!</p>
-            </div>
-
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🔒</span>
-              <div class="wiki-card-title"><span data-i18n="rulePrivacy">Privacidade & Respeito na DM</span></div>
-              <p class="wiki-card-text" data-i18n="rulePrivacyDesc">Respeite o espaço alheio. É proibido incomodar ou insistir no privado (DM) de membros sem autorização. Segurança e paz em primeiro lugar.</p>
-            </div>
+          <div class="banner-info">
+            <h3 class="banner-title" data-i18n="bannerTitle">Vitrine Mágica de Pelúcias, Sanrio & Setup RPG</h3>
+            <p class="banner-desc" data-i18n="bannerDesc">Descubra itens fofos e góticos curados para a comunidade com os melhores descontos na Shopee!</p>
           </div>
-
-          <div class="callout callout-warning">
-            <div class="callout-title">
-              <span>⚠️</span> <span data-i18n="calloutSecurityTitle">Aviso Geral de Segurança</span>
-            </div>
-            <p data-i18n="calloutSecurityText">A equipe da Cringelândia NUNCA pedirá fotos pessoais, senhas ou dados confidenciais por mensagem direta. Se alguém agir de forma desconfortável com você, bloqueie imediatamente e acione um moderador no canal de suporte.</p>
-          </div>
-        </section>
-
-        <!-- SECTION: CARGOS & IDENTIDADE -->
-        <section id="cargos-identidade">
-          <h2 data-i18n="h2Roles">🏷️ Cargos & Identidade: Simplicidade de Uma Palavra</h2>
-          <p data-i18n="pRolesIntro">Acreditamos que títulos e cargos não devem ser burocráticos ou cansativos. Na Cringelândia, nossos cargos adotam <strong>uma única palavra concisa</strong>, unindo nossa atmosfera mágica ao acolhimento dos nossos membros:</p>
-
-          <div class="wiki-table-wrap">
-            <table class="wiki-table">
-              <thead>
-                <tr>
-                  <th data-i18n="thRole">Cargo</th>
-                  <th data-i18n="thRoleSpirit">Espírito da Comunidade</th>
-                  <th data-i18n="thRoleHow">Como Obter / Significado</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><code>Membro</code></td>
-                  <td data-i18n="tdMemberSpirit">O coração e a base acolhedora do servidor</td>
-                  <td data-i18n="tdMemberHow">Atribuído a todos que chegam para somar com respeito</td>
-                </tr>
-                <tr>
-                  <td><code>Artista</code></td>
-                  <td data-i18n="tdArtistSpirit">Criatividade, desenho, música e expressão autoral</td>
-                  <td data-i18n="tdArtistHow">Criadores que compartilham suas ilustrações e criações</td>
-                </tr>
-                <tr>
-                  <td><code>Viajante</code></td>
-                  <td data-i18n="tdTravelerSpirit">Exploradores dos canais de texto e minigames</td>
-                  <td data-i18n="tdTravelerHow">Membros ativos nos bate-papos e eventos da Pyxie</td>
-                </tr>
-                <tr>
-                  <td><code>Cultivador</code></td>
-                  <td data-i18n="tdCultivatorSpirit">Dedicado à economia mágica e feijões mágicos</td>
-                  <td data-i18n="tdCultivatorHow">Adquirido através de conquistas ou títulos na loja</td>
-                </tr>
-                <tr>
-                  <td><code>Bardo</code></td>
-                  <td data-i18n="tdBardSpirit">Música, chamadas de voz e boas conversas</td>
-                  <td data-i18n="tdBardHow">Presença constante nas salas de jogos e convivência</td>
-                </tr>
-                <tr>
-                  <td><code>Guardião</code></td>
-                  <td data-i18n="tdGuardianSpirit">Proteção, zelo e mediação empática</td>
-                  <td data-i18n="tdGuardianHow">Equipe dedicada à moderação e bem-estar geral</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- SECTION: APOIE NO TOP.GG -->
-        <section id="apoie-o-servidor">
-          <h2 data-i18n="h2Topgg">🗳️ Apoie a Cringelândia no Top.gg: Ganhe +20🪙 no Daily</h2>
-          <p data-i18n="pTopggIntro">Você sabia que seu voto diário no Top.gg ajuda a Cringelândia a crescer e acolher mais pessoas pelo Brasil e pelo mundo? Além disso, votar garante recompensas fantásticas em moedas e joias raras!</p>
-
-          <div class="callout callout-tip">
-            <div class="callout-title">
-              <span>🔥</span> <span data-i18n="calloutTopggBonusTitle">NOVO: Reconhecimento de Voto no /py-daily (+20 Moedas Extras)</span>
-            </div>
-            <p data-i18n="calloutTopggBonusText">Quando você vota na Cringelândia no Top.gg, a Pyxie reconhece o seu voto ativamente por <strong>12 horas</strong>! Ao resgatar seu comando <code>/py-daily</code>, você ganha automaticamente um bônus especial de <strong>+20 moedas extras</strong> além da recompensa padrão e da sua streak diária!</p>
-          </div>
-
-          <div class="wiki-grid">
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🟣</span>
-              <div class="wiki-card-title"><span data-i18n="voteWeekday">Voto em Dias Úteis</span></div>
-              <p class="wiki-card-text" data-i18n="voteWeekdayDesc"><strong>+50 Moedas</strong> imediatas, <strong>1x Ametista Reluzente</strong> e desbloqueio de <strong>+20 moedas</strong> no seu <code>/py-daily</code>!</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🟢</span>
-              <div class="wiki-card-title"><span data-i18n="voteWeekend">Voto no Fim de Semana (2X)</span></div>
-              <p class="wiki-card-text" data-i18n="voteWeekendDesc"><strong>+100 Moedas (2x)</strong>, <strong>1x Esmeralda Nobre</strong>, <strong>+1 Feijão Mágico 🌱</strong> e desbloqueio de <strong>+20 moedas</strong> no <code>/py-daily</code>!</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- SECTION: ECONOMIA & MOEDAS -->
-        <section id="eco-moedas-daily">
-          <h2 data-i18n="h2Economy">🪙 Moedinhas, Sequência Diária (🔥 Streaks) & Cooldowns</h2>
-          <p data-i18n="pEcoIntro">A economia da Pyxie foi desenvolvida para ser recompensadora e justa. As <strong>moedinhas</strong> são o principal meio de troca no servidor, permitindo abrir baús, girar o tarot, comprar temas visuais e realizar casamentos.</p>
-
-          <h3>🔥 Sistema de Sequência Diária (/py-daily)</h3>
-          <p data-i18n="pDailyStreakDesc">Ao resgatar seu baú diário todos os dias consecutivos, você ativa sua <strong>Sequência Diária (Streak 🔥)</strong>. A cada dia que você mantém a sequência, um bônus progressivo é adicionado:</p>
-
-          <ul>
-            <li data-i18n="liStreak1"><strong>Dia 1:</strong> Recompensa base (20 a 50 moedas) + <code>🔥 x1</code>.</li>
-            <li data-i18n="liStreak2"><strong>Dia 2:</strong> Recompensa base + <strong>+4 moedas de bônus</strong> + <code>🔥 x2</code>.</li>
-            <li data-i18n="liStreak3"><strong>Dia 3:</strong> Recompensa base + <strong>+6 moedas de bônus</strong> + <code>🔥 x3</code>.</li>
-            <li data-i18n="liStreak5"><strong>Dia 5+:</strong> Recompensa base + bônus crescente (até +25 moedas) + <code>🔥 x5+</code> em destaque nos placares!</li>
-          </ul>
-
-          <div class="callout callout-note">
-            <div class="callout-title">
-              <span>⏰</span> <span data-i18n="calloutGraceTitle">Janela de Proteção da Sequência (48 Horas)</span>
-            </div>
-            <p data-i18n="calloutGraceText">Sabemos que a rotina pode ser puxada. Por isso, a Pyxie oferece uma janela de tolerância de <strong>48 horas</strong> entre coletas. Você pode resgatar a cada 24 horas, e sua sequência só reseta para 1 se você ficar mais de dois dias inteiros sem usar <code>/py-daily</code>.</p>
-          </div>
-        </section>
-
-        <!-- SECTION: FEIJÕES MÁGICOS -->
-        <section id="eco-feijoes">
-          <h2 data-i18n="h2MagicBeans">🌱 Feijões Mágicos: O Tesouro Mais Raro do Reino</h2>
-          <p data-i18n="pBeansIntro">Os <strong>Feijões Mágicos</strong> são relíquias sagradas de Cringelândia. Diferente das moedas comuns, eles não são vendidos nem comprados — eles devem ser conquistados através de maestria e perseverança!</p>
-
-          <div class="wiki-grid">
-            <div class="wiki-card">
-              <span class="wiki-card-icon">👑</span>
-              <div class="wiki-card-title"><span data-i18n="beanUseTitles">Títulos Honoríficos</span></div>
-              <p class="wiki-card-text" data-i18n="beanUseTitlesDesc">Troque feijões mágicos por títulos permanentes no seu perfil (como <em>Cultivador de Feijões</em>, <em>Soberano Supremo</em> ou <em>Grão-Mestre Arcano</em>).</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🎨</span>
-              <div class="wiki-card-title"><span data-i18n="beanUseThemes">Temas Visuais de Perfil</span></div>
-              <p class="wiki-card-text" data-i18n="beanUseThemesDesc">Desbloqueie paletas cosméticas exclusivas (Ouro Real, Esmeralda Mística, Nebulosa Cósmica, Rosa Neon) para personalizar suas fichas.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">✨</span>
-              <div class="wiki-card-title"><span data-i18n="beanHowGet">Como Obter Feijões</span></div>
-              <p class="wiki-card-text" data-i18n="beanHowGetDesc">1% de sorte épica no baú <code>/py-daily</code>, 2% de sorte em turnos de trabalho perfeitos no <code>/py-work</code>, votos no fim de semana no Top.gg ou vencendo a Arte da Semana!</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- SECTION: MOCHILA, COFRE & BAÚS -->
-        <section id="eco-bolsa-loja">
-          <h2 data-i18n="h2Inventory">🎒 Mochila, Baús & Joias (/py-inventory & /py-shop)</h2>
-          <p data-i18n="pInventoryIntro">Todos os tesouros coletados durante sua jornada ficam salvos na sua mochila pessoal. Use <code>/py-inventory</code> para inspecionar seus pertences e <code>/py-shop</code> para adquirir novos itens:</p>
-
-          <ul>
-            <li data-i18n="liChests"><strong>Baús de Madeira & Baús Lendários:</strong> Abra baús para receber moedas, joias nobres e poções mágicas.</li>
-            <li data-i18n="liGems"><strong>Gemas Preciosas:</strong> Ametistas, Esmeraldas e Cristais místicos com alto valor de mercado para venda em <code>/py-sell</code>.</li>
-            <li data-i18n="liWallet"><strong>Cofre & Carteira:</strong> Consulte seu extrato a qualquer momento com <code>/py-wallet</code>.</li>
-          </ul>
-        </section>
-
-        <!-- SECTION: CARREIRAS & TRABALHO -->
-        <section id="trabalho-profissoes">
-          <h2 data-i18n="h2Work">💼 As 10 Vocações da Pyxie (/py-profession & /py-work)</h2>
-          <p data-i18n="pWorkIntro">Trabalhar na Cringelândia é divertido e interativo! Com o comando <code>/py-profession</code>, você escolhe entre 10 carreiras temáticas, cada uma com perguntas práticas e desafios rápidos:</p>
-
-          <div class="wiki-grid">
-            <div class="wiki-card">
-              <span class="wiki-card-icon">💻</span>
-              <div class="wiki-card-title"><span>Programador</span></div>
-              <p class="wiki-card-text" data-i18n="profDev">Enfrente bugs, otimize algoritmos e desenvolva sistemas mágicos.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🧪</span>
-              <div class="wiki-card-title"><span>Alquimista</span></div>
-              <p class="wiki-card-text" data-i18n="profAlch">Misture reagentes raros e prepare elixires místicos nas caldeiras.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🍳</span>
-              <div class="wiki-card-title"><span>Chef de Cozinha</span></div>
-              <p class="wiki-card-text" data-i18n="profChef">Cozinhe banquetes deliciosos com equilíbrio perfeito de sabores.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🔍</span>
-              <div class="wiki-card-title"><span>Detetive</span></div>
-              <p class="wiki-card-text" data-i18n="profDet">Analise pistas enigmáticas e desvende mistérios no reino.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">✨</span>
-              <div class="wiki-card-title"><span>Astrólogo</span></div>
-              <p class="wiki-card-text" data-i18n="profAstro">Mapeie constelações cintilantes e interprete mensagens astrais.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🌱</span>
-              <div class="wiki-card-title"><span>Jardineiro</span></div>
-              <p class="wiki-card-text" data-i18n="profGard">Cultive flores encantadas e proteja a flora do bosque.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🎵</span>
-              <div class="wiki-card-title"><span>Bardo</span></div>
-              <p class="wiki-card-text" data-i18n="profBard">Componha baladas lendárias para alegrar a comunidade nos canais.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">☕</span>
-              <div class="wiki-card-title"><span>Barista</span></div>
-              <p class="wiki-card-text" data-i18n="profBarista">Extraia cafés aromáticos e sirva conforto em canecas quentes.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🎨</span>
-              <div class="wiki-card-title"><span>Designer</span></div>
-              <p class="wiki-card-text" data-i18n="profDesigner">Harmonize paletas de cores, tipografias e artes visuais.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🔨</span>
-              <div class="wiki-card-title"><span>Ferreiro</span></div>
-              <p class="wiki-card-text" data-i18n="profSmith">Forje ferramentas lendárias e armaduras resistentes na bigorna.</p>
-            </div>
-          </div>
-        </section>
-
-        <section id="trabalho-expedientes">
-          <h2 data-i18n="h2Shifts">⏱️ Como Funcionam os Expedientes (/py-work)</h2>
-          <p data-i18n="pShiftsIntro">A cada 3 horas, você pode iniciar um expediente com <code>/py-work</code>. A Pyxie apresentará um cenário prático da sua profissão com 4 alternativas:</p>
-
-          <ul>
-            <li data-i18n="liShift1"><strong>Tempo Limite:</strong> Você tem 45 segundos para analisar e escolher a melhor resposta nos botões interativos.</li>
-            <li data-i18n="liShift2"><strong>Salário Completo:</strong> Acertar o desafio garante seu salário integral em moedas e avanço no histórico profissional.</li>
-            <li data-i18n="liShift3"><strong>Sorte Épica (2%):</strong> Desempenho perfeito pode recompensar você com um cobiçado <strong>Feijão Mágico 🌱</strong>!</li>
-          </ul>
-        </section>
-
-        <!-- SECTION: TAROT DOS 78 ARCANOS -->
-        <section id="tarot-oraculo">
-          <h2 data-i18n="h2Tarot">🔮 Tarot Místico dos 78 Arcanos (/py-tarot)</h2>
-          <p data-i18n="pTarotIntro">A Pyxie abriga um baralho esotérico completo de <strong>78 cartas arcanas</strong> (22 Arcanos Maiores e 56 Arcanos Menores divididos nos naipes de Copas, Paus, Espadas e Ouros). Todas as lâminas são renderizadas em tempo real com ilustrações exclusivas em arte digital.</p>
-
-          <div class="callout callout-note">
-            <div class="callout-title">
-              <span>🃏</span> <span data-i18n="calloutTarotTitle">Posições Normais & Invertidas</span>
-            </div>
-            <p data-i18n="calloutTarotText">Cada tiragem pode surgir na posição <strong>Normal</strong> (luz, fluidez, conselho direto) ou <strong>Invertida</strong> (bloqueios, desafios internos, advertência do oráculo). A Pyxie fornece uma análise personalizada e palavras-chave para guiar o seu dia.</p>
-          </div>
-        </section>
-
-        <section id="tarot-album">
-          <h2 data-i18n="h2Album">🏆 Álbum de Conquistas Arcanas (/py-album)</h2>
-          <p data-i18n="pAlbumIntro">Conforme você faz tiragens diárias, as cartas descobertas são registradas no seu <strong>Álbum de Conquistas</strong> com o comando <code>/py-album</code>:</p>
-
-          <ul>
-            <li data-i18n="liAlbum1"><strong>10 Marcos Históricos:</strong> Desbloqueie conquistas especiais por colecionar arcanos maiores, naipes inteiros ou completar o baralho sagrado.</li>
-            <li data-i18n="liAlbum2"><strong>Bounties em Moedas:</strong> Cada conquista concluída pode ser resgatada por bolsas generosas de moedinhas!</li>
-            <li data-i18n="liAlbum3"><strong>Suborno do Destino:</strong> Se a carta tirada não te agradar, use o botão de suborno para convencer a Pyxie a tirar uma nova lâmina em troca de moedas.</li>
-          </ul>
-        </section>
-
-        <!-- SECTION: SOCIAL, CASAMENTOS & PERFIL -->
-        <section id="social-perfil">
-          <h2 data-i18n="h2Profile">👤 Perfil do Aventureiro (/py-profile)</h2>
-          <p data-i18n="pProfileIntro">Seu cartão de visitas na comunidade! O comando <code>/py-profile</code> exibe sua ficha com sua profissão, títulos de uma palavra conquistados, dias de casado, biografia e saldo de moedas.</p>
-        </section>
-
-        <section id="social-casamento-ship">
-          <h2 data-i18n="h2Marriage">💍 Casamentos & Medidor de Afinidade (/py-marry & /py-ship)</h2>
-          <p data-i18n="pMarriageIntro">Celebre conexões especiais no servidor!</p>
-
-          <ul>
-            <li data-i18n="liMarry"><code>/py-marry</code>: Peça alguém especial em casamento. Se a pessoa aceitar nos botões, vocês recebem a certidão com data oficial registrada no perfil.</li>
-            <li data-i18n="liShip"><code>/py-ship</code>: Calcule a porcentagem de compatibilidade astral e humor entre duas pessoas com ilustrações exclusivas e vereditos divertidos da Pyxie.</li>
-            <li data-i18n="liDivorce"><code>/py-divorce</code>: Se as estrelas mudarem de rumo, encerre o matrimônio pacificamente e sem brigas.</li>
-          </ul>
-        </section>
-
-        <!-- SECTION: MINIGAMES & DIVERSÃO -->
-        <section id="jogos-comunidade">
-          <h2 data-i18n="h2Games">🎲 Minigames & Convivência Leve</h2>
-          <p data-i18n="pGamesIntro">Quebre o gelo em chamadas de voz e conversas de texto com comandos leves e integrados:</p>
-
-          <div class="wiki-grid">
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🥠</span>
-              <div class="wiki-card-title"><span>/py-cookie</span></div>
-              <p class="wiki-card-text" data-i18n="gameCookie">Abra um biscoito da sorte e leia provérbios filosóficos, engraçados ou enigmáticos.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">❓</span>
-              <div class="wiki-card-title"><span>/py-likely</span></div>
-              <p class="wiki-card-text" data-i18n="gameLikely">Enquetes ao vivo de "Quem é mais provável" com botões de votação para animar o chat.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">✂️</span>
-              <div class="wiki-card-title"><span>/py-jokenpo</span></div>
-              <p class="wiki-card-text" data-i18n="gameJokenpo">Desafie a Pyxie ou outros membros em disputas PvP com apostas de moedinhas.</p>
-            </div>
-            <div class="wiki-card">
-              <span class="wiki-card-icon">🪙</span>
-              <div class="wiki-card-title"><span>/py-coinflip & /py-dados</span></div>
-              <p class="wiki-card-text" data-i18n="gameDice">Cara ou coroa rápido e rolagem de dados clássicos de RPG (d4, d6, d20, d100).</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- SECTION: TEMPORADAS & EVENTOS -->
-        <section id="temporadas-sazonal">
-          <h2 data-i18n="h2Seasonal">🎃 Eventos Sazonais & Concurso de Arte (/py-infoevento)</h2>
-          <p data-i18n="pSeasonalIntro">Durante festivais mágicos (como o Festival da Colheita Espectral e celebrações comemorativas), módulos sazonais são ativados no servidor:</p>
-
-          <ul>
-            <li data-i18n="liArtOfWeek"><strong>Arte da Semana:</strong> Toda semana, ilustradores da comunidade submetem suas artes no canal oficial. A arte mais votada pelos membros vence no domingo às 10h, garantindo <strong>+5 Abóboras Sazonais</strong> e destaque na comunidade!</li>
-            <li data-i18n="liDrops"><strong>Drops de Baús nos Chats:</strong> Em 9 horários do dia, baús surpresa surgem nos canais para membros ágeis reivindicarem recompensas imediatas.</li>
-            <li data-i18n="liCardViral"><strong>Card Viral da Pyxie:</strong> Ao final do evento, cada participante gera um card comemorativo em Canvas com seu avatar, estatísticas e elogio da Pyxie para compartilhar no Discord e nas redes sociais.</li>
-          </ul>
-        </section>
-
-        <!-- SECTION: PLACAR DE LÍDERES -->
-        <section id="placar-rank">
-          <h2 data-i18n="h2Rank">🏆 Placar de Líderes (/py-rank)</h2>
-          <p data-i18n="pRankIntro">Com o comando <code>/py-rank</code>, você consulta o placar em tempo real com abas dinâmicas:</p>
-
-          <ul>
-            <li data-i18n="liRankCoins"><strong>Moedinhas:</strong> Os membros mais prósperos do reino, com exibição do ícone <code>🔥 x[streak]</code> para quem mantém suas sequências ativas.</li>
-            <li data-i18n="liRankBeans"><strong>Feijões Mágicos:</strong> Os mestres cultivadores de relíquias raras.</li>
-            <li data-i18n="liRankStreaks"><strong>Maiores Streaks:</strong> Os aventureiros com as mais longas e lendárias ofensivas diárias consecutivas.</li>
-            <li data-i18n="liRankSeasonal"><strong>Placar Sazonal:</strong> A pontuação exclusiva de eventos temáticos ativos.</li>
-          </ul>
-        <!-- Vitrine Nativa de Achadinhos da Pyxie & Setup (Bilingue: Shopee BR / Adsterra EN) -->
-        <div class="wiki-partner-banner-wrap" style="margin: 36px 0 10px;">
-          <!-- PT: Vitrine Nativa Shopee Brasil -->
-          <a href="/promo" target="_blank" rel="noopener noreferrer" class="mascot-banner monetization-pt" data-hourly-promo="true" style="text-decoration: none;">
-            <img src="/assets/pyxie/pyxie_space_banner.jpg" alt="Shopee Achadinhos" style="width:105px; height:75px; object-fit:cover; border-radius:10px;" />
-            <div class="mascot-banner-text">
-              <h4 style="color:#f472b6;">🛍️ Achadinhos da Comunidade & Promoções Especiais</h4>
-              <p>Confira pelúcias fofas, itens de setup e mimos gamer selecionados com os melhores descontos!</p>
-            </div>
-          </a>
-
-          <!-- EN: Adsterra Global Sponsor Banner (Mobile/Desktop 300x250) -->
-          <div class="adsterra-banner-container monetization-en">
-            <div class="adsterra-header">
-              <span class="adsterra-badge">✦ Official Community Sponsor</span>
-              <span>Featured Gaming Deals & Web Rewards</span>
-            </div>
-            <div class="adsterra-frame-wrap adsterra-mobile-300">
-              <script>
-                atOptions = {
-                  'key' : '3057c5e3d039655f3a86a9ee6ae57808',
-                  'format' : 'iframe',
-                  'height' : 250,
-                  'width' : 300,
-                  'params' : {}
-                };
-              </script>
-              <script src="https://www.highrevenueformat.com/3057c5e3d039655f3a86a9ee6ae57808/invoke.js"></script>
-            </div>
+          <div class="banner-action">
+            <span class="banner-btn" data-i18n="bannerBtn">Conferir Ofertas ➔</span>
           </div>
         </div>
+      </a>
 
+      <!-- EN: Adsterra Global Sponsor Banner (Desktop 468x60 / Mobile 300x250) -->
+      <div class="adsterra-banner-container monetization-en">
+        <div class="adsterra-header">
+          <span class="adsterra-badge">✦ Official Sponsor</span>
+          <span>Featured Deals & Web Rewards</span>
+        </div>
+        <div class="adsterra-frame-wrap adsterra-desktop-468">
+          <script>
+            atOptions = {
+              'key' : 'fbb18d996650a174db4ff64b5fba394f',
+              'format' : 'iframe',
+              'height' : 60,
+              'width' : 468,
+              'params' : {}
+            };
+          </script>
+          <script src="https://www.highrevenueformat.com/fbb18d996650a174db4ff64b5fba394f/invoke.js"></script>
+        </div>
+        <div class="adsterra-frame-wrap adsterra-mobile-300">
+          <script>
+            atOptions = {
+              'key' : '3057c5e3d039655f3a86a9ee6ae57808',
+              'format' : 'iframe',
+              'height' : 250,
+              'width' : 300,
+              'params' : {}
+            };
+          </script>
+          <script src="https://www.highrevenueformat.com/3057c5e3d039655f3a86a9ee6ae57808/invoke.js"></script>
+        </div>
       </div>
-    </main>
+    </div>
 
-    <!-- Right Side: On This Page (TOC) -->
-    <aside class="wiki-toc">
-      <div class="toc-title" data-i18n="tocTitle">Nesta Página</div>
-      <ul class="toc-nav">
-        <li><a href="#sobre-cringelandia" class="toc-link" data-i18n="tocAbout">Santuário Neurodivergente</a></li>
-        <li><a href="#diretrizes-leis" class="toc-link" data-i18n="tocGuidelines">Diretrizes & Leis</a></li>
-        <li><a href="#cargos-identidade" class="toc-link" data-i18n="tocRoles">Cargos da Comunidade</a></li>
-        <li><a href="#apoie-o-servidor" class="toc-link" data-i18n="tocSupport">Apoie no Top.gg (+20🪙)</a></li>
-        <li><a href="#eco-moedas-daily" class="toc-link" data-i18n="tocDaily">Moedinhas & Streaks</a></li>
-        <li><a href="#eco-feijoes" class="toc-link" data-i18n="tocBeans">Feijões Mágicos</a></li>
-        <li><a href="#trabalho-profissoes" class="toc-link" data-i18n="tocWork">10 Vocações & Trabalho</a></li>
-        <li><a href="#tarot-oraculo" class="toc-link" data-i18n="tocTarot">Tarot dos 78 Arcanos</a></li>
-        <li><a href="#social-perfil" class="toc-link" data-i18n="tocSocial">Social & Casamentos</a></li>
-        <li><a href="#jogos-comunidade" class="toc-link" data-i18n="tocGames">Minigames Sociais</a></li>
-        <li><a href="#temporadas-sazonal" class="toc-link" data-i18n="tocSeasonal">Eventos Sazonais</a></li>
-        <li><a href="#placar-rank" class="toc-link" data-i18n="tocRank">Placar dos Líderes</a></li>
-      </ul>
-    </aside>
+    <!-- 1. Aba: Economia & Moedas -->
+    <section id="tab-eco" class="tab-content active">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🪙 Moedinhas & Recompensas Diárias</h3>
+            <span class="badge badge-t1">Economia</span>
+          </div>
+          <p data-i18n="wikiEcoCoinsDesc">As moedinhas são a moeda oficial da Pyxie. Resgate recompensas diárias com <code>/py-daily</code>, ganhe bônus em dobro aos fins de semana e colete bônus adicionais a cada 24 horas.</p>
+        </div>
 
-  </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🌱 Feijões Mágicos</h3>
+            <span class="badge badge-t2">Raro</span>
+          </div>
+          <p data-i18n="wikiEcoBeansDesc">Recurso místico de alto valor. Obtido com 2% de chance em turnos de trabalho perfeitos ou através de eventos especiais da comunidade.</p>
+        </div>
 
-  <!-- Footer -->
-  <footer class="wiki-footer">
-    <p data-i18n="footerCredits">Pyxie • Bot Oficial de Economia, Tarot & Comunidade da Cringelândia • Criado com 💜 por zululuga</p>
-    <p style="margin-top: 8px;">
-      <a href="/" data-i18n="footerBack">Voltar ao Início</a> • 
-      <a href="https://discord.gg/874440609402134528" target="_blank" rel="noopener noreferrer" data-i18n="footerGuild">Comunidade Cringelândia</a> • 
-      <a href="/vote" target="_blank" rel="noopener noreferrer" data-i18n="footerVote">Votar no Top.gg (+20🪙)</a> • 
-      <a href="/promo" target="_blank" rel="noopener noreferrer" data-hourly-promo="true" data-i18n="footerPromo" style="color: #f472b6;">🎁 Achadinhos & Promoções</a>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🎒 Baús & Mochila da Pyxie</h3>
+            <span class="badge badge-t3">Mochila</span>
+          </div>
+          <p data-i18n="wikiEcoShopDesc">Consulte seu saldo com <code>/py-wallet</code> e inspecione sua mochila com <code>/py-inventory</code>. Abra baús de tesouro para ganhar moedas e recompensas.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🗳️ Voto & Bônus no Diário</h3>
+            <span class="badge badge-t1">Top.gg</span>
+          </div>
+          <p data-i18n="wikiEcoTradeDesc">Vote na Cringelândia pelo <code>/py-vote</code> para ganhar moedas instantâneas, feijões mágicos no fim de semana e +20 moedas extras em cada <code>/py-daily</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Aba: Carreiras & Minigames -->
+    <section id="tab-work" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">💼 10 Profissões Únicas</h3>
+            <span class="badge badge-t2">Carreiras</span>
+          </div>
+          <p data-i18n="wikiWorkProfessionsDesc">Escolha sua vocação com <code>/py-profession</code>: Programador, Alquimista, Chef de Cozinha, Detetive, Astrólogo, Jardineiro, Bardo, Barista, Designer ou Ferreiro.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">⏱️ Minigames Interativos de Trabalho</h3>
+            <span class="badge badge-t1">45 Segundos</span>
+          </div>
+          <p data-i18n="wikiWorkMinigameDesc">Trabalhe com <code>/py-work</code> para enfrentar desafios de múltipla escolha com 45s de tempo limite. Respostas certas garantem salário cheio e chances de Feijão Mágico!</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">📈 Progressão & Ranking Global</h3>
+            <span class="badge badge-t3">Ranking</span>
+          </div>
+          <p data-i18n="wikiWorkProgressionDesc">A cada expediente concluído com maestria você acumula turnos trabalhados e sobe nos rankings do servidor e global com <code>/py-ranking</code>.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🌐 Desafios 100% Bilíngues</h3>
+            <span class="badge badge-t1">PT-BR & EN</span>
+          </div>
+          <p data-i18n="wikiWorkBilingualDesc">Todos os minigames de carreira possuem desafios localizados de acordo com o idioma configurado no servidor ou perfil do usuário.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Aba: Tarot (78 Arcanos) -->
+    <section id="tab-tarot" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🔮 78 Cartas Canônicas</h3>
+            <span class="badge badge-t3">Místico</span>
+          </div>
+          <p data-i18n="wikiTarotDeckDesc">O baralho completo da Pyxie conta com 22 Arcanos Maiores e 56 Arcanos Menores (Copas, Paus, Espadas e Ouros), cada uma com arte gerada via Canvas.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">📖 Tiragem Diária & Interpretação</h3>
+            <span class="badge badge-t1">Oráculo</span>
+          </div>
+          <p data-i18n="wikiTarotDailyDesc">Tire sua carta do dia com <code>/py-tarot</code>. Descubra sua posição (Normal ou Invertida), conselho do oráculo, palavras-chave e significado profundo.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🏆 Álbum de Colecionador & Conquistas</h3>
+            <span class="badge badge-t2">10 Conquistas</span>
+          </div>
+          <p data-i18n="wikiTarotAlbumDesc">Acompanhe sua coleção de cartas com <code>/py-album</code>. Complete marcos do álbum para desbloquear 10 conquistas especiais e ganhar recompensas em moedas!</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🪙 Suborno do Destino</h3>
+            <span class="badge badge-t2">Mecânica</span>
+          </div>
+          <p data-i18n="wikiTarotBribeDesc">Não gostou da sua carta? Pague um suborno em moedinhas para forçar o destino a sortear uma nova lâmina mística!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Aba: Social & Casamentos -->
+    <section id="tab-social" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">💍 Casamento & Cerimônias</h3>
+            <span class="badge badge-t1">Romance</span>
+          </div>
+          <p data-i18n="wikiSocialMarryDesc">Peça seu par em casamento com <code>/py-marry</code>, celebre o amor no servidor e acompanhe o contador de dias de união no seu perfil.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">💖 Calculadora de Afinidade (Ship)</h3>
+            <span class="badge badge-t2">Canvas</span>
+          </div>
+          <p data-i18n="wikiSocialShipDesc">Descubra a porcentagem de química entre dois usuários com <code>/py-ship</code>! Imagens exclusivas desenhadas em Canvas com vereditos divertidos.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">👤 Perfil de Aventureiro</h3>
+            <span class="badge badge-t3">Customização</span>
+          </div>
+          <p data-i18n="wikiSocialProfileDesc">Consulte sua ficha completa com <code>/py-profile</code>. Exiba títulos honoríficos, biografia personalizada, cargo profissional e badges mágicas.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">💔 Divórcio Pacífico</h3>
+            <span class="badge badge-t1">Social</span>
+          </div>
+          <p data-i18n="wikiSocialDivorceDesc">Se o relacionamento não vingar, use <code>/py-divorce</code> para formalizar a separação amigavelmente com apenas um clique.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Aba: Jogos & Diversão -->
+    <section id="tab-games" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🥠 Biscoito da Sorte</h3>
+            <span class="badge badge-t1">Diversão</span>
+          </div>
+          <p data-i18n="wikiGamesCookieDesc">Quebre um biscoito com <code>/py-cookie</code> para ler provérbios filosóficos, engraçados ou misteriosos selecionados para o seu momento.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🪙 Cara ou Coroa & Dados</h3>
+            <span class="badge badge-t1">Sorte</span>
+          </div>
+          <p data-i18n="wikiGamesLuckDesc">Resolva disputas e apostas rápidas no chat com <code>/py-coinflip</code> e rolagem de dados com <code>/py-dados</code> (d4 a d100).</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">✂️ Jokenpô Interativo</h3>
+            <span class="badge badge-t2">Desafio</span>
+          </div>
+          <p data-i18n="wikiGamesJokenpoDesc">Dispute partidas de Pedra, Papel e Tesoura contra a Pyxie ou outros membros da guilda com <code>/py-jokenpo</code>.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">❓ Quem é Mais Provável</h3>
+            <span class="badge badge-t3">Party Game</span>
+          </div>
+          <p data-i18n="wikiGamesLikelyDesc">Gere perguntas descontraídas para animar a chamada de voz ou o chat de texto com <code>/py-likely</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Banner Promocional da Pyxie (Apoio & Bônus) -->
+    <a href="/promo" target="_blank" rel="noopener noreferrer" class="pyxie-promo-banner" data-hourly-promo="true">
+      <span class="promo-icon">🎁</span>
+      <div class="promo-content">
+        <div class="promo-title" data-i18n="promoTitle">Apoie a Pyxie & Ganhe Bônus</div>
+        <div class="promo-desc" data-i18n="promoDesc">Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!</div>
+      </div>
+      <span class="promo-cta" data-i18n="promoBtn">Apoiar ✦</span>
+    </a>
+  </main>
+
+  <footer>
+    <p data-i18n="footerCredits">Pyxie • Bot Oficial de RPG & Comunidade • Desenvolvido com 💜 por zululuga</p>
+    <p style="margin-top: 6px;">
+      <a href="/" data-i18n="footerBack">Voltar à Página Principal</a> • 
+      <a href="/invite" target="_blank" rel="noopener" data-i18n="footerInvite">Convidar para o Discord</a> • 
+      <a href="/promo" target="_blank" rel="noopener noreferrer" data-hourly-promo="true" data-i18n="footerPromo" style="color: #f472b6;">🛍️ Achadinhos Shopee</a>
     </p>
   </footer>
 
-  <!-- Assistente Flutuante da Pyxie (Positioned before script for synchronous test assertions) -->
+  <!-- Assistente Flutuante da Pyxie (Child-Safe & Elegante) -->
   <div id="pyxieFloatingTip" class="pyxie-floating-tip" style="display: none;">
     <button class="tip-close-btn" onclick="dismissPyxieTip()" title="Fechar">✕</button>
     <div class="tip-mascot-wrap">
@@ -1261,12 +1041,12 @@
     <div class="tip-body">
       <div class="tip-header">
         <span class="tip-title">Pyxie ✨</span>
-        <span class="tip-badge" data-i18n="tipBadge">Dica da Comunidade</span>
+        <span class="tip-badge" data-i18n="tipBadge">Dica Arcana</span>
       </div>
-      <p class="tip-text" data-i18n="tipText">Conheça a Wiki da Cringelândia e lembre-se de votar no Top.gg para ganhar +20 moedas no seu /py-daily!</p>
+      <p class="tip-text" data-i18n="tipText">Consulte a Enciclopédia da Pyxie e confira nossos achadinhos na Shopee!</p>
       <div class="tip-actions">
-        <a href="/vote" target="_blank" rel="noopener noreferrer" class="tip-btn-primary" data-i18n="tipBtnVote">Votar no Top.gg 🗳️</a>
-        <a href="/bonus" class="tip-btn-secondary" data-i18n="tipBtnBonus">Bônus Web ✨</a>
+        <a href="/bonus" class="tip-btn-primary" data-i18n="tipBtnBonus">Bônus Web ✨</a>
+        <a href="/promo" target="_blank" rel="noopener noreferrer" class="tip-btn-secondary" data-i18n="tipBtnShopee" data-hourly-promo="true">Achadinhos 🛍️</a>
       </div>
     </div>
   </div>
@@ -1275,353 +1055,121 @@
     const I18N = {
       pt: {
         navHome: "Início",
-        navBonus: "Bônus Web",
-        navVote: "Votar Top.gg",
-        navDiscord: "Servidor Cringelândia",
-        sideSecCommunity: "🌺 Cringelândia & Acolhimento",
-        sideAbout: "Santuário Neurodivergente",
-        sideGuidelines: "Diretrizes & Ambiente Seguro",
-        sideRoles: "Cargos & Identidade",
-        sideSupport: "Apoie no Top.gg (+20🪙)",
-        sideSecEconomy: "🪙 Economia Mágica",
-        sideDaily: "Moedinhas & Recompensas Diárias",
-        sideBeans: "Feijões Mágicos & Relíquias",
-        sideShop: "Mochila, Cofre & Baús",
-        sideSecWork: "💼 Carreiras & Trabalho",
-        sideProfessions: "As 10 Vocações Únicas",
-        sideShifts: "Expedientes & Minigames",
-        sideSecTarot: "🔮 Tarot dos 78 Arcanos",
-        sideTarotRead: "Tiragem Diária & Cartas",
-        sideTarotAlbum: "Álbum de Conquistas & Suborno",
-        sideSecSocial: "💍 Social, Laços & Jogos",
-        sideProfile: "Perfil, Biografia & Títulos",
-        sideMarriage: "Casamentos & Medidor Ship",
-        sideGames: "Minigames Sociais & Biscoito",
-        sideSecSeasonal: "🏆 Temporadas & Rankings",
-        sideSeasonal: "Eventos Sazonais & Arte",
-        sideLeaderboard: "Placar dos Líderes (/py-rank)",
-        breadWiki: "Wiki Oficial",
-        breadCurrent: "Cringelândia & Acolhimento",
-        wikiMainTitle: "Enciclopédia & Guia Oficial da Comunidade",
-        wikiMainLead: "O guia definitivo da Pyxie e do servidor Cringelândia: um santuário para mentes neurodivergentes, artistas e criadores, integrado a um ecossistema mágico de lazer, economia viva, tarot e minigames comunitários.",
-        metaMascot: "Mascote:",
-        metaGuild: "Servidor Oficial:",
-        metaDocStatus: "Guia da Comunidade",
-        mascotBannerTitle: "Quem é a Pyxie?",
-        mascotBannerDesc: "Nascida nas clareiras encantadas de um reino misterioso, a Pyxie é a guardiã oficial da Cringelândia. Ela tem um sorrisinho malicioso e adora uma piadinha sarcástica, mas possui um coração imenso de ouro e zela com afinco pela segurança, inclusão e bem-estar de cada membro da nossa comunidade.",
-        h2AboutCringelandia: "🌺 Cringelândia: Um Santuário para Mentes Neurodivergentes",
-        pAboutCringelandia1: "A <strong>Cringelândia</strong> é o servidor original, oficial e coração pulsante de todo o projeto da Pyxie. Criada com o propósito primordial de ser um refúgio acolhedor, nossa comunidade foi construída para dar voz e espaço a <strong>mentes neurodivergentes</strong> — acolhendo pessoas no Espectro Autista (TEA), TDAH, Bipolaridade e diversas outras formas singulares de sentir e perceber o mundo.",
-        calloutTeaTitle: "Apoio & Respeito Incondicional à Causa Autista",
-        calloutTeaText: "Membros neurodivergentes muitas vezes possuem hiperfocos apaixonantes, formas literais de comunicação ou ritmos próprios de socialização. Na Cringelândia, hiperfocos são celebrados, o diálogo empático é a nossa regra número um e qualquer deboche ou preconceito contra pessoas com deficiência ou condições mentais resulta em <strong>banimento imediato e irreversível</strong>.",
-        pAboutCringelandia2: "Além de um espaço seguro de saúde mental e amizade, somos uma efervescente comunidade de <strong>artistas visuais, gamers e escritores</strong>. Valorizamos cada desenho, cada projeto autoral e cada vitória compartilhada nos nossos canais de convivência.",
-        h2Guidelines: "⚖️ Diretrizes & Regras de Ouro de Convivência",
-        pGuidelinesIntro: "Para preservar nossa atmosfera saudável e acolhedora, a moderação da Cringelândia atua com rigor e transparência nas seguintes diretrizes essenciais:",
-        ruleZeroPrejudice: "Tolerância Zero a Preconceito",
-        ruleZeroPrejudiceDesc: "Discriminação de raça, sexualidade, identidade de gênero, religião ou capacitismo acarreta banimento imediato sem advertência prévia.",
-        ruleNoBullying: "Sem Panelinhas ou Hostilidade",
-        ruleNoBullyingDesc: "É expressamente proibida a criação de grupos com intuito de isolar, falar mal pelas costas ou difamar qualquer outro membro.",
-        ruleArtists: "Proteção aos Artistas",
-        ruleArtistsDesc: "É proibido salvar ou utilizar artes e imagens autorais de membros sem consentimento prévio. Artistas podem divulgar comissões livremente!",
-        rulePrivacy: "Privacidade & Respeito na DM",
-        rulePrivacyDesc: "Respeite o espaço alheio. É proibido incomodar ou insistir no privado (DM) de membros sem autorização. Segurança e paz em primeiro lugar.",
-        calloutSecurityTitle: "Aviso Geral de Segurança",
-        calloutSecurityText: "A equipe da Cringelândia NUNCA pedirá fotos pessoais, senhas ou dados confidenciais por mensagem direta. Se alguém agir de forma desconfortável com você, bloqueie imediatamente e acione um moderador no canal de suporte.",
-        h2Roles: "🏷️ Cargos & Identidade: Simplicidade de Uma Palavra",
-        pRolesIntro: "Acreditamos que títulos e cargos não devem ser burocráticos ou cansativos. Na Cringelândia, nossos cargos adotam <strong>uma única palavra concisa</strong>, unindo nossa atmosfera mágica ao acolhimento dos nossos membros:",
-        thRole: "Cargo",
-        thRoleSpirit: "Espírito da Comunidade",
-        thRoleHow: "Como Obter / Significado",
-        tdMemberSpirit: "O coração e a base acolhedora do servidor",
-        tdMemberHow: "Atribuído a todos que chegam para somar com respeito",
-        tdArtistSpirit: "Criatividade, desenho, música e expressão autoral",
-        tdArtistHow: "Criadores que compartilham suas ilustrações e criações",
-        tdTravelerSpirit: "Exploradores dos canais de texto e minigames",
-        tdTravelerHow: "Membros ativos nos bate-papos e eventos da Pyxie",
-        tdCultivatorSpirit: "Dedicado à economia mágica e feijões mágicos",
-        tdCultivatorHow: "Adquirido através de conquistas ou títulos na loja",
-        tdBardSpirit: "Música, chamadas de voz e boas conversas",
-        tdBardHow: "Presença constante nas salas de jogos e convivência",
-        tdGuardianSpirit: "Proteção, zelo e mediação empática",
-        tdGuardianHow: "Equipe dedicada à moderação e bem-estar geral",
-        h2Topgg: "🗳️ Apoie a Cringelândia no Top.gg: Ganhe +20🪙 no Daily",
-        pTopggIntro: "Você sabia que seu voto diário no Top.gg ajuda a Cringelândia a crescer e acolher mais pessoas pelo Brasil e pelo mundo? Além disso, votar garante recompensas fantásticas em moedas e joias raras!",
-        calloutTopggBonusTitle: "NOVO: Reconhecimento de Voto no /py-daily (+20 Moedas Extras)",
-        calloutTopggBonusText: "Quando você vota na Cringelândia no Top.gg, a Pyxie reconhece o seu voto ativamente por <strong>12 horas</strong>! Ao resgatar seu comando <code>/py-daily</code>, você ganha automaticamente um bônus especial de <strong>+20 moedas extras</strong> além da recompensa padrão e da sua streak diária!",
-        voteWeekday: "Voto em Dias Úteis",
-        voteWeekdayDesc: "<strong>+50 Moedas</strong> imediatas, <strong>1x Ametista Reluzente</strong> e desbloqueio de <strong>+20 moedas</strong> no seu <code>/py-daily</code>!",
-        voteWeekend: "Voto no Fim de Semana (2X)",
-        voteWeekendDesc: "<strong>+100 Moedas (2x)</strong>, <strong>1x Esmeralda Nobre</strong>, <strong>+1 Feijão Mágico 🌱</strong> e desbloqueio de <strong>+20 moedas</strong> no <code>/py-daily</code>!",
-        h2Economy: "🪙 Moedinhas, Sequência Diária (🔥 Streaks) & Cooldowns",
-        pEcoIntro: "A economia da Pyxie foi desenvolvida para ser recompensadora e justa. As <strong>moedinhas</strong> são o principal meio de troca no servidor, permitindo abrir baús, girar o tarot, comprar temas visuais e realizar casamentos.",
-        pDailyStreakDesc: "Ao resgatar seu baú diário todos os dias consecutivos, você ativa sua <strong>Sequência Diária (Streak 🔥)</strong>. A cada dia que você mantém a sequência, um bônus progressivo é adicionado:",
-        liStreak1: "<strong>Dia 1:</strong> Recompensa base (20 a 50 moedas) + <code>🔥 x1</code>.",
-        liStreak2: "<strong>Dia 2:</strong> Recompensa base + <strong>+4 moedas de bônus</strong> + <code>🔥 x2</code>.",
-        liStreak3: "<strong>Dia 3:</strong> Recompensa base + <strong>+6 moedas de bônus</strong> + <code>🔥 x3</code>.",
-        liStreak5: "<strong>Dia 5+:</strong> Recompensa base + bônus crescente (até +25 moedas) + <code>🔥 x5+</code> em destaque nos placares!",
-        calloutGraceTitle: "Janela de Proteção da Sequência (48 Horas)",
-        calloutGraceText: "Sabemos que a rotina pode ser puxada. Por isso, a Pyxie oferece uma janela de tolerância de <strong>48 horas</strong> entre coletas. Você pode resgatar a cada 24 horas, e sua sequência só reseta para 1 se você ficar mais de dois dias inteiros sem usar <code>/py-daily</code>.",
-        h2MagicBeans: "🌱 Feijões Mágicos: O Tesouro Mais Raro do Reino",
-        pBeansIntro: "Os <strong>Feijões Mágicos</strong> são relíquias sagradas de Cringelândia. Diferente das moedas comuns, eles não são vendidos nem comprados — eles devem ser conquistados através de maestria e perseverança!",
-        beanUseTitles: "Títulos Honoríficos",
-        beanUseTitlesDesc: "Troque feijões mágicos por títulos permanentes no seu perfil (como Cultivador de Feijões, Soberano Supremo ou Grão-Mestre Arcano).",
-        beanUseThemes: "Temas Visuais de Perfil",
-        beanUseThemesDesc: "Desbloqueie paletas cosméticas exclusivas (Ouro Real, Esmeralda Mística, Nebulosa Cósmica, Rosa Neon) para personalizar suas fichas.",
-        beanHowGet: "Como Obter Feijões",
-        beanHowGetDesc: "1% de sorte épica no baú /py-daily, 2% de sorte em turnos de trabalho perfeitos no /py-work, votos no fim de semana no Top.gg ou vencendo a Arte da Semana!",
-        h2Inventory: "🎒 Mochila, Baús & Joias (/py-inventory & /py-shop)",
-        pInventoryIntro: "Todos os tesouros coletados durante sua jornada ficam salvos na sua mochila pessoal. Use /py-inventory para inspecionar seus pertences e /py-shop para adquirir novos itens:",
-        liChests: "<strong>Baús de Madeira & Baús Lendários:</strong> Abra baús para receber moedas, joias nobres e poções mágicas.",
-        liGems: "<strong>Gemas Preciosas:</strong> Ametistas, Esmeraldas e Cristais místicos com alto valor de mercado para venda em /py-sell.",
-        liWallet: "<strong>Cofre & Carteira:</strong> Consulte seu extrato a qualquer momento com /py-wallet.",
-        h2Work: "💼 As 10 Vocações da Pyxie (/py-profession & /py-work)",
-        pWorkIntro: "Trabalhar na Cringelândia é divertido e interativo! Com o comando /py-profession, você escolhe entre 10 carreiras temáticas, cada uma com perguntas práticas e desafios rápidos:",
-        profDev: "Enfrente bugs, otimize algoritmos e desenvolva sistemas mágicos.",
-        profAlch: "Misture reagentes raros e prepare elixires místicos nas caldeiras.",
-        profChef: "Cozinhe banquetes deliciosos com equilíbrio perfeito de sabores.",
-        profDet: "Analise pistas enigmáticas e desvende mistérios no reino.",
-        profAstro: "Mapeie constelações cintilantes e interprete mensagens astrais.",
-        profGard: "Cultive flores encantadas e proteja a flora do bosque.",
-        profBard: "Componha baladas lendárias para alegrar a comunidade nos canais.",
-        profBarista: "Extraia cafés aromáticos e sirva conforto em canecas quentes.",
-        profDesigner: "Harmonize paletas de cores, tipografias e artes visuais.",
-        profSmith: "Forje ferramentas lendárias e armaduras resistentes na bigorna.",
-        h2Shifts: "⏱️ Como Funcionam os Expedientes (/py-work)",
-        pShiftsIntro: "A cada 3 horas, você pode iniciar um expediente com /py-work. A Pyxie apresentará um cenário prático da sua profissão com 4 alternativas:",
-        liShift1: "<strong>Tempo Limite:</strong> Você tem 45 segundos para analisar e escolher a melhor resposta nos botões interativos.",
-        liShift2: "<strong>Salário Completo:</strong> Acertar o desafio garante seu salário integral em moedas e avanço no histórico profissional.",
-        liShift3: "<strong>Sorte Épica (2%):</strong> Desempenho perfeito pode recompensar você com um cobiçado Feijão Mágico 🌱!",
-        h2Tarot: "🔮 Tarot Místico dos 78 Arcanos (/py-tarot)",
-        pTarotIntro: "A Pyxie abriga um baralho esotérico completo de 78 cartas arcanas (22 Arcanos Maiores e 56 Arcanos Menores divididos nos naipes de Copas, Paus, Espadas e Ouros). Todas as lâminas são renderizadas em tempo real com ilustrações exclusivas em arte digital.",
-        calloutTarotTitle: "Posições Normais & Invertidas",
-        calloutTarotText: "Cada tiragem pode surgir na posição Normal (luz, fluidez, conselho direto) ou Invertida (bloqueios, desafios internos, advertência do oráculo). A Pyxie fornece uma análise personalizada e palavras-chave para guiar o seu dia.",
-        h2Album: "🏆 Álbum de Conquistas Arcanas (/py-album)",
-        pAlbumIntro: "Conforme você faz tiragens diárias, as cartas descobertas são registradas no seu Álbum de Conquistas com o comando /py-album:",
-        liAlbum1: "<strong>10 Marcos Históricos:</strong> Desbloqueie conquistas especiais por colecionar arcanos maiores, naipes inteiros ou completar o baralho sagrado.",
-        liAlbum2: "<strong>Bounties em Moedas:</strong> Cada conquista concluída pode ser resgatada por bolsas generosas de moedinhas!",
-        liAlbum3: "<strong>Suborno do Destino:</strong> Se a carta tirada não te agradar, use o botão de suborno para convencer a Pyxie a tirar uma nova lâmina em troca de moedas.",
-        h2Profile: "👤 Perfil do Aventureiro (/py-profile)",
-        pProfileIntro: "Seu cartão de visitas na comunidade! O comando /py-profile exibe sua ficha com sua profissão, títulos de uma palavra conquistados, dias de casado, biografia e saldo de moedas.",
-        h2Marriage: "💍 Casamentos & Medidor de Afinidade (/py-marry & /py-ship)",
-        pMarriageIntro: "Celebre conexões especiais no servidor!",
-        liMarry: "/py-marry: Peça alguém especial em casamento. Se a pessoa aceitar nos botões, vocês recebem a certidão com data oficial registrada no perfil.",
-        liShip: "/py-ship: Calcule a porcentagem de compatibilidade astral e humor entre duas pessoas com ilustrações exclusivas e vereditos divertidos da Pyxie.",
-        liDivorce: "/py-divorce: Se as estrelas mudarem de rumo, encerre o matrimônio pacificamente e sem brigas.",
-        h2Games: "🎲 Minigames & Convivência Leve",
-        pGamesIntro: "Quebre o gelo em chamadas de voz e conversas de texto com comandos leves e integrados:",
-        gameCookie: "Abra um biscoito da sorte e leia provérbios filosóficos, engraçados ou enigmáticos.",
-        gameLikely: "Enquetes ao vivo de \"Quem é mais provável\" com botões de votação para animar o chat.",
-        gameJokenpo: "Desafie a Pyxie ou outros membros em disputas PvP com apostas de moedinhas.",
-        gameDice: "Cara ou coroa rápido e rolagem de dados clássicos de RPG (d4, d6, d20, d100).",
-        h2Seasonal: "🎃 Eventos Sazonais & Concurso de Arte (/py-infoevento)",
-        pSeasonalIntro: "Durante festivais mágicos (como o Festival da Colheita Espectral e celebrações comemorativas), módulos sazonais são ativados no servidor:",
-        liArtOfWeek: "<strong>Arte da Semana:</strong> Toda semana, ilustradores da comunidade submetem suas artes no canal oficial. A arte mais votada pelos membros vence no domingo às 10h, garantindo +5 Abóboras Sazonais e destaque na comunidade!",
-        liDrops: "<strong>Drops de Baús nos Chats:</strong> Em 9 horários do dia, baús surpresa surgem nos canais para membros ágeis reivindicarem recompensas imediatas.",
-        liCardViral: "<strong>Card Viral da Pyxie:</strong> Ao final do evento, cada participante gera um card comemorativo em Canvas com seu avatar, estatísticas e elogio da Pyxie para compartilhar no Discord e nas redes sociais.",
-        h2Rank: "🏆 Placar de Líderes (/py-rank)",
-        pRankIntro: "Com o comando /py-rank, você consulta o placar em tempo real com abas dinâmicas:",
-        liRankCoins: "<strong>Moedinhas:</strong> Os membros mais prósperos do reino, com exibição do ícone 🔥 x[streak] para quem mantém suas sequências ativas.",
-        liRankBeans: "<strong>Feijões Mágicos:</strong> Os mestres cultivadores de relíquias raras.",
-        liRankStreaks: "<strong>Maiores Streaks:</strong> Os aventureiros com as mais longas e lendárias ofensivas diárias consecutivas.",
-        liRankSeasonal: "<strong>Placar Sazonal:</strong> A pontuação exclusiva de eventos temáticos ativos.",
-        tocTitle: "Nesta Página",
-        tocAbout: "Santuário Neurodivergente",
-        tocGuidelines: "Diretrizes & Leis",
-        tocRoles: "Cargos da Comunidade",
-        tocSupport: "Apoie no Top.gg (+20🪙)",
-        tocDaily: "Moedinhas & Streaks",
-        tocBeans: "Feijões Mágicos",
-        tocWork: "10 Vocações & Trabalho",
-        tocTarot: "Tarot dos 78 Arcanos",
-        tocSocial: "Social & Casamentos",
-        tocGames: "Minigames Sociais",
-        tocSeasonal: "Eventos Sazonais",
-        tocRank: "Placar dos Líderes",
-        footerCredits: "Pyxie • Bot Oficial de Economia, Tarot & Comunidade da Cringelândia • Criado com 💜 por zululuga",
-        footerBack: "Voltar ao Início",
-        footerGuild: "Comunidade Cringelândia",
-        footerVote: "Votar no Top.gg (+20🪙)",
-        footerPromo: "🎁 Achadinhos & Promoções",
-        tipBadge: "Dica da Comunidade",
-        tipText: "Conheça a Wiki da Cringelândia e lembre-se de votar no Top.gg para ganhar +20 moedas no seu /py-daily!",
-        tipBtnVote: "Votar no Top.gg 🗳️",
-        tipBtnBonus: "Bônus Web ✨"
+        navEco: "Economia",
+        navWork: "Carreiras",
+        navTarot: "Tarot",
+        navSocial: "Social",
+        navGames: "Jogos",
+        btnInvite: "Adicionar Bot",
+        heroBadge: "📖 Enciclopédia & Guia Oficial",
+        heroTitle: "Enciclopédia Oficial da Pyxie",
+        heroDesc: "Conheça todos os módulos da Pyxie: Economia Viva com Moedinhas e Feijões, Carreiras interativas com minigames, Tarot canônico dos 78 Arcanos, Social e Diversão Comunitária.",
+        tabEco: "🪙 Economia & Moedas",
+        tabWork: "💼 Carreiras & Minigames",
+        tabTarot: "🔮 Tarot (78 Arcanos)",
+        tabSocial: "💍 Social & Casamentos",
+        tabGames: "🎲 Jogos & Diversão",
+        bannerTag: "Achadinhos da Pyxie",
+        bannerTitle: "Vitrine Mágica de Pelúcias, Sanrio & Setup RPG",
+        bannerDesc: "Descubra itens fofos e góticos curados para a comunidade com os melhores descontos na Shopee!",
+        bannerBtn: "Conferir Ofertas ➔",
+        promoTitle: "Apoie a Pyxie & Ganhe Bônus",
+        promoDesc: "Apoie a comunidade da Cringelândia e desbloqueie recompensas mágicas!",
+        promoBtn: "Apoiar ✦",
+        tipBadge: "Dica Oficial",
+        tipText: "Consulte a Enciclopédia da Pyxie e confira nossos achadinhos na Shopee!",
+        tipBtnBonus: "Bônus Web ✨",
+        tipBtnShopee: "Achadinhos 🛍️",
+        footerCredits: "Pyxie • Bot Oficial de Economia, Tarot & Comunidade • Desenvolvido com 💜 por zululuga",
+        footerBack: "Voltar à Página Principal",
+        footerInvite: "Convidar para o Discord",
+        footerPromo: "🛍️ Achadinhos Shopee",
+        wikiEcoCoinsDesc: "As moedinhas são a moeda oficial da Pyxie. Resgate recompensas diárias com /py-daily, ganhe bônus em dobro aos fins de semana e colete bônus adicionais a cada 24 horas.",
+        wikiEcoBeansDesc: "Recurso místico de alto valor. Obtido com 2% de chance em turnos de trabalho perfeitos ou através de eventos especiais da comunidade.",
+        wikiEcoShopDesc: "Consulte seu saldo com /py-wallet e inspecione sua mochila com /py-inventory. Abra baús de tesouro para ganhar moedas e recompensas.",
+        wikiEcoTradeDesc: "Vote na Cringelândia pelo /py-vote para ganhar moedas, feijões mágicos no fim de semana e +20 moedas extras em cada /py-daily.",
+        wikiWorkProfessionsDesc: "Escolha sua vocação com /py-profession: Programador, Alquimista, Chef de Cozinha, Detetive, Astrólogo, Jardineiro, Bardo, Barista, Designer ou Ferreiro.",
+        wikiWorkMinigameDesc: "Trabalhe com /py-work para enfrentar desafios de múltipla escolha com 45s de tempo limite. Respostas certas garantem salário cheio e chances de Feijão Mágico!",
+        wikiWorkProgressionDesc: "A cada expediente concluído com maestria você acumula turnos trabalhados e sobe nos rankings do servidor e global com /py-ranking.",
+        wikiWorkBilingualDesc: "Todos os minigames de carreira possuem desafios localizados de acordo com o idioma configurado no servidor ou perfil do usuário.",
+        wikiTarotDeckDesc: "O baralho completo da Pyxie conta com 22 Arcanos Maiores e 56 Arcanos Menores (Copas, Paus, Espadas e Ouros), cada uma com arte gerada via Canvas.",
+        wikiTarotDailyDesc: "Tire sua carta do dia com /py-tarot. Descubra sua posição (Normal ou Invertida), conselho do oráculo, palavras-chave e significado profundo.",
+        wikiTarotAlbumDesc: "Acompanhe sua coleção de cartas com /py-album. Complete marcos do álbum para desbloquear 10 conquistas especiais e ganhar recompensas em moedas!",
+        wikiTarotBribeDesc: "Não gostou da sua carta? Pague um suborno em moedinhas para forçar o destino a sortear uma nova lâmina mística!",
+        wikiSocialMarryDesc: "Peça seu par em casamento com /py-marry, celebre o amor no servidor e acompanhe o contador de dias de união no seu perfil.",
+        wikiSocialShipDesc: "Descubra a porcentagem de química entre dois usuários com /py-ship! Imagens exclusivas desenhadas em Canvas com vereditos divertidos.",
+        wikiSocialProfileDesc: "Consulte sua ficha completa com /py-profile. Exiba títulos honoríficos, biografia personalizada, cargo profissional e badges mágicas.",
+        wikiSocialDivorceDesc: "Se o relacionamento não vingar, use /py-divorce para formalizar a separação amigavelmente com apenas um clique.",
+        wikiGamesCookieDesc: "Quebre um biscoito com /py-cookie para ler provérbios filosóficos, engraçados ou misteriosos selecionados para o seu momento.",
+        wikiGamesLuckDesc: "Resolva disputas e apostas rápidas no chat com /py-coinflip e rolagem de dados com /py-dados (d4 a d100).",
+        wikiGamesJokenpoDesc: "Dispute partidas de Pedra, Papel e Tesoura contra a Pyxie ou outros membros da guilda com /py-jokenpo.",
+        wikiGamesLikelyDesc: "Gere perguntas descontraídas para animar a chamada de voz ou o chat de texto com /py-likely."
       },
       en: {
         navHome: "Home",
-        navBonus: "Web Bonus",
-        navVote: "Vote Top.gg",
-        navDiscord: "Cringelândia Server",
-        sideSecCommunity: "🌺 Cringelândia & Sanctuary",
-        sideAbout: "Neurodivergent Sanctuary",
-        sideGuidelines: "Guidelines & Safe Space",
-        sideRoles: "Roles & Community Identity",
-        sideSupport: "Support on Top.gg (+20🪙)",
-        sideSecEconomy: "🪙 Magical Economy",
-        sideDaily: "Coins & Daily Streaks",
-        sideBeans: "Magic Beans & Relics",
-        sideShop: "Backpack, Vault & Chests",
-        sideSecWork: "💼 Careers & Work",
-        sideProfessions: "The 10 Unique Vocations",
-        sideShifts: "Work Shifts & Minigames",
-        sideSecTarot: "🔮 Tarot of 78 Arcana",
-        sideTarotRead: "Daily Reading & Cards",
-        sideTarotAlbum: "Achievement Album & Bribes",
-        sideSecSocial: "💍 Social, Bonds & Games",
-        sideProfile: "Adventurer Profile & Titles",
-        sideMarriage: "Marriages & Love Affinity",
-        sideGames: "Social Minigames & Cookie",
-        sideSecSeasonal: "🏆 Seasons & Rankings",
-        sideSeasonal: "Seasonal Events & Art",
-        sideLeaderboard: "Leaderboards (/py-rank)",
-        breadWiki: "Official Wiki",
-        breadCurrent: "Cringelândia & Sanctuary",
-        wikiMainTitle: "Community Encyclopedia & Official Guide",
-        wikiMainLead: "The ultimate guide to Pyxie and the Cringelândia server: a welcoming sanctuary for neurodivergent minds, artists, and creators, integrated with a magical living economy, tarot, and community minigames.",
-        metaMascot: "Mascot:",
-        metaGuild: "Official Server:",
-        metaDocStatus: "Community Guide",
-        mascotBannerTitle: "Who is Pyxie?",
-        mascotBannerDesc: "Born in the enchanted glades of a whimsical realm, Pyxie is the official guardian of Cringelândia. She carries a mischievous smirk and loves witty remarks, but she holds an immense heart of gold and fiercely protects the safety, inclusion, and well-being of every community member.",
-        h2AboutCringelandia: "🌺 Cringelândia: A Sanctuary for Neurodivergent Minds",
-        pAboutCringelandia1: "<strong>Cringelândia</strong> is the original, official server and beating heart of the entire Pyxie project. Built primarily as a safe and warm haven, our community was created to provide a voice and comfort to <strong>neurodivergent individuals</strong> — embracing people with Autism Spectrum Disorder (ASD), ADHD, Bipolarity, and all unique ways of feeling and experiencing the world.",
-        calloutTeaTitle: "Unconditional Support & Empathy for Autism & Diversity",
-        calloutTeaText: "Neurodivergent members frequently possess inspiring hyperfocuses, direct communication styles, or personalized social pacing. In Cringelândia, hyperfocuses are celebrated, empathetic dialogue is rule number one, and any mockery or discrimination against people with disabilities results in an <strong>immediate and permanent ban</strong>.",
-        pAboutCringelandia2: "Beyond a safe mental health and friendship sanctuary, we are a thriving community of <strong>visual artists, gamers, and storytellers</strong>. We cherish every drawing, personal creative project, and milestone shared in our community lounges.",
-        h2Guidelines: "⚖️ Community Guidelines & Golden Rules",
-        pGuidelinesIntro: "To preserve our safe and welcoming atmosphere, Cringelândia moderation enforces the following essential community rules with clarity and care:",
-        ruleZeroPrejudice: "Zero Tolerance for Prejudice",
-        ruleZeroPrejudiceDesc: "Discrimination based on race, sexuality, gender identity, religion, or ability results in an immediate ban without warning.",
-        ruleNoBullying: "No Cliques or Hostility",
-        ruleNoBullyingDesc: "Forming groups with the intent to isolate, gossip about, or defame any other member is strictly prohibited.",
-        ruleArtists: "Protection for Artists",
-        ruleArtistsDesc: "Saving or sharing members' artwork without explicit permission is forbidden. Artists are free to promote commission openings!",
-        rulePrivacy: "Privacy & Respect in DMs",
-        rulePrivacyDesc: "Respect personal boundaries. Harassing or persistently messaging members in direct messages without consent is forbidden.",
-        calloutSecurityTitle: "Community Safety Notice",
-        calloutSecurityText: "Cringelândia staff will NEVER request personal photos, passwords, or confidential information in private messages. If anyone makes you feel uncomfortable, block them immediately and inform moderation.",
-        h2Roles: "🏷️ Community Roles: Single-Word Simplicity",
-        pRolesIntro: "We believe roles should be clean, meaningful, and clutter-free. In Cringelândia, our community roles use <strong>a single concise word</strong> that blends our magical theme with warmth:",
-        thRole: "Role",
-        thRoleSpirit: "Community Meaning",
-        thRoleHow: "How to Obtain / Essence",
-        tdMemberSpirit: "The foundation and welcoming heart of the server",
-        tdMemberHow: "Assigned to everyone who joins with respect",
-        tdArtistSpirit: "Creativity, drawing, music, and authorial expression",
-        tdArtistHow: "Creators who share their art and illustrations",
-        tdTravelerSpirit: "Explorers of text channels and minigames",
-        tdTravelerHow: "Active participants in chat lounges and bot events",
-        tdCultivatorSpirit: "Devoted to magical economy and magic beans",
-        tdCultivatorHow: "Obtained through milestones or shop titles",
-        tdBardSpirit: "Music, voice call presence, and uplifting chats",
-        tdBardHow: "Frequent visitors of game rooms and voice channels",
-        tdGuardianSpirit: "Protection, guidance, and empathetic mediation",
-        tdGuardianHow: "Staff team dedicated to moderation and community care",
-        h2Topgg: "🗳️ Support Cringelândia on Top.gg: Unlock +20🪙 in Daily",
-        pTopggIntro: "Did you know that voting for Cringelândia on Top.gg helps our server expand and welcome more people worldwide? In addition, voting rewards you with coins, gems, and daily perks!",
-        calloutTopggBonusTitle: "NEW: Top.gg Vote Recognized in /py-daily (+20 Extra Coins)",
-        calloutTopggBonusText: "When you vote for Cringelândia on Top.gg, Pyxie actively acknowledges your vote for <strong>12 hours</strong>! When claiming your <code>/py-daily</code>, you automatically receive a <strong>+20 extra coin bonus</strong> on top of your daily rewards and streak!",
-        voteWeekday: "Weekday Vote",
-        voteWeekdayDesc: "<strong>+50 Coins</strong>, <strong>1x Shimmering Amethyst</strong>, and an extra <strong>+20 coins</strong> on your <code>/py-daily</code>!",
-        voteWeekend: "Weekend Vote (2X Bonus)",
-        voteWeekendDesc: "<strong>+100 Coins (2x)</strong>, <strong>1x Noble Emerald</strong>, <strong>+1 Magic Bean 🌱</strong>, and an extra <strong>+20 coins</strong> on <code>/py-daily</code>!",
-        h2Economy: "🪙 Magic Coins, Daily Streaks (🔥) & Cooldowns",
-        pEcoIntro: "Pyxie's economy was designed to be balanced and rewarding. <strong>Coins</strong> are the primary currency in the realm, used to open chests, draw tarot cards, unlock visual themes, and celebrate marriages.",
-        pDailyStreakDesc: "By claiming your daily crate every consecutive day, you build up your <strong>Daily Streak (🔥)</strong>. With each day maintained, a compounding coin bonus is granted:",
-        liStreak1: "<strong>Day 1:</strong> Base reward (20 to 50 coins) + <code>🔥 x1</code>.",
-        liStreak2: "<strong>Day 2:</strong> Base reward + <strong>+4 bonus coins</strong> + <code>🔥 x2</code>.",
-        liStreak3: "<strong>Day 3:</strong> Base reward + <strong>+6 bonus coins</strong> + <code>🔥 x3</code>.",
-        liStreak5: "<strong>Day 5+:</strong> Compounding bonus (up to +25 coins) + <code>🔥 x5+</code> featured on the leaderboards!",
-        calloutGraceTitle: "48-Hour Streak Grace Window",
-        calloutGraceText: "We know real-world schedules vary. Pyxie provides a generous <strong>48-hour grace period</strong> between claims. You can claim every 24 hours, and your streak only resets to 1 if more than two whole days pass without running <code>/py-daily</code>.",
-        h2MagicBeans: "🌱 Magic Beans: The Realm's Most Coveted Treasure",
-        pBeansIntro: "<strong>Magic Beans</strong> are rare sacred relics in Cringelândia. Unlike regular coins, they cannot be bought or sold — they must be earned through dedication and skill!",
-        beanUseTitles: "Honorific Titles",
-        beanUseTitlesDesc: "Exchange magic beans for permanent profile titles (such as Bean Cultivator, Realm Sovereign, or Arcane Grandmaster).",
-        beanUseThemes: "Visual Profile Themes",
-        beanUseThemesDesc: "Unlock exclusive cosmetic color palettes (Royal Gold, Mystic Emerald, Cosmic Nebula, Neon Pink) to style your profile card.",
-        beanHowGet: "How to Earn Magic Beans",
-        beanHowGetDesc: "1% epic luck in /py-daily crates, 2% chance on flawless /py-work shifts, Top.gg weekend voting, or winning the weekly Art Showcase!",
-        h2Inventory: "🎒 Backpack, Chests & Gems (/py-inventory & /py-shop)",
-        pInventoryIntro: "All relics acquired during your journey remain safely stored in your personal backpack. Use /py-inventory to view your loot and /py-shop to buy new crates:",
-        liChests: "<strong>Wooden & Legendary Chests:</strong> Open mystery crates for coins, noble gems, and magical items.",
-        liGems: "<strong>Precious Gems:</strong> Amethysts, Emeralds, and mystical crystals with high exchange value when sold via /py-sell.",
-        liWallet: "<strong>Vault & Wallet:</strong> Check your detailed coin and bean balance anytime with /py-wallet.",
-        h2Work: "💼 The 10 Vocations of Pyxie (/py-profession & /py-work)",
-        pWorkIntro: "Working in Cringelândia is engaging and interactive! With /py-profession, you can pick between 10 themed career vocations, each featuring localized scenarios:",
-        profDev: "Tackle coding bugs, optimize algorithms, and develop mystical software.",
-        profAlch: "Brew rare reagents and prepare arcane potions in bubbling cauldrons.",
-        profChef: "Cook gourmet dishes with fine culinary balance and seasoning.",
-        profDet: "Investigate enigmatic clues and solve realm mysteries.",
-        profAstro: "Map starry constellations and divine celestial omens.",
-        profGard: "Nurture enchanted flora and protect the glade ecosystem.",
-        profBard: "Compose legendary ballads to entertain friends in chat and voice rooms.",
-        profBarista: "Brew aromatic coffee beans and serve warm mugs of joy.",
-        profDesigner: "Harmonize color palettes, typography, and visual artwork.",
-        profSmith: "Forge durable weapons, tools, and sturdy armor on the anvil.",
-        h2Shifts: "⏱️ How Work Shifts Work (/py-work)",
-        pShiftsIntro: "Every 3 hours, you can initiate a shift with /py-work. Pyxie will present a multiple-choice challenge tailored to your career:",
-        liShift1: "<strong>Time Limit:</strong> You have 45 seconds to choose the best option using interactive buttons.",
-        liShift2: "<strong>Full Salary:</strong> Selecting the correct option awards your full coin paycheck and advances career shifts.",
-        liShift3: "<strong>Epic Luck (2%):</strong> Flawless shifts hold a chance to drop a coveted Magic Bean 🌱!",
-        h2Tarot: "🔮 Mystic Tarot of 78 Arcana (/py-tarot)",
-        pTarotIntro: "Pyxie features a complete 78-card esoteric deck (22 Major Arcana and 56 Minor Arcana across Cups, Wands, Swords, and Pentacles). Every card is rendered in real-time with digital canvas art.",
-        calloutTarotTitle: "Upright & Reversed Readings",
-        calloutTarotText: "Cards can appear Upright (clarity, flow, guidance) or Reversed (internal hurdles, warning, subconscious reflection). Pyxie delivers in-depth interpretations and keywords for your day.",
-        h2Album: "🏆 Tarot Achievement Album (/py-album)",
-        pAlbumIntro: "As you draw cards daily, discovered arcana are logged in your Achievement Album via /py-album:",
-        liAlbum1: "<strong>10 Milestones:</strong> Unlock special achievements by gathering major arcana, entire suits, or the complete deck.",
-        liAlbum2: "<strong>Coin Bounties:</strong> Completed milestones can be claimed for generous coin rewards!",
-        liAlbum3: "<strong>Bribe Destiny:</strong> Unsatisfied with a reading? Use the bribe button to convince Pyxie to pull a fresh card in exchange for coins.",
-        h2Profile: "👤 Adventurer Profile (/py-profile)",
-        pProfileIntro: "Your official server passport! /py-profile displays your vocation, single-word earned titles, marriage milestone, custom biography, and coin balance.",
-        h2Marriage: "💍 Marriages & Love Compatibility (/py-marry & /py-ship)",
-        pMarriageIntro: "Celebrate meaningful bonds in the community!",
-        liMarry: "/py-marry: Propose to someone special. Upon button acceptance, a marriage certificate with milestone counters is tied to your profile.",
-        liShip: "/py-ship: Compute cosmic compatibility and chemistry between two users with exclusive canvas artwork and witty commentary.",
-        liDivorce: "/py-divorce: If destinies drift apart, end a union peacefully with zero drama.",
-        h2Games: "🎲 Community Minigames & Leisure",
-        pGamesIntro: "Break the ice in voice chats and text lounges with lightweight interactive games:",
-        gameCookie: "Crack open a fortune cookie for philosophical, witty, or enigmatic advice.",
-        gameLikely: "Live party polls of 'Who is most likely to' with instant button voting.",
-        gameJokenpo: "Play PvP Rock-Paper-Scissors against Pyxie or friends with coin wagers.",
-        gameDice: "Flip a coin or roll tabletop RPG dice (d4, d6, d20, d100).",
-        h2Seasonal: "🎃 Seasonal Events & Art Showcase (/py-infoevento)",
-        pSeasonalIntro: "During seasonal festivals (such as the Spectral Harvest and festive celebrations), event modules activate on the server:",
-        liArtOfWeek: "<strong>Art of the Week:</strong> Community illustrators share artwork weekly. The top-voted piece on Sunday at 10 AM wins +5 Seasonal Pumpkins and a community feature!",
-        liDrops: "<strong>Chat Chest Drops:</strong> Mystery treasure chests spawn across chat channels 9 times a day for fast clickers.",
-        liCardViral: "<strong>Pyxie Viral Card:</strong> Conclude events by generating a personalized canvas card showing your avatar, stats, and a custom Pyxie compliment.",
-        h2Rank: "🏆 Community Leaderboards (/py-rank)",
-        pRankIntro: "Inspect server and global rankings with /py-rank across dynamic tabs:",
-        liRankCoins: "<strong>Coins:</strong> The wealthiest adventurers, showcasing 🔥 x[streak] badges for active daily streaks.",
-        liRankBeans: "<strong>Magic Beans:</strong> Masters of rare cultivated relics.",
-        liRankStreaks: "<strong>Highest Streaks:</strong> Adventurers with the longest consecutive daily streaks.",
-        liRankSeasonal: "<strong>Seasonal Leaderboard:</strong> Real-time rankings for active seasonal events.",
-        tocTitle: "On This Page",
-        tocAbout: "Neurodivergent Sanctuary",
-        tocGuidelines: "Guidelines & Rules",
-        tocRoles: "Community Roles",
-        tocSupport: "Support on Top.gg (+20🪙)",
-        tocDaily: "Coins & Streaks",
-        tocBeans: "Magic Beans",
-        tocWork: "10 Vocations & Work",
-        tocTarot: "Tarot of 78 Arcana",
-        tocSocial: "Social & Marriage",
-        tocGames: "Social Minigames",
-        tocSeasonal: "Seasonal Events",
-        tocRank: "Leaderboards",
-        footerCredits: "Pyxie • Official Economy, Tarot & Community Bot for Cringelândia • Crafted with 💜 by zululuga",
+        navEco: "Economy",
+        navWork: "Careers",
+        navTarot: "Tarot",
+        navSocial: "Social",
+        navGames: "Games",
+        btnInvite: "Add Bot",
+        heroBadge: "📖 Official Encyclopedia & Guide",
+        heroTitle: "Official Pyxie Encyclopedia",
+        heroDesc: "Discover all Pyxie modules: Living Economy with Coins and Magic Beans, Interactive Careers with minigames, canonical 78-Arcana Tarot, Social and Community Games.",
+        tabEco: "🪙 Economy & Coins",
+        tabWork: "💼 Careers & Minigames",
+        tabTarot: "🔮 Tarot (78 Arcana)",
+        tabSocial: "💍 Social & Marriages",
+        tabGames: "🎲 Games & Fun",
+        bannerTag: "Pyxie Finds",
+        bannerTitle: "Magical Showcase: Plushes, Sanrio & Setup RPG",
+        bannerDesc: "Discover cute and goth community-curated items with special partner discounts!",
+        bannerBtn: "View Deals ➔",
+        promoTitle: "Support Pyxie & Earn Bonuses",
+        promoDesc: "Support the community and unlock magical rewards!",
+        promoBtn: "Support ✦",
+        tipBadge: "Official Tip",
+        tipText: "Explore Pyxie's Encyclopedia and discover curated deals!",
+        tipBtnBonus: "Web Bonus ✨",
+        tipBtnShopee: "Special Deals 🎁",
+        footerCredits: "Pyxie • Official Economy, Tarot & Community Bot • Crafted with 💜 by zululuga",
         footerBack: "Back to Home",
-        footerGuild: "Cringelândia Community",
-        footerVote: "Vote on Top.gg (+20🪙)",
-        footerPromo: "🎁 Special Deals & Promos",
-        tipBadge: "Community Tip",
-        tipText: "Explore the Cringelândia Wiki and don't forget to vote on Top.gg for +20 coins on your /py-daily!",
-        tipBtnVote: "Vote on Top.gg 🗳️",
-        tipBtnBonus: "Web Bonus ✨"
+        footerInvite: "Add to Discord",
+        footerPromo: "🎁 Partner Deals",
+        wikiEcoCoinsDesc: "Coins are Pyxie's official currency. Claim daily rewards with /py-daily, enjoy double weekend rewards, and collect bonus rewards every 24 hours.",
+        wikiEcoBeansDesc: "High-value mystical resource. Earned with a 2% chance on flawless work shifts or through special community events.",
+        wikiEcoShopDesc: "Check your balance with /py-wallet and inspect your backpack with /py-inventory. Open treasure chests for coins and magical rewards.",
+        wikiEcoTradeDesc: "Vote for Cringelândia using /py-vote to claim coins, weekend magic beans, and +20 extra coins on every /py-daily.",
+        wikiWorkProfessionsDesc: "Choose your career path with /py-profession: Developer, Alchemist, Chef, Detective, Astrologer, Gardener, Bard, Barista, Designer, or Blacksmith.",
+        wikiWorkMinigameDesc: "Work shifts with /py-work featuring 45-second multiple choice challenges. Correct answers yield full salary and Magic Bean drop chances!",
+        wikiWorkProgressionDesc: "Every successful shift counts toward your career record and ranks you up on server and global leaderboards via /py-ranking.",
+        wikiWorkBilingualDesc: "All career minigames feature localized challenges matching the server or user language setting.",
+        wikiTarotDeckDesc: "The complete Pyxie deck features 22 Major Arcana and 56 Minor Arcana (Cups, Wands, Swords, Pentacles), each rendered with Canvas art.",
+        wikiTarotDailyDesc: "Draw your card of the day with /py-tarot. Discover upright or reversed positions, oracle advice, keywords, and in-depth meanings.",
+        wikiTarotAlbumDesc: "Track your card collection with /py-album. Reach deck milestones to unlock 10 special achievements and earn coin bounties!",
+        wikiTarotBribeDesc: "Unsatisfied with your fortune? Bribe destiny with coins to draw a fresh mystical arcana card!",
+        wikiSocialMarryDesc: "Propose to your partner with /py-marry, celebrate your bond in the server, and display your anniversary milestone on your profile.",
+        wikiSocialShipDesc: "Calculate love affinity between two users with /py-ship! Exclusive Canvas illustrations with fun matchmaking verdicts.",
+        wikiSocialProfileDesc: "View your full adventurer card with /py-profile. Showcase honorific titles, custom bio, chosen profession, and earned badges.",
+        wikiSocialDivorceDesc: "If things don't work out, use /py-divorce to peacefully end a marriage with a single click.",
+        wikiGamesCookieDesc: "Crack open a fortune cookie with /py-cookie for inspiring, witty, or enigmatic proverbs tailored for your day.",
+        wikiGamesLuckDesc: "Settle friendly bets quickly in chat with /py-coinflip and roll tabletop dice with /py-dados (d4 to d100).",
+        wikiGamesJokenpoDesc: "Challenge Pyxie or friends to Rock, Paper, Scissors matches with /py-jokenpo.",
+        wikiGamesLikelyDesc: "Spark lively voice call or chat debates with community party questions using /py-likely."
       }
     };
 
     let currentLang = 'pt';
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      const activeTab = document.getElementById(`tab-${tabId}`);
+      if (activeBtn) activeBtn.classList.add('active');
+      if (activeTab) activeTab.classList.add('active');
+    }
 
     function getSavedLang() {
       try {
@@ -1657,27 +1205,20 @@
       currentLang = (lang === 'en' || lang === 'pt') ? lang : 'pt';
       setSavedLang(currentLang);
       const dict = I18N[currentLang] || I18N.pt;
-      document.querySelectorAll('[data-i18n]').forEach((el) => {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (dict[key]) {
-          el.innerHTML = dict[key];
-        }
+        if (dict[key]) el.innerHTML = dict[key];
       });
       document.documentElement.lang = currentLang === 'en' ? 'en' : 'pt-BR';
+      document.body.classList.toggle('lang-pt', currentLang === 'pt');
+      document.body.classList.toggle('lang-en', currentLang === 'en');
       const btn = document.getElementById('langToggle');
       if (btn) btn.textContent = currentLang === 'en' ? 'PT / EN' : 'EN / PT';
 
-      const searchInput = document.getElementById('wikiSearch');
-      if (searchInput) {
-        searchInput.placeholder = currentLang === 'en'
-          ? 'Search topics, commands, and guidelines...'
-          : 'Pesquisar tópicos, comandos e regras...';
-      }
-
-      document.querySelectorAll('a[href="/"], a[href^="/?"]').forEach((link) => {
+      document.querySelectorAll('a[href="/"], a[href^="/?"]').forEach(link => {
         link.setAttribute('href', `/?lang=${currentLang}`);
       });
-      document.querySelectorAll('a[href="/bonus"], a[href^="/bonus?"]').forEach((link) => {
+      document.querySelectorAll('a[href="/bonus"], a[href^="/bonus?"]').forEach(link => {
         link.setAttribute('href', `/bonus?lang=${currentLang}`);
       });
 
@@ -1694,32 +1235,6 @@
         url.searchParams.set('lang', next);
         window.history.replaceState({}, '', url);
       } catch (_) {}
-    }
-
-    function handleSearch(query) {
-      const term = (query || '').toLowerCase().trim();
-      const sections = document.querySelectorAll('.wiki-content section');
-      const sidebarLinks = document.querySelectorAll('.sidebar-link');
-
-      sections.forEach((sec) => {
-        if (!term) {
-          sec.style.display = 'block';
-          return;
-        }
-        const text = sec.textContent.toLowerCase();
-        sec.style.display = text.includes(term) ? 'block' : 'none';
-      });
-
-      sidebarLinks.forEach((link) => {
-        if (!term) {
-          link.style.display = 'flex';
-          return;
-        }
-        const targetId = link.getAttribute('href').replace('#', '');
-        const targetSec = document.getElementById(targetId);
-        const matches = link.textContent.toLowerCase().includes(term) || (targetSec && targetSec.textContent.toLowerCase().includes(term));
-        link.style.display = matches ? 'flex' : 'none';
-      });
     }
 
     function initPyxieTip() {
@@ -1746,52 +1261,42 @@
       localStorage.setItem('pyxie_tip_dismissed', Date.now().toString());
     }
 
-    async function syncHourlyPromoLinks() {
-      const isPt = currentLang === 'pt';
-      const promoEls = document.querySelectorAll('[data-hourly-promo="true"]');
-      if (!isPt) {
-        const ADSTERRA_SMARTLINK = 'https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813';
-        promoEls.forEach((el) => {
-          el.href = ADSTERRA_SMARTLINK;
-          el.setAttribute('title', 'Special Gaming Deals & Rewards ✦');
-        });
-        return;
-      }
-      try {
-        const res = await fetch('/api/shopee/hourly-promo');
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data && data.success && data.promo && data.promo.link) {
-          promoEls.forEach((el) => {
-            el.href = data.promo.link;
-            if (data.promo.name) {
-              el.setAttribute('title', `Shopee: ${data.promo.name} (${data.promo.commission || ''})`);
-            }
-          });
-        }
-      } catch (_) {}
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
       const requestedLang = resolveInitialLang();
       applyLang(requestedLang);
 
-      // Active Section Highlighting in TOC & Sidebar
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            document.querySelectorAll('.sidebar-link').forEach((link) => {
-              link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
-            });
-            document.querySelectorAll('.toc-link').forEach((link) => {
-              link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+      if (window.location.hash) {
+        const h = window.location.hash.replace('#', '');
+        if (['eco', 'work', 'tarot', 'social', 'games'].includes(h)) {
+          switchTab(h);
+        }
+      }
+
+      async function syncHourlyPromoLinks() {
+        const isPt = currentLang === 'pt';
+        const promoEls = document.querySelectorAll('[data-hourly-promo="true"]');
+        if (!isPt) {
+          const ADSTERRA_SMARTLINK = 'https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813';
+          promoEls.forEach((el) => {
+            el.href = ADSTERRA_SMARTLINK;
+            el.setAttribute('title', 'Special Gaming Deals & Rewards ✦');
+          });
+          return;
+        }
+        try {
+          const res = await fetch('/api/shopee/hourly-promo');
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data && data.success && data.promo && data.promo.link) {
+            promoEls.forEach((el) => {
+              el.href = data.promo.link;
+              if (data.promo.name) {
+                el.setAttribute('title', `Shopee: ${data.promo.name} (${data.promo.commission || ''})`);
+              }
             });
           }
-        });
-      }, { rootMargin: '-20% 0px -70% 0px' });
-
-      document.querySelectorAll('.wiki-content section').forEach((sec) => observer.observe(sec));
+        } catch (_) {}
+      }
 
       initPyxieTip();
       syncHourlyPromoLinks();

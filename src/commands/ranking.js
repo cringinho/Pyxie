@@ -42,8 +42,7 @@ async function buildRankingView(source, viewerId, category = 'coins') {
     const lines = entries.length
       ? entries.map((entry, idx) => {
           const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `**#${idx + 1}**`;
-          const streakPart = entry.dailyStreak > 0 ? ` • 🔥 **x${entry.dailyStreak}**` : '';
-          return `${medal} <@${entry.userId}>\n> 🌱 **${entry.magicBeans || 0} ${t('common.magicBeans', source)}**${streakPart}`;
+          return `${medal} <@${entry.userId}>\n> 🌱 **${entry.magicBeans || 0} ${t('common.magicBeans', source)}**`;
         })
       : [t('ranking.emptyBeans', source)];
     desc = [t('ranking.beansDesc', source), '', ...lines].join('\n');
@@ -57,7 +56,7 @@ async function buildRankingView(source, viewerId, category = 'coins') {
           const dayLabel = entry.dailyStreak === 1
             ? t('ranking.streakSingleDay', source)
             : t('ranking.streakMultiDays', source);
-          return `${medal} <@${entry.userId}>\n> 🔥 **x${entry.dailyStreak}** (${dayLabel})`;
+          return `${medal} <@${entry.userId}>\n> 🔥 **${entry.dailyStreak} ${dayLabel}**`;
         })
       : [t('ranking.emptyStreaks', source)];
     desc = [t('ranking.streaksDesc', source), '', ...lines].join('\n');
@@ -68,8 +67,7 @@ async function buildRankingView(source, viewerId, category = 'coins') {
     const lines = entries.length
       ? entries.map((entry, idx) => {
           const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `**#${idx + 1}**`;
-          const streakPart = entry.dailyStreak > 0 ? ` • 🔥 **x${entry.dailyStreak}**` : '';
-          return `${medal} <@${entry.userId}>\n> 💰 **${formatCoins(entry.coins, source)}**${streakPart}`;
+          return `${medal} <@${entry.userId}>\n> 💰 **${formatCoins(entry.coins, source)}**`;
         })
       : [t('ranking.emptyCoins', source)];
     desc = [t('ranking.coinsDesc', source), '', ...lines].join('\n');

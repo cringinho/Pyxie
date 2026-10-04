@@ -14,7 +14,6 @@ const { getLanguage, t } = require('../utils/i18n');
 
 const CATEGORY_KEYS = [
   { key: 'bau', emoji: '📦' },
-  { key: 'joia', emoji: '💎' },
 ];
 
 function getCategories(source = null) {
@@ -204,9 +203,9 @@ module.exports = {
   handleShopInteraction,
   data: new SlashCommandBuilder()
     .setName(SHOP)
-    .setDescription('Open the store to buy mystery chests and precious gems.')
+    .setDescription('Open the store to buy mystery chests and special items.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Abre a lojinha para comprar baús misteriosos e gemas preciosas.',
+      'pt-BR': 'Abre a lojinha para comprar baús misteriosos e itens especiais.',
     })
     .addStringOption((opt) =>
       opt
@@ -222,8 +221,7 @@ module.exports = {
         })
         .setRequired(false)
         .addChoices(
-          { name: '📦 Mystery Chests', nameLocalizations: { 'pt-BR': '📦 Baús Misteriosos' }, value: 'bau' },
-          { name: '💎 Precious Gems & Jewels', nameLocalizations: { 'pt-BR': '💎 Joias & Gemas Preciosas' }, value: 'joia' }
+          { name: '📦 Mystery Chests', nameLocalizations: { 'pt-BR': '📦 Baús Misteriosos' }, value: 'bau' }
         )
     ),
   async executePrefix({ message }) {

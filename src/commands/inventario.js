@@ -118,13 +118,13 @@ function buildInventoryComponents(userId, selectedItemId = null, source = null) 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(INVENTORY)
-    .setDescription('View and manage your backpack items, chests and gems')
+    .setDescription('View and manage your backpack items, chests, and rewards')
     .setDescriptionLocalizations({
-      'pt-BR': 'Veja e gerencie sua mochila, baús e joias',
+      'pt-BR': 'Veja e gerencie sua mochila, baús e recompensas',
     }),
   name: INVENTORY,
   aliases: ['inventario', 'py-inventario', 'mochila', 'py-mochila', 'inv', 'py-inv'],
-  description: 'View and manage your backpack items, chests and gems',
+  description: 'View and manage your backpack items, chests, and rewards',
   category: 'loja',
   buildInventoryEmbed,
   buildInventoryComponents,
