@@ -88,7 +88,7 @@ function buildJokenpoEmbed(game, lang = 'pt') {
       `*Escolham seus movimentos nos botões abaixo. Cada jogada é secreta até ambos votarem!*`;
 
   const confirmedText = isEn ? '✅ Choice confirmed!' : '✅ Escolha confirmada!';
-  const thinkingText = isEn ? '⏳ Thinking of a move...' : '⏳ Pensando na jogada...';
+  const thinkingText = isEn ? '🤔 Thinking of a move...' : '🤔 Pensando na jogada...';
 
   return new EmbedBuilder()
     .setColor(PYXIE_COLORS.purple || '#9b5de5')

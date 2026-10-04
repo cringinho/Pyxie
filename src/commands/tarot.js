@@ -109,7 +109,7 @@ function buildAlreadyDrawnEmbed(remainingTime, guildOrSource) {
   const desc = [
     t('tarot.alreadyDrawnTitle', guildOrSource),
     '',
-    `⏳ **${t('tarot.nextFree', guildOrSource)}**`,
+    `⏰ **${t('tarot.nextFree', guildOrSource)}**`,
     `> ${t('tarot.nextFreeDesc', guildOrSource, { time: remainingTime.formatted })}`,
     '',
     `✨ **${t('tarot.bribeSection', guildOrSource)}**`,

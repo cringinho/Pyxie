@@ -1747,7 +1747,7 @@
           <!-- Logs Screen -->
           <div id="terminalScreen" class="terminal-screen">
             <div class="empty-logs">
-              <span>⏳ Conectando aos fluxos de telemetria da Pyxie...</span>
+              <span>🔄 Conectando aos fluxos de telemetria da Pyxie...</span>
             </div>
           </div>
           <!-- Hidden fallback element for any backward compatibility -->
@@ -2201,7 +2201,7 @@
       }
 
       async function checkItemStatus(id) {
-        showToast('Verificando status do link na Shopee...', '⏳');
+        showToast('Verificando status do link na Shopee...', '🔍');
         try {
           const res = await fetch('/api/admin/shopee/check', {
             method: 'POST',
@@ -2227,7 +2227,7 @@
       async function checkAllShopeeLinks() {
         const btn = document.getElementById('btnCheckAll');
         btn.disabled = true;
-        btn.innerHTML = '<span>⏳ Testando links...</span>';
+        btn.innerHTML = '<span>🔄 Testando links...</span>';
         showToast('Iniciando verificação de todos os links...', '🔄');
 
         try {
@@ -2253,7 +2253,7 @@
         const btn = document.getElementById(`btn-sync-img-${id}`);
         if (btn) {
           btn.disabled = true;
-          btn.innerHTML = '<span>⏳...</span>';
+          btn.innerHTML = '<span>🔄...</span>';
         }
         showToast('Buscando foto oficial da Shopee...', '📸');
 
@@ -2290,7 +2290,7 @@
       async function syncAllShopeeImages() {
         const btn = document.getElementById('btnSyncAllImages');
         btn.disabled = true;
-        btn.innerHTML = '<span>⏳ Sincronizando Fotos...</span>';
+        btn.innerHTML = '<span>🔄 Sincronizando Fotos...</span>';
         showToast('Iniciando sincronização de fotos oficiais direto da Shopee...', '📸');
 
         try {
@@ -2330,7 +2330,7 @@
 
       async function handleLinkInputAutoPreview(url) {
         if (!url || !url.startsWith('http')) return;
-        showToast('Buscando dados e foto oficial da Shopee...', '⏳');
+        showToast('Buscando dados e foto oficial da Shopee...', '🔍');
 
         try {
           const res = await fetch('/api/admin/shopee/preview-link', {
@@ -3180,8 +3180,8 @@
       async function saveAllEmojis() {
         const btn = document.getElementById('btnSaveEmojis');
         btn.disabled = true;
-        btn.innerHTML = '<span>⏳ Salvando Emojis...</span>';
-        showToast('Gravando mapeamento de emojis no servidor...', '⏳');
+        btn.innerHTML = '<span>💾 Salvando Emojis...</span>';
+        showToast('Gravando mapeamento de emojis no servidor...', '💾');
 
         try {
           const res = await fetch('/api/admin/emojis', {
@@ -3257,7 +3257,7 @@
               badge.innerText = '✅ Meta Atingida (1000/1000)';
             } else if (data.isJobRunning) {
               badge.className = 'status-pill status-paused';
-              badge.innerText = '⏳ Gerando lote agora...';
+              badge.innerText = '⚙️ Gerando lote agora...';
             } else {
               badge.className = 'status-pill status-active';
               badge.innerText = '🤖 Agendador Ativo (A cada 3h)';
@@ -3292,7 +3292,7 @@
         const btn = document.getElementById('btnTriggerSeeder');
         if (btn) {
           btn.disabled = true;
-          btn.innerText = '⏳ Disparando lote...';
+          btn.innerText = '🚀 Disparando lote...';
         }
         showToast('Iniciando geração de 1 novo cenário por carreira via Groq...', '⚡');
         try {

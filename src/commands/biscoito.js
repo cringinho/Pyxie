@@ -19,14 +19,14 @@ function buildCookieView(userId, source = null) {
   if (!status.canOpen) {
     const bonusSession = createBonusSession(userId, 'cookie_bonus', {}, lang);
 
-    const cooldownTitle = isEn ? '⏳ ✦ Cookie Already Opened Today' : '⏳ ✦ Biscoito Já Quebrado Hoje';
+    const cooldownTitle = isEn ? '⏰ ✦ Cookie Already Opened Today' : '⏰ ✦ Biscoito Já Quebrado Hoje';
     const cooldownDesc = isEn
       ? `You have already cracked your daily fortune cookie! The next one will be fresh in **${formatRemaining(status.timeRemainingMs, 'en')}**.\n\n` +
         `✨ **Want to open an extra cookie right now?**\n` +
-        `Visit our sponsored web portal, wait 10 seconds, and earn **1 Extra Cookie 🥠** + **100 Coins 💰** + **1 Hourglass ⏳**!`
+        `Visit our sponsored web portal, wait 10 seconds, and earn **1 Extra Cookie 🥠** + **100 Coins 💰**!`
       : `Você já quebrou o seu biscoito da sorte diário! O próximo estará fresquinho em **${formatRemaining(status.timeRemainingMs)}**.\n\n` +
         `✨ **Quer quebrar um biscoito extra agora?**\n` +
-        `Acesse nosso portal patrocinado, aguarde 10 segundos e ganhe **1 Biscoito Extra 🥠** + **100 Moedas 💰** + **1 Ampulheta ⏳**!`;
+        `Acesse nosso portal patrocinado, aguarde 10 segundos e ganhe **1 Biscoito Extra 🥠** + **100 Moedas 💰**!`;
 
     const cooldownEmbed = new EmbedBuilder()
       .setColor(PYXIE_COLORS.purple || '#9b5de5')

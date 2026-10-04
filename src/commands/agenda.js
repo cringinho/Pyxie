@@ -42,7 +42,7 @@ function buildAgendaEmbed(guild, now = Date.now(), source = null) {
           `**${emoji} ${automation.name}**`,
           `> ⏰ **${nextLabel}** <t:${Math.floor(automation.nextAt / 1000)}:F>`,
           `> 📅 **${timeLabel}** ${formatDate(automation.nextAt, lang)} (Brasília)`,
-          `> ⏳ **${leftLabel}** ${formatRemaining(automation.remainingMs)}`,
+          `> ⏱️ **${leftLabel}** ${formatRemaining(automation.remainingMs)}`,
           `> 📢 **${channelLabel}** <#${automation.channelId}>`,
           `> 🔁 **${freqLabel}** ${automation.frequency}`,
         ].join('\n');

@@ -184,7 +184,7 @@ function buildAchievementsView(userId, pageNumber, source = null) {
     } else if (a.isReady) {
       statusLine = `> **${t('album.readyBadge', source)}** (+${a.rewardCoins} 🪙) — *Clique no botão abaixo para resgatar!*`;
     } else {
-      statusLine = `> ⏳ **Progresso:** \`${a.progressBar}\` **${a.current}/${a.target}** (${a.percent}%) • Recompensa: **+${a.rewardCoins} 🪙**`;
+      statusLine = `> 🎯 **Progresso:** \`${a.progressBar}\` **${a.current}/${a.target}** (${a.percent}%) • Recompensa: **+${a.rewardCoins} 🪙**`;
     }
 
     return [

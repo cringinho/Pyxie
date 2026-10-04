@@ -13,8 +13,8 @@ const { getLanguage, formatRemaining, t } = require('../utils/i18n');
 function buildBonusCooldownEmbed(remainingMs, source = null) {
   const isEn = getLanguage(source) === 'en';
   const desc = isEn
-    ? `⏳ You already claimed your daily web bonus today. Please wait **${formatRemaining(remainingMs, source)}** before claiming again!`
-    : `⏳ Você já resgatou seu bônus diário na web hoje. Espere **${formatRemaining(remainingMs, source)}** para resgatar novamente!`;
+    ? `⏰ You already claimed your daily web bonus today. Please wait **${formatRemaining(remainingMs, source)}** before claiming again!`
+    : `⏰ Você já resgatou seu bônus diário na web hoje. Espere **${formatRemaining(remainingMs, source)}** para resgatar novamente!`;
 
   return new EmbedBuilder()
     .setColor(PYXIE_COLORS.violet || '#8b5cf6')

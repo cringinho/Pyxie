@@ -114,7 +114,7 @@ function buildInfoEventoView(userId, client) {
 
   // 6. Prazo de Encerramento
   embed.addFields({
-    name: '⏳ Prazo de Encerramento',
+    name: '⏰ Prazo de Encerramento',
     value: `> **${formattedEndDate}**\n> *(Fuso Horário Oficial: ${config.dates?.timezone || 'America/Sao_Paulo'})*`,
     inline: false,
   });
