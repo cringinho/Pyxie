@@ -1924,9 +1924,12 @@
         'table.score': 'SALDO ACUMULADO',
         'art.title': 'Artes da Semana Concorrendo',
         'art.voting': 'Votação Aberta até Domingo às 10h',
+        'art.winner.badge': '👑 Vencedora da Arte da Semana',
+        'art.winner.votes': '{votes} votos recebidos',
+        'art.reigning.title': '✨ Obra Vencedora da Semana Anterior',
         'empty.podium': 'Aguardando aventureiro(a)',
         'empty.table': 'Nenhum participante pontuou ainda. Abra um baú para aparecer aqui!',
-        'empty.art': 'Nenhuma arte enviada esta semana ainda. Poste seu desenho em #artes marcando @Pyxie!',
+        'empty.art': 'Nenhuma nova arte enviada esta semana ainda.',
         'footer.desc': 'Cringelândia © 2026. Todos os direitos reservados. Atualização em tempo real sincronizada via Supervisor Express.',
         'search.placeholder': 'Buscar aventureiro...',
         'share.btnNav': 'Compartilhar',
@@ -1982,9 +1985,12 @@
         'table.score': 'ACCUMULATED BALANCE',
         'art.title': 'Weekly Contest Artworks',
         'art.voting': 'Voting Open until Sunday 10:00 BRT',
+        'art.winner.badge': '👑 Winner of the Week',
+        'art.winner.votes': '{votes} votes received',
+        'art.reigning.title': '✨ Reigning Art of the Week',
         'empty.podium': 'Waiting for player',
         'empty.table': 'No participants have scored yet. Open a chest to claim the lead!',
-        'empty.art': 'No artworks submitted this week yet. Post your art in #artes mentioning @Pyxie!',
+        'empty.art': 'No new artworks submitted this week yet.',
         'footer.desc': 'Cringelândia © 2026. All rights reserved. Real-time updates synced via Express Supervisor.',
         'search.placeholder': 'Search player...',
         'share.btnNav': 'Share Card',
@@ -2233,13 +2239,43 @@
       // 2. Tabela de Classificação
       renderTable(lb, maxScore);
 
-      // 3. Galeria de Artes da Semana
+      // 3. Galeria de Artes da Semana & Obra Vencedora Anterior
       const artGrid = document.getElementById('artGalleryGrid');
       const arts = liveData.currentWeekArt || [];
-      if (arts.length === 0) {
-        artGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">${dict['empty.art']}</div>`;
-      } else {
-        artGrid.innerHTML = arts.map(art => `
+      const winner = liveData.lastArtWinner;
+
+      let html = '';
+
+      if (winner) {
+        const winnerBadge = dict['art.winner.badge'] || '👑 Vencedora da Arte da Semana';
+        const votesText = (dict['art.winner.votes'] || '{votes} votos recebidos').replace('{votes}', winner.votes);
+        html += `
+          <div class="art-card art-card-winner" style="grid-column: 1 / -1; max-width: 520px; margin: 0 auto 1.5rem; border: 1.5px solid rgba(234, 179, 8, 0.45); background: radial-gradient(circle at top, rgba(234, 179, 8, 0.12), rgba(18, 9, 36, 0.95)); box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(234, 179, 8, 0.15);">
+            <div style="padding: 10px 16px; background: rgba(234, 179, 8, 0.18); border-bottom: 1px solid rgba(234, 179, 8, 0.3); font-size: 0.8rem; font-weight: 700; color: #fef08a; display: flex; align-items: center; justify-content: space-between;">
+              <span>${dict['art.reigning.title'] || '✨ Obra Vencedora da Semana Anterior'}</span>
+              <span>🏆 +5 Abóboras</span>
+            </div>
+            <div class="art-img-wrap" style="height: 320px;">
+              <img class="art-img" src="${winner.imageUrl}" alt="${winner.authorName}" loading="lazy" />
+            </div>
+            <div class="art-info">
+              <div class="art-author">
+                <img class="art-avatar" src="${winner.authorAvatar}" alt="${winner.authorName}" />
+                <div>
+                  <span class="art-author-name" style="color: #fff; font-weight: 700;">${winner.authorName}</span>
+                  <div style="font-size: 0.72rem; color: #fde047;">${winnerBadge}</div>
+                </div>
+              </div>
+              <div class="art-vote-badge" style="background: rgba(234, 179, 8, 0.2); border-color: rgba(234, 179, 8, 0.4); color: #fef08a;">
+                <span>🗳️ ${votesText}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (arts.length > 0) {
+        html += arts.map(art => `
           <div class="art-card">
             <div class="art-img-wrap">
               <img class="art-img" src="${art.imageUrl}" alt="${art.authorName}" loading="lazy" />
@@ -2256,7 +2292,11 @@
             </div>
           </div>
         `).join('');
+      } else if (!winner) {
+        html = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">${dict['empty.art']}</div>`;
       }
+
+      artGrid.innerHTML = html;
     }
 
     function renderTable(list, maxScore) {

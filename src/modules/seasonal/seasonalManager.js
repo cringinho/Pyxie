@@ -802,6 +802,20 @@ function setupWebRoutes(app) {
           submittedAt: a.submittedAt,
         };
       }),
+      lastArtWinner: (() => {
+        const lastWinner = data.history?.lastArtWinner;
+        if (!lastWinner) return null;
+        const authorId = lastWinner.authorId;
+        return {
+          messageId: lastWinner.messageId,
+          authorId,
+          authorName: data.userProfiles?.[authorId]?.displayName || data.userProfiles?.[authorId]?.username || lastWinner.authorName || 'Artista Vencedor(a)',
+          authorAvatar: data.userProfiles?.[authorId]?.avatarUrl || lastWinner.authorAvatar || `https://cdn.discordapp.com/embed/avatars/${Number(String(authorId).slice(-2)) % 5}.png`,
+          imageUrl: `/api/sazonal/art-image/${lastWinner.messageId}`,
+          votes: lastWinner.votes || 0,
+          talliedAt: lastWinner.talliedAt,
+        };
+      })(),
       updatedAt: Date.now(),
     });
   });

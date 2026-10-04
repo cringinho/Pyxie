@@ -501,6 +501,23 @@ async function tallyWeeklyArt(client) {
     messageId: bestSubmission.messageId,
   });
 
+  // Salva vencedor histórico para exibição permanente na galeria do site sem sobrescrever o saldo recém-adicionado
+  const currentData = loadData();
+  currentData.history = currentData.history || {};
+  currentData.history.lastArtWinner = {
+    messageId: bestSubmission.messageId,
+    authorId: bestSubmission.authorId,
+    votes: maxVotes,
+    imageUrl: bestSubmission.imageUrl,
+    originalUrl: bestSubmission.originalUrl,
+    talliedAt: Date.now(),
+  };
+  currentData.history.pastArtWinners = [
+    ...(currentData.history.pastArtWinners || []),
+    currentData.history.lastArtWinner,
+  ].slice(-50);
+  saveData(currentData);
+
   // Anúncio do vencedor no canal de artes
   if (channel && channel.isTextBased()) {
     const rawTemplate = config.templates?.artOfWeekWinner || '🎨 Parabéns {author}, sua arte foi a mais votada e você garantiu +5 {currencyName}!';
