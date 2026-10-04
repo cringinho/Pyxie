@@ -39,12 +39,12 @@ const CRINGELANDIA_GUILD_ID = '1453890868980482090';
     await rest.put(Routes.applicationCommands(DISCORD_CLIENT_ID), { body: allSlashCommands });
     console.log('✅ Slash commands registrados globalmente com sucesso!');
 
-    // 2. Registro Instantâneo na Cringelândia (Guild Oficial - Atualização imediata sem esperar cache do Discord)
+    // 2. Limpeza de comandos de guilda na Cringelândia (elimina duplicatas no autocomplete)
     try {
-      await rest.put(Routes.applicationGuildCommands(DISCORD_CLIENT_ID, CRINGELANDIA_GUILD_ID), { body: allSlashCommands });
-      console.log(`✅ Slash commands registrados instantaneamente na Cringelândia (${CRINGELANDIA_GUILD_ID})!`);
+      await rest.put(Routes.applicationGuildCommands(DISCORD_CLIENT_ID, CRINGELANDIA_GUILD_ID), { body: [] });
+      console.log(`✅ Comandos locais da Cringelândia limpos para evitar duplicatas (${CRINGELANDIA_GUILD_ID})!`);
     } catch (guildErr) {
-      console.warn('Aviso: Não foi possível registrar na guilda específica:', guildErr.message);
+      console.warn('Aviso: Não foi possível limpar comandos da guilda específica:', guildErr.message);
     }
   } catch (error) {
     console.error('Erro ao registrar slash commands:', error);

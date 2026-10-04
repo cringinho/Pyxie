@@ -63,7 +63,7 @@ const APP_EMOJIS = {
   CHEST: '<:rarecrate:1548444209328033913>',
   GIFT: getThemeEmoji('dailyBonus'),
   PRIZE: '<a:prizedraw:1548444183776329798>',
-  MAGIC_BEAN: '<:peakmagicbean:1548444143431323719>',
+  MAGIC_BEAN: '<:peakmagicbean:1548444140532928642>',
   BACKPACK: '<:a1backpack:1548443778359103579>',
   SPARKLES: '<a:purplesparkles:1548444202621214840>',
   PORTAL: '<:map:1551355962974273546>',

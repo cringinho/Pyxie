@@ -217,6 +217,8 @@ function getEmoji(emojiKey) {
   if (customId) {
     const cachedObj = APP_EMOJI_BY_ID.get(customId);
     if (cachedObj) return cachedObj.format;
+    const def = EMOJI_DEFINITIONS[emojiKey] || EMOJI_DEFINITIONS[String(emojiKey).toUpperCase()];
+    if (def && def.fallback) return def.fallback;
     return `<:emoji_${customId}:${customId}>`;
   }
 
