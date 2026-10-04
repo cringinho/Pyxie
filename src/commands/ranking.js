@@ -34,7 +34,15 @@ async function buildRankingView(source, viewerId, category = 'coins') {
           return `${medal} <@${entry.userId}>\n> ${sEmoji} **${entry.balance} ${sCfg.currencyName || 'Abóboras'}**`;
         })
       : ['Ninguém pontuou no evento sazonal ainda. Abra baús ou envie artes para liderar!'];
-    desc = [`Top 10 aventureiros acumulando **${sCfg.currencyName}**:`, '', ...lines].join('\n');
+    const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
+    const webLinkText = t('ranking.webLeaderboardLink', source, { url: `${baseUrl}/ranking-sazonal` });
+    desc = [
+      `Top 10 aventureiros acumulando **${sCfg.currencyName}**:`,
+      '',
+      ...lines,
+      '',
+      webLinkText,
+    ].join('\n');
   } else if (category === 'beans') {
     title = t('ranking.beansTitle', source);
     color = PYXIE_COLORS.emerald || '#10b981';
@@ -115,7 +123,20 @@ async function buildRankingView(source, viewerId, category = 'coins') {
     );
   }
 
-  return { embeds: [embed], components: [buttonRow] };
+  const components = [buttonRow];
+  if (seasonalActive) {
+    const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
+    const linkRow = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel(t('ranking.btnWebLeaderboard', source))
+        .setEmoji('🌐')
+        .setStyle(ButtonStyle.Link)
+        .setURL(`${baseUrl}/ranking-sazonal`)
+    );
+    components.push(linkRow);
+  }
+
+  return { embeds: [embed], components };
 }
 
 function isRankingInteraction(interaction) {

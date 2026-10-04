@@ -326,7 +326,9 @@ const TRANSLATIONS = {
       "streakSingleDay": "dia consecutivo",
       "streakMultiDays": "dias consecutivos",
       "viewerPlacement": "👤 Sua Colocação Atual",
-      "viewerLine": "> 🏅 **Posição #{position}** com **{amount}**"
+      "viewerLine": "> 🏅 **Posição #{position}** com **{amount}**",
+      "btnWebLeaderboard": "Placar & Galeria Web",
+      "webLeaderboardLink": "🌐 [Abrir Placar & Galeria de Artes no Site]({url})"
     },
     "marriage": {
       "proposeTitle": "💍  ✦  Pedido de Casamento",
@@ -767,7 +769,9 @@ const TRANSLATIONS = {
       "streakSingleDay": "consecutive day",
       "streakMultiDays": "consecutive days",
       "viewerPlacement": "👤 Your Current Placement",
-      "viewerLine": "> 🏅 **Rank #{position}** with **{amount}**"
+      "viewerLine": "> 🏅 **Rank #{position}** with **{amount}**",
+      "btnWebLeaderboard": "Live Web Leaderboard",
+      "webLeaderboardLink": "🌐 [Open Live Web Leaderboard & Gallery]({url})"
     },
     "marriage": {
       "proposeTitle": "💍  ✦  Marriage Proposal",

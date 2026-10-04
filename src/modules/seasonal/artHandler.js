@@ -381,21 +381,30 @@ async function handleButtonInteraction(interaction) {
       }
 
       // Notifica o autor com sucesso
+      const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
       const successEmbed = new EmbedBuilder()
         .setColor('#10b981')
         .setTitle('🎉  ✦  Arte Confirmada na Votação da Semana!')
         .setDescription(
           `Eba, <@${authorId}>! Seu desenho foi registrado com sucesso!\n\n` +
-          `✨ **Sua arte já está concorrendo e aparecendo na nossa galeria no site!**\n` +
+          `✨ **Sua arte já está concorrendo e aparecendo na nossa [Galeria de Artes no Site](${baseUrl}/ranking-sazonal)!**\n` +
           `Peça para os seus amigos votarem reagindo com 🎃 na sua publicação acima. Boa sorte! 💜`
         )
         .setFooter({ text: 'A apuração dos votos ocorre todo domingo às 10h BRT!' });
+
+      const linkRow = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setLabel('Ver Galeria no Site')
+          .setEmoji('🌐')
+          .setStyle(ButtonStyle.Link)
+          .setURL(`${baseUrl}/ranking-sazonal`)
+      );
 
       if (typeof interaction.update === 'function') {
         await interaction.update({
           content: null,
           embeds: [successEmbed],
-          components: [],
+          components: [linkRow],
         }).catch(() => null);
       }
 
@@ -539,17 +548,30 @@ async function tallyWeeklyArt(client) {
       .replace(/{author}/g, `<@${bestSubmission.authorId}>`)
       .replace(/{currencyName}/g, config.currencyName || 'Abóboras');
 
+    const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
     const winnerEmbed = new EmbedBuilder()
       .setColor('#a855f7')
       .setTitle('🎨 ARTE DA SEMANA DEFINIDA!')
-      .setDescription(`${descText}\n\n**Total de Votos:** ${maxVotes} 🗳️`)
+      .setDescription(
+        `${descText}\n\n**Total de Votos:** ${maxVotes} 🗳️\n\n` +
+        `🌐 **Galeria Oficial:** [Confira as obras de destaque da semana no site!](${baseUrl}/ranking-sazonal)`
+      )
       .setImage(bestSubmission.originalUrl || bestSubmission.imageUrl)
       .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!' })
       .setTimestamp();
 
+    const winnerRow = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('🏆 Ver Galeria & Placar Web')
+        .setEmoji('🌐')
+        .setStyle(ButtonStyle.Link)
+        .setURL(`${baseUrl}/ranking-sazonal`)
+    );
+
     await channel.send({
       content: `🎉 <@${bestSubmission.authorId}> venceu a Arte da Semana!`,
       embeds: [winnerEmbed],
+      components: [winnerRow],
     }).catch(() => null);
   }
 

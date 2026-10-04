@@ -1,4 +1,10 @@
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
+const {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+  SlashCommandBuilder,
+} = require('discord.js');
 const {
   isSeasonalActive,
   loadConfig,
@@ -119,11 +125,33 @@ function buildInfoEventoView(userId, client) {
     inline: false,
   });
 
+  const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
+
+  // 7. Campo com Link para o Placar & Galeria de Artes Web
+  embed.addFields({
+    name: '🌐 Placar Ao Vivo & Galeria de Artes',
+    value: `> [Clique aqui para abrir o Placar & Galeria de Artes no Site](${baseUrl}/ranking-sazonal)\n> Acompanhe a pontuação dos membros, veja os desenhos e confira as estatísticas!`,
+    inline: false,
+  });
+
   embed.setImage(imageUrl)
     .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!' })
     .setTimestamp();
 
-  return { embeds: [embed] };
+  const linkRow = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel('🏆 Ver Placar & Galeria no Site')
+      .setEmoji('🌐')
+      .setStyle(ButtonStyle.Link)
+      .setURL(`${baseUrl}/ranking-sazonal`),
+    new ButtonBuilder()
+      .setLabel('🎨 Galeria de Artes')
+      .setEmoji('🖼️')
+      .setStyle(ButtonStyle.Link)
+      .setURL(`${baseUrl}/evento#artes`)
+  );
+
+  return { embeds: [embed], components: [linkRow] };
 }
 
 module.exports = {
