@@ -31,6 +31,7 @@ function getInviteUrl(clientId = null, permissions = RECOMMENDED_PERMISSIONS) {
 function buildInviteComponents(clientId, isEn = false) {
   const { getEmoji } = require('../utils/appEmojis');
   const recommendedUrl = getInviteUrl(clientId, RECOMMENDED_PERMISSIONS);
+  const adminUrl = getInviteUrl(clientId, ADMIN_PERMISSIONS);
   const { getVoteUrl } = require('../services/topgg');
   const voteUrl = getVoteUrl();
 

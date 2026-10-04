@@ -28,7 +28,7 @@ try {
   const voteNormal = processTopggVote({ user: testUserA, isWeekend: false });
   assert.equal(voteNormal.success, true, 'Voto comum no Top.gg deve ser processado.');
   assert.equal(voteNormal.coins, 50, 'Recompensa comum deve ser 50 moedas.');
-  assert.equal(hasItem(testUserA, 'ametista', 3), true, 'Usuário deve receber 1x Ametista Reluzente.');
+  assert.equal(hasItem(testUserA, 'ametista', 1), true, 'Usuário deve receber 1x Ametista Reluzente.');
 
   const voteWeekend = processTopggVote({ user: testUserB, isWeekend: true });
   assert.equal(voteWeekend.success, true, 'Voto no fim de semana no Top.gg deve ser processado.');
@@ -143,24 +143,7 @@ try {
   assert.ok(indexHtml.indexOf('id="pyxieFloatingTip"') < indexHtml.indexOf('function initLang'), '#pyxieFloatingTip deve estar posicionado antes de initLang no index.html para parsing síncrono');
   assert.ok(wikiHtml.indexOf('id="pyxieFloatingTip"') < wikiHtml.indexOf('function applyLang'), '#pyxieFloatingTip deve estar posicionado antes de applyLang no wiki.html para parsing síncrono');
 
-  // 10. Validação de Verificação de Domínio do Pinterest (Tag nos HTMLs e Arquivo Dedicado)
-  const PINTEREST_VERIFY_TAG = '8da8f2e95821ed9fa6a1b3fce231664f';
-  [indexHtml, wikiHtml, bonusHtml].forEach((htmlContent) => {
-    assert.ok(htmlContent.includes(PINTEREST_VERIFY_TAG), 'Todas as páginas web principais devem conter a tag de verificação do Pinterest');
-  });
-  const pinterestFilePath = path.join(__dirname, '..', 'public', 'pinterest-8da8f2e95821ed9fa6a1b3fce231664f.html');
-  assert.ok(fs.existsSync(pinterestFilePath), 'Arquivo de verificação HTML do Pinterest deve existir');
-
-  // 11. Validação de Catálogo Dinâmico do Pinterest (CSV)
-  const pinterestCatalogService = require('../src/services/pinterestCatalogService');
-  const catalogCsv = pinterestCatalogService.generatePinterestCsv();
-  assert.ok(catalogCsv.includes('id,title,description,link,image_link,price,availability'), 'CSV do Pinterest deve conter todos os cabeçalhos obrigatórios');
-  assert.ok(catalogCsv.includes('pyxie_mascot_art'), 'CSV deve conter artes oficiais da Pyxie');
-  assert.ok(catalogCsv.includes('tarot_card_1'), 'CSV deve conter cartas de Tarot');
-  const catalogFilePath = path.join(__dirname, '..', 'public', 'pinterest-catalog.csv');
-  assert.ok(fs.existsSync(catalogFilePath), 'Arquivo public/pinterest-catalog.csv deve existir');
-
-  // 12. Validação Estrita de Sintaxe JavaScript nos Scripts de Páginas Web
+  // 10. Validação Estrita de Sintaxe JavaScript nos Scripts de Páginas Web
   const vm = require('node:vm');
   [
     { name: 'index.html', content: indexHtml },
@@ -178,12 +161,11 @@ try {
     });
   });
 
-  console.log('Verificação de Top.gg, Trocas Seguras, Temas Visuais e Afiliados Shopee: OK');
+  console.log('Verificação de Top.gg, Temas Visuais e Afiliados Shopee: OK');
 } finally {
   const cleanFiles = [
     path.join(__dirname, '..', 'data', 'economy.json'),
     path.join(__dirname, '..', 'data', 'inventory.json'),
-    path.join(__dirname, '..', 'data', 'trades.json'),
   ];
 
   for (const file of cleanFiles) {

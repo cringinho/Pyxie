@@ -383,7 +383,7 @@ const TRANSLATIONS = {
         }
       },
       "renovationTitle": "✨  ✦  Lojinha em Reformas Arcanas!",
-      "renovationDesc": "*« A artesã da Cringelândia pendurou uma placa rústica na porta encantada do bazar... »*\n\n🔨 **Estamos remodelando nossas prateleiras mágicas!**\nNo momento, as compras diretas de baús e joias estão pausadas enquanto expandimos o catálogo com novos itens mágicos e colecionáveis.\n\n💡 **Enquanto isso, você pode:**\n• Trabalhar em sua profissão com **/py-work** para acumular moedinhas;\n• Abrir suas cartas diárias de tarot com **/py-tarot**;\n• Negociar gemas e itens com outros aventureiros via **/py-trade**!"
+      "renovationDesc": "*« A artesã da Cringelândia pendurou uma placa rústica na porta encantada do bazar... »*\n\n🔨 **Estamos remodelando nossas prateleiras mágicas!**\nNo momento, as compras diretas de baús e joias estão pausadas enquanto expandimos o catálogo com novos itens mágicos e colecionáveis.\n\n💡 **Enquanto isso, você pode:**\n• Trabalhar em sua profissão com **/py-work** para acumular moedinhas;\n• Abrir suas cartas diárias de tarot com **/py-tarot**;\n• Explorar sua mochila e itens com **/py-inventory**!"
     },
     "inventory": {
       "backpackTitle": "🎒  ✦  Mochila de {user}",
@@ -425,23 +425,6 @@ const TRANSLATIONS = {
       "invalidItem": "❌ Item inválido ou não encontrado.",
       "success": "💰 Você vendeu **{amount}x {emoji} {name}** e recebeu **+{earnings}**!\nNovo saldo: **{balance}**.",
       "needIdPrefix": "❌ Informe o item que deseja vender. Use `py!inventory` (ou `py!inventario`) para ver o que você possui."
-    },
-    "trade": {
-      "expired": "⏳ Esta proposta de troca expirou ou já foi encerrada.",
-      "notParticipant": "❌ Você não participa desta negociação.",
-      "cancelled": "❌ A proposta de troca foi cancelada por <@{user}>.",
-      "completedTitle": "🤝  ✦  Troca Concluída com Sucesso!",
-      "completedDesc": "🎉 A transferência foi realizada com sucesso entre <@{sender}> e <@{receiver}>!\n\n⏳ *Ambos os usuários entraram em cooldown de 30 minutos para novas trocas.*",
-      "inProgressTitle": "🤝  ✦  Proposta de Troca em Andamento",
-      "inProgressDesc": "Aguardando a confirmação de ambas as partes para concluir a troca atômica.\n\n> 🔵 <@{sender}>: {sStatus}\n> 🔴 <@{receiver}>: {rStatus}\n\n⏳ *Tempo restante para expirar: menos de 2 minutos.*",
-      "btnConfirm": "Confirmar Troca",
-      "btnCancel": "Cancelar Troca",
-      "confirmed": "✅ **CONFIRMOU**",
-      "waiting": "⏳ Aguardando...",
-      "proposalTitle": "🤝  ✦  Proposta de Troca",
-      "proposalDesc": "<@{sender}> enviou uma proposta de troca oficial para <@{receiver}>!\n\n📦 **OFERTA PROPOSTA:**\n> {offer}\n\n💌 *<@{receiver}>, clique em Confirmar abaixo para aceitar ou em Cancelar para recusar.*",
-      "itemOffer": "📦 **{amount}x {emoji} {name}**",
-      "coinOffer": "🪙 **{amount} Moedinhas**"
     },
     "ship": {
       "countError": "❌ Escolha exatamente duas pessoas ou deixe o comando sem menções para sortear.",
@@ -830,7 +813,7 @@ const TRANSLATIONS = {
         }
       },
       "renovationTitle": "✨  ✦  Arcane Renovations Underway!",
-      "renovationDesc": "*« The boutique crafter has hung an ornate rustic sign on the shop's enchanted gate... »*\n\n🔨 **We are remodeling our magical shelves!**\nDirect purchases of chests and jewels are temporarily paused while we expand our catalog with brand-new magical items and collectibles.\n\n💡 **In the meantime, you can:**\n• Work at your profession with **/py-work** to accumulate coins;\n• Draw your daily tarot card with **/py-tarot**;\n• Trade gems and items directly with other adventurers via **/py-trade**!"
+      "renovationDesc": "*« The boutique crafter has hung an ornate rustic sign on the shop's enchanted gate... »*\n\n🔨 **We are remodeling our magical shelves!**\nDirect purchases of chests and jewels are temporarily paused while we expand our catalog with brand-new magical items and collectibles.\n\n💡 **In the meantime, you can:**\n• Work at your profession with **/py-work** to accumulate coins;\n• Draw your daily tarot card with **/py-tarot**;\n• Explore your backpack and items with **/py-inventory**!"
     },
     "inventory": {
       "backpackTitle": "🎒  ✦  {user}’s Backpack",
@@ -872,23 +855,6 @@ const TRANSLATIONS = {
       "invalidItem": "❌ Invalid item or not found.",
       "success": "💰 You sold **{amount}x {emoji} {name}** and received **+{earnings}**!\nNew balance: **{balance}**.",
       "needIdPrefix": "❌ Please specify the item to sell. Use `py!inventory` (or `py!inventario`) to see what you have."
-    },
-    "trade": {
-      "expired": "⏳ This trade proposal expired or was already closed.",
-      "notParticipant": "❌ You are not part of this trade.",
-      "cancelled": "❌ The trade proposal was cancelled by <@{user}>.",
-      "completedTitle": "🤝  ✦  Trade Successfully Completed!",
-      "completedDesc": "🎉 The transfer was successfully completed between <@{sender}> and <@{receiver}>!\n\n⏳ *Both users entered a 30-minute cooldown for new trades.*",
-      "inProgressTitle": "🤝  ✦  Trade Proposal in Progress",
-      "inProgressDesc": "Waiting for both parties to confirm the atomic trade.\n\n> 🔵 <@{sender}>: {sStatus}\n> 🔴 <@{receiver}>: {rStatus}\n\n⏳ *Time remaining to expire: under 2 minutes.*",
-      "btnConfirm": "Confirm Trade",
-      "btnCancel": "Cancel Trade",
-      "confirmed": "✅ **CONFIRMED**",
-      "waiting": "⏳ Waiting...",
-      "proposalTitle": "🤝  ✦  Trade Proposal",
-      "proposalDesc": "<@{sender}> sent an official trade proposal to <@{receiver}>!\n\n📦 **OFFERED ITEM/COINS:**\n> {offer}\n\n💌 *<@{receiver}>, click Confirm below to accept or Cancel to reject.*",
-      "itemOffer": "📦 **{amount}x {emoji} {name}**",
-      "coinOffer": "🪙 **{amount} Coins**"
     },
     "ship": {
       "countError": "❌ Choose exactly two people or leave empty to pick a random pair.",
@@ -1028,7 +994,7 @@ const TRANSLATIONS = {
           "btnOpenWeb": "Open Full Web Wiki",
           "categoryPlaceholder": "Select an encyclopedia topic...",
           "optEco": "🪙 Economy & Currency",
-          "optEcoDesc": "Daily coins, vote bonuses, secure trades, chests, and vault.",
+          "optEcoDesc": "Daily coins, vote bonuses, secure transactions, chests, and vault.",
           "topicEcoTitle": "🪙 Economy, Coins & Rewards",
           "topicEcoDesc": "Pyxie's living economy is fueled by shiny coins and magic beans. Collect daily rewards with `/py-daily`, double your weekend earnings, and vote on Top.gg to claim coins and special mystery chests.",
           "optWork": "💼 Careers & Minigames",
