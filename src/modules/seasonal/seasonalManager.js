@@ -383,29 +383,93 @@ function getSeasonalLeaderboard(limit = 50) {
   }));
 }
 
-async function syncTopUserProfiles(client) {
-  if (!client || !client.users) return;
+async function syncTopUserProfiles(client = clientRef) {
   try {
     const data = loadData();
     data.userProfiles = data.userProfiles || {};
     let changed = false;
     const userIds = Object.keys(data.balances || {});
+    if (!userIds.length) return;
+
+    let cringelandiaGuild = null;
+    if (client && client.guilds) {
+      try {
+        cringelandiaGuild = client.guilds.cache.get('1453890868980482090') || await client.guilds.fetch('1453890868980482090').catch(() => null);
+      } catch (_) {}
+    }
+
+    const token = process.env.DISCORD_TOKEN;
+
     for (const id of userIds) {
-      if (!data.userProfiles[id] || !data.userProfiles[id].avatarUrl) {
-        try {
-          const u = await client.users.fetch(id).catch(() => null);
-          if (u) {
-            data.userProfiles[id] = {
-              username: u.username,
-              displayName: u.displayName || u.username,
-              avatarUrl: u.displayAvatarURL ? u.displayAvatarURL({ extension: 'png', size: 128 }) : null,
-              updatedAt: Date.now(),
-            };
-            changed = true;
+      const existing = data.userProfiles[id];
+      const isGeneric = !existing || !existing.displayName || existing.displayName.startsWith('Aventureiro');
+      if (isGeneric || !existing.avatarUrl) {
+        let fetchedUser = null;
+        let memberNick = null;
+        let memberAvatar = null;
+
+        if (client && client.users) {
+          try {
+            fetchedUser = await client.users.fetch(id).catch(() => null);
+            if (cringelandiaGuild) {
+              const m = cringelandiaGuild.members.cache.get(id) || await cringelandiaGuild.members.fetch(id).catch(() => null);
+              if (m) {
+                memberNick = m.displayName;
+                memberAvatar = typeof m.displayAvatarURL === 'function' ? m.displayAvatarURL({ extension: 'png', size: 128 }) : null;
+              }
+            }
+          } catch (_) {}
+        } else if (token && typeof fetch === 'function') {
+          try {
+            const memRes = await fetch(`https://discord.com/api/v10/guilds/1453890868980482090/members/${id}`, {
+              headers: { Authorization: `Bot ${token}` },
+            });
+            if (memRes.ok) {
+              const memData = await memRes.json();
+              if (memData && memData.user) {
+                fetchedUser = memData.user;
+                memberNick = memData.nick || memData.user.global_name || memData.user.username;
+                if (memData.avatar) {
+                  memberAvatar = `https://cdn.discordapp.com/guilds/1453890868980482090/users/${id}/avatars/${memData.avatar}.png?size=128`;
+                }
+              }
+            }
+            if (!fetchedUser) {
+              const uRes = await fetch(`https://discord.com/api/v10/users/${id}`, {
+                headers: { Authorization: `Bot ${token}` },
+              });
+              if (uRes.ok) {
+                fetchedUser = await uRes.json();
+              }
+            }
+          } catch (_) {}
+        }
+
+        if (fetchedUser) {
+          const username = fetchedUser.username || fetchedUser.tag || `User#${String(id).slice(-4)}`;
+          const displayName = memberNick || fetchedUser.displayName || fetchedUser.global_name || fetchedUser.globalName || username;
+          let avatarUrl = memberAvatar;
+          if (!avatarUrl) {
+            if (typeof fetchedUser.displayAvatarURL === 'function') {
+              avatarUrl = fetchedUser.displayAvatarURL({ extension: 'png', size: 128 });
+            } else if (fetchedUser.avatar) {
+              avatarUrl = `https://cdn.discordapp.com/avatars/${id}/${fetchedUser.avatar}.png?size=128`;
+            } else {
+              avatarUrl = `https://cdn.discordapp.com/embed/avatars/${Number(String(id).slice(-4)) % 5}.png`;
+            }
           }
-        } catch (_) {}
+
+          data.userProfiles[id] = {
+            username,
+            displayName,
+            avatarUrl,
+            updatedAt: Date.now(),
+          };
+          changed = true;
+        }
       }
     }
+
     if (changed) {
       saveData(data);
     }
@@ -497,6 +561,7 @@ function init(client, app, sendIpc = null) {
 
   if (client) {
     clientRef = client;
+    syncTopUserProfiles(client).catch(() => null);
     const config = loadConfig();
     if (config.active) {
       start();
@@ -638,22 +703,18 @@ function setupWebRoutes(app) {
   const cardRenderer = require('./cardRenderer');
 
   // 0. Rotas públicas do Ranking ao Vivo (com isolamento estrito por módulo)
-  app.get(['/evento', '/ranking', '/evento/ranking', '/ranking-sazonal'], (req, res) => {
+  app.get(['/evento', '/ranking', '/evento/ranking', '/ranking-sazonal'], async (req, res) => {
     if (!isSeasonalActive()) {
       return res.status(404).redirect('/');
     }
+
+    await syncTopUserProfiles(clientRef);
 
     const config = loadConfig();
     const data = loadData();
     const leaderboard = getSeasonalLeaderboard(50);
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
     const currencyEmojiObj = resolveSeasonalEmojiObject(clientRef, config.assets?.emojis?.currency, '🎃');
-
-    let shopeeProducts = [];
-    try {
-      const shopeeManager = require('../../services/shopeeManager');
-      shopeeProducts = shopeeManager.getActiveItems({ shuffle: true, limit: 12 });
-    } catch (_) {}
 
     res.render(path.join(__dirname, 'views', 'rankingSazonal.ejs'), {
       config,
@@ -663,11 +724,10 @@ function setupWebRoutes(app) {
       currencyEmojiUrl: currencyEmojiObj.url || 'https://cdn.discordapp.com/emojis/1551355734577381447.png',
       currencyEmojiFormatted: currencyEmojiObj.formatted,
       active: true,
-      shopeeProducts,
     });
   });
 
-  app.get(['/api/sazonal/ranking', '/api/seasonal/ranking'], (req, res) => {
+  app.get(['/api/sazonal/ranking', '/api/seasonal/ranking'], async (req, res) => {
     if (!isSeasonalActive()) {
       return res.json({
         success: false,
@@ -676,6 +736,8 @@ function setupWebRoutes(app) {
         message: 'Nenhum evento sazonal ativo no momento.',
       });
     }
+
+    await syncTopUserProfiles(clientRef);
 
     const config = loadConfig();
     const data = loadData();
@@ -722,6 +784,7 @@ function setupWebRoutes(app) {
       return res.status(404).send('Evento sazonal inativo');
     }
     try {
+      await syncTopUserProfiles(clientRef);
       const config = loadConfig();
       const leaderboard = getSeasonalLeaderboard(5);
       const lang = req.query.lang === 'en' ? 'en' : 'pt';

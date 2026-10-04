@@ -61,11 +61,11 @@ function pyxieFooter(baseText = null, source = null) {
 
 const PYXIE_PHRASES = {
   welcome: [
-    'Ora, ora... quem deixou esse mortal entrar no meu reino de travessuras?',
-    'Olha só quem resolveu dar as caras. Espero que traga doces ou moedas de ouro.',
+    'Ora, ora... quem é esse que entrou?',
+    'Olha só quem resolveu dar as caras. Espero que traga doces ou dinheiro com ele...',
     'Boas-vindas ao incrível e mágico recanto da Pyxie!',
     'Mais um aventureiro pronto para acumular moedinhas, ler cartas e curtir a comunidade!',
-    'Que o seu dia seja repleto de riquezas e boas risadas!',
+    'Que o seu dia seja repleto de boas risadas!',
   ],
   leisure: [
     'Uma pausa para o café e uma boa partida entre amigos!',

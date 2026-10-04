@@ -239,8 +239,18 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
   ctx.restore();
 
   // 2. Carregamento dos Assets
-  const mascotPath = path.join(__dirname, '../../../public/assets/pyxie/pyxie_mascot.png');
-  const mascotImg = fs.existsSync(mascotPath) ? await loadSafeImage(mascotPath) : null;
+  const preferredMascotPaths = [
+    path.join(__dirname, '../../../public/assets/pyxie/pyxie_halloweenCosplay.png'),
+    path.join(__dirname, '../../../public/assets/pyxie/pyxie_fullart_hd.png'),
+    path.join(__dirname, '../../../public/assets/pyxie/pyxie_mascot.png'),
+  ];
+  let mascotImg = null;
+  for (const mPath of preferredMascotPaths) {
+    if (fs.existsSync(mPath)) {
+      mascotImg = await loadSafeImage(mPath);
+      if (mascotImg) break;
+    }
+  }
   const pumpkinImg = await loadSafeImage('https://cdn.discordapp.com/emojis/1551355734577381447.png');
 
   // 3. Top Header: Tag de Servidor Oficial & Nome CRINGELÂNDIA
@@ -268,45 +278,54 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
 
   // 3.2 Título da Comunidade: CRINGELÂNDIA (Gigante & Escancarado)
   ctx.save();
-  ctx.font = '900 52px sans-serif';
+  ctx.font = '900 50px sans-serif';
   ctx.fillStyle = '#ffffff';
   ctx.shadowColor = 'rgba(168, 85, 247, 0.9)';
   ctx.shadowBlur = 25;
-  ctx.fillText(T.communityName, 70, 146);
+  ctx.fillText(T.communityName, 70, 142);
 
   // 3.3 Subtítulo do Evento
   ctx.font = 'bold 20px sans-serif';
   ctx.fillStyle = PALETTE.gold;
   ctx.shadowColor = 'rgba(251, 191, 36, 0.6)';
   ctx.shadowBlur = 12;
-  ctx.fillText(T.subtitle, 70, 186);
+  ctx.fillText(T.subtitle, 70, 182);
   ctx.restore();
 
-  // 4. Mascote Pyxie Escancarada (Top Right)
+  // 4. Mascote Pyxie Escancarada em Alta Definição (Top Right)
   if (mascotImg) {
     ctx.save();
     // Brilho místico ao redor da mascote
     ctx.shadowColor = 'rgba(255, 20, 147, 0.65)';
-    ctx.shadowBlur = 32;
+    ctx.shadowBlur = 28;
 
-    const mw = 270;
+    const mw = 210;
     const mh = (mascotImg.height / mascotImg.width) * mw;
-    const mx = WIDTH - mw - 40;
-    const my = 35;
-    ctx.drawImage(mascotImg, mx, my, mw, Math.min(mh, 380));
+    const mx = WIDTH - mw - 35;
+    const my = 22;
+    ctx.drawImage(mascotImg, mx, my, mw, Math.min(mh, 245));
     ctx.restore();
 
-    // Balão de fala charmoso da Pyxie
+    // Balão de fala charmoso e perfeitamente posicionado da Pyxie
     ctx.save();
-    const balloonX = mx - 180;
-    const balloonY = 88;
-    const balloonW = 180;
-    const balloonH = 44;
+    const balloonW = 182;
+    const balloonH = 42;
+    const balloonX = mx - balloonW - 14;
+    const balloonY = 56;
 
-    ctx.fillStyle = 'rgba(18, 10, 32, 0.92)';
-    ctx.strokeStyle = 'rgba(255, 20, 147, 0.55)';
+    ctx.fillStyle = 'rgba(18, 10, 32, 0.94)';
+    ctx.strokeStyle = 'rgba(255, 20, 147, 0.65)';
     ctx.lineWidth = 2;
-    drawRoundedRect(ctx, balloonX, balloonY, balloonW, balloonH, 16);
+    drawRoundedRect(ctx, balloonX, balloonY, balloonW, balloonH, 14);
+    ctx.fill();
+    ctx.stroke();
+
+    // Rabicho do balão apontando para a Pyxie
+    ctx.beginPath();
+    ctx.moveTo(balloonX + balloonW - 2, balloonY + 16);
+    ctx.lineTo(balloonX + balloonW + 12, balloonY + 22);
+    ctx.lineTo(balloonX + balloonW - 2, balloonY + 28);
+    ctx.closePath();
     ctx.fill();
     ctx.stroke();
 

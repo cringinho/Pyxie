@@ -65,8 +65,11 @@ const { getAnimatedEmoji } = require('./src/utils/serverEmojis');
 
 const welcomeHeartReactions = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🩷', '🩵', '🖤', '🤍', '🤎'];
 const CRINGE_PHRASE_COOLDOWN_MS = 60 * 1000;
+const CRINGE_CHANNEL_COOLDOWN_MS = 30 * 1000;
 const cringePhraseCooldowns = new Map();
+const cringeChannelCooldowns = new Map();
 const processedCringeMessageIds = new Set();
+let cringeInFlight = false;
 const recentWelcomes = new Map();
 const processedMessageIds = new Map();
 const processedInteractionIds = new Map();
@@ -369,25 +372,39 @@ async function handleCringePhrase(message) {
     ids.forEach((id) => processedCringeMessageIds.delete(id));
   }
 
+  // Previne execução simultânea se múltiplas chamadas assíncronas chegarem juntas
+  if (cringeInFlight) return true;
+
   const now = Date.now();
-  const lastTriggeredAt = cringePhraseCooldowns.get(message.author.id) || 0;
-  if (now - lastTriggeredAt < CRINGE_PHRASE_COOLDOWN_MS) {
-    await message.react('🍅').catch(() => null);
+  const channelId = message.channel?.id || message.channelId;
+  const lastChannelTrigger = cringeChannelCooldowns.get(channelId) || 0;
+  const lastAuthorTrigger = cringePhraseCooldowns.get(message.author.id) || 0;
+
+  // Se o canal ou o usuário estiverem em cooldown, aplica reação sem disparar novo GIF
+  if (now - lastChannelTrigger < CRINGE_CHANNEL_COOLDOWN_MS || now - lastAuthorTrigger < CRINGE_PHRASE_COOLDOWN_MS) {
+    if (now - lastAuthorTrigger > 4000) {
+      await message.react('🍅').catch(() => null);
+    }
     return true;
   }
 
-  // Registra o cooldown imediatamente para prevenir race conditions com mensagens simultâneas
+  cringeInFlight = true;
   cringePhraseCooldowns.set(message.author.id, now);
+  if (channelId) cringeChannelCooldowns.set(channelId, now);
 
-  await message.react('🌈').catch(() => null);
-  
-  const localGifPath = path.join(__dirname, 'assets', 'cringe_small.gif');
-  if (fs.existsSync(localGifPath)) {
-    await message.reply({
-      files: [new AttachmentBuilder(localGifPath, { name: 'gacha_boy.gif' })]
-    }).catch(() => null);
-  } else {
-    await message.reply('https://klipy.com/gifs/gacha-life-gacha-boy').catch(() => null);
+  try {
+    await message.react('🌈').catch(() => null);
+    
+    const localGifPath = path.join(__dirname, 'assets', 'cringe_small.gif');
+    if (fs.existsSync(localGifPath)) {
+      await message.reply({
+        files: [new AttachmentBuilder(localGifPath, { name: 'gacha_boy.gif' })]
+      }).catch(() => null);
+    } else {
+      await message.reply('https://klipy.com/gifs/gacha-life-gacha-boy').catch(() => null);
+    }
+  } finally {
+    cringeInFlight = false;
   }
   return true;
 }
@@ -863,12 +880,19 @@ client.on('interactionCreate', async (interaction) => {
       ephemeralCommands.has(interaction.commandName)
     );
     await interaction.deferReply({ flags: isEphemeral ? MessageFlags.Ephemeral : undefined });
-    if (!command || typeof command.executeSlash !== 'function') {
+    if (!command) {
       await interaction.editReply({ content: 'Esse comando ainda não está disponível. Não olhe para mim assim; eu também estou investigando.' });
       return;
     }
 
-    await command.executeSlash({ interaction });
+    if (typeof command.executeSlash === 'function') {
+      await command.executeSlash({ interaction });
+    } else if (typeof command.execute === 'function') {
+      await command.execute(interaction);
+    } else {
+      await interaction.editReply({ content: 'Esse comando ainda não está disponível. Não olhe para mim assim; eu também estou investigando.' });
+      return;
+    }
   } catch (error) {
     console.error(`Erro ao processar interaction (${interaction.commandName || interaction.customId}):`, error);
     if (interaction.deferred || interaction.replied) {

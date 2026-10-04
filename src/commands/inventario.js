@@ -129,6 +129,10 @@ module.exports = {
   buildInventoryEmbed,
   buildInventoryComponents,
 
+  async executeSlash({ interaction }) {
+    return this.execute(interaction);
+  },
+
   async execute(interaction) {
     const userId = interaction.user.id;
     const userTag = interaction.user.username;
@@ -136,11 +140,13 @@ module.exports = {
     const embed = buildInventoryEmbed(userId, userTag, null, interaction);
     const components = buildInventoryComponents(userId, null, interaction);
 
-    const message = await interaction.reply({
-      embeds: [embed],
-      components,
-      fetchReply: true,
-    });
+    const message = (interaction.deferred || interaction.replied)
+      ? await interaction.editReply({ embeds: [embed], components })
+      : await interaction.reply({
+          embeds: [embed],
+          components,
+          fetchReply: true,
+        });
 
     const collector = message.createMessageComponentCollector({
       filter: (i) => i.user.id === userId,

@@ -229,25 +229,12 @@
       flex-shrink: 0;
     }
 
-    .brand-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px rgba(244, 63, 94, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-      position: relative;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .brand-icon img {
-      width: 34px;
-      height: 34px;
+    .brand-icon-img {
+      width: 42px;
+      height: 42px;
       object-fit: contain;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      filter: drop-shadow(0 2px 8px rgba(244, 63, 94, 0.45));
+      flex-shrink: 0;
     }
 
     .brand-title {
@@ -1499,9 +1486,7 @@
   <header class="navbar">
     <div class="container nav-wrapper">
       <a href="/" class="nav-brand">
-        <div class="brand-icon">
-          <img src="https://cdn.discordapp.com/emojis/1548443951596306552.webp" alt="Pyxie" />
-        </div>
+        <img src="/assets/pyxie/pyxie_pixelart_face.png" class="brand-icon-img" alt="Pyxie" />
         <div class="brand-title">Pyxie</div>
       </a>
 

@@ -5,6 +5,7 @@ const {
   loadData,
   saveData,
   addSeasonalBalance,
+  updateUserProfile,
   resolveSeasonalEmoji,
   resolveSeasonalEmojiObject,
   isSeasonalActive,
@@ -256,6 +257,20 @@ async function triggerDrop(client, force = false) {
       const amount = Math.floor(Math.random() * 2) + 1;
       const updatedBalance = addSeasonalBalance(user.id, amount);
       const currencyEmoji = resolveSeasonalEmoji(client, config.assets?.emojis?.currency, '🎃');
+
+      if (user) {
+        let member = null;
+        try {
+          member = dropMsg.guild?.members?.cache?.get(user.id) || await dropMsg.guild?.members?.fetch(user.id).catch(() => null);
+        } catch (_) {}
+        updateUserProfile(user.id, {
+          username: user.username,
+          displayName: member?.displayName || user.displayName || user.globalName || user.username,
+          avatarUrl: (member && typeof member.displayAvatarURL === 'function')
+            ? member.displayAvatarURL({ extension: 'png', size: 128 })
+            : (typeof user.displayAvatarURL === 'function' ? user.displayAvatarURL({ extension: 'png', size: 128 }) : null),
+        });
+      }
 
       const winEmbed = new EmbedBuilder()
         .setColor('#10b981')
