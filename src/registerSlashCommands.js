@@ -21,14 +21,7 @@ const CRINGELANDIA_GUILD_ID = '1453890868980482090';
       }
     }
 
-    const commandsMap = new Map();
-    for (const cmd of slashCommands) {
-      if (cmd && cmd.name) commandsMap.set(cmd.name, cmd);
-    }
-    for (const cmd of moduleSlash) {
-      if (cmd && cmd.name) commandsMap.set(cmd.name, cmd);
-    }
-    const allSlashCommands = Array.from(commandsMap.values());
+    const allSlashCommands = [...slashCommands, ...moduleSlash];
     console.log(`Enviando ${allSlashCommands.length} slash commands para a API do Discord (${slashCommands.length} core + ${moduleSlash.length} de módulos)...`);
 
     // 1. Registro Global (para todos os servidores onde a Pyxie está presente)

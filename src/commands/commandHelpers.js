@@ -407,13 +407,6 @@ function getHelpModules(customCommands = null, source = null) {
     if (!name || seen.has(name)) continue;
     seen.add(name);
 
-    try {
-      const moduleManager = require('../services/moduleManager');
-      if (typeof moduleManager.isCommandEnabled === 'function' && !moduleManager.isCommandEnabled(name)) {
-        continue;
-      }
-    } catch (_) {}
-
     const bareName = name.startsWith('py-') ? name.slice(3) : name;
     if (!isOwner && (OWNER_ONLY_COMMANDS.has(name) || OWNER_ONLY_COMMANDS.has(bareName))) {
       continue;

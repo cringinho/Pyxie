@@ -8,6 +8,5 @@ data/backup/
 minhasnote/
 .botmelody.lock
 prefix.json
-
-
-
+public/uploads/*
+!public/uploads/.gitkeep

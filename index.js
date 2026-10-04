@@ -740,22 +740,24 @@ client.on('interactionCreate', async (interaction) => {
       }
     }
 
-    const activeTarotCommand = commandsByName.get('py-tarot') || commandsByName.get('tarot');
-    if (activeTarotCommand && typeof activeTarotCommand.isTarotButton === 'function' && activeTarotCommand.isTarotButton(interaction)) {
+    if (interaction.isButton() && (interaction.customId.startsWith('seasonal_art_') || interaction.customId.startsWith('seasonal_multi_art_'))) {
+      const artHandler = require('./src/modules/seasonal/artHandler');
+      await artHandler.handleButtonInteraction(interaction);
+      return;
+    }
+
+    if (tarotCommand.isTarotButton(interaction)) {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
-      await activeTarotCommand.executeButton({ interaction });
+      await tarotCommand.executeButton({ interaction });
       return;
     }
 
     if (interaction.isButton() && interaction.customId === 'tarot:draw') {
-      if (!activeTarotCommand) {
-        return interaction.reply({ content: '❌ O módulo de Tarot está temporariamente desativado.', flags: MessageFlags.Ephemeral });
-      }
       incrementCommand();
       recordUniqueUser(interaction.user.id);
-      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-      await activeTarotCommand.executeSlash({ interaction });
+      await interaction.deferReply({ ephemeral: true });
+      await tarotCommand.executeSlash({ interaction });
       return;
     }
 

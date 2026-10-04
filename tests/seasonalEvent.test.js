@@ -108,23 +108,10 @@ const mockClient = {
 };
 
 let reactedEmoji = null;
-const mockArtMessage = {
-  id: 'msg_art_123',
-  author: { id: 'artist_user_1', bot: false, tag: 'Artist#0001' },
-  channelId: 'art_channel_test',
-  content: 'Minha arte para o evento! <@bot_pyxie_id> https://i.imgur.com/example_art.png',
-  mentions: {
-    has: (u) => u === mockClient.user,
-    users: new Map([['bot_pyxie_id', mockClient.user]]),
-  },
-  attachments: new Map(),
-  react: async (emoji) => { reactedEmoji = emoji; },
-};
-
 const mockChannel = {
   id: 'art_channel_test',
   isTextBased: () => true,
-  send: async () => ({ id: 'sent_art_announcement' }),
+  send: async () => ({ id: 'sent_art_prompt', delete: async () => {} }),
   messages: {
     fetch: async () => ({
       reactions: {
@@ -140,6 +127,21 @@ const mockChannel = {
   },
 };
 
+const mockArtMessage = {
+  id: 'msg_art_123',
+  author: { id: 'artist_user_1', bot: false, tag: 'Artist#0001' },
+  channelId: 'art_channel_test',
+  channel: mockChannel,
+  createdTimestamp: Date.now(),
+  content: 'Minha arte para o evento! <@bot_pyxie_id> https://i.imgur.com/example_art.png',
+  mentions: {
+    has: (u) => u === mockClient.user,
+    users: new Map([['bot_pyxie_id', mockClient.user]]),
+  },
+  attachments: new Map(),
+  react: async (emoji) => { reactedEmoji = emoji; },
+};
+
 // Configura canal de artes de teste
 seasonalManager.saveConfig({
   channels: { ...seasonalManager.loadConfig().channels, artChannelId: 'art_channel_test' },
@@ -148,6 +150,20 @@ seasonalManager.saveConfig({
 // Submete a arte
 artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted) => {
   assert.equal(submitted, true, 'Submissão de arte com menção e imagem deve ser aceita');
+
+  // Confirmação interativa do autor via botão
+  const mockConfirmInteraction = {
+    isButton: () => true,
+    customId: `seasonal_art_confirm:${mockArtMessage.id}:${mockArtMessage.author.id}`,
+    user: { id: mockArtMessage.author.id },
+    channelId: mockArtMessage.channelId,
+    client: mockClient,
+    update: async () => {},
+    reply: async () => {},
+    message: { delete: async () => {} },
+  };
+  await artHandler.handleButtonInteraction(mockConfirmInteraction);
+
   assert(reactedEmoji !== null, 'Bot deve reagir com o emoji oficial de contagem');
 
   const dataAfterSub = seasonalManager.loadData();
@@ -181,7 +197,19 @@ artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted
   const submittedAncient = await artHandler.handleArtSubmission(oldDateMessage, mockClient);
   assert.equal(submittedAncient, false, 'Mensagens antigas (> 7 dias) não podem ser submetidas');
 
-  // 5.3 Nova arte genuína da semana atual deve ser aceita normalmente
+  // 5.3 Teste de Múltiplas Artes em uma única postagem (deve exibir aviso sem marcar autor)
+  const multiArtMessage = {
+    ...mockArtMessage,
+    id: 'msg_multi_art_test',
+    attachments: new Map([
+      ['att1', { contentType: 'image/png', url: 'https://cdn.discordapp.com/1.png' }],
+      ['att2', { contentType: 'image/png', url: 'https://cdn.discordapp.com/2.png' }],
+    ]),
+  };
+  const submittedMulti = await artHandler.handleArtSubmission(multiArtMessage, mockClient);
+  assert.equal(submittedMulti, true, 'Aviso de múltiplas imagens deve ser processado');
+
+  // 5.4 Nova arte genuína da semana atual deve ser aceita normalmente
   const freshWeekMessage = {
     ...mockArtMessage,
     id: 'msg_art_fresh_week2',
@@ -189,6 +217,19 @@ artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted
   };
   const submittedFresh = await artHandler.handleArtSubmission(freshWeekMessage, mockClient);
   assert.equal(submittedFresh, true, 'Nova arte enviada na semana corrente deve ser aceita');
+
+  const mockFreshConfirm = {
+    isButton: () => true,
+    customId: `seasonal_art_confirm:${freshWeekMessage.id}:${freshWeekMessage.author.id}`,
+    user: { id: freshWeekMessage.author.id },
+    channelId: freshWeekMessage.channelId,
+    client: mockClient,
+    update: async () => {},
+    reply: async () => {},
+    message: { delete: async () => {} },
+  };
+  await artHandler.handleButtonInteraction(mockFreshConfirm);
+
   assert.equal(seasonalManager.loadData().currentWeekArt.length, 1, 'Fila da nova semana deve conter apenas a nova arte');
 
   // Limpa para os próximos testes

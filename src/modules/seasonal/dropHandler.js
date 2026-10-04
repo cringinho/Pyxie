@@ -70,6 +70,68 @@ function getEmojiDisplayName(targetItem, resolvedFormatted, targetObj) {
   return `${resolvedFormatted} **${customName}**`;
 }
 
+/**
+ * Calcula os próximos horários agendados de drops
+ */
+function getNextScheduledDrops(count = 5, baseDate = new Date()) {
+  const drops = [];
+  const weekdayTimes = [
+    [9, 30],
+    [15, 30],
+    [21, 0],
+  ];
+  const weekendTimes = [
+    [10, 0],
+    [13, 0],
+    [16, 0],
+    [18, 30],
+    [21, 0],
+    [23, 30],
+  ];
+
+  for (let d = 0; d < 7 && drops.length < count; d++) {
+    const dayDate = new Date(baseDate.getTime() + d * 24 * 60 * 60 * 1000);
+    const spOffset = -3 * 60; // America/Sao_Paulo (UTC-3 em minutos)
+    const utcTime = dayDate.getTime() + (dayDate.getTimezoneOffset() * 60000);
+    const spDate = new Date(utcTime + (spOffset * 60000));
+    const dayOfWeek = spDate.getDay();
+    const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+    const times = isWeekend ? weekendTimes : weekdayTimes;
+
+    for (const [h, m] of times) {
+      const scheduledSp = new Date(spDate.getFullYear(), spDate.getMonth(), spDate.getDate(), h, m, 0, 0);
+      const scheduledUtc = scheduledSp.getTime() - (spOffset * 60000);
+
+      if (scheduledUtc > baseDate.getTime()) {
+        const diffMs = scheduledUtc - baseDate.getTime();
+        const diffHours = Math.floor(diffMs / (3600 * 1000));
+        const diffMins = Math.floor((diffMs % (3600 * 1000)) / (60 * 1000));
+        let relativeText = '';
+        if (diffHours > 0) {
+          relativeText = `em ${diffHours}h ${diffMins}m`;
+        } else {
+          relativeText = `em ${diffMins} minutos`;
+        }
+
+        const dayName = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][dayOfWeek];
+        const timeFormatted = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')} BRT`;
+
+        drops.push({
+          timestamp: scheduledUtc,
+          dayName,
+          timeFormatted,
+          relativeText,
+          isWeekend,
+        });
+
+        if (drops.length >= count) break;
+      }
+    }
+  }
+
+  return drops;
+}
+
 function start(client) {
   stop();
 
@@ -112,7 +174,6 @@ function start(client) {
 }
 
 function stop() {
-  // Para todos os crons
   for (const job of dropJobs) {
     try {
       job.stop();
@@ -120,7 +181,6 @@ function stop() {
   }
   dropJobs = [];
 
-  // Cancela coletores de reação pendentes
   for (const collector of activeCollectors) {
     try {
       collector.stop('shutdown');
@@ -128,7 +188,6 @@ function stop() {
   }
   activeCollectors.clear();
 
-  // Cancela timers de auto-delete pendentes
   for (const timer of activeTimers) {
     try {
       clearTimeout(timer);
@@ -177,7 +236,6 @@ async function triggerDrop(client, force = false) {
 
   const decoys = rawDecoys.map(normalizeDecoy).filter(Boolean);
 
-  // Resolve todos os decoys para objetos estruturados garantindo ID para reações
   const resolvedDecoyObjects = decoys.map((d) => {
     const resolved = resolveSeasonalEmojiObject(client, d.id, '🎃');
     const label = d.label || DECOY_NAMES[d.id] || DECOY_NAMES[resolved.id] || DECOY_NAMES[resolved.name] || resolved.name || 'Emoji Secreto';
@@ -188,7 +246,6 @@ async function triggerDrop(client, force = false) {
     };
   });
 
-  // Sorteia aleatoriamente 1 emoji correto da rodada
   const targetObj = resolvedDecoyObjects[Math.floor(Math.random() * resolvedDecoyObjects.length)];
   const targetLabel = getEmojiDisplayName(targetObj.rawDecoy, targetObj.formatted, targetObj);
 
@@ -214,12 +271,34 @@ async function triggerDrop(client, force = false) {
     return false;
   }
 
-  // Registra o ID no histórico de drops
+  // Registra no histórico de drops (Ledger para visualização administrativa)
   const data = loadData();
+  data.history = data.history || {};
   data.history.lastDropMessageId = dropMsg.id;
+  data.history.drops = data.history.drops || [];
+
+  const dropRecord = {
+    id: `drop_${dropMsg.id}`,
+    messageId: dropMsg.id,
+    channelId: dropsChannelId,
+    sentAt: Date.now(),
+    targetEmoji: {
+      id: targetObj.id,
+      name: targetObj.name,
+      label: targetObj.label,
+      formatted: targetObj.formatted,
+    },
+    status: 'ativo',
+    winner: null,
+  };
+
+  data.history.drops.unshift(dropRecord);
+  if (data.history.drops.length > 50) {
+    data.history.drops = data.history.drops.slice(0, 50);
+  }
   saveData(data);
 
-  // Adiciona as 6 reações decoys na mensagem de forma ordenada
+  // Adiciona reações decoys na mensagem de forma ordenada
   for (const decoyObj of resolvedDecoyObjects) {
     try {
       await dropMsg.react(decoyObj.reactable);
@@ -229,7 +308,6 @@ async function triggerDrop(client, force = false) {
     }
   }
 
-  // Coletor de Reação Rápida com Auto-claim
   let claimed = false;
   const filter = (reaction, user) => !user.bot;
   const collector = dropMsg.createReactionCollector({ filter, time: 5 * 60 * 1000 });
@@ -242,7 +320,6 @@ async function triggerDrop(client, force = false) {
     const reactionId = String(reaction.emoji?.id || '');
     const reactionToString = typeof reaction.emoji?.toString === 'function' ? reaction.emoji.toString() : '';
 
-    // Verifica se corresponde com precisão ao emoji premiado (por ID, nome, unicode ou formatted)
     const isTarget =
       (targetObj.id && (reactionId === String(targetObj.id) || reactionId.includes(String(targetObj.id)))) ||
       (targetObj.name && (reactionName === targetObj.name.toLowerCase() || reactionName.includes(targetObj.name.toLowerCase()))) ||
@@ -253,30 +330,52 @@ async function triggerDrop(client, force = false) {
       claimed = true;
       collector.stop('claimed');
 
-      // Recompensa aleatória entre 1 e 2 moedas sazonais
       const amount = Math.floor(Math.random() * 2) + 1;
-      const updatedBalance = addSeasonalBalance(user.id, amount);
-      const currencyEmoji = resolveSeasonalEmoji(client, config.assets?.emojis?.currency, '🎃');
+      let member = null;
+      try {
+        member = dropMsg.guild?.members?.cache?.get(user.id) || await dropMsg.guild?.members?.fetch(user.id).catch(() => null);
+      } catch (_) {}
 
-      if (user) {
-        let member = null;
-        try {
-          member = dropMsg.guild?.members?.cache?.get(user.id) || await dropMsg.guild?.members?.fetch(user.id).catch(() => null);
-        } catch (_) {}
-        updateUserProfile(user.id, {
+      const userDisplayName = member?.displayName || user.displayName || user.globalName || user.username;
+      const userAvatar = (member && typeof member.displayAvatarURL === 'function')
+        ? member.displayAvatarURL({ extension: 'png', size: 128 })
+        : (typeof user.displayAvatarURL === 'function' ? user.displayAvatarURL({ extension: 'png', size: 128 }) : null);
+
+      updateUserProfile(user.id, {
+        username: user.username,
+        displayName: userDisplayName,
+        avatarUrl: userAvatar,
+      });
+
+      // Registra ganho no histórico financeiro de abóboras (Ledger)
+      const updatedBalance = addSeasonalBalance(user.id, amount, {
+        source: 'drop',
+        description: `Baú Misterioso da Pyxie aberto (+${amount} Abóboras)`,
+        messageId: dropMsg.id,
+      });
+
+      // Atualiza o registro do drop no histórico de drops
+      const currentData = loadData();
+      const storedDrop = (currentData.history?.drops || []).find((d) => d.messageId === dropMsg.id);
+      if (storedDrop) {
+        storedDrop.status = 'reivindicado';
+        storedDrop.winner = {
+          userId: user.id,
           username: user.username,
-          displayName: member?.displayName || user.displayName || user.globalName || user.username,
-          avatarUrl: (member && typeof member.displayAvatarURL === 'function')
-            ? member.displayAvatarURL({ extension: 'png', size: 128 })
-            : (typeof user.displayAvatarURL === 'function' ? user.displayAvatarURL({ extension: 'png', size: 128 }) : null),
-        });
+          displayName: userDisplayName,
+          avatarUrl: userAvatar,
+          amount,
+          claimedAt: Date.now(),
+        };
+        saveData(currentData);
       }
 
+      const currencyEmoji = resolveSeasonalEmoji(client, config.assets?.emojis?.currency, '🎃');
       const winEmbed = new EmbedBuilder()
         .setColor('#10b981')
         .setTitle('🎉 BAÚ ABERTO COM SUCESSO! 🎉')
         .setDescription(
-          `<@${user.id}> foi mais rápido que a luz (ou usou pacto) e abriu o baú primeiro!\n\n` +
+          `<@${user.id}> foi mais rápido que a luz e abriu o baú primeiro!\n\n` +
           `💰 **Saque:** +${amount} ${currencyEmoji} ${config.currencyName || 'Abóboras'}!\n` +
           `💳 **Saldo Atual:** ${updatedBalance} ${currencyEmoji}\n\n` +
           `*Os outros que fiquem comendo poeira.*`
@@ -293,6 +392,14 @@ async function triggerDrop(client, force = false) {
   collector.on('end', (_collected, reason) => {
     activeCollectors.delete(collector);
     if (!claimed && reason !== 'shutdown') {
+      // Atualiza status para expirado no histórico
+      const currentData = loadData();
+      const storedDrop = (currentData.history?.drops || []).find((d) => d.messageId === dropMsg.id);
+      if (storedDrop && storedDrop.status === 'ativo') {
+        storedDrop.status = 'expirado';
+        saveData(currentData);
+      }
+
       const expiredEmbed = new EmbedBuilder()
         .setColor('#6b7280')
         .setTitle('💨 O BAÚ DA PYXIE EVAPOROU!')
@@ -311,6 +418,7 @@ async function triggerDrop(client, force = false) {
       await dropMsg.delete().catch(() => null);
     } catch (_) {}
   }, 5 * 60 * 1000);
+  if (deleteTimer && typeof deleteTimer.unref === 'function') deleteTimer.unref();
   activeTimers.add(deleteTimer);
 
   return true;
@@ -320,4 +428,5 @@ module.exports = {
   start,
   stop,
   triggerDrop,
+  getNextScheduledDrops,
 };

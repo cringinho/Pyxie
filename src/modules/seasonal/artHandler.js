@@ -1,17 +1,25 @@
 const cron = require('node-cron');
-const { EmbedBuilder } = require('discord.js');
+const {
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  MessageFlags,
+} = require('discord.js');
 const {
   loadConfig,
   loadData,
   saveData,
   addSeasonalBalance,
   updateUserProfile,
-  resolveSeasonalEmoji,
   resolveSeasonalEmojiObject,
   isSeasonalActive,
 } = require('./seasonalManager');
+const { cacheArtImage } = require('./imageHelper');
 
 let artJob = null;
+const activePromptTimers = new Map();
+const pendingSubmissions = new Map();
 
 function start(client) {
   stop();
@@ -38,8 +46,49 @@ function stop() {
     } catch (_) {}
     artJob = null;
   }
+  for (const timer of activePromptTimers.values()) {
+    try {
+      clearTimeout(timer);
+    } catch (_) {}
+  }
+  activePromptTimers.clear();
 }
 
+/**
+ * Filtra anexos da mensagem retornando apenas imagens válidas
+ */
+function extractImagesFromMessage(message) {
+  const images = [];
+
+  if (message.attachments && message.attachments.size > 0) {
+    for (const att of message.attachments.values()) {
+      const type = att.contentType || '';
+      const name = att.name || att.url || '';
+      if (type.startsWith('image/') || /\.(png|jpe?g|gif|webp)(\?.*)?$/i.test(name)) {
+        images.push({
+          id: att.id,
+          url: att.url,
+          name: att.name,
+        });
+      }
+    }
+  }
+
+  if (images.length === 0 && message.content) {
+    const matches = message.content.match(/https?:\/\/\S+\.(?:png|jpe?g|gif|webp)(?:\?\S*)?/gi);
+    if (matches) {
+      matches.forEach((url, i) => {
+        images.push({ id: `text_${i}`, url, name: 'url_image' });
+      });
+    }
+  }
+
+  return images;
+}
+
+/**
+ * Processa mensagens postadas no canal de artes oficial da Cringelândia
+ */
 async function handleArtSubmission(message, client) {
   if (!isSeasonalActive()) return false;
   if (!message || message.author?.bot) return false;
@@ -48,81 +97,85 @@ async function handleArtSubmission(message, client) {
   if (!config.channels?.artChannelId) return false;
   if (message.channelId !== config.channels.artChannelId) return false;
 
-  // Verifica se o bot foi mencionado
-  const isMentioned =
-    message.mentions.has(client?.user) ||
-    message.mentions.users?.has(client?.user?.id) ||
-    (client?.user?.id && message.content.includes(client.user.id));
-
-  if (!isMentioned) return false;
-
-  // Validação de imagem anexada ou URL direta de imagem
-  let imageUrl = null;
-  if (message.attachments?.size > 0) {
-    const imgAtt = message.attachments.find((att) => {
-      const type = att.contentType || '';
-      const name = att.name || att.url || '';
-      return type.startsWith('image/') || /\.(png|jpe?g|gif|webp)(\?.*)?$/i.test(name);
-    });
-    if (imgAtt) imageUrl = imgAtt.url;
-  }
-
-  if (!imageUrl && message.content) {
-    const match = message.content.match(/https?:\/\/\S+\.(?:png|jpe?g|gif|webp)(?:\?\S*)?/i);
-    if (match) imageUrl = match[0];
-  }
-
-  if (!imageUrl) {
-    // Menção sem imagem no canal de artes: aviso sarcástico
-    await message.react('❓').catch(() => null);
+  // Ignora mensagens com mais de 7 dias
+  if (message.createdTimestamp && Date.now() - message.createdTimestamp > 7 * 24 * 60 * 60 * 1000) {
     return false;
   }
 
-  // Previne submissão duplicada da mesma mensagem ou re-submissão de semanas anteriores
+  const images = extractImagesFromMessage(message);
+  if (images.length === 0) {
+    return false;
+  }
+
+  const targetChannel = message.channel || (client && client.channels && typeof client.channels.fetch === 'function' ? await client.channels.fetch(message.channelId || message.channel?.id).catch(() => null) : null);
+  if (!targetChannel || typeof targetChannel.send !== 'function') {
+    return false;
+  }
+
+  // CENÁRIO 1: O autor postou mais de 1 arte de uma vez só
+  // Aviso educado SEM marcá-lo, com botão de "Entendido" que fecha na hora ou em 10 minutos
+  if (images.length > 1) {
+    const noticeEmbed = new EmbedBuilder()
+      .setColor('#f59e0b')
+      .setTitle('⚠️  ✦  Aviso de Postagem: Arte da Semana')
+      .setDescription(
+        'Notamos que você postou mais de uma imagem nesta mesma mensagem!\n\n' +
+        'Para participar do concurso de **Arte da Semana**, poste **apenas 1 arte por mensagem**. ' +
+        'Assim a galera da Cringelândia consegue votar individualmente na sua obra favorita.\n\n' +
+        'Se você deseja concorrer, poste a sua arte preferida sozinha aqui no canal! 🎨'
+      )
+      .setFooter({ text: 'Dica da Pyxie • Você pode fechar este aviso a qualquer momento' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`seasonal_multi_art_dismiss:${message.id}`)
+        .setLabel('Entendido')
+        .setEmoji('👍')
+        .setStyle(ButtonStyle.Secondary)
+    );
+
+    try {
+      const noticeMsg = await targetChannel.send({
+        embeds: [noticeEmbed],
+        components: [row],
+      });
+
+      // Auto-delete após 10 minutos
+      const timer = setTimeout(async () => {
+        try {
+          if (noticeMsg && typeof noticeMsg.delete === 'function') {
+            await noticeMsg.delete().catch(() => null);
+          }
+        } catch (_) {}
+      }, 10 * 60 * 1000);
+      if (timer && typeof timer.unref === 'function') timer.unref();
+
+      activePromptTimers.set(`notice_${noticeMsg.id}`, timer);
+    } catch (err) {
+      console.warn('[Seasonal:Art] Falha ao enviar aviso de múltiplas imagens:', err.message);
+    }
+
+    return true;
+  }
+
+  // CENÁRIO 2: O autor postou exatamente 1 arte
+  const targetImage = images[0];
+  const imageUrl = targetImage.url;
+
+  // Previne duplicatas de artes já registradas na semana ou apuradas no passado
   const data = loadData();
   const currentWeek = data.currentWeekArt || [];
   const pastTallied = data.history?.talliedArtMessageIds || [];
 
   if (pastTallied.includes(message.id)) {
-    console.log(`[Seasonal:Art] Mensagem ${message.id} já foi apurada em semanas passadas. Ignorando.`);
     return false;
   }
-
   if (currentWeek.some((item) => item.messageId === message.id)) {
     return true;
   }
 
-  // Previne necro-menções em mensagens antigas de semanas passadas (> 7 dias)
-  const messageTime = message.createdTimestamp || Date.now();
-  const maxAgeMs = 7 * 24 * 60 * 60 * 1000;
-  if (Date.now() - messageTime > maxAgeMs) {
-    console.log(`[Seasonal:Art] Mensagem ${message.id} foi postada há mais de 7 dias. Ignorando arte antiga.`);
-    return false;
-  }
-
-  // Emoji oficial de contagem da Pyxie
-  const artEmojiConfig = config.assets?.emojis?.artOfWeek?.[0] || '1548443988745261086';
-  const resolvedArtObj = resolveSeasonalEmojiObject(client, artEmojiConfig, '🎨');
-
-  try {
-    await message.react(resolvedArtObj.reactable);
-  } catch (err) {
-    console.warn('[Seasonal:Art] Falha ao reagir com emoji personalizado, usando fallback:', err.message);
-    await message.react('🎨').catch(() => null);
-  }
-
-  // Registra a obra na lista da semana
-  currentWeek.push({
-    messageId: message.id,
-    authorId: message.author.id,
-    channelId: message.channel?.id || message.channelId,
-    imageUrl,
-    submittedAt: Date.now(),
-  });
-
-  data.currentWeekArt = currentWeek;
-  saveData(data);
-
+  // Atualiza perfil do autor imediatamente para garantir nome e avatar sincronizados
   if (message.author) {
     updateUserProfile(message.author.id, {
       username: message.author.username,
@@ -131,10 +184,229 @@ async function handleArtSubmission(message, client) {
     });
   }
 
-  console.log(`[Seasonal:Art] Nova arte submetida por ${message.author.tag} (${message.author.id})`);
+  // Salva submissão pendente para vincular a imagem caso o author confirme
+  pendingSubmissions.set(message.id, {
+    messageId: message.id,
+    authorId: message.author.id,
+    imageUrl,
+    channelId: targetChannel.id || message.channelId,
+    message,
+  });
+
+  // Mensagem com botões somente para o autor, marcando-o para ver rápido
+  // Explicada em linguagem "pra criança entender"
+  const promptEmbed = new EmbedBuilder()
+    .setColor('#a855f7')
+    .setTitle('🎨  ✦  Arte da Semana na Cringelândia!')
+    .setDescription(
+      `Oi <@${message.author.id}>! ✨ Que desenho bonito!\n\n` +
+      `Conta pra mim: **essa arte foi feita por você mesmo(a)?**\n\n` +
+      `Se for autoral sua, você gostaria de colocá-la na nossa **Votação de Arte da Semana**?\n\n` +
+      `📌 **Como funciona (bem facinho de entender):**\n` +
+      `• Se você clicar em **Sim**, sua arte vai para a nossa galeria no site e o pessoal do servidor poderá votar nela reagindo com 🎃!\n` +
+      `• No domingo às 10h da manhã, a arte mais votada vence e você ganha **+5 Abóboras**!\n` +
+      `• Se você clicar em **Não**, tá tudo bem! Sua arte continua aqui no canal pra todo mundo admirar, mas sem entrar na disputa de pontos.\n\n` +
+      `O que você prefere fazer?`
+    )
+    .setFooter({ text: 'Apenas você pode responder a esta pergunta usando os botões abaixo.' });
+
+  const confirmRow = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`seasonal_art_confirm:${message.id}:${message.author.id}`)
+      .setLabel('Sim, quero participar!')
+      .setEmoji('🎨')
+      .setStyle(ButtonStyle.Success),
+    new ButtonBuilder()
+      .setCustomId(`seasonal_art_decline:${message.id}:${message.author.id}`)
+      .setLabel('Não, é só pra ver')
+      .setEmoji('❌')
+      .setStyle(ButtonStyle.Secondary)
+  );
+
+  try {
+    const promptMsg = await targetChannel.send({
+      content: `<@${message.author.id}>`,
+      embeds: [promptEmbed],
+      components: [confirmRow],
+    });
+
+    // Auto-delete do prompt caso fique sem resposta por 24 horas
+    const promptTimer = setTimeout(async () => {
+      try {
+        if (promptMsg && typeof promptMsg.delete === 'function') {
+          await promptMsg.delete().catch(() => null);
+        }
+      } catch (_) {}
+    }, 24 * 60 * 60 * 1000);
+    if (promptTimer && typeof promptTimer.unref === 'function') promptTimer.unref();
+
+    activePromptTimers.set(`prompt_${promptMsg.id}`, promptTimer);
+  } catch (err) {
+    console.error('[Seasonal:Art] Falha ao enviar pergunta ao autor da arte:', err);
+  }
+
   return true;
 }
 
+/**
+ * Trata as interações dos botões de confirmação de arte e dismiss de avisos
+ */
+async function handleButtonInteraction(interaction) {
+  if (!interaction || (typeof interaction.isButton === 'function' && !interaction.isButton())) return false;
+  const customId = interaction.customId;
+  if (!customId) return false;
+
+  // 1. Fechar aviso de múltiplas artes (qualquer um pode clicar para despoluir)
+  if (customId.startsWith('seasonal_multi_art_dismiss:')) {
+    try {
+      if (interaction.message && typeof interaction.message.delete === 'function') {
+        await interaction.message.delete().catch(() => null);
+      }
+    } catch (_) {}
+    return true;
+  }
+
+  // 2. Confirmação / Declínio de arte autoral
+  if (customId.startsWith('seasonal_art_confirm:') || customId.startsWith('seasonal_art_decline:')) {
+    const parts = customId.split(':');
+    const action = parts[0];
+    const messageId = parts[1];
+    const authorId = parts[2];
+
+    const clickerId = interaction.user ? interaction.user.id : interaction.userId;
+
+    // Segurança: Somente o autor da postagem pode decidir
+    if (clickerId !== authorId) {
+      if (typeof interaction.reply === 'function') {
+        await interaction.reply({
+          content: `❌ Apenas o autor desta arte (<@${authorId}>) pode decidir se deseja participar do concurso!`,
+          flags: MessageFlags.Ephemeral,
+        }).catch(() => null);
+      }
+      return true;
+    }
+
+    // Se o autor recusou participar
+    if (action === 'seasonal_art_decline') {
+      pendingSubmissions.delete(messageId);
+      const declineEmbed = new EmbedBuilder()
+        .setColor('#64748b')
+        .setDescription(`Sem problemas, <@${authorId}>! Sua arte continua aqui no canal pra todo mundo admirar com carinho! 💖`);
+
+      if (typeof interaction.update === 'function') {
+        await interaction.update({
+          content: null,
+          embeds: [declineEmbed],
+          components: [],
+        }).catch(() => null);
+      }
+
+      const declineTimer = setTimeout(async () => {
+        try {
+          if (interaction.message && typeof interaction.message.delete === 'function') {
+            await interaction.message.delete().catch(() => null);
+          }
+        } catch (_) {}
+      }, 6000);
+      if (declineTimer && typeof declineTimer.unref === 'function') declineTimer.unref();
+      activePromptTimers.set(`decline_${messageId}`, declineTimer);
+      return true;
+    }
+
+    // Se o autor aceitou participar
+    if (action === 'seasonal_art_confirm') {
+      const config = loadConfig();
+      const pending = pendingSubmissions.get(messageId);
+      let originalMsg = pending?.message || null;
+      if (!originalMsg && interaction.channel?.messages?.fetch) {
+        try {
+          originalMsg = await interaction.channel.messages.fetch(messageId).catch(() => null);
+        } catch (_) {}
+      }
+
+      let targetImageUrl = pending?.imageUrl || null;
+      if (!targetImageUrl && originalMsg) {
+        const imgs = extractImagesFromMessage(originalMsg);
+        if (imgs.length > 0) targetImageUrl = imgs[0].url;
+      }
+
+      // Baixa e salva a imagem localmente em disco imediatamente para NUNCA QUEBRAR no site
+      let cachedPublicUrl = null;
+      if (targetImageUrl) {
+        cachedPublicUrl = await cacheArtImage(targetImageUrl, messageId);
+      }
+
+      // Registra a obra na lista da semana
+      const data = loadData();
+      data.currentWeekArt = data.currentWeekArt || [];
+
+      if (!data.currentWeekArt.some((item) => item.messageId === messageId)) {
+        data.currentWeekArt.push({
+          messageId,
+          authorId,
+          channelId: interaction.channelId || interaction.channel?.id || pending?.channelId,
+          imageUrl: cachedPublicUrl || `/api/sazonal/art-image/${messageId}`,
+          originalUrl: targetImageUrl,
+          submittedAt: Date.now(),
+        });
+        saveData(data);
+      }
+
+      pendingSubmissions.delete(messageId);
+
+      // Reage na mensagem original com o emoji oficial de contagem de votos da Pyxie
+      if (originalMsg && typeof originalMsg.react === 'function') {
+        const artEmojiConfig = config.assets?.emojis?.artOfWeek?.[0] || '1548443988745261086';
+        const resolvedArtObj = resolveSeasonalEmojiObject(interaction.client || originalMsg.client, artEmojiConfig, '🎨');
+        try {
+          await originalMsg.react(resolvedArtObj.reactable);
+        } catch (err) {
+          console.warn('[Seasonal:Art] Falha ao reagir com emoji personalizado, usando fallback:', err.message);
+          await originalMsg.react('🎨').catch(() => null);
+        }
+      }
+
+      // Notifica o autor com sucesso
+      const successEmbed = new EmbedBuilder()
+        .setColor('#10b981')
+        .setTitle('🎉  ✦  Arte Confirmada na Votação da Semana!')
+        .setDescription(
+          `Eba, <@${authorId}>! Seu desenho foi registrado com sucesso!\n\n` +
+          `✨ **Sua arte já está concorrendo e aparecendo na nossa galeria no site!**\n` +
+          `Peça para os seus amigos votarem reagindo com 🎃 na sua publicação acima. Boa sorte! 💜`
+        )
+        .setFooter({ text: 'A apuração dos votos ocorre todo domingo às 10h BRT!' });
+
+      if (typeof interaction.update === 'function') {
+        await interaction.update({
+          content: null,
+          embeds: [successEmbed],
+          components: [],
+        }).catch(() => null);
+      }
+
+      // Auto-delete do aviso após 60 segundos para manter o canal limpo
+      const confirmTimer = setTimeout(async () => {
+        try {
+          if (interaction.message && typeof interaction.message.delete === 'function') {
+            await interaction.message.delete().catch(() => null);
+          }
+        } catch (_) {}
+      }, 60000);
+      if (confirmTimer && typeof confirmTimer.unref === 'function') confirmTimer.unref();
+      activePromptTimers.set(`confirm_${messageId}`, confirmTimer);
+
+      console.log(`[Seasonal:Art] Arte ${messageId} confirmada pelo autor ${authorId} e salva com sucesso.`);
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Apuração dominical da arte da semana
+ */
 async function tallyWeeklyArt(client) {
   const config = loadConfig();
   const data = loadData();
@@ -183,7 +455,6 @@ async function tallyWeeklyArt(client) {
           });
 
           if (reaction) {
-            // Desconsidera a reação do próprio bot
             votes = Math.max(0, reaction.count - (reaction.me ? 1 : 0));
           }
         }
@@ -198,7 +469,7 @@ async function tallyWeeklyArt(client) {
     }
   }
 
-  // Registra no histórico de apurações e esvazia o ciclo da semana para nunca reutilizar
+  // Registra no histórico de apurações e limpa o ciclo da semana
   const talliedIds = submissions.map((s) => s.messageId);
   data.history = data.history || {};
   data.history.talliedArtMessageIds = [
@@ -222,9 +493,13 @@ async function tallyWeeklyArt(client) {
     return { success: true, winner: null, message: 'Nenhuma arte recebeu votos.' };
   }
 
-  // Premia o vencedor com +5 moedas sazonais
+  // Premia o vencedor com +5 moedas sazonais e registra no histórico de auditoria
   const rewardAmount = 5;
-  addSeasonalBalance(bestSubmission.authorId, rewardAmount);
+  addSeasonalBalance(bestSubmission.authorId, rewardAmount, {
+    source: 'art_weekly',
+    description: `Vencedor da Arte da Semana (${maxVotes} votos)`,
+    messageId: bestSubmission.messageId,
+  });
 
   // Anúncio do vencedor no canal de artes
   if (channel && channel.isTextBased()) {
@@ -237,7 +512,7 @@ async function tallyWeeklyArt(client) {
       .setColor('#a855f7')
       .setTitle('🎨 ARTE DA SEMANA DEFINIDA!')
       .setDescription(`${descText}\n\n**Total de Votos:** ${maxVotes} 🗳️`)
-      .setImage(bestSubmission.imageUrl)
+      .setImage(bestSubmission.originalUrl || bestSubmission.imageUrl)
       .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!' })
       .setTimestamp();
 
@@ -255,5 +530,7 @@ module.exports = {
   start,
   stop,
   handleArtSubmission,
+  handleButtonInteraction,
   tallyWeeklyArt,
+  extractImagesFromMessage,
 };

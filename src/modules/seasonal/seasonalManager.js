@@ -321,13 +321,35 @@ function resolveSeasonalEmoji(client, emojiKeyOrId, fallback = '🎃') {
   return obj.formatted;
 }
 
-// Manipulação atômica de moedas sazonais
-function addSeasonalBalance(userId, amount) {
+// Manipulação atômica de moedas sazonais com auditoria de ganhos
+function addSeasonalBalance(userId, amount, reasonInfo = null) {
   if (!userId || typeof amount !== 'number') return 0;
   const data = loadData();
   const current = Number(data.balances[userId] || 0);
   const updated = Math.max(0, current + amount);
   data.balances[userId] = updated;
+
+  // Auditoria e Registro de Transações de Abóboras (Ledger)
+  data.history = data.history || {};
+  data.history.pumpkinGains = data.history.pumpkinGains || [];
+  const profile = data.userProfiles?.[String(userId)] || {};
+  const gainEntry = {
+    id: `gain_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+    userId: String(userId),
+    username: profile.username || 'usuário',
+    displayName: profile.displayName || profile.username || `Aventureiro (${String(userId).slice(-4)})`,
+    avatarUrl: profile.avatarUrl || null,
+    amount,
+    currentBalance: updated,
+    source: reasonInfo?.source || 'sistema',
+    description: reasonInfo?.description || (amount > 0 ? `Ganhou +${amount} Abóboras` : `${amount} Abóboras`),
+    timestamp: Date.now(),
+  };
+  data.history.pumpkinGains.unshift(gainEntry);
+  if (data.history.pumpkinGains.length > 50) {
+    data.history.pumpkinGains = data.history.pumpkinGains.slice(0, 50);
+  }
+
   saveData(data);
   return updated;
 }
@@ -766,14 +788,20 @@ function setupWebRoutes(app) {
         totalArtSubmissions: (data.currentWeekArt || []).length,
       },
       leaderboard,
-      currentWeekArt: (data.currentWeekArt || []).map((a) => ({
-        messageId: a.messageId,
-        authorId: a.authorId,
-        authorName: data.userProfiles?.[a.authorId]?.displayName || data.userProfiles?.[a.authorId]?.username || a.authorName || 'Artista da Cringelândia',
-        authorAvatar: data.userProfiles?.[a.authorId]?.avatarUrl || data.userProfiles?.[a.authorId]?.avatar || a.authorAvatar || `https://cdn.discordapp.com/embed/avatars/${Number(String(a.authorId).slice(-2)) % 5}.png`,
-        imageUrl: a.imageUrl,
-        submittedAt: a.submittedAt,
-      })),
+      currentWeekArt: (data.currentWeekArt || []).map((a) => {
+        let displayImgUrl = a.imageUrl;
+        if (!displayImgUrl || displayImgUrl.includes('cdn.discordapp.com/attachments/')) {
+          displayImgUrl = `/api/sazonal/art-image/${a.messageId}`;
+        }
+        return {
+          messageId: a.messageId,
+          authorId: a.authorId,
+          authorName: data.userProfiles?.[a.authorId]?.displayName || data.userProfiles?.[a.authorId]?.username || a.authorName || 'Artista da Cringelândia',
+          authorAvatar: data.userProfiles?.[a.authorId]?.avatarUrl || data.userProfiles?.[a.authorId]?.avatar || a.authorAvatar || `https://cdn.discordapp.com/embed/avatars/${Number(String(a.authorId).slice(-2)) % 5}.png`,
+          imageUrl: displayImgUrl,
+          submittedAt: a.submittedAt,
+        };
+      }),
       updatedAt: Date.now(),
     });
   });
@@ -823,6 +851,46 @@ function setupWebRoutes(app) {
     }
   });
 
+  // Proxy permanente de imagens de arte com cache local em disco (Zero Links Quebrados)
+  app.get(['/api/sazonal/art-image/:messageId', '/api/seasonal/art/:messageId'], async (req, res) => {
+    const messageId = req.params.messageId;
+    const imageHelper = require('./imageHelper');
+    const cachedPath = imageHelper.getCachedImagePath(messageId);
+    if (cachedPath) {
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.sendFile(cachedPath);
+    }
+
+    if (clientRef) {
+      try {
+        const config = loadConfig();
+        const channelId = config.channels?.artChannelId;
+        if (channelId) {
+          const channel = await clientRef.channels.fetch(channelId).catch(() => null);
+          if (channel) {
+            const msg = await channel.messages.fetch(messageId).catch(() => null);
+            if (msg) {
+              const artHandler = require('./artHandler');
+              const imgs = artHandler.extractImagesFromMessage(msg);
+              if (imgs.length > 0 && imgs[0].url) {
+                await imageHelper.cacheArtImage(imgs[0].url, messageId);
+                const freshPath = imageHelper.getCachedImagePath(messageId);
+                if (freshPath) {
+                  res.setHeader('Cache-Control', 'public, max-age=86400');
+                  return res.sendFile(freshPath);
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn(`[Seasonal:ArtProxy] Erro ao recuperar imagem ${messageId}:`, err.message);
+      }
+    }
+
+    return res.status(404).send('Arte não encontrada');
+  });
+
   // Rota de visualização da página administrativa (/admin/sazonal)
   app.get('/admin/sazonal', (req, res) => {
     const cookieHeader = req.headers.cookie;
@@ -836,11 +904,34 @@ function setupWebRoutes(app) {
 
     const config = loadConfig();
     const data = loadData();
+    const dropHandler = require('./dropHandler');
+    const nextDrops = dropHandler.getNextScheduledDrops(5);
+    const recentDrops = (data.history?.drops || []).slice(0, 20);
+    const pumpkinGains = (data.history?.pumpkinGains || []).slice(0, 30);
+
     res.render(path.join(__dirname, 'views', 'adminSazonal.ejs'), {
       config,
       data,
       active: config.active,
       appEmojis: getSimplifiedAppEmojis(),
+      nextDrops,
+      recentDrops,
+      pumpkinGains,
+    });
+  });
+
+  // APIs do Painel Sazonal: Controle de Drops e Auditoria de Abóboras
+  app.get('/api/admin/sazonal/drops-info', requireAdminAuth, (req, res) => {
+    const dropHandler = require('./dropHandler');
+    const data = loadData();
+    const nextDrops = dropHandler.getNextScheduledDrops(5);
+    const recentDrops = (data.history?.drops || []).slice(0, 20);
+    const pumpkinGains = (data.history?.pumpkinGains || []).slice(0, 30);
+    res.json({
+      success: true,
+      nextDrops,
+      recentDrops,
+      pumpkinGains,
     });
   });
 

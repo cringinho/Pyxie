@@ -512,6 +512,95 @@
         font-weight: 700;
       }
 
+      /* Tabelas de Auditoria de Drops e Abóboras */
+      .table-responsive {
+        overflow-x: auto;
+        margin-top: 10px;
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+      }
+      .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        text-align: left;
+      }
+      .admin-table th {
+        background: rgba(139, 92, 246, 0.15);
+        color: var(--purple-glow);
+        padding: 10px 14px;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        white-space: nowrap;
+      }
+      .admin-table td {
+        padding: 10px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        color: #f1f5f9;
+        font-size: 0.82rem;
+      }
+      .admin-table tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .badge-claimed {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.35);
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .badge-expired {
+        background: rgba(107, 114, 128, 0.15);
+        color: #94a3b8;
+        border: 1px solid rgba(107, 114, 128, 0.35);
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .badge-active {
+        background: rgba(234, 179, 8, 0.15);
+        color: #facc15;
+        border: 1px solid rgba(234, 179, 8, 0.35);
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .user-badge-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .user-badge-cell img {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .next-drop-card {
+        background: rgba(139, 92, 246, 0.08);
+        border: 1px solid rgba(139, 92, 246, 0.25);
+        border-radius: 12px;
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .next-drop-card .drop-time {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .next-drop-card .drop-rel {
+        font-size: 0.75rem;
+        color: var(--purple-glow);
+        font-weight: 600;
+      }
+
       /* Modal Visual de Emojis */
       .emoji-modal-backdrop {
         display: none;
@@ -1188,6 +1277,160 @@
           </div>
         </div>
       </div>
+
+      <!-- SEÇÃO COMPLETA: CONTROLE DE DROPS & AUDITORIA DE ABÓBORAS -->
+      <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 24px;">
+
+        <!-- 1. Próximos Horários & Histórico de Drops -->
+        <div class="card" id="cardDropsControl">
+          <div class="card-header">
+            <h2>📦 Controle de Drops da Pyxie & Próximos Horários</h2>
+            <button type="button" class="btn btn-secondary" onclick="refreshDropsInfo()" style="padding: 6px 14px; font-size: 0.8rem;">
+              🔄 Atualizar Dados
+            </button>
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <label style="margin-bottom: 10px; display: block; font-weight: 700; color: var(--purple-glow);">⏰ Próximos Disparos Agendados de Baús (Horário de Brasília):</label>
+            <div id="nextDropsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px;">
+              <% if (typeof nextDrops !== 'undefined' && nextDrops && nextDrops.length > 0) { %>
+                <% nextDrops.forEach(function(d) { %>
+                  <div class="next-drop-card">
+                    <span style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700;"><%= d.dayName %><%= d.isWeekend ? ' (Fim de Semana)' : ' (Dia Útil)' %></span>
+                    <span class="drop-time"><%= d.timeFormatted %></span>
+                    <span class="drop-rel">⏳ <%= d.relativeText %></span>
+                  </div>
+                <% }); %>
+              <% } else { %>
+                <p class="help-text">Nenhum próximo drop agendado no momento.</p>
+              <% } %>
+            </div>
+          </div>
+
+          <label style="margin-bottom: 8px; display: block; font-weight: 700; color: var(--purple-glow);">📋 Histórico dos Últimos Drops Enviados:</label>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Data & Hora</th>
+                  <th>Emoji Alvo</th>
+                  <th>Status</th>
+                  <th>Vencedor do Saque</th>
+                  <th>Recompensa</th>
+                </tr>
+              </thead>
+              <tbody id="recentDropsTbody">
+                <% if (typeof recentDrops !== 'undefined' && recentDrops && recentDrops.length > 0) { %>
+                  <% recentDrops.forEach(function(drop) { %>
+                    <tr>
+                      <td><%= new Date(drop.sentAt).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }) %></td>
+                      <td>
+                        <strong><%= drop.targetEmoji?.label || drop.targetEmoji?.name || 'Emoji Secreto' %></strong>
+                      </td>
+                      <td>
+                        <% if (drop.status === 'reivindicado') { %>
+                          <span class="badge-claimed">✅ Reivindicado</span>
+                        <% } else if (drop.status === 'expirado') { %>
+                          <span class="badge-expired">💨 Expirado</span>
+                        <% } else { %>
+                          <span class="badge-active">⚡ Ativo</span>
+                        <% } %>
+                      </td>
+                      <td>
+                        <% if (drop.winner) { %>
+                          <div class="user-badge-cell">
+                            <% if (drop.winner.avatarUrl) { %>
+                              <img src="<%= drop.winner.avatarUrl %>" alt="avatar" />
+                            <% } %>
+                            <div>
+                              <div><strong><%= drop.winner.displayName || drop.winner.username %></strong></div>
+                              <small style="color: #94a3b8;"><%= drop.winner.username %></small>
+                            </div>
+                          </div>
+                        <% } else { %>
+                          <span style="color: #64748b;">Ninguém (evaporou)</span>
+                        <% } %>
+                      </td>
+                      <td>
+                        <%= drop.winner ? ('+' + drop.winner.amount + ' Abóboras') : '-' %>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="5" style="text-align: center; color: #64748b; padding: 20px;">Nenhum drop registrado ainda no evento.</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2. Auditoria ao Vivo: Últimas Abóboras Ganhas -->
+        <div class="card" id="cardPumpkinsLedger">
+          <div class="card-header">
+            <h2>🎃 Auditoria: Últimas Abóboras Ganhas (Ledger em Tempo Real)</h2>
+            <span class="help-text">Visualização detalhada de quem desencadeou cada ganho</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Data & Hora</th>
+                  <th>Usuário</th>
+                  <th>Quantidade</th>
+                  <th>Origem / Ação Desencadeadora</th>
+                  <th>Saldo Resultante</th>
+                </tr>
+              </thead>
+              <tbody id="pumpkinGainsTbody">
+                <% if (typeof pumpkinGains !== 'undefined' && pumpkinGains && pumpkinGains.length > 0) { %>
+                  <% pumpkinGains.forEach(function(gain) { %>
+                    <tr>
+                      <td><%= new Date(gain.timestamp).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }) %></td>
+                      <td>
+                        <div class="user-badge-cell">
+                          <% if (gain.avatarUrl) { %>
+                            <img src="<%= gain.avatarUrl %>" alt="avatar" />
+                          <% } %>
+                          <div>
+                            <div><strong><%= gain.displayName || gain.username %></strong></div>
+                            <small style="color: #94a3b8;"><%= gain.username %> (<code><%= gain.userId.slice(-4) %></code>)</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="color: #34d399; font-weight: 700;">
+                        +<%= gain.amount %> Abóboras
+                      </td>
+                      <td>
+                        <% if (gain.source === 'drop') { %>
+                          📦 <strong>Baú da Pyxie:</strong> <%= gain.description %>
+                        <% } else if (gain.source === 'art_weekly') { %>
+                          🎨 <strong>Arte da Semana:</strong> <%= gain.description %>
+                        <% } else if (gain.source === 'admin') { %>
+                          🛡️ <strong>Administrador:</strong> <%= gain.description %>
+                        <% } else { %>
+                          ✨ <%= gain.description %>
+                        <% } %>
+                      </td>
+                      <td>
+                        <strong><%= gain.currentBalance %></strong> Abóboras
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="5" style="text-align: center; color: #64748b; padding: 20px;">Nenhum ganho de abóboras registrado até o momento.</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
     <!-- Modal Seletor de Emojis do Discord da Pyxie -->
     <div class="emoji-modal-backdrop" id="seasonalEmojiModal" style="display: none;" onclick="handleModalBackdropClick(event)">
       <div class="emoji-modal" onclick="event.stopPropagation()">
@@ -2084,6 +2327,111 @@
           showToast(json.message || 'Apuração executada!', json.success ? 'success' : 'error');
         } catch (err) {
           showToast('Erro: ' + err.message, 'error');
+        }
+      }
+
+      async function refreshDropsInfo() {
+        try {
+          const res = await fetch('/api/admin/sazonal/drops-info');
+          const json = await res.json();
+          if (json.success) {
+            renderDropsInfo(json);
+            showToast('Informações de drops e auditoria atualizadas!');
+          }
+        } catch (err) {
+          showToast('Erro ao atualizar dados: ' + err.message, 'error');
+        }
+      }
+
+      function renderDropsInfo(info) {
+        // 1. Próximos drops
+        const nextList = document.getElementById('nextDropsList');
+        if (nextList && info.nextDrops) {
+          if (info.nextDrops.length === 0) {
+            nextList.innerHTML = '<p class="help-text">Nenhum próximo drop agendado no momento.</p>';
+          } else {
+            nextList.innerHTML = info.nextDrops.map((d) => `
+              <div class="next-drop-card">
+                <span style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700;">${escapeHtml(d.dayName)}${d.isWeekend ? ' (Fim de Semana)' : ' (Dia Útil)'}</span>
+                <span class="drop-time">${escapeHtml(d.timeFormatted)}</span>
+                <span class="drop-rel">⏳ ${escapeHtml(d.relativeText)}</span>
+              </div>
+            `).join('');
+          }
+        }
+
+        // 2. Tabela de Drops Recentes
+        const dropsTbody = document.getElementById('recentDropsTbody');
+        if (dropsTbody && info.recentDrops) {
+          if (info.recentDrops.length === 0) {
+            dropsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 20px;">Nenhum drop registrado ainda no evento.</td></tr>';
+          } else {
+            dropsTbody.innerHTML = info.recentDrops.map((drop) => {
+              const dt = new Date(drop.sentAt).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+              let statusBadge = '<span class="badge-active">⚡ Ativo</span>';
+              if (drop.status === 'reivindicado') statusBadge = '<span class="badge-claimed">✅ Reivindicado</span>';
+              if (drop.status === 'expirado') statusBadge = '<span class="badge-expired">💨 Expirado</span>';
+
+              let winnerHtml = '<span style="color: #64748b;">Ninguém (evaporou)</span>';
+              let rewardHtml = '-';
+              if (drop.winner) {
+                winnerHtml = `
+                  <div class="user-badge-cell">
+                    ${drop.winner.avatarUrl ? `<img src="${escapeHtml(drop.winner.avatarUrl)}" alt="avatar" />` : ''}
+                    <div>
+                      <div><strong>${escapeHtml(drop.winner.displayName || drop.winner.username)}</strong></div>
+                      <small style="color: #94a3b8;">${escapeHtml(drop.winner.username)}</small>
+                    </div>
+                  </div>
+                `;
+                rewardHtml = `+${drop.winner.amount} Abóboras`;
+              }
+
+              return `
+                <tr>
+                  <td>${escapeHtml(dt)}</td>
+                  <td><strong>${escapeHtml(drop.targetEmoji?.label || drop.targetEmoji?.name || 'Emoji Secreto')}</strong></td>
+                  <td>${statusBadge}</td>
+                  <td>${winnerHtml}</td>
+                  <td>${escapeHtml(rewardHtml)}</td>
+                </tr>
+              `;
+            }).join('');
+          }
+        }
+
+        // 3. Tabela de Auditoria de Abóboras Ganhas
+        const gainsTbody = document.getElementById('pumpkinGainsTbody');
+        if (gainsTbody && info.pumpkinGains) {
+          if (info.pumpkinGains.length === 0) {
+            gainsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 20px;">Nenhum ganho de abóboras registrado até o momento.</td></tr>';
+          } else {
+            gainsTbody.innerHTML = info.pumpkinGains.map((gain) => {
+              const dt = new Date(gain.timestamp).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+              let sourceIcon = '✨';
+              if (gain.source === 'drop') sourceIcon = '📦';
+              if (gain.source === 'art_weekly') sourceIcon = '🎨';
+              if (gain.source === 'admin') sourceIcon = '🛡️';
+
+              return `
+                <tr>
+                  <td>${escapeHtml(dt)}</td>
+                  <td>
+                    <div class="user-badge-cell">
+                      ${gain.avatarUrl ? `<img src="${escapeHtml(gain.avatarUrl)}" alt="avatar" />` : ''}
+                      <div>
+                        <div><strong>${escapeHtml(gain.displayName || gain.username)}</strong></div>
+                        <small style="color: #94a3b8;">${escapeHtml(gain.username)} (<code>${escapeHtml(String(gain.userId).slice(-4))}</code>)</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="color: #34d399; font-weight: 700;">+${gain.amount} Abóboras</td>
+                  <td>${sourceIcon} ${escapeHtml(gain.description)}</td>
+                  <td><strong>${gain.currentBalance}</strong> Abóboras</td>
+                </tr>
+              `;
+            }).join('');
+          }
         }
       }
 
