@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🔮 Preview Visual: Novo Sistema de Tarot da Pyxie</title>
+  <title>🔮 Preview Visual: Novo Tarot Autoral da Pyxie (Cringelândia)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Quicksand:wght@500;600;700&family=Cinzel:wght@600;700;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #1e1f22;
+      --bg-dark: #120320;
       --discord-dark: #313338;
       --discord-darker: #2b2d31;
-      --discord-sidebar: #1e1f22;
       --discord-button: #4e5058;
       --discord-blurple: #5865f2;
       --discord-green: #23a55a;
       --discord-text: #dbdee1;
       --discord-muted: #949ba4;
-      --discord-link: #00a8fc;
-      --brand-violet: #8b5cf6;
-      --brand-pink: #ec4899;
-      --brand-gold: #f59e0b;
+      --pyxie-pink: #E60067;
+      --pyxie-soft-pink: #FF8FB3;
+      --pyxie-violet: #8B5CF6;
+      --pyxie-deep-purple: #4B0082;
+      --pyxie-ink: #1A1A1A;
     }
 
     * {
@@ -31,8 +31,8 @@
     }
 
     body {
-      font-family: 'Outfit', sans-serif;
-      background: radial-gradient(circle at 50% 20%, #170d2b 0%, #0d0617 100%);
+      font-family: 'Quicksand', sans-serif;
+      background: radial-gradient(circle at 50% 20%, #1c0533 0%, #0a0114 100%);
       color: #e2e8f0;
       padding: 30px 20px;
       min-height: 100vh;
@@ -45,34 +45,35 @@
 
     header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 35px;
     }
 
     h1 {
-      font-family: 'Cinzel', serif;
-      font-size: 2.4rem;
-      background: linear-gradient(135deg, #c084fc, #f472b6, #facc15);
+      font-family: 'Fredoka', cursive;
+      font-size: 2.6rem;
+      background: linear-gradient(135deg, #ff8fb3, #e60067, #c084fc);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
     }
 
     p.subtitle {
-      color: #94a3b8;
+      color: #cbd5e1;
       font-size: 1.05rem;
-      max-width: 700px;
+      max-width: 750px;
       margin: 0 auto;
     }
 
     /* Switcher Controls */
     .controls-panel {
-      background: rgba(30, 27, 46, 0.7);
+      background: rgba(35, 10, 55, 0.75);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(192, 132, 252, 0.2);
+      border: 1px solid rgba(230, 0, 103, 0.35);
+      box-shadow: 0 0 25px rgba(230, 0, 103, 0.15);
       border-radius: 16px;
       padding: 18px 24px;
-      margin-bottom: 35px;
+      margin-bottom: 30px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -87,39 +88,42 @@
     }
 
     .control-label {
-      font-weight: 600;
-      color: #cbd5e1;
+      font-weight: 700;
+      color: #ff8fb3;
       font-size: 0.95rem;
+      font-family: 'Fredoka', cursive;
     }
 
     .btn-toggle {
-      background: #2b2d31;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #cbd5e1;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 600;
+      background: #231238;
+      border: 1px solid rgba(230, 0, 103, 0.3);
+      color: #e2e8f0;
+      padding: 9px 18px;
+      border-radius: 10px;
       cursor: pointer;
+      font-weight: 600;
+      font-size: 0.92rem;
+      font-family: 'Quicksand', sans-serif;
       transition: all 0.2s ease;
-      font-size: 0.9rem;
     }
 
     .btn-toggle:hover {
-      background: #383a40;
-      border-color: rgba(192, 132, 252, 0.4);
+      background: #3b185f;
+      border-color: #ff8fb3;
+      transform: translateY(-1px);
     }
 
     .btn-toggle.active {
-      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      background: linear-gradient(135deg, #e60067, #8b5cf6);
       color: #ffffff;
       border-color: transparent;
-      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+      box-shadow: 0 0 15px rgba(230, 0, 103, 0.5);
     }
 
-    /* Grid Layout */
+    /* Layout Grid */
     .showcase-grid {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: 1fr 390px;
       gap: 30px;
       align-items: start;
     }
@@ -130,13 +134,13 @@
       }
     }
 
-    /* Discord Chat Window Mockup */
+    /* Discord Chat Simulation */
     .discord-chat {
-      background-color: var(--discord-dark);
+      background: var(--discord-dark);
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      padding: 24px;
-      border: 1px solid #3f4147;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .discord-msg {
@@ -149,8 +153,8 @@
       height: 44px;
       border-radius: 50%;
       object-fit: cover;
-      flex-shrink: 0;
-      border: 2px solid #a855f7;
+      background: #2b2d31;
+      border: 2px solid var(--pyxie-pink);
     }
 
     .discord-content {
@@ -166,19 +170,19 @@
     }
 
     .bot-name {
-      font-weight: 600;
-      color: #f2f3f5;
+      font-weight: 700;
+      color: #ffffff;
       font-size: 1.05rem;
     }
 
     .bot-tag {
-      background: var(--discord-blurple);
-      color: white;
-      font-size: 0.68rem;
+      background: var(--pyxie-pink);
+      color: #fff;
+      font-size: 0.65rem;
       font-weight: 700;
       padding: 2px 5px;
       border-radius: 4px;
-      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
     .timestamp {
@@ -189,17 +193,17 @@
     /* Discord Embed */
     .discord-embed {
       background: var(--discord-darker);
-      border-left: 4px solid #c084fc;
+      border-left: 4px solid var(--pyxie-pink);
       border-radius: 4px 8px 8px 4px;
       padding: 16px;
-      margin-top: 8px;
+      margin-top: 6px;
       max-width: 540px;
-      transition: all 0.3s ease;
+      transition: border-color 0.3s ease;
     }
 
     .discord-embed.is-new-discovery {
-      border-left-color: #ff1493;
-      box-shadow: 0 0 15px rgba(255, 20, 147, 0.25);
+      border-left-color: #ff8fb3;
+      box-shadow: 0 0 25px rgba(230, 0, 103, 0.35);
     }
 
     .embed-grid {
@@ -212,119 +216,116 @@
       flex: 1;
     }
 
-    .embed-thumbnail {
-      width: 80px;
-      height: 80px;
-      border-radius: 8px;
-      object-fit: contain;
-      flex-shrink: 0;
-      background: rgba(0, 0, 0, 0.2);
-    }
-
     .embed-title {
+      font-family: 'Fredoka', cursive;
+      font-size: 1.15rem;
       color: #ffffff;
-      font-size: 1.1rem;
-      font-weight: 700;
       margin-bottom: 12px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
-    .embed-desc {
-      color: var(--discord-text);
-      font-size: 0.95rem;
-      line-height: 1.55;
-      margin-bottom: 14px;
-    }
-
-    .embed-desc strong {
-      color: #ffffff;
-    }
-
-    .quote-box {
-      border-left: 4px solid #4e5058;
-      padding-left: 10px;
-      margin: 6px 0 12px 0;
-      color: #c4c9ce;
-      font-style: italic;
-    }
-
-    /* Nova Descoberta Banner (Item 7) */
+    /* Discovery Banner (Item 7) */
     .discovery-banner {
-      background: linear-gradient(90deg, rgba(230, 0, 103, 0.25), rgba(245, 158, 11, 0.15));
-      border: 1px solid rgba(255, 20, 147, 0.4);
+      display: none;
+      background: linear-gradient(135deg, rgba(230, 0, 103, 0.25), rgba(139, 92, 246, 0.2));
+      border: 1px solid #ff8fb3;
       border-radius: 8px;
       padding: 10px 14px;
       margin-bottom: 14px;
-      display: none;
+      animation: pulseGlow 2s infinite alternate;
     }
 
     .discovery-banner.visible {
       display: block;
     }
 
+    @keyframes pulseGlow {
+      from { box-shadow: 0 0 10px rgba(230, 0, 103, 0.3); }
+      to { box-shadow: 0 0 20px rgba(230, 0, 103, 0.7); }
+    }
+
     .discovery-title {
-      color: #ff70a6;
+      font-family: 'Fredoka', cursive;
       font-weight: 700;
+      color: #ff8fb3;
       font-size: 0.92rem;
-      margin-bottom: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-bottom: 4px;
     }
 
     .discovery-desc {
-      color: #e2e8f0;
       font-size: 0.85rem;
+      color: #f1f5f9;
+      line-height: 1.35;
+    }
+
+    .embed-desc {
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+      margin-bottom: 16px;
+    }
+
+    .quote-box {
+      border-left: 3px solid var(--pyxie-pink);
+      padding: 6px 12px;
+      background: rgba(230, 0, 103, 0.08);
+      border-radius: 0 6px 6px 0;
+      font-style: italic;
+      color: #f8fafc;
+      margin: 8px 0;
     }
 
     /* Barra de Progresso Visual (Item 4) */
     .progress-box {
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 8px;
       padding: 10px 12px;
-      margin-top: 12px;
-      font-size: 0.88rem;
+      margin-bottom: 16px;
     }
 
     .progress-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 6px;
+      font-size: 0.82rem;
       font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 6px;
     }
 
     .progress-bar-track {
-      height: 8px;
+      width: 100%;
+      height: 10px;
       background: #1e1f22;
-      border-radius: 4px;
+      border-radius: 5px;
       overflow: hidden;
-      display: flex;
+      margin-bottom: 6px;
     }
 
     .progress-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, #8b5cf6, #ec4899);
-      width: 32%;
-      transition: width 0.5s ease;
+      background: linear-gradient(90deg, var(--pyxie-violet), var(--pyxie-pink));
+      border-radius: 5px;
+      transition: width 0.4s ease;
     }
 
     .progress-chars {
       font-family: monospace;
-      color: #c084fc;
-      margin-top: 4px;
       font-size: 0.82rem;
+      color: #ff8fb3;
+      letter-spacing: 1px;
     }
 
-    /* Imagem da Carta no Embed */
     .embed-card-image {
       margin-top: 14px;
       border-radius: 8px;
       overflow: hidden;
-      max-width: 480px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 440px;
+      border: 1px solid rgba(230, 0, 103, 0.35);
+      background: #0e0517;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
     }
 
     .embed-card-image img {
@@ -335,36 +336,45 @@
     }
 
     .embed-footer {
-      color: var(--discord-muted);
+      margin-top: 14px;
       font-size: 0.78rem;
-      margin-top: 10px;
+      color: var(--discord-muted);
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    /* Botões de Ação Rica (Item 6) */
+    .embed-thumbnail {
+      width: 76px;
+      height: 76px;
+      border-radius: 8px;
+      object-fit: contain;
+      align-self: flex-start;
+      filter: drop-shadow(0 0 8px rgba(230, 0, 103, 0.5));
+    }
+
+    /* ActionRow Buttons (Item 6) */
     .discord-action-row {
       display: flex;
-      flex-wrap: wrap;
       gap: 8px;
-      margin-top: 12px;
-      max-width: 540px;
+      margin-top: 10px;
+      flex-wrap: wrap;
     }
 
     .discord-btn {
       background: var(--discord-button);
       color: #ffffff;
       border: none;
-      padding: 8px 14px;
       border-radius: 4px;
+      padding: 8px 14px;
       font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: background 0.15s ease;
+      transition: background 0.2s ease;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .discord-btn:hover {
@@ -372,10 +382,10 @@
     }
 
     .discord-btn.btn-primary {
-      background: var(--discord-blurple);
+      background: var(--pyxie-pink);
     }
     .discord-btn.btn-primary:hover {
-      background: #4752c4;
+      background: #c20056;
     }
 
     .discord-btn.btn-success {
@@ -387,21 +397,22 @@
 
     /* Painel Lateral de Comparação */
     .comparison-panel {
-      background: rgba(30, 27, 46, 0.6);
-      border: 1px solid rgba(192, 132, 252, 0.2);
+      background: rgba(35, 10, 55, 0.65);
+      border: 1px solid rgba(230, 0, 103, 0.35);
+      box-shadow: 0 0 25px rgba(230, 0, 103, 0.15);
       border-radius: 16px;
       padding: 24px;
     }
 
     .comparison-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Fredoka', cursive;
       font-size: 1.4rem;
-      color: #f1f5f9;
+      color: #ffffff;
       margin-bottom: 8px;
     }
 
     .comparison-desc {
-      color: #94a3b8;
+      color: #cbd5e1;
       font-size: 0.92rem;
       line-height: 1.5;
       margin-bottom: 20px;
@@ -414,7 +425,7 @@
     }
 
     .card-choice-card {
-      background: rgba(15, 10, 25, 0.6);
+      background: rgba(20, 6, 32, 0.7);
       border: 2px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       padding: 14px;
@@ -426,57 +437,67 @@
     }
 
     .card-choice-card:hover {
-      border-color: rgba(192, 132, 252, 0.5);
-      background: rgba(124, 58, 237, 0.15);
+      border-color: rgba(230, 0, 103, 0.6);
+      background: rgba(230, 0, 103, 0.12);
     }
 
     .card-choice-card.active {
-      border-color: #a855f7;
-      background: rgba(124, 58, 237, 0.25);
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+      border-color: #ff8fb3;
+      background: rgba(230, 0, 103, 0.22);
+      box-shadow: 0 0 20px rgba(230, 0, 103, 0.4);
     }
 
     .choice-mini-img {
-      width: 70px;
-      height: 110px;
+      width: 74px;
+      height: 112px;
       object-fit: cover;
       border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 143, 179, 0.4);
     }
 
     .choice-info h4 {
       color: #ffffff;
       font-size: 1.05rem;
+      font-family: 'Fredoka', cursive;
       margin-bottom: 4px;
     }
 
     .choice-info p {
-      color: #94a3b8;
-      font-size: 0.85rem;
-      line-height: 1.4;
+      color: #cbd5e1;
+      font-size: 0.84rem;
+      line-height: 1.35;
     }
 
     .badge-tag {
       display: inline-block;
-      font-size: 0.72rem;
-      padding: 2px 8px;
-      border-radius: 4px;
+      font-size: 0.68rem;
       font-weight: 700;
-      margin-bottom: 6px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
     }
 
-    .badge-legacy { background: #475569; color: #f1f5f9; }
-    .badge-new { background: #7c3aed; color: #fdf4ff; }
-    .badge-hot { background: #db2777; color: #fff; }
+    .badge-neon {
+      background: linear-gradient(135deg, #e60067, #8b5cf6);
+      color: #fff;
+    }
+
+    .badge-celestial {
+      background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+      color: #fff;
+    }
 
     .status-summary {
-      margin-top: 24px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      margin-top: 22px;
+      padding: 14px;
+      background: rgba(14, 5, 24, 0.7);
       border-radius: 10px;
-      padding: 14px 18px;
-      font-size: 0.88rem;
-      color: #6ee7b7;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+      border: 1px solid rgba(230, 0, 103, 0.2);
     }
   </style>
 </head>
@@ -484,18 +505,18 @@
 
   <div class="container">
     <header>
-      <h1>🔮 Visualizador de Proposta: Novo Módulo de Tarot</h1>
+      <h1>🔮 Novo Tarot Autoral da Pyxie & Cringelândia</h1>
       <p class="subtitle">
-        Veja e teste em tempo real as melhorias dos itens <strong>2</strong> (Novo Canvas), <strong>4</strong> (Barra de Progresso Visual), <strong>6</strong> (Botões de Ação Rica) e <strong>7</strong> (Efeito de Nova Descoberta).
+        Design temático oficial alinhado com a identidade da Pyxie: paleta <strong>Rosa Pyxie (#E60067)</strong>, <strong>Rosa Suave (#FF8FB3)</strong>, <strong>Violeta (#8B5CF6)</strong> e tipografia oficial (<strong>Fredoka & Quicksand</strong>).
       </p>
     </header>
 
-    <!-- Barra de Controle Interativo -->
+    <!-- Barra de Controles Interativos -->
     <div class="controls-panel">
       <div class="control-group">
-        <span class="control-label">Cenário de Teste:</span>
+        <span class="control-label">Cenário no Discord:</span>
         <button class="btn-toggle active" id="btnScenarioNormal" onclick="setScenario('normal')">
-          ☀️ Tiragem Padrão (Carta Já Conhecida)
+          Tiragem Padrão
         </button>
         <button class="btn-toggle" id="btnScenarioNew" onclick="setScenario('new')">
           🌟 Nova Carta Descoberta! (Item 7)
@@ -503,15 +524,12 @@
       </div>
 
       <div class="control-group">
-        <span class="control-label">Design da Arte da Carta (Item 2):</span>
-        <button class="btn-toggle" id="btnStyleLegacy" onclick="setStyle('legacy')">
-          1. Legado (Kuromi)
+        <span class="control-label">Modelo de Carta Autoral:</span>
+        <button class="btn-toggle active" id="btnStyleNeon" onclick="setStyle('neon')">
+          1. Rosa Neon & Morceguinhos (Template 1)
         </button>
-        <button class="btn-toggle active" id="btnStylePyxie" onclick="setStyle('pyxie')">
-          2. Pyxie Mascot HD (2x)
-        </button>
-        <button class="btn-toggle" id="btnStyleAuth" onclick="setStyle('auth')">
-          3. Baralho 78 Pinturas HD (2x)
+        <button class="btn-toggle" id="btnStyleCelestial" onclick="setStyle('celestial')">
+          2. Violeta Místico & Mascote Pyxie (Template 2)
         </button>
       </div>
     </div>
@@ -527,7 +545,7 @@
               <div class="discord-header">
                 <span class="bot-name">Pyxie</span>
                 <span class="bot-tag">APP</span>
-                <span class="timestamp">Hoje às 23:05</span>
+                <span class="timestamp">Hoje às 23:40</span>
               </div>
 
               <!-- Embed Discord -->
@@ -572,7 +590,7 @@
 
                     <!-- Imagem do Canvas Renderizado (Item 2) -->
                     <div class="embed-card-image">
-                      <img id="cardImageRender" src="assets/preview/tarot_design_a_pyxie.png" alt="Tarot Card Render">
+                      <img id="cardImageRender" src="assets/preview/tarot_pyxie_neon_bat.png" alt="Tarot Card Render">
                     </div>
 
                     <div class="embed-footer">
@@ -603,50 +621,40 @@
         </div>
       </div>
 
-      <!-- Painel Direito: Seletor & Comparativo de Estilos do Canvas -->
+      <!-- Painel Direito: Seletor & Comparativo dos Novos Modelos -->
       <div class="comparison-panel">
-        <h3 class="comparison-title">Opções de Canvas (Item 2)</h3>
+        <h3 class="comparison-title">Modelos Autorais da Pyxie</h3>
         <p class="comparison-desc">
-          Clique nas opções abaixo para alternar instantaneamente a imagem gerada no simulador do Discord ao lado:
+          Totalmente integrados ao guia <strong>docs/Pyxie-IDENTIDADE.md</strong>, sem borrões de IA e com tipografia perfeita:
         </p>
 
         <div class="card-preview-thumb-box">
-          <!-- Opção 1: Legado -->
-          <div class="card-choice-card" id="cardChoiceLegacy" onclick="setStyle('legacy')">
-            <img src="assets/preview/tarot_legacy.png" class="choice-mini-img" alt="Legacy">
+          <!-- Modelo 1: Rosa Neon & Morceguinhos -->
+          <div class="card-choice-card active" id="cardChoiceNeon" onclick="setStyle('neon')">
+            <img src="assets/preview/tarot_pyxie_neon_bat.png" class="choice-mini-img" alt="Template 1 Neon Bat">
             <div class="choice-info">
-              <span class="badge-tag badge-legacy">ATUAL / LEGADO</span>
-              <h4>1. Kuromi Clássica (Vetor)</h4>
-              <p>O visual legado desenhado puramente em código vetorial de capuz preto e caveirinha (1x DPI).</p>
+              <span class="badge-tag badge-neon">MODELO AUTORAL 1</span>
+              <h4>Rosa Neon & Morcegos</h4>
+              <p>Círculo mágico rúnico, glifos nos cantos, caixa de oráculo translúcida e selo <em>Pyxie's Tarot by cringinho</em>.</p>
             </div>
           </div>
 
-          <!-- Opção 2: Pyxie Mascot HD -->
-          <div class="card-choice-card active" id="cardChoicePyxie" onclick="setStyle('pyxie')">
-            <img src="assets/preview/tarot_design_a_pyxie.png" class="choice-mini-img" alt="Pyxie Mascot HD">
+          <!-- Modelo 2: Violeta Místico & Mascote Pyxie -->
+          <div class="card-choice-card" id="cardChoiceCelestial" onclick="setStyle('celestial')">
+            <img src="assets/preview/tarot_pyxie_celestial.png" class="choice-mini-img" alt="Template 2 Celestial Pyxie">
             <div class="choice-info">
-              <span class="badge-tag badge-new">NOVA PROPOSTA A (2x HD)</span>
-              <h4>2. Santuário da Pyxie Mística (HD)</h4>
-              <p>Mascote oficial da <strong>Pyxie</strong> em 2x HD (1200x2048), portal celestial, moldura dourada nobre e selo oficial <em>Pyxie's Tarot by cringinho</em>.</p>
-            </div>
-          </div>
-
-          <!-- Opção 3: Arte Autêntica -->
-          <div class="card-choice-card" id="cardChoiceAuth" onclick="setStyle('auth')">
-            <img src="assets/preview/tarot_design_b_authentic.png" class="choice-mini-img" alt="Arte Autêntica">
-            <div class="choice-info">
-              <span class="badge-tag badge-hot">NOVA PROPOSTA B (2x HD)</span>
-              <h4>3. Baralho Nobre de 78 Pinturas (HD)</h4>
-              <p>Pintura oficial em altíssima definição da carta envolta em moldura dourada entalhada, filigranas de museu e selo <em>Pyxie's Tarot by cringinho</em>.</p>
+              <span class="badge-tag badge-celestial">MODELO AUTORAL 2</span>
+              <h4>Violeta Astral & Pyxie Mística</h4>
+              <p>Estrelas astrais, máscara alada, constelações de fundo, oráculo de alta definição e assinatura oficial.</p>
             </div>
           </div>
         </div>
 
         <div class="status-summary">
-          ✨ <strong>Vantagens Integradas:</strong><br>
-          • <strong>Item 4 (Barra Visual):</strong> Substitui texto puro por barra gráfica elegante no embed.<br>
-          • <strong>Item 6 (Botões de Ação):</strong> O jogador vai direto para o Álbum daquela carta com 1 clique.<br>
-          • <strong>Item 7 (Nova Descoberta):</strong> Alerta brilhante quando tira carta inédita, mudando para o sticker de vitória da Pyxie!
+          ✨ <strong>100% Dentro da Identidade da Pyxie:</strong><br>
+          • <strong>Cores:</strong> #E60067 (Rosa Pyxie), #FF8FB3 (Rosa Suave), #8B5CF6 (Violeta).<br>
+          • <strong>Fontes:</strong> Fredoka (Títulos) & Quicksand (Textos e Oráculo).<br>
+          • <strong>Assinatura Obrigatória:</strong> <em>Pyxie's Tarot by cringinho</em> no rodapé.
         </div>
       </div>
     </div>
@@ -654,12 +662,11 @@
 
   <script>
     let currentScenario = 'normal';
-    let currentStyle = 'pyxie';
+    let currentStyle = 'neon';
 
     const STYLE_IMAGES = {
-      legacy: 'assets/preview/tarot_legacy.png',
-      pyxie: 'assets/preview/tarot_design_a_pyxie.png',
-      auth: 'assets/preview/tarot_design_b_authentic.png'
+      neon: 'assets/preview/tarot_pyxie_neon_bat.png',
+      celestial: 'assets/preview/tarot_pyxie_celestial.png'
     };
 
     function setScenario(scen) {
@@ -679,9 +686,9 @@
         embed.classList.add('is-new-discovery');
         thumb.src = 'assets/pyxie/sticker/sticker_win_victory.png';
         progressLabel.textContent = '26/78 (33.3%) • +1 NOVA!';
-        progressLabel.style.color = '#ff70a6';
+        progressLabel.style.color = '#ff8fb3';
         progressFill.style.width = '33.3%';
-        progressFill.style.background = 'linear-gradient(90deg, #ec4899, #f59e0b)';
+        progressFill.style.background = 'linear-gradient(90deg, #e60067, #8b5cf6)';
         progressChars.textContent = '▰▰▰▰▱▱▱▱▱▱▱▱ 33.3% Concluído (+1 Nova Descoberta!)';
       } else {
         banner.classList.remove('visible');
@@ -690,20 +697,18 @@
         progressLabel.textContent = '25/78 (32.1%)';
         progressLabel.style.color = '#cbd5e1';
         progressFill.style.width = '32.1%';
-        progressFill.style.background = 'linear-gradient(90deg, #8b5cf6, #ec4899)';
-        progressChars.textContent = '▰▰▰▰▱▱▱▱▱▱▱▱ 32.1% Concluído';
+        progressFill.style.background = 'linear-gradient(90deg, #8b5cf6, #e60067)';
+        progressChars.textContent = '▰▰▰▱▱▱▱▱▱▱▱ 32.1% Concluído';
       }
     }
 
     function setStyle(st) {
       currentStyle = st;
-      document.getElementById('btnStyleLegacy').classList.toggle('active', st === 'legacy');
-      document.getElementById('btnStylePyxie').classList.toggle('active', st === 'pyxie');
-      document.getElementById('btnStyleAuth').classList.toggle('active', st === 'auth');
+      document.getElementById('btnStyleNeon').classList.toggle('active', st === 'neon');
+      document.getElementById('btnStyleCelestial').classList.toggle('active', st === 'celestial');
 
-      document.getElementById('cardChoiceLegacy').classList.toggle('active', st === 'legacy');
-      document.getElementById('cardChoicePyxie').classList.toggle('active', st === 'pyxie');
-      document.getElementById('cardChoiceAuth').classList.toggle('active', st === 'auth');
+      document.getElementById('cardChoiceNeon').classList.toggle('active', st === 'neon');
+      document.getElementById('cardChoiceCelestial').classList.toggle('active', st === 'celestial');
 
       const img = document.getElementById('cardImageRender');
       img.style.opacity = '0.3';
