@@ -23,6 +23,7 @@ const {
 const { t, getLanguage, formatCoins } = require('../utils/i18n');
 const { getAnimatedEmoji } = require('../utils/serverEmojis');
 const { getThemeEmoji, getUserProfileBadge } = require('../utils/themeEmojis');
+const { applyPyxieEmotion } = require('../utils/pyxieEmotions');
 
 const name = 'py-album';
 const aliases = ['album', 'albumdetarot', 'py-albumdetarot', 'tarot-album', 'py-tarot-album'];
@@ -358,12 +359,22 @@ async function handleAlbumInteraction(interaction) {
     }
 
     const achName = lang === 'en' ? result.achievement.nameEn : result.achievement.namePt;
+    const claimSuccessText = t('album.claimSuccess', interaction, {
+      name: achName,
+      coins: result.rewardCoins,
+      balance: result.newBalance,
+    });
+    const claimEmbed = new EmbedBuilder()
+      .setColor('#10b981')
+      .setTitle(lang === 'en' ? '🏆 ✦ Achievement Claimed!' : '🏆 ✦ Conquista Resgatada!')
+      .setDescription(claimSuccessText)
+      .setTimestamp();
+    const { attachment } = applyPyxieEmotion(claimEmbed, 'CONQUEST');
+
     await interaction.reply({
-      content: t('album.claimSuccess', interaction, {
-        name: achName,
-        coins: result.rewardCoins,
-        balance: result.newBalance,
-      }),
+      content: claimSuccessText,
+      embeds: [claimEmbed],
+      files: attachment ? [attachment] : [],
       flags: 64,
     });
 

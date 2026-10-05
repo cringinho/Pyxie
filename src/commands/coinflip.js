@@ -3,6 +3,7 @@ const { COINFLIP } = require('./commandNames');
 const { getBalance, spendCoins, addCoins } = require('../services/economy');
 const { getLanguage } = require('../utils/i18n');
 const { pyxieFooter } = require('../utils/pyxieVoice');
+const { applyPyxieEmotion } = require('../utils/pyxieEmotions');
 
 function flipCoin(userChoice, bet, userId, source = null) {
   const lang = getLanguage(source);
@@ -12,11 +13,24 @@ function flipCoin(userChoice, bet, userId, source = null) {
   const balance = getBalance(userId);
 
   if (balance < safeBet) {
+    const errorMsg = isEn
+      ? `❌ You don't have enough coins! Your current balance is **${balance} Coins 💰**.`
+      : `❌ Você não possui saldo suficiente! Seu saldo atual é **${balance} Moedas 💰**.`;
+    const errEmbed = new EmbedBuilder()
+      .setColor('#ef4444')
+      .setTitle(isEn ? '👀 ✦ Not Enough Coins!' : '👀 ✦ Saldo Insuficiente!')
+      .setDescription(
+        isEn
+          ? `${errorMsg}\n\n*Pyxie is watching your empty pockets... Come back when you have enough to bet!*`
+          : `${errorMsg}\n\n*A Pyxie tá de olho nos seus bolsos vazios... Volte quando tiver moedas para apostar!*`
+      )
+      .setTimestamp();
+    const { attachment } = applyPyxieEmotion(errEmbed, 'WATCHING');
     return {
       success: false,
-      error: isEn
-        ? `❌ You don't have enough coins! Your current balance is **${balance} Coins 💰**.`
-        : `❌ Você não possui saldo suficiente! Seu saldo atual é **${balance} Moedas 💰**.`,
+      error: errorMsg,
+      embed: errEmbed,
+      files: attachment ? [attachment] : [],
     };
   }
 
@@ -80,7 +94,12 @@ function flipCoin(userChoice, bet, userId, source = null) {
       );
   }
 
-  return { success: true, won, outcome, newBalance, embed };
+  const emotionRes = won
+    ? applyPyxieEmotion(embed, 'VICTORY')
+    : applyPyxieEmotion(embed, 'DEFEAT');
+  const files = emotionRes?.attachment ? [emotionRes.attachment] : [];
+
+  return { success: true, won, outcome, newBalance, embed, files };
 }
 
 module.exports = {
@@ -148,10 +167,13 @@ module.exports = {
 
     const result = flipCoin(choice, bet, message.author.id, message);
     if (!result.success) {
+      if (result.embed) {
+        return message.reply({ embeds: [result.embed], files: result.files || [] });
+      }
       return message.reply(result.error);
     }
 
-    await message.reply({ embeds: [result.embed] });
+    await message.reply({ embeds: [result.embed], files: result.files || [] });
   },
   async executeSlash({ interaction }) {
     const choice = interaction.options.getString('side') || interaction.options.getString('lado') || 'cara';
@@ -159,9 +181,12 @@ module.exports = {
 
     const result = flipCoin(choice, bet, interaction.user.id, interaction);
     if (!result.success) {
+      if (result.embed) {
+        return interaction.editReply({ embeds: [result.embed], files: result.files || [] });
+      }
       return interaction.editReply(result.error);
     }
 
-    await interaction.editReply({ embeds: [result.embed] });
+    await interaction.editReply({ embeds: [result.embed], files: result.files || [] });
   },
 };

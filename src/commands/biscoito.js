@@ -10,6 +10,7 @@ const { getCookieStatus, claimCookie } = require('../services/cookie');
 const { createBonusSession } = require('../services/bonusTimer');
 const { formatRemaining, getLanguage } = require('../utils/i18n');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
+const { applyPyxieEmotion } = require('../utils/pyxieEmotions');
 
 function buildCookieView(userId, source = null) {
   const lang = getLanguage(source);
@@ -44,7 +45,8 @@ function buildCookieView(userId, source = null) {
         .setURL(bonusSession.url)
     );
 
-    return { embeds: [cooldownEmbed], components: [row] };
+    const { attachment } = applyPyxieEmotion(cooldownEmbed, 'COOLDOWN');
+    return { embeds: [cooldownEmbed], files: attachment ? [attachment] : [], components: [row] };
   }
 
   const result = claimCookie(userId, lang);
@@ -86,7 +88,11 @@ function buildCookieView(userId, source = null) {
     });
   }
 
-  return { embeds: [embed], components: [] };
+  const emotionRes = result.fortuneType === 'positive'
+    ? applyPyxieEmotion(embed, 'HAPPY')
+    : applyPyxieEmotion(embed, 'SAD');
+
+  return { embeds: [embed], files: emotionRes?.attachment ? [emotionRes.attachment] : [], components: [] };
 }
 
 module.exports = {

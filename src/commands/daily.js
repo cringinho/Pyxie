@@ -11,6 +11,7 @@ const { createBonusSession } = require('../services/bonusTimer');
 const { t, getLanguage, formatCoins, formatRemaining } = require('../utils/i18n');
 const { DAILY } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
+const { applyPyxieEmotion } = require('../utils/pyxieEmotions');
 
 function isWeekend() {
   const now = new Date();
@@ -68,7 +69,8 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
         .setEmoji('🎁')
     );
 
-    return { embeds: [embed], components: [row] };
+    const { attachment } = applyPyxieEmotion(embed, 'COOLDOWN');
+    return { embeds: [embed], files: attachment ? [attachment] : [], components: [row] };
   }
 
   const compliment = getDailyCompliment(result.streak, guildOrSource);
@@ -120,7 +122,8 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
       .setEmoji('🎁')
   );
 
-  return { embeds: [embed], components: [buttonRow] };
+  const { attachment } = applyPyxieEmotion(embed, 'VICTORY');
+  return { embeds: [embed], files: attachment ? [attachment] : [], components: [buttonRow] };
 }
 
 module.exports = {

@@ -9,6 +9,7 @@ const { JOKENPO } = require('./commandNames');
 const { getBalance, spendCoins, addCoins } = require('../services/economy');
 const { getLanguage } = require('../utils/i18n');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
+const { applyPyxieEmotion } = require('../utils/pyxieEmotions');
 
 // Armazena partidas ativas em memória com timeout automático
 const activeGames = new Map();
@@ -184,10 +185,11 @@ async function handleJokenpoInteraction(interaction) {
           ? `<@${userId}> declined or ended the Rock-Paper-Scissors match.`
           : `<@${userId}> recusou ou encerrou a partida de Jokenpô.`
       )
-      .setTimestamp();
+    const { attachment } = applyPyxieEmotion(cancelEmbed, 'COOLDOWN');
 
     await interaction.update({
       embeds: [cancelEmbed],
+      files: attachment ? [attachment] : [],
       components: buildJokenpoComponents(gameId, true, lang),
     });
     return;
@@ -308,8 +310,13 @@ async function handleJokenpoInteraction(interaction) {
         .setFooter({ text: isEn ? 'Legendary duel' : 'Duelo lendário' });
     }
 
+    const emotionRes = (game.challengerChoice === game.opponentChoice)
+      ? applyPyxieEmotion(resultEmbed, 'HAPPY', { smile: true })
+      : applyPyxieEmotion(resultEmbed, 'VICTORY');
+
     await interaction.message.edit({
       embeds: [resultEmbed],
+      files: emotionRes?.attachment ? [emotionRes.attachment] : [],
       components: buildJokenpoComponents(gameId, true, lang),
     }).catch(() => null);
   } else {

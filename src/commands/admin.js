@@ -9,13 +9,30 @@ const { ADMIN } = require('./commandNames');
 const { OWNER_SNOWFLAKE, createOwnerMagicToken } = require('../services/adminAuth');
 const { getLanguage, t } = require('../utils/i18n');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
+const { applyPyxieEmotion } = require('../utils/pyxieEmotions');
+
+function buildDenialView(guildOrSource = null) {
+  const isEn = getLanguage(guildOrSource) === 'en';
+  const text = t('admin.onlyOwner', guildOrSource, { owner: `<@${OWNER_SNOWFLAKE}>` });
+  const denyEmbed = new EmbedBuilder()
+    .setColor('#ef4444')
+    .setTitle(isEn ? '⛔ ✦ Restricted Access!' : '⛔ ✦ Acesso Restrito!')
+    .setDescription(text)
+    .setFooter({ text: pyxieFooter(isEn ? 'Nice try, mortal...' : 'A Pyxie está de olho... Boa tentativa!', guildOrSource) })
+    .setTimestamp();
+
+  const { attachment } = applyPyxieEmotion(denyEmbed, 'PROHIBITED');
+  return {
+    content: text,
+    embeds: [denyEmbed],
+    files: attachment ? [attachment] : [],
+    ephemeral: true,
+  };
+}
 
 function buildAdminView(userId, guildOrSource = null) {
   if (userId !== OWNER_SNOWFLAKE) {
-    return {
-      content: t('admin.onlyOwner', guildOrSource, { owner: `<@${OWNER_SNOWFLAKE}>` }),
-      ephemeral: true,
-    };
+    return buildDenialView(guildOrSource);
   }
 
   const tokenResult = createOwnerMagicToken(userId);
@@ -51,10 +68,7 @@ function buildAdminView(userId, guildOrSource = null) {
 
 function buildModulesView(userId, guildOrSource = null) {
   if (userId !== OWNER_SNOWFLAKE) {
-    return {
-      content: t('admin.onlyOwner', guildOrSource, { owner: `<@${OWNER_SNOWFLAKE}>` }),
-      ephemeral: true,
-    };
+    return buildDenialView(guildOrSource);
   }
 
   const moduleManager = require('../services/moduleManager');
