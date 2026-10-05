@@ -513,6 +513,9 @@
         <button class="btn-toggle" id="btnStyleAuth" onclick="setStyle('auth')">
           3. Baralho 78 Pinturas HD (2x)
         </button>
+        <button class="btn-toggle" id="btnStyleSatori" onclick="setStyle('satori')">
+          4. Satori + Resvg (Retina 1360x2320)
+        </button>
       </div>
     </div>
 
@@ -631,13 +634,23 @@
             </div>
           </div>
 
-          <!-- Opção 3: Arte Autêntica -->
+          <!-- Opção 3: Arte Autêntica Canvas -->
           <div class="card-choice-card" id="cardChoiceAuth" onclick="setStyle('auth')">
             <img src="assets/preview/tarot_design_b_authentic.png" class="choice-mini-img" alt="Arte Autêntica">
             <div class="choice-info">
               <span class="badge-tag badge-hot">NOVA PROPOSTA B (2x HD)</span>
               <h4>3. Baralho Nobre de 78 Pinturas (HD)</h4>
               <p>Pintura oficial em altíssima definição da carta envolta em moldura dourada entalhada, filigranas de museu e selo <em>Pyxie's Tarot by cringinho</em>.</p>
+            </div>
+          </div>
+
+          <!-- Opção 4: Satori + Resvg Ultra-Nítido -->
+          <div class="card-choice-card" id="cardChoiceSatori" onclick="setStyle('satori')">
+            <img src="assets/preview/tarot_satori_demo.png" class="choice-mini-img" alt="Satori Resvg Ultra HD">
+            <div class="choice-info">
+              <span class="badge-tag" style="background: linear-gradient(135deg, #10b981, #06b6d4); color: #fff;">SATORI + RESVG (VETORIAL)</span>
+              <h4>4. HTML/CSS + Rust Resvg (1360x2320)</h4>
+              <p>Tecnologia moderna <strong>Satori + @resvg/resvg-js</strong> com tipografia tipográfica <em>Cinzel & Cormorant Garamond</em>, layout Flexbox e zero pixels borrados!</p>
             </div>
           </div>
         </div>
@@ -659,7 +672,8 @@
     const STYLE_IMAGES = {
       legacy: 'assets/preview/tarot_legacy.png',
       pyxie: 'assets/preview/tarot_design_a_pyxie.png',
-      auth: 'assets/preview/tarot_design_b_authentic.png'
+      auth: 'assets/preview/tarot_design_b_authentic.png',
+      satori: 'assets/preview/tarot_satori_demo.png'
     };
 
     function setScenario(scen) {
@@ -700,10 +714,12 @@
       document.getElementById('btnStyleLegacy').classList.toggle('active', st === 'legacy');
       document.getElementById('btnStylePyxie').classList.toggle('active', st === 'pyxie');
       document.getElementById('btnStyleAuth').classList.toggle('active', st === 'auth');
+      document.getElementById('btnStyleSatori').classList.toggle('active', st === 'satori');
 
       document.getElementById('cardChoiceLegacy').classList.toggle('active', st === 'legacy');
       document.getElementById('cardChoicePyxie').classList.toggle('active', st === 'pyxie');
       document.getElementById('cardChoiceAuth').classList.toggle('active', st === 'auth');
+      document.getElementById('cardChoiceSatori').classList.toggle('active', st === 'satori');
 
       const img = document.getElementById('cardImageRender');
       img.style.opacity = '0.3';
