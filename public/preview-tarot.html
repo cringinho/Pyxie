@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔮 Preview Visual: Novo Sistema de Tarot da Pyxie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #1e1f22;
+      --discord-dark: #313338;
+      --discord-darker: #2b2d31;
+      --discord-sidebar: #1e1f22;
+      --discord-button: #4e5058;
+      --discord-blurple: #5865f2;
+      --discord-green: #23a55a;
+      --discord-text: #dbdee1;
+      --discord-muted: #949ba4;
+      --discord-link: #00a8fc;
+      --brand-violet: #8b5cf6;
+      --brand-pink: #ec4899;
+      --brand-gold: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: radial-gradient(circle at 50% 20%, #170d2b 0%, #0d0617 100%);
+      color: #e2e8f0;
+      padding: 30px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.4rem;
+      background: linear-gradient(135deg, #c084fc, #f472b6, #facc15);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    p.subtitle {
+      color: #94a3b8;
+      font-size: 1.05rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Switcher Controls */
+    .controls-panel {
+      background: rgba(30, 27, 46, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(192, 132, 252, 0.2);
+      border-radius: 16px;
+      padding: 18px 24px;
+      margin-bottom: 35px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .control-label {
+      font-weight: 600;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+    }
+
+    .btn-toggle {
+      background: #2b2d31;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+
+    .btn-toggle:hover {
+      background: #383a40;
+      border-color: rgba(192, 132, 252, 0.4);
+    }
+
+    .btn-toggle.active {
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+    }
+
+    /* Grid Layout */
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .showcase-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Discord Chat Window Mockup */
+    .discord-chat {
+      background-color: var(--discord-dark);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      padding: 24px;
+      border: 1px solid #3f4147;
+    }
+
+    .discord-msg {
+      display: flex;
+      gap: 16px;
+    }
+
+    .discord-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid #a855f7;
+    }
+
+    .discord-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .discord-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .bot-name {
+      font-weight: 600;
+      color: #f2f3f5;
+      font-size: 1.05rem;
+    }
+
+    .bot-tag {
+      background: var(--discord-blurple);
+      color: white;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .timestamp {
+      color: var(--discord-muted);
+      font-size: 0.78rem;
+    }
+
+    /* Discord Embed */
+    .discord-embed {
+      background: var(--discord-darker);
+      border-left: 4px solid #c084fc;
+      border-radius: 4px 8px 8px 4px;
+      padding: 16px;
+      margin-top: 8px;
+      max-width: 540px;
+      transition: all 0.3s ease;
+    }
+
+    .discord-embed.is-new-discovery {
+      border-left-color: #ff1493;
+      box-shadow: 0 0 15px rgba(255, 20, 147, 0.25);
+    }
+
+    .embed-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .embed-main {
+      flex: 1;
+    }
+
+    .embed-thumbnail {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: contain;
+      flex-shrink: 0;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .embed-title {
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .embed-desc {
+      color: var(--discord-text);
+      font-size: 0.95rem;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .embed-desc strong {
+      color: #ffffff;
+    }
+
+    .quote-box {
+      border-left: 4px solid #4e5058;
+      padding-left: 10px;
+      margin: 6px 0 12px 0;
+      color: #c4c9ce;
+      font-style: italic;
+    }
+
+    /* Nova Descoberta Banner (Item 7) */
+    .discovery-banner {
+      background: linear-gradient(90deg, rgba(230, 0, 103, 0.25), rgba(245, 158, 11, 0.15));
+      border: 1px solid rgba(255, 20, 147, 0.4);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .discovery-banner.visible {
+      display: block;
+    }
+
+    .discovery-title {
+      color: #ff70a6;
+      font-weight: 700;
+      font-size: 0.92rem;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .discovery-desc {
+      color: #e2e8f0;
+      font-size: 0.85rem;
+    }
+
+    /* Barra de Progresso Visual (Item 4) */
+    .progress-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 12px;
+      font-size: 0.88rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .progress-bar-track {
+      height: 8px;
+      background: #1e1f22;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8b5cf6, #ec4899);
+      width: 32%;
+      transition: width 0.5s ease;
+    }
+
+    .progress-chars {
+      font-family: monospace;
+      color: #c084fc;
+      margin-top: 4px;
+      font-size: 0.82rem;
+    }
+
+    /* Imagem da Carta no Embed */
+    .embed-card-image {
+      margin-top: 14px;
+      border-radius: 8px;
+      overflow: hidden;
+      max-width: 480px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .embed-card-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: opacity 0.2s ease;
+    }
+
+    .embed-footer {
+      color: var(--discord-muted);
+      font-size: 0.78rem;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Botões de Ação Rica (Item 6) */
+    .discord-action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      max-width: 540px;
+    }
+
+    .discord-btn {
+      background: var(--discord-button);
+      color: #ffffff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease;
+    }
+
+    .discord-btn:hover {
+      background: #6d6f78;
+    }
+
+    .discord-btn.btn-primary {
+      background: var(--discord-blurple);
+    }
+    .discord-btn.btn-primary:hover {
+      background: #4752c4;
+    }
+
+    .discord-btn.btn-success {
+      background: var(--discord-green);
+    }
+    .discord-btn.btn-success:hover {
+      background: #1f8b4c;
+    }
+
+    /* Painel Lateral de Comparação */
+    .comparison-panel {
+      background: rgba(30, 27, 46, 0.6);
+      border: 1px solid rgba(192, 132, 252, 0.2);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .comparison-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      color: #f1f5f9;
+      margin-bottom: 8px;
+    }
+
+    .comparison-desc {
+      color: #94a3b8;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .card-preview-thumb-box {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-choice-card {
+      background: rgba(15, 10, 25, 0.6);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .card-choice-card:hover {
+      border-color: rgba(192, 132, 252, 0.5);
+      background: rgba(124, 58, 237, 0.15);
+    }
+
+    .card-choice-card.active {
+      border-color: #a855f7;
+      background: rgba(124, 58, 237, 0.25);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+    }
+
+    .choice-mini-img {
+      width: 70px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .choice-info h4 {
+      color: #ffffff;
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+
+    .choice-info p {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .badge-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .badge-legacy { background: #475569; color: #f1f5f9; }
+    .badge-new { background: #7c3aed; color: #fdf4ff; }
+    .badge-hot { background: #db2777; color: #fff; }
+
+    .status-summary {
+      margin-top: 24px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 0.88rem;
+      color: #6ee7b7;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>🔮 Visualizador de Proposta: Novo Módulo de Tarot</h1>
+      <p class="subtitle">
+        Veja e teste em tempo real as melhorias dos itens <strong>2</strong> (Novo Canvas), <strong>4</strong> (Barra de Progresso Visual), <strong>6</strong> (Botões de Ação Rica) e <strong>7</strong> (Efeito de Nova Descoberta).
+      </p>
+    </header>
+
+    <!-- Barra de Controle Interativo -->
+    <div class="controls-panel">
+      <div class="control-group">
+        <span class="control-label">Cenário de Teste:</span>
+        <button class="btn-toggle active" id="btnScenarioNormal" onclick="setScenario('normal')">
+          ☀️ Tiragem Padrão (Carta Já Conhecida)
+        </button>
+        <button class="btn-toggle" id="btnScenarioNew" onclick="setScenario('new')">
+          🌟 Nova Carta Descoberta! (Item 7)
+        </button>
+      </div>
+
+      <div class="control-group">
+        <span class="control-label">Design da Arte da Carta (Item 2):</span>
+        <button class="btn-toggle" id="btnStyleLegacy" onclick="setStyle('legacy')">
+          1. Legado (Kuromi)
+        </button>
+        <button class="btn-toggle active" id="btnStylePyxie" onclick="setStyle('pyxie')">
+          2. Pyxie & Astaroth Astral
+        </button>
+        <button class="btn-toggle" id="btnStyleAuth" onclick="setStyle('auth')">
+          3. Arte Autêntica + Moldura
+        </button>
+      </div>
+    </div>
+
+    <!-- Layout Grid -->
+    <div class="showcase-grid">
+      <!-- Painel Esquerdo: Mockup Fiel do Discord -->
+      <div>
+        <div class="discord-chat">
+          <div class="discord-msg">
+            <img src="assets/pyxie/pyxie_mascot.png" class="discord-avatar" alt="Pyxie Mascot">
+            <div class="discord-content">
+              <div class="discord-header">
+                <span class="bot-name">Pyxie</span>
+                <span class="bot-tag">APP</span>
+                <span class="timestamp">Hoje às 23:05</span>
+              </div>
+
+              <!-- Embed Discord -->
+              <div class="discord-embed" id="targetEmbed">
+                <div class="embed-grid">
+                  <div class="embed-main">
+                    <div class="embed-title" id="embedTitle">
+                      🔮 ✦ Tarot da Pyxie — Cringelândia
+                    </div>
+
+                    <!-- Banner de Nova Descoberta (Item 7) -->
+                    <div class="discovery-banner" id="discoveryBanner">
+                      <div class="discovery-title">
+                        🎉 ✨ NOVA DESCOBERTA REGISTRADA NO SEU ÁLBUM! (+1 Carta)
+                      </div>
+                      <div class="discovery-desc">
+                        Parabéns! Você acaba de desbloquear a carta <strong>#01 - O Mago</strong> pela primeira vez!
+                      </div>
+                    </div>
+
+                    <div class="embed-desc">
+                      🔮 <strong>Carta Sorteada:</strong> <strong>I. O Mago</strong> (`✦ Posição Normal ✦`)<br><br>
+                      ✨ <strong>Palavras-Chave</strong>
+                      <div class="quote-box">Poder • Habilidade • Concentração • Ação</div>
+                      📜 <strong>Mensagem do Destino</strong>
+                      <div class="quote-box">"Você possui todas as ferramentas para manifestar sua vontade no plano material."</div>
+                    </div>
+
+                    <!-- Barra de Progresso Visual (Item 4) -->
+                    <div class="progress-box">
+                      <div class="progress-header">
+                        <span>📖 Coleção Astral de Tarot</span>
+                        <span id="progressPercentLabel">25/78 (32.1%)</span>
+                      </div>
+                      <div class="progress-bar-track">
+                        <div class="progress-bar-fill" id="progressBarFill" style="width: 32.1%;"></div>
+                      </div>
+                      <div class="progress-chars" id="progressChars">
+                        ▰▰▰▰▱▱▱▱▱▱▱▱ 32.1% Concluído
+                      </div>
+                    </div>
+
+                    <!-- Imagem do Canvas Renderizado (Item 2) -->
+                    <div class="embed-card-image">
+                      <img id="cardImageRender" src="assets/preview/tarot_design_a_pyxie.png" alt="Tarot Card Render">
+                    </div>
+
+                    <div class="embed-footer">
+                      <span>Pyxie • 💡 Dica: Complete seu álbum de 78 cartas de Tarot e resgate conquistas em /py-album.</span>
+                    </div>
+                  </div>
+
+                  <!-- Thumbnail Lateral -->
+                  <img id="embedThumbnail" src="assets/pyxie/emojis/pyxie_pose_speelcasting.png" class="embed-thumbnail" alt="Thumbnail">
+                </div>
+              </div>
+
+              <!-- Botões de Ação Rica (Item 6) -->
+              <div class="discord-action-row">
+                <button class="discord-btn" title="Gasta moedas e tira uma nova carta imediatamente">
+                  🔮 Subornar a Pyxie (50 🪙)
+                </button>
+                <button class="discord-btn btn-primary" title="Abre o álbum exatamente na carta tirada">
+                  📖 Ver no Álbum (#01)
+                </button>
+                <button class="discord-btn btn-success" title="Verifica conquistas do álbum">
+                  🏆 Conquistas (3 Prontas)
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Painel Direito: Seletor & Comparativo de Estilos do Canvas -->
+      <div class="comparison-panel">
+        <h3 class="comparison-title">Opções de Canvas (Item 2)</h3>
+        <p class="comparison-desc">
+          Clique nas opções abaixo para alternar instantaneamente a imagem gerada no simulador do Discord ao lado:
+        </p>
+
+        <div class="card-preview-thumb-box">
+          <!-- Opção 1: Legado -->
+          <div class="card-choice-card" id="cardChoiceLegacy" onclick="setStyle('legacy')">
+            <img src="assets/preview/tarot_legacy.png" class="choice-mini-img" alt="Legacy">
+            <div class="choice-info">
+              <span class="badge-tag badge-legacy">ATUAL / LEGADO</span>
+              <h4>1. Kuromi Clássica (Vetor)</h4>
+              <p>O visual legado desenhado puramente em código vetorial de capuz preto e caveirinha.</p>
+            </div>
+          </div>
+
+          <!-- Opção 2: Pyxie & Astaroth -->
+          <div class="card-choice-card active" id="cardChoicePyxie" onclick="setStyle('pyxie')">
+            <img src="assets/preview/tarot_design_a_pyxie.png" class="choice-mini-img" alt="Pyxie & Astaroth">
+            <div class="choice-info">
+              <span class="badge-tag badge-new">NOVA PROPOSTA A</span>
+              <h4>2. Pyxie & Astaroth Astral</h4>
+              <p>Portal cósmico estrelado com a <strong>Pyxie Mística</strong> conjurando junto com o familiar <strong>Astaroth</strong>, runas e marcadores zodiacais.</p>
+            </div>
+          </div>
+
+          <!-- Opção 3: Arte Autêntica -->
+          <div class="card-choice-card" id="cardChoiceAuth" onclick="setStyle('auth')">
+            <img src="assets/preview/tarot_design_b_authentic.png" class="choice-mini-img" alt="Arte Autêntica">
+            <div class="choice-info">
+              <span class="badge-tag badge-hot">NOVA PROPOSTA B</span>
+              <h4>3. Arte Autêntica das 78 Cartas</h4>
+              <p>Incorpora a própria ilustração autêntica em alta definição da carta (como em <em>/py-album</em>) envolta na moldura dourada e cósmica.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-summary">
+          ✨ <strong>Vantagens Integradas:</strong><br>
+          • <strong>Item 4 (Barra Visual):</strong> Substitui texto puro por barra gráfica elegante no embed.<br>
+          • <strong>Item 6 (Botões de Ação):</strong> O jogador vai direto para o Álbum daquela carta com 1 clique.<br>
+          • <strong>Item 7 (Nova Descoberta):</strong> Alerta brilhante quando tira carta inédita, mudando para o sticker de vitória da Pyxie!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentScenario = 'normal';
+    let currentStyle = 'pyxie';
+
+    const STYLE_IMAGES = {
+      legacy: 'assets/preview/tarot_legacy.png',
+      pyxie: 'assets/preview/tarot_design_a_pyxie.png',
+      auth: 'assets/preview/tarot_design_b_authentic.png'
+    };
+
+    function setScenario(scen) {
+      currentScenario = scen;
+      document.getElementById('btnScenarioNormal').classList.toggle('active', scen === 'normal');
+      document.getElementById('btnScenarioNew').classList.toggle('active', scen === 'new');
+
+      const banner = document.getElementById('discoveryBanner');
+      const embed = document.getElementById('targetEmbed');
+      const thumb = document.getElementById('embedThumbnail');
+      const progressLabel = document.getElementById('progressPercentLabel');
+      const progressFill = document.getElementById('progressBarFill');
+      const progressChars = document.getElementById('progressChars');
+
+      if (scen === 'new') {
+        banner.classList.add('visible');
+        embed.classList.add('is-new-discovery');
+        thumb.src = 'assets/pyxie/sticker/sticker_win_victory.png';
+        progressLabel.textContent = '26/78 (33.3%) • +1 NOVA!';
+        progressLabel.style.color = '#ff70a6';
+        progressFill.style.width = '33.3%';
+        progressFill.style.background = 'linear-gradient(90deg, #ec4899, #f59e0b)';
+        progressChars.textContent = '▰▰▰▰▱▱▱▱▱▱▱▱ 33.3% Concluído (+1 Nova Descoberta!)';
+      } else {
+        banner.classList.remove('visible');
+        embed.classList.remove('is-new-discovery');
+        thumb.src = 'assets/pyxie/emojis/pyxie_pose_speelcasting.png';
+        progressLabel.textContent = '25/78 (32.1%)';
+        progressLabel.style.color = '#cbd5e1';
+        progressFill.style.width = '32.1%';
+        progressFill.style.background = 'linear-gradient(90deg, #8b5cf6, #ec4899)';
+        progressChars.textContent = '▰▰▰▰▱▱▱▱▱▱▱▱ 32.1% Concluído';
+      }
+    }
+
+    function setStyle(st) {
+      currentStyle = st;
+      document.getElementById('btnStyleLegacy').classList.toggle('active', st === 'legacy');
+      document.getElementById('btnStylePyxie').classList.toggle('active', st === 'pyxie');
+      document.getElementById('btnStyleAuth').classList.toggle('active', st === 'auth');
+
+      document.getElementById('cardChoiceLegacy').classList.toggle('active', st === 'legacy');
+      document.getElementById('cardChoicePyxie').classList.toggle('active', st === 'pyxie');
+      document.getElementById('cardChoiceAuth').classList.toggle('active', st === 'auth');
+
+      const img = document.getElementById('cardImageRender');
+      img.style.opacity = '0.3';
+      setTimeout(() => {
+        img.src = STYLE_IMAGES[st];
+        img.style.opacity = '1';
+      }, 150);
+    }
+  </script>
+</body>
+</html>
