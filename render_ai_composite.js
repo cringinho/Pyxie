@@ -4,12 +4,12 @@ const satori = require('satori').default || require('satori');
 const { Resvg } = require('@resvg/resvg-js');
 const { createCanvas, loadImage } = require('@napi-rs/canvas');
 
-async function renderAiCardComposite() {
+async function renderAuthenticPyxieCard() {
   const fredokaData = fs.readFileSync(path.join(__dirname, 'assets/fonts/Fredoka-Bold.ttf'));
   const quicksandData = fs.readFileSync(path.join(__dirname, 'assets/fonts/Quicksand-Bold.ttf'));
 
-  // Carrega a arte rica gerada por IA
-  const rawArt = await loadImage(path.join(__dirname, 'assets/tarot/templates/ai_magician_raw.jpg'));
+  // Carrega a nova arte oficial da Pyxie como O Mago
+  const rawArt = await loadImage(path.join(__dirname, 'assets/tarot/templates/ai_pyxie_magician_raw.jpg'));
   const aCanvas = createCanvas(rawArt.width, rawArt.height);
   const aCtx = aCanvas.getContext('2d');
   aCtx.drawImage(rawArt, 0, 0);
@@ -18,7 +18,7 @@ async function renderAiCardComposite() {
   const W = 768;
   const H = 1376;
 
-  // Monta a composição com Satori
+  // Monta a composição com Satori e paleta oficial da Pyxie (Rosa Pyxie #E60067 e Violeta #8B5CF6)
   const svg = await satori(
     {
       type: 'div',
@@ -33,14 +33,14 @@ async function renderAiCardComposite() {
           boxSizing: 'border-box',
           position: 'relative',
           padding: '24px 20px',
-          borderRadius: '30px',
+          borderRadius: '32px',
           border: '4px solid #e60067',
-          boxShadow: '0 0 35px rgba(230, 0, 103, 0.6)',
+          boxShadow: '0 0 40px rgba(230, 0, 103, 0.65)',
           overflow: 'hidden',
           backgroundColor: '#0a0114',
         },
         children: [
-          // 1. Arte Rica de IA em Tela Cheia no Fundo
+          // 1. Arte da Pyxie Autêntica no Fundo
           {
             type: 'img',
             props: {
@@ -65,8 +65,8 @@ async function renderAiCardComposite() {
                 top: 0,
                 left: 0,
                 right: 0,
-                height: '180px',
-                backgroundImage: 'linear-gradient(to bottom, rgba(10, 1, 20, 0.95) 0%, rgba(10, 1, 20, 0.7) 60%, rgba(10, 1, 20, 0) 100%)',
+                height: '190px',
+                backgroundImage: 'linear-gradient(to bottom, rgba(10, 1, 20, 0.95) 0%, rgba(10, 1, 20, 0.72) 65%, rgba(10, 1, 20, 0) 100%)',
               },
             },
           },
@@ -80,7 +80,7 @@ async function renderAiCardComposite() {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                height: '420px',
+                height: '430px',
                 backgroundImage: 'linear-gradient(to top, rgba(10, 1, 20, 0.98) 0%, rgba(10, 1, 20, 0.88) 65%, rgba(10, 1, 20, 0) 100%)',
               },
             },
@@ -95,7 +95,6 @@ async function renderAiCardComposite() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 marginTop: '10px',
-                zIndex: 2,
               },
               children: [
                 {
@@ -137,7 +136,6 @@ async function renderAiCardComposite() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 width: '100%',
-                zIndex: 2,
               },
               children: [
                 // Badge de Orientação
@@ -217,7 +215,7 @@ async function renderAiCardComposite() {
                   },
                 },
 
-                // Rodapé Oficial
+                // Rodapé Oficial Canônico
                 {
                   type: 'div',
                   props: {
@@ -280,7 +278,7 @@ async function renderAiCardComposite() {
 
   const outPath = path.join(__dirname, 'public/assets/preview/tarot_ai_magician_render.png');
   fs.writeFileSync(outPath, pngBuffer);
-  console.log(`✅ Carta AI + Satori gerada com sucesso! Resolução: ${pngData.width}x${pngData.height} (${pngBuffer.length} bytes)`);
+  console.log(`✅ Carta Autêntica da Pyxie gerada com sucesso! Resolução: ${pngData.width}x${pngData.height} (${pngBuffer.length} bytes)`);
 }
 
-renderAiCardComposite().catch(console.error);
+renderAuthenticPyxieCard().catch(console.error);

@@ -524,15 +524,12 @@
       </div>
 
       <div class="control-group">
-        <span class="control-label">Modelo de Carta:</span>
-        <button class="btn-toggle" id="btnStyleNeon" onclick="setStyle('neon')">
-          1. Rosa Neon (Vetor Puro)
+        <span class="control-label">Modelo de Carta Autoral:</span>
+        <button class="btn-toggle active" id="btnStyleNeon" onclick="setStyle('neon')">
+          1. Rosa Neon & Morceguinhos (Template 1)
         </button>
         <button class="btn-toggle" id="btnStyleCelestial" onclick="setStyle('celestial')">
-          2. Violeta Místico
-        </button>
-        <button class="btn-toggle active" id="btnStyleAi" onclick="setStyle('ai')">
-          ✨ 3. Arte de IA + Satori (Opção 2)
+          2. Violeta Místico & Mascote Pyxie (Template 2)
         </button>
       </div>
     </div>
@@ -593,7 +590,7 @@
 
                     <!-- Imagem do Canvas Renderizado (Item 2) -->
                     <div class="embed-card-image">
-                      <img id="cardImageRender" src="assets/preview/tarot_ai_magician_render.png" alt="Tarot Card Render">
+                      <img id="cardImageRender" src="assets/preview/tarot_pyxie_neon_bat.png" alt="Tarot Card Render">
                     </div>
 
                     <div class="embed-footer">
@@ -651,16 +648,6 @@
               <p>Estrelas astrais, máscara alada, constelações de fundo, oráculo de alta definição e assinatura oficial.</p>
             </div>
           </div>
-
-          <!-- Modelo 3: Arte Rica Ilustrada por IA + Tipografia Nativa Satori -->
-          <div class="card-choice-card active" id="cardChoiceAi" onclick="setStyle('ai')">
-            <img src="assets/preview/tarot_ai_magician_render.png" class="choice-mini-img" alt="Arte Rica IA + Satori">
-            <div class="choice-info">
-              <span class="badge-tag" style="background: linear-gradient(135deg, #e60067, #ec4899); color: #fff;">ILUSTRAÇÃO IA + SATORI (OPÇÃO 2)</span>
-              <h4>O Mago (Arte Rica de IA)</h4>
-              <p>Pintura de alta complexidade com os 4 elementos, raios néon, moldura gótica arcana e textos nítidos sobrepostos!</p>
-            </div>
-          </div>
         </div>
 
         <div class="status-summary">
@@ -675,12 +662,11 @@
 
   <script>
     let currentScenario = 'normal';
-    let currentStyle = 'ai';
+    let currentStyle = 'neon';
 
     const STYLE_IMAGES = {
       neon: 'assets/preview/tarot_pyxie_neon_bat.png',
-      celestial: 'assets/preview/tarot_pyxie_celestial.png',
-      ai: 'assets/preview/tarot_ai_magician_render.png'
+      celestial: 'assets/preview/tarot_pyxie_celestial.png'
     };
 
     function setScenario(scen) {
@@ -720,11 +706,9 @@
       currentStyle = st;
       document.getElementById('btnStyleNeon').classList.toggle('active', st === 'neon');
       document.getElementById('btnStyleCelestial').classList.toggle('active', st === 'celestial');
-      document.getElementById('btnStyleAi').classList.toggle('active', st === 'ai');
 
       document.getElementById('cardChoiceNeon').classList.toggle('active', st === 'neon');
       document.getElementById('cardChoiceCelestial').classList.toggle('active', st === 'celestial');
-      document.getElementById('cardChoiceAi').classList.toggle('active', st === 'ai');
 
       const img = document.getElementById('cardImageRender');
       img.style.opacity = '0.3';
