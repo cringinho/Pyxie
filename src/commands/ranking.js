@@ -10,7 +10,6 @@ const { formatCoins } = require('./economyHelpers');
 const { RANKING } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 const { getLanguage, t } = require('../utils/i18n');
-const { applyPyxieEmotion } = require('../utils/pyxieEmotions');
 
 async function buildRankingView(source, viewerId, category = 'coins') {
   let title = t('ranking.mainTitle', source);
@@ -116,8 +115,7 @@ async function buildRankingView(source, viewerId, category = 'coins') {
     );
   }
 
-  const { attachment } = applyPyxieEmotion(embed, 'VICTORY', { pose: true });
-  return { embeds: [embed], files: attachment ? [attachment] : [], components: [buttonRow] };
+  return { embeds: [embed], components: [buttonRow] };
 }
 
 function isRankingInteraction(interaction) {
