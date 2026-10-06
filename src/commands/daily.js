@@ -6,18 +6,10 @@ const {
   SlashCommandBuilder,
 } = require('discord.js');
 const { claimDaily } = require('../services/economy');
-const { getVoteUrl } = require('../services/topgg');
 const { createBonusSession } = require('../services/bonusTimer');
 const { t, getLanguage, formatCoins, formatRemaining } = require('../utils/i18n');
 const { DAILY } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
-
-function isWeekend() {
-  const now = new Date();
-  const brDateStr = now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' });
-  const day = new Date(brDateStr).getDay();
-  return day === 0 || day === 6;
-}
 
 function getDailyCompliment(streak, source = null) {
   if (streak <= 2) return t('daily.complimentTier1', source);
@@ -29,23 +21,13 @@ function getDailyCompliment(streak, source = null) {
 
 function buildDailyView(userId, guildOrSource = null, clientId = null) {
   const result = claimDaily(userId);
-  const voteUrl = getVoteUrl(clientId);
   const lang = getLanguage(guildOrSource);
-  const weekend = isWeekend();
   const bonusSession = createBonusSession(userId, 'item_bonus', {}, lang);
-
-  const voteBonusText = weekend
-    ? t('daily.voteWeekendBonus', guildOrSource)
-    : t('daily.voteWeekdayBonus', guildOrSource);
 
   if (!result.claimed) {
     const desc = [
       t('daily.descCooldown', guildOrSource, { time: formatRemaining(result.remainingMs, guildOrSource) }),
       ...(result.streak > 0 ? ['', t('daily.streakCooldown', guildOrSource, { streak: result.streak })] : []),
-      '',
-      voteBonusText,
-      '',
-      t('vote.cta', guildOrSource),
     ].join('\n');
 
     const embed = new EmbedBuilder()
@@ -56,11 +38,6 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
       .setTimestamp();
 
     const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setLabel(t('daily.btnLabelCooldown', guildOrSource))
-        .setEmoji('🗳️')
-        .setStyle(ButtonStyle.Link)
-        .setURL(voteUrl),
       new ButtonBuilder()
         .setLabel(t('daily.btnWebBonus', guildOrSource))
         .setStyle(ButtonStyle.Link)
@@ -90,14 +67,8 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
     t('daily.summaryTitle', guildOrSource),
     collectedLine,
     t('daily.streakLine', guildOrSource, { streak: result.streak, compliment }),
-    ...(result.voteBonus > 0 ? [t('daily.topggVoteBonusActive', guildOrSource, { amount: result.voteBonus })] : []),
     t('daily.balance', guildOrSource, { balance: formatCoins(result.balance, guildOrSource) }),
     ...(result.magicBeanBonus ? [t('daily.magicBean', guildOrSource, { total: result.magicBeans })] : []),
-    '',
-    ...(result.voteBonus === 0 ? [t('daily.topggVoteBonusPrompt', guildOrSource), ''] : []),
-    voteBonusText,
-    '',
-    t('vote.cta', guildOrSource),
   ].join('\n');
 
   const embed = new EmbedBuilder()
@@ -108,11 +79,6 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
     .setTimestamp();
 
   const buttonRow = new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setLabel(t('daily.btnLabel', guildOrSource))
-      .setEmoji('🗳️')
-      .setStyle(ButtonStyle.Link)
-      .setURL(voteUrl),
     new ButtonBuilder()
       .setLabel(t('daily.btnWebBonus', guildOrSource))
       .setStyle(ButtonStyle.Link)
@@ -129,9 +95,9 @@ module.exports = {
   buildDailyView,
   data: new SlashCommandBuilder()
     .setName(DAILY)
-    .setDescription('Claim daily coins & unlock Top.gg voting bonus.')
+    .setDescription('Claim daily coins and maintain your streak.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Resgate moedas diárias e desbloqueie bônus no Top.gg.',
+      'pt-BR': 'Resgate moedas diárias e mantenha sua sequência.',
     }),
   async executePrefix({ message, client }) {
     const view = buildDailyView(message.author.id, message, client?.user?.id);

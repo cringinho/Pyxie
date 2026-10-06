@@ -513,16 +513,16 @@ function claimDaily(userId, now = Date.now()) {
   // Cap em 25 moedas para manter equilíbrio econômico
   const streakBonus = streak > 1 ? Math.min(streak * 2, 25) : 0;
 
-  // Reconhecimento do voto no Top.gg (+20 moedas extras)
-  const hasVoted = hasActiveVote(userId, now);
-  const voteBonus = hasVoted ? 20 : 0;
+  // Votos no Top.gg agora são puramente voluntários (sem bônus de moedas)
+  const hasVoted = false;
+  const voteBonus = 0;
 
   const { minimum, maximum } = getEconomyConfig();
   const amount = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
   const wonMagicBean = Math.random() < 0.01; // 1% de chance de Feijão Mágico
 
   const updated = updateUserAccount(userId, (acc) => {
-    acc.coins += (amount + streakBonus + voteBonus);
+    acc.coins += (amount + streakBonus);
     acc.dailyStreak = streak;
     if (wonMagicBean) {
       acc.magicBeans = (acc.magicBeans || 0) + 1;
@@ -535,9 +535,9 @@ function claimDaily(userId, now = Date.now()) {
     amount,
     streak,
     streakBonus,
-    voteBonus,
-    hasVoted,
-    totalAmount: amount + streakBonus + voteBonus,
+    voteBonus: 0,
+    hasVoted: false,
+    totalAmount: amount + streakBonus,
     magicBeanBonus: wonMagicBean,
     balance: updated.coins,
     magicBeans: updated.magicBeans,

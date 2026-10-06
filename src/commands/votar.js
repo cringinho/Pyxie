@@ -10,38 +10,20 @@ const { t } = require('../utils/i18n');
 const { VOTE } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 
-const { createBonusSession } = require('../services/bonusTimer');
-
-function isWeekend() {
-  const now = new Date();
-  const brDateStr = now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' });
-  const day = new Date(brDateStr).getDay();
-  return day === 0 || day === 6;
-}
-
 function buildVoteView(guildOrSource = null, clientOrBotId = null) {
   const botId = clientOrBotId || '1453888365618270331';
   const voteUrl = getVoteUrl(botId);
-  const weekend = isWeekend();
-  const lang = (typeof guildOrSource?.locale === 'string' && guildOrSource.locale.startsWith('pt')) ? 'pt' : 'en';
-  const userId = guildOrSource?.user?.id || guildOrSource?.author?.id || 'guest';
-  const bonusSession = createBonusSession(userId, 'vote_bonus', {}, lang);
 
   const desc = [
     t('vote.desc', guildOrSource),
     '',
-    t('vote.rewardsTitle', guildOrSource),
-    t('vote.rewardCoins', guildOrSource),
-    t('vote.rewardDailyBonus', guildOrSource),
-    t('vote.rewardBean', guildOrSource),
-    '',
-    weekend ? t('vote.weekendActive', guildOrSource) : t('vote.weekendTip', guildOrSource),
+    t('vote.supportNote', guildOrSource),
     '',
     t('vote.cta', guildOrSource),
   ].join('\n');
 
   const embed = new EmbedBuilder()
-    .setColor(weekend ? PYXIE_COLORS.gold || '#facc15' : PYXIE_COLORS.magenta || '#e60067')
+    .setColor(PYXIE_COLORS.purple || '#8b5cf6')
     .setTitle(t('vote.title', guildOrSource))
     .setDescription(desc)
     .setFooter({ text: pyxieFooter(t('vote.footerText', guildOrSource), guildOrSource) })
@@ -52,12 +34,7 @@ function buildVoteView(guildOrSource = null, clientOrBotId = null) {
       .setLabel(t('vote.btnLabel', guildOrSource))
       .setEmoji('🗳️')
       .setStyle(ButtonStyle.Link)
-      .setURL(voteUrl),
-    new ButtonBuilder()
-      .setLabel(t('daily.btnWebBonus', guildOrSource))
-      .setEmoji('🎁')
-      .setStyle(ButtonStyle.Link)
-      .setURL(bonusSession.url)
+      .setURL(voteUrl)
   );
 
   return { embeds: [embed], components: [row] };
@@ -71,9 +48,9 @@ module.exports = {
   ephemeral: false,
   data: new SlashCommandBuilder()
     .setName(commandName)
-    .setDescription('Vote for Pyxie on Top.gg to claim free Coins, Daily Bonus, and Magic Beans.')
+    .setDescription('Support Pyxie by voting on Top.gg.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Vote na Pyxie no Top.gg e ganhe Moedinhas, Bônus no Diário e Feijões Mágicos!',
+      'pt-BR': 'Apoie o crescimento da Pyxie votando no Top.gg.',
     }),
   async executePrefix({ message, client }) {
     const view = buildVoteView(message, client?.user?.id);

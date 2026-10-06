@@ -32,30 +32,15 @@ function processTopggVote(payload) {
   }
 
   const isWeekend = Boolean(payload.isWeekend);
-  const coinsReward = isWeekend ? 100 : 50;
 
-  // 1. Entregar Moedas
-  addCoins(userId, coinsReward);
-
-  // 2. Bônus de fim de semana: +1 Feijão Mágico
-  if (isWeekend) {
-    addMagicBeans(userId, 1);
-  }
-
-  // 3. Registrar carimbo do voto para bônus no /py-daily (+20 moedas por 12h)
-  registerUserVote(userId);
-
-  addLog(
-    `[Top.gg Voto] Usuário ${userId} votou na Cringelândia! Recompensa: +${coinsReward} 🪙` +
-      (isWeekend ? ' + 1 🌱 Feijão Mágico (Bônus Fim de Semana 2x Ativo!)' : '') +
-      ' (+20 moedas extras no /py-daily desbloqueadas por 12h)'
-  );
+  // Votos no Top.gg agora são puramente de apoio voluntário (sem premiação/bônus em moedas)
+  addLog(`[Top.gg Voto] Usuário ${userId} votou na Cringelândia (apoio voluntário à comunidade).`);
 
   return {
     success: true,
     userId,
-    coins: coinsReward,
-    magicBeans: isWeekend ? 1 : 0,
+    coins: 0,
+    magicBeans: 0,
     isWeekend,
   };
 }

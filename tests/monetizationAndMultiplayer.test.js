@@ -22,20 +22,18 @@ try {
   const userAcc = getUserAccount(testUserA);
   assert.equal(userAcc.equippedTheme, 'ouro', 'Tema Ouro deve estar equipado no perfil.');
 
-  // 4. Teste de Votos Top.gg (Recompensas e Bônus Fim de Semana)
+  // 4. Teste de Votos Top.gg (Sem recompensas / voluntário)
   assert.equal(verifyWebhookAuth('teste'), true, 'Sem secret configurado deve validar webhook.');
 
   const voteNormal = processTopggVote({ user: testUserA, isWeekend: false });
   assert.equal(voteNormal.success, true, 'Voto comum no Top.gg deve ser processado.');
-  assert.equal(voteNormal.coins, 50, 'Recompensa comum deve ser 50 moedas.');
-  assert.equal(hasActiveVote(testUserA), true, 'Usuário deve ter status de votante ativo para bônus diário.');
+  assert.equal(voteNormal.coins, 0, 'Recompensa comum deve ser 0 moedas (sem recompensas).');
 
   const voteWeekend = processTopggVote({ user: testUserB, isWeekend: true });
   assert.equal(voteWeekend.success, true, 'Voto no fim de semana no Top.gg deve ser processado.');
-  assert.equal(voteWeekend.coins, 100, 'Recompensa de fim de semana deve ser 100 moedas (2x).');
-  assert.equal(hasActiveVote(testUserB), true, 'Usuário B deve ter status de votante ativo.');
+  assert.equal(voteWeekend.coins, 0, 'Recompensa de fim de semana deve ser 0 moedas.');
   const accB = getUserAccount(testUserB);
-  assert.equal(accB.magicBeans, 1, 'Fim de semana deve conceder 1 Feijão Mágico.');
+  assert.equal(accB.magicBeans, 0, 'Fim de semana não deve conceder Feijão Mágico.');
 
   // 5. Teste do Gerenciador de Afiliados Shopee & Smartlink
   const shopeeManager = require('../src/services/shopeeManager');

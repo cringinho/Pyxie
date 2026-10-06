@@ -162,13 +162,13 @@ try {
   assert.equal(hasActiveVote('voter-daily-user', voteTime + 11 * 3600 * 1000), true, 'Voto deve ser válido dentro de 12 horas');
   assert.equal(hasActiveVote('voter-daily-user', voteTime + 13 * 3600 * 1000), false, 'Voto deve expirar após 12 horas');
 
-  // Claim diário com bônus de voto (+20 moedas)
+  // Claim diário sem bônus de voto (bônus removidos)
   setEconomyConfig(15, 15);
   const voteClaim = claimDaily('voter-daily-user', voteTime);
   assert.equal(voteClaim.claimed, true);
-  assert.equal(voteClaim.hasVoted, true, 'Claim diário deve reconhecer o voto no Top.gg');
-  assert.equal(voteClaim.voteBonus, 20, 'Claim diário deve conceder +20 moedas de bônus pelo voto');
-  assert.equal(voteClaim.totalAmount, 35, 'Total deve somar base (15) + voto (20) = 35');
+  assert.equal(voteClaim.hasVoted, false, 'Claim diário não deve atribuir hasVoted de bônus');
+  assert.equal(voteClaim.voteBonus, 0, 'Claim diário não deve conceder bônus pelo voto');
+  assert.equal(voteClaim.totalAmount, 15, 'Total deve ser apenas o base (15)');
 
   // Teste de ranking com dailyStreak exposto
   const rankList = getRanking(10);
