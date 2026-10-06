@@ -381,7 +381,7 @@ async function handleButtonInteraction(interaction) {
       }
 
       // Notifica o autor com sucesso
-      const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
+      const baseUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org';
       const successEmbed = new EmbedBuilder()
         .setColor('#10b981')
         .setTitle('🎉  ✦  Arte Confirmada na Votação da Semana!')
@@ -548,7 +548,7 @@ async function tallyWeeklyArt(client) {
       .replace(/{author}/g, `<@${bestSubmission.authorId}>`)
       .replace(/{currencyName}/g, config.currencyName || 'Abóboras');
 
-    const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
+    const baseUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org';
     const winnerEmbed = new EmbedBuilder()
       .setColor('#a855f7')
       .setTitle('🎨 ARTE DA SEMANA DEFINIDA!')
