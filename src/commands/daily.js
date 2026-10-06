@@ -34,7 +34,7 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
       .setColor(PYXIE_COLORS.violet || '#8b5cf6')
       .setTitle(t('daily.titleCooldown', guildOrSource))
       .setDescription(desc)
-      .setFooter({ text: pyxieFooter(t('daily.footerCooldown', guildOrSource)) })
+      .setFooter({ text: pyxieFooter(t('daily.footerCooldown', guildOrSource), guildOrSource) })
       .setTimestamp();
 
     const row = new ActionRowBuilder().addComponents(
@@ -75,7 +75,7 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
     .setColor(PYXIE_COLORS.gold || '#facc15')
     .setTitle(t('daily.titleClaimed', guildOrSource))
     .setDescription(desc)
-    .setFooter({ text: pyxieFooter(t('daily.footer', guildOrSource)) })
+    .setFooter({ text: pyxieFooter(t('daily.footer', guildOrSource), guildOrSource) })
     .setTimestamp();
 
   const buttonRow = new ActionRowBuilder().addComponents(

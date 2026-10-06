@@ -20,7 +20,7 @@ function buildBonusCooldownEmbed(remainingMs, source = null) {
     .setColor(PYXIE_COLORS.violet || '#8b5cf6')
     .setTitle(isEn ? '🎁  ✦  Daily Web Bonus on Cooldown' : '🎁  ✦  Bônus Web Diário em Cooldown')
     .setDescription(desc)
-    .setFooter({ text: pyxieFooter(isEn ? 'Bonus resets every 24 hours' : 'Bônus renovado a cada 24 horas') })
+    .setFooter({ text: pyxieFooter(isEn ? 'Bonus resets every 24 hours' : 'Bônus renovado a cada 24 horas', source) })
     .setTimestamp();
 }
 
@@ -61,7 +61,7 @@ function buildBonusEmbed(userId, sessionUrl, source = null) {
     .setTitle(isEn ? '🎁  ✦  Pyxie Magic Bonus & Rewards' : '🎁  ✦  Bônus Mágico & Recompensas da Pyxie')
     .setTitle(isEn ? '🎁  ✦  Pyxie Daily Web Bonus' : '🎁  ✦  Bônus Web Diário da Pyxie')
     .setDescription(desc)
-    .setFooter({ text: pyxieFooter(isEn ? 'Rewards sponsored by Monetag (24h cooldown)' : 'Recompensa diária patrocinada (Cooldown de 24h)') })
+    .setFooter({ text: pyxieFooter(isEn ? 'Rewards sponsored by Monetag (24h cooldown)' : 'Recompensa diária patrocinada (Cooldown de 24h)', source) })
     .setTimestamp();
 
   const { getEmoji } = require('../utils/appEmojis');

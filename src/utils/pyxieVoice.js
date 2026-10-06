@@ -19,7 +19,7 @@ const PYXIE_FOOTER = 'Pyxie';
 const ROTATING_TIPS = {
   pt: [
     '💡 Dica: Use /py-daily todos os dias para acumular moedas e feijões mágicos.',
-    '💡 Dica: Apoie a Cringelândia e a Pyxie votando no Top.gg para nos ajudar a crescer.',
+    '💡 Dica: Suba de nível profissional completando seus turnos em /py-work.',
     '💡 Dica: Você pode personalizar títulos e temas no seu /py-profile.',
     '💡 Dica: Complete seu álbum de 78 cartas de Tarot e resgate conquistas em /py-album.',
     '💡 Dica: Experimente o Tarot diário (/py-tarot) para prever seu dia.',
@@ -29,7 +29,7 @@ const ROTATING_TIPS = {
   ],
   en: [
     '💡 Tip: Use /py-daily every day to accumulate coins and magic beans.',
-    '💡 Tip: Support Cringelândia and Pyxie by voting on Top.gg to help us grow.',
+    '💡 Tip: Level up your career by completing your work shifts in /py-work.',
     '💡 Tip: Customize your titles and visual themes in /py-profile.',
     '💡 Tip: Complete your 78-card Tarot album and claim achievements in /py-album.',
     '💡 Tip: Draw a daily Tarot reading (/py-tarot) to foresee your fortune.',

@@ -69,8 +69,8 @@ const COMMAND_ICONS = {
   configeconomia: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
 
   // Loja & Mochila
-  shop: 'https://cdn.discordapp.com/emojis/1548444209328033913.png',
-  loja: 'https://cdn.discordapp.com/emojis/1548444209328033913.png',
+  shop: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
+  loja: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
   inventory: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
   inventario: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
   mochila: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
