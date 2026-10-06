@@ -570,7 +570,7 @@ const TRANSLATIONS = {
       "epicBeanBonus": "✨ **BÔNUS ÉPICO DE DESEMPENHO (2% de Chance)!**",
       "epicBeanDesc": "> 🌱 Você recebeu **+1 Feijão Mágico** pelo serviço impecável! (Saldo: **{beans} 🌱**)",
       "minigameTitle": "💼  ✦  Expediente de {profession} — Minigame",
-      "timeLimit": "⏱️ **TEMPO DE RESPOSTA: 45 SEGUNDOS**\nEscolha a melhor alternativa nos botões abaixo:",
+      "timeLimit": "⏱️ **TEMPO DE RESPOSTA: 1 MINUTO E MEIO**\nEscolha a melhor alternativa nos botões abaixo:",
       "otherUserSession": "❌ Este expediente pertence a outro trabalhador. Use `/py-work` para iniciar o seu!",
       "expiredSession": "⏰ Este expediente já foi finalizado ou expirou. Use `/py-work` novamente quando estiver disponível!"
     },
@@ -1017,7 +1017,7 @@ const TRANSLATIONS = {
       "epicBeanBonus": "✨ **EPIC PERFORMANCE BONUS (2% Chance)!**",
       "epicBeanDesc": "> 🌱 You received **+1 Magic Bean** for stellar work! (Balance: **{beans} 🌱**)",
       "minigameTitle": "💼  ✦  {profession} Shift — Minigame",
-      "timeLimit": "⏱️ **TIME LIMIT: 45 SECONDS**\nChoose the best answer using the buttons below:",
+      "timeLimit": "⏱️ **TIME LIMIT: 1 MINUTE AND 30 SECONDS**\nChoose the best answer using the buttons below:",
       "otherUserSession": "❌ This shift belongs to another worker. Use `/py-work` to start your own!",
       "expiredSession": "⏰ This shift has expired or was already completed. Use `/py-work` again when available!"
     },

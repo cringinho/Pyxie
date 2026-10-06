@@ -36,7 +36,7 @@ function loadGeneratedMinigames() {
 
 const WORK_MINIMUM = 15;
 const WORK_MAXIMUM = 40;
-const WORK_TIMEOUT_MS = 45 * 1000;
+const WORK_TIMEOUT_MS = 90 * 1000;
 
 // Sessões ativas de minigames em RAM
 const activeWorkSessions = new Map();
