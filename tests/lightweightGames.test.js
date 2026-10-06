@@ -203,9 +203,46 @@ assert.ok(sessionPt.url.includes('lang=pt'), 'URL do bônus PT deve conter lang=
 const sessionEn = bonusTimer.createBonusSession('test-user-en', 'en');
 assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=en');
 
-console.log('Verificação dos comandos leves, convite bilíngue e desafios de trabalho em PT/EN: OK');
-} finally {
+// Validação do Embed e Botões [A] [B] [C] [D] no comando de trabalho
+(async () => {
+  const { setProfession } = require('../src/services/economy');
+  const workerId = `test_worker_${Date.now()}`;
+  setProfession(workerId, 'programador', 0);
+
+  let workReply = null;
+  await trabalhoCommand.executePrefix({
+    message: {
+      author: { id: workerId },
+      guild: { id: '1453890868980482090' },
+      reply: (payload) => { workReply = payload; },
+    },
+  });
+
+  assert.ok(workReply && workReply.embeds && workReply.embeds.length > 0, 'O comando de trabalho deve retornar um embed.');
+  const workEmbedDesc = workReply.embeds[0].data.description;
+  assert.ok(workEmbedDesc.includes('**[A]**'), 'A descrição do embed deve conter a alternativa [A].');
+  assert.ok(workEmbedDesc.includes('**[B]**'), 'A descrição do embed deve conter a alternativa [B].');
+  assert.ok(workEmbedDesc.includes('**[C]**'), 'A descrição do embed deve conter a alternativa [C].');
+  assert.ok(workEmbedDesc.includes('**[D]**'), 'A descrição do embed deve conter a alternativa [D].');
+
+  assert.ok(workReply.components && workReply.components.length > 0, 'Deve retornar a linha de botões.');
+  const workButtons = workReply.components[0].components;
+  assert.equal(workButtons.length, 4, 'Devem existir 4 botões de escolha.');
+  assert.equal(workButtons[0].data.label, '[A]', 'O botão 1 deve ser [A].');
+  assert.equal(workButtons[1].data.label, '[B]', 'O botão 2 deve ser [B].');
+  assert.equal(workButtons[2].data.label, '[C]', 'O botão 3 deve ser [C].');
+  assert.equal(workButtons[3].data.label, '[D]', 'O botão 4 deve ser [D].');
+})().then(() => {
+  console.log('Verificação dos comandos leves, convite bilíngue e desafios de trabalho em PT/EN: OK');
+}).catch((err) => {
+  console.error(err);
+  process.exit(1);
+}).finally(() => {
   fs.writeFileSync(economyFile, originalEconomy, 'utf8');
+});
+} catch (e) {
+  fs.writeFileSync(economyFile, originalEconomy, 'utf8');
+  throw e;
 }
 
 

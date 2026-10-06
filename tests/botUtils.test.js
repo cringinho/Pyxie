@@ -45,6 +45,15 @@ try {
   assert.equal(rawComponents.components[0].type, 3, 'Deve conter um StringSelectMenu (tipo 3).');
   assert.ok(rawComponents.components[0].options.length >= 6, 'Deve conter opções para todos os 6 módulos temáticos.');
 
+  // Validação dos botões de link do menu de ajuda (sem restos de código ou chaves i18n cruas!)
+  assert.ok(helpPage1.components[1], 'Deve conter a fileira de botões de links úteis.');
+  const buttonRowJson = helpPage1.components[1].toJSON();
+  assert.equal(buttonRowJson.components.length, 4, 'A fileira de links do help deve conter 4 botões.');
+  buttonRowJson.components.forEach((btn) => {
+    assert.ok(btn.label && !btn.label.startsWith('help.'), `O label do botão '${btn.label}' não pode ser uma chave crua do i18n.`);
+    assert.ok(btn.url && btn.url.startsWith('http'), `O botão '${btn.label}' deve ter uma URL válida.`);
+  });
+
   const defaultPrefix = getPrefix();
   assert.equal(defaultPrefix, 'py!', 'O prefixo padrão deve ser py!.');
 

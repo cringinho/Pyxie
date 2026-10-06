@@ -1070,11 +1070,12 @@ async function handleWorkInteraction(interaction) {
   const result = finishWork(sessionUserId, isCorrect, session.salary, isCriticalBonus);
 
   if (!isCorrect) {
+    const correctLetterPrefix = session.correctLetter ? `**[${session.correctLetter}]** ` : '';
     const desc = [
       t('workMinigame.wrongMistake', lang),
       '',
       t('workMinigame.correctAnswerLabel', lang),
-      `> *${session.correctText}*`,
+      `> ${correctLetterPrefix}*${session.correctText}*`,
       '',
       t('workMinigame.nextShiftLabel', lang),
       t('workMinigame.noSalaryText', lang),
@@ -1164,6 +1165,7 @@ async function runWork(source, reply) {
   const shuffledChoices = shuffleArray(allChoices);
   const correctIndex = shuffledChoices.findIndex((c) => c.correct);
 
+  const labelLetters = ['A', 'B', 'C', 'D'];
   const salary = Math.floor(Math.random() * (WORK_MAXIMUM - WORK_MINIMUM + 1)) + WORK_MINIMUM;
 
   // Inicia o cooldown e registra o trabalho
@@ -1171,6 +1173,7 @@ async function runWork(source, reply) {
 
   activeWorkSessions.set(user.id, {
     correctIndex,
+    correctLetter: labelLetters[correctIndex],
     correctText: gameData.correct,
     salary,
     professionKey,
@@ -1186,8 +1189,14 @@ async function runWork(source, reply) {
     }
   }, WORK_TIMEOUT_MS);
 
+  const formattedOptions = shuffledChoices
+    .map((choice, idx) => `**[${labelLetters[idx]}]** ${choice.text}`)
+    .join('\n\n');
+
   const questionDesc = [
     gameData.scenario,
+    '',
+    formattedOptions,
     '',
     t('workMinigame.timeLimit', lang),
   ].join('\n');
@@ -1200,12 +1209,11 @@ async function runWork(source, reply) {
     .setTimestamp();
 
   const buttonRow = new ActionRowBuilder();
-  const labelLetters = ['A', 'B', 'C', 'D'];
   shuffledChoices.forEach((choice, idx) => {
     buttonRow.addComponents(
       new ButtonBuilder()
         .setCustomId(`work_ans:${idx}:${user.id}`)
-        .setLabel(`[${labelLetters[idx]}] ${choice.text}`.slice(0, 80))
+        .setLabel(`[${labelLetters[idx]}]`)
         .setStyle(ButtonStyle.Primary)
     );
   });

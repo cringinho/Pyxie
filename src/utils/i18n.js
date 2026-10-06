@@ -250,6 +250,10 @@ const TRANSLATIONS = {
       "noCommands": "> *Nenhum comando disponível nesta categoria no momento.*",
       "tipDropdown": "💡 *Selecione uma categoria no menu suspenso abaixo para ver todos os comandos:*",
       "tipNav": "💡 *Use o menu abaixo para navegar entre outras categorias:*",
+      "btnInvite": "Convidar Pyxie",
+      "btnWebsite": "Website",
+      "btnWiki": "Wiki & Guia",
+      "btnSupport": "Suporte",
       "categories": {
         "todos": {
           "label": "Visão Geral / Todos",
@@ -693,6 +697,10 @@ const TRANSLATIONS = {
       "noCommands": "> *No commands currently available in this category.*",
       "tipDropdown": "💡 *Select a category in the dropdown menu below to view all commands:*",
       "tipNav": "💡 *Use the menu below to navigate between categories:*",
+      "btnInvite": "Invite Pyxie",
+      "btnWebsite": "Website",
+      "btnWiki": "Wiki & Guide",
+      "btnSupport": "Support",
       "categories": {
         "todos": {
           "label": "Overview / All",
