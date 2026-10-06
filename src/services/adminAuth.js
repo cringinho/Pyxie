@@ -94,7 +94,7 @@ function createOwnerMagicToken(userId) {
   const sig = crypto.createHmac('sha256', ADMIN_SECRET).update(payload).digest('hex');
   const token = Buffer.from(JSON.stringify({ payload, sig })).toString('base64url');
 
-  const baseUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org';
+  const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
   const url = `${baseUrl.replace(/\/$/, '')}/admin?token=${token}`;
 
   return {

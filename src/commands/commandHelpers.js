@@ -517,20 +517,19 @@ function buildModularHelpComponents(currentModuleId = 'todos', userId = '', sour
 
   const selectRow = new ActionRowBuilder().addComponents(selectMenu);
 
-  const baseUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org';
   const buttonRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setLabel(t('help.btnInvite', ctx))
       .setStyle(ButtonStyle.Link)
-      .setURL(`${baseUrl}/invite`),
+      .setURL('http://pyxie.duckdns.org/invite'),
     new ButtonBuilder()
       .setLabel(t('help.btnWebsite', ctx))
       .setStyle(ButtonStyle.Link)
-      .setURL(baseUrl),
+      .setURL('http://pyxie.duckdns.org'),
     new ButtonBuilder()
       .setLabel(t('help.btnWiki', ctx))
       .setStyle(ButtonStyle.Link)
-      .setURL(`${baseUrl}/wiki`),
+      .setURL('http://pyxie.duckdns.org/wiki'),
     new ButtonBuilder()
       .setLabel(t('help.btnSupport', ctx))
       .setStyle(ButtonStyle.Link)

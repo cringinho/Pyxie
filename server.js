@@ -1658,7 +1658,7 @@ function ensureSshKeys() {
 }
 
 const server = app.listen(PORT, HOST, () => {
-  const publicUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org';
+  const publicUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
   addLog(`Painel web da Pyxie iniciado em ${publicUrl}`);
   console.log(`Painel da Pyxie rodando em ${publicUrl}`);
   ensureSshKeys();

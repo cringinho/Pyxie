@@ -76,7 +76,7 @@ function resolveAssetPath(subpath) {
  * Retorna a URL pública do asset para uso no website ou dashboards.
  */
 function getPyxieWebAssetUrl(subpath) {
-  const baseUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org';
+  const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
   const cleanSubpath = String(subpath).replace(/\\/g, '/');
   return `${baseUrl}/assets/pyxie/${cleanSubpath}`;
 }

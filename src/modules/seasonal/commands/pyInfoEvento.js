@@ -125,7 +125,7 @@ function buildInfoEventoView(userId, client) {
     inline: false,
   });
 
-  const baseUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org';
+  const baseUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
 
   // 7. Campo com Link para o Placar & Galeria de Artes Web
   embed.addFields({

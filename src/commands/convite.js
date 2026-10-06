@@ -19,7 +19,7 @@ const ADMIN_PERMISSIONS = 8;
 const DEFAULT_BOT_ID = '1543650200718155897';
 const COMMUNITY_SERVER_URL = 'https://disboard.org/pt-br/server/1453890868980482090';
 function getWebBonusUrl() {
-  const base = process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org';
+  const base = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
   return `${base.replace(/\/$/, '')}/bonus`;
 }
 
