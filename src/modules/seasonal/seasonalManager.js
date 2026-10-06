@@ -48,7 +48,7 @@ const DEFAULT_CONFIG = {
     artOfWeekWinner: '🎨 **ARTE DA SEMANA DEFINIDA!**\n\nOlha só, parece que temos alguém talentoso no meio de tantos rabiscos. Parabéns {author}, sua arte foi a mais votada e você garantiu **+5 {currencyName}**!\n\nConfiram a obra de arte abaixo:',
     infoEventTitle: '🕸️ {eventName} — GUIA OFICIAL 🕸️',
     infoEventDescription: 'Bem-vindo(a) ao evento temático oficial da Cringelândia! Acumule **{currencyName}** participando das atividades e dispute o topo do placar.',
-    infoEventRules: '• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!',
+    infoEventRules: '• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Atividade no Canal de Drops:** Converse e interaja em {dropsChannel} nos horários especiais para ganhar moedas automáticas:\n  - ☀️ **Manhã (06:00 às 11:00 BRT):** Ganhe **+1 {currencyName}** (anúncio e entrega às 11:00 BRT)\n  - 🌙 **Madrugada (23:00 às 03:00 BRT):** Ganhe **+2 {currencyName}** (anúncio e entrega às 03:00 BRT)\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!',
     infoEventExtra: '> Use **/py-rank** para conferir o placar dos membros mais dedicados!\n> Dúvidas ou choro? Procure a moderação antes de passar vergonha no chat geral.',
   },
 };
@@ -57,6 +57,10 @@ const DEFAULT_DATA = {
   balances: {},
   userProfiles: {},
   currentWeekArt: [],
+  activity: {
+    morningUserIds: [],
+    nightUserIds: [],
+  },
   history: {
     lastDropMessageId: null,
     lastWinners: null,
@@ -70,7 +74,7 @@ let clientRef = null;
 let appRef = null;
 let sendIpcRef = null;
 let scheduledJobs = [];
-let artMessageHandler = null;
+let seasonalMessageHandler = null;
 
 // Escrita Atômica Segura
 function atomicWriteJson(filePath, data) {
@@ -600,15 +604,22 @@ function reload() {
     if (clientRef) {
       const artHandler = require('./artHandler');
       const dropHandler = require('./dropHandler');
+      const activityHandler = require('./activityHandler');
       artHandler.start(clientRef);
       dropHandler.start(clientRef);
+      activityHandler.start(clientRef);
 
-      artMessageHandler = (message) => {
+      seasonalMessageHandler = (message) => {
         artHandler.handleArtSubmission(message, clientRef).catch((err) => {
           console.error('[Seasonal] Erro ao processar submissão de arte:', err);
         });
+        try {
+          activityHandler.trackMessage(message);
+        } catch (err) {
+          console.error('[Seasonal] Erro ao processar atividade sazonal:', err);
+        }
       };
-      clientRef.on('messageCreate', artMessageHandler);
+      clientRef.on('messageCreate', seasonalMessageHandler);
     }
   } else {
     stop();
@@ -624,19 +635,26 @@ function start(broadcastAnnouncement = false) {
 
   const artHandler = require('./artHandler');
   const dropHandler = require('./dropHandler');
+  const activityHandler = require('./activityHandler');
 
   // Inicia crons dos submódulos
   artHandler.start(clientRef);
   dropHandler.start(clientRef);
+  activityHandler.start(clientRef);
 
-  // Listener para submissão de artes da semana no canal designado
+  // Listener para submissão de artes da semana e atividade de mensagens
   if (clientRef) {
-    artMessageHandler = (message) => {
+    seasonalMessageHandler = (message) => {
       artHandler.handleArtSubmission(message, clientRef).catch((err) => {
         console.error('[Seasonal] Erro ao processar submissão de arte:', err);
       });
+      try {
+        activityHandler.trackMessage(message);
+      } catch (err) {
+        console.error('[Seasonal] Erro ao processar atividade sazonal:', err);
+      }
     };
-    clientRef.on('messageCreate', artMessageHandler);
+    clientRef.on('messageCreate', seasonalMessageHandler);
   }
 
   // Cron diário às 23:59 BRT para verificação pontual do término (zero memory leak)
@@ -678,6 +696,11 @@ function stopJobsAndListeners() {
     dropHandler.stop();
   } catch (_) {}
 
+  try {
+    const activityHandler = require('./activityHandler');
+    activityHandler.stop();
+  } catch (_) {}
+
   // Cancela crons do orquestrador
   for (const job of scheduledJobs) {
     try {
@@ -687,9 +710,9 @@ function stopJobsAndListeners() {
   scheduledJobs = [];
 
   // Remove listener do bot se estiver ativo
-  if (clientRef && artMessageHandler) {
-    clientRef.removeListener('messageCreate', artMessageHandler);
-    artMessageHandler = null;
+  if (clientRef && seasonalMessageHandler) {
+    clientRef.removeListener('messageCreate', seasonalMessageHandler);
+    seasonalMessageHandler = null;
   }
 }
 
@@ -1061,6 +1084,37 @@ function setupWebRoutes(app) {
       }
 
       return res.status(400).json({ success: false, error: 'Bot Discord não está online para apurar arte.' });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post('/api/admin/sazonal/trigger-activity', requireAdminAuth, async (req, res) => {
+    try {
+      const config = loadConfig();
+      if (!config.channels?.dropsChannelId) {
+        return res.status(400).json({
+          success: false,
+          error: 'Canal de drops não configurado!',
+        });
+      }
+
+      const { windowType } = req.body || {};
+      const type = windowType === 'night' ? 'night' : 'morning';
+
+      if (clientRef) {
+        const activityHandler = require('./activityHandler');
+        const result = type === 'night'
+          ? await activityHandler.tallyNight(clientRef)
+          : await activityHandler.tallyMorning(clientRef);
+        return res.json({
+          success: true,
+          message: `Apuração de atividade (${type}) executada! ${result.count || 0} usuários premiados.`,
+          data: result,
+        });
+      }
+
+      return res.status(400).json({ success: false, error: 'Bot Discord não está online para apurar atividade.' });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }

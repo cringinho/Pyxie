@@ -70,6 +70,9 @@ function buildInfoEventoView(userId, client) {
   // 3. Regras / Como Funciona Customizáveis
   const defaultRules =
     `• **Baú da Pyxie (Drops):** Surgem de surpresa em ${dropsChannelMention} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n` +
+    `• **Atividade no Canal de Drops:** Converse e interaja em ${dropsChannelMention} nos horários especiais para ganhar moedas automáticas:\n` +
+    `  - ☀️ **Manhã (06:00 às 11:00 BRT):** Ganhe **+1 ${currencyName}** (anúncio e entrega às 11:00 BRT)\n` +
+    `  - 🌙 **Madrugada (23:00 às 03:00 BRT):** Ganhe **+2 ${currencyName}** (anúncio e entrega às 03:00 BRT)\n` +
     `• **Arte da Semana:** Poste sua arte em ${artChannelMention} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 ${currencyName}**!`;
   const rawRules = config.templates?.infoEventRules || defaultRules;
   const rules = rawRules

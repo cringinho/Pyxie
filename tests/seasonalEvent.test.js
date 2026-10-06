@@ -11,6 +11,7 @@ process.env.SEASONAL_DATA_PATH = testDataPath;
 const seasonalManager = require('../src/modules/seasonal/seasonalManager');
 const artHandler = require('../src/modules/seasonal/artHandler');
 const dropHandler = require('../src/modules/seasonal/dropHandler');
+const activityHandler = require('../src/modules/seasonal/activityHandler');
 const infoEventoCommand = require('../src/modules/seasonal/commands/pyInfoEvento');
 const { buildRankingView } = require('../src/commands/ranking');
 
@@ -321,6 +322,128 @@ artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted
   assert(matchLabel, 'Embed de drop com apelido deve informar explicitamente a reação');
   assert(['Wumpus Bruxinho Teste', 'Caldeirão Mágico Teste'].includes(matchLabel[2]), 'Apelido customizado deve ser exibido no embed');
   console.log('✅ Baú da Pyxie com apelidos visuais customizados validado com sucesso.');
+
+  // 6.2 Teste de Recompensas de Atividade por Horário (06h-11h: +1 moeda, 23h-03h: +2 moedas)
+  let activitySentMessage = null;
+  const mockActivityChannel = {
+    id: 'drops_channel_test',
+    isTextBased: () => true,
+    send: async (payload) => {
+      activitySentMessage = payload;
+      return { id: 'msg_announcement_act' };
+    },
+  };
+  mockClient.channels.fetch = async (id) => {
+    if (id === 'drops_channel_test') return mockActivityChannel;
+    return null;
+  };
+
+  seasonalManager.saveConfig({
+    channels: { ...seasonalManager.loadConfig().channels, dropsChannelId: 'drops_channel_test' },
+  });
+
+  activityHandler.clearActivityUsers();
+
+  // Teste Janela Matinal (06h às 11h BRT -> +1 moeda)
+  const morningDate = new Date('2026-10-06T08:30:00-03:00');
+  const userMorning1 = 'user_morning_1';
+  const userMorning2 = 'user_morning_2';
+
+  // Mensagens válidas na janela matinal
+  const trackedM1 = activityHandler.trackMessage({
+    author: { id: userMorning1, bot: false },
+    channelId: 'drops_channel_test',
+    createdAt: morningDate,
+  });
+  assert.equal(trackedM1, true, 'Mensagem do usuário 1 na manhã deve ser contabilizada');
+
+  // Segunda mensagem do mesmo usuário não duplica
+  const trackedM1Dup = activityHandler.trackMessage({
+    author: { id: userMorning1, bot: false },
+    channelId: 'drops_channel_test',
+    createdAt: morningDate,
+  });
+  assert.equal(trackedM1Dup, false, 'Mensagem repetida do mesmo usuário não deve ser duplicada');
+
+  // Mensagem de outro usuário
+  const trackedM2 = activityHandler.trackMessage({
+    author: { id: userMorning2, bot: false },
+    channelId: 'drops_channel_test',
+    createdAt: morningDate,
+  });
+  assert.equal(trackedM2, true, 'Mensagem do usuário 2 na manhã deve ser contabilizada');
+
+  // Mensagem de bot (deve ignorar)
+  const trackedBot = activityHandler.trackMessage({
+    author: { id: 'bot_user_99', bot: true },
+    channelId: 'drops_channel_test',
+    createdAt: morningDate,
+  });
+  assert.equal(trackedBot, false, 'Mensagem de bot deve ser ignorada');
+
+  // Mensagem em outro canal (deve ignorar)
+  const trackedOtherChan = activityHandler.trackMessage({
+    author: { id: 'other_user', bot: false },
+    channelId: 'other_general_channel',
+    createdAt: morningDate,
+  });
+  assert.equal(trackedOtherChan, false, 'Mensagem fora do canal de drops deve ser ignorada');
+
+  assert.equal(activityHandler.getMorningUsers().length, 2, 'Deve haver exatamente 2 usuários matinais');
+
+  const initialBalM1 = seasonalManager.getSeasonalBalance(userMorning1);
+  const initialBalM2 = seasonalManager.getSeasonalBalance(userMorning2);
+
+  // Executa apuração matinal
+  const tallyMorningRes = await activityHandler.tallyMorning(mockClient);
+  assert.equal(tallyMorningRes.success, true);
+  assert.equal(tallyMorningRes.count, 2);
+  assert.equal(tallyMorningRes.rewardAmount, 1);
+  assert.equal(seasonalManager.getSeasonalBalance(userMorning1), initialBalM1 + 1, 'userMorning1 deve ganhar +1 moeda');
+  assert.equal(seasonalManager.getSeasonalBalance(userMorning2), initialBalM2 + 1, 'userMorning2 deve ganhar +1 moeda');
+  assert.equal(activityHandler.getMorningUsers().length, 0, 'Lista de matinais deve ser limpa após apuração');
+  assert(activitySentMessage && activitySentMessage.content.includes(userMorning1) && activitySentMessage.content.includes(userMorning2), 'Anúncio matinal deve mencionar os usuários');
+
+  // Teste Janela Noturna (23h às 03h BRT -> +2 moedas)
+  const nightDate = new Date('2026-10-06T01:45:00-03:00'); // 01:45 BRT
+  const userNight1 = 'user_night_1';
+  const userNight2 = 'user_night_2';
+
+  activityHandler.trackMessage({
+    author: { id: userNight1, bot: false },
+    channelId: 'drops_channel_test',
+    createdAt: nightDate,
+  });
+  activityHandler.trackMessage({
+    author: { id: userNight2, bot: false },
+    channelId: 'drops_channel_test',
+    createdAt: nightDate,
+  });
+
+  assert.equal(activityHandler.getNightUsers().length, 2, 'Deve haver 2 usuários noturnos');
+
+  const initialBalN1 = seasonalManager.getSeasonalBalance(userNight1);
+  const initialBalN2 = seasonalManager.getSeasonalBalance(userNight2);
+
+  const tallyNightRes = await activityHandler.tallyNight(mockClient);
+  assert.equal(tallyNightRes.success, true);
+  assert.equal(tallyNightRes.count, 2);
+  assert.equal(tallyNightRes.rewardAmount, 2);
+  assert.equal(seasonalManager.getSeasonalBalance(userNight1), initialBalN1 + 2, 'userNight1 deve ganhar +2 moedas');
+  assert.equal(seasonalManager.getSeasonalBalance(userNight2), initialBalN2 + 2, 'userNight2 deve ganhar +2 moedas');
+  assert.equal(activityHandler.getNightUsers().length, 0, 'Lista de noturnos deve ser limpa após apuração');
+  assert(activitySentMessage && activitySentMessage.content.includes(userNight1) && activitySentMessage.content.includes(userNight2), 'Anúncio noturno deve mencionar os usuários');
+
+  // Fora da janela (ex: 15:00 BRT)
+  const afternoonDate = new Date('2026-10-06T15:00:00-03:00');
+  const trackedAfternoon = activityHandler.trackMessage({
+    author: { id: 'afternoon_user', bot: false },
+    channelId: 'drops_channel_test',
+    createdAt: afternoonDate,
+  });
+  assert.equal(trackedAfternoon, false, 'Mensagens fora dos horários temáticos não devem ser pontuadas');
+
+  console.log('✅ Mecânica de Recompensa de Atividade por Horário (06h-11h: +1 e 23h-03h: +2) validada com sucesso.');
 
   // 7. Teste de Ranking com Filtro Sazonal (/py-rank)
   const rankingActiveView = await buildRankingView({ client: mockClient }, 'viewer_1', 'sazonal');
