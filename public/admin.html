@@ -1789,6 +1789,25 @@
       </section>
     </div>
 
+    <!-- Modal Configuração de Módulos (Parcerias & Museu) -->
+    <div id="moduleConfigModal" class="modal-backdrop">
+      <div class="modal-box" style="max-width: 580px; width: 95%; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-header">
+          <h3 id="moduleConfigModalTitle">⚙️ Configurar Módulo</h3>
+          <button type="button" onclick="closeModuleConfigModal()" class="btn btn-secondary" style="padding: 4px 8px;">✕</button>
+        </div>
+        <form id="moduleConfigForm" onsubmit="handleSaveModuleConfig(event)" class="modal-form">
+          <div id="moduleConfigModalBody">
+            <div style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando configurações...</div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button type="button" onclick="closeModuleConfigModal()" class="btn btn-secondary">Cancelar</button>
+            <button type="submit" id="moduleConfigSaveBtn" class="btn btn-primary">💾 Salvar Configurações</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Modal Adicionar Novo Anúncio -->
     <div id="addModal" class="modal-backdrop">
       <div class="modal-box">
@@ -1983,10 +2002,19 @@
               ` : ''}
             </div>
 
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-              <button class="btn ${mod.enabled ? 'btn-danger' : 'btn-success'}" style="flex: 1; justify-content: center;" onclick="toggleModule('${mod.id}', ${!mod.enabled})">
-                ${mod.enabled ? '⏹️ Desativar Módulo' : '▶️ Ativar Módulo'}
+            <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+              <button class="btn ${mod.enabled ? 'btn-danger' : 'btn-success'}" style="flex: 1; min-width: 140px; justify-content: center;" onclick="toggleModule('${mod.id}', ${!mod.enabled})">
+                ${mod.enabled ? '⏹️ Desativar' : '▶️ Ativar'}
               </button>
+              ${(mod.id === 'partnerships' || mod.id === 'museum') ? `
+                <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Configurar canais e cargos" onclick="openModuleConfigModal('${mod.id}')">
+                  ⚙️ Configurar
+                </button>
+              ` : (mod.id === 'seasonal') ? `
+                <a href="/admin/sazonal" class="btn btn-secondary" style="text-decoration: none; justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Painel dedicado do evento sazonal">
+                  ⚙️ Painel
+                </a>
+              ` : ''}
               <button class="btn btn-secondary" title="Recarregar módulo sem reiniciar o bot" onclick="reloadModule('${mod.id}')">
                 🔄
               </button>
@@ -2030,6 +2058,158 @@
           }
         } catch (err) {
           showToast(`Erro de conexão: ${err.message}`, 'error');
+        }
+      }
+
+      let currentConfigModuleId = null;
+
+      async function openModuleConfigModal(id) {
+        currentConfigModuleId = id;
+        const modal = document.getElementById('moduleConfigModal');
+        const title = document.getElementById('moduleConfigModalTitle');
+        const body = document.getElementById('moduleConfigModalBody');
+        const saveBtn = document.getElementById('moduleConfigSaveBtn');
+        if (!modal || !body) return;
+
+        modal.classList.add('open');
+        body.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando configurações do módulo...</div>';
+        if (saveBtn) saveBtn.disabled = true;
+
+        try {
+          const res = await fetch(`/api/admin/modules/${encodeURIComponent(id)}/config`);
+          const data = await res.json();
+          if (!data.success) {
+            body.innerHTML = `<div style="color: #f87171; padding: 20px;">Falha ao carregar configuração: ${data.error || 'Erro'}</div>`;
+            return;
+          }
+
+          const cfg = data.config || {};
+          if (saveBtn) saveBtn.disabled = false;
+
+          if (id === 'partnerships') {
+            title.textContent = '🤝 Configurar Central de Parcerias';
+            const channels = cfg.channels || {};
+            const roles = cfg.roles || {};
+            body.innerHTML = `
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+                Configure os canais e cargos do Discord para o fluxo de solicitação, aprovação e divulgação de parcerias.
+              </p>
+              <div class="form-field" style="margin-bottom: 14px;">
+                <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Canal de Triagem / Pedidos (Obrigatório):</label>
+                <input type="text" id="partRequestChannelId" value="${channels.requestChannelId || ''}" placeholder="Ex: 123456789012345678" required style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+                <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Canal onde o bot posta a mensagem inicial do formulário/pedidos.</span>
+              </div>
+              <div class="form-field" style="margin-bottom: 14px;">
+                <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Canal de Revisão da Staff (Obrigatório):</label>
+                <input type="text" id="partModReviewChannelId" value="${channels.modReviewChannelId || ''}" placeholder="Ex: 123456789012345678" required style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+                <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Canal privado onde os botões de Aprovar e Recusar chegam para a moderação.</span>
+              </div>
+              <div class="form-field" style="margin-bottom: 14px;">
+                <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Canal Público de Publicação (Obrigatório):</label>
+                <input type="text" id="partPublishedChannelId" value="${channels.publishedChannelId || ''}" placeholder="Ex: 123456789012345678" required style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+                <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Canal público onde os projetos parceiros são oficialmente divulgados.</span>
+              </div>
+              <div class="form-field" style="margin-bottom: 14px;">
+                <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Canal de Boas-Vindas / Apresentação (Opcional):</label>
+                <input type="text" id="partWelcomeChannelId" value="${channels.welcomeChannelId || ''}" placeholder="Ex: 123456789012345678" style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+              </div>
+              <div class="form-field" style="margin-bottom: 14px;">
+                <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Canal do Radar (Bumps 24h) (Opcional):</label>
+                <input type="text" id="partRadarChannelId" value="${channels.radarChannelId || ''}" placeholder="Ex: 123456789012345678" style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+                <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Canal que recebe alertas quando um projeto recebe bump no site.</span>
+              </div>
+              <div class="form-field" style="margin-bottom: 14px;">
+                <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Cargo de Triagem (Opcional):</label>
+                <input type="text" id="partScreeningRoleId" value="${roles.screeningRoleId || ''}" placeholder="Ex: 123456789012345678" style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+              </div>
+              <div class="form-field" style="margin-bottom: 14px;">
+                <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Cargos de Staff Autorizados (Separados por vírgula):</label>
+                <input type="text" id="partAdminRoleIds" value="${(roles.adminRoleIds || []).join(', ')}" placeholder="Ex: 111111111, 222222222" style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+                <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Membros com esses cargos podem aprovar/recusar pedidos.</span>
+              </div>
+            `;
+          } else if (id === 'museum') {
+            title.textContent = '🏛️ Configurar Museu da Comunidade';
+            body.innerHTML = `
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+                Configure o canal monitorado para catalogar automaticamente ilustrações e desenhos postados pelos membros.
+              </p>
+              <div class="form-field" style="margin-bottom: 14px;">
+                <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Canal de Artes / Desenhos do Discord (Obrigatório):</label>
+                <input type="text" id="museumArtChannelId" value="${cfg.artChannelId || ''}" placeholder="Ex: 123456789012345678" required style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+                <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Qualquer imagem enviada por membros neste canal será arquivada no museu automaticamente.</span>
+              </div>
+              <div class="form-field" style="margin-bottom: 14px;">
+                <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Cargos de Moderação de Artes (Separados por vírgula):</label>
+                <input type="text" id="museumAdminRoleIds" value="${(cfg.adminRoleIds || []).join(', ')}" placeholder="Ex: 111111111, 222222222" style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+                <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Cargos com permissão para editar descrições ou remover artes da galeria.</span>
+              </div>
+            `;
+          }
+        } catch (err) {
+          body.innerHTML = `<div style="color: #f87171; padding: 20px;">Erro de conexão: ${err.message}</div>`;
+        }
+      }
+
+      function closeModuleConfigModal() {
+        const modal = document.getElementById('moduleConfigModal');
+        if (modal) modal.classList.remove('open');
+        currentConfigModuleId = null;
+      }
+
+      async function handleSaveModuleConfig(event) {
+        event.preventDefault();
+        if (!currentConfigModuleId) return;
+
+        let payload = {};
+        if (currentConfigModuleId === 'partnerships') {
+          payload = {
+            channels: {
+              welcomeChannelId: document.getElementById('partWelcomeChannelId')?.value || '',
+              requestChannelId: document.getElementById('partRequestChannelId')?.value || '',
+              modReviewChannelId: document.getElementById('partModReviewChannelId')?.value || '',
+              publishedChannelId: document.getElementById('partPublishedChannelId')?.value || '',
+              radarChannelId: document.getElementById('partRadarChannelId')?.value || '',
+            },
+            roles: {
+              screeningRoleId: document.getElementById('partScreeningRoleId')?.value || '',
+              adminRoleIds: document.getElementById('partAdminRoleIds')?.value || '',
+            },
+          };
+        } else if (currentConfigModuleId === 'museum') {
+          payload = {
+            artChannelId: document.getElementById('museumArtChannelId')?.value || '',
+            adminRoleIds: document.getElementById('museumAdminRoleIds')?.value || '',
+          };
+        }
+
+        const saveBtn = document.getElementById('moduleConfigSaveBtn');
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.textContent = 'Salvando...';
+        }
+
+        try {
+          const res = await fetch(`/api/admin/modules/${encodeURIComponent(currentConfigModuleId)}/config`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(data.message || 'Configurações salvas com sucesso!', 'success');
+            closeModuleConfigModal();
+            await fetchModules();
+          } else {
+            showToast(`Erro ao salvar: ${data.error || 'Falha'}`, 'error');
+          }
+        } catch (err) {
+          showToast(`Erro de conexão: ${err.message}`, 'error');
+        } finally {
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = '💾 Salvar Configurações';
+          }
         }
       }
 

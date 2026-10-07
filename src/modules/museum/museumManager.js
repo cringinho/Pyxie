@@ -50,6 +50,28 @@ class MuseumManager {
     return writeJsonAtomic(DATA_PATH, this.data);
   }
 
+  getConfig() {
+    this.refresh();
+    return {
+      artChannelId: this.config.artChannelId || '',
+      adminRoleIds: Array.isArray(this.config.adminRoleIds) ? [...this.config.adminRoleIds] : [],
+    };
+  }
+
+  saveConfig(updates = {}) {
+    this.refresh();
+    const artChannelId = String(updates.artChannelId !== undefined ? updates.artChannelId : this.config.artChannelId || '').trim();
+    let adminRoleIds = this.config.adminRoleIds || [];
+    if (updates.adminRoleIds !== undefined) {
+      adminRoleIds = Array.isArray(updates.adminRoleIds)
+        ? updates.adminRoleIds.map((r) => String(r).trim()).filter(Boolean)
+        : String(updates.adminRoleIds || '').split(',').map((r) => r.trim()).filter(Boolean);
+    }
+    this.config = { artChannelId, adminRoleIds };
+    writeJsonAtomic(CONFIG_PATH, this.config);
+    return this.config;
+  }
+
   async handleMessage(message) {
     try {
       if (message.author?.bot) return;
@@ -217,6 +239,25 @@ class MuseumManager {
 
     app.delete('/api/museum/art/:id', requireToken, (req, res) => {
       res.json({ success: this.deleteArt(req.params.id) });
+    });
+
+    const { requireAdminAuth } = require('../../services/adminAuth');
+
+    app.get('/api/admin/modules/museum/config', requireAdminAuth, (req, res) => {
+      try {
+        res.json({ success: true, config: this.getConfig() });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    });
+
+    app.post('/api/admin/modules/museum/config', requireAdminAuth, (req, res) => {
+      try {
+        const saved = this.saveConfig(req.body || {});
+        res.json({ success: true, config: saved, message: 'Configurações do museu salvas com sucesso!' });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
     });
   }
 }

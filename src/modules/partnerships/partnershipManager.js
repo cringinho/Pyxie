@@ -77,6 +77,49 @@ class PartnershipManager {
     return writeJsonAtomic(DATA_PATH, this.data);
   }
 
+  getConfig() {
+    this.refresh();
+    return {
+      channels: { ...this.config.channels },
+      roles: {
+        screeningRoleId: this.config.roles?.screeningRoleId || '',
+        adminRoleIds: Array.isArray(this.config.roles?.adminRoleIds) ? [...this.config.roles.adminRoleIds] : [],
+      },
+    };
+  }
+
+  saveConfig(updates = {}) {
+    this.refresh();
+    const currentChannels = this.config.channels || {};
+    const currentRoles = this.config.roles || {};
+    const updatedChannels = updates.channels || {};
+    const updatedRoles = updates.roles || {};
+
+    const channels = {
+      welcomeChannelId: String(updatedChannels.welcomeChannelId !== undefined ? updatedChannels.welcomeChannelId : currentChannels.welcomeChannelId || '').trim(),
+      requestChannelId: String(updatedChannels.requestChannelId !== undefined ? updatedChannels.requestChannelId : currentChannels.requestChannelId || '').trim(),
+      modReviewChannelId: String(updatedChannels.modReviewChannelId !== undefined ? updatedChannels.modReviewChannelId : currentChannels.modReviewChannelId || '').trim(),
+      publishedChannelId: String(updatedChannels.publishedChannelId !== undefined ? updatedChannels.publishedChannelId : currentChannels.publishedChannelId || '').trim(),
+      radarChannelId: String(updatedChannels.radarChannelId !== undefined ? updatedChannels.radarChannelId : currentChannels.radarChannelId || '').trim(),
+    };
+
+    let adminRoleIds = currentRoles.adminRoleIds || [];
+    if (updatedRoles.adminRoleIds !== undefined) {
+      adminRoleIds = Array.isArray(updatedRoles.adminRoleIds)
+        ? updatedRoles.adminRoleIds.map((r) => String(r).trim()).filter(Boolean)
+        : String(updatedRoles.adminRoleIds || '').split(',').map((r) => r.trim()).filter(Boolean);
+    }
+
+    const roles = {
+      screeningRoleId: String(updatedRoles.screeningRoleId !== undefined ? updatedRoles.screeningRoleId : currentRoles.screeningRoleId || '').trim(),
+      adminRoleIds,
+    };
+
+    this.config = { channels, roles };
+    writeJsonAtomic(CONFIG_PATH, this.config);
+    return this.config;
+  }
+
   isConfigured() {
     return Boolean(this.config.channels.requestChannelId && this.config.channels.modReviewChannelId && this.config.channels.publishedChannelId);
   }
@@ -548,6 +591,25 @@ class PartnershipManager {
       const result = await this.applyBump(req.params.id, lang);
       const { status, ...body } = result;
       res.status(status).json(body);
+    });
+
+    const { requireAdminAuth } = require('../../services/adminAuth');
+
+    app.get('/api/admin/modules/partnerships/config', requireAdminAuth, (req, res) => {
+      try {
+        res.json({ success: true, config: this.getConfig() });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    });
+
+    app.post('/api/admin/modules/partnerships/config', requireAdminAuth, (req, res) => {
+      try {
+        const saved = this.saveConfig(req.body || {});
+        res.json({ success: true, config: saved, message: 'Configurações de parcerias salvas com sucesso!' });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
     });
   }
 }

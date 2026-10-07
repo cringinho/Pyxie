@@ -89,6 +89,33 @@ const { COMMAND_CATEGORY_MAP } = require(path.join(repo, 'src/commands/commandHe
   assert.equal(partnershipManager.rateLimited('5.6.7.8'), false);
   console.log('  ✅ 5. Rate limit por IP validado.');
 
+  // 6. Configuração Administrativa Modular (getConfig e saveConfig)
+  partnershipManager.saveConfig({
+    channels: {
+      requestChannelId: 'req_123',
+      modReviewChannelId: 'mod_123',
+      publishedChannelId: 'pub_123',
+    },
+    roles: {
+      adminRoleIds: ['role_1', 'role_2'],
+    },
+  });
+  const partCfg = partnershipManager.getConfig();
+  assert.equal(partCfg.channels.requestChannelId, 'req_123');
+  assert.equal(partCfg.channels.modReviewChannelId, 'mod_123');
+  assert.equal(partCfg.channels.publishedChannelId, 'pub_123');
+  assert.deepEqual(partCfg.roles.adminRoleIds, ['role_1', 'role_2']);
+  assert.equal(partnershipManager.isConfigured(), true);
+
+  museumManager.saveConfig({
+    artChannelId: 'art_chan_999',
+    adminRoleIds: ['art_role_1'],
+  });
+  const musCfg = museumManager.getConfig();
+  assert.equal(musCfg.artChannelId, 'art_chan_999');
+  assert.deepEqual(musCfg.adminRoleIds, ['art_role_1']);
+  console.log('  ✅ 6. Configurações administrativas de Parcerias e Museu validadas.');
+
   console.log('🎉 [TEST] Museu & Parcerias passaram com 100% de sucesso!');
   process.chdir(repo);
   fs.rmSync(tmp, { recursive: true, force: true });
