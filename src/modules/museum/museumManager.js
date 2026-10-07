@@ -1,0 +1,225 @@
+const path = require('path');
+const crypto = require('crypto');
+const { readJson, writeJsonAtomic } = require('../../utils/atomicJson');
+const { restGet } = require('../../utils/discordRest');
+
+const CONFIG_PATH = path.join(process.cwd(), 'data', 'museumConfig.json');
+const DATA_PATH = path.join(process.cwd(), 'data', 'museumData.json');
+
+const URL_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // tokens ?ex= do CDN duram ~24h; renovamos bem antes
+const AUTHOR_CACHE_TTL_MS = 60 * 60 * 1000;
+const PAGE_LIMIT_MAX = 48;
+
+function safeEqual(a, b) {
+  const x = Buffer.from(String(a || ''));
+  const y = Buffer.from(String(b || ''));
+  return x.length === y.length && crypto.timingSafeEqual(x, y);
+}
+
+class MuseumManager {
+  constructor() {
+    this.client = null;
+    this.config = { artChannelId: '', adminRoleIds: [] };
+    this.data = { arts: [] };
+    this.urlCache = new Map(); // artId -> { url, at }
+    this.authorCache = new Map(); // userId -> { name, at }
+  }
+
+  init(client, ctx) {
+    this.client = client || null;
+    this.refresh();
+    // Listener rastreado pelo ModuleManager: removido automaticamente no onUnload (Zero Memory Leak)
+    if (client && ctx && typeof ctx.registerListener === 'function') {
+      ctx.registerListener('messageCreate', (msg) => this.handleMessage(msg));
+    }
+  }
+
+  /** Bot e web são processos distintos: sempre relê o disco antes de operar. */
+  refresh() {
+    this.config = { artChannelId: '', adminRoleIds: [], ...readJson(CONFIG_PATH, {}) };
+    const data = readJson(DATA_PATH, null);
+    if (data && Array.isArray(data.arts)) {
+      this.data = data;
+    } else {
+      this.data = { arts: [] };
+      writeJsonAtomic(DATA_PATH, this.data);
+    }
+  }
+
+  saveData() {
+    return writeJsonAtomic(DATA_PATH, this.data);
+  }
+
+  async handleMessage(message) {
+    try {
+      if (message.author?.bot) return;
+      this.refresh();
+      if (!this.config.artChannelId || message.channel.id !== this.config.artChannelId) return;
+
+      const img = message.attachments.find((att) => att.contentType?.startsWith('image/'));
+      if (!img) return;
+
+      this.data.arts.unshift({
+        id: `art_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        messageId: message.id,
+        channelId: message.channel.id,
+        userId: message.author.id,
+        cachedAuthor: message.member?.displayName || message.author.username,
+        originalAttachmentUrl: img.url,
+        description: (message.content || '').trim().slice(0, 1000),
+        createdAt: Date.now(),
+      });
+      this.saveData();
+    } catch (err) {
+      console.error('[Museum] Erro ao registrar arte:', err);
+    }
+  }
+
+  // ---- Resolução dinâmica (bot: Client; web: REST) ----
+
+  async resolveAuthor(userId, fallback) {
+    const cached = this.authorCache.get(userId);
+    if (cached && Date.now() - cached.at < AUTHOR_CACHE_TTL_MS) return cached.name;
+
+    let name = null;
+    try {
+      if (this.client) {
+        const user = await this.client.users.fetch(userId);
+        name = user?.displayName || user?.username || null;
+      } else {
+        const user = await restGet(`/users/${userId}`);
+        name = user?.global_name || user?.username || null;
+      }
+    } catch {
+      name = null;
+    }
+    name = name || fallback;
+    if (this.authorCache.size >= 2000) {
+      const firstKey = this.authorCache.keys().next().value;
+      if (firstKey) this.authorCache.delete(firstKey);
+    }
+    this.authorCache.set(userId, { name, at: Date.now() });
+    return name;
+  }
+
+  /** Renova o anexo via API do Discord (token temporário do CDN). Mantém a URL antiga se a mensagem sumiu. */
+  async resolveImageUrl(art) {
+    const cached = this.urlCache.get(art.id);
+    if (cached && Date.now() - cached.at < URL_CACHE_TTL_MS) return cached.url;
+
+    let url = art.originalAttachmentUrl;
+    try {
+      let attachments = null;
+      if (this.client) {
+        const channel = await this.client.channels.fetch(art.channelId);
+        const msg = channel ? await channel.messages.fetch(art.messageId) : null;
+        attachments = msg ? [...msg.attachments.values()].map((a) => ({ url: a.url, type: a.contentType })) : null;
+      } else {
+        const msg = await restGet(`/channels/${art.channelId}/messages/${art.messageId}`);
+        attachments = msg?.attachments?.map((a) => ({ url: a.url, type: a.content_type })) || null;
+      }
+      const fresh = attachments?.find((a) => a.type?.startsWith('image/'));
+      if (fresh) url = fresh.url;
+    } catch {
+      // mantém URL original
+    }
+    if (this.urlCache.size >= 2000) {
+      const firstKey = this.urlCache.keys().next().value;
+      if (firstKey) this.urlCache.delete(firstKey);
+    }
+    this.urlCache.set(art.id, { url, at: Date.now() });
+    return url;
+  }
+
+  async getArtPage({ userId = null, page = 1, limit = 24 } = {}) {
+    this.refresh();
+    const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 24, 1), PAGE_LIMIT_MAX);
+    const list = userId ? this.data.arts.filter((a) => a.userId === userId) : this.data.arts;
+    const totalPages = Math.max(1, Math.ceil(list.length / safeLimit));
+    const safePage = Math.min(Math.max(parseInt(page, 10) || 1, 1), totalPages);
+    const slice = list.slice((safePage - 1) * safeLimit, safePage * safeLimit);
+
+    const arts = await Promise.all(
+      slice.map(async (art) => ({
+        id: art.id,
+        userId: art.userId,
+        author: await this.resolveAuthor(art.userId, art.cachedAuthor),
+        description: art.description,
+        createdAt: art.createdAt,
+        // Imagem sempre passa pela rota que renova o token do CDN
+        imageUrl: `/api/museum/art-image/${encodeURIComponent(art.id)}`,
+      }))
+    );
+    return { arts, page: safePage, totalPages, total: list.length };
+  }
+
+  getCount() {
+    this.refresh();
+    return this.data.arts.length;
+  }
+
+  editDescription(artId, newDesc) {
+    this.refresh();
+    const art = this.data.arts.find((a) => a.id === artId);
+    if (!art) return false;
+    art.description = String(newDesc || '').slice(0, 1000);
+    this.saveData();
+    return true;
+  }
+
+  deleteArt(artId) {
+    this.refresh();
+    const prev = this.data.arts.length;
+    this.data.arts = this.data.arts.filter((a) => a.id !== artId);
+    if (this.data.arts.length === prev) return false;
+    this.urlCache.delete(artId);
+    this.saveData();
+    return true;
+  }
+
+  setupWebRoutes(app) {
+    const requireToken = (req, res, next) => {
+      const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
+      const token = req.headers['x-admin-token'];
+      if (!secret || !token || !safeEqual(token, secret)) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
+      next();
+    };
+
+    app.get('/api/museum/arts', async (req, res) => {
+      try {
+        const { user, page, limit } = req.query;
+        const result = await this.getArtPage({
+          userId: /^\d{15,25}$/.test(String(user || '')) ? String(user) : null,
+          page,
+          limit,
+        });
+        res.json({ success: true, ...result });
+      } catch (err) {
+        console.error('[Museum] /api/museum/arts:', err);
+        res.status(500).json({ success: false });
+      }
+    });
+
+    app.get('/api/museum/art-image/:id', async (req, res) => {
+      this.refresh();
+      const art = this.data.arts.find((a) => a.id === req.params.id);
+      if (!art) return res.status(404).end();
+      const url = await this.resolveImageUrl(art);
+      res.set('Cache-Control', 'public, max-age=900');
+      res.redirect(302, url);
+    });
+
+    app.patch('/api/museum/art/:id', requireToken, (req, res) => {
+      res.json({ success: this.editDescription(req.params.id, req.body?.description) });
+    });
+
+    app.delete('/api/museum/art/:id', requireToken, (req, res) => {
+      res.json({ success: this.deleteArt(req.params.id) });
+    });
+  }
+}
+
+module.exports = new MuseumManager();
+

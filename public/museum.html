@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Museu da Comunidade • Pyxie</title>
+<style>
+  :root { --bg:#120b1f; --card:#1e1433; --line:#8b5cf6; --txt:#f3ecff; --mut:#b9a8d9; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font-family:'Courier New',monospace; }
+  header { padding:28px 16px 12px; text-align:center; }
+  h1 { margin:0; font-size:1.8rem; letter-spacing:2px; text-shadow:3px 3px 0 #4c1d95; }
+  p.sub { color:var(--mut); margin:8px 0 0; }
+  .bar { display:flex; gap:8px; justify-content:center; align-items:center; margin:16px; flex-wrap:wrap; }
+  button, .lang { background:var(--card); color:var(--txt); border:2px solid var(--line); padding:8px 14px; cursor:pointer; font:inherit; box-shadow:3px 3px 0 #4c1d95; }
+  button:disabled { opacity:.4; cursor:default; }
+  #grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; max-width:1200px; margin:0 auto; padding:0 16px 40px; }
+  figure { margin:0; background:var(--card); border:2px solid var(--line); box-shadow:4px 4px 0 #4c1d95; }
+  figure img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; background:#000; image-rendering:auto; }
+  figcaption { padding:10px; font-size:.85rem; }
+  .author { color:#c4b5fd; font-weight:bold; }
+  .desc { color:var(--mut); margin-top:4px; word-break:break-word; }
+  #msg { text-align:center; color:var(--mut); padding:40px 16px; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title"></h1>
+  <p class="sub" id="subtitle"></p>
+</header>
+<div class="bar">
+  <button id="prev"></button>
+  <span id="pageInfo"></span>
+  <button id="next"></button>
+  <button class="lang" id="langBtn"></button>
+</div>
+<div id="msg"></div>
+<main id="grid"></main>
+
+<script>
+const I18N = {
+  pt: { title:'🏛️ Museu da Comunidade', subtitle:'Acervo permanente das criações da Cringelândia.', prev:'◀ Anterior', next:'Próxima ▶', page:'Página {p} de {t} • {n} obras', loading:'Carregando acervo...', empty:'Nenhuma obra no acervo ainda.', error:'Não foi possível carregar o acervo.', lang:'EN' },
+  en: { title:'🏛️ Community Art Museum', subtitle:'Permanent archive of our community creations.', prev:'◀ Previous', next:'Next ▶', page:'Page {p} of {t} • {n} artworks', loading:'Loading archive...', empty:'No artworks in the archive yet.', error:'Could not load the archive.', lang:'PT' }
+};
+const params = new URLSearchParams(location.search);
+const qLang = params.get('lang');
+let lang = (qLang === 'pt' || qLang === 'en') ? qLang : ((navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en');
+let page = 1, totalPages = 1;
+const $ = (id) => document.getElementById(id);
+const tr = (k, r = {}) => Object.entries(r).reduce((s, [a, b]) => s.replaceAll('{' + a + '}', b), I18N[lang][k]);
+
+function applyLang() {
+  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+  document.title = I18N[lang].title.replace('🏛️ ', '') + ' • Pyxie';
+  $('title').textContent = tr('title');
+  $('subtitle').textContent = tr('subtitle');
+  $('prev').textContent = tr('prev');
+  $('next').textContent = tr('next');
+  $('langBtn').textContent = tr('lang');
+}
+
+async function load() {
+  $('msg').textContent = tr('loading');
+  $('grid').replaceChildren();
+  try {
+    const res = await fetch('/api/museum/arts?page=' + page + '&limit=24');
+    const data = await res.json();
+    if (!data.success) throw new Error('api');
+    page = data.page; totalPages = data.totalPages;
+    $('msg').textContent = data.arts.length ? '' : tr('empty');
+    for (const art of data.arts) {
+      const fig = document.createElement('figure');
+      const img = document.createElement('img');
+      img.loading = 'lazy'; img.alt = art.description || art.author; img.src = art.imageUrl;
+      const cap = document.createElement('figcaption');
+      const a = document.createElement('div'); a.className = 'author'; a.textContent = art.author;
+      const d = document.createElement('div'); d.className = 'desc'; d.textContent = art.description || '';
+      cap.append(a, d); fig.append(img, cap); $('grid').append(fig);
+    }
+    $('pageInfo').textContent = tr('page', { p: page, t: totalPages, n: data.total });
+    $('prev').disabled = page <= 1; $('next').disabled = page >= totalPages;
+  } catch (e) { $('msg').textContent = tr('error'); }
+}
+
+$('prev').onclick = () => { page--; load(); };
+$('next').onclick = () => { page++; load(); };
+$('langBtn').onclick = () => { lang = lang === 'pt' ? 'en' : 'pt'; applyLang(); load(); };
+applyLang(); load();
+</script>
+</body>
+</html>

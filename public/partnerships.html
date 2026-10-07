@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parcerias • Pyxie</title>
+<style>
+  :root { --bg:#120b1f; --card:#1e1433; --line:#8b5cf6; --txt:#f3ecff; --mut:#b9a8d9; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font-family:system-ui,sans-serif; }
+  header { padding:28px 16px 8px; text-align:center; }
+  h1 { margin:0; }
+  h2 { max-width:1200px; margin:24px auto 8px; padding:0 16px; font-size:1.1rem; color:#c4b5fd; }
+  .sub { color:var(--mut); margin:8px 0 0; }
+  .tabs { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:16px; }
+  button { background:var(--card); color:var(--txt); border:1px solid var(--line); padding:8px 14px; border-radius:8px; cursor:pointer; font:inherit; }
+  button.active, button:hover:not(:disabled) { background:var(--line); }
+  button:disabled { opacity:.45; cursor:default; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; max-width:1200px; margin:0 auto; padding:0 16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+  .card img { width:100%; aspect-ratio:16/9; object-fit:cover; background:#000; }
+  .body { padding:12px; display:flex; flex-direction:column; gap:8px; flex:1; }
+  .tag { color:#c4b5fd; font-size:.8rem; }
+  .desc { color:var(--mut); font-size:.9rem; word-break:break-word; flex:1; }
+  .actions { display:flex; gap:8px; }
+  a.visit { color:var(--txt); background:var(--line); padding:8px 14px; border-radius:8px; text-decoration:none; }
+  #toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--line); padding:10px 16px; border-radius:8px; display:none; }
+  #msg { text-align:center; color:var(--mut); padding:30px; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title"></h1>
+  <p class="sub" id="subtitle"></p>
+  <button id="langBtn"></button>
+</header>
+<div class="tabs" id="tabs"></div>
+<h2 id="featuredTitle"></h2>
+<div class="grid" id="mosaic"></div>
+<h2 id="allTitle"></h2>
+<div id="msg"></div>
+<div class="grid" id="catalog"></div>
+<div id="toast"></div>
+
+<script>
+const I18N = {
+  pt: { title:'🤝 Mural de Parcerias', subtitle:'Projetos parceiros da Cringelândia.', featured:'⭐ Destaques', all:'Todos os projetos', tabAll:'Todos', loading:'Carregando...', empty:'Nenhuma parceria publicada ainda.', error:'Não foi possível carregar as parcerias.', visit:'Acessar', bump:'🚀 Promover', lang:'EN',
+    macro:{ community:'Comunidades', creator:'Criadores', service:'Serviços', ong:'ONGs' } },
+  en: { title:'🤝 Partnership Board', subtitle:'Partner projects of Cringelândia.', featured:'⭐ Featured', all:'All projects', tabAll:'All', loading:'Loading...', empty:'No partnerships published yet.', error:'Could not load partnerships.', visit:'Visit', bump:'🚀 Promote', lang:'PT',
+    macro:{ community:'Communities', creator:'Creators', service:'Services', ong:'NGOs' } }
+};
+const qLang = new URLSearchParams(location.search).get('lang');
+let lang = (qLang === 'pt' || qLang === 'en') ? qLang : ((navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en');
+let category = null;
+const $ = (id) => document.getElementById(id);
+
+function toast(text) { const el = $('toast'); el.textContent = text; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 3500); }
+function safeUrl(u) { try { const x = new URL(u); return (x.protocol === 'http:' || x.protocol === 'https:') ? x.href : '#'; } catch { return '#'; } }
+
+function card(p) {
+  const c = document.createElement('div'); c.className = 'card';
+  const img = document.createElement('img'); img.loading = 'lazy'; img.alt = p.projectName; img.src = safeUrl(p.imageUrl);
+  const body = document.createElement('div'); body.className = 'body';
+  const tag = document.createElement('div'); tag.className = 'tag'; tag.textContent = p.categoryEmoji + ' ' + (p.categoryLabel[lang] || p.categoryLabel.en);
+  const name = document.createElement('strong'); name.textContent = p.projectName;
+  const desc = document.createElement('div'); desc.className = 'desc'; desc.textContent = p.publicDesc;
+  const actions = document.createElement('div'); actions.className = 'actions';
+  const visit = document.createElement('a'); visit.className = 'visit'; visit.href = safeUrl(p.accessLink); visit.target = '_blank'; visit.rel = 'noopener noreferrer nofollow'; visit.textContent = I18N[lang].visit;
+  const bump = document.createElement('button'); bump.textContent = I18N[lang].bump;
+  bump.onclick = async () => {
+    bump.disabled = true;
+    try {
+      const res = await fetch('/api/partnerships/bump/' + encodeURIComponent(p.id) + '?lang=' + lang, { method: 'POST' });
+      const data = await res.json(); toast(data.message || '');
+      if (res.ok) load();
+    } catch { toast(I18N[lang].error); }
+    bump.disabled = false;
+  };
+  actions.append(visit, bump); body.append(tag, name, desc, actions); c.append(img, body);
+  return c;
+}
+
+function renderTabs() {
+  const tabs = $('tabs'); tabs.replaceChildren();
+  const entries = [[null, I18N[lang].tabAll], ...Object.entries(I18N[lang].macro)];
+  for (const [key, label] of entries) {
+    const b = document.createElement('button'); b.textContent = label;
+    if (key === category) b.classList.add('active');
+    b.onclick = () => { category = key; renderTabs(); load(); };
+    tabs.append(b);
+  }
+}
+
+function applyLang() {
+  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+  document.title = I18N[lang].title.replace('🤝 ', '') + ' • Pyxie';
+  $('title').textContent = I18N[lang].title; $('subtitle').textContent = I18N[lang].subtitle;
+  $('featuredTitle').textContent = I18N[lang].featured; $('allTitle').textContent = I18N[lang].all;
+  $('langBtn').textContent = I18N[lang].lang; renderTabs();
+}
+
+async function load() {
+  $('msg').textContent = I18N[lang].loading;
+  try {
+    const res = await fetch('/api/partnerships' + (category ? '?category=' + encodeURIComponent(category) : ''));
+    const data = await res.json();
+    $('mosaic').replaceChildren(...Object.values(data.mosaic || {}).map(card));
+    $('catalog').replaceChildren(...data.catalog.map(card));
+    $('msg').textContent = data.catalog.length ? '' : I18N[lang].empty;
+  } catch { $('msg').textContent = I18N[lang].error; }
+}
+
+$('langBtn').onclick = () => { lang = lang === 'pt' ? 'en' : 'pt'; applyLang(); load(); };
+applyLang(); load();
+</script>
+</body>
+</html>
+
