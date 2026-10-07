@@ -1274,6 +1274,44 @@ app.post('/api/admin/modules/:id/reload', requireAdminAuth, async (req, res) => 
   }
 });
 
+app.get('/api/admin/modules/:id/config', requireAdminAuth, (req, res) => {
+  try {
+    const { id } = req.params;
+    if (id === 'partnerships') {
+      const pm = require('./src/modules/partnerships/partnershipManager');
+      return res.json({ success: true, config: pm.getConfig() });
+    }
+    if (id === 'museum') {
+      const mm = require('./src/modules/museum/museumManager');
+      return res.json({ success: true, config: mm.getConfig() });
+    }
+    return res.status(404).json({ success: false, error: `Módulo '${id}' não possui configuração customizada.` });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/admin/modules/:id/config', requireAdminAuth, (req, res) => {
+  try {
+    const { id } = req.params;
+    if (id === 'partnerships') {
+      const pm = require('./src/modules/partnerships/partnershipManager');
+      const saved = pm.saveConfig(req.body || {});
+      sendIpcToBot({ type: 'MODULE_RELOAD', moduleId: id });
+      return res.json({ success: true, config: saved, message: 'Configurações de parcerias salvas com sucesso!' });
+    }
+    if (id === 'museum') {
+      const mm = require('./src/modules/museum/museumManager');
+      const saved = mm.saveConfig(req.body || {});
+      sendIpcToBot({ type: 'MODULE_RELOAD', moduleId: id });
+      return res.json({ success: true, config: saved, message: 'Configurações do museu salvas com sucesso!' });
+    }
+    return res.status(404).json({ success: false, error: `Módulo '${id}' não possui configuração customizada.` });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 app.post('/api/admin/verify', (req, res) => {
   const { token, secret } = req.body || {};
   if (token) {

@@ -746,6 +746,13 @@ client.on('interactionCreate', async (interaction) => {
       return;
     }
 
+    // Interações modulares da Central de Parcerias (botões, seletores e modais)
+    if (interaction.customId && (interaction.customId.startsWith('part:') || interaction.customId.startsWith('part_staff:'))) {
+      const partnershipManager = require('./src/modules/partnerships/partnershipManager');
+      await partnershipManager.handleInteraction(interaction);
+      return;
+    }
+
     if (tarotCommand.isTarotButton(interaction)) {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
