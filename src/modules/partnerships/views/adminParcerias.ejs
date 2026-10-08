@@ -432,7 +432,7 @@
                           <strong style="color: var(--cyan-neon);"><%= p.bumpCount || 0 %></strong>
                         </td>
                         <td>
-                          <button class="btn btn-danger" onclick="deletePartner('<%= p.id %>', '<%= p.projectName.replace(/'/g, \"\\\\'\") %>')">
+                          <button class="btn btn-danger" data-id="<%= p.id %>" data-name="<%= p.projectName %>" onclick="deletePartner(this.dataset.id, this.dataset.name)">
                             🗑️ Excluir
                           </button>
                         </td>
@@ -588,7 +588,7 @@
               <strong style="color: var(--cyan-neon);">${p.bumpCount || 0}</strong>
             </td>
             <td>
-              <button class="btn btn-danger" onclick="deletePartner('${p.id}', '${p.projectName.replace(/'/g, "\\'")}')">
+              <button class="btn btn-danger" data-id="${p.id}" data-name="${(p.projectName || '').replace(/"/g, '&quot;')}" onclick="deletePartner(this.dataset.id, this.dataset.name)">
                 🗑️ Excluir
               </button>
             </td>
