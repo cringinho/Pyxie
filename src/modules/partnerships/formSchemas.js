@@ -15,7 +15,7 @@ const CATEGORY_SCHEMAS = {
     emoji: '🔴',
     title: { pt: 'Triagem • Canal no YouTube', en: 'Screening • YouTube Channel' },
     fields: [
-      { id: 'rep_name', style: S, label: { pt: 'Nome / @ do Canal:', en: 'Channel name / @handle:' }, placeholder: { pt: 'Ex: Canal do Leandro', en: 'e.g. Leandro\'s Channel' } },
+      { id: 'rep_name', style: S, label: { pt: 'Nome / @ do Canal:', en: 'Channel name / @handle:' }, placeholder: { pt: 'Ex: Canal do cringe_arts', en: 'e.g. cringe_arts\'s Channel' } },
       { id: 'access_link', style: S, label: { pt: 'Link do Canal:', en: 'Channel link:' }, placeholder: { pt: 'https://youtube.com/@...', en: 'https://youtube.com/@...' } },
       { id: 'metrics', style: S, label: { pt: 'Inscritos e Frequência de Postagem:', en: 'Subscribers & posting frequency:' }, placeholder: { pt: 'Ex: 15k inscritos, vídeos semanais', en: 'e.g. 15k subs, weekly videos' } },
       { id: 'proposal', style: P, label: { pt: 'Nicho e Proposta de Colaboração:', en: 'Niche & collaboration proposal:' }, placeholder: { pt: 'Assunto abordado e ideias de colaboração mútua...', en: 'Topics covered and mutual collaboration ideas...' } },
@@ -39,7 +39,7 @@ const CATEGORY_SCHEMAS = {
     emoji: '🎵',
     title: { pt: 'Triagem • Criador do TikTok', en: 'Screening • TikTok Creator' },
     fields: [
-      { id: 'rep_name', style: S, label: { pt: '@ da Conta / Nome:', en: 'Account @handle / name:' }, placeholder: { pt: 'Ex: @leandro_arts', en: 'e.g. @leandro_arts' } },
+      { id: 'rep_name', style: S, label: { pt: '@ da Conta / Nome:', en: 'Account @handle / name:' }, placeholder: { pt: 'Ex: @cringe_arts_arts', en: 'e.g. @cringe_arts_arts' } },
       { id: 'access_link', style: S, label: { pt: 'Link do Perfil no TikTok:', en: 'TikTok profile link:' }, placeholder: { pt: 'https://tiktok.com/@...', en: 'https://tiktok.com/@...' } },
       { id: 'metrics', style: S, label: { pt: 'Seguidores & Média de Views:', en: 'Followers & average views:' }, placeholder: { pt: 'Ex: 30k seguidores, ~10k views', en: 'e.g. 30k followers, ~10k views' } },
       { id: 'proposal', style: P, label: { pt: 'Nicho e Formato do Conteúdo:', en: 'Niche & content format:' }, placeholder: { pt: 'Cortes, comédia, animação ou tutoriais...', en: 'Clips, comedy, animation or tutorials...' } },
