@@ -288,6 +288,41 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
   assert.ok(quizReply && quizReply.embeds && quizReply.embeds.length > 0, 'Comando quiz deve retornar embed.');
   assert.ok(quizReply.components && quizReply.components.length > 0, 'Comando quiz deve retornar botões.');
   assert.equal(quizReply.components[0].components.length, 4, 'Primeira linha de botões deve ter as 4 alternativas [A, B, C, D].');
+
+  // Execução do comando quiz via Slash Command (garantindo que interaction.deferred use editReply)
+  let slashQuizReply = null;
+  const mockSlashQuizUser = `quiz_slash_${Date.now()}`;
+  await quizCommand.executeSlash({
+    interaction: {
+      user: { id: mockSlashQuizUser },
+      guild: { id: '1453890868980482090' },
+      deferred: true,
+      editReply: (payload) => { slashQuizReply = payload; },
+      reply: () => { throw new Error('InteractionAlreadyReplied'); },
+    },
+  });
+  assert.ok(slashQuizReply && slashQuizReply.embeds && slashQuizReply.embeds.length > 0, 'Comando quiz via slash deferred deve responder com editReply sem erros.');
+
+  // 14. Testes dos Geradores Autônomos de IA (Work Seeder com 16 Carreiras e Quiz Seeder)
+  const workSeeder = require('../src/services/workSeederService');
+  assert.equal(workSeeder.PROFESSIONS.length, 16, 'Work Seeder deve ter exatamente 16 profissões.');
+  assert.ok(workSeeder.PROFESSIONS.includes('dublador'), 'Work Seeder deve incluir dublador.');
+  assert.ok(workSeeder.PROFESSIONS.includes('desenvolvedor_jogos'), 'Work Seeder deve incluir desenvolvedor_jogos.');
+  assert.ok(workSeeder.PROFESSIONS.includes('psicologo'), 'Work Seeder deve incluir psicologo.');
+  assert.ok(workSeeder.PROFESSIONS.includes('telemarketing'), 'Work Seeder deve incluir telemarketing.');
+  assert.ok(workSeeder.PROFESSIONS.includes('animador_festa'), 'Work Seeder deve incluir animador_festa.');
+  assert.ok(workSeeder.PROFESSIONS.includes('advogada'), 'Work Seeder deve incluir advogada.');
+
+  const workStatus = workSeeder.getStatus();
+  assert.equal(workStatus.targetTotal, 1600, 'Work Seeder targetTotal deve ser 1600 (16 profissões x 100).');
+  assert.equal(Object.keys(workStatus.perProfession).length, 16, 'Work Seeder perProfession deve conter 16 profissões.');
+
+  const quizStatus = quizSeeder.getStatus();
+  assert.equal(quizStatus.targetTotal, 500, 'Quiz Seeder targetTotal deve ser 500.');
+  assert.equal(quizStatus.perLevel[1], 125, 'Quiz Seeder Nível 1 deve ter 125 perguntas.');
+  assert.equal(quizStatus.perLevel[2], 125, 'Quiz Seeder Nível 2 deve ter 125 perguntas.');
+  assert.equal(quizStatus.perLevel[3], 125, 'Quiz Seeder Nível 3 deve ter 125 perguntas.');
+  assert.equal(quizStatus.perLevel[4], 125, 'Quiz Seeder Nível 4 deve ter 125 perguntas.');
 })().then(() => {
   console.log('Verificação dos comandos leves, convite bilíngue e desafios de trabalho em PT/EN: OK');
   console.log('Verificação do Quiz Cultural (500 Questões, 10 Moedas/Questão, Cooldown 3h e Tiers): OK');

@@ -9,7 +9,7 @@ async function main() {
   console.log(`📊 Status atual: ${initialStatus.currentTotal}/${initialStatus.targetTotal} (${initialStatus.progressPercentage}%)`);
 
   if (initialStatus.isCompleted) {
-    console.log('🎉 A meta de 100 cenários por carreira (1000 no total) já foi atingida!');
+    console.log(`🎉 A meta de 100 cenários por carreira (${initialStatus.targetTotal} no total) já foi atingida!`);
     process.exit(0);
   }
 

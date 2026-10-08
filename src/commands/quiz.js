@@ -344,7 +344,15 @@ module.exports = {
   isQuizInteraction,
   handleQuizInteraction,
   async executeSlash({ interaction }) {
-    await runQuiz(interaction, (options) => interaction.reply(options));
+    await runQuiz(interaction, (options) => {
+      if (interaction.deferred || interaction.replied) {
+        return interaction.editReply(options);
+      }
+      return interaction.reply(options);
+    });
+  },
+  async execute(interaction) {
+    return this.executeSlash({ interaction });
   },
   async executePrefix({ message }) {
     await runQuiz(message, (options) => message.reply(options));

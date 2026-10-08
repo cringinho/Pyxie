@@ -1597,15 +1597,18 @@
               </div>
               <button onclick="saveWelcomeChannel()" id="btnSaveWelcome" class="btn btn-secondary">💾 Salvar Canal</button>
             </div>
+          </div>
+
+          <!-- Gerador IA de Carreiras -->
           <div class="control-card" style="grid-column: 1 / -1;">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
               <div>
                 <h3 style="margin-bottom: 4px;">🧠 Gerador IA de Carreiras (Groq Cloud • qwen/qwen3.8-27b)</h3>
-                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Geração autônoma e rotativa com 10 sub-temas técnicos por carreira. Meta final: 100/carreira (1.000 no total).</p>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Geração autônoma e rotativa com 10 sub-temas técnicos por carreira. Suporte às 16 profissões da Pyxie. Meta final: 100/carreira (1.600 no total).</p>
               </div>
               <div style="display: flex; align-items: center; gap: 10px;">
                 <span id="seederStatusBadge" class="status-pill status-active" style="font-size: 0.75rem;">🤖 Agendador Ativo (A cada 3h)</span>
-                <button onclick="triggerWorkSeederBatch()" id="btnTriggerSeeder" class="btn btn-primary" style="font-size: 0.75rem; padding: 6px 14px;">⚡ Gerar Lote Agora (+10)</button>
+                <button onclick="triggerWorkSeederBatch()" id="btnTriggerSeeder" class="btn btn-primary" style="font-size: 0.75rem; padding: 6px 14px;">⚡ Gerar Lote Agora (+16)</button>
               </div>
             </div>
 
@@ -1619,8 +1622,36 @@
               </div>
             </div>
 
-            <div id="seederProfGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 14px;">
-              <!-- Preenchido dinamicamente via JS -->
+            <div id="seederProfGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 14px;">
+              <!-- Preenchido dinamicamente via JS (16 Profissões) -->
+            </div>
+          </div>
+
+          <!-- Gerador IA de Quiz Cultural -->
+          <div class="control-card" style="grid-column: 1 / -1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h3 style="margin-bottom: 4px;">🎯 Gerador IA de Quiz Cultural (Groq Cloud • qwen/qwen3.8-27b)</h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Geração autônoma de perguntas culturais e enciclopédicas bilíngues (PT-BR/EN) em 4 níveis de dificuldade e 12 tópicos. Meta final: 125/nível (500 no total).</p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span id="quizSeederStatusBadge" class="status-pill status-active" style="font-size: 0.75rem;">🤖 Agendador Ativo (A cada 3h)</span>
+                <button onclick="triggerQuizSeederBatch()" id="btnTriggerQuizSeeder" class="btn btn-primary" style="font-size: 0.75rem; padding: 6px 14px;">⚡ Gerar Perguntas Agora (+4)</button>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; margin-bottom: 6px;">
+                <span id="quizSeederProgressLabel">Progresso Global: Carregando...</span>
+                <span id="quizSeederPercentLabel" style="color: #38bdf8;">--%</span>
+              </div>
+              <div style="background: rgba(255,255,255,0.08); border-radius: 999px; height: 10px; overflow: hidden;">
+                <div id="quizSeederProgressBar" style="background: linear-gradient(90deg, #0ea5e9, #38bdf8); height: 100%; width: 0%; transition: width 0.4s ease;"></div>
+              </div>
+            </div>
+
+            <div id="quizSeederLevelGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 14px;">
+              <!-- Preenchido dinamicamente via JS (Níveis 1 a 4) -->
             </div>
           </div>
         </div>
@@ -3522,6 +3553,7 @@
          ========================================================== */
       async function loadBotConfig() {
         fetchWorkSeederStatus();
+        fetchQuizSeederStatus();
         try {
           const res = await fetch('/api/config');
           if (res.status === 401 || res.status === 403) return;
@@ -3565,7 +3597,7 @@
               badge.className = 'status-pill status-active';
               badge.style.background = 'rgba(16, 185, 129, 0.2)';
               badge.style.color = '#34d399';
-              badge.innerText = '✅ Meta Atingida (1000/1000)';
+              badge.innerText = `✅ Meta Atingida (${data.targetTotal}/${data.targetTotal})`;
             } else if (data.isJobRunning) {
               badge.className = 'status-pill status-paused';
               badge.innerText = '⚙️ Gerando lote agora...';
@@ -3583,14 +3615,22 @@
             const icons = {
               programador: '💻', cozinheiro: '🍳', agricultor: '🌾', medico: '🩺',
               musico: '🎵', professor: '📚', fotografo: '📸', mecanico: '🔧',
-              vendedor: '💼', artista: '🎨'
+              vendedor: '💼', artista: '🎨', dublador: '🎙️', desenvolvedor_jogos: '🎮',
+              psicologo: '🧠', telemarketing: '🎧', animador_festa: '🎈', advogada: '⚖️'
+            };
+            const labels = {
+              programador: 'Programador', cozinheiro: 'Cozinheiro', agricultor: 'Agricultor', medico: 'Médico',
+              musico: 'Músico', professor: 'Professor', fotografo: 'Fotógrafo', mecanico: 'Mecânico',
+              vendedor: 'Vendedor', artista: 'Artista', dublador: 'Dublador', desenvolvedor_jogos: 'Dev Jogos',
+              psicologo: 'Psicólogo', telemarketing: 'Telemarketing', animador_festa: 'Animador Festa', advogada: 'Advogada'
             };
             grid.innerHTML = Object.entries(data.perProfession).map(([prof, count]) => {
               const icon = icons[prof] || '💼';
+              const label = labels[prof] || prof;
               const isFull = count >= (data.targetPerProfession || 100);
               return `
                 <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 0.76rem; font-weight: 600; text-transform: capitalize;">${icon} ${prof}</span>
+                  <span style="font-size: 0.76rem; font-weight: 600;">${icon} ${label}</span>
                   <span style="font-size: 0.76rem; font-family: monospace; font-weight: 700; color: ${isFull ? '#34d399' : '#c084fc'};">${count}/${data.targetPerProfession || 100}</span>
                 </div>
               `;
@@ -3622,7 +3662,94 @@
         } finally {
           if (btn) {
             btn.disabled = false;
-            btn.innerText = '⚡ Gerar Lote Agora (+10)';
+            btn.innerText = '⚡ Gerar Lote Agora (+16)';
+          }
+        }
+      }
+
+      async function fetchQuizSeederStatus() {
+        try {
+          const res = await fetch('/api/admin/quiz-seeder/status');
+          const data = await res.json();
+          if (!data.success) return;
+
+          const badge = document.getElementById('quizSeederStatusBadge');
+          const progressLabel = document.getElementById('quizSeederProgressLabel');
+          const percentLabel = document.getElementById('quizSeederPercentLabel');
+          const progressBar = document.getElementById('quizSeederProgressBar');
+          const btnTrigger = document.getElementById('btnTriggerQuizSeeder');
+          const grid = document.getElementById('quizSeederLevelGrid');
+
+          if (progressLabel) progressLabel.innerText = `Progresso Global: ${data.currentTotal} / ${data.targetTotal} perguntas`;
+          if (percentLabel) percentLabel.innerText = `${data.progressPercentage}%`;
+          if (progressBar) progressBar.style.width = `${data.progressPercentage}%`;
+
+          if (badge) {
+            if (data.isCompleted) {
+              badge.className = 'status-pill status-active';
+              badge.style.background = 'rgba(16, 185, 129, 0.2)';
+              badge.style.color = '#34d399';
+              badge.innerText = `✅ Meta Atingida (${data.targetTotal}/${data.targetTotal})`;
+            } else if (data.isJobRunning) {
+              badge.className = 'status-pill status-paused';
+              badge.innerText = '⚙️ Gerando lote agora...';
+            } else {
+              badge.className = 'status-pill status-active';
+              badge.innerText = '🤖 Agendador Ativo (A cada 3h)';
+            }
+          }
+
+          if (btnTrigger) {
+            btnTrigger.disabled = data.isCompleted || data.isJobRunning;
+          }
+
+          if (grid && data.perLevel) {
+            const levelInfo = {
+              1: { name: 'Nível 1 • Aprendiz', icon: '🌱', color: '#38bdf8' },
+              2: { name: 'Nível 2 • Praticante', icon: '⚡', color: '#818cf8' },
+              3: { name: 'Nível 3 • Mestre', icon: '🔥', color: '#c084fc' },
+              4: { name: 'Nível 4 • Grão-Mestre', icon: '👑', color: '#f43f5e' },
+            };
+            const targetPerLvl = 125;
+            grid.innerHTML = [1, 2, 3, 4].map((lvl) => {
+              const info = levelInfo[lvl] || { name: `Nível ${lvl}`, icon: '❓', color: '#38bdf8' };
+              const count = data.perLevel[lvl] || 0;
+              const isFull = count >= targetPerLvl;
+              return `
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.8rem; font-weight: 600; color: ${info.color};">${info.icon} ${info.name}</span>
+                  <span style="font-size: 0.8rem; font-family: monospace; font-weight: 700; color: ${isFull ? '#34d399' : '#38bdf8'};">${count}/${targetPerLvl}</span>
+                </div>
+              `;
+            }).join('');
+          }
+        } catch (_) {}
+      }
+
+      async function triggerQuizSeederBatch() {
+        const btn = document.getElementById('btnTriggerQuizSeeder');
+        if (btn) {
+          btn.disabled = true;
+          btn.innerText = '🚀 Disparando perguntas...';
+        }
+        showToast('Iniciando geração de 4 perguntas do quiz via Groq...', '⚡');
+        try {
+          const res = await fetch('/api/admin/quiz-seeder/trigger', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ count: 4 })
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast('Lote de quiz iniciado em background! Atualizando status...', '🚀');
+            setTimeout(fetchQuizSeederStatus, 2000);
+          }
+        } catch (_) {
+          showToast('Erro ao disparar gerador de quiz.', '⚠️');
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerText = '⚡ Gerar Perguntas Agora (+4)';
           }
         }
       }

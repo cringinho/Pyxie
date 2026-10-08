@@ -22,6 +22,12 @@ const PROFESSIONS = [
   'mecanico',
   'vendedor',
   'artista',
+  'dublador',
+  'desenvolvedor_jogos',
+  'psicologo',
+  'telemarketing',
+  'animador_festa',
+  'advogada',
 ];
 
 // Matriz temática para garantir máxima variedade e zero repetição de situações
@@ -146,6 +152,78 @@ const PROFESSION_SUBTHEMES = {
     'Teoria da Gestalt Aplicada à Ilustração: Fechamento, Continuidade e Relação Figura-Fundo',
     'Técnicas Mistas Tradicionais: Integração de Aquarela, Tinta Nanquim e Meios Secos sem Rachaduras',
   ],
+  dublador: [
+    'Sincronia Labial (Lip Sync) e Adaptação de Frases em Versão Brasileira',
+    'Técnicas de Microfonismo em Cabine, Controle de Pop e Efeito de Proximidade',
+    'Voz Caricata e Modulação Tímbrica em Animação Infantil vs Live-Action',
+    'Casting, Interpretação Dramática e Transição de Emoções em Takes Contínuos',
+    'Saúde Vocal e Fonoaudiologia: Aquecimento, Desaquecimento e Prevenção de Fendas',
+    'Dublagem de Jogos e Games: Localização sem Referência Visual Direta',
+    'Locução Comercial e Institucional: Ritmo, Empatia e Dicção Precisa',
+    'Redublagem de Clássicos, Remoção de Ruído de Fita e Equalização de Faixas',
+    'Direção de Dublagem: Marcação de Pausas, Respirações e Reações Físicas',
+    'Manutenção de Registro em Sessões Longas de Gritos e Batalhas em Animes',
+  ],
+  desenvolvedor_jogos: [
+    'Arquitetura de Game Loop, Delta Time e Resolução de Deslocamento de Física',
+    'Otimização de Draw Calls, Batching Estático/Dinâmico e GPU Instancing',
+    'Inteligência Artificial de NPCs: Árvores de Comportamento (Behavior Trees) e NavMesh',
+    'Detecção e Resolução de Colisão: Hitboxes AABB, SAT e Raycasting Contínuo',
+    'Otimização de Shaders, Overdraw de Partículas e Profiling de Renderização',
+    'Sistemas de Iluminação: Baked Lightmaps, Sondas de Luz e Cascaded Shadow Maps',
+    'Arquitetura de Estado: Finite State Machines (FSM) para Personagens e Inimigos',
+    'Sincronização Multiplayer: Client Prediction, Server Reconciliation e Lag Compensation',
+    'Gerenciamento de Memória de Assets: Addressables, Texture Streaming e Garbage Collection',
+    'Game Feel e Juice: Screenshake, Curvas de Animação e Interpolação de Câmera',
+  ],
+  psicologo: [
+    'Manejo de Transferência e Contratransferência na Relação Terapêutica',
+    'Intervenção em Crise e Avaliação de Risco: Protocolos de Suporte e Acolhimento',
+    'Terapia Cognitivo-Comportamental: Reestruturação Cognitiva e Registro de Pensamentos Disfuncionais',
+    'Psicanálise Clínica: Associação Livre, Interpretação de Sonhos e Análise de Resistências',
+    'Elaboração de Laudos, Pareceres e Relatórios Psicológicos Conforme Resoluções do CFP',
+    'Sigilo Profissional e Dilemas Éticos em Contextos Jurídicos e Multidisciplinares',
+    'Abordagem Humanista e Fenomenológica: Escuta Empática e Aceitação Incondicional',
+    'Manejo de Sintomas de Transtornos de Ansiedade e Pânico: Técnicas de Aterramento e Respiração',
+    'Psicopatologia e Diagnóstico Diferencial Baseado no DSM-5-TR e CID-11',
+    'Mediação de Conflitos em Terapia de Casal e Familiar Sistêmica',
+  ],
+  telemarketing: [
+    'Manejo de Chamadas de Alta Tensão: Desescalada Verbal e Empatia Assertiva',
+    'Gestão de Métricas Operacionais: Otimização de TMA sem Comprometer o FCR e NPS',
+    'Técnicas de Retenção de Clientes e Apresentação de Contrapropostas Estratégicas',
+    'Adequação às Normas Legais do SAC, Decretos de Teleatendimento e Código de Defesa do Consumidor',
+    'Auditoria e Monitoria de Qualidade: Aderência a Scripts com Comunicação Humanizada',
+    'Segurança da Informação e LGPD: Validação Rigorosa de Titularidade e Dados Sensíveis',
+    'Gestão de Filas de Espera, Discadores Preditivos e Redução de Taxa de Abandono',
+    'Contorno Rápido de Objeções em Vendas Ativas com Foco em Benefícios Tangíveis',
+    'Registro e Tabulação Precisa de Protocolos em Sistemas CRM Multicanais',
+    'Técnicas de Modulação Vocal, Dicção e Cordialidade Sob Pressão Contínua',
+  ],
+  animador_festa: [
+    'Dinâmica de Grupo e Gestão de Energia: Ritmo da Festa do Início aos Parabéns',
+    'Recreação Infantil Segura: Adaptação de Brincadeiras por Faixas Etárias Heterogêneas',
+    'Técnicas de Escultura em Balões: Criação Rápida de Formas sob Alta Demanda',
+    'Pintura Facial Artística: Materiais Antialérgicos, Higienização e Agilidade no Traço',
+    'Improvisação Teatral e Personificação: Mantendo o Personagem Perante Perguntas Inusitadas',
+    'Manejo de Crianças Tímidas ou Desafiadoras: Inclusão Cuidadosa sem Constrangimento',
+    'Truques de Mágica Cômica: Ilusionismo Visual e Participação Ativa do Público',
+    'Animação de Pista e Coreografias: Conexão e Engajamento de Pais e Crianças',
+    'Gestão do Momento do Parabéns: Posicionamento, Clímax Emocional e Entusiasmo Coletivo',
+    'Segurança e Primeiros Socorros em Brinquedos Infláveis e Gincanas Físicas',
+  ],
+  advogada: [
+    'Tutelas Provisórias de Urgência: Demonstração de Probabilidade do Direito e Perigo de Dano',
+    'Estratégia Recursal: Prequestionamento e Recursos Especial e Extraordinário aos Tribunais Superiores',
+    'Sustentação Oral Perante Órgãos Colegiados: Retórica Forense e Síntese Persuasiva',
+    'Elaboração e Negociação Contratual B2B: Alocação de Riscos, Cláusulas Penais e Limite de Responsabilidade',
+    'Audiência de Instrução e Julgamento: Técnica de Inquirição de Testemunhas e Impugnações Imediatas',
+    'Direito Penal e Processual Penal: Cadeia de Custódia de Provas e Garantias Fundamentais',
+    'Direito Trabalhista Empresarial: Conformidade com Precedentes Vinculantes e Redução de Passivo',
+    'Cumprimento de Sentença e Execução: Desconsideração da Personalidade Jurídica e Penhora de Bens',
+    'Conformidade Regulatória e LGPD: Adequação de Bases Legais e Gestão de Incidentes de Segurança',
+    'Resolução Adequada de Disputas: Mediação, Arbitragem e Acordos Extrajudiciais Estruturados',
+  ],
 };
 
 const CANDIDATE_MODELS = [
@@ -212,6 +290,7 @@ async function detectWorkingModel() {
  * Gera 1 cenário individual para a profissão focando em um subtema específico.
  */
 async function fetchSingleScenario(profession, subtheme, attempt = 1) {
+  if (!API_KEY) return null;
   const model = await detectWorkingModel();
   const prompt = `Você é um gerador de banco de dados para minigames de carreiras em um bot de RPG no Discord.
 Gere estritamente um objeto JSON com exatamente 1 cenário técnico e desafiador para a profissão "${profession}".
@@ -385,7 +464,7 @@ async function generateBatch({ countPerProfession = 1 } = {}) {
     );
 
     if (isCompleted) {
-      console.log('🎉 [Groq Seeder] META ATINGIDA: 100 cenários em todas as 10 profissões (1000/1000). Gerador desativado.');
+      console.log(`🎉 [Groq Seeder] META ATINGIDA: 100 cenários em todas as ${PROFESSIONS.length} profissões (${TARGET_PER_PROFESSION * PROFESSIONS.length}/${TARGET_PER_PROFESSION * PROFESSIONS.length}). Gerador desativado.`);
       stopScheduler();
     }
 
@@ -436,8 +515,9 @@ function startScheduler(intervalMs = DEFAULT_INTERVAL_MS) {
   if (schedulerTimer) return;
 
   const db = loadDatabase();
+  const targetTotal = TARGET_PER_PROFESSION * PROFESSIONS.length;
   if (isTargetReached(db)) {
-    console.log('[Groq Seeder] Meta de 1000 cenários já atingida. Agendador não será iniciado.');
+    console.log(`[Groq Seeder] Meta de ${targetTotal} cenários já atingida. Agendador não será iniciado.`);
     return;
   }
 
