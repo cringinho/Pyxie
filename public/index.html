@@ -272,6 +272,132 @@
       transform: translateY(-1px);
     }
 
+    /* Submenu de Módulos (Dropdown Elegante & Compacto) */
+    .nav-dropdown {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .nav-dropdown-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 8px 12px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-dropdown-btn:hover,
+    .nav-dropdown.open .nav-dropdown-btn,
+    .nav-dropdown:focus-within .nav-dropdown-btn {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .dropdown-arrow {
+      transition: transform 0.25s ease;
+      opacity: 0.7;
+    }
+
+    .nav-dropdown:hover .dropdown-arrow,
+    .nav-dropdown.open .dropdown-arrow,
+    .nav-dropdown:focus-within .dropdown-arrow {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+
+    .nav-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      min-width: 250px;
+      background: rgba(18, 10, 34, 0.97);
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      border-radius: 16px;
+      padding: 8px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(139, 92, 246, 0.25);
+      backdrop-filter: blur(20px);
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 1000;
+      animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes dropdownFadeIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(2px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(8px); }
+    }
+
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown.open .nav-dropdown-menu,
+    .nav-dropdown:focus-within .nav-dropdown-menu {
+      display: flex;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(139, 92, 246, 0.18);
+      color: #ffffff;
+      transform: translateX(4px);
+    }
+
+    .dropdown-item-info {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .dropdown-item-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #ffffff;
+    }
+
+    .dropdown-item-desc {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    .drawer-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px 6px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--pink-glow);
+      font-weight: 800;
+    }
+
+    .drawer-sublink {
+      margin-left: 12px;
+      border-left: 2px solid rgba(192, 132, 252, 0.25);
+      border-radius: 0 12px 12px 0;
+    }
+
     .nav-right {
       display: flex;
       align-items: center;
@@ -1510,18 +1636,36 @@
           <img src="https://cdn.discordapp.com/emojis/1548444204202459136.gif" class="emoji-icon" alt="gift" />
           <span data-i18n-text="nav.bonus">Bônus Web (10s)</span>
         </a>
-        <a href="/parcerias" id="navPartnerships" class="nav-link partnerships-dynamic-link" style="display: none;">
-          <img src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" class="emoji-icon" alt="handshake" />
-          <span data-i18n-text="nav.partnerships">Parcerias</span>
-        </a>
-        <a href="/museu" id="navMuseum" class="nav-link museum-dynamic-link" style="display: none;">
-          <img src="https://cdn.discordapp.com/emojis/1551355962974273546.png" class="emoji-icon" alt="art" />
-          <span data-i18n-text="nav.museum">Museu de Arte</span>
-        </a>
-        <a href="/evento" id="navSeasonalRanking" class="nav-link seasonal-dynamic-link" style="display: none;">
-          <img src="https://cdn.discordapp.com/emojis/1551355734577381447.png" class="emoji-icon" alt="pumpkin" />
-          <span data-i18n-text="nav.seasonal">Ranking do Evento</span>
-        </a>
+        <div class="nav-dropdown" id="navModulesDropdown" style="display: none;">
+          <button class="nav-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false">
+            <img src="/assets/pyxie/icons/astaroth_pet_cute_flying.svg" class="emoji-icon" alt="modules" />
+            <span data-i18n-text="nav.modules">Módulos</span>
+            <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="nav-dropdown-menu" id="navModulesMenu">
+            <a href="/parcerias" id="navPartnerships" class="dropdown-item partnerships-dynamic-link" style="display: none;">
+              <img src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" class="emoji-icon" alt="handshake" />
+              <div class="dropdown-item-info">
+                <span class="dropdown-item-title" data-i18n-text="nav.partnerships">Parcerias</span>
+                <span class="dropdown-item-desc" data-i18n-text="nav.partnerships_desc">Mural comunitário & impulsos</span>
+              </div>
+            </a>
+            <a href="/museu" id="navMuseum" class="dropdown-item museum-dynamic-link" style="display: none;">
+              <img src="https://cdn.discordapp.com/emojis/1551355962974273546.png" class="emoji-icon" alt="art" />
+              <div class="dropdown-item-info">
+                <span class="dropdown-item-title" data-i18n-text="nav.museum">Museu de Arte</span>
+                <span class="dropdown-item-desc" data-i18n-text="nav.museum_desc">Galeria e criações dos membros</span>
+              </div>
+            </a>
+            <a href="/evento" id="navSeasonalRanking" class="dropdown-item seasonal-dynamic-link" style="display: none;">
+              <img src="https://cdn.discordapp.com/emojis/1551355734577381447.png" class="emoji-icon" alt="pumpkin" />
+              <div class="dropdown-item-info">
+                <span class="dropdown-item-title" data-i18n-text="nav.seasonal">Ranking do Evento</span>
+                <span class="dropdown-item-desc" data-i18n-text="nav.seasonal_desc">Placar ao vivo da temporada</span>
+              </div>
+            </a>
+          </div>
+        </div>
       </nav>
 
       <!-- Right Action Controls -->
@@ -1564,15 +1708,19 @@
       <img src="https://cdn.discordapp.com/emojis/1548444204202459136.gif" class="emoji-icon" alt="gift" />
       <span data-i18n-text="nav.bonus">Bônus Web (10s)</span>
     </a>
-    <a href="/parcerias" id="drawerPartnerships" class="nav-link partnerships-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
+    <div class="drawer-section-title" id="drawerModulesTitle" style="display: none;">
+      <img src="/assets/pyxie/icons/astaroth_pet_cute_flying.svg" class="emoji-icon" alt="modules" />
+      <span data-i18n-text="nav.modules">Módulos da Comunidade</span>
+    </div>
+    <a href="/parcerias" id="drawerPartnerships" class="nav-link drawer-sublink partnerships-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
       <img src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" class="emoji-icon" alt="handshake" />
       <span data-i18n-text="nav.partnerships">Parcerias</span>
     </a>
-    <a href="/museu" id="drawerMuseum" class="nav-link museum-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
+    <a href="/museu" id="drawerMuseum" class="nav-link drawer-sublink museum-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
       <img src="https://cdn.discordapp.com/emojis/1551355962974273546.png" class="emoji-icon" alt="art" />
       <span data-i18n-text="nav.museum">Museu de Arte</span>
     </a>
-    <a href="/evento" id="drawerSeasonalRanking" class="nav-link seasonal-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
+    <a href="/evento" id="drawerSeasonalRanking" class="nav-link drawer-sublink seasonal-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
       <img src="https://cdn.discordapp.com/emojis/1551355734577381447.png" class="emoji-icon" alt="pumpkin" />
       <span data-i18n-text="nav.seasonal">Ranking do Evento</span>
     </a>
@@ -1945,9 +2093,13 @@
         'nav.commands': 'Comandos',
         'nav.vote': 'Top.gg',
         'nav.bonus': 'Bônus Web (10s)',
+        'nav.modules': 'Módulos',
         'nav.partnerships': 'Parcerias',
+        'nav.partnerships_desc': 'Mural comunitário & impulsos',
         'nav.museum': 'Museu de Arte',
+        'nav.museum_desc': 'Galeria e criações dos membros',
         'nav.seasonal': 'Ranking do Evento',
+        'nav.seasonal_desc': 'Placar ao vivo da temporada',
         'nav.add': 'Adicionar',
         'hero.status': 'Online & Operacional • Discord.js v14',
         'hero.titlePrefix': 'Sua Fada Mágica no',
@@ -2001,9 +2153,13 @@
         'nav.commands': 'Commands',
         'nav.vote': 'Top.gg',
         'nav.bonus': 'Web Bonus (10s)',
+        'nav.modules': 'Modules',
         'nav.partnerships': 'Partnerships',
+        'nav.partnerships_desc': 'Community board & bumps',
         'nav.museum': 'Art Museum',
+        'nav.museum_desc': 'Member art gallery',
         'nav.seasonal': 'Event Leaderboard',
+        'nav.seasonal_desc': 'Live event leaderboard',
         'nav.add': 'Add Pyxie',
         'hero.status': 'Online & Operational • Discord.js v14',
         'hero.titlePrefix': 'Your Magical Fairy on',
@@ -2150,6 +2306,17 @@
       syncHourlyPromoLinks();
     }
 
+    let moduleStates = { partnerships: false, museum: false, seasonal: false };
+
+    function syncModulesDropdown() {
+      const anyActive = moduleStates.partnerships || moduleStates.museum || moduleStates.seasonal;
+      const dropdown = document.getElementById('navModulesDropdown');
+      if (dropdown) dropdown.style.display = anyActive ? 'inline-flex' : 'none';
+
+      const drawerTitle = document.getElementById('drawerModulesTitle');
+      if (drawerTitle) drawerTitle.style.display = anyActive ? 'flex' : 'none';
+    }
+
     async function checkModuleDynamicLinks() {
       try {
         const res = await fetch('/api/modules/status');
@@ -2158,6 +2325,10 @@
         if (data && data.success && data.modules) {
           const partActive = Boolean(data.modules.partnerships && (data.modules.partnerships.active ?? data.modules.partnerships.enabled));
           const museumActive = Boolean(data.modules.museum && (data.modules.museum.active ?? data.modules.museum.enabled));
+
+          moduleStates.partnerships = partActive;
+          moduleStates.museum = museumActive;
+          syncModulesDropdown();
 
           document.querySelectorAll('.partnerships-dynamic-link').forEach(el => {
             el.style.display = partActive ? (el.classList.contains('footer-link') ? 'inline' : 'inline-flex') : 'none';
@@ -2173,15 +2344,22 @@
       try {
         const res = await fetch('/api/sazonal/ranking');
         if (!res.ok) {
+          moduleStates.seasonal = false;
+          syncModulesDropdown();
           document.querySelectorAll('.seasonal-dynamic-link').forEach(el => el.style.display = 'none');
           return;
         }
         const data = await res.json();
         const isLive = Boolean(data && data.active);
+        moduleStates.seasonal = isLive;
+        syncModulesDropdown();
+
         document.querySelectorAll('.seasonal-dynamic-link').forEach(el => {
-          el.style.display = isLive ? 'inline-flex' : 'none';
+          el.style.display = isLive ? (el.classList.contains('footer-link') ? 'inline' : 'inline-flex') : 'none';
         });
       } catch (_) {
+        moduleStates.seasonal = false;
+        syncModulesDropdown();
         document.querySelectorAll('.seasonal-dynamic-link').forEach(el => el.style.display = 'none');
       }
     }

@@ -35,3 +35,4 @@ O baralho é composto pelos 78 arcanos completos (22 Maiores e 56 Menores), todo
 - **Canvas (node-canvas):** Responsável por montar e renderizar a carta, efeitos de brilho, moldura e arte final.
 - **Discord.js (v14):** Para exibir as cartas e menus de navegação do álbum.
 - **Dicionário Bilíngue (i18n):** Garante interpretações completas e naturais em Português e em Inglês.
+

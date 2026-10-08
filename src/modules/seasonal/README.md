@@ -45,3 +45,4 @@ Conta também com um ranking visual público para premiar os membros mais ativos
 - **Canvas (node-canvas):** Biblioteca gráfica para desenhar o cartão de classificação e montar a arte do evento.
 - **Discord.js (v14):** Para detectar conversas ativas e sortear drops.
 - **Express & EJS:** Para exibir a página web do placar e o painel de controle.
+

@@ -1,91 +1,661 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Museu da Comunidade • Pyxie</title>
-<style>
-  :root { --bg:#120b1f; --card:#1e1433; --line:#8b5cf6; --txt:#f3ecff; --mut:#b9a8d9; }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--txt); font-family:'Courier New',monospace; }
-  header { padding:28px 16px 12px; text-align:center; }
-  h1 { margin:0; font-size:1.8rem; letter-spacing:2px; text-shadow:3px 3px 0 #4c1d95; }
-  p.sub { color:var(--mut); margin:8px 0 0; }
-  .bar { display:flex; gap:8px; justify-content:center; align-items:center; margin:16px; flex-wrap:wrap; }
-  button, .lang { background:var(--card); color:var(--txt); border:2px solid var(--line); padding:8px 14px; cursor:pointer; font:inherit; box-shadow:3px 3px 0 #4c1d95; }
-  button:disabled { opacity:.4; cursor:default; }
-  #grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; max-width:1200px; margin:0 auto; padding:0 16px 40px; }
-  figure { margin:0; background:var(--card); border:2px solid var(--line); box-shadow:4px 4px 0 #4c1d95; }
-  figure img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; background:#000; image-rendering:auto; }
-  figcaption { padding:10px; font-size:.85rem; }
-  .author { color:#c4b5fd; font-weight:bold; }
-  .desc { color:var(--mut); margin-top:4px; word-break:break-word; }
-  #msg { text-align:center; color:var(--mut); padding:40px 16px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Museu da Comunidade • Pyxie</title>
+  <meta name="description" content="Acervo permanente de artes, ilustrações e criações da comunidade da Cringelândia com a Pyxie.">
+  <link rel="icon" type="image/png" href="/assets/pyxie/pyxie_pixelart_face.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0818;
+      --card: #180f2d;
+      --line: #8b5cf6;
+      --line-glow: rgba(139, 92, 246, 0.4);
+      --txt: #f8fafc;
+      --mut: #cbd5e1;
+      --dim: #94a3b8;
+      --pink-neon: #ec4899;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(236, 72, 153, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+      color: var(--txt);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar Superior */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(13, 8, 24, 0.85);
+      border-bottom: 1px solid rgba(139, 92, 246, 0.25);
+      padding: 12px 24px;
+    }
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand-home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--txt);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      padding: 6px 14px 6px 8px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.25s ease;
+    }
+    .brand-home-btn:hover {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: var(--line);
+      box-shadow: 0 0 16px var(--line-glow);
+      transform: translateY(-1px);
+    }
+    .brand-pixel-icon {
+      width: 32px;
+      height: 32px;
+      image-rendering: pixelated;
+      border-radius: 6px;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--txt);
+      background: rgba(24, 15, 45, 0.7);
+      transition: all 0.2s ease;
+    }
+    .btn-nav:hover {
+      background: rgba(139, 92, 246, 0.25);
+      border-color: var(--line);
+    }
+    .btn-discord {
+      background: linear-gradient(135deg, #5865F2, #7289da);
+      border: none;
+      color: #fff;
+    }
+
+    /* Header / Hero */
+    header {
+      padding: 38px 20px 16px;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 20%, #c4b5fd 60%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p.sub {
+      color: var(--mut);
+      margin: 10px 0 0;
+      font-size: 1.02rem;
+    }
+
+    /* Container Principal */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Paginação e Controles */
+    .bar {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+    button.page-btn {
+      background: var(--card);
+      color: var(--txt);
+      border: 1px solid var(--line);
+      padding: 9px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.88rem;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button.page-btn:hover:not(:disabled) {
+      background: var(--line);
+      box-shadow: 0 0 16px var(--line-glow);
+      transform: translateY(-1px);
+    }
+    button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: none;
+    }
+    #pageInfo {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #c4b5fd;
+      padding: 6px 14px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Grid de Obras */
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 40px;
+    }
+    figure {
+      margin: 0;
+      background: var(--card);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    figure:hover {
+      transform: translateY(-4px);
+      border-color: var(--line);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.65), 0 0 20px rgba(139, 92, 246, 0.25);
+    }
+    figure img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      display: block;
+      background: #080410;
+      transition: transform 0.4s ease;
+    }
+    figure:hover img {
+      transform: scale(1.03);
+    }
+    figcaption {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      background: rgba(18, 10, 36, 0.95);
+    }
+    .author {
+      color: #6ee7b7;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .desc {
+      color: var(--mut);
+      font-size: 0.84rem;
+      line-height: 1.45;
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    #msg {
+      text-align: center;
+      color: var(--dim);
+      padding: 50px 16px;
+      font-size: 1.05rem;
+    }
+
+    /* Monetização / Anúncios */
+    .monetization-pt { display: block; }
+    .monetization-en { display: none; }
+    html[lang="en"] .monetization-pt { display: none !important; }
+    html[lang="en"] .monetization-en { display: flex !important; }
+    html[lang="pt-BR"] .monetization-en { display: none !important; }
+    html[lang="pt-BR"] .monetization-pt { display: block !important; }
+
+    .promo-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(139, 92, 246, 0.22));
+      border: 1px solid rgba(236, 72, 153, 0.35);
+      border-radius: 16px;
+      padding: 14px 22px;
+      margin: 20px 0 28px;
+      text-decoration: none;
+      color: var(--txt);
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.4);
+      transition: all 0.25s ease;
+    }
+    .promo-banner:hover {
+      border-color: var(--pink-neon);
+      transform: translateY(-2px);
+    }
+    .promo-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .promo-icon {
+      font-size: 1.8rem;
+    }
+    .promo-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .promo-desc {
+      font-size: 0.82rem;
+      color: var(--mut);
+    }
+    .promo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--pink-neon), #db2777);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .adsterra-banner-container {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 90px;
+      padding: 12px 16px;
+      background: radial-gradient(circle at center, rgba(168, 85, 247, 0.12), rgba(12, 6, 24, 0.95));
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: 16px;
+      box-shadow: 0 8px 28px rgba(10, 5, 20, 0.6);
+      text-align: center;
+      overflow: hidden;
+      margin: 20px 0 28px;
+    }
+    .adsterra-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.72rem;
+      color: #c084fc;
+      text-transform: uppercase;
+    }
+    .adsterra-badge {
+      background: rgba(244, 63, 94, 0.2);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: #fca5a5;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.68rem;
+    }
+    .adsterra-desktop-468 { display: flex; justify-content: center; width: 100%; }
+    .adsterra-mobile-300 { display: none; justify-content: center; width: 100%; }
+    @media (max-width: 520px) {
+      .adsterra-desktop-468 { display: none !important; }
+      .adsterra-mobile-300 { display: flex !important; }
+      .promo-banner { flex-direction: column; align-items: stretch; text-align: center; }
+      .promo-content { flex-direction: column; }
+      .promo-btn { justify-content: center; }
+    }
+
+    /* Rodapé */
+    footer {
+      border-top: 1px solid rgba(139, 92, 246, 0.2);
+      background: rgba(8, 4, 16, 0.9);
+      padding: 30px 20px;
+      text-align: center;
+      margin-top: auto;
+    }
+    .footer-text {
+      color: var(--dim);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      font-size: 0.84rem;
+    }
+    .footer-links a {
+      color: #c4b5fd;
+      text-decoration: none;
+    }
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1 id="title"></h1>
-  <p class="sub" id="subtitle"></p>
-</header>
-<div class="bar">
-  <button id="prev"></button>
-  <span id="pageInfo"></span>
-  <button id="next"></button>
-  <button class="lang" id="langBtn"></button>
-</div>
-<div id="msg"></div>
-<main id="grid"></main>
 
-<script>
-const I18N = {
-  pt: { title:'🏛️ Museu da Comunidade', subtitle:'Acervo permanente das criações da Cringelândia.', prev:'◀ Anterior', next:'Próxima ▶', page:'Página {p} de {t} • {n} obras', loading:'Carregando acervo...', empty:'Nenhuma obra no acervo ainda.', error:'Não foi possível carregar o acervo.', lang:'EN' },
-  en: { title:'🏛️ Community Art Museum', subtitle:'Permanent archive of our community creations.', prev:'◀ Previous', next:'Next ▶', page:'Page {p} of {t} • {n} artworks', loading:'Loading archive...', empty:'No artworks in the archive yet.', error:'Could not load the archive.', lang:'PT' }
-};
-const params = new URLSearchParams(location.search);
-const qLang = params.get('lang');
-let lang = (qLang === 'pt' || qLang === 'en') ? qLang : ((navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en');
-let page = 1, totalPages = 1;
-const $ = (id) => document.getElementById(id);
-const tr = (k, r = {}) => Object.entries(r).reduce((s, [a, b]) => s.replaceAll('{' + a + '}', b), I18N[lang][k]);
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="nav-container">
+      <a href="/" class="brand-home-btn" title="Voltar para a página inicial da Pyxie">
+        <img src="/assets/pyxie/pyxie_pixelart_face.png" class="brand-pixel-icon" alt="Pyxie" />
+        <span>Pyxie</span>
+      </a>
+      <div class="nav-actions">
+        <button id="langBtn" class="btn-nav" type="button">EN</button>
+        <a href="https://discord.gg/874440609402134528" target="_blank" rel="noopener noreferrer" class="btn-nav btn-discord">
+          <span>💬</span> <span>Cringelândia</span>
+        </a>
+      </div>
+    </div>
+  </header>
 
-function applyLang() {
-  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
-  document.title = I18N[lang].title.replace('🏛️ ', '') + ' • Pyxie';
-  $('title').textContent = tr('title');
-  $('subtitle').textContent = tr('subtitle');
-  $('prev').textContent = tr('prev');
-  $('next').textContent = tr('next');
-  $('langBtn').textContent = tr('lang');
-}
+  <!-- Cabeçalho Principal -->
+  <header>
+    <h1 id="title"></h1>
+    <p class="sub" id="subtitle"></p>
+  </header>
 
-async function load() {
-  $('msg').textContent = tr('loading');
-  $('grid').replaceChildren();
-  try {
-    const res = await fetch('/api/museum/arts?page=' + page + '&limit=24');
-    const data = await res.json();
-    if (!data.success) throw new Error('api');
-    page = data.page; totalPages = data.totalPages;
-    $('msg').textContent = data.arts.length ? '' : tr('empty');
-    for (const art of data.arts) {
-      const fig = document.createElement('figure');
-      const img = document.createElement('img');
-      img.loading = 'lazy'; img.alt = art.description || art.author; img.src = art.imageUrl;
-      const cap = document.createElement('figcaption');
-      const a = document.createElement('div'); a.className = 'author'; a.textContent = art.author;
-      const d = document.createElement('div'); d.className = 'desc'; d.textContent = art.description || '';
-      cap.append(a, d); fig.append(img, cap); $('grid').append(fig);
+  <main class="container">
+
+    <!-- Anúncios (Shopee em PT / Adsterra em EN) -->
+    <div class="monetization-pt">
+      <a href="/promo" class="promo-banner" data-hourly-promo="true" target="_blank" rel="noopener">
+        <div class="promo-content">
+          <span class="promo-icon">🎨</span>
+          <div>
+            <div class="promo-title" id="ptBannerTitle">Materiais de Arte, Colecionáveis & Setup</div>
+            <div class="promo-desc" id="ptBannerDesc">Encontre mesas digitalizadoras, prints e artigos com os melhores cupons na Shopee!</div>
+          </div>
+        </div>
+        <span class="promo-btn" id="ptBannerBtn">Ver Ofertas ➔</span>
+      </a>
+    </div>
+
+    <div class="monetization-en adsterra-banner-container">
+      <div class="adsterra-header">
+        <span class="adsterra-badge">SPONSOR</span>
+        <span>Community Partner Art Deals & Tech Rewards</span>
+      </div>
+      <div class="adsterra-desktop-468">
+        <script>
+          atOptions = {
+            'key' : '9bfd0ea5a8cecbfa6b88b7f8373b88d3',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/9bfd0ea5a8cecbfa6b88b7f8373b88d3/invoke.js"></script>
+      </div>
+      <div class="adsterra-mobile-300">
+        <script>
+          atOptions = {
+            'key' : 'f3dbfeae56ba2efdf768f54ef4ff8685',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/f3dbfeae56ba2efdf768f54ef4ff8685/invoke.js"></script>
+      </div>
+    </div>
+
+    <!-- Barra de Navegação de Páginas -->
+    <div class="bar">
+      <button class="page-btn" id="prev"></button>
+      <span id="pageInfo"></span>
+      <button class="page-btn" id="next"></button>
+    </div>
+
+    <div id="msg"></div>
+    <div id="grid"></div>
+
+    <div class="bar">
+      <button class="page-btn" id="prev2"></button>
+      <button class="page-btn" id="next2"></button>
+    </div>
+
+  </main>
+
+  <!-- Rodapé -->
+  <footer>
+    <div class="footer-text" id="footerText">Pyxie & Cringelândia • Galeria permanente de arte e cultura comunitária.</div>
+    <div class="footer-links">
+      <a href="/" id="footerHomeLink">Início</a>
+      <span>•</span>
+      <a href="/parcerias" id="footerPartnersLink">Mural de Parcerias</a>
+      <span>•</span>
+      <a href="/wiki" id="footerWikiLink">Wiki Oficial</a>
+      <span>•</span>
+      <a href="/promo" data-hourly-promo="true" target="_blank" rel="noopener" id="footerPromoLink">Ofertas</a>
+    </div>
+  </footer>
+
+  <script>
+    const I18N = {
+      pt: {
+        title: '🏛️ Museu da Comunidade',
+        subtitle: 'Acervo permanente das criações, ilustrações e fanarts da Cringelândia.',
+        prev: '◀ Anterior',
+        next: 'Próxima ▶',
+        page: 'Página {p} de {t} • {n} obras',
+        loading: 'Carregando acervo de arte...',
+        empty: 'Nenhuma obra no acervo ainda.',
+        error: 'Não foi possível carregar o acervo no momento.',
+        lang: 'EN',
+        footer: 'Pyxie & Cringelândia • Galeria permanente de arte e cultura comunitária.',
+        footerHome: 'Início',
+        footerPartners: 'Mural de Parcerias',
+        footerWiki: 'Wiki Oficial',
+        footerPromo: 'Ofertas',
+        ptBannerTitle: 'Materiais de Arte, Colecionáveis & Setup',
+        ptBannerDesc: 'Encontre mesas digitalizadoras, prints e artigos com os melhores cupons na Shopee!',
+        ptBannerBtn: 'Ver Ofertas ➔'
+      },
+      en: {
+        title: '🏛️ Community Art Museum',
+        subtitle: 'Permanent archive of creations, illustrations and fanarts of Cringelândia.',
+        prev: '◀ Previous',
+        next: 'Next ▶',
+        page: 'Page {p} of {t} • {n} artworks',
+        loading: 'Loading artwork archive...',
+        empty: 'No artworks in the archive yet.',
+        error: 'Could not load the archive at the moment.',
+        lang: 'PT',
+        footer: 'Pyxie & Cringelândia • Permanent gallery of community art & culture.',
+        footerHome: 'Home',
+        footerPartners: 'Partnerships Board',
+        footerWiki: 'Official Wiki',
+        footerPromo: 'Deals',
+        ptBannerTitle: 'Art Supplies, Collectibles & Setup Deals',
+        ptBannerDesc: 'Find drawing tablets, prints and anime gear with top coupons on Shopee!',
+        ptBannerBtn: 'Check Deals ➔'
+      }
+    };
+
+    const params = new URLSearchParams(location.search);
+    const qLang = params.get('lang');
+    let lang = (qLang === 'pt' || qLang === 'en') ? qLang : ((navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en');
+    let page = 1, totalPages = 1;
+
+    const $ = (id) => document.getElementById(id);
+    const tr = (k, r = {}) => Object.entries(r).reduce((s, [a, b]) => s.replaceAll('{' + a + '}', b), I18N[lang][k]);
+
+    function applyLang() {
+      document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+      document.title = I18N[lang].title.replace('🏛️ ', '') + ' • Pyxie';
+      $('title').textContent = tr('title');
+      $('subtitle').textContent = tr('subtitle');
+      $('prev').textContent = tr('prev');
+      $('next').textContent = tr('next');
+      $('prev2').textContent = tr('prev');
+      $('next2').textContent = tr('next');
+      $('langBtn').textContent = tr('lang');
+
+      $('footerText').textContent = I18N[lang].footer;
+      $('footerHomeLink').textContent = I18N[lang].footerHome;
+      $('footerPartnersLink').textContent = I18N[lang].footerPartners;
+      $('footerWikiLink').textContent = I18N[lang].footerWiki;
+      $('footerPromoLink').textContent = I18N[lang].footerPromo;
+
+      $('ptBannerTitle').textContent = I18N[lang].ptBannerTitle;
+      $('ptBannerDesc').textContent = I18N[lang].ptBannerDesc;
+      $('ptBannerBtn').textContent = I18N[lang].ptBannerBtn;
+
+      $('footerHomeLink').href = '/?lang=' + lang;
+      $('footerPartnersLink').href = '/parcerias?lang=' + lang;
+      $('footerWikiLink').href = '/wiki?lang=' + lang;
+
+      syncHourlyPromoLinks();
     }
-    $('pageInfo').textContent = tr('page', { p: page, t: totalPages, n: data.total });
-    $('prev').disabled = page <= 1; $('next').disabled = page >= totalPages;
-  } catch (e) { $('msg').textContent = tr('error'); }
-}
 
-$('prev').onclick = () => { page--; load(); };
-$('next').onclick = () => { page++; load(); };
-$('langBtn').onclick = () => { lang = lang === 'pt' ? 'en' : 'pt'; applyLang(); load(); };
-applyLang(); load();
-</script>
+    async function syncHourlyPromoLinks() {
+      const isPt = lang === 'pt';
+      const promoEls = document.querySelectorAll('[data-hourly-promo="true"]');
+      if (!isPt) {
+        const ADSTERRA_SMARTLINK = 'https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813';
+        promoEls.forEach((el) => {
+          el.href = ADSTERRA_SMARTLINK;
+          el.setAttribute('title', 'Special Gaming Deals & Rewards ✦');
+        });
+        return;
+      }
+      try {
+        const res = await fetch('/api/shopee/hourly-promo');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.success && data.promo && data.promo.link) {
+          promoEls.forEach((el) => {
+            el.href = data.promo.link;
+            if (data.promo.name) {
+              el.setAttribute('title', `Shopee: ${data.promo.name} (${data.promo.commission || ''})`);
+            }
+          });
+        }
+      } catch (_) {}
+    }
+
+    async function load() {
+      $('msg').textContent = tr('loading');
+      $('grid').replaceChildren();
+      try {
+        const res = await fetch('/api/museum/arts?page=' + page + '&limit=24');
+        const data = await res.json();
+        if (!data.success) throw new Error('api');
+        page = data.page;
+        totalPages = data.totalPages;
+        $('msg').textContent = data.arts.length ? '' : tr('empty');
+
+        for (const art of data.arts) {
+          const fig = document.createElement('figure');
+          const img = document.createElement('img');
+          img.loading = 'lazy';
+          img.alt = art.description || art.author;
+          img.src = art.imageUrl;
+          img.onerror = () => { img.src = '/assets/pyxie/pyxie_mascot.png'; };
+
+          const cap = document.createElement('figcaption');
+          const a = document.createElement('div');
+          a.className = 'author';
+          a.textContent = '🎨 ' + art.author;
+
+          const d = document.createElement('div');
+          d.className = 'desc';
+          d.textContent = art.description || '';
+
+          cap.append(a, d);
+          fig.append(img, cap);
+          $('grid').append(fig);
+        }
+
+        const pageText = tr('page', { p: page, t: totalPages, n: data.total });
+        $('pageInfo').textContent = pageText;
+        $('prev').disabled = page <= 1;
+        $('next').disabled = page >= totalPages;
+        $('prev2').disabled = page <= 1;
+        $('next2').disabled = page >= totalPages;
+      } catch (e) {
+        $('msg').textContent = tr('error');
+      }
+    }
+
+    const prevFn = () => { if (page > 1) { page--; load(); window.scrollTo({ top: 0, behavior: 'smooth' }); } };
+    const nextFn = () => { if (page < totalPages) { page++; load(); window.scrollTo({ top: 0, behavior: 'smooth' }); } };
+
+    $('prev').onclick = prevFn;
+    $('next').onclick = nextFn;
+    $('prev2').onclick = prevFn;
+    $('next2').onclick = nextFn;
+
+    $('langBtn').onclick = () => {
+      lang = lang === 'pt' ? 'en' : 'pt';
+      try {
+        const u = new URL(location.href);
+        u.searchParams.set('lang', lang);
+        history.replaceState({}, '', u);
+      } catch (_) {}
+      applyLang();
+      load();
+    };
+
+    applyLang();
+    load();
+  </script>
 </body>
 </html>

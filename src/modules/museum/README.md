@@ -42,3 +42,4 @@ Ele conta com um sistema de colheita diária que percorre o canal de arte do ser
 - **Discord.js (v14):** Para coletar mensagens dos canais e enviar embeds informativos.
 - **Express:** Servidor web para entregar as imagens e a galeria aos visitantes.
 - **Cache de Imagens:** Otimização para carregar as fotos rapidamente sem gastar tráfego excessivo.
+

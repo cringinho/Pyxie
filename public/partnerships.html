@@ -1,118 +1,1187 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Parcerias • Pyxie</title>
-<style>
-  :root { --bg:#120b1f; --card:#1e1433; --line:#8b5cf6; --txt:#f3ecff; --mut:#b9a8d9; }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--txt); font-family:system-ui,sans-serif; }
-  header { padding:28px 16px 8px; text-align:center; }
-  h1 { margin:0; }
-  h2 { max-width:1200px; margin:24px auto 8px; padding:0 16px; font-size:1.1rem; color:#c4b5fd; }
-  .sub { color:var(--mut); margin:8px 0 0; }
-  .tabs { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:16px; }
-  button { background:var(--card); color:var(--txt); border:1px solid var(--line); padding:8px 14px; border-radius:8px; cursor:pointer; font:inherit; }
-  button.active, button:hover:not(:disabled) { background:var(--line); }
-  button:disabled { opacity:.45; cursor:default; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; max-width:1200px; margin:0 auto; padding:0 16px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
-  .card img { width:100%; aspect-ratio:16/9; object-fit:cover; background:#000; }
-  .body { padding:12px; display:flex; flex-direction:column; gap:8px; flex:1; }
-  .tag { color:#c4b5fd; font-size:.8rem; }
-  .desc { color:var(--mut); font-size:.9rem; word-break:break-word; flex:1; }
-  .actions { display:flex; gap:8px; }
-  a.visit { color:var(--txt); background:var(--line); padding:8px 14px; border-radius:8px; text-decoration:none; }
-  #toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--line); padding:10px 16px; border-radius:8px; display:none; }
-  #msg { text-align:center; color:var(--mut); padding:30px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mural das Alianças • Pyxie & Astaroth</title>
+  <meta name="description" content="Conheça as comunidades parceiras, criadores e projetos aliados da Cringelândia e Pyxie sob a guarda de Astaroth.">
+  <link rel="icon" type="image/png" href="/assets/pyxie/pyxie_pixelart_face.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0614;
+      --bg-deep: #120924;
+      --card-bg: rgba(23, 14, 44, 0.78);
+      --card-border: rgba(139, 92, 246, 0.28);
+      --purple-main: #8b5cf6;
+      --purple-glow: rgba(139, 92, 246, 0.45);
+      --green-astaroth: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.45);
+      --pink-neon: #ec4899;
+      --pink-glow: rgba(236, 72, 153, 0.45);
+      --cyan-neon: #06b6d4;
+      --gold-neon: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #cbd5e1;
+      --text-dim: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 85% 25%, rgba(16, 185, 129, 0.14) 0%, transparent 50%),
+        radial-gradient(circle at 50% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 60%);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Navbar Superior */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(18px);
+      background: rgba(10, 6, 20, 0.85);
+      border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+      padding: 12px 24px;
+    }
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand-home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      padding: 6px 14px 6px 8px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .brand-home-btn:hover {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: var(--purple-main);
+      box-shadow: 0 0 20px var(--purple-glow);
+      transform: translateY(-1px);
+    }
+    .brand-pixel-icon {
+      width: 32px;
+      height: 32px;
+      image-rendering: pixelated;
+      border-radius: 6px;
+      filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.5));
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      color: var(--text-main);
+      background: rgba(18, 10, 36, 0.7);
+    }
+    .btn-nav:hover {
+      background: rgba(139, 92, 246, 0.25);
+      border-color: var(--purple-main);
+    }
+    .btn-lang {
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.35);
+    }
+    .btn-discord {
+      background: linear-gradient(135deg, #5865F2, #7289da);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 14px rgba(88, 101, 242, 0.35);
+    }
+    .btn-discord:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(88, 101, 242, 0.5);
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 44px 20px 24px;
+      text-align: center;
+    }
+    .hero-badge-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+    }
+    .hero-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 10px #34d399;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+    .hero-mascot-flying {
+      width: 130px;
+      height: 130px;
+      margin: 0 auto 12px;
+      filter: drop-shadow(0 12px 24px rgba(16, 185, 129, 0.35));
+      animation: floatPet 4s ease-in-out infinite;
+    }
+    @keyframes floatPet {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(2deg); }
+    }
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .gradient-text-hero {
+      background: linear-gradient(135deg, #ffffff 10%, #6ee7b7 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 35px rgba(16, 185, 129, 0.25));
+    }
+    .hero-subtitle {
+      max-width: 760px;
+      margin: 0 auto 28px;
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .hero-meta-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .meta-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.84rem;
+      color: #e2e8f0;
+    }
+    .meta-stat-num {
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      color: #6ee7b7;
+    }
+    .btn-apply-partner {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      text-decoration: none;
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .btn-apply-partner:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(16, 185, 129, 0.55);
+    }
+
+    /* Container Principal */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+      flex: 1;
+      width: 100%;
+    }
+
+    /* Categorias / Tabs */
+    .tabs-wrap {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 28px 0 36px;
+    }
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(22, 13, 44, 0.65);
+      border: 1px solid rgba(139, 92, 246, 0.28);
+      color: #cbd5e1;
+      padding: 10px 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tab-btn:hover {
+      background: rgba(139, 92, 246, 0.22);
+      color: #fff;
+      border-color: var(--purple-main);
+      transform: translateY(-1px);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.35), rgba(16, 185, 129, 0.25));
+      border-color: #6ee7b7;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+    }
+    .tab-icon {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+
+    /* Seções e Títulos */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 36px 0 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .section-mascot-icon {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 2px 6px rgba(16, 185, 129, 0.4));
+    }
+    .section-desc {
+      color: var(--text-dim);
+      font-size: 0.88rem;
+    }
+
+    /* Grid de Cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 22px;
+      margin-bottom: 40px;
+    }
+
+    /* Cartão do Parceiro */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.65), 0 0 25px rgba(139, 92, 246, 0.2);
+      border-color: rgba(139, 92, 246, 0.55);
+    }
+    /* Estilos Específicos por Macro-categoria */
+    .card.macro-community { border-top: 3px solid #8b5cf6; }
+    .card.macro-creator { border-top: 3px solid #ec4899; }
+    .card.macro-service { border-top: 3px solid #06b6d4; }
+    .card.macro-ong { border-top: 3px solid #10b981; }
+
+    .card.is-featured {
+      background: linear-gradient(180deg, rgba(32, 18, 58, 0.85) 0%, rgba(18, 10, 34, 0.85) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      border-top: 3px solid #f59e0b;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(245, 158, 11, 0.15);
+    }
+    .card.is-featured .featured-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-thumb-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #080410;
+      overflow: hidden;
+    }
+    .card-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .card:hover .card-thumb {
+      transform: scale(1.04);
+    }
+    .card-thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10, 6, 20, 0.85) 0%, transparent 60%);
+    }
+
+    .card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+    .card-header-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .tag-pill {
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .tag-macro-community { background: rgba(139, 92, 246, 0.18); border-color: rgba(139, 92, 246, 0.4); color: #d8b4fe; }
+    .tag-macro-creator { background: rgba(236, 72, 153, 0.18); border-color: rgba(236, 72, 153, 0.4); color: #f9a8d4; }
+    .tag-macro-service { background: rgba(6, 182, 212, 0.18); border-color: rgba(6, 182, 212, 0.4); color: #67e8f9; }
+    .tag-macro-ong { background: rgba(16, 185, 129, 0.18); border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+
+    .bump-streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #facc15;
+      background: rgba(250, 204, 21, 0.12);
+      border: 1px solid rgba(250, 204, 21, 0.28);
+      padding: 2px 8px;
+      border-radius: 9999px;
+    }
+    .project-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.18rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .project-desc {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      flex: 1;
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .btn-visit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.85), rgba(124, 58, 237, 0.85));
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.86rem;
+      padding: 10px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .btn-visit:hover {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+      transform: translateY(-1px);
+    }
+    .btn-bump {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
+      font-weight: 700;
+      font-size: 0.86rem;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .btn-bump:hover:not(:disabled) {
+      background: rgba(16, 185, 129, 0.3);
+      border-color: #34d399;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+      transform: translateY(-1px);
+    }
+    .btn-bump:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Estado de Vazio ou Carregando */
+    #msg {
+      text-align: center;
+      color: var(--text-dim);
+      padding: 60px 20px;
+      font-size: 1.05rem;
+    }
+
+    /* Bloco de Anúncios / Patrocínio */
+    .monetization-pt { display: block; }
+    .monetization-en { display: none; }
+    html[lang="en"] .monetization-pt { display: none !important; }
+    html[lang="en"] .monetization-en { display: flex !important; }
+    html[lang="pt-BR"] .monetization-en { display: none !important; }
+    html[lang="pt-BR"] .monetization-pt { display: block !important; }
+
+    .promo-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.25));
+      border: 1px solid rgba(236, 72, 153, 0.4);
+      border-radius: 18px;
+      padding: 16px 24px;
+      margin: 32px 0 20px;
+      text-decoration: none;
+      color: var(--text-main);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      transition: all 0.25s ease;
+    }
+    .promo-banner:hover {
+      border-color: var(--pink-neon);
+      box-shadow: 0 12px 35px rgba(236, 72, 153, 0.3);
+      transform: translateY(-2px);
+    }
+    .promo-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .promo-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(236, 72, 153, 0.25);
+      border: 1px solid rgba(236, 72, 153, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .promo-icon-img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+    .promo-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .promo-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+    .promo-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--pink-neon), #db2777);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.84rem;
+      padding: 9px 18px;
+      border-radius: 9999px;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4);
+    }
+
+    /* Adsterra Container para EN */
+    .adsterra-banner-container {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 100px;
+      padding: 14px 18px;
+      background: radial-gradient(circle at center, rgba(168, 85, 247, 0.12), rgba(12, 6, 24, 0.95));
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(10, 5, 20, 0.6);
+      text-align: center;
+      overflow: hidden;
+      margin: 32px 0 20px;
+    }
+    .adsterra-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.74rem;
+      color: #c084fc;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .adsterra-badge {
+      background: rgba(244, 63, 94, 0.2);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: #fca5a5;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.68rem;
+    }
+    .adsterra-desktop-468 { display: flex; justify-content: center; width: 100%; }
+    .adsterra-mobile-300 { display: none; justify-content: center; width: 100%; }
+    @media (max-width: 520px) {
+      .adsterra-desktop-468 { display: none !important; }
+      .adsterra-mobile-300 { display: flex !important; }
+      .promo-banner { flex-direction: column; align-items: stretch; text-align: center; }
+      .promo-content { flex-direction: column; }
+      .promo-cta-btn { justify-content: center; }
+    }
+
+    /* Rodapé */
+    footer {
+      border-top: 1px solid rgba(139, 92, 246, 0.2);
+      background: rgba(8, 4, 16, 0.9);
+      padding: 36px 20px;
+      text-align: center;
+      margin-top: auto;
+    }
+    .footer-mascot {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      opacity: 0.85;
+      filter: drop-shadow(0 4px 10px rgba(16, 185, 129, 0.3));
+    }
+    .footer-text {
+      color: var(--text-dim);
+      font-size: 0.86rem;
+      margin-bottom: 8px;
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-size: 0.84rem;
+    }
+    .footer-links a {
+      color: #c4b5fd;
+      text-decoration: none;
+    }
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Toast Flutuante */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(18, 10, 36, 0.96);
+      border: 1px solid var(--green-astaroth);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 12px;
+      display: none;
+      z-index: 1000;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px var(--green-glow);
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1 id="title"></h1>
-  <p class="sub" id="subtitle"></p>
-  <button id="langBtn"></button>
-</header>
-<div class="tabs" id="tabs"></div>
-<h2 id="featuredTitle"></h2>
-<div class="grid" id="mosaic"></div>
-<h2 id="allTitle"></h2>
-<div id="msg"></div>
-<div class="grid" id="catalog"></div>
-<div id="toast"></div>
 
-<script>
-const I18N = {
-  pt: { title:'🤝 Mural de Parcerias', subtitle:'Projetos parceiros da Cringelândia.', featured:'⭐ Destaques', all:'Todos os projetos', tabAll:'Todos', loading:'Carregando...', empty:'Nenhuma parceria publicada ainda.', error:'Não foi possível carregar as parcerias.', visit:'Acessar', bump:'🚀 Promover', lang:'EN',
-    macro:{ community:'Comunidades', creator:'Criadores', service:'Serviços', ong:'ONGs' } },
-  en: { title:'🤝 Partnership Board', subtitle:'Partner projects of Cringelândia.', featured:'⭐ Featured', all:'All projects', tabAll:'All', loading:'Loading...', empty:'No partnerships published yet.', error:'Could not load partnerships.', visit:'Visit', bump:'🚀 Promote', lang:'PT',
-    macro:{ community:'Communities', creator:'Creators', service:'Services', ong:'NGOs' } }
-};
-const qLang = new URLSearchParams(location.search).get('lang');
-let lang = (qLang === 'pt' || qLang === 'en') ? qLang : ((navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en');
-let category = null;
-const $ = (id) => document.getElementById(id);
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="/" class="brand-home-btn" title="Voltar para a página inicial da Pyxie">
+          <img src="/assets/pyxie/pyxie_pixelart_face.png" class="brand-pixel-icon" alt="Pyxie" />
+          <span>Pyxie</span>
+        </a>
+      </div>
+      <div class="nav-actions">
+        <button id="langBtn" class="btn-nav btn-lang" type="button">EN</button>
+        <a href="https://discord.gg/874440609402134528" target="_blank" rel="noopener noreferrer" class="btn-nav btn-discord">
+          <span>💬</span> <span id="discordBtnText">Cringelândia</span>
+        </a>
+      </div>
+    </div>
+  </header>
 
-function toast(text) { const el = $('toast'); el.textContent = text; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 3500); }
-function safeUrl(u) { try { const x = new URL(u); return (x.protocol === 'http:' || x.protocol === 'https:') ? x.href : '#'; } catch { return '#'; } }
+  <!-- Hero Section Astaroth -->
+  <section class="hero">
+    <div class="hero-badge-wrap">
+      <span class="hero-badge-dot"></span>
+      <span id="heroBadge">Guardião Astaroth • Alianças Vivas</span>
+    </div>
 
-function card(p) {
-  const c = document.createElement('div'); c.className = 'card';
-  const img = document.createElement('img'); img.loading = 'lazy'; img.alt = p.projectName; img.src = safeUrl(p.imageUrl);
-  const body = document.createElement('div'); body.className = 'body';
-  const tag = document.createElement('div'); tag.className = 'tag'; tag.textContent = p.categoryEmoji + ' ' + (p.categoryLabel[lang] || p.categoryLabel.en);
-  const name = document.createElement('strong'); name.textContent = p.projectName;
-  const desc = document.createElement('div'); desc.className = 'desc'; desc.textContent = p.publicDesc;
-  const actions = document.createElement('div'); actions.className = 'actions';
-  const visit = document.createElement('a'); visit.className = 'visit'; visit.href = safeUrl(p.accessLink); visit.target = '_blank'; visit.rel = 'noopener noreferrer nofollow'; visit.textContent = I18N[lang].visit;
-  const bump = document.createElement('button'); bump.textContent = I18N[lang].bump;
-  bump.onclick = async () => {
-    bump.disabled = true;
-    try {
-      const res = await fetch('/api/partnerships/bump/' + encodeURIComponent(p.id) + '?lang=' + lang, { method: 'POST' });
-      const data = await res.json(); toast(data.message || '');
-      if (res.ok) load();
-    } catch { toast(I18N[lang].error); }
-    bump.disabled = false;
-  };
-  actions.append(visit, bump); body.append(tag, name, desc, actions); c.append(img, body);
-  return c;
-}
+    <!-- Mascote Astaroth Flutuante -->
+    <img src="/assets/pyxie/icons/astaroth_pet_cute_flying.svg" class="hero-mascot-flying" alt="Astaroth Alianças" />
 
-function renderTabs() {
-  const tabs = $('tabs'); tabs.replaceChildren();
-  const entries = [[null, I18N[lang].tabAll], ...Object.entries(I18N[lang].macro)];
-  for (const [key, label] of entries) {
-    const b = document.createElement('button'); b.textContent = label;
-    if (key === category) b.classList.add('active');
-    b.onclick = () => { category = key; renderTabs(); load(); };
-    tabs.append(b);
-  }
-}
+    <h1 class="hero-title">
+      <span id="titlePrefix">Mural das Alianças de</span> <span class="gradient-text-hero">Astaroth</span>
+    </h1>
 
-function applyLang() {
-  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
-  document.title = I18N[lang].title.replace('🤝 ', '') + ' • Pyxie';
-  $('title').textContent = I18N[lang].title; $('subtitle').textContent = I18N[lang].subtitle;
-  $('featuredTitle').textContent = I18N[lang].featured; $('allTitle').textContent = I18N[lang].all;
-  $('langBtn').textContent = I18N[lang].lang; renderTabs();
-}
+    <p class="hero-subtitle" id="subtitle">
+      Explore projetos parceiros, comunidades acolhedoras, canais de criadores e ferramentas aliadas da Cringelândia e Pyxie. Impulsione suas alianças favoritas!
+    </p>
 
-async function load() {
-  $('msg').textContent = I18N[lang].loading;
-  try {
-    const res = await fetch('/api/partnerships' + (category ? '?category=' + encodeURIComponent(category) : ''));
-    const data = await res.json();
-    $('mosaic').replaceChildren(...Object.values(data.mosaic || {}).map(card));
-    $('catalog').replaceChildren(...data.catalog.map(card));
-    $('msg').textContent = data.catalog.length ? '' : I18N[lang].empty;
-  } catch { $('msg').textContent = I18N[lang].error; }
-}
+    <div class="hero-meta-strip">
+      <div class="meta-stat">
+        <span>🛡️</span>
+        <span id="statPartnersLabel">Parcerias:</span>
+        <span class="meta-stat-num" id="statPartnersCount">0</span>
+      </div>
+      <div class="meta-stat">
+        <span>⚡</span>
+        <span id="statBumpsLabel">Total de Impulsos:</span>
+        <span class="meta-stat-num" id="statBumpsCount">0</span>
+      </div>
+      <a href="https://discord.gg/874440609402134528" target="_blank" rel="noopener noreferrer" class="btn-apply-partner" id="btnApply">
+        <span>✨</span> <span id="btnApplyText">Quero ser Parceiro</span>
+      </a>
+    </div>
+  </section>
 
-$('langBtn').onclick = () => { lang = lang === 'pt' ? 'en' : 'pt'; applyLang(); load(); };
-applyLang(); load();
-</script>
+  <!-- Container Principal -->
+  <main class="container">
+
+    <!-- Anúncios / Patrocínio Superior (Shopee para PT / Adsterra para EN) -->
+    <div class="monetization-pt">
+      <a href="/promo" class="promo-banner" data-hourly-promo="true" target="_blank" rel="noopener">
+        <div class="promo-content">
+          <div class="promo-icon-wrap">
+            <img src="/assets/pyxie/icons/astaroth_pet1.svg" class="promo-icon-img" alt="Shopee Astaroth Deals" />
+          </div>
+          <div>
+            <div class="promo-title" id="ptBannerTitle">Presente Especial de Astaroth • Achadinhos da Comunidade</div>
+            <div class="promo-desc" id="ptBannerDesc">Confira pelúcias, colecionáveis e setups gamer com os melhores cupons na Shopee!</div>
+          </div>
+        </div>
+        <span class="promo-cta-btn" id="ptBannerBtn">Ver Ofertas ➔</span>
+      </a>
+    </div>
+
+    <div class="monetization-en adsterra-banner-container">
+      <div class="adsterra-header">
+        <span class="adsterra-badge">SPONSOR</span>
+        <span>Community Partner Deals & Special Rewards</span>
+      </div>
+      <div class="adsterra-desktop-468">
+        <script>
+          atOptions = {
+            'key' : '9bfd0ea5a8cecbfa6b88b7f8373b88d3',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/9bfd0ea5a8cecbfa6b88b7f8373b88d3/invoke.js"></script>
+      </div>
+      <div class="adsterra-mobile-300">
+        <script>
+          atOptions = {
+            'key' : 'f3dbfeae56ba2efdf768f54ef4ff8685',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/f3dbfeae56ba2efdf768f54ef4ff8685/invoke.js"></script>
+      </div>
+    </div>
+
+    <!-- Seletor de Categorias / Abas com Ícones Temáticos -->
+    <div class="tabs-wrap" id="tabs"></div>
+
+    <!-- Destaques (Mosaico de Impulsos de Astaroth) -->
+    <div id="featuredSection" style="display: none;">
+      <div class="section-header">
+        <div class="section-title">
+          <img src="/assets/pyxie/icons/astaroth_pet_green_atack.svg" class="section-mascot-icon" alt="Astaroth Atack" />
+          <span id="featuredTitle">⭐ Destaques de Astaroth</span>
+        </div>
+        <div class="section-desc" id="featuredDesc">Alianças mais recentemente impulsionadas pela comunidade</div>
+      </div>
+      <div class="grid" id="mosaic"></div>
+    </div>
+
+    <!-- Catálogo Completo de Projetos -->
+    <div class="section-header">
+      <div class="section-title">
+        <img src="/assets/pyxie/icons/astaroth_pet1.svg" class="section-mascot-icon" alt="Astaroth All" />
+        <span id="allTitle">Todos os Projetos Aliados</span>
+      </div>
+      <div class="section-desc" id="allDesc">Navegue pelas alianças oficiais cadastradas</div>
+    </div>
+
+    <div id="msg"></div>
+    <div class="grid" id="catalog"></div>
+
+  </main>
+
+  <!-- Rodapé -->
+  <footer>
+    <img src="/assets/pyxie/icons/astaroth_pet_idling.svg" class="footer-mascot" alt="Astaroth Idling" />
+    <div class="footer-text" id="footerText">Pyxie & Cringelândia • Conectando mundos e comunidades mágicas.</div>
+    <div class="footer-links">
+      <a href="/" id="footerHomeLink">Início</a>
+      <span>•</span>
+      <a href="/wiki" id="footerWikiLink">Wiki da Pyxie</a>
+      <span>•</span>
+      <a href="/bonus" id="footerBonusLink">Bônus Diário</a>
+      <span>•</span>
+      <a href="/promo" data-hourly-promo="true" target="_blank" rel="noopener" id="footerPromoLink">Ofertas Parceiras</a>
+    </div>
+  </footer>
+
+  <div id="toast"></div>
+
+  <script>
+    const I18N = {
+      pt: {
+        metaTitle: 'Mural das Alianças • Pyxie & Astaroth',
+        heroBadge: 'Guardião Astaroth • Alianças Vivas',
+        titlePrefix: 'Mural das Alianças de',
+        subtitle: 'Explore projetos parceiros, comunidades acolhedoras, canais de criadores e ferramentas aliadas da Cringelândia e Pyxie. Impulsione suas alianças favoritas!',
+        statPartners: 'Parcerias:',
+        statBumps: 'Total de Impulsos:',
+        btnApply: 'Quero ser Parceiro',
+        featured: '⭐ Destaques de Astaroth',
+        featuredDesc: 'Alianças mais recentemente impulsionadas pela comunidade',
+        all: 'Todos os Projetos Aliados',
+        allDesc: 'Navegue pelas alianças oficiais cadastradas',
+        tabAll: 'Todas as Alianças',
+        loading: 'Carregando alianças arcanas...',
+        empty: 'Nenhuma parceria cadastrada nesta categoria ainda.',
+        error: 'Não foi possível carregar as parcerias no momento.',
+        visit: 'Explorar Projeto ➔',
+        bump: '⚡ Impulsionar',
+        bumped: 'Impulsionado!',
+        bumpStreak: 'Impulsos',
+        lang: 'EN',
+        footer: 'Pyxie & Cringelândia • Conectando mundos e comunidades mágicas.',
+        footerHome: 'Início',
+        footerWiki: 'Wiki Oficial',
+        footerBonus: 'Bônus Web',
+        footerPromo: 'Ofertas Parceiras',
+        ptBannerTitle: 'Presente Especial de Astaroth • Achadinhos da Comunidade',
+        ptBannerDesc: 'Confira pelúcias, colecionáveis e setups gamer com os melhores cupons na Shopee!',
+        ptBannerBtn: 'Ver Ofertas ➔',
+        macro: {
+          community: 'Comunidades',
+          creator: 'Criadores',
+          service: 'Serviços & Bots',
+          ong: 'ONGs & Causas'
+        }
+      },
+      en: {
+        metaTitle: 'Alliances Board • Pyxie & Astaroth',
+        heroBadge: 'Guardian Astaroth • Active Alliances',
+        titlePrefix: 'Alliances Board of',
+        subtitle: 'Explore partner projects, welcoming communities, creator channels and allied tools of Cringelândia and Pyxie. Boost your favorite alliances!',
+        statPartners: 'Partnerships:',
+        statBumps: 'Total Bumps:',
+        btnApply: 'Become a Partner',
+        featured: '⭐ Astaroth Highlights',
+        featuredDesc: 'Most recently boosted alliances by the community',
+        all: 'All Allied Projects',
+        allDesc: 'Browse through official verified partnerships',
+        tabAll: 'All Alliances',
+        loading: 'Loading arcane alliances...',
+        empty: 'No partnerships found in this category yet.',
+        error: 'Could not load partnerships at the moment.',
+        visit: 'Explore Project ➔',
+        bump: '⚡ Boost Ally',
+        bumped: 'Boosted!',
+        bumpStreak: 'Bumps',
+        lang: 'PT',
+        footer: 'Pyxie & Cringelândia • Connecting magical worlds and servers.',
+        footerHome: 'Home',
+        footerWiki: 'Official Wiki',
+        footerBonus: 'Web Bonus',
+        footerPromo: 'Partner Deals',
+        ptBannerTitle: 'Astaroth Special Reward • Community Deals',
+        ptBannerDesc: 'Find plushies, anime figures and gaming gear with top coupons on Shopee!',
+        ptBannerBtn: 'Check Deals ➔',
+        macro: {
+          community: 'Communities',
+          creator: 'Creators',
+          service: 'Services & Bots',
+          ong: 'NGOs & Causes'
+        }
+      }
+    };
+
+    const qLang = new URLSearchParams(location.search).get('lang');
+    let lang = (qLang === 'pt' || qLang === 'en') ? qLang : ((navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en');
+    let category = null;
+    const $ = (id) => document.getElementById(id);
+
+    function toast(text) {
+      const el = $('toast');
+      el.textContent = text;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    function safeUrl(u) {
+      try {
+        const x = new URL(u);
+        return (x.protocol === 'http:' || x.protocol === 'https:') ? x.href : '#';
+      } catch {
+        return '#';
+      }
+    }
+
+    const MACRO_PETS = {
+      community: '/assets/pyxie/icons/astaroth_pet_cute_flying.svg',
+      creator: '/assets/pyxie/icons/astaroth_pet1.svg',
+      service: '/assets/pyxie/icons/astaroth_pet_green_atack.svg',
+      ong: '/assets/pyxie/icons/astaroth_pet_idling.svg'
+    };
+
+    function card(p, isFeatured = false) {
+      const c = document.createElement('div');
+      c.className = 'card macro-' + (p.macroCategory || 'community') + (isFeatured ? ' is-featured' : '');
+
+      if (isFeatured) {
+        const featBadge = document.createElement('div');
+        featBadge.className = 'featured-badge';
+        featBadge.textContent = '⭐ ' + (lang === 'pt' ? 'Destaque' : 'Featured');
+        c.append(featBadge);
+      }
+
+      // Thumbnail
+      const thumbWrap = document.createElement('div');
+      thumbWrap.className = 'card-thumb-wrap';
+      const img = document.createElement('img');
+      img.className = 'card-thumb';
+      img.loading = 'lazy';
+      img.alt = p.projectName;
+      img.src = safeUrl(p.imageUrl);
+      img.onerror = () => { img.src = '/assets/pyxie/pyxie_mascot.png'; };
+      const overlay = document.createElement('div');
+      overlay.className = 'card-thumb-overlay';
+      thumbWrap.append(img, overlay);
+
+      // Body
+      const body = document.createElement('div');
+      body.className = 'card-body';
+
+      // Header Tag Line
+      const headerLine = document.createElement('div');
+      headerLine.className = 'card-header-line';
+
+      const tag = document.createElement('div');
+      tag.className = 'tag-pill tag-macro-' + (p.macroCategory || 'community');
+      const macroLabel = (p.categoryLabel && (p.categoryLabel[lang] || p.categoryLabel.en)) || p.categoryKey || '';
+      tag.textContent = (p.categoryEmoji || '🤝') + ' ' + macroLabel;
+
+      const bumpCount = p.bumpCount || 0;
+      const streakBadge = document.createElement('div');
+      streakBadge.className = 'bump-streak-badge';
+      streakBadge.textContent = `🔥 ${bumpCount} ${I18N[lang].bumpStreak}`;
+
+      headerLine.append(tag, streakBadge);
+
+      // Name & Description
+      const name = document.createElement('h3');
+      name.className = 'project-name';
+      name.textContent = p.projectName;
+
+      const desc = document.createElement('p');
+      desc.className = 'project-desc';
+      desc.textContent = p.publicDesc || '';
+
+      // Actions
+      const actions = document.createElement('div');
+      actions.className = 'card-actions';
+
+      const visit = document.createElement('a');
+      visit.className = 'btn-visit';
+      visit.href = safeUrl(p.accessLink);
+      visit.target = '_blank';
+      visit.rel = 'noopener noreferrer nofollow';
+      visit.textContent = I18N[lang].visit;
+
+      const bump = document.createElement('button');
+      bump.className = 'btn-bump';
+      bump.type = 'button';
+      bump.textContent = I18N[lang].bump;
+
+      bump.onclick = async () => {
+        bump.disabled = true;
+        try {
+          const res = await fetch('/api/partnerships/bump/' + encodeURIComponent(p.id) + '?lang=' + lang, { method: 'POST' });
+          const data = await res.json();
+          toast(data.message || (res.ok ? I18N[lang].bumped : I18N[lang].error));
+          if (res.ok) load();
+        } catch {
+          toast(I18N[lang].error);
+        }
+        bump.disabled = false;
+      };
+
+      actions.append(visit, bump);
+      body.append(headerLine, name, desc, actions);
+      c.append(thumbWrap, body);
+      return c;
+    }
+
+    function renderTabs() {
+      const tabs = $('tabs');
+      tabs.replaceChildren();
+
+      const entries = [
+        [null, I18N[lang].tabAll, '/assets/pyxie/icons/astaroth_pet_cute_flying.svg'],
+        ['community', I18N[lang].macro.community, MACRO_PETS.community],
+        ['creator', I18N[lang].macro.creator, MACRO_PETS.creator],
+        ['service', I18N[lang].macro.service, MACRO_PETS.service],
+        ['ong', I18N[lang].macro.ong, MACRO_PETS.ong]
+      ];
+
+      for (const [key, label, petIcon] of entries) {
+        const b = document.createElement('button');
+        b.className = 'tab-btn' + (key === category ? ' active' : '');
+        b.type = 'button';
+
+        const icon = document.createElement('img');
+        icon.className = 'tab-icon';
+        icon.src = petIcon;
+        icon.alt = label;
+
+        const span = document.createElement('span');
+        span.textContent = label;
+
+        b.append(icon, span);
+        b.onclick = () => {
+          category = key;
+          renderTabs();
+          load();
+        };
+        tabs.append(b);
+      }
+    }
+
+    function applyLang() {
+      document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+      document.title = I18N[lang].metaTitle;
+
+      $('heroBadge').textContent = I18N[lang].heroBadge;
+      $('titlePrefix').textContent = I18N[lang].titlePrefix;
+      $('subtitle').textContent = I18N[lang].subtitle;
+      $('statPartnersLabel').textContent = I18N[lang].statPartners;
+      $('statBumpsLabel').textContent = I18N[lang].statBumps;
+      $('btnApplyText').textContent = I18N[lang].btnApply;
+
+      $('featuredTitle').textContent = I18N[lang].featured;
+      $('featuredDesc').textContent = I18N[lang].featuredDesc;
+      $('allTitle').textContent = I18N[lang].all;
+      $('allDesc').textContent = I18N[lang].allDesc;
+
+      $('langBtn').textContent = I18N[lang].lang;
+      $('footerText').textContent = I18N[lang].footer;
+      $('footerHomeLink').textContent = I18N[lang].footerHome;
+      $('footerWikiLink').textContent = I18N[lang].footerWiki;
+      $('footerBonusLink').textContent = I18N[lang].footerBonus;
+      $('footerPromoLink').textContent = I18N[lang].footerPromo;
+
+      $('ptBannerTitle').textContent = I18N[lang].ptBannerTitle;
+      $('ptBannerDesc').textContent = I18N[lang].ptBannerDesc;
+      $('ptBannerBtn').textContent = I18N[lang].ptBannerBtn;
+
+      // Atualiza links com idioma atual
+      $('footerHomeLink').href = '/?lang=' + lang;
+      $('footerWikiLink').href = '/wiki?lang=' + lang;
+      $('footerBonusLink').href = '/bonus?lang=' + lang;
+
+      renderTabs();
+      syncHourlyPromoLinks();
+    }
+
+    async function syncHourlyPromoLinks() {
+      const isPt = lang === 'pt';
+      const promoEls = document.querySelectorAll('[data-hourly-promo="true"]');
+      if (!isPt) {
+        const ADSTERRA_SMARTLINK = 'https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813';
+        promoEls.forEach((el) => {
+          el.href = ADSTERRA_SMARTLINK;
+          el.setAttribute('title', 'Special Gaming Deals & Rewards ✦');
+        });
+        return;
+      }
+      try {
+        const res = await fetch('/api/shopee/hourly-promo');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.success && data.promo && data.promo.link) {
+          promoEls.forEach((el) => {
+            el.href = data.promo.link;
+            if (data.promo.name) {
+              el.setAttribute('title', `Shopee: ${data.promo.name} (${data.promo.commission || ''})`);
+            }
+          });
+        }
+      } catch (_) {}
+    }
+
+    async function load() {
+      $('msg').textContent = I18N[lang].loading;
+      try {
+        const res = await fetch('/api/partnerships' + (category ? '?category=' + encodeURIComponent(category) : ''));
+        const data = await res.json();
+
+        // Mosaico de Destaques
+        const mosaicList = Object.values(data.mosaic || {});
+        const featSec = $('featuredSection');
+        if (mosaicList.length > 0 && !category) {
+          featSec.style.display = 'block';
+          $('mosaic').replaceChildren(...mosaicList.map((p) => card(p, true)));
+        } else {
+          featSec.style.display = 'none';
+        }
+
+        // Catálogo
+        $('catalog').replaceChildren(...data.catalog.map((p) => card(p, false)));
+        $('msg').textContent = data.catalog.length ? '' : I18N[lang].empty;
+
+        // Métricas rápidas
+        $('statPartnersCount').textContent = data.catalog.length;
+        const totalBumps = data.catalog.reduce((sum, p) => sum + (p.bumpCount || 0), 0);
+        $('statBumpsCount').textContent = totalBumps;
+      } catch {
+        $('msg').textContent = I18N[lang].error;
+      }
+    }
+
+    $('langBtn').onclick = () => {
+      lang = lang === 'pt' ? 'en' : 'pt';
+      try {
+        const u = new URL(location.href);
+        u.searchParams.set('lang', lang);
+        history.replaceState({}, '', u);
+      } catch (_) {}
+      applyLang();
+      load();
+    };
+
+    applyLang();
+    load();
+  </script>
 </body>
 </html>
-

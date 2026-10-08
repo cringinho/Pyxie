@@ -47,3 +47,4 @@ Para o módulo funcionar perfeitamente, o administrador configura:
 - **Discord.js (v14):** Para exibir botões, janelas de formulário (modais) e cartões visuais (embeds).
 - **Express:** Servidor que exibe as páginas do site e recebe os impulsos diários.
 - **Armazenamento Seguro em Arquivo:** Guarda as configurações e parcerias com proteção contra perda de dados.
+
