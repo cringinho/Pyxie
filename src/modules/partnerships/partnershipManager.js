@@ -442,15 +442,16 @@ class PartnershipManager {
     const schema = CATEGORY_SCHEMAS[req.categoryKey];
 
     if (action === 'approve') {
+      let publishedMessageId = null;
+      let publishedChannelId = null;
       const pubChannel = await this.client.channels.fetch(this.config.channels.publishedChannelId).catch(() => null);
       if (pubChannel) {
-        const publicEmbed = new EmbedBuilder()
-          .setColor('#8B5CF6')
-          .setTitle(trunc(t('partnerships.public_title', lang, { emoji: schema?.emoji || '🤝', project: req.projectName }), 256))
-          .setDescription(trunc(`${req.publicDesc}\n\n${t('partnerships.public_link', lang, { url: req.accessLink })}`, 4000))
-          .setImage(req.imageUrl)
-          .setFooter({ text: t('partnerships.footer_hint', lang) });
-        await pubChannel.send({ embeds: [publicEmbed] });
+        const publicEmbed = this.buildPublicPartnerEmbed({ ...req, bumpCount: 0 }, lang);
+        const sent = await pubChannel.send({ embeds: [publicEmbed] }).catch(() => null);
+        if (sent) {
+          publishedMessageId = sent.id;
+          publishedChannelId = pubChannel.id;
+        }
       }
 
       if (member) {
@@ -462,7 +463,14 @@ class PartnershipManager {
       this.refresh();
       const cur = this.data.pendingRequests.findIndex((r) => r.id === ticketId);
       if (cur !== -1) this.data.pendingRequests.splice(cur, 1);
-      this.data.approvedPartners.push({ ...req, approvedAt: Date.now(), lastBumpedAt: Date.now(), bumpCount: 0 });
+      this.data.approvedPartners.push({
+        ...req,
+        approvedAt: Date.now(),
+        lastBumpedAt: Date.now(),
+        bumpCount: 0,
+        publishedMessageId,
+        publishedChannelId,
+      });
       this.saveData();
 
       const approvedEmbed = EmbedBuilder.from(interaction.message.embeds[0])
@@ -542,13 +550,49 @@ class PartnershipManager {
     return { mosaic, catalog: list.map((p) => this.sanitize(p)) };
   }
 
-  async sendToChannel(channelId, content) {
+  getPublicWebUrl() {
+    const base = (process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org').replace(/\/+$/, '');
+    return `${base}/parcerias`;
+  }
+
+  buildPublicPartnerEmbed(partner, lang = 'pt') {
+    const schema = CATEGORY_SCHEMAS[partner.categoryKey];
+    const muralUrl = this.getPublicWebUrl();
+    const bumps = Number(partner.bumpCount || 0);
+
+    const descParts = [
+      partner.publicDesc,
+      '',
+      t('partnerships.public_link', lang, { url: partner.accessLink }),
+      t('partnerships.public_web_mural', lang, { url: muralUrl }),
+      t('partnerships.public_bump_streak', lang, { count: bumps }),
+    ];
+
+    const embed = new EmbedBuilder()
+      .setColor('#8B5CF6')
+      .setTitle(trunc(t('partnerships.public_title', lang, { emoji: schema?.emoji || '🤝', project: partner.projectName }), 256))
+      .setDescription(trunc(descParts.join('\n'), 4000))
+      .setFooter({ text: t('partnerships.footer_hint', lang) });
+
+    if (partner.imageUrl) {
+      embed.setImage(partner.imageUrl);
+    }
+    return embed;
+  }
+
+  async sendToChannel(channelId, payload) {
+    const data = typeof payload === 'string' ? { content: payload } : payload;
     if (this.client) {
       const ch = await this.client.channels.fetch(channelId).catch(() => null);
-      if (ch) await ch.send({ content }).catch(() => null);
+      if (ch) await ch.send(data).catch(() => null);
       return;
     }
-    await restPost(`/channels/${channelId}/messages`, { content, allowed_mentions: { parse: [] } });
+    const body = {
+      content: data.content || '',
+      embeds: data.embeds ? data.embeds.map((e) => (typeof e.toJSON === 'function' ? e.toJSON() : e)) : undefined,
+      allowed_mentions: { parse: [] },
+    };
+    await restPost(`/channels/${channelId}/messages`, body).catch(() => null);
   }
 
   async applyBump(partnerId, lang = 'en') {
@@ -567,9 +611,28 @@ class PartnershipManager {
     partner.bumpCount = (partner.bumpCount || 0) + 1;
     this.saveData(); // load-modify-save síncrono: janela de corrida mínima entre bot e web
 
+    // 1. Atualiza embed da publicação original no canal oficial, se ainda existir
+    if (this.client && partner.publishedChannelId && partner.publishedMessageId) {
+      try {
+        const pubCh = await this.client.channels.fetch(partner.publishedChannelId).catch(() => null);
+        if (pubCh) {
+          const originalMsg = await pubCh.messages.fetch(partner.publishedMessageId).catch(() => null);
+          if (originalMsg) {
+            const updatedEmbed = this.buildPublicPartnerEmbed(partner, 'pt');
+            await originalMsg.edit({ embeds: [updatedEmbed] }).catch(() => null);
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 2. Transmite no canal de radar de bumps com embed rico e links
     const radar = this.config.channels.radarChannelId;
     if (radar) {
-      await this.sendToChannel(radar, t('partnerships.radar_msg', 'pt', { project: partner.projectName, url: partner.accessLink }));
+      const radarEmbed = this.buildPublicPartnerEmbed(partner, 'pt')
+        .setColor('#EC4899')
+        .setTitle(`🚀 ${partner.projectName} • Impulso no Mural!`);
+      const radarMsg = t('partnerships.radar_msg', 'pt', { project: partner.projectName, url: partner.accessLink });
+      await this.sendToChannel(radar, { content: radarMsg, embeds: [radarEmbed] });
     }
     return { success: true, status: 200, message: t('partnerships.bump_ok', lang), partner: this.sanitize(partner) };
   }
@@ -595,6 +658,10 @@ class PartnershipManager {
       if (q.startsWith('en')) return 'en';
       return String(req.headers['accept-language'] || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
     };
+
+    app.get(['/parcerias', '/partnerships'], (req, res) => {
+      res.sendFile(path.join(process.cwd(), 'public', 'partnerships.html'));
+    });
 
     app.get('/api/partnerships', (req, res) => {
       res.json(this.getPartnershipCatalog(req.query.category ? String(req.query.category) : null));

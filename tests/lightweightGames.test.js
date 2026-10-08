@@ -234,15 +234,16 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
   assert.equal(workButtons[3].data.label, '[D]', 'O botão 4 deve ser [D].');
 })().then(() => {
   console.log('Verificação dos comandos leves, convite bilíngue e desafios de trabalho em PT/EN: OK');
+  fs.writeFileSync(economyFile, originalEconomy, 'utf8');
+  process.exit(0);
 }).catch((err) => {
   console.error(err);
-  process.exit(1);
-}).finally(() => {
   fs.writeFileSync(economyFile, originalEconomy, 'utf8');
+  process.exit(1);
 });
 } catch (e) {
   fs.writeFileSync(economyFile, originalEconomy, 'utf8');
-  throw e;
+  process.exit(1);
 }
 
 

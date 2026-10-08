@@ -376,9 +376,30 @@ app.get('/wiki', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'wiki.html'));
 });
 
+app.get(['/parcerias', '/partnerships'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'partnerships.html'));
+});
+
+app.get(['/museu', '/museum'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'museum.html'));
+});
+
 // 1. Healthcheck e status público
 app.get('/api/status', (req, res) => {
   res.json(getBotStatus());
+});
+
+app.get('/api/modules/status', (req, res) => {
+  try {
+    const all = moduleManager.getAllModules();
+    const modulesMap = {};
+    for (const m of all) {
+      modulesMap[m.id] = { enabled: m.enabled, active: m.active };
+    }
+    res.json({ success: true, modules: modulesMap });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // 1.1 Emojis oficiais da aplicação (Discord Dev Portal)

@@ -172,6 +172,36 @@ const { COMMAND_CATEGORY_MAP } = require(path.join(repo, 'src/commands/commandHe
   assert.equal(partnershipManager.deleteApprovedPartner('partner_to_delete'), false);
   console.log('  ✅ 8. Exclusão de parcerias por ID no painel administrativo validada.');
 
+  // 9. Embed de Parceria com referência ao Mural Web e Contagem de Impulsos/Bumps
+  const testPartner = {
+    categoryKey: 'community',
+    projectName: 'Comunidade Alpha',
+    accessLink: 'https://discord.gg/alpha',
+    publicDesc: 'Uma comunidade muito legal.',
+    imageUrl: 'https://cdn.discordapp.com/banner.png',
+    bumpCount: 7,
+  };
+  const ptEmbed = partnershipManager.buildPublicPartnerEmbed(testPartner, 'pt');
+  const enEmbed = partnershipManager.buildPublicPartnerEmbed(testPartner, 'en');
+
+  assert.ok(ptEmbed.data.description.includes('/parcerias'), 'Embed PT deve referenciar a aba pública /parcerias');
+  assert.ok(ptEmbed.data.description.includes('7'), 'Embed PT deve exibir a contagem de impulsos');
+  assert.ok(ptEmbed.data.description.includes('**Impulsos no Site:** 7'), 'Embed PT deve formatar os impulsos corretamente');
+  assert.ok(enEmbed.data.description.includes('/parcerias'), 'Embed EN deve referenciar a aba pública /parcerias');
+  assert.ok(enEmbed.data.description.includes('**Website Bumps:** 7'), 'Embed EN deve formatar os bumps corretamente');
+  console.log('  ✅ 9. Embed de parcerias com link do mural web e streak de bumps validado.');
+
+  // 10. Obrigatoriedade de README.md em todos os módulos
+  const modulesDir = path.join(repo, 'src/modules');
+  const moduleFolders = fs.readdirSync(modulesDir).filter((f) => fs.statSync(path.join(modulesDir, f)).isDirectory());
+  for (const modFolder of moduleFolders) {
+    const readmePath = path.join(modulesDir, modFolder, 'README.md');
+    assert.ok(fs.existsSync(readmePath), `Módulo '${modFolder}' DEVE possuir um arquivo README.md`);
+    const readmeContent = fs.readFileSync(readmePath, 'utf8');
+    assert.ok(readmeContent.length > 50, `README.md de '${modFolder}' não pode estar vazio`);
+  }
+  console.log('  ✅ 10. Obrigatoriedade de README.md em 100% dos módulos validada.');
+
   console.log('🎉 [TEST] Museu & Parcerias passaram com 100% de sucesso!');
   process.chdir(repo);
   fs.rmSync(tmp, { recursive: true, force: true });

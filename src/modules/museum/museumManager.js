@@ -372,6 +372,10 @@ class MuseumManager {
       next();
     };
 
+    app.get(['/museu', '/museum'], (req, res) => {
+      res.sendFile(path.join(process.cwd(), 'public', 'museum.html'));
+    });
+
     app.get('/api/museum/arts', async (req, res) => {
       try {
         const { user, page, limit } = req.query;

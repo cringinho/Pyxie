@@ -1510,6 +1510,14 @@
           <img src="https://cdn.discordapp.com/emojis/1548444204202459136.gif" class="emoji-icon" alt="gift" />
           <span data-i18n-text="nav.bonus">Bônus Web (10s)</span>
         </a>
+        <a href="/parcerias" id="navPartnerships" class="nav-link partnerships-dynamic-link" style="display: none;">
+          <img src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" class="emoji-icon" alt="handshake" />
+          <span data-i18n-text="nav.partnerships">Parcerias</span>
+        </a>
+        <a href="/museu" id="navMuseum" class="nav-link museum-dynamic-link" style="display: none;">
+          <img src="https://cdn.discordapp.com/emojis/1551355962974273546.png" class="emoji-icon" alt="art" />
+          <span data-i18n-text="nav.museum">Museu de Arte</span>
+        </a>
         <a href="/evento" id="navSeasonalRanking" class="nav-link seasonal-dynamic-link" style="display: none;">
           <img src="https://cdn.discordapp.com/emojis/1551355734577381447.png" class="emoji-icon" alt="pumpkin" />
           <span data-i18n-text="nav.seasonal">Ranking do Evento</span>
@@ -1555,6 +1563,14 @@
     <a href="/bonus" class="nav-link" onclick="closeMobileMenu()">
       <img src="https://cdn.discordapp.com/emojis/1548444204202459136.gif" class="emoji-icon" alt="gift" />
       <span data-i18n-text="nav.bonus">Bônus Web (10s)</span>
+    </a>
+    <a href="/parcerias" id="drawerPartnerships" class="nav-link partnerships-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
+      <img src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" class="emoji-icon" alt="handshake" />
+      <span data-i18n-text="nav.partnerships">Parcerias</span>
+    </a>
+    <a href="/museu" id="drawerMuseum" class="nav-link museum-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
+      <img src="https://cdn.discordapp.com/emojis/1551355962974273546.png" class="emoji-icon" alt="art" />
+      <span data-i18n-text="nav.museum">Museu de Arte</span>
     </a>
     <a href="/evento" id="drawerSeasonalRanking" class="nav-link seasonal-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
       <img src="https://cdn.discordapp.com/emojis/1551355734577381447.png" class="emoji-icon" alt="pumpkin" />
@@ -1797,6 +1813,8 @@
         <a href="/invite" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.add">Adicionar Pyxie</a>
         <a href="/vote" target="_blank" rel="noopener" class="footer-link" data-i18n="nav.vote">Top.gg</a>
         <a href="/bonus" class="footer-link" data-i18n="nav.bonus">Bônus Web (10s)</a>
+        <a href="/parcerias" class="footer-link partnerships-dynamic-link" style="display: none;" data-i18n="nav.partnerships">Parcerias</a>
+        <a href="/museu" class="footer-link museum-dynamic-link" style="display: none;" data-i18n="nav.museum">Museu de Arte</a>
         <a href="/evento" class="footer-link seasonal-dynamic-link" style="display: none;" data-i18n="nav.seasonal">Ranking do Evento</a>
         <a href="/promo" target="_blank" rel="noopener noreferrer" class="footer-link" data-hourly-promo="true" data-i18n="footer.promo" style="color: var(--pink-glow);">🛍️ Achadinhos Shopee</a>
         <a href="/discord" target="_blank" rel="noopener" class="footer-link" data-i18n="hero.btnGuild">Comunidade Oficial</a>
@@ -1927,6 +1945,8 @@
         'nav.commands': 'Comandos',
         'nav.vote': 'Top.gg',
         'nav.bonus': 'Bônus Web (10s)',
+        'nav.partnerships': 'Parcerias',
+        'nav.museum': 'Museu de Arte',
         'nav.seasonal': 'Ranking do Evento',
         'nav.add': 'Adicionar',
         'hero.status': 'Online & Operacional • Discord.js v14',
@@ -1981,6 +2001,8 @@
         'nav.commands': 'Commands',
         'nav.vote': 'Top.gg',
         'nav.bonus': 'Web Bonus (10s)',
+        'nav.partnerships': 'Partnerships',
+        'nav.museum': 'Art Museum',
         'nav.seasonal': 'Event Leaderboard',
         'nav.add': 'Add Pyxie',
         'hero.status': 'Online & Operational • Discord.js v14',
@@ -2115,11 +2137,36 @@
       document.querySelectorAll('a[href^="/bonus"]').forEach(el => {
         el.setAttribute('href', `/bonus?lang=${currentLang}`);
       });
+      document.querySelectorAll('a[href^="/parcerias"], a[href^="/partnerships"]').forEach(el => {
+        el.setAttribute('href', `/parcerias?lang=${currentLang}`);
+      });
+      document.querySelectorAll('a[href^="/museu"], a[href^="/museum"]').forEach(el => {
+        el.setAttribute('href', `/museu?lang=${currentLang}`);
+      });
       document.querySelectorAll('a[href^="/evento"]').forEach(el => {
         el.setAttribute('href', `/evento?lang=${currentLang}`);
       });
       fetchCommands(currentLang);
       syncHourlyPromoLinks();
+    }
+
+    async function checkModuleDynamicLinks() {
+      try {
+        const res = await fetch('/api/modules/status');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.success && data.modules) {
+          const partActive = Boolean(data.modules.partnerships && (data.modules.partnerships.active ?? data.modules.partnerships.enabled));
+          const museumActive = Boolean(data.modules.museum && (data.modules.museum.active ?? data.modules.museum.enabled));
+
+          document.querySelectorAll('.partnerships-dynamic-link').forEach(el => {
+            el.style.display = partActive ? (el.classList.contains('footer-link') ? 'inline' : 'inline-flex') : 'none';
+          });
+          document.querySelectorAll('.museum-dynamic-link').forEach(el => {
+            el.style.display = museumActive ? (el.classList.contains('footer-link') ? 'inline' : 'inline-flex') : 'none';
+          });
+        }
+      } catch (_) {}
     }
 
     async function checkSeasonalEvent() {
@@ -2370,8 +2417,10 @@
     initLang();
     fetchStats();
     checkSeasonalEvent();
+    checkModuleDynamicLinks();
     setInterval(fetchStats, 15000);
     setInterval(checkSeasonalEvent, 30000);
+    setInterval(checkModuleDynamicLinks, 30000);
     initPyxieTip();
     syncHourlyPromoLinks();
   </script>

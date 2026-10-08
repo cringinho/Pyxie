@@ -1,333 +1,423 @@
-# 🛠️ Guia Técnico de Criação e Integração de Novos Módulos na Pyxie
+# 🛠️ Guia Técnico Mestre: Criação e Integração de Novos Módulos na Pyxie
 
 > **Público-alvo:** Desenvolvedores, Engenheiros de Software e Agentes de IA autônomos.  
-> **Arquitetura Base:** Padrão *Cog / Plug-in Modular Desacoplado* (inspirado no Red-DiscordBot), com **Zero Memory Leak**, Paridade Bilíngue Mandatória (`pt-BR` & `en`) e Sincronização Dinâmica em Tempo Real com o Ecossistema Web.
+> **Arquitetura Base:** Padrão *Cog / Plug-in Modular Desacoplado* (inspirado no Red-DiscordBot), com **Zero Memory Leak**, Preservação Atômica de Dados, Painéis Administrativos Dedicados (Regra das 4+ Configurações), Paridade Bilíngue Mandatória (`pt-BR` & `en`) e Sincronização Dinâmica em Tempo Real com o Ecossistema Web.
 
 ---
 
 ## 🧭 Sumário Executivo
-1. [Visão Geral da Arquitetura](#1-visão-geral-da-arquitetura)
-2. [Estrutura de Pastas e Convenção Canônica](#2-estrutura-de-pastas-e-convenção-canônica)
-3. [Passo a Passo: Construindo um Módulo do Zero](#3-passo-a-passo-construindo-um-módulo-do-zero)
-   - [Passo 1: Criar o Descritor do Módulo (`index.js`)](#passo-1-criar-o-descritor-do-módulo-indexjs)
-   - [Passo 2: Construir o Gerenciador Isolado (`manager.js`)](#passo-2-construir-o-gerenciador-isolado-managerjs)
-   - [Passo 3: Criar Comandos Slash & Prefixo no Módulo](#passo-3-criar-comandos-slash--prefixo-no-módulo)
-4. [Dinamismo e Sincronização Obrigatória com a Web](#4-dinamismo-e-sincronização-obrigatória-com-a-web)
-   - [Como o `/api/commands` descobre seu módulo](#como-o-apicommands-descobre-seu-módulo)
-   - [Ciclo de Vida do Front-end (`public/index.html` e `public/wiki.html`)](#ciclo-de-vida-do-front-end-publicindexhtml-e-publicwikihtml)
-   - [Expondo Rotas Web Próprias (`setupWebRoutes`)](#expondo-rotas-web-próprias-setupwebroutes)
-5. [Prevenção Estrita de Vazamento de Memória (Zero Memory Leak)](#5-prevenção-estrita-de-vazamento-de-memória-zero-memory-leak)
-6. [Diretrizes Mandatórias de Internacionalização (i18n)](#6-diretrizes-mandatórias-de-internacionalização-i18n)
-7. [Mapeamento de Categoria e Quality Gate Automático](#7-mapeamento-de-categoria-e-quality-gate-automático)
-8. [Checklist de Verificação Antes de Commitar](#8-checklist-de-verificação-antes-de-commitar)
+1. [Visão Geral da Arquitetura Modular](#1-visão-geral-da-arquitetura-modular)
+2. [Estrutura Canônica de Pastas e Arquivos](#2-estrutura-canônica-de-pastas-e-arquivos)
+3. [Obrigação do README.md por Módulo (Sem Jargões Complexos)](#3-obrigação-do-readmemd-por-módulo-sem-jargões-complexos)
+4. [Regra das 4+ Configurações: Página Administrativa Dedicada](#4-regra-das-4-configurações-página-administrativa-dedicada)
+5. [Preservação de Dados, Concorrência e Atomicidade](#5-preservação-de-dados-concorrência-e-atomicidade)
+6. [Prevenção Estrita de Vazamento de Memória (Zero Memory Leak)](#6-prevenção-estrita-de-vazamento-de-memória-zero-memory-leak)
+7. [Dinamismo e Sincronização com o Website e Central de Ajuda](#7-dinamismo-e-sincronização-com-o-website-e-central-de-ajuda)
+8. [Passo a Passo: Construindo um Módulo do Zero](#8-passo-a-passo-construindo-um-módulo-do-zero)
+   - [Passo 1: Descritor do Módulo (`index.js`)](#passo-1-descritor-do-módulo-indexjs)
+   - [Passo 2: Gerenciador de Negócios (`manager.js`)](#passo-2-gerenciador-de-negócios-managerjs)
+   - [Passo 3: Comandos Slash & Prefixo no Módulo](#passo-3-comandos-slash--prefixo-no-módulo)
+   - [Passo 4: Página Externa Administrativa (`views/adminModulo.ejs`)](#passo-4-página-externa-administrativa-viewsadminmoduloejs)
+9. [Diretrizes Mandatórias de Internacionalização (i18n)](#9-diretrizes-mandatórias-de-internacionalização-i18n)
+10. [Mapeamento de Categorias, Emojis e Quality Gate](#10-mapeamento-de-categorias-emojis-e-quality-gate)
+11. [Checklist Final de Verificação (Quality Assurance)](#11-checklist-final-de-verificação-quality-assurance)
 
 ---
 
-## 1. Visão Geral da Arquitetura
+## 1. Visão Geral da Arquitetura Modular
 
-Na Pyxie, os módulos **não são fragmentos colados** diretamente em `src/index.js` ou `server.js`. Em vez disso, o bot adota um motor modular em [`src/services/moduleManager.js`](file:///e:/botMelody/src/services/moduleManager.js) que:
-1. **Descobre automaticamente** diretórios em `src/modules/` na inicialização e em recarregamentos em tempo real (*hot-reload*).
-2. **Isola o escopo de recursos** de cada módulo (comandos, listeners do Discord, crons e timers).
-3. **Controla ativação e persistência** de estado em `data/modulesConfig.json` via painel administrativo ou comando `/py-admin modulos`.
-4. **Alimenta dinamicamente** o comando de ajuda (`/py-help`) e a API Web (`/api/commands`), permitindo que novos módulos apareçam nas abas do site e da central de ajuda instantaneamente sem tocar em linhas de HTML.
+Na Pyxie, funcionalidades e novos sistemas **NUNCA são acoplados diretamente** em `src/index.js`, `src/commands/index.js` ou `server.js`. Em vez disso, todo subsistema opera como um módulo isolado gerenciado por [`src/services/moduleManager.js`](file:///e:/botMelody/src/services/moduleManager.js).
+
+### Principais Pilares do Motor Modular:
+1. **Descoberta Automática:** O `ModuleManager` varre a pasta `src/modules/` na inicialização e em recarregamentos (*hot-reload*).
+2. **Ciclo de Vida Controlado:** Cada módulo possui métodos explícitos de inicialização (`onLoad`) e desligamento (`onUnload`).
+3. **Escopo Isolado de Recursos:** Listeners do Discord, agendamentos cron, intervalos e timeouts pertencem ao módulo e são removidos sem deixar resíduos ao desativá-lo.
+4. **Sincronização Bidirecional (Bot ↔ Web):** As alterações de estado feitas no painel web refletem instantaneamente no bot via comunicação IPC (`MODULE_TOGGLE`, `MODULE_RELOAD`).
+5. **Catálogo Dinâmico:** Os comandos do módulo aparecem dinamicamente no comando `/py-help` e na rota pública `/api/commands` sem exigir alterações manuais no HTML do site.
 
 ```mermaid
 flowchart TD
-    A["Pasta src/modules/novo-modulo/"] -->|Varredura Automática| B["ModuleManager (src/services/moduleManager.js)"]
-    B -->|Ativação & onLoad| C["Escopo Isolado (Contexto Protegido)"]
-    C -->|Registra| D["Comandos no commandsByName"]
-    C -->|Rastreia| E["Listeners, Crons & Timers"]
-    C -->|Expõe| F["Rotas Express (setupWebRoutes)"]
-    B -->|getHelpModules()| G["/py-help (Discord)"]
-    B -->|getHelpModules()| H["/api/commands (Website)"]
-    H -->|fetchCommands(lang)| I["Frontend (index.html: #categoryTabs & #commandsGrid)"]
+    A["Pasta src/modules/<id>/"] -->|Varredura Automática| B["ModuleManager (src/services/moduleManager.js)"]
+    B -->|onLoad(ctx)| C["Escopo Isolado de Execução"]
+    C -->|Registra| D["Comandos em commandsByName & Slash"]
+    C -->|Rastreia via ctx| E["Eventos, Crons, Intervals & Timeouts"]
+    C -->|setupWebRoutes(app)| F["Rotas Express & Páginas Dedicadas"]
+    B -->|getHelpModules()| G["Central de Ajuda /py-help (Discord)"]
+    B -->|/api/commands| H["Catálogo Interativo Web (index.html)"]
+    B -->|/api/modules/status| I["Navegação Dinâmica (Navbar, Drawer & Footer)"]
 ```
 
 ---
 
-## 2. Estrutura de Pastas e Convenção Canônica
+## 2. Estrutura Canônica de Pastas e Arquivos
 
-Todo módulo novo deve residir dentro de sua própria pasta isolada em `src/modules/<id-do-modulo>/`:
+Todo novo módulo deve residir estritamente dentro de seu diretório próprio em `src/modules/<id-do-modulo>/`:
 
 ```text
 src/modules/
-└── novo-modulo/                     <-- ID em kebab-case ou lowercase
-    ├── index.js                     <-- PONTO DE ENTRADA OBRIGATÓRIO (Descritor do Módulo)
-    ├── novoModuloManager.js         <-- Gerenciador da lógica de negócios, banco e crons
-    ├── commands/                    <-- Comandos pertencentes exclusivamente ao módulo
+└── meu-modulo/                      <-- ID canônico em kebab-case ou minúsculas
+    ├── README.md                    <-- DOCUMENTAÇÃO OBRIGATÓRIA (sem jargões técnicos)
+    ├── index.js                     <-- Ponto de entrada e descritor do módulo
+    ├── meuModuloManager.js          <-- Lógica de negócio, leitura/escrita atômica e estado
+    ├── commands/                    <-- Comandos exclusivos deste módulo
     │   └── pyMeuComando.js
-    └── views/ (opcional)            <-- Templates ou páginas HTML complementares se houver
+    └── views/ (obrigatório se 4+ configs)
+        └── adminMeuModulo.ejs       <-- Página administrativa dedicada externa
 ```
+
+Arquivos de dados e persistência devem ser salvos exclusivamente na pasta global `data/`:
+- `data/<modulo>Config.json` (configurações do módulo: canais, cargos, limites)
+- `data/<modulo>Data.json` (dados operacionais gerados pelos usuários)
 
 ---
 
-## 3. Passo a Passo: Construindo um Módulo do Zero
+## 3. Obrigação do README.md por Módulo (Sem Jargões Complexos)
 
-### Passo 1: Criar o Descritor do Módulo (`index.js`)
-Crie o arquivo [`src/modules/<id-do-modulo>/index.js`](file:///e:/botMelody/src/modules/seasonal/index.js). Ele deve exportar um objeto estritamente estruturado:
+**Regra Absoluta:** Todo módulo criado **DEVE obrigatoriamente** incluir um arquivo `README.md` localizado na raiz de sua pasta (`src/modules/<id>/README.md`).
+
+### Objetivo do README:
+Permitir que qualquer membro da equipe, administrador de servidor ou moderador entenda exatamente do que o módulo se trata, o que ele faz, quais comandos ele oferece e como configurá-lo, **sem precisar ler código-fonte ou entender termos complexos de programação**.
+
+### Diretrizes de Escrita:
+- **Linguagem Acessível:** Proibido usar jargões técnicos herméticos (ex: "instanciação de singleton", "despachante polimórfico", "middleware de throttling"). Use termos comuns como "limite de tentativas", "painel de controle", "mensagem automática", "canal de avisos".
+- **Estrutura Obrigatória:**
+  1. **O que é este módulo?** (Explicação em 1 a 2 parágrafos simples).
+  2. **O que ele é capaz de fazer?** (Lista em tópicos das principais funcionalidades).
+  3. **Comandos no Discord** (Tabela com comando, para que serve e quem pode usar).
+  4. **Canais e Cargos Necessários** (O que a staff precisa configurar para o módulo funcionar).
+  5. **Recursos no Site e Web** (Se possui páginas públicas, mural, galeria ou painel próprio).
+  6. **Ferramentas e Bibliotecas Usadas** (Ex: Canvas para imagens, Express para páginas web).
+
+---
+
+## 4. Regra das 4+ Configurações: Página Administrativa Dedicada
+
+Para manter a interface da Pyxie intuitiva, limpa e profissional, adotamos a seguinte regra de interface:
+
+> **Regra de Ouro da Interface:**  
+> Se um módulo possuir **4 ou mais configurações** (ex: canais de entrada, canais de aprovação, cargos de triagem, limites numéricos, filtros de mídia) ou envolver **gerenciamento de listas/ações complexas** (aprovação de pedidos, exclusão de itens por ID, auditoria):
+> 
+> 1. **NÃO poluir a barra de abas principal** do painel administrativo (`public/admin.html`).
+> 2. O módulo **DEVE ter uma página externa administrativa própria** dentro do escopo administrativo (`src/modules/<modulo>/views/admin<Modulo>.ejs`), servida em `/admin/<modulo>`.
+> 3. Na aba Módulos do painel administrativo geral (`public/admin.html`), o módulo deve exibir um cartão limpo com botão:
+>    ```html
+>    <a href="/admin/<modulo>" class="btn-module-panel">⚙️ Acessar Painel</a>
+>    ```
+> 4. Toda ação administrativa do módulo (como exclusão de registros por ID ou ajuste fino) deve ser feita dentro dessa página dedicada.
+
+### Requisitos de Segurança da Página Administrativa:
+- A rota `GET /admin/<modulo>` deve validar a sessão administrativa usando `isValidAdminSession(cookie)` ou `isIpAllowed(req)` de [`src/services/adminAuth.js`](file:///e:/botMelody/src/services/adminAuth.js).
+- Se não estiver autenticado, deve redirecionar para `/admin`.
+- Todas as APIs de alteração (`/api/admin/modules/<modulo>/...`) devem usar o middleware `requireAdminAuth`.
+
+---
+
+## 5. Preservação de Dados, Concorrência e Atomicidade
+
+A Pyxie opera simultaneamente com um processo bot (Discord) e um servidor web (Express). Portanto, erros de concorrência ou corrupção de arquivos são inaceitáveis.
+
+### Diretrizes Mandatórias de Dados:
+1. **Escrita Atômica Obrigatória:**
+   - **NUNCA** utilize `fs.writeFileSync(caminho, json)` diretamente no arquivo final. Se o servidor for interrompido durante a escrita, o arquivo ficará corrompido ou vazio (0 bytes).
+   - Utilize sempre `writeJsonAtomic(filePath, data)` de [`src/utils/atomicJson.js`](file:///e:/botMelody/src/utils/atomicJson.js), que salva primeiro em um arquivo temporário (`.tmp.<timestamp>`) e realiza `fs.renameSync` de forma atômica no sistema operacional.
+2. **Separação de Configuração vs. Dados Operacionais:**
+   - Configurações administrativas ficam em `data/<modulo>Config.json`.
+   - Dados criados por usuários (tickets, artes, parcerias, registros) ficam em `data/<modulo>Data.json`.
+3. **Prevenção de Condições de Corrida (Bot ↔ Web):**
+   - Antes de modificar os dados em memória, invoque `this.refresh()` para carregar as modificações mais recentes feitas pela outra ponta.
+   - Execute o ciclo **Ler do disco -> Modificar em memória -> Salvar atomicamente** de forma síncrona.
+
+---
+
+## 6. Prevenção Estrita de Vazamento de Memória (Zero Memory Leak)
+
+O bot executa em ambiente de produção com limite estrito de memória (`--max-old-space-size=768` no Node.js). Vazamentos de memória degradam a máquina, travam respostas a interações e derrubam o processo.
+
+### Práticas Mandatórias de Gerenciamento de Recursos:
+1. **Uso Exclusivo do Contexto Seguro (`ctx`):**
+   No método `onLoad(ctx)`, utilize estritamente as funções injetadas pelo `ModuleManager`:
+   
+   | ❌ Incorreto (Causa Vazamento de Memória) | ✅ Correto (Gerenciado com Limpeza Automática) |
+   | :--- | :--- |
+   | `client.on('messageCreate', handler)` | `ctx.registerListener('messageCreate', handler)` |
+   | `cron.schedule('0 * * * *', task)` | `ctx.registerCron('0 * * * *', task)` |
+   | `setInterval(fn, 1000)` | `ctx.registerInterval(fn, 1000)` |
+   | `setTimeout(fn, 5000)` | `ctx.registerTimeout(fn, 5000)` |
+
+2. **Proibição de Listeners Globais Duplicados:**
+   - **NUNCA** registre `client.on('interactionCreate', ...)` dentro do seu manager de módulo se o bot já despacha interações centralmente em `index.js`.
+   - Listeners duplicados causam **execuções em dobro**, respostas rejeitadas pelo Discord com erro `"Unknown interaction"` e modais abrindo duas vezes.
+
+3. **Limpeza Explícita no `onUnload()`:**
+   - Limpe estruturas em memória como `Map` ou `Set` que acumulam dados transitórios (ex: rate-limits por IP, caches de usuários):
+     ```javascript
+     async onUnload() {
+       this.client = null;
+       this.bumpHits.clear();
+       this.activeSessions = {};
+     }
+     ```
+
+---
+
+## 7. Dinamismo e Sincronização com o Website e Central de Ajuda
+
+O ecossistema da Pyxie é 100% integrado. Quando um módulo é ativado ou desativado, o comportamento deve se propagar automaticamente para:
+
+### 1. Central de Ajuda no Discord (`/py-help`)
+- A central consome `getHelpModules()` de [`src/commands/commandHelpers.js`](file:///e:/botMelody/src/commands/commandHelpers.js).
+- `getHelpModules()` consulta dinamicamente `moduleManager.getActiveCommands()`.
+- Os comandos de módulos ativos entram automaticamente no menu suspenso de categorias (`social`, `utilidades`, etc.).
+
+### 2. Catálogo Interativo no Site (`public/index.html`)
+- O front-end consome `/api/commands?lang=pt` e `/api/commands?lang=en`.
+- Ao alternar categorias ou buscar comandos na barra de pesquisa, os comandos do módulo são renderizados em tempo real.
+
+### 3. Navegação Dinâmica no Site Principal (`public/index.html`)
+- Se o módulo possui uma página pública (como `/parcerias` ou `/museu`), os links na **Navbar superior**, no **Drawer mobile** e no **Rodapé** devem possuir a classe dinâmica correspondente (ex: `.partnerships-dynamic-link` ou `.museum-dynamic-link`) com `style="display: none;"` por padrão.
+- A função de monitoramento do front-end consulta `/api/modules/status` e exibe os links apenas quando o módulo estiver ativo no bot.
+
+### 4. Embeds com Referência Web e Streaks
+- Cada anúncio ou embed oficial publicado pelo módulo no Discord deve incluir:
+  - O link de direcionamento para a página web correspondente (ex: `🌐 Mural no Site: https://.../parcerias`).
+  - A contagem de impulsos, streaks ou visualizações dados via web (ex: `⚡ Impulsos no Site: 5`).
+  - Ao receber interações na web (ex: bumps), o bot deve atualizar a mensagem original no canal e/ou emitir aviso no canal de radar.
+
+---
+
+## 8. Passo a Passo: Construindo um Módulo do Zero
+
+### Passo 1: Descritor do Módulo (`index.js`)
+Crie [`src/modules/<id>/index.js`](file:///e:/botMelody/src/modules/partnerships/index.js):
 
 ```javascript
-// src/modules/exemplo/index.js
-const exemploManager = require('./exemploManager');
-const pyExemploCmd = require('./commands/pyExemploCmd');
+// src/modules/meu-modulo/index.js
+const meuModuloManager = require('./meuModuloManager');
+const pyMeuComando = require('./commands/pyMeuComando');
 
 module.exports = {
-  // Identificador único (letras minúsculas e hífens)
-  id: 'exemplo',
+  id: 'meu-modulo',
 
-  // Metadados bilíngues obrigatórios
   name: {
-    'pt-BR': 'Módulo de Exemplo',
-    en: 'Example Module',
+    'pt-BR': 'Nome em Português',
+    en: 'Name in English',
   },
   description: {
-    'pt-BR': 'Descrição clara em português para a central de ajuda e admin.',
-    en: 'Clear English description for the help center and admin panel.',
+    'pt-BR': 'Descrição amigável em português.',
+    en: 'Friendly description in English.',
   },
 
-  // Categoria oficial onde os comandos serão catalogados:
-  // 'economia' | 'loja' | 'tarot' | 'social' | 'utilidades'
-  category: 'utilidades',
-  icon: '✨',
+  category: 'social', // 'economia' | 'loja' | 'tarot' | 'social' | 'utilidades'
+  icon: '⭐',
   version: '1.0.0',
   author: 'Pyxie Team',
-  defaultEnabled: false, // se inicia ativo por padrão na primeira execução
+  defaultEnabled: true,
 
-  // Lista de comandos fornecidos por este módulo
-  commands: [
-    pyExemploCmd,
-  ],
+  commands: [pyMeuComando],
 
-  // Hook chamado quando o módulo é ativado
   async onLoad(ctx) {
-    // ctx injeta métodos seguros para não causar vazamento de memória:
-    // ctx.registerListener(event, handler)
-    // ctx.registerCron(cronTime, onTick)
-    // ctx.registerInterval(fn, ms)
-    // ctx.registerTimeout(fn, ms)
-    if (ctx.client) {
-      exemploManager.init(ctx.client, ctx);
-    }
+    meuModuloManager.init(ctx.client || null, ctx);
   },
 
-  // Hook chamado na desativação ou reload do módulo
-  async onUnload(ctx) {
-    // Pare qualquer processo específico do seu manager
-    exemploManager.stop();
+  async onUnload() {
+    meuModuloManager.destroy();
   },
 
-  // (Opcional) Registro de rotas HTTP no Express
   setupWebRoutes(app, ctx) {
-    if (typeof exemploManager.setupWebRoutes === 'function') {
-      exemploManager.setupWebRoutes(app);
-    }
+    meuModuloManager.setupWebRoutes(app, ctx);
   },
 };
 ```
 
 ---
 
-### Passo 2: Construir o Gerenciador Isolado (`manager.js`)
-O manager encapsula as regras de negócio, dados e crons do módulo.
+### Passo 2: Gerenciador de Negócios (`manager.js`)
+Crie [`src/modules/<id>/meuModuloManager.js`](file:///e:/botMelody/src/modules/partnerships/partnershipManager.js):
 
 ```javascript
-// src/modules/exemplo/exemploManager.js
-const EventEmitter = require('events');
+// src/modules/meu-modulo/meuModuloManager.js
+const path = require('path');
+const { readJson, writeJsonAtomic } = require('../../utils/atomicJson');
+const { t } = require('../../utils/i18n');
 
-class ExemploManager extends EventEmitter {
+const CONFIG_PATH = path.join(process.cwd(), 'data', 'meuModuloConfig.json');
+const DATA_PATH = path.join(process.cwd(), 'data', 'meuModuloData.json');
+
+class MeuModuloManager {
   constructor() {
-    super();
     this.client = null;
-    this.cronJob = null;
-    this.running = false;
+    this.config = {};
+    this.data = { items: [] };
+    this.tempCache = new Map();
   }
 
   init(client, ctx) {
-    this.client = client;
-    this.running = true;
+    this.client = client || null;
+    this.refresh();
 
-    // Use SEMPRE o ctx.registerCron para garantir limpeza automática no unhook
+    // Registra cron com descarte automático garantido
     if (ctx && typeof ctx.registerCron === 'function') {
-      ctx.registerCron('0 * * * *', () => {
-        this.executarTarefaHoraria();
-      });
+      ctx.registerCron('0 * * * *', () => this.tarefaHoraria());
     }
   }
 
-  executarTarefaHoraria() {
-    if (!this.running) return;
-    console.log('[Exemplo] Tarefa horária executada com sucesso.');
+  destroy() {
+    this.client = null;
+    this.tempCache.clear();
   }
 
-  stop() {
-    this.running = false;
-    // O ModuleManager já limpa automaticamente os crons e listeners registrados via ctx!
+  refresh() {
+    this.config = readJson(CONFIG_PATH, { canalId: '', limite: 10 });
+    this.data = readJson(DATA_PATH, { items: [] });
   }
 
-  setupWebRoutes(app) {
-    // API pública ou interna do módulo
-    app.get('/api/exemplo/dados', (req, res) => {
-      res.json({ success: true, timestamp: Date.now() });
+  saveData() {
+    return writeJsonAtomic(DATA_PATH, this.data);
+  }
+
+  saveConfig(newConfig) {
+    this.config = { ...this.config, ...newConfig };
+    return writeJsonAtomic(CONFIG_PATH, this.config);
+  }
+
+  tarefaHoraria() {
+    // Rotina automática protegida
+  }
+
+  setupWebRoutes(app, ctx) {
+    // Rota pública para visualização de dados
+    app.get('/api/meu-modulo/items', (req, res) => {
+      this.refresh();
+      res.json({ success: true, items: this.data.items });
     });
   }
 }
 
-module.exports = new ExemploManager();
+module.exports = new MeuModuloManager();
 ```
 
 ---
 
-### Passo 3: Criar Comandos Slash & Prefixo no Módulo
-Os comandos do módulo seguem o padrão Discord.js v14 do projeto, com nomes canônicos em inglês e localização nativa em português.
+### Passo 3: Comandos Slash & Prefixo no Módulo
+Crie os comandos na pasta `commands/`:
 
 ```javascript
-// src/modules/exemplo/commands/pyExemploCmd.js
+// src/modules/meu-modulo/commands/pyMeuComando.js
 const { SlashCommandBuilder } = require('discord.js');
 const { t } = require('../../../utils/i18n');
+const meuModuloManager = require('../meuModuloManager');
+
+const name = 'py-meucomando';
+const aliases = ['meucomando', 'mycommand', 'py-mycommand'];
 
 module.exports = {
-  name: 'py-exemplo',
-  aliases: ['exemplo', 'example', 'py-example'],
-  category: 'utilidades', // Categoria canônica do comando
-
+  name,
+  aliases,
+  category: 'social',
+  ephemeral: true,
   data: new SlashCommandBuilder()
-    .setName('py-example')
-    .setNameLocalizations({
-      'pt-BR': 'py-exemplo',
-    })
-    .setDescription('Execute an example action in Pyxie.')
+    .setName(name)
+    .setDescription('Execute the module action.')
     .setDescriptionLocalizations({
-      'pt-BR': 'Executa uma ação de exemplo na Pyxie.',
+      'pt-BR': 'Executa a ação principal do módulo.',
     }),
 
-  async execute(interaction) {
-    // Resposta bilíngue utilizando a função t()
-    const msg = t('exemplo.sucesso', interaction);
-    await interaction.reply({ content: msg, ephemeral: true });
+  async executeSlash({ interaction }) {
+    await interaction.reply({
+      content: t('meumodulo.sucesso', interaction),
+      ephemeral: true,
+    });
   },
 
-  async executePrefix(message, args) {
-    const msg = t('exemplo.sucesso', message);
-    await message.reply(msg);
+  async executePrefix({ message }) {
+    await message.reply(t('meumodulo.sucesso', message));
   },
 };
 ```
 
 ---
 
-## 4. Dinamismo e Sincronização Obrigatória com a Web
+### Passo 4: Página Externa Administrativa (`views/adminModulo.ejs`)
+Se o módulo tiver 4 ou mais configurações ou manipulação de listas, crie a view em `views/adminMeuModulo.ejs` e configure a rota com autenticação administrativa em `setupWebRoutes`:
 
-### Como o `/api/commands` descobre seu módulo
-O website oficial consome o endpoint central [`/api/commands`](file:///e:/botMelody/server.js#L393) fornecido pelo Express no arquivo [`server.js`](file:///e:/botMelody/server.js).
+```javascript
+// Dentro de setupWebRoutes em meuModuloManager.js
+const { requireAdminAuth, isValidAdminSession, isIpAllowed } = require('../../services/adminAuth');
 
-1. Quando o website solicita `/api/commands?lang=pt` ou `/api/commands?lang=en`, o servidor invoca `getHelpModules(source, { lang, isOwner })` de [`src/commands/commandHelpers.js`](file:///e:/botMelody/src/commands/commandHelpers.js).
-2. O `commandHelpers.js` consulta dinamicamente `moduleManager.getActiveCommands()`.
-3. Todos os comandos do seu novo módulo que estiver habilitado são **agrupados na categoria informada** (`mod.category` ou `cmd.category`).
-4. **Resultado:** O novo comando aparece instantaneamente no JSON retornado da API com seu nome, descrição, aliases e categoria, sem que nenhuma linha de JSON estático precise ser escrita!
+app.get('/admin/meu-modulo', (req, res) => {
+  const cookieHeader = req.headers.cookie;
+  const sessionCookie = cookieHeader ? (cookieHeader.match(/(?:^|;\s*)pyxie_admin_session=([^;]*)/)?.[1] || null) : null;
+  const isAuthed = (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
+
+  if (!isAuthed) return res.redirect('/admin');
+
+  this.refresh();
+  res.render(path.join(__dirname, 'views', 'adminMeuModulo.ejs'), {
+    config: this.config,
+    items: this.data.items,
+  });
+});
+
+app.delete('/api/admin/modules/meu-modulo/items/:id', requireAdminAuth, (req, res) => {
+  this.refresh();
+  const id = req.params.id;
+  const idx = this.data.items.findIndex(i => i.id === id);
+  if (idx === -1) return res.status(404).json({ success: false, message: 'Item não encontrado' });
+  this.data.items.splice(idx, 1);
+  this.saveData();
+  res.json({ success: true });
+});
+```
 
 ---
 
-### Ciclo de Vida do Front-end (`public/index.html` e `public/wiki.html`)
-Para preservar a integridade do ecossistema, o front-end respeita três regras críticas:
+## 9. Diretrizes Mandatórias de Internacionalização (i18n)
 
-1. **Proibição de Listas Estáticas Isoladas**:
-   - É expressamente proibido adicionar `<div class="command-card">` manualmente no HTML.
-   - Todo card de comando é renderizado em tempo de execução via `renderCommands()` a partir de `allModules`.
-2. **Atualização Dinâmica de Categorias e Contadores**:
-   - `renderTabs()` gera os botões de categoria (`#categoryTabs`) calculando dinamicamente a contagem de comandos ativos:
+Conforme a Política de Arquitetura Bilíngue Mandatória ([`AGENTS.md`](file:///e:/botMelody/AGENTS.md)):
+
+1. **Paridade Rigorosa de Chaves:**
+   - Cada chave adicionada a `TRANSLATIONS.pt` em [`src/utils/i18n.js`](file:///e:/botMelody/src/utils/i18n.js) **DEVE ter sua contraparte idêntica** em `TRANSLATIONS.en`.
+   - Placeholders (`{user}`, `{count}`, `{url}`) devem ser perfeitamente iguais nas duas versões.
+2. **Sem Textos Fixos no Código:**
+   - Mensagens em embeds, footers e respostas ao usuário utilizam sempre `t(chave, source, { ... })`.
+3. **Slash Commands:**
+   - `.setName()` e `.setDescription()` em inglês.
+   - `.setDescriptionLocalizations({ 'pt-BR': '...' })` obrigatório.
+
+---
+
+## 10. Mapeamento de Categorias, Emojis e Quality Gate
+
+1. **Mapeamento Canônico de Categorias:**
+   - Em [`src/commands/commandHelpers.js`](file:///e:/botMelody/src/commands/commandHelpers.js), adicione o nome canônico e **todos os aliases** do comando em `COMMAND_CATEGORY_MAP`:
      ```javascript
-     const count = mod.id === 'todos' ? totalCommands : (mod.commands ? mod.commands.length : 0);
+     'meucomando': 'social',
+     'py-meucomando': 'social',
+     'mycommand': 'social',
+     'py-mycommand': 'social',
      ```
-   - Ao ativar um módulo via painel administrativo, o total de comandos e abas se ajusta sozinho no próximo `fetchCommands(lang)`.
-3. **Detecção e Alternância de Idioma**:
-   - Na inicialização da página e em chamadas de `applyLang(lang)` / `toggleLanguage()`, o script dispara obrigatoriamente `fetchCommands(currentLang)`.
-   - Se o seu comando estiver com chaves em `i18n.js` ou metadados traduzidos no módulo, o card web exibirá o texto no idioma selecionado pelo visitante.
+2. **Política Estrita de Emojis:**
+   - É expressamente proibido usar o emoji do portal de Minecraft (`portalframe98`).
+   - Use o emoji oficial de mapa/galáxia da Pyxie (`<:map:1551355962974273546>`) ou `getThemeEmojiUrl()`.
+3. **Quality Gate Automatizado:**
+   - Execute o teste automatizado antes de qualquer commit:
+     ```bash
+     npm test
+     ```
+   - O teste audita a paridade de todas as chaves i18n e verifica se todos os comandos estão devidamente mapeados no catálogo.
 
 ---
 
-### Expondo Rotas Web Próprias (`setupWebRoutes`)
-Se o seu novo módulo precisa de uma API para o front-end (como o módulo sazonal que fornece `/api/sazonal/ranking` ou o tarot que fornece `/api/tarot/card-preview`):
-- Declare a função `setupWebRoutes(app, ctx)` no seu `index.js`.
-- O `moduleManager.init({ app })` monta automaticamente essas rotas no Express durante o boot do servidor.
-- Lembre-se de aplicar sanitização de entradas e cabeçalhos de segurança CORS já configurados no servidor.
+## 11. Checklist Final de Verificação (Quality Assurance)
 
----
+Antes de considerar qualquer novo módulo concluído, verifique rigorosamente cada item:
 
-## 5. Prevenção Estrita de Vazamento de Memória (Zero Memory Leak)
-
-Quando um módulo é recarregado ou desativado em tempo de execução, qualquer resíduo em segundo plano causa degradação de performance e comportamentos duplicados.
-
-Para evitar isso, o `ModuleManager` injeta um `ctx` (contexto seguro) no hook `onLoad(ctx)`. **NUNCA** registre eventos globais diretamente em `process` ou instâncias puras de `client.on` sem usar o `ctx`:
-
-| ❌ Prática Incorreta (Causa Memory Leak) | ✅ Prática Mandatória (Gerenciada pelo Módulo) |
-| :--- | :--- |
-| `client.on('messageCreate', handler)` | `ctx.registerListener('messageCreate', handler)` |
-| `cron.schedule('0 * * * *', task)` | `ctx.registerCron('0 * * * *', task)` |
-| `setInterval(fn, 1000)` | `ctx.registerInterval(fn, 1000)` |
-| `setTimeout(fn, 5000)` | `ctx.registerTimeout(fn, 5000)` |
-
-Ao invocar `moduleManager.disableModule(id)` ou `reloadModule(id)`:
-- Todos os listeners registrados em `ctx.registerListener` são desatrelados via `client.removeListener`.
-- Todos os cron jobs são interrompidos via `job.stop()`.
-- Todos os intervalos e timeouts são limpos via `clearInterval` e `clearTimeout`.
-- Todos os comandos e aliases são removidos do mapa `commandsByName`.
-
----
-
-## 6. Diretrizes Mandatórias de Internacionalização (i18n)
-
-Conforme as diretrizes arquiteturais do projeto ([`AGENTS.md`](file:///e:/botMelody/AGENTS.md) e [`GEMINI.md`](file:///e:/botMelody/GEMINI.md)), **é proibido implementar funcionalidades em apenas um idioma**.
-
-Ao adicionar respostas, embeds ou mensagens no seu módulo:
-
-1. Abra [`src/utils/i18n.js`](file:///e:/botMelody/src/utils/i18n.js).
-2. Adicione a chave no bloco `TRANSLATIONS.pt`:
-   ```javascript
-   exemplo: {
-     sucesso: '✨ {user}, o comando de exemplo funcionou com sucesso!',
-   },
-   ```
-3. Adicione a contraparte **exatamente idêntica** no bloco `TRANSLATIONS.en`:
-   ```javascript
-   exemplo: {
-     sucesso: '✨ {user}, the example command worked successfully!',
-   },
-   ```
-4. **Placeholders dinâmicos**: Nomes de variáveis como `{user}`, `{coins}`, `{time}`, etc., devem ser idênticos em `pt` e `en`.
-5. **No comando**: Chame `t('exemplo.sucesso', interaction, { user: interaction.user.displayName })`.
-
----
-
-## 7. Mapeamento de Categoria e Quality Gate Automático
-
-O bot possui um sistema automatizado de testes que trava o build caso algum comando fique "órfão" sem categoria.
-
-1. Abra [`src/commands/commandHelpers.js`](file:///e:/botMelody/src/commands/commandHelpers.js).
-2. Localize `COMMAND_CATEGORY_MAP`.
-3. Registre o nome principal do comando e **todos os seus aliases**:
-   ```javascript
-   // Módulo de Exemplo
-   'example': 'utilidades',
-   'py-example': 'utilidades',
-   'exemplo': 'utilidades',
-   'py-exemplo': 'utilidades',
-   ```
-4. Se o módulo for exportado como comando raiz em `src/commands/index.js`, certifique-se de adicioná-lo à lista `commands`.
-
----
-
-## 8. Checklist de Verificação Antes de Commitar
-
-Antes de considerar qualquer novo módulo concluído, siga esta lista:
-
-- [ ] A pasta do módulo foi criada em `src/modules/<id>/` com um `index.js` descritor válido.
-- [ ] O `index.js` implementa `onLoad(ctx)` e `onUnload(ctx)` com descarte limpo de memória.
-- [ ] O comando possui suporte Slash (com `.setDescriptionLocalizations`) e Prefixo (`py!`).
-- [ ] Todas as novas mensagens foram inseridas em paridade perfeita em `src/utils/i18n.js` (`pt` e `en`).
-- [ ] Todos os nomes e aliases foram mapeados em `COMMAND_CATEGORY_MAP` em `src/commands/commandHelpers.js`.
-- [ ] Nenhum emoji proibido foi utilizado (ex: portal do Minecraft `portalframe98`).
-- [ ] O Quality Gate foi executado e aprovado com 100% de sucesso:
-  ```bash
-  npm test
-  ```
-  *(Audita sintaxe, paridade i18n de 370+ chaves, integridade do catálogo do Help/Web e ciclo de vida de módulos).*
+- [ ] **README.md do Módulo:** Criado em linguagem simples, sem termos complexos de programação, explicando o que faz, comandos, canais e bibliotecas.
+- [ ] **Regra das 4+ Configurações:** Se possuir 4 ou mais configurações ou gestão de listas, possui página própria em `/admin/<modulo>` acessada pelo botão `⚙️ Acessar Painel` na aba Módulos do painel admin.
+- [ ] **Preservação Atômica:** Dados salvos na pasta `data/` usando exclusivamente `writeJsonAtomic`.
+- [ ] **Zero Memory Leak:** Listeners e crons registrados com `ctx.registerListener` e `ctx.registerCron`. `onUnload()` limpa referências e estruturas em memória.
+- [ ] **Sem Listeners Duplicados:** Nenhum listener solto de `interactionCreate` no Discord Client.
+- [ ] **Paridade i18n:** Todas as chaves e placeholders sincronizados em PT-BR e EN no `src/utils/i18n.js`.
+- [ ] **Catálogo & Ajuda:** Comandos registrados em `COMMAND_CATEGORY_MAP` em `commandHelpers.js`.
+- [ ] **Links Web Dinâmicos:** Se possuir páginas públicas, integrado ao `public/index.html` com exibição condicionada ao status ativo.
+- [ ] **Quality Gate:** Aprovado 100% no comando `npm test`.
