@@ -28,13 +28,12 @@ module.exports = {
   },
 
   async onUnload() {
+    museumManager.stop();
     museumManager.client = null;
-    museumManager.urlCache.clear();
-    museumManager.authorCache.clear();
   },
 
-  setupWebRoutes(app) {
-    museumManager.setupWebRoutes(app);
+  setupWebRoutes(app, ctx) {
+    museumManager.setupWebRoutes(app, ctx);
   },
 };
 

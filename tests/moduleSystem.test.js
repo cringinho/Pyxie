@@ -143,6 +143,7 @@ console.log('✅ Formatação de metadados para painel administrativo validada.'
   try { if (fs.existsSync(testSeasonalData)) fs.unlinkSync(testSeasonalData); } catch (_) {}
 
   console.log('🎉 Todos os testes do Motor Modular de Cogs passaram com 100% de sucesso!');
+  process.exit(0);
 })().catch((err) => {
   console.error('❌ Falha na suíte de testes de módulos:', err);
   process.exit(1);

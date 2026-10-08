@@ -1052,6 +1052,26 @@ if (process.stdin) {
             });
             break;
           }
+          case 'MUSEUM_HARVEST_TRIGGER': {
+            console.log(`[IPC:Bot] Comando MUSEUM_HARVEST_TRIGGER recebido (limit=${data.limit || 50}).`);
+            const museumManager = require('./src/modules/museum/museumManager');
+            museumManager.harvestBatch(parseInt(data.limit, 10) || 50).then((res) => {
+              console.log(`[Museum:Harvester] Disparo manual via IPC concluído: ${res?.message || 'Sucesso'}`);
+            }).catch((err) => {
+              console.error('[IPC:Bot] Erro ao executar colheita do museu:', err);
+            });
+            break;
+          }
+          case 'PARTNERSHIP_POST_PANEL': {
+            console.log('[IPC:Bot] Comando PARTNERSHIP_POST_PANEL recebido do supervisor.');
+            const partnershipManager = require('./src/modules/partnerships/partnershipManager');
+            partnershipManager.postPanel().then((res) => {
+              console.log(`[Partnerships:Panel] Postagem do painel via IPC: ${res.ok ? 'SUCESSO no canal ' + res.channelId : 'FALHOU: ' + res.message}`);
+            }).catch((err) => {
+              console.error('[IPC:Bot] Erro ao postar painel de parcerias:', err);
+            });
+            break;
+          }
         }
       }
     } catch (error) {

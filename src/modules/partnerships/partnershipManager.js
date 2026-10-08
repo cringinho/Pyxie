@@ -244,12 +244,17 @@ class PartnershipManager {
     return channel.send({ embeds: [embed], components: [row] });
   }
 
-  async postPanel(source) {
+  async postPanel(source = null, lang = 'pt') {
     this.refresh();
-    const chanId = this.config.channels.requestChannelId;
-    const channel = chanId ? await source.client.channels.fetch(chanId).catch(() => null) : null;
-    if (!channel) return { ok: false, key: 'partnerships.panel_no_channel' };
-    await this.renderRequestChannelPanel(channel, source);
+    const chanId = this.config.channels?.requestChannelId;
+    const client = source?.client || this.client;
+    if (!chanId) return { ok: false, key: 'partnerships.panel_no_channel', message: 'Canal de solicitações não configurado.' };
+    if (!client) return { ok: false, key: 'partnerships.panel_no_client', message: 'Bot do Discord não conectado.' };
+
+    const channel = await client.channels.fetch(chanId).catch(() => null);
+    if (!channel || !channel.isTextBased()) return { ok: false, key: 'partnerships.panel_no_channel', message: 'Canal não encontrado ou inválido.' };
+
+    await this.renderRequestChannelPanel(channel, source || { guild: channel.guild, lang });
     return { ok: true, channelId: chanId };
   }
 
@@ -570,7 +575,10 @@ class PartnershipManager {
     return hits.length > BUMP_RATE_MAX;
   }
 
-  setupWebRoutes(app) {
+  setupWebRoutes(app, ctx) {
+    if (ctx && typeof ctx.sendIpc === 'function') {
+      this.sendIpc = ctx.sendIpc;
+    }
     const detectLang = (req) => {
       const q = String(req.query?.lang || '').toLowerCase();
       if (q.startsWith('pt')) return 'pt';
@@ -607,6 +615,24 @@ class PartnershipManager {
       try {
         const saved = this.saveConfig(req.body || {});
         res.json({ success: true, config: saved, message: 'Configurações de parcerias salvas com sucesso!' });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    });
+
+    app.post('/api/admin/modules/partnerships/post-panel', requireAdminAuth, async (req, res) => {
+      try {
+        if (!this.client) {
+          if (this.sendIpc) {
+            this.sendIpc({ type: 'PARTNERSHIP_POST_PANEL' });
+            return res.json({ success: true, message: 'Solicitação de postagem do painel enviada ao bot via IPC!' });
+          }
+        }
+        const result = await this.postPanel();
+        if (!result.ok) {
+          return res.status(400).json({ success: false, error: result.message || 'Falha ao postar painel' });
+        }
+        return res.json({ success: true, message: `Painel de solicitações publicado no canal <#${result.channelId}>!` });
       } catch (err) {
         res.status(500).json({ success: false, error: err.message });
       }

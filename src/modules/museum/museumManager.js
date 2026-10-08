@@ -32,6 +32,20 @@ class MuseumManager {
     if (client && ctx && typeof ctx.registerListener === 'function') {
       ctx.registerListener('messageCreate', (msg) => this.handleMessage(msg));
     }
+    // Cron diário para raspagem histórica suave às 04:00 BRT
+    if (client && ctx && typeof ctx.registerCron === 'function') {
+      ctx.registerCron('0 4 * * *', () => {
+        this.harvestBatch(50).catch((err) => {
+          console.error('[Museum:Harvester] Erro na raspagem diária:', err);
+        });
+      }, { timezone: 'America/Sao_Paulo' });
+      console.log('[Museum:Harvester] Cron diário de raspagem (04:00 BRT) agendado com sucesso.');
+    }
+  }
+
+  stop() {
+    this.urlCache.clear();
+    this.authorCache.clear();
   }
 
   /** Bot e web são processos distintos: sempre relê o disco antes de operar. */
@@ -40,14 +54,160 @@ class MuseumManager {
     const data = readJson(DATA_PATH, null);
     if (data && Array.isArray(data.arts)) {
       this.data = data;
+      if (!this.data.harvester) {
+        this.data.harvester = {
+          oldestScrapedMessageId: null,
+          completed: false,
+          lastRunAt: null,
+          totalScraped: 0,
+        };
+      }
     } else {
-      this.data = { arts: [] };
+      this.data = {
+        arts: [],
+        harvester: {
+          oldestScrapedMessageId: null,
+          completed: false,
+          lastRunAt: null,
+          totalScraped: 0,
+        },
+      };
       writeJsonAtomic(DATA_PATH, this.data);
     }
   }
 
   saveData() {
     return writeJsonAtomic(DATA_PATH, this.data);
+  }
+
+  /**
+   * Raspa um lote suave de mensagens antigas do canal de artes (Backfill Histórico)
+   */
+  async harvestBatch(limit = 50) {
+    this.refresh();
+    const artChannelId = this.config.artChannelId;
+    if (!artChannelId) {
+      return { success: false, error: 'Canal de artes não configurado.' };
+    }
+
+    if (!this.client) {
+      return { success: false, error: 'Bot do Discord não está conectado para buscar o histórico.' };
+    }
+
+    const channel = await this.client.channels.fetch(artChannelId).catch(() => null);
+    if (!channel || !channel.isTextBased()) {
+      return { success: false, error: 'Canal de artes não encontrado ou não é canal de texto.' };
+    }
+
+    if (!this.data.harvester) {
+      this.data.harvester = {
+        oldestScrapedMessageId: null,
+        completed: false,
+        lastRunAt: null,
+        totalScraped: 0,
+      };
+    }
+
+    const harvester = this.data.harvester;
+    if (harvester.completed) {
+      return {
+        success: true,
+        message: 'Histórico do canal já foi 100% catalogado.',
+        added: 0,
+        completed: true,
+        totalArts: this.data.arts.length,
+      };
+    }
+
+    const safeLimit = Math.min(Math.max(limit, 1), 100);
+    const fetchOptions = { limit: safeLimit };
+    if (harvester.oldestScrapedMessageId) {
+      fetchOptions.before = harvester.oldestScrapedMessageId;
+    }
+
+    let fetchedMessages;
+    try {
+      fetchedMessages = await channel.messages.fetch(fetchOptions);
+    } catch (err) {
+      console.error('[Museum:Harvester] Falha ao buscar mensagens:', err);
+      return { success: false, error: `Erro na API do Discord: ${err.message}` };
+    }
+
+    if (!fetchedMessages || fetchedMessages.size === 0) {
+      harvester.completed = true;
+      harvester.lastRunAt = Date.now();
+      this.saveData();
+      return {
+        success: true,
+        message: 'Início do canal alcançado! Histórico 100% catalogado.',
+        added: 0,
+        completed: true,
+        totalArts: this.data.arts.length,
+      };
+    }
+
+    // Set para deduplicação O(1) de mensagens já catalogadas
+    const existingMessageIds = new Set(this.data.arts.map((a) => a.messageId));
+    let addedCount = 0;
+    let oldestInBatch = null;
+
+    for (const msg of fetchedMessages.values()) {
+      oldestInBatch = msg.id;
+
+      if (msg.author?.bot) continue;
+      if (existingMessageIds.has(msg.id)) continue;
+
+      const img = msg.attachments.find((att) => att.contentType?.startsWith('image/'));
+      if (!img) continue;
+
+      this.data.arts.push({
+        id: `art_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        messageId: msg.id,
+        channelId: msg.channelId,
+        userId: msg.author.id,
+        cachedAuthor: msg.member?.displayName || msg.author.username,
+        originalAttachmentUrl: img.url,
+        description: (msg.content || '').trim().slice(0, 1000),
+        createdAt: msg.createdTimestamp || Date.now(),
+      });
+      existingMessageIds.add(msg.id);
+      addedCount++;
+    }
+
+    // Mantém a galeria ordenada do mais recente para o mais antigo
+    this.data.arts.sort((a, b) => b.createdAt - a.createdAt);
+
+    harvester.oldestScrapedMessageId = oldestInBatch;
+    harvester.lastRunAt = Date.now();
+    harvester.totalScraped = (harvester.totalScraped || 0) + addedCount;
+
+    if (fetchedMessages.size < safeLimit) {
+      harvester.completed = true;
+    }
+
+    this.saveData();
+    console.log(`[Museum:Harvester] Lote concluído: ${addedCount} arte(s) nova(s). Mais antiga: ${oldestInBatch}`);
+    return {
+      success: true,
+      added: addedCount,
+      completed: harvester.completed,
+      totalArts: this.data.arts.length,
+      message: harvester.completed
+        ? `Lote concluído: +${addedCount} arte(s). Início do canal alcançado!`
+        : `Lote concluído: +${addedCount} arte(s) adicionada(s) do histórico!`,
+    };
+  }
+
+  getHarvesterStatus() {
+    this.refresh();
+    const h = this.data.harvester || {};
+    return {
+      completed: Boolean(h.completed),
+      lastRunAt: h.lastRunAt || null,
+      totalScraped: h.totalScraped || 0,
+      totalArts: this.data.arts.length,
+      oldestScrapedMessageId: h.oldestScrapedMessageId || null,
+    };
   }
 
   getConfig() {
@@ -199,7 +359,10 @@ class MuseumManager {
     return true;
   }
 
-  setupWebRoutes(app) {
+  setupWebRoutes(app, ctx) {
+    if (ctx && typeof ctx.sendIpc === 'function') {
+      this.sendIpc = ctx.sendIpc;
+    }
     const requireToken = (req, res, next) => {
       const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
       const token = req.headers['x-admin-token'];
@@ -245,7 +408,7 @@ class MuseumManager {
 
     app.get('/api/admin/modules/museum/config', requireAdminAuth, (req, res) => {
       try {
-        res.json({ success: true, config: this.getConfig() });
+        res.json({ success: true, config: this.getConfig(), harvester: this.getHarvesterStatus() });
       } catch (err) {
         res.status(500).json({ success: false, error: err.message });
       }
@@ -254,7 +417,32 @@ class MuseumManager {
     app.post('/api/admin/modules/museum/config', requireAdminAuth, (req, res) => {
       try {
         const saved = this.saveConfig(req.body || {});
-        res.json({ success: true, config: saved, message: 'Configurações do museu salvas com sucesso!' });
+        res.json({ success: true, config: saved, harvester: this.getHarvesterStatus(), message: 'Configurações do museu salvas com sucesso!' });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    });
+
+    app.get('/api/admin/modules/museum/harvester/status', requireAdminAuth, (req, res) => {
+      try {
+        res.json({ success: true, harvester: this.getHarvesterStatus() });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    });
+
+    app.post('/api/admin/modules/museum/harvester/trigger', requireAdminAuth, async (req, res) => {
+      try {
+        const count = parseInt(req.body?.limit, 10) || 50;
+        if (!this.client) {
+          // No processo do supervisor web, encaminha para o bot via IPC
+          if (this.sendIpc) {
+            this.sendIpc({ type: 'MUSEUM_HARVEST_TRIGGER', limit: count });
+            return res.json({ success: true, message: `Disparo de raspagem (+${count} mensagens) enviado para o bot via IPC!` });
+          }
+        }
+        const result = await this.harvestBatch(count);
+        res.json(result);
       } catch (err) {
         res.status(500).json({ success: false, error: err.message });
       }

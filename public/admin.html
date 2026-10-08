@@ -2127,9 +2127,33 @@
                 <input type="text" id="partAdminRoleIds" value="${(roles.adminRoleIds || []).join(', ')}" placeholder="Ex: 111111111, 222222222" style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
                 <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Membros com esses cargos podem aprovar/recusar pedidos.</span>
               </div>
+
+              <!-- Publicação do Painel / Embed da Pyxie -->
+              <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 12px; padding: 14px; margin-top: 10px;">
+                <strong style="color: #c084fc; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                  <span>📢</span> Publicar Mensagem / Embed da Pyxie no Canal
+                </strong>
+                <p style="font-size: 0.76rem; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">
+                  Envia a mensagem oficial com o <strong>menu suspenso de categorias</strong> para o Canal de Triagem/Pedidos configurado acima. Os membros poderão escolher o tipo de projeto e preencher o formulário diretamente por ele.
+                </p>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <button type="button" id="postPartnershipPanelBtn" class="btn btn-secondary" style="font-size: 0.78rem; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px;" onclick="publishPartnershipPanel(this)">
+                    ✨ Publicar Painel no Discord Agora
+                  </button>
+                  <span id="partnershipPanelFeedback" style="font-size: 0.75rem; color: var(--text-muted);"></span>
+                </div>
+              </div>
             `;
           } else if (id === 'museum') {
             title.textContent = '🏛️ Configurar Museu da Comunidade';
+            const h = data.harvester || {};
+            const lastDate = h.lastRunAt ? new Date(h.lastRunAt).toLocaleString('pt-BR') : 'Nunca executado';
+            const statusBadge = h.completed
+              ? '<span style="color: #10b981; font-weight: 700;">✅ Histórico 100% Concluído</span>'
+              : (h.oldestScrapedMessageId
+                ? '<span style="color: #f59e0b; font-weight: 700;">⏳ Em progresso (avanço diário às 04h)</span>'
+                : '<span style="color: #94a3b8; font-weight: 700;">⏸️ Aguardando primeira execução</span>');
+
             body.innerHTML = `
               <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
                 Configure o canal monitorado para catalogar automaticamente ilustrações e desenhos postados pelos membros.
@@ -2139,10 +2163,43 @@
                 <input type="text" id="museumArtChannelId" value="${cfg.artChannelId || ''}" placeholder="Ex: 123456789012345678" required style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
                 <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Qualquer imagem enviada por membros neste canal será arquivada no museu automaticamente.</span>
               </div>
-              <div class="form-field" style="margin-bottom: 14px;">
+              <div class="form-field" style="margin-bottom: 16px;">
                 <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Cargos de Moderação de Artes (Separados por vírgula):</label>
                 <input type="text" id="museumAdminRoleIds" value="${(cfg.adminRoleIds || []).join(', ')}" placeholder="Ex: 111111111, 222222222" style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
                 <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Cargos com permissão para editar descrições ou remover artes da galeria.</span>
+              </div>
+
+              <!-- Seção do Harvester / Raspador Histórico -->
+              <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 12px; padding: 14px; margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                  <strong style="color: #c084fc; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
+                    <span>⛏️</span> Raspagem Histórica do Canal (Backfill Diário)
+                  </strong>
+                  ${statusBadge}
+                </div>
+                <p style="font-size: 0.76rem; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">
+                  O bot avança no passado suavemente todo dia às <strong>04:00 BRT</strong> em lotes de 50 mensagens, preenchendo o acervo com as artes antigas sem risco de rate limit.
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; font-size: 0.76rem; margin-bottom: 12px;">
+                  <div style="background: rgba(0,0,0,0.25); padding: 8px 10px; border-radius: 8px;">
+                    <span style="color: var(--text-muted); display: block;">Total no Acervo:</span>
+                    <strong style="font-size: 0.95rem; color: #fff;">${h.totalArts || 0} artes</strong>
+                  </div>
+                  <div style="background: rgba(0,0,0,0.25); padding: 8px 10px; border-radius: 8px;">
+                    <span style="color: var(--text-muted); display: block;">Raspadas do Histórico:</span>
+                    <strong style="font-size: 0.95rem; color: #38bdf8;">+${h.totalScraped || 0}</strong>
+                  </div>
+                  <div style="background: rgba(0,0,0,0.25); padding: 8px 10px; border-radius: 8px;">
+                    <span style="color: var(--text-muted); display: block;">Último Lote:</span>
+                    <strong style="font-size: 0.8rem; color: #e2e8f0;">${lastDate}</strong>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <button type="button" id="triggerHarvesterBtn" class="btn btn-secondary" style="font-size: 0.78rem; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px;" onclick="triggerHarvesterBatch(this)">
+                    ⚡ Raspar Próximo Lote Agora (+50 mensagens)
+                  </button>
+                  <span id="harvesterFeedback" style="font-size: 0.75rem; color: var(--text-muted);"></span>
+                </div>
               </div>
             `;
           }
@@ -2210,6 +2267,73 @@
             saveBtn.disabled = false;
             saveBtn.textContent = '💾 Salvar Configurações';
           }
+        }
+      }
+
+      async function triggerHarvesterBatch(btn) {
+        if (!btn) return;
+        const feedback = document.getElementById('harvesterFeedback');
+        btn.disabled = true;
+        const origText = btn.innerHTML;
+        btn.innerHTML = '⏳ Raspando lote...';
+        if (feedback) feedback.textContent = 'Buscando 50 mensagens anteriores...';
+
+        try {
+          const res = await fetch('/api/admin/modules/museum/harvester/trigger', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ limit: 50 }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(data.message || 'Lote processado com sucesso!', 'success');
+            if (feedback) feedback.textContent = `+${data.added || 0} artes adicionadas.`;
+            // Atualiza modal com dados frescos
+            setTimeout(() => {
+              if (currentConfigModuleId === 'museum') {
+                openModuleConfigModal('museum');
+              }
+            }, 1200);
+          } else {
+            showToast(`Erro na raspagem: ${data.error || 'Falha'}`, 'error');
+            if (feedback) feedback.textContent = data.error || 'Erro.';
+          }
+        } catch (err) {
+          showToast(`Erro de conexão: ${err.message}`, 'error');
+          if (feedback) feedback.textContent = 'Erro de rede.';
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = origText;
+        }
+      }
+
+      async function publishPartnershipPanel(btn) {
+        if (!btn) return;
+        const feedback = document.getElementById('partnershipPanelFeedback');
+        btn.disabled = true;
+        const origText = btn.innerHTML;
+        btn.innerHTML = '⏳ Publicando...';
+        if (feedback) feedback.textContent = 'Enviando embed para o Discord...';
+
+        try {
+          const res = await fetch('/api/admin/modules/partnerships/post-panel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(data.message || 'Painel publicado com sucesso!', 'success');
+            if (feedback) feedback.textContent = '✅ Publicado no canal!';
+          } else {
+            showToast(`Erro ao publicar: ${data.error || 'Falha'}`, 'error');
+            if (feedback) feedback.textContent = data.error || 'Erro.';
+          }
+        } catch (err) {
+          showToast(`Erro de conexão: ${err.message}`, 'error');
+          if (feedback) feedback.textContent = 'Erro de rede.';
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = origText;
         }
       }
 

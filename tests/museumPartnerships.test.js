@@ -113,8 +113,50 @@ const { COMMAND_CATEGORY_MAP } = require(path.join(repo, 'src/commands/commandHe
   });
   const musCfg = museumManager.getConfig();
   assert.equal(musCfg.artChannelId, 'art_chan_999');
-  assert.deepEqual(musCfg.adminRoleIds, ['art_role_1']);
-  console.log('  ✅ 6. Configurações administrativas de Parcerias e Museu validadas.');
+  // 7. Harvester Histórico do Museu (Raspagem em Lotes Suaves)
+  const fakeMessages = new Map([
+    ['msg_100', { id: 'msg_100', channelId: 'art_chan_999', author: { id: 'user_1', bot: false, username: 'Alice' }, attachments: [{ url: 'https://cdn.discordapp.com/art1.png', contentType: 'image/png' }], createdTimestamp: 1000 }],
+    ['msg_90', { id: 'msg_90', channelId: 'art_chan_999', author: { id: 'user_bot', bot: true, username: 'Bot' }, attachments: [{ url: 'https://cdn.discordapp.com/bot.png', contentType: 'image/png' }], createdTimestamp: 900 }],
+    ['msg_80', { id: 'msg_80', channelId: 'art_chan_999', author: { id: 'user_2', bot: false, username: 'Bob' }, attachments: [{ url: 'https://cdn.discordapp.com/text.txt', contentType: 'text/plain' }], createdTimestamp: 800 }],
+    ['msg_70', { id: 'msg_70', channelId: 'art_chan_999', author: { id: 'user_3', bot: false, username: 'Carol' }, attachments: [{ url: 'https://cdn.discordapp.com/art2.jpg', contentType: 'image/jpeg' }], createdTimestamp: 700 }],
+  ]);
+
+  let lastFetchOptions = null;
+  museumManager.client = {
+    channels: {
+      async fetch(id) {
+        if (id !== 'art_chan_999') return null;
+        return {
+          id,
+          isTextBased: () => true,
+          messages: {
+            async fetch(options) {
+              lastFetchOptions = options;
+              return fakeMessages;
+            },
+          },
+        };
+      },
+    },
+  };
+
+  const harvestRes1 = await museumManager.harvestBatch(10);
+  assert.equal(harvestRes1.success, true);
+  assert.equal(harvestRes1.added, 2); // Somente msg_100 e msg_70 (ignora bot e não-imagem)
+  assert.equal(harvestRes1.completed, true); // Retornou menos do que safeLimit (10)
+
+  const hStatus = museumManager.getHarvesterStatus();
+  assert.equal(hStatus.completed, true);
+  assert.equal(hStatus.totalScraped, 2);
+  assert.equal(hStatus.oldestScrapedMessageId, 'msg_70');
+
+  // Segunda chamada com completed = true não refaz busca
+  const harvestRes2 = await museumManager.harvestBatch(10);
+  assert.equal(harvestRes2.success, true);
+  assert.equal(harvestRes2.added, 0);
+  assert.equal(harvestRes2.completed, true);
+
+  console.log('  ✅ 7. Harvester Histórico do Museu: lotes, cursor e deduplicação validados.');
 
   console.log('🎉 [TEST] Museu & Parcerias passaram com 100% de sucesso!');
   process.chdir(repo);

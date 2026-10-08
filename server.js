@@ -1283,7 +1283,7 @@ app.get('/api/admin/modules/:id/config', requireAdminAuth, (req, res) => {
     }
     if (id === 'museum') {
       const mm = require('./src/modules/museum/museumManager');
-      return res.json({ success: true, config: mm.getConfig() });
+      return res.json({ success: true, config: mm.getConfig(), harvester: mm.getHarvesterStatus() });
     }
     return res.status(404).json({ success: false, error: `Módulo '${id}' não possui configuração customizada.` });
   } catch (err) {
@@ -1304,7 +1304,7 @@ app.post('/api/admin/modules/:id/config', requireAdminAuth, (req, res) => {
       const mm = require('./src/modules/museum/museumManager');
       const saved = mm.saveConfig(req.body || {});
       sendIpcToBot({ type: 'MODULE_RELOAD', moduleId: id });
-      return res.json({ success: true, config: saved, message: 'Configurações do museu salvas com sucesso!' });
+      return res.json({ success: true, config: saved, harvester: mm.getHarvesterStatus(), message: 'Configurações do museu salvas com sucesso!' });
     }
     return res.status(404).json({ success: false, error: `Módulo '${id}' não possui configuração customizada.` });
   } catch (err) {

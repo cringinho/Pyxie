@@ -32,8 +32,8 @@ module.exports = {
     partnershipManager.bumpHits.clear();
   },
 
-  setupWebRoutes(app) {
-    partnershipManager.setupWebRoutes(app);
+  setupWebRoutes(app, ctx) {
+    partnershipManager.setupWebRoutes(app, ctx);
   },
 };
 
