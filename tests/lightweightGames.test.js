@@ -168,7 +168,7 @@ const { t } = require('../src/utils/i18n');
 const bonusTimer = require('../src/services/bonusTimer');
 
 const activeProfessions = Object.keys(professionsDef);
-assert.equal(activeProfessions.length, 15, 'Devem existir 15 profissões no sistema.');
+assert.equal(activeProfessions.length, 16, 'Devem existir 16 profissões no sistema.');
 
 for (const profKey of activeProfessions) {
   const games = PROFESSION_MINIGAMES[profKey];
@@ -232,8 +232,65 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
   assert.equal(workButtons[1].data.label, '[B]', 'O botão 2 deve ser [B].');
   assert.equal(workButtons[2].data.label, '[C]', 'O botão 3 deve ser [C].');
   assert.equal(workButtons[3].data.label, '[D]', 'O botão 4 deve ser [D].');
+
+  // 13. Testes do Quiz Cultural (500 Questões, 10 Moedas/Acerto, 3h Cooldown e Dificuldade Progressiva)
+  const quizCommand = require('../src/commands/quiz');
+  const quizSeeder = require('../src/services/quizSeederService');
+  const { getQuizStatus, startQuiz } = require('../src/services/economy');
+
+  assert.ok(quizCommand.name, 'Comando quiz deve ter nome.');
+  assert.ok(quizCommand.aliases.includes('quiz'), 'Comando quiz deve ter alias quiz.');
+  assert.ok(quizCommand.aliases.includes('py-quiz'), 'Comando quiz deve ter alias py-quiz.');
+  assert.ok(quizCommand.aliases.includes('trivia'), 'Comando quiz deve ter alias trivia.');
+
+  // Verifica se o banco de 500 questões foi carregado e estruturado
+  const quizDb = quizSeeder.loadDatabase();
+  assert.ok(Array.isArray(quizDb), 'Banco de perguntas deve ser um array.');
+  assert.equal(quizDb.length, 500, 'Banco de perguntas do quiz deve conter exatamente 500 questões.');
+
+  const levelCounts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  for (const q of quizDb) {
+    assert.ok(q.pt && q.en, 'Pergunta deve ter paridade bilíngue em PT e EN.');
+    assert.ok(q.pt.question && q.en.question, 'Texto da pergunta em PT e EN deve existir.');
+    assert.ok(q.pt.correct && q.en.correct, 'Resposta correta em PT e EN deve existir.');
+    assert.equal(q.pt.wrongs.length, 3, 'Devem existir exatamente 3 alternativas incorretas em PT.');
+    assert.equal(q.en.wrongs.length, 3, 'Devem existir exatamente 3 alternativas incorretas em EN.');
+    assert.ok(q.level >= 1 && q.level <= 4, 'Nível deve estar entre 1 e 4.');
+    levelCounts[q.level]++;
+  }
+  assert.equal(levelCounts[1], 125, 'Nível 1 deve ter 125 questões.');
+  assert.equal(levelCounts[2], 125, 'Nível 2 deve ter 125 questões.');
+  assert.equal(levelCounts[3], 125, 'Nível 3 deve ter 125 questões.');
+  assert.equal(levelCounts[4], 125, 'Nível 4 deve ter 125 questões.');
+
+  // Teste de cooldown de 3 horas do Quiz
+  const testQuizUser = `test_quiz_player_${Date.now()}`;
+  const initialQuizStatus = getQuizStatus(testQuizUser);
+  assert.strictEqual(initialQuizStatus.available, true, 'Novo jogador deve ter quiz disponível.');
+
+  const started = startQuiz(testQuizUser);
+  assert.strictEqual(started.started, true, 'startQuiz deve registrar o início.');
+  const afterStartStatus = getQuizStatus(testQuizUser);
+  assert.strictEqual(afterStartStatus.available, false, 'Jogador que iniciou deve entrar em cooldown.');
+  assert.ok(afterStartStatus.remainingMs > 2.9 * 60 * 60 * 1000, 'Cooldown restante deve ser de aproximadamente 3 horas.');
+
+  // Execução do comando quiz
+  let quizReply = null;
+  const mockQuizUser = `quiz_exec_${Date.now()}`;
+  await quizCommand.executePrefix({
+    message: {
+      author: { id: mockQuizUser },
+      guild: { id: '1453890868980482090' },
+      reply: (payload) => { quizReply = payload; },
+    },
+  });
+
+  assert.ok(quizReply && quizReply.embeds && quizReply.embeds.length > 0, 'Comando quiz deve retornar embed.');
+  assert.ok(quizReply.components && quizReply.components.length > 0, 'Comando quiz deve retornar botões.');
+  assert.equal(quizReply.components[0].components.length, 4, 'Primeira linha de botões deve ter as 4 alternativas [A, B, C, D].');
 })().then(() => {
   console.log('Verificação dos comandos leves, convite bilíngue e desafios de trabalho em PT/EN: OK');
+  console.log('Verificação do Quiz Cultural (500 Questões, 10 Moedas/Questão, Cooldown 3h e Tiers): OK');
   fs.writeFileSync(economyFile, originalEconomy, 'utf8');
   process.exit(0);
 }).catch((err) => {

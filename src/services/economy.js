@@ -6,6 +6,7 @@ const economyFile = path.join(__dirname, '..', '..', 'data', 'economy.json');
 const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 const STREAK_GRACE_MS = 48 * 60 * 60 * 1000;
 const WORK_COOLDOWN_MS = 3 * 60 * 60 * 1000;
+const QUIZ_COOLDOWN_MS = 3 * 60 * 60 * 1000;
 
 const CURRENCY_DEFINITIONS = [
   { key: 'coins', label: 'Moedinhas', emoji: '🪙' },
@@ -107,6 +108,7 @@ function normalizeAccount(account) {
     profession: acc.profession || null,
     workCount: normalizeNumber(acc.workCount, 0),
     lastWorkAt: acc.lastWorkAt || null,
+    lastQuizAt: acc.lastQuizAt || null,
     lastDailyAt: acc.lastDailyAt || null,
     lastVotedAt: acc.lastVotedAt || null,
     dailyStreak: normalizeNumber(acc.dailyStreak, 0),
@@ -427,6 +429,30 @@ function startWork(userId, data = {}, now = Date.now()) {
   };
 }
 
+function getQuizStatus(userId, now = Date.now()) {
+  const account = getUserAccount(userId);
+  const lastQuizAt = account.lastQuizAt ? new Date(account.lastQuizAt).getTime() : 0;
+  const remainingMs = Math.max(0, QUIZ_COOLDOWN_MS - (now - lastQuizAt));
+  return {
+    available: remainingMs === 0,
+    remainingMs,
+    nextQuizAt: remainingMs ? new Date(now + remainingMs).toISOString() : null,
+  };
+}
+
+function startQuiz(userId, now = Date.now()) {
+  const status = getQuizStatus(userId, now);
+  if (!status.available) return { started: false, ...status };
+
+  updateUserAccount(userId, (current) => {
+    current.lastQuizAt = new Date(now).toISOString();
+  });
+  return {
+    started: true,
+    ...getQuizStatus(userId, now),
+  };
+}
+
 function getCareerLevel(userId) {
   const account = getUserAccount(userId);
   return Math.max(1, Math.min(4, Number(account.careerLevel) || 1));
@@ -655,6 +681,7 @@ function getStreakRanking(limit = 10, userIds = null) {
 module.exports = {
   DAILY_COOLDOWN_MS,
   WORK_COOLDOWN_MS,
+  QUIZ_COOLDOWN_MS,
   CURRENCY_DEFINITIONS,
   TITLES_CATALOG,
   THEMES_CATALOG,
@@ -683,6 +710,8 @@ module.exports = {
   setProfession,
   startWork,
   finishWork,
+  getQuizStatus,
+  startQuiz,
   getCareerLevel,
   setCareerLevel,
   getDailyStatus,

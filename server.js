@@ -10,6 +10,7 @@ const { lockFilePath, isProcessAlive } = require('./src/utils/botUtils');
 const { reloadEmojiConfig } = require('./src/utils/appEmojis');
 const shopeeManager = require('./src/services/shopeeManager');
 const workSeederService = require('./src/services/workSeederService');
+const quizSeederService = require('./src/services/quizSeederService');
 const seasonalManager = require('./src/modules/seasonal/seasonalManager');
 const moduleManager = require('./src/services/moduleManager');
 
@@ -627,6 +628,27 @@ app.post('/api/admin/work-seeder/trigger', requireAdminAuth, async (req, res) =>
       console.error('[Groq Seeder] Erro no lote disparado manualmente:', e.message);
     });
     return res.json({ success: true, message: 'Lote de geração iniciado em background!' });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// APIs do Seeder de Perguntas de Quiz
+app.get('/api/admin/quiz-seeder/status', requireAdminAuth, (req, res) => {
+  try {
+    return res.json({ success: true, ...quizSeederService.getStatus() });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/admin/quiz-seeder/trigger', requireAdminAuth, async (req, res) => {
+  try {
+    const count = parseInt(req.body?.count, 10) || 4;
+    quizSeederService.generateBatch({ count }).catch((e) => {
+      console.error('[Quiz Seeder] Erro no lote disparado manualmente:', e.message);
+    });
+    return res.json({ success: true, message: 'Lote de perguntas do quiz iniciado em background!' });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }
@@ -1723,6 +1745,7 @@ const server = app.listen(PORT, HOST, () => {
   ensureSshKeys();
   startBot();
   workSeederService.startScheduler();
+  quizSeederService.startScheduler();
 });
 
 server.on('clientError', (err, socket) => {
@@ -1734,6 +1757,7 @@ server.on('clientError', (err, socket) => {
 
 function handleServerShutdown() {
   workSeederService.stopScheduler();
+  quizSeederService.stopScheduler();
   flushSync();
   if (botProcess && !botProcess.killed) {
     try { botProcess.kill('SIGTERM'); } catch (_) {}

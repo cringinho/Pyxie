@@ -43,6 +43,11 @@ const PROFESSION_ALIASES = {
   terapeuta: 'psicologo',
   dubladora: 'dublador',
   voz: 'dublador',
+  advogado: 'advogada',
+  advogada: 'advogada',
+  lawyer: 'advogada',
+  attorney: 'advogada',
+  jurista: 'advogada',
 };
 
 function resolveProfession(value) {

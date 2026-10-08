@@ -125,6 +125,10 @@ const COMMAND_ICONS = {
   dice: getThemeEmojiUrl('dice') || 'https://cdn.discordapp.com/emojis/1551355542700822538.png',
   coinflip: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
   moeda: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
+  quiz: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  'py-quiz': 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  trivia: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  'py-trivia': 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
 
   // Utilidades & Sistema
   help: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
@@ -304,6 +308,12 @@ const COMMAND_CATEGORY_MAP = {
   'py-coinflip': 'economia',
   caraoucoroa: 'economia',
   'py-caraoucoroa': 'economia',
+  quiz: 'economia',
+  'py-quiz': 'economia',
+  trivia: 'economia',
+  'py-trivia': 'economia',
+  perguntas: 'economia',
+  'py-perguntas': 'economia',
 
   // Utilidades & Sistema
   help: 'utilidades',

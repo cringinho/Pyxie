@@ -59,6 +59,10 @@ const professions = {
     label: 'Animador de Festa',
     words: 'festa aniversario comemoracao parabens bolo balao bexiga recreacao brincadeira danca musica microfone fantasia peruca palhaco mascara maquiagem pintura facial escultura baloes gincana jogo risada alegria crianca infantil buffet salao decoracao magia truque palco animador personagem show dancinha corre-cutia cabo-de-guerra danca-das-cadeiras queimada pega-pega esconde-esconde corrida saco trenzinho parabens-pra-voce confete serpentina guloseima pipoca algodao-doce recreador lembrancinha animacao energia sorriso aplausos diversao convidados palco-infantil palhacada brincadeiras teatro fantoche oficinas cama-elastica piscina-bolinhas brinquedo figurino contacao historias'.split(' '),
   },
+  advogada: {
+    label: 'Advogada',
+    words: 'direito processo lei constituicao tribunal juiz audiencia julgamento peticao recurso liminar acordao jurisprudencia contrato honorarios cliente defesa acusacao ministerio publico oab vara comarca sentenca despacho inicial contestacao apelacao habeas-corpus mandado-seguranca prova testemunha pericia parecer consultoria litigio acordo conciliacao mediacao estatuto codigo penal civil trabalhista tributario administrativo empresarial sustentacao-oral prazo preclusao revelia intimacao citacao certidao procuracao instrumento estagiario assessor promotor magistrado desembargador plenário júri réu autor peticionamento protocolo custodia tutela cautelar dano-moral responsabilidade-civil cumprimento-sentenca execucao embargos agravo transito-em-julgado sumula repercussao-geral'.split(' '),
+  },
 };
 
 const commonWorkWords = 'atividade atendimento habilidade pratica rotina tarefa oficio tecnica ferramenta material equipe horario cliente estudo experiencia servico qualidade resultado processo planejamento organizacao cuidado producao aprendizado treinamento'.split(' ');

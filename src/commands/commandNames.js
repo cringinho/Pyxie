@@ -36,5 +36,7 @@ module.exports = {
   ADMIN: 'py-admin',
   WIKI: 'py-wiki',
   EXPORT_MESSAGES: 'py-exportar',
+  QUIZ: 'py-quiz',
 };
+
 

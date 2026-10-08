@@ -96,6 +96,12 @@ const CAREER_HIERARCHIES = {
     { level: 3, pt: 'Animador Principal & Mestre de Cerimônias', en: 'Lead Entertainer & Master of Ceremonies' },
     { level: 4, pt: 'Diretor de Espetáculos Infantis', en: 'Children\'s Show Director' },
   ],
+  advogada: [
+    { level: 1, pt: 'Estagiária de Direito / Paralegal', en: 'Law Intern / Paralegal' },
+    { level: 2, pt: 'Advogada Júnior', en: 'Junior Associate Attorney' },
+    { level: 3, pt: 'Advogada Plena / Especialista', en: 'Senior Legal Counsel' },
+    { level: 4, pt: 'Sócia do Escritório / Desembargadora Honorária', en: 'Law Firm Partner / Managing Partner' },
+  ],
 };
 
 const SALARY_RANGES = {

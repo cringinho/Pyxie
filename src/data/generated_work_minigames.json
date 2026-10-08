@@ -14308,5 +14308,721 @@
         ]
       }
     }
+  ],
+  "advogada": [
+    {
+      "level": 1,
+      "pt": {
+        "scenario": "⚖️ **Petições Iniciais e Custas Processuais!**\nAo distribuir uma petição inicial sem pedido de gratuidade da justiça, o que deve ser anexado sob pena de cancelamento da distribuição?",
+        "correct": "Guia de recolhimento das custas iniciais devidamente quitada",
+        "wrongs": [
+          "Certidão de antecedentes criminais do autor",
+          "Apenas declaração verbal de pobreza do patrono",
+          "Procuração com firma reconhecida por autenticidade em 3 vias"
+        ]
+      },
+      "en": {
+        "scenario": "⚖️ **Initial Complaint Filing Fees!**\nWhen filing an initial lawsuit without fee waiver entitlement, what mandatory document must be attached to avoid case dismissal?",
+        "correct": "Official court docket payment receipt verifying statutory filing fees",
+        "wrongs": [
+          "The plaintiff's full certified criminal history check",
+          "An informal oral declaration of low-income status",
+          "Three notarized hardcopy powers of attorney"
+        ]
+      }
+    },
+    {
+      "level": 1,
+      "pt": {
+        "scenario": "📜 **Instrumento de Procuração e Poderes Especiais!**\nPara firmar acordo, confessar ou receber e dar quitação em juízo, o que a procuração deve conter obrigatoriamente?",
+        "correct": "Cláusula expressa de poderes especiais específicos para tais atos",
+        "wrongs": [
+          "Apenas a cláusula padrão \"ad judicia\" genérica",
+          "Autorização manuscrita sem identificação dos autos",
+          "Registro prévio no cartório de títulos e documentos"
+        ]
+      },
+      "en": {
+        "scenario": "📜 **Power of Attorney & Special Powers!**\nTo settle, confess liability, or receive settlement funds in court on behalf of a client, what must the power of attorney specify?",
+        "correct": "An express clause conferring specific special powers for those acts",
+        "wrongs": [
+          "Only the basic standard general litigation clause",
+          "An unverified informal handwritten note",
+          "Pre-registration at the commercial trade bureau"
+        ]
+      }
+    },
+    {
+      "level": 1,
+      "pt": {
+        "scenario": "🕒 **Prazo em Dobro para Litisconsortes!**\nDois réus com procuradores de escritórios distintos possuem prazo para contestar em processo físico. Qual a prerrogativa legal?",
+        "correct": "Prazo em dobro para todas as suas manifestações em cartório",
+        "wrongs": [
+          "Prazo triplicado por se tratar de litisconsórcio passivo",
+          "Nenhum prazo diferenciado, devendo apresentar defesa conjunta",
+          "Suspensão indefinida dos autos até nomeação de perito"
+        ]
+      },
+      "en": {
+        "scenario": "🕒 **Double Deadline for Co-Defendants!**\nTwo co-defendants represented by separate law firms must respond to physical court proceedings. What procedural rule applies?",
+        "correct": "Double statutory time limit for all filings when records are physical",
+        "wrongs": [
+          "Triple time limit automatically granted for multiple defendants",
+          "No extension permitted, mandating a joint unified brief",
+          "Indefinite case stay until an independent expert is named"
+        ]
+      }
+    },
+    {
+      "level": 1,
+      "pt": {
+        "scenario": "📂 **Juntada de Documentos Substanciais!**\nVocê juntou uma petição com documento novo aos autos. O que o juiz deve determinar antes de proferir decisão?",
+        "correct": "Intimação da parte contrária para manifestação no prazo legal (contraditório)",
+        "wrongs": [
+          "Julgamento imediato e antecipado da lide a favor de quem juntou",
+          "Desentranhamento compulsório de qualquer documento novo",
+          "Encaminhamento automático dos autos para o Ministério Público"
+        ]
+      },
+      "en": {
+        "scenario": "📂 **Admitting New Evidence to Docket!**\nYou introduced substantial newly discovered evidence to the case record. What must the judge order before deciding?",
+        "correct": "Service upon opposing counsel to respond within statutory time (adversarial principle)",
+        "wrongs": [
+          "Immediate summary judgment favoring the party offering evidence",
+          "Mandatory removal and shredding of any post-complaint document",
+          "Immediate transfer of civil docket to criminal prosecutors"
+        ]
+      }
+    },
+    {
+      "level": 1,
+      "pt": {
+        "scenario": "🏛️ **Competência Territorial e Foro!**\nEm ação de reparação de danos decorrente de acidente de trânsito de veículos, qual foro é legalmente competente por opção do autor?",
+        "correct": "O foro do domicílio do autor ou do local do fato",
+        "wrongs": [
+          "Exclusivamente o foro do domicílio do réu",
+          "O foro da capital do estado federativo",
+          "O foro de escolha contratual de qualquer seguradora"
+        ]
+      },
+      "en": {
+        "scenario": "🏛️ **Territorial Jurisdiction & Venue!**\nIn a tort claim arising from a motor vehicle accident, which venue may the plaintiff legally choose?",
+        "correct": "The court in plaintiff's domicile or the venue where the accident occurred",
+        "wrongs": [
+          "Exclusively the permanent residence venue of the tortfeasor defendant",
+          "Mandatory state capital supreme district venue",
+          "The insurer's corporate headquarters venue by default"
+        ]
+      }
+    },
+    {
+      "level": 1,
+      "pt": {
+        "scenario": "📋 **Efeitos da Revelia no Processo Civil!**\nO réu devidamente citado deixa de apresentar contestação no prazo. Qual a presunção jurídica gerada?",
+        "correct": "Presunção relativa de veracidade dos fatos alegados pelo autor",
+        "wrongs": [
+          "Presunção absoluta de procedência sem qualquer possibilidade de prova",
+          "Extinção do processo sem julgamento do mérito",
+          "Condenação automática por litigância de má-fé"
+        ]
+      },
+      "en": {
+        "scenario": "📋 **Default Judgment Effects in Civil Law!**\nThe defendant is served process but fails to file an answer within time. What evidentiary presumption occurs?",
+        "correct": "Rebuttable presumption of truth regarding plaintiff's factual allegations",
+        "wrongs": [
+          "Irrebuttable absolute verdict preventing any judicial scrutiny",
+          "Dismissal of the entire proceedings without prejudice",
+          "Immediate sanction for vexatious and bad-faith litigation"
+        ]
+      }
+    },
+    {
+      "level": 1,
+      "pt": {
+        "scenario": "📑 **Autenticação de Cópias pelo Advogado!**\nAo instruir petição no processo eletrônico, como o advogado comprova a autenticidade de cópias de documentos?",
+        "correct": "Declarando pessoalmente a autenticidade sob sua responsabilidade profissional",
+        "wrongs": [
+          "Obrigando o reconhecimento de firma em cartório de todas as folhas",
+          "Contratando perito grafotécnico particular",
+          "Exigindo a apresentação física de originais no balcão da vara"
+        ]
+      },
+      "en": {
+        "scenario": "📑 **Attorney Certification of Copies!**\nWhen attaching documentary copies to an electronic court filing, how does the attorney verify authenticity?",
+        "correct": "Certifying copy authenticity under personal professional bar responsibility",
+        "wrongs": [
+          "Mandating individual notary public embossing on every single page",
+          "Hiring a private forensic handwriting expert for each exhibit",
+          "Submitting original physical hardcopies directly to the court clerk"
+        ]
+      }
+    },
+    {
+      "level": 1,
+      "pt": {
+        "scenario": "✉️ **Citação Válida da Pessoa Jurídica!**\nA citação postal foi entregue na sede da empresa e recebida pelo funcionário da portaria. Como os tribunais consideram o ato?",
+        "correct": "Válida pela teoria da aparência, incumbindo ao preposto repassar à diretoria",
+        "wrongs": [
+          "Nula de pleno direito, pois apenas o diretor presidente pode assinar",
+          "Invalidação imediata com necessidade de citação por oficial de justiça",
+          "Inexistente até que a empresa protocole ciência espontânea"
+        ]
+      },
+      "en": {
+        "scenario": "✉️ **Service of Process on Corporations!**\nPostal service of process is signed for at corporate headquarters by a reception desk employee. How do courts treat the service?",
+        "correct": "Valid under the doctrine of apparent authority",
+        "wrongs": [
+          "Completely void since only the chief executive officer may sign",
+          "Immediately voided requiring an in-person judicial bailiff delivery",
+          "Non-existent until the corporate board files formal notice"
+        ]
+      }
+    },
+    {
+      "level": 2,
+      "pt": {
+        "scenario": "🛡️ **Contestação e Preliminares de Mérito!**\nO autor ajuizou ação de cobrança sem comprovar o envio de notificação prévia obrigatória prevista em lei. O que alegar em preliminar?",
+        "correct": "Ausência de pressuposto de constituição e desenvolvimento válido e regular do processo",
+        "wrongs": [
+          "Incompetência absoluta de jurisdição internacional",
+          "Litispendência com processo já extinto com julgamento de mérito",
+          "Coisa julgada formal em sede penal"
+        ]
+      },
+      "en": {
+        "scenario": "🛡️ **Defense Brief Preliminary Objections!**\nPlaintiff files collection litigation without required statutory pre-suit notice. What preliminary procedural bar must you raise?",
+        "correct": "Failure of an indispensable condition precedent for regular procedural progression",
+        "wrongs": [
+          "Total lack of subject-matter international jurisdiction",
+          "Lis pendens against a prior action already adjudicated with prejudice",
+          "Formal res judicata stemming from criminal misdemeanor records"
+        ]
+      }
+    },
+    {
+      "level": 2,
+      "pt": {
+        "scenario": "⚡ **Embargos de Declaração contra Sentença!**\nA sentença proferida pelo juízo omitiu-se sobre o pedido de honorários de sucumbência. Qual o recurso cabível e o prazo?",
+        "correct": "Embargos de Declaração no prazo legal de 5 dias úteis",
+        "wrongs": [
+          "Apelação Cível direta no prazo de 15 dias úteis",
+          "Agravo de Instrumento perante o Tribunal no prazo de 10 dias",
+          "Mandado de Segurança contra ato judicial em 120 dias"
+        ]
+      },
+      "en": {
+        "scenario": "⚡ **Motion for Clarification / Reconsideration!**\nThe trial court judgment completely omitted addressing statutory attorney fee allocation. What motion must be filed?",
+        "correct": "Motion for Clarification (Embargos de Declaração) within 5 business days",
+        "wrongs": [
+          "Direct Civil Appeal brief to appellate bench within 15 business days",
+          "Interlocutory Appeal directly to State Court within 10 days",
+          "Constitutional Mandamus against judicial act within 120 calendar days"
+        ]
+      }
+    },
+    {
+      "level": 2,
+      "pt": {
+        "scenario": "🚫 **Tutela de Evidência e Requisitos!**\nAs alegações de fato puderem ser comprovadas apenas documentalmente e houver tese firmada em julgamento de casos repetitivos. O que pleitear?",
+        "correct": "Tutela de Evidência, que independe da demonstração de perigo de dano ou risco ao resultado útil",
+        "wrongs": [
+          "Tutela de Urgência Antecipada com depósito integral de caução fidejussória",
+          "Prisão civil do réu por desobediência a jurisprudência",
+          "Conversão automática do rito comum em execução fiscal"
+        ]
+      },
+      "en": {
+        "scenario": "🚫 **Evidence-Based Summary Relief!**\nYour factual claims are proven strictly by documentation aligned with binding precedent. What relief should you petition for?",
+        "correct": "Summary Evidence Injunction, which does not require showing irreparable harm",
+        "wrongs": [
+          "Precautionary urgent relief mandating cash surety bond deposit",
+          "Civil detention of defendant for defying binding case precedents",
+          "Automatic conversion into tax enforcement execution"
+        ]
+      }
+    },
+    {
+      "level": 2,
+      "pt": {
+        "scenario": "🤝 **Acordo Extrajudicial e Homologação!**\nAs partes transacionaram amigavelmente antes da audiência de conciliação. Qual o procedimento perante o juiz da causa?",
+        "correct": "Peticionar conjuntamente juntando o termo de acordo e requerendo homologação e extinção com mérito",
+        "wrongs": [
+          "Abandonar o processo sem manifestação para que seja extinto por inércia",
+          "Exigir que o juiz realize audiência solene obrigatória mesmo com o acordo",
+          "Requerer a transferência dos autos para a delegacia de polícia"
+        ]
+      },
+      "en": {
+        "scenario": "🤝 **Out-of-Court Settlement Approval!**\nParties reach an amicable settlement prior to the mandatory conciliation hearing. What motion should be submitted?",
+        "correct": "File a joint stipulation of settlement requesting judicial homologation and dismissal with prejudice",
+        "wrongs": [
+          "Abandon case without appearance waiting for docket administrative closure",
+          "Demand an obligatory formal bench trial regardless of consent",
+          "Request court transfer file to regional police department"
+        ]
+      }
+    },
+    {
+      "level": 2,
+      "pt": {
+        "scenario": "🔍 **Inversão do Ônus da Prova no CDC!**\nEm litígio entre consumidor e fornecedor, o consumidor é manifestamente hipossuficiente técnico. Qual o fundamento para inversão do ônus da prova?",
+        "correct": "Artigo 6º, VIII do Código de Defesa do Consumidor diante da verossimilhança e vulnerabilidade",
+        "wrongs": [
+          "Presunção de culpabilidade penal prevista no Código de Processo Penal",
+          "Regra geral estrita do CPC de que o autor sempre prova todos os fatos",
+          "Norma regulamentadora da vigilância sanitária"
+        ]
+      },
+      "en": {
+        "scenario": "🔍 **Shifting Burden of Proof in Consumer Law!**\nIn consumer litigation, the individual exhibits evident technical vulnerability against a conglomerate. What is the legal basis to shift burden?",
+        "correct": "Statutory Consumer Protection Code rule based on plausibility and vulnerability",
+        "wrongs": [
+          "Strict criminal culpability presumption under penal procedure",
+          "Strict civil baseline requiring plaintiffs prove all facts without exception",
+          "Municipal sanitary surveillance regulations"
+        ]
+      }
+    },
+    {
+      "level": 2,
+      "pt": {
+        "scenario": "💰 **Honorários Advocatícios de Sucumbência!**\nO juiz julgou totalmente procedente a ação condenatória. Qual a faixa percentual padrão dos honorários sucumbenciais no CPC?",
+        "correct": "Entre 10% e 20% sobre o valor da condenação, do proveito econômico ou do valor atualizado da causa",
+        "wrongs": [
+          "Fixo e imutável de 50% de todo o patrimônio do réu",
+          "Até 5% fixado discricionariamente pelo escrivão da vara",
+          "Sem honorários sucumbenciais em primeira instância no rito comum"
+        ]
+      },
+      "en": {
+        "scenario": "💰 **Statutory Prevailing Party Legal Fees!**\nThe court rules completely in your client's favor on a damage claim. What is the standard statutory percentage for fee awards?",
+        "correct": "Between 10% and 20% of the judgment amount or updated dispute value",
+        "wrongs": [
+          "Strict statutory 50% penalty on defendant's net worth",
+          "Capped at 5% set discretionarily by the courtroom clerk",
+          "No prevailing fees permitted in first-instance common courts"
+        ]
+      }
+    },
+    {
+      "level": 2,
+      "pt": {
+        "scenario": "📞 **Sigilo Profissional e Prerrogativas da OAB!**\nDurante uma investigação policial, a autoridade intima o advogado para depor como testemunha sobre confidências do cliente. Qual a postura legal?",
+        "correct": "Recusar-se a depor, invocando o dever e direito de sigilo profissional resguardado pelo Estatuto da OAB",
+        "wrongs": [
+          "Prestar depoimento irrestrito sob pena de desacato imediato",
+          "Revelar apenas as mensagens de WhatsApp sem abrir os contratos",
+          "Cobrar honorários da autoridade policial para responder às perguntas"
+        ]
+      },
+      "en": {
+        "scenario": "📞 **Attorney-Client Privilege Protection!**\nPolice detectives subpoena an attorney to testify about confidential statements made by their client. How must counsel respond?",
+        "correct": "Decline to testify, invoking inviolable professional secrecy and attorney-client privilege",
+        "wrongs": [
+          "Provide full testimony under threat of contempt of court",
+          "Disclose WhatsApp messages while keeping written contracts secret",
+          "Charge police an hourly consulting fee to answer queries"
+        ]
+      }
+    },
+    {
+      "level": 2,
+      "pt": {
+        "scenario": "⚖️ **Defesa Prévia no Processo Penal!**\nO cliente foi denunciado pelo Ministério Público por estelionato e citado. Qual a peça cabível a apresentar no prazo de 10 dias?",
+        "correct": "Resposta à Acusação com rol de testemunhas e exceções",
+        "wrongs": [
+          "Alegações Finais por memoriais escritos",
+          "Recurso em Sentido Estrito contra o recebimento da denúncia",
+          "Revisão Criminal perante o Tribunal de Justiça"
+        ]
+      },
+      "en": {
+        "scenario": "⚖️ **Criminal Defense Response to Indictment!**\nA client is indicted on fraud charges and formally served. What responsive brief must be submitted within 10 days?",
+        "correct": "Answer to Accusation (Resposta à Acusação) naming defense witnesses and objections",
+        "wrongs": [
+          "Final closing arguments memoranda",
+          "Interlocutory Criminal Appeal against indictment acceptance",
+          "Collateral criminal review petition after judgment finality"
+        ]
+      }
+    },
+    {
+      "level": 2,
+      "pt": {
+        "scenario": "🛡️ **Prescrição Intercorrente na Execução!**\nEm processo de execução de título extrajudicial, o credor não localiza bens e os autos ficam paralisados sem impulso útil. O que ocorre?",
+        "correct": "Inicia-se a contagem do prazo da prescrição intercorrente após 1 ano de suspensão",
+        "wrongs": [
+          "A dívida é multiplicada por dez a título de penalidade civil",
+          "O processo tramita indefinidamente por até 100 anos sem prescrição",
+          "O devedor é automaticamente condenado a pena restritiva de direitos"
+        ]
+      },
+      "en": {
+        "scenario": "🛡️ **Intercurrent Prescription in Debt Enforcement!**\nIn an execution docket, the creditor fails to find assets and leaves the docket dormant without action. What occurs?",
+        "correct": "The statutory intercurrent prescription clock begins after one year of suspension",
+        "wrongs": [
+          "The debt amount is multiplied tenfold as a civil sanction",
+          "The enforcement docket continues indefinitely for a century without bar",
+          "The debtor is automatically sentenced to criminal community service"
+        ]
+      }
+    },
+    {
+      "level": 3,
+      "pt": {
+        "scenario": "🏛️ **Recurso Especial ao Superior Tribunal de Justiça (STJ)!**\nO acórdão do Tribunal estadual contrariou frontalmente lei federal ordinária. Qual recurso é cabível e qual o requisito essencial?",
+        "correct": "Recurso Especial (REsp) demonstrando violação à lei federal e o devido prequestionamento",
+        "wrongs": [
+          "Recurso Extraordinário sem suscitar repercussão geral",
+          "Agravo Regimental diretamente ao presidente do Supremo Tribunal Federal",
+          "Apelação adesiva perante a turma julgadora regional"
+        ]
+      },
+      "en": {
+        "scenario": "🏛️ **Special Appeal to the Superior Court of Justice!**\nAn appellate state court ruling directly violated a federal statute. What appellate remedy lies and what is its threshold?",
+        "correct": "Special Appeal (REsp) establishing federal law violation and explicit pre-questioning",
+        "wrongs": [
+          "Constitutional Appeal without asserting general repercussion impact",
+          "Internal motion filed directly to the Supreme Court Chief Justice",
+          "Cross-appeal before the regional trial division"
+        ]
+      }
+    },
+    {
+      "level": 3,
+      "pt": {
+        "scenario": "⚖️ **Súmula Vinculante e Reclamação Constitucional!**\nUm juiz de primeira instância descumpriu expressamente o teor de Súmula Vinculante do STF. Qual medida jurídica originária cabe ao Supremo?",
+        "correct": "Reclamação Constitucional para cassar a decisão e garantir a autoridade da súmula",
+        "wrongs": [
+          "Ação Rescisória imediata antes mesmo do trânsito em julgado",
+          "Representação disciplinar em substituição a qualquer recurso",
+          "Habeas Data contra o tribunal local"
+        ]
+      },
+      "en": {
+        "scenario": "⚖️ **Constitutional Complaint for Binding Precedent!**\nA trial judge expressly disregards a Binding Precedent (Súmula Vinculante) of the Supreme Federal Court. What remedy lies?",
+        "correct": "Constitutional Complaint (Reclamação Constitucional) to vacate the ruling and enforce precedent authority",
+        "wrongs": [
+          "Rescissory action prior to trial court final judgment",
+          "Disciplinary grievance substituting appellate review entirely",
+          "Habeas Data petition directed at local court servers"
+        ]
+      }
+    },
+    {
+      "level": 3,
+      "pt": {
+        "scenario": "💼 **Due Diligence em Fusões e Aquisições (M&A)!**\nDurante a auditoria jurídica pré-compra de uma sociedade anônima, descobre-se passivo trabalhista oculto bilionário. Qual cláusula contratual protege o comprador?",
+        "correct": "Cláusula de Declarações e Garantias (R&W) com Cláusula de Indenização e Retenção de Preço (Escrow)",
+        "wrongs": [
+          "Cláusula de renúncia irrestrita ao direito de agir contra os vendedores",
+          "Pacto comissório verbal sem garantia de ressarcimento",
+          "Cláusula leonina transferindo integralmente o risco ao adquirente"
+        ]
+      },
+      "en": {
+        "scenario": "💼 **M&A Due Diligence & Liability Mitigation!**\nDuring legal audit of a corporate target, undisclosed labor liabilities are discovered. What contractual mechanisms protect the buyer?",
+        "correct": "Representations and Warranties (R&Ws) coupled with an Indemnification and Escrow holdback clause",
+        "wrongs": [
+          "Unconditional covenant not to sue target shareholders",
+          "Unwritten oral trust without financial collateral backing",
+          "One-sided indemnity shifting all undisclosed liabilities to buyer"
+        ]
+      }
+    },
+    {
+      "level": 3,
+      "pt": {
+        "scenario": "📜 **Teoria dos Motivos Determinantes no Direito Administrativo!**\nA Administração exonerou servidora comissionada justificando falsamente \"corte de gastos\", mas nomeou substituto no dia seguinte. O que alegar?",
+        "correct": "Nulidade do ato por vício de motivo pela Teoria dos Motivos Determinantes",
+        "wrongs": [
+          "Inconstitucionalidade de todo o regime celetista da administração pública",
+          "Direito adquirido irrevogável ao cargo de livre provimento e exoneração",
+          "Crime de responsabilidade com pedido de intervenção militar"
+        ]
+      },
+      "en": {
+        "scenario": "📜 **Doctrine of Determinant Motives in Administrative Law!**\nPublic authority dismisses an appointee falsely citing \"budget cuts\", but fills the exact seat the next day. What is the legal challenge?",
+        "correct": "Nullity of administrative act for defective cause under Doctrine of Determinant Motives",
+        "wrongs": [
+          "Unconstitutionality of general civil service statutes",
+          "Irrevocable vested property right to a discretionary at-will appointment",
+          "Treason charge petitioning for federal military intervention"
+        ]
+      }
+    },
+    {
+      "level": 3,
+      "pt": {
+        "scenario": "📊 **Desconsideração da Personalidade Jurídica (Art. 50 CC)!**\nO devedor esvaziou as contas da empresa transferindo patrimônio para sócios de forma fraudulenta. Qual o requisito no Código Civil?",
+        "correct": "Comprovação de abuso da personalidade jurídica caracterizado pelo desvio de finalidade ou confusão patrimonial",
+        "wrongs": [
+          "Mero inadimplemento da obrigação financeira sem qualquer dolo",
+          "Prejuízo financeiro comum decorrente de crise econômica setorial",
+          "Encerramento regular das atividades mercantis sem falência"
+        ]
+      },
+      "en": {
+        "scenario": "📊 **Piercing the Corporate Veil (Article 50 Civil Code)!**\nA corporate debtor siphoned corporate assets into shareholder personal accounts fraudulently. What requirement must be proven?",
+        "correct": "Abuse of corporate personality manifested through intentional diversion of purpose or commingling of assets",
+        "wrongs": [
+          "Simple inability to pay debt without any fraudulent intent",
+          "Generic operational business loss caused by inflation",
+          "Orderly dissolution of company without bankruptcy declaration"
+        ]
+      }
+    },
+    {
+      "level": 3,
+      "pt": {
+        "scenario": "🛡️ **Controle de Constitucionalidade Difuso!**\nEm sede de Apelação Cível, o Tribunal de Justiça vislumbra inconstitucionalidade de lei municipal. Qual o procedimento obrigatório pelo art. 97 da CF?",
+        "correct": "Observância da Cláusula de Reserva de Plenário, submetendo a questão ao Pleno ou Órgão Especial",
+        "wrongs": [
+          "Declaração de inconstitucionalidade monocrática pelo relator sem ouvir o colegiado",
+          "Remessa imediata do processo principal ao Ministério Público da União",
+          "Ignorar a inconstitucionalidade e decidir com base apenas em princípios abstratos"
+        ]
+      },
+      "en": {
+        "scenario": "🛡️ **Full Bench Rule in Constitutional Review!**\nAn appellate state court chamber detects an unconstitutional municipal law. Under Article 97 of the Constitution, what is required?",
+        "correct": "Observe the Full Bench Rule (Reserva de Plenário), remitting the constitutional issue to Full Court",
+        "wrongs": [
+          "Single-judge chambers striking down statutory law without collegiate quorum",
+          "Immediate transfer of civil suit to federal criminal attorneys",
+          "Overlooking statutory invalidity to decide solely on abstract equity"
+        ]
+      }
+    },
+    {
+      "level": 3,
+      "pt": {
+        "scenario": "⚖️ **Habeas Corpus e Trancamento de Ação Penal!**\nO réu foi denunciado por fato que manifestamente não constitui crime (atipicidade material evidente). Qual o instrumento cabível?",
+        "correct": "Habeas Corpus perante o Tribunal competente pleiteando o trancamento da ação penal por falta de justa causa",
+        "wrongs": [
+          "Ação Popular perante a vara da fazenda pública",
+          "Apenas esperar a sentença condenatória para recorrer em apelação",
+          "Embargos de terceiro no juízo de família"
+        ]
+      },
+      "en": {
+        "scenario": "⚖️ **Habeas Corpus & Dismissal of Criminal Action!**\nA client faces criminal charges for acts that unequivocally do not constitute an offense. What urgent relief should be sought?",
+        "correct": "Petition for Habeas Corpus to quash criminal proceedings due to lack of probable cause and legal basis",
+        "wrongs": [
+          "Class action lawsuit in environmental claims court",
+          "Wait for trial verdict and subsequent appellate review years later",
+          "Third-party claim in probate and family court"
+        ]
+      }
+    },
+    {
+      "level": 3,
+      "pt": {
+        "scenario": "📑 **Ação Rescisória e Prazo Decadencial!**\nUma sentença transitou em julgado com base em documento falso comprovado em juízo. Qual a ação autônoma e o prazo?",
+        "correct": "Ação Rescisória no prazo decadencial de 2 anos a contar do trânsito em julgado",
+        "wrongs": [
+          "Agravo interno no prazo de 15 dias perante a primeira instância",
+          "Ação civil pública sem qualquer prazo decadencial",
+          "Petição simples nos próprios autos após 10 anos"
+        ]
+      },
+      "en": {
+        "scenario": "📑 **Action for Relief from Judgment (Rescisória)!**\nA civil judgment becomes final based on forged evidence subsequently proven in court. What independent action and deadline apply?",
+        "correct": "Action for Annulment of Final Judgment (Ação Rescisória) within a 2-year limitation period from finality",
+        "wrongs": [
+          "Internal chamber appeal within 15 days before the trial judge",
+          "Public civil class action with no statutory time bars",
+          "Informal administrative letter filed a decade later"
+        ]
+      }
+    },
+    {
+      "level": 3,
+      "pt": {
+        "scenario": "💼 **Compliance Trabalhista e Terceirização Ilícita!**\nUma grande empresa contratou prestador de serviços, mas os sócios exerciam subordinação direta e pessoalidade nos terceirizados. Qual o risco jurídico?",
+        "correct": "Reconhecimento de vínculo empregatício direto com a tomadora e responsabilidade solidária",
+        "wrongs": [
+          "Isenção total de qualquer responsabilidade tributária ou trabalhista",
+          "Conversão obrigatória da empresa tomadora em cooperativa sem fins lucrativos",
+          "Multa meramente simbólica aplicada pela junta comercial"
+        ]
+      },
+      "en": {
+        "scenario": "💼 **Labor Compliance & Sham Outsourcing!**\nA corporation outsources operations but corporate executives exercise direct day-to-day command and personal control over contractor staff. What risk ensues?",
+        "correct": "Judicial reclassification establishing direct employer-employee relationship and joint liability",
+        "wrongs": [
+          "Total statutory exemption from all civil and tax liabilities",
+          "Mandatory conversion of the corporation into a non-profit cooperative",
+          "A nominal cosmetic fine issued by the commercial registry board"
+        ]
+      }
+    },
+    {
+      "level": 4,
+      "pt": {
+        "scenario": "🏛️ **Recurso Extraordinário com Repercussão Geral no STF!**\nAo interpor Recurso Extraordinário perante o STF com base em violação à CF/88, qual requisito preliminar autônomo é formalmente indispensável?",
+        "correct": "Demonstração fundamentada de Repercussão Geral sob ponto de vista econômico, político, social ou jurídico",
+        "wrongs": [
+          "Certidão de depósito recursal equivalente ao triplo do valor da causa",
+          "Autorização expressa de no mínimo cinco governadores de estado",
+          "Apresentação de parecer unânime da Ordem dos Advogados do Brasil"
+        ]
+      },
+      "en": {
+        "scenario": "🏛️ **Constitutional Supreme Court General Repercussion!**\nWhen lodging a Constitutional Appeal (Recurso Extraordinário) before the Supreme Federal Court, what mandatory preliminary showing is required?",
+        "correct": "A substantiated showing of General Repercussion transcending subjective interests on economic, political, social, or legal grounds",
+        "wrongs": [
+          "Surety bond deposit equaling triple the entire damages claim",
+          "Written concurrence endorsement from five state governors",
+          "A unanimous legal opinion issued by the Federal Bar Council"
+        ]
+      }
+    },
+    {
+      "level": 4,
+      "pt": {
+        "scenario": "⚖️ **Incidente de Resolução de Demandas Repetitivas (IRDR)!**\nExiste efetiva repetição de processos sobre a mesma questão unicamente de direito com risco de quebra de isonomia. O que suscitar?",
+        "correct": "Incidente de Resolução de Demandas Repetitivas (IRDR) perante o Presidente do Tribunal de Justiça competente",
+        "wrongs": [
+          "Ação Direta de Inconstitucionalidade por omissão no juízo de comarca",
+          "Dissídio coletivo de greve na Justiça do Trabalho",
+          "Arguição de Impedimento contra todos os juízes do estado"
+        ]
+      },
+      "en": {
+        "scenario": "⚖️ **Resolution of Repetitive Claims Incident (IRDR)!**\nThousands of parallel lawsuits dispute an identical question of statutory law threatening judicial uniformity. What mechanism should be invoked?",
+        "correct": "Incident for Resolution of Repetitive Proceedings (IRDR) submitted to the competent Appellate Court President",
+        "wrongs": [
+          "Direct constitutional review suit filed before a municipal magistrate",
+          "Collective union labor arbitration strike dispute",
+          "Recusal motion disqualifying all state judges simultaneously"
+        ]
+      }
+    },
+    {
+      "level": 4,
+      "pt": {
+        "scenario": "📜 **Mandado de Injunção e Omissão Legislativa Inconstitucional!**\nA ausência de norma regulamentadora inviabiliza o exercício de direito constitucional de greve de servidores públicos. Qual a via constitucional cabível?",
+        "correct": "Mandado de Injunção perante o STF para suprir a lacuna legislativa integrativa",
+        "wrongs": [
+          "Habeas Corpus coletivo preventivo de ofício",
+          "Ação Popular por ato lesivo ao patrimônio histórico",
+          "Mandado de Segurança contra lei em tese"
+        ]
+      },
+      "en": {
+        "scenario": "📜 **Writ of Injunction & Unconstitutional Legislative Inertia!**\nLack of implementing statutes prevents public servants from exercising their constitutional right to strike. What constitutional remedy applies?",
+        "correct": "Writ of Injunction (Mandado de Injunção) before the Supreme Court to remedy constitutional omission",
+        "wrongs": [
+          "Collective preventive habeas corpus issued sua sponte",
+          "Citizen suit for injury to historic cultural landmarks",
+          "Writ of Mandamus against statutory legislation in the abstract"
+        ]
+      }
+    },
+    {
+      "level": 4,
+      "pt": {
+        "scenario": "💼 **Cláusula Compromissória Arbitral e Jurisdição Estatal!**\nEm contrato empresarial internacional de alta complexidade contendo cláusula compromissória arbitral cheia (válida e eficaz), a parte ajuíza ação no judiciário. Como defender a empresa?",
+        "correct": "Arguir em preliminar de contestação a existência de convenção de arbitragem, gerando extinção sem resolução de mérito",
+        "wrongs": [
+          "Concordar tacitamente com a jurisdição estatal e desistir da arbitragem contratada",
+          "Impetrar mandado de segurança contra a câmara arbitral internacional",
+          "Pleitear a penhora imediata dos bens dos árbitros nomeados"
+        ]
+      },
+      "en": {
+        "scenario": "💼 **Enforcing Binding Arbitration Clauses!**\nA party to a commercial cross-border contract containing a binding arbitration clause improperly files suit in state trial court. What defense must you assert?",
+        "correct": "Raise the arbitration agreement in preliminary defense, mandating dismissal without prejudice in favor of the arbitral tribunal",
+        "wrongs": [
+          "Tacitly consent to state jurisdiction and waive the arbitral agreement",
+          "File a constitutional writ of mandamus against the international arbitral institution",
+          "Petition the trial court to freeze the personal assets of the designated arbitrators"
+        ]
+      }
+    },
+    {
+      "level": 4,
+      "pt": {
+        "scenario": "🌐 **Homologação de Sentença Estrangeira no STJ!**\nPara que uma sentença proferida por tribunal de Nova York produza efeitos executivos de penhora sobre bens no Brasil, qual procedimento é indispensável?",
+        "correct": "Ação de Homologação de Decisão Estrangeira (HDE) perante o Superior Tribunal de Justiça (STJ)",
+        "wrongs": [
+          "Ajuizar execução direta na comarca local sem qualquer homologação prévia",
+          "Apenas registrar a sentença estrangeira no consulado brasileiro no exterior",
+          "Apresentar a sentença em cartório de notas acompanhada de tradução livre"
+        ]
+      },
+      "en": {
+        "scenario": "🌐 **Recognition of Foreign Judgments (STJ Homologation)!**\nFor a civil judgment issued by a New York state court to permit execution against real estate in Brazil, what mandatory procedure must be completed?",
+        "correct": "Foreign Judgment Recognition Proceeding (HDE) before the Superior Court of Justice (STJ)",
+        "wrongs": [
+          "File immediate asset execution in local district court with zero prior recognition",
+          "Register the judgment copy exclusively at the overseas Brazilian diplomatic consulate",
+          "Submit document to a notary accompanied by an uncertified machine translation"
+        ]
+      }
+    },
+    {
+      "level": 4,
+      "pt": {
+        "scenario": "🛡️ **Arguição de Descumprimento de Preceito Fundamental (ADPF)!**\nUm decreto pré-constitucional (anterior à CF/1988) viola frontalmente preceito fundamental republicano. Por que a ADPF é a via adequada em vez de ADI?",
+        "correct": "Pelo princípio da subsidiariedade e porque a ADI não é admitida para atos normativos pré-constitucionais no Brasil",
+        "wrongs": [
+          "Porque qualquer cidadão comum possui legitimidade ativa para propor ADPF no STF",
+          "Porque a ADPF dispensa a demonstração de lesão a preceito fundamental",
+          "Porque a ADPF é julgada exclusivamente pelo Senado Federal"
+        ]
+      },
+      "en": {
+        "scenario": "🛡️ **Claim of Non-Compliance with Fundamental Precept (ADPF)!**\nA pre-constitutional 1970 statute violates fundamental constitutional principles. Why must ADPF be utilized instead of standard ADI?",
+        "correct": "Under the subsidiarity doctrine and because ADI is legally inadmissible against pre-constitutional legislation",
+        "wrongs": [
+          "Because any individual citizen holds direct standing to file ADPFs before the Supreme Court",
+          "Because ADPF does not require proving injury to core constitutional norms",
+          "Because ADPF is adjudicated exclusively by the Federal Senate"
+        ]
+      }
+    },
+    {
+      "level": 4,
+      "pt": {
+        "scenario": "⚖️ **Embargos de Divergência perante o Plenário ou Seção do STJ!**\nTurmas distintas do mesmo Tribunal Superior proferiram acórdãos com teses diametralmente opostas sobre o mesmo dispositivo legal. Qual o recurso uniformizador?",
+        "correct": "Embargos de Divergência comprovando a similitude fática e a divergência jurisprudencial analítica",
+        "wrongs": [
+          "Agravo regimental simples contra a decisão colegiada",
+          "Recurso ordinário constitucional dirigido à primeira instância",
+          "Reclamação administrativa ao Conselho Nacional de Justiça (CNJ)"
+        ]
+      },
+      "en": {
+        "scenario": "⚖️ **En Banc Resolution of Inter-Chamber Circuit Splits!**\nDifferent chambers of the Superior Court of Justice issue conflicting rulings on the identical statutory provision. What harmonizing appellate brief must you lodge?",
+        "correct": "Motion for Harmonization of Conflicting Decisions (Embargos de Divergência) detailing analytical conflict and factual equivalence",
+        "wrongs": [
+          "Standard single-judge motion against en banc decisions",
+          "Direct constitutional ordinary appeal to district magistrates",
+          "Administrative misconduct petition to the National Council of Justice (CNJ)"
+        ]
+      }
+    },
+    {
+      "level": 4,
+      "pt": {
+        "scenario": "📜 **Teoria do Diálogo das Fontes no Direito Privado!**\nEm litígio complexo envolvendo contrato bancário com idoso hipossuficiente, como harmonizar o Código Civil, o CDC e o Estatuto do Idoso?",
+        "correct": "Aplicando a Teoria do Diálogo das Fontes de Erik Jayme e Claudia Lima Marques para complementariedade e máxima proteção axiológica",
+        "wrongs": [
+          "Revogação automática do Código Civil pelo critério cronológico",
+          "Exclusão peremptória do CDC por se tratar de instituição financeira bancária",
+          "Subordinação integral da Constituição à legislação infraconstitucional"
+        ]
+      },
+      "en": {
+        "scenario": "📜 **Dialogue of Legal Sources Doctrine in Private Law!**\nIn complex litigation involving a consumer credit contract with an elderly vulnerable citizen, how should Civil Code, Consumer Code, and Senior Citizens Act be reconciled?",
+        "correct": "Applying the Dialogue of Sources Doctrine (Erik Jayme / Claudia Lima Marques) for harmonized complementarity and maximal protection",
+        "wrongs": [
+          "Automatic statutory repeal of the Civil Code via chronological hierarchy",
+          "Total exclusion of consumer laws on banking institutions",
+          "Subordinating constitutional human dignity rights to banking bylaws"
+        ]
+      }
+    }
   ]
 }

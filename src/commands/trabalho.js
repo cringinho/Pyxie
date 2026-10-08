@@ -1361,6 +1361,72 @@ const PROFESSION_MINIGAMES = {
       },
     },
   ],
+
+  advogada: [
+    {
+      level: 1,
+      pt: {
+        scenario: '⚖️ **Contagem de Prazos Processuais!**\nVocê recebeu uma intimação publicada na sexta-feira no Diário de Justiça Eletrônico (DJe). Como deve ser contagem do prazo no CPC?',
+        correct: 'Considera-se publicado no primeiro dia útil seguinte e o prazo inicia no próximo dia útil subsequente',
+        wrongs: [
+          'O prazo começa a correr imediatamente no sábado às 00:00',
+          'Conta-se corridamente incluindo sábados e domingos sem interrupção',
+          'Ignora-se o Diário de Justiça e espera-se carta com aviso de recebimento',
+        ],
+      },
+      en: {
+        scenario: '⚖️ **Statutory Deadline Calculation!**\nA court electronic notice was published on Friday. Under procedural law, how do you compute the filing deadline?',
+        correct: 'Deem published on next business day, with limitation countdown starting the day after',
+        wrongs: [
+          'Start counting continuously over the weekend from midnight Saturday',
+          'Ignore court electronic notice until physical postal mail arrives',
+          'File immediately without checking working day computation rules',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '🏛️ **Audiência de Instrução e Julgamento!**\nDurante a oitiva de uma testemunha chave, a parte contrária faz uma pergunta capciosa e indutiva. Qual a atitude da advogada?',
+        correct: 'Pela ordem, formular imediata impugnação requerendo que o magistrado indefira a pergunta',
+        wrongs: [
+          'Interromper a testemunha com gritos desproporcionais e bater na mesa',
+          'Aguardar o julgamento da apelação sem registrar protesto em ata',
+          'Sair da sala de audiência em sinal de protesto sem autorização',
+        ],
+      },
+      en: {
+        scenario: '🏛️ **Witness Examination Objection!**\nDuring direct examination in court, opposing counsel asks an improper leading question. What is your legal action?',
+        correct: 'Raise an immediate objection for the record and request the judge strike or disallow the question',
+        wrongs: [
+          'Scream loudly at the witness and bang on the counsel table',
+          'Say nothing and hope to bring it up in the appeals court without objection',
+          'Storm out of the courtroom abruptly without judicial permission',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '📜 **Tutela de Urgência em Saúde!**\nUm cliente grave necessita de medicamento de alto custo não fornecido pelo plano. Qual medida jurídica emergencial deve ser impetrada?',
+        correct: 'Ação com pedido de Tutela de Urgência Cautelar ou Antecipada demonstrando fumus boni iuris e periculum in mora',
+        wrongs: [
+          'Esperar o trânsito em julgado de uma ação ordinária de cobrança',
+          'Encaminhar um e-mail informal de reclamação para o SAC do hospital',
+          'Protocolar um recurso administrativo sem efeitos suspensivos na ANS',
+        ],
+      },
+      en: {
+        scenario: '📜 **Emergency Injunction for Healthcare!**\nA critical patient requires vital medical coverage denied by their insurer. What expedited relief must you seek?',
+        correct: 'File an emergency preliminary injunction showing prima facie entitlement and imminent peril of harm',
+        wrongs: [
+          'Wait for a final unappealable declaratory judgment after standard trial',
+          'Send an informal email complaint to the hospital reception desk',
+          'Lodge a non-binding administrative memo with no stay order',
+        ],
+      },
+    },
+  ],
 };
 
 function shuffleArray(array) {

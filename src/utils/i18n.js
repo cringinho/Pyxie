@@ -451,7 +451,8 @@ const TRANSLATIONS = {
         "desenvolvedor_jogos": "Desenvolvedor(a) de Jogos",
         "psicologo": "Psicólogo(a)",
         "telemarketing": "Operador(a) de Telemarketing",
-        "animador_festa": "Animador(a) de Festa"
+        "animador_festa": "Animador(a) de Festa",
+        "advogada": "Advogada"
       }
     },
     "shop": {
@@ -659,6 +660,28 @@ const TRANSLATIONS = {
       "demotedDesc": "Atenção: devido aos erros consecutivos no expediente, você foi rebaixado(a) para **{role}**.\nSeus rendimentos foram ajustados ao novo patamar. Pratique e recupere seu cargo!",
       "streakStatus": "> 🔥 **Sequência de Acertos:** {streak} seguidos",
       "mistakeStatus": "> ⚠️ **Erros Consecutivos:** {streak}"
+    },
+    "quiz": {
+      "cooldown": "⏰ Você já disputou o Quiz recentemente! Aguarde **{time}** para tentar um novo desafio.",
+      "title": "🧠  ✦  Desafio do Quiz Pyxie",
+      "roundHeader": "Pergunta #{round} • Nível: **{difficulty}**",
+      "accumulatedLabel": "🪙 Moedas Acumuladas nesta rodada: **{amount}**",
+      "cashoutHint": "💡 Responda com calma! Se errar, perderá todo o montante acumulado nesta partida.",
+      "timeLimit": "⏱️ **TEMPO DE RESPOSTA: 60 SEGUNDOS**",
+      "successTitle": "🎉  ✦  Resposta Correta!",
+      "successDesc": "Parabéns! Você acertou a questão e acumulou mais **+{reward} Moedas**!\n\n🪙 **Total Acumulado:** **{total} Moedas**\n📈 **Nível Atual:** **{difficulty}**\n\n*Carregando a próxima pergunta...*",
+      "wrongTitle": "💥  ✦  Você Errou o Quiz!",
+      "wrongDesc": "Que pena! Você errou a questão e **perdeu as {lost} moedinhas acumuladas** nesta partida!\n\n💡 **Resposta Correta:** **{correct}**\n⏰ Tente novamente em **3 horas**!",
+      "cashoutButton": "💰 Parar e Garantir Moedas",
+      "nextButton": "➡️ Próxima Pergunta",
+      "cashoutTitle": "🏆  ✦  Prêmio Garantido!",
+      "cashoutDesc": "Você decidiu parar e garantiu **+{amount} Moedas** com segurança!\n\n💳 **Novo Saldo:** **{balance} Moedas**\n⏰ Próximo Quiz disponível em **3 horas**.",
+      "otherUserSession": "❌ Esta partida de Quiz pertence a outro jogador. Use `/py-quiz` para começar a sua!",
+      "expiredSession": "⏰ Esta sessão de Quiz expirou ou já foi encerrada. Use `/py-quiz` para iniciar uma nova partida!",
+      "diffTier1": "Iniciante",
+      "diffTier2": "Intermediário",
+      "diffTier3": "Avançado",
+      "diffTier4": "Mestre Supremo"
     },
     "wiki": {
       "title": "📖  ✦  Wiki & Enciclopédia Oficial da Pyxie",
@@ -984,7 +1007,8 @@ const TRANSLATIONS = {
         "desenvolvedor_jogos": "Game Developer",
         "psicologo": "Psychologist",
         "telemarketing": "Call Center Operator",
-        "animador_festa": "Party Entertainer"
+        "animador_festa": "Party Entertainer",
+        "advogada": "Attorney / Lawyer"
       }
     },
     "shop": {
@@ -1192,6 +1216,28 @@ const TRANSLATIONS = {
       "demotedDesc": "Warning: due to consecutive shift mistakes, you were demoted to **{role}**.\nYour earnings were adjusted. Keep training to reclaim your role!",
       "streakStatus": "> 🔥 **Success Streak:** {streak} in a row",
       "mistakeStatus": "> ⚠️ **Consecutive Mistakes:** {streak}"
+    },
+    "quiz": {
+      "cooldown": "⏰ You already played the Quiz recently! Please wait **{time}** before taking a new challenge.",
+      "title": "🧠  ✦  Pyxie Quiz Challenge",
+      "roundHeader": "Question #{round} • Tier: **{difficulty}**",
+      "accumulatedLabel": "🪙 Coins Accumulated in this round: **{amount}**",
+      "cashoutHint": "💡 Think carefully! If you make a mistake, you lose all accumulated coins in this run.",
+      "timeLimit": "⏱️ **TIME LIMIT: 60 SECONDS**",
+      "successTitle": "🎉  ✦  Correct Answer!",
+      "successDesc": "Great job! You answered correctly and accumulated another **+{reward} Coins**!\n\n🪙 **Total Accumulated:** **{total} Coins**\n📈 **Current Tier:** **{difficulty}**\n\n*Loading next question...*",
+      "wrongTitle": "💥  ✦  Wrong Answer in the Quiz!",
+      "wrongDesc": "Too bad! You got it wrong and **lost all {lost} coins accumulated** in this round!\n\n💡 **Correct Answer:** **{correct}**\n⏰ Try again in **3 hours**!",
+      "cashoutButton": "💰 Cash Out & Keep Coins",
+      "nextButton": "➡️ Next Question",
+      "cashoutTitle": "🏆  ✦  Reward Secured!",
+      "cashoutDesc": "You decided to cash out and secured **+{amount} Coins** safely!\n\n💳 **New Balance:** **{balance} Coins**\n⏰ Next Quiz available in **3 hours**.",
+      "otherUserSession": "❌ This Quiz session belongs to another player. Use `/py-quiz` to start your own!",
+      "expiredSession": "⏰ This Quiz session has expired or ended. Use `/py-quiz` to start a new run!",
+      "diffTier1": "Beginner",
+      "diffTier2": "Intermediate",
+      "diffTier3": "Advanced",
+      "diffTier4": "Supreme Master"
     },
     "wiki": {
           "title": "📖  ✦  Official Pyxie Encyclopedia & Wiki",

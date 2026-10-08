@@ -36,6 +36,7 @@ const commands = [
   require('./admin'),
   require('./wiki'),
   require('./exportar'),
+  require('./quiz'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');
