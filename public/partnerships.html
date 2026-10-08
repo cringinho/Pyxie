@@ -141,7 +141,7 @@
       position: relative;
       max-width: 1280px;
       margin: 0 auto;
-      padding: 44px 20px 24px;
+      padding: 40px 20px 24px;
       text-align: center;
     }
     .hero-badge-wrap {
@@ -172,17 +172,46 @@
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.5; transform: scale(1.3); }
     }
+
+    /* Mascote Astaroth Flutuante em FORMATO MAIOR */
+    .hero-mascot-flying-wrap {
+      position: relative;
+      display: inline-block;
+      margin: 0 auto 16px;
+    }
+    .hero-mascot-flying-wrap::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.28) 0%, rgba(139, 92, 246, 0.15) 50%, transparent 70%);
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(14px);
+      animation: auraPulse 4s ease-in-out infinite alternate;
+    }
+    @keyframes auraPulse {
+      0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; }
+      100% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+    }
     .hero-mascot-flying {
-      width: 130px;
-      height: 130px;
-      margin: 0 auto 12px;
-      filter: drop-shadow(0 12px 24px rgba(16, 185, 129, 0.35));
-      animation: floatPet 4s ease-in-out infinite;
+      width: 240px;
+      height: 240px;
+      max-width: 80vw;
+      object-fit: contain;
+      filter: drop-shadow(0 14px 28px rgba(16, 185, 129, 0.45));
+      animation: floatPet 4.5s ease-in-out infinite;
+      position: relative;
+      z-index: 1;
     }
     @keyframes floatPet {
       0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-12px) rotate(2deg); }
+      50% { transform: translateY(-14px) rotate(2.5deg); }
     }
+
     .hero-title {
       font-family: 'Outfit', sans-serif;
       font-size: clamp(2.2rem, 5vw, 3.4rem);
@@ -228,6 +257,11 @@
       font-family: 'Outfit', sans-serif;
       color: #6ee7b7;
     }
+    .meta-stat-icon {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
     .btn-apply-partner {
       display: inline-flex;
       align-items: center;
@@ -257,7 +291,7 @@
       width: 100%;
     }
 
-    /* Categorias / Tabs */
+    /* Categorias / Tabs com ícones PNG (astaroth_gem e astaroth_icon2) */
     .tabs-wrap {
       display: flex;
       justify-content: center;
@@ -293,9 +327,68 @@
       box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
     }
     .tab-icon {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    }
+
+    /* Banner Especial de Destaques de Astaroth (com SVG em FORMATO MAIOR) */
+    .featured-spotlight-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      background: linear-gradient(135deg, rgba(38, 20, 68, 0.9), rgba(16, 8, 32, 0.9));
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 22px;
+      padding: 20px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(245, 158, 11, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .featured-spotlight-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .featured-spotlight-icon {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+    .featured-spotlight-text h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .featured-spotlight-text p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .featured-astaroth-mascot-large {
+      width: 145px;
+      height: 145px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 20px rgba(16, 185, 129, 0.45));
+      animation: floatAction 3.8s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes floatAction {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.03); }
+    }
+    @media (max-width: 680px) {
+      .featured-spotlight-banner { flex-direction: column; text-align: center; }
+      .featured-spotlight-left { flex-direction: column; }
+      .featured-spotlight-text h3 { justify-content: center; }
+      .featured-astaroth-mascot-large { width: 110px; height: 110px; }
     }
 
     /* Seções e Títulos */
@@ -317,9 +410,10 @@
       font-weight: 800;
       color: #fff;
     }
-    .section-mascot-icon {
-      width: 28px;
-      height: 28px;
+    .section-icon-png {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
       filter: drop-shadow(0 2px 6px rgba(16, 185, 129, 0.4));
     }
     .section-desc {
@@ -538,10 +632,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 20px;
       background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.25));
       border: 1px solid rgba(236, 72, 153, 0.4);
-      border-radius: 18px;
+      border-radius: 20px;
       padding: 16px 24px;
       margin: 32px 0 20px;
       text-decoration: none;
@@ -557,33 +651,29 @@
     .promo-content {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
     }
-    .promo-icon-wrap {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: rgba(236, 72, 153, 0.25);
-      border: 1px solid rgba(236, 72, 153, 0.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .promo-icon-img {
-      width: 32px;
-      height: 32px;
+    /* Mascote Astaroth Pet1 em formato de destaque maior no banner */
+    .promo-icon-img-large {
+      width: 88px;
+      height: 88px;
       object-fit: contain;
+      flex-shrink: 0;
+      filter: drop-shadow(0 6px 14px rgba(236, 72, 153, 0.4));
+      transition: transform 0.3s ease;
+    }
+    .promo-banner:hover .promo-icon-img-large {
+      transform: scale(1.06) rotate(2deg);
     }
     .promo-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 800;
       color: #fff;
       margin-bottom: 2px;
     }
     .promo-desc {
-      font-size: 0.84rem;
+      font-size: 0.86rem;
       color: var(--text-muted);
     }
     .promo-cta-btn {
@@ -593,8 +683,8 @@
       background: linear-gradient(135deg, var(--pink-neon), #db2777);
       color: #fff;
       font-weight: 700;
-      font-size: 0.84rem;
-      padding: 9px 18px;
+      font-size: 0.86rem;
+      padding: 10px 20px;
       border-radius: 9999px;
       white-space: nowrap;
       box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4);
@@ -644,40 +734,54 @@
       .promo-banner { flex-direction: column; align-items: stretch; text-align: center; }
       .promo-content { flex-direction: column; }
       .promo-cta-btn { justify-content: center; }
+      .hero-mascot-flying { width: 180px; height: 180px; }
     }
 
-    /* Rodapé */
+    /* Rodapé com Mascote Idling em Formato Maior */
     footer {
       border-top: 1px solid rgba(139, 92, 246, 0.2);
-      background: rgba(8, 4, 16, 0.9);
-      padding: 36px 20px;
+      background: rgba(8, 4, 16, 0.92);
+      padding: 40px 20px 32px;
       text-align: center;
       margin-top: auto;
+      position: relative;
     }
-    .footer-mascot {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 12px;
-      opacity: 0.85;
-      filter: drop-shadow(0 4px 10px rgba(16, 185, 129, 0.3));
+    .footer-mascot-wrap {
+      margin-bottom: 14px;
+    }
+    .footer-mascot-large {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 18px rgba(16, 185, 129, 0.35));
+      animation: floatIdle 5s ease-in-out infinite;
+    }
+    @keyframes floatIdle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
     }
     .footer-text {
       color: var(--text-dim);
-      font-size: 0.86rem;
-      margin-bottom: 8px;
+      font-size: 0.88rem;
+      margin-bottom: 12px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
     .footer-links {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 16px;
-      font-size: 0.84rem;
+      font-size: 0.86rem;
     }
     .footer-links a {
       color: #c4b5fd;
       text-decoration: none;
+      transition: color 0.2s ease;
     }
     .footer-links a:hover {
+      color: #fff;
       text-decoration: underline;
     }
 
@@ -727,8 +831,10 @@
       <span id="heroBadge">Guardião Astaroth • Alianças Vivas</span>
     </div>
 
-    <!-- Mascote Astaroth Flutuante -->
-    <img src="/assets/pyxie/icons/astaroth_pet_cute_flying.svg" class="hero-mascot-flying" alt="Astaroth Alianças" />
+    <!-- Mascote Astaroth Flutuante em FORMATO MAIOR (240px) -->
+    <div class="hero-mascot-flying-wrap">
+      <img src="/assets/pyxie/icons/astaroth_pet_cute_flying.svg" class="hero-mascot-flying" alt="Astaroth Alianças" />
+    </div>
 
     <h1 class="hero-title">
       <span id="titlePrefix">Mural das Alianças de</span> <span class="gradient-text-hero">Astaroth</span>
@@ -740,12 +846,12 @@
 
     <div class="hero-meta-strip">
       <div class="meta-stat">
-        <span>🛡️</span>
+        <img src="/assets/pyxie/emojis/astaroth_gem.png" class="meta-stat-icon" alt="gem" />
         <span id="statPartnersLabel">Parcerias:</span>
         <span class="meta-stat-num" id="statPartnersCount">0</span>
       </div>
       <div class="meta-stat">
-        <span>⚡</span>
+        <img src="/assets/pyxie/emojis/astaroth_icon2.png" class="meta-stat-icon" alt="flame" />
         <span id="statBumpsLabel">Total de Impulsos:</span>
         <span class="meta-stat-num" id="statBumpsCount">0</span>
       </div>
@@ -758,13 +864,11 @@
   <!-- Container Principal -->
   <main class="container">
 
-    <!-- Anúncios / Patrocínio Superior (Shopee para PT / Adsterra para EN) -->
+    <!-- Anúncios / Patrocínio Superior (Shopee para PT / Adsterra para EN) com Astaroth em formato de destaque -->
     <div class="monetization-pt">
       <a href="/promo" class="promo-banner" data-hourly-promo="true" target="_blank" rel="noopener">
         <div class="promo-content">
-          <div class="promo-icon-wrap">
-            <img src="/assets/pyxie/icons/astaroth_pet1.svg" class="promo-icon-img" alt="Shopee Astaroth Deals" />
-          </div>
+          <img src="/assets/pyxie/icons/astaroth_pet1.svg" class="promo-icon-img-large" alt="Shopee Astaroth Deals" />
           <div>
             <div class="promo-title" id="ptBannerTitle">Presente Especial de Astaroth • Achadinhos da Comunidade</div>
             <div class="promo-desc" id="ptBannerDesc">Confira pelúcias, colecionáveis e setups gamer com os melhores cupons na Shopee!</div>
@@ -805,17 +909,21 @@
       </div>
     </div>
 
-    <!-- Seletor de Categorias / Abas com Ícones Temáticos -->
+    <!-- Seletor de Categorias / Abas com Ícones PNG Padronizados (astaroth_gem e astaroth_icon2) -->
     <div class="tabs-wrap" id="tabs"></div>
 
     <!-- Destaques (Mosaico de Impulsos de Astaroth) -->
     <div id="featuredSection" style="display: none;">
-      <div class="section-header">
-        <div class="section-title">
-          <img src="/assets/pyxie/icons/astaroth_pet_green_atack.svg" class="section-mascot-icon" alt="Astaroth Atack" />
-          <span id="featuredTitle">⭐ Destaques de Astaroth</span>
+      <div class="featured-spotlight-banner">
+        <div class="featured-spotlight-left">
+          <img src="/assets/pyxie/emojis/astaroth_gem.png" class="featured-spotlight-icon" alt="gem" />
+          <div class="featured-spotlight-text">
+            <h3 id="featuredTitle">⭐ Destaques de Astaroth</h3>
+            <p id="featuredDesc">Alianças mais recentemente impulsionadas pela comunidade com poderes arcanos</p>
+          </div>
         </div>
-        <div class="section-desc" id="featuredDesc">Alianças mais recentemente impulsionadas pela comunidade</div>
+        <!-- Mascote Astaroth de Ataque em FORMATO MAIOR (145px) -->
+        <img src="/assets/pyxie/icons/astaroth_pet_green_atack.svg" class="featured-astaroth-mascot-large" alt="Astaroth Atack" />
       </div>
       <div class="grid" id="mosaic"></div>
     </div>
@@ -823,7 +931,7 @@
     <!-- Catálogo Completo de Projetos -->
     <div class="section-header">
       <div class="section-title">
-        <img src="/assets/pyxie/icons/astaroth_pet1.svg" class="section-mascot-icon" alt="Astaroth All" />
+        <img src="/assets/pyxie/emojis/astaroth_icon2.png" class="section-icon-png" alt="Astaroth Icon" />
         <span id="allTitle">Todos os Projetos Aliados</span>
       </div>
       <div class="section-desc" id="allDesc">Navegue pelas alianças oficiais cadastradas</div>
@@ -834,10 +942,12 @@
 
   </main>
 
-  <!-- Rodapé -->
+  <!-- Rodapé com Mascote Astaroth Idling em FORMATO MAIOR (120px) -->
   <footer>
-    <img src="/assets/pyxie/icons/astaroth_pet_idling.svg" class="footer-mascot" alt="Astaroth Idling" />
-    <div class="footer-text" id="footerText">Pyxie & Cringelândia • Conectando mundos e comunidades mágicas.</div>
+    <div class="footer-mascot-wrap">
+      <img src="/assets/pyxie/icons/astaroth_pet_idling.svg" class="footer-mascot-large" alt="Astaroth Idling" />
+    </div>
+    <div class="footer-text" id="footerText">Pyxie & Cringelândia • Conectando mundos e comunidades mágicas sob a bênção de Astaroth.</div>
     <div class="footer-links">
       <a href="/" id="footerHomeLink">Início</a>
       <span>•</span>
@@ -862,7 +972,7 @@
         statBumps: 'Total de Impulsos:',
         btnApply: 'Quero ser Parceiro',
         featured: '⭐ Destaques de Astaroth',
-        featuredDesc: 'Alianças mais recentemente impulsionadas pela comunidade',
+        featuredDesc: 'Alianças mais recentemente impulsionadas pela comunidade com poderes arcanos',
         all: 'Todos os Projetos Aliados',
         allDesc: 'Navegue pelas alianças oficiais cadastradas',
         tabAll: 'Todas as Alianças',
@@ -874,7 +984,7 @@
         bumped: 'Impulsionado!',
         bumpStreak: 'Impulsos',
         lang: 'EN',
-        footer: 'Pyxie & Cringelândia • Conectando mundos e comunidades mágicas.',
+        footer: 'Pyxie & Cringelândia • Conectando mundos e comunidades mágicas sob a bênção de Astaroth.',
         footerHome: 'Início',
         footerWiki: 'Wiki Oficial',
         footerBonus: 'Bônus Web',
@@ -898,7 +1008,7 @@
         statBumps: 'Total Bumps:',
         btnApply: 'Become a Partner',
         featured: '⭐ Astaroth Highlights',
-        featuredDesc: 'Most recently boosted alliances by the community',
+        featuredDesc: 'Most recently boosted alliances by the community with arcane powers',
         all: 'All Allied Projects',
         allDesc: 'Browse through official verified partnerships',
         tabAll: 'All Alliances',
@@ -910,7 +1020,7 @@
         bumped: 'Boosted!',
         bumpStreak: 'Bumps',
         lang: 'PT',
-        footer: 'Pyxie & Cringelândia • Connecting magical worlds and servers.',
+        footer: 'Pyxie & Cringelândia • Connecting magical worlds and servers under Astaroth blessing.',
         footerHome: 'Home',
         footerWiki: 'Official Wiki',
         footerBonus: 'Web Bonus',
@@ -948,11 +1058,10 @@
       }
     }
 
-    const MACRO_PETS = {
-      community: '/assets/pyxie/icons/astaroth_pet_cute_flying.svg',
-      creator: '/assets/pyxie/icons/astaroth_pet1.svg',
-      service: '/assets/pyxie/icons/astaroth_pet_green_atack.svg',
-      ong: '/assets/pyxie/icons/astaroth_pet_idling.svg'
+    // Para ícones pequenos nas abas, usamos estritamente as imagens PNG solicitadas
+    const ICON_PNG = {
+      all: '/assets/pyxie/emojis/astaroth_icon2.png',
+      gem: '/assets/pyxie/emojis/astaroth_gem.png'
     };
 
     function card(p, isFeatured = false) {
@@ -1047,22 +1156,23 @@
       const tabs = $('tabs');
       tabs.replaceChildren();
 
+      // Ícones pequenos padronizados com astaroth_icon2.png e astaroth_gem.png
       const entries = [
-        [null, I18N[lang].tabAll, '/assets/pyxie/icons/astaroth_pet_cute_flying.svg'],
-        ['community', I18N[lang].macro.community, MACRO_PETS.community],
-        ['creator', I18N[lang].macro.creator, MACRO_PETS.creator],
-        ['service', I18N[lang].macro.service, MACRO_PETS.service],
-        ['ong', I18N[lang].macro.ong, MACRO_PETS.ong]
+        [null, I18N[lang].tabAll, ICON_PNG.all],
+        ['community', I18N[lang].macro.community, ICON_PNG.gem],
+        ['creator', I18N[lang].macro.creator, ICON_PNG.all],
+        ['service', I18N[lang].macro.service, ICON_PNG.gem],
+        ['ong', I18N[lang].macro.ong, ICON_PNG.all]
       ];
 
-      for (const [key, label, petIcon] of entries) {
+      for (const [key, label, pngIcon] of entries) {
         const b = document.createElement('button');
         b.className = 'tab-btn' + (key === category ? ' active' : '');
         b.type = 'button';
 
         const icon = document.createElement('img');
         icon.className = 'tab-icon';
-        icon.src = petIcon;
+        icon.src = pngIcon;
         icon.alt = label;
 
         const span = document.createElement('span');
