@@ -22,9 +22,40 @@ function getReply(result, professionKey, source = null) {
     : t('profession.paidSuccess', source, { profession: professionLabel, cost: formatCoins(50, source) });
 }
 
+const PROFESSION_ALIASES = {
+  gamedev: 'desenvolvedor_jogos',
+  game_dev: 'desenvolvedor_jogos',
+  'desenvolvedor de jogos': 'desenvolvedor_jogos',
+  'desenvolvedor-jogos': 'desenvolvedor_jogos',
+  desenvolvedorjogos: 'desenvolvedor_jogos',
+  jogos: 'desenvolvedor_jogos',
+  games: 'desenvolvedor_jogos',
+  'animador de festa': 'animador_festa',
+  'animador-festa': 'animador_festa',
+  animadorfesta: 'animador_festa',
+  animador: 'animador_festa',
+  recreador: 'animador_festa',
+  callcenter: 'telemarketing',
+  'call center': 'telemarketing',
+  sac: 'telemarketing',
+  atendente: 'telemarketing',
+  psicologa: 'psicologo',
+  terapeuta: 'psicologo',
+  dubladora: 'dublador',
+  voz: 'dublador',
+};
+
 function resolveProfession(value) {
-  const normalized = String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  return professions[normalized] ? normalized : null;
+  const normalized = String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+  if (professions[normalized]) return normalized;
+  if (PROFESSION_ALIASES[normalized]) return PROFESSION_ALIASES[normalized];
+  const underscored = normalized.replace(/[\s-]+/g, '_');
+  if (professions[underscored]) return underscored;
+  return null;
 }
 
 async function execute(source, reply, value) {

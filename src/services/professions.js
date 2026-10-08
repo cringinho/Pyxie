@@ -39,6 +39,26 @@ const professions = {
     label: 'Artista',
     words: 'aquarela argila arte artista atelie aquarela banner barro pincel brilho busto canvas caricatura ceramica cerne colagem cor desenho escultura esboço estampa exposicao fantasia figura forma grafite gravura ilustracao imagem instalacao lapis linha madeira mural obra oficina oleo papel pintura pincelada plastico portfolio retrato textura tinta tela tridimensional verniz aquarela abstrato acabamento anatomia aquarela arte-final bico composição criacao desenho digital detalhe diretor dourado enquadramento estilo expressionismo figurino fotografia galeria geometria icone impressao inspiracao lamina paisagem paleta perspectiva performance personagem pincelada poster profundidade projeto realismo roteiro cenário serigrafia simbolo tecnica teatro tema tonalidade traço visual escultura ceramista decoracao figurino mosaico monumento restauracao'.split(' '),
   },
+  dublador: {
+    label: 'Dublador',
+    words: 'microfone estudio voz dublagem gravacao personagem animacao filme serie locucao fone cabine redublagem labial sincronia fala tom timbre entonacao diccao respiracao casting diretor papel audio mixer roteiro take cena emocao enfase pausa playback canal sonoplastia atriz ator narrador trailer desenho anime game curta longa versao brasileira canais efeito reverberacao equalizacao compressor interpretacao impostacao articulacao gravador faixa pista sincronismo ruido popfilter acustica masterizacao sessao contracena ensaio locutor vozes original elenco escala projeto emissora estudio-dublagem falante fala-rapida grito sussurro choro risada gargalhada voz-grave voz-aguda sotaque modulacao microfonacao trilha dublado versao trailer-dublado'.split(' '),
+  },
+  desenvolvedor_jogos: {
+    label: 'Desenvolvedor de Jogos',
+    words: 'game engine unity unreal godot pixel sprite textura modelo shader fisica colizao render animacao gameplay roteiro fase level designer nivel personagem inimigo boss mapa inventario quest hud som trilha mecanica loop bug glitch build compilacao teste fps framerate controle joystick teclado mouse vr inteligencia artificial pathfinding hitbox poligono malha iluminacao particula efeito particulas gravidade pulo corrida ataque defesa dano vida mana save checkpoint menu tela loading shader-graph script csharp cpp python lua balanceamento prototipo vertical-slice playtest publicacao steam console mobile itch indie estudio publisher narrativa cutscene ambientacao otimizacao renderizador'.split(' '),
+  },
+  psicologo: {
+    label: 'Psicólogo',
+    words: 'mente cerebro terapia consulta paciente sessao acolhimento escuta empatia comportamento emocao sentimento trauma angustia ansiedade depressao fobia estresse saude mental psicoterapia psicanalise cognitivo comportamental gestalt humanismo inconsciente ego id superego consciencia memoria atencao percepcao vinculo diagnostico relatorio anamnese evolucao etica sigilo setting divan consultorio clinica acolher intervencao escuta-ativa transferencia contratransferencia relaxamento mindfulness respiracao luto perda superacao auto-estima autocuidado identidade personalidade infancia desenvolvimento neuropsicologia teste psicologico escala avaliacao resiliencia bem-estar grupo casal familia plantao orientacao vocacional mediacao conflito'.split(' '),
+  },
+  telemarketing: {
+    label: 'Telemarketing',
+    words: 'headset ligacao chamada telefone ramal atendimento cliente operador sac suporte venda cobranca receptivo ativo central callcenter contact fila espera discador script protocolo registro sistema crm ticket resolucao pausa feedback monitoria qualidade gravacao nps csat tma tme meta bonus comissao cancelamento retencao negociacao proposta oferta plano portabilidade contrato informacao cadastro confirmacao transferencia supervisor coordenador equipe operacao campanha lead discagem retorno reclamacao elogio ouvidoria horario escala produtividade tabulacao motivo agendamento cordialidade comunicacao agilidade paciencia persuasao argumento'.split(' '),
+  },
+  animador_festa: {
+    label: 'Animador de Festa',
+    words: 'festa aniversario comemoracao parabens bolo balao bexiga recreacao brincadeira danca musica microfone fantasia peruca palhaco mascara maquiagem pintura facial escultura baloes gincana jogo risada alegria crianca infantil buffet salao decoracao magia truque palco animador personagem show dancinha corre-cutia cabo-de-guerra danca-das-cadeiras queimada pega-pega esconde-esconde corrida saco trenzinho parabens-pra-voce confete serpentina guloseima pipoca algodao-doce recreador lembrancinha animacao energia sorriso aplausos diversao convidados palco-infantil palhacada brincadeiras teatro fantoche oficinas cama-elastica piscina-bolinhas brinquedo figurino contacao historias'.split(' '),
+  },
 };
 
 const commonWorkWords = 'atividade atendimento habilidade pratica rotina tarefa oficio tecnica ferramenta material equipe horario cliente estudo experiencia servico qualidade resultado processo planejamento organizacao cuidado producao aprendizado treinamento'.split(' ');

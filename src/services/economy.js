@@ -427,15 +427,79 @@ function startWork(userId, data = {}, now = Date.now()) {
   };
 }
 
+function getCareerLevel(userId) {
+  const account = getUserAccount(userId);
+  return Math.max(1, Math.min(4, Number(account.careerLevel) || 1));
+}
+
+function setCareerLevel(userId, level) {
+  const clamped = Math.max(1, Math.min(4, Number(level) || 1));
+  const updated = updateUserAccount(userId, (acc) => {
+    acc.careerLevel = clamped;
+    acc.careerStreak = 0;
+    acc.careerMistakes = 0;
+  });
+  return updated.careerLevel;
+}
+
 function finishWork(userId, success, amount, bonusBean = false) {
-  if (!success) return { earned: false, amount: 0, balance: getBalance(userId), magicBeans: getMagicBeans(userId), bonusBean: false };
+  let promoted = false;
+  let demoted = false;
+  let previousLevel = 1;
+  let newLevel = 1;
+
+  if (!success) {
+    const updated = updateUserAccount(userId, (current) => {
+      previousLevel = Math.max(1, Math.min(4, Number(current.careerLevel) || 1));
+      current.careerStreak = 0;
+      const mistakes = (Number(current.careerMistakes) || 0) + 1;
+      current.careerMistakes = mistakes;
+
+      // hierarquia diminui com muitos erros seguidos (chance de 5% de diminuir a cada erro cometido seguido)
+      if (previousLevel > 1 && Math.random() < 0.05) {
+        current.careerLevel = previousLevel - 1;
+        current.careerMistakes = 0; // reseta a sequência de erros ao rebaixar
+        demoted = true;
+      }
+      newLevel = Math.max(1, Math.min(4, Number(current.careerLevel) || 1));
+    });
+
+    return {
+      earned: false,
+      amount: 0,
+      balance: getBalance(userId),
+      magicBeans: getMagicBeans(userId),
+      bonusBean: false,
+      careerLevel: newLevel,
+      previousLevel,
+      careerStreak: 0,
+      careerMistakes: updated.careerMistakes || 0,
+      promoted: false,
+      demoted,
+    };
+  }
+
   const account = updateUserAccount(userId, (current) => {
     current.coins = (Number(current.coins) || 0) + amount;
     current.workCount = (Number(current.workCount) || 0) + 1;
     if (bonusBean) {
       current.magicBeans = (Number(current.magicBeans) || 0) + 1;
     }
+
+    previousLevel = Math.max(1, Math.min(4, Number(current.careerLevel) || 1));
+    current.careerMistakes = 0;
+    const streak = (Number(current.careerStreak) || 0) + 1;
+    current.careerStreak = streak;
+
+    // hierarquia aumenta com acertos seguidos (chance de 2% de evolução a cada acerto seguido)
+    if (previousLevel < 4 && Math.random() < 0.02) {
+      current.careerLevel = previousLevel + 1;
+      current.careerStreak = 0; // reseta a sequência de acertos ao ser promovido
+      promoted = true;
+    }
+    newLevel = Math.max(1, Math.min(4, Number(current.careerLevel) || 1));
   });
+
   return {
     earned: true,
     amount,
@@ -443,6 +507,12 @@ function finishWork(userId, success, amount, bonusBean = false) {
     magicBeans: account.magicBeans,
     bonusBean,
     workCount: account.workCount,
+    careerLevel: newLevel,
+    previousLevel,
+    careerStreak: account.careerStreak || 0,
+    careerMistakes: 0,
+    promoted,
+    demoted: false,
   };
 }
 
@@ -613,6 +683,8 @@ module.exports = {
   setProfession,
   startWork,
   finishWork,
+  getCareerLevel,
+  setCareerLevel,
   getDailyStatus,
   claimDaily,
   getRanking,

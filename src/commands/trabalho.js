@@ -15,6 +15,11 @@ const {
   startWork,
 } = require('../services/economy');
 const {
+  getRoleTitle,
+  calculateSalaryForLevel,
+  filterMinigamesByLevel,
+} = require('../services/careerHierarchy');
+const {
   formatCoins,
   formatRemaining,
   getLanguage,
@@ -1026,6 +1031,336 @@ const PROFESSION_MINIGAMES = {
       },
     },
   ],
+
+  dublador: [
+    {
+      level: 1,
+      pt: {
+        scenario: '🎙️ **Sincronia Labial no Estúdio!**\nO personagem na tela abre a boca dizendo uma frase curta e expressiva. O que o dublador deve sincronizar com exatidão?',
+        correct: 'A abertura da boca e o tempo de fala do personagem na tela',
+        wrongs: [
+          'O volume dos autofalantes da sala de espera',
+          'A iluminação da cabine de áudio',
+          'A velocidade do ar-condicionado',
+        ],
+      },
+      en: {
+        scenario: '🎙️ **Studio Lip-Sync Timing!**\nThe on-screen character opens their mouth with an expressive line. What must the voice actor sync precisely?',
+        correct: 'The mouth flap timing and character dialogue duration',
+        wrongs: [
+          'The waiting room loudspeaker volume',
+          'The studio booth ambient light levels',
+          'The air conditioning fan speed',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '🎧 **Uso do Pop Filter no Microfone!**\nDurante a gravação de falas com muitas consoantes oclusivas (P e B), por que o pop filter é indispensável?',
+        correct: 'Para atenuar os picos de ar que causam estalos e distorção na cápsula',
+        wrongs: [
+          'Para mudar o idioma da gravação automaticamente',
+          'Para aumentar o eco na sala',
+          'Para diminuir o volume da música de fundo',
+        ],
+      },
+      en: {
+        scenario: '🎧 **Microphone Pop Filter!**\nWhen recording dialogue with heavy plosive consonants (P and B sounds), why is a pop filter essential?',
+        correct: 'To disperse bursts of air that cause plosive thumps and capsule distortion',
+        wrongs: [
+          'To translate spoken words into subtitles in real-time',
+          'To inject artificial reverberation into the booth',
+          'To reduce the volume of the background soundtrack',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '🎭 **Interpretação e Subtexto!**\nO roteiro indica que o herói está disfarçando o medo para proteger seus aliados. Qual a melhor nuance vocal?',
+        correct: 'Voz firme na superfície com respiração sutilmente trêmula nos finais de frase',
+        wrongs: [
+          'Gritar comicamente sem conexão com o drama',
+          'Falar em tom monótono robótico e sem emoção',
+          'Sussurrar tão baixo que o microfone não capta nada',
+        ],
+      },
+      en: {
+        scenario: '🎭 **Dramatic Subtext in Voice Acting!**\nThe script notes reveal the hero is masking dread to keep allies hopeful. What is the best vocal nuance?',
+        correct: 'A confident outward delivery with subtle breath trembles at sentence endings',
+        wrongs: [
+          'A cartoonish scream detached from scene drama',
+          'A flat emotionless monotonic drone',
+          'An inaudible mumble that the preamp cannot pick up',
+        ],
+      },
+    },
+  ],
+
+  desenvolvedor_jogos: [
+    {
+      level: 1,
+      pt: {
+        scenario: '🕹️ **Detecção de Colisão!**\nO herói está atravessando o chão de pedra e caindo no vazio. Qual componente essencial está faltando na malha do piso?',
+        correct: 'Um componente de Colisor (Collider)',
+        wrongs: [
+          'Um arquivo de áudio MP3',
+          'Uma textura 4K de alta resolução',
+          'Uma luz de holofote virtual',
+        ],
+      },
+      en: {
+        scenario: '🕹️ **Collision Detection!**\nThe protagonist falls straight through the stone floor into the void. Which essential engine component is missing on the mesh?',
+        correct: 'A Collider component',
+        wrongs: [
+          'An ambient MP3 sound effect',
+          'A high-resolution 4K diffuse texture',
+          'A directional spot light source',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '⚡ **Game Feel e Impacto (Juice)!**\nO golpe do machado parece sem peso e sem impacto para os jogadores no playtest. O que adicionar para melhorar a sensação do golpe?',
+        correct: 'Freeze-frame de 2 frames (hitstop), leve tremor de tela e partículas de faísca',
+        wrongs: [
+          'Apagar o personagem principal do código',
+          'Tirar todo o som do jogo',
+          'Aumentar o tempo de carregamento da fase',
+        ],
+      },
+      en: {
+        scenario: '⚡ **Game Feel & Combat Juice!**\nPlayer feedback says weapon strikes feel weightless and floaty during combat. How do you enhance the impact feel?',
+        correct: 'Add hitstop (2-frame pause), subtle screen shake, and spark particles',
+        wrongs: [
+          'Remove the player character model completely',
+          'Mute all game audio tracks permanently',
+          'Artificially increase level loading times',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '👾 **Inteligência Artificial de Inimigos!**\nQual padrão de arquitetura simples e eficiente é ideal para organizar estados de patrulha, perseguição e ataque dos monstros?',
+        correct: 'Máquina de Estados Finitos (Finite State Machine - FSM)',
+        wrongs: [
+          'Um único if/else aninhado com 500 linhas desordenadas',
+          'Um gerador de números aleatórios sem lógica',
+          'Desligar a física do jogo',
+        ],
+      },
+      en: {
+        scenario: '👾 **Enemy AI Behavior!**\nWhich architectural pattern is industry-standard for cleanly managing enemy states like Patrol, Chase, and Attack?',
+        correct: 'Finite State Machine (FSM)',
+        wrongs: [
+          'A 500-line chaotic nested if/else block',
+          'A random number generator with zero behavioral logic',
+          'Disabling the game physics engine',
+        ],
+      },
+    },
+  ],
+
+  psicologo: [
+    {
+      level: 1,
+      pt: {
+        scenario: '🛋️ **Primeira Sessão de Acolhimento!**\nO paciente chega à consulta demonstrando nervosismo e receio de ser julgado. Qual a postura inicial fundamental?',
+        correct: 'Escuta ativa e empática, criando um ambiente seguro e sem julgamentos',
+        wrongs: [
+          'Criticar as decisões pessoais do paciente imediatamente',
+          'Interromper a fala a cada 10 segundos para dar sermões',
+          'Ficar olhando o relógio com cara de tédio',
+        ],
+      },
+      en: {
+        scenario: '🛋️ **Intake Therapy Session!**\nA client arrives visibly anxious and fearful of being judged. What is the foundational psychological posture?',
+        correct: 'Active empathetic listening in a safe, non-judgmental holding space',
+        wrongs: [
+          'Immediately criticize the client’s lifestyle choices',
+          'Interrupt every 10 seconds to lecture them',
+          'Constantly check your wristwatch with bored expressions',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '🌬️ **Manejo de Crise de Ansiedade!**\nO paciente relata hiperventilação e aceleração cardíaca súbita no consultório. Qual intervenção somática auxilia na regulação?',
+        correct: 'Guiar respiração diafragmática pausada (técnica 4-7-8) e ancoragem sensorial',
+        wrongs: [
+          'Mandar o paciente correr escadas acima para desabafar',
+          'Oferecer três copos de café expresso puro',
+          'Dizer para ele prender a respiração por 3 minutos',
+        ],
+      },
+      en: {
+        scenario: '🌬️ **Panic De-escalation Technique!**\nA patient exhibits hyperventilation and acute somatic anxiety during consultation. Which technique assists rapid nervous regulation?',
+        correct: 'Guide slow diaphragmatic breathing (4-7-8 method) and 5-4-3-2-1 sensory grounding',
+        wrongs: [
+          'Urge the patient to sprint up flights of stairs',
+          'Serve three cups of concentrated caffeinated espresso',
+          'Instruct them to hold their breath for 3 minutes',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '🔒 **Sigilo Profissional e Ética!**\nUm familiar do paciente liga solicitando informações confidenciais sobre o que foi dito na terapia. Como agir eticamente?',
+        correct: 'Explicar com respeito que o sigilo profissional é protegido por lei e pelo código de ética',
+        wrongs: [
+          'Ler todas as anotações do prontuário em voz alta',
+          'Cobrar uma taxa extra para revelar os segredos',
+          'Encaminhar o áudio gravado da sessão por mensagem',
+        ],
+      },
+      en: {
+        scenario: '🔒 **Professional Confidentiality & Ethics!**\nA patient’s relative calls demanding details about topics discussed in therapy sessions. What is the ethical response?',
+        correct: 'Politely explain that confidentiality is legally protected by the code of ethics and cannot be breached',
+        wrongs: [
+          'Read all clinical notes aloud over the phone',
+          'Charge a cash fee to disclose therapy details',
+          'Forward audio recordings of the session via text message',
+        ],
+      },
+    },
+  ],
+
+  telemarketing: [
+    {
+      level: 1,
+      pt: {
+        scenario: '📞 **Atendimento Inicial com Cordialidade!**\nAo atender uma chamada receptiva de um cliente na fila, qual a saudação profissional padrão?',
+        correct: 'Cumprimentar educadamente, identificar a empresa e seu nome, e perguntar como pode ajudar',
+        wrongs: [
+          'Ficar em silêncio absoluto esperando o cliente falar primeiro',
+          'Dizer "fala rápido que estou com pressa"',
+          'Transferir a ligação para o ramal errado imediatamente',
+        ],
+      },
+      en: {
+        scenario: '📞 **Inbound Greeting Standards!**\nWhen answering an inbound customer queue call, what is the standard professional opening?',
+        correct: 'Warm greeting, state your company and name, and ask how you may assist them',
+        wrongs: [
+          'Remain completely silent waiting for the caller to speak first',
+          'Say "make it fast, I have no time"',
+          'Blindly transfer the customer to a random dead line',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '🛡️ **Cliente Exaltado no SAC!**\nO cliente liga indignado devido a um atraso em uma entrega. Qual a técnica recomendada de desescalada?',
+        correct: 'Ouvir atentamente sem interromper, acolher a queixa com empatia e focar na solução imediata',
+        wrongs: [
+          'Gritar de volta no mesmo tom para mostrar autoridade',
+          'Desligar o telefone na cara do cliente de propósito',
+          'Dizer com deboche que a culpa foi exclusivamente dele',
+        ],
+      },
+      en: {
+        scenario: '🛡️ **De-escalating Angry Customers!**\nA customer calls furious about an urgent delivery delay. What is the proven de-escalation protocol?',
+        correct: 'Listen without interruption, validate their frustration with empathy, and focus on immediate resolution',
+        wrongs: [
+          'Yell back aggressively to assert authority',
+          'Hang up the phone call deliberately in their face',
+          'Sarcastically tell them the problem is 100% their own fault',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '📊 **Tabulação e Histórico de Protocolo!**\nApós finalizar a ligação e combinar um reenvio com o cliente, qual procedimento no CRM é essencial?',
+        correct: 'Registrar o protocolo detalhado no chamado e classificar o motivo correto da tabulação',
+        wrongs: [
+          'Fechar o sistema sem salvar nenhuma informação',
+          'Apagar o cadastro do cliente para zerar o ticket',
+          'Anotar um bilhete em guardanapo de papel e jogar fora',
+        ],
+      },
+      en: {
+        scenario: '📊 **CRM Ticket Documentation!**\nAfter wrapping up the call and scheduling a product replacement, which CRM step is critical?',
+        correct: 'Record comprehensive ticket notes and tag the accurate contact disposition code',
+        wrongs: [
+          'Force close the browser without saving changes',
+          'Delete the client profile from the company database',
+          'Write a note on a paper napkin and discard it',
+        ],
+      },
+    },
+  ],
+
+  animador_festa: [
+    {
+      level: 1,
+      pt: {
+        scenario: '🎈 **Quebrando o Gelo no Aniversário!**\nAs crianças acabaram de chegar ao salão e muitas estão tímidas nos cantos. Qual a brincadeira ideal para integrar a turma?',
+        correct: 'Uma dinâmica musical simples e divertida como Dança das Cadeiras ou Estátua',
+        wrongs: [
+          'Fazer uma prova de matemática avançada com nota',
+          'Mandar todas as crianças ficarem em silêncio sentadas',
+          'Apagar as luzes e fingir ser um monstro assustador',
+        ],
+      },
+      en: {
+        scenario: '🎈 **Party Icebreaker Games!**\nChildren have just arrived at the venue and many are shy and clinging to parents. What is the best icebreaker game?',
+        correct: 'An upbeat musical group game like Musical Statues or Freeze Dance',
+        wrongs: [
+          'Hand out advanced math tests for grading',
+          'Command all children to sit in complete silent isolation',
+          'Turn off all lights and pretend to be a terrifying monster',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '🎨 **Pintura Facial e Higiene!**\nVocê está fazendo maquiagem artística de borboletas e super-heróis nas crianças. Qual cuidado sanitário é obrigatório?',
+        correct: 'Usar tintas atóxicas dermatologicamente testadas e higienizar esponjas e pincéis',
+        wrongs: [
+          'Usar tinta guache de parede não regulamentada',
+          'Usar caneta permanente que não sai com água',
+          'Passar graxa de sapato nas bochechas',
+        ],
+      },
+      en: {
+        scenario: '🎨 **Face Painting Safety!**\nYou are painting superhero and butterfly art on kids’ faces. What hygiene rule is strictly mandatory?',
+        correct: 'Use non-toxic dermatologically approved face paints and sanitize brushes between children',
+        wrongs: [
+          'Use industrial wall paints that lack cosmetics approval',
+          'Use permanent markers that cannot wash off skin',
+          'Apply dark shoe polish onto cheeks',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '🎂 **O Momento Mágico do Parabéns!**\nChegou a hora principal de cantar os Parabéns ao redor do bolo. Como o animador deve reger o momento?',
+        correct: 'Reunir toda a família e convidados, animar o coro com palmas e celebrar o aniversariante com entusiasmo',
+        wrongs: [
+          'Comer o primeiro pedaço do bolo antes do aniversariante',
+          'Soprar as velinhas no lugar do aniversariante',
+          'Iniciar uma discussão sobre o sabor do recheio',
+        ],
+      },
+      en: {
+        scenario: '🎂 **Conducting the Birthday Song!**\nIt is time for the main event: singing Happy Birthday around the cake. How should the entertainer lead the crowd?',
+        correct: 'Gather family and guests around, lead synchronized clapping, and spotlight the birthday child joyfully',
+        wrongs: [
+          'Snatch and eat the first slice of cake before the child',
+          'Blow out all birthday candles before the child gets a chance',
+          'Start an argument with the caterer over cake flavors',
+        ],
+      },
+    },
+  ],
 };
 
 function shuffleArray(array) {
@@ -1079,18 +1414,33 @@ async function handleWorkInteraction(interaction) {
       '',
       t('workMinigame.nextShiftLabel', lang),
       t('workMinigame.noSalaryText', lang),
-    ].join('\n');
+    ];
+
+    if (result.demoted) {
+      const newRoleTitle = getRoleTitle(session.professionKey, result.careerLevel, lang);
+      desc.push(
+        '',
+        t('workMinigame.demotedTitle', lang),
+        t('workMinigame.demotedDesc', lang, { role: newRoleTitle })
+      );
+    } else if (result.careerMistakes > 1) {
+      desc.push(
+        '',
+        t('workMinigame.mistakeStatus', lang, { streak: result.careerMistakes })
+      );
+    }
 
     const errorEmbed = new EmbedBuilder()
       .setColor(PYXIE_COLORS.crimson || '#ef4444')
       .setTitle(t('workMinigame.wrongTitle', lang, { profession: session.professionLabel }))
-      .setDescription(desc)
+      .setDescription(desc.join('\n'))
       .setFooter({ text: 'Pyxie' })
       .setTimestamp();
 
     return interaction.update({ embeds: [errorEmbed], components: [] });
   }
 
+  const currentRoleTitle = getRoleTitle(session.professionKey, result.careerLevel, lang);
   const desc = [
     t('workMinigame.successDedication', lang),
     '',
@@ -1099,8 +1449,21 @@ async function handleWorkInteraction(interaction) {
     t('workMinigame.balanceLine', lang, { balance: formatCoins(result.balance, lang) }),
     '',
     t('workMinigame.careerHeader', lang),
+    t('workMinigame.roleLabel', lang, { role: currentRoleTitle }),
     t('workMinigame.workCountLine', lang, { count: getUserAccount(sessionUserId).workCount }),
   ];
+
+  if (result.promoted) {
+    desc.push(
+      '',
+      t('workMinigame.promotedTitle', lang),
+      t('workMinigame.promotedDesc', lang, { role: currentRoleTitle })
+    );
+  } else if (result.careerStreak > 1) {
+    desc.push(
+      t('workMinigame.streakStatus', lang, { streak: result.careerStreak })
+    );
+  }
 
   if (result.bonusBean) {
     desc.push(
@@ -1146,12 +1509,16 @@ async function runWork(source, reply) {
   const profDef = professions[professionKey];
   const professionLabel = t(`profession.labels.${professionKey}`, lang) || profDef?.label || professionKey;
 
+  const userLevel = Math.max(1, Math.min(4, Number(account.careerLevel) || 1));
+  const roleTitle = getRoleTitle(professionKey, userLevel, lang);
+
   const generatedMinigames = loadGeneratedMinigames();
   const defaultList = PROFESSION_MINIGAMES[professionKey] || PROFESSION_MINIGAMES.programador;
   const generatedList = (generatedMinigames && generatedMinigames[professionKey]) || [];
   const minigames = [...defaultList, ...generatedList];
 
-  const chosenGame = minigames[Math.floor(Math.random() * minigames.length)];
+  const levelMinigames = filterMinigamesByLevel(minigames, userLevel);
+  const chosenGame = levelMinigames[Math.floor(Math.random() * levelMinigames.length)];
   const gameData = chosenGame[lang] || chosenGame.en || chosenGame.pt;
 
   const wrongsPool = Array.isArray(gameData.wrongs) ? gameData.wrongs : [];
@@ -1166,10 +1533,10 @@ async function runWork(source, reply) {
   const correctIndex = shuffledChoices.findIndex((c) => c.correct);
 
   const labelLetters = ['A', 'B', 'C', 'D'];
-  const salary = Math.floor(Math.random() * (WORK_MAXIMUM - WORK_MINIMUM + 1)) + WORK_MINIMUM;
+  const salary = calculateSalaryForLevel(userLevel);
 
   // Inicia o cooldown e registra o trabalho
-  startWork(user.id, { profession: professionKey, salary });
+  startWork(user.id, { profession: professionKey, salary, level: userLevel });
 
   activeWorkSessions.set(user.id, {
     correctIndex,
@@ -1178,6 +1545,8 @@ async function runWork(source, reply) {
     salary,
     professionKey,
     professionLabel,
+    userLevel,
+    roleTitle,
     lang,
     startedAt: Date.now(),
   });
@@ -1194,6 +1563,8 @@ async function runWork(source, reply) {
     .join('\n\n');
 
   const questionDesc = [
+    t('workMinigame.roleLabel', lang, { role: roleTitle }),
+    '',
     gameData.scenario,
     '',
     formattedOptions,

@@ -446,7 +446,12 @@ const TRANSLATIONS = {
         "musico": "Músico(a)",
         "fotografo": "Fotógrafo(a)",
         "mecanico": "Mecânico(a)",
-        "vendedor": "Vendedor(a)"
+        "vendedor": "Vendedor(a)",
+        "dublador": "Dublador(a)",
+        "desenvolvedor_jogos": "Desenvolvedor(a) de Jogos",
+        "psicologo": "Psicólogo(a)",
+        "telemarketing": "Operador(a) de Telemarketing",
+        "animador_festa": "Animador(a) de Festa"
       }
     },
     "shop": {
@@ -646,7 +651,14 @@ const TRANSLATIONS = {
       "minigameTitle": "💼  ✦  Expediente de {profession} — Minigame",
       "timeLimit": "⏱️ **TEMPO DE RESPOSTA: 1 MINUTO E MEIO**\nEscolha a melhor alternativa nos botões abaixo:",
       "otherUserSession": "❌ Este expediente pertence a outro trabalhador. Use `/py-work` para iniciar o seu!",
-      "expiredSession": "⏰ Este expediente já foi finalizado ou expirou. Use `/py-work` novamente quando estiver disponível!"
+      "expiredSession": "⏰ Este expediente já foi finalizado ou expirou. Use `/py-work` novamente quando estiver disponível!",
+      "roleLabel": "💼 **Cargo Atual:** {role}",
+      "promotedTitle": "🎉  ✦  PROMOÇÃO DE CARGO!",
+      "promotedDesc": "Parabéns pelo seu empenho e sequência impecável! Você foi promovido(a) para **{role}**!\nSeus salários futuros foram aumentados.",
+      "demotedTitle": "⚠️  ✦  REBAIXAMENTO DE CARGO!",
+      "demotedDesc": "Atenção: devido aos erros consecutivos no expediente, você foi rebaixado(a) para **{role}**.\nSeus rendimentos foram ajustados ao novo patamar. Pratique e recupere seu cargo!",
+      "streakStatus": "> 🔥 **Sequência de Acertos:** {streak} seguidos",
+      "mistakeStatus": "> ⚠️ **Erros Consecutivos:** {streak}"
     },
     "wiki": {
       "title": "📖  ✦  Wiki & Enciclopédia Oficial da Pyxie",
@@ -967,7 +979,12 @@ const TRANSLATIONS = {
         "musico": "Musician",
         "fotografo": "Photographer",
         "mecanico": "Mechanic",
-        "vendedor": "Salesperson"
+        "vendedor": "Salesperson",
+        "dublador": "Voice Actor",
+        "desenvolvedor_jogos": "Game Developer",
+        "psicologo": "Psychologist",
+        "telemarketing": "Call Center Operator",
+        "animador_festa": "Party Entertainer"
       }
     },
     "shop": {
@@ -1167,7 +1184,14 @@ const TRANSLATIONS = {
       "minigameTitle": "💼  ✦  {profession} Shift — Minigame",
       "timeLimit": "⏱️ **TIME LIMIT: 1 MINUTE AND 30 SECONDS**\nChoose the best answer using the buttons below:",
       "otherUserSession": "❌ This shift belongs to another worker. Use `/py-work` to start your own!",
-      "expiredSession": "⏰ This shift has expired or was already completed. Use `/py-work` again when available!"
+      "expiredSession": "⏰ This shift has expired or was already completed. Use `/py-work` again when available!",
+      "roleLabel": "💼 **Current Role:** {role}",
+      "promotedTitle": "🎉  ✦  CAREER PROMOTION!",
+      "promotedDesc": "Congratulations on your outstanding streak! You have been promoted to **{role}**!\nYour future earnings have increased.",
+      "demotedTitle": "⚠️  ✦  CAREER DEMOTION!",
+      "demotedDesc": "Warning: due to consecutive shift mistakes, you were demoted to **{role}**.\nYour earnings were adjusted. Keep training to reclaim your role!",
+      "streakStatus": "> 🔥 **Success Streak:** {streak} in a row",
+      "mistakeStatus": "> ⚠️ **Consecutive Mistakes:** {streak}"
     },
     "wiki": {
           "title": "📖  ✦  Official Pyxie Encyclopedia & Wiki",

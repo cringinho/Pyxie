@@ -168,7 +168,7 @@ const { t } = require('../src/utils/i18n');
 const bonusTimer = require('../src/services/bonusTimer');
 
 const activeProfessions = Object.keys(professionsDef);
-assert.equal(activeProfessions.length, 10, 'Devem existir 10 profissões no sistema.');
+assert.equal(activeProfessions.length, 15, 'Devem existir 15 profissões no sistema.');
 
 for (const profKey of activeProfessions) {
   const games = PROFESSION_MINIGAMES[profKey];
