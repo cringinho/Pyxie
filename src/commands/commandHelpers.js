@@ -339,6 +339,12 @@ const COMMAND_CATEGORY_MAP = {
   'py-admin': 'utilidades',
   wiki: 'utilidades',
   'py-wiki': 'utilidades',
+  'py-exportar': 'utilidades',
+  exportar: 'utilidades',
+  'py-export': 'utilidades',
+  export: 'utilidades',
+  'export-messages': 'utilidades',
+  'py-export-messages': 'utilidades',
 };
 
 let _loadedCommands = null;

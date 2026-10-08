@@ -620,7 +620,11 @@ const TRANSLATIONS = {
       "moduleActive": "Ativo",
       "moduleInactive": "Inativo",
       "moduleCommands": "Comandos:",
-      "moduleToggleSuccess": "✅ Módulo **{name}** agora está **{status}**!"
+      "moduleToggleSuccess": "✅ Módulo **{name}** agora está **{status}**!",
+      "exportMessagesTitle": "📜  ✦  Exportação de Mensagens — {channel}",
+      "exportMessagesDesc": "As últimas **{count}** mensagens do canal {channel} foram compiladas em um arquivo de texto para auditoria.",
+      "exportMessagesEmpty": "⚠️ Nenhuma mensagem encontrada no canal para exportar.",
+      "exportMessagesFooter": "Auditoria Administrativa • Pyxie Core"
     },
     "workMinigame": {
       "noProfession": "❌ Você ainda não possui uma profissão registrada! Use `/py-profession` para escolher sua vocação antes de trabalhar.",
@@ -1137,7 +1141,11 @@ const TRANSLATIONS = {
       "moduleActive": "Active",
       "moduleInactive": "Inactive",
       "moduleCommands": "Commands:",
-      "moduleToggleSuccess": "✅ Module **{name}** is now **{status}**!"
+      "moduleToggleSuccess": "✅ Module **{name}** is now **{status}**!",
+      "exportMessagesTitle": "📜  ✦  Message Export — {channel}",
+      "exportMessagesDesc": "The latest **{count}** messages from {channel} have been compiled into a text file for audit.",
+      "exportMessagesEmpty": "⚠️ No messages found in the channel to export.",
+      "exportMessagesFooter": "Administrative Audit • Pyxie Core"
     },
     "workMinigame": {
       "noProfession": "❌ You do not have a registered profession yet! Use `/py-profession` to choose a career before working.",

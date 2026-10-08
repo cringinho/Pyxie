@@ -35,6 +35,7 @@ const commands = [
   require('./coinflip'),
   require('./admin'),
   require('./wiki'),
+  require('./exportar'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');
@@ -45,6 +46,7 @@ const GUILD_ONLY_COMMANDS = new Set([
   'welcome', 'py-welcome', 'setwelcome', 'py-setwelcome',
   'schedule', 'py-schedule', 'agenda', 'py-agenda',
   'admin', 'py-admin',
+  'exportar', 'py-exportar', 'export', 'py-export', 'export-messages', 'py-export-messages',
   'seteco', 'py-seteco', 'setareconomia', 'py-setareconomia',
   'reseteco', 'py-reseteco', 'resetareconomia', 'py-resetareconomia',
   'ecoconfig', 'py-ecoconfig', 'configeconomia', 'py-configeconomia',

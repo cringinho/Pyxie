@@ -35,5 +35,6 @@ module.exports = {
   COINFLIP: 'py-coinflip',
   ADMIN: 'py-admin',
   WIKI: 'py-wiki',
+  EXPORT_MESSAGES: 'py-exportar',
 };
 
