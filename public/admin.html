@@ -2006,14 +2006,18 @@
               <button class="btn ${mod.enabled ? 'btn-danger' : 'btn-success'}" style="flex: 1; min-width: 140px; justify-content: center;" onclick="toggleModule('${mod.id}', ${!mod.enabled})">
                 ${mod.enabled ? '⏹️ Desativar' : '▶️ Ativar'}
               </button>
-              ${(mod.id === 'partnerships' || mod.id === 'museum') ? `
-                <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Configurar canais e cargos" onclick="openModuleConfigModal('${mod.id}')">
-                  ⚙️ Configurar
-                </button>
+              ${(mod.id === 'partnerships') ? `
+                <a href="/admin/parcerias" class="btn btn-secondary" style="text-decoration: none; justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Painel dedicado da Central de Parcerias">
+                  ⚙️ Acessar Painel
+                </a>
               ` : (mod.id === 'seasonal') ? `
                 <a href="/admin/sazonal" class="btn btn-secondary" style="text-decoration: none; justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Painel dedicado do evento sazonal">
-                  ⚙️ Painel
+                  ⚙️ Acessar Painel
                 </a>
+              ` : (mod.id === 'museum') ? `
+                <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Configurar canal e cargos" onclick="openModuleConfigModal('${mod.id}')">
+                  ⚙️ Configurar
+                </button>
               ` : ''}
               <button class="btn btn-secondary" title="Recarregar módulo sem reiniciar o bot" onclick="reloadModule('${mod.id}')">
                 🔄

@@ -156,7 +156,21 @@ const { COMMAND_CATEGORY_MAP } = require(path.join(repo, 'src/commands/commandHe
   assert.equal(harvestRes2.added, 0);
   assert.equal(harvestRes2.completed, true);
 
-  console.log('  ✅ 7. Harvester Histórico do Museu: lotes, cursor e deduplicação validados.');
+  // 8. Exclusão de Parcerias por ID (Painel Administrativo)
+  partnershipManager.data.approvedPartners.push({
+    id: 'partner_to_delete',
+    projectName: 'Projeto Teste Delete',
+    categoryKey: 'bot',
+    imageUrl: 'https://cdn.discordapp.com/x.png',
+  });
+  partnershipManager.saveData();
+
+  assert.equal(partnershipManager.getApprovedPartners().some(p => p.id === 'partner_to_delete'), true);
+  const deletedOk = partnershipManager.deleteApprovedPartner('partner_to_delete');
+  assert.equal(deletedOk, true);
+  assert.equal(partnershipManager.getApprovedPartners().some(p => p.id === 'partner_to_delete'), false);
+  assert.equal(partnershipManager.deleteApprovedPartner('partner_to_delete'), false);
+  console.log('  ✅ 8. Exclusão de parcerias por ID no painel administrativo validada.');
 
   console.log('🎉 [TEST] Museu & Parcerias passaram com 100% de sucesso!');
   process.chdir(repo);

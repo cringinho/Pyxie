@@ -43,10 +43,6 @@ class PartnershipManager {
   init(client, ctx) {
     this.client = client || null;
     this.refresh();
-    // Listener rastreado pelo ModuleManager (descartado no onUnload). Arquitetura stateless: sem collectors.
-    if (client && ctx && typeof ctx.registerListener === 'function') {
-      ctx.registerListener('interactionCreate', (i) => this.handleInteraction(i));
-    }
   }
 
   /** Bot e web compartilham os arquivos: sempre relê o disco antes de operar. */
@@ -493,6 +489,20 @@ class PartnershipManager {
     }
   }
 
+  deleteApprovedPartner(partnerId) {
+    this.refresh();
+    const prev = this.data.approvedPartners.length;
+    this.data.approvedPartners = this.data.approvedPartners.filter((p) => p.id !== partnerId);
+    if (this.data.approvedPartners.length === prev) return false;
+    this.saveData();
+    return true;
+  }
+
+  getApprovedPartners() {
+    this.refresh();
+    return [...this.data.approvedPartners];
+  }
+
   // ---------- Web: catálogo público, mosaico e bump 24h ----------
 
   sanitize(p) {
@@ -601,7 +611,24 @@ class PartnershipManager {
       res.status(status).json(body);
     });
 
-    const { requireAdminAuth } = require('../../services/adminAuth');
+    const { requireAdminAuth, isValidAdminSession, isIpAllowed } = require('../../services/adminAuth');
+
+    // Rota de visualização da página administrativa dedicada (/admin/parcerias)
+    app.get('/admin/parcerias', (req, res) => {
+      const cookieHeader = req.headers.cookie;
+      const sessionCookie = cookieHeader ? (cookieHeader.match(/(?:^|;\s*)pyxie_admin_session=([^;]*)/)?.[1] || null) : null;
+      const isAuthed = (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
+
+      if (!isAuthed) {
+        return res.redirect('/admin');
+      }
+
+      this.refresh();
+      res.render(path.join(__dirname, 'views', 'adminParcerias.ejs'), {
+        config: this.getConfig(),
+        partners: this.getApprovedPartners(),
+      });
+    });
 
     app.get('/api/admin/modules/partnerships/config', requireAdminAuth, (req, res) => {
       try {
@@ -633,6 +660,27 @@ class PartnershipManager {
           return res.status(400).json({ success: false, error: result.message || 'Falha ao postar painel' });
         }
         return res.json({ success: true, message: `Painel de solicitações publicado no canal <#${result.channelId}>!` });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    });
+
+    app.get('/api/admin/modules/partnerships/items', requireAdminAuth, (req, res) => {
+      try {
+        const partners = this.getApprovedPartners();
+        return res.json({ success: true, partners });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    });
+
+    app.delete('/api/admin/modules/partnerships/items/:id', requireAdminAuth, (req, res) => {
+      try {
+        const ok = this.deleteApprovedPartner(req.params.id);
+        if (!ok) {
+          return res.status(404).json({ success: false, error: 'Parceria não encontrada para exclusão.' });
+        }
+        return res.json({ success: true, message: 'Parceria excluída com sucesso do acervo!' });
       } catch (err) {
         res.status(500).json({ success: false, error: err.message });
       }

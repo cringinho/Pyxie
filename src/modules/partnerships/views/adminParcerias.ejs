@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Central de Parcerias • Painel da Cringelândia</title>
+    <link rel="icon" href="https://cdn.discordapp.com/emojis/1551355962974273546.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg-main: #07040e;
+        --bg-card: rgba(18, 10, 34, 0.94);
+        --purple-accent: #8b5cf6;
+        --purple-glow: #c084fc;
+        --pink-neon: #ec4899;
+        --cyan-neon: #38bdf8;
+        --green-neon: #10b981;
+        --red-neon: #ef4444;
+        --text-white: #ffffff;
+        --text-muted: #94a3b8;
+        --border-glass: rgba(192, 132, 252, 0.22);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-main);
+        background-image: 
+          radial-gradient(circle at top right, #2b0f4c 0%, #07040e 100%),
+          radial-gradient(circle at 10% 40%, rgba(236, 72, 153, 0.08) 0%, transparent 40%),
+          radial-gradient(circle at 90% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+        color: var(--text-white);
+        min-height: 100vh;
+        padding: 20px 16px 40px;
+      }
+
+      .container {
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 16px 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(16px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-icon {
+        font-size: 32px;
+      }
+
+      .brand-title h1 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, #fff 30%, var(--purple-glow) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .brand-title p {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .btn {
+        padding: 8px 18px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        transition: all 0.2s ease;
+        text-decoration: none;
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--purple-accent), #6d28d9);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        color: #fff;
+        padding: 6px 12px;
+        font-size: 0.78rem;
+      }
+
+      .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+      }
+
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.35fr;
+        gap: 24px;
+      }
+
+      @media (max-width: 1024px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        margin-bottom: 24px;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .card-header h2 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--purple-glow);
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: #fff;
+        font-size: 0.85rem;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      input[type="text"]:focus {
+        border-color: var(--purple-glow);
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+      }
+
+      .help-text {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+        display: block;
+      }
+
+      /* Tabela de Parcerias */
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84rem;
+      }
+
+      th {
+        text-align: left;
+        padding: 12px 14px;
+        color: var(--text-muted);
+        font-weight: 700;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        letter-spacing: 0.5px;
+      }
+
+      td {
+        padding: 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        vertical-align: middle;
+      }
+
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .partner-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .partner-thumb {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: #000;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .partner-name {
+        font-weight: 700;
+        color: #fff;
+        display: block;
+      }
+
+      .partner-cat {
+        font-size: 0.72rem;
+        color: var(--purple-glow);
+      }
+
+      .partner-id-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #cbd5e1;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--bg-card);
+        border: 1px solid var(--purple-glow);
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-size: 0.88rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        display: none;
+        z-index: 1000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Topbar -->
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-icon">🤝</div>
+          <div class="brand-title">
+            <h1>Central de Parcerias • Painel Dedicado</h1>
+            <p>Gerenciamento de canais, publicação de formulário e exclusão de parceiros</p>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <a href="/admin" class="btn btn-secondary">
+            ⬅️ Voltar ao Painel Geral
+          </a>
+        </div>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="main-grid">
+        <!-- Coluna Esquerda: Configuração de Canais e Publicador -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <h2>⚙️ Configuração de Canais e Cargos</h2>
+            </div>
+
+            <form id="partnerConfigForm" onsubmit="saveConfig(event)">
+              <div class="form-group">
+                <label>Canal de Triagem / Pedidos (Obrigatório):</label>
+                <input type="text" id="partRequestChannelId" value="<%= (config.channels && config.channels.requestChannelId) || '' %>" placeholder="Ex: 123456789012345678" required />
+                <span class="help-text">Canal onde os membros veem o menu de formulários.</span>
+              </div>
+
+              <div class="form-group">
+                <label>Canal de Revisão da Staff (Obrigatório):</label>
+                <input type="text" id="partModReviewChannelId" value="<%= (config.channels && config.channels.modReviewChannelId) || '' %>" placeholder="Ex: 123456789012345678" required />
+                <span class="help-text">Canal privado onde os botões de Aprovar e Recusar chegam para a moderação.</span>
+              </div>
+
+              <div class="form-group">
+                <label>Canal Público de Publicação (Obrigatório):</label>
+                <input type="text" id="partPublishedChannelId" value="<%= (config.channels && config.channels.publishedChannelId) || '' %>" placeholder="Ex: 123456789012345678" required />
+                <span class="help-text">Canal público onde os projetos aprovados são oficialmente divulgados.</span>
+              </div>
+
+              <div class="form-group">
+                <label>Canal de Boas-Vindas / Apresentação (Opcional):</label>
+                <input type="text" id="partWelcomeChannelId" value="<%= (config.channels && config.channels.welcomeChannelId) || '' %>" placeholder="Ex: 123456789012345678" />
+              </div>
+
+              <div class="form-group">
+                <label>Canal do Radar (Bumps 24h) (Opcional):</label>
+                <input type="text" id="partRadarChannelId" value="<%= (config.channels && config.channels.radarChannelId) || '' %>" placeholder="Ex: 123456789012345678" />
+                <span class="help-text">Canal que recebe alertas quando um projeto recebe bump no site.</span>
+              </div>
+
+              <div class="form-group">
+                <label>Cargo de Triagem (Opcional):</label>
+                <input type="text" id="partScreeningRoleId" value="<%= (config.roles && config.roles.screeningRoleId) || '' %>" placeholder="Ex: 123456789012345678" />
+              </div>
+
+              <div class="form-group">
+                <label>Cargos de Staff Autorizados (Separados por vírgula):</label>
+                <input type="text" id="partAdminRoleIds" value="<%= (config.roles && config.roles.adminRoleIds && config.roles.adminRoleIds.join(', ')) || '' %>" placeholder="Ex: 111111111, 222222222" />
+                <span class="help-text">Membros com esses cargos podem aprovar/recusar pedidos.</span>
+              </div>
+
+              <button type="submit" id="saveConfigBtn" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                💾 Salvar Configurações
+              </button>
+            </form>
+          </div>
+
+          <!-- Publicar Embed -->
+          <div class="card">
+            <div class="card-header">
+              <h2>📢 Publicar Painel no Discord</h2>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
+              Envia a mensagem oficial com o <strong>menu suspenso de categorias</strong> para o Canal de Triagem/Pedidos. Os membros escolherão a categoria e preencherão o formulário por ela.
+            </p>
+            <button type="button" id="publishBtn" class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="publishPanel()">
+              ✨ Publicar Painel no Canal do Discord Agora
+            </button>
+            <div id="publishFeedback" style="font-size: 0.8rem; text-align: center; margin-top: 8px; color: var(--text-muted);"></div>
+          </div>
+        </div>
+
+        <!-- Coluna Direita: Acervo e Exclusão de Parcerias por ID -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <h2>📋 Parcerias Aprovadas (<span id="partnerCount"><%= partners.length %></span>)</h2>
+              <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 10px;" onclick="fetchPartners()">
+                🔄 Atualizar
+              </button>
+            </div>
+
+            <div class="table-wrap">
+              <table id="partnersTable">
+                <thead>
+                  <tr>
+                    <th>Projeto</th>
+                    <th>ID da Parceria</th>
+                    <th>Bumps</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="partnersTbody">
+                  <% if (partners.length === 0) { %>
+                    <tr>
+                      <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                        Nenhuma parceria aprovada no acervo.
+                      </td>
+                    </tr>
+                  <% } else { %>
+                    <% partners.forEach(p => { %>
+                      <tr id="row-<%= p.id %>">
+                        <td>
+                          <div class="partner-info">
+                            <img class="partner-thumb" src="<%= p.imageUrl %>" onerror="this.src='https://cdn.discordapp.com/emojis/1551355962974273546.png'" />
+                            <div>
+                              <span class="partner-name"><%= p.projectName %></span>
+                              <span class="partner-cat"><%= p.categoryKey %></span>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="partner-id-badge"><%= p.id %></span>
+                        </td>
+                        <td>
+                          <strong style="color: var(--cyan-neon);"><%= p.bumpCount || 0 %></strong>
+                        </td>
+                        <td>
+                          <button class="btn btn-danger" onclick="deletePartner('<%= p.id %>', '<%= p.projectName.replace(/'/g, \"\\\\'\") %>')">
+                            🗑️ Excluir
+                          </button>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      function showToast(msg, isError = false) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.style.borderColor = isError ? 'var(--red-neon)' : 'var(--purple-glow)';
+        t.style.display = 'block';
+        setTimeout(() => { t.style.display = 'none'; }, 3500);
+      }
+
+      async function saveConfig(e) {
+        e.preventDefault();
+        const btn = document.getElementById('saveConfigBtn');
+        btn.disabled = true;
+        btn.textContent = 'Salvando...';
+
+        const payload = {
+          channels: {
+            welcomeChannelId: document.getElementById('partWelcomeChannelId').value.trim(),
+            requestChannelId: document.getElementById('partRequestChannelId').value.trim(),
+            modReviewChannelId: document.getElementById('partModReviewChannelId').value.trim(),
+            publishedChannelId: document.getElementById('partPublishedChannelId').value.trim(),
+            radarChannelId: document.getElementById('partRadarChannelId').value.trim(),
+          },
+          roles: {
+            screeningRoleId: document.getElementById('partScreeningRoleId').value.trim(),
+            adminRoleIds: document.getElementById('partAdminRoleIds').value.trim(),
+          },
+        };
+
+        try {
+          const res = await fetch('/api/admin/modules/partnerships/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast('Configurações salvas com sucesso!');
+          } else {
+            showToast('Erro ao salvar: ' + (data.error || 'Falha'), true);
+          }
+        } catch (err) {
+          showToast('Erro de rede: ' + err.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = '💾 Salvar Configurações';
+        }
+      }
+
+      async function publishPanel() {
+        const btn = document.getElementById('publishBtn');
+        const feedback = document.getElementById('publishFeedback');
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+        feedback.textContent = 'Enviando mensagem oficial para o canal...';
+
+        try {
+          const res = await fetch('/api/admin/modules/partnerships/post-panel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast('Painel publicado com sucesso!');
+            feedback.textContent = '✅ ' + (data.message || 'Publicado com sucesso!');
+          } else {
+            showToast('Falha: ' + (data.error || 'Erro'), true);
+            feedback.textContent = '❌ ' + (data.error || 'Erro ao publicar.');
+          }
+        } catch (err) {
+          showToast('Erro de conexão: ' + err.message, true);
+          feedback.textContent = '❌ Erro de conexão.';
+        } finally {
+          btn.disabled = false;
+          btn.textContent = '✨ Publicar Painel no Canal do Discord Agora';
+        }
+      }
+
+      async function deletePartner(id, name) {
+        if (!confirm(`Tem certeza que deseja excluir permanentemente a parceria "${name}" (ID: ${id})?`)) {
+          return;
+        }
+
+        try {
+          const res = await fetch(`/api/admin/modules/partnerships/items/${encodeURIComponent(id)}`, {
+            method: 'DELETE',
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`Parceria "${name}" excluída com sucesso!`);
+            const row = document.getElementById(`row-${id}`);
+            if (row) row.remove();
+            fetchPartners();
+          } else {
+            showToast('Erro ao excluir: ' + (data.error || 'Falha'), true);
+          }
+        } catch (err) {
+          showToast('Erro de conexão: ' + err.message, true);
+        }
+      }
+
+      async function fetchPartners() {
+        try {
+          const res = await fetch('/api/admin/modules/partnerships/items');
+          const data = await res.json();
+          if (data.success) {
+            renderPartners(data.partners || []);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      function renderPartners(list) {
+        document.getElementById('partnerCount').textContent = list.length;
+        const tbody = document.getElementById('partnersTbody');
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhuma parceria aprovada no acervo.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = list.map(p => `
+          <tr id="row-${p.id}">
+            <td>
+              <div class="partner-info">
+                <img class="partner-thumb" src="${p.imageUrl}" onerror="this.src='https://cdn.discordapp.com/emojis/1551355962974273546.png'" />
+                <div>
+                  <span class="partner-name">${p.projectName}</span>
+                  <span class="partner-cat">${p.categoryKey}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="partner-id-badge">${p.id}</span>
+            </td>
+            <td>
+              <strong style="color: var(--cyan-neon);">${p.bumpCount || 0}</strong>
+            </td>
+            <td>
+              <button class="btn btn-danger" onclick="deletePartner('${p.id}', '${p.projectName.replace(/'/g, "\\'")}')">
+                🗑️ Excluir
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    </script>
+  </body>
+</html>
