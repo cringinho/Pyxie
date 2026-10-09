@@ -14,6 +14,10 @@ const quizSeederService = require('./src/services/quizSeederService');
 const seasonalManager = require('./src/modules/seasonal/seasonalManager');
 const moduleManager = require('./src/services/moduleManager');
 const { serveLocalizedPage } = require('./src/utils/seoRenderer');
+const { renderTarotCard } = require('./src/services/tarotRenderer');
+const tarotCardsList = require('./src/data/tarot.json');
+const { generateRssXml, generateAtomXml, generateJsonFeed, getDailyTarotCard } = require('./src/services/feedGenerator');
+const { autoSubmitAllUrls } = require('./src/services/indexNowService');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -378,11 +382,61 @@ app.get('/vote', (req, res) => {
 
 app.get('/', serveLocalizedPage('index', publicDir));
 
+app.get('/tarot', serveLocalizedPage('tarot', publicDir));
+
 app.get('/wiki', serveLocalizedPage('wiki', publicDir));
 
 app.get(['/parcerias', '/partnerships'], serveLocalizedPage('partnerships', publicDir));
 
 app.get(['/museu', '/museum'], serveLocalizedPage('museum', publicDir));
+
+// Feeds RSS / Atom / JSON Feed para captação externa e automação (Pinterest, Zapier, IFTTT, Google Discover)
+app.get(['/rss.xml', '/feed.xml'], (req, res) => {
+  const lang = (req.query.lang === 'en') ? 'en' : 'pt';
+  res.setHeader('Content-Type', 'application/rss+xml; charset=UTF-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.send(generateRssXml(lang));
+});
+
+app.get('/atom.xml', (req, res) => {
+  const lang = (req.query.lang === 'en') ? 'en' : 'pt';
+  res.setHeader('Content-Type', 'application/atom+xml; charset=UTF-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.send(generateAtomXml(lang));
+});
+
+app.get('/feed.json', (req, res) => {
+  const lang = (req.query.lang === 'en') ? 'en' : 'pt';
+  res.setHeader('Content-Type', 'application/json; charset=UTF-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.json(generateJsonFeed(lang));
+});
+
+// APIs do Oráculo de Tarot & Imagens Renderizadas para Pinterest e Redes Sociais
+app.get('/api/tarot/cards', (req, res) => {
+  res.json({ success: true, count: tarotCardsList.length, cards: tarotCardsList });
+});
+
+app.get('/api/tarot/card-image', (req, res) => {
+  const cardId = req.query.id || 'major_00';
+  const orientation = (req.query.pos === 'reversed' || req.query.orientation === 'REVERSED') ? 'REVERSED' : 'UPRIGHT';
+  const lang = (req.query.lang === 'en') ? 'en' : 'pt';
+  const card = tarotCardsList.find(c => c.id === cardId) || tarotCardsList[0];
+  try {
+    const buffer = renderTarotCard(card, orientation, lang);
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+    res.send(buffer);
+  } catch (err) {
+    console.error('[API Tarot Image] Erro ao renderizar imagem:', err.message);
+    res.status(500).send('Erro ao gerar imagem de tarot');
+  }
+});
+
+// Widget embutível para blogs, sites e parceiros (gera backlinks e autoridade de domínio)
+app.get('/widget/card', (req, res) => {
+  res.sendFile(path.join(publicDir, 'widget.html'));
+});
 
 // 1. Healthcheck e status público
 app.get('/api/status', (req, res) => {
@@ -1743,6 +1797,15 @@ const server = app.listen(PORT, HOST, () => {
   startBot();
   workSeederService.startScheduler();
   quizSeederService.startScheduler();
+
+  // Submissão autônoma ao protocolo IndexNow (Bing, Yandex, Seznam, Naver) após o boot
+  setTimeout(() => {
+    autoSubmitAllUrls(publicDir).then((res) => {
+      console.log(`[IndexNow] Submissão autônoma concluída: ${res.message} (${res.count} URLs)`);
+    }).catch((err) => {
+      console.error('[IndexNow] Erro na submissão de inicialização:', err.message);
+    });
+  }, 10000);
 });
 
 server.on('clientError', (err, socket) => {

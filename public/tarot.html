@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Tirar Carta de Tarot Online Grátis • Oráculo Mágico da Pyxie</title>
+  <meta name="description" content="Tire sua Carta do Dia de Tarot online gratuitamente com a Pyxie. Conheça as mensagens dos 78 arcanos, conselhos místicos e compartilhe seu destino no Pinterest e redes sociais." />
+  <meta name="keywords" content="tarot online, tirar carta de tarot, carta do dia tarot, oraculo tarot gratis, tarot arcanos maiores, tarot discord, pyxie tarot, tarot reading online" />
+  <meta name="author" content="Pyxie Team & Cringelândia" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <link rel="canonical" href="https://pyxie.com.br/tarot" />
+  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot?lang=pt" />
+  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot" />
+
+  <!-- Preconnect & DNS Prefetch -->
+  <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+
+  <!-- Open Graph / Pinterest / Discord Embed -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pyxie.com.br/tarot" />
+  <meta property="og:title" content="Tirar Carta de Tarot Online Grátis • Oráculo da Pyxie" />
+  <meta property="og:description" content="Tire sua carta do dia no Tarot dos 78 arcanos com conselhos místicos e interpretação mágica personalizada." />
+  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Oráculo Mágico de Tarot da Pyxie" />
+  <meta property="og:site_name" content="Pyxie Discord Bot" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@PyxieBot" />
+  <meta name="twitter:creator" content="@PyxieBot" />
+  <meta name="twitter:title" content="Tirar Carta de Tarot Online Grátis • Oráculo da Pyxie" />
+  <meta name="twitter:description" content="Tire sua carta do dia no Tarot dos 78 arcanos com conselhos místicos e interpretação mágica personalizada." />
+  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta name="twitter:image:alt" content="Oráculo Mágico de Tarot da Pyxie" />
+
+  <!-- Schema.org JSON-LD Structured Data for Google Rich Results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://pyxie.com.br/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Tarot Online",
+            "item": "https://pyxie.com.br/tarot"
+          }
+        ]
+      },
+      {
+        "@type": "WebApplication",
+        "name": "Oráculo de Tarot Online da Pyxie",
+        "applicationCategory": "EntertainmentApplication",
+        "operatingSystem": "All",
+        "url": "https://pyxie.com.br/tarot",
+        "inLanguage": ["pt-BR", "en"],
+        "description": "Tiragem online de cartas de Tarot dos 78 arcanos com revelação de destino, conselhos e compartilhamento para redes sociais.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="icon" type="image/png" href="/assets/pyxie/pyxie_pixelart_face.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #07040d;
+      --bg-card: rgba(22, 13, 42, 0.85);
+      --purple-main: #8b5cf6;
+      --purple-glow: #a855f7;
+      --pink-neon: #ec4899;
+      --pink-glow: #f472b6;
+      --gold-accent: #facc15;
+      --text-white: #ffffff;
+      --text-muted: #cbd5e1;
+      --text-dim: #94a3b8;
+      --border-glass: rgba(192, 132, 252, 0.25);
+      --font-title: 'Cinzel', serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.25) 0%, transparent 60%),
+        radial-gradient(circle at 10% 40%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      border-bottom: 1px solid var(--border-glass);
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+    .brand-img {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.5));
+    }
+    .brand-title {
+      font-family: var(--font-title);
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      background: linear-gradient(135deg, #fff, var(--pink-glow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-lang {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-glass);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-lang:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: var(--purple-glow);
+    }
+    .btn-home {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 6px 12px;
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+    .btn-home:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .badge-oracle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(139, 92, 246, 0.18);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #d8b4fe;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
+    }
+
+    .oracle-title {
+      font-family: var(--font-title);
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+    .gradient-txt {
+      background: linear-gradient(135deg, #f472b6, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .oracle-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto 35px;
+    }
+
+    /* Card Draw Area */
+    .tarot-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .card-flipper {
+      position: relative;
+      width: 280px;
+      height: 480px;
+      perspective: 1200px;
+      cursor: pointer;
+      margin: 0 auto 30px;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+      border-radius: 20px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(139, 92, 246, 0.3);
+    }
+    .card-flipper.revealed .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .card-back {
+      background: linear-gradient(145deg, #160a2b, #2a1147);
+      border: 2px solid rgba(192, 132, 252, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card-back-pattern {
+      width: 100%;
+      height: 100%;
+      border: 1px dashed rgba(244, 114, 182, 0.4);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
+    }
+    .back-symbol {
+      font-size: 4rem;
+      filter: drop-shadow(0 0 15px rgba(244, 114, 182, 0.7));
+      animation: floatSymbol 3s ease-in-out infinite alternate;
+    }
+    @keyframes floatSymbol {
+      from { transform: translateY(-4px); }
+      to { transform: translateY(4px); }
+    }
+    .back-prompt {
+      font-family: var(--font-title);
+      font-size: 1.05rem;
+      color: #e9d5ff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .card-front {
+      transform: rotateY(180deg);
+      background: #000;
+      border: 2px solid rgba(244, 114, 182, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-front img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 18px;
+    }
+
+    /* Actions */
+    .draw-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+    .btn-draw {
+      background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 30px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(236, 72, 153, 0.45);
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-draw:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(236, 72, 153, 0.65);
+    }
+
+    /* Reading Detail Card */
+    .reading-card {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: left;
+      margin-bottom: 40px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(16px);
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reading-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+    }
+    .reading-card-title {
+      font-family: var(--font-title);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .reading-orientation {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .orientation-upright {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      color: #34d399;
+    }
+    .orientation-reversed {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(248, 113, 113, 0.4);
+      color: #f87171;
+    }
+    .reading-keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .keyword-pill {
+      background: rgba(139, 92, 246, 0.16);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: #c084fc;
+      font-weight: 600;
+    }
+    .reading-text {
+      font-size: 1.05rem;
+      color: #e2e8f0;
+      line-height: 1.7;
+      margin-bottom: 25px;
+    }
+
+    /* Viral Share Grid */
+    .viral-share-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .viral-share-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .viral-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn-share {
+      padding: 10px 18px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .btn-pinterest {
+      background: #e60023;
+      color: #fff;
+    }
+    .btn-pinterest:hover {
+      background: #bd081c;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(230, 0, 35, 0.4);
+    }
+    .btn-whatsapp {
+      background: #25d366;
+      color: #fff;
+    }
+    .btn-whatsapp:hover {
+      background: #128c7e;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    }
+    .btn-twitter {
+      background: #000;
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+    .btn-twitter:hover {
+      background: #111;
+      border-color: #fff;
+      transform: translateY(-2px);
+    }
+    .btn-discord-cta {
+      background: linear-gradient(135deg, #5865f2, #9333ea);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-discord-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5);
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border-glass);
+      padding: 30px 20px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    .footer a {
+      color: var(--pink-glow);
+      text-decoration: none;
+      margin: 0 8px;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .oracle-title { font-size: 1.9rem; }
+      .card-flipper { width: 240px; height: 410px; }
+      .btn-draw { width: 100%; justify-content: center; }
+      .btn-share { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="/" class="nav-brand">
+      <img src="/assets/pyxie/pyxie_pixelart_face.png" class="brand-img" alt="Pyxie" />
+      <span class="brand-title">Pyxie</span>
+    </a>
+    <div class="nav-actions">
+      <a href="/" class="btn-home" id="navHome">Início</a>
+      <a href="/wiki" class="btn-home" id="navWiki">Wiki</a>
+      <button class="btn-lang" id="langBtn" onclick="toggleLanguage()">EN / PT</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    <div class="badge-oracle">
+      <span>✨</span> <span id="lblOracleBadge">Oráculo & Tarot dos 78 Arcanos</span>
+    </div>
+
+    <h1 class="oracle-title">
+      <span id="lblTitlePrefix">Tire sua Carta de Tarot</span> <span class="gradient-txt" id="lblTitleHighlight">Online Grátis</span>
+    </h1>
+
+    <p class="oracle-desc" id="lblOracleDesc">
+      Conecte-se com o destino e receba a revelação mágica da Pyxie. Mentalize sua pergunta ou seu dia e toque na carta misteriosa abaixo para revelar seu arcano.
+    </p>
+
+    <!-- Tarot Stage -->
+    <div class="tarot-stage">
+      <div class="card-flipper" id="cardFlipper" onclick="handleCardClick()" title="Toque para virar a carta">
+        <div class="card-inner">
+          <div class="card-back">
+            <div class="card-back-pattern">
+              <div class="back-symbol">🔮</div>
+              <div class="back-prompt" id="lblCardPrompt">Revelar Arcano</div>
+            </div>
+          </div>
+          <div class="card-front">
+            <img id="cardImage" src="/assets/pyxie/pyxie_mascot.png" alt="Carta de Tarot" />
+          </div>
+        </div>
+      </div>
+
+      <div class="draw-controls">
+        <button class="btn-draw" id="btnDraw" onclick="drawNewCard()">
+          <span>✨</span> <span id="lblBtnDraw">Tirar Outra Carta</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Reading Detail Box -->
+    <section class="reading-card" id="readingCard">
+      <div class="reading-header">
+        <div class="reading-card-title" id="readingCardTitle">O Mago</div>
+        <div class="reading-orientation orientation-upright" id="readingOrientation">
+          <span id="readingOrientationDot">●</span> <span id="readingOrientationText">Posição em Pé</span>
+        </div>
+      </div>
+
+      <div class="reading-keywords" id="readingKeywords">
+        <!-- Pills injetadas via JS -->
+      </div>
+
+      <div class="reading-text" id="readingText">
+        <!-- Interpretação detalhada -->
+      </div>
+
+      <!-- Viral Social Sharing Box -->
+      <div class="viral-share-box">
+        <div class="viral-share-title" id="lblShareTitle">
+          <span>📢</span> Compartilhe seu Destino & Salve seu Pin:
+        </div>
+        <div class="viral-buttons">
+          <a href="#" target="_blank" rel="noopener noreferrer" class="btn-share btn-pinterest" id="sharePinterest">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0a12 12 0 0 0-4.37 23.18c-.06-.97-.1-2.46.02-3.52l.74-3.15s-.19-.38-.19-.94c0-.88.51-1.54 1.15-1.54.54 0 .8.4.8.9 0 .54-.35 1.35-.53 2.1-.15.63.32 1.15.94 1.15 1.13 0 2-1.2 2-2.92 0-1.53-1.1-2.6-2.67-2.6-1.95 0-3.1 1.46-3.1 2.97 0 .59.23 1.22.51 1.56.06.07.07.13.05.2-.05.23-.18.72-.2.82-.03.13-.1.17-.23.1-1-.46-1.63-1.9-1.63-3.07 0-2.5 1.82-4.8 5.25-4.8 2.76 0 4.9 1.97 4.9 4.6 0 2.74-1.73 4.95-4.13 4.95-.8 0-1.57-.42-1.83-.92l-.5 1.9c-.18.7-.67 1.58-1 2.1A12 12 0 1 0 12 0z"/></svg>
+            <span id="lblSharePinterest">Salvar no Pinterest</span>
+          </a>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="btn-share btn-whatsapp" id="shareWhatsapp">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+            <span id="lblShareWhatsapp">WhatsApp</span>
+          </a>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="btn-share btn-twitter" id="shareTwitter">
+            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span id="lblShareTwitter">Postar no X</span>
+          </a>
+          <a href="/invite" target="_blank" rel="noopener noreferrer" class="btn-share btn-discord-cta" id="ctaDiscord">
+            <span>🟣</span> <span id="lblCtaDiscord">Adicionar Pyxie ao Discord</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 Pyxie Bot • Feito com magia pela Cringelândia.</p>
+    <p>
+      <a href="/">Página Principal</a> •
+      <a href="/wiki">Wiki & Documentação</a> •
+      <a href="/parcerias">Parcerias</a> •
+      <a href="/museu">Museu</a> •
+      <a href="/bonus">Bônus Diário</a> •
+      <a href="/rss.xml">Feed RSS</a>
+    </p>
+  </footer>
+
+  <script>
+    const I18N = {
+      pt: {
+        metaTitle: 'Tirar Carta de Tarot Online Grátis • Oráculo Mágico da Pyxie',
+        metaDesc: 'Tire sua Carta do Dia de Tarot online gratuitamente com a Pyxie. Conheça as mensagens dos 78 arcanos, conselhos místicos e compartilhe seu destino no Pinterest e redes sociais.',
+        navHome: 'Início',
+        navWiki: 'Wiki Oficial',
+        badge: 'Oráculo & Tarot dos 78 Arcanos',
+        titlePrefix: 'Tire sua Carta de Tarot',
+        titleHighlight: 'Online Grátis',
+        desc: 'Conecte-se com o destino e receba a revelação mágica da Pyxie. Mentalize sua pergunta ou seu dia e toque na carta misteriosa abaixo para revelar seu arcano.',
+        cardPrompt: 'Revelar Arcano',
+        btnDraw: 'Tirar Outra Carta',
+        upright: 'Posição em Pé (Direta)',
+        reversed: 'Posição Invertida',
+        shareTitle: '📢 Compartilhe seu Destino & Salve seu Pin:',
+        sharePinterest: 'Salvar no Pinterest',
+        shareWhatsapp: 'WhatsApp',
+        shareTwitter: 'Postar no X',
+        ctaDiscord: 'Adicionar Pyxie ao Discord',
+      },
+      en: {
+        metaTitle: 'Free Daily Tarot Card Reading Online • Pyxie Oracle',
+        metaDesc: 'Draw your free daily Tarot card online with Pyxie. Discover mystical messages of all 78 arcana cards, spiritual advice, and save pins directly to Pinterest.',
+        navHome: 'Home',
+        navWiki: 'Official Wiki',
+        badge: '78 Arcana Tarot & Oracle',
+        titlePrefix: 'Draw Your Daily Tarot Card',
+        titleHighlight: 'Free Online',
+        desc: 'Tune into your intuition and receive Pyxie\'s mystical reading. Focus on your question or today\'s destiny and tap the mysterious card below to reveal your arcana.',
+        cardPrompt: 'Reveal Arcana',
+        btnDraw: 'Draw Another Card',
+        upright: 'Upright Position',
+        reversed: 'Reversed Position',
+        shareTitle: '📢 Share Your Reading & Save to Pinterest:',
+        sharePinterest: 'Save to Pinterest',
+        shareWhatsapp: 'WhatsApp',
+        shareTwitter: 'Post on X',
+        ctaDiscord: 'Add Pyxie to Discord',
+      }
+    };
+
+    let currentLang = 'pt';
+    let currentCard = null;
+    let currentOrientation = 'UPRIGHT';
+    let allTarotCards = [];
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialLang = urlParams.get('lang') || ((navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en');
+    const paramCardId = urlParams.get('id');
+    const paramPos = urlParams.get('pos');
+
+    async function loadTarotData() {
+      try {
+        const res = await fetch('/api/tarot/cards');
+        if (res.ok) {
+          const data = await res.json();
+          allTarotCards = data.cards || [];
+        }
+      } catch (_) {}
+    }
+
+    function applyLang(lang) {
+      currentLang = (lang === 'en' || lang === 'pt') ? lang : 'pt';
+      document.documentElement.lang = currentLang === 'pt' ? 'pt-BR' : 'en';
+      const S = I18N[currentLang];
+
+      document.title = S.metaTitle;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', S.metaDesc);
+
+      document.getElementById('navHome').textContent = S.navHome;
+      document.getElementById('navHome').href = `/?lang=${currentLang}`;
+      document.getElementById('navWiki').textContent = S.navWiki;
+      document.getElementById('navWiki').href = `/wiki?lang=${currentLang}`;
+      document.getElementById('langBtn').textContent = currentLang === 'pt' ? '🇺🇸 EN' : '🇧🇷 PT-BR';
+
+      document.getElementById('lblOracleBadge').textContent = S.badge;
+      document.getElementById('lblTitlePrefix').textContent = S.titlePrefix;
+      document.getElementById('lblTitleHighlight').textContent = S.titleHighlight;
+      document.getElementById('lblOracleDesc').textContent = S.desc;
+      document.getElementById('lblCardPrompt').textContent = S.cardPrompt;
+      document.getElementById('lblBtnDraw').textContent = S.btnDraw;
+      document.getElementById('lblShareTitle').textContent = S.shareTitle;
+      document.getElementById('lblSharePinterest').textContent = S.sharePinterest;
+      document.getElementById('lblShareWhatsapp').textContent = S.shareWhatsapp;
+      document.getElementById('lblShareTwitter').textContent = S.shareTwitter;
+      document.getElementById('lblCtaDiscord').textContent = S.ctaDiscord;
+
+      if (currentCard) {
+        renderCardDetails(currentCard, currentOrientation);
+      }
+    }
+
+    function toggleLanguage() {
+      const next = currentLang === 'pt' ? 'en' : 'pt';
+      applyLang(next);
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('lang', next);
+        window.history.replaceState({}, '', url);
+      } catch (_) {}
+    }
+
+    function renderCardDetails(card, orientation) {
+      currentCard = card;
+      currentOrientation = orientation;
+      const S = I18N[currentLang];
+      const isReversed = orientation === 'REVERSED';
+
+      const flipper = document.getElementById('cardFlipper');
+      const cardImg = document.getElementById('cardImage');
+      const readingCard = document.getElementById('readingCard');
+
+      // Atualiza imagem com rota do card gerado em alta definição
+      const imgUrl = `https://pyxie.com.br/api/tarot/card-image?id=${card.id}&pos=${isReversed ? 'reversed' : 'upright'}&lang=${currentLang}`;
+      cardImg.src = imgUrl;
+      cardImg.alt = `${card.name} (${orientation}) - Pyxie Tarot`;
+
+      flipper.classList.add('revealed');
+      readingCard.style.display = 'block';
+
+      document.getElementById('readingCardTitle').textContent = card.name;
+      const orientBadge = document.getElementById('readingOrientation');
+      orientBadge.className = `reading-orientation ${isReversed ? 'orientation-reversed' : 'orientation-upright'}`;
+      document.getElementById('readingOrientationText').textContent = isReversed ? S.reversed : S.upright;
+
+      // Palavras-chave
+      const kwContainer = document.getElementById('readingKeywords');
+      kwContainer.innerHTML = (card.keywords || []).map(kw => `<span class="keyword-pill">#${kw}</span>`).join('');
+
+      // Interpretação
+      const text = isReversed ? (card.reversed || card.upright) : card.upright;
+      document.getElementById('readingText').textContent = text;
+
+      // Monta URLs de Compartilhamento Viral
+      const shareUrl = `https://pyxie.com.br/tarot?id=${card.id}&pos=${isReversed ? 'reversed' : 'upright'}&utm_source=social_share&lang=${currentLang}`;
+      const shareText = currentLang === 'en'
+        ? `🔮 I drew "${card.name}" (${isReversed ? 'Reversed' : 'Upright'}) on Pyxie's Daily Tarot Oracle! Check your reading:`
+        : `🔮 Tirei a carta "${card.name}" (${isReversed ? 'Invertida' : 'Em Pé'}) no Oráculo de Tarot da Pyxie! Veja sua mensagem:`;
+
+      // Pinterest Pin Builder
+      const pinDesc = `${shareText} ${text} #tarot #oraculo #tarotonline #pyxie`;
+      const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(imgUrl)}&description=${encodeURIComponent(pinDesc)}`;
+      document.getElementById('sharePinterest').href = pinUrl;
+
+      // WhatsApp
+      const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
+      document.getElementById('shareWhatsapp').href = waUrl;
+
+      // Twitter / X
+      const twUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}&hashtags=tarot,oraculo,pyxie`;
+      document.getElementById('shareTwitter').href = twUrl;
+    }
+
+    function handleCardClick() {
+      const flipper = document.getElementById('cardFlipper');
+      if (!flipper.classList.contains('revealed')) {
+        drawNewCard();
+      }
+    }
+
+    function drawNewCard() {
+      if (!allTarotCards || allTarotCards.length === 0) return;
+      const flipper = document.getElementById('cardFlipper');
+      flipper.classList.remove('revealed');
+
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * allTarotCards.length);
+        const card = allTarotCards[randomIndex];
+        const isReversed = Math.random() < 0.25; // 25% de chance de invertida
+        renderCardDetails(card, isReversed ? 'REVERSED' : 'UPRIGHT');
+      }, 300);
+    }
+
+    // Inicialização
+    (async () => {
+      applyLang(initialLang);
+      await loadTarotData();
+
+      // Se URL continha carta específica (ex: vindo de um Pin do Pinterest ou do Feed RSS)
+      if (paramCardId && allTarotCards.length > 0) {
+        const match = allTarotCards.find(c => c.id === paramCardId);
+        if (match) {
+          const orientation = (paramPos && paramPos.toLowerCase() === 'reversed') ? 'REVERSED' : 'UPRIGHT';
+          renderCardDetails(match, orientation);
+          return;
+        }
+      }
+
+      // Senão, já sorteia determinística a Carta do Dia de hoje
+      if (allTarotCards.length > 0) {
+        const todayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % allTarotCards.length;
+        renderCardDetails(allTarotCards[todayIndex], 'UPRIGHT');
+      }
+    })();
+  </script>
+</body>
+</html>

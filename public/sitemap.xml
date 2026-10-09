@@ -22,6 +22,27 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/" />
   </url>
 
+  <!-- Tarot Oracle (Default / pt-BR) -->
+  <url>
+    <loc>https://pyxie.com.br/tarot</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot" />
+  </url>
+  <!-- Tarot Oracle (English) -->
+  <url>
+    <loc>https://pyxie.com.br/tarot?lang=en</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot" />
+  </url>
+
   <!-- Wiki & Docs (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/wiki</loc>

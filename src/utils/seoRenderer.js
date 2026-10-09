@@ -24,6 +24,24 @@ const SEO_CONFIG = {
       locale: 'en_US'
     }
   },
+  tarot: {
+    file: 'tarot.html',
+    canonical: 'https://pyxie.com.br/tarot',
+    pt: {
+      title: 'Tirar Carta de Tarot Online Grátis • Oráculo Mágico da Pyxie',
+      description: 'Tire sua Carta do Dia de Tarot online gratuitamente com a Pyxie. Conheça as mensagens dos 78 arcanos, conselhos místicos e compartilhe seu destino no Pinterest e redes sociais.',
+      ogTitle: 'Tirar Carta de Tarot Online Grátis • Oráculo da Pyxie',
+      ogDesc: 'Tire sua carta do dia no Tarot dos 78 arcanos com conselhos místicos e interpretação mágica personalizada.',
+      locale: 'pt_BR'
+    },
+    en: {
+      title: 'Free Daily Tarot Card Reading Online • Pyxie Oracle',
+      description: 'Draw your free daily Tarot card online with Pyxie. Discover mystical messages of all 78 arcana cards, spiritual advice, and save pins directly to Pinterest.',
+      ogTitle: 'Free Daily Tarot Card Reading Online • Pyxie Oracle',
+      ogDesc: 'Draw your daily Tarot card from all 78 arcana with mystical advice and personalized magical readings.',
+      locale: 'en_US'
+    }
+  },
   wiki: {
     file: 'wiki.html',
     canonical: 'https://pyxie.com.br/wiki',
@@ -171,3 +189,4 @@ module.exports = {
   serveLocalizedPage,
   clearSeoCache
 };
+
