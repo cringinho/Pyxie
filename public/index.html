@@ -816,10 +816,13 @@
     .mascot-avatar-img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      padding: 6px;
       border-radius: 50%;
-      background: #0e071a;
+      background: radial-gradient(circle at center, #1a0e34 0%, #0e071a 100%);
       display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
 
     .mascot-status-tag {
@@ -2236,7 +2239,7 @@
         <!-- Right Side: Pyxie Mascot Card & Simulator -->
         <div class="hero-mascot-card">
           <div class="mascot-avatar-wrap">
-            <img src="/assets/pyxie/pyxie_mascot.png" class="mascot-avatar-img" alt="Pyxie Mascot" />
+            <img src="/assets/pyxie/pyxie_pixelart.png" class="mascot-avatar-img" alt="Pyxie Mascot" />
             <div class="mascot-status-tag" title="Online no Discord"></div>
           </div>
           <div class="mascot-name">Pyxie</div>
