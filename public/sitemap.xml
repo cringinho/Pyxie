@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Homepage (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/</loc>
     <lastmod>2026-10-08</lastmod>
@@ -8,7 +9,20 @@
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/?lang=pt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/" />
   </url>
+  <!-- Homepage (English) -->
+  <url>
+    <loc>https://pyxie.com.br/?lang=en</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/" />
+  </url>
+
+  <!-- Wiki & Docs (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/wiki</loc>
     <lastmod>2026-10-08</lastmod>
@@ -16,7 +30,20 @@
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/wiki?lang=pt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/wiki?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/wiki" />
   </url>
+  <!-- Wiki & Docs (English) -->
+  <url>
+    <loc>https://pyxie.com.br/wiki?lang=en</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/wiki?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/wiki?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/wiki" />
+  </url>
+
+  <!-- Partnerships (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/parcerias</loc>
     <lastmod>2026-10-08</lastmod>
@@ -24,15 +51,41 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/parcerias?lang=pt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/parcerias?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/parcerias" />
   </url>
+  <!-- Partnerships (English) -->
+  <url>
+    <loc>https://pyxie.com.br/parcerias?lang=en</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/parcerias?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/parcerias?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/parcerias" />
+  </url>
+
+  <!-- Community Museum (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/museu</loc>
     <lastmod>2026-10-08</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/museu?lang=pt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/museu?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/museu" />
   </url>
+  <!-- Community Museum (English) -->
+  <url>
+    <loc>https://pyxie.com.br/museu?lang=en</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/museu?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/museu?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/museu" />
+  </url>
+
+  <!-- Magic Web Bonus (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/bonus</loc>
     <lastmod>2026-10-08</lastmod>
@@ -40,5 +93,16 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/bonus?lang=pt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/bonus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/bonus" />
+  </url>
+  <!-- Magic Web Bonus (English) -->
+  <url>
+    <loc>https://pyxie.com.br/bonus?lang=en</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/bonus?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/bonus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/bonus" />
   </url>
 </urlset>

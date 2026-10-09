@@ -13,6 +13,7 @@ const workSeederService = require('./src/services/workSeederService');
 const quizSeederService = require('./src/services/quizSeederService');
 const seasonalManager = require('./src/modules/seasonal/seasonalManager');
 const moduleManager = require('./src/services/moduleManager');
+const { serveLocalizedPage } = require('./src/utils/seoRenderer');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -20,6 +21,7 @@ app.set('view engine', 'ejs');
 const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || '0.0.0.0';
 const appRoot = __dirname;
+const publicDir = path.join(__dirname, 'public');
 
 let botProcess = null;
 let botLogs = [];
@@ -274,6 +276,7 @@ app.use(express.urlencoded({ extended: true }));
 seasonalManager.init(null, app, sendIpcToBot);
 moduleManager.init({ app, sendIpc: sendIpcToBot });
 app.use(express.static(path.join(__dirname, 'public'), {
+  index: false,
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.html')) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -373,17 +376,13 @@ app.get('/vote', (req, res) => {
   res.redirect('https://top.gg/discord/servers/874440609402134528/vote');
 });
 
-app.get('/wiki', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'wiki.html'));
-});
+app.get('/', serveLocalizedPage('index', publicDir));
 
-app.get(['/parcerias', '/partnerships'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'partnerships.html'));
-});
+app.get('/wiki', serveLocalizedPage('wiki', publicDir));
 
-app.get(['/museu', '/museum'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'museum.html'));
-});
+app.get(['/parcerias', '/partnerships'], serveLocalizedPage('partnerships', publicDir));
+
+app.get(['/museu', '/museum'], serveLocalizedPage('museum', publicDir));
 
 // 1. Healthcheck e status público
 app.get('/api/status', (req, res) => {
@@ -1403,9 +1402,7 @@ app.post('/api/topgg/webhook', (req, res) => {
 // 3. Rotas administrativas protegidas
 // 3. Sistema de Bônus de Recompensas (Página de Espera 10s da Pyxie)
 // 5. Sistema de Bônus de Recompensas (Página de Espera 10s da Pyxie)
-app.get('/bonus', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'bonus.html'));
-});
+app.get('/bonus', serveLocalizedPage('bonus', publicDir));
 
 app.post('/api/bonus/claim', sensitiveRouteLimiter, (req, res) => {
   const { token } = req.body || {};
@@ -1690,7 +1687,7 @@ app.use((req, res) => {
     return res.status(404).json({ error: 'Endpoint não encontrado.' });
   }
 
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  serveLocalizedPage('index', publicDir)(req, res);
 });
 
 function ensureSshKeys() {

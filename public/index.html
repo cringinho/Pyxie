@@ -9,9 +9,16 @@
   <meta name="author" content="Pyxie Team & Cringelândia" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://pyxie.com.br/" />
+  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/?lang=pt" />
+  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/" />
 
   <!-- Google Search Console Verification -->
   <meta name="google-site-verification" content="-IygB84cSAXZkubvjj5e9O_HYJ1PNABOZGyBmETicJQ" />
+
+  <!-- Preconnect & DNS Prefetch to maximize Core Web Vitals (LCP) -->
+  <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
 
   <!-- Open Graph / Facebook / Discord Embed -->
   <meta property="og:type" content="website" />
@@ -19,16 +26,23 @@
   <meta property="og:title" content="Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord" />
   <meta property="og:description" content="Economia Viva com moedinhas e feijões mágicos, 16 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord." />
   <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Pyxie Discord Bot Avatar & Mascot" />
   <meta property="og:site_name" content="Pyxie Discord Bot" />
   <meta property="og:locale" content="pt_BR" />
   <meta property="og:locale:alternate" content="en_US" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@PyxieBot" />
+  <meta name="twitter:creator" content="@PyxieBot" />
   <meta name="twitter:url" content="https://pyxie.com.br/" />
   <meta name="twitter:title" content="Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord" />
   <meta name="twitter:description" content="Economia Viva com moedinhas e feijões mágicos, 16 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord." />
   <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta name="twitter:image:alt" content="Pyxie Discord Bot Avatar & Mascot" />
 
   <!-- Schema.org JSON-LD Structured Data for Google Search -->
   <script type="application/ld+json">
@@ -2347,12 +2361,46 @@
       } catch (_) {}
     }
 
+    function updateIndexSEO(lang) {
+      const isEn = lang === 'en';
+      const title = isEn
+        ? 'Pyxie • Magical Discord Bot for Economy, Tarot & Community'
+        : 'Pyxie • Bot Mágico de Economia, Tarot & Comunidade no Discord';
+      const desc = isEn
+        ? 'Pyxie is a magical fairy Discord bot featuring a Living Economy, 16 Careers & interactive jobs, 78 Tarot Cards with dynamic Canvas rendering, and vibrant community games.'
+        : 'Pyxie é uma fada mágica para o Discord com Economia Viva (moedinhas e feijões mágicos), 16 Carreiras e Profissões com minigames práticos, Tarot dos 78 Arcanos em Canvas e Diversão comunitária.';
+      const ogTitle = isEn
+        ? 'Pyxie • Magical RPG, Economy & Community Discord Bot'
+        : 'Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord';
+      const ogDesc = desc;
+
+      document.title = title;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', desc);
+
+      const ogT = document.querySelector('meta[property="og:title"]');
+      if (ogT) ogT.setAttribute('content', ogTitle);
+
+      const ogD = document.querySelector('meta[property="og:description"]');
+      if (ogD) ogD.setAttribute('content', ogDesc);
+
+      const ogLoc = document.querySelector('meta[property="og:locale"]');
+      if (ogLoc) ogLoc.setAttribute('content', isEn ? 'en_US' : 'pt_BR');
+
+      const twT = document.querySelector('meta[name="twitter:title"]');
+      if (twT) twT.setAttribute('content', ogTitle);
+
+      const twD = document.querySelector('meta[name="twitter:description"]');
+      if (twD) twD.setAttribute('content', ogDesc);
+    }
+
     function applyLang(lang) {
       currentLang = (lang === 'en' || lang === 'pt') ? lang : 'pt';
       setSavedLang(currentLang);
       document.documentElement.lang = currentLang === 'pt' ? 'pt-BR' : 'en';
       document.body.classList.toggle('lang-pt', currentLang === 'pt');
       document.body.classList.toggle('lang-en', currentLang === 'en');
+      updateIndexSEO(currentLang);
 
       const btn = document.getElementById('langToggle');
       if (btn) {
@@ -2577,7 +2625,7 @@
           : '';
 
         const iconHtml = cmd.iconUrl
-          ? `<img src="${cmd.iconUrl}" class="emoji-icon" alt="" />`
+          ? `<img src="${cmd.iconUrl}" class="emoji-icon" alt="${cmd.name || 'command'}" />`
           : `<span class="emoji-icon">✨</span>`;
 
         return `

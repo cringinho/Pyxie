@@ -5,17 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Museu da Comunidade • Pyxie</title>
   <meta name="description" content="Acervo permanente de artes, ilustrações e criações da comunidade da Cringelândia com a Pyxie.">
-  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://pyxie.com.br/museu" />
+  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/museu?lang=pt" />
+  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/museu?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/museu" />
+
+  <!-- Preconnect & DNS Prefetch -->
+  <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://pyxie.com.br/museu" />
   <meta property="og:title" content="Museu da Comunidade • Pyxie" />
   <meta property="og:description" content="Acervo permanente de artes, ilustrações e criações da comunidade da Cringelândia com a Pyxie." />
   <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Museu de Artes da Comunidade Pyxie" />
+  <meta property="og:site_name" content="Pyxie Discord Bot" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:locale:alternate" content="en_US" />
+
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@PyxieBot" />
+  <meta name="twitter:creator" content="@PyxieBot" />
   <meta name="twitter:title" content="Museu da Comunidade • Pyxie" />
   <meta name="twitter:description" content="Acervo permanente de artes, ilustrações e criações da comunidade da Cringelândia com a Pyxie." />
   <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta name="twitter:image:alt" content="Museu de Artes da Comunidade Pyxie" />
+
+  <!-- Schema.org JSON-LD for Community Museum -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://pyxie.com.br/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Museu",
+            "item": "https://pyxie.com.br/museu"
+          }
+        ]
+      },
+      {
+        "@type": "ImageGallery",
+        "name": "Museu da Comunidade da Pyxie",
+        "description": "Galeria permanente com as ilustrações, fanarts e criações dos membros do Discord.",
+        "url": "https://pyxie.com.br/museu",
+        "inLanguage": ["pt-BR", "en"]
+      }
+    ]
+  }
+  </script>
+
   <link rel="icon" type="image/png" href="/assets/pyxie/pyxie_pixelart_face.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -551,6 +604,22 @@
     function applyLang() {
       document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
       document.title = I18N[lang].title.replace('🏛️ ', '') + ' • Pyxie';
+
+      const isEn = lang === 'en';
+      const mDesc = isEn ? 'Permanent gallery of artwork, member creations, and visual lore from Pyxie and the Cringelândia community.' : 'Acervo permanente de artes, ilustrações e criações da comunidade da Cringelândia com a Pyxie.';
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', mDesc);
+      const ogT = document.querySelector('meta[property="og:title"]');
+      if (ogT) ogT.setAttribute('content', document.title);
+      const ogD = document.querySelector('meta[property="og:description"]');
+      if (ogD) ogD.setAttribute('content', mDesc);
+      const ogLoc = document.querySelector('meta[property="og:locale"]');
+      if (ogLoc) ogLoc.setAttribute('content', isEn ? 'en_US' : 'pt_BR');
+      const twT = document.querySelector('meta[name="twitter:title"]');
+      if (twT) twT.setAttribute('content', document.title);
+      const twD = document.querySelector('meta[name="twitter:description"]');
+      if (twD) twD.setAttribute('content', mDesc);
+
       $('title').textContent = tr('title');
       $('subtitle').textContent = tr('subtitle');
       $('prev').textContent = tr('prev');

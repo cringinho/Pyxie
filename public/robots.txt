@@ -1,7 +1,10 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /admin/
 Disallow: /api/admin/
+Disallow: /api/private/
 Disallow: /auth/
+Disallow: /console
 
 Sitemap: https://pyxie.com.br/sitemap.xml

@@ -5,17 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wiki & Enciclopédia Oficial • Pyxie & Cringelândia</title>
   <meta name="description" content="Enciclopédia e Guia da Comunidade da Pyxie e Cringelândia. Conheça o santuário para mentes neurodivergentes, economia viva, 78 cartas de tarot, 16 carreiras e minigames." />
-  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://pyxie.com.br/wiki" />
-  <meta property="og:type" content="website" />
+  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/wiki?lang=pt" />
+  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/wiki?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/wiki" />
+
+  <!-- Preconnect & DNS Prefetch -->
+  <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+
+  <meta property="og:type" content="article" />
   <meta property="og:url" content="https://pyxie.com.br/wiki" />
   <meta property="og:title" content="Wiki & Enciclopédia Oficial • Pyxie & Cringelândia" />
   <meta property="og:description" content="Enciclopédia e Guia da Comunidade da Pyxie e Cringelândia. Conheça o santuário para mentes neurodivergentes, economia viva, 78 cartas de tarot, 16 carreiras e minigames." />
   <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Pyxie Wiki Oficial Avatar & Mascote" />
+  <meta property="og:site_name" content="Pyxie Discord Bot" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:locale:alternate" content="en_US" />
+
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@PyxieBot" />
+  <meta name="twitter:creator" content="@PyxieBot" />
   <meta name="twitter:title" content="Wiki & Enciclopédia Oficial • Pyxie & Cringelândia" />
   <meta name="twitter:description" content="Enciclopédia e Guia da Comunidade da Pyxie e Cringelândia. Conheça o santuário para mentes neurodivergentes, economia viva, 78 cartas de tarot, 16 carreiras e minigames." />
   <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta name="twitter:image:alt" content="Pyxie Wiki Oficial Avatar & Mascote" />
+
+  <!-- Schema.org JSON-LD for Wiki Documentation -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://pyxie.com.br/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Wiki",
+            "item": "https://pyxie.com.br/wiki"
+          }
+        ]
+      },
+      {
+        "@type": "TechArticle",
+        "headline": "Wiki & Enciclopédia Oficial da Pyxie",
+        "description": "Documentação completa de comandos, economia mágica, 16 carreiras e 78 cartas de tarot da Pyxie.",
+        "url": "https://pyxie.com.br/wiki",
+        "inLanguage": ["pt-BR", "en"],
+        "author": {
+          "@type": "Organization",
+          "name": "Pyxie Team & Cringelândia"
+        }
+      }
+    ]
+  }
+  </script>
+
   <link rel="icon" href="https://cdn.discordapp.com/emojis/1548443951596306552.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1523,9 +1580,39 @@
       return browserLang;
     }
 
+    function updateWikiSEO(lang) {
+      const isEn = lang === 'en';
+      const title = isEn
+        ? 'Official Wiki & Encyclopedia • Pyxie & Cringelândia'
+        : 'Wiki & Enciclopédia Oficial • Pyxie & Cringelândia';
+      const desc = isEn
+        ? 'Official documentation and community guide for Pyxie Discord Bot. Explore the neurodivergent sanctuary, dynamic economy, 78 tarot cards, 16 careers, and minigames.'
+        : 'Enciclopédia e Guia da Comunidade da Pyxie e Cringelândia. Conheça o santuário para mentes neurodivergentes, economia viva, 78 cartas de tarot, 16 carreiras e minigames.';
+
+      document.title = title;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', desc);
+
+      const ogT = document.querySelector('meta[property="og:title"]');
+      if (ogT) ogT.setAttribute('content', title);
+
+      const ogD = document.querySelector('meta[property="og:description"]');
+      if (ogD) ogD.setAttribute('content', desc);
+
+      const ogLoc = document.querySelector('meta[property="og:locale"]');
+      if (ogLoc) ogLoc.setAttribute('content', isEn ? 'en_US' : 'pt_BR');
+
+      const twT = document.querySelector('meta[name="twitter:title"]');
+      if (twT) twT.setAttribute('content', title);
+
+      const twD = document.querySelector('meta[name="twitter:description"]');
+      if (twD) twD.setAttribute('content', desc);
+    }
+
     function applyLang(lang) {
       currentLang = (lang === 'en' || lang === 'pt') ? lang : 'pt';
       setSavedLang(currentLang);
+      updateWikiSEO(currentLang);
       const dict = I18N[currentLang] || I18N.pt;
       document.querySelectorAll('[data-i18n]').forEach((el) => {
         const key = el.getAttribute('data-i18n');

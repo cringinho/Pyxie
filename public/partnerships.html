@@ -5,17 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mural das Alianças • Pyxie & Astaroth</title>
   <meta name="description" content="Conheça as comunidades parceiras, criadores e projetos aliados da Cringelândia e Pyxie sob a guarda de Astaroth.">
-  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://pyxie.com.br/parcerias" />
+  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/parcerias?lang=pt" />
+  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/parcerias?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/parcerias" />
+
+  <!-- Preconnect & DNS Prefetch -->
+  <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://pyxie.com.br/parcerias" />
   <meta property="og:title" content="Mural das Alianças • Pyxie & Astaroth" />
   <meta property="og:description" content="Conheça as comunidades parceiras, criadores e projetos aliados da Cringelândia e Pyxie sob a guarda de Astaroth." />
   <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Mural de Parcerias da Pyxie" />
+  <meta property="og:site_name" content="Pyxie Discord Bot" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:locale:alternate" content="en_US" />
+
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@PyxieBot" />
+  <meta name="twitter:creator" content="@PyxieBot" />
   <meta name="twitter:title" content="Mural das Alianças • Pyxie & Astaroth" />
   <meta name="twitter:description" content="Conheça as comunidades parceiras, criadores e projetos aliados da Cringelândia e Pyxie sob a guarda de Astaroth." />
   <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta name="twitter:image:alt" content="Mural de Parcerias da Pyxie" />
+
+  <!-- Schema.org JSON-LD for Partnerships Board -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://pyxie.com.br/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Parcerias",
+            "item": "https://pyxie.com.br/parcerias"
+          }
+        ]
+      },
+      {
+        "@type": "CollectionPage",
+        "name": "Mural de Alianças e Parcerias • Pyxie",
+        "description": "Catálogo de servidores e comunidades parceiras da Pyxie e Cringelândia.",
+        "url": "https://pyxie.com.br/parcerias",
+        "inLanguage": ["pt-BR", "en"]
+      }
+    ]
+  }
+  </script>
+
   <link rel="icon" type="image/png" href="/assets/pyxie/pyxie_pixelart_face.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1202,6 +1255,20 @@
     function applyLang() {
       document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
       document.title = I18N[lang].metaTitle;
+
+      const isEn = lang === 'en';
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', isEn ? 'Discover partner Discord communities, creators, and allied projects of Pyxie and Cringelândia protected by Astaroth.' : 'Conheça as comunidades parceiras, criadores e projetos aliados da Cringelândia e Pyxie sob a guarda de Astaroth.');
+      const ogT = document.querySelector('meta[property="og:title"]');
+      if (ogT) ogT.setAttribute('content', I18N[lang].metaTitle);
+      const ogD = document.querySelector('meta[property="og:description"]');
+      if (ogD) ogD.setAttribute('content', isEn ? 'Discover partner Discord communities, creators, and allied projects of Pyxie and Cringelândia protected by Astaroth.' : 'Conheça as comunidades parceiras, criadores e projetos aliados da Cringelândia e Pyxie sob a guarda de Astaroth.');
+      const ogLoc = document.querySelector('meta[property="og:locale"]');
+      if (ogLoc) ogLoc.setAttribute('content', isEn ? 'en_US' : 'pt_BR');
+      const twT = document.querySelector('meta[name="twitter:title"]');
+      if (twT) twT.setAttribute('content', I18N[lang].metaTitle);
+      const twD = document.querySelector('meta[name="twitter:description"]');
+      if (twD) twD.setAttribute('content', isEn ? 'Discover partner Discord communities, creators, and allied projects of Pyxie and Cringelândia protected by Astaroth.' : 'Conheça as comunidades parceiras, criadores e projetos aliados da Cringelândia e Pyxie sob a guarda de Astaroth.');
 
       $('heroBadge').textContent = I18N[lang].heroBadge;
       $('titlePrefix').textContent = I18N[lang].titlePrefix;

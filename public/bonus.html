@@ -5,17 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>Pyxie • Bônus Mágico Encantado</title>
     <meta name="description" content="Resgate moedinhas mágicas gratuitas para sua conta no Discord assistindo 10 segundos no portal oficial da Pyxie." />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href="https://pyxie.com.br/bonus" />
+    <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/bonus?lang=pt" />
+    <link rel="alternate" hreflang="en" href="https://pyxie.com.br/bonus?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/bonus" />
+
+    <!-- Preconnect & DNS Prefetch -->
+    <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://pyxie.com.br/bonus" />
     <meta property="og:title" content="Pyxie • Bônus Mágico Encantado" />
     <meta property="og:description" content="Resgate moedinhas mágicas gratuitas para sua conta no Discord assistindo 10 segundos no portal oficial da Pyxie." />
     <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content="Pyxie Bônus Mágico Diário" />
+    <meta property="og:site_name" content="Pyxie Discord Bot" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale:alternate" content="en_US" />
+
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@PyxieBot" />
+    <meta name="twitter:creator" content="@PyxieBot" />
     <meta name="twitter:title" content="Pyxie • Bônus Mágico Encantado" />
     <meta name="twitter:description" content="Resgate moedinhas mágicas gratuitas para sua conta no Discord assistindo 10 segundos no portal oficial da Pyxie." />
     <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+    <meta name="twitter:image:alt" content="Pyxie Bônus Mágico Diário" />
+
+    <!-- Schema.org JSON-LD for Web Bonus -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://pyxie.com.br/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Bônus",
+              "item": "https://pyxie.com.br/bonus"
+            }
+          ]
+        },
+        {
+          "@type": "WebPage",
+          "name": "Bônus Mágico da Pyxie",
+          "description": "Portal diário de recompensas e resgate de moedinhas para usuários do Discord.",
+          "url": "https://pyxie.com.br/bonus",
+          "inLanguage": ["pt-BR", "en"]
+        }
+      ]
+    }
+    </script>
+
     <link rel="icon" href="https://cdn.discordapp.com/emojis/1548443951596306552.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1285,6 +1338,21 @@
         document.body.classList.toggle('lang-en', userLang === 'en');
         S = I18N[userLang];
         document.title = S.metaTitle;
+
+        const isEn = userLang === 'en';
+        const bDesc = isEn ? 'Claim free magic coins for your Discord account in 10 seconds on the official Pyxie reward portal.' : 'Resgate moedinhas mágicas gratuitas para sua conta no Discord assistindo 10 segundos no portal oficial da Pyxie.';
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute('content', bDesc);
+        const ogT = document.querySelector('meta[property="og:title"]');
+        if (ogT) ogT.setAttribute('content', S.metaTitle);
+        const ogD = document.querySelector('meta[property="og:description"]');
+        if (ogD) ogD.setAttribute('content', bDesc);
+        const ogLoc = document.querySelector('meta[property="og:locale"]');
+        if (ogLoc) ogLoc.setAttribute('content', isEn ? 'en_US' : 'pt_BR');
+        const twT = document.querySelector('meta[name="twitter:title"]');
+        if (twT) twT.setAttribute('content', S.metaTitle);
+        const twD = document.querySelector('meta[name="twitter:description"]');
+        if (twD) twD.setAttribute('content', bDesc);
 
         const langToggleBtn = document.getElementById('langToggle');
         if (langToggleBtn) {
