@@ -11,7 +11,7 @@ const { getLanguage, t } = require('../utils/i18n');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 
 function getWikiWebUrl() {
-  const base = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
+  const base = process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br';
   return `${base.replace(/\/$/, '')}/wiki`;
 }
 

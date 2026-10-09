@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title>Pyxie • Bot Mágico de Economia, Tarot & Comunidade no Discord</title>
   <meta name="description" content="Pyxie é uma fada mágica para o Discord com Economia Viva (moedinhas e feijões mágicos), 16 Carreiras e Profissões com minigames práticos, Tarot dos 78 Arcanos em Canvas e Diversão comunitária." />
-  <meta name="keywords" content="pyxie, pyxie bot, bot discord, bot de rpg discord, tarot discord, economia discord, bot de empregos discord, minigames discord, cringelandia, pyxie discord bot" />
+  <meta name="keywords" content="pyxie, pyxie discord, pyxie bot, bot pyxie discord, discord bot, bot de rpg discord, tarot discord, economia discord, bot de empregos discord, minigames discord, cringelandia, pyxie discord bot" />
   <meta name="author" content="Pyxie Team & Cringelândia" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://pyxie.com.br/" />
@@ -1610,6 +1610,116 @@
     }
 
     @media (max-width: 480px) {
+      .hero {
+        padding: 28px 0 24px;
+      }
+      .hero-title {
+        font-size: clamp(1.85rem, 7.5vw, 2.3rem);
+        line-height: 1.2;
+        margin-bottom: 14px;
+      }
+      .hero-subtitle {
+        font-size: 0.92rem;
+        line-height: 1.55;
+        margin-bottom: 22px;
+        padding: 0 4px;
+      }
+      .hero-highlights {
+        gap: 6px;
+        margin-bottom: 22px;
+      }
+      .highlight-pill {
+        padding: 5px 11px;
+        font-size: 0.74rem;
+        gap: 6px;
+      }
+      .hero-actions {
+        gap: 9px;
+        margin-bottom: 34px;
+      }
+      .hero-actions .btn {
+        padding: 12px 16px;
+        font-size: 0.92rem;
+      }
+      .hero-mascot-card {
+        padding: 20px 14px 16px;
+        border-radius: 20px;
+      }
+      .mascot-avatar-wrap {
+        width: 135px;
+        height: 135px;
+      }
+      .hero-simulator {
+        padding: 12px 12px 10px;
+        border-radius: 14px;
+      }
+      .sim-body {
+        font-size: 0.78rem;
+      }
+      .sim-interactive-btn {
+        font-size: 0.74rem;
+        padding: 6px 10px;
+      }
+      .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 36px;
+      }
+      .stat-card {
+        padding: 14px 8px;
+        border-radius: 16px;
+      }
+      .stat-num {
+        font-size: 1.45rem;
+      }
+      .stat-label {
+        font-size: 0.68rem;
+      }
+      .section-title {
+        font-size: 1.75rem;
+      }
+      .section-subtitle {
+        font-size: 0.86rem;
+      }
+      .cmd-card {
+        padding: 14px 12px;
+      }
+      .cmd-name {
+        font-size: 0.92rem;
+      }
+      .cmd-desc {
+        font-size: 0.78rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .container {
+        padding: 0 10px;
+      }
+      .brand-title {
+        font-size: 1.15rem;
+      }
+      .brand-icon-img {
+        width: 30px;
+        height: 30px;
+      }
+      .hero-title {
+        font-size: 1.65rem;
+      }
+      .stats-bar {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .highlight-pill {
+        width: 100%;
+        justify-content: center;
+      }
+      .sim-interactive-btn {
+        font-size: 0.7rem;
+      }
+    }
+
+    @media (max-width: 480px) {
       .nav-wrapper {
         gap: 6px;
       }
@@ -2077,7 +2187,7 @@
           </div>
 
           <h1 class="hero-title">
-            <span data-i18n="hero.titlePrefix">Sua Fada Mágica no</span> <span class="gradient-text" data-i18n="hero.titleHighlight">Discord</span>
+            <span class="brand-h1-prefix">Pyxie</span> • <span data-i18n="hero.titlePrefix">Sua Fada Mágica no</span> <span class="gradient-text" data-i18n="hero.titleHighlight">Discord</span>
           </h1>
 
           <p class="hero-subtitle" data-i18n="hero.subtitle">
@@ -2571,6 +2681,19 @@
       }
     };
 
+    
+    function trackEvent(eventName, params = {}) {
+      try {
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', eventName, {
+            ...params,
+            page_lang: typeof currentLang !== 'undefined' ? currentLang : 'pt',
+            timestamp: Date.now()
+          });
+        }
+      } catch (_) {}
+    }
+
     function getSavedLang() {
       try {
         return localStorage.getItem('pyxie_lang');
@@ -2607,8 +2730,10 @@
     }
 
     function toggleLanguage() {
+      const prev = currentLang;
       const nextLang = currentLang === 'pt' ? 'en' : 'pt';
       applyLang(nextLang);
+      trackEvent('toggle_language', { previous_lang: prev, target_lang: nextLang });
       try {
         const url = new URL(window.location.href);
         url.searchParams.set('lang', nextLang);
@@ -2838,6 +2963,7 @@
     }
 
     function selectCategory(catId) {
+      trackEvent('select_command_category', { category_id: catId, lang: currentLang });
       activeCategory = catId;
       renderTabs();
       renderCommands();
@@ -2917,6 +3043,7 @@
     }
 
     function copyCommand(cmdName) {
+      trackEvent('copy_command', { command_name: cmdName, lang: currentLang });
       const toast = document.getElementById('toast');
       const dict = I18N[currentLang] || I18N.pt;
       const showToast = () => {
@@ -2989,6 +3116,7 @@
     ];
     let simIdx = 0;
     function triggerSimRandom() {
+      trackEvent('try_simulator', { sim_index: (simIdx + 1) % SIM_PREVIEWS.length, lang: currentLang });
       simIdx = (simIdx + 1) % SIM_PREVIEWS.length;
       const preview = SIM_PREVIEWS[simIdx];
       const simBody = document.querySelector('.hero-simulator .sim-body');
@@ -2997,6 +3125,24 @@
         simBody.innerHTML = `<div><span class="sim-cmd">${preview.cmd}</span></div><div class="sim-resp">${text}</div>`;
       }
     }
+
+    
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link) return;
+      const href = link.getAttribute('href') || '';
+      if (href.includes('/invite')) {
+        trackEvent('click_cta_invite', { href, label: link.innerText?.trim() });
+      } else if (href.includes('/vote')) {
+        trackEvent('click_cta_vote', { href, label: link.innerText?.trim() });
+      } else if (href.includes('/bonus')) {
+        trackEvent('click_cta_bonus', { href, label: link.innerText?.trim() });
+      } else if (href.includes('/discord')) {
+        trackEvent('click_cta_discord', { href, label: link.innerText?.trim() });
+      } else if (href.includes('/promo')) {
+        trackEvent('click_cta_promo', { href, label: link.innerText?.trim() });
+      }
+    });
 
     initLang();
     fetchStats();

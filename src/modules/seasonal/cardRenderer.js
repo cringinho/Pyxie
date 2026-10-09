@@ -653,7 +653,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
 
   ctx.font = 'bold 15px sans-serif';
   ctx.fillStyle = PALETTE.gold;
-  ctx.fillText('pyxie.duckdns.org', rightX + 117, rightY + 105);
+  ctx.fillText('pyxie.com.br', rightX + 117, rightY + 105);
 
   ctx.font = 'bold 12px sans-serif';
   ctx.fillStyle = '#a855f7';

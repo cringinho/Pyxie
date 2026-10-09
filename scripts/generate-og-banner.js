@@ -2,6 +2,33 @@ const { createCanvas, loadImage } = require('@napi-rs/canvas');
 const fs = require('fs');
 const path = require('path');
 
+function drawVectorStar(ctx, cx, cy, spikes, outerRadius, innerRadius, color) {
+  let rot = (Math.PI / 2) * 3;
+  let x = cx;
+  let y = cy;
+  const step = Math.PI / spikes;
+
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - outerRadius);
+  for (let i = 0; i < spikes; i++) {
+    x = cx + Math.cos(rot) * outerRadius;
+    y = cy + Math.sin(rot) * innerRadius;
+    ctx.lineTo(x, y);
+    rot += step;
+
+    x = cx + Math.cos(rot) * innerRadius;
+    y = cy + Math.sin(rot) * outerRadius;
+    ctx.lineTo(x, y);
+    rot += step;
+  }
+  ctx.lineTo(cx, cy - outerRadius);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
 async function generateOgBanner() {
   const width = 1200;
   const height = 630;
@@ -21,9 +48,9 @@ async function generateOgBanner() {
 
   // Cinematic dark overlay gradient
   const grad = ctx.createLinearGradient(0, 0, width, height);
-  grad.addColorStop(0, 'rgba(10, 5, 18, 0.88)');
-  grad.addColorStop(0.5, 'rgba(16, 7, 32, 0.75)');
-  grad.addColorStop(1, 'rgba(7, 3, 14, 0.92)');
+  grad.addColorStop(0, 'rgba(10, 5, 18, 0.90)');
+  grad.addColorStop(0.5, 'rgba(16, 7, 32, 0.78)');
+  grad.addColorStop(1, 'rgba(7, 3, 14, 0.94)');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, width, height);
 
@@ -111,37 +138,40 @@ async function generateOgBanner() {
   ctx.fillText('Um lugar seguro para quem acha que o mundo', 100, 345);
   ctx.fillText('é barulhento demais.”', 100, 380);
 
-  // Feature pills below slogan
+  // Catchy pills below slogan with vector spark stars (100% immune to OS font missing glyphs)
   const pills = [
-    { text: '🛡️ Proteção a Menores', x: 70 },
-    { text: '🔮 Oráculo Diário', x: 260 },
-    { text: '💎 Moedinhas & Feijões', x: 430 }
+    { text: '16 Profissões & Minigames', width: 220, x: 70 },
+    { text: '78 Cartas de Tarot', width: 175, x: 305 },
+    { text: 'Economia Viva & Cofre', width: 195, x: 495 }
   ];
 
   ctx.font = 'bold 14px sans-serif';
   pills.forEach(p => {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.strokeStyle = 'rgba(192, 132, 252, 0.35)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.roundRect(p.x, 435, 160, 34, 17);
+    ctx.roundRect(p.x, 435, p.width, 36, 18);
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = '#e2e8f0';
-    ctx.fillText(p.text, p.x + 12, 457);
+    // Geometric vector star sparkle drawn directly via 2D canvas paths
+    drawVectorStar(ctx, p.x + 18, 453, 4, 6, 2.5, '#f472b6');
+
+    // Clean text label without raw emojis
+    ctx.fillStyle = '#f1f5f9';
+    ctx.fillText(p.text, p.x + 32, 458);
   });
 
   // Footer Tagline
   ctx.fillStyle = '#94a3b8';
   ctx.font = 'bold 18px sans-serif';
-  ctx.fillText('🌐 pyxie.com.br   •   Cringelândia Community', 70, 560);
+  ctx.fillText('pyxie.com.br   •   Cringelândia Community', 70, 560);
 
   const outPath = path.join(__dirname, '../public/assets/pyxie/og_banner_hd.png');
   const buffer = canvas.toBuffer('image/png');
   fs.writeFileSync(outPath, buffer);
-  console.log('✅ Generated HD OG banner at:', outPath, 'Bytes:', buffer.length);
+  console.log('✅ Generated HD OG banner with vector stars at:', outPath, 'Bytes:', buffer.length);
 }
 
 generateOgBanner().catch(console.error);
-

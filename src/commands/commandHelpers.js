@@ -549,7 +549,7 @@ function buildModularHelpComponents(currentModuleId = 'todos', userId = '', sour
 
   const selectRow = new ActionRowBuilder().addComponents(selectMenu);
 
-  const baseUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org';
+  const baseUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br';
   const buttonRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setLabel(t('help.btnInvite', ctx))

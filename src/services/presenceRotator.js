@@ -6,9 +6,9 @@ const { ActivityType } = require('discord.js');
  */
 const PRESENCE_ACTIVITIES = [
   {
-    name: '/py-help ✦ pyxie.duckdns.org',
+    name: '/py-help ✦ pyxie.com.br',
     type: ActivityType.Playing,
-    state: 'Add me: pyxie.duckdns.org',
+    state: 'Add me: pyxie.com.br',
   },
   {
     name: '78 Tarot Cards Album | /py-album',
@@ -26,12 +26,12 @@ const PRESENCE_ACTIVITIES = [
     state: 'Technical job challenges',
   },
   {
-    name: 'Add to Server ➔ pyxie.duckdns.org',
+    name: 'Add to Server ➔ pyxie.com.br',
     type: ActivityType.Playing,
     state: 'Type /py-help to start!',
   },
   {
-    name: 'Official Wiki ✦ pyxie.duckdns.org/wiki',
+    name: 'Official Wiki ✦ pyxie.com.br/wiki',
     type: ActivityType.Watching,
     state: 'Guides, economy & jobs',
   },
