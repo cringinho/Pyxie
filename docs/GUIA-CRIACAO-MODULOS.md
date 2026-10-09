@@ -264,6 +264,14 @@ Toda página pública deve integrar monetização responsiva:
 - Toda nova página de módulo deve ser integrada ao dropdown `#navModulesDropdown` no desktop e `#drawerModulesTitle` no mobile.
 - Adicione a classe dinâmica correspondente (ex: `.<modulo>-dynamic-link` com `style="display: none;"`), que se torna visível apenas quando `/api/modules/status` indicar que o módulo está ativado.
 
+### 6. Padrão Mandatório de SEO Bilíngue & Rastreabilidade de Busca:
+Se a página do módulo for pública e indexável para atrair tráfego externo:
+- **Registro no `src/utils/seoRenderer.js`**: Deve conter as entradas completas `pt` e `en` com `title`, `description`, `ogTitle`, `ogDesc` e `locale`.
+- **Serviço no `server.js`**: A rota Express deve entregar `getLocalizedHtml('<modulo>', lang, publicDir)` para fornecer o HTML pré-renderizado aos crawlers sem depender de JavaScript do cliente.
+- **Canônica & Hreflang**: Deve incluir canonical autorreferencial e tags `hreflang="pt-BR"`, `hreflang="en"` e `hreflang="x-default"`.
+- **Registro no `public/sitemap.xml`**: Adicionar a rota em português e a versão `?lang=en` com referências alternadas.
+- **Hierarquia Semântica**: Exatamente **uma tag `<h1>`**, todas as tags `<img>` com atributo `alt` preenchido e bloco `application/ld+json` (Schema.org).
+
 ---
 
 ## 8. Preservação de Dados, Concorrência e Atomicidade
@@ -583,6 +591,7 @@ Antes de considerar qualquer novo módulo concluído, verifique rigorosamente ca
   - [ ] Botões para o Discord usando estritamente `/discord` (e nunca `discord.gg/<id>` hardcoded).
   - [ ] Blocos de anúncios com Shopee em PT (`data-hourly-promo="true"`) e Adsterra em EN.
   - [ ] Mascotes SVGs do Astaroth em formato grande (120px - 240px) e ícones pequenos com PNGs (`astaroth_gem.png` e `astaroth_icon2.png`).
+  - [ ] SEO Técnico Bilíngue: registrado em `seoRenderer.js` (`pt` e `en`), canonical, hreflang (`pt-BR`, `en`, `x-default`), sitemap.xml, exatamente 1 tag `<h1>`, tags `<img>` com atributo `alt` e Schema.org JSON-LD.
 - [ ] **Submenu no Site Principal (`public/index.html`):** Adicionado ao dropdown de módulos para não estourar o header, com classe dinâmica exibida apenas quando ativo.
 - [ ] **Preservação Atômica:** Dados salvos na pasta `data/` usando exclusivamente `writeJsonAtomic`.
 - [ ] **Zero Memory Leak:** Listeners e crons registrados com `ctx.registerListener` e `ctx.registerCron`. `onUnload()` limpa referências e estruturas em memória.
