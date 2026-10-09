@@ -11,7 +11,7 @@ const { VOTE } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 
 function buildVoteView(guildOrSource = null, clientOrBotId = null) {
-  const botId = clientOrBotId || '1453888365618270331';
+  const botId = clientOrBotId || '1543650200718155897';
   const voteUrl = getVoteUrl(botId);
 
   const desc = [

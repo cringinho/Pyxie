@@ -1,0 +1,1419 @@
+[
+  {
+    "options": [],
+    "name": "py-ping",
+    "description": "Check bot WebSocket latency and API responsiveness.",
+    "description_localizations": {
+      "pt-BR": "Verifica a latência do WebSocket e tempo de resposta da API."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-status",
+    "description": "View system and server status.",
+    "description_localizations": {
+      "pt-BR": "Mostra o status do bot e informações do servidor."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "📖 Visão Geral",
+            "value": "todos"
+          },
+          {
+            "name": "🪙 Economia & Carreiras",
+            "value": "economia"
+          },
+          {
+            "name": "🎒 Loja & Mochila",
+            "value": "loja"
+          },
+          {
+            "name": "🔮 Tarot Místico",
+            "value": "tarot"
+          },
+          {
+            "name": "💑 Social & Casamentos",
+            "value": "social"
+          },
+          {
+            "name": "⚙️ Utilidades & Sistema",
+            "value": "utilidades"
+          }
+        ],
+        "name": "module",
+        "name_localizations": {
+          "en-US": "module",
+          "en-GB": "module",
+          "pt-BR": "modulo"
+        },
+        "description": "Module to inspect directly",
+        "description_localizations": {
+          "pt-BR": "Módulo que deseja consultar diretamente"
+        },
+        "required": false
+      }
+    ],
+    "name": "py-help",
+    "description": "Interactive help center categorized by modules and utilities.",
+    "description_localizations": {
+      "pt-BR": "Central de ajuda interativa categorizada por módulos e utilidades."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "channel_types": [
+          0
+        ],
+        "name": "channel",
+        "name_localizations": {
+          "en-US": "channel",
+          "en-GB": "channel",
+          "pt-BR": "canal"
+        },
+        "description": "Text channel for welcome messages.",
+        "description_localizations": {
+          "pt-BR": "Canal de texto para envio de boas-vindas."
+        },
+        "required": true,
+        "type": 7
+      }
+    ],
+    "name": "py-welcome",
+    "description": "Sets the channel where welcome messages are sent.",
+    "description_localizations": {
+      "pt-BR": "Define o canal onde a mensagem de boas-vindas será enviada."
+    },
+    "contexts": [
+      0
+    ],
+    "default_member_permissions": "32",
+    "integration_types": [
+      0
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-sixseven",
+    "description": "Sends the sixseven image in the chat.",
+    "description_localizations": {
+      "pt-BR": "Envia a imagem do sixseven no chat."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "person1",
+        "name_localizations": {
+          "en-US": "person1",
+          "en-GB": "person1",
+          "pt-BR": "pessoa1"
+        },
+        "description": "First person of the couple.",
+        "description_localizations": {
+          "pt-BR": "Primeira pessoa do casal."
+        },
+        "required": false,
+        "type": 6
+      },
+      {
+        "name": "person2",
+        "name_localizations": {
+          "en-US": "person2",
+          "en-GB": "person2",
+          "pt-BR": "pessoa2"
+        },
+        "description": "Second person of the couple.",
+        "description_localizations": {
+          "pt-BR": "Segunda pessoa do casal."
+        },
+        "required": false,
+        "type": 6
+      }
+    ],
+    "name": "py-ship",
+    "description": "Calculate love affinity between two users or draw a random couple.",
+    "description_localizations": {
+      "pt-BR": "Junta duas pessoas ou sorteia um casal e calcula a porcentagem de amor."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-daily",
+    "description": "Claim daily coins and maintain your streak.",
+    "description_localizations": {
+      "pt-BR": "Resgate moedas diárias e mantenha sua sequência."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "user",
+        "name_localizations": {
+          "en-US": "user",
+          "en-GB": "user",
+          "pt-BR": "usuario"
+        },
+        "description": "User to check wallet balance",
+        "description_localizations": {
+          "pt-BR": "Usuário para consultar a carteira"
+        },
+        "required": false,
+        "type": 6
+      }
+    ],
+    "name": "py-wallet",
+    "description": "View wallet balance of coins and magic beans.",
+    "description_localizations": {
+      "pt-BR": "Exibe a quantidade de Moedinhas e Feijões Mágicos de um usuário."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "user",
+        "name_localizations": {
+          "en-US": "user",
+          "en-GB": "user",
+          "pt-BR": "usuario"
+        },
+        "description": "User to inspect profile",
+        "description_localizations": {
+          "pt-BR": "Usuário para consultar o perfil"
+        },
+        "required": false,
+        "type": 6
+      }
+    ],
+    "name": "py-profile",
+    "description": "Display your adventurer profile with custom titles, themes, and stats.",
+    "description_localizations": {
+      "pt-BR": "Exibe seu perfil com títulos e temas customizáveis, vocação, moedas e Feijões Mágicos."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "user",
+        "name_localizations": {
+          "en-US": "user",
+          "en-GB": "user",
+          "pt-BR": "usuario"
+        },
+        "description": "User to propose to",
+        "description_localizations": {
+          "pt-BR": "Usuário para pedir em casamento"
+        },
+        "required": true,
+        "type": 6
+      }
+    ],
+    "name": "py-marriage",
+    "description": "Propose marriage for 1000 coins.",
+    "description_localizations": {
+      "pt-BR": "Solicita uma cerimônia de casamento por 1000 Moedinhas."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-divorce",
+    "description": "End marriage for 500 coins.",
+    "description_localizations": {
+      "pt-BR": "Encerra seu casamento por 500 Moedinhas."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "🪙 Coins",
+            "value": "coins"
+          },
+          {
+            "name": "🌱 Magic Beans",
+            "value": "beans"
+          },
+          {
+            "name": "🔥 Daily Streaks",
+            "value": "streaks"
+          }
+        ],
+        "name": "category",
+        "name_localizations": {
+          "en-US": "category",
+          "en-GB": "category",
+          "pt-BR": "categoria"
+        },
+        "description": "Ranking category to display.",
+        "description_localizations": {
+          "pt-BR": "Categoria do ranking para exibir."
+        },
+        "required": false
+      }
+    ],
+    "name": "py-rank",
+    "description": "Display global leaderboards for Coins, Magic Beans, and Daily Streaks.",
+    "description_localizations": {
+      "pt-BR": "Exibe os rankings globais de Moedas, Feijões e Maiores Streaks."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "min_value": 0,
+        "type": 4,
+        "name": "minimum",
+        "name_localizations": {
+          "en-US": "minimum",
+          "en-GB": "minimum",
+          "pt-BR": "minimo"
+        },
+        "description": "Minimum value for daily coins",
+        "description_localizations": {
+          "pt-BR": "Valor mínimo para o diário"
+        },
+        "required": true
+      },
+      {
+        "min_value": 0,
+        "type": 4,
+        "name": "maximum",
+        "name_localizations": {
+          "en-US": "maximum",
+          "en-GB": "maximum",
+          "pt-BR": "maximo"
+        },
+        "description": "Maximum value for daily coins",
+        "description_localizations": {
+          "pt-BR": "Valor máximo para o diário"
+        },
+        "required": true
+      }
+    ],
+    "name": "py-ecoconfig",
+    "description": "Configure daily minimum and maximum Coins rewards.",
+    "description_localizations": {
+      "pt-BR": "Configura a quantidade de Moedinhas do diário."
+    },
+    "contexts": [
+      0
+    ],
+    "default_member_permissions": "0",
+    "integration_types": [
+      0
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "user",
+        "name_localizations": {
+          "en-US": "user",
+          "en-GB": "user",
+          "pt-BR": "usuario"
+        },
+        "description": "User to update balance for.",
+        "description_localizations": {
+          "pt-BR": "Usuário que terá o saldo alterado."
+        },
+        "required": true,
+        "type": 6
+      },
+      {
+        "min_value": 0,
+        "type": 4,
+        "name": "amount",
+        "name_localizations": {
+          "en-US": "amount",
+          "en-GB": "amount",
+          "pt-BR": "quantidade"
+        },
+        "description": "New balance amount.",
+        "description_localizations": {
+          "pt-BR": "Nova quantia de saldo."
+        },
+        "required": true
+      }
+    ],
+    "name": "py-seteco",
+    "description": "Set a user's Coins balance.",
+    "description_localizations": {
+      "pt-BR": "Define o saldo de Moedinhas de um usuário."
+    },
+    "contexts": [
+      0
+    ],
+    "default_member_permissions": "0",
+    "integration_types": [
+      0
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "user",
+        "name_localizations": {
+          "en-US": "user",
+          "en-GB": "user",
+          "pt-BR": "usuario"
+        },
+        "description": "User whose economy data will be reset.",
+        "description_localizations": {
+          "pt-BR": "Usuário que terá os dados de economia resetados."
+        },
+        "required": true,
+        "type": 6
+      }
+    ],
+    "name": "py-reseteco",
+    "description": "Reset a user's Coins and daily cooldown.",
+    "description_localizations": {
+      "pt-BR": "Zera as Moedinhas e o cooldown diário de um usuário."
+    },
+    "contexts": [
+      0
+    ],
+    "default_member_permissions": "0",
+    "integration_types": [
+      0
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "Agricultor",
+            "value": "agricultor"
+          },
+          {
+            "name": "Cozinheiro",
+            "value": "cozinheiro"
+          },
+          {
+            "name": "Professor",
+            "value": "professor"
+          },
+          {
+            "name": "Programador",
+            "value": "programador"
+          },
+          {
+            "name": "Medico",
+            "value": "medico"
+          },
+          {
+            "name": "Musico",
+            "value": "musico"
+          },
+          {
+            "name": "Fotografo",
+            "value": "fotografo"
+          },
+          {
+            "name": "Mecanico",
+            "value": "mecanico"
+          },
+          {
+            "name": "Vendedor",
+            "value": "vendedor"
+          },
+          {
+            "name": "Artista",
+            "value": "artista"
+          },
+          {
+            "name": "Dublador",
+            "value": "dublador"
+          },
+          {
+            "name": "Desenvolvedor de Jogos",
+            "value": "desenvolvedor_jogos"
+          },
+          {
+            "name": "Psicólogo",
+            "value": "psicologo"
+          },
+          {
+            "name": "Telemarketing",
+            "value": "telemarketing"
+          },
+          {
+            "name": "Animador de Festa",
+            "value": "animador_festa"
+          },
+          {
+            "name": "Advogada",
+            "value": "advogada"
+          }
+        ],
+        "name": "profession",
+        "name_localizations": {
+          "en-US": "profession",
+          "en-GB": "profession",
+          "pt-BR": "profissao"
+        },
+        "description": "Desired profession to choose.",
+        "description_localizations": {
+          "pt-BR": "Profissão desejada para escolher."
+        },
+        "required": true
+      }
+    ],
+    "name": "py-profession",
+    "description": "Choose or change your profession.",
+    "description_localizations": {
+      "pt-BR": "Escolhe ou troca sua profissão."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-work",
+    "description": "Start a career shift minigame to earn coins and magic beans.",
+    "description_localizations": {
+      "pt-BR": "Inicia um minigame interativo da sua profissão para receber moedas e Feijões Mágicos."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "📦 Mystery Chests",
+            "value": "bau"
+          }
+        ],
+        "name": "category",
+        "name_localizations": {
+          "en-US": "category",
+          "en-GB": "category",
+          "pt-BR": "categoria"
+        },
+        "description": "Initial category to open",
+        "description_localizations": {
+          "pt-BR": "Categoria inicial da lojinha"
+        },
+        "required": false
+      }
+    ],
+    "name": "py-shop",
+    "description": "Open the store to buy mystery chests and special items.",
+    "description_localizations": {
+      "pt-BR": "Abre a lojinha para comprar baús misteriosos e itens especiais."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "📦 Baú Rústico (300 Coins)",
+            "value": "bau_madeira"
+          },
+          {
+            "name": "🪙 Baú Prateado (1,000 Coins)",
+            "value": "bau_prata"
+          },
+          {
+            "name": "💜 Baú Travesso de Pyxie (2,500 Coins)",
+            "value": "bau_caos"
+          },
+          {
+            "name": "🟣 Ametista Reluzente (250 Coins)",
+            "value": "ametista"
+          },
+          {
+            "name": "🔮 Opala Mística (600 Coins)",
+            "value": "opala"
+          },
+          {
+            "name": "🟢 Esmeralda Nobre (1,400 Coins)",
+            "value": "esmeralda"
+          },
+          {
+            "name": "🔴 Rubi Escarlate (3,500 Coins)",
+            "value": "rubi"
+          },
+          {
+            "name": "💎 Diamante Real (9,000 Coins)",
+            "value": "diamante"
+          },
+          {
+            "name": "👑 Jade Imperial (22,000 Coins)",
+            "value": "jade_imperial"
+          }
+        ],
+        "name": "item",
+        "description": "Item you want to buy",
+        "description_localizations": {
+          "pt-BR": "Item que você deseja comprar"
+        },
+        "required": true
+      },
+      {
+        "max_value": 99,
+        "min_value": 1,
+        "type": 4,
+        "name": "amount",
+        "name_localizations": {
+          "en-US": "amount",
+          "en-GB": "amount",
+          "pt-BR": "quantidade"
+        },
+        "description": "Quantity to purchase",
+        "description_localizations": {
+          "pt-BR": "Quantidade a comprar"
+        },
+        "required": false
+      }
+    ],
+    "name": "py-buy",
+    "description": "Buy an item directly from the shop.",
+    "description_localizations": {
+      "pt-BR": "Compra um item diretamente da loja."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "📦 Baú Rústico (+100 Coins)",
+            "value": "bau_madeira"
+          },
+          {
+            "name": "🪙 Baú Prateado (+350 Coins)",
+            "value": "bau_prata"
+          },
+          {
+            "name": "💜 Baú Travesso de Pyxie (+900 Coins)",
+            "value": "bau_caos"
+          },
+          {
+            "name": "🟣 Ametista Reluzente (+100 Coins)",
+            "value": "ametista"
+          },
+          {
+            "name": "🔮 Opala Mística (+250 Coins)",
+            "value": "opala"
+          },
+          {
+            "name": "🟢 Esmeralda Nobre (+600 Coins)",
+            "value": "esmeralda"
+          },
+          {
+            "name": "🔴 Rubi Escarlate (+1,500 Coins)",
+            "value": "rubi"
+          },
+          {
+            "name": "💎 Diamante Real (+4,000 Coins)",
+            "value": "diamante"
+          },
+          {
+            "name": "👑 Jade Imperial (+10,000 Coins)",
+            "value": "jade_imperial"
+          }
+        ],
+        "name": "item",
+        "description": "Item you want to sell",
+        "description_localizations": {
+          "pt-BR": "Item que você deseja vender"
+        },
+        "required": true
+      },
+      {
+        "max_value": 99,
+        "min_value": 1,
+        "type": 4,
+        "name": "amount",
+        "name_localizations": {
+          "en-US": "amount",
+          "en-GB": "amount",
+          "pt-BR": "quantidade"
+        },
+        "description": "Quantity to sell",
+        "description_localizations": {
+          "pt-BR": "Quantidade a vender"
+        },
+        "required": false
+      }
+    ],
+    "name": "py-sell",
+    "description": "Sell items from your backpack for coins.",
+    "description_localizations": {
+      "pt-BR": "Vende itens da sua mochila por moedinhas."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-inventory",
+    "description": "View and manage your backpack items, chests, and rewards",
+    "description_localizations": {
+      "pt-BR": "Veja e gerencie sua mochila, baús e recompensas"
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-tarot",
+    "description": "Draw a daily Tarot card rendered with special artwork.",
+    "description_localizations": {
+      "pt-BR": "Receba uma tiragem privada do Tarot da Pyxie renderizada na hora."
+    },
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "max_value": 78,
+        "min_value": 1,
+        "type": 4,
+        "name": "pagina",
+        "description": "Card number to open directly in the album (1 to 78)",
+        "description_localizations": {
+          "pt-BR": "Número da carta para abrir diretamente no álbum (1 a 78)"
+        },
+        "required": false
+      }
+    ],
+    "name": "py-album",
+    "description": "Open and browse your 78-card Tarot Album and claim achievements.",
+    "description_localizations": {
+      "pt-BR": "Abra e folheie seu Álbum de 78 cartas do Tarot e resgate conquistas."
+    },
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-schedule",
+    "description": "Shows upcoming scheduled automations and tasks.",
+    "description_localizations": {
+      "pt-BR": "Mostra os próximos disparos e verificações automáticas do bot."
+    },
+    "contexts": [
+      0
+    ],
+    "default_member_permissions": "32",
+    "integration_types": [
+      0
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "name": "search",
+        "name_localizations": {
+          "en-US": "search",
+          "en-GB": "search",
+          "pt-BR": "busca"
+        },
+        "description": "Filter emojis by name.",
+        "description_localizations": {
+          "pt-BR": "Filtrar emojis pelo nome."
+        },
+        "required": false
+      }
+    ],
+    "name": "py-emojis",
+    "description": "Download and search this server's custom emojis.",
+    "description_localizations": {
+      "pt-BR": "Baixa e pesquisa a lista de emojis customizados deste servidor."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "default_member_permissions": "32",
+    "dm_permission": false,
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "admin",
+        "name_localizations": {
+          "en-US": "admin",
+          "en-GB": "admin",
+          "pt-BR": "administrador"
+        },
+        "description": "Show administrator permissions invite directly.",
+        "description_localizations": {
+          "pt-BR": "Exibe diretamente o convite com permissão de Administrador."
+        },
+        "required": false,
+        "type": 5
+      }
+    ],
+    "name": "py-invite",
+    "description": "Get official invite links to add Pyxie to your Discord server.",
+    "description_localizations": {
+      "pt-BR": "Obtenha links oficiais de convite para adicionar a Pyxie ao seu servidor."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-vote",
+    "description": "Support Pyxie by voting on Top.gg.",
+    "description_localizations": {
+      "pt-BR": "Apoie o crescimento da Pyxie votando no Top.gg."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "English 🇺🇸",
+            "value": "en"
+          },
+          {
+            "name": "Portuguese 🇧🇷",
+            "value": "pt"
+          }
+        ],
+        "name": "language",
+        "name_localizations": {
+          "en-US": "language",
+          "en-GB": "language",
+          "pt-BR": "idioma"
+        },
+        "description": "Choose the server language.",
+        "description_localizations": {
+          "en-US": "Choose the server language.",
+          "en-GB": "Choose the server language.",
+          "pt-BR": "Escolha o idioma do servidor."
+        },
+        "required": false
+      }
+    ],
+    "name": "py-language",
+    "description": "Configure the bot language for this server.",
+    "description_localizations": {
+      "pt-BR": "Configura o idioma do bot no servidor."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-bonus",
+    "description": "Claim 75 free daily Coins via a 10s sponsored link.",
+    "description_localizations": {
+      "pt-BR": "Resgata 75 Moedas diárias gratuitas através do link de 10s."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "opponent",
+        "name_localizations": {
+          "en-US": "opponent",
+          "en-GB": "opponent",
+          "pt-BR": "oponente"
+        },
+        "description": "The member you want to challenge.",
+        "description_localizations": {
+          "pt-BR": "O membro que você deseja desafiar."
+        },
+        "required": true,
+        "type": 6
+      },
+      {
+        "min_value": 10,
+        "type": 4,
+        "name": "bet",
+        "name_localizations": {
+          "en-US": "bet",
+          "en-GB": "bet",
+          "pt-BR": "aposta"
+        },
+        "description": "Optional amount of coins to bet.",
+        "description_localizations": {
+          "pt-BR": "Quantidade opcional de moedas para apostar."
+        },
+        "required": false
+      }
+    ],
+    "name": "py-jokenpo",
+    "description": "Challenge another member to a Rock-Paper-Scissors match with optional coin bets.",
+    "description_localizations": {
+      "pt-BR": "Desafie outro membro para uma partida de Pedra, Papel e Tesoura com apostas opcionais."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-cookie",
+    "description": "Crack open your daily magical fortune cookie for wisdom, lucky numbers, and prizes.",
+    "description_localizations": {
+      "pt-BR": "Quebre seu biscoito da sorte diário para receber sabedoria, números da sorte e prêmios."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "target",
+        "name_localizations": {
+          "en-US": "target",
+          "en-GB": "target",
+          "pt-BR": "alvo"
+        },
+        "description": "Target member for the voting poll.",
+        "description_localizations": {
+          "pt-BR": "Membro ou alvo da votação."
+        },
+        "required": true,
+        "type": 6
+      },
+      {
+        "name": "second_member",
+        "name_localizations": {
+          "en-US": "second_member",
+          "en-GB": "second_member",
+          "pt-BR": "segundo_membro"
+        },
+        "description": "Optional second member (default: you).",
+        "description_localizations": {
+          "pt-BR": "Segundo membro opcional (padrão: você)."
+        },
+        "required": false,
+        "type": 6
+      },
+      {
+        "type": 3,
+        "name": "situation",
+        "name_localizations": {
+          "en-US": "situation",
+          "en-GB": "situation",
+          "pt-BR": "situacao"
+        },
+        "description": "Optional custom situation.",
+        "description_localizations": {
+          "pt-BR": "Situação personalizada opcional."
+        },
+        "required": false
+      }
+    ],
+    "name": "py-likely",
+    "description": "Start a \"Who is most likely to...\" voting poll with a target member.",
+    "description_localizations": {
+      "pt-BR": "Inicie uma votação divertida de \"Quem é mais provável de...\" escolhendo o alvo."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "max_value": 100,
+        "min_value": 2,
+        "type": 4,
+        "name": "sides",
+        "name_localizations": {
+          "en-US": "sides",
+          "en-GB": "sides",
+          "pt-BR": "lados"
+        },
+        "description": "Number of sides on the dice (e.g. 6, 20, 100).",
+        "description_localizations": {
+          "pt-BR": "Quantidade de lados do dado (ex: 6, 20, 100)."
+        },
+        "required": false
+      },
+      {
+        "max_value": 10,
+        "min_value": 1,
+        "type": 4,
+        "name": "amount",
+        "name_localizations": {
+          "en-US": "amount",
+          "en-GB": "amount",
+          "pt-BR": "quantidade"
+        },
+        "description": "How many dice to roll (1 to 10).",
+        "description_localizations": {
+          "pt-BR": "Quantos dados rolar (1 a 10)."
+        },
+        "required": false
+      }
+    ],
+    "name": "py-dice",
+    "description": "Roll RPG polyhedral dice (d4, d6, d8, d10, d12, d20, d100).",
+    "description_localizations": {
+      "pt-BR": "Role dados mágicos de RPG (d4, d6, d8, d10, d12, d20, d100)."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "🪙 Heads / Cara",
+            "value": "cara"
+          },
+          {
+            "name": "👑 Tails / Coroa",
+            "value": "coroa"
+          }
+        ],
+        "name": "side",
+        "name_localizations": {
+          "en-US": "side",
+          "en-GB": "side",
+          "pt-BR": "lado"
+        },
+        "description": "Choose Heads (Cara) or Tails (Coroa).",
+        "description_localizations": {
+          "pt-BR": "Escolha Cara ou Coroa."
+        },
+        "required": true
+      },
+      {
+        "min_value": 10,
+        "type": 4,
+        "name": "bet",
+        "name_localizations": {
+          "en-US": "bet",
+          "en-GB": "bet",
+          "pt-BR": "aposta"
+        },
+        "description": "Amount of coins to bet (minimum 10).",
+        "description_localizations": {
+          "pt-BR": "Quantidade de moedas para apostar (mínimo 10)."
+        },
+        "required": true
+      }
+    ],
+    "name": "py-coinflip",
+    "description": "Bet your coins on a Cara ou Coroa (Heads or Tails) coin flip against Pyxie.",
+    "description_localizations": {
+      "pt-BR": "Aposte suas moedas em um cara ou coroa contra a Pyxie."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-admin",
+    "description": "Access Pyxie's secure owner administration dashboard.",
+    "description_localizations": {
+      "pt-BR": "Acesse o painel seguro de administração exclusivo do criador da Pyxie."
+    },
+    "contexts": [
+      0
+    ],
+    "integration_types": [
+      0
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-wiki",
+    "description": "Open the official Pyxie encyclopedia and systems guide.",
+    "description_localizations": {
+      "pt-BR": "Abre a enciclopédia e guia oficial dos sistemas da Pyxie."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "channel_types": [
+          0,
+          5
+        ],
+        "name": "channel",
+        "name_localizations": {
+          "pt-BR": "canal"
+        },
+        "description": "Channel to export messages from (optional, defaults to current channel).",
+        "description_localizations": {
+          "pt-BR": "Canal de onde exportar as mensagens (opcional, padrão é o canal atual)."
+        },
+        "required": false,
+        "type": 7
+      }
+    ],
+    "name": "py-exportar",
+    "description": "Exports the last 50 messages from the channel into a .txt file for administration.",
+    "description_localizations": {
+      "pt-BR": "Exporta as últimas 50 mensagens do canal em um arquivo .txt para a administração."
+    },
+    "contexts": [
+      0
+    ],
+    "default_member_permissions": "32",
+    "integration_types": [
+      0
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-quiz",
+    "description": "Answer cultural quiz questions to earn 10 coins. One wrong answer loses all!",
+    "description_localizations": {
+      "pt-BR": "Responda ao quiz cultural valendo 10 moedas por acerto. Um erro perde tudo!"
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-terms",
+    "description": "Read community terms, child safety framework, and emotional support hotlines.",
+    "description_localizations": {
+      "pt-BR": "Leia os termos de uso, salvaguarda de menores e canais de acolhimento e suporte."
+    },
+    "contexts": [
+      0,
+      1,
+      2
+    ],
+    "integration_types": [
+      0,
+      1
+    ],
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-museum",
+    "description": "Open the Community Art Museum gallery on the website.",
+    "description_localizations": {
+      "pt-BR": "Abra a galeria do Museu da Comunidade no site."
+    },
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "panel",
+            "name_localizations": {
+              "pt-BR": "painel"
+            },
+            "value": "panel"
+          }
+        ],
+        "name": "action",
+        "description": "Staff only: publish the request panel in the request channel",
+        "description_localizations": {
+          "pt-BR": "Somente staff: publica o painel de solicitações no canal de solicitações"
+        },
+        "required": false
+      }
+    ],
+    "name": "py-partner",
+    "description": "Apply for a partnership or promotion with the community.",
+    "description_localizations": {
+      "pt-BR": "Solicite uma parceria ou divulgação com a comunidade."
+    },
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-infoevento",
+    "description": "Complete guide, balance and rules for Cringelândia seasonal event.",
+    "description_localizations": {
+      "pt-BR": "Informações completas, saldo e regras do evento sazonal da Cringelândia."
+    },
+    "type": 1
+  }
+]

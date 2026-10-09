@@ -377,7 +377,7 @@ app.get('/discord', (req, res) => {
 });
 
 app.get('/vote', (req, res) => {
-  res.redirect('https://top.gg/discord/servers/874440609402134528/vote');
+  res.redirect('https://top.gg/bot/1543650200718155897/vote');
 });
 
 app.get('/', serveLocalizedPage('index', publicDir));

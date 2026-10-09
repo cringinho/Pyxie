@@ -1,0 +1,132 @@
+/* ===================================================
+   🧚 PYXIE • TOP.GG CUSTOM CSS (GOTHIC-FAIRY THEME)
+   =================================================== */
+
+/* 1. PALETA DE CORES & VARIÁVEIS GLOBAIS */
+:root {
+  --py-primary: #a855f7;
+  --py-secondary: #ec4899;
+  --py-dark-bg: #0b0713;
+  --py-card-bg: rgba(22, 13, 37, 0.75);
+  --py-card-border: rgba(192, 132, 252, 0.22);
+  --py-text: #f8fafc;
+  --py-text-muted: #cbd5e1;
+  --py-glow: 0 0 25px rgba(168, 85, 247, 0.45);
+}
+
+/* 2. FUNDO GERAL & AMBIÊNCIA MÍSTICA */
+body, [data-theme='dark'] {
+  background-color: var(--py-dark-bg) !important;
+  background-image: 
+    radial-gradient(circle at 50% -10%, #3b1464 0%, rgba(11, 7, 19, 0.98) 45%, #07040d 100%),
+    radial-gradient(circle at 10% 40%, rgba(236, 72, 153, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 60%, rgba(168, 85, 247, 0.1) 0%, transparent 45%) !important;
+  color: var(--py-text) !important;
+}
+
+/* 3. AVATAR DA PYXIE COM BRILHO PULSANTE */
+img[alt*='avatar' i], img[src*='avatars' i], header img {
+  border-radius: 24px !important;
+  border: 2px solid var(--py-primary) !important;
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.55), 0 0 10px rgba(236, 72, 153, 0.35) !important;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease !important;
+}
+
+img[alt*='avatar' i]:hover, header img:hover {
+  transform: scale(1.05) rotate(1deg) !important;
+  box-shadow: 0 0 45px rgba(236, 72, 153, 0.7), 0 0 20px rgba(168, 85, 247, 0.6) !important;
+}
+
+/* 4. BOTÕES PRINCIPAIS (VOTE, INVITE, ETC) */
+button, a[role='button'], .chakra-button {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+button:has(svg), a[href*='invite' i], a[href*='vote' i] {
+  background: linear-gradient(135deg, #9333ea, #ec4899) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 18px rgba(147, 51, 234, 0.4) !important;
+  border-radius: 12px !important;
+}
+
+button:has(svg):hover, a[href*='invite' i]:hover, a[href*='vote' i]:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 8px 28px rgba(236, 72, 153, 0.55) !important;
+  filter: brightness(1.1) !important;
+}
+
+/* 5. TÍTULOS & CABEÇALHOS COM GRADIENTE VIOLETA & ROSA */
+h1, h2, h3, h4 {
+  background: linear-gradient(135deg, #fbcfe8 0%, #c084fc 50%, #f472b6 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  letter-spacing: -0.02em !important;
+  font-weight: 800 !important;
+}
+
+/* 6. CARDS & SEÇÕES COM GLASSMORPHYSME */
+article, section, .card, [class*='card' i], [class*='container' i] {
+  background: var(--py-card-bg) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid var(--py-card-border) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* 7. BLOCOS DE CÓDIGO & TABELAS */
+pre, code {
+  background: rgba(14, 8, 25, 0.85) !important;
+  border: 1px solid rgba(168, 85, 247, 0.25) !important;
+  color: #f1f5f9 !important;
+  border-radius: 10px !important;
+}
+
+table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: 1px solid var(--py-card-border) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+th {
+  background: rgba(147, 51, 234, 0.2) !important;
+  color: #fbcfe8 !important;
+  padding: 10px 14px !important;
+}
+
+td {
+  padding: 10px 14px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* 8. CITAÇÕES (BLOCKQUOTES) ESTILO GRIMÓRIO */
+blockquote {
+  border-left: 4px solid var(--py-primary) !important;
+  background: rgba(147, 51, 234, 0.08) !important;
+  border-radius: 0 12px 12px 0 !important;
+  padding: 12px 18px !important;
+  color: var(--py-text-muted) !important;
+  font-style: italic !important;
+}
+
+/* 9. SCROLLBAR ELEGANTE */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0713;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #9333ea, #ec4899);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a855f7, #f43f5e);
+}
+

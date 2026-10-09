@@ -2,13 +2,13 @@ const fs = require('fs');
 const path = require('path');
 
 const GTAG_SNIPPET = `  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7H5BZ0MCNV"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T4CBHKWHH6"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 
-    gtag('config', 'G-7H5BZ0MCNV');
+    gtag('config', 'G-T4CBHKWHH6');
   </script>
 `;
 
@@ -28,7 +28,7 @@ publicPages.forEach(relPath => {
   if (!fs.existsSync(fullPath)) return;
   let html = fs.readFileSync(fullPath, 'utf8');
 
-  if (html.includes('G-7H5BZ0MCNV')) {
+  if (html.includes('G-T4CBHKWHH6')) {
     console.log('Already present in:', relPath);
     return;
   }
