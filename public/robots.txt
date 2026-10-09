@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/admin/
+Disallow: /auth/
+
+Sitemap: https://pyxie.com.br/sitemap.xml

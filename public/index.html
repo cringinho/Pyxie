@@ -4,32 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title>Pyxie • Bot Mágico de Economia, Tarot & Comunidade no Discord</title>
-  <meta name="description" content="Pyxie é uma fada mágica para o Discord com Economia Viva (moedinhas e feijões mágicos), 10 Carreiras com minigames práticos, Tarot dos 78 Arcanos em Canvas e Diversão comunitária." />
-  <meta name="keywords" content="pyxie, bot discord, tarot discord, economia discord, bot de empregos discord, minigames discord, cringelandia" />
+  <meta name="description" content="Pyxie é uma fada mágica para o Discord com Economia Viva (moedinhas e feijões mágicos), 16 Carreiras e Profissões com minigames práticos, Tarot dos 78 Arcanos em Canvas e Diversão comunitária." />
+  <meta name="keywords" content="pyxie, pyxie bot, bot discord, bot de rpg discord, tarot discord, economia discord, bot de empregos discord, minigames discord, cringelandia, pyxie discord bot" />
   <meta name="author" content="Pyxie Team & Cringelândia" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <link rel="canonical" href="https://pyxie.duckdns.org/" />
+  <link rel="canonical" href="https://pyxie.com.br/" />
 
   <!-- Google Search Console Verification -->
   <meta name="google-site-verification" content="-IygB84cSAXZkubvjj5e9O_HYJ1PNABOZGyBmETicJQ" />
 
-
   <!-- Open Graph / Facebook / Discord Embed -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://pyxie.duckdns.org/" />
+  <meta property="og:url" content="https://pyxie.com.br/" />
   <meta property="og:title" content="Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord" />
-  <meta property="og:description" content="Economia Viva com moedinhas e feijões mágicos, 10 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord." />
-  <meta property="og:image" content="https://pyxie.duckdns.org/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:description" content="Economia Viva com moedinhas e feijões mágicos, 16 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord." />
+  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
   <meta property="og:site_name" content="Pyxie Discord Bot" />
   <meta property="og:locale" content="pt_BR" />
   <meta property="og:locale:alternate" content="en_US" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://pyxie.duckdns.org/" />
+  <meta name="twitter:url" content="https://pyxie.com.br/" />
   <meta name="twitter:title" content="Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord" />
-  <meta name="twitter:description" content="Economia Viva com moedinhas e feijões mágicos, 10 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord." />
-  <meta name="twitter:image" content="https://pyxie.duckdns.org/assets/pyxie/pyxie_mascot.png" />
+  <meta name="twitter:description" content="Economia Viva com moedinhas e feijões mágicos, 16 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord." />
+  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
 
   <!-- Schema.org JSON-LD Structured Data for Google Search -->
   <script type="application/ld+json">
@@ -38,15 +37,15 @@
     "@graph": [
       {
         "@type": "WebSite",
-        "@id": "https://pyxie.duckdns.org/#website",
-        "url": "https://pyxie.duckdns.org/",
+        "@id": "https://pyxie.com.br/#website",
+        "url": "https://pyxie.com.br/",
         "name": "Pyxie Bot",
         "description": "Bot Mágico de RPG, Economia e Comunidade para servidores do Discord",
         "inLanguage": ["pt-BR", "en"]
       },
       {
         "@type": "SoftwareApplication",
-        "@id": "https://pyxie.duckdns.org/#application",
+        "@id": "https://pyxie.com.br/#application",
         "name": "Pyxie",
         "applicationCategory": "GameApplication",
         "operatingSystem": "Discord",
@@ -55,10 +54,10 @@
           "price": "0",
           "priceCurrency": "USD"
         },
-        "description": "Fada mágica para o Discord com economia viva com moedinhas e feijões mágicos, 10 profissões com minigames de turno, 78 cartas de tarot em Canvas e entretenimento comunitário.",
-        "url": "https://pyxie.duckdns.org/",
-        "image": "https://pyxie.duckdns.org/assets/pyxie/pyxie_mascot.png",
-        "screenshot": "https://pyxie.duckdns.org/assets/pyxie/pyxie_mascot.png",
+        "description": "Fada mágica para o Discord com economia viva com moedinhas e feijões mágicos, 16 profissões com minigames de turno, 78 cartas de tarot em Canvas e entretenimento comunitário.",
+        "url": "https://pyxie.com.br/",
+        "image": "https://pyxie.com.br/assets/pyxie/pyxie_mascot.png",
+        "screenshot": "https://pyxie.com.br/assets/pyxie/pyxie_mascot.png",
         "author": {
           "@type": "Organization",
           "name": "Cringelândia",
@@ -291,9 +290,16 @@
       border-radius: 12px;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       transition: all 0.2s ease;
       white-space: nowrap;
+    }
+
+    .nav-dropdown-btn .emoji-icon {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.5));
     }
 
     .nav-dropdown-btn:hover,
@@ -349,12 +355,20 @@
     .dropdown-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
+      gap: 14px;
+      padding: 12px 14px;
       border-radius: 12px;
       text-decoration: none;
       color: var(--text-muted);
       transition: all 0.2s ease;
+    }
+
+    .dropdown-item .emoji-icon {
+      width: 28px;
+      height: 28px;
+      vertical-align: middle;
+      filter: drop-shadow(0 2px 6px rgba(168, 85, 247, 0.4));
+      flex-shrink: 0;
     }
 
     .dropdown-item:hover {
@@ -383,7 +397,7 @@
     .drawer-section-title {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       padding: 14px 16px 6px;
       font-size: 0.8rem;
       text-transform: uppercase;
@@ -392,10 +406,20 @@
       font-weight: 800;
     }
 
+    .drawer-section-title .emoji-icon {
+      width: 22px;
+      height: 22px;
+    }
+
     .drawer-sublink {
       margin-left: 12px;
       border-left: 2px solid rgba(192, 132, 252, 0.25);
       border-radius: 0 12px 12px 0;
+    }
+
+    .drawer-sublink .emoji-icon {
+      width: 24px;
+      height: 24px;
     }
 
     .nav-right {
@@ -1234,6 +1258,79 @@
       }
     }
 
+    @media (max-width: 600px) {
+      .navbar {
+        padding: 10px 0;
+      }
+      .nav-wrapper {
+        gap: 10px;
+      }
+      .nav-right {
+        gap: 8px;
+      }
+      .brand-title {
+        font-size: 1.35rem;
+      }
+      .brand-icon-img {
+        width: 38px;
+        height: 38px;
+      }
+      .lang-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+      }
+      .nav-cta {
+        padding: 6px 12px;
+        font-size: 0.82rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-wrapper {
+        gap: 6px;
+      }
+      .nav-brand {
+        gap: 8px;
+      }
+      .nav-right {
+        gap: 6px;
+      }
+      .brand-title {
+        font-size: 1.25rem;
+      }
+      .brand-icon-img {
+        width: 34px;
+        height: 34px;
+      }
+      .lang-btn {
+        padding: 6px 8px;
+        font-size: 0.78rem;
+        border-radius: 12px;
+      }
+      .nav-cta {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        justify-content: center;
+        border-radius: 12px;
+        flex-shrink: 0;
+      }
+      .nav-cta span {
+        display: none;
+      }
+      .nav-cta .cta-plus-badge {
+        width: 18px;
+        height: 18px;
+      }
+      .mobile-menu-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+        border-radius: 12px;
+        flex-shrink: 0;
+      }
+    }
+
     /* Native Pyxie & Shopee Feature Banner */
     .pyxie-native-banner-container {
       max-width: 860px;
@@ -1644,7 +1741,7 @@
           </button>
           <div class="nav-dropdown-menu" id="navModulesMenu">
             <a href="/parcerias" id="navPartnerships" class="dropdown-item partnerships-dynamic-link" style="display: none;">
-              <img src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" class="emoji-icon" alt="handshake" />
+              <img src="/assets/pyxie/emojis/astaroth_gem.png" class="emoji-icon" alt="partnerships" />
               <div class="dropdown-item-info">
                 <span class="dropdown-item-title" data-i18n-text="nav.partnerships">Parcerias</span>
                 <span class="dropdown-item-desc" data-i18n-text="nav.partnerships_desc">Mural comunitário & impulsos</span>
@@ -1677,11 +1774,7 @@
           <svg class="cta-plus-badge" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           <span data-i18n-text="nav.invite">Adicionar Pyxie</span>
         </a>
-        <button id="mobileMenuBtn" class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Abrir menu de navegação">
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </button>
+        <button id="mobileMenuBtn" class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Abrir menu de navegação">☰</button>
       </div>
     </div>
   </header>
@@ -1713,7 +1806,7 @@
       <span data-i18n-text="nav.modules">Módulos da Comunidade</span>
     </div>
     <a href="/parcerias" id="drawerPartnerships" class="nav-link drawer-sublink partnerships-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
-      <img src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" class="emoji-icon" alt="handshake" />
+      <img src="/assets/pyxie/emojis/astaroth_gem.png" class="emoji-icon" alt="partnerships" />
       <span data-i18n-text="nav.partnerships">Parcerias</span>
     </a>
     <a href="/museu" id="drawerMuseum" class="nav-link drawer-sublink museum-dynamic-link" onclick="closeMobileMenu()" style="display: none;">
@@ -1749,7 +1842,7 @@
       </h1>
 
       <p class="hero-subtitle" data-i18n="hero.subtitle">
-        Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames práticos, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.
+        Economia Viva com Moedinhas e Feijões Mágicos, 16 Carreiras com Minigames práticos, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.
       </p>
 
       <div class="hero-actions">
@@ -1880,7 +1973,7 @@
             <div class="pillar-icon-pod">
               <img src="https://cdn.discordapp.com/emojis/1548444230588956683.gif" class="emoji-icon-xl" alt="career" />
             </div>
-            <h3 class="pillar-title" data-i18n="pillars.p1Title">10 Carreiras & Profissões</h3>
+            <h3 class="pillar-title" data-i18n="pillars.p1Title">16 Carreiras & Profissões</h3>
           </div>
           <p class="pillar-text" data-i18n="pillars.p1Desc">Escolha sua profissão, resolva minigames temáticos nos turnos de trabalho, ganhe experiência profissional e suba no ranking global.</p>
         </div>
@@ -2104,7 +2197,7 @@
         'hero.status': 'Online & Operacional • Discord.js v14',
         'hero.titlePrefix': 'Sua Fada Mágica no',
         'hero.titleHighlight': 'Discord',
-        'hero.subtitle': 'Economia Viva com Moedinhas e Feijões Mágicos, 10 Carreiras com Minigames práticos, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.',
+        'hero.subtitle': 'Economia Viva com Moedinhas e Feijões Mágicos, 16 Carreiras com Minigames práticos, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.',
         'hero.btnInvite': 'Adicionar ao Discord',
         'hero.btnVote': 'Votar no Top.gg',
         'hero.btnBonus': 'Bônus Web (10s)',
@@ -2116,7 +2209,7 @@
         'stats.uptime': 'Tempo Online',
         'pillars.title': 'Explore o Universo da Pyxie',
         'pillars.desc': 'Desenvolvida para transformar servidores do Discord em comunidades ativas, divertidas e engajadas.',
-        'pillars.p1Title': '10 Carreiras & Profissões',
+        'pillars.p1Title': '16 Carreiras & Profissões',
         'pillars.p1Desc': 'Escolha sua profissão, resolva minigames temáticos nos turnos de trabalho, ganhe experiência profissional e suba no ranking global.',
         'pillars.p2Title': 'Economia & Moedinhas',
         'pillars.p2Desc': 'Acumule Moedinhas no cofre diário, cultive Feijões Mágicos raros, abra baús de tesouro e negocie itens com seus amigos.',
@@ -2164,7 +2257,7 @@
         'hero.status': 'Online & Operational • Discord.js v14',
         'hero.titlePrefix': 'Your Magical Fairy on',
         'hero.titleHighlight': 'Discord',
-        'hero.subtitle': 'Living Economy with Coins & Magic Beans, 10 Careers with practical Minigames, Mystic Tarot with 78 Canvas Arcana, and Complete Entertainment for your community.',
+        'hero.subtitle': 'Living Economy with Coins & Magic Beans, 16 Careers with practical Minigames, Mystic Tarot with 78 Canvas Arcana, and Complete Entertainment for your community.',
         'hero.btnInvite': 'Add to Discord',
         'hero.btnVote': 'Vote on Top.gg',
         'hero.btnBonus': 'Web Bonus (10s)',
@@ -2176,7 +2269,7 @@
         'stats.uptime': 'Online Uptime',
         'pillars.title': 'Discover the World of Pyxie',
         'pillars.desc': 'Built to transform Discord servers into vibrant, entertaining, and deeply engaged communities.',
-        'pillars.p1Title': '10 Careers & Professions',
+        'pillars.p1Title': '16 Careers & Professions',
         'pillars.p1Desc': 'Choose your profession, solve shift minigames, advance career levels, and climb the global leaderboards.',
         'pillars.p2Title': 'Living Economy & Coins',
         'pillars.p2Desc': 'Collect daily coins in your vault, cultivate rare Magic Beans, crack open mystery treasure chests, and trade with friends.',
