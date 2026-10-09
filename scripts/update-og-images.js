@@ -27,3 +27,4 @@ targetFiles.forEach(relPath => {
     console.log('ℹ️ Already updated or not found in:', relPath);
   }
 });
+
