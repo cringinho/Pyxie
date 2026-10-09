@@ -236,11 +236,12 @@
       transition: all 0.3s ease;
     }
 
-    .nav-wrapper {
-      display: flex;
+.nav-wrapper {
+      display: grid;
+      grid-template-columns: minmax(160px, auto) 1fr auto;
       align-items: center;
-      justify-content: space-between;
       gap: 16px;
+      width: 100%;
     }
 
     .nav-brand {
@@ -250,6 +251,7 @@
       text-decoration: none;
       color: #fff;
       flex-shrink: 0;
+      justify-self: start;
     }
 
     .brand-icon-img {
@@ -274,7 +276,9 @@
     .nav-menu {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 6px;
+      justify-self: center;
     }
 
     .nav-link {
@@ -645,11 +649,279 @@
       font-size: 1rem;
     }
 
-    /* Hero Section */
+    /* Hero Section - Split Showcase Layout */
     .hero {
-      padding: 60px 0 45px;
-      text-align: center;
+      padding: 55px 0 40px;
       position: relative;
+    }
+
+    .hero-split {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: 40px;
+      margin-bottom: 55px;
+    }
+
+    .hero-content {
+      text-align: left;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #34d399;
+      margin-bottom: 22px;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+      letter-spacing: 0.02em;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 10px #34d399;
+      position: relative;
+    }
+    .pulse-dot::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      border-radius: 50%;
+      border: 1px solid #34d399;
+      animation: ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+
+    @keyframes ripple {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .hero-title {
+      font-family: var(--font-title);
+      font-size: clamp(2.4rem, 5.2vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.12;
+      margin-bottom: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, #ffffff 15%, #f472b6 65%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 35px rgba(244, 114, 182, 0.4));
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.7;
+      font-weight: 400;
+      max-width: 620px;
+    }
+
+    /* Hero Key Highlights */
+    .hero-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .highlight-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+    .highlight-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--purple-glow);
+      transform: translateY(-1px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 12px;
+    }
+
+    /* Hero Mascot Card Showcase */
+    .hero-mascot-card {
+      position: relative;
+      background: linear-gradient(145deg, rgba(26, 14, 52, 0.82), rgba(12, 6, 24, 0.9));
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 40px rgba(168, 85, 247, 0.2);
+      backdrop-filter: blur(20px);
+      text-align: center;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+    .hero-mascot-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.75), 0 0 50px rgba(244, 63, 94, 0.28);
+      border-color: rgba(244, 114, 182, 0.6);
+    }
+    .hero-mascot-card::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: -40%;
+      width: 180%;
+      height: 180%;
+      background: radial-gradient(circle at center, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .mascot-avatar-wrap {
+      position: relative;
+      width: 170px;
+      height: 170px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      padding: 6px;
+      background: linear-gradient(135deg, var(--pink-neon), var(--purple-main), #38bdf8);
+      box-shadow: 0 0 30px rgba(244, 63, 94, 0.45);
+      animation: floatMascot 4s ease-in-out infinite;
+    }
+    @keyframes floatMascot {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .mascot-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      background: #0e071a;
+      display: block;
+    }
+
+    .mascot-status-tag {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: #10b981;
+      border: 3px solid #0e071a;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+    }
+
+    .mascot-name {
+      font-family: var(--font-title);
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .mascot-role {
+      font-size: 0.82rem;
+      color: var(--pink-glow);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+
+    /* Live Interactive Command Simulator Pill */
+    .hero-simulator {
+      background: rgba(10, 5, 20, 0.75);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      border-radius: 16px;
+      padding: 12px 14px;
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      position: relative;
+    }
+    .sim-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 6px;
+    }
+    .sim-dots {
+      display: flex;
+      gap: 5px;
+    }
+    .sim-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .sim-dot.red { background: #ef4444; }
+    .sim-dot.yellow { background: #f59e0b; }
+    .sim-dot.green { background: #10b981; }
+
+    .sim-body {
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+    .sim-cmd {
+      color: #f472b6;
+      font-weight: 700;
+    }
+    .sim-resp {
+      color: #34d399;
+      font-size: 0.78rem;
+      margin-top: 4px;
+    }
+
+    .sim-interactive-btn {
+      margin-top: 10px;
+      width: 100%;
+      background: rgba(147, 51, 234, 0.25);
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      color: #d8b4fe;
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .sim-interactive-btn:hover {
+      background: linear-gradient(135deg, var(--pink-neon), var(--purple-main));
+      color: #ffffff;
+      border-color: transparent;
+      transform: translateY(-1px);
     }
 
     .status-badge {
@@ -1208,11 +1480,37 @@
 
     /* Responsive Mobile Overhauls */
     @media (max-width: 1024px) {
+      .nav-wrapper {
+        display: flex;
+        justify-content: space-between;
+      }
       .nav-menu {
         display: none;
       }
       .mobile-menu-btn {
         display: flex;
+      }
+      .hero-split {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        text-align: center;
+      }
+      .hero-content {
+        text-align: center;
+      }
+      .hero-subtitle {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .hero-highlights {
+        justify-content: center;
+      }
+      .hero-actions {
+        justify-content: center;
+      }
+      .hero-mascot-card {
+        max-width: 440px;
+        margin: 0 auto;
       }
       .stats-bar {
         grid-template-columns: repeat(2, 1fr);
@@ -1771,40 +2069,87 @@
   <main class="container">
     <!-- Hero Section -->
     <section class="hero">
-      <div class="status-badge">
-        <span class="pulse-dot"></span>
-        <span id="botStatusText" data-i18n="hero.status">Online & Operacional • Discord.js v14</span>
-      </div>
+      <div class="hero-split">
+        <div class="hero-content">
+          <div class="status-badge">
+            <span class="pulse-dot"></span>
+            <span id="botStatusText" data-i18n="hero.status">Online & Operacional • Discord.js v14</span>
+          </div>
 
-      <h1 class="hero-title">
-        <span data-i18n="hero.titlePrefix">Sua Fada Mágica no</span> <span class="gradient-text" data-i18n="hero.titleHighlight">Discord</span>
-      </h1>
+          <h1 class="hero-title">
+            <span data-i18n="hero.titlePrefix">Sua Fada Mágica no</span> <span class="gradient-text" data-i18n="hero.titleHighlight">Discord</span>
+          </h1>
 
-      <p class="hero-subtitle" data-i18n="hero.subtitle">
-        Economia Viva com Moedinhas e Feijões Mágicos, 16 Carreiras com Minigames práticos, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.
-      </p>
+          <p class="hero-subtitle" data-i18n="hero.subtitle">
+            Economia Viva com Moedinhas e Feijões Mágicos, 16 Carreiras com Minigames práticos, Tarot Místico dos 78 Arcanos em Canvas e Entretenimento completo para sua comunidade.
+          </p>
 
-      <div class="hero-actions">
-        <a href="/invite" target="_blank" rel="noopener" class="btn btn-primary">
-          <img src="https://cdn.discordapp.com/emojis/1551356640782057502.gif" class="emoji-icon" alt="wings" />
-          <span data-i18n="hero.btnInvite">Adicionar ao Discord</span>
-        </a>
-        <a href="/vote" target="_blank" rel="noopener" class="btn btn-accent">
-          <img src="https://cdn.discordapp.com/emojis/1551356493050413159.gif" class="emoji-icon" alt="boost" />
-          <span data-i18n="hero.btnVote">Votar no Top.gg</span>
-        </a>
-        <a href="/bonus" class="btn btn-secondary">
-          <img src="https://cdn.discordapp.com/emojis/1548444204202459136.gif" class="emoji-icon" alt="gift" />
-          <span data-i18n="hero.btnBonus">Bônus Web (10s)</span>
-        </a>
-        <a href="/evento" class="btn btn-purple seasonal-dynamic-link" style="display: none; background: linear-gradient(135deg, #7c3aed, #f97316); border-color: rgba(249, 115, 22, 0.4);">
-          <img src="https://cdn.discordapp.com/emojis/1551355734577381447.png" class="emoji-icon" alt="pumpkin" />
-          <span data-i18n="hero.btnSeasonal">🏆 Evento & Ranking</span>
-        </a>
-        <a href="/discord" target="_blank" rel="noopener" class="btn btn-cyan">
-          <img src="https://cdn.discordapp.com/emojis/1548443887025266739.gif" class="emoji-icon" alt="crown" />
-          <span data-i18n="hero.btnGuild">Comunidade Oficial</span>
-        </a>
+          <div class="hero-highlights">
+            <div class="highlight-pill">
+              <img src="https://cdn.discordapp.com/emojis/1548444230588956683.gif" class="emoji-icon" alt="career" />
+              <span data-i18n="hero.hl1">16 Profissões & Minigames</span>
+            </div>
+            <div class="highlight-pill">
+              <img src="https://cdn.discordapp.com/emojis/1548444111319605330.gif" class="emoji-icon" alt="tarot" />
+              <span data-i18n="hero.hl2">78 Arcanos em Canvas HD</span>
+            </div>
+            <div class="highlight-pill">
+              <img src="https://cdn.discordapp.com/emojis/1548443880066777098.gif" class="emoji-icon" alt="coin" />
+              <span data-i18n="hero.hl3">Economia Viva & Cofrinho</span>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <a href="/invite" target="_blank" rel="noopener" class="btn btn-primary">
+              <img src="https://cdn.discordapp.com/emojis/1551356640782057502.gif" class="emoji-icon" alt="wings" />
+              <span data-i18n="hero.btnInvite">Adicionar ao Discord</span>
+            </a>
+            <a href="/vote" target="_blank" rel="noopener" class="btn btn-accent">
+              <img src="https://cdn.discordapp.com/emojis/1551356493050413159.gif" class="emoji-icon" alt="boost" />
+              <span data-i18n="hero.btnVote">Votar no Top.gg</span>
+            </a>
+            <a href="/bonus" class="btn btn-secondary">
+              <img src="https://cdn.discordapp.com/emojis/1548444204202459136.gif" class="emoji-icon" alt="gift" />
+              <span data-i18n="hero.btnBonus">Bônus Web (10s)</span>
+            </a>
+            <a href="/evento" class="btn btn-purple seasonal-dynamic-link" style="display: none; background: linear-gradient(135deg, #7c3aed, #f97316); border-color: rgba(249, 115, 22, 0.4);">
+              <img src="https://cdn.discordapp.com/emojis/1551355734577381447.png" class="emoji-icon" alt="pumpkin" />
+              <span data-i18n="hero.btnSeasonal">🏆 Evento & Ranking</span>
+            </a>
+            <a href="/discord" target="_blank" rel="noopener" class="btn btn-cyan">
+              <img src="https://cdn.discordapp.com/emojis/1548443887025266739.gif" class="emoji-icon" alt="crown" />
+              <span data-i18n="hero.btnGuild">Comunidade Oficial</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Side: Pyxie Mascot Card & Simulator -->
+        <div class="hero-mascot-card">
+          <div class="mascot-avatar-wrap">
+            <img src="/assets/pyxie/pyxie_mascot.png" class="mascot-avatar-img" alt="Pyxie Mascot" />
+            <div class="mascot-status-tag" title="Online no Discord"></div>
+          </div>
+          <div class="mascot-name">Pyxie</div>
+          <div class="mascot-role" data-i18n="hero.mascotRole">Fada Arcana do Discord</div>
+
+          <div class="hero-simulator">
+            <div class="sim-header">
+              <div class="sim-dots">
+                <span class="sim-dot red"></span>
+                <span class="sim-dot yellow"></span>
+                <span class="sim-dot green"></span>
+              </div>
+              <span>discord / channel</span>
+            </div>
+            <div class="sim-body">
+              <div><span class="sim-cmd">/py-tarot</span> <span style="color: var(--text-dim);">[carta do dia]</span></div>
+              <div class="sim-resp">🔮 <strong>O Mago</strong>: "O poder da criação está em suas mãos hoje!"</div>
+            </div>
+            <button class="sim-interactive-btn" onclick="triggerSimRandom()">
+              <span>✨</span> <span data-i18n="hero.btnSimTest">Testar outro comando</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Stats Bar (Animated Application Emojis & Glowing Pods) -->
@@ -2113,6 +2458,11 @@
         'hero.btnBonus': 'Bônus Web (10s)',
         'hero.btnSeasonal': '🏆 Evento & Ranking',
         'hero.btnGuild': 'Comunidade Oficial',
+        'hero.hl1': '16 Profissões & Minigames',
+        'hero.hl2': '78 Arcanos em Canvas HD',
+        'hero.hl3': 'Economia Viva & Cofrinho',
+        'hero.mascotRole': 'Fada Arcana do Discord',
+        'hero.btnSimTest': 'Testar outro comando',
         'stats.commands': 'Comandos Executados',
         'stats.users': 'Aventureiros na Comunidade',
         'stats.messages': 'Mensagens Processadas',
@@ -2176,6 +2526,11 @@
         'hero.btnBonus': 'Web Bonus (10s)',
         'hero.btnSeasonal': '🏆 Event & Leaderboard',
         'hero.btnGuild': 'Official Community',
+        'hero.hl1': '16 Careers & Minigames',
+        'hero.hl2': '78 Canvas HD Arcana',
+        'hero.hl3': 'Living Economy & Vault',
+        'hero.mascotRole': 'Discord Arcane Fairy',
+        'hero.btnSimTest': 'Try another command',
         'stats.commands': 'Commands Run',
         'stats.users': 'Community Adventurers',
         'stats.messages': 'Messages Processed',
@@ -2624,6 +2979,25 @@
     }
 
     // Inicialização
+    
+    const SIM_PREVIEWS = [
+      { cmd: '/py-tarot [carta do dia]', resp: '🔮 <strong>O Mago</strong>: "O poder da criação está em suas mãos hoje!"', respEn: '🔮 <strong>The Magician</strong>: "The power of creation is in your hands today!"' },
+      { cmd: '/py-work [turno]', resp: '💼 <strong>Alquimista</strong>: Turno concluído! Você destilou a poção e faturou +180 Moedinhas.', respEn: '💼 <strong>Alchemist</strong>: Shift finished! You brewed the potion and earned +180 Coins.' },
+      { cmd: '/py-ship [@amor]', resp: '💖 <strong>Afinidade Cósmica</strong>: 98% • As estrelas abençoaram esta união divina!', respEn: '💖 <strong>Cosmic Affinity</strong>: 98% • The stars have blessed this celestial union!' },
+      { cmd: '/py-daily', resp: '🎁 <strong>Cofre Diário</strong>: Recompensas resgatadas com sucesso! +250 Moedinhas e +1 Feijão Mágico.', respEn: '🎁 <strong>Daily Vault</strong>: Rewards claimed! +250 Coins and +1 Magic Bean.' },
+      { cmd: '/py-cookie', resp: '🥠 <strong>Biscoito da Sorte</strong>: "A sorte favorece aqueles que ousam criar o seu próprio destino."', respEn: '🥠 <strong>Fortune Cookie</strong>: "Luck favors those who dare to forge their own fate."' }
+    ];
+    let simIdx = 0;
+    function triggerSimRandom() {
+      simIdx = (simIdx + 1) % SIM_PREVIEWS.length;
+      const preview = SIM_PREVIEWS[simIdx];
+      const simBody = document.querySelector('.hero-simulator .sim-body');
+      if (simBody) {
+        const text = currentLang === 'en' ? preview.respEn : preview.resp;
+        simBody.innerHTML = `<div><span class="sim-cmd">${preview.cmd}</span></div><div class="sim-resp">${text}</div>`;
+      }
+    }
+
     initLang();
     fetchStats();
     checkSeasonalEvent();
