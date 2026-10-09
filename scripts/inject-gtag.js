@@ -42,3 +42,4 @@ publicPages.forEach(relPath => {
     console.warn('⚠️ No <head> tag found in:', relPath);
   }
 });
+
