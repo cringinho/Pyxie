@@ -563,87 +563,12 @@
       white-space: nowrap;
     }
 
-    /* Segmentação de Monetização Bilíngue (PT = Shopee BR, EN = Adsterra Global) */
+    /* Segmentação de Monetização Oficial (Shopee Brasil) */
     .monetization-pt {
       display: block;
     }
     .monetization-en {
-      display: none;
-    }
-    html[lang="en"] .monetization-pt,
-    body.lang-en .monetization-pt {
       display: none !important;
-    }
-    html[lang="en"] .monetization-en,
-    body.lang-en .monetization-en {
-      display: flex !important;
-    }
-    html[lang="pt-BR"] .monetization-en,
-    body.lang-pt .monetization-en {
-      display: none !important;
-    }
-    html[lang="pt-BR"] .monetization-pt,
-    body.lang-pt .monetization-pt {
-      display: block !important;
-    }
-
-    .adsterra-banner-container {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 100px;
-      padding: 14px 18px;
-      background: radial-gradient(circle at center, rgba(168, 85, 247, 0.12), rgba(12, 6, 24, 0.95));
-      border: 1px solid rgba(168, 85, 247, 0.35);
-      border-radius: 18px;
-      box-shadow: 0 8px 32px rgba(10, 5, 20, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      text-align: center;
-      box-sizing: border-box;
-      overflow: hidden;
-      margin: 36px 0 16px;
-    }
-    .adsterra-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 10px;
-      font-size: 0.75rem;
-      color: #c084fc;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-    .adsterra-badge {
-      background: rgba(244, 63, 94, 0.2);
-      border: 1px solid rgba(244, 63, 94, 0.4);
-      color: #fca5a5;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 0.7rem;
-    }
-    .adsterra-frame-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      overflow: hidden;
-    }
-    .adsterra-desktop-468 {
-      display: flex;
-    }
-    .adsterra-mobile-300 {
-      display: none;
-    }
-    @media (max-width: 520px) {
-      .adsterra-desktop-468 {
-        display: none !important;
-      }
-      .adsterra-mobile-300 {
-        display: flex !important;
-      }
     }
 
     /* Rodapé */
@@ -1161,40 +1086,6 @@
         </div>
         <span class="promo-btn" data-i18n="promoBtn">Conferir Ofertas ➔</span>
       </a>
-
-      <!-- EN: Adsterra Global Sponsor Banner (Desktop 468x60 / Mobile 300x250) -->
-      <div class="adsterra-banner-container monetization-en">
-        <div class="adsterra-header">
-          <span class="adsterra-badge">✦ Official Sponsor</span>
-          <span>Featured Deals & Web Rewards</span>
-        </div>
-        <div class="adsterra-frame-wrap adsterra-desktop-468">
-          <script>
-            atOptions = {
-              'key' : 'fbb18d996650a174db4ff64b5fba394f',
-              'format' : 'iframe',
-              'height' : 60,
-              'width' : 468,
-              'params' : {}
-            };
-          </script>
-          <script src="https://www.highrevenueformat.com/fbb18d996650a174db4ff64b5fba394f/invoke.js"></script>
-        </div>
-        <div class="adsterra-frame-wrap adsterra-mobile-300">
-          <script>
-            atOptions = {
-              'key' : '3057c5e3d039655f3a86a9ee6ae57808',
-              'format' : 'iframe',
-              'height' : 250,
-              'width' : 300,
-              'params' : {}
-            };
-          </script>
-          <script src="https://www.highrevenueformat.com/3057c5e3d039655f3a86a9ee6ae57808/invoke.js"></script>
-        </div>
-      </div>
-
-
     </main>
 
     <!-- Sumário na Página (Desktop) -->
@@ -1735,16 +1626,7 @@
     }
 
     async function syncHourlyPromoLinks() {
-      const isPt = currentLang === 'pt';
       const promoEls = document.querySelectorAll('[data-hourly-promo="true"]');
-      if (!isPt) {
-        const ADSTERRA_SMARTLINK = 'https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813';
-        promoEls.forEach((el) => {
-          el.href = ADSTERRA_SMARTLINK;
-          el.setAttribute('title', 'Special Gaming Deals & Rewards ✦');
-        });
-        return;
-      }
       try {
         const res = await fetch('/api/shopee/hourly-promo');
         if (!res.ok) return;

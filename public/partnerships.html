@@ -754,47 +754,7 @@
       box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4);
     }
 
-    /* Adsterra Container para EN */
-    .adsterra-banner-container {
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 100px;
-      padding: 14px 18px;
-      background: radial-gradient(circle at center, rgba(168, 85, 247, 0.12), rgba(12, 6, 24, 0.95));
-      border: 1px solid rgba(168, 85, 247, 0.35);
-      border-radius: 18px;
-      box-shadow: 0 8px 32px rgba(10, 5, 20, 0.6);
-      text-align: center;
-      overflow: hidden;
-      margin: 32px 0 20px;
-    }
-    .adsterra-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      font-size: 0.74rem;
-      color: #c084fc;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-    .adsterra-badge {
-      background: rgba(244, 63, 94, 0.2);
-      border: 1px solid rgba(244, 63, 94, 0.4);
-      color: #fca5a5;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 0.68rem;
-    }
-    .adsterra-desktop-468 { display: flex; justify-content: center; width: 100%; }
-    .adsterra-mobile-300 { display: none; justify-content: center; width: 100%; }
     @media (max-width: 520px) {
-      .adsterra-desktop-468 { display: none !important; }
-      .adsterra-mobile-300 { display: flex !important; }
       .promo-banner { flex-direction: column; align-items: stretch; text-align: center; }
       .promo-content { flex-direction: column; }
       .promo-cta-btn { justify-content: center; }
@@ -940,37 +900,6 @@
         </div>
         <span class="promo-cta-btn" id="ptBannerBtn">Ver Ofertas ➔</span>
       </a>
-    </div>
-
-    <div class="monetization-en adsterra-banner-container">
-      <div class="adsterra-header">
-        <span class="adsterra-badge">SPONSOR</span>
-        <span>Community Partner Deals & Special Rewards</span>
-      </div>
-      <div class="adsterra-desktop-468">
-        <script>
-          atOptions = {
-            'key' : '9bfd0ea5a8cecbfa6b88b7f8373b88d3',
-            'format' : 'iframe',
-            'height' : 60,
-            'width' : 468,
-            'params' : {}
-          };
-        </script>
-        <script src="https://www.highrevenueformat.com/9bfd0ea5a8cecbfa6b88b7f8373b88d3/invoke.js"></script>
-      </div>
-      <div class="adsterra-mobile-300">
-        <script>
-          atOptions = {
-            'key' : 'f3dbfeae56ba2efdf768f54ef4ff8685',
-            'format' : 'iframe',
-            'height' : 50,
-            'width' : 320,
-            'params' : {}
-          };
-        </script>
-        <script src="https://www.highrevenueformat.com/f3dbfeae56ba2efdf768f54ef4ff8685/invoke.js"></script>
-      </div>
     </div>
 
     <!-- Seletor de Categorias / Abas com Ícones PNG Padronizados (astaroth_gem e astaroth_icon2) -->
@@ -1303,16 +1232,7 @@
     }
 
     async function syncHourlyPromoLinks() {
-      const isPt = lang === 'pt';
       const promoEls = document.querySelectorAll('[data-hourly-promo="true"]');
-      if (!isPt) {
-        const ADSTERRA_SMARTLINK = 'https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813';
-        promoEls.forEach((el) => {
-          el.href = ADSTERRA_SMARTLINK;
-          el.setAttribute('title', 'Special Gaming Deals & Rewards ✦');
-        });
-        return;
-      }
       try {
         const res = await fetch('/api/shopee/hourly-promo');
         if (!res.ok) return;

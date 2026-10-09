@@ -107,25 +107,23 @@ try {
   assert.ok(wikiHtml.includes('href="/promo"'), 'wiki.html deve conter links direcionando para /promo');
   assert.ok(bonusHtml.includes('href="/promo"'), 'bonus.html deve conter sponsorBtn direcionando para /promo');
 
-  // 7. Teste de Segmentação Bilíngue de Monetização (Shopee no Brasil, Adsterra no Exterior)
-  const ADSTERRA_KEYS = {
-    smartlink: 'https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813',
-    banner468: 'fbb18d996650a174db4ff64b5fba394f',
-    banner300: '3057c5e3d039655f3a86a9ee6ae57808',
-    skyscraper160: 'd9b7c704cc9d72eed445cd7653b5293a',
-  };
+  // 7. Teste de Monetização Segura Oficial (Exclusivo Shopee e Ausência de Adsterra/Bets)
+  const ADSTERRA_PATTERNS = [
+    'highrevenueformat.com',
+    'profitableratecpmnetwork.com',
+    'fbb18d996650a174db4ff64b5fba394f',
+    '3057c5e3d039655f3a86a9ee6ae57808',
+    'd9b7c704cc9d72eed445cd7653b5293a'
+  ];
 
   [indexHtml, wikiHtml, bonusHtml].forEach((htmlContent) => {
     assert.ok(htmlContent.includes('.monetization-pt'), 'HTML deve conter estilos para modo PT');
-    assert.ok(htmlContent.includes('.monetization-en'), 'HTML deve conter estilos para modo EN');
-    assert.ok(htmlContent.includes(ADSTERRA_KEYS.smartlink), 'HTML deve conter Adsterra Smartlink para tráfego internacional');
-    assert.ok(htmlContent.includes(ADSTERRA_KEYS.banner300), 'HTML deve conter banner Adsterra 300x250');
+    ADSTERRA_PATTERNS.forEach(pattern => {
+      assert.ok(!htmlContent.includes(pattern), `HTML não deve conter scripts invasivos ou links do Adsterra (${pattern})`);
+    });
   });
 
-  assert.ok(indexHtml.includes(ADSTERRA_KEYS.banner468), 'index.html deve conter banner Adsterra 468x60');
-  assert.ok(indexHtml.includes(ADSTERRA_KEYS.skyscraper160), 'index.html deve conter skyscraper Adsterra 160x600');
-  assert.ok(bonusHtml.includes(ADSTERRA_KEYS.skyscraper160), 'bonus.html deve conter skyscraper Adsterra 160x600');
-  assert.ok(serverSrc.includes(ADSTERRA_KEYS.smartlink), 'server.js deve redirecionar tráfego EN para Adsterra Smartlink');
+  assert.ok(!serverSrc.includes('profitableratecpmnetwork.com'), 'server.js não deve redirecionar para Adsterra');
 
   // 8. Teste de Persistência Confiável de Idioma (pyxie_lang, URL sync e Cross-page)
   [indexHtml, wikiHtml, bonusHtml].forEach((htmlContent) => {

@@ -831,103 +831,7 @@
         display: block;
       }
       .monetization-en {
-        display: none;
-      }
-      html[lang="en"] .monetization-pt,
-      body.lang-en .monetization-pt {
         display: none !important;
-      }
-      html[lang="en"] .monetization-en,
-      body.lang-en .monetization-en {
-        display: flex !important;
-      }
-      html[lang="pt-BR"] .monetization-en,
-      body.lang-pt .monetization-en {
-        display: none !important;
-      }
-      html[lang="pt-BR"] .monetization-pt,
-      body.lang-pt .monetization-pt {
-        display: block !important;
-      }
-
-      .adsterra-bonus-card {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        min-height: 100px;
-        padding: 14px 10px;
-        margin-top: 15px;
-        background: radial-gradient(circle at center, rgba(168, 85, 247, 0.12), rgba(12, 6, 24, 0.95));
-        border: 1px solid rgba(168, 85, 247, 0.35);
-        border-radius: 18px;
-        box-shadow: 0 8px 32px rgba(10, 5, 20, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-        text-align: center;
-        box-sizing: border-box;
-        overflow: hidden;
-      }
-      .adsterra-bonus-header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 10px;
-        font-size: 0.75rem;
-        color: #c084fc;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-      }
-      .adsterra-bonus-badge {
-        background: rgba(244, 63, 94, 0.2);
-        border: 1px solid rgba(244, 63, 94, 0.4);
-        color: #fca5a5;
-        padding: 2px 8px;
-        border-radius: 20px;
-        font-weight: 700;
-        font-size: 0.7rem;
-      }
-      .adsterra-frame-wrap {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        overflow: hidden;
-      }
-      .adsterra-desktop-468 {
-        display: flex;
-      }
-      .adsterra-mobile-300 {
-        display: none;
-      }
-      @media (max-width: 520px) {
-        .adsterra-desktop-468 {
-          display: none !important;
-        }
-        .adsterra-mobile-300 {
-          display: flex !important;
-        }
-      }
-
-      .adsterra-skyscraper {
-        display: none;
-        position: fixed;
-        top: 120px;
-        right: 16px;
-        width: 160px;
-        height: 600px;
-        z-index: 99;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(168, 85, 247, 0.35);
-        background: rgba(12, 6, 24, 0.9);
-        backdrop-filter: blur(8px);
-      }
-      @media (min-width: 1480px) {
-        html[lang="en"] .adsterra-skyscraper {
-          display: block !important;
-        }
       }
     </style>
   </head>
@@ -952,38 +856,6 @@
           </div>
           <span class="shopee-top-btn" id="bannerTopBtn">Conferir ➔</span>
         </a>
-
-        <!-- Top Banner EN: Adsterra 468x60 / 300x250 -->
-        <div class="adsterra-bonus-card monetization-en" id="adsterraTopBanner" style="margin-top: 0; margin-bottom: 18px;">
-          <div class="adsterra-bonus-header">
-            <span class="adsterra-bonus-badge">✦ Official Sponsor</span>
-            <span>Featured Partner Rewards</span>
-          </div>
-          <div class="adsterra-frame-wrap adsterra-desktop-468">
-            <script>
-              atOptions = {
-                'key' : 'fbb18d996650a174db4ff64b5fba394f',
-                'format' : 'iframe',
-                'height' : 60,
-                'width' : 468,
-                'params' : {}
-              };
-            </script>
-            <script src="https://www.highrevenueformat.com/fbb18d996650a174db4ff64b5fba394f/invoke.js"></script>
-          </div>
-          <div class="adsterra-frame-wrap adsterra-mobile-300">
-            <script>
-              atOptions = {
-                'key' : '3057c5e3d039655f3a86a9ee6ae57808',
-                'format' : 'iframe',
-                'height' : 250,
-                'width' : 300,
-                'params' : {}
-              };
-            </script>
-            <script src="https://www.highrevenueformat.com/3057c5e3d039655f3a86a9ee6ae57808/invoke.js"></script>
-          </div>
-        </div>
 
         <!-- Card Principal da Pyxie -->
         <div class="bonus-container">
@@ -1019,26 +891,6 @@
               <div class="showcase-card-wrapper" id="showcaseCardWrapper"></div>
               <div class="showcase-dots" id="showcaseDots"></div>
             </div>
-
-            <!-- Adsterra 300x250 Banner in Timer Card for EN -->
-            <div class="adsterra-bonus-card monetization-en" id="adsterraTimerCard">
-              <div class="adsterra-bonus-header">
-                <span class="adsterra-bonus-badge">✦ Official Sponsor</span>
-                <span>Featured Partner Deals</span>
-              </div>
-              <div class="adsterra-frame-wrap">
-                <script>
-                  atOptions = {
-                    'key' : '3057c5e3d039655f3a86a9ee6ae57808',
-                    'format' : 'iframe',
-                    'height' : 250,
-                    'width' : 300,
-                    'params' : {}
-                  };
-                </script>
-                <script src="https://www.highrevenueformat.com/3057c5e3d039655f3a86a9ee6ae57808/invoke.js"></script>
-              </div>
-            </div>
           </div>
 
           <!-- Card de Instruções Amigável (Exibido quando acessa sem token direto pela URL) -->
@@ -1072,26 +924,6 @@
               </div>
               <div class="showcase-card-wrapper" id="showcaseCardWrapperInst"></div>
               <div class="showcase-dots" id="showcaseDotsInst"></div>
-            </div>
-
-            <!-- Adsterra 300x250 Banner in Instructions Card for EN -->
-            <div class="adsterra-bonus-card monetization-en" id="adsterraInstCard">
-              <div class="adsterra-bonus-header">
-                <span class="adsterra-bonus-badge">✦ Official Sponsor</span>
-                <span>Special Offers & Deals</span>
-              </div>
-              <div class="adsterra-frame-wrap">
-                <script>
-                  atOptions = {
-                    'key' : '3057c5e3d039655f3a86a9ee6ae57808',
-                    'format' : 'iframe',
-                    'height' : 250,
-                    'width' : 300,
-                    'params' : {}
-                  };
-                </script>
-                <script src="https://www.highrevenueformat.com/3057c5e3d039655f3a86a9ee6ae57808/invoke.js"></script>
-              </div>
             </div>
 
             <a id="sponsorBtn" href="/promo" data-fallback-link="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" class="btn-sponsor" data-hourly-promo="true">
@@ -1678,17 +1510,6 @@
       }
 
       async function syncHourlyPromo() {
-        const ADSTERRA_SMARTLINK = 'https://www.profitableratecpmnetwork.com/h5e79gd1n?key=95a94394d06a9e066a810f77a06ab813';
-        if (userLang === 'en') {
-          SMARTLINK_URL = ADSTERRA_SMARTLINK;
-          const sponsorBtnEl = document.getElementById('sponsorBtn');
-          if (sponsorBtnEl) {
-            sponsorBtnEl.href = ADSTERRA_SMARTLINK;
-            sponsorBtnEl.setAttribute('title', 'Special Partner Rewards & Deals ✦');
-          }
-          return;
-        }
-
         try {
           const res = await fetch('/api/shopee/hourly-promo');
           if (!res.ok) return;
@@ -1782,19 +1603,5 @@
         }
       }
     </script>
-    <!-- Skyscraper 160x600 Global Sponsor (Wide screens only, English) -->
-    <div class="adsterra-skyscraper monetization-en">
-      <div style="font-size: 0.65rem; color: #a855f7; text-align: center; padding: 4px 0; background: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.5px;">✦ Sponsor Deals</div>
-      <script>
-        atOptions = {
-          'key' : 'd9b7c704cc9d72eed445cd7653b5293a',
-          'format' : 'iframe',
-          'height' : 600,
-          'width' : 160,
-          'params' : {}
-        };
-      </script>
-      <script src="https://www.highrevenueformat.com/d9b7c704cc9d72eed445cd7653b5293a/invoke.js"></script>
-    </div>
   </body>
 </html>
