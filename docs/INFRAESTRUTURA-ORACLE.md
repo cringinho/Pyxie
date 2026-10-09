@@ -9,7 +9,8 @@
 - **Sistema Operacional**: Ubuntu 22.04.5 LTS (aarch64)
 - **IP Público**: `150.136.249.229`
 - **IP Privado**: `10.0.0.195/24` (Gateway: `10.0.0.1`)
-- **Domínio Dinâmico (DNS)**: `pyxie.duckdns.org`
+- **Domínio Oficial**: `https://pyxie.com.br` (com SSL/TLS automático Caddy + Let's Encrypt)
+- **Domínio Dinâmico (Legado/Redirecionado)**: `pyxie.duckdns.org` -> `https://pyxie.com.br`
 - **Usuário SSH**: `ubuntu`
 - **Chave SSH Local**: `~/.ssh/kuromi_access`
 - **Diretório da Aplicação**: `/home/ubuntu/kuromi`
@@ -49,17 +50,30 @@ Host pyxie-oracle
 | Porta | Protocolo | Finalidade | Configuração |
 |---|---|---|---|
 | **22** | TCP | Acesso SSH | Ingress Rule OCI + iptables |
-| **80** | TCP | HTTP Padrão (Web, Wiki, Bônus) | Redirecionamento NAT iptables para `3000` |
-| **3000** | TCP | Painel Web & API Express | Porta nativa da aplicação |
-| **443** | TCP | HTTPS (futuro SSL/TLS) | Aberta no firewall |
+| **80** | TCP | HTTP Padrão (Redirecionamento automático) | Gerenciado pelo Caddy (redirect 308 para HTTPS) |
+| **443** | TCP | HTTPS Seguro (Let's Encrypt Automático) | Caddy Proxy Reverso -> `localhost:3000` |
+| **3000** | TCP | Painel Web & API Express | Porta nativa da aplicação Node.js |
+
+### Configuração do Caddy (`/etc/caddy/Caddyfile` na VM)
+```caddy
+www.pyxie.com.br, pyxie.duckdns.org {
+    redir https://pyxie.com.br{uri} permanent
+}
+
+pyxie.com.br {
+    reverse_proxy 127.0.0.1:3000
+}
+```
 
 ### Endereços do Ecossistema Pyxie
-- **Website Principal**: [http://pyxie.duckdns.org](http://pyxie.duckdns.org) *(ou com porta: [http://pyxie.duckdns.org:3000](http://pyxie.duckdns.org:3000))*
-- **Portal de Bônus (10s)**: [http://pyxie.duckdns.org/bonus](http://pyxie.duckdns.org/bonus)
-- **Enciclopédia & Wiki**: [http://pyxie.duckdns.org/wiki](http://pyxie.duckdns.org/wiki)
-- **API de Status**: [http://pyxie.duckdns.org/api/status](http://pyxie.duckdns.org/api/status)
-- **Painel Administrativo do Criador**: [http://pyxie.duckdns.org/admin](http://pyxie.duckdns.org/admin) *(requer Magic Token HMAC gerado via `/py-admin` ou chave mestra)*
-- **Mapeamento Visual de Emojis**: [http://pyxie.duckdns.org/admin/emojis](http://pyxie.duckdns.org/admin/emojis) *(galeria visual de slots de emojis)*
+- **Website Principal**: [https://pyxie.com.br](https://pyxie.com.br)
+- **Portal de Bônus (10s)**: [https://pyxie.com.br/bonus](https://pyxie.com.br/bonus)
+- **Mural de Parcerias**: [https://pyxie.com.br/parcerias](https://pyxie.com.br/parcerias)
+- **Museu de Artes da Comunidade**: [https://pyxie.com.br/museu](https://pyxie.com.br/museu)
+- **Enciclopédia & Wiki**: [https://pyxie.com.br/wiki](https://pyxie.com.br/wiki)
+- **API de Status**: [https://pyxie.com.br/api/status](https://pyxie.com.br/api/status)
+- **Painel Administrativo do Criador**: [https://pyxie.com.br/admin](https://pyxie.com.br/admin) *(requer Magic Token HMAC gerado via `/py-admin` ou chave mestra)*
+- **Mapeamento Visual de Emojis**: [https://pyxie.com.br/admin/emojis](https://pyxie.com.br/admin/emojis) *(galeria visual de slots de emojis)*
 
 ---
 
