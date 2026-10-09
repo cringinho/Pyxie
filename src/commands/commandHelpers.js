@@ -355,6 +355,12 @@ const COMMAND_CATEGORY_MAP = {
   export: 'utilidades',
   'export-messages': 'utilidades',
   'py-export-messages': 'utilidades',
+  terms: 'utilidades',
+  'py-terms': 'utilidades',
+  termos: 'utilidades',
+  'py-termos': 'utilidades',
+  regras: 'utilidades',
+  'py-regras': 'utilidades',
 };
 
 let _loadedCommands = null;

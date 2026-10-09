@@ -126,4 +126,25 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/bonus?lang=en" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/bonus" />
   </url>
+
+  <!-- Terms of Use & Child Safety (Default / pt-BR) -->
+  <url>
+    <loc>https://pyxie.com.br/termos</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/termos?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/termos?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/termos" />
+  </url>
+  <!-- Terms of Use & Child Safety (English) -->
+  <url>
+    <loc>https://pyxie.com.br/termos?lang=en</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/termos?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/termos?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/termos" />
+  </url>
 </urlset>

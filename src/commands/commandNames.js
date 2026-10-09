@@ -37,6 +37,7 @@ module.exports = {
   WIKI: 'py-wiki',
   EXPORT_MESSAGES: 'py-exportar',
   QUIZ: 'py-quiz',
+  TERMS: 'py-terms',
 };
 
 

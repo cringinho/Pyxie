@@ -37,6 +37,7 @@ const commands = [
   require('./wiki'),
   require('./exportar'),
   require('./quiz'),
+  require('./termos'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');

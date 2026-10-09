@@ -390,6 +390,8 @@ app.get(['/parcerias', '/partnerships'], serveLocalizedPage('partnerships', publ
 
 app.get(['/museu', '/museum'], serveLocalizedPage('museum', publicDir));
 
+app.get(['/termos', '/terms'], serveLocalizedPage('terms', publicDir));
+
 // Feeds RSS / Atom / JSON Feed para captação externa e automação (Pinterest, Zapier, IFTTT, Google Discover)
 app.get(['/rss.xml', '/feed.xml'], (req, res) => {
   const lang = (req.query.lang === 'en') ? 'en' : 'pt';

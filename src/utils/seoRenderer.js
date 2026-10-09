@@ -113,6 +113,24 @@ const SEO_CONFIG = {
       ogDesc: 'Claim free magic coins for your Discord account in 10 seconds on the official Pyxie reward portal.',
       locale: 'en_US'
     }
+  },
+  terms: {
+    file: 'terms.html',
+    canonical: 'https://pyxie.com.br/termos',
+    pt: {
+      title: 'Termos de Uso, Proteção a Menores & Segurança • Pyxie & Cringelândia',
+      description: 'Diretrizes regulatórias, proteção integral a menores (ECA e Lei 14.811/2024), termo de consentimento, canais protegidos e canais de acolhimento e suporte emocional da Cringelândia e Pyxie.',
+      ogTitle: 'Termos de Uso, Proteção a Menores & Segurança • Pyxie & Cringelândia',
+      ogDesc: 'Nosso compromisso inegociável com a proteção de menores, acolhimento e suporte a pessoas em sofrimento psíquico, e licença de uso comunitário.',
+      locale: 'pt_BR'
+    },
+    en: {
+      title: 'Terms of Use, Child Safety & Protection • Pyxie & Cringelândia',
+      description: 'Regulatory guidelines, child safeguarding framework, consent terms, protected channel architecture, and emotional crisis hotline network for Pyxie and Cringelândia.',
+      ogTitle: 'Terms of Use, Child Safety & Protection • Pyxie & Cringelândia',
+      ogDesc: 'Our non-negotiable commitment to child protection, mental health crisis support, and community intellectual property licensing.',
+      locale: 'en_US'
+    }
   }
 };
 

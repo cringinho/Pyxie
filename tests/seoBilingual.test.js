@@ -6,7 +6,7 @@ const { getLocalizedHtml, SEO_CONFIG, detectRequestLang } = require('../src/util
 console.log('🌐 [TEST] Auditoria & Quality Gate de SEO Bilíngue (PT-BR & EN)...');
 
 const publicDir = path.join(__dirname, '..', 'public');
-const pages = ['index', 'tarot', 'wiki', 'partnerships', 'museum', 'bonus'];
+const pages = ['index', 'tarot', 'wiki', 'partnerships', 'museum', 'bonus', 'terms'];
 
 // 1. robots.txt
 const robotsPath = path.join(publicDir, 'robots.txt');
@@ -24,14 +24,14 @@ console.log('  ✅ 1. robots.txt validado e protegendo rotas privadas.');
 const sitemapPath = path.join(publicDir, 'sitemap.xml');
 assert.ok(fs.existsSync(sitemapPath), 'sitemap.xml deve existir');
 const sitemapContent = fs.readFileSync(sitemapPath, 'utf8');
-['https://pyxie.com.br/', 'https://pyxie.com.br/tarot', 'https://pyxie.com.br/wiki', 'https://pyxie.com.br/parcerias', 'https://pyxie.com.br/museu', 'https://pyxie.com.br/bonus'].forEach((url) => {
+['https://pyxie.com.br/', 'https://pyxie.com.br/tarot', 'https://pyxie.com.br/wiki', 'https://pyxie.com.br/parcerias', 'https://pyxie.com.br/museu', 'https://pyxie.com.br/bonus', 'https://pyxie.com.br/termos'].forEach((url) => {
   assert.ok(sitemapContent.includes(url), `sitemap deve conter a URL ${url}`);
 });
 assert.ok(sitemapContent.includes('hreflang="pt-BR"'), 'sitemap deve ter anotação hreflang pt-BR');
 assert.ok(sitemapContent.includes('hreflang="en"'), 'sitemap deve ter anotação hreflang en');
 assert.ok(sitemapContent.includes('hreflang="x-default"'), 'sitemap deve ter anotação hreflang x-default');
 // Versões em inglês mapeadas no sitemap
-['https://pyxie.com.br/?lang=en', 'https://pyxie.com.br/tarot?lang=en', 'https://pyxie.com.br/wiki?lang=en', 'https://pyxie.com.br/parcerias?lang=en', 'https://pyxie.com.br/museu?lang=en', 'https://pyxie.com.br/bonus?lang=en'].forEach((url) => {
+['https://pyxie.com.br/?lang=en', 'https://pyxie.com.br/tarot?lang=en', 'https://pyxie.com.br/wiki?lang=en', 'https://pyxie.com.br/parcerias?lang=en', 'https://pyxie.com.br/museu?lang=en', 'https://pyxie.com.br/bonus?lang=en', 'https://pyxie.com.br/termos?lang=en'].forEach((url) => {
   assert.ok(sitemapContent.includes(url), `sitemap deve conter versão explicitamente em inglês ${url}`);
 });
 console.log('  ✅ 2. sitemap.xml validado com todas as URLs canônicas e hreflangs bidirecionais.');

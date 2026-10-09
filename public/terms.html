@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Termos de Uso, Proteção a Menores & Segurança • Pyxie & Cringelândia</title>
+  <meta name="description" content="Diretrizes regulatórias, proteção integral a menores (ECA e Lei 14.811/2024), termo de consentimento, canais protegidos e canais de acolhimento e suporte emocional da Cringelândia e Pyxie." />
+  <meta name="keywords" content="termos de uso pyxie, cringelandia regras, protecao a menores discord, eca discord, acolhimento neurodivergente, termos cringelandia, privacidade pyxie" />
+  <meta name="author" content="Pyxie Team & Comunidade Cringelândia" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <link rel="canonical" href="https://pyxie.com.br/termos" />
+  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/termos?lang=pt" />
+  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/termos?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/termos" />
+
+  <!-- Preconnect & DNS Prefetch -->
+  <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+
+  <!-- Open Graph / Redes Sociais -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pyxie.com.br/termos" />
+  <meta property="og:title" content="Termos de Uso, Proteção a Menores & Segurança • Pyxie & Cringelândia" />
+  <meta property="og:description" content="Nosso compromisso inegociável com a proteção de menores, acolhimento e suporte a pessoas em sofrimento psíquico, e licença de uso comunitário." />
+  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Mascote Pyxie - Segurança e Termos da Comunidade" />
+  <meta property="og:site_name" content="Pyxie Discord Bot" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@PyxieBot" />
+  <meta name="twitter:creator" content="@PyxieBot" />
+  <meta name="twitter:title" content="Termos de Uso, Proteção a Menores & Segurança • Pyxie & Cringelândia" />
+  <meta name="twitter:description" content="Nosso compromisso inegociável com a proteção de menores, acolhimento e suporte a pessoas em sofrimento psíquico, e licença de uso comunitário." />
+  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta name="twitter:image:alt" content="Mascote Pyxie - Segurança e Termos da Comunidade" />
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://pyxie.com.br/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Termos & Segurança",
+            "item": "https://pyxie.com.br/termos"
+          }
+        ]
+      },
+      {
+        "@type": "TechArticle",
+        "headline": "Termos de Uso, Proteção a Menores & Diretrizes de Segurança Comunitária",
+        "inLanguage": ["pt-BR", "en"],
+        "url": "https://pyxie.com.br/termos",
+        "author": {
+          "@type": "Organization",
+          "name": "Pyxie & Comunidade Cringelândia",
+          "url": "https://pyxie.com.br"
+        },
+        "description": "Regulamento oficial, diretrizes de privacidade, salvaguarda de menores de idade, licença de propriedade intelectual e canais de suporte emocional da Cringelândia."
+      }
+    ]
+  }
+  </script>
+
+  <link rel="icon" type="image/png" href="/assets/pyxie/pyxie_pixelart_face.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #07040e;
+      --bg-surface: #0f081d;
+      --bg-card: rgba(20, 11, 38, 0.88);
+      --purple-main: #8b5cf6;
+      --purple-glow: #a855f7;
+      --pink-neon: #ec4899;
+      --pink-glow: #f472b6;
+      --emerald-accent: #10b981;
+      --amber-accent: #f59e0b;
+      --text-white: #ffffff;
+      --text-muted: #cbd5e1;
+      --text-dim: #94a3b8;
+      --border-glass: rgba(168, 85, 247, 0.25);
+      --font-title: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.2) 0%, transparent 55%),
+        radial-gradient(circle at 10% 45%, rgba(236, 72, 153, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 90% 85%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Container Global */
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 4, 14, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-glass);
+      padding: 14px 0;
+    }
+    .nav-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 10px rgba(236, 72, 153, 0.5));
+    }
+    .brand-text {
+      font-family: var(--font-title);
+      font-size: 1.35rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .btn-home {
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .btn-home:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+    }
+    .btn-lang {
+      background: rgba(139, 92, 246, 0.18);
+      color: #d8b4fe;
+      border: 1px solid rgba(168, 85, 247, 0.4);
+    }
+    .btn-lang:hover {
+      background: rgba(139, 92, 246, 0.35);
+      border-color: #c084fc;
+    }
+    .btn-discord {
+      background: linear-gradient(135deg, #5865F2, #4752c4);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(88, 101, 242, 0.35);
+    }
+    .btn-discord:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(88, 101, 242, 0.55);
+    }
+
+    /* Hero / Header dos Termos */
+    .terms-header {
+      padding: 56px 0 36px;
+      text-align: center;
+      position: relative;
+    }
+    .terms-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      color: #d8b4fe;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 18px;
+    }
+    .terms-title {
+      font-family: var(--font-title);
+      font-size: clamp(2rem, 5vw, 2.9rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 40%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .terms-slogan {
+      max-width: 720px;
+      margin: 0 auto 24px;
+      font-size: 1.15rem;
+      color: #e2e8f0;
+      font-weight: 500;
+      font-style: italic;
+    }
+    .terms-intro-card {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.14), rgba(139, 92, 246, 0.14));
+      border: 1px solid rgba(236, 72, 153, 0.4);
+      border-radius: 20px;
+      padding: 22px 28px;
+      max-width: 860px;
+      margin: 0 auto;
+      text-align: left;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+    .terms-intro-card h3 {
+      font-family: var(--font-title);
+      font-size: 1.1rem;
+      color: #fbcfe8;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .terms-intro-card p {
+      color: var(--text-muted);
+      font-size: 0.94rem;
+      line-height: 1.6;
+    }
+
+    /* Conteúdo Principal */
+    .terms-content {
+      padding: 24px 0 60px;
+    }
+    .terms-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 32px 36px;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(12px);
+    }
+    @media (max-width: 640px) {
+      .terms-section {
+        padding: 22px 20px;
+      }
+    }
+    .section-heading {
+      font-family: var(--font-title);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+    }
+    .section-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+    .terms-text {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      margin-bottom: 16px;
+    }
+    .terms-text strong {
+      color: #ffffff;
+    }
+    .terms-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .terms-list li {
+      position: relative;
+      padding-left: 28px;
+      color: var(--text-muted);
+      font-size: 0.96rem;
+    }
+    .terms-list li::before {
+      content: '✦';
+      position: absolute;
+      left: 6px;
+      color: var(--purple-glow);
+      font-size: 0.85rem;
+    }
+
+    /* Cards de Destaque / Boxes de Alerta */
+    .alert-box {
+      border-radius: 16px;
+      padding: 18px 22px;
+      margin: 18px 0;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .alert-shield {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #a7f3d0;
+    }
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #fde68a;
+    }
+    .alert-urgent {
+      background: rgba(236, 72, 153, 0.12);
+      border: 1px solid rgba(236, 72, 153, 0.5);
+      color: #fbcfe8;
+    }
+    .alert-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .alert-body h4 {
+      font-family: var(--font-title);
+      font-size: 1.02rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .alert-body p {
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    /* Linhas de Ajuda & Telefones Úteis */
+    .helpline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .helpline-card {
+      background: rgba(15, 8, 29, 0.95);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      border-radius: 16px;
+      padding: 18px 20px;
+      transition: all 0.2s ease;
+    }
+    .helpline-card:hover {
+      border-color: var(--pink-glow);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.25);
+    }
+    .helpline-card h4 {
+      font-family: var(--font-title);
+      font-size: 1.05rem;
+      color: #fff;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .helpline-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .helpline-phone {
+      font-family: var(--font-title);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #f472b6;
+      margin: 8px 0 4px;
+    }
+    .helpline-card p {
+      font-size: 0.86rem;
+      color: var(--text-dim);
+      line-height: 1.45;
+    }
+
+    /* Tabela de Condições Jurídicas */
+    .terms-table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .terms-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      text-align: left;
+    }
+    .terms-table th {
+      background: rgba(139, 92, 246, 0.2);
+      color: #e2e8f0;
+      font-family: var(--font-title);
+      font-weight: 700;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .terms-table td {
+      padding: 14px 18px;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .terms-table tr:last-child td {
+      border-bottom: none;
+    }
+    .terms-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-glass);
+      background: rgba(7, 4, 14, 0.95);
+      padding: 32px 0;
+      text-align: center;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .footer-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.2s;
+    }
+    .footer-link:hover {
+      color: var(--pink-glow);
+    }
+    .footer-credits {
+      color: var(--text-dim);
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Navbar -->
+  <header class="navbar">
+    <div class="container nav-wrapper">
+      <a href="/" class="nav-brand" title="Voltar à página inicial">
+        <img src="/assets/pyxie/pyxie_pixelart_face.png" class="brand-icon" alt="Pyxie" />
+        <span class="brand-text">Pyxie</span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="/" class="btn-nav btn-home">
+          <span>🏠</span> <span data-i18n="nav.home">Página Inicial</span>
+        </a>
+        <a href="/wiki" class="btn-nav btn-home">
+          <span>📖</span> <span data-i18n="nav.wiki">Wiki Oficial</span>
+        </a>
+        <button id="langToggle" class="btn-nav btn-lang" onclick="toggleLanguage()">
+          <span>🇧🇷</span> <span>PT-BR</span>
+        </button>
+        <a href="/discord" target="_blank" rel="noopener noreferrer" class="btn-nav btn-discord">
+          <span>💬</span> <span>Cringelândia</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    <section class="terms-header">
+      <div class="terms-badge" data-i18n="header.badge">🛡️ Marco de Proteção, Consentimento & Ética</div>
+      <h1 class="terms-title" data-i18n="header.title">Termos de Uso, Proteção a Menores & Segurança</h1>
+      <p class="terms-slogan" data-i18n="header.slogan">
+        "O acolhimento de pessoas que sofrem. Um lugar seguro para quem acha que o mundo é barulhento demais."
+      </p>
+
+      <div class="terms-intro-card">
+        <h3 data-i18n="intro.title">💜 Nossa Missão Inegociável de Proteção</h3>
+        <p data-i18n="intro.desc">
+          A comunidade <strong>Cringelândia</strong> e a aplicação <strong>Pyxie</strong> foram idealizadas como um refúgio acolhedor e protetivo, especialmente para mentes neurodivergentes, pessoas tímidas e indivíduos que enfrentam momentos de dor ou vulnerabilidade. Este documento formaliza as bases legais brasileiras e internacionais que regem nossa atuação, nossa política de salvaguarda de crianças e adolescentes, e nosso suporte humano contínuo.
+        </p>
+      </div>
+    </section>
+
+    <div class="terms-content">
+      <!-- 1. FUNDAMENTAÇÃO LEGAL -->
+      <section class="terms-section">
+        <h2 class="section-heading">
+          <span class="section-icon">⚖️</span>
+          <span data-i18n="sec1.title">1. Fundamentação Legal e Marco Regulatório</span>
+        </h2>
+        <p class="terms-text" data-i18n="sec1.intro">
+          O presente instrumento fundamenta-se estritamente na legislação brasileira vigente e nas diretrizes internacionais de segurança digital:
+        </p>
+        <ul class="terms-list">
+          <li><strong>Estatuto da Criança e do Adolescente — ECA (Lei nº 8.069/1990) e Lei nº 14.811/2024:</strong> Artigos 17 e 18 do ECA e disposições de proteção digital, assegurando a preservação da dignidade, identidade, imagem e integridade física e psicológica de crianças e adolescentes contra qualquer forma de assédio, intimidação sistemática (bullying/cyberbullying) ou abuso.</li>
+          <li><strong>Termos de Serviço do Discord e Idade Mínima:</strong> Cumprimento estrito da idade mínima exigida pelo Discord no Brasil (13 anos completos). Menores de 13 anos identificados na plataforma são imediatamente removidos para preservação de sua integridade jurídica e pessoal.</li>
+          <li><strong>Lei Geral de Proteção de Dados Pessoais — LGPD (Lei nº 13.709/2018):</strong> Artigo 7º, inciso I, e Artigo 14, dispondo sobre o tratamento ético de dados cadastrais, identificadores e consentimento específico para o melhor interesse de menores de idade.</li>
+          <li><strong>Lei de Direitos Autorais (Lei nº 9.610/1998):</strong> Artigos 28, 29 e 49, regulando a licença não exclusiva para reprodução de criações artísticas e literárias submetidas na comunidade.</li>
+          <li><strong>Código Civil Brasileiro (Lei nº 10.406/2002):</strong> Artigo 20, referente à inviolabilidade dos direitos da personalidade e proteção contra uso ofensivo ou vexatório de imagens.</li>
+          <li><strong>Marco Civil da Internet (Lei nº 12.965/2014):</strong> Artigo 7º, assegurando direitos de privacidade, liberdade de expressão consciente e salvaguarda de registros.</li>
+        </ul>
+      </section>
+
+      <!-- 2. PROTEÇÃO INTEGRAL A MENORES E CANAIS RESTRITOS -->
+      <section class="terms-section">
+        <h2 class="section-heading">
+          <span class="section-icon">🚸</span>
+          <span data-i18n="sec2.title">2. Proteção Integral a Menores e Escopo de Canais Protegidos</span>
+        </h2>
+        <p class="terms-text" data-i18n="sec2.text1">
+          A Cringelândia implementa uma arquitetura técnica e hierárquica rigorosa com canais segregados para garantir que menores de idade nunca sejam expostos a situações de risco, assédio ou conteúdos pesados:
+        </p>
+
+        <div class="alert-box alert-shield">
+          <div class="alert-icon">🛡️</div>
+          <div class="alert-body">
+            <h4 data-i18n="sec2.box1Title">Canais de Divulgação de Imagens do Rosto (Estritamente +18)</h4>
+            <p data-i18n="sec2.box1Desc">
+              O compartilhamento de fotografias pessoais, retratos de rosto ou identificadores físicos é <strong>estritamente restrito a maiores de idade (+18)</strong> em canais fechados, isolados por cargos verificados. É <strong>expressamente proibido</strong> que menores de 18 anos enviem fotos de seus rostos ou corpos em qualquer área do servidor, com exclusão imediata e advertência pela equipe de moderação.
+            </p>
+          </div>
+        </div>
+
+        <div class="alert-box alert-warning">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-body">
+            <h4 data-i18n="sec2.box2Title">Canais de Desabafos & Temas Sensíveis (Apenas para Maiores)</h4>
+            <p data-i18n="sec2.box2Desc">
+              Os canais destinados a desabafos e partilhas emocionais profundas possuem <strong>acesso bloqueado a menores de idade</strong> por abordarem temáticas delicadas, angústias severas e vivências adultas. Essa barreira impede que menores sejam sobrecarregados emocionalmente ou expostos a gatilhos psíquicos inadequados ao seu estágio de desenvolvimento.
+            </p>
+          </div>
+        </div>
+
+        <ul class="terms-list">
+          <li><strong>Tolerância Zero contra Grooming ou Assédio:</strong> Qualquer tentativa de abordagem imprópria, solicitação de fotos íntimas ou mensagens privadas (DMs) não consentidas direcionadas a menores resultará em <strong>banimento sumário e irrevogável</strong>, com preservação de logs e cooperação imediata com as autoridades policiais competentes.</li>
+          <li><strong>Direito de Remoção pelos Responsáveis Legais:</strong> Pais ou responsáveis legais podem solicitar a qualquer momento a exclusão imediata de qualquer conteúdo referente aos seus tutelados através de nossa ouvidoria oficial.</li>
+        </ul>
+      </section>
+
+      <!-- 3. SISTEMA DE AUTOAJUDA E SUPORTE EMOCIONAL -->
+      <section class="terms-section">
+        <h2 class="section-heading">
+          <span class="section-icon">❤️‍🩹</span>
+          <span data-i18n="sec3.title">3. Sistema de Acolhimento, Autoajuda e Suporte Emocional</span>
+        </h2>
+        <p class="terms-text" data-i18n="sec3.intro">
+          Nosso slogan é <em>"o acolhimento de pessoas que sofrem. Um lugar seguro para quem acha que o mundo é barulhento demais"</em>. No entanto, <strong>a Cringelândia não substitui o atendimento médico, psicológico ou psiquiátrico profissional</strong>. Em casos de dor severa, ideação suicida, ansiedade extrema ou abuso, orientamos e incentivamos veementemente a busca por ajuda especializada imediata:
+        </p>
+
+        <div class="alert-box alert-urgent">
+          <div class="alert-icon">🆘</div>
+          <div class="alert-body">
+            <h4 data-i18n="sec3.alertTitle">Você Não Está Sozinho(a) — Procure Auxílio Gratuito Imediato</h4>
+            <p data-i18n="sec3.alertDesc">
+              Se você ou alguém que você conhece estiver passando por um momento de desespero ou sofrimento extremo, entre em contato imediatamente com os serviços de apoio emocional disponíveis 24 horas por dia:
+            </p>
+          </div>
+        </div>
+
+        <div class="helpline-grid">
+          <div class="helpline-card">
+            <h4><span>🇧🇷</span> CVV — Brasil <span class="helpline-badge">Gratuito • 24h</span></h4>
+            <div class="helpline-phone">Ligue 188</div>
+            <p>Centro de Valorização da Vida. Apoio emocional confidencial e prevenção do suicídio por telefone, chat ou e-mail (cvv.org.br).</p>
+          </div>
+
+          <div class="helpline-card">
+            <h4><span>🇧🇷</span> Disque 100 / 180 <span class="helpline-badge">Direitos Humanos</span></h4>
+            <div class="helpline-phone">Ligue 100 ou 180</div>
+            <p>Denúncia de violações de direitos de crianças e adolescentes (Disque 100) e atendimento à mulher em situação de violência (Ligue 180).</p>
+          </div>
+
+          <div class="helpline-card">
+            <h4><span>🇵🇹</span> SOS Voz Amiga — Portugal <span class="helpline-badge">24 Horas</span></h4>
+            <div class="helpline-phone">21 354 45 45</div>
+            <p>Linha de apoio emocional em Portugal, confidencial e anônima para pessoas em sofrimento ou solidão (sosvozamiga.org).</p>
+          </div>
+
+          <div class="helpline-card">
+            <h4><span>🌐</span> Linhas Internacionais <span class="helpline-badge">Global</span></h4>
+            <div class="helpline-phone">findahelpline.com</div>
+            <p>Befrienders Worldwide e IASP. Encontre linhas de crise gratuitas e acolhimento em mais de 130 países e múltiplos idiomas.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. LICENÇA DE USO DE IMAGEM E CRIAÇÕES ARTÍSTICAS -->
+      <section class="terms-section">
+        <h2 class="section-heading">
+          <span class="section-icon">🎨</span>
+          <span data-i18n="sec4.title">4. Licença de Conteúdo, Fanarts e Propriedade Intelectual</span>
+        </h2>
+        <p class="terms-text" data-i18n="sec4.intro">
+          Para viabilizar a exposição comunitária, concursos e murais de arte (como o Museu da Comunidade e postagens no Pinterest), estabelecemos as seguintes condições sobre materiais voluntariamente compartilhados:
+        </p>
+
+        <div class="terms-table-wrap">
+          <table class="terms-table">
+            <thead>
+              <tr>
+                <th>Elemento Legal</th>
+                <th>Tratamento Jurídico</th>
+                <th>Garantia ao Usuário</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Direitos Morais de Autor</strong></td>
+                <td>Inalienáveis e irrenunciáveis (Art. 24, Lei 9.610/98).</td>
+                <td>Manutenção irrestrita do crédito autoral e assinatura artística.</td>
+              </tr>
+              <tr>
+                <td><strong>Direitos Patrimoniais</strong></td>
+                <td>Licenciamento não exclusivo e gratuito (Art. 49, Lei 9.610/98).</td>
+                <td>Sem cobrança de royalties; autor mantém pleno direito sobre a obra original.</td>
+              </tr>
+              <tr>
+                <td><strong>Dados Pessoais & Nicknames</strong></td>
+                <td>Tratamento fundamentado no consentimento (Art. 7º, I, LGPD).</td>
+                <td>Direito de solicitar desanonimização ou remoção a qualquer tempo.</td>
+              </tr>
+              <tr>
+                <td><strong>Proteção Integral a Menores</strong></td>
+                <td>Conformidade com ECA (Lei 8.069/90 e Lei 14.811/24).</td>
+                <td>Vedada qualquer exposição vexatória, constrangedora ou comercial.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ul class="terms-list">
+          <li><strong>Proibição de Fins Lucrativos Diretos:</strong> É terminantemente proibida a comercialização, venda ou exploração econômica direta de artes de membros sem contrato prévio e formal por escrito com o autor.</li>
+          <li><strong>Divulgação Promocional Comunitária:</strong> Os materiais submetidos voluntariamente nos canais de arte poderão ser exibidos no acervo do Museu Web da Pyxie, no Pinterest oficial da comunidade ou em agregadores de comunidades (ex: Disboard).</li>
+        </ul>
+      </section>
+
+      <!-- 5. DIREITO DE REVOGAÇÃO E CANAIS DE SUPORTE -->
+      <section class="terms-section">
+        <h2 class="section-heading">
+          <span class="section-icon">📩</span>
+          <span data-i18n="sec5.title">5. Manifestação de Aceite, Revogação & Ouvidoria</span>
+        </h2>
+        <p class="terms-text" data-i18n="sec5.text1">
+          O aceite aos presentes termos ocorre mediante a permanência voluntária no servidor, interação com botões de verificação nas regras, ou envio ativo de materiais nos canais públicos da comunidade.
+        </p>
+        <p class="terms-text" data-i18n="sec5.text2">
+          <strong>Direito de Exclusão (Art. 8º, § 5º da LGPD):</strong> Qualquer membro ou responsável legal poderá revogar a autorização ou solicitar a exclusão definitiva de publicações ou artes através de:
+        </p>
+        <ul class="terms-list">
+          <li>Abertura de ticket interno de suporte no servidor Discord da Cringelândia (canal <code>#suporte</code> ou atendimento privado).</li>
+          <li>Tempo de resposta para exclusão de mídias sob controle direto da administração: até <strong>48 horas úteis</strong>.</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="/" class="footer-link" data-i18n="nav.home">Página Inicial</a>
+        <a href="/wiki" class="footer-link" data-i18n="nav.wiki">Wiki Oficial</a>
+        <a href="/tarot" class="footer-link">Tarot Online</a>
+        <a href="/termos" class="footer-link" style="color: var(--pink-glow); font-weight: 700;">Termos & Segurança</a>
+        <a href="/discord" target="_blank" rel="noopener noreferrer" class="footer-link">Cringelândia Discord</a>
+      </div>
+      <p class="footer-credits" data-i18n="footer.credits">
+        Pyxie &copy; 2026 • Comunidade Cringelândia. Um lugar seguro para quem acha que o mundo é barulhento demais.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const I18N = {
+      pt: {
+        'nav.home': 'Página Inicial',
+        'nav.wiki': 'Wiki Oficial',
+        'header.badge': '🛡️ Marco de Proteção, Consentimento & Ética',
+        'header.title': 'Termos de Uso, Proteção a Menores & Segurança',
+        'header.slogan': '"O acolhimento de pessoas que sofrem. Um lugar seguro para quem acha que o mundo é barulhento demais."',
+        'intro.title': '💜 Nossa Missão Inegociável de Proteção',
+        'intro.desc': 'A comunidade Cringelândia e a aplicação Pyxie foram idealizadas como um refúgio acolhedor e protetivo, especialmente para mentes neurodivergentes, pessoas tímidas e indivíduos que enfrentam momentos de dor ou vulnerabilidade. Este documento formaliza as bases legais brasileiras e internacionais que regem nossa atuação, nossa política de salvaguarda de crianças e adolescentes, e nosso suporte humano contínuo.',
+        'sec1.title': '1. Fundamentação Legal e Marco Regulatório',
+        'sec1.intro': 'O presente instrumento fundamenta-se estritamente na legislação brasileira vigente e nas diretrizes internacionais de segurança digital:',
+        'sec2.title': '2. Proteção Integral a Menores e Escopo de Canais Protegidos',
+        'sec2.text1': 'A Cringelândia implementa uma arquitetura técnica e hierárquica rigorosa com canais segregados para garantir que menores de idade nunca sejam expostos a situações de risco, assédio ou conteúdos pesados:',
+        'sec2.box1Title': 'Canais de Divulgação de Imagens do Rosto (Estritamente +18)',
+        'sec2.box1Desc': 'O compartilhamento de fotografias pessoais, retratos de rosto ou identificadores físicos é estritamente restrito a maiores de idade (+18) em canais fechados, isolados por cargos verificados. É expressamente proibido que menores de 18 anos enviem fotos de seus rostos ou corpos em qualquer área do servidor, com exclusão imediata e advertência pela equipe de moderação.',
+        'sec2.box2Title': 'Canais de Desabafos & Temas Sensíveis (Apenas para Maiores)',
+        'sec2.box2Desc': 'Os canais destinados a desabafos e partilhas emocionais profundas possuem acesso bloqueado a menores de idade por abordarem temáticas delicadas, angústias severas e vivências adultas. Essa barreira impede que menores sejam sobrecarregados emocionalmente ou expostos a gatilhos psíquicos inadequados ao seu estágio de desenvolvimento.',
+        'sec3.title': '3. Sistema de Acolhimento, Autoajuda e Suporte Emocional',
+        'sec3.intro': 'Nosso slogan é "o acolhimento de pessoas que sofrem. Um lugar seguro para quem acha que o mundo é barulhento demais". No entanto, a Cringelândia não substitui o atendimento médico, psicológico ou psiquiátrico profissional. Em casos de dor severa, ideação suicida, ansiedade extrema ou abuso, orientamos e incentivamos veementemente a busca por ajuda especializada imediata:',
+        'sec3.alertTitle': 'Você Não Está Sozinho(a) — Procure Auxílio Gratuito Imediato',
+        'sec3.alertDesc': 'Se você ou alguém que você conhece estiver passando por um momento de desespero ou sofrimento extremo, entre em contato imediatamente com os serviços de apoio emocional disponíveis 24 horas por dia:',
+        'sec4.title': '4. Licença de Conteúdo, Fanarts e Propriedade Intelectual',
+        'sec4.intro': 'Para viabilizar a exposição comunitária, concursos e murais de arte (como o Museu da Comunidade e postagens no Pinterest), estabelecemos as seguintes condições sobre materiais voluntariamente compartilhados:',
+        'sec5.title': '5. Manifestação de Aceite, Revogação & Ouvidoria',
+        'sec5.text1': 'O aceite aos presentes termos ocorre mediante a permanência voluntária no servidor, interação com botões de verificação nas regras, ou envio ativo de materiais nos canais públicos da comunidade.',
+        'sec5.text2': 'Direito de Exclusão (Art. 8º, § 5º da LGPD): Qualquer membro ou responsável legal poderá revogar a autorização ou solicitar a exclusão definitiva de publicações ou artes através de:',
+        'footer.credits': 'Pyxie © 2026 • Comunidade Cringelândia. Um lugar seguro para quem acha que o mundo é barulhento demais.'
+      },
+      en: {
+        'nav.home': 'Home',
+        'nav.wiki': 'Official Wiki',
+        'header.badge': '🛡️ Safeguarding, Consent & Safety Framework',
+        'header.title': 'Terms of Use, Child Safety & Protection',
+        'header.slogan': '"A sanctuary embracing those who suffer. A safe place for those who feel the world is simply too loud."',
+        'intro.title': '💜 Our Non-Negotiable Protection Mission',
+        'intro.desc': 'The Cringelândia community and Pyxie Discord application were built as a welcoming and protective refuge, especially for neurodivergent minds, shy individuals, and anyone going through suffering or vulnerability. This document establishes our compliance with laws, child protection policies, and our human support systems.',
+        'sec1.title': '1. Legal Basis & Regulatory Framework',
+        'sec1.intro': 'This agreement complies with applicable Brazilian and international digital safety legislation:',
+        'sec2.title': '2. Child Safety & Channel Segregation Architecture',
+        'sec2.text1': 'Cringelândia enforces strict technical and role-based segregation so minors are never exposed to harassment, adult risks, or heavy themes:',
+        'sec2.box1Title': 'Face & Personal Photo Channels (Strictly 18+)',
+        'sec2.box1Desc': 'Sharing personal face pictures or physical appearance media is strictly confined to verified adults (18+) in gated private channels. Minors are strictly prohibited from uploading photos of themselves anywhere on the server, subject to immediate media deletion and staff intervention.',
+        'sec2.box2Title': 'Emotional Vent & Heavy Topic Channels (Adults Only)',
+        'sec2.box2Desc': 'Channels dedicated to deep emotional venting and severe mental health talks are locked for minors. This prevents younger members from encountering psychological triggers or adult crisis content unsuited for their developmental stage.',
+        'sec3.title': '3. Emotional Support & Crisis Helpline Network',
+        'sec3.intro': 'Our motto is "a sanctuary embracing those who suffer. A safe place for those who feel the world is simply too loud." However, Cringelândia never replaces medical or psychological healthcare. In severe crises, suicidal ideation, extreme depression, or abuse, we urge you to contact free specialized hotlines immediately:',
+        'sec3.alertTitle': 'You Are Not Alone — Seek Free Immediate Support',
+        'sec3.alertDesc': 'If you or someone you know is in extreme despair, please connect with 24/7 free emotional crisis lines:',
+        'sec4.title': '4. Artwork License, Fanart & Intellectual Property',
+        'sec4.intro': 'To enable community showcases, art galleries, and Pinterest pins, we establish clear terms for voluntarily submitted content:',
+        'sec5.title': '5. Consent, Revocation & Support Channels',
+        'sec5.text1': 'Consent is given through continued server membership, verification button clicks, or active submissions to public community channels.',
+        'sec5.text2': 'Right to Deletion: Any member or legal guardian may revoke image or artwork permissions at any time via:',
+        'footer.credits': 'Pyxie © 2026 • Cringelândia Community. A safe place for those who feel the world is simply too loud.'
+      }
+    };
+
+    let currentLang = 'pt';
+
+    function initLang() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlLang = urlParams.get('lang');
+      const savedLang = localStorage.getItem('pyxie_lang');
+      const browserLang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
+      currentLang = urlLang || savedLang || browserLang;
+      if (currentLang !== 'en') currentLang = 'pt';
+      applyLang(currentLang);
+    }
+
+    function applyLang(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+      const dict = I18N[lang] || I18N.pt;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerHTML = dict[key];
+      });
+
+      const langBtn = document.getElementById('langToggle');
+      if (langBtn) {
+        langBtn.innerHTML = lang === 'en' ? '<span>🇺🇸</span> <span>EN-US</span>' : '<span>🇧🇷</span> <span>PT-BR</span>';
+      }
+      localStorage.setItem('pyxie_lang', lang);
+    }
+
+    function toggleLanguage() {
+      const next = currentLang === 'pt' ? 'en' : 'pt';
+      applyLang(next);
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('lang', next);
+        window.history.replaceState({}, '', url);
+      } catch (_) {}
+    }
+
+    initLang();
+  </script>
+</body>
+</html>

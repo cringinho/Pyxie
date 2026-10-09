@@ -709,6 +709,18 @@ const TRANSLATIONS = {
       "optGamesDesc": "Biscoito da sorte, cara ou coroa, jokenpô, dados e perguntas descontraídas.",
       "topicGamesTitle": "🎲 Minigames & Diversão Comunitária",
       "topicGamesDesc": "Aproveite momentos leves em comunidade com `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados` e `/py-likely`. Comandos rápidos e integrados para animar qualquer chat de Discord."
+    },
+    "terms": {
+      "title": "🛡️ Termos de Uso, Proteção a Menores & Segurança",
+      "desc": "A Cringelândia e a Pyxie são um santuário de acolhimento seguro: *'o acolhimento de pessoas que sofrem. Um lugar seguro para quem acha que o mundo é barulhento demais.'*",
+      "fieldSafeguardTitle": "🚸 Salvaguarda de Menores & Idade Mínima",
+      "fieldSafeguardValue": "• Respeito estrito à idade mínima do Discord (13 anos).\n• Conformidade rigorosa com o ECA (Lei 8.069/90 e Lei 14.811/24).\n• Tolerância zero contra assédio, grooming ou cyberbullying.",
+      "fieldChannelsTitle": "🔒 Canais Segregados & Protegidos",
+      "fieldChannelsValue": "• **Fotos do Rosto:** Estritamente restrito a adultos (+18) em canal isolado.\n• **Desabafos Profundos:** Acesso bloqueado a menores de idade para prevenir sobrecarga psicológica e gatilhos psíquicos.",
+      "fieldSupportTitle": "❤️‍🩹 Apoio Emocional & Ajuda Médica Especializada",
+      "fieldSupportValue": "Acolhemos com carinho, mas a comunidade não substitui apoio profissional. Se estiver passando por dor severa ou ideação suicida, ligue **188 (CVV gratuito 24h)** no Brasil, **Disque 100**, ou acesse **findahelpline.com** para suporte internacional imediato.",
+      "footer": "Pyxie Core • Segurança, Ética & Acolhimento Comunitário",
+      "btnOpenWeb": "Ver Termos Completos no Site"
     }
   },
   "en": {
@@ -1265,6 +1277,18 @@ const TRANSLATIONS = {
           "optGamesDesc": "Fortune cookies, coin flips, rock-paper-scissors, dice rolls, and fun party queries.",
           "topicGamesTitle": "🎲 Community Minigames & Casual Fun",
           "topicGamesDesc": "Enjoy lightweight community fun with `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados`, and `/py-likely`. Fast, engaging commands designed to bring energy to every Discord chat."
+    },
+    "terms": {
+      "title": "🛡️ Terms of Use, Child Safety & Safeguarding Framework",
+      "desc": "Cringelândia and Pyxie are a safe sanctuary embracing vulnerable minds: *'a sanctuary embracing those who suffer. A safe place for those who feel the world is simply too loud.'*",
+      "fieldSafeguardTitle": "🚸 Child Safeguarding & Discord Minimum Age",
+      "fieldSafeguardValue": "• Strict compliance with Discord's minimum age requirement (13 years old).\n• Compliance with Brazilian Child and Adolescent Statute (ECA - Law 8,069/90 & Law 14,811/24).\n• Zero tolerance for harassment, grooming, or cyberbullying.",
+      "fieldChannelsTitle": "🔒 Segregated & Protected Channels",
+      "fieldChannelsValue": "• **Face / Selfie Photos:** Strictly restricted to verified adults (18+) in gated private channels.\n• **Emotional Vents & Mental Health:** Locked for minors to prevent psychological burnout and exposure to trauma triggers.",
+      "fieldSupportTitle": "❤️‍🩹 Crisis Support & Medical Assistance Hotlines",
+      "fieldSupportValue": "We offer warmth and empathy, but our community never replaces professional healthcare. If you or someone you know is in extreme crisis or having suicidal thoughts, call **188 (CVV free 24/7)** in Brazil, dial **100**, or visit **findahelpline.com** for free international support.",
+      "footer": "Pyxie Core • Safety, Ethics & Community Care",
+      "btnOpenWeb": "Read Full Terms on Website"
     }
   }
 };
