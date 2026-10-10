@@ -1,7 +1,7 @@
 import React from 'react';
 import { Heart, ShieldCheck, Sparkles, BookOpen, Gift } from 'lucide-react';
 
-export default function Footer({ t }) {
+export default function Footer({ t, lang = 'pt' }) {
   return (
     <footer className="w-full bg-[#06030c] border-t border-purple-500/15 py-12 px-4 sm:px-6 lg:px-8 mt-20">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
@@ -18,16 +18,16 @@ export default function Footer({ t }) {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-5 text-sm font-medium text-slate-300">
-          <a href="/wiki" className="hover:text-pink-400 transition-colors">
+          <a href={`/wiki?lang=${lang}`} className="hover:text-pink-400 transition-colors">
             {t('footer.wiki')}
           </a>
-          <a href="/museu" className="hover:text-pink-400 transition-colors">
+          <a href={`/museu?lang=${lang}`} className="hover:text-pink-400 transition-colors">
             {t('footer.museum')}
           </a>
-          <a href="/bonus" className="hover:text-pink-400 transition-colors">
+          <a href={`/bonus?lang=${lang}`} className="hover:text-pink-400 transition-colors">
             {t('footer.bonus')}
           </a>
-          <a href="/termos" className="hover:text-pink-400 transition-colors flex items-center gap-1.5">
+          <a href={`/termos?lang=${lang}`} className="hover:text-pink-400 transition-colors flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
             {t('footer.terms')}
           </a>

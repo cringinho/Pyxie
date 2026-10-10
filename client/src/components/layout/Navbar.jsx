@@ -39,34 +39,34 @@ export default function Navbar({ lang, setLang, t }) {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1.5 lg:gap-2">
           <a
-            href="/#pilares"
+            href={`/?lang=${lang}#pilares`}
             className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
           >
             {t('nav.features')}
           </a>
           <a
-            href="/#comandos"
+            href={`/?lang=${lang}#comandos`}
             className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
           >
             <Terminal className="w-3.5 h-3.5 text-pink-400" />
             {t('nav.commands')}
           </a>
           <a
-            href="/wiki"
+            href={`/wiki?lang=${lang}`}
             className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
           >
             <BookOpen className="w-3.5 h-3.5 text-purple-400" />
             {t('nav.wiki')}
           </a>
           <a
-            href="/museu"
+            href={`/museu?lang=${lang}`}
             className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
           >
             <Sparkles className="w-3.5 h-3.5 text-pink-400" />
             {t('nav.museum')}
           </a>
           <a
-            href="/bonus"
+            href={`/bonus?lang=${lang}`}
             className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
           >
             <Gift className="w-3.5 h-3.5 text-amber-400" />
@@ -121,14 +121,14 @@ export default function Navbar({ lang, setLang, t }) {
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#080410]/95 backdrop-blur-2xl border-b border-purple-500/20 px-4 pt-3 pb-6 flex flex-col gap-2 animate-fadeIn">
           <a
-            href="/#pilares"
+            href={`/?lang=${lang}#pilares`}
             onClick={() => setMobileMenuOpen(false)}
             className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5"
           >
             {t('nav.features')}
           </a>
           <a
-            href="/#comandos"
+            href={`/?lang=${lang}#comandos`}
             onClick={() => setMobileMenuOpen(false)}
             className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
           >
@@ -136,7 +136,7 @@ export default function Navbar({ lang, setLang, t }) {
             <Terminal className="w-4 h-4 text-pink-400" />
           </a>
           <a
-            href="/wiki"
+            href={`/wiki?lang=${lang}`}
             onClick={() => setMobileMenuOpen(false)}
             className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
           >
@@ -144,7 +144,7 @@ export default function Navbar({ lang, setLang, t }) {
             <BookOpen className="w-4 h-4 text-purple-400" />
           </a>
           <a
-            href="/museu"
+            href={`/museu?lang=${lang}`}
             onClick={() => setMobileMenuOpen(false)}
             className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
           >
@@ -152,7 +152,7 @@ export default function Navbar({ lang, setLang, t }) {
             <Sparkles className="w-4 h-4 text-pink-400" />
           </a>
           <a
-            href="/bonus"
+            href={`/bonus?lang=${lang}`}
             onClick={() => setMobileMenuOpen(false)}
             className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
           >

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Terminal, ArrowRight, CornerDownLeft, X, Sparkles } from 'lucide-react';
 
-export default function CommandPaletteModal({ isOpen, onClose, commands = [], onSelectCommand }) {
+export default function CommandPaletteModal({ isOpen, onClose, commands = [], onSelectCommand, t }) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
@@ -70,7 +70,7 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
               setQuery(e.target.value);
               setSelectedIndex(0);
             }}
-            placeholder="Buscar comandos por nome, palavra-chave ou categoria..."
+            placeholder={t ? t('palette.placeholder') : 'Buscar comandos por nome, palavra-chave ou categoria...'}
             className="w-full bg-transparent text-sm text-white placeholder-slate-400 outline-none font-sans"
           />
           <button
@@ -124,7 +124,7 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
             ))
           ) : (
             <div className="p-8 text-center text-slate-400 text-sm">
-              Nenhum comando encontrado para "{query}".
+              {t ? t('palette.empty') : `Nenhum comando encontrado para "${query}".`}
             </div>
           )}
         </div>
@@ -132,10 +132,10 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
         {/* Footer shortcuts helper */}
         <div className="px-4 py-2.5 bg-black/40 border-t border-purple-500/15 flex items-center justify-between text-[11px] text-slate-400 font-mono">
           <div className="flex items-center gap-3">
-            <span>↑↓ Navegar</span>
-            <span>↵ Abrir Detalhes</span>
+            <span>{t ? t('palette.navigate') : '↑↓ Navegar'}</span>
+            <span>{t ? t('palette.open') : '↵ Abrir Detalhes'}</span>
           </div>
-          <span>ESC para fechar</span>
+          <span>{t ? t('palette.esc') : 'ESC para fechar'}</span>
         </div>
       </div>
     </div>

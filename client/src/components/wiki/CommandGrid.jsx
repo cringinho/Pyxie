@@ -83,7 +83,7 @@ export default function CommandGrid({ t, lang }) {
       <div className="text-center mb-10">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold mb-3 shadow-sm">
           <BookOpen className="w-3.5 h-3.5 text-pink-400" />
-          <span>Guia Completo & Documentação Oficial</span>
+          <span>{t('wiki.badge')}</span>
         </div>
         <h2 className="font-title font-black text-3xl sm:text-5xl text-white tracking-tight">
           {t('wiki.title')}
@@ -125,7 +125,7 @@ export default function CommandGrid({ t, lang }) {
               : 'bg-white/5 border border-purple-500/20 text-slate-300 hover:bg-white/10 hover:text-white'
           }`}
         >
-          Todos ({allCommands.length})
+          {t('catalog.all')} ({allCommands.length})
         </button>
 
         {modules.map((m) => (
@@ -158,7 +158,7 @@ export default function CommandGrid({ t, lang }) {
         </div>
       ) : (
         <div className="text-center py-16 text-slate-400 text-sm">
-          Nenhum comando encontrado para esta categoria.
+          {t('catalog.empty')}
         </div>
       )}
 
@@ -168,6 +168,7 @@ export default function CommandGrid({ t, lang }) {
         onClose={() => setPaletteOpen(false)}
         commands={allCommands}
         onSelectCommand={(cmd) => setSelectedCommand(cmd)}
+        t={t}
       />
 
       {/* Command Detail Drawer Modal */}

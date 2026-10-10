@@ -5,40 +5,40 @@ export default function PillarsSection({ t }) {
   const pillars = [
     {
       id: 1,
-      title: 'Tarot dos 78 Arcanos & Álbum',
-      desc: 'Tire cartas dos 78 arcanos ilustrados com arte em Canvas HD, consulte oráculos diários, interpretações diretas e invertidas e complete seu álbum colecionável.',
+      title: t('pillars.p1Title'),
+      desc: t('pillars.p1Desc'),
       icon: Sparkles,
       iconColor: 'text-pink-400',
       podBg: 'bg-pink-500/10 border-pink-500/30',
     },
     {
       id: 2,
-      title: 'Economia Viva & 16 Vocações',
-      desc: 'Acumule moedinhas e feijões mágicos, escolha entre 16 carreiras dinâmicas com minigames em cada turno de trabalho e escale o ranking de riqueza.',
+      title: t('pillars.p2Title'),
+      desc: t('pillars.p2Desc'),
       icon: Coins,
       iconColor: 'text-amber-400',
       podBg: 'bg-amber-500/10 border-amber-500/30',
     },
     {
       id: 3,
-      title: 'Matrimônio, Casa & Dinâmica Familiar',
-      desc: 'Casamentos bilaterais permanentes, compra de casas, cultivo da Árvore da Vida, cofre de amor com juros e herdeiros que estagiam e trazem moedas.',
+      title: t('pillars.p3Title'),
+      desc: t('pillars.p3Desc'),
       icon: Heart,
       iconColor: 'text-rose-400',
       podBg: 'bg-rose-500/10 border-rose-500/30',
     },
     {
       id: 4,
-      title: 'Quiz & Desafios da Comunidade',
-      desc: 'Desafie seus amigos com centenas de perguntas de cultura pop, conhecimentos gerais e lógica com recompensas automáticas por agilidade e acerto.',
+      title: t('pillars.p4Title'),
+      desc: t('pillars.p4Desc'),
       icon: Brain,
       iconColor: 'text-purple-400',
       podBg: 'bg-purple-500/10 border-purple-500/30',
     },
     {
       id: 5,
-      title: 'Minigames & Lazer Social',
-      desc: 'Dispute Jokenpô, quebre o Biscoito da Sorte, descubra afinidade no /py-ship, brinque de Quem é Mais Provável e personalize temas visuais no perfil.',
+      title: t('pillars.p5Title'),
+      desc: t('pillars.p5Desc'),
       icon: Gamepad2,
       iconColor: 'text-cyan-400',
       podBg: 'bg-cyan-500/10 border-cyan-500/30',
@@ -50,13 +50,13 @@ export default function PillarsSection({ t }) {
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold mb-3 shadow-sm">
           <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-          <span>Pilares Oficiais</span>
+          <span>{t('pillars.badge')}</span>
         </div>
         <h2 className="font-title font-black text-3xl sm:text-4xl text-white tracking-tight">
-          Explore o Universo da Pyxie
+          {t('pillars.title')}
         </h2>
         <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mt-2">
-          Desenvolvida para transformar servidores do Discord em comunidades ativas, divertidas e engajadas.
+          {t('pillars.desc')}
         </p>
       </div>
 

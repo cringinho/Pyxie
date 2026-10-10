@@ -553,7 +553,7 @@ export default function MuseumScene({ t }) {
                     href="/museu"
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-purple-500/30 hover:border-pink-500/50 transition-all"
                   >
-                    <span>Ver no Fórum do Museu</span>
+                    <span>{t('museum.modalForum')}</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
@@ -570,7 +570,7 @@ export default function MuseumScene({ t }) {
             <div className="w-12 h-12 rounded-full bg-pink-500/20 border border-pink-500/50 flex items-center justify-center mx-auto text-pink-400">
               <ShieldAlert className="w-6 h-6" />
             </div>
-            <h4 className="font-title font-bold text-xl text-white">Proteção de Propriedade Visual</h4>
+            <h4 className="font-title font-bold text-xl text-white">{t('museum.artShieldTitle')}</h4>
             <p className="text-slate-300 text-sm leading-relaxed">
               {t('museum.artShield')}
             </p>
@@ -578,7 +578,7 @@ export default function MuseumScene({ t }) {
               onClick={() => setShieldModalOpen(false)}
               className="px-6 py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-neon-pink"
             >
-              Compreendi
+              {t('museum.modalUnderstood')}
             </button>
           </div>
         </div>

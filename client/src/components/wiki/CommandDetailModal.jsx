@@ -35,7 +35,7 @@ export default function CommandDetailModal({ command, onClose, lang = 'pt', t })
         <button
           onClick={onClose}
           className="absolute top-5 right-5 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
-          title="Fechar (ESC)"
+          title={t ? t('cmdModal.close') : 'Fechar (ESC)'}
         >
           <X className="w-5 h-5" />
         </button>
@@ -65,19 +65,19 @@ export default function CommandDetailModal({ command, onClose, lang = 'pt', t })
             }`}
           >
             {copiedCmd ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
-            <span>{copiedCmd ? 'Comando Copiado! ✨' : 'Copiar Sintaxe'}</span>
+            <span>{copiedCmd ? (t ? t('cmdModal.copiedCmd') : 'Comando Copiado! ✨') : (t ? t('cmdModal.copyCmd') : 'Copiar Sintaxe')}</span>
           </button>
 
           <button
             onClick={handleCopyLink}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border flex items-center gap-2 ${
               copiedLink
-                ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
+                ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300'
                 : 'bg-white/5 border-purple-500/25 text-purple-200 hover:bg-white/10 hover:text-white'
             }`}
           >
             {copiedLink ? <Check className="w-4 h-4 text-emerald-300" /> : <Share2 className="w-4 h-4" />}
-            <span>{copiedLink ? 'Link Copiado! 🔗' : 'Copiar Deep Link'}</span>
+            <span>{copiedLink ? (t ? t('cmdModal.copiedLink') : 'Link Copiado! 🔗') : (t ? t('cmdModal.copyLink') : 'Copiar Deep Link')}</span>
           </button>
         </div>
 
@@ -86,15 +86,15 @@ export default function CommandDetailModal({ command, onClose, lang = 'pt', t })
           <div className="flex items-center gap-2.5">
             <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
             <div>
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Cooldown</span>
-              <span className="font-semibold text-slate-200">{command.cooldown ? `${command.cooldown}s` : '3 segundos'}</span>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">{t ? t('cmdModal.cooldown') : 'Cooldown'}</span>
+              <span className="font-semibold text-slate-200">{command.cooldown ? `${command.cooldown}s` : (t ? t('cmdModal.cooldownSeconds') : '3 segundos')}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
             <div>
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Permissões</span>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">{t ? t('cmdModal.permissions') : 'Permissões'}</span>
               <span className="font-semibold text-slate-200">@everyone</span>
             </div>
           </div>
@@ -102,8 +102,8 @@ export default function CommandDetailModal({ command, onClose, lang = 'pt', t })
           <div className="flex items-center gap-2.5">
             <Terminal className="w-4 h-4 text-cyan-400 flex-shrink-0" />
             <div>
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Plataforma</span>
-              <span className="font-semibold text-slate-200">Slash & Prefixo</span>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">{t ? t('cmdModal.platform') : 'Plataforma'}</span>
+              <span className="font-semibold text-slate-200">{t ? t('cmdModal.platformVal') : 'Slash & Prefixo'}</span>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function CommandDetailModal({ command, onClose, lang = 'pt', t })
         {command.aliases && command.aliases.length > 0 && (
           <div className="space-y-2">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-              Prefixos Alternativos (py!)
+              {t ? t('cmdModal.aliasesTitle') : 'Prefixos Alternativos (py!)'}
             </span>
             <div className="flex flex-wrap gap-2">
               {command.aliases.map((alias, idx) => (
@@ -132,7 +132,7 @@ export default function CommandDetailModal({ command, onClose, lang = 'pt', t })
         <div className="space-y-2 pt-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              Resposta Real no Discord
+              {t ? t('cmdModal.liveSimulation') : 'Resposta Real no Discord'}
             </span>
             <span className="text-[11px] text-purple-400 font-mono">Live Simulation</span>
           </div>

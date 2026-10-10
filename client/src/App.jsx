@@ -123,7 +123,7 @@ export default function App() {
         <main className="flex-1">
           <CurrentPage t={t} lang={lang} stats={stats} userId={pageUserId} />
         </main>
-        <Footer t={t} />
+        <Footer t={t} lang={lang} />
       </div>
     </div>
   );
