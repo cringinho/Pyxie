@@ -4,56 +4,56 @@ import { ShoppingBag, Sparkles, ExternalLink, Tag } from 'lucide-react';
 export default function ShopeeBentoGrid({ t, lang }) {
   const [items, setItems] = useState([]);
 
-  // Curated fallback products in dark-kawaii style
+  // Curated products in dark-kawaii / Sanrio / Goth aesthetic with matching Shopee images
   const defaultItems = [
     {
-      id: 'sh-01',
-      titulo: 'Pelúcia Kuromi Gótica 30cm com Asas de Morcego',
-      titulo_en: 'Gothic Kuromi 30cm Plush with Bat Wings',
-      preco: 'R$ 49,90',
-      preco_en: '$9.90',
-      tag: 'Mais Vendido',
-      tag_en: 'Best Seller',
-      link: '/promo',
-      imagem: 'https://images.unsplash.com/photo-1558679908-541bcf1249ff?w=500',
+      id: '23798670825',
+      titulo: 'Kuromi Sanrio Boneca de pelúcia fofa 25cm Kuromi Sanrio',
+      titulo_en: 'Kuromi Sanrio 25cm Cute Plush Doll',
+      preco: 'R$ 55,99',
+      preco_en: '$10.77',
+      tag: 'Pelúcia Sanrio',
+      tag_en: 'Sanrio Plush',
+      link: 'https://s.shopee.com.br/1BMdNQEU79',
+      imagem: 'https://down-br.img.susercontent.com/file/br-11134207-7r98o-mbe0k65jvlov9d',
     },
     {
-      id: 'sh-02',
-      titulo: 'Mousepad Gamer Extra Grande Roxo & Rosa Estelar',
-      titulo_en: 'XXL Starry Purple & Pink Gaming Mousepad',
-      preco: 'R$ 38,50',
-      preco_en: '$7.80',
-      tag: 'Setup Aesthetic',
-      tag_en: 'Setup Aesthetic',
-      link: '/promo',
-      imagem: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500',
+      id: '58265449372',
+      titulo: 'Camiseta Feminina Premium Hello Kitty Kuromi 100% Algodão',
+      titulo_en: 'Premium Hello Kitty Kuromi 100% Cotton Women T-Shirt',
+      preco: 'R$ 34,90',
+      preco_en: '$6.71',
+      tag: 'Moda & Estilo',
+      tag_en: 'Fashion & Goth',
+      link: 'https://s.shopee.com.br/1AfzHIvTw',
+      imagem: 'https://down-br.img.susercontent.com/file/sg-11134201-8257t-mrez4efi09vpc3',
     },
     {
-      id: 'sh-03',
-      titulo: 'Luminária de Lua Mística RGB com Controle',
-      titulo_en: 'Mystic Lunar RGB Lamp with Remote',
-      preco: 'R$ 54,90',
-      preco_en: '$11.20',
-      tag: 'Iluminação',
-      tag_en: 'Lighting',
-      link: '/promo',
-      imagem: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500',
+      id: '28812198611',
+      titulo: 'EEBR Vintage Goth Espinhos Casal Anéis Para Homens Mulheres',
+      titulo_en: 'Vintage Goth Thorn Couple Rings for Men & Women',
+      preco: 'R$ 12,06',
+      preco_en: '$2.32',
+      tag: 'Acessório Goth',
+      tag_en: 'Goth Jewelry',
+      link: 'https://s.shopee.com.br/LnWNtHeo2',
+      imagem: 'https://down-br.img.susercontent.com/file/sg-11134201-7rdy7-m0j7wbk9ta7y39',
     },
     {
-      id: 'sh-04',
-      titulo: 'Kit Papelaria Mágica & Canetas Néon Pastel',
-      titulo_en: 'Magical Stationery & Pastel Neon Pen Set',
+      id: '58212898323',
+      titulo: 'Anel gótico camafeu roxo pedra roxa oval moldura ornamental',
+      titulo_en: 'Gothic Purple Cameo Ring with Oval Stone',
       preco: 'R$ 29,90',
-      preco_en: '$5.90',
-      tag: 'Papelaria',
-      tag_en: 'Stationery',
-      link: '/promo',
-      imagem: 'https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=500',
+      preco_en: '$5.75',
+      tag: 'Acessório Goth',
+      tag_en: 'Goth Jewelry',
+      link: 'https://s.shopee.com.br/W6waCH1T5',
+      imagem: 'https://down-br.img.susercontent.com/file/br-11134207-820ly-mppd70swjy81c9',
     },
   ];
 
   useEffect(() => {
-    fetch('/api/shopee/showcase')
+    fetch('/api/showcase')
       .then((res) => res.json())
       .then((data) => {
         if (data && data.success && Array.isArray(data.items) && data.items.length > 0) {
@@ -63,7 +63,16 @@ export default function ShopeeBentoGrid({ t, lang }) {
         }
       })
       .catch(() => {
-        setItems(defaultItems);
+        fetch('/api/shopee/showcase')
+          .then((res) => res.json())
+          .then((st) => {
+            if (st && st.success && Array.isArray(st.items) && st.items.length > 0) {
+              setItems(st.items.slice(0, 4));
+            } else {
+              setItems(defaultItems);
+            }
+          })
+          .catch(() => setItems(defaultItems));
       });
   }, []);
 
