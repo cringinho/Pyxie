@@ -10,13 +10,15 @@ import {
 export default function Wiki({ t, lang }) {
   const isEn = lang === 'en';
   const [activeTab, setActiveTab] = useState(() => {
-    const hash = window.location.hash.toLowerCase();
-    if (hash.includes('comando') || hash.includes('cmd') || hash.includes('py-')) return 'commands';
-    if (hash.includes('eco') || hash.includes('moeda')) return 'economy';
-    if (hash.includes('trabalho') || hash.includes('carreira') || hash.includes('vocacao')) return 'careers';
-    if (hash.includes('tarot') || hash.includes('album') || hash.includes('arcano')) return 'tarot';
-    if (hash.includes('casamento') || hash.includes('social') || hash.includes('familia')) return 'marriage';
-    if (hash.includes('faq') || hash.includes('duvida')) return 'faq';
+    const rawHash = (window.location.hash || '').toLowerCase().replace('#', '').trim();
+    if (!rawHash) return 'overview';
+    if (rawHash.startsWith('py-')) return 'commands';
+    if (rawHash === 'comandos' || rawHash === 'commands') return 'commands';
+    if (rawHash.includes('eco') || rawHash.includes('moeda')) return 'economy';
+    if (rawHash.includes('trabalho') || rawHash.includes('carreira') || rawHash.includes('vocacao')) return 'careers';
+    if (rawHash.includes('tarot') || rawHash.includes('album') || rawHash.includes('arcano')) return 'tarot';
+    if (rawHash.includes('casamento') || rawHash.includes('social') || rawHash.includes('familia')) return 'marriage';
+    if (rawHash.includes('faq') || rawHash.includes('duvida')) return 'faq';
     return 'overview';
   });
 
@@ -29,13 +31,24 @@ export default function Wiki({ t, lang }) {
   // Sync hash changes
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.toLowerCase();
-      if (hash.includes('comando') || hash.includes('cmd') || hash.includes('py-')) setActiveTab('commands');
-      else if (hash.includes('eco') || hash.includes('moeda')) setActiveTab('economy');
-      else if (hash.includes('trabalho') || hash.includes('carreira')) setActiveTab('careers');
-      else if (hash.includes('tarot') || hash.includes('album')) setActiveTab('tarot');
-      else if (hash.includes('casamento') || hash.includes('social')) setActiveTab('marriage');
-      else if (hash.includes('faq')) setActiveTab('faq');
+      const rawHash = (window.location.hash || '').toLowerCase().replace('#', '').trim();
+      if (!rawHash) {
+        setActiveTab('overview');
+        return;
+      }
+      if (rawHash.startsWith('py-') || rawHash === 'comandos' || rawHash === 'commands') {
+        setActiveTab('commands');
+      } else if (rawHash.includes('eco') || rawHash.includes('moeda')) {
+        setActiveTab('economy');
+      } else if (rawHash.includes('trabalho') || rawHash.includes('carreira') || rawHash.includes('vocacao')) {
+        setActiveTab('careers');
+      } else if (rawHash.includes('tarot') || rawHash.includes('album') || rawHash.includes('arcano')) {
+        setActiveTab('tarot');
+      } else if (rawHash.includes('casamento') || rawHash.includes('social') || rawHash.includes('familia')) {
+        setActiveTab('marriage');
+      } else if (rawHash.includes('faq') || rawHash.includes('duvida')) {
+        setActiveTab('faq');
+      }
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
@@ -253,6 +266,159 @@ export default function Wiki({ t, lang }) {
                 </div>
               </div>
             </div>
+
+            {/* Interactive Encyclopedia Chapters Hub */}
+            <div className="space-y-4 pt-4 border-t border-purple-500/15">
+              <h3 className="font-title font-bold text-lg text-white flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-pink-400" />
+                <span>{isEn ? 'Explore the 6 System Guides & Chapters' : 'Explore os 6 Capítulos da Enciclopédia'}</span>
+              </h3>
+              <p className="text-xs text-slate-400">
+                {isEn
+                  ? 'Select any chapter below to explore deep mechanics, rules, and live commands:'
+                  : 'Navegue pelos capítulos completos com explicações detalhadas, regras, fórmulas e atalhos:'}
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
+                {/* 1. Economia */}
+                <div
+                  onClick={() => {
+                    setActiveTab('economy');
+                    window.location.hash = 'economy';
+                  }}
+                  className="p-5 rounded-2xl glass-panel border border-amber-500/20 hover:border-amber-500/50 cursor-pointer transition-all hover:-translate-y-1 hover:shadow-neon-pink group"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-2xl p-2 rounded-xl bg-amber-500/10 border border-amber-500/20">🪙</span>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">Capítulo 02</span>
+                  </div>
+                  <h4 className="font-title font-bold text-white text-base group-hover:text-amber-300 transition-colors">
+                    {isEn ? 'Living Economy' : 'Economia Mágica'}
+                  </h4>
+                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                    {isEn ? 'Dual-currency mechanics, daily rewards, streaks, and the 10s web bonus portal.' : 'Moedinhas, Feijões Mágicos raros, bônus diários, streaks e portal web.'}
+                  </p>
+                  <div className="mt-4 flex items-center text-xs font-bold text-amber-400 group-hover:translate-x-1 transition-transform">
+                    <span>{isEn ? 'Read Chapter ➔' : 'Ler Capítulo ➔'}</span>
+                  </div>
+                </div>
+
+                {/* 2. Carreiras */}
+                <div
+                  onClick={() => {
+                    setActiveTab('careers');
+                    window.location.hash = 'careers';
+                  }}
+                  className="p-5 rounded-2xl glass-panel border border-purple-500/20 hover:border-purple-500/50 cursor-pointer transition-all hover:-translate-y-1 hover:shadow-neon-pink group"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-2xl p-2 rounded-xl bg-purple-500/10 border border-purple-500/20">💼</span>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">Capítulo 03</span>
+                  </div>
+                  <h4 className="font-title font-bold text-white text-base group-hover:text-purple-300 transition-colors">
+                    {isEn ? '16 Vocations & Work' : '16 Vocações & Trabalho'}
+                  </h4>
+                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                    {isEn ? 'Clock in every 3h, solve 45s thematic challenges, earn XP and senior promotions.' : 'Turnos de 3 horas com minigames técnicos de 45 segundos, XP e promoções.'}
+                  </p>
+                  <div className="mt-4 flex items-center text-xs font-bold text-purple-400 group-hover:translate-x-1 transition-transform">
+                    <span>{isEn ? 'Read Chapter ➔' : 'Ler Capítulo ➔'}</span>
+                  </div>
+                </div>
+
+                {/* 3. Tarot */}
+                <div
+                  onClick={() => {
+                    setActiveTab('tarot');
+                    window.location.hash = 'tarot';
+                  }}
+                  className="p-5 rounded-2xl glass-panel border border-pink-500/20 hover:border-pink-500/50 cursor-pointer transition-all hover:-translate-y-1 hover:shadow-neon-pink group"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-2xl p-2 rounded-xl bg-pink-500/10 border border-pink-500/20">🔮</span>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-300">Capítulo 04</span>
+                  </div>
+                  <h4 className="font-title font-bold text-white text-base group-hover:text-pink-300 transition-colors">
+                    {isEn ? '78 Arcana Tarot Oracle' : 'Tarot dos 78 Arcanos'}
+                  </h4>
+                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                    {isEn ? 'Daily card reading in HD canvas, collectible album, arcane bribes, and achievements.' : 'Tiragem diária em tela HD, álbum colecionável de cartas e suborno arcano.'}
+                  </p>
+                  <div className="mt-4 flex items-center text-xs font-bold text-pink-400 group-hover:translate-x-1 transition-transform">
+                    <span>{isEn ? 'Read Chapter ➔' : 'Ler Capítulo ➔'}</span>
+                  </div>
+                </div>
+
+                {/* 4. Casamento */}
+                <div
+                  onClick={() => {
+                    setActiveTab('marriage');
+                    window.location.hash = 'marriage';
+                  }}
+                  className="p-5 rounded-2xl glass-panel border border-rose-500/20 hover:border-rose-500/50 cursor-pointer transition-all hover:-translate-y-1 hover:shadow-neon-pink group"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-2xl p-2 rounded-xl bg-rose-500/10 border border-rose-500/20">💍</span>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300">Capítulo 05</span>
+                  </div>
+                  <h4 className="font-title font-bold text-white text-base group-hover:text-rose-300 transition-colors">
+                    {isEn ? 'Marriage & Family' : 'Casamento & Família'}
+                  </h4>
+                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                    {isEn ? 'Tree of life watering every 12h, shared Love Vault with 5% daily interest, and children.' : 'Árvore da Vida a cada 12h, cofre do casal com rendimento diário e filhos.'}
+                  </p>
+                  <div className="mt-4 flex items-center text-xs font-bold text-rose-400 group-hover:translate-x-1 transition-transform">
+                    <span>{isEn ? 'Read Chapter ➔' : 'Ler Capítulo ➔'}</span>
+                  </div>
+                </div>
+
+                {/* 5. Comandos */}
+                <div
+                  onClick={() => {
+                    setActiveTab('commands');
+                    window.location.hash = 'comandos';
+                  }}
+                  className="p-5 rounded-2xl glass-panel border border-cyan-500/20 hover:border-cyan-500/50 cursor-pointer transition-all hover:-translate-y-1 hover:shadow-neon-pink group"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-2xl p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20">⚙️</span>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">Capítulo 06</span>
+                  </div>
+                  <h4 className="font-title font-bold text-white text-base group-hover:text-cyan-300 transition-colors">
+                    {isEn ? 'Commands Catalog' : 'Catálogo de Comandos'}
+                  </h4>
+                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                    {isEn ? 'Interactive documentation with fuzzy search (Ctrl+K), category filters and live discord embeds.' : 'Documentação completa com busca fuzzy (Ctrl+K), filtros e embeds ao vivo.'}
+                  </p>
+                  <div className="mt-4 flex items-center text-xs font-bold text-cyan-400 group-hover:translate-x-1 transition-transform">
+                    <span>{isEn ? 'Explore Commands ➔' : 'Explorar Comandos ➔'}</span>
+                  </div>
+                </div>
+
+                {/* 6. FAQ */}
+                <div
+                  onClick={() => {
+                    setActiveTab('faq');
+                    window.location.hash = 'faq';
+                  }}
+                  className="p-5 rounded-2xl glass-panel border border-indigo-500/20 hover:border-indigo-500/50 cursor-pointer transition-all hover:-translate-y-1 hover:shadow-neon-pink group"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-2xl p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20">❓</span>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">Capítulo 07</span>
+                  </div>
+                  <h4 className="font-title font-bold text-white text-base group-hover:text-indigo-300 transition-colors">
+                    {isEn ? 'FAQ & Community Help' : 'Dúvidas & FAQ'}
+                  </h4>
+                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                    {isEn ? 'Frequently asked questions, cooldowns, invite guide and server settings.' : 'Perguntas frequentes, permissões, recargas e suporte do bot.'}
+                  </p>
+                  <div className="mt-4 flex items-center text-xs font-bold text-indigo-400 group-hover:translate-x-1 transition-transform">
+                    <span>{isEn ? 'Open FAQ ➔' : 'Ver Perguntas ➔'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -270,7 +436,7 @@ export default function Wiki({ t, lang }) {
                   {isEn ? 'Living Economy: Coins, Magic Beans & Vaults' : 'Economia Viva: Moedinhas, Feijões e Cofres'}
                 </h2>
                 <p className="text-slate-400 text-xs sm:text-sm">
-                  {isEn ? 'Dual-currency mechanics, inventory, market and daily earnings' : 'Duas moedas, inventário, mercado e rendimentos diários'}
+                  {isEn ? 'Dual-currency mechanics, daily earnings, and rewards' : 'Duas moedas, rendimentos diários e recompensas'}
                 </p>
               </div>
             </div>
@@ -283,11 +449,11 @@ export default function Wiki({ t, lang }) {
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed">
                   {isEn
-                    ? 'The primary currency used for day-to-day shopping, career shifts, wedding rings, gifts, and games. Earned via /py-daily, /py-work shifts, and Tarot album milestones.'
-                    : 'A moeda principal para compras na loja, salários de profissão, alianças de casamento, minigames e presentes. Obtida no /py-daily, nos turnos de /py-work e no portal de bônus web.'}
+                    ? 'The primary currency used for social dynamics, career shifts, wedding rings, gifts, and games. Earned via /py-daily, /py-work shifts, and Tarot album milestones.'
+                    : 'A moeda principal para salários de profissão, alianças de casamento, minigames, bônus e presentes. Obtida no /py-daily, nos turnos de /py-work e no portal de bônus web.'}
                 </p>
                 <div className="font-mono text-[11px] text-pink-300 bg-black/40 px-3 py-1.5 rounded-lg border border-pink-500/20">
-                  /py-carteira • /py-daily • /py-loja
+                  /py-carteira • /py-daily • /py-bonus
                 </div>
               </div>
 

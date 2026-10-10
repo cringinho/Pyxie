@@ -9,8 +9,8 @@ export default function CommandDetailModal({ command, onClose, lang = 'pt', t })
   if (!command) return null;
 
   const rawName = command.name || '';
-  const displayName = rawName.startsWith('/') ? rawName : `/${rawName}`;
   const cleanName = rawName.replace(/^\/+/, '');
+  const displayName = `/${cleanName}`;
 
   const handleCopyCmd = () => {
     navigator.clipboard.writeText(displayName);

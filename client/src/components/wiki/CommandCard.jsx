@@ -5,8 +5,8 @@ export default function CommandCard({ command, onSelect, t }) {
   const [copied, setCopied] = useState(false);
 
   const rawName = command.name || '';
-  const displayName = rawName.startsWith('/') ? rawName : `/${rawName}`;
   const cleanName = rawName.replace(/^\/+/, '');
+  const displayName = `/${cleanName}`;
 
   const handleCopy = (e) => {
     e.stopPropagation();

@@ -446,7 +446,7 @@ function getHelpModules(customCommands = null, source = null) {
     const emoji = MODULE_EMOJIS[category] || '⚙️';
 
     targetBucket.push({
-      name: `/${name}`,
+      name: `/${String(name).replace(/^\/+/, '')}`,
       desc,
       aliases: cmd.aliases || [],
       category,

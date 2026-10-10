@@ -3197,13 +3197,16 @@
           ? `<img src="${cmd.iconUrl}" class="emoji-icon" alt="${cmd.name || 'command'}" />`
           : `<span class="emoji-icon">✨</span>`;
 
+        const cleanCmdName = (cmd.name || '').replace(/^\/+/, '');
+        const cmdDisplay = `/${cleanCmdName}`;
+
         return `
-          <div class="cmd-card" onclick="copyCommand('${cmd.name}')">
+          <div class="cmd-card" onclick="copyCommand('${cmdDisplay}')">
             <div>
               <div class="cmd-top">
                 <div class="cmd-name">
                   ${iconHtml}
-                  <span>${cmd.name}</span>
+                  <span>${cmdDisplay}</span>
                 </div>
                 <div class="cmd-copy-icon">📋</div>
               </div>
@@ -3346,6 +3349,6 @@
     initPyxieTip();
     syncHourlyPromoLinks();
   </script>
-  <script type="module" src="/dist/assets/index.js"></script>
+  <script type="module" src="/dist/assets/index.js?v=2.2.0"></script>
 </body>
 </html>

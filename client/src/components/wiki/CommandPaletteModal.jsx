@@ -104,7 +104,7 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
                   </div>
                   <div className="min-w-0">
                     <span className="font-mono font-bold text-sm text-white block truncate">
-                      {cmd.name?.startsWith('/') ? cmd.name : `/${cmd.name || ''}`}
+                      /{ (cmd.name || '').replace(/^\/+/, '') }
                     </span>
                     <span className="text-xs text-slate-400 truncate block">
                       {cmd.description}
