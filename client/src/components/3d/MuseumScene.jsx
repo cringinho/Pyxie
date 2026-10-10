@@ -438,3 +438,4 @@ export default function MuseumScene({ t }) {
     </section>
   );
 }
+

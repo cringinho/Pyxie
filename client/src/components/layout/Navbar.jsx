@@ -167,3 +167,4 @@ export default function Navbar({ lang, setLang, t }) {
     </header>
   );
 }
+

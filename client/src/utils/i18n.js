@@ -125,3 +125,4 @@ export function getInitialLang() {
   if (saved === 'en' || saved === 'pt') return saved;
   return (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
 }
+

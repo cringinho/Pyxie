@@ -186,10 +186,38 @@ function getLocalizedHtml(pageKey, lang, publicDir) {
 function serveLocalizedPage(pageKey, publicDir) {
   return (req, res) => {
     const lang = detectRequestLang(req);
-    const html = getLocalizedHtml(pageKey, lang, publicDir);
+    let html = getLocalizedHtml(pageKey, lang, publicDir);
     if (!html) {
       return res.status(404).send('Page not found');
     }
+
+    // Dynamic Artwork OpenGraph for Museum
+    if (pageKey === 'museum' && req.query && req.query.art) {
+      try {
+        const artId = String(req.query.art).trim();
+        const dataPath = path.join(process.cwd(), 'data', 'museumData.json');
+        if (fs.existsSync(dataPath)) {
+          const museumData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+          const art = (museumData.arts || []).find((a) => a.id === artId);
+          if (art) {
+            const rawTitle = art.description ? art.description.slice(0, 50) : 'Obra da Comunidade';
+            const artTitle = `${rawTitle} • Museu da Pyxie`;
+            const artDesc = `Obra de arte criada por @${art.authorName || 'Membro'} no acervo cultural da Pyxie.`;
+            const artImg = art.imageUrl || `https://pyxie.com.br/api/museum/art-image/${art.id}`;
+
+            html = html
+              .replace(/<title>[\s\S]*?<\/title>/i, `<title>${artTitle}</title>`)
+              .replace(/(<meta\s+property=["']og:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artTitle}$2`)
+              .replace(/(<meta\s+property=["']og:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artDesc}$2`)
+              .replace(/(<meta\s+property=["']og:image["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artImg}$2`)
+              .replace(/(<meta\s+name=["']twitter:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artTitle}$2`)
+              .replace(/(<meta\s+name=["']twitter:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artDesc}$2`)
+              .replace(/(<meta\s+name=["']twitter:image["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artImg}$2`);
+          }
+        }
+      } catch (_) {}
+    }
+
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
     res.setHeader('Vary', 'Accept-Language');
     res.send(html);

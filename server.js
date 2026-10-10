@@ -18,6 +18,10 @@ const { renderTarotCard } = require('./src/services/tarotRenderer');
 const tarotCardsList = require('./src/data/tarot.json');
 const { generateRssXml, generateAtomXml, generateJsonFeed, getDailyTarotCard } = require('./src/services/feedGenerator');
 const { autoSubmitAllUrls } = require('./src/services/indexNowService');
+const { getUserAccount } = require('./src/services/economy');
+const tarotAlbumService = require('./src/services/tarotAlbumService');
+const marriageManager = require('./src/modules/marriage/marriageManager');
+const { TAROT_ACHIEVEMENTS } = require('./src/data/tarotAchievements');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -395,6 +399,103 @@ app.get(['/parcerias', '/partnerships'], serveLocalizedPage('partnerships', publ
 app.get(['/museu', '/museum'], serveLocalizedPage('museum', publicDir));
 
 app.get(['/termos', '/terms'], serveLocalizedPage('terms', publicDir));
+ 
+// Perfil público & Vitrine do Álbum de Tarot na Web
+app.get('/u/:userId', (req, res) => {
+  const userId = String(req.params.userId || '').trim();
+  const uHtmlPath = path.join(publicDir, 'u.html');
+  if (!fs.existsSync(uHtmlPath)) {
+    return res.status(404).sendFile(path.join(publicDir, '404.html'));
+  }
+
+  let html = fs.readFileSync(uHtmlPath, 'utf8');
+  try {
+    const account = getUserAccount(userId);
+    const album = tarotAlbumService.getUserAlbum(userId);
+    const discoveredCount = album?.discoveredCards?.length || 0;
+    const profession = account?.profession
+      ? (account.profession.charAt(0).toUpperCase() + account.profession.slice(1).replace(/_/g, ' '))
+      : 'Aventureiro Místico';
+    const name = account?.username || `Membro (${userId.slice(-4)})`;
+    const title = `Perfil de ${name} • Universo Pyxie`;
+    const desc = `Colecionou ${discoveredCount}/78 Arcanos de Tarot e atua como ${profession} no Discord!`;
+    const canonical = `https://pyxie.com.br/u/${userId}`;
+
+    html = html
+      .replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`)
+      .replace(/(<link\s+rel=["']canonical["']\s+href=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${canonical}$2`)
+      .replace(/(<meta\s+property=["']og:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${title}$2`)
+      .replace(/(<meta\s+property=["']og:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${desc}$2`)
+      .replace(/(<meta\s+property=["']og:url["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${canonical}$2`)
+      .replace(/(<meta\s+name=["']twitter:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${title}$2`)
+      .replace(/(<meta\s+name=["']twitter:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${desc}$2`);
+  } catch (err) {
+    console.error('[Profile OpenGraph] Erro ao injetar metadados:', err.message);
+  }
+
+  res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+  res.send(html);
+});
+
+// API de Perfil Público e Álbum de Tarot
+app.get('/api/profile/:userId', (req, res) => {
+  try {
+    const userId = String(req.params.userId || '').trim();
+    if (!/^\d{15,25}$/.test(userId)) {
+      return res.status(400).json({ success: false, error: 'ID de usuário inválido.' });
+    }
+    const account = getUserAccount(userId);
+    const album = tarotAlbumService.getUserAlbum(userId);
+    const marriage = marriageManager.getMarriage(userId);
+
+    const cards = album.discoveredCards || [];
+    const achievements = TAROT_ACHIEVEMENTS.map((ach) => {
+      const isClaimed = (album.claimedAchievements || []).includes(ach.id);
+      const prog = typeof ach.check === 'function' ? ach.check(cards) : { current: 0, target: 1 };
+      return {
+        id: ach.id,
+        namePt: ach.namePt,
+        nameEn: ach.nameEn,
+        descPt: ach.descPt,
+        descEn: ach.descEn,
+        rewardCoins: ach.rewardCoins,
+        isClaimed,
+        current: prog.current,
+        target: prog.target,
+        completed: prog.current >= prog.target,
+      };
+    });
+
+    return res.json({
+      success: true,
+      userId,
+      account: {
+        balance: account.balance || 0,
+        magicBeans: account.magicBeans || 0,
+        profession: account.profession || null,
+        activeTitle: account.activeTitle || null,
+        dailyStreak: account.dailyStreak || 0,
+      },
+      marriage: marriage ? {
+        isMarried: true,
+        spouses: marriage.spouses,
+        love: marriage.love ?? 100,
+        treeLevel: marriage.treeLevel || 0,
+        vaultCoins: marriage.vault?.coins || 0,
+      } : { isMarried: false },
+      tarot: {
+        discoveredCards: album.discoveredCards || [],
+        totalCards: 78,
+        discoveredCount: (album.discoveredCards || []).length,
+        firstDiscoveryDates: album.firstDiscoveryDates || {},
+      },
+      achievements,
+    });
+  } catch (err) {
+    console.error('[API Profile] Erro ao carregar perfil:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // Feeds RSS / Atom / JSON Feed para captação externa e automação (Pinterest, Zapier, IFTTT, Google Discover)
 app.get(['/rss.xml', '/feed.xml'], (req, res) => {
@@ -1781,6 +1882,31 @@ function ensureSshKeys() {
     };
   }
 }
+
+// Handler para páginas não encontradas (404)
+app.use((req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ success: false, error: 'Endpoint não encontrado.' });
+  }
+  const file404 = path.join(publicDir, '404.html');
+  if (fs.existsSync(file404)) {
+    return res.status(404).sendFile(file404);
+  }
+  return res.status(404).send('404 Not Found');
+});
+
+// Handler para erros internos do servidor (500)
+app.use((err, req, res, next) => {
+  console.error('[Internal Error]', err);
+  if (req.path.startsWith('/api/')) {
+    return res.status(500).json({ success: false, error: 'Erro interno no servidor.' });
+  }
+  const file500 = path.join(publicDir, '500.html');
+  if (fs.existsSync(file500)) {
+    return res.status(500).sendFile(file500);
+  }
+  return res.status(500).send('500 Internal Server Error');
+});
 
 const server = app.listen(PORT, HOST, () => {
   const publicUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';

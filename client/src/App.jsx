@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Wiki from './pages/Wiki';
 import Museum from './pages/Museum';
 import Bonus from './pages/Bonus';
+import Profile from './pages/Profile';
 import { I18N } from './utils/i18n';
 
 export default function App() {
@@ -93,12 +94,19 @@ export default function App() {
   const path = window.location.pathname.toLowerCase();
 
   let CurrentPage = Home;
+  let pageUserId = '';
   if (path.includes('wiki')) {
     CurrentPage = Wiki;
   } else if (path.includes('museu') || path.includes('museum')) {
     CurrentPage = Museum;
   } else if (path.includes('bonus')) {
     CurrentPage = Bonus;
+  } else if (path.startsWith('/u/') || path.includes('/u/')) {
+    CurrentPage = Profile;
+    const parts = window.location.pathname.split(/\/u\/?/i);
+    if (parts.length > 1) {
+      pageUserId = parts[1].split('/')[0];
+    }
   }
 
   return (
@@ -113,10 +121,11 @@ export default function App() {
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar lang={lang} setLang={setLang} t={t} />
         <main className="flex-1">
-          <CurrentPage t={t} lang={lang} stats={stats} />
+          <CurrentPage t={t} lang={lang} stats={stats} userId={pageUserId} />
         </main>
         <Footer t={t} />
       </div>
     </div>
   );
 }
+

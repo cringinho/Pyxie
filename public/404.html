@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 • Dimensão Perdida | Pyxie Discord Bot</title>
+  <meta name="description" content="A página que você está procurando viajou para outra dimensão astral ou nunca existiu." />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="icon" href="https://cdn.discordapp.com/emojis/1548443951596306552.webp" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/dist/assets/index.css" />
+  <style>
+    body {
+      margin: 0;
+      background-color: #080410;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    #noise-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.25;
+    }
+  </style>
+</head>
+<body class="selection:bg-pink-500 selection:text-white">
+  <canvas id="noise-canvas"></canvas>
+
+  <div class="relative z-10 max-w-lg mx-auto px-6 py-12 text-center flex flex-col items-center">
+    <div class="relative mb-6">
+      <div class="w-36 h-36 rounded-full p-2 bg-gradient-to-tr from-pink-500 via-purple-600 to-cyan-400 shadow-neon-pink animate-pulse">
+        <img
+          src="/assets/pyxie/pyxie_mascot.png"
+          alt="Pyxie Fadinha Perdida"
+          class="w-full h-full object-contain rounded-full bg-[#0e071a] p-3"
+        />
+      </div>
+      <span class="absolute -top-2 -right-2 px-3 py-1 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 font-mono font-black text-xs">
+        ERRO 404
+      </span>
+    </div>
+
+    <h1 class="font-title font-black text-3xl sm:text-4xl text-white mb-3 tracking-tight">
+      Dimensão Não Encontrada!
+    </h1>
+
+    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-md">
+      A Pyxie procurou em todas as constelações astrais e nos registros arcanos, mas essa página parece ter sumido no vácuo do espaço.
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
+      <a
+        href="/"
+        class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-purple-500 text-white font-title font-bold text-sm shadow-neon-pink transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+      >
+        <span>🔮</span>
+        <span>Voltar para um Lugar Seguro</span>
+      </a>
+      <a
+        href="/wiki"
+        class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-purple-500/30 text-purple-200 font-title font-semibold text-sm transition-all flex items-center justify-center gap-2"
+      >
+        <span>📖</span>
+        <span>Guia de Comandos</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    (function initNoise() {
+      const canvas = document.getElementById('noise-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let w = (canvas.width = window.innerWidth);
+      let h = (canvas.height = window.innerHeight);
+
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+
+      const stars = Array.from({ length: 60 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        radius: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.7 + 0.3,
+        speed: Math.random() * 0.02 + 0.01,
+      }));
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#f472b6';
+        for (const s of stars) {
+          s.alpha += Math.sin(Date.now() * s.speed) * 0.02;
+          ctx.globalAlpha = Math.max(0.1, Math.min(0.9, s.alpha));
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
+  </script>
+</body>
+</html>
