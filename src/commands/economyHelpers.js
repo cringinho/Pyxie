@@ -41,8 +41,21 @@ function buildWalletEmbed(user, currencies, position, source = null) {
 /**
  * Constrói o Embed de perfil com layout exuberante, espaçamento generoso e dados integrados.
  */
-function buildProfileEmbed({ user, account, spouse, rankPosition, professionLabel, equippedTitle, source = null }) {
+function buildProfileEmbed({
+  user,
+  account,
+  spouse,
+  rankPosition,
+  professionLabel,
+  equippedTitle,
+  source = null,
+  tarotStats = null,
+  marriageDetails = null,
+  museumArtsCount = 0,
+  hasImageCard = false,
+}) {
   const lang = getLanguage(source);
+  const isEn = lang === 'en';
   const titlePrefix = equippedTitle ? `[${equippedTitle.emoji} ${equippedTitle.name}] ` : '';
   const coinsVal = Number(account?.coins) || 0;
   const magicBeansVal = Number(account?.magicBeans) || 0;
@@ -56,10 +69,6 @@ function buildProfileEmbed({ user, account, spouse, rankPosition, professionLabe
         ? t('profile.dedicationVeteran', source)
         : (workVal >= 5 ? t('profile.dedicationPractitioner', source) : t('profile.dedicationNovice', source)));
 
-  const marriageDisplay = spouse
-    ? t('profile.marriedTo', source, { spouse })
-    : t('profile.single', source);
-
   let bioText = t('profile.bioDefault', source);
   if (account?.bio && account.bio.trim()) {
     bioText = account.bio.trim();
@@ -69,38 +78,66 @@ function buildProfileEmbed({ user, account, spouse, rankPosition, professionLabe
 
   const bioQuote = `> *« ${bioText} »*`;
 
-  const description = [
+  const descLines = [
     bioQuote,
     '',
     t('profile.treasureHeader', source),
-    '',
     t('profile.coins', source, { coins: coinsVal.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR') }),
     t('profile.magicBeans', source, { beans: magicBeansVal.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR') }),
     t('profile.ranking', source, { rank: rankStr }),
     '',
     t('profile.careerHeader', source),
-    '',
     t('profile.profession', source, { profession: professionLabel || t('profile.noProfession', source) }),
     t('profile.workCount', source, { count: workVal }),
     t('profile.dedication', source, { level: dedicationLevel }),
     '',
     t('profile.socialHeader', source),
-    '',
-    marriageDisplay,
-  ].join('\n');
+  ];
+
+  if (marriageDetails && marriageDetails.isMarried) {
+    descLines.push(`> 💍 **${isEn ? 'Spouse' : 'Cônjuge'}:** ${marriageDetails.spouseName}`);
+    descLines.push(`> ❤️ **${isEn ? 'Love Bar' : 'Barra do Amor'}:** **${marriageDetails.lovePoints}%** (${marriageDetails.marriageDays} ${isEn ? 'days' : 'dias'})`);
+    if (marriageDetails.childrenCount > 0) {
+      descLines.push(`> 👶 **${isEn ? 'Children' : 'Filhos'}:** **${marriageDetails.childrenCount}** ${isEn ? 'adopted' : 'adotado(s)'}`);
+    }
+    if (marriageDetails.vaultCoins > 0) {
+      descLines.push(`> 🏦 **${isEn ? 'Family Vault' : 'Cofre Familiar'}:** **${marriageDetails.vaultCoins.toLocaleString()}** ${isEn ? 'Coins' : 'Moedas'}`);
+    }
+  } else {
+    descLines.push(spouse ? t('profile.marriedTo', source, { spouse }) : t('profile.single', source));
+  }
+
+  if (tarotStats) {
+    descLines.push('');
+    descLines.push(`**🔮 ${isEn ? 'MYSTIC TAROT' : 'TAROT MÍSTICO'}**`);
+    descLines.push(`> 📖 **${isEn ? 'Arcana Discovered' : 'Arcanos Descobertos'}:** **${tarotStats.discoveredCount}/78** (${tarotStats.percentage}%)`);
+    descLines.push(`> 🏆 **${isEn ? 'Achievements' : 'Conquistas'}:** **${tarotStats.achievementsClaimed}/10**`);
+  }
+
+  if (museumArtsCount > 0) {
+    descLines.push('');
+    descLines.push(`**🎨 ${isEn ? '3D MUSEUM' : 'MUSEU 3D'}**`);
+    descLines.push(`> 🏛️ **${isEn ? 'Exhibited Arts' : 'Obras no Acervo'}:** **${museumArtsCount}** ${isEn ? 'community art(s)' : 'arte(s) da comunidade'}`);
+  }
 
   const { THEMES_CATALOG } = require('../services/economy');
   const equippedTheme = account?.equippedTheme && THEMES_CATALOG[account.equippedTheme]
     ? THEMES_CATALOG[account.equippedTheme]
     : THEMES_CATALOG.default;
 
-  return new EmbedBuilder()
+  const embed = new EmbedBuilder()
     .setColor(equippedTheme?.color || PYXIE_COLORS.magenta || '#e60067')
     .setTitle(t('profile.title', source, { title: titlePrefix, user: user.displayName || user.username }))
-    .setDescription(description)
+    .setDescription(descLines.join('\n'))
     .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 256 }))
-    .setFooter({ text: 'Pyxie' })
+    .setFooter({ text: '✦ Pyxie • pyxie.com.br' })
     .setTimestamp();
+
+  if (hasImageCard) {
+    embed.setImage('attachment://profile_card.png');
+  }
+
+  return embed;
 }
 
 function buildRankingEmbed(entries, memberMap, viewerRank, source = null) {

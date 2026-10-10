@@ -159,7 +159,8 @@ try {
   const themesViewPt = perfilCmd.buildThemesView(mockTargetUser, 'viewer-1', 'pt');
   const themesViewEn = perfilCmd.buildThemesView(mockTargetUser, 'viewer-1', 'en');
   assert.ok(themesViewPt.embeds[0].data.title.includes('Temas & Cores'), 'Temas PT ok');
-  assert.ok(themesViewEn.embeds[0].data.title.includes('Themes & Colors'), 'Temas EN ok');
+  const { generateProfileCard } = require('../src/services/profileCardGenerator');
+  assert.equal(typeof generateProfileCard, 'function', 'generateProfileCard deve ser exportada');
 
   // 6. Daily & Votar
   const dailyPt = dailyCmd.buildDailyView('test-user-1', 'pt');

@@ -1,5 +1,7 @@
+const path = require('path');
 const {
   ActionRowBuilder,
+  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
@@ -25,6 +27,10 @@ const {
   setUserBio,
 } = require('../services/economy');
 const { getSpouseId } = require('../services/marriage');
+const marriageManager = require('../modules/marriage/marriageManager');
+const { getAlbumStats } = require('../services/tarotAlbumService');
+const { generateProfileCard } = require('../services/profileCardGenerator');
+const { readJson } = require('../utils/atomicJson');
 const professions = require('../services/professions');
 const { buildProfileEmbed } = require('./economyHelpers');
 const { PROFILE } = require('./commandNames');
@@ -35,7 +41,9 @@ function getTargetUser(source) {
   return source.options?.getUser('user') || source.options?.getUser('usuario') || source.user || source.author;
 }
 
-function buildProfileView(targetUser, viewerId, source = null) {
+async function buildProfileView(targetUser, viewerId, source = null) {
+  const lang = getLanguage(source);
+  const isEn = lang === 'en';
   const account = getUserAccount(targetUser.id);
   const spouseId = getSpouseId(targetUser.id);
   const rank = getUserRank(targetUser.id);
@@ -47,6 +55,58 @@ function buildProfileView(targetUser, viewerId, source = null) {
     ? t(`profession.labels.${professionKey}`, source) || professions[professionKey]?.label
     : null;
 
+  const guild = source?.guild || (source?.channel?.guild) || null;
+  const client = source?.client || null;
+
+  // 1. Dados do Módulo de Tarot
+  const tarotStats = getAlbumStats(targetUser.id, lang);
+
+  // 2. Dados do Módulo de Matrimônio
+  let marriageDetails = null;
+  try {
+    const marriage = marriageManager.getMarriage(targetUser.id);
+    if (marriage) {
+      let spouseName = isEn ? 'Beloved Spouse' : 'Cônjuge';
+      if (spouseId) {
+        const spouseUser = client?.users?.cache?.get(spouseId);
+        if (spouseUser) spouseName = spouseUser.displayName || spouseUser.username;
+      }
+      marriageDetails = {
+        isMarried: true,
+        spouseName,
+        lovePoints: Math.round(marriage.lovePoints || 100),
+        marriageDays: Math.max(1, Math.floor((Date.now() - (marriage.marriedAt || Date.now())) / (24 * 60 * 60 * 1000))),
+        childrenCount: Array.isArray(marriage.children) ? marriage.children.length : 0,
+        vaultCoins: Number(marriage.sharedVaultCoins) || 0,
+      };
+    }
+  } catch (_) {}
+
+  // 3. Dados do Museu 3D
+  let museumArtsCount = 0;
+  try {
+    const mData = readJson(path.join(process.cwd(), 'data', 'museumData.json'), { arts: [] });
+    if (mData && Array.isArray(mData.arts)) {
+      museumArtsCount = mData.arts.filter((a) => a.authorId === targetUser.id).length;
+    }
+  } catch (_) {}
+
+  // 4. Renderização do Card Declarativo de Alta Fidelidade (Satori + Resvg Rust)
+  let attachment = null;
+  try {
+    const pngBuffer = await generateProfileCard({
+      targetUser,
+      guild,
+      source,
+      client,
+    });
+    if (pngBuffer) {
+      attachment = new AttachmentBuilder(pngBuffer, { name: 'profile_card.png' });
+    }
+  } catch (err) {
+    console.error('[ProfileCard] Erro ao renderizar card visual:', err);
+  }
+
   const embed = buildProfileEmbed({
     user: targetUser,
     account,
@@ -55,6 +115,10 @@ function buildProfileView(targetUser, viewerId, source = null) {
     professionLabel,
     equippedTitle,
     source,
+    tarotStats,
+    marriageDetails,
+    museumArtsCount,
+    hasImageCard: Boolean(attachment),
   });
 
   const components = [];
@@ -75,10 +139,27 @@ function buildProfileView(targetUser, viewerId, source = null) {
       .setEmoji('✏️')
       .setStyle(ButtonStyle.Secondary)
   );
-
   components.push(actionRow);
 
-  return { embeds: [embed], components };
+  const linkRow = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel(isEn ? 'Inspect 3D Card on Web' : 'Inspecionar Card 3D no Site')
+      .setEmoji('🌐')
+      .setStyle(ButtonStyle.Link)
+      .setURL(`https://pyxie.com.br/u/${targetUser.id}`),
+    new ButtonBuilder()
+      .setLabel(isEn ? 'Invite Pyxie' : 'Convidar a Pyxie')
+      .setEmoji('➕')
+      .setStyle(ButtonStyle.Link)
+      .setURL('https://pyxie.com.br/convite')
+  );
+  components.push(linkRow);
+
+  const result = { embeds: [embed], components };
+  if (attachment) {
+    result.files = [attachment];
+  }
+  return result;
 }
 
 function buildTitlesView(targetUser, viewerId, source = null) {
@@ -333,7 +414,7 @@ async function handleProfileInteraction(interaction) {
     setUserBio(targetId, newBio);
 
     const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
-    const view = buildProfileView(targetUser, interaction.user.id, interaction);
+    const view = await buildProfileView(targetUser, interaction.user.id, interaction);
     return interaction.update(view);
   }
 
@@ -348,7 +429,7 @@ async function handleProfileInteraction(interaction) {
   // 4. Voltar para o Perfil Principal
   if (action === 'profile_view_main') {
     const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
-    const view = buildProfileView(targetUser, interaction.user.id, interaction);
+    const view = await buildProfileView(targetUser, interaction.user.id, interaction);
     return interaction.update(view);
   }
 
@@ -465,12 +546,12 @@ module.exports = {
     ),
   async executePrefix({ message }) {
     const target = message.mentions.users.first() || message.author;
-    const view = buildProfileView(target, message.author.id, message);
+    const view = await buildProfileView(target, message.author.id, message);
     await message.reply(view);
   },
   async executeSlash({ interaction }) {
     const target = getTargetUser(interaction);
-    const view = buildProfileView(target, interaction.user.id, interaction);
+    const view = await buildProfileView(target, interaction.user.id, interaction);
     await interaction.editReply(view);
   },
 };
