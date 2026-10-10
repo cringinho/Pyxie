@@ -10,16 +10,16 @@ const SEO_CONFIG = {
     file: 'index.html',
     canonical: 'https://pyxie.com.br/',
     pt: {
-      title: 'Pyxie • Bot Mágico de Economia, Tarot & Comunidade no Discord',
-      description: 'Pyxie é uma fada mágica para o Discord com Economia Viva (moedinhas e feijões mágicos), 16 Carreiras e Profissões com minigames práticos, Tarot dos 78 Arcanos em Canvas e Diversão comunitária.',
-      ogTitle: 'Pyxie • Bot Mágico de RPG, Economia & Comunidade no Discord',
+      title: 'Pyxie • A Fada Companheira do seu Servidor no Discord',
+      description: 'Pyxie é a fada mágica para o seu servidor Discord: Economia Viva com moedinhas e feijões, Tarot dos 78 Arcanos em Canvas, 16 Carreiras e Dinâmica Social completa.',
+      ogTitle: 'Pyxie • A Fada Companheira do seu Servidor no Discord',
       ogDesc: 'Economia Viva com moedinhas e feijões mágicos, 16 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord.',
       locale: 'pt_BR'
     },
     en: {
-      title: 'Pyxie • Magical Discord Bot for Economy, Tarot & Community',
-      description: 'Pyxie is a magical fairy Discord bot featuring a Living Economy, 16 Careers & interactive jobs, 78 Tarot Cards with dynamic Canvas rendering, and vibrant community games.',
-      ogTitle: 'Pyxie • Magical RPG, Economy & Community Discord Bot',
+      title: 'Pyxie • The Companion Fairy for Your Discord Server',
+      description: 'Pyxie is the magical companion fairy for your Discord server: Living Economy with coins & beans, 78 Tarot Arcana in Canvas, 16 Careers, and rich Social Dynamics.',
+      ogTitle: 'Pyxie • The Companion Fairy for Your Discord Server',
       ogDesc: 'Living Economy with magic coins and beans, 16 interactive job careers, 78 Tarot cards with dynamic Canvas art, and rich community games for your Discord server.',
       locale: 'en_US'
     }
