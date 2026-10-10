@@ -202,6 +202,26 @@ const { COMMAND_CATEGORY_MAP } = require(path.join(repo, 'src/commands/commandHe
   }
   console.log('  ✅ 10. Obrigatoriedade de README.md em 100% dos módulos validada.');
 
+  // 11. Validação do Honeypot de Marca d'Água do Museu com Sharp
+  const sampleArt = {
+    id: 'test_art_honeypot_01',
+    channelId: '123456789',
+    messageId: '987654321',
+    userId: '111222333',
+    originalAttachmentUrl: '/assets/pyxie/pyxie_mascot.png',
+  };
+  const watermarked = await museumManager.getWatermarkedImage(sampleArt);
+  assert.ok(watermarked, 'Watermarked image não pode ser nulo');
+  assert.ok(watermarked.buffer instanceof Buffer, 'Watermarked buffer deve ser uma instância de Buffer');
+  assert.ok(watermarked.buffer.length > 500, 'Watermarked buffer deve possuir tamanho plausível');
+  assert.strictEqual(watermarked.contentType, 'image/webp', 'Formato final deve ser WebP de alta eficiência');
+  assert.ok(museumManager.watermarkCache.has(sampleArt.id), 'Arte deve ser salva no cache de marca d\'água');
+
+  // Valida retorno instantâneo do cache
+  const cachedWatermark = await museumManager.getWatermarkedImage(sampleArt);
+  assert.strictEqual(cachedWatermark.buffer, watermarked.buffer, 'Segunda chamada deve recuperar o buffer idêntico em memória');
+  console.log('  ✅ 11. Honeypot de Marca d\'Água com Sharp e Cache LRU validados com sucesso.');
+
   console.log('🎉 [TEST] Museu & Parcerias passaram com 100% de sucesso!');
   process.chdir(repo);
   fs.rmSync(tmp, { recursive: true, force: true });

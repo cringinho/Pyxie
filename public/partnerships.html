@@ -1094,7 +1094,8 @@
       const img = document.createElement('img');
       img.className = 'card-thumb';
       img.loading = 'lazy';
-      img.alt = p.projectName;
+      img.alt = `Parceria Oficial: ${p.projectName} • Conheça em https://pyxie.com.br/`;
+      img.setAttribute('data-canonical-url', 'https://pyxie.com.br/');
       img.src = safeUrl(p.imageUrl);
       img.onerror = () => { img.src = '/assets/pyxie/pyxie_mascot.png'; };
       const overlay = document.createElement('div');
@@ -1307,6 +1308,18 @@
       applyLang();
       load();
     };
+
+    // Defesa de Cópia: Anexa atribuição oficial e canônica ao clipboard
+    document.addEventListener('copy', (e) => {
+      const selection = window.getSelection()?.toString();
+      if (selection && selection.length > 3) {
+        e.preventDefault();
+        const textWithAttribution = `${selection}\n\nFonte: Mural Oficial de Alianças e Parcerias Pyxie (https://pyxie.com.br/)`;
+        if (e.clipboardData) {
+          e.clipboardData.setData('text/plain', textWithAttribution);
+        }
+      }
+    });
 
     applyLang();
     load();

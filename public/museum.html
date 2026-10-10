@@ -439,7 +439,7 @@
   <header class="top-nav">
     <div class="nav-container">
       <a href="/" class="brand-home-btn" title="Voltar para a página inicial da Pyxie">
-        <img src="/assets/pyxie/pyxie_pixelart_face.png" class="brand-pixel-icon" alt="Pyxie" />
+        <img src="/assets/pyxie/pyxie_pixelart_face.png" class="brand-pixel-icon" alt="Mascote Pyxie • Visite https://pyxie.com.br/" data-canonical-url="https://pyxie.com.br/" />
         <span>Pyxie</span>
       </a>
       <div class="nav-actions">
@@ -631,7 +631,8 @@
           const fig = document.createElement('figure');
           const img = document.createElement('img');
           img.loading = 'lazy';
-          img.alt = art.description || art.author;
+          img.alt = `Arte por @${art.author || 'Artista'} no Museu da Pyxie • Visite https://pyxie.com.br/`;
+          img.setAttribute('data-canonical-url', 'https://pyxie.com.br/');
           img.src = art.imageUrl;
           img.onerror = () => { img.src = '/assets/pyxie/pyxie_mascot.png'; };
 
@@ -678,6 +679,18 @@
       applyLang();
       load();
     };
+
+    // Defesa de Cópia: Anexa atribuição oficial e canônica ao clipboard
+    document.addEventListener('copy', (e) => {
+      const selection = window.getSelection()?.toString();
+      if (selection && selection.length > 3) {
+        e.preventDefault();
+        const textWithAttribution = `${selection}\n\nFonte: Galeria Oficial da Comunidade Pyxie (https://pyxie.com.br/)`;
+        if (e.clipboardData) {
+          e.clipboardData.setData('text/plain', textWithAttribution);
+        }
+      }
+    });
 
     applyLang();
     load();

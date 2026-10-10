@@ -10,6 +10,18 @@ export default function MuseumScene({ t }) {
   const [shieldModalOpen, setShieldModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isWebGLSupported, setIsWebGLSupported] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Responsive Mobile / Touch Viewport Check (< 768px ou touchscreen mobile)
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768 || ('ontouchstart' in window && window.innerWidth < 1024);
+      setIsMobile(mobile);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Fallback default artworks in case /api/museum/arts has few or 0 items
   const defaultArts = [
@@ -73,9 +85,9 @@ export default function MuseumScene({ t }) {
     return () => observer.disconnect();
   }, []);
 
-  // Three.js Scene Setup
+  // Three.js Scene Setup (Desativado em dispositivos móveis para fluidez e economia de bateria/GPU)
   useEffect(() => {
-    if (!isVisible || !canvasRef.current || arts.length === 0) return;
+    if (!isVisible || !canvasRef.current || arts.length === 0 || isMobile) return;
 
     let renderer;
     try {
@@ -201,34 +213,21 @@ export default function MuseumScene({ t }) {
     const loader = new THREE.TextureLoader();
     const cardMeshes = [];
 
-    // Definição dos cinturões esféricos de latitude (phi) e longitude (theta)
-    const sphereSlots = [
-      // Cinturão Superior (phi ~ 66°)
-      { phi: 1.15, theta: 0 },
-      { phi: 1.15, theta: (2 * Math.PI) / 3 },
-      { phi: 1.15, theta: (4 * Math.PI) / 3 },
-      // Cinturão Equatorial (phi = 90°)
-      { phi: Math.PI / 2, theta: 0.35 },
-      { phi: Math.PI / 2, theta: 0.35 + (2 * Math.PI) / 5 },
-      { phi: Math.PI / 2, theta: 0.35 + (4 * Math.PI) / 5 },
-      { phi: Math.PI / 2, theta: 0.35 + (6 * Math.PI) / 5 },
-      { phi: Math.PI / 2, theta: 0.35 + (8 * Math.PI) / 5 },
-      // Cinturão Inferior (phi ~ 114°)
-      { phi: 1.99, theta: 0.8 },
-      { phi: 1.99, theta: 0.8 + (2 * Math.PI) / 3 },
-      { phi: 1.99, theta: 0.8 + (4 * Math.PI) / 3 },
-    ];
+    // 5. Projeção Esférica Tangente de Cartas de Arte (Fibonacci Sphere Lattice com Jitter)
+    const count = Math.max(arts.length, 12);
+    const goldenRatio = (1 + Math.sqrt(5)) / 2;
+    const radialDist = sphereRadius + 0.15;
 
-    sphereSlots.forEach((slot, index) => {
-      const art = arts[index % arts.length];
-      const phi = slot.phi;
-      const theta = slot.theta;
-      const radialDist = sphereRadius + 0.12;
+    for (let i = 0; i < count; i++) {
+      const art = arts[i % arts.length];
+      const yNorm = count <= 1 ? 0 : 1 - (i / (count - 1)) * 2;
+      const radiusAtY = Math.sqrt(Math.max(0, 1 - yNorm * yNorm));
+      const theta = (2 * Math.PI * i) / goldenRatio + (Math.random() - 0.5) * 0.35;
 
-      // Coordenadas esféricas -> Cartesianas (x, y, z)
-      const x = Math.sin(phi) * Math.sin(theta) * radialDist;
-      const y = Math.cos(phi) * radialDist;
-      const z = Math.sin(phi) * Math.cos(theta) * radialDist;
+      // Coordenadas esféricas harmônicas -> Cartesianas (x, y, z)
+      const posX = Math.cos(theta) * radiusAtY * radialDist;
+      const posY = yNorm * radialDist;
+      const posZ = Math.sin(theta) * radiusAtY * radialDist;
 
       const texture = loader.load(art.imageUrl || '/assets/pyxie/og_banner_hd.png');
       texture.minFilter = THREE.LinearFilter;
@@ -241,14 +240,17 @@ export default function MuseumScene({ t }) {
       });
 
       const mesh = new THREE.Mesh(cardGeometry, material);
-      mesh.position.set(x, y, z);
+      mesh.position.set(posX, posY, posZ);
 
       // Orientação Tangente à Esfera (Vetor normal partindo do centro C)
-      mesh.lookAt(x * 2, y * 2, z * 2);
+      mesh.lookAt(posX * 2, posY * 2, posZ * 2);
+
+      // Leve rotação aleatória no eixo Z local [-0.15, +0.15 rad] para efeito cósmico orgânico
+      mesh.rotateZ((Math.random() - 0.5) * 0.3);
 
       // Moldura de vidro/neon por trás da carta
       const frameMat = new THREE.MeshBasicMaterial({
-        color: index % 2 === 0 ? 0xe60067 : 0x8b5cf6,
+        color: i % 2 === 0 ? 0xe60067 : 0x8b5cf6,
         transparent: true,
         opacity: 0.45,
         side: THREE.DoubleSide,
@@ -261,10 +263,12 @@ export default function MuseumScene({ t }) {
 
       globeGroup.add(mesh);
       cardMeshes.push(mesh);
-    });
+    }
 
-    // Física e Interação de Órbita 3D (Arraste Dual-Axis)
+    // Física e Interação de Órbita 3D (Arraste Dual-Axis & Kinetic Intent Filtering)
     let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
     let previousMouseX = 0;
     let previousMouseY = 0;
     let angularVelY = 0.002;
@@ -275,15 +279,19 @@ export default function MuseumScene({ t }) {
 
     const onPointerDown = (e) => {
       isDragging = true;
-      previousMouseX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-      previousMouseY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+      const cx = e.clientX || (e.touches && e.touches[0]?.clientX) || 0;
+      const cy = e.clientY || (e.touches && e.touches[0]?.clientY) || 0;
+      dragStartX = cx;
+      dragStartY = cy;
+      previousMouseX = cx;
+      previousMouseY = cy;
       angularVelY = 0;
       angularVelX = 0;
     };
 
     const onPointerMove = (e) => {
-      const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-      const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+      const clientX = e.clientX || (e.touches && e.touches[0]?.clientX) || 0;
+      const clientY = e.clientY || (e.touches && e.touches[0]?.clientY) || 0;
 
       if (isDragging) {
         const deltaX = clientX - previousMouseX;
@@ -307,24 +315,35 @@ export default function MuseumScene({ t }) {
       }
     };
 
-    const onPointerUp = () => {
-      isDragging = false;
-    };
+    const onPointerUp = (e) => {
+      if (!isDragging) return;
+      const clientX = e.clientX || (e.changedTouches && e.changedTouches[0]?.clientX) || previousMouseX;
+      const clientY = e.clientY || (e.changedTouches && e.changedTouches[0]?.clientY) || previousMouseY;
+      const dragDistance = Math.hypot(clientX - dragStartX, clientY - dragStartY);
 
-    const onClick = () => {
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(cardMeshes);
-      if (intersects.length > 0) {
-        const hitArt = intersects[0].object.userData.art;
-        if (hitArt) setSelectedArt(hitArt);
+      // Drag Threshold: Se distância euclidiana < 7px, intenção é clique/inspeção da carta
+      // Se >= 7px, ignora seleção e trata estritamente como inércia de rotação
+      if (dragDistance < 7) {
+        if (containerRef.current) {
+          const rect = containerRef.current.getBoundingClientRect();
+          mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+        }
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(cardMeshes);
+        if (intersects.length > 0) {
+          const hitArt = intersects[0].object.userData?.art;
+          if (hitArt) setSelectedArt(hitArt);
+        }
       }
+
+      isDragging = false;
     };
 
     const canvasElem = canvasRef.current;
     canvasElem.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp);
-    canvasElem.addEventListener('click', onClick);
 
     // Loop de Animação e Renderização
     let animationFrameId;
@@ -375,10 +394,32 @@ export default function MuseumScene({ t }) {
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
       canvasElem.removeEventListener('pointerdown', onPointerDown);
-      canvasElem.removeEventListener('click', onClick);
+
+      // Prevenção total de Memory Leaks de GPU (VRAM Three.js)
+      scene.traverse((object) => {
+        if (object.geometry) {
+          object.geometry.dispose();
+        }
+        if (object.material) {
+          if (Array.isArray(object.material)) {
+            object.material.forEach((mat) => {
+              if (mat.map) mat.map.dispose();
+              if (mat.alphaMap) mat.alphaMap.dispose();
+              if (mat.normalMap) mat.normalMap.dispose();
+              mat.dispose();
+            });
+          } else {
+            if (object.material.map) object.material.map.dispose();
+            if (object.material.alphaMap) object.material.alphaMap.dispose();
+            if (object.material.normalMap) object.material.normalMap.dispose();
+            object.material.dispose();
+          }
+        }
+      });
+
       renderer.dispose();
     };
-  }, [isVisible, arts]);
+  }, [isVisible, arts, isMobile]);
 
   const handleContextMenu = (e) => {
     e.preventDefault();
@@ -404,9 +445,10 @@ export default function MuseumScene({ t }) {
       <div
         ref={containerRef}
         onContextMenu={handleContextMenu}
+        style={{ touchAction: 'none' }}
         className="art-shield relative w-full max-w-6xl mx-auto h-[380px] sm:h-[480px] lg:h-[540px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none"
       >
-        {isWebGLSupported ? (
+        {isWebGLSupported && !isMobile ? (
           <canvas ref={canvasRef} className="w-full h-full block" />
         ) : (
           /* Mobile CSS 3D Tilt Fallback */
@@ -415,11 +457,12 @@ export default function MuseumScene({ t }) {
               <div
                 key={art.id}
                 onClick={() => setSelectedArt(art)}
-                className="shrink-0 w-64 h-88 rounded-2xl glass-panel p-3 border border-pink-500/30 snap-center cursor-pointer shadow-lg transform hover:scale-105 transition-all"
+                className="shrink-0 w-64 h-[352px] rounded-2xl glass-panel p-3 border border-pink-500/30 snap-center cursor-pointer shadow-lg transform hover:scale-105 transition-all"
               >
                 <img
                   src={art.imageUrl}
-                  alt={art.author || 'Arte da Comunidade'}
+                  alt={`Arte por @${art.author || 'Artista'} no Museu da Pyxie • Visite https://pyxie.com.br/`}
+                  data-canonical-url="https://pyxie.com.br/"
                   className="w-full h-64 object-cover rounded-xl"
                 />
                 <div className="mt-3 text-left">
@@ -456,19 +499,30 @@ export default function MuseumScene({ t }) {
           >
             <button
               onClick={() => setSelectedArt(null)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-all"
+              className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-all z-20"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-              <div className="relative rounded-2xl overflow-hidden border border-purple-500/30 shadow-neon-pink">
+              <div className="relative rounded-2xl overflow-hidden border border-purple-500/30 shadow-neon-pink group">
                 <img
                   src={selectedArt.imageUrl}
-                  alt={selectedArt.author || 'Arte da Comunidade'}
+                  alt={`Arte por @${selectedArt.author || 'Artista'} no Museu da Pyxie • Visite https://pyxie.com.br/`}
+                  data-canonical-url="https://pyxie.com.br/"
                   className="w-full h-80 object-cover pointer-events-none select-none"
                 />
-                <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-black/70 backdrop-blur-md text-[10px] font-mono text-pink-300 border border-pink-500/30">
+                {/* Honeypot Ribbon para Screenshots */}
+                <div className="absolute inset-x-0 bottom-0 py-2 px-3 bg-black/85 backdrop-blur-md border-t border-pink-500/40 flex items-center justify-between text-[11px] font-mono tracking-wide z-10 shadow-lg select-none pointer-events-none">
+                  <span className="text-white font-bold truncate">
+                    <span className="text-pink-400 font-extrabold mr-1">✦</span>
+                    pyxie.com.br • @{selectedArt.author || 'Artista'}
+                  </span>
+                  <span className="text-purple-300/80 text-[10px] shrink-0 ml-2 hidden sm:inline">
+                    Galeria Oficial
+                  </span>
+                </div>
+                <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-black/70 backdrop-blur-md text-[10px] font-mono text-pink-300 border border-pink-500/30 z-10">
                   ✦ {selectedArt.id}
                 </div>
               </div>

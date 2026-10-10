@@ -144,8 +144,19 @@ export default function Museum({ t, lang }) {
     setShieldModalOpen(true);
   };
 
+  const handleCopy = (e) => {
+    const selection = window.getSelection()?.toString();
+    if (selection && selection.length > 3) {
+      e.preventDefault();
+      const textWithAttribution = `${selection}\n\nFonte: Galeria Oficial da Comunidade Pyxie (https://pyxie.com.br/)`;
+      if (e.clipboardData) {
+        e.clipboardData.setData('text/plain', textWithAttribution);
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+    <div onCopy={handleCopy} className="min-h-screen py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
       {/* Header */}
       <div className="text-center space-y-4 max-w-3xl mx-auto pt-2">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-xs font-bold shadow-sm">
@@ -260,7 +271,8 @@ export default function Museum({ t, lang }) {
                 >
                   <img
                     src={art.imageUrl || `/api/museum/art-image/${art.id}`}
-                    alt={art.description || 'Arte da Comunidade'}
+                    alt={`Arte por ${getAuthorHandle(art)} no Museu da Pyxie • Visite https://pyxie.com.br/`}
+                    data-canonical-url="https://pyxie.com.br/"
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
                   />
@@ -370,7 +382,8 @@ export default function Museum({ t, lang }) {
                 >
                   <img
                     src={art.imageUrl || `/api/museum/art-image/${art.id}`}
-                    alt={art.description || 'Arte da Comunidade'}
+                    alt={`Arte por ${getAuthorHandle(art)} no Museu da Pyxie • Visite https://pyxie.com.br/`}
+                    data-canonical-url="https://pyxie.com.br/"
                     loading="lazy"
                     className="w-full h-full object-contain max-h-[500px] pointer-events-none"
                   />
@@ -462,17 +475,28 @@ export default function Museum({ t, lang }) {
               </div>
             </div>
 
-            {/* Lightbox Image with Zoom & Art Shield */}
+            {/* Lightbox Image with Zoom, Art Shield & Honeypot Ribbon */}
             <div
               onContextMenu={handleContextMenu}
-              className="relative max-h-[75vh] max-w-full overflow-hidden rounded-2xl select-none art-shield flex items-center justify-center bg-black/50 p-2"
+              className="relative max-h-[75vh] max-w-full overflow-hidden rounded-2xl select-none art-shield flex items-center justify-center bg-black/50 p-2 group"
             >
               <img
                 src={selectedArt.imageUrl || `/api/museum/art-image/${selectedArt.id}`}
-                alt={selectedArt.description || 'Arte da Comunidade'}
+                alt={`Arte por ${getAuthorHandle(selectedArt)} no Museu da Pyxie • Visite https://pyxie.com.br/`}
+                data-canonical-url="https://pyxie.com.br/"
                 style={{ transform: `scale(${lightboxZoom})`, transition: 'transform 0.2s ease-out' }}
                 className="max-h-[72vh] max-w-full object-contain pointer-events-none rounded-lg"
               />
+              {/* Honeypot Ribbon sobre a base da imagem para capturas de tela (Print Screen) */}
+              <div className="absolute inset-x-0 bottom-0 py-2.5 px-4 bg-black/85 backdrop-blur-md border-t border-pink-500/40 flex items-center justify-between text-xs font-mono tracking-wide z-20 select-none pointer-events-none">
+                <span className="text-white font-bold truncate">
+                  <span className="text-pink-400 font-extrabold mr-1.5">✦</span>
+                  pyxie.com.br • {getAuthorHandle(selectedArt)}
+                </span>
+                <span className="text-purple-300/80 text-[11px] shrink-0 ml-2 hidden sm:inline">
+                  Galeria Oficial da Comunidade
+                </span>
+              </div>
             </div>
 
             {/* Lightbox Description */}

@@ -1,5 +1,7 @@
 const path = require('path');
 const crypto = require('crypto');
+const fs = require('fs');
+const sharp = require('sharp');
 const { readJson, writeJsonAtomic } = require('../../utils/atomicJson');
 const { restGet } = require('../../utils/discordRest');
 
@@ -23,6 +25,7 @@ class MuseumManager {
     this.data = { arts: [] };
     this.urlCache = new Map(); // artId -> { url, at }
     this.authorCache = new Map(); // userId -> { name, at }
+    this.watermarkCache = new Map(); // artId -> { buffer, contentType, at }
   }
 
   init(client, ctx) {
@@ -46,6 +49,7 @@ class MuseumManager {
   stop() {
     this.urlCache.clear();
     this.authorCache.clear();
+    this.watermarkCache.clear();
   }
 
   /** Bot e web são processos distintos: sempre relê o disco antes de operar. */
@@ -326,6 +330,105 @@ class MuseumManager {
     return url;
   }
 
+  /**
+   * Honeypot de Marca d'Água: Carimba a assinatura indelével do ecossistema
+   * "✦ Pyxie • Galeria Oficial da Comunidade • https://pyxie.com.br/"
+   * em tempo de execução via Sharp antes de servir a imagem.
+   */
+  async getWatermarkedImage(art) {
+    if (!art) return null;
+    const cached = this.watermarkCache.get(art.id);
+    if (cached && Date.now() - cached.at < 30 * 60 * 1000) {
+      return cached;
+    }
+
+    try {
+      const url = await this.resolveImageUrl(art);
+      if (!url) return null;
+
+      let inputBuffer = null;
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) PyxieBot/1.0',
+          },
+          signal: AbortSignal.timeout(10000),
+        });
+        if (!response.ok) return { redirectUrl: url };
+        const arrayBuffer = await response.arrayBuffer();
+        inputBuffer = Buffer.from(arrayBuffer);
+      } else if (url.startsWith('/')) {
+        let localPath = path.join(process.cwd(), 'public', url.replace(/^\//, ''));
+        if (!fs.existsSync(localPath)) {
+          localPath = path.join(__dirname, '../../../public', url.replace(/^\//, ''));
+        }
+        if (fs.existsSync(localPath)) {
+          inputBuffer = fs.readFileSync(localPath);
+        } else {
+          return null;
+        }
+      } else {
+        return { redirectUrl: url };
+      }
+
+      if (!inputBuffer || inputBuffer.length === 0) {
+        return { redirectUrl: url };
+      }
+
+      const metadata = await sharp(inputBuffer).metadata();
+
+      // GIFs animados: preserva sem achatar frames
+      if (metadata.format === 'gif' && metadata.pages && metadata.pages > 1) {
+        return { redirectUrl: url };
+      }
+
+      const width = metadata.width || 800;
+      const height = metadata.height || 800;
+      const bannerHeight = Math.max(36, Math.min(84, Math.round(height * 0.08)));
+      const fontSize = Math.max(12, Math.min(22, Math.round(bannerHeight * 0.35)));
+      const strokeWidth = Math.max(1, Math.round(bannerHeight * 0.04));
+      const text = '✦ Pyxie • Galeria Oficial da Comunidade • https://pyxie.com.br/';
+
+      const svgString = `
+        <svg width="${width}" height="${bannerHeight}" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#0e071a" stop-opacity="0.94" />
+              <stop offset="50%" stop-color="#1f0a2d" stop-opacity="0.90" />
+              <stop offset="100%" stop-color="#0e071a" stop-opacity="0.94" />
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="${width}" height="${bannerHeight}" fill="url(#bg)" />
+          <line x1="0" y1="0" x2="${width}" y2="0" stroke="#e60067" stroke-width="${strokeWidth}" stroke-opacity="0.9" />
+          <text x="${width / 2}" y="${Math.floor(bannerHeight / 2) + Math.round(fontSize * 0.35)}" font-family="DejaVu Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="${fontSize}" font-weight="bold" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">
+            ${text}
+          </text>
+        </svg>
+      `;
+
+      const watermarked = await sharp(inputBuffer)
+        .composite([{ input: Buffer.from(svgString), top: height - bannerHeight, left: 0 }])
+        .webp({ quality: 88 })
+        .toBuffer();
+
+      if (this.watermarkCache.size >= 300) {
+        const firstKey = this.watermarkCache.keys().next().value;
+        if (firstKey) this.watermarkCache.delete(firstKey);
+      }
+
+      const result = {
+        buffer: watermarked,
+        contentType: 'image/webp',
+        at: Date.now(),
+      };
+      this.watermarkCache.set(art.id, result);
+      return result;
+    } catch (err) {
+      console.warn(`[Museum] Erro ao carimbar imagem da arte ${art.id}:`, err.message);
+      return null;
+    }
+  }
+
   async getArtPage({ userId = null, page = 1, limit = 24 } = {}) {
     this.refresh();
     const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 24, 1), PAGE_LIMIT_MAX);
@@ -375,6 +478,7 @@ class MuseumManager {
     this.data.arts = this.data.arts.filter((a) => a.id !== artId);
     if (this.data.arts.length === prev) return false;
     this.urlCache.delete(artId);
+    this.watermarkCache.delete(artId);
     this.saveData();
     return true;
   }
@@ -415,9 +519,25 @@ class MuseumManager {
       this.refresh();
       const art = this.data.arts.find((a) => a.id === req.params.id);
       if (!art) return res.status(404).end();
-      const url = await this.resolveImageUrl(art);
+
+      const result = await this.getWatermarkedImage(art);
+      if (result && result.buffer) {
+        res.set({
+          'Content-Type': result.contentType,
+          'Cache-Control': 'public, max-age=1800, stale-while-revalidate=3600',
+          'X-Content-Source': 'Pyxie Community Gallery (https://pyxie.com.br/)',
+        });
+        return res.send(result.buffer);
+      }
+
+      if (result && result.redirectUrl) {
+        res.set('Cache-Control', 'public, max-age=900');
+        return res.redirect(302, result.redirectUrl);
+      }
+
+      const fallbackUrl = await this.resolveImageUrl(art);
       res.set('Cache-Control', 'public, max-age=900');
-      res.redirect(302, url);
+      res.redirect(302, fallbackUrl);
     });
 
     app.patch('/api/museum/art/:id', requireToken, (req, res) => {
