@@ -139,3 +139,4 @@ export default function CommandDetailModal({ command, onClose, lang = 'pt', t })
     </div>
   );
 }
+

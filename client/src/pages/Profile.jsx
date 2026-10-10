@@ -367,3 +367,4 @@ export default function Profile({ t, lang, userId }) {
     </div>
   );
 }
+

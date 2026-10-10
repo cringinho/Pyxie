@@ -125,3 +125,4 @@ export default function DiscordEmbedPreview({ command, lang = 'pt' }) {
     </div>
   );
 }
+

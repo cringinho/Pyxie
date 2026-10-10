@@ -141,3 +141,4 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
     </div>
   );
 }
+
