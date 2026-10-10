@@ -1,10 +1,8 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { getBalance, spendCoins } = require('../services/economy');
-const { endMarriage, getSpouseId } = require('../services/marriage');
-const { DIVORCE } = require('./commandNames');
-const { formatCoins, t } = require('../utils/i18n');
-
-const DIVORCE_COST = 500;
+const { getBalance, spendCoins } = require('../../../services/economy');
+const { endMarriage, getSpouseId, DIVORCE_COST } = require('../marriageManager');
+const { DIVORCE } = require('../../../commands/commandNames');
+const { formatCoins, t } = require('../../../utils/i18n');
 
 async function executeDivorce(source, reply) {
   const user = source.user || source.author;
@@ -15,19 +13,23 @@ async function executeDivorce(source, reply) {
   }
 
   if (getBalance(user.id) < DIVORCE_COST) {
-    await reply(t('divorce.insufficientCoins', source, {
-      cost: formatCoins(DIVORCE_COST, source),
-      balance: formatCoins(getBalance(user.id), source),
-    }));
+    await reply(
+      t('divorce.insufficientCoins', source, {
+        cost: formatCoins(DIVORCE_COST, source),
+        balance: formatCoins(getBalance(user.id), source),
+      })
+    );
     return;
   }
 
   const payment = spendCoins(user.id, DIVORCE_COST);
   if (!payment.spent) {
-    await reply(t('divorce.insufficientCoins', source, {
-      cost: formatCoins(DIVORCE_COST, source),
-      balance: formatCoins(getBalance(user.id), source),
-    }));
+    await reply(
+      t('divorce.insufficientCoins', source, {
+        cost: formatCoins(DIVORCE_COST, source),
+        balance: formatCoins(getBalance(user.id), source),
+      })
+    );
     return;
   }
 
@@ -36,11 +38,11 @@ async function executeDivorce(source, reply) {
 }
 
 module.exports = {
-  name: DIVORCE,
+  name: DIVORCE || 'py-divorce',
   aliases: ['divorce', 'divorcio', 'py-divorcio', 'py-divorce', 'separar'],
   DIVORCE_COST,
   data: new SlashCommandBuilder()
-    .setName(DIVORCE)
+    .setName(DIVORCE || 'py-divorce')
     .setDescription('End marriage for 500 coins.')
     .setDescriptionLocalizations({
       'pt-BR': 'Encerra seu casamento por 500 Moedinhas.',

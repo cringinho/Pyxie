@@ -38,6 +38,7 @@ module.exports = {
   EXPORT_MESSAGES: 'py-exportar',
   QUIZ: 'py-quiz',
   TERMS: 'py-terms',
+  CHILD: 'py-child',
 };
 
 

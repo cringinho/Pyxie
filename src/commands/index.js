@@ -8,8 +8,6 @@ const commands = [
   require('./daily'),
   require('./carteira'),
   require('./perfil'),
-  require('./casamento'),
-  require('./divorcio'),
   require('./ranking'),
   require('./economyconfig'),
   require('./setareconomia'),
