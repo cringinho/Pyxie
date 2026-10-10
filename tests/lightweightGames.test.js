@@ -168,7 +168,7 @@ const { t } = require('../src/utils/i18n');
 const bonusTimer = require('../src/services/bonusTimer');
 
 const activeProfessions = Object.keys(professionsDef);
-assert.equal(activeProfessions.length, 16, 'Devem existir 16 profissões no sistema.');
+assert.equal(activeProfessions.length, 22, 'Devem existir 22 profissões no sistema (16 convencionais + 6 mágicas).');
 
 for (const profKey of activeProfessions) {
   const games = PROFESSION_MINIGAMES[profKey];
@@ -305,17 +305,23 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
 
   // 14. Testes dos Geradores Autônomos de IA (Work Seeder com 16 Carreiras e Quiz Seeder)
   const workSeeder = require('../src/services/workSeederService');
-  assert.equal(workSeeder.PROFESSIONS.length, 16, 'Work Seeder deve ter exatamente 16 profissões.');
+  assert.equal(workSeeder.PROFESSIONS.length, 22, 'Work Seeder deve ter 22 profissões (16 convencionais + 6 mágicas).');
   assert.ok(workSeeder.PROFESSIONS.includes('dublador'), 'Work Seeder deve incluir dublador.');
   assert.ok(workSeeder.PROFESSIONS.includes('desenvolvedor_jogos'), 'Work Seeder deve incluir desenvolvedor_jogos.');
   assert.ok(workSeeder.PROFESSIONS.includes('psicologo'), 'Work Seeder deve incluir psicologo.');
   assert.ok(workSeeder.PROFESSIONS.includes('telemarketing'), 'Work Seeder deve incluir telemarketing.');
   assert.ok(workSeeder.PROFESSIONS.includes('animador_festa'), 'Work Seeder deve incluir animador_festa.');
   assert.ok(workSeeder.PROFESSIONS.includes('advogada'), 'Work Seeder deve incluir advogada.');
+  assert.ok(workSeeder.PROFESSIONS.includes('alquimista'), 'Work Seeder deve incluir alquimista.');
+  assert.ok(workSeeder.PROFESSIONS.includes('mago'), 'Work Seeder deve incluir mago.');
+  assert.ok(workSeeder.PROFESSIONS.includes('ferreiro'), 'Work Seeder deve incluir ferreiro.');
+  assert.ok(workSeeder.PROFESSIONS.includes('rei_rainha'), 'Work Seeder deve incluir rei_rainha.');
+  assert.ok(workSeeder.PROFESSIONS.includes('domador_feras'), 'Work Seeder deve incluir domador_feras.');
+  assert.ok(workSeeder.PROFESSIONS.includes('aniquilador_vegetais'), 'Work Seeder deve incluir aniquilador_vegetais.');
 
   const workStatus = workSeeder.getStatus();
-  assert.equal(workStatus.targetTotal, 1600, 'Work Seeder targetTotal deve ser 1600 (16 profissões x 100).');
-  assert.equal(Object.keys(workStatus.perProfession).length, 16, 'Work Seeder perProfession deve conter 16 profissões.');
+  assert.equal(workStatus.targetTotal, 2200, 'Work Seeder targetTotal deve ser 2200 (22 profissões x 100).');
+  assert.equal(Object.keys(workStatus.perProfession).length, 22, 'Work Seeder perProfession deve conter 22 profissões.');
 
   const quizStatus = quizSeeder.getStatus();
   assert.equal(quizStatus.targetTotal, 500, 'Quiz Seeder targetTotal deve ser 500.');

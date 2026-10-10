@@ -97,10 +97,46 @@ const CAREER_HIERARCHIES = {
     { level: 4, pt: 'Diretor de Espetáculos Infantis', en: 'Children\'s Show Director' },
   ],
   advogada: [
-    { level: 1, pt: 'Estagiária de Direito / Paralegal', en: 'Law Intern / Paralegal' },
-    { level: 2, pt: 'Advogada Júnior', en: 'Junior Associate Attorney' },
-    { level: 3, pt: 'Advogada Plena / Especialista', en: 'Senior Legal Counsel' },
-    { level: 4, pt: 'Sócia do Escritório / Desembargadora Honorária', en: 'Law Firm Partner / Managing Partner' },
+    { level: 1, pt: 'Estagiário(a) de Direito / Paralegal', en: 'Law Intern / Paralegal' },
+    { level: 2, pt: 'Advogado(a) Júnior', en: 'Junior Associate Attorney' },
+    { level: 3, pt: 'Advogado(a) Pleno(a) / Especialista', en: 'Senior Legal Counsel' },
+    { level: 4, pt: 'Sócio(a) do Escritório / Desembargador(a) Honorário(a)', en: 'Law Firm Partner / Managing Partner' },
+  ],
+  alquimista: [
+    { level: 1, pt: 'Alquimista Aprendiz', en: 'Apprentice Alchemist' },
+    { level: 2, pt: 'Manipulador(a) de Poções & Éter', en: 'Potion & Aether Crafter' },
+    { level: 3, pt: 'Mestre da Transmutação Elemental', en: 'Master of Elemental Transmutation' },
+    { level: 4, pt: 'Grão-Alquimista da Pedra Filosofal', en: 'Grand Alchemist of the Philosopher\'s Stone' },
+  ],
+  mago: [
+    { level: 1, pt: 'Mago(a) Aprendiz de Rituais', en: 'Apprentice Ritualist' },
+    { level: 2, pt: 'Invocador(a) Elemental', en: 'Elemental Evoker' },
+    { level: 3, pt: 'Conjurador(a) do Vazio Cósmico', en: 'Cosmic Void Conjurer' },
+    { level: 4, pt: 'Arquimago(a) Supremo(a) do Éter', en: 'Supreme Archmage of the Aether' },
+  ],
+  ferreiro: [
+    { level: 1, pt: 'Ferreiro(a) Aprendiz de Forja', en: 'Apprentice Blacksmith' },
+    { level: 2, pt: 'Armeiro(a) de Lâminas Medievais', en: 'Armorer of Medieval Blades' },
+    { level: 3, pt: 'Artífice de Mythril & Aço Místico', en: 'Mythril & Mystic Steel Artificer' },
+    { level: 4, pt: 'Mestre Forjador(a) de Armas Mitológicas', en: 'Master Smith of Mythological Relics' },
+  ],
+  rei_rainha: [
+    { level: 1, pt: 'Herdeiro(a) da Coroa & Regente', en: 'Crown Heir & Regent' },
+    { level: 2, pt: 'Monarca da Paz & Colheitas', en: 'Monarch of Peace & Harvests' },
+    { level: 3, pt: 'Rei/Rainha das Grandes Conquistas', en: 'Sovereign of Grand Conquests' },
+    { level: 4, pt: 'Imperador(a) Eterno(a) dos Reinos', en: 'Eternal Emperor of the Realms' },
+  ],
+  domador_feras: [
+    { level: 1, pt: 'Rastreador(a) de Criaturas Selvagens', en: 'Wild Creature Tracker' },
+    { level: 2, pt: 'Domador(a) de Feras Míticas', en: 'Mythic Beast Tamer' },
+    { level: 3, pt: 'Guardião(ã) de Dragões & Bestas Antigas', en: 'Warden of Ancient Dragons & Beasts' },
+    { level: 4, pt: 'Soberano(a) Primordial das Feras Lendárias', en: 'Primordial Sovereign of Legendary Beasts' },
+  ],
+  aniquilador_vegetais: [
+    { level: 1, pt: 'Desbravador(a) Anti-Clorofila', en: 'Anti-Chlorophyll Pioneer' },
+    { level: 2, pt: 'Ceifador(a) de Raízes & Tubérculos', en: 'Root & Tuber Reaper' },
+    { level: 3, pt: 'Exterminador(a) Botânico(a) Implacável', en: 'Relentless Botanical Exterminator' },
+    { level: 4, pt: 'Flagelo Supremo dos Reinos Vegetais', en: 'Supreme Scourge of the Plant Kingdom' },
   ],
 };
 

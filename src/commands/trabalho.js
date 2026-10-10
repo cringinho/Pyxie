@@ -1387,7 +1387,7 @@ const PROFESSION_MINIGAMES = {
     {
       level: 2,
       pt: {
-        scenario: '🏛️ **Audiência de Instrução e Julgamento!**\nDurante a oitiva de uma testemunha chave, a parte contrária faz uma pergunta capciosa e indutiva. Qual a atitude da advogada?',
+        scenario: '🏛️ **Audiência de Instrução e Julgamento!**\nDurante a oitiva de uma testemunha chave, a parte contrária faz uma pergunta capciosa e indutiva. Qual a atitude do(a) advogado(a)?',
         correct: 'Pela ordem, formular imediata impugnação requerendo que o magistrado indefira a pergunta',
         wrongs: [
           'Interromper a testemunha com gritos desproporcionais e bater na mesa',
@@ -1423,6 +1423,528 @@ const PROFESSION_MINIGAMES = {
           'Wait for a final unappealable declaratory judgment after standard trial',
           'Send an informal email complaint to the hospital reception desk',
           'Lodge a non-binding administrative memo with no stay order',
+        ],
+      },
+    },
+  ],
+
+  alquimista: [
+    {
+      level: 1,
+      pt: {
+        scenario: '⚗️ **Destilação de Éter Volátil!**\nDurante a destilação de uma infusão de pétalas estelares, a temperatura no alambique subiu abruptamente. O que fazer?',
+        correct: 'Reduzir a chama do atanor e ajustar o resfriamento por água na serpentina',
+        wrongs: [
+          'Tapar hermeticamente o topo da retorta sob pressão máxima',
+          'Jogar enxofre em pó diretamente dentro da caldeira fervente',
+          'Agitar o balão de vidro com as mãos desprotegidas',
+        ],
+      },
+      en: {
+        scenario: '⚗️ **Volatile Aether Distillation!**\nDuring the distillation of celestial petals, temperature in the alembic rises drastically. What is the immediate action?',
+        correct: 'Reduce the athanor flame and increase condensing water flow through the coil',
+        wrongs: [
+          'Hermetically seal the retort neck under peak vapor pressure',
+          'Toss raw powdered brimstone straight into the boiling chamber',
+          'Vigorously shake the fragile glass flask with bare hands',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '🧪 **Estabilização de Elixir Hermético!**\nO elixir de vitalidade começou a coagular prematuramente antes da adição da tintura dourada. Qual reagente neutraliza o precipitado?',
+        correct: 'Adicionar gotas de menstruo destilado de orvalho matinal em banho-maria brando',
+        wrongs: [
+          'Aquecer com fogo grego até a solução evaporar por completo',
+          'Misturar pó de chumbo oxidado para forçar a sedimentação',
+          'Despejar vinagre comercial impuro para quebrar o frasco',
+        ],
+      },
+      en: {
+        scenario: '🧪 **Hermetic Elixir Stabilization!**\nThe elixir of vitality begins coagulating prematurely before adding the gold tincture. Which reagent stabilizes the precipitate?',
+        correct: 'Incorporate drops of distilled morning dew menstruum in a gentle water bath',
+        wrongs: [
+          'Ignite with Greek fire until all sacred solvent evaporates',
+          'Mix oxidized raw lead dust to force toxic sludge settling',
+          'Pour unpurified vinegar to shatter the alchemical flask',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '✨ **Transmutação Elemental Metálica!**\nVocê está purificando mercúrio hermético para convertê-lo em prata solar. Qual a ordem correta das cores na grande obra?',
+        correct: 'Nigredo (decomposição negra), Albedo (purificação branca) e Citrinitas (maturação amarela)',
+        wrongs: [
+          'Começar pelo Rubedo vermelho e terminar em cinzas escuras sem queima',
+          'Ferver tudo sem separação até que os metais derretam a bigorna',
+          'Pular a fase de albedo e despejar óleo fervente em cadinho de barro',
+        ],
+      },
+      en: {
+        scenario: '✨ **Elemental Metal Transmutation!**\nYou are purifying hermetic quicksilver to transmute into solar silver. What is the correct sequence of stages in the Great Work?',
+        correct: 'Nigredo (black decay), Albedo (white cleansing), and Citrinitas (yellow ripening)',
+        wrongs: [
+          'Start immediately with red Rubedo and reduce all to dark ash',
+          'Boil blindly without separation until molten ore melts the bench',
+          'Skip the albedo stage and dump scalding pitch onto earthen clay',
+        ],
+      },
+    },
+    {
+      level: 4,
+      pt: {
+        scenario: '💎 **A Pedra Filosofal & Opus Magnum!**\nNa fase final do Rubedo, a quintessência atinge o clímax no atanor sagrado. Qual o passo decisivo para selar a Pedra Filosofal?',
+        correct: 'Fixar o espírito mercurial com o ouroboros hermético na proporção áurea de calor constante',
+        wrongs: [
+          'Quebrar o frasco hermético com um martelo antes da coagulação',
+          'Apagar o fogo com água salgada gelada e descartar os cristais',
+          'Expor a matéria vermelha diretamente ao ar poluído das forjas comuns',
+        ],
+      },
+      en: {
+        scenario: '💎 **The Philosopher\'s Stone & Opus Magnum!**\nIn the final Rubedo stage, quintessence reaches climax in the athanor. What is the decisive step to crystallize the Philosopher\'s Stone?',
+        correct: 'Fix the volatile mercurial spirit using hermetic ouroboros under constant golden-ratio heat',
+        wrongs: [
+          'Shatter the sealed vessel with a hammer before crystallization',
+          'Douse sacred flame with iced salt water and discard the rubies',
+          'Expose divine red stone directly to corrosive mundane furnace soot',
+        ],
+      },
+    },
+  ],
+
+  mago: [
+    {
+      level: 1,
+      pt: {
+        scenario: '🔮 **Canalização de Mana Inicial!**\nAo entoar o primeiro cântico no círculo rúnico, seu fluxo de mana oscila descontrolado. Como manter o foco estável?',
+        correct: 'Aterrar a mana através do cajado e regular a respiração rítmica com a runa central',
+        wrongs: [
+          'Liberar todo o reservatório de mana de uma só vez sem foco',
+          'Romper a linha de sal e giz do círculo protetor com os pés',
+          'Olhar diretamente para o vórtice arcano sem fechar os filtros',
+        ],
+      },
+      en: {
+        scenario: '🔮 **Initial Mana Channeling!**\nWhile chanting the first ritual verse within the runic circle, your mana stream wavers wildly. How do you stabilize focus?',
+        correct: 'Ground stray mana through your staff and synchronize rhythmic breathing with the central rune',
+        wrongs: [
+          'Release your entire arcane reservoir all at once with zero anchor',
+          'Kick away the chalk boundary and step outside the warding ring',
+          'Stare directly into the astral vortex without psychic shielding',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '⚡ **Invocação dos Quatro Elementos!**\nUm elemental de fogo instável ameaça consumir o santuário durante o ritual. Qual feitiço de abjuração neutraliza as labaredas sem criar explosão de vapor?',
+        correct: 'Conjurar um vácuo de ar supressor combinado com barreira de gelo perene',
+        wrongs: [
+          'Lançar uma rajada de vento forte para espalhar as fagulhas',
+          'Alimentar o fogo com pergaminhos arcanos e madeira seca',
+          'Inundar o salão com petróleo destilado sob alta pressão',
+        ],
+      },
+      en: {
+        scenario: '⚡ **Elemental Evocation Crisis!**\nAn erratic fire elemental threatens to incinerate the sanctuary. Which abjuration ward suppresses the inferno without steam blast?',
+        correct: 'Weave an air-suppressing vacuum sphere laced with an enduring permafrost barrier',
+        wrongs: [
+          'Cast a hurricane gale that scatters white-hot embers everywhere',
+          'Feed the flames with arcane scrolls and flammable dry spruce',
+          'Flood the sanctum with highly pressurized distilled lamp oil',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '🌌 **Fissura do Vazio Cósmico!**\nUm portal para o éter sideral abriu uma fenda no espaço-tempo. Como conter a atração gravitacional sem ser sugado?',
+        correct: 'Ancorar sigilos de geometria sagrada nos quatro cantos e tecer um feitiço de estase temporal',
+        wrongs: [
+          'Pular de cabeça dentro da fenda para tentar fechar por dentro',
+          'Tentar tapar o buraco negro dimensional com uma pedra comum',
+          'Canalizar magia de ilusão para fingir que a fenda não existe',
+        ],
+      },
+      en: {
+        scenario: '🌌 **Cosmic Void Rift!**\nA portal to deep astral ether tears open local space-time. How do you contain its gravitational singularity without getting pulled in?',
+        correct: 'Anchor sacred geometry sigils at four corners and weave a targeted chronomantic stasis field',
+        wrongs: [
+          'Leap headfirst into the singularity to push it shut from inside',
+          'Stuff a mundane granite boulder into the micro black hole',
+          'Cast minor illusion glamour pretending the tear does not exist',
+        ],
+      },
+    },
+    {
+      level: 4,
+      pt: {
+        scenario: '🌟 **Arquimagia Suprema & Domínio do Éter!**\nPara conjurar a Supernova Arcana sem esgotar a própria alma, qual técnica milenar os arquimagos empregam?',
+        correct: 'Sintonizar a centelha da alma com o fluxo cósmico das constelações primordiais como bateria externa',
+        wrongs: [
+          'Consumir a própria força vital até a parada cardiorrespiratória',
+          'Assinar um pacto cego com qualquer entidade astral desconhecida',
+          'Romper todos os canais de mana do corpo de forma irreversível',
+        ],
+      },
+      en: {
+        scenario: '🌟 **Supreme Archmagic & Aether Mastery!**\nTo cast an Arcane Supernova without draining your mortal soul, what ancient technique must a supreme archmage employ?',
+        correct: 'Harmonize your soul spark with celestial constellation currents to act as an external mana reservoir',
+        wrongs: [
+          'Burn your own vital life essence straight into cardiac arrest',
+          'Blindly sign away your eternal soul to unknown astral demons',
+          'Shatter all internal mana meridians irreversibly for quick surge',
+        ],
+      },
+    },
+  ],
+
+  ferreiro: [
+    {
+      level: 1,
+      pt: {
+        scenario: '⚒️ **Têmpera de Lâmina Medieval!**\nVocê está forjando uma espada de aço carbono da Alta Idade Média. No momento da têmpera, qual a cor ideal da lâmina ao sair da forja antes do banho de óleo?',
+        correct: 'Vermelho-cereja brilhante (aprox. 800°C), garantindo dureza sem fragilidade',
+        wrongs: [
+          'Branco incandescente derretendo e soltando faíscas destrutivas',
+          'Preto totalmente frio e sem aquecimento uniforme',
+          'Amarelo brilhante prestes a virar poça de metal líquido',
+        ],
+      },
+      en: {
+        scenario: '⚒️ **Medieval Blade Quenching!**\nYou are crafting a high-carbon steel longsword in the High Middle Ages. What is the ideal incandescent glow before plunging into oil?',
+        correct: 'Bright cherry red (around 800°C), ensuring maximum hardness without brittleness',
+        wrongs: [
+          'Incandescent blinding white sparking violently and burning the edge',
+          'Completely black and cold with zero uniform thermal retention',
+          'Blistering pale yellow on the verge of collapsing into molten slag',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '🐉 **Forjando com Escamas de Dragão!**\nUm cavaleiro trouxe escamas de dragão vermelho para forjar um peitoral resistente a fogo. Qual o segredo para moldar matéria draconiana na bigorna?',
+        correct: 'Aquecer a bigorna com brasa encantada e entrelaçar rebites de ferro frio sob martelada rítmica',
+        wrongs: [
+          'Bater com marreta enferrujada até esmagar as escamas em pó',
+          'Jogar água gelada diretamente nas escamas quentes para quebrar a couraça',
+          'Colar as escamas na armadura usando resina de pinheiro comum',
+        ],
+      },
+      en: {
+        scenario: '🐉 **Forging with Dragon Scales!**\nA champion brings red dragon scales to forge a fireproof breastplate. How do you shape draconian plates on the anvil without shattering them?',
+        correct: 'Preheat anvil with enchanted embers and bind cold-forged iron rivets under synchronized hammering',
+        wrongs: [
+          'Smash blindly with a rusted sledgehammer until scales turn to powder',
+          'Douse white-hot dragon scales with freezing well water to crack them',
+          'Glue scales onto mundane armor plates using ordinary tree sap',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '🌌 **Forja de Mythril & Aço Místico!**\nVocê foi incumbido de forjar uma lança rúnica inspirada na lendária Gungnir. O Mythril resiste ao fogo comum do carvão. O que usar para atingir o ponto de fusão?',
+        correct: 'Acionar os foles duplos com carvão de carvalho sagrado e alimentar a chama com fagulhas de meteorito',
+        wrongs: [
+          'Soprar na brasa com a boca até ficar sem fôlego',
+          'Misturar areia de praia comum para esfriar a forja',
+          'Substituir o mythril por latão pintado de prateado',
+        ],
+      },
+      en: {
+        scenario: '🌌 **Mythril & Mystic Steel Forging!**\nYou are tasked with forging a runic spear inspired by legendary Gungnir. Mythril resists normal coal fires. How do you reach working temperature?',
+        correct: 'Operate dual bellows stoked with sacred oak charcoal and feed embers with meteorite spark dust',
+        wrongs: [
+          'Blow lightly onto cold coals with your mouth until out of breath',
+          'Throw coarse beach sand into the crucible to choke furnace heat',
+          'Scam the customer by swapping mythril with cheap silver-painted brass',
+        ],
+      },
+    },
+    {
+      level: 4,
+      pt: {
+        scenario: '🗡️ **A Forja de Relíquias Mitológicas (Excalibur / Mjölnir)!**\nVocê está forjando uma relíquia divina inquebrável capaz de canalizar trovões e cortar pedras. Qual o ritual supremo de acabamento e têmpera?',
+        correct: 'Dobrar o núcleo de aço mil vezes com runas arcanas e temperar em lágrimas celestes com bênção divina',
+        wrongs: [
+          'Polir com cera de chão comum e deixar secar no sereno',
+          'Bater a lâmina com pedregulho até que o gume fique torto',
+          'Deixar a espada esquecida na chuva para enferrujar propositalmente',
+        ],
+      },
+      en: {
+        scenario: '🗡️ **Forging Mythological Relics (Excalibur / Mjölnir)!**\nYou are forging an unbreakable divine artifact capable of splitting bedrock and channeling lightning. What is the ultimate finishing rite?',
+        correct: 'Fold the steel core a thousand times etched with ancient runes and quench in blessed celestial water',
+        wrongs: [
+          'Buff with mundane shoe polish and leave exposed in the damp fog',
+          'Pound the master blade with a river rock until edges warp crooked',
+          'Leave the legendary blade out in the acid rain to intentionally rust',
+        ],
+      },
+    },
+  ],
+
+  rei_rainha: [
+    {
+      level: 1,
+      pt: {
+        scenario: '🌾 **Crise de Seca & Gestão de Celeiros no Império Romano!**\nA colheita de trigo falhou em três províncias e a plebe protesta nas ruas de Roma. Qual decreto imperial resolve a crise sem falir o tesouro?',
+        correct: 'Abrir os celeiros públicos da Anona imperial, tabelar o preço do pão e importar grãos do Egito',
+        wrongs: [
+          'Ordenar que a guarda imperial confisque os últimos grãos das famílias pobres',
+          'Fugir da capital em segredo e passar as férias numa ilha isolada',
+          'Aumentar os impostos sobre a farinha em 400% durante a fome',
+        ],
+      },
+      en: {
+        scenario: '🌾 **Drought & Granary Crisis in the Roman Empire!**\nWheat crops failed across three provinces and crowds gather in Roman streets. What imperial decree stabilizes the realm without bankrupting the treasury?',
+        correct: 'Release reserve grain from the imperial Annona, cap bread prices, and fast-track shipments from Egypt',
+        wrongs: [
+          'Dispatch praetorian guards to seize the final crumbs from peasant homes',
+          'Flee the imperial palace in secret to vacation on a secluded resort island',
+          'Quadruple flour taxes by 400% while citizens starve in the forums',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '👑 **Diplomacia & Alianças Dinásticas no Império Persa e Bizâncio!**\nDois reinos vizinhos ameaçam formar uma coalizão hostil contra suas fronteiras. Como o soberano assegura a paz duradoura?',
+        correct: 'Propor um tratado de comércio bilateral nas rotas de seda, selado com casamento dinástico e isenção alfandegária',
+        wrongs: [
+          'Executar os embaixadores estrangeiros e pendurar seus elmos nas muralhas',
+          'Declarar guerra imediata a ambos os impérios sem convocar o exército',
+          'Entregar metade das terras do seu próprio reino como suborno desesperado',
+        ],
+      },
+      en: {
+        scenario: '👑 **Diplomacy & Dynastic Treaties in Byzantine & Persian Realms!**\nTwo neighboring kingdoms threaten a hostile coalition on your borders. How does a wise sovereign secure enduring peace?',
+        correct: 'Offer a bilateral Silk Road trade treaty cemented by dynastic marriage and mutual customs exemptions',
+        wrongs: [
+          'Execute the foreign envoys and hang their diplomatic banners in disgrace',
+          'Declare immediate offensive two-front war without mobilizing soldiers',
+          'Surrender half your homeland provinces unconditionally as frantic bribe',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '🛡️ **Cerco Militar & Logística na Dinastia Han!**\nUma horda invasora montada cerca a fortaleza da fronteira e corta a linha de água potável. Qual a estratégia militar vitoriosa do monarca?',
+        correct: 'Construir contra-trincheiras internas, cavar poços artesianos no pátio e lançar contra-ataque noturno de cavalaria leve',
+        wrongs: [
+          'Abrir os portões da fortaleza e render todo o exército sem lutar',
+          'Beber a água envenenada do fosso externo para economizar tempo',
+          'Ordenar que os arqueiros disparem todas as flechas contra o céu vazio',
+        ],
+      },
+      en: {
+        scenario: '🛡️ **Siege Warfare & Logistics under the Han Dynasty!**\nA nomadic steppe host besieges your border fortress, cutting off the aqueduct supply. What victorious strategy saves the garrison?',
+        correct: 'Build inner defensive counter-trenches, sink courtyard artesian wells, and launch a night cavalry sally',
+        wrongs: [
+          'Swing open the citadel iron gates and surrender the army unconditionally',
+          'Command troops to drink stagnant poisoned moat water to save time',
+          'Order archers to waste their remaining quiver arrows firing blindly into the sky',
+        ],
+      },
+    },
+    {
+      level: 4,
+      pt: {
+        scenario: '🏛️ **A Idade de Ouro & Edito da Soberania Universal!**\nApós décadas de guerras, o império atinge a paz total. Qual medida consagra o seu reinado na história como um monarca lendário?',
+        correct: 'Promulgar um código de leis justas, fundar bibliotecas imperiais, financiar artes e garantir previdência aos veteranos',
+        wrongs: [
+          'Construir estátuas de ouro maciço de si mesmo e proibir que o povo leia livros',
+          'Dissolver todas as escolas e transformar as academias em prisões privadas',
+          'Gastar todo o tesouro imperial em fogos de artifício em uma única noite',
+        ],
+      },
+      en: {
+        scenario: '🏛️ **The Golden Age & Decree of Universal Sovereignty!**\nFollowing decades of triumph, peace reigns across all borders. What imperial enactment enshrines your legacy as an immortal ruler?',
+        correct: 'Codify equitable civil laws, establish grand academies, patronize arts, and guarantee veteran pensions',
+        wrongs: [
+          'Melt the state reserve into gigantic self-portraits and ban public literacy',
+          'Abolish scientific libraries and convert scholastic halls into dungeons',
+          'Squander every single coin in the treasury on single-night fireworks display',
+        ],
+      },
+    },
+  ],
+
+  domador_feras: [
+    {
+      level: 1,
+      pt: {
+        scenario: '🐺 **Pacificação de Lobos-cinzentos & Ursos Selvagens!**\nUma alcatéia de lobos-cinzentos cerca seu acampamento na floresta nevada. Qual a conduta etológica correta para evitar o ataque e iniciar a aproximação?',
+        correct: 'Manter postura ereta sem encarar nos olhos, emitir sinais de calma com baixa energia e ofertar carne fresca à distância',
+        wrongs: [
+          'Sair correndo de costas aos gritos agitando os braços desordenadamente',
+          'Pular em cima do lobo alfa e tentar morder o focinho dele',
+          'Fingir de morto deitado no chão com bifes amarrados no pescoço',
+        ],
+      },
+      en: {
+        scenario: '🐺 **Calming Wild Gray Wolves & Grizzly Bears!**\nA pack of wild gray wolves corners your outpost in a snowy forest. What sound ethological conduct prevents attack and earns trust?',
+        correct: 'Stand upright without aggressive direct eye lock, project calm grounding energy, and offer fresh meat at distance',
+        wrongs: [
+          'Turn your back, scream frantically, and run flailing into the dark trees',
+          'Pounce onto the alpha wolf and attempt to bite its snout in dominance',
+          'Lie flat on the snow pretending to be dead with raw steaks tied to your collar',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '🌊 **Domando o Kelpie Céltico & Criaturas Marinhas!**\nNas margens de um lago escocês enevoado, um corcel negro aquático (Kelpie) tenta seduzi-lo para montá-lo e afogá-lo. Como domá-lo segundo o mito céltico?',
+        correct: 'Lançar um freio e cabeçada gravados com cruz e prata antes de subir, anulando a magia de metamorfose',
+        wrongs: [
+          'Montar no pelo molhado dele imediatamente e pedir para ele nadar no fundo',
+          'Oferecer capim seco envenenado enquanto mergulha sem fôlego no lago',
+          'Tentar puxar o rabo do cavalo d\'água com as duas mãos desprotegidas',
+        ],
+      },
+      en: {
+        scenario: '🌊 **Taming the Celtic Kelpie & Marine Beasts!**\nBy a foggy Scottish loch, a sleek water horse (Kelpie) lures travelers to mount its sticky back and drown. How do you tame it per Celtic lore?',
+        correct: 'Cast a silver-inlaid bridle bearing protective marks over its head before mounting, mastering its shape-shifting curse',
+        wrongs: [
+          'Hop bareback onto its dripping flank and urge it to dive deep underwater',
+          'Feed it rotten straw while holding your breath at the muddy bottom of the loch',
+          'Grab the water demon horse by the tail with bare hands and try to drag it',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '🔥 **Confronto com Feras Nórdicas & Gregas (Cérbero e Fenrir)!**\nVocê está diante do cão tricéfalo Cérbero guardando o portal infernal. Como passar por ele e acalmá-lo como os heróis mitológicos fizeram?',
+        correct: 'Tocar música suave com lira mágica para adormecer as três cabeças e ofertar bolo de mel aromatizado',
+        wrongs: [
+          'Chutar as três cabeças ao mesmo tempo pulando com botas de ferro',
+          'Gritar ordens em latim enquanto joga pedras nas mandíbulas em chamas',
+          'Colocar uma coleira de gato com guizo no pescoço central de Cérbero',
+        ],
+      },
+      en: {
+        scenario: '🔥 **Greek & Norse Legend Taming (Cerberus & Fenrir)!**\nYou stand before three-headed hound Cerberus guarding the gate of Tartarus. How do you pacify all three heads as mythological heroes did?',
+        correct: 'Play sweet lulling melodies on an enchanted lyre to put the heads to sleep, offering soporific honey cakes',
+        wrongs: [
+          'Try to kick all three snapping jaws simultaneously in heavy steel boots',
+          'Scream Latin commands while chucking pebbles into the beast\'s flaming throats',
+          'Fasten an ordinary kitten collar with a jingling bell around Cerberus\'s neck',
+        ],
+      },
+    },
+    {
+      level: 4,
+      pt: {
+        scenario: '🐉 **Vínculo Sagrado com Dragões Arcanos & Leviatã Primordial!**\nNo topo da montanha dos ventos, um colossal dragão ancião desperta. Como o mestre dos domadores sela o pacto eterno de companheirismo?',
+        correct: 'Harmonizar os batimentos cardíacos com a pulsação draconiana através do olhar de respeito mútuo e troca de sopro',
+        wrongs: [
+          'Acertar o olho do dragão com uma flecha de brinquedo para chamar atenção',
+          'Tentar puxar as asas gigantes do dragão com uma corda de varal comum',
+          'Usar um spray de pimenta caseiro para irritar as ventas de fogo do dragão',
+        ],
+      },
+      en: {
+        scenario: '🐉 **Sacred Pact with Primordial Dragons & Sea Leviathans!**\nAtop the peak of storms, an ancient winged dragon awakens. How does a grand beastmaster forge an eternal bond of companionship?',
+        correct: 'Harmonize your soul rhythm with the dragon\'s core pulse through shared breath and unflinching mutual sovereign respect',
+        wrongs: [
+          'Shoot the colossal wyrm in the eye with a toy suction cup arrow to get its attention',
+          'Try to tie down the dragon\'s massive wings using an ordinary backyard clothesline',
+          'Spray household pepper spray directly into the nostrils of an ancient fire breather',
+        ],
+      },
+    },
+  ],
+
+  aniquilador_vegetais: [
+    {
+      level: 1,
+      pt: {
+        scenario: '🥦 **Anatomia Vegetal & O Ódio à Clorofila!**\nVocê está planejando sabotar uma horta inteira de brócolis e alfaces. Qual estrutura celular vegetal é responsável pela fotossíntese que você tanto detesta?',
+        correct: 'Os cloroplastos ricos em clorofila, que captam luz solar nos tecidos foliares',
+        wrongs: [
+          'As mitocôndrias presentes nas células musculares animais',
+          'O sangue venoso que circula pelas artérias dos tubérculos',
+          'O cérebro pensante que planeja os ataques das folhas de alface',
+        ],
+      },
+      en: {
+        scenario: '🥦 **Plant Anatomy & The Deep Hatred of Chlorophyll!**\nYou plan to obliterate an entire plot of foul broccoli and lettuce. Which cellular organelle produces the photosynthesis you despise so much?',
+        correct: 'Chloroplasts packed with green chlorophyll pigments capturing photons in leaf mesophyll',
+        wrongs: [
+          'Mitochondria found inside active animal muscle tissues',
+          'The venous bloodstream flowing through tuber arteries',
+          'The conscious thinking brain that schemes malicious lettuce plots',
+        ],
+      },
+    },
+    {
+      level: 2,
+      pt: {
+        scenario: '🥔 **Solanáceas Tóxicas & Alcaloides Perigosos!**\nUm fazendeiro tentou esconder batatas no subsolo. Como o exterminador botânico identifica que um tubérculo criou a perigosa toxina solanina?',
+        correct: 'Casca esverdeada pelo contato com a luz e brotação ativa rica em alcaloides tóxicos',
+        wrongs: [
+          'A batata começa a latir alto quando você se aproxima da despensa',
+          'Ela fica transparente como água cristalina e derrete ao sol',
+          'A batata ganha asas e sai voando pelo telhado da cozinha',
+        ],
+      },
+      en: {
+        scenario: '🥔 **Toxic Solanaceae & Deadly Alkaloids!**\nA peasant tried hoarding underground potatoes. How does a botanical destroyer confirm the tuber has concentrated dangerous solanine toxin?',
+        correct: 'Greenish skin discoloration from light exposure paired with active sprout eyes high in glycoalkaloids',
+        wrongs: [
+          'The potato starts barking loudly whenever you approach the pantry',
+          'It turns completely translucent like clear spring water and evaporates',
+          'The raw potato sprouts feathered wings and flies away through the chimney',
+        ],
+      },
+    },
+    {
+      level: 3,
+      pt: {
+        scenario: '🌾 **Xilema, Floema & Ceifa Implacável de Raízes!**\nPara erradicar um campo rebelde de cenouras e beterrabas de raiz pivotante profunda, qual tecido condutor vegetal deve ser cortado para interromper a seiva elaborada?',
+        correct: 'O floema, que transporta açúcares e nutrientes fotossintéticos das folhas para a raiz',
+        wrongs: [
+          'O cordão umbilical que liga o legume à terra',
+          'O nervo ciático que comanda os movimentos da couve-flor',
+          'As escamas externas que protegem a cenoura de mordidas de tubarão',
+        ],
+      },
+      en: {
+        scenario: '🌾 **Xylem, Phloem & Relentless Root Decimation!**\nTo wipe out a deep taproot crop of stubborn carrots and beets, which vascular plant tissue must be severed to starve the roots of sugars?',
+        correct: 'The phloem, which translocates photosynthesized sugars and nutrients downward from leaves',
+        wrongs: [
+          'The umbilical cord that attaches the turnip directly to planet core',
+          'The sciatic nerve that governs voluntary cauliflower reflexes',
+          'The dorsal shark scales protecting baby carrots from aquatic bites',
+        ],
+      },
+    },
+    {
+      level: 4,
+      pt: {
+        scenario: '🔥 **O Golpe de Misericórdia nos Vegetais do Planeta!**\nVocê está prestes a purificar uma floresta de vegetais com sua prensa trituradora e dessecação total. O que torna a celulose e a lignina tão resistentes e como aniquilá-las?',
+        correct: 'Polímeros estruturais de glicose e anéis aromáticos complexos, quebrados por hidrólise enzimática extrema e calor intenso',
+        wrongs: [
+          'Elas são feitas de aço inoxidável importado e só quebram com dinamite atômica',
+          'Vegetais não têm celulose, são compostos puramente de gelatina e algodão',
+          'Basta pedir com educação para os vegetais irem embora da galáxia',
+        ],
+      },
+      en: {
+        scenario: '🔥 **The Final Cleansing of Earth\'s Plant Kingdom!**\nYou are about to unleash total mechanical shredding and desiccation upon every leafy fiend. What makes cellulose and lignin tough, and how do you destroy them?',
+        correct: 'Complex glucose polymers and cross-linked aromatic matrices, disintegrated by extreme thermochemical hydrolysis',
+        wrongs: [
+          'Vegetables are forged from hardened titanium and only explode under antimatter',
+          'Plants contain zero cellulose and consist strictly of cotton candy fluff',
+          'You just have to ask the vegetables politely to leave the solar system',
         ],
       },
     },

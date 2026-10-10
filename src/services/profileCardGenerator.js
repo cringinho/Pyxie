@@ -747,3 +747,4 @@ async function generateProfileCard({ targetUser, guild, source = null, client = 
 module.exports = {
   generateProfileCard,
 };
+

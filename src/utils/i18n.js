@@ -501,6 +501,18 @@ const TRANSLATIONS = {
       "switchCost": "❌ Trocar de profissão custa **{cost}**. Seu saldo é **{balance}**.",
       "freeSuccess": "✅ Sua profissão agora é **{profession}**. Essa primeira escolha foi gratuita!",
       "paidSuccess": "✅ Sua profissão agora é **{profession}**. Foram cobradas **{cost}**.",
+      "insufficientBeans": "❌ Você precisa de **{cost} 🌱 Feijões Mágicos** para desbloquear esta vocação arcana! Seu saldo: **{balance} 🌱**.",
+      "unlockedMagicSuccess": "✨ **Vocação Arcana Desbloqueada!** Você gastou **{cost} 🌱 Feijões Mágicos** e agora é oficialmente um(a) **{profession}**!",
+      "embedTitle": "🏛️  ✦  Guia de Profissões & Vocações da Pyxie",
+      "embedDesc": "Escolha o seu caminho no reino! Carreiras convencionais custam moedinhas para troca, enquanto vocações místicas arcanas requerem **Feijões Mágicos** 🌱 para desbloqueio vitalício.",
+      "currentProfession": "💼 Carreira Atual",
+      "none": "Nenhuma (Escolha uma abaixo!)",
+      "standardCareers": "💼 Carreiras Convencionais (16)",
+      "magicCareers": "✨ Vocações Mágicas Arcanas (6)",
+      "selectPlaceholder": "Selecione uma profissão ou vocação...",
+      "beanCostTag": "Custa {cost} 🌱 Feijões Mágicos",
+      "unlockedTag": "Desbloqueada",
+      "userBalanceField": "🪙 Moedas: {coins}  |  🌱 Feijões: {beans}",
       "invalid": "❌ Escolha uma profissão válida: {list}.",
       "labels": {
         "programador": "Programador(a)",
@@ -523,7 +535,12 @@ const TRANSLATIONS = {
         "psicologo": "Psicólogo(a)",
         "telemarketing": "Operador(a) de Telemarketing",
         "animador_festa": "Animador(a) de Festa",
-        "advogada": "Advogada"
+        "advogada": "Advogado(a)",
+        "mago": "Mago(a)",
+        "ferreiro": "Ferreiro(a)",
+        "rei_rainha": "Rei / Rainha",
+        "domador_feras": "Domador(a) de Feras",
+        "aniquilador_vegetais": "Aniquilador(a) de Vegetais"
       }
     },
     "shop": {
@@ -1135,6 +1152,18 @@ const TRANSLATIONS = {
       "switchCost": "❌ Changing profession costs **{cost}**. Your balance is **{balance}**.",
       "freeSuccess": "✅ Your profession is now **{profession}**. This first choice was free!",
       "paidSuccess": "✅ Your profession is now **{profession}**. **{cost}** was charged.",
+      "insufficientBeans": "❌ You need **{cost} 🌱 Magic Beans** to unlock this arcane calling! Your balance: **{balance} 🌱**.",
+      "unlockedMagicSuccess": "✨ **Arcane Calling Unlocked!** You spent **{cost} 🌱 Magic Beans** and are now officially a **{profession}**!",
+      "embedTitle": "🏛️  ✦  Pyxie's Guide to Careers & Callings",
+      "embedDesc": "Choose your path in the realm! Standard careers cost coins to switch, while arcane callings require **Magic Beans** 🌱 for lifetime unlock.",
+      "currentProfession": "💼 Current Career",
+      "none": "None (Choose one below!)",
+      "standardCareers": "💼 Standard Careers (16)",
+      "magicCareers": "✨ Arcane Magical Callings (6)",
+      "selectPlaceholder": "Select a profession or calling...",
+      "beanCostTag": "Costs {cost} 🌱 Magic Beans",
+      "unlockedTag": "Unlocked",
+      "userBalanceField": "🪙 Coins: {coins}  |  🌱 Beans: {beans}",
       "invalid": "❌ Choose a valid profession: {list}.",
       "labels": {
         "programador": "Programmer",
@@ -1157,7 +1186,12 @@ const TRANSLATIONS = {
         "psicologo": "Psychologist",
         "telemarketing": "Call Center Operator",
         "animador_festa": "Party Entertainer",
-        "advogada": "Attorney / Lawyer"
+        "advogada": "Attorney / Lawyer",
+        "mago": "Mage / Wizard",
+        "ferreiro": "Blacksmith",
+        "rei_rainha": "King / Queen",
+        "domador_feras": "Beast Tamer",
+        "aniquilador_vegetais": "Vegetable Slayer"
       }
     },
     "shop": {

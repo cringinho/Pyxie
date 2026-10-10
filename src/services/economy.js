@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { getEconomyConfig } = require('./database');
+const professions = require('./professions');
 
 const economyFile = path.join(__dirname, '..', '..', 'data', 'economy.json');
 const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
@@ -116,6 +117,7 @@ function normalizeAccount(account) {
     equippedTitle: acc.equippedTitle || null,
     themes: Array.isArray(acc.themes) ? acc.themes : ['default'],
     equippedTheme: acc.equippedTheme || 'default',
+    unlockedProfessions: Array.isArray(acc.unlockedProfessions) ? acc.unlockedProfessions : [],
     bio: typeof acc.bio === 'string' ? acc.bio.trim().slice(0, 150) : null,
   };
 }
@@ -389,6 +391,45 @@ function setProfession(userId, profession, cost = 50) {
   const account = getUserAccount(userId);
   const hasProfession = Boolean(account.profession);
   if (account.profession === profession) return { changed: false, reason: 'same', balance: account.coins, account };
+
+  const profDef = professions[profession];
+  const isMagic = Boolean(profDef?.isMagic);
+  const beanCost = isMagic ? (profDef.beanCost || 1) : 0;
+  const unlocked = Array.isArray(account.unlockedProfessions) && account.unlockedProfessions.includes(profession);
+
+  // Se for profissão mágica e ainda não estiver desbloqueada pelo usuário
+  if (isMagic && !unlocked) {
+    if (account.magicBeans < beanCost) {
+      return {
+        changed: false,
+        reason: 'insufficient_beans',
+        beanCost,
+        balanceBeans: account.magicBeans,
+        balance: account.coins,
+        account,
+      };
+    }
+
+    const updated = updateUserAccount(userId, (current) => {
+      current.magicBeans = Math.max(0, (current.magicBeans || 0) - beanCost);
+      current.unlockedProfessions = Array.isArray(current.unlockedProfessions)
+        ? [...current.unlockedProfessions, profession]
+        : [profession];
+      current.profession = profession;
+    });
+
+    return {
+      changed: true,
+      unlockedWithBeans: true,
+      beanCost,
+      charged: 0,
+      remainingBeans: updated.magicBeans,
+      balance: updated.coins,
+      account: updated,
+    };
+  }
+
+  // Profissão comum OU profissão mágica previamente desbloqueada
   if (hasProfession && account.coins < cost) return { changed: false, reason: 'insufficient', balance: account.coins, account };
 
   const charged = hasProfession ? cost : 0;
@@ -403,6 +444,11 @@ function setProfession(userId, profession, cost = 50) {
     balance: updated.coins,
     account: updated,
   };
+}
+
+function getUserUnlockedProfessions(userId) {
+  const account = getUserAccount(userId);
+  return account.unlockedProfessions || [];
 }
 
 function isTestUser(userId) {
@@ -708,6 +754,7 @@ module.exports = {
   equipTheme,
   getWorkStatus,
   setProfession,
+  getUserUnlockedProfessions,
   startWork,
   finishWork,
   getQuizStatus,

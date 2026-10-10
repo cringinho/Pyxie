@@ -68,3 +68,4 @@ runTests().catch((err) => {
   console.error('❌ Falha nos testes de perfil:', err);
   process.exit(1);
 });
+

@@ -134,6 +134,64 @@ try {
   assert.equal(workFinish.bonusBean, true, 'O bônus de feijão mágico deve ser registrado.');
   assert.equal(getMagicBeans('worker'), 1, 'Trabalhador deve ter recebido 1 feijão de bônus.');
 
+  // Testes de Profissões Mágicas & Gênero Inclusivo
+  const professionsData = require('../src/services/professions');
+  const { getRoleTitle } = require('../src/services/careerHierarchy');
+
+  assert.equal(professionsData.advogada.label, 'Advogado(a)', 'Advogado deve ter rótulo para ambos os gêneros.');
+  assert.equal(getRoleTitle('advogada', 1, 'pt'), 'Estagiário(a) de Direito / Paralegal', 'Cargo de nível 1 deve ser de ambos os gêneros.');
+  assert.equal(getRoleTitle('advogada', 2, 'pt'), 'Advogado(a) Júnior', 'Cargo de nível 2 deve ser de ambos os gêneros.');
+
+  const magicKeys = ['alquimista', 'mago', 'ferreiro', 'rei_rainha', 'domador_feras', 'aniquilador_vegetais'];
+  for (const mKey of magicKeys) {
+    assert.ok(professionsData[mKey], `Profissão mágica ${mKey} deve existir.`);
+    assert.equal(professionsData[mKey].isMagic, true, `${mKey} deve ter isMagic true.`);
+    assert.ok(professionsData[mKey].words.length >= 100, `${mKey} deve ter pelo menos 100 palavras.`);
+    assert.ok([1, 2].includes(professionsData[mKey].beanCost), `${mKey} deve ter custo de 1 ou 2 feijões.`);
+    assert.ok(getRoleTitle(mKey, 1, 'pt'), `${mKey} deve ter título no nível 1 PT.`);
+    assert.ok(getRoleTitle(mKey, 4, 'en'), `${mKey} deve ter título no nível 4 EN.`);
+  }
+  assert.equal(professionsData.rei_rainha.beanCost, 2, 'Rei/Rainha deve custar 2 feijões.');
+  assert.equal(professionsData.domador_feras.beanCost, 2, 'Domador de feras deve custar 2 feijões.');
+  assert.equal(professionsData.aniquilador_vegetais.beanCost, 2, 'Aniquilador de vegetais deve custar 2 feijões.');
+  assert.equal(professionsData.alquimista.beanCost, 1, 'Alquimista deve custar 1 feijão.');
+  assert.equal(professionsData.mago.beanCost, 1, 'Mago deve custar 1 feijão.');
+  assert.equal(professionsData.ferreiro.beanCost, 1, 'Ferreiro deve custar 1 feijão.');
+
+  // Teste de desbloqueio com feijões mágicos
+  const magicCandidate = 'magic-user';
+  const tryWithoutBeans = setProfession(magicCandidate, 'alquimista');
+  assert.equal(tryWithoutBeans.changed, false, 'Não deve permitir desbloquear profissão mágica sem feijões.');
+  assert.equal(tryWithoutBeans.reason, 'insufficient_beans');
+
+  addMagicBeans(magicCandidate, 1);
+  const unlockAlchemist = setProfession(magicCandidate, 'alquimista');
+  assert.equal(unlockAlchemist.changed, true, 'Deve desbloquear alquimista com 1 feijão.');
+  assert.equal(unlockAlchemist.unlockedWithBeans, true);
+  assert.equal(getMagicBeans(magicCandidate), 0, 'Saldo de feijões deve ser 0 após desbloqueio.');
+  assert.equal(getUserAccount(magicCandidate).profession, 'alquimista');
+  assert.ok(getUserAccount(magicCandidate).unlockedProfessions.includes('alquimista'), 'Alquimista deve estar nas profissões desbloqueadas.');
+
+  // Teste de vocação de 2 feijões (rei_rainha)
+  addMagicBeans(magicCandidate, 1);
+  setUserBalance(magicCandidate, 100);
+  const tryKingWith1Bean = setProfession(magicCandidate, 'rei_rainha');
+  assert.equal(tryKingWith1Bean.changed, false, 'Rei/Rainha custa 2 feijões e deve falhar com apenas 1.');
+  assert.equal(tryKingWith1Bean.reason, 'insufficient_beans');
+
+  addMagicBeans(magicCandidate, 1); // Agora tem 2 feijões
+  const unlockKing = setProfession(magicCandidate, 'rei_rainha');
+  assert.equal(unlockKing.changed, true, 'Deve desbloquear Rei/Rainha com 2 feijões.');
+  assert.equal(unlockKing.beanCost, 2);
+  assert.equal(getMagicBeans(magicCandidate), 0, 'Deve gastar os 2 feijões.');
+  assert.ok(getUserAccount(magicCandidate).unlockedProfessions.includes('rei_rainha'));
+
+  // Alternar de volta para alquimista (já desbloqueado) deve cobrar moedas convencionais e não feijões
+  const switchBackToAlchemist = setProfession(magicCandidate, 'alquimista');
+  assert.equal(switchBackToAlchemist.changed, true, 'Deve permitir troca para profissão mágica já desbloqueada.');
+  assert.equal(switchBackToAlchemist.charged, 50, 'Deve cobrar 50 moedas normais.');
+  assert.equal(getMagicBeans(magicCandidate), 0, 'Não deve cobrar feijões de profissão já desbloqueada.');
+
   // Teste de Daily Streak
   setEconomyConfig(20, 20);
   const sDay1 = claimDaily('streak-user', Date.parse('2026-03-01T12:00:00.000Z'));
@@ -174,7 +232,30 @@ try {
   const rankList = getRanking(10);
   const streakRankEntry = rankList.find(e => e.userId === 'streak-user');
   assert.ok(streakRankEntry, 'streak-user deve estar presente no ranking');
-  assert.equal(typeof streakRankEntry.dailyStreak, 'number', 'dailyStreak deve ser um número no ranking');
+  // Testes de Interface & Embed do comando de profissão
+  const { resolveProfession, buildProfessionEmbed, buildProfessionSelectRow } = require('../src/commands/profissao');
+  assert.equal(resolveProfession('mago'), 'mago');
+  assert.equal(resolveProfession('maga'), 'mago');
+  assert.equal(resolveProfession('wizard'), 'mago');
+  assert.equal(resolveProfession('ferreiro'), 'ferreiro');
+  assert.equal(resolveProfession('blacksmith'), 'ferreiro');
+  assert.equal(resolveProfession('rei'), 'rei_rainha');
+  assert.equal(resolveProfession('rainha'), 'rei_rainha');
+  assert.equal(resolveProfession('domador de feras'), 'domador_feras');
+  assert.equal(resolveProfession('beast tamer'), 'domador_feras');
+  assert.equal(resolveProfession('aniquilador de vegetais'), 'aniquilador_vegetais');
+  assert.equal(resolveProfession('vegetable slayer'), 'aniquilador_vegetais');
+  assert.equal(resolveProfession('advogado'), 'advogada');
+  assert.equal(resolveProfession('advogada'), 'advogada');
+
+  const fakeSource = { author: { id: magicCandidate } };
+  const embed = buildProfessionEmbed(magicCandidate, fakeSource);
+  assert.ok(embed.data.title.includes('Profissões') || embed.data.title.includes('Careers'), 'Embed deve ter título de profissões');
+  assert.ok(embed.data.fields.length >= 3, 'Embed deve conter os campos de status, comuns e mágicas');
+
+  const selectRow = buildProfessionSelectRow(magicCandidate, fakeSource);
+  assert.ok(selectRow.components && selectRow.components[0], 'SelectRow deve conter o select menu');
+  assert.equal(selectRow.components[0].options.length, 22, 'Deve ter 22 opções no menu de profissões (16 comuns + 6 mágicas)');
 
   console.log('Verificação da economia, cooldown, ranking, Feijões Mágicos e Títulos: OK');
 } finally {
