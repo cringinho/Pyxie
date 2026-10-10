@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pyxie_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: pyxie_user
+      POSTGRES_PASSWORD: pyxie_secure_pass
+      POSTGRES_DB: pyxie_db
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+    driver: local

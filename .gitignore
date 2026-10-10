@@ -16,3 +16,5 @@ public/uploads/*
 # Outros aplicativos e projetos isolados
 meus outros app/
 scratch/
+*.tar.gz
+*.sql

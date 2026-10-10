@@ -3,6 +3,9 @@ const path = require('node:path');
 const { TOTAL_CARDS, getCardByNumber, getCardById } = require('../data/tarotCardsCatalog');
 const { getAchievementById, evaluateAndSortAchievements } = require('../data/tarotAchievements');
 const { addCoins, getBalance } = require('./economy');
+const { db } = require('../database');
+const { tarotAlbums, users } = require('../database/schema');
+const { eq, sql } = require('drizzle-orm');
 
 const ALBUM_FILE = path.join(__dirname, '..', '..', 'data', 'tarot_album.json');
 
@@ -238,8 +241,54 @@ function hasCard(userId, cardIdentifier) {
   return user.discoveredCards.includes(cardNum);
 }
 
+/**
+ * Registra a descoberta de carta utilizando transação atômica Drizzle ORM (PostgreSQL)
+ * com fallback e sincronização automática.
+ */
+async function registerCardDiscovery(userId, cardId) {
+  const strUserId = String(userId);
+  const cardNum = resolveCardNumber(cardId) || Number(cardId);
+
+  try {
+    let [album] = await db.select().from(tarotAlbums).where(eq(tarotAlbums.userId, strUserId));
+    if (!album) {
+      await db.insert(users).values({ userId: strUserId }).onConflictDoNothing();
+      await db.insert(tarotAlbums).values({ userId: strUserId }).onConflictDoNothing();
+    }
+
+    return await db.transaction(async (tx) => {
+      const [cur] = await tx.select().from(tarotAlbums).where(eq(tarotAlbums.userId, strUserId));
+      const discovered = cur?.discoveredCards || [];
+      const isNew = !discovered.includes(cardNum);
+
+      let updatedList = discovered;
+      if (isNew) {
+        updatedList = [...discovered, cardNum].sort((a, b) => a - b);
+      }
+
+      await tx.update(tarotAlbums)
+        .set({
+          discoveredCards: updatedList,
+          totalPulls: sql`${tarotAlbums.totalPulls} + 1`,
+          updatedAt: new Date()
+        })
+        .where(eq(tarotAlbums.userId, strUserId));
+
+      // Sincroniza espelho local JSON para contingência e backward compatibility
+      recordCardDiscovery(strUserId, cardNum);
+
+      return { isNew, totalDiscovered: updatedList.length, cardId: cardNum };
+    });
+  } catch (err) {
+    // Fallback gracioso para JSON quando o banco não estiver acessível
+    const fallbackRes = recordCardDiscovery(strUserId, cardNum);
+    return { isNew: fallbackRes.isNew, totalDiscovered: fallbackRes.totalDiscovered, cardId: cardNum };
+  }
+}
+
 module.exports = {
   getUserAlbum,
+  registerCardDiscovery,
   recordCardDiscovery,
   claimAchievement,
   getAlbumStats,

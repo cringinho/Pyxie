@@ -9,7 +9,7 @@
     "web": "node server.js",
     "dev": "node server.js",
     "register": "node src/registerSlashCommands.js",
-    "test": "node tests/botUtils.test.js && node tests/economy.test.js && node tests/tarot.test.js && node tests/tarotAlbum.test.js && node tests/performance.test.js && node tests/monetizationAndMultiplayer.test.js && node tests/bonusTimer.test.js && node tests/lightweightGames.test.js && node tests/themeEmojis.test.js && node tests/i18nParity.test.js && node tests/seasonalEvent.test.js && node tests/moduleSystem.test.js && node tests/museumPartnerships.test.js && node tests/seoBilingual.test.js && node tests/marriageModule.test.js",
+    "test": "node tests/botUtils.test.js && node tests/economy.test.js && node tests/tarot.test.js && node tests/tarotAlbum.test.js && node tests/performance.test.js && node tests/monetizationAndMultiplayer.test.js && node tests/bonusTimer.test.js && node tests/lightweightGames.test.js && node tests/themeEmojis.test.js && node tests/i18nParity.test.js && node tests/seasonalEvent.test.js && node tests/moduleSystem.test.js && node tests/museumPartnerships.test.js && node tests/seoBilingual.test.js && node tests/marriageModule.test.js && node tests/postgresDrizzle.test.js",
     "deploy": "node scripts/deployLocal.js",
     "build:client": "npm --prefix client run build"
   },
@@ -24,10 +24,16 @@
     "@resvg/resvg-js": "^2.6.2",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.45.4",
     "ejs": "^6.0.1",
     "express": "^5.2.1",
     "node-cron": "^4.6.0",
+    "pg": "^8.23.1",
     "satori": "^0.35.0",
     "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.23.1",
+    "drizzle-kit": "^0.31.11"
   }
 }
