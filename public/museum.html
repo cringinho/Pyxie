@@ -191,13 +191,13 @@
     }
 
     /* Header / Hero */
-    header {
+    header.museum-legacy-hero {
       padding: 38px 20px 16px;
       text-align: center;
       max-width: 900px;
       margin: 0 auto;
     }
-    h1 {
+    header.museum-legacy-hero h1 {
       margin: 0;
       font-family: 'Outfit', sans-serif;
       font-size: clamp(2rem, 4vw, 2.8rem);
@@ -207,7 +207,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    p.sub {
+    header.museum-legacy-hero p.sub {
       color: var(--mut);
       margin: 10px 0 0;
       font-size: 1.02rem;
@@ -399,7 +399,7 @@
     }
 
     /* Rodapé */
-    footer {
+    footer.museum-legacy-footer {
       border-top: 1px solid rgba(139, 92, 246, 0.2);
       background: rgba(8, 4, 16, 0.9);
       padding: 30px 20px;
@@ -452,7 +452,7 @@
   </header>
 
   <!-- Cabeçalho Principal -->
-  <header>
+  <header class="museum-legacy-hero">
     <h1 id="title"></h1>
     <p class="sub" id="subtitle"></p>
   </header>
@@ -491,7 +491,7 @@
   </main>
 
   <!-- Rodapé -->
-  <footer>
+  <footer class="museum-legacy-footer">
     <div class="footer-text" id="footerText">Pyxie & Cringelândia • Galeria permanente de arte e cultura comunitária.</div>
     <div class="footer-links">
       <a href="/" id="footerHomeLink">Início</a>

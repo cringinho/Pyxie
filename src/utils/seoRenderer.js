@@ -201,8 +201,8 @@ function serveLocalizedPage(pageKey, publicDir) {
           const art = (museumData.arts || []).find((a) => a.id === artId);
           if (art) {
             const rawTitle = art.description ? art.description.slice(0, 50) : 'Obra da Comunidade';
-            const artTitle = `${rawTitle} • Museu da Pyxie`;
-            const artDesc = `Obra de arte criada por @${art.authorName || 'Membro'} no acervo cultural da Pyxie.`;
+            const authorHandle = (art.authorUsername || art.cachedAuthor || art.authorName || art.author || 'Membro').replace(/^@+/, '');
+            const artDesc = `Obra de arte criada por @${authorHandle} no acervo cultural da Pyxie.`;
             const artImg = art.imageUrl || `https://pyxie.com.br/api/museum/art-image/${art.id}`;
 
             html = html

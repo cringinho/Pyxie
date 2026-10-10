@@ -165,6 +165,7 @@ class MuseumManager {
         messageId: msg.id,
         channelId: msg.channelId,
         userId: msg.author.id,
+        authorUsername: msg.author?.username || null,
         cachedAuthor: msg.member?.displayName || msg.author.username,
         originalAttachmentUrl: img.url,
         description: (msg.content || '').trim().slice(0, 1000),
@@ -246,6 +247,7 @@ class MuseumManager {
         messageId: message.id,
         channelId: message.channel.id,
         userId: message.author.id,
+        authorUsername: message.author?.username || null,
         cachedAuthor: message.member?.displayName || message.author.username,
         originalAttachmentUrl: img.url,
         description: (message.content || '').trim().slice(0, 1000),
@@ -261,27 +263,38 @@ class MuseumManager {
 
   async resolveAuthor(userId, fallback) {
     const cached = this.authorCache.get(userId);
-    if (cached && Date.now() - cached.at < AUTHOR_CACHE_TTL_MS) return cached.name;
+    if (cached && Date.now() - cached.at < AUTHOR_CACHE_TTL_MS) {
+      if (cached.data && typeof cached.data === 'object') return cached.data;
+      if (typeof cached.name === 'string') return { name: cached.name, username: cached.username || cached.name };
+    }
 
-    let name = null;
+    let displayName = null;
+    let username = null;
     try {
       if (this.client) {
         const user = await this.client.users.fetch(userId);
-        name = user?.displayName || user?.username || null;
+        displayName = user?.displayName || user?.globalName || user?.username || null;
+        username = user?.username || null;
       } else {
         const user = await restGet(`/users/${userId}`);
-        name = user?.global_name || user?.username || null;
+        displayName = user?.global_name || user?.username || null;
+        username = user?.username || null;
       }
     } catch {
-      name = null;
+      displayName = null;
+      username = null;
     }
-    name = name || fallback;
+    const cleanFallback = fallback || 'Artista';
+    const resolved = {
+      name: displayName || cleanFallback,
+      username: username || displayName || cleanFallback,
+    };
     if (this.authorCache.size >= 2000) {
       const firstKey = this.authorCache.keys().next().value;
       if (firstKey) this.authorCache.delete(firstKey);
     }
-    this.authorCache.set(userId, { name, at: Date.now() });
-    return name;
+    this.authorCache.set(userId, { data: resolved, name: resolved.name, username: resolved.username, at: Date.now() });
+    return resolved;
   }
 
   /** Renova o anexo via API do Discord (token temporário do CDN). Mantém a URL antiga se a mensagem sumiu. */
@@ -322,15 +335,22 @@ class MuseumManager {
     const slice = list.slice((safePage - 1) * safeLimit, safePage * safeLimit);
 
     const arts = await Promise.all(
-      slice.map(async (art) => ({
-        id: art.id,
-        userId: art.userId,
-        author: await this.resolveAuthor(art.userId, art.cachedAuthor),
-        description: art.description,
-        createdAt: art.createdAt,
-        // Imagem sempre passa pela rota que renova o token do CDN
-        imageUrl: `/api/museum/art-image/${encodeURIComponent(art.id)}`,
-      }))
+      slice.map(async (art) => {
+        const resolved = await this.resolveAuthor(art.userId, art.cachedAuthor);
+        const authorName = (resolved && typeof resolved === 'object') ? resolved.name : (resolved || art.cachedAuthor || 'Artista');
+        const authorUsername = (resolved && typeof resolved === 'object') ? resolved.username : (art.authorUsername || art.cachedAuthor || 'Artista');
+        return {
+          id: art.id,
+          userId: art.userId,
+          author: authorName,
+          authorName: authorName,
+          authorUsername: authorUsername,
+          description: art.description,
+          createdAt: art.createdAt,
+          // Imagem sempre passa pela rota que renova o token do CDN
+          imageUrl: `/api/museum/art-image/${encodeURIComponent(art.id)}`,
+        };
+      })
     );
     return { arts, page: safePage, totalPages, total: list.length };
   }

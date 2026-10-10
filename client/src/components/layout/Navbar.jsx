@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Compass, BookOpen, Gift, ShieldCheck, Menu, X, ExternalLink, Globe } from 'lucide-react';
+import { Sparkles, Compass, BookOpen, Gift, ShieldCheck, Menu, X, ExternalLink, Globe, Terminal } from 'lucide-react';
 
 export default function Navbar({ lang, setLang, t }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -43,6 +43,13 @@ export default function Navbar({ lang, setLang, t }) {
             className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
           >
             {t('nav.features')}
+          </a>
+          <a
+            href="/#comandos"
+            className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
+          >
+            <Terminal className="w-3.5 h-3.5 text-pink-400" />
+            {t('nav.commands')}
           </a>
           <a
             href="/wiki"
@@ -119,6 +126,14 @@ export default function Navbar({ lang, setLang, t }) {
             className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5"
           >
             {t('nav.features')}
+          </a>
+          <a
+            href="/#comandos"
+            onClick={() => setMobileMenuOpen(false)}
+            className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
+          >
+            <span>{t('nav.commands')}</span>
+            <Terminal className="w-4 h-4 text-pink-400" />
           </a>
           <a
             href="/wiki"

@@ -5,6 +5,16 @@ import {
   Share2, Check, ZoomIn, ZoomOut, ChevronLeft, ChevronRight
 } from 'lucide-react';
 
+const getAuthorName = (art) => {
+  return art?.authorName || art?.author || art?.authorUsername || 'Artista';
+};
+
+const getAuthorHandle = (art) => {
+  const raw = art?.authorUsername || art?.authorName || art?.author || 'Artista';
+  const clean = String(raw).trim().replace(/^@+/, '');
+  return clean && clean.toLowerCase() !== 'artista' ? `@${clean}` : (art?.userId ? `@Membro` : `@Artista`);
+};
+
 export default function Museum({ t, lang }) {
   const [arts, setArts] = useState([]);
   const [page, setPage] = useState(1);
@@ -57,8 +67,9 @@ export default function Museum({ t, lang }) {
   const authorPills = useMemo(() => {
     const map = new Map();
     arts.forEach((a) => {
-      if (a.userId && a.authorName && !map.has(a.userId)) {
-        map.set(a.userId, a.authorName);
+      const name = a.authorUsername || a.authorName || a.author;
+      if (a.userId && name && !map.has(a.userId)) {
+        map.set(a.userId, String(name).trim().replace(/^@+/, ''));
       }
     });
     return Array.from(map.entries()).map(([userId, name]) => ({ userId, name }));
@@ -71,7 +82,9 @@ export default function Museum({ t, lang }) {
     return arts.filter(
       (a) =>
         a.description?.toLowerCase().includes(q) ||
-        a.authorName?.toLowerCase().includes(q)
+        a.authorName?.toLowerCase().includes(q) ||
+        a.author?.toLowerCase().includes(q) ||
+        a.authorUsername?.toLowerCase().includes(q)
     );
   }, [arts, searchQuery]);
 
@@ -134,15 +147,15 @@ export default function Museum({ t, lang }) {
   return (
     <div className="min-h-screen py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
       {/* Header */}
-      <div className="text-center space-y-3">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-xs font-bold shadow-sm">
+      <div className="text-center space-y-4 max-w-3xl mx-auto pt-2">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-xs font-bold shadow-sm">
           <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-          <span>Acervo Cultural da Comunidade</span>
+          <span>{t('museum.badge')}</span>
         </div>
-        <h1 className="font-title font-black text-3xl sm:text-5xl text-white tracking-tight">
+        <h1 className="font-title font-black text-3xl sm:text-5xl md:text-6xl bg-gradient-to-r from-white via-pink-200 to-purple-300 bg-clip-text text-transparent tracking-tight">
           {t('museum.title')}
         </h1>
-        <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto">
+        <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
           {t('museum.subtitle')}
         </p>
       </div>
@@ -267,7 +280,7 @@ export default function Museum({ t, lang }) {
                 <div className="p-4 space-y-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-title font-bold text-pink-300 truncate max-w-[150px]">
-                      @{art.authorName || 'Artista'}
+                      {getAuthorHandle(art)}
                     </span>
                     <span className="text-[11px] font-mono text-slate-400">
                       {art.createdAt ? new Date(art.createdAt).toLocaleDateString('pt-BR') : ''}
@@ -317,12 +330,12 @@ export default function Museum({ t, lang }) {
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-purple-600 p-0.5 shadow-sm">
                       <div className="w-full h-full rounded-full bg-[#0e071a] flex items-center justify-center text-pink-300 font-bold font-mono text-xs">
-                        {(art.authorName || 'A')[0].toUpperCase()}
+                        {(getAuthorName(art) || 'A')[0].toUpperCase()}
                       </div>
                     </div>
                     <div>
                       <span className="font-title font-bold text-white text-sm block">
-                        @{art.authorName || 'Artista Anônimo'}
+                        {getAuthorHandle(art)}
                       </span>
                       <span className="text-[11px] font-mono text-purple-300/70">
                         Publicado em {art.createdAt ? new Date(art.createdAt).toLocaleDateString('pt-BR') : 'Data cósmica'}
@@ -409,7 +422,7 @@ export default function Museum({ t, lang }) {
             <div className="w-full flex items-center justify-between mb-3 px-2 text-white">
               <div className="flex items-center gap-3">
                 <span className="font-title font-bold text-sm text-pink-300">
-                  @{selectedArt.authorName || 'Artista'}
+                  {getAuthorHandle(selectedArt)}
                 </span>
                 <span className="text-xs font-mono text-slate-400">
                   ID: {selectedArt.id?.slice(0, 10)}...
