@@ -160,6 +160,7 @@ function buildInfoEventoView(userId, client) {
 module.exports = {
   name: 'infoevento',
   category: 'economia',
+  guildScope: ['1453890868980482090'],
   aliases: [
     'py-infoevento',
     'pyinfoevento',

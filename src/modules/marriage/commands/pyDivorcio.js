@@ -54,3 +54,4 @@ module.exports = {
     await executeDivorce(interaction, (content) => interaction.editReply(content));
   },
 };
+

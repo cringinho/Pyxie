@@ -118,6 +118,13 @@ class ModuleManager extends EventEmitter {
             delete require.cache[require.resolve(moduleIndexPath)];
             const mod = require(moduleIndexPath);
             if (mod && mod.id) {
+              if (Array.isArray(mod.commands) && Array.isArray(mod.guildScope)) {
+                for (const cmd of mod.commands) {
+                  if (!cmd.guildScope) {
+                    cmd.guildScope = mod.guildScope;
+                  }
+                }
+              }
               this.modules.set(mod.id, mod);
             }
           } catch (err) {
@@ -203,8 +210,21 @@ class ModuleManager extends EventEmitter {
       // Registro de Listeners de Eventos do Discord com rastreamento para unhook automático
       registerListener: (event, handler) => {
         if (this.client) {
-          this.client.on(event, handler);
-          scope.listeners.push({ event, handler });
+          const wrappedHandler = (...args) => {
+            if (Array.isArray(mod.guildScope) && mod.guildScope.length > 0) {
+              const firstArg = args[0];
+              const eventGuildId =
+                firstArg?.guildId ||
+                firstArg?.guild?.id ||
+                (typeof firstArg === 'string' && firstArg.length >= 17 ? firstArg : null);
+              if (eventGuildId && !mod.guildScope.includes(eventGuildId)) {
+                return;
+              }
+            }
+            return handler(...args);
+          };
+          this.client.on(event, wrappedHandler);
+          scope.listeners.push({ event, handler: wrappedHandler, originalHandler: handler });
         }
       },
 
@@ -276,6 +296,9 @@ class ModuleManager extends EventEmitter {
     // 1. Registra os comandos do módulo no despachante commandsByName
     if (Array.isArray(mod.commands)) {
       for (const cmd of mod.commands) {
+        if (Array.isArray(mod.guildScope) && !cmd.guildScope) {
+          cmd.guildScope = mod.guildScope;
+        }
         scope.commands.push(cmd);
         if (this.commandsByName) {
           const mainName = cmd.name || cmd.data?.name;
@@ -423,15 +446,32 @@ class ModuleManager extends EventEmitter {
   }
 
   /**
+   * Verifica se um comando está autorizado a responder em determinado servidor
+   */
+  isCommandInGuildScope(command, guildId) {
+    if (!command?.guildScope || !Array.isArray(command.guildScope) || command.guildScope.length === 0) {
+      return true; // Comando universal / global
+    }
+    if (!guildId) return false;
+    return command.guildScope.includes(guildId);
+  }
+
+  /**
    * Retorna a lista de comandos fornecidos por todos os módulos atualmente ATIVOS.
    * Utilizado por commandHelpers.js para catalogação dinâmica na Web e Ajuda (/py-help).
    */
-  getActiveCommands() {
+  getActiveCommands(guildId = null) {
     const cmds = [];
     for (const [id, scope] of this.activeScopes.entries()) {
       const mod = this.modules.get(id);
+      if (guildId && Array.isArray(mod?.guildScope) && mod.guildScope.length > 0 && !mod.guildScope.includes(guildId)) {
+        continue;
+      }
       const defaultCategory = mod?.category || 'utilidades';
       for (const cmd of scope.commands) {
+        if (guildId && !this.isCommandInGuildScope(cmd, guildId)) {
+          continue;
+        }
         // Assegura que o comando possua categoria explícita herdada do módulo
         if (!cmd.category) {
           cmd.category = defaultCategory;
@@ -497,6 +537,7 @@ class ModuleManager extends EventEmitter {
         icon: mod.icon || '🧩',
         version: mod.version || '1.0.0',
         author: mod.author || 'Pyxie Team',
+        guildScope: mod.guildScope || null,
         enabled: isEnabled,
         active: isActive,
         commandsCount: commandsList.length,

@@ -723,3 +723,4 @@ module.exports = {
   sendChildToWork,
   claimChildReward,
 };
+

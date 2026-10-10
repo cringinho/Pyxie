@@ -3,8 +3,14 @@ const path = require('node:path');
 const cron = require('node-cron');
 const { EmbedBuilder } = require('discord.js');
 
-const CONFIG_PATH = process.env.SEASONAL_CONFIG_PATH || path.join(__dirname, '..', '..', '..', 'data', 'seasonalConfig.json');
-const DATA_PATH = process.env.SEASONAL_DATA_PATH || path.join(__dirname, '..', '..', '..', 'data', 'seasonalData.json');
+const CRINGELANDIA_DIR = path.join(__dirname, '..', '..', '..', 'data', 'cringelandia');
+const LEGACY_DIR = path.join(__dirname, '..', '..', '..', 'data');
+
+const DEFAULT_CONFIG_PATH = path.join(CRINGELANDIA_DIR, 'seasonalConfig.json');
+const DEFAULT_DATA_PATH = path.join(CRINGELANDIA_DIR, 'seasonalData.json');
+
+const CONFIG_PATH = process.env.SEASONAL_CONFIG_PATH || DEFAULT_CONFIG_PATH;
+const DATA_PATH = process.env.SEASONAL_DATA_PATH || DEFAULT_DATA_PATH;
 
 const DEFAULT_CONFIG = {
   active: false,
@@ -98,6 +104,17 @@ function atomicWriteJson(filePath, data) {
 
 function loadConfig() {
   try {
+    // Migração transparente de legado em data/ para data/cringelandia/
+    if (CONFIG_PATH === DEFAULT_CONFIG_PATH && !fs.existsSync(DEFAULT_CONFIG_PATH)) {
+      const legacyPath = path.join(LEGACY_DIR, 'seasonalConfig.json');
+      if (fs.existsSync(legacyPath)) {
+        if (!fs.existsSync(CRINGELANDIA_DIR)) fs.mkdirSync(CRINGELANDIA_DIR, { recursive: true });
+        try {
+          fs.copyFileSync(legacyPath, DEFAULT_CONFIG_PATH);
+          console.log('[Seasonal] Configuração migrada com sucesso de data/ para data/cringelandia/seasonalConfig.json');
+        } catch (_) {}
+      }
+    }
     if (!fs.existsSync(CONFIG_PATH)) {
       atomicWriteJson(CONFIG_PATH, DEFAULT_CONFIG);
       return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
@@ -140,6 +157,17 @@ function saveConfig(updates, overwrite = false) {
 
 function loadData() {
   try {
+    // Migração transparente de legado em data/ para data/cringelandia/
+    if (DATA_PATH === DEFAULT_DATA_PATH && !fs.existsSync(DEFAULT_DATA_PATH)) {
+      const legacyPath = path.join(LEGACY_DIR, 'seasonalData.json');
+      if (fs.existsSync(legacyPath)) {
+        if (!fs.existsSync(CRINGELANDIA_DIR)) fs.mkdirSync(CRINGELANDIA_DIR, { recursive: true });
+        try {
+          fs.copyFileSync(legacyPath, DEFAULT_DATA_PATH);
+          console.log('[Seasonal] Dados migrados com sucesso de data/ para data/cringelandia/seasonalData.json');
+        } catch (_) {}
+      }
+    }
     if (!fs.existsSync(DATA_PATH)) {
       atomicWriteJson(DATA_PATH, DEFAULT_DATA);
       return JSON.parse(JSON.stringify(DEFAULT_DATA));

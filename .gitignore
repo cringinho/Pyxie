@@ -2,6 +2,8 @@ node_modules/
 .env
 npm-debug.log*
 data/*.json
+data/**/*.json
+data/cringelandia/
 !data/encounters.json
 data/*.bak
 data/backup/

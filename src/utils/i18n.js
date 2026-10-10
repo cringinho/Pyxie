@@ -156,6 +156,11 @@ function formatRemaining(remainingMs, source = null) {
 
 const TRANSLATIONS = {
   "pt": {
+    "cringelandia": {
+      "guild_only": "❌ Este comando ou recurso é exclusivo do laboratório da Cringelândia.",
+      "lab_badge": "🧪 Cringelândia Lab",
+      "welcome_special": "Bem-vindo(a) ao laboratório da Cringelândia!"
+    },
     "museum": {
       "title": "🏛️ Museu da Comunidade",
       "desc": "Acervo permanente das criações dos membros da Cringelândia, com navegação retrô.",

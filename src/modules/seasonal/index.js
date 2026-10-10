@@ -25,6 +25,7 @@ module.exports = {
   icon: '🎃',
   version: '1.0.0',
   author: 'Pyxie Team',
+  guildScope: ['1453890868980482090'],
   defaultEnabled: false,
 
   // Comandos fornecidos pelo módulo

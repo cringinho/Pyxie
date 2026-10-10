@@ -236,3 +236,4 @@ module.exports = {
     return handleList(interaction, (content) => interaction.editReply(content));
   },
 };
+

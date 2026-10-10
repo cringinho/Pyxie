@@ -7,11 +7,16 @@ console.log('Iniciando auditoria automatizada de paridade de internacionalizaç�
 
 /**
  * Extrai todas as chaves recursivamente em formato 'pai.filho.chave'.
+ * Isenção Mandatória: O namespace 'cringelandia' (Zona B / Lab Local) é isento
+ * de paridade em EN, permitindo gírias e mecânicas exclusivas do servidor matriz.
  */
 function getLeafKeys(obj, prefix = '') {
   let keys = [];
   for (const [k, v] of Object.entries(obj)) {
     const full = prefix ? `${prefix}.${k}` : k;
+    if (k === 'cringelandia' || full === 'cringelandia' || full.startsWith('cringelandia.')) {
+      continue;
+    }
     if (v && typeof v === 'object' && !Array.isArray(v)) {
       keys = keys.concat(getLeafKeys(v, full));
     } else {

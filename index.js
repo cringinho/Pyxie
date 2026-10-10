@@ -464,7 +464,9 @@ client.once('ready', async () => {
 
   // Watcher ativo para sincronização automática de alterações em seasonalConfig.json
   try {
-    const seasonalConfigPath = path.join(__dirname, 'data', 'seasonalConfig.json');
+    const cringelandiaConfigPath = path.join(__dirname, 'data', 'cringelandia', 'seasonalConfig.json');
+    const legacyConfigPath = path.join(__dirname, 'data', 'seasonalConfig.json');
+    const seasonalConfigPath = process.env.SEASONAL_CONFIG_PATH || (fs.existsSync(cringelandiaConfigPath) ? cringelandiaConfigPath : legacyConfigPath);
     let seasonalDebounceTimer = null;
     fs.watchFile(seasonalConfigPath, { interval: 2000 }, (curr, prev) => {
       if (curr.mtimeMs !== prev.mtimeMs) {
@@ -696,6 +698,13 @@ client.on('messageCreate', async (message) => {
   const command = commandsByName.get(cmd);
   if (!command || typeof command.executePrefix !== 'function') return;
 
+  // Guarda de Escopo de Guilda (Zona B - Cringelândia Lab)
+  if (Array.isArray(command.guildScope) && command.guildScope.length > 0) {
+    if (!message.guildId || !command.guildScope.includes(message.guildId)) {
+      return;
+    }
+  }
+
   incrementCommand();
   try {
     await command.executePrefix({ message, args, prefix });
@@ -895,6 +904,14 @@ client.on('interactionCreate', async (interaction) => {
     if (!command) {
       await interaction.editReply({ content: 'Esse comando ainda não está disponível. Não olhe para mim assim; eu também estou investigando.' });
       return;
+    }
+
+    // Guarda de Escopo de Guilda (Zona B - Cringelândia Lab)
+    if (Array.isArray(command.guildScope) && command.guildScope.length > 0) {
+      if (!interaction.guildId || !command.guildScope.includes(interaction.guildId)) {
+        await interaction.editReply({ content: '❌ Este comando ou recurso é exclusivo do laboratório da Cringelândia.' });
+        return;
+      }
     }
 
     if (typeof command.executeSlash === 'function') {

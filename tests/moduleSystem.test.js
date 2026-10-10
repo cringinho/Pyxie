@@ -34,7 +34,9 @@ assert.equal(seasonalMod.id, 'seasonal', 'ID do módulo deve ser seasonal');
 assert.equal(seasonalMod.category, 'economia', 'Categoria nativa do módulo seasonal deve ser economia');
 assert(Array.isArray(seasonalMod.commands), 'Módulo deve exportar lista de comandos');
 assert(seasonalMod.commands.length > 0, 'Módulo seasonal deve conter ao menos 1 comando');
-console.log(`✅ Descoberta de módulos validada: ${discovered.size} módulo(s) encontrado(s) em src/modules/.`);
+assert(Array.isArray(seasonalMod.guildScope) && seasonalMod.guildScope.includes('1453890868980482090'), 'Módulo seasonal deve possuir guildScope restrito à Cringelândia');
+assert(seasonalMod.commands[0].guildScope && seasonalMod.commands[0].guildScope.includes('1453890868980482090'), 'Comandos do módulo seasonal devem herdar guildScope');
+console.log(`✅ Descoberta de módulos validada: ${discovered.size} módulo(s) encontrado(s) em src/modules/ com suporte a guildScope.`);
 
 // 2. Teste de Metadados e Formatação Administrativa
 const allModules = moduleManager.getAllModules();
@@ -44,6 +46,7 @@ assert(seasonalMeta, 'Metadados de seasonal devem ser retornados');
 assert.equal(seasonalMeta.category, 'economia');
 assert.equal(typeof seasonalMeta.commandsCount, 'number');
 assert(seasonalMeta.commandsCount >= 1, 'commandsCount deve ser pelo menos 1');
+assert(Array.isArray(seasonalMeta.guildScope) && seasonalMeta.guildScope.includes('1453890868980482090'), 'Metadados do módulo devem exportar guildScope');
 console.log('✅ Formatação de metadados para painel administrativo validada.');
 
 (async () => {
@@ -82,6 +85,29 @@ console.log('✅ Formatação de metadados para painel administrativo validada.'
   // 5. Teste de Categoria Dinâmica e Resolução de Comandos
   const detectedCategory = moduleManager.getCommandCategory('py-infoevento');
   assert.equal(detectedCategory, 'economia', 'Categoria nativa de py-infoevento deve ser economia');
+
+  // 5.1 Teste de Isolamento de Escopo de Servidor (isCommandInGuildScope)
+  const infoCmd = seasonalMod.commands[0];
+  assert.equal(moduleManager.isCommandInGuildScope(infoCmd, '1453890868980482090'), true, 'Comando da Cringelândia deve responder na Cringelândia');
+  assert.equal(moduleManager.isCommandInGuildScope(infoCmd, '999999999999999999'), false, 'Comando da Cringelândia deve ser bloqueado em servidor externo');
+  const globalCmdDummy = { name: 'ping', guildScope: null };
+  assert.equal(moduleManager.isCommandInGuildScope(globalCmdDummy, '999999999999999999'), true, 'Comando global deve responder em qualquer servidor');
+
+  // 5.2 Teste de Filtro de Eventos de Guilda em ctx.registerListener
+  const testCtx = moduleManager.createContext(seasonalMod);
+  let eventCapturedCount = 0;
+  testCtx.registerListener('messageCreate', (msg) => {
+    eventCapturedCount++;
+  });
+
+  // Emite evento de servidor externo (não permitido)
+  mockClient.emit('messageCreate', { guildId: '999999999999999999', content: 'hello external' });
+  assert.equal(eventCapturedCount, 0, 'Listener com guildScope DEVE ignorar eventos de servidores não autorizados');
+
+  // Emite evento da Cringelândia (permitido)
+  mockClient.emit('messageCreate', { guildId: '1453890868980482090', content: 'hello cringelandia' });
+  assert.equal(eventCapturedCount, 1, 'Listener com guildScope DEVE processar eventos da Cringelândia');
+  console.log('✅ Isolamento multi-tenant e guarda de eventos por guildScope validados com sucesso.');
 
   // 6. Teste de Garantia de Zero Resíduos em Memória (Zero Memory Leaks / Unload Lifecycle)
   // Registra recursos adicionais no escopo do módulo para teste rigoroso
