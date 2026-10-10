@@ -54,7 +54,8 @@ export default function CommandGrid({ t, lang }) {
 
     if (matched) {
       setSelectedCommand(matched);
-      const el = document.getElementById(`cmd-${matched.name}`);
+      const cleanName = (matched.name || '').replace(/^\/+/, '');
+      const el = document.getElementById(`cmd-${cleanName}`) || document.getElementById(`cmd-${matched.name}`);
       if (el) {
         setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
       }

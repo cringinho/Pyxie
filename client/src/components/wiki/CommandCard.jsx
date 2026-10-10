@@ -4,15 +4,19 @@ import { Copy, Check, Terminal, ChevronRight, Sparkles } from 'lucide-react';
 export default function CommandCard({ command, onSelect, t }) {
   const [copied, setCopied] = useState(false);
 
+  const rawName = command.name || '';
+  const displayName = rawName.startsWith('/') ? rawName : `/${rawName}`;
+  const cleanName = rawName.replace(/^\/+/, '');
+
   const handleCopy = (e) => {
     e.stopPropagation();
-    const cmdText = command.name ? `/${command.name}` : `py!${command.aliases?.[0] || ''}`;
+    const cmdText = rawName ? displayName : `py!${command.aliases?.[0] || ''}`;
     navigator.clipboard.writeText(cmdText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const anchorId = `cmd-${command.name}`;
+  const anchorId = `cmd-${cleanName}`;
 
   return (
     <div
@@ -27,7 +31,7 @@ export default function CommandCard({ command, onSelect, t }) {
         <div className="flex items-center justify-between">
           <div className="font-mono font-bold text-sm text-pink-400 group-hover:text-pink-300 transition-colors flex items-center gap-2">
             <Terminal className="w-3.5 h-3.5 text-purple-400 group-hover:rotate-12 transition-transform" />
-            <span>/{command.name}</span>
+            <span>{displayName}</span>
           </div>
 
           <div className="flex items-center gap-1.5">

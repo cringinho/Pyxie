@@ -8,15 +8,18 @@ export default function CommandDetailModal({ command, onClose, lang = 'pt', t })
 
   if (!command) return null;
 
+  const rawName = command.name || '';
+  const displayName = rawName.startsWith('/') ? rawName : `/${rawName}`;
+  const cleanName = rawName.replace(/^\/+/, '');
+
   const handleCopyCmd = () => {
-    const text = `/${command.name}`;
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(displayName);
     setCopiedCmd(true);
     setTimeout(() => setCopiedCmd(false), 2000);
   };
 
   const handleCopyLink = () => {
-    const url = `${window.location.origin}/wiki#${command.name}`;
+    const url = `${window.location.origin}/wiki#${cleanName}`;
     navigator.clipboard.writeText(url);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
@@ -41,10 +44,10 @@ export default function CommandDetailModal({ command, onClose, lang = 'pt', t })
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 font-mono font-bold text-xs">
             <Terminal className="w-3.5 h-3.5" />
-            <span>/{command.name}</span>
+            <span>{displayName}</span>
           </div>
           <h3 className="font-title font-extrabold text-2xl text-white tracking-tight">
-            /{command.name}
+            {displayName}
           </h3>
           <p className="text-slate-300 text-sm leading-relaxed">
             {command.description}

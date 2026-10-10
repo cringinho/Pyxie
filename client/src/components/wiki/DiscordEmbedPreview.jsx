@@ -66,7 +66,7 @@ export default function DiscordEmbedPreview({ command, lang = 'pt' }) {
     // Generic fallback preview
     return {
       color: '#3B82F6',
-      title: `✨ /${cmd.name}`,
+      title: `✨ ${cmd.name?.startsWith('/') ? cmd.name : `/${cmd.name || ''}`}`,
       desc: cmd.description || (isEn ? 'Command executed successfully.' : 'Comando executado com sucesso.'),
       fields: [
         { name: isEn ? 'Status' : 'Status', value: '✅ Operacional', inline: true },
