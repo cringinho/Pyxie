@@ -278,7 +278,19 @@ Se a página do módulo for pública e indexável para atrair tráfego externo:
 
 A Pyxie opera simultaneamente com um processo bot (Discord) e um servidor web (Express). Portanto, erros de concorrência ou corrupção de arquivos são inaceitáveis.
 
-### Diretrizes Mandatórias de Dados:
+### Arquitetura de Persistência em Duas Camadas:
+
+#### Camada Primária: PostgreSQL 16 com Drizzle ORM (`src/database/schema.js`)
+1. **Transações ACID Atômicas:**
+   - Para operações monetárias, matrimoniais ou de perfil, utilize transações relacionais atômicas via `db.transaction()` para garantir rollback automático em caso de exceção.
+2. **Sandbox da Matriz (`cringelandia_lab`):**
+   - Para módulos experimentais ou mecânicas exclusivas da Cringelândia (`guildScope: ['1453890868980482090']`), armazene estados flexíveis com chave única na tabela `cringelandia_lab`.
+3. **Watchdog de Tarefas (`scheduler_state`):**
+   - Agendamentos de automação de longa duração são monitorados na tabela `scheduler_state`, preservando a data da última execução mesmo após reinicializações.
+4. **Multi-Tenant Global (`guild_configs`):**
+   - Configurações por guilda (canais de boas-vindas, idioma, módulos ativados) são gerenciadas de forma centralizada pelo painel autônomo `/py-setup`.
+
+#### Camada de Contingência / Fallback (JSON Atômico em `data/`):
 1. **Escrita Atômica Obrigatória:**
    - **NUNCA** utilize `fs.writeFileSync(caminho, json)` diretamente no arquivo final. Se o servidor for interrompido durante a escrita, o arquivo ficará corrompido ou vazio (0 bytes).
    - Utilize sempre `writeJsonAtomic(filePath, data)` de [`src/utils/atomicJson.js`](file:///e:/botMelody/src/utils/atomicJson.js), que salva primeiro em um arquivo temporário (`.tmp.<timestamp>`) e realiza `fs.renameSync` de forma atômica no sistema operacional.
@@ -310,15 +322,22 @@ O bot executa em ambiente de produção com limite estrito de memória (`--max-o
    - **NUNCA** registre `client.on('interactionCreate', ...)` dentro do seu manager de módulo se o bot já despacha interações centralmente em `index.js`.
    - Listeners duplicados causam **execuções em dobro**, respostas rejeitadas pelo Discord com erro `"Unknown interaction"` e modais abrindo duas vezes.
 
-3. **Limpeza Explícita no `onUnload()`:**
+3. **Ciclo de Vida da Agenda Automática (`automationSchedule`):**
+   - Se o módulo registrar tarefas visíveis no comando `/py-agenda` via `registerAutomation({ id, ... })`, é **obrigatório** invocar `unregisterAutomation(id)` dentro do método `onUnload()` para evitar que tarefas órfãs continuem sendo exibidas após a desativação.
+
+4. **Limpeza Explícita no `onUnload()`:**
    - Limpe estruturas em memória como `Map` ou `Set` que acumulam dados transitórios (ex: rate-limits por IP, caches de usuários):
      ```javascript
      async onUnload() {
        this.client = null;
        this.bumpHits.clear();
        this.activeSessions = {};
+       unregisterAutomation('meu-modulo-job');
      }
      ```
+
+5. **Proteção de Mídia Server-Side (Honeypot com Sharp):**
+   - Módulos que expõem galerias ou artes públicas devem fornecer imagens através de endpoints com carimbo via biblioteca `sharp` contendo a marca d'água oficial (`✦ Pyxie • https://pyxie.com.br/`), protegendo contra cópia não autorizada e gerando tráfego orgânico.
 
 ---
 

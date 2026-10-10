@@ -64,6 +64,10 @@ Para criar uma funcionalidade, evento ou comando que deve existir **apenas na Cr
 - **Novas Frases / Lore:** Adicione ao handler `handleCringePhrase` em `index.js` respeitando os mapas de cooldown anti-spam (`cringePhraseCooldowns`, `cringeChannelCooldowns`).
 - **Eventos Sazonais (Halloween, Natal, etc.):** Configure via `/py-admin evento` ou diretamente em `src/modules/seasonal/seasonalConfig.json`.
 
+### 2.4 Persistência Dedicada na Cringelândia (`cringelandia_lab`)
+- Mecânicas experimentais, laboratórios de artes ou drops da matriz utilizam a tabela `cringelandia_lab` no PostgreSQL gerenciada pelo Drizzle ORM (`src/database/schema.js`).
+- Isso garante total isolamento relacional e atômico, sem risco de corrupção ou colisão com tabelas de usuários globais (`users`, `guild_configs`).
+
 ---
 
 ## 3. Zona A: Funcionalidades Globais da Pyxie (Para Todas as Comunidades)
@@ -75,10 +79,10 @@ Comunidades externas não precisam criar conta em sites externos ou conceder per
 
 - **/py-setup view (ou `/py-setup` sem argumentos):**
   - Abre o painel interativo exibindo o idioma ativo, canal de boas-vindas configurado e botões rápidos para alternar o idioma entre 🇧🇷 Português e 🇺🇸 Inglês.
-- **/py-setup welcome <canal>:**
+- **/py-setup welcome <canal> (ou `/py-setwelcome`):**
   - Define o canal onde os novos membros serão recepcionados.
 - **/py-setup language <pt|en>:**
-  - Define o idioma padrão do servidor. A escolha é salva persistentemente no arquivo `data/settings.json`.
+  - Define o idioma padrão do servidor. A escolha é salva persistentemente na tabela `guild_configs` do PostgreSQL (com contingência atômica).
 - **Restrição de Segurança:**
   - Exclusivo para administradores do servidor (`PermissionFlagsBits.ManageGuild` / `Administrator`).
 
@@ -127,10 +131,11 @@ Execute localmente:
 ```bash
 npm test
 ```
-O Quality Gate executa 15 suítes de teste que validam:
+O Quality Gate executa 16 suítes de teste que validam:
 - Paridade de chaves e placeholders no `i18n.js` (100% simétrico entre PT e EN).
 - Categorização de 100% dos comandos em `COMMAND_CATEGORY_MAP`.
 - Integridade do sistema de permissões de dono (Snowflake `214153735281180673`).
+- Persistência e integridade relacional do PostgreSQL 16 e Drizzle ORM.
 - Ciclo de vida dos módulos de Casamento, Tarot, Museu, Parcerias e Sazonal.
 - SEO técnico bilíngue (Canonicals, Hreflang, Schema.org e OpenGraph).
 

@@ -143,11 +143,51 @@ const COMMAND_ICONS = {
 };
 
 const MODULE_METADATA = {
-  todos: { id: 'todos', label: 'Visão Geral', emoji: '📖', iconUrl: MODULE_ICONS.todos, desc: 'Visão geral e índice de todas as categorias' },
-  economia: { id: 'economia', label: 'Economia & Carreiras', emoji: '🪙', iconUrl: MODULE_ICONS.economia, desc: 'Moedinhas, trabalho, profissões, rankings, trocas e cofres' },
-  tarot: { id: 'tarot', label: 'Tarot Místico', emoji: '🔮', iconUrl: MODULE_ICONS.tarot, desc: 'Tiragens diárias, 78 arcanos e oráculo do destino' },
-  social: { id: 'social', label: 'Social & Casamentos', emoji: '💑', iconUrl: MODULE_ICONS.social, desc: 'Casamentos, divórcios, perfil de aventureiro e afinidade' },
-  utilidades: { id: 'utilidades', label: 'Utilidades & Sistema', emoji: '⚙️', iconUrl: MODULE_ICONS.utilidades, desc: 'Status operacional, setup autônomo, ping, convite, agenda, idioma e configurações' },
+  todos: {
+    id: 'todos',
+    label: 'Visão Geral',
+    labelEn: 'Overview',
+    emoji: '📖',
+    iconUrl: MODULE_ICONS.todos,
+    desc: 'Visão geral e índice de todas as categorias',
+    descEn: 'Overview and index of all command categories',
+  },
+  economia: {
+    id: 'economia',
+    label: 'Economia & Carreiras',
+    labelEn: 'Economy & Careers',
+    emoji: '🪙',
+    iconUrl: MODULE_ICONS.economia,
+    desc: 'Moedinhas, trabalho, profissões, rankings e recompensas diárias',
+    descEn: 'Coins, work, professions, rankings, and daily rewards',
+  },
+  tarot: {
+    id: 'tarot',
+    label: 'Tarot Místico',
+    labelEn: 'Mystic Tarot',
+    emoji: '🔮',
+    iconUrl: MODULE_ICONS.tarot,
+    desc: 'Tiragens diárias, 78 arcanos e oráculo do destino',
+    descEn: 'Daily card readings, 78 arcana, and destiny oracle',
+  },
+  social: {
+    id: 'social',
+    label: 'Social & Casamentos',
+    labelEn: 'Social & Marriages',
+    emoji: '💑',
+    iconUrl: MODULE_ICONS.social,
+    desc: 'Casamentos, divórcios, perfil de aventureiro e afinidade',
+    descEn: 'Marriages, divorces, adventurer profile, and affinity',
+  },
+  utilidades: {
+    id: 'utilidades',
+    label: 'Utilidades & Sistema',
+    labelEn: 'Utilities & System',
+    emoji: '⚙️',
+    iconUrl: MODULE_ICONS.utilidades,
+    desc: 'Status operacional, setup autônomo, ping, convite, agenda, idioma e configurações',
+    descEn: 'Operational status, autonomous setup, ping, invite, schedule, language, and configs',
+  },
 };
 
 const MODULE_KEYS = ['todos', 'economia', 'tarot', 'social', 'utilidades'];
@@ -412,7 +452,6 @@ function getHelpModules(customCommands = null, source = null) {
 
   const moduleCommands = {
     economia: [],
-    loja: [],
     tarot: [],
     social: [],
     utilidades: [],

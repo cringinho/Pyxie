@@ -1,4 +1,4 @@
-const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
+const { ChannelType, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 const { setWelcomeChannel } = require('../services/database');
 const { WELCOME } = require('./commandNames');
 const { t } = require('../utils/i18n');
@@ -25,7 +25,7 @@ module.exports = {
         .setDescriptionLocalizations({
           'pt-BR': 'Canal de texto para envio de boas-vindas.',
         })
-        .addChannelTypes([0])
+        .addChannelTypes([ChannelType.GuildText, ChannelType.GuildAnnouncement])
         .setRequired(true)
     ),
   async executePrefix({ message, args, prefix }) {
