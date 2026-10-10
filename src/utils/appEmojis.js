@@ -78,6 +78,13 @@ const KEY_TO_SLOT_MAP = {
   RELIC_T3: 'relic_t3',
   RELIC_T4: 'relic_t4',
   RELIC_T5: 'relic_t5',
+  MUSEUM: 'museum',
+  PARTNERSHIPS: 'partnerships',
+  MARRIAGE: 'marriage',
+  SEASONAL: 'seasonal',
+  MATH: 'arcaneMath',
+  TICTACTOE: 'tictactoe',
+  MINESWEEPER: 'minesweeper',
 };
 
 // Mapeamento padrão de identificadores para emojis oficiais da aplicação (Discord Dev Portal) e fallbacks Unicode
@@ -139,6 +146,13 @@ const EMOJI_DEFINITIONS = {
   MONSTER: { name: 'alienmonsterani', aliases: ['monstro', 'monster'], fallback: '👾' },
   ARROW: { name: '2353arrowrightglow', aliases: ['seta', 'arrow', 'purplearrow', '8857pinkarrow', '9037arrowpink'], fallback: '➡️' },
   KUROMI: { name: '9733kuromiheart', aliases: ['kuromi', 'kuromiwitch', '1014kuromimaid', '5802kuromisparkles'], fallback: '🖤' },
+  MUSEUM: { name: '2663tarotcards', aliases: ['museu', 'museum', 'arte'], fallback: '🏛️' },
+  PARTNERSHIPS: { name: '3849purplebutterflies', aliases: ['parcerias', 'partnerships', 'comunidade'], fallback: '🤝' },
+  MARRIAGE: { name: 'anelrosa', aliases: ['marriage', 'casamento', 'matrimonio'], fallback: '💍' },
+  SEASONAL: { name: 'cogumelo', aliases: ['seasonal', 'sazonal', 'bosque'], fallback: '🎃' },
+  MATH: { name: '6449spellbook', aliases: ['math', 'matematica', 'calculo'], fallback: '🧮' },
+  TICTACTOE: { name: 'pixdreamsmooncha', aliases: ['tictactoe', 'velha', 'jogodavelha'], fallback: '🌙' },
+  MINESWEEPER: { name: '4693toxicpotion', aliases: ['minesweeper', 'campominado', 'minas'], fallback: '💥' },
 };
 
 /**

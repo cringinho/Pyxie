@@ -12,13 +12,13 @@ const { getThemeEmojiUrl } = require('../utils/themeEmojis');
 function getModuleIconUrl(categoryKey) {
   switch (categoryKey) {
     case 'todos':
-      return getThemeEmojiUrl('websiteHome') || 'https://cdn.discordapp.com/emojis/1551356640782057502.gif';
+      return getThemeEmojiUrl('helpCommands') || 'https://cdn.discordapp.com/emojis/1551356640782057502.gif';
     case 'economia':
       return getThemeEmojiUrl('economyCareers') || getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif';
     case 'tarot':
       return getThemeEmojiUrl('tarot') || 'https://cdn.discordapp.com/emojis/1551356087611957269.gif';
     case 'social':
-      return getThemeEmojiUrl('websiteSocial') || getThemeEmojiUrl('ship') || 'https://cdn.discordapp.com/emojis/1551356415543742554.gif';
+      return getThemeEmojiUrl('marriage') || getThemeEmojiUrl('ship') || 'https://cdn.discordapp.com/emojis/1551356415543742554.gif';
     case 'utilidades':
     default:
       return getThemeEmojiUrl('helpCommands') || 'https://cdn.discordapp.com/emojis/1548444319730499664.gif';
@@ -120,6 +120,18 @@ const COMMAND_ICONS = {
   'py-quiz': 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
   trivia: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
   'py-trivia': 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  math: 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
+  'py-math': 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
+  matematica: 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
+  'py-matematica': 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
+  tictactoe: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  'py-tictactoe': 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  velha: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  'py-velha': 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  minesweeper: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
+  'py-minesweeper': 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
+  campominado: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
+  'py-campominado': 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
 
   // Utilidades & Sistema
   help: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
@@ -317,6 +329,23 @@ const COMMAND_CATEGORY_MAP = {
   parceria: 'social',
   'py-partnership': 'social',
   partnership: 'social',
+  math: 'social',
+  'py-math': 'social',
+  matematica: 'social',
+  'py-matematica': 'social',
+  arcanemath: 'social',
+  tictactoe: 'social',
+  'py-tictactoe': 'social',
+  velha: 'social',
+  'py-velha': 'social',
+  jogodavelha: 'social',
+  'py-jogodavelha': 'social',
+  minesweeper: 'social',
+  'py-minesweeper': 'social',
+  campominado: 'social',
+  'py-campominado': 'social',
+  minas: 'social',
+  'py-minas': 'social',
   cookie: 'economia',
   'py-cookie': 'economia',
   biscoito: 'economia',

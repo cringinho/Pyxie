@@ -1,34 +1,78 @@
 {
-  "_comment": "Arquivo Central de Padronização de Emojis por Assunto, Módulo e Área da Pyxie. Modifique os IDs de acordo com a prioridade desejada.",
+  "_comment": "Arquivo Central de Padronização de Emojis por Módulo e Embeds do Discord da Pyxie. Utilizado exclusivamente para renderização de embeds, componentes e mensagens no Discord.",
   "themes": {
     "coins": {
       "name": "Moedinhas da Pyxie",
-      "description": "Emoji padrão para moedinhas, economia, saldos e transações financeiras",
+      "description": "Emoji padrão para moedinhas, economia, saldos e transações financeiras em embeds",
       "primaryId": "1548443880066777098",
       "secondaryIds": [
         "1548444230588956683"
       ],
       "fallback": "🪙"
     },
+    "magicBeans": {
+      "name": "Feijões Mágicos da Pyxie",
+      "description": "Emoji padrão para feijões mágicos e vocações arcanas em embeds",
+      "primaryId": "1548444140532928642",
+      "secondaryIds": [],
+      "fallback": "🌱"
+    },
     "weekendBonus": {
       "name": "Bônus de Fim de Semana",
-      "description": "Emoji padrão para bônus e eventos especiais de final de semana (2X)",
+      "description": "Emoji padrão para bônus e eventos especiais de final de semana (2X) em embeds",
       "primaryId": "1548443947079049256",
       "secondaryIds": [],
       "fallback": "🔥"
     },
     "dailyBonus": {
-      "name": "Bônus Diário & Web 10s",
-      "description": "Emoji padrão para recompensa diária, baú e bônus web de 10 segundos",
+      "name": "Bônus Diário",
+      "description": "Emoji padrão para recompensa diária e caixas em embeds",
       "primaryId": "1548443978414817331",
       "secondaryIds": [
         "1548444204202459136"
       ],
       "fallback": "🎁"
     },
+    "economyCareers": {
+      "name": "Economia & Carreiras",
+      "description": "Emoji padrão para o módulo de economia, trabalho e profissões em embeds",
+      "primaryId": "1548444230588956683",
+      "secondaryIds": [
+        "1548443880066777098"
+      ],
+      "fallback": "💼"
+    },
+    "shop": {
+      "name": "Loja & Mochila da Pyxie",
+      "description": "Emoji padrão para a loja de baús, compras, vendas e inventário em embeds",
+      "primaryId": "1551356299500064858",
+      "secondaryIds": [
+        "1548443778359103579",
+        "1548444204202459136"
+      ],
+      "fallback": "🎒"
+    },
+    "userProfile": {
+      "name": "Perfil & Identidade Arcana",
+      "description": "Emoji padrão para perfil de usuário, menções e identidade em embeds",
+      "primaryId": "1551355544185344112",
+      "secondaryIds": [
+        "1551355728378335282"
+      ],
+      "fallback": "👤"
+    },
+    "helpCommands": {
+      "name": "Central de Ajuda & Comandos",
+      "description": "Emoji padrão para o comando /py-help e guias de comandos no Discord",
+      "primaryId": "1548444173747621918",
+      "secondaryIds": [
+        "1551355882447704124"
+      ],
+      "fallback": "📖"
+    },
     "tarot": {
-      "name": "Sistema de Tarot da Pyxie",
-      "description": "Emoji padrão para o sistema de Tarot místico e suas dependências",
+      "name": "Sistema de Tarot Místico",
+      "description": "Emoji padrão para o sistema de Tarot místico e tiragens em embeds",
       "primaryId": "1548444111319605330",
       "secondaryIds": [
         "1551355296113238187",
@@ -41,53 +85,16 @@
     },
     "tarotAlbum": {
       "name": "Álbum de Tarot da Pyxie",
-      "description": "Emoji padrão para o álbum de tarot, catálogo de cartas e conquistas",
+      "description": "Emoji padrão para o álbum de tarot e catálogo de cartas colecionáveis em embeds",
       "primaryId": "1551355436890857512",
       "secondaryIds": [
         "1551356087611957269"
       ],
       "fallback": "📖"
     },
-    "helpCommands": {
-      "name": "Central de Ajuda & Aba Comandos",
-      "description": "Emoji padrão para a aba de comandos do website e comando de ajuda /py-help",
-      "primaryId": "1548444173747621918",
-      "secondaryIds": [
-        "1551355882447704124"
-      ],
-      "fallback": "📖"
-    },
-    "economyCareers": {
-      "name": "Economia & Carreiras",
-      "description": "Emoji padrão para o módulo de economia, trabalho e profissões",
-      "primaryId": "1548444230588956683",
-      "secondaryIds": [
-        "1548443880066777098",
-        "1551356441112084641"
-      ],
-      "fallback": "🪙"
-    },
-    "dice": {
-      "name": "Sistema de Dados (Dice)",
-      "description": "Emoji padrão para o sistema de rolagem de dados e minigames de sorte",
-      "primaryId": "1551356619647094814",
-      "secondaryIds": [
-        "1551356333272596572"
-      ],
-      "fallback": "🎲"
-    },
-    "userProfile": {
-      "name": "Menção de Usuário & Perfil Roxo",
-      "description": "Emoji padrão para quando o usuário é mencionado em embeds ou perfil de aventureiro",
-      "primaryId": "1551355544185344112",
-      "secondaryIds": [
-        "1551355728378335282"
-      ],
-      "fallback": "👤"
-    },
     "ship": {
-      "name": "Ship & Casamentos",
-      "description": "Emoji padrão para calculadora de afinidade (ship), casamentos e romance",
+      "name": "Calculadora de Afinidade (Ship)",
+      "description": "Emoji padrão para afinidade e romance em embeds",
       "primaryId": "1551744119670575124",
       "secondaryIds": [
         "1548444199970545756",
@@ -95,33 +102,77 @@
       ],
       "fallback": "💖"
     },
-    "websiteHome": {
-      "name": "Website Home & Favicon",
-      "description": "Emoji padrão para o ícone principal, logo e página inicial (Home) do website",
-      "primaryId": "1551356640782057502",
+    "marriage": {
+      "name": "Módulo Matrimônio & Família",
+      "description": "Emoji padrão para casamentos, árvore da vida, cofre do amor e filhos em embeds",
+      "primaryId": "1548444199970545756",
+      "secondaryIds": [
+        "1551744119670575124"
+      ],
+      "fallback": "💍"
+    },
+    "museum": {
+      "name": "Museu Comunitário de Artes",
+      "description": "Emoji padrão para galeria de obras de arte, curadoria e exibições em embeds",
+      "primaryId": "1551355436890857512",
       "secondaryIds": [
         "1548444149785694238"
       ],
-      "fallback": "🦋"
+      "fallback": "🏛️"
     },
-    "websiteSocial": {
-      "name": "Aba Social do Website",
-      "description": "Emoji padrão para a aba de comunidade social do website e módulo social",
+    "partnerships": {
+      "name": "Mural de Parcerias & Servidores",
+      "description": "Emoji padrão para divulgação de servidores parceiros e bumps em embeds",
       "primaryId": "1551355541148667954",
       "secondaryIds": [
         "1551356415543742554"
       ],
-      "fallback": "💑"
+      "fallback": "🤝"
     },
-    "shop": {
-      "name": "Loja & Mochila da Pyxie",
-      "description": "Emoji padrão para a loja de baús, compras, vendas e inventário",
-      "primaryId": "1551356299500064858",
+    "seasonal": {
+      "name": "Evento Sazonal do Bosque da Penumbra",
+      "description": "Emoji padrão para drops temáticos e atividades sazonais em embeds",
+      "primaryId": "1551356273918746724",
       "secondaryIds": [
-        "1548443778359103579",
-        "1548444204202459136"
+        "1548443947079049256"
       ],
-      "fallback": "🎒"
+      "fallback": "🎃"
+    },
+    "arcaneMath": {
+      "name": "Mestre da Matemática Arcana",
+      "description": "Emoji padrão para o grimório de cálculos e desafios matemáticos em embeds",
+      "primaryId": "1551355602297430016",
+      "secondaryIds": [
+        "1551355882447704124"
+      ],
+      "fallback": "🧮"
+    },
+    "tictactoe": {
+      "name": "Jogo da Velha Arcano",
+      "description": "Emoji padrão para os duelos de jogo da velha em embeds",
+      "primaryId": "1551355296113238187",
+      "secondaryIds": [
+        "1548444319730499664"
+      ],
+      "fallback": "🌙"
+    },
+    "minesweeper": {
+      "name": "Campo Minado Arcano",
+      "description": "Emoji padrão para runas explosivas e cristais de mana em embeds",
+      "primaryId": "1551355644844580967",
+      "secondaryIds": [
+        "1548444229007835206"
+      ],
+      "fallback": "💥"
+    },
+    "dice": {
+      "name": "Sistema de Dados (Dice)",
+      "description": "Emoji padrão para rolagem de dados e minigames de sorte em embeds",
+      "primaryId": "1551356619647094814",
+      "secondaryIds": [
+        "1551356333272596572"
+      ],
+      "fallback": "🎲"
     }
   }
 }

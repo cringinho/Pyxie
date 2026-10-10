@@ -53,7 +53,7 @@ function groupEmojisByTheme(emojis) {
 const APP_EMOJIS = {
   WINGS: '<a:pinkeing:1548444149785694238>',
   WINGS_PURPLE: '<:9194purplewing:1551356206684307556>',
-  BUTTERFLY: getThemeEmoji('websiteHome'),
+  BUTTERFLY: '<a:255208butterfly:1551356640782057502>',
   SPELLBOOK: '<a:6449spellbook:1551355882447704124>',
   HEART: '<a:purpleheartdrip2:1548444199970545756>',
   COIN: getThemeEmoji('coins'),
@@ -63,7 +63,7 @@ const APP_EMOJIS = {
   CHEST: '<:rarecrate:1548444209328033913>',
   GIFT: getThemeEmoji('dailyBonus'),
   PRIZE: '<a:prizedraw:1548444183776329798>',
-  MAGIC_BEAN: '<:peakmagicbean:1548444140532928642>',
+  MAGIC_BEAN: getThemeEmoji('magicBeans'),
   BACKPACK: '<:a1backpack:1548443778359103579>',
   SPARKLES: '<a:purplesparkles:1548444202621214840>',
   PORTAL: '<:map:1551355962974273546>',
@@ -75,10 +75,16 @@ const APP_EMOJIS = {
   TAROT_ALBUM: getThemeEmoji('tarotAlbum'),
   DICE: getThemeEmoji('dice'),
   USER_PROFILE: getThemeEmoji('userProfile'),
-  GRIMORIO: getThemeEmoji('grimorio'),
   SHIP: getThemeEmoji('ship'),
   WEEKEND_BONUS: getThemeEmoji('weekendBonus'),
   HELP: getThemeEmoji('helpCommands'),
+  MARRIAGE: getThemeEmoji('marriage'),
+  MUSEUM: getThemeEmoji('museum'),
+  PARTNERSHIPS: getThemeEmoji('partnerships'),
+  SEASONAL: getThemeEmoji('seasonal'),
+  MATH: getThemeEmoji('arcaneMath'),
+  TICTACTOE: getThemeEmoji('tictactoe'),
+  MINESWEEPER: getThemeEmoji('minesweeper'),
 };
 
 function getAnimatedEmoji(guild, preferredNames = [], fallback = '✨') {

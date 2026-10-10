@@ -36,6 +36,9 @@ module.exports = {
   QUIZ: 'py-quiz',
   TERMS: 'py-terms',
   CHILD: 'py-child',
+  MATH: 'py-math',
+  TICTACTOE: 'py-tictactoe',
+  MINESWEEPER: 'py-minesweeper',
 };
 
 

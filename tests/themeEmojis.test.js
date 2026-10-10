@@ -22,18 +22,24 @@ assert(rawConfig.themes, 'Configuração deve possuir nó themes');
 
 const EXPECTED_THEMES = [
   'coins',
+  'magicBeans',
   'weekendBonus',
   'dailyBonus',
+  'economyCareers',
+  'shop',
+  'userProfile',
+  'helpCommands',
   'tarot',
   'tarotAlbum',
-  'helpCommands',
-  'economyCareers',
-  'dice',
-  'userProfile',
   'ship',
-  'websiteHome',
-  'websiteSocial',
-  'shop',
+  'marriage',
+  'museum',
+  'partnerships',
+  'seasonal',
+  'arcaneMath',
+  'tictactoe',
+  'minesweeper',
+  'dice',
 ];
 
 for (const themeKey of EXPECTED_THEMES) {
@@ -43,23 +49,29 @@ for (const themeKey of EXPECTED_THEMES) {
   assert(Array.isArray(theme.secondaryIds), `Tema '${themeKey}' deve possuir array secondaryIds`);
   assert(theme.fallback && typeof theme.fallback === 'string', `Tema '${themeKey}' deve possuir fallback`);
 }
-console.log('✅ Arquivo de configuração themeEmojis.json validado com 12 temas padrão.');
+console.log(`✅ Arquivo de configuração themeEmojis.json validado com ${EXPECTED_THEMES.length} temas padrão para Discord embeds.`);
 
 // 2. Validação dos IDs dos Emojis e Resolução contra o Catálogo Oficial
 const EXPECTED_MAPPINGS = {
   coins: { primaryId: '1548443880066777098', name: 'coin', animated: true },
+  magicBeans: { primaryId: '1548444140532928642', name: 'peakmagicbean', animated: false },
   weekendBonus: { primaryId: '1548443947079049256', name: 'event45', animated: false },
   dailyBonus: { primaryId: '1548443978414817331', name: 'gift62', animated: false },
+  economyCareers: { primaryId: '1548444230588956683', name: 'shineygoldcoinsi', animated: true },
+  shop: { primaryId: '1551356299500064858', name: '9862_holo_diamond', animated: true },
+  userProfile: { primaryId: '1551355544185344112', name: '3861memberpurple', animated: false },
+  helpCommands: { primaryId: '1548444173747621918', name: 'prcomputer', animated: true },
   tarot: { primaryId: '1548444111319605330', name: 'Moon', animated: true },
   tarotAlbum: { primaryId: '1551355436890857512', name: '2663tarotcards', animated: true },
-  helpCommands: { primaryId: '1548444173747621918', name: 'prcomputer', animated: true },
-  economyCareers: { primaryId: '1548444230588956683', name: 'shineygoldcoinsi', animated: true },
-  dice: { primaryId: '1551356619647094814', name: '96959prided20', animated: false },
-  userProfile: { primaryId: '1551355544185344112', name: '3861memberpurple', animated: false },
   ship: { primaryId: '1551744119670575124', name: 'emoji_1551744119670575124', animated: false },
-  websiteHome: { primaryId: '1551356640782057502', name: '255208butterfly', animated: true },
-  websiteSocial: { primaryId: '1551355541148667954', name: '3849purplebutterflies', animated: true },
-  shop: { primaryId: '1551356299500064858', name: 'emoji_1551356299500064858', animated: false },
+  marriage: { primaryId: '1548444199970545756', name: 'purpleheartdrip2', animated: true },
+  museum: { primaryId: '1551355436890857512', name: '2663tarotcards', animated: true },
+  partnerships: { primaryId: '1551355541148667954', name: '3849purplebutterflies', animated: true },
+  seasonal: { primaryId: '1551356273918746724', name: '9721dndd20', animated: false },
+  arcaneMath: { primaryId: '1551355602297430016', name: '4353_Pentacle', animated: false },
+  tictactoe: { primaryId: '1551355296113238187', name: '1314moon', animated: false },
+  minesweeper: { primaryId: '1551355644844580967', name: '4693toxicpotion', animated: false },
+  dice: { primaryId: '1551356619647094814', name: '96959prided20', animated: false },
 };
 
 for (const key of EXPECTED_THEMES) {

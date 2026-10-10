@@ -33,6 +33,9 @@ const commands = [
   require('./exportar'),
   require('./quiz'),
   require('./termos'),
+  require('./matematica'),
+  require('./jogodavelha'),
+  require('./campominado'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');

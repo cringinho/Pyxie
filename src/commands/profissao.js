@@ -16,22 +16,26 @@ const { formatCoins } = require('./economyHelpers');
 const { PROFESSION } = require('./commandNames');
 const { getLanguage, t } = require('../utils/i18n');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
+const { getEmoji } = require('../utils/appEmojis');
 
 function getProfessionChoices() {
   return Object.entries(professions).map(([value, profession]) => ({
-    name: `${profession.isMagic ? '✨ ' : ''}${profession.label}${profession.isMagic ? ` (${profession.beanCost}🌱)` : ''}`.slice(0, 100),
+    name: `${profession.isMagic ? '✨ ' : ''}${profession.label}${profession.isMagic ? ` (${profession.beanCost} Feijões)` : ''}`.slice(0, 100),
     value,
   }));
 }
 
 function getReply(result, professionKey, source = null) {
   const professionLabel = t(`profession.labels.${professionKey}`, source) || professions[professionKey]?.label || professionKey;
+  const beanEmoji = getEmoji('MAGIC_BEAN');
+
   if (!result.changed && result.reason === 'same') {
     return t('profession.sameProfession', source, { profession: professionLabel });
   }
   if (!result.changed && result.reason === 'insufficient_beans') {
     return t('profession.insufficientBeans', source, {
       cost: result.beanCost,
+      beanEmoji,
       balance: result.balanceBeans,
     });
   }
@@ -45,6 +49,7 @@ function getReply(result, professionKey, source = null) {
     return t('profession.unlockedMagicSuccess', source, {
       profession: professionLabel,
       cost: result.beanCost,
+      beanEmoji,
     });
   }
   return result.charged === 0
@@ -147,9 +152,11 @@ function buildProfessionEmbed(userId, source) {
   const account = getUserAccount(userId);
   const lang = getLanguage(source);
   const currentKey = account.profession;
+  const currentProf = currentKey ? professions[currentKey] : null;
   const currentLabel = currentKey
-    ? (t(`profession.labels.${currentKey}`, source) || professions[currentKey]?.label || currentKey)
+    ? (t(`profession.labels.${currentKey}`, source) || currentProf?.label || currentKey)
     : t('profession.none', source);
+  const currentEmoji = currentProf?.emoji || '💼';
   const careerLevel = getCareerLevel(userId);
   const roleTitle = currentKey ? getRoleTitle(currentKey, careerLevel, lang) : null;
   const unlocked = account.unlockedProfessions || [];
@@ -157,33 +164,58 @@ function buildProfessionEmbed(userId, source) {
   const commonKeys = Object.keys(professions).filter((k) => !professions[k].isMagic);
   const magicKeys = Object.keys(professions).filter((k) => professions[k].isMagic);
 
+  const beanEmoji = getEmoji('MAGIC_BEAN');
+  const coinEmoji = getEmoji('COIN');
+  const sparklesEmoji = getEmoji('SPARKLES');
+
+  // Format conventional careers cleanly in rows of 4 with their thematic emojis
+  const commonFormattedRows = [];
+  for (let i = 0; i < commonKeys.length; i += 4) {
+    const chunk = commonKeys.slice(i, i + 4);
+    const rowStr = chunk
+      .map((k) => `${professions[k].emoji} **${t(`profession.labels.${k}`, source) || professions[k].label}**`)
+      .join('  •  ');
+    commonFormattedRows.push(rowStr);
+  }
+
+  // Format magic vocations with custom application emojis and clean cost tag without duplicate icons
+  const magicFormattedList = magicKeys
+    .map((k) => {
+      const p = professions[k];
+      const isOwned = unlocked.includes(k);
+      const label = t(`profession.labels.${k}`, source) || p.label;
+      if (isOwned) {
+        return `${p.emoji} **${label}** — ✅ *${t('profession.unlockedTag', source)}*`;
+      }
+      const beanUnit = p.beanCost === 1 ? t('profession.beanUnitSingle', source) : t('profession.beanUnitPlural', source);
+      const costText = t('profession.beanCostTag', source, { cost: p.beanCost, beanEmoji, beanUnit });
+      return `${p.emoji} **${label}** — *${costText}*`;
+    })
+    .join('\n');
+
   const embed = new EmbedBuilder()
-    .setTitle(t('profession.embedTitle', source))
-    .setDescription(t('profession.embedDesc', source))
+    .setTitle(`${sparklesEmoji}  ✦  ${t('profession.embedTitle', source)}`)
+    .setDescription(t('profession.embedDesc', source, { beanEmoji }))
     .setColor(PYXIE_COLORS.primary || 0xe60067)
     .addFields(
       {
         name: t('profession.currentProfession', source),
-        value: `**${currentLabel}**${roleTitle ? ` — *${roleTitle}* (Nível ${careerLevel})` : ''}\n> ${t('profession.userBalanceField', source, { coins: formatCoins(account.coins, source), beans: `${account.magicBeans} 🌱` })}`,
+        value: `${currentEmoji} **${currentLabel}**${roleTitle ? ` — *${roleTitle}* (Nível ${careerLevel})` : ''}\n> ${t('profession.userBalanceField', source, {
+          coinEmoji,
+          coins: Number(account.coins || 0).toLocaleString('pt-BR'),
+          beanEmoji,
+          beans: Number(account.magicBeans || 0).toLocaleString('pt-BR'),
+        })}`,
         inline: false,
       },
       {
-        name: t('profession.standardCareers', source),
-        value: commonKeys.map((k) => `• **${t(`profession.labels.${k}`, source) || professions[k].label}**`).join(' '),
+        name: t('profession.standardCareers', source, { count: commonKeys.length }),
+        value: commonFormattedRows.join('\n'),
         inline: false,
       },
       {
-        name: t('profession.magicCareers', source),
-        value: magicKeys
-          .map((k) => {
-            const p = professions[k];
-            const isOwned = unlocked.includes(k);
-            const statusTag = isOwned
-              ? `✅ *(${t('profession.unlockedTag', source)})*`
-              : `🌱 *(${t('profession.beanCostTag', source, { cost: p.beanCost })})*`;
-            return `${p.emoji} **${t(`profession.labels.${k}`, source) || p.label}** — ${statusTag}`;
-          })
-          .join('\n'),
+        name: t('profession.magicCareers', source, { count: magicKeys.length }),
+        value: magicFormattedList,
         inline: false,
       }
     )
