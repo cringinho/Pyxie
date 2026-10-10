@@ -144,10 +144,8 @@ module.exports = {
     })
     .addSubcommand((sub) =>
       sub
-        .setName('listar')
+        .setName('list')
         .setNameLocalizations({
-          'en-US': 'list',
-          'en-GB': 'list',
           'pt-BR': 'listar',
         })
         .setDescription('List all children of your marriage')
@@ -157,10 +155,8 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
-        .setName('estagiar')
+        .setName('work')
         .setNameLocalizations({
-          'en-US': 'work',
-          'en-GB': 'work',
           'pt-BR': 'estagiar',
         })
         .setDescription('Send a child to a 24-hour internship for coins')
@@ -169,10 +165,8 @@ module.exports = {
         })
         .addStringOption((opt) =>
           opt
-            .setName('filho')
+            .setName('child')
             .setNameLocalizations({
-              'en-US': 'child',
-              'en-GB': 'child',
               'pt-BR': 'filho',
             })
             .setDescription('Name or ID of the child')
@@ -184,10 +178,8 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
-        .setName('resgatar')
+        .setName('claim')
         .setNameLocalizations({
-          'en-US': 'claim',
-          'en-GB': 'claim',
           'pt-BR': 'resgatar',
         })
         .setDescription('Claim coins from a completed internship')
@@ -196,10 +188,8 @@ module.exports = {
         })
         .addStringOption((opt) =>
           opt
-            .setName('filho')
+            .setName('child')
             .setNameLocalizations({
-              'en-US': 'child',
-              'en-GB': 'child',
               'pt-BR': 'filho',
             })
             .setDescription('Name or ID of the child')

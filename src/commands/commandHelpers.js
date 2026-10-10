@@ -15,8 +15,6 @@ function getModuleIconUrl(categoryKey) {
       return getThemeEmojiUrl('websiteHome') || 'https://cdn.discordapp.com/emojis/1551356640782057502.gif';
     case 'economia':
       return getThemeEmojiUrl('economyCareers') || getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548444230588956683.gif';
-    case 'loja':
-      return getThemeEmojiUrl('shop') || getThemeEmojiUrl('loja') || 'https://cdn.discordapp.com/emojis/1551356299500064858.gif';
     case 'tarot':
       return getThemeEmojiUrl('tarot') || 'https://cdn.discordapp.com/emojis/1551356087611957269.gif';
     case 'social':
@@ -32,7 +30,11 @@ const MODULE_ICONS = new Proxy({}, {
 });
 
 const COMMAND_ICONS = {
-  // Utilidades & Enciclopédia
+  // Utilidades & Enciclopédia & Setup
+  setup: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  'py-setup': 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  config: 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
+  'py-config': 'https://cdn.discordapp.com/emojis/1548444319730499664.gif',
   wiki: 'https://cdn.discordapp.com/emojis/1551356435521339452.gif',
   'py-wiki': 'https://cdn.discordapp.com/emojis/1551356435521339452.gif',
 
@@ -67,21 +69,6 @@ const COMMAND_ICONS = {
   resetareconomia: 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
   ecoconfig: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
   configeconomia: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
-
-  // Loja & Mochila
-  shop: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
-  loja: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
-  inventory: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
-  inventario: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
-  mochila: 'https://cdn.discordapp.com/emojis/1548443778359103579.png',
-  buy: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  comprar: 'https://cdn.discordapp.com/emojis/1548444230588956683.gif',
-  sell: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
-  vender: 'https://cdn.discordapp.com/emojis/1548443977429028955.gif',
-  buy: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
-  comprar: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
-  sell: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
-  vender: getThemeEmojiUrl('coins') || 'https://cdn.discordapp.com/emojis/1548443880066777098.gif',
 
   // Tarot Místico & Álbum
   tarot: 'https://cdn.discordapp.com/emojis/1551356087611957269.gif',
@@ -158,17 +145,15 @@ const COMMAND_ICONS = {
 const MODULE_METADATA = {
   todos: { id: 'todos', label: 'Visão Geral', emoji: '📖', iconUrl: MODULE_ICONS.todos, desc: 'Visão geral e índice de todas as categorias' },
   economia: { id: 'economia', label: 'Economia & Carreiras', emoji: '🪙', iconUrl: MODULE_ICONS.economia, desc: 'Moedinhas, trabalho, profissões, rankings, trocas e cofres' },
-  loja: { id: 'loja', label: 'Loja & Mochila', emoji: '🎒', iconUrl: MODULE_ICONS.loja, desc: 'Baús misteriosos, itens e inventário' },
   tarot: { id: 'tarot', label: 'Tarot Místico', emoji: '🔮', iconUrl: MODULE_ICONS.tarot, desc: 'Tiragens diárias, 78 arcanos e oráculo do destino' },
   social: { id: 'social', label: 'Social & Casamentos', emoji: '💑', iconUrl: MODULE_ICONS.social, desc: 'Casamentos, divórcios, perfil de aventureiro e afinidade' },
-  utilidades: { id: 'utilidades', label: 'Utilidades & Sistema', emoji: '⚙️', iconUrl: MODULE_ICONS.utilidades, desc: 'Status operacional, ping, convite, agenda, idioma e configurações' },
+  utilidades: { id: 'utilidades', label: 'Utilidades & Sistema', emoji: '⚙️', iconUrl: MODULE_ICONS.utilidades, desc: 'Status operacional, setup autônomo, ping, convite, agenda, idioma e configurações' },
 };
 
-const MODULE_KEYS = ['todos', 'economia', 'loja', 'tarot', 'social', 'utilidades'];
+const MODULE_KEYS = ['todos', 'economia', 'tarot', 'social', 'utilidades'];
 const MODULE_EMOJIS = {
   todos: '📖',
   economia: '🪙',
-  loja: '🎒',
   tarot: '🔮',
   social: '💑',
   utilidades: '⚙️',
@@ -232,26 +217,6 @@ const COMMAND_CATEGORY_MAP = {
   eventos: 'economia',
   'py-eventos': 'economia',
   pyeventos: 'economia',
-
-  // Loja & Mochila
-  shop: 'loja',
-  'py-shop': 'loja',
-  loja: 'loja',
-  'py-loja': 'loja',
-  inventory: 'loja',
-  'py-inventory': 'loja',
-  inventario: 'loja',
-  'py-inventario': 'loja',
-  buy: 'loja',
-  'py-buy': 'loja',
-  comprar: 'loja',
-  'py-comprar': 'loja',
-  sell: 'loja',
-  'py-sell': 'loja',
-  vender: 'loja',
-  'py-vender': 'loja',
-  mochila: 'loja',
-  'py-mochila': 'loja',
 
   // Tarot Místico & Álbum
   tarot: 'tarot',
@@ -340,6 +305,14 @@ const COMMAND_CATEGORY_MAP = {
   'py-invite': 'utilidades',
   convite: 'utilidades',
   'py-convite': 'utilidades',
+  setup: 'utilidades',
+  'py-setup': 'utilidades',
+  config: 'utilidades',
+  'py-config': 'utilidades',
+  configurar: 'utilidades',
+  'py-configurar': 'utilidades',
+  servidor: 'utilidades',
+  'py-servidor': 'utilidades',
   welcome: 'utilidades',
   'py-welcome': 'utilidades',
   boasvindas: 'utilidades',

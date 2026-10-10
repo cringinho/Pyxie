@@ -434,7 +434,10 @@ module.exports = {
     })
     .addIntegerOption((option) =>
       option
-        .setName('pagina')
+        .setName('page')
+        .setNameLocalizations({
+          'pt-BR': 'pagina',
+        })
         .setDescription('Card number to open directly in the album (1 to 78)')
         .setDescriptionLocalizations({
           'pt-BR': 'Número da carta para abrir diretamente no álbum (1 a 78)',
@@ -444,7 +447,7 @@ module.exports = {
         .setRequired(false)
     ),
   async executeSlash({ interaction }) {
-    const targetPage = interaction.options.getInteger('pagina') || 1;
+    const targetPage = interaction.options.getInteger('page') || interaction.options.getInteger('pagina') || 1;
     const view = buildCardsView(interaction.user.id, targetPage, interaction);
 
     await interaction.editReply({

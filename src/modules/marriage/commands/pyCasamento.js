@@ -484,10 +484,8 @@ module.exports = {
     })
     .addSubcommand((sub) =>
       sub
-        .setName('propor')
+        .setName('propose')
         .setNameLocalizations({
-          'en-US': 'propose',
-          'en-GB': 'propose',
           'pt-BR': 'propor',
         })
         .setDescription('Propose marriage to someone for 1000 coins')
@@ -496,10 +494,8 @@ module.exports = {
         })
         .addUserOption((opt) =>
           opt
-            .setName('usuario')
+            .setName('user')
             .setNameLocalizations({
-              'en-US': 'user',
-              'en-GB': 'user',
               'pt-BR': 'usuario',
             })
             .setDescription('User to propose to')
@@ -513,8 +509,6 @@ module.exports = {
       sub
         .setName('status')
         .setNameLocalizations({
-          'en-US': 'status',
-          'en-GB': 'status',
           'pt-BR': 'status',
         })
         .setDescription('View your marriage stats, Love Bar, house, tree and family')
@@ -524,10 +518,8 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
-        .setName('arvore')
+        .setName('tree')
         .setNameLocalizations({
-          'en-US': 'tree',
-          'en-GB': 'tree',
           'pt-BR': 'arvore',
         })
         .setDescription('Buy or cultivate the Tree of Life for +10% Love')
@@ -536,10 +528,8 @@ module.exports = {
         })
         .addStringOption((opt) =>
           opt
-            .setName('acao')
+            .setName('action')
             .setNameLocalizations({
-              'en-US': 'action',
-              'en-GB': 'action',
               'pt-BR': 'acao',
             })
             .setDescription('Action: cultivate or buy')
@@ -554,10 +544,8 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
-        .setName('casa')
+        .setName('house')
         .setNameLocalizations({
-          'en-US': 'house',
-          'en-GB': 'house',
           'pt-BR': 'casa',
         })
         .setDescription('Purchase the Family House (2000 coins, 2 beans, love >= 50%)')
@@ -567,10 +555,8 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
-        .setName('cofre')
+        .setName('vault')
         .setNameLocalizations({
-          'en-US': 'vault',
-          'en-GB': 'vault',
           'pt-BR': 'cofre',
         })
         .setDescription('Manage the Eternal Love Vault and daily interest')
@@ -579,10 +565,8 @@ module.exports = {
         })
         .addStringOption((opt) =>
           opt
-            .setName('acao')
+            .setName('action')
             .setNameLocalizations({
-              'en-US': 'action',
-              'en-GB': 'action',
               'pt-BR': 'acao',
             })
             .setDescription('Action: deposit or claim')
@@ -596,10 +580,8 @@ module.exports = {
         )
         .addIntegerOption((opt) =>
           opt
-            .setName('valor')
+            .setName('amount')
             .setNameLocalizations({
-              'en-US': 'amount',
-              'en-GB': 'amount',
               'pt-BR': 'valor',
             })
             .setDescription('Amount of coins to deposit')
@@ -613,8 +595,6 @@ module.exports = {
       sub
         .setName('date')
         .setNameLocalizations({
-          'en-US': 'date',
-          'en-GB': 'date',
           'pt-BR': 'date',
         })
         .setDescription('Start a Date Night couple harmony trivia (12h cooldown)')
@@ -624,10 +604,8 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
-        .setName('carinho')
+        .setName('affection')
         .setNameLocalizations({
-          'en-US': 'affection',
-          'en-GB': 'affection',
           'pt-BR': 'carinho',
         })
         .setDescription('Give daily affection to your spouse (+5% Love, 24h cooldown)')
@@ -637,10 +615,8 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
-        .setName('filho')
+        .setName('child')
         .setNameLocalizations({
-          'en-US': 'child',
-          'en-GB': 'child',
           'pt-BR': 'filho',
         })
         .setDescription('Adopt or expand your family with a new child')

@@ -39,6 +39,9 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName('action')
+        .setNameLocalizations({
+          'pt-BR': 'acao',
+        })
         .setDescription('Staff only: publish the request panel in the request channel')
         .setDescriptionLocalizations({
           'pt-BR': 'Somente staff: publica o painel de solicitações no canal de solicitações',
@@ -47,7 +50,7 @@ module.exports = {
         .setRequired(false)
     ),
   async executeSlash({ interaction }) {
-    const wantsPanel = interaction.options.getString('action') === 'panel';
+    const wantsPanel = (interaction.options.getString('action') || interaction.options.getString('acao')) === 'panel';
     await run(interaction, wantsPanel, (payload) => interaction.editReply(payload));
   },
   async executePrefix({ message, args }) {

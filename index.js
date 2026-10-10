@@ -26,8 +26,7 @@ moduleManager.init({
 });
 const tarotCommand = require('./src/commands/tarot');
 const helpCommand = require('./src/commands/help');
-const shopCommand = require('./src/commands/loja');
-const inventoryCommand = require('./src/commands/inventario');
+const setupCommand = require('./src/commands/setup');
 const profileCommand = require('./src/commands/perfil');
 const workCommand = require('./src/commands/trabalho');
 const dailyCommand = require('./src/commands/daily');
@@ -161,7 +160,7 @@ async function sendStartupAnnouncement() {
           '> 👤 **/py-profile** — Customize títulos, temas e biografia',
           '> 🎲 **/py-coinflip** — Dispute cara ou coroa com apostas de moedinhas',
           '> 🪙 **/py-daily** — Resgate moedas diárias e bônus patrocinado',
-          '> 🎒 **/py-inventory** — Visualize sua mochila, baús e gemas',
+          '> 💍 **/py-marriage** — Construa sua família e cultive a Árvore da Vida',
           '> ❓ **/py-help** — Menu interativo com todos os comandos',
         ].join('\n'),
         inline: false,
@@ -792,17 +791,10 @@ client.on('interactionCreate', async (interaction) => {
       return;
     }
 
-    if (typeof shopCommand?.isShopInteraction === 'function' && shopCommand.isShopInteraction(interaction)) {
+    if (typeof setupCommand?.isSetupInteraction === 'function' && setupCommand.isSetupInteraction(interaction)) {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
-      await shopCommand.handleShopInteraction(interaction);
-      return;
-    }
-
-    if (typeof inventoryCommand?.isInventoryInteraction === 'function' && inventoryCommand.isInventoryInteraction(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await inventoryCommand.handleInventoryInteraction(interaction);
+      await setupCommand.handleSetupInteraction(interaction);
       return;
     }
 

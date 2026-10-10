@@ -29,36 +29,28 @@ function buildBonusEmbed(userId, sessionUrl, source = null) {
 
   const desc = isEn
     ? [
-        '✨ **Claim your Free Web Bonus (10s)!**',
         '✨ **Claim your Free Daily Web Bonus (10s)!**',
         '',
         'Click the button below to open your personalized bonus link. After waiting **10 seconds** on the web page, you will automatically receive:',
         '',
         '> 🪙 **+75 Coins** added directly to your account',
-        '> 🌱 **+1 Magic Bean** to customize your profile themes',
-        '> 📦 **1x Rustic Mystery Chest** stored in your backpack (`/py-inventory`)',
+        '> 🌱 **+1 Magic Bean** to customize your profile themes and marriage',
         '',
-        '🔒 *Your link is securely signed and valid for 15 minutes.*',
         '🔒 *Your link is securely signed, single-use, and valid for 15 minutes.*',
       ].join('\n')
     : [
-        '✨ **Resgate seu Bônus Web Gratuito (10s)!**',
         '✨ **Resgate seu Bônus Web Diário Gratuito (10s)!**',
         '',
         'Clique no botão abaixo para abrir seu link exclusivo. Ao aguardar **10 segundos** na página, você receberá automaticamente:',
         '',
-        '> 🪙 **+75 Moedas** creditadas na sua conta',
-        '> 🌱 **+1 Feijão Mágico** para comprar temas no perfil',
-        '> 📦 **1x Baú Rústico Misterioso** guardado na mochila (`/py-inventory`)',
         '> 🪙 **+75 Moedas** creditadas diretamente na sua conta',
+        '> 🌱 **+1 Feijão Mágico** para comprar temas no perfil e casamento',
         '',
-        '🔒 *Seu link é seguro, pessoal e válido por 15 minutos.*',
         '🔒 *Seu link é seguro, de uso único e válido por 15 minutos.*',
       ].join('\n');
 
   const embed = new EmbedBuilder()
     .setColor(PYXIE_COLORS.gold || '#facc15')
-    .setTitle(isEn ? '🎁  ✦  Pyxie Magic Bonus & Rewards' : '🎁  ✦  Bônus Mágico & Recompensas da Pyxie')
     .setTitle(isEn ? '🎁  ✦  Pyxie Daily Web Bonus' : '🎁  ✦  Bônus Web Diário da Pyxie')
     .setDescription(desc)
     .setFooter({ text: pyxieFooter(isEn ? 'Rewards sponsored by Monetag (24h cooldown)' : 'Recompensa diária patrocinada (Cooldown de 24h)', source) })

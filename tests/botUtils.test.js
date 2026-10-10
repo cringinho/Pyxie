@@ -43,7 +43,7 @@ try {
   
   const rawComponents = helpPage1.components[0].toJSON();
   assert.equal(rawComponents.components[0].type, 3, 'Deve conter um StringSelectMenu (tipo 3).');
-  assert.ok(rawComponents.components[0].options.length >= 6, 'Deve conter opções para todos os 6 módulos temáticos.');
+  assert.ok(rawComponents.components[0].options.length >= 5, 'Deve conter opções para todos os 5 módulos temáticos.');
 
   // Validação dos botões de link do menu de ajuda (sem restos de código ou chaves i18n cruas!)
   assert.ok(helpPage1.components[1], 'Deve conter a fileira de botões de links úteis.');
@@ -177,19 +177,13 @@ try {
   const agendaEmbedEn = agendaCmd.buildAgendaEmbed(null, Date.now(), 'en');
   assert.ok(agendaEmbedPt.data.title.includes('Agenda de Automações'), 'Agenda PT ok');
   assert.ok(agendaEmbedEn.data.title.includes('Automation Schedule'), 'Agenda EN ok');
-  // 8. Loja e Inventário:
-  const lojaCmd = require('../src/commands/loja');
-  const inventarioCmd = require('../src/commands/inventario');
-
-  const shopEmbedPt = lojaCmd.buildShopEmbed('bau', 'pt');
-  const shopEmbedEn = lojaCmd.buildShopEmbed('bau', 'en');
-  assert.ok(shopEmbedPt.data.title.includes('Lojinha'), 'Loja PT ok');
-  assert.ok(shopEmbedEn.data.title.includes('Shop'), 'Loja EN ok');
-
-  const invEmbedPt = inventarioCmd.buildInventoryEmbed('user-1', 'Aventureiro', null, 'pt');
-  const invEmbedEn = inventarioCmd.buildInventoryEmbed('user-1', 'Adventurer', null, 'en');
-  assert.ok(invEmbedPt.data.title.includes('Mochila'), 'Inventario PT ok');
-  assert.ok(invEmbedEn.data.title.includes('Backpack'), 'Inventario EN ok');
+  // 8. Painel de Setup Autônomo (Zero-OAuth):
+  const setupCmd = require('../src/commands/setup');
+  const mockGuild = { id: 'guild-test-1', name: 'Test Guild', iconURL: () => null };
+  const setupViewPt = setupCmd.buildSetupDashboard(mockGuild, 'pt');
+  const setupViewEn = setupCmd.buildSetupDashboard(mockGuild, 'en');
+  assert.ok(setupViewPt.embeds[0].data.title.includes('Painel de Configuração'), 'Setup PT ok');
+  assert.ok(setupViewEn.embeds[0].data.title.includes('Server Configuration Panel'), 'Setup EN ok');
 
   // 9. Emojis preview e busca:
   const emojisCmd = require('../src/commands/emojis');

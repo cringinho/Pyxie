@@ -151,22 +151,84 @@ export default function MuseumScene({ t }) {
     violetLight.position.set(0, -3, 3);
     scene.add(violetLight);
 
-    // Texture Loader & Cards Mesh Group
-    const cardsGroup = new THREE.Group();
-    scene.add(cardsGroup);
+    // Globo das Artes Mágicas (Spherical Projection Globe)
+    const globeGroup = new THREE.Group();
+    scene.add(globeGroup);
 
-    const cardGeometry = new THREE.PlaneGeometry(1.6, 2.3);
+    const sphereRadius = 3.3;
+
+    // 1. Esfera Celeste Wireframe (Meridianos e Paralelos)
+    const globeWireGeo = new THREE.SphereGeometry(sphereRadius, 24, 16);
+    const globeWireMat = new THREE.MeshBasicMaterial({
+      color: 0x8b5cf6,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.22,
+    });
+    const globeWireMesh = new THREE.Mesh(globeWireGeo, globeWireMat);
+    globeGroup.add(globeWireMesh);
+
+    // 2. Núcleo Holográfico Enegrecido / Atmosfera Interna
+    const innerAuraGeo = new THREE.SphereGeometry(sphereRadius * 0.98, 32, 24);
+    const innerAuraMat = new THREE.MeshBasicMaterial({
+      color: 0x140726,
+      transparent: true,
+      opacity: 0.65,
+      side: THREE.BackSide,
+    });
+    globeGroup.add(new THREE.Mesh(innerAuraGeo, innerAuraMat));
+
+    // 3. Anéis Orbitais Celestes (Equador & Meridiano Primário)
+    const torusGeo = new THREE.TorusGeometry(sphereRadius + 0.05, 0.02, 16, 64);
+    const equatorMat = new THREE.MeshBasicMaterial({ color: 0xe60067, transparent: true, opacity: 0.55 });
+    const equatorRing = new THREE.Mesh(torusGeo, equatorMat);
+    equatorRing.rotation.x = Math.PI / 2;
+    globeGroup.add(equatorRing);
+
+    const meridianMat = new THREE.MeshBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.4 });
+    const meridianRing = new THREE.Mesh(torusGeo, meridianMat);
+    globeGroup.add(meridianRing);
+
+    // 4. Cristal Mágico Central (Ponto Focal C)
+    const coreGeo = new THREE.OctahedronGeometry(0.5, 0);
+    const coreMat = new THREE.MeshBasicMaterial({ color: 0xff3b81, wireframe: true });
+    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    globeGroup.add(coreMesh);
+
+    // 5. Projeção Esférica Tangente de Cartas de Arte (Superfície do Globo)
+    const cardGeometry = new THREE.PlaneGeometry(1.22, 1.78);
+    const frameGeometry = new THREE.PlaneGeometry(1.3, 1.86);
     const loader = new THREE.TextureLoader();
     const cardMeshes = [];
 
-    const radius = 4.2;
-    const cardItems = arts.slice(0, 8);
-    const total = cardItems.length;
+    // Definição dos cinturões esféricos de latitude (phi) e longitude (theta)
+    const sphereSlots = [
+      // Cinturão Superior (phi ~ 66°)
+      { phi: 1.15, theta: 0 },
+      { phi: 1.15, theta: (2 * Math.PI) / 3 },
+      { phi: 1.15, theta: (4 * Math.PI) / 3 },
+      // Cinturão Equatorial (phi = 90°)
+      { phi: Math.PI / 2, theta: 0.35 },
+      { phi: Math.PI / 2, theta: 0.35 + (2 * Math.PI) / 5 },
+      { phi: Math.PI / 2, theta: 0.35 + (4 * Math.PI) / 5 },
+      { phi: Math.PI / 2, theta: 0.35 + (6 * Math.PI) / 5 },
+      { phi: Math.PI / 2, theta: 0.35 + (8 * Math.PI) / 5 },
+      // Cinturão Inferior (phi ~ 114°)
+      { phi: 1.99, theta: 0.8 },
+      { phi: 1.99, theta: 0.8 + (2 * Math.PI) / 3 },
+      { phi: 1.99, theta: 0.8 + (4 * Math.PI) / 3 },
+    ];
 
-    cardItems.forEach((art, index) => {
-      const angle = (index / total) * Math.PI * 2;
-      const x = Math.sin(angle) * radius;
-      const z = Math.cos(angle) * radius - radius;
+    sphereSlots.forEach((slot, index) => {
+      const art = arts[index % arts.length];
+      const phi = slot.phi;
+      const theta = slot.theta;
+      const radialDist = sphereRadius + 0.12;
+
+      // Coordenadas esféricas -> Cartesianas (x, y, z)
+      const x = Math.sin(phi) * Math.sin(theta) * radialDist;
+      const y = Math.cos(phi) * radialDist;
+      const z = Math.sin(phi) * Math.cos(theta) * radialDist;
 
       const texture = loader.load(art.imageUrl || '/assets/pyxie/og_banner_hd.png');
       texture.minFilter = THREE.LinearFilter;
@@ -179,18 +241,34 @@ export default function MuseumScene({ t }) {
       });
 
       const mesh = new THREE.Mesh(cardGeometry, material);
-      mesh.position.set(x, 0, z);
-      mesh.rotation.y = angle + Math.PI;
-      mesh.userData = { art, initialZ: z, initialY: mesh.rotation.y };
+      mesh.position.set(x, y, z);
 
-      cardsGroup.add(mesh);
+      // Orientação Tangente à Esfera (Vetor normal partindo do centro C)
+      mesh.lookAt(x * 2, y * 2, z * 2);
+
+      // Moldura de vidro/neon por trás da carta
+      const frameMat = new THREE.MeshBasicMaterial({
+        color: index % 2 === 0 ? 0xe60067 : 0x8b5cf6,
+        transparent: true,
+        opacity: 0.45,
+        side: THREE.DoubleSide,
+      });
+      const frameMesh = new THREE.Mesh(frameGeometry, frameMat);
+      frameMesh.position.z = -0.01;
+      mesh.add(frameMesh);
+
+      mesh.userData = { art, initialPos: mesh.position.clone() };
+
+      globeGroup.add(mesh);
       cardMeshes.push(mesh);
     });
 
-    // Physics & Interaction variables
+    // Física e Interação de Órbita 3D (Arraste Dual-Axis)
     let isDragging = false;
     let previousMouseX = 0;
-    let angularVelocity = 0.003;
+    let previousMouseY = 0;
+    let angularVelY = 0.002;
+    let angularVelX = 0;
     const friction = 0.95;
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2(-100, -100);
@@ -198,7 +276,9 @@ export default function MuseumScene({ t }) {
     const onPointerDown = (e) => {
       isDragging = true;
       previousMouseX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-      angularVelocity = 0;
+      previousMouseY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+      angularVelY = 0;
+      angularVelX = 0;
     };
 
     const onPointerMove = (e) => {
@@ -207,12 +287,19 @@ export default function MuseumScene({ t }) {
 
       if (isDragging) {
         const deltaX = clientX - previousMouseX;
-        angularVelocity = deltaX * 0.005;
-        cardsGroup.rotation.y += angularVelocity;
+        const deltaY = clientY - previousMouseY;
+
+        angularVelY = deltaX * 0.004;
+        angularVelX = deltaY * 0.0025;
+
+        globeGroup.rotation.y += angularVelY;
+        globeGroup.rotation.x = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, globeGroup.rotation.x + angularVelX));
+
         previousMouseX = clientX;
+        previousMouseY = clientY;
       }
 
-      // Raycasting coords
+      // Coordenadas de Raycasting
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
         mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
@@ -239,7 +326,7 @@ export default function MuseumScene({ t }) {
     window.addEventListener('pointerup', onPointerUp);
     canvasElem.addEventListener('click', onClick);
 
-    // Animation Loop
+    // Loop de Animação e Renderização
     let animationFrameId;
     const clock = new THREE.Clock();
 
@@ -247,14 +334,21 @@ export default function MuseumScene({ t }) {
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Inércia
+      // Inércia e Rotação Ambiente do Globo
       if (!isDragging) {
-        cardsGroup.rotation.y += angularVelocity;
-        angularVelocity *= friction;
-        if (Math.abs(angularVelocity) < 0.0008) {
-          angularVelocity = 0.0018; // Rotação ambiente contínua
+        globeGroup.rotation.y += angularVelY;
+        globeGroup.rotation.x += angularVelX;
+        angularVelY *= friction;
+        angularVelX *= friction;
+
+        if (Math.abs(angularVelY) < 0.0006) {
+          angularVelY = 0.0016; // Rotação cósmica suave contínua
         }
       }
+
+      // Pulsação suave do núcleo mágico
+      coreMesh.rotation.y += 0.015;
+      coreMesh.rotation.x += 0.01;
 
       // Parallax de partículas
       particleSystem.rotation.y = elapsedTime * 0.02;
@@ -296,7 +390,7 @@ export default function MuseumScene({ t }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-xs font-bold mb-3 shadow-sm">
           <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-          <span>The Holographic Community Deck</span>
+          <span>{t('museum.badge')}</span>
         </div>
         <h2 className="font-title font-black text-3xl sm:text-4xl text-white tracking-tight">
           {t('museum.title')}

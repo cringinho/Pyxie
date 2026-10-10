@@ -14,10 +14,7 @@ const commands = [
   require('./resetareconomia'),
   require('./profissao'),
   require('./trabalho'),
-  require('./loja'),
-  require('./comprar'),
-  require('./vender'),
-  require('./inventario'),
+  require('./setup'),
   require('./tarot'),
   require('./album'),
   require('./agenda'),
@@ -43,6 +40,7 @@ setLoadedCommands(commands);
 
 // Comandos restritos a contexto de guilda e administração
 const GUILD_ONLY_COMMANDS = new Set([
+  'setup', 'py-setup',
   'welcome', 'py-welcome', 'setwelcome', 'py-setwelcome',
   'schedule', 'py-schedule', 'agenda', 'py-agenda',
   'admin', 'py-admin',
