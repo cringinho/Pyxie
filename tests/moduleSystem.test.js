@@ -101,11 +101,11 @@ console.log('✅ Formatação de metadados para painel administrativo validada.'
   });
 
   // Emite evento de servidor externo (não permitido)
-  mockClient.emit('messageCreate', { guildId: '999999999999999999', content: 'hello external' });
+  mockClient.emit('messageCreate', { id: 'm1', author: { id: 'u1', bot: false }, channel: { id: 'c1' }, guildId: '999999999999999999', content: 'hello external' });
   assert.equal(eventCapturedCount, 0, 'Listener com guildScope DEVE ignorar eventos de servidores não autorizados');
 
   // Emite evento da Cringelândia (permitido)
-  mockClient.emit('messageCreate', { guildId: '1453890868980482090', content: 'hello cringelandia' });
+  mockClient.emit('messageCreate', { id: 'm2', author: { id: 'u2', bot: false }, channel: { id: 'c2' }, guildId: '1453890868980482090', content: 'hello cringelandia' });
   assert.equal(eventCapturedCount, 1, 'Listener com guildScope DEVE processar eventos da Cringelândia');
   console.log('✅ Isolamento multi-tenant e guarda de eventos por guildScope validados com sucesso.');
 

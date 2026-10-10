@@ -236,7 +236,7 @@ class MuseumManager {
     try {
       if (message.author?.bot) return;
       this.refresh();
-      if (!this.config.artChannelId || message.channel.id !== this.config.artChannelId) return;
+      if (!this.config.artChannelId || message.channel?.id !== this.config.artChannelId) return;
 
       const img = message.attachments.find((att) => att.contentType?.startsWith('image/'));
       if (!img) return;
