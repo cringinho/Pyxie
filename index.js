@@ -24,7 +24,6 @@ moduleManager.init({
   commandsByName,
   slashCommands,
 });
-const marriageCommand = require('./src/commands/casamento');
 const tarotCommand = require('./src/commands/tarot');
 const helpCommand = require('./src/commands/help');
 const shopCommand = require('./src/commands/loja');
@@ -60,7 +59,7 @@ const {
 const { incrementCommand, incrementMessages, recordUniqueUser, updateStats, flushSync } = require('./src/services/logging');
 const { setGuildLanguage } = require('./src/utils/i18n');
 const { flushInventorySync } = require('./src/services/inventory');
-const { getBrasiliaDate, resetDailyDraws } = require('./src/services/tarot');
+const { getBrasiliaDate, resetDailyDraws, readState } = require('./src/services/tarot');
 const { getAnimatedEmoji } = require('./src/utils/serverEmojis');
 
 const welcomeHeartReactions = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🩷', '🩵', '🖤', '🤍', '🤎'];
@@ -335,6 +334,14 @@ async function postTarotDailyAnnouncement(now = Date.now()) {
 
 function startTarotScheduler() {
   const currentCycle = getBrasiliaDate();
+  const state = readState();
+
+  // Se o ciclo já virou e o anúncio de hoje ainda não foi postado:
+  if (state.cycle !== currentCycle) {
+    console.log(`[TarotScheduler] Novo ciclo detectado (${currentCycle}). Disparando anúncio diário do Tarot...`);
+    postTarotDailyAnnouncement().catch((error) => console.error('Erro no anúncio diário do Tarot:', error));
+  }
+
   const nextMidnightUtc = Date.parse(`${currentCycle}T03:00:00.000Z`) + 24 * 60 * 60 * 1000;
   const delay = Math.max(1000, nextMidnightUtc - Date.now());
 
@@ -778,13 +785,6 @@ client.on('interactionCreate', async (interaction) => {
       return;
     }
 
-    if (typeof marriageCommand?.isMarriageButton === 'function' && marriageCommand.isMarriageButton(interaction)) {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await marriageCommand.executeButton({ interaction });
-      return;
-    }
-
     if (typeof helpCommand?.isHelpButton === 'function' && helpCommand.isHelpButton(interaction)) {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
@@ -1094,6 +1094,15 @@ if (process.stdin) {
               console.log(`[Partnerships:Panel] Postagem do painel via IPC: ${res.ok ? 'SUCESSO no canal ' + res.channelId : 'FALHOU: ' + res.message}`);
             }).catch((err) => {
               console.error('[IPC:Bot] Erro ao postar painel de parcerias:', err);
+            });
+            break;
+          }
+          case 'TAROT_DAILY_TRIGGER': {
+            console.log('[IPC:Bot] Comando TAROT_DAILY_TRIGGER recebido do supervisor.');
+            postTarotDailyAnnouncement().then(() => {
+              console.log('[Tarot:Daily] Anúncio diário postado com sucesso via IPC.');
+            }).catch((err) => {
+              console.error('[Tarot:Daily] Erro ao postar anúncio diário via IPC:', err);
             });
             break;
           }

@@ -2,7 +2,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const https = require('node:https');
 
-const INDEXNOW_KEY = process.env.INDEXNOW_KEY || 'pyxie_indexnow_8f73b612c0914e9e';
+const rawKey = process.env.INDEXNOW_KEY || 'pyxie-indexnow-8f73b612c0914e9e';
+const INDEXNOW_KEY = rawKey.replace(/[^a-zA-Z0-9-]/g, '-');
 const INDEXNOW_HOST = 'pyxie.com.br';
 const KEY_FILE_NAME = `${INDEXNOW_KEY}.txt`;
 

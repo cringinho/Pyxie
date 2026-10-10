@@ -1806,8 +1806,17 @@ app.post('/api/stats/reset', requireAdminAuth, (req, res) => {
 });
 
 app.post('/api/logs/clear', requireAdminAuth, (req, res) => {
+  botLogs = [];
   clearLogs();
   res.json({ success: true, message: 'Logs limpos com sucesso.' });
+});
+
+app.post('/api/admin/tarot/post-daily', requireAdminAuth, (req, res) => {
+  const sent = sendIpcToBot({ type: 'TAROT_DAILY_TRIGGER' });
+  if (sent) {
+    return res.json({ success: true, message: 'Comando de postagem do Tarot enviado ao bot via IPC.' });
+  }
+  return res.status(503).json({ success: false, error: 'Bot offline ou IPC indisponível.' });
 });
 
 app.post('/api/embed/send', requireAdminAuth, (req, res) => {

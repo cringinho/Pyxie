@@ -157,5 +157,6 @@ module.exports = {
   getCardCount,
   getTimeUntilMidnight,
   hasActiveDraw,
+  readState,
   resetDailyDraws,
 };
