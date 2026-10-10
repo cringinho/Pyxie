@@ -140,6 +140,16 @@ if [ "${FORCE_DEPLOY}" = true ] || git diff "${LOCAL_REV}" "${REMOTE_REV}" --nam
   npm ci --omit=dev
 fi
 
+if [ -d "client" ] && [ -f "client/package.json" ]; then
+  if [ "${FORCE_DEPLOY}" = true ] || git diff "${LOCAL_REV}" "${REMOTE_REV}" --name-only | grep -qE '^client/'; then
+    echo "⚛️ Verificando e compilando frontend React/Vite..."
+    if [ ! -d "client/node_modules" ] || git diff "${LOCAL_REV}" "${REMOTE_REV}" --name-only | grep -qE '^client/package(-lock)?\.json$'; then
+      (cd client && npm install --silent)
+    fi
+    (cd client && npm run build) || echo "Aviso: falha não-fatal ao compilar frontend (utilizando dist existente)."
+  fi
+fi
+
 if [ "${FORCE_DEPLOY}" = true ] || git diff "${LOCAL_REV}" "${REMOTE_REV}" --name-only | grep -qE '^(src/commands|src/registerSlashCommands\.js)'; then
   echo "📜 Registrando slash commands..."
   node src/registerSlashCommands.js || echo "Aviso: falha não-fatal ao registrar slash commands."

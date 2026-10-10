@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #07040D;
+  background-image: 
+    radial-gradient(circle at 50% -15%, #3b1464 0%, rgba(14, 7, 26, 0.98) 45%, #07040D 100%),
+    radial-gradient(circle at 10% 40%, rgba(244, 63, 94, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 60%, rgba(147, 51, 234, 0.1) 0%, transparent 45%);
+  color: #FFFFFF;
+  min-height: 100vh;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(22, 13, 42, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(192, 132, 252, 0.18);
+}
+
+.glass-panel-hover {
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-panel-hover:hover {
+  background: rgba(36, 19, 68, 0.88);
+  border-color: rgba(244, 63, 94, 0.45);
+  box-shadow: 0 16px 40px rgba(244, 63, 94, 0.18);
+  transform: translateY(-3px);
+}
+
+/* Cyber-Goth Neon Glows */
+.glow-pink {
+  box-shadow: 0 0 25px rgba(230, 0, 103, 0.45);
+}
+
+.glow-violet {
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+}
+
+.gradient-text-pink {
+  background: linear-gradient(135deg, #FF6EA7 0%, #E60067 50%, #9333EA 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-violet {
+  background: linear-gradient(135deg, #C084FC 0%, #8B5CF6 50%, #E60067 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Art Shield Protection */
+.art-shield {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  pointer-events: auto;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #07040D;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(147, 51, 234, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(230, 0, 103, 0.6);
+}
