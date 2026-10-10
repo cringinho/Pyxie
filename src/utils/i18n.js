@@ -385,7 +385,12 @@ const TRANSLATIONS = {
       "dedicationMaster": "Mestre",
       "dedicationVeteran": "Veterano",
       "dedicationPractitioner": "Praticante",
-      "dedicationNovice": "Iniciante"
+      "dedicationNovice": "Iniciante",
+      "showcaseHint": "💡 *Use os botões abaixo para customizar títulos, temas visuais ou biografia.*",
+      "originGuild": "🏰 **Origem:** {guild}",
+      "themeLabel": "🎨 **Tema:** {theme}",
+      "titleLabel": "👑 **Título:** {title}",
+      "noTitleEquipped": "Nenhum"
     },
     "ranking": {
       "mainTitle": "🏆  ✦  Ranking Oficial do Reino",
@@ -1036,7 +1041,12 @@ const TRANSLATIONS = {
       "dedicationMaster": "Master",
       "dedicationVeteran": "Veteran",
       "dedicationPractitioner": "Practitioner",
-      "dedicationNovice": "Novice"
+      "dedicationNovice": "Novice",
+      "showcaseHint": "💡 *Use the buttons below to customize titles, visual themes or biography.*",
+      "originGuild": "🏰 **Origin:** {guild}",
+      "themeLabel": "🎨 **Theme:** {theme}",
+      "titleLabel": "👑 **Title:** {title}",
+      "noTitleEquipped": "None"
     },
     "ranking": {
       "mainTitle": "🏆  ✦  Official Realm Leaderboard",

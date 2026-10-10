@@ -53,6 +53,7 @@ function buildProfileEmbed({
   marriageDetails = null,
   museumArtsCount = 0,
   hasImageCard = false,
+  guild = null,
 }) {
   const lang = getLanguage(source);
   const isEn = lang === 'en';
@@ -61,6 +62,11 @@ function buildProfileEmbed({
   const magicBeansVal = Number(account?.magicBeans) || 0;
   const workVal = Number(account?.workCount) || 0;
   const rankStr = rankPosition ? `#${rankPosition} Global` : t('common.unranked', source);
+
+  const { THEMES_CATALOG } = require('../services/economy');
+  const equippedTheme = account?.equippedTheme && THEMES_CATALOG[account.equippedTheme]
+    ? THEMES_CATALOG[account.equippedTheme]
+    : THEMES_CATALOG.default;
 
   const dedicationLevel =
     workVal >= 50
@@ -78,57 +84,71 @@ function buildProfileEmbed({
 
   const bioQuote = `> *« ${bioText} »*`;
 
-  const descLines = [
-    bioQuote,
-    '',
-    t('profile.treasureHeader', source),
-    t('profile.coins', source, { coins: coinsVal.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR') }),
-    t('profile.magicBeans', source, { beans: magicBeansVal.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR') }),
-    t('profile.ranking', source, { rank: rankStr }),
-    '',
-    t('profile.careerHeader', source),
-    t('profile.profession', source, { profession: professionLabel || t('profile.noProfession', source) }),
-    t('profile.workCount', source, { count: workVal }),
-    t('profile.dedication', source, { level: dedicationLevel }),
-    '',
-    t('profile.socialHeader', source),
-  ];
-
-  if (marriageDetails && marriageDetails.isMarried) {
-    descLines.push(`> 💍 **${isEn ? 'Spouse' : 'Cônjuge'}:** ${marriageDetails.spouseName}`);
-    descLines.push(`> ❤️ **${isEn ? 'Love Bar' : 'Barra do Amor'}:** **${marriageDetails.lovePoints}%** (${marriageDetails.marriageDays} ${isEn ? 'days' : 'dias'})`);
-    if (marriageDetails.childrenCount > 0) {
-      descLines.push(`> 👶 **${isEn ? 'Children' : 'Filhos'}:** **${marriageDetails.childrenCount}** ${isEn ? 'adopted' : 'adotado(s)'}`);
+  let desc = '';
+  if (hasImageCard) {
+    const titleText = equippedTitle ? `${equippedTitle.emoji} ${equippedTitle.name}` : t('profile.noTitleEquipped', source);
+    const themeText = `${equippedTheme.emoji} ${equippedTheme.name}`;
+    const showcaseLines = [
+      bioQuote,
+      '',
+      `> ${t('profile.titleLabel', source, { title: titleText })}  •  ${t('profile.themeLabel', source, { theme: themeText })}`,
+    ];
+    if (guild?.name) {
+      showcaseLines.push(`> ${t('profile.originGuild', source, { guild: guild.name })}`);
     }
-    if (marriageDetails.vaultCoins > 0) {
-      descLines.push(`> 🏦 **${isEn ? 'Family Vault' : 'Cofre Familiar'}:** **${marriageDetails.vaultCoins.toLocaleString()}** ${isEn ? 'Coins' : 'Moedas'}`);
-    }
+    showcaseLines.push('');
+    showcaseLines.push(t('profile.showcaseHint', source));
+    desc = showcaseLines.join('\n');
   } else {
-    descLines.push(spouse ? t('profile.marriedTo', source, { spouse }) : t('profile.single', source));
-  }
+    const descLines = [
+      bioQuote,
+      '',
+      t('profile.treasureHeader', source),
+      t('profile.coins', source, { coins: coinsVal.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR') }),
+      t('profile.magicBeans', source, { beans: magicBeansVal.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR') }),
+      t('profile.ranking', source, { rank: rankStr }),
+      '',
+      t('profile.careerHeader', source),
+      t('profile.profession', source, { profession: professionLabel || t('profile.noProfession', source) }),
+      t('profile.workCount', source, { count: workVal }),
+      t('profile.dedication', source, { level: dedicationLevel }),
+      '',
+      t('profile.socialHeader', source),
+    ];
 
-  if (tarotStats) {
-    descLines.push('');
-    descLines.push(`**🔮 ${isEn ? 'MYSTIC TAROT' : 'TAROT MÍSTICO'}**`);
-    descLines.push(`> 📖 **${isEn ? 'Arcana Discovered' : 'Arcanos Descobertos'}:** **${tarotStats.discoveredCount}/78** (${tarotStats.percentage}%)`);
-    descLines.push(`> 🏆 **${isEn ? 'Achievements' : 'Conquistas'}:** **${tarotStats.achievementsClaimed}/10**`);
-  }
+    if (marriageDetails && marriageDetails.isMarried) {
+      descLines.push(`> 💍 **${isEn ? 'Spouse' : 'Cônjuge'}:** ${marriageDetails.spouseName}`);
+      descLines.push(`> ❤️ **${isEn ? 'Love Bar' : 'Barra do Amor'}:** **${marriageDetails.lovePoints}%** (${marriageDetails.marriageDays} ${isEn ? 'days' : 'dias'})`);
+      if (marriageDetails.childrenCount > 0) {
+        descLines.push(`> 👶 **${isEn ? 'Children' : 'Filhos'}:** **${marriageDetails.childrenCount}** ${isEn ? 'adopted' : 'adotado(s)'}`);
+      }
+      if (marriageDetails.vaultCoins > 0) {
+        descLines.push(`> 🏦 **${isEn ? 'Family Vault' : 'Cofre Familiar'}:** **${marriageDetails.vaultCoins.toLocaleString()}** ${isEn ? 'Coins' : 'Moedas'}`);
+      }
+    } else {
+      descLines.push(spouse ? t('profile.marriedTo', source, { spouse }) : t('profile.single', source));
+    }
 
-  if (museumArtsCount > 0) {
-    descLines.push('');
-    descLines.push(`**🎨 ${isEn ? '3D MUSEUM' : 'MUSEU 3D'}**`);
-    descLines.push(`> 🏛️ **${isEn ? 'Exhibited Arts' : 'Obras no Acervo'}:** **${museumArtsCount}** ${isEn ? 'community art(s)' : 'arte(s) da comunidade'}`);
-  }
+    if (tarotStats) {
+      descLines.push('');
+      descLines.push(`**🔮 ${isEn ? 'MYSTIC TAROT' : 'TAROT MÍSTICO'}**`);
+      descLines.push(`> 📖 **${isEn ? 'Arcana Discovered' : 'Arcanos Descobertos'}:** **${tarotStats.discoveredCount || 0}/78** (${tarotStats.percent || 0}%)`);
+      descLines.push(`> 🏆 **${isEn ? 'Achievements' : 'Conquistas'}:** **${tarotStats.claimedCount || 0}/10**`);
+    }
 
-  const { THEMES_CATALOG } = require('../services/economy');
-  const equippedTheme = account?.equippedTheme && THEMES_CATALOG[account.equippedTheme]
-    ? THEMES_CATALOG[account.equippedTheme]
-    : THEMES_CATALOG.default;
+    if (museumArtsCount > 0) {
+      descLines.push('');
+      descLines.push(`**🎨 ${isEn ? '3D MUSEUM' : 'MUSEU 3D'}**`);
+      descLines.push(`> 🏛️ **${isEn ? 'Exhibited Arts' : 'Obras no Acervo'}:** **${museumArtsCount}** ${isEn ? 'community art(s)' : 'arte(s) da comunidade'}`);
+    }
+
+    desc = descLines.join('\n');
+  }
 
   const embed = new EmbedBuilder()
     .setColor(equippedTheme?.color || PYXIE_COLORS.magenta || '#e60067')
     .setTitle(t('profile.title', source, { title: titlePrefix, user: user.displayName || user.username }))
-    .setDescription(descLines.join('\n'))
+    .setDescription(desc)
     .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 256 }))
     .setFooter({ text: '✦ Pyxie • pyxie.com.br' })
     .setTimestamp();

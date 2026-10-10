@@ -119,6 +119,7 @@ async function buildProfileView(targetUser, viewerId, source = null) {
     marriageDetails,
     museumArtsCount,
     hasImageCard: Boolean(attachment),
+    guild,
   });
 
   const components = [];
