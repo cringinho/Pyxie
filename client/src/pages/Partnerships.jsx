@@ -539,3 +539,4 @@ export default function Partnerships({ t, lang }) {
     </div>
   );
 }
+
