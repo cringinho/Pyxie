@@ -4182,30 +4182,35 @@
       }
 
       function renderAcervoStats(data) {
+        if (!data) return;
         const profTotalEl = document.getElementById('acervoTotalProfessions');
         const careerTotalEl = document.getElementById('acervoTotalCareerQuestions');
         const quizTotalEl = document.getElementById('acervoTotalQuizQuestions');
 
-        if (profTotalEl) profTotalEl.innerText = data.careers.totalProfessions || 22;
-        if (careerTotalEl) careerTotalEl.innerText = data.careers.totalQuestions || 0;
-        if (quizTotalEl) quizTotalEl.innerText = data.quiz.totalQuestions || 500;
+        if (profTotalEl) profTotalEl.innerText = data.careers?.totalProfessions || 22;
+        if (careerTotalEl) careerTotalEl.innerText = data.careers?.totalQuestions || 0;
+        if (quizTotalEl) quizTotalEl.innerText = data.quiz?.totalQuestions || 500;
 
         // Render careers grid
         const careersGrid = document.getElementById('acervoCareersGrid');
-        if (careersGrid && Array.isArray(data.careers.professions)) {
-          careersGrid.innerHTML = data.careers.professions.map((p) => {
-            const isFull = p.totalQuestions >= 100;
+        const profList = data.careers?.professions || data.careers?.items || [];
+        if (careersGrid && profList.length > 0) {
+          careersGrid.innerHTML = profList.map((p) => {
+            const isFull = (p.totalQuestions || 0) >= 100;
+            const levels = p.levels || p.levelCounts || {};
+            const icon = p.icon || p.emoji || '💼';
+            const name = p.name || p.label || p.key || 'Carreira';
             return `
               <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">${p.icon} ${p.name}</span>
+                  <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">${icon} ${name}</span>
                   <span style="font-size: 0.75rem; font-family: monospace; font-weight: 700; color: ${isFull ? '#34d399' : '#c084fc'};">${p.totalQuestions}/100</span>
                 </div>
                 <div style="display: flex; gap: 4px; font-size: 0.68rem; color: var(--text-muted); font-family: monospace;">
-                  <span title="Nível 1" style="background: rgba(56,189,248,0.15); color: #38bdf8; padding: 1px 4px; border-radius: 4px;">L1: ${p.levels[1] || 0}</span>
-                  <span title="Nível 2" style="background: rgba(129,140,248,0.15); color: #818cf8; padding: 1px 4px; border-radius: 4px;">L2: ${p.levels[2] || 0}</span>
-                  <span title="Nível 3" style="background: rgba(192,132,252,0.15); color: #c084fc; padding: 1px 4px; border-radius: 4px;">L3: ${p.levels[3] || 0}</span>
-                  <span title="Nível 4" style="background: rgba(244,63,94,0.15); color: #f43f5e; padding: 1px 4px; border-radius: 4px;">L4: ${p.levels[4] || 0}</span>
+                  <span title="Nível 1" style="background: rgba(56,189,248,0.15); color: #38bdf8; padding: 1px 4px; border-radius: 4px;">L1: ${levels[1] || 0}</span>
+                  <span title="Nível 2" style="background: rgba(129,140,248,0.15); color: #818cf8; padding: 1px 4px; border-radius: 4px;">L2: ${levels[2] || 0}</span>
+                  <span title="Nível 3" style="background: rgba(192,132,252,0.15); color: #c084fc; padding: 1px 4px; border-radius: 4px;">L3: ${levels[3] || 0}</span>
+                  <span title="Nível 4" style="background: rgba(244,63,94,0.15); color: #f43f5e; padding: 1px 4px; border-radius: 4px;">L4: ${levels[4] || 0}</span>
                 </div>
               </div>
             `;
@@ -4214,26 +4219,43 @@
 
         // Populate simProfessionSelect
         const simProfSelect = document.getElementById('simProfessionSelect');
-        if (simProfSelect && Array.isArray(data.careers.professions)) {
+        if (simProfSelect && profList.length > 0) {
           const currentVal = simProfSelect.value;
-          simProfSelect.innerHTML = data.careers.professions.map((p) =>
-            `<option value="${p.id}">${p.icon} ${p.name} (${p.totalQuestions} cenários)</option>`
-          ).join('');
-          if (currentVal) simProfSelect.value = currentVal;
+          simProfSelect.innerHTML = profList.map((p) => {
+            const id = p.id || p.key;
+            const icon = p.icon || p.emoji || '💼';
+            const name = p.name || p.label || id;
+            return `<option value="${id}">${icon} ${name} (${p.totalQuestions || 0} cenários)</option>`;
+          }).join('');
+          if (currentVal && Array.from(simProfSelect.options).some(o => o.value === currentVal)) {
+            simProfSelect.value = currentVal;
+          }
         }
 
         // Render quiz real stats
         const quizGrid = document.getElementById('acervoQuizGrid');
-        if (quizGrid && data.quiz.levels) {
+        const quizLevels = data.quiz?.levels || data.quiz?.levelCounts || {};
+        if (quizGrid) {
+          const defaultNames = {
+            1: { name: 'Fácil (Iniciante)', icon: '🌱' },
+            2: { name: 'Médio (Intermediário)', icon: '⚡' },
+            3: { name: 'Difícil (Avançado)', icon: '🔥' },
+            4: { name: 'Mestre (Extremo)', icon: '👑' }
+          };
           quizGrid.innerHTML = [1, 2, 3, 4].map((lvl) => {
-            const item = data.quiz.levels[lvl] || { name: `Nível ${lvl}`, count: 0, icon: '❓' };
+            let item = quizLevels[lvl];
+            if (typeof item === 'number') {
+              item = { count: item, ...defaultNames[lvl] };
+            } else if (!item) {
+              item = { count: 0, ...defaultNames[lvl] };
+            }
             return `
               <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                  <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">${item.icon} ${item.name}</span>
+                  <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">${item.icon || defaultNames[lvl].icon} ${item.name || defaultNames[lvl].name}</span>
                   <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">500 Questões Culturais</div>
                 </div>
-                <span style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #34d399;">${item.count}</span>
+                <span style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #34d399;">${item.count || 0}</span>
               </div>
             `;
           }).join('');
@@ -4254,56 +4276,66 @@
           const res = await fetch('/api/admin/acervo/test-draw', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type, profession, userLevel, lang })
+            body: JSON.stringify({ type, profession, userLevel, level: userLevel, lang })
           });
           const data = await res.json();
-          if (!data.success) {
-            container.innerHTML = `<div style="color: #f87171;">❌ Erro ao sortear: ${data.error || 'Falha desconhecida'}</div>`;
+          if (!data || !data.success) {
+            container.innerHTML = `<div style="color: #f87171;">❌ Erro ao sortear: ${data?.error || 'Falha desconhecida'}</div>`;
             return;
           }
 
-          const item = data.item;
-          let choicesHtml = '';
-
           if (data.type === 'career') {
-            const opts = item.options || item.reactions || [];
-            choicesHtml = opts.map((opt, idx) => {
+            const choices = Array.isArray(data.choices) ? data.choices : (data.options || data.item?.options || []);
+            const choicesHtml = choices.map((c, idx) => {
               const letter = ['A', 'B', 'C', 'D'][idx] || String(idx + 1);
-              const label = typeof opt === 'string' ? opt : (opt.text || opt.label || JSON.stringify(opt));
-              return `<div class="acervo-choice-pill"><strong>[${letter}]</strong> ${label}</div>`;
+              const isCorrect = typeof c === 'object' ? Boolean(c.isCorrect) : (c === data.correctAnswer);
+              const label = typeof c === 'object' ? (c.text || c.label || JSON.stringify(c)) : String(c);
+              return `
+                <div class="acervo-choice-pill" style="${isCorrect ? 'border-color: #34d399; background: rgba(52,211,153,0.12); color: #fff;' : ''}">
+                  <strong style="color: ${isCorrect ? '#34d399' : 'var(--cyan-neon)'};">[${letter}]</strong> ${label}
+                  ${isCorrect ? '<span style="color: #34d399; font-weight: 700; margin-left: 6px;">(Gabarito Correto)</span>' : ''}
+                </div>
+              `;
             }).join('');
+
+            const role = data.roleTitle || 'Profissional';
+            const profLabel = data.professionLabel || data.profession || profession;
+            const salary = data.salary ? ` • Salário Base: ${data.salary} Moedinhas` : '';
 
             container.innerHTML = `
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; margin-bottom: 10px;">
-                <span style="font-weight: 700; color: #38bdf8; font-size: 0.85rem;">💼 Carreira: ${data.profession} (Nível ${data.level}) • Idioma: ${data.lang.toUpperCase()}</span>
-                <span class="card-status-pill status-active" style="font-size: 0.72rem;">✅ Acervo Real: ${data.poolSize} cenários</span>
+                <span style="font-weight: 700; color: #38bdf8; font-size: 0.85rem;">💼 Carreira: ${profLabel} (${role}) • Nível ${data.userLevel || data.level || userLevel} • Idioma: ${(data.lang || lang).toUpperCase()}</span>
+                <span class="card-status-pill status-active" style="font-size: 0.72rem;">✅ Acervo Real: ${data.poolSize || 0} cenários disponíveis</span>
               </div>
-              <h5 style="font-size: 0.95rem; color: #fff; margin: 0 0 6px 0;">${item.title || 'Desafio Profissional'}</h5>
-              <p style="font-size: 0.85rem; color: #e2e8f0; line-height: 1.45; margin: 0 0 10px 0;">${item.prompt || item.challenge || item.scenario || 'Cenário carregado com sucesso.'}</p>
+              <h5 style="font-size: 0.95rem; color: #fff; margin: 0 0 6px 0;">Desafio Profissional${salary}</h5>
+              <p style="font-size: 0.88rem; color: #e2e8f0; line-height: 1.5; margin: 0 0 10px 0;">${data.scenario || data.item?.scenario || 'Cenário carregado com sucesso.'}</p>
               <div style="margin-top: 8px;">
-                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Opções Disponíveis no Discord:</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Alternativas Sorteadas no Discord:</span>
                 ${choicesHtml}
               </div>
             `;
           } else {
-            const opts = item.options || [];
-            choicesHtml = opts.map((opt, idx) => {
+            const choices = Array.isArray(data.choices) ? data.choices : (data.options || data.item?.options || []);
+            const choicesHtml = choices.map((c, idx) => {
               const letter = ['A', 'B', 'C', 'D'][idx] || String(idx + 1);
-              const isCorrect = (idx === item.correctIndex);
+              const isCorrect = typeof c === 'object' ? Boolean(c.isCorrect) : (idx === data.correctIndex || c === data.correctAnswer);
+              const label = typeof c === 'object' ? (c.text || c.label || JSON.stringify(c)) : String(c);
               return `
-                <div class="acervo-choice-pill" style="${isCorrect ? 'border-color: #34d399; background: rgba(52,211,153,0.1);' : ''}">
-                  <strong>[${letter}]</strong> ${opt} ${isCorrect ? '<span style="color: #34d399; font-weight: 700; margin-left: 6px;">(Gabarito Correto)</span>' : ''}
+                <div class="acervo-choice-pill" style="${isCorrect ? 'border-color: #34d399; background: rgba(52,211,153,0.12); color: #fff;' : ''}">
+                  <strong style="color: ${isCorrect ? '#34d399' : 'var(--cyan-neon)'};">[${letter}]</strong> ${label}
+                  ${isCorrect ? '<span style="color: #34d399; font-weight: 700; margin-left: 6px;">(Gabarito Correto)</span>' : ''}
                 </div>
               `;
             }).join('');
 
             container.innerHTML = `
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; margin-bottom: 10px;">
-                <span style="font-weight: 700; color: #34d399; font-size: 0.85rem;">🎯 Quiz Cultural (Nível ${data.level}) • Idioma: ${data.lang.toUpperCase()}</span>
-                <span class="card-status-pill status-active" style="font-size: 0.72rem;">✅ Acervo Real: ${data.poolSize} perguntas</span>
+                <span style="font-weight: 700; color: #34d399; font-size: 0.85rem;">🎯 Quiz Cultural (Nível ${data.level || userLevel} • Tópico: ${data.topic || 'Conhecimentos Gerais'}) • Idioma: ${(data.lang || lang).toUpperCase()}</span>
+                <span class="card-status-pill status-active" style="font-size: 0.72rem;">✅ Acervo Real: ${data.poolSize || 0} perguntas disponíveis</span>
               </div>
-              <h5 style="font-size: 0.95rem; color: #fff; margin: 0 0 6px 0;">${item.question || 'Pergunta do Quiz'}</h5>
+              <h5 style="font-size: 0.95rem; color: #fff; margin: 0 0 6px 0;">${data.question || data.item?.question || 'Pergunta do Quiz'}</h5>
               <div style="margin-top: 8px;">
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Alternativas Sorteadas no Discord:</span>
                 ${choicesHtml}
               </div>
             `;

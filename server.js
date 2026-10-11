@@ -1575,10 +1575,10 @@ app.get('/api/admin/acervo/stats', requireAdminAuth, (req, res) => {
 // API de Simulação de Sorteio de Minigame ao Vivo
 app.post('/api/admin/acervo/test-draw', requireAdminAuth, (req, res) => {
   try {
-    const { type, profession, level, lang } = req.body || {};
+    const { type, profession, level, userLevel, lang } = req.body || {};
     const result = acervoAuditService.simulateDraw(type || 'career', {
       profession,
-      level,
+      level: level !== undefined ? level : userLevel,
       lang: lang || 'pt',
     });
     return res.json(result);

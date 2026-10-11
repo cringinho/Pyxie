@@ -59,13 +59,19 @@ function getAcervoStats() {
     }
 
     totalCareerQuestions += items.length;
+    const emoji = profDef.emoji || '💼';
     careersList.push({
       key,
+      id: key,
       label: profDef.label || key,
+      name: profDef.label || key,
+      icon: emoji,
+      emoji,
       isMagic: Boolean(profDef.isMagic),
       beanCost: profDef.beanCost || 0,
       totalQuestions: items.length,
       levelCounts,
+      levels: levelCounts,
       hasBilingual: items.every((i) => i.pt && i.en),
     });
   }
@@ -88,10 +94,17 @@ function getAcervoStats() {
       totalProfessions: Object.keys(professions).length,
       totalQuestions: totalCareerQuestions,
       items: careersList,
+      professions: careersList,
     },
     quiz: {
       totalQuestions: quizData.length,
       levelCounts: quizLevelCounts,
+      levels: {
+        1: { name: 'Fácil (Iniciante)', count: quizLevelCounts[1] || 0, icon: '🌱' },
+        2: { name: 'Médio (Intermediário)', count: quizLevelCounts[2] || 0, icon: '⚡' },
+        3: { name: 'Difícil (Avançado)', count: quizLevelCounts[3] || 0, icon: '🔥' },
+        4: { name: 'Mestre (Extremo)', count: quizLevelCounts[4] || 0, icon: '👑' },
+      },
       topics: quizTopics,
     },
   };
@@ -138,8 +151,10 @@ function simulateDraw(type, params = {}) {
       success: true,
       type: 'career',
       professionKey,
+      profession: professionKey,
       professionLabel: profDef.label,
       userLevel,
+      level: userLevel,
       roleTitle,
       salary,
       poolSize: eligiblePool.length,
@@ -147,6 +162,14 @@ function simulateDraw(type, params = {}) {
       scenario: localized.scenario,
       correctAnswer: localized.correct,
       choices: shuffledChoices,
+      options: shuffledChoices.map((c) => c.text),
+      item: {
+        title: `${profDef.emoji || '💼'} ${profDef.label} - ${roleTitle}`,
+        scenario: localized.scenario,
+        options: shuffledChoices.map((c) => c.text),
+        reactions: ['🇦', '🇧', '🇨', '🇩'],
+      },
+      lang,
     };
   }
 
@@ -179,6 +202,14 @@ function simulateDraw(type, params = {}) {
       question: localized.question || localized.scenario,
       correctAnswer: localized.correct,
       choices: shuffledChoices,
+      options: shuffledChoices.map((c) => c.text),
+      correctIndex: shuffledChoices.findIndex((c) => c.isCorrect),
+      item: {
+        question: localized.question || localized.scenario,
+        options: shuffledChoices.map((c) => c.text),
+        correctIndex: shuffledChoices.findIndex((c) => c.isCorrect),
+      },
+      lang,
     };
   }
 
