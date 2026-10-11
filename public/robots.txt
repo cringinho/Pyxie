@@ -7,4 +7,10 @@ Disallow: /api/private/
 Disallow: /auth/
 Disallow: /console
 
+User-agent: Google-adstxt
+Allow: /
+
+User-agent: Mediapartners-Google
+Allow: /
+
 Sitemap: https://pyxie.com.br/sitemap.xml
