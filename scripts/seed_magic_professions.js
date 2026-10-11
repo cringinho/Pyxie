@@ -462,3 +462,4 @@ for (const [prof, items] of Object.entries(MAGIC_CAREERS)) {
 
 fs.writeFileSync(FILE_PATH, JSON.stringify(currentData, null, 2), 'utf8');
 console.log('✅ 6 profissões mágicas integradas com sucesso ao banco de minigames!');
+
