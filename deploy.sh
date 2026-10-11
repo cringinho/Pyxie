@@ -156,7 +156,7 @@ if [ "${FORCE_DEPLOY}" = true ] || git diff "${LOCAL_REV}" "${REMOTE_REV}" --nam
 fi
 
 echo "🔄 Reiniciando processo no PM2..."
-pm2 reload pyxie --update-env || pm2 restart pyxie --update-env || pm2 startOrReload ecosystem.config.js --update-env
+pm2 reload ecosystem.config.js --update-env || pm2 restart ecosystem.config.js --update-env || pm2 startOrReload ecosystem.config.js --update-env
 pm2 save --force 2>/dev/null || true
 
 (cd "${HOME}/backups/kuromi" && ls -dt auto-* 2>/dev/null | tail -n +16 | xargs -r rm -rf) || true

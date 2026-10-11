@@ -284,7 +284,7 @@ fi
 
 # 14. Reinício gracioso do processo no PM2
 log "🔄 Reiniciando Pyxie via PM2 (reload gracioso)..."
-pm2 reload pyxie --update-env || pm2 restart pyxie --update-env || pm2 startOrReload ecosystem.config.js --update-env
+pm2 reload ecosystem.config.js --update-env || pm2 restart ecosystem.config.js --update-env || pm2 startOrReload ecosystem.config.js --update-env
 pm2 save --force 2>/dev/null || true
 
 # 15. Limpeza de backups antigos (mantém apenas os últimos 15 backups para não encher o disco)
