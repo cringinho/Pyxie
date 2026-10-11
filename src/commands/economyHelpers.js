@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const { PYXIE_COLORS, KUROMI_COLORS } = require('../utils/pyxieVoice');
 const { getLanguage, t, formatCoins, formatRemaining } = require('../utils/i18n');
+const { getEmoji } = require('../utils/appEmojis');
 
 function buildCurrencyFields(currencies, source = null) {
   const lang = getLanguage(source);
@@ -82,7 +83,9 @@ function buildProfileEmbed({
     bioText = equippedTitle.desc;
   }
 
-  const bioQuote = `> *« ${bioText} »*`;
+  const bioQuote = `> 💬 *« ${bioText} »*`;
+  const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
+  const coinEmoji = getEmoji('COIN') || '🪙';
 
   let desc = '';
   if (hasImageCard) {
@@ -91,10 +94,12 @@ function buildProfileEmbed({
     const showcaseLines = [
       bioQuote,
       '',
-      `> ${t('profile.titleLabel', source, { title: titleText })}  •  ${t('profile.themeLabel', source, { theme: themeText })}`,
+      `> ${t('profile.titleLabel', source, { title: titleText })}`,
+      `> ${t('profile.themeLabel', source, { theme: themeText })}`,
     ];
     if (guild?.name) {
-      showcaseLines.push(`> ${t('profile.originGuild', source, { guild: guild.name })}`);
+      const cleanGuild = String(guild.name).replace(/^🌸\s*/, '');
+      showcaseLines.push(`> 🏰 **${isEn ? 'Origin' : 'Origem'}:** 🌸 **${cleanGuild}**`);
     }
     showcaseLines.push('');
     showcaseLines.push(t('profile.showcaseHint', source));
@@ -105,7 +110,7 @@ function buildProfileEmbed({
       '',
       t('profile.treasureHeader', source),
       t('profile.coins', source, { coins: coinsVal.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR') }),
-      t('profile.magicBeans', source, { beans: magicBeansVal.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR') }),
+      t('profile.magicBeans', source, { beans: magicBeansVal.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR'), emoji: beanEmoji }),
       t('profile.ranking', source, { rank: rankStr }),
       '',
       t('profile.careerHeader', source),
@@ -147,6 +152,10 @@ function buildProfileEmbed({
 
   const embed = new EmbedBuilder()
     .setColor(equippedTheme?.color || PYXIE_COLORS.magenta || '#e60067')
+    .setAuthor({
+      name: user.displayName || user.username,
+      iconURL: user.displayAvatarURL({ dynamic: true, size: 128 }),
+    })
     .setTitle(t('profile.title', source, { title: titlePrefix, user: user.displayName || user.username }))
     .setDescription(desc)
     .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 256 }))

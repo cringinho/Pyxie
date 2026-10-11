@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { getEconomyConfig } = require('./database');
 const professions = require('./professions');
+const { getEmoji } = require('../utils/appEmojis');
 
 const economyFile = path.join(__dirname, '..', '..', 'data', 'economy.json');
 const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
@@ -179,19 +180,25 @@ function spendMagicBeans(userId, amount) {
 
 function getCurrencyBalances(userId, source = null) {
   const account = getUserAccount(userId);
-  if (!source) {
-    return CURRENCY_DEFINITIONS.map((currency) => ({
-      ...currency,
-      amount: Number(account[currency.key]) || 0,
-    }));
-  }
+  const coinEmoji = getEmoji('COIN') || '🪙';
+  const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
   const { getLanguage } = require('../utils/i18n');
-  const lang = getLanguage(source);
-  return CURRENCY_DEFINITIONS.map((currency) => ({
-    ...currency,
-    label: currency.key === 'magicBeans' ? (lang === 'en' ? 'Magic Beans' : 'Feijões Mágicos') : (lang === 'en' ? 'Coins' : 'Moedinhas'),
-    amount: Number(account[currency.key]) || 0,
-  }));
+  const lang = source ? getLanguage(source) : 'pt';
+
+  return [
+    {
+      key: 'coins',
+      label: lang === 'en' ? 'Coins' : 'Moedinhas',
+      emoji: coinEmoji,
+      amount: Number(account.coins) || 0,
+    },
+    {
+      key: 'magicBeans',
+      label: lang === 'en' ? 'Magic Beans' : 'Feijões Mágicos',
+      emoji: beanEmoji,
+      amount: Number(account.magicBeans) || 0,
+    },
+  ];
 }
 
 function spendCoins(userId, amount) {
@@ -223,7 +230,29 @@ function resetUserEconomy(userId) {
 }
 
 function getTitlesCatalog() {
-  return TITLES_CATALOG;
+  const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
+  const crownEmoji = getEmoji('CROWN') || '👑';
+  const diamondEmoji = getEmoji('DIAMOND') || '💎';
+
+  return {
+    ...TITLES_CATALOG,
+    cultivador: {
+      ...TITLES_CATALOG.cultivador,
+      emoji: beanEmoji,
+    },
+    shinychaser: {
+      ...TITLES_CATALOG.shinychaser,
+      emoji: diamondEmoji,
+    },
+    soberano: {
+      ...TITLES_CATALOG.soberano,
+      emoji: crownEmoji,
+    },
+    magnata: {
+      ...TITLES_CATALOG.magnata,
+      emoji: diamondEmoji,
+    },
+  };
 }
 
 function getUserTitles(userId) {
@@ -232,7 +261,8 @@ function getUserTitles(userId) {
 }
 
 function buyTitle(userId, titleId) {
-  const title = TITLES_CATALOG[titleId];
+  const catalog = getTitlesCatalog();
+  const title = catalog[titleId];
   if (!title) {
     return { success: false, reason: 'title_not_found', message: 'Título não encontrado no catálogo.' };
   }
@@ -243,11 +273,12 @@ function buyTitle(userId, titleId) {
     return { success: false, reason: 'already_owned', message: `Você já possui o título **${title.name}**!` };
   }
 
+  const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
   if (account.magicBeans < title.cost) {
     return {
       success: false,
       reason: 'insufficient_beans',
-      message: `Você precisa de **${title.cost} 🌱 Feijões Mágicos** para adquirir este título (Saldo atual: ${account.magicBeans} 🌱).`,
+      message: `Você precisa de **${title.cost} ${beanEmoji} Feijões Mágicos** para adquirir este título (Saldo atual: ${account.magicBeans} ${beanEmoji}).`,
     };
   }
 
@@ -329,11 +360,12 @@ function buyTheme(userId, themeId) {
     return { success: false, reason: 'already_owned', message: `Você já possui o tema visual **${theme.name}**!` };
   }
 
+  const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
   if (account.magicBeans < theme.cost) {
     return {
       success: false,
       reason: 'insufficient_beans',
-      message: `Você precisa de **${theme.cost} 🌱 Feijões Mágicos** para adquirir este tema visual (Saldo atual: ${account.magicBeans} 🌱).`,
+      message: `Você precisa de **${theme.cost} ${beanEmoji} Feijões Mágicos** para adquirir este tema visual (Saldo atual: ${account.magicBeans} ${beanEmoji}).`,
     };
   }
 

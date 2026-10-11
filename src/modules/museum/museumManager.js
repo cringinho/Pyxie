@@ -258,6 +258,13 @@ class MuseumManager {
         createdAt: Date.now(),
       });
       this.saveData();
+      if (typeof global.broadcastLiveEvent === 'function') {
+        global.broadcastLiveEvent('MUSEUM_UPDATE', { count: this.data.artworks.length });
+      }
+      try {
+        const { submitIndexNowUrls } = require('../../services/indexNowService');
+        submitIndexNowUrls(['https://pyxie.com.br/museu', 'https://pyxie.com.br/museum?lang=en']).catch(() => null);
+      } catch (_) {}
     } catch (err) {
       console.error('[Museum] Erro ao registrar arte:', err);
     }

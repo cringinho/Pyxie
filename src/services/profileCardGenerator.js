@@ -245,12 +245,24 @@ function iconCoin(size = 18, color = '#fbbf24') {
   );
 }
 
+let customMagicBeanBase64 = null;
+function getCustomMagicBeanBase64() {
+  if (customMagicBeanBase64) return customMagicBeanBase64;
+  try {
+    const p = path.join(process.cwd(), 'public', 'assets', 'pyxie', 'emojis', 'custom_magic_bean.png');
+    if (fs.existsSync(p)) {
+      customMagicBeanBase64 = `data:image/png;base64,${fs.readFileSync(p).toString('base64')}`;
+    }
+  } catch (_) {}
+  return customMagicBeanBase64;
+}
+
 function iconBean(size = 18, color = '#10b981') {
   return createSvg(
     [
-      { type: 'path', props: { d: 'M12 22v-9', stroke: color, strokeWidth: '2', strokeLinecap: 'round' } },
-      { type: 'path', props: { d: 'M12 13c0-4.5 4-7 8-7-0.5 4-3 8-8 7z', stroke: color, strokeWidth: '1.8', fill: color, fillOpacity: '0.25' } },
-      { type: 'path', props: { d: 'M12 16c0-3.5-3-5.5-6-5.5 0.4 3 2.2 6 6 5.5z', stroke: color, strokeWidth: '1.8', fill: color, fillOpacity: '0.25' } },
+      { type: 'path', props: { d: 'M7 3C4 3 2 6 2 11c0 6 3 10 9 10 5 0 11-4 11-10 0-5-3-8-8-8-2 0-3 1-5 1-1 0-1-1-2-1z', stroke: color, strokeWidth: '1.8', fill: color, fillOpacity: '0.35' } },
+      { type: 'path', props: { d: 'M7 7c1-2 3-3 6-3', stroke: '#a7f3d0', strokeWidth: '1.6', strokeLinecap: 'round' } },
+      { type: 'circle', props: { cx: '16', cy: '8', r: '1.2', fill: '#6ee7b7' } },
     ],
     size,
     size
@@ -864,7 +876,15 @@ async function generateProfileCard({ targetUser, guild, source = null, client = 
                               children: `• ${magicBeans.toLocaleString(isEn ? 'en-US' : 'pt-BR')} ${isEn ? 'Magic Beans' : 'Feijões Mágicos'}`,
                             },
                           },
-                          iconBean(14, '#10b981'),
+                          getCustomMagicBeanBase64()
+                            ? {
+                                type: 'img',
+                                props: {
+                                  src: getCustomMagicBeanBase64(),
+                                  style: { width: '16px', height: '16px', objectFit: 'contain' },
+                                },
+                              }
+                            : iconBean(16, '#10b981'),
                         ],
                       },
                     },

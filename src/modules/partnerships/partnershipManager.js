@@ -487,6 +487,14 @@ class PartnershipManager {
       });
       this.saveData();
 
+      if (typeof global.broadcastLiveEvent === 'function') {
+        global.broadcastLiveEvent('PARTNERSHIP_UPDATE', { count: this.data.approvedPartners.length });
+      }
+      try {
+        const { submitIndexNowUrls } = require('../../services/indexNowService');
+        submitIndexNowUrls(['https://pyxie.com.br/parcerias', 'https://pyxie.com.br/partnerships?lang=en']).catch(() => null);
+      } catch (_) {}
+
       const approvedEmbed = EmbedBuilder.from(interaction.message.embeds[0])
         .setColor('#22C55E')
         .setTitle(trunc(t('partnerships.approved_title', lang, { project: req.projectName }), 256))
@@ -624,6 +632,9 @@ class PartnershipManager {
     partner.lastBumpedAt = now;
     partner.bumpCount = (partner.bumpCount || 0) + 1;
     this.saveData(); // load-modify-save síncrono: janela de corrida mínima entre bot e web
+    if (typeof global.broadcastLiveEvent === 'function') {
+      global.broadcastLiveEvent('PARTNERSHIP_UPDATE', { partnerId, bumps: partner.bumpCount });
+    }
 
     // 1. Atualiza embed da publicação original no canal oficial, se ainda existir
     if (this.client && partner.publishedChannelId && partner.publishedMessageId) {

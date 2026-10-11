@@ -1,8 +1,14 @@
 require('dotenv').config();
 const express = require('express');
+const compression = require('compression');
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+
+try {
+  const sharp = require('sharp');
+  sharp.cache({ files: 50, memory: 64 });
+} catch (_) {}
 const { spawn, execFile } = require('node:child_process');
 const { setWelcomeChannel, getWelcomeChannel, normalizeChannelValue, getEconomyConfig, setEconomyConfig } = require('./src/services/database');
 const { addLog: savePersistentLog, getLogs, getStats, updateStats, resetStats, clearLogs, flushSync } = require('./src/services/logging');
@@ -235,6 +241,17 @@ function requireAdminAuth(req, res, next) {
 
 app.disable('x-powered-by');
 
+// Compressão HTTP Gzip/Deflate para otimização extrema de performance e Core Web Vitals
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers.accept && req.headers.accept.includes('text/event-stream')) {
+      return false; // Não comprimir fluxos contínuos SSE
+    }
+    return compression.filter(req, res);
+  },
+  threshold: 1024,
+}));
+
 // Security & Hardening Headers
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -290,24 +307,79 @@ app.use('/api/', publicApiLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Tratamento gracioso de payloads JSON malformados
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ success: false, error: 'Payload JSON malformado.' });
+  }
+  next(err);
+});
+
+// Server-Sent Events (SSE) para sincronização instantânea em tempo real Web-Bot
+const sseClients = new Set();
+function broadcastLiveEvent(type, payload = {}) {
+  const message = `event: ${type}\ndata: ${JSON.stringify({ ...payload, timestamp: Date.now() })}\n\n`;
+  for (const client of sseClients) {
+    try {
+      client.write(message);
+    } catch (_) {
+      sseClients.delete(client);
+    }
+  }
+}
+global.broadcastLiveEvent = broadcastLiveEvent;
+
+app.get('/api/events/live', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  if (typeof res.flushHeaders === 'function') res.flushHeaders();
+
+  res.write(`event: connected\ndata: ${JSON.stringify({ status: 'connected', time: Date.now() })}\n\n`);
+  sseClients.add(res);
+
+  const heartbeat = setInterval(() => {
+    try {
+      res.write(': heartbeat\n\n');
+    } catch (_) {
+      clearInterval(heartbeat);
+      sseClients.delete(res);
+    }
+  }, 25000);
+
+  req.on('close', () => {
+    clearInterval(heartbeat);
+    sseClients.delete(res);
+  });
+});
+
 // Inicializa rotas web do módulo sazonal com body parsers e canal IPC ativo
 seasonalManager.init(null, app, sendIpcToBot);
 moduleManager.init({ app, sendIpc: sendIpcToBot });
+
+// Entrega de arquivos estáticos com caching de alta performance para assets e imutabilidade
 app.use(express.static(path.join(__dirname, 'public'), {
   index: false,
   setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html') || filePath.includes('dist')) {
+    if (filePath.endsWith('.html')) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    } else if (filePath.includes('dist') || filePath.endsWith('.js') || filePath.endsWith('.css')) {
+      res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+    } else if (/\.(png|jpe?g|gif|svg|webp|woff2?|ttf|eot|ico)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
     } else {
       res.setHeader('Cache-Control', 'public, max-age=86400');
     }
   }
 }));
 app.use('/assets', express.static(path.join(__dirname, 'assets'), {
-  maxAge: '1d',
+  maxAge: '7d',
+  immutable: true,
 }));
 app.use('/assets', express.static(path.join(__dirname, 'public', 'assets'), {
-  maxAge: '1d',
+  maxAge: '7d',
+  immutable: true,
 }));
 
 const OFFICIAL_APP_EMOJIS = {
@@ -405,6 +477,14 @@ app.get(['/parcerias', '/partnerships'], serveLocalizedPage('partnerships', publ
 app.get(['/museu', '/museum'], serveLocalizedPage('museum', publicDir));
 
 app.get(['/termos', '/terms'], serveLocalizedPage('terms', publicDir));
+
+app.get(['/privacidade', '/privacy'], serveLocalizedPage('privacy', publicDir));
+
+app.get('/ads.txt', (req, res) => {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.sendFile(path.join(publicDir, 'ads.txt'));
+});
  
 // Perfil público & Vitrine do Álbum de Tarot na Web
 app.get('/u/:userId', (req, res) => {
@@ -569,11 +649,35 @@ app.get('/api/modules/status', (req, res) => {
   }
 });
 
-// 1.1 Emojis oficiais da aplicação (Discord Dev Portal)
+// 1.1 Emojis oficiais da aplicação (Discord Dev Portal com resolução dinâmica em tempo real)
 app.get('/api/emojis', (req, res) => {
+  const { getCustomEmojiConfig } = require('./src/utils/appEmojis');
+  const customConfig = getCustomEmojiConfig();
+  const currencies = embedRegistry.getCurrenciesConfig();
+
+  const dynamicEmojis = { ...OFFICIAL_APP_EMOJIS };
+  if (customConfig.magic_bean && currencies.magicBeans) {
+    dynamicEmojis.magic_bean = {
+      name: currencies.magicBeans.currentName || 'peakmagicbean',
+      id: currencies.magicBeans.currentEmojiId,
+      animated: currencies.magicBeans.isAnimated,
+      url: currencies.magicBeans.currentUrl,
+    };
+  }
+  if (customConfig.coins && currencies.coins) {
+    dynamicEmojis.coin = {
+      name: currencies.coins.currentName || 'shineygoldcoinsi',
+      id: currencies.coins.currentEmojiId,
+      animated: currencies.coins.isAnimated,
+      url: currencies.coins.currentUrl,
+    };
+  }
+
   res.json({
     success: true,
-    emojis: OFFICIAL_APP_EMOJIS,
+    emojis: dynamicEmojis,
+    currencies,
+    customConfig,
   });
 });
 
@@ -1433,6 +1537,7 @@ app.post('/api/admin/emojis', requireAdminAuth, (req, res) => {
     reloadEmojiConfig();
     embedRegistry.reloadRegistryCache();
     sendIpcToBot({ type: 'RELOAD_EMOJIS' });
+    broadcastLiveEvent('RELOAD_EMOJIS', { emojis: currentData });
 
     return res.json({
       success: true,
@@ -1486,6 +1591,7 @@ app.post('/api/admin/embeds/slot', requireAdminAuth, (req, res) => {
 
     const saved = embedRegistry.saveEmbedSlotEmoji(embedId, slotKey, emojiId);
     sendIpcToBot({ type: 'RELOAD_EMOJIS' });
+    broadcastLiveEvent('RELOAD_EMOJIS', { embedId, slotKey, emojiId });
 
     return res.json({
       success: true,
@@ -1524,6 +1630,7 @@ app.post('/api/admin/currencies', requireAdminAuth, (req, res) => {
 
     sendIpcToBot({ type: 'RELOAD_EMOJIS' });
     const updated = embedRegistry.getCurrenciesConfig();
+    broadcastLiveEvent('RELOAD_EMOJIS', { currencies: updated });
 
     return res.json({
       success: true,
@@ -1603,6 +1710,7 @@ app.post('/api/admin/modules/:id/toggle', requireAdminAuth, async (req, res) => 
     const shouldEnable = active !== undefined ? Boolean(active) : !moduleManager.isModuleEnabled(id);
     moduleManager.setModuleConfigState(id, shouldEnable);
     sendIpcToBot({ type: 'MODULE_TOGGLE', moduleId: id, enabled: shouldEnable });
+    broadcastLiveEvent('MODULE_TOGGLE', { moduleId: id, enabled: shouldEnable });
     return res.json({ success: true, moduleId: id, enabled: shouldEnable });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
@@ -1614,6 +1722,7 @@ app.post('/api/admin/modules/:id/reload', requireAdminAuth, async (req, res) => 
     const { id } = req.params;
     await moduleManager.reloadModule(id);
     sendIpcToBot({ type: 'MODULE_RELOAD', moduleId: id });
+    broadcastLiveEvent('MODULE_TOGGLE', { moduleId: id });
     return res.json({ success: true, moduleId: id, message: `Módulo '${id}' recarregado com sucesso!` });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });

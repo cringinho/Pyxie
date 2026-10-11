@@ -9,6 +9,7 @@ const { createBonusSession, getWebBonusStatus } = require('../services/bonusTime
 const { BONUS } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 const { getLanguage, formatRemaining, t } = require('../utils/i18n');
+const { getEmoji } = require('../utils/appEmojis');
 
 function buildBonusCooldownEmbed(remainingMs, source = null) {
   const isEn = getLanguage(source) === 'en';
@@ -27,14 +28,17 @@ function buildBonusCooldownEmbed(remainingMs, source = null) {
 function buildBonusEmbed(userId, sessionUrl, source = null) {
   const isEn = getLanguage(source) === 'en';
 
+  const coinEmoji = getEmoji('COIN') || '🪙';
+  const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
+
   const desc = isEn
     ? [
         '✨ **Claim your Free Daily Web Bonus (10s)!**',
         '',
         'Click the button below to open your personalized bonus link. After waiting **10 seconds** on the web page, you will automatically receive:',
         '',
-        '> 🪙 **+75 Coins** added directly to your account',
-        '> 🌱 **+1 Magic Bean** to customize your profile themes and marriage',
+        `> ${coinEmoji} **+75 Coins** added directly to your account`,
+        `> ${beanEmoji} **+1 Magic Bean** to customize your profile themes and marriage`,
         '',
         '🔒 *Your link is securely signed, single-use, and valid for 15 minutes.*',
       ].join('\n')
@@ -43,8 +47,8 @@ function buildBonusEmbed(userId, sessionUrl, source = null) {
         '',
         'Clique no botão abaixo para abrir seu link exclusivo. Ao aguardar **10 segundos** na página, você receberá automaticamente:',
         '',
-        '> 🪙 **+75 Moedas** creditadas diretamente na sua conta',
-        '> 🌱 **+1 Feijão Mágico** para comprar temas no perfil e casamento',
+        `> ${coinEmoji} **+75 Moedas** creditadas diretamente na sua conta`,
+        `> ${beanEmoji} **+1 Feijão Mágico** para comprar temas no perfil e casamento`,
         '',
         '🔒 *Seu link é seguro, de uso único e válido por 15 minutos.*',
       ].join('\n');
@@ -55,8 +59,7 @@ function buildBonusEmbed(userId, sessionUrl, source = null) {
     .setDescription(desc)
     .setFooter({ text: pyxieFooter(isEn ? 'Rewards sponsored by Monetag (24h cooldown)' : 'Recompensa diária patrocinada (Cooldown de 24h)', source) })
     .setTimestamp();
-
-  const { getEmoji } = require('../utils/appEmojis');
+ 
   const buttonRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setLabel(isEn ? 'Open 10s Bonus Page' : 'Abrir Página de Bônus (10s)')

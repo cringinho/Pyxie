@@ -10,6 +10,7 @@ const { formatCoins } = require('./economyHelpers');
 const { RANKING } = require('./commandNames');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 const { getLanguage, t } = require('../utils/i18n');
+const { getEmoji } = require('../utils/appEmojis');
 
 async function buildRankingView(source, viewerId, category = 'coins') {
   let title = t('ranking.mainTitle', source);
@@ -39,10 +40,11 @@ async function buildRankingView(source, viewerId, category = 'coins') {
     title = t('ranking.beansTitle', source);
     color = PYXIE_COLORS.emerald || '#10b981';
     const entries = getRanking(10).sort((a, b) => (b.magicBeans || 0) - (a.magicBeans || 0));
+    const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
     const lines = entries.length
       ? entries.map((entry, idx) => {
           const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `**#${idx + 1}**`;
-          return `${medal} <@${entry.userId}>\n> 🌱 **${entry.magicBeans || 0} ${t('common.magicBeans', source)}**`;
+          return `${medal} <@${entry.userId}>\n> ${beanEmoji} **${entry.magicBeans || 0} ${t('common.magicBeans', source)}**`;
         })
       : [t('ranking.emptyBeans', source)];
     desc = [t('ranking.beansDesc', source), '', ...lines].join('\n');

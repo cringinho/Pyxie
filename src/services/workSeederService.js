@@ -436,13 +436,14 @@ ESTRUTURA DO JSON:
       const errJson = await response.json().catch(() => ({}));
       const msg = errJson.error?.message || '';
       const waitMatch = msg.match(/try again in (\d+(\.\d+)?)s/i);
-      const waitSec = waitMatch ? Math.ceil(parseFloat(waitMatch[1])) + 2 : 12 * attempt;
-      console.log(`[Groq Seeder] Rate limit 429 detectado. Pausando ${waitSec}s para liberar tokens...`);
-      await sleep(waitSec * 1000);
-      if (attempt <= 4) {
+      const waitSec = waitMatch ? Math.ceil(parseFloat(waitMatch[1])) + 2 : 10;
+      if (attempt <= 1) {
+        console.log(`[Groq Seeder] Rate limit 429 detectado. Pausando ${waitSec}s para liberar tokens...`);
+        await sleep(waitSec * 1000);
         return fetchSingleScenario(profession, subtheme, attempt + 1);
       }
-      return null;
+      console.warn('[Groq Seeder] Limite de taxa (429) persistente na Groq. Encerrando lote para proteger a VM.');
+      return { error: 'rate_limit' };
     }
 
     if (!response.ok) {
@@ -518,7 +519,12 @@ async function generateBatch({ countPerProfession = 1 } = {}) {
         const currentTheme = subthemes[themeIndex];
 
         const scenario = await fetchSingleScenario(prof, currentTheme);
-        if (scenario) {
+        if (scenario && scenario.error === 'rate_limit') {
+          console.log('[Groq Seeder] Pausando ciclo de geração até a próxima janela programada.');
+          break;
+        }
+
+        if (scenario && scenario.scenario) {
           const isDup = db[prof].some(
             (s) => s.scenario === scenario.scenario || s.pt?.scenario === scenario.pt?.scenario
           );
@@ -531,6 +537,10 @@ async function generateBatch({ countPerProfession = 1 } = {}) {
 
         // Intervalo de segurança de 12 segundos entre chamadas para ficar com folga abaixo de 1000 OTPM
         await sleep(12000);
+      }
+      if (totalGeneratedThisRound === 0 && needed > 0) {
+        // Se a primeira profissão foi interrompida por rate limit, não insiste nas outras 21
+        break;
       }
     }
 

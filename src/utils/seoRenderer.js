@@ -131,6 +131,24 @@ const SEO_CONFIG = {
       ogDesc: 'Our non-negotiable commitment to child protection, mental health crisis support, and community intellectual property licensing.',
       locale: 'en_US'
     }
+  },
+  privacy: {
+    file: 'privacy.html',
+    canonical: 'https://pyxie.com.br/privacidade',
+    pt: {
+      title: 'Política de Privacidade & Proteção de Dados • Pyxie & Cringelândia',
+      description: 'Política de privacidade oficial da Pyxie e Cringelândia: conformidade integral com a LGPD e GDPR, uso transparente de dados do Discord, cookies e publicidade.',
+      ogTitle: 'Política de Privacidade & Proteção de Dados • Pyxie & Cringelândia',
+      ogDesc: 'Conheça nossas diretrizes de privacidade, conformidade com a LGPD/GDPR, uso responsável de dados e proteção ao usuário no ecossistema da Pyxie.',
+      locale: 'pt_BR'
+    },
+    en: {
+      title: 'Privacy Policy & Data Protection • Pyxie & Cringelândia',
+      description: 'Official privacy policy for Pyxie and Cringelândia: complete LGPD and GDPR compliance, transparent Discord data handling, cookies, and advertising practices.',
+      ogTitle: 'Privacy Policy & Data Protection • Pyxie & Cringelândia',
+      ogDesc: 'Learn about our privacy practices, LGPD/GDPR compliance, responsible data processing, and user safeguards across the Pyxie ecosystem.',
+      locale: 'en_US'
+    }
   }
 };
 
@@ -201,6 +219,7 @@ function serveLocalizedPage(pageKey, publicDir) {
           const art = (museumData.arts || []).find((a) => a.id === artId);
           if (art) {
             const rawTitle = art.description ? art.description.slice(0, 50) : 'Obra da Comunidade';
+            const artTitle = `${rawTitle} • Museu da Pyxie`;
             const authorHandle = (art.authorUsername || art.cachedAuthor || art.authorName || art.author || 'Membro').replace(/^@+/, '');
             const artDesc = `Obra de arte criada por @${authorHandle} no acervo cultural da Pyxie.`;
             const artImg = art.imageUrl || `https://pyxie.com.br/api/museum/art-image/${art.id}`;

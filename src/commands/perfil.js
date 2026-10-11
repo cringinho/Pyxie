@@ -36,6 +36,7 @@ const { buildProfileEmbed } = require('./economyHelpers');
 const { PROFILE } = require('./commandNames');
 const { PYXIE_COLORS, KUROMI_COLORS } = require('../utils/pyxieVoice');
 const { getLanguage, t } = require('../utils/i18n');
+const { getEmoji } = require('../utils/appEmojis');
 
 function getTargetUser(source) {
   return source.options?.getUser('user') || source.options?.getUser('usuario') || source.user || source.author;
@@ -175,12 +176,13 @@ function buildTitlesView(targetUser, viewerId, source = null) {
     ? `> ${titlesCatalog[equippedId].emoji} **${titlesCatalog[equippedId].name}**\n> *« ${titlesCatalog[equippedId].desc} »*`
     : (isEn ? '> 🕊️ *No title equipped (Default display)*' : '> 🕊️ *Nenhum título equipado (Exibição padrão)*');
 
+  const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
   const desc = isEn
     ? [
         'Customize your profile header with prestige titles!',
         '',
-        '🌱 **YOUR BALANCE**',
-        `> 🌱 **Magic Beans:** **${account.magicBeans || 0} 🌱**`,
+        `${beanEmoji} **YOUR BALANCE**`,
+        `> ${beanEmoji} **Magic Beans:** **${account.magicBeans || 0} ${beanEmoji}**`,
         '',
         '👑 **CURRENTLY EQUIPPED TITLE**',
         '',
@@ -192,8 +194,8 @@ function buildTitlesView(targetUser, viewerId, source = null) {
     : [
         'Personalize o cabeçalho do seu perfil com títulos de prestígio!',
         '',
-        '🌱 **SEU SALDO**',
-        `> 🌱 **Feijões Mágicos:** **${account.magicBeans || 0} 🌱**`,
+        `${beanEmoji} **SEU SALDO**`,
+        `> ${beanEmoji} **Feijões Mágicos:** **${account.magicBeans || 0} ${beanEmoji}**`,
         '',
         '👑 **TÍTULO ATUALMENTE EQUIPADO**',
         '',
@@ -228,7 +230,7 @@ function buildTitlesView(targetUser, viewerId, source = null) {
       optDesc = isEn ? 'Click to equip this title' : 'Clique para equipar este título';
       val = `equip:${title.id}`;
     } else {
-      statusTag = ` [${title.cost} 🌱]`;
+      statusTag = ` [${title.cost} ${beanEmoji}]`;
       optDesc = isEn ? `Purchase for ${title.cost} Magic Bean(s)` : `Comprar por ${title.cost} Feijão(ões) Mágico(s)`;
       val = `buy:${title.id}`;
     }
@@ -274,13 +276,14 @@ function buildThemesView(targetUser, viewerId, source = null) {
   const ownedThemes = account.themes || ['default'];
   const equippedId = account.equippedTheme || 'default';
   const currentTheme = themesCatalog[equippedId] || themesCatalog.default;
+  const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
 
   const desc = isEn
     ? [
         'Customize the colors and visual style of your profile cards!',
         '',
-        '🌱 **YOUR BALANCE**',
-        `> 🌱 **Magic Beans:** **${account.magicBeans || 0} 🌱**`,
+        `${beanEmoji} **YOUR BALANCE**`,
+        `> ${beanEmoji} **Magic Beans:** **${account.magicBeans || 0} ${beanEmoji}**`,
         '',
         '🎨 **CURRENT VISUAL THEME**',
         `> ${currentTheme.emoji} **${currentTheme.name}** (\`${currentTheme.color}\`)\n> *« ${currentTheme.desc} »*`,
@@ -291,8 +294,8 @@ function buildThemesView(targetUser, viewerId, source = null) {
     : [
         'Personalize a cor e o estilo visual dos cartões do seu perfil!',
         '',
-        '🌱 **SEU SALDO**',
-        `> 🌱 **Feijões Mágicos:** **${account.magicBeans || 0} 🌱**`,
+        `${beanEmoji} **SEU SALDO**`,
+        `> ${beanEmoji} **Feijões Mágicos:** **${account.magicBeans || 0} ${beanEmoji}**`,
         '',
         '🎨 **TEMA VISUAL ATUAL**',
         `> ${currentTheme.emoji} **${currentTheme.name}** (\`${currentTheme.color}\`)\n> *« ${currentTheme.desc} »*`,
@@ -326,7 +329,7 @@ function buildThemesView(targetUser, viewerId, source = null) {
       optDesc = isEn ? 'Click to equip this theme' : 'Clique para equipar este tema';
       val = `equip:${theme.id}`;
     } else {
-      statusTag = ` [${theme.cost} 🌱]`;
+      statusTag = ` [${theme.cost} ${beanEmoji}]`;
       optDesc = isEn ? `Unlock for ${theme.cost} Magic Bean(s)` : `Desbloquear por ${theme.cost} Feijão(ões) Mágico(s)`;
       val = `buy:${theme.id}`;
     }

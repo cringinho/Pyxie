@@ -3474,10 +3474,31 @@
       const nav = document.querySelector('.navbar');
       if (nav) nav.classList.toggle('scrolled', window.scrollY > 20);
     });
+    function initLiveSync() {
+      if (typeof window.EventSource === 'undefined') return;
+      try {
+        const es = new EventSource('/api/events/live');
+        es.addEventListener('RELOAD_EMOJIS', () => {
+          fetchCommands(currentLang);
+        });
+        es.addEventListener('MODULE_TOGGLE', () => {
+          checkModuleDynamicLinks();
+          fetchCommands(currentLang);
+        });
+        es.addEventListener('PARTNERSHIP_UPDATE', () => {
+          checkModuleDynamicLinks();
+        });
+        es.addEventListener('MUSEUM_UPDATE', () => {
+          checkModuleDynamicLinks();
+        });
+      } catch (_) {}
+    }
+
     initLang();
     fetchStats();
     checkSeasonalEvent();
     checkModuleDynamicLinks();
+    initLiveSync();
     setInterval(fetchStats, 15000);
     setInterval(checkSeasonalEvent, 30000);
     setInterval(checkModuleDynamicLinks, 30000);
