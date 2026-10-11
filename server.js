@@ -1497,12 +1497,51 @@ app.post('/api/admin/embeds/slot', requireAdminAuth, (req, res) => {
   }
 });
 
+// API de Consulta das Currencies Globais (coins & magicBeans)
+app.get('/api/admin/currencies', requireAdminAuth, (req, res) => {
+  try {
+    const currencies = embedRegistry.getCurrenciesConfig();
+    return res.json({ success: true, currencies });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API de Salvamento de Currency Global (Atualização Atômica & Sincronização em Tempo Real)
+app.post('/api/admin/currencies', requireAdminAuth, (req, res) => {
+  try {
+    const { currencyKey, emojiId, currencies } = req.body || {};
+
+    if (currencies && typeof currencies === 'object') {
+      for (const [key, id] of Object.entries(currencies)) {
+        embedRegistry.saveCurrencyEmoji(key, id);
+      }
+    } else if (currencyKey) {
+      embedRegistry.saveCurrencyEmoji(currencyKey, emojiId);
+    } else {
+      return res.status(400).json({ success: false, error: 'currencyKey ou currencies é obrigatório.' });
+    }
+
+    sendIpcToBot({ type: 'RELOAD_EMOJIS' });
+    const updated = embedRegistry.getCurrenciesConfig();
+
+    return res.json({
+      success: true,
+      message: 'Currencies globais atualizadas e sincronizadas com sucesso!',
+      currencies: updated,
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // API de Introspecção em Tempo Real do Processo do Bot
 app.get('/api/admin/introspect', requireAdminAuth, (req, res) => {
   try {
     const modules = moduleManager.getAllModules();
     const embeds = embedRegistry.getAllEmbedsWithResolvedSlots();
     const acervo = acervoAuditService.getAcervoStats();
+    const currencies = embedRegistry.getCurrenciesConfig();
 
     return res.json({
       success: true,
@@ -1515,6 +1554,7 @@ app.get('/api/admin/introspect', requireAdminAuth, (req, res) => {
       },
       modules,
       embeds,
+      currencies,
       acervo,
     });
   } catch (err) {

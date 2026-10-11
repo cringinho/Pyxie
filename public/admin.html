@@ -861,20 +861,100 @@
         background: #2b2d31;
         border-left: 4px solid var(--embed-theme-color, #e60067);
         border-radius: 4px 8px 8px 4px;
-        padding: 12px 16px;
+        padding: 14px 18px;
         color: #dbdee1;
-        font-size: 0.82rem;
+        font-size: 0.84rem;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      }
+      .discord-author {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+      }
+      .discord-author img {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .discord-bot-badge {
+        background: #5865f2;
+        color: #fff;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 1px 4px;
+        border-radius: 3px;
+        line-height: 1.2;
       }
       .embed-discord-title {
         font-weight: 700;
-        font-size: 0.95rem;
+        font-size: 0.98rem;
         color: #ffffff;
-        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        line-height: 1.35;
       }
       .embed-discord-desc {
-        line-height: 1.45;
+        line-height: 1.5;
         color: #dbdee1;
         white-space: pre-line;
+      }
+      .embed-discord-fields {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px 14px;
+        margin-top: 6px;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        padding: 10px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .embed-discord-field {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .discord-field-name {
+        font-weight: 700;
+        font-size: 0.78rem;
+        color: #ffffff;
+      }
+      .discord-field-value {
+        font-size: 0.8rem;
+        color: #dbdee1;
+        line-height: 1.4;
+      }
+      .embed-discord-footer {
+        font-size: 0.72rem;
+        color: #949ba4;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 6px;
+      }
+      .discord-inline-emoji {
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+        object-fit: contain;
+        display: inline-block;
+        margin: 0 2px;
+      }
+      .discord-inline-code {
+        background: #1e1f22;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.78rem;
+        color: #dbdee1;
       }
       .embed-slots-grid {
         display: grid;
@@ -893,6 +973,21 @@
       }
       .embed-slot-item:hover {
         border-color: rgba(236, 72, 153, 0.4);
+      }
+      .currency-card {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        transition: all 0.2s ease;
+      }
+      .currency-card:hover {
+        border-color: rgba(236, 72, 153, 0.5);
+        background: rgba(0, 0, 0, 0.55);
       }
 
       /* Acervo Inspector & Simulator */
@@ -1610,6 +1705,25 @@
           </div>
         </div>
 
+        <!-- CARD DE CURRENCIES GLOBAIS (Moedinhas & Feijões Mágicos) -->
+        <div style="background: rgba(18, 9, 36, 0.95); border: 1px solid rgba(236, 72, 153, 0.4); border-radius: 20px; padding: 22px; margin-bottom: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 12px;">
+            <div>
+              <h4 style="font-family: 'Fredoka', sans-serif; font-size: 1.1rem; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                <span>🪙</span> Currencies Globais Canônicas (Ícone Universal)
+              </h4>
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 0 0;">
+                Moedas e Feijões têm o <strong>mesmo ícone em qualquer lugar do bot</strong> (trabalho, daily, ranking, lojinha, perfis e embeds). Altere abaixo com 1 clique para sincronizar globalmente.
+              </p>
+            </div>
+            <span class="card-status-pill status-active" style="font-size: 10px; padding: 2px 8px;">🌐 Sincronização Global</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;" id="currenciesGrid">
+            <div style="color: var(--text-muted); font-size: 0.8rem; padding: 12px;">Carregando currencies globais...</div>
+          </div>
+        </div>
+
         <!-- Emoji Stats -->
         <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 20px;">
           <div class="stat-card">
@@ -2107,7 +2221,10 @@
         } else {
           stopLogPolling();
         }
-        if (tabId === 'emojis') fetchEmbedsData();
+        if (tabId === 'emojis') {
+          fetchEmbedsData();
+          fetchCurrenciesData();
+        }
         if (tabId === 'bot') { loadBotConfig(); fetchAcervoAudit(); }
         if (tabId === 'shopee') fetchShopeeData();
         if (tabId === 'modules') fetchModules();
@@ -3432,8 +3549,132 @@
          CONTRATO DINÂMICO DE EMBEDS & MAPEADOR DE EMOJIS (TAB 2)
          ========================================================== */
       let allEmbedsData = { embeds: [], appEmojis: [], totalEmbeds: 0, totalSlots: 0, customSlotsCount: 0 };
-      let currentEditingEmbedSlot = { embedId: null, slotKey: null, title: '', fallback: '✨' };
+      let allCurrenciesData = { coins: null, magicBeans: null };
+      let currentEditingEmbedSlot = null; // { embedId, slotKey, title, fallback }
+      let currentEditingCurrency = null;  // 'coins' | 'magicBeans'
       let activePickerFilter = 'all';
+
+      async function fetchCurrenciesData() {
+        try {
+          const res = await fetch('/api/admin/currencies');
+          if (res.status === 401 || res.status === 403) {
+            window.location.href = '/admin';
+            return;
+          }
+          const data = await res.json();
+          if (data.success && data.currencies) {
+            allCurrenciesData = data.currencies;
+            renderCurrenciesCards();
+          }
+        } catch (err) {
+          console.error('Erro ao carregar currencies:', err);
+        }
+      }
+
+      function renderCurrenciesCards() {
+        const grid = document.getElementById('currenciesGrid');
+        if (!grid) return;
+
+        const coins = allCurrenciesData.coins || {
+          key: 'coins',
+          name: 'Moedinhas da Pyxie',
+          description: 'Moeda principal do bot para trabalho, daily, rankings e loja.',
+          currentEmojiId: '1548443880066777098',
+          currentUrl: 'https://cdn.discordapp.com/emojis/1548443880066777098.png',
+          currentName: 'coins',
+          isAnimated: false,
+          fallback: '🪙',
+          isCustomized: false,
+        };
+
+        const beans = allCurrenciesData.magicBeans || {
+          key: 'magicBeans',
+          name: 'Feijões Mágicos',
+          description: 'Recurso arcano raro obtido em bônus diários e eventos para rituais especiais.',
+          currentEmojiId: '1548444140532928642',
+          currentUrl: 'https://cdn.discordapp.com/emojis/1548444140532928642.png',
+          currentName: 'magic_bean',
+          isAnimated: false,
+          fallback: '🌱',
+          isCustomized: false,
+        };
+
+        const renderItem = (cur) => {
+          const isCustom = Boolean(cur.currentUrl);
+          const iconHtml = isCustom
+            ? `<img src="${cur.currentUrl}" alt="${cur.name}" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${cur.currentEmojiId}.png';" />`
+            : `<span style="font-size: 28px;">${cur.fallback}</span>`;
+          const badgeClass = cur.isAnimated ? 'status-active' : 'status-paused';
+          const badgeText = cur.isAnimated ? '✨ GIF Animado' : (cur.currentEmojiId ? '📄 PNG Estático' : '🔤 Unicode');
+
+          return `
+            <div class="currency-card" id="currency-card-${cur.key}">
+              <div style="display: flex; align-items: center; gap: 14px; min-width: 0;">
+                <div class="emoji-preview-box" onclick="openEmojiPickerForCurrency('${cur.key}', '${cur.name}', '${cur.fallback}')" title="Clique para trocar emoji da moeda global" style="width: 56px; height: 56px;">
+                  ${iconHtml}
+                </div>
+                <div style="min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <strong style="color: #fff; font-size: 0.95rem; font-family: 'Fredoka', sans-serif;">${cur.name}</strong>
+                    <span class="card-status-pill ${badgeClass}" style="font-size: 8px; padding: 1px 6px;">${badgeText}</span>
+                  </div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; line-height: 1.3;">${cur.description}</div>
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #38bdf8; margin-top: 4px;">
+                    emoji: <strong>${cur.currentName || cur.key}</strong> <span style="color: var(--text-muted);">(${cur.currentEmojiId || 'padrão'})</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+                <button type="button" class="btn btn-primary btn-mini" onclick="openEmojiPickerForCurrency('${cur.key}', '${cur.name}', '${cur.fallback}')" style="padding: 6px 12px; font-weight: 700;">
+                  🎨 Alterar
+                </button>
+                <button type="button" class="btn btn-secondary btn-mini" onclick="resetCurrency('${cur.key}')" style="padding: 5px 10px; font-size: 0.72rem;">
+                  🔄 Resetar
+                </button>
+              </div>
+            </div>
+          `;
+        };
+
+        grid.innerHTML = renderItem(coins) + renderItem(beans);
+      }
+
+      function openEmojiPickerForCurrency(currencyKey, title, fallback) {
+        currentEditingCurrency = currencyKey;
+        currentEditingEmbedSlot = null;
+
+        const modal = document.getElementById('emojiPickerModal');
+        const titleEl = document.getElementById('modalSlotTitle');
+        if (titleEl) titleEl.innerText = `Currency Global → [${currencyKey}] (${title})`;
+
+        const searchInput = document.getElementById('pickerSearchInput');
+        if (searchInput) searchInput.value = '';
+        activePickerFilter = 'all';
+        updatePickerFilterButtons();
+        renderPickerGrid();
+        if (modal) modal.classList.add('open');
+      }
+
+      async function resetCurrency(currencyKey) {
+        showToast('Restaurando currency para padrão...', '🔄');
+        try {
+          const res = await fetch('/api/admin/currencies', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ currencyKey, emojiId: '' })
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast('Currency restaurada para o padrão oficial!', '✅');
+            await fetchCurrenciesData();
+            await fetchEmbedsData();
+          } else {
+            showToast(data.error || 'Erro ao resetar currency.', '⚠️');
+          }
+        } catch (_) {
+          showToast('Erro de comunicação.', '⚠️');
+        }
+      }
 
       async function fetchEmbedsData() {
         try {
@@ -3458,7 +3699,8 @@
       }
 
       function fetchEmojisData() {
-        return fetchEmbedsData();
+        fetchEmbedsData();
+        fetchCurrenciesData();
       }
 
       function updateEmbedsStats() {
@@ -3467,9 +3709,19 @@
         const customSlotsEl = document.getElementById('emojiSlotsCustom');
         const fallbackSlotsEl = document.getElementById('emojiSlotsFallback');
 
-        const totalEmbeds = allEmbedsData.totalEmbeds || (allEmbedsData.embeds ? allEmbedsData.embeds.length : 0);
-        const totalSlots = allEmbedsData.totalSlots || 0;
-        const customSlots = allEmbedsData.customSlotsCount || 0;
+        const embeds = allEmbedsData.embeds || [];
+        const totalEmbeds = embeds.length;
+        let totalSlots = 0;
+        let customSlots = 0;
+
+        embeds.forEach((emb) => {
+          const slotsList = Array.isArray(emb.slots) ? emb.slots : [];
+          totalSlots += slotsList.length;
+          slotsList.forEach((s) => {
+            if (s.isCustomized) customSlots++;
+          });
+        });
+
         const fallbackSlots = Math.max(0, totalSlots - customSlots);
 
         if (totalEmbedsEl) totalEmbedsEl.innerText = totalEmbeds;
@@ -3482,6 +3734,48 @@
         renderEmbedCards();
       }
 
+      function formatDiscordEmbedText(rawText, slotDict) {
+        if (!rawText) return '';
+        let str = escapeLogHtml(rawText);
+
+        // Substituição dos slots por emojis formatados
+        for (const [key, slot] of Object.entries(slotDict)) {
+          const isCustom = Boolean(slot.currentUrl);
+          const emojiHtml = isCustom
+            ? `<img class="discord-inline-emoji" src="${slot.currentUrl}" alt="${key}" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${slot.currentEmojiId}.png';" />`
+            : `<span style="font-size: 1.1em; vertical-align: middle;">${slot.fallback || ''}</span>`;
+          str = str.replaceAll(`{${key}}`, emojiHtml);
+          str = str.replaceAll(`{${key}_emoji}`, emojiHtml);
+        }
+
+        // Placeholders comuns nas prévias
+        str = str.replaceAll('{role}', 'Engenharia de Software');
+        str = str.replaceAll('{round}', '3');
+        str = str.replaceAll('{card_name}', 'O Louco (0)');
+        str = str.replaceAll('{quote}', 'Novos começos, espontaneidade e um espírito livre.');
+        str = str.replaceAll('{collected}', '18');
+        str = str.replaceAll('{total}', '22');
+        str = str.replaceAll('{username}', 'PyxieDev');
+        str = str.replaceAll('{p1}', 'Alex');
+        str = str.replaceAll('{p2}', 'Taylor');
+        str = str.replaceAll('{art_title}', 'Floresta Violeta');
+        str = str.replaceAll('{artist}', 'AriaMística');
+        str = str.replaceAll('{server_name}', 'Vila Geek');
+        str = str.replaceAll('{top1}', 'ReiDoOuro');
+        str = str.replaceAll('{top2}', 'MagoPrateado');
+        str = str.replaceAll('{wisdom}', 'A paciência é a chave cósmica para abrir as portas da abundância.');
+        str = str.replaceAll('{level}', '2');
+        str = str.replaceAll('{current_turn}', 'Vez do Jogador 1');
+        str = str.replaceAll('{mines_count}', '3');
+        str = str.replaceAll('{value}', '18');
+
+        // Formatação markdown Discord:
+        str = str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        str = str.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        str = str.replace(/`([^`]+)`/g, '<code class="discord-inline-code">$1</code>');
+        return str;
+      }
+
       function renderEmbedCards() {
         const container = document.getElementById('embedsContainer');
         if (!container) return;
@@ -3492,11 +3786,12 @@
 
         const filtered = embeds.filter((emb) => {
           const matchCat = catFilter === 'all' || emb.category === catFilter;
+          const slotsList = Array.isArray(emb.slots) ? emb.slots : [];
           const matchSearch = !search ||
             emb.name.toLowerCase().includes(search) ||
             emb.id.toLowerCase().includes(search) ||
             (emb.description && emb.description.toLowerCase().includes(search)) ||
-            Object.keys(emb.slots || {}).some(s => s.toLowerCase().includes(search));
+            slotsList.some(s => s.key.toLowerCase().includes(search) || (s.label && s.label.toLowerCase().includes(search)));
           return matchCat && matchSearch;
         });
 
@@ -3506,49 +3801,64 @@
         }
 
         container.innerHTML = filtered.map((emb) => {
-          const slots = emb.slots || {};
-          const resolved = emb.resolvedSlots || {};
-          const slotEntries = Object.entries(slots);
+          const slotsList = Array.isArray(emb.slots) ? emb.slots : [];
+          const slotDict = {};
+          slotsList.forEach((s) => {
+            slotDict[s.key] = s;
+          });
 
-          const primarySlot = resolved['primary'] || (slotEntries[0] ? resolved[slotEntries[0][0]] : null);
-          const primaryIcon = primarySlot ? (primarySlot.isCustom ? `<img src="${primarySlot.url}" style="width: 18px; height: 18px; vertical-align: middle;" />` : primarySlot.text) : '✨';
+          // Constrói os campos do preview do Discord se existirem no schema
+          let fieldsHtml = '';
+          if (Array.isArray(emb.previewFields) && emb.previewFields.length > 0) {
+            fieldsHtml = `
+              <div class="embed-discord-fields">
+                ${emb.previewFields.map((f) => `
+                  <div class="embed-discord-field" style="${f.inline ? '' : 'grid-column: 1 / -1;'}">
+                    <div class="discord-field-name">${formatDiscordEmbedText(f.name, slotDict)}</div>
+                    <div class="discord-field-value">${formatDiscordEmbedText(f.value, slotDict)}</div>
+                  </div>
+                `).join('')}
+              </div>
+            `;
+          }
 
-          const slotsHtml = slotEntries.map(([slotKey, slotDef]) => {
-            const currentSlot = resolved[slotKey] || { text: slotDef.fallback || '✨', isCustom: false, isAnimated: false, url: null };
-            const isCustom = Boolean(currentSlot.isCustom && currentSlot.url);
-
-            let previewIcon = `<span style="font-size: 22px;">${currentSlot.text || slotDef.fallback || '✨'}</span>`;
+          // Constrói a lista interativa de slots
+          const slotsHtml = slotsList.map((slot) => {
+            const isCustom = Boolean(slot.isCustomized && (slot.currentUrl || slot.currentEmojiId));
+            let previewIcon = `<span style="font-size: 22px;">${slot.fallback || '✨'}</span>`;
             let badgeClass = 'status-paused';
-            let badgeText = 'Padrão';
+            let badgeText = 'Padrão Unicode';
 
-            if (isCustom) {
-              previewIcon = `<img src="${currentSlot.url}" alt="${slotKey}" style="width: 28px; height: 28px; object-fit: contain;" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${currentSlot.emojiId}.png';" />`;
-              badgeClass = currentSlot.isAnimated ? 'status-active' : 'status-paused';
-              badgeText = currentSlot.isAnimated ? '✨ GIF Animado' : '📄 PNG Estático';
+            if (isCustom && slot.currentUrl) {
+              previewIcon = `<img src="${slot.currentUrl}" alt="${slot.key}" style="width: 28px; height: 28px; object-fit: contain;" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${slot.currentEmojiId}.png';" />`;
+              const isAnim = slot.currentFormat && slot.currentFormat.startsWith('<a:');
+              badgeClass = isAnim ? 'status-active' : 'status-paused';
+              badgeText = isAnim ? '✨ GIF Animado' : '📄 PNG Estático';
             }
 
             return `
-              <div class="embed-slot-item" id="slot-card-${emb.id}-${slotKey}">
-                <div class="emoji-preview-box" onclick="openEmojiPickerForEmbedSlot('${emb.id}', '${slotKey}', '${slotDef.title || slotKey}', '${slotDef.fallback || '✨'}')" title="Clique para trocar emoji" style="width: 44px; height: 44px;">
+              <div class="embed-slot-item" id="slot-card-${emb.id}-${slot.key}">
+                <div class="emoji-preview-box" onclick="openEmojiPickerForEmbedSlot('${emb.id}', '${slot.key}', '${slot.label || slot.key}', '${slot.fallback || '✨'}')" title="Clique para trocar emoji" style="width: 44px; height: 44px;">
                   ${previewIcon}
                 </div>
                 <div style="flex: 1; min-width: 0;">
                   <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-                    <strong style="font-size: 0.82rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${slotDef.title || slotKey}</strong>
+                    <strong style="font-size: 0.82rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${slot.label || slot.key}</strong>
                     <span class="card-status-pill ${badgeClass}" style="font-size: 8px; padding: 1px 5px;">${badgeText}</span>
                   </div>
-                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--purple-glow); margin-top: 2px;">slot: ${slotKey}</div>
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--purple-glow); margin-top: 2px;">slot: {${slot.key}}</div>
+                  <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${slot.description || ''}</div>
                 </div>
                 <div style="display: flex; gap: 4px;">
-                  <button type="button" class="btn btn-secondary btn-mini" style="padding: 4px 6px;" onclick="openEmojiPickerForEmbedSlot('${emb.id}', '${slotKey}', '${slotDef.title || slotKey}', '${slotDef.fallback || '✨'}')" title="Escolher emoji">🎨</button>
-                  ${isCustom ? `<button type="button" class="btn btn-danger btn-mini" style="padding: 4px 6px;" onclick="resetEmbedSlot('${emb.id}', '${slotKey}')" title="Restaurar padrão">✕</button>` : ''}
+                  <button type="button" class="btn btn-secondary btn-mini" style="padding: 4px 6px;" onclick="openEmojiPickerForEmbedSlot('${emb.id}', '${slot.key}', '${slot.label || slot.key}', '${slot.fallback || '✨'}')" title="Escolher emoji">🎨</button>
+                  ${isCustom ? `<button type="button" class="btn btn-danger btn-mini" style="padding: 4px 6px;" onclick="resetEmbedSlot('${emb.id}', '${slot.key}')" title="Restaurar padrão">✕</button>` : ''}
                 </div>
               </div>
             `;
           }).join('');
 
           return `
-            <div class="embed-card" style="border-left: 4px solid ${emb.color || '#e60067'};">
+            <div class="embed-card" style="border-left: 4px solid ${emb.defaultColor || '#e60067'};">
               <div class="embed-card-header">
                 <div>
                   <div class="embed-card-title">
@@ -3559,19 +3869,29 @@
                   <p style="font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 0 0;">${emb.description}</p>
                 </div>
                 <div style="display: flex; gap: 8px; align-items: center;">
-                  <span style="font-size: 0.75rem; color: var(--text-muted);">${slotEntries.length} slots visuais</span>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">${slotsList.length} slots visuais</span>
                 </div>
               </div>
 
-              <!-- Discord Mini Preview Box -->
-              <div class="embed-discord-preview" style="--embed-theme-color: ${emb.color || '#e60067'};">
-                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 0.75rem; color: #949ba4;">
-                  <span style="width: 14px; height: 14px; border-radius: 50%; background: #e60067; display: inline-block;"></span>
-                  <strong>Pyxie</strong>
-                  <span style="background: #5865f2; color: #fff; font-size: 8px; padding: 0 4px; border-radius: 3px;">BOT</span>
+              <!-- Prévia Autêntica do Discord Embed (Zero '✨' artificial!) -->
+              <div class="embed-discord-preview" style="--embed-theme-color: ${emb.defaultColor || '#e60067'};">
+                <div class="discord-author">
+                  <img src="/assets/pyxie/pyxie_mascot.png" alt="Pyxie Mascot" onerror="this.src='https://cdn.discordapp.com/emojis/1548444149785694238.gif';" />
+                  <span style="color: #f2f3f5; font-weight: 700;">Pyxie</span>
+                  <span class="discord-bot-badge">APP</span>
+                  <span style="color: #949ba4; font-size: 0.72rem; margin-left: auto;">Hoje às 14:32</span>
                 </div>
-                <div class="embed-discord-title">${primaryIcon} ${emb.name}</div>
-                <div class="embed-discord-desc">Exemplo demonstrativo dos slots visuais configurados para este embed no Discord. Toda alteração feita aqui reflete imediatamente nos comandos.</div>
+                <div class="embed-discord-title">
+                  ${formatDiscordEmbedText(emb.previewTitle || emb.name, slotDict)}
+                </div>
+                <div class="embed-discord-desc">
+                  ${formatDiscordEmbedText(emb.previewDesc || emb.description, slotDict)}
+                </div>
+                ${fieldsHtml}
+                <div class="embed-discord-footer">
+                  <img src="/assets/pyxie/pyxie_pixelart_face.png" style="width: 14px; height: 14px; border-radius: 50%;" onerror="this.style.display='none';" />
+                  <span>Pyxie • Sistema Místico • Hoje às 14:32</span>
+                </div>
               </div>
 
               <!-- Slots Grid -->
@@ -3585,6 +3905,8 @@
 
       function openEmojiPickerForEmbedSlot(embedId, slotKey, title, fallback) {
         currentEditingEmbedSlot = { embedId, slotKey, title, fallback };
+        currentEditingCurrency = null;
+
         const modal = document.getElementById('emojiPickerModal');
         const titleEl = document.getElementById('modalSlotTitle');
         if (titleEl) titleEl.innerText = `${embedId} → [${slotKey}] (${title})`;
@@ -3600,7 +3922,8 @@
       function closeEmojiPicker() {
         const modal = document.getElementById('emojiPickerModal');
         if (modal) modal.classList.remove('open');
-        currentEditingEmbedSlot = { embedId: null, slotKey: null, title: '', fallback: '✨' };
+        currentEditingEmbedSlot = null;
+        currentEditingCurrency = null;
       }
 
       function setPickerFilter(type) {
@@ -3660,7 +3983,31 @@
       }
 
       async function selectEmojiForSlot(emojiId) {
-        if (!currentEditingEmbedSlot.embedId || !currentEditingEmbedSlot.slotKey) return;
+        if (currentEditingCurrency) {
+          const currencyKey = currentEditingCurrency;
+          closeEmojiPicker();
+          showToast('Atualizando currency global...', '🪙');
+          try {
+            const res = await fetch('/api/admin/currencies', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ currencyKey, emojiId }),
+            });
+            const data = await res.json();
+            if (data.success) {
+              showToast('✨ Currency global atualizada com sucesso em todo o bot!', '💾');
+              await fetchCurrenciesData();
+              await fetchEmbedsData();
+            } else {
+              showToast(data.error || 'Erro ao atualizar currency.', '⚠️');
+            }
+          } catch (err) {
+            showToast('Erro de conexão ao salvar currency.', '⚠️');
+          }
+          return;
+        }
+
+        if (!currentEditingEmbedSlot || !currentEditingEmbedSlot.embedId || !currentEditingEmbedSlot.slotKey) return;
         const { embedId, slotKey } = currentEditingEmbedSlot;
 
         closeEmojiPicker();

@@ -13,6 +13,10 @@ const EventEmitter = require('events');
  *   * Interrompe cron jobs
  *   * Cancela intervalos e timeouts
  *   * Desregistra comandos e aliases de commandsByName
+ * - Contrato Unificado de Embeds e Emojis Dinâmicos:
+ *   * Schemas visuais publicados no embedRegistry e auto-descobertos pelo Dashboard (/admin)
+ *   * Resolução centralizada de slots visuais e moedas canônicas ({coins}, {beans})
+ *   * Zero emojis hardcoded; suporte nativo a buildEmbed() e registerEmbed()
  * - Persistência atômica de estado em data/modulesConfig.json
  * - Injeção dinâmica transparente na central de ajuda (/py-help) e catálogo web (/api/commands)
  */
@@ -261,6 +265,16 @@ class ModuleManager extends EventEmitter {
         fullConfig.modules[mod.id].updatedAt = Date.now();
         this.saveConfig(fullConfig);
       },
+
+      // Contrato Unificado de Embeds e Emojis Dinâmicos (embedRegistry.js)
+      registerEmbed: (schema) => {
+        const { registerEmbed } = require('../utils/embedRegistry');
+        return registerEmbed(schema);
+      },
+      buildEmbed: (embedId, options = {}, source = null) => {
+        const { buildEmbed } = require('../utils/embedRegistry');
+        return buildEmbed(embedId, options, source);
+      },
     };
   }
 
@@ -334,7 +348,19 @@ class ModuleManager extends EventEmitter {
       }
     }
 
-    // 2. Executa o hook onLoad do módulo
+    // 2. Se o módulo declarar schemas de embeds em mod.embeds, registra-os automaticamente
+    if (Array.isArray(mod.embeds)) {
+      const { registerEmbed } = require('../utils/embedRegistry');
+      for (const embedSchema of mod.embeds) {
+        try {
+          registerEmbed(embedSchema);
+        } catch (err) {
+          console.warn(`[ModuleManager] Falha ao registrar embed '${embedSchema?.id}' do módulo '${moduleId}':`, err.message);
+        }
+      }
+    }
+
+    // 3. Executa o hook onLoad do módulo
     if (typeof mod.onLoad === 'function') {
       try {
         await mod.onLoad(ctx);
@@ -545,6 +571,23 @@ class ModuleManager extends EventEmitter {
       });
     }
     return result;
+  }
+
+  /**
+   * Registra um schema de embed dinâmico no catálogo do embedRegistry
+   * Permite que módulos e comandos publiquem seus schemas visuais para auto-descoberta no dashboard
+   */
+  registerEmbed(schema) {
+    const { registerEmbed } = require('../utils/embedRegistry');
+    return registerEmbed(schema);
+  }
+
+  /**
+   * Constrói um embed dinâmico resolvendo slots de emojis customizados e tokens globais ({coins}, {beans})
+   */
+  buildEmbed(embedId, options = {}, source = null) {
+    const { buildEmbed } = require('../utils/embedRegistry');
+    return buildEmbed(embedId, options, source);
   }
 }
 

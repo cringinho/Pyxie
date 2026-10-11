@@ -72,6 +72,7 @@ function registerEmbed(schema) {
     slots: Array.isArray(schema.slots) ? schema.slots : [],
     previewTitle: schema.previewTitle || schema.name || schema.id,
     previewDesc: schema.previewDesc || '',
+    previewFields: Array.isArray(schema.previewFields) ? schema.previewFields : [],
   });
 }
 
@@ -250,9 +251,107 @@ function getAllEmbedsWithResolvedSlots() {
       slots,
       previewTitle: schema.previewTitle,
       previewDesc: schema.previewDesc,
+      previewFields: schema.previewFields || [],
     });
   }
   return list;
+}
+
+/**
+ * Retorna as configurações das moedas globais (coins e magicBeans)
+ */
+function getCurrenciesConfig() {
+  loadCustomEmojis();
+  const THEME_FILE = path.join(__dirname, '..', 'data', 'themeEmojis.json');
+  let themeConfig = {};
+  try {
+    if (fs.existsSync(THEME_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(THEME_FILE, 'utf8'));
+      themeConfig = parsed && parsed.themes ? parsed.themes : {};
+    }
+  } catch (_) {}
+
+  const coinsId = customEmojisCache['coins'] || (themeConfig.coins && themeConfig.coins.primaryId) || '1548443880066777098';
+  const beansId = customEmojisCache['magic_bean'] || (themeConfig.magicBeans && themeConfig.magicBeans.primaryId) || '1548444140532928642';
+
+  const resolveItem = (key, name, desc, emojiId, defaultId, fallback) => {
+    let resolved = null;
+    if (emojiId && appEmojiMap.has(String(emojiId))) {
+      resolved = appEmojiMap.get(String(emojiId));
+    } else if (emojiId) {
+      resolved = {
+        id: String(emojiId),
+        name: `emoji_${emojiId}`,
+        animated: false,
+        url: `https://cdn.discordapp.com/emojis/${emojiId}.png`,
+        format: `<:emoji_${emojiId}:${emojiId}>`,
+      };
+    }
+    return {
+      key,
+      name,
+      description: desc,
+      currentEmojiId: emojiId || defaultId,
+      currentUrl: resolved ? resolved.url : `https://cdn.discordapp.com/emojis/${defaultId}.png`,
+      currentName: resolved ? resolved.name : name,
+      isAnimated: resolved ? resolved.animated : false,
+      fallback,
+      defaultId,
+      isCustomized: Boolean(customEmojisCache[key === 'magicBeans' ? 'magic_bean' : 'coins']),
+    };
+  };
+
+  return {
+    coins: resolveItem('coins', 'Moedinhas da Pyxie', 'Moeda principal do bot para trabalho, daily, rankings e loja.', coinsId, '1548443880066777098', '🪙'),
+    magicBeans: resolveItem('magicBeans', 'Feijões Mágicos', 'Recurso arcano raro obtido em bônus diários e eventos para rituais especiais.', beansId, '1548444140532928642', '🌱'),
+  };
+}
+
+/**
+ * Salva a alteração de emoji de uma currency global
+ */
+function saveCurrencyEmoji(currencyKey, emojiId) {
+  loadCustomEmojis();
+  let cleanId = emojiId ? String(emojiId).trim() : '';
+  if (cleanId === '1548444170488778954') {
+    cleanId = '1551355962974273546';
+  }
+
+  const THEME_FILE = path.join(__dirname, '..', 'data', 'themeEmojis.json');
+  let themeJson = { themes: {} };
+  try {
+    if (fs.existsSync(THEME_FILE)) {
+      themeJson = JSON.parse(fs.readFileSync(THEME_FILE, 'utf8'));
+    }
+  } catch (_) {}
+
+  if (currencyKey === 'coins') {
+    if (cleanId) customEmojisCache['coins'] = cleanId;
+    else delete customEmojisCache['coins'];
+    if (themeJson.themes && themeJson.themes.coins) {
+      themeJson.themes.coins.primaryId = cleanId || '1548443880066777098';
+    }
+  } else if (currencyKey === 'magicBeans' || currencyKey === 'magic_bean' || currencyKey === 'beans') {
+    if (cleanId) customEmojisCache['magic_bean'] = cleanId;
+    else delete customEmojisCache['magic_bean'];
+    if (themeJson.themes && themeJson.themes.magicBeans) {
+      themeJson.themes.magicBeans.primaryId = cleanId || '1548444140532928642';
+    }
+  }
+
+  // Grava ambos os arquivos de forma atômica
+  const tmpEmojis = `${EMOJIS_FILE}.${Date.now()}.tmp`;
+  fs.writeFileSync(tmpEmojis, JSON.stringify(customEmojisCache, null, 2), 'utf8');
+  fs.renameSync(tmpEmojis, EMOJIS_FILE);
+
+  if (themeJson.themes) {
+    const tmpTheme = `${THEME_FILE}.${Date.now()}.tmp`;
+    fs.writeFileSync(tmpTheme, JSON.stringify(themeJson, null, 2), 'utf8');
+    fs.renameSync(tmpTheme, THEME_FILE);
+  }
+
+  reloadRegistryCache();
+  return { success: true, currencyKey, emojiId: cleanId };
 }
 
 /**
@@ -272,7 +371,9 @@ function saveEmbedSlotEmoji(embedId, slotKey, emojiId) {
     delete customEmojisCache[key];
   }
 
-  fs.writeFileSync(EMOJIS_FILE, JSON.stringify(customEmojisCache, null, 2), 'utf8');
+  const tmpEmojis = `${EMOJIS_FILE}.${Date.now()}.tmp`;
+  fs.writeFileSync(tmpEmojis, JSON.stringify(customEmojisCache, null, 2), 'utf8');
+  fs.renameSync(tmpEmojis, EMOJIS_FILE);
   reloadEmojiConfig();
   return { success: true, embedId, slotKey, emojiId: cleanId };
 }
@@ -296,8 +397,13 @@ registerEmbed({
   category: 'economy',
   description: 'Embed principal do comando /py-work exibindo cenários técnicos, desafios e opções.',
   defaultColor: '#f43f5e',
-  previewTitle: '{header} Expediente Técnico: {role}',
-  previewDesc: 'Um incidente em produção exige sua tomada de decisão imediata!\nSalário previsto: 15-40 {coins}\nTempo limite: 90s {timer}',
+  previewTitle: '{header} Expediente Técnico: Engenharia de Software',
+  previewDesc: 'Um incidente crítico em produção exige sua tomada de decisão imediata!\nO pipeline de deploy quebrou e clientes estão enfrentando erros 502.',
+  previewFields: [
+    { name: '📋 Incidente Técnico', value: 'Falha no pod principal de autenticação durante atualização.', inline: false },
+    { name: '💰 Remuneração Prevista', value: '35 {coins}', inline: true },
+    { name: '⏱️ Tempo Limite', value: '90 segundos {timer}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone de Cabeçalho', fallback: '💼', defaultEmojiKey: 'work_career', description: 'Exibido no título da crise' },
     { key: 'coins', label: 'Moeda do Salário', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Ícone da moeda ganha ao acertar' },
@@ -313,8 +419,13 @@ registerEmbed({
   category: 'minigames',
   description: 'Embed de perguntas do minigame /py-quiz com acúmulo de streak e prêmios.',
   defaultColor: '#8b5cf6',
-  previewTitle: '{header} Quiz Cultural da Pyxie (Rodada {round})',
-  previewDesc: 'Responda corretamente para acumular moedas no cofre!\nPrêmio acumulado: 10 {coins} • Dificuldade: Normal',
+  previewTitle: '{header} Quiz Cultural da Pyxie (Rodada 3)',
+  previewDesc: 'Responda corretamente para acumular moedas no cofre da guilda!\nQual elemento astrológico rege os signos de Câncer, Escorpião e Peixes?',
+  previewFields: [
+    { name: '🎯 Opções', value: '1️⃣ Fogo\n2️⃣ Água\n3️⃣ Ar\n4️⃣ Terra', inline: false },
+    { name: '💰 Prêmio do Cofre', value: '10 {coins}', inline: true },
+    { name: '⏱️ Tempo Restante', value: '30s {timer}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🎯', defaultEmojiKey: 'CONTROLLER', description: 'Exibido no título do quiz' },
     { key: 'coins', label: 'Moedas de Prêmio', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Ícone das moedas acumuladas' },
@@ -329,8 +440,12 @@ registerEmbed({
   category: 'tarot',
   description: 'Embed do comando /py-tarot com leitura arcana e conselho místico.',
   defaultColor: '#7c3aed',
-  previewTitle: '{moon} Revelação Arcana: {card_name}',
-  previewDesc: '> {quote}\n\n✨ **Conselho dos Astros:** Siga sua intuição e confie no universo.',
+  previewTitle: '{moon} Revelação Arcana: O Louco (0)',
+  previewDesc: '> "Novos começos, inocência, espontaneidade e a coragem de dar o salto da fé."\n\n✨ **Conselho dos Astros:** Siga sua intuição e confie no universo.',
+  previewFields: [
+    { name: '🔮 Orientação Arcana', value: 'Posição Reta (Upright)', inline: true },
+    { name: '✨ Sintonia Cósmica', value: 'Alta Vibração', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🔮', defaultEmojiKey: 'tarot_card', description: 'Ícone de abertura do Tarot' },
     { key: 'moon', label: 'Lua Arcana', fallback: '🌙', defaultEmojiKey: 'MOON', description: 'Exibido ao lado do nome do arcano' },
@@ -344,8 +459,12 @@ registerEmbed({
   category: 'tarot',
   description: 'Embed do comando /py-album com progresso de arcanos e cartas brilhantes.',
   defaultColor: '#c084fc',
-  previewTitle: '{header} Álbum Celestial de Arcanos ({collected}/{total})',
+  previewTitle: '{header} Álbum Celestial de Arcanos (18/22)',
   previewDesc: 'Coleção completa de arcanos maiores da Pyxie. Cartas douradas concedem bônus diário!',
+  previewFields: [
+    { name: '⭐ Cartas Desbloqueadas', value: '18 / 22 Arcanos', inline: true },
+    { name: '💎 Bônus Diário Acumulado', value: '+45% {gem}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone do Álbum', fallback: '🎴', defaultEmojiKey: 'tarotAlbum', description: 'Ícone no topo do catálogo de cartas' },
     { key: 'star', label: 'Estrela Cósmica', fallback: '⭐', defaultEmojiKey: 'STAR', description: 'Indicador de raridade da carta' },
@@ -360,7 +479,12 @@ registerEmbed({
   description: 'Embed do comando /py-daily e do portal de resgate web.',
   defaultColor: '#10b981',
   previewTitle: '{header} Recompensa Diária Coletada!',
-  previewDesc: 'Você recebeu **100** {coins} e **1** {beans}!\nVolte amanhã para manter seu streak ativo.',
+  previewDesc: 'Você resgatou com sucesso seu bônus diário e manteve a chama viva!',
+  previewFields: [
+    { name: '💰 Moedinhas Recebidas', value: '+100 {coins}', inline: true },
+    { name: '🌱 Feijões Mágicos', value: '+1 {beans}', inline: true },
+    { name: '🔥 Streak Ativo', value: '7 dias consecutivos {streak}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone de Presente', fallback: '🎁', defaultEmojiKey: 'daily_bonus', description: 'Ícone no título do bônus' },
     { key: 'coins', label: 'Moedas Gerais', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Moedas creditadas' },
@@ -375,8 +499,12 @@ registerEmbed({
   category: 'economy',
   description: 'Embed de notificação de bônus dobrado aos sábados e domingos.',
   defaultColor: '#f59e0b',
-  previewTitle: '{header} Fim de Semana Mágico Ativado (2X Moedas)',
-  previewDesc: 'Todas as atividades econômicas estão rendendo em dobro até domingo às 23:59!',
+  previewTitle: '{header} Fim de Semana Mágico Ativado!',
+  previewDesc: 'Todas as atividades econômicas e trabalhos estão rendendo em dobro até domingo às 23:59!',
+  previewFields: [
+    { name: '💰 Multiplicador Ativo', value: '2X {coins} em tudo!', inline: true },
+    { name: '⏳ Duração', value: 'Até Domingo às 23:59', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone de Fogo/Evento', fallback: '🔥', defaultEmojiKey: 'weekend_bonus', description: 'Ícone do evento no título' },
     { key: 'coins', label: 'Moedas Turbinadas', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Moedas dobradas' },
@@ -389,8 +517,13 @@ registerEmbed({
   category: 'social',
   description: 'Embed gerado pelo comando /py-perfil com status, casamento e saldos.',
   defaultColor: '#8b5cf6',
-  previewTitle: '{header} Identidade Arcana • {username}',
-  previewDesc: 'Carteira: {coins} Moedas • {beans} Feijões Mágicos\n💍 Estado Civil: Casado(a)',
+  previewTitle: '{header} Identidade Arcana • @PyxieDev',
+  previewDesc: 'Membro místico da comunidade da Cringelândia desde 2024.',
+  previewFields: [
+    { name: '💰 Saldo em Moedas', value: '1.450 {coins}', inline: true },
+    { name: '🌱 Feijões Mágicos', value: '12 {beans}', inline: true },
+    { name: '💍 Vínculo Matrimonial', value: 'Casado(a) com @Luna {marriage}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Badge de Usuário', fallback: '👤', defaultEmojiKey: 'userProfile', description: 'Ícone de identificação de perfil' },
     { key: 'coins', label: 'Moedas da Carteira', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Saldo de moedas' },
@@ -405,8 +538,13 @@ registerEmbed({
   category: 'social',
   description: 'Embed de casamento, árvore da vida e cofre familiar do comando /py-casamento.',
   defaultColor: '#ec4899',
-  previewTitle: '{header} Santuário do Amor • {p1} & {p2}',
-  previewDesc: '❤️ Amor: 100% • 🌳 Árvore: Nível 3 • 👶 Filhos: 1\nCofre Conjunto: 1.250 {coins}',
+  previewTitle: '{header} Santuário do Amor • Alex & Taylor',
+  previewDesc: 'União celebrada sob as bênçãos místicas e perpétuas da Pyxie.',
+  previewFields: [
+    { name: '💖 Sintonia do Amor', value: '100% de afinidade {heart}', inline: true },
+    { name: '🌳 Árvore da Vida', value: 'Nível 3 (Frondosa) {tree}', inline: true },
+    { name: '💰 Cofre Conjunto', value: '1.250 {coins}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Aliança de Casamento', fallback: '💍', defaultEmojiKey: 'marriage_ring', description: 'Ícone principal do casamento' },
     { key: 'heart', label: 'Coração de Afinidade', fallback: '💖', defaultEmojiKey: 'HEART', description: 'Barra do Amor e data nights' },
@@ -423,6 +561,10 @@ registerEmbed({
   defaultColor: '#38bdf8',
   previewTitle: '{header} Vitrine da Lojinha da Pyxie',
   previewDesc: 'Itens arcanos, baús misteriosos e poções especiais à venda!',
+  previewFields: [
+    { name: '📦 Baú Cósmico Lendário', value: '500 {coins}', inline: true },
+    { name: '💎 Amuleto de Proteção', value: '800 {coins} {gem}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone da Loja/Baú', fallback: '📦', defaultEmojiKey: 'shop_chest', description: 'Ícone no título da loja' },
     { key: 'gem', label: 'Joias & Cosméticos', fallback: '💎', defaultEmojiKey: 'shop_gem', description: 'Ícone de itens raros' },
@@ -436,8 +578,12 @@ registerEmbed({
   category: 'community',
   description: 'Embed de obras de arte e desenhos postados no mural e no comando /py-museu.',
   defaultColor: '#a855f7',
-  previewTitle: '{header} Obra em Exposição • {art_title}',
-  previewDesc: 'Artista: {artist} • Curtidas: 14 ✨\nCadastrado pelo Harvester Comunitário.',
+  previewTitle: '{header} Galeria Comunitária • Floresta Violeta',
+  previewDesc: 'Obra artística criada por membro e catalogada no museu comunitário.',
+  previewFields: [
+    { name: '🎨 Artista', value: '@AriaMística', inline: true },
+    { name: '✨ Curtidas da Galeria', value: '24 curtidas {sparkles}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone do Museu', fallback: '🏛️', defaultEmojiKey: 'museum', description: 'Ícone no topo do mural' },
     { key: 'sparkles', label: 'Brilho de Destaque', fallback: '✨', defaultEmojiKey: 'SPARKLES', description: 'Destaque visual da obra' },
@@ -450,8 +596,12 @@ registerEmbed({
   category: 'community',
   description: 'Embed de divulgação de servidores parceiros e bumps via /py-parcerias.',
   defaultColor: '#8b5cf6',
-  previewTitle: '{header} Comunidade Parceira: {server_name}',
-  previewDesc: 'Streak de bumps: 5 dias consecutivos!\nVisite e faça parte da nossa aliança.',
+  previewTitle: '{header} Comunidade Parceira: Vila Geek',
+  previewDesc: 'Conheça nossos aliados e faça parte desta comunidade incrível!',
+  previewFields: [
+    { name: '🦋 Membros Ativos', value: '1.250 membros {butterfly}', inline: true },
+    { name: '🔥 Streak de Parceria', value: '5 dias sem interrupção', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone de Parceria', fallback: '🤝', defaultEmojiKey: 'partnerships', description: 'Ícone no topo do embed' },
     { key: 'butterfly', label: 'Borboleta Violeta', fallback: '🦋', defaultEmojiKey: 'BUTTERFLY', description: 'Símbolo comunitário da Pyxie' },
@@ -465,7 +615,11 @@ registerEmbed({
   description: 'Embed do comando /py-ranking listando as maiores fortunas do servidor.',
   defaultColor: '#fbbf24',
   previewTitle: '{header} Placar Imperial de Riqueza',
-  previewDesc: '1º Lugar: {top1} (15.420 {coins})\n2º Lugar: {top2} (12.300 {coins})',
+  previewDesc: 'Os aventureiros e feiticeiros mais afortunados do reino da Cringelândia.',
+  previewFields: [
+    { name: '👑 1º Lugar', value: '@ReiDoOuro (15.420 {coins})', inline: false },
+    { name: '🥈 2º Lugar', value: '@MagoPrateado (12.300 {coins})', inline: false },
+  ],
   slots: [
     { key: 'header', label: 'Troféu do Ranking', fallback: '🏆', defaultEmojiKey: 'ranking', description: 'Ícone do topo do ranking' },
     { key: 'crown', label: 'Coroa do 1º Lugar', fallback: '👑', defaultEmojiKey: 'CROWN', description: 'Ícone do primeiro colocado' },
@@ -480,7 +634,10 @@ registerEmbed({
   description: 'Embed do comando /py-cookie com sabedorias e números da sorte.',
   defaultColor: '#f97316',
   previewTitle: '{header} Mensagem do Biscoito da Sorte',
-  previewDesc: '> "{wisdom}"\n\n🍀 Seus Números da Sorte: 07, 14, 21, 35, 42',
+  previewDesc: '> "A paciência é a chave cósmica para abrir as portas da abundância."',
+  previewFields: [
+    { name: '🍀 Números da Sorte', value: '07 • 14 • 21 • 35 • 42 {sparkles}', inline: false },
+  ],
   slots: [
     { key: 'header', label: 'Biscoito da Sorte', fallback: '🥠', defaultEmojiKey: 'fortune_cookie', description: 'Ícone do título do biscoito' },
     { key: 'sparkles', label: 'Brilho Astral', fallback: '✨', defaultEmojiKey: 'SPARKLES', description: 'Ícone decorativo da mensagem' },
@@ -493,8 +650,13 @@ registerEmbed({
   category: 'minigames',
   description: 'Embed do desafio de matemática /py-math com progressão de dificuldade.',
   defaultColor: '#0ea5e9',
-  previewTitle: '{header} Grimório Matemático (Nível {level})',
-  previewDesc: 'Calcule a expressão arcana para quebrar o selo rúnico!\nTempo limite: 30s ⏰',
+  previewTitle: '{header} Grimório Matemático (Nível Médio)',
+  previewDesc: 'Calcule a expressão arcana para quebrar o selo rúnico da torre!',
+  previewFields: [
+    { name: '📐 Expressão Arcana', value: '2x + 10 = 30. Qual o valor de x?', inline: false },
+    { name: '⏱️ Tempo Limite', value: '30s', inline: true },
+    { name: '✅ Recompensa', value: 'Streak +1 {correct}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Livro de Cálculos', fallback: '🧮', defaultEmojiKey: 'arcaneMath', description: 'Ícone no cabeçalho do desafio' },
     { key: 'correct', label: 'Acerto de Cálculo', fallback: '✅', defaultEmojiKey: 'CHECK', description: 'Feedback de resposta correta' },
@@ -508,8 +670,12 @@ registerEmbed({
   category: 'minigames',
   description: 'Embed de tabuleiro do comando /py-velha para duelos entre membros.',
   defaultColor: '#a855f7',
-  previewTitle: '{header} Jogo da Velha • {p1} vs {p2}',
-  previewDesc: 'Turno atual: {current_turn}\nEscolha uma casa livre no tabuleiro!',
+  previewTitle: '{header} Jogo da Velha • Duelo Arcano',
+  previewDesc: 'Partida de estratégia e raciocínio na arena mística.',
+  previewFields: [
+    { name: '❌ Jogador 1', value: '@Arthur {x_mark}', inline: true },
+    { name: '⭕ Jogador 2', value: '@Beatriz {o_mark}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone do Duelo', fallback: '🌙', defaultEmojiKey: 'tictactoe', description: 'Ícone do cabeçalho da partida' },
     { key: 'x_mark', label: 'Símbolo X', fallback: '❌', defaultEmojiKey: 'CROSS', description: 'Marcação do Jogador 1' },
@@ -523,8 +689,12 @@ registerEmbed({
   category: 'minigames',
   description: 'Embed do minigame /py-minas na Masmorra 5x5.',
   defaultColor: '#ef4444',
-  previewTitle: '{header} Desarme na Masmorra (Minas: {mines_count})',
+  previewTitle: '{header} Desarme na Masmorra (5x5)',
   previewDesc: 'Encontre todas as runas seguras sem acionar poções explosivas!',
+  previewFields: [
+    { name: '💣 Minas Ocultas', value: '3 minas {bomb}', inline: true },
+    { name: '💎 Gemas Seguras', value: '8 reveladas {gem}', inline: true },
+  ],
   slots: [
     { key: 'header', label: 'Ícone de Masmorra', fallback: '💥', defaultEmojiKey: 'minesweeper', description: 'Ícone no título do campo minado' },
     { key: 'bomb', label: 'Runa Explosiva', fallback: '💣', defaultEmojiKey: 'BOMB', description: 'Ícone ao detonar uma mina' },
@@ -538,8 +708,11 @@ registerEmbed({
   category: 'minigames',
   description: 'Embed do comando /py-dado com rolagens de atributos.',
   defaultColor: '#ec4899',
-  previewTitle: '{header} Rolagem de D20: Resultado [{value}]',
-  previewDesc: 'O destino decidiu seu resultado! Sucesso Crítico ✨',
+  previewTitle: '{header} Rolagem de D20 • Teste de Destino',
+  previewDesc: 'Você jogou o dado poliédrico de atributos arcanos!',
+  previewFields: [
+    { name: '🎲 Resultado Final', value: '**18** (Sucesso Decisivo)', inline: false },
+  ],
   slots: [
     { key: 'header', label: 'Dado D20', fallback: '🎲', defaultEmojiKey: 'dice', description: 'Ícone do dado no título' },
   ],
@@ -551,8 +724,11 @@ registerEmbed({
   category: 'social',
   description: 'Embed do comando /py-ship medindo a compatibilidade amorosa.',
   defaultColor: '#f43f5e',
-  previewTitle: '{header} Calculadora de Amor • {p1} & {p2}',
-  previewDesc: 'Compatibilidade: **88%** ❤️\n"Vocês formam uma combinação mágica quase perfeita!"',
+  previewTitle: '{header} Calculadora de Amor • Lucas & Sofia',
+  previewDesc: 'Compatibilidade sentimental avaliada pelos astros da Pyxie.',
+  previewFields: [
+    { name: '💖 Compatibilidade', value: '**88%** • Sintonia Quase Perfeita {sparkles}', inline: false },
+  ],
   slots: [
     { key: 'header', label: 'Coração de Afinidade', fallback: '💖', defaultEmojiKey: 'ship_heart', description: 'Ícone do título do ship' },
     { key: 'sparkles', label: 'Brilhos de Paixão', fallback: '✨', defaultEmojiKey: 'SPARKLES', description: 'Indicador visual de romance' },
@@ -566,7 +742,10 @@ registerEmbed({
   description: 'Embed do comando /py-help com navegação por categorias.',
   defaultColor: '#8b5cf6',
   previewTitle: '{header} Central de Comandos da Pyxie',
-  previewDesc: 'Selecione uma categoria abaixo para explorar todas as funcionalidades.',
+  previewDesc: 'Explore todas as funcionalidades e comandos mágicos da Pyxie!',
+  previewFields: [
+    { name: '📖 Instruções de Uso', value: 'Selecione uma categoria no menu suspenso abaixo para ver detalhes.', inline: false },
+  ],
   slots: [
     { key: 'header', label: 'Grimório de Ajuda', fallback: '📖', defaultEmojiKey: 'helpCommands', description: 'Ícone no topo da ajuda' },
   ],
@@ -579,6 +758,8 @@ module.exports = {
   resolveSlotEmoji,
   buildEmbed,
   saveEmbedSlotEmoji,
+  getCurrenciesConfig,
+  saveCurrencyEmoji,
   reloadRegistryCache,
   EMBED_REGISTRY,
 };

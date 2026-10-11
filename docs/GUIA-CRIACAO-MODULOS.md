@@ -574,7 +574,123 @@ Conforme a Política de Arquitetura Bilíngue Mandatória ([`AGENTS.md`](file://
 
 ---
 
-## 13. Mapeamento de Categorias, Emojis e Quality Gate
+## 13. Sistema Unificado e Dinâmico de Embeds e Emojis
+
+O ecossistema da Pyxie opera com um **Contrato Central de Embeds e Emojis Dinâmicos** (`src/utils/embedRegistry.js`), integrando o bot em execução, o `moduleManager` e o Painel Administrativo (`/admin`).
+
+### 13.1 Princípios Fundamentais (Zero Hardcoding)
+1. **Proibição Estrita de Emojis Hardcoded:**
+   - Comandos e módulos **NUNCA** devem injetar emojis diretamente como strings literais em títulos, campos ou descrições (ex: proibido `const msg = '<:moeda:...> 100 moedas'`).
+   - Use sempre tokens dinâmicos como `{coins}`, `{beans}` ou utilize slots mapeados do schema do embed.
+2. **Moedas Canônicas Globais (`coins` e `magicBeans`):**
+   - Moedinhas (`coins`) e Feijões Mágicos (`magicBeans`) possuem identidade visual canônica universal em todo o bot.
+   - Qualquer substituição ou teste dessas moedas é feito com 1 clique no topo da aba de Embeds do Dashboard e propaga atômica e instantaneamente para `emojis.json`, `themeEmojis.json` e todos os comandos e embeds via IPC em tempo real.
+3. **Proibição do Portal de Minecraft:**
+   - O emoji `portalframe98` (`1548444170488778954`) é estritamente proibido. O substituto canônico é o mapa/galáxia violeta oficial da Pyxie (`<:map:1551355962974273546>`).
+
+---
+
+### 13.2 Registro de Schemas de Embeds no Módulo
+
+Todo embed criado por um módulo deve ser registrado para permitir **auto-descoberta automática** no painel administrativo, onde administradores podem inspecionar a pré-visualização real idêntica ao Discord e reatribuir cada emoji visual com 1 clique.
+
+Há duas formas equivalentes de registrar um schema:
+
+#### Opção A: Declarando `embeds` no descritor do módulo (`index.js`):
+```javascript
+module.exports = {
+  id: 'meu-modulo',
+  name: { 'pt-BR': 'Meu Módulo', en: 'My Module' },
+  // ...
+  embeds: [
+    {
+      id: 'meu_modulo_resumo',
+      name: 'Resumo do Módulo',
+      category: 'social',
+      description: 'Painel exibido após a conclusão de uma ação no módulo',
+      defaultColor: '#E60067',
+      slots: [
+        {
+          key: 'header',
+          label: 'Ícone de Cabeçalho',
+          description: 'Emoji exibido antes do título do painel',
+          defaultEmojiKey: 'crystal',
+          fallback: '🔮'
+        },
+        {
+          key: 'status',
+          label: 'Status da Operação',
+          description: 'Emoji indicando sucesso da operação',
+          defaultEmojiKey: 'check_pink',
+          fallback: '✅'
+        }
+      ],
+      previewTitle: '{header} **Operação Concluída com Sucesso!**',
+      previewDesc: '{status} Todos os itens foram processados e seu saldo recebeu {coins} **+250 Moedinhas**.',
+      previewFields: [
+        { name: '✨ Progresso', value: 'Nível **5** atingido', inline: true },
+        { name: '🪙 Recompensa', value: '{coins} **250** moedas', inline: true }
+      ]
+    }
+  ]
+};
+```
+
+#### Opção B: Registrando no ciclo de vida `onLoad(ctx)`:
+```javascript
+async onLoad(ctx) {
+  ctx.registerEmbed({
+    id: 'meu_modulo_resumo',
+    name: 'Resumo do Módulo',
+    category: 'social',
+    description: 'Painel exibido após a conclusão de uma ação no módulo',
+    defaultColor: '#E60067',
+    slots: [
+      { key: 'header', label: 'Cabeçalho', defaultEmojiKey: 'crystal', fallback: '🔮' }
+    ],
+    previewTitle: '{header} **Operação Concluída com Sucesso!**',
+    previewDesc: 'Detalhes da operação com saldo {coins}...',
+    previewFields: [
+      { name: 'Status', value: 'Concluído com sucesso', inline: true }
+    ]
+  });
+}
+```
+
+---
+
+### 13.3 Construindo Embeds com `buildEmbed(id, options, source)`
+
+No código do seu comando ou serviço, utilize o construtor dinâmico:
+
+```javascript
+const { buildEmbed } = require('../../utils/embedRegistry');
+// Ou pelo contexto do módulo: ctx.buildEmbed(...)
+
+const embed = buildEmbed('meu_modulo_resumo', {
+  title: '{header} **Título com Emoji Dinâmico**',
+  description: 'Você resgatou suas recompensas! Saldo atualizado: {coins} **{amount}** moedas.',
+  fields: [
+    { name: 'Status', value: 'Operação finalizada', inline: true }
+  ],
+  color: '#E60067'
+}, interaction);
+
+// embed.resolvedEmojis contém todos os emojis resolvidos do schema
+// tokens como {coins}, {beans}, {header} são substituídos automaticamente!
+await interaction.reply({ embeds: [embed] });
+```
+
+---
+
+### 13.4 Painel Administrativo e Fidelidade de Visualização
+- O dashboard administrativo consome os endpoints `/api/admin/introspect` e `/api/admin/currencies`.
+- Ele renderiza uma pré-visualização **100% autêntica ao Discord** (avatar oficial da Pyxie, selo [APP], título formatado, descrição com emojis nativos da CDN, grid de campos organizados e rodapé com data).
+- Nenhum símbolo estranho (`✨`) ou texto arbitrário é forçado no visualizador; o preview reflete estritamente os campos reais fornecidos no schema (`previewTitle`, `previewDesc`, `previewFields`).
+
+---
+
+## 14. Mapeamento de Categorias, Emojis e Quality Gate
 
 1. **Mapeamento Canônico de Categorias:**
    - Em [`src/commands/commandHelpers.js`](file:///e:/botMelody/src/commands/commandHelpers.js), adicione o nome canônico e **todos os aliases** do comando em `COMMAND_CATEGORY_MAP`:
@@ -596,11 +712,12 @@ Conforme a Política de Arquitetura Bilíngue Mandatória ([`AGENTS.md`](file://
 
 ---
 
-## 14. Checklist Final de Verificação (Quality Assurance para IAs)
+## 15. Checklist Final de Verificação (Quality Assurance para IAs)
 
 Antes de considerar qualquer novo módulo concluído, verifique rigorosamente cada item desta lista:
 
 - [ ] **README.md do Módulo:** Criado em linguagem simples, sem termos complexos de programação, explicando o que faz, comandos, canais e bibliotecas.
+- [ ] **Schemas de Embeds:** Todos os embeds do módulo registrados via schema (`embedRegistry` ou `ctx.registerEmbed`) com slots semânticos, `previewTitle`, `previewDesc`, `previewFields` e construídos via `buildEmbed()`, com zero emojis literais hardcoded.
 - [ ] **Ciclo de Vida de Modais e Interações:** NENHUM `deferReply()` antes de `showModal()`. `deferReply({ ephemeral: true })` usado no submit de modais para evitar timeout de 3s. Nenhum listener global duplicado de `interactionCreate`.
 - [ ] **Publicação do Painel Inicial (`postPanel`):** Se o módulo usa um embed com botão em canal público, implementada a função `postPanel()` e o botão correspondente no painel web para a staff postar no canal com 1 clique.
 - [ ] **Regra das 4+ Configurações:** Se possuir 4 ou mais configurações ou gestão de listas, possui página própria em `/admin/<modulo>` acessada pelo botão `⚙️ Acessar Painel` na aba Módulos do painel admin.
@@ -617,3 +734,4 @@ Antes de considerar qualquer novo módulo concluído, verifique rigorosamente ca
 - [ ] **Paridade i18n:** Todas as chaves e placeholders sincronizados em PT-BR e EN no `src/utils/i18n.js`.
 - [ ] **Catálogo & Ajuda:** Comandos registrados em `COMMAND_CATEGORY_MAP` em `commandHelpers.js`.
 - [ ] **Quality Gate:** Aprovado 100% no comando `npm test`.
+
