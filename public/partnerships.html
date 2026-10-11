@@ -856,6 +856,7 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
 
+  <div id="pyxie-app">
   <!-- Top Navigation -->
   <header class="top-nav">
     <div class="nav-container">
@@ -979,6 +980,7 @@
   </footer>
 
   <div id="toast"></div>
+  </div><!-- #pyxie-app -->
 
   <script>
     const I18N = {
@@ -1327,8 +1329,11 @@
       }
     });
 
-    applyLang();
-    load();
+    if (!window.__PYXIE_REACT_ACTIVE__) {
+      applyLang();
+      load();
+    }
   </script>
+  <script type="module" src="/dist/assets/index.js?v=2.2.2"></script>
 </body>
 </html>

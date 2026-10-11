@@ -7,6 +7,7 @@ import Wiki from './pages/Wiki';
 import Museum from './pages/Museum';
 import Bonus from './pages/Bonus';
 import Profile from './pages/Profile';
+import Partnerships from './pages/Partnerships';
 import { I18N } from './utils/i18n';
 
 export default function App() {
@@ -101,6 +102,8 @@ export default function App() {
     CurrentPage = Museum;
   } else if (path.includes('bonus')) {
     CurrentPage = Bonus;
+  } else if (path.includes('parcerias') || path.includes('partnerships')) {
+    CurrentPage = Partnerships;
   } else if (path.startsWith('/u/') || path.includes('/u/')) {
     CurrentPage = Profile;
     const parts = window.location.pathname.split(/\/u\/?/i);

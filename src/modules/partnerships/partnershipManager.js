@@ -667,6 +667,58 @@ class PartnershipManager {
       res.json(this.getPartnershipCatalog(req.query.category ? String(req.query.category) : null));
     });
 
+    app.get('/api/partnerships/proxy-image', async (req, res) => {
+      const targetUrl = req.query.url;
+      if (!targetUrl || typeof targetUrl !== 'string') {
+        return res.status(400).send('URL inválida');
+      }
+      try {
+        const parsed = new URL(targetUrl);
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+          return res.status(400).send('Protocolo inválido');
+        }
+        // Proteção contra SSRF: bloqueia hostnames locais e privados
+        const hostname = parsed.hostname.toLowerCase();
+        if (
+          hostname === 'localhost' ||
+          hostname === '127.0.0.1' ||
+          hostname === '0.0.0.0' ||
+          hostname === '::1' ||
+          hostname.startsWith('10.') ||
+          hostname.startsWith('192.168.') ||
+          hostname.startsWith('172.16.') ||
+          hostname.startsWith('169.254.')
+        ) {
+          return res.status(403).send('Origem não permitida');
+        }
+
+        const response = await fetch(targetUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+          },
+          signal: AbortSignal.timeout(8000),
+        });
+
+        if (!response.ok) {
+          return res.status(response.status).send('Falha ao obter imagem');
+        }
+
+        const contentType = response.headers.get('content-type') || 'image/jpeg';
+        if (!contentType.startsWith('image/')) {
+          return res.status(415).send('O conteúdo não é uma imagem válida');
+        }
+
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        const arrayBuffer = await response.arrayBuffer();
+        return res.send(Buffer.from(arrayBuffer));
+      } catch (err) {
+        return res.status(502).send('Erro ao buscar imagem externa');
+      }
+    });
+
     app.post('/api/partnerships/bump/:id', async (req, res) => {
       const lang = detectLang(req);
       const ip = String(req.headers['x-forwarded-for'] || req.ip || '').split(',')[0].trim() || 'unknown';

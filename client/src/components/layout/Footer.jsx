@@ -27,6 +27,9 @@ export default function Footer({ t, lang = 'pt' }) {
           <a href={`/bonus?lang=${lang}`} className="hover:text-pink-400 transition-colors">
             {t('footer.bonus')}
           </a>
+          <a href={`/parcerias?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+            {t('footer.partnerships')}
+          </a>
           <a href={`/termos?lang=${lang}`} className="hover:text-pink-400 transition-colors flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
             {t('footer.terms')}
