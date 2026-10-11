@@ -282,13 +282,12 @@ async function handleEmbedThemes(source, reply, searchQuery = '') {
 
   const userId = source.user?.id || source.author?.id;
   const collector = message.createMessageComponentCollector({
-    componentType: ComponentType.Button | ComponentType.StringSelect,
     time: 5 * 60 * 1000,
     filter: (i) => i.user.id === userId,
   });
 
   collector.on('collect', async (interaction) => {
-    if (interaction.isStringSelect() && interaction.customId === 'embed_theme_select') {
+    if (interaction.isStringSelectMenu() && interaction.customId === 'embed_theme_select') {
       const selectedKey = interaction.values[0];
       const preview = buildThemePreview(selectedKey, source);
       if (preview) {
@@ -337,13 +336,12 @@ async function handlePreviewAndExport(source, reply, searchQuery = '') {
 
   const userId = source.user?.id || source.author?.id;
   const collector = message.createMessageComponentCollector({
-    componentType: ComponentType.Button | ComponentType.StringSelect,
     time: 5 * 60 * 1000,
     filter: (i) => i.user.id === userId,
   });
 
   collector.on('collect', async (interaction) => {
-    if (interaction.isStringSelect()) {
+    if (interaction.isStringSelectMenu()) {
       const selectedId = interaction.values[0];
       const selectedEmoji = emojis.find((e) => e.id === selectedId);
       if (selectedEmoji) {

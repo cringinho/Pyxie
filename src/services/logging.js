@@ -91,16 +91,45 @@ function flushSync() {
   }
 }
 
-function addLog(message) {
+function categorizeLogMessage(msg) {
+  if (!msg || typeof msg !== 'string') return 'INFO';
+  const m = msg.toUpperCase();
+  if (m.includes('ERROR') || m.includes('ERR_') || m.includes('EXCEPTION') || m.includes('REJECTION') || m.includes('FAILED') || m.includes('FALHA') || m.includes('TYPEERROR')) {
+    return 'ERROR';
+  }
+  if (m.includes('[CMD]') || m.includes('[COMMAND]') || m.includes('INTERACTION') || m.includes('SLASH') || m.includes('COMANDO') || m.includes('EXECUTOU')) {
+    return 'COMMAND';
+  }
+  if (m.includes('[SYSTEM]') || m.includes('[IPC') || m.includes('SUPERVISOR') || m.includes('INICIANDO') || m.includes('ENCERRANDO') || m.includes('PM2') || m.includes('MÓDULO') || m.includes('READY') || m.includes('CONECTADA')) {
+    return 'SYSTEM';
+  }
+  return 'INFO';
+}
+
+function isSpamLog(msg) {
+  if (!msg || typeof msg !== 'string') return false;
+  // Interrompe spam de leitura de arquivo em disco ou matchers repetitivos
+  if (msg.includes('Emojis:Matcher') || msg.includes('[Matcher]') || msg.includes('Matcher:') || msg.includes('readJsonFile')) {
+    return true;
+  }
+  return false;
+}
+
+function addLog(message, forcedCategory = null) {
+  if (isSpamLog(message)) return;
+
   const timestamp = new Date().toISOString();
   if (!cachedLogs) {
     cachedLogs = readJsonFile(logsFile, { entries: [] });
     if (!Array.isArray(cachedLogs.entries)) cachedLogs.entries = [];
   }
 
+  const category = forcedCategory || categorizeLogMessage(message);
+
   cachedLogs.entries.push({
     timestamp,
     message,
+    category,
   });
 
   if (cachedLogs.entries.length > MAX_LOG_ENTRIES) {
@@ -110,12 +139,19 @@ function addLog(message) {
   scheduleLogsSave();
 }
 
-function getLogs(limit = 100) {
+function getLogs(limit = 100, categoryFilter = 'ALL') {
   if (!cachedLogs) {
     cachedLogs = readJsonFile(logsFile, { entries: [] });
     if (!Array.isArray(cachedLogs.entries)) cachedLogs.entries = [];
   }
-  return cachedLogs.entries.slice(-limit).reverse();
+
+  let entries = cachedLogs.entries;
+  if (categoryFilter && categoryFilter !== 'ALL') {
+    const filter = String(categoryFilter).toUpperCase();
+    entries = entries.filter((e) => (e.category || categorizeLogMessage(e.message)) === filter);
+  }
+
+  return entries.slice(-limit).reverse();
 }
 
 function clearLogs() {

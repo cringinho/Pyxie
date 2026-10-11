@@ -22,6 +22,8 @@ const { getUserAccount } = require('./src/services/economy');
 const tarotAlbumService = require('./src/services/tarotAlbumService');
 const marriageManager = require('./src/modules/marriage/marriageManager');
 const { TAROT_ACHIEVEMENTS } = require('./src/data/tarotAchievements');
+const embedRegistry = require('./src/utils/embedRegistry');
+const acervoAuditService = require('./src/services/acervoAuditService');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -65,6 +67,10 @@ function cleanupOrphanBotProcess() {
 }
 
 function addLog(message) {
+  if (!message || typeof message !== 'string') return;
+  if (message.includes('Emojis:Matcher') || message.includes('[Matcher]') || message.includes('Matcher:') || message.includes('readJsonFile')) {
+    return;
+  }
   const timestamp = new Date().toLocaleTimeString('pt-BR');
   botLogs.push(`[${timestamp}] ${message}`);
   savePersistentLog(message);
@@ -1376,27 +1382,32 @@ app.get('/api/admin/emojis', requireAdminAuth, (req, res) => {
   }
 });
 
-// API de Salvamento dos Emojis (AJAX assíncrono para o console)
+// API de Salvamento dos Emojis (Totalmente Dinâmica e Atômica)
 app.post('/api/admin/emojis', requireAdminAuth, (req, res) => {
   try {
     const incoming = req.body?.emojis || req.body || {};
-    const emojisData = {};
+    const dataPath = path.join(__dirname, 'src/data/emojis.json');
+    let currentData = {};
+    if (fs.existsSync(dataPath)) {
+      try {
+        currentData = JSON.parse(fs.readFileSync(dataPath, 'utf8')) || {};
+      } catch (_) {}
+    }
 
-    for (const [slot, meta] of Object.entries(SLOT_METADATA)) {
-      let val = incoming[slot] !== undefined ? incoming[slot] : '';
-      val = val ? String(val).trim() : '';
-
-      // Regra 4: Proibição estrita do portal de Minecraft
+    // Merge dinâmico preservando slots customizados e chaves novas
+    for (const [key, rawVal] of Object.entries(incoming)) {
+      let val = rawVal !== undefined && rawVal !== null ? String(rawVal).trim() : '';
+      // Regra Mandatória 4: Proibição estrita do portal de Minecraft
       if (val === '1548444170488778954') {
         val = '1551355962974273546';
       }
-
-      emojisData[slot] = val;
+      currentData[key] = val;
     }
 
-    // 1. Salva src/data/emojis.json
-    const dataPath = path.join(__dirname, 'src/data/emojis.json');
-    fs.writeFileSync(dataPath, JSON.stringify(emojisData, null, 2), 'utf8');
+    // 1. Gravação Atômica em src/data/emojis.json
+    const tempFile = `${dataPath}.${Date.now()}.tmp`;
+    fs.writeFileSync(tempFile, JSON.stringify(currentData, null, 2), 'utf8');
+    fs.renameSync(tempFile, dataPath);
 
     // 2. Sincroniza com src/data/themeEmojis.json
     try {
@@ -1405,27 +1416,132 @@ app.post('/api/admin/emojis', requireAdminAuth, (req, res) => {
         const themeContent = JSON.parse(fs.readFileSync(themePath, 'utf8'));
         if (themeContent && themeContent.themes) {
           for (const [slot, meta] of Object.entries(SLOT_METADATA)) {
-            if (meta.themeKey && themeContent.themes[meta.themeKey] && emojisData[slot]) {
-              themeContent.themes[meta.themeKey].primaryId = emojisData[slot];
+            if (meta.themeKey && themeContent.themes[meta.themeKey] && currentData[slot]) {
+              themeContent.themes[meta.themeKey].primaryId = currentData[slot];
             }
           }
-          fs.writeFileSync(themePath, JSON.stringify(themeContent, null, 2), 'utf8');
+          const themeTemp = `${themePath}.${Date.now()}.tmp`;
+          fs.writeFileSync(themeTemp, JSON.stringify(themeContent, null, 2), 'utf8');
+          fs.renameSync(themeTemp, themePath);
         }
       }
     } catch (syncErr) {
       console.error('Erro ao sincronizar themeEmojis.json:', syncErr.message);
     }
 
-    // 3. Atualiza cache em memória do bot imediatamente
+    // 3. Atualiza cache em memória do bot imediatamente via IPC
     reloadEmojiConfig();
+    embedRegistry.reloadRegistryCache();
     sendIpcToBot({ type: 'RELOAD_EMOJIS' });
 
     return res.json({
       success: true,
-      count: Object.keys(emojisData).length,
+      count: Object.keys(currentData).length,
       message: 'Configurações de emojis salvas e aplicadas em tempo real com sucesso!',
-      emojis: emojisData,
+      emojis: currentData,
     });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API de Listagem Central de Embeds & Slots Visuais Registrados
+app.get('/api/admin/embeds', requireAdminAuth, (req, res) => {
+  try {
+    const embeds = embedRegistry.getAllEmbedsWithResolvedSlots();
+
+    let appEmojis = [];
+    const catalogPath = path.join(__dirname, 'src/data/discordAppEmojis.json');
+    if (fs.existsSync(catalogPath)) {
+      const raw = fs.readFileSync(catalogPath, 'utf8');
+      const parsed = JSON.parse(raw);
+      appEmojis = Array.isArray(parsed) ? parsed : (parsed.items || []);
+    }
+
+    const simplifiedAppEmojis = appEmojis.map((e) => ({
+      id: String(e.id),
+      name: e.name || 'emoji',
+      animated: Boolean(e.animated),
+      url: `https://cdn.discordapp.com/emojis/${e.id}.${e.animated ? 'gif' : 'png'}`,
+    }));
+
+    return res.json({
+      success: true,
+      embeds,
+      appEmojis: simplifiedAppEmojis,
+      count: embeds.length,
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API para Salvar Slot de Embed Individualmente com Atualização Atômica
+app.post('/api/admin/embeds/slot', requireAdminAuth, (req, res) => {
+  try {
+    const { embedId, slotKey, emojiId } = req.body || {};
+    if (!embedId || !slotKey) {
+      return res.status(400).json({ success: false, error: 'embedId e slotKey são obrigatórios.' });
+    }
+
+    const saved = embedRegistry.saveEmbedSlotEmoji(embedId, slotKey, emojiId);
+    sendIpcToBot({ type: 'RELOAD_EMOJIS' });
+
+    return res.json({
+      success: true,
+      message: `Slot '${slotKey}' do embed '${embedId}' atualizado com sucesso!`,
+      result: saved,
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API de Introspecção em Tempo Real do Processo do Bot
+app.get('/api/admin/introspect', requireAdminAuth, (req, res) => {
+  try {
+    const modules = moduleManager.getAllModules();
+    const embeds = embedRegistry.getAllEmbedsWithResolvedSlots();
+    const acervo = acervoAuditService.getAcervoStats();
+
+    return res.json({
+      success: true,
+      timestamp: Date.now(),
+      bot: {
+        running: !!botProcess && !botProcess.killed && botProcess.exitCode === null,
+        pid: botProcess ? botProcess.pid : null,
+        uptime: botStartTime ? Date.now() - botStartTime : 0,
+        stats: getStats(),
+      },
+      modules,
+      embeds,
+      acervo,
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API de Auditoria Real de Acervo (Carreiras & Quiz)
+app.get('/api/admin/acervo/stats', requireAdminAuth, (req, res) => {
+  try {
+    const stats = acervoAuditService.getAcervoStats();
+    return res.json({ success: true, ...stats });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API de Simulação de Sorteio de Minigame ao Vivo
+app.post('/api/admin/acervo/test-draw', requireAdminAuth, (req, res) => {
+  try {
+    const { type, profession, level, lang } = req.body || {};
+    const result = acervoAuditService.simulateDraw(type || 'career', {
+      profession,
+      level,
+      lang: lang || 'pt',
+    });
+    return res.json(result);
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }
@@ -1643,7 +1759,8 @@ function getSystemTelemetry() {
 
 app.get('/api/logs', requireAdminAuth, (req, res) => {
   const limit = parseInt(req.query.limit || '150', 10);
-  const rawLogs = getLogs(limit);
+  const category = req.query.category || req.query.tab || 'ALL';
+  const rawLogs = getLogs(limit, category);
   res.json({
     success: true,
     logs: rawLogs,

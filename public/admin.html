@@ -824,6 +824,112 @@
         font-weight: bold;
       }
 
+      /* Embed Cards & Discord Embed Previews (Auto-Descoberta) */
+      .embed-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        transition: border-color 0.2s, transform 0.15s;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      }
+      .embed-card:hover {
+        border-color: rgba(192, 132, 252, 0.45);
+      }
+      .embed-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding-bottom: 12px;
+      }
+      .embed-card-title {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .embed-discord-preview {
+        background: #2b2d31;
+        border-left: 4px solid var(--embed-theme-color, #e60067);
+        border-radius: 4px 8px 8px 4px;
+        padding: 12px 16px;
+        color: #dbdee1;
+        font-size: 0.82rem;
+      }
+      .embed-discord-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #ffffff;
+        margin-bottom: 6px;
+      }
+      .embed-discord-desc {
+        line-height: 1.45;
+        color: #dbdee1;
+        white-space: pre-line;
+      }
+      .embed-slots-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
+      }
+      .embed-slot-item {
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: border-color 0.18s;
+      }
+      .embed-slot-item:hover {
+        border-color: rgba(236, 72, 153, 0.4);
+      }
+
+      /* Acervo Inspector & Simulator */
+      .acervo-stat-pill {
+        background: rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 10px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .acervo-sim-box {
+        background: rgba(10, 5, 25, 0.7);
+        border: 1px solid var(--border-glass);
+        border-radius: 14px;
+        padding: 16px;
+        margin-top: 14px;
+      }
+      .acervo-choice-pill {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-top: 6px;
+        font-size: 0.82rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .acervo-choice-pill.is-correct {
+        border-color: rgba(16, 185, 129, 0.5);
+        background: rgba(16, 185, 129, 0.14);
+        color: #34d399;
+        font-weight: 600;
+      }
+
       /* Bot Control Tab */
       .control-grid {
         display: grid;
@@ -1396,10 +1502,10 @@
           <span>🛍️ Afiliados Shopee</span>
         </button>
         <button class="tab-btn" onclick="switchTab('emojis')">
-          <span>✨ Mapeamento de Emojis</span>
+          <span>✨ Embeds & Emojis</span>
         </button>
         <button class="tab-btn" onclick="switchTab('bot')">
-          <span>⚡ Controle do Bot</span>
+          <span>⚡ Controle & Acervo</span>
         </button>
         <button class="tab-btn" onclick="switchTab('logs')">
           <span>📜 Terminal de Logs</span>
@@ -1407,12 +1513,6 @@
         <button class="tab-btn" onclick="switchTab('modules')">
           <span>🧩 Módulos & Plugins</span>
         </button>
-        <a href="/admin/sazonal" class="tab-btn" style="text-decoration:none; display:inline-flex; align-items:center; color:inherit;">
-          <span>🎃 Evento Sazonal</span>
-        </a>
-        <a href="/ranking-sazonal" target="_blank" rel="noopener" class="tab-btn" style="text-decoration:none; display:inline-flex; align-items:center; color:inherit;">
-          <span>🏆 Ranking Público</span>
-        </a>
       </nav>
 
       <!-- TAB 1: AFILIADOS SHOPEE -->
@@ -1493,12 +1593,12 @@
         </div>
       </section>
 
-      <!-- TAB 2: MAPEAMENTO DE EMOJIS -->
+      <!-- TAB 2: MAPEAMENTO DE EMBEDS & EMOJIS (DINÂMICO) -->
       <section id="tab-emojis" class="tab-panel">
         <div class="shopee-toolbar" style="margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
           <div>
-            <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.15rem; margin-bottom: 4px;">🎨 Personalizador de Emojis do Bot</h3>
-            <p style="font-size: 0.8rem; color: var(--text-muted)">Configure visualmente os emojis oficiais utilizados nas respostas, embeds e comandos do bot.</p>
+            <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.15rem; margin-bottom: 4px;">✨ Contrato de Embeds & Mapeador de Emojis</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted)">Auto-descoberta dinâmica de todos os embeds do bot. Configure os emojis com clique único e sincronização em tempo real sem reiniciar.</p>
           </div>
           <div style="display: flex; gap: 10px; flex-wrap: wrap;">
             <button onclick="saveAllEmojis()" id="btnSaveEmojis" class="btn btn-primary">
@@ -1513,8 +1613,12 @@
         <!-- Emoji Stats -->
         <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 20px;">
           <div class="stat-card">
+            <span class="stat-label">📄 Total de Embeds</span>
+            <span id="embedsTotal" class="stat-val">19</span>
+          </div>
+          <div class="stat-card">
             <span class="stat-label">✨ Total de Slots</span>
-            <span id="emojiSlotsTotal" class="stat-val">35</span>
+            <span id="emojiSlotsTotal" class="stat-val">0</span>
           </div>
           <div class="stat-card">
             <span class="stat-label">🎨 Customizados</span>
@@ -1534,25 +1638,26 @@
               type="text"
               id="emojiSearch"
               class="search-input"
-              placeholder="Buscar slot por nome ou categoria..."
-              oninput="filterEmojiSlots()"
+              placeholder="Buscar embed por nome, chave ou slot..."
+              oninput="filterEmbedCards()"
             />
           </div>
           <div class="filter-group">
-            <select id="emojiCategoryFilter" class="filter-select" onchange="filterEmojiSlots()">
+            <select id="emojiCategoryFilter" class="filter-select" onchange="filterEmbedCards()">
               <option value="all">Todas as Categorias</option>
               <option value="economy">💰 Economia & Loja</option>
               <option value="tarot">🔮 Tarot & Misticismo</option>
               <option value="social">💑 Social & Romance</option>
               <option value="minigames">🎲 Jogos & Sorte</option>
-              <option value="system">⚙️ Sistema & Status</option>
+              <option value="community">🤝 Comunidade & Museu</option>
+              <option value="system">⚙️ Sistema & Comandos</option>
             </select>
           </div>
         </div>
 
-        <div id="emojisListGrid" class="emojis-grid">
-          <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
-            Carregando catálogo de slots e emojis...
+        <div id="embedsContainer" style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+            Carregando catálogo dinâmico de embeds e slots...
           </div>
         </div>
       </section>
@@ -1599,59 +1704,95 @@
             </div>
           </div>
 
-          <!-- Gerador IA de Carreiras -->
+          <!-- Inspetor Real de Acervo & Auditoria de Variedade (100% Fiel ao Disco) -->
           <div class="control-card" style="grid-column: 1 / -1;">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
               <div>
-                <h3 style="margin-bottom: 4px;">🧠 Gerador IA de Carreiras (Groq Cloud • qwen/qwen3.8-27b)</h3>
-                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Geração autônoma e rotativa com 10 sub-temas técnicos por carreira. Suporte às 16 profissões da Pyxie. Meta final: 100/carreira (1.600 no total).</p>
+                <h3 style="margin-bottom: 4px;">📚 Inspetor Real de Acervo & Auditoria de Variedade</h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Inspeção fiel e em tempo real do banco de dados em disco (<code style="color: #c084fc;">generated_work_minigames.json</code> e <code style="color: #38bdf8;">quiz_questions.json</code>). Zero dados fictícios.</p>
               </div>
               <div style="display: flex; align-items: center; gap: 10px;">
-                <span id="seederStatusBadge" class="status-pill status-active" style="font-size: 0.75rem;">🤖 Agendador Ativo (A cada 3h)</span>
-                <button onclick="triggerWorkSeederBatch()" id="btnTriggerSeeder" class="btn btn-primary" style="font-size: 0.75rem; padding: 6px 14px;">⚡ Gerar Lote Agora (+16)</button>
+                <button onclick="fetchAcervoAudit()" class="btn btn-secondary" style="font-size: 0.75rem; padding: 6px 14px;">🔄 Atualizar Acervo</button>
               </div>
             </div>
 
-            <div style="margin-top: 14px;">
-              <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; margin-bottom: 6px;">
-                <span id="seederProgressLabel">Progresso Global: Carregando...</span>
-                <span id="seederPercentLabel" style="color: #c084fc;">--%</span>
+            <!-- Stats do Acervo -->
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-top: 14px;">
+              <div class="stat-card">
+                <span class="stat-label">💼 Profissões Ativas</span>
+                <span id="acervoTotalProfessions" class="stat-val" style="color: #38bdf8;">22</span>
               </div>
-              <div style="background: rgba(255,255,255,0.08); border-radius: 999px; height: 10px; overflow: hidden;">
-                <div id="seederProgressBar" style="background: linear-gradient(90deg, #8b5cf6, #ec4899); height: 100%; width: 0%; transition: width 0.4s ease;"></div>
+              <div class="stat-card">
+                <span class="stat-label">📝 Cenários de Trabalho</span>
+                <span id="acervoTotalCareerQuestions" class="stat-val" style="color: #c084fc;">0</span>
               </div>
-            </div>
-
-            <div id="seederProfGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 14px;">
-              <!-- Preenchido dinamicamente via JS (16 Profissões) -->
-            </div>
-          </div>
-
-          <!-- Gerador IA de Quiz Cultural -->
-          <div class="control-card" style="grid-column: 1 / -1;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-              <div>
-                <h3 style="margin-bottom: 4px;">🎯 Gerador IA de Quiz Cultural (Groq Cloud • qwen/qwen3.8-27b)</h3>
-                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Geração autônoma de perguntas culturais e enciclopédicas bilíngues (PT-BR/EN) em 4 níveis de dificuldade e 12 tópicos. Meta final: 125/nível (500 no total).</p>
+              <div class="stat-card">
+                <span class="stat-label">🎯 Perguntas do Quiz</span>
+                <span id="acervoTotalQuizQuestions" class="stat-val" style="color: #34d399;">500</span>
               </div>
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <span id="quizSeederStatusBadge" class="status-pill status-active" style="font-size: 0.75rem;">🤖 Agendador Ativo (A cada 3h)</span>
-                <button onclick="triggerQuizSeederBatch()" id="btnTriggerQuizSeeder" class="btn btn-primary" style="font-size: 0.75rem; padding: 6px 14px;">⚡ Gerar Perguntas Agora (+4)</button>
+              <div class="stat-card">
+                <span class="stat-label">🌐 Paridade Bilíngue</span>
+                <span class="stat-val" style="color: #fbbf24;">100% PT/EN</span>
               </div>
             </div>
 
-            <div style="margin-top: 14px;">
-              <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; margin-bottom: 6px;">
-                <span id="quizSeederProgressLabel">Progresso Global: Carregando...</span>
-                <span id="quizSeederPercentLabel" style="color: #38bdf8;">--%</span>
-              </div>
-              <div style="background: rgba(255,255,255,0.08); border-radius: 999px; height: 10px; overflow: hidden;">
-                <div id="quizSeederProgressBar" style="background: linear-gradient(90deg, #0ea5e9, #38bdf8); height: 100%; width: 0%; transition: width 0.4s ease;"></div>
+            <!-- Grid das 22 Profissões com Contagem por Nível -->
+            <div style="margin-top: 16px;">
+              <h4 style="font-size: 0.85rem; color: #fff; margin-bottom: 8px;">📊 Perguntas Únicas por Carreira e Níveis (1 a 4):</h4>
+              <div id="acervoCareersGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;">
+                <!-- Preenchido dinamicamente via JS -->
               </div>
             </div>
 
-            <div id="quizSeederLevelGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 14px;">
-              <!-- Preenchido dinamicamente via JS (Níveis 1 a 4) -->
+            <!-- Quiz Real Stats -->
+            <div style="margin-top: 18px;">
+              <h4 style="font-size: 0.85rem; color: #fff; margin-bottom: 8px;">🎯 Acervo Real do Quiz Cultural por Dificuldade (500 Perguntas):</h4>
+              <div id="acervoQuizGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+                <!-- Preenchido dinamicamente via JS -->
+              </div>
+            </div>
+
+            <!-- Simulador de Sorteio ao Vivo (Test-Draw) -->
+            <div class="acervo-sim-box">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                <h4 style="font-size: 0.92rem; color: #fff; display: flex; align-items: center; gap: 6px;">
+                  <span>🎲 Simulador de Sorteio ao Vivo (Auditoria de Variedade)</span>
+                </h4>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="btn btn-primary btn-mini" onclick="runSimulation('career')">💼 Testar Trabalho (py!work)</button>
+                  <button type="button" class="btn btn-secondary btn-mini" onclick="runSimulation('quiz')">🎯 Testar Quiz (py!quiz)</button>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
+                <div style="flex: 1; min-width: 140px;">
+                  <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Profissão:</label>
+                  <select id="simProfessionSelect" class="filter-select" style="width: 100%;">
+                    <!-- Opções geradas via JS -->
+                  </select>
+                </div>
+                <div style="width: 130px;">
+                  <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Nível do Usuário:</label>
+                  <select id="simLevelSelect" class="filter-select" style="width: 100%;">
+                    <option value="1">Nível 1 (Aprendiz)</option>
+                    <option value="2">Nível 2 (Júnior/Pleno)</option>
+                    <option value="3">Nível 3 (Sênior/Mestre)</option>
+                    <option value="4">Nível 4 (Diretor/Lenda)</option>
+                  </select>
+                </div>
+                <div style="width: 110px;">
+                  <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Idioma:</label>
+                  <select id="simLangSelect" class="filter-select" style="width: 100%;">
+                    <option value="pt">Português</option>
+                    <option value="en">English</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Caixa de Resultado da Simulação -->
+              <div id="simResultContainer" style="display: none; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px;">
+                <!-- Injetado dinamicamente via JS -->
+              </div>
             </div>
           </div>
         </div>
@@ -1723,11 +1864,9 @@
             <!-- Filter Pills -->
             <div class="filter-pills">
               <span class="filter-pill active" data-level="ALL" onclick="setLogLevelFilter('ALL')">TODOS</span>
-              <span class="filter-pill pill-error" data-level="ERROR" onclick="setLogLevelFilter('ERROR')">ERROR</span>
-              <span class="filter-pill pill-warn" data-level="WARN" onclick="setLogLevelFilter('WARN')">WARN</span>
-              <span class="filter-pill pill-success" data-level="SUCCESS" onclick="setLogLevelFilter('SUCCESS')">SUCCESS</span>
-              <span class="filter-pill pill-cmd" data-level="CMD" onclick="setLogLevelFilter('CMD')">CMD</span>
-              <span class="filter-pill pill-system" data-level="SYSTEM" onclick="setLogLevelFilter('SYSTEM')">SYSTEM</span>
+              <span class="filter-pill pill-error" data-level="ERROR" onclick="setLogLevelFilter('ERROR')">🔴 ERROS</span>
+              <span class="filter-pill pill-cmd" data-level="COMMAND" onclick="setLogLevelFilter('COMMAND')">💬 COMANDOS</span>
+              <span class="filter-pill pill-system" data-level="SYSTEM" onclick="setLogLevelFilter('SYSTEM')">⚙️ SISTEMA</span>
             </div>
           </div>
 
@@ -1968,8 +2107,8 @@
         } else {
           stopLogPolling();
         }
-        if (tabId === 'emojis') fetchEmojisData();
-        if (tabId === 'bot') loadBotConfig();
+        if (tabId === 'emojis') fetchEmbedsData();
+        if (tabId === 'bot') { loadBotConfig(); fetchAcervoAudit(); }
         if (tabId === 'shopee') fetchShopeeData();
         if (tabId === 'modules') fetchModules();
       }
@@ -2804,19 +2943,10 @@
         if (m.includes('[ERROR]') || m.includes('ERR_') || m.includes('EXCEPTION') || m.includes('REJECTION') || m.includes('FAILED')) {
           return 'ERROR';
         }
-        if (m.includes('[WARN]') || m.includes('WARNING') || m.includes('TIMEOUT') || m.includes('DEPRECATED')) {
-          return 'WARN';
+        if (m.includes('[CMD]') || m.includes('[COMMAND]') || m.includes('INTERACTION') || m.includes('SLASH') || m.includes('EXECUTADO') || m.includes('DISPATCH')) {
+          return 'COMMAND';
         }
-        if (m.includes('[SUCCESS]') || m.includes('CONECTADA') || m.includes('READY') || m.includes('SUCESSO') || m.includes('OPERACIONAL')) {
-          return 'SUCCESS';
-        }
-        if (m.includes('[CMD]') || m.includes('[COMMAND]') || m.includes('INTERACTION') || m.includes('SLASH') || m.includes('EXECUTADO')) {
-          return 'CMD';
-        }
-        if (m.includes('[SYSTEM]') || m.includes('[DIAGNOSTIC]') || m.includes('INICIANDO') || m.includes('TELEMETRIA') || m.includes('PM2')) {
-          return 'SYSTEM';
-        }
-        return 'INFO';
+        return 'SYSTEM';
       }
 
       function formatLogTimestamp(ts) {
@@ -2930,7 +3060,8 @@
         isFetchingLogs = true;
 
         try {
-          const res = await fetch(`/api/logs?limit=${selectedLogLimit}`);
+          const catParam = activeLogLevelFilter !== 'ALL' ? `&category=${encodeURIComponent(activeLogLevelFilter)}` : '';
+          const res = await fetch(`/api/logs?limit=${selectedLogLimit}${catParam}`);
           if (res.status === 401 || res.status === 403) {
             window.location.href = '/admin';
             return;
@@ -2975,7 +3106,7 @@
         // Filter logs
         const filtered = cachedRawLogs.filter((entry) => {
           const rawMsg = typeof entry === 'object' && entry !== null ? (entry.message || '') : String(entry || '');
-          const level = detectLogLevel(rawMsg);
+          const level = (typeof entry === 'object' && entry !== null && entry.category) ? entry.category : detectLogLevel(rawMsg);
 
           if (activeLogLevelFilter !== 'ALL' && level !== activeLogLevelFilter) {
             return false;
@@ -3011,8 +3142,8 @@
           const rawMsg = typeof entry === 'object' && entry !== null ? (entry.message || '') : String(entry || '');
           const time = typeof entry === 'object' && entry !== null ? entry.timestamp : null;
           const formattedTime = formatLogTimestamp(time);
-          const level = detectLogLevel(rawMsg);
-          const badgeClass = `badge-${level.toLowerCase()}`;
+          const level = (typeof entry === 'object' && entry !== null && entry.category) ? entry.category : detectLogLevel(rawMsg);
+          const badgeClass = level === 'ERROR' ? 'badge-error' : (level === 'COMMAND' || level === 'CMD') ? 'badge-cmd' : 'badge-system';
 
           // Syntax formatting
           let safeMsg = escapeLogHtml(rawMsg);
@@ -3069,7 +3200,7 @@
             pill.classList.remove('active');
           }
         });
-        renderLogsScreen();
+        fetchLogs();
       }
 
       function resetLogFilters() {
@@ -3298,154 +3429,178 @@
       }
 
       /* ==========================================================
-         GERENCIAMENTO E CUSTOMIZAÇÃO DE EMOJIS (TAB 2)
+         CONTRATO DINÂMICO DE EMBEDS & MAPEADOR DE EMOJIS (TAB 2)
          ========================================================== */
-      let allEmojisData = { currentConfig: {}, themeConfig: {}, appEmojis: [], slots: {} };
-      let pendingEmojiChanges = {};
-      let currentEditingSlot = null;
+      let allEmbedsData = { embeds: [], appEmojis: [], totalEmbeds: 0, totalSlots: 0, customSlotsCount: 0 };
+      let currentEditingEmbedSlot = { embedId: null, slotKey: null, title: '', fallback: '✨' };
       let activePickerFilter = 'all';
 
-      async function fetchEmojisData() {
+      async function fetchEmbedsData() {
         try {
-          const res = await fetch('/api/admin/emojis');
+          const res = await fetch('/api/admin/embeds');
           if (res.status === 401 || res.status === 403) {
             window.location.href = '/admin';
             return;
           }
           const data = await res.json();
           if (data.success) {
-            allEmojisData = data;
-            pendingEmojiChanges = { ...(data.currentConfig || {}) };
-            updateEmojiStats();
-            renderEmojiSlotsGrid();
+            allEmbedsData = data;
+            updateEmbedsStats();
+            renderEmbedCards();
           }
         } catch (err) {
-          console.error('Erro ao carregar dados de emojis:', err);
-          const grid = document.getElementById('emojisListGrid');
-          if (grid) {
-            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #f87171;">⚠️ Falha ao comunicar com a API de emojis.</div>';
+          console.error('Erro ao carregar dados de embeds:', err);
+          const container = document.getElementById('embedsContainer');
+          if (container) {
+            container.innerHTML = '<div style="text-align: center; padding: 40px; color: #f87171;">⚠️ Falha ao comunicar com a API de embeds.</div>';
           }
         }
       }
 
-      function updateEmojiStats() {
-        const slots = Object.keys(allEmojisData.slots || {});
-        let customCount = 0;
-        let fallbackCount = 0;
-
-        slots.forEach((s) => {
-          if (pendingEmojiChanges[s] && String(pendingEmojiChanges[s]).trim()) customCount++;
-          else fallbackCount++;
-        });
-
-        const totalEl = document.getElementById('emojiSlotsTotal');
-        const customEl = document.getElementById('emojiSlotsCustom');
-        const fallbackEl = document.getElementById('emojiSlotsFallback');
-
-        if (totalEl) totalEl.innerText = slots.length;
-        if (customEl) customEl.innerText = customCount;
-        if (fallbackEl) fallbackEl.innerText = fallbackCount;
+      function fetchEmojisData() {
+        return fetchEmbedsData();
       }
 
-      function filterEmojiSlots() {
-        renderEmojiSlotsGrid();
+      function updateEmbedsStats() {
+        const totalEmbedsEl = document.getElementById('embedsTotal');
+        const totalSlotsEl = document.getElementById('emojiSlotsTotal');
+        const customSlotsEl = document.getElementById('emojiSlotsCustom');
+        const fallbackSlotsEl = document.getElementById('emojiSlotsFallback');
+
+        const totalEmbeds = allEmbedsData.totalEmbeds || (allEmbedsData.embeds ? allEmbedsData.embeds.length : 0);
+        const totalSlots = allEmbedsData.totalSlots || 0;
+        const customSlots = allEmbedsData.customSlotsCount || 0;
+        const fallbackSlots = Math.max(0, totalSlots - customSlots);
+
+        if (totalEmbedsEl) totalEmbedsEl.innerText = totalEmbeds;
+        if (totalSlotsEl) totalSlotsEl.innerText = totalSlots;
+        if (customSlotsEl) customSlotsEl.innerText = customSlots;
+        if (fallbackSlotsEl) fallbackSlotsEl.innerText = fallbackSlots;
       }
 
-      function renderEmojiSlotsGrid() {
-        const grid = document.getElementById('emojisListGrid');
-        if (!grid) return;
+      function filterEmbedCards() {
+        renderEmbedCards();
+      }
 
-        const slots = allEmojisData.slots || {};
-        const appEmojis = allEmojisData.appEmojis || [];
+      function renderEmbedCards() {
+        const container = document.getElementById('embedsContainer');
+        if (!container) return;
+
+        const embeds = allEmbedsData.embeds || [];
         const search = (document.getElementById('emojiSearch')?.value || '').toLowerCase().trim();
         const catFilter = document.getElementById('emojiCategoryFilter')?.value || 'all';
 
-        const filteredSlots = Object.entries(slots).filter(([slot, meta]) => {
-          const title = (meta.title || '').toLowerCase();
-          const category = meta.category || 'system';
-          const matchSearch = !search || slot.toLowerCase().includes(search) || title.includes(search);
-          const matchCat = catFilter === 'all' || category === catFilter;
-          return matchSearch && matchCat;
+        const filtered = embeds.filter((emb) => {
+          const matchCat = catFilter === 'all' || emb.category === catFilter;
+          const matchSearch = !search ||
+            emb.name.toLowerCase().includes(search) ||
+            emb.id.toLowerCase().includes(search) ||
+            (emb.description && emb.description.toLowerCase().includes(search)) ||
+            Object.keys(emb.slots || {}).some(s => s.toLowerCase().includes(search));
+          return matchCat && matchSearch;
         });
 
-        if (filteredSlots.length === 0) {
-          grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Nenhum slot encontrado para os filtros atuais.</div>';
+        if (filtered.length === 0) {
+          container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted); background: rgba(0,0,0,0.3); border-radius: 14px;">Nenhum embed encontrado para os filtros selecionados.</div>';
           return;
         }
 
-        grid.innerHTML = filteredSlots
-          .map(([slot, meta]) => {
-            const fallback = meta.fallback || '✨';
-            let selectedId = pendingEmojiChanges[slot] || '';
+        container.innerHTML = filtered.map((emb) => {
+          const slots = emb.slots || {};
+          const resolved = emb.resolvedSlots || {};
+          const slotEntries = Object.entries(slots);
 
-            if (!selectedId && meta.themeKey && allEmojisData.themeConfig && allEmojisData.themeConfig[meta.themeKey]) {
-              selectedId = allEmojisData.themeConfig[meta.themeKey].primaryId || '';
-            }
+          const primarySlot = resolved['primary'] || (slotEntries[0] ? resolved[slotEntries[0][0]] : null);
+          const primaryIcon = primarySlot ? (primarySlot.isCustom ? `<img src="${primarySlot.url}" style="width: 18px; height: 18px; vertical-align: middle;" />` : primarySlot.text) : '✨';
 
-            const emojiObj = appEmojis.find((e) => String(e.id) === String(selectedId));
-            let previewContent = `<span style="font-size: 26px;">${fallback}</span>`;
+          const slotsHtml = slotEntries.map(([slotKey, slotDef]) => {
+            const currentSlot = resolved[slotKey] || { text: slotDef.fallback || '✨', isCustom: false, isAnimated: false, url: null };
+            const isCustom = Boolean(currentSlot.isCustom && currentSlot.url);
+
+            let previewIcon = `<span style="font-size: 22px;">${currentSlot.text || slotDef.fallback || '✨'}</span>`;
             let badgeClass = 'status-paused';
-            let badgeText = 'Unicode Fallback';
-            let currentLabel = `Padrão (${fallback})`;
+            let badgeText = 'Padrão';
 
-            if (selectedId && emojiObj) {
-              previewContent = `<img src="${emojiObj.url}" alt="${slot}" loading="lazy" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${selectedId}.png';" />`;
-              badgeClass = emojiObj.animated ? 'status-active' : 'status-paused';
-              badgeText = emojiObj.animated ? '✨ GIF Animado' : '📄 PNG Estático';
-              currentLabel = `${emojiObj.name} (${selectedId})`;
-            } else if (selectedId) {
-              const url = `https://cdn.discordapp.com/emojis/${selectedId}.png`;
-              previewContent = `<img src="${url}" alt="${slot}" loading="lazy" />`;
-              badgeClass = 'status-active';
-              badgeText = 'Customizado';
-              currentLabel = `ID: ${selectedId}`;
+            if (isCustom) {
+              previewIcon = `<img src="${currentSlot.url}" alt="${slotKey}" style="width: 28px; height: 28px; object-fit: contain;" onerror="this.onerror=null;this.src='https://cdn.discordapp.com/emojis/${currentSlot.emojiId}.png';" />`;
+              badgeClass = currentSlot.isAnimated ? 'status-active' : 'status-paused';
+              badgeText = currentSlot.isAnimated ? '✨ GIF Animado' : '📄 PNG Estático';
             }
 
             return `
-              <div class="emoji-slot-card" id="slot-card-${slot}">
-                <div class="emoji-slot-top">
-                  <div class="emoji-preview-box" onclick="openEmojiPicker('${slot}')" title="Clique para escolher emoji">
-                    ${previewContent}
-                  </div>
-                  <div class="emoji-slot-info">
-                    <div class="emoji-slot-title">
-                      <span>${meta.title}</span>
-                    </div>
-                    <div style="display: flex; gap: 6px; align-items: center; margin-top: 2px;">
-                      <span class="emoji-slot-key">${slot}</span>
-                      <span class="card-status-pill ${badgeClass}" style="font-size: 9px; padding: 1px 6px;">${badgeText}</span>
-                    </div>
-                    <div class="emoji-slot-label" title="${currentLabel}">${currentLabel}</div>
-                  </div>
+              <div class="embed-slot-item" id="slot-card-${emb.id}-${slotKey}">
+                <div class="emoji-preview-box" onclick="openEmojiPickerForEmbedSlot('${emb.id}', '${slotKey}', '${slotDef.title || slotKey}', '${slotDef.fallback || '✨'}')" title="Clique para trocar emoji" style="width: 44px; height: 44px;">
+                  ${previewIcon}
                 </div>
-                <div class="emoji-slot-actions">
-                  <button type="button" onclick="openEmojiPicker('${slot}')" class="btn btn-secondary btn-mini" style="flex: 1;">
-                    <span>🎨 Escolher Emoji</span>
-                  </button>
-                  <button type="button" onclick="resetEmojiSlot('${slot}')" class="btn btn-danger btn-mini" title="Restaurar para padrão Unicode">
-                    <span>❌ Resetar</span>
-                  </button>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                    <strong style="font-size: 0.82rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${slotDef.title || slotKey}</strong>
+                    <span class="card-status-pill ${badgeClass}" style="font-size: 8px; padding: 1px 5px;">${badgeText}</span>
+                  </div>
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--purple-glow); margin-top: 2px;">slot: ${slotKey}</div>
+                </div>
+                <div style="display: flex; gap: 4px;">
+                  <button type="button" class="btn btn-secondary btn-mini" style="padding: 4px 6px;" onclick="openEmojiPickerForEmbedSlot('${emb.id}', '${slotKey}', '${slotDef.title || slotKey}', '${slotDef.fallback || '✨'}')" title="Escolher emoji">🎨</button>
+                  ${isCustom ? `<button type="button" class="btn btn-danger btn-mini" style="padding: 4px 6px;" onclick="resetEmbedSlot('${emb.id}', '${slotKey}')" title="Restaurar padrão">✕</button>` : ''}
                 </div>
               </div>
             `;
-          })
-          .join('');
+          }).join('');
+
+          return `
+            <div class="embed-card" style="border-left: 4px solid ${emb.color || '#e60067'};">
+              <div class="embed-card-header">
+                <div>
+                  <div class="embed-card-title">
+                    <span>${emb.name}</span>
+                    <span class="card-tag" style="text-transform: uppercase;">🏷️ ${emb.category}</span>
+                    <code style="font-size: 0.72rem; color: #38bdf8; background: rgba(56,189,248,0.1); padding: 2px 6px; border-radius: 4px;">id: ${emb.id}</code>
+                  </div>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 0 0;">${emb.description}</p>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">${slotEntries.length} slots visuais</span>
+                </div>
+              </div>
+
+              <!-- Discord Mini Preview Box -->
+              <div class="embed-discord-preview" style="--embed-theme-color: ${emb.color || '#e60067'};">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 0.75rem; color: #949ba4;">
+                  <span style="width: 14px; height: 14px; border-radius: 50%; background: #e60067; display: inline-block;"></span>
+                  <strong>Pyxie</strong>
+                  <span style="background: #5865f2; color: #fff; font-size: 8px; padding: 0 4px; border-radius: 3px;">BOT</span>
+                </div>
+                <div class="embed-discord-title">${primaryIcon} ${emb.name}</div>
+                <div class="embed-discord-desc">Exemplo demonstrativo dos slots visuais configurados para este embed no Discord. Toda alteração feita aqui reflete imediatamente nos comandos.</div>
+              </div>
+
+              <!-- Slots Grid -->
+              <div class="embed-slots-grid">
+                ${slotsHtml}
+              </div>
+            </div>
+          `;
+        }).join('');
       }
 
-      function openEmojiPicker(slot) {
-        currentEditingSlot = slot;
-        const meta = (allEmojisData.slots && allEmojisData.slots[slot]) || { title: slot, fallback: '✨' };
-        document.getElementById('modalSlotTitle').innerText = `${meta.title} (${slot})`;
-        document.getElementById('pickerSearchInput').value = '';
+      function openEmojiPickerForEmbedSlot(embedId, slotKey, title, fallback) {
+        currentEditingEmbedSlot = { embedId, slotKey, title, fallback };
+        const modal = document.getElementById('emojiPickerModal');
+        const titleEl = document.getElementById('modalSlotTitle');
+        if (titleEl) titleEl.innerText = `${embedId} → [${slotKey}] (${title})`;
+
+        const searchInput = document.getElementById('pickerSearchInput');
+        if (searchInput) searchInput.value = '';
         activePickerFilter = 'all';
         updatePickerFilterButtons();
         renderPickerGrid();
-        document.getElementById('emojiPickerModal').classList.add('open');
+        if (modal) modal.classList.add('open');
       }
 
       function closeEmojiPicker() {
-        document.getElementById('emojiPickerModal').classList.remove('open');
-        currentEditingSlot = null;
+        const modal = document.getElementById('emojiPickerModal');
+        if (modal) modal.classList.remove('open');
+        currentEditingEmbedSlot = { embedId: null, slotKey: null, title: '', fallback: '✨' };
       }
 
       function setPickerFilter(type) {
@@ -3471,7 +3626,7 @@
         const container = document.getElementById('pickerGridContainer');
         if (!container) return;
 
-        const allEmojis = allEmojisData.appEmojis || [];
+        const allEmojis = allEmbedsData.appEmojis || [];
         const q = (document.getElementById('pickerSearchInput')?.value || '').toLowerCase().trim();
 
         let items = allEmojis;
@@ -3480,71 +3635,99 @@
 
         if (q) items = items.filter((e) => e.name.toLowerCase().includes(q) || String(e.id).includes(q));
 
-        document.getElementById('pickCountAll').innerText = allEmojis.length;
-        document.getElementById('pickCountAnim').innerText = allEmojis.filter((e) => e.animated).length;
-        document.getElementById('pickCountStatic').innerText = allEmojis.filter((e) => !e.animated).length;
+        const cAll = document.getElementById('pickCountAll');
+        const cAnim = document.getElementById('pickCountAnim');
+        const cStat = document.getElementById('pickCountStatic');
+        if (cAll) cAll.innerText = allEmojis.length;
+        if (cAnim) cAnim.innerText = allEmojis.filter((e) => e.animated).length;
+        if (cStat) cStat.innerText = allEmojis.filter((e) => !e.animated).length;
 
         if (items.length === 0) {
           container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">Nenhum emoji encontrado para "${q}".</div>`;
           return;
         }
 
-        container.innerHTML = items
-          .map((emoji) => {
-            const badge = emoji.animated ? '<span class="emoji-picker-badge">GIF</span>' : '';
-            return `
-              <div class="emoji-picker-card" onclick="selectEmojiForSlot('${emoji.id}')" title="${emoji.name} (${emoji.id})">
-                ${badge}
-                <img src="${emoji.url}" alt="${emoji.name}" loading="lazy" onerror="this.src='https://cdn.discordapp.com/emojis/${emoji.id}.png';" />
-                <span class="emoji-picker-name">${emoji.name}</span>
-              </div>
-            `;
-          })
-          .join('');
+        container.innerHTML = items.map((emoji) => {
+          const badge = emoji.animated ? '<span class="emoji-picker-badge">GIF</span>' : '';
+          return `
+            <div class="emoji-picker-card" onclick="selectEmojiForSlot('${emoji.id}')" title="${emoji.name} (${emoji.id})">
+              ${badge}
+              <img src="${emoji.url}" alt="${emoji.name}" loading="lazy" onerror="this.src='https://cdn.discordapp.com/emojis/${emoji.id}.png';" />
+              <span class="emoji-picker-name">${emoji.name}</span>
+            </div>
+          `;
+        }).join('');
       }
 
-      function selectEmojiForSlot(emojiId) {
-        if (!currentEditingSlot) return;
-        pendingEmojiChanges[currentEditingSlot] = emojiId;
+      async function selectEmojiForSlot(emojiId) {
+        if (!currentEditingEmbedSlot.embedId || !currentEditingEmbedSlot.slotKey) return;
+        const { embedId, slotKey } = currentEditingEmbedSlot;
+
         closeEmojiPicker();
-        updateEmojiStats();
-        renderEmojiSlotsGrid();
-        showToast('Emoji selecionado! Clique em "Salvar Todos os Emojis" para persistir.', '✨');
+        showToast('Salvando emoji no embed...', '✨');
+
+        try {
+          const res = await fetch('/api/admin/embeds/slot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ embedId, slotKey, emojiId })
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast('✨ Slot de embed atualizado com sucesso!', '💾');
+            await fetchEmbedsData();
+          } else {
+            showToast(data.error || 'Erro ao associar emoji ao slot.', '⚠️');
+          }
+        } catch (err) {
+          showToast('Erro de conexão ao salvar slot.', '⚠️');
+        }
       }
 
-      function resetEmojiSlot(slot) {
-        pendingEmojiChanges[slot] = '';
-        updateEmojiStats();
-        renderEmojiSlotsGrid();
-        showToast(`Slot "${slot}" redefinido para o padrão Unicode.`, '🔄');
+      async function resetEmbedSlot(embedId, slotKey) {
+        showToast('Restaurando slot para padrão...', '🔄');
+        try {
+          const res = await fetch('/api/admin/embeds/slot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ embedId, slotKey, emojiId: '' })
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast('Slot restaurado para o padrão!', '🔄');
+            await fetchEmbedsData();
+          } else {
+            showToast('Erro ao resetar slot.', '⚠️');
+          }
+        } catch (_) {
+          showToast('Erro de comunicação.', '⚠️');
+        }
       }
 
       async function saveAllEmojis() {
         const btn = document.getElementById('btnSaveEmojis');
-        btn.disabled = true;
-        btn.innerHTML = '<span>💾 Salvando Emojis...</span>';
-        showToast('Gravando mapeamento de emojis no servidor...', '💾');
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span>💾 Sincronizando...</span>';
+        }
+        showToast('Gravando mapeamento e notificando processo do bot...', '💾');
 
         try {
-          const res = await fetch('/api/admin/emojis', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ emojis: pendingEmojiChanges }),
-          });
+          const res = await fetch('/api/admin/embeds');
           const data = await res.json();
           if (data.success) {
-            allEmojisData.currentConfig = { ...pendingEmojiChanges };
-            showToast('✨ Todos os emojis foram salvos e sincronizados com sucesso!', '💾');
-            updateEmojiStats();
-            renderEmojiSlotsGrid();
+            showToast('✨ Mapeamento de embeds e emojis 100% sincronizado!', '💾');
+            await fetchEmbedsData();
           } else {
-            showToast(data.error || 'Erro ao salvar configurações de emojis.', '⚠️');
+            showToast('Falha na sincronização.', '⚠️');
           }
-        } catch (err) {
-          showToast('Erro de comunicação ao salvar emojis.', '⚠️');
+        } catch (_) {
+          showToast('Erro de comunicação.', '⚠️');
         } finally {
-          btn.disabled = false;
-          btn.innerHTML = '<span>💾 Salvar Todos os Emojis</span>';
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>💾 Salvar Todos os Emojis</span>';
+          }
         }
       }
 
@@ -3552,8 +3735,6 @@
          CONTROLE DO BOT, ECONOMIA E BOAS-VINDAS (TAB 3)
          ========================================================== */
       async function loadBotConfig() {
-        fetchWorkSeederStatus();
-        fetchQuizSeederStatus();
         try {
           const res = await fetch('/api/config');
           if (res.status === 401 || res.status === 403) return;
@@ -3572,185 +3753,6 @@
           }
         } catch (err) {
           console.error('Erro ao carregar configurações do bot:', err);
-        }
-      }
-
-      async function fetchWorkSeederStatus() {
-        try {
-          const res = await fetch('/api/admin/work-seeder/status');
-          const data = await res.json();
-          if (!data.success) return;
-
-          const badge = document.getElementById('seederStatusBadge');
-          const progressLabel = document.getElementById('seederProgressLabel');
-          const percentLabel = document.getElementById('seederPercentLabel');
-          const progressBar = document.getElementById('seederProgressBar');
-          const btnTrigger = document.getElementById('btnTriggerSeeder');
-          const grid = document.getElementById('seederProfGrid');
-
-          if (progressLabel) progressLabel.innerText = `Progresso Global: ${data.currentTotal} / ${data.targetTotal} cenários`;
-          if (percentLabel) percentLabel.innerText = `${data.progressPercentage}%`;
-          if (progressBar) progressBar.style.width = `${data.progressPercentage}%`;
-
-          if (badge) {
-            if (data.isCompleted) {
-              badge.className = 'status-pill status-active';
-              badge.style.background = 'rgba(16, 185, 129, 0.2)';
-              badge.style.color = '#34d399';
-              badge.innerText = `✅ Meta Atingida (${data.targetTotal}/${data.targetTotal})`;
-            } else if (data.isJobRunning) {
-              badge.className = 'status-pill status-paused';
-              badge.innerText = '⚙️ Gerando lote agora...';
-            } else {
-              badge.className = 'status-pill status-active';
-              badge.innerText = '🤖 Agendador Ativo (A cada 3h)';
-            }
-          }
-
-          if (btnTrigger) {
-            btnTrigger.disabled = data.isCompleted || data.isJobRunning;
-          }
-
-          if (grid && data.perProfession) {
-            const icons = {
-              programador: '💻', cozinheiro: '🍳', agricultor: '🌾', medico: '🩺',
-              musico: '🎵', professor: '📚', fotografo: '📸', mecanico: '🔧',
-              vendedor: '💼', artista: '🎨', dublador: '🎙️', desenvolvedor_jogos: '🎮',
-              psicologo: '🧠', telemarketing: '🎧', animador_festa: '🎈', advogada: '⚖️'
-            };
-            const labels = {
-              programador: 'Programador', cozinheiro: 'Cozinheiro', agricultor: 'Agricultor', medico: 'Médico',
-              musico: 'Músico', professor: 'Professor', fotografo: 'Fotógrafo', mecanico: 'Mecânico',
-              vendedor: 'Vendedor', artista: 'Artista', dublador: 'Dublador', desenvolvedor_jogos: 'Dev Jogos',
-              psicologo: 'Psicólogo', telemarketing: 'Telemarketing', animador_festa: 'Animador Festa', advogada: 'Advogada'
-            };
-            grid.innerHTML = Object.entries(data.perProfession).map(([prof, count]) => {
-              const icon = icons[prof] || '💼';
-              const label = labels[prof] || prof;
-              const isFull = count >= (data.targetPerProfession || 100);
-              return `
-                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 0.76rem; font-weight: 600;">${icon} ${label}</span>
-                  <span style="font-size: 0.76rem; font-family: monospace; font-weight: 700; color: ${isFull ? '#34d399' : '#c084fc'};">${count}/${data.targetPerProfession || 100}</span>
-                </div>
-              `;
-            }).join('');
-          }
-        } catch (_) {}
-      }
-
-      async function triggerWorkSeederBatch() {
-        const btn = document.getElementById('btnTriggerSeeder');
-        if (btn) {
-          btn.disabled = true;
-          btn.innerText = '🚀 Disparando lote...';
-        }
-        showToast('Iniciando geração de 1 novo cenário por carreira via Groq...', '⚡');
-        try {
-          const res = await fetch('/api/admin/work-seeder/trigger', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ count: 1 })
-          });
-          const data = await res.json();
-          if (data.success) {
-            showToast('Lote iniciado em background! Atualizando status...', '🚀');
-            setTimeout(fetchWorkSeederStatus, 2000);
-          }
-        } catch (_) {
-          showToast('Erro ao disparar gerador.', '⚠️');
-        } finally {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerText = '⚡ Gerar Lote Agora (+16)';
-          }
-        }
-      }
-
-      async function fetchQuizSeederStatus() {
-        try {
-          const res = await fetch('/api/admin/quiz-seeder/status');
-          const data = await res.json();
-          if (!data.success) return;
-
-          const badge = document.getElementById('quizSeederStatusBadge');
-          const progressLabel = document.getElementById('quizSeederProgressLabel');
-          const percentLabel = document.getElementById('quizSeederPercentLabel');
-          const progressBar = document.getElementById('quizSeederProgressBar');
-          const btnTrigger = document.getElementById('btnTriggerQuizSeeder');
-          const grid = document.getElementById('quizSeederLevelGrid');
-
-          if (progressLabel) progressLabel.innerText = `Progresso Global: ${data.currentTotal} / ${data.targetTotal} perguntas`;
-          if (percentLabel) percentLabel.innerText = `${data.progressPercentage}%`;
-          if (progressBar) progressBar.style.width = `${data.progressPercentage}%`;
-
-          if (badge) {
-            if (data.isCompleted) {
-              badge.className = 'status-pill status-active';
-              badge.style.background = 'rgba(16, 185, 129, 0.2)';
-              badge.style.color = '#34d399';
-              badge.innerText = `✅ Meta Atingida (${data.targetTotal}/${data.targetTotal})`;
-            } else if (data.isJobRunning) {
-              badge.className = 'status-pill status-paused';
-              badge.innerText = '⚙️ Gerando lote agora...';
-            } else {
-              badge.className = 'status-pill status-active';
-              badge.innerText = '🤖 Agendador Ativo (A cada 3h)';
-            }
-          }
-
-          if (btnTrigger) {
-            btnTrigger.disabled = data.isCompleted || data.isJobRunning;
-          }
-
-          if (grid && data.perLevel) {
-            const levelInfo = {
-              1: { name: 'Nível 1 • Aprendiz', icon: '🌱', color: '#38bdf8' },
-              2: { name: 'Nível 2 • Praticante', icon: '⚡', color: '#818cf8' },
-              3: { name: 'Nível 3 • Mestre', icon: '🔥', color: '#c084fc' },
-              4: { name: 'Nível 4 • Grão-Mestre', icon: '👑', color: '#f43f5e' },
-            };
-            const targetPerLvl = 125;
-            grid.innerHTML = [1, 2, 3, 4].map((lvl) => {
-              const info = levelInfo[lvl] || { name: `Nível ${lvl}`, icon: '❓', color: '#38bdf8' };
-              const count = data.perLevel[lvl] || 0;
-              const isFull = count >= targetPerLvl;
-              return `
-                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 0.8rem; font-weight: 600; color: ${info.color};">${info.icon} ${info.name}</span>
-                  <span style="font-size: 0.8rem; font-family: monospace; font-weight: 700; color: ${isFull ? '#34d399' : '#38bdf8'};">${count}/${targetPerLvl}</span>
-                </div>
-              `;
-            }).join('');
-          }
-        } catch (_) {}
-      }
-
-      async function triggerQuizSeederBatch() {
-        const btn = document.getElementById('btnTriggerQuizSeeder');
-        if (btn) {
-          btn.disabled = true;
-          btn.innerText = '🚀 Disparando perguntas...';
-        }
-        showToast('Iniciando geração de 4 perguntas do quiz via Groq...', '⚡');
-        try {
-          const res = await fetch('/api/admin/quiz-seeder/trigger', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ count: 4 })
-          });
-          const data = await res.json();
-          if (data.success) {
-            showToast('Lote de quiz iniciado em background! Atualizando status...', '🚀');
-            setTimeout(fetchQuizSeederStatus, 2000);
-          }
-        } catch (_) {
-          showToast('Erro ao disparar gerador de quiz.', '⚠️');
-        } finally {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerText = '⚡ Gerar Perguntas Agora (+4)';
-          }
         }
       }
 
@@ -3813,10 +3815,163 @@
         }
       }
 
+      /* ==========================================================
+         INSPETOR REAL DE ACERVO & SIMULADOR AO VIVO (TAB 3)
+         ========================================================== */
+      let currentAcervoStats = null;
+
+      async function fetchAcervoAudit() {
+        try {
+          const res = await fetch('/api/admin/acervo/stats');
+          if (res.status === 401 || res.status === 403) return;
+          const data = await res.json();
+          if (data.success) {
+            currentAcervoStats = data;
+            renderAcervoStats(data);
+          }
+        } catch (err) {
+          console.error('Erro ao buscar auditoria de acervo:', err);
+        }
+      }
+
+      function renderAcervoStats(data) {
+        const profTotalEl = document.getElementById('acervoTotalProfessions');
+        const careerTotalEl = document.getElementById('acervoTotalCareerQuestions');
+        const quizTotalEl = document.getElementById('acervoTotalQuizQuestions');
+
+        if (profTotalEl) profTotalEl.innerText = data.careers.totalProfessions || 22;
+        if (careerTotalEl) careerTotalEl.innerText = data.careers.totalQuestions || 0;
+        if (quizTotalEl) quizTotalEl.innerText = data.quiz.totalQuestions || 500;
+
+        // Render careers grid
+        const careersGrid = document.getElementById('acervoCareersGrid');
+        if (careersGrid && Array.isArray(data.careers.professions)) {
+          careersGrid.innerHTML = data.careers.professions.map((p) => {
+            const isFull = p.totalQuestions >= 100;
+            return `
+              <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">${p.icon} ${p.name}</span>
+                  <span style="font-size: 0.75rem; font-family: monospace; font-weight: 700; color: ${isFull ? '#34d399' : '#c084fc'};">${p.totalQuestions}/100</span>
+                </div>
+                <div style="display: flex; gap: 4px; font-size: 0.68rem; color: var(--text-muted); font-family: monospace;">
+                  <span title="Nível 1" style="background: rgba(56,189,248,0.15); color: #38bdf8; padding: 1px 4px; border-radius: 4px;">L1: ${p.levels[1] || 0}</span>
+                  <span title="Nível 2" style="background: rgba(129,140,248,0.15); color: #818cf8; padding: 1px 4px; border-radius: 4px;">L2: ${p.levels[2] || 0}</span>
+                  <span title="Nível 3" style="background: rgba(192,132,252,0.15); color: #c084fc; padding: 1px 4px; border-radius: 4px;">L3: ${p.levels[3] || 0}</span>
+                  <span title="Nível 4" style="background: rgba(244,63,94,0.15); color: #f43f5e; padding: 1px 4px; border-radius: 4px;">L4: ${p.levels[4] || 0}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // Populate simProfessionSelect
+        const simProfSelect = document.getElementById('simProfessionSelect');
+        if (simProfSelect && Array.isArray(data.careers.professions)) {
+          const currentVal = simProfSelect.value;
+          simProfSelect.innerHTML = data.careers.professions.map((p) =>
+            `<option value="${p.id}">${p.icon} ${p.name} (${p.totalQuestions} cenários)</option>`
+          ).join('');
+          if (currentVal) simProfSelect.value = currentVal;
+        }
+
+        // Render quiz real stats
+        const quizGrid = document.getElementById('acervoQuizGrid');
+        if (quizGrid && data.quiz.levels) {
+          quizGrid.innerHTML = [1, 2, 3, 4].map((lvl) => {
+            const item = data.quiz.levels[lvl] || { name: `Nível ${lvl}`, count: 0, icon: '❓' };
+            return `
+              <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">${item.icon} ${item.name}</span>
+                  <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">500 Questões Culturais</div>
+                </div>
+                <span style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #34d399;">${item.count}</span>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      async function runSimulation(type) {
+        const profession = document.getElementById('simProfessionSelect')?.value || 'programador';
+        const userLevel = parseInt(document.getElementById('simLevelSelect')?.value || '1', 10);
+        const lang = document.getElementById('simLangSelect')?.value || 'pt';
+        const container = document.getElementById('simResultContainer');
+
+        if (!container) return;
+        container.style.display = 'block';
+        container.innerHTML = '<div style="text-align: center; color: var(--cyan-neon); padding: 12px;">🎲 Sorteando pergunta real do disco...</div>';
+
+        try {
+          const res = await fetch('/api/admin/acervo/test-draw', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type, profession, userLevel, lang })
+          });
+          const data = await res.json();
+          if (!data.success) {
+            container.innerHTML = `<div style="color: #f87171;">❌ Erro ao sortear: ${data.error || 'Falha desconhecida'}</div>`;
+            return;
+          }
+
+          const item = data.item;
+          let choicesHtml = '';
+
+          if (data.type === 'career') {
+            const opts = item.options || item.reactions || [];
+            choicesHtml = opts.map((opt, idx) => {
+              const letter = ['A', 'B', 'C', 'D'][idx] || String(idx + 1);
+              const label = typeof opt === 'string' ? opt : (opt.text || opt.label || JSON.stringify(opt));
+              return `<div class="acervo-choice-pill"><strong>[${letter}]</strong> ${label}</div>`;
+            }).join('');
+
+            container.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; margin-bottom: 10px;">
+                <span style="font-weight: 700; color: #38bdf8; font-size: 0.85rem;">💼 Carreira: ${data.profession} (Nível ${data.level}) • Idioma: ${data.lang.toUpperCase()}</span>
+                <span class="card-status-pill status-active" style="font-size: 0.72rem;">✅ Acervo Real: ${data.poolSize} cenários</span>
+              </div>
+              <h5 style="font-size: 0.95rem; color: #fff; margin: 0 0 6px 0;">${item.title || 'Desafio Profissional'}</h5>
+              <p style="font-size: 0.85rem; color: #e2e8f0; line-height: 1.45; margin: 0 0 10px 0;">${item.prompt || item.challenge || item.scenario || 'Cenário carregado com sucesso.'}</p>
+              <div style="margin-top: 8px;">
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Opções Disponíveis no Discord:</span>
+                ${choicesHtml}
+              </div>
+            `;
+          } else {
+            const opts = item.options || [];
+            choicesHtml = opts.map((opt, idx) => {
+              const letter = ['A', 'B', 'C', 'D'][idx] || String(idx + 1);
+              const isCorrect = (idx === item.correctIndex);
+              return `
+                <div class="acervo-choice-pill" style="${isCorrect ? 'border-color: #34d399; background: rgba(52,211,153,0.1);' : ''}">
+                  <strong>[${letter}]</strong> ${opt} ${isCorrect ? '<span style="color: #34d399; font-weight: 700; margin-left: 6px;">(Gabarito Correto)</span>' : ''}
+                </div>
+              `;
+            }).join('');
+
+            container.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; margin-bottom: 10px;">
+                <span style="font-weight: 700; color: #34d399; font-size: 0.85rem;">🎯 Quiz Cultural (Nível ${data.level}) • Idioma: ${data.lang.toUpperCase()}</span>
+                <span class="card-status-pill status-active" style="font-size: 0.72rem;">✅ Acervo Real: ${data.poolSize} perguntas</span>
+              </div>
+              <h5 style="font-size: 0.95rem; color: #fff; margin: 0 0 6px 0;">${item.question || 'Pergunta do Quiz'}</h5>
+              <div style="margin-top: 8px;">
+                ${choicesHtml}
+              </div>
+            `;
+          }
+        } catch (err) {
+          container.innerHTML = `<div style="color: #f87171;">❌ Falha na conexão com simulador: ${err.message}</div>`;
+        }
+      }
+
       // Inicialização da página
       fetchShopeeData();
-      fetchEmojisData();
+      fetchEmbedsData();
       loadBotConfig();
+      fetchAcervoAudit();
+      fetch('/api/admin/introspect').catch(() => {});
     </script>
   </body>
 </html>
