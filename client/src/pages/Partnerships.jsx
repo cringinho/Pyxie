@@ -42,23 +42,39 @@ const MACRO_THEMES = {
   },
 };
 
+// Normalize external image URLs (e.g. unpacking Discord proxy wrappers)
+function normalizeImageUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+  const trimmed = url.trim();
+  const discordProxyMatch = trimmed.match(/\/https\/(.+)$/i);
+  if (discordProxyMatch) {
+    return 'https://' + discordProxyMatch[1];
+  }
+  const discordProxyHttpMatch = trimmed.match(/\/http\/(.+)$/i);
+  if (discordProxyHttpMatch) {
+    return 'http://' + discordProxyHttpMatch[1];
+  }
+  return trimmed;
+}
+
 // Safe image component with 2-tier fallback: direct -> server proxy -> Pyxie mascot
 function PartnerImage({ src, alt, className = '' }) {
-  const [currentSrc, setCurrentSrc] = useState(() => src || '/assets/pyxie/pyxie_mascot.png');
+  const cleanSrc = useMemo(() => normalizeImageUrl(src) || '/assets/pyxie/pyxie_mascot.png', [src]);
+  const [currentSrc, setCurrentSrc] = useState(cleanSrc);
   const [attempt, setAttempt] = useState(0); // 0: direct, 1: proxy, 2: default
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setCurrentSrc(src || '/assets/pyxie/pyxie_mascot.png');
+    setCurrentSrc(cleanSrc);
     setAttempt(0);
     setLoaded(false);
-  }, [src]);
+  }, [cleanSrc]);
 
   const handleError = () => {
-    if (attempt === 0 && src && (src.startsWith('http://') || src.startsWith('https://'))) {
+    if (attempt === 0 && cleanSrc && (cleanSrc.startsWith('http://') || cleanSrc.startsWith('https://'))) {
       // 1st Fallback: attempt through safe backend proxy
       setAttempt(1);
-      setCurrentSrc(`/api/partnerships/proxy-image?url=${encodeURIComponent(src)}`);
+      setCurrentSrc(`/api/partnerships/proxy-image?url=${encodeURIComponent(cleanSrc)}`);
     } else if (attempt <= 1) {
       // 2nd Fallback: official Pyxie mascot fallback
       setAttempt(2);
@@ -71,8 +87,7 @@ function PartnerImage({ src, alt, className = '' }) {
       src={currentSrc}
       alt={alt}
       loading="lazy"
-      referrerPolicy="no-referrer"
-      crossOrigin="anonymous"
+      decoding="async"
       onLoad={() => setLoaded(true)}
       onError={handleError}
       className={`${className} transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-70'}`}
@@ -164,9 +179,10 @@ function PartnerCard({ partner, isFeatured = false, t, lang, onBump, bumpingId, 
 
           {/* Project Description with Read More */}
           <div className="mt-2 text-sm text-slate-300/90 leading-relaxed">
-            <p className="whitespace-pre-line">{displayDesc}</p>
+            <p className="whitespace-pre-line break-words">{displayDesc}</p>
             {isLongDesc && (
               <button
+                type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-pink-400 hover:text-pink-300 hover:underline focus:outline-none transition-colors"
               >

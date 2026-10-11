@@ -141,6 +141,7 @@ const TARGETS = [
   { file: 'public/wiki.html', subtitle: 'Carregando Enciclopédia e Documentação' },
   { file: 'public/bonus.html', subtitle: 'Sintonizando Portal de Bônus e Recompensas' },
   { file: 'public/u.html', subtitle: 'Sintonizando Perfil e Cartas de Tarot' },
+  { file: 'public/partnerships.html', subtitle: 'Sintonizando Mural de Alianças e Parcerias' },
 ];
 
 for (const t of TARGETS) {
@@ -162,6 +163,11 @@ for (const t of TARGETS) {
       const splashHtml = getSplashMarkup(t.subtitle);
       html = html.substring(0, idx + appTag.length) + splashHtml + html.substring(idx + appTag.length);
     }
+  }
+
+  // Adiciona CSS compilado do React se não estiver presente
+  if (!html.includes('/dist/assets/index.css')) {
+    html = html.replace('</head>', '  <link rel="stylesheet" href="/dist/assets/index.css" />\n</head>');
   }
 
   fs.writeFileSync(filePath, html, 'utf8');

@@ -32,6 +32,20 @@ const DEFAULT_CONFIG = {
 
 const trunc = (s, n) => (String(s).length > n ? `${String(s).slice(0, n - 3)}...` : String(s));
 
+function normalizeImageUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+  const trimmed = url.trim();
+  const discordProxyMatch = trimmed.match(/\/https\/(.+)$/i);
+  if (discordProxyMatch) {
+    return 'https://' + discordProxyMatch[1];
+  }
+  const discordProxyHttpMatch = trimmed.match(/\/http\/(.+)$/i);
+  if (discordProxyHttpMatch) {
+    return 'http://' + discordProxyHttpMatch[1];
+  }
+  return trimmed;
+}
+
 class PartnershipManager {
   constructor() {
     this.client = null;
@@ -523,7 +537,7 @@ class PartnershipManager {
       categoryLabel: schema ? schema.label : { pt: p.categoryKey, en: p.categoryKey },
       projectName: p.projectName,
       accessLink: p.accessLink,
-      imageUrl: p.imageUrl,
+      imageUrl: normalizeImageUrl(p.imageUrl),
       publicDesc: p.publicDesc,
       approvedAt: p.approvedAt,
       lastBumpedAt: p.lastBumpedAt,
@@ -668,10 +682,11 @@ class PartnershipManager {
     });
 
     app.get('/api/partnerships/proxy-image', async (req, res) => {
-      const targetUrl = req.query.url;
-      if (!targetUrl || typeof targetUrl !== 'string') {
+      const rawUrl = req.query.url;
+      if (!rawUrl || typeof rawUrl !== 'string') {
         return res.status(400).send('URL inválida');
       }
+      const targetUrl = normalizeImageUrl(rawUrl);
       try {
         const parsed = new URL(targetUrl);
         if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
@@ -697,7 +712,7 @@ class PartnershipManager {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
           },
-          signal: AbortSignal.timeout(8000),
+          signal: AbortSignal.timeout(12000),
         });
 
         if (!response.ok) {
