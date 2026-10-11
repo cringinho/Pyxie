@@ -165,9 +165,25 @@ if [ -f "${BACKUP_DIR}/src_data/shopee.json" ]; then
       try { fs.copyFileSync(process.argv[1], 'src/data/shopee.json'); } catch (_) {}
     }
   " "${BACKUP_DIR}/src_data/shopee.json" || true
+if [ -f "${BACKUP_DIR}/src_data/themeEmojis.json" ]; then
+  node -e "
+    const fs = require('fs');
+    try {
+      const gitConfig = JSON.parse(fs.readFileSync('src/data/themeEmojis.json', 'utf8'));
+      const backupConfig = JSON.parse(fs.readFileSync(process.argv[1], 'utf8'));
+      const mergedThemes = Object.assign({}, gitConfig.themes || {});
+      for (const [k, v] of Object.entries(backupConfig.themes || {})) {
+        if (mergedThemes[k]) {
+          mergedThemes[k] = Object.assign({}, mergedThemes[k], v);
+        } else {
+          mergedThemes[k] = v;
+        }
+      }
+      gitConfig.themes = mergedThemes;
+      fs.writeFileSync('src/data/themeEmojis.json', JSON.stringify(gitConfig, null, 2), 'utf8');
+    } catch (_) {}
+  " "${BACKUP_DIR}/src_data/themeEmojis.json" || true
 fi
-[ -f "${BACKUP_DIR}/src_data/themeEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/themeEmojis.json" src/data/themeEmojis.json
-if [ -f "${BACKUP_DIR}/src_data/emojis.json" ]; then
   node -e "
     const fs = require('fs');
     try {
