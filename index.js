@@ -68,6 +68,10 @@ const cringePhraseCooldowns = new Map();
 const cringeChannelCooldowns = new Map();
 const processedCringeMessageIds = new Set();
 let cringeInFlight = false;
+const sapatonaPhraseCooldowns = new Map();
+const sapatonaChannelCooldowns = new Map();
+const processedSapatonaMessageIds = new Set();
+let sapatonaInFlight = false;
 const recentWelcomes = new Map();
 const processedMessageIds = new Map();
 const processedInteractionIds = new Map();
@@ -414,6 +418,56 @@ async function handleCringePhrase(message) {
   return true;
 }
 
+async function handleSapatonaPhrase(message) {
+  if (!/\bsapatonas?\b/i.test(message.content)) return false;
+
+  // Deduplicação estrita: a mesma mensagem nunca é processada duas vezes
+  if (processedSapatonaMessageIds.has(message.id)) {
+    return true;
+  }
+  processedSapatonaMessageIds.add(message.id);
+  if (processedSapatonaMessageIds.size > 500) {
+    const ids = Array.from(processedSapatonaMessageIds).slice(0, 200);
+    ids.forEach((id) => processedSapatonaMessageIds.delete(id));
+  }
+
+  // Previne execução simultânea se múltiplas chamadas assíncronas chegarem juntas
+  if (sapatonaInFlight) return true;
+
+  const now = Date.now();
+  const channelId = message.channel?.id || message.channelId;
+  const lastChannelTrigger = sapatonaChannelCooldowns.get(channelId) || 0;
+  const lastAuthorTrigger = sapatonaPhraseCooldowns.get(message.author.id) || 0;
+
+  // Se o canal ou o usuário estiverem em cooldown, aplica reação sem disparar novo GIF
+  if (now - lastChannelTrigger < CRINGE_CHANNEL_COOLDOWN_MS || now - lastAuthorTrigger < CRINGE_PHRASE_COOLDOWN_MS) {
+    if (now - lastAuthorTrigger > 4000) {
+      await message.react('🍅').catch(() => null);
+    }
+    return true;
+  }
+
+  sapatonaInFlight = true;
+  sapatonaPhraseCooldowns.set(message.author.id, now);
+  if (channelId) sapatonaChannelCooldowns.set(channelId, now);
+
+  try {
+    await message.react('🌈').catch(() => null);
+
+    const localGifPath = path.join(__dirname, 'assets', 'sapatona_small.gif');
+    if (fs.existsSync(localGifPath)) {
+      await message.reply({
+        files: [new AttachmentBuilder(localGifPath, { name: 'sapatona.gif' })]
+      }).catch(() => null);
+    } else {
+      await message.reply('https://static2.klipy.com/ii/4493325008d34b7bf8cd6813cd5c1619/94/1b/tAZCIkR3Ydv1.gif').catch(() => null);
+    }
+  } finally {
+    sapatonaInFlight = false;
+  }
+  return true;
+}
+
 function updateLiveStats() {
   try {
     const totalMembers = client.guilds.cache.reduce((acc, g) => acc + (g.memberCount || 0), 0);
@@ -692,6 +746,10 @@ client.on('messageCreate', async (message) => {
   recordUniqueUser(message.author.id);
 
   if (await handleCringePhrase(message)) {
+    return;
+  }
+
+  if (await handleSapatonaPhrase(message)) {
     return;
   }
 
