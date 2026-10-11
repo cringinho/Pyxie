@@ -434,10 +434,12 @@ export default function MuseumScene({ t }) {
           <span>{t('museum.badge')}</span>
         </div>
         <h2 className="font-title font-black text-3xl sm:text-4xl text-white tracking-tight">
-          {t('museum.title')}
+          <span className="hidden md:inline">{t('museum.title')}</span>
+          <span className="inline md:hidden">{t('museum.mobileTitle') || t('museum.title')}</span>
         </h2>
         <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mt-2">
-          {t('museum.subtitle')}
+          <span className="hidden md:inline">{t('museum.subtitle')}</span>
+          <span className="inline md:hidden">{t('museum.mobileSubtitle') || t('museum.subtitle')}</span>
         </p>
       </div>
 
