@@ -158,7 +158,7 @@ function buildGameEmbed(game, statusText, isEn = false) {
 }
 
 async function startTicTacToe(interaction, source = null) {
-  const lang = getLanguage(source);
+  const lang = getLanguage(source || interaction);
   const isEn = lang === 'en';
 
   const user = interaction.user || interaction.author;
@@ -371,7 +371,7 @@ module.exports = {
     ),
   aliases: ['tictactoe', 'velha', 'py-velha', 'jogodavelha', 'py-jogodavelha'],
   async execute(interaction, client, source = null) {
-    await startTicTacToe(interaction, source);
+    await startTicTacToe(interaction, source || interaction);
   },
   startTicTacToe,
 };

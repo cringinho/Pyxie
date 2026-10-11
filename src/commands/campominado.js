@@ -182,7 +182,7 @@ function buildStatusEmbed(game, statusMsg = null, isVictory = false, isDefeat = 
 }
 
 async function startMinesweeper(interaction, source = null) {
-  const lang = getLanguage(source);
+  const lang = getLanguage(source || interaction);
   const isEn = lang === 'en';
   const user = interaction.user || interaction.author;
   const username = user.displayName || user.username;
@@ -340,7 +340,7 @@ module.exports = {
     ),
   aliases: ['minesweeper', 'campominado', 'py-campominado', 'minas', 'py-minas'],
   async execute(interaction, client, source = null) {
-    await startMinesweeper(interaction, source);
+    await startMinesweeper(interaction, source || interaction);
   },
   startMinesweeper,
 };

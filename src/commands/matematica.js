@@ -146,7 +146,7 @@ function buildRankingEmbed(lang = 'pt') {
 }
 
 async function startMathGame(interaction, source = null) {
-  const lang = getLanguage(source);
+  const lang = getLanguage(source || interaction);
   const isEn = lang === 'en';
   const userId = interaction.user ? interaction.user.id : interaction.author.id;
   const username = interaction.user ? (interaction.user.displayName || interaction.user.username) : (interaction.author.displayName || interaction.author.username);
@@ -363,14 +363,14 @@ module.exports = {
   aliases: ['math', 'matematica', 'py-matematica', 'arcanemath'],
   async execute(interaction, client, source = null) {
     const action = interaction.options?.getString('acao') || 'jogar';
-    const lang = getLanguage(source);
+    const lang = getLanguage(source || interaction);
 
     if (action === 'ranking') {
       const embed = buildRankingEmbed(lang);
       return interaction.reply({ embeds: [embed] });
     }
 
-    await startMathGame(interaction, source);
+    await startMathGame(interaction, source || interaction);
   },
   startMathGame,
   buildRankingEmbed,

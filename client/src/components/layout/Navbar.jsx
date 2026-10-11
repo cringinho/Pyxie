@@ -14,89 +14,89 @@ export default function Navbar({ lang, setLang, t }) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#080410]/80 backdrop-blur-2xl border-b border-purple-500/15 transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full bg-[#080410]/85 backdrop-blur-2xl border-b border-purple-500/15 transition-all">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand */}
-        <a href="/" className="flex items-center gap-3 group">
+        <a href="/" className="flex items-center gap-2.5 group shrink-0">
           <div className="relative">
             <img
               src="/assets/pyxie/pyxie_pixelart_face.png"
               alt="Pyxie Mascot"
-              className="w-10 h-10 object-contain rounded-xl border border-pink-500/30 group-hover:border-pink-500/60 transition-all shadow-neon-pink"
+              className="w-9 h-9 object-contain rounded-xl border border-pink-500/30 group-hover:border-pink-500/60 transition-all shadow-neon-pink"
             />
-            <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-[#080410] animate-pulse" />
+            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#080410] animate-pulse" />
           </div>
           <div className="flex flex-col">
-            <span className="font-title font-extrabold text-xl tracking-tight text-white group-hover:text-pink-400 transition-colors">
+            <span className="font-title font-black text-lg tracking-tight text-white group-hover:text-pink-400 transition-colors leading-none">
               Pyxie
             </span>
-            <span className="text-[10px] font-mono font-medium text-purple-300/70 tracking-wider uppercase">
-              Discord.js v14
+            <span className="text-[9px] font-mono font-medium text-purple-300/70 tracking-wider uppercase mt-1">
+              v14 • Online
             </span>
           </div>
         </a>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1.5 lg:gap-2">
+        <nav className="hidden md:flex items-center gap-1 xl:gap-2 overflow-x-auto scrollbar-none">
           <a
             href={`/?lang=${lang}#pilares`}
-            className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
           >
             {t('nav.features')}
           </a>
           <a
             href={`/?lang=${lang}#comandos`}
-            className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
+            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
           >
-            <Terminal className="w-3.5 h-3.5 text-pink-400" />
-            {t('nav.commands')}
+            <Terminal className="w-3.5 h-3.5 text-pink-400 shrink-0" />
+            <span>{t('nav.commands')}</span>
           </a>
           <a
             href={`/wiki?lang=${lang}`}
-            className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
+            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
           >
-            <BookOpen className="w-3.5 h-3.5 text-purple-400" />
-            {t('nav.wiki')}
+            <BookOpen className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+            <span>{t('nav.wiki')}</span>
           </a>
           <a
             href={`/museu?lang=${lang}`}
-            className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
+            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
           >
-            <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-            {t('nav.museum')}
+            <Sparkles className="w-3.5 h-3.5 text-pink-400 shrink-0" />
+            <span>{t('nav.museum')}</span>
           </a>
           <a
             href={`/bonus?lang=${lang}`}
-            className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
+            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
           >
-            <Gift className="w-3.5 h-3.5 text-amber-400" />
-            {t('nav.bonus')}
-            <span className="ml-1 text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">
+            <Gift className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span>{t('nav.bonus')}</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">
               10s
             </span>
           </a>
           <a
             href={`/parcerias?lang=${lang}`}
-            className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
+            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            {t('nav.partnerships')}
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span>{t('nav.partnerships')}</span>
           </a>
           <a
             href="/discord"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
           >
             {t('nav.support')}
           </a>
         </nav>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 shrink-0">
           <button
             onClick={toggleLang}
-            className="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-300 bg-white/5 hover:bg-white/10 border border-purple-500/20 hover:border-purple-500/40 transition-all flex items-center gap-1.5"
+            className="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-300 bg-white/5 hover:bg-white/10 border border-purple-500/20 hover:border-purple-500/40 transition-all flex items-center gap-1.5 whitespace-nowrap"
             title="Switch Language / Alternar Idioma"
           >
             <Globe className="w-3.5 h-3.5 text-pink-400" />
@@ -107,9 +107,9 @@ export default function Navbar({ lang, setLang, t }) {
             href="/invite"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-neon-pink transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-neon-pink transition-all transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap"
           >
-            <Sparkles className="w-4 h-4 text-pink-200" />
+            <Sparkles className="w-3.5 h-3.5 text-pink-200" />
             <span>{t('nav.invite')}</span>
           </a>
 

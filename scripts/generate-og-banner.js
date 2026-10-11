@@ -121,7 +121,7 @@ async function generateOgBanner() {
   // Subtitle
   ctx.fillStyle = '#cbd5e1';
   ctx.font = '600 22px sans-serif';
-  ctx.fillText('Economia Viva • 16 Carreiras • 78 Arcanos de Tarot', 70, 225);
+  ctx.fillText('Economia Viva • 22 Carreiras • 78 Arcanos de Tarot', 70, 225);
 
   // Slogan box
   ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
@@ -140,7 +140,7 @@ async function generateOgBanner() {
 
   // Catchy pills below slogan with vector spark stars (100% immune to OS font missing glyphs)
   const pills = [
-    { text: '16 Profissões & Minigames', width: 220, x: 70 },
+    { text: '22 Profissões & Minigames', width: 220, x: 70 },
     { text: '78 Cartas de Tarot', width: 175, x: 305 },
     { text: 'Economia Viva & Cofre', width: 195, x: 495 }
   ];

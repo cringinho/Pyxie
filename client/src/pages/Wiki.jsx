@@ -129,8 +129,8 @@ export default function Wiki({ t, lang }) {
         </h1>
         <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
           {isEn
-            ? 'Explore deep documentation for Pyxie: live economy, 16 careers, 78 Tarot Arcana, marriage dynamics and command catalog.'
-            : 'Explore explicações detalhadas sobre a economia mágica, 16 vocações profissionais, o oráculo de tarot dos 78 arcanos, matrimônio e comandos oficiais.'}
+            ? 'Explore deep documentation for Pyxie: live economy, 22 vocations, 78 Tarot Arcana, marriage dynamics and command catalog.'
+            : 'Explore explicações detalhadas sobre a economia mágica, 22 vocações profissionais, o oráculo de tarot dos 78 arcanos, matrimônio e comandos oficiais.'}
         </p>
 
         {/* Quick Highlights Chips */}
@@ -139,7 +139,7 @@ export default function Wiki({ t, lang }) {
             <Sparkles className="w-3 h-3" /> 78 Arcanos em HD
           </span>
           <span className="px-3 py-1 rounded-xl bg-white/5 border border-purple-500/20 text-xs font-mono text-purple-300 flex items-center gap-1.5">
-            <Briefcase className="w-3 h-3" /> 16 Vocações Únicas
+            <Briefcase className="w-3 h-3" /> 22 Vocações Únicas
           </span>
           <span className="px-3 py-1 rounded-xl bg-white/5 border border-purple-500/20 text-xs font-mono text-emerald-300 flex items-center gap-1.5">
             <Shield className="w-3 h-3" /> 100% Gratuita & Segura
@@ -316,7 +316,7 @@ export default function Wiki({ t, lang }) {
                     <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">Capítulo 03</span>
                   </div>
                   <h4 className="font-title font-bold text-white text-base group-hover:text-purple-300 transition-colors">
-                    {isEn ? '16 Vocations & Work' : '16 Vocações & Trabalho'}
+                    {isEn ? '22 Vocations & Work' : '22 Vocações & Trabalho'}
                   </h4>
                   <p className="text-xs text-slate-300 mt-1 leading-relaxed">
                     {isEn ? 'Clock in every 3h, solve 45s thematic challenges, earn XP and senior promotions.' : 'Turnos de 3 horas com minigames técnicos de 45 segundos, XP e promoções.'}
@@ -507,43 +507,56 @@ export default function Wiki({ t, lang }) {
               </div>
               <div>
                 <h2 className="font-title font-extrabold text-2xl sm:text-3xl text-white">
-                  {isEn ? '16 Unique Vocations & 45s Technical Minigames' : '16 Carreiras Únicas & Minigames de 45s'}
+                  {isEn ? '22 Unique Vocations & 45s Technical Minigames' : '22 Carreiras Únicas & Minigames de 45s'}
                 </h2>
                 <p className="text-slate-400 text-xs sm:text-sm">
-                  {isEn ? 'Interactive questions every 3 hours, career promotions and XP' : 'Perguntas técnicas a cada 3h, hierarquia salarial e XP'}
+                  {isEn ? '16 standard careers & 6 bean-unlocked magic vocations' : '16 profissões comuns e 6 vocações mágicas arcanas'}
                 </p>
               </div>
             </div>
 
             <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
               {isEn
-                ? 'Every 3 hours, you can clock in with /py-work. Each of the 16 careers features a custom thematic challenge with 45-second timer. Correct choices grant bonuses, XP, and unlock senior promotions with higher salaries!'
-                : 'A cada 3 horas você pode bater ponto com o comando /py-work. Cada uma das 16 vocações possui desafios técnicos imersivos com cronômetro de 45 segundos. Acertos perfeitos garantem bônus salariais, XP de carreira e abrem caminho para promoções de alto nível!'}
+                ? 'Every 3 hours, you can clock in with /py-work. Each of the 22 vocations features custom thematic challenges with 45-second timers. Correct choices grant bonuses, XP, and unlock senior promotions with higher salaries! You can also unlock 6 mystical professions using rare Magic Beans.'
+                : 'A cada 3 horas você pode bater ponto com o comando /py-work. Cada uma das 22 vocações possui desafios técnicos imersivos com cronômetro de 45 segundos. Acertos perfeitos garantem bônus salariais, XP de carreira e abrem caminho para promoções de alto nível! Além das 16 comuns, há 6 vocações mágicas desbloqueadas com Feijões Mágicos.'}
             </p>
 
             {/* List of Careers */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2.5 pt-2">
               {[
-                { name: 'Alquimista Místico', icon: '🧪', desc: 'Poções & Transmutação' },
-                { name: 'Guarda da Penumbra', icon: '🛡️', desc: 'Defesa & Sentinela' },
-                { name: 'Bibliotecário Astral', icon: '📜', desc: 'Grimórios & Histórias' },
-                { name: 'Ferreiro Rúnico', icon: '⚒️', desc: 'Forja & Runas Arcanas' },
-                { name: 'Chef Confeiteiro', icon: '🧁', desc: 'Doces & Encantamentos' },
-                { name: 'Herbalista Fada', icon: '🌿', desc: 'Plantas Raras & Ervas' },
-                { name: 'Astrólogo Cósmico', icon: '🔭', desc: 'Constelações & Mapas' },
-                { name: 'Detetive Arcano', icon: '🔍', desc: 'Enigmas & Mistérios' },
-                { name: 'Domador de Sombras', icon: '🦇', desc: 'Familires & Morcegos' },
-                { name: 'Bardo Encantado', icon: '🪕', desc: 'Canções & Lendas' },
-                { name: 'Necromante Amigável', icon: '💀', desc: 'Almas & Crânios Fofos' },
-                { name: 'Navegador Estelar', icon: '🌌', desc: 'Rotas pelo Espaço' },
-                { name: 'Costureiro Gótico', icon: '🧵', desc: 'Roupas Punk & Fitas' },
-                { name: 'Mercador Nômade', icon: '🪙', desc: 'Trocas & Negócios' },
-                { name: 'Cultivador de Cristais', icon: '💎', desc: 'Gemas de Mana' },
-                { name: 'Guardião de Portais', icon: '🌀', desc: 'Fendas Dimensionais' },
+                { name: 'Programador(a)', icon: '💻', desc: 'Sistemas & Bugs' },
+                { name: 'Cozinheiro(a)', icon: '🍳', desc: 'Pratos & Temperos' },
+                { name: 'Professor(a)', icon: '📚', desc: 'Aulas & Ensino' },
+                { name: 'Médico(a)', icon: '🩺', desc: 'Saúde & Diagnósticos' },
+                { name: 'Agricultor(a)', icon: '🌾', desc: 'Safras & Terra' },
+                { name: 'Músico(a)', icon: '🎵', desc: 'Melodias & Acordes' },
+                { name: 'Fotógrafo(a)', icon: '📷', desc: 'Foco & Luz' },
+                { name: 'Mecânico(a)', icon: '🔧', desc: 'Motores & Peças' },
+                { name: 'Vendedor(a)', icon: '🏷️', desc: 'Metas & Negócios' },
+                { name: 'Artista', icon: '🎨', desc: 'Pintura & Telas' },
+                { name: 'Dublador(a)', icon: '🎙️', desc: 'Voz & Personagens' },
+                { name: 'Dev de Jogos', icon: '🎮', desc: 'Física & Engines' },
+                { name: 'Psicólogo(a)', icon: '🧠', desc: 'Escuta & Empatia' },
+                { name: 'Telemarketing', icon: '🎧', desc: 'SAC & Chamadas' },
+                { name: 'Animador de Festa', icon: '🎈', desc: 'Recreação & Alegria' },
+                { name: 'Advogado(a)', icon: '⚖️', desc: 'Leis & Processos' },
+                { name: 'Alquimista ✨', icon: '🧪', desc: 'Poções & Transmutação', isMagic: true },
+                { name: 'Mago(a) ✨', icon: '🔮', desc: 'Mana & Encantamento', isMagic: true },
+                { name: 'Ferreiro(a) ✨', icon: '⚒️', desc: 'Forja & Aço Lendário', isMagic: true },
+                { name: 'Rei / Rainha ✨', icon: '👑', desc: 'Coroa & Diplomacia', isMagic: true },
+                { name: 'Domador de Feras ✨', icon: '🐉', desc: 'Dragões & Instinto', isMagic: true },
+                { name: 'Anti-Vegetais ✨', icon: '🍆', desc: 'Ódio a Legumes & Caos', isMagic: true },
               ].map((job, idx) => (
-                <div key={idx} className="p-3 rounded-2xl bg-white/5 border border-purple-500/15 hover:border-pink-500/30 transition-all">
-                  <span className="text-xl">{job.icon}</span>
-                  <div className="font-title font-bold text-xs text-white mt-1">{job.name}</div>
+                <div
+                  key={idx}
+                  className={`p-2.5 rounded-xl border transition-all ${
+                    job.isMagic
+                      ? 'bg-gradient-to-b from-purple-900/30 to-pink-900/20 border-pink-500/40 hover:border-pink-400'
+                      : 'bg-white/5 border-purple-500/15 hover:border-purple-500/35'
+                  }`}
+                >
+                  <span className="text-lg">{job.icon}</span>
+                  <div className="font-title font-bold text-xs text-white mt-1 truncate">{job.name}</div>
                   <div className="text-[10px] text-slate-400 truncate">{job.desc}</div>
                 </div>
               ))}

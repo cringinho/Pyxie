@@ -11,16 +11,16 @@ const SEO_CONFIG = {
     canonical: 'https://pyxie.com.br/',
     pt: {
       title: 'Pyxie • A Fada Companheira do seu Servidor no Discord',
-      description: 'Pyxie é a fada mágica para o seu servidor Discord: Economia Viva com moedinhas e feijões, Tarot dos 78 Arcanos em Canvas, 16 Carreiras e Dinâmica Social completa.',
+      description: 'Pyxie é a fada mágica para o seu servidor Discord: Economia Viva com moedinhas e feijões, Tarot dos 78 Arcanos em Canvas, 22 Carreiras e Dinâmica Social completa.',
       ogTitle: 'Pyxie • A Fada Companheira do seu Servidor no Discord',
-      ogDesc: 'Economia Viva com moedinhas e feijões mágicos, 16 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord.',
+      ogDesc: 'Economia Viva com moedinhas e feijões mágicos, 22 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord.',
       locale: 'pt_BR'
     },
     en: {
       title: 'Pyxie • The Companion Fairy for Your Discord Server',
-      description: 'Pyxie is the magical companion fairy for your Discord server: Living Economy with coins & beans, 78 Tarot Arcana in Canvas, 16 Careers, and rich Social Dynamics.',
+      description: 'Pyxie is the magical companion fairy for your Discord server: Living Economy with coins & beans, 78 Tarot Arcana in Canvas, 22 Careers, and rich Social Dynamics.',
       ogTitle: 'Pyxie • The Companion Fairy for Your Discord Server',
-      ogDesc: 'Living Economy with magic coins and beans, 16 interactive job careers, 78 Tarot cards with dynamic Canvas art, and rich community games for your Discord server.',
+      ogDesc: 'Living Economy with magic coins and beans, 22 interactive job careers, 78 Tarot cards with dynamic Canvas art, and rich community games for your Discord server.',
       locale: 'en_US'
     }
   },
@@ -47,16 +47,16 @@ const SEO_CONFIG = {
     canonical: 'https://pyxie.com.br/wiki',
     pt: {
       title: 'Wiki & Enciclopédia Oficial • Pyxie & Cringelândia',
-      description: 'Enciclopédia e Guia da Comunidade da Pyxie e Cringelândia. Conheça o santuário para mentes neurodivergentes, economia viva, 78 cartas de tarot, 16 carreiras e minigames.',
+      description: 'Enciclopédia e Guia da Comunidade da Pyxie e Cringelândia. Conheça o santuário para mentes neurodivergentes, economia viva, 78 cartas de tarot, 22 carreiras e minigames.',
       ogTitle: 'Wiki & Enciclopédia Oficial • Pyxie & Cringelândia',
-      ogDesc: 'Enciclopédia e Guia da Comunidade da Pyxie e Cringelândia. Conheça o santuário para mentes neurodivergentes, economia viva, 78 cartas de tarot, 16 carreiras e minigames.',
+      ogDesc: 'Enciclopédia e Guia da Comunidade da Pyxie e Cringelândia. Conheça o santuário para mentes neurodivergentes, economia viva, 78 cartas de tarot, 22 carreiras e minigames.',
       locale: 'pt_BR'
     },
     en: {
       title: 'Official Wiki & Encyclopedia • Pyxie & Cringelândia',
-      description: 'Official documentation and community guide for Pyxie Discord Bot. Explore the neurodivergent sanctuary, dynamic economy, 78 tarot cards, 16 careers, and minigames.',
+      description: 'Official documentation and community guide for Pyxie Discord Bot. Explore the neurodivergent sanctuary, dynamic economy, 78 tarot cards, 22 careers, and minigames.',
       ogTitle: 'Official Wiki & Documentation • Pyxie & Cringelândia',
-      ogDesc: 'Complete guide for Pyxie Discord Bot features, live economy, 78 tarot cards, 16 careers, and interactive community minigames.',
+      ogDesc: 'Complete guide for Pyxie Discord Bot features, live economy, 78 tarot cards, 22 careers, and interactive community minigames.',
       locale: 'en_US'
     }
   },
