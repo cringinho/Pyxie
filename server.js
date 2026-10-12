@@ -22,7 +22,7 @@ const moduleManager = require('./src/services/moduleManager');
 const { serveLocalizedPage } = require('./src/utils/seoRenderer');
 const { renderTarotCard } = require('./src/services/tarotRenderer');
 const tarotCardsList = require('./src/data/tarot.json');
-const { generateRssXml, generateAtomXml, generateJsonFeed, getDailyTarotCard } = require('./src/services/feedGenerator');
+const { generateRssXml, generateAtomXml, generateJsonFeed, generatePinterestRssXml, getDailyTarotCard } = require('./src/services/feedGenerator');
 const { autoSubmitAllUrls } = require('./src/services/indexNowService');
 const { getUserAccount } = require('./src/services/economy');
 const tarotAlbumService = require('./src/services/tarotAlbumService');
@@ -603,6 +603,14 @@ app.get('/feed.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json; charset=UTF-8');
   res.setHeader('Cache-Control', 'public, max-age=3600');
   res.json(generateJsonFeed(lang));
+});
+
+// Feed RSS dedicado para o Pinterest com as artes do museu e watermark persistente
+app.get(['/rss-pinterest.xml', '/pinterest.xml', '/feed-pinterest.xml', '/museu/rss.xml'], (req, res) => {
+  const lang = (req.query.lang === 'en') ? 'en' : 'pt';
+  res.setHeader('Content-Type', 'application/rss+xml; charset=UTF-8');
+  res.setHeader('Cache-Control', 'public, max-age=1800');
+  res.send(generatePinterestRssXml(lang));
 });
 
 // APIs do Oráculo de Tarot & Imagens Renderizadas para Pinterest e Redes Sociais

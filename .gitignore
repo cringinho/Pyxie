@@ -12,6 +12,7 @@ minhasnote/
 prefix.json
 public/uploads/*
 !public/uploads/.gitkeep
+data/museumWatermarks/
 
 # Outros aplicativos e projetos isolados
 meus outros app/

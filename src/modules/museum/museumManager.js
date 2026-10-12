@@ -18,6 +18,16 @@ function safeEqual(a, b) {
   return x.length === y.length && crypto.timingSafeEqual(x, y);
 }
 
+function getWatermarksDir() {
+  const dir = path.join(process.cwd(), 'data', 'museumWatermarks');
+  if (!fs.existsSync(dir)) {
+    try {
+      fs.mkdirSync(dir, { recursive: true });
+    } catch (_) {}
+  }
+  return dir;
+}
+
 class MuseumManager {
   constructor() {
     this.client = null;
@@ -340,13 +350,39 @@ class MuseumManager {
   /**
    * Honeypot de Marca d'Água: Carimba a assinatura indelével do ecossistema
    * "✦ Pyxie • Galeria Oficial da Comunidade • https://pyxie.com.br/"
-   * em tempo de execução via Sharp antes de servir a imagem.
+   * em tempo de execução via Sharp e persiste no disco para o Pinterest e feeds permanentes.
    */
   async getWatermarkedImage(art) {
-    if (!art) return null;
+    if (!art || !art.id) return null;
+    const watermarksDir = getWatermarksDir();
+    const diskPath = path.join(watermarksDir, `${art.id}.webp`);
+
+    // 1. Memória RAM (Mais rápido)
     const cached = this.watermarkCache.get(art.id);
-    if (cached && Date.now() - cached.at < 30 * 60 * 1000) {
+    if (cached && Date.now() - cached.at < 60 * 60 * 1000) {
       return cached;
+    }
+
+    // 2. Persistência em Disco (Sobrevive a reinicializações e previne expiração de links CDN do Discord)
+    if (fs.existsSync(diskPath)) {
+      try {
+        const diskBuffer = fs.readFileSync(diskPath);
+        if (diskBuffer && diskBuffer.length > 500) {
+          const result = {
+            buffer: diskBuffer,
+            contentType: 'image/webp',
+            at: Date.now(),
+          };
+          if (this.watermarkCache.size >= 300) {
+            const firstKey = this.watermarkCache.keys().next().value;
+            if (firstKey) this.watermarkCache.delete(firstKey);
+          }
+          this.watermarkCache.set(art.id, result);
+          return result;
+        }
+      } catch (readErr) {
+        console.warn(`[Museum] Erro ao ler marca d'água em disco (${art.id}):`, readErr.message);
+      }
     }
 
     try {
@@ -384,7 +420,7 @@ class MuseumManager {
 
       const metadata = await sharp(inputBuffer).metadata();
 
-      // GIFs animados: preserva sem achatar frames
+      // GIFs animados: preserva sem achatar frames caso não seja solicitado webp
       if (metadata.format === 'gif' && metadata.pages && metadata.pages > 1) {
         return { redirectUrl: url };
       }
@@ -418,6 +454,13 @@ class MuseumManager {
         .webp({ quality: 88 })
         .toBuffer();
 
+      // Persistência Atômica em Disco: salva de forma indelével
+      try {
+        fs.writeFileSync(diskPath, watermarked);
+      } catch (saveErr) {
+        console.warn(`[Museum] Não foi possível persistir marca d'água no disco (${art.id}):`, saveErr.message);
+      }
+
       if (this.watermarkCache.size >= 300) {
         const firstKey = this.watermarkCache.keys().next().value;
         if (firstKey) this.watermarkCache.delete(firstKey);
@@ -434,6 +477,67 @@ class MuseumManager {
       console.warn(`[Museum] Erro ao carimbar imagem da arte ${art.id}:`, err.message);
       return null;
     }
+  }
+
+  /**
+   * Lista síncrona simplificada de artes para consumo em feeds e páginas públicas
+   */
+  listArts(page = 1, limit = 24) {
+    this.refresh();
+    const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 24, 1), PAGE_LIMIT_MAX);
+    const totalPages = Math.max(1, Math.ceil(this.data.arts.length / safeLimit));
+    const safePage = Math.min(Math.max(parseInt(page, 10) || 1, 1), totalPages);
+    const slice = this.data.arts.slice((safePage - 1) * safeLimit, safePage * safeLimit);
+    const arts = slice.map((art) => {
+      const author = art.cachedAuthor || art.authorUsername || 'Artista';
+      const cleanDesc = (art.description || '').trim();
+      const title = cleanDesc ? cleanDesc.slice(0, 80) : `Obra de ${author}`;
+      return {
+        id: art.id,
+        title,
+        description: cleanDesc,
+        author,
+        authorName: author,
+        authorUsername: art.authorUsername || author,
+        userId: art.userId,
+        createdAt: art.createdAt,
+        submittedAt: art.createdAt,
+        timestamp: art.createdAt,
+        category: 'Fanart',
+        url: `/api/museum/art-image/${encodeURIComponent(art.id)}.webp`,
+        imageUrl: `/api/museum/art-image/${encodeURIComponent(art.id)}.webp`,
+      };
+    });
+    return { arts, page: safePage, totalPages, total: this.data.arts.length };
+  }
+
+  /**
+   * Retorna até N artes catalogadas para geração de feeds ricos (ex: Pinterest RSS)
+   */
+  getAllArts(limit = 100) {
+    this.refresh();
+    const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 100, 1), 500);
+    const slice = this.data.arts.slice(0, safeLimit);
+    return slice.map((art) => {
+      const author = art.cachedAuthor || art.authorUsername || 'Artista';
+      const cleanDesc = (art.description || '').trim();
+      const title = cleanDesc ? cleanDesc.slice(0, 80) : `Obra de ${author}`;
+      return {
+        id: art.id,
+        title,
+        description: cleanDesc,
+        author,
+        authorName: author,
+        authorUsername: art.authorUsername || author,
+        userId: art.userId,
+        createdAt: art.createdAt,
+        submittedAt: art.createdAt,
+        timestamp: art.createdAt,
+        category: 'Fanart',
+        url: `/api/museum/art-image/${encodeURIComponent(art.id)}.webp`,
+        imageUrl: `/api/museum/art-image/${encodeURIComponent(art.id)}.webp`,
+      };
+    });
   }
 
   async getArtPage({ userId = null, page = 1, limit = 24 } = {}) {
@@ -457,8 +561,8 @@ class MuseumManager {
           authorUsername: authorUsername,
           description: art.description,
           createdAt: art.createdAt,
-          // Imagem sempre passa pela rota que renova o token do CDN
-          imageUrl: `/api/museum/art-image/${encodeURIComponent(art.id)}`,
+          // Imagem passa pela rota persistente com extensão .webp
+          imageUrl: `/api/museum/art-image/${encodeURIComponent(art.id)}.webp`,
         };
       })
     );
@@ -486,6 +590,12 @@ class MuseumManager {
     if (this.data.arts.length === prev) return false;
     this.urlCache.delete(artId);
     this.watermarkCache.delete(artId);
+    try {
+      const diskPath = path.join(getWatermarksDir(), `${artId}.webp`);
+      if (fs.existsSync(diskPath)) {
+        fs.unlinkSync(diskPath);
+      }
+    } catch (_) {}
     this.saveData();
     return true;
   }
@@ -522,16 +632,18 @@ class MuseumManager {
       }
     });
 
-    app.get('/api/museum/art-image/:id', async (req, res) => {
+    app.get(['/api/museum/art-image/:id', '/api/museum/art-image/:id.:ext'], async (req, res) => {
       this.refresh();
-      const art = this.data.arts.find((a) => a.id === req.params.id);
+      const rawId = req.params.id || '';
+      const cleanId = rawId.replace(/\.(webp|png|jpe?g)$/i, '');
+      const art = this.data.arts.find((a) => a.id === cleanId);
       if (!art) return res.status(404).end();
 
       const result = await this.getWatermarkedImage(art);
       if (result && result.buffer) {
         res.set({
-          'Content-Type': result.contentType,
-          'Cache-Control': 'public, max-age=1800, stale-while-revalidate=3600',
+          'Content-Type': result.contentType || 'image/webp',
+          'Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400',
           'X-Content-Source': 'Pyxie Community Gallery (https://pyxie.com.br/)',
         });
         return res.send(result.buffer);

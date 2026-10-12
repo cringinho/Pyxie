@@ -46,6 +46,25 @@ function escapeXml(unsafe) {
 }
 
 /**
+ * Sanitiza menções e emojis específicos do Discord para apresentação externa limpa
+ */
+function sanitizeDiscordText(text) {
+  if (typeof text !== 'string') return '';
+  return text
+    // Remove menções de usuários <@123> ou <@!123>
+    .replace(/<@!?\d+>/g, '')
+    // Remove menções de cargos <@&123>
+    .replace(/<@&\d+>/g, '')
+    // Remove menções de canais <#123>
+    .replace(/<#\d+>/g, '')
+    // Remove emojis customizados do Discord <:nome:123> ou <a:nome:123>
+    .replace(/<a?:([a-zA-Z0-9_~]+):\d+>/g, '')
+    // Remove múltiplos espaços e quebras de linha redundantes
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
  * Coleta os itens mais relevantes e dinâmicos para o feed público
  */
 function getFeedItems(lang = 'pt') {
@@ -83,17 +102,19 @@ function getFeedItems(lang = 'pt') {
     const artsResult = museumManager.listArts(1, 4);
     if (artsResult && artsResult.arts && artsResult.arts.length > 0) {
       artsResult.arts.forEach((art) => {
+        const cleanDesc = sanitizeDiscordText(art.description);
+        const artTitle = cleanDesc.length >= 3
+          ? (isEn ? `🎨 Community Artwork: ${cleanDesc.slice(0, 45)} by ${art.author}` : `🎨 Arte da Comunidade: ${cleanDesc.slice(0, 45)} por ${art.author}`)
+          : (isEn ? `🎨 Community Artwork by ${art.author}` : `🎨 Arte da Comunidade por ${art.author}`);
         items.push({
-          title: isEn
-            ? `🎨 Community Artwork: ${art.title || 'Creative Lore'} by ${art.author || 'Member'}`
-            : `🎨 Arte da Comunidade: ${art.title || 'Criação da Comunidade'} por ${art.author || 'Membro'}`,
+          title: artTitle,
           link: `${SITE_URL}/museu?art=${art.id}&utm_source=rss_museum&lang=${lang}`,
           guid: `museum-art-${art.id}`,
           pubDate: new Date(art.submittedAt || art.timestamp || Date.now() - 3600000).toUTCString(),
           description: isEn
-            ? `Original artwork displayed at the Pyxie Community Museum. Author: ${art.author || 'Artist'}. Category: ${art.category || 'Fanart'}. Visit the full interactive art gallery on Pyxie.`
-            : `Obra original em exibição no Museu de Criações da Pyxie. Autor: ${art.author || 'Artista'}. Categoria: ${art.category || 'Fanart'}. Conheça o acervo completo da comunidade.`,
-          imageUrl: art.url || `${SITE_URL}/assets/pyxie/pyxie_mascot.png`,
+            ? `Original artwork displayed at the Pyxie Community Museum. Author: ${art.author}. ${cleanDesc ? `"${cleanDesc}". ` : ''}Visit the full interactive art gallery on Pyxie.`
+            : `Obra original em exibição no Museu de Criações da Pyxie. Autor: ${art.author}. ${cleanDesc ? `"${cleanDesc}". ` : ''}Conheça o acervo completo da comunidade.`,
+          imageUrl: `${SITE_URL}/api/museum/art-image/${encodeURIComponent(art.id)}.webp`,
           category: isEn ? 'Community Art' : 'Arte Comunitária',
         });
       });
@@ -247,10 +268,131 @@ function generateJsonFeed(lang = 'pt') {
   };
 }
 
+/**
+ * Gera Feed RSS 2.0 dedicado e otimizado para o Pinterest com as artes do Museu da Comunidade
+ * Inclui namespaces de rich media (<enclosure>, <media:content>, <content:encoded>, <dc:creator>)
+ * e URLs com marca d'água persistente queimada em disco (.webp).
+ */
+function generatePinterestRssXml(lang = 'pt') {
+  const isEn = lang === 'en';
+  const title = isEn
+    ? 'Pyxie Community Art Museum • Official Gallery (Pinterest Feed)'
+    : 'Museu de Artes da Comunidade Pyxie • Galeria Oficial (Feed Pinterest)';
+  const desc = isEn
+    ? 'Official high-resolution Pinterest RSS feed for Pyxie Community Museum. Artworks, fanarts, and illustrations with persistent watermark and creator attribution.'
+    : 'Feed RSS oficial para o Pinterest com o acervo em alta resolução do Museu de Criações da Pyxie & Cringelândia. Fanarts e ilustrações com marca d\'água permanente e créditos aos artistas.';
+  const feedUrl = `${SITE_URL}/rss-pinterest.xml${isEn ? '?lang=en' : ''}`;
+  const siteUrl = `${SITE_URL}/museu${isEn ? '?lang=en' : ''}`;
+
+  const allArts = museumManager.getAllArts(100);
+  let itemsXml = '';
+
+  if (!allArts || allArts.length === 0) {
+    const welcomeTitle = isEn
+      ? '🎨 Pyxie Community Museum • Creative Showcase'
+      : '🎨 Museu da Comunidade Pyxie • Galeria Criativa';
+    const welcomeDesc = isEn
+      ? 'Permanent showcase of artworks, illustrations, and fanarts created by the Discord community. Visit Pyxie\'s official interactive museum.'
+      : 'Acervo permanente de ilustrações, fanarts e criações visuais da comunidade do Discord. Acesse a galeria interativa oficial da Pyxie.';
+    const welcomeImg = `${SITE_URL}/assets/pyxie/pyxie_mascot.png`;
+
+    itemsXml = `
+    <item>
+      <title>${escapeXml(welcomeTitle)}</title>
+      <link>${escapeXml(siteUrl)}</link>
+      <guid isPermaLink="false">museum-showcase-welcome</guid>
+      <pubDate>${new Date().toUTCString()}</pubDate>
+      <dc:creator>Pyxie Team</dc:creator>
+      <category>${escapeXml(isEn ? 'Community Art' : 'Arte Comunitária')}</category>
+      <description><![CDATA[${welcomeDesc}]]></description>
+      <content:encoded><![CDATA[
+        <p><img src="${welcomeImg}" alt="${escapeXml(welcomeTitle)}" /></p>
+        <p>${welcomeDesc}</p>
+        <p><a href="${siteUrl}">${isEn ? 'Visit the Pyxie Museum' : 'Visitar o Museu da Pyxie'}</a></p>
+      ]]></content:encoded>
+      <enclosure url="${escapeXml(welcomeImg)}" type="image/png" length="150000" />
+      <media:content url="${escapeXml(welcomeImg)}" medium="image" type="image/png" width="1200">
+        <media:title>${escapeXml(welcomeTitle)}</media:title>
+        <media:description>${escapeXml(welcomeDesc)}</media:description>
+        <media:credit role="author">Pyxie Team</media:credit>
+      </media:content>
+    </item>`;
+  } else {
+    itemsXml = allArts.map((art) => {
+      const author = art.author || (isEn ? 'Community Artist' : 'Artista da Comunidade');
+      const cleanDesc = sanitizeDiscordText(art.description);
+      const artTitle = cleanDesc.length >= 3
+        ? (isEn ? `🎨 ${cleanDesc.slice(0, 65)} — by ${author} • Pyxie Gallery` : `🎨 ${cleanDesc.slice(0, 65)} — por ${author} • Museu Pyxie`)
+        : (isEn ? `🎨 Artwork by ${author} • Pyxie Community Museum` : `🎨 Obra de ${author} • Museu da Comunidade Pyxie`);
+
+      const pinDesc = cleanDesc.length >= 3
+        ? (isEn
+          ? `"${cleanDesc}" — Artwork created by ${author} in the Pyxie & Cringelândia Discord community. Explore the full gallery with community fanarts and creations at the Official Museum.`
+          : `"${cleanDesc}" — Obra criada por ${author} na comunidade da Pyxie & Cringelândia. Conheça a galeria completa no Museu Oficial da Pyxie.`)
+        : (isEn
+          ? `Original artwork created by ${author} in the Pyxie community. Discover the full Community Museum gallery at https://pyxie.com.br/museu.`
+          : `Ilustração original criada por ${author} na comunidade da Pyxie. Descubra o acervo completo da galeria em https://pyxie.com.br/museu.`);
+
+      const artLink = `${SITE_URL}/museu?art=${encodeURIComponent(art.id)}&utm_source=pinterest_rss&utm_medium=social&utm_campaign=museum_art${isEn ? '&lang=en' : ''}`;
+      const imageUrl = `${SITE_URL}/api/museum/art-image/${encodeURIComponent(art.id)}.webp`;
+      const pubDate = new Date(art.createdAt || art.submittedAt || Date.now()).toUTCString();
+
+      return `
+    <item>
+      <title>${escapeXml(artTitle)}</title>
+      <link>${escapeXml(artLink)}</link>
+      <guid isPermaLink="false">museum-art-${escapeXml(art.id)}</guid>
+      <pubDate>${pubDate}</pubDate>
+      <dc:creator>${escapeXml(author)}</dc:creator>
+      <category>${escapeXml(isEn ? 'Digital Art' : 'Arte Digital')}</category>
+      <description><![CDATA[${pinDesc}]]></description>
+      <content:encoded><![CDATA[
+        <p><img src="${escapeXml(imageUrl)}" alt="${escapeXml(artTitle)}" /></p>
+        <p>${pinDesc}</p>
+        <p>✦ <strong>${isEn ? 'Artist' : 'Artista'}:</strong> ${escapeXml(author)} | <a href="${escapeXml(artLink)}">${isEn ? 'View in Pyxie Community Gallery' : 'Ver na Galeria da Comunidade'}</a></p>
+        <p><small>✦ Pyxie • Galeria Oficial da Comunidade • <a href="https://pyxie.com.br/">https://pyxie.com.br/</a></small></p>
+      ]]></content:encoded>
+      <enclosure url="${escapeXml(imageUrl)}" type="image/webp" length="250000" />
+      <media:content url="${escapeXml(imageUrl)}" medium="image" type="image/webp" width="1200">
+        <media:title>${escapeXml(artTitle)}</media:title>
+        <media:description>${escapeXml(pinDesc)}</media:description>
+        <media:credit role="author">${escapeXml(author)}</media:credit>
+      </media:content>
+    </item>`;
+    }).join('');
+  }
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>${escapeXml(title)}</title>
+    <link>${escapeXml(siteUrl)}</link>
+    <description>${escapeXml(desc)}</description>
+    <language>${isEn ? 'en-US' : 'pt-BR'}</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <atom:link href="${escapeXml(feedUrl)}" rel="self" type="application/rss+xml" />
+    <image>
+      <url>${SITE_URL}/assets/pyxie/pyxie_mascot.png</url>
+      <title>${escapeXml(title)}</title>
+      <link>${escapeXml(siteUrl)}</link>
+    </image>
+    ${itemsXml}
+  </channel>
+</rss>`;
+}
+
 module.exports = {
   getDailyTarotCard,
   getFeedItems,
   generateRssXml,
   generateAtomXml,
   generateJsonFeed,
+  generatePinterestRssXml,
+  sanitizeDiscordText,
 };
+

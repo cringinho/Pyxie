@@ -16,6 +16,7 @@ const museumManager = require(path.join(repo, 'src/modules/museum/museumManager'
 const museumModule = require(path.join(repo, 'src/modules/museum'));
 const partnershipsModule = require(path.join(repo, 'src/modules/partnerships'));
 const { COMMAND_CATEGORY_MAP } = require(path.join(repo, 'src/commands/commandHelpers'));
+const { generatePinterestRssXml, sanitizeDiscordText } = require(path.join(repo, 'src/services/feedGenerator'));
 
 (async () => {
   // 1. Esquemas: 9 categorias, limites do Discord, pares PT/EN
@@ -202,13 +203,14 @@ const { COMMAND_CATEGORY_MAP } = require(path.join(repo, 'src/commands/commandHe
   }
   console.log('  ✅ 10. Obrigatoriedade de README.md em 100% dos módulos validada.');
 
-  // 11. Validação do Honeypot de Marca d'Água do Museu com Sharp
+  // 11. Validação do Honeypot de Marca d'Água do Museu com Sharp e Persistência em Disco
   const sampleArt = {
     id: 'test_art_honeypot_01',
     channelId: '123456789',
     messageId: '987654321',
     userId: '111222333',
     originalAttachmentUrl: '/assets/pyxie/pyxie_mascot.png',
+    description: 'Ilustração mágica da Pyxie <:star:123> <@111>',
   };
   const watermarked = await museumManager.getWatermarkedImage(sampleArt);
   assert.ok(watermarked, 'Watermarked image não pode ser nulo');
@@ -217,10 +219,57 @@ const { COMMAND_CATEGORY_MAP } = require(path.join(repo, 'src/commands/commandHe
   assert.strictEqual(watermarked.contentType, 'image/webp', 'Formato final deve ser WebP de alta eficiência');
   assert.ok(museumManager.watermarkCache.has(sampleArt.id), 'Arte deve ser salva no cache de marca d\'água');
 
-  // Valida retorno instantâneo do cache
-  const cachedWatermark = await museumManager.getWatermarkedImage(sampleArt);
-  assert.strictEqual(cachedWatermark.buffer, watermarked.buffer, 'Segunda chamada deve recuperar o buffer idêntico em memória');
-  console.log('  ✅ 11. Honeypot de Marca d\'Água com Sharp e Cache LRU validados com sucesso.');
+  const diskWatermarkPath = path.join(process.cwd(), 'data', 'museumWatermarks', `${sampleArt.id}.webp`);
+  assert.ok(fs.existsSync(diskWatermarkPath), 'Imagem com watermark deve ser persistida fisicamente no disco em data/museumWatermarks');
+  assert.strictEqual(fs.readFileSync(diskWatermarkPath).length, watermarked.buffer.length, 'Tamanho do arquivo em disco deve bater com o buffer');
+
+  // Valida recuperação do disco após limpar o cache em memória RAM
+  museumManager.watermarkCache.clear();
+  const diskReloaded = await museumManager.getWatermarkedImage(sampleArt);
+  assert.ok(diskReloaded && diskReloaded.buffer, 'Deve recarregar instantaneamente do disco');
+  assert.strictEqual(diskReloaded.buffer.length, watermarked.buffer.length, 'Buffer recarregado do disco deve ser idêntico');
+  console.log('  ✅ 11. Honeypot de Marca d\'Água com Sharp, Cache LRU e Persistência em Disco validados com sucesso.');
+
+  // 12. Listagem de Artes do Museu (listArts e getAllArts)
+  museumManager.refresh();
+  museumManager.data.arts.unshift(sampleArt);
+  museumManager.saveData();
+
+  const listRes = museumManager.listArts(1, 10);
+  assert.ok(listRes && Array.isArray(listRes.arts), 'listArts deve retornar lista');
+  assert.ok(listRes.arts.length >= 1, 'Deve conter pelo menos 1 arte');
+  assert.ok(listRes.arts[0].imageUrl.endsWith('.webp'), 'imageUrl deve ter extensão .webp');
+
+  const allArtsRes = museumManager.getAllArts(10);
+  assert.ok(Array.isArray(allArtsRes) && allArtsRes.length >= 1, 'getAllArts deve retornar array');
+  assert.strictEqual(allArtsRes[0].id, sampleArt.id);
+  console.log('  ✅ 12. Métodos de listagem síncrona listArts e getAllArts validados.');
+
+  // 13. Feed RSS Dedicado para o Pinterest (PT-BR e EN)
+  const cleanSample = sanitizeDiscordText('Arte linda!! <:star:123> <@111222> confira <#333>');
+  assert.strictEqual(cleanSample, 'Arte linda!! confira', 'sanitizeDiscordText deve limpar emojis e menções');
+
+  const ptPinterestRss = generatePinterestRssXml('pt');
+  assert.ok(ptPinterestRss.includes('<rss version="2.0"'), 'Deve ser RSS 2.0 válido');
+  assert.ok(ptPinterestRss.includes('xmlns:media="http://search.yahoo.com/mrss/"'), 'Deve conter namespace Yahoo Media');
+  assert.ok(ptPinterestRss.includes('xmlns:content="http://purl.org/rss/1.0/modules/content/"'), 'Deve conter namespace Content');
+  assert.ok(ptPinterestRss.includes('<language>pt-BR</language>'), 'Idioma PT deve ser pt-BR');
+  assert.ok(ptPinterestRss.includes('<enclosure url="https://pyxie.com.br/api/museum/art-image/test_art_honeypot_01.webp" type="image/webp"'), 'Deve conter enclosure com .webp e tipo image/webp');
+  assert.ok(ptPinterestRss.includes('<media:content url="https://pyxie.com.br/api/museum/art-image/test_art_honeypot_01.webp" medium="image" type="image/webp"'), 'Deve conter media:content');
+  assert.ok(ptPinterestRss.includes('<content:encoded>'), 'Deve conter content:encoded');
+  assert.ok(ptPinterestRss.includes('✦ Pyxie • Galeria Oficial da Comunidade'), 'Deve conter branding oficial no corpo do item');
+
+  const enPinterestRss = generatePinterestRssXml('en');
+  assert.ok(enPinterestRss.includes('<language>en-US</language>'), 'Idioma EN deve ser en-US');
+  assert.ok(enPinterestRss.includes('Community Art Museum'), 'Título em inglês deve estar presente');
+  assert.ok(enPinterestRss.includes('https://pyxie.com.br/api/museum/art-image/test_art_honeypot_01.webp'), 'URL da imagem deve estar presente no feed em inglês');
+  console.log('  ✅ 13. Feed RSS do Pinterest com namespaces de mídia, paridade bilíngue e watermark persistente validado.');
+
+  // 14. Remoção de arte limpa arquivo de watermark em disco
+  const deleted = museumManager.deleteArt(sampleArt.id);
+  assert.strictEqual(deleted, true, 'deleteArt deve retornar true');
+  assert.ok(!fs.existsSync(diskWatermarkPath), 'deleteArt deve remover o arquivo .webp do disco em data/museumWatermarks');
+  console.log('  ✅ 14. Exclusão atômica de artes com expurgo de cache e disco validada.');
 
   console.log('🎉 [TEST] Museu & Parcerias passaram com 100% de sucesso!');
   process.chdir(repo);
