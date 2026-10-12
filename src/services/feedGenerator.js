@@ -114,7 +114,7 @@ function getFeedItems(lang = 'pt') {
           description: isEn
             ? `Original artwork displayed at the Pyxie Community Museum. Author: ${art.author}. ${cleanDesc ? `"${cleanDesc}". ` : ''}Visit the full interactive art gallery on Pyxie.`
             : `Obra original em exibição no Museu de Criações da Pyxie. Autor: ${art.author}. ${cleanDesc ? `"${cleanDesc}". ` : ''}Conheça o acervo completo da comunidade.`,
-          imageUrl: `${SITE_URL}/api/museum/art-image/${encodeURIComponent(art.id)}.webp`,
+          imageUrl: `${SITE_URL}/api/museum/art-image/${encodeURIComponent(art.id)}.jpg`,
           category: isEn ? 'Community Art' : 'Arte Comunitária',
         });
       });
@@ -334,7 +334,7 @@ function generatePinterestRssXml(lang = 'pt') {
           : `Ilustração original criada por ${author} na comunidade da Pyxie. Descubra o acervo completo da galeria em https://pyxie.com.br/museu.`);
 
       const artLink = `${SITE_URL}/museu?art=${encodeURIComponent(art.id)}&utm_source=pinterest_rss&utm_medium=social&utm_campaign=museum_art${isEn ? '&lang=en' : ''}`;
-      const imageUrl = `${SITE_URL}/api/museum/art-image/${encodeURIComponent(art.id)}.webp`;
+      const imageUrl = `${SITE_URL}/api/museum/art-image/${encodeURIComponent(art.id)}.jpg`;
       const pubDate = new Date(art.createdAt || art.submittedAt || Date.now()).toUTCString();
 
       return `
@@ -352,8 +352,8 @@ function generatePinterestRssXml(lang = 'pt') {
         <p>✦ <strong>${isEn ? 'Artist' : 'Artista'}:</strong> ${escapeXml(author)} | <a href="${escapeXml(artLink)}">${isEn ? 'View in Pyxie Community Gallery' : 'Ver na Galeria da Comunidade'}</a></p>
         <p><small>✦ Pyxie • Galeria Oficial da Comunidade • <a href="https://pyxie.com.br/">https://pyxie.com.br/</a></small></p>
       ]]></content:encoded>
-      <enclosure url="${escapeXml(imageUrl)}" type="image/webp" length="250000" />
-      <media:content url="${escapeXml(imageUrl)}" medium="image" type="image/webp" width="1200">
+      <enclosure url="${escapeXml(imageUrl)}" type="image/jpeg" length="250000" />
+      <media:content url="${escapeXml(imageUrl)}" medium="image" type="image/jpeg" width="1200">
         <media:title>${escapeXml(artTitle)}</media:title>
         <media:description>${escapeXml(pinDesc)}</media:description>
         <media:credit role="author">${escapeXml(author)}</media:credit>

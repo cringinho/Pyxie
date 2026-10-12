@@ -213,7 +213,9 @@ function serveLocalizedPage(pageKey, publicDir) {
     if (pageKey === 'museum' && req.query && req.query.art) {
       try {
         const artId = String(req.query.art).trim();
-        const dataPath = path.join(process.cwd(), 'data', 'museumData.json');
+        const cwdDataPath = path.join(process.cwd(), 'data', 'museumData.json');
+        const fallbackDataPath = path.join(__dirname, '../../data', 'museumData.json');
+        const dataPath = fs.existsSync(cwdDataPath) ? cwdDataPath : fallbackDataPath;
         if (fs.existsSync(dataPath)) {
           const museumData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
           const art = (museumData.arts || []).find((a) => a.id === artId);
@@ -222,7 +224,7 @@ function serveLocalizedPage(pageKey, publicDir) {
             const artTitle = `${rawTitle} • Museu da Pyxie`;
             const authorHandle = (art.authorUsername || art.cachedAuthor || art.authorName || art.author || 'Membro').replace(/^@+/, '');
             const artDesc = `Obra de arte criada por @${authorHandle} no acervo cultural da Pyxie.`;
-            const artImg = art.imageUrl || `https://pyxie.com.br/api/museum/art-image/${art.id}`;
+            const artImg = `https://pyxie.com.br/api/museum/art-image/${encodeURIComponent(art.id)}.jpg`;
 
             html = html
               .replace(/<title>[\s\S]*?<\/title>/i, `<title>${artTitle}</title>`)

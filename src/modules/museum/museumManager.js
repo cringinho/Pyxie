@@ -352,13 +352,16 @@ class MuseumManager {
    * "✦ Pyxie • Galeria Oficial da Comunidade • https://pyxie.com.br/"
    * em tempo de execução via Sharp e persiste no disco para o Pinterest e feeds permanentes.
    */
-  async getWatermarkedImage(art) {
+  async getWatermarkedImage(art, format = 'jpg') {
     if (!art || !art.id) return null;
+    const cleanFmt = (format || 'jpg').toLowerCase() === 'png' ? 'png' : ((format || 'jpg').toLowerCase() === 'webp' ? 'webp' : 'jpg');
+    const mimeType = cleanFmt === 'png' ? 'image/png' : (cleanFmt === 'webp' ? 'image/webp' : 'image/jpeg');
     const watermarksDir = getWatermarksDir();
-    const diskPath = path.join(watermarksDir, `${art.id}.webp`);
+    const diskPath = path.join(watermarksDir, `${art.id}.${cleanFmt}`);
+    const cacheKey = `${art.id}_${cleanFmt}`;
 
     // 1. Memória RAM (Mais rápido)
-    const cached = this.watermarkCache.get(art.id);
+    const cached = this.watermarkCache.get(cacheKey);
     if (cached && Date.now() - cached.at < 60 * 60 * 1000) {
       return cached;
     }
@@ -370,14 +373,14 @@ class MuseumManager {
         if (diskBuffer && diskBuffer.length > 500) {
           const result = {
             buffer: diskBuffer,
-            contentType: 'image/webp',
+            contentType: mimeType,
             at: Date.now(),
           };
-          if (this.watermarkCache.size >= 300) {
+          if (this.watermarkCache.size >= 500) {
             const firstKey = this.watermarkCache.keys().next().value;
             if (firstKey) this.watermarkCache.delete(firstKey);
           }
-          this.watermarkCache.set(art.id, result);
+          this.watermarkCache.set(cacheKey, result);
           return result;
         }
       } catch (readErr) {
@@ -420,7 +423,7 @@ class MuseumManager {
 
       const metadata = await sharp(inputBuffer).metadata();
 
-      // GIFs animados: preserva sem achatar frames caso não seja solicitado webp
+      // GIFs animados: preserva sem achatar frames caso não seja solicitado webp/jpg
       if (metadata.format === 'gif' && metadata.pages && metadata.pages > 1) {
         return { redirectUrl: url };
       }
@@ -449,29 +452,36 @@ class MuseumManager {
         </svg>
       `;
 
-      const watermarked = await sharp(inputBuffer)
-        .composite([{ input: Buffer.from(svgString), top: height - bannerHeight, left: 0 }])
-        .webp({ quality: 88 })
-        .toBuffer();
+      let sharpPipeline = sharp(inputBuffer)
+        .composite([{ input: Buffer.from(svgString), top: height - bannerHeight, left: 0 }]);
+
+      let watermarked;
+      if (cleanFmt === 'png') {
+        watermarked = await sharpPipeline.png().toBuffer();
+      } else if (cleanFmt === 'webp') {
+        watermarked = await sharpPipeline.webp({ quality: 88 }).toBuffer();
+      } else {
+        watermarked = await sharpPipeline.jpeg({ quality: 90 }).toBuffer();
+      }
 
       // Persistência Atômica em Disco: salva de forma indelével
       try {
         fs.writeFileSync(diskPath, watermarked);
       } catch (saveErr) {
-        console.warn(`[Museum] Não foi possível persistir marca d'água no disco (${art.id}):`, saveErr.message);
+        console.warn(`[Museum] Não foi possível persistir marca d'água no disco (${art.id}.${cleanFmt}):`, saveErr.message);
       }
 
-      if (this.watermarkCache.size >= 300) {
+      if (this.watermarkCache.size >= 500) {
         const firstKey = this.watermarkCache.keys().next().value;
         if (firstKey) this.watermarkCache.delete(firstKey);
       }
 
       const result = {
         buffer: watermarked,
-        contentType: 'image/webp',
+        contentType: mimeType,
         at: Date.now(),
       };
-      this.watermarkCache.set(art.id, result);
+      this.watermarkCache.set(cacheKey, result);
       return result;
     } catch (err) {
       console.warn(`[Museum] Erro ao carimbar imagem da arte ${art.id}:`, err.message);
@@ -591,9 +601,12 @@ class MuseumManager {
     this.urlCache.delete(artId);
     this.watermarkCache.delete(artId);
     try {
-      const diskPath = path.join(getWatermarksDir(), `${artId}.webp`);
-      if (fs.existsSync(diskPath)) {
-        fs.unlinkSync(diskPath);
+      const watermarksDir = getWatermarksDir();
+      for (const ext of ['webp', 'jpg', 'jpeg', 'png']) {
+        const diskPath = path.join(watermarksDir, `${artId}.${ext}`);
+        if (fs.existsSync(diskPath)) {
+          fs.unlinkSync(diskPath);
+        }
       }
     } catch (_) {}
     this.saveData();
@@ -613,9 +626,8 @@ class MuseumManager {
       next();
     };
 
-    app.get(['/museu', '/museum'], (req, res) => {
-      res.sendFile(path.join(process.cwd(), 'public', 'museum.html'));
-    });
+    const { serveLocalizedPage } = require('../../utils/seoRenderer');
+    app.get(['/museu', '/museum'], serveLocalizedPage('museum', path.join(process.cwd(), 'public')));
 
     app.get('/api/museum/arts', async (req, res) => {
       try {
@@ -635,14 +647,23 @@ class MuseumManager {
     app.get(['/api/museum/art-image/:id', '/api/museum/art-image/:id.:ext'], async (req, res) => {
       this.refresh();
       const rawId = req.params.id || '';
-      const cleanId = rawId.replace(/\.(webp|png|jpe?g)$/i, '');
+      let format = 'jpg';
+      let cleanId = rawId;
+      const extMatch = rawId.match(/\.(webp|jpe?g|png)$/i);
+      if (extMatch) {
+        format = extMatch[1].toLowerCase() === 'jpeg' ? 'jpg' : extMatch[1].toLowerCase();
+        cleanId = rawId.replace(/\.(webp|jpe?g|png)$/i, '');
+      } else if (req.params.ext) {
+        format = req.params.ext.toLowerCase() === 'jpeg' ? 'jpg' : req.params.ext.toLowerCase();
+      }
+
       const art = this.data.arts.find((a) => a.id === cleanId);
       if (!art) return res.status(404).end();
 
-      const result = await this.getWatermarkedImage(art);
+      const result = await this.getWatermarkedImage(art, format);
       if (result && result.buffer) {
         res.set({
-          'Content-Type': result.contentType || 'image/webp',
+          'Content-Type': result.contentType || (format === 'png' ? 'image/png' : (format === 'webp' ? 'image/webp' : 'image/jpeg')),
           'Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400',
           'X-Content-Source': 'Pyxie Community Gallery (https://pyxie.com.br/)',
         });
