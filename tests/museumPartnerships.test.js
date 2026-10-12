@@ -288,7 +288,58 @@ const { generatePinterestRssXml, sanitizeDiscordText } = require(path.join(repo,
   assert.strictEqual(deleted, true, 'deleteArt deve retornar true');
   assert.ok(!fs.existsSync(diskWatermarkJpgPath), 'deleteArt deve remover o arquivo .jpg do disco em data/museumWatermarks');
   assert.ok(!fs.existsSync(diskWatermarkWebpPath), 'deleteArt deve remover o arquivo .webp do disco em data/museumWatermarks');
-  console.log('  ✅ 14. Exclusão atômica de artes com expurgo multiformato de cache e disco validada.');
+  // 15. Curadoria Visual Administrativa (getAdminArtList, editArt e busca)
+  museumManager.refresh();
+  const artA = {
+    id: 'test_curation_01',
+    channelId: '123',
+    messageId: '456',
+    userId: '789',
+    originalAttachmentUrl: '/assets/pyxie/pyxie_mascot.png',
+    description: 'Ilustração mágica da Lua',
+    cachedAuthor: 'Artista Lunar',
+  };
+  const artB = {
+    id: 'test_curation_02',
+    channelId: '123',
+    messageId: '457',
+    userId: '790',
+    originalAttachmentUrl: '/assets/pyxie/pyxie_mascot.png',
+    description: 'Desenho do Sol radiante',
+    cachedAuthor: 'Artista Solar',
+  };
+  museumManager.data.arts.push(artA, artB);
+  museumManager.saveData();
+
+  const adminList = museumManager.getAdminArtList({ page: 1, limit: 10 });
+  assert.ok(adminList && Array.isArray(adminList.arts));
+  assert.ok(adminList.total >= 2);
+  assert.ok(adminList.uniqueAuthorsCount >= 2);
+
+  // Busca por autor
+  const searchAuthor = museumManager.getAdminArtList({ search: 'Lunar' });
+  assert.strictEqual(searchAuthor.arts.length, 1);
+  assert.strictEqual(searchAuthor.arts[0].id, 'test_curation_01');
+
+  // Busca por descrição
+  const searchDesc = museumManager.getAdminArtList({ search: 'radiante' });
+  assert.strictEqual(searchDesc.arts.length, 1);
+  assert.strictEqual(searchDesc.arts[0].id, 'test_curation_02');
+
+  // Edição de descrição e autor (editArt)
+  const edited = museumManager.editArt('test_curation_01', {
+    author: 'Gica Master',
+    description: 'Nova legenda estelar',
+  });
+  assert.strictEqual(edited, true);
+  const refreshedArt = museumManager.data.arts.find((a) => a.id === 'test_curation_01');
+  assert.strictEqual(refreshedArt.cachedAuthor, 'Gica Master');
+  assert.strictEqual(refreshedArt.description, 'Nova legenda estelar');
+
+  // Limpeza
+  museumManager.deleteArt('test_curation_01');
+  museumManager.deleteArt('test_curation_02');
+  console.log('  ✅ 15. Curadoria Visual do Museu (getAdminArtList, busca textual e editArt) validada com sucesso.');
 
   console.log('🎉 [TEST] Museu & Parcerias passaram com 100% de sucesso!');
   process.chdir(repo);

@@ -584,13 +584,68 @@ class MuseumManager {
     return this.data.arts.length;
   }
 
-  editDescription(artId, newDesc) {
+  editArt(artId, { description, author } = {}) {
     this.refresh();
     const art = this.data.arts.find((a) => a.id === artId);
     if (!art) return false;
-    art.description = String(newDesc || '').slice(0, 1000);
+    if (description !== undefined) {
+      art.description = String(description || '').slice(0, 1000);
+    }
+    if (author !== undefined && String(author).trim().length > 0) {
+      art.cachedAuthor = String(author).trim().slice(0, 50);
+      art.authorUsername = String(author).trim().slice(0, 50);
+    }
     this.saveData();
     return true;
+  }
+
+  editDescription(artId, newDesc) {
+    return this.editArt(artId, { description: newDesc });
+  }
+
+  getAdminArtList({ page = 1, limit = 24, search = '' } = {}) {
+    this.refresh();
+    const q = String(search || '').trim().toLowerCase();
+    let filtered = this.data.arts;
+    if (q) {
+      filtered = this.data.arts.filter((art) => {
+        const author = (art.cachedAuthor || art.authorUsername || '').toLowerCase();
+        const desc = (art.description || '').toLowerCase();
+        const id = (art.id || '').toLowerCase();
+        return author.includes(q) || desc.includes(q) || id.includes(q);
+      });
+    }
+
+    const uniqueAuthors = new Set(this.data.arts.map((a) => a.cachedAuthor || a.authorUsername || 'Desconhecido'));
+    const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 24, 1), 100);
+    const totalPages = Math.max(1, Math.ceil(filtered.length / safeLimit));
+    const safePage = Math.min(Math.max(parseInt(page, 10) || 1, 1), totalPages);
+    const slice = filtered.slice((safePage - 1) * safeLimit, safePage * safeLimit);
+
+    const arts = slice.map((art) => {
+      const author = art.cachedAuthor || art.authorUsername || 'Artista';
+      return {
+        id: art.id,
+        author,
+        authorUsername: art.authorUsername || author,
+        userId: art.userId,
+        channelId: art.channelId,
+        messageId: art.messageId,
+        description: art.description || '',
+        createdAt: art.createdAt,
+        imageUrl: `/api/museum/art-image/${encodeURIComponent(art.id)}.jpg`,
+        originalAttachmentUrl: art.originalAttachmentUrl || '',
+      };
+    });
+
+    return {
+      arts,
+      total: filtered.length,
+      totalUnfiltered: this.data.arts.length,
+      uniqueAuthorsCount: uniqueAuthors.size,
+      page: safePage,
+      totalPages,
+    };
   }
 
   deleteArt(artId) {
@@ -681,7 +736,7 @@ class MuseumManager {
     });
 
     app.patch('/api/museum/art/:id', requireToken, (req, res) => {
-      res.json({ success: this.editDescription(req.params.id, req.body?.description) });
+      res.json({ success: this.editArt(req.params.id, req.body || {}) });
     });
 
     app.delete('/api/museum/art/:id', requireToken, (req, res) => {
@@ -689,6 +744,38 @@ class MuseumManager {
     });
 
     const { requireAdminAuth } = require('../../services/adminAuth');
+
+    // Curadoria Visual de Obras do Museu (Owner Only via Sessão / Admin Token)
+    app.get('/api/admin/modules/museum/arts', requireAdminAuth, (req, res) => {
+      try {
+        const { page, limit, q } = req.query;
+        const result = this.getAdminArtList({ page, limit, search: q });
+        res.json({ success: true, ...result, harvester: this.getHarvesterStatus() });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    });
+
+    app.patch('/api/admin/modules/museum/art/:id', requireAdminAuth, (req, res) => {
+      try {
+        const { description, author } = req.body || {};
+        const ok = this.editArt(req.params.id, { description, author });
+        if (!ok) return res.status(404).json({ success: false, error: 'Obra não encontrada no acervo.' });
+        res.json({ success: true, message: 'Obra atualizada com sucesso no acervo!' });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    });
+
+    app.delete('/api/admin/modules/museum/art/:id', requireAdminAuth, (req, res) => {
+      try {
+        const ok = this.deleteArt(req.params.id);
+        if (!ok) return res.status(404).json({ success: false, error: 'Obra não encontrada no acervo.' });
+        res.json({ success: true, message: 'Obra removida com sucesso do acervo e do disco!' });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    });
 
     app.get('/api/admin/modules/museum/config', requireAdminAuth, (req, res) => {
       try {

@@ -1602,6 +1602,9 @@
         <button class="tab-btn" onclick="switchTab('bot')">
           <span>⚡ Controle & Acervo</span>
         </button>
+        <button class="tab-btn" onclick="switchTab('museum')">
+          <span>🏛️ Museu & Artes</span>
+        </button>
         <button class="tab-btn" onclick="switchTab('logs')">
           <span>📜 Terminal de Logs</span>
         </button>
@@ -2071,6 +2074,81 @@
           </div>
         </div>
       </section>
+
+      <!-- TAB 6: CURADORIA DO MUSEU DE ARTES (OWNER ONLY) -->
+      <section id="tab-museum" class="tab-panel">
+        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2 style="font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+              <span>🏛️ Curadoria do Museu da Comunidade</span>
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
+              Gerenciamento visual exclusivo de obras, ilustrações e fanarts. Edite legendas, altere nomes de artistas ou remova itens com expurgo automático de cache e disco.
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <a href="/museu" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+              <span>🌐</span> <span>Ver Museu Público ↗</span>
+            </a>
+            <button class="btn btn-secondary" onclick="fetchMuseumAdminData()">
+              <span>🔄 Atualizar Obras</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats do Museu -->
+        <div class="stats-grid" style="margin-bottom: 20px;">
+          <div class="stat-card">
+            <span class="stat-label">🎨 Total no Acervo</span>
+            <span id="museumStatTotal" class="stat-val">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">👥 Artistas Únicos</span>
+            <span id="museumStatAuthors" class="stat-val" style="color: #38bdf8">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">⛏️ Raspadas do Histórico</span>
+            <span id="museumStatScraped" class="stat-val" style="color: #c084fc">+0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">📡 Feed Pinterest & RSS</span>
+            <span id="museumStatStatus" class="stat-val" style="color: #34d399; font-size: 1.15rem;">Universal JPEG</span>
+          </div>
+        </div>
+
+        <!-- Toolbar de Busca e Ações -->
+        <div class="shopee-toolbar" style="margin-bottom: 20px;">
+          <div class="search-box" style="flex: 1; min-width: 260px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="museumSearchInput" class="search-input" placeholder="Buscar por autor, descrição ou ID..." oninput="handleMuseumSearchInput(this.value)" />
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button type="button" id="museumHarvesterTabBtn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px 14px; display: inline-flex; align-items: center; gap: 6px;" onclick="triggerMuseumHarvesterFromTab(this)">
+              <span>⚡</span> <span>Raspar +50 Mensagens Antigas</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid de Obras -->
+        <div id="museumAdminGrid" class="shopee-grid" style="grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px;">
+          <div style="text-align: center; color: var(--text-muted); padding: 40px; grid-column: 1 / -1;">
+            Carregando acervo do museu...
+          </div>
+        </div>
+
+        <!-- Paginação -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 12px;">
+          <button id="museumAdminPrevBtn" class="btn btn-secondary" onclick="changeMuseumAdminPage(-1)" disabled>
+            ◀ Anterior
+          </button>
+          <span id="museumAdminPageInfo" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
+            Página 1 de 1
+          </span>
+          <button id="museumAdminNextBtn" class="btn btn-secondary" onclick="changeMuseumAdminPage(1)" disabled>
+            Próxima ▶
+          </button>
+        </div>
+      </section>
     </div>
 
     <!-- Modal Configuração de Módulos (Parcerias & Museu) -->
@@ -2087,6 +2165,38 @@
           <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
             <button type="button" onclick="closeModuleConfigModal()" class="btn btn-secondary">Cancelar</button>
             <button type="submit" id="moduleConfigSaveBtn" class="btn btn-primary">💾 Salvar Configurações</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de Edição de Obra do Museu (Owner Only) -->
+    <div id="museumArtEditModal" class="modal-backdrop">
+      <div class="modal-box" style="max-width: 520px; width: 95%;">
+        <div class="modal-header">
+          <h3>✏️ Editar Informações da Obra</h3>
+          <button type="button" onclick="closeMuseumArtEditModal()" class="btn btn-secondary" style="padding: 4px 8px;">✕</button>
+        </div>
+        <form onsubmit="handleSaveMuseumArt(event)" class="modal-form">
+          <input type="hidden" id="editArtId" />
+          <div style="display: flex; gap: 14px; margin-bottom: 14px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+            <img id="editArtThumb" src="" alt="Thumbnail" style="width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-glass);" onerror="this.src='/assets/pyxie/pyxie_mascot.png'" />
+            <div style="overflow: hidden; flex: 1;">
+              <span id="editArtIdBadge" style="font-size: 0.72rem; color: #c084fc; font-weight: 700; display: block;">ID: art_xxx</span>
+              <span id="editArtDate" style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 2px;">Enviada em: --</span>
+            </div>
+          </div>
+          <div class="form-field" style="margin-bottom: 12px;">
+            <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Nome do Artista / Crédito:</label>
+            <input type="text" id="editArtAuthor" placeholder="Nome visível no museu" required style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+          </div>
+          <div class="form-field" style="margin-bottom: 14px;">
+            <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Legenda / Descrição da Obra:</label>
+            <textarea id="editArtDescription" rows="3" placeholder="Digite uma legenda ou título para a obra..." style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-family: inherit; font-size: 0.85rem; resize: vertical;"></textarea>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+            <button type="button" onclick="closeMuseumArtEditModal()" class="btn btn-secondary">Cancelar</button>
+            <button type="submit" id="editArtSaveBtn" class="btn btn-primary">💾 Salvar Alterações</button>
           </div>
         </form>
       </div>
@@ -2228,6 +2338,7 @@
         if (tabId === 'bot') { loadBotConfig(); fetchAcervoAudit(); }
         if (tabId === 'shopee') fetchShopeeData();
         if (tabId === 'modules') fetchModules();
+        if (tabId === 'museum') fetchMuseumAdminData();
       }
 
       async function fetchModules() {
@@ -2304,6 +2415,9 @@
               ` : (mod.id === 'museum') ? `
                 <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Configurar canal e cargos" onclick="openModuleConfigModal('${mod.id}')">
                   ⚙️ Configurar
+                </button>
+                <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Abrir Curadoria Visual de Obras" onclick="switchTab('museum')">
+                  🏛️ Curadoria
                 </button>
               ` : ''}
               <button class="btn btn-secondary" title="Recarregar módulo sem reiniciar o bot" onclick="reloadModule('${mod.id}')">
@@ -4342,6 +4456,247 @@
           }
         } catch (err) {
           container.innerHTML = `<div style="color: #f87171;">❌ Falha na conexão com simulador: ${err.message}</div>`;
+        }
+      }
+
+      /* ==========================================================================
+         MUSEU & CURADORIA DE OBRAS VISUAL (OWNER ONLY)
+         ========================================================================== */
+      let museumAdminPage = 1;
+      let museumAdminTotalPages = 1;
+      let museumAdminSearchQuery = '';
+      let museumSearchDebounceTimeout = null;
+      let currentMuseumArts = [];
+
+      function safeEscape(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      async function fetchMuseumAdminData(page = museumAdminPage) {
+        museumAdminPage = Math.max(1, parseInt(page, 10) || 1);
+        const grid = document.getElementById('museumAdminGrid');
+        if (grid) {
+          grid.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 40px; grid-column: 1 / -1;">Carregando acervo do museu...</div>';
+        }
+
+        try {
+          const q = encodeURIComponent(museumAdminSearchQuery || '');
+          const res = await fetch(`/api/admin/modules/museum/arts?page=${museumAdminPage}&limit=24&q=${q}`);
+          const data = await res.json();
+          if (!data.success) throw new Error(data.error || 'Erro ao carregar obras do museu.');
+
+          currentMuseumArts = data.arts || [];
+          museumAdminTotalPages = data.totalPages || 1;
+
+          // Atualiza contadores
+          const statTotal = document.getElementById('museumStatTotal');
+          const statAuthors = document.getElementById('museumStatAuthors');
+          const statScraped = document.getElementById('museumStatScraped');
+          if (statTotal) statTotal.textContent = data.totalUnfiltered ?? data.total ?? 0;
+          if (statAuthors) statAuthors.textContent = data.uniqueAuthorsCount ?? 0;
+          const h = data.harvester || {};
+          if (statScraped) statScraped.textContent = `+${h.totalScraped || 0}`;
+
+          // Renderiza cartões no Grid
+          if (!currentMuseumArts.length) {
+            grid.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 40px; grid-column: 1 / -1;">Nenhuma obra encontrada com os critérios informados.</div>';
+          } else {
+            grid.innerHTML = currentMuseumArts.map((art) => {
+              const dateStr = art.createdAt ? new Date(art.createdAt).toLocaleDateString('pt-BR') : 'Data não informada';
+              const cleanDesc = (art.description || '').trim();
+              const displayDesc = cleanDesc
+                ? safeEscape(cleanDesc)
+                : '<em style="color: var(--text-muted);">Sem legenda informada</em>';
+              const escapedAuthor = safeEscape(art.author || 'Artista');
+              const artUrl = `/museu?art=${encodeURIComponent(art.id)}`;
+
+              return `
+                <div class="shopee-item-card" id="museum-card-${art.id}" style="gap: 12px; display: flex; flex-direction: column;">
+                  <div style="position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.12);">
+                    <img src="${art.imageUrl}" alt="${escapedAuthor}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/assets/pyxie/pyxie_mascot.png'" />
+                    <div style="position: absolute; top: 8px; left: 8px; background: rgba(13,8,24,0.85); backdrop-filter: blur(6px); padding: 4px 10px; border-radius: 8px; font-size: 0.72rem; font-weight: 700; color: #fff; border: 1px solid rgba(139,92,246,0.35); box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+                      🎨 ${escapedAuthor}
+                    </div>
+                    <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; color: #cbd5e1;">
+                      📅 ${dateStr}
+                    </div>
+                  </div>
+
+                  <div style="font-size: 0.82rem; color: #e2e8f0; line-height: 1.45; min-height: 42px; max-height: 58px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                    ${displayDesc}
+                  </div>
+
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem; color: var(--text-muted);">
+                    <span style="font-family: monospace; color: #a78bfa;">${safeEscape(art.id)}</span>
+                    ${art.userId ? `<span title="ID do Usuário Discord">👤 ${art.userId.slice(0, 6)}...</span>` : ''}
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);">
+                    <button type="button" class="btn btn-secondary" style="font-size: 0.75rem; padding: 7px 8px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" onclick="openMuseumArtEditModal('${art.id}')">
+                      ✏️ Editar
+                    </button>
+                    <button type="button" class="btn btn-secondary" style="font-size: 0.75rem; padding: 7px 8px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; color: #f87171; border-color: rgba(239,68,68,0.35);" onclick="deleteMuseumArt('${art.id}', '${escapedAuthor}')">
+                      🗑️ Excluir
+                    </button>
+                  </div>
+                  <div style="display: flex; gap: 6px;">
+                    <a href="${artUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width: 100%; font-size: 0.72rem; padding: 5px; text-align: center; text-decoration: none; color: #94a3b8; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
+                      <span>🔗 Ver no Museu</span> <span>↗</span>
+                    </a>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+
+          // Paginação
+          const prevBtn = document.getElementById('museumAdminPrevBtn');
+          const nextBtn = document.getElementById('museumAdminNextBtn');
+          const pageInfo = document.getElementById('museumAdminPageInfo');
+          if (prevBtn) prevBtn.disabled = museumAdminPage <= 1;
+          if (nextBtn) nextBtn.disabled = museumAdminPage >= museumAdminTotalPages;
+          if (pageInfo) pageInfo.textContent = `Página ${museumAdminPage} de ${museumAdminTotalPages} • ${data.total} obra(s)`;
+        } catch (err) {
+          if (grid) grid.innerHTML = `<div style="text-align: center; color: #f87171; padding: 40px; grid-column: 1 / -1;">❌ Erro ao buscar acervo: ${err.message}</div>`;
+        }
+      }
+
+      function handleMuseumSearchInput(val) {
+        museumAdminSearchQuery = String(val || '').trim();
+        clearTimeout(museumSearchDebounceTimeout);
+        museumSearchDebounceTimeout = setTimeout(() => {
+          museumAdminPage = 1;
+          fetchMuseumAdminData(1);
+        }, 320);
+      }
+
+      function changeMuseumAdminPage(delta) {
+        const next = museumAdminPage + delta;
+        if (next >= 1 && next <= museumAdminTotalPages) {
+          fetchMuseumAdminData(next);
+        }
+      }
+
+      function openMuseumArtEditModal(artId) {
+        const art = currentMuseumArts.find((a) => a.id === artId);
+        if (!art) {
+          showToast('Obra não encontrada em memória.', 'error');
+          return;
+        }
+
+        document.getElementById('editArtId').value = art.id;
+        document.getElementById('editArtAuthor').value = art.author || '';
+        document.getElementById('editArtDescription').value = art.description || '';
+        document.getElementById('editArtIdBadge').textContent = `ID: ${art.id}`;
+        document.getElementById('editArtThumb').src = art.imageUrl || '/assets/pyxie/pyxie_mascot.png';
+        const dateStr = art.createdAt ? new Date(art.createdAt).toLocaleString('pt-BR') : 'Data não informada';
+        document.getElementById('editArtDate').textContent = `Enviada em: ${dateStr}`;
+
+        const modal = document.getElementById('museumArtEditModal');
+        if (modal) modal.classList.add('open');
+      }
+
+      function closeMuseumArtEditModal() {
+        const modal = document.getElementById('museumArtEditModal');
+        if (modal) modal.classList.remove('open');
+      }
+
+      async function handleSaveMuseumArt(event) {
+        event.preventDefault();
+        const artId = document.getElementById('editArtId').value;
+        const author = document.getElementById('editArtAuthor').value;
+        const description = document.getElementById('editArtDescription').value;
+
+        const saveBtn = document.getElementById('editArtSaveBtn');
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.textContent = 'Salvando...';
+        }
+
+        try {
+          const res = await fetch(`/api/admin/modules/museum/art/${encodeURIComponent(artId)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ author, description }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(data.message || 'Obra atualizada com sucesso!', 'success');
+            closeMuseumArtEditModal();
+            await fetchMuseumAdminData();
+          } else {
+            showToast(`Erro ao salvar: ${data.error || 'Falha'}`, 'error');
+          }
+        } catch (err) {
+          showToast(`Erro de conexão: ${err.message}`, 'error');
+        } finally {
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = '💾 Salvar Alterações';
+          }
+        }
+      }
+
+      async function deleteMuseumArt(artId, authorName) {
+        const confirmed = confirm(`Tem certeza que deseja EXCLUIR permanentemente a obra de "${authorName}" do acervo?\n\nEsta ação irá remover os arquivos de imagem física e a marca d'água do disco.`);
+        if (!confirmed) return;
+
+        showToast('Excluindo obra do acervo...', 'info');
+        try {
+          const res = await fetch(`/api/admin/modules/museum/art/${encodeURIComponent(artId)}`, {
+            method: 'DELETE',
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(data.message || 'Obra removida com sucesso!', 'success');
+            const card = document.getElementById(`museum-card-${artId}`);
+            if (card) {
+              card.style.transition = 'all 0.3s ease';
+              card.style.opacity = '0';
+              card.style.transform = 'scale(0.9)';
+              setTimeout(() => card.remove(), 300);
+            }
+            setTimeout(() => fetchMuseumAdminData(), 600);
+          } else {
+            showToast(`Erro ao excluir: ${data.error || 'Falha'}`, 'error');
+          }
+        } catch (err) {
+          showToast(`Erro de conexão: ${err.message}`, 'error');
+        }
+      }
+
+      async function triggerMuseumHarvesterFromTab(btn) {
+        if (!btn) return;
+        btn.disabled = true;
+        const origText = btn.innerHTML;
+        btn.innerHTML = '⏳ Raspando lote...';
+
+        try {
+          const res = await fetch('/api/admin/modules/museum/harvester/trigger', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ limit: 50 }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(data.message || 'Lote de mensagens processado com sucesso!', 'success');
+            setTimeout(() => fetchMuseumAdminData(), 1000);
+          } else {
+            showToast(`Erro na raspagem: ${data.error || 'Falha'}`, 'error');
+          }
+        } catch (err) {
+          showToast(`Erro de conexão: ${err.message}`, 'error');
+        } finally {
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = origText;
+          }, 1500);
         }
       }
 
