@@ -492,6 +492,76 @@ artHandler.handleArtSubmission(mockArtMessage, mockClient).then(async (submitted
   assert(cardEn.length > 10000, 'Tamanho do card em EN deve ser compatível com imagem PNG válida');
   console.log('✅ Geração do Card Viral em PT/EN e Perfis de Usuários validados com sucesso.');
 
+  // 11. Teste de Restrições e Inelegibilidade (Exclusão por ID Único e por Cargo)
+  const creatorId = '214153735281180673';
+  assert.equal(seasonalManager.isUserExcluded(creatorId), true, 'Criador deve ser excluído por padrão no seasonalConfig');
+  seasonalManager.addSeasonalBalance(creatorId, 50);
+  assert.equal(seasonalManager.getSeasonalBalance(creatorId), 0, 'Criador excluído não deve ganhar abóboras');
+
+  const excludedUserTest = 'user_blocked_99';
+  seasonalManager.addSeasonalBalance(excludedUserTest, 30);
+  assert.equal(seasonalManager.getSeasonalBalance(excludedUserTest), 30, 'Usuário ganha normalmente antes de ser excluído');
+
+  seasonalManager.excludeUser(excludedUserTest);
+  assert.equal(seasonalManager.isUserExcluded(excludedUserTest), true, 'Usuário deve ser detectado como excluído');
+  assert.equal(seasonalManager.getSeasonalBalance(excludedUserTest), 0, 'Saldo do usuário deve ser zerado ao ser excluído');
+
+  // Tentativa de adicionar saldo ao excluído
+  seasonalManager.addSeasonalBalance(excludedUserTest, 10);
+  assert.equal(seasonalManager.getSeasonalBalance(excludedUserTest), 0, 'Usuário excluído não pode receber novo saldo');
+
+  // Verifica que não aparece no ranking
+  const topExclusionTest = seasonalManager.getTopSeasonalBalances(20);
+  assert.equal(topExclusionTest.some((e) => e.userId === excludedUserTest), false, 'Usuário excluído não pode constar no getTopSeasonalBalances');
+  const lbExclusionTest = seasonalManager.getSeasonalLeaderboard(20);
+  assert.equal(lbExclusionTest.some((e) => e.userId === excludedUserTest), false, 'Usuário excluído não pode constar no getSeasonalLeaderboard');
+
+  // Teste de exclusão por cargo
+  const testRoleId = '999888777666555444';
+  const roleMember = {
+    roles: {
+      cache: [{ id: testRoleId }],
+    },
+  };
+  const memberUserId = 'user_with_role_1';
+  assert.equal(seasonalManager.isUserExcluded(memberUserId, roleMember), false, 'Não deve estar excluído antes do cargo ser adicionado às restrições');
+  seasonalManager.excludeRole(testRoleId);
+  assert.equal(seasonalManager.isUserExcluded(memberUserId, roleMember), true, 'Membro com cargo restrito deve ser excluído');
+  seasonalManager.addSeasonalBalance(memberUserId, 20, null, roleMember);
+  assert.equal(seasonalManager.getSeasonalBalance(memberUserId), 0, 'Membro com cargo restrito não pode receber saldo');
+
+  // Readmissão (unexclude)
+  seasonalManager.unexcludeUser(excludedUserTest);
+  assert.equal(seasonalManager.isUserExcluded(excludedUserTest), false, 'Usuário readmitido não deve estar excluído');
+  seasonalManager.addSeasonalBalance(excludedUserTest, 15);
+  assert.equal(seasonalManager.getSeasonalBalance(excludedUserTest), 15, 'Usuário readmitido volta a pontuar normalmente');
+
+  seasonalManager.unexcludeRole(testRoleId);
+  assert.equal(seasonalManager.isUserExcluded(memberUserId, roleMember), false, 'Cargo readmitido libera membro');
+
+  // Teste dos subcomandos no admin.js
+  const adminCommand = require('../src/commands/admin');
+  const unauthorizedAdmin = adminCommand.buildSeasonalRestrictionsView('999999999999999999');
+  assert(unauthorizedAdmin.content.includes('Acesso Restrito') || unauthorizedAdmin.content.includes('Restricted Access'), 'Não-dono não pode acessar restrições sazonais');
+
+  const ownerAdminList = adminCommand.buildSeasonalRestrictionsView('214153735281180673', 'pt', ['lista']);
+  assert(ownerAdminList.embeds && ownerAdminList.embeds.length > 0, 'Dono deve visualizar painel de restrições');
+
+  const ownerAdminExclude = adminCommand.buildSeasonalRestrictionsView('214153735281180673', 'pt', ['excluir-user', '111222333444555666']);
+  assert(ownerAdminExclude.embeds[0].data.description.includes('excluído'), 'Subcomando excluir-user deve confirmar exclusão em PT');
+  assert.equal(seasonalManager.isUserExcluded('111222333444555666'), true, 'Usuário deve ter sido excluído pelo subcomando');
+
+  const ownerAdminInclude = adminCommand.buildSeasonalRestrictionsView('214153735281180673', 'pt', ['incluir-user', '111222333444555666']);
+  assert(ownerAdminInclude.embeds[0].data.description.includes('readmitido'), 'Subcomando incluir-user deve confirmar readmissão em PT');
+  assert.equal(seasonalManager.isUserExcluded('111222333444555666'), false, 'Usuário deve ter sido readmitido pelo subcomando');
+
+  // Validação em EN
+  const ownerAdminExcludeEn = adminCommand.buildSeasonalRestrictionsView('214153735281180673', 'en', ['exclude-user', '111222333444555666']);
+  assert(ownerAdminExcludeEn.embeds[0].data.description.includes('excluded'), 'Subcomando excluir-user deve confirmar exclusão em EN');
+  seasonalManager.unexcludeUser('111222333444555666');
+
+  console.log('✅ Sistema de Restrições Sazonais (por Usuário e por Cargo) e Admin validado com 100% de sucesso.');
+
   // Limpa arquivos de teste e desliga jobs em memória
   seasonalManager.stop(false);
   try { if (fs.existsSync(testConfigPath)) fs.unlinkSync(testConfigPath); } catch (_) {}

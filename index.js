@@ -792,14 +792,18 @@ client.on('interactionCreate', async (interaction) => {
 
   try {
     // Interações de gerenciamento de módulos exclusivos do Dono
-    if (interaction.isButton() && (interaction.customId.startsWith('admin_modules_view') || interaction.customId.startsWith('admin_mod_toggle:'))) {
+    if (interaction.isButton() && (interaction.customId.startsWith('admin_modules_view') || interaction.customId.startsWith('admin_seasonal_view') || interaction.customId.startsWith('admin_mod_toggle:'))) {
       const adminCmd = require('./src/commands/admin');
       const { OWNER_SNOWFLAKE } = require('./src/services/adminAuth');
       if (interaction.user.id !== OWNER_SNOWFLAKE) {
-        return interaction.reply({ content: '❌ Apenas o criador da Pyxie pode gerenciar módulos!', ephemeral: true });
+        return interaction.reply({ content: '❌ Apenas o criador da Pyxie pode gerenciar o painel administrativo!', ephemeral: true });
       }
       if (interaction.customId.startsWith('admin_modules_view')) {
         const view = adminCmd.buildModulesView(interaction.user.id, interaction);
+        return interaction.reply(view);
+      }
+      if (interaction.customId.startsWith('admin_seasonal_view')) {
+        const view = adminCmd.buildSeasonalRestrictionsView(interaction.user.id, interaction);
         return interaction.reply(view);
       }
       if (interaction.customId.startsWith('admin_mod_toggle:')) {

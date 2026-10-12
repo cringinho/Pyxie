@@ -1,3 +1,4 @@
 # Google AdSense Official Authorized Digital Sellers (ads.txt)
 # Pyxie Discord Bot • https://pyxie.com.br
 google.com, pub-8113298456573494, DIRECT, f08c47fec0942fa0
+

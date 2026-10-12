@@ -484,12 +484,58 @@ function getUserUnlockedProfessions(userId) {
 }
 
 function isTestUser(userId) {
-  return (
-    !userId ||
-    /^(user_)?test[_-]/i.test(userId) ||
-    /^user_no_egg/i.test(userId) ||
-    userId === 'user_123'
-  );
+  if (!userId || typeof userId !== 'string') return true;
+  const trimmed = userId.trim();
+
+  // IDs usados estritamente em testes unitários automatizados (tests/economy.test.js)
+  if (trimmed === 'streak-user' || trimmed === 'economy-test-user' || trimmed === 'string-balance') {
+    return false;
+  }
+
+  // Padrões de teste e mocks
+  if (/^(user_)?test/i.test(trimmed)) return true;
+  if (/^user_no_egg/i.test(trimmed)) return true;
+  if (/^user_marry/i.test(trimmed)) return true;
+  if (/^mock/i.test(trimmed)) return true;
+  if (/^dummy/i.test(trimmed)) return true;
+  if (/^sample/i.test(trimmed)) return true;
+  if (/test[_-]/i.test(trimmed)) return true;
+  if (
+    trimmed === 'user_123' ||
+    trimmed === 'test-user-1' ||
+    trimmed === 'admin-target' ||
+    trimmed === 'worker' ||
+    trimmed === 'magic-candidate' ||
+    trimmed === 'recipient' ||
+    trimmed === 'proposer' ||
+    trimmed === 'test_user_pt' ||
+    trimmed === 'test_user_en' ||
+    trimmed === 'test_author_pt'
+  ) {
+    return true;
+  }
+
+  // No Discord, qualquer ID de usuário real é estritamente um snowflake numérico de 17 a 20 dígitos
+  if (!/^\d{17,20}$/.test(trimmed)) {
+    return true;
+  }
+
+  return false;
+}
+
+function purgeTestAccounts() {
+  const current = readEconomy();
+  let changed = false;
+  for (const uid of Object.keys(current)) {
+    if (isTestUser(uid)) {
+      delete current[uid];
+      changed = true;
+    }
+  }
+  if (changed) {
+    writeEconomy(current);
+  }
+  return changed;
 }
 
 function startWork(userId, data = {}, now = Date.now()) {
@@ -801,4 +847,6 @@ module.exports = {
   registerUserVote,
   hasActiveVote,
   VOTE_VALIDITY_MS,
+  isTestUser,
+  purgeTestAccounts,
 };

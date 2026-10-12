@@ -43,6 +43,11 @@ function buildAdminView(userId, guildOrSource = null) {
       .setCustomId(`admin_modules_view:${userId}`)
       .setLabel(t('admin.btnModules', guildOrSource))
       .setEmoji('🧩')
+      .setStyle(ButtonStyle.Secondary),
+    new ButtonBuilder()
+      .setCustomId(`admin_seasonal_view:${userId}`)
+      .setLabel(getLanguage(guildOrSource) === 'en' ? 'Seasonal' : 'Sazonal')
+      .setEmoji('🎃')
       .setStyle(ButtonStyle.Secondary)
   );
 
@@ -100,21 +105,131 @@ function buildModulesView(userId, guildOrSource = null) {
   return { embeds: [embed], components: buttonRows, ephemeral: true };
 }
 
+function extractSnowflake(arg) {
+  if (!arg) return null;
+  const match = String(arg).match(/\d{17,20}/);
+  return match ? match[0] : null;
+}
+
+function buildSeasonalRestrictionsView(userId, guildOrSource = null, args = []) {
+  if (userId !== OWNER_SNOWFLAKE) {
+    return {
+      content: t('admin.onlyOwner', guildOrSource, { owner: `<@${OWNER_SNOWFLAKE}>` }),
+      ephemeral: true,
+    };
+  }
+
+  const seasonalManager = require('../modules/seasonal/seasonalManager');
+  const sub = (args[0] || '').toLowerCase();
+  const targetId = extractSnowflake(args[1]);
+
+  let feedback = '';
+
+  if (sub === 'excluir-user' || sub === 'exclude-user') {
+    if (!targetId) {
+      feedback = `> ${t('admin.seasonalMissingTarget', guildOrSource)}\n\n`;
+    } else {
+      seasonalManager.excludeUser(targetId);
+      feedback = `> ${t('admin.seasonalUserExcluded', guildOrSource, { user: `<@${targetId}> (\`${targetId}\`)` })}\n\n`;
+    }
+  } else if (sub === 'incluir-user' || sub === 'unexclude-user') {
+    if (!targetId) {
+      feedback = `> ${t('admin.seasonalMissingTarget', guildOrSource)}\n\n`;
+    } else {
+      seasonalManager.unexcludeUser(targetId);
+      feedback = `> ${t('admin.seasonalUserUnexcluded', guildOrSource, { user: `<@${targetId}> (\`${targetId}\`)` })}\n\n`;
+    }
+  } else if (sub === 'excluir-cargo' || sub === 'exclude-role') {
+    if (!targetId) {
+      feedback = `> ${t('admin.seasonalMissingTarget', guildOrSource)}\n\n`;
+    } else {
+      seasonalManager.excludeRole(targetId);
+      feedback = `> ${t('admin.seasonalRoleExcluded', guildOrSource, { role: `<@&${targetId}> (\`${targetId}\`)` })}\n\n`;
+    }
+  } else if (sub === 'incluir-cargo' || sub === 'unexclude-role') {
+    if (!targetId) {
+      feedback = `> ${t('admin.seasonalMissingTarget', guildOrSource)}\n\n`;
+    } else {
+      seasonalManager.unexcludeRole(targetId);
+      feedback = `> ${t('admin.seasonalRoleUnexcluded', guildOrSource, { role: `<@&${targetId}> (\`${targetId}\`)` })}\n\n`;
+    }
+  } else if (sub === 'zerar' || sub === 'reset') {
+    if (!targetId) {
+      feedback = `> ${t('admin.seasonalMissingTarget', guildOrSource)}\n\n`;
+    } else {
+      seasonalManager.resetUserSeasonalBalance(targetId);
+      feedback = `> ${t('admin.seasonalUserReset', guildOrSource, { user: `<@${targetId}> (\`${targetId}\`)` })}\n\n`;
+    }
+  }
+
+  const { excludedUserIds, excludedRoleIds } = seasonalManager.getRestrictions();
+  const cfg = seasonalManager.loadConfig();
+
+  const userListText = excludedUserIds.length > 0
+    ? excludedUserIds.map((id) => `• <@${id}> (\`${id}\`)`).join('\n')
+    : t('admin.seasonalNoUsers', guildOrSource);
+
+  const roleListText = excludedRoleIds.length > 0
+    ? excludedRoleIds.map((id) => `• <@&${id}> (\`${id}\`)`).join('\n')
+    : t('admin.seasonalNoRoles', guildOrSource);
+
+  const isEn = getLanguage(guildOrSource) === 'en';
+  const embed = new EmbedBuilder()
+    .setColor('#f59e0b')
+    .setTitle(t('admin.seasonalRestrictionsTitle', guildOrSource))
+    .setDescription(
+      t('admin.seasonalRestrictionsDesc', guildOrSource, {
+        feedback,
+        eventName: cfg.eventName || 'Sazonal',
+        status: cfg.active ? (isEn ? '🟢 Active' : '🟢 Ativo') : (isEn ? '⚪ Inactive' : '⚪ Inativo'),
+        users: userListText,
+        roles: roleListText,
+      })
+    )
+    .setFooter({ text: pyxieFooter(t('admin.seasonalFooter', guildOrSource)) })
+    .setTimestamp();
+
+  return { embeds: [embed], ephemeral: true };
+}
+
 module.exports = {
   name: ADMIN,
   ephemeral: true,
   aliases: ['admin', 'painel', 'py-admin', 'dashboard', 'paineldono', 'owner'],
   buildAdminView,
   buildModulesView,
+  buildSeasonalRestrictionsView,
   data: new SlashCommandBuilder()
     .setName(ADMIN)
     .setDescription('Access Pyxie\'s secure owner administration dashboard.')
     .setDescriptionLocalizations({
       'pt-BR': 'Acesse o painel seguro de administração exclusivo do criador da Pyxie.',
-    }),
+    })
+    .addStringOption((opt) =>
+      opt
+        .setName('menu')
+        .setNameLocalizations({
+          'pt-BR': 'menu',
+        })
+        .setDescription('Select administrative management menu.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Selecione o menu de gerenciamento administrativo.',
+        })
+        .setRequired(false)
+        .addChoices(
+          { name: 'Dashboard', value: 'dashboard' },
+          { name: 'Modules & Plugins', value: 'modules' },
+          { name: 'Seasonal Restrictions', value: 'seasonal' }
+        )
+    ),
   async executePrefix({ message, args }) {
     if (args && (args[0] === 'modulos' || args[0] === 'modules')) {
       const view = buildModulesView(message.author.id, message);
+      await message.reply(view);
+      return;
+    }
+    if (args && (args[0] === 'sazonal' || args[0] === 'seasonal')) {
+      const view = buildSeasonalRestrictionsView(message.author.id, message, args.slice(1));
       await message.reply(view);
       return;
     }
@@ -122,6 +237,17 @@ module.exports = {
     await message.reply(view);
   },
   async executeSlash({ interaction }) {
+    const menu = interaction.options?.getString ? interaction.options.getString('menu') : null;
+    if (menu === 'modules') {
+      const view = buildModulesView(interaction.user.id, interaction);
+      await interaction.editReply(view);
+      return;
+    }
+    if (menu === 'seasonal') {
+      const view = buildSeasonalRestrictionsView(interaction.user.id, interaction);
+      await interaction.editReply(view);
+      return;
+    }
     const view = buildAdminView(interaction.user.id, interaction);
     await interaction.editReply(view);
   },

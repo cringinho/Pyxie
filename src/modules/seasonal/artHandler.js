@@ -14,6 +14,7 @@ const {
   updateUserProfile,
   resolveSeasonalEmojiObject,
   isSeasonalActive,
+  isUserExcluded,
 } = require('./seasonalManager');
 const { cacheArtImage } = require('./imageHelper');
 
@@ -461,6 +462,9 @@ async function tallyWeeklyArt(client) {
   let maxVotes = -1;
 
   for (const sub of submissions) {
+    if (isUserExcluded(sub.authorId)) {
+      continue;
+    }
     let votes = 0;
     try {
       const subChannel = (client && sub.channelId) ? await client.channels.fetch(sub.channelId).catch(() => channel) : channel;

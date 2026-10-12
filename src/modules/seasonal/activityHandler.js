@@ -7,6 +7,7 @@ const {
   addSeasonalBalance,
   resolveSeasonalEmojiObject,
   isSeasonalActive,
+  isUserExcluded,
 } = require('./seasonalManager');
 
 let activityJobs = [];
@@ -136,6 +137,11 @@ function trackMessage(message) {
     return false;
   }
 
+  // Usuários ou cargos inelegíveis não são rastreados para atividade
+  if (isUserExcluded(message.author.id, message.member)) {
+    return false;
+  }
+
   if (!isInitialized) {
     loadStateFromStorage();
   }
@@ -196,7 +202,7 @@ async function tallyMorning(client) {
   if (!isSeasonalActive()) return { success: false, reason: 'inactive' };
   loadStateFromStorage();
 
-  const userIds = Array.from(morningUsers);
+  const userIds = Array.from(morningUsers).filter((id) => !isUserExcluded(id));
   morningUsers.clear();
   saveStateToStorage();
 
@@ -260,7 +266,7 @@ async function tallyNight(client) {
   if (!isSeasonalActive()) return { success: false, reason: 'inactive' };
   loadStateFromStorage();
 
-  const userIds = Array.from(nightUsers);
+  const userIds = Array.from(nightUsers).filter((id) => !isUserExcluded(id));
   nightUsers.clear();
   saveStateToStorage();
 

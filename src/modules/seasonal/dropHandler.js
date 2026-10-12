@@ -9,6 +9,7 @@ const {
   resolveSeasonalEmoji,
   resolveSeasonalEmojiObject,
   isSeasonalActive,
+  isUserExcluded,
 } = require('./seasonalManager');
 
 let dropJobs = [];
@@ -327,14 +328,20 @@ async function triggerDrop(client, force = false) {
       (targetObj.isUnicode && (reaction.emoji?.name === targetObj.reactable || reactionToString === targetObj.reactable));
 
     if (isTarget) {
-      claimed = true;
-      collector.stop('claimed');
-
-      const amount = Math.floor(Math.random() * 2) + 1;
       let member = null;
       try {
         member = dropMsg.guild?.members?.cache?.get(user.id) || await dropMsg.guild?.members?.fetch(user.id).catch(() => null);
       } catch (_) {}
+
+      // Usuários ou cargos excluídos/inelegíveis não podem resgatar o baú (mantém o baú aberto para os demais)
+      if (isUserExcluded(user.id, member)) {
+        return;
+      }
+
+      claimed = true;
+      collector.stop('claimed');
+
+      const amount = Math.floor(Math.random() * 2) + 1;
 
       const userDisplayName = member?.displayName || user.displayName || user.globalName || user.username;
       const userAvatar = (member && typeof member.displayAvatarURL === 'function')

@@ -5,6 +5,7 @@ const path = require('node:path');
 // Isola o arquivo de dados durante o teste
 const testMarriageDataFile = path.join(__dirname, 'marriageData.test.json');
 const testEconomyFile = path.join(__dirname, '..', 'data', 'economy.json');
+const originalEconomy = fs.existsSync(testEconomyFile) ? fs.readFileSync(testEconomyFile, 'utf8') : '{}';
 process.env.MARRIAGE_DATA_PATH = testMarriageDataFile;
 
 const marriageManager = require('../src/modules/marriage/marriageManager');
@@ -200,5 +201,8 @@ try {
 } finally {
   if (fs.existsSync(testMarriageDataFile)) {
     fs.unlinkSync(testMarriageDataFile);
+  }
+  if (originalEconomy) {
+    fs.writeFileSync(testEconomyFile, originalEconomy, 'utf8');
   }
 }

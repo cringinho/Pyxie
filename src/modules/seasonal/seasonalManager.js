@@ -57,6 +57,10 @@ const DEFAULT_CONFIG = {
     infoEventRules: '• **Baú da Pyxie (Drops):** Surgem de surpresa em {dropsChannel} (3x/dia na semana e 6x/dia nos fins de semana). Seja o primeiro a clicar na reação certa!\n• **Atividade no Canal de Drops:** Converse e interaja em {dropsChannel} nos horários especiais para ganhar moedas automáticas:\n  - ☀️ **Manhã (06:00 às 11:00 BRT):** Ganhe **+1 {currencyName}** (anúncio e entrega às 11:00 BRT)\n  - 🌙 **Madrugada (23:00 às 03:00 BRT):** Ganhe **+2 {currencyName}** (anúncio e entrega às 03:00 BRT)\n• **Arte da Semana:** Poste sua arte em {artChannel} marcando a Pyxie (@Pyxie). A arte mais votada aos domingos (10:00 BRT) ganha **+5 {currencyName}**!',
     infoEventExtra: '> Use **/py-rank** para conferir o placar dos membros mais dedicados!\n> Dúvidas ou choro? Procure a moderação antes de passar vergonha no chat geral.',
   },
+  restrictions: {
+    excludedUserIds: ['214153735281180673'], // Criador da Pyxie inelegível para ganhar moedas sazonais ou constar no placar
+    excludedRoleIds: [],
+  },
 };
 
 const DEFAULT_DATA = {
@@ -120,7 +124,19 @@ function loadConfig() {
       return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
     }
     const raw = fs.readFileSync(CONFIG_PATH, 'utf8');
-    return { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    return {
+      ...DEFAULT_CONFIG,
+      ...parsed,
+      restrictions: {
+        excludedUserIds: Array.isArray(parsed?.restrictions?.excludedUserIds)
+          ? parsed.restrictions.excludedUserIds.map(String)
+          : [...DEFAULT_CONFIG.restrictions.excludedUserIds],
+        excludedRoleIds: Array.isArray(parsed?.restrictions?.excludedRoleIds)
+          ? parsed.restrictions.excludedRoleIds.map(String)
+          : [...DEFAULT_CONFIG.restrictions.excludedRoleIds],
+      },
+    };
   } catch (err) {
     console.error('[Seasonal] Falha ao ler seasonalConfig.json, usando padrão:', err);
     return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
@@ -150,6 +166,14 @@ function saveConfig(updates, overwrite = false) {
       },
     },
     templates: { ...(current.templates || {}), ...(updates.templates || {}) },
+    restrictions: {
+      excludedUserIds: Array.isArray(updates.restrictions?.excludedUserIds)
+        ? updates.restrictions.excludedUserIds.map(String)
+        : (current.restrictions?.excludedUserIds || []),
+      excludedRoleIds: Array.isArray(updates.restrictions?.excludedRoleIds)
+        ? updates.restrictions.excludedRoleIds.map(String)
+        : (current.restrictions?.excludedRoleIds || []),
+    },
   };
   atomicWriteJson(CONFIG_PATH, merged);
   return merged;
@@ -353,9 +377,71 @@ function resolveSeasonalEmoji(client, emojiKeyOrId, fallback = '🎃') {
   return obj.formatted;
 }
 
+// Validador de inelegibilidade/exclusão (Usuários ou Cargos incapazes de ganhar moedas ou constar no placar)
+function isUserExcluded(userId, member = null, config = null) {
+  if (!userId) return false;
+  const uid = String(userId).trim();
+  const cfg = config || loadConfig();
+  const restrictions = cfg.restrictions || {};
+
+  const excludedUserIds = Array.isArray(restrictions.excludedUserIds)
+    ? restrictions.excludedUserIds.map((id) => String(id).trim())
+    : [];
+  if (excludedUserIds.includes(uid)) {
+    return true;
+  }
+
+  const excludedRoleIds = Array.isArray(restrictions.excludedRoleIds)
+    ? restrictions.excludedRoleIds.map((id) => String(id).trim())
+    : [];
+  if (excludedRoleIds.length === 0) {
+    return false;
+  }
+
+  // 1. Verifica no objeto member (GuildMember / InteractionMember) se fornecido
+  if (member) {
+    if (member.roles && member.roles.cache) {
+      if (member.roles.cache.some((r) => excludedRoleIds.includes(String(r.id)))) {
+        return true;
+      }
+    } else if (Array.isArray(member._roles)) {
+      if (member._roles.some((rId) => excludedRoleIds.includes(String(rId)))) {
+        return true;
+      }
+    } else if (Array.isArray(member.roles)) {
+      if (member.roles.some((rId) => excludedRoleIds.includes(String(rId)))) {
+        return true;
+      }
+    }
+  }
+
+  // 2. Tenta verificar no cache da guilda se clientRef estiver disponível
+  if (clientRef && clientRef.guilds) {
+    try {
+      const targetGuildId = '1453890868980482090';
+      const guild = clientRef.guilds.cache.get(targetGuildId);
+      if (guild) {
+        const m = guild.members.cache.get(uid);
+        if (m && m.roles && m.roles.cache) {
+          if (m.roles.cache.some((r) => excludedRoleIds.includes(String(r.id)))) {
+            return true;
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
+  return false;
+}
+
 // Manipulação atômica de moedas sazonais com auditoria de ganhos
-function addSeasonalBalance(userId, amount, reasonInfo = null) {
+function addSeasonalBalance(userId, amount, reasonInfo = null, member = null) {
   if (!userId || typeof amount !== 'number') return 0;
+  if (amount > 0 && isUserExcluded(userId, member)) {
+    console.log(`[Seasonal] Usuário ${userId} está na lista de exclusão/inelegibilidade do evento. Ganho de ${amount} moedas bloqueado.`);
+    return getSeasonalBalance(userId);
+  }
+
   const data = loadData();
   const current = Number(data.balances[userId] || 0);
   const updated = Math.max(0, current + amount);
@@ -388,6 +474,7 @@ function addSeasonalBalance(userId, amount, reasonInfo = null) {
 
 function getSeasonalBalance(userId) {
   if (!userId) return 0;
+  if (isUserExcluded(userId)) return 0;
   const data = loadData();
   return Number(data.balances[userId] || 0);
 }
@@ -395,6 +482,7 @@ function getSeasonalBalance(userId) {
 function getTopSeasonalBalances(limit = 10) {
   const data = loadData();
   return Object.entries(data.balances || {})
+    .filter(([userId]) => !isUserExcluded(userId))
     .map(([userId, balance]) => ({ userId, balance: Number(balance) }))
     .sort((a, b) => b.balance - a.balance)
     .slice(0, limit);
@@ -417,6 +505,7 @@ function getSeasonalLeaderboard(limit = 50) {
   const balances = data.balances || {};
   const profiles = data.userProfiles || {};
   const entries = Object.entries(balances)
+    .filter(([userId]) => !isUserExcluded(userId))
     .map(([userId, balance]) => {
       const prof = profiles[userId] || {};
       const shortId = String(userId).slice(-4);
@@ -435,6 +524,93 @@ function getSeasonalLeaderboard(limit = 50) {
     rank: idx + 1,
     ...e,
   }));
+}
+
+// Gestão de Exclusões e Zeramento de Saldos Sazonais
+function resetUserSeasonalBalance(userId) {
+  if (!userId) return false;
+  const uid = String(userId).trim();
+  const data = loadData();
+  let changed = false;
+  if (data.balances && Object.prototype.hasOwnProperty.call(data.balances, uid)) {
+    delete data.balances[uid];
+    changed = true;
+  }
+  if (data.userProfiles && data.userProfiles[uid]) {
+    delete data.userProfiles[uid];
+    changed = true;
+  }
+  if (changed) {
+    saveData(data);
+  }
+  return true;
+}
+
+function excludeUser(userId) {
+  if (!userId) return false;
+  const uid = String(userId).trim();
+  const cfg = loadConfig();
+  cfg.restrictions = cfg.restrictions || { excludedUserIds: [], excludedRoleIds: [] };
+  const list = Array.isArray(cfg.restrictions.excludedUserIds)
+    ? cfg.restrictions.excludedUserIds.map(String)
+    : [];
+  if (!list.includes(uid)) {
+    list.push(uid);
+    cfg.restrictions.excludedUserIds = list;
+    saveConfig(cfg);
+  }
+  resetUserSeasonalBalance(uid);
+  return true;
+}
+
+function unexcludeUser(userId) {
+  if (!userId) return false;
+  const uid = String(userId).trim();
+  const cfg = loadConfig();
+  cfg.restrictions = cfg.restrictions || { excludedUserIds: [], excludedRoleIds: [] };
+  const list = Array.isArray(cfg.restrictions.excludedUserIds)
+    ? cfg.restrictions.excludedUserIds.map(String)
+    : [];
+  cfg.restrictions.excludedUserIds = list.filter((id) => id !== uid);
+  saveConfig(cfg);
+  return true;
+}
+
+function excludeRole(roleId) {
+  if (!roleId) return false;
+  const rid = String(roleId).trim();
+  const cfg = loadConfig();
+  cfg.restrictions = cfg.restrictions || { excludedUserIds: [], excludedRoleIds: [] };
+  const list = Array.isArray(cfg.restrictions.excludedRoleIds)
+    ? cfg.restrictions.excludedRoleIds.map(String)
+    : [];
+  if (!list.includes(rid)) {
+    list.push(rid);
+    cfg.restrictions.excludedRoleIds = list;
+    saveConfig(cfg);
+  }
+  return true;
+}
+
+function unexcludeRole(roleId) {
+  if (!roleId) return false;
+  const rid = String(roleId).trim();
+  const cfg = loadConfig();
+  cfg.restrictions = cfg.restrictions || { excludedUserIds: [], excludedRoleIds: [] };
+  const list = Array.isArray(cfg.restrictions.excludedRoleIds)
+    ? cfg.restrictions.excludedRoleIds.map(String)
+    : [];
+  cfg.restrictions.excludedRoleIds = list.filter((id) => id !== rid);
+  saveConfig(cfg);
+  return true;
+}
+
+function getRestrictions() {
+  const cfg = loadConfig();
+  return {
+    excludedUserIds: cfg.restrictions?.excludedUserIds || [],
+    excludedRoleIds: cfg.restrictions?.excludedRoleIds || [],
+  };
 }
 
 async function syncTopUserProfiles(client = clientRef) {
@@ -1147,6 +1323,69 @@ function setupWebRoutes(app) {
       res.status(500).json({ success: false, error: err.message });
     }
   });
+
+  // APIs do Painel Sazonal: Restrições & Exclusões (Usuários e Cargos inelegíveis)
+  app.get('/api/admin/sazonal/restrictions', requireAdminAuth, (req, res) => {
+    res.json({
+      success: true,
+      restrictions: getRestrictions(),
+    });
+  });
+
+  app.post('/api/admin/sazonal/restrictions/exclude-user', requireAdminAuth, (req, res) => {
+    try {
+      const { userId } = req.body || {};
+      if (!userId) return res.status(400).json({ success: false, error: 'userId obrigatório' });
+      excludeUser(userId);
+      res.json({ success: true, restrictions: getRestrictions() });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post('/api/admin/sazonal/restrictions/unexclude-user', requireAdminAuth, (req, res) => {
+    try {
+      const { userId } = req.body || {};
+      if (!userId) return res.status(400).json({ success: false, error: 'userId obrigatório' });
+      unexcludeUser(userId);
+      res.json({ success: true, restrictions: getRestrictions() });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post('/api/admin/sazonal/restrictions/exclude-role', requireAdminAuth, (req, res) => {
+    try {
+      const { roleId } = req.body || {};
+      if (!roleId) return res.status(400).json({ success: false, error: 'roleId obrigatório' });
+      excludeRole(roleId);
+      res.json({ success: true, restrictions: getRestrictions() });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post('/api/admin/sazonal/restrictions/unexclude-role', requireAdminAuth, (req, res) => {
+    try {
+      const { roleId } = req.body || {};
+      if (!roleId) return res.status(400).json({ success: false, error: 'roleId obrigatório' });
+      unexcludeRole(roleId);
+      res.json({ success: true, restrictions: getRestrictions() });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post('/api/admin/sazonal/reset-user', requireAdminAuth, (req, res) => {
+    try {
+      const { userId } = req.body || {};
+      if (!userId) return res.status(400).json({ success: false, error: 'userId obrigatório' });
+      resetUserSeasonalBalance(userId);
+      res.json({ success: true, message: `Saldo sazonal de ${userId} zerado com sucesso.` });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
 }
 
 module.exports = {
@@ -1171,6 +1410,13 @@ module.exports = {
   getSimplifiedAppEmojis,
   checkEndEvent,
   finalizeAndRewardEvent,
+  isUserExcluded,
+  resetUserSeasonalBalance,
+  excludeUser,
+  unexcludeUser,
+  excludeRole,
+  unexcludeRole,
+  getRestrictions,
   DEFAULT_CONFIG,
   DEFAULT_DATA,
 };

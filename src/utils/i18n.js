@@ -731,7 +731,18 @@ const TRANSLATIONS = {
       "exportMessagesTitle": "📜  ✦  Exportação de Mensagens — {channel}",
       "exportMessagesDesc": "As últimas **{count}** mensagens do canal {channel} foram compiladas em um arquivo de texto para auditoria.",
       "exportMessagesEmpty": "⚠️ Nenhuma mensagem encontrada no canal para exportar.",
-      "exportMessagesFooter": "Auditoria Administrativa • Pyxie Core"
+      "exportMessagesFooter": "Auditoria Administrativa • Pyxie Core",
+      "seasonalRestrictionsTitle": "🎃  ✦  Restrições do Módulo Sazonal",
+      "seasonalRestrictionsDesc": "{feedback}**Evento:** {eventName} ({status})\n\n🚫 **Usuários Excluídos do Ranking & Ganhos:**\n{users}\n\n🚫 **Cargos Excluídos do Ranking & Ganhos:**\n{roles}\n\n📖 **Comandos:**\n• `py!admin sazonal excluir-user <id>`\n• `py!admin sazonal incluir-user <id>`\n• `py!admin sazonal excluir-cargo <id>`\n• `py!admin sazonal incluir-cargo <id>`\n• `py!admin sazonal zerar <id>`",
+      "seasonalNoUsers": "*Nenhum usuário excluído.*",
+      "seasonalNoRoles": "*Nenhum cargo excluído.*",
+      "seasonalUserExcluded": "✅ Usuário {user} foi excluído do evento sazonal (saldo zerado).",
+      "seasonalUserUnexcluded": "✅ Usuário {user} foi readmitido no evento sazonal.",
+      "seasonalRoleExcluded": "✅ Cargo {role} foi excluído do evento sazonal.",
+      "seasonalRoleUnexcluded": "✅ Cargo {role} foi readmitido no evento sazonal.",
+      "seasonalUserReset": "✅ Saldo sazonal de {user} foi zerado.",
+      "seasonalMissingTarget": "❌ Forneça a menção ou ID válido.",
+      "seasonalFooter": "Controle de Integridade Sazonal • Pyxie Core"
     },
     "workMinigame": {
       "noProfession": "❌ Você ainda não possui uma profissão registrada! Use `/py-profession` para escolher sua vocação antes de trabalhar.",
@@ -1395,7 +1406,18 @@ const TRANSLATIONS = {
       "exportMessagesTitle": "📜  ✦  Message Export — {channel}",
       "exportMessagesDesc": "The latest **{count}** messages from {channel} have been compiled into a text file for audit.",
       "exportMessagesEmpty": "⚠️ No messages found in the channel to export.",
-      "exportMessagesFooter": "Administrative Audit • Pyxie Core"
+      "exportMessagesFooter": "Administrative Audit • Pyxie Core",
+      "seasonalRestrictionsTitle": "🎃  ✦  Seasonal Module Restrictions",
+      "seasonalRestrictionsDesc": "{feedback}**Event:** {eventName} ({status})\n\n🚫 **Users Excluded from Leaderboard & Gains:**\n{users}\n\n🚫 **Roles Excluded from Leaderboard & Gains:**\n{roles}\n\n📖 **Commands:**\n• `py!admin seasonal exclude-user <id>`\n• `py!admin seasonal unexclude-user <id>`\n• `py!admin seasonal exclude-role <id>`\n• `py!admin seasonal unexclude-role <id>`\n• `py!admin seasonal reset <id>`",
+      "seasonalNoUsers": "*No users excluded.*",
+      "seasonalNoRoles": "*No roles excluded.*",
+      "seasonalUserExcluded": "✅ User {user} was excluded from the seasonal event (balance reset).",
+      "seasonalUserUnexcluded": "✅ User {user} was re-admitted to the seasonal event.",
+      "seasonalRoleExcluded": "✅ Role {role} was excluded from the seasonal event.",
+      "seasonalRoleUnexcluded": "✅ Role {role} was re-admitted to the seasonal event.",
+      "seasonalUserReset": "✅ Seasonal balance of {user} was reset.",
+      "seasonalMissingTarget": "❌ Please provide a valid mention or ID.",
+      "seasonalFooter": "Seasonal Integrity Control • Pyxie Core"
     },
     "workMinigame": {
       "noProfession": "❌ You do not have a registered profession yet! Use `/py-profession` to choose a career before working.",
