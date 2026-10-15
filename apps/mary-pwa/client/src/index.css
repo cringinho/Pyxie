@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root, [data-theme="dark-romantic"] {
+  --bg-main: #0B090E;
+  --bg-card: rgba(24, 18, 30, 0.72);
+  --border-card: rgba(230, 0, 103, 0.22);
+  --primary: #E60067;
+  --primary-hover: #ff1a7d;
+  --secondary: #F43F5E;
+  --accent-glow: rgba(230, 0, 103, 0.35);
+  --text-main: #FDF2F8;
+  --text-muted: #D1A3BD;
+}
+
+[data-theme="neon-rose"] {
+  --bg-main: #120714;
+  --bg-card: rgba(32, 12, 38, 0.75);
+  --border-card: rgba(255, 42, 133, 0.35);
+  --primary: #FF2A85;
+  --primary-hover: #ff529c;
+  --secondary: #FF75B5;
+  --accent-glow: rgba(255, 42, 133, 0.5);
+  --text-main: #FFF0F6;
+  --text-muted: #E598BE;
+}
+
+[data-theme="cyber-goth"] {
+  --bg-main: #09070F;
+  --bg-card: rgba(20, 14, 34, 0.75);
+  --border-card: rgba(147, 51, 234, 0.3);
+  --primary: #9333EA;
+  --primary-hover: #a855f7;
+  --secondary: #C084FC;
+  --accent-gold: #F59E0B;
+  --accent-glow: rgba(147, 51, 234, 0.45);
+  --text-main: #F3E8FF;
+  --text-muted: #B8A5D1;
+}
+
+[data-theme="starry-night"] {
+  --bg-main: #070B19;
+  --bg-card: rgba(13, 20, 42, 0.75);
+  --border-card: rgba(56, 189, 248, 0.25);
+  --primary: #38BDF8;
+  --primary-hover: #60a5fa;
+  --secondary: #818CF8;
+  --accent-glow: rgba(56, 189, 248, 0.4);
+  --text-main: #F0F9FF;
+  --text-muted: #94A3B8;
+}
+
+@layer base {
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  opacity: 0.5;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
+}
+
+/* Glassmorphism helpers sincronizados com o tema ativo */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-card);
+}
+
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-card);
+}
+
+.theme-glow {
+  box-shadow: 0 0 28px var(--accent-glow);
+}
+

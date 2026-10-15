@@ -1,0 +1,55 @@
+{
+  "name": "Mary & Leh — Nosso Universo",
+  "short_name": "Mary & Leh",
+  "description": "Diário Privado, Linha do Tempo e Nosso Universo",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B090E",
+  "theme_color": "#E60067",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Novo Relato",
+      "short_name": "Novo Relato",
+      "description": "Escrever uma nova memória a dois",
+      "url": "/?action=new-memory",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Galeria de Fotos",
+      "short_name": "Galeria",
+      "description": "Ver fotos e álbuns do casal",
+      "url": "/?tab=gallery",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Versículo do Dia",
+      "short_name": "Versículo",
+      "description": "Palavra diária da Mary",
+      "url": "/?tab=feed",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
