@@ -22,7 +22,7 @@ export default function SettingsView({ onOpenProfile }) {
   const [feedback, setFeedback] = useState(null);
 
   // Datas Especiais & Contador
-  const [anniversaryDate, setAnniversaryDate] = useState('2026-01-30');
+  const [anniversaryDate, setAnniversaryDate] = useState('2026-10-15');
   const [specialDates, setSpecialDates] = useState([]);
   const [newTitle, setNewTitle] = useState('');
   const [newDate, setNewDate] = useState('');
@@ -252,7 +252,7 @@ export default function SettingsView({ onOpenProfile }) {
         <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between text-xs">
           <div>
             <span className="text-white font-display font-semibold block">Início da Nossa História</span>
-            <span className="text-[11px] text-pink-300 font-mono">30 de Janeiro de 2026</span>
+            <span className="text-[11px] text-pink-300 font-mono">15 de Outubro de 2026</span>
           </div>
           <Heart weight="fill" className="w-5 h-5 text-pink-500 animate-pulse" />
         </div>

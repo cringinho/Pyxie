@@ -294,14 +294,24 @@ router.post('/', requireAuth, upload.array('images', 10), async (req, res) => {
     }).catch(() => null);
 
 
+    let returnedTags = [];
+    try {
+      returnedTags = JSON.parse(parsedTags);
+    } catch (e) {
+      returnedTags = [];
+    }
+
     return res.status(201).json({
       success: true,
       message: 'Relato gravado no Universo com sucesso! ✨',
       memory: {
         ...created,
+        tags: returnedTags,
         media: savedMedia,
         author: sanitizeUser(req.user),
-        likes: []
+        likes: [],
+        connectionsCount: 0,
+        connections: []
       }
     });
   } catch (err) {

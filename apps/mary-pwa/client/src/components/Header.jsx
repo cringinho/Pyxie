@@ -20,7 +20,7 @@ export default function Header({ onOpenProfile }) {
               <Heart className="w-4 h-4 text-pink-500 fill-pink-500 animate-bounce" />
             </h1>
             <p className="text-[10px] text-pink-300/70 font-medium">
-              Mary & Leh • 30/01/2026
+              Mary & Leh • 15/10/2026
             </p>
           </div>
         </div>

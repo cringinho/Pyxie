@@ -62,7 +62,7 @@ export default function DailyBibleVerseCard({ onTransformToMemory }) {
     }
   }
 
-  const isMary = user?.username === 'mary';
+  const isMary = user?.username == 'mary';
 
   return (
     <div className="relative rounded-3xl overflow-hidden glass-panel border border-pink-500/25 shadow-2xl p-5 sm:p-6 transition-all">
@@ -71,7 +71,7 @@ export default function DailyBibleVerseCard({ onTransformToMemory }) {
         <div className="flex items-center gap-2 text-pink-400">
           <BookOpenText weight="duotone" className="w-5 h-5" />
           <h3 className="text-xs font-semibold uppercase tracking-wider font-display text-pink-300 flex items-center gap-1.5">
-            <span>{isMary ? 'Palavra do Dia para Mary' : 'Versículo Diário do Amor'}</span>
+            <span>{isMary ? 'Palavra do Dia para Mary' : 'Versículo Diário'}</span>
             <Sparkle weight="fill" className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
           </h3>
         </div>

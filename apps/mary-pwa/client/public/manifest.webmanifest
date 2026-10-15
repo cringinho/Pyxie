@@ -1,7 +1,7 @@
 {
   "name": "Mary & Leh — Nosso Universo",
   "short_name": "Mary & Leh",
-  "description": "Diário Privado, Linha do Tempo e Nosso Universo",
+  "description": "Diário Privado, Nosso Universo",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -47,7 +47,7 @@
     {
       "name": "Versículo do Dia",
       "short_name": "Versículo",
-      "description": "Palavra diária da Mary",
+      "description": "Verso diário da Mary",
       "url": "/?tab=feed",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }

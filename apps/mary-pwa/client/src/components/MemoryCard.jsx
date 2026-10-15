@@ -61,18 +61,34 @@ export default function MemoryCard({ memory, onLike, onDelete, onTagClick, onSel
 
   const images = memory.media || [];
   const ReactionIcon = currentReaction.icon;
+  const isMaryAuthor = memory.author?.username === 'mary';
+
+  // Tratamento 100% seguro de tags (array, string JSON ou texto)
+  let safeTags = [];
+  if (Array.isArray(memory.tags)) {
+    safeTags = memory.tags;
+  } else if (typeof memory.tags === 'string' && memory.tags.trim()) {
+    try {
+      const parsed = JSON.parse(memory.tags);
+      safeTags = Array.isArray(parsed) ? parsed : [memory.tags];
+    } catch (e) {
+      safeTags = memory.tags.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean);
+    }
+  }
 
   return (
     <article className="glass-panel rounded-3xl overflow-hidden border border-pink-500/20 shadow-xl transition-all duration-300 hover:border-pink-500/40 relative">
       {/* Header do Relato */}
       <div className="p-4 sm:p-5 flex items-start justify-between gap-3 border-b border-white/5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full border border-pink-500/40 overflow-hidden bg-[#18121e] flex items-center justify-center shrink-0">
+          <div className={`w-10 h-10 rounded-full border overflow-hidden bg-[#18121e] flex items-center justify-center shrink-0 ${
+            isMaryAuthor ? 'border-sky-400/60 shadow-[0_0_10px_rgba(56,189,248,0.25)]' : 'border-purple-500/40 shadow-[0_0_10px_rgba(147,51,234,0.2)]'
+          }`}>
             {memory.author?.avatarUrl ? (
               <img src={memory.author.avatarUrl} alt="" className="w-full h-full object-cover" />
             ) : (
-              <span className="font-serif font-bold text-sm text-pink-300">
-                {memory.author?.username === 'mary' ? 'M' : 'L'}
+              <span className={`font-serif font-bold text-sm ${isMaryAuthor ? 'text-sky-300' : 'text-purple-300'}`}>
+                {isMaryAuthor ? 'M' : 'L'}
               </span>
             )}
           </div>
@@ -81,7 +97,7 @@ export default function MemoryCard({ memory, onLike, onDelete, onTagClick, onSel
             <div className="flex items-center gap-1.5 font-display font-semibold text-xs sm:text-sm text-white">
               <span>{memory.author?.displayName || 'Autor'}</span>
               {memory.author?.nickname && (
-                <span className="text-[11px] text-pink-400 font-sans font-normal">
+                <span className={`text-[11px] font-sans font-medium ${isMaryAuthor ? 'text-sky-400' : 'text-purple-400'}`}>
                   ({memory.author.nickname})
                 </span>
               )}
@@ -181,15 +197,15 @@ export default function MemoryCard({ memory, onLike, onDelete, onTagClick, onSel
         )}
 
         {/* Tags */}
-        {memory.tags && memory.tags.length > 0 && (
+        {safeTags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 pt-1">
-            {memory.tags.map((tag) => (
+            {safeTags.map((tag) => (
               <button
                 key={tag}
                 onClick={() => onTagClick && onTagClick(tag)}
                 className="text-[11px] font-sans font-medium px-2 py-0.5 rounded-lg bg-pink-500/10 text-pink-300 border border-pink-500/20 hover:bg-pink-500/20 transition-all"
               >
-                #{tag.replace(/^#/, '')}
+                #{String(tag).replace(/^#/, '')}
               </button>
             ))}
           </div>

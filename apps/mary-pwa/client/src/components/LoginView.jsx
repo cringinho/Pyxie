@@ -40,7 +40,7 @@ export default function LoginView() {
               <Heart weight="fill" className="w-5 h-5 text-pink-500 animate-bounce" />
             </h1>
             <p className="text-xs text-pink-200/60 font-sans font-medium">
-              Diário Secreto & Linha do Tempo • Mary & Leh
+              Diário • Mary & Leh
             </p>
           </div>
 
@@ -51,11 +51,11 @@ export default function LoginView() {
               onClick={() => setUsername('mary')}
               className={`p-3 rounded-2xl border transition-all flex flex-col items-center gap-1.5 ${
                 username === 'mary'
-                  ? 'bg-pink-500/20 border-pink-500 text-white shadow-lg shadow-pink-500/10'
+                  ? 'bg-sky-500/20 border-sky-400 text-white shadow-lg shadow-sky-500/15'
                   : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'
               }`}
             >
-              <Heart weight="duotone" className="w-6 h-6 text-pink-400" />
+              <Heart weight="duotone" className="w-6 h-6 text-sky-400" />
               <span className="text-xs font-semibold font-display">Mary (Maricota)</span>
             </button>
 

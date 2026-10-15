@@ -61,17 +61,17 @@ export default function CoupleHeader({ onOpenProfile }) {
             className={`relative group ${isMaryMe ? 'cursor-pointer' : ''}`}
             title={isMaryMe ? 'Editar meu perfil' : maryUser.displayName}
           >
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full p-0.5 bg-gradient-to-tr from-pink-500 to-rose-400 shadow-md">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full p-0.5 bg-gradient-to-tr from-sky-400 via-sky-300 to-cyan-300 shadow-md shadow-sky-400/25">
               <div className="w-full h-full rounded-full overflow-hidden bg-[#18121e] flex items-center justify-center">
                 {maryUser.avatarUrl ? (
                   <img src={maryUser.avatarUrl} alt="Mary" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-xs font-bold font-serif text-pink-300">M</span>
+                  <span className="text-xs font-bold font-serif text-sky-300">M</span>
                 )}
               </div>
             </div>
             {isMaryMe && (
-              <span className="absolute -bottom-0.5 -right-0.5 p-0.5 rounded-full bg-pink-600 text-white shadow-sm border border-[#0b090e]">
+              <span className="absolute -bottom-0.5 -right-0.5 p-0.5 rounded-full bg-sky-500 text-white shadow-sm border border-[#0b090e]">
                 <Settings className="w-2.5 h-2.5" />
               </span>
             )}
@@ -108,9 +108,9 @@ export default function CoupleHeader({ onOpenProfile }) {
 
           <div className="hidden xs:block pl-1">
             <div className="flex items-center gap-1 font-display font-semibold text-xs sm:text-sm text-white">
-              <span>{maryUser.nickname || 'Maricota'}</span>
+              <span className="text-sky-300">{maryUser.nickname || 'Maricota'}</span>
               <span className="text-pink-400 font-serif italic text-xs">&</span>
-              <span>{lehUser.nickname || 'Cringinho'}</span>
+              <span className="text-purple-300">{lehUser.nickname || 'Cringinho'}</span>
             </div>
             <div className="text-[10px] text-pink-300/70 flex items-center gap-1">
               <Sparkle weight="fill" className="w-2.5 h-2.5 text-pink-400" />

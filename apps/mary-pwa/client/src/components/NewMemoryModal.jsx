@@ -48,12 +48,28 @@ async function compressImageClientSide(file, maxDimension = 1800, quality = 0.88
 }
 
 const MOODS = [
-  'Feliz & Radiante ✨',
-  'Amor Eterno 💖',
-  'Paz & Gratidão 🕊️',
-  'Mágica & Fofa 🌸',
-  'Cringe & Apaixonado ⚡',
-  'Nostálgica 🌙'
+'Exaustão',
+  'Ansiedade',
+  'Irritação',
+  'Sobrecarga',
+  'Derrota',
+  'Apatia',
+  'Esgotamento',
+  'Frustração',
+  'Tédio',
+  'Surto',
+  'Paranoia',
+  'Sono',
+  'Confusão',
+  'Impaciência',
+  'Vazio',
+  'Desorientação',
+  'Estresse',
+  'Paralisia',
+  'Incômodo',
+  'Pânico',
+  'Pavor',
+  'Caos'
 ];
 
 export default function NewMemoryModal({

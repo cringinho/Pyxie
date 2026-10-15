@@ -34,7 +34,7 @@ export async function runSeed() {
       nickname: 'Maricota',
       passwordHash: maryHash,
       avatarUrl: null,
-      bannerColor: '#EC4899',
+      bannerColor: '#38BDF8',
       bio: 'Unicórnio com glitter, música e arte',
       moodStatus: 'Brilhando com glitter e amor',
       theme: 'dark-romantic',
