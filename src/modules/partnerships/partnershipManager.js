@@ -14,7 +14,8 @@ const path = require('path');
 const { CATEGORY_SCHEMAS, pick } = require('./formSchemas');
 const { getLanguage, t } = require('../../utils/i18n');
 const { readJson, writeJsonAtomic, isHttpUrl } = require('../../utils/atomicJson');
-const { restPost } = require('../../utils/discordRest');
+const { restPost, restPatch } = require('../../utils/discordRest');
+
 
 const CONFIG_PATH = path.join(process.cwd(), 'data', 'partnershipsConfig.json');
 const DATA_PATH = path.join(process.cwd(), 'data', 'partnershipsData.json');
@@ -528,6 +529,80 @@ class PartnershipManager {
     return true;
   }
 
+  async syncPublishedEmbed(partner) {
+    if (!partner || !partner.publishedChannelId || !partner.publishedMessageId) return false;
+    const updatedEmbed = this.buildPublicPartnerEmbed(partner, 'pt');
+    if (this.client) {
+      try {
+        const pubCh = await this.client.channels.fetch(partner.publishedChannelId).catch(() => null);
+        if (pubCh) {
+          const originalMsg = await pubCh.messages.fetch(partner.publishedMessageId).catch(() => null);
+          if (originalMsg) {
+            await originalMsg.edit({ embeds: [updatedEmbed] }).catch(() => null);
+            return true;
+          }
+        }
+      } catch (_) {}
+    }
+    const embedJson = typeof updatedEmbed.toJSON === 'function' ? updatedEmbed.toJSON() : updatedEmbed;
+    const patched = await restPatch(
+      `/channels/${partner.publishedChannelId}/messages/${partner.publishedMessageId}`,
+      { embeds: [embedJson] }
+    ).catch(() => null);
+    return Boolean(patched);
+  }
+
+  async updateApprovedPartner(partnerId, updates = {}) {
+    this.refresh();
+    const partner = this.data.approvedPartners.find((p) => p.id === partnerId);
+    if (!partner) {
+      return { ok: false, status: 404, error: 'Parceria não encontrada no acervo.' };
+    }
+
+    if (updates.projectName !== undefined) {
+      const name = String(updates.projectName).trim();
+      if (!name) return { ok: false, status: 400, error: 'O nome do projeto não pode ficar vazio.' };
+      partner.projectName = trunc(name, 100);
+    }
+
+    if (updates.imageUrl !== undefined) {
+      const img = normalizeImageUrl(String(updates.imageUrl).trim());
+      if (img && !isHttpUrl(img)) {
+        return { ok: false, status: 400, error: 'URL da imagem inválida (use http:// ou https://).' };
+      }
+      partner.imageUrl = img;
+    }
+
+    if (updates.accessLink !== undefined) {
+      const link = String(updates.accessLink).trim();
+      if (!link || !isHttpUrl(link)) {
+        return { ok: false, status: 400, error: 'Link de acesso inválido (use http:// ou https://).' };
+      }
+      partner.accessLink = link;
+    }
+
+    if (updates.publicDesc !== undefined) {
+      const desc = String(updates.publicDesc).trim();
+      if (!desc) return { ok: false, status: 400, error: 'A descrição pública não pode ficar vazia.' };
+      partner.publicDesc = trunc(desc, 3500);
+    }
+
+    if (updates.categoryKey !== undefined && CATEGORY_SCHEMAS[updates.categoryKey]) {
+      partner.categoryKey = updates.categoryKey;
+      partner.macroCategory = CATEGORY_SCHEMAS[updates.categoryKey].macro;
+    }
+
+    partner.updatedAt = Date.now();
+    this.saveData();
+
+    if (typeof global.broadcastLiveEvent === 'function') {
+      global.broadcastLiveEvent('PARTNERSHIP_UPDATE', { partnerId: partner.id });
+    }
+
+    const discordSynced = await this.syncPublishedEmbed(partner);
+    return { ok: true, status: 200, partner, discordSynced };
+  }
+
   getApprovedPartners() {
     this.refresh();
     return [...this.data.approvedPartners];
@@ -772,6 +847,7 @@ class PartnershipManager {
       res.render(path.join(__dirname, 'views', 'adminParcerias.ejs'), {
         config: this.getConfig(),
         partners: this.getApprovedPartners(),
+        categories: CATEGORY_SCHEMAS,
       });
     });
 
@@ -818,6 +894,28 @@ class PartnershipManager {
         res.status(500).json({ success: false, error: err.message });
       }
     });
+
+    const handleUpdatePartner = async (req, res) => {
+      try {
+        const result = await this.updateApprovedPartner(req.params.id, req.body || {});
+        if (!result.ok) {
+          return res.status(result.status || 400).json({ success: false, error: result.error });
+        }
+        return res.json({
+          success: true,
+          partner: result.partner,
+          discordSynced: result.discordSynced,
+          message: result.discordSynced
+            ? 'Parceria atualizada com sucesso no site e no embed do Discord!'
+            : 'Parceria atualizada no acervo com sucesso!',
+        });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+      }
+    };
+
+    app.put('/api/admin/modules/partnerships/items/:id', requireAdminAuth, handleUpdatePartner);
+    app.post('/api/admin/modules/partnerships/items/:id', requireAdminAuth, handleUpdatePartner);
 
     app.delete('/api/admin/modules/partnerships/items/:id', requireAdminAuth, (req, res) => {
       try {

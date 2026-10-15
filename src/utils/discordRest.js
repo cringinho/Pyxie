@@ -35,5 +35,16 @@ async function restPost(route, body) {
   }
 }
 
-module.exports = { restGet, restPost };
+async function restPatch(route, body) {
+  const r = getRest();
+  if (!r) return null;
+  try {
+    return await r.patch(route, { body });
+  } catch {
+    return null;
+  }
+}
+
+module.exports = { restGet, restPost, restPatch };
+
 

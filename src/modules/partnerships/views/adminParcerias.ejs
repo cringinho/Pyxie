@@ -137,6 +137,91 @@
         box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
       }
 
+      .btn-edit {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: #fff;
+        padding: 6px 12px;
+        font-size: 0.78rem;
+      }
+
+      .btn-edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      }
+
+      .action-btns {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.78);
+        backdrop-filter: blur(8px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 950;
+        padding: 16px;
+      }
+
+      .modal-backdrop.active {
+        display: flex;
+      }
+
+      .modal-box {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 24px;
+        width: 100%;
+        max-width: 620px;
+        max-height: 92vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
+      }
+
+      textarea, select {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: #fff;
+        font-size: 0.85rem;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      textarea:focus, select:focus {
+        border-color: var(--purple-glow);
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+      }
+
+      select option {
+        background: #120a22;
+        color: #fff;
+      }
+
+      .preview-box {
+        margin-top: 10px;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px dashed rgba(192, 132, 252, 0.3);
+        border-radius: 12px;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .preview-box img {
+        max-width: 100%;
+        max-height: 180px;
+        border-radius: 8px;
+        object-fit: contain;
+      }
+
       .main-grid {
         display: grid;
         grid-template-columns: 1fr 1.35fr;
@@ -304,7 +389,7 @@
           <div class="brand-icon">🤝</div>
           <div class="brand-title">
             <h1>Central de Parcerias • Painel Dedicado</h1>
-            <p>Gerenciamento de canais, publicação de formulário e exclusão de parceiros</p>
+            <p>Gerenciamento de canais, publicação de formulário, edição e exclusão de parceiros</p>
           </div>
         </div>
 
@@ -386,7 +471,7 @@
           </div>
         </div>
 
-        <!-- Coluna Direita: Acervo e Exclusão de Parcerias por ID -->
+        <!-- Coluna Direita: Acervo, Edição e Exclusão de Parcerias por ID -->
         <div>
           <div class="card">
             <div class="card-header">
@@ -418,7 +503,7 @@
                       <tr id="row-<%= p.id %>">
                         <td>
                           <div class="partner-info">
-                            <img class="partner-thumb" src="<%= p.imageUrl %>" onerror="this.src='https://cdn.discordapp.com/emojis/1551355962974273546.png'" />
+                            <img class="partner-thumb" src="<%= p.imageUrl %>" alt="<%= p.projectName %>" onerror="this.src='https://cdn.discordapp.com/emojis/1551355962974273546.png'" />
                             <div>
                               <span class="partner-name"><%= p.projectName %></span>
                               <span class="partner-cat"><%= p.categoryKey %></span>
@@ -432,9 +517,14 @@
                           <strong style="color: var(--cyan-neon);"><%= p.bumpCount || 0 %></strong>
                         </td>
                         <td>
-                          <button class="btn btn-danger" data-id="<%= p.id %>" data-name="<%= p.projectName %>" onclick="deletePartner(this.dataset.id, this.dataset.name)">
-                            🗑️ Excluir
-                          </button>
+                          <div class="action-btns">
+                            <button class="btn btn-edit" data-id="<%= p.id %>" onclick="openEditModal(this.dataset.id)">
+                              ✏️ Editar
+                            </button>
+                            <button class="btn btn-danger" data-id="<%= p.id %>" data-name="<%= p.projectName %>" onclick="deletePartner(this.dataset.id, this.dataset.name)">
+                              🗑️ Excluir
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     <% }) %>
@@ -447,9 +537,64 @@
       </div>
     </div>
 
+    <!-- Modal de Edição de Parceria -->
+    <div id="editPartnerModal" class="modal-backdrop" onclick="if(event.target === this) closeEditModal()">
+      <div class="modal-box">
+        <div class="card-header" style="margin-bottom: 16px;">
+          <h2>✏️ Editar Parceria <span id="editPartnerIdBadge" class="partner-id-badge"></span></h2>
+          <button type="button" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.78rem;" onclick="closeEditModal()">✕</button>
+        </div>
+
+        <form id="editPartnerForm" onsubmit="savePartnerEdit(event)">
+          <input type="hidden" id="editPartnerId" />
+
+          <div class="form-group">
+            <label>Nome do Projeto / Comunidade:</label>
+            <input type="text" id="editProjectName" required maxlength="100" />
+          </div>
+
+          <div class="form-group">
+            <label>Categoria:</label>
+            <select id="editCategoryKey">
+              <% const catMap = (typeof categories !== 'undefined' && categories) ? categories : {}; %>
+              <% Object.entries(catMap).forEach(([key, schema]) => { %>
+                <option value="<%= key %>"><%= schema.emoji %> <%= (schema.label && schema.label.pt) || key %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Link de Acesso / Convite (http:// ou https://):</label>
+            <input type="text" id="editAccessLink" required placeholder="https://discord.gg/..." />
+          </div>
+
+          <div class="form-group">
+            <label>URL Direta da Imagem / Banner (ex: https://i.imgur.com/zPJm4mt.jpeg):</label>
+            <input type="text" id="editImageUrl" placeholder="https://i.imgur.com/..." oninput="updateImagePreview(this.value)" />
+            <span class="help-text">Use o link direto da imagem (.jpeg, .png, .webp, .gif). Salvar atualiza o site e edita automaticamente o embed no Discord!</span>
+            <div class="preview-box">
+              <img id="editImagePreview" src="https://cdn.discordapp.com/emojis/1551355962974273546.png" alt="Preview da imagem da parceria" onerror="this.src='https://cdn.discordapp.com/emojis/1551355962974273546.png'" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Descrição Pública:</label>
+            <textarea id="editPublicDesc" rows="6" required maxlength="3500"></textarea>
+          </div>
+
+          <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px;">
+            <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancelar</button>
+            <button type="submit" id="saveEditBtn" class="btn btn-primary">💾 Salvar e Atualizar Discord</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div id="toast" class="toast"></div>
 
     <script>
+      let cachedPartners = <%- JSON.stringify(partners || []) %>;
+
       function showToast(msg, isError = false) {
         const t = document.getElementById('toast');
         t.textContent = msg;
@@ -527,6 +672,73 @@
         }
       }
 
+      function updateImagePreview(url) {
+        const img = document.getElementById('editImagePreview');
+        const trimmed = (url || '').trim();
+        img.src = trimmed || 'https://cdn.discordapp.com/emojis/1551355962974273546.png';
+      }
+
+      function openEditModal(id) {
+        const partner = cachedPartners.find(p => p.id === id);
+        if (!partner) {
+          showToast('Parceria não encontrada na lista atual.', true);
+          return;
+        }
+        document.getElementById('editPartnerId').value = partner.id;
+        document.getElementById('editPartnerIdBadge').textContent = partner.id;
+        document.getElementById('editProjectName').value = partner.projectName || '';
+        const catSelect = document.getElementById('editCategoryKey');
+        if (catSelect && partner.categoryKey) {
+          catSelect.value = partner.categoryKey;
+        }
+        document.getElementById('editAccessLink').value = partner.accessLink || '';
+        document.getElementById('editImageUrl').value = partner.imageUrl || '';
+        document.getElementById('editPublicDesc').value = partner.publicDesc || '';
+        updateImagePreview(partner.imageUrl || '');
+        document.getElementById('editPartnerModal').classList.add('active');
+      }
+
+      function closeEditModal() {
+        document.getElementById('editPartnerModal').classList.remove('active');
+      }
+
+      async function savePartnerEdit(e) {
+        e.preventDefault();
+        const id = document.getElementById('editPartnerId').value;
+        const btn = document.getElementById('saveEditBtn');
+        btn.disabled = true;
+        btn.textContent = 'Salvando...';
+
+        const payload = {
+          projectName: document.getElementById('editProjectName').value.trim(),
+          categoryKey: document.getElementById('editCategoryKey').value,
+          accessLink: document.getElementById('editAccessLink').value.trim(),
+          imageUrl: document.getElementById('editImageUrl').value.trim(),
+          publicDesc: document.getElementById('editPublicDesc').value.trim(),
+        };
+
+        try {
+          const res = await fetch(`/api/admin/modules/partnerships/items/${encodeURIComponent(id)}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(data.message || 'Parceria atualizada com sucesso!');
+            closeEditModal();
+            await fetchPartners();
+          } else {
+            showToast('Erro ao editar: ' + (data.error || 'Falha'), true);
+          }
+        } catch (err) {
+          showToast('Erro de conexão: ' + err.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = '💾 Salvar e Atualizar Discord';
+        }
+      }
+
       async function deletePartner(id, name) {
         if (!confirm(`Tem certeza que deseja excluir permanentemente a parceria "${name}" (ID: ${id})?`)) {
           return;
@@ -555,7 +767,8 @@
           const res = await fetch('/api/admin/modules/partnerships/items');
           const data = await res.json();
           if (data.success) {
-            renderPartners(data.partners || []);
+            cachedPartners = data.partners || [];
+            renderPartners(cachedPartners);
           }
         } catch (err) {
           console.error(err);
@@ -574,7 +787,7 @@
           <tr id="row-${p.id}">
             <td>
               <div class="partner-info">
-                <img class="partner-thumb" src="${p.imageUrl}" onerror="this.src='https://cdn.discordapp.com/emojis/1551355962974273546.png'" />
+                <img class="partner-thumb" src="${p.imageUrl}" alt="${(p.projectName || '').replace(/"/g, '&quot;')}" onerror="this.src='https://cdn.discordapp.com/emojis/1551355962974273546.png'" />
                 <div>
                   <span class="partner-name">${p.projectName}</span>
                   <span class="partner-cat">${p.categoryKey}</span>
@@ -588,9 +801,14 @@
               <strong style="color: var(--cyan-neon);">${p.bumpCount || 0}</strong>
             </td>
             <td>
-              <button class="btn btn-danger" data-id="${p.id}" data-name="${(p.projectName || '').replace(/"/g, '&quot;')}" onclick="deletePartner(this.dataset.id, this.dataset.name)">
-                🗑️ Excluir
-              </button>
+              <div class="action-btns">
+                <button class="btn btn-edit" data-id="${p.id}" onclick="openEditModal(this.dataset.id)">
+                  ✏️ Editar
+                </button>
+                <button class="btn btn-danger" data-id="${p.id}" data-name="${(p.projectName || '').replace(/"/g, '&quot;')}" onclick="deletePartner(this.dataset.id, this.dataset.name)">
+                  🗑️ Excluir
+                </button>
+              </div>
             </td>
           </tr>
         `).join('');
@@ -598,4 +816,5 @@
     </script>
   </body>
 </html>
+
 

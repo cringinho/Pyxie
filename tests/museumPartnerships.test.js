@@ -157,21 +157,66 @@ const { generatePinterestRssXml, sanitizeDiscordText } = require(path.join(repo,
   assert.equal(harvestRes2.added, 0);
   assert.equal(harvestRes2.completed, true);
 
-  // 8. Exclusão de Parcerias por ID (Painel Administrativo)
+  // 8. Edição e Exclusão de Parcerias por ID (Painel Administrativo)
   partnershipManager.data.approvedPartners.push({
     id: 'partner_to_delete',
     projectName: 'Projeto Teste Delete',
-    categoryKey: 'bot',
-    imageUrl: 'https://cdn.discordapp.com/x.png',
+    categoryKey: 'discord_community',
+    macroCategory: 'community',
+    accessLink: 'https://discord.gg/teste',
+    publicDesc: 'Desc original',
+    imageUrl: 'https://imgur.com/a/PWijFHG',
+    publishedChannelId: 'pub_ch_1',
+    publishedMessageId: 'pub_msg_1',
   });
   partnershipManager.saveData();
+
+  let editedDiscordEmbed = null;
+  partnershipManager.client = {
+    channels: {
+      async fetch(chId) {
+        if (chId !== 'pub_ch_1') return null;
+        return {
+          messages: {
+            async fetch(msgId) {
+              if (msgId !== 'pub_msg_1') return null;
+              return {
+                async edit(payload) {
+                  editedDiscordEmbed = payload.embeds?.[0] || null;
+                },
+              };
+            },
+          },
+        };
+      },
+    },
+  };
+
+  const updRes = await partnershipManager.updateApprovedPartner('partner_to_delete', {
+    imageUrl: 'https://i.imgur.com/zPJm4mt.jpeg',
+    projectName: 'NYSS Atualizada',
+  });
+  assert.equal(updRes.ok, true);
+  assert.equal(updRes.discordSynced, true);
+  assert.equal(updRes.partner.imageUrl, 'https://i.imgur.com/zPJm4mt.jpeg');
+  assert.equal(updRes.partner.projectName, 'NYSS Atualizada');
+  assert.ok(editedDiscordEmbed, 'Deve editar o embed publicado no Discord quando atualizado pelo admin');
+  assert.equal(editedDiscordEmbed.data.image.url, 'https://i.imgur.com/zPJm4mt.jpeg');
+
+  const badImgRes = await partnershipManager.updateApprovedPartner('partner_to_delete', {
+    imageUrl: 'not-a-valid-url',
+  });
+  assert.equal(badImgRes.ok, false);
+  assert.equal(badImgRes.status, 400);
+  partnershipManager.client = null;
 
   assert.equal(partnershipManager.getApprovedPartners().some(p => p.id === 'partner_to_delete'), true);
   const deletedOk = partnershipManager.deleteApprovedPartner('partner_to_delete');
   assert.equal(deletedOk, true);
   assert.equal(partnershipManager.getApprovedPartners().some(p => p.id === 'partner_to_delete'), false);
   assert.equal(partnershipManager.deleteApprovedPartner('partner_to_delete'), false);
-  console.log('  ✅ 8. Exclusão de parcerias por ID no painel administrativo validada.');
+  console.log('  ✅ 8. Edição (com sincronização no Discord) e exclusão de parcerias por ID no painel administrativo validadas.');
+
 
   // 9. Embed de Parceria com referência ao Mural Web e Contagem de Impulsos/Bumps
   const testPartner = {
