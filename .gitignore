@@ -19,13 +19,3 @@ meus outros app/
 scratch/
 *.tar.gz
 *.sql
-
-# PWA Privado Mary & Leh
-apps/mary-pwa/server/data/*.db*
-apps/mary-pwa/server/uploads/*
-!apps/mary-pwa/server/uploads/.gitkeep
-!apps/mary-pwa/server/uploads/avatars/.gitkeep
-apps/mary-pwa/client/dist/
-apps/mary-pwa/.env
-apps/mary-pwa/.env.local
-
