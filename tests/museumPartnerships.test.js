@@ -316,6 +316,22 @@ const { generatePinterestRssXml, sanitizeDiscordText } = require(path.join(repo,
   assert.ok(enPinterestRss.includes('Community Art Museum'), 'Título em inglês deve estar presente');
   assert.ok(enPinterestRss.includes('https://pyxie.com.br/api/museum/art-image/test_art_honeypot_01.jpg'), 'URL da imagem deve estar presente no feed em inglês');
 
+  // 13.1 Hashtags bilíngues no feed do Pinterest
+  const { buildPinterestHashtags } = require(path.join(repo, 'src/services/feedGenerator'));
+  const ptTags = buildPinterestHashtags({ description: 'Fanart da Kuromi em estilo mangá gótico', author: 'Lúcia Arte' }, 'pt');
+  const enTags = buildPinterestHashtags({ description: 'Kuromi fanart in gothic manga style', author: 'Lúcia Arte' }, 'en');
+  assert.ok(ptTags.includes('Pyxie') && ptTags.includes('ArteDigital'), 'Hashtags base PT devem estar presentes');
+  assert.ok(enTags.includes('Pyxie') && enTags.includes('DigitalArt'), 'Hashtags base EN devem estar presentes');
+  assert.ok(ptTags.includes('Kuromi') && ptTags.includes('Anime') && ptTags.includes('ArteGotica'), 'Hashtags temáticas devem ser detectadas (inclusive com acento)');
+  assert.ok(ptTags.includes('ArteDeLuciaArte'), 'Hashtag do artista deve ser normalizada sem acentos');
+  assert.ok(ptTags.length <= 12 && new Set(ptTags.map((t) => t.toLowerCase())).size === ptTags.length, 'Hashtags devem ser únicas e limitadas a 12');
+  assert.ok(ptTags.every((t) => /^[A-Za-z0-9]+$/.test(t)), 'Hashtags devem conter apenas caracteres alfanuméricos');
+  assert.ok(ptPinterestRss.includes('#Pyxie') && enPinterestRss.includes('#DigitalArt'), 'Feed deve conter hashtags na descrição');
+  assert.ok(ptPinterestRss.includes('<media:keywords>') && ptPinterestRss.includes('<category>Pyxie</category>'), 'Feed deve conter media:keywords e categories por hashtag');
+  const descMatches = [...ptPinterestRss.matchAll(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/g)];
+  assert.ok(descMatches.length > 0 && descMatches.every((m) => m[1].length <= 500), 'Descrição do Pin deve respeitar 500 caracteres');
+  console.log('  ✅ 13.1 Hashtags bilíngues do Feed Pinterest validadas.');
+
   // Validação do OpenGraph Dinâmico do Museu (evita fallback na mascote padrão em scrapers)
   const { serveLocalizedPage } = require('../src/utils/seoRenderer');
   let capturedOgHtml = '';

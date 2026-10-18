@@ -358,7 +358,7 @@ export default function Partnerships({ t, lang }) {
         <div className="relative w-36 h-24 sm:w-52 sm:h-32 mx-auto mb-6 flex items-center justify-center">
           <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-2xl animate-pulse" />
           <img
-            src="/assets/pyxie/icons/astaroth_heart_icon.svg"
+            src="/assets/pyxie/icons/astaroth_heart_icon.svg?v=2.2.3"
             alt="Guardião Astaroth"
             className="relative z-10 w-full h-full object-contain filter drop-shadow-[0_8px_24px_rgba(16,185,129,0.45)] transform hover:scale-105 transition-transform duration-300"
           />

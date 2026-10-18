@@ -269,9 +269,106 @@ function generateJsonFeed(lang = 'pt') {
 }
 
 /**
+ * Hashtags do Feed Pinterest (paridade PT/EN)
+ * - BASE: identidade da marca e do nicho (sempre presentes)
+ * - THEMATIC: detectadas por palavras-chave na descrição da obra
+ */
+const PINTEREST_BASE_HASHTAGS = {
+  pt: ['Pyxie', 'Cringelandia', 'Fanart', 'ArteDigital', 'Ilustracao', 'ArteDaComunidade'],
+  en: ['Pyxie', 'Cringelandia', 'Fanart', 'DigitalArt', 'Illustration', 'CommunityArt'],
+};
+
+const PINTEREST_THEMATIC_HASHTAGS = [
+  { match: /\b(anime|manga|mang[áa])\b/i, pt: ['Anime', 'AnimeArt'], en: ['Anime', 'AnimeArt'] },
+  { match: /\b(chibi|kawaii|fofo|fofa|cute)\b/i, pt: ['Kawaii', 'Chibi'], en: ['Kawaii', 'Chibi'] },
+  { match: /\bkuromi\b/i, pt: ['Kuromi', 'Sanrio'], en: ['Kuromi', 'Sanrio'] },
+  { match: /\b(sanrio|hello ?kitty|my ?melody|cinnamoroll)\b/i, pt: ['Sanrio'], en: ['Sanrio'] },
+  { match: /\b(pixel|8-?bit|16-?bit)\b/i, pt: ['PixelArt'], en: ['PixelArt'] },
+  { match: /\b(g[óo]tic[oa]|goth|dark|sombri[oa])\b/i, pt: ['ArteGotica', 'DarkArt'], en: ['GothicArt', 'DarkArt'] },
+  { match: /\b(tarot|arcano|arcana|bruxa|witch|m[áa]gi[ac]|magic|feiti[çc]o)\b/i, pt: ['Tarot', 'ArteMistica'], en: ['Tarot', 'MysticArt'] },
+  { match: /\b(desenho|sketch|rascunho|drawing|lineart)\b/i, pt: ['Desenho', 'Sketch'], en: ['Drawing', 'Sketch'] },
+  { match: /\b(aquarela|watercolor|pintura|painting)\b/i, pt: ['Pintura', 'Aquarela'], en: ['Painting', 'Watercolor'] },
+  { match: /\b(oc|original character|personagem)\b/i, pt: ['OC', 'PersonagemOriginal'], en: ['OC', 'OriginalCharacter'] },
+  { match: /\b(gato|gatinho|cat|kitty|neko)\b/i, pt: ['ArteDeGato'], en: ['CatArt'] },
+  { match: /\b(minecraft|roblox|pok[eé]mon|genshin|valorant|game|jogo)\b/i, pt: ['GameArt', 'Gamer'], en: ['GameArt', 'Gamer'] },
+  { match: /\b(discord)\b/i, pt: ['Discord'], en: ['Discord'] },
+];
+
+const PINTEREST_MAX_HASHTAGS = 12;
+
+/**
+ * Converte texto livre em hashtag válida (sem acentos, espaços ou símbolos)
+ */
+function toHashtag(text) {
+  const cleaned = String(text || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9 ]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join('');
+  return cleaned.length >= 2 && cleaned.length <= 30 && !/^\d+$/.test(cleaned) ? cleaned : '';
+}
+
+/**
+ * Monta a lista de hashtags (sem '#') para uma obra do museu, deduplicada e limitada
+ */
+function buildPinterestHashtags({ description = '', author = '' } = {}, lang = 'pt') {
+  const key = lang === 'en' ? 'en' : 'pt';
+  const tags = [];
+  const seen = new Set();
+  const push = (tag, limit = PINTEREST_MAX_HASHTAGS) => {
+    const clean = toHashtag(tag);
+    const norm = clean.toLowerCase();
+    if (clean && !seen.has(norm) && tags.length < limit) {
+      seen.add(norm);
+      tags.push(clean);
+    }
+  };
+
+  // Reserva espaço para a marca e o artista; temáticas preenchem o restante
+  const authorTag = author ? `${key === 'en' ? 'ArtBy' : 'ArteDe'} ${author}` : '';
+  const thematicLimit = PINTEREST_MAX_HASHTAGS - PINTEREST_BASE_HASHTAGS[key].length - (toHashtag(authorTag) ? 1 : 0);
+  const normalizedDesc = String(description || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  PINTEREST_THEMATIC_HASHTAGS.forEach((rule) => {
+    if (rule.match.test(normalizedDesc)) rule[key].forEach((t) => push(t, thematicLimit));
+  });
+  PINTEREST_BASE_HASHTAGS[key].forEach((t) => push(t));
+  if (authorTag) push(authorTag);
+
+  return tags;
+}
+
+function formatHashtags(tags) {
+  return tags.map((t) => `#${t}`).join(' ');
+}
+
+const PINTEREST_DESC_LIMIT = 500;
+
+/**
+ * Anexa as hashtags ao texto do Pin respeitando o limite de 500 caracteres do Pinterest
+ * (o corpo é encurtado com reticências, as hashtags são preservadas)
+ */
+function withHashtags(body, tags) {
+  const tagLine = formatHashtags(tags);
+  if (!tagLine) return body;
+  const room = PINTEREST_DESC_LIMIT - tagLine.length - 2;
+  const safeBody = body.length > room ? `${body.slice(0, Math.max(0, room - 1)).trimEnd()}…` : body;
+  return `${safeBody}\n\n${tagLine}`;
+}
+
+function renderHashtagCategories(tags) {
+  return tags.map((t) => `<category>${escapeXml(t)}</category>`).join('\n      ');
+}
+
+/**
  * Gera Feed RSS 2.0 dedicado e otimizado para o Pinterest com as artes do Museu da Comunidade
  * Inclui namespaces de rich media (<enclosure>, <media:content>, <content:encoded>, <dc:creator>)
  * e URLs com marca d'água persistente queimada em disco (.webp).
+ * Cada item recebe hashtags bilíngues (marca + temáticas detectadas + artista) na descrição,
+ * em <category> individuais e em <media:keywords>.
  */
 function generatePinterestRssXml(lang = 'pt') {
   const isEn = lang === 'en';
@@ -291,10 +388,12 @@ function generatePinterestRssXml(lang = 'pt') {
     const welcomeTitle = isEn
       ? '🎨 Pyxie Community Museum • Creative Showcase'
       : '🎨 Museu da Comunidade Pyxie • Galeria Criativa';
-    const welcomeDesc = isEn
+    const welcomeBody = isEn
       ? 'Permanent showcase of artworks, illustrations, and fanarts created by the Discord community. Visit Pyxie\'s official interactive museum.'
       : 'Acervo permanente de ilustrações, fanarts e criações visuais da comunidade do Discord. Acesse a galeria interativa oficial da Pyxie.';
     const welcomeImg = `${SITE_URL}/assets/pyxie/pyxie_mascot.png`;
+    const welcomeTags = buildPinterestHashtags({ description: 'discord', author: '' }, lang);
+    const welcomeDesc = withHashtags(welcomeBody, welcomeTags);
 
     itemsXml = `
     <item>
@@ -304,16 +403,19 @@ function generatePinterestRssXml(lang = 'pt') {
       <pubDate>${new Date().toUTCString()}</pubDate>
       <dc:creator>Pyxie Team</dc:creator>
       <category>${escapeXml(isEn ? 'Community Art' : 'Arte Comunitária')}</category>
+      ${renderHashtagCategories(welcomeTags)}
       <description><![CDATA[${welcomeDesc}]]></description>
       <content:encoded><![CDATA[
         <p><img src="${welcomeImg}" alt="${escapeXml(welcomeTitle)}" /></p>
-        <p>${welcomeDesc}</p>
+        <p>${welcomeBody}</p>
+        <p>${escapeXml(formatHashtags(welcomeTags))}</p>
         <p><a href="${siteUrl}">${isEn ? 'Visit the Pyxie Museum' : 'Visitar o Museu da Pyxie'}</a></p>
       ]]></content:encoded>
       <enclosure url="${escapeXml(welcomeImg)}" type="image/png" length="150000" />
       <media:content url="${escapeXml(welcomeImg)}" medium="image" type="image/png" width="1200">
         <media:title>${escapeXml(welcomeTitle)}</media:title>
         <media:description>${escapeXml(welcomeDesc)}</media:description>
+        <media:keywords>${escapeXml(welcomeTags.join(', '))}</media:keywords>
         <media:credit role="author">Pyxie Team</media:credit>
       </media:content>
     </item>`;
@@ -325,13 +427,16 @@ function generatePinterestRssXml(lang = 'pt') {
         ? (isEn ? `🎨 ${cleanDesc.slice(0, 65)} — by ${author} • Pyxie Gallery` : `🎨 ${cleanDesc.slice(0, 65)} — por ${author} • Museu Pyxie`)
         : (isEn ? `🎨 Artwork by ${author} • Pyxie Community Museum` : `🎨 Obra de ${author} • Museu da Comunidade Pyxie`);
 
-      const pinDesc = cleanDesc.length >= 3
+      const pinBody = cleanDesc.length >= 3
         ? (isEn
           ? `"${cleanDesc}" — Artwork created by ${author} in the Pyxie & Cringelândia Discord community. Explore the full gallery with community fanarts and creations at the Official Museum.`
           : `"${cleanDesc}" — Obra criada por ${author} na comunidade da Pyxie & Cringelândia. Conheça a galeria completa no Museu Oficial da Pyxie.`)
         : (isEn
           ? `Original artwork created by ${author} in the Pyxie community. Discover the full Community Museum gallery at https://pyxie.com.br/museu.`
           : `Ilustração original criada por ${author} na comunidade da Pyxie. Descubra o acervo completo da galeria em https://pyxie.com.br/museu.`);
+
+      const hashtags = buildPinterestHashtags({ description: cleanDesc, author: art.author || '' }, lang);
+      const pinDesc = withHashtags(pinBody, hashtags);
 
       const artLink = `${SITE_URL}/museu?art=${encodeURIComponent(art.id)}&utm_source=pinterest_rss&utm_medium=social&utm_campaign=museum_art${isEn ? '&lang=en' : ''}`;
       const imageUrl = `${SITE_URL}/api/museum/art-image/${encodeURIComponent(art.id)}.jpg`;
@@ -345,10 +450,12 @@ function generatePinterestRssXml(lang = 'pt') {
       <pubDate>${pubDate}</pubDate>
       <dc:creator>${escapeXml(author)}</dc:creator>
       <category>${escapeXml(isEn ? 'Digital Art' : 'Arte Digital')}</category>
+      ${renderHashtagCategories(hashtags)}
       <description><![CDATA[${pinDesc}]]></description>
       <content:encoded><![CDATA[
         <p><img src="${escapeXml(imageUrl)}" alt="${escapeXml(artTitle)}" /></p>
-        <p>${pinDesc}</p>
+        <p>${pinBody}</p>
+        <p>${escapeXml(formatHashtags(hashtags))}</p>
         <p>✦ <strong>${isEn ? 'Artist' : 'Artista'}:</strong> ${escapeXml(author)} | <a href="${escapeXml(artLink)}">${isEn ? 'View in Pyxie Community Gallery' : 'Ver na Galeria da Comunidade'}</a></p>
         <p><small>✦ Pyxie • Galeria Oficial da Comunidade • <a href="https://pyxie.com.br/">https://pyxie.com.br/</a></small></p>
       ]]></content:encoded>
@@ -356,6 +463,7 @@ function generatePinterestRssXml(lang = 'pt') {
       <media:content url="${escapeXml(imageUrl)}" medium="image" type="image/jpeg" width="1200">
         <media:title>${escapeXml(artTitle)}</media:title>
         <media:description>${escapeXml(pinDesc)}</media:description>
+        <media:keywords>${escapeXml(hashtags.join(', '))}</media:keywords>
         <media:credit role="author">${escapeXml(author)}</media:credit>
       </media:content>
     </item>`;
@@ -393,6 +501,7 @@ module.exports = {
   generateAtomXml,
   generateJsonFeed,
   generatePinterestRssXml,
+  buildPinterestHashtags,
   sanitizeDiscordText,
 };
 
