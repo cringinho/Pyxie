@@ -152,6 +152,8 @@ const COMMAND_ICONS = {
   idioma: 'https://cdn.discordapp.com/emojis/1551356365065166998.gif',
   sixseven: 'https://cdn.discordapp.com/emojis/1551356116481482754.gif',
   admin: 'https://cdn.discordapp.com/emojis/1551356439736352878.png',
+  gamepass: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
+  'py-gamepass': 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
 };
 
 const MODULE_METADATA = {
@@ -415,6 +417,17 @@ const COMMAND_CATEGORY_MAP = {
   'py-termos': 'utilidades',
   regras: 'utilidades',
   'py-regras': 'utilidades',
+  mary: 'utilidades',
+  'py-mary': 'utilidades',
+  'estudio-mary': 'utilidades',
+  'py-estudio-mary': 'utilidades',
+  'mary-studio': 'utilidades',
+  'py-mary-studio': 'utilidades',
+  'py-mary-edit-context': 'utilidades',
+  gamepass: 'utilidades',
+  'py-gamepass': 'utilidades',
+  'checar-gamepass': 'utilidades',
+  'check-gamepass': 'utilidades',
 };
 
 let _loadedCommands = null;
