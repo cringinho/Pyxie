@@ -177,3 +177,4 @@ module.exports = {
   getPixQrCodeUrl,
   crc16,
 };
+

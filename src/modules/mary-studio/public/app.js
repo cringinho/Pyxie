@@ -722,3 +722,4 @@ async function handleLogoutAll() {
   await apiFetch('/api/mary/auth/logout-all', { method: 'POST' });
   window.location.replace('/mary');
 }
+

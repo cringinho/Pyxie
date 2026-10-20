@@ -15,3 +15,4 @@ Módulo exclusivo de painel administrativo web e estúdio visual de mensagens, e
 - **Customização Local de Perfil**: Edição local de avatar, banner, apelido e biografia da Pyxie exclusivamente no servidor da Mary via `PATCH /guilds/{guildId}/members/@me`.
 - **Persistência Atômica Blindada em `data/`**: Gravação segura e atômica fora de `src/` em `data/maryStudioConfig.json`, `data/marySavedMessages.json`, `data/maryStoreData.json` e `data/marySecurity.json`.
 - **Zero Memory Leak**: Gerenciamento de ciclo de vida através de `moduleManager.js` e métodos injetados por `ctx`.
+

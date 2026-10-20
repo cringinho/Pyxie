@@ -264,3 +264,4 @@ class ButtonActionHandler {
 
 const instance = new ButtonActionHandler();
 module.exports = instance;
+

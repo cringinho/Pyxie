@@ -130,3 +130,4 @@ class ReviewHandler {
 
 const instance = new ReviewHandler();
 module.exports = instance;
+

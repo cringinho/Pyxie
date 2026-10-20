@@ -87,3 +87,4 @@ class StickyAndFaqHandler {
 
 const instance = new StickyAndFaqHandler();
 module.exports = instance;
+
