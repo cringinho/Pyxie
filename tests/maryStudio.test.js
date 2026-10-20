@@ -16,6 +16,7 @@ const templatesCatalog = require('../src/modules/mary-studio/utils/templatesCata
 const maryStudioManager = require('../src/modules/mary-studio/maryStudioManager');
 const maryStudioModule = require('../src/modules/mary-studio/index');
 const buttonActionHandler = require('../src/modules/mary-studio/handlers/buttonActionHandler');
+const reviewHandler = require('../src/modules/mary-studio/handlers/reviewHandler');
 const { COMMAND_CATEGORY_MAP } = require('../src/commands/commandHelpers');
 const { TRANSLATIONS } = require('../src/utils/i18n');
 
@@ -406,6 +407,106 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
     assert.ok('py-gamepass' in COMMAND_CATEGORY_MAP, 'py-gamepass deve estar mapeado em COMMAND_CATEGORY_MAP');
 
     console.log('  ✅ 10. Inspetor de Gamepass, Cálculo Inverso e Mapeamento validados com sucesso.');
+
+    // =========================================================================
+    // 11. PERSISTÊNCIA ATÔMICA, REAPLICAÇÃO DE AÇÕES E CICLO DE AVALIAÇÃO
+    // =========================================================================
+    console.log('  💾 11. Testando Persistência Atômica, Reaplicação de Ações e Ciclo de Avaliação...');
+
+    // 11.1 Persistência de Nickname e Status
+    await maryStudioManager.updateLocalProfile('1557399041443111025', {
+      nick: '🎀 Pyxie Oficial',
+      bio: 'Atendimento Robux 24/7',
+      statusLoja: 'online',
+    });
+    const cfgAfterProfile = maryStudioManager.loadConfig();
+    assert.equal(cfgAfterProfile.localNick, '🎀 Pyxie Oficial', 'localNick deve persistir no arquivo de configuração');
+    assert.equal(cfgAfterProfile.localBio, 'Atendimento Robux 24/7', 'localBio deve persistir no arquivo de configuração');
+    assert.equal(cfgAfterProfile.statusLoja, 'online', 'statusLoja deve persistir');
+
+    // 11.2 Reaplicação automática de nickname no discoverGuild
+    let nickSetOnGuild = null;
+    const testGuildMe = {
+      id: '1557399041443111025',
+      name: 'MALIBUX',
+      ownerId: '1463644930080637140',
+      members: {
+        me: {
+          nickname: 'Antigo Nick',
+          setNickname: async (newNick) => {
+            nickSetOnGuild = newNick;
+          },
+        },
+      },
+    };
+    maryStudioManager.client = {
+      guilds: {
+        cache: new Map([['1557399041443111025', testGuildMe]]),
+      },
+    };
+    maryStudioManager.discoverGuild();
+    assert.equal(nickSetOnGuild, '🎀 Pyxie Oficial', 'discoverGuild deve reaplicar automaticamente o nick persistido no servidor');
+
+    // 11.3 Roteamento do botão de review (vouch e personalizado)
+    let reviewModalOpened = false;
+    reviewHandler.init(maryStudioManager);
+    reviewHandler.openReviewModal = async () => {
+      reviewModalOpened = true;
+    };
+    buttonActionHandler.init(maryStudioManager);
+    await buttonActionHandler.handleButton({
+      customId: 'mary_btn:open_review:btn_vouch_review',
+      reply: async () => {},
+    });
+    assert.equal(reviewModalOpened, true, 'Botão de review deve acionar openReviewModal do reviewHandler');
+
+    // 11.4 Submissão de avaliação e persistência de dados
+    let reviewChannelSentEmbed = null;
+    const mockReviewChannel = {
+      id: 'ch_avaliacoes_99',
+      name: 'avaliações',
+      isTextBased: () => true,
+      send: async (payload) => {
+        reviewChannelSentEmbed = payload;
+      },
+    };
+    const mockGuildWithReview = {
+      id: '1557399041443111025',
+      channels: {
+        cache: new Map([['ch_avaliacoes_99', mockReviewChannel]]),
+        fetch: async () => mockReviewChannel,
+      },
+    };
+    const mockModalSubmit = {
+      fields: {
+        getTextInputValue: (field) => {
+          if (field === 'review_stars') return '5';
+          if (field === 'review_comment') return 'Entrega excelente e instantânea!';
+          if (field === 'review_proof') return 'https://cdn.discordapp.com/proof.png';
+          return '';
+        },
+      },
+      user: { id: 'buyer_123', tag: 'Buyer#0001' },
+      guild: mockGuildWithReview,
+      reply: async () => {},
+    };
+    await reviewHandler.handleReviewSubmit(mockModalSubmit);
+
+    const storeAfterReview = maryStudioManager.loadStoreData();
+    assert.ok(storeAfterReview.reviews.length >= 1, 'Deve persistir avaliação no storeData');
+    const latestRev = storeAfterReview.reviews[storeAfterReview.reviews.length - 1];
+    assert.equal(latestRev.customerId, 'buyer_123');
+    assert.equal(latestRev.stars, 5);
+    assert.ok(reviewChannelSentEmbed, 'Deve postar card oficial no canal de avaliações descoberto');
+
+    // 11.5 Resolução dinâmica de variáveis pós-salvamento
+    const resolved = maryStudioManager.resolveVariables(
+      'Status: {status_loja} | Avaliações: {total_avaliacoes} | Média: {nota_media} | PIX: {pix_key}'
+    );
+    assert.ok(resolved.includes('Online'), 'Deve resolver status online');
+    assert.ok(resolved.includes('5.0 ⭐'), 'Deve calcular média 5 estrelas das avaliações');
+
+    console.log('  ✅ 11. Persistência atômica, reaplicação de ações e ciclo de avaliação validados com sucesso.');
 
     // Limpeza de arquivos de teste temporários
     try {

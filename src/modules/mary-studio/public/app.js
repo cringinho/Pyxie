@@ -90,6 +90,7 @@ async function loadBootstrapData() {
     renderSentMessages();
     renderMacrosTab();
     renderModulesTab();
+    renderProfileTab();
     renderSecurityTab(data);
     updateExpressCalc('robux');
 
@@ -147,10 +148,15 @@ function renderHeader() {
 function renderChannels() {
   const select = document.getElementById('selectChannel');
   const vouchSelect = document.getElementById('selectVouchChannel');
+  const ticketSelect = document.getElementById('selectModTicketCategory');
+  const reviewSelect = document.getElementById('selectModReviewChannel');
+
   if (!appState.guild || !appState.channels || appState.channels.length === 0) {
     const emptyOpt = '<option value="">⚠️ Pyxie não está no servidor ou não há canais (convide o bot primeiro)</option>';
     if (select) select.innerHTML = emptyOpt;
     if (vouchSelect) vouchSelect.innerHTML = emptyOpt;
+    if (ticketSelect) ticketSelect.innerHTML = emptyOpt;
+    if (reviewSelect) reviewSelect.innerHTML = emptyOpt;
     return;
   }
   if (select) {
@@ -174,6 +180,24 @@ function renderChannels() {
         autoSelected = true;
       }
       vouchSelect.appendChild(opt);
+    });
+  }
+  if (ticketSelect) {
+    ticketSelect.innerHTML = '<option value="">Categoria padrão (Automática)</option>';
+    appState.channels.forEach((ch) => {
+      const opt = document.createElement('option');
+      opt.value = ch.id;
+      opt.textContent = `#${ch.name}`;
+      ticketSelect.appendChild(opt);
+    });
+  }
+  if (reviewSelect) {
+    reviewSelect.innerHTML = '<option value="">Canal de avaliações (Automático #avaliações)</option>';
+    appState.channels.forEach((ch) => {
+      const opt = document.createElement('option');
+      opt.value = ch.id;
+      opt.textContent = `#${ch.name}`;
+      reviewSelect.appendChild(opt);
     });
   }
 }
@@ -686,6 +710,17 @@ function generateCanvasPriceTable() {
 }
 
 // --- PERFIL E MÓDULOS ---
+function renderProfileTab() {
+  const nickInput = document.getElementById('inputLocalNick');
+  if (nickInput) {
+    nickInput.value = (appState.botProfile && appState.botProfile.nick) || (appState.config && appState.config.localNick) || '';
+  }
+  const statusSelect = document.getElementById('selectStoreStatus');
+  if (statusSelect) {
+    statusSelect.value = appState.config.statusLoja || 'online';
+  }
+}
+
 async function saveProfile() {
   const nick = document.getElementById('inputLocalNick').value;
   const statusLoja = document.getElementById('selectStoreStatus').value;
@@ -719,13 +754,24 @@ function renderModulesTab() {
   document.getElementById('inputModEstoque').value = cfg.estoqueRobux || 25000;
   document.getElementById('inputModPreco').value = cfg.preco1k || 37.0;
   document.getElementById('inputModPixKey').value = cfg.pixKey || '';
+
+  const ticketCategory = document.getElementById('selectModTicketCategory');
+  if (ticketCategory) ticketCategory.value = cfg.channelTickets || '';
+
+  const reviewChannel = document.getElementById('selectModReviewChannel');
+  if (reviewChannel) reviewChannel.value = cfg.channelReviews || '';
 }
 
 async function saveModules() {
+  const ticketCategory = document.getElementById('selectModTicketCategory');
+  const reviewChannel = document.getElementById('selectModReviewChannel');
+
   const payload = {
     estoqueRobux: parseInt(document.getElementById('inputModEstoque').value, 10) || 0,
     preco1k: parseFloat(document.getElementById('inputModPreco').value) || 37.0,
     pixKey: document.getElementById('inputModPixKey').value.trim(),
+    channelTickets: ticketCategory ? ticketCategory.value || null : null,
+    channelReviews: reviewChannel ? reviewChannel.value || null : null,
     featureFlags: {
       stockModule: document.getElementById('flagStock').checked,
       pixModule: document.getElementById('flagPix').checked,

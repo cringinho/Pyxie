@@ -194,44 +194,47 @@ class MaryStudioManager {
   discoverGuild() {
     if (!this.client?.guilds?.cache) return null;
     const config = this.loadConfig();
+    let targetGuild = null;
 
     // 1. Se já tem guildId válido no cache, mantém
     if (config.guildId && this.client.guilds.cache.has(config.guildId)) {
-      return this.client.guilds.cache.get(config.guildId);
-    }
-
-    // 2. Se a guild padrão da Mary está no cache
-    if (this.client.guilds.cache.has(MARY_DEFAULT_GUILD_ID)) {
+      targetGuild = this.client.guilds.cache.get(config.guildId);
+    } else if (this.client.guilds.cache.has(MARY_DEFAULT_GUILD_ID)) {
+      // 2. Se a guild padrão da Mary está no cache
       config.guildId = MARY_DEFAULT_GUILD_ID;
       this.saveConfig(config);
-      return this.client.guilds.cache.get(MARY_DEFAULT_GUILD_ID);
-    }
-
-    // 3. Busca guilds onde a Mary é dona ou tem permissão de Admin/ManageGuild
-    let candidate = null;
-    for (const guild of this.client.guilds.cache.values()) {
-      if (guild.ownerId === securityGuard.MARY_DISCORD_ID) {
-        candidate = guild;
-        break;
+      targetGuild = this.client.guilds.cache.get(MARY_DEFAULT_GUILD_ID);
+    } else {
+      // 3. Busca guilds onde a Mary é dona ou tem permissão de Admin/ManageGuild
+      for (const guild of this.client.guilds.cache.values()) {
+        if (guild.ownerId === securityGuard.MARY_DISCORD_ID) {
+          targetGuild = guild;
+          break;
+        }
+        const member = guild.members?.cache?.get(securityGuard.MARY_DISCORD_ID);
+        if (
+          member &&
+          (member.permissions?.has(PermissionFlagsBits.Administrator) ||
+            member.permissions?.has(PermissionFlagsBits.ManageGuild))
+        ) {
+          targetGuild = guild;
+          break;
+        }
       }
-      const member = guild.members?.cache?.get(securityGuard.MARY_DISCORD_ID);
-      if (
-        member &&
-        (member.permissions?.has(PermissionFlagsBits.Administrator) ||
-          member.permissions?.has(PermissionFlagsBits.ManageGuild))
-      ) {
-        candidate = guild;
-        break;
+
+      if (targetGuild) {
+        config.guildId = targetGuild.id;
+        this.saveConfig(config);
       }
     }
 
-    if (candidate) {
-      config.guildId = candidate.id;
-      this.saveConfig(config);
-      return candidate;
+    if (targetGuild && config.localNick && targetGuild.members?.me) {
+      if (targetGuild.members.me.nickname !== config.localNick) {
+        targetGuild.members.me.setNickname(config.localNick).catch(() => {});
+      }
     }
 
-    return null;
+    return targetGuild;
   }
 
   getGuild(guildId = null) {
@@ -548,6 +551,12 @@ class MaryStudioManager {
     if (statusLoja) {
       config.statusLoja = statusLoja;
     }
+    if (nick !== undefined) {
+      config.localNick = String(nick || '').trim().slice(0, 32);
+    }
+    if (bio !== undefined) {
+      config.localBio = String(bio || '').trim();
+    }
 
     if (this.client) {
       const guild = this.getGuild(targetGuildId);
@@ -733,7 +742,7 @@ class MaryStudioManager {
         };
 
         botProfile = {
-          nick: guild.members?.me?.nickname || '',
+          nick: guild.members?.me?.nickname || config.localNick || '',
           avatarUrl: typeof guild.members?.me?.displayAvatarURL === 'function' ? guild.members.me.displayAvatarURL() : '',
           bannerUrl: '',
         };
@@ -780,7 +789,7 @@ class MaryStudioManager {
               const botMember = await rest.get(Routes.guildMember(targetGuildId, '@me')).catch(() => null);
               if (botMember) {
                 botProfile = {
-                  nick: botMember.nick || botMember.user?.username || '',
+                  nick: botMember.nick || config.localNick || botMember.user?.username || '',
                   avatarUrl: botMember.avatar
                     ? `https://cdn.discordapp.com/guilds/${targetGuildId}/users/${botMember.user?.id}/avatars/${botMember.avatar}.png`
                     : (botMember.user?.avatar ? `https://cdn.discordapp.com/avatars/${botMember.user.id}/${botMember.user.avatar}.png` : ''),

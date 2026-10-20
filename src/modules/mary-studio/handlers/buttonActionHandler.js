@@ -106,7 +106,14 @@ class ButtonActionHandler {
       });
     }
 
-    // 4. Auto-Cargo por Botão
+    // 4. Abrir Modal de Avaliação (ex: botão de vouch ou botão personalizado)
+    if (actionType === 'open_review' || actionId === 'btn_vouch_review' || actionType === 'review') {
+      if (this.manager.reviewHandler?.openReviewModal) {
+        return this.manager.reviewHandler.openReviewModal(interaction);
+      }
+    }
+
+    // 5. Auto-Cargo por Botão
     if (actionType === 'role') {
       const roleId = actionId;
       const member = interaction.member;

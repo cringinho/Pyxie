@@ -16,7 +16,10 @@ class ReviewHandler {
 
     if (this.manager.ctx?.registerListener) {
       this.manager.ctx.registerListener('interactionCreate', (interaction) => {
-        if (interaction.isButton() && interaction.customId === 'mary_review:open_modal') {
+        if (
+          interaction.isButton() &&
+          (interaction.customId === 'mary_review:open_modal' || interaction.customId.startsWith('mary_btn:open_review'))
+        ) {
           this.openReviewModal(interaction);
         } else if (interaction.isModalSubmit() && interaction.customId === 'mary_modal:review') {
           this.handleReviewSubmit(interaction);
@@ -91,33 +94,48 @@ class ReviewHandler {
 
     const config = this.manager.loadConfig();
 
-    // Se houver canal de avaliações configurado, posta o card oficial
-    if (config.channelReviews && interaction.guild) {
-      const channel = await interaction.guild.channels.fetch(config.channelReviews).catch(() => null);
-      if (channel && typeof channel.send === 'function') {
-        const sum = storeData.reviews.reduce((acc, r) => acc + (Number(r.stars) || 5), 0);
-        const avg = (sum / storeData.reviews.length).toFixed(1);
+    // Se houver canal de avaliações configurado (ou auto-descoberto), posta o card oficial
+    if (interaction.guild) {
+      let targetChannelId = config.channelReviews;
+      if (!targetChannelId && interaction.guild.channels?.cache) {
+        const channelsList = typeof interaction.guild.channels.cache.values === 'function'
+          ? Array.from(interaction.guild.channels.cache.values())
+          : (Array.isArray(interaction.guild.channels.cache) ? interaction.guild.channels.cache : []);
 
-        const embed = new EmbedBuilder()
-          .setColor('#f59e0b')
-          .setTitle(`⭐・Avaliação #${reviewIndex} da Mary Store`)
-          .setDescription([
-            `👤 **Cliente:** <@${interaction.user.id}> (\`${interaction.user.tag}\`)`,
-            `🌟 **Nota:** ${starString} **(${starsNum}/5)**`,
-            '',
-            `💬 **Depoimento:**`,
-            `> "${comment}"`,
-          ].join('\n'))
-          .setFooter({
-            text: `Mary Store • Total: ${storeData.reviews.length} avaliações • Média Geral: ${avg} ⭐`,
-          })
-          .setTimestamp();
+        const autoFound = channelsList.find(
+          (c) => (typeof c.isTextBased === 'function' ? c.isTextBased() : true) &&
+            (c.name?.includes('avaliac') || c.name?.includes('avaliaç') || c.name?.includes('review') || c.name?.includes('feedback'))
+        );
+        if (autoFound) targetChannelId = autoFound.id;
+      }
 
-        if (proofUrl && proofUrl.startsWith('http')) {
-          embed.setImage(proofUrl);
+      if (targetChannelId) {
+        const channel = await interaction.guild.channels.fetch(targetChannelId).catch(() => null);
+        if (channel && typeof channel.send === 'function') {
+          const sum = storeData.reviews.reduce((acc, r) => acc + (Number(r.stars) || 5), 0);
+          const avg = (sum / storeData.reviews.length).toFixed(1);
+
+          const embed = new EmbedBuilder()
+            .setColor('#f59e0b')
+            .setTitle(`⭐・Avaliação #${reviewIndex} da Mary Store`)
+            .setDescription([
+              `👤 **Cliente:** <@${interaction.user.id}> (\`${interaction.user.tag}\`)`,
+              `🌟 **Nota:** ${starString} **(${starsNum}/5)**`,
+              '',
+              `💬 **Depoimento:**`,
+              `> "${comment}"`,
+            ].join('\n'))
+            .setFooter({
+              text: `Mary Store • Total: ${storeData.reviews.length} avaliações • Média Geral: ${avg} ⭐`,
+            })
+            .setTimestamp();
+
+          if (proofUrl && proofUrl.startsWith('http')) {
+            embed.setImage(proofUrl);
+          }
+
+          await channel.send({ embeds: [embed] }).catch(() => {});
         }
-
-        await channel.send({ embeds: [embed] }).catch(() => {});
       }
     }
 
