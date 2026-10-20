@@ -8,6 +8,8 @@ const {
   ButtonStyle,
   PermissionFlagsBits,
   ChannelType,
+  REST,
+  Routes,
 } = require('discord.js');
 
 const securityGuard = require('./utils/securityGuard');
@@ -25,12 +27,23 @@ const MARY_DEFAULT_GUILD_ID = '1557399041443111025';
 class MaryStudioManager {
   constructor() {
     this.client = null;
+    this._restClient = null;
     this.ctx = null;
     this.buttonActionHandler = null;
     this.ticketHandler = null;
     this.reviewHandler = null;
     this.stickyAndFaqHandler = null;
     this.giveawayHandler = null;
+  }
+
+  getRestClient() {
+    if (this._restClient) return this._restClient;
+    const token = process.env.DISCORD_TOKEN;
+    if (token) {
+      this._restClient = new REST({ version: '10' }).setToken(token);
+      return this._restClient;
+    }
+    return null;
   }
 
   init(client, ctx) {
@@ -62,6 +75,7 @@ class MaryStudioManager {
 
   stop() {
     this.client = null;
+    this._restClient = null;
   }
 
   ensureStorage() {
@@ -366,22 +380,40 @@ class MaryStudioManager {
 
   // --- ENVIO E EDIÇÃO DE MENSAGENS COM HISTÓRICO UNDO ---
   async sendMessage(channelId, messagePayload) {
-    if (!this.client) throw new Error('Cliente Discord não conectado.');
-    const channel = await this.client.channels.fetch(channelId).catch(() => null);
-    if (!channel || typeof channel.send !== 'function') {
-      throw new Error('Canal de texto não encontrado ou sem permissão de envio.');
-    }
-
     const config = this.loadConfig();
     const content = messagePayload.content ? this.resolveVariables(messagePayload.content, config) : '';
     const embeds = messagePayload.embed ? [this.buildEmbed(messagePayload.embed, config)] : [];
     const components = this.buildActionRows(messagePayload.buttons || []);
 
-    const sentMessage = await channel.send({
-      content: content || undefined,
-      embeds: embeds.length > 0 ? embeds : undefined,
-      components: components.length > 0 ? components : undefined,
-    });
+    let sentMessageId = null;
+    let guildId = config.guildId || MARY_DEFAULT_GUILD_ID;
+    let channelName = '';
+
+    if (this.client) {
+      const channel = await this.client.channels.fetch(channelId).catch(() => null);
+      if (!channel || typeof channel.send !== 'function') {
+        throw new Error('Canal de texto não encontrado ou sem permissão de envio.');
+      }
+      const sentMessage = await channel.send({
+        content: content || undefined,
+        embeds: embeds.length > 0 ? embeds : undefined,
+        components: components.length > 0 ? components : undefined,
+      });
+      sentMessageId = sentMessage.id;
+      guildId = channel.guild?.id || config.guildId;
+      channelName = channel.name || '';
+    } else {
+      const rest = this.getRestClient();
+      if (!rest) throw new Error('Cliente Discord não conectado e token indisponível.');
+      const body = {};
+      if (content) body.content = content;
+      if (embeds.length > 0) body.embeds = embeds.map((e) => (typeof e.toJSON === 'function' ? e.toJSON() : e));
+      if (components.length > 0) body.components = components.map((c) => (typeof c.toJSON === 'function' ? c.toJSON() : c));
+
+      const rawSent = await rest.post(Routes.channelMessages(channelId), { body });
+      if (!rawSent || !rawSent.id) throw new Error('Falha ao enviar mensagem no canal.');
+      sentMessageId = rawSent.id;
+    }
 
     // Salva metadados da mensagem enviada
     const recordId = `msg_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
@@ -389,10 +421,10 @@ class MaryStudioManager {
 
     savedMessages.messages[recordId] = {
       recordId,
-      guildId: channel.guild?.id || config.guildId,
+      guildId,
       channelId,
-      channelName: channel.name,
-      messageId: sentMessage.id,
+      channelName,
+      messageId: sentMessageId,
       content: messagePayload.content || '',
       embed: messagePayload.embed || null,
       buttons: messagePayload.buttons || [],
@@ -402,20 +434,13 @@ class MaryStudioManager {
     };
 
     this.saveMessages(savedMessages);
-    return { success: true, recordId, messageId: sentMessage.id };
+    return { success: true, recordId, messageId: sentMessageId };
   }
 
   async editMessage(recordId, newMessagePayload) {
-    if (!this.client) throw new Error('Cliente Discord não conectado.');
     const savedMessages = this.loadMessages();
     const record = savedMessages.messages[recordId];
     if (!record) throw new Error('Registro de mensagem não encontrado.');
-
-    const channel = await this.client.channels.fetch(record.channelId).catch(() => null);
-    if (!channel) throw new Error('Canal da mensagem original não encontrado.');
-
-    const message = await channel.messages.fetch(record.messageId).catch(() => null);
-    if (!message) throw new Error('Mensagem no Discord não foi encontrada (pode ter sido apagada manualmente).');
 
     // Salva versão anterior no histórico de Undo (máx 5 versões)
     const previousVersion = {
@@ -440,18 +465,34 @@ class MaryStudioManager {
     const embeds = record.embed ? [this.buildEmbed(record.embed, config)] : [];
     const components = this.buildActionRows(record.buttons || []);
 
-    await message.edit({
-      content: content || '',
-      embeds,
-      components,
-    });
+    if (this.client) {
+      const channel = await this.client.channels.fetch(record.channelId).catch(() => null);
+      if (!channel) throw new Error('Canal da mensagem original não encontrado.');
+
+      const message = await channel.messages.fetch(record.messageId).catch(() => null);
+      if (!message) throw new Error('Mensagem no Discord não foi encontrada (pode ter sido apagada manualmente).');
+
+      await message.edit({
+        content: content || '',
+        embeds,
+        components,
+      });
+    } else {
+      const rest = this.getRestClient();
+      if (!rest) throw new Error('Cliente Discord não conectado e token indisponível.');
+      const body = {
+        content: content || '',
+        embeds: embeds.map((e) => (typeof e.toJSON === 'function' ? e.toJSON() : e)),
+        components: components.map((c) => (typeof c.toJSON === 'function' ? c.toJSON() : c)),
+      };
+      await rest.patch(Routes.channelMessage(record.channelId, record.messageId), { body });
+    }
 
     this.saveMessages(savedMessages);
     return { success: true, recordId, messageId: record.messageId };
   }
 
   async undoMessage(recordId) {
-    if (!this.client) throw new Error('Cliente Discord não conectado.');
     const savedMessages = this.loadMessages();
     const record = savedMessages.messages[recordId];
     if (!record) throw new Error('Registro de mensagem não encontrado.');
@@ -465,15 +506,28 @@ class MaryStudioManager {
     record.buttons = previousVersion.buttons;
     record.updatedAt = Date.now();
 
-    const channel = await this.client.channels.fetch(record.channelId).catch(() => null);
-    if (channel) {
-      const message = await channel.messages.fetch(record.messageId).catch(() => null);
-      if (message) {
-        const config = this.loadConfig();
-        const content = record.content ? this.resolveVariables(record.content, config) : '';
-        const embeds = record.embed ? [this.buildEmbed(record.embed, config)] : [];
-        const components = this.buildActionRows(record.buttons || []);
-        await message.edit({ content: content || '', embeds, components });
+    const config = this.loadConfig();
+    const content = record.content ? this.resolveVariables(record.content, config) : '';
+    const embeds = record.embed ? [this.buildEmbed(record.embed, config)] : [];
+    const components = this.buildActionRows(record.buttons || []);
+
+    if (this.client) {
+      const channel = await this.client.channels.fetch(record.channelId).catch(() => null);
+      if (channel) {
+        const message = await channel.messages.fetch(record.messageId).catch(() => null);
+        if (message) {
+          await message.edit({ content: content || '', embeds, components });
+        }
+      }
+    } else {
+      const rest = this.getRestClient();
+      if (rest) {
+        const body = {
+          content: content || '',
+          embeds: embeds.map((e) => (typeof e.toJSON === 'function' ? e.toJSON() : e)),
+          components: components.map((c) => (typeof c.toJSON === 'function' ? c.toJSON() : c)),
+        };
+        await rest.patch(Routes.channelMessage(record.channelId, record.messageId), { body }).catch(() => null);
       }
     }
 
@@ -483,34 +537,32 @@ class MaryStudioManager {
 
   // --- ATUALIZAÇÃO DO PERFIL LOCAL DA PYXIE NO SERVIDOR DA MARY ---
   async updateLocalProfile(guildId, { nick, avatar, banner, bio, statusLoja }) {
-    if (!this.client) throw new Error('Cliente Discord não conectado.');
-    const guild = this.getGuild(guildId);
-    if (!guild) throw new Error('Servidor da Mary não encontrado.');
-
     const config = this.loadConfig();
+    const targetGuildId = guildId || config.guildId || MARY_DEFAULT_GUILD_ID;
+
     if (statusLoja) {
       config.statusLoja = statusLoja;
     }
 
-    // Altera apelido local (nick)
-    if (nick !== undefined) {
-      let finalNick = String(nick || '').trim().slice(0, 32);
-      if (guild.members?.me) {
+    if (this.client) {
+      const guild = this.getGuild(targetGuildId);
+      if (nick !== undefined && guild?.members?.me) {
+        let finalNick = String(nick || '').trim().slice(0, 32);
         await guild.members.me.setNickname(finalNick || null).catch((e) => {
           console.warn('[MaryStudio] Não foi possível alterar nick local:', e.message);
         });
       }
     }
 
-    // Se forneceu avatar ou banner, tenta via REST PATCH /guilds/{id}/members/@me
-    if ((avatar !== undefined || banner !== undefined || bio !== undefined || nick !== undefined) && this.client.rest) {
+    const rest = this.client?.rest || this.getRestClient();
+    if ((avatar !== undefined || banner !== undefined || bio !== undefined || nick !== undefined) && rest && targetGuildId) {
       try {
         const body = {};
         if (nick !== undefined) body.nick = String(nick || '').trim().slice(0, 32);
         if (avatar !== undefined) body.avatar = avatar;
         if (banner !== undefined) body.banner = banner;
         if (bio !== undefined) body.bio = bio;
-        await this.client.rest.patch(`/guilds/${guild.id}/members/@me`, { body });
+        await rest.patch(`/guilds/${targetGuildId}/members/@me`, { body });
       } catch (err) {
         console.warn('[MaryStudio] Aviso ao atualizar perfil local via REST:', err.message);
       }
@@ -634,10 +686,10 @@ class MaryStudioManager {
       const targetGuildId = config.guildId || MARY_DEFAULT_GUILD_ID;
       let guild = this.getGuild(targetGuildId);
 
-      // Se a guild não está no cache local ainda, tenta buscar via REST/API se o client estiver conectado
-      if (!guild && targetGuildId && typeof this.client?.guilds?.fetch === 'function') {
-        guild = await this.client.guilds.fetch(targetGuildId).catch(() => null);
-      }
+      const channels = [];
+      const roles = [];
+      let botProfile = { nick: '', avatarUrl: '', bannerUrl: '' };
+      let guildData = null;
 
       if (guild) {
         if (guild.channels?.cache?.size === 0 && typeof guild.channels?.fetch === 'function') {
@@ -646,16 +698,7 @@ class MaryStudioManager {
         if (guild.roles?.cache?.size <= 1 && typeof guild.roles?.fetch === 'function') {
           await guild.roles.fetch().catch(() => null);
         }
-      }
 
-      const savedMessages = this.loadMessages();
-      const storeData = this.loadStoreData();
-      const templates = templatesCatalog.getAllTemplates();
-
-      const channels = [];
-      const roles = [];
-
-      if (guild) {
         guild.channels?.cache?.forEach((ch) => {
           if (ch.type === ChannelType.GuildText || ch.type === ChannelType.GuildAnnouncement) {
             channels.push({
@@ -666,7 +709,6 @@ class MaryStudioManager {
             });
           }
         });
-        channels.sort((a, b) => a.position - b.position);
 
         guild.roles?.cache?.forEach((r) => {
           if (r.id !== guild.id) {
@@ -678,15 +720,81 @@ class MaryStudioManager {
             });
           }
         });
-        roles.sort((a, b) => b.position - a.position);
+
+        guildData = {
+          id: guild.id,
+          name: guild.name,
+          iconUrl: typeof guild.iconURL === 'function' ? guild.iconURL() : null,
+        };
+
+        botProfile = {
+          nick: guild.members?.me?.nickname || '',
+          avatarUrl: typeof guild.members?.me?.displayAvatarURL === 'function' ? guild.members.me.displayAvatarURL() : '',
+          bannerUrl: '',
+        };
+      } else {
+        const rest = this.getRestClient();
+        if (rest && targetGuildId) {
+          try {
+            const rawGuild = await rest.get(Routes.guild(targetGuildId)).catch(() => null);
+            if (rawGuild) {
+              guildData = {
+                id: rawGuild.id,
+                name: rawGuild.name,
+                iconUrl: rawGuild.icon ? `https://cdn.discordapp.com/icons/${rawGuild.id}/${rawGuild.icon}.png` : null,
+              };
+
+              const rawChannels = await rest.get(Routes.guildChannels(targetGuildId)).catch(() => []);
+              if (Array.isArray(rawChannels)) {
+                rawChannels.forEach((ch) => {
+                  if (ch.type === 0 || ch.type === 5) {
+                    channels.push({
+                      id: ch.id,
+                      name: ch.name,
+                      parentId: ch.parent_id,
+                      position: ch.position,
+                    });
+                  }
+                });
+              }
+
+              const rawRoles = await rest.get(Routes.guildRoles(targetGuildId)).catch(() => []);
+              if (Array.isArray(rawRoles)) {
+                rawRoles.forEach((r) => {
+                  if (r.id !== targetGuildId) {
+                    roles.push({
+                      id: r.id,
+                      name: r.name,
+                      color: r.color ? `#${r.color.toString(16).padStart(6, '0')}` : '#99aab5',
+                      position: r.position,
+                    });
+                  }
+                });
+              }
+
+              const botMember = await rest.get(Routes.guildMember(targetGuildId, '@me')).catch(() => null);
+              if (botMember) {
+                botProfile = {
+                  nick: botMember.nick || botMember.user?.username || '',
+                  avatarUrl: botMember.avatar
+                    ? `https://cdn.discordapp.com/guilds/${targetGuildId}/users/${botMember.user?.id}/avatars/${botMember.avatar}.png`
+                    : (botMember.user?.avatar ? `https://cdn.discordapp.com/avatars/${botMember.user.id}/${botMember.user.avatar}.png` : ''),
+                  bannerUrl: '',
+                };
+              }
+            }
+          } catch (err) {
+            console.warn('[MaryStudio] Aviso ao consultar Discord REST API no bootstrap:', err.message);
+          }
+        }
       }
 
-      const botProfile = {
-        nick: guild?.members?.me?.nickname || '',
-        avatarUrl: typeof guild?.members?.me?.displayAvatarURL === 'function' ? guild.members.me.displayAvatarURL() : '',
-        bannerUrl: '',
-      };
+      channels.sort((a, b) => a.position - b.position);
+      roles.sort((a, b) => b.position - a.position);
 
+      const savedMessages = this.loadMessages();
+      const storeData = this.loadStoreData();
+      const templates = templatesCatalog.getAllTemplates();
       const security = securityGuard.readSecurityData();
 
       const clientId = this.client?.user?.id || '1543650200718155897';
@@ -694,13 +802,7 @@ class MaryStudioManager {
 
       return res.json({
         success: true,
-        guild: guild
-          ? {
-              id: guild.id,
-              name: guild.name,
-              iconUrl: typeof guild.iconURL === 'function' ? guild.iconURL() : null,
-            }
-          : null,
+        guild: guildData,
         targetGuildId,
         inviteUrl,
         channels,
@@ -809,26 +911,48 @@ class MaryStudioManager {
     // 11. API Importar Histórico de Canal
     app.get('/api/mary/channels/:channelId/history', securityGuard.requireMaryAuth, async (req, res) => {
       try {
-        if (!this.client) return res.status(500).json({ error: 'Cliente Discord offline.' });
-        const channel = await this.client.channels.fetch(req.params.channelId).catch(() => null);
-        if (!channel || typeof channel.messages?.fetch !== 'function') {
-          return res.status(404).json({ error: 'Canal não encontrado.' });
-        }
-
-        const messages = await channel.messages.fetch({ limit: 30 });
+        const channelId = req.params.channelId;
         const botMessages = [];
 
-        messages.forEach((msg) => {
-          if (msg.author.id === this.client.user?.id) {
-            botMessages.push({
-              messageId: msg.id,
-              channelId: channel.id,
-              content: msg.content,
-              embeds: msg.embeds,
-              createdAt: msg.createdTimestamp,
+        if (this.client) {
+          const channel = await this.client.channels.fetch(channelId).catch(() => null);
+          if (!channel || typeof channel.messages?.fetch !== 'function') {
+            return res.status(404).json({ error: 'Canal não encontrado.' });
+          }
+
+          const messages = await channel.messages.fetch({ limit: 30 });
+          messages.forEach((msg) => {
+            if (msg.author.id === this.client.user?.id) {
+              botMessages.push({
+                messageId: msg.id,
+                channelId: channel.id,
+                content: msg.content,
+                embeds: msg.embeds,
+                createdAt: msg.createdTimestamp,
+              });
+            }
+          });
+        } else {
+          const rest = this.getRestClient();
+          if (!rest) return res.status(500).json({ error: 'Cliente Discord offline.' });
+          const messages = await rest.get(Routes.channelMessages(channelId), {
+            query: new URLSearchParams({ limit: '30' }),
+          }).catch(() => []);
+          const clientId = '1543650200718155897';
+          if (Array.isArray(messages)) {
+            messages.forEach((msg) => {
+              if (msg.author?.id === clientId) {
+                botMessages.push({
+                  messageId: msg.id,
+                  channelId,
+                  content: msg.content,
+                  embeds: msg.embeds,
+                  createdAt: new Date(msg.timestamp).getTime(),
+                });
+              }
             });
           }
-        });
+        }
 
         return res.json({ success: true, messages: botMessages });
       } catch (err) {
