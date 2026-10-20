@@ -20,6 +20,8 @@ const CONFIG_FILE = path.join(DATA_DIR, 'maryStudioConfig.json');
 const MESSAGES_FILE = path.join(DATA_DIR, 'marySavedMessages.json');
 const STORE_FILE = path.join(DATA_DIR, 'maryStoreData.json');
 
+const MARY_DEFAULT_GUILD_ID = '1557399041443111025';
+
 class MaryStudioManager {
   constructor() {
     this.client = null;
@@ -88,7 +90,7 @@ class MaryStudioManager {
     try {
       if (!fs.existsSync(CONFIG_FILE)) {
         const initial = {
-          guildId: null,
+          guildId: MARY_DEFAULT_GUILD_ID,
           statusLoja: 'online', // 'online' | 'fila' | 'offline'
           estoqueRobux: 25000,
           preco1k: 37.0,
@@ -176,12 +178,19 @@ class MaryStudioManager {
     if (!this.client?.guilds?.cache) return null;
     const config = this.loadConfig();
 
-    // Se já tem guildId válido no cache, mantém
+    // 1. Se já tem guildId válido no cache, mantém
     if (config.guildId && this.client.guilds.cache.has(config.guildId)) {
       return this.client.guilds.cache.get(config.guildId);
     }
 
-    // Busca guilds onde a Mary é dona ou tem permissão de Admin/ManageGuild
+    // 2. Se a guild padrão da Mary está no cache
+    if (this.client.guilds.cache.has(MARY_DEFAULT_GUILD_ID)) {
+      config.guildId = MARY_DEFAULT_GUILD_ID;
+      this.saveConfig(config);
+      return this.client.guilds.cache.get(MARY_DEFAULT_GUILD_ID);
+    }
+
+    // 3. Busca guilds onde a Mary é dona ou tem permissão de Admin/ManageGuild
     let candidate = null;
     for (const guild of this.client.guilds.cache.values()) {
       if (guild.ownerId === securityGuard.MARY_DISCORD_ID) {
@@ -210,7 +219,7 @@ class MaryStudioManager {
 
   getGuild(guildId = null) {
     if (!this.client?.guilds?.cache) return null;
-    const targetId = guildId || this.loadConfig().guildId;
+    const targetId = guildId || this.loadConfig().guildId || MARY_DEFAULT_GUILD_ID;
     if (targetId && this.client.guilds.cache.has(targetId)) {
       return this.client.guilds.cache.get(targetId);
     }
@@ -620,9 +629,25 @@ class MaryStudioManager {
     });
 
     // 6. API Bootstrap (dados completos para alimentar a SPA)
-    app.get('/api/mary/bootstrap', securityGuard.requireMaryAuth, (req, res) => {
-      const guild = this.getGuild();
+    app.get('/api/mary/bootstrap', securityGuard.requireMaryAuth, async (req, res) => {
       const config = this.loadConfig();
+      const targetGuildId = config.guildId || MARY_DEFAULT_GUILD_ID;
+      let guild = this.getGuild(targetGuildId);
+
+      // Se a guild não está no cache local ainda, tenta buscar via REST/API se o client estiver conectado
+      if (!guild && targetGuildId && typeof this.client?.guilds?.fetch === 'function') {
+        guild = await this.client.guilds.fetch(targetGuildId).catch(() => null);
+      }
+
+      if (guild) {
+        if (guild.channels?.cache?.size === 0 && typeof guild.channels?.fetch === 'function') {
+          await guild.channels.fetch().catch(() => null);
+        }
+        if (guild.roles?.cache?.size <= 1 && typeof guild.roles?.fetch === 'function') {
+          await guild.roles.fetch().catch(() => null);
+        }
+      }
+
       const savedMessages = this.loadMessages();
       const storeData = this.loadStoreData();
       const templates = templatesCatalog.getAllTemplates();
@@ -658,11 +683,14 @@ class MaryStudioManager {
 
       const botProfile = {
         nick: guild?.members?.me?.nickname || '',
-        avatarUrl: guild?.members?.me?.displayAvatarURL() || '',
+        avatarUrl: typeof guild?.members?.me?.displayAvatarURL === 'function' ? guild.members.me.displayAvatarURL() : '',
         bannerUrl: '',
       };
 
       const security = securityGuard.readSecurityData();
+
+      const clientId = this.client?.user?.id || '1543650200718155897';
+      const inviteUrl = `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot%20applications.commands`;
 
       return res.json({
         success: true,
@@ -670,9 +698,11 @@ class MaryStudioManager {
           ? {
               id: guild.id,
               name: guild.name,
-              iconUrl: guild.iconURL(),
+              iconUrl: typeof guild.iconURL === 'function' ? guild.iconURL() : null,
             }
           : null,
+        targetGuildId,
+        inviteUrl,
         channels,
         roles,
         botProfile,

@@ -63,6 +63,8 @@ async function loadBootstrapData() {
     if (!data.success) return;
 
     appState.guild = data.guild;
+    appState.targetGuildId = data.targetGuildId || '1557399041443111025';
+    appState.inviteUrl = data.inviteUrl || 'https://discord.com/oauth2/authorize?client_id=1543650200718155897&permissions=8&scope=bot%20applications.commands';
     appState.channels = data.channels || [];
     appState.roles = data.roles || [];
     appState.config = data.config || {};
@@ -92,10 +94,21 @@ async function loadBootstrapData() {
 
 function renderHeader() {
   const infoText = document.getElementById('guildInfoText');
+  const banner = document.getElementById('guildInviteBanner');
+  const bannerGuildId = document.getElementById('bannerGuildId');
+  const btnInvite = document.getElementById('btnInviteBot');
+
   if (appState.guild) {
     infoText.textContent = `Servidor: ${appState.guild.name}`;
+    if (banner) banner.style.display = 'none';
   } else {
-    infoText.textContent = 'Nenhum servidor vinculado automaticamente.';
+    const inviteUrl = appState.inviteUrl || 'https://discord.com/oauth2/authorize?client_id=1543650200718155897&permissions=8&scope=bot%20applications.commands';
+    infoText.innerHTML = `Servidor: <span style="color: #f59e0b;">Aguardando Convite</span> (<a href="${inviteUrl}" target="_blank" style="color: #ec4899; text-decoration: underline;">Convidar Pyxie</a>)`;
+    if (banner) {
+      banner.style.display = 'block';
+      if (bannerGuildId) bannerGuildId.textContent = appState.targetGuildId || '1557399041443111025';
+      if (btnInvite) btnInvite.href = inviteUrl;
+    }
   }
 
   const dot = document.getElementById('statusDot');
@@ -118,6 +131,10 @@ function renderHeader() {
 
 function renderChannels() {
   const select = document.getElementById('selectChannel');
+  if (!appState.guild || !appState.channels || appState.channels.length === 0) {
+    select.innerHTML = '<option value="">⚠️ Pyxie não está no servidor ou não há canais (convide o bot primeiro)</option>';
+    return;
+  }
   select.innerHTML = '<option value="">Selecione um canal...</option>';
   appState.channels.forEach((ch) => {
     const opt = document.createElement('option');

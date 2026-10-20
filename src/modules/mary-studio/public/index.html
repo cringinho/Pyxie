@@ -41,6 +41,26 @@
   <!-- Main Container -->
   <main class="container">
 
+    <!-- Banner de Convite de Servidor (quando a Pyxie não estiver no servidor configurado) -->
+    <div id="guildInviteBanner" class="card" style="display: none; background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(236, 72, 153, 0.4); margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="font-size: 32px;">💌</div>
+          <div>
+            <h3 style="margin: 0; font-size: 16px; color: #fff;">A Pyxie precisa ser convidada para o seu servidor!</h3>
+            <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted);">
+              A bot ainda não está no servidor da Mary (ID: <code id="bannerGuildId">1557399041443111025</code>). Autorize a entrada para carregar seus canais e enviar as embeds.
+            </p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <a id="btnInviteBot" href="#" target="_blank" class="btn-primary-action" style="padding: 10px 18px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+            ✨ Convidar Pyxie Agora
+          </a>
+        </div>
+      </div>
+    </div>
+
     <!-- 1. ABA CONSTRUTOR DE EMBEDS -->
     <div class="tab-pane active" id="tab-builder">
       <div class="builder-grid">
