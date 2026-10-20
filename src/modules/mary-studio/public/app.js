@@ -30,6 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnAddButton').addEventListener('click', addNewButton);
   document.getElementById('btnSaveProfile').addEventListener('click', saveProfile);
   document.getElementById('btnSaveModules').addEventListener('click', saveModules);
+  document.getElementById('fileLocalAvatar')?.addEventListener('change', (e) => handleFileUpload(e, 'inputLocalAvatar', updateProfilePreview));
+  document.getElementById('btnResetAvatar')?.addEventListener('click', resetLocalAvatar);
+  document.getElementById('inputLocalNick')?.addEventListener('input', updateProfilePreview);
+  document.getElementById('inputLocalBio')?.addEventListener('input', updateProfilePreview);
+  document.getElementById('inputLocalAvatar')?.addEventListener('input', updateProfilePreview);
+  document.getElementById('selectStoreStatus')?.addEventListener('change', updateProfilePreview);
   document.getElementById('fileImage').addEventListener('change', (e) => handleFileUpload(e, 'inputImageUrl'));
   document.getElementById('fileThumbnail').addEventListener('change', (e) => handleFileUpload(e, 'inputThumbnailUrl'));
   document.getElementById('btnOpenCanvasTable').addEventListener('click', generateCanvasPriceTable);
@@ -613,7 +619,7 @@ window.undoMessage = async function(recordId) {
 };
 
 // --- UPLOAD DE IMAGEM ---
-async function handleFileUpload(e, targetInputId) {
+async function handleFileUpload(e, targetInputId, callback = null) {
   const file = e.target.files[0];
   if (!file) return;
 
@@ -631,6 +637,7 @@ async function handleFileUpload(e, targetInputId) {
       if (data.success) {
         document.getElementById(targetInputId).value = data.url;
         updateDiscordPreview();
+        if (typeof callback === 'function') callback();
         alert('✅ Imagem enviada com sucesso!');
       } else {
         alert('❌ Erro ao enviar: ' + (data.error || 'Falha no upload.'));
@@ -709,34 +716,114 @@ function generateCanvasPriceTable() {
   alert('🎨 Imagem da Tabela de Preços gerada com sucesso e anexada no preview!');
 }
 
-// --- PERFIL E MÓDULOS ---
+// --- PERFIL E APARÊNCIA LOCAL DA PYXIE ---
 function renderProfileTab() {
+  const botProfile = appState.botProfile || {};
+  const cfg = appState.config || {};
+
   const nickInput = document.getElementById('inputLocalNick');
   if (nickInput) {
-    nickInput.value = (appState.botProfile && appState.botProfile.nick) || (appState.config && appState.config.localNick) || '';
+    nickInput.value = botProfile.nick || cfg.localNick || '';
   }
+
+  const bioInput = document.getElementById('inputLocalBio');
+  if (bioInput) {
+    bioInput.value = botProfile.bio || cfg.localBio || '';
+  }
+
+  const avatarInput = document.getElementById('inputLocalAvatar');
+  if (avatarInput) {
+    avatarInput.value = cfg.localAvatarUrl || '';
+  }
+
   const statusSelect = document.getElementById('selectStoreStatus');
   if (statusSelect) {
-    statusSelect.value = appState.config.statusLoja || 'online';
+    statusSelect.value = cfg.statusLoja || 'online';
+  }
+
+  updateProfilePreview();
+}
+
+function updateProfilePreview() {
+  const nickInput = document.getElementById('inputLocalNick');
+  const bioInput = document.getElementById('inputLocalBio');
+  const avatarInput = document.getElementById('inputLocalAvatar');
+  const statusSelect = document.getElementById('selectStoreStatus');
+
+  const previewNick = document.getElementById('previewLocalNick');
+  const previewBio = document.getElementById('previewLocalBio');
+  const previewAvatar = document.getElementById('previewLocalAvatar');
+  const previewDot = document.getElementById('previewStatusDot');
+  const previewServer = document.getElementById('previewServerName');
+
+  if (previewNick) {
+    previewNick.textContent = (nickInput && nickInput.value.trim()) || (appState.botProfile && appState.botProfile.nick) || 'Pyxie | Mary Store';
+  }
+
+  if (previewBio) {
+    previewBio.textContent = (bioInput && bioInput.value.trim()) || 'Assistente e Lojinha de Robux oficial da Mary Store • Entrega Rápida & Segurança Garantida! 🎀';
+  }
+
+  if (previewAvatar) {
+    const customUrl = avatarInput && avatarInput.value.trim();
+    if (customUrl && (customUrl.startsWith('http://') || customUrl.startsWith('https://') || customUrl.startsWith('data:image/'))) {
+      previewAvatar.src = customUrl;
+    } else if (appState.botProfile && appState.botProfile.avatarUrl) {
+      previewAvatar.src = appState.botProfile.avatarUrl;
+    } else {
+      previewAvatar.src = 'https://cdn.discordapp.com/emojis/1548444149785694238.gif';
+    }
+  }
+
+  if (previewDot) {
+    const status = statusSelect ? statusSelect.value : 'online';
+    if (status === 'online') previewDot.style.background = '#22c55e';
+    else if (status === 'fila') previewDot.style.background = '#eab308';
+    else previewDot.style.background = '#ef4444';
+  }
+
+  if (previewServer) {
+    previewServer.textContent = appState.guild ? appState.guild.name : 'MALIBUX';
   }
 }
 
+function resetLocalAvatar() {
+  const avatarInput = document.getElementById('inputLocalAvatar');
+  if (avatarInput) avatarInput.value = 'reset';
+  const previewAvatar = document.getElementById('previewLocalAvatar');
+  if (previewAvatar) {
+    previewAvatar.src = (appState.botProfile && appState.botProfile.avatarUrl) || 'https://cdn.discordapp.com/emojis/1548444149785694238.gif';
+  }
+  alert('🔄 Foto resetada para o padrão da Pyxie. Clique em "Salvar Perfil Local" para aplicar no Discord.');
+}
+
 async function saveProfile() {
-  const nick = document.getElementById('inputLocalNick').value;
+  const nick = document.getElementById('inputLocalNick').value.trim();
+  const bio = document.getElementById('inputLocalBio').value.trim();
+  const avatar = document.getElementById('inputLocalAvatar').value.trim();
   const statusLoja = document.getElementById('selectStoreStatus').value;
+
+  const btn = document.getElementById('btnSaveProfile');
+  btn.disabled = true;
+  btn.textContent = '⏳ Aplicando perfil local no Discord...';
 
   try {
     const res = await apiFetch('/api/mary/bot-profile', {
       method: 'PATCH',
-      body: JSON.stringify({ nick, statusLoja }),
+      body: JSON.stringify({ nick, bio, avatar, statusLoja }),
     });
     const data = await res.json();
     if (data.success) {
-      alert('✅ Perfil local salvo com sucesso!');
+      alert('✅ Foto, apelido e descrição locais atualizados com sucesso no Discord!');
       loadBootstrapData();
+    } else {
+      alert('❌ Erro: ' + (data.error || 'Não foi possível atualizar o perfil local.'));
     }
   } catch (_) {
-    alert('Erro ao salvar perfil.');
+    alert('Erro de conexão ao salvar perfil.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '💾 Salvar Perfil Local no Discord';
   }
 }
 

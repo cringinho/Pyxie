@@ -32,18 +32,26 @@ function buildQuickHubView(userId, source) {
   if (config.statusLoja === 'fila') statusBadge = '🟡 Fila de Pedidos';
   if (config.statusLoja === 'offline') statusBadge = '🔴 Lojinha Fechada';
 
+  let desc = t('mary.hub_desc', source, {
+    status: statusBadge,
+    estoque: (Number(config.estoqueRobux) || 0).toLocaleString('pt-BR'),
+    preco: (Number(config.preco1k) || 37.0).toFixed(2).replace('.', ','),
+  });
+
+  if (config.localBio) {
+    desc += `\n\n📝 **Sobre a Lojinha:**\n> *"${config.localBio}"*`;
+  }
+
   const embed = new EmbedBuilder()
     .setColor('#ec4899')
     .setTitle(t('mary.hub_title', source))
-    .setDescription(
-      t('mary.hub_desc', source, {
-        status: statusBadge,
-        estoque: (Number(config.estoqueRobux) || 0).toLocaleString('pt-BR'),
-        preco: (Number(config.preco1k) || 37.0).toFixed(2).replace('.', ','),
-      })
-    )
+    .setDescription(desc)
     .setFooter({ text: '🎀 Mary Store • Central Administrativa Exclusiva' })
     .setTimestamp();
+
+  if (config.localAvatarUrl && (config.localAvatarUrl.startsWith('http://') || config.localAvatarUrl.startsWith('https://'))) {
+    embed.setThumbnail(config.localAvatarUrl);
+  }
 
   const row1 = new ActionRowBuilder().addComponents(
     new ButtonBuilder()

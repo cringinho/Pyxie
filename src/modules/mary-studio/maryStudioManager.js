@@ -106,6 +106,9 @@ class MaryStudioManager {
         const initial = {
           guildId: MARY_DEFAULT_GUILD_ID,
           statusLoja: 'online', // 'online' | 'fila' | 'offline'
+          localNick: '',
+          localAvatarUrl: '',
+          localBio: '',
           estoqueRobux: 25000,
           preco1k: 37.0,
           pixKey: '',
@@ -273,7 +276,9 @@ class MaryStudioManager {
       .replace(/\{total_avaliacoes\}/gi, String(totalReviews))
       .replace(/\{nota_media\}/gi, `${avgScore} ⭐`)
       .replace(/\{pix_key\}/gi, cfg.pixKey || 'Chave PIX não informada')
-      .replace(/\{pix_name\}/gi, cfg.pixName || 'MARY STORE');
+      .replace(/\{pix_name\}/gi, cfg.pixName || 'MARY STORE')
+      .replace(/\{bio\}/gi, cfg.localBio || 'Mary Store • Robux Oficial')
+      .replace(/\{descricao\}/gi, cfg.localBio || 'Mary Store • Robux Oficial');
   }
 
   // --- CONSTRUÇÃO DE EMBEDS E COMPONENTES DISCORD ---
@@ -543,6 +548,28 @@ class MaryStudioManager {
     return { success: true, restoredAt: previousVersion.savedAt };
   }
 
+  // --- CONVERSOR DE IMAGEM PARA DATA URI (DISCORD REST API) ---
+  async formatAvatarDataUri(input) {
+    if (input === null || input === undefined) return undefined;
+    const str = String(input).trim();
+    if (str === '' || str === 'null' || str === 'reset') return null;
+    if (str.startsWith('data:image/')) return str;
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+      try {
+        const res = await fetch(str);
+        if (!res.ok) return null;
+        const arrayBuffer = await res.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const mime = res.headers.get('content-type') || 'image/png';
+        return `data:${mime};base64,${buffer.toString('base64')}`;
+      } catch (e) {
+        console.warn('[MaryStudio] Falha ao converter imagem para Data URI:', e.message);
+        return null;
+      }
+    }
+    return null;
+  }
+
   // --- ATUALIZAÇÃO DO PERFIL LOCAL DA PYXIE NO SERVIDOR DA MARY ---
   async updateLocalProfile(guildId, { nick, avatar, banner, bio, statusLoja }) {
     const config = this.loadConfig();
@@ -556,6 +583,10 @@ class MaryStudioManager {
     }
     if (bio !== undefined) {
       config.localBio = String(bio || '').trim();
+    }
+    if (avatar !== undefined) {
+      const cleanAvatar = String(avatar || '').trim();
+      config.localAvatarUrl = (cleanAvatar === 'null' || cleanAvatar === 'reset') ? '' : cleanAvatar;
     }
 
     if (this.client) {
@@ -573,17 +604,38 @@ class MaryStudioManager {
       try {
         const body = {};
         if (nick !== undefined) body.nick = String(nick || '').trim().slice(0, 32);
-        if (avatar !== undefined) body.avatar = avatar;
+        if (avatar !== undefined) {
+          body.avatar = await this.formatAvatarDataUri(avatar);
+        }
         if (banner !== undefined) body.banner = banner;
         if (bio !== undefined) body.bio = bio;
-        await rest.patch(`/guilds/${targetGuildId}/members/@me`, { body });
+
+        await rest.patch(`/guilds/${targetGuildId}/members/@me`, { body }).catch(async (err) => {
+          // Se falhar devido a campos não suportados (ex: bio em bots), tenta novamente só com nick e avatar
+          if (body.bio !== undefined || body.banner !== undefined) {
+            const fallbackBody = {};
+            if (body.nick !== undefined) fallbackBody.nick = body.nick;
+            if (body.avatar !== undefined) fallbackBody.avatar = body.avatar;
+            await rest.patch(`/guilds/${targetGuildId}/members/@me`, { body: fallbackBody }).catch((e2) => {
+              console.warn('[MaryStudio] Aviso ao atualizar avatar/nick local via REST:', e2.message);
+            });
+          } else {
+            console.warn('[MaryStudio] Aviso ao atualizar perfil local via REST:', err.message);
+          }
+        });
       } catch (err) {
         console.warn('[MaryStudio] Aviso ao atualizar perfil local via REST:', err.message);
       }
     }
 
     this.saveConfig(config);
-    return { success: true, statusLoja: config.statusLoja };
+    return {
+      success: true,
+      statusLoja: config.statusLoja,
+      localNick: config.localNick,
+      localBio: config.localBio,
+      localAvatarUrl: config.localAvatarUrl,
+    };
   }
 
   // --- ROTAS DO SERVIDOR WEB EXPRESS ---
@@ -743,7 +795,9 @@ class MaryStudioManager {
 
         botProfile = {
           nick: guild.members?.me?.nickname || config.localNick || '',
-          avatarUrl: typeof guild.members?.me?.displayAvatarURL === 'function' ? guild.members.me.displayAvatarURL() : '',
+          avatarUrl: (guild.members?.me?.avatar ? guild.members.me.displayAvatarURL() : null) || config.localAvatarUrl || (typeof guild.members?.me?.displayAvatarURL === 'function' ? guild.members.me.displayAvatarURL() : ''),
+          bio: config.localBio || '',
+          localAvatarUrl: config.localAvatarUrl || '',
           bannerUrl: '',
         };
       } else {
@@ -792,7 +846,9 @@ class MaryStudioManager {
                   nick: botMember.nick || config.localNick || botMember.user?.username || '',
                   avatarUrl: botMember.avatar
                     ? `https://cdn.discordapp.com/guilds/${targetGuildId}/users/${botMember.user?.id}/avatars/${botMember.avatar}.png`
-                    : (botMember.user?.avatar ? `https://cdn.discordapp.com/avatars/${botMember.user.id}/${botMember.user.avatar}.png` : ''),
+                    : (config.localAvatarUrl || (botMember.user?.avatar ? `https://cdn.discordapp.com/avatars/${botMember.user.id}/${botMember.user.avatar}.png` : '')),
+                  bio: config.localBio || '',
+                  localAvatarUrl: config.localAvatarUrl || '',
                   bannerUrl: '',
                 };
               }

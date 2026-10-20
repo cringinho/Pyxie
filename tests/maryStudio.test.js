@@ -347,6 +347,7 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
     const patchResult = await maryStudioManager.updateLocalProfile(null, {
       nick: 'Pyxie [🟢 Loja ON]',
       bio: 'Lojinha da Mary • Robux com entrega rápida!',
+      avatar: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
       statusLoja: 'online',
     });
 
@@ -355,8 +356,16 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
     assert.ok(restPatchCalled.endpoint.includes('/members/@me'), 'Deve chamar rota canônica /members/@me');
     assert.equal(restPatchCalled.data.body.nick, 'Pyxie [🟢 Loja ON]', 'Deve enviar apelido local');
     assert.equal(restPatchCalled.data.body.bio, 'Lojinha da Mary • Robux com entrega rápida!', 'Deve enviar bio local');
+    assert.ok(restPatchCalled.data.body.avatar && restPatchCalled.data.body.avatar.startsWith('data:image/png;base64,'), 'Deve enviar avatar em formato Data URI base64');
+    assert.equal(patchResult.localBio, 'Lojinha da Mary • Robux com entrega rápida!', 'Deve persistir bio');
+    assert.ok(patchResult.localAvatarUrl.startsWith('data:image/png;base64,'), 'Deve persistir localAvatarUrl');
 
-    console.log('  ✅ 7. Isolamento de Feature Flags e atualização do Perfil Local (@me) validados.');
+    // Teste de Reset de Avatar
+    const resetResult = await maryStudioManager.updateLocalProfile(null, { avatar: 'reset' });
+    assert.equal(resetResult.localAvatarUrl, '', 'Reset deve limpar localAvatarUrl');
+    assert.equal(restPatchCalled.data.body.avatar, null, 'Reset deve enviar null para o Discord');
+
+    console.log('  ✅ 7. Isolamento de Feature Flags e atualização do Perfil Local (@me) com Foto e Bio validados.');
 
     // =========================================================================
     // 8. TEMPLATES PRONTOS E CATÁLOGO DE MENSAGENS

@@ -451,29 +451,94 @@
 
     <!-- 7. ABA APARÊNCIA DA PYXIE -->
     <div class="tab-pane" id="tab-profile">
-      <div class="card" style="max-width: 600px; margin: 0 auto;">
-        <h2 class="card-title">🧚‍♀️ Perfil Local da Pyxie no Seu Servidor</h2>
-        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
-          Personalize como a Pyxie aparece exclusivamente no servidor da Mary, sem afetar outros servidores!
-        </p>
+      <div style="display: grid; grid-template-columns: minmax(320px, 1fr) minmax(280px, 360px); gap: 24px; align-items: start;">
+        
+        <!-- Formulário de Edição -->
+        <div class="card" style="margin: 0;">
+          <h2 class="card-title">🧚‍♀️ Perfil Exclusivo no Seu Servidor</h2>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;">
+            Personalize a foto (avatar), apelido e descrição da Pyxie <strong>exclusivamente no servidor da Mary</strong>, sem alterar a aparência global dela em outros servidores!
+          </p>
 
-        <div class="form-group">
-          <label class="form-label">Apelido Local (Nick no Servidor):</label>
-          <input type="text" id="inputLocalNick" class="form-control" placeholder="Ex: 🎀 Pyxie | Mary Store">
+          <div class="form-group">
+            <label class="form-label">🖼️ Foto do Bot no Servidor (Avatar Local):</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <input type="text" id="inputLocalAvatar" class="form-control" placeholder="Cole o link da imagem ou clique em Escolher Foto...">
+              <label class="btn-secondary" style="margin: 0; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; font-size: 12.5px;">
+                📁 Escolher Foto
+                <input type="file" id="fileLocalAvatar" accept="image/png,image/jpeg,image/gif,image/webp" style="display: none;">
+              </label>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11.5px; color: var(--text-muted);">PNG/JPG quadrado (512x512).</span>
+              <button type="button" id="btnResetAvatar" class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #f59e0b;">
+                🔄 Resetar para Foto Padrão
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">🎀 Apelido Local (Nick no Servidor):</label>
+            <input type="text" id="inputLocalNick" class="form-control" placeholder="Ex: 🎀 Pyxie | Mary Store" maxlength="32">
+            <span style="font-size: 11.5px; color: var(--text-muted); display: block; margin-top: 4px;">Máximo 32 caracteres. Reaplicado automaticamente no boot.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">📝 Descrição / Biografia da Loja:</label>
+            <textarea id="inputLocalBio" class="form-control" rows="3" placeholder="Ex: Assistente e Lojinha de Robux oficial da Mary Store • Entrega Rápida & Segurança Garantida! 🎀"></textarea>
+            <span style="font-size: 11.5px; color: var(--text-muted); display: block; margin-top: 4px;">Apresentação exibida no comando /mary e nos guias da lojinha.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">🟢 Status da Loja no Servidor:</label>
+            <select id="selectStoreStatus" class="form-control">
+              <option value="online">🟢 Loja Online (Entrega Rápida)</option>
+              <option value="fila">🟡 Atendimento em Fila</option>
+              <option value="offline">🔴 Lojinha Fechada</option>
+            </select>
+          </div>
+
+          <button id="btnSaveProfile" class="btn-primary-action" style="width: 100%; margin-top: 8px;">
+            💾 Salvar Perfil Local no Discord
+          </button>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Status da Loja no Servidor:</label>
-          <select id="selectStoreStatus" class="form-control">
-            <option value="online">🟢 Loja Online (Entrega Rápida)</option>
-            <option value="fila">🟡 Atendimento em Fila</option>
-            <option value="offline">🔴 Lojinha Fechada</option>
-          </select>
+        <!-- Card de Preview em Tempo Real -->
+        <div class="card" style="margin: 0; background: #232428; border: 1px solid rgba(255,255,255,0.08);">
+          <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <span>👁️</span> Preview do Perfil no Discord
+          </h3>
+          <div style="background: #111214; border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 14px;">
+              <div style="position: relative; width: 64px; height: 64px; flex-shrink: 0;">
+                <img id="previewLocalAvatar" src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" alt="Avatar Local" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid #ec4899;">
+                <div id="previewStatusDot" style="position: absolute; bottom: 0; right: 0; width: 16px; height: 16px; border-radius: 50%; background: #22c55e; border: 3px solid #111214;"></div>
+              </div>
+              <div style="min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <strong id="previewLocalNick" style="color: #f2f3f5; font-size: 15px; word-break: break-word;">Pyxie | Mary Store</strong>
+                  <span class="discord-bot-tag" style="font-size: 9px; padding: 1px 4px;">APP</span>
+                </div>
+                <div style="font-size: 12px; color: #949ba4; margin-top: 2px;">pyxie#3749</div>
+              </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; border: 1px solid rgba(255,255,255,0.05);">
+              <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #b5bac1; margin-bottom: 6px;">
+                SOBRE MIM (NO SERVIDOR)
+              </div>
+              <div id="previewLocalBio" style="font-size: 12.5px; color: #dbdee1; line-height: 1.4; white-space: pre-wrap; word-break: break-word;">
+                Assistente e Lojinha de Robux oficial da Mary Store • Entrega Rápida & Segurança Garantida! 🎀
+              </div>
+            </div>
+
+            <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: #949ba4;">
+              <span>Servidor:</span>
+              <strong id="previewServerName" style="color: #ec4899;">MALIBUX</strong>
+            </div>
+          </div>
         </div>
 
-        <button id="btnSaveProfile" class="btn-primary-action" style="margin-top: 16px;">
-          💾 Salvar Perfil Local
-        </button>
       </div>
     </div>
 
