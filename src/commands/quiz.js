@@ -11,6 +11,8 @@ const { QUIZ } = require('./commandNames');
 const {
   getQuizStatus,
   startQuiz,
+  recordQuizQuestion,
+  getUserAccount,
   addCoins,
   getBalance,
 } = require('../services/economy');
@@ -21,17 +23,37 @@ const QUIZ_FILE = path.join(__dirname, '../data/quiz_questions.json');
 const QUIZ_TIMEOUT_MS = 60 * 1000;
 const REWARD_PER_QUESTION = 10;
 
-// Sessões em andamento: userId -> { round, streak, accumulated, currentQuestion, lang, ... }
+// Sessões em andamento: userId -> { round, streak, accumulated, currentQuestion, lang, seenKeys, ... }
 const activeQuizSessions = new Map();
 
+// Cache em memória de perguntas do quiz com validação de mtime para evitar I/O desnecessário
+let cachedQuizQuestions = null;
+let lastQuizMtime = 0;
+
 function loadQuizQuestions() {
-  if (fs.existsSync(QUIZ_FILE)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(QUIZ_FILE, 'utf8'));
-      if (Array.isArray(data)) return data;
-    } catch (_) {}
-  }
-  return [];
+  try {
+    if (fs.existsSync(QUIZ_FILE)) {
+      const stats = fs.statSync(QUIZ_FILE);
+      if (cachedQuizQuestions && stats.mtimeMs === lastQuizMtime) {
+        return cachedQuizQuestions;
+      }
+      const raw = fs.readFileSync(QUIZ_FILE, 'utf8');
+      const data = JSON.parse(raw);
+      if (Array.isArray(data)) {
+        cachedQuizQuestions = data;
+        lastQuizMtime = stats.mtimeMs;
+        return cachedQuizQuestions;
+      }
+    }
+  } catch (_) {}
+  return cachedQuizQuestions || [];
+}
+
+function getQuizQuestionKey(q) {
+  if (!q) return '';
+  if (q.id) return String(q.id);
+  const text = q.pt?.question || q.question || q.en?.question || '';
+  return text.trim().slice(0, 60);
 }
 
 function shuffleArray(array) {
@@ -48,13 +70,31 @@ function getDifficultyTierName(level, lang = 'pt') {
   return t(key, lang);
 }
 
-function selectQuestionForLevel(questions, level) {
+function selectQuestionForLevel(questions, level, seenKeys = new Set(), recentHistory = []) {
   const targetLevel = Math.max(1, Math.min(4, level));
   const pool = questions.filter((q) => Number(q.level) === targetLevel);
-  if (pool.length > 0) {
-    return pool[Math.floor(Math.random() * pool.length)];
+  const basePool = pool.length > 0 ? pool : questions;
+
+  const historySet = new Set(recentHistory);
+  // 1º Filtro: Não vistas na sessão atual E não vistas recentemente no histórico da conta
+  let eligible = basePool.filter((q) => {
+    const k = getQuizQuestionKey(q);
+    return !seenKeys.has(k) && !historySet.has(k);
+  });
+
+  // 2º Filtro: Se esgotou o histórico recente, filtra apenas as não vistas nesta sessão
+  if (eligible.length === 0) {
+    eligible = basePool.filter((q) => !seenKeys.has(getQuizQuestionKey(q)));
   }
-  return questions[Math.floor(Math.random() * questions.length)];
+
+  // 3º Filtro: Se todas foram vistas na sessão atual, evita apenas a última questão
+  if (eligible.length === 0) {
+    const lastKey = recentHistory[recentHistory.length - 1];
+    eligible = basePool.filter((q) => getQuizQuestionKey(q) !== lastKey);
+    if (eligible.length === 0) eligible = basePool;
+  }
+
+  return eligible[Math.floor(Math.random() * eligible.length)];
 }
 
 function buildQuizQuestionView(userId, session, lang) {
@@ -173,7 +213,17 @@ async function handleQuizInteraction(interaction) {
     if (session.timeoutTimer) clearTimeout(session.timeoutTimer);
 
     const allQuestions = loadQuizQuestions();
-    const nextQ = selectQuestionForLevel(allQuestions, session.level);
+    const account = getUserAccount(sessionUserId);
+    const recentHistory = Array.isArray(account.recentQuizQuestions) ? account.recentQuizQuestions : [];
+    if (!session.seenKeys) session.seenKeys = new Set();
+
+    const nextQ = selectQuestionForLevel(allQuestions, session.level, session.seenKeys, recentHistory);
+    const nextKey = getQuizQuestionKey(nextQ);
+    if (nextKey) {
+      session.seenKeys.add(nextKey);
+      recordQuizQuestion(sessionUserId, nextKey);
+    }
+
     const qData = nextQ[lang] || nextQ.en || nextQ.pt;
 
     const rawWrongs = Array.isArray(qData.wrongs) ? qData.wrongs : [];
@@ -194,6 +244,9 @@ async function handleQuizInteraction(interaction) {
         activeQuizSessions.delete(sessionUserId);
       }
     }, QUIZ_TIMEOUT_MS);
+    if (session.timeoutTimer && typeof session.timeoutTimer.unref === 'function') {
+      session.timeoutTimer.unref();
+    }
 
     const nextView = buildQuizQuestionView(sessionUserId, session, lang);
     return interaction.update(nextView);
@@ -281,17 +334,26 @@ async function runQuiz(source, reply) {
   const allQuestions = loadQuizQuestions();
   if (!allQuestions || allQuestions.length === 0) {
     await reply({
-      content: '⚠️ O banco de perguntas do quiz está sendo inicializado. Tente novamente em instantes!',
+      content: t('quiz.initializing', lang),
       ephemeral: true,
     });
     return;
   }
 
-  // Inicia o cooldown de 3 horas no banco
-  startQuiz(user.id);
+  const account = getUserAccount(user.id);
+  const recentHistory = Array.isArray(account.recentQuizQuestions) ? account.recentQuizQuestions : [];
 
   const initialLevel = 1;
-  const chosenQ = selectQuestionForLevel(allQuestions, initialLevel);
+  const seenKeys = new Set();
+  const chosenQ = selectQuestionForLevel(allQuestions, initialLevel, seenKeys, recentHistory);
+  const chosenKey = getQuizQuestionKey(chosenQ);
+  if (chosenKey) {
+    seenKeys.add(chosenKey);
+  }
+
+  // Inicia o cooldown de 3 horas no banco e salva a questão na história anti-repetição
+  startQuiz(user.id, Date.now(), chosenKey);
+
   const qData = chosenQ[lang] || chosenQ.en || chosenQ.pt;
 
   const rawWrongs = Array.isArray(qData.wrongs) ? qData.wrongs : [];
@@ -313,6 +375,7 @@ async function runQuiz(source, reply) {
     correctText: qData.correct,
     questionText: qData.question,
     lang,
+    seenKeys,
     startedAt: Date.now(),
   };
 
@@ -321,6 +384,9 @@ async function runQuiz(source, reply) {
       activeQuizSessions.delete(user.id);
     }
   }, QUIZ_TIMEOUT_MS);
+  if (session.timeoutTimer && typeof session.timeoutTimer.unref === 'function') {
+    session.timeoutTimer.unref();
+  }
 
   activeQuizSessions.set(user.id, session);
 
@@ -343,6 +409,10 @@ module.exports = {
     }),
   isQuizInteraction,
   handleQuizInteraction,
+  selectQuestionForLevel,
+  getQuizQuestionKey,
+  loadQuizQuestions,
+  activeQuizSessions,
   async executeSlash({ interaction }) {
     await runQuiz(interaction, (options) => {
       if (interaction.deferred || interaction.replied) {

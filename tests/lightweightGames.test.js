@@ -246,7 +246,7 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
   // Verifica se o banco de 500 questões foi carregado e estruturado
   const quizDb = quizSeeder.loadDatabase();
   assert.ok(Array.isArray(quizDb), 'Banco de perguntas deve ser um array.');
-  assert.equal(quizDb.length, 500, 'Banco de perguntas do quiz deve conter exatamente 500 questões.');
+  assert.equal(quizDb.length, 600, 'Banco de perguntas do quiz deve conter exatamente 600 questões.');
 
   const levelCounts = { 1: 0, 2: 0, 3: 0, 4: 0 };
   for (const q of quizDb) {
@@ -258,10 +258,10 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
     assert.ok(q.level >= 1 && q.level <= 4, 'Nível deve estar entre 1 e 4.');
     levelCounts[q.level]++;
   }
-  assert.equal(levelCounts[1], 125, 'Nível 1 deve ter 125 questões.');
-  assert.equal(levelCounts[2], 125, 'Nível 2 deve ter 125 questões.');
-  assert.equal(levelCounts[3], 125, 'Nível 3 deve ter 125 questões.');
-  assert.equal(levelCounts[4], 125, 'Nível 4 deve ter 125 questões.');
+  assert.equal(levelCounts[1], 150, 'Nível 1 deve ter 150 questões.');
+  assert.equal(levelCounts[2], 150, 'Nível 2 deve ter 150 questões.');
+  assert.equal(levelCounts[3], 150, 'Nível 3 deve ter 150 questões.');
+  assert.equal(levelCounts[4], 150, 'Nível 4 deve ter 150 questões.');
 
   // Teste de cooldown de 3 horas do Quiz
   const testQuizUser = `test_quiz_player_${Date.now()}`;
@@ -303,6 +303,26 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
   });
   assert.ok(slashQuizReply && slashQuizReply.embeds && slashQuizReply.embeds.length > 0, 'Comando quiz via slash deferred deve responder com editReply sem erros.');
 
+  // Validação do Sistema de Baralho Anti-Repetição e Cache do Quiz
+  const testDeckQuestions = [
+    { id: 'q1', level: 1, pt: { question: 'P1', correct: 'C1', wrongs: ['W1', 'W2', 'W3'] }, en: { question: 'Q1', correct: 'C1', wrongs: ['W1', 'W2', 'W3'] } },
+    { id: 'q2', level: 1, pt: { question: 'P2', correct: 'C2', wrongs: ['W1', 'W2', 'W3'] }, en: { question: 'Q2', correct: 'C2', wrongs: ['W1', 'W2', 'W3'] } },
+    { id: 'q3', level: 1, pt: { question: 'P3', correct: 'C3', wrongs: ['W1', 'W2', 'W3'] }, en: { question: 'Q3', correct: 'C3', wrongs: ['W1', 'W2', 'W3'] } },
+  ];
+  const qPick1 = quizCommand.selectQuestionForLevel(testDeckQuestions, 1, new Set(['q1', 'q2']), []);
+  assert.equal(quizCommand.getQuizQuestionKey(qPick1), 'q3', 'selectQuestionForLevel deve excluir questões já vistas na sessão.');
+
+  const qPickHistory = quizCommand.selectQuestionForLevel(testDeckQuestions, 1, new Set(), ['q1', 'q3']);
+  assert.equal(quizCommand.getQuizQuestionKey(qPickHistory), 'q2', 'selectQuestionForLevel deve excluir questões do histórico recente.');
+
+  // Teste de gravação de chave recente em recentQuizQuestions
+  const antiRepeatUser = `quiz_antirepeat_${Date.now()}`;
+  const { getUserAccount, recordQuizQuestion } = require('../src/services/economy');
+  recordQuizQuestion(antiRepeatUser, 'q_test_key_1');
+  recordQuizQuestion(antiRepeatUser, 'q_test_key_2');
+  const antiRepeatAcc = getUserAccount(antiRepeatUser);
+  assert.deepEqual(antiRepeatAcc.recentQuizQuestions, ['q_test_key_1', 'q_test_key_2'], 'recentQuizQuestions deve armazenar as chaves de perguntas vistas.');
+
   // 14. Testes dos Geradores Autônomos de IA (Work Seeder com 16 Carreiras e Quiz Seeder)
   const workSeeder = require('../src/services/workSeederService');
   assert.equal(workSeeder.PROFESSIONS.length, 22, 'Work Seeder deve ter 22 profissões (16 convencionais + 6 mágicas).');
@@ -324,14 +344,383 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
   assert.equal(Object.keys(workStatus.perProfession).length, 22, 'Work Seeder perProfession deve conter 22 profissões.');
 
   const quizStatus = quizSeeder.getStatus();
-  assert.equal(quizStatus.targetTotal, 500, 'Quiz Seeder targetTotal deve ser 500.');
-  assert.equal(quizStatus.perLevel[1], 125, 'Quiz Seeder Nível 1 deve ter 125 perguntas.');
-  assert.equal(quizStatus.perLevel[2], 125, 'Quiz Seeder Nível 2 deve ter 125 perguntas.');
-  assert.equal(quizStatus.perLevel[3], 125, 'Quiz Seeder Nível 3 deve ter 125 perguntas.');
-  assert.equal(quizStatus.perLevel[4], 125, 'Quiz Seeder Nível 4 deve ter 125 perguntas.');
+  assert.equal(quizStatus.targetTotal, 600, 'Quiz Seeder targetTotal deve ser 600.');
+  assert.equal(quizStatus.perLevel[1], 150, 'Quiz Seeder Nível 1 deve ter 150 perguntas.');
+  assert.equal(quizStatus.perLevel[2], 150, 'Quiz Seeder Nível 2 deve ter 150 perguntas.');
+  assert.equal(quizStatus.perLevel[3], 150, 'Quiz Seeder Nível 3 deve ter 150 perguntas.');
+  assert.equal(quizStatus.perLevel[4], 150, 'Quiz Seeder Nível 4 deve ter 150 perguntas.');
+
+  // 15. Testes de Engajamento Positivo do Trabalho (Resposta Rápida, Ajuda de Custo e Botões Desabilitados)
+  const fastWorkerId = `test_fast_worker_${Date.now()}`;
+  setProfession(fastWorkerId, 'programador', 0);
+
+  let fastWorkReply = null;
+  await trabalhoCommand.executePrefix({
+    message: {
+      author: { id: fastWorkerId },
+      guild: { id: '1453890868980482090' },
+      reply: (payload) => { fastWorkReply = payload; },
+    },
+  });
+
+  assert.ok(fastWorkReply && fastWorkReply.components && fastWorkReply.components.length > 0);
+
+  // Simula resposta correta rápida (< 12s)
+  // Extrai customId e simula o clique no botão correto
+  // Como activeWorkSessions é interno, podemos interagir pelo handler
+  // Testamos o fluxo de erro com ajuda de custo e estilização de botões
+  const wrongWorkerId = `test_wrong_worker_${Date.now()}`;
+  setProfession(wrongWorkerId, 'psicologo', 0);
+  setUserBalance(wrongWorkerId, 0);
+
+  let wrongWorkReply = null;
+  await trabalhoCommand.executePrefix({
+    message: {
+      author: { id: wrongWorkerId },
+      guild: { id: '1453890868980482090' },
+      reply: (payload) => { wrongWorkReply = payload; },
+    },
+  });
+
+  assert.ok(wrongWorkReply);
+  let updatedWrongPayload = null;
+  await trabalhoCommand.handleWorkInteraction({
+    customId: `work_ans:999:${wrongWorkerId}`, // Índice intencionalmente errado
+    user: { id: wrongWorkerId },
+    update: (payload) => { updatedWrongPayload = payload; },
+  });
+
+  assert.ok(updatedWrongPayload, 'handleWorkInteraction deve atualizar a interação.');
+  assert.ok(updatedWrongPayload.embeds && updatedWrongPayload.embeds.length > 0, 'Deve retornar embed de erro educativo.');
+  const errorDesc = updatedWrongPayload.embeds[0].data.description;
+  assert.ok(errorDesc.includes('Ajuda de Custo') || errorDesc.includes('Stipend Allowance'), 'Embed de erro deve mencionar Ajuda de Custo.');
+  assert.ok(errorDesc.includes('Escudo de Estabilidade') || errorDesc.includes('Stability Shield'), 'Embed de erro deve mencionar Escudo de Estabilidade.');
+
+  // Verifica botões desabilitados pós-clique
+  assert.ok(updatedWrongPayload.components && updatedWrongPayload.components.length > 0, 'Deve manter a linha de botões desabilitados.');
+  const postButtons = updatedWrongPayload.components[0].components;
+  assert.equal(postButtons.length, 4, 'Devem existir 4 botões.');
+  for (const b of postButtons) {
+    assert.equal(b.data.disabled, true, 'Todos os botões devem estar desabilitados.');
+  }
+
+  // Verifica se o usuário recebeu a ajuda de custo (pelo menos 5 moedas)
+  const wrongBalance = getBalance(wrongWorkerId);
+  assert.ok(wrongBalance >= 5, `Usuário que errou deve receber ajuda de custo mínima de 5 moedas (recebeu: ${wrongBalance}).`);
+
+  // 16. Testes do Serviço de Auditoria de Acervo (acervoAuditService)
+  const acervoAuditService = require('../src/services/acervoAuditService');
+  const levelDist = acervoAuditService.auditLevelDistribution({ targetPerLevel: 10 });
+  assert.equal(levelDist.totalProfessions, 22, 'Deve auditar exatamente 22 profissões.');
+  assert.ok(typeof levelDist.complianceRate === 'number', 'complianceRate deve ser numérico.');
+  assert.ok(Array.isArray(levelDist.underTargetProfessions), 'underTargetProfessions deve ser array.');
+
+  const lengthBias = acervoAuditService.auditAnswerLengthBias({ biasThreshold: 0.35 });
+  assert.equal(lengthBias.biasThreshold, 0.35, 'Threshold deve ser 0.35.');
+  assert.ok(lengthBias.totalAudited > 0, 'Total de questões auditadas deve ser maior que zero.');
+  assert.ok(typeof lengthBias.overallBiasRate === 'number', 'overallBiasRate deve ser numérico.');
+
+  const auditReport = acervoAuditService.generateAuditReport({ targetPerLevel: 10, biasThreshold: 0.35 });
+  assert.ok(auditReport.healthScore >= 0 && auditReport.healthScore <= 100, 'Health score deve estar entre 0 e 100.');
+  assert.ok(auditReport.summaryMarkdown.includes('RELATÓRIO DE AUDITORIA ERGONÔMICA DO ACERVO'), 'Markdown deve conter cabeçalho canônico.');
+  assert.ok(auditReport.recommendations.length > 0, 'Deve conter recomendações.');
+
+  const acervoStats = acervoAuditService.getAcervoStats();
+  assert.ok(acervoStats.careers, 'Deve conter estatísticas de carreiras.');
+  assert.ok(acervoStats.quiz, 'Deve conter estatísticas do quiz.');
+  assert.ok(acervoStats.ergonomics, 'Deve conter estatísticas de ergonomia.');
+
+  // 17. Testes de Psicologia Comportamental (Efeito Zeigarnik e Near-Miss em Envelopes)
+  const envWorkerId = `test_env_worker_${Date.now()}`;
+  setProfession(envWorkerId, 'programador', 0);
+  setUserBalance(envWorkerId, 0);
+
+  // Simula 2 turnos prévios concluídos para que o próximo atinja 3/3
+  const { updateUserAccount: updateWorkerAcc } = require('../src/services/economy');
+  updateWorkerAcc(envWorkerId, (acc) => { acc.projectProgress = 2; });
+
+  let envWorkReply = null;
+  await trabalhoCommand.executePrefix({
+    message: {
+      author: { id: envWorkerId },
+      guild: { id: '1453890868980482090' },
+      reply: (payload) => { envWorkReply = payload; },
+    },
+  });
+
+  assert.ok(envWorkReply);
+  const activeSession = trabalhoCommand.activeWorkSessions.get(envWorkerId);
+  assert.ok(activeSession, 'Sessão ativa de trabalho deve existir.');
+
+  // Acerta a questão clicando na alternativa correta
+  let updatedSuccessPayload = null;
+  await trabalhoCommand.handleWorkInteraction({
+    customId: `work_ans:${activeSession.correctIndex}:${envWorkerId}`,
+    user: { id: envWorkerId },
+    update: (payload) => { updatedSuccessPayload = payload; },
+  });
+
+  assert.ok(updatedSuccessPayload, 'Payload de acerto deve ser retornado.');
+  const successDesc = updatedSuccessPayload.embeds[0].data.description;
+  assert.ok(successDesc.includes('Projeto da Carreira') || successDesc.includes('Career Project'), 'Deve exibir barra de projeto.');
+  assert.ok(successDesc.includes('[███] 3/3'), 'Deve exibir barra cheia 3/3.');
+
+  // Deve conter 2 rows: botões de resposta desabilitados e botões dos 3 envelopes
+  assert.equal(updatedSuccessPayload.components.length, 2, 'Deve retornar 2 linhas de botões (respostas + envelopes).');
+  const envelopeButtons = updatedSuccessPayload.components[1].components;
+  assert.equal(envelopeButtons.length, 3, 'Devem existir 3 envelopes para escolha.');
+  assert.ok(envelopeButtons[0].data.label.includes('Envelope A'), 'Deve conter Envelope A.');
+  assert.ok(envelopeButtons[1].data.label.includes('Envelope B'), 'Deve conter Envelope B.');
+  assert.ok(envelopeButtons[2].data.label.includes('Envelope C'), 'Deve conter Envelope C.');
+
+  // Verifica se a sessão de envelope foi criada
+  assert.ok(trabalhoCommand.activeEnvelopeSessions.has(envWorkerId), 'Sessão de envelope deve estar ativa.');
+
+  // Simula clique no Envelope B
+  let envelopeRewardPayload = null;
+  await trabalhoCommand.handleWorkInteraction({
+    customId: `work_env:B:${envWorkerId}`,
+    user: { id: envWorkerId },
+    message: {
+      embeds: updatedSuccessPayload.embeds,
+      components: updatedSuccessPayload.components,
+    },
+    update: (payload) => { envelopeRewardPayload = payload; },
+  });
+
+  assert.ok(envelopeRewardPayload, 'Payload de resgate de envelope deve ser retornado.');
+  assert.ok(envelopeRewardPayload.embeds.length >= 2, 'Deve retornar embed original e embed de revelação.');
+  const revealDesc = envelopeRewardPayload.embeds[1].data.description;
+  assert.ok(revealDesc.includes('Envelope B'), 'Deve confirmar a abertura do Envelope B.');
+  assert.ok(revealDesc.includes('Envelope A') && revealDesc.includes('Envelope C'), 'Deve revelar os outros dois envelopes.');
+
+  // Verifica botões de envelope desabilitados
+  const disabledEnvButtons = envelopeRewardPayload.components[1].components;
+  for (const eb of disabledEnvButtons) {
+    assert.equal(eb.data.disabled, true, 'Todos os envelopes devem estar desabilitados pós-escolha.');
+  }
+  // Botão B deve ser Success (verde, código 3)
+  assert.equal(disabledEnvButtons[1].data.style, 3, 'Envelope B escolhido deve ter estilo Success (3).');
+
+  // Sessão de envelope consumida
+  assert.equal(trabalhoCommand.activeEnvelopeSessions.has(envWorkerId), false, 'Sessão de envelope deve ser removida após escolha.');
+
+  // 18. Testes do Comando de Profissão com Maestria (Currículo Lendário)
+  const profCmd = require('../src/commands/profissao');
+  const profWorkerId = `test_prof_master_${Date.now()}`;
+  setProfession(profWorkerId, 'programador', 0);
+  updateWorkerAcc(profWorkerId, (acc) => {
+    acc.masteredProfessions = ['programador', 'alquimista'];
+  });
+
+  let profReply = null;
+  await profCmd.executePrefix({
+    message: {
+      author: { id: profWorkerId },
+      guild: { id: '1453890868980482090' },
+      reply: (payload) => { profReply = payload; },
+    },
+  });
+
+  assert.ok(profReply && profReply.embeds && profReply.embeds.length > 0);
+  const profEmbedDesc = profReply.embeds[0].data.description;
+  assert.ok(profEmbedDesc.includes('Carreiras Dominadas: 2/22 (+6% de Bônus Salarial Global)'), 'Embed deve exibir contador de maestria no topo.');
+
+  // Verifica se o ícone ⭐ Mestre aparece na listagem
+  const fields = profReply.embeds[0].data.fields;
+  const standardField = fields.find((f) => f.name.includes('Carreiras Convencionais'));
+  assert.ok(standardField && standardField.value.includes('⭐ Mestre'), 'Profissão dominada deve exibir ⭐ Mestre.');
+
+  // 19. Testes de Dilemas de Corrupção / Proposta Sombria (Papers, Please & Reigns)
+  const {
+    PROFESSION_DILEMMAS,
+    getDilemmaScenario,
+    activeDilemmaSessions,
+    handleDilemmaInteraction,
+  } = trabalhoCommand;
+
+  // 19.1 Verifica cenários contextuais bilíngues para todas as 22 profissões canônicas
+  assert.ok(Object.keys(PROFESSION_DILEMMAS).length >= 22, 'Devem existir no mínimo 22 cenários de dilema.');
+  for (const profKey of activeProfessions) {
+    const ptScenario = getDilemmaScenario(profKey, 'pt');
+    assert.ok(ptScenario && ptScenario.length > 15, `Cenário em PT para ${profKey} deve ser descritivo.`);
+    const enScenario = getDilemmaScenario(profKey, 'en');
+    assert.ok(enScenario && enScenario.length > 15, `Cenário em EN para ${profKey} deve ser descritivo.`);
+  }
+
+  // 19.2 Teste de interação de dilema com usuário não autorizado
+  let unauthorizedReply = null;
+  await handleDilemmaInteraction({
+    customId: 'work_dil:accept:user_owner_123',
+    user: { id: 'impostor_999' },
+    reply: (payload) => { unauthorizedReply = payload; },
+  });
+  assert.ok(unauthorizedReply && unauthorizedReply.flags === 64, 'Interação de dilema por outro usuário deve ser rejeitada como efêmera.');
+
+  // 19.3 Teste de interação de dilema com sessão expirada
+  let expiredReply = null;
+  await handleDilemmaInteraction({
+    customId: 'work_dil:accept:expired_user_123',
+    user: { id: 'expired_user_123' },
+    reply: (payload) => { expiredReply = payload; },
+  });
+  assert.ok(expiredReply && expiredReply.flags === 64, 'Interação de dilema com sessão expirada deve ser rejeitada como efêmera.');
+
+  // 19.4 Teste de Aceitar Esquema (accept)
+  const dilWorkerId = `test_dil_worker_${Date.now()}`;
+  setUserBalance(dilWorkerId, 100);
+  activeDilemmaSessions.set(dilWorkerId, {
+    userId: dilWorkerId,
+    professionKey: 'programador',
+    professionLabel: 'Programador Mágico',
+    baseSalary: 45,
+    startedAt: Date.now(),
+    lang: 'pt',
+  });
+
+  let acceptOutcomePayload = null;
+  await handleDilemmaInteraction({
+    customId: `work_dil:accept:${dilWorkerId}`,
+    user: { id: dilWorkerId },
+    message: {
+      components: [
+        {
+          components: [
+            { data: { customId: 'btn1', disabled: true } },
+          ],
+        },
+      ],
+    },
+    update: (payload) => { acceptOutcomePayload = payload; },
+  });
+
+  assert.ok(acceptOutcomePayload, 'Payload de resolução do dilema deve ser retornado.');
+  assert.ok(acceptOutcomePayload.embeds && acceptOutcomePayload.embeds.length > 0, 'Deve retornar embed com o desfecho.');
+  assert.equal(acceptOutcomePayload.embeds[0].data.footer.text, 'Pyxie', 'Embed deve conter footer da Pyxie.');
+  assert.ok(acceptOutcomePayload.components && acceptOutcomePayload.components.length >= 2, 'Deve conter botões anteriores e botões de dilema desabilitados.');
+  const dilemmaButtons = acceptOutcomePayload.components[1].components;
+  assert.equal(dilemmaButtons[0].data.disabled, true, 'Botão de aceitar deve estar desabilitado.');
+  assert.equal(dilemmaButtons[1].data.disabled, true, 'Botão de denunciar deve estar desabilitado.');
+  assert.equal(activeDilemmaSessions.has(dilWorkerId), false, 'Sessão de dilema deve ser removida após resolução.');
+
+  // 19.5 Teste de Denunciar ao Conselho (report)
+  const reportWorkerId = `test_report_worker_${Date.now()}`;
+  setUserBalance(reportWorkerId, 100);
+  activeDilemmaSessions.set(reportWorkerId, {
+    userId: reportWorkerId,
+    professionKey: 'mago',
+    professionLabel: 'Arcane Mage',
+    baseSalary: 50,
+    startedAt: Date.now(),
+    lang: 'en',
+  });
+
+  let reportOutcomePayload = null;
+  await handleDilemmaInteraction({
+    customId: `work_dil:report:${reportWorkerId}`,
+    user: { id: reportWorkerId },
+    message: { components: [] },
+    update: (payload) => { reportOutcomePayload = payload; },
+  });
+
+  assert.ok(reportOutcomePayload, 'Payload de denúncia ao conselho deve ser retornado.');
+  assert.ok(reportOutcomePayload.embeds && reportOutcomePayload.embeds.length > 0);
+  const repButtons = reportOutcomePayload.components[0].components;
+  assert.equal(repButtons[1].data.disabled, true);
+  assert.equal(repButtons[1].data.style, 3, 'Botão de report deve estar estilizado como Success (3).');
+  assert.equal(activeDilemmaSessions.has(reportWorkerId), false);
+
+  // 19.6 Teste de Conclusão de Projeto (3/3) durante Dilema Moral com Liberação de Envelopes
+  const dilEnvWorkerId = `test_dil_env_worker_${Date.now()}`;
+  setUserBalance(dilEnvWorkerId, 50);
+  updateWorkerAcc(dilEnvWorkerId, (acc) => { acc.projectProgress = 2; });
+
+  activeDilemmaSessions.set(dilEnvWorkerId, {
+    userId: dilEnvWorkerId,
+    professionKey: 'alquimista',
+    professionLabel: 'Alquimista',
+    baseSalary: 40,
+    startedAt: Date.now(),
+    isGoldenShift: true,
+    isFastResponse: true,
+    masteryBonusPercent: 6,
+    lang: 'pt',
+  });
+
+  let dilEnvPayload = null;
+  await handleDilemmaInteraction({
+    customId: `work_dil:report:${dilEnvWorkerId}`,
+    user: { id: dilEnvWorkerId },
+    message: {
+      components: [
+        { components: [{ data: { customId: 'btn_ans', disabled: true } }] },
+      ],
+    },
+    update: (payload) => { dilEnvPayload = payload; },
+  });
+
+  assert.ok(dilEnvPayload, 'Payload deve ser retornado.');
+  const dilEnvDesc = dilEnvPayload.embeds[0].data.description;
+  assert.ok(dilEnvDesc.includes('Demanda de Alta Demanda') || dilEnvDesc.includes('Turno de Alta Demanda') || dilEnvDesc.includes('Demanda VIP'), 'Deve exibir badge de Golden Shift.');
+  assert.ok(dilEnvDesc.includes('Resposta Rápida') || dilEnvDesc.includes('Fast Response'), 'Deve exibir badge de Resposta Rápida.');
+  assert.ok(dilEnvDesc.includes('Projeto da Carreira') || dilEnvDesc.includes('Career Project'), 'Deve exibir barra de projeto.');
+  assert.ok(dilEnvDesc.includes('[███] 3/3'), 'Deve exibir 3/3 concluído.');
+
+  // Verifica se gerou a linha de envelopes (Row 0: ans, Row 1: dilemma, Row 2: envelopes)
+  assert.equal(dilEnvPayload.components.length, 3, 'Deve conter 3 ActionRows.');
+  assert.ok(trabalhoCommand.activeEnvelopeSessions.has(dilEnvWorkerId), 'Sessão de envelopes deve estar ativa para o usuário do dilema.');
+
+  // Resgata o Envelope A
+  let chosenEnvPayload = null;
+  await trabalhoCommand.handleWorkInteraction({
+    customId: `work_env:A:${dilEnvWorkerId}`,
+    user: { id: dilEnvWorkerId },
+    message: {
+      embeds: dilEnvPayload.embeds,
+      components: dilEnvPayload.components,
+    },
+    update: (payload) => { chosenEnvPayload = payload; },
+  });
+
+  assert.ok(chosenEnvPayload, 'Payload pós-envelope retornado.');
+  assert.equal(chosenEnvPayload.components.length, 3, 'Deve preservar as 3 ActionRows intactas.');
+  assert.equal(chosenEnvPayload.components[2].components[0].data.disabled, true, 'Envelopes devem estar desabilitados.');
+  assert.equal(trabalhoCommand.activeEnvelopeSessions.has(dilEnvWorkerId), false, 'Sessão de envelope consumida.');
+
+  // Teste de Baralho Anti-Repetição (Deck Shuffle / No-Repeat Window) para Desenvolvedor de Jogos
+  const { setProfession: setProfLocal, updateUserAccount: updateAccLocal } = require('../src/services/economy');
+  const devWorkerId = 'dev_antirepeat_tester';
+  setProfLocal(devWorkerId, 'desenvolvedor_jogos');
+
+  const chosenKeys = [];
+  for (let shift = 1; shift <= 10; shift++) {
+    let capturedPayload = null;
+    // Bypassa cooldown resetando lastWorkAt para testar rotação contínua
+    updateAccLocal(devWorkerId, (acc) => { acc.lastWorkAt = null; });
+    await trabalhoCommand.executePrefix({
+      message: {
+        author: { id: devWorkerId },
+        guild: { id: 'test_guild' },
+        reply: (payload) => { capturedPayload = payload; },
+      },
+    });
+
+    assert.ok(capturedPayload, `Turno ${shift} deve gerar payload`);
+    const session = trabalhoCommand.activeWorkSessions.get(devWorkerId);
+    assert.ok(session && session.questionKey, `Turno ${shift} deve registrar questionKey na sessão`);
+    chosenKeys.push(session.questionKey);
+  }
+
+  // Verifica que em 10 turnos sucessivos não houve repetição consecutiva
+  for (let i = 1; i < chosenKeys.length; i++) {
+    assert.notEqual(chosenKeys[i], chosenKeys[i - 1], `Questão no turno ${i + 1} não pode ser idêntica à do turno ${i}`);
+  }
+  const uniqueCount = new Set(chosenKeys).size;
+  assert.ok(uniqueCount >= 8, `De 10 turnos, deve sortear pelo menos 8 questões distintas (obtido: ${uniqueCount})`);
+
 })().then(() => {
   console.log('Verificação dos comandos leves, convite bilíngue e desafios de trabalho em PT/EN: OK');
-  console.log('Verificação do Quiz Cultural (500 Questões, 10 Moedas/Questão, Cooldown 3h e Tiers): OK');
+  console.log('Verificação do Quiz Cultural (600 Questões, 10 Moedas/Questão, Cooldown 3h e Tiers): OK');
   fs.writeFileSync(economyFile, originalEconomy, 'utf8');
   process.exit(0);
 }).catch((err) => {

@@ -9,8 +9,8 @@ const API_KEY = process.env.GROQ_API_KEY;
 const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const DATA_FILE = path.join(__dirname, '../data/quiz_questions.json');
 
-const TARGET_TOTAL = 500;
-const QUESTIONS_PER_LEVEL = 125; // 4 níveis x 125 = 500 questões
+const TARGET_TOTAL = 600;
+const QUESTIONS_PER_LEVEL = 150; // 4 níveis x 150 = 600 questões
 
 const CANDIDATE_MODELS = [
   'qwen/qwen3.8-27b',
@@ -218,7 +218,7 @@ async function generateBatch({ count = 5 } = {}) {
   try {
     const list = loadDatabase();
     if (list.length >= TARGET_TOTAL && !API_KEY) {
-      return { success: true, message: 'Meta de 500 perguntas já atingida.', total: list.length };
+      return { success: true, message: 'Meta de 600 perguntas já atingida.', total: list.length };
     }
 
     let added = 0;

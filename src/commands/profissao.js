@@ -10,6 +10,8 @@ const {
   getCareerLevel,
   getUserAccount,
   setProfession,
+  getMasteryBonusPercent,
+  getUserMasteredProfessions,
 } = require('../services/economy');
 const { getRoleTitle } = require('../services/careerHierarchy');
 const { formatCoins } = require('./economyHelpers');
@@ -160,6 +162,9 @@ function buildProfessionEmbed(userId, source) {
   const careerLevel = getCareerLevel(userId);
   const roleTitle = currentKey ? getRoleTitle(currentKey, careerLevel, lang) : null;
   const unlocked = account.unlockedProfessions || [];
+  const mastered = Array.isArray(account.masteredProfessions) ? account.masteredProfessions : [];
+  const totalCount = Object.keys(professions).length;
+  const masteryBonus = Math.min(45, mastered.length * 3);
 
   const commonKeys = Object.keys(professions).filter((k) => !professions[k].isMagic);
   const magicKeys = Object.keys(professions).filter((k) => professions[k].isMagic);
@@ -173,7 +178,11 @@ function buildProfessionEmbed(userId, source) {
   for (let i = 0; i < commonKeys.length; i += 4) {
     const chunk = commonKeys.slice(i, i + 4);
     const rowStr = chunk
-      .map((k) => `${professions[k].emoji} **${t(`profession.labels.${k}`, source) || professions[k].label}**`)
+      .map((k) => {
+        const isMaster = mastered.includes(k);
+        const masterTag = isMaster ? ` ⭐ ${t('profession.masterBadge', source)}` : '';
+        return `${professions[k].emoji} **${t(`profession.labels.${k}`, source) || professions[k].label}**${masterTag}`;
+      })
       .join('  •  ');
     commonFormattedRows.push(rowStr);
   }
@@ -183,24 +192,41 @@ function buildProfessionEmbed(userId, source) {
     .map((k) => {
       const p = professions[k];
       const isOwned = unlocked.includes(k);
+      const isMaster = mastered.includes(k);
+      const masterTag = isMaster ? ` ⭐ ${t('profession.masterBadge', source)}` : '';
       const label = t(`profession.labels.${k}`, source) || p.label;
       if (isOwned) {
-        return `${p.emoji} **${label}** — ✅ *${t('profession.unlockedTag', source)}*`;
+        return `${p.emoji} **${label}**${masterTag} — ✅ *${t('profession.unlockedTag', source)}*`;
       }
       const beanUnit = p.beanCost === 1 ? t('profession.beanUnitSingle', source) : t('profession.beanUnitPlural', source);
       const costText = t('profession.beanCostTag', source, { cost: p.beanCost, beanEmoji, beanUnit });
-      return `${p.emoji} **${label}** — *${costText}*`;
+      return `${p.emoji} **${label}**${masterTag} — *${costText}*`;
     })
     .join('\n');
 
+  const masteryHeader = t('profession.masteryCounter', source, {
+    count: mastered.length,
+    total: totalCount,
+    bonus: masteryBonus,
+  });
+
+  const embedDesc = [
+    `> **${masteryHeader}**`,
+    '',
+    t('profession.embedDesc', source, { beanEmoji }),
+  ].join('\n');
+
+  const isCurrentMaster = currentKey && mastered.includes(currentKey);
+  const currentMasterTag = isCurrentMaster ? ` ⭐ ${t('profession.masterBadge', source)}` : '';
+
   const embed = new EmbedBuilder()
     .setTitle(`${sparklesEmoji}  ✦  ${t('profession.embedTitle', source)}`)
-    .setDescription(t('profession.embedDesc', source, { beanEmoji }))
+    .setDescription(embedDesc)
     .setColor(PYXIE_COLORS.primary || 0xe60067)
     .addFields(
       {
         name: t('profession.currentProfession', source),
-        value: `${currentEmoji} **${currentLabel}**${roleTitle ? ` — *${roleTitle}* (Nível ${careerLevel})` : ''}\n> ${t('profession.userBalanceField', source, {
+        value: `${currentEmoji} **${currentLabel}**${roleTitle ? ` — *${roleTitle}* (${t('profession.levelWithNumber', source, { level: careerLevel })})` : ''}${currentMasterTag}\n> ${t('profession.userBalanceField', source, {
           coinEmoji,
           coins: Number(account.coins || 0).toLocaleString('pt-BR'),
           beanEmoji,
@@ -230,7 +256,10 @@ function buildProfessionEmbed(userId, source) {
 function buildProfessionSelectRow(userId, source) {
   const account = getUserAccount(userId);
   const unlocked = account.unlockedProfessions || [];
+  const mastered = Array.isArray(account.masteredProfessions) ? account.masteredProfessions : [];
   const options = Object.entries(professions).map(([value, prof]) => {
+    const isMaster = mastered.includes(value);
+    const masterPrefix = isMaster ? `⭐ ${t('profession.masterBadge', source)} • ` : '';
     const isMagic = Boolean(prof.isMagic);
     const isOwned = unlocked.includes(value);
     const label = t(`profession.labels.${value}`, source) || prof.label;
@@ -248,9 +277,9 @@ function buildProfessionSelectRow(userId, source) {
     }
 
     return {
-      label: label.slice(0, 100),
+      label: `${isMaster ? '⭐ ' : ''}${label}`.slice(0, 100),
       value,
-      description: desc.slice(0, 100),
+      description: `${masterPrefix}${desc}`.slice(0, 100),
       emoji: prof.emoji || (isMagic ? '✨' : '💼'),
       default: account.profession === value,
     };

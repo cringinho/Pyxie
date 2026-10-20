@@ -14998,5 +14998,3005 @@
         "Austrian ultimatum to Romania"
       ]
     }
+  },
+  {
+    "id": "quiz_0501",
+    "level": 1,
+    "topic": "Ciência Geral & Astronomia",
+    "question": "Qual astro é considerado o único satélite natural da Terra?",
+    "correct": "A Lua",
+    "wrongs": [
+      "O Sol",
+      "Marte",
+      "A Estrela Dalva"
+    ],
+    "pt": {
+      "question": "Qual astro é considerado o único satélite natural da Terra?",
+      "correct": "A Lua",
+      "wrongs": [
+        "O Sol",
+        "Marte",
+        "A Estrela Dalva"
+      ]
+    },
+    "en": {
+      "question": "Which celestial body is considered Earth's only natural satellite?",
+      "correct": "The Moon",
+      "wrongs": [
+        "The Sun",
+        "Mars",
+        "The Morning Star"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0502",
+    "level": 1,
+    "topic": "Geografia Global & Capitais",
+    "question": "Qual é a capital oficial do Brasil?",
+    "correct": "Brasília",
+    "wrongs": [
+      "Rio de Janeiro",
+      "São Paulo",
+      "Salvador"
+    ],
+    "pt": {
+      "question": "Qual é a capital oficial do Brasil?",
+      "correct": "Brasília",
+      "wrongs": [
+        "Rio de Janeiro",
+        "São Paulo",
+        "Salvador"
+      ]
+    },
+    "en": {
+      "question": "What is the official capital city of Brazil?",
+      "correct": "Brasília",
+      "wrongs": [
+        "Rio de Janeiro",
+        "São Paulo",
+        "Salvador"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0503",
+    "level": 1,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual é o maior animal mamífero vivo do planeta Terra?",
+    "correct": "Baleia-azul",
+    "wrongs": [
+      "Elefante-africano",
+      "Tubarão-baleia",
+      "Girafa"
+    ],
+    "pt": {
+      "question": "Qual é o maior animal mamífero vivo do planeta Terra?",
+      "correct": "Baleia-azul",
+      "wrongs": [
+        "Elefante-africano",
+        "Tubarão-baleia",
+        "Girafa"
+      ]
+    },
+    "en": {
+      "question": "What is the largest living mammal on planet Earth?",
+      "correct": "Blue whale",
+      "wrongs": [
+        "African elephant",
+        "Whale shark",
+        "Giraffe"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0504",
+    "level": 1,
+    "topic": "Cultura Pop, Cinema & Quadrinhos",
+    "question": "Qual super-herói dos quadrinhos é conhecido pelo bordão \"Com grandes poderes vêm grandes responsabilidades\"?",
+    "correct": "Homem-Aranha",
+    "wrongs": [
+      "Batman",
+      "Homem de Ferro",
+      "Superman"
+    ],
+    "pt": {
+      "question": "Qual super-herói dos quadrinhos é conhecido pelo bordão \"Com grandes poderes vêm grandes responsabilidades\"?",
+      "correct": "Homem-Aranha",
+      "wrongs": [
+        "Batman",
+        "Homem de Ferro",
+        "Superman"
+      ]
+    },
+    "en": {
+      "question": "Which comic superhero is known for the motto \"With great power comes great responsibility\"?",
+      "correct": "Spider-Man",
+      "wrongs": [
+        "Batman",
+        "Iron Man",
+        "Superman"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0505",
+    "level": 1,
+    "topic": "Jogos, Videogames & E-Sports",
+    "question": "Qual é o famoso encanador italiano protagonista dos principais jogos da Nintendo?",
+    "correct": "Mario",
+    "wrongs": [
+      "Sonic",
+      "Crash Bandicoot",
+      "Link"
+    ],
+    "pt": {
+      "question": "Qual é o famoso encanador italiano protagonista dos principais jogos da Nintendo?",
+      "correct": "Mario",
+      "wrongs": [
+        "Sonic",
+        "Crash Bandicoot",
+        "Link"
+      ]
+    },
+    "en": {
+      "question": "Which famous Italian plumber is the iconic protagonist of Nintendo's flagship games?",
+      "correct": "Mario",
+      "wrongs": [
+        "Sonic",
+        "Crash Bandicoot",
+        "Link"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0506",
+    "level": 1,
+    "topic": "Tecnologia, Internet & Computação",
+    "question": "Qual empresa de tecnologia desenvolveu o sistema operacional Android?",
+    "correct": "Google",
+    "wrongs": [
+      "Apple",
+      "Microsoft",
+      "Nokia"
+    ],
+    "pt": {
+      "question": "Qual empresa de tecnologia desenvolveu o sistema operacional Android?",
+      "correct": "Google",
+      "wrongs": [
+        "Apple",
+        "Microsoft",
+        "Nokia"
+      ]
+    },
+    "en": {
+      "question": "Which technology company developed the Android mobile operating system?",
+      "correct": "Google",
+      "wrongs": [
+        "Apple",
+        "Microsoft",
+        "Nokia"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0507",
+    "level": 1,
+    "topic": "História Mundial & Civilizações Antigas",
+    "question": "Em qual país moderno estão localizadas as famosas Pirâmides de Gizé?",
+    "correct": "Egito",
+    "wrongs": [
+      "Grécia",
+      "México",
+      "Itália"
+    ],
+    "pt": {
+      "question": "Em qual país moderno estão localizadas as famosas Pirâmides de Gizé?",
+      "correct": "Egito",
+      "wrongs": [
+        "Grécia",
+        "México",
+        "Itália"
+      ]
+    },
+    "en": {
+      "question": "In which modern country are the famous Pyramids of Giza located?",
+      "correct": "Egypt",
+      "wrongs": [
+        "Greece",
+        "Mexico",
+        "Italy"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0508",
+    "level": 1,
+    "topic": "Literatura Clássica & Mitologia",
+    "question": "Na mitologia grega, quem é o deus dos mares e dos terremotos empunhando um tridente?",
+    "correct": "Poseidon",
+    "wrongs": [
+      "Zeus",
+      "Hades",
+      "Apolo"
+    ],
+    "pt": {
+      "question": "Na mitologia grega, quem é o deus dos mares e dos terremotos empunhando um tridente?",
+      "correct": "Poseidon",
+      "wrongs": [
+        "Zeus",
+        "Hades",
+        "Apolo"
+      ]
+    },
+    "en": {
+      "question": "In Greek mythology, who is the god of the sea wielding a trident?",
+      "correct": "Poseidon",
+      "wrongs": [
+        "Zeus",
+        "Hades",
+        "Apollo"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0509",
+    "level": 1,
+    "topic": "Música, Arte & Instrumentos",
+    "question": "Quantas cordas tem um violão acústico tradicional padrão?",
+    "correct": "6 cordas",
+    "wrongs": [
+      "4 cordas",
+      "8 cordas",
+      "12 cordas"
+    ],
+    "pt": {
+      "question": "Quantas cordas tem um violão acústico tradicional padrão?",
+      "correct": "6 cordas",
+      "wrongs": [
+        "4 cordas",
+        "8 cordas",
+        "12 cordas"
+      ]
+    },
+    "en": {
+      "question": "How many strings does a standard classical acoustic guitar typically have?",
+      "correct": "6 strings",
+      "wrongs": [
+        "4 strings",
+        "8 strings",
+        "12 strings"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0510",
+    "level": 1,
+    "topic": "Culinária Mundial & Gastronomia",
+    "question": "Qual ingrediente é a base essencial para a fabricação do chocolate tradicional?",
+    "correct": "Cacau",
+    "wrongs": [
+      "Café",
+      "Canela",
+      "Baunilha"
+    ],
+    "pt": {
+      "question": "Qual ingrediente é a base essencial para a fabricação do chocolate tradicional?",
+      "correct": "Cacau",
+      "wrongs": [
+        "Café",
+        "Canela",
+        "Baunilha"
+      ]
+    },
+    "en": {
+      "question": "Which ingredient serves as the essential raw base for making traditional chocolate?",
+      "correct": "Cocoa",
+      "wrongs": [
+        "Coffee",
+        "Cinnamon",
+        "Vanilla"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0511",
+    "level": 1,
+    "topic": "Química, Física & Elementos",
+    "question": "Qual é a fórmula química simples da água pura?",
+    "correct": "H2O",
+    "wrongs": [
+      "CO2",
+      "NaCl",
+      "O2"
+    ],
+    "pt": {
+      "question": "Qual é a fórmula química simples da água pura?",
+      "correct": "H2O",
+      "wrongs": [
+        "CO2",
+        "NaCl",
+        "O2"
+      ]
+    },
+    "en": {
+      "question": "What is the standard chemical formula for pure water?",
+      "correct": "H2O",
+      "wrongs": [
+        "CO2",
+        "NaCl",
+        "O2"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0512",
+    "level": 1,
+    "topic": "Lógica, Charadas & Raciocínio Matemático",
+    "question": "Quanto é o resultado da multiplicação simples de 7 por 8?",
+    "correct": "56",
+    "wrongs": [
+      "54",
+      "49",
+      "64"
+    ],
+    "pt": {
+      "question": "Quanto é o resultado da multiplicação simples de 7 por 8?",
+      "correct": "56",
+      "wrongs": [
+        "54",
+        "49",
+        "64"
+      ]
+    },
+    "en": {
+      "question": "What is the mathematical product of 7 multiplied by 8?",
+      "correct": "56",
+      "wrongs": [
+        "54",
+        "49",
+        "64"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0513",
+    "level": 1,
+    "topic": "Geografia Global & Capitais",
+    "question": "Qual é o maior oceano em extensão territorial do planeta Terra?",
+    "correct": "Oceano Pacífico",
+    "wrongs": [
+      "Oceano Atlântico",
+      "Oceano Índico",
+      "Oceano Ártico"
+    ],
+    "pt": {
+      "question": "Qual é o maior oceano em extensão territorial do planeta Terra?",
+      "correct": "Oceano Pacífico",
+      "wrongs": [
+        "Oceano Atlântico",
+        "Oceano Índico",
+        "Oceano Ártico"
+      ]
+    },
+    "en": {
+      "question": "What is the largest ocean on Earth by surface area?",
+      "correct": "Pacific Ocean",
+      "wrongs": [
+        "Atlantic Ocean",
+        "Indian Ocean",
+        "Arctic Ocean"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0514",
+    "level": 1,
+    "topic": "Cultura Pop, Cinema & Quadrinhos",
+    "question": "Em qual filme de animação da Disney conhecemos os personagens Simba, Timão e Pumba?",
+    "correct": "O Rei Leão",
+    "wrongs": [
+      "Aladdin",
+      "Tarzan",
+      "Mogli: O Menino Lobo"
+    ],
+    "pt": {
+      "question": "Em qual filme de animação da Disney conhecemos os personagens Simba, Timão e Pumba?",
+      "correct": "O Rei Leão",
+      "wrongs": [
+        "Aladdin",
+        "Tarzan",
+        "Mogli: O Menino Lobo"
+      ]
+    },
+    "en": {
+      "question": "In which classic Disney animated film do we meet Simba, Timon, and Pumbaa?",
+      "correct": "The Lion King",
+      "wrongs": [
+        "Aladdin",
+        "Tarzan",
+        "The Jungle Book"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0515",
+    "level": 1,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual pássaro é famoso pela capacidade de voar para trás e bater as asas a dezenas de vezes por segundo?",
+    "correct": "Beija-flor",
+    "wrongs": [
+      "Pica-pau",
+      "Gaivota",
+      "Canário"
+    ],
+    "pt": {
+      "question": "Qual pássaro é famoso pela capacidade de voar para trás e bater as asas a dezenas de vezes por segundo?",
+      "correct": "Beija-flor",
+      "wrongs": [
+        "Pica-pau",
+        "Gaivota",
+        "Canário"
+      ]
+    },
+    "en": {
+      "question": "Which bird is famous for its unique ability to fly backwards and hover with ultra-fast wingbeats?",
+      "correct": "Hummingbird",
+      "wrongs": [
+        "Woodpecker",
+        "Seagull",
+        "Canary"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0516",
+    "level": 1,
+    "topic": "Jogos, Videogames & E-Sports",
+    "question": "Qual jogo em blocos criado por Markus \"Notch\" Persson se tornou o jogo mais vendido do mundo?",
+    "correct": "Minecraft",
+    "wrongs": [
+      "Roblox",
+      "Terraria",
+      "Lego Worlds"
+    ],
+    "pt": {
+      "question": "Qual jogo em blocos criado por Markus \"Notch\" Persson se tornou o jogo mais vendido do mundo?",
+      "correct": "Minecraft",
+      "wrongs": [
+        "Roblox",
+        "Terraria",
+        "Lego Worlds"
+      ]
+    },
+    "en": {
+      "question": "Which sandbox block game created by Markus \"Notch\" Persson became the best-selling videogame in history?",
+      "correct": "Minecraft",
+      "wrongs": [
+        "Roblox",
+        "Terraria",
+        "Lego Worlds"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0517",
+    "level": 1,
+    "topic": "História Mundial & Civilizações Antigas",
+    "question": "Qual navegador português liderou a esquadra que aportou no Brasil em abril de 1500?",
+    "correct": "Pedro Álvares Cabral",
+    "wrongs": [
+      "Vasco da Gama",
+      "Cristóvão Colombo",
+      "Fernão de Magalhães"
+    ],
+    "pt": {
+      "question": "Qual navegador português liderou a esquadra que aportou no Brasil em abril de 1500?",
+      "correct": "Pedro Álvares Cabral",
+      "wrongs": [
+        "Vasco da Gama",
+        "Cristóvão Colombo",
+        "Fernão de Magalhães"
+      ]
+    },
+    "en": {
+      "question": "Which Portuguese explorer led the fleet that arrived in Brazil in April 1500?",
+      "correct": "Pedro Álvares Cabral",
+      "wrongs": [
+        "Vasco da Gama",
+        "Christopher Columbus",
+        "Ferdinand Magellan"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0518",
+    "level": 1,
+    "topic": "Música, Arte & Instrumentos",
+    "question": "Quem pintou o célebre quadro da Mona Lisa (La Gioconda)?",
+    "correct": "Leonardo da Vinci",
+    "wrongs": [
+      "Vincent van Gogh",
+      "Pablo Picasso",
+      "Michelangelo"
+    ],
+    "pt": {
+      "question": "Quem pintou o célebre quadro da Mona Lisa (La Gioconda)?",
+      "correct": "Leonardo da Vinci",
+      "wrongs": [
+        "Vincent van Gogh",
+        "Pablo Picasso",
+        "Michelangelo"
+      ]
+    },
+    "en": {
+      "question": "Who painted the world-renowned portrait of the Mona Lisa (La Gioconda)?",
+      "correct": "Leonardo da Vinci",
+      "wrongs": [
+        "Vincent van Gogh",
+        "Pablo Picasso",
+        "Michelangelo"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0519",
+    "level": 1,
+    "topic": "Tecnologia, Internet & Computação",
+    "question": "O que significa a sigla mundial \"WWW\" presente no início de endereços de sites da internet?",
+    "correct": "World Wide Web",
+    "wrongs": [
+      "World Web Wide",
+      "Wide World Web",
+      "Web World Wide"
+    ],
+    "pt": {
+      "question": "O que significa a sigla mundial \"WWW\" presente no início de endereços de sites da internet?",
+      "correct": "World Wide Web",
+      "wrongs": [
+        "World Web Wide",
+        "Wide World Web",
+        "Web World Wide"
+      ]
+    },
+    "en": {
+      "question": "What does the acronym \"WWW\" stand for in internet web addresses?",
+      "correct": "World Wide Web",
+      "wrongs": [
+        "World Web Wide",
+        "Wide World Web",
+        "Web World Wide"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0520",
+    "level": 1,
+    "topic": "Literatura Clássica & Mitologia",
+    "question": "Qual criatura lendária mitológica renasce de suas próprias cinzas após a morte?",
+    "correct": "Fênix",
+    "wrongs": [
+      "Grifo",
+      "Pégaso",
+      "Hidra"
+    ],
+    "pt": {
+      "question": "Qual criatura lendária mitológica renasce de suas próprias cinzas após a morte?",
+      "correct": "Fênix",
+      "wrongs": [
+        "Grifo",
+        "Pégaso",
+        "Hidra"
+      ]
+    },
+    "en": {
+      "question": "Which legendary mythical bird is reborn from its own ashes after death?",
+      "correct": "Phoenix",
+      "wrongs": [
+        "Gryphon",
+        "Pegasus",
+        "Hydra"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0521",
+    "level": 1,
+    "topic": "Culinária Mundial & Gastronomia",
+    "question": "A pizza e o espaguete são pratos mundialmente originários de qual país europeu?",
+    "correct": "Itália",
+    "wrongs": [
+      "França",
+      "Espanha",
+      "Portugal"
+    ],
+    "pt": {
+      "question": "A pizza e o espaguete são pratos mundialmente originários de qual país europeu?",
+      "correct": "Itália",
+      "wrongs": [
+        "França",
+        "Espanha",
+        "Portugal"
+      ]
+    },
+    "en": {
+      "question": "Pizza and spaghetti are dishes originally associated with which European country?",
+      "correct": "Italy",
+      "wrongs": [
+        "France",
+        "Spain",
+        "Portugal"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0522",
+    "level": 1,
+    "topic": "Ciência Geral & Astronomia",
+    "question": "Qual é a força física universal invisível que atrai os corpos em direção ao centro da Terra?",
+    "correct": "Gravidade",
+    "wrongs": [
+      "Magnetismo",
+      "Eletricidade estática",
+      "Pressão atmosférica"
+    ],
+    "pt": {
+      "question": "Qual é a força física universal invisível que atrai os corpos em direção ao centro da Terra?",
+      "correct": "Gravidade",
+      "wrongs": [
+        "Magnetismo",
+        "Eletricidade estática",
+        "Pressão atmosférica"
+      ]
+    },
+    "en": {
+      "question": "What is the universal invisible force that pulls physical bodies toward the center of the Earth?",
+      "correct": "Gravity",
+      "wrongs": [
+        "Magnetism",
+        "Static electricity",
+        "Atmospheric pressure"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0523",
+    "level": 1,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual gás essencial os seres humanos inalam do ar para sustentar a respiração celular?",
+    "correct": "Oxigênio",
+    "wrongs": [
+      "Gás carbônico",
+      "Nitrogênio",
+      "Hélio"
+    ],
+    "pt": {
+      "question": "Qual gás essencial os seres humanos inalam do ar para sustentar a respiração celular?",
+      "correct": "Oxigênio",
+      "wrongs": [
+        "Gás carbônico",
+        "Nitrogênio",
+        "Hélio"
+      ]
+    },
+    "en": {
+      "question": "Which essential gas do humans inhale from atmospheric air to sustain cellular respiration?",
+      "correct": "Oxygen",
+      "wrongs": [
+        "Carbon dioxide",
+        "Nitrogen",
+        "Helium"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0524",
+    "level": 1,
+    "topic": "Geografia Global & Capitais",
+    "question": "Em qual continente do planeta Terra está localizada a França e a Alemanha?",
+    "correct": "Europa",
+    "wrongs": [
+      "Ásia",
+      "África",
+      "América"
+    ],
+    "pt": {
+      "question": "Em qual continente do planeta Terra está localizada a França e a Alemanha?",
+      "correct": "Europa",
+      "wrongs": [
+        "Ásia",
+        "África",
+        "América"
+      ]
+    },
+    "en": {
+      "question": "On which continental landmass are France and Germany located?",
+      "correct": "Europe",
+      "wrongs": [
+        "Asia",
+        "Africa",
+        "Americas"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0525",
+    "level": 1,
+    "topic": "Cultura Pop, Cinema & Quadrinhos",
+    "question": "Qual é o nome da escola de magia e bruxaria onde Harry Potter estuda?",
+    "correct": "Hogwarts",
+    "wrongs": [
+      "Beauxbatons",
+      "Durmstrang",
+      "Ilvermorny"
+    ],
+    "pt": {
+      "question": "Qual é o nome da escola de magia e bruxaria onde Harry Potter estuda?",
+      "correct": "Hogwarts",
+      "wrongs": [
+        "Beauxbatons",
+        "Durmstrang",
+        "Ilvermorny"
+      ]
+    },
+    "en": {
+      "question": "What is the name of the magical school attended by Harry Potter?",
+      "correct": "Hogwarts",
+      "wrongs": [
+        "Beauxbatons",
+        "Durmstrang",
+        "Ilvermorny"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0526",
+    "level": 2,
+    "topic": "Ciência Geral & Astronomia",
+    "question": "Qual planeta do Sistema Solar possui o dia mais longo, demorando mais para girar em torno de si do que ao redor do Sol?",
+    "correct": "Vênus",
+    "wrongs": [
+      "Mercúrio",
+      "Marte",
+      "Júpiter"
+    ],
+    "pt": {
+      "question": "Qual planeta do Sistema Solar possui o dia mais longo, demorando mais para girar em torno de si do que ao redor do Sol?",
+      "correct": "Vênus",
+      "wrongs": [
+        "Mercúrio",
+        "Marte",
+        "Júpiter"
+      ]
+    },
+    "en": {
+      "question": "Which Solar System planet has the longest day, taking longer to rotate on its axis than to orbit the Sun?",
+      "correct": "Venus",
+      "wrongs": [
+        "Mercury",
+        "Mars",
+        "Jupiter"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0527",
+    "level": 2,
+    "topic": "Geografia Global & Capitais",
+    "question": "Qual é a capital da Austrália?",
+    "correct": "Camberra",
+    "wrongs": [
+      "Sydney",
+      "Melbourne",
+      "Brisbane"
+    ],
+    "pt": {
+      "question": "Qual é a capital da Austrália?",
+      "correct": "Camberra",
+      "wrongs": [
+        "Sydney",
+        "Melbourne",
+        "Brisbane"
+      ]
+    },
+    "en": {
+      "question": "What is the official federal capital of Australia?",
+      "correct": "Canberra",
+      "wrongs": [
+        "Sydney",
+        "Melbourne",
+        "Brisbane"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0528",
+    "level": 2,
+    "topic": "História Mundial & Civilizações Antigas",
+    "question": "Em qual ano aconteceu a Queda do Muro de Berlim, marcando o prelúdio do fim da Guerra Fria?",
+    "correct": "1989",
+    "wrongs": [
+      "1991",
+      "1985",
+      "1975"
+    ],
+    "pt": {
+      "question": "Em qual ano aconteceu a Queda do Muro de Berlim, marcando o prelúdio do fim da Guerra Fria?",
+      "correct": "1989",
+      "wrongs": [
+        "1991",
+        "1985",
+        "1975"
+      ]
+    },
+    "en": {
+      "question": "In which year did the Fall of the Berlin Wall take place, signaling the close of the Cold War?",
+      "correct": "1989",
+      "wrongs": [
+        "1991",
+        "1985",
+        "1975"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0529",
+    "level": 2,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual organela celular é conhecida como a \"usina de energia\" responsável pela respiração celular e produção de ATP?",
+    "correct": "Mitocôndria",
+    "wrongs": [
+      "Ribossomo",
+      "Complexo de Golgi",
+      "Lisossomo"
+    ],
+    "pt": {
+      "question": "Qual organela celular é conhecida como a \"usina de energia\" responsável pela respiração celular e produção de ATP?",
+      "correct": "Mitocôndria",
+      "wrongs": [
+        "Ribossomo",
+        "Complexo de Golgi",
+        "Lisossomo"
+      ]
+    },
+    "en": {
+      "question": "Which cellular organelle is dubbed the \"powerhouse of the cell\" responsible for generating ATP?",
+      "correct": "Mitochondrion",
+      "wrongs": [
+        "Ribosome",
+        "Golgi apparatus",
+        "Lysosome"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0530",
+    "level": 2,
+    "topic": "Química, Física & Elementos",
+    "question": "Qual é o elemento químico mais abundante no universo observável?",
+    "correct": "Hidrogênio",
+    "wrongs": [
+      "Hélio",
+      "Oxigênio",
+      "Carbono"
+    ],
+    "pt": {
+      "question": "Qual é o elemento químico mais abundante no universo observável?",
+      "correct": "Hidrogênio",
+      "wrongs": [
+        "Hélio",
+        "Oxigênio",
+        "Carbono"
+      ]
+    },
+    "en": {
+      "question": "What is the most abundant chemical element in the observable universe?",
+      "correct": "Hydrogen",
+      "wrongs": [
+        "Helium",
+        "Oxygen",
+        "Carbon"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0531",
+    "level": 2,
+    "topic": "Cultura Pop, Cinema & Quadrinhos",
+    "question": "Qual diretor de cinema dirigiu a aclamada trilogia de ficção científica \"Interestelar\", \"A Origem\" e \"O Cavaleiro das Trevas\"?",
+    "correct": "Christopher Nolan",
+    "wrongs": [
+      "Steven Spielberg",
+      "Denis Villeneuve",
+      "James Cameron"
+    ],
+    "pt": {
+      "question": "Qual diretor de cinema dirigiu a aclamada trilogia de ficção científica \"Interestelar\", \"A Origem\" e \"O Cavaleiro das Trevas\"?",
+      "correct": "Christopher Nolan",
+      "wrongs": [
+        "Steven Spielberg",
+        "Denis Villeneuve",
+        "James Cameron"
+      ]
+    },
+    "en": {
+      "question": "Which filmmaker directed the acclaimed films \"Interstellar\", \"Inception\", and \"The Dark Knight\"?",
+      "correct": "Christopher Nolan",
+      "wrongs": [
+        "Steven Spielberg",
+        "Denis Villeneuve",
+        "James Cameron"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0532",
+    "level": 2,
+    "topic": "Jogos, Videogames & E-Sports",
+    "question": "Em qual jogo da franquia \"The Legend of Zelda\" o jogador controla o tempo tocando melodias em uma ocarina?",
+    "correct": "Ocarina of Time",
+    "wrongs": [
+      "Majora's Mask",
+      "Breath of the Wild",
+      "The Wind Waker"
+    ],
+    "pt": {
+      "question": "Em qual jogo da franquia \"The Legend of Zelda\" o jogador controla o tempo tocando melodias em uma ocarina?",
+      "correct": "Ocarina of Time",
+      "wrongs": [
+        "Majora's Mask",
+        "Breath of the Wild",
+        "The Wind Waker"
+      ]
+    },
+    "en": {
+      "question": "In which \"The Legend of Zelda\" title does Link control time by playing melodies on an ocarina?",
+      "correct": "Ocarina of Time",
+      "wrongs": [
+        "Majora's Mask",
+        "Breath of the Wild",
+        "The Wind Waker"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0533",
+    "level": 2,
+    "topic": "Tecnologia, Internet & Computação",
+    "question": "Quem é amplamente considerado o pioneiro e criador do sistema operacional de código aberto Linux?",
+    "correct": "Linus Torvalds",
+    "wrongs": [
+      "Richard Stallman",
+      "Bill Gates",
+      "Steve Wozniak"
+    ],
+    "pt": {
+      "question": "Quem é amplamente considerado o pioneiro e criador do sistema operacional de código aberto Linux?",
+      "correct": "Linus Torvalds",
+      "wrongs": [
+        "Richard Stallman",
+        "Bill Gates",
+        "Steve Wozniak"
+      ]
+    },
+    "en": {
+      "question": "Who is widely recognized as the principal creator of the open-source Linux operating system kernel?",
+      "correct": "Linus Torvalds",
+      "wrongs": [
+        "Richard Stallman",
+        "Bill Gates",
+        "Steve Wozniak"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0534",
+    "level": 2,
+    "topic": "Literatura Clássica & Mitologia",
+    "question": "Quem escreveu a tragédia clássica \"Romeu e Julieta\" e a peça \"Hamlet\"?",
+    "correct": "William Shakespeare",
+    "wrongs": [
+      "Charles Dickens",
+      "Oscar Wilde",
+      "Lord Byron"
+    ],
+    "pt": {
+      "question": "Quem escreveu a tragédia clássica \"Romeu e Julieta\" e a peça \"Hamlet\"?",
+      "correct": "William Shakespeare",
+      "wrongs": [
+        "Charles Dickens",
+        "Oscar Wilde",
+        "Lord Byron"
+      ]
+    },
+    "en": {
+      "question": "Who authored the classic tragic plays \"Romeo and Juliet\" and \"Hamlet\"?",
+      "correct": "William Shakespeare",
+      "wrongs": [
+        "Charles Dickens",
+        "Oscar Wilde",
+        "Lord Byron"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0535",
+    "level": 2,
+    "topic": "Música, Arte & Instrumentos",
+    "question": "Qual compositor clássico alemão continuou compondo obras-primas, como a Nona Sinfonia, mesmo após ficar quase totalmente surdo?",
+    "correct": "Ludwig van Beethoven",
+    "wrongs": [
+      "Wolfgang Amadeus Mozart",
+      "Johann Sebastian Bach",
+      "Frédéric Chopin"
+    ],
+    "pt": {
+      "question": "Qual compositor clássico alemão continuou compondo obras-primas, como a Nona Sinfonia, mesmo após ficar quase totalmente surdo?",
+      "correct": "Ludwig van Beethoven",
+      "wrongs": [
+        "Wolfgang Amadeus Mozart",
+        "Johann Sebastian Bach",
+        "Frédéric Chopin"
+      ]
+    },
+    "en": {
+      "question": "Which German classical composer completed groundbreaking masterpieces, including his Ninth Symphony, despite near-total deafness?",
+      "correct": "Ludwig van Beethoven",
+      "wrongs": [
+        "Wolfgang Amadeus Mozart",
+        "Johann Sebastian Bach",
+        "Frédéric Chopin"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0536",
+    "level": 2,
+    "topic": "Culinária Mundial & Gastronomia",
+    "question": "Qual especiaria avermelhada, colhida dos estigmas da flor Crocus sativus, é considerada a mais cara do mundo por quilo?",
+    "correct": "Açafrão verdadeiro",
+    "wrongs": [
+      "Cardamomo",
+      "Baunilha de Madagascar",
+      "Canela-do-ceilão"
+    ],
+    "pt": {
+      "question": "Qual especiaria avermelhada, colhida dos estigmas da flor Crocus sativus, é considerada a mais cara do mundo por quilo?",
+      "correct": "Açafrão verdadeiro",
+      "wrongs": [
+        "Cardamomo",
+        "Baunilha de Madagascar",
+        "Canela-do-ceilão"
+      ]
+    },
+    "en": {
+      "question": "Which precious spice harvested from the stigmas of Crocus sativus flowers is considered the most expensive by weight?",
+      "correct": "Saffron",
+      "wrongs": [
+        "Cardamom",
+        "Madagascar vanilla",
+        "Ceylon cinnamon"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0537",
+    "level": 2,
+    "topic": "Lógica, Charadas & Raciocínio Matemático",
+    "question": "Quantos lados possui um heptágono regular?",
+    "correct": "7 lados",
+    "wrongs": [
+      "6 lados",
+      "8 lados",
+      "9 lados"
+    ],
+    "pt": {
+      "question": "Quantos lados possui um heptágono regular?",
+      "correct": "7 lados",
+      "wrongs": [
+        "6 lados",
+        "8 lados",
+        "9 lados"
+      ]
+    },
+    "en": {
+      "question": "How many sides does a standard regular heptagon have?",
+      "correct": "7 sides",
+      "wrongs": [
+        "6 sides",
+        "8 sides",
+        "9 sides"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0538",
+    "level": 2,
+    "topic": "História Mundial & Civilizações Antigas",
+    "question": "Qual famosa rainha do Egito antigo teve relacionamentos históricos com os líderes romanos Júlio César e Marco Antônio?",
+    "correct": "Cleópatra VII",
+    "wrongs": [
+      "Nefertiti",
+      "Hatshepsut",
+      "Nefertari"
+    ],
+    "pt": {
+      "question": "Qual famosa rainha do Egito antigo teve relacionamentos históricos com os líderes romanos Júlio César e Marco Antônio?",
+      "correct": "Cleópatra VII",
+      "wrongs": [
+        "Nefertiti",
+        "Hatshepsut",
+        "Nefertari"
+      ]
+    },
+    "en": {
+      "question": "Which famous ancient Egyptian queen had historic alliances with Roman leaders Julius Caesar and Mark Antony?",
+      "correct": "Cleopatra VII",
+      "wrongs": [
+        "Nefertiti",
+        "Hatshepsut",
+        "Nefertari"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0539",
+    "level": 2,
+    "topic": "Geografia Global & Capitais",
+    "question": "Qual é o país mais extenso territorialmente do mundo, estendendo-se por 11 fusos horários?",
+    "correct": "Rússia",
+    "wrongs": [
+      "Canadá",
+      "China",
+      "Estados Unidos"
+    ],
+    "pt": {
+      "question": "Qual é o país mais extenso territorialmente do mundo, estendendo-se por 11 fusos horários?",
+      "correct": "Rússia",
+      "wrongs": [
+        "Canadá",
+        "China",
+        "Estados Unidos"
+      ]
+    },
+    "en": {
+      "question": "What is the largest country in the world by land area, spanning across eleven time zones?",
+      "correct": "Russia",
+      "wrongs": [
+        "Canada",
+        "China",
+        "United States"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0540",
+    "level": 2,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual animal invertebrado marinho possui três corações e sangue com pigmentação azulada?",
+    "correct": "Polvo",
+    "wrongs": [
+      "Estrela-do-mar",
+      "Água-viva",
+      "Lagosta"
+    ],
+    "pt": {
+      "question": "Qual animal invertebrado marinho possui três corações e sangue com pigmentação azulada?",
+      "correct": "Polvo",
+      "wrongs": [
+        "Estrela-do-mar",
+        "Água-viva",
+        "Lagosta"
+      ]
+    },
+    "en": {
+      "question": "Which marine invertebrate cephalopod possesses three hearts and copper-based blue blood?",
+      "correct": "Octopus",
+      "wrongs": [
+        "Starfish",
+        "Jellyfish",
+        "Lobster"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0541",
+    "level": 2,
+    "topic": "Cultura Pop, Cinema & Quadrinhos",
+    "question": "Qual ator interpretou o lendário personagem Tony Stark (Homem de Ferro) no Universo Cinematográfico Marvel (MCU)?",
+    "correct": "Robert Downey Jr.",
+    "wrongs": [
+      "Chris Evans",
+      "Mark Ruffalo",
+      "Benedict Cumberbatch"
+    ],
+    "pt": {
+      "question": "Qual ator interpretou o lendário personagem Tony Stark (Homem de Ferro) no Universo Cinematográfico Marvel (MCU)?",
+      "correct": "Robert Downey Jr.",
+      "wrongs": [
+        "Chris Evans",
+        "Mark Ruffalo",
+        "Benedict Cumberbatch"
+      ]
+    },
+    "en": {
+      "question": "Which actor portrayed Tony Stark (Iron Man) throughout the Marvel Cinematic Universe (MCU)?",
+      "correct": "Robert Downey Jr.",
+      "wrongs": [
+        "Chris Evans",
+        "Mark Ruffalo",
+        "Benedict Cumberbatch"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0542",
+    "level": 2,
+    "topic": "Jogos, Videogames & E-Sports",
+    "question": "Em qual jogo competitivo da Riot Games equipes de 5 jogadores lutam para destruir o \"Nexus\" inimigo em Summoner's Rift?",
+    "correct": "League of Legends",
+    "wrongs": [
+      "Dota 2",
+      "Valorant",
+      "Overwatch"
+    ],
+    "pt": {
+      "question": "Em qual jogo competitivo da Riot Games equipes de 5 jogadores lutam para destruir o \"Nexus\" inimigo em Summoner's Rift?",
+      "correct": "League of Legends",
+      "wrongs": [
+        "Dota 2",
+        "Valorant",
+        "Overwatch"
+      ]
+    },
+    "en": {
+      "question": "In which Riot Games competitive MOBA do two teams of five clash to destroy the enemy \"Nexus\" on Summoner's Rift?",
+      "correct": "League of Legends",
+      "wrongs": [
+        "Dota 2",
+        "Valorant",
+        "Overwatch"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0543",
+    "level": 2,
+    "topic": "Tecnologia, Internet & Computação",
+    "question": "Em qual década foi lançado o primeiro iPhone original pela Apple, apresentado por Steve Jobs?",
+    "correct": "Anos 2000 (2007)",
+    "wrongs": [
+      "Anos 1990 (1998)",
+      "Anos 2010 (2010)",
+      "Anos 2000 (2004)"
+    ],
+    "pt": {
+      "question": "Em qual década foi lançado o primeiro iPhone original pela Apple, apresentado por Steve Jobs?",
+      "correct": "Anos 2000 (2007)",
+      "wrongs": [
+        "Anos 1990 (1998)",
+        "Anos 2010 (2010)",
+        "Anos 2000 (2004)"
+      ]
+    },
+    "en": {
+      "question": "In which decade and year was the original first-generation Apple iPhone unveiled by Steve Jobs?",
+      "correct": "2000s (2007)",
+      "wrongs": [
+        "1990s (1998)",
+        "2010s (2010)",
+        "2000s (2004)"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0544",
+    "level": 2,
+    "topic": "Química, Física & Elementos",
+    "question": "Qual cientista britânico formulou a célebre Teoria da Gravitação Universal e as três leis do movimento mecânico?",
+    "correct": "Sir Isaac Newton",
+    "wrongs": [
+      "Albert Einstein",
+      "Galileu Galilei",
+      "Niels Bohr"
+    ],
+    "pt": {
+      "question": "Qual cientista britânico formulou a célebre Teoria da Gravitação Universal e as três leis do movimento mecânico?",
+      "correct": "Sir Isaac Newton",
+      "wrongs": [
+        "Albert Einstein",
+        "Galileu Galilei",
+        "Niels Bohr"
+      ]
+    },
+    "en": {
+      "question": "Which British scientist formulated the Universal Law of Gravitation and three fundamental laws of motion?",
+      "correct": "Sir Isaac Newton",
+      "wrongs": [
+        "Albert Einstein",
+        "Galileo Galilei",
+        "Niels Bohr"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0545",
+    "level": 2,
+    "topic": "Literatura Clássica & Mitologia",
+    "question": "Na mitologia nórdica, qual é o nome do martelo sagrado empunhado pelo deus do trovão, Thor?",
+    "correct": "Mjölnir",
+    "wrongs": [
+      "Gungnir",
+      "Gram",
+      "Excalibur"
+    ],
+    "pt": {
+      "question": "Na mitologia nórdica, qual é o nome do martelo sagrado empunhado pelo deus do trovão, Thor?",
+      "correct": "Mjölnir",
+      "wrongs": [
+        "Gungnir",
+        "Gram",
+        "Excalibur"
+      ]
+    },
+    "en": {
+      "question": "In Norse mythology, what is the name of the enchanted warhammer wielded by the god of thunder, Thor?",
+      "correct": "Mjölnir",
+      "wrongs": [
+        "Gungnir",
+        "Gram",
+        "Excalibur"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0546",
+    "level": 2,
+    "topic": "Música, Arte & Instrumentos",
+    "question": "Qual célebre banda de rock britânica gravou álbuns históricos como \"The Dark Side of the Moon\" e \"The Wall\"?",
+    "correct": "Pink Floyd",
+    "wrongs": [
+      "Led Zeppelin",
+      "The Rolling Stones",
+      "Queen"
+    ],
+    "pt": {
+      "question": "Qual célebre banda de rock britânica gravou álbuns históricos como \"The Dark Side of the Moon\" e \"The Wall\"?",
+      "correct": "Pink Floyd",
+      "wrongs": [
+        "Led Zeppelin",
+        "The Rolling Stones",
+        "Queen"
+      ]
+    },
+    "en": {
+      "question": "Which iconic British rock band recorded landmark concept albums such as \"The Dark Side of the Moon\" and \"The Wall\"?",
+      "correct": "Pink Floyd",
+      "wrongs": [
+        "Led Zeppelin",
+        "The Rolling Stones",
+        "Queen"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0547",
+    "level": 2,
+    "topic": "Ciência Geral & Astronomia",
+    "question": "Qual é o nome da galáxia espiral mais próxima da nossa Via Láctea, com a qual ela colidirá em bilhões de anos?",
+    "correct": "Galáxia de Andrômeda",
+    "wrongs": [
+      "Galáxia do Triângulo",
+      "Grande Nuvem de Magalhães",
+      "Galáxia do Sombrero"
+    ],
+    "pt": {
+      "question": "Qual é o nome da galáxia espiral mais próxima da nossa Via Láctea, com a qual ela colidirá em bilhões de anos?",
+      "correct": "Galáxia de Andrômeda",
+      "wrongs": [
+        "Galáxia do Triângulo",
+        "Grande Nuvem de Magalhães",
+        "Galáxia do Sombrero"
+      ]
+    },
+    "en": {
+      "question": "What is the name of the nearest major spiral galaxy to our Milky Way, headed for eventual collision in billions of years?",
+      "correct": "Andromeda Galaxy",
+      "wrongs": [
+        "Triangulum Galaxy",
+        "Large Magellanic Cloud",
+        "Sombrero Galaxy"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0548",
+    "level": 2,
+    "topic": "Geografia Global & Capitais",
+    "question": "O deserto do Saara, o maior deserto quente do mundo, está situado em qual continente?",
+    "correct": "África",
+    "wrongs": [
+      "Ásia",
+      "Oceania",
+      "América do Sul"
+    ],
+    "pt": {
+      "question": "O deserto do Saara, o maior deserto quente do mundo, está situado em qual continente?",
+      "correct": "África",
+      "wrongs": [
+        "Ásia",
+        "Oceania",
+        "América do Sul"
+      ]
+    },
+    "en": {
+      "question": "The Sahara Desert, the world's largest hot desert, is predominantly situated in which continent?",
+      "correct": "Africa",
+      "wrongs": [
+        "Asia",
+        "Oceania",
+        "South America"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0549",
+    "level": 2,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual processo bioquímico vegetal transforma luz solar, água e gás carbônico em glicose e oxigênio?",
+    "correct": "Fotossíntese",
+    "wrongs": [
+      "Quimiossíntese",
+      "Fermentação lática",
+      "Transpiração celular"
+    ],
+    "pt": {
+      "question": "Qual processo bioquímico vegetal transforma luz solar, água e gás carbônico em glicose e oxigênio?",
+      "correct": "Fotossíntese",
+      "wrongs": [
+        "Quimiossíntese",
+        "Fermentação lática",
+        "Transpiração celular"
+      ]
+    },
+    "en": {
+      "question": "Which biochemical process in plants converts sunlight, water, and carbon dioxide into glucose and oxygen?",
+      "correct": "Photosynthesis",
+      "wrongs": [
+        "Chemosynthesis",
+        "Lactic fermentation",
+        "Cellular transpiration"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0550",
+    "level": 2,
+    "topic": "Cultura Pop, Cinema & Quadrinhos",
+    "question": "Qual franquia de ficção científica criada por George Lucas apresenta a Força, Sabres de Luz e a Ordem Jedi?",
+    "correct": "Star Wars",
+    "wrongs": [
+      "Star Trek",
+      "Duna",
+      "Blade Runner"
+    ],
+    "pt": {
+      "question": "Qual franquia de ficção científica criada por George Lucas apresenta a Força, Sabres de Luz e a Ordem Jedi?",
+      "correct": "Star Wars",
+      "wrongs": [
+        "Star Trek",
+        "Duna",
+        "Blade Runner"
+      ]
+    },
+    "en": {
+      "question": "Which space opera franchise created by George Lucas introduced the Force, Lightsabers, and the Jedi Order?",
+      "correct": "Star Wars",
+      "wrongs": [
+        "Star Trek",
+        "Dune",
+        "Blade Runner"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0551",
+    "level": 3,
+    "topic": "História Mundial & Civilizações Antigas",
+    "question": "Em qual batalha naval decisiva em 31 a.C. Otaviano derrotou as frotas combinadas de Marco Antônio e Cleópatra?",
+    "correct": "Batalha de Áccio (Actium)",
+    "wrongs": [
+      "Batalha de Salamina",
+      "Batalha de Lepanto",
+      "Batalha de Farsália"
+    ],
+    "pt": {
+      "question": "Em qual batalha naval decisiva em 31 a.C. Otaviano derrotou as frotas combinadas de Marco Antônio e Cleópatra?",
+      "correct": "Batalha de Áccio (Actium)",
+      "wrongs": [
+        "Batalha de Salamina",
+        "Batalha de Lepanto",
+        "Batalha de Farsália"
+      ]
+    },
+    "en": {
+      "question": "In which decisive naval engagement in 31 BC did Octavian defeat the combined fleets of Mark Antony and Cleopatra?",
+      "correct": "Battle of Actium",
+      "wrongs": [
+        "Battle of Salamis",
+        "Battle of Lepanto",
+        "Battle of Pharsalus"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0552",
+    "level": 3,
+    "topic": "Ciência Geral & Astronomia",
+    "question": "Qual é o limite teórico ao redor de um buraco negro a partir do qual nada, nem mesmo a luz, pode escapar?",
+    "correct": "Horizonte de Eventos",
+    "wrongs": [
+      "Raio de Chandrasekhar",
+      "Esfera de Hill",
+      "Singularidade Gravitacional"
+    ],
+    "pt": {
+      "question": "Qual é o limite teórico ao redor de um buraco negro a partir do qual nada, nem mesmo a luz, pode escapar?",
+      "correct": "Horizonte de Eventos",
+      "wrongs": [
+        "Raio de Chandrasekhar",
+        "Esfera de Hill",
+        "Singularidade Gravitacional"
+      ]
+    },
+    "en": {
+      "question": "What is the theoretical boundary surrounding a black hole beyond which neither light nor matter can escape?",
+      "correct": "Event Horizon",
+      "wrongs": [
+        "Chandrasekhar Limit",
+        "Hill Sphere",
+        "Gravitational Singularity"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0553",
+    "level": 3,
+    "topic": "Química, Física & Elementos",
+    "question": "Qual elemento químico metálico de número atômico 74 possui o mais alto ponto de fusão entre todos os metais (3.422 °C)?",
+    "correct": "Tungstênio (W)",
+    "wrongs": [
+      "Titânio (Ti)",
+      "Ósmio (Os)",
+      "Platina (Pt)"
+    ],
+    "pt": {
+      "question": "Qual elemento químico metálico de número atômico 74 possui o mais alto ponto de fusão entre todos os metais (3.422 °C)?",
+      "correct": "Tungstênio (W)",
+      "wrongs": [
+        "Titânio (Ti)",
+        "Ósmio (Os)",
+        "Platina (Pt)"
+      ]
+    },
+    "en": {
+      "question": "Which metallic element with atomic number 74 boasts the highest melting point of all refractory metals (3,422 °C)?",
+      "correct": "Tungsten (W)",
+      "wrongs": [
+        "Titanium (Ti)",
+        "Osmium (Os)",
+        "Platinum (Pt)"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0554",
+    "level": 3,
+    "topic": "Geografia Global & Capitais",
+    "question": "Qual é o lago mais profundo e volumoso de água doce do mundo, contendo cerca de 20% da água doce de superfície não congelada da Terra?",
+    "correct": "Lago Baikal",
+    "wrongs": [
+      "Lago Tanganica",
+      "Lago Superior",
+      "Lago Vitória"
+    ],
+    "pt": {
+      "question": "Qual é o lago mais profundo e volumoso de água doce do mundo, contendo cerca de 20% da água doce de superfície não congelada da Terra?",
+      "correct": "Lago Baikal",
+      "wrongs": [
+        "Lago Tanganica",
+        "Lago Superior",
+        "Lago Vitória"
+      ]
+    },
+    "en": {
+      "question": "Which is the world's deepest and most voluminous freshwater lake, holding roughly 20% of Earth's unfrozen surface fresh water?",
+      "correct": "Lake Baikal",
+      "wrongs": [
+        "Lake Tanganyika",
+        "Lake Superior",
+        "Lake Victoria"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0555",
+    "level": 3,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual enzima é responsável por desemparelhar a dupla fita de DNA durante o processo de replicação celular?",
+    "correct": "Helicase",
+    "wrongs": [
+      "DNA Polimerase",
+      "Ligase",
+      "Topoisomerase"
+    ],
+    "pt": {
+      "question": "Qual enzima é responsável por desemparelhar a dupla fita de DNA durante o processo de replicação celular?",
+      "correct": "Helicase",
+      "wrongs": [
+        "DNA Polimerase",
+        "Ligase",
+        "Topoisomerase"
+      ]
+    },
+    "en": {
+      "question": "Which enzyme is responsible for unwinding double-stranded DNA during cellular DNA replication?",
+      "correct": "Helicase",
+      "wrongs": [
+        "DNA Polymerase",
+        "Ligase",
+        "Topoisomerase"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0556",
+    "level": 3,
+    "topic": "Literatura Clássica & Mitologia",
+    "question": "Na obra épica \"A Divina Comédia\" de Dante Alighieri, qual poeta romano guia Dante pelo Inferno e pelo Purgatório?",
+    "correct": "Virgílio",
+    "wrongs": [
+      "Homero",
+      "Ovídio",
+      "Horácio"
+    ],
+    "pt": {
+      "question": "Na obra épica \"A Divina Comédia\" de Dante Alighieri, qual poeta romano guia Dante pelo Inferno e pelo Purgatório?",
+      "correct": "Virgílio",
+      "wrongs": [
+        "Homero",
+        "Ovídio",
+        "Horácio"
+      ]
+    },
+    "en": {
+      "question": "In Dante Alighieri's epic poem \"The Divine Comedy\", which classical Roman poet guides Dante through Hell and Purgatory?",
+      "correct": "Virgil",
+      "wrongs": [
+        "Homer",
+        "Ovid",
+        "Horace"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0557",
+    "level": 3,
+    "topic": "Tecnologia, Internet & Computação",
+    "question": "Qual matemático e criptoanalista britânico desempenhou papel crucial na decifração da máquina Enigma em Bletchley Park na Segunda Guerra?",
+    "correct": "Alan Turing",
+    "wrongs": [
+      "John von Neumann",
+      "Claude Shannon",
+      "Ada Lovelace"
+    ],
+    "pt": {
+      "question": "Qual matemático e criptoanalista britânico desempenhou papel crucial na decifração da máquina Enigma em Bletchley Park na Segunda Guerra?",
+      "correct": "Alan Turing",
+      "wrongs": [
+        "John von Neumann",
+        "Claude Shannon",
+        "Ada Lovelace"
+      ]
+    },
+    "en": {
+      "question": "Which British mathematician and cryptanalyst played a seminal role in cracking the Enigma machine cipher at Bletchley Park?",
+      "correct": "Alan Turing",
+      "wrongs": [
+        "John von Neumann",
+        "Claude Shannon",
+        "Ada Lovelace"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0558",
+    "level": 3,
+    "topic": "Jogos, Videogames & E-Sports",
+    "question": "Qual célebre designer de jogos japonês criou as lendárias franquias \"Dark Souls\", \"Bloodborne\" e \"Elden Ring\"?",
+    "correct": "Hidetaka Miyazaki",
+    "wrongs": [
+      "Hideo Kojima",
+      "Shinji Mikami",
+      "Shigeru Miyamoto"
+    ],
+    "pt": {
+      "question": "Qual célebre designer de jogos japonês criou as lendárias franquias \"Dark Souls\", \"Bloodborne\" e \"Elden Ring\"?",
+      "correct": "Hidetaka Miyazaki",
+      "wrongs": [
+        "Hideo Kojima",
+        "Shinji Mikami",
+        "Shigeru Miyamoto"
+      ]
+    },
+    "en": {
+      "question": "Which celebrated Japanese game director created the renowned dark fantasy titles \"Dark Souls\", \"Bloodborne\", and \"Elden Ring\"?",
+      "correct": "Hidetaka Miyazaki",
+      "wrongs": [
+        "Hideo Kojima",
+        "Shinji Mikami",
+        "Shigeru Miyamoto"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0559",
+    "level": 3,
+    "topic": "Música, Arte & Instrumentos",
+    "question": "Qual técnica artística pictórica renascentista, desenvolvida por Leonardo da Vinci, utiliza transições graduais sutis sem linhas visíveis?",
+    "correct": "Sfumato",
+    "wrongs": [
+      "Chiaroscuro",
+      "Afresco",
+      "Pontilhismo"
+    ],
+    "pt": {
+      "question": "Qual técnica artística pictórica renascentista, desenvolvida por Leonardo da Vinci, utiliza transições graduais sutis sem linhas visíveis?",
+      "correct": "Sfumato",
+      "wrongs": [
+        "Chiaroscuro",
+        "Afresco",
+        "Pontilhismo"
+      ]
+    },
+    "en": {
+      "question": "Which Renaissance painting technique popularized by Leonardo da Vinci blends colors and shades gradually with imperceptible transitions?",
+      "correct": "Sfumato",
+      "wrongs": [
+        "Chiaroscuro",
+        "Fresco",
+        "Pointillism"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0560",
+    "level": 3,
+    "topic": "Culinária Mundial & Gastronomia",
+    "question": "Qual fungo subterrâneo raro e altamente aromático da região de Piemonte (Itália) chega a custar milhares de dólares o quilo?",
+    "correct": "Trufa branca de Alba (Tuber magnatum)",
+    "wrongs": [
+      "Trufa negra de Périgord",
+      "Cogumelo Matsutake",
+      "Morchella silvestre"
+    ],
+    "pt": {
+      "question": "Qual fungo subterrâneo raro e altamente aromático da região de Piemonte (Itália) chega a custar milhares de dólares o quilo?",
+      "correct": "Trufa branca de Alba (Tuber magnatum)",
+      "wrongs": [
+        "Trufa negra de Périgord",
+        "Cogumelo Matsutake",
+        "Morchella silvestre"
+      ]
+    },
+    "en": {
+      "question": "Which underground mycorrhizal fungus from the Piedmont region of Italy commands thousands of dollars per kilogram at auction?",
+      "correct": "White Alba truffle (Tuber magnatum)",
+      "wrongs": [
+        "Black Périgord truffle",
+        "Matsutake mushroom",
+        "Wild morel"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0561",
+    "level": 3,
+    "topic": "Lógica, Charadas & Raciocínio Matemático",
+    "question": "Qual é o valor aproximado da constante matemática \"e\" (número de Euler), base dos logaritmos naturais?",
+    "correct": "2,718",
+    "wrongs": [
+      "3,141",
+      "1,618",
+      "1,414"
+    ],
+    "pt": {
+      "question": "Qual é o valor aproximado da constante matemática \"e\" (número de Euler), base dos logaritmos naturais?",
+      "correct": "2,718",
+      "wrongs": [
+        "3,141",
+        "1,618",
+        "1,414"
+      ]
+    },
+    "en": {
+      "question": "What is the approximate numerical value of Euler's mathematical constant \"e\", base of natural logarithms?",
+      "correct": "2.718",
+      "wrongs": [
+        "3.141",
+        "1.618",
+        "1.414"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0562",
+    "level": 3,
+    "topic": "História Mundial & Civilizações Antigas",
+    "question": "Qual tratado assinado em 1648 pôs fim à sangrenta Guerra dos Trinta Anos na Europa Central, estabelecendo o conceito de soberania estatal moderna?",
+    "correct": "Paz de Vestfália",
+    "wrongs": [
+      "Tratado de Utrecht",
+      "Tratado de Tordesilhas",
+      "Congresso de Viena"
+    ],
+    "pt": {
+      "question": "Qual tratado assinado em 1648 pôs fim à sangrenta Guerra dos Trinta Anos na Europa Central, estabelecendo o conceito de soberania estatal moderna?",
+      "correct": "Paz de Vestfália",
+      "wrongs": [
+        "Tratado de Utrecht",
+        "Tratado de Tordesilhas",
+        "Congresso de Viena"
+      ]
+    },
+    "en": {
+      "question": "Which 1648 treaties concluded the European Thirty Years' War, cementing modern principles of Westphalian national sovereignty?",
+      "correct": "Peace of Westphalia",
+      "wrongs": [
+        "Treaty of Utrecht",
+        "Treaty of Tordesillas",
+        "Congress of Vienna"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0563",
+    "level": 3,
+    "topic": "Ciência Geral & Astronomia",
+    "question": "Qual partícula subatômica fundamental de carga neutra possui massa quase nula e raramente interage com a matéria comum?",
+    "correct": "Neutrino",
+    "wrongs": [
+      "Póstron",
+      "Quark charm",
+      "Múon"
+    ],
+    "pt": {
+      "question": "Qual partícula subatômica fundamental de carga neutra possui massa quase nula e raramente interage com a matéria comum?",
+      "correct": "Neutrino",
+      "wrongs": [
+        "Póstron",
+        "Quark charm",
+        "Múon"
+      ]
+    },
+    "en": {
+      "question": "Which neutral subatomic fundamental particle exhibits near-zero rest mass and interacts exceptionally weakly with matter?",
+      "correct": "Neutrino",
+      "wrongs": [
+        "Positron",
+        "Charm quark",
+        "Muon"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0564",
+    "level": 3,
+    "topic": "Geografia Global & Capitais",
+    "question": "Qual é o país soberano com o menor território geográfico e menor população do mundo, localizado dentro de Roma?",
+    "correct": "Vaticano",
+    "wrongs": [
+      "Mônaco",
+      "San Marino",
+      "Liechtenstein"
+    ],
+    "pt": {
+      "question": "Qual é o país soberano com o menor território geográfico e menor população do mundo, localizado dentro de Roma?",
+      "correct": "Vaticano",
+      "wrongs": [
+        "Mônaco",
+        "San Marino",
+        "Liechtenstein"
+      ]
+    },
+    "en": {
+      "question": "Which sovereign city-state is the smallest independent recognized nation by area and population in the world?",
+      "correct": "Vatican City",
+      "wrongs": [
+        "Monaco",
+        "San Marino",
+        "Liechtenstein"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0565",
+    "level": 3,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Como se chama o fenômeno biológico de emissão de luz fria produzida por reações químicas em seres vivos como vaga-lumes e peixes abissais?",
+    "correct": "Bioluminescência",
+    "wrongs": [
+      "Fluorescência",
+      "Fosforescência",
+      "Incandescência"
+    ],
+    "pt": {
+      "question": "Como se chama o fenômeno biológico de emissão de luz fria produzida por reações químicas em seres vivos como vaga-lumes e peixes abissais?",
+      "correct": "Bioluminescência",
+      "wrongs": [
+        "Fluorescência",
+        "Fosforescência",
+        "Incandescência"
+      ]
+    },
+    "en": {
+      "question": "What is the biological production and emission of cold light by living organisms through luciferin-luciferase enzymatic reactions?",
+      "correct": "Bioluminescence",
+      "wrongs": [
+        "Fluorescence",
+        "Phosphorescence",
+        "Incandescence"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0566",
+    "level": 3,
+    "topic": "Cultura Pop, Cinema & Quadrinhos",
+    "question": "Em \"O Senhor dos Anéis\", qual é o nome do criador original do Um Anel e Senhor das Sombras de Mordor?",
+    "correct": "Sauron",
+    "wrongs": [
+      "Morgoth",
+      "Saruman",
+      "Witch-King of Angmar"
+    ],
+    "pt": {
+      "question": "Em \"O Senhor dos Anéis\", qual é o nome do criador original do Um Anel e Senhor das Sombras de Mordor?",
+      "correct": "Sauron",
+      "wrongs": [
+        "Morgoth",
+        "Saruman",
+        "Witch-King of Angmar"
+      ]
+    },
+    "en": {
+      "question": "In J.R.R. Tolkien's Middle-earth, who forged the One Ring in Mount Doom as the titular Dark Lord of Mordor?",
+      "correct": "Sauron",
+      "wrongs": [
+        "Morgoth",
+        "Saruman",
+        "Witch-King of Angmar"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0567",
+    "level": 3,
+    "topic": "Jogos, Videogames & E-Sports",
+    "question": "Qual console de videogame lançado pela Sony em 2000 permanece até hoje como o console doméstico mais vendido da história (mais de 155 milhões)?",
+    "correct": "PlayStation 2",
+    "wrongs": [
+      "PlayStation 1",
+      "Nintendo DS",
+      "Nintendo Switch"
+    ],
+    "pt": {
+      "question": "Qual console de videogame lançado pela Sony em 2000 permanece até hoje como o console doméstico mais vendido da história (mais de 155 milhões)?",
+      "correct": "PlayStation 2",
+      "wrongs": [
+        "PlayStation 1",
+        "Nintendo DS",
+        "Nintendo Switch"
+      ]
+    },
+    "en": {
+      "question": "Which home console launched by Sony in 2000 holds the record as the best-selling gaming console of all time with over 155 million units?",
+      "correct": "PlayStation 2",
+      "wrongs": [
+        "PlayStation 1",
+        "Nintendo DS",
+        "Nintendo Switch"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0568",
+    "level": 3,
+    "topic": "Tecnologia, Internet & Computação",
+    "question": "Qual protocolo criptográfico assimétrico foi inventado em 1977 por Rivest, Shamir e Adleman, sustentando a segurança de chaves públicas?",
+    "correct": "Criptografia RSA",
+    "wrongs": [
+      "AES-256",
+      "DES clássico",
+      "Diffie-Hellman puro"
+    ],
+    "pt": {
+      "question": "Qual protocolo criptográfico assimétrico foi inventado em 1977 por Rivest, Shamir e Adleman, sustentando a segurança de chaves públicas?",
+      "correct": "Criptografia RSA",
+      "wrongs": [
+        "AES-256",
+        "DES clássico",
+        "Diffie-Hellman puro"
+      ]
+    },
+    "en": {
+      "question": "Which public-key cryptosystem developed in 1977 by Rivest, Shamir, and Adleman is widely used for secure electronic data transmission?",
+      "correct": "RSA Cryptosystem",
+      "wrongs": [
+        "AES-256",
+        "Standard DES",
+        "Diffie-Hellman Key Exchange"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0569",
+    "level": 3,
+    "topic": "Literatura Clássica & Mitologia",
+    "question": "Qual escritor russo é o autor dos clássicos universais \"Crime e Castigo\" e \"Os Irmãos Karamázov\"?",
+    "correct": "Fiódor Dostoiévski",
+    "wrongs": [
+      "Liev Tolstói",
+      "Anton Tchekhov",
+      "Aleksandr Pushkin"
+    ],
+    "pt": {
+      "question": "Qual escritor russo é o autor dos clássicos universais \"Crime e Castigo\" e \"Os Irmãos Karamázov\"?",
+      "correct": "Fiódor Dostoiévski",
+      "wrongs": [
+        "Liev Tolstói",
+        "Anton Tchekhov",
+        "Aleksandr Pushkin"
+      ]
+    },
+    "en": {
+      "question": "Which Russian novelist authored the existential masterpieces \"Crime and Punishment\" and \"The Brothers Karamazov\"?",
+      "correct": "Fyodor Dostoevsky",
+      "wrongs": [
+        "Leo Tolstoy",
+        "Anton Chekhov",
+        "Aleksandr Pushkin"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0570",
+    "level": 3,
+    "topic": "Química, Física & Elementos",
+    "question": "Qual princípio da mecânica quântica, formulado por Werner Heisenberg, afirma que não se pode determinar simultaneamente posição e momento de uma partícula?",
+    "correct": "Princípio da Incerteza",
+    "wrongs": [
+      "Princípio da Exclusão de Pauli",
+      "Efeito Fotoelétrico",
+      "Dualidade Onda-Partícula"
+    ],
+    "pt": {
+      "question": "Qual princípio da mecânica quântica, formulado por Werner Heisenberg, afirma que não se pode determinar simultaneamente posição e momento de uma partícula?",
+      "correct": "Princípio da Incerteza",
+      "wrongs": [
+        "Princípio da Exclusão de Pauli",
+        "Efeito Fotoelétrico",
+        "Dualidade Onda-Partícula"
+      ]
+    },
+    "en": {
+      "question": "Which quantum physics postulate by Werner Heisenberg dictates that position and momentum cannot both be precisely measured simultaneously?",
+      "correct": "Uncertainty Principle",
+      "wrongs": [
+        "Pauli Exclusion Principle",
+        "Photoelectric Effect",
+        "Wave-Particle Duality"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0571",
+    "level": 3,
+    "topic": "Música, Arte & Instrumentos",
+    "question": "Qual compositor polonês-francês do período romântico compôs quase exclusivamente para piano solo, incluindo noturnos, baladas e polonaises?",
+    "correct": "Frédéric Chopin",
+    "wrongs": [
+      "Franz Liszt",
+      "Robert Schumann",
+      "Johannes Brahms"
+    ],
+    "pt": {
+      "question": "Qual compositor polonês-francês do período romântico compôs quase exclusivamente para piano solo, incluindo noturnos, baladas e polonaises?",
+      "correct": "Frédéric Chopin",
+      "wrongs": [
+        "Franz Liszt",
+        "Robert Schumann",
+        "Johannes Brahms"
+      ]
+    },
+    "en": {
+      "question": "Which Romantic-era Polish virtuoso composer wrote almost exclusively for solo piano, including famous nocturnes and polonaises?",
+      "correct": "Frédéric Chopin",
+      "wrongs": [
+        "Franz Liszt",
+        "Robert Schumann",
+        "Johannes Brahms"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0572",
+    "level": 3,
+    "topic": "Culinária Mundial & Gastronomia",
+    "question": "Qual corte nobre da carne bovina corresponde ao músculo psoas major, conhecido por ser a parte mais macia da carcaça?",
+    "correct": "Filé-mignon (Tenderloin)",
+    "wrongs": [
+      "Picanha (Sirloin Cap)",
+      "Alcatra (Top Sirloin)",
+      "Contrafilé (Ribeye)"
+    ],
+    "pt": {
+      "question": "Qual corte nobre da carne bovina corresponde ao músculo psoas major, conhecido por ser a parte mais macia da carcaça?",
+      "correct": "Filé-mignon (Tenderloin)",
+      "wrongs": [
+        "Picanha (Sirloin Cap)",
+        "Alcatra (Top Sirloin)",
+        "Contrafilé (Ribeye)"
+      ]
+    },
+    "en": {
+      "question": "Which premium beef primal cut corresponds to the sublumbar psoas major muscle, praised as the most tender cut of beef?",
+      "correct": "Tenderloin (Filet Mignon)",
+      "wrongs": [
+        "Sirloin Cap (Picanha)",
+        "Top Sirloin",
+        "Ribeye"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0573",
+    "level": 3,
+    "topic": "Geografia Global & Capitais",
+    "question": "Qual é o estreito marítimo estratégico que separa a Península Ibérica (Europa) do continente africano, ligando o Mediterrâneo ao Atlântico?",
+    "correct": "Estreito de Gibraltar",
+    "wrongs": [
+      "Estreito de Bósforo",
+      "Estreito de Ormuz",
+      "Estreito de Malaca"
+    ],
+    "pt": {
+      "question": "Qual é o estreito marítimo estratégico que separa a Península Ibérica (Europa) do continente africano, ligando o Mediterrâneo ao Atlântico?",
+      "correct": "Estreito de Gibraltar",
+      "wrongs": [
+        "Estreito de Bósforo",
+        "Estreito de Ormuz",
+        "Estreito de Malaca"
+      ]
+    },
+    "en": {
+      "question": "Which strategic maritime strait separates the Iberian Peninsula from Morocco, connecting the Atlantic Ocean to the Mediterranean Sea?",
+      "correct": "Strait of Gibraltar",
+      "wrongs": [
+        "Bosphorus Strait",
+        "Strait of Hormuz",
+        "Strait of Malacca"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0574",
+    "level": 3,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual grupo único de mamíferos australianos inclui o ornitorrinco e a equidna, que se reproduzem pondo ovos em vez de dar à luz filhotes vivos?",
+    "correct": "Monotremados (Monotremata)",
+    "wrongs": [
+      "Marsupiais (Marsupialia)",
+      "Placentários (Placentalia)",
+      "Cetáceos"
+    ],
+    "pt": {
+      "question": "Qual grupo único de mamíferos australianos inclui o ornitorrinco e a equidna, que se reproduzem pondo ovos em vez de dar à luz filhotes vivos?",
+      "correct": "Monotremados (Monotremata)",
+      "wrongs": [
+        "Marsupiais (Marsupialia)",
+        "Placentários (Placentalia)",
+        "Cetáceos"
+      ]
+    },
+    "en": {
+      "question": "Which unique order of Australasian mammals, comprising the platypus and echidna, reproduce by laying eggs rather than bearing live young?",
+      "correct": "Monotremes (Monotremata)",
+      "wrongs": [
+        "Marsupials (Marsupialia)",
+        "Placentals (Placentalia)",
+        "Cetaceans"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0575",
+    "level": 3,
+    "topic": "Ciência Geral & Astronomia",
+    "question": "Qual telescópio espacial lançado em dezembro de 2021 pela NASA/ESA opera na órbita do ponto Lagrange L2 para observar o cosmos infravermelho primordial?",
+    "correct": "Telescópio Espacial James Webb (JWST)",
+    "wrongs": [
+      "Telescópio Espacial Hubble",
+      "Observatório Espacial Kepler",
+      "Telescópio Espacial Spitzer"
+    ],
+    "pt": {
+      "question": "Qual telescópio espacial lançado em dezembro de 2021 pela NASA/ESA opera na órbita do ponto Lagrange L2 para observar o cosmos infravermelho primordial?",
+      "correct": "Telescópio Espacial James Webb (JWST)",
+      "wrongs": [
+        "Telescópio Espacial Hubble",
+        "Observatório Espacial Kepler",
+        "Telescópio Espacial Spitzer"
+      ]
+    },
+    "en": {
+      "question": "Which infrared space observatory launched in December 2021 operates around the Sun-Earth L2 point observing the early universe?",
+      "correct": "James Webb Space Telescope (JWST)",
+      "wrongs": [
+        "Hubble Space Telescope",
+        "Kepler Space Telescope",
+        "Spitzer Space Telescope"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0576",
+    "level": 4,
+    "topic": "Ciência Geral & Astronomia",
+    "question": "Qual é o limite de massa máxima teórica (aproximadamente 1,4 massas solares) para que uma anã branca não sofra colapso gravitacional em estrela de nêutrons?",
+    "correct": "Limite de Chandrasekhar",
+    "wrongs": [
+      "Limite de Tolman-Oppenheimer-Volkoff",
+      "Raio de Schwarzschild",
+      "Limite de Eddington"
+    ],
+    "pt": {
+      "question": "Qual é o limite de massa máxima teórica (aproximadamente 1,4 massas solares) para que uma anã branca não sofra colapso gravitacional em estrela de nêutrons?",
+      "correct": "Limite de Chandrasekhar",
+      "wrongs": [
+        "Limite de Tolman-Oppenheimer-Volkoff",
+        "Raio de Schwarzschild",
+        "Limite de Eddington"
+      ]
+    },
+    "en": {
+      "question": "What is the maximum theoretical mass limit (roughly 1.4 solar masses) above which a degenerate white dwarf must collapse into a neutron star?",
+      "correct": "Chandrasekhar Limit",
+      "wrongs": [
+        "Tolman-Oppenheimer-Volkoff Limit",
+        "Schwarzschild Radius",
+        "Eddington Luminosity Limit"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0577",
+    "level": 4,
+    "topic": "História Mundial & Civilizações Antigas",
+    "question": "Qual faraó egípcio da 18ª Dinastia instituiu uma revolução religiosa monoteísta em torno do culto exclusivo do disco solar Aton?",
+    "correct": "Aquenáton (Amenófis IV)",
+    "wrongs": [
+      "Ramsés II",
+      "Tutancâmon",
+      "Tutmés III"
+    ],
+    "pt": {
+      "question": "Qual faraó egípcio da 18ª Dinastia instituiu uma revolução religiosa monoteísta em torno do culto exclusivo do disco solar Aton?",
+      "correct": "Aquenáton (Amenófis IV)",
+      "wrongs": [
+        "Ramsés II",
+        "Tutancâmon",
+        "Tutmés III"
+      ]
+    },
+    "en": {
+      "question": "Which 18th Dynasty Egyptian pharaoh introduced a short-lived monotheistic religious revolution centered exclusively on the Aten sun disc?",
+      "correct": "Akhenaten (Amenhotep IV)",
+      "wrongs": [
+        "Ramesses II",
+        "Tutankhamun",
+        "Thutmose III"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0578",
+    "level": 4,
+    "topic": "Química, Física & Elementos",
+    "question": "Qual elemento químico superpesado sintético de número atômico 118, batizado em homenagem a Yuri Oganessian, encerra o 7º período da Tabela Periódica?",
+    "correct": "Oganessônio (Og)",
+    "wrongs": [
+      "Tennesso (Ts)",
+      "Livermório (Lv)",
+      "Moscóvio (Mc)"
+    ],
+    "pt": {
+      "question": "Qual elemento químico superpesado sintético de número atômico 118, batizado em homenagem a Yuri Oganessian, encerra o 7º período da Tabela Periódica?",
+      "correct": "Oganessônio (Og)",
+      "wrongs": [
+        "Tennesso (Ts)",
+        "Livermório (Lv)",
+        "Moscóvio (Mc)"
+      ]
+    },
+    "en": {
+      "question": "Which synthetic superheavy transactinide element with atomic number 118 completes the 7th period of the Periodic Table?",
+      "correct": "Oganesson (Og)",
+      "wrongs": [
+        "Tennessine (Ts)",
+        "Livermorium (Lv)",
+        "Moscovium (Mc)"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0579",
+    "level": 4,
+    "topic": "Geografia Global & Capitais",
+    "question": "Qual é a capital oficial do Cazaquistão que foi renomeada temporariamente para Nur-Sultan entre 2019 e 2022 antes de retomar seu nome?",
+    "correct": "Astana",
+    "wrongs": [
+      "Almaty",
+      "Shymkent",
+      "Bishkek"
+    ],
+    "pt": {
+      "question": "Qual é a capital oficial do Cazaquistão que foi renomeada temporariamente para Nur-Sultan entre 2019 e 2022 antes de retomar seu nome?",
+      "correct": "Astana",
+      "wrongs": [
+        "Almaty",
+        "Shymkent",
+        "Bishkek"
+      ]
+    },
+    "en": {
+      "question": "What is the official national capital of Kazakhstan, temporarily styled Nur-Sultan between 2019 and 2022 before returning to its prior name?",
+      "correct": "Astana",
+      "wrongs": [
+        "Almaty",
+        "Shymkent",
+        "Bishkek"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0580",
+    "level": 4,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual tecnologia biotecnológica baseada no sistema imune adaptativo de bactérias revolucionou a engenharia genética com edição precisa de genomas?",
+    "correct": "CRISPR-Cas9",
+    "wrongs": [
+      "PCR quantitativo (qPCR)",
+      "Eletroforese em gel",
+      "Western Blotting"
+    ],
+    "pt": {
+      "question": "Qual tecnologia biotecnológica baseada no sistema imune adaptativo de bactérias revolucionou a engenharia genética com edição precisa de genomas?",
+      "correct": "CRISPR-Cas9",
+      "wrongs": [
+        "PCR quantitativo (qPCR)",
+        "Eletroforese em gel",
+        "Western Blotting"
+      ]
+    },
+    "en": {
+      "question": "Which gene-editing biotechnology derived from bacterial adaptive immune mechanisms enables RNA-guided precision genome targeting?",
+      "correct": "CRISPR-Cas9",
+      "wrongs": [
+        "Quantitative PCR (qPCR)",
+        "Agarose Gel Electrophoresis",
+        "Western Blotting"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0581",
+    "level": 4,
+    "topic": "Literatura Clássica & Mitologia",
+    "question": "Na epopeia suméria \"Epopeia de Gilgámesh\", qual herói sobreviveu ao Grande Dilúvio enviado pelos deuses recebendo a imortalidade?",
+    "correct": "Utnapishtim",
+    "wrongs": [
+      "Enkidu",
+      "Humbaba",
+      "Lugalbanda"
+    ],
+    "pt": {
+      "question": "Na epopeia suméria \"Epopeia de Gilgámesh\", qual herói sobreviveu ao Grande Dilúvio enviado pelos deuses recebendo a imortalidade?",
+      "correct": "Utnapishtim",
+      "wrongs": [
+        "Enkidu",
+        "Humbaba",
+        "Lugalbanda"
+      ]
+    },
+    "en": {
+      "question": "In the ancient Mesopotamian Epic of Gilgamesh, which sage survived the Great Deluge to receive immortality from the gods?",
+      "correct": "Utnapishtim",
+      "wrongs": [
+        "Enkidu",
+        "Humbaba",
+        "Lugalbanda"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0582",
+    "level": 4,
+    "topic": "Tecnologia, Internet & Computação",
+    "question": "No paper seminal de 2017 \"Attention Is All You Need\", qual arquitetura neural de deep learning foi introduzida revolucionando o processamento de linguagem natural?",
+    "correct": "Transformers",
+    "wrongs": [
+      "Redes Neurais Convolucionais (CNN)",
+      "Redes Neurais Recorrentes (LSTM)",
+      "Máquinas de Vetores de Suporte (SVM)"
+    ],
+    "pt": {
+      "question": "No paper seminal de 2017 \"Attention Is All You Need\", qual arquitetura neural de deep learning foi introduzida revolucionando o processamento de linguagem natural?",
+      "correct": "Transformers",
+      "wrongs": [
+        "Redes Neurais Convolucionais (CNN)",
+        "Redes Neurais Recorrentes (LSTM)",
+        "Máquinas de Vetores de Suporte (SVM)"
+      ]
+    },
+    "en": {
+      "question": "In the 2017 landmark research paper \"Attention Is All You Need\", which deep learning architecture was introduced powering modern LLMs?",
+      "correct": "Transformers",
+      "wrongs": [
+        "Convolutional Neural Networks (CNN)",
+        "Recurrent Neural Networks (LSTM)",
+        "Support Vector Machines (SVM)"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0583",
+    "level": 4,
+    "topic": "Lógica, Charadas & Raciocínio Matemático",
+    "question": "Qual célebre problema não resolvido da matemática teórica postula que todos os zeros não triviais da função Zeta têm parte real igual a 1/2?",
+    "correct": "Hipótese de Riemann",
+    "wrongs": [
+      "Último Teorema de Fermat",
+      "Conjectura de Goldbach",
+      "Conjectura de Collatz"
+    ],
+    "pt": {
+      "question": "Qual célebre problema não resolvido da matemática teórica postula que todos os zeros não triviais da função Zeta têm parte real igual a 1/2?",
+      "correct": "Hipótese de Riemann",
+      "wrongs": [
+        "Último Teorema de Fermat",
+        "Conjectura de Goldbach",
+        "Conjectura de Collatz"
+      ]
+    },
+    "en": {
+      "question": "Which millennium prize mathematics problem conjectures that all non-trivial zeros of the analytic zeta function have real part equal to 1/2?",
+      "correct": "Riemann Hypothesis",
+      "wrongs": [
+        "Fermat's Last Theorem",
+        "Goldbach's Conjecture",
+        "Collatz Conjecture"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0584",
+    "level": 4,
+    "topic": "Música, Arte & Instrumentos",
+    "question": "Qual luthier italiano do século XVII de Cremona criou violinos míticos cujos instrumentos alcançam dezenas de milhões de dólares em leilões?",
+    "correct": "Antonio Stradivari (Stradivarius)",
+    "wrongs": [
+      "Giuseppe Guarneri",
+      "Andrea Amati",
+      "Nicola Bergonzi"
+    ],
+    "pt": {
+      "question": "Qual luthier italiano do século XVII de Cremona criou violinos míticos cujos instrumentos alcançam dezenas de milhões de dólares em leilões?",
+      "correct": "Antonio Stradivari (Stradivarius)",
+      "wrongs": [
+        "Giuseppe Guarneri",
+        "Andrea Amati",
+        "Nicola Bergonzi"
+      ]
+    },
+    "en": {
+      "question": "Which 17th-century Cremonese master luthier crafted immortal string instruments commanding record tens of millions at private auctions?",
+      "correct": "Antonio Stradivari (Stradivarius)",
+      "wrongs": [
+        "Giuseppe Guarneri",
+        "Andrea Amati",
+        "Nicola Bergonzi"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0585",
+    "level": 4,
+    "topic": "História Mundial & Civilizações Antigas",
+    "question": "Qual batalha em 1260 na Galileia marcou a primeira vez que um avanço do Império Mongol foi permanentemente contido por forças mamelucas?",
+    "correct": "Batalha de Ain Jalut",
+    "wrongs": [
+      "Batalha de Mohi",
+      "Batalha de Yarmouk",
+      "Cerco de Bagdá"
+    ],
+    "pt": {
+      "question": "Qual batalha em 1260 na Galileia marcou a primeira vez que um avanço do Império Mongol foi permanentemente contido por forças mamelucas?",
+      "correct": "Batalha de Ain Jalut",
+      "wrongs": [
+        "Batalha de Mohi",
+        "Batalha de Yarmouk",
+        "Cerco de Bagdá"
+      ]
+    },
+    "en": {
+      "question": "Which 1260 battle in the Jezreel Valley marked the first decisive permanent military defeat halting the westward expansion of the Mongol Empire?",
+      "correct": "Battle of Ain Jalut",
+      "wrongs": [
+        "Battle of Mohi",
+        "Battle of Yarmouk",
+        "Siege of Baghdad"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0586",
+    "level": 4,
+    "topic": "Química, Física & Elementos",
+    "question": "No Modelo Padrão da física de partículas, qual bóson fundamental de calibre (spin 0), comprovado no CERN em 2012, confere massa às partículas elementares?",
+    "correct": "Bóson de Higgs",
+    "wrongs": [
+      "Bóson W",
+      "Bóson Z",
+      "Glúon"
+    ],
+    "pt": {
+      "question": "No Modelo Padrão da física de partículas, qual bóson fundamental de calibre (spin 0), comprovado no CERN em 2012, confere massa às partículas elementares?",
+      "correct": "Bóson de Higgs",
+      "wrongs": [
+        "Bóson W",
+        "Bóson Z",
+        "Glúon"
+      ]
+    },
+    "en": {
+      "question": "In the Standard Model of particle physics, which scalar boson discovered at CERN in 2012 explains the origin of elementary particle mass?",
+      "correct": "Higgs Boson",
+      "wrongs": [
+        "W Boson",
+        "Z Boson",
+        "Gluon"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0587",
+    "level": 4,
+    "topic": "Culinária Mundial & Gastronomia",
+    "question": "Qual técnica culinária desenvolvida por Hervé This e Ferran Adrià utiliza alginato de sódio e cloreto de cálcio para encapsular líquidos em esferas finas?",
+    "correct": "Esferificação (Gastronomia Molecular)",
+    "wrongs": [
+      "Sous-vide térmico",
+      "Liofilização a vácuo",
+      "Clarificação por gelificação"
+    ],
+    "pt": {
+      "question": "Qual técnica culinária desenvolvida por Hervé This e Ferran Adrià utiliza alginato de sódio e cloreto de cálcio para encapsular líquidos em esferas finas?",
+      "correct": "Esferificação (Gastronomia Molecular)",
+      "wrongs": [
+        "Sous-vide térmico",
+        "Liofilização a vácuo",
+        "Clarificação por gelificação"
+      ]
+    },
+    "en": {
+      "question": "Which avant-garde culinary technique pioneered by Ferran Adrià utilizes sodium alginate and calcium baths to encapsulate liquids within gelatinous membranes?",
+      "correct": "Spherification (Molecular Gastronomy)",
+      "wrongs": [
+        "Thermal Sous-vide",
+        "Vacuum Freeze-Drying",
+        "Gelification Clarification"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0588",
+    "level": 4,
+    "topic": "Jogos, Videogames & E-Sports",
+    "question": "Qual lendário programa de Inteligência Artificial da DeepMind derrotou o campeão mundial de Go, Lee Sedol, por 4 a 1 em março de 2016?",
+    "correct": "AlphaGo",
+    "wrongs": [
+      "Deep Blue",
+      "Stockfish",
+      "OpenAI Five"
+    ],
+    "pt": {
+      "question": "Qual lendário programa de Inteligência Artificial da DeepMind derrotou o campeão mundial de Go, Lee Sedol, por 4 a 1 em março de 2016?",
+      "correct": "AlphaGo",
+      "wrongs": [
+        "Deep Blue",
+        "Stockfish",
+        "OpenAI Five"
+      ]
+    },
+    "en": {
+      "question": "Which DeepMind reinforcement learning system defeated legendary 9-dan Go master Lee Sedol 4-1 in an iconic historic match in 2016?",
+      "correct": "AlphaGo",
+      "wrongs": [
+        "Deep Blue",
+        "Stockfish",
+        "OpenAI Five"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0589",
+    "level": 4,
+    "topic": "Geografia Global & Capitais",
+    "question": "Qual é o ponto mais profundo da superfície da crosta terrestre, situado na Fossa das Marianas a cerca de 11.000 metros abaixo do nível do mar?",
+    "correct": "Depressão Challenger (Challenger Deep)",
+    "wrongs": [
+      "Fossa de Porto Rico",
+      "Fossa de Java",
+      "Abismo de Milwaukee"
+    ],
+    "pt": {
+      "question": "Qual é o ponto mais profundo da superfície da crosta terrestre, situado na Fossa das Marianas a cerca de 11.000 metros abaixo do nível do mar?",
+      "correct": "Depressão Challenger (Challenger Deep)",
+      "wrongs": [
+        "Fossa de Porto Rico",
+        "Fossa de Java",
+        "Abismo de Milwaukee"
+      ]
+    },
+    "en": {
+      "question": "What is the deepest surveyed point in Earth's seabed crust, situated in the Mariana Trench roughly 11,000 meters beneath the surface?",
+      "correct": "Challenger Deep",
+      "wrongs": [
+        "Puerto Rico Trench",
+        "Java Trench",
+        "Milwaukee Deep"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0590",
+    "level": 4,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual filo de animais microscópicos extremófilos de oito patas pode sobreviver ao vácuo espacial, radiação gama e temperaturas perto do zero absoluto?",
+    "correct": "Tardígrados (Tardigrada)",
+    "wrongs": [
+      "Rotíferos (Rotifera)",
+      "Nematoides (Nematoda)",
+      "Platelmintos"
+    ],
+    "pt": {
+      "question": "Qual filo de animais microscópicos extremófilos de oito patas pode sobreviver ao vácuo espacial, radiação gama e temperaturas perto do zero absoluto?",
+      "correct": "Tardígrados (Tardigrada)",
+      "wrongs": [
+        "Rotíferos (Rotifera)",
+        "Nematoides (Nematoda)",
+        "Platelmintos"
+      ]
+    },
+    "en": {
+      "question": "Which micro-animal phylum of eight-legged extremophiles can survive exposure to outer space vacuum, ionizing radiation, and cryogenic temperatures?",
+      "correct": "Tardigrades (Tardigrada)",
+      "wrongs": [
+        "Rotifers (Rotifera)",
+        "Nematodes (Nematoda)",
+        "Platyhelminthes"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0591",
+    "level": 4,
+    "topic": "Cultura Pop, Cinema & Quadrinhos",
+    "question": "No romance clássico cyberpunk \"Neuromancer\" de 1984 de William Gibson, qual é a poderosa inteligência artificial que busca se fundir com Wintermute?",
+    "correct": "Neuromancer",
+    "wrongs": [
+      "HAL 9000",
+      "Skynet",
+      "Shodan"
+    ],
+    "pt": {
+      "question": "No romance clássico cyberpunk \"Neuromancer\" de 1984 de William Gibson, qual é a poderosa inteligência artificial que busca se fundir com Wintermute?",
+      "correct": "Neuromancer",
+      "wrongs": [
+        "HAL 9000",
+        "Skynet",
+        "Shodan"
+      ]
+    },
+    "en": {
+      "question": "In William Gibson's seminal 1984 cyberpunk novel \"Neuromancer\", which artificial intelligence seeks convergence with Wintermute?",
+      "correct": "Neuromancer",
+      "wrongs": [
+        "HAL 9000",
+        "Skynet",
+        "Shodan"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0592",
+    "level": 4,
+    "topic": "Tecnologia, Internet & Computação",
+    "question": "Qual algoritmo criptográfico de consenso descentralizado foi introduzido no whitepaper do Bitcoin publicado sob o pseudônimo Satoshi Nakamoto em 2008?",
+    "correct": "Prova de Trabalho (Proof of Work - PoW)",
+    "wrongs": [
+      "Prova de Participação (Proof of Stake)",
+      "Tolerância a Falhas Bizantinas Prática",
+      "Raft Consensus"
+    ],
+    "pt": {
+      "question": "Qual algoritmo criptográfico de consenso descentralizado foi introduzido no whitepaper do Bitcoin publicado sob o pseudônimo Satoshi Nakamoto em 2008?",
+      "correct": "Prova de Trabalho (Proof of Work - PoW)",
+      "wrongs": [
+        "Prova de Participação (Proof of Stake)",
+        "Tolerância a Falhas Bizantinas Prática",
+        "Raft Consensus"
+      ]
+    },
+    "en": {
+      "question": "Which consensus protocol utilizing hash puzzle difficulty was introduced in the 2008 Bitcoin whitepaper by Satoshi Nakamoto?",
+      "correct": "Proof of Work (PoW)",
+      "wrongs": [
+        "Proof of Stake (PoS)",
+        "Practical Byzantine Fault Tolerance",
+        "Raft Consensus"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0593",
+    "level": 4,
+    "topic": "Literatura Clássica & Mitologia",
+    "question": "Qual filósofo pré-socrático postulou que a substância primordial do cosmos (Arkhé) é o fluxo contínuo e a mudança, sintetizado na máxima \"tudo flui\" (Panta Rhei)?",
+    "correct": "Heráclito de Éfeso",
+    "wrongs": [
+      "Parmênides de Eleia",
+      "Tales de Mileto",
+      "Anaximandro"
+    ],
+    "pt": {
+      "question": "Qual filósofo pré-socrático postulou que a substância primordial do cosmos (Arkhé) é o fluxo contínuo e a mudança, sintetizado na máxima \"tudo flui\" (Panta Rhei)?",
+      "correct": "Heráclito de Éfeso",
+      "wrongs": [
+        "Parmênides de Eleia",
+        "Tales de Mileto",
+        "Anaximandro"
+      ]
+    },
+    "en": {
+      "question": "Which pre-Socratic Greek philosopher argued that the fundamental nature of the universe is constant flux and strife, epitomized in \"Panta Rhei\"?",
+      "correct": "Heraclitus of Ephesus",
+      "wrongs": [
+        "Parmenides of Elea",
+        "Thales of Miletus",
+        "Anaximander"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0594",
+    "level": 4,
+    "topic": "Química, Física & Elementos",
+    "question": "Qual constante física fundamental simbolizada por h (ou ℏ quando reduzida) governa a quantização de energia no universo microscópico?",
+    "correct": "Constante de Planck",
+    "wrongs": [
+      "Constante de Boltzmann",
+      "Constante de Rydberg",
+      "Permissividade do Vácuo"
+    ],
+    "pt": {
+      "question": "Qual constante física fundamental simbolizada por h (ou ℏ quando reduzida) governa a quantização de energia no universo microscópico?",
+      "correct": "Constante de Planck",
+      "wrongs": [
+        "Constante de Boltzmann",
+        "Constante de Rydberg",
+        "Permissividade do Vácuo"
+      ]
+    },
+    "en": {
+      "question": "Which fundamental physical constant symbolized by h sets the scale for energy and quantum mechanical action in microscopic systems?",
+      "correct": "Planck Constant",
+      "wrongs": [
+        "Boltzmann Constant",
+        "Rydberg Constant",
+        "Vacuum Permittivity"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0595",
+    "level": 4,
+    "topic": "História Mundial & Civilizações Antigas",
+    "question": "Qual imperador romano de origem berbere fundou a Dinastia Severa e faleceu durante campanha militar em Eboraco (atual York) em 211 d.C.?",
+    "correct": "Sétimo Severo",
+    "wrongs": [
+      "Caracala",
+      "Marco Aurélio",
+      "Domiciano"
+    ],
+    "pt": {
+      "question": "Qual imperador romano de origem berbere fundou a Dinastia Severa e faleceu durante campanha militar em Eboraco (atual York) em 211 d.C.?",
+      "correct": "Sétimo Severo",
+      "wrongs": [
+        "Caracala",
+        "Marco Aurélio",
+        "Domiciano"
+      ]
+    },
+    "en": {
+      "question": "Which Roman emperor of North African Punic descent founded the Severan dynasty and passed away campaigning in Eboracum (York) in 211 AD?",
+      "correct": "Septimius Severus",
+      "wrongs": [
+        "Caracalla",
+        "Marcus Aurelius",
+        "Domitian"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0596",
+    "level": 4,
+    "topic": "Ciência Geral & Astronomia",
+    "question": "Qual efeito óptico astronômico predito pela Relatividade Geral curva e amplia a luz de galáxias distantes pela presença de um objeto maciço no primeiro plano?",
+    "correct": "Lente Gravitacional",
+    "wrongs": [
+      "Efeito Doppler Relativístico",
+      "Aberração Estelar",
+      "Radiação de Hawking"
+    ],
+    "pt": {
+      "question": "Qual efeito óptico astronômico predito pela Relatividade Geral curva e amplia a luz de galáxias distantes pela presença de um objeto maciço no primeiro plano?",
+      "correct": "Lente Gravitacional",
+      "wrongs": [
+        "Efeito Doppler Relativístico",
+        "Aberração Estelar",
+        "Radiação de Hawking"
+      ]
+    },
+    "en": {
+      "question": "Which astronomical phenomenon predicted by General Relativity deflects and magnifies light from background cosmic sources around massive foreground matter?",
+      "correct": "Gravitational Lensing",
+      "wrongs": [
+        "Relativistic Doppler Effect",
+        "Stellar Aberration",
+        "Hawking Radiation"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0597",
+    "level": 4,
+    "topic": "Geografia Global & Capitais",
+    "question": "Qual é a capital administrativa e sede do governo executivo da Bolívia, localizada a mais de 3.600 metros de altitude nos Andes?",
+    "correct": "La Paz",
+    "wrongs": [
+      "Sucre",
+      "Santa Cruz de la Sierra",
+      "Cochabamba"
+    ],
+    "pt": {
+      "question": "Qual é a capital administrativa e sede do governo executivo da Bolívia, localizada a mais de 3.600 metros de altitude nos Andes?",
+      "correct": "La Paz",
+      "wrongs": [
+        "Sucre",
+        "Santa Cruz de la Sierra",
+        "Cochabamba"
+      ]
+    },
+    "en": {
+      "question": "Which Andean city serves as the official seat of government and executive capital of Bolivia at an altitude over 3,600 meters?",
+      "correct": "La Paz",
+      "wrongs": [
+        "Sucre",
+        "Santa Cruz de la Sierra",
+        "Cochabamba"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0598",
+    "level": 4,
+    "topic": "Biologia, Animais & Natureza",
+    "question": "Qual estrutura celular membranosa nas células vegetais e fungos regula a pressão de turgor celular e armazena compostos orgânicos secundários?",
+    "correct": "Vacúolo Central",
+    "wrongs": [
+      "Cloroplasto",
+      "Parede Celular Secundária",
+      "Peroxissomo"
+    ],
+    "pt": {
+      "question": "Qual estrutura celular membranosa nas células vegetais e fungos regula a pressão de turgor celular e armazena compostos orgânicos secundários?",
+      "correct": "Vacúolo Central",
+      "wrongs": [
+        "Cloroplasto",
+        "Parede Celular Secundária",
+        "Peroxissomo"
+      ]
+    },
+    "en": {
+      "question": "Which large membrane-bound organelle inside plant and fungal cells governs internal turgor hydrostatic pressure and metabolic storage?",
+      "correct": "Central Vacuole",
+      "wrongs": [
+        "Chloroplast",
+        "Secondary Cell Wall",
+        "Peroxisome"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0599",
+    "level": 4,
+    "topic": "Música, Arte & Instrumentos",
+    "question": "Qual técnica vanguardista de composição musical desenvolvida por Arnold Schoenberg no início do século XX organiza as 12 notas da escala cromática em séries sem centro tonal?",
+    "correct": "Dodecafonismo (Serialismo de 12 Sons)",
+    "wrongs": [
+      "Politonalidade",
+      "Música Concreta",
+      "Minimalismo Repetitivo"
+    ],
+    "pt": {
+      "question": "Qual técnica vanguardista de composição musical desenvolvida por Arnold Schoenberg no início do século XX organiza as 12 notas da escala cromática em séries sem centro tonal?",
+      "correct": "Dodecafonismo (Serialismo de 12 Sons)",
+      "wrongs": [
+        "Politonalidade",
+        "Música Concreta",
+        "Minimalismo Repetitivo"
+      ]
+    },
+    "en": {
+      "question": "Which early 20th-century avant-garde compositional method pioneered by Arnold Schoenberg treats all twelve chromatic pitch classes with equal importance?",
+      "correct": "Twelve-Tone Technique (Dodecaphony)",
+      "wrongs": [
+        "Polytonality",
+        "Musique Concrète",
+        "Harmonic Minimalism"
+      ]
+    }
+  },
+  {
+    "id": "quiz_0600",
+    "level": 4,
+    "topic": "História Mundial & Civilizações Antigas",
+    "question": "Em 1453, a queda de qual lendária capital imperial milenar para as forças do sultão otomano Mehmed II marcou simbolicamente o fim da Idade Média?",
+    "correct": "Constantinopla (Império Bizantino)",
+    "wrongs": [
+      "Alexandria",
+      "Antioquia",
+      "Atenas"
+    ],
+    "pt": {
+      "question": "Em 1453, a queda de qual lendária capital imperial milenar para as forças do sultão otomano Mehmed II marcou simbolicamente o fim da Idade Média?",
+      "correct": "Constantinopla (Império Bizantino)",
+      "wrongs": [
+        "Alexandria",
+        "Antioquia",
+        "Atenas"
+      ]
+    },
+    "en": {
+      "question": "In 1453, the fall of which thousand-year imperial capital to Ottoman forces under Sultan Mehmed II symbolically signaled the close of the Middle Ages?",
+      "correct": "Constantinople (Byzantine Empire)",
+      "wrongs": [
+        "Alexandria",
+        "Antioch",
+        "Athens"
+      ]
+    }
   }
 ]

@@ -9,7 +9,10 @@ const {
 } = require('discord.js');
 const professions = require('../services/professions');
 const {
+  claimProjectBonus,
   finishWork,
+  getMasteryBonusPercent,
+  resolveCorruptionDilemma,
   getUserAccount,
   getWorkStatus,
   startWork,
@@ -30,13 +33,25 @@ const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 
 const GENERATED_FILE = path.join(__dirname, '../data/generated_work_minigames.json');
 
+let cachedGeneratedMinigames = null;
+let lastGeneratedMinigamesMtime = 0;
+
 function loadGeneratedMinigames() {
-  if (fs.existsSync(GENERATED_FILE)) {
-    try {
-      return JSON.parse(fs.readFileSync(GENERATED_FILE, 'utf8'));
-    } catch (_) {}
-  }
-  return {};
+  try {
+    if (fs.existsSync(GENERATED_FILE)) {
+      const stats = fs.statSync(GENERATED_FILE);
+      if (cachedGeneratedMinigames && stats.mtimeMs === lastGeneratedMinigamesMtime) {
+        return cachedGeneratedMinigames;
+      }
+      const data = JSON.parse(fs.readFileSync(GENERATED_FILE, 'utf8'));
+      if (data && typeof data === 'object') {
+        cachedGeneratedMinigames = data;
+        lastGeneratedMinigamesMtime = stats.mtimeMs;
+        return cachedGeneratedMinigames;
+      }
+    }
+  } catch (_) {}
+  return cachedGeneratedMinigames || {};
 }
 
 const WORK_MINIMUM = 15;
@@ -1960,14 +1975,446 @@ function shuffleArray(array) {
   return arr;
 }
 
+function getQuestionKey(game) {
+  if (!game) return '';
+  const str = String(game.pt?.scenario || game.scenario || game.en?.scenario || game.correct || '').trim();
+  return str.split('\n')[0].replace(/[*_#`]/g, '').trim().slice(0, 80);
+}
+
+
+// Sessões ativas de envelopes de RH em RAM
+const activeEnvelopeSessions = new Map();
+
+function generateEnvelopePrizes() {
+  const tier1 = { tier: 1, type: 'coins', amount: 35 };
+  const tier2 = { tier: 2, type: 'coins', amount: 75 };
+  const isBean = Math.random() < 0.20;
+  const tier3 = isBean
+    ? { tier: 3, type: 'beans', amount: 1 }
+    : { tier: 3, type: 'coins', amount: 120 };
+
+  return shuffleArray([tier1, tier2, tier3]);
+}
+
+function formatPrize(prize, lang = 'pt') {
+  if (prize.type === 'beans') {
+    return t(
+      prize.amount > 1 ? 'workMinigame.magicBeansRewardPlural' : 'workMinigame.magicBeanReward',
+      lang,
+      { amount: prize.amount }
+    );
+  }
+  return t('workMinigame.coinsReward', lang, { amount: prize.amount });
+}
+
+async function handleEnvelopeInteraction(interaction) {
+  const parts = interaction.customId.split(':');
+  const chosenKey = parts[1]; // 'A', 'B' ou 'C'
+  const sessionUserId = parts[2];
+  
+
+  if (interaction.user.id !== sessionUserId) {
+    return interaction.reply({
+      content: t('workMinigame.otherUserSession', interaction),
+      flags: 64,
+    });
+  }
+
+  const session = activeEnvelopeSessions.get(sessionUserId);
+  if (!session) {
+    return interaction.reply({
+      content: t('workMinigame.expiredEnvelope', interaction),
+      flags: 64,
+    });
+  }
+
+  activeEnvelopeSessions.delete(sessionUserId);
+
+  const lang = session.lang || getLanguage(interaction);
+  const chosenPrize = session.envelopes[chosenKey];
+  const claimResult = claimProjectBonus(sessionUserId, chosenPrize);
+
+  const envelopeKeys = ['A', 'B', 'C'];
+  const rareKey = envelopeKeys.find((k) => session.envelopes[k].tier === 3) || 'A';
+  const rarePrize = session.envelopes[rareKey];
+
+  let nearMissNote = '';
+  if (chosenKey === rareKey) {
+    nearMissNote = t('workMinigame.nearMissRarest', lang);
+  } else if (chosenPrize.tier === 2) {
+    nearMissNote = t('workMinigame.nearMissClose', lang, {
+      letter: rareKey,
+      reward: formatPrize(rarePrize, lang),
+    });
+  } else {
+    nearMissNote = t('workMinigame.nearMissMissed', lang, {
+      letter: rareKey,
+      reward: formatPrize(rarePrize, lang),
+    });
+  }
+
+  const otherKeys = envelopeKeys.filter((k) => k !== chosenKey);
+  const revealLines = otherKeys.map((k) => {
+    return t('workMinigame.envelopeRevealLine', lang, {
+      letter: k,
+      reward: formatPrize(session.envelopes[k], lang),
+    });
+  });
+
+  const balanceLine =
+    chosenPrize.type === 'beans'
+      ? t('workMinigame.envelopeBeanBalanceLine', lang, { beans: claimResult.magicBeans })
+      : t('workMinigame.balanceLine', lang, { balance: formatCoins(claimResult.balance, lang) });
+
+  const desc = [
+    t('workMinigame.envelopeRewardChosen', lang, {
+      letter: chosenKey,
+      reward: formatPrize(chosenPrize, lang),
+    }),
+    balanceLine,
+    '',
+    t('workMinigame.otherEnvelopesHeader', lang),
+    ...revealLines,
+    '',
+    nearMissNote,
+  ];
+
+  const envelopeEmbed = new EmbedBuilder()
+    .setColor(0xF59E0B)
+    .setTitle(t('workMinigame.envelopeBonusTitle', lang))
+    .setDescription(desc.join('\n'))
+    .setFooter({ text: 'Pyxie' })
+    .setTimestamp();
+
+  const disabledEnvRow = new ActionRowBuilder();
+  envelopeKeys.forEach((key) => {
+    const isChosen = key === chosenKey;
+    disabledEnvRow.addComponents(
+      new ButtonBuilder()
+        .setCustomId(`work_env_done:${key}:${sessionUserId}`)
+        .setLabel(t('workMinigame.envelopeButtonLabel', lang, { letter: key }))
+        .setStyle(isChosen ? ButtonStyle.Success : ButtonStyle.Secondary)
+        .setDisabled(true)
+    );
+  });
+
+  const prevRows = (interaction.message?.components || []).slice(0, -1);
+  const updatedComponents = [...prevRows, disabledEnvRow];
+
+  const existingEmbeds = interaction.message?.embeds || [];
+  const finalEmbeds = existingEmbeds.length > 0
+    ? [EmbedBuilder.from(existingEmbeds[0]), envelopeEmbed]
+    : [envelopeEmbed];
+
+  return interaction.update({ embeds: finalEmbeds, components: updatedComponents });
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DILEMAS DE CORRUPÇÃO / PROPOSTA SOMBRIA (Papers, Please & Reigns)
+// ══════════════════════════════════════════════════════════════════════════════
+const PROFESSION_DILEMMAS = {
+  programador: {
+    pt: 'Um intermediário da dark web oferece propina para você injetar uma backdoor silenciosa no servidor central da guilda.',
+    en: 'A dark web broker offers a bribe for you to inject a silent backdoor into the guild\'s central server.',
+  },
+  cozinheiro: {
+    pt: 'Um fornecedor duvidoso oferece um lote de carne de monstro vencida com desconto e uma comissão secreta para você aprová-la no banquete.',
+    en: 'A shady vendor offers a batch of expired monster meat at a discount plus a secret commission for you to approve it for the banquet.',
+  },
+  artista: {
+    pt: 'Um marchante desonesto oferece uma mala de moedas para você pintar e certificar uma réplica falsa como original de um mestre renascentista.',
+    en: 'A crooked art dealer offers a suitcase of coins for you to paint and certify a fake replica as a Renaissance master original.',
+  },
+  minerador: {
+    pt: 'Um garimpeiro clandestino oferece um suborno pesado para você ocultar um veio secreto de diamantes no relatório oficial da mina.',
+    en: 'An illegal prospector offers a heavy bribe for you to conceal a secret diamond vein from the mine\'s official report.',
+  },
+  alquimista: {
+    pt: 'Um mercador clandestino oferece um saco de moedas reluzentes para você falsificar o laudo de pureza de uma poção adulterada.',
+    en: 'A black-market merchant offers a pouch of gleaming coins for you to forge the purity certificate of an adulterated potion.',
+  },
+  pescador: {
+    pt: 'Pescadores predatórios oferecem suborno para você desativar as boias de monitoramento do santuário marítimo protegido.',
+    en: 'Poachers offer a bribe for you to disable the monitoring buoys of the protected marine sanctuary.',
+  },
+  detetive: {
+    pt: 'O principal suspeito de um roubo milionário oferece propina para você queimar a evidência-chave antes do julgamento.',
+    en: 'The prime suspect of a million-coin heist offers a bribe for you to burn the key evidence before trial.',
+  },
+  fazendeiro: {
+    pt: 'Um atravessador duvidoso oferece pagar o dobro se você usar pesticidas proibidos e falsificar o selo orgânico da colheita.',
+    en: 'A crooked middleman offers double pay if you use banned pesticides and fake the crop\'s organic seal.',
+  },
+  agricultor: {
+    pt: 'Um sindicato clandestino quer pagar uma fortuna para você misturar sementes geneticamente mutantes nos silos comunitários.',
+    en: 'An illicit syndicate wants to pay a fortune for you to blend genetically mutated seeds into the community silos.',
+  },
+  professor: {
+    pt: 'Pais nobres e influentes oferecem um suborno generoso para você vazar o gabarito da prova final e aprovar o herdeiro deles.',
+    en: 'Influential noble parents offer a generous bribe for you to leak the final exam key and pass their failing heir.',
+  },
+  medico: {
+    pt: 'Um aristocrata oferece uma bolada para você emitir laudos médicos fraudulentos e desviar elixires raros da farmácia real.',
+    en: 'An aristocrat offers a fortune for you to issue fraudulent medical reports and siphon rare elixirs from the royal apothecary.',
+  },
+  musico: {
+    pt: 'Um produtor predatório oferece dinheiro na mão para você roubar os acordes de um bardo novato e registrar a composição como sua.',
+    en: 'A predatory producer offers cash upfront for you to steal a rookie bard\'s chords and register the song as your own.',
+  },
+  fotografo: {
+    pt: 'Um tabloide sensacionalista oferece uma quantia absurda por fotos comprometedoras de celebridades tiradas sem permissão.',
+    en: 'A sensationalist tabloid offers an absurd sum for compromising celebrity photos taken without permission.',
+  },
+  mecanico: {
+    pt: 'Apostadores de racha ilegal oferecem moedas para você sabotar discretamente a suspensão da carruagem do competidor rival.',
+    en: 'Illegal race gamblers offer coins for you to discreetly sabotage the suspension on the rival racer\'s carriage.',
+  },
+  vendedor: {
+    pt: 'O gerente da loja sugere que você embuta garantias fantasmas e taxas extras ocultas no cartão de clientes desatentos.',
+    en: 'The store manager suggests you slip phantom warranties and hidden fees onto unsuspecting customers\' cards.',
+  },
+  dublador: {
+    pt: 'Um estúdio pirata propõe pagamento em dinheiro vivo para você ceder sua voz a clones de IA sem direitos autorais.',
+    en: 'A bootleg studio offers cash under the table for you to license your voice to uncredited AI voice clones.',
+  },
+  desenvolvedor_jogos: {
+    pt: 'Um investidor ganancioso oferece um bônus gordo para você sabotar os algoritmos de drop das caixas de saque para 0.01%.',
+    en: 'A greedy publisher offers a fat bonus for you to rig the loot box drop rates down to 0.01%.',
+  },
+  psicologo: {
+    pt: 'Um rival corporativo oferece propina para você quebrar o sigilo profissional e vazar as fragilidades emocionais do seu paciente.',
+    en: 'A corporate rival offers a bribe for you to break patient confidentiality and leak your client\'s emotional weaknesses.',
+  },
+  telemarketing: {
+    pt: 'Um golpista de cartas mágicas oferece um pagamento alto pela planilha com os dados pessoais e números de telefone dos clientes.',
+    en: 'A magic card scammer offers a high payout for the database sheet containing client phone numbers and personal details.',
+  },
+  animador_festa: {
+    pt: 'Uma agência concorrente oferece dinheiro para você dar um cano no evento nobre de hoje e deixar a festa sem atração.',
+    en: 'A rival agency offers cash for you to bail on today\'s high-profile event and leave the party with no entertainment.',
+  },
+  advogada: {
+    pt: 'O patrono da acusação propõe uma divisão de honorários ilegais para você perder propositalmente o prazo da petição do seu cliente.',
+    en: 'Opposing counsel proposes an illegal fee split for you to deliberately miss your client\'s court motion deadline.',
+  },
+  mago: {
+    pt: 'Um necromante encapuzado oferece ouro proibido em troca de você desativar as runas de barreira da biblioteca proibida.',
+    en: 'A hooded necromancer offers forbidden gold in exchange for deactivating the barrier runes on the forbidden library.',
+  },
+  ferreiro: {
+    pt: 'Um mercenário oferece moedas para você forjar armaduras com ferro de segunda linha e carimbar o selo de aço valiriano.',
+    en: 'A mercenary offers coins for you to forge armor using scrap iron and stamp it with the royal steel seal.',
+  },
+  rei_rainha: {
+    pt: 'Uma guilda de barões corruptos oferece um baú de joias secretas em troca de um decreto real que isente suas terras de impostos.',
+    en: 'A guild of corrupt barons offers a chest of secret jewels in exchange for a royal decree granting them tax-exempt status.',
+  },
+  domador_feras: {
+    pt: 'Contrabandistas oferecem uma fortuna para você falsificar a guia de transporte e liberar ovos de quimeras para o mercado negro.',
+    en: 'Smugglers offer a fortune for you to fake the manifest and release chimera eggs onto the black market.',
+  },
+  aniquilador_vegetais: {
+    pt: 'Um cartel de mercadores oferece ouro para você despejar pragas alquímicas na horta da cooperativa rival.',
+    en: 'A merchant cartel offers gold for you to unleash alchemical blights upon the rival cooperative\'s vegetable patch.',
+  },
+};
+
+function getDilemmaScenario(professionKey, lang = 'pt') {
+  const item = PROFESSION_DILEMMAS[professionKey] || PROFESSION_DILEMMAS.programador;
+  return item[lang] || item.pt || item.en;
+}
+
+const activeDilemmaSessions = new Map();
+
+async function handleDilemmaInteraction(interaction) {
+  const parts = interaction.customId.split(':');
+  const action = parts[1]; // 'accept' ou 'report'
+  const sessionUserId = parts[2];
+  
+
+  if (interaction.user.id !== sessionUserId) {
+    return interaction.reply({
+      content: t('workMinigame.otherUserSession', interaction),
+      flags: 64,
+    });
+  }
+
+  const session = activeDilemmaSessions.get(sessionUserId);
+  if (!session) {
+    return interaction.reply({
+      content: t('workMinigame.expiredSession', interaction),
+      flags: 64,
+    });
+  }
+
+  activeDilemmaSessions.delete(sessionUserId);
+  const lang = session.lang || getLanguage(interaction);
+  const result = resolveCorruptionDilemma(sessionUserId, action, session.baseSalary);
+
+  const disabledDilemmaRow = new ActionRowBuilder();
+  let acceptStyle = ButtonStyle.Secondary;
+  let reportStyle = ButtonStyle.Secondary;
+
+  if (action === 'accept') {
+    acceptStyle = result.outcome === 'success' ? ButtonStyle.Success : ButtonStyle.Danger;
+  } else {
+    reportStyle = ButtonStyle.Success;
+  }
+
+  disabledDilemmaRow.addComponents(
+    new ButtonBuilder()
+      .setCustomId(`work_dil_done:accept:${sessionUserId}`)
+      .setLabel(t('workDilemma.buttonAccept', lang))
+      .setStyle(acceptStyle)
+      .setDisabled(true),
+    new ButtonBuilder()
+      .setCustomId(`work_dil_done:report:${sessionUserId}`)
+      .setLabel(t('workDilemma.buttonReport', lang))
+      .setStyle(reportStyle)
+      .setDisabled(true)
+  );
+
+  const updatedComponents = [];
+  if (interaction.message?.components && interaction.message.components[0]) {
+    updatedComponents.push(interaction.message.components[0]);
+  }
+  updatedComponents.push(disabledDilemmaRow);
+
+  let embedColor = 0x10B981;
+  let embedTitle = '';
+  let embedDesc = '';
+
+  const descParts = [];
+  if (result.outcome === 'success') {
+    embedColor = 0xF59E0B;
+    embedTitle = t('workDilemma.acceptSuccessTitle', lang);
+    descParts.push(t('workDilemma.acceptSuccessDesc', lang, {
+      bonus: result.bonus,
+      amount: formatCoins(result.amount, lang),
+      balance: formatCoins(result.balance, lang),
+    }));
+  } else if (result.outcome === 'audit') {
+    embedColor = 0xEF4444;
+    embedTitle = t('workDilemma.acceptAuditTitle', lang);
+    descParts.push(t('workDilemma.acceptAuditDesc', lang, {
+      mistakes: result.careerMistakes,
+      balance: formatCoins(result.balance, lang),
+    }));
+    if (result.demoted) {
+      const newRoleTitle = getRoleTitle(session.professionKey, result.careerLevel, lang);
+      descParts.push(
+        '',
+        t('workDilemma.auditDemotedTitle', lang),
+        t('workDilemma.auditDemotedDesc', lang, { role: newRoleTitle })
+      );
+    } else {
+      descParts.push('', t('workDilemma.auditShieldDesc', lang));
+    }
+  } else {
+    embedColor = 0x3B82F6;
+    embedTitle = t('workDilemma.reportSuccessTitle', lang);
+    descParts.push(t('workDilemma.reportSuccessDesc', lang, {
+      bonus: result.bonus,
+      amount: formatCoins(result.amount, lang),
+      balance: formatCoins(result.balance, lang),
+    }));
+    if (result.promoted) {
+      const newRoleTitle = getRoleTitle(session.professionKey, result.careerLevel, lang);
+      descParts.push(
+        '',
+        t('workMinigame.promotedTitle', lang),
+        t('workMinigame.promotedDesc', lang, { role: newRoleTitle })
+      );
+    }
+  }
+
+  if (result.outcome !== 'audit') {
+    if (session.isGoldenShift) {
+      descParts.push(t('workMinigame.goldenShiftBadge', lang));
+    }
+    if (session.isFastResponse) {
+      descParts.push(t('workMinigame.speedBonusBadge', lang));
+    }
+    if (session.masteryBonusPercent > 0) {
+      descParts.push(t('workMinigame.masteryBonusBadge', lang, { percent: session.masteryBonusPercent }));
+    }
+    if (result.projectProgressDisplay) {
+      descParts.push('');
+      if (result.projectCompleted || result.projectProgressDisplay >= 3) {
+        descParts.push(t('workMinigame.projectProgress3', lang));
+      } else if (result.projectProgressDisplay === 2) {
+        descParts.push(t('workMinigame.projectProgress2', lang));
+      } else {
+        descParts.push(t('workMinigame.projectProgress1', lang));
+      }
+    }
+  }
+  embedDesc = descParts.join('\n');
+
+  if (result.projectCompleted) {
+    const prizes = generateEnvelopePrizes();
+    activeEnvelopeSessions.set(sessionUserId, {
+      userId: sessionUserId,
+      lang,
+      envelopes: {
+        A: prizes[0],
+        B: prizes[1],
+        C: prizes[2],
+      },
+      createdAt: Date.now(),
+    });
+
+    const envelopeTimeout = setTimeout(() => {
+      if (activeEnvelopeSessions.has(sessionUserId)) {
+        activeEnvelopeSessions.delete(sessionUserId);
+      }
+    }, 10 * 60 * 1000);
+    if (envelopeTimeout && typeof envelopeTimeout.unref === 'function') {
+      envelopeTimeout.unref();
+    }
+
+    const envelopeRow = new ActionRowBuilder();
+    ['A', 'B', 'C'].forEach((letter) => {
+      envelopeRow.addComponents(
+        new ButtonBuilder()
+          .setCustomId(`work_env:${letter}:${sessionUserId}`)
+          .setLabel(t('workMinigame.envelopeButtonLabel', lang, { letter }))
+          .setStyle(ButtonStyle.Primary)
+      );
+    });
+    updatedComponents.push(envelopeRow);
+  }
+
+  const dilemmaResultEmbed = new EmbedBuilder()
+    .setColor(embedColor)
+    .setTitle(embedTitle)
+    .setDescription(embedDesc)
+    .setFooter({ text: 'Pyxie' })
+    .setTimestamp();
+
+  return interaction.update({ embeds: [dilemmaResultEmbed], components: updatedComponents });
+}
+
 function isWorkInteraction(interaction) {
-  return typeof interaction.customId === 'string' && interaction.customId.startsWith('work_ans:');
+  return (
+    typeof interaction.customId === 'string' &&
+    (interaction.customId.startsWith('work_ans:') || interaction.customId.startsWith('work_env:') || interaction.customId.startsWith('work_dil:'))
+  );
 }
 
 async function handleWorkInteraction(interaction) {
+  if (typeof interaction.customId === 'string' && interaction.customId.startsWith('work_env:')) {
+    return handleEnvelopeInteraction(interaction);
+  }
+  if (typeof interaction.customId === 'string' && interaction.customId.startsWith('work_dil:')) {
+    return handleDilemmaInteraction(interaction);
+  }
+
   const parts = interaction.customId.split(':');
   const selectedIdx = Number(parts[1]);
   const sessionUserId = parts[2];
+  
 
   if (interaction.user.id !== sessionUserId) {
     return interaction.reply({
@@ -1988,20 +2435,47 @@ async function handleWorkInteraction(interaction) {
 
   const lang = session.lang || getLanguage(interaction);
   const isCorrect = selectedIdx === session.correctIndex;
-  const isCriticalBonus = isCorrect && Math.random() < 0.02; // 2% de chance de bônus de Feijão Mágico em acertos
+  const labelLetters = ['A', 'B', 'C', 'D'];
 
-  const result = finishWork(sessionUserId, isCorrect, session.salary, isCriticalBonus);
+  // 1. Cálculo de Bônus de Resposta Rápida (Eficiência de Turno: <= 12 segundos)
+  const elapsedMs = Date.now() - (session.startedAt || Date.now());
+  const isFastResponse = isCorrect && elapsedMs <= 12000;
+
+  // 3. Desabilitação visual dos 4 botões pós-clique
+  const disabledRow = new ActionRowBuilder();
+  labelLetters.forEach((letter, idx) => {
+    let style = ButtonStyle.Secondary;
+    if (idx === session.correctIndex) {
+      style = ButtonStyle.Success; // Verde para alternativa correta
+    } else if (!isCorrect && idx === selectedIdx) {
+      style = ButtonStyle.Danger; // Vermelho para a alternativa errada clicada
+    }
+    disabledRow.addComponents(
+      new ButtonBuilder()
+        .setCustomId(`work_done:${idx}:${sessionUserId}`)
+        .setLabel(`[${letter}]`)
+        .setStyle(style)
+        .setDisabled(true)
+    );
+  });
 
   if (!isCorrect) {
-    const correctLetterPrefix = session.correctLetter ? `**[${session.correctLetter}]** ` : '';
+    // 2. Recompensa de Consolação Educativa ("Ajuda de Custo": 20% do salário, mínimo 5 moedas)
+    const consolationAmount = Math.max(5, Math.round(session.salary * 0.20));
+    const result = finishWork(sessionUserId, false, consolationAmount);
+
+    const chosenLetter = labelLetters[selectedIdx] || '?';
+    const chosenText = (session.choices && session.choices[selectedIdx]) || '';
+
     const desc = [
-      t('workMinigame.wrongMistake', lang),
+      t('workMinigame.encouragingMistake', lang),
       '',
+      t('workMinigame.userChoiceLabel', lang, { letter: chosenLetter, text: chosenText }),
       t('workMinigame.correctAnswerLabel', lang),
-      `> ${correctLetterPrefix}*${session.correctText}*`,
+      `> **[${session.correctLetter}]** *${session.correctText}*`,
       '',
-      t('workMinigame.nextShiftLabel', lang),
-      t('workMinigame.noSalaryText', lang),
+      t('workMinigame.consolationReward', lang, { amount: formatCoins(result.amount, lang) }),
+      t('workMinigame.balanceLine', lang, { balance: formatCoins(result.balance, lang) }),
     ];
 
     if (result.demoted) {
@@ -2011,12 +2485,23 @@ async function handleWorkInteraction(interaction) {
         t('workMinigame.demotedTitle', lang),
         t('workMinigame.demotedDesc', lang, { role: newRoleTitle })
       );
-    } else if (result.careerMistakes > 1) {
+    } else {
       desc.push(
         '',
-        t('workMinigame.mistakeStatus', lang, { streak: result.careerMistakes })
+        t('workMinigame.stabilityShield', lang)
       );
+      if (result.careerMistakes > 1) {
+        desc.push(
+          t('workMinigame.mistakeStatus', lang, { streak: result.careerMistakes })
+        );
+      }
     }
+
+    desc.push(
+      '',
+      t('workMinigame.nextShiftLabel', lang),
+      t('workMinigame.nextShiftInfo', lang)
+    );
 
     const errorEmbed = new EmbedBuilder()
       .setColor(PYXIE_COLORS.crimson || '#ef4444')
@@ -2025,8 +2510,79 @@ async function handleWorkInteraction(interaction) {
       .setFooter({ text: 'Pyxie' })
       .setTimestamp();
 
-    return interaction.update({ embeds: [errorEmbed], components: [] });
+    return interaction.update({ embeds: [errorEmbed], components: [disabledRow] });
   }
+
+  // Acerto: Calcula bônus de agilidade (+15% no salário) se respondeu em até 12s
+  let finalSalary = session.salary;
+  if (isFastResponse) {
+    finalSalary += Math.round(session.salary * 0.15);
+  }
+
+  // Sorteio de 10% para Proposta Sombria / Dilema de Corrupção (Papers, Please & Reigns)
+  // Ocorre em 10% dos turnos para criar evento moral especial (exceto em turnos de conclusão de projeto 3/3)
+  const userAccount = getUserAccount(sessionUserId);
+  const isProjectCompletionShift = (Number(userAccount.projectProgress) || 0) >= 2;
+  const triggerDilemma = !isProjectCompletionShift && (session.triggerDilemma !== undefined ? Boolean(session.triggerDilemma) : (Math.random() < 0.10));
+  if (triggerDilemma) {
+    activeDilemmaSessions.set(sessionUserId, {
+      userId: sessionUserId,
+      professionKey: session.professionKey,
+      professionLabel: session.professionLabel,
+      baseSalary: finalSalary,
+      startedAt: session.startedAt,
+      isGoldenShift: session.isGoldenShift,
+      isFastResponse,
+      masteryBonusPercent: session.masteryBonusPercent,
+      lang,
+      createdAt: Date.now(),
+    });
+
+    const dilemmaTimeout = setTimeout(() => {
+      if (activeDilemmaSessions.has(sessionUserId)) {
+        activeDilemmaSessions.delete(sessionUserId);
+      }
+    }, 5 * 60 * 1000);
+    if (dilemmaTimeout && typeof dilemmaTimeout.unref === 'function') {
+      dilemmaTimeout.unref();
+    }
+
+    const dilemmaScenario = getDilemmaScenario(session.professionKey, lang);
+
+    const dilemmaDesc = [
+      `✅ **${t('workMinigame.successDedication', lang)}**`,
+      '',
+      t('workDilemma.dilemmaAlert', lang),
+      `> *« ${dilemmaScenario} »*`,
+      '',
+      t('workDilemma.choicePrompt', lang),
+      t('workDilemma.optAcceptDesc', lang),
+      t('workDilemma.optReportDesc', lang),
+    ].join('\n');
+
+    const dilemmaEmbed = new EmbedBuilder()
+      .setColor(0x7C3AED)
+      .setTitle(t('workDilemma.embedTitle', lang, { profession: session.professionLabel }))
+      .setDescription(dilemmaDesc)
+      .setFooter({ text: 'Pyxie' })
+      .setTimestamp();
+
+    const dilemmaRow = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`work_dil:accept:${sessionUserId}`)
+        .setLabel(t('workDilemma.buttonAccept', lang))
+        .setStyle(ButtonStyle.Danger),
+      new ButtonBuilder()
+        .setCustomId(`work_dil:report:${sessionUserId}`)
+        .setLabel(t('workDilemma.buttonReport', lang))
+        .setStyle(ButtonStyle.Success)
+    );
+
+    return interaction.update({ embeds: [dilemmaEmbed], components: [disabledRow, dilemmaRow] });
+  }
+
+  const isCriticalBonus = Math.random() < 0.02; // 2% de chance de bônus de Feijão Mágico em acertos
+  const result = finishWork(sessionUserId, true, finalSalary, isCriticalBonus);
 
   const currentRoleTitle = getRoleTitle(session.professionKey, result.careerLevel, lang);
   const desc = [
@@ -2041,6 +2597,16 @@ async function handleWorkInteraction(interaction) {
     t('workMinigame.workCountLine', lang, { count: getUserAccount(sessionUserId).workCount }),
   ];
 
+  if (session.isGoldenShift) {
+    desc.push(t('workMinigame.goldenShiftBadge', lang));
+  }
+  if (isFastResponse) {
+    desc.push(t('workMinigame.speedBonusBadge', lang));
+  }
+  if (session.masteryBonusPercent > 0) {
+    desc.push(t('workMinigame.masteryBonusBadge', lang, { percent: session.masteryBonusPercent }));
+  }
+
   if (result.promoted) {
     desc.push(
       '',
@@ -2053,6 +2619,14 @@ async function handleWorkInteraction(interaction) {
     );
   }
 
+  if (result.newlyMastered) {
+    desc.push(
+      '',
+      t('workMinigame.newlyMasteredTitle', lang),
+      t('workMinigame.newlyMasteredDesc', lang, { profession: session.professionLabel })
+    );
+  }
+
   if (result.bonusBean) {
     desc.push(
       '',
@@ -2061,14 +2635,61 @@ async function handleWorkInteraction(interaction) {
     );
   }
 
+  // Barra de Projeto da Carreira (Efeito Zeigarnik: 1/3, 2/3, 3/3)
+  desc.push('');
+  if (result.projectCompleted || result.projectProgressDisplay >= 3) {
+    desc.push(t('workMinigame.projectProgress3', lang));
+  } else if (result.projectProgressDisplay === 2) {
+    desc.push(t('workMinigame.projectProgress2', lang));
+  } else {
+    desc.push(t('workMinigame.projectProgress1', lang));
+  }
+
+  const components = [disabledRow];
+
+  if (result.projectCompleted) {
+    const prizes = generateEnvelopePrizes();
+    activeEnvelopeSessions.set(sessionUserId, {
+      userId: sessionUserId,
+      lang,
+      envelopes: {
+        A: prizes[0],
+        B: prizes[1],
+        C: prizes[2],
+      },
+      createdAt: Date.now(),
+    });
+
+    const envelopeTimeout = setTimeout(() => {
+      if (activeEnvelopeSessions.has(sessionUserId)) {
+        activeEnvelopeSessions.delete(sessionUserId);
+      }
+    }, 10 * 60 * 1000);
+    if (envelopeTimeout && typeof envelopeTimeout.unref === 'function') {
+      envelopeTimeout.unref();
+    }
+
+    const envelopeRow = new ActionRowBuilder();
+    ['A', 'B', 'C'].forEach((letter) => {
+      envelopeRow.addComponents(
+        new ButtonBuilder()
+          .setCustomId(`work_env:${letter}:${sessionUserId}`)
+          .setLabel(t('workMinigame.envelopeButtonLabel', lang, { letter }))
+          .setStyle(ButtonStyle.Primary)
+      );
+    });
+    components.push(envelopeRow);
+  }
+
+  const embedColor = session.isGoldenShift ? 0xF59E0B : (PYXIE_COLORS.emerald || '#10b981');
   const successEmbed = new EmbedBuilder()
-    .setColor(PYXIE_COLORS.emerald || '#10b981')
+    .setColor(embedColor)
     .setTitle(t('workMinigame.successTitle', lang, { profession: session.professionLabel }))
     .setDescription(desc.join('\n'))
     .setFooter({ text: 'Pyxie' })
     .setTimestamp();
 
-  return interaction.update({ embeds: [successEmbed], components: [] });
+  return interaction.update({ embeds: [successEmbed], components });
 }
 
 async function runWork(source, reply) {
@@ -2101,12 +2722,35 @@ async function runWork(source, reply) {
   const roleTitle = getRoleTitle(professionKey, userLevel, lang);
 
   const generatedMinigames = loadGeneratedMinigames();
-  const defaultList = PROFESSION_MINIGAMES[professionKey] || PROFESSION_MINIGAMES.programador;
+  const defaultList = PROFESSION_MINIGAMES[professionKey] || [];
   const generatedList = (generatedMinigames && generatedMinigames[professionKey]) || [];
-  const minigames = [...defaultList, ...generatedList];
+
+  // Pool unificado e deduplicado por chave de enunciado
+  const seenMap = new Map();
+  for (const g of [...generatedList, ...defaultList]) {
+    const key = getQuestionKey(g);
+    if (key && !seenMap.has(key)) {
+      seenMap.set(key, g);
+    }
+  }
+  const minigames = Array.from(seenMap.values());
 
   const levelMinigames = filterMinigamesByLevel(minigames, userLevel);
-  const chosenGame = levelMinigames[Math.floor(Math.random() * levelMinigames.length)];
+
+  // Sistema de Baralho Anti-Repetição (Deck Shuffle / No-Repeat Window)
+  const recentHistory = Array.isArray(account.recentWorkQuestions) ? account.recentWorkQuestions : [];
+  const seenKeys = new Set(recentHistory);
+  let eligibleGames = levelMinigames.filter((g) => !seenKeys.has(getQuestionKey(g)));
+
+  // Se todas as questões do nível foram vistas recentemente no histórico, renova o ciclo excluindo a última
+  if (eligibleGames.length === 0) {
+    const lastKey = recentHistory[recentHistory.length - 1];
+    eligibleGames = levelMinigames.filter((g) => getQuestionKey(g) !== lastKey);
+    if (eligibleGames.length === 0) eligibleGames = levelMinigames;
+  }
+
+  const chosenGame = eligibleGames[Math.floor(Math.random() * eligibleGames.length)];
+  const chosenKey = getQuestionKey(chosenGame);
   const gameData = chosenGame[lang] || chosenGame.en || chosenGame.pt;
 
   const wrongsPool = Array.isArray(gameData.wrongs) ? gameData.wrongs : [];
@@ -2121,47 +2765,72 @@ async function runWork(source, reply) {
   const correctIndex = shuffledChoices.findIndex((c) => c.correct);
 
   const labelLetters = ['A', 'B', 'C', 'D'];
-  const salary = calculateSalaryForLevel(userLevel);
+  let salary = calculateSalaryForLevel(userLevel);
 
-  // Inicia o cooldown e registra o trabalho
-  startWork(user.id, { profession: professionKey, salary, level: userLevel });
+  // Bônus Passivo de Currículo (+3% por profissão dominada em masteredProfessions, cap +45%)
+  const masteryBonusPercent = getMasteryBonusPercent(user.id);
+  if (masteryBonusPercent > 0) {
+    salary += Math.round(salary * (masteryBonusPercent / 100));
+  }
+
+  // Sorteio de 8% de chance para Turno de Alta Demanda (Urgência VIP: 1.5x moedas)
+  const isGoldenShift = Math.random() < 0.08;
+  if (isGoldenShift) {
+    salary = Math.ceil(salary * 1.5);
+  }
+
+  // Inicia o cooldown e registra o trabalho com a chave anti-repetição
+  startWork(user.id, { profession: professionKey, salary, level: userLevel, questionKey: chosenKey });
 
   activeWorkSessions.set(user.id, {
+    questionKey: chosenKey,
     correctIndex,
     correctLetter: labelLetters[correctIndex],
     correctText: gameData.correct,
+    choices: shuffledChoices.map((c) => c.text),
     salary,
     professionKey,
     professionLabel,
     userLevel,
     roleTitle,
     lang,
+    isGoldenShift,
+    masteryBonusPercent,
     startedAt: Date.now(),
   });
 
   // Timeout automático da sessão
-  setTimeout(() => {
+  const sessionTimeout = setTimeout(() => {
     if (activeWorkSessions.has(user.id)) {
       activeWorkSessions.delete(user.id);
     }
   }, WORK_TIMEOUT_MS);
+  if (sessionTimeout && typeof sessionTimeout.unref === 'function') {
+    sessionTimeout.unref();
+  }
 
   const formattedOptions = shuffledChoices
     .map((choice, idx) => `**[${labelLetters[idx]}]** ${choice.text}`)
     .join('\n\n');
 
-  const questionDesc = [
+  const questionDescParts = [];
+  if (isGoldenShift) {
+    questionDescParts.push(t('workMinigame.goldenShiftBanner', lang), '');
+  }
+  questionDescParts.push(
     t('workMinigame.roleLabel', lang, { role: roleTitle }),
     '',
     gameData.scenario,
     '',
     formattedOptions,
     '',
-    t('workMinigame.timeLimit', lang),
-  ].join('\n');
+    t('workMinigame.timeLimit', lang)
+  );
+  const questionDesc = questionDescParts.join('\n');
 
+  const embedColor = isGoldenShift ? 0xF59E0B : (PYXIE_COLORS.violet || '#a855f7');
   const embed = new EmbedBuilder()
-    .setColor(PYXIE_COLORS.violet || '#a855f7')
+    .setColor(embedColor)
     .setTitle(t('workMinigame.minigameTitle', lang, { profession: professionLabel }))
     .setDescription(questionDesc)
     .setFooter({ text: 'Pyxie' })
@@ -2185,6 +2854,15 @@ module.exports = {
   aliases: ['work', 'trabalho', 'py-trabalho', 'py-work', 'trampo', 'job'],
   isWorkInteraction,
   handleWorkInteraction,
+  handleEnvelopeInteraction,
+  activeWorkSessions,
+  activeEnvelopeSessions,
+  generateEnvelopePrizes,
+  formatPrize,
+  PROFESSION_DILEMMAS,
+  getDilemmaScenario,
+  activeDilemmaSessions,
+  handleDilemmaInteraction,
   PROFESSION_MINIGAMES,
   data: new SlashCommandBuilder()
     .setName(WORK)

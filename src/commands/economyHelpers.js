@@ -117,9 +117,15 @@ function buildProfileEmbed({
       t('profile.profession', source, { profession: professionLabel || t('profile.noProfession', source) }),
       t('profile.workCount', source, { count: workVal }),
       t('profile.dedication', source, { level: dedicationLevel }),
-      '',
-      t('profile.socialHeader', source),
     ];
+
+    if (Array.isArray(account?.masteredProfessions) && account.masteredProfessions.length > 0) {
+      const masteredCount = account.masteredProfessions.length;
+      const masteryBonusPercent = Math.min(45, masteredCount * 3);
+      descLines.push(t('profile.masteredCareers', source, { count: masteredCount, bonus: masteryBonusPercent }));
+    }
+
+    descLines.push('', t('profile.socialHeader', source));
 
     if (marriageDetails && marriageDetails.isMarried) {
       descLines.push(`> 💍 **${isEn ? 'Spouse' : 'Cônjuge'}:** ${marriageDetails.spouseName}`);

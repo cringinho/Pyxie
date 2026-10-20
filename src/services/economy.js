@@ -109,6 +109,7 @@ function normalizeAccount(account) {
     magicBeans: normalizeNumber(acc.magicBeans, 0),
     profession: acc.profession || null,
     workCount: normalizeNumber(acc.workCount, 0),
+    projectProgress: Math.max(0, Math.min(2, normalizeNumber(acc.projectProgress, 0))),
     lastWorkAt: acc.lastWorkAt || null,
     lastQuizAt: acc.lastQuizAt || null,
     lastDailyAt: acc.lastDailyAt || null,
@@ -119,6 +120,9 @@ function normalizeAccount(account) {
     themes: Array.isArray(acc.themes) ? acc.themes : ['default'],
     equippedTheme: acc.equippedTheme || 'default',
     unlockedProfessions: Array.isArray(acc.unlockedProfessions) ? acc.unlockedProfessions : [],
+    masteredProfessions: Array.isArray(acc.masteredProfessions) ? acc.masteredProfessions : [],
+    recentWorkQuestions: Array.isArray(acc.recentWorkQuestions) ? acc.recentWorkQuestions : [],
+    recentQuizQuestions: Array.isArray(acc.recentQuizQuestions) ? acc.recentQuizQuestions : [],
     bio: typeof acc.bio === 'string' ? acc.bio.trim().slice(0, 150) : null,
   };
 }
@@ -226,6 +230,7 @@ function resetUserEconomy(userId) {
     acc.magicBeans = 0;
     acc.lastDailyAt = null;
     acc.dailyStreak = 0;
+    acc.projectProgress = 0;
   });
 }
 
@@ -448,6 +453,11 @@ function setProfession(userId, profession, cost = 50) {
         ? [...current.unlockedProfessions, profession]
         : [profession];
       current.profession = profession;
+      current.careerLevel = 1;
+      current.careerStreak = 0;
+      current.shiftsAtLevel = 0;
+      current.careerMistakes = 0;
+      current.recentWorkQuestions = [];
     });
 
     return {
@@ -467,6 +477,11 @@ function setProfession(userId, profession, cost = 50) {
   const charged = hasProfession ? cost : 0;
   const updated = updateUserAccount(userId, (current) => {
     current.profession = profession;
+    current.careerLevel = 1;
+    current.careerStreak = 0;
+    current.shiftsAtLevel = 0;
+    current.careerMistakes = 0;
+    current.recentWorkQuestions = [];
     if (hasProfession) current.coins -= cost;
   });
 
@@ -544,6 +559,10 @@ function startWork(userId, data = {}, now = Date.now()) {
 
   const account = updateUserAccount(userId, (current) => {
     current.lastWorkAt = new Date(now).toISOString();
+    if (data.questionKey) {
+      const recents = Array.isArray(current.recentWorkQuestions) ? current.recentWorkQuestions : [];
+      current.recentWorkQuestions = [...recents.filter((k) => k !== data.questionKey), data.questionKey].slice(-15);
+    }
   });
   return {
     started: true,
@@ -564,17 +583,42 @@ function getQuizStatus(userId, now = Date.now()) {
   };
 }
 
-function startQuiz(userId, now = Date.now()) {
+function startQuiz(userId, now = Date.now(), questionKey = null) {
   const status = getQuizStatus(userId, now);
   if (!status.available) return { started: false, ...status };
 
   updateUserAccount(userId, (current) => {
     current.lastQuizAt = new Date(now).toISOString();
+    if (questionKey && typeof questionKey === 'string') {
+      const qk = questionKey.trim();
+      if (qk) {
+        if (!Array.isArray(current.recentQuizQuestions)) current.recentQuizQuestions = [];
+        current.recentQuizQuestions = current.recentQuizQuestions.filter((k) => k !== qk);
+        current.recentQuizQuestions.push(qk);
+        if (current.recentQuizQuestions.length > 15) {
+          current.recentQuizQuestions.shift();
+        }
+      }
+    }
   });
   return {
     started: true,
     ...getQuizStatus(userId, now),
   };
+}
+
+function recordQuizQuestion(userId, questionKey) {
+  if (!userId || !questionKey || typeof questionKey !== 'string') return;
+  const qk = questionKey.trim();
+  if (!qk) return;
+  updateUserAccount(userId, (current) => {
+    if (!Array.isArray(current.recentQuizQuestions)) current.recentQuizQuestions = [];
+    current.recentQuizQuestions = current.recentQuizQuestions.filter((k) => k !== qk);
+    current.recentQuizQuestions.push(qk);
+    if (current.recentQuizQuestions.length > 15) {
+      current.recentQuizQuestions.shift();
+    }
+  });
 }
 
 function getCareerLevel(userId) {
@@ -588,6 +632,15 @@ function setCareerLevel(userId, level) {
     acc.careerLevel = clamped;
     acc.careerStreak = 0;
     acc.careerMistakes = 0;
+    acc.shiftsAtLevel = 0;
+    if (clamped === 4 && acc.profession) {
+      if (!Array.isArray(acc.masteredProfessions)) {
+        acc.masteredProfessions = [];
+      }
+      if (!acc.masteredProfessions.includes(acc.profession)) {
+        acc.masteredProfessions.push(acc.profession);
+      }
+    }
   });
   return updated.careerLevel;
 }
@@ -600,15 +653,22 @@ function finishWork(userId, success, amount, bonusBean = false) {
 
   if (!success) {
     const updated = updateUserAccount(userId, (current) => {
+      if (amount > 0) {
+        current.coins = (Number(current.coins) || 0) + amount;
+      }
       previousLevel = Math.max(1, Math.min(4, Number(current.careerLevel) || 1));
       current.careerStreak = 0;
       const mistakes = (Number(current.careerMistakes) || 0) + 1;
       current.careerMistakes = mistakes;
 
-      // hierarquia diminui com muitos erros seguidos (chance de 5% de diminuir a cada erro cometido seguido)
-      if (previousLevel > 1 && Math.random() < 0.05) {
+      // Rebaixamento justo: advertência prévia, ocorrendo apenas a partir de 3 erros consecutivos
+      const guaranteedDemotion = mistakes >= 5;
+      const rolledDemotion = mistakes >= 3 && Math.random() < 0.15;
+
+      if (previousLevel > 1 && (guaranteedDemotion || rolledDemotion)) {
         current.careerLevel = previousLevel - 1;
         current.careerMistakes = 0; // reseta a sequência de erros ao rebaixar
+        current.shiftsAtLevel = 0;
         demoted = true;
       }
       newLevel = Math.max(1, Math.min(4, Number(current.careerLevel) || 1));
@@ -616,9 +676,9 @@ function finishWork(userId, success, amount, bonusBean = false) {
 
     return {
       earned: false,
-      amount: 0,
-      balance: getBalance(userId),
-      magicBeans: getMagicBeans(userId),
+      amount: amount || 0,
+      balance: updated.coins,
+      magicBeans: updated.magicBeans,
       bonusBean: false,
       careerLevel: newLevel,
       previousLevel,
@@ -626,8 +686,19 @@ function finishWork(userId, success, amount, bonusBean = false) {
       careerMistakes: updated.careerMistakes || 0,
       promoted: false,
       demoted,
+      projectProgress: Math.max(0, Math.min(2, Number(updated.projectProgress) || 0)),
+      previousProjectProgress: Math.max(0, Math.min(2, Number(updated.projectProgress) || 0)),
+      projectProgressDisplay: Math.max(0, Math.min(2, Number(updated.projectProgress) || 0)),
+      projectCompleted: false,
+      masteredProfessions: Array.isArray(updated.masteredProfessions) ? updated.masteredProfessions : [],
+      newlyMastered: false,
     };
   }
+
+  let newlyMastered = false;
+  let projectCompleted = false;
+  let previousProjectProgress = 0;
+  let nextProjectProgress = 0;
 
   const account = updateUserAccount(userId, (current) => {
     current.coins = (Number(current.coins) || 0) + amount;
@@ -636,18 +707,67 @@ function finishWork(userId, success, amount, bonusBean = false) {
       current.magicBeans = (Number(current.magicBeans) || 0) + 1;
     }
 
+    // Progressão do Projeto de Carreira (0, 1, 2)
+    previousProjectProgress = Math.max(0, Math.min(2, Number(current.projectProgress) || 0));
+    nextProjectProgress = previousProjectProgress + 1;
+    if (nextProjectProgress >= 3) {
+      current.projectProgress = 0;
+      projectCompleted = true;
+    } else {
+      current.projectProgress = nextProjectProgress;
+    }
+
     previousLevel = Math.max(1, Math.min(4, Number(current.careerLevel) || 1));
     current.careerMistakes = 0;
     const streak = (Number(current.careerStreak) || 0) + 1;
     current.careerStreak = streak;
 
-    // hierarquia aumenta com acertos seguidos (chance de 2% de evolução a cada acerto seguido)
-    if (previousLevel < 4 && Math.random() < 0.02) {
+    const shiftsAtLevel = (Number(current.shiftsAtLevel) || 0) + 1;
+    current.shiftsAtLevel = shiftsAtLevel;
+
+    const totalWorks = Number(current.workCount) || 0;
+
+    // Metas garantidas por expedientes concluídos
+    // Nível 1 -> 2: 10 expedientes
+    // Nível 2 -> 3: 25 expedientes (ou 15 no cargo)
+    // Nível 3 -> 4: 45 expedientes (ou 20 no cargo)
+    const guaranteedByWorks =
+      (previousLevel === 1 && (shiftsAtLevel >= 10 || totalWorks >= 10)) ||
+      (previousLevel === 2 && (shiftsAtLevel >= 15 || totalWorks >= 25)) ||
+      (previousLevel === 3 && (shiftsAtLevel >= 20 || totalWorks >= 45));
+
+    // Metas garantidas por sequência de acertos (streak impecável)
+    // Nível 1: 5 acertos seguidos
+    // Nível 2: 7 acertos seguidos
+    // Nível 3: 10 acertos seguidos
+    const guaranteedByStreak =
+      (previousLevel === 1 && streak >= 5) ||
+      (previousLevel === 2 && streak >= 7) ||
+      (previousLevel === 3 && streak >= 10);
+
+    // Bônus progressivo por streak: chance base 5% + 3% por acerto consecutivo (cap 60%)
+    const dynamicChance = Math.min(0.60, 0.05 + streak * 0.03);
+    const rolledPromotion = Math.random() < dynamicChance;
+
+    if (previousLevel < 4 && (guaranteedByWorks || guaranteedByStreak || rolledPromotion)) {
       current.careerLevel = previousLevel + 1;
       current.careerStreak = 0; // reseta a sequência de acertos ao ser promovido
+      current.shiftsAtLevel = 0;
+      current.recentWorkQuestions = []; // limpa histórico recente para explorar novas questões do novo cargo
       promoted = true;
     }
     newLevel = Math.max(1, Math.min(4, Number(current.careerLevel) || 1));
+
+    // Maestria de Carreira (Currículo Lendário)
+    if (newLevel === 4 && current.profession) {
+      if (!Array.isArray(current.masteredProfessions)) {
+        current.masteredProfessions = [];
+      }
+      if (!current.masteredProfessions.includes(current.profession)) {
+        current.masteredProfessions.push(current.profession);
+        newlyMastered = true;
+      }
+    }
   });
 
   return {
@@ -663,6 +783,12 @@ function finishWork(userId, success, amount, bonusBean = false) {
     careerMistakes: 0,
     promoted,
     demoted: false,
+    projectProgress: account.projectProgress,
+    previousProjectProgress,
+    projectProgressDisplay: projectCompleted ? 3 : nextProjectProgress,
+    projectCompleted,
+    masteredProfessions: account.masteredProfessions || [],
+    newlyMastered,
   };
 }
 
@@ -802,6 +928,188 @@ function getStreakRanking(limit = 10, userIds = null) {
     .slice(0, limit);
 }
 
+
+function claimProjectBonus(userId, prize) {
+  const updated = updateUserAccount(userId, (acc) => {
+    if (prize.type === 'beans') {
+      acc.magicBeans = (Number(acc.magicBeans) || 0) + (Number(prize.amount) || 1);
+    } else {
+      acc.coins = (Number(acc.coins) || 0) + (Number(prize.amount) || 0);
+    }
+  });
+  return {
+    balance: updated.coins,
+    magicBeans: updated.magicBeans,
+    prize,
+  };
+}
+
+function getMasteryBonusPercent(userId) {
+  const account = getUserAccount(userId);
+  const mastered = Array.isArray(account.masteredProfessions) ? account.masteredProfessions : [];
+  return Math.min(45, mastered.length * 3);
+}
+
+function getUserMasteredProfessions(userId) {
+  const account = getUserAccount(userId);
+  return Array.isArray(account.masteredProfessions) ? account.masteredProfessions : [];
+}
+
+function resolveCorruptionDilemma(userId, choice, baseSalary = 30) {
+  const account = getUserAccount(userId);
+  const previousLevel = Math.max(1, Math.min(4, Number(account.careerLevel) || 1));
+  let promoted = false;
+  let demoted = false;
+  let newLevel = previousLevel;
+
+  if (choice === 'accept') {
+    // 65% de chance de bônus absurdo (+70 moedas), 35% de chance de cair na Auditoria Interna
+    const isSuccess = Math.random() < 0.65;
+    if (isSuccess) {
+      const bonus = 70;
+      const totalAmount = baseSalary + bonus;
+      let projectCompleted = false;
+      let projectProgressDisplay = 0;
+      const updated = updateUserAccount(userId, (acc) => {
+        acc.coins = (Number(acc.coins) || 0) + totalAmount;
+        acc.workCount = (Number(acc.workCount) || 0) + 1;
+        const prevProg = Math.max(0, Math.min(2, Number(acc.projectProgress) || 0));
+        const nextProg = prevProg + 1;
+        if (nextProg >= 3) {
+          acc.projectProgress = 0;
+          projectCompleted = true;
+          projectProgressDisplay = 3;
+        } else {
+          acc.projectProgress = nextProg;
+          projectProgressDisplay = nextProg;
+        }
+        if (previousLevel === 4 && acc.profession) {
+          if (!Array.isArray(acc.masteredProfessions)) acc.masteredProfessions = [];
+          if (!acc.masteredProfessions.includes(acc.profession)) {
+            acc.masteredProfessions.push(acc.profession);
+          }
+        }
+      });
+      return {
+        choice: 'accept',
+        outcome: 'success',
+        bonus,
+        amount: totalAmount,
+        balance: updated.coins,
+        careerLevel: previousLevel,
+        previousLevel,
+        careerMistakes: updated.careerMistakes || 0,
+        promoted: false,
+        demoted: false,
+        projectCompleted,
+        projectProgressDisplay,
+      };
+    } else {
+      // Flagrado pela Auditoria Interna: perde o salário do turno e ganha +1 careerMistakes
+      let currentMistakes = 0;
+      const updated = updateUserAccount(userId, (acc) => {
+        acc.careerStreak = 0;
+        currentMistakes = (Number(acc.careerMistakes) || 0) + 1;
+        acc.careerMistakes = currentMistakes;
+
+        const guaranteedDemotion = currentMistakes >= 5;
+        const rolledDemotion = currentMistakes >= 3 && Math.random() < 0.15;
+        if (previousLevel > 1 && (guaranteedDemotion || rolledDemotion)) {
+          acc.careerLevel = previousLevel - 1;
+          acc.careerMistakes = 0;
+          acc.shiftsAtLevel = 0;
+          demoted = true;
+        }
+        newLevel = Math.max(1, Math.min(4, Number(acc.careerLevel) || 1));
+      });
+
+      return {
+        choice: 'accept',
+        outcome: 'audit',
+        bonus: 0,
+        amount: 0,
+        balance: updated.coins,
+        careerLevel: newLevel,
+        previousLevel,
+        careerMistakes: currentMistakes,
+        promoted: false,
+        demoted,
+      };
+    }
+  } else {
+    // Denunciar ao Conselho: bônus seguro de +20 moedas, limpa careerMistakes = 0 e ganha +5% de chance de promoção
+    const bonus = 20;
+    const totalAmount = baseSalary + bonus;
+    let projectCompleted = false;
+    let projectProgressDisplay = 0;
+    const updated = updateUserAccount(userId, (acc) => {
+      acc.coins = (Number(acc.coins) || 0) + totalAmount;
+      acc.workCount = (Number(acc.workCount) || 0) + 1;
+      acc.careerMistakes = 0;
+
+      const prevProg = Math.max(0, Math.min(2, Number(acc.projectProgress) || 0));
+      const nextProg = prevProg + 1;
+      if (nextProg >= 3) {
+        acc.projectProgress = 0;
+        projectCompleted = true;
+        projectProgressDisplay = 3;
+      } else {
+        acc.projectProgress = nextProg;
+        projectProgressDisplay = nextProg;
+      }
+
+      const streak = (Number(acc.careerStreak) || 0) + 1;
+      acc.careerStreak = streak;
+      const shiftsAtLevel = (Number(acc.shiftsAtLevel) || 0) + 1;
+      acc.shiftsAtLevel = shiftsAtLevel;
+      const totalWorks = Number(acc.workCount) || 0;
+
+      const guaranteedByWorks =
+        (previousLevel === 1 && (shiftsAtLevel >= 10 || totalWorks >= 10)) ||
+        (previousLevel === 2 && (shiftsAtLevel >= 15 || totalWorks >= 25)) ||
+        (previousLevel === 3 && (shiftsAtLevel >= 20 || totalWorks >= 45));
+
+      const guaranteedByStreak =
+        (previousLevel === 1 && streak >= 5) ||
+        (previousLevel === 2 && streak >= 7) ||
+        (previousLevel === 3 && streak >= 10);
+
+      // +5% de chance extra de promoção naquele turno
+      const dynamicChance = Math.min(0.65, 0.05 + streak * 0.03 + 0.05);
+      const rolledPromotion = Math.random() < dynamicChance;
+
+      if (previousLevel < 4 && (guaranteedByWorks || guaranteedByStreak || rolledPromotion)) {
+        acc.careerLevel = previousLevel + 1;
+        acc.careerStreak = 0;
+        acc.shiftsAtLevel = 0;
+        promoted = true;
+      }
+      newLevel = Math.max(1, Math.min(4, Number(acc.careerLevel) || 1));
+
+      if (newLevel === 4 && acc.profession) {
+        if (!Array.isArray(acc.masteredProfessions)) acc.masteredProfessions = [];
+        if (!acc.masteredProfessions.includes(acc.profession)) {
+          acc.masteredProfessions.push(acc.profession);
+        }
+      }
+    });
+
+    return {
+      choice: 'report',
+      outcome: 'council',
+      bonus,
+      amount: totalAmount,
+      balance: updated.coins,
+      careerLevel: newLevel,
+      previousLevel,
+      careerMistakes: 0,
+      promoted,
+      demoted: false,
+      projectCompleted,
+      projectProgressDisplay,
+    };
+  }
+}
 module.exports = {
   DAILY_COOLDOWN_MS,
   WORK_COOLDOWN_MS,
@@ -835,8 +1143,13 @@ module.exports = {
   getUserUnlockedProfessions,
   startWork,
   finishWork,
+  claimProjectBonus,
+  getMasteryBonusPercent,
+  getUserMasteredProfessions,
+  resolveCorruptionDilemma,
   getQuizStatus,
   startQuiz,
+  recordQuizQuestion,
   getCareerLevel,
   setCareerLevel,
   getDailyStatus,

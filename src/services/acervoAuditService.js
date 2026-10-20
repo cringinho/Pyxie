@@ -3,6 +3,14 @@ const path = require('path');
 const professions = require('./professions');
 const { getRoleTitle, calculateSalaryForLevel, filterMinigamesByLevel } = require('./careerHierarchy');
 
+let PROFESSION_SUBTHEMES = {};
+try {
+  const ws = require('./workSeederService');
+  if (ws && ws.PROFESSION_SUBTHEMES) {
+    PROFESSION_SUBTHEMES = ws.PROFESSION_SUBTHEMES;
+  }
+} catch (_) {}
+
 const CAREERS_FILE = path.join(__dirname, '..', 'data', 'generated_work_minigames.json');
 const QUIZ_FILE = path.join(__dirname, '..', 'data', 'quiz_questions.json');
 
@@ -32,6 +40,270 @@ function shuffleArray(array) {
     [cloned[i], cloned[j]] = [cloned[j], cloned[i]];
   }
   return cloned;
+}
+
+/**
+ * 1. Auditoria de Distribuição de Questões por Nível nas 22 Profissões
+ */
+function auditLevelDistribution({ targetPerLevel = 10 } = {}) {
+  const careersData = loadCareersData();
+  const professionKeys = Object.keys(professions);
+  const underTargetProfessions = [];
+  let totalDeficit = 0;
+  const totalLevelSlots = professionKeys.length * 4;
+  let metLevelSlots = 0;
+
+  for (const key of professionKeys) {
+    const profDef = professions[key] || {};
+    const items = Array.isArray(careersData[key]) ? careersData[key] : [];
+    const levelCounts = { 1: 0, 2: 0, 3: 0, 4: 0, unassigned: 0 };
+
+    for (const item of items) {
+      const lvl = item.level ? Number(item.level) : null;
+      if (lvl && levelCounts[lvl] !== undefined) {
+        levelCounts[lvl]++;
+      } else {
+        levelCounts.unassigned++;
+      }
+    }
+
+    const deficits = {};
+    let profDeficit = 0;
+    for (let lvl = 1; lvl <= 4; lvl++) {
+      const count = levelCounts[lvl] || 0;
+      if (count < targetPerLevel) {
+        const diff = targetPerLevel - count;
+        deficits[lvl] = { current: count, target: targetPerLevel, deficit: diff };
+        profDeficit += diff;
+      } else {
+        metLevelSlots++;
+      }
+    }
+
+    if (profDeficit > 0) {
+      totalDeficit += profDeficit;
+      const subthemes = PROFESSION_SUBTHEMES[key] || ['Conhecimentos e Boas Práticas da Profissão'];
+      underTargetProfessions.push({
+        professionKey: key,
+        label: profDef.label || key,
+        emoji: profDef.emoji || '💼',
+        isMagic: Boolean(profDef.isMagic),
+        totalQuestions: items.length,
+        levelCounts,
+        deficits,
+        totalDeficit: profDeficit,
+        recommendedSubthemes: subthemes.slice(0, 3),
+      });
+    }
+  }
+
+  // Ordena pela prioridade de geração (maior déficit primeiro)
+  underTargetProfessions.sort((a, b) => b.totalDeficit - a.totalDeficit);
+
+  const complianceRate = Math.round((metLevelSlots / totalLevelSlots) * 100);
+
+  return {
+    targetPerLevel,
+    totalProfessions: professionKeys.length,
+    compliantProfessionsCount: professionKeys.length - underTargetProfessions.length,
+    underTargetCount: underTargetProfessions.length,
+    totalDeficit,
+    complianceRate,
+    underTargetProfessions,
+  };
+}
+
+/**
+ * 2. Validador de "Viés de Tamanho de Resposta" (Answer Length Bias)
+ * Identifica questões onde a resposta correta é mais de 35% mais longa que a média das alternativas incorretas.
+ */
+function auditAnswerLengthBias({ biasThreshold = 0.35, minLengthDiff = 8 } = {}) {
+  const careersData = loadCareersData();
+  const quizData = loadQuizData();
+
+  let careerAudited = 0;
+  let careerBiased = 0;
+  const careerBiasedItems = [];
+
+  for (const [profKey, list] of Object.entries(careersData)) {
+    if (!Array.isArray(list)) continue;
+    const profDef = professions[profKey] || {};
+
+    list.forEach((item) => {
+      careerAudited++;
+      const correctStr = String(item.pt?.correct || item.correct || '').trim();
+      const wrongs = Array.isArray(item.pt?.wrongs) ? item.pt.wrongs : (Array.isArray(item.wrongs) ? item.wrongs : []);
+
+      if (wrongs.length > 0 && correctStr.length > 0) {
+        const avgWrongsLen = wrongs.reduce((sum, w) => sum + String(w).trim().length, 0) / wrongs.length;
+        const ratio = avgWrongsLen > 0 ? (correctStr.length / avgWrongsLen) : 1;
+        const diff = correctStr.length - avgWrongsLen;
+
+        if (ratio > (1 + biasThreshold) && diff >= minLengthDiff) {
+          careerBiased++;
+          careerBiasedItems.push({
+            type: 'career',
+            profession: profKey,
+            professionLabel: profDef.label || profKey,
+            level: item.level || 1,
+            scenarioSnippet: String(item.pt?.scenario || item.scenario || '').slice(0, 70),
+            correctLength: correctStr.length,
+            avgWrongsLength: Math.round(avgWrongsLen),
+            ratio: Number(ratio.toFixed(2)),
+            excessPercent: Math.round((ratio - 1) * 100),
+          });
+        }
+      }
+    });
+  }
+
+  let quizAudited = 0;
+  let quizBiased = 0;
+  const quizBiasedItems = [];
+
+  quizData.forEach((q) => {
+    quizAudited++;
+    const correctStr = String(q.pt?.correct || q.correct || '').trim();
+    const wrongs = Array.isArray(q.pt?.wrongs) ? q.pt.wrongs : (Array.isArray(q.wrongs) ? q.wrongs : []);
+
+    if (wrongs.length > 0 && correctStr.length > 0) {
+      const avgWrongsLen = wrongs.reduce((sum, w) => sum + String(w).trim().length, 0) / wrongs.length;
+      const ratio = avgWrongsLen > 0 ? (correctStr.length / avgWrongsLen) : 1;
+      const diff = correctStr.length - avgWrongsLen;
+
+      if (ratio > (1 + biasThreshold) && diff >= minLengthDiff) {
+        quizBiased++;
+        quizBiasedItems.push({
+          type: 'quiz',
+          id: q.id,
+          level: q.level || 1,
+          topic: q.topic || 'Geral',
+          questionSnippet: String(q.pt?.question || q.question || '').slice(0, 70),
+          correctLength: correctStr.length,
+          avgWrongsLength: Math.round(avgWrongsLen),
+          ratio: Number(ratio.toFixed(2)),
+          excessPercent: Math.round((ratio - 1) * 100),
+        });
+      }
+    }
+  });
+
+  const totalAudited = careerAudited + quizAudited;
+  const totalBiased = careerBiased + quizBiased;
+  const overallBiasRate = totalAudited > 0 ? Math.round((totalBiased / totalAudited) * 100) : 0;
+  const careerBiasRate = careerAudited > 0 ? Math.round((careerBiased / careerAudited) * 100) : 0;
+  const quizBiasRate = quizAudited > 0 ? Math.round((quizBiased / quizAudited) * 100) : 0;
+
+  careerBiasedItems.sort((a, b) => b.ratio - a.ratio);
+  quizBiasedItems.sort((a, b) => b.ratio - a.ratio);
+
+  return {
+    biasThreshold,
+    totalAudited,
+    totalBiased,
+    overallBiasRate,
+    careers: {
+      audited: careerAudited,
+      biased: careerBiased,
+      biasRate: careerBiasRate,
+      topDiscrepant: careerBiasedItems.slice(0, 10),
+    },
+    quiz: {
+      audited: quizAudited,
+      biased: quizBiased,
+      biasRate: quizBiasRate,
+      topDiscrepant: quizBiasedItems.slice(0, 10),
+    },
+  };
+}
+
+/**
+ * Formata o resumo legível para comando administrativo ou log do sistema
+ */
+function formatAuditSummary({ healthScore, distribution, bias, recommendations }) {
+  const lines = [
+    '📊 **RELATÓRIO DE AUDITORIA ERGONÔMICA DO ACERVO**',
+    `> **Health Score Geral:** \`${healthScore}/100\` ${healthScore >= 80 ? '🟢 Ótimo' : healthScore >= 60 ? '🟡 Bom' : '🔴 Atenção'}`,
+    '',
+    `💼 **Distribuição por Níveis (Meta: ${distribution.targetPerLevel}/nível)**`,
+    `> • Cobertura de Níveis: **${distribution.complianceRate}%** (${distribution.compliantProfessionsCount}/${distribution.totalProfessions} profissões completas)`,
+    `> • Profissões com Déficit: **${distribution.underTargetCount}** (Faltam ${distribution.totalDeficit} questões no total)`,
+  ];
+
+  if (distribution.underTargetProfessions.length > 0) {
+    lines.push('', '⚠️ **Profissões Prioritárias para Geração no Seeder:**');
+    distribution.underTargetProfessions.slice(0, 6).forEach((p) => {
+      const deficitStr = Object.entries(p.deficits).map(([lvl, d]) => `N${lvl}: -${d.deficit}`).join(', ');
+      lines.push(`> • ${p.emoji} **${p.label}**: Déficit de ${p.totalDeficit} (${deficitStr})`);
+    });
+  }
+
+  lines.push(
+    '',
+    `📏 **Viés de Tamanho de Resposta (Threshold > +${Math.round(bias.biasThreshold * 100)}%)**`,
+    `> • Carreiras: **${bias.careers.biasRate}%** com resposta correta mais longa (${bias.careers.biased}/${bias.careers.audited})`,
+    `> • Quiz: **${bias.quiz.biasRate}%** com resposta correta mais longa (${bias.quiz.biased}/${bias.quiz.audited})`,
+    `> • Índice Global de Viés: **${bias.overallBiasRate}%** (${bias.totalBiased}/${bias.totalAudited} questões)`,
+    '',
+    '💡 **Recomendações:**'
+  );
+
+  recommendations.forEach((rec) => {
+    lines.push(`> ➡️ ${rec}`);
+  });
+
+  return lines.join('\n');
+}
+
+/**
+ * 3. Exporta Relatório Resumido para Consumo Administrativo ou Log de Inicialização
+ */
+function generateAuditReport({ targetPerLevel = 10, biasThreshold = 0.35 } = {}) {
+  const distribution = auditLevelDistribution({ targetPerLevel });
+  const bias = auditAnswerLengthBias({ biasThreshold });
+
+  // Health Score Ergonômico Geral (0 a 100)
+  const distributionScore = (distribution.complianceRate / 100) * 50;
+  const biasScore = ((100 - bias.overallBiasRate) / 100) * 50;
+  const healthScore = Math.max(0, Math.min(100, Math.round(distributionScore + biasScore)));
+
+  const recommendations = [];
+  if (distribution.underTargetCount > 0) {
+    recommendations.push(
+      `Priorizar geração no workSeederService para ${distribution.underTargetCount} profissão(ões) com déficit de ${distribution.totalDeficit} questão(ões) no total.`
+    );
+  }
+  if (bias.careers.biasRate > 30) {
+    recommendations.push(
+      `Balancear o comprimento das alternativas incorretas nos minigames de carreira (${bias.careers.biasRate}% com alternativas corretas excessivamente longas).`
+    );
+  }
+  if (bias.quiz.biasRate > 20) {
+    recommendations.push(
+      `Revisar ${bias.quiz.biased} questões no banco de Quiz onde a alternativa correta é > 35% mais longa.`
+    );
+  }
+  if (recommendations.length === 0) {
+    recommendations.push('Acervo em equilíbrio ergonômico ideal!');
+  }
+
+  const summaryMarkdown = formatAuditSummary({
+    healthScore,
+    distribution,
+    bias,
+    recommendations,
+  });
+
+  return {
+    timestamp: new Date().toISOString(),
+    healthScore,
+    targetPerLevel,
+    biasThreshold,
+    distribution,
+    bias,
+    recommendations,
+    summaryMarkdown,
+  };
 }
 
 /**
@@ -89,6 +361,9 @@ function getAcervoStats() {
     quizTopics[topic] = (quizTopics[topic] || 0) + 1;
   }
 
+  // 3. Auditoria Ergonômica de Qualidade e Viés
+  const ergonomics = generateAuditReport({ targetPerLevel: 10, biasThreshold: 0.35 });
+
   return {
     careers: {
       totalProfessions: Object.keys(professions).length,
@@ -107,6 +382,7 @@ function getAcervoStats() {
       },
       topics: quizTopics,
     },
+    ergonomics,
   };
 }
 
@@ -219,5 +495,8 @@ function simulateDraw(type, params = {}) {
 module.exports = {
   getAcervoStats,
   simulateDraw,
+  auditLevelDistribution,
+  auditAnswerLengthBias,
+  generateAuditReport,
+  formatAuditSummary,
 };
-

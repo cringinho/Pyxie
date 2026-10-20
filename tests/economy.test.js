@@ -21,6 +21,8 @@ const {
   getUserRank,
   finishWork,
   getWorkStatus,
+  getCareerLevel,
+  setCareerLevel,
   resetUserEconomy,
   setProfession,
   setUserBalance,
@@ -36,6 +38,9 @@ const {
   getRanking,
   registerUserVote,
   hasActiveVote,
+  resolveCorruptionDilemma,
+  startQuiz,
+  recordQuizQuestion,
 } = require('../src/services/economy');
 const { createMarriageRequest, endMarriage, getSpouseId, resolveMarriageRequest } = require('../src/services/marriage');
 
@@ -133,6 +138,118 @@ try {
   assert.equal(getUserAccount('worker').workCount, 1, 'Conta deve ter 1 trabalho registrado.');
   assert.equal(workFinish.bonusBean, true, 'O bônus de feijão mágico deve ser registrado.');
   assert.equal(getMagicBeans('worker'), 1, 'Trabalhador deve ter recebido 1 feijão de bônus.');
+
+  // Testes de Progressão de Carreira: Metas Garantidas por Expedientes Concluídos
+  const promoWorker = 'promo-worker-1';
+  setProfession(promoWorker, 'programador', 0);
+  setCareerLevel(promoWorker, 1);
+  // Simula 9 expedientes prévios
+  const { updateUserAccount } = require('../src/services/economy');
+  updateUserAccount(promoWorker, (acc) => { acc.workCount = 9; });
+  // O 10º expediente garante promoção para o Nível 2
+  const promoResult = finishWork(promoWorker, true, 30);
+  assert.equal(promoResult.workCount, 10, 'Deve ter completado 10 expedientes.');
+  assert.equal(promoResult.promoted, true, 'Deve ser promovido com 10 expedientes garantidos.');
+  assert.equal(promoResult.careerLevel, 2, 'Novo cargo deve ser Nível 2.');
+
+  // Teste de Promoção Garantida por Sequência de Acertos (Streak de 5 no Nível 1)
+  const streakWorker = 'streak-worker-1';
+  setProfession(streakWorker, 'psicologo', 0);
+  setCareerLevel(streakWorker, 1);
+  updateUserAccount(streakWorker, (acc) => { acc.workCount = 0; acc.careerStreak = 4; });
+  const streakPromo = finishWork(streakWorker, true, 25);
+  assert.equal(streakPromo.promoted, true, 'Deve ser promovido ao atingir streak de 5 no Nível 1.');
+  assert.equal(streakPromo.careerLevel, 2, 'Cargo promovido para Nível 2.');
+  assert.equal(streakPromo.careerStreak, 0, 'Sequência deve resetar após promoção.');
+
+  // Teste de Proteção contra Rebaixamento Injusto (1 e 2 erros não rebaixam)
+  const safeWorker = 'safe-worker-1';
+  setProfession(safeWorker, 'desenvolvedor_jogos', 0);
+  setCareerLevel(safeWorker, 2);
+  const fail1 = finishWork(safeWorker, false, 0);
+  assert.equal(fail1.demoted, false, '1º erro nunca deve rebaixar o usuário.');
+  assert.equal(fail1.careerMistakes, 1, 'Deve registrar 1 erro.');
+  assert.equal(fail1.careerLevel, 2, 'Deve manter o Nível 2.');
+  const fail2 = finishWork(safeWorker, false, 0);
+  assert.equal(fail2.demoted, false, '2º erro consecutivo não deve rebaixar.');
+  assert.equal(fail2.careerMistakes, 2, 'Deve registrar 2 erros.');
+  assert.equal(fail2.careerLevel, 2, 'Deve manter o Nível 2.');
+
+  // Erros acumulados excessivos (5 seguidos) garantem rebaixamento com justiça
+  updateUserAccount(safeWorker, (acc) => { acc.careerMistakes = 4; });
+  const failGuaranteed = finishWork(safeWorker, false, 0);
+  assert.equal(failGuaranteed.demoted, true, '5º erro consecutivo deve rebaixar para Nível 1.');
+  assert.equal(failGuaranteed.careerLevel, 1, 'Nível rebaixado para 1.');
+  assert.equal(failGuaranteed.careerMistakes, 0, 'Erros devem ser zerados após rebaixamento.');
+
+  // Teste da Barra de Projeto de 3 Turnos (Efeito Zeigarnik: 0 -> 1 -> 2 -> 0)
+  const zeigWorker = 'zeigarnik-worker-1';
+  setProfession(zeigWorker, 'programador', 0);
+  updateUserAccount(zeigWorker, (acc) => { acc.projectProgress = 0; });
+
+  const shift1 = finishWork(zeigWorker, true, 20);
+  assert.equal(shift1.projectProgress, 1, 'Após 1º acerto, projectProgress deve ser 1.');
+  assert.equal(shift1.projectProgressDisplay, 1, 'Display deve indicar 1/3.');
+  assert.equal(shift1.projectCompleted, false, 'Projeto ainda não deve estar concluído.');
+
+  // Erro não altera nem reseta o progresso
+  const shiftFail = finishWork(zeigWorker, false, 5);
+  assert.equal(shiftFail.projectProgress, 1, 'Erro não deve alterar projectProgress.');
+  assert.equal(getUserAccount(zeigWorker).projectProgress, 1, 'Conta deve reter projectProgress = 1 após erro.');
+
+  const shift2 = finishWork(zeigWorker, true, 20);
+  assert.equal(shift2.projectProgress, 2, 'Após 2º acerto, projectProgress deve ser 2.');
+  assert.equal(shift2.projectProgressDisplay, 2, 'Display deve indicar 2/3.');
+  assert.equal(shift2.projectCompleted, false, 'Projeto ainda não deve estar concluído.');
+
+  const shift3 = finishWork(zeigWorker, true, 20);
+  assert.equal(shift3.projectProgress, 0, 'Após 3º acerto, projectProgress deve resetar para 0.');
+  assert.equal(shift3.projectProgressDisplay, 3, 'Display deve indicar 3/3.');
+  assert.equal(shift3.projectCompleted, true, 'projectCompleted deve ser true.');
+  assert.equal(getUserAccount(zeigWorker).projectProgress, 0, 'Conta deve ter projectProgress resetado para 0.');
+
+  // Teste de claimProjectBonus (Moedas e Feijões Mágicos)
+  const { claimProjectBonus } = require('../src/services/economy');
+  const bonusCoins = claimProjectBonus(zeigWorker, { type: 'coins', amount: 75 });
+  assert.ok(bonusCoins.balance >= 75, 'Bônus de moedas deve ser creditado com sucesso.');
+  const bonusBeans = claimProjectBonus(zeigWorker, { type: 'beans', amount: 1 });
+  assert.ok(bonusBeans.magicBeans >= 1, 'Bônus de Feijão Mágico deve ser creditado com sucesso.');
+
+  // Testes do Sistema de Maestria de Carreira (Currículo Lendário)
+  const { getMasteryBonusPercent, getUserMasteredProfessions } = require('../src/services/economy');
+  const masterWorker = 'master-worker-1';
+  setProfession(masterWorker, 'programador', 0);
+  assert.equal(getMasteryBonusPercent(masterWorker), 0, 'Usuário sem maestria deve ter 0% de bônus.');
+  assert.deepEqual(getUserMasteredProfessions(masterWorker), [], 'Lista de dominadas deve começar vazia.');
+
+  // Promoção ao Nível 4 adiciona à lista de maestria
+  setCareerLevel(masterWorker, 4);
+  assert.deepEqual(getUserMasteredProfessions(masterWorker), ['programador'], 'Nível 4 deve adicionar a profissão a masteredProfessions.');
+  assert.equal(getMasteryBonusPercent(masterWorker), 3, '1 profissão dominada concede +3% de bônus.');
+
+  // Concluir expediente já no Nível 4 não duplica
+  const shiftLevel4 = finishWork(masterWorker, true, 40);
+  assert.deepEqual(getUserMasteredProfessions(masterWorker), ['programador'], 'Não deve duplicar profissão já dominada.');
+  assert.equal(shiftLevel4.newlyMastered, false, 'newlyMastered deve ser false se já estava dominada.');
+
+  // Troca de profissão redefine careerLevel para 1, mas preserva masteredProfessions
+  setProfession(masterWorker, 'cozinheiro', 0);
+  assert.equal(getCareerLevel(masterWorker), 1, 'Troca de profissão deve redefinir careerLevel para 1.');
+  assert.deepEqual(getUserMasteredProfessions(masterWorker), ['programador'], 'masteredProfessions deve ser preservado após troca.');
+
+  // Domina a 2ª profissão (cozinheiro)
+  setCareerLevel(masterWorker, 4);
+  assert.equal(getUserMasteredProfessions(masterWorker).length, 2, 'Deve ter 2 profissões dominadas.');
+  assert.equal(getMasteryBonusPercent(masterWorker), 6, '2 profissões dominadas concedem +6% de bônus.');
+
+  // Simula 16 profissões dominadas para testar o teto de 45%
+  updateUserAccount(masterWorker, (acc) => {
+    acc.masteredProfessions = [
+      'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8',
+      'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15', 'p16'
+    ];
+  });
+  assert.equal(getMasteryBonusPercent(masterWorker), 45, 'O bônus de maestria deve ser limitado no teto de +45%.');
 
   // Testes de Profissões Mágicas & Gênero Inclusivo
   const professionsData = require('../src/services/professions');
@@ -256,6 +373,76 @@ try {
   const selectRow = buildProfessionSelectRow(magicCandidate, fakeSource);
   assert.ok(selectRow.components && selectRow.components[0], 'SelectRow deve conter o select menu');
   assert.equal(selectRow.components[0].options.length, 22, 'Deve ter 22 opções no menu de profissões (16 comuns + 6 mágicas)');
+
+    // Testes de Dilemas de Corrupção / Proposta Sombria (resolveCorruptionDilemma)
+  const dilUserId = 'test_dilemma_user';
+  setUserBalance(dilUserId, 100);
+  setCareerLevel(dilUserId, 2);
+
+  // 1. Escolha 'report' (Denunciar ao Conselho): +20 moedas seguras, limpa careerMistakes = 0
+  const reportRes = resolveCorruptionDilemma(dilUserId, 'report', 30);
+  assert.equal(reportRes.choice, 'report');
+  assert.equal(reportRes.outcome, 'council');
+  assert.equal(reportRes.bonus, 20);
+  assert.equal(reportRes.amount, 50, 'Salário base (30) + Bônus de Denúncia (20) deve ser 50');
+  assert.equal(reportRes.careerMistakes, 0, 'Denúncia deve zerar falhas na carreira');
+  assert.equal(getBalance(dilUserId), 150, 'Saldo deve refletir +50 moedas');
+
+  // 2. Escolha 'accept' com Sucesso (Math.random < 0.65): +70 moedas bônus
+  const origRandom = Math.random;
+  try {
+    Math.random = () => 0.10; // Força sucesso (< 0.65)
+    const acceptSuccessRes = resolveCorruptionDilemma(dilUserId, 'accept', 30);
+    assert.equal(acceptSuccessRes.choice, 'accept');
+    assert.equal(acceptSuccessRes.outcome, 'success');
+    assert.equal(acceptSuccessRes.bonus, 70);
+    assert.equal(acceptSuccessRes.amount, 100, 'Salário base (30) + Bônus do Esquema (70) deve ser 100');
+    assert.equal(getBalance(dilUserId), 250);
+
+    // 3. Escolha 'accept' com Flagrante da Auditoria (Math.random >= 0.65): 0 moedas, +1 careerMistakes
+    Math.random = () => 0.80; // Força auditoria (>= 0.65) e sem rebaixamento (demotion roll < 0.15)
+    const auditRes = resolveCorruptionDilemma(dilUserId, 'accept', 30);
+    assert.equal(auditRes.choice, 'accept');
+    assert.equal(auditRes.outcome, 'audit');
+    assert.equal(auditRes.bonus, 0);
+    assert.equal(auditRes.amount, 0, 'Auditoria deve confiscar o salário (0 moedas)');
+    assert.equal(auditRes.careerMistakes, 1, 'Auditoria deve registrar +1 falha');
+    assert.equal(getBalance(dilUserId), 250, 'Saldo não deve ser alterado');
+
+    // 4. Conclusão de Projeto (3/3) via denúncia
+    const completeProjectRes = resolveCorruptionDilemma(dilUserId, 'report', 30);
+    assert.equal(completeProjectRes.projectCompleted, true, 'Deve concluir o projeto ao atingir 3 turnos');
+    assert.equal(completeProjectRes.projectProgressDisplay, 3);
+    assert.equal(getUserAccount(dilUserId).projectProgress, 0, 'Progresso deve ser resetado para 0 após conclusão');
+
+    // 5. Sistema de Baralho Anti-Repetição (Deck Shuffle / No-Repeat Window)
+    const deckWorker = 'test_deck_worker';
+    setProfession(deckWorker, 'programador');
+    assert.deepEqual(getUserAccount(deckWorker).recentWorkQuestions, [], 'Histórico recente deve iniciar vazio');
+
+    startWork(deckWorker, { profession: 'programador', questionKey: 'Questao_A' }, Date.now());
+    assert.deepEqual(getUserAccount(deckWorker).recentWorkQuestions, ['Questao_A'], 'Deve registrar Questao_A no histórico');
+
+    // Simula próximo turno
+    startWork(deckWorker, { profession: 'programador', questionKey: 'Questao_B' }, Date.now() + 4 * 3600 * 1000);
+    assert.deepEqual(getUserAccount(deckWorker).recentWorkQuestions, ['Questao_A', 'Questao_B'], 'Deve reter ordem de histórico');
+
+    // Troca de profissão limpa o histórico
+    setUserBalance(deckWorker, 100);
+    const switchRes = setProfession(deckWorker, 'cozinheiro');
+    assert.equal(switchRes.changed, true, 'Deve permitir troca de carreira com saldo suficiente');
+    assert.deepEqual(getUserAccount(deckWorker).recentWorkQuestions, [], 'Troca de carreira deve resetar o histórico');
+
+    // Validação do Histórico Anti-Repetição do Quiz Cultural
+    const quizDeckUser = 'deck_quiz_user';
+    assert.deepEqual(getUserAccount(quizDeckUser).recentQuizQuestions, [], 'Histórico recente do quiz deve iniciar vazio');
+    startQuiz(quizDeckUser, Date.now(), 'Quiz_Q1');
+    assert.deepEqual(getUserAccount(quizDeckUser).recentQuizQuestions, ['Quiz_Q1'], 'startQuiz deve registrar a questão inicial');
+    recordQuizQuestion(quizDeckUser, 'Quiz_Q2');
+    assert.deepEqual(getUserAccount(quizDeckUser).recentQuizQuestions, ['Quiz_Q1', 'Quiz_Q2'], 'recordQuizQuestion deve registrar novas questões');
+  } finally {
+    Math.random = origRandom;
+  }
 
   console.log('Verificação da economia, cooldown, ranking, Feijões Mágicos e Títulos: OK');
 } finally {
