@@ -6,6 +6,8 @@ data/**/*.json
 data/cringelandia/
 !data/encounters.json
 data/*.bak
+data/*.backup
+data/*.tmp
 data/backup/
 minhasnote/
 .botmelody.lock
@@ -13,6 +15,9 @@ prefix.json
 public/uploads/*
 !public/uploads/.gitkeep
 data/museumWatermarks/
+logs/
+*.backup
+*.tmp
 
 # Outros aplicativos e projetos isolados
 meus outros app/

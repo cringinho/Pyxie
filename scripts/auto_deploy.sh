@@ -99,7 +99,8 @@ fi
 
 # 6. Prepara árvore de trabalho para Fast-Forward seguro
 # Descarta alterações locais em arquivos rastreados de src/data e public/ para não travar o pull
-git checkout -- src/data/ public/ 2>/dev/null || true
+git reset HEAD 2>/dev/null || true
+git checkout -- src/data/ public/ package.json package-lock.json 2>/dev/null || true
 
 # 7. Executa o git pull Fast-Forward
 if ! git pull --ff-only origin main; then

@@ -71,7 +71,8 @@ if [ -f "src/data/generated_work_minigames.json" ]; then
   cp "src/data/generated_work_minigames.json" "${TEMP_MINIGAMES}"
 fi
 
-git checkout -- src/data/ public/ 2>/dev/null || true
+git reset HEAD 2>/dev/null || true
+git checkout -- src/data/ public/ package.json package-lock.json 2>/dev/null || true
 
 echo "📥 Atualizando código via git pull..."
 git pull --ff-only origin main
