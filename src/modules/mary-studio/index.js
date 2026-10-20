@@ -6,6 +6,7 @@ const stickyAndFaqHandler = require('./handlers/stickyAndFaqHandler');
 const giveawayHandler = require('./handlers/giveawayHandler');
 const pyMaryStudioCmd = require('./commands/pyMaryStudio');
 const pyMaryEditContextCmd = require('./commands/pyMaryEditContext');
+const pyGamepassCmd = require('./commands/pyGamepass');
 const securityGuard = require('./utils/securityGuard');
 const {
   ModalBuilder,
@@ -33,7 +34,7 @@ module.exports = {
   author: 'Pyxie Team',
   defaultEnabled: true,
 
-  commands: [pyMaryStudioCmd, pyMaryEditContextCmd],
+  commands: [pyMaryStudioCmd, pyMaryEditContextCmd, pyGamepassCmd],
 
   async onLoad(ctx) {
     maryStudioManager.buttonActionHandler = buttonActionHandler;

@@ -33,6 +33,9 @@
     <div class="nav-tab active" data-tab="tab-builder">🎨 Criar & Editar Embeds</div>
     <div class="nav-tab" data-tab="tab-templates">📑 Modelos Prontos</div>
     <div class="nav-tab" data-tab="tab-sent">✏️ Mensagens Enviadas</div>
+    <div class="nav-tab" data-tab="tab-tools">🧮 Ferramentas Robux</div>
+    <div class="nav-tab" data-tab="tab-macros">💬 Respostas Rápidas</div>
+    <div class="nav-tab" data-tab="tab-vouch">📦 Recibo de Entrega</div>
     <div class="nav-tab" data-tab="tab-profile">🧚‍♀️ Aparência da Pyxie</div>
     <div class="nav-tab" data-tab="tab-modules">🛍️ Módulos da Loja</div>
     <div class="nav-tab" data-tab="tab-security">🔒 Segurança & Aparelhos</div>
@@ -232,7 +235,221 @@
       </div>
     </div>
 
-    <!-- 4. ABA APARÊNCIA DA PYXIE -->
+    <!-- 4. ABA FERRAMENTAS ROBUX -->
+    <div class="tab-pane" id="tab-tools">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px;">
+        
+        <!-- Inspetor de Gamepass -->
+        <div class="card">
+          <h2 class="card-title">🔍 Inspetor & Validador de Gamepass</h2>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+            Cole o link ou o ID da Gamepass para conferir se está à venda, o valor em Robux e se o preço está correto.
+          </p>
+          <div class="form-group">
+            <label class="form-label">Link ou ID da Gamepass:</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="inputInspectGamepass" class="form-control" placeholder="Ex: https://www.roblox.com/game-pass/123456...">
+              <button type="button" class="btn-primary-action" id="btnInspectGamepass" style="white-space: nowrap; padding: 8px 16px;">🔍 Checar</button>
+            </div>
+          </div>
+
+          <div id="gamepassInspectResult" style="display: none; margin-top: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px;">
+            <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 12px;">
+              <img id="gpResultIcon" src="" alt="Gamepass Icon" style="width: 64px; height: 64px; border-radius: 12px; object-fit: cover; background: #222;">
+              <div>
+                <div id="gpResultBadge" style="display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-bottom: 4px;"></div>
+                <h3 id="gpResultName" style="font-size: 15px; color: #fff; margin: 0;"></h3>
+                <p id="gpResultCreator" style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0;"></p>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; margin-bottom: 14px;">
+              <div style="background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px;">
+                <span style="color: var(--text-muted); display: block; font-size: 11px;">Preço Bruto:</span>
+                <strong id="gpResultGross" style="color: #38bdf8;"></strong>
+              </div>
+              <div style="background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px;">
+                <span style="color: var(--text-muted); display: block; font-size: 11px;">Líquido (Recebe 70%):</span>
+                <strong id="gpResultLiquid" style="color: #10b981;"></strong>
+              </div>
+            </div>
+            <a id="gpResultBuyLink" href="#" target="_blank" class="btn-primary-action" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; width: 100%; padding: 10px;">
+              🛒 Abrir no Roblox para Comprar
+            </a>
+          </div>
+        </div>
+
+        <!-- Inspetor de Jogador Roblox -->
+        <div class="card">
+          <h2 class="card-title">👤 Inspetor de Jogador Roblox</h2>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+            Digite o nick do cliente para ver o avatar oficial, ID da conta e links diretos para as experiências/gamepasses.
+          </p>
+          <div class="form-group">
+            <label class="form-label">Nickname do Roblox:</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="inputInspectPlayer" class="form-control" placeholder="Ex: Builderman">
+              <button type="button" class="btn-primary-action" id="btnInspectPlayer" style="white-space: nowrap; padding: 8px 16px;">🔍 Buscar</button>
+            </div>
+          </div>
+
+          <div id="playerInspectResult" style="display: none; margin-top: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px;">
+            <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 14px;">
+              <img id="playerResultAvatar" src="" alt="Avatar" style="width: 64px; height: 64px; border-radius: 50%; background: #222;">
+              <div>
+                <h3 id="playerResultName" style="font-size: 16px; color: #fff; margin: 0;"></h3>
+                <p id="playerResultId" style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0 0; font-family: monospace;"></p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <a id="playerResultProfileLink" href="#" target="_blank" class="btn-secondary" style="flex: 1; text-align: center; text-decoration: none; font-size: 12px; padding: 8px;">
+                👤 Ver Perfil
+              </a>
+              <a id="playerResultCreationsLink" href="#" target="_blank" class="btn-secondary" style="flex: 1; text-align: center; text-decoration: none; font-size: 12px; padding: 8px;">
+                🎮 Ver Criações / Passes
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calculadora Express 30% & Cotação -->
+        <div class="card" style="grid-column: 1 / -1;">
+          <h2 class="card-title">🧮 Calculadora Express: Taxa de 30% & Cotação BRL</h2>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+            Simule valores em tempo real para responder instantaneamente aos clientes com a mensagem pronta de atendimento.
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div class="form-group">
+              <label class="form-label">Robux Líquidos Desejados (Receber):</label>
+              <input type="number" id="calcInputRobux" class="form-control" placeholder="Ex: 1000" min="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ou Valor em Reais (R$):</label>
+              <input type="number" id="calcInputBrl" class="form-control" placeholder="Ex: 37.00" step="0.5" min="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cotação Atual por 1.000 Robux (R$):</label>
+              <input type="number" id="calcInputRate" class="form-control" value="37.00" step="0.5">
+            </div>
+          </div>
+
+          <div id="calcResultsCard" style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+              <div>
+                <span style="font-size: 11px; color: var(--text-muted); display: block;">Robux Líquidos:</span>
+                <strong id="calcResRobux" style="font-size: 18px; color: #fff;">1.000 R$</strong>
+              </div>
+              <div>
+                <span style="font-size: 11px; color: var(--text-muted); display: block;">Valor na Gamepass (Taxa 30%):</span>
+                <strong id="calcResGross" style="font-size: 18px; color: #ec4899;">1.429 R$</strong>
+              </div>
+              <div>
+                <span style="font-size: 11px; color: var(--text-muted); display: block;">Valor a Pagar:</span>
+                <strong id="calcResBrl" style="font-size: 18px; color: #10b981;">R$ 37,00</strong>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn-primary-action" id="btnCopyCalcMessage" style="padding: 10px 18px; font-size: 13px;">
+              📋 Copiar Resposta Formatada para o Cliente
+            </button>
+            <span id="copyCalcFeedback" style="font-size: 12px; color: #10b981; display: none;">✅ Copiado para a área de transferência!</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 5. ABA RESPOSTAS RÁPIDAS & MACROS -->
+    <div class="tab-pane" id="tab-macros">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+          <div>
+            <h2 class="card-title">💬 Respostas Rápidas & Macros de Atendimento</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0 0;">
+              Mensagens salvas para você copiar com 1 clique ou enviar diretamente no canal de atendimento da Mary.
+            </p>
+          </div>
+          <button type="button" class="btn-secondary" id="btnToggleNewMacroForm">➕ Adicionar Resposta</button>
+        </div>
+
+        <!-- Formulário Adicionar Nova Macro -->
+        <div id="newMacroForm" style="display: none; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+          <h3 style="font-size: 14px; margin-bottom: 12px; color: #fff;">Nova Resposta Rápida:</h3>
+          <div class="form-group">
+            <label class="form-label">Título / Identificador:</label>
+            <input type="text" id="inputNewMacroLabel" class="form-control" placeholder="Ex: 📦 Prazo de Entrega">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Texto da Mensagem:</label>
+            <textarea id="inputNewMacroText" class="form-control" rows="4" placeholder="Escreva o texto completo da mensagem..."></textarea>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn-primary-action" id="btnSaveNewMacro" style="padding: 8px 16px; font-size: 13px;">Salvar Resposta</button>
+            <button type="button" class="btn-secondary" id="btnCancelNewMacro" style="padding: 8px 16px; font-size: 13px;">Cancelar</button>
+          </div>
+        </div>
+
+        <!-- Lista de Macros -->
+        <div id="macrosListGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;"></div>
+      </div>
+    </div>
+
+    <!-- 6. ABA RECIBO DE ENTREGA (VOUCH) -->
+    <div class="tab-pane" id="tab-vouch">
+      <div class="card" style="max-width: 650px; margin: 0 auto;">
+        <h2 class="card-title">📦 Gerador de Recibo de Entrega (Vouch)</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+          Publique o comprovante oficial de entrega no canal de entregas com um botão para o cliente avaliar o atendimento.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">Canal para Postar o Recibo:</label>
+          <select id="selectVouchChannel" class="form-control">
+            <option value="">Carregando canais...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nickname do Cliente no Roblox:</label>
+          <input type="text" id="inputVouchNick" class="form-control" placeholder="Ex: @jogador123">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Quantidade de Robux:</label>
+            <input type="number" id="inputVouchRobux" class="form-control" placeholder="Ex: 1000" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Valor Pago (R$):</label>
+            <input type="number" id="inputVouchPrice" class="form-control" placeholder="Ex: 37.00" step="0.5">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Print / Comprovante de Compra (Imagem):</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="inputVouchImageUrl" class="form-control" placeholder="URL da imagem ou faça upload...">
+            <label class="btn-secondary" style="display: flex; align-items: center; cursor: pointer; white-space: nowrap;">
+              📁 Upload
+              <input type="file" id="fileVouchImage" accept="image/*" style="display: none;">
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Observação Opcional:</label>
+          <input type="text" id="inputVouchNotes" class="form-control" placeholder="Ex: Gamepass comprada e pendente por 5 dias.">
+        </div>
+
+        <button type="button" class="btn-primary-action" id="btnSubmitVouch" style="width: 100%; margin-top: 10px;">
+          ✨ Publicar Comprovante de Entrega no Discord
+        </button>
+      </div>
+    </div>
+
+    <!-- 7. ABA APARÊNCIA DA PYXIE -->
     <div class="tab-pane" id="tab-profile">
       <div class="card" style="max-width: 600px; margin: 0 auto;">
         <h2 class="card-title">🧚‍♀️ Perfil Local da Pyxie no Seu Servidor</h2>

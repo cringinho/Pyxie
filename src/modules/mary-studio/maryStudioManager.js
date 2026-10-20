@@ -129,9 +129,12 @@ class MaryStudioManager {
             giveawayModule: false,
           },
           macros: [
-            { id: 'm1', label: '👋 Saudação', text: 'Olá! Seja muito bem-vindo(a) à Mary Store! Já estou verificando seu pedido, um momentinho por favor.' },
-            { id: 'm2', label: '⏳ Robux Pendentes', text: 'Prontinho! Seus Robux já foram comprados na sua Gamepass. Você pode acompanhar em: https://www.roblox.com/transactions (ficam pendentes por 5 dias pelo Roblox).' },
-            { id: 'm3', label: '📸 Preços Regionais', text: 'Atenção: verifique se desativou a opção de "Preços Regionais" na sua Gamepass para não alterar o valor em Robux!' },
+            { id: 'm1', label: '👋 Saudação', text: 'Olá! Seja muito bem-vindo(a) à Mary Store! 🎀 Já estou atendendo você. Qual a quantidade de Robux que deseja comprar hoje?' },
+            { id: 'm2', label: '⏳ Robux Pendentes', text: 'Prontinho! Seus Robux já foram comprados na sua Gamepass. Você pode acompanhar em: https://www.roblox.com/transactions (ficam pendentes por 5 dias pelo Roblox antes de cair no seu saldo).' },
+            { id: 'm3', label: '⚠️ Preços Regionais', text: 'Atenção: no painel da sua Gamepass no Creator Hub do Roblox, certifique-se de DESATIVAR a caixinha de "Preços Regionais", pois ela altera o valor final em Robux!' },
+            { id: 'm4', label: '📘 Como Criar Gamepass', text: 'Passo a passo:\n1. Acesse https://create.roblox.com/dashboard/creations\n2. Clique em sua experiência padrão (SeuNome\'s Place)\n3. No menu lateral, vá em "Passes" (Passes)\n4. Clique em "Criar Passe", coloque um nome e salve.\n5. Clique no passe criado, vá na aba "Vendas", ative "Item à Venda" e coloque o valor exato combinado!\n6. Copie e envie o link aqui no chat.' },
+            { id: 'm5', label: '💳 Chave PIX', text: 'Aqui está nossa Chave PIX para pagamento:\nChave: {pix_key}\nNome: {pix_name}\nPor favor, envie o comprovante assim que realizar a transferência!' },
+            { id: 'm6', label: '⭐ Pedir Avaliação', text: 'Muito obrigada por confiar na Mary Store! 💖 Poderia deixar uma avaliação com ⭐ no nosso canal de avaliações? Isso ajuda muito a lojinha a crescer!' },
           ],
         };
         this.writeAtomic(CONFIG_FILE, initial);
@@ -265,7 +268,9 @@ class MaryStudioManager {
       .replace(/\{preco_1k\}/gi, precoStr)
       .replace(/\{status_loja\}/gi, statusStr)
       .replace(/\{total_avaliacoes\}/gi, String(totalReviews))
-      .replace(/\{nota_media\}/gi, `${avgScore} ⭐`);
+      .replace(/\{nota_media\}/gi, `${avgScore} ⭐`)
+      .replace(/\{pix_key\}/gi, cfg.pixKey || 'Chave PIX não informada')
+      .replace(/\{pix_name\}/gi, cfg.pixName || 'MARY STORE');
   }
 
   // --- CONSTRUÇÃO DE EMBEDS E COMPONENTES DISCORD ---
@@ -859,7 +864,7 @@ class MaryStudioManager {
         const savePath = path.join(UPLOADS_DIR, safeName);
         fs.writeFileSync(savePath, buffer);
 
-        const baseUrl = (process.env.PUBLIC_BASE_URL || process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org:3000').replace(/\/+$/, '');
+        const baseUrl = (process.env.PUBLIC_BASE_URL || process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br').replace(/\/+$/, '');
         const url = `${baseUrl}/api/mary/media/${safeName}`;
 
         return res.json({ success: true, url, fileName: safeName });
@@ -998,6 +1003,131 @@ class MaryStudioManager {
       } catch (err) {
         return res.status(500).json({ error: err.message });
       }
+    });
+
+    // 15. API Inspetor de Gamepass Roblox
+    app.get('/api/mary/roblox/gamepass', securityGuard.requireMaryAuth, async (req, res) => {
+      try {
+        const input = req.query.input || req.query.id;
+        if (!input) return res.status(400).json({ error: 'Informe a URL ou o ID da Gamepass.' });
+        const result = await robloxHelper.fetchRobloxGamepass(input);
+        if (!result.success) return res.status(404).json(result);
+        return res.json(result);
+      } catch (err) {
+        return res.status(500).json({ error: err.message });
+      }
+    });
+
+    // 16. API Inspetor de Jogador Roblox
+    app.get('/api/mary/roblox/user', securityGuard.requireMaryAuth, async (req, res) => {
+      try {
+        const username = req.query.username || req.query.nick;
+        if (!username) return res.status(400).json({ error: 'Informe o nick do jogador no Roblox.' });
+        const result = await robloxHelper.fetchRobloxUser(username);
+        if (!result.success) return res.status(404).json(result);
+        return res.json(result);
+      } catch (err) {
+        return res.status(500).json({ error: err.message });
+      }
+    });
+
+    // 17. API Calculadora Robux & Cotação
+    app.post('/api/mary/roblox/calc', securityGuard.requireMaryAuth, (req, res) => {
+      const { robux, brl, ratePer1k } = req.body || {};
+      const cfg = this.loadConfig();
+      const currentRate = Number(ratePer1k) || Number(cfg.preco1k) || 37.0;
+
+      let result = {};
+      if (robux !== undefined) {
+        const numRobux = Number(robux) || 0;
+        const grossGamepass = robloxHelper.calcRobuxGamepass(numRobux);
+        const priceBrl = robloxHelper.calcPriceBRL(numRobux, currentRate);
+        result = {
+          mode: 'from_robux',
+          robuxReceive: numRobux,
+          grossGamepass,
+          priceBrl,
+          currentRate,
+          formattedMessage: `💰 **Cotação Mary Store**\n• Robux desejados: **${numRobux.toLocaleString('pt-BR')} R$**\n• Valor da Gamepass (com taxa de 30%): **${grossGamepass.toLocaleString('pt-BR')} R$**\n• Valor a pagar: **R$ ${priceBrl.toFixed(2).replace('.', ',')}**\n⚠️ *Lembre-se de desativar os Preços Regionais na Gamepass!*`,
+        };
+      } else if (brl !== undefined) {
+        const numBrl = Number(brl) || 0;
+        const possibleRobux = robloxHelper.calcReverseRobux(numBrl, currentRate);
+        const grossGamepass = robloxHelper.calcRobuxGamepass(possibleRobux);
+        result = {
+          mode: 'from_brl',
+          brlAmount: numBrl,
+          robuxReceive: possibleRobux,
+          grossGamepass,
+          currentRate,
+          formattedMessage: `💰 **Cotação Mary Store**\n• Com **R$ ${numBrl.toFixed(2).replace('.', ',')}**, você recebe **${possibleRobux.toLocaleString('pt-BR')} Robux**.\n• Crie sua Gamepass por **${grossGamepass.toLocaleString('pt-BR')} Robux**.\n⚠️ *Lembre-se de desativar os Preços Regionais na Gamepass!*`,
+        };
+      } else {
+        return res.status(400).json({ error: 'Informe robux ou brl.' });
+      }
+
+      return res.json({ success: true, ...result });
+    });
+
+    // 18. API Enviar Comprovante de Entrega (Vouch)
+    app.post('/api/mary/receipt/send', securityGuard.requireMaryAuth, securityGuard.csrfProtection, async (req, res) => {
+      try {
+        const { channelId, clientNick, clientRobux, clientPrice, proofImageUrl, notes } = req.body || {};
+        if (!channelId || !clientNick || !clientRobux) {
+          return res.status(400).json({ error: 'Canal, nick do cliente e quantidade de Robux são obrigatórios.' });
+        }
+
+        const config = this.loadConfig();
+        const numRobux = Number(clientRobux) || 0;
+        const numPrice = Number(clientPrice) || robloxHelper.calcPriceBRL(numRobux, config.preco1k);
+
+        const embedData = {
+          title: '🎀・Entrega Concluída com Sucesso!',
+          description: `Mais uma encomenda de Robux finalizada com total segurança e agilidade na **Mary Store**!\n\n` +
+            `👤 **Cliente:** \`${clientNick}\`\n` +
+            `💎 **Quantidade:** **${numRobux.toLocaleString('pt-BR')} Robux**\n` +
+            `💰 **Valor:** **R$ ${numPrice.toFixed(2).replace('.', ',')}**\n` +
+            `⏳ **Status:** **✅ Comprado (Pendentes por 5 dias)**\n` +
+            (notes ? `📝 **Obs:** ${notes}\n\n` : '\n') +
+            `💖 *Obrigada pela confiança! Deixe sua avaliação abaixo para fortalecer a lojinha.*`,
+          color: '#10b981',
+          imageUrl: proofImageUrl || '',
+          footerText: 'Mary Store • Entregas Oficiais & Comprovantes',
+        };
+
+        const buttons = [
+          {
+            id: 'btn_vouch_review',
+            label: 'Avaliar Atendimento',
+            emoji: '⭐',
+            style: 'Success',
+            actionType: 'open_review',
+          },
+        ];
+
+        const result = await this.sendMessage(channelId, {
+          content: `🎉 Parabéns pela compra, **${clientNick}**!`,
+          embed: embedData,
+          buttons,
+        });
+
+        return res.json({ success: true, result });
+      } catch (err) {
+        return res.status(500).json({ error: err.message });
+      }
+    });
+
+    // 19. API Gerenciar Respostas Rápidas (Macros)
+    app.post('/api/mary/macros', securityGuard.requireMaryAuth, securityGuard.csrfProtection, (req, res) => {
+      const { macros } = req.body || {};
+      if (!Array.isArray(macros)) {
+        return res.status(400).json({ error: 'A lista de macros deve ser um array.' });
+      }
+
+      const config = this.loadConfig();
+      config.macros = macros;
+      this.saveConfig(config);
+      return res.json({ success: true, macros: config.macros });
     });
   }
 }

@@ -33,6 +33,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('fileImage').addEventListener('change', (e) => handleFileUpload(e, 'inputImageUrl'));
   document.getElementById('fileThumbnail').addEventListener('change', (e) => handleFileUpload(e, 'inputThumbnailUrl'));
   document.getElementById('btnOpenCanvasTable').addEventListener('click', generateCanvasPriceTable);
+
+  // Ferramentas Robux, Macros e Recibo
+  document.getElementById('btnInspectGamepass')?.addEventListener('click', inspectGamepass);
+  document.getElementById('btnInspectPlayer')?.addEventListener('click', inspectPlayer);
+  document.getElementById('calcInputRobux')?.addEventListener('input', () => updateExpressCalc('robux'));
+  document.getElementById('calcInputBrl')?.addEventListener('input', () => updateExpressCalc('brl'));
+  document.getElementById('calcInputRate')?.addEventListener('input', () => updateExpressCalc('rate'));
+  document.getElementById('btnCopyCalcMessage')?.addEventListener('click', copyCalcMessage);
+  document.getElementById('btnToggleNewMacroForm')?.addEventListener('click', toggleNewMacroForm);
+  document.getElementById('btnSaveNewMacro')?.addEventListener('click', saveNewMacro);
+  document.getElementById('btnCancelNewMacro')?.addEventListener('click', toggleNewMacroForm);
+  document.getElementById('btnSubmitVouch')?.addEventListener('click', submitVouch);
+  document.getElementById('fileVouchImage')?.addEventListener('change', (e) => handleFileUpload(e, 'inputVouchImageUrl'));
 });
 
 async function apiFetch(url, options = {}) {
@@ -75,8 +88,10 @@ async function loadBootstrapData() {
     renderChannels();
     renderTemplates();
     renderSentMessages();
+    renderMacrosTab();
     renderModulesTab();
     renderSecurityTab(data);
+    updateExpressCalc('robux');
 
     // Se veio parâmetro de edição na URL (?editMessageId=...)
     const urlParams = new URLSearchParams(window.location.search);
@@ -131,17 +146,36 @@ function renderHeader() {
 
 function renderChannels() {
   const select = document.getElementById('selectChannel');
+  const vouchSelect = document.getElementById('selectVouchChannel');
   if (!appState.guild || !appState.channels || appState.channels.length === 0) {
-    select.innerHTML = '<option value="">⚠️ Pyxie não está no servidor ou não há canais (convide o bot primeiro)</option>';
+    const emptyOpt = '<option value="">⚠️ Pyxie não está no servidor ou não há canais (convide o bot primeiro)</option>';
+    if (select) select.innerHTML = emptyOpt;
+    if (vouchSelect) vouchSelect.innerHTML = emptyOpt;
     return;
   }
-  select.innerHTML = '<option value="">Selecione um canal...</option>';
-  appState.channels.forEach((ch) => {
-    const opt = document.createElement('option');
-    opt.value = ch.id;
-    opt.textContent = `#${ch.name}`;
-    select.appendChild(opt);
-  });
+  if (select) {
+    select.innerHTML = '<option value="">Selecione um canal...</option>';
+    appState.channels.forEach((ch) => {
+      const opt = document.createElement('option');
+      opt.value = ch.id;
+      opt.textContent = `#${ch.name}`;
+      select.appendChild(opt);
+    });
+  }
+  if (vouchSelect) {
+    vouchSelect.innerHTML = '<option value="">Selecione o canal de entregas...</option>';
+    let autoSelected = false;
+    appState.channels.forEach((ch) => {
+      const opt = document.createElement('option');
+      opt.value = ch.id;
+      opt.textContent = `#${ch.name}`;
+      if (!autoSelected && (ch.name.includes('entrega') || ch.name.includes('vouch') || ch.name.includes('recibo'))) {
+        opt.selected = true;
+        autoSelected = true;
+      }
+      vouchSelect.appendChild(opt);
+    });
+  }
 }
 
 function setupTabs() {
@@ -753,5 +787,303 @@ async function handleLogoutAll() {
   if (!confirm('Deseja desconectar todos os aparelhos conectados ao Estúdio?')) return;
   await apiFetch('/api/mary/auth/logout-all', { method: 'POST' });
   window.location.replace('/mary');
+}
+
+// --- FERRAMENTAS ROBUX: INSPETOR DE GAMEPASS ---
+async function inspectGamepass() {
+  const input = document.getElementById('inputInspectGamepass').value.trim();
+  if (!input) return alert('Digite o link ou o ID da Gamepass.');
+
+  const btn = document.getElementById('btnInspectGamepass');
+  const resultBox = document.getElementById('gamepassInspectResult');
+  btn.disabled = true;
+  btn.textContent = 'Buscando...';
+
+  try {
+    const res = await apiFetch(`/api/mary/roblox/gamepass?input=${encodeURIComponent(input)}`);
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      alert(data.error || 'Gamepass não encontrada no Roblox.');
+      resultBox.style.display = 'none';
+      return;
+    }
+
+    document.getElementById('gpResultName').textContent = data.name;
+    document.getElementById('gpResultCreator').textContent = `Criador: ${data.creatorName} (${data.creatorType})`;
+    document.getElementById('gpResultGross').textContent = `${data.priceInRobux.toLocaleString('pt-BR')} R$`;
+    document.getElementById('gpResultLiquid').textContent = `${data.liquidRobux.toLocaleString('pt-BR')} R$`;
+    document.getElementById('gpResultBuyLink').href = data.buyUrl;
+
+    const iconImg = document.getElementById('gpResultIcon');
+    iconImg.src = data.iconUrl || 'https://tr.rbxcdn.com/30DAY-AvatarHeadshot-placeholder/150/150/AvatarHeadshot/Png/noFilter';
+
+    const badge = document.getElementById('gpResultBadge');
+    if (data.isForSale && data.priceInRobux > 0) {
+      badge.textContent = '🟢 À VENDA';
+      badge.className = 'badge-onsale';
+    } else {
+      badge.textContent = '🔴 FORA DE VENDA / SEM PREÇO';
+      badge.className = 'badge-offsale';
+    }
+
+    resultBox.style.display = 'block';
+  } catch (e) {
+    alert('Erro ao inspecionar gamepass.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔍 Checar';
+  }
+}
+
+// --- FERRAMENTAS ROBUX: INSPETOR DE JOGADOR ---
+async function inspectPlayer() {
+  const input = document.getElementById('inputInspectPlayer').value.trim();
+  if (!input) return alert('Digite o nickname do usuário no Roblox.');
+
+  const btn = document.getElementById('btnInspectPlayer');
+  const resultBox = document.getElementById('playerInspectResult');
+  btn.disabled = true;
+  btn.textContent = 'Buscando...';
+
+  try {
+    const res = await apiFetch(`/api/mary/roblox/user?username=${encodeURIComponent(input)}`);
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      alert(data.error || 'Usuário não encontrado no Roblox.');
+      resultBox.style.display = 'none';
+      return;
+    }
+
+    document.getElementById('playerResultName').textContent = `${data.displayName} (@${data.name})`;
+    document.getElementById('playerResultId').textContent = `Roblox ID: ${data.id}`;
+    document.getElementById('playerResultAvatar').src = data.avatarUrl;
+    document.getElementById('playerResultProfileLink').href = data.profileUrl;
+    document.getElementById('playerResultCreationsLink').href = data.creationsUrl;
+
+    resultBox.style.display = 'block';
+  } catch (e) {
+    alert('Erro ao buscar jogador.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔍 Buscar';
+  }
+}
+
+// --- CALCULADORA EXPRESS BIDIRECIONAL ---
+function updateExpressCalc(fromField) {
+  const inputRobux = document.getElementById('calcInputRobux');
+  const inputBrl = document.getElementById('calcInputBrl');
+  const inputRate = document.getElementById('calcInputRate');
+
+  if (!inputRobux || !inputBrl || !inputRate) return;
+  const rate = Number(inputRate.value) || Number(appState.config.preco1k) || 37.0;
+
+  let robuxVal = 0;
+  let grossVal = 0;
+  let brlVal = 0;
+
+  if (fromField === 'brl') {
+    brlVal = Number(inputBrl.value) || 0;
+    robuxVal = brlVal > 0 ? Math.floor((brlVal / rate) * 1000) : 0;
+    inputRobux.value = robuxVal > 0 ? robuxVal : '';
+    grossVal = robuxVal > 0 ? Math.ceil(robuxVal / 0.7) : 0;
+  } else {
+    robuxVal = Number(inputRobux.value) || 0;
+    grossVal = robuxVal > 0 ? Math.ceil(robuxVal / 0.7) : 0;
+    brlVal = robuxVal > 0 ? (robuxVal / 1000) * rate : 0;
+    inputBrl.value = brlVal > 0 ? brlVal.toFixed(2) : '';
+  }
+
+  document.getElementById('calcResRobux').textContent = `${robuxVal.toLocaleString('pt-BR')} R$`;
+  document.getElementById('calcResGross').textContent = `${grossVal.toLocaleString('pt-BR')} R$`;
+  document.getElementById('calcResBrl').textContent = `R$ ${brlVal.toFixed(2).replace('.', ',')}`;
+}
+
+function copyCalcMessage() {
+  const robux = document.getElementById('calcResRobux').textContent;
+  const gross = document.getElementById('calcResGross').textContent;
+  const brl = document.getElementById('calcResBrl').textContent;
+
+  const msg = `💰 **Cotação Mary Store** 🎀\n` +
+    `• Robux que você recebe: **${robux}**\n` +
+    `• Valor a colocar na Gamepass (taxa de 30%): **${gross}**\n` +
+    `• Valor a pagar via PIX: **${brl}**\n\n` +
+    `⚠️ **Importante:** Desative a opção "Preços Regionais" na Gamepass para o valor não sofrer alteração!`;
+
+  navigator.clipboard.writeText(msg).then(() => {
+    const feedback = document.getElementById('copyCalcFeedback');
+    if (feedback) {
+      feedback.style.display = 'inline';
+      setTimeout(() => { feedback.style.display = 'none'; }, 3000);
+    }
+  }).catch(() => {
+    alert('Erro ao copiar mensagem.');
+  });
+}
+
+// --- RESPOSTAS RÁPIDAS & MACROS ---
+function renderMacrosTab() {
+  const grid = document.getElementById('macrosListGrid');
+  if (!grid) return;
+  const macros = appState.config.macros || [];
+  grid.innerHTML = '';
+
+  macros.forEach((m, idx) => {
+    const card = document.createElement('div');
+    card.className = 'macro-card';
+
+    const title = document.createElement('div');
+    title.className = 'macro-card-title';
+    title.textContent = m.label || `Resposta #${idx + 1}`;
+
+    const text = document.createElement('div');
+    text.className = 'macro-card-text';
+    text.textContent = m.text;
+
+    const actions = document.createElement('div');
+    actions.className = 'macro-card-actions';
+
+    const btnCopy = document.createElement('button');
+    btnCopy.type = 'button';
+    btnCopy.className = 'btn-secondary';
+    btnCopy.textContent = '📋 Copiar';
+    btnCopy.style.padding = '6px 12px';
+    btnCopy.style.fontSize = '12px';
+    btnCopy.onclick = () => {
+      let resolvedText = m.text;
+      resolvedText = resolvedText.replace(/\{pix_key\}/gi, appState.config.pixKey || '');
+      resolvedText = resolvedText.replace(/\{pix_name\}/gi, appState.config.pixName || 'MARY STORE');
+      navigator.clipboard.writeText(resolvedText).then(() => {
+        btnCopy.textContent = '✅ Copiado!';
+        setTimeout(() => { btnCopy.textContent = '📋 Copiar'; }, 2000);
+      });
+    };
+
+    const btnSend = document.createElement('button');
+    btnSend.type = 'button';
+    btnSend.className = 'btn-primary-action';
+    btnSend.textContent = '🚀 Enviar no Canal';
+    btnSend.style.padding = '6px 12px';
+    btnSend.style.fontSize = '12px';
+    btnSend.onclick = async () => {
+      const channelId = document.getElementById('selectChannel')?.value;
+      if (!channelId) {
+        alert('Por favor, selecione primeiro um canal na aba "Criar & Editar Embeds".');
+        return;
+      }
+      btnSend.disabled = true;
+      btnSend.textContent = 'Enviando...';
+      try {
+        const res = await apiFetch('/api/mary/messages/send', {
+          method: 'POST',
+          body: JSON.stringify({
+            channelId,
+            messageData: { content: m.text }
+          })
+        });
+        const d = await res.json();
+        if (d.success) {
+          alert('Mensagem rápida enviada no canal com sucesso!');
+        } else {
+          alert(d.error || 'Erro ao enviar mensagem.');
+        }
+      } catch (e) {
+        alert('Erro ao conectar ao servidor.');
+      } finally {
+        btnSend.disabled = false;
+        btnSend.textContent = '🚀 Enviar no Canal';
+      }
+    };
+
+    actions.appendChild(btnCopy);
+    actions.appendChild(btnSend);
+    card.appendChild(title);
+    card.appendChild(text);
+    card.appendChild(actions);
+    grid.appendChild(card);
+  });
+}
+
+function toggleNewMacroForm() {
+  const form = document.getElementById('newMacroForm');
+  if (!form) return;
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+async function saveNewMacro() {
+  const label = document.getElementById('inputNewMacroLabel').value.trim();
+  const text = document.getElementById('inputNewMacroText').value.trim();
+  if (!label || !text) return alert('Preencha o título e o texto da resposta rápida.');
+
+  const macros = appState.config.macros || [];
+  macros.push({
+    id: `m_${Date.now().toString(36)}`,
+    label,
+    text,
+  });
+
+  const res = await apiFetch('/api/mary/macros', {
+    method: 'POST',
+    body: JSON.stringify({ macros }),
+  });
+  const data = await res.json();
+  if (data.success) {
+    appState.config.macros = macros;
+    renderMacrosTab();
+    toggleNewMacroForm();
+    document.getElementById('inputNewMacroLabel').value = '';
+    document.getElementById('inputNewMacroText').value = '';
+    alert('Nova resposta rápida salva com sucesso!');
+  } else {
+    alert(data.error || 'Erro ao salvar resposta.');
+  }
+}
+
+// --- RECIBO DE ENTREGA (VOUCH) ---
+async function submitVouch() {
+  const channelId = document.getElementById('selectVouchChannel').value;
+  const clientNick = document.getElementById('inputVouchNick').value.trim();
+  const clientRobux = document.getElementById('inputVouchRobux').value.trim();
+  const clientPrice = document.getElementById('inputVouchPrice').value.trim();
+  const proofImageUrl = document.getElementById('inputVouchImageUrl').value.trim();
+  const notes = document.getElementById('inputVouchNotes').value.trim();
+
+  if (!channelId) return alert('Selecione o canal para postar o comprovante.');
+  if (!clientNick) return alert('Informe o nickname do cliente no Roblox.');
+  if (!clientRobux) return alert('Informe a quantidade de Robux entregue.');
+
+  const btn = document.getElementById('btnSubmitVouch');
+  btn.disabled = true;
+  btn.textContent = 'Publicando Comprovante...';
+
+  try {
+    const res = await apiFetch('/api/mary/receipt/send', {
+      method: 'POST',
+      body: JSON.stringify({
+        channelId,
+        clientNick,
+        clientRobux,
+        clientPrice,
+        proofImageUrl,
+        notes,
+      }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('🎉 Comprovante de entrega postado com sucesso no Discord!');
+      document.getElementById('inputVouchNick').value = '';
+      document.getElementById('inputVouchRobux').value = '';
+      document.getElementById('inputVouchPrice').value = '';
+      document.getElementById('inputVouchImageUrl').value = '';
+      document.getElementById('inputVouchNotes').value = '';
+    } else {
+      alert(data.error || 'Erro ao publicar comprovante.');
+    }
+  } catch (err) {
+    alert('Erro ao conectar ao servidor.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✨ Publicar Comprovante de Entrega no Discord';
+  }
 }
 

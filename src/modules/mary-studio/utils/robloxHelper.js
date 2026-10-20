@@ -3,7 +3,7 @@
  */
 
 /**
- * Calcula quantos Robux o cliente deve colocar na Gamepass para que o vendedor
+ * Calcula quantos Robux o cliente deve colocar na Gamepass para que o comprador/vendedor
  * receba a quantia líquida desejada após o desconto de 30% da taxa do Roblox.
  * Fórmula canônica: ceil(robuxLiquido / 0.70)
  */
@@ -11,6 +11,16 @@ function calcRobuxGamepass(robuxReceive) {
   const amount = Number(robuxReceive) || 0;
   if (amount <= 0) return 0;
   return Math.ceil(amount / 0.7);
+}
+
+/**
+ * Calcula quanto Robux líquido a pessoa recebe se a gamepass for vendida pelo preço bruto X.
+ * Fórmula: floor(grossRobux * 0.70)
+ */
+function calcLiquidFromGamepass(grossRobux) {
+  const amount = Number(grossRobux) || 0;
+  if (amount <= 0) return 0;
+  return Math.floor(amount * 0.7);
 }
 
 /**
@@ -24,6 +34,88 @@ function calcPriceBRL(robuxReceive, ratePer1k = 37.0, discountPercent = 0) {
   const basePrice = (robux / 1000) * rate;
   const finalPrice = basePrice * (1 - discount / 100);
   return Number(Math.max(0, finalPrice).toFixed(2));
+}
+
+/**
+ * Calcula quantos Robux o cliente pode comprar com um valor em Reais (BRL)
+ */
+function calcReverseRobux(brlAmount, ratePer1k = 37.0) {
+  const brl = Number(brlAmount) || 0;
+  const rate = Number(ratePer1k) || 37.0;
+  if (brl <= 0 || rate <= 0) return 0;
+  return Math.floor((brl / rate) * 1000);
+}
+
+/**
+ * Extrai o ID numérico da Gamepass a partir de uma URL ou string numérica
+ */
+function extractGamepassId(input) {
+  if (!input) return null;
+  const str = String(input).trim();
+  const urlMatch = str.match(/(?:game-pass(?:es)?|gamepass)\/(\d+)/i) || str.match(/[?&]id=(\d+)/i);
+  if (urlMatch && urlMatch[1]) return urlMatch[1];
+  const numMatch = str.match(/\b(\d{5,15})\b/);
+  return numMatch ? numMatch[1] : null;
+}
+
+/**
+ * Consulta a API oficial do Roblox para obter detalhes completos de uma Gamepass
+ */
+async function fetchRobloxGamepass(gamePassIdOrUrl) {
+  const gamePassId = extractGamepassId(gamePassIdOrUrl);
+  if (!gamePassId) {
+    return { success: false, error: 'Link ou ID numérico de Gamepass inválido.' };
+  }
+
+  try {
+    const res = await fetch(`https://apis.roblox.com/game-passes/v1/game-passes/${gamePassId}/product-info`, {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    if (!res.ok) {
+      if (res.status === 404) return { success: false, error: 'Gamepass não encontrada no Roblox.' };
+      return { success: false, error: `Erro na API do Roblox (${res.status})` };
+    }
+
+    const data = await res.json();
+    if (!data || !data.TargetId) {
+      return { success: false, error: 'Dados da Gamepass não disponíveis.' };
+    }
+
+    const price = Number(data.PriceInRobux) || 0;
+    const isForSale = Boolean(data.IsForSale);
+    const liquidRobux = isForSale && price > 0 ? Math.floor(price * 0.7) : 0;
+
+    let iconUrl = null;
+    try {
+      const thumbRes = await fetch(
+        `https://thumbnails.roblox.com/v1/game-passes?gamePassIds=${gamePassId}&size=150x150&format=Png`
+      );
+      if (thumbRes.ok) {
+        const thumbData = await thumbRes.json();
+        if (thumbData?.data?.[0]?.imageUrl) {
+          iconUrl = thumbData.data[0].imageUrl;
+        }
+      }
+    } catch (_) {}
+
+    return {
+      success: true,
+      id: String(data.TargetId),
+      name: data.Name || 'Gamepass Sem Nome',
+      description: data.Description || '',
+      creatorName: data.Creator?.Name || 'Desconhecido',
+      creatorId: data.Creator?.Id || null,
+      creatorType: data.Creator?.CreatorType || 'User',
+      priceInRobux: price,
+      isForSale,
+      liquidRobux,
+      iconUrl,
+      buyUrl: `https://www.roblox.com/game-pass/${data.TargetId}`,
+    };
+  } catch (err) {
+    return { success: false, error: `Falha ao conectar com a API do Roblox: ${err.message}` };
+  }
 }
 
 /**
@@ -171,7 +263,11 @@ function getPixQrCodeUrl(pixPayload) {
 
 module.exports = {
   calcRobuxGamepass,
+  calcLiquidFromGamepass,
   calcPriceBRL,
+  calcReverseRobux,
+  extractGamepassId,
+  fetchRobloxGamepass,
   fetchRobloxUser,
   generatePixPayload,
   getPixQrCodeUrl,

@@ -120,7 +120,7 @@ function createMagicLink(userId, options = {}, customBaseUrl = null) {
   const sig = crypto.createHmac('sha256', secret).update(payload).digest('hex');
   const token = Buffer.from(JSON.stringify({ payload, sig })).toString('base64url');
 
-  const baseUrl = (customBaseUrl || process.env.PUBLIC_BASE_URL || process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org:3000').replace(/\/+$/, '');
+  const baseUrl = (customBaseUrl || process.env.PUBLIC_BASE_URL || process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br').replace(/\/+$/, '');
   const url = `${baseUrl}/mary/auth/magic?token=${token}`;
 
   return {

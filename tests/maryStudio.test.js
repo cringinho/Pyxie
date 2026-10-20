@@ -385,6 +385,28 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
 
     console.log('  ✅ 9. Paridade bilíngue e mapeamento de comandos validados.');
 
+    // =========================================================================
+    // 10. FERRAMENTAS ROBUX: INSPETOR DE GAMEPASS, CÁLCULO INVERSO E VOUCH
+    // =========================================================================
+    console.log('  🧮 10. Testando Inspetor de Gamepass, Cálculo Inverso e Vouch...');
+
+    // 10.1 Cálculo Inverso e Líquido
+    assert.equal(robloxHelper.calcReverseRobux(37.0, 37.0), 1000, 'R$ 37 a taxa 37/1k deve dar 1.000 Robux');
+    assert.equal(robloxHelper.calcReverseRobux(74.0, 37.0), 2000, 'R$ 74 a taxa 37/1k deve dar 2.000 Robux');
+    assert.equal(robloxHelper.calcLiquidFromGamepass(1429), 1000, '1429 Robux bruto na gamepass (70%) deve resultar em 1000 Robux líquido');
+    assert.equal(robloxHelper.extractGamepassId('https://www.roblox.com/game-pass/12345678/vip'), '12345678', 'Deve extrair ID de URL Roblox');
+    assert.equal(robloxHelper.extractGamepassId('987654321'), '987654321', 'Deve aceitar ID numérico puro');
+
+    // 10.2 Mock de Gamepass Inspection
+    const pyGamepassCmd = require('../src/modules/mary-studio/commands/pyGamepass');
+    assert.ok(pyGamepassCmd.data, 'Comando py-gamepass deve possuir dados SlashCommandBuilder');
+    assert.equal(pyGamepassCmd.name, 'py-gamepass');
+    assert.ok(pyGamepassCmd.aliases.includes('gamepass'), 'Deve conter alias gamepass');
+    assert.ok('gamepass' in COMMAND_CATEGORY_MAP, 'gamepass deve estar mapeado em COMMAND_CATEGORY_MAP');
+    assert.ok('py-gamepass' in COMMAND_CATEGORY_MAP, 'py-gamepass deve estar mapeado em COMMAND_CATEGORY_MAP');
+
+    console.log('  ✅ 10. Inspetor de Gamepass, Cálculo Inverso e Mapeamento validados com sucesso.');
+
     // Limpeza de arquivos de teste temporários
     try {
       if (fs.existsSync(testDataDir)) {
