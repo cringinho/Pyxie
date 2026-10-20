@@ -415,6 +415,13 @@ const COMMAND_CATEGORY_MAP = {
   'py-termos': 'utilidades',
   regras: 'utilidades',
   'py-regras': 'utilidades',
+  mary: 'utilidades',
+  'py-mary': 'utilidades',
+  'estudio-mary': 'utilidades',
+  'py-estudio-mary': 'utilidades',
+  'mary-studio': 'utilidades',
+  'py-mary-studio': 'utilidades',
+  'py-mary-edit-context': 'utilidades',
 };
 
 let _loadedCommands = null;

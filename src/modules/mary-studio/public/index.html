@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎀 Estúdio Visual da Mary • Pyxie</title>
+  <link rel="stylesheet" href="/mary/assets/styles.css">
+  <link rel="icon" href="https://cdn.discordapp.com/emojis/1548444149785694238.gif">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="brand">
+      <div class="brand-icon">🎀</div>
+      <div class="brand-text">
+        <h1>Estúdio da Mary</h1>
+        <p id="guildInfoText">Carregando seu servidor...</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="status-badge" id="statusBadge" title="Clique para alternar o status da loja">
+        <span id="statusDot">🟢</span> <span id="statusLabel">Loja Online</span>
+      </div>
+      <button class="btn-secondary" id="btnRefresh">🔄 Atualizar</button>
+      <button class="btn-secondary" id="btnLogout" style="color: #ef4444;">🚪 Sair</button>
+    </div>
+  </header>
+
+  <!-- Nav Tabs -->
+  <nav class="nav-tabs">
+    <div class="nav-tab active" data-tab="tab-builder">🎨 Criar & Editar Embeds</div>
+    <div class="nav-tab" data-tab="tab-templates">📑 Modelos Prontos</div>
+    <div class="nav-tab" data-tab="tab-sent">✏️ Mensagens Enviadas</div>
+    <div class="nav-tab" data-tab="tab-profile">🧚‍♀️ Aparência da Pyxie</div>
+    <div class="nav-tab" data-tab="tab-modules">🛍️ Módulos da Loja</div>
+    <div class="nav-tab" data-tab="tab-security">🔒 Segurança & Aparelhos</div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- 1. ABA CONSTRUTOR DE EMBEDS -->
+    <div class="tab-pane active" id="tab-builder">
+      <div class="builder-grid">
+        
+        <!-- Coluna Esquerda: Formulário -->
+        <div class="builder-form-col">
+          
+          <div class="card" id="editModeBanner" style="display: none; background: rgba(168, 85, 247, 0.15); border-color: var(--accent-purple);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #d8b4fe;">✏️ Modo de Edição Ativo</strong>
+                <p style="font-size: 12px; color: var(--text-muted);">Você está editando uma mensagem já enviada no Discord.</p>
+              </div>
+              <button class="btn-secondary" id="btnCancelEdit" style="padding: 4px 10px; font-size: 12px;">Cancelar Edição</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">📍 Onde Enviar no Discord?</h2>
+            <div class="form-group">
+              <label class="form-label">Canal de Texto do Servidor:</label>
+              <select id="selectChannel" class="form-control">
+                <option value="">Carregando canais...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Texto da Mensagem (Fora do Card):</label>
+              <input type="text" id="inputContent" class="form-control" placeholder="Ex: Olá @everyone, confiram nossa vitrine de hoje!">
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">🎨 Conteúdo do Card (Embed)</h2>
+            
+            <div class="form-group">
+              <label class="form-label">Título do Card:</label>
+              <input type="text" id="inputTitle" class="form-control" placeholder="Ex: 🎀・Lojinha de Robux da Mary">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Cor da Faixa Lateral:</label>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="color" id="inputColor" value="#ec4899" style="width: 44px; height: 38px; border-radius: 8px; border: none; cursor: pointer;">
+                <input type="text" id="inputColorHex" class="form-control" value="#ec4899" style="max-width: 120px;">
+              </div>
+              <div class="color-presets">
+                <div class="color-dot" style="background:#ec4899;" data-color="#ec4899"></div>
+                <div class="color-dot" style="background:#a855f7;" data-color="#a855f7"></div>
+                <div class="color-dot" style="background:#38bdf8;" data-color="#38bdf8"></div>
+                <div class="color-dot" style="background:#10b981;" data-color="#10b981"></div>
+                <div class="color-dot" style="background:#f59e0b;" data-color="#f59e0b"></div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <label class="form-label" style="margin: 0;">Descrição / Mensagem Principal:</label>
+                <div style="display: flex; gap: 4px;">
+                  <button type="button" class="btn-secondary var-btn" data-var="{status_loja}" style="padding: 2px 6px; font-size: 11px;">{status_loja}</button>
+                  <button type="button" class="btn-secondary var-btn" data-var="{estoque}" style="padding: 2px 6px; font-size: 11px;">{estoque}</button>
+                  <button type="button" class="btn-secondary var-btn" data-var="{preco_1k}" style="padding: 2px 6px; font-size: 11px;">{preco_1k}</button>
+                </div>
+              </div>
+              <textarea id="inputDescription" class="form-control" rows="6" placeholder="Escreva a descrição do seu card aqui..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Imagem Grande (Banner):</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="inputImageUrl" class="form-control" placeholder="URL da imagem ou faça upload...">
+                <label class="btn-secondary" style="display: flex; align-items: center; cursor: pointer; white-space: nowrap;">
+                  📁 Upload
+                  <input type="file" id="fileImage" accept="image/*" style="display: none;">
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Miniatura Lateral (Thumbnail):</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="inputThumbnailUrl" class="form-control" placeholder="URL da miniatura...">
+                <label class="btn-secondary" style="display: flex; align-items: center; cursor: pointer; white-space: nowrap;">
+                  📁 Upload
+                  <input type="file" id="fileThumbnail" accept="image/*" style="display: none;">
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Texto do Rodapé (Footer):</label>
+              <input type="text" id="inputFooterText" class="form-control" placeholder="Ex: 🎀 Mary Store • Pagamento via PIX">
+            </div>
+
+            <button type="button" class="btn-secondary" id="btnOpenCanvasTable" style="width: 100%; border-color: var(--accent-purple); color: #d8b4fe;">
+              🎨 Criar Imagem de Tabela de Preços Aqui no Site (Canvas)
+            </button>
+          </div>
+
+          <!-- Construtor de Botões Interativos -->
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h2 class="card-title" style="margin: 0;">🔘 Botões Clicáveis do Card</h2>
+              <button class="btn-secondary" id="btnAddButton" style="padding: 6px 12px; font-size: 12px;">➕ Novo Botão</button>
+            </div>
+            <div id="buttonsList">
+              <p style="font-size: 13px; color: var(--text-muted);">Nenhum botão adicionado ainda. Clique em "Novo Botão" acima.</p>
+            </div>
+          </div>
+
+          <button id="btnSubmitMessage" class="btn-primary-action">
+            🚀 Enviar Mensagem para o Discord
+          </button>
+
+        </div>
+
+        <!-- Coluna Direita: Live Preview Discord -->
+        <div class="builder-preview-col">
+          <div class="discord-preview-wrap">
+            <div style="font-size: 12px; font-weight: 700; color: #949ba4; text-transform: uppercase; margin-bottom: 14px; letter-spacing: 0.5px;">
+              👁️ Pré-visualização em Tempo Real (Idêntica ao Discord)
+            </div>
+
+            <div class="discord-msg-header">
+              <img class="discord-bot-avatar" id="prevBotAvatar" src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" alt="Avatar">
+              <div>
+                <span class="discord-bot-name" id="prevBotNick">Pyxie</span>
+                <span class="discord-bot-tag">APP</span>
+                <span style="font-size: 11px; color: #949ba4; margin-left: 6px;">Hoje às 12:00</span>
+              </div>
+            </div>
+
+            <div class="discord-content-text" id="prevContentText"></div>
+
+            <div class="discord-embed" id="prevEmbedCard">
+              <div class="discord-embed-title" id="prevEmbedTitle"></div>
+              <div class="discord-embed-desc" id="prevEmbedDesc"></div>
+              <img id="prevEmbedImage" class="discord-embed-image" style="display: none;" src="" alt="Banner">
+              <div class="discord-embed-footer" id="prevEmbedFooter">
+                <span id="prevFooterText"></span>
+              </div>
+            </div>
+
+            <div class="discord-buttons-row" id="prevButtonsRow"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. ABA MODELOS PRONTOS -->
+    <div class="tab-pane" id="tab-templates">
+      <div class="card">
+        <h2 class="card-title">✨ Modelos Prontos para Lojinha de Robux</h2>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
+          Selecione um modelo abaixo para carregá-lo instantaneamente no construtor com textos, cores e botões pré-configurados!
+        </p>
+        <div id="templatesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;"></div>
+      </div>
+    </div>
+
+    <!-- 3. ABA MENSAGENS ENVIADAS -->
+    <div class="tab-pane" id="tab-sent">
+      <div class="card">
+        <h2 class="card-title">✏️ Mensagens e Cards Enviados no Servidor</h2>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
+          Todas as mensagens enviadas pela Pyxie ficam salvas aqui. Você pode alterar o texto ou desfazer edições com 1 clique.
+        </p>
+        <div id="sentMessagesList"></div>
+      </div>
+    </div>
+
+    <!-- 4. ABA APARÊNCIA DA PYXIE -->
+    <div class="tab-pane" id="tab-profile">
+      <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <h2 class="card-title">🧚‍♀️ Perfil Local da Pyxie no Seu Servidor</h2>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
+          Personalize como a Pyxie aparece exclusivamente no servidor da Mary, sem afetar outros servidores!
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">Apelido Local (Nick no Servidor):</label>
+          <input type="text" id="inputLocalNick" class="form-control" placeholder="Ex: 🎀 Pyxie | Mary Store">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Status da Loja no Servidor:</label>
+          <select id="selectStoreStatus" class="form-control">
+            <option value="online">🟢 Loja Online (Entrega Rápida)</option>
+            <option value="fila">🟡 Atendimento em Fila</option>
+            <option value="offline">🔴 Lojinha Fechada</option>
+          </select>
+        </div>
+
+        <button id="btnSaveProfile" class="btn-primary-action" style="margin-top: 16px;">
+          💾 Salvar Perfil Local
+        </button>
+      </div>
+    </div>
+
+    <!-- 5. ABA MÓDULOS DA LOJA -->
+    <div class="tab-pane" id="tab-modules">
+      <div class="card">
+        <h2 class="card-title">🛍️ Módulos & Recursos Opcionais da Lojinha</h2>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 24px;">
+          Ative ou desative ferramentas conforme a sua necessidade através das chavinhas abaixo:
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px;">
+          
+          <div class="card" style="background: rgba(255,255,255,0.02); margin: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong>📦 Controle de Estoque & Cotação</strong>
+              <label class="switch"><input type="checkbox" id="flagStock"><span class="slider"></span></label>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">Atualiza automaticamente as variáveis {estoque} e {preco_1k}.</p>
+            <div style="display: flex; gap: 8px;">
+              <input type="number" id="inputModEstoque" class="form-control" placeholder="Estoque (Robux)">
+              <input type="number" id="inputModPreco" class="form-control" placeholder="Preço 1k (R$)" step="0.5">
+            </div>
+          </div>
+
+          <div class="card" style="background: rgba(255,255,255,0.02); margin: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong>💳 Gerador de PIX Copia-e-Cola</strong>
+              <label class="switch"><input type="checkbox" id="flagPix"><span class="slider"></span></label>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">Gera código BR Code EMV oficial para seus clientes pagarem.</p>
+            <input type="text" id="inputModPixKey" class="form-control" placeholder="Sua Chave PIX (CPF/E-mail/Aleatória)">
+          </div>
+
+          <div class="card" style="background: rgba(255,255,255,0.02); margin: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong>🎫 Sistema de Tickets com Macros</strong>
+              <label class="switch"><input type="checkbox" id="flagTicket"><span class="slider"></span></label>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-muted);">Cria canal privado de compra com botões rápidos para a Mary.</p>
+          </div>
+
+          <div class="card" style="background: rgba(255,255,255,0.02); margin: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong>⭐ Sistema de Avaliações (1-5 Estrelas)</strong>
+              <label class="switch"><input type="checkbox" id="flagReview"><span class="slider"></span></label>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-muted);">Permite aos compradores avaliarem e posta no canal com contador.</p>
+          </div>
+
+          <div class="card" style="background: rgba(255,255,255,0.02); margin: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong>📌 Mensagem Fixa no Chat (Sticky)</strong>
+              <label class="switch"><input type="checkbox" id="flagSticky"><span class="slider"></span></label>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-muted);">Mantém um aviso anti-golpe sempre no fim do canal escolhido.</p>
+          </div>
+
+          <div class="card" style="background: rgba(255,255,255,0.02); margin: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong>🛡️ Filtro Anti-Convite de Outros Servidores</strong>
+              <label class="switch"><input type="checkbox" id="flagAntiLink"><span class="slider"></span></label>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-muted);">Apaga convites de servidores concorrentes postados por clientes.</p>
+          </div>
+
+        </div>
+
+        <button id="btnSaveModules" class="btn-primary-action" style="max-width: 300px; margin-top: 24px;">
+          💾 Salvar Configurações
+        </button>
+      </div>
+    </div>
+
+    <!-- 6. ABA SEGURANÇA & APARELHOS -->
+    <div class="tab-pane" id="tab-security">
+      <div class="card">
+        <h2 class="card-title">🔒 Segurança do Painel da Mary</h2>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
+          Aqui você pode monitorar e desconectar qualquer aparelho que tenha acessado o estúdio.
+        </p>
+
+        <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 24px;">
+          <div>
+            <div style="font-size: 24px; font-weight: 700; color: #fff;" id="activeSessionsVal">1</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Aparelhos Conectados</div>
+          </div>
+          <button class="btn-secondary" id="btnDisconnectAll" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.4);">
+            🚨 Desconectar Todos os Aparelhos Agora
+          </button>
+        </div>
+
+        <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Histórico de Acessos Recentes:</h3>
+        <div id="auditLogsList" style="font-family: monospace; font-size: 12px; color: var(--text-muted);"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/mary/assets/app.js"></script>
+</body>
+</html>

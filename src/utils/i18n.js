@@ -822,6 +822,16 @@ const TRANSLATIONS = {
       "topicGamesTitle": "🎲 Minigames & Diversão Comunitária",
       "topicGamesDesc": "Aproveite momentos leves em comunidade com `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados` e `/py-likely`. Comandos rápidos e integrados para animar qualquer chat de Discord."
     },
+    "mary": {
+      "access_denied": "🔒 Acesso negado. Este estúdio administrativo é exclusivo da Mary.",
+      "hub_title": "🎀 Estúdio da Mary • Painel Administrativo",
+      "hub_desc": "Olá, Mary! Seja bem-vinda ao seu estúdio exclusivo na Pyxie.\n\n**Status Atual:** {status}\n**Estoque:** `{estoque} R$`\n**Preço (1k):** `R$ {preco}`\n\nEscolha uma das ações abaixo para gerenciar sua loja ou entrar no estúdio web:",
+      "btn_open_web": "Abrir Estúdio Web",
+      "btn_toggle_status": "Mudar Status",
+      "btn_update_stock": "Atualizar Estoque/Preço",
+      "btn_pin_dm": "Fixar Atalho na DM",
+      "btn_logout_all": "Desconectar Sessões"
+    },
     "terms": {
       "title": "🛡️ Termos de Uso, Proteção a Menores & Segurança",
       "desc": "A Cringelândia e a Pyxie são um santuário de acolhimento seguro: *'o acolhimento de pessoas que sofrem. Um lugar seguro para quem acha que o mundo é barulhento demais.'*",
@@ -1496,6 +1506,16 @@ const TRANSLATIONS = {
           "optGamesDesc": "Fortune cookies, coin flips, rock-paper-scissors, dice rolls, and fun party queries.",
           "topicGamesTitle": "🎲 Community Minigames & Casual Fun",
           "topicGamesDesc": "Enjoy lightweight community fun with `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados`, and `/py-likely`. Fast, engaging commands designed to bring energy to every Discord chat."
+    },
+    "mary": {
+      "access_denied": "🔒 Access denied. This administrative studio is exclusive to Mary.",
+      "hub_title": "🎀 Mary's Studio • Administrative Hub",
+      "hub_desc": "Hello, Mary! Welcome to your exclusive studio in Pyxie.\n\n**Current Status:** {status}\n**Stock:** `{estoque} R$`\n**Price (1k):** `R$ {preco}`\n\nChoose an action below to manage your store or open the web studio:",
+      "btn_open_web": "Open Web Studio",
+      "btn_toggle_status": "Toggle Status",
+      "btn_update_stock": "Update Stock/Price",
+      "btn_pin_dm": "Pin Shortcut to DM",
+      "btn_logout_all": "Disconnect Sessions"
     },
     "terms": {
       "title": "🛡️ Terms of Use, Child Safety & Safeguarding Framework",
