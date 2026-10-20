@@ -233,7 +233,14 @@ function updateDiscordPreview() {
   appState.currentButtons.forEach((b) => {
     const btn = document.createElement('button');
     btn.className = `discord-btn discord-btn-${(b.style || 'primary').toLowerCase()}`;
-    btn.textContent = `${b.emoji ? b.emoji + ' ' : ''}${b.label || 'Botão'}`;
+    let label = (b.label || 'Botão').trim();
+    const emoji = (b.emoji || '').trim();
+    if (emoji && label.startsWith(emoji)) {
+      while (label.startsWith(emoji)) {
+        label = label.slice(emoji.length).trim();
+      }
+    }
+    btn.textContent = `${emoji ? emoji + ' ' : ''}${label}`;
     btn.onclick = () => {
       if (b.actionType === 'image_response') {
         alert(`🖼️ [Preview de Resposta]\nTexto: ${b.responseText || 'Sem texto'}\nImagem: ${b.responseImageUrl || 'Sem imagem'}`);
@@ -288,6 +295,14 @@ function renderButtonsList() {
 
   container.innerHTML = '';
   appState.currentButtons.forEach((b, index) => {
+    let cleanLabel = (b.label || '').trim();
+    const cleanEmoji = (b.emoji || '').trim();
+    if (cleanEmoji && cleanLabel.startsWith(cleanEmoji)) {
+      while (cleanLabel.startsWith(cleanEmoji)) {
+        cleanLabel = cleanLabel.slice(cleanEmoji.length).trim();
+      }
+      b.label = cleanLabel;
+    }
     const item = document.createElement('div');
     item.className = 'btn-builder-item';
     item.innerHTML = `

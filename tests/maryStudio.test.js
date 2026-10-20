@@ -263,7 +263,19 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
     assert.equal(savedAfterUndo.content, 'Avisos da Loja', 'Conteúdo deve ser revertido para o original');
     assert.equal(savedAfterUndo.versions.length, 0, 'Histórico deve consumir a versão restaurada');
 
-    console.log('  ✅ 5. Envio, edição com message.edit() e histórico Undo validados com sucesso.');
+    // 5.4 Prevenção de duplicidade de emoji em botões (Anti-Duplicação Visual)
+    const testRows = maryStudioManager.buildActionRows([
+      { label: '📘 Como Criar Gamepass', emoji: '📘', style: 'Primary' },
+      { label: '💰 Tabela de Preços', emoji: '💰', style: 'Secondary' },
+    ]);
+    const btn1Json = testRows[0].components[0].toJSON();
+    const btn2Json = testRows[0].components[1].toJSON();
+    assert.equal(btn1Json.label, 'Como Criar Gamepass', 'Emoji duplicado 📘 deve ser removido do label');
+    assert.equal(btn1Json.emoji.name, '📘', 'Emoji nativo deve ser preservado');
+    assert.equal(btn2Json.label, 'Tabela de Preços', 'Emoji duplicado 💰 deve ser removido do label');
+    assert.equal(btn2Json.emoji.name, '💰', 'Emoji nativo deve ser preservado');
+
+    console.log('  ✅ 5. Envio, edição com message.edit(), histórico Undo e desduplicação de botões validados com sucesso.');
 
     // =========================================================================
     // 6. CLIQUE NOS BOTÕES INTERATIVOS (buttonActionHandler.js)

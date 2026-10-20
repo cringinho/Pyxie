@@ -48,7 +48,7 @@ const TEMPLATES = [
       buttons: [
         {
           id: 'btn_como_criar',
-          label: '📘 Como Criar Gamepass',
+          label: 'Como Criar Gamepass',
           emoji: '📘',
           style: 'Primary', // Blurple
           actionType: 'image_response',
@@ -58,14 +58,14 @@ const TEMPLATES = [
           subButtons: [
             {
               id: 'btn_sub_calc',
-              label: '🧮 Calcular Meus 30%',
+              label: 'Calcular Meus 30%',
               emoji: '🧮',
               style: 'Success',
               actionType: 'calculator',
             },
             {
               id: 'btn_sub_buy',
-              label: '🛒 Quero Comprar',
+              label: 'Quero Comprar',
               emoji: '🛒',
               style: 'Primary',
               actionType: 'ticket',
@@ -74,7 +74,7 @@ const TEMPLATES = [
         },
         {
           id: 'btn_tabela_precos',
-          label: '💰 Tabela de Preços',
+          label: 'Tabela de Preços',
           emoji: '💰',
           style: 'Secondary', // Grey
           actionType: 'image_response',
@@ -84,7 +84,7 @@ const TEMPLATES = [
           subButtons: [
             {
               id: 'btn_sub_buy_2',
-              label: '🛒 Abrir Pedido',
+              label: 'Abrir Pedido',
               emoji: '🛒',
               style: 'Success',
               actionType: 'ticket',
@@ -93,14 +93,14 @@ const TEMPLATES = [
         },
         {
           id: 'btn_calc_roblox',
-          label: '🧮 Calculadora 30%',
+          label: 'Calculadora 30%',
           emoji: '🧮',
           style: 'Success', // Green
           actionType: 'calculator',
         },
         {
           id: 'btn_comprar_ticket',
-          label: '🛒 Comprar Robux',
+          label: 'Comprar Robux',
           emoji: '🛒',
           style: 'Danger', // Red/Pink
           actionType: 'ticket',
@@ -135,14 +135,14 @@ const TEMPLATES = [
       buttons: [
         {
           id: 'btn_estoque_comprar',
-          label: '🛒 Comprar Agora',
+          label: 'Comprar Agora',
           emoji: '🛒',
           style: 'Success',
           actionType: 'ticket',
         },
         {
           id: 'btn_estoque_calc',
-          label: '🧮 Calcular Valor',
+          label: 'Calcular Valor',
           emoji: '🧮',
           style: 'Secondary',
           actionType: 'calculator',
@@ -179,14 +179,14 @@ const TEMPLATES = [
       buttons: [
         {
           id: 'btn_guia_calc',
-          label: '🧮 Testar Calculadora 30%',
+          label: 'Testar Calculadora 30%',
           emoji: '🧮',
           style: 'Primary',
           actionType: 'calculator',
         },
         {
           id: 'btn_guia_duvidas',
-          label: '💬 Tirar Dúvidas',
+          label: 'Tirar Dúvidas',
           emoji: '💬',
           style: 'Secondary',
           actionType: 'ticket',
@@ -226,7 +226,7 @@ const TEMPLATES = [
       buttons: [
         {
           id: 'btn_concordo_comprar',
-          label: '✅ Concordo & Quero Comprar',
+          label: 'Concordo & Quero Comprar',
           emoji: '✅',
           style: 'Success',
           actionType: 'ticket',
@@ -259,7 +259,7 @@ const TEMPLATES = [
       buttons: [
         {
           id: 'btn_open_ticket',
-          label: '🎫 Abrir Ticket de Compra',
+          label: 'Abrir Ticket de Compra',
           emoji: '🎫',
           style: 'Primary',
           actionType: 'ticket',
@@ -282,4 +282,3 @@ module.exports = {
   getAllTemplates,
   getTemplateById,
 };
-

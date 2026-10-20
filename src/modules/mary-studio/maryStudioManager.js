@@ -311,10 +311,21 @@ class MaryStudioManager {
       }
 
       const button = new ButtonBuilder();
-      if (btn.label) button.setLabel(String(btn.label).slice(0, 80));
-      if (btn.emoji) {
+      let label = btn.label ? String(btn.label).trim() : '';
+      let emoji = btn.emoji ? String(btn.emoji).trim() : null;
+
+      // Previne duplicação de emoji no botão do Discord:
+      // Se o botão possui emoji definido e o label começa com ele, remove o emoji do texto do label
+      if (emoji && label) {
+        while (label.startsWith(emoji)) {
+          label = label.slice(emoji.length).trim();
+        }
+      }
+
+      if (label) button.setLabel(label.slice(0, 80));
+      if (emoji) {
         try {
-          button.setEmoji(btn.emoji);
+          button.setEmoji(emoji);
         } catch (_) {}
       }
 

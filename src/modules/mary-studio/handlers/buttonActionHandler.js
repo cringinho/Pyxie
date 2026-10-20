@@ -220,7 +220,7 @@ class ButtonActionHandler {
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId('mary_btn:ticket:calc_buy')
-          .setLabel('🛒 Fazer Este Pedido Agora')
+          .setLabel('Fazer Este Pedido Agora')
           .setEmoji('🛒')
           .setStyle(ButtonStyle.Success)
       );
