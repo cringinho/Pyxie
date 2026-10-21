@@ -60,6 +60,10 @@ const { setGuildLanguage } = require('./src/utils/i18n');
 const { flushInventorySync } = require('./src/services/inventory');
 const { getBrasiliaDate, resetDailyDraws, readState } = require('./src/services/tarot');
 const { getAnimatedEmoji } = require('./src/utils/serverEmojis');
+const { recordCommand, flushSync: flushTelemetrySync } = require('./src/services/commandTelemetry');
+const { isBlacklisted, recordActivity, forceLeaveGuild } = require('./src/services/trustAndSafety');
+const { checkPostCrash, attachProcessWatchdog } = require('./src/services/schedulerWatchdog');
+const { updateGuildsSnapshot } = require('./src/services/guildDirectory');
 
 const welcomeHeartReactions = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🩷', '🩵', '🖤', '🤍', '🤎'];
 const CRINGE_PHRASE_COOLDOWN_MS = 60 * 1000;
@@ -473,6 +477,7 @@ function updateLiveStats() {
     const totalMembers = client.guilds.cache.reduce((acc, g) => acc + (g.memberCount || 0), 0);
     const guildsCount = client.guilds.cache.size;
     updateStats({ totalMembers, guildsCount });
+    updateGuildsSnapshot(client);
   } catch (_) {}
 }
 
@@ -482,6 +487,12 @@ client.once('ready', async () => {
   startPresenceRotator(client);
 
   updateLiveStats();
+  attachProcessWatchdog(client);
+  await checkPostCrash(client, {
+    reconcileTasks: async () => {
+      await postTarotDailyAnnouncement().catch(() => null);
+    },
+  });
   await sendStartupAnnouncement();
   await syncApplicationEmojis(client).catch(() => null);
   startBumpGuideScheduler();
@@ -579,6 +590,13 @@ client.on('emojiUpdate', () => syncApplicationEmojis(client));
 
 // Atualizações dinâmicas de contagem de membros e servidores
 client.on('guildCreate', async (guild) => {
+  const bl = isBlacklisted({ guildId: guild.id });
+  if (bl.blacklisted) {
+    console.warn(`[Trust&Safety] Servidor banido tentou adicionar Pyxie: ${guild.name} (${guild.id}). Forçando saída.`);
+    await guild.leave().catch(() => null);
+    return;
+  }
+
   updateLiveStats();
 
   // Em servidores externos, define explicitamente o idioma padrão como inglês
@@ -732,6 +750,9 @@ client.on('guildMemberAdd', async (member) => {
 client.on('messageCreate', async (message) => {
   if (message.author?.bot) return;
 
+  const bl = isBlacklisted({ guildId: message.guildId, userId: message.author?.id });
+  if (bl.blacklisted) return;
+
   // Deduplicação de eventos de mensagem do Discord Gateway
   if (processedMessageIds.has(message.id)) return;
   processedMessageIds.set(message.id, Date.now());
@@ -770,16 +791,65 @@ client.on('messageCreate', async (message) => {
   }
 
   incrementCommand();
+  const startTime = Date.now();
+  let success = true;
+  let cmdErr = null;
   try {
     await command.executePrefix({ message, args, prefix });
   } catch (error) {
+    success = false;
+    cmdErr = error;
     console.error(`Erro ao executar prefix command ${prefix}${cmd}:`, error);
     await message.reply('❌ Ocorreu um erro ao executar este comando. Tente novamente mais tarde.').catch(() => null);
+  } finally {
+    const durationMs = Date.now() - startTime;
+    recordCommand({
+      name: cmd,
+      type: 'prefix',
+      guildId: message.guildId,
+      userId: message.author?.id,
+      lang: message.guildId ? 'pt-BR' : 'en',
+      success,
+      durationMs,
+      error: cmdErr ? cmdErr.message : null,
+      category: command.category,
+    });
+    recordActivity({
+      userId: message.author?.id,
+      guildId: message.guildId,
+      success,
+      textInput: message.content,
+      context: `prefix:${cmd}`,
+    });
   }
 });
 
 // O registro compartilhado também encaminha cada slash command ao próprio arquivo.
 client.on('interactionCreate', async (interaction) => {
+  const bl = isBlacklisted({ guildId: interaction.guildId, userId: interaction.user?.id });
+  if (bl.blacklisted) {
+    if (interaction.isRepliable()) {
+      return interaction.reply({ content: '🚫 Você ou este servidor estão na Blacklist Global da Pyxie.', flags: MessageFlags.Ephemeral }).catch(() => null);
+    }
+    return;
+  }
+
+  if (interaction.isModalSubmit()) {
+    for (const row of interaction.components || []) {
+      for (const comp of row.components || []) {
+        if (comp.value) {
+          recordActivity({
+            userId: interaction.user?.id,
+            guildId: interaction.guildId,
+            success: true,
+            textInput: comp.value,
+            context: `modal:${interaction.customId}:${comp.customId}`,
+          });
+        }
+      }
+    }
+  }
+
   // Deduplicação de eventos de interação do Discord Gateway
   if (processedInteractionIds.has(interaction.id)) return;
   processedInteractionIds.set(interaction.id, Date.now());
@@ -968,13 +1038,41 @@ client.on('interactionCreate', async (interaction) => {
       }
     }
 
-    if (typeof command.executeSlash === 'function') {
-      await command.executeSlash({ interaction });
-    } else if (typeof command.execute === 'function') {
-      await command.execute(interaction);
-    } else {
-      await interaction.editReply({ content: 'Esse comando ainda não está disponível. Não olhe para mim assim; eu também estou investigando.' });
-      return;
+    const startTime = Date.now();
+    let success = true;
+    let cmdErr = null;
+    try {
+      if (typeof command.executeSlash === 'function') {
+        await command.executeSlash({ interaction });
+      } else if (typeof command.execute === 'function') {
+        await command.execute(interaction);
+      } else {
+        await interaction.editReply({ content: 'Esse comando ainda não está disponível. Não olhe para mim assim; eu também estou investigando.' });
+        return;
+      }
+    } catch (cmdError) {
+      success = false;
+      cmdErr = cmdError;
+      throw cmdError;
+    } finally {
+      const durationMs = Date.now() - startTime;
+      recordCommand({
+        name: interaction.commandName,
+        type: 'slash',
+        guildId: interaction.guildId,
+        userId: interaction.user?.id,
+        lang: interaction.locale || 'pt-BR',
+        success,
+        durationMs,
+        error: cmdErr ? cmdErr.message : null,
+        category: command?.category,
+      });
+      recordActivity({
+        userId: interaction.user?.id,
+        guildId: interaction.guildId,
+        success,
+        context: `slash:${interaction.commandName}`,
+      });
     }
   } catch (error) {
     console.error(`Erro ao processar interaction (${interaction.commandName || interaction.customId}):`, error);
@@ -993,6 +1091,7 @@ client.on('error', (error) => {
 function handleAppShutdown() {
   flushSync();
   flushInventorySync();
+  flushTelemetrySync();
   releaseBotLock();
 }
 
@@ -1160,6 +1259,18 @@ if (process.stdin) {
             });
             break;
           }
+          case 'FORCE_LEAVE_GUILD': {
+            console.log(`[IPC:Bot] Comando FORCE_LEAVE_GUILD recebido para '${data.guildId}'.`);
+            forceLeaveGuild(client, data.guildId)
+              .then(() => updateLiveStats())
+              .catch((err) => console.error('[IPC:Bot] Erro ao forçar saída do servidor:', err.message));
+            break;
+          }
+          case 'SYNC_GUILDS': {
+            console.log('[IPC:Bot] Comando SYNC_GUILDS recebido.');
+            updateLiveStats();
+            break;
+          }
         }
       }
     } catch (error) {
@@ -1172,6 +1283,7 @@ function handleBotShutdown() {
   try { releaseBotLock(); } catch (_) {}
   try { flushSync(); } catch (_) {}
   try { flushInventorySync(); } catch (_) {}
+  try { flushTelemetrySync(); } catch (_) {}
   try {
     if (client && typeof client.destroy === 'function') {
       client.destroy();

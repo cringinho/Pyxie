@@ -30,6 +30,9 @@ const marriageManager = require('./src/modules/marriage/marriageManager');
 const { TAROT_ACHIEVEMENTS } = require('./src/data/tarotAchievements');
 const embedRegistry = require('./src/utils/embedRegistry');
 const acervoAuditService = require('./src/services/acervoAuditService');
+const { createAdminMasterRouter } = require('./src/routes/adminMasterRoutes');
+const { createExpressTelemetryMiddleware } = require('./src/services/resourceTelemetry');
+const { createRouteGateMiddleware } = require('./src/services/webRoutesManager');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -252,6 +255,10 @@ app.use(compression({
   threshold: 1024,
 }));
 
+// Telemetria de recursos da VM e roteador de rotas ativadas/pausadas
+app.use(createExpressTelemetryMiddleware());
+app.use(createRouteGateMiddleware());
+
 // Security & Hardening Headers
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -306,6 +313,9 @@ app.use('/api/', publicApiLimiter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Rotas da API Master SaaS Dashboard
+app.use('/', createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }));
 
 // Tratamento gracioso de payloads JSON malformados
 app.use((err, req, res, next) => {

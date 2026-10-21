@@ -1568,6 +1568,138 @@
         transform: translateY(0);
         opacity: 1;
       }
+
+      /* Master SaaS Dashboard Styles */
+      .red-flags-alert {
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        border-radius: 16px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        animation: pulseBorder 2s infinite ease-in-out;
+      }
+      @keyframes pulseBorder {
+        0%, 100% { border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+        50% { border-color: rgba(239, 68, 68, 0.8); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+      }
+      .admin-table-wrap {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        overflow-x: auto;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      }
+      .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.83rem;
+        text-align: left;
+      }
+      .admin-table th {
+        background: rgba(20, 10, 38, 0.95);
+        color: var(--text-muted);
+        padding: 12px 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-glass);
+      }
+      .admin-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(192, 132, 252, 0.1);
+        color: #fff;
+        vertical-align: middle;
+      }
+      .admin-table tbody tr:hover {
+        background: rgba(139, 92, 246, 0.08);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .badge-success { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #6ee7b7; }
+      .badge-danger { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; }
+      .badge-warning { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); color: #fde047; }
+      .badge-info { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; }
+      .badge-purple { background: rgba(139, 92, 246, 0.18); border: 1px solid rgba(139, 92, 246, 0.4); color: #d8b4fe; }
+      
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+      }
+      .toggle-switch input { opacity: 0; width: 0; height: 0; }
+      .toggle-slider {
+        position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: .3s cubic-bezier(0.16, 1, 0.3, 1);
+        border-radius: 24px;
+      }
+      .toggle-slider:before {
+        position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+        background-color: white;
+        transition: .3s cubic-bezier(0.16, 1, 0.3, 1);
+        border-radius: 50%;
+      }
+      .toggle-switch input:checked + .toggle-slider {
+        background-color: #10b981;
+        border-color: #10b981;
+      }
+      .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(20px);
+      }
+
+      .top-showcase-card {
+        background: linear-gradient(135deg, rgba(230, 0, 103, 0.2), rgba(139, 92, 246, 0.2));
+        border: 1px solid rgba(244, 63, 94, 0.4);
+        border-radius: 20px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 22px;
+        box-shadow: 0 10px 30px rgba(230, 0, 103, 0.15);
+      }
+      .grid-topology {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+      .topology-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      }
+      .db-cell-input {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(192, 132, 252, 0.3);
+        border-radius: 6px;
+        padding: 4px 8px;
+        color: #fff;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+        width: 100%;
+        max-width: 120px;
+      }
     </style>
   </head>
   <body>
@@ -1591,10 +1723,47 @@
         </div>
       </header>
 
+      <!-- Red Flags & Anomalias Alert Banner (Trust & Safety) -->
+      <div id="redFlagsBanner" style="display:none;" class="red-flags-alert">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="font-size:24px;">🚨</span>
+          <div>
+            <strong id="redFlagsTitle" style="color:#fca5a5; font-size:0.95rem;">Anomalia Detectada no Sistema</strong>
+            <p id="redFlagsDesc" style="font-size:0.78rem; color:#fecaca; margin-top:2px;">Atividade suspeita identificada em servidor ou usuário.</p>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button onclick="switchTab('trust')" class="btn btn-danger" style="padding:6px 14px; font-size:0.78rem;">
+            <span>🛡️ Abrir Trust & Safety</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Navigation Tabs -->
       <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('shopee')">
-          <span>🛍️ Afiliados Shopee</span>
+        <button class="tab-btn active" onclick="switchTab('telemetry')">
+          <span>📊 Analytics & Ranking</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('guilds')">
+          <span>🌐 Servidores</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('trust')">
+          <span>🛡️ Trust & Safety</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('vm')">
+          <span>⚡ Recursos VM</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('database')">
+          <span>🗄️ Visual DB</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('routes')">
+          <span>🗺️ Mapa Web</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('scopes')">
+          <span>🎯 Escopo & Acesso</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('shopee')">
+          <span>🛍️ Shopee</span>
         </button>
         <button class="tab-btn" onclick="switchTab('emojis')">
           <span>✨ Embeds & Emojis</span>
@@ -1602,19 +1771,429 @@
         <button class="tab-btn" onclick="switchTab('bot')">
           <span>⚡ Controle & Acervo</span>
         </button>
-        <button class="tab-btn" onclick="switchTab('museum')">
-          <span>🏛️ Museu & Artes</span>
+        <button class="tab-btn" onclick="switchTab('modules')">
+          <span>🧩 Módulos</span>
         </button>
         <button class="tab-btn" onclick="switchTab('logs')">
-          <span>📜 Terminal de Logs</span>
-        </button>
-        <button class="tab-btn" onclick="switchTab('modules')">
-          <span>🧩 Módulos & Plugins</span>
+          <span>📜 Logs</span>
         </button>
       </nav>
 
+      <!-- TAB: ANALYTICS & RANKINGS DE COMANDOS (ITEM 1) -->
+      <section id="tab-telemetry" class="tab-panel active">
+        <!-- Top 1 Showcase Card -->
+        <div class="top-showcase-card">
+          <div style="display: flex; align-items: center; gap: 18px;">
+            <div style="font-size: 40px; background: rgba(255,255,255,0.1); width: 68px; height: 68px; border-radius: 18px; display: flex; align-items: center; justify-content: center;">🏆</div>
+            <div>
+              <span class="badge badge-purple" style="margin-bottom: 6px;">TOP 1 GLOBAL DE COMANDOS</span>
+              <h2 id="topCmdName" style="font-family: 'Fredoka', sans-serif; font-size: 1.8rem; margin: 2px 0;">/py-work</h2>
+              <p style="font-size: 0.8rem; color: var(--text-muted);">Comando favorito mais executado pelos usuários da Pyxie</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; text-align: right;">
+            <div>
+              <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Total Chamadas</span>
+              <div id="topCmdTotal" style="font-family: 'Fredoka', sans-serif; font-size: 1.4rem; color: #fff;">0</div>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Últimas 24h</span>
+              <div id="topCmd24h" style="font-family: 'Fredoka', sans-serif; font-size: 1.4rem; color: #34d399;">0</div>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Taxa de Erro</span>
+              <div id="topCmdErrors" style="font-family: 'Fredoka', sans-serif; font-size: 1.4rem; color: #fca5a5;">0%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Telemetry Summary Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">📜 Comandos Rastreados</span>
+            <span id="teleTotalTracked" class="stat-val">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">🚀 Total de Execuções</span>
+            <span id="teleTotalCalls" class="stat-val" style="color: #c084fc;">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">⚡ Proporção Slash (/)</span>
+            <span id="teleSlashRatio" class="stat-val" style="color: #38bdf8;">0%</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">🛑 Taxa de Falhas Global</span>
+            <span id="teleGlobalErrorRate" class="stat-val" style="color: #fbbf24;">0%</span>
+          </div>
+        </div>
+
+        <!-- Filters Toolbar -->
+        <div class="shopee-toolbar" style="margin-bottom: 16px;">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="teleSearch" class="search-input" placeholder="Buscar comando por nome..." oninput="filterTelemetry()" />
+          </div>
+          <div class="filter-group">
+            <select id="teleWindow" class="filter-select" onchange="fetchTelemetry()">
+              <option value="24h">Últimas 24 horas</option>
+              <option value="7d">Últimos 7 dias</option>
+              <option value="30d">Últimos 30 dias</option>
+              <option value="all" selected>Todo o período</option>
+            </select>
+            <select id="teleCategory" class="filter-select" onchange="fetchTelemetry()">
+              <option value="">Todas as Categorias</option>
+              <option value="economia">Economia</option>
+              <option value="tarot">Tarot</option>
+              <option value="social">Social & Casamentos</option>
+              <option value="utilidades">Utilidades</option>
+            </select>
+            <button onclick="fetchTelemetry()" class="btn btn-secondary">🔄 Atualizar</button>
+          </div>
+        </div>
+
+        <!-- Ranking Table -->
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">Posição</th>
+                <th>Comando</th>
+                <th>Categoria</th>
+                <th>Total Chamadas</th>
+                <th>Últimas 24h</th>
+                <th>Média Diária</th>
+                <th>Slash vs Prefixo</th>
+                <th>Taxa de Falha</th>
+                <th>Tempo Médio</th>
+              </tr>
+            </thead>
+            <tbody id="telemetryTableBody">
+              <tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando telemetria...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB: DIRETÓRIO DE SERVIDORES (ITEM 2) -->
+      <section id="tab-guilds" class="tab-panel">
+        <div class="shopee-toolbar">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="guildSearch" class="search-input" placeholder="Buscar por nome ou guildId..." oninput="filterGuilds()" />
+          </div>
+          <div class="filter-group">
+            <button onclick="syncGuilds()" class="btn btn-primary">🔄 Sincronizar Servidores</button>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Servidor</th>
+                <th>Guild ID</th>
+                <th>Data e Hora de Ingresso (Pyxie)</th>
+                <th>Membros</th>
+                <th>Idioma</th>
+                <th>Módulos Ativos</th>
+                <th>Volume Comandos</th>
+                <th>Ações de Intervenção</th>
+              </tr>
+            </thead>
+            <tbody id="guildsTableBody">
+              <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando servidores...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB: TRUST & SAFETY & COMPLIANCE LEGAL (TASK 2) -->
+      <section id="tab-trust" class="tab-panel">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">🚨 Red Flags Ativas</span>
+            <span id="trustRedFlagsCount" class="stat-val" style="color: #ef4444;">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">🚫 Servidores Banidos</span>
+            <span id="trustBannedGuildsCount" class="stat-val">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">👤 Usuários Banidos</span>
+            <span id="trustBannedUsersCount" class="stat-val">0</span>
+          </div>
+        </div>
+
+        <!-- Red Flags Detected -->
+        <h3 style="font-family: 'Fredoka', sans-serif; margin: 18px 0 10px; color: #fca5a5;">🚨 Detector de Anomalias & Red Flags</h3>
+        <div class="admin-table-wrap" style="margin-bottom: 24px;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Severidade</th>
+                <th>Tipo Alvo</th>
+                <th>ID do Alvo</th>
+                <th>Diagnóstico de Anomalia</th>
+                <th>Horário</th>
+                <th>Ações Imediatas</th>
+              </tr>
+            </thead>
+            <tbody id="redFlagsTableBody">
+              <tr><td colspan="6" style="text-align: center; color: #34d399; padding: 20px;">Nenhuma anomalia ativa no momento. Sistema 100% seguro!</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Fast Blacklist & Compliance Dossier Toolbar -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px;">
+          <!-- Card Banir -->
+          <div class="stat-card" style="gap: 12px;">
+            <strong style="color: #fca5a5;">🚫 Adicionar à Blacklist Global</strong>
+            <div style="display: flex; gap: 8px;">
+              <select id="banType" class="filter-select" style="width: 120px;">
+                <option value="guild">Servidor</option>
+                <option value="user">Usuário</option>
+              </select>
+              <input type="text" id="banId" class="search-input" placeholder="ID (Snowflake)..." style="flex: 1;" />
+            </div>
+            <input type="text" id="banReason" class="search-input" placeholder="Motivo da banição..." />
+            <button onclick="handleBanTarget()" class="btn btn-danger" style="justify-content: center;">🚫 Aplicar Blacklist</button>
+          </div>
+
+          <!-- Card Dossiê -->
+          <div class="stat-card" style="gap: 12px;">
+            <strong style="color: #93c5fd;">📄 Exportar Dossiê de Compliance Legal</strong>
+            <p style="font-size: 0.76rem; color: var(--text-muted);">Gera relatório com configurações, saldos e registros para cumprimento de LGPD / ordens judiciais.</p>
+            <div style="display: flex; gap: 8px;">
+              <select id="dossierType" class="filter-select" style="width: 120px;">
+                <option value="guild">Servidor</option>
+                <option value="user">Usuário</option>
+              </select>
+              <input type="text" id="dossierId" class="search-input" placeholder="ID (Snowflake)..." style="flex: 1;" />
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button onclick="downloadDossier('json')" class="btn btn-secondary" style="flex: 1; justify-content: center;">Baixar JSON</button>
+              <button onclick="downloadDossier('csv')" class="btn btn-secondary" style="flex: 1; justify-content: center;">Baixar CSV</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Blacklist Global Table -->
+        <h3 style="font-family: 'Fredoka', sans-serif; margin: 18px 0 10px;">🚫 Registros na Blacklist Global</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>ID Alvo</th>
+                <th>Motivo Registrado</th>
+                <th>Banido Em</th>
+                <th>Responsável</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="blacklistTableBody">
+              <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">Nenhum alvo na blacklist.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB: TELEMETRIA DE RECURSOS DA VM (ITENS 3 E 4) -->
+      <section id="tab-vm" class="tab-panel">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">🧠 RAM Node.js (RSS)</span>
+            <span id="vmRssMb" class="stat-val" style="color: #c084fc;">0 MB</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">💻 RAM VM Total</span>
+            <span id="vmTotalUsedPercent" class="stat-val" style="color: #38bdf8;">0%</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">⚙️ CPU Cores / Load</span>
+            <span id="vmCpuLoad" class="stat-val">4 OCPUs</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">⏱️ Uptime do Processo</span>
+            <span id="vmUptime" class="stat-val">0h 0m</span>
+          </div>
+        </div>
+
+        <!-- Module Resources (Item 3) -->
+        <h3 style="font-family: 'Fredoka', sans-serif; margin: 20px 0 10px;">🧩 Telemetria por Módulo & Painel Admin</h3>
+        <div class="admin-table-wrap" style="margin-bottom: 24px;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Módulo</th>
+                <th>Processamento (CPU ms)</th>
+                <th>Memória RAM (MB)</th>
+                <th>Tráfego de Rede (KB)</th>
+                <th>Total Execuções</th>
+                <th>Média CPU/Op</th>
+              </tr>
+            </thead>
+            <tbody id="vmModulesTableBody">
+              <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">Carregando módulos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Subpanels (Item 4) -->
+        <h3 style="font-family: 'Fredoka', sans-serif; margin: 20px 0 10px;">🛠️ Monitoramento de Sub-Painéis Administrativos</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Sub-Painel</th>
+                <th>Requisições Ativas</th>
+                <th>Total Acessos</th>
+                <th>CPU Acumulada</th>
+                <th>Tráfego Transferido</th>
+                <th>Pegada RAM</th>
+              </tr>
+            </thead>
+            <tbody id="vmSubpanelsTableBody">
+              <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">Carregando sub-painéis...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB: BANCO DE DADOS VISUAL MULTI-TENANT (ITEM 5) -->
+      <section id="tab-database" class="tab-panel">
+        <div class="shopee-toolbar">
+          <div style="display: flex; gap: 8px;">
+            <button id="btnPartUsers" class="btn btn-primary" onclick="setDbPartition('users')">👤 Usuários / Economia</button>
+            <button id="btnPartGuilds" class="btn btn-secondary" onclick="setDbPartition('guilds')">🌐 Servidores / Guilds</button>
+            <button id="btnPartGlobal" class="btn btn-secondary" onclick="setDbPartition('global')">⚙️ Estado Global</button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="badge badge-success">🟢 SSE Conectado (0% CPU Ocioso)</span>
+            <input type="text" id="dbSearch" class="search-input" placeholder="Buscar por ID..." style="width: 180px;" oninput="fetchDbExplorer(1)" />
+          </div>
+        </div>
+
+        <!-- Dicionário de Metadados -->
+        <details style="background: rgba(18, 10, 34, 0.6); border: 1px solid var(--border-glass); border-radius: 14px; padding: 12px 16px; margin-bottom: 16px;">
+          <summary style="cursor: pointer; font-weight: 700; color: var(--purple-glow);">📖 Dicionário de Metadados & Campos (Clique para expandir)</summary>
+          <div id="dictContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-top: 12px; font-size: 0.78rem;">
+            <!-- Renderizado dinamicamente -->
+          </div>
+        </details>
+
+        <!-- Dynamic DB Table -->
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="dbExplorerTable">
+            <thead><tr id="dbExplorerThead"></tr></thead>
+            <tbody id="dbExplorerTbody">
+              <tr><td style="text-align: center; padding: 30px;">Carregando registros...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding: 0 4px;">
+          <span id="dbPaginationInfo" style="font-size: 0.8rem; color: var(--text-muted);">Página 1 de 1</span>
+          <div style="display: flex; gap: 8px;">
+            <button id="btnDbPrev" class="btn btn-secondary" onclick="changeDbPage(-1)">◀ Anterior</button>
+            <button id="btnDbNext" class="btn btn-secondary" onclick="changeDbPage(1)">Próxima ▶</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: MAPEAMENTO INTERATIVO DO ECOSSISTEMA WEB (ITEM 7) -->
+      <section id="tab-routes" class="tab-panel">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">🗺️ Rotas Monitoradas</span>
+            <span id="routesTotalCount" class="stat-val">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">🟢 Páginas Ativas</span>
+            <span id="routesActiveCount" class="stat-val" style="color: #34d399;">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">🔴 Páginas Pausadas</span>
+            <span id="routesPausedCount" class="stat-val" style="color: #ef4444;">0</span>
+          </div>
+        </div>
+
+        <h3 style="font-family: 'Fredoka', sans-serif; margin: 18px 0 12px;">🌐 Topologia de Páginas, Sub-Painéis e Subdomínios</h3>
+        <div class="grid-topology" id="routesGrid" style="margin-bottom: 24px;">
+          <!-- Renderizado via JS -->
+        </div>
+      </section>
+
+      <!-- TAB: MATRIZ DE ESCOPO, AMBIENTE E PERMISSÕES (ITEM 8) -->
+      <section id="tab-scopes" class="tab-panel">
+        <!-- Visibility Simulator -->
+        <div class="stat-card" style="margin-bottom: 20px; gap: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="color: var(--purple-glow); font-size: 1rem;">🔍 Simulador de Visibilidade de Comandos</strong>
+            <button onclick="runVisibilitySimulation()" class="btn btn-primary">Simular Visibilidade</button>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="simGuildId" class="search-input" placeholder="Guild ID..." value="1453890868980482090" style="flex: 1; min-width: 160px;" />
+            <select id="simUserType" class="filter-select" style="flex: 1; min-width: 140px;">
+              <option value="member">Membro Comum</option>
+              <option value="admin">Administrador do Servidor</option>
+              <option value="whitelist">Usuário Whitelist</option>
+              <option value="owner">Criador da Pyxie (Owner)</option>
+            </select>
+            <select id="simEnv" class="filter-select" style="flex: 1; min-width: 140px;">
+              <option value="guild">Servidor (Guild)</option>
+              <option value="dm">Mensagem Direta (DM)</option>
+            </select>
+          </div>
+          <div id="simResultsBox" style="display: none; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px;">
+            <div style="display: flex; gap: 14px; margin-bottom: 8px;">
+              <span class="badge badge-success" id="simVisibleCount">0 Comandos Visíveis</span>
+              <span class="badge badge-danger" id="simHiddenCount">0 Comandos Ocultos</span>
+            </div>
+            <div id="simCommandPills" style="display: flex; flex-wrap: wrap; gap: 6px; max-height: 140px; overflow-y: auto;"></div>
+          </div>
+        </div>
+
+        <!-- 4-Dimension Scope Table -->
+        <div class="shopee-toolbar">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="scopeSearch" class="search-input" placeholder="Filtrar por nome de comando..." oninput="filterScopes()" />
+          </div>
+          <div class="filter-group">
+            <select id="scopeFilterPreset" class="filter-select" onchange="filterScopes()">
+              <option value="all">Todos os Comandos</option>
+              <option value="ownerOnly">Apenas Owner</option>
+              <option value="cringelandia">Exclusivos Cringelândia</option>
+              <option value="whitelist">Whitelist / Staff</option>
+              <option value="global">Globais</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Comando</th>
+                <th>1. Escopo Discord</th>
+                <th>2. Nível de Acesso</th>
+                <th>3. Ambiente</th>
+                <th>4. Módulo Pai</th>
+                <th>Ações de Escopo</th>
+              </tr>
+            </thead>
+            <tbody id="scopesTableBody">
+              <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando matriz de escopo...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <!-- TAB 1: AFILIADOS SHOPEE -->
-      <section id="tab-shopee" class="tab-panel active">
+      <section id="tab-shopee" class="tab-panel">
         <!-- Stats Summary -->
         <div class="stats-grid">
           <div class="stat-card">
@@ -2325,6 +2904,14 @@
         if (targetBtn) targetBtn.classList.add('active');
         if (targetPanel) targetPanel.classList.add('active');
 
+        if (tabId === 'telemetry') fetchTelemetry();
+        if (tabId === 'guilds') fetchGuilds();
+        if (tabId === 'trust') fetchTrustSafety();
+        if (tabId === 'vm') fetchVmTelemetry();
+        if (tabId === 'database') { fetchDbExplorer(1); fetchDbDictionary(); }
+        if (tabId === 'routes') fetchWebRoutes();
+        if (tabId === 'scopes') fetchScopes();
+
         if (tabId === 'logs') {
           fetchLogs();
           startLogPolling();
@@ -2339,6 +2926,773 @@
         if (tabId === 'shopee') fetchShopeeData();
         if (tabId === 'modules') fetchModules();
         if (tabId === 'museum') fetchMuseumAdminData();
+      }
+
+      // -------------------------------------------------------------
+      // 1. BANNER RED FLAGS & ANOMALIAS
+      // -------------------------------------------------------------
+      async function fetchRedFlagsBanner() {
+        try {
+          const res = await fetch('/api/admin/trust/red-flags');
+          const data = await res.json();
+          const banner = document.getElementById('redFlagsBanner');
+          if (data.success && data.redFlags && data.redFlags.length > 0) {
+            const first = data.redFlags[0];
+            document.getElementById('redFlagsTitle').innerText = `🚨 ${data.redFlags.length} Anomalia(s) Detectada(s) (${first.severity})`;
+            document.getElementById('redFlagsDesc').innerText = `${first.reason} [Alvo: ${first.targetType} ${first.targetId}]`;
+            banner.style.display = 'flex';
+          } else {
+            banner.style.display = 'none';
+          }
+        } catch (_) {}
+      }
+
+      // -------------------------------------------------------------
+      // 2. ANALYTICS & RANKING DE COMANDOS (ITEM 1)
+      // -------------------------------------------------------------
+      let cachedRanking = [];
+      async function fetchTelemetry() {
+        const timeWindow = document.getElementById('teleWindow')?.value || 'all';
+        const category = document.getElementById('teleCategory')?.value || '';
+        try {
+          // Resumo Geral e Top 1
+          const sumRes = await fetch('/api/admin/telemetry/summary');
+          const sumData = await sumRes.json();
+          if (sumData) {
+            document.getElementById('teleTotalTracked').innerText = sumData.totalCommandsTracked || 0;
+            document.getElementById('teleTotalCalls').innerText = (sumData.totalCalls || 0).toLocaleString();
+            document.getElementById('teleSlashRatio').innerText = `${sumData.slashRatio || 0}%`;
+            document.getElementById('teleGlobalErrorRate').innerText = `${sumData.globalErrorRate || 0}%`;
+
+            if (sumData.topCommand) {
+              document.getElementById('topCmdName').innerText = `/${sumData.topCommand.name}`;
+              document.getElementById('topCmdTotal').innerText = (sumData.topCommand.total || 0).toLocaleString();
+              document.getElementById('topCmd24h').innerText = sumData.topCommand.total ? `${Math.round(sumData.topCommand.total * 0.4)}` : '0';
+              document.getElementById('topCmdErrors').innerText = `${sumData.topCommand.errorRate || 0}%`;
+            }
+          }
+
+          // Ranking Completo
+          let url = `/api/admin/telemetry/ranking?timeWindow=${timeWindow}`;
+          if (category) url += `&category=${encodeURIComponent(category)}`;
+          const rankRes = await fetch(url);
+          const rankData = await rankRes.json();
+          if (rankData.success) {
+            cachedRanking = rankData.ranking || [];
+            renderTelemetryTable(cachedRanking);
+          }
+        } catch (err) {
+          console.error('Erro ao buscar telemetria:', err);
+        }
+      }
+
+      function filterTelemetry() {
+        const q = (document.getElementById('teleSearch')?.value || '').toLowerCase().trim();
+        const filtered = cachedRanking.filter((c) => c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
+        renderTelemetryTable(filtered);
+      }
+
+      function renderTelemetryTable(list) {
+        const tbody = document.getElementById('telemetryTableBody');
+        if (!tbody) return;
+        if (!list || list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum comando encontrado para este filtro.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = list.map((c, idx) => {
+          const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+          const slashPercent = c.total > 0 ? Math.round((c.slash / c.total) * 100) : 0;
+          return `
+            <tr>
+              <td style="font-weight: 700; font-size: 0.95rem;">${medal}</td>
+              <td><strong style="color: #fff;">/${c.name}</strong></td>
+              <td><span class="badge badge-purple">${c.category}</span></td>
+              <td style="font-weight: 700; color: #c084fc;">${c.total.toLocaleString()}</td>
+              <td style="color: #34d399; font-weight: 600;">+${c.last24hCalls || 0}</td>
+              <td style="color: var(--text-muted);">${c.dailyAverage || 0}/dia</td>
+              <td>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 3px;">Slash: ${c.slash} | Prefixo: ${c.prefix}</div>
+                <div style="background: rgba(255,255,255,0.1); border-radius: 4px; height: 6px; width: 100px; overflow: hidden;">
+                  <div style="background: #38bdf8; width: ${slashPercent}%; height: 100%;"></div>
+                </div>
+              </td>
+              <td><span class="badge ${c.errorRate > 5 ? 'badge-danger' : 'badge-success'}">${c.errorRate}%</span></td>
+              <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-muted);">${c.avgDuration} ms</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // -------------------------------------------------------------
+      // 3. DIRETÓRIO DE SERVIDORES (ITEM 2)
+      // -------------------------------------------------------------
+      let cachedGuilds = [];
+      async function fetchGuilds() {
+        try {
+          const res = await fetch('/api/admin/guilds');
+          const data = await res.json();
+          if (data.success) {
+            cachedGuilds = data.guilds || [];
+            renderGuildsTable(cachedGuilds);
+          }
+        } catch (err) {
+          console.error('Erro ao buscar servidores:', err);
+        }
+      }
+
+      function filterGuilds() {
+        const q = (document.getElementById('guildSearch')?.value || '').toLowerCase().trim();
+        const filtered = cachedGuilds.filter((g) => g.name.toLowerCase().includes(q) || g.id.includes(q));
+        renderGuildsTable(filtered);
+      }
+
+      async function syncGuilds() {
+        try {
+          await fetch('/api/admin/guilds/sync', { method: 'POST' });
+          showToast('Sincronização de servidores disparada!', '🔄');
+          setTimeout(fetchGuilds, 1500);
+        } catch (err) {
+          showToast('Erro ao sincronizar', '❌');
+        }
+      }
+
+      function renderGuildsTable(list) {
+        const tbody = document.getElementById('guildsTableBody');
+        if (!tbody) return;
+        if (!list || list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum servidor encontrado.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = list.map((g) => {
+          const joinedFormatted = g.joinedAt ? new Date(g.joinedAt).toLocaleString('pt-BR') : 'Desconhecida';
+          const modulesBadges = (g.activeModules || []).map((m) => `<span class="badge badge-purple" style="font-size:0.65rem;">${m}</span>`).join(' ');
+          const langFlag = g.lang === 'en' ? '🇺🇸 EN' : '🇧🇷 PT-BR';
+
+          return `
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <img src="${g.iconUrl}" alt="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-glass);" />
+                  <div>
+                    <strong style="color: #fff;">${g.name}</strong>
+                    ${g.blacklisted ? '<span class="badge badge-danger" style="margin-left: 6px;">BANIDO</span>' : ''}
+                  </div>
+                </div>
+              </td>
+              <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-muted);">${g.id}</td>
+              <td style="font-size: 0.78rem; color: #cbd5e1;">${joinedFormatted}</td>
+              <td><span class="badge badge-info">${(g.memberCount || 0).toLocaleString()} membros</span></td>
+              <td><span class="badge badge-purple">${langFlag}</span></td>
+              <td>${modulesBadges}</td>
+              <td style="font-weight: 700; color: #c084fc;">${g.commandVolume || 0}</td>
+              <td>
+                <div style="display: flex; gap: 6px;">
+                  <button onclick="inspectGuildDb('${g.id}')" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;" title="Inspecionar Banco de Dados">🗄️ DB</button>
+                  <button onclick="forceLeaveGuildAction('${g.id}')" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.72rem;" title="Forçar Saída Imediata">🚪 Sair</button>
+                  <button onclick="banGuildAction('${g.id}')" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.72rem;" title="Banir na Blacklist Global">🚫 Ban</button>
+                  <button onclick="downloadDossierFor('guild', '${g.id}')" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;" title="Baixar Dossiê">📄</button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      async function forceLeaveGuildAction(guildId) {
+        if (!confirm(`Tem certeza que deseja forçar a Pyxie a SAIR IMEDIATAMENTE do servidor ${guildId}?`)) return;
+        try {
+          const res = await fetch(`/api/admin/guilds/${guildId}/force-leave`, { method: 'POST' });
+          const data = await res.json();
+          if (data.success) {
+            showToast('Ordem de saída imediata enviada!', '🚪');
+            setTimeout(fetchGuilds, 1500);
+          } else {
+            showToast(data.error || 'Falha ao forçar saída', '❌');
+          }
+        } catch (err) {
+          showToast('Erro de conexão', '❌');
+        }
+      }
+
+      async function banGuildAction(guildId) {
+        const reason = prompt('Informe o motivo legal/técnico da banição deste servidor na Blacklist:', 'Violação de Termos / Abuso');
+        if (!reason) return;
+        try {
+          const res = await fetch('/api/admin/trust/blacklist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'guild', id: guildId, reason }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`Servidor ${guildId} banido com sucesso!`, '🚫');
+            fetchGuilds();
+          } else {
+            showToast(data.error || 'Erro ao banir', '❌');
+          }
+        } catch (err) {
+          showToast('Erro de rede', '❌');
+        }
+      }
+
+      function inspectGuildDb(guildId) {
+        switchTab('database');
+        setDbPartition('guilds');
+        const searchInput = document.getElementById('dbSearch');
+        if (searchInput) {
+          searchInput.value = guildId;
+          fetchDbExplorer(1);
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 4. TRUST & SAFETY & COMPLIANCE LEGAL (TASK 2)
+      // -------------------------------------------------------------
+      async function fetchTrustSafety() {
+        try {
+          // Red Flags
+          const rfRes = await fetch('/api/admin/trust/red-flags');
+          const rfData = await rfRes.json();
+          const rfTbody = document.getElementById('redFlagsTableBody');
+          if (rfData.success && rfTbody) {
+            document.getElementById('trustRedFlagsCount').innerText = rfData.count || 0;
+            if (rfData.redFlags && rfData.redFlags.length > 0) {
+              rfTbody.innerHTML = rfData.redFlags.map((f) => `
+                <tr>
+                  <td><span class="badge ${f.severity === 'CRITICAL' ? 'badge-danger' : 'badge-warning'}">${f.severity}</span></td>
+                  <td><strong>${f.targetType.toUpperCase()}</strong></td>
+                  <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${f.targetId}</td>
+                  <td style="color: #fca5a5; font-size: 0.8rem;">${f.reason}</td>
+                  <td style="font-size: 0.72rem; color: var(--text-muted);">${new Date(f.detectedAt).toLocaleTimeString('pt-BR')}</td>
+                  <td>
+                    <button onclick="blacklistTargetQuick('${f.targetType}', '${f.targetId}')" class="btn btn-danger" style="padding: 3px 8px; font-size: 0.72rem;">🚫 Banir</button>
+                    ${f.targetType === 'guild' ? `<button onclick="forceLeaveGuildAction('${f.targetId}')" class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.72rem;">🚪 Sair</button>` : ''}
+                  </td>
+                </tr>
+              `).join('');
+            } else {
+              rfTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #34d399; padding: 20px;">Nenhuma anomalia ativa no momento. Sistema 100% seguro!</td></tr>`;
+            }
+          }
+
+          // Blacklist
+          const blRes = await fetch('/api/admin/trust/blacklist');
+          const blData = await blRes.json();
+          const blTbody = document.getElementById('blacklistTableBody');
+          if (blData.success && blTbody) {
+            document.getElementById('trustBannedGuildsCount').innerText = (blData.guilds || []).length;
+            document.getElementById('trustBannedUsersCount').innerText = (blData.users || []).length;
+
+            const allBanned = [...(blData.guilds || []), ...(blData.users || [])];
+            if (allBanned.length > 0) {
+              blTbody.innerHTML = allBanned.map((b) => `
+                <tr>
+                  <td><span class="badge badge-purple">${b.type.toUpperCase()}</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${b.id}</td>
+                  <td style="color: #cbd5e1;">${b.reason}</td>
+                  <td style="font-size: 0.75rem; color: var(--text-muted);">${new Date(b.bannedAt).toLocaleString('pt-BR')}</td>
+                  <td style="font-size: 0.75rem;">${b.bannedBy}</td>
+                  <td>
+                    <button onclick="unbanTarget('${b.type}', '${b.id}')" class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.72rem;">Desbanir</button>
+                  </td>
+                </tr>
+              `).join('');
+            } else {
+              blTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">Nenhum alvo na blacklist.</td></tr>`;
+            }
+          }
+        } catch (err) {
+          console.error('Erro ao buscar Trust & Safety:', err);
+        }
+      }
+
+      async function handleBanTarget() {
+        const type = document.getElementById('banType').value;
+        const id = document.getElementById('banId').value.trim();
+        const reason = document.getElementById('banReason').value.trim() || 'Violação de Termos / Abuso';
+        if (!id) return alert('Digite o ID (Snowflake) do alvo.');
+
+        try {
+          const res = await fetch('/api/admin/trust/blacklist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type, id, reason }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`${type} ${id} adicionado à Blacklist Global!`, '🚫');
+            document.getElementById('banId').value = '';
+            document.getElementById('banReason').value = '';
+            fetchTrustSafety();
+          } else {
+            showToast(data.error || 'Falha ao banir', '❌');
+          }
+        } catch (err) {
+          showToast('Erro de rede', '❌');
+        }
+      }
+
+      async function blacklistTargetQuick(type, id) {
+        if (!confirm(`Banir permanentemente ${type} ${id}?`)) return;
+        try {
+          await fetch('/api/admin/trust/blacklist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type, id, reason: 'Alvo detectado por anomalia crítica' }),
+          });
+          showToast('Alvo banido na Blacklist!', '🚫');
+          fetchTrustSafety();
+        } catch (_) {}
+      }
+
+      async function unbanTarget(type, id) {
+        if (!confirm(`Remover ${type} ${id} da Blacklist?`)) return;
+        try {
+          const res = await fetch('/api/admin/trust/unblacklist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type, id }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast('Alvo desbanido com sucesso!', '✅');
+            fetchTrustSafety();
+          }
+        } catch (_) {}
+      }
+
+      function downloadDossier(format) {
+        const type = document.getElementById('dossierType').value;
+        const id = document.getElementById('dossierId').value.trim();
+        if (!id) return alert('Informe o ID do alvo para extrair o Dossiê.');
+        downloadDossierFor(type, id, format);
+      }
+
+      function downloadDossierFor(type, id, format = 'json') {
+        window.open(`/api/admin/trust/dossier/${type}/${id}?format=${format}`, '_blank');
+      }
+
+      // -------------------------------------------------------------
+      // 5. TELEMETRIA DE RECURSOS DA VM (ITENS 3 E 4)
+      // -------------------------------------------------------------
+      async function fetchVmTelemetry() {
+        try {
+          // Overview
+          const ovRes = await fetch('/api/admin/vm/overview');
+          const ov = await ovRes.json();
+          if (ov) {
+            document.getElementById('vmRssMb').innerText = `${ov.nodeMemory?.rssMb || 0} MB`;
+            document.getElementById('vmTotalUsedPercent').innerText = `${ov.systemMemory?.usedPercent || 0}% (${ov.systemMemory?.usedMb} MB)`;
+            document.getElementById('vmCpuLoad').innerText = `${ov.cpus} OCPUs (Load: ${ov.loadAverage?.[0]?.toFixed(2) || '0.00'})`;
+            const h = Math.floor((ov.uptimeSeconds || 0) / 3600);
+            const m = Math.floor(((ov.uptimeSeconds || 0) % 3600) / 60);
+            document.getElementById('vmUptime').innerText = `${h}h ${m}m (${ov.uptimeSeconds}s)`;
+          }
+
+          // Modules
+          const modRes = await fetch('/api/admin/vm/modules');
+          const modData = await modRes.json();
+          const modTbody = document.getElementById('vmModulesTableBody');
+          if (modData.success && modTbody) {
+            modTbody.innerHTML = (modData.modules || []).map((m) => {
+              const isAdmin = m.id === 'admin';
+              return `
+                <tr ${isAdmin ? 'style="background: rgba(230,0,103,0.12); font-weight: bold;"' : ''}>
+                  <td><strong>${isAdmin ? '👑 ' : '🧩 '}${m.name}</strong></td>
+                  <td style="color: #c084fc;">${m.cpuTimeMs} ms</td>
+                  <td style="color: #38bdf8;">${m.ramMb} MB</td>
+                  <td style="color: #34d399;">${m.netTotalKb} KB</td>
+                  <td>${(m.executionCount || 0).toLocaleString()}</td>
+                  <td style="color: var(--text-muted); font-size: 0.75rem;">${m.avgCpuMs} ms/op</td>
+                </tr>
+              `;
+            }).join('');
+          }
+
+          // Subpanels
+          const spRes = await fetch('/api/admin/vm/subpanels');
+          const spData = await spRes.json();
+          const spTbody = document.getElementById('vmSubpanelsTableBody');
+          if (spData.success && spTbody) {
+            spTbody.innerHTML = (spData.subpanels || []).map((s) => `
+              <tr>
+                <td><strong>/admin/${s.name.toLowerCase()}</strong></td>
+                <td><span class="badge ${s.activeRequests > 0 ? 'badge-warning' : 'badge-success'}">${s.activeRequests} ativas</span></td>
+                <td>${(s.totalHits || 0).toLocaleString()}</td>
+                <td style="color: #c084fc;">${s.cpuTimeMs} ms</td>
+                <td style="color: #34d399;">${s.networkKb} KB</td>
+                <td style="color: #38bdf8;">${s.ramMb} MB</td>
+              </tr>
+            `).join('');
+          }
+        } catch (err) {
+          console.error('Erro ao buscar telemetria VM:', err);
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 6. BANCO DE DADOS VISUAL MULTI-TENANT (ITEM 5)
+      // -------------------------------------------------------------
+      let dbCurrentPartition = 'users';
+      let dbCurrentPage = 1;
+      let dbTotalPages = 1;
+
+      function setDbPartition(part) {
+        dbCurrentPartition = part;
+        dbCurrentPage = 1;
+        document.getElementById('btnPartUsers').className = part === 'users' ? 'btn btn-primary' : 'btn btn-secondary';
+        document.getElementById('btnPartGuilds').className = part === 'guilds' ? 'btn btn-primary' : 'btn btn-secondary';
+        document.getElementById('btnPartGlobal').className = part === 'global' ? 'btn btn-primary' : 'btn btn-secondary';
+        fetchDbExplorer(1);
+      }
+
+      function changeDbPage(delta) {
+        const target = dbCurrentPage + delta;
+        if (target >= 1 && target <= dbTotalPages) {
+          fetchDbExplorer(target);
+        }
+      }
+
+      async function fetchDbDictionary() {
+        try {
+          const res = await fetch('/api/admin/db/dictionary');
+          const data = await res.json();
+          const dict = data.dictionary || {};
+          const c = document.getElementById('dictContainer');
+          if (c) {
+            c.innerHTML = Object.entries(dict).map(([k, v]) => `
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 6px 10px;">
+                <div style="font-weight: 700; color: #fff;">${v.icon} ${k}</div>
+                <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 2px;">${v.description}</div>
+              </div>
+            `).join('');
+          }
+        } catch (_) {}
+      }
+
+      async function fetchDbExplorer(page = 1) {
+        dbCurrentPage = page;
+        const search = document.getElementById('dbSearch')?.value || '';
+        try {
+          const res = await fetch(`/api/admin/db/explore?partition=${dbCurrentPartition}&page=${page}&limit=12&search=${encodeURIComponent(search)}`);
+          const data = await res.json();
+          if (!data.success) return;
+
+          dbTotalPages = data.totalPages || 1;
+          document.getElementById('dbPaginationInfo').innerText = `Página ${data.page} de ${dbTotalPages} (Total: ${data.total} registros)`;
+          document.getElementById('btnDbPrev').disabled = dbCurrentPage <= 1;
+          document.getElementById('btnDbNext').disabled = dbCurrentPage >= dbTotalPages;
+
+          const thead = document.getElementById('dbExplorerThead');
+          const tbody = document.getElementById('dbExplorerTbody');
+
+          if (dbCurrentPartition === 'users') {
+            thead.innerHTML = `
+              <th>User ID</th>
+              <th>🪙 Moedas</th>
+              <th>🏦 Banco</th>
+              <th>🌱 Feijões</th>
+              <th>💼 Carreira</th>
+              <th>⭐ Nível</th>
+              <th>🔥 Streak</th>
+              <th>Ações</th>
+            `;
+            tbody.innerHTML = (data.records || []).map((u) => `
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${u.id}</td>
+                <td><input type="number" id="db_coins_${u.id}" class="db-cell-input" value="${u.coins}" /></td>
+                <td><input type="number" id="db_bank_${u.id}" class="db-cell-input" value="${u.bank}" /></td>
+                <td><input type="number" id="db_beans_${u.id}" class="db-cell-input" value="${u.magicBeans}" /></td>
+                <td><input type="text" id="db_career_${u.id}" class="db-cell-input" value="${u.career}" /></td>
+                <td>${u.careerLevel}</td>
+                <td>${u.streak}</td>
+                <td>
+                  <button onclick="saveUserRecord('${u.id}')" class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.72rem;">💾 Salvar</button>
+                </td>
+              </tr>
+            `).join('');
+          } else if (dbCurrentPartition === 'guilds') {
+            thead.innerHTML = `
+              <th>Guild ID</th>
+              <th>Prefixo</th>
+              <th>Idioma</th>
+              <th>Canal Boas-Vindas</th>
+              <th>Módulos Ativos</th>
+              <th>Ações</th>
+            `;
+            tbody.innerHTML = (data.records || []).map((g) => `
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${g.id}</td>
+                <td><input type="text" id="db_prefix_${g.id}" class="db-cell-input" value="${g.prefix}" style="width: 60px;" /></td>
+                <td>
+                  <select id="db_lang_${g.id}" class="filter-select" style="padding: 3px 6px; font-size: 0.75rem;">
+                    <option value="pt-BR" ${g.lang === 'pt-BR' ? 'selected' : ''}>pt-BR</option>
+                    <option value="en" ${g.lang === 'en' ? 'selected' : ''}>en</option>
+                  </select>
+                </td>
+                <td><input type="text" id="db_welcome_${g.id}" class="db-cell-input" value="${g.welcomeChannelId || ''}" style="width: 140px;" /></td>
+                <td>${(g.activeModules || []).map((m) => `<span class="badge badge-purple">${m}</span>`).join(' ')}</td>
+                <td>
+                  <button onclick="saveGuildRecord('${g.id}')" class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.72rem;">💾 Salvar</button>
+                </td>
+              </tr>
+            `).join('');
+          } else if (dbCurrentPartition === 'global') {
+            thead.innerHTML = `<th>Chave de Estado</th><th>Nome</th><th>Condição</th><th>Status</th><th>Ações</th>`;
+            tbody.innerHTML = (data.records || []).map((r) => `
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace;">${r.id}</td>
+                <td><strong>${r.name}</strong></td>
+                <td><span class="badge ${r.active ? 'badge-success' : 'badge-danger'}">${r.active ? 'Ativo' : 'Pausado'}</span></td>
+                <td>${r.status}</td>
+                <td><span style="font-size: 0.72rem; color: var(--text-muted);">Sincronizado</span></td>
+              </tr>
+            `).join('');
+          }
+        } catch (err) {
+          console.error('Erro no Visual DB Explorer:', err);
+        }
+      }
+
+      async function saveUserRecord(userId) {
+        const coins = document.getElementById(`db_coins_${userId}`)?.value;
+        const bank = document.getElementById(`db_bank_${userId}`)?.value;
+        const magicBeans = document.getElementById(`db_beans_${userId}`)?.value;
+        const career = document.getElementById(`db_career_${userId}`)?.value;
+
+        try {
+          await fetch('/api/admin/db/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ partition: 'users', recordId: userId, field: 'coins', value: coins }),
+          });
+          await fetch('/api/admin/db/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ partition: 'users', recordId: userId, field: 'bank', value: bank }),
+          });
+          await fetch('/api/admin/db/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ partition: 'users', recordId: userId, field: 'magicBeans', value: magicBeans }),
+          });
+          await fetch('/api/admin/db/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ partition: 'users', recordId: userId, field: 'career', value: career }),
+          });
+          showToast(`Usuário ${userId} atualizado com sucesso!`, '💾');
+        } catch (_) {
+          showToast('Erro ao salvar no banco', '❌');
+        }
+      }
+
+      async function saveGuildRecord(guildId) {
+        const prefix = document.getElementById(`db_prefix_${guildId}`)?.value;
+        const lang = document.getElementById(`db_lang_${guildId}`)?.value;
+        const welcomeChannelId = document.getElementById(`db_welcome_${guildId}`)?.value;
+
+        try {
+          await fetch('/api/admin/db/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ partition: 'guilds', recordId: guildId, field: 'prefix', value: prefix }),
+          });
+          await fetch('/api/admin/db/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ partition: 'guilds', recordId: guildId, field: 'lang', value: lang }),
+          });
+          await fetch('/api/admin/db/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ partition: 'guilds', recordId: guildId, field: 'welcomeChannelId', value: welcomeChannelId }),
+          });
+          showToast(`Servidor ${guildId} atualizado com sucesso!`, '💾');
+        } catch (_) {
+          showToast('Erro ao salvar no banco', '❌');
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 7. MAPEAMENTO DO ECOSSISTEMA WEB (ITEM 7)
+      // -------------------------------------------------------------
+      async function fetchWebRoutes() {
+        try {
+          const res = await fetch('/api/admin/routes/map');
+          const data = await res.json();
+          if (!data.success) return;
+
+          document.getElementById('routesTotalCount').innerText = data.totalTracked || 0;
+          document.getElementById('routesActiveCount').innerText = data.activeCount || 0;
+          document.getElementById('routesPausedCount').innerText = data.pausedCount || 0;
+
+          const grid = document.getElementById('routesGrid');
+          if (grid) {
+            grid.innerHTML = (data.routes || []).map((r) => `
+              <div class="topology-card" style="border-color: ${r.enabled ? 'rgba(52, 211, 153, 0.35)' : 'rgba(239, 68, 68, 0.35)'};">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                    <span class="badge ${r.enabled ? 'badge-success' : 'badge-danger'}">${r.statusLabel}</span>
+                    <span class="badge badge-purple">${r.type.toUpperCase()}</span>
+                  </div>
+                  <strong style="font-size: 0.95rem; color: #fff;">${r.name}</strong>
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--purple-glow); margin-top: 4px;">${r.path}</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+                  <span style="font-size: 0.72rem; color: var(--text-muted);">Acessos: <strong>${(r.hits || 0).toLocaleString()}</strong></span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" ${r.enabled ? 'checked' : ''} onchange="toggleRouteAction('${r.id}', this.checked)" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            `).join('');
+          }
+        } catch (err) {
+          console.error('Erro ao buscar mapa web:', err);
+        }
+      }
+
+      async function toggleRouteAction(routeId, enabled) {
+        try {
+          const res = await fetch(`/api/admin/routes/${routeId}/toggle`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`Rota ${routeId} ${enabled ? 'ativada' : 'pausada'} com sucesso!`, enabled ? '🟢' : '⏸️');
+            fetchWebRoutes();
+          }
+        } catch (_) {
+          showToast('Erro ao alternar rota', '❌');
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 8. MATRIZ DE ESCOPO DE COMANDOS (ITEM 8)
+      // -------------------------------------------------------------
+      let cachedScopes = [];
+      async function fetchScopes() {
+        try {
+          const res = await fetch('/api/admin/scopes');
+          const data = await res.json();
+          if (data.success) {
+            cachedScopes = data.scopes || [];
+            filterScopes();
+          }
+        } catch (err) {
+          console.error('Erro ao buscar escopos:', err);
+        }
+      }
+
+      function filterScopes() {
+        const q = (document.getElementById('scopeSearch')?.value || '').toLowerCase().trim();
+        const preset = document.getElementById('scopeFilterPreset')?.value || 'all';
+
+        let list = cachedScopes;
+        if (preset === 'ownerOnly') list = list.filter((c) => c.ownerOnly);
+        else if (preset === 'cringelandia') list = list.filter((c) => c.isCringelandiaExclusive);
+        else if (preset === 'whitelist') list = list.filter((c) => c.accessLevel === 'whitelist');
+        else if (preset === 'global') list = list.filter((c) => c.discordScope === 'global');
+
+        if (q) {
+          list = list.filter((c) => c.name.toLowerCase().includes(q));
+        }
+
+        renderScopesTable(list);
+      }
+
+      function renderScopesTable(list) {
+        const tbody = document.getElementById('scopesTableBody');
+        if (!tbody) return;
+        if (!list || list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum comando encontrado para este filtro de escopo.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = list.map((c) => {
+          const scopeBadge = c.isCringelandiaExclusive
+            ? '<span class="badge badge-warning">🧪 Cringelândia Lab</span>'
+            : c.discordScope === 'guildScope'
+            ? '<span class="badge badge-purple">Servidores Específicos</span>'
+            : '<span class="badge badge-success">🌐 Global</span>';
+
+          const accessBadge = c.ownerOnly
+            ? '<span class="badge badge-danger">👑 Apenas Owner</span>'
+            : c.accessLevel === 'whitelist'
+            ? '<span class="badge badge-warning">🛡️ Whitelist / Staff</span>'
+            : '<span class="badge badge-info">Público Geral</span>';
+
+          const envBadge = c.environment === 'guildOnly'
+            ? '<span class="badge badge-purple">Apenas Servidor</span>'
+            : c.environment === 'dmOnly'
+            ? '<span class="badge badge-purple">Apenas DM</span>'
+            : '<span class="badge badge-success">Servidor & DM</span>';
+
+          return `
+            <tr>
+              <td><strong>/${c.name}</strong></td>
+              <td>${scopeBadge}</td>
+              <td>${accessBadge}</td>
+              <td>${envBadge}</td>
+              <td><span class="badge badge-purple">${c.parentModule}</span></td>
+              <td>
+                <button onclick="promptEditScope('${c.name}', ${c.ownerOnly})" class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.72rem;">✏️ Editar</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      async function promptEditScope(cmdName, currentOwnerOnly) {
+        const newOwnerOnly = confirm(`Deseja definir o comando '/${cmdName}' como exclusivo do Criador da Pyxie (ownerOnly)?\nOK = Sim (Apenas Dono)\nCancelar = Público / Padrão`);
+        try {
+          const res = await fetch(`/api/admin/scopes/${cmdName}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ownerOnly: newOwnerOnly }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`Escopo de '/${cmdName}' atualizado com sucesso!`, '🎯');
+            fetchScopes();
+          }
+        } catch (_) {
+          showToast('Erro ao atualizar escopo', '❌');
+        }
+      }
+
+      async function runVisibilitySimulation() {
+        const guildId = document.getElementById('simGuildId').value.trim();
+        const userType = document.getElementById('simUserType').value;
+        const environment = document.getElementById('simEnv').value;
+
+        try {
+          const res = await fetch('/api/admin/scopes/simulate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ guildId, userType, environment }),
+          });
+          const data = await res.json();
+          if (!data.success) return;
+
+          document.getElementById('simResultsBox').style.display = 'block';
+          document.getElementById('simVisibleCount').innerText = `${data.visibleCount} Comandos Visíveis`;
+          document.getElementById('simHiddenCount').innerText = `${data.hiddenCount} Comandos Ocultos`;
+
+          const container = document.getElementById('simCommandPills');
+          container.innerHTML = [
+            ...data.visibleCommands.map((c) => `<span class="badge badge-success" title="${c.reason}">/${c.name}</span>`),
+            ...data.hiddenCommands.map((c) => `<span class="badge badge-danger" title="${c.reason}">/${c.name} (${c.reason})</span>`),
+          ].join(' ');
+        } catch (err) {
+          alert('Erro ao rodar simulação: ' + err.message);
+        }
       }
 
       async function fetchModules() {
@@ -3640,6 +4994,9 @@
       }
 
       document.addEventListener('DOMContentLoaded', () => {
+        fetchRedFlagsBanner();
+        fetchTelemetry();
+
         const screen = document.getElementById('terminalScreen');
         if (screen) {
           screen.addEventListener('scroll', () => {

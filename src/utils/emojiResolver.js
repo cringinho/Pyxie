@@ -52,8 +52,13 @@ function getEmojiConfig() {
 
 function resolveEmoji(client, slot, format = 'discord') {
   const config = getEmojiConfig();
-  const emojiId = config[slot];
+  let emojiId = config[slot];
   const fallback = FALLBACKS[slot] || '✨';
+
+  // Regra Mandatória 7: Proibição estrita do portal de Minecraft
+  if (emojiId === '1548444170488778954') {
+    emojiId = '1551355962974273546';
+  }
 
   if (!emojiId) return fallback;
 
@@ -79,4 +84,3 @@ function resolveEmoji(client, slot, format = 'discord') {
 }
 
 module.exports = { resolveEmoji, FALLBACKS, getEmojiConfig };
-
