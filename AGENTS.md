@@ -44,7 +44,7 @@ Sempre que uma nova feature, comando, botão, minigame, desafio, embed, item de 
   ```bash
   npm test
   ```
-- O comando executa todos os **23 arquivos de testes** do ecossistema, incluindo testes de segurança, integridade econômica, tarot, SEO, paridade i18n, módulos desacoplados, Drizzle ORM, estúdio SaaS, master dashboard SaaS, integridade do banco de dados e Discord health.
+- O comando executa todos os **24 arquivos de testes** do ecossistema, incluindo testes de segurança, integridade econômica, tarot, SEO, paridade i18n, módulos desacoplados, Drizzle ORM, estúdio SaaS, master dashboard SaaS, integridade do banco de dados, Discord health e homologation preview dispatcher.
 - **100% dos testes devem passar** sem exceções antes de finalizar qualquer turno ou enviar commits para produção.
 
 ---
@@ -206,3 +206,16 @@ Antes de encerrar qualquer tarefa ou responder ao criador que o trabalho foi con
 1. Disparar uma Onda de Verificação completa (`POST /api/admin/reconcile?force=true`) e verificar se todas as abas do `/admin` retornam dados reais da VM sem valores "undefined", "/none" ou placeholders estáticos.
 2. Validar o retorno do endpoint `GET /api/public/system-truth` para confirmar que os placeholders do site público estão recebendo os números e catálogos atualizados.
 3. Executar a suíte de testes automatizados (`npm test`) e garantir 100% de aprovação em todos os testes de sintaxe, paridade bilíngue (`i18nParity.test.js`) e integridade de módulos.
+
+---
+
+## 11. Protocolo Obrigatório de Preview Automático de Embeds e Mensagens (`1461937203214024891`)
+
+### 1. Despacho Automático Sem Necessidade de Solicitação
+- Toda vez que o Agente de IA criar um novo Embed, modificar um Embed existente ou alterar mensagens estruturadas do bot, ele é **OBRIGADO** a disparar automaticamente uma preview real do resultado final no canal de testes de ID **`1461937203214024891`** através do serviço `src/utils/homologationPreviewDispatcher.js`, mesmo que o criador não peça isso no prompt da tarefa.
+- Isso garante que o proprietário visualize imediatamente no Discord como a formatação ficou sem precisar executar comandos manualmente para testar.
+
+### 2. Blindagem Anti-Ping (Tags Sempre Entre Crases ```` ``` ````)
+- No canal `1461937203214024891`, **NUNCA** mencione usuários, cargos ou `@everyone`/`@here` de forma ativa.
+- Qualquer tag de usuário (`<@id>`), cargo (`<@&id>`) ou menção simulada na preview deve ser obrigatoriamente escapada entre crases triplas ```` ```<@id>``` ```` (ou inline `` `<@&id>` `` dentro de embeds) e enviada com `allowedMentions: { parse: [], users: [], roles: [], repliedUser: false }` no payload do Discord.js.
+
