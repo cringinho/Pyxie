@@ -1,5 +1,5 @@
 const express = require('express');
-const { getRanking, getTimeseries, getSummary } = require('../services/commandTelemetry');
+const { getRanking, getTimeseries, getSummary, getCategoryBreakdown } = require('../services/commandTelemetry');
 const {
   isBlacklisted,
   blacklistTarget,
@@ -56,9 +56,40 @@ function createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }) {
   });
 
   router.get('/api/admin/telemetry/timeseries', requireAdminAuth, (req, res) => {
-    const { timeWindow, commandName } = req.query;
-    const points = getTimeseries({ timeWindow, commandName });
+    const { timeWindow, commandName, category } = req.query;
+    const points = getTimeseries({ timeWindow, commandName, category });
     res.json({ success: true, count: points.length, points });
+  });
+
+  router.get('/api/admin/telemetry/categories', requireAdminAuth, (req, res) => {
+    const categories = getCategoryBreakdown();
+    res.json({ success: true, count: categories.length, categories });
+  });
+
+  // Verification Waves Engine: Reconciliação com Força Real, Retry e Sem Cache (Seção 2)
+  router.post('/api/admin/reconcile', requireAdminAuth, async (req, res) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
+    const tab = req.query.tab || req.body?.tab || null;
+    const force = req.query.force === 'true' || req.body?.force === true;
+
+    try {
+      const truthEngine = require('../services/truthReconciliationEngine');
+      const waveResult = await truthEngine.runVerificationWave({
+        force: true,
+        trigger: `reconcile_api:${tab || 'all'}`,
+        tab,
+      });
+
+      res.json({
+        success: true,
+        ...waveResult,
+      });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
   });
 
   // 2. Servers Directory (Task 4)

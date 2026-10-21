@@ -1,30 +1,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { OWNER_SNOWFLAKE } = require('./adminAuth');
-const { COMMAND_CATEGORY_MAP } = require('../commands/commandHelpers');
+const { getIntrospectedCommands, OWNER_COMMANDS, GUILD_ONLY_COMMANDS, CRINGELANDIA_GUILD_ID, MARY_DEFAULT_GUILD_ID } = require('./commandIntrospector');
 
 const SCOPES_FILE = path.join(__dirname, '..', '..', 'data', 'commandScopes.json');
-const CRINGELANDIA_GUILD_ID = '1453890868980482090';
-
-// Comandos do Criador / Owner Only
-const OWNER_COMMANDS = new Set([
-  'admin', 'py-admin',
-  'seteco', 'py-seteco', 'setareconomia', 'py-setareconomia',
-  'reseteco', 'py-reseteco', 'resetareconomia', 'py-resetareconomia',
-  'ecoconfig', 'py-ecoconfig', 'configeconomia', 'py-configeconomia',
-]);
-
-// Comandos estritamente de Servidor (Guild Only)
-const GUILD_ONLY_COMMANDS = new Set([
-  'setup', 'py-setup',
-  'welcome', 'py-welcome', 'setwelcome', 'py-setwelcome',
-  'schedule', 'py-schedule', 'agenda', 'py-agenda',
-  'admin', 'py-admin',
-  'exportar', 'py-exportar', 'export', 'py-export', 'export-messages', 'py-export-messages',
-  'seteco', 'py-seteco', 'setareconomia', 'py-setareconomia',
-  'reseteco', 'py-reseteco', 'resetareconomia', 'py-resetareconomia',
-  'ecoconfig', 'py-ecoconfig', 'configeconomia', 'py-configeconomia',
-]);
 
 let scopeOverrides = {};
 
@@ -54,56 +33,83 @@ loadScopeOverrides();
 
 /**
  * Retorna lista de todos os comandos e suas 4 dimensões de escopo
+ * Cobre 100% dos comandos em src/commands/ e todos os submódulos em src/modules/
  */
 function getAllCommandScopes() {
-  const { commands } = require('../commands/index');
+  const introspected = getIntrospectedCommands();
   const result = [];
 
-  for (const cmd of commands || []) {
-    const name = cmd.data?.name || cmd.name || 'unnamed';
+  for (const cmd of introspected) {
+    const name = cmd.name;
     const override = scopeOverrides[name] || {};
 
-    const category = COMMAND_CATEGORY_MAP[name] || 'utilidades';
+    const category = cmd.category || 'utilidades';
     const isOwner = override.ownerOnly ?? (Boolean(cmd.ownerOnly) || OWNER_COMMANDS.has(name));
-    const guildScope = override.guildScope ?? (Array.isArray(cmd.guildScope) ? cmd.guildScope : []);
+    
+    // Escopo de Servidor
+    let guildScope = override.guildScope !== undefined
+      ? (Array.isArray(override.guildScope) ? override.guildScope : [])
+      : (Array.isArray(cmd.guildScope) ? cmd.guildScope : []);
+
+    const isCringelandiaExclusive =
+      guildScope.includes(CRINGELANDIA_GUILD_ID) && guildScope.length === 1;
+    const isMaryExclusive =
+      cmd.moduleId === 'mary-studio' || (guildScope.includes(MARY_DEFAULT_GUILD_ID) && guildScope.length === 1);
+
+    let discordScope = 'global';
+    if (override.serverScope) {
+      discordScope = override.serverScope;
+    } else if (isCringelandiaExclusive) {
+      discordScope = 'cringelandia';
+    } else if (isMaryExclusive) {
+      discordScope = 'mary-studio';
+    } else if (guildScope.length > 0) {
+      discordScope = 'guildScope';
+    }
+
+    // Escopo de Usuário
     const allowedUserIds = override.allowedUserIds ?? (Array.isArray(cmd.allowedUserIds) ? cmd.allowedUserIds : []);
     const allowedRoleIds = override.allowedRoleIds ?? (Array.isArray(cmd.allowedRoleIds) ? cmd.allowedRoleIds : []);
 
-    // 1. Escopo de Visibilidade Discord
-    const discordScope = guildScope.length > 0 ? 'guildScope' : 'global';
-    const isCringelandiaExclusive = guildScope.includes(CRINGELANDIA_GUILD_ID) && guildScope.length === 1;
-
-    // 2. Nível de Acesso de Usuário
     let accessLevel = 'public';
-    if (isOwner) {
+    if (override.userScope) {
+      accessLevel = override.userScope;
+    } else if (isOwner) {
       accessLevel = 'ownerOnly';
-    } else if (allowedUserIds.length > 0 || allowedRoleIds.length > 0) {
+    } else if (allowedRoleIds.length > 0) {
+      accessLevel = 'staff';
+    } else if (allowedUserIds.length > 0) {
       accessLevel = 'whitelist';
     }
 
-    // 3. Ambiente de Execução
-    let environment = override.environment || (GUILD_ONLY_COMMANDS.has(name) ? 'guildOnly' : 'both');
-
-    // 4. Módulo Pai
-    const parentModule = category;
+    // Ambiente de Execução
+    let environment = override.environment || cmd.environment || (GUILD_ONLY_COMMANDS.has(name) ? 'guildOnly' : 'both');
 
     result.push({
       name,
       category,
-      description: cmd.data?.description || cmd.description || '',
+      moduleId: cmd.moduleId || 'core',
+      description: cmd.description || '',
       discordScope,
+      serverScope: discordScope,
       isCringelandiaExclusive,
+      isMaryExclusive,
       guildScope,
       accessLevel,
+      userScope: accessLevel,
       ownerOnly: isOwner,
       allowedUserIds,
       allowedRoleIds,
       environment,
-      parentModule,
-      moduleActive: true, // Dinamicamente checado se módulo estiver desativado
+      parentModule: category,
+      moduleActive: true,
+      hasSlash: cmd.hasSlash,
+      hasPrefix: cmd.hasPrefix,
     });
   }
 
+  // Ordena por nome
+  result.sort((a, b) => a.name.localeCompare(b.name));
   return result;
 }
 
@@ -119,8 +125,28 @@ function updateCommandScope(commandName, updates = {}) {
   if (typeof updates.ownerOnly === 'boolean') {
     scopeOverrides[canonicalName].ownerOnly = updates.ownerOnly;
   }
+  if (updates.serverScope) {
+    scopeOverrides[canonicalName].serverScope = updates.serverScope;
+    if (updates.serverScope === 'global') {
+      scopeOverrides[canonicalName].guildScope = [];
+    } else if (updates.serverScope === 'cringelandia') {
+      scopeOverrides[canonicalName].guildScope = [CRINGELANDIA_GUILD_ID];
+    } else if (updates.serverScope === 'mary-studio') {
+      scopeOverrides[canonicalName].guildScope = [MARY_DEFAULT_GUILD_ID];
+    }
+  }
   if (Array.isArray(updates.guildScope)) {
     scopeOverrides[canonicalName].guildScope = updates.guildScope;
+  }
+  if (updates.userScope) {
+    scopeOverrides[canonicalName].userScope = updates.userScope;
+    if (updates.userScope === 'ownerOnly') {
+      scopeOverrides[canonicalName].ownerOnly = true;
+    } else if (updates.userScope === 'public') {
+      scopeOverrides[canonicalName].ownerOnly = false;
+      scopeOverrides[canonicalName].allowedUserIds = [];
+      scopeOverrides[canonicalName].allowedRoleIds = [];
+    }
   }
   if (Array.isArray(updates.allowedUserIds)) {
     scopeOverrides[canonicalName].allowedUserIds = updates.allowedUserIds;
@@ -158,51 +184,61 @@ function simulateVisibility({
 
   for (const cmd of allScopes) {
     let canSee = true;
-    let reason = 'Comando público disponível';
+    let reason = '';
 
-    // 1. Verificação de Ambiente
+    // 1. Verificação de Ambiente (guild vs dm)
     if (environment === 'dm' && cmd.environment === 'guildOnly') {
       canSee = false;
-      reason = 'Bloqueado em DM (Requer servidor)';
+      reason = 'Comando restrito a servidores (Guild Only). Não pode ser executado em DM.';
+    } else if (environment === 'guild' && cmd.environment === 'dmOnly') {
+      canSee = false;
+      reason = 'Comando restrito a mensagens diretas (DM Only).';
     }
 
     // 2. Verificação de Escopo de Servidor
     if (canSee && cmd.guildScope && cmd.guildScope.length > 0) {
-      if (!guildId || !cmd.guildScope.includes(String(guildId))) {
+      if (!cmd.guildScope.includes(guildId)) {
         canSee = false;
-        reason = `Exclusivo de servidor específico (Não registrado para ${guildId || 'DM'})`;
+        reason = `Comando restrito a servidores autorizados (${cmd.guildScope.join(', ')}).`;
       }
     }
 
     // 3. Verificação de Nível de Usuário
     if (canSee) {
-      if (cmd.ownerOnly) {
-        if (userType !== 'owner' && userId !== OWNER_SNOWFLAKE) {
+      const isOwnerUser = userType === 'owner' || userId === OWNER_SNOWFLAKE;
+      if (cmd.ownerOnly && !isOwnerUser) {
+        canSee = false;
+        reason = 'Comando exclusivo do Criador da Pyxie (Owner Only).';
+      } else if (cmd.accessLevel === 'staff' && !isOwnerUser && userType !== 'admin') {
+        const hasRole = Array.isArray(cmd.allowedRoleIds) && cmd.allowedRoleIds.some((r) => userRoleIds.includes(r));
+        if (!hasRole) {
           canSee = false;
-          reason = 'Exclusivo do Criador da Pyxie (ownerOnly)';
+          reason = 'Comando exclusivo para Staff / Administradores.';
         }
-      } else if (cmd.accessLevel === 'whitelist') {
-        const hasUser = cmd.allowedUserIds.includes(String(userId));
-        const hasRole = userRoleIds.some((r) => cmd.allowedRoleIds.includes(String(r)));
-        if (!hasUser && !hasRole && userType !== 'owner' && userType !== 'admin') {
+      } else if (cmd.accessLevel === 'whitelist' && !isOwnerUser) {
+        const isUserAllowed = Array.isArray(cmd.allowedUserIds) && cmd.allowedUserIds.includes(userId);
+        const isRoleAllowed = Array.isArray(cmd.allowedRoleIds) && cmd.allowedRoleIds.some((r) => userRoleIds.includes(r));
+        if (!isUserAllowed && !isRoleAllowed) {
           canSee = false;
-          reason = 'Restrito à Whitelist de Usuários / Cargos autorizados';
+          reason = 'Usuário não consta na Whitelist deste comando.';
         }
       }
     }
 
     if (canSee) {
-      visible.push({ ...cmd, reason });
+      visible.push(cmd);
     } else {
-      hidden.push({ ...cmd, reason });
+      hidden.push({ ...cmd, hideReason: reason });
     }
   }
 
   return {
-    context: { guildId, userType, userId, environment },
+    params: { guildId, userType, userId, environment },
     totalCommands: allScopes.length,
     visibleCount: visible.length,
     hiddenCount: hidden.length,
+    visible,
+    hidden,
     visibleCommands: visible,
     hiddenCommands: hidden,
   };
@@ -213,4 +249,7 @@ module.exports = {
   updateCommandScope,
   simulateVisibility,
   CRINGELANDIA_GUILD_ID,
+  MARY_DEFAULT_GUILD_ID,
+  OWNER_COMMANDS,
+  GUILD_ONLY_COMMANDS,
 };

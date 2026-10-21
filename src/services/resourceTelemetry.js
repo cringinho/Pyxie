@@ -1,9 +1,13 @@
 const os = require('node:os');
+const fs = require('node:fs');
+const path = require('node:path');
 
-// Módulos monitorados
+// Módulos monitorados no sistema
 const MODULE_IDS = ['marriage', 'seasonal', 'museum', 'partnerships', 'mary-studio', 'admin'];
 
 const moduleStats = new Map();
+const moduleHeapDeltas = new Map();
+
 for (const id of MODULE_IDS) {
   moduleStats.set(id, {
     id,
@@ -12,7 +16,6 @@ for (const id of MODULE_IDS) {
     networkBytesIn: 0,
     networkBytesOut: 0,
     executionCount: 0,
-    ramMb: id === 'admin' ? 32 : 18, // Baseline estimado em MB
   });
 }
 
@@ -27,11 +30,16 @@ const SUBPANEL_MAP = {
   '/api/admin/modules': 'admin_modules',
   '/api/admin/terminal': 'admin_terminal',
   '/admin/economia': 'admin_economia',
+  '/api/admin/economia': 'admin_economia',
   '/admin/personalizacao': 'admin_personalizacao',
   '/admin/sazonal': 'admin_sazonal',
+  '/api/admin/sazonal': 'admin_sazonal',
   '/admin/loja': 'admin_loja',
   '/admin/bosque': 'admin_bosque',
   '/admin/textos': 'admin_textos',
+  '/api/admin/reconcile': 'admin_core',
+  '/api/admin/guilds': 'admin_core',
+  '/api/admin/telemetry': 'admin_core',
 };
 
 const subpanelStats = new Map();
@@ -57,12 +65,62 @@ for (const sp of ALL_SUBPANELS) {
     totalHits: 0,
     cpuTimeMs: 0,
     networkBytes: 0,
-    ramMb: 8.5, // Estimativa de cache por subpainel
+    allocatedBytes: 0,
   });
 }
 
 /**
- * Registra o consumo de processamento e rede de um módulo
+ * Define o delta de Heap real alocado pelo módulo durante onLoad
+ */
+function setModuleHeapDelta(moduleId, deltaBytes) {
+  moduleHeapDeltas.set(moduleId, Math.max(0, deltaBytes));
+}
+
+/**
+ * Calcula a pegada de memória RAM real (em MB) do módulo baseada em seus arquivos e Heap
+ */
+function calculateModuleRamMb(moduleId) {
+  let stateBytes = 0;
+  const dataDir = path.join(__dirname, '..', '..', 'data');
+
+  try {
+    if (moduleId === 'mary-studio') {
+      const f1 = path.join(dataDir, 'maryStudioConfig.json');
+      if (fs.existsSync(f1)) stateBytes += fs.statSync(f1).size;
+    } else if (moduleId === 'seasonal') {
+      const f1 = path.join(dataDir, 'seasonalConfig.json');
+      if (fs.existsSync(f1)) stateBytes += fs.statSync(f1).size;
+      const f2 = path.join(dataDir, 'seasonalState.json');
+      if (fs.existsSync(f2)) stateBytes += fs.statSync(f2).size;
+      const f3 = path.join(dataDir, 'cringelandia', 'seasonalData.json');
+      if (fs.existsSync(f3)) stateBytes += fs.statSync(f3).size;
+    } else if (moduleId === 'marriage') {
+      const f1 = path.join(dataDir, 'marriages.json');
+      if (fs.existsSync(f1)) stateBytes += fs.statSync(f1).size;
+    } else if (moduleId === 'museum') {
+      const f1 = path.join(dataDir, 'museum_arts.json');
+      if (fs.existsSync(f1)) stateBytes += fs.statSync(f1).size;
+    } else if (moduleId === 'partnerships') {
+      const f1 = path.join(dataDir, 'partnerships.json');
+      if (fs.existsSync(f1)) stateBytes += fs.statSync(f1).size;
+    } else if (moduleId === 'admin') {
+      const f1 = path.join(dataDir, 'commandScopes.json');
+      if (fs.existsSync(f1)) stateBytes += fs.statSync(f1).size;
+      const f2 = path.join(dataDir, 'adminAuthTokens.json');
+      if (fs.existsSync(f2)) stateBytes += fs.statSync(f2).size;
+    }
+  } catch (_) {}
+
+  const heapDelta = moduleHeapDeltas.get(moduleId) || 0;
+  const totalBytes = stateBytes + heapDelta;
+
+  // Converte para MB reais; valor mínimo representativo de 0.05 MB se em execução
+  const mb = totalBytes / (1024 * 1024);
+  return Number(Math.max(0.05, mb).toFixed(2));
+}
+
+/**
+ * Registra o consumo de processamento e rede de um módulo com alta precisão
  * @param {string} moduleId
  * @param {number} durationMs
  * @param {number} [bytesIn=0]
@@ -76,7 +134,6 @@ function trackModuleExecution(moduleId, durationMs, bytesIn = 0, bytesOut = 0) {
     networkBytesIn: 0,
     networkBytesOut: 0,
     executionCount: 0,
-    ramMb: 15,
   };
 
   mod.cpuTimeMs += Math.max(0, durationMs);
@@ -88,11 +145,12 @@ function trackModuleExecution(moduleId, durationMs, bytesIn = 0, bytesOut = 0) {
 }
 
 /**
- * Middleware Express para monitorar tráfego e CPU de sub-painéis e do módulo admin
+ * Middleware Express para monitorar tráfego, conexões e CPU real de sub-painéis e do módulo admin
  */
 function createExpressTelemetryMiddleware() {
   return (req, res, next) => {
     const startHr = process.hrtime.bigint();
+    const memBefore = process.memoryUsage().heapUsed;
     const bytesIn = parseInt(req.headers['content-length'] || 0, 10) || 0;
     let bytesOut = 0;
 
@@ -130,11 +188,15 @@ function createExpressTelemetryMiddleware() {
       sp.activeRequests = Math.max(0, sp.activeRequests - 1);
       const endHr = process.hrtime.bigint();
       const durationMs = Number(endHr - startHr) / 1e6;
+      const memDelta = Math.max(0, process.memoryUsage().heapUsed - memBefore);
 
       sp.cpuTimeMs += durationMs;
-      sp.networkBytes += bytesIn + bytesOut;
+      const socketIn = req.socket?.bytesRead || bytesIn;
+      const socketOut = res.socket?.bytesWritten || bytesOut;
+      sp.networkBytes += Math.max(bytesIn + bytesOut, socketIn + socketOut);
+      sp.allocatedBytes = (sp.allocatedBytes || 0) + memDelta;
 
-      // Alimenta o módulo 'admin' no ranking global de módulos
+      // Alimenta o módulo 'admin' no ranking global de recursos
       if (req.originalUrl.startsWith('/admin') || req.originalUrl.startsWith('/api/admin')) {
         trackModuleExecution('admin', durationMs, bytesIn, bytesOut);
       }
@@ -175,14 +237,17 @@ function getVmOverview() {
 }
 
 /**
- * Retorna ranking e métricas detalhadas de cada módulo
+ * Retorna ranking e métricas reais de cada módulo (sem mocks de 18 MB)
  */
 function getModuleMetrics() {
   const list = Array.from(moduleStats.values()).map((m) => {
     const netTotalKb = Number(((m.networkBytesIn + m.networkBytesOut) / 1024).toFixed(2));
     const avgCpuMs = m.executionCount > 0 ? Number((m.cpuTimeMs / m.executionCount).toFixed(2)) : 0;
+    const realRamMb = calculateModuleRamMb(m.id);
+
     return {
       ...m,
+      ramMb: realRamMb,
       cpuTimeMs: Number(m.cpuTimeMs.toFixed(2)),
       avgCpuMs,
       netTotalKb,
@@ -194,14 +259,18 @@ function getModuleMetrics() {
 }
 
 /**
- * Retorna telemetria de todos os sub-painéis administrativos
+ * Retorna telemetria de todos os sub-painéis administrativos (sem mocks de 8.5 MB)
  */
 function getSubpanelMetrics() {
-  const list = Array.from(subpanelStats.values()).map((s) => ({
-    ...s,
-    cpuTimeMs: Number(s.cpuTimeMs.toFixed(2)),
-    networkKb: Number((s.networkBytes / 1024).toFixed(2)),
-  }));
+  const list = Array.from(subpanelStats.values()).map((s) => {
+    const ramMb = Number(Math.max(0.1, (s.allocatedBytes || 0) / (1024 * 1024)).toFixed(2));
+    return {
+      ...s,
+      ramMb,
+      cpuTimeMs: Number(s.cpuTimeMs.toFixed(2)),
+      networkKb: Number((s.networkBytes / 1024).toFixed(2)),
+    };
+  });
 
   list.sort((a, b) => b.totalHits - a.totalHits);
   return list;
@@ -209,9 +278,9 @@ function getSubpanelMetrics() {
 
 module.exports = {
   trackModuleExecution,
+  setModuleHeapDelta,
   createExpressTelemetryMiddleware,
   getVmOverview,
   getModuleMetrics,
   getSubpanelMetrics,
 };
-

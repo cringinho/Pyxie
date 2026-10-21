@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const professions = require('./professions');
 const { getRoleTitle, calculateSalaryForLevel, filterMinigamesByLevel } = require('./careerHierarchy');
+const { parseDiscordEmojisToHtml, extractFirstEmoji } = require('../utils/emojiResolver');
 
 let PROFESSION_SUBTHEMES = {};
 try {
@@ -332,12 +333,16 @@ function getAcervoStats() {
 
     totalCareerQuestions += items.length;
     const emoji = profDef.emoji || '💼';
+    const iconHtml = parseDiscordEmojisToHtml(emoji);
+    const iconInfo = extractFirstEmoji(emoji);
     careersList.push({
       key,
       id: key,
       label: profDef.label || key,
       name: profDef.label || key,
       icon: emoji,
+      iconHtml,
+      iconUrl: iconInfo?.url || null,
       emoji,
       isMagic: Boolean(profDef.isMagic),
       beanCost: profDef.beanCost || 0,

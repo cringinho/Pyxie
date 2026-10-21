@@ -743,6 +743,43 @@ app.get(['/promo', '/api/promo', '/shopee/loja'], (req, res) => {
   }
 });
 
+// 2c. Endpoint Público Unificado de Verdade Absoluta (Seção 3)
+app.get('/api/public/system-truth', async (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=60');
+  const truthFile = path.join(__dirname, 'data', 'publicTruthSnapshot.json');
+  const fallbackFile = path.join(__dirname, 'data', 'publicTruthFallback.json');
+
+  try {
+    if (fs.existsSync(truthFile)) {
+      const data = JSON.parse(fs.readFileSync(truthFile, 'utf8'));
+      return res.json({ success: true, ...data });
+    }
+
+    const truthEngine = require('./src/services/truthReconciliationEngine');
+    await truthEngine.runVerificationWave({ force: true, trigger: 'public_api_init' });
+
+    if (fs.existsSync(truthFile)) {
+      const data = JSON.parse(fs.readFileSync(truthFile, 'utf8'));
+      return res.json({ success: true, ...data });
+    }
+
+    if (fs.existsSync(fallbackFile)) {
+      const data = JSON.parse(fs.readFileSync(fallbackFile, 'utf8'));
+      return res.json({ success: true, ...data });
+    }
+
+    return res.status(503).json({ success: false, error: 'Snapshot de verdade pública em inicialização.' });
+  } catch (err) {
+    if (fs.existsSync(fallbackFile)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(fallbackFile, 'utf8'));
+        return res.json({ success: true, ...data });
+      } catch (_) {}
+    }
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 app.get('/api/shopee/hourly-promo', (req, res) => {
   try {
     const promo = shopeeManager.getHourlyStorePromo();
@@ -2310,6 +2347,14 @@ const server = app.listen(PORT, HOST, () => {
   startBot();
   workSeederService.startScheduler();
   quizSeederService.startScheduler();
+
+  // Motor de Ondas de Verificação Contínua (SSOT: VM <-> Painel <-> Site)
+  try {
+    const truthEngine = require('./src/services/truthReconciliationEngine');
+    truthEngine.startCycle(null, app);
+  } catch (err) {
+    console.warn('[TruthReconciliationEngine] Falha ao iniciar ciclo:', err.message);
+  }
 
   // Submissão autônoma ao protocolo IndexNow (Bing, Yandex, Seznam, Naver) após o boot
   setTimeout(() => {

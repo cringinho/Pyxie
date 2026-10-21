@@ -1,86 +1,76 @@
-const fs = require('fs');
-const path = require('path');
+/**
+ * emojiResolver.js
+ * Utilitário universal para resolução, parsing e renderização de emojis do Discord
+ * Converte tokens <:nome:id> e <a:nome:id> em tags HTML <img> otimizadas com CDN do Discord.
+ */
 
-const EMOJI_PATH = path.join(__dirname, '../data/emojis.json');
+// Regex para emojis customizados estáticos <:nome:id> e animados <a:nome:id>
+const DISCORD_EMOJI_REGEX = /<(a)?:([a-zA-Z0-9_~]+):([0-9]{17,21})>/g;
 
-const FALLBACKS = {
-  // 1. Economia & Loja
-  coins: '🪙',
-  magic_bean: '🌱',
-  daily_bonus: '🎁',
-  weekend_bonus: '🔥',
-  work_career: '💼',
-  shop_chest: '📦',
-  shop_gem: '💎',
+/**
+ * Retorna a URL da CDN oficial do Discord para um dado emoji ID
+ * @param {string} emojiId Snowflake ID do emoji
+ * @param {boolean} [isAnimated=false]
+ * @param {number} [size=32]
+ */
+function getDiscordEmojiUrl(emojiId, isAnimated = false, size = 32) {
+  if (!emojiId) return '';
+  const ext = isAnimated ? 'gif' : 'webp';
+  return `https://cdn.discordapp.com/emojis/${emojiId}.${ext}?size=${size}&quality=lossless`;
+}
 
-  // 2. Místico & Tarot
-  tarot_card: '🔮',
-  tarotAlbum: '📖',
-  grimorio: '📖',
+/**
+ * Converte qualquer token de emoji do Discord dentro de uma string em uma tag <img> HTML
+ * @param {string} text Texto que pode conter emojis do Discord (<:nome:id>)
+ * @param {Object} [options]
+ * @param {number} [options.size=20] Tamanho em px (width e height)
+ * @param {string} [options.extraClass=''] Classes CSS adicionais
+ * @returns {string} String com tags <img> HTML inline
+ */
+function parseDiscordEmojisToHtml(text, options = {}) {
+  if (!text || typeof text !== 'string') return '';
+  const size = options.size || 20;
+  const extraClass = options.extraClass ? ` ${options.extraClass}` : '';
 
-  // 3. Social & Romance
-  ship_heart: '💖',
-  marriage_ring: '💍',
-  divorce: '💔',
-  trade: '🤝',
+  return text.replace(DISCORD_EMOJI_REGEX, (_match, animated, name, id) => {
+    const isAnim = Boolean(animated);
+    const url = getDiscordEmojiUrl(id, isAnim, Math.max(32, size));
+    const cleanAlt = String(name).replace(/"/g, '&quot;');
+    return `<img src="${url}" alt="${cleanAlt}" title="${cleanAlt}" class="pyxie-inline-emoji${extraClass}" style="width:${size}px;height:${size}px;object-fit:contain;vertical-align:middle;display:inline-block;margin:0 2px;flex-shrink:0;" loading="lazy" onerror="this.style.display='none'" />`;
+  });
+}
 
-  // 4. Jogos & Sorte
-  fortune_cookie: '🥠',
-  dice: '🎲',
-  jokenpo: '✂️',
-  coinflip: '🪙',
-  likely: '❓',
+/**
+ * Remove tokens de emojis brutos de uma string, deixando apenas texto limpo
+ * @param {string} text
+ * @returns {string}
+ */
+function stripDiscordEmojis(text) {
+  if (!text || typeof text !== 'string') return '';
+  return text.replace(DISCORD_EMOJI_REGEX, '').replace(/\s+/g, ' ').trim();
+}
 
-  // 5. Sistema & Utilidades
-  websiteHome: '🦋',
-  websiteSocial: '💑',
-  helpCommands: '📖',
-  userProfile: '👤',
-  ranking: '🏆',
-  status_success: '✅',
-  status_fail: '❌',
+/**
+ * Extrai o primeiro ID de emoji customizado encontrado em uma string
+ * @param {string} text
+ * @returns {{ id: string, name: string, animated: boolean } | null}
+ */
+function extractFirstEmoji(text) {
+  if (!text || typeof text !== 'string') return null;
+  const match = new RegExp(DISCORD_EMOJI_REGEX.source).exec(text);
+  if (!match) return null;
+  return {
+    animated: Boolean(match[1]),
+    name: match[2],
+    id: match[3],
+    url: getDiscordEmojiUrl(match[3], Boolean(match[1]), 64),
+  };
+}
+
+module.exports = {
+  getDiscordEmojiUrl,
+  parseDiscordEmojisToHtml,
+  stripDiscordEmojis,
+  extractFirstEmoji,
+  DISCORD_EMOJI_REGEX,
 };
-
-function getEmojiConfig() {
-  try {
-    if (!fs.existsSync(EMOJI_PATH)) return {};
-    return JSON.parse(fs.readFileSync(EMOJI_PATH, 'utf8'));
-  } catch {
-    return {};
-  }
-}
-
-function resolveEmoji(client, slot, format = 'discord') {
-  const config = getEmojiConfig();
-  let emojiId = config[slot];
-  const fallback = FALLBACKS[slot] || '✨';
-
-  // Regra Mandatória 7: Proibição estrita do portal de Minecraft
-  if (emojiId === '1548444170488778954') {
-    emojiId = '1551355962974273546';
-  }
-
-  if (!emojiId) return fallback;
-
-  const appEmoji = client?.application?.emojis?.cache?.get(emojiId) 
-                || client?.emojis?.cache?.get(emojiId);
-
-  if (format === 'discord') {
-    if (appEmoji) return appEmoji.toString();
-    return `<:_:${emojiId}>`;
-  }
-
-  if (format === 'url') {
-    const ext = appEmoji?.animated ? 'gif' : 'png';
-    return `https://cdn.discordapp.com/emojis/${emojiId}.${ext}`;
-  }
-
-  if (format === 'web') {
-    const url = `https://cdn.discordapp.com/emojis/${emojiId}.png`;
-    return `<img src="${url}" class="pyxie-inline-emoji" alt="${slot}" style="width:1.2em; height:1.2em; vertical-align:middle;" />`;
-  }
-
-  return fallback;
-}
-
-module.exports = { resolveEmoji, FALLBACKS, getEmojiConfig };

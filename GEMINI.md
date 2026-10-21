@@ -169,3 +169,40 @@ Sempre que estruturar e implementar embeds do Discord no bot (utilizando `new Em
    - O rodapé deve ser dinâmico e contextual: exibir o nome da aplicação (`Pyxie`) e o nome do servidor quando aplicável (`guild ? guild.name : 'Privado'`), com texto ou dicas rotativas de outros comandos e funções do bot.
    - Minigames rápidos, notificações efêmeras ou embeds compactos podem utilizar rodapés simplificados para priorizar a agilidade e evitar sobrecarga visual na tela.
    - Utilize `.setTimestamp()` nativo com a data/hora do evento em embeds que representem ações com temporalidade relevante (transações, logs, alertas).
+
+---
+
+## 10. Constituição de Governança Contínua (Princípio da Sincronização Tripla)
+
+### 1. Princípio da Sincronização Tripla (VM <-> Painel /admin <-> Site Público)
+Nenhuma funcionalidade, módulo, comando, profissão, moeda, rota web ou regra de segurança é considerada implementada na Pyxie se existir apenas no código do bot. Toda entrega no repositório kuromi exige homologação simultânea em 3 camadas:
+1. **Código e Estado na VM** (`src/` e `data/`).
+2. **Controle, Telemetria e Visualização no Painel Master** (`/admin`).
+3. **Reflexo Automático nos Placeholders da API de Verdade Absoluta do Site** (`/api/public/system-truth` e `truthHydrator.js`).
+
+### 2. Regra de Criação, Modificação e Exclusão no Painel (/admin)
+Sempre que um Agente de IA criar, atualizar ou remover qualquer elemento do sistema, ele é OBRIGADO a executar o seguinte protocolo de homologação em todas as abas envolvidas do `/admin`:
+1. **Se criar ou alterar um MÓDULO (`src/modules/<id>/`)**:
+   - Registrar o módulo no ModuleManager com suporte a hot-reload e Zero Memory Leak (`ctx.registerListener`, `ctx.registerCron`, `ctx.registerInterval`).
+   - Conectar o módulo ao Profiler Real da aba "Recursos VM" (medindo CPU em ms, RAM em MB e Rede em KB reais — proibido usar valores fixos/placeholders).
+   - Expor o status do módulo na aba "Módulos" e na aba "Visual DB -> Estado Global", especificando claramente se ele está Ativo Globalmente, Ativo em Escopo Restrito (ex: Cringelândia) ou Pausado.
+   - Se o sistema novo ainda não possuir controle visual no painel, o Agente DEVE criar a interface de controle correspondente no `/admin` (e registrá-la no monitor de Sub-Painéis se tiver rota própria).
+   - Se um módulo ou sistema for removido ou desativado, o Agente deve limpar ou atualizar suas configurações em todas as abas afetadas do painel.
+2. **Se criar, editar ou remover um COMANDO (Slash ou Prefixo `py!`)**:
+   - Registrar o comando no introspector (`src/services/commandIntrospector.js`) para que apareça imediatamente na aba "Analytics & Ranking" (mesmo com 0 chamadas), extinguindo em definitivo o placeholder `/none`.
+   - Configurar explicitamente seu escopo na aba "Escopo & Acesso": definir se é Global, Exclusivo da Cringelândia, Exclusivo do Estúdio da Mary (`mary-studio`) ou de outra guilda; definir se é Público, Staff, Whitelist de Usuários ou Exclusivo do Owner (`ownerOnly`).
+   - Garantir que comandos marcados como `ownerOnly` ou restritos a servidores privados sejam automaticamente filtrados e ocultados do guia público de comandos do site e da Wiki.
+   - Registrar os embeds utilizados pelo comando no `src/utils/embedRegistry.js` seguindo a paleta padrão da Pyxie e usando `resolveEmoji(client, slot, 'discord')`.
+3. **Se criar ou alterar DADOS DE USUÁRIOS, ECONOMIA, CARREIRAS ou ACERVO**:
+   - Atualizar o mapeamento na aba "Visual DB -> Usuários / Economia" e no "Dicionário de Metadados", garantindo que profissões, níveis de carreira (L1-L4 do `/py-work`), saldos e cooldowns exibam seus valores reais e nomes de usuário (`@username`) resolvidos.
+   - Atualizar a aba "Controle & Acervo" (Inspetor Real de Acervo), garantindo que todos os contadores reflitam os arquivos reais em disco e que todas as tags de emojis do Discord (`<:nome:id>`) sejam convertidas em imagens (`<img>`) pela CDN do Discord via `src/utils/emojiResolver.js`.
+   - Expor qualquer novo contador ou categoria no endpoint `/api/public/system-truth` para alimentar os placeholders automáticos do site.
+4. **Se adicionar/alterar ROTAS WEB, SUBDOMÍNIOS ou REGRAS DE TRUST & SAFETY**:
+   - Atualizar o "Mapa Web" interativo com o status real da rota/subdomínio (Ativo vs. Pausado) e seu toggle de manutenção.
+   - Sincronizar novas regras de moderação, detecção de anomalias e blacklists de servidores/usuários com as abas "Trust & Safety" e "Servidores".
+
+### 3. Protocolo Obrigatório de Homologação Antes do Commit (Quality Gate)
+Antes de encerrar qualquer tarefa ou responder ao criador que o trabalho foi concluído, o Agente DEVE obrigatoriamente:
+1. Disparar uma Onda de Verificação completa (`POST /api/admin/reconcile?force=true`) e verificar se todas as abas do `/admin` retornam dados reais da VM sem valores "undefined", "/none" ou placeholders estáticos.
+2. Validar o retorno do endpoint `GET /api/public/system-truth` para confirmar que os placeholders do site público estão recebendo os números e catálogos atualizados.
+3. Executar a suíte de testes automatizados (`npm test`) e garantir 100% de aprovação em todos os testes de sintaxe, paridade bilíngue (`i18nParity.test.js`) e integridade de módulos.

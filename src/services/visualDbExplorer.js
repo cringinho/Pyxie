@@ -1,11 +1,17 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const { CAREER_HIERARCHIES } = require('./careerHierarchy');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data');
 const ECONOMY_FILE = path.join(DATA_DIR, 'economy.json');
 const GUILD_CONFIGS_FILE = path.join(DATA_DIR, 'guildConfigs.json');
 const SEASONAL_FILE = path.join(DATA_DIR, 'seasonalState.json');
+const SEASONAL_CONFIG_FILE = path.join(DATA_DIR, 'seasonalConfig.json');
+const CRING_SEASONAL_FILE = path.join(DATA_DIR, 'cringelandia', 'seasonalData.json');
+const CRING_SEASONAL_CFG = path.join(DATA_DIR, 'cringelandia', 'seasonalConfig.json');
 const MARY_FILE = path.join(DATA_DIR, 'maryStudioConfig.json');
+
+const CRINGELANDIA_GUILD_ID = '1453890868980482090';
 
 // Dicionário Semântico de Metadados
 const METADATA_DICTIONARY = {
@@ -13,8 +19,19 @@ const METADATA_DICTIONARY = {
   coins: { label: 'Moedinhas de Ouro', icon: '🪙', type: 'number', description: 'Saldo na carteira do usuário para compras, minigames e transferências.' },
   bank: { label: 'Banco Celestial', icon: '🏦', type: 'number', description: 'Saldo guardado no cofre bancário, imune a furtos e perdas acidentais.' },
   magicBeans: { label: 'Feijões Mágicos', icon: '🌱', type: 'number', description: 'Moeda arcana e sagrada da Pyxie ganha exclusivamente em eventos especiais.' },
-  career: { label: 'Carreira / Profissão', icon: '💼', type: 'string', description: 'Profissão atual do usuário definida via /py-profissao (ex: alquimista, dev, bardo).' },
-  careerLevel: { label: 'Nível Profissional', icon: '⭐', type: 'number', description: 'Nível de experiência na carreira que concede bônus de salário no /py-work.' },
+  career: { label: 'Carreira / Profissão', icon: '💼', type: 'string', description: 'Profissão atual do usuário definida via /py-profissao (ex: alquimista, programador, bardo).' },
+  careerLevel: {
+    label: '⭐ Nível de Carreira (L1-L4 /py-work)',
+    icon: '⭐',
+    type: 'number',
+    description: 'Progressão profissional no comando /py-work (L1 Aprendiz até L4 Mestre). Define o bônus salarial e a complexidade dos cenários.',
+  },
+  socialLevel: {
+    label: '💬 Nível Social (XP)',
+    icon: '💬',
+    type: 'number',
+    description: 'Nível de atividade e experiência social do usuário obtido através de interações nos canais de texto.',
+  },
   dailyCooldown: { label: 'Cooldown do Diário', icon: '⏰', type: 'timestamp', description: 'Timestamp em milissegundos para liberação do próximo /py-daily.' },
   workCooldown: { label: 'Cooldown de Trabalho', icon: '⏱️', type: 'timestamp', description: 'Timestamp em milissegundos para liberação do próximo turno do /py-work.' },
   streak: { label: 'Sequência Diária (Streak)', icon: '🔥', type: 'number', description: 'Dias consecutivos de resgate do bônus diário que aumentam as recompensas.' },
@@ -27,9 +44,9 @@ const METADATA_DICTIONARY = {
   activeModules: { label: 'Módulos Ativos', icon: '🧩', type: 'array', description: 'Lista de identificadores de subsistemas habilitados neste servidor específico.' },
 
   // Global
-  active: { label: 'Ativação do Módulo', icon: '🟢', type: 'boolean', description: 'Indica se o subsistema está ativo globalmente na Pyxie.' },
+  active: { label: 'Ativação do Módulo', icon: '🟢', type: 'boolean', description: 'Indica se o subsistema está ativo na Pyxie.' },
   eventTitle: { label: 'Título do Evento', icon: '🎃', type: 'string', description: 'Nome público do evento sazonal ativo exibido no /py-infoevento.' },
-  status: { label: 'Condição Operacional', icon: '📊', type: 'string', description: 'Estado atual de integridade e saúde do serviço.' },
+  status: { label: 'Condição Operacional', icon: '📊', type: 'string', description: 'Estado atual de integridade, escopo de servidores e saúde do serviço.' },
 };
 
 function safeAtomicWrite(filePath, data) {
@@ -68,14 +85,58 @@ function broadcastDbDiff(diff) {
   }
 }
 
-/**
- * Registra um cliente SSE para transmissão de diffs
- */
 function registerSseClient(res) {
   activeSseClients.add(res);
   res.on('close', () => {
     activeSseClients.delete(res);
   });
+}
+
+/**
+ * Resolve o título descritivo do nível de carreira de acordo com a profissão
+ */
+function formatCareerLevel(profession, level = 1) {
+  const lvl = Math.min(4, Math.max(1, Number(level) || 1));
+  const profKey = String(profession || '').toLowerCase().trim();
+  const tiers = CAREER_HIERARCHIES[profKey];
+
+  if (tiers && tiers[lvl - 1]) {
+    return `Nível ${lvl} • ${tiers[lvl - 1].pt}`;
+  }
+
+  const genericTiers = { 1: 'Aprendiz', 2: 'Praticante', 3: 'Especialista', 4: 'Mestre' };
+  return `Nível ${lvl} • ${genericTiers[lvl] || 'Aventureiro'}`;
+}
+
+/**
+ * Resolve identidade humana (username e avatar) de um Snowflake ID
+ */
+function resolveUserIdentity(userId) {
+  // 1. Criador canônico da Pyxie
+  if (userId === '214153735281180673') {
+    return {
+      username: 'zululuga',
+      displayName: 'Criador da Pyxie',
+      avatarUrl: 'https://cdn.discordapp.com/embed/avatars/0.png',
+    };
+  }
+
+  // 2. Busca em perfis sazonais da Cringelândia
+  const cringData = readJsonSafe(CRING_SEASONAL_FILE);
+  if (cringData.userProfiles && cringData.userProfiles[userId]) {
+    const prof = cringData.userProfiles[userId];
+    return {
+      username: prof.username || `user_${userId.slice(-4)}`,
+      displayName: prof.displayName || prof.username || `Membro ${userId.slice(-4)}`,
+      avatarUrl: prof.avatarUrl || 'https://cdn.discordapp.com/embed/avatars/1.png',
+    };
+  }
+
+  return {
+    username: `user_${userId.slice(-4)}`,
+    displayName: `Membro ${userId.slice(-4)}`,
+    avatarUrl: 'https://cdn.discordapp.com/embed/avatars/2.png',
+  };
 }
 
 /**
@@ -97,19 +158,38 @@ function queryPartition({ partition = 'users', page = 1, limit = 15, search = ''
   if (partition === 'users') {
     const eco = readJsonSafe(ECONOMY_FILE);
     for (const [userId, u] of Object.entries(eco)) {
-      if (s && !userId.includes(s) && !String(u.career || '').toLowerCase().includes(s)) {
+      // Mapeamento Polimórfico de Carreira (user.profession || user.career || user.job || user.workProfession)
+      const profession = u.profession || u.career || u.job || u.workProfession || 'Nenhuma';
+      const profLevel = u.professionLevel ?? u.careerLevel ?? u.workLevel ?? 1;
+      const levelLabel = formatCareerLevel(profession, profLevel);
+      const identity = resolveUserIdentity(userId);
+
+      if (
+        s &&
+        !userId.includes(s) &&
+        !profession.toLowerCase().includes(s) &&
+        !identity.username.toLowerCase().includes(s) &&
+        !identity.displayName.toLowerCase().includes(s)
+      ) {
         continue;
       }
+
       allItems.push({
         id: userId,
+        username: identity.username,
+        displayName: identity.displayName,
+        avatarUrl: identity.avatarUrl,
         coins: u.coins ?? 0,
         bank: u.bank ?? 0,
         magicBeans: u.magicBeans ?? 0,
-        career: u.career || 'Nenhuma',
-        careerLevel: u.careerLevel ?? 1,
-        streak: u.streak ?? 0,
-        dailyCooldown: u.dailyCooldown || 0,
-        workCooldown: u.workCooldown || 0,
+        career: profession,
+        profession: profession,
+        careerLevel: profLevel,
+        careerLevelLabel: levelLabel,
+        socialLevel: u.socialLevel ?? u.xpLevel ?? 1,
+        streak: u.dailyStreak ?? u.streak ?? 0,
+        dailyCooldown: u.lastDailyAt || u.dailyCooldown || 0,
+        workCooldown: u.lastWorkAt || u.workCooldown || 0,
       });
     }
     allItems.sort((a, b) => (b.coins + b.bank) - (a.coins + a.bank));
@@ -130,10 +210,41 @@ function queryPartition({ partition = 'users', page = 1, limit = 15, search = ''
     }
   } else if (partition === 'global') {
     const seasonal = readJsonSafe(SEASONAL_FILE);
+    const seasonalCfg = readJsonSafe(SEASONAL_CONFIG_FILE);
+    const cringCfg = readJsonSafe(CRING_SEASONAL_CFG);
     const mary = readJsonSafe(MARY_FILE);
+
+    // Detecção Fiel de Condição Operacional do Módulo Sazonal (Global vs Cringelândia)
+    const isSeasonalActive = Boolean(seasonal.active || seasonalCfg.active || cringCfg.active);
+    let seasonalStatus = 'Pausado';
+    let eventTitle = seasonal.eventTitle || seasonalCfg.eventName || cringCfg.eventName || 'Nenhum';
+
+    if (isSeasonalActive) {
+      const isCringelandiaScope =
+        (Array.isArray(seasonalCfg.guildScope) && seasonalCfg.guildScope.includes(CRINGELANDIA_GUILD_ID)) ||
+        cringCfg.active ||
+        seasonal.guildScope === CRINGELANDIA_GUILD_ID;
+      seasonalStatus = isCringelandiaScope
+        ? '🟢 Ativo (Escopo: Cringelândia)'
+        : '🟢 Ativo (Global)';
+    }
+
     allItems = [
-      { id: 'seasonal_state', name: 'Módulo Sazonal', active: Boolean(seasonal.active), eventTitle: seasonal.eventTitle || 'Nenhum', status: seasonal.active ? 'Ativo' : 'Pausado' },
-      { id: 'mary_studio', name: 'Estúdio da Mary (SaaS)', active: Boolean(mary.active ?? true), status: 'Isolado', guildId: mary.guildId || '1453890868980482090' },
+      {
+        id: 'seasonal_state',
+        name: 'Módulo Sazonal',
+        active: isSeasonalActive,
+        eventTitle,
+        status: seasonalStatus,
+        scope: seasonalStatus.includes('Cringelândia') ? 'Cringelândia' : 'Global',
+      },
+      {
+        id: 'mary_studio',
+        name: 'Estúdio da Mary (SaaS)',
+        active: Boolean(mary.active ?? true),
+        status: '🟢 Ativo (Escopo: Mary Store)',
+        guildId: mary.guildId || CRINGELANDIA_GUILD_ID,
+      },
     ];
   }
 
@@ -178,16 +289,29 @@ function updateRecord({ partition, recordId, field, value }) {
     targetFile = ECONOMY_FILE;
     fileData = readJsonSafe(targetFile);
     if (!fileData[recordId]) fileData[recordId] = {};
-    fileData[recordId][field] = sanitizedValue;
+
+    // Sincroniza polimorficamente carreira/profissão
+    if (field === 'career' || field === 'profession') {
+      fileData[recordId].career = sanitizedValue;
+      fileData[recordId].profession = sanitizedValue;
+    } else if (field === 'careerLevel') {
+      fileData[recordId].careerLevel = sanitizedValue;
+      fileData[recordId].professionLevel = sanitizedValue;
+    } else {
+      fileData[recordId][field] = sanitizedValue;
+    }
   } else if (partition === 'guilds') {
     targetFile = GUILD_CONFIGS_FILE;
     fileData = readJsonSafe(targetFile);
     if (!fileData[recordId]) fileData[recordId] = {};
     fileData[recordId][field] = sanitizedValue;
   } else if (partition === 'global') {
-    if (recordId === 'seasonal_state') targetFile = SEASONAL_FILE;
-    else if (recordId === 'mary_studio') targetFile = MARY_FILE;
-    if (targetFile) {
+    if (recordId === 'seasonal_state') {
+      targetFile = SEASONAL_FILE;
+      fileData = readJsonSafe(targetFile);
+      fileData[field] = sanitizedValue;
+    } else if (recordId === 'mary_studio') {
+      targetFile = MARY_FILE;
       fileData = readJsonSafe(targetFile);
       fileData[field] = sanitizedValue;
     }
@@ -195,18 +319,23 @@ function updateRecord({ partition, recordId, field, value }) {
 
   if (targetFile) {
     safeAtomicWrite(targetFile, fileData);
-    const diff = { partition, recordId, field, value: sanitizedValue };
-    broadcastDbDiff(diff);
-    return { success: true, diff };
+    broadcastDbDiff({ partition, recordId, field, value: sanitizedValue });
   }
 
-  throw new Error(`Partição ou arquivo não encontrado para '${partition}'.`);
+  return { success: true, recordId, field, value: sanitizedValue };
+}
+
+function getMetadataDictionary() {
+  return METADATA_DICTIONARY;
 }
 
 module.exports = {
   METADATA_DICTIONARY,
   queryPartition,
   updateRecord,
+  getMetadataDictionary,
+  formatCareerLevel,
+  resolveUserIdentity,
   registerSseClient,
+  broadcastDbDiff,
 };
-

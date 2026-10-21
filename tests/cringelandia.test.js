@@ -67,3 +67,4 @@ assert.ok(html.includes('Lei nº 13.146/2015') || html.includes('13.146'), 'Deve
 console.log('  ✅ 3. Requisitos institucionais, monetização ética, leis e links essenciais validados no HTML.');
 
 console.log('🎉 TODOS OS TESTES DA CRINGELÂNDIA PASSARAM COM 100% DE SUCESSO!\n');
+

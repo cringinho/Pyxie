@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
+const resourceTelemetry = require('./resourceTelemetry');
 
 /**
  * Pyxie Modular Engine (Inspirado no padrão Cog/Plugin do Red-DiscordBot)
@@ -214,7 +215,7 @@ class ModuleManager extends EventEmitter {
       // Registro de Listeners de Eventos do Discord com rastreamento para unhook automático
       registerListener: (event, handler) => {
         if (this.client) {
-          const wrappedHandler = (...args) => {
+          const wrappedHandler = async (...args) => {
             if (Array.isArray(mod.guildScope) && mod.guildScope.length > 0) {
               const firstArg = args[0];
               const eventGuildId =
@@ -225,29 +226,72 @@ class ModuleManager extends EventEmitter {
                 return;
               }
             }
-            return handler(...args);
+            const startHr = process.hrtime.bigint();
+            let bytesIn = 0;
+            try {
+              const firstArg = args[0];
+              if (firstArg && typeof firstArg === 'object') {
+                if (firstArg.content) bytesIn += Buffer.byteLength(String(firstArg.content));
+                if (firstArg.customId) bytesIn += Buffer.byteLength(String(firstArg.customId));
+              }
+              return await handler(...args);
+            } finally {
+              const endHr = process.hrtime.bigint();
+              const durationMs = Number(endHr - startHr) / 1e6;
+              resourceTelemetry.trackModuleExecution(mod.id, durationMs, bytesIn, 0);
+            }
           };
           this.client.on(event, wrappedHandler);
           scope.listeners.push({ event, handler: wrappedHandler, originalHandler: handler });
         }
       },
 
-      // Registro de Cron Jobs com rastreamento para stop automático
+      // Registro de Cron Jobs com rastreamento para stop automático e profiler real
       registerCron: (cronTime, onTick, options = {}) => {
         const cron = require('node-cron');
-        const job = cron.schedule(cronTime, onTick, options);
+        const wrappedOnTick = async () => {
+          const startHr = process.hrtime.bigint();
+          try {
+            return await onTick();
+          } finally {
+            const endHr = process.hrtime.bigint();
+            const durationMs = Number(endHr - startHr) / 1e6;
+            resourceTelemetry.trackModuleExecution(mod.id, durationMs, 0, 0);
+          }
+        };
+        const job = cron.schedule(cronTime, wrappedOnTick, options);
         scope.crons.push(job);
         return job;
       },
 
-      // Registro de Timers para cancelamento automático
+      // Registro de Timers para cancelamento automático e profiler real
       registerInterval: (fn, ms) => {
-        const id = setInterval(fn, ms);
+        const wrappedFn = async () => {
+          const startHr = process.hrtime.bigint();
+          try {
+            return await fn();
+          } finally {
+            const endHr = process.hrtime.bigint();
+            const durationMs = Number(endHr - startHr) / 1e6;
+            resourceTelemetry.trackModuleExecution(mod.id, durationMs, 0, 0);
+          }
+        };
+        const id = setInterval(wrappedFn, ms);
         scope.intervals.push(id);
         return id;
       },
       registerTimeout: (fn, ms) => {
-        const id = setTimeout(fn, ms);
+        const wrappedFn = async () => {
+          const startHr = process.hrtime.bigint();
+          try {
+            return await fn();
+          } finally {
+            const endHr = process.hrtime.bigint();
+            const durationMs = Number(endHr - startHr) / 1e6;
+            resourceTelemetry.trackModuleExecution(mod.id, durationMs, 0, 0);
+          }
+        };
+        const id = setTimeout(wrappedFn, ms);
         scope.timeouts.push(id);
         return id;
       },
@@ -360,10 +404,13 @@ class ModuleManager extends EventEmitter {
       }
     }
 
-    // 3. Executa o hook onLoad do módulo
+    // 3. Executa o hook onLoad do módulo com medição de Heap real
     if (typeof mod.onLoad === 'function') {
       try {
+        const memBefore = process.memoryUsage().heapUsed;
         await mod.onLoad(ctx);
+        const memAfter = process.memoryUsage().heapUsed;
+        resourceTelemetry.setModuleHeapDelta(mod.id, Math.max(0, memAfter - memBefore));
       } catch (err) {
         console.error(`[ModuleManager] Erro durante onLoad do módulo '${moduleId}':`, err);
       }

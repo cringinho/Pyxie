@@ -488,6 +488,10 @@ client.once('ready', async () => {
 
   updateLiveStats();
   attachProcessWatchdog(client);
+  try {
+    const truthEngine = require('./src/services/truthReconciliationEngine');
+    truthEngine.startCycle(client, null);
+  } catch (_) {}
   await checkPostCrash(client, {
     reconcileTasks: async () => {
       await postTarotDailyAnnouncement().catch(() => null);
@@ -644,6 +648,7 @@ client.on('guildCreate', async (guild) => {
   }
 });
 client.on('guildDelete', () => updateLiveStats());
+client.on('guildUpdate', () => updateLiveStats());
 client.on('guildMemberRemove', () => updateLiveStats());
 
 // Mensagem de boas-vindas ao entrar no servidor.
