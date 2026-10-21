@@ -59,7 +59,7 @@ const {
 const { incrementCommand, incrementMessages, recordUniqueUser, updateStats, flushSync } = require('./src/services/logging');
 const { setGuildLanguage } = require('./src/utils/i18n');
 const { flushInventorySync } = require('./src/services/inventory');
-const { getBrasiliaDate, resetDailyDraws, readState } = require('./src/services/tarot');
+const { getBrasiliaDate, resetDailyDraws, readState, wasAnnouncedToday, markAnnouncedToday } = require('./src/services/tarot');
 const { getAnimatedEmoji } = require('./src/utils/serverEmojis');
 const { recordCommand, flushSync: flushTelemetrySync } = require('./src/services/commandTelemetry');
 const { isBlacklisted, recordActivity, forceLeaveGuild } = require('./src/services/trustAndSafety');
@@ -324,8 +324,21 @@ function buildTarotDailyComponents() {
   ];
 }
 
-async function postTarotDailyAnnouncement(now = Date.now()) {
-  resetDailyDraws(now);
+async function postTarotDailyAnnouncement(now = Date.now(), { force = false } = {}) {
+  const currentCycle = getBrasiliaDate(now);
+
+  // Guarda estrita anti-duplicação: não publica mais de uma vez por ciclo diário a menos que seja forçado via admin
+  if (!force && wasAnnouncedToday(now)) {
+    console.log(`[TarotScheduler] Anúncio de Tarot do ciclo ${currentCycle} já foi publicado. Ignorando disparo duplicado.`);
+    return;
+  }
+
+  // Apenas reseta o estado de tiragens dos usuários se o ciclo do banco ainda for de um dia anterior
+  const state = readState();
+  if (state.cycle !== currentCycle) {
+    resetDailyDraws(now);
+  }
+
   const channel = await client.channels.fetch(TAROT_CHANNEL_ID).catch(() => null);
   if (!channel || !channel.isTextBased()) {
     console.warn(`Canal do Tarot não encontrado ou inválido: ${TAROT_CHANNEL_ID}`);
@@ -338,16 +351,20 @@ async function postTarotDailyAnnouncement(now = Date.now()) {
     components: buildTarotDailyComponents(),
     allowedMentions: { roles: [TAROT_ROLE_ID] },
   });
+
+  markAnnouncedToday(now);
+  console.log(`[TarotScheduler] Anúncio do Tarot publicado com sucesso para o ciclo ${currentCycle}.`);
 }
 
 function startTarotScheduler() {
   const currentCycle = getBrasiliaDate();
-  const state = readState();
 
-  // Se o ciclo já virou e o anúncio de hoje ainda não foi postado:
-  if (state.cycle !== currentCycle) {
-    console.log(`[TarotScheduler] Novo ciclo detectado (${currentCycle}). Disparando anúncio diário do Tarot...`);
+  // Só dispara na inicialização se o anúncio do ciclo atual AINDA NÃO tiver sido postado
+  if (!wasAnnouncedToday()) {
+    console.log(`[TarotScheduler] Anúncio diário pendente para o ciclo (${currentCycle}). Disparando anúncio do Tarot...`);
     postTarotDailyAnnouncement().catch((error) => console.error('Erro no anúncio diário do Tarot:', error));
+  } else {
+    console.log(`[TarotScheduler] Anúncio diário já publicado para o ciclo (${currentCycle}). Próximo disparo agendado para 00:00 BRT.`);
   }
 
   const nextMidnightUtc = Date.parse(`${currentCycle}T03:00:00.000Z`) + 24 * 60 * 60 * 1000;
@@ -495,7 +512,12 @@ client.once(Events.ClientReady, async () => {
   } catch (_) {}
   await checkPostCrash(client, {
     reconcileTasks: async () => {
-      await postTarotDailyAnnouncement().catch(() => null);
+      if (!wasAnnouncedToday()) {
+        console.log('[schedulerWatchdog] Conciliação pós-queda: Anúncio do Tarot ainda pendente para o dia. Publicando...');
+        await postTarotDailyAnnouncement().catch(() => null);
+      } else {
+        console.log('[schedulerWatchdog] Conciliação pós-queda: Anúncio do Tarot já havia sido publicado hoje. Nenhuma ação necessária.');
+      }
     },
   });
   await sendStartupAnnouncement();
@@ -1335,11 +1357,13 @@ process.on('exit', () => {
   handleBotShutdown();
 });
 
-client.login(DISCORD_TOKEN).catch((error) => {
-  console.error('Falha ao conectar com o Discord:', error.message);
-  releaseBotLock();
-  process.exit(1);
-});
+if (require.main === module) {
+  client.login(DISCORD_TOKEN).catch((error) => {
+    console.error('Falha ao conectar com o Discord:', error.message);
+    releaseBotLock();
+    process.exit(1);
+  });
+}
 
 module.exports = {
   client,

@@ -87,6 +87,14 @@ try {
   const remaining = getTimeUntilMidnight();
   assert.ok(remaining.totalMinutes >= 0 && remaining.totalMinutes <= 1440, 'Minutos restantes devem estar entre 0 e 1440.');
 
+  // 6. Validar guarda anti-duplicação de anúncio diário
+  const { wasAnnouncedToday, markAnnouncedToday } = require('../src/services/tarot');
+  assert.strictEqual(typeof wasAnnouncedToday, 'function', 'wasAnnouncedToday deve ser função');
+  assert.strictEqual(typeof markAnnouncedToday, 'function', 'markAnnouncedToday deve ser função');
+  
+  markAnnouncedToday();
+  assert.strictEqual(wasAnnouncedToday(), true, 'wasAnnouncedToday deve retornar true após markAnnouncedToday');
+
   console.log('Verificação do Tarot da Pyxie (78 cartas, Canvas, Sorteio, Suborno): OK');
 } finally {
   if (originalState !== null) {

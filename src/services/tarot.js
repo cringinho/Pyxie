@@ -141,6 +141,20 @@ function resetDailyDraws(now = Date.now()) {
   return state.cycle;
 }
 
+function wasAnnouncedToday(now = Date.now()) {
+  const state = readState();
+  const cycle = getBrasiliaDate(now);
+  return state.lastAnnouncedDate === cycle;
+}
+
+function markAnnouncedToday(now = Date.now()) {
+  const state = readState();
+  const cycle = getBrasiliaDate(now);
+  state.lastAnnouncedDate = cycle;
+  writeState(state);
+  return cycle;
+}
+
 function getCardCount() {
   return cards.length;
 }
@@ -158,5 +172,8 @@ module.exports = {
   getTimeUntilMidnight,
   hasActiveDraw,
   readState,
+  writeState,
   resetDailyDraws,
+  wasAnnouncedToday,
+  markAnnouncedToday,
 };
