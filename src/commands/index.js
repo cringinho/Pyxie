@@ -2,7 +2,7 @@ const commands = [
   require('./ping'),
   require('./status'),
   require('./help'),
-  require('./setwelcome'),
+  require('./set'),
   require('./sixseven'),
   require('./ship'),
   require('./daily'),
@@ -44,7 +44,7 @@ setLoadedCommands(commands);
 // Comandos restritos a contexto de guilda e administração
 const GUILD_ONLY_COMMANDS = new Set([
   'setup', 'py-setup',
-  'welcome', 'py-welcome', 'setwelcome', 'py-setwelcome',
+  'set', 'py-set', 'configurar', 'py-configurar',
   'schedule', 'py-schedule', 'agenda', 'py-agenda',
   'admin', 'py-admin',
   'exportar', 'py-exportar', 'export', 'py-export', 'export-messages', 'py-export-messages',
@@ -58,50 +58,46 @@ const GUILD_ONLY_COMMANDS = new Set([
 for (const command of commands) {
   if (command.data) {
     const cmdName = command.data.name || command.name;
-    const isGuildOnly = GUILD_ONLY_COMMANDS.has(cmdName);
 
-    if (isGuildOnly) {
-      if (typeof command.data.setIntegrationTypes === 'function') {
-        command.data.setIntegrationTypes([0]); // GuildInstall
-      }
+    if (GUILD_ONLY_COMMANDS.has(cmdName)) {
+      // Comandos administrativos e de infraestrutura rodam apenas em servidores
       if (typeof command.data.setContexts === 'function') {
-        command.data.setContexts([0]); // Guild only
+        command.data.setContexts([0]); // 0 = Guild
+      }
+      if (typeof command.data.setIntegrationTypes === 'function') {
+        command.data.setIntegrationTypes([0]); // 0 = Guild Install
       }
     } else {
-      if (typeof command.data.setIntegrationTypes === 'function') {
-        command.data.setIntegrationTypes([0, 1]); // GuildInstall + UserInstall
-      }
+      // Comandos sociais, lúdicos, utilitários e econômicos rodam em qualquer lugar (Guild + Bot DM + Private Channels)
       if (typeof command.data.setContexts === 'function') {
-        command.data.setContexts([0, 1, 2]); // Guild + BotDM + PrivateChannel
+        command.data.setContexts([0, 1, 2]); // 0 = Guild, 1 = Bot DM, 2 = Private Channels / DMs
+      }
+      if (typeof command.data.setIntegrationTypes === 'function') {
+        command.data.setIntegrationTypes([0, 1]); // 0 = Guild Install, 1 = User Install (User App)
       }
     }
   }
 }
 
-const commandsByName = new Map(
-  commands.flatMap((command) => {
-    const mainName = command.name || command.data?.name;
-    const entries = [];
-    if (mainName) {
-      entries.push([mainName, command]);
-      if (mainName.startsWith('py-')) {
-        entries.push([mainName.slice(3), command]);
-      }
+const commandsByName = new Map();
+const slashCommands = [];
+
+for (const command of commands) {
+  commandsByName.set(command.name, command);
+
+  if (Array.isArray(command.aliases)) {
+    for (const alias of command.aliases) {
+      commandsByName.set(alias, command);
     }
-    (command.aliases || []).forEach((alias) => {
-      entries.push([alias, command]);
-      if (alias.startsWith('py-')) {
-        entries.push([alias.slice(3), command]);
-      } else {
-        entries.push([`py-${alias}`, command]);
-      }
-    });
-    return entries;
-  })
-);
+  }
+
+  if (command.data) {
+    slashCommands.push(command.data);
+  }
+}
 
 module.exports = {
   commands,
   commandsByName,
-  slashCommands: commands.map((command) => command.data.toJSON()),
+  slashCommands,
 };

@@ -3,7 +3,8 @@ module.exports = {
   PING: 'py-ping',
   STATUS: 'py-status',
   HELP: 'py-help',
-  WELCOME: 'py-welcome',
+  SET: 'py-set',
+  WELCOME: 'py-set',
   SIXSEVEN: 'py-sixseven',
   SHIP: 'py-ship',
   DAILY: 'py-daily',
@@ -40,5 +41,3 @@ module.exports = {
   TICTACTOE: 'py-tictactoe',
   MINESWEEPER: 'py-minesweeper',
 };
-
-

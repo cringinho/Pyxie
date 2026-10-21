@@ -16,7 +16,7 @@ const OWNER_COMMANDS = new Set([
 // Comandos restritos ao ambiente de servidor (Guild Only)
 const GUILD_ONLY_COMMANDS = new Set([
   'setup', 'py-setup',
-  'welcome', 'py-welcome', 'setwelcome', 'py-setwelcome',
+  'set', 'py-set', 'configurar', 'py-configurar',
   'schedule', 'py-schedule', 'agenda', 'py-agenda',
   'admin', 'py-admin',
   'exportar', 'py-exportar', 'export', 'py-export', 'export-messages', 'py-export-messages',

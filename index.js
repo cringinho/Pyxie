@@ -65,6 +65,23 @@ const { recordCommand, flushSync: flushTelemetrySync } = require('./src/services
 const { isBlacklisted, recordActivity, forceLeaveGuild } = require('./src/services/trustAndSafety');
 const { checkPostCrash, attachProcessWatchdog } = require('./src/services/schedulerWatchdog');
 const { updateGuildsSnapshot } = require('./src/services/guildDirectory');
+const {
+  onGuildMemberAdd: onCheckinMemberAdd,
+  onMessageCreate: onCheckinMessageCreate,
+  checkAndDispatchBatch,
+} = require('./src/services/welcomeCheckinService');
+const {
+  onMessageCreate: onVentMessageCreate,
+  handleVentInteraction,
+} = require('./src/services/ventService');
+const {
+  getAllTarotGuildConfigs,
+  getWelcomeConfig,
+} = require('./src/services/guildConfigService');
+const {
+  handleWelcomeInteraction,
+  buildWelcomePreviewEmbed,
+} = require('./src/commands/set');
 
 const welcomeHeartReactions = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🩷', '🩵', '🖤', '🤍', '🤎'];
 const CRINGE_PHRASE_COOLDOWN_MS = 60 * 1000;
@@ -300,15 +317,20 @@ function startBumpGuideScheduler() {
   }, BUMP_GUIDE_INTERVAL_MS);
 }
 
-function buildTarotDailyEmbed(guild) {
+function buildTarotDailyEmbed(guild, isExternal = false) {
   const guildName = guild?.name || '';
+  let description =
+    'Uma carta por dia para iluminar seus caminhos. A leitura é privada e renderizada especialmente para você!\n\n' +
+    'Clique no botão abaixo ou use `/py-tarot` (ou `py!tarot`) para receber a sua tiragem de hoje.';
+
+  if (isExternal) {
+    description += '\n\n-# 🔮 Criado e disponibilizado por: [Cringelândia](<https://pyxie.com.br/cringelandia>)';
+  }
+
   return new EmbedBuilder()
     .setColor('#c084fc')
     .setTitle(`${getAnimatedEmoji(guild, ['moon', 'tarot', 'magic'], '🌙')}  ✦  Tarot Diário${guildName ? ` — ${guildName}` : ''}  ✦`)
-    .setDescription(
-      'Uma carta por dia para iluminar seus caminhos. A leitura é privada e renderizada especialmente para você!\n\n' +
-      'Clique no botão abaixo ou use `/py-tarot` (ou `py!tarot`) para receber a sua tiragem de hoje.'
-    )
+    .setDescription(description)
     .setFooter({ text: 'Tarot Diário • Pyxie supervisiona • Conecte-se com as energias do dia' })
     .setTimestamp();
 }
@@ -339,18 +361,37 @@ async function postTarotDailyAnnouncement(now = Date.now(), { force = false } = 
     resetDailyDraws(now);
   }
 
+  // 1. Envio para a Cringelândia (Canal oficial principal)
   const channel = await client.channels.fetch(TAROT_CHANNEL_ID).catch(() => null);
-  if (!channel || !channel.isTextBased()) {
+  if (channel && channel.isTextBased()) {
+    await channel.send({
+      content: `<@&${TAROT_ROLE_ID}>`,
+      embeds: [buildTarotDailyEmbed(channel.guild, false)],
+      components: buildTarotDailyComponents(),
+      allowedMentions: { roles: [TAROT_ROLE_ID] },
+    }).catch((err) => console.error('[TarotScheduler] Erro no envio principal:', err.message));
+  } else {
     console.warn(`Canal do Tarot não encontrado ou inválido: ${TAROT_CHANNEL_ID}`);
-    return;
   }
 
-  await channel.send({
-    content: `<@&${TAROT_ROLE_ID}>`,
-    embeds: [buildTarotDailyEmbed(channel.guild)],
-    components: buildTarotDailyComponents(),
-    allowedMentions: { roles: [TAROT_ROLE_ID] },
-  });
+  // 2. Envio para todos os demais servidores configurados via py!set tarot <#canal>
+  const externalConfigs = getAllTarotGuildConfigs();
+  for (const item of externalConfigs) {
+    if (item.channelId === TAROT_CHANNEL_ID) continue; // Evita duplicar canal principal
+
+    await new Promise((r) => setTimeout(r, 500)); // Espaçamento de 500ms para rate limit
+    try {
+      const extChannel = await client.channels.fetch(item.channelId).catch(() => null);
+      if (extChannel && extChannel.isTextBased()) {
+        await extChannel.send({
+          embeds: [buildTarotDailyEmbed(extChannel.guild, true)],
+          components: buildTarotDailyComponents(),
+        });
+      }
+    } catch (err) {
+      console.warn(`[TarotScheduler] Falha ao enviar tarot na guilda ${item.guildId}:`, err.message);
+    }
+  }
 
   markAnnouncedToday(now);
   console.log(`[TarotScheduler] Anúncio do Tarot publicado com sucesso para o ciclo ${currentCycle}.`);
@@ -524,6 +565,9 @@ client.once(Events.ClientReady, async () => {
   await syncApplicationEmojis(client).catch(() => null);
   startBumpGuideScheduler();
   startTarotScheduler();
+  setInterval(() => {
+    checkAndDispatchBatch(client).catch((err) => console.error('[welcomeCheckin] Erro no agendador:', err.message));
+  }, 15 * 60 * 1000);
   seasonalManager.init(client, null);
   moduleManager.init({
     client,
@@ -700,13 +744,49 @@ client.on(Events.GuildMemberAdd, async (member) => {
   }
 
   const isCringelandia = member.guild.id === '1453890868980482090';
-  const configuredWelcomeChannelId = getWelcomeChannel(member.guild.id);
 
-  // Servidores externos só recebem boas-vindas se configuraram um canal explicitamente com /py-welcome
-  if (!isCringelandia && !configuredWelcomeChannelId) {
+  // Sistema de Acolhimento Tardio para novatos na Cringelândia
+  if (isCringelandia) {
+    onCheckinMemberAdd(member);
+  }
+
+  // 1. Tratamento para Servidores Externos via Boas-Vindas Premium Customizáveis
+  if (!isCringelandia) {
+    const welcomeCfg = getWelcomeConfig(member.guild.id);
+    if (welcomeCfg && welcomeCfg.channelId) {
+      try {
+        const extChannel = member.guild.channels.cache.get(welcomeCfg.channelId) || (await member.guild.channels.fetch(welcomeCfg.channelId).catch(() => null));
+        if (extChannel && extChannel.isTextBased()) {
+          const customEmbed = buildWelcomePreviewEmbed(member, welcomeCfg);
+          const welcomeMessage = await extChannel.send({
+            content: `Bem-vindo(a) ${member} a **${member.guild.name}**! ✨`,
+            embeds: [customEmbed],
+            allowedMentions: { users: [member.id] },
+          });
+
+          // Reações automáticas configuradas
+          if (Array.isArray(welcomeCfg.autoReactions)) {
+            for (const emoji of welcomeCfg.autoReactions) {
+              await welcomeMessage.react(emoji).catch(() => null);
+            }
+          }
+
+          // Atribuição de Auto-Role com proteção de hierarquia
+          if (welcomeCfg.autoRoleId) {
+            await member.roles.add(welcomeCfg.autoRoleId).catch((err) => {
+              console.warn(`[AutoRole] Falha ao atribuir cargo automático em ${member.guild.id}: ${err.message}`);
+            });
+          }
+        }
+      } catch (err) {
+        console.warn(`[WelcomePremium] Erro ao enviar boas-vindas na guilda ${member.guild.id}: ${err.message}`);
+      }
+    }
     return;
   }
 
+  // 2. Tratamento Canônico Original da Cringelândia (100% Preservado)
+  const configuredWelcomeChannelId = getWelcomeChannel(member.guild.id);
   const targetChannelId =
     configuredWelcomeChannelId ||
     (isCringelandia ? (getWelcomeChannel('global') || WELCOME_CHANNEL_ID) : null);
@@ -756,21 +836,17 @@ client.on(Events.GuildMemberAdd, async (member) => {
 
   try {
     const welcomeMessage = await welcomeChannel.send({
-      content: isCringelandia
-        ? `${member} chegou! <@&${WELCOME_ROLE_ID}>, recebam nossa nova pessoa com carinho 💗`
-        : `Welcome ${member} to **${guildName}**! ✨`,
-      embeds: isCringelandia ? [welcomeEmbed] : [],
+      content: `${member} chegou! <@&${WELCOME_ROLE_ID}>, recebam nossa nova pessoa com carinho 💗`,
+      embeds: [welcomeEmbed],
       allowedMentions: {
         users: [member.id],
-        roles: isCringelandia ? [WELCOME_ROLE_ID] : [],
+        roles: [WELCOME_ROLE_ID],
       },
     });
 
-    if (isCringelandia) {
-      await welcomeMessage.react(getRandomWelcomeHeart()).catch((error) => {
-        console.warn('Não foi possível reagir à mensagem de boas-vindas:', error.message);
-      });
-    }
+    await welcomeMessage.react(getRandomWelcomeHeart()).catch((error) => {
+      console.warn('Não foi possível reagir à mensagem de boas-vindas:', error.message);
+    });
   } catch (err) {
     console.warn('Falha ao enviar mensagem de boas-vindas:', err.message);
   }
@@ -803,6 +879,10 @@ client.on(Events.MessageCreate, async (message) => {
   if (await handleSapatonaPhrase(message)) {
     return;
   }
+
+  // Monitoramento de interação para novatos tímidos e desabafos (Sticky)
+  onCheckinMessageCreate(message);
+  await onVentMessageCreate(message).catch(() => null);
 
   const prefix = getPrefix();
   if (!message.content.startsWith(prefix)) return;
@@ -929,6 +1009,18 @@ client.on(Events.InteractionCreate, async (interaction) => {
       const partnershipManager = require('./src/modules/partnerships/partnershipManager');
       await partnershipManager.handleInteraction(interaction);
       return;
+    }
+
+    // Interações do Sistema de Desabafos (Sticky, Autoajuda, Anônimo e Preferências)
+    if (interaction.customId && (interaction.customId.startsWith('vent:') || interaction.customId.startsWith('vent_pref:') || interaction.customId === 'vent_modal_submit')) {
+      const handled = await handleVentInteraction(interaction);
+      if (handled) return;
+    }
+
+    // Interações de Boas-Vindas Premium (Preview, Modais e Auto-Role)
+    if (interaction.customId && (interaction.customId.startsWith('welcome_preview:') || interaction.customId.startsWith('welcome_edit_') || interaction.customId.startsWith('welcome_modal_') || interaction.customId.startsWith('welcome_autorole_select:'))) {
+      const handled = await handleWelcomeInteraction(interaction);
+      if (handled) return;
     }
 
     if (tarotCommand.isTarotButton(interaction)) {
