@@ -457,7 +457,7 @@
         <div class="card" style="margin: 0;">
           <h2 class="card-title">🧚‍♀️ Perfil Exclusivo no Seu Servidor</h2>
           <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;">
-            Personalize a foto (avatar), apelido e descrição da Pyxie <strong>exclusivamente no servidor da Mary</strong>, sem alterar a aparência global dela em outros servidores!
+            Personalize o banner, foto (avatar), apelido e descrição da Pyxie <strong>exclusivamente no servidor da Mary</strong>, sem alterar a aparência global dela em outros servidores!
           </p>
 
           <div class="form-group">
@@ -473,6 +473,23 @@
               <span style="font-size: 11.5px; color: var(--text-muted);">PNG/JPG quadrado (512x512).</span>
               <button type="button" id="btnResetAvatar" class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #f59e0b;">
                 🔄 Resetar para Foto Padrão
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">🎨 Banner do Bot no Servidor (Banner Local):</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <input type="text" id="inputLocalBanner" class="form-control" placeholder="Cole o link da imagem do banner ou clique em Escolher Banner...">
+              <label class="btn-secondary" style="margin: 0; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; font-size: 12.5px;">
+                📁 Escolher Banner
+                <input type="file" id="fileLocalBanner" accept="image/png,image/jpeg,image/gif,image/webp" style="display: none;">
+              </label>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11.5px; color: var(--text-muted);">Recomendado: proporção 16:9 ou 600x240 (PNG/JPG/GIF).</span>
+              <button type="button" id="btnResetBanner" class="btn-secondary" style="font-size: 11px; padding: 3px 8px; color: #f59e0b;">
+                🔄 Resetar Banner
               </button>
             </div>
           </div>
@@ -504,37 +521,45 @@
         </div>
 
         <!-- Card de Preview em Tempo Real -->
-        <div class="card" style="margin: 0; background: #232428; border: 1px solid rgba(255,255,255,0.08);">
-          <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-            <span>👁️</span> Preview do Perfil no Discord
-          </h3>
-          <div style="background: #111214; border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.05);">
-            <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 14px;">
-              <div style="position: relative; width: 64px; height: 64px; flex-shrink: 0;">
-                <img id="previewLocalAvatar" src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" alt="Avatar Local" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid #ec4899;">
-                <div id="previewStatusDot" style="position: absolute; bottom: 0; right: 0; width: 16px; height: 16px; border-radius: 50%; background: #22c55e; border: 3px solid #111214;"></div>
+        <div class="card" style="margin: 0; background: #232428; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; padding: 0;">
+          <div style="padding: 14px 16px 12px 16px;">
+            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 6px;">
+              <span>👁️</span> Preview do Perfil no Discord
+            </h3>
+          </div>
+          <div style="background: #111214; border-radius: 0 0 12px 12px; border-top: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
+            <!-- Banner Realista do Discord -->
+            <div id="previewLocalBanner" style="height: 90px; width: 100%; background-color: #ec4899; background-size: cover; background-position: center; position: relative;"></div>
+
+            <div style="padding: 0 16px 16px 16px; position: relative;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: -36px; margin-bottom: 12px;">
+                <div style="position: relative; width: 72px; height: 72px; flex-shrink: 0;">
+                  <img id="previewLocalAvatar" src="https://cdn.discordapp.com/emojis/1548444149785694238.gif" alt="Avatar Local" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 4px solid #111214;">
+                  <div id="previewStatusDot" style="position: absolute; bottom: 2px; right: 2px; width: 16px; height: 16px; border-radius: 50%; background: #22c55e; border: 3px solid #111214;"></div>
+                </div>
               </div>
-              <div style="min-width: 0;">
+
+              <div style="margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                   <strong id="previewLocalNick" style="color: #f2f3f5; font-size: 15px; word-break: break-word;">Pyxie | Mary Store</strong>
                   <span class="discord-bot-tag" style="font-size: 9px; padding: 1px 4px;">APP</span>
                 </div>
                 <div style="font-size: 12px; color: #949ba4; margin-top: 2px;">pyxie#3749</div>
               </div>
-            </div>
 
-            <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; border: 1px solid rgba(255,255,255,0.05);">
-              <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #b5bac1; margin-bottom: 6px;">
-                SOBRE MIM (NO SERVIDOR)
+              <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #b5bac1; margin-bottom: 6px;">
+                  SOBRE MIM (NO SERVIDOR)
+                </div>
+                <div id="previewLocalBio" style="font-size: 12.5px; color: #dbdee1; line-height: 1.4; white-space: pre-wrap; word-break: break-word;">
+                  Assistente e Lojinha de Robux oficial da Mary Store • Entrega Rápida & Segurança Garantida! 🎀
+                </div>
               </div>
-              <div id="previewLocalBio" style="font-size: 12.5px; color: #dbdee1; line-height: 1.4; white-space: pre-wrap; word-break: break-word;">
-                Assistente e Lojinha de Robux oficial da Mary Store • Entrega Rápida & Segurança Garantida! 🎀
-              </div>
-            </div>
 
-            <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: #949ba4;">
-              <span>Servidor:</span>
-              <strong id="previewServerName" style="color: #ec4899;">MALIBUX</strong>
+              <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: #949ba4;">
+                <span>Servidor:</span>
+                <strong id="previewServerName" style="color: #ec4899;">MALIBUX</strong>
+              </div>
             </div>
           </div>
         </div>

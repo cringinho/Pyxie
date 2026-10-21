@@ -348,6 +348,7 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
       nick: 'Pyxie [🟢 Loja ON]',
       bio: 'Lojinha da Mary • Robux com entrega rápida!',
       avatar: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+      banner: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
       statusLoja: 'online',
     });
 
@@ -357,15 +358,25 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
     assert.equal(restPatchCalled.data.body.nick, 'Pyxie [🟢 Loja ON]', 'Deve enviar apelido local');
     assert.equal(restPatchCalled.data.body.bio, 'Lojinha da Mary • Robux com entrega rápida!', 'Deve enviar bio local');
     assert.ok(restPatchCalled.data.body.avatar && restPatchCalled.data.body.avatar.startsWith('data:image/png;base64,'), 'Deve enviar avatar em formato Data URI base64');
+    assert.ok(restPatchCalled.data.body.banner && restPatchCalled.data.body.banner.startsWith('data:image/png;base64,'), 'Deve enviar banner em formato Data URI base64');
     assert.equal(patchResult.localBio, 'Lojinha da Mary • Robux com entrega rápida!', 'Deve persistir bio');
     assert.ok(patchResult.localAvatarUrl.startsWith('data:image/png;base64,'), 'Deve persistir localAvatarUrl');
+    assert.ok(patchResult.localBannerUrl.startsWith('data:image/png;base64,'), 'Deve persistir localBannerUrl');
 
-    // Teste de Reset de Avatar
-    const resetResult = await maryStudioManager.updateLocalProfile(null, { avatar: 'reset' });
+    // Teste de Reset de Avatar e Banner
+    const resetResult = await maryStudioManager.updateLocalProfile(null, { avatar: 'reset', banner: 'reset' });
     assert.equal(resetResult.localAvatarUrl, '', 'Reset deve limpar localAvatarUrl');
-    assert.equal(restPatchCalled.data.body.avatar, null, 'Reset deve enviar null para o Discord');
+    assert.equal(resetResult.localBannerUrl, '', 'Reset deve limpar localBannerUrl');
+    assert.equal(restPatchCalled.data.body.avatar, null, 'Reset deve enviar null para avatar no Discord');
+    assert.equal(restPatchCalled.data.body.banner, null, 'Reset deve enviar null para banner no Discord');
 
-    console.log('  ✅ 7. Isolamento de Feature Flags e atualização do Perfil Local (@me) com Foto e Bio validados.');
+    // Teste de Banner no Hub Rápido (/py-mary)
+    const { buildQuickHubView } = require('../src/modules/mary-studio/commands/pyMaryStudio');
+    await maryStudioManager.updateLocalProfile(null, { banner: 'https://cdn.discordapp.com/banners/test_banner.png' });
+    const quickHubView = buildQuickHubView(securityGuard.MARY_DISCORD_ID, { user: { id: securityGuard.MARY_DISCORD_ID } });
+    assert.ok(quickHubView.embeds?.[0]?.data?.image?.url === 'https://cdn.discordapp.com/banners/test_banner.png', 'Quick Hub deve exibir banner local no embed.image');
+
+    console.log('  ✅ 7. Isolamento de Feature Flags e atualização do Perfil Local (@me) com Foto, Banner e Bio validados.');
 
     // =========================================================================
     // 8. TEMPLATES PRONTOS E CATÁLOGO DE MENSAGENS

@@ -32,9 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnSaveModules').addEventListener('click', saveModules);
   document.getElementById('fileLocalAvatar')?.addEventListener('change', (e) => handleFileUpload(e, 'inputLocalAvatar', updateProfilePreview));
   document.getElementById('btnResetAvatar')?.addEventListener('click', resetLocalAvatar);
+  document.getElementById('fileLocalBanner')?.addEventListener('change', (e) => handleFileUpload(e, 'inputLocalBanner', updateProfilePreview));
+  document.getElementById('btnResetBanner')?.addEventListener('click', resetLocalBanner);
   document.getElementById('inputLocalNick')?.addEventListener('input', updateProfilePreview);
   document.getElementById('inputLocalBio')?.addEventListener('input', updateProfilePreview);
   document.getElementById('inputLocalAvatar')?.addEventListener('input', updateProfilePreview);
+  document.getElementById('inputLocalBanner')?.addEventListener('input', updateProfilePreview);
   document.getElementById('selectStoreStatus')?.addEventListener('change', updateProfilePreview);
   document.getElementById('fileImage').addEventListener('change', (e) => handleFileUpload(e, 'inputImageUrl'));
   document.getElementById('fileThumbnail').addEventListener('change', (e) => handleFileUpload(e, 'inputThumbnailUrl'));
@@ -736,6 +739,11 @@ function renderProfileTab() {
     avatarInput.value = cfg.localAvatarUrl || '';
   }
 
+  const bannerInput = document.getElementById('inputLocalBanner');
+  if (bannerInput) {
+    bannerInput.value = cfg.localBannerUrl || '';
+  }
+
   const statusSelect = document.getElementById('selectStoreStatus');
   if (statusSelect) {
     statusSelect.value = cfg.statusLoja || 'online';
@@ -748,11 +756,13 @@ function updateProfilePreview() {
   const nickInput = document.getElementById('inputLocalNick');
   const bioInput = document.getElementById('inputLocalBio');
   const avatarInput = document.getElementById('inputLocalAvatar');
+  const bannerInput = document.getElementById('inputLocalBanner');
   const statusSelect = document.getElementById('selectStoreStatus');
 
   const previewNick = document.getElementById('previewLocalNick');
   const previewBio = document.getElementById('previewLocalBio');
   const previewAvatar = document.getElementById('previewLocalAvatar');
+  const previewBanner = document.getElementById('previewLocalBanner');
   const previewDot = document.getElementById('previewStatusDot');
   const previewServer = document.getElementById('previewServerName');
 
@@ -772,6 +782,18 @@ function updateProfilePreview() {
       previewAvatar.src = appState.botProfile.avatarUrl;
     } else {
       previewAvatar.src = 'https://cdn.discordapp.com/emojis/1548444149785694238.gif';
+    }
+  }
+
+  if (previewBanner) {
+    const customBanner = bannerInput && bannerInput.value.trim();
+    if (customBanner && (customBanner.startsWith('http://') || customBanner.startsWith('https://') || customBanner.startsWith('data:image/'))) {
+      previewBanner.style.backgroundImage = `url("${customBanner}")`;
+    } else if (appState.botProfile && appState.botProfile.bannerUrl) {
+      previewBanner.style.backgroundImage = `url("${appState.botProfile.bannerUrl}")`;
+    } else {
+      previewBanner.style.backgroundImage = 'none';
+      previewBanner.style.backgroundColor = '#ec4899';
     }
   }
 
@@ -797,10 +819,26 @@ function resetLocalAvatar() {
   alert('🔄 Foto resetada para o padrão da Pyxie. Clique em "Salvar Perfil Local" para aplicar no Discord.');
 }
 
+function resetLocalBanner() {
+  const bannerInput = document.getElementById('inputLocalBanner');
+  if (bannerInput) bannerInput.value = 'reset';
+  const previewBanner = document.getElementById('previewLocalBanner');
+  if (previewBanner) {
+    if (appState.botProfile && appState.botProfile.bannerUrl && appState.botProfile.bannerUrl !== 'reset') {
+      previewBanner.style.backgroundImage = `url("${appState.botProfile.bannerUrl}")`;
+    } else {
+      previewBanner.style.backgroundImage = 'none';
+      previewBanner.style.backgroundColor = '#ec4899';
+    }
+  }
+  alert('🔄 Banner resetado para o padrão. Clique em "Salvar Perfil Local" para aplicar no Discord.');
+}
+
 async function saveProfile() {
   const nick = document.getElementById('inputLocalNick').value.trim();
   const bio = document.getElementById('inputLocalBio').value.trim();
   const avatar = document.getElementById('inputLocalAvatar').value.trim();
+  const banner = document.getElementById('inputLocalBanner') ? document.getElementById('inputLocalBanner').value.trim() : undefined;
   const statusLoja = document.getElementById('selectStoreStatus').value;
 
   const btn = document.getElementById('btnSaveProfile');
@@ -810,11 +848,11 @@ async function saveProfile() {
   try {
     const res = await apiFetch('/api/mary/bot-profile', {
       method: 'PATCH',
-      body: JSON.stringify({ nick, bio, avatar, statusLoja }),
+      body: JSON.stringify({ nick, bio, avatar, banner, statusLoja }),
     });
     const data = await res.json();
     if (data.success) {
-      alert('✅ Foto, apelido e descrição locais atualizados com sucesso no Discord!');
+      alert('✅ Banner, foto, apelido e descrição locais atualizados com sucesso no Discord!');
       loadBootstrapData();
     } else {
       alert('❌ Erro: ' + (data.error || 'Não foi possível atualizar o perfil local.'));

@@ -108,6 +108,7 @@ class MaryStudioManager {
           statusLoja: 'online', // 'online' | 'fila' | 'offline'
           localNick: '',
           localAvatarUrl: '',
+          localBannerUrl: '',
           localBio: '',
           estoqueRobux: 25000,
           preco1k: 37.0,
@@ -143,7 +144,11 @@ class MaryStudioManager {
         this.writeAtomic(CONFIG_FILE, initial);
         return initial;
       }
-      return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+      const data = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+      if (data && typeof data === 'object' && data.localBannerUrl === undefined) {
+        data.localBannerUrl = '';
+      }
+      return data;
     } catch (_) {
       return {};
     }
@@ -588,6 +593,10 @@ class MaryStudioManager {
       const cleanAvatar = String(avatar || '').trim();
       config.localAvatarUrl = (cleanAvatar === 'null' || cleanAvatar === 'reset') ? '' : cleanAvatar;
     }
+    if (banner !== undefined) {
+      const cleanBanner = String(banner || '').trim();
+      config.localBannerUrl = (cleanBanner === 'null' || cleanBanner === 'reset') ? '' : cleanBanner;
+    }
 
     if (this.client) {
       const guild = this.getGuild(targetGuildId);
@@ -607,7 +616,9 @@ class MaryStudioManager {
         if (avatar !== undefined) {
           body.avatar = await this.formatAvatarDataUri(avatar);
         }
-        if (banner !== undefined) body.banner = banner;
+        if (banner !== undefined) {
+          body.banner = await this.formatAvatarDataUri(banner);
+        }
         if (bio !== undefined) body.bio = bio;
 
         await rest.patch(`/guilds/${targetGuildId}/members/@me`, { body }).catch(async (err) => {
@@ -635,6 +646,7 @@ class MaryStudioManager {
       localNick: config.localNick,
       localBio: config.localBio,
       localAvatarUrl: config.localAvatarUrl,
+      localBannerUrl: config.localBannerUrl,
     };
   }
 
@@ -754,7 +766,7 @@ class MaryStudioManager {
 
       const channels = [];
       const roles = [];
-      let botProfile = { nick: '', avatarUrl: '', bannerUrl: '' };
+      let botProfile = { nick: '', avatarUrl: '', bannerUrl: '', localAvatarUrl: '', localBannerUrl: '' };
       let guildData = null;
 
       if (guild) {
@@ -798,7 +810,8 @@ class MaryStudioManager {
           avatarUrl: (guild.members?.me?.avatar ? guild.members.me.displayAvatarURL() : null) || config.localAvatarUrl || (typeof guild.members?.me?.displayAvatarURL === 'function' ? guild.members.me.displayAvatarURL() : ''),
           bio: config.localBio || '',
           localAvatarUrl: config.localAvatarUrl || '',
-          bannerUrl: '',
+          bannerUrl: config.localBannerUrl || (typeof guild.members?.me?.bannerURL === 'function' ? guild.members.me.bannerURL() : '') || '',
+          localBannerUrl: config.localBannerUrl || '',
         };
       } else {
         const rest = this.getRestClient();
@@ -849,7 +862,10 @@ class MaryStudioManager {
                     : (config.localAvatarUrl || (botMember.user?.avatar ? `https://cdn.discordapp.com/avatars/${botMember.user.id}/${botMember.user.avatar}.png` : '')),
                   bio: config.localBio || '',
                   localAvatarUrl: config.localAvatarUrl || '',
-                  bannerUrl: '',
+                  bannerUrl: botMember.banner
+                    ? `https://cdn.discordapp.com/guilds/${targetGuildId}/users/${botMember.user?.id}/banners/${botMember.banner}.png`
+                    : (config.localBannerUrl || ''),
+                  localBannerUrl: config.localBannerUrl || '',
                 };
               }
             }

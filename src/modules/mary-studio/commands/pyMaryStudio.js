@@ -53,6 +53,10 @@ function buildQuickHubView(userId, source) {
     embed.setThumbnail(config.localAvatarUrl);
   }
 
+  if (config.localBannerUrl && (config.localBannerUrl.startsWith('http://') || config.localBannerUrl.startsWith('https://'))) {
+    embed.setImage(config.localBannerUrl);
+  }
+
   const row1 = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setLabel(t('mary.btn_open_web', source))
