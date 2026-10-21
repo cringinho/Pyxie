@@ -149,6 +149,24 @@ const SEO_CONFIG = {
       ogDesc: 'Learn about our privacy practices, LGPD/GDPR compliance, responsible data processing, and user safeguards across the Pyxie ecosystem.',
       locale: 'en_US'
     }
+  },
+  cringelandia: {
+    file: 'cringelandia.html',
+    canonical: 'https://pyxie.com.br/cringelandia',
+    pt: {
+      title: 'Cringelândia • Comunidade Neurodivergente & Acolhimento no Discord',
+      description: 'O maior servidor neurodivergente do Discord brasileiro: acolhimento psicológico, triagem humanizada para autistas e PCDs, enciclopédia neurodivergente e guia CIPTEA.',
+      ogTitle: 'Cringelândia • Comunidade Neurodivergente & Apoio Psicológico',
+      ogDesc: 'Comunidade segura e acolhedora no Discord para autistas, TDAH, PCDs e mentes neurodivergentes com canais de apoio, enciclopédia e guia de direitos.',
+      locale: 'pt_BR'
+    },
+    en: {
+      title: 'Cringelândia • Neurodivergent Community & Mental Support Discord',
+      description: 'The largest neurodivergent Discord community in Brazil: mental health support, autistic and disabled rights guide, sensory regulation, and safe space.',
+      ogTitle: 'Cringelândia • Neurodivergent Community & Mental Support',
+      ogDesc: 'Safe Discord sanctuary for autistics, ADHD, disabled folks, and neurodivergent minds with crisis hotlines, encylopedia, and community care.',
+      locale: 'en_US'
+    }
   }
 };
 

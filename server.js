@@ -33,6 +33,7 @@ const acervoAuditService = require('./src/services/acervoAuditService');
 const { createAdminMasterRouter } = require('./src/routes/adminMasterRoutes');
 const { createExpressTelemetryMiddleware } = require('./src/services/resourceTelemetry');
 const { createRouteGateMiddleware } = require('./src/services/webRoutesManager');
+const cringelandiaService = require('./src/services/cringelandiaService');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -490,6 +491,8 @@ app.get(['/termos', '/terms'], serveLocalizedPage('terms', publicDir));
 
 app.get(['/privacidade', '/privacy'], serveLocalizedPage('privacy', publicDir));
 
+app.get('/cringelandia', serveLocalizedPage('cringelandia', publicDir));
+
 app.get('/ads.txt', (req, res) => {
   res.setHeader('Content-Type', 'text/plain; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=86400');
@@ -745,6 +748,104 @@ app.get('/api/shopee/hourly-promo', (req, res) => {
     const promo = shopeeManager.getHourlyStorePromo();
     res.setHeader('Cache-Control', 'public, max-age=60');
     return res.json({ success: true, promo });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 2d. Portal da Cringelândia & Acolhimento Neurodivergente
+app.get('/api/cringelandia/impact', (req, res) => {
+  try {
+    const count = cringelandiaService.getImpactCount();
+    res.setHeader('Cache-Control', 'public, max-age=10');
+    return res.json({ success: true, count });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/cringelandia/track-help-click', (req, res) => {
+  try {
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = forwarded ? forwarded.split(',')[0].trim() : (req.socket.remoteAddress || '127.0.0.1');
+    const result = cringelandiaService.trackHelpClick(ip);
+    return res.json(result);
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/cringelandia/ciptea-states', (req, res) => {
+  try {
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    return res.json({ success: true, states: cringelandiaService.CIPTEA_STATES });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+let liveGuildCache = { data: null, fetchedAt: 0 };
+app.get('/api/cringelandia/live-guild', async (req, res) => {
+  const now = Date.now();
+  if (liveGuildCache.data && (now - liveGuildCache.fetchedAt < 60000)) {
+    res.setHeader('Cache-Control', 'public, max-age=60');
+    return res.json({ success: true, guild: liveGuildCache.data });
+  }
+  try {
+    const response = await fetch('https://discord.com/api/guilds/1453890868980482090/widget.json', {
+      headers: { 'User-Agent': 'Pyxie-Bot/1.0 (+https://pyxie.com.br)' },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!response.ok) {
+      throw new Error(`Discord widget HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    liveGuildCache = { data, fetchedAt: now };
+    res.setHeader('Cache-Control', 'public, max-age=60');
+    return res.json({ success: true, guild: data });
+  } catch (err) {
+    if (liveGuildCache.data) {
+      return res.json({ success: true, guild: liveGuildCache.data, stale: true });
+    }
+    return res.json({
+      success: true,
+      guild: {
+        id: '1453890868980482090',
+        name: 'Cringelândia 🌸 Comunidade & Acolhimento',
+        instant_invite: 'https://discord.gg/cringelandia',
+        presence_count: 50,
+        members: []
+      },
+      fallback: true
+    });
+  }
+});
+
+app.get('/api/cringelandia/art-samples', (req, res) => {
+  try {
+    let arts = [];
+    const museumPath = path.join(__dirname, 'data', 'museumData.json');
+    if (fs.existsSync(museumPath)) {
+      const parsed = JSON.parse(fs.readFileSync(museumPath, 'utf8'));
+      if (parsed && Array.isArray(parsed.arts)) {
+        arts = parsed.arts;
+      }
+    }
+    let formatted = arts.slice(0, 16).map((art) => ({
+      id: art.id,
+      author: art.cachedAuthor || art.authorUsername || 'Membro da Cringelândia',
+      url: `/api/museum/art-image/${encodeURIComponent(art.id)}.jpg`,
+      description: art.description || 'Arte da Comunidade Cringelândia'
+    }));
+
+    if (formatted.length === 0) {
+      formatted = [
+        { id: 'sample_1', author: 'Comunidade Cringelândia', url: '/assets/pyxie/pyxie_mascot.png', description: 'Mascote Pyxie' },
+        { id: 'sample_2', author: 'Cantinho Criativo', url: '/assets/pyxie/pyxie_pixelart_face.png', description: 'Pixel Art Pyxie' }
+      ];
+    }
+    res.setHeader('Cache-Control', 'public, max-age=120');
+    return res.json({ success: true, arts: formatted });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }

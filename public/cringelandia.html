@@ -1,0 +1,2817 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T4CBHKWHH6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T4CBHKWHH6');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cringelândia • Comunidade Neurodivergente & Acolhimento no Discord</title>
+  <meta name="description" content="O maior servidor neurodivergente do Discord brasileiro: acolhimento psicológico, triagem humanizada para autistas e PCDs, enciclopédia neurodivergente e guia CIPTEA.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <link rel="canonical" href="https://pyxie.com.br/cringelandia" />
+  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/cringelandia" />
+  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/cringelandia?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
+
+  <!-- Preconnect & DNS Prefetch -->
+  <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pyxie.com.br/cringelandia" />
+  <meta property="og:title" content="Cringelândia • Comunidade Neurodivergente & Apoio Psicológico" />
+  <meta property="og:description" content="Comunidade segura e acolhedora no Discord para autistas, TDAH, PCDs e mentes neurodivergentes com canais de apoio, enciclopédia e guia de direitos." />
+  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Cringelândia Comunidade Neurodivergente & Apoio Psicológico" />
+  <meta property="og:site_name" content="Pyxie Discord Bot" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@PyxieBot" />
+  <meta name="twitter:creator" content="@PyxieBot" />
+  <meta name="twitter:title" content="Cringelândia • Comunidade Neurodivergente & Apoio Psicológico" />
+  <meta name="twitter:description" content="Comunidade segura e acolhedora no Discord para autistas, TDAH, PCDs e mentes neurodivergentes com canais de apoio, enciclopédia e guia de direitos." />
+  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta name="twitter:image:alt" content="Cringelândia Comunidade Neurodivergente & Apoio Psicológico" />
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://pyxie.com.br/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Cringelândia",
+            "item": "https://pyxie.com.br/cringelandia"
+          }
+        ]
+      },
+      {
+        "@type": "CommunityCenter",
+        "name": "Cringelândia - Comunidade Neurodivergente & Apoio Psicológico",
+        "url": "https://pyxie.com.br/cringelandia",
+        "logo": "https://pyxie.com.br/assets/pyxie/pyxie_mascot.png",
+        "description": "O maior servidor neurodivergente do Discord brasileiro: acolhimento psicológico, triagem humanizada para autistas e PCDs, enciclopédia neurodivergente e guia CIPTEA.",
+        "inLanguage": ["pt-BR", "en"]
+      }
+    ]
+  }
+  </script>
+
+  <link rel="icon" type="image/png" href="/assets/pyxie/pyxie_pixelart_face.png" />
+
+  <style>
+    :root {
+      --bg-dark: #0b0714;
+      --bg-surface: #140d24;
+      --bg-card: #1c1333;
+      --bg-card-hover: #261944;
+      --purple-primary: #a855f7;
+      --purple-light: #c084fc;
+      --purple-glow: rgba(168, 85, 247, 0.25);
+      --accent-pink: #f472b6;
+      --accent-teal: #2dd4bf;
+      --accent-yellow: #fbbf24;
+      --accent-blue: #38bdf8;
+      --text-main: #f3f4f6;
+      --text-muted: #cbd5e1;
+      --text-dim: #94a3b8;
+      --border-subtle: rgba(192, 132, 252, 0.18);
+      --border-bright: rgba(192, 132, 252, 0.45);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --font-stack: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      line-height: 1.65;
+      font-size: 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Ambient Marquee Background (Mobile Only) */
+    .mobile-ambient-art {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.08;
+      overflow: hidden;
+    }
+
+    .ambient-marquee-track {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      animation: ambientMarquee 45s linear infinite;
+    }
+
+    @keyframes ambientMarquee {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+
+    .ambient-art-row {
+      display: flex;
+      gap: 20px;
+      white-space: nowrap;
+    }
+
+    .ambient-art-row img {
+      width: 140px;
+      height: 140px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      filter: saturate(0.8) blur(1px);
+    }
+
+    @media (max-width: 900px) {
+      .mobile-ambient-art {
+        display: block;
+      }
+    }
+
+    /* Floating Art Frames (Desktop PC Only) */
+    .floating-art-container {
+      display: block;
+      position: fixed;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .floating-art-frame {
+      position: fixed;
+      bottom: 24px;
+      pointer-events: auto;
+      background: rgba(20, 13, 36, 0.88);
+      border: 1px solid var(--border-bright);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 20px var(--purple-glow);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 290px;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .floating-art-frame:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: var(--purple-light);
+    }
+
+    .floating-art-frame.left-frame {
+      left: 20px;
+    }
+
+    .floating-art-frame.right-frame {
+      right: 20px;
+    }
+
+    .floating-art-thumb {
+      width: 58px;
+      height: 58px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      border: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .floating-art-info {
+      overflow: hidden;
+    }
+
+    .floating-art-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--purple-light);
+      background: rgba(168, 85, 247, 0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-bottom: 2px;
+    }
+
+    .floating-art-author {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+
+    .floating-art-desc {
+      font-size: 11px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 1024px) {
+      .floating-art-frame {
+        display: none;
+      }
+    }
+
+    /* Page Container */
+    .page-wrap {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* Header Nav */
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 35px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .nav-brand img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--purple-primary);
+      box-shadow: 0 0 12px var(--purple-glow);
+    }
+
+    .nav-brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand-title {
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.3px;
+      background: linear-gradient(135deg, #fff 30%, var(--purple-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-brand-subtitle {
+      font-size: 11px;
+      color: var(--accent-pink);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      color: #fff;
+      background: rgba(168, 85, 247, 0.15);
+    }
+
+    .lang-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--purple-light);
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .lang-toggle:hover {
+      border-color: var(--purple-light);
+      box-shadow: 0 0 12px var(--purple-glow);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      text-align: center;
+      padding: 40px 10px 50px;
+      position: relative;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(168, 85, 247, 0.14);
+      border: 1px solid var(--border-bright);
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--purple-light);
+      margin-bottom: 24px;
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    h1.hero-title {
+      font-size: clamp(26px, 4.8vw, 46px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--purple-light) 80%, var(--accent-pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      max-width: 950px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-lead {
+      font-size: clamp(16px, 2vw, 19px);
+      color: var(--text-muted);
+      max-width: 820px;
+      margin: 0 auto 35px;
+      line-height: 1.6;
+    }
+
+    /* 3 Institutional Pillars */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 24px;
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .pillar-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 26px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .pillar-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--purple-primary);
+      transition: width 0.3s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--purple-light);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--purple-glow);
+    }
+
+    .pillar-card:hover::before {
+      width: 6px;
+    }
+
+    .pillar-icon {
+      font-size: 32px;
+      margin-bottom: 14px;
+      display: inline-block;
+    }
+
+    .pillar-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .pillar-text {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* Social Impact Counter Banner */
+    .impact-banner {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.22) 0%, rgba(244, 114, 182, 0.15) 100%);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      margin: 45px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px var(--purple-glow);
+    }
+
+    .impact-banner::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(192, 132, 252, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .impact-headline {
+      font-size: clamp(20px, 3.2vw, 30px);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .impact-number {
+      display: inline-block;
+      font-weight: 900;
+      color: var(--accent-yellow);
+      font-size: 1.15em;
+      padding: 0 6px;
+      text-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+      transition: transform 0.2s ease;
+    }
+
+    .impact-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* Ethical Monetization Shopee Section */
+    .shopee-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 35px 25px;
+      margin: 50px 0;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .mascot-speech-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .mascot-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px solid var(--purple-light);
+      background: var(--bg-card);
+      padding: 4px;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px var(--purple-glow);
+    }
+
+    .speech-bubble {
+      background: var(--bg-card);
+      border: 1px solid var(--border-bright);
+      border-radius: 18px;
+      border-top-left-radius: 4px;
+      padding: 18px 22px;
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.55;
+      position: relative;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .speech-bubble strong {
+      color: var(--accent-pink);
+    }
+
+    .slider-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 0 5px;
+    }
+
+    .slider-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slider-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .slider-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .slider-btn:hover {
+      border-color: var(--purple-light);
+      background: var(--bg-card-hover);
+      color: var(--purple-light);
+    }
+
+    .shopee-slider-track {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 15px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--purple-primary) var(--bg-card);
+    }
+
+    .shopee-slider-track::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .shopee-slider-track::-webkit-scrollbar-track {
+      background: var(--bg-card);
+      border-radius: 3px;
+    }
+
+    .shopee-slider-track::-webkit-scrollbar-thumb {
+      background: var(--purple-primary);
+      border-radius: 3px;
+    }
+
+    .shopee-product-card {
+      flex: 0 0 220px;
+      scroll-snap-align: start;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s, border-color 0.25s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .shopee-product-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--purple-light);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .product-img-box {
+      width: 100%;
+      height: 160px;
+      background: #0d0716;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .shopee-product-card:hover .product-img-box img {
+      transform: scale(1.05);
+    }
+
+    .product-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(20, 13, 36, 0.85);
+      backdrop-filter: blur(4px);
+      color: var(--accent-pink);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(244, 114, 182, 0.4);
+    }
+
+    .product-body {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
+
+    .product-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .product-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+
+    .product-price {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent-yellow);
+    }
+
+    .product-btn {
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(168, 85, 247, 0.18);
+      color: var(--purple-light);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Section Headers */
+    .section-head {
+      text-align: center;
+      margin: 60px 0 35px;
+    }
+
+    .section-pill {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--purple-light);
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(24px, 3.5vw, 36px);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .section-head p {
+      font-size: 16px;
+      color: var(--text-dim);
+      max-width: 740px;
+      margin: 0 auto;
+    }
+
+    /* Neurodivergent Encyclopedia */
+    .conditions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 24px;
+    }
+
+    .condition-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: all 0.3s;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .condition-card:hover {
+      border-color: var(--purple-light);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 18px var(--purple-glow);
+    }
+
+    .condition-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .condition-icon {
+      font-size: 28px;
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .condition-name {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .condition-sub {
+      font-size: 12px;
+      color: var(--accent-pink);
+      font-weight: 600;
+    }
+
+    .box-realities, .box-welcoming {
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      border-left: 3px solid;
+    }
+
+    .box-realities {
+      border-left-color: var(--accent-blue);
+    }
+
+    .box-welcoming {
+      border-left-color: var(--accent-teal);
+    }
+
+    .box-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .box-realities .box-label {
+      color: var(--accent-blue);
+    }
+
+    .box-welcoming .box-label {
+      color: var(--accent-teal);
+    }
+
+    .box-content {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Central de Autoajuda e Denúncia */
+    .help-category-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      margin-bottom: 26px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .help-category-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+    }
+
+    .help-items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .help-item-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .help-item-card:hover {
+      border-color: var(--purple-light);
+      transform: translateY(-2px);
+    }
+
+    .help-item-header {
+      margin-bottom: 10px;
+    }
+
+    .help-item-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .help-item-phone {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--accent-yellow);
+      margin: 4px 0;
+      display: block;
+      letter-spacing: 0.5px;
+    }
+
+    .help-item-info {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .help-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(168, 85, 247, 0.2);
+      border: 1px solid var(--purple-primary);
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .help-action-btn:hover {
+      background: var(--purple-primary);
+      box-shadow: 0 0 14px var(--purple-glow);
+    }
+
+    /* CIPTEA Guide Section */
+    .ciptea-wrap {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 35px 25px;
+      margin: 45px 0;
+    }
+
+    .ciptea-benefits-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 35px;
+    }
+
+    .benefit-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .benefit-icon {
+      font-size: 22px;
+      color: var(--accent-teal);
+      flex-shrink: 0;
+    }
+
+    .benefit-text {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .benefit-text strong {
+      color: #fff;
+    }
+
+    .ciptea-selector-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-md);
+      padding: 24px;
+    }
+
+    .search-filter-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      flex: 1;
+      background: #0d0716;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--purple-light);
+      box-shadow: 0 0 10px var(--purple-glow);
+    }
+
+    .states-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 6px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--purple-primary) var(--bg-dark);
+    }
+
+    .state-card {
+      background: #110920;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .state-card:hover {
+      border-color: var(--purple-light);
+      background: #170d2b;
+    }
+
+    .state-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .state-badge {
+      background: var(--purple-primary);
+      color: #fff;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .state-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .state-organ {
+      font-size: 12px;
+      color: var(--accent-pink);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .state-docs {
+      font-size: 11.5px;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .state-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid var(--border-subtle);
+      color: var(--purple-light);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .state-btn:hover {
+      background: var(--purple-primary);
+      color: #fff;
+    }
+
+    /* Medical Report Guide Section */
+    .laudo-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 35px 25px;
+      margin: 45px 0;
+    }
+
+    .laudo-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .laudo-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .checklist-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .check-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .check-badge {
+      background: rgba(74, 222, 128, 0.15);
+      color: var(--accent-teal);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .check-body h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .check-body p {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.45;
+    }
+
+    /* Interactive Medical Report Visual Sample */
+    .report-sample-box {
+      background: #ffffff;
+      color: #1a1a1a;
+      border-radius: var(--radius-md);
+      padding: 26px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      position: relative;
+      font-family: Georgia, serif;
+    }
+
+    .report-sample-badge {
+      position: absolute;
+      top: -12px;
+      right: 20px;
+      background: var(--purple-primary);
+      color: #fff;
+      font-family: var(--font-stack);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .report-header {
+      border-bottom: 2px solid #222;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .report-clinic {
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .report-doctor {
+      font-size: 13px;
+      color: #444;
+    }
+
+    .report-tag-callout {
+      display: inline-block;
+      font-family: var(--font-stack);
+      font-size: 10px;
+      font-weight: 800;
+      background: #6b21a8;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    .report-title-inner {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      margin: 16px 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .report-paragraph {
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+      color: #222;
+    }
+
+    .report-cid-highlight {
+      background: #fef08a;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+      color: #854d0e;
+    }
+
+    .report-footer {
+      border-top: 1px solid #ccc;
+      margin-top: 20px;
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .report-sign {
+      text-align: center;
+      font-size: 11px;
+      color: #333;
+    }
+
+    .report-sign-line {
+      width: 160px;
+      border-top: 1px solid #222;
+      margin: 0 auto 4px;
+    }
+
+    .tenorio-btn-wrap {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .tenorio-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 30px;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      transition: all 0.2s;
+    }
+
+    .tenorio-link-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.6);
+    }
+
+    /* Recreation, Discord Live & Roblox Section */
+    .community-fun-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin: 40px 0;
+    }
+
+    .fun-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      transition: all 0.3s;
+    }
+
+    .fun-card:hover {
+      border-color: var(--purple-light);
+      transform: translateY(-3px);
+    }
+
+    .fun-card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .fun-icon {
+      font-size: 28px;
+    }
+
+    .fun-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .fun-desc {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.55;
+      margin-bottom: 20px;
+    }
+
+    /* Live Discord Server Embed Card */
+    .discord-live-card {
+      background: linear-gradient(135deg, #18122c 0%, #100b1e 100%);
+      border: 1px solid rgba(88, 101, 242, 0.4);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(88, 101, 242, 0.2);
+    }
+
+    .discord-badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      margin-bottom: 14px;
+    }
+
+    .discord-pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .discord-guild-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .discord-guild-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: #5865f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 900;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(88, 101, 242, 0.4);
+    }
+
+    .discord-guild-info h4 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .discord-guild-stats {
+      font-size: 13px;
+      color: var(--text-dim);
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .stat-online {
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    .discord-join-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #5865f2;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .discord-join-btn:hover {
+      background: #4752c4;
+      transform: translateY(-2px);
+    }
+
+    /* Roblox Group Card */
+    .roblox-card {
+      background: linear-gradient(135deg, #1b122c 0%, #110c1f 100%);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    }
+
+    .roblox-join-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #e11d48;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .roblox-join-btn:hover {
+      background: #be123c;
+      transform: translateY(-2px);
+    }
+
+    /* Footer */
+    .site-footer {
+      border-top: 1px solid var(--border-subtle);
+      margin-top: 70px;
+      padding-top: 35px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.8;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--purple-light);
+    }
+
+    .footer-disclaimer {
+      max-width: 800px;
+      margin: 12px auto 0;
+      font-size: 12px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Art Background for Mobile Viewports -->
+  <div class="mobile-ambient-art" aria-hidden="true" id="mobileAmbientArt">
+    <div class="ambient-marquee-track" id="ambientTrack">
+      <div class="ambient-art-row" id="ambientRow1"></div>
+      <div class="ambient-art-row" id="ambientRow2"></div>
+      <div class="ambient-art-row" id="ambientRow3"></div>
+      <div class="ambient-art-row" id="ambientRow4"></div>
+    </div>
+  </div>
+
+  <!-- Floating Art Frames for Desktop (PC) -->
+  <div class="floating-art-container" aria-label="Artes em destaque da comunidade">
+    <div class="floating-art-frame left-frame" id="floatingLeftFrame" style="display: none;">
+      <img src="/assets/pyxie/pyxie_mascot.png" alt="Arte da Comunidade Cringelândia" class="floating-art-thumb" id="floatingLeftThumb" />
+      <div class="floating-art-info">
+        <span class="floating-art-badge">🎨 Museu Comunitário</span>
+        <span class="floating-art-author" id="floatingLeftAuthor">@Membro</span>
+        <span class="floating-art-desc" id="floatingLeftDesc">Obra de arte no Museu da Pyxie</span>
+      </div>
+    </div>
+
+    <div class="floating-art-frame right-frame" id="floatingRightFrame" style="display: none;">
+      <img src="/assets/pyxie/pyxie_pixelart_face.png" alt="Ilustração da Comunidade Cringelândia" class="floating-art-thumb" id="floatingRightThumb" />
+      <div class="floating-art-info">
+        <span class="floating-art-badge">✨ Acervo Cultural</span>
+        <span class="floating-art-author" id="floatingRightAuthor">@Membro</span>
+        <span class="floating-art-desc" id="floatingRightDesc">Obra em destaque na comunidade</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <!-- Navbar -->
+    <header class="site-nav">
+      <a href="/" class="nav-brand" aria-label="Página Inicial da Pyxie">
+        <img src="/assets/pyxie/pyxie_mascot.png" alt="Logotipo Oficial da Pyxie" />
+        <div class="nav-brand-text">
+          <span class="nav-brand-title">Pyxie & Cringelândia</span>
+          <span class="nav-brand-subtitle">Comunidade & Acolhimento</span>
+        </div>
+      </a>
+      <nav class="nav-links">
+        <a href="#manifesto" class="nav-link" data-i18n="nav.manifesto">Manifesto</a>
+        <a href="#enciclopedia" class="nav-link" data-i18n="nav.enciclopedia">Enciclopédia</a>
+        <a href="#autoajuda" class="nav-link" data-i18n="nav.help">Canais de Apoio</a>
+        <a href="#ciptea" class="nav-link" data-i18n="nav.ciptea">Guia CIPTEA</a>
+        <a href="#laudo" class="nav-link" data-i18n="nav.laudo">Laudo Válido</a>
+        <a href="#comunidade" class="nav-link" data-i18n="nav.community">Discord & Roblox</a>
+        <button class="lang-toggle" id="langToggleBtn" onclick="toggleLanguage()" aria-label="Alternar Idioma">
+          🌐 <span id="langLabel">EN</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- 1. Hero & Institutional Positioning -->
+    <section class="hero-section" id="manifesto">
+      <div class="hero-tag">
+        <span>💜</span>
+        <span data-i18n="hero.tag">A Maior Comunidade Neurodivergente do Discord BR</span>
+      </div>
+      <h1 class="hero-title" id="mainHeroTitle" data-i18n="hero.title">
+        Cringelândia: O Maior Servidor Neurodivergente do Discord Brasileiro
+      </h1>
+      <p class="hero-lead" data-i18n="hero.lead">
+        Acolhimento humanizado, escuta atenta, inclusão autista, suporte psicológico e celebração da neurodiversidade em um refúgio acolhedor e seguro. Aqui ninguém caminha sozinho.
+      </p>
+
+      <!-- 3 Institutional Pillars -->
+      <div class="pillars-grid">
+        <article class="pillar-card">
+          <div class="pillar-icon">🛡️</div>
+          <h3 class="pillar-title" data-i18n="pillar1.title">Cantinho Protegido & Triagem Humanizada</h3>
+          <p class="pillar-text" data-i18n="pillar1.desc">
+            Sistema de verificação dedicado para pessoas neurodivergentes (TEA, TDAH, AH/SD) e PCDs/PCDIs, com proteção absoluta de dados sensíveis perante a LGPD e sem exposição forçada.
+          </p>
+        </article>
+
+        <article class="pillar-card">
+          <div class="pillar-icon">⚖️</div>
+          <h3 class="pillar-title" data-i18n="pillar2.title">Moderação Anti-Capacitismo</h3>
+          <p class="pillar-text" data-i18n="pillar2.desc">
+            Equipe voluntária treinada para acolher crises sensoriais, validar vivências, evitar julgamentos e aplicar tolerância zero a qualquer manifestação de capacitismo, preconceito ou bullying.
+          </p>
+        </article>
+
+        <article class="pillar-card">
+          <div class="pillar-icon">🤝</div>
+          <h3 class="pillar-title" data-i18n="pillar3.title">Rede de Autoajuda & Convivência</h3>
+          <p class="pillar-text" data-i18n="pillar3.desc">
+            Canais de desabafo seguro, regulação emocional mútua, escuta atenta, compartilhamento de hiperfocos e integração social no ritmo de cada mente.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 2. Social Impact Counter Banner -->
+    <section class="impact-banner" aria-label="Contador de Pessoas Ajudadas">
+      <h2 class="impact-headline" id="impactBannerText">
+        💜 A Cringelândia já direcionou e ajudou <span class="impact-number" id="helpedCount">1.420</span> pessoas através de nossos links de autoajuda e ONGs!
+      </h2>
+      <p class="impact-desc" data-i18n="impact.desc">
+        Cada clique em telefones de crise, órgãos públicos, cartilhas de direitos ou redes de apoio contabiliza nosso impacto social real. Se precisar de ajuda neste instante, os canais abaixo estão sempre abertos.
+      </p>
+    </section>
+
+    <!-- 3. Ethical Monetization: Single Shopee Slider + Pyxie Speech Bubble -->
+    <section class="shopee-section" aria-label="Vitrine de Achadinhos da Shopee">
+      <div class="mascot-speech-wrap">
+        <img src="/assets/pyxie/pyxie_mascot.png" alt="Mascote Pyxie com balão de fala transparente" class="mascot-avatar" />
+        <div class="speech-bubble">
+          <p data-i18n="shopee.speech">
+            <strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee é o que viabiliza o funcionamento 100% gratuito do bot e dos nossos projetos de acolhimento, e ainda ajuda nossos membros e visitantes a encontrarem itens úteis de regulação sensorial, abafadores e presentes legais!
+          </p>
+        </div>
+      </div>
+
+      <div class="slider-header">
+        <h3 class="slider-title">
+          <span>🛍️</span>
+          <span data-i18n="shopee.title">Achadinhos Úteis da Shopee & Regulação Sensorial</span>
+        </h3>
+        <div class="slider-controls">
+          <button class="slider-btn" onclick="scrollShopee(-1)" aria-label="Rolar produtos para a esquerda">❮</button>
+          <button class="slider-btn" onclick="scrollShopee(1)" aria-label="Rolar produtos para a direita">❯</button>
+        </div>
+      </div>
+
+      <div class="shopee-slider-track" id="shopeeTrack">
+        <!-- Itens carregados dinamicamente via /api/showcase com fallback -->
+        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
+          <div class="product-img-box">
+            <img src="/assets/pyxie/pyxie_mascot.png" alt="Abafador de Ruído Sensorial Confortável" />
+            <span class="product-tag">Regulação Sensorial</span>
+          </div>
+          <div class="product-body">
+            <span class="product-title">Abafador de Ruído Auditivo Confortável Infantil e Adulto</span>
+            <div class="product-price-row">
+              <span class="product-price">R$ 54,90</span>
+              <span class="product-btn">Ver na Shopee</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://s.shopee.com.br/1BMdNQEU79" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
+          <div class="product-img-box">
+            <img src="/assets/pyxie/pyxie_pixelart_face.png" alt="Fidget Cube e Brinquedos Antiestresse" />
+            <span class="product-tag">Fidget & Foco</span>
+          </div>
+          <div class="product-body">
+            <span class="product-title">Fidget Pad Sensorial 6 Lados para Concentração e Ansiedade</span>
+            <div class="product-price-row">
+              <span class="product-price">R$ 29,90</span>
+              <span class="product-btn">Ver na Shopee</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
+          <div class="product-img-box">
+            <img src="/assets/pyxie/pyxie_mascot.png" alt="Luminária Projetora Galáxia Relaxante" />
+            <span class="product-tag">Conforto Visual</span>
+          </div>
+          <div class="product-body">
+            <span class="product-title">Luminária Projetora de Céu Estrelado e Galáxia Calmante</span>
+            <div class="product-price-row">
+              <span class="product-price">R$ 68,00</span>
+              <span class="product-btn">Ver na Shopee</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
+          <div class="product-img-box">
+            <img src="/assets/pyxie/pyxie_pixelart_face.png" alt="Pelúcia Macia Reversível" />
+            <span class="product-tag">Pelúcias & Geek</span>
+          </div>
+          <div class="product-body">
+            <span class="product-title">Pelúcia de Humor Reversível Super Macia para Regulação Emocional</span>
+            <div class="product-price-row">
+              <span class="product-price">R$ 24,90</span>
+              <span class="product-btn">Ver na Shopee</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- 4. Neurodivergent Encyclopedia -->
+    <section class="encyclopedia-section" id="enciclopedia">
+      <div class="section-head">
+        <span class="section-pill" data-i18n="enc.pill">Guia Educativo & Compreensão</span>
+        <h2 data-i18n="enc.title">Enciclopédia Neurodivergente: Conhecer para Acolher</h2>
+        <p data-i18n="enc.lead">
+          Neurodiversidade é a variação natural e infinita do cérebro humano. Conheça as principais condições e a melhor abordagem prática de acolhimento.
+        </p>
+      </div>
+
+      <div class="conditions-grid">
+        <!-- 1. TEA -->
+        <article class="condition-card">
+          <div class="condition-top">
+            <div class="condition-icon">♾️</div>
+            <div>
+              <h3 class="condition-name" data-i18n="tea.name">TEA • Autismo</h3>
+              <span class="condition-sub" data-i18n="tea.sub">Transtorno do Espectro Autista</span>
+            </div>
+          </div>
+          <div class="box-realities">
+            <div class="box-label">🔍 <span data-i18n="cond.realities">Características Reais</span></div>
+            <p class="box-content" data-i18n="tea.realities">
+              Processamento sensorial singular (hipo ou hipersensibilidade a ruídos, luzes e toques), comunicação predominantemente direta e literal, hiperfocos profundos e possíveis crises de sobrecarga (*meltdown* explosivo ou *shutdown* silencioso).
+            </p>
+          </div>
+          <div class="box-welcoming">
+            <div class="box-label">💚 <span data-i18n="cond.how">Como Acolher com Empatia</span></div>
+            <p class="box-content" data-i18n="tea.how">
+              Comunique-se com clareza sem ironias dúbias ou joguinhos; respeite o tempo de processamento; ofereça ambiente silencioso em sobrecargas e nunca reprima movimentos de autorregulação (*stimming*).
+            </p>
+          </div>
+        </article>
+
+        <!-- 2. TDAH -->
+        <article class="condition-card">
+          <div class="condition-top">
+            <div class="condition-icon">⚡</div>
+            <div>
+              <h3 class="condition-name" data-i18n="tdah.name">TDAH</h3>
+              <span class="condition-sub" data-i18n="tdah.sub">Déficit de Atenção & Hiperatividade</span>
+            </div>
+          </div>
+          <div class="box-realities">
+            <div class="box-label">🔍 <span data-i18n="cond.realities">Características Reais</span></div>
+            <p class="box-content" data-i18n="tdah.realities">
+              Disfunção executiva na iniciação de tarefas, regulação atípica de dopamina, 'cegueira temporal' para estimar prazos, hiperfoco involuntário em novidades e disforia sensível à rejeição (RSD).
+            </p>
+          </div>
+          <div class="box-welcoming">
+            <div class="box-label">💚 <span data-i18n="cond.how">Como Acolher com Empatia</span></div>
+            <p class="box-content" data-i18n="tdah.how">
+              Evite julgamentos morais de 'preguiça'; fragmente instruções em passos curtos e visuais; celebre pequenos avanços e acolha episódios de esquecimento sem repreensões punitivas.
+            </p>
+          </div>
+        </article>
+
+        <!-- 3. AH/SD -->
+        <article class="condition-card">
+          <div class="condition-top">
+            <div class="condition-icon">💡</div>
+            <div>
+              <h3 class="condition-name" data-i18n="ahsd.name">AH/SD</h3>
+              <span class="condition-sub" data-i18n="ahsd.sub">Altas Habilidades / Superdotação</span>
+            </div>
+          </div>
+          <div class="box-realities">
+            <div class="box-label">🔍 <span data-i18n="cond.realities">Características Reais</span></div>
+            <p class="box-content" data-i18n="ahsd.realities">
+              Assincronia marcante (intelecto muito avançado em contraste com a maturidade socioemocional), hiperexcitabilidade intelectual e sensorial, senso moral agudo e constante síndrome do impostor.
+            </p>
+          </div>
+          <div class="box-welcoming">
+            <div class="box-label">💚 <span data-i18n="cond.how">Como Acolher com Empatia</span></div>
+            <p class="box-content" data-i18n="ahsd.how">
+              Valide suas curiosidades profundas sem esperar que saibam tudo da vida; não imponha pressão por perfeição constante e ofereça espaços para debates maduros.
+            </p>
+          </div>
+        </article>
+
+        <!-- 4. Transtornos de Aprendizagem -->
+        <article class="condition-card">
+          <div class="condition-top">
+            <div class="condition-icon">📚</div>
+            <div>
+              <h3 class="condition-name" data-i18n="learn.name">Aprendizagem Específica</h3>
+              <span class="condition-sub" data-i18n="learn.sub">Dislexia, Discalculia, Disgrafia, Dispraxia</span>
+            </div>
+          </div>
+          <div class="box-realities">
+            <div class="box-label">🔍 <span data-i18n="cond.realities">Características Reais</span></div>
+            <p class="box-content" data-i18n="learn.realities">
+              Dificuldades no processamento fonológico de letras (dislexia), cognição de números e cálculo (discalculia), motricidade fina na escrita (disgrafia) ou coordenação motora (dispraxia), com intelecto plenamente intacto.
+            </p>
+          </div>
+          <div class="box-welcoming">
+            <div class="box-label">💚 <span data-i18n="cond.how">Como Acolher com Empatia</span></div>
+            <p class="box-content" data-i18n="learn.how">
+              Disponibilize materiais em múltiplos formatos (áudio, fontes amigáveis como OpenDyslexic); conceda tempo extra e nunca aponte erros ortográficos em público.
+            </p>
+          </div>
+        </article>
+
+        <!-- 5. Tourette e Tiques -->
+        <article class="condition-card">
+          <div class="condition-top">
+            <div class="condition-icon">🌀</div>
+            <div>
+              <h3 class="condition-name" data-i18n="tourette.name">Tourette & Tiques</h3>
+              <span class="condition-sub" data-i18n="tourette.sub">Síndrome de Tourette e Tiques Motores/Vocais</span>
+            </div>
+          </div>
+          <div class="box-realities">
+            <div class="box-label">🔍 <span data-i18n="cond.realities">Características Reais</span></div>
+            <p class="box-content" data-i18n="tourette.realities">
+              Movimentos corporais ou sons vocais involuntários e repentinos precedidos por uma urgência pré-monitória intensa física, que se acentuam em momentos de ansiedade, sobrecarga ou cansaço.
+            </p>
+          </div>
+          <div class="box-welcoming">
+            <div class="box-label">💚 <span data-i18n="cond.how">Como Acolher com Empatia</span></div>
+            <p class="box-content" data-i18n="tourette.how">
+              Ignore a ocorrência dos tiques com naturalidade (trate como espirros); nunca peça para a pessoa 'parar ou segurar' (causa dor física) e mantenha o diálogo fluido sem olhares constrangedores.
+            </p>
+          </div>
+        </article>
+
+        <!-- 6. Condições Psiquiátricas e Adquiridas -->
+        <article class="condition-card">
+          <div class="condition-top">
+            <div class="condition-icon">🌱</div>
+            <div>
+              <h3 class="condition-name" data-i18n="psy.name">Psiquiátricas & Adquiridas</h3>
+              <span class="condition-sub" data-i18n="psy.sub">TOC, Bipolaridade, Borderline (TPB) & TAG</span>
+            </div>
+          </div>
+          <div class="box-realities">
+            <div class="box-label">🔍 <span data-i18n="cond.realities">Características Reais</span></div>
+            <p class="box-content" data-i18n="psy.realities">
+              Pensamentos intrusivos com rituais (TOC), ciclagens de humor maníaco/depressivo (Bipolar), desregulação emocional intensa e medo de abandono (Borderline), e hipervigilância física (TAG).
+            </p>
+          </div>
+          <div class="box-welcoming">
+            <div class="box-label">💚 <span data-i18n="cond.how">Como Acolher com Empatia</span></div>
+            <p class="box-content" data-i18n="psy.how">
+              Esteja presente sem emitir conselhos rasos ('é só se acalmar'); valide o sofrimento mental como real e biológico; acolha crises com firmeza afetuosa e incentive acompanhamento médico/terapêutico contínuo.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 5. National and International Hotlines & Reporting -->
+    <section class="help-section" id="autoajuda">
+      <div class="section-head">
+        <span class="section-pill" data-i18n="help.pill">Rede de Proteção & Acolhimento Imediato</span>
+        <h2 data-i18n="help.title">Central de Autoajuda Psicológica & Canais de Denúncia</h2>
+        <p data-i18n="help.lead">
+          Se você ou alguém próximo está passando por um momento difícil, saiba que existe apoio profissional, gratuito e sigiloso esperando pelo seu contato.
+        </p>
+      </div>
+
+      <!-- 5.1 Brasil -->
+      <div class="help-category-block">
+        <h3 class="help-category-title">
+          <span>🇧🇷</span>
+          <span data-i18n="br.title">Brasil: Apoio Psicológico & Prevenção ao Suicídio</span>
+        </h3>
+        <div class="help-items-grid">
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">CVV • Centro de Valorização da Vida</span>
+              <span class="help-item-phone">📞 188</span>
+            </div>
+            <p class="help-item-info" data-i18n="br.cvv.desc">Atendimento 24 horas por dia, 100% gratuito e confidencial para apoio emocional e prevenção ao suicídio por telefone ou chat online.</p>
+            <a href="https://cvv.org.br" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Acessar Chat CVV</span> ↗
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">CAPS • SUS & Mapa da Saúde Mental</span>
+              <span class="help-item-phone">🏥 Rede Pública</span>
+            </div>
+            <p class="help-item-info" data-i18n="br.caps.desc">Encontre atendimento psicológico e psiquiátrico gratuito no Centros de Atenção Psicossocial (CAPS) mais próximo de sua residência.</p>
+            <a href="https://mapasaudemental.com.br" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Mapa da Saúde Mental</span> ↗
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">Pode Falar • UNICEF</span>
+              <span class="help-item-phone">💬 Chat Adolescentes</span>
+            </div>
+            <p class="help-item-info" data-i18n="br.unicef.desc">Canal de ajuda em saúde mental voltado especialmente para jovens e adolescentes de 13 a 24 anos com especialistas do UNICEF.</p>
+            <a href="https://podefalar.org.br" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Conversar com Pode Falar</span> ↗
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">SAMU • Emergência Médica</span>
+              <span class="help-item-phone">🚑 192</span>
+            </div>
+            <p class="help-item-info" data-i18n="br.samu.desc">Serviço de Atendimento Móvel de Urgência para crises psiquiátricas agudas com risco iminente à vida ou intoxicação medicamentosa.</p>
+            <a href="tel:192" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Ligar SAMU 192</span> 📞
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.1 Internacional -->
+      <div class="help-category-block">
+        <h3 class="help-category-title">
+          <span>🌍</span>
+          <span data-i18n="intl.title">Rede Internacional: Portugal, EUA, Canadá, Reino Unido e Mundo</span>
+        </h3>
+        <div class="help-items-grid">
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">Portugal • SOS Voz Amiga & SNS 24</span>
+              <span class="help-item-phone">📞 213 544 545 / 808 24 24 24</span>
+            </div>
+            <p class="help-item-info" data-i18n="intl.pt.desc">Linhas de apoio emocional e apoio psicológico em Portugal (SOS Voz Amiga e Linha SNS 24 Saúde 24h).</p>
+            <a href="https://www.sosvozamiga.org" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>SOS Voz Amiga (PT)</span> ↗
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">EUA & Canadá • 988 Lifeline</span>
+              <span class="help-item-phone">📞 Ligue ou SMS 988</span>
+            </div>
+            <p class="help-item-info" data-i18n="intl.us.desc">988 Suicide & Crisis Lifeline: apoio gratuito e confidencial 24h para quem vive nos Estados Unidos ou Canadá.</p>
+            <a href="https://988lifeline.org" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>988 Lifeline Portal</span> ↗
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">Reino Unido • Samaritans & Shout</span>
+              <span class="help-item-phone">📞 116 123 / SMS 85258</span>
+            </div>
+            <p class="help-item-info" data-i18n="intl.uk.desc">Samaritans (ligue 116 123) e Shout (envie SMS com a palavra SHOUT para 85258) no Reino Unido.</p>
+            <a href="https://www.samaritans.org" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Samaritans UK</span> ↗
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">Diretório Global (+130 Países)</span>
+              <span class="help-item-phone">🌐 Find A Helpline</span>
+            </div>
+            <p class="help-item-info" data-i18n="intl.global.desc">Encontre canais de ajuda gratuitos, confidencias e imediatos em mais de 130 países ao redor do mundo.</p>
+            <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Find A Helpline Global</span> ↗
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.2 Bullying e Violência Familiar -->
+      <div class="help-category-block">
+        <h3 class="help-category-title">
+          <span>🛡️</span>
+          <span data-i18n="bully.title">Combate ao Bullying Escolar, Violência Doméstica & Familiar</span>
+        </h3>
+        <div class="help-items-grid">
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">Disque 100 • Direitos Humanos</span>
+              <span class="help-item-phone">📞 Ligue 100</span>
+            </div>
+            <p class="help-item-info" data-i18n="bully.100.desc">Ouvidoria Nacional de Direitos Humanos: denúncias de violência física/psicológica contra crianças, adolescentes e vulneráveis.</p>
+            <a href="tel:100" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Discar 100</span> 📞
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">Ligue 180 • Central da Mulher</span>
+              <span class="help-item-phone">📞 Ligue 180</span>
+            </div>
+            <p class="help-item-info" data-i18n="bully.180.desc">Central de Atendimento à Mulher: acolhimento, orientação jurídica e denúncias de violência doméstica ou assédio.</p>
+            <a href="tel:180" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Discar 180</span> 📞
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">SaferNet Brasil • Crimes Virtuais</span>
+              <span class="help-item-phone">💻 Denúncia Online</span>
+            </div>
+            <p class="help-item-info" data-i18n="bully.safernet.desc">Canal de denúncias de crimes na internet, cyberbullying, doxxing, vazamento de imagens e ódio virtual.</p>
+            <a href="https://new.safernet.org.br/denuncie" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Denunciar na SaferNet</span> ↗
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.3 LGBTfobia -->
+      <div class="help-category-block">
+        <h3 class="help-category-title">
+          <span>🏳️‍🌈</span>
+          <span data-i18n="lgbt.title">Combate à Intolerância e Discriminação Sexual & de Gênero</span>
+        </h3>
+        <p style="font-size: 13.5px; color: var(--text-dim); margin-bottom: 16px;" data-i18n="lgbt.legal">
+          ⚖️ <strong>Marco Legal:</strong> Por decisão do Supremo Tribunal Federal (ADO 26 / MI 4733), a homotransfobia é equiparada ao <strong>crime inafiançável e imprescritível de racismo</strong> no Brasil (Lei nº 7.716/89).
+        </p>
+        <div class="help-items-grid">
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">Acolhe LGBT+</span>
+              <span class="help-item-phone">🤝 Terapia & Acolhimento</span>
+            </div>
+            <p class="help-item-info" data-i18n="lgbt.acolhe.desc">Rede voluntária de terapeutas que oferece apoio psicológico humanizado e gratuito para a comunidade LGBTQIA+.</p>
+            <a href="https://acolhelgbt.org" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Conhecer Acolhe LGBT+</span> ↗
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">Casa 1 • Centro de Cultura & Acolhida</span>
+              <span class="help-item-phone">🏠 Acolhimento</span>
+            </div>
+            <p class="help-item-info" data-i18n="lgbt.casa1.desc">Espaço de acolhimento para jovens expulsos de casa pela família por orientação sexual ou identidade de gênero.</p>
+            <a href="https://www.casaum.org" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Portal Casa 1</span> ↗
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">ANTRA • Associação Nacional de Travestis e Transexuais</span>
+              <span class="help-item-phone">✊ Direitos Trans</span>
+            </div>
+            <p class="help-item-info" data-i18n="lgbt.antra.desc">Articulação e defesa jurídica dos direitos fundamentais da população trans e travesti no Brasil.</p>
+            <a href="https://antrabrasil.org" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Portal da ANTRA</span> ↗
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.4 Capacitismo e Discriminação PCD -->
+      <div class="help-category-block">
+        <h3 class="help-category-title">
+          <span>♿</span>
+          <span data-i18n="pcd.title">Combate ao Capacitismo & Proteção Legal de PCDs e PCDIs</span>
+        </h3>
+        <p style="font-size: 13.5px; color: var(--text-dim); margin-bottom: 16px;" data-i18n="pcd.legal">
+          ⚖️ <strong>Marco Legal:</strong> A Lei Brasileira de Inclusão (LBI nº 13.146/2015, Art. 88) e a Lei Berenice Piana (Lei nº 12.764/2012) tipificam expressamente como <strong>crime passível de reclusão de 1 a 3 anos e multa</strong> discriminar pessoa por motivo de deficiência ou autismo.
+        </p>
+        <div class="help-items-grid">
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">Fala.BR • Plataforma Federal de Ouvidoria</span>
+              <span class="help-item-phone">⚖️ CGU / Ouvidoria Geral</span>
+            </div>
+            <p class="help-item-info" data-i18n="pcd.falabr.desc">Canal oficial integrado para denunciar capacitismo institucional em escolas, órgãos públicos e empresas concessionárias.</p>
+            <a href="https://falabr.cgu.gov.br" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Denunciar no Fala.BR</span> ↗
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">MPF • Ministério Público Federal</span>
+              <span class="help-item-phone">🏛️ Atendimento ao Cidadão</span>
+            </div>
+            <p class="help-item-info" data-i18n="pcd.mpf.desc">Acionamento da Procuradoria dos Direitos do Cidadão para violações de acessibilidade e direitos difusos de pessoas autistas/PCD.</p>
+            <a href="https://www.mpf.mp.br/servicos/sac" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Sala de Atendimento MPF</span> ↗
+            </a>
+          </div>
+
+          <div class="help-item-card">
+            <div class="help-item-header">
+              <span class="help-item-name">Defensoria Pública da União (DPU)</span>
+              <span class="help-item-phone">🛡️ Assistência Jurídica Gratuita</span>
+            </div>
+            <p class="help-item-info" data-i18n="pcd.dpu.desc">Atendimento jurídico 100% gratuito para fornecimento de remédios, terapias ABA, acompanhante terapêutico e BPC/LOAS.</p>
+            <a href="https://www.dpu.def.br" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
+              <span>Buscar Defensoria Pública</span> ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. CIPTEA Guide (All 27 UFs) -->
+    <section class="ciptea-wrap" id="ciptea">
+      <div class="section-head" style="margin-top: 10px;">
+        <span class="section-pill" data-i18n="ciptea.pill">Direitos & Cidadania Autista</span>
+        <h2 data-i18n="ciptea.title">Guia Nacional da CIPTEA: Todos os 27 Estados do Brasil</h2>
+        <p data-i18n="ciptea.lead">
+          A Carteira de Identificação da Pessoa com Transtorno do Espectro Autista (Lei Romeo Mion nº 13.977/2020) é um documento oficial e gratuito que assegura atenção integral e pronta resposta aos autistas.
+        </p>
+      </div>
+
+      <div class="ciptea-benefits-list">
+        <div class="benefit-item">
+          <div class="benefit-icon">✅</div>
+          <div class="benefit-text">
+            <strong>Validade Nacional:</strong> Comprova formalmente a condição autista em todo o país sem necessidade de portar laudos volumosos.
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">⚡</div>
+          <div class="benefit-text">
+            <strong>Atendimento Prioritário:</strong> Prioridade por lei em agências bancárias, aeroportos, hospitais, farmácias e repartições públicas.
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🅿️</div>
+          <div class="benefit-text">
+            <strong>Vagas Especiais PCD:</strong> Acesso simplificado à credencial oficial de estacionamento em vagas exclusivas.
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🎟️</div>
+          <div class="benefit-text">
+            <strong>Meia-Entrada Cultural:</strong> Direito à meia-entrada em cinemas, teatros e eventos culturais (estendido ao acompanhante).
+          </div>
+        </div>
+      </div>
+
+      <div class="ciptea-selector-box">
+        <div class="search-filter-row">
+          <input type="text" id="stateSearchInput" class="search-input" placeholder="🔍 Digite a sigla ou nome do seu Estado (ex: SP, Rio de Janeiro, Bahia, MG...)" oninput="filterStates()" aria-label="Filtrar Estados para emissão de CIPTEA" />
+        </div>
+        <div class="states-grid" id="statesGrid">
+          <!-- Carregado via JS dinamicamente com as 27 UFs -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Valid Medical Report Guide + Visual Example -->
+    <section class="laudo-section" id="laudo">
+      <div class="section-head" style="margin-top: 10px;">
+        <span class="section-pill" data-i18n="laudo.pill">Orientação Técnica & Segurança Jurídica</span>
+        <h2 data-i18n="laudo.title">O Que Torna um Laudo de Autismo Válido perante a Lei?</h2>
+        <p data-i18n="laudo.lead">
+          Evite recusas em escolas, concursos ou planos de saúde. Veja o checklist obrigatório e confira o exemplo visual ilustrativo abaixo.
+        </p>
+      </div>
+
+      <div class="laudo-layout">
+        <!-- Checklist -->
+        <div class="checklist-wrap">
+          <div class="check-item">
+            <span class="check-badge">1</span>
+            <div class="check-body">
+              <h4 data-i18n="laudo.c1.t">Médico Especialista Habilitado</h4>
+              <p data-i18n="laudo.c1.d">Deve ser emitido por Psiquiatra, Neurologista ou Neuropediatra com CRM ativo e preferencialmente RQE (Registro de Qualificação de Especialista).</p>
+            </div>
+          </div>
+
+          <div class="check-item">
+            <span class="check-badge">2</span>
+            <div class="check-body">
+              <h4 data-i18n="laudo.c2.t">Identificação Civil Completa do Paciente</h4>
+              <p data-i18n="laudo.c2.d">Nome completo sem abreviações, número do CPF, RG e data de nascimento do paciente.</p>
+            </div>
+          </div>
+
+          <div class="check-item">
+            <span class="check-badge">3</span>
+            <div class="check-body">
+              <h4 data-i18n="laudo.c3.t">Código CID-10 e/ou CID-11 e Nível de Suporte</h4>
+              <p data-i18n="laudo.c3.d">Indicação expressa do CID-10 (ex: <code>F84.0</code>) e/ou CID-11 (ex: <code>6A02</code>), acompanhado do nível de suporte necessário (Nível 1, 2 ou 3).</p>
+            </div>
+          </div>
+
+          <div class="check-item">
+            <span class="check-badge">4</span>
+            <div class="check-body">
+              <h4 data-i18n="laudo.c4.t">Relato Clínico Funcional Detalhado</h4>
+              <p data-i18n="laudo.c4.d">Descrição técnica dos impactos funcionais, comunicação social, hipersensibilidade sensorial e histórico de desenvolvimento.</p>
+            </div>
+          </div>
+
+          <div class="check-item">
+            <span class="check-badge">5</span>
+            <div class="check-body">
+              <h4 data-i18n="laudo.c5.t">Assinatura, Carimbo ou Certificação Digital</h4>
+              <p data-i18n="laudo.c5.d">Carimbo com CRM ativo e assinatura física, ou assinatura digital ICP-Brasil com código de verificação no portal CFM / Gov.br.</p>
+            </div>
+          </div>
+
+          <div class="check-item">
+            <span class="check-badge">6</span>
+            <div class="check-body">
+              <h4 data-i18n="laudo.c6.t">Caráter Permanente: Laudo Não Vence!</h4>
+              <p data-i18n="laudo.c6.d">Por força da Lei nº 14.811 e jurisprudência consolidada, o autismo é uma condição neurobiológica permanente. É ilegal exigir renovação periódica de laudo de TEA.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Sample Component -->
+        <div class="report-sample-box" aria-label="Modelo Visual Ilustrativo de Laudo Médico Válido">
+          <span class="report-sample-badge">Modelo Ilustrativo CFM</span>
+
+          <div class="report-header">
+            <div class="report-clinic">Clínica Médica de Neurologia & Neurodesenvolvimento</div>
+            <div class="report-doctor"><span class="report-tag-callout">[1] CRM & Especialidade</span> Dr(a). Especialista • CRM/SP 000.000 • RQE 00000</div>
+          </div>
+
+          <div class="report-title-inner">Laudo Médico Pericial</div>
+
+          <p class="report-paragraph">
+            <span class="report-tag-callout">[2] Identificação Civil</span>
+            Atesto para os devidos fins de direito que o(a) paciente <strong>[Nome Fictício do Paciente]</strong>, inscrito(a) no CPF nº 000.000.000-00, nascido(a) em 15/04/2002, foi submetido(a) a extensa avaliação clínica e neuropsicológica multidisciplinar.
+          </p>
+
+          <p class="report-paragraph">
+            <span class="report-tag-callout">[3] Diagnóstico & CID</span>
+            O quadro clínico é plenamente compatível com o diagnóstico de <strong>Transtorno do Espectro Autista</strong> (<span class="report-cid-highlight">CID-10: F84.0</span> / <span class="report-cid-highlight">CID-11: 6A02</span>), apresentando <span class="report-cid-highlight">Nível de Suporte 1 (Leve)</span> para comunicação social e regulação adaptativa.
+          </p>
+
+          <p class="report-paragraph">
+            <span class="report-tag-callout">[4] Descrição Clínica</span>
+            Apresenta hipersensibilidade auditiva a ruídos intensos, padrões rígidos de rotina, necessidade de previsibilidade e dificuldades pragmáticas na interação em grandes grupos.
+          </p>
+
+          <p class="report-paragraph" style="font-size: 12px; color: #555; font-style: italic;">
+            *Declaro expressamente que a condição acima descrita tem caráter neurobiológico vitalício e permanente, possuindo validade indeterminada conforme a legislação nacional vigente.
+          </p>
+
+          <div class="report-footer">
+            <div style="font-size: 11px; color: #666;">
+              Data: 21 de Outubro de 2026<br>
+              São Paulo, SP
+            </div>
+            <div class="report-sign">
+              <span class="report-tag-callout" style="display:block; margin: 0 auto 6px; width: fit-content;">[5] Assinatura & CRM</span>
+              <div class="report-sign-line"></div>
+              Dr(a). Especialista em Neurologia<br>
+              Assinatura Digital Certificada ICP-Brasil
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tenorio-btn-wrap">
+        <a href="https://tenorioadvogados.com/laudo-de-autista/#como-e-feito-o-laudo-do-autismo" target="_blank" rel="noopener noreferrer" class="tenorio-link-btn" onclick="trackClick(this.href)">
+          <span>📖 Ler Tutorial Jurídico Completo de Laudo (Tenório Advogados)</span> ↗
+        </a>
+      </div>
+    </section>
+
+    <!-- 8. Recreation, Live Discord & Official Projects -->
+    <section class="community-section" id="comunidade">
+      <div class="section-head">
+        <span class="section-pill" data-i18n="fun.pill">Descontração, Amizades & Criatividade</span>
+        <h2 data-i18n="fun.title">Diversão Saudável, Discord ao Vivo & Projetos Oficiais</h2>
+        <p data-i18n="fun.lead">
+          Além de suporte emocional, oferecemos um ambiente leve e acolhedor para fazer amizades, jogar e se divertir com a Pyxie.
+        </p>
+      </div>
+
+      <div class="community-fun-grid">
+        <!-- py!quiz Card -->
+        <article class="fun-card">
+          <div>
+            <div class="fun-card-head">
+              <span class="fun-icon">🎯</span>
+              <h3 class="fun-title">py!quiz • Quiz Cultural</h3>
+            </div>
+            <p class="fun-desc" data-i18n="quiz.desc">
+              Participe de disputas cronometradas no chat com mais de 600 perguntas bilíngues sobre cultura pop, animes, ciência, história e jogos. Ganhe Moedinhas e suba no ranking da comunidade!
+            </p>
+          </div>
+          <div style="font-size: 12px; color: var(--purple-light); font-weight: 700;">
+            Use no chat: <code>py!quiz</code> ou <code>/py-quiz</code>
+          </div>
+        </article>
+
+        <!-- py!work Card -->
+        <article class="fun-card">
+          <div>
+            <div class="fun-card-head">
+              <span class="fun-icon">💼</span>
+              <h3 class="fun-title">py!work • 22 Profissões</h3>
+            </div>
+            <p class="fun-desc" data-i18n="work.desc">
+              Escolha sua carreira mágica (Programador, Alquimista, Médico, Artista, Astrônomo, Confeiteiro...) e resolva desafios práticos e dilemas profissionais a cada 3 horas para receber seu salário.
+            </p>
+          </div>
+          <div style="font-size: 12px; color: var(--purple-light); font-weight: 700;">
+            Use no chat: <code>py!work</code> ou <code>/py-work</code>
+          </div>
+        </article>
+
+        <!-- Discord Live Server Embed -->
+        <article class="fun-card discord-live-card">
+          <div>
+            <div class="discord-badge-live">
+              <span class="discord-pulse-dot"></span>
+              <span data-i18n="discord.live">Servidor Discord Ao Vivo</span>
+            </div>
+            <div class="discord-guild-meta">
+              <div class="discord-guild-icon" id="guildIcon">C</div>
+              <div class="discord-guild-info">
+                <h4 id="guildName">Cringelândia</h4>
+                <div class="discord-guild-stats">
+                  <span class="stat-online"><strong id="guildOnline">--</strong> online</span>
+                  <span>•</span>
+                  <span><strong id="guildMembers">Comunidade Ativa</strong></span>
+                </div>
+              </div>
+            </div>
+            <p class="fun-desc" style="margin-bottom: 16px;" data-i18n="discord.desc">
+              Junte-se a nós agora mesmo! Salas de desabafo protegido, jogos, canais de arte, bots musicais e acolhimento esperando por você.
+            </p>
+          </div>
+          <a href="https://discord.gg/cringelandia" id="discordInviteLink" target="_blank" rel="noopener noreferrer" class="discord-join-btn" onclick="trackClick(this.href)">
+            <span>Entrar no Discord da Cringelândia</span> 💬
+          </a>
+        </article>
+
+        <!-- Roblox Official Group Card -->
+        <article class="fun-card roblox-card">
+          <div>
+            <div class="fun-card-head">
+              <span class="fun-icon">🟥</span>
+              <h3 class="fun-title" data-i18n="roblox.title">Grupo Roblox Oficial</h3>
+            </div>
+            <p class="fun-desc" data-i18n="roblox.desc">
+              Conheça nossas criações de jogos, mapas acolhedores e experiências sensoriais relaxantes desenvolvidas no Roblox pelo time da Cringelândia!
+            </p>
+          </div>
+          <a href="https://www.roblox.com/share/g/35473881" target="_blank" rel="noopener noreferrer" class="roblox-join-btn" onclick="trackClick(this.href)">
+            <span>Acessar Grupo no Roblox</span> ↗
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/wiki">Grimório & Wiki</a>
+        <a href="/museu">Museu Comunitário</a>
+        <a href="/parcerias">Parcerias</a>
+        <a href="/bonus">Bônus Diário</a>
+        <a href="/termos">Termos de Uso</a>
+        <a href="/privacidade">Privacidade & LGPD</a>
+      </div>
+      <p>© 2026 Cringelândia & Pyxie Bot • Desenvolvido com carinho e acolhimento para mentes neurodivergentes.</p>
+      <p class="footer-disclaimer">
+        Aviso de Utilidade Pública: A Cringelândia é uma iniciativa comunitária de suporte mútuo e acolhimento voluntário. Nossos canais não substituem acompanhamento médico, psiquiátrico ou psicológico individualizado. Em caso de emergência, acione o SAMU (192) ou o CVV (188).
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Dicionário Front-end de Paridade Bilíngue (PT-BR & EN)
+    const I18N = {
+      pt: {
+        'nav.manifesto': 'Manifesto',
+        'nav.enciclopedia': 'Enciclopédia',
+        'nav.help': 'Canais de Apoio',
+        'nav.ciptea': 'Guia CIPTEA',
+        'nav.laudo': 'Laudo Válido',
+        'nav.community': 'Discord & Roblox',
+        'hero.tag': 'A Maior Comunidade Neurodivergente do Discord BR',
+        'hero.title': 'Cringelândia: O Maior Servidor Neurodivergente do Discord Brasileiro',
+        'hero.lead': 'Acolhimento humanizado, escuta atenta, inclusão autista, suporte psicológico e celebração da neurodiversidade em um refúgio acolhedor e seguro. Aqui ninguém caminha sozinho.',
+        'pillar1.title': 'Cantinho Protegido & Triagem Humanizada',
+        'pillar1.desc': 'Sistema de verificação dedicado para pessoas neurodivergentes (TEA, TDAH, AH/SD) e PCDs/PCDIs, com proteção absoluta de dados sensíveis perante a LGPD e sem exposição forçada.',
+        'pillar2.title': 'Moderação Anti-Capacitismo',
+        'pillar2.desc': 'Equipe voluntária treinada para acolher crises sensoriais, validar vivências, evitar julgamentos e aplicar tolerância zero a qualquer manifestação de capacitismo, preconceito ou bullying.',
+        'pillar3.title': 'Rede de Autoajuda & Convivência',
+        'pillar3.desc': 'Canais de desabafo seguro, regulação emocional mútua, escuta atenta, compartilhamento de hiperfocos e integração social no ritmo de cada mente.',
+        'impact.text': '💜 A Cringelândia já direcionou e ajudou {count} pessoas através de nossos links de autoajuda e ONGs!',
+        'impact.desc': 'Cada clique em telefones de crise, órgãos públicos, cartilhas de direitos ou redes de apoio contabiliza nosso impacto social real. Se precisar de ajuda neste instante, os canais abaixo estão sempre abertos.',
+        'shopee.speech': '<strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee é o que viabiliza o funcionamento 100% gratuito do bot e dos nossos projetos de acolhimento, e ainda ajuda nossos membros e visitantes a encontrarem itens úteis de regulação sensorial, abafadores e presentes legais!',
+        'shopee.title': 'Achadinhos Úteis da Shopee & Regulação Sensorial',
+        'enc.pill': 'Guia Educativo & Compreensão',
+        'enc.title': 'Enciclopédia Neurodivergente: Conhecer para Acolher',
+        'enc.lead': 'Neurodiversidade é a variação natural e infinita do cérebro humano. Conheça as principais condições e a melhor abordagem prática de acolhimento.',
+        'cond.realities': 'Características Reais',
+        'cond.how': 'Como Acolher com Empatia',
+        'tea.name': 'TEA • Autismo',
+        'tea.sub': 'Transtorno do Espectro Autista',
+        'tea.realities': 'Processamento sensorial singular (hipo ou hipersensibilidade a ruídos, luzes e toques), comunicação predominantemente direta e literal, hiperfocos profundos e possíveis crises de sobrecarga (*meltdown* explosivo ou *shutdown* silencioso).',
+        'tea.how': 'Comunique-se com clareza sem ironias dúbias ou joguinhos; respeite o tempo de processamento; ofereça ambiente silencioso em sobrecargas e nunca reprima movimentos de autorregulação (*stimming*).',
+        'tdah.name': 'TDAH',
+        'tdah.sub': 'Déficit de Atenção & Hiperatividade',
+        'tdah.realities': 'Disfunção executiva na iniciação de tarefas, regulação atípica de dopamina, \'cegueira temporal\' para estimar prazos, hiperfoco involuntário em novidades e disforia sensível à rejeição (RSD).',
+        'tdah.how': 'Evite julgamentos morais de \'preguiça\'; fragmente instruções em passos curtos e visuais; celebre pequenos avanços e acolha episódios de esquecimento sem repreensões punitivas.',
+        'ahsd.name': 'AH/SD',
+        'ahsd.sub': 'Altas Habilidades / Superdotação',
+        'ahsd.realities': 'Assincronia marcante (intelecto muito avançado em contraste com a maturidade socioemocional), hiperexcitabilidade intelectual e sensorial, senso moral agudo e constante síndrome do impostor.',
+        'ahsd.how': 'Valide suas curiosidades profundas sem esperar que saibam tudo da vida; não imponha pressão por perfeição constante e ofereça espaços para debates maduros.',
+        'learn.name': 'Aprendizagem Específica',
+        'learn.sub': 'Dislexia, Discalculia, Disgrafia, Dispraxia',
+        'learn.realities': 'Dificuldades no processamento fonológico de letras (dislexia), cognição de números e cálculo (discalculia), motricidade fina na escrita (disgrafia) ou coordenação motora (dispraxia), com intelecto plenamente intacto.',
+        'learn.how': 'Disponibilize materiais em múltiplos formatos (áudio, fontes amigáveis como OpenDyslexic); conceda tempo extra e nunca aponte erros ortográficos em público.',
+        'tourette.name': 'Tourette & Tiques',
+        'tourette.sub': 'Síndrome de Tourette e Tiques Motores/Vocais',
+        'tourette.realities': 'Movimentos corporais ou sons vocais involuntários e repentinos precedidos por uma urgência pré-monitória intensa física, que se acentuam em momentos de ansiedade, sobrecarga ou cansaço.',
+        'tourette.how': 'Ignore a ocorrência dos tiques com naturalidade (trate como espirros); nunca peça para a pessoa \'parar ou segurar\' (causa dor física) e mantenha o diálogo fluido sem olhares constrangedores.',
+        'psy.name': 'Psiquiátricas & Adquiridas',
+        'psy.sub': 'TOC, Bipolaridade, Borderline (TPB) & TAG',
+        'psy.realities': 'Pensamentos intrusivos com rituais (TOC), ciclagens de humor maníaco/depressivo (Bipolar), desregulação emocional intensa e medo de abandono (Borderline), e hipervigilância física (TAG).',
+        'psy.how': 'Esteja presente sem emitir conselhos rasos (\'é só se acalmar\'); valide o sofrimento mental como real e biológico; acolha crises com firmeza afetuosa e incentive acompanhamento médico/terapêutico contínuo.',
+        'help.pill': 'Rede de Proteção & Acolhimento Imediato',
+        'help.title': 'Central de Autoajuda Psicológica & Canais de Denúncia',
+        'help.lead': 'Se você ou alguém próximo está passando por um momento difícil, saiba que existe apoio profissional, gratuito e sigiloso esperando pelo seu contato.',
+        'br.title': 'Brasil: Apoio Psicológico & Prevenção ao Suicídio',
+        'intl.title': 'Rede Internacional: Portugal, EUA, Canadá, Reino Unido e Mundo',
+        'bully.title': 'Combate ao Bullying Escolar, Violência Doméstica & Familiar',
+        'lgbt.title': 'Combate à Intolerância e Discriminação Sexual & de Gênero',
+        'pcd.title': 'Combate ao Capacitismo & Proteção Legal de PCDs e PCDIs',
+        'ciptea.pill': 'Direitos & Cidadania Autista',
+        'ciptea.title': 'Guia Nacional da CIPTEA: Todos os 27 Estados do Brasil',
+        'ciptea.lead': 'A Carteira de Identificação da Pessoa com Transtorno do Espectro Autista (Lei Romeo Mion nº 13.977/2020) é um documento oficial e gratuito que assegura atenção integral e pronta resposta aos autistas.',
+        'laudo.pill': 'Orientação Técnica & Segurança Jurídica',
+        'laudo.title': 'O Que Torna um Laudo de Autismo Válido perante a Lei?',
+        'laudo.lead': 'Evite recusas em escolas, concursos ou planos de saúde. Veja o checklist obrigatório e confira o exemplo visual ilustrativo abaixo.',
+        'fun.pill': 'Descontração, Amizades & Criatividade',
+        'fun.title': 'Diversão Saudável, Discord ao Vivo & Projetos Oficiais',
+        'fun.lead': 'Além de suporte emocional, oferecemos um ambiente leve e acolhedor para fazer amizades, jogar e se divertir com a Pyxie.',
+        'discord.live': 'Servidor Discord Ao Vivo',
+        'roblox.title': 'Grupo Roblox Oficial'
+      },
+      en: {
+        'nav.manifesto': 'Manifesto',
+        'nav.enciclopedia': 'Encyclopedia',
+        'nav.help': 'Crisis Hotlines',
+        'nav.ciptea': 'CIPTEA Guide',
+        'nav.laudo': 'Valid Medical Report',
+        'nav.community': 'Discord & Roblox',
+        'hero.tag': 'The Largest Neurodivergent Community on Brazilian Discord',
+        'hero.title': 'Cringelândia: The Largest Neurodivergent Discord Community in Brazil',
+        'hero.lead': 'Humanized welcoming, active listening, autistic inclusion, psychological crisis support, and neurodiversity pride in a safe haven. Nobody walks alone here.',
+        'pillar1.title': 'Protected Haven & Sensitive Screening',
+        'pillar1.desc': 'Dedicated verification system for neurodivergent (ASD, ADHD, Gifted) individuals and disabled members, with strict GDPR/LGPD data protection and zero forced exposure.',
+        'pillar2.title': 'Anti-Ableism Moderation',
+        'pillar2.desc': 'Trained volunteer team to welcome sensory crises, validate lived realities, eliminate judgment, and enforce zero tolerance for ableism, prejudice, or bullying.',
+        'pillar3.title': 'Peer Support & Safe Haven',
+        'pillar3.desc': 'Safe venting channels, mutual emotional co-regulation, attentive listening, hyperfocus spaces, and social integration at each person\'s unique pace.',
+        'impact.text': '💜 Cringelândia has already guided and helped {count} people through our crisis hotlines and NGOs!',
+        'impact.desc': 'Every click on emergency hotlines, public agencies, rights directories, or support resources counts toward our real social impact. If you need help right now, our channels are always open.',
+        'shopee.speech': '<strong>Psst! 🌸</strong> Here on Cringelândia\'s portal, we <em>do not display intrusive ads or pop-ups</em>. This single curated Shopee showcase is what powers our 100% free bot and mental support projects, while helping our visitors find helpful sensory toys, noise-canceling earplugs, and cool items!',
+        'shopee.title': 'Helpful Shopee Finds & Sensory Regulation',
+        'enc.pill': 'Educational Guide & Understanding',
+        'enc.title': 'Neurodivergent Encyclopedia: Understanding to Welcome',
+        'enc.lead': 'Neurodiversity represents the natural, beautiful variance of the human brain. Discover key traits and empathetic, practical ways to support each mind.',
+        'cond.realities': 'Real Characteristics',
+        'cond.how': 'How to Welcome Empathetically',
+        'tea.name': 'ASD • Autism',
+        'tea.sub': 'Autism Spectrum Disorder',
+        'tea.realities': 'Unique sensory processing (hypo/hypersensitivity to sounds, lights, textures), literal communication, deep passion for special interests, and overstimulation crises (meltdowns or shutdowns).',
+        'tea.how': 'Communicate clearly without ambiguous sarcasm; respect processing latency; provide calm low-stimulus environments and never repress self-regulating stimming.',
+        'tdah.name': 'ADHD',
+        'tdah.sub': 'Attention Deficit Hyperactivity Disorder',
+        'tdah.realities': 'Executive dysfunction in initiating tasks, atypical dopamine regulation, time blindness, spontaneous hyperfocus on novelties, and rejection sensitive dysphoria (RSD).',
+        'tdah.how': 'Avoid moral judgment or labeling as lazy; break tasks into visual steps; celebrate small achievements and respond to forgetfulness with patience.',
+        'ahsd.name': 'Giftedness / 2e',
+        'ahsd.sub': 'High Abilities & Twice Exceptionality',
+        'ahsd.realities': 'Asynchronous development (high intellectual age contrasting with emotional regulation), sensory and moral excitability, existential dread, and imposter syndrome.',
+        'ahsd.how': 'Validate their depth of thought without unrealistic perfectionism; provide room for profound intellectual exploration without adultifying their emotions.',
+        'learn.name': 'Specific Learning',
+        'learn.sub': 'Dyslexia, Dyscalculia, Dysgraphia, Dyspraxia',
+        'learn.realities': 'Challenges in phonological decoding (dyslexia), numerical operations (dyscalculia), fine motor writing (dysgraphia), or gross coordination (dyspraxia), with intact general intelligence.',
+        'learn.how': 'Provide materials in multiple accessible formats (audio, clear sans-serif typography); allow extra time and never single out mistakes in front of peers.',
+        'tourette.name': 'Tourette & Tics',
+        'tourette.sub': 'Tourette Syndrome & Motor/Vocal Tics',
+        'tourette.realities': 'Involuntary sudden motor or vocal tics preceded by an intense physical premonitory urge, aggravated by stress, exhaustion, or intense excitement.',
+        'tourette.how': 'Normalize tics naturally (like sneezes); never demand someone stop or suppress them (which causes physical discomfort); keep the conversation flowing smoothly.',
+        'psy.name': 'Psychiatric & Acquired',
+        'psy.sub': 'OCD, Bipolar Disorder, Borderline (BPD) & GAD',
+        'psy.realities': 'Intrusive thoughts and soothing rituals (OCD), cyclic mood swings (Bipolar), intense affective dysregulation and fear of abandonment (BPD), and chronic anxiety (GAD).',
+        'psy.how': 'Be present without platitudes (\'just calm down\'); validate mental pain as biological and real; provide calm, reliable presence and encourage professional care.',
+        'help.pill': 'Safety Net & Immediate Care',
+        'help.title': 'Crisis Hotlines & Legal Protection Directory',
+        'help.lead': 'If you or someone you care about is experiencing psychological distress, professional and confidential support is available around the clock.',
+        'br.title': 'Brazil: Mental Support & Suicide Prevention',
+        'intl.title': 'International Support: Portugal, USA, Canada, UK & Worldwide',
+        'bully.title': 'Combatting School Bullying & Domestic Violence',
+        'lgbt.title': 'Protecting Against LGBTQIA+ Discrimination',
+        'pcd.title': 'Anti-Ableism Protection for Autistic & Disabled People',
+        'ciptea.pill': 'Autistic Civil Rights',
+        'ciptea.title': 'National CIPTEA Guide: All 27 Brazilian States',
+        'ciptea.lead': 'The National Autistic ID Card (Law 13,977/2020) provides free and official identification, ensuring prompt priority and dignified accommodation across Brazil.',
+        'laudo.pill': 'Legal Compliance & Medical Accuracy',
+        'laudo.title': 'What Makes an Autistic Medical Report Legally Valid?',
+        'laudo.lead': 'Prevent rejections in schools, exams, or healthcare plans. Review our mandatory checklist and interactive illustrative report below.',
+        'fun.pill': 'Leisure, Friendships & Creativity',
+        'fun.title': 'Wholesome Fun, Live Discord & Official Projects',
+        'fun.lead': 'Beyond emotional support, we provide an engaging, safe space to build lasting friendships, play minigames, and enjoy life together.',
+        'discord.live': 'Live Discord Server',
+        'roblox.title': 'Official Roblox Group'
+      }
+    };
+
+    let currentLang = 'pt';
+    let currentHelpedCount = 1420;
+    let allStates = [];
+
+    function detectInitialLang() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryLang = urlParams.get('lang');
+      if (queryLang === 'en' || queryLang === 'pt') return queryLang;
+      const navLang = navigator.language || navigator.userLanguage || '';
+      return navLang.toLowerCase().startsWith('en') ? 'en' : 'pt';
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+      const label = document.getElementById('langLabel');
+      if (label) label.textContent = lang === 'en' ? 'PT' : 'EN';
+
+      const dict = I18N[lang] || I18N.pt;
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.innerHTML = dict[key];
+        }
+      });
+
+      updateImpactBanner();
+    }
+
+    function toggleLanguage() {
+      const next = currentLang === 'pt' ? 'en' : 'pt';
+      const url = new URL(window.location);
+      if (next === 'en') {
+        url.searchParams.set('lang', 'en');
+      } else {
+        url.searchParams.delete('lang');
+      }
+      window.history.replaceState({}, '', url.toString());
+      applyLanguage(next);
+    }
+
+    function updateImpactBanner() {
+      const el = document.getElementById('impactBannerText');
+      if (!el) return;
+      const dict = I18N[currentLang] || I18N.pt;
+      const textTemplate = dict['impact.text'] || '💜 A Cringelândia já direcionou e ajudou {count} pessoas através de nossos links de autoajuda e ONGs!';
+      const formatted = Number(currentHelpedCount).toLocaleString(currentLang === 'en' ? 'en-US' : 'pt-BR');
+      el.innerHTML = textTemplate.replace('{count}', `<span class="impact-number" id="helpedCount">${formatted}</span>`);
+    }
+
+    // Impact Counter Fetch & Click Tracking
+    async function fetchImpact() {
+      try {
+        const res = await fetch('/api/cringelandia/impact');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data.count === 'number') {
+            currentHelpedCount = data.count;
+            updateImpactBanner();
+          }
+        }
+      } catch (err) {
+        console.warn('Falha ao obter contador de impacto:', err);
+      }
+    }
+
+    async function trackClick(url) {
+      try {
+        // Incrementa visualmente imediatamente para resposta tátil
+        currentHelpedCount += 1;
+        updateImpactBanner();
+
+        // Envia telemetria com rate-limit ao backend
+        fetch('/api/cringelandia/track-help-click', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        }).catch(() => null);
+      } catch (_) {}
+    }
+
+    // Shopee Slider
+    function scrollShopee(direction) {
+      const track = document.getElementById('shopeeTrack');
+      if (track) {
+        track.scrollBy({ left: direction * 240, behavior: 'smooth' });
+      }
+    }
+
+    async function loadShopeeShowcase() {
+      try {
+        const res = await fetch('/api/showcase');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.success && Array.isArray(data.items) && data.items.length > 0) {
+          const track = document.getElementById('shopeeTrack');
+          if (!track) return;
+          track.innerHTML = data.items.map((item) => {
+            const title = currentLang === 'en' ? (item.titulo_en || item.titulo || item.title) : (item.titulo || item.title);
+            const price = currentLang === 'en' ? (item.preco_en || item.preco || item.price) : (item.preco || item.price);
+            const tag = currentLang === 'en' ? (item.tag_en || item.tag || 'Sensorial & Geek') : (item.tag || 'Sensorial & Geek');
+            const img = item.imagem || item.image || '/assets/pyxie/pyxie_mascot.png';
+            const link = item.link || item.productLink || 'https://s.shopee.com.br/BU6Bod6Sw';
+            return `
+              <a href="${link}" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
+                <div class="product-img-box">
+                  <img src="${img}" alt="${title.replace(/"/g, '&quot;')}" loading="lazy" />
+                  <span class="product-tag">${tag}</span>
+                </div>
+                <div class="product-body">
+                  <span class="product-title">${title}</span>
+                  <div class="product-price-row">
+                    <span class="product-price">${price}</span>
+                    <span class="product-btn">${currentLang === 'en' ? 'View on Shopee' : 'Ver na Shopee'}</span>
+                  </div>
+                </div>
+              </a>
+            `;
+          }).join('');
+        }
+      } catch (err) {
+        console.warn('Shopee showcase fallback mantido:', err);
+      }
+    }
+
+    // CIPTEA 27 States
+    async function loadCipteaStates() {
+      try {
+        const res = await fetch('/api/cringelandia/ciptea-states');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.states)) {
+            allStates = data.states;
+            renderStates(allStates);
+            return;
+          }
+        }
+      } catch (_) {}
+
+      // Fallback estático das 27 UFs
+      allStates = [
+        { uf: 'AC', state: 'Acre', organ: 'SEJDH / OCA', url: 'https://servicos.ac.gov.br', docs: 'Laudo com CID, RG/CPF, Comprovante Residência' },
+        { uf: 'AL', state: 'Alagoas', organ: 'SEADES / Cidadão Alagoano', url: 'https://seades.al.gov.br', docs: 'Laudo médico, RG/CPF do titular e responsável' },
+        { uf: 'AP', state: 'Amapá', organ: 'SEJUF / Fácil Amapá', url: 'https://servicos.ap.gov.br', docs: 'Laudo com CID F84, RG/CPF, Comprovante Residencial' },
+        { uf: 'AM', state: 'Amazonas', organ: 'Sejusc Amazonas', url: 'https://www.sejusc.am.gov.br', docs: 'Laudo médico, RG/CPF, Tipo Sanguíneo' },
+        { uf: 'BA', state: 'Bahia', organ: 'SJDH / SAC Digital', url: 'https://www.ba.gov.br', docs: 'Laudo com CRM/RQE, RG, CPF, Residência' },
+        { uf: 'CE', state: 'Ceará', organ: 'SPS Ceará / Vapt Vupt', url: 'https://www.sps.ce.gov.br', docs: 'Laudo com CID, RG, CPF, Comprovante Ceará' },
+        { uf: 'DF', state: 'Distrito Federal', organ: 'SEDES / DF Social', url: 'https://sedes.df.gov.br', docs: 'Laudo com CID, RG, CPF, Residência no DF' },
+        { uf: 'ES', state: 'Espírito Santo', organ: 'SEADH Espírito Santo', url: 'https://seadh.es.gov.br', docs: 'Laudo com CID F84/6A02, RG/CPF, Comprovante ES' },
+        { uf: 'GO', state: 'Goiás', organ: 'Secretaria de Desenvolvimento Social', url: 'https://goias.gov.br', docs: 'Laudo com CID, RG/CPF, Comprovante Goiás' },
+        { uf: 'MA', state: 'Maranhão', organ: 'SEDES / Viva Procon', url: 'https://viva.procon.ma.gov.br', docs: 'Laudo com CID F84, RG, CPF, Residência' },
+        { uf: 'MT', state: 'Mato Grosso', organ: 'SETASC Mato Grosso', url: 'https://www.setasc.mt.gov.br', docs: 'Laudo com CRM ativo, RG, CPF, Residência MT' },
+        { uf: 'MS', state: 'Mato Grosso do Sul', organ: 'SEAD Mato Grosso do Sul', url: 'https://www.sead.ms.gov.br', docs: 'Laudo médico, RG, CPF, Residência MS' },
+        { uf: 'MG', state: 'Minas Gerais', organ: 'SEDESE / Portal Cidadão MG', url: 'https://social.mg.gov.br', docs: 'Laudo com CID-10/11, RG, CPF, Residência MG' },
+        { uf: 'PA', state: 'Pará', organ: 'SEASTER Pará', url: 'https://www.seaster.pa.gov.br', docs: 'Laudo com CID, RG, CPF, Residência PA' },
+        { uf: 'PB', state: 'Paraíba', organ: 'SEDH Paraíba', url: 'https://paraiba.pb.gov.br', docs: 'Laudo médico, RG, CPF, Residência PB' },
+        { uf: 'PR', state: 'Paraná', organ: 'SEJUF Paraná / CIPTEA Digital', url: 'https://www.justica.pr.gov.br', docs: 'Laudo com CID F84, RG/CPF, Residência Paraná' },
+        { uf: 'PE', state: 'Pernambuco', organ: 'SDSCJ Pernambuco', url: 'https://www.pe.gov.br', docs: 'Laudo médico com CRM, RG, CPF, Residência PE' },
+        { uf: 'PI', state: 'Piauí', organ: 'SEID Piauí', url: 'https://www.sejid.pi.gov.br', docs: 'Laudo com CID, RG, CPF, Residência PI' },
+        { uf: 'RJ', state: 'Rio de Janeiro', organ: 'Detran-RJ / SEASDH', url: 'https://www.detran.rj.gov.br', docs: 'Laudo com CID, RG, CPF, Residência RJ' },
+        { uf: 'RN', state: 'Rio Grande do Norte', organ: 'SETHAS Rio Grande do Norte', url: 'https://www.sethas.rn.gov.br', docs: 'Laudo médico, RG, CPF, Residência RN' },
+        { uf: 'RS', state: 'Rio Grande do Sul', organ: 'FADERS / Governo RS', url: 'https://www.faders.rs.gov.br', docs: 'Laudo médico, RG, CPF, Residência RS' },
+        { uf: 'RO', state: 'Rondônia', organ: 'SEAS Rondônia', url: 'https://rondonia.ro.gov.br', docs: 'Laudo com CID F84, RG, CPF, Residência RO' },
+        { uf: 'RR', state: 'Roraima', organ: 'SETRABES Roraima', url: 'https://www.setrabes.rr.gov.br', docs: 'Laudo com CID, RG, CPF, Residência RR' },
+        { uf: 'SC', state: 'Santa Catarina', organ: 'FCEE Santa Catarina', url: 'https://www.fcee.sc.gov.br', docs: 'Laudo médico, RG, CPF, Residência SC' },
+        { uf: 'SP', state: 'São Paulo', organ: 'SEDPcD / Portal Ciptea SP', url: 'https://ciptea.sp.gov.br', docs: 'Laudo com CID F84/6A02, RG, CPF, Residência SP' },
+        { uf: 'SE', state: 'Sergipe', organ: 'SEASC Sergipe', url: 'https://www.se.gov.br', docs: 'Laudo com CID, RG, CPF, Residência SE' },
+        { uf: 'TO', state: 'Tocantins', organ: 'SEDS Tocantins', url: 'https://www.to.gov.br', docs: 'Laudo médico com CID, RG, CPF, Residência TO' }
+      ];
+      renderStates(allStates);
+    }
+
+    function renderStates(list) {
+      const grid = document.getElementById('statesGrid');
+      if (!grid) return;
+      if (list.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 30px;">Nenhum Estado encontrado com esse termo.</div>`;
+        return;
+      }
+      grid.innerHTML = list.map((st) => `
+        <div class="state-card">
+          <div>
+            <div class="state-header">
+              <span class="state-name">${st.state}</span>
+              <span class="state-badge">${st.uf}</span>
+            </div>
+            <div class="state-organ">${st.organ}</div>
+            <div class="state-docs">📄 <strong>Documentos:</strong> ${st.docs}</div>
+          </div>
+          <a href="${st.url}" target="_blank" rel="noopener noreferrer" class="state-btn" onclick="trackClick(this.href)">
+            <span>${currentLang === 'en' ? 'Official Portal' : 'Portal Oficial de Emissão'}</span> ↗
+          </a>
+        </div>
+      `).join('');
+    }
+
+    function filterStates() {
+      const term = (document.getElementById('stateSearchInput')?.value || '').toLowerCase().trim();
+      if (!term) {
+        renderStates(allStates);
+        return;
+      }
+      const filtered = allStates.filter((s) =>
+        s.uf.toLowerCase().includes(term) || s.state.toLowerCase().includes(term) || s.organ.toLowerCase().includes(term)
+      );
+      renderStates(filtered);
+    }
+
+    // Live Discord Widget Sync
+    async function loadDiscordLiveGuild() {
+      try {
+        const res = await fetch('/api/cringelandia/live-guild');
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json && json.success && json.guild) {
+          const g = json.guild;
+          const nameEl = document.getElementById('guildName');
+          const onlineEl = document.getElementById('guildOnline');
+          const membersEl = document.getElementById('guildMembers');
+          const inviteLink = document.getElementById('discordInviteLink');
+
+          if (nameEl && g.name) nameEl.textContent = g.name;
+          if (onlineEl && typeof g.presence_count === 'number') {
+            onlineEl.textContent = g.presence_count;
+          }
+          if (membersEl) {
+            membersEl.textContent = g.members && g.members.length ? `${g.members.length}+ membros online` : 'Comunidade Ativa';
+          }
+          if (inviteLink && g.instant_invite) {
+            inviteLink.href = g.instant_invite;
+          }
+        }
+      } catch (err) {
+        console.warn('Live Discord widget fetch fallback:', err);
+      }
+    }
+
+    // Community Art from Museum (Desktop floating + Mobile ambient)
+    async function loadCommunityArts() {
+      try {
+        const res = await fetch('/api/cringelandia/art-samples');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.success && Array.isArray(data.arts) && data.arts.length > 0) {
+          const arts = data.arts;
+
+          // 1. Desktop Floating Frames
+          const leftFrame = document.getElementById('floatingLeftFrame');
+          const rightFrame = document.getElementById('floatingRightFrame');
+
+          if (arts.length > 0 && leftFrame) {
+            const artLeft = arts[0];
+            const leftThumb = document.getElementById('floatingLeftThumb');
+            const leftAuthor = document.getElementById('floatingLeftAuthor');
+            const leftDesc = document.getElementById('floatingLeftDesc');
+            if (leftThumb) leftThumb.src = artLeft.url;
+            if (leftAuthor) leftAuthor.textContent = `@${artLeft.author.replace(/^@+/, '')}`;
+            if (leftDesc && artLeft.description) leftDesc.textContent = artLeft.description.slice(0, 45);
+            leftFrame.style.display = 'flex';
+          }
+
+          if (arts.length > 1 && rightFrame) {
+            const artRight = arts[1];
+            const rightThumb = document.getElementById('floatingRightThumb');
+            const rightAuthor = document.getElementById('floatingRightAuthor');
+            const rightDesc = document.getElementById('floatingRightDesc');
+            if (rightThumb) rightThumb.src = artRight.url;
+            if (rightAuthor) rightAuthor.textContent = `@${artRight.author.replace(/^@+/, '')}`;
+            if (rightDesc && artRight.description) rightDesc.textContent = artRight.description.slice(0, 45);
+            rightFrame.style.display = 'flex';
+          }
+
+          // 2. Mobile Ambient Marquee
+          const row1 = document.getElementById('ambientRow1');
+          const row2 = document.getElementById('ambientRow2');
+          const row3 = document.getElementById('ambientRow3');
+          const row4 = document.getElementById('ambientRow4');
+
+          const makeRowHtml = (subset) => subset.map(a => `<img src="${a.url}" alt="Arte Comunitária Cringelândia" loading="lazy" />`).join('');
+
+          if (row1) row1.innerHTML = makeRowHtml(arts.slice(0, 4)) + makeRowHtml(arts.slice(0, 4));
+          if (row2) row2.innerHTML = makeRowHtml(arts.slice(2, 6)) + makeRowHtml(arts.slice(2, 6));
+          if (row3) row3.innerHTML = makeRowHtml(arts.slice(4, 8)) + makeRowHtml(arts.slice(4, 8));
+          if (row4) row4.innerHTML = makeRowHtml(arts.slice(0, 4)) + makeRowHtml(arts.slice(0, 4));
+        }
+      } catch (err) {
+        console.warn('Artes comunitárias fallback mantido:', err);
+      }
+    }
+
+    // Inicialização da Página
+    document.addEventListener('DOMContentLoaded', () => {
+      const initialLang = detectInitialLang();
+      applyLanguage(initialLang);
+      fetchImpact();
+      loadShopeeShowcase();
+      loadCipteaStates();
+      loadDiscordLiveGuild();
+      loadCommunityArts();
+    });
+  </script>
+</body>
+</html>
