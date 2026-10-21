@@ -11,7 +11,7 @@ console.log('🛡️ Iniciando suíte de testes de Engenharia: Integridade do Ba
 // 1. Auditoria de Integridade de Banco de Dados Real (data/)
 // =========================================================================
 const dataDir = path.join(__dirname, '..', 'data');
-const auditResult = auditDatabase(dataDir);
+const auditResult = auditDatabase(dataDir, { autoCleanStale: true });
 
 assert.strictEqual(typeof auditResult.totalCheckedFiles, 'number', 'totalCheckedFiles deve ser numérico');
 assert.ok(auditResult.totalCheckedFiles >= 25, 'Deve auditar ao menos 25 arquivos JSON canônicos');

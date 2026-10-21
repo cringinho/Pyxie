@@ -16,14 +16,18 @@ let isDirty = false;
 let flushTimer = null;
 
 function safeAtomicWrite(filePath, data) {
+  let tmp = null;
   try {
     const dir = path.dirname(filePath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    const tmp = `${filePath}.tmp.${Date.now()}.${Math.random().toString(36).slice(2, 6)}`;
+    tmp = `${filePath}.tmp.${Date.now()}.${Math.random().toString(36).slice(2, 6)}`;
     fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
     fs.renameSync(tmp, filePath);
   } catch (err) {
     console.error('[commandTelemetry] Erro ao gravar telemetria atomicamente:', err.message);
+    if (tmp && fs.existsSync(tmp)) {
+      try { fs.unlinkSync(tmp); } catch (_) {}
+    }
   }
 }
 

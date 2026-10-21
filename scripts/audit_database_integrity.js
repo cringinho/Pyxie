@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-function auditDatabase(dataDir) {
+function auditDatabase(dataDir, { autoCleanStale = false } = {}) {
   const issues = [];
   const fixes = [];
   console.log(`🔍 [Audit] Escaneando diretório de dados: ${dataDir}`);
@@ -115,14 +115,26 @@ function auditDatabase(dataDir) {
            (f.endsWith('.backup') && f !== 'settings.json.bak');
   });
 
+  const remainingStaleFiles = [];
   for (const sf of staleFiles) {
-    issues.push({ file: sf, issue: 'STALE_TEMPORARY_OR_BACKUP_FILE', details: 'Arquivo temporário ou backup legado acumulado' });
+    if (autoCleanStale) {
+      try {
+        fs.unlinkSync(path.join(dataDir, sf));
+        fixes.push({ file: sf, status: 'AUTO_DELETED_STALE' });
+      } catch (err) {
+        remainingStaleFiles.push(sf);
+        issues.push({ file: sf, issue: 'STALE_TEMPORARY_OR_BACKUP_FILE', details: `Falha ao remover: ${err.message}` });
+      }
+    } else {
+      remainingStaleFiles.push(sf);
+      issues.push({ file: sf, issue: 'STALE_TEMPORARY_OR_BACKUP_FILE', details: 'Arquivo temporário ou backup legado acumulado' });
+    }
   }
 
   return {
     totalCheckedFiles: files.length,
-    totalStaleFiles: staleFiles.length,
-    staleFiles,
+    totalStaleFiles: remainingStaleFiles.length,
+    staleFiles: remainingStaleFiles,
     issuesFound: issues.length,
     issues,
     fixes,
