@@ -289,7 +289,7 @@ pm2 reload ecosystem.config.js --update-env || pm2 restart ecosystem.config.js -
 pm2 save --force 2>/dev/null || true
 
 # 15. Limpeza de backups antigos (mantém apenas os últimos 15 backups para não encher o disco)
-(cd "${HOME}/backups/kuromi" && ls -dt auto-* 2>/dev/null | tail -n +16 | xargs -r rm -rf) || true
+(cd "${HOME}/backups/kuromi" && ls -dt [0-9]* auto-* 2>/dev/null | tail -n +16 | xargs -r rm -rf) || true
 
 log "🎉 Deploy automático concluído com sucesso para ${REMOTE_REV:0:7}!"
 log "Status atual da Pyxie:"

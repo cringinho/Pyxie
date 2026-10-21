@@ -44,7 +44,7 @@ Sempre que uma nova feature, comando, botão, minigame, desafio, embed, item de 
   ```bash
   npm test
   ```
-- O comando executa todos os **20 arquivos de testes** do ecossistema, incluindo testes de segurança, integridade econômica, tarot, SEO, paridade i18n, módulos desacoplados, Drizzle ORM, estúdio SaaS e master dashboard SaaS.
+- O comando executa todos os **23 arquivos de testes** do ecossistema, incluindo testes de segurança, integridade econômica, tarot, SEO, paridade i18n, módulos desacoplados, Drizzle ORM, estúdio SaaS, master dashboard SaaS, integridade do banco de dados e Discord health.
 - **100% dos testes devem passar** sem exceções antes de finalizar qualquer turno ou enviar commits para produção.
 
 ---

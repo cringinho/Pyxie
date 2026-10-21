@@ -12,6 +12,7 @@ const {
   ButtonStyle,
   MessageFlags,
   Options,
+  Events,
 } = require('discord.js');
 const { acquireBotLock, releaseBotLock, getPrefix } = require('./src/utils/botUtils');
 const { getWelcomeChannel, normalizeChannelValue } = require('./src/services/database');
@@ -481,7 +482,7 @@ function updateLiveStats() {
   } catch (_) {}
 }
 
-client.once('ready', async () => {
+client.once(Events.ClientReady, async () => {
   console.log(`Pyxie conectada como ${client.user.tag}`);
 
   startPresenceRotator(client);
@@ -588,12 +589,12 @@ client.once('ready', async () => {
 });
 
 // Atualização automática de catálogo de emojis quando novos emojis forem adicionados/editados/removidos
-client.on('emojiCreate', () => syncApplicationEmojis(client));
-client.on('emojiDelete', () => syncApplicationEmojis(client));
-client.on('emojiUpdate', () => syncApplicationEmojis(client));
+client.on(Events.GuildEmojiCreate, () => syncApplicationEmojis(client));
+client.on(Events.GuildEmojiDelete, () => syncApplicationEmojis(client));
+client.on(Events.GuildEmojiUpdate, () => syncApplicationEmojis(client));
 
 // Atualizações dinâmicas de contagem de membros e servidores
-client.on('guildCreate', async (guild) => {
+client.on(Events.GuildCreate, async (guild) => {
   const bl = isBlacklisted({ guildId: guild.id });
   if (bl.blacklisted) {
     console.warn(`[Trust&Safety] Servidor banido tentou adicionar Pyxie: ${guild.name} (${guild.id}). Forçando saída.`);
@@ -609,12 +610,14 @@ client.on('guildCreate', async (guild) => {
   }
 
   // Envia mensagem introdutória oficial no canal padrão do servidor
+  const botMember = guild.members.me || await guild.members.fetchMe().catch(() => null);
   const targetChannel =
     guild.systemChannel ||
     guild.channels.cache.find(
       (c) =>
         c.isTextBased() &&
-        c.permissionsFor(guild.members.me || client.user)?.has(['ViewChannel', 'SendMessages', 'EmbedLinks'])
+        botMember &&
+        c.permissionsFor(botMember)?.has(['ViewChannel', 'SendMessages', 'EmbedLinks'])
     );
 
   if (targetChannel) {
@@ -647,12 +650,12 @@ client.on('guildCreate', async (guild) => {
     await targetChannel.send({ embeds: [embed] }).catch(() => null);
   }
 });
-client.on('guildDelete', () => updateLiveStats());
-client.on('guildUpdate', () => updateLiveStats());
-client.on('guildMemberRemove', () => updateLiveStats());
+client.on(Events.GuildDelete, () => updateLiveStats());
+client.on(Events.GuildUpdate, () => updateLiveStats());
+client.on(Events.GuildMemberRemove, () => updateLiveStats());
 
 // Mensagem de boas-vindas ao entrar no servidor.
-client.on('guildMemberAdd', async (member) => {
+client.on(Events.GuildMemberAdd, async (member) => {
   updateLiveStats();
 
   // Não processa boas-vindas para bots
@@ -752,7 +755,7 @@ client.on('guildMemberAdd', async (member) => {
 });
 
 // Procura o comando na pasta commands e mantém o index focado na infraestrutura.
-client.on('messageCreate', async (message) => {
+client.on(Events.MessageCreate, async (message) => {
   if (message.author?.bot) return;
 
   const bl = isBlacklisted({ guildId: message.guildId, userId: message.author?.id });
@@ -830,7 +833,7 @@ client.on('messageCreate', async (message) => {
 });
 
 // O registro compartilhado também encaminha cada slash command ao próprio arquivo.
-client.on('interactionCreate', async (interaction) => {
+client.on(Events.InteractionCreate, async (interaction) => {
   const bl = isBlacklisted({ guildId: interaction.guildId, userId: interaction.user?.id });
   if (bl.blacklisted) {
     if (interaction.isRepliable()) {
@@ -871,7 +874,7 @@ client.on('interactionCreate', async (interaction) => {
       const adminCmd = require('./src/commands/admin');
       const { OWNER_SNOWFLAKE } = require('./src/services/adminAuth');
       if (interaction.user.id !== OWNER_SNOWFLAKE) {
-        return interaction.reply({ content: '❌ Apenas o criador da Pyxie pode gerenciar o painel administrativo!', ephemeral: true });
+        return interaction.reply({ content: '❌ Apenas o criador da Pyxie pode gerenciar o painel administrativo!', flags: MessageFlags.Ephemeral });
       }
       if (interaction.customId.startsWith('admin_modules_view')) {
         const view = adminCmd.buildModulesView(interaction.user.id, interaction);
@@ -910,14 +913,6 @@ client.on('interactionCreate', async (interaction) => {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
       await tarotCommand.executeButton({ interaction });
-      return;
-    }
-
-    if (interaction.isButton() && interaction.customId === 'tarot:draw') {
-      incrementCommand();
-      recordUniqueUser(interaction.user.id);
-      await interaction.deferReply({ ephemeral: true });
-      await tarotCommand.executeSlash({ interaction });
       return;
     }
 
@@ -1089,8 +1084,36 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
-client.on('error', (error) => {
-  console.error('Erro do cliente Discord:', error);
+client.on(Events.Error, (error) => {
+  console.error('[Discord:Client] Erro:', error);
+});
+
+client.on(Events.Warn, (info) => {
+  console.warn('[Discord:Client] Aviso:', info);
+});
+
+client.on(Events.ShardError, (error, shardId) => {
+  console.error(`[Discord:Shard ${shardId}] Erro de conexão:`, error);
+});
+
+client.on(Events.ShardDisconnect, (event, shardId) => {
+  console.warn(`[Discord:Shard ${shardId}] Desconectado (código ${event?.code || 'desconhecido'})`);
+});
+
+client.on(Events.ShardReconnecting, (shardId) => {
+  console.log(`[Discord:Shard ${shardId}] Reconectando ao Discord Gateway...`);
+});
+
+client.on(Events.ShardResume, (shardId, replayedEvents) => {
+  console.log(`[Discord:Shard ${shardId}] Conexão restabelecida (${replayedEvents} eventos reprocessados).`);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[Runtime:UnhandledRejection] Rejeição assíncrona não tratada:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('[Runtime:UncaughtException] Exceção crítica capturada:', error);
 });
 
 function handleAppShutdown() {

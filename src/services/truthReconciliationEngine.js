@@ -57,9 +57,19 @@ class TruthReconciliationEngine extends EventEmitter {
         fs.mkdirSync(DATA_DIR, { recursive: true });
       }
 
+      const ignoredFiles = new Set([
+        'publicTruthSnapshot.json',
+        'publicTruthFallback.json',
+        'logs.json',
+        'stats.json',
+        'commandTelemetry.json',
+        'liveGuildsSnapshot.json',
+        'guildsSnapshot.json',
+      ]);
+
       let debounceTimer = null;
       const watcher = fs.watch(DATA_DIR, (eventType, filename) => {
-        if (!filename || filename.endsWith('.tmp') || filename.includes('.tmp.')) return;
+        if (!filename || filename.endsWith('.tmp') || filename.includes('.tmp.') || filename.endsWith('.bak') || ignoredFiles.has(filename)) return;
         if (debounceTimer) clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
           this.runVerificationWave({ force: false, trigger: `fs.watch:${filename}` }).catch(() => null);
@@ -340,9 +350,16 @@ class TruthReconciliationEngine extends EventEmitter {
 
       const dir = path.dirname(PUBLIC_TRUTH_FILE);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      const tmp = `${PUBLIC_TRUTH_FILE}.tmp.${Date.now()}`;
+      const tmp = `${PUBLIC_TRUTH_FILE}.tmp.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}`;
       fs.writeFileSync(tmp, JSON.stringify(truthPayload, null, 2), 'utf8');
-      fs.renameSync(tmp, PUBLIC_TRUTH_FILE);
+      try {
+        fs.renameSync(tmp, PUBLIC_TRUTH_FILE);
+      } catch (renameErr) {
+        try {
+          fs.copyFileSync(tmp, PUBLIC_TRUTH_FILE);
+          if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+        } catch (_) {}
+      }
     } catch (err) {
       console.warn('[TruthReconciliationEngine] Falha ao atualizar publicTruthSnapshot.json:', err.message);
     }
