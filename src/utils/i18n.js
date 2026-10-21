@@ -883,7 +883,7 @@ const TRANSLATIONS = {
       "btn_logout_all": "Desconectar Sessões"
     },
     "terms": {
-      "title": "🛡️ Termos de Uso, Proteção a Menores & Segurança",
+      "title": "🛡️ Termos de Uso, Proteção Infantil & Segurança",
       "desc": "A Cringelândia e a Pyxie são um santuário de acolhimento seguro: *'o acolhimento de pessoas que sofrem. Um lugar seguro para quem acha que o mundo é barulhento demais.'*",
       "fieldSafeguardTitle": "🚸 Salvaguarda de Menores & Idade Mínima",
       "fieldSafeguardValue": "• Respeito estrito à idade mínima do Discord (13 anos).\n• Conformidade rigorosa com o ECA (Lei 8.069/90 e Lei 14.811/24).\n• Tolerância zero contra assédio, grooming ou cyberbullying.",
@@ -1618,7 +1618,7 @@ const TRANSLATIONS = {
       "btn_logout_all": "Disconnect Sessions"
     },
     "terms": {
-      "title": "🛡️ Terms of Use, Child Safety & Safeguarding Framework",
+      "title": "🛡️ Terms of Use, Child Safety & Safeguarding",
       "desc": "Cringelândia and Pyxie are a safe sanctuary embracing vulnerable minds: *'a sanctuary embracing those who suffer. A safe place for those who feel the world is simply too loud.'*",
       "fieldSafeguardTitle": "🚸 Child Safeguarding & Discord Minimum Age",
       "fieldSafeguardValue": "• Strict compliance with Discord's minimum age requirement (13 years old).\n• Compliance with Brazilian Child and Adolescent Statute (ECA - Law 8,069/90 & Law 14,811/24).\n• Zero tolerance for harassment, grooming, or cyberbullying.",

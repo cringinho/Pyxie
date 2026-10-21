@@ -44,11 +44,26 @@ Sempre que uma nova feature, comando, botão, minigame, desafio, embed, item de 
   ```bash
   npm test
   ```
-- O comando executa todos os 10 arquivos de testes, incluindo `tests/i18nParity.test.js` que audita recursivamente todas as chaves e comandos.
+- O comando executa todos os **19 arquivos de testes** do ecossistema, incluindo testes de segurança, integridade econômica, tarot, SEO, paridade i18n, módulos desacoplados, Drizzle ORM e estúdio SaaS.
+- **100% dos testes devem passar** sem exceções antes de finalizar qualquer turno ou enviar commits para produção.
 
 ---
 
-## 3. Política de Paridade Dinâmica: Comandos Web & Central de Ajuda (`help.js`)
+## 3. Arquitetura de Subsistemas & Módulos Dinâmicos (`src/services/moduleManager.js`)
+A Pyxie utiliza uma arquitetura de **Monólito Modular** com subsistemas isolados gerenciados pelo `moduleManager`:
+1. **Módulos Opcionais Nativos do Bot (`src/modules/*`)**:
+   - Módulos como Matrimônio (`marriage`) e Eventos Sazonais (`seasonal`) pertencem ao ecossistema global do bot, mas operam desacoplados com ciclo de vida próprio (`onLoad`, `onUnload`, listeners dedicados e crons).
+   - Podem ser ligados ou desligados dinamicamente em tempo de execução sem reinicializar o processo e sem interferir nos comandos principais.
+2. **Módulo SaaS Isolado (Estúdio da Mary - `src/modules/mary-studio/`)**:
+   - Opera como um subsistema SaaS restrito e dedicado exclusivamente ao servidor e à identidade da Mary (`MARY_DEFAULT_GUILD_ID`).
+   - Possui rotas web Express dedicadas (`/mary`, `/api/mary/*`), autenticação por Magic Link HMAC de uso único, controle de sessões e banco de configuração isolado (`data/maryStudioConfig.json`).
+   - Permite personalização do perfil local da Pyxie (`PATCH /guilds/{guildId}/members/@me` para nick, avatar e banner) exclusivamente na guilda da Mary, sem alterar em nada a identidade visual global da Pyxie em outros servidores.
+3. **Monitoramento e Condição dos Subsistemas**:
+   - A condição operacional, status de ativação e saúde de cada módulo são monitorados e expostos via `moduleManager.getStatus()`, rota `/api/status`, painel `/admin` e comando `/py-status`.
+
+---
+
+## 4. Política de Paridade Dinâmica: Comandos Web & Central de Ajuda (`help.js`)
 - **Fonte Única da Verdade**: A lista oficial de módulos e categorização de comandos reside estritamente em `src/commands/commandHelpers.js` (`MODULE_METADATA` e `COMMAND_CATEGORY_MAP`) e no comando central `src/commands/help.js`.
 - **Regra Obrigatória para Novos Comandos**: Sempre que um novo comando for criado ou alterado no bot:
   1. O nome e todos os aliases DEVEM ser registrados em `COMMAND_CATEGORY_MAP` vinculado à sua categoria correspondente em `MODULE_METADATA`.
@@ -65,7 +80,24 @@ Sempre que uma nova feature, comando, botão, minigame, desafio, embed, item de 
 
 ---
 
-## 4. Política Visual de Emojis: Proibição Estrita do Portal de Minecraft (`portalframe98`)
+## 5. Política de Integridade e Proteção Econômica (Zero Impacto Não Planejado)
+- **Minigames de Recreação Pura**: Jogos casuais focados em entretenimento (ex: Matemática Arcana `/py-matematica`, Jogo da Velha `/py-jogodavelha`, Campo Minado `/py-campominado`, Biscoito da Sorte, Provável) NÃO devem conceder saldo, moedas ou feijões mágicos sem cálculo e autorização explícita do criador.
+- **Proteção Anti-Inflação**: O ganho de moedas é restrito estritamente a fluxos econômicos regulados: trabalho formal com turnos (`/py-work`), bônus diário regular (`/py-daily`), bônus web cronometrado (24h de cooldown) e recompensas limitadas de oráculo/conquistas.
+- **Prevenção de Exploits**: Nenhuma funcionalidade nova de comunidade, mini-evento ou utilidade pode injetar moeda no banco sem travas de cooldown, atomicidade e validação de permissões.
+
+---
+
+## 6. Camada Híbrida de Persistência: PostgreSQL (Drizzle ORM) & Arquivos Atômicos
+- **PostgreSQL com Drizzle ORM (`src/db/`)**:
+  - Camada primária estruturada para operações transacionais relacionais de alta concorrência: usuários, saldos econômicos, histórico de transações, matrimônio e álbum de cartas de tarot.
+  - As transações utilizam travas e guardas de integridade para garantir que transferências e resgates sejam ACID.
+- **Persistência Atômica JSON (`data/`)**:
+  - Utiliza o padrão `writeAtomic` (escrita em arquivo temporário `.tmp` seguida de `renameSync`) para garantir resiliência contra corrupção em quedas de energia ou reinicializações forçadas da VM.
+  - Mantém redundância, configurações dinâmicas de módulos, backups locais e capacidade de execução autônoma em modo de testes.
+
+---
+
+## 7. Política Visual de Emojis: Proibição Estrita do Portal de Minecraft (`portalframe98`)
 - **Regra de Estilo Visual**: É expressamente PROIBIDO utilizar o emoji do portal do Minecraft (`portalframe98`, ID `1548444170488778954`) em qualquer parte do ecossistema da Pyxie (Discord, embeds, website, wiki ou portal de bônus).
 - **Substituto Canônico Obrigatório**: Para ilustrar cenários, navegação, viagens entre locais, portais arcanos e exploração do Bosque da Penumbra, deve-se utilizar estritamente o emoji oficial de mapas / galáxia violeta da Pyxie:
   - **Discord**: `<:map:1551355962974273546>` ou alias `MAP` / `PORTAL` via `getEmoji('MAP')` em `src/utils/appEmojis.js`.
@@ -73,7 +105,7 @@ Sempre que uma nova feature, comando, botão, minigame, desafio, embed, item de 
 
 ---
 
-## 5. Política Mandatória de SEO Profissional e Dinâmico (Web & Search Engine Trust)
+## 8. Política Mandatória de SEO Profissional e Dinâmico (Web & Search Engine Trust)
 Toda página web pública (`public/*.html`), rota servida pelo Express (`server.js`) ou módulo que disponibilize interface pública DEVE seguir rigorosamente os padrões de SEO técnico, rastreabilidade e integridade para mecanismos de busca (Google, Bing, Yandex, Yahoo, DuckDuckGo):
 
 ### 1. Paridade Bilíngue Mandatória no SEO
@@ -110,6 +142,30 @@ Toda página web pública (`public/*.html`), rota servida pelo Express (`server.
 
 ### 5. Prevenção de Erros de Desindexação e Penalidades (Anti-Blackhat)
 - **Proibido Cloaking ou Conteúdo Oculto Danoso**: O conteúdo entregue ao bot/crawler de busca deve refletir fielmente o conteúdo consumido pelo usuário humano.
-- **Proteção do `robots.txt`**: Rotas administrativas (`/admin`, `/api/admin/`, `/console`) DEVEM permanecer com `Disallow` explícito no `public/robots.txt` para preservar a segurança e evitar indexação de telas de login ou dados confidenciais.
+- **Proteção do `robots.txt`**: Rotas administrativas (`/admin`, `/api/admin/`, `/console`, `/mary`) DEVEM permanecer com `Disallow` explícito no `public/robots.txt` para preservar a segurança e evitar indexação de telas de login ou dados confidenciais.
 - **Quality Gate de SEO**: O teste `tests/seoBilingual.test.js` é executado obrigatoriamente dentro de `npm test`. Nenhuma alteração web pode quebrar os requisitos auditados de tags, canonicals, sitemap ou robots.
 
+---
+
+## 9. Diretrizes de Engenharia de Interface: Embeds do Discord (Discord UI/UX SaaS)
+Sempre que estruturar e implementar embeds do Discord no bot (utilizando `new EmbedBuilder()` do Discord.js v14):
+
+1. **Título e Âncora Visual**:
+   - O título deve ser curto, impactante e escaneável (**máximo 8 palavras**).
+   - Deve iniciar com exatamente UM emoji funcional como âncora visual (ex: 📈, 🛑, 👤, 🔄, 🔮, 💎).
+   - Os emojis devem ser resolvidos canonicamente via `src/utils/appEmojis.js` (`getEmoji('CHAVE')`), `themeEmojis.js` ou emojis nativos Unicode com fallbacks. Schemas dinâmicos customizáveis pelo Dashboard (/admin) são integrados via `src/utils/embedRegistry.js`.
+
+2. **Descrição e Hierarquia Textual**:
+   - Destaque com negrito (`**`) os termos-chave, sujeito e objeto principal para leitura rápida.
+   - Restrinja o texto a parágrafos curtos (máximo 2 linhas por bloco) antes de quebras de seção, prevenindo quebras desordenadas em telas de smartphones.
+
+3. **Campos (Fields) e Otimização Mobile**:
+   - Utilize a propriedade `inline: true` para métricas e dados complementares que fiquem bem dispostos lado a lado.
+   - Limite a no máximo 2 a 3 campos inline por linha para evitar que o cliente mobile do Discord force colunas caóticas.
+   - Valores numéricos, saldos, valores monetários, IDs e códigos devem ser formatados em linha de código (Inline Code, entre crases `` `...` ``) para destaque visual limpo e neutro.
+   - Nunca exiba URLs brutas no corpo ou campos: use sempre links mascarados na sintaxe `[Texto do Link](URL)`.
+
+4. **Rodapé e Metadados (Footer & Timestamp)**:
+   - O rodapé deve ser dinâmico e contextual: exibir o nome da aplicação (`Pyxie`) e o nome do servidor quando aplicável (`guild ? guild.name : 'Privado'`), com texto ou dicas rotativas de outros comandos e funções do bot.
+   - Minigames rápidos, notificações efêmeras ou embeds compactos podem utilizar rodapés simplificados para priorizar a agilidade e evitar sobrecarga visual na tela.
+   - Utilize `.setTimestamp()` nativo com a data/hora do evento em embeds que representem ações com temporalidade relevante (transações, logs, alertas).
