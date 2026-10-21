@@ -113,3 +113,29 @@ Toda página web pública (`public/*.html`), rota servida pelo Express (`server.
 - **Proteção do `robots.txt`**: Rotas administrativas (`/admin`, `/api/admin/`, `/console`) DEVEM permanecer com `Disallow` explícito no `public/robots.txt` para preservar a segurança e evitar indexação de telas de login ou dados confidenciais.
 - **Quality Gate de SEO**: O teste `tests/seoBilingual.test.js` é executado obrigatoriamente dentro de `npm test`. Nenhuma alteração web pode quebrar os requisitos auditados de tags, canonicals, sitemap ou robots.
 
+### 6. EMBEDS
+**Você é um especialista em Design de Interface e Engenharia de Integrações para Discord. Sua tarefa é estruturar blocos de embeds do Discord que sigam rigorosamente os padrões de design mais atuais, limpos e legíveis do mercado de SaaS.**
+
+Sempre que estruturar um embed para o Discord, você deve aplicar as seguintes regras de conteúdo e formatação:
+
+1. **TÍTULO E DESCRIÇÃO**
+- Título: Deve ser curto (máximo 6 palavras). Deve começar com exatamente UM emoji funcional como âncora visual (ex: 📈, 🛑, 👤, 🔄). Todos os emojis do embed devem ser registrados junto com o embed completo no painel administrativo no Contrato de Embeds & Mapeador de Emojis. Todos os emojis devem seguir prioritariamente o que o Contrato de Embeds & Mapeador de Emojis manda. e sempre deve haver um fallback caso o emoji personalizado não funcione.
+- Descrição: Use negrito (**) apenas no sujeito e no objeto principal para escaneabilidade rápida. Evite textos longos ou blocos massivos de conteúdo.
+
+2. **CAMPOS (FIELDS)**
+- Alinhamento Lateral Limitado: Sempre use a propriedade inline ativada para métricas e dados complementares que fiquem melhores lado a lado. Limite a no máximo 2 itens por linha para o mobile (em telas menores, o Discord força a quebra automática de 3 colunas para visualização vertical de qualquer forma).
+- Bloco de Código para Dados: Valores numéricos, valores monetários, IDs e códigos devem ser emoldurados em linha de código (Inline Code, entre crases) para criar um destaque visual neutro.
+- Links Limpos: Nunca exiba URLs brutas. Sempre mascare links usando a sintaxe [Texto do Link](URL).
+
+3. **RODAPÉ E METADADOS**
+- O rodapé deve ser dinâmico. Ele deve obrigatoriamente exibir o nome da aplicação de origem e o nome do servidor atual do Discord onde o alerta foi disparado.
+- Além da aplicação e do servidor, o texto do rodapé deve variar dicas de outros comandos e funções do bot.
+- Sempre inclua o registro de data e hora (timestamp) nativo com a hora do evento no padrão ISO 8601 para que o Discord converta automaticamente para o fuso horário local do usuário.
+- Opcional: Use um ícone minúsculo e circular no rodapé para a logo da marca.
+
+4. **ESPAÇAMENTO DE LINHAS E OTAVIZAÇÃO MOBILE**
+- Quebras de Linha Estratégicas: Insira espaçamento duplo (pular uma linha em branco) entre a descrição principal e o início dos campos para evitar o efeito de bloco de texto colado nas telas menores dos smartphones.
+- Limite de Densidade Visual: Restrinja o texto a parágrafos curtos de no máximo 2 linhas antes de forçar uma quebra de seção. Isso evita que o texto quebre de forma caótica quando a largura da tela do celular for reduzida.
+
+Apresente apenas a estrutura descritiva do embed textualmente, **sem gerar blocos de código de programação ou JSON**.
+
