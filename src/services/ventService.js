@@ -18,17 +18,42 @@ const activeStickyMessageIds = new Map(); // guildId -> messageId
 function buildVentStickyEmbed() {
   return new EmbedBuilder()
     .setColor('#4c1d95')
-    .setTitle('💜  ✦  Espaço de Acolhimento & Desabafos')
-    .setDescription(
-      'Este é um espaço comunitário seguro e afetuoso dedicado à escuta, desabafo e acolhimento mútuo.\n\n' +
-      '📜 **Diretrizes e Regras de Convivência:**\n' +
-      '• **Respeito Absoluto:** Proibido qualquer tipo de julgamento, invalidação emocional, deboche ou conselhos hostis.\n' +
-      '• **Alerta de Restrição (+18) & Gatilhos (TW):** Este canal pode conter relatos densos e temas pesados. Cuide da sua saúde mental ao ler.\n' +
-      '• **Apoio Comunitário:** Este espaço é formado por amigos e **não substitui atendimento psicológico ou psiquiátrico profissional**.\n\n' +
-      '✍️ **Como Utilizar o Canal:**\n' +
-      '> Você pode **digitar livremente no chat** caso não se importe em mostrar seu perfil,\n' +
-      '> ou clicar no botão **`[ 🎭 Desabafo Anônimo ]`** abaixo para publicar com identidade 100% oculta!'
-    )
+.setTitle('💜  ✦  Espaço de Acolhimento & Desabafos')
+.setDescription(
+  'Um espaço para falar, ser ouvido e encontrar apoio. 🫂\n' +
+  'Aqui, cada pessoa merece ser acolhida com respeito, empatia e compreensão.\n\n' +
+
+  '━━━━━━━━━━━━━━━━━━━━\n' +
+  '📜 **DIRETRIZES E REGRAS DE CONVIVÊNCIA**\n' +
+  '━━━━━━━━━━━━━━━━━━━━\n\n' +
+
+  '💜 **1. Respeito e Empatia**\n' +
+  'Não são permitidos julgamentos, deboche, invalidação emocional, hostilidade ou qualquer atitude que desrespeite a vulnerabilidade de alguém.\n\n' +
+
+  '🕯️ **2. Gatilhos e Conteúdos Sensíveis**\n' +
+  'Este canal pode conter relatos delicados, temas pesados e experiências difíceis. Utilize avisos de gatilho (TW) quando necessário e respeite seus próprios limites ao ler os relatos.\n\n' +
+
+  '🤝 **3. Acolhimento sem Pressão**\n' +
+  'Ouça sem minimizar a dor alheia. Não imponha conselhos, soluções ou experiências pessoais. Às vezes, alguém só precisa ser ouvido.\n\n' +
+
+  '🫂 **4. Limites e Privacidade**\n' +
+  'Respeite o espaço e os limites de cada pessoa. Não compartilhe relatos, prints ou informações pessoais de outros membros sem autorização.\n\n' +
+
+  '🩹 **5. Apoio Comunitário**\n' +
+  'Somos uma comunidade de amigos que busca oferecer apoio mútuo. Este espaço não substitui acompanhamento psicológico ou psiquiátrico profissional.\n\n' +
+
+  '━━━━━━━━━━━━━━━━━━━━\n' +
+  '✍️ **COMO UTILIZAR O CANAL**\n' +
+  '━━━━━━━━━━━━━━━━━━━━\n\n' +
+
+  '💬 **Desabafo público**\n' +
+  'Escreva diretamente no chat se estiver confortável em compartilhar sua identidade e seu relato com a comunidade.\n\n' +
+
+  '🎭 **Desabafo anônimo**\n' +
+  'Prefere preservar sua identidade? Utilize o botão **[ 🎭 Desabafo Anônimo ]** abaixo para enviar seu relato sem exibir seu perfil aos demais membros.\n\n' +
+
+  '🌷 **Lembre-se:** você não precisa encontrar as palavras perfeitas, justificar seus sentimentos ou resolver tudo de uma vez. Este espaço existe para que você possa se expressar com respeito e segurança.'
+)
     .setFooter({ text: 'Pyxie • Cuidado, Acolhimento & Respeito Mútuo' })
     .setTimestamp();
 }
@@ -311,3 +336,4 @@ module.exports = {
   onMessageCreate,
   handleVentInteraction,
 };
+

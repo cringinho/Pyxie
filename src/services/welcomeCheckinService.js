@@ -344,3 +344,4 @@ module.exports = {
   _pendingNewcomers: pendingNewcomers,
   _welcomedOnceSet: welcomedOnceSet,
 };
+

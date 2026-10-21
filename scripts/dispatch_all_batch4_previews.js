@@ -133,3 +133,4 @@ run().catch((err) => {
   console.error('[PreviewBatch4] Erro fatal:', err);
   process.exitCode = 1;
 });
+

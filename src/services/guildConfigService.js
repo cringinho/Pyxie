@@ -168,3 +168,4 @@ module.exports = {
   setWelcomeConfig,
   getAllTarotGuildConfigs,
 };
+

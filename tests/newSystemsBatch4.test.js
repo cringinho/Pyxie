@@ -176,3 +176,4 @@ assert.ok(sampleExternalTarotDesc.includes('-#'), 'Deve utilizar o modificador d
 console.log('  ✅ 9. Assinatura do Tarot com link azul Markdown (-#) validada.');
 
 console.log('\n🎉 TODOS OS TESTES DOS NOVOS SISTEMAS (LOTE 4) PASSARAM COM 100% DE SUCESSO!\n');
+
