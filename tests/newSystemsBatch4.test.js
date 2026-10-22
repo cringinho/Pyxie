@@ -95,9 +95,9 @@ console.log('  ✅ 4. Construtor de lote com didática de Canais e Cargos (<id:c
 // =========================================================================
 const stickyEmbed = buildVentStickyEmbed();
 assert.ok(stickyEmbed.data.title.includes('Desabafos'), 'Sticky deve ter título claro de desabafos');
-assert.ok(stickyEmbed.data.description.includes('Respeito Absoluto'), 'Sticky deve conter regra de respeito');
+assert.ok(stickyEmbed.data.description.includes('Respeito e Empatia'), 'Sticky deve conter regra de respeito');
 assert.ok(stickyEmbed.data.description.includes('+18') || stickyEmbed.data.description.includes('TW'), 'Sticky deve conter aviso de restrição/gatilho');
-assert.ok(stickyEmbed.data.description.includes('não substitui atendimento psicológico'), 'Sticky deve encorajar apoio profissional');
+assert.ok(stickyEmbed.data.description.includes('não substitui acompanhamento psicológico'), 'Sticky deve encorajar apoio profissional');
 
 const stickyComponents = buildVentStickyComponents();
 assert.strictEqual(stickyComponents.length, 1);

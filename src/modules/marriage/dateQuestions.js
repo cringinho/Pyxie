@@ -196,8 +196,8 @@ module.exports = [
   {
     "id": 11,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #11, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #11, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -215,8 +215,8 @@ module.exports = [
   {
     "id": 12,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #12:",
-      "en": "If we make a roadtrip playlist for our drive #12:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -234,8 +234,8 @@ module.exports = [
   {
     "id": 13,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #13?",
-      "en": "What would our ideal Sunday morning routine be #13?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -253,8 +253,8 @@ module.exports = [
   {
     "id": 14,
     "question": {
-      "pt": "Em uma loja de decoração mágica #14, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #14, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -272,8 +272,8 @@ module.exports = [
   {
     "id": 15,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #15:",
-      "en": "If we could set the weather forecast for our day off #15:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -291,8 +291,8 @@ module.exports = [
   {
     "id": 16,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #16?",
-      "en": "Which simple gift brightens our entire day #16?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -310,8 +310,8 @@ module.exports = [
   {
     "id": 17,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #17:",
-      "en": "If we created a nighttime wind-down ritual #17:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -329,8 +329,8 @@ module.exports = [
   {
     "id": 18,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #18, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #18, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -348,8 +348,8 @@ module.exports = [
   {
     "id": 19,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #19:",
-      "en": "If Pyxie asked us about our bond #19:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -367,8 +367,8 @@ module.exports = [
   {
     "id": 20,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #20:",
-      "en": "When we go on a late-night snack run #20:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -386,8 +386,8 @@ module.exports = [
   {
     "id": 21,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #21, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #21, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -405,8 +405,8 @@ module.exports = [
   {
     "id": 22,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #22:",
-      "en": "If we make a roadtrip playlist for our drive #22:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -424,8 +424,8 @@ module.exports = [
   {
     "id": 23,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #23?",
-      "en": "What would our ideal Sunday morning routine be #23?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -443,8 +443,8 @@ module.exports = [
   {
     "id": 24,
     "question": {
-      "pt": "Em uma loja de decoração mágica #24, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #24, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -462,8 +462,8 @@ module.exports = [
   {
     "id": 25,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #25:",
-      "en": "If we could set the weather forecast for our day off #25:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -481,8 +481,8 @@ module.exports = [
   {
     "id": 26,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #26?",
-      "en": "Which simple gift brightens our entire day #26?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -500,8 +500,8 @@ module.exports = [
   {
     "id": 27,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #27:",
-      "en": "If we created a nighttime wind-down ritual #27:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -519,8 +519,8 @@ module.exports = [
   {
     "id": 28,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #28, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #28, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -538,8 +538,8 @@ module.exports = [
   {
     "id": 29,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #29:",
-      "en": "If Pyxie asked us about our bond #29:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -557,8 +557,8 @@ module.exports = [
   {
     "id": 30,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #30:",
-      "en": "When we go on a late-night snack run #30:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -576,8 +576,8 @@ module.exports = [
   {
     "id": 31,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #31, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #31, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -595,8 +595,8 @@ module.exports = [
   {
     "id": 32,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #32:",
-      "en": "If we make a roadtrip playlist for our drive #32:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -614,8 +614,8 @@ module.exports = [
   {
     "id": 33,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #33?",
-      "en": "What would our ideal Sunday morning routine be #33?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -633,8 +633,8 @@ module.exports = [
   {
     "id": 34,
     "question": {
-      "pt": "Em uma loja de decoração mágica #34, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #34, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -652,8 +652,8 @@ module.exports = [
   {
     "id": 35,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #35:",
-      "en": "If we could set the weather forecast for our day off #35:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -671,8 +671,8 @@ module.exports = [
   {
     "id": 36,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #36?",
-      "en": "Which simple gift brightens our entire day #36?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -690,8 +690,8 @@ module.exports = [
   {
     "id": 37,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #37:",
-      "en": "If we created a nighttime wind-down ritual #37:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -709,8 +709,8 @@ module.exports = [
   {
     "id": 38,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #38, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #38, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -728,8 +728,8 @@ module.exports = [
   {
     "id": 39,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #39:",
-      "en": "If Pyxie asked us about our bond #39:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -747,8 +747,8 @@ module.exports = [
   {
     "id": 40,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #40:",
-      "en": "When we go on a late-night snack run #40:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -766,8 +766,8 @@ module.exports = [
   {
     "id": 41,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #41, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #41, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -785,8 +785,8 @@ module.exports = [
   {
     "id": 42,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #42:",
-      "en": "If we make a roadtrip playlist for our drive #42:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -804,8 +804,8 @@ module.exports = [
   {
     "id": 43,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #43?",
-      "en": "What would our ideal Sunday morning routine be #43?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -823,8 +823,8 @@ module.exports = [
   {
     "id": 44,
     "question": {
-      "pt": "Em uma loja de decoração mágica #44, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #44, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -842,8 +842,8 @@ module.exports = [
   {
     "id": 45,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #45:",
-      "en": "If we could set the weather forecast for our day off #45:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -861,8 +861,8 @@ module.exports = [
   {
     "id": 46,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #46?",
-      "en": "Which simple gift brightens our entire day #46?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -880,8 +880,8 @@ module.exports = [
   {
     "id": 47,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #47:",
-      "en": "If we created a nighttime wind-down ritual #47:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -899,8 +899,8 @@ module.exports = [
   {
     "id": 48,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #48, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #48, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -918,8 +918,8 @@ module.exports = [
   {
     "id": 49,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #49:",
-      "en": "If Pyxie asked us about our bond #49:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -937,8 +937,8 @@ module.exports = [
   {
     "id": 50,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #50:",
-      "en": "When we go on a late-night snack run #50:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -956,8 +956,8 @@ module.exports = [
   {
     "id": 51,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #51, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #51, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -975,8 +975,8 @@ module.exports = [
   {
     "id": 52,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #52:",
-      "en": "If we make a roadtrip playlist for our drive #52:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -994,8 +994,8 @@ module.exports = [
   {
     "id": 53,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #53?",
-      "en": "What would our ideal Sunday morning routine be #53?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -1013,8 +1013,8 @@ module.exports = [
   {
     "id": 54,
     "question": {
-      "pt": "Em uma loja de decoração mágica #54, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #54, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -1032,8 +1032,8 @@ module.exports = [
   {
     "id": 55,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #55:",
-      "en": "If we could set the weather forecast for our day off #55:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -1051,8 +1051,8 @@ module.exports = [
   {
     "id": 56,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #56?",
-      "en": "Which simple gift brightens our entire day #56?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -1070,8 +1070,8 @@ module.exports = [
   {
     "id": 57,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #57:",
-      "en": "If we created a nighttime wind-down ritual #57:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -1089,8 +1089,8 @@ module.exports = [
   {
     "id": 58,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #58, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #58, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -1108,8 +1108,8 @@ module.exports = [
   {
     "id": 59,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #59:",
-      "en": "If Pyxie asked us about our bond #59:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -1127,8 +1127,8 @@ module.exports = [
   {
     "id": 60,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #60:",
-      "en": "When we go on a late-night snack run #60:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -1146,8 +1146,8 @@ module.exports = [
   {
     "id": 61,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #61, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #61, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -1165,8 +1165,8 @@ module.exports = [
   {
     "id": 62,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #62:",
-      "en": "If we make a roadtrip playlist for our drive #62:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -1184,8 +1184,8 @@ module.exports = [
   {
     "id": 63,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #63?",
-      "en": "What would our ideal Sunday morning routine be #63?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -1203,8 +1203,8 @@ module.exports = [
   {
     "id": 64,
     "question": {
-      "pt": "Em uma loja de decoração mágica #64, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #64, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -1222,8 +1222,8 @@ module.exports = [
   {
     "id": 65,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #65:",
-      "en": "If we could set the weather forecast for our day off #65:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -1241,8 +1241,8 @@ module.exports = [
   {
     "id": 66,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #66?",
-      "en": "Which simple gift brightens our entire day #66?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -1260,8 +1260,8 @@ module.exports = [
   {
     "id": 67,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #67:",
-      "en": "If we created a nighttime wind-down ritual #67:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -1279,8 +1279,8 @@ module.exports = [
   {
     "id": 68,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #68, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #68, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -1298,8 +1298,8 @@ module.exports = [
   {
     "id": 69,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #69:",
-      "en": "If Pyxie asked us about our bond #69:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -1317,8 +1317,8 @@ module.exports = [
   {
     "id": 70,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #70:",
-      "en": "When we go on a late-night snack run #70:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -1336,8 +1336,8 @@ module.exports = [
   {
     "id": 71,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #71, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #71, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -1355,8 +1355,8 @@ module.exports = [
   {
     "id": 72,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #72:",
-      "en": "If we make a roadtrip playlist for our drive #72:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -1374,8 +1374,8 @@ module.exports = [
   {
     "id": 73,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #73?",
-      "en": "What would our ideal Sunday morning routine be #73?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -1393,8 +1393,8 @@ module.exports = [
   {
     "id": 74,
     "question": {
-      "pt": "Em uma loja de decoração mágica #74, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #74, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -1412,8 +1412,8 @@ module.exports = [
   {
     "id": 75,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #75:",
-      "en": "If we could set the weather forecast for our day off #75:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -1431,8 +1431,8 @@ module.exports = [
   {
     "id": 76,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #76?",
-      "en": "Which simple gift brightens our entire day #76?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -1450,8 +1450,8 @@ module.exports = [
   {
     "id": 77,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #77:",
-      "en": "If we created a nighttime wind-down ritual #77:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -1469,8 +1469,8 @@ module.exports = [
   {
     "id": 78,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #78, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #78, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -1488,8 +1488,8 @@ module.exports = [
   {
     "id": 79,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #79:",
-      "en": "If Pyxie asked us about our bond #79:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -1507,8 +1507,8 @@ module.exports = [
   {
     "id": 80,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #80:",
-      "en": "When we go on a late-night snack run #80:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -1526,8 +1526,8 @@ module.exports = [
   {
     "id": 81,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #81, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #81, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -1545,8 +1545,8 @@ module.exports = [
   {
     "id": 82,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #82:",
-      "en": "If we make a roadtrip playlist for our drive #82:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -1564,8 +1564,8 @@ module.exports = [
   {
     "id": 83,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #83?",
-      "en": "What would our ideal Sunday morning routine be #83?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -1583,8 +1583,8 @@ module.exports = [
   {
     "id": 84,
     "question": {
-      "pt": "Em uma loja de decoração mágica #84, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #84, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -1602,8 +1602,8 @@ module.exports = [
   {
     "id": 85,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #85:",
-      "en": "If we could set the weather forecast for our day off #85:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -1621,8 +1621,8 @@ module.exports = [
   {
     "id": 86,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #86?",
-      "en": "Which simple gift brightens our entire day #86?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -1640,8 +1640,8 @@ module.exports = [
   {
     "id": 87,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #87:",
-      "en": "If we created a nighttime wind-down ritual #87:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -1659,8 +1659,8 @@ module.exports = [
   {
     "id": 88,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #88, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #88, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -1678,8 +1678,8 @@ module.exports = [
   {
     "id": 89,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #89:",
-      "en": "If Pyxie asked us about our bond #89:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -1697,8 +1697,8 @@ module.exports = [
   {
     "id": 90,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #90:",
-      "en": "When we go on a late-night snack run #90:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -1716,8 +1716,8 @@ module.exports = [
   {
     "id": 91,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #91, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #91, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -1735,8 +1735,8 @@ module.exports = [
   {
     "id": 92,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #92:",
-      "en": "If we make a roadtrip playlist for our drive #92:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -1754,8 +1754,8 @@ module.exports = [
   {
     "id": 93,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #93?",
-      "en": "What would our ideal Sunday morning routine be #93?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -1773,8 +1773,8 @@ module.exports = [
   {
     "id": 94,
     "question": {
-      "pt": "Em uma loja de decoração mágica #94, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #94, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -1792,8 +1792,8 @@ module.exports = [
   {
     "id": 95,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #95:",
-      "en": "If we could set the weather forecast for our day off #95:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -1811,8 +1811,8 @@ module.exports = [
   {
     "id": 96,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #96?",
-      "en": "Which simple gift brightens our entire day #96?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -1830,8 +1830,8 @@ module.exports = [
   {
     "id": 97,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #97:",
-      "en": "If we created a nighttime wind-down ritual #97:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -1849,8 +1849,8 @@ module.exports = [
   {
     "id": 98,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #98, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #98, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -1868,8 +1868,8 @@ module.exports = [
   {
     "id": 99,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #99:",
-      "en": "If Pyxie asked us about our bond #99:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -1887,8 +1887,8 @@ module.exports = [
   {
     "id": 100,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #100:",
-      "en": "When we go on a late-night snack run #100:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -1906,8 +1906,8 @@ module.exports = [
   {
     "id": 101,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #101, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #101, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -1925,8 +1925,8 @@ module.exports = [
   {
     "id": 102,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #102:",
-      "en": "If we make a roadtrip playlist for our drive #102:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -1944,8 +1944,8 @@ module.exports = [
   {
     "id": 103,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #103?",
-      "en": "What would our ideal Sunday morning routine be #103?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -1963,8 +1963,8 @@ module.exports = [
   {
     "id": 104,
     "question": {
-      "pt": "Em uma loja de decoração mágica #104, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #104, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -1982,8 +1982,8 @@ module.exports = [
   {
     "id": 105,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #105:",
-      "en": "If we could set the weather forecast for our day off #105:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -2001,8 +2001,8 @@ module.exports = [
   {
     "id": 106,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #106?",
-      "en": "Which simple gift brightens our entire day #106?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -2020,8 +2020,8 @@ module.exports = [
   {
     "id": 107,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #107:",
-      "en": "If we created a nighttime wind-down ritual #107:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -2039,8 +2039,8 @@ module.exports = [
   {
     "id": 108,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #108, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #108, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -2058,8 +2058,8 @@ module.exports = [
   {
     "id": 109,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #109:",
-      "en": "If Pyxie asked us about our bond #109:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -2077,8 +2077,8 @@ module.exports = [
   {
     "id": 110,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #110:",
-      "en": "When we go on a late-night snack run #110:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -2096,8 +2096,8 @@ module.exports = [
   {
     "id": 111,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #111, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #111, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -2115,8 +2115,8 @@ module.exports = [
   {
     "id": 112,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #112:",
-      "en": "If we make a roadtrip playlist for our drive #112:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -2134,8 +2134,8 @@ module.exports = [
   {
     "id": 113,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #113?",
-      "en": "What would our ideal Sunday morning routine be #113?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -2153,8 +2153,8 @@ module.exports = [
   {
     "id": 114,
     "question": {
-      "pt": "Em uma loja de decoração mágica #114, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #114, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -2172,8 +2172,8 @@ module.exports = [
   {
     "id": 115,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #115:",
-      "en": "If we could set the weather forecast for our day off #115:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -2191,8 +2191,8 @@ module.exports = [
   {
     "id": 116,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #116?",
-      "en": "Which simple gift brightens our entire day #116?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -2210,8 +2210,8 @@ module.exports = [
   {
     "id": 117,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #117:",
-      "en": "If we created a nighttime wind-down ritual #117:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -2229,8 +2229,8 @@ module.exports = [
   {
     "id": 118,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #118, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #118, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -2248,8 +2248,8 @@ module.exports = [
   {
     "id": 119,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #119:",
-      "en": "If Pyxie asked us about our bond #119:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -2267,8 +2267,8 @@ module.exports = [
   {
     "id": 120,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #120:",
-      "en": "When we go on a late-night snack run #120:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -2286,8 +2286,8 @@ module.exports = [
   {
     "id": 121,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #121, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #121, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -2305,8 +2305,8 @@ module.exports = [
   {
     "id": 122,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #122:",
-      "en": "If we make a roadtrip playlist for our drive #122:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -2324,8 +2324,8 @@ module.exports = [
   {
     "id": 123,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #123?",
-      "en": "What would our ideal Sunday morning routine be #123?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -2343,8 +2343,8 @@ module.exports = [
   {
     "id": 124,
     "question": {
-      "pt": "Em uma loja de decoração mágica #124, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #124, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -2362,8 +2362,8 @@ module.exports = [
   {
     "id": 125,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #125:",
-      "en": "If we could set the weather forecast for our day off #125:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -2381,8 +2381,8 @@ module.exports = [
   {
     "id": 126,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #126?",
-      "en": "Which simple gift brightens our entire day #126?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -2400,8 +2400,8 @@ module.exports = [
   {
     "id": 127,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #127:",
-      "en": "If we created a nighttime wind-down ritual #127:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -2419,8 +2419,8 @@ module.exports = [
   {
     "id": 128,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #128, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #128, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -2438,8 +2438,8 @@ module.exports = [
   {
     "id": 129,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #129:",
-      "en": "If Pyxie asked us about our bond #129:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -2457,8 +2457,8 @@ module.exports = [
   {
     "id": 130,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #130:",
-      "en": "When we go on a late-night snack run #130:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -2476,8 +2476,8 @@ module.exports = [
   {
     "id": 131,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #131, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #131, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -2495,8 +2495,8 @@ module.exports = [
   {
     "id": 132,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #132:",
-      "en": "If we make a roadtrip playlist for our drive #132:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -2514,8 +2514,8 @@ module.exports = [
   {
     "id": 133,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #133?",
-      "en": "What would our ideal Sunday morning routine be #133?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -2533,8 +2533,8 @@ module.exports = [
   {
     "id": 134,
     "question": {
-      "pt": "Em uma loja de decoração mágica #134, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #134, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -2552,8 +2552,8 @@ module.exports = [
   {
     "id": 135,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #135:",
-      "en": "If we could set the weather forecast for our day off #135:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -2571,8 +2571,8 @@ module.exports = [
   {
     "id": 136,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #136?",
-      "en": "Which simple gift brightens our entire day #136?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -2590,8 +2590,8 @@ module.exports = [
   {
     "id": 137,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #137:",
-      "en": "If we created a nighttime wind-down ritual #137:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -2609,8 +2609,8 @@ module.exports = [
   {
     "id": 138,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #138, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #138, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -2628,8 +2628,8 @@ module.exports = [
   {
     "id": 139,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #139:",
-      "en": "If Pyxie asked us about our bond #139:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -2647,8 +2647,8 @@ module.exports = [
   {
     "id": 140,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #140:",
-      "en": "When we go on a late-night snack run #140:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -2666,8 +2666,8 @@ module.exports = [
   {
     "id": 141,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #141, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #141, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -2685,8 +2685,8 @@ module.exports = [
   {
     "id": 142,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #142:",
-      "en": "If we make a roadtrip playlist for our drive #142:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -2704,8 +2704,8 @@ module.exports = [
   {
     "id": 143,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #143?",
-      "en": "What would our ideal Sunday morning routine be #143?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -2723,8 +2723,8 @@ module.exports = [
   {
     "id": 144,
     "question": {
-      "pt": "Em uma loja de decoração mágica #144, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #144, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -2742,8 +2742,8 @@ module.exports = [
   {
     "id": 145,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #145:",
-      "en": "If we could set the weather forecast for our day off #145:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -2761,8 +2761,8 @@ module.exports = [
   {
     "id": 146,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #146?",
-      "en": "Which simple gift brightens our entire day #146?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -2780,8 +2780,8 @@ module.exports = [
   {
     "id": 147,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #147:",
-      "en": "If we created a nighttime wind-down ritual #147:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -2799,8 +2799,8 @@ module.exports = [
   {
     "id": 148,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #148, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #148, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -2818,8 +2818,8 @@ module.exports = [
   {
     "id": 149,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #149:",
-      "en": "If Pyxie asked us about our bond #149:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -2837,8 +2837,8 @@ module.exports = [
   {
     "id": 150,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #150:",
-      "en": "When we go on a late-night snack run #150:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -2856,8 +2856,8 @@ module.exports = [
   {
     "id": 151,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #151, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #151, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -2875,8 +2875,8 @@ module.exports = [
   {
     "id": 152,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #152:",
-      "en": "If we make a roadtrip playlist for our drive #152:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -2894,8 +2894,8 @@ module.exports = [
   {
     "id": 153,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #153?",
-      "en": "What would our ideal Sunday morning routine be #153?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -2913,8 +2913,8 @@ module.exports = [
   {
     "id": 154,
     "question": {
-      "pt": "Em uma loja de decoração mágica #154, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #154, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -2932,8 +2932,8 @@ module.exports = [
   {
     "id": 155,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #155:",
-      "en": "If we could set the weather forecast for our day off #155:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -2951,8 +2951,8 @@ module.exports = [
   {
     "id": 156,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #156?",
-      "en": "Which simple gift brightens our entire day #156?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -2970,8 +2970,8 @@ module.exports = [
   {
     "id": 157,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #157:",
-      "en": "If we created a nighttime wind-down ritual #157:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -2989,8 +2989,8 @@ module.exports = [
   {
     "id": 158,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #158, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #158, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -3008,8 +3008,8 @@ module.exports = [
   {
     "id": 159,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #159:",
-      "en": "If Pyxie asked us about our bond #159:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -3027,8 +3027,8 @@ module.exports = [
   {
     "id": 160,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #160:",
-      "en": "When we go on a late-night snack run #160:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -3046,8 +3046,8 @@ module.exports = [
   {
     "id": 161,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #161, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #161, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -3065,8 +3065,8 @@ module.exports = [
   {
     "id": 162,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #162:",
-      "en": "If we make a roadtrip playlist for our drive #162:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -3084,8 +3084,8 @@ module.exports = [
   {
     "id": 163,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #163?",
-      "en": "What would our ideal Sunday morning routine be #163?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -3103,8 +3103,8 @@ module.exports = [
   {
     "id": 164,
     "question": {
-      "pt": "Em uma loja de decoração mágica #164, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #164, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -3122,8 +3122,8 @@ module.exports = [
   {
     "id": 165,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #165:",
-      "en": "If we could set the weather forecast for our day off #165:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -3141,8 +3141,8 @@ module.exports = [
   {
     "id": 166,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #166?",
-      "en": "Which simple gift brightens our entire day #166?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -3160,8 +3160,8 @@ module.exports = [
   {
     "id": 167,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #167:",
-      "en": "If we created a nighttime wind-down ritual #167:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -3179,8 +3179,8 @@ module.exports = [
   {
     "id": 168,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #168, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #168, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -3198,8 +3198,8 @@ module.exports = [
   {
     "id": 169,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #169:",
-      "en": "If Pyxie asked us about our bond #169:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -3217,8 +3217,8 @@ module.exports = [
   {
     "id": 170,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #170:",
-      "en": "When we go on a late-night snack run #170:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -3236,8 +3236,8 @@ module.exports = [
   {
     "id": 171,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #171, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #171, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -3255,8 +3255,8 @@ module.exports = [
   {
     "id": 172,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #172:",
-      "en": "If we make a roadtrip playlist for our drive #172:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -3274,8 +3274,8 @@ module.exports = [
   {
     "id": 173,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #173?",
-      "en": "What would our ideal Sunday morning routine be #173?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -3293,8 +3293,8 @@ module.exports = [
   {
     "id": 174,
     "question": {
-      "pt": "Em uma loja de decoração mágica #174, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #174, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -3312,8 +3312,8 @@ module.exports = [
   {
     "id": 175,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #175:",
-      "en": "If we could set the weather forecast for our day off #175:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -3331,8 +3331,8 @@ module.exports = [
   {
     "id": 176,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #176?",
-      "en": "Which simple gift brightens our entire day #176?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -3350,8 +3350,8 @@ module.exports = [
   {
     "id": 177,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #177:",
-      "en": "If we created a nighttime wind-down ritual #177:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -3369,8 +3369,8 @@ module.exports = [
   {
     "id": 178,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #178, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #178, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -3388,8 +3388,8 @@ module.exports = [
   {
     "id": 179,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #179:",
-      "en": "If Pyxie asked us about our bond #179:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -3407,8 +3407,8 @@ module.exports = [
   {
     "id": 180,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #180:",
-      "en": "When we go on a late-night snack run #180:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -3426,8 +3426,8 @@ module.exports = [
   {
     "id": 181,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #181, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #181, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -3445,8 +3445,8 @@ module.exports = [
   {
     "id": 182,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #182:",
-      "en": "If we make a roadtrip playlist for our drive #182:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -3464,8 +3464,8 @@ module.exports = [
   {
     "id": 183,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #183?",
-      "en": "What would our ideal Sunday morning routine be #183?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -3483,8 +3483,8 @@ module.exports = [
   {
     "id": 184,
     "question": {
-      "pt": "Em uma loja de decoração mágica #184, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #184, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -3502,8 +3502,8 @@ module.exports = [
   {
     "id": 185,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #185:",
-      "en": "If we could set the weather forecast for our day off #185:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -3521,8 +3521,8 @@ module.exports = [
   {
     "id": 186,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #186?",
-      "en": "Which simple gift brightens our entire day #186?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -3540,8 +3540,8 @@ module.exports = [
   {
     "id": 187,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #187:",
-      "en": "If we created a nighttime wind-down ritual #187:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -3559,8 +3559,8 @@ module.exports = [
   {
     "id": 188,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #188, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #188, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -3578,8 +3578,8 @@ module.exports = [
   {
     "id": 189,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #189:",
-      "en": "If Pyxie asked us about our bond #189:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -3597,8 +3597,8 @@ module.exports = [
   {
     "id": 190,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #190:",
-      "en": "When we go on a late-night snack run #190:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -3616,8 +3616,8 @@ module.exports = [
   {
     "id": 191,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #191, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #191, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -3635,8 +3635,8 @@ module.exports = [
   {
     "id": 192,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #192:",
-      "en": "If we make a roadtrip playlist for our drive #192:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -3654,8 +3654,8 @@ module.exports = [
   {
     "id": 193,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #193?",
-      "en": "What would our ideal Sunday morning routine be #193?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -3673,8 +3673,8 @@ module.exports = [
   {
     "id": 194,
     "question": {
-      "pt": "Em uma loja de decoração mágica #194, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #194, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -3692,8 +3692,8 @@ module.exports = [
   {
     "id": 195,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #195:",
-      "en": "If we could set the weather forecast for our day off #195:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -3711,8 +3711,8 @@ module.exports = [
   {
     "id": 196,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #196?",
-      "en": "Which simple gift brightens our entire day #196?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -3730,8 +3730,8 @@ module.exports = [
   {
     "id": 197,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #197:",
-      "en": "If we created a nighttime wind-down ritual #197:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -3749,8 +3749,8 @@ module.exports = [
   {
     "id": 198,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #198, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #198, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -3768,8 +3768,8 @@ module.exports = [
   {
     "id": 199,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #199:",
-      "en": "If Pyxie asked us about our bond #199:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -3787,8 +3787,8 @@ module.exports = [
   {
     "id": 200,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #200:",
-      "en": "When we go on a late-night snack run #200:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -3806,8 +3806,8 @@ module.exports = [
   {
     "id": 201,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #201, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #201, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -3825,8 +3825,8 @@ module.exports = [
   {
     "id": 202,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #202:",
-      "en": "If we make a roadtrip playlist for our drive #202:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -3844,8 +3844,8 @@ module.exports = [
   {
     "id": 203,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #203?",
-      "en": "What would our ideal Sunday morning routine be #203?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -3863,8 +3863,8 @@ module.exports = [
   {
     "id": 204,
     "question": {
-      "pt": "Em uma loja de decoração mágica #204, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #204, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -3882,8 +3882,8 @@ module.exports = [
   {
     "id": 205,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #205:",
-      "en": "If we could set the weather forecast for our day off #205:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -3901,8 +3901,8 @@ module.exports = [
   {
     "id": 206,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #206?",
-      "en": "Which simple gift brightens our entire day #206?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -3920,8 +3920,8 @@ module.exports = [
   {
     "id": 207,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #207:",
-      "en": "If we created a nighttime wind-down ritual #207:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -3939,8 +3939,8 @@ module.exports = [
   {
     "id": 208,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #208, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #208, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -3958,8 +3958,8 @@ module.exports = [
   {
     "id": 209,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #209:",
-      "en": "If Pyxie asked us about our bond #209:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -3977,8 +3977,8 @@ module.exports = [
   {
     "id": 210,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #210:",
-      "en": "When we go on a late-night snack run #210:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -3996,8 +3996,8 @@ module.exports = [
   {
     "id": 211,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #211, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #211, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -4015,8 +4015,8 @@ module.exports = [
   {
     "id": 212,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #212:",
-      "en": "If we make a roadtrip playlist for our drive #212:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -4034,8 +4034,8 @@ module.exports = [
   {
     "id": 213,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #213?",
-      "en": "What would our ideal Sunday morning routine be #213?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -4053,8 +4053,8 @@ module.exports = [
   {
     "id": 214,
     "question": {
-      "pt": "Em uma loja de decoração mágica #214, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #214, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -4072,8 +4072,8 @@ module.exports = [
   {
     "id": 215,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #215:",
-      "en": "If we could set the weather forecast for our day off #215:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -4091,8 +4091,8 @@ module.exports = [
   {
     "id": 216,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #216?",
-      "en": "Which simple gift brightens our entire day #216?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -4110,8 +4110,8 @@ module.exports = [
   {
     "id": 217,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #217:",
-      "en": "If we created a nighttime wind-down ritual #217:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -4129,8 +4129,8 @@ module.exports = [
   {
     "id": 218,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #218, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #218, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -4148,8 +4148,8 @@ module.exports = [
   {
     "id": 219,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #219:",
-      "en": "If Pyxie asked us about our bond #219:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -4167,8 +4167,8 @@ module.exports = [
   {
     "id": 220,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #220:",
-      "en": "When we go on a late-night snack run #220:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -4186,8 +4186,8 @@ module.exports = [
   {
     "id": 221,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #221, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #221, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -4205,8 +4205,8 @@ module.exports = [
   {
     "id": 222,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #222:",
-      "en": "If we make a roadtrip playlist for our drive #222:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -4224,8 +4224,8 @@ module.exports = [
   {
     "id": 223,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #223?",
-      "en": "What would our ideal Sunday morning routine be #223?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -4243,8 +4243,8 @@ module.exports = [
   {
     "id": 224,
     "question": {
-      "pt": "Em uma loja de decoração mágica #224, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #224, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -4262,8 +4262,8 @@ module.exports = [
   {
     "id": 225,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #225:",
-      "en": "If we could set the weather forecast for our day off #225:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -4281,8 +4281,8 @@ module.exports = [
   {
     "id": 226,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #226?",
-      "en": "Which simple gift brightens our entire day #226?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -4300,8 +4300,8 @@ module.exports = [
   {
     "id": 227,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #227:",
-      "en": "If we created a nighttime wind-down ritual #227:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -4319,8 +4319,8 @@ module.exports = [
   {
     "id": 228,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #228, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #228, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -4338,8 +4338,8 @@ module.exports = [
   {
     "id": 229,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #229:",
-      "en": "If Pyxie asked us about our bond #229:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -4357,8 +4357,8 @@ module.exports = [
   {
     "id": 230,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #230:",
-      "en": "When we go on a late-night snack run #230:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -4376,8 +4376,8 @@ module.exports = [
   {
     "id": 231,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #231, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #231, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -4395,8 +4395,8 @@ module.exports = [
   {
     "id": 232,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #232:",
-      "en": "If we make a roadtrip playlist for our drive #232:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -4414,8 +4414,8 @@ module.exports = [
   {
     "id": 233,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #233?",
-      "en": "What would our ideal Sunday morning routine be #233?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -4433,8 +4433,8 @@ module.exports = [
   {
     "id": 234,
     "question": {
-      "pt": "Em uma loja de decoração mágica #234, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #234, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -4452,8 +4452,8 @@ module.exports = [
   {
     "id": 235,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #235:",
-      "en": "If we could set the weather forecast for our day off #235:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -4471,8 +4471,8 @@ module.exports = [
   {
     "id": 236,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #236?",
-      "en": "Which simple gift brightens our entire day #236?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -4490,8 +4490,8 @@ module.exports = [
   {
     "id": 237,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #237:",
-      "en": "If we created a nighttime wind-down ritual #237:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -4509,8 +4509,8 @@ module.exports = [
   {
     "id": 238,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #238, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #238, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -4528,8 +4528,8 @@ module.exports = [
   {
     "id": 239,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #239:",
-      "en": "If Pyxie asked us about our bond #239:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -4547,8 +4547,8 @@ module.exports = [
   {
     "id": 240,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #240:",
-      "en": "When we go on a late-night snack run #240:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -4566,8 +4566,8 @@ module.exports = [
   {
     "id": 241,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #241, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #241, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -4585,8 +4585,8 @@ module.exports = [
   {
     "id": 242,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #242:",
-      "en": "If we make a roadtrip playlist for our drive #242:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -4604,8 +4604,8 @@ module.exports = [
   {
     "id": 243,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #243?",
-      "en": "What would our ideal Sunday morning routine be #243?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -4623,8 +4623,8 @@ module.exports = [
   {
     "id": 244,
     "question": {
-      "pt": "Em uma loja de decoração mágica #244, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #244, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -4642,8 +4642,8 @@ module.exports = [
   {
     "id": 245,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #245:",
-      "en": "If we could set the weather forecast for our day off #245:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -4661,8 +4661,8 @@ module.exports = [
   {
     "id": 246,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #246?",
-      "en": "Which simple gift brightens our entire day #246?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -4680,8 +4680,8 @@ module.exports = [
   {
     "id": 247,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #247:",
-      "en": "If we created a nighttime wind-down ritual #247:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -4699,8 +4699,8 @@ module.exports = [
   {
     "id": 248,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #248, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #248, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -4718,8 +4718,8 @@ module.exports = [
   {
     "id": 249,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #249:",
-      "en": "If Pyxie asked us about our bond #249:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -4737,8 +4737,8 @@ module.exports = [
   {
     "id": 250,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #250:",
-      "en": "When we go on a late-night snack run #250:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -4756,8 +4756,8 @@ module.exports = [
   {
     "id": 251,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #251, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #251, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -4775,8 +4775,8 @@ module.exports = [
   {
     "id": 252,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #252:",
-      "en": "If we make a roadtrip playlist for our drive #252:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -4794,8 +4794,8 @@ module.exports = [
   {
     "id": 253,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #253?",
-      "en": "What would our ideal Sunday morning routine be #253?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -4813,8 +4813,8 @@ module.exports = [
   {
     "id": 254,
     "question": {
-      "pt": "Em uma loja de decoração mágica #254, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #254, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -4832,8 +4832,8 @@ module.exports = [
   {
     "id": 255,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #255:",
-      "en": "If we could set the weather forecast for our day off #255:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -4851,8 +4851,8 @@ module.exports = [
   {
     "id": 256,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #256?",
-      "en": "Which simple gift brightens our entire day #256?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -4870,8 +4870,8 @@ module.exports = [
   {
     "id": 257,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #257:",
-      "en": "If we created a nighttime wind-down ritual #257:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -4889,8 +4889,8 @@ module.exports = [
   {
     "id": 258,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #258, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #258, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -4908,8 +4908,8 @@ module.exports = [
   {
     "id": 259,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #259:",
-      "en": "If Pyxie asked us about our bond #259:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -4927,8 +4927,8 @@ module.exports = [
   {
     "id": 260,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #260:",
-      "en": "When we go on a late-night snack run #260:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -4946,8 +4946,8 @@ module.exports = [
   {
     "id": 261,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #261, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #261, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -4965,8 +4965,8 @@ module.exports = [
   {
     "id": 262,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #262:",
-      "en": "If we make a roadtrip playlist for our drive #262:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -4984,8 +4984,8 @@ module.exports = [
   {
     "id": 263,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #263?",
-      "en": "What would our ideal Sunday morning routine be #263?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -5003,8 +5003,8 @@ module.exports = [
   {
     "id": 264,
     "question": {
-      "pt": "Em uma loja de decoração mágica #264, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #264, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -5022,8 +5022,8 @@ module.exports = [
   {
     "id": 265,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #265:",
-      "en": "If we could set the weather forecast for our day off #265:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -5041,8 +5041,8 @@ module.exports = [
   {
     "id": 266,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #266?",
-      "en": "Which simple gift brightens our entire day #266?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -5060,8 +5060,8 @@ module.exports = [
   {
     "id": 267,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #267:",
-      "en": "If we created a nighttime wind-down ritual #267:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -5079,8 +5079,8 @@ module.exports = [
   {
     "id": 268,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #268, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #268, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -5098,8 +5098,8 @@ module.exports = [
   {
     "id": 269,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #269:",
-      "en": "If Pyxie asked us about our bond #269:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -5117,8 +5117,8 @@ module.exports = [
   {
     "id": 270,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #270:",
-      "en": "When we go on a late-night snack run #270:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -5136,8 +5136,8 @@ module.exports = [
   {
     "id": 271,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #271, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #271, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -5155,8 +5155,8 @@ module.exports = [
   {
     "id": 272,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #272:",
-      "en": "If we make a roadtrip playlist for our drive #272:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -5174,8 +5174,8 @@ module.exports = [
   {
     "id": 273,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #273?",
-      "en": "What would our ideal Sunday morning routine be #273?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -5193,8 +5193,8 @@ module.exports = [
   {
     "id": 274,
     "question": {
-      "pt": "Em uma loja de decoração mágica #274, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #274, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -5212,8 +5212,8 @@ module.exports = [
   {
     "id": 275,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #275:",
-      "en": "If we could set the weather forecast for our day off #275:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -5231,8 +5231,8 @@ module.exports = [
   {
     "id": 276,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #276?",
-      "en": "Which simple gift brightens our entire day #276?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -5250,8 +5250,8 @@ module.exports = [
   {
     "id": 277,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #277:",
-      "en": "If we created a nighttime wind-down ritual #277:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -5269,8 +5269,8 @@ module.exports = [
   {
     "id": 278,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #278, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #278, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -5288,8 +5288,8 @@ module.exports = [
   {
     "id": 279,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #279:",
-      "en": "If Pyxie asked us about our bond #279:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -5307,8 +5307,8 @@ module.exports = [
   {
     "id": 280,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #280:",
-      "en": "When we go on a late-night snack run #280:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -5326,8 +5326,8 @@ module.exports = [
   {
     "id": 281,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #281, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #281, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -5345,8 +5345,8 @@ module.exports = [
   {
     "id": 282,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #282:",
-      "en": "If we make a roadtrip playlist for our drive #282:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -5364,8 +5364,8 @@ module.exports = [
   {
     "id": 283,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #283?",
-      "en": "What would our ideal Sunday morning routine be #283?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -5383,8 +5383,8 @@ module.exports = [
   {
     "id": 284,
     "question": {
-      "pt": "Em uma loja de decoração mágica #284, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #284, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -5402,8 +5402,8 @@ module.exports = [
   {
     "id": 285,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #285:",
-      "en": "If we could set the weather forecast for our day off #285:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -5421,8 +5421,8 @@ module.exports = [
   {
     "id": 286,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #286?",
-      "en": "Which simple gift brightens our entire day #286?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -5440,8 +5440,8 @@ module.exports = [
   {
     "id": 287,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #287:",
-      "en": "If we created a nighttime wind-down ritual #287:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -5459,8 +5459,8 @@ module.exports = [
   {
     "id": 288,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #288, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #288, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -5478,8 +5478,8 @@ module.exports = [
   {
     "id": 289,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #289:",
-      "en": "If Pyxie asked us about our bond #289:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -5497,8 +5497,8 @@ module.exports = [
   {
     "id": 290,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #290:",
-      "en": "When we go on a late-night snack run #290:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -5516,8 +5516,8 @@ module.exports = [
   {
     "id": 291,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #291, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #291, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -5535,8 +5535,8 @@ module.exports = [
   {
     "id": 292,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #292:",
-      "en": "If we make a roadtrip playlist for our drive #292:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -5554,8 +5554,8 @@ module.exports = [
   {
     "id": 293,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #293?",
-      "en": "What would our ideal Sunday morning routine be #293?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -5573,8 +5573,8 @@ module.exports = [
   {
     "id": 294,
     "question": {
-      "pt": "Em uma loja de decoração mágica #294, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #294, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -5592,8 +5592,8 @@ module.exports = [
   {
     "id": 295,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #295:",
-      "en": "If we could set the weather forecast for our day off #295:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -5611,8 +5611,8 @@ module.exports = [
   {
     "id": 296,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #296?",
-      "en": "Which simple gift brightens our entire day #296?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -5630,8 +5630,8 @@ module.exports = [
   {
     "id": 297,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #297:",
-      "en": "If we created a nighttime wind-down ritual #297:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -5649,8 +5649,8 @@ module.exports = [
   {
     "id": 298,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #298, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #298, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -5668,8 +5668,8 @@ module.exports = [
   {
     "id": 299,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #299:",
-      "en": "If Pyxie asked us about our bond #299:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -5687,8 +5687,8 @@ module.exports = [
   {
     "id": 300,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #300:",
-      "en": "When we go on a late-night snack run #300:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -5706,8 +5706,8 @@ module.exports = [
   {
     "id": 301,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #301, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #301, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -5725,8 +5725,8 @@ module.exports = [
   {
     "id": 302,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #302:",
-      "en": "If we make a roadtrip playlist for our drive #302:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -5744,8 +5744,8 @@ module.exports = [
   {
     "id": 303,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #303?",
-      "en": "What would our ideal Sunday morning routine be #303?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -5763,8 +5763,8 @@ module.exports = [
   {
     "id": 304,
     "question": {
-      "pt": "Em uma loja de decoração mágica #304, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #304, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -5782,8 +5782,8 @@ module.exports = [
   {
     "id": 305,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #305:",
-      "en": "If we could set the weather forecast for our day off #305:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -5801,8 +5801,8 @@ module.exports = [
   {
     "id": 306,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #306?",
-      "en": "Which simple gift brightens our entire day #306?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -5820,8 +5820,8 @@ module.exports = [
   {
     "id": 307,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #307:",
-      "en": "If we created a nighttime wind-down ritual #307:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -5839,8 +5839,8 @@ module.exports = [
   {
     "id": 308,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #308, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #308, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -5858,8 +5858,8 @@ module.exports = [
   {
     "id": 309,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #309:",
-      "en": "If Pyxie asked us about our bond #309:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -5877,8 +5877,8 @@ module.exports = [
   {
     "id": 310,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #310:",
-      "en": "When we go on a late-night snack run #310:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -5896,8 +5896,8 @@ module.exports = [
   {
     "id": 311,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #311, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #311, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -5915,8 +5915,8 @@ module.exports = [
   {
     "id": 312,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #312:",
-      "en": "If we make a roadtrip playlist for our drive #312:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -5934,8 +5934,8 @@ module.exports = [
   {
     "id": 313,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #313?",
-      "en": "What would our ideal Sunday morning routine be #313?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -5953,8 +5953,8 @@ module.exports = [
   {
     "id": 314,
     "question": {
-      "pt": "Em uma loja de decoração mágica #314, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #314, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -5972,8 +5972,8 @@ module.exports = [
   {
     "id": 315,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #315:",
-      "en": "If we could set the weather forecast for our day off #315:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -5991,8 +5991,8 @@ module.exports = [
   {
     "id": 316,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #316?",
-      "en": "Which simple gift brightens our entire day #316?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -6010,8 +6010,8 @@ module.exports = [
   {
     "id": 317,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #317:",
-      "en": "If we created a nighttime wind-down ritual #317:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -6029,8 +6029,8 @@ module.exports = [
   {
     "id": 318,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #318, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #318, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -6048,8 +6048,8 @@ module.exports = [
   {
     "id": 319,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #319:",
-      "en": "If Pyxie asked us about our bond #319:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -6067,8 +6067,8 @@ module.exports = [
   {
     "id": 320,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #320:",
-      "en": "When we go on a late-night snack run #320:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -6086,8 +6086,8 @@ module.exports = [
   {
     "id": 321,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #321, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #321, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -6105,8 +6105,8 @@ module.exports = [
   {
     "id": 322,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #322:",
-      "en": "If we make a roadtrip playlist for our drive #322:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -6124,8 +6124,8 @@ module.exports = [
   {
     "id": 323,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #323?",
-      "en": "What would our ideal Sunday morning routine be #323?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -6143,8 +6143,8 @@ module.exports = [
   {
     "id": 324,
     "question": {
-      "pt": "Em uma loja de decoração mágica #324, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #324, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -6162,8 +6162,8 @@ module.exports = [
   {
     "id": 325,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #325:",
-      "en": "If we could set the weather forecast for our day off #325:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -6181,8 +6181,8 @@ module.exports = [
   {
     "id": 326,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #326?",
-      "en": "Which simple gift brightens our entire day #326?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -6200,8 +6200,8 @@ module.exports = [
   {
     "id": 327,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #327:",
-      "en": "If we created a nighttime wind-down ritual #327:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -6219,8 +6219,8 @@ module.exports = [
   {
     "id": 328,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #328, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #328, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -6238,8 +6238,8 @@ module.exports = [
   {
     "id": 329,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #329:",
-      "en": "If Pyxie asked us about our bond #329:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -6257,8 +6257,8 @@ module.exports = [
   {
     "id": 330,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #330:",
-      "en": "When we go on a late-night snack run #330:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -6276,8 +6276,8 @@ module.exports = [
   {
     "id": 331,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #331, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #331, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -6295,8 +6295,8 @@ module.exports = [
   {
     "id": 332,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #332:",
-      "en": "If we make a roadtrip playlist for our drive #332:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -6314,8 +6314,8 @@ module.exports = [
   {
     "id": 333,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #333?",
-      "en": "What would our ideal Sunday morning routine be #333?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -6333,8 +6333,8 @@ module.exports = [
   {
     "id": 334,
     "question": {
-      "pt": "Em uma loja de decoração mágica #334, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #334, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -6352,8 +6352,8 @@ module.exports = [
   {
     "id": 335,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #335:",
-      "en": "If we could set the weather forecast for our day off #335:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -6371,8 +6371,8 @@ module.exports = [
   {
     "id": 336,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #336?",
-      "en": "Which simple gift brightens our entire day #336?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -6390,8 +6390,8 @@ module.exports = [
   {
     "id": 337,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #337:",
-      "en": "If we created a nighttime wind-down ritual #337:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -6409,8 +6409,8 @@ module.exports = [
   {
     "id": 338,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #338, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #338, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -6428,8 +6428,8 @@ module.exports = [
   {
     "id": 339,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #339:",
-      "en": "If Pyxie asked us about our bond #339:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -6447,8 +6447,8 @@ module.exports = [
   {
     "id": 340,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #340:",
-      "en": "When we go on a late-night snack run #340:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -6466,8 +6466,8 @@ module.exports = [
   {
     "id": 341,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #341, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #341, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -6485,8 +6485,8 @@ module.exports = [
   {
     "id": 342,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #342:",
-      "en": "If we make a roadtrip playlist for our drive #342:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -6504,8 +6504,8 @@ module.exports = [
   {
     "id": 343,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #343?",
-      "en": "What would our ideal Sunday morning routine be #343?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -6523,8 +6523,8 @@ module.exports = [
   {
     "id": 344,
     "question": {
-      "pt": "Em uma loja de decoração mágica #344, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #344, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -6542,8 +6542,8 @@ module.exports = [
   {
     "id": 345,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #345:",
-      "en": "If we could set the weather forecast for our day off #345:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -6561,8 +6561,8 @@ module.exports = [
   {
     "id": 346,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #346?",
-      "en": "Which simple gift brightens our entire day #346?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -6580,8 +6580,8 @@ module.exports = [
   {
     "id": 347,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #347:",
-      "en": "If we created a nighttime wind-down ritual #347:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -6599,8 +6599,8 @@ module.exports = [
   {
     "id": 348,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #348, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #348, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -6618,8 +6618,8 @@ module.exports = [
   {
     "id": 349,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #349:",
-      "en": "If Pyxie asked us about our bond #349:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -6637,8 +6637,8 @@ module.exports = [
   {
     "id": 350,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #350:",
-      "en": "When we go on a late-night snack run #350:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -6656,8 +6656,8 @@ module.exports = [
   {
     "id": 351,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #351, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #351, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -6675,8 +6675,8 @@ module.exports = [
   {
     "id": 352,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #352:",
-      "en": "If we make a roadtrip playlist for our drive #352:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -6694,8 +6694,8 @@ module.exports = [
   {
     "id": 353,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #353?",
-      "en": "What would our ideal Sunday morning routine be #353?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -6713,8 +6713,8 @@ module.exports = [
   {
     "id": 354,
     "question": {
-      "pt": "Em uma loja de decoração mágica #354, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #354, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -6732,8 +6732,8 @@ module.exports = [
   {
     "id": 355,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #355:",
-      "en": "If we could set the weather forecast for our day off #355:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -6751,8 +6751,8 @@ module.exports = [
   {
     "id": 356,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #356?",
-      "en": "Which simple gift brightens our entire day #356?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -6770,8 +6770,8 @@ module.exports = [
   {
     "id": 357,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #357:",
-      "en": "If we created a nighttime wind-down ritual #357:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -6789,8 +6789,8 @@ module.exports = [
   {
     "id": 358,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #358, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #358, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -6808,8 +6808,8 @@ module.exports = [
   {
     "id": 359,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #359:",
-      "en": "If Pyxie asked us about our bond #359:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -6827,8 +6827,8 @@ module.exports = [
   {
     "id": 360,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #360:",
-      "en": "When we go on a late-night snack run #360:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -6846,8 +6846,8 @@ module.exports = [
   {
     "id": 361,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #361, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #361, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -6865,8 +6865,8 @@ module.exports = [
   {
     "id": 362,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #362:",
-      "en": "If we make a roadtrip playlist for our drive #362:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -6884,8 +6884,8 @@ module.exports = [
   {
     "id": 363,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #363?",
-      "en": "What would our ideal Sunday morning routine be #363?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -6903,8 +6903,8 @@ module.exports = [
   {
     "id": 364,
     "question": {
-      "pt": "Em uma loja de decoração mágica #364, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #364, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -6922,8 +6922,8 @@ module.exports = [
   {
     "id": 365,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #365:",
-      "en": "If we could set the weather forecast for our day off #365:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -6941,8 +6941,8 @@ module.exports = [
   {
     "id": 366,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #366?",
-      "en": "Which simple gift brightens our entire day #366?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -6960,8 +6960,8 @@ module.exports = [
   {
     "id": 367,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #367:",
-      "en": "If we created a nighttime wind-down ritual #367:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -6979,8 +6979,8 @@ module.exports = [
   {
     "id": 368,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #368, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #368, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -6998,8 +6998,8 @@ module.exports = [
   {
     "id": 369,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #369:",
-      "en": "If Pyxie asked us about our bond #369:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -7017,8 +7017,8 @@ module.exports = [
   {
     "id": 370,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #370:",
-      "en": "When we go on a late-night snack run #370:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -7036,8 +7036,8 @@ module.exports = [
   {
     "id": 371,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #371, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #371, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -7055,8 +7055,8 @@ module.exports = [
   {
     "id": 372,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #372:",
-      "en": "If we make a roadtrip playlist for our drive #372:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -7074,8 +7074,8 @@ module.exports = [
   {
     "id": 373,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #373?",
-      "en": "What would our ideal Sunday morning routine be #373?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -7093,8 +7093,8 @@ module.exports = [
   {
     "id": 374,
     "question": {
-      "pt": "Em uma loja de decoração mágica #374, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #374, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -7112,8 +7112,8 @@ module.exports = [
   {
     "id": 375,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #375:",
-      "en": "If we could set the weather forecast for our day off #375:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -7131,8 +7131,8 @@ module.exports = [
   {
     "id": 376,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #376?",
-      "en": "Which simple gift brightens our entire day #376?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -7150,8 +7150,8 @@ module.exports = [
   {
     "id": 377,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #377:",
-      "en": "If we created a nighttime wind-down ritual #377:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -7169,8 +7169,8 @@ module.exports = [
   {
     "id": 378,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #378, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #378, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -7188,8 +7188,8 @@ module.exports = [
   {
     "id": 379,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #379:",
-      "en": "If Pyxie asked us about our bond #379:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -7207,8 +7207,8 @@ module.exports = [
   {
     "id": 380,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #380:",
-      "en": "When we go on a late-night snack run #380:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -7226,8 +7226,8 @@ module.exports = [
   {
     "id": 381,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #381, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #381, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -7245,8 +7245,8 @@ module.exports = [
   {
     "id": 382,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #382:",
-      "en": "If we make a roadtrip playlist for our drive #382:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -7264,8 +7264,8 @@ module.exports = [
   {
     "id": 383,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #383?",
-      "en": "What would our ideal Sunday morning routine be #383?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -7283,8 +7283,8 @@ module.exports = [
   {
     "id": 384,
     "question": {
-      "pt": "Em uma loja de decoração mágica #384, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #384, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -7302,8 +7302,8 @@ module.exports = [
   {
     "id": 385,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #385:",
-      "en": "If we could set the weather forecast for our day off #385:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -7321,8 +7321,8 @@ module.exports = [
   {
     "id": 386,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #386?",
-      "en": "Which simple gift brightens our entire day #386?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -7340,8 +7340,8 @@ module.exports = [
   {
     "id": 387,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #387:",
-      "en": "If we created a nighttime wind-down ritual #387:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -7359,8 +7359,8 @@ module.exports = [
   {
     "id": 388,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #388, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #388, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -7378,8 +7378,8 @@ module.exports = [
   {
     "id": 389,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #389:",
-      "en": "If Pyxie asked us about our bond #389:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -7397,8 +7397,8 @@ module.exports = [
   {
     "id": 390,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #390:",
-      "en": "When we go on a late-night snack run #390:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [
@@ -7416,8 +7416,8 @@ module.exports = [
   {
     "id": 391,
     "question": {
-      "pt": "Em uma feira ou evento ao ar livre #391, o que fazemos primeiro?",
-      "en": "At an outdoor carnival or night market #391, what is our first stop?"
+      "pt": "Em uma feira ou evento ao ar livre, o que fazemos primeiro?",
+      "en": "At an outdoor carnival or night market, what is our first stop?"
     },
     "options": {
       "pt": [
@@ -7435,8 +7435,8 @@ module.exports = [
   {
     "id": 392,
     "question": {
-      "pt": "Se formos montar uma playlist para nossa viagem de carro #392:",
-      "en": "If we make a roadtrip playlist for our drive #392:"
+      "pt": "Se formos montar uma playlist para nossa viagem de carro:",
+      "en": "If we make a roadtrip playlist for our drive:"
     },
     "options": {
       "pt": [
@@ -7454,8 +7454,8 @@ module.exports = [
   {
     "id": 393,
     "question": {
-      "pt": "Qual seria nossa atividade de domingo de manhã perfeita #393?",
-      "en": "What would our ideal Sunday morning routine be #393?"
+      "pt": "Qual seria nossa atividade de domingo de manhã perfeita?",
+      "en": "What would our ideal Sunday morning routine be?"
     },
     "options": {
       "pt": [
@@ -7473,8 +7473,8 @@ module.exports = [
   {
     "id": 394,
     "question": {
-      "pt": "Em uma loja de decoração mágica #394, o que compramos para nossa casa?",
-      "en": "In an enchanted home decor shop #394, what do we buy?"
+      "pt": "Em uma loja de decoração mágica, o que compramos para nossa casa?",
+      "en": "In an enchanted home decor shop, what do we buy?"
     },
     "options": {
       "pt": [
@@ -7492,8 +7492,8 @@ module.exports = [
   {
     "id": 395,
     "question": {
-      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga #395:",
-      "en": "If we could set the weather forecast for our day off #395:"
+      "pt": "Se pudéssemos escolher o clima ideal para o nosso dia de folga:",
+      "en": "If we could set the weather forecast for our day off:"
     },
     "options": {
       "pt": [
@@ -7511,8 +7511,8 @@ module.exports = [
   {
     "id": 396,
     "question": {
-      "pt": "Qual desses presentes simples faz nosso dia mais feliz #396?",
-      "en": "Which simple gift brightens our entire day #396?"
+      "pt": "Qual desses presentes simples faz nosso dia mais feliz?",
+      "en": "Which simple gift brightens our entire day?"
     },
     "options": {
       "pt": [
@@ -7530,8 +7530,8 @@ module.exports = [
   {
     "id": 397,
     "question": {
-      "pt": "Se fôssemos criar um ritual noturno antes de dormir #397:",
-      "en": "If we created a nighttime wind-down ritual #397:"
+      "pt": "Se fôssemos criar um ritual noturno antes de dormir:",
+      "en": "If we created a nighttime wind-down ritual:"
     },
     "options": {
       "pt": [
@@ -7549,8 +7549,8 @@ module.exports = [
   {
     "id": 398,
     "question": {
-      "pt": "Em um jogo de tabuleiro competitivo #398, qual é a nossa postura?",
-      "en": "In a competitive tabletop board game #398, how do we roll?"
+      "pt": "Em um jogo de tabuleiro competitivo, qual é a nossa postura?",
+      "en": "In a competitive tabletop board game, how do we roll?"
     },
     "options": {
       "pt": [
@@ -7568,8 +7568,8 @@ module.exports = [
   {
     "id": 399,
     "question": {
-      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão #399:",
-      "en": "If Pyxie asked us about our bond #399:"
+      "pt": "Se a Pyxie nos fizesse uma pergunta sobre nossa conexão:",
+      "en": "If Pyxie asked us about our bond:"
     },
     "options": {
       "pt": [
@@ -7587,8 +7587,8 @@ module.exports = [
   {
     "id": 400,
     "question": {
-      "pt": "Quando saímos para comprar guloseimas à noite #400:",
-      "en": "When we go on a late-night snack run #400:"
+      "pt": "Quando saímos para comprar guloseimas à noite:",
+      "en": "When we go on a late-night snack run:"
     },
     "options": {
       "pt": [

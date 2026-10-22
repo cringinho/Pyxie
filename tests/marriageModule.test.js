@@ -39,7 +39,16 @@ try {
   assert.ok(sampleQ.question.pt && sampleQ.question.en, 'Pergunta deve ter paridade bilíngue PT e EN');
   assert.equal(sampleQ.options.pt.length, 3, 'Pergunta PT deve ter 3 opções');
   assert.equal(sampleQ.options.en.length, 3, 'Pergunta EN deve ter 3 opções');
-  console.log('  ✅ 1. Banco generativo com 400 questões bilíngues e 3 opções validado.');
+
+  // Validação estrita contra vazamento de IDs (#\d+) nas perguntas
+  const hasHashId = dateQuestions.some((q) => /#\d+/.test(q.question.pt) || /#\d+/.test(q.question.en));
+  assert.equal(hasHashId, false, 'Nenhuma questão do Date Night deve conter identificadores de lote como #123');
+
+  // Validação do sanitizador defensivo de tempo de execução
+  const dirtySample = 'Em uma feira ou evento ao ar livre #241, o que fazemos primeiro?';
+  const cleaned = marriageManager.sanitizeDateQuestionText(dirtySample);
+  assert.equal(cleaned, 'Em uma feira ou evento ao ar livre, o que fazemos primeiro?', 'Sanitizador deve remover #241 e normalizar pontuação');
+  console.log('  ✅ 1. Banco generativo com 400 questões bilíngues, sanitizador e zero identificadores # vazados validado.');
 
   // 2. Proposta e Celebração do Casamento
   const prop = marriageManager.createMarriageProposal(userA, userB, 'guild_test_1');
@@ -116,6 +125,32 @@ try {
   console.log('  ✅ 5. Casa Familiar & Cofre do Amor Eterno: Depósitos, Juros proporcionais e Cooldown validados.');
 
   // 6. Date Night (Teste de Sintonia)
+  // Validação da interface mobile [A] [B] [C] e opções no embed
+  const pyCasamento = require('../src/modules/marriage/commands/pyCasamento');
+  let capturedDateUI = null;
+  const mockMsg = {
+    author: { id: userA },
+    guild: { id: '1453890868980482090' },
+    mentions: { users: new Map() },
+    reply: (payload) => {
+      capturedDateUI = payload;
+      return payload;
+    },
+  };
+  pyCasamento.executePrefix({ message: mockMsg, args: ['date'] });
+  assert.ok(capturedDateUI, 'Date Night deve responder com mensagem');
+  assert.ok(capturedDateUI.embeds && capturedDateUI.embeds.length === 1, 'Deve conter exatamente 1 embed');
+  const dateEmbedDesc = capturedDateUI.embeds[0].data.description;
+  assert.ok(dateEmbedDesc.includes('**[A]**'), 'Embed deve conter opção **[A]** no corpo');
+  assert.ok(dateEmbedDesc.includes('**[B]**'), 'Embed deve conter opção **[B]** no corpo');
+  assert.ok(dateEmbedDesc.includes('**[C]**'), 'Embed deve conter opção **[C]** no corpo');
+  assert.equal(capturedDateUI.components.length, 1, 'Deve conter 1 ActionRow de botões');
+  const dateButtons = capturedDateUI.components[0].components;
+  assert.equal(dateButtons.length, 3, 'Deve conter 3 botões compactos');
+  assert.equal(dateButtons[0].data.label, '[A]', 'Botão 1 deve ser compacto [A]');
+  assert.equal(dateButtons[1].data.label, '[B]', 'Botão 2 deve ser compacto [B]');
+  assert.equal(dateButtons[2].data.label, '[C]', 'Botão 3 deve ser compacto [C]');
+
   // Simula acerto mútuo (+15% amor e +100 moedas cada)
   const balAStart = getBalance(userA);
   const balBStart = getBalance(userB);
@@ -199,6 +234,10 @@ try {
 
   console.log('🎉 Todos os testes de Engenharia do Módulo Matrimônio & Família passaram com 100% de integridade!');
 } finally {
+  try {
+    const pyCasamento = require('../src/modules/marriage/commands/pyCasamento');
+    if (pyCasamento.activeDateSessions) pyCasamento.activeDateSessions.clear();
+  } catch (_) {}
   if (fs.existsSync(testMarriageDataFile)) {
     fs.unlinkSync(testMarriageDataFile);
   }

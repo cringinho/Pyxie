@@ -24,12 +24,13 @@ const {
   claimVaultInterest,
   canStartDateNight,
   getRandomDateQuestion,
+  sanitizeDateQuestionText,
   resolveDateNight,
   canHaveChild,
   addChild,
 } = require('../marriageManager');
 const { playChildBirthAnimation } = require('../marriageAnimations');
-const { formatCoins, t } = require('../../../utils/i18n');
+const { formatCoins, getLanguage, t } = require('../../../utils/i18n');
 const { MARRIAGE } = require('../../../commands/commandNames');
 
 const name = MARRIAGE || 'py-marriage';
@@ -362,12 +363,16 @@ async function handleDateNight(source, reply) {
 
   const marriage = check.marriage;
   const spouseId = marriage.spouses.find((id) => id !== user.id);
-  const isEn = source.locale?.startsWith('en') || source.guild?.preferredLocale?.startsWith('en');
-  const lang = isEn ? 'en' : 'pt';
+  const lang = getLanguage(source);
 
   const question = getRandomDateQuestion();
-  const qText = question.question[lang] || question.question.pt;
+  const qText = sanitizeDateQuestionText(question.question[lang] || question.question.pt);
   const qOptions = question.options[lang] || question.options.pt;
+
+  const letters = ['A', 'B', 'C', 'D', 'E'];
+  const optionsFormatted = qOptions
+    .map((opt, idx) => `**[${letters[idx] || idx + 1}]** ${opt}`)
+    .join('\n');
 
   const sessionId = `date_${marriage.id}_${Date.now()}`;
   activeDateSessions.set(sessionId, {
@@ -379,10 +384,11 @@ async function handleDateNight(source, reply) {
     createdAt: Date.now(),
   });
 
-  // Limpeza automática após 60s
-  setTimeout(() => {
+  // Limpeza automática após 60s (Zero Memory Leak & Event Loop Friendly)
+  const cleanTimer = setTimeout(() => {
     activeDateSessions.delete(sessionId);
   }, 60000);
+  if (cleanTimer.unref) cleanTimer.unref();
 
   const embed = new EmbedBuilder()
     .setColor('#FF69B4')
@@ -392,17 +398,19 @@ async function handleDateNight(source, reply) {
         userA: `<@${user.id}>`,
         userB: `<@${spouseId}>`,
         question: qText,
+        options: optionsFormatted,
       })
     )
     .setFooter({ text: 'Pyxie • Marriage & Family Core' })
     .setTimestamp();
 
   const row = new ActionRowBuilder();
-  qOptions.forEach((opt, idx) => {
+  qOptions.forEach((_, idx) => {
+    const letter = letters[idx] || String.fromCharCode(65 + idx);
     row.addComponents(
       new ButtonBuilder()
         .setCustomId(`marr:date_ans:${sessionId}:${idx}`)
-        .setLabel(opt.length > 80 ? opt.substring(0, 77) + '...' : opt)
+        .setLabel(`[${letter}]`)
         .setStyle(ButtonStyle.Primary)
     );
   });

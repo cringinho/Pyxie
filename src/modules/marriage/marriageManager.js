@@ -485,11 +485,33 @@ function canStartDateNight(userId) {
 }
 
 /**
+ * Sanitizador estrito de texto de perguntas de Date Night.
+ * Previne que identificadores de lote (#123) ou espaçamentos irregulares vazem para o usuário.
+ */
+function sanitizeDateQuestionText(text) {
+  if (typeof text !== 'string') return '';
+  return text
+    .replace(/\s*#\d+\b/g, '')
+    .replace(/\s+([,?:!])/g, '$1')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+/**
  * Seleciona uma pergunta aleatória do banco generativo de 400 questões
  */
 function getRandomDateQuestion() {
   const randomIndex = Math.floor(Math.random() * dateQuestions.length);
-  return dateQuestions[randomIndex];
+  const q = dateQuestions[randomIndex];
+  if (!q) return null;
+  return {
+    ...q,
+    question: {
+      pt: sanitizeDateQuestionText(q.question?.pt),
+      en: sanitizeDateQuestionText(q.question?.en),
+    },
+    options: q.options,
+  };
 }
 
 /**
@@ -716,6 +738,7 @@ module.exports = {
   claimVaultInterest,
   canStartDateNight,
   getRandomDateQuestion,
+  sanitizeDateQuestionText,
   resolveDateNight,
   canHaveChild,
   addChild,
