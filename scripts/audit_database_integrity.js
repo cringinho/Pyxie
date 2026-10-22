@@ -97,7 +97,9 @@ function auditDatabase(dataDir, { autoCleanStale = false } = {}) {
     if (typeof marriages === 'object' && !Array.isArray(marriages)) {
       for (const [mId, m] of Object.entries(marriages)) {
         if (!m || typeof m !== 'object') continue;
-        if (!m.user1Id || !m.user2Id || m.user1Id === m.user2Id) {
+        const u1 = m.user1Id || (Array.isArray(m.spouses) ? m.spouses[0] : null);
+        const u2 = m.user2Id || (Array.isArray(m.spouses) ? m.spouses[1] : null);
+        if (!u1 || !u2 || u1 === u2) {
           issues.push({ file: 'marriageData.json', marriageId: mId, issue: 'INCOHERENT_SPOUSES', m });
         }
         if (m.sharedVaultCoins !== undefined && (typeof m.sharedVaultCoins !== 'number' || m.sharedVaultCoins < 0 || isNaN(m.sharedVaultCoins))) {
