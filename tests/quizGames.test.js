@@ -248,5 +248,58 @@ if (fs.existsSync(hook) && bash.status === 0) {
   console.log('  ⏭️ 9. bash indisponível: verificação do hook pulada.');
 }
 
-fs.rmSync(tmpDir, { recursive: true, force: true });
-console.log('🎉 tests/quizGames.test.js concluído com 100% de sucesso!');
+// 10. /py-set via slash: o index.js já fez deferReply, então a resposta precisa ser editReply
+(async () => {
+  const originalAssign = guildConfigService.assignDedicatedChannel;
+  const assigned = [];
+  guildConfigService.assignDedicatedChannel = (guildId, featureKey, channelId) => {
+    assigned.push({ guildId, featureKey, channelId });
+    return { status: 'ASSIGNED', featureKey, featureName: 'Jogos & Minigames', featureNameEn: 'Games & Minigames', channelId, previousChannelId: null, conflictFeature: null };
+  };
+  const setCommand = require('../src/commands/set');
+  guildConfigService.assignDedicatedChannel = originalAssign;
+
+  assert.equal(setCommand.ephemeral, true, '/py-set deve abrir o defer em modo privado');
+
+  const makeInteraction = (sub) => {
+    const calls = { editReply: [], reply: 0 };
+    const interaction = {
+      deferred: true,
+      replied: false,
+      guildId: 'test_guild_set',
+      guild: { id: 'test_guild_set', name: 'Servidor Teste' },
+      locale: 'pt-BR',
+      member: { permissions: { has: () => true } },
+      options: {
+        getSubcommand: () => sub,
+        getChannel: () => ({ id: '555', isTextBased: () => true }),
+      },
+      editReply: async (payload) => calls.editReply.push(payload),
+      reply: async () => {
+        calls.reply += 1;
+        throw new Error('InteractionAlreadyReplied');
+      },
+    };
+    return { interaction, calls };
+  };
+
+  const games = makeInteraction('games');
+  await setCommand.executeSlash({ interaction: games.interaction });
+  assert.equal(games.calls.reply, 0, 'Não pode chamar reply() depois do defer');
+  assert.equal(games.calls.editReply.length, 1);
+  assert.ok(games.calls.editReply[0].content.includes('<#555>'), 'Confirma o canal de jogos configurado');
+  assert.ok(!('ephemeral' in games.calls.editReply[0]), 'editReply não recebe a flag ephemeral');
+  assert.deepEqual(assigned, [{ guildId: 'test_guild_set', featureKey: 'games', channelId: '555' }]);
+
+  const help = makeInteraction(null);
+  await setCommand.executeSlash({ interaction: help.interaction });
+  assert.equal(help.calls.reply, 0);
+  assert.equal(help.calls.editReply[0].embeds.length, 1, 'Sem subcomando mostra a central de configuração');
+  console.log('  ✅ 10. /py-set via slash responde com editReply após o defer (inclui py-set jogos).');
+
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+  console.log('🎉 tests/quizGames.test.js concluído com 100% de sucesso!');
+})().catch((err) => {
+  console.error('❌ Falha nos testes de /py-set:', err);
+  process.exit(1);
+});

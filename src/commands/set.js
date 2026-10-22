@@ -206,6 +206,8 @@ function buildChannelFeedback(assignResult, source) {
 module.exports = {
   name: SET,
   aliases: ['set', 'py-set', 'configurar', 'py-configurar'],
+  // Configurações respondem em privado: o index.js abre o deferReply efêmero
+  ephemeral: true,
   data: new SlashCommandBuilder()
     .setName(SET)
     .setDescription('Configures channels and server features (Welcome, Vent, Tarot, Tickets, Games).')
@@ -416,8 +418,14 @@ module.exports = {
   },
 
   async executeSlash({ interaction }) {
+    // O index.js já fez deferReply: responder de novo com reply() lança InteractionAlreadyReplied
+    const respond = ({ ephemeral, ...payload }) =>
+      interaction.deferred || interaction.replied
+        ? interaction.editReply(payload)
+        : interaction.reply({ ...payload, ephemeral: true });
+
     if (!interaction.member?.permissions?.has(PermissionFlagsBits.ManageGuild)) {
-      await interaction.reply({ content: t('admin.noPermission', interaction), ephemeral: true });
+      await respond({ content: t('admin.noPermission', interaction), ephemeral: true });
       return;
     }
 
@@ -435,13 +443,13 @@ module.exports = {
           `• \`/py-set tarot canal:#canal\` — Postagem diária do Tarot às 00:00 BRT.\n\n` +
           `• \`/py-set jogos canal:#canal\` — Restringe os duelos de quiz a um canal de jogos.`
         );
-      await interaction.reply({ embeds: [helpEmbed], ephemeral: true });
+      await respond({ embeds: [helpEmbed], ephemeral: true });
       return;
     }
 
     const channel = interaction.options.getChannel('channel') || interaction.options.getChannel('canal');
     if (!channel || !channel.isTextBased()) {
-      await interaction.reply({ content: t('admin.welcomeNeedChannel', interaction), ephemeral: true });
+      await respond({ content: t('admin.welcomeNeedChannel', interaction), ephemeral: true });
       return;
     }
 
@@ -452,11 +460,11 @@ module.exports = {
       const panel = buildWelcomeControlPanel(interaction.guild, getWelcomeConfig(interaction.guildId));
 
       if (feedback.isAlreadySet) {
-        await interaction.reply({ content: feedback.text, ...panel, ephemeral: true });
+        await respond({ content: feedback.text, ...panel, ephemeral: true });
         return;
       }
 
-      await interaction.reply({
+      await respond({
         content: feedback.text ? `${feedback.text}\n\n` : undefined,
         ...panel,
         ephemeral: true,
@@ -470,7 +478,7 @@ module.exports = {
       const feedback = buildChannelFeedback(assignRes, interaction);
 
       if (feedback.isAlreadySet) {
-        await interaction.reply({ content: feedback.text, ephemeral: true });
+        await respond({ content: feedback.text, ephemeral: true });
         return;
       }
 
@@ -481,7 +489,7 @@ module.exports = {
       scheduleStickyReposition(interaction.guild, channel);
       const successMsg = `✅ Canal de desabafos configurado para <#${channel.id}> com sucesso!`;
       const finalMsg = feedback.text ? `${feedback.text}\n\n${successMsg}` : successMsg;
-      await interaction.reply({
+      await respond({
         content: finalMsg,
         ephemeral: true,
       });
@@ -494,16 +502,25 @@ module.exports = {
       const feedback = buildChannelFeedback(assignRes, interaction);
 
       if (feedback.isAlreadySet) {
-        await interaction.reply({ content: feedback.text, ephemeral: true });
+        await respond({ content: feedback.text, ephemeral: true });
         return;
       }
 
       const successMsg = `✅ Canal do Tarot Diário configurado para <#${channel.id}>! As tiragens diárias serão anunciadas aqui à 00:00 BRT.`;
       const finalMsg = feedback.text ? `${feedback.text}\n\n${successMsg}` : successMsg;
-      await interaction.reply({
+      await respond({
         content: finalMsg,
         ephemeral: true,
       });
+      return;
+    }
+
+    // Subcomando Jogos (nome base do slash)
+    if (sub === 'games') {
+      const assignRes = assignDedicatedChannel(interaction.guildId, 'games', channel.id);
+      const feedback = buildChannelFeedback(assignRes, interaction);
+      const successMsg = t('set.gamesSuccess', interaction, { channel: channel.id });
+      await respond({ content: feedback.isAlreadySet ? feedback.text : [feedback.text, successMsg].filter(Boolean).join('\n\n') });
       return;
     }
 
@@ -512,7 +529,7 @@ module.exports = {
       const assignRes = assignDedicatedChannel(interaction.guildId, 'tickets', channel.id);
       const feedback = buildChannelFeedback(assignRes, interaction);
       const catPayload = buildCategorySelectionPayload(channel, feedback.text, interaction);
-      await interaction.reply({ ...catPayload, ephemeral: true });
+      await respond({ ...catPayload, ephemeral: true });
       return;
     }
   },
