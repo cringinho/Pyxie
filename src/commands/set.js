@@ -118,43 +118,38 @@ function buildWelcomePreviewEmbed(member, welcomeConfig) {
 }
 
 /**
- * Constrói o Embed e Componentes para Seleção de Categoria dos Tickets
+ * Constrói o Embed e Componentes para Seleção de Categoria e Registros dos Tickets
  */
-function buildCategorySelectionPayload(channel, notice = '') {
+function buildCategorySelectionPayload(channel, notice = '', source = channel) {
   const embed = new EmbedBuilder()
     .setColor('#8B5CF6')
-    .setTitle('📁  ✦  Selecione a Categoria dos Tickets')
-    .setDescription(
-      `O canal do painel de atendimento foi definido para <#${channel.id}>!\n\n` +
+    .setTitle(t('tickets.setup_payload_title', source))
+    .setDescription(t('tickets.setup_payload_desc', source, { channel: `<#${channel.id}>` }))
+    .setFooter({ text: t('tickets.setup_payload_footer', source) });
 
-      '### ⚙️ Próximo Passo: Categoria das Salas\n\n' +
-
-      'Precisamos definir em qual **Categoria do Discord** os novos canais de atendimento serão criados:\n\n' +
-
-      '• Selecione uma categoria existente no menu abaixo;\n\n' +
-
-      '• Ou clique em **[ ➕ Crie pra mim ]** para criarmos automaticamente a categoria `📩・ATENDIMENTO` no topo do servidor com permissões blindadas.\n\n' +
-
-      '-# 🔒 Os novos chamados serão criados de forma 100% privada e visíveis apenas ao usuário e à Staff.'
-    )
-    .setFooter({ text: 'Pyxie • Sistema Oficial de Tickets' })
-    .setTimestamp();
-
-  const selectRow = new ActionRowBuilder().addComponents(
+  const categoryRow = new ActionRowBuilder().addComponents(
     new ChannelSelectMenuBuilder()
       .setCustomId('tkt:setup:select_cat')
-      .setPlaceholder('Selecione uma categoria existente no servidor...')
+      .setPlaceholder(t('tickets.setup_cat_placeholder', source))
       .setChannelTypes(ChannelType.GuildCategory)
+  );
+
+  const logsRow = new ActionRowBuilder().addComponents(
+    new ChannelSelectMenuBuilder()
+      .setCustomId('tkt:setup:select_logs')
+      .setPlaceholder(t('tickets.setup_logs_placeholder', source))
+      .setChannelTypes(ChannelType.GuildText)
   );
 
   const buttonRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId('tkt:setup:create_cat')
-      .setLabel('➕ Crie pra mim')
+      .setEmoji('➕')
+      .setLabel(t('tickets.btn_create_cat', source))
       .setStyle(ButtonStyle.Success)
   );
 
-  const payload = { embeds: [embed], components: [selectRow, buttonRow] };
+  const payload = { embeds: [embed], components: [categoryRow, logsRow, buttonRow] };
   if (notice && notice.trim()) {
     payload.content = notice.trim();
   }
@@ -386,7 +381,7 @@ module.exports = {
     if (['tickets', 'ticket', 'atendimento'].includes(sub)) {
       const assignRes = assignDedicatedChannel(message.guildId, 'tickets', channel.id);
       const feedback = buildChannelFeedback(assignRes, message);
-      const catPayload = buildCategorySelectionPayload(channel, feedback.text);
+      const catPayload = buildCategorySelectionPayload(channel, feedback.text, message);
       await message.reply(catPayload);
       return;
     }
@@ -487,7 +482,7 @@ module.exports = {
     if (['tickets', 'ticket', 'atendimento'].includes(sub)) {
       const assignRes = assignDedicatedChannel(interaction.guildId, 'tickets', channel.id);
       const feedback = buildChannelFeedback(assignRes, interaction);
-      const catPayload = buildCategorySelectionPayload(channel, feedback.text);
+      const catPayload = buildCategorySelectionPayload(channel, feedback.text, interaction);
       await interaction.reply({ ...catPayload, ephemeral: true });
       return;
     }

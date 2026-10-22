@@ -777,11 +777,29 @@ registerEmbed({
   previewTitle: '{header} Atendimento Iniciado • Suporte Pyxie',
   previewDesc: 'Olá! Descreva o motivo do seu contato com detalhes e prints para agilizar o suporte.',
   previewFields: [
-    { name: '⏱️ Tempo de Resposta', value: 'Nossa equipe responderá em breve.', inline: true },
-    { name: '🔒 Fechamento', value: 'Apenas a Staff pode encerrar o chamado.', inline: true },
+    { name: '🙋 Assumir', value: 'A Staff assume o chamado com um toque.', inline: true },
+    { name: '🔒 Fechamento', value: 'Autor ou Staff, com transcrição na DM.', inline: true },
   ],
   slots: [
     { key: 'header', label: 'Ícone da Sala', fallback: '📩', defaultEmojiKey: 'helpCommands', description: 'Ícone de boas-vindas da sala' },
+  ],
+});
+
+registerEmbed({
+  id: 'tickets_close_log',
+  name: '📁 Registro de Atendimento Encerrado',
+  category: 'system',
+  description: 'Registro enviado ao canal de logs da Staff com resumo e transcrição .txt do atendimento.',
+  defaultColor: '#64748b',
+  previewTitle: '{header} Atendimento Encerrado',
+  previewDesc: 'Resumo do atendimento com a transcrição completa anexada.',
+  previewFields: [
+    { name: '👤 Aberto por', value: '`<@123456789>`', inline: true },
+    { name: '🏷️ Tipo', value: '`#0004` Ajuda', inline: true },
+    { name: '⏱️ Duração', value: '`1h 12min`', inline: true },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone do Registro', fallback: '📁', defaultEmojiKey: 'helpCommands', description: 'Ícone do registro de encerramento' },
   ],
 });
 

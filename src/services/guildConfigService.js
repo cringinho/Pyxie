@@ -310,6 +310,7 @@ function getTicketConfig(guildId) {
     ticketPanelChannelId: cfg.ticketPanelChannelId || null,
     ticketCategoryId: cfg.ticketCategoryId || null,
     ticketPanelMessageId: cfg.ticketPanelMessageId || null,
+    ticketLogChannelId: cfg.ticketLogChannelId || null,
   };
 }
 
@@ -319,6 +320,7 @@ function setTicketConfig(guildId, updates = {}) {
     ticketPanelChannelId: updates.ticketPanelChannelId !== undefined ? normalizeChannelValue(updates.ticketPanelChannelId) : current.ticketPanelChannelId,
     ticketCategoryId: updates.ticketCategoryId !== undefined ? normalizeChannelValue(updates.ticketCategoryId) : current.ticketCategoryId,
     ticketPanelMessageId: updates.ticketPanelMessageId !== undefined ? updates.ticketPanelMessageId : current.ticketPanelMessageId,
+    ticketLogChannelId: updates.ticketLogChannelId !== undefined ? normalizeChannelValue(updates.ticketLogChannelId) : current.ticketLogChannelId,
   };
   return updateGuildConfig(guildId, normalizedUpdates);
 }
