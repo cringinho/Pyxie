@@ -171,7 +171,25 @@ const mockModalSubmit = {
 
   const customTs = parseDateTime('25/12/2026 20:00');
   assert.ok(customTs && !isNaN(customTs), 'Parser de data customizada deve ser número válido');
-  console.log('✅ Parser de data & hora de sorteios validado.');
+  assert.strictEqual(customTs, Date.parse('2026-12-25T20:00:00-03:00'), 'Data absoluta deve respeitar timezone de Brasília (-03:00)');
+
+  // Duração relativa a partir de now
+  const dur1h = parseDateTime('1h', nowTs);
+  assert.strictEqual(dur1h, nowTs + 3600000, 'Duração de 1h deve somar exatamente 3.600.000 ms');
+
+  const dur30m = parseDateTime('30m', nowTs);
+  assert.strictEqual(dur30m, nowTs + 1800000, 'Duração de 30m deve somar exatamente 1.800.000 ms');
+
+  const dur2d = parseDateTime('2d', nowTs);
+  assert.strictEqual(dur2d, nowTs + 2 * 86400000, 'Duração de 2d deve somar exatamente 172.800.000 ms');
+
+  const durComp = parseDateTime('1h30m', nowTs);
+  assert.strictEqual(durComp, nowTs + 5400000, 'Duração composta de 1h30m deve somar 5.400.000 ms');
+
+  const shortYear = parseDateTime('25/12/26 20:00');
+  assert.strictEqual(shortYear, customTs, 'Ano com 2 dígitos deve ser inferido como 2026');
+
+  console.log('✅ Parser de data & hora de sorteios validado (relativo e BRT).');
 
   // 2.2 Hub e Card Público
   const hub = buildHubPayload();

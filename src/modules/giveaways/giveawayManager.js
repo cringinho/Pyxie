@@ -60,25 +60,113 @@ function saveGiveawaysData(data) {
 }
 
 /**
- * Converte string DD/MM/AAAA HH:mm ou AGORA para timestamp
+ * Converte strings de duração relativa (ex: 10m, 1h, 2d, 1h30m, 2 dias) em milissegundos
  */
-function parseDateTime(input) {
+function parseRelativeDuration(str) {
+  if (!str || typeof str !== 'string') return null;
+  const clean = str.trim().toLowerCase();
+
+  // Caso 1: unidade simples (ex: 10m, 30 min, 1h, 2 horas, 1d, 3 dias, 45 seg)
+  const simpleMatch = clean.match(/^(\d+)\s*(s(?:eg(?:undos?)?)?|seconds?|sec|m(?:in(?:utos?)?)?|minutes?|h(?:(?:ou)?rs?|oras?)?|d(?:ias?)?|days?|w|sem(?:anas?)?|weeks?)$/i);
+  if (simpleMatch) {
+    const val = parseInt(simpleMatch[1], 10);
+    const unit = simpleMatch[2].toLowerCase();
+    if (unit.startsWith('s') && !unit.startsWith('sem')) return val * 1000;
+    if (unit.startsWith('m') && !unit.startsWith('minu')) return val * 60 * 1000;
+    if (unit.startsWith('min')) return val * 60 * 1000;
+    if (unit.startsWith('h')) return val * 3600 * 1000;
+    if (unit.startsWith('d')) return val * 86400 * 1000;
+    if (unit.startsWith('w') || unit.startsWith('sem')) return val * 7 * 86400 * 1000;
+  }
+
+  // Caso 2: composto (ex: 1d 2h, 1h30m, 2h 15m)
+  const comp = clean.match(/^(?:(\d+)\s*d)?\s*(?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?\s*(?:(\d+)\s*s)?$/i);
+  if (comp && (comp[1] || comp[2] || comp[3] || comp[4])) {
+    let total = 0;
+    if (comp[1]) total += parseInt(comp[1], 10) * 86400 * 1000;
+    if (comp[2]) total += parseInt(comp[2], 10) * 3600 * 1000;
+    if (comp[3]) total += parseInt(comp[3], 10) * 60 * 1000;
+    if (comp[4]) total += parseInt(comp[4], 10) * 1000;
+    return total > 0 ? total : null;
+  }
+
+  return null;
+}
+
+/**
+ * Converte string DD/MM/AAAA HH:mm, duração relativa (10m, 1h, 2d) ou AGORA para timestamp
+ * Sempre referenciado no fuso horário canônico de Brasília (America/Sao_Paulo / UTC-3)
+ */
+function parseDateTime(input, baseTime = Date.now()) {
   if (!input || typeof input !== 'string') return null;
   const clean = input.trim();
-  if (clean.toUpperCase() === 'AGORA') return Date.now();
+  if (clean.toUpperCase() === 'AGORA' || clean.toUpperCase() === 'NOW') return Date.now();
 
-  const match = clean.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})\s+(\d{1,2}):(\d{2})$/);
-  if (!match) return null;
+  // 1. Duração relativa (ex: 30m, 1h, 2d, 1h30m)
+  const relMs = parseRelativeDuration(clean);
+  if (relMs !== null) {
+    return (baseTime || Date.now()) + relMs;
+  }
 
-  const day = parseInt(match[1], 10);
-  const month = parseInt(match[2], 10) - 1;
-  const year = parseInt(match[3], 10);
-  const hour = parseInt(match[4], 10);
-  const min = parseInt(match[5], 10);
+  // Obter partes da data atual em Brasília (BRT)
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(now);
 
-  const dt = new Date(year, month, day, hour, min, 0);
-  const ts = dt.getTime();
-  return isNaN(ts) ? null : ts;
+  const curYear = parseInt(parts.find((p) => p.type === 'year')?.value, 10);
+  const curMonth = parseInt(parts.find((p) => p.type === 'month')?.value, 10);
+  const curDay = parseInt(parts.find((p) => p.type === 'day')?.value, 10);
+
+  // 2. Formato completo: DD/MM/AAAA HH:mm ou DD/MM/AA HH:mm (separador /, - ou .)
+  const fullMatch = clean.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})\s+(\d{1,2})[:h](\d{2})$/i);
+  if (fullMatch) {
+    const day = parseInt(fullMatch[1], 10);
+    const month = parseInt(fullMatch[2], 10);
+    let year = parseInt(fullMatch[3], 10);
+    if (year < 100) year += 2000;
+    const hour = parseInt(fullMatch[4], 10);
+    const min = parseInt(fullMatch[5], 10);
+
+    const iso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}:00-03:00`;
+    const ts = Date.parse(iso);
+    return isNaN(ts) ? null : ts;
+  }
+
+  // 3. Formato sem ano: DD/MM HH:mm (assume ano corrente em BRT)
+  const noYearMatch = clean.match(/^(\d{1,2})[\/\-\.](\d{1,2})\s+(\d{1,2})[:h](\d{2})$/i);
+  if (noYearMatch) {
+    const day = parseInt(noYearMatch[1], 10);
+    const month = parseInt(noYearMatch[2], 10);
+    const hour = parseInt(noYearMatch[3], 10);
+    const min = parseInt(noYearMatch[4], 10);
+
+    const iso = `${curYear}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}:00-03:00`;
+    const ts = Date.parse(iso);
+    return isNaN(ts) ? null : ts;
+  }
+
+  // 4. Formato apenas horário: HH:mm ou HHhMM (se for hoje e já passou em BRT, assume amanhã)
+  const timeOnlyMatch = clean.match(/^(\d{1,2})[:h](\d{2})$/i);
+  if (timeOnlyMatch) {
+    const hour = parseInt(timeOnlyMatch[1], 10);
+    const min = parseInt(timeOnlyMatch[2], 10);
+
+    const todayIso = `${curYear}-${String(curMonth).padStart(2, '0')}-${String(curDay).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}:00-03:00`;
+    let targetTs = Date.parse(todayIso);
+    if (targetTs <= Date.now()) {
+      targetTs += 86400000; // adiciona 1 dia
+    }
+    return isNaN(targetTs) ? null : targetTs;
+  }
+
+  return null;
 }
 
 /**
@@ -130,16 +218,16 @@ function buildStep1Modal() {
 
   const startInput = new TextInputBuilder()
     .setCustomId('startsAt')
-    .setLabel('Data & Hora de Início (ou AGORA)')
-    .setPlaceholder('DD/MM/AAAA HH:mm ou AGORA')
+    .setLabel('Início: AGORA, Duração ou Data')
+    .setPlaceholder('Ex: AGORA, 10m, ou 22/10 15:00')
     .setValue('AGORA')
     .setStyle(TextInputStyle.Short)
     .setRequired(true);
 
   const endInput = new TextInputBuilder()
     .setCustomId('endsAt')
-    .setLabel('Data & Hora de Término')
-    .setPlaceholder('DD/MM/AAAA HH:mm (mínimo 1 min)')
+    .setLabel('Término: Duração (1h, 30m, 2d) ou Data')
+    .setPlaceholder('Ex: 1h, 30m, 2d ou 22/10 16:00')
     .setStyle(TextInputStyle.Short)
     .setRequired(true);
 
@@ -578,7 +666,7 @@ async function handleGiveawayInteraction(interaction, client) {
     const winnersCountRaw = interaction.fields.getTextInputValue('winnersCount')?.trim();
 
     const startsAt = parseDateTime(startsAtRaw);
-    const endsAt = parseDateTime(endsAtRaw);
+    const endsAt = parseDateTime(endsAtRaw, startsAt || Date.now());
     const winnersCount = parseInt(winnersCountRaw, 10);
 
     if (!title) {
@@ -588,7 +676,7 @@ async function handleGiveawayInteraction(interaction, client) {
 
     if (!startsAt) {
       await interaction.reply({
-        content: '❌ Data de início inválida. Use `DD/MM/AAAA HH:mm` ou `AGORA`.',
+        content: '❌ Data de início inválida. Use `AGORA`, uma duração (ex: `10m`, `1h`) ou uma data (`DD/MM/AAAA HH:mm`).',
         ephemeral: true,
       });
       return;
@@ -596,7 +684,7 @@ async function handleGiveawayInteraction(interaction, client) {
 
     if (!endsAt) {
       await interaction.reply({
-        content: '❌ Data de término inválida. Use o formato `DD/MM/AAAA HH:mm`.',
+        content: '❌ Data de término inválida. Use uma duração (ex: `1h`, `30m`, `2d`) ou uma data (`DD/MM/AAAA HH:mm`).',
         ephemeral: true,
       });
       return;
