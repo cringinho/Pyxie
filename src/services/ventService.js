@@ -324,11 +324,28 @@ async function handleVentInteraction(interaction) {
   return false;
 }
 
+/**
+ * Remove resíduos de mensagem Sticky do canal anterior em caso de migração
+ */
+async function cleanupOldChannelSticky(guild, oldChannelId) {
+  if (!guild || !oldChannelId) return;
+  try {
+    const lastId = activeStickyMessageIds.get(guild.id) || getGuildConfig(guild.id).lastVentStickyId;
+    if (lastId) {
+      const oldChan = await guild.channels.fetch(oldChannelId).catch(() => null);
+      if (oldChan && oldChan.isTextBased()) {
+        await oldChan.messages.delete(lastId).catch(() => null);
+      }
+    }
+  } catch (_) {}
+}
+
 module.exports = {
   buildVentStickyEmbed,
   buildVentStickyComponents,
   buildAutohelpEmbed,
   scheduleStickyReposition,
+  cleanupOldChannelSticky,
   onMessageCreate,
   handleVentInteraction,
 };

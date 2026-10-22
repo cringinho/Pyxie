@@ -17,9 +17,10 @@ const {
   setTarotChannelId,
   getWelcomeConfig,
   setTicketPanelChannelId,
+  assignDedicatedChannel,
 } = require('../services/guildConfigService');
-const { scheduleStickyReposition } = require('../services/ventService');
-const { t } = require('../utils/i18n');
+const { scheduleStickyReposition, cleanupOldChannelSticky } = require('../services/ventService');
+const { t, getLanguage } = require('../utils/i18n');
 
 /**
  * Constrói o Painel Interativo de Configuração de Boas-Vindas Premium
@@ -119,7 +120,7 @@ function buildWelcomePreviewEmbed(member, welcomeConfig) {
 /**
  * Constrói o Embed e Componentes para Seleção de Categoria dos Tickets
  */
-function buildCategorySelectionPayload(channel) {
+function buildCategorySelectionPayload(channel, notice = '') {
   const embed = new EmbedBuilder()
     .setColor('#8B5CF6')
     .setTitle('📁  ✦  Selecione a Categoria dos Tickets')
@@ -153,7 +154,58 @@ function buildCategorySelectionPayload(channel) {
       .setStyle(ButtonStyle.Success)
   );
 
-  return { embeds: [embed], components: [selectRow, buttonRow] };
+  const payload = { embeds: [embed], components: [selectRow, buttonRow] };
+  if (notice && notice.trim()) {
+    payload.content = notice.trim();
+  }
+  return payload;
+}
+
+/**
+ * Constrói o feedback bilíngue de atribuição, deduplicação e conflitos de canais
+ */
+function buildChannelFeedback(assignResult, source) {
+  const { status, channelId, previousChannelId, conflictFeature, featureName, featureNameEn } = assignResult;
+  const lang = getLanguage(source);
+  const isEn = lang === 'en';
+  const name = isEn ? (featureNameEn || featureName) : featureName;
+
+  if (status === 'ALREADY_ASSIGNED') {
+    return {
+      isAlreadySet: true,
+      text: t('admin.channelAlreadySet', source, {
+        channel: `<#${channelId}>`,
+        feature: name,
+      }),
+    };
+  }
+
+  const lines = [];
+
+  if (previousChannelId && previousChannelId !== channelId) {
+    lines.push(
+      t('admin.channelReplaced', source, {
+        oldChannel: `<#${previousChannelId}>`,
+        feature: name,
+        newChannel: `<#${channelId}>`,
+      })
+    );
+  }
+
+  if (conflictFeature) {
+    lines.push(
+      t('admin.channelConflict', source, {
+        channel: `<#${channelId}>`,
+        conflictFeature,
+        feature: name,
+      })
+    );
+  }
+
+  return {
+    isAlreadySet: false,
+    text: lines.join('\n\n'),
+  };
 }
 
 module.exports = {
@@ -277,35 +329,64 @@ module.exports = {
 
     // 1. Subcomando Boas-Vindas
     if (['boas-vindas', 'boasvindas', 'welcome'].includes(sub)) {
-      const updated = setWelcomeConfig(message.guildId, { channelId: channel.id });
-      const panel = buildWelcomeControlPanel(message.guild, updated.welcomeConfig);
-      await message.reply(panel);
+      const assignRes = assignDedicatedChannel(message.guildId, 'welcome', channel.id);
+      const feedback = buildChannelFeedback(assignRes, message);
+      const panel = buildWelcomeControlPanel(message.guild, getWelcomeConfig(message.guildId));
+
+      if (feedback.isAlreadySet) {
+        await message.reply({ content: feedback.text, ...panel });
+        return;
+      }
+
+      await message.reply({
+        content: feedback.text ? `${feedback.text}\n\n` : undefined,
+        ...panel,
+      });
       return;
     }
 
     // 2. Subcomando Desabafos
     if (['desabafos', 'desabafo', 'vent'].includes(sub)) {
-      setVentChannelId(message.guildId, channel.id);
+      const assignRes = assignDedicatedChannel(message.guildId, 'vent', channel.id);
+      const feedback = buildChannelFeedback(assignRes, message);
+
+      if (feedback.isAlreadySet) {
+        await message.reply({ content: feedback.text });
+        return;
+      }
+
+      if (assignRes.previousChannelId && assignRes.previousChannelId !== channel.id) {
+        await cleanupOldChannelSticky(message.guild, assignRes.previousChannelId);
+      }
+
       scheduleStickyReposition(message.guild, channel);
-      await message.reply({
-        content: `✅ Canal de desabafos configurado para <#${channel.id}>! A mensagem fixa de acolhimento e autoajuda já foi ativada.`,
-      });
+      const successMsg = `✅ Canal de desabafos configurado para <#${channel.id}>! A mensagem fixa de acolhimento e autoajuda já foi ativada.`;
+      const finalMsg = feedback.text ? `${feedback.text}\n\n${successMsg}` : successMsg;
+      await message.reply({ content: finalMsg });
       return;
     }
 
     // 3. Subcomando Tarot
     if (sub === 'tarot') {
-      setTarotChannelId(message.guildId, channel.id);
-      await message.reply({
-        content: `✅ Canal do Tarot Diário configurado para <#${channel.id}>! As tiragens e anúncios diários serão postados automaticamente aqui à 00:00 BRT.`,
-      });
+      const assignRes = assignDedicatedChannel(message.guildId, 'tarot', channel.id);
+      const feedback = buildChannelFeedback(assignRes, message);
+
+      if (feedback.isAlreadySet) {
+        await message.reply({ content: feedback.text });
+        return;
+      }
+
+      const successMsg = `✅ Canal do Tarot Diário configurado para <#${channel.id}>! As tiragens e anúncios diários serão postados automaticamente aqui à 00:00 BRT.`;
+      const finalMsg = feedback.text ? `${feedback.text}\n\n${successMsg}` : successMsg;
+      await message.reply({ content: finalMsg });
       return;
     }
 
     // 4. Subcomando Tickets
     if (['tickets', 'ticket', 'atendimento'].includes(sub)) {
-      setTicketPanelChannelId(message.guildId, channel.id);
-      const catPayload = buildCategorySelectionPayload(channel);
+      const assignRes = assignDedicatedChannel(message.guildId, 'tickets', channel.id);
+      const feedback = buildChannelFeedback(assignRes, message);
+      const catPayload = buildCategorySelectionPayload(channel, feedback.text);
       await message.reply(catPayload);
       return;
     }
@@ -342,18 +423,42 @@ module.exports = {
 
     // 1. Subcomando Boas-Vindas
     if (['boas-vindas', 'welcome'].includes(sub)) {
-      const updated = setWelcomeConfig(interaction.guildId, { channelId: channel.id });
-      const panel = buildWelcomeControlPanel(interaction.guild, updated.welcomeConfig);
-      await interaction.reply({ ...panel, ephemeral: true });
+      const assignRes = assignDedicatedChannel(interaction.guildId, 'welcome', channel.id);
+      const feedback = buildChannelFeedback(assignRes, interaction);
+      const panel = buildWelcomeControlPanel(interaction.guild, getWelcomeConfig(interaction.guildId));
+
+      if (feedback.isAlreadySet) {
+        await interaction.reply({ content: feedback.text, ...panel, ephemeral: true });
+        return;
+      }
+
+      await interaction.reply({
+        content: feedback.text ? `${feedback.text}\n\n` : undefined,
+        ...panel,
+        ephemeral: true,
+      });
       return;
     }
 
     // 2. Subcomando Desabafos
     if (['desabafos', 'vent'].includes(sub)) {
-      setVentChannelId(interaction.guildId, channel.id);
+      const assignRes = assignDedicatedChannel(interaction.guildId, 'vent', channel.id);
+      const feedback = buildChannelFeedback(assignRes, interaction);
+
+      if (feedback.isAlreadySet) {
+        await interaction.reply({ content: feedback.text, ephemeral: true });
+        return;
+      }
+
+      if (assignRes.previousChannelId && assignRes.previousChannelId !== channel.id) {
+        await cleanupOldChannelSticky(interaction.guild, assignRes.previousChannelId);
+      }
+
       scheduleStickyReposition(interaction.guild, channel);
+      const successMsg = `✅ Canal de desabafos configurado para <#${channel.id}> com sucesso!`;
+      const finalMsg = feedback.text ? `${feedback.text}\n\n${successMsg}` : successMsg;
       await interaction.reply({
-        content: `✅ Canal de desabafos configurado para <#${channel.id}> com sucesso!`,
+        content: finalMsg,
         ephemeral: true,
       });
       return;
@@ -361,9 +466,18 @@ module.exports = {
 
     // 3. Subcomando Tarot
     if (sub === 'tarot') {
-      setTarotChannelId(interaction.guildId, channel.id);
+      const assignRes = assignDedicatedChannel(interaction.guildId, 'tarot', channel.id);
+      const feedback = buildChannelFeedback(assignRes, interaction);
+
+      if (feedback.isAlreadySet) {
+        await interaction.reply({ content: feedback.text, ephemeral: true });
+        return;
+      }
+
+      const successMsg = `✅ Canal do Tarot Diário configurado para <#${channel.id}>! As tiragens diárias serão anunciadas aqui à 00:00 BRT.`;
+      const finalMsg = feedback.text ? `${feedback.text}\n\n${successMsg}` : successMsg;
       await interaction.reply({
-        content: `✅ Canal do Tarot Diário configurado para <#${channel.id}>! As tiragens diárias serão anunciadas aqui à 00:00 BRT.`,
+        content: finalMsg,
         ephemeral: true,
       });
       return;
@@ -371,8 +485,9 @@ module.exports = {
 
     // 4. Subcomando Tickets
     if (['tickets', 'ticket', 'atendimento'].includes(sub)) {
-      setTicketPanelChannelId(interaction.guildId, channel.id);
-      const catPayload = buildCategorySelectionPayload(channel);
+      const assignRes = assignDedicatedChannel(interaction.guildId, 'tickets', channel.id);
+      const feedback = buildChannelFeedback(assignRes, interaction);
+      const catPayload = buildCategorySelectionPayload(channel, feedback.text);
       await interaction.reply({ ...catPayload, ephemeral: true });
       return;
     }
@@ -502,4 +617,6 @@ module.exports = {
 
   buildWelcomeControlPanel,
   buildWelcomePreviewEmbed,
+  buildCategorySelectionPayload,
+  buildChannelFeedback,
 };

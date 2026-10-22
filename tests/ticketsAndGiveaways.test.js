@@ -225,6 +225,33 @@ const mockModalSubmit = {
   assert.notEqual(winners[0], winners[1], 'Ganhadores devem ser distintos');
   console.log('✅ Apuração Fisher-Yates com seleção de vencedores únicos validada.');
 
+  // ==========================================
+  // 3. TESTES DE BLINDAGEM CONTRA DUPLICAÇÃO
+  // ==========================================
+  const ticketsModule = require('../src/modules/tickets/index');
+  const giveawaysModule = require('../src/modules/giveaways/giveawayManager');
+
+  // 3.1 Interação de ticket já respondida não deve executar novamente
+  let calledCount = 0;
+  const mockAlreadyRepliedInteraction = {
+    customId: 'tkt:open:help',
+    replied: true,
+    reply: async () => { calledCount++; },
+  };
+  await ticketsModule.handleInteraction(mockAlreadyRepliedInteraction);
+  assert.strictEqual(calledCount, 0, 'handleInteraction não deve executar se replied for true');
+
+  // 3.2 Interação de sorteio já deferida não deve executar novamente
+  let gwCalledCount = 0;
+  const mockAlreadyDeferredGw = {
+    customId: 'gw:hub:open',
+    deferred: true,
+    reply: async () => { gwCalledCount++; },
+  };
+  await giveawaysModule.handleGiveawayInteraction(mockAlreadyDeferredGw);
+  assert.strictEqual(gwCalledCount, 0, 'handleGiveawayInteraction não deve executar se deferred for true');
+  console.log('✅ Blindagem contra duplicação de eventos e InteractionAlreadyReplied validada.');
+
   console.log('🎉 tests/ticketsAndGiveaways.test.js concluído com 100% de sucesso!');
 })().catch((err) => {
   console.error('❌ Falha nos testes de tickets e sorteios:', err);

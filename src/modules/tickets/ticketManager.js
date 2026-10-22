@@ -129,6 +129,7 @@ function buildTicketPanel(guildOrGuildId) {
  * Abre canal de atendimento para Ajuda ou Denúncia
  */
 async function handleOpenTicket(interaction, type) {
+  if (!interaction || interaction.replied || interaction.deferred) return;
   const { guild, user } = interaction;
   if (!guild) return;
 
@@ -276,6 +277,7 @@ async function handleOpenTicket(interaction, type) {
  * Abre o Modal de Remoção de Conteúdo da Galeria Virtual
  */
 async function handleArtRemovalClick(interaction) {
+  if (!interaction || interaction.replied || interaction.deferred) return;
   const modal = new ModalBuilder()
     .setCustomId('tkt:modal:art_removal')
     .setTitle('Remoção de Conteúdo do Museu');
@@ -296,6 +298,7 @@ async function handleArtRemovalClick(interaction) {
  * Processa a submissão do Modal de Remoção de Arte
  */
 async function handleArtRemovalSubmit(interaction) {
+  if (!interaction || interaction.replied || interaction.deferred) return;
   const { user, client } = interaction;
   const details = interaction.fields.getTextInputValue('tkt:art_details');
 
@@ -374,6 +377,7 @@ async function handleArtRemovalSubmit(interaction) {
  * Conclusão da exclusão de arte pela Staff
  */
 async function handleArtRemovalDone(interaction, targetUserId, requestId) {
+  if (!interaction || interaction.replied || interaction.deferred) return;
   if (!interaction.member?.permissions?.has(PermissionFlagsBits.ManageChannels)) {
     return interaction.reply({
       content: '❌ Você precisa de permissão de Gerenciar Canais para concluir solicitações de remoção.',
@@ -421,6 +425,7 @@ async function handleArtRemovalDone(interaction, targetUserId, requestId) {
  * Encerra o ticket no canal e agenda a exclusão
  */
 async function handleCloseTicket(interaction, channelId) {
+  if (!interaction || interaction.replied || interaction.deferred) return;
   if (!interaction.member?.permissions?.has(PermissionFlagsBits.ManageChannels)) {
     return interaction.reply({
       content: '❌ Apenas membros da Staff com permissão de Gerenciar Canais podem encerrar este atendimento.',

@@ -446,7 +446,7 @@ async function checkGiveawaysLifecycle(client) {
  * Roteador central de interações de Sorteios ('gw:*')
  */
 async function handleGiveawayInteraction(interaction, client) {
-  if (!interaction) return;
+  if (!interaction || interaction.replied || interaction.deferred) return;
 
   const { customId } = interaction;
   if (!customId || !customId.startsWith('gw:')) return;

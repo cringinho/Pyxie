@@ -31,6 +31,7 @@ const {
   setTarotChannelId,
   getTarotChannelId,
   getAllTarotGuildConfigs,
+  assignDedicatedChannel,
 } = require('../src/services/guildConfigService');
 
 const setCommand = require('../src/commands/set');
@@ -174,6 +175,49 @@ const sampleExternalTarotDesc = 'Uma carta por dia para iluminar seus caminhos.\
 assert.ok(sampleExternalTarotDesc.includes('[Cringelândia](<https://pyxie.com.br/cringelandia>)'), 'Tarot fora da Cringelândia deve ter link azul clicável apontando para pyxie.com.br/cringelandia');
 assert.ok(sampleExternalTarotDesc.includes('-#'), 'Deve utilizar o modificador de subtexto -# do Discord');
 console.log('  ✅ 9. Assinatura do Tarot com link azul Markdown (-#) validada.');
+
+// =========================================================================
+// 6. Testes de Deduplicação Rigorosa e Prevenção de Conflitos de Canais (py!set)
+// =========================================================================
+const dedupGuildId = 'guild_dedup_test_8888';
+
+// 6.1 Setar canal inicial para Tarot
+const res1 = assignDedicatedChannel(dedupGuildId, 'tarot', 'chan_tarot_111');
+assert.strictEqual(res1.status, 'ASSIGNED');
+assert.strictEqual(res1.channelId, 'chan_tarot_111');
+assert.strictEqual(res1.previousChannelId, null);
+assert.strictEqual(getTarotChannelId(dedupGuildId), 'chan_tarot_111');
+
+// 6.2 Tentar setar 2x exatamente o mesmo canal para Tarot (deve retornar ALREADY_ASSIGNED)
+const resDuplicate = assignDedicatedChannel(dedupGuildId, 'tarot', 'chan_tarot_111');
+assert.strictEqual(resDuplicate.status, 'ALREADY_ASSIGNED');
+assert.strictEqual(resDuplicate.previousChannelId, null);
+
+// 6.3 Substituir o canal de Tarot por outro canal (deve desvincular o antigo e dar prioridade ao novo)
+const resReplace = assignDedicatedChannel(dedupGuildId, 'tarot', 'chan_tarot_222');
+assert.strictEqual(resReplace.status, 'ASSIGNED');
+assert.strictEqual(resReplace.channelId, 'chan_tarot_222');
+assert.strictEqual(resReplace.previousChannelId, 'chan_tarot_111');
+assert.strictEqual(getTarotChannelId(dedupGuildId), 'chan_tarot_222');
+
+// 6.4 Conflito cruzado: atribuir o canal de Tarot (chan_tarot_222) para Desabafos (vent)
+const resConflict = assignDedicatedChannel(dedupGuildId, 'vent', 'chan_tarot_222');
+assert.strictEqual(resConflict.status, 'ASSIGNED');
+assert.strictEqual(resConflict.channelId, 'chan_tarot_222');
+assert.strictEqual(resConflict.conflictFeature, 'Tarot Diário');
+assert.strictEqual(getVentChannelId(dedupGuildId), 'chan_tarot_222');
+assert.strictEqual(getTarotChannelId(dedupGuildId), null, 'Canal anterior de Tarot deve ter sido desvinculado por conflito');
+
+// 6.5 Feedback de texto gerado pelo helper buildChannelFeedback
+const feedbackReplace = setCommand.buildChannelFeedback(resReplace, { guildId: dedupGuildId });
+assert.strictEqual(feedbackReplace.isAlreadySet, false);
+assert.ok(feedbackReplace.text.includes('<#chan_tarot_111>'), 'Aviso deve marcar o canal antigo');
+assert.ok(feedbackReplace.text.includes('<#chan_tarot_222>'), 'Aviso deve marcar o canal novo');
+
+const feedbackDup = setCommand.buildChannelFeedback(resDuplicate, { guildId: dedupGuildId });
+assert.strictEqual(feedbackDup.isAlreadySet, true);
+assert.ok(feedbackDup.text.includes('<#chan_tarot_111>'), 'Aviso deve indicar que canal já está configurado');
+console.log('  ✅ 10. Deduplicação rigorosa, prevenção de 2 canais por função e avisos com canal antigo validados.');
 
 console.log('\n🎉 TODOS OS TESTES DOS NOVOS SISTEMAS (LOTE 4) PASSARAM COM 100% DE SUCESSO!\n');
 

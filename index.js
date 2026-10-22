@@ -998,22 +998,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
       }
     }
 
-    // Interações de Sorteios (gw:*)
-    if (interaction.customId && interaction.customId.startsWith('gw:')) {
-      const { handleGiveawayInteraction } = require('./src/modules/giveaways/giveawayManager');
-      await handleGiveawayInteraction(interaction, client);
-      return;
-    }
-
-    // Interações de Tickets (tkt:*)
-    if (interaction.customId && interaction.customId.startsWith('tkt:')) {
-      const ticketsModule = moduleManager.modules.get('tickets');
-      if (ticketsModule && typeof ticketsModule.handleInteraction === 'function') {
-        await ticketsModule.handleInteraction(interaction);
-        return;
-      }
-    }
-
     if (interaction.isButton() && (interaction.customId.startsWith('seasonal_art_') || interaction.customId.startsWith('seasonal_multi_art_'))) {
       const artHandler = require('./src/modules/seasonal/artHandler');
       await artHandler.handleButtonInteraction(interaction);

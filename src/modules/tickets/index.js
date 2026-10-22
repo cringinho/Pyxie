@@ -11,6 +11,8 @@ const ticketManager = require('./ticketManager');
 const { getTicketConfig, setTicketConfig } = require('../../services/guildConfigService');
 
 async function handleTicketInteraction(interaction) {
+  if (!interaction || interaction.replied || interaction.deferred) return;
+
   // 1. Botões e Menus de Seleção
   if (interaction.isButton()) {
     const customId = interaction.customId || '';
@@ -100,8 +102,13 @@ async function handleTicketInteraction(interaction) {
           try {
             const panelChannel = await guild.channels.fetch(cfg.ticketPanelChannelId).catch(() => null);
             if (panelChannel && panelChannel.isTextBased()) {
+              if (cfg.ticketPanelMessageId) {
+                await panelChannel.messages.delete(cfg.ticketPanelMessageId).catch(() => null);
+              }
               const panelPayload = ticketManager.buildTicketPanel(guild.id);
-              await panelChannel.send(panelPayload);
+              const sentPanel = await panelChannel.send(panelPayload);
+              cfg.ticketPanelMessageId = sentPanel.id;
+              setTicketConfig(guild.id, cfg);
             }
           } catch (_) {}
         }
@@ -159,8 +166,13 @@ async function handleTicketInteraction(interaction) {
         try {
           const panelChannel = await guild.channels.fetch(cfg.ticketPanelChannelId).catch(() => null);
           if (panelChannel && panelChannel.isTextBased()) {
+            if (cfg.ticketPanelMessageId) {
+              await panelChannel.messages.delete(cfg.ticketPanelMessageId).catch(() => null);
+            }
             const panelPayload = ticketManager.buildTicketPanel(guild.id);
-            await panelChannel.send(panelPayload);
+            const sentPanel = await panelChannel.send(panelPayload);
+            cfg.ticketPanelMessageId = sentPanel.id;
+            setTicketConfig(guild.id, cfg);
           }
         } catch (_) {}
       }
