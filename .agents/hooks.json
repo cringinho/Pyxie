@@ -1,0 +1,17 @@
+{
+  "pyxie-architectural-guardrail": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"E:/botMelody/.agents/hooks/pre-tool-validator.sh\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}
