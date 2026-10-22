@@ -493,9 +493,6 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('propose')
-        .setNameLocalizations({
-          'pt-BR': 'propor',
-        })
         .setDescription('Propose marriage to someone for 1000 coins')
         .setDescriptionLocalizations({
           'pt-BR': 'Pede alguém em casamento por 1000 Moedinhas',
@@ -503,9 +500,6 @@ module.exports = {
         .addUserOption((opt) =>
           opt
             .setName('user')
-            .setNameLocalizations({
-              'pt-BR': 'usuario',
-            })
             .setDescription('User to propose to')
             .setDescriptionLocalizations({
               'pt-BR': 'Usuário para pedir em casamento',
@@ -516,9 +510,6 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('status')
-        .setNameLocalizations({
-          'pt-BR': 'status',
-        })
         .setDescription('View your marriage stats, Love Bar, house, tree and family')
         .setDescriptionLocalizations({
           'pt-BR': 'Visualiza o status matrimonial, Barra do Amor, casa, árvore e família',
@@ -527,9 +518,6 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('tree')
-        .setNameLocalizations({
-          'pt-BR': 'arvore',
-        })
         .setDescription('Buy or cultivate the Tree of Life for +10% Love')
         .setDescriptionLocalizations({
           'pt-BR': 'Compre ou cultive a Árvore da Vida para +10% de Amor',
@@ -537,25 +525,19 @@ module.exports = {
         .addStringOption((opt) =>
           opt
             .setName('action')
-            .setNameLocalizations({
-              'pt-BR': 'acao',
-            })
             .setDescription('Action: cultivate or buy')
             .setDescriptionLocalizations({
               'pt-BR': 'Ação: cultivar ou comprar',
             })
             .addChoices(
-              { name: 'Cultivar / Water (+10% Amor)', value: 'cultivar' },
-              { name: 'Comprar / Unlock (1 Feijão Mágico)', value: 'comprar' }
+              { name: 'Cultivate (+10% Love)', value: 'cultivate' },
+              { name: 'Buy / Unlock (1 Magic Bean)', value: 'buy' }
             )
         )
     )
     .addSubcommand((sub) =>
       sub
         .setName('house')
-        .setNameLocalizations({
-          'pt-BR': 'casa',
-        })
         .setDescription('Purchase the Family House (2000 coins, 2 beans, love >= 50%)')
         .setDescriptionLocalizations({
           'pt-BR': 'Adquire a Casa Familiar (2000 moedas, 2 feijões, amor >= 50%)',
@@ -564,9 +546,6 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('vault')
-        .setNameLocalizations({
-          'pt-BR': 'cofre',
-        })
         .setDescription('Manage the Eternal Love Vault and daily interest')
         .setDescriptionLocalizations({
           'pt-BR': 'Gerencie o Cofre do Amor Eterno e os rendimentos diários',
@@ -574,24 +553,18 @@ module.exports = {
         .addStringOption((opt) =>
           opt
             .setName('action')
-            .setNameLocalizations({
-              'pt-BR': 'acao',
-            })
             .setDescription('Action: deposit or claim')
             .setDescriptionLocalizations({
               'pt-BR': 'Ação: depositar ou resgatar',
             })
             .addChoices(
-              { name: 'Depositar / Deposit', value: 'depositar' },
-              { name: 'Resgatar Juros / Claim Interest', value: 'resgatar' }
+              { name: 'Deposit Coins', value: 'deposit' },
+              { name: 'Claim Daily Interest', value: 'claim' }
             )
         )
         .addIntegerOption((opt) =>
           opt
             .setName('amount')
-            .setNameLocalizations({
-              'pt-BR': 'valor',
-            })
             .setDescription('Amount of coins to deposit')
             .setDescriptionLocalizations({
               'pt-BR': 'Quantidade de moedas a depositar',
@@ -602,9 +575,6 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('date')
-        .setNameLocalizations({
-          'pt-BR': 'date',
-        })
         .setDescription('Start a Date Night couple harmony trivia (12h cooldown)')
         .setDescriptionLocalizations({
           'pt-BR': 'Inicia um Date Night com teste de sintonia a dois (12h cooldown)',
@@ -613,9 +583,6 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('affection')
-        .setNameLocalizations({
-          'pt-BR': 'carinho',
-        })
         .setDescription('Give daily affection to your spouse (+5% Love, 24h cooldown)')
         .setDescriptionLocalizations({
           'pt-BR': 'Dê um carinho diário ao seu amor (+5% Amor, 24h cooldown)',
@@ -624,9 +591,6 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('child')
-        .setNameLocalizations({
-          'pt-BR': 'filho',
-        })
         .setDescription('Adopt or expand your family with a new child')
         .setDescriptionLocalizations({
           'pt-BR': 'Adote ou aumente a família com um novo filho',
@@ -665,23 +629,23 @@ module.exports = {
 
   async executeSlash({ interaction }) {
     const sub = interaction.options.getSubcommand();
-    if (sub === 'propor' || sub === 'propose') {
+    if (sub === 'propose' || sub === 'propor') {
       return handlePropose(interaction, (c) => interaction.editReply(c));
     }
     if (sub === 'status') return handleStatus(interaction, (c) => interaction.editReply(c));
-    if (sub === 'arvore' || sub === 'tree') {
-      const action = interaction.options.getString('acao') || interaction.options.getString('action') || 'cultivar';
+    if (sub === 'tree' || sub === 'arvore') {
+      const action = interaction.options.getString('action') || interaction.options.getString('acao') || 'cultivate';
       return handleTree(interaction, action, (c) => interaction.editReply(c));
     }
-    if (sub === 'casa' || sub === 'house') return handleHouse(interaction, (c) => interaction.editReply(c));
-    if (sub === 'cofre' || sub === 'vault') {
-      const action = interaction.options.getString('acao') || interaction.options.getString('action') || 'resgatar';
-      const amount = interaction.options.getInteger('valor') || interaction.options.getInteger('amount') || 0;
+    if (sub === 'house' || sub === 'casa') return handleHouse(interaction, (c) => interaction.editReply(c));
+    if (sub === 'vault' || sub === 'cofre') {
+      const action = interaction.options.getString('action') || interaction.options.getString('acao') || 'claim';
+      const amount = interaction.options.getInteger('amount') || interaction.options.getInteger('valor') || 0;
       return handleVault(interaction, action, amount, (c) => interaction.editReply(c));
     }
     if (sub === 'date') return handleDateNight(interaction, (c) => interaction.editReply(c));
-    if (sub === 'carinho' || sub === 'affection') return handleAffection(interaction, (c) => interaction.editReply(c));
-    if (sub === 'filho' || sub === 'child') return handleChildProposal(interaction, (c) => interaction.editReply(c));
+    if (sub === 'affection' || sub === 'carinho') return handleAffection(interaction, (c) => interaction.editReply(c));
+    if (sub === 'child' || sub === 'filho') return handleChildProposal(interaction, (c) => interaction.editReply(c));
 
     return handleStatus(interaction, (c) => interaction.editReply(c));
   },

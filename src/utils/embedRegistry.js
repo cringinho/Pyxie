@@ -536,7 +536,7 @@ registerEmbed({
   id: 'marriage_profile',
   name: '💍 Matrimônio & Família',
   category: 'social',
-  description: 'Embed de casamento, árvore da vida e cofre familiar do comando /py-casamento.',
+  description: 'Embed de casamento, árvore da vida e cofre familiar do comando /py-marriage.',
   defaultColor: '#ec4899',
   previewTitle: '{header} Santuário do Amor • Alex & Taylor',
   previewDesc: 'União celebrada sob as bênçãos místicas e perpétuas da Pyxie.',

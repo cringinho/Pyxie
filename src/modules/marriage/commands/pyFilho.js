@@ -145,9 +145,6 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('list')
-        .setNameLocalizations({
-          'pt-BR': 'listar',
-        })
         .setDescription('List all children of your marriage')
         .setDescriptionLocalizations({
           'pt-BR': 'Lista todos os filhos do seu casamento',
@@ -156,9 +153,6 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('work')
-        .setNameLocalizations({
-          'pt-BR': 'estagiar',
-        })
         .setDescription('Send a child to a 24-hour internship for coins')
         .setDescriptionLocalizations({
           'pt-BR': 'Envia um filho para um estágio de 24 horas por moedas',
@@ -166,9 +160,6 @@ module.exports = {
         .addStringOption((opt) =>
           opt
             .setName('child')
-            .setNameLocalizations({
-              'pt-BR': 'filho',
-            })
             .setDescription('Name or ID of the child')
             .setDescriptionLocalizations({
               'pt-BR': 'Nome ou ID do filho',
@@ -179,9 +170,6 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('claim')
-        .setNameLocalizations({
-          'pt-BR': 'resgatar',
-        })
         .setDescription('Claim coins from a completed internship')
         .setDescriptionLocalizations({
           'pt-BR': 'Resgata as moedas de um estágio concluído',
@@ -189,9 +177,6 @@ module.exports = {
         .addStringOption((opt) =>
           opt
             .setName('child')
-            .setNameLocalizations({
-              'pt-BR': 'filho',
-            })
             .setDescription('Name or ID of the child')
             .setDescriptionLocalizations({
               'pt-BR': 'Nome ou ID do filho',
@@ -204,10 +189,10 @@ module.exports = {
     const sub = (args[0] || '').toLowerCase();
     const target = args.slice(1).join(' ').trim();
 
-    if (sub === 'estagiar' || sub === 'work') {
+    if (sub === 'work' || sub === 'estagiar') {
       return handleWork(message, target, (content) => message.reply(content));
     }
-    if (sub === 'resgatar' || sub === 'claim') {
+    if (sub === 'claim' || sub === 'resgatar') {
       return handleClaim(message, target, (content) => message.reply(content));
     }
     return handleList(message, (content) => message.reply(content));
@@ -215,12 +200,12 @@ module.exports = {
 
   async executeSlash({ interaction }) {
     const sub = interaction.options.getSubcommand();
-    const target = interaction.options.getString('filho') || interaction.options.getString('child');
+    const target = interaction.options.getString('child') || interaction.options.getString('filho');
 
-    if (sub === 'estagiar' || sub === 'work') {
+    if (sub === 'work' || sub === 'estagiar') {
       return handleWork(interaction, target, (content) => interaction.editReply(content));
     }
-    if (sub === 'resgatar' || sub === 'claim') {
+    if (sub === 'claim' || sub === 'resgatar') {
       return handleClaim(interaction, target, (content) => interaction.editReply(content));
     }
     return handleList(interaction, (content) => interaction.editReply(content));
