@@ -33,16 +33,22 @@ function buildWelcomeControlPanel(guild, welcomeConfig) {
     .setColor(welcomeConfig.color || '#8b5cf6')
     .setTitle('✨  ✦  Painel de Boas-Vindas Premium')
     .setDescription(
-      `Configure as boas-vindas do **${guild.name}** com estilo premium e 100% gratuito!\n\n` +
-      `**Variáveis dinâmicas suportadas no texto:**\n` +
-      '\\`{user}\\` (menciona o membro) • \\`{username}\\` (nome puro) • \\`{server}\\` (nome do servidor) • \\`{memberCount}\\` (total de membros)\n\n' +
-      `📍 **Canal de Envio:** ${channelDisplay}\n` +
-      `🏷️ **Título:** \`${welcomeConfig.title || 'Sem título'}\`\n` +
-      `💬 **Mensagem:**\n> ${welcomeConfig.description || 'Sem mensagem'}\n` +
-      `🎨 **Cor:** \`${welcomeConfig.color || '#8b5cf6'}\`\n` +
-      `🖼️ **Imagem / GIF:** ${welcomeConfig.imageUrl ? `[Link Visual](${welcomeConfig.imageUrl})` : '*Nenhum*'}\n` +
-      `🎭 **Reações Automáticas:** ${autoReactionsDisplay}\n` +
-      `👑 **Cargo Automático (Auto-Role):** ${autoRoleDisplay}`
+      `Configure as boas-vindas do **${guild.name}** com estilo moderno, limpo e personalizável!\n\n` +
+
+      `### 📋 Configuração Atual\n\n` +
+
+      `📍 **Canal de Envio:** ${channelDisplay}\n\n` +
+      `🏷️ **Título:** \`${welcomeConfig.title || 'Sem título'}\`\n\n` +
+      `💬 **Mensagem:**\n> ${welcomeConfig.description || 'Sem mensagem'}\n\n` +
+      `🎨 **Cor:** \`${welcomeConfig.color || '#8b5cf6'}\`\n\n` +
+      `🖼️ **Imagem / GIF:** ${welcomeConfig.imageUrl ? `[Link Visual](${welcomeConfig.imageUrl})` : '*Nenhum*'}\n\n` +
+      `🎭 **Reações Automáticas:** ${autoReactionsDisplay}\n\n` +
+      `👑 **Cargo Automático (Auto-Role):** ${autoRoleDisplay}\n\n` +
+
+      '### 🧩 Variáveis Disponíveis\n\n' +
+      '• `{user}` (menção) • `{username}` (nome puro)\n\n' +
+      '• `{server}` (servidor) • `{memberCount}` (total de membros)\n\n' +
+      '-# 💡 Utilize os botões abaixo para editar interativamente via modal.'
     )
     .setFooter({ text: 'Pyxie Premium • Boas-Vindas & Auto-Role sem limitações' })
     .setTimestamp();
@@ -188,8 +194,8 @@ module.exports = {
         .setTitle('⚙️  ✦  Central de Configuração `py!set`')
         .setDescription(
           `Utilize o comando \`${prefix || 'py!'}set\` para ativar os recursos oficiais da Pyxie no seu servidor:\n\n` +
-          `• \`${prefix || 'py!'}set boas-vindas <#canal>\` — Configura o sistema de Boas-Vindas customizável e Auto-Role.\n` +
-          `• \`${prefix || 'py!'}set desabafos <#canal>\` — Configura o canal de Desabafos com mensagem Sticky, Autoajuda na DM e Desabafo Anônimo.\n` +
+          `• \`${prefix || 'py!'}set boas-vindas <#canal>\` — Configura o sistema de Boas-Vindas customizável e Auto-Role.\n\n` +
+          `• \`${prefix || 'py!'}set desabafos <#canal>\` — Configura o canal de Desabafos com mensagem Sticky, Autoajuda na DM e Desabafo Anônimo.\n\n` +
           `• \`${prefix || 'py!'}set tarot <#canal>\` — Configura o canal para postagem diária automática do Tarot às 00:00 BRT.`
         )
         .setFooter({ text: 'Pyxie • Configurações Globais do Servidor' });
@@ -246,8 +252,8 @@ module.exports = {
         .setTitle('⚙️  ✦  Central de Configuração `/py-set`')
         .setDescription(
           `Escolha uma das opções abaixo para configurar seu servidor:\n\n` +
-          `• \`/py-set boas-vindas canal:#canal\` — Boas-Vindas customizáveis e Auto-Role.\n` +
-          `• \`/py-set desabafos canal:#canal\` — Canal de Desabafos, Sticky e Anônimo.\n` +
+          `• \`/py-set boas-vindas canal:#canal\` — Boas-Vindas customizáveis e Auto-Role.\n\n` +
+          `• \`/py-set desabafos canal:#canal\` — Canal de Desabafos, Sticky e Anônimo.\n\n` +
           `• \`/py-set tarot canal:#canal\` — Postagem diária do Tarot às 00:00 BRT.`
         );
       await interaction.reply({ embeds: [helpEmbed], ephemeral: true });

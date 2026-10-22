@@ -18,42 +18,38 @@ const activeStickyMessageIds = new Map(); // guildId -> messageId
 function buildVentStickyEmbed() {
   return new EmbedBuilder()
     .setColor('#4c1d95')
-.setTitle('💜  ✦  Espaço de Acolhimento & Desabafos')
-.setDescription(
-  'Um espaço para falar, ser ouvido e encontrar apoio. 🫂\n' +
-  'Aqui, cada pessoa merece ser acolhida com respeito, empatia e compreensão.\n\n' +
+    .setTitle('💜  ✦  Espaço de Acolhimento & Desabafos')
+    .setDescription(
+      'Um espaço seguro e acolhedor dedicado à escuta, desabafo e apoio mútuo. 🫂\n\n' +
+      'Aqui, cada pessoa merece ser ouvida com empatia, delicadeza e compreensão.\n\n' +
 
-  '━━━━━━━━━━━━━━━━━━━━\n' +
-  '📜 **DIRETRIZES E REGRAS DE CONVIVÊNCIA**\n' +
-  '━━━━━━━━━━━━━━━━━━━━\n\n' +
+      '### 📜 Diretrizes e Convivência\n\n' +
 
-  '💜 **1. Respeito e Empatia**\n' +
-  'Não são permitidos julgamentos, deboche, invalidação emocional, hostilidade ou qualquer atitude que desrespeite a vulnerabilidade de alguém.\n\n' +
+      '💜 **1. Respeito e Empatia**\n' +
+      'Proibido qualquer tipo de julgamento, invalidação emocional, deboche ou conselhos hostis. Respeite a vulnerabilidade alheia.\n\n' +
 
-  '🕯️ **2. Gatilhos e Conteúdos Sensíveis**\n' +
-  'Este canal pode conter relatos delicados, temas pesados e experiências difíceis. Utilize avisos de gatilho (TW) quando necessário e respeite seus próprios limites ao ler os relatos.\n\n' +
+      '🕯️ **2. Gatilhos e Conteúdos Sensíveis (TW / +18)**\n' +
+      'Este canal pode conter relatos densos e temas delicados. Utilize avisos de gatilho quando necessário e cuide de sua saúde mental ao ler.\n\n' +
 
-  '🤝 **3. Acolhimento sem Pressão**\n' +
-  'Ouça sem minimizar a dor alheia. Não imponha conselhos, soluções ou experiências pessoais. Às vezes, alguém só precisa ser ouvido.\n\n' +
+      '🤝 **3. Acolhimento sem Pressão**\n' +
+      'Ouça sem minimizar a dor alheia. Não imponha soluções ou opiniões invasivas. Às vezes, quem desabafa só precisa de escuta.\n\n' +
 
-  '🫂 **4. Limites e Privacidade**\n' +
-  'Respeite o espaço e os limites de cada pessoa. Não compartilhe relatos, prints ou informações pessoais de outros membros sem autorização.\n\n' +
+      '🫂 **4. Limites e Privacidade**\n' +
+      'Respeite o espaço individual. É terminantemente proibido compartilhar prints, relatos ou expor membros sem autorização prévia.\n\n' +
 
-  '🩹 **5. Apoio Comunitário**\n' +
-  'Somos uma comunidade de amigos que busca oferecer apoio mútuo. Este espaço não substitui acompanhamento psicológico ou psiquiátrico profissional.\n\n' +
+      '🩹 **5. Apoio Comunitário**\n' +
+      'Somos uma comunidade de apoio mútuo entre amigos. Este espaço **não substitui acompanhamento psicológico ou psiquiátrico profissional**.\n\n' +
 
-  '━━━━━━━━━━━━━━━━━━━━\n' +
-  '✍️ **COMO UTILIZAR O CANAL**\n' +
-  '━━━━━━━━━━━━━━━━━━━━\n\n' +
+      '### ✍️ Como Utilizar o Canal\n\n' +
 
-  '💬 **Desabafo público**\n' +
-  'Escreva diretamente no chat se estiver confortável em compartilhar sua identidade e seu relato com a comunidade.\n\n' +
+      '💬 **Desabafo Público**\n' +
+      'Envie sua mensagem diretamente no chat caso se sinta à vontade para compartilhar seu relato com a comunidade.\n\n' +
 
-  '🎭 **Desabafo anônimo**\n' +
-  'Prefere preservar sua identidade? Utilize o botão **[ 🎭 Desabafo Anônimo ]** abaixo para enviar seu relato sem exibir seu perfil aos demais membros.\n\n' +
+      '🎭 **Desabafo Anônimo**\n' +
+      'Prefere sigilo absoluto? Utilize o botão **[ 🎭 Desabafo Anônimo ]** abaixo para publicar com identidade 100% oculta.\n\n' +
 
-  '🌷 **Lembre-se:** você não precisa encontrar as palavras perfeitas, justificar seus sentimentos ou resolver tudo de uma vez. Este espaço existe para que você possa se expressar com respeito e segurança.'
-)
+      '-# 🌷 Lembre-se: você não precisa encontrar as palavras perfeitas. Este cantinho é seguro para acolher o seu momento.'
+    )
     .setFooter({ text: 'Pyxie • Cuidado, Acolhimento & Respeito Mútuo' })
     .setTimestamp();
 }
@@ -84,8 +80,8 @@ function buildAutohelpEmbed() {
     .setColor('#059669')
     .setTitle('🌱  ✦  Rede de Apoio Emocional & Saúde Mental')
     .setDescription(
-      'Se você está passando por um momento difícil, lembre-se de que você não precisa enfrentar isso sozinho(a). ' +
-      'Existem profissionais prontos para te ouvir com sigilo e carinho 24 horas por dia.'
+      'Se você está passando por um momento difícil, lembre-se de que você não precisa enfrentar isso sozinho(a).\n\n' +
+      'Existem profissionais prontos para te ouvir com sigilo, respeito e carinho 24 horas por dia.'
     )
     .addFields(
       {
@@ -97,7 +93,7 @@ function buildAutohelpEmbed() {
           '• **Disque 100:** Direitos Humanos e proteção a vulneráveis',
           '• **Ligue 180:** Central de atendimento à mulher',
           '• **SUS / CAPS:** Procure a Unidade Básica de Saúde ou CAPS mais próximo de você.',
-        ].join('\n'),
+        ].join('\n\n'),
         inline: false,
       },
       {
@@ -107,7 +103,7 @@ function buildAutohelpEmbed() {
           '• **EUA & Canadá:** Suicide & Crisis Lifeline: Ligue ou envie SMS para `988`',
           '• **Reino Unido:** Samaritans: Ligue `116 123`',
           '• **Diretório Global de Ajuda:** [findahelpline.com](https://findahelpline.com) e [befrienders.org](https://www.befrienders.org)',
-        ].join('\n'),
+        ].join('\n\n'),
         inline: false,
       }
     )

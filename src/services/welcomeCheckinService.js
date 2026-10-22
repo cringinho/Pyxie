@@ -209,8 +209,9 @@ function buildCheckinPayload({ userIds = [], templateIndex = 0 }) {
     .setTitle(template.title)
     .setDescription(
       `${template.description}\n\n` +
-      `💡 **Guia Didático: Canais e Cargos**\n` +
-      `No topo da lista de canais, clique na opção **Canais e Cargos** (<id:customize>) para escolher pronomes, cores e ativar notificações de eventos sem receber pings indesejados!`
+      `### 💡 Canais e Cargos\n\n` +
+      `No topo da lista de canais, clique na opção **Canais e Cargos** (<id:customize>) para escolher pronomes, cores e ativar notificações sem receber menções indesejadas!\n\n` +
+      `-# 🌸 Sinta-se em casa para explorar tudo no seu próprio ritmo.`
     )
     .setImage(TUTORIAL_IMAGE_URL)
     .setFooter({ text: 'Cringelândia • Acolhimento 100% Neuroafirmativo & Gentil' })
