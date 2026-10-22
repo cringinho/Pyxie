@@ -12,7 +12,7 @@ module.exports = {
   guildScope: null, // global
   handleInteraction: handleGiveawayInteraction,
 
-  onLoad(ctx) {
+  async onLoad(ctx) {
     // 1. Worker autônomo a cada 15 segundos (Zero Memory Leak)
     ctx.registerInterval(() => {
       checkGiveawaysLifecycle(ctx.client);
@@ -28,7 +28,7 @@ module.exports = {
     });
   },
 
-  onUnload() {
+  async onUnload() {
     clearDebounces();
   },
 };

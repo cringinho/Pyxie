@@ -170,13 +170,13 @@ class ModuleManager extends EventEmitter {
     for (const [id, mod] of this.modules.entries()) {
       const isEnabled = this.isModuleEnabled(id);
       if (isEnabled && !this.activeScopes.has(id)) {
-        this.enableModule(id, false).catch((err) => {
+        Promise.resolve(this.enableModule(id, false)).catch((err) => {
           console.error(`[ModuleManager] Erro ao ativar módulo ${id} na inicialização:`, err);
         });
       } else if (isEnabled && this.activeScopes.has(id) && client) {
         // Se o client do Discord acabou de ficar pronto, notifica o módulo
         if (typeof mod.onLoad === 'function') {
-          mod.onLoad(this.createContext(mod)).catch((err) => {
+          Promise.resolve(mod.onLoad(this.createContext(mod))).catch((err) => {
             console.error(`[ModuleManager] Erro ao conectar client no módulo '${id}':`, err);
           });
         }
