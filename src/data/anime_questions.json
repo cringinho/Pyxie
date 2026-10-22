@@ -1,0 +1,2050 @@
+[
+  {
+    "id": "anime_101",
+    "level": 1,
+    "topic": "Naruto",
+    "question": "Qual é o grande sonho de Naruto Uzumaki?",
+    "correct": "Tornar-se Hokage",
+    "wrongs": [
+      "Tornar-se Mizukage",
+      "Encontrar o One Piece",
+      "Ser o ninja mais forte de Suna"
+    ],
+    "pt": {
+      "topic": "Naruto",
+      "question": "Qual é o grande sonho de Naruto Uzumaki?",
+      "correct": "Tornar-se Hokage",
+      "wrongs": [
+        "Tornar-se Mizukage",
+        "Encontrar o One Piece",
+        "Ser o ninja mais forte de Suna"
+      ]
+    },
+    "en": {
+      "topic": "Naruto",
+      "question": "What is Naruto Uzumaki's big dream?",
+      "correct": "To become Hokage",
+      "wrongs": [
+        "To become Mizukage",
+        "To find the One Piece",
+        "To be the strongest ninja of Suna"
+      ]
+    }
+  },
+  {
+    "id": "anime_102",
+    "level": 1,
+    "topic": "One Piece",
+    "question": "Qual é o nome do capitão dos Piratas do Chapéu de Palha?",
+    "correct": "Monkey D. Luffy",
+    "wrongs": [
+      "Roronoa Zoro",
+      "Portgas D. Ace",
+      "Trafalgar Law"
+    ],
+    "pt": {
+      "topic": "One Piece",
+      "question": "Qual é o nome do capitão dos Piratas do Chapéu de Palha?",
+      "correct": "Monkey D. Luffy",
+      "wrongs": [
+        "Roronoa Zoro",
+        "Portgas D. Ace",
+        "Trafalgar Law"
+      ]
+    },
+    "en": {
+      "topic": "One Piece",
+      "question": "Who is the captain of the Straw Hat Pirates?",
+      "correct": "Monkey D. Luffy",
+      "wrongs": [
+        "Roronoa Zoro",
+        "Portgas D. Ace",
+        "Trafalgar Law"
+      ]
+    }
+  },
+  {
+    "id": "anime_103",
+    "level": 1,
+    "topic": "Dragon Ball",
+    "question": "A qual raça Goku pertence?",
+    "correct": "Saiyajin",
+    "wrongs": [
+      "Namekuseijin",
+      "Terráqueo",
+      "Majin"
+    ],
+    "pt": {
+      "topic": "Dragon Ball",
+      "question": "A qual raça Goku pertence?",
+      "correct": "Saiyajin",
+      "wrongs": [
+        "Namekuseijin",
+        "Terráqueo",
+        "Majin"
+      ]
+    },
+    "en": {
+      "topic": "Dragon Ball",
+      "question": "Which race does Goku belong to?",
+      "correct": "Saiyan",
+      "wrongs": [
+        "Namekian",
+        "Earthling",
+        "Majin"
+      ]
+    }
+  },
+  {
+    "id": "anime_104",
+    "level": 1,
+    "topic": "Pokémon",
+    "question": "De que tipo é o Charmander?",
+    "correct": "Fogo",
+    "wrongs": [
+      "Água",
+      "Planta",
+      "Elétrico"
+    ],
+    "pt": {
+      "topic": "Pokémon",
+      "question": "De que tipo é o Charmander?",
+      "correct": "Fogo",
+      "wrongs": [
+        "Água",
+        "Planta",
+        "Elétrico"
+      ]
+    },
+    "en": {
+      "topic": "Pokémon",
+      "question": "What type is Charmander?",
+      "correct": "Fire",
+      "wrongs": [
+        "Water",
+        "Grass",
+        "Electric"
+      ]
+    }
+  },
+  {
+    "id": "anime_105",
+    "level": 1,
+    "topic": "Studio Ghibli",
+    "question": "Qual estúdio produziu \"A Viagem de Chihiro\"?",
+    "correct": "Studio Ghibli",
+    "wrongs": [
+      "Toei Animation",
+      "Kyoto Animation",
+      "Madhouse"
+    ],
+    "pt": {
+      "topic": "Studio Ghibli",
+      "question": "Qual estúdio produziu \"A Viagem de Chihiro\"?",
+      "correct": "Studio Ghibli",
+      "wrongs": [
+        "Toei Animation",
+        "Kyoto Animation",
+        "Madhouse"
+      ]
+    },
+    "en": {
+      "topic": "Studio Ghibli",
+      "question": "Which studio produced \"Spirited Away\"?",
+      "correct": "Studio Ghibli",
+      "wrongs": [
+        "Toei Animation",
+        "Kyoto Animation",
+        "Madhouse"
+      ]
+    }
+  },
+  {
+    "id": "anime_106",
+    "level": 1,
+    "topic": "Death Note",
+    "question": "Qual shinigami deixa o Death Note cair no mundo humano?",
+    "correct": "Ryuk",
+    "wrongs": [
+      "Rem",
+      "Sidoh",
+      "Misa"
+    ],
+    "pt": {
+      "topic": "Death Note",
+      "question": "Qual shinigami deixa o Death Note cair no mundo humano?",
+      "correct": "Ryuk",
+      "wrongs": [
+        "Rem",
+        "Sidoh",
+        "Misa"
+      ]
+    },
+    "en": {
+      "topic": "Death Note",
+      "question": "Which shinigami drops the Death Note into the human world?",
+      "correct": "Ryuk",
+      "wrongs": [
+        "Rem",
+        "Sidoh",
+        "Misa"
+      ]
+    }
+  },
+  {
+    "id": "anime_107",
+    "level": 1,
+    "topic": "Attack on Titan",
+    "question": "Quem é o protagonista de Attack on Titan?",
+    "correct": "Eren Yeager",
+    "wrongs": [
+      "Levi Ackerman",
+      "Armin Arlert",
+      "Reiner Braun"
+    ],
+    "pt": {
+      "topic": "Attack on Titan",
+      "question": "Quem é o protagonista de Attack on Titan?",
+      "correct": "Eren Yeager",
+      "wrongs": [
+        "Levi Ackerman",
+        "Armin Arlert",
+        "Reiner Braun"
+      ]
+    },
+    "en": {
+      "topic": "Attack on Titan",
+      "question": "Who is the protagonist of Attack on Titan?",
+      "correct": "Eren Yeager",
+      "wrongs": [
+        "Levi Ackerman",
+        "Armin Arlert",
+        "Reiner Braun"
+      ]
+    }
+  },
+  {
+    "id": "anime_108",
+    "level": 1,
+    "topic": "Sailor Moon",
+    "question": "Qual é o nome civil da Sailor Moon?",
+    "correct": "Usagi Tsukino",
+    "wrongs": [
+      "Rei Hino",
+      "Ami Mizuno",
+      "Makoto Kino"
+    ],
+    "pt": {
+      "topic": "Sailor Moon",
+      "question": "Qual é o nome civil da Sailor Moon?",
+      "correct": "Usagi Tsukino",
+      "wrongs": [
+        "Rei Hino",
+        "Ami Mizuno",
+        "Makoto Kino"
+      ]
+    },
+    "en": {
+      "topic": "Sailor Moon",
+      "question": "What is Sailor Moon's civilian name?",
+      "correct": "Usagi Tsukino",
+      "wrongs": [
+        "Rei Hino",
+        "Ami Mizuno",
+        "Makoto Kino"
+      ]
+    }
+  },
+  {
+    "id": "anime_109",
+    "level": 1,
+    "topic": "Pokémon",
+    "question": "Qual Pokémon é o número #001 da Pokédex Nacional?",
+    "correct": "Bulbasaur",
+    "wrongs": [
+      "Pikachu",
+      "Mew",
+      "Charmander"
+    ],
+    "pt": {
+      "topic": "Pokémon",
+      "question": "Qual Pokémon é o número #001 da Pokédex Nacional?",
+      "correct": "Bulbasaur",
+      "wrongs": [
+        "Pikachu",
+        "Mew",
+        "Charmander"
+      ]
+    },
+    "en": {
+      "topic": "Pokémon",
+      "question": "Which Pokémon is #001 in the National Pokédex?",
+      "correct": "Bulbasaur",
+      "wrongs": [
+        "Pikachu",
+        "Mew",
+        "Charmander"
+      ]
+    }
+  },
+  {
+    "id": "anime_110",
+    "level": 1,
+    "topic": "Cultura Otaku",
+    "question": "Em que direção se lê tradicionalmente um mangá japonês?",
+    "correct": "Da direita para a esquerda",
+    "wrongs": [
+      "Da esquerda para a direita",
+      "De baixo para cima",
+      "Em espiral"
+    ],
+    "pt": {
+      "topic": "Cultura Otaku",
+      "question": "Em que direção se lê tradicionalmente um mangá japonês?",
+      "correct": "Da direita para a esquerda",
+      "wrongs": [
+        "Da esquerda para a direita",
+        "De baixo para cima",
+        "Em espiral"
+      ]
+    },
+    "en": {
+      "topic": "Otaku Culture",
+      "question": "In which direction is a Japanese manga traditionally read?",
+      "correct": "Right to left",
+      "wrongs": [
+        "Left to right",
+        "Bottom to top",
+        "In a spiral"
+      ]
+    }
+  },
+  {
+    "id": "anime_111",
+    "level": 1,
+    "topic": "Demon Slayer",
+    "question": "Qual é o nome da irmã de Tanjiro que vira oni?",
+    "correct": "Nezuko",
+    "wrongs": [
+      "Kanao",
+      "Shinobu",
+      "Mitsuri"
+    ],
+    "pt": {
+      "topic": "Demon Slayer",
+      "question": "Qual é o nome da irmã de Tanjiro que vira oni?",
+      "correct": "Nezuko",
+      "wrongs": [
+        "Kanao",
+        "Shinobu",
+        "Mitsuri"
+      ]
+    },
+    "en": {
+      "topic": "Demon Slayer",
+      "question": "What is the name of Tanjiro's sister who becomes a demon?",
+      "correct": "Nezuko",
+      "wrongs": [
+        "Kanao",
+        "Shinobu",
+        "Mitsuri"
+      ]
+    }
+  },
+  {
+    "id": "anime_112",
+    "level": 1,
+    "topic": "My Hero Academia",
+    "question": "Qual herói é conhecido como o \"Símbolo da Paz\"?",
+    "correct": "All Might",
+    "wrongs": [
+      "Endeavor",
+      "Hawks",
+      "Eraser Head"
+    ],
+    "pt": {
+      "topic": "My Hero Academia",
+      "question": "Qual herói é conhecido como o \"Símbolo da Paz\"?",
+      "correct": "All Might",
+      "wrongs": [
+        "Endeavor",
+        "Hawks",
+        "Eraser Head"
+      ]
+    },
+    "en": {
+      "topic": "My Hero Academia",
+      "question": "Which hero is known as the \"Symbol of Peace\"?",
+      "correct": "All Might",
+      "wrongs": [
+        "Endeavor",
+        "Hawks",
+        "Eraser Head"
+      ]
+    }
+  },
+  {
+    "id": "anime_113",
+    "level": 1,
+    "topic": "Jujutsu Kaisen",
+    "question": "Qual feiticeiro de venda nos olhos é chamado de \"o mais forte\"?",
+    "correct": "Satoru Gojo",
+    "wrongs": [
+      "Suguru Geto",
+      "Kento Nanami",
+      "Yuji Itadori"
+    ],
+    "pt": {
+      "topic": "Jujutsu Kaisen",
+      "question": "Qual feiticeiro de venda nos olhos é chamado de \"o mais forte\"?",
+      "correct": "Satoru Gojo",
+      "wrongs": [
+        "Suguru Geto",
+        "Kento Nanami",
+        "Yuji Itadori"
+      ]
+    },
+    "en": {
+      "topic": "Jujutsu Kaisen",
+      "question": "Which blindfolded sorcerer is called \"the strongest\"?",
+      "correct": "Satoru Gojo",
+      "wrongs": [
+        "Suguru Geto",
+        "Kento Nanami",
+        "Yuji Itadori"
+      ]
+    }
+  },
+  {
+    "id": "anime_114",
+    "level": 1,
+    "topic": "Cultura Otaku",
+    "question": "Como se chama quem é fã intenso de anime e mangá?",
+    "correct": "Otaku",
+    "wrongs": [
+      "Senpai",
+      "Kohai",
+      "Sensei"
+    ],
+    "pt": {
+      "topic": "Cultura Otaku",
+      "question": "Como se chama quem é fã intenso de anime e mangá?",
+      "correct": "Otaku",
+      "wrongs": [
+        "Senpai",
+        "Kohai",
+        "Sensei"
+      ]
+    },
+    "en": {
+      "topic": "Otaku Culture",
+      "question": "What do you call an intense fan of anime and manga?",
+      "correct": "Otaku",
+      "wrongs": [
+        "Senpai",
+        "Kohai",
+        "Sensei"
+      ]
+    }
+  },
+  {
+    "id": "anime_115",
+    "level": 1,
+    "topic": "Dragon Ball",
+    "question": "Quantas Esferas do Dragão são necessárias para invocar Shenlong?",
+    "correct": "7",
+    "wrongs": [
+      "5",
+      "9",
+      "12"
+    ],
+    "pt": {
+      "topic": "Dragon Ball",
+      "question": "Quantas Esferas do Dragão são necessárias para invocar Shenlong?",
+      "correct": "7",
+      "wrongs": [
+        "5",
+        "9",
+        "12"
+      ]
+    },
+    "en": {
+      "topic": "Dragon Ball",
+      "question": "How many Dragon Balls are needed to summon Shenron?",
+      "correct": "7",
+      "wrongs": [
+        "5",
+        "9",
+        "12"
+      ]
+    }
+  },
+  {
+    "id": "anime_116",
+    "level": 1,
+    "topic": "Pokémon",
+    "question": "Qual é a evolução final do Squirtle?",
+    "correct": "Blastoise",
+    "wrongs": [
+      "Wartortle",
+      "Gyarados",
+      "Lapras"
+    ],
+    "pt": {
+      "topic": "Pokémon",
+      "question": "Qual é a evolução final do Squirtle?",
+      "correct": "Blastoise",
+      "wrongs": [
+        "Wartortle",
+        "Gyarados",
+        "Lapras"
+      ]
+    },
+    "en": {
+      "topic": "Pokémon",
+      "question": "What is Squirtle's final evolution?",
+      "correct": "Blastoise",
+      "wrongs": [
+        "Wartortle",
+        "Gyarados",
+        "Lapras"
+      ]
+    }
+  },
+  {
+    "id": "anime_201",
+    "level": 2,
+    "topic": "One Piece",
+    "question": "Qual Akuma no Mi Luffy comeu?",
+    "correct": "Gomu Gomu no Mi",
+    "wrongs": [
+      "Mera Mera no Mi",
+      "Hito Hito no Mi",
+      "Bara Bara no Mi"
+    ],
+    "pt": {
+      "topic": "One Piece",
+      "question": "Qual Akuma no Mi Luffy comeu?",
+      "correct": "Gomu Gomu no Mi",
+      "wrongs": [
+        "Mera Mera no Mi",
+        "Hito Hito no Mi",
+        "Bara Bara no Mi"
+      ]
+    },
+    "en": {
+      "topic": "One Piece",
+      "question": "Which Devil Fruit did Luffy eat?",
+      "correct": "Gomu Gomu no Mi",
+      "wrongs": [
+        "Mera Mera no Mi",
+        "Hito Hito no Mi",
+        "Bara Bara no Mi"
+      ]
+    }
+  },
+  {
+    "id": "anime_202",
+    "level": 2,
+    "topic": "Naruto",
+    "question": "Qual é o nome da Raposa de Nove Caudas?",
+    "correct": "Kurama",
+    "wrongs": [
+      "Shukaku",
+      "Gyuki",
+      "Matatabi"
+    ],
+    "pt": {
+      "topic": "Naruto",
+      "question": "Qual é o nome da Raposa de Nove Caudas?",
+      "correct": "Kurama",
+      "wrongs": [
+        "Shukaku",
+        "Gyuki",
+        "Matatabi"
+      ]
+    },
+    "en": {
+      "topic": "Naruto",
+      "question": "What is the name of the Nine-Tailed Fox?",
+      "correct": "Kurama",
+      "wrongs": [
+        "Shukaku",
+        "Gyuki",
+        "Matatabi"
+      ]
+    }
+  },
+  {
+    "id": "anime_203",
+    "level": 2,
+    "topic": "Fullmetal Alchemist",
+    "question": "O que Alphonse Elric perdeu na transmutação humana?",
+    "correct": "O corpo inteiro",
+    "wrongs": [
+      "O braço direito",
+      "A perna esquerda",
+      "A voz"
+    ],
+    "pt": {
+      "topic": "Fullmetal Alchemist",
+      "question": "O que Alphonse Elric perdeu na transmutação humana?",
+      "correct": "O corpo inteiro",
+      "wrongs": [
+        "O braço direito",
+        "A perna esquerda",
+        "A voz"
+      ]
+    },
+    "en": {
+      "topic": "Fullmetal Alchemist",
+      "question": "What did Alphonse Elric lose in the human transmutation?",
+      "correct": "His entire body",
+      "wrongs": [
+        "His right arm",
+        "His left leg",
+        "His voice"
+      ]
+    }
+  },
+  {
+    "id": "anime_204",
+    "level": 2,
+    "topic": "Hunter x Hunter",
+    "question": "Qual amigo de Gon vem de uma família de assassinos?",
+    "correct": "Killua Zoldyck",
+    "wrongs": [
+      "Kurapika",
+      "Leorio",
+      "Hisoka"
+    ],
+    "pt": {
+      "topic": "Hunter x Hunter",
+      "question": "Qual amigo de Gon vem de uma família de assassinos?",
+      "correct": "Killua Zoldyck",
+      "wrongs": [
+        "Kurapika",
+        "Leorio",
+        "Hisoka"
+      ]
+    },
+    "en": {
+      "topic": "Hunter x Hunter",
+      "question": "Which of Gon's friends comes from a family of assassins?",
+      "correct": "Killua Zoldyck",
+      "wrongs": [
+        "Kurapika",
+        "Leorio",
+        "Hisoka"
+      ]
+    }
+  },
+  {
+    "id": "anime_205",
+    "level": 2,
+    "topic": "Studio Ghibli",
+    "question": "Quem dirigiu \"Meu Amigo Totoro\"?",
+    "correct": "Hayao Miyazaki",
+    "wrongs": [
+      "Isao Takahata",
+      "Makoto Shinkai",
+      "Mamoru Hosoda"
+    ],
+    "pt": {
+      "topic": "Studio Ghibli",
+      "question": "Quem dirigiu \"Meu Amigo Totoro\"?",
+      "correct": "Hayao Miyazaki",
+      "wrongs": [
+        "Isao Takahata",
+        "Makoto Shinkai",
+        "Mamoru Hosoda"
+      ]
+    },
+    "en": {
+      "topic": "Studio Ghibli",
+      "question": "Who directed \"My Neighbor Totoro\"?",
+      "correct": "Hayao Miyazaki",
+      "wrongs": [
+        "Isao Takahata",
+        "Makoto Shinkai",
+        "Mamoru Hosoda"
+      ]
+    }
+  },
+  {
+    "id": "anime_206",
+    "level": 2,
+    "topic": "Filmes de Anime",
+    "question": "Qual filme de Makoto Shinkai (2016) é sobre troca de corpos?",
+    "correct": "Your Name (Kimi no Na wa)",
+    "wrongs": [
+      "Weathering with You",
+      "Suzume",
+      "O Jardim das Palavras"
+    ],
+    "pt": {
+      "topic": "Filmes de Anime",
+      "question": "Qual filme de Makoto Shinkai (2016) é sobre troca de corpos?",
+      "correct": "Your Name (Kimi no Na wa)",
+      "wrongs": [
+        "Weathering with You",
+        "Suzume",
+        "O Jardim das Palavras"
+      ]
+    },
+    "en": {
+      "topic": "Anime Movies",
+      "question": "Which 2016 Makoto Shinkai film is about body swapping?",
+      "correct": "Your Name (Kimi no Na wa)",
+      "wrongs": [
+        "Weathering with You",
+        "Suzume",
+        "The Garden of Words"
+      ]
+    }
+  },
+  {
+    "id": "anime_207",
+    "level": 2,
+    "topic": "Cowboy Bebop",
+    "question": "Quem é o caçador de recompensas protagonista de Cowboy Bebop?",
+    "correct": "Spike Spiegel",
+    "wrongs": [
+      "Jet Black",
+      "Vicious",
+      "Edward"
+    ],
+    "pt": {
+      "topic": "Cowboy Bebop",
+      "question": "Quem é o caçador de recompensas protagonista de Cowboy Bebop?",
+      "correct": "Spike Spiegel",
+      "wrongs": [
+        "Jet Black",
+        "Vicious",
+        "Edward"
+      ]
+    },
+    "en": {
+      "topic": "Cowboy Bebop",
+      "question": "Who is the bounty hunter protagonist of Cowboy Bebop?",
+      "correct": "Spike Spiegel",
+      "wrongs": [
+        "Jet Black",
+        "Vicious",
+        "Edward"
+      ]
+    }
+  },
+  {
+    "id": "anime_208",
+    "level": 2,
+    "topic": "Evangelion",
+    "question": "Quem pilota o EVA-01 em Neon Genesis Evangelion?",
+    "correct": "Shinji Ikari",
+    "wrongs": [
+      "Asuka Langley",
+      "Rei Ayanami",
+      "Kaworu Nagisa"
+    ],
+    "pt": {
+      "topic": "Evangelion",
+      "question": "Quem pilota o EVA-01 em Neon Genesis Evangelion?",
+      "correct": "Shinji Ikari",
+      "wrongs": [
+        "Asuka Langley",
+        "Rei Ayanami",
+        "Kaworu Nagisa"
+      ]
+    },
+    "en": {
+      "topic": "Evangelion",
+      "question": "Who pilots EVA-01 in Neon Genesis Evangelion?",
+      "correct": "Shinji Ikari",
+      "wrongs": [
+        "Asuka Langley",
+        "Rei Ayanami",
+        "Kaworu Nagisa"
+      ]
+    }
+  },
+  {
+    "id": "anime_209",
+    "level": 2,
+    "topic": "Demon Slayer",
+    "question": "Qual respiração Tanjiro aprende primeiro com Urokodaki?",
+    "correct": "Respiração da Água",
+    "wrongs": [
+      "Respiração do Trovão",
+      "Respiração das Chamas",
+      "Respiração da Fera"
+    ],
+    "pt": {
+      "topic": "Demon Slayer",
+      "question": "Qual respiração Tanjiro aprende primeiro com Urokodaki?",
+      "correct": "Respiração da Água",
+      "wrongs": [
+        "Respiração do Trovão",
+        "Respiração das Chamas",
+        "Respiração da Fera"
+      ]
+    },
+    "en": {
+      "topic": "Demon Slayer",
+      "question": "Which breathing style does Tanjiro first learn from Urokodaki?",
+      "correct": "Water Breathing",
+      "wrongs": [
+        "Thunder Breathing",
+        "Flame Breathing",
+        "Beast Breathing"
+      ]
+    }
+  },
+  {
+    "id": "anime_210",
+    "level": 2,
+    "topic": "Jujutsu Kaisen",
+    "question": "O que Yuji Itadori engole e vira receptáculo de Sukuna?",
+    "correct": "Um dedo de Sukuna",
+    "wrongs": [
+      "Um olho amaldiçoado",
+      "Uma espada amaldiçoada",
+      "Um pergaminho proibido"
+    ],
+    "pt": {
+      "topic": "Jujutsu Kaisen",
+      "question": "O que Yuji Itadori engole e vira receptáculo de Sukuna?",
+      "correct": "Um dedo de Sukuna",
+      "wrongs": [
+        "Um olho amaldiçoado",
+        "Uma espada amaldiçoada",
+        "Um pergaminho proibido"
+      ]
+    },
+    "en": {
+      "topic": "Jujutsu Kaisen",
+      "question": "What does Yuji Itadori swallow to become Sukuna's vessel?",
+      "correct": "One of Sukuna's fingers",
+      "wrongs": [
+        "A cursed eye",
+        "A cursed sword",
+        "A forbidden scroll"
+      ]
+    }
+  },
+  {
+    "id": "anime_211",
+    "level": 2,
+    "topic": "Mangakás",
+    "question": "Quem é o autor do mangá One Piece?",
+    "correct": "Eiichiro Oda",
+    "wrongs": [
+      "Masashi Kishimoto",
+      "Akira Toriyama",
+      "Tite Kubo"
+    ],
+    "pt": {
+      "topic": "Mangakás",
+      "question": "Quem é o autor do mangá One Piece?",
+      "correct": "Eiichiro Oda",
+      "wrongs": [
+        "Masashi Kishimoto",
+        "Akira Toriyama",
+        "Tite Kubo"
+      ]
+    },
+    "en": {
+      "topic": "Mangaka",
+      "question": "Who is the author of the One Piece manga?",
+      "correct": "Eiichiro Oda",
+      "wrongs": [
+        "Masashi Kishimoto",
+        "Akira Toriyama",
+        "Tite Kubo"
+      ]
+    }
+  },
+  {
+    "id": "anime_212",
+    "level": 2,
+    "topic": "Mangakás",
+    "question": "Quem criou Dragon Ball?",
+    "correct": "Akira Toriyama",
+    "wrongs": [
+      "Eiichiro Oda",
+      "Rumiko Takahashi",
+      "Yoshihiro Togashi"
+    ],
+    "pt": {
+      "topic": "Mangakás",
+      "question": "Quem criou Dragon Ball?",
+      "correct": "Akira Toriyama",
+      "wrongs": [
+        "Eiichiro Oda",
+        "Rumiko Takahashi",
+        "Yoshihiro Togashi"
+      ]
+    },
+    "en": {
+      "topic": "Mangaka",
+      "question": "Who created Dragon Ball?",
+      "correct": "Akira Toriyama",
+      "wrongs": [
+        "Eiichiro Oda",
+        "Rumiko Takahashi",
+        "Yoshihiro Togashi"
+      ]
+    }
+  },
+  {
+    "id": "anime_213",
+    "level": 2,
+    "topic": "Spy x Family",
+    "question": "Em Spy x Family, quem consegue ler mentes?",
+    "correct": "Anya Forger",
+    "wrongs": [
+      "Yor Forger",
+      "Loid Forger",
+      "Damian Desmond"
+    ],
+    "pt": {
+      "topic": "Spy x Family",
+      "question": "Em Spy x Family, quem consegue ler mentes?",
+      "correct": "Anya Forger",
+      "wrongs": [
+        "Yor Forger",
+        "Loid Forger",
+        "Damian Desmond"
+      ]
+    },
+    "en": {
+      "topic": "Spy x Family",
+      "question": "In Spy x Family, who can read minds?",
+      "correct": "Anya Forger",
+      "wrongs": [
+        "Yor Forger",
+        "Loid Forger",
+        "Damian Desmond"
+      ]
+    }
+  },
+  {
+    "id": "anime_214",
+    "level": 2,
+    "topic": "Bleach",
+    "question": "Como se chama a espada dos Shinigami em Bleach?",
+    "correct": "Zanpakutō",
+    "wrongs": [
+      "Kunai",
+      "Nichirin",
+      "Chakram"
+    ],
+    "pt": {
+      "topic": "Bleach",
+      "question": "Como se chama a espada dos Shinigami em Bleach?",
+      "correct": "Zanpakutō",
+      "wrongs": [
+        "Kunai",
+        "Nichirin",
+        "Chakram"
+      ]
+    },
+    "en": {
+      "topic": "Bleach",
+      "question": "What is the Soul Reapers' sword called in Bleach?",
+      "correct": "Zanpakutō",
+      "wrongs": [
+        "Kunai",
+        "Nichirin",
+        "Chakram"
+      ]
+    }
+  },
+  {
+    "id": "anime_215",
+    "level": 2,
+    "topic": "Pokémon",
+    "question": "Qual destes tipos é super efetivo contra o tipo Água?",
+    "correct": "Elétrico",
+    "wrongs": [
+      "Fogo",
+      "Pedra",
+      "Gelo"
+    ],
+    "pt": {
+      "topic": "Pokémon",
+      "question": "Qual destes tipos é super efetivo contra o tipo Água?",
+      "correct": "Elétrico",
+      "wrongs": [
+        "Fogo",
+        "Pedra",
+        "Gelo"
+      ]
+    },
+    "en": {
+      "topic": "Pokémon",
+      "question": "Which of these types is super effective against Water?",
+      "correct": "Electric",
+      "wrongs": [
+        "Fire",
+        "Rock",
+        "Ice"
+      ]
+    }
+  },
+  {
+    "id": "anime_216",
+    "level": 2,
+    "topic": "Cultura Otaku",
+    "question": "O que define um anime do gênero \"isekai\"?",
+    "correct": "O protagonista vai para outro mundo",
+    "wrongs": [
+      "Romance em colégio",
+      "Batalhas de robôs gigantes",
+      "Competições esportivas"
+    ],
+    "pt": {
+      "topic": "Cultura Otaku",
+      "question": "O que define um anime do gênero \"isekai\"?",
+      "correct": "O protagonista vai para outro mundo",
+      "wrongs": [
+        "Romance em colégio",
+        "Batalhas de robôs gigantes",
+        "Competições esportivas"
+      ]
+    },
+    "en": {
+      "topic": "Otaku Culture",
+      "question": "What defines an \"isekai\" anime?",
+      "correct": "The protagonist is sent to another world",
+      "wrongs": [
+        "High school romance",
+        "Giant robot battles",
+        "Sports competitions"
+      ]
+    }
+  },
+  {
+    "id": "anime_301",
+    "level": 3,
+    "topic": "Fullmetal Alchemist",
+    "question": "Qual é o princípio fundamental da alquimia em Fullmetal Alchemist?",
+    "correct": "Troca Equivalente",
+    "wrongs": [
+      "Pedra Filosofal",
+      "Portão da Verdade",
+      "Transmutação Humana"
+    ],
+    "pt": {
+      "topic": "Fullmetal Alchemist",
+      "question": "Qual é o princípio fundamental da alquimia em Fullmetal Alchemist?",
+      "correct": "Troca Equivalente",
+      "wrongs": [
+        "Pedra Filosofal",
+        "Portão da Verdade",
+        "Transmutação Humana"
+      ]
+    },
+    "en": {
+      "topic": "Fullmetal Alchemist",
+      "question": "What is the fundamental principle of alchemy in Fullmetal Alchemist?",
+      "correct": "Equivalent Exchange",
+      "wrongs": [
+        "Philosopher's Stone",
+        "Gate of Truth",
+        "Human Transmutation"
+      ]
+    }
+  },
+  {
+    "id": "anime_302",
+    "level": 3,
+    "topic": "Death Note",
+    "question": "Qual é o nome completo verdadeiro de L?",
+    "correct": "L Lawliet",
+    "wrongs": [
+      "Light Yagami",
+      "Nate River",
+      "Mihael Keehl"
+    ],
+    "pt": {
+      "topic": "Death Note",
+      "question": "Qual é o nome completo verdadeiro de L?",
+      "correct": "L Lawliet",
+      "wrongs": [
+        "Light Yagami",
+        "Nate River",
+        "Mihael Keehl"
+      ]
+    },
+    "en": {
+      "topic": "Death Note",
+      "question": "What is L's real full name?",
+      "correct": "L Lawliet",
+      "wrongs": [
+        "Light Yagami",
+        "Nate River",
+        "Mihael Keehl"
+      ]
+    }
+  },
+  {
+    "id": "anime_303",
+    "level": 3,
+    "topic": "Attack on Titan",
+    "question": "Qual é a muralha mais externa em Attack on Titan?",
+    "correct": "Muralha Maria",
+    "wrongs": [
+      "Muralha Rose",
+      "Muralha Sina",
+      "Muralha Shiganshina"
+    ],
+    "pt": {
+      "topic": "Attack on Titan",
+      "question": "Qual é a muralha mais externa em Attack on Titan?",
+      "correct": "Muralha Maria",
+      "wrongs": [
+        "Muralha Rose",
+        "Muralha Sina",
+        "Muralha Shiganshina"
+      ]
+    },
+    "en": {
+      "topic": "Attack on Titan",
+      "question": "What is the outermost wall in Attack on Titan?",
+      "correct": "Wall Maria",
+      "wrongs": [
+        "Wall Rose",
+        "Wall Sina",
+        "Wall Shiganshina"
+      ]
+    }
+  },
+  {
+    "id": "anime_304",
+    "level": 3,
+    "topic": "Steins;Gate",
+    "question": "O que o \"Phone Microwave\" de Steins;Gate envia ao passado?",
+    "correct": "Mensagens de texto (D-Mails)",
+    "wrongs": [
+      "Objetos físicos",
+      "Pessoas",
+      "Chamadas de voz"
+    ],
+    "pt": {
+      "topic": "Steins;Gate",
+      "question": "O que o \"Phone Microwave\" de Steins;Gate envia ao passado?",
+      "correct": "Mensagens de texto (D-Mails)",
+      "wrongs": [
+        "Objetos físicos",
+        "Pessoas",
+        "Chamadas de voz"
+      ]
+    },
+    "en": {
+      "topic": "Steins;Gate",
+      "question": "What does the \"Phone Microwave\" in Steins;Gate send to the past?",
+      "correct": "Text messages (D-Mails)",
+      "wrongs": [
+        "Physical objects",
+        "People",
+        "Voice calls"
+      ]
+    }
+  },
+  {
+    "id": "anime_305",
+    "level": 3,
+    "topic": "Evangelion",
+    "question": "Qual organização opera os EVAs em Neon Genesis Evangelion?",
+    "correct": "NERV",
+    "wrongs": [
+      "SEELE",
+      "WILLE",
+      "Seção 9"
+    ],
+    "pt": {
+      "topic": "Evangelion",
+      "question": "Qual organização opera os EVAs em Neon Genesis Evangelion?",
+      "correct": "NERV",
+      "wrongs": [
+        "SEELE",
+        "WILLE",
+        "Seção 9"
+      ]
+    },
+    "en": {
+      "topic": "Evangelion",
+      "question": "Which organization operates the EVAs in Neon Genesis Evangelion?",
+      "correct": "NERV",
+      "wrongs": [
+        "SEELE",
+        "WILLE",
+        "Section 9"
+      ]
+    }
+  },
+  {
+    "id": "anime_306",
+    "level": 3,
+    "topic": "Ghost in the Shell",
+    "question": "Quem é a protagonista de Ghost in the Shell?",
+    "correct": "Motoko Kusanagi",
+    "wrongs": [
+      "Batou",
+      "Togusa",
+      "Daisuke Aramaki"
+    ],
+    "pt": {
+      "topic": "Ghost in the Shell",
+      "question": "Quem é a protagonista de Ghost in the Shell?",
+      "correct": "Motoko Kusanagi",
+      "wrongs": [
+        "Batou",
+        "Togusa",
+        "Daisuke Aramaki"
+      ]
+    },
+    "en": {
+      "topic": "Ghost in the Shell",
+      "question": "Who is the protagonist of Ghost in the Shell?",
+      "correct": "Motoko Kusanagi",
+      "wrongs": [
+        "Batou",
+        "Togusa",
+        "Daisuke Aramaki"
+      ]
+    }
+  },
+  {
+    "id": "anime_307",
+    "level": 3,
+    "topic": "Studio Ghibli",
+    "question": "Qual foi o primeiro longa dirigido por Hayao Miyazaki (1979)?",
+    "correct": "O Castelo de Cagliostro",
+    "wrongs": [
+      "Nausicaä do Vale do Vento",
+      "O Castelo no Céu",
+      "Meu Amigo Totoro"
+    ],
+    "pt": {
+      "topic": "Studio Ghibli",
+      "question": "Qual foi o primeiro longa dirigido por Hayao Miyazaki (1979)?",
+      "correct": "O Castelo de Cagliostro",
+      "wrongs": [
+        "Nausicaä do Vale do Vento",
+        "O Castelo no Céu",
+        "Meu Amigo Totoro"
+      ]
+    },
+    "en": {
+      "topic": "Studio Ghibli",
+      "question": "What was the first feature film directed by Hayao Miyazaki (1979)?",
+      "correct": "The Castle of Cagliostro",
+      "wrongs": [
+        "Nausicaä of the Valley of the Wind",
+        "Castle in the Sky",
+        "My Neighbor Totoro"
+      ]
+    }
+  },
+  {
+    "id": "anime_308",
+    "level": 3,
+    "topic": "Hunter x Hunter",
+    "question": "Como se chama o sistema de energia vital de Hunter x Hunter?",
+    "correct": "Nen",
+    "wrongs": [
+      "Chakra",
+      "Haki",
+      "Reiatsu"
+    ],
+    "pt": {
+      "topic": "Hunter x Hunter",
+      "question": "Como se chama o sistema de energia vital de Hunter x Hunter?",
+      "correct": "Nen",
+      "wrongs": [
+        "Chakra",
+        "Haki",
+        "Reiatsu"
+      ]
+    },
+    "en": {
+      "topic": "Hunter x Hunter",
+      "question": "What is the life-energy system in Hunter x Hunter called?",
+      "correct": "Nen",
+      "wrongs": [
+        "Chakra",
+        "Haki",
+        "Reiatsu"
+      ]
+    }
+  },
+  {
+    "id": "anime_309",
+    "level": 3,
+    "topic": "One Piece",
+    "question": "Qual foi o primeiro navio dos Chapéus de Palha?",
+    "correct": "Going Merry",
+    "wrongs": [
+      "Thousand Sunny",
+      "Red Force",
+      "Moby Dick"
+    ],
+    "pt": {
+      "topic": "One Piece",
+      "question": "Qual foi o primeiro navio dos Chapéus de Palha?",
+      "correct": "Going Merry",
+      "wrongs": [
+        "Thousand Sunny",
+        "Red Force",
+        "Moby Dick"
+      ]
+    },
+    "en": {
+      "topic": "One Piece",
+      "question": "What was the Straw Hats' first ship?",
+      "correct": "Going Merry",
+      "wrongs": [
+        "Thousand Sunny",
+        "Red Force",
+        "Moby Dick"
+      ]
+    }
+  },
+  {
+    "id": "anime_310",
+    "level": 3,
+    "topic": "Naruto",
+    "question": "Qual é a técnica ocular do clã Hyuga?",
+    "correct": "Byakugan",
+    "wrongs": [
+      "Sharingan",
+      "Rinnegan",
+      "Mangekyō Sharingan"
+    ],
+    "pt": {
+      "topic": "Naruto",
+      "question": "Qual é a técnica ocular do clã Hyuga?",
+      "correct": "Byakugan",
+      "wrongs": [
+        "Sharingan",
+        "Rinnegan",
+        "Mangekyō Sharingan"
+      ]
+    },
+    "en": {
+      "topic": "Naruto",
+      "question": "What is the ocular technique of the Hyuga clan?",
+      "correct": "Byakugan",
+      "wrongs": [
+        "Sharingan",
+        "Rinnegan",
+        "Mangekyō Sharingan"
+      ]
+    }
+  },
+  {
+    "id": "anime_311",
+    "level": 3,
+    "topic": "Trilhas Sonoras",
+    "question": "Quem compôs a trilha sonora de Cowboy Bebop?",
+    "correct": "Yoko Kanno",
+    "wrongs": [
+      "Joe Hisaishi",
+      "Hiroyuki Sawano",
+      "Yuki Kajiura"
+    ],
+    "pt": {
+      "topic": "Trilhas Sonoras",
+      "question": "Quem compôs a trilha sonora de Cowboy Bebop?",
+      "correct": "Yoko Kanno",
+      "wrongs": [
+        "Joe Hisaishi",
+        "Hiroyuki Sawano",
+        "Yuki Kajiura"
+      ]
+    },
+    "en": {
+      "topic": "Soundtracks",
+      "question": "Who composed the Cowboy Bebop soundtrack?",
+      "correct": "Yoko Kanno",
+      "wrongs": [
+        "Joe Hisaishi",
+        "Hiroyuki Sawano",
+        "Yuki Kajiura"
+      ]
+    }
+  },
+  {
+    "id": "anime_312",
+    "level": 3,
+    "topic": "Trilhas Sonoras",
+    "question": "Qual compositor assina as trilhas dos filmes de Hayao Miyazaki?",
+    "correct": "Joe Hisaishi",
+    "wrongs": [
+      "Yoko Kanno",
+      "Ryuichi Sakamoto",
+      "Kenji Kawai"
+    ],
+    "pt": {
+      "topic": "Trilhas Sonoras",
+      "question": "Qual compositor assina as trilhas dos filmes de Hayao Miyazaki?",
+      "correct": "Joe Hisaishi",
+      "wrongs": [
+        "Yoko Kanno",
+        "Ryuichi Sakamoto",
+        "Kenji Kawai"
+      ]
+    },
+    "en": {
+      "topic": "Soundtracks",
+      "question": "Which composer scores Hayao Miyazaki's films?",
+      "correct": "Joe Hisaishi",
+      "wrongs": [
+        "Yoko Kanno",
+        "Ryuichi Sakamoto",
+        "Kenji Kawai"
+      ]
+    }
+  },
+  {
+    "id": "anime_313",
+    "level": 3,
+    "topic": "Mangakás",
+    "question": "Qual autor criou One-Punch Man e Mob Psycho 100?",
+    "correct": "ONE",
+    "wrongs": [
+      "Yusuke Murata",
+      "Hiro Mashima",
+      "Kentaro Miura"
+    ],
+    "pt": {
+      "topic": "Mangakás",
+      "question": "Qual autor criou One-Punch Man e Mob Psycho 100?",
+      "correct": "ONE",
+      "wrongs": [
+        "Yusuke Murata",
+        "Hiro Mashima",
+        "Kentaro Miura"
+      ]
+    },
+    "en": {
+      "topic": "Mangaka",
+      "question": "Which author created One-Punch Man and Mob Psycho 100?",
+      "correct": "ONE",
+      "wrongs": [
+        "Yusuke Murata",
+        "Hiro Mashima",
+        "Kentaro Miura"
+      ]
+    }
+  },
+  {
+    "id": "anime_314",
+    "level": 3,
+    "topic": "Pokémon",
+    "question": "Qual Pokémon lendário Ash avista no primeiro episódio do anime?",
+    "correct": "Ho-Oh",
+    "wrongs": [
+      "Mew",
+      "Lugia",
+      "Articuno"
+    ],
+    "pt": {
+      "topic": "Pokémon",
+      "question": "Qual Pokémon lendário Ash avista no primeiro episódio do anime?",
+      "correct": "Ho-Oh",
+      "wrongs": [
+        "Mew",
+        "Lugia",
+        "Articuno"
+      ]
+    },
+    "en": {
+      "topic": "Pokémon",
+      "question": "Which legendary Pokémon does Ash see in the first episode?",
+      "correct": "Ho-Oh",
+      "wrongs": [
+        "Mew",
+        "Lugia",
+        "Articuno"
+      ]
+    }
+  },
+  {
+    "id": "anime_315",
+    "level": 3,
+    "topic": "Code Geass",
+    "question": "Qual é o efeito do Geass de Lelouch?",
+    "correct": "Obriga alguém a obedecer uma ordem",
+    "wrongs": [
+      "Ler mentes",
+      "Parar o tempo",
+      "Prever o futuro"
+    ],
+    "pt": {
+      "topic": "Code Geass",
+      "question": "Qual é o efeito do Geass de Lelouch?",
+      "correct": "Obriga alguém a obedecer uma ordem",
+      "wrongs": [
+        "Ler mentes",
+        "Parar o tempo",
+        "Prever o futuro"
+      ]
+    },
+    "en": {
+      "topic": "Code Geass",
+      "question": "What is the effect of Lelouch's Geass?",
+      "correct": "It forces someone to obey a command",
+      "wrongs": [
+        "Reading minds",
+        "Stopping time",
+        "Predicting the future"
+      ]
+    }
+  },
+  {
+    "id": "anime_316",
+    "level": 3,
+    "topic": "Dragon Ball",
+    "question": "Contra quem Goku vira Super Saiyajin pela primeira vez?",
+    "correct": "Freeza",
+    "wrongs": [
+      "Cell",
+      "Vegeta",
+      "Majin Boo"
+    ],
+    "pt": {
+      "topic": "Dragon Ball",
+      "question": "Contra quem Goku vira Super Saiyajin pela primeira vez?",
+      "correct": "Freeza",
+      "wrongs": [
+        "Cell",
+        "Vegeta",
+        "Majin Boo"
+      ]
+    },
+    "en": {
+      "topic": "Dragon Ball",
+      "question": "Against whom does Goku first turn Super Saiyan?",
+      "correct": "Frieza",
+      "wrongs": [
+        "Cell",
+        "Vegeta",
+        "Majin Buu"
+      ]
+    }
+  },
+  {
+    "id": "anime_401",
+    "level": 4,
+    "topic": "História do Anime",
+    "question": "Em que ano estreou a série de TV de Astro Boy (Tetsuwan Atom)?",
+    "correct": "1963",
+    "wrongs": [
+      "1958",
+      "1971",
+      "1979"
+    ],
+    "pt": {
+      "topic": "História do Anime",
+      "question": "Em que ano estreou a série de TV de Astro Boy (Tetsuwan Atom)?",
+      "correct": "1963",
+      "wrongs": [
+        "1958",
+        "1971",
+        "1979"
+      ]
+    },
+    "en": {
+      "topic": "Anime History",
+      "question": "In what year did the Astro Boy (Tetsuwan Atom) TV series premiere?",
+      "correct": "1963",
+      "wrongs": [
+        "1958",
+        "1971",
+        "1979"
+      ]
+    }
+  },
+  {
+    "id": "anime_402",
+    "level": 4,
+    "topic": "História do Anime",
+    "question": "Quem é conhecido como o \"Deus do Mangá\"?",
+    "correct": "Osamu Tezuka",
+    "wrongs": [
+      "Shotaro Ishinomori",
+      "Go Nagai",
+      "Leiji Matsumoto"
+    ],
+    "pt": {
+      "topic": "História do Anime",
+      "question": "Quem é conhecido como o \"Deus do Mangá\"?",
+      "correct": "Osamu Tezuka",
+      "wrongs": [
+        "Shotaro Ishinomori",
+        "Go Nagai",
+        "Leiji Matsumoto"
+      ]
+    },
+    "en": {
+      "topic": "Anime History",
+      "question": "Who is known as the \"God of Manga\"?",
+      "correct": "Osamu Tezuka",
+      "wrongs": [
+        "Shotaro Ishinomori",
+        "Go Nagai",
+        "Leiji Matsumoto"
+      ]
+    }
+  },
+  {
+    "id": "anime_403",
+    "level": 4,
+    "topic": "Filmes de Anime",
+    "question": "Qual foi o primeiro anime a ganhar o Oscar de Melhor Animação?",
+    "correct": "A Viagem de Chihiro",
+    "wrongs": [
+      "O Menino e a Garça",
+      "Your Name",
+      "Princesa Mononoke"
+    ],
+    "pt": {
+      "topic": "Filmes de Anime",
+      "question": "Qual foi o primeiro anime a ganhar o Oscar de Melhor Animação?",
+      "correct": "A Viagem de Chihiro",
+      "wrongs": [
+        "O Menino e a Garça",
+        "Your Name",
+        "Princesa Mononoke"
+      ]
+    },
+    "en": {
+      "topic": "Anime Movies",
+      "question": "What was the first anime to win the Oscar for Best Animated Feature?",
+      "correct": "Spirited Away",
+      "wrongs": [
+        "The Boy and the Heron",
+        "Your Name",
+        "Princess Mononoke"
+      ]
+    }
+  },
+  {
+    "id": "anime_404",
+    "level": 4,
+    "topic": "Mangakás",
+    "question": "Quem é a autora de Fullmetal Alchemist?",
+    "correct": "Hiromu Arakawa",
+    "wrongs": [
+      "Rumiko Takahashi",
+      "Naoko Takeuchi",
+      "CLAMP"
+    ],
+    "pt": {
+      "topic": "Mangakás",
+      "question": "Quem é a autora de Fullmetal Alchemist?",
+      "correct": "Hiromu Arakawa",
+      "wrongs": [
+        "Rumiko Takahashi",
+        "Naoko Takeuchi",
+        "CLAMP"
+      ]
+    },
+    "en": {
+      "topic": "Mangaka",
+      "question": "Who is the author of Fullmetal Alchemist?",
+      "correct": "Hiromu Arakawa",
+      "wrongs": [
+        "Rumiko Takahashi",
+        "Naoko Takeuchi",
+        "CLAMP"
+      ]
+    }
+  },
+  {
+    "id": "anime_405",
+    "level": 4,
+    "topic": "Berserk",
+    "question": "Como se chama a espada gigante de Guts em Berserk?",
+    "correct": "Dragon Slayer",
+    "wrongs": [
+      "Zangetsu",
+      "Durandal",
+      "Excalibur"
+    ],
+    "pt": {
+      "topic": "Berserk",
+      "question": "Como se chama a espada gigante de Guts em Berserk?",
+      "correct": "Dragon Slayer",
+      "wrongs": [
+        "Zangetsu",
+        "Durandal",
+        "Excalibur"
+      ]
+    },
+    "en": {
+      "topic": "Berserk",
+      "question": "What is the name of Guts' giant sword in Berserk?",
+      "correct": "Dragon Slayer",
+      "wrongs": [
+        "Zangetsu",
+        "Durandal",
+        "Excalibur"
+      ]
+    }
+  },
+  {
+    "id": "anime_406",
+    "level": 4,
+    "topic": "Diretores",
+    "question": "Quem dirigiu Neon Genesis Evangelion?",
+    "correct": "Hideaki Anno",
+    "wrongs": [
+      "Mamoru Oshii",
+      "Satoshi Kon",
+      "Shinichirō Watanabe"
+    ],
+    "pt": {
+      "topic": "Diretores",
+      "question": "Quem dirigiu Neon Genesis Evangelion?",
+      "correct": "Hideaki Anno",
+      "wrongs": [
+        "Mamoru Oshii",
+        "Satoshi Kon",
+        "Shinichirō Watanabe"
+      ]
+    },
+    "en": {
+      "topic": "Directors",
+      "question": "Who directed Neon Genesis Evangelion?",
+      "correct": "Hideaki Anno",
+      "wrongs": [
+        "Mamoru Oshii",
+        "Satoshi Kon",
+        "Shinichirō Watanabe"
+      ]
+    }
+  },
+  {
+    "id": "anime_407",
+    "level": 4,
+    "topic": "Filmes de Anime",
+    "question": "Qual thriller psicológico de 1997 foi dirigido por Satoshi Kon?",
+    "correct": "Perfect Blue",
+    "wrongs": [
+      "Akira",
+      "Ghost in the Shell",
+      "Jin-Roh"
+    ],
+    "pt": {
+      "topic": "Filmes de Anime",
+      "question": "Qual thriller psicológico de 1997 foi dirigido por Satoshi Kon?",
+      "correct": "Perfect Blue",
+      "wrongs": [
+        "Akira",
+        "Ghost in the Shell",
+        "Jin-Roh"
+      ]
+    },
+    "en": {
+      "topic": "Anime Movies",
+      "question": "Which 1997 psychological thriller was directed by Satoshi Kon?",
+      "correct": "Perfect Blue",
+      "wrongs": [
+        "Akira",
+        "Ghost in the Shell",
+        "Jin-Roh"
+      ]
+    }
+  },
+  {
+    "id": "anime_408",
+    "level": 4,
+    "topic": "Akira",
+    "question": "Em que ano se passa a história de Akira, em Neo-Tóquio?",
+    "correct": "2019",
+    "wrongs": [
+      "2001",
+      "2032",
+      "2099"
+    ],
+    "pt": {
+      "topic": "Akira",
+      "question": "Em que ano se passa a história de Akira, em Neo-Tóquio?",
+      "correct": "2019",
+      "wrongs": [
+        "2001",
+        "2032",
+        "2099"
+      ]
+    },
+    "en": {
+      "topic": "Akira",
+      "question": "In what year is Akira set, in Neo-Tokyo?",
+      "correct": "2019",
+      "wrongs": [
+        "2001",
+        "2032",
+        "2099"
+      ]
+    }
+  },
+  {
+    "id": "anime_409",
+    "level": 4,
+    "topic": "Hunter x Hunter",
+    "question": "Qual é a categoria de Nen de Gon Freecss?",
+    "correct": "Intensificação",
+    "wrongs": [
+      "Transmutação",
+      "Emissão",
+      "Especialização"
+    ],
+    "pt": {
+      "topic": "Hunter x Hunter",
+      "question": "Qual é a categoria de Nen de Gon Freecss?",
+      "correct": "Intensificação",
+      "wrongs": [
+        "Transmutação",
+        "Emissão",
+        "Especialização"
+      ]
+    },
+    "en": {
+      "topic": "Hunter x Hunter",
+      "question": "What is Gon Freecss' Nen category?",
+      "correct": "Enhancement",
+      "wrongs": [
+        "Transmutation",
+        "Emission",
+        "Specialization"
+      ]
+    }
+  },
+  {
+    "id": "anime_410",
+    "level": 4,
+    "topic": "One Piece",
+    "question": "Em que ano o primeiro capítulo de One Piece foi publicado?",
+    "correct": "1997",
+    "wrongs": [
+      "1995",
+      "1999",
+      "2001"
+    ],
+    "pt": {
+      "topic": "One Piece",
+      "question": "Em que ano o primeiro capítulo de One Piece foi publicado?",
+      "correct": "1997",
+      "wrongs": [
+        "1995",
+        "1999",
+        "2001"
+      ]
+    },
+    "en": {
+      "topic": "One Piece",
+      "question": "In what year was the first chapter of One Piece published?",
+      "correct": "1997",
+      "wrongs": [
+        "1995",
+        "1999",
+        "2001"
+      ]
+    }
+  },
+  {
+    "id": "anime_411",
+    "level": 4,
+    "topic": "Cultura Otaku",
+    "question": "Em qual revista Naruto, One Piece e Dragon Ball foram publicados?",
+    "correct": "Weekly Shōnen Jump",
+    "wrongs": [
+      "Weekly Shōnen Magazine",
+      "Weekly Shōnen Sunday",
+      "Monthly Afternoon"
+    ],
+    "pt": {
+      "topic": "Cultura Otaku",
+      "question": "Em qual revista Naruto, One Piece e Dragon Ball foram publicados?",
+      "correct": "Weekly Shōnen Jump",
+      "wrongs": [
+        "Weekly Shōnen Magazine",
+        "Weekly Shōnen Sunday",
+        "Monthly Afternoon"
+      ]
+    },
+    "en": {
+      "topic": "Otaku Culture",
+      "question": "In which magazine were Naruto, One Piece and Dragon Ball serialized?",
+      "correct": "Weekly Shōnen Jump",
+      "wrongs": [
+        "Weekly Shōnen Magazine",
+        "Weekly Shōnen Sunday",
+        "Monthly Afternoon"
+      ]
+    }
+  },
+  {
+    "id": "anime_412",
+    "level": 4,
+    "topic": "Diretores",
+    "question": "Quem dirigiu Cowboy Bebop?",
+    "correct": "Shinichirō Watanabe",
+    "wrongs": [
+      "Hideaki Anno",
+      "Mamoru Hosoda",
+      "Kunihiko Ikuhara"
+    ],
+    "pt": {
+      "topic": "Diretores",
+      "question": "Quem dirigiu Cowboy Bebop?",
+      "correct": "Shinichirō Watanabe",
+      "wrongs": [
+        "Hideaki Anno",
+        "Mamoru Hosoda",
+        "Kunihiko Ikuhara"
+      ]
+    },
+    "en": {
+      "topic": "Directors",
+      "question": "Who directed Cowboy Bebop?",
+      "correct": "Shinichirō Watanabe",
+      "wrongs": [
+        "Hideaki Anno",
+        "Mamoru Hosoda",
+        "Kunihiko Ikuhara"
+      ]
+    }
+  },
+  {
+    "id": "anime_413",
+    "level": 4,
+    "topic": "Mecha",
+    "question": "Quem criou Mobile Suit Gundam (1979)?",
+    "correct": "Yoshiyuki Tomino",
+    "wrongs": [
+      "Shoji Kawamori",
+      "Go Nagai",
+      "Ichiro Itano"
+    ],
+    "pt": {
+      "topic": "Mecha",
+      "question": "Quem criou Mobile Suit Gundam (1979)?",
+      "correct": "Yoshiyuki Tomino",
+      "wrongs": [
+        "Shoji Kawamori",
+        "Go Nagai",
+        "Ichiro Itano"
+      ]
+    },
+    "en": {
+      "topic": "Mecha",
+      "question": "Who created Mobile Suit Gundam (1979)?",
+      "correct": "Yoshiyuki Tomino",
+      "wrongs": [
+        "Shoji Kawamori",
+        "Go Nagai",
+        "Ichiro Itano"
+      ]
+    }
+  },
+  {
+    "id": "anime_414",
+    "level": 4,
+    "topic": "Naruto",
+    "question": "Quem foi o Primeiro Hokage da Vila da Folha?",
+    "correct": "Hashirama Senju",
+    "wrongs": [
+      "Tobirama Senju",
+      "Hiruzen Sarutobi",
+      "Madara Uchiha"
+    ],
+    "pt": {
+      "topic": "Naruto",
+      "question": "Quem foi o Primeiro Hokage da Vila da Folha?",
+      "correct": "Hashirama Senju",
+      "wrongs": [
+        "Tobirama Senju",
+        "Hiruzen Sarutobi",
+        "Madara Uchiha"
+      ]
+    },
+    "en": {
+      "topic": "Naruto",
+      "question": "Who was the First Hokage of the Hidden Leaf?",
+      "correct": "Hashirama Senju",
+      "wrongs": [
+        "Tobirama Senju",
+        "Hiruzen Sarutobi",
+        "Madara Uchiha"
+      ]
+    }
+  },
+  {
+    "id": "anime_415",
+    "level": 4,
+    "topic": "Studio Ghibli",
+    "question": "Em que ano o Studio Ghibli foi fundado?",
+    "correct": "1985",
+    "wrongs": [
+      "1979",
+      "1988",
+      "1992"
+    ],
+    "pt": {
+      "topic": "Studio Ghibli",
+      "question": "Em que ano o Studio Ghibli foi fundado?",
+      "correct": "1985",
+      "wrongs": [
+        "1979",
+        "1988",
+        "1992"
+      ]
+    },
+    "en": {
+      "topic": "Studio Ghibli",
+      "question": "In what year was Studio Ghibli founded?",
+      "correct": "1985",
+      "wrongs": [
+        "1979",
+        "1988",
+        "1992"
+      ]
+    }
+  },
+  {
+    "id": "anime_416",
+    "level": 4,
+    "topic": "Light Novels",
+    "question": "Quem escreveu a light novel Sword Art Online?",
+    "correct": "Reki Kawahara",
+    "wrongs": [
+      "Kugane Maruyama",
+      "Tappei Nagatsuki",
+      "Fuse"
+    ],
+    "pt": {
+      "topic": "Light Novels",
+      "question": "Quem escreveu a light novel Sword Art Online?",
+      "correct": "Reki Kawahara",
+      "wrongs": [
+        "Kugane Maruyama",
+        "Tappei Nagatsuki",
+        "Fuse"
+      ]
+    },
+    "en": {
+      "topic": "Light Novels",
+      "question": "Who wrote the Sword Art Online light novel?",
+      "correct": "Reki Kawahara",
+      "wrongs": [
+        "Kugane Maruyama",
+        "Tappei Nagatsuki",
+        "Fuse"
+      ]
+    }
+  }
+]

@@ -1086,6 +1086,30 @@ client.on(Events.InteractionCreate, async (interaction) => {
       return;
     }
 
+    const duelCommand = commandsByName.get('py-duel');
+    if (typeof duelCommand?.isDuelInteraction === 'function' && duelCommand.isDuelInteraction(interaction)) {
+      incrementCommand();
+      recordUniqueUser(interaction.user.id);
+      await duelCommand.handleDuelInteraction(interaction);
+      return;
+    }
+
+    const challengeCommand = commandsByName.get('py-challenge');
+    if (typeof challengeCommand?.isChallengeInteraction === 'function' && challengeCommand.isChallengeInteraction(interaction)) {
+      incrementCommand();
+      recordUniqueUser(interaction.user.id);
+      await challengeCommand.handleChallengeInteraction(interaction);
+      return;
+    }
+
+    const animeCommand = commandsByName.get('py-anime');
+    if (typeof animeCommand?.isAnimeInteraction === 'function' && animeCommand.isAnimeInteraction(interaction)) {
+      incrementCommand();
+      recordUniqueUser(interaction.user.id);
+      await animeCommand.handleAnimeInteraction(interaction);
+      return;
+    }
+
     if (typeof jokenpoCommand?.isJokenpoInteraction === 'function' && jokenpoCommand.isJokenpoInteraction(interaction)) {
       incrementCommand();
       recordUniqueUser(interaction.user.id);

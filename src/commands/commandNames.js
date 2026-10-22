@@ -42,4 +42,7 @@ module.exports = {
   MINESWEEPER: 'py-minesweeper',
   GIVEAWAY: 'py-giveaway',
   CLOSE_TICKET: 'py-close',
+  DUEL: 'py-duel',
+  CHALLENGE: 'py-challenge',
+  ANIME: 'py-anime',
 };

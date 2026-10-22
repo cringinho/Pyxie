@@ -435,6 +435,59 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'quiz_duel',
+  name: '⚔️ Duelo de Quiz',
+  category: 'minigames',
+  description: 'Embed do /py-duel: desafio PvP melhor de 3, rodadas e resultado final com prêmio limitado.',
+  defaultColor: '#9b5de5',
+  previewTitle: '{header} Duelo de Quiz: Rodada 2/3',
+  previewDesc: '> ✅ **Rodada 1:** `<@111>` acertou! Resposta: **Kurama**\n\n### ❓ Qual é o princípio fundamental da alquimia em Fullmetal Alchemist?\n\n**[A]** Pedra Filosofal\n\n**[B]** Troca Equivalente\n\n**[C]** Portão da Verdade\n\n**[D]** Transmutação Humana',
+  previewFields: [
+    { name: '📊 Placar', value: '`<@111>` `1` x `0` `<@222>`', inline: false },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '⚔️', defaultEmojiKey: 'CONTROLLER', description: 'Exibido no título do duelo' },
+    { key: 'coins', label: 'Moedas do Prêmio', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Prêmio do vencedor' },
+  ],
+});
+
+registerEmbed({
+  id: 'daily_challenge',
+  name: '🧩 Desafio do Dia',
+  category: 'minigames',
+  description: 'Embed privado do /py-challenge: pergunta diária igual para todos, sequência e prêmio crescente.',
+  defaultColor: '#00f5d4',
+  previewTitle: '{header} Desafio do Dia',
+  previewDesc: 'Uma pergunta por dia, a mesma para todo mundo. Você tem **uma única tentativa**!\n\n### ❓ Qual lua de Júpiter tem a atividade vulcânica mais intensa?\n\n**[A]** Europa\n\n**[B]** Io\n\n**[C]** Calisto\n\n**[D]** Ganimedes',
+  previewFields: [
+    { name: '🔥 Sequência', value: '`3` dia(s)', inline: true },
+    { name: '🪙 Prêmio se acertar', value: '`5` {coins}', inline: true },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🧩', defaultEmojiKey: 'SPARKLES', description: 'Exibido no título do desafio' },
+    { key: 'coins', label: 'Moedas do Prêmio', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Prêmio por acerto' },
+  ],
+});
+
+registerEmbed({
+  id: 'anime_marathon',
+  name: '🎴 Maratona Otaku',
+  category: 'minigames',
+  description: 'Embed privado do /py-anime: 5 perguntas de anime e cultura geek com dificuldade crescente.',
+  defaultColor: '#ff1493',
+  previewTitle: '{header} Maratona Otaku: Pergunta 3/5',
+  previewDesc: '> ✅ Acertou! Resposta: **Gomu Gomu no Mi**\n\n### ❓ Qual é a técnica ocular do clã Hyuga?\n\n**[A]** Sharingan\n\n**[B]** Rinnegan\n\n**[C]** Byakugan\n\n**[D]** Mangekyō Sharingan',
+  previewFields: [
+    { name: '🪙 Ganho nesta maratona', value: '`2` {coins}', inline: true },
+    { name: '✨ Por acerto', value: '`+1` {coins}', inline: true },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🎴', defaultEmojiKey: 'SPARKLES', description: 'Exibido no título da maratona' },
+    { key: 'coins', label: 'Moedas por Acerto', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Moedas ganhas' },
+  ],
+});
+
+registerEmbed({
   id: 'tarot_draw',
   name: '🔮 Tiragem Diária de Tarot',
   category: 'tarot',

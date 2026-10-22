@@ -98,6 +98,17 @@ function updateGuildConfig(guildId, updates = {}) {
 // =========================================================================
 
 const DEDICATED_CHANNEL_FEATURES = {
+  games: {
+    key: 'games',
+    name: { 'pt-BR': 'Jogos & Minigames', en: 'Games & Minigames' },
+    get: (cfg) => cfg.gamesChannelId || null,
+    set: (updates, id) => {
+      updates.gamesChannelId = id;
+    },
+    clear: (updates) => {
+      updates.gamesChannelId = null;
+    },
+  },
   welcome: {
     key: 'welcome',
     name: { 'pt-BR': 'Boas-Vindas', en: 'Welcome' },

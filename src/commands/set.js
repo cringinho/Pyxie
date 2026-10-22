@@ -208,7 +208,7 @@ module.exports = {
   aliases: ['set', 'py-set', 'configurar', 'py-configurar'],
   data: new SlashCommandBuilder()
     .setName(SET)
-    .setDescription('Configures channels and server features (Welcome, Vent, Tarot, Tickets).')
+    .setDescription('Configures channels and server features (Welcome, Vent, Tarot, Tickets, Games).')
     .setDescriptionLocalizations({
       'pt-BR': 'Configura canais e recursos avançados da Pyxie no servidor.',
     })
@@ -284,6 +284,24 @@ module.exports = {
             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
             .setRequired(true)
         )
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName('games')
+        .setNameLocalizations({ 'pt-BR': 'jogos' })
+        .setDescription('Restricts multiplayer games (quiz duels) to a single channel.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Restringe os jogos multiplayer (duelos de quiz) a um único canal.',
+        })
+        .addChannelOption((option) =>
+          option
+            .setName('channel')
+            .setNameLocalizations({ 'pt-BR': 'canal' })
+            .setDescription('Text channel for games and duels.')
+            .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto para jogos e duelos.' })
+            .addChannelTypes(ChannelType.GuildText)
+            .setRequired(true)
+        )
     ),
 
   async executePrefix({ message, args, prefix }) {
@@ -299,7 +317,7 @@ module.exports = {
     const sub = (args[0] || '').toLowerCase();
 
     // Se executado sem argumentos, lista as opções
-    if (!sub || !['boas-vindas', 'boasvindas', 'welcome', 'desabafos', 'desabafo', 'vent', 'tarot', 'tickets', 'ticket', 'atendimento'].includes(sub)) {
+    if (!sub || !['boas-vindas', 'boasvindas', 'welcome', 'desabafos', 'desabafo', 'vent', 'tarot', 'tickets', 'ticket', 'atendimento', 'jogos', 'games', 'minigames'].includes(sub)) {
       const helpEmbed = new EmbedBuilder()
         .setColor('#8b5cf6')
         .setTitle('⚙️  ✦  Central de Configuração `py!set`')
@@ -308,7 +326,8 @@ module.exports = {
           `• \`${prefix || 'py!'}set boas-vindas <#canal>\` — Configura o sistema de Boas-Vindas customizável e Auto-Role.\n\n` +
           `• \`${prefix || 'py!'}set desabafos <#canal>\` — Configura o canal de Desabafos com mensagem Sticky, Autoajuda na DM e Desabafo Anônimo.\n\n` +
           `• \`${prefix || 'py!'}set tarot <#canal>\` — Configura o canal para postagem diária automática do Tarot às 00:00 BRT.\n\n` +
-          `• \`${prefix || 'py!'}set tickets <#canal>\` — Configura o canal do painel de Tickets e categoria de atendimento.`
+          `• \`${prefix || 'py!'}set tickets <#canal>\` — Configura o canal do painel de Tickets e categoria de atendimento.\n\n` +
+          `• \`${prefix || 'py!'}set jogos <#canal>\` — Restringe os duelos de quiz a um canal de jogos.`
         )
         .setFooter({ text: 'Pyxie • Configurações Globais do Servidor' });
 
@@ -377,6 +396,15 @@ module.exports = {
       return;
     }
 
+    // Subcomando Jogos (no slash o nome base é sub === 'games')
+    if (['jogos', 'games', 'minigames'].includes(sub)) {
+      const assignRes = assignDedicatedChannel(message.guildId, 'games', channel.id);
+      const feedback = buildChannelFeedback(assignRes, message);
+      const successMsg = t('set.gamesSuccess', message, { channel: channel.id });
+      await message.reply({ content: feedback.isAlreadySet ? feedback.text : [feedback.text, successMsg].filter(Boolean).join('\n\n') });
+      return;
+    }
+
     // 4. Subcomando Tickets
     if (['tickets', 'ticket', 'atendimento'].includes(sub)) {
       const assignRes = assignDedicatedChannel(message.guildId, 'tickets', channel.id);
@@ -404,7 +432,8 @@ module.exports = {
           `• \`/py-set boas-vindas canal:#canal\` — Boas-Vindas customizáveis e Auto-Role.\n\n` +
           `• \`/py-set desabafos canal:#canal\` — Canal de Desabafos, Sticky e Anônimo.\n\n` +
           `• \`/py-set tickets canal:#canal\` — Sistema de Tickets e Atendimento.\n\n` +
-          `• \`/py-set tarot canal:#canal\` — Postagem diária do Tarot às 00:00 BRT.`
+          `• \`/py-set tarot canal:#canal\` — Postagem diária do Tarot às 00:00 BRT.\n\n` +
+          `• \`/py-set jogos canal:#canal\` — Restringe os duelos de quiz a um canal de jogos.`
         );
       await interaction.reply({ embeds: [helpEmbed], ephemeral: true });
       return;

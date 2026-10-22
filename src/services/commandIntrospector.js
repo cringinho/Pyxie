@@ -25,6 +25,7 @@ const GUILD_ONLY_COMMANDS = new Set([
   'ecoconfig', 'py-ecoconfig', 'configeconomia', 'py-configeconomia',
   'fechar', 'py-fechar', 'closeticket', 'fecharticket', 'ticket-close', 'py-close',
   'sorteio', 'py-sorteio', 'giveaway', 'py-giveaway', 'sorteios', 'py-sorteios',
+  'duel', 'py-duel', 'duelo', 'py-duelo', 'quizduel', 'py-quizduel', 'duelquiz',
 ]);
 
 let cachedIntrospectedCommands = null;
