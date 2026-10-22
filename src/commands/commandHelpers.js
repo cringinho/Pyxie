@@ -155,6 +155,14 @@ const COMMAND_ICONS = {
   admin: 'https://cdn.discordapp.com/emojis/1551356439736352878.png',
   gamepass: 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
   'py-gamepass': 'https://cdn.discordapp.com/emojis/1548444225635483672.png',
+  giveaway: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
+  sorteio: 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
+  'py-giveaway': 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
+  'py-sorteio': 'https://cdn.discordapp.com/emojis/1548444204202459136.gif',
+  close: 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
+  fechar: 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
+  'py-close': 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
+  'py-fechar': 'https://cdn.discordapp.com/emojis/1548444272628465694.png',
 };
 
 const MODULE_METADATA = {

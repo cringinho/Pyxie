@@ -23,6 +23,8 @@ const GUILD_ONLY_COMMANDS = new Set([
   'seteco', 'py-seteco', 'setareconomia', 'py-setareconomia',
   'reseteco', 'py-reseteco', 'resetareconomia', 'py-resetareconomia',
   'ecoconfig', 'py-ecoconfig', 'configeconomia', 'py-configeconomia',
+  'fechar', 'py-fechar', 'closeticket', 'fecharticket', 'ticket-close', 'py-close',
+  'sorteio', 'py-sorteio', 'giveaway', 'py-giveaway', 'sorteios', 'py-sorteios',
 ]);
 
 let cachedIntrospectedCommands = null;

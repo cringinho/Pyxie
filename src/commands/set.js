@@ -168,8 +168,8 @@ module.exports = {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     .addSubcommand((sub) =>
       sub
-        .setName('boas-vindas')
-        .setNameLocalizations({ 'pt-BR': 'boas-vindas', 'en-US': 'welcome', 'en-GB': 'welcome' })
+        .setName('welcome')
+        .setNameLocalizations({ 'pt-BR': 'boas-vindas' })
         .setDescription('Configures the customizable welcome channel and auto-role.')
         .setDescriptionLocalizations({
           'pt-BR': 'Configura o canal de boas-vindas customizável e cargo automático.',
@@ -177,7 +177,7 @@ module.exports = {
         .addChannelOption((option) =>
           option
             .setName('channel')
-            .setNameLocalizations({ 'pt-BR': 'canal', 'en-US': 'channel', 'en-GB': 'channel' })
+            .setNameLocalizations({ 'pt-BR': 'canal' })
             .setDescription('Text channel for welcome messages.')
             .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto para envio de boas-vindas.' })
             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
@@ -186,8 +186,8 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
-        .setName('desabafos')
-        .setNameLocalizations({ 'pt-BR': 'desabafos', 'en-US': 'vent', 'en-GB': 'vent' })
+        .setName('vent')
+        .setNameLocalizations({ 'pt-BR': 'desabafos' })
         .setDescription('Configures the vent channel with sticky messages and anonymous venting.')
         .setDescriptionLocalizations({
           'pt-BR': 'Configura o canal de desabafos com mensagem fixa e desabafo anônimo.',
@@ -195,7 +195,7 @@ module.exports = {
         .addChannelOption((option) =>
           option
             .setName('channel')
-            .setNameLocalizations({ 'pt-BR': 'canal', 'en-US': 'channel', 'en-GB': 'channel' })
+            .setNameLocalizations({ 'pt-BR': 'canal' })
             .setDescription('Text channel for vents and mutual support.')
             .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto para desabafos e apoio mútuo.' })
             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
@@ -205,7 +205,7 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('tarot')
-        .setNameLocalizations({ 'pt-BR': 'tarot', 'en-US': 'tarot', 'en-GB': 'tarot' })
+        .setNameLocalizations({ 'pt-BR': 'tarot' })
         .setDescription('Configures the channel for daily automatic tarot announcements.')
         .setDescriptionLocalizations({
           'pt-BR': 'Configura o canal para postagem diária automática do Tarot.',
@@ -213,7 +213,7 @@ module.exports = {
         .addChannelOption((option) =>
           option
             .setName('channel')
-            .setNameLocalizations({ 'pt-BR': 'canal', 'en-US': 'channel', 'en-GB': 'channel' })
+            .setNameLocalizations({ 'pt-BR': 'canal' })
             .setDescription('Text channel for daily tarot announcements.')
             .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto para anúncios diários do Tarot.' })
             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
@@ -223,7 +223,7 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('tickets')
-        .setNameLocalizations({ 'pt-BR': 'tickets', 'en-US': 'tickets', 'en-GB': 'tickets' })
+        .setNameLocalizations({ 'pt-BR': 'tickets' })
         .setDescription('Configures the ticket panel channel and category.')
         .setDescriptionLocalizations({
           'pt-BR': 'Configura o canal do painel de tickets e categoria de atendimento.',
@@ -231,7 +231,7 @@ module.exports = {
         .addChannelOption((option) =>
           option
             .setName('channel')
-            .setNameLocalizations({ 'pt-BR': 'canal', 'en-US': 'channel', 'en-GB': 'channel' })
+            .setNameLocalizations({ 'pt-BR': 'canal' })
             .setDescription('Text channel for the ticket panel.')
             .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto onde o painel de tickets será postado.' })
             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)

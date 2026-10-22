@@ -7,16 +7,20 @@ const {
   EmbedBuilder,
 } = require('discord.js');
 const { buildHubPayload } = require('../modules/giveaways/giveawayManager');
+const { GIVEAWAY } = require('./commandNames');
 
-const name = 'py-sorteio';
+const name = GIVEAWAY;
 
 module.exports = {
   name,
-  aliases: ['sorteio', 'giveaway', 'py-giveaway', 'sorteios', 'py-sorteios'],
-  description: 'Gerencie e crie sorteios interativos para a comunidade com regras e apuração justa.',
+  aliases: ['sorteio', 'giveaway', 'py-giveaway', 'py-sorteio', 'sorteios', 'py-sorteios'],
+  description: 'Manage and create interactive community giveaways with fair drawing.',
 
   data: new SlashCommandBuilder()
     .setName(name)
+    .setNameLocalizations({
+      'pt-BR': 'py-sorteio',
+    })
     .setDescription('Manage and create interactive community giveaways with fair drawing.')
     .setDescriptionLocalizations({
       'pt-BR': 'Gerencie e crie sorteios interativos para a comunidade com regras e apuração justa.',
