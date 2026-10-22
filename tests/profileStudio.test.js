@@ -39,7 +39,8 @@ function pngSize(buffer) {
   ensureCanvasFonts();
   const { GlobalFonts } = require('@napi-rs/canvas');
   assert.ok(GlobalFonts.has(EMOJI_FONT_FAMILY), 'Fonte de emojis deve estar registrada no canvas.');
-  assert.equal(withEmojiFallback('bold 20px sans-serif'), 'bold 20px sans-serif, Twemoji');
+  assert.equal(withEmojiFallback('bold 20px sans-serif'), 'bold 20px "DejaVu Sans", PyxieSans, Twemoji', 'Nome genérico vira família concreta + emojis.');
+  assert.equal(withEmojiFallback('italic 15px serif'), 'italic 15px "DejaVu Serif", "DejaVu Sans", PyxieSans, Twemoji');
   for (const file of ['../src/services/shipRenderer.js', '../src/services/tarotRenderer.js', '../src/modules/seasonal/cardRenderer.js']) {
     const src = require('node:fs').readFileSync(require('node:path').join(__dirname, file), 'utf8');
     const rawFonts = src.split(/\r?\n/).filter((l) => /ctx\.font\s*=/.test(l) && !l.includes('withEmojiFallback('));
