@@ -1,12 +1,12 @@
 const fs = require('fs');
 const path = require('path');
+const groqClient = require('./groqClient');
 
 try {
   require('dotenv').config();
 } catch (_) {}
 
 const API_KEY = process.env.GROQ_API_KEY;
-const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const DATA_FILE = path.join(__dirname, '../data/quiz_questions.json');
 
 const TARGET_TOTAL = 600;
@@ -36,15 +36,13 @@ const QUIZ_TOPICS = [
 
 let selectedModel = null;
 let schedulerTimer = null;
+let firstRunTimer = null;
 let isJobRunning = false;
 let lastRunTimestamp = null;
 let nextRunTimestamp = null;
 
 const DEFAULT_INTERVAL_MS = 3 * 60 * 60 * 1000;
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const SCHEDULER_KEY = 'quizSeeder';
 
 function loadDatabase() {
   if (fs.existsSync(DATA_FILE)) {
@@ -66,30 +64,7 @@ function saveDatabase(data) {
 }
 
 async function detectWorkingModel() {
-  if (selectedModel) return selectedModel;
-
-  if (!API_KEY) {
-    selectedModel = 'qwen/qwen3.8-27b';
-    return selectedModel;
-  }
-
-  try {
-    const res = await fetch('https://api.groq.com/openai/v1/models', {
-      headers: { Authorization: `Bearer ${API_KEY}` },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      const available = new Set((data.data || []).map((m) => m.id));
-      for (const m of CANDIDATE_MODELS) {
-        if (available.has(m)) {
-          selectedModel = m;
-          return selectedModel;
-        }
-      }
-    }
-  } catch (_) {}
-
-  selectedModel = 'qwen/qwen3.8-27b';
+  if (!selectedModel) selectedModel = await groqClient.resolveModel(CANDIDATE_MODELS);
   return selectedModel;
 }
 
@@ -132,13 +107,8 @@ ESTRUTURA DO JSON:
 }`;
 
   try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${API_KEY}`,
-      },
-      body: JSON.stringify({
+    const response = await groqClient.chatCompletion(
+      {
         model,
         max_tokens: 500,
         response_format: { type: 'json_object' },
@@ -153,22 +123,14 @@ ESTRUTURA DO JSON:
             content: prompt,
           },
         ],
-      }),
-    });
+      },
+      { label: 'Quiz Seeder' }
+    );
 
-    if (response.status === 429) {
-      const waitSec = 10 * attempt;
-      console.log(`[Quiz Seeder] Rate limit 429. Aguardando ${waitSec}s...`);
-      await sleep(waitSec * 1000);
-      if (attempt <= 3) {
-        return fetchSingleQuestion(level, topic, attempt + 1);
-      }
-      return null;
-    }
-
+    if (response.rateLimited) return { error: 'rate_limit' };
     if (!response.ok) return null;
 
-    const result = await response.json();
+    const result = response.data;
     const content = result.choices?.[0]?.message?.content || '{}';
     const parsed = JSON.parse(content);
     const item = parsed.question ? parsed : parsed.questions ? parsed.questions[0] : null;
@@ -196,10 +158,8 @@ ESTRUTURA DO JSON:
       },
     };
   } catch (err) {
-    if (attempt <= 2) {
-      await sleep(2000 * attempt);
-      return fetchSingleQuestion(level, topic, attempt + 1);
-    }
+    // JSON inválido do modelo: uma nova tentativa (a fila já cuida do espaçamento)
+    if (attempt <= 1) return fetchSingleQuestion(level, topic, attempt + 1);
     return null;
   }
 }
@@ -214,6 +174,7 @@ async function generateBatch({ count = 5 } = {}) {
 
   isJobRunning = true;
   lastRunTimestamp = Date.now();
+  groqClient.markRun(SCHEDULER_KEY, lastRunTimestamp);
 
   try {
     const list = loadDatabase();
@@ -226,11 +187,14 @@ async function generateBatch({ count = 5 } = {}) {
       const level = (i % 4) + 1;
       const topic = QUIZ_TOPICS[Math.floor(Math.random() * QUIZ_TOPICS.length)];
       const question = await fetchSingleQuestion(level, topic);
+      if (question && question.error === 'rate_limit') {
+        console.log('[Quiz Seeder] Limite da Groq ativo. Lote encerrado até a próxima janela programada.');
+        break;
+      }
       if (question) {
         list.push(question);
         added++;
         saveDatabase(list);
-        await sleep(1500);
       }
     }
 
@@ -267,35 +231,39 @@ function getStatus() {
 }
 
 function startScheduler(intervalMs = DEFAULT_INTERVAL_MS) {
-  if (schedulerTimer) return;
+  if (schedulerTimer || firstRunTimer) return;
 
   const list = loadDatabase();
-  if (list.length >= TARGET_TOTAL) {
+  if (list.length >= TARGET_TOTAL || !API_KEY) {
     return;
   }
 
-  nextRunTimestamp = Date.now() + 60 * 1000;
-
-  setTimeout(async () => {
-    if (loadDatabase().length < TARGET_TOTAL && API_KEY) {
-      console.log('[Quiz Seeder] Disparando lote inicial de quiz em background...');
-      await generateBatch({ count: 4 });
-    }
-  }, 60 * 1000);
-
-  schedulerTimer = setInterval(async () => {
+  const runScheduled = async () => {
     nextRunTimestamp = Date.now() + intervalMs;
-    const currentList = loadDatabase();
-    if (currentList.length >= TARGET_TOTAL || !API_KEY) {
+    if (loadDatabase().length >= TARGET_TOTAL) {
       stopScheduler();
       return;
     }
-    console.log('[Quiz Seeder] Executando lote programado de quiz a cada 3 horas...');
+    console.log('[Quiz Seeder] Executando lote programado de quiz (ciclo de 3 horas)...');
     await generateBatch({ count: 4 });
-  }, intervalMs);
+  };
+
+  // Sem lote no boot: o primeiro lote respeita o intervalo desde o último lote real (persistido em disco)
+  const firstDelay = groqClient.computeFirstRunDelay(groqClient.getLastRun(SCHEDULER_KEY), intervalMs);
+  nextRunTimestamp = Date.now() + firstDelay;
+  firstRunTimer = setTimeout(() => {
+    firstRunTimer = null;
+    schedulerTimer = setInterval(runScheduled, intervalMs);
+    runScheduled();
+  }, firstDelay);
 }
 
 function stopScheduler() {
+  if (firstRunTimer) {
+    clearTimeout(firstRunTimer);
+    firstRunTimer = null;
+    nextRunTimestamp = null;
+  }
   if (schedulerTimer) {
     clearInterval(schedulerTimer);
     schedulerTimer = null;

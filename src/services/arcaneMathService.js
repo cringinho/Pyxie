@@ -1,13 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 const { readJson, writeJsonAtomic } = require('../utils/atomicJson');
+const groqClient = require('./groqClient');
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const QUESTIONS_FILE = path.join(DATA_DIR, 'arcaneMathQuestions.json');
 const RANKING_FILE = path.join(DATA_DIR, 'arcaneMathRanking.json');
 const STATE_FILE = path.join(DATA_DIR, 'arcaneMathState.json');
 
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
 
 // ==========================================
@@ -976,13 +976,9 @@ REGRAS ESTREITAS:
 2. Cada pergunta deve ter exatamente 4 opções ("A", "B", "C", "D") e "correctIndex" deve ser um número inteiro de 0 a 3 indicando a opção correta.
 3. Não use blocos de código markdown nem texto fora do JSON.`;
 
-      const res = await fetch(GROQ_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
+      // Sem novas tentativas no 429: o gerador procedural abaixo cobre a falta
+      const res = await groqClient.chatCompletion(
+        {
           model: GROQ_MODEL,
           max_tokens: 2800,
           response_format: { type: 'json_object' },
@@ -997,11 +993,12 @@ REGRAS ESTREITAS:
               content: prompt,
             },
           ],
-        }),
-      });
+        },
+        { label: 'ArcaneMath', maxRetries: 0 }
+      );
 
       if (res.ok) {
-        const json = await res.json();
+        const json = res.data;
         const content = json.choices?.[0]?.message?.content;
         if (content) {
           const parsed = JSON.parse(content);

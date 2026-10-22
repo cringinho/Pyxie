@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const groqClient = require('./groqClient');
 
 // Tenta carregar variáveis de ambiente caso tenha dotenv instalado
 try {
@@ -7,7 +8,6 @@ try {
 } catch (_) {}
 
 const API_KEY = process.env.GROQ_API_KEY;
-const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const DATA_FILE = path.join(__dirname, '../data/generated_work_minigames.json');
 
 const TARGET_PER_PROFESSION = 100;
@@ -313,16 +313,14 @@ const CANDIDATE_MODELS = [
 
 let selectedModel = null;
 let schedulerTimer = null;
+let firstRunTimer = null;
 let isJobRunning = false;
 let lastRunTimestamp = null;
 let nextRunTimestamp = null;
 
 // Intervalo padrão de execução automática: a cada 3 horas
 const DEFAULT_INTERVAL_MS = 3 * 60 * 60 * 1000;
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const SCHEDULER_KEY = 'workSeeder';
 
 function loadDatabase() {
   if (fs.existsSync(DATA_FILE)) {
@@ -342,25 +340,7 @@ function saveDatabase(data) {
 }
 
 async function detectWorkingModel() {
-  if (selectedModel) return selectedModel;
-
-  try {
-    const res = await fetch('https://api.groq.com/openai/v1/models', {
-      headers: { Authorization: `Bearer ${API_KEY}` },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      const available = new Set((data.data || []).map((m) => m.id));
-      for (const m of CANDIDATE_MODELS) {
-        if (available.has(m)) {
-          selectedModel = m;
-          return selectedModel;
-        }
-      }
-    }
-  } catch (_) {}
-
-  selectedModel = 'qwen/qwen3.8-27b';
+  if (!selectedModel) selectedModel = await groqClient.resolveModel(CANDIDATE_MODELS);
   return selectedModel;
 }
 
@@ -408,13 +388,8 @@ ESTRUTURA DO JSON:
 }`;
 
   try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${API_KEY}`,
-      },
-      body: JSON.stringify({
+    const response = await groqClient.chatCompletion(
+      {
         model,
         max_tokens: 550,
         response_format: { type: 'json_object' },
@@ -429,30 +404,14 @@ ESTRUTURA DO JSON:
             content: prompt,
           },
         ],
-      }),
-    });
+      },
+      { label: 'Work Seeder' }
+    );
 
-    if (response.status === 429) {
-      const errJson = await response.json().catch(() => ({}));
-      const msg = errJson.error?.message || '';
-      const waitMatch = msg.match(/try again in (\d+(\.\d+)?)s/i);
-      const waitSec = waitMatch ? Math.ceil(parseFloat(waitMatch[1])) + 2 : 10;
-      if (attempt <= 1) {
-        console.log(`[Groq Seeder] Rate limit 429 detectado. Pausando ${waitSec}s para liberar tokens...`);
-        await sleep(waitSec * 1000);
-        return fetchSingleScenario(profession, subtheme, attempt + 1);
-      }
-      console.warn('[Groq Seeder] Limite de taxa (429) persistente na Groq. Encerrando lote para proteger a VM.');
-      return { error: 'rate_limit' };
-    }
+    if (response.rateLimited) return { error: 'rate_limit' };
+    if (!response.ok) return null;
 
-    if (!response.ok) {
-      const errText = await response.text();
-      console.warn(`[Groq Seeder] Erro HTTP ${response.status}: ${errText.slice(0, 120)}`);
-      return null;
-    }
-
-    const result = await response.json();
+    const result = response.data;
     const content = result.choices?.[0]?.message?.content || '{}';
     const parsed = JSON.parse(content);
     const item = parsed.scenarios ? parsed.scenarios[0] : parsed;
@@ -478,10 +437,8 @@ ESTRUTURA DO JSON:
       },
     };
   } catch (err) {
-    if (attempt <= 2) {
-      await sleep(3000 * attempt);
-      return fetchSingleScenario(profession, subtheme, attempt + 1);
-    }
+    // JSON inválido do modelo: uma nova tentativa (a fila já cuida do espaçamento)
+    if (attempt <= 1) return fetchSingleScenario(profession, subtheme, attempt + 1);
     return null;
   }
 }
@@ -497,12 +454,15 @@ async function generateBatch({ countPerProfession = 1 } = {}) {
 
   isJobRunning = true;
   lastRunTimestamp = Date.now();
+  groqClient.markRun(SCHEDULER_KEY, lastRunTimestamp);
 
   try {
     const db = loadDatabase();
     let totalGeneratedThisRound = 0;
+    let rateLimited = false;
 
     for (const prof of PROFESSIONS) {
+      if (rateLimited) break;
       if (!db[prof]) db[prof] = [];
 
       // Se já atingiu 100, não gera mais nada para esta profissão
@@ -520,7 +480,8 @@ async function generateBatch({ countPerProfession = 1 } = {}) {
 
         const scenario = await fetchSingleScenario(prof, currentTheme);
         if (scenario && scenario.error === 'rate_limit') {
-          console.log('[Groq Seeder] Pausando ciclo de geração até a próxima janela programada.');
+          console.log('[Groq Seeder] Limite da Groq ativo. Lote encerrado até a próxima janela programada.');
+          rateLimited = true;
           break;
         }
 
@@ -534,13 +495,6 @@ async function generateBatch({ countPerProfession = 1 } = {}) {
             totalGeneratedThisRound++;
           }
         }
-
-        // Intervalo de segurança de 12 segundos entre chamadas para ficar com folga abaixo de 1000 OTPM
-        await sleep(12000);
-      }
-      if (totalGeneratedThisRound === 0 && needed > 0) {
-        // Se a primeira profissão foi interrompida por rate limit, não insiste nas outras 21
-        break;
       }
     }
 
@@ -600,7 +554,7 @@ function getStatus() {
 }
 
 function startScheduler(intervalMs = DEFAULT_INTERVAL_MS) {
-  if (schedulerTimer) return;
+  if (schedulerTimer || firstRunTimer) return;
 
   const db = loadDatabase();
   const targetTotal = TARGET_PER_PROFESSION * PROFESSIONS.length;
@@ -609,32 +563,36 @@ function startScheduler(intervalMs = DEFAULT_INTERVAL_MS) {
     return;
   }
 
-  nextRunTimestamp = Date.now() + 60 * 1000; // Primeira rodada de aquecimento em 1 minuto
-
-  // Inicia após 1 minuto de inicialização do servidor
-  setTimeout(async () => {
-    if (!isTargetReached(loadDatabase())) {
-      console.log('[Groq Seeder] Disparando lote inicial automático em background...');
-      await generateBatch({ countPerProfession: 1 });
-    }
-  }, 60 * 1000);
-
-  // Agenda execuções recorrentes a cada intervalo (ex: a cada 3h)
-  schedulerTimer = setInterval(async () => {
+  const runScheduled = async () => {
     nextRunTimestamp = Date.now() + intervalMs;
-    const currentDb = loadDatabase();
-    if (isTargetReached(currentDb)) {
+    if (isTargetReached(loadDatabase())) {
       stopScheduler();
       return;
     }
-    console.log('[Groq Seeder] Executando lote programado a cada 3 horas...');
+    console.log('[Groq Seeder] Executando lote programado (ciclo de 3 horas)...');
     await generateBatch({ countPerProfession: 1 });
-  }, intervalMs);
+  };
 
-  console.log(`[Groq Seeder] Agendador automático ativado (Ciclo: a cada ${intervalMs / (1000 * 60 * 60)}h até atingir 1000 cenários).`);
+  // Sem lote no boot: o primeiro lote respeita o intervalo desde o último lote real (persistido em disco)
+  const firstDelay = groqClient.computeFirstRunDelay(groqClient.getLastRun(SCHEDULER_KEY), intervalMs);
+  nextRunTimestamp = Date.now() + firstDelay;
+  firstRunTimer = setTimeout(() => {
+    firstRunTimer = null;
+    schedulerTimer = setInterval(runScheduled, intervalMs);
+    runScheduled();
+  }, firstDelay);
+
+  console.log(
+    `[Groq Seeder] Agendador ativado (ciclo de ${intervalMs / (1000 * 60 * 60)}h até ${targetTotal} cenários). Próximo lote em ${Math.round(firstDelay / 60000)} min.`
+  );
 }
 
 function stopScheduler() {
+  if (firstRunTimer) {
+    clearTimeout(firstRunTimer);
+    firstRunTimer = null;
+    nextRunTimestamp = null;
+  }
   if (schedulerTimer) {
     clearInterval(schedulerTimer);
     schedulerTimer = null;
