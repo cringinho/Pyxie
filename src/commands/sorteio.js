@@ -66,3 +66,4 @@ module.exports = {
     return interaction.reply({ ...payload, ephemeral: true });
   },
 };
+

@@ -26,3 +26,4 @@ O módulo de Sorteios da Pyxie traz um sistema moderno e completo de sorteios in
   - Embaralhamento criptográfico com pesos de cargos bônus.
   - Seleção de vencedores únicos (zero duplicidade).
   - Anúncio público mencionando estritamente os ganhadores (sem `@everyone` ou `@here`).
+

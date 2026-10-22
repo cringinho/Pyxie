@@ -10,6 +10,7 @@ module.exports = {
   description: 'Sistema completo de sorteios estilo Loritta com agendamento, restrições e apuração Fisher-Yates.',
   defaultEnabled: true,
   guildScope: null, // global
+  handleInteraction: handleGiveawayInteraction,
 
   onLoad(ctx) {
     // 1. Worker autônomo a cada 15 segundos (Zero Memory Leak)
@@ -18,7 +19,7 @@ module.exports = {
     }, 15000);
 
     // 2. Listener central para interações de sorteio ('gw:*')
-    ctx.registerListener(ctx.client, 'interactionCreate', async (interaction) => {
+    ctx.registerListener('interactionCreate', async (interaction) => {
       try {
         await handleGiveawayInteraction(interaction, ctx.client);
       } catch (err) {

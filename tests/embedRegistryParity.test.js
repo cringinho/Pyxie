@@ -66,3 +66,4 @@ assert.ok(typeof webCoin === 'string' && webCoin.length > 0, 'resolveEmoji web m
 
 console.log('✅ resolveEmoji validado com sucesso nos modos discord e web.');
 console.log('🎉 tests/embedRegistryParity.test.js concluído com 100% de sucesso!');
+

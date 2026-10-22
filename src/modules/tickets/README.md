@@ -22,3 +22,4 @@ O módulo de Tickets da Pyxie implementa uma infraestrutura completa e isolada p
   - Criação de canais privados com sobreposição de permissões seguras.
   - Recepção com instruções e botão `[ 🔒 Fechar Atendimento ]`.
   - Fechamento seguro restrito exclusivamente a membros com permissão de `ManageChannels` (tanto pelo botão quanto pelo comando `py!fechar`).
+

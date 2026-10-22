@@ -213,7 +213,17 @@ class ModuleManager extends EventEmitter {
       isWebProcess: Boolean(this.app),
 
       // Registro de Listeners de Eventos do Discord com rastreamento para unhook automático
-      registerListener: (event, handler) => {
+      registerListener: (arg1, arg2, arg3) => {
+        let event = arg1;
+        let handler = arg2;
+        if (typeof arg1 !== 'string' && typeof arg2 === 'string') {
+          event = arg2;
+          handler = arg3;
+        }
+        if (!event || typeof handler !== 'function') {
+          console.warn(`[ModuleManager] registerListener chamado com parâmetros inválidos no módulo ${mod.id}:`, arg1, arg2);
+          return;
+        }
         if (this.client) {
           const wrappedHandler = async (...args) => {
             if (Array.isArray(mod.guildScope) && mod.guildScope.length > 0) {
