@@ -63,7 +63,7 @@ async function runTests() {
 
   // 5. Validação das 7 Paletas de Temas Visuais
   const themeKeys = Object.keys(THEME_PALETTES);
-  assert.equal(themeKeys.length, 7, 'Devem existir 7 temas com paletas customizadas completas.');
+  assert.equal(themeKeys.length, 13, 'Devem existir 13 temas com paletas customizadas completas.');
   for (const tKey of themeKeys) {
     const palette = THEME_PALETTES[tKey];
     assert.ok(palette.color, `Tema ${tKey} deve possuir cor primária.`);
@@ -71,7 +71,7 @@ async function runTests() {
     assert.ok(palette.avatarRing, `Tema ${tKey} deve possuir anel temático de avatar.`);
     assert.ok(palette.titleBg, `Tema ${tKey} deve possuir estilo de título prestige.`);
   }
-  console.log('  ✅ 5. Todas as 7 paletas de temas visuais com gradientes e prestígio validadas com sucesso.');
+  console.log('  ✅ 5. Todas as 13 paletas de temas visuais com gradientes e prestígio validadas com sucesso.');
 
   // 6. Integração do Comando /py-profile e Desduplicação de Embed
   const profileView = await perfilCmd.buildProfileView(mockUser, 'viewer-1', 'pt');

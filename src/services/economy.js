@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { getEconomyConfig } = require('./database');
 const professions = require('./professions');
+const { normalizeProfileStyle } = require('./profileStyle');
 const { getEmoji } = require('../utils/appEmojis');
 
 const economyFile = path.join(__dirname, '..', '..', 'data', 'economy.json');
@@ -68,13 +69,19 @@ const TITLES_CATALOG = {
 };
 
 const THEMES_CATALOG = {
-  default: { id: 'default', name: 'Padrão Pyxie', emoji: '🌸', color: '#e60067', cost: 0, desc: 'O clássico magenta da Pyxie.' },
-  ouro: { id: 'ouro', name: 'Ouro Real', emoji: '👑', color: '#facc15', cost: 2, desc: 'Dourado brilhante para os mais prósperos.' },
-  esmeralda: { id: 'esmeralda', name: 'Esmeralda Mística', emoji: '🌲', color: '#10b981', cost: 2, desc: 'Verde vibrante das florestas de Cringelândia.' },
-  galaxia: { id: 'galaxia', name: 'Nebulosa Cósmica', emoji: '🌌', color: '#8b5cf6', cost: 3, desc: 'Violeta estelar profundo e misterioso.' },
-  cyberpunk: { id: 'cyberpunk', name: 'Rosa Neon', emoji: '⚡', color: '#ff1493', cost: 3, desc: 'Brilho neon intenso e futurista.' },
-  chama: { id: 'chama', name: 'Fogo Carmesim', emoji: '🔥', color: '#ef4444', cost: 4, desc: 'Vermelho flamejante de pura bravura.' },
-  diamante: { id: 'diamante', name: 'Diamante Glacial', emoji: '💎', color: '#00f5d4', cost: 5, desc: 'Ciano radiante e cristalino.' },
+  default: { id: 'default', name: 'Pyxie Bloom', nameEn: 'Pyxie Bloom', emoji: '🌸', color: '#ff3d8b', cost: 0, desc: 'Pétalas magenta flutuando sobre um céu violeta.', descEn: 'Magenta petals drifting over a violet sky.' },
+  ouro: { id: 'ouro', name: 'Ouro Real', nameEn: 'Royal Gold', emoji: '👑', color: '#facc15', cost: 2, desc: 'Raios dourados de sol nascente para os mais prósperos.', descEn: 'Golden sunrise rays for the most prosperous.' },
+  esmeralda: { id: 'esmeralda', name: 'Esmeralda Mística', nameEn: 'Mystic Emerald', emoji: '🌿', color: '#34d399', cost: 2, desc: 'Folhagem esmeralda de uma floresta encantada.', descEn: 'Emerald foliage from an enchanted forest.' },
+  galaxia: { id: 'galaxia', name: 'Nebulosa Cósmica', nameEn: 'Cosmic Nebula', emoji: '🌌', color: '#a78bfa', cost: 3, desc: 'Campo de estrelas com brilho de nebulosa.', descEn: 'A starfield with a nebula glow.' },
+  cyberpunk: { id: 'cyberpunk', name: 'Neon City', nameEn: 'Neon City', emoji: '⚡', color: '#ff2bd6', cost: 3, desc: 'Grade neon rosa e ciano de uma cidade futurista.', descEn: 'Pink and cyan neon grid from a future city.' },
+  chama: { id: 'chama', name: 'Fogo Carmesim', nameEn: 'Crimson Fire', emoji: '🔥', color: '#f97316', cost: 4, desc: 'Brasas subindo de uma fogueira intensa.', descEn: 'Embers rising from a roaring fire.' },
+  diamante: { id: 'diamante', name: 'Diamante Glacial', nameEn: 'Glacial Diamond', emoji: '💎', color: '#5eead4', cost: 5, desc: 'Cristais de gelo facetados e cintilantes.', descEn: 'Faceted, glittering ice crystals.' },
+  aurora: { id: 'aurora', name: 'Aurora Boreal', nameEn: 'Northern Lights', emoji: '🌠', color: '#4ade80', cost: 3, desc: 'Faixas de luz verde e lilás dançando no céu polar.', descEn: 'Green and lilac light ribbons over a polar sky.' },
+  sakura: { id: 'sakura', name: 'Sakura Clara', nameEn: 'Light Sakura', emoji: '🌷', color: '#ec4899', cost: 3, desc: 'Tema claro com pétalas de cerejeira.', descEn: 'A light theme with cherry blossom petals.' },
+  vaporwave: { id: 'vaporwave', name: 'Vaporwave', nameEn: 'Vaporwave', emoji: '🌇', color: '#ff71ce', cost: 4, desc: 'Sol retrô e horizonte em grade dos anos 80.', descEn: 'Retro sun and an 80s grid horizon.' },
+  matcha: { id: 'matcha', name: 'Matcha Minimal', nameEn: 'Matcha Minimal', emoji: '🍵', color: '#4d7c0f', cost: 2, desc: 'Tema claro, limpo e calmo em tons de chá verde.', descEn: 'A clean, calm light theme in green tea tones.' },
+  noir: { id: 'noir', name: 'Noir', nameEn: 'Noir', emoji: '🖤', color: '#f5f5f5', cost: 4, desc: 'Preto e branco elegante, estilo editorial.', descEn: 'Elegant black and white, editorial style.' },
+  arcade: { id: 'arcade', name: 'Arcade 8-bit', nameEn: '8-bit Arcade', emoji: '🕹️', color: '#facc15', cost: 4, desc: 'Pixels coloridos de fliperama clássico.', descEn: 'Colorful pixels from a classic arcade.' },
 };
 
 function normalizeNumber(value, fallback = 0) {
@@ -124,6 +131,7 @@ function normalizeAccount(account) {
     recentWorkQuestions: Array.isArray(acc.recentWorkQuestions) ? acc.recentWorkQuestions : [],
     recentQuizQuestions: Array.isArray(acc.recentQuizQuestions) ? acc.recentQuizQuestions : [],
     bio: typeof acc.bio === 'string' ? acc.bio.trim().slice(0, 150) : null,
+    profileStyle: normalizeProfileStyle(acc.profileStyle),
   };
 }
 
@@ -334,6 +342,13 @@ function equipTitle(userId, titleId) {
 
 function unequipTitle(userId) {
   return equipTitle(userId, null);
+}
+
+function setProfileStyle(userId, partial = {}) {
+  const updated = updateUserAccount(userId, (acc) => {
+    acc.profileStyle = normalizeProfileStyle({ ...acc.profileStyle, ...partial });
+  });
+  return updated.profileStyle;
 }
 
 function setUserBio(userId, bioText) {
@@ -1134,6 +1149,7 @@ module.exports = {
   equipTitle,
   unequipTitle,
   setUserBio,
+  setProfileStyle,
   getThemesCatalog,
   getUserThemes,
   buyTheme,

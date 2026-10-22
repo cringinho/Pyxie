@@ -1,6 +1,9 @@
 const { createCanvas, loadImage } = require('@napi-rs/canvas');
+const { ensureCanvasFonts, withEmojiFallback } = require('../utils/canvasFonts');
 const { AttachmentBuilder } = require('discord.js');
 const { getCanvasStrings, getLanguage } = require('../utils/i18n');
+
+ensureCanvasFonts();
 
 const WIDTH = 1200;
 const HEIGHT = 700;
@@ -66,7 +69,7 @@ function drawAvatar(ctx, member, image, centerX, centerY, radius, ringColor) {
     ctx.fillStyle = '#260d35';
     ctx.fill();
     ctx.fillStyle = '#f472b6';
-    ctx.font = 'bold 48px sans-serif';
+    ctx.font = withEmojiFallback('bold 48px sans-serif');
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText((member.displayName || member.user?.username || '?').slice(0, 2).toUpperCase(), centerX, centerY);
@@ -180,7 +183,7 @@ async function renderShipCard(memberA, memberB, percent, lang = 'pt') {
   ctx.strokeRect(28, 28, WIDTH - 56, HEIGHT - 56);
 
   ctx.fillStyle = palette.accent;
-  ctx.font = 'bold 20px sans-serif';
+  ctx.font = withEmojiFallback('bold 20px sans-serif');
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('✦', 28, 28);
@@ -192,12 +195,12 @@ async function renderShipCard(memberA, memberB, percent, lang = 'pt') {
   ctx.fillStyle = '#FFFFFF';
   ctx.shadowColor = palette.accentGlow;
   ctx.shadowBlur = 12;
-  ctx.font = 'bold 38px serif';
+  ctx.font = withEmojiFallback('bold 38px serif');
   ctx.fillText(langKey === 'pt' ? cStrs.header : cStrs.headerGeneric, WIDTH / 2, 80);
   ctx.shadowBlur = 0;
 
   ctx.fillStyle = '#e2e8f0';
-  ctx.font = '17px sans-serif';
+  ctx.font = withEmojiFallback('17px sans-serif');
   ctx.fillText(cStrs.subtitle, WIDTH / 2, 118);
 
   // 4. Avatars & Bridge
@@ -229,7 +232,7 @@ async function renderShipCard(memberA, memberB, percent, lang = 'pt') {
 
   // Display Names below avatars
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 25px sans-serif';
+  ctx.font = withEmojiFallback('bold 25px sans-serif');
   ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
   ctx.shadowBlur = 8;
   ctx.fillText(memberA.displayName || cStrs.person1, 245, 460);
@@ -269,12 +272,12 @@ async function renderShipCard(memberA, memberB, percent, lang = 'pt') {
 
   // Percentage Text
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 19px sans-serif';
+  ctx.font = withEmojiFallback('bold 19px sans-serif');
   ctx.fillText(`${percent}%`, WIDTH / 2, barY + barH / 2 + 1);
 
   // 6. Verdict Quote
   ctx.fillStyle = '#f8fafc';
-  ctx.font = 'italic 21px sans-serif';
+  ctx.font = withEmojiFallback('italic 21px sans-serif');
   const verdictLines = wrapText(ctx, `“${palette.verdict}”`, 820);
   verdictLines.forEach((line, index) => {
     ctx.fillText(line, WIDTH / 2, 595 + index * 26);
@@ -282,7 +285,7 @@ async function renderShipCard(memberA, memberB, percent, lang = 'pt') {
 
   // 7. Footer
   ctx.fillStyle = palette.accent;
-  ctx.font = 'bold 12px sans-serif';
+  ctx.font = withEmojiFallback('bold 12px sans-serif');
   ctx.fillText(cStrs.footer, WIDTH / 2, 658);
 
   return canvas.toBuffer('image/png');

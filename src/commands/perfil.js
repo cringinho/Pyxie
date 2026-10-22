@@ -25,7 +25,9 @@ const {
   buyTheme,
   equipTheme,
   setUserBio,
+  setProfileStyle,
 } = require('../services/economy');
+const { LAYOUTS, FRAMES, SHOWCASE_STATS, STICKERS } = require('../services/profileStyle');
 const { getSpouseId } = require('../services/marriage');
 const marriageManager = require('../modules/marriage/marriageManager');
 const { getAlbumStats } = require('../services/tarotAlbumService');
@@ -136,6 +138,11 @@ async function buildProfileView(targetUser, viewerId, source = null) {
       .setEmoji('🎨')
       .setStyle(ButtonStyle.Primary),
     new ButtonBuilder()
+      .setCustomId(`profile_open_studio:${targetUser.id}:${viewerId}`)
+      .setLabel(t('profileStudio.btn_customize', source))
+      .setEmoji('🎛️')
+      .setStyle(ButtonStyle.Primary),
+    new ButtonBuilder()
       .setCustomId(`profile_open_bio:${targetUser.id}:${viewerId}`)
       .setLabel(t('profile.btnEditBio', source))
       .setEmoji('✏️')
@@ -157,11 +164,122 @@ async function buildProfileView(targetUser, viewerId, source = null) {
   );
   components.push(linkRow);
 
-  const result = { embeds: [embed], components };
+  const result = { embeds: [embed], components, attachments: [] };
   if (attachment) {
     result.files = [attachment];
   }
   return result;
+}
+
+async function renderCardAttachment(targetUser, source, overrides = null) {
+  try {
+    const png = await generateProfileCard({
+      targetUser,
+      guild: source?.guild || source?.channel?.guild || null,
+      source,
+      client: source?.client || null,
+      overrides,
+    });
+    return png ? new AttachmentBuilder(png, { name: 'profile_card.png' }) : null;
+  } catch (err) {
+    console.error('[ProfileCard] Erro ao renderizar prévia:', err);
+    return null;
+  }
+}
+
+const SHOWCASE_EMOJIS = { coins: '🪙', beans: '🌱', rank: '🏆', level: '💼', tarot: '🔮', works: '🔨', streak: '🔥', museum: '🎨', love: '💍' };
+const LAYOUT_EMOJIS = { glass: '🪟', neon: '💡', minimal: '◽' };
+const FRAME_EMOJIS = { circle: '⭕', squircle: '🟪', halo: '💫' };
+
+/**
+ * Estúdio do Perfil: personalização gratuita com prévia ao vivo do card.
+ */
+async function buildStudioView(targetUser, viewerId, source = null) {
+  const account = getUserAccount(targetUser.id);
+  const style = account.profileStyle;
+  const isEn = getLanguage(source) === 'en';
+  const themesCatalog = getThemesCatalog();
+  const theme = themesCatalog[account.equippedTheme] || themesCatalog.default;
+  const guildName = source?.guild?.name || 'Pyxie';
+  const ids = `${targetUser.id}:${viewerId}`;
+
+  const attachment = await renderCardAttachment(targetUser, source);
+  const showcaseText = style.showcase.map((k) => t(`profileCard.stat_${k}`, source)).join(', ');
+
+  const embed = new EmbedBuilder()
+    .setColor(theme.color || '#8B5CF6')
+    .setTitle(t('profileStudio.title', source))
+    .setDescription(
+      [
+        t('profileStudio.intro', source),
+        t('profileStudio.section_current', source),
+        t('profileStudio.line_theme', source, { value: `${theme.emoji} ${isEn ? theme.nameEn || theme.name : theme.name}` }),
+        t('profileStudio.line_layout', source, { value: t(`profileStudio.layout_${style.layout}`, source) }),
+        t('profileStudio.line_frame', source, { value: t(`profileStudio.frame_${style.frame}`, source) }),
+        t('profileStudio.line_showcase', source, { value: showcaseText }),
+        t('profileStudio.line_sticker', source, { value: style.sticker === 'none' ? t('profileStudio.sticker_none', source) : style.sticker }),
+        t('profileStudio.themes_hint', source),
+      ].join('\n\n')
+    )
+    .setFooter({ text: t('profileStudio.footer', source, { guild: guildName }) });
+  if (attachment) embed.setImage('attachment://profile_card.png');
+
+  const layoutRow = new ActionRowBuilder().addComponents(
+    new StringSelectMenuBuilder()
+      .setCustomId(`profile_studio_layout:${ids}`)
+      .setPlaceholder(t('profileStudio.ph_layout', source))
+      .addOptions(LAYOUTS.map((key) => ({
+        label: t(`profileStudio.layout_${key}`, source),
+        description: t(`profileStudio.layout_${key}_desc`, source),
+        value: key,
+        emoji: LAYOUT_EMOJIS[key],
+        default: style.layout === key,
+      })))
+  );
+  const frameRow = new ActionRowBuilder().addComponents(
+    new StringSelectMenuBuilder()
+      .setCustomId(`profile_studio_frame:${ids}`)
+      .setPlaceholder(t('profileStudio.ph_frame', source))
+      .addOptions(FRAMES.map((key) => ({
+        label: t(`profileStudio.frame_${key}`, source),
+        description: t(`profileStudio.frame_${key}_desc`, source),
+        value: key,
+        emoji: FRAME_EMOJIS[key],
+        default: style.frame === key,
+      })))
+  );
+  const showcaseRow = new ActionRowBuilder().addComponents(
+    new StringSelectMenuBuilder()
+      .setCustomId(`profile_studio_showcase:${ids}`)
+      .setPlaceholder(t('profileStudio.ph_showcase', source))
+      .setMinValues(1)
+      .setMaxValues(4)
+      .addOptions(SHOWCASE_STATS.map((key) => ({
+        label: t(`profileCard.stat_${key}`, source),
+        value: key,
+        emoji: SHOWCASE_EMOJIS[key],
+        default: style.showcase.includes(key),
+      })))
+  );
+  const stickerRow = new ActionRowBuilder().addComponents(
+    new StringSelectMenuBuilder()
+      .setCustomId(`profile_studio_sticker:${ids}`)
+      .setPlaceholder(t('profileStudio.ph_sticker', source))
+      .addOptions(STICKERS.map((value) => (value === 'none'
+        ? { label: t('profileStudio.sticker_none', source), value, emoji: '🚫', default: style.sticker === value }
+        : { label: value, value, default: style.sticker === value })))
+  );
+  const backRow = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`profile_view_main:${ids}`)
+      .setLabel(t('profileStudio.back', source))
+      .setEmoji('◀️')
+      .setStyle(ButtonStyle.Secondary)
+  );
+
+  const view = { embeds: [embed], components: [layoutRow, frameRow, showcaseRow, stickerRow, backRow], attachments: [] };
+  if (attachment) view.files = [attachment];
+  return view;
 }
 
 function buildTitlesView(targetUser, viewerId, source = null) {
@@ -265,100 +383,106 @@ function buildTitlesView(targetUser, viewerId, source = null) {
       .setDisabled(!equippedId)
   );
 
-  return { embeds: [embed], components: [selectRow, buttonRow] };
+  return { embeds: [embed], components: [selectRow, buttonRow], attachments: [] };
 }
 
-function buildThemesView(targetUser, viewerId, source = null) {
+/**
+ * Galeria de temas com prévia ao vivo: escolher um tema não adquirido mostra o card com ele antes da compra.
+ */
+async function buildThemesView(targetUser, viewerId, source = null, previewThemeId = null) {
   const lang = getLanguage(source);
   const isEn = lang === 'en';
   const account = getUserAccount(targetUser.id);
   const themesCatalog = getThemesCatalog();
   const ownedThemes = account.themes || ['default'];
   const equippedId = account.equippedTheme || 'default';
-  const currentTheme = themesCatalog[equippedId] || themesCatalog.default;
+  const previewTheme = previewThemeId && themesCatalog[previewThemeId] ? themesCatalog[previewThemeId] : null;
+  const shownTheme = previewTheme || themesCatalog[equippedId] || themesCatalog.default;
   const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
+  const nameOf = (theme) => (isEn ? theme.nameEn || theme.name : theme.name);
+  const descOf = (theme) => (isEn ? theme.descEn || theme.desc : theme.desc);
+  const ids = `${targetUser.id}:${viewerId}`;
 
-  const desc = isEn
-    ? [
-        'Customize the colors and visual style of your profile cards!',
-        '',
-        `${beanEmoji} **YOUR BALANCE**`,
-        `> ${beanEmoji} **Magic Beans:** **${account.magicBeans || 0} ${beanEmoji}**`,
-        '',
-        '🎨 **CURRENT VISUAL THEME**',
-        `> ${currentTheme.emoji} **${currentTheme.name}** (\`${currentTheme.color}\`)\n> *« ${currentTheme.desc} »*`,
-        '',
-        '✨ **THEMES CATALOG**',
-        'Choose a theme in the dropdown menu below to **unlock** or **equip**:',
-      ].join('\n')
-    : [
-        'Personalize a cor e o estilo visual dos cartões do seu perfil!',
-        '',
-        `${beanEmoji} **SEU SALDO**`,
-        `> ${beanEmoji} **Feijões Mágicos:** **${account.magicBeans || 0} ${beanEmoji}**`,
-        '',
-        '🎨 **TEMA VISUAL ATUAL**',
-        `> ${currentTheme.emoji} **${currentTheme.name}** (\`${currentTheme.color}\`)\n> *« ${currentTheme.desc} »*`,
-        '',
-        '✨ **CATÁLOGO DE TEMAS**',
-        'Escolha um tema no menu suspenso abaixo para **desbloquear** ou **equipar**:',
-      ].join('\n');
+  const attachment = await renderCardAttachment(targetUser, source, previewTheme ? { theme: previewTheme.id } : null);
+
+  const headline = previewTheme
+    ? (isEn ? `### 👀 Previewing: ${previewTheme.emoji} ${nameOf(previewTheme)}` : `### 👀 Experimentando: ${previewTheme.emoji} ${nameOf(previewTheme)}`)
+    : (isEn ? `### 🎨 Current Theme: ${shownTheme.emoji} ${nameOf(shownTheme)}` : `### 🎨 Tema Atual: ${shownTheme.emoji} ${nameOf(shownTheme)}`);
+
+  const desc = [
+    isEn
+      ? 'Each theme changes the whole card: banner art, colors and light or dark mode. Pick one below to try it on your own card.'
+      : 'Cada tema muda o cartão inteiro: arte do banner, cores e modo claro ou escuro. Escolha um abaixo para experimentar no seu próprio card.',
+    headline,
+    `> *${descOf(shownTheme)}*`,
+    isEn
+      ? `• **Your Magic Beans:** \`${account.magicBeans || 0}\` ${beanEmoji}`
+      : `• **Seus Feijões Mágicos:** \`${account.magicBeans || 0}\` ${beanEmoji}`,
+  ].join('\n\n');
 
   const embed = new EmbedBuilder()
-    .setColor(currentTheme.color || PYXIE_COLORS.magenta)
-    .setTitle(isEn ? `🎨  ✦  Profile Themes & Colors — ${targetUser.displayName || targetUser.username}` : `🎨  ✦  Temas & Cores do Perfil — ${targetUser.displayName || targetUser.username}`)
+    .setColor(shownTheme.color || PYXIE_COLORS.magenta)
+    .setTitle(isEn ? '🎨 Profile Themes' : '🎨 Temas do Perfil')
     .setDescription(desc)
-    .setThumbnail(targetUser.displayAvatarURL({ dynamic: true, size: 256 }))
-    .setFooter({ text: 'Pyxie' })
-    .setTimestamp();
+    .setFooter({ text: `Pyxie • ${source?.guild?.name || 'Pyxie'}` });
+  if (attachment) embed.setImage('attachment://profile_card.png');
 
   const options = Object.values(themesCatalog).map((theme) => {
     const isEquipped = equippedId === theme.id;
-    const isOwned = ownedThemes.includes(theme.id);
-
-    let statusTag = '';
-    let optDesc = '';
-    let val = '';
-
+    const isOwned = ownedThemes.includes(theme.id) || theme.cost === 0;
+    let statusTag;
+    let optDesc;
+    let val;
     if (isEquipped) {
-      statusTag = isEn ? ' [EQUIPPED]' : ' [EQUIPADO]';
-      optDesc = isEn ? 'Theme currently active on profile' : 'Tema atualmente ativo no perfil';
+      statusTag = isEn ? ' • Equipped' : ' • Equipado';
+      optDesc = isEn ? 'Active on your profile' : 'Ativo no seu perfil';
       val = `equipped:${theme.id}`;
     } else if (isOwned) {
-      statusTag = isEn ? ' [OWNED]' : ' [ADQUIRIDO]';
-      optDesc = isEn ? 'Click to equip this theme' : 'Clique para equipar este tema';
+      statusTag = isEn ? ' • Owned' : ' • Adquirido';
+      optDesc = isEn ? 'Tap to equip' : 'Toque para equipar';
       val = `equip:${theme.id}`;
     } else {
-      statusTag = ` [${theme.cost} ${beanEmoji}]`;
-      optDesc = isEn ? `Unlock for ${theme.cost} Magic Bean(s)` : `Desbloquear por ${theme.cost} Feijão(ões) Mágico(s)`;
-      val = `buy:${theme.id}`;
+      statusTag = ` • ${theme.cost} ${isEn ? 'beans' : 'feijões'}`;
+      optDesc = descOf(theme);
+      val = `preview:${theme.id}`;
     }
-
     return {
-      label: `${theme.name}${statusTag}`.slice(0, 100),
+      label: `${nameOf(theme)}${statusTag}`.slice(0, 100),
       description: optDesc.slice(0, 100),
       value: val,
       emoji: theme.emoji,
-      default: isEquipped,
+      default: previewTheme ? previewTheme.id === theme.id : isEquipped,
     };
   });
 
   const selectRow = new ActionRowBuilder().addComponents(
     new StringSelectMenuBuilder()
-      .setCustomId(`profile_select_theme:${targetUser.id}:${viewerId}`)
-      .setPlaceholder(isEn ? '🎨 Choose a visual theme to equip or buy...' : '🎨 Escolha um tema visual para equipar ou comprar...')
+      .setCustomId(`profile_select_theme:${ids}`)
+      .setPlaceholder(isEn ? '🎨 Pick a theme to try or equip...' : '🎨 Escolha um tema para experimentar ou equipar...')
       .addOptions(options)
   );
 
-  const buttonRow = new ActionRowBuilder().addComponents(
+  const buttons = [
     new ButtonBuilder()
-      .setCustomId(`profile_view_main:${targetUser.id}:${viewerId}`)
+      .setCustomId(`profile_view_main:${ids}`)
       .setLabel(isEn ? 'Back to Profile' : 'Voltar ao Perfil')
       .setEmoji('◀️')
-      .setStyle(ButtonStyle.Secondary)
-  );
+      .setStyle(ButtonStyle.Secondary),
+  ];
+  if (previewTheme && !ownedThemes.includes(previewTheme.id)) {
+    buttons.unshift(
+      new ButtonBuilder()
+        .setCustomId(`profile_buy_theme:${ids}:${previewTheme.id}`)
+        .setLabel(isEn ? `Unlock for ${previewTheme.cost} beans` : `Desbloquear por ${previewTheme.cost} feijões`)
+        .setEmoji('🔓')
+        .setStyle(ButtonStyle.Success)
+        .setDisabled((account.magicBeans || 0) < previewTheme.cost)
+    );
+  }
 
-  return { embeds: [embed], components: [selectRow, buttonRow] };
+  const view = { embeds: [embed], components: [selectRow, new ActionRowBuilder().addComponents(...buttons)], attachments: [] };
+  if (attachment) view.files = [attachment];
+  return view;
 }
 
 function isProfileInteraction(interaction) {
@@ -432,9 +556,10 @@ async function handleProfileInteraction(interaction) {
 
   // 4. Voltar para o Perfil Principal
   if (action === 'profile_view_main') {
+    await interaction.deferUpdate();
     const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
     const view = await buildProfileView(targetUser, interaction.user.id, interaction);
-    return interaction.update(view);
+    return interaction.editReply(view);
   }
 
   // 5. Abrir Galeria de Títulos
@@ -446,9 +571,42 @@ async function handleProfileInteraction(interaction) {
 
   // 6. Abrir Galeria de Temas
   if (action === 'profile_open_themes') {
+    await interaction.deferUpdate();
     const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
-    const view = buildThemesView(targetUser, interaction.user.id, interaction);
-    return interaction.update(view);
+    const view = await buildThemesView(targetUser, interaction.user.id, interaction);
+    return interaction.editReply(view);
+  }
+
+  // 6b. Estúdio do Perfil (só o dono do perfil)
+  if (action.startsWith('profile_studio_') || action === 'profile_open_studio') {
+    if (interaction.user.id !== targetId) {
+      return interaction.reply({ content: t('profileStudio.only_owner', interaction), flags: 64 });
+    }
+    const values = interaction.values || [];
+    if (action === 'profile_studio_layout') setProfileStyle(targetId, { layout: values[0] });
+    if (action === 'profile_studio_frame') setProfileStyle(targetId, { frame: values[0] });
+    if (action === 'profile_studio_showcase') setProfileStyle(targetId, { showcase: values });
+    if (action === 'profile_studio_sticker') setProfileStyle(targetId, { sticker: values[0] });
+
+    await interaction.deferUpdate();
+    const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
+    const view = await buildStudioView(targetUser, interaction.user.id, interaction);
+    return interaction.editReply(view);
+  }
+
+  // 6c. Comprar tema após a prévia
+  if (action === 'profile_buy_theme') {
+    if (interaction.user.id !== targetId) {
+      return interaction.reply({ content: t('profileStudio.only_owner', interaction), flags: 64 });
+    }
+    const res = buyTheme(targetId, parts[3]);
+    if (!res.success) {
+      return interaction.reply({ content: `❌ ${res.message}`, flags: 64 });
+    }
+    await interaction.deferUpdate();
+    const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
+    const view = await buildThemesView(targetUser, interaction.user.id, interaction);
+    return interaction.editReply(view);
   }
 
   // 7. Desequipar Título
@@ -491,32 +649,20 @@ async function handleProfileInteraction(interaction) {
 
   // 9. Seleção de Tema no Dropdown
   if (action === 'profile_select_theme') {
-    const selectedVal = interaction.values[0];
-    const [operation, themeId] = selectedVal.split(':');
-
+    const [operation, themeId] = interaction.values[0].split(':');
     if (operation === 'equipped') {
       return interaction.reply({
         content: isEn ? '🎨 This visual theme is already active on your profile!' : '🎨 Este tema visual já está ativo no seu perfil!',
         flags: 64,
       });
     }
-
-    if (operation === 'equip') {
+    if (operation === 'equip' && interaction.user.id === targetId) {
       equipTheme(targetId, themeId);
-      const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
-      const view = buildThemesView(targetUser, interaction.user.id, interaction);
-      return interaction.update(view);
     }
-
-    if (operation === 'buy') {
-      const res = buyTheme(targetId, themeId);
-      if (!res.success) {
-        return interaction.reply({ content: `❌ ${res.message}`, flags: 64 });
-      }
-      const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
-      const view = buildThemesView(targetUser, interaction.user.id, interaction);
-      return interaction.update(view);
-    }
+    await interaction.deferUpdate();
+    const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
+    const view = await buildThemesView(targetUser, interaction.user.id, interaction, operation === 'preview' ? themeId : null);
+    return interaction.editReply(view);
   }
 }
 
@@ -526,6 +672,7 @@ module.exports = {
   buildProfileView,
   buildTitlesView,
   buildThemesView,
+  buildStudioView,
   isProfileInteraction,
   handleProfileInteraction,
   data: new SlashCommandBuilder()

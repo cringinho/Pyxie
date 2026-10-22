@@ -7,6 +7,7 @@ const {
   recordUserAnswer,
   getMathRanking,
   generateBatchQuestions,
+  waitForPendingGeneration,
 } = require('../src/services/arcaneMathService');
 const mathCmd = require('../src/commands/matematica');
 const tictactoeCmd = require('../src/commands/jogodavelha');
@@ -91,6 +92,8 @@ async function runTests() {
   console.log('    ✅ 1.4 Registro de streaks e ranking global validado com sucesso.');
 
   // 1.5 Expansão de Perguntas e Contador Atualizado
+  // A sequência de acertos do passo 1.4 pode ter disparado a expansão automática em segundo plano
+  await waitForPendingGeneration();
   const initialCount = getGrimoireStats().total;
   const newBatch = await generateBatchQuestions(10);
   assert.equal(newBatch.length, 10, 'Deve gerar exatamente 10 novas questões.');

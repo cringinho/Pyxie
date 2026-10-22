@@ -156,9 +156,17 @@ try {
   assert.ok(titlesViewPt.embeds[0].data.title.includes('Galeria de Títulos'), 'Títulos PT ok');
   assert.ok(titlesViewEn.embeds[0].data.title.includes('Titles Gallery'), 'Títulos EN ok');
 
-  const themesViewPt = perfilCmd.buildThemesView(mockTargetUser, 'viewer-1', 'pt');
-  const themesViewEn = perfilCmd.buildThemesView(mockTargetUser, 'viewer-1', 'en');
-  assert.ok(themesViewPt.embeds[0].data.title.includes('Temas & Cores'), 'Temas PT ok');
+  // Galeria de temas é assíncrona (renderiza a prévia do card)
+  Promise.all([
+    perfilCmd.buildThemesView(mockTargetUser, 'viewer-1', 'pt'),
+    perfilCmd.buildThemesView(mockTargetUser, 'viewer-1', 'en'),
+  ]).then(([themesViewPt, themesViewEn]) => {
+    assert.ok(themesViewPt.embeds[0].data.title.includes('Temas do Perfil'), 'Temas PT ok');
+    assert.ok(themesViewEn.embeds[0].data.title.includes('Profile Themes'), 'Temas EN ok');
+  }).catch((err) => {
+    console.error('❌ Galeria de temas:', err);
+    process.exit(1);
+  });
   const { generateProfileCard } = require('../src/services/profileCardGenerator');
   assert.equal(typeof generateProfileCard, 'function', 'generateProfileCard deve ser exportada');
 

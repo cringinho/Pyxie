@@ -1,6 +1,9 @@
 const { createCanvas } = require('@napi-rs/canvas');
+const { ensureCanvasFonts, withEmojiFallback } = require('../utils/canvasFonts');
 const { AttachmentBuilder } = require('discord.js');
 const { getCanvasStrings, getLanguage } = require('../utils/i18n');
+
+ensureCanvasFonts();
 
 const WIDTH = 600;
 const HEIGHT = 1024;
@@ -330,7 +333,7 @@ function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
 
   // Corner Stars ✦
   ctx.fillStyle = accentColor;
-  ctx.font = 'bold 20px sans-serif';
+  ctx.font = withEmojiFallback('bold 20px sans-serif');
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('✦', 26, 26);
@@ -343,13 +346,13 @@ function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
   ctx.fillStyle = '#ffffff';
   ctx.shadowColor = accentColor;
   ctx.shadowBlur = 12;
-  ctx.font = 'bold 30px serif';
+  ctx.font = withEmojiFallback('bold 30px serif');
   ctx.fillText(card.num || '✦', 300, 68);
 
   // Arcana Category
   ctx.shadowBlur = 0;
   ctx.fillStyle = accentColor;
-  ctx.font = 'bold 13px sans-serif';
+  ctx.font = withEmojiFallback('bold 13px sans-serif');
   const arcanaLabel = card.arcana ? (langKey === 'en' ? 'MAJOR ARCANA' : card.arcana.toUpperCase()) : cStrs.arcana;
   ctx.fillText(arcanaLabel, 300, 98);
 
@@ -429,7 +432,7 @@ function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
 
   // Badge Text
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 13px sans-serif';
+  ctx.font = withEmojiFallback('bold 13px sans-serif');
   ctx.shadowColor = accentColor;
   ctx.shadowBlur = 6;
   ctx.fillText(
@@ -441,7 +444,7 @@ function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
 
   // 6. Card Name in Highlight
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 28px serif';
+  ctx.font = withEmojiFallback('bold 28px serif');
   ctx.shadowColor = accentColor;
   ctx.shadowBlur = 10;
   ctx.fillText(card.name, 300, 650);
@@ -449,7 +452,7 @@ function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
 
   // 7. Keywords
   ctx.fillStyle = accentColor;
-  ctx.font = 'italic 15px sans-serif';
+  ctx.font = withEmojiFallback('italic 15px sans-serif');
   const kwText = (card.keywords || []).join('  •  ');
   ctx.fillText(kwText, 300, 686);
 
@@ -462,7 +465,7 @@ function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
   ctx.stroke();
 
   ctx.fillStyle = accentColor;
-  ctx.font = '12px sans-serif';
+  ctx.font = withEmojiFallback('12px sans-serif');
   ctx.fillText('✦', 300, 712);
 
   // 8. Interpretation Box
@@ -482,7 +485,7 @@ function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
   // Interpretation Text
   const interpretationText = `"${isReversed ? card.reversed : card.upright}"`;
   ctx.fillStyle = '#f8fafc';
-  ctx.font = '16px sans-serif';
+  ctx.font = withEmojiFallback('16px sans-serif');
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
 
@@ -499,7 +502,7 @@ function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = accentColor;
-  ctx.font = 'bold 11px sans-serif';
+  ctx.font = withEmojiFallback('bold 11px sans-serif');
   ctx.fillText(cStrs.footer, 300, 978);
 
   const buffer = canvas.toBuffer('image/png');

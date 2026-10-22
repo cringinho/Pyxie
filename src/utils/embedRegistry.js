@@ -839,6 +839,23 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'profile_studio',
+  name: '🎛️ Estúdio do Perfil',
+  category: 'economy',
+  description: 'Personalização gratuita do card de perfil com prévia ao vivo (estilo, moldura, destaques e sticker).',
+  defaultColor: '#ff3d8b',
+  previewTitle: '{header} Estúdio do Perfil',
+  previewDesc: 'Monte o visual do seu cartão. Cada escolha atualiza a prévia na hora, sem custo.',
+  previewFields: [
+    { name: '🪟 Estilo', value: 'Vidro, Neon ou Minimalista', inline: true },
+    { name: '💫 Moldura', value: 'Círculo, Quadrado suave ou Halo', inline: true },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone do Estúdio', fallback: '🎛️', defaultEmojiKey: 'helpCommands', description: 'Ícone do título do estúdio' },
+  ],
+});
+
+registerEmbed({
   id: 'tickets_close_log',
   name: '📁 Registro de Atendimento Encerrado',
   category: 'system',

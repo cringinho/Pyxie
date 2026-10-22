@@ -1,6 +1,9 @@
 const path = require('node:path');
 const fs = require('node:fs');
 const { createCanvas, loadImage } = require('@napi-rs/canvas');
+const { ensureCanvasFonts, withEmojiFallback } = require('../../utils/canvasFonts');
+
+ensureCanvasFonts();
 
 // Cores temáticas da Pyxie & Cringelândia (referência: pyxieVoice.js)
 const PALETTE = {
@@ -256,7 +259,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
   // 3. Top Header: Tag de Servidor Oficial & Nome CRINGELÂNDIA
   // 3.1 Tag Pill
   ctx.save();
-  ctx.font = 'bold 15px sans-serif';
+  ctx.font = withEmojiFallback('bold 15px sans-serif');
   const tagMetrics = ctx.measureText(T.serverTag);
   const tagW = tagMetrics.width + 36;
   const tagH = 34;
@@ -278,14 +281,14 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
 
   // 3.2 Título da Comunidade: CRINGELÂNDIA (Gigante & Escancarado)
   ctx.save();
-  ctx.font = '900 50px sans-serif';
+  ctx.font = withEmojiFallback('900 50px sans-serif');
   ctx.fillStyle = '#ffffff';
   ctx.shadowColor = 'rgba(168, 85, 247, 0.9)';
   ctx.shadowBlur = 25;
   ctx.fillText(T.communityName, 70, 142);
 
   // 3.3 Subtítulo do Evento
-  ctx.font = 'bold 20px sans-serif';
+  ctx.font = withEmojiFallback('bold 20px sans-serif');
   ctx.fillStyle = PALETTE.gold;
   ctx.shadowColor = 'rgba(251, 191, 36, 0.6)';
   ctx.shadowBlur = 12;
@@ -329,7 +332,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
     ctx.fill();
     ctx.stroke();
 
-    ctx.font = 'bold 13px sans-serif';
+    ctx.font = withEmojiFallback('bold 13px sans-serif');
     ctx.fillStyle = '#fce7f3';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -382,7 +385,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
       const h = avatar.height * scale;
       ctx.drawImage(avatar, cx - w / 2, cy - h / 2, w, h);
     } else {
-      ctx.font = `bold ${radius * 0.75}px sans-serif`;
+      ctx.font = withEmojiFallback(`bold ${radius * 0.75}px sans-serif`);
       ctx.fillStyle = crownColor;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -399,7 +402,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
     drawRoundedRect(ctx, cx - badgeW / 2, badgeY, badgeW, badgeH, 14);
     ctx.fill();
 
-    ctx.font = `bold ${isLeader ? 14 : 12}px sans-serif`;
+    ctx.font = withEmojiFallback(`bold ${isLeader ? 14 : 12}px sans-serif`);
     ctx.fillStyle = '#0a0514';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -408,7 +411,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
 
     // 6. Nome do Jogador (Sanitizado de caracteres que gerem retângulos vazios)
     const nameY = badgeY + badgeH + 18;
-    ctx.font = `bold ${isLeader ? 20 : 16}px sans-serif`;
+    ctx.font = withEmojiFallback(`bold ${isLeader ? 20 : 16}px sans-serif`);
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -437,7 +440,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
       ctx.drawImage(pumpkinImg, iconX, iconY, iconSize, iconSize);
     }
 
-    ctx.font = `bold ${isLeader ? 14 : 12}px sans-serif`;
+    ctx.font = withEmojiFallback(`bold ${isLeader ? 14 : 12}px sans-serif`);
     ctx.fillStyle = PALETTE.gold;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -471,7 +474,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
     drawRoundedRect(ctx, rowX + 16, yPos + 14, 48, 40, 12);
     ctx.fill();
 
-    ctx.font = 'bold 18px sans-serif';
+    ctx.font = withEmojiFallback('bold 18px sans-serif');
     ctx.fillStyle = PALETTE.purpleLight;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -496,7 +499,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
       ctx.restore();
 
       // Nome limpo
-      ctx.font = 'bold 18px sans-serif';
+      ctx.font = withEmojiFallback('bold 18px sans-serif');
       ctx.fillStyle = '#ffffff';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
@@ -511,13 +514,13 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
       if (pumpkinImg) {
         ctx.drawImage(pumpkinImg, rIconX, rIconY, rIconSize, rIconSize);
       }
-      ctx.font = 'bold 18px sans-serif';
+      ctx.font = withEmojiFallback('bold 18px sans-serif');
       ctx.fillStyle = PALETTE.gold;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       ctx.fillText(`${entry.balance} ${T.currency}`, rIconX + 30, yPos + 34);
     } else {
-      ctx.font = 'italic 16px sans-serif';
+      ctx.font = withEmojiFallback('italic 16px sans-serif');
       ctx.fillStyle = PALETTE.textDim;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
@@ -529,7 +532,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
         yPos + 34
       );
 
-      ctx.font = 'bold 16px sans-serif';
+      ctx.font = withEmojiFallback('bold 16px sans-serif');
       ctx.fillStyle = PALETTE.cyan;
       ctx.textAlign = 'right';
       ctx.fillText(isEn ? '+100 Coins Bonus' : '+Bônus na Entrada', rowX + rowW - 24, yPos + 34);
@@ -563,13 +566,13 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
   ctx.shadowBlur = 0;
 
   // 7.1 Lado Esquerdo do Rodapé: Título do Convite & Descrição
-  ctx.font = '900 28px sans-serif';
+  ctx.font = withEmojiFallback('900 28px sans-serif');
   ctx.fillStyle = '#ffffff';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
   ctx.fillText(T.inviteTitle, footX + 36, footY + 28);
 
-  ctx.font = '500 16px sans-serif';
+  ctx.font = withEmojiFallback('500 16px sans-serif');
   ctx.fillStyle = PALETTE.textMuted;
   ctx.fillText(T.inviteSub, footX + 36, footY + 70);
 
@@ -599,7 +602,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
   drawDiscordLogo(ctx, btnX + 34, btnY + btnH / 2, 28);
 
   // Texto do Convite
-  ctx.font = '900 24px sans-serif';
+  ctx.font = withEmojiFallback('900 24px sans-serif');
   ctx.fillStyle = '#ffffff';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
@@ -614,13 +617,13 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
   drawRoundedRect(ctx, tagEnterX, tagEnterY, tagEnterW, tagEnterH, 12);
   ctx.fill();
 
-  ctx.font = 'bold 14px sans-serif';
+  ctx.font = withEmojiFallback('bold 14px sans-serif');
   ctx.fillStyle = '#5865f2';
   ctx.textAlign = 'center';
   ctx.fillText(isEn ? 'JOIN NOW' : 'ENTRE JÁ', tagEnterX + tagEnterW / 2, tagEnterY + tagEnterH / 2);
 
   // Texto auxiliar de benefícios
-  ctx.font = '600 13px sans-serif';
+  ctx.font = withEmojiFallback('600 13px sans-serif');
   ctx.fillStyle = PALETTE.cyan;
   ctx.textAlign = 'left';
   ctx.fillText(
@@ -642,20 +645,20 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
   ctx.fill();
   ctx.stroke();
 
-  ctx.font = 'bold 20px sans-serif';
+  ctx.font = withEmojiFallback('bold 20px sans-serif');
   ctx.fillStyle = '#ffffff';
   ctx.textAlign = 'center';
   ctx.fillText('Pyxie Bot', rightX + 117, rightY + 36);
 
-  ctx.font = '500 13px sans-serif';
+  ctx.font = withEmojiFallback('500 13px sans-serif');
   ctx.fillStyle = PALETTE.purpleLight;
   ctx.fillText(T.botDesc, rightX + 117, rightY + 68);
 
-  ctx.font = 'bold 15px sans-serif';
+  ctx.font = withEmojiFallback('bold 15px sans-serif');
   ctx.fillStyle = PALETTE.gold;
   ctx.fillText('pyxie.com.br', rightX + 117, rightY + 105);
 
-  ctx.font = 'bold 12px sans-serif';
+  ctx.font = withEmojiFallback('bold 12px sans-serif');
   ctx.fillStyle = '#a855f7';
   ctx.fillText('© 2026 Cringelândia', rightX + 117, rightY + 140);
 

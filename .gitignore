@@ -24,3 +24,4 @@ meus outros app/
 scratch/
 *.tar.gz
 *.sql
+data/cache/

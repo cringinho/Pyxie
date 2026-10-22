@@ -8,7 +8,9 @@ const QUESTIONS_FILE = path.join(DATA_DIR, 'arcaneMathQuestions.json');
 const RANKING_FILE = path.join(DATA_DIR, 'arcaneMathRanking.json');
 const STATE_FILE = path.join(DATA_DIR, 'arcaneMathState.json');
 
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
+// Mesma ordem de preferência dos seeders: o primeiro disponível para a chave é usado
+const GROQ_CANDIDATE_MODELS = ['qwen/qwen3.8-27b', 'llama-3.3-70b-versatile', 'openai/gpt-oss-120b', 'openai/gpt-oss-20b'];
+let pendingGeneration = null;
 
 // ==========================================
 // BANCO INICIAL DE QUESTÕES ARCANAS (SEED)
@@ -785,9 +787,13 @@ async function recordUserAnswer({ userId, username, isCorrect, currentStreak }) 
       state.correctSinceLastGen = 0;
       saveStateData(state);
       // Disparo em background sem travar a resposta do usuário
-      generateBatchQuestions(10).catch((err) => {
-        console.error('[ArcaneMath] Erro na geração automática de questões:', err.message);
-      });
+      pendingGeneration = generateBatchQuestions(10)
+        .catch((err) => {
+          console.error('[ArcaneMath] Erro na geração automática de questões:', err.message);
+        })
+        .finally(() => {
+          pendingGeneration = null;
+        });
     } else {
       saveStateData(state);
     }
@@ -979,7 +985,7 @@ REGRAS ESTREITAS:
       // Sem novas tentativas no 429: o gerador procedural abaixo cobre a falta
       const res = await groqClient.chatCompletion(
         {
-          model: GROQ_MODEL,
+          model: await groqClient.resolveModel(GROQ_CANDIDATE_MODELS),
           max_tokens: 2800,
           response_format: { type: 'json_object' },
           temperature: 0.7,
@@ -1022,6 +1028,9 @@ REGRAS ESTREITAS:
     }
   }
 
+  // O modelo às vezes devolve mais questões do que o pedido: mantém exatamente `count`
+  questionsToAdd.splice(count);
+
   // Preenche com o gerador procedural se Groq gerou menos do que o desejado
   while (questionsToAdd.length < count) {
     const diff = difficultiesToMake[questionsToAdd.length % difficultiesToMake.length];
@@ -1055,7 +1064,13 @@ REGRAS ESTREITAS:
   return questionsToAdd;
 }
 
+/** Aguarda a expansão automática em andamento (usado por testes e desligamento). */
+function waitForPendingGeneration() {
+  return pendingGeneration || Promise.resolve();
+}
+
 module.exports = {
+  waitForPendingGeneration,
   getGrimoireStats,
   getDifficultyForStreak,
   getRandomQuestion,
