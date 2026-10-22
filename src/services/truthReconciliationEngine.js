@@ -30,7 +30,47 @@ class TruthReconciliationEngine extends EventEmitter {
   /**
    * Inicia o ciclo contínuo de Ondas de Verificação
    */
+  /**
+   * Purgador SSOT de chaves e sistemas legados obsoletos (shop, relic_t*, etc)
+   */
+  purgeObsoleteLegacyData() {
+    try {
+      const candidates = [
+        path.join(__dirname, '..', 'data', 'emojis.json'),
+        path.join(DATA_DIR, 'emojis.json'),
+      ];
+      const obsoleteKeys = [
+        'shop_chest',
+        'shop_gem',
+        'relic_t1',
+        'relic_t2',
+        'relic_t3',
+        'relic_t4',
+        'relic_t5',
+        'phantom_coin',
+        'vigor_energy',
+      ];
+      for (const p of candidates) {
+        if (fs.existsSync(p)) {
+          const raw = fs.readFileSync(p, 'utf8');
+          const data = JSON.parse(raw);
+          let changed = false;
+          for (const k of obsoleteKeys) {
+            if (k in data) {
+              delete data[k];
+              changed = true;
+            }
+          }
+          if (changed) {
+            fs.writeFileSync(p, JSON.stringify(data, null, 2), 'utf8');
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
   startCycle(botClient = null, expressApp = null) {
+    this.purgeObsoleteLegacyData();
     this.botClient = botClient;
     this.expressApp = expressApp;
 
@@ -103,6 +143,7 @@ class TruthReconciliationEngine extends EventEmitter {
     this.isReconciling = true;
 
     try {
+      this.purgeObsoleteLegacyData();
       const now = Date.now();
 
       // 1. Atualiza snapshot de servidores se o cliente Discord estiver disponível

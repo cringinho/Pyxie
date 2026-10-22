@@ -142,7 +142,7 @@ function scheduleStickyReposition(guild, channel) {
     } catch (err) {
       console.warn(`[ventService] Falha ao reposicionar mensagem sticky em ${guildId}:`, err.message);
     }
-  }, 4000);
+  }, 30000);
 
   ventDebounceTimers.set(guildId, timer);
 }

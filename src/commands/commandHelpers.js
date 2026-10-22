@@ -432,6 +432,19 @@ const COMMAND_CATEGORY_MAP = {
   'py-gamepass': 'utilidades',
   'checar-gamepass': 'utilidades',
   'check-gamepass': 'utilidades',
+  sorteio: 'utilidades',
+  'py-sorteio': 'utilidades',
+  giveaway: 'utilidades',
+  'py-giveaway': 'utilidades',
+  sorteios: 'utilidades',
+  'py-sorteios': 'utilidades',
+  fechar: 'utilidades',
+  'py-fechar': 'utilidades',
+  close: 'utilidades',
+  'py-close': 'utilidades',
+  closeticket: 'utilidades',
+  fecharticket: 'utilidades',
+  'ticket-close': 'utilidades',
 };
 
 let _loadedCommands = null;

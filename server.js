@@ -432,8 +432,6 @@ const SLOT_METADATA = {
   daily_bonus: { title: 'Bônus Diário & Recompensa Web', fallback: '🎁', category: 'economy', themeKey: 'dailyBonus' },
   weekend_bonus: { title: 'Bônus de Fim de Semana (2X)', fallback: '🔥', category: 'economy', themeKey: 'weekendBonus' },
   work_career: { title: 'Trabalho & Expedientes', fallback: '💼', category: 'economy', themeKey: 'economyCareers' },
-  shop_chest: { title: 'Baús & Lojinha da Pyxie', fallback: '📦', category: 'economy', themeKey: null },
-  shop_gem: { title: 'Joias & Gemas Preciosas', fallback: '💎', category: 'economy', themeKey: null },
 
   // 🔮 Místico & Tarot
   tarot_card: { title: 'Carta de Tarot (Místico)', fallback: '🔮', category: 'tarot', themeKey: 'tarot' },

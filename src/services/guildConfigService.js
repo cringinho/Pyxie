@@ -154,6 +154,43 @@ function getAllTarotGuildConfigs() {
   return results;
 }
 
+// =========================================================================
+// Helpers Específicos para Tickets Multi-Tenant
+// =========================================================================
+
+function getTicketConfig(guildId) {
+  const cfg = getGuildConfig(guildId);
+  return {
+    ticketPanelChannelId: cfg.ticketPanelChannelId || null,
+    ticketCategoryId: cfg.ticketCategoryId || null,
+  };
+}
+
+function setTicketConfig(guildId, updates = {}) {
+  const current = getTicketConfig(guildId);
+  const updated = {
+    ticketPanelChannelId: updates.ticketPanelChannelId !== undefined ? normalizeChannelValue(updates.ticketPanelChannelId) : current.ticketPanelChannelId,
+    ticketCategoryId: updates.ticketCategoryId !== undefined ? normalizeChannelValue(updates.ticketCategoryId) : current.ticketCategoryId,
+  };
+  return updateGuildConfig(guildId, updated);
+}
+
+function getTicketPanelChannelId(guildId) {
+  return getTicketConfig(guildId).ticketPanelChannelId;
+}
+
+function setTicketPanelChannelId(guildId, channelId) {
+  return setTicketConfig(guildId, { ticketPanelChannelId: channelId });
+}
+
+function getTicketCategoryId(guildId) {
+  return getTicketConfig(guildId).ticketCategoryId;
+}
+
+function setTicketCategoryId(guildId, categoryId) {
+  return setTicketConfig(guildId, { ticketCategoryId: categoryId });
+}
+
 module.exports = {
   GUILD_CONFIGS_FILE,
   readAllConfigs,
@@ -167,5 +204,11 @@ module.exports = {
   getWelcomeConfig,
   setWelcomeConfig,
   getAllTarotGuildConfigs,
+  getTicketConfig,
+  setTicketConfig,
+  getTicketPanelChannelId,
+  setTicketPanelChannelId,
+  getTicketCategoryId,
+  setTicketCategoryId,
 };
 

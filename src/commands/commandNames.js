@@ -40,4 +40,6 @@ module.exports = {
   MATH: 'py-math',
   TICTACTOE: 'py-tictactoe',
   MINESWEEPER: 'py-minesweeper',
+  GIVEAWAY: 'py-sorteio',
+  CLOSE_TICKET: 'py-fechar',
 };

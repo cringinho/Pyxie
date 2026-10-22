@@ -36,6 +36,8 @@ const commands = [
   require('./matematica'),
   require('./jogodavelha'),
   require('./campominado'),
+  require('./fecharTicket'),
+  require('./sorteio'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');
@@ -51,6 +53,8 @@ const GUILD_ONLY_COMMANDS = new Set([
   'seteco', 'py-seteco', 'setareconomia', 'py-setareconomia',
   'reseteco', 'py-reseteco', 'resetareconomia', 'py-resetareconomia',
   'ecoconfig', 'py-ecoconfig', 'configeconomia', 'py-configeconomia',
+  'fechar', 'py-fechar', 'closeticket', 'fecharticket', 'ticket-close', 'py-close',
+  'sorteio', 'py-sorteio', 'giveaway', 'py-giveaway', 'sorteios', 'py-sorteios',
 ]);
 
 // Suporte nativo a User Apps (Discord Apps v2)

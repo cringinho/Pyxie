@@ -7,6 +7,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
   RoleSelectMenuBuilder,
+  ChannelSelectMenuBuilder,
 } = require('discord.js');
 const { SET } = require('./commandNames');
 const {
@@ -15,6 +16,7 @@ const {
   setVentChannelId,
   setTarotChannelId,
   getWelcomeConfig,
+  setTicketPanelChannelId,
 } = require('../services/guildConfigService');
 const { scheduleStickyReposition } = require('../services/ventService');
 const { t } = require('../utils/i18n');
@@ -114,16 +116,56 @@ function buildWelcomePreviewEmbed(member, welcomeConfig) {
   return embed;
 }
 
+/**
+ * Constrói o Embed e Componentes para Seleção de Categoria dos Tickets
+ */
+function buildCategorySelectionPayload(channel) {
+  const embed = new EmbedBuilder()
+    .setColor('#8B5CF6')
+    .setTitle('📁  ✦  Selecione a Categoria dos Tickets')
+    .setDescription(
+      `O canal do painel de atendimento foi definido para <#${channel.id}>!\n\n` +
+
+      '### ⚙️ Próximo Passo: Categoria das Salas\n\n' +
+
+      'Precisamos definir em qual **Categoria do Discord** os novos canais de atendimento serão criados:\n\n' +
+
+      '• Selecione uma categoria existente no menu abaixo;\n\n' +
+
+      '• Ou clique em **[ ➕ Crie pra mim ]** para criarmos automaticamente a categoria `📩・ATENDIMENTO` no topo do servidor com permissões blindadas.\n\n' +
+
+      '-# 🔒 Os novos chamados serão criados de forma 100% privada e visíveis apenas ao usuário e à Staff.'
+    )
+    .setFooter({ text: 'Pyxie • Sistema Oficial de Tickets' })
+    .setTimestamp();
+
+  const selectRow = new ActionRowBuilder().addComponents(
+    new ChannelSelectMenuBuilder()
+      .setCustomId('tkt:setup:select_cat')
+      .setPlaceholder('Selecione uma categoria existente no servidor...')
+      .setChannelTypes(ChannelType.GuildCategory)
+  );
+
+  const buttonRow = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId('tkt:setup:create_cat')
+      .setLabel('➕ Crie pra mim')
+      .setStyle(ButtonStyle.Success)
+  );
+
+  return { embeds: [embed], components: [selectRow, buttonRow] };
+}
+
 module.exports = {
   name: SET,
   aliases: ['set', 'py-set', 'configurar', 'py-configurar'],
   data: new SlashCommandBuilder()
     .setName(SET)
-    .setDescription('Configures channels and server features (Welcome, Vent, Tarot).')
+    .setDescription('Configures channels and server features (Welcome, Vent, Tarot, Tickets).')
     .setDescriptionLocalizations({
       'pt-BR': 'Configura canais e recursos avançados da Pyxie no servidor.',
     })
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     .addSubcommand((sub) =>
       sub
         .setName('boas-vindas')
@@ -177,10 +219,32 @@ module.exports = {
             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
             .setRequired(true)
         )
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName('tickets')
+        .setNameLocalizations({ 'pt-BR': 'tickets', 'en-US': 'tickets', 'en-GB': 'tickets' })
+        .setDescription('Configures the ticket panel channel and category.')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Configura o canal do painel de tickets e categoria de atendimento.',
+        })
+        .addChannelOption((option) =>
+          option
+            .setName('channel')
+            .setNameLocalizations({ 'pt-BR': 'canal', 'en-US': 'channel', 'en-GB': 'channel' })
+            .setDescription('Text channel for the ticket panel.')
+            .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto onde o painel de tickets será postado.' })
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+            .setRequired(true)
+        )
     ),
 
   async executePrefix({ message, args, prefix }) {
-    if (!message.member?.permissions?.has(PermissionFlagsBits.ManageGuild)) {
+    if (
+      !message.member?.permissions?.has(PermissionFlagsBits.ManageChannels) &&
+      !message.member?.permissions?.has(PermissionFlagsBits.ManageGuild) &&
+      !message.member?.permissions?.has(PermissionFlagsBits.Administrator)
+    ) {
       await message.reply(t('admin.noPermission', message));
       return;
     }
@@ -188,7 +252,7 @@ module.exports = {
     const sub = (args[0] || '').toLowerCase();
 
     // Se executado sem argumentos, lista as opções
-    if (!sub || !['boas-vindas', 'boasvindas', 'welcome', 'desabafos', 'desabafo', 'vent', 'tarot'].includes(sub)) {
+    if (!sub || !['boas-vindas', 'boasvindas', 'welcome', 'desabafos', 'desabafo', 'vent', 'tarot', 'tickets', 'ticket', 'atendimento'].includes(sub)) {
       const helpEmbed = new EmbedBuilder()
         .setColor('#8b5cf6')
         .setTitle('⚙️  ✦  Central de Configuração `py!set`')
@@ -196,7 +260,8 @@ module.exports = {
           `Utilize o comando \`${prefix || 'py!'}set\` para ativar os recursos oficiais da Pyxie no seu servidor:\n\n` +
           `• \`${prefix || 'py!'}set boas-vindas <#canal>\` — Configura o sistema de Boas-Vindas customizável e Auto-Role.\n\n` +
           `• \`${prefix || 'py!'}set desabafos <#canal>\` — Configura o canal de Desabafos com mensagem Sticky, Autoajuda na DM e Desabafo Anônimo.\n\n` +
-          `• \`${prefix || 'py!'}set tarot <#canal>\` — Configura o canal para postagem diária automática do Tarot às 00:00 BRT.`
+          `• \`${prefix || 'py!'}set tarot <#canal>\` — Configura o canal para postagem diária automática do Tarot às 00:00 BRT.\n\n` +
+          `• \`${prefix || 'py!'}set tickets <#canal>\` — Configura o canal do painel de Tickets e categoria de atendimento.`
         )
         .setFooter({ text: 'Pyxie • Configurações Globais do Servidor' });
 
@@ -236,6 +301,14 @@ module.exports = {
       });
       return;
     }
+
+    // 4. Subcomando Tickets
+    if (['tickets', 'ticket', 'atendimento'].includes(sub)) {
+      setTicketPanelChannelId(message.guildId, channel.id);
+      const catPayload = buildCategorySelectionPayload(channel);
+      await message.reply(catPayload);
+      return;
+    }
   },
 
   async executeSlash({ interaction }) {
@@ -254,6 +327,7 @@ module.exports = {
           `Escolha uma das opções abaixo para configurar seu servidor:\n\n` +
           `• \`/py-set boas-vindas canal:#canal\` — Boas-Vindas customizáveis e Auto-Role.\n\n` +
           `• \`/py-set desabafos canal:#canal\` — Canal de Desabafos, Sticky e Anônimo.\n\n` +
+          `• \`/py-set tickets canal:#canal\` — Sistema de Tickets e Atendimento.\n\n` +
           `• \`/py-set tarot canal:#canal\` — Postagem diária do Tarot às 00:00 BRT.`
         );
       await interaction.reply({ embeds: [helpEmbed], ephemeral: true });
@@ -292,6 +366,14 @@ module.exports = {
         content: `✅ Canal do Tarot Diário configurado para <#${channel.id}>! As tiragens diárias serão anunciadas aqui à 00:00 BRT.`,
         ephemeral: true,
       });
+      return;
+    }
+
+    // 4. Subcomando Tickets
+    if (['tickets', 'ticket', 'atendimento'].includes(sub)) {
+      setTicketPanelChannelId(interaction.guildId, channel.id);
+      const catPayload = buildCategorySelectionPayload(channel);
+      await interaction.reply({ ...catPayload, ephemeral: true });
       return;
     }
   },

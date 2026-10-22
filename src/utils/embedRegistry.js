@@ -554,25 +554,6 @@ registerEmbed({
 });
 
 registerEmbed({
-  id: 'shop_catalog',
-  name: '🛍️ Lojinha Arcana & Baús',
-  category: 'economy',
-  description: 'Embed do comando /py-loja para compra de cosméticos, baús e poções.',
-  defaultColor: '#38bdf8',
-  previewTitle: '{header} Vitrine da Lojinha da Pyxie',
-  previewDesc: 'Itens arcanos, baús misteriosos e poções especiais à venda!',
-  previewFields: [
-    { name: '📦 Baú Cósmico Lendário', value: '500 {coins}', inline: true },
-    { name: '💎 Amuleto de Proteção', value: '800 {coins} {gem}', inline: true },
-  ],
-  slots: [
-    { key: 'header', label: 'Ícone da Loja/Baú', fallback: '📦', defaultEmojiKey: 'shop_chest', description: 'Ícone no título da loja' },
-    { key: 'gem', label: 'Joias & Cosméticos', fallback: '💎', defaultEmojiKey: 'shop_gem', description: 'Ícone de itens raros' },
-    { key: 'coins', label: 'Moedas de Compra', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Custo em moedas' },
-  ],
-});
-
-registerEmbed({
   id: 'museum_art',
   name: '🏛️ Museu Comunitário',
   category: 'community',
@@ -748,6 +729,160 @@ registerEmbed({
   ],
   slots: [
     { key: 'header', label: 'Grimório de Ajuda', fallback: '📖', defaultEmojiKey: 'helpCommands', description: 'Ícone no topo da ajuda' },
+  ],
+});
+
+
+registerEmbed({
+  id: 'tickets_main_panel',
+  name: '📩 Painel Geral de Atendimento (Tickets)',
+  category: 'system',
+  description: 'Embed principal com botões para abertura de chamados e denúncias.',
+  defaultColor: '#8b5cf6',
+  previewTitle: '{header} Central de Atendimento ao Membro',
+  previewDesc: 'Selecione abaixo a categoria adequada para falar diretamente com a moderação.',
+  previewFields: [
+    { name: '🆘 Suporte Geral', value: 'Dúvidas, bugs ou auxílio técnico.', inline: true },
+    { name: '🚨 Denúncias', value: 'Canal seguro e confidencial para reports.', inline: true },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone de Atendimento', fallback: '📩', defaultEmojiKey: 'helpCommands', description: 'Ícone no título do painel' },
+  ],
+});
+
+registerEmbed({
+  id: 'tickets_art_removal_pending',
+  name: '🖼️ Solicitação de Remoção de Conteúdo',
+  category: 'community',
+  description: 'Embed enviado no canal de aprovações para análise de remoção de artes do museu.',
+  defaultColor: '#f59e0b',
+  previewTitle: '{header} Pedido de Exclusão de Obra do Museu',
+  previewDesc: 'Um artista solicitou a remoção formal de suas obras da galeria virtual.',
+  previewFields: [
+    { name: '👤 Solicitante', value: '@Artista (ID: 123456789)', inline: true },
+    { name: '🔗 Link da Galeria', value: '/museu?user=123456789', inline: true },
+    { name: '📝 Motivo / Descrição', value: 'Desejo retirar meus desenhos postados em 2025.', inline: false },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone de Remoção', fallback: '🖼️', defaultEmojiKey: 'museum', description: 'Ícone do cabeçalho da pendência' },
+  ],
+});
+
+registerEmbed({
+  id: 'tickets_room_welcome',
+  name: '🔒 Sala Privada de Ticket (Recepção)',
+  category: 'system',
+  description: 'Embed fixado no topo da sala criada para orientar o membro e a staff.',
+  defaultColor: '#8b5cf6',
+  previewTitle: '{header} Atendimento Iniciado • Suporte Pyxie',
+  previewDesc: 'Olá! Descreva o motivo do seu contato com detalhes e prints para agilizar o suporte.',
+  previewFields: [
+    { name: '⏱️ Tempo de Resposta', value: 'Nossa equipe responderá em breve.', inline: true },
+    { name: '🔒 Fechamento', value: 'Apenas a Staff pode encerrar o chamado.', inline: true },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone da Sala', fallback: '📩', defaultEmojiKey: 'helpCommands', description: 'Ícone de boas-vindas da sala' },
+  ],
+});
+
+registerEmbed({
+  id: 'giveaway_admin_hub',
+  name: '🎉 Central Administrativa de Sorteios',
+  category: 'system',
+  description: 'Hub do comando /py-sorteio para criação e gerenciamento de sorteios.',
+  defaultColor: '#ec4899',
+  previewTitle: '{header} Central de Sorteios Pyxie',
+  previewDesc: 'Painel de controle para criação guiada, agendamento e cancelamento de sorteios.',
+  previewFields: [
+    { name: '➕ Criar Sorteio', value: 'Wizard interativo com regras de cargos e bônus.', inline: true },
+    { name: '🗑️ Cancelar Sorteio', value: 'Encerramento antecipado de sorteios ativos.', inline: true },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone do Sorteio', fallback: '🎉', defaultEmojiKey: 'tada', description: 'Ícone no título da central' },
+  ],
+});
+
+registerEmbed({
+  id: 'giveaway_public_card',
+  name: '🎁 Card Público de Sorteio',
+  category: 'community',
+  description: 'Card interativo publicado no canal de texto com botão de participação e regras.',
+  defaultColor: '#ec4899',
+  previewTitle: '{header} Sorteio Oficial da Comunidade',
+  previewDesc: 'Clique no botão abaixo para garantir sua participação e concorrer!',
+  previewFields: [
+    { name: '🏆 Prêmio(s)', value: 'Discord Nitro Mensal 💖', inline: true },
+    { name: '👥 Ganhadores', value: '1 Vencedor', inline: true },
+    { name: '⏳ Encerramento', value: 'Hoje às 20:00 (em 2 horas)', inline: false },
+  ],
+  slots: [
+    { key: 'header', label: 'Emoji do Card', fallback: '🎉', defaultEmojiKey: 'tada', description: 'Emoji de destaque no título do sorteio' },
+  ],
+});
+
+registerEmbed({
+  id: 'venting_sticky_panel',
+  name: '💌 Painel Sticky de Desabafos',
+  category: 'community',
+  description: 'Embed fixado automaticamente no canal de desabafos com botão de envio anônimo.',
+  defaultColor: '#8b5cf6',
+  previewTitle: '{header} Espaço de Acolhimento & Desabafos',
+  previewDesc: 'Um ambiente seguro para expressar sentimentos, pedir conselhos e desabafar sem julgamentos.',
+  previewFields: [
+    { name: '🕊️ Desabafo Anônimo', value: 'Sua identidade é 100% protegida e preservada.', inline: true },
+    { name: '🤝 Respeito & Apoio', value: 'Comentários com carinho e acolhimento mútuo.', inline: true },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone de Acolhimento', fallback: '💌', defaultEmojiKey: 'HEART', description: 'Ícone no cabeçalho do desabafo' },
+  ],
+});
+
+registerEmbed({
+  id: 'venting_autohelp_card',
+  name: '🌷 Cartão de Autoajuda & Apoio 24h',
+  category: 'community',
+  description: 'Embed disparado com canais de apoio emocional (CVV 188) em mensagens sensíveis.',
+  defaultColor: '#f43f5e',
+  previewTitle: '{header} Você não está sozinho(a) 💖',
+  previewDesc: 'Se estiver passando por um momento difícil, lembre-se de que existem pessoas prontas para te ouvir.',
+  previewFields: [
+    { name: '📞 CVV (Centro de Valorização da Vida)', value: 'Ligue **188** (Ligação Gratuita 24h) ou acesse [cvv.org.br](https://www.cvv.org.br).', inline: false },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone de Apoio', fallback: '🌷', defaultEmojiKey: 'HEART', description: 'Ícone de acolhimento emocional' },
+  ],
+});
+
+registerEmbed({
+  id: 'welcome_panel',
+  name: '👋 Painel de Boas-Vindas',
+  category: 'system',
+  description: 'Embed de recepção enviado no canal de boas-vindas aos novos membros.',
+  defaultColor: '#8b5cf6',
+  previewTitle: '{header} Bem-vindo(a) ao Servidor!',
+  previewDesc: 'Ficamos muito felizes em ter você aqui conosco! Sinta-se em casa.',
+  previewFields: [
+    { name: '📜 Regras', value: 'Leia as diretrizes no canal de regras.', inline: true },
+    { name: '💬 Bate-papo', value: 'Comece a conversar no chat geral!', inline: true },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone de Recepção', fallback: '👋', defaultEmojiKey: 'SPARKLES', description: 'Ícone no título de boas-vindas' },
+  ],
+});
+
+registerEmbed({
+  id: 'welcome_checkin_card',
+  name: '✨ Cartão de Check-in de Boas-Vindas',
+  category: 'system',
+  description: 'Embed interativo com botão de check-in para atribuição automática de cargo (Auto-Role).',
+  defaultColor: '#10b981',
+  previewTitle: '{header} Confirmação de Entrada • Auto-Role',
+  previewDesc: 'Clique no botão abaixo para confirmar sua leitura e liberar acesso aos canais.',
+  previewFields: [
+    { name: '🛡️ Verificação Rápida', value: 'Clique em Check-in para receber seu cargo.', inline: false },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone de Verificação', fallback: '✨', defaultEmojiKey: 'status_success', description: 'Ícone de validação de entrada' },
   ],
 });
 
