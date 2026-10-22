@@ -7,7 +7,7 @@ const {
 module.exports = {
   id: 'giveaways',
   name: 'Sorteios & Recompensas',
-  description: 'Sistema completo de sorteios estilo Loritta com agendamento, restrições e apuração Fisher-Yates.',
+  description: 'Sistema completo de sorteios e mimos para a comunidade com agendamento, cargos e roleta da sorte.',
   defaultEnabled: true,
   guildScope: null, // global
   handleInteraction: handleGiveawayInteraction,

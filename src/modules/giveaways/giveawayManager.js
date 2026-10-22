@@ -177,11 +177,11 @@ function buildHubPayload() {
     .setColor(EMBED_PINK)
     .setTitle('🎉  ✦  Central de Sorteios Pyxie')
     .setDescription(
-      `### 🎁 Gerencie seus Sorteios com Facilidade\n\n` +
-      `Crie sorteios modernos com regras avançadas de cargos, multiplicadores de chances e apuração justa via Fisher-Yates.\n\n` +
-      `• **Criar Sorteio:** Inicia o assistente interativo passo a passo.\n\n` +
-      `• **Cancelar Sorteio:** Encerre sorteios ativos ou agendados antecipadamente.\n\n` +
-      `-# 🌷 Pyxie Community Engine • Feito para comunidades ativas`
+      `### 🎁 Mimos e Presentes pro Servidor!\n\n` +
+      `Crie sorteios fofos, escolha quem pode participar e deixe a sorte girar a roleta mágica! 🍀✨\n\n` +
+      `• **Criar Sorteio:** Inicie o passo a passo pra montar um sorteio novinho.\n\n` +
+      `• **Cancelar Sorteio:** Errou o prêmio ou mudou de ideia? Cancele por aqui.\n\n` +
+      `-# 🌷 Pyxie • Espalhando mimos e presentinhos pelo servidor`
     );
 
   const row = new ActionRowBuilder().addComponents(
@@ -320,7 +320,7 @@ function buildPublicCardPayload(giveaway) {
       `• **Criado por:** <@${giveaway.createdBy}>\n\n` +
       `• **Encerramento:** <t:${Math.floor(giveaway.endsAt / 1000)}:f> (<t:${Math.floor(giveaway.endsAt / 1000)}:R>)\n\n` +
       formatRestrictionsSummary(giveaway.restrictions) +
-      `-# 🛡️ Sorteio verificado pela Pyxie • ID: \`${giveaway.id}\``
+      `-# 🍀 Boa sorte a todos os participantes! • ID: \`${giveaway.id}\``
     );
   } else if (isFinished) {
     embed.setColor(EMBED_SUCCESS);
@@ -337,20 +337,20 @@ function buildPublicCardPayload(giveaway) {
     }
 
     embed.setDescription(
-      `### 🎁 Resultado Oficial da Apuração\n\n` +
+      `### 🎁 Resultado do Sorteio\n\n` +
       `${winnersText}\n\n` +
       `• **Total de Entradas:** \`${Object.keys(giveaway.participants || {}).length}\` participantes\n\n` +
       `• **Encerrado em:** <t:${Math.floor((giveaway.endedAt || Date.now()) / 1000)}:f>\n\n` +
-      `-# 🌷 Parabéns aos vencedores! Pyxie Community Engine`
+      `-# 🌷 Parabéns aos sortudos da vez! A sorte brilhou pra vocês ✨`
     );
   } else if (isCancelled) {
     embed.setColor(EMBED_MUTED);
     embed.setTitle(`🚫  ✦  Sorteio Cancelado: ${giveaway.title}`);
     embed.setDescription(
-      `### 🛑 Este sorteio foi cancelado pela administração do servidor.\n\n` +
+      `### 🛑 Este sorteio foi cancelado pela moderação.\n\n` +
       `• **ID do Sorteio:** \`${giveaway.id}\`\n\n` +
       `• **Cancelado em:** <t:${Math.floor(Date.now() / 1000)}:f>\n\n` +
-      `-# 🌷 Pyxie Community Engine`
+      `-# 🌷 Pyxie • Sorteio cancelado`
     );
   } else {
     // Scheduled
