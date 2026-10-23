@@ -200,7 +200,10 @@ function registerSlashCommands() {
   });
 }
 
-const { processTopggVote, verifyWebhookAuth } = require('./src/services/topgg');
+const { processTopggVote, verifyWebhookAuth, getVoteUrl } = require('./src/services/topgg');
+const growthFunnel = require('./src/services/growthFunnel');
+const { buildGuildInviteUrl, buildUserInstallUrl, resolvePreset } = require('./src/services/inviteLinks');
+const { getBotListStatus } = require('./src/services/botListStats');
 const { verifyAndClaimBonus } = require('./src/services/bonusTimer');
 const {
   OWNER_SNOWFLAKE,
@@ -462,9 +465,17 @@ const SLOT_METADATA = {
 };
 
 // 0. Redirecionamentos amigáveis oficiais da Pyxie
+// /invite?ref=topgg&perms=basic|full|admin → convite com permissões mínimas e origem contabilizada no funil
 app.get('/invite', (req, res) => {
-  const clientId = process.env.DISCORD_CLIENT_ID || '1543650200718155897';
-  res.redirect(`https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot%20applications.commands`);
+  const preset = resolvePreset(req.query.perms);
+  try { growthFunnel.recordInviteClick(req.query.ref, 'guild', { visitorKey: req.ip }); } catch (_) {}
+  res.redirect(buildGuildInviteUrl(preset));
+});
+
+// /install?ref=site → instala a Pyxie na conta do usuário (User App)
+app.get('/install', (req, res) => {
+  try { growthFunnel.recordInviteClick(req.query.ref, 'user', { visitorKey: req.ip }); } catch (_) {}
+  res.redirect(buildUserInstallUrl());
 });
 
 app.get('/discord', (req, res) => {
@@ -472,7 +483,7 @@ app.get('/discord', (req, res) => {
 });
 
 app.get('/vote', (req, res) => {
-  res.redirect('https://top.gg/bot/1543650200718155897/vote');
+  res.redirect(getVoteUrl());
 });
 
 app.get('/', serveLocalizedPage('index', publicDir));

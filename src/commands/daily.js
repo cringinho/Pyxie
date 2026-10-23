@@ -8,8 +8,10 @@ const {
 const { claimDaily } = require('../services/economy');
 const { createBonusSession } = require('../services/bonusTimer');
 const { t, getLanguage, formatCoins, formatRemaining } = require('../utils/i18n');
-const { DAILY } = require('./commandNames');
+const { DAILY, VOTE } = require('./commandNames');
+const { getUserVoteStatus, getVoteUrl, VOTE_BEANS } = require('../services/topgg');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
+const { getEmoji } = require('../utils/appEmojis');
 
 function getDailyCompliment(streak, source = null) {
   if (streak <= 2) return t('daily.complimentTier1', source);
@@ -69,6 +71,9 @@ function buildDailyView(userId, guildOrSource = null, clientId = null) {
     t('daily.streakLine', guildOrSource, { streak: result.streak, compliment }),
     t('daily.balance', guildOrSource, { balance: formatCoins(result.balance, guildOrSource) }),
     ...(result.magicBeanBonus ? [t('daily.magicBean', guildOrSource, { total: result.magicBeans })] : []),
+    ...(getUserVoteStatus(userId).canVote
+      ? ['', t('vote.dailyReminder', guildOrSource, { beans: VOTE_BEANS, voteCmd: `[\`/${VOTE || 'py-vote'}\`](${getVoteUrl(clientId)})` }).replace('🌱', getEmoji('MAGIC_BEAN') || '🌱')]
+      : []),
   ].join('\n');
 
   const embed = new EmbedBuilder()

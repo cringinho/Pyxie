@@ -1,190 +1,200 @@
 [
   {
+    "options": [],
     "name": "py-ping",
-    "description": "Check bot WebSocket latency and API responsiveness."
+    "description": "Check bot WebSocket latency and API responsiveness.",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-status",
-    "description": "View system and server status."
+    "description": "View system and server status.",
+    "type": 1
   },
   {
-    "name": "py-help",
-    "description": "Interactive help center categorized by modules and utilities.",
     "options": [
       {
         "type": 3,
         "choices": [
           {
-            "name": "📖 Visão Geral",
+            "name": "📖 Overview",
             "value": "todos"
           },
           {
-            "name": "🪙 Economia & Carreiras",
+            "name": "🪙 Economy & Careers",
             "value": "economia"
           },
           {
-            "name": "🎒 Loja & Mochila",
-            "value": "loja"
-          },
-          {
-            "name": "🔮 Tarot Místico",
+            "name": "🔮 Mystic Tarot",
             "value": "tarot"
           },
           {
-            "name": "💑 Social & Casamentos",
+            "name": "💑 Social & Marriages",
             "value": "social"
           },
           {
-            "name": "⚙️ Utilidades & Sistema",
+            "name": "⚙️ Utilities & System",
             "value": "utilidades"
           }
         ],
         "name": "module",
-        "name_localizations": {
-          "en-US": "module",
-          "en-GB": "module",
-          "pt-BR": "modulo"
-        },
         "description": "Module to inspect directly",
-        "description_localizations": {
-          "pt-BR": "Módulo que deseja consultar diretamente"
-        },
         "required": false
       }
-    ]
+    ],
+    "name": "py-help",
+    "description": "Interactive help center categorized by modules and utilities.",
+    "type": 1
   },
   {
-    "name": "py-welcome",
-    "description": "Sets the channel where welcome messages are sent.",
     "options": [
       {
-        "channel_types": [
-          0
-        ],
-        "name": "channel",
-        "name_localizations": {
-          "en-US": "channel",
-          "en-GB": "channel",
-          "pt-BR": "canal"
-        },
-        "description": "Text channel for welcome messages.",
-        "description_localizations": {
-          "pt-BR": "Canal de texto para envio de boas-vindas."
-        },
-        "required": true,
-        "type": 7
+        "type": 1,
+        "name": "welcome",
+        "description": "Configures the customizable welcome channel and auto-role.",
+        "options": [
+          {
+            "channel_types": [
+              0,
+              5
+            ],
+            "name": "channel",
+            "description": "Text channel for welcome messages.",
+            "required": true,
+            "type": 7
+          }
+        ]
+      },
+      {
+        "type": 1,
+        "name": "vent",
+        "description": "Configures the vent channel with sticky messages and anonymous venting.",
+        "options": [
+          {
+            "channel_types": [
+              0,
+              5
+            ],
+            "name": "channel",
+            "description": "Text channel for vents and mutual support.",
+            "required": true,
+            "type": 7
+          }
+        ]
+      },
+      {
+        "type": 1,
+        "name": "tarot",
+        "description": "Configures the channel for daily automatic tarot announcements.",
+        "options": [
+          {
+            "channel_types": [
+              0,
+              5
+            ],
+            "name": "channel",
+            "description": "Text channel for daily tarot announcements.",
+            "required": true,
+            "type": 7
+          }
+        ]
+      },
+      {
+        "type": 1,
+        "name": "tickets",
+        "description": "Configures the ticket panel channel and category.",
+        "options": [
+          {
+            "channel_types": [
+              0,
+              5
+            ],
+            "name": "channel",
+            "description": "Text channel for the ticket panel.",
+            "required": true,
+            "type": 7
+          }
+        ]
+      },
+      {
+        "type": 1,
+        "name": "games",
+        "description": "Restricts multiplayer games (quiz duels) to a single channel.",
+        "options": [
+          {
+            "channel_types": [
+              0
+            ],
+            "name": "channel",
+            "description": "Text channel for games and duels.",
+            "required": true,
+            "type": 7
+          }
+        ]
       }
-    ]
+    ],
+    "name": "py-set",
+    "description": "Configures channels and server features (Welcome, Vent, Tarot, Tickets, Games).",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-sixseven",
-    "description": "Sends the sixseven image in the chat."
+    "description": "Sends the sixseven image in the chat.",
+    "type": 1
   },
   {
-    "name": "py-ship",
-    "description": "Calculate love affinity between two users or draw a random couple.",
     "options": [
       {
         "name": "person1",
-        "name_localizations": {
-          "en-US": "person1",
-          "en-GB": "person1",
-          "pt-BR": "pessoa1"
-        },
         "description": "First person of the couple.",
-        "description_localizations": {
-          "pt-BR": "Primeira pessoa do casal."
-        },
         "required": false,
         "type": 6
       },
       {
         "name": "person2",
-        "name_localizations": {
-          "en-US": "person2",
-          "en-GB": "person2",
-          "pt-BR": "pessoa2"
-        },
         "description": "Second person of the couple.",
-        "description_localizations": {
-          "pt-BR": "Segunda pessoa do casal."
-        },
         "required": false,
         "type": 6
       }
-    ]
+    ],
+    "name": "py-ship",
+    "description": "Calculate love affinity between two users or draw a random couple.",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-daily",
-    "description": "Claim daily coins and maintain your streak."
+    "description": "Claim daily coins and maintain your streak.",
+    "type": 1
   },
   {
+    "options": [
+      {
+        "name": "user",
+        "description": "User to check wallet balance",
+        "required": false,
+        "type": 6
+      }
+    ],
     "name": "py-wallet",
     "description": "View wallet balance of coins and magic beans.",
+    "type": 1
+  },
+  {
     "options": [
       {
         "name": "user",
-        "name_localizations": {
-          "en-US": "user",
-          "en-GB": "user",
-          "pt-BR": "usuario"
-        },
-        "description": "User to check wallet balance",
-        "description_localizations": {
-          "pt-BR": "Usuário para consultar a carteira"
-        },
+        "description": "User to inspect profile",
         "required": false,
         "type": 6
       }
-    ]
-  },
-  {
+    ],
     "name": "py-profile",
     "description": "Display your adventurer profile with custom titles, themes, and stats.",
-    "options": [
-      {
-        "name": "user",
-        "name_localizations": {
-          "en-US": "user",
-          "en-GB": "user",
-          "pt-BR": "usuario"
-        },
-        "description": "User to inspect profile",
-        "description_localizations": {
-          "pt-BR": "Usuário para consultar o perfil"
-        },
-        "required": false,
-        "type": 6
-      }
-    ]
+    "type": 1
   },
   {
-    "name": "py-marriage",
-    "description": "Propose marriage for 1000 coins.",
-    "options": [
-      {
-        "name": "user",
-        "name_localizations": {
-          "en-US": "user",
-          "en-GB": "user",
-          "pt-BR": "usuario"
-        },
-        "description": "User to propose to",
-        "description_localizations": {
-          "pt-BR": "Usuário para pedir em casamento"
-        },
-        "required": true,
-        "type": 6
-      }
-    ]
-  },
-  {
-    "name": "py-divorce",
-    "description": "End marriage for 500 coins."
-  },
-  {
-    "name": "py-rank",
-    "description": "Display global leaderboards for Coins, Magic Beans, and Daily Streaks.",
     "options": [
       {
         "type": 3,
@@ -203,116 +213,182 @@
           }
         ],
         "name": "category",
-        "name_localizations": {
-          "en-US": "category",
-          "en-GB": "category",
-          "pt-BR": "categoria"
-        },
         "description": "Ranking category to display.",
-        "description_localizations": {
-          "pt-BR": "Categoria do ranking para exibir."
-        },
         "required": false
       }
-    ]
+    ],
+    "name": "py-rank",
+    "description": "Display global leaderboards for Coins, Magic Beans, and Daily Streaks.",
+    "type": 1
   },
   {
-    "name": "py-profession",
-    "description": "Choose or change your profession.",
     "options": [
       {
         "type": 3,
         "choices": [
           {
-            "name": "Agricultor",
+            "name": "Farmer",
             "value": "agricultor"
           },
           {
-            "name": "Cozinheiro",
+            "name": "Chef",
             "value": "cozinheiro"
           },
           {
-            "name": "Professor",
+            "name": "Teacher",
             "value": "professor"
           },
           {
-            "name": "Programador",
+            "name": "Programmer",
             "value": "programador"
           },
           {
-            "name": "Medico",
+            "name": "Doctor",
             "value": "medico"
           },
           {
-            "name": "Musico",
+            "name": "Musician",
             "value": "musico"
           },
           {
-            "name": "Fotografo",
+            "name": "Photographer",
             "value": "fotografo"
           },
           {
-            "name": "Mecanico",
+            "name": "Mechanic",
             "value": "mecanico"
           },
           {
-            "name": "Vendedor",
+            "name": "Salesperson",
             "value": "vendedor"
           },
           {
-            "name": "Artista",
+            "name": "Artist",
             "value": "artista"
           },
           {
-            "name": "Dublador",
+            "name": "Voice Actor",
             "value": "dublador"
           },
           {
-            "name": "Desenvolvedor de Jogos",
+            "name": "Game Developer",
             "value": "desenvolvedor_jogos"
           },
           {
-            "name": "Psicólogo",
+            "name": "Psychologist",
             "value": "psicologo"
           },
           {
-            "name": "Telemarketing",
+            "name": "Call Center Operator",
             "value": "telemarketing"
           },
           {
-            "name": "Animador de Festa",
+            "name": "Party Entertainer",
             "value": "animador_festa"
           },
           {
-            "name": "Advogada",
+            "name": "Attorney / Lawyer",
             "value": "advogada"
+          },
+          {
+            "name": "✨ Alchemist (1 Bean)",
+            "value": "alquimista"
+          },
+          {
+            "name": "✨ Mage / Wizard (1 Bean)",
+            "value": "mago"
+          },
+          {
+            "name": "✨ Blacksmith (1 Bean)",
+            "value": "ferreiro"
+          },
+          {
+            "name": "✨ King / Queen (2 Beans)",
+            "value": "rei_rainha"
+          },
+          {
+            "name": "✨ Beast Tamer (2 Beans)",
+            "value": "domador_feras"
+          },
+          {
+            "name": "✨ Vegetable Slayer (2 Beans)",
+            "value": "aniquilador_vegetais"
           }
         ],
         "name": "profession",
-        "name_localizations": {
-          "en-US": "profession",
-          "en-GB": "profession",
-          "pt-BR": "profissao"
-        },
         "description": "Desired profession to choose.",
-        "description_localizations": {
-          "pt-BR": "Profissão desejada para escolher."
-        },
-        "required": true
+        "required": false
       }
-    ]
+    ],
+    "name": "py-profession",
+    "description": "Choose or change your profession.",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-work",
-    "description": "Start a career shift minigame to earn coins and magic beans."
+    "description": "Start a career shift minigame to earn coins and magic beans.",
+    "type": 1
   },
   {
+    "options": [
+      {
+        "type": 1,
+        "name": "view",
+        "description": "View current server configuration and settings",
+        "options": []
+      },
+      {
+        "type": 1,
+        "name": "welcome",
+        "description": "Configure the welcome announcements channel",
+        "options": [
+          {
+            "channel_types": [
+              0
+            ],
+            "name": "channel",
+            "description": "Text channel for welcome messages",
+            "required": true,
+            "type": 7
+          }
+        ]
+      },
+      {
+        "type": 1,
+        "name": "language",
+        "description": "Set the primary bot language for this server",
+        "options": [
+          {
+            "type": 3,
+            "choices": [
+              {
+                "name": "Português (Brasil) 🇧🇷",
+                "value": "pt"
+              },
+              {
+                "name": "English (US/Global) 🇺🇸",
+                "value": "en"
+              }
+            ],
+            "name": "lang",
+            "description": "Choose between Portuguese or English",
+            "required": true
+          }
+        ]
+      }
+    ],
+    "name": "py-setup",
+    "description": "Configure Pyxie settings for your server (Zero-OAuth dashboard).",
+    "type": 1
+  },
+  {
+    "options": [],
     "name": "py-tarot",
-    "description": "Draw a daily Tarot card rendered with special artwork."
+    "description": "Draw a daily Tarot card rendered with special artwork.",
+    "type": 1
   },
   {
-    "name": "py-album",
-    "description": "Open and browse your 78-card Tarot Album and claim achievements.",
     "options": [
       {
         "max_value": 78,
@@ -320,64 +396,68 @@
         "type": 4,
         "name": "pagina",
         "description": "Card number to open directly in the album (1 to 78)",
-        "description_localizations": {
-          "pt-BR": "Número da carta para abrir diretamente no álbum (1 a 78)"
-        },
         "required": false
       }
-    ]
+    ],
+    "name": "py-album",
+    "description": "Open and browse your 78-card Tarot Album and claim achievements.",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-schedule",
-    "description": "Shows upcoming scheduled automations and tasks."
+    "description": "Shows upcoming scheduled automations and tasks.",
+    "type": 1
   },
   {
-    "name": "py-emojis",
-    "description": "Download and search this server's custom emojis.",
     "options": [
       {
         "type": 3,
+        "choices": [
+          {
+            "name": "Pyxie Embeds (Official)",
+            "value": "embeds"
+          },
+          {
+            "name": "Server Emojis",
+            "value": "server"
+          }
+        ],
+        "name": "scope",
+        "description": "Choose whether to view Pyxie embed themes or server emojis.",
+        "required": false
+      },
+      {
+        "type": 3,
         "name": "search",
-        "name_localizations": {
-          "en-US": "search",
-          "en-GB": "search",
-          "pt-BR": "busca"
-        },
-        "description": "Filter emojis by name.",
-        "description_localizations": {
-          "pt-BR": "Filtrar emojis pelo nome."
-        },
+        "description": "Filter emojis or embed themes by name.",
         "required": false
       }
-    ]
+    ],
+    "name": "py-emojis",
+    "description": "View official Pyxie embed theme emojis or manage server emojis.",
+    "type": 1
   },
   {
-    "name": "py-invite",
-    "description": "Get official invite links to add Pyxie to your Discord server.",
     "options": [
       {
         "name": "admin",
-        "name_localizations": {
-          "en-US": "admin",
-          "en-GB": "admin",
-          "pt-BR": "administrador"
-        },
         "description": "Show administrator permissions invite directly.",
-        "description_localizations": {
-          "pt-BR": "Exibe diretamente o convite com permissão de Administrador."
-        },
         "required": false,
         "type": 5
       }
-    ]
+    ],
+    "name": "py-invite",
+    "description": "Get official invite links to add Pyxie to your Discord server.",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-vote",
-    "description": "Support Pyxie by voting on Top.gg."
+    "description": "Support Pyxie by voting on Top.gg.",
+    "type": 1
   },
   {
-    "name": "py-language",
-    "description": "Configure the bot language for this server.",
     "options": [
       {
         "type": 3,
@@ -392,40 +472,25 @@
           }
         ],
         "name": "language",
-        "name_localizations": {
-          "en-US": "language",
-          "en-GB": "language",
-          "pt-BR": "idioma"
-        },
         "description": "Choose the server language.",
-        "description_localizations": {
-          "en-US": "Choose the server language.",
-          "en-GB": "Choose the server language.",
-          "pt-BR": "Escolha o idioma do servidor."
-        },
         "required": false
       }
-    ]
+    ],
+    "name": "py-language",
+    "description": "Configure the bot language for this server.",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-bonus",
-    "description": "Claim 75 free daily Coins via a 10s sponsored link."
+    "description": "Claim 75 free daily Coins via a 10s sponsored link.",
+    "type": 1
   },
   {
-    "name": "py-jokenpo",
-    "description": "Challenge another member to a Rock-Paper-Scissors match with optional coin bets.",
     "options": [
       {
         "name": "opponent",
-        "name_localizations": {
-          "en-US": "opponent",
-          "en-GB": "opponent",
-          "pt-BR": "oponente"
-        },
         "description": "The member you want to challenge.",
-        "description_localizations": {
-          "pt-BR": "O membro que você deseja desafiar."
-        },
         "required": true,
         "type": 6
       },
@@ -433,89 +498,53 @@
         "min_value": 10,
         "type": 4,
         "name": "bet",
-        "name_localizations": {
-          "en-US": "bet",
-          "en-GB": "bet",
-          "pt-BR": "aposta"
-        },
         "description": "Optional amount of coins to bet.",
-        "description_localizations": {
-          "pt-BR": "Quantidade opcional de moedas para apostar."
-        },
         "required": false
       }
-    ]
+    ],
+    "name": "py-jokenpo",
+    "description": "Challenge another member to a Rock-Paper-Scissors match with optional coin bets.",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-cookie",
-    "description": "Crack open your daily magical fortune cookie for wisdom, lucky numbers, and prizes."
+    "description": "Crack open your daily magical fortune cookie for wisdom, lucky numbers, and prizes.",
+    "type": 1
   },
   {
-    "name": "py-likely",
-    "description": "Start a \"Who is most likely to...\" voting poll with a target member.",
     "options": [
       {
         "name": "target",
-        "name_localizations": {
-          "en-US": "target",
-          "en-GB": "target",
-          "pt-BR": "alvo"
-        },
         "description": "Target member for the voting poll.",
-        "description_localizations": {
-          "pt-BR": "Membro ou alvo da votação."
-        },
         "required": true,
         "type": 6
       },
       {
         "name": "second_member",
-        "name_localizations": {
-          "en-US": "second_member",
-          "en-GB": "second_member",
-          "pt-BR": "segundo_membro"
-        },
         "description": "Optional second member (default: you).",
-        "description_localizations": {
-          "pt-BR": "Segundo membro opcional (padrão: você)."
-        },
         "required": false,
         "type": 6
       },
       {
         "type": 3,
         "name": "situation",
-        "name_localizations": {
-          "en-US": "situation",
-          "en-GB": "situation",
-          "pt-BR": "situacao"
-        },
         "description": "Optional custom situation.",
-        "description_localizations": {
-          "pt-BR": "Situação personalizada opcional."
-        },
         "required": false
       }
-    ]
+    ],
+    "name": "py-likely",
+    "description": "Start a \"Who is most likely to...\" voting poll with a target member.",
+    "type": 1
   },
   {
-    "name": "py-dice",
-    "description": "Roll RPG polyhedral dice (d4, d6, d8, d10, d12, d20, d100).",
     "options": [
       {
         "max_value": 100,
         "min_value": 2,
         "type": 4,
         "name": "sides",
-        "name_localizations": {
-          "en-US": "sides",
-          "en-GB": "sides",
-          "pt-BR": "lados"
-        },
         "description": "Number of sides on the dice (e.g. 6, 20, 100).",
-        "description_localizations": {
-          "pt-BR": "Quantidade de lados do dado (ex: 6, 20, 100)."
-        },
         "required": false
       },
       {
@@ -523,22 +552,15 @@
         "min_value": 1,
         "type": 4,
         "name": "amount",
-        "name_localizations": {
-          "en-US": "amount",
-          "en-GB": "amount",
-          "pt-BR": "quantidade"
-        },
         "description": "How many dice to roll (1 to 10).",
-        "description_localizations": {
-          "pt-BR": "Quantos dados rolar (1 a 10)."
-        },
         "required": false
       }
-    ]
+    ],
+    "name": "py-dice",
+    "description": "Roll RPG polyhedral dice (d4, d6, d8, d10, d12, d20, d100).",
+    "type": 1
   },
   {
-    "name": "py-coinflip",
-    "description": "Bet your coins on a Cara ou Coroa (Heads or Tails) coin flip against Pyxie.",
     "options": [
       {
         "type": 3,
@@ -553,41 +575,28 @@
           }
         ],
         "name": "side",
-        "name_localizations": {
-          "en-US": "side",
-          "en-GB": "side",
-          "pt-BR": "lado"
-        },
         "description": "Choose Heads (Cara) or Tails (Coroa).",
-        "description_localizations": {
-          "pt-BR": "Escolha Cara ou Coroa."
-        },
         "required": true
       },
       {
         "min_value": 10,
         "type": 4,
         "name": "bet",
-        "name_localizations": {
-          "en-US": "bet",
-          "en-GB": "bet",
-          "pt-BR": "aposta"
-        },
         "description": "Amount of coins to bet (minimum 10).",
-        "description_localizations": {
-          "pt-BR": "Quantidade de moedas para apostar (mínimo 10)."
-        },
         "required": true
       }
-    ]
+    ],
+    "name": "py-coinflip",
+    "description": "Bet your coins on a Cara ou Coroa (Heads or Tails) coin flip against Pyxie.",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-wiki",
-    "description": "Open the official Pyxie encyclopedia and systems guide."
+    "description": "Open the official Pyxie encyclopedia and systems guide.",
+    "type": 1
   },
   {
-    "name": "py-exportar",
-    "description": "Exports the last 50 messages from the channel into a .txt file for administration.",
     "options": [
       {
         "channel_types": [
@@ -595,56 +604,328 @@
           5
         ],
         "name": "channel",
-        "name_localizations": {
-          "pt-BR": "canal"
-        },
         "description": "Channel to export messages from (optional, defaults to current channel).",
-        "description_localizations": {
-          "pt-BR": "Canal de onde exportar as mensagens (opcional, padrão é o canal atual)."
-        },
         "required": false,
         "type": 7
       }
-    ]
+    ],
+    "name": "py-exportar",
+    "description": "Exports the last 50 messages from the channel into a .txt file for administration.",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-quiz",
-    "description": "Answer cultural quiz questions to earn 10 coins. One wrong answer loses all!"
+    "description": "Answer cultural quiz questions to earn 10 coins. One wrong answer loses all!",
+    "type": 1
   },
   {
+    "options": [],
     "name": "py-terms",
-    "description": "Read community terms, child safety framework, and emotional support hotlines."
+    "description": "Read community terms, child safety framework, and emotional support hotlines.",
+    "type": 1
   },
   {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "Jogar / Play",
+            "value": "jogar"
+          },
+          {
+            "name": "Ranking Global / Leaderboard",
+            "value": "ranking"
+          }
+        ],
+        "name": "acao",
+        "description": "Choose between playing or checking the leaderboard",
+        "required": false
+      }
+    ],
+    "name": "py-math",
+    "description": "Play the progressive Arcane Math challenge or check the global ranking!",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "adversario",
+        "description": "Optional: Mention a friend to duel 1v1. Omit to play solo against Pyxie!",
+        "required": false,
+        "type": 6
+      }
+    ],
+    "name": "py-tictactoe",
+    "description": "Play Arcane Tic-Tac-Toe solo against Pyxie AI or challenge a server member!",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "🟢 Aprendiz (3 Runas)",
+            "value": "aprendiz"
+          },
+          {
+            "name": "🟡 Adepto (5 Runas)",
+            "value": "adepto"
+          },
+          {
+            "name": "🔴 Arquimago (7 Runas)",
+            "value": "arquimago"
+          }
+        ],
+        "name": "dificuldade",
+        "description": "Select difficulty level (rune quantity)",
+        "required": false
+      }
+    ],
+    "name": "py-minesweeper",
+    "description": "Play the classic 5x5 Arcane Minesweeper with mana crystals!",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 3,
+        "name": "reason",
+        "description": "Optional reason recorded in the Staff log.",
+        "required": false,
+        "max_length": 500
+      }
+    ],
+    "name": "py-close",
+    "description": "Closes the current ticket, sends the transcript and deletes the room (author or Staff).",
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-giveaway",
+    "description": "Manage and create interactive community giveaways with fair drawing.",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "opponent",
+        "description": "Who do you want to challenge?",
+        "required": true,
+        "type": 6
+      },
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "General knowledge",
+            "value": "general"
+          },
+          {
+            "name": "Anime & Geek",
+            "value": "anime"
+          }
+        ],
+        "name": "theme",
+        "description": "Question theme (default: general knowledge).",
+        "required": false
+      }
+    ],
+    "name": "py-duel",
+    "description": "Challenge someone to a best-of-3 quiz duel (general or anime). The winner earns a few coins!",
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-challenge",
+    "description": "One secret question per day, the same for everyone. Keep your streak to earn more coins!",
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-anime",
+    "description": "Otaku Marathon: 5 anime & geek questions of rising difficulty. Each right answer earns coins!",
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-dungeon",
+    "description": "Velvet Catacombs: a long, hard roguelike dungeon. Pay 50 coins, dive deep and escape rich.",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 1,
+        "name": "propose",
+        "description": "Propose marriage to someone for 1000 coins",
+        "options": [
+          {
+            "name": "user",
+            "description": "User to propose to",
+            "required": true,
+            "type": 6
+          }
+        ]
+      },
+      {
+        "type": 1,
+        "name": "status",
+        "description": "View your marriage stats, Love Bar, house, tree and family",
+        "options": []
+      },
+      {
+        "type": 1,
+        "name": "tree",
+        "description": "Buy or cultivate the Tree of Life for +10% Love",
+        "options": [
+          {
+            "type": 3,
+            "choices": [
+              {
+                "name": "Cultivate (+10% Love)",
+                "value": "cultivate"
+              },
+              {
+                "name": "Buy / Unlock (1 Magic Bean)",
+                "value": "buy"
+              }
+            ],
+            "name": "action",
+            "description": "Action: cultivate or buy",
+            "required": false
+          }
+        ]
+      },
+      {
+        "type": 1,
+        "name": "house",
+        "description": "Purchase the Family House (2000 coins, 2 beans, love >= 50%)",
+        "options": []
+      },
+      {
+        "type": 1,
+        "name": "vault",
+        "description": "Manage the Eternal Love Vault and daily interest",
+        "options": [
+          {
+            "type": 3,
+            "choices": [
+              {
+                "name": "Deposit Coins",
+                "value": "deposit"
+              },
+              {
+                "name": "Claim Daily Interest",
+                "value": "claim"
+              }
+            ],
+            "name": "action",
+            "description": "Action: deposit or claim",
+            "required": false
+          },
+          {
+            "min_value": 1,
+            "type": 4,
+            "name": "amount",
+            "description": "Amount of coins to deposit",
+            "required": false
+          }
+        ]
+      },
+      {
+        "type": 1,
+        "name": "date",
+        "description": "Start a Date Night couple harmony trivia (12h cooldown)",
+        "options": []
+      },
+      {
+        "type": 1,
+        "name": "affection",
+        "description": "Give daily affection to your spouse (+5% Love, 24h cooldown)",
+        "options": []
+      },
+      {
+        "type": 1,
+        "name": "child",
+        "description": "Adopt or expand your family with a new child",
+        "options": []
+      }
+    ],
+    "name": "py-marriage",
+    "description": "Full Marriage, Romance, Family & Tree of Life system.",
+    "type": 1
+  },
+  {
+    "options": [],
+    "name": "py-divorce",
+    "description": "End marriage for 500 coins.",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "type": 1,
+        "name": "list",
+        "description": "List all children of your marriage",
+        "options": []
+      },
+      {
+        "type": 1,
+        "name": "work",
+        "description": "Send a child to a 24-hour internship for coins",
+        "options": [
+          {
+            "type": 3,
+            "name": "child",
+            "description": "Name or ID of the child",
+            "required": true
+          }
+        ]
+      },
+      {
+        "type": 1,
+        "name": "claim",
+        "description": "Claim coins from a completed internship",
+        "options": [
+          {
+            "type": 3,
+            "name": "child",
+            "description": "Name or ID of the child",
+            "required": true
+          }
+        ]
+      }
+    ],
+    "name": "py-child",
+    "description": "Manage your marriage children, internships and rewards.",
+    "type": 1
+  },
+  {
+    "options": [],
     "name": "py-museum",
-    "description": "Open the Community Art Museum gallery on the website."
+    "description": "Open the Community Art Museum gallery on the website.",
+    "type": 1
   },
   {
-    "name": "py-partner",
-    "description": "Apply for a partnership or promotion with the community.",
     "options": [
       {
         "type": 3,
         "choices": [
           {
             "name": "panel",
-            "name_localizations": {
-              "pt-BR": "painel"
-            },
             "value": "panel"
           }
         ],
         "name": "action",
         "description": "Staff only: publish the request panel in the request channel",
-        "description_localizations": {
-          "pt-BR": "Somente staff: publica o painel de solicitações no canal de solicitações"
-        },
         "required": false
       }
-    ]
-  },
-  {
-    "name": "py-infoevento",
-    "description": "Complete guide, balance and rules for Cringelândia seasonal event."
+    ],
+    "name": "py-partner",
+    "description": "Apply for a partnership or promotion with the community.",
+    "type": 1
   }
 ]

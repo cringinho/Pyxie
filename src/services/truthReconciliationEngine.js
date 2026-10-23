@@ -335,6 +335,14 @@ class TruthReconciliationEngine extends EventEmitter {
       const quizQuestionsCount = acervoStats.quiz?.totalQuestions || 600;
 
       // 5. Catacumbas de Veludo (dungeon crawler): números reais de data/dungeon.json
+      let growthSummary = { periodJoins: 0, periodNet: 0, activation24h: {}, retention: { d7: {} } };
+      try {
+        growthSummary = require('./growthFunnel').getFunnelSummary({ days: 30 });
+      } catch (_) {}
+      let voteStats = { totalVotes: 0, totalBeans: 0 };
+      try {
+        voteStats = require('./topgg').getVoteStats();
+      } catch (_) {}
       let dungeonStats = { totals: {}, deepestFloor: 0, settings: {} };
       try {
         dungeonStats = require('../modules/dungeon/dungeonStore').getDungeonStats();
@@ -398,6 +406,16 @@ class TruthReconciliationEngine extends EventEmitter {
             deepestFloor: Number(dungeonStats.deepestFloor) || 0,
             floors: 5,
             ticket: Number(dungeonStats.settings.ticket) || 0,
+          },
+          growth: {
+            guildsJoined30d: Number(growthSummary.periodJoins) || 0,
+            netGuilds30d: Number(growthSummary.periodNet) || 0,
+            activation24hRate: growthSummary.activation24h?.rate ?? null,
+            retentionD7Rate: growthSummary.retention?.d7?.rate ?? null,
+          },
+          votes: {
+            total: Number(voteStats.totalVotes) || 0,
+            beansGiven: Number(voteStats.totalBeans) || 0,
           },
         },
       };

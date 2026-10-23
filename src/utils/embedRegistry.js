@@ -635,6 +635,39 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'topgg_vote',
+  name: '🗳️ Voto no Top.gg',
+  category: 'economy',
+  description: 'Embed do /py-vote: recompensa em feijões mágicos por voto, bônus de fim de semana e status do próximo voto.',
+  defaultColor: '#9b5de5',
+  previewTitle: '{header} Vote na Pyxie no Top.gg',
+  previewDesc: 'Cada voto no **Top.gg** ajuda a Pyxie a ser encontrada por novos servidores.\n\n### {beans} Recompensa por voto\n\n• **Por voto:** `1` feijão mágico, a cada `12h`.\n\n• **Fim de semana:** `2` feijões por voto (sexta a domingo).\n\n> ✅ **Seu voto está liberado agora!**',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Ícone de Voto', fallback: '🗳️', defaultEmojiKey: '5707lightpurplecheck', description: 'Ícone no título do voto' },
+    { key: 'beans', label: 'Feijões Mágicos', fallback: '🌱', defaultEmojiKey: 'magic_bean', description: 'Recompensa por voto' },
+  ],
+});
+
+registerEmbed({
+  id: 'guild_welcome',
+  name: '🧚 Boas-vindas ao Entrar num Servidor',
+  category: 'system',
+  description: 'Primeira mensagem da Pyxie num servidor novo (guildCreate): comandos de início, idioma com botões e links.',
+  defaultColor: '#8b5cf6',
+  previewTitle: '{header} Oi! Eu sou a Pyxie',
+  previewDesc: 'Obrigada por me chamar para **Servidor**. N-não que eu estivesse esperando o convite… mas já que estou aqui, vamos começar direito.\n\n### ✨ Comece por aqui\n\n• **Moedinhas diárias:** {coins} `/py-daily` entrega seu bônus todo dia, e a sequência rende mais.\n\n• **Tarot ilustrado:** {tarot} `/py-tarot` tira a sua carta do dia e guarda no álbum.\n\n• **Catacumbas de Veludo:** {dungeon} `/py-dungeon` é um roguelike difícil com ticket de `50` moedinhas.\n\n### {globe} Idioma\n\nEstou falando **Português** aqui.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Fada da Pyxie', fallback: '🧚', defaultEmojiKey: 'fairy', description: 'Âncora visual do título' },
+    { key: 'coins', label: 'Moedinhas', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Linha do /py-daily' },
+    { key: 'tarot', label: 'Tarot', fallback: '🔮', defaultEmojiKey: 'TAROT', description: 'Linha do /py-tarot' },
+    { key: 'dungeon', label: 'Catacumbas', fallback: '🕯️', defaultEmojiKey: 'DUNGEON', description: 'Linha do /py-dungeon' },
+    { key: 'globe', label: 'Idioma', fallback: '🌐', defaultEmojiKey: '16017pinkearth', description: 'Seção de idioma' },
+  ],
+});
+
+registerEmbed({
   id: 'weekend_bonus',
   name: '🔥 Bônus de Fim de Semana (2X)',
   category: 'economy',

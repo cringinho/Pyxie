@@ -718,6 +718,7 @@ module.exports = {
   get HELP_MODULES() {
     return getHelpModules();
   },
+  OWNER_ONLY_COMMANDS,
   setLoadedCommands,
   getHelpModules,
   buildModularHelpEmbed,

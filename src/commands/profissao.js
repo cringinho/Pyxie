@@ -21,8 +21,17 @@ const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { getEmoji } = require('../utils/appEmojis');
 
 function getProfessionChoices() {
+  const choiceLabel = (value, profession, lang) => {
+    const label = t(`profession.labels.${value}`, { lang }) || profession.label;
+    const beanWord = lang === 'pt'
+      ? (profession.beanCost === 1 ? 'Feijão' : 'Feijões')
+      : (profession.beanCost === 1 ? 'Bean' : 'Beans');
+    const cost = profession.isMagic ? ` (${profession.beanCost} ${beanWord})` : '';
+    return `${profession.isMagic ? '✨ ' : ''}${label}${cost}`.slice(0, 100);
+  };
   return Object.entries(professions).map(([value, profession]) => ({
-    name: `${profession.isMagic ? '✨ ' : ''}${profession.label}${profession.isMagic ? ` (${profession.beanCost} Feijões)` : ''}`.slice(0, 100),
+    name: choiceLabel(value, profession, 'en'),
+    name_localizations: { 'pt-BR': choiceLabel(value, profession, 'pt') },
     value,
   }));
 }

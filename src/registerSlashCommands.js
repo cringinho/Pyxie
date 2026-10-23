@@ -4,6 +4,10 @@ const { commands: rootCommands } = require('./commands');
 const moduleManager = require('./services/moduleManager');
 
 const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
+
+// Comandos de módulos que também funcionam instalados na conta do usuário (User App),
+// em servidores sem a Pyxie, grupos e DMs. Os comandos da raiz já são marcados em src/commands/index.js.
+const USER_INSTALLABLE_MODULE_COMMANDS = new Set(['py-tarot', 'py-album', 'py-dungeon']);
 const TARGET_GUILD_ID = process.env.CRINGELANDIA_GUILD_ID || CRINGELANDIA_GUILD_ID || '1453890868980482090';
 
 (async () => {
@@ -31,6 +35,10 @@ const TARGET_GUILD_ID = process.env.CRINGELANDIA_GUILD_ID || CRINGELANDIA_GUILD_
       if (!cmd || !cmd.data || typeof cmd.data.toJSON !== 'function') continue;
       const json = cmd.data.toJSON();
       if (!json || !json.name) continue;
+      if (USER_INSTALLABLE_MODULE_COMMANDS.has(json.name)) {
+        json.integration_types = [0, 1];
+        json.contexts = [0, 1, 2];
+      }
 
       const isGuildScoped = Array.isArray(cmd.guildScope) && cmd.guildScope.length > 0;
       if (isGuildScoped) {

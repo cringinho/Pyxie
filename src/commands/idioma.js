@@ -108,8 +108,8 @@ module.exports = {
         })
         .setRequired(false)
         .addChoices(
-          { name: 'English 🇺🇸', nameLocalizations: { 'pt-BR': 'Inglês 🇺🇸' }, value: 'en' },
-          { name: 'Portuguese 🇧🇷', nameLocalizations: { 'pt-BR': 'Português 🇧🇷' }, value: 'pt' }
+          { name: 'English 🇺🇸', name_localizations: { 'pt-BR': 'Inglês 🇺🇸' }, value: 'en' },
+          { name: 'Portuguese 🇧🇷', name_localizations: { 'pt-BR': 'Português 🇧🇷' }, value: 'pt' }
         )
     ),
   async executePrefix({ message, args }) {

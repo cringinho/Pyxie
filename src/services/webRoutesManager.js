@@ -15,6 +15,11 @@ const INITIAL_ROUTES = [
   { id: 'termos', path: '/termos', name: 'Termos de Serviço', type: 'legal', enabled: true, httpStatus: 200 },
   { id: 'privacidade', path: '/privacidade', name: 'Política de Privacidade', type: 'legal', enabled: true, httpStatus: 200 },
 
+  // Redirecionamentos do funil de crescimento (contam a origem ?ref= em data/growthInvites.json)
+  { id: 'invite', path: '/invite', name: 'Convite para Servidor (permissões mínimas)', type: 'public', enabled: true, httpStatus: 302 },
+  { id: 'install', path: '/install', name: 'Instalação na Conta (User App)', type: 'public', enabled: true, httpStatus: 302 },
+  { id: 'vote', path: '/vote', name: 'Voto no Top.gg (+feijão)', type: 'public', enabled: true, httpStatus: 302 },
+
   // Sub-Painéis Administrativos
   { id: 'admin_dashboard', path: '/admin', name: 'Console Master Admin', type: 'admin', enabled: true, httpStatus: 200 },
   { id: 'admin_emojis', path: '/admin/emojis', name: 'Mapeador Visual de Emojis', type: 'admin', enabled: true, httpStatus: 200 },

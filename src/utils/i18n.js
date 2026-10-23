@@ -50,6 +50,13 @@ function getLanguage(source) {
       return 'pt';
     }
 
+    // 2.1 User App em servidor onde a Pyxie não está (interaction.guild nulo): segue o idioma do Discord da pessoa
+    const isUserAppInForeignGuild =
+      typeof source === 'object' && 'guild' in source && !source.guild && typeof source.locale === 'string';
+    if (isUserAppInForeignGuild) {
+      return source.locale.toLowerCase().startsWith('pt') ? 'pt' : 'en';
+    }
+
     // 3. REGRA MANDATÓRIA: Qualquer outro servidor do Discord é ESTRITAMENTE 'en' por padrão!
     return 'en';
   }
@@ -394,7 +401,13 @@ const TRANSLATIONS = {
       "coins": "Moedinhas",
       "magicBeans": "Feijões Mágicos",
       "ranking": "Ranking",
-      "unranked": "Ainda sem colocação"
+      "unranked": "Ainda sem colocação",
+      "blacklisted": "🚫 Você ou este servidor estão na blacklist global da Pyxie.",
+      "ownerPanelOnly": "❌ Só o criador da Pyxie pode mexer neste painel.",
+      "commandUnavailable": "Esse comando ainda não está disponível. Não olhe para mim assim; eu também estou investigando.",
+      "guildScopeOnly": "❌ Este comando é exclusivo do laboratório da Cringelândia.",
+      "actionError": "❌ Ocorreu um erro ao processar esta ação. Tente novamente mais tarde.",
+      "actionErrorShort": "❌ Ocorreu um erro ao processar esta ação."
     },
     "status": {
       "title": "🌸  ✦  Status Operacional — Pyxie",
@@ -409,18 +422,18 @@ const TRANSLATIONS = {
       "apiLatency": "🌐 **Tempo de Resposta:** `{latency}ms`"
     },
     "vote": {
-      "title": "🗳️  ✦  Vote na Pyxie no Top.gg",
-      "desc": "Apoie o crescimento da nossa comunidade votando na Pyxie no **Top.gg** a cada 12 horas!\n\nSeu voto voluntário ajuda o bot a ser descoberto por novos servidores e comunidades.",
-      "supportNote": "💜 *Votar no Top.gg não concede moedas ou bônus no jogo, mas é a melhor forma de apoiar o nosso projeto!*",
-      "rewardsTitle": "🎁 **APOIO VOLUNTÁRIO:**",
-      "rewardCoins": "> 🌟 Ajude a Pyxie a alcançar mais servidores e comunidades!",
-      "rewardDailyBonus": "> 💜 Divulgação comunitária para o crescimento do bot.",
-      "weekendActive": "🌟 *Obrigado pelo seu voto e apoio contínuo!*",
-      "weekendTip": "🌟 *Obrigado pelo seu voto e apoio contínuo!*",
-      "cta": "👉 *Clique no botão abaixo para abrir a página oficial de votação:*",
+      "title": "🌱 Vote na Pyxie no Top.gg",
+      "desc": "Cada voto no **Top.gg** ajuda a Pyxie a ser encontrada por novos servidores. E-eu não preciso disso, tá? Mas aceito.",
+      "rewardsTitle": "### 🌱 Recompensa por voto",
+      "rewardLine": "• **Por voto:** `{beans}` feijão mágico, a cada `12h`.",
+      "weekendLine": "• **Fim de semana:** `{beans}` feijões por voto (sexta a domingo).",
+      "statusReady": "> ✅ **Seu voto está liberado agora!**",
+      "statusCooldown": "> ⏳ **Você já votou.** Próximo voto em `{time}`.",
+      "totalLine": "-# 🌱 Você já ganhou `{beans}` feijões com `{votes}` votos. Obrigada!",
+      "cta": "-# Os feijões caem na sua conta poucos segundos depois do voto.",
       "btnLabel": "Votar no Top.gg",
-      "footerText": "Obrigado por apoiar a Pyxie e a Cringelândia!",
-      "rewardBean": "> 🌱 Apoio voluntário à comunidade."
+      "footerText": "Obrigada por apoiar a Pyxie",
+      "dailyReminder": "-# 🌱 Votar no Top.gg rende `{beans}` feijão mágico: {voteCmd}"
     },
     "daily": {
       "titleClaimed": "<:gift62:1548443978414817331>  ✦  Recompensa Diária Coletada!",
@@ -461,6 +474,8 @@ const TRANSLATIONS = {
       "tarotDesc": "Tiragem de 78 cartas de tarot com arte em Canvas, calculadora de afinidade (ship) e sistema de casamentos.",
       "btnRecommended": "Adicionar Pyxie (Recomendado)",
       "btnAdmin": "Convite Administrador",
+      "btnUserInstall": "Instalar na minha conta",
+      "btnWebBonus": "Bônus Web (10s)",
       "btnSupport": "Servidor de Suporte",
       "btnVote": "Votar no Top.gg",
       "footer": "Pyxie • Magia, Lazer & Comunidade para o seu Servidor",
@@ -1125,6 +1140,29 @@ const TRANSLATIONS = {
       "topicGamesTitle": "🎲 Minigames & Diversão Comunitária",
       "topicGamesDesc": "Aproveite momentos leves em comunidade com `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados` e `/py-likely`. Comandos rápidos e integrados para animar qualquer chat de Discord."
     },
+    "growth": {
+      "languageName": {
+        "pt": "Português",
+        "en": "English"
+      },
+      "welcome": {
+        "title": "{fairy} Oi! Eu sou a Pyxie",
+        "intro": "Obrigada por me chamar para **{guild}**. N-não que eu estivesse esperando o convite… mas já que estou aqui, vamos começar direito.",
+        "startHeader": "### ✨ Comece por aqui",
+        "daily": "• **Moedinhas diárias:** {coin} {daily} entrega seu bônus todo dia, e a sequência rende mais.",
+        "tarot": "• **Tarot ilustrado:** {tarotIcon} {tarot} tira a sua carta do dia e guarda no álbum.",
+        "dungeon": "• **Catacumbas de Veludo:** {dungeonIcon} {dungeon} é um roguelike difícil com ticket de `50` moedinhas.",
+        "help": "• **Todos os comandos:** {helpIcon} {help} abre o guia completo.",
+        "languageHeader": "### {globe} Idioma",
+        "languageBody": "Estou falando **{language}** aqui. Quem pode **Gerenciar Servidor** troca o idioma nos botões abaixo ou com {languageCmd}.",
+        "footer": "Pyxie • {guild} • Dica: /py-help mostra tudo",
+        "btnSite": "Site",
+        "btnSupport": "Suporte",
+        "btnVote": "Votar (+feijão)",
+        "langChanged": "Pronto! A partir de agora eu falo **{language}** neste servidor.",
+        "langNoPermission": "Só quem pode **Gerenciar Servidor** escolhe o meu idioma aqui. Peça para a staff, tá?"
+      }
+    },
     "dungeon": {
       "name": "Catacumbas de Veludo",
       "private": "Mensagem privada",
@@ -1684,7 +1722,13 @@ const TRANSLATIONS = {
       "coins": "Coins",
       "magicBeans": "Magic Beans",
       "ranking": "Leaderboard",
-      "unranked": "Not ranked yet"
+      "unranked": "Not ranked yet",
+      "blacklisted": "🚫 You or this server are on Pyxie's global blacklist.",
+      "ownerPanelOnly": "❌ Only Pyxie's creator can use this panel.",
+      "commandUnavailable": "This command isn't available yet. Don't look at me like that; I'm investigating too.",
+      "guildScopeOnly": "❌ This command is exclusive to the Cringelândia lab.",
+      "actionError": "❌ Something went wrong while processing this action. Please try again later.",
+      "actionErrorShort": "❌ Something went wrong while processing this action."
     },
     "status": {
       "title": "🌸  ✦  Operational Status — Pyxie",
@@ -1699,18 +1743,18 @@ const TRANSLATIONS = {
       "apiLatency": "🌐 **API Response Time:** `{latency}ms`"
     },
     "vote": {
-      "title": "🗳️  ✦  Vote for Pyxie on Top.gg",
-      "desc": "Support our community by voting for Pyxie on **Top.gg** every 12 hours!\n\nYour voluntary vote helps the bot be discovered by new servers and communities.",
-      "supportNote": "💜 *Voting on Top.gg does not grant in-game coins or bonuses, but it is the best way to support our project!*",
-      "rewardsTitle": "🎁 **VOLUNTARY SUPPORT:**",
-      "rewardCoins": "> 🌟 Help Pyxie reach more servers and communities!",
-      "rewardDailyBonus": "> 💜 Community exposure for the bot's growth.",
-      "weekendActive": "🌟 *Thank you for your vote and ongoing support!*",
-      "weekendTip": "🌟 *Thank you for your vote and ongoing support!*",
-      "cta": "👉 *Click the button below to open the official voting page:*",
+      "title": "🌱 Vote for Pyxie on Top.gg",
+      "desc": "Every vote on **Top.gg** helps new servers find Pyxie. I-I don't need it, okay? But I'll take it.",
+      "rewardsTitle": "### 🌱 Vote reward",
+      "rewardLine": "• **Per vote:** `{beans}` magic bean, every `12h`.",
+      "weekendLine": "• **Weekends:** `{beans}` beans per vote (Friday to Sunday).",
+      "statusReady": "> ✅ **Your vote is ready now!**",
+      "statusCooldown": "> ⏳ **You already voted.** Next vote in `{time}`.",
+      "totalLine": "-# 🌱 You have earned `{beans}` beans from `{votes}` votes. Thank you!",
+      "cta": "-# Beans land in your account a few seconds after you vote.",
       "btnLabel": "Vote on Top.gg",
-      "footerText": "Thank you for supporting Pyxie and Cringelândia!",
-      "rewardBean": "> 🌱 Voluntary community support."
+      "footerText": "Thanks for supporting Pyxie",
+      "dailyReminder": "-# 🌱 Voting on Top.gg gives `{beans}` magic bean: {voteCmd}"
     },
     "daily": {
       "titleClaimed": "<:gift62:1548443978414817331>  ✦  Daily Reward Collected!",
@@ -1751,6 +1795,8 @@ const TRANSLATIONS = {
       "tarotDesc": "Full 78-card tarot spreads with rendered canvas art, love compatibility ship meter, and marriage system.",
       "btnRecommended": "Add Pyxie (Recommended)",
       "btnAdmin": "Admin Invite",
+      "btnUserInstall": "Install on my account",
+      "btnWebBonus": "Web Bonus (10s)",
       "btnSupport": "Support Server",
       "btnVote": "Vote on Top.gg",
       "footer": "Pyxie • Magic, Leisure & Community for your Server",
@@ -2414,6 +2460,29 @@ const TRANSLATIONS = {
           "optGamesDesc": "Fortune cookies, coin flips, rock-paper-scissors, dice rolls, and fun party queries.",
           "topicGamesTitle": "🎲 Community Minigames & Casual Fun",
           "topicGamesDesc": "Enjoy lightweight community fun with `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados`, and `/py-likely`. Fast, engaging commands designed to bring energy to every Discord chat."
+    },
+    "growth": {
+      "languageName": {
+        "pt": "Português",
+        "en": "English"
+      },
+      "welcome": {
+        "title": "{fairy} Hi! I'm Pyxie",
+        "intro": "Thanks for inviting me to **{guild}**. N-not that I was waiting for it… but since I'm here, let's do this properly.",
+        "startHeader": "### ✨ Start here",
+        "daily": "• **Daily coins:** {coin} {daily} hands out your daily bonus, and streaks pay more.",
+        "tarot": "• **Illustrated tarot:** {tarotIcon} {tarot} draws your card of the day and saves it to your album.",
+        "dungeon": "• **Velvet Catacombs:** {dungeonIcon} {dungeon} is a hard roguelike with a `50` coin ticket.",
+        "help": "• **Every command:** {helpIcon} {help} opens the full guide.",
+        "languageHeader": "### {globe} Language",
+        "languageBody": "I'm speaking **{language}** here. Members with **Manage Server** can switch languages with the buttons below or with {languageCmd}.",
+        "footer": "Pyxie • {guild} • Tip: /py-help shows everything",
+        "btnSite": "Website",
+        "btnSupport": "Support",
+        "btnVote": "Vote (+bean)",
+        "langChanged": "Done! From now on I speak **{language}** in this server.",
+        "langNoPermission": "Only members with **Manage Server** can pick my language here. Ask your staff, okay?"
+      }
     },
     "dungeon": {
       "name": "Velvet Catacombs",
