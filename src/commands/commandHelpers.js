@@ -143,7 +143,7 @@ const COMMAND_ICONS = {
   ajuda: 'https://cdn.discordapp.com/emojis/1551355882447704124.gif',
   help: getThemeEmojiUrl('helpCommands') || 'https://cdn.discordapp.com/emojis/1548444173747621918.gif',
   ajuda: getThemeEmojiUrl('helpCommands') || 'https://cdn.discordapp.com/emojis/1548444173747621918.gif',
-  ping: 'https://cdn.discordapp.com/emojis/1548444326621741096.png',
+  ping: 'https://cdn.discordapp.com/emojis/1552115213594001509.gif',
   info: 'https://cdn.discordapp.com/emojis/1551355784124825731.gif',
   invite: 'https://cdn.discordapp.com/emojis/1548444149785694238.gif',
   convite: 'https://cdn.discordapp.com/emojis/1548444149785694238.gif',
