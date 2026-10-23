@@ -368,16 +368,33 @@ console.log('  ✅ 7. Inimigos, Nyx, ícones e bênçãos usam Application Emoji
     else set(x, y, 225, 225, 230, 180);
   }
   set(0, 0, 230, 230, 230, 120);
-  defringeRgba(img, w, w);
+  defringeRgba(img, w, w, { edges: 'hard' });
   const alpha = (x, y) => img[(y * w + x) * 4 + 3];
   assert.equal(alpha(0, 3), 0, 'Halo claro removido');
   assert.equal(alpha(1, 3), 255, 'Contorno escuro preservado');
   assert.equal(alpha(3, 3), 255, 'Miolo preservado');
   const again = Uint8ClampedArray.from(img);
-  defringeRgba(again, w, w);
-  assert.deepEqual(again, img, 'Limpeza idempotente');
+  defringeRgba(again, w, w, { edges: 'hard' });
+  assert.deepEqual(again, img, 'Modo binário é idempotente');
+
+  // Borda suave: degraus diagonais viram alfa parcial e lados retos continuam no lugar
+  const { smoothEdges } = require('../src/utils/spriteCleanup');
+  const n = 24;
+  const shape = new Uint8ClampedArray(n * n * 4);
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const inside = x >= 4 && y >= 4 && x < 20 && y < 20 && x + y < 34;
+    shape.set([20, 15, 25, inside ? 255 : 0], (y * n + x) * 4);
+  }
+  smoothEdges(shape, n, n);
+  const a = (x, y) => shape[(y * n + x) * 4 + 3];
+  assert.equal(a(4, 8), 255, 'Lado reto preservado');
+  assert.equal(a(3, 8), 0, 'Nada vaza do lado reto');
+  let partial = 0;
+  for (let i = 3; i < shape.length; i += 4) if (shape[i] > 0 && shape[i] < 255) partial++;
+  assert.ok(partial >= 8, 'A diagonal ganhou antisserrilhado');
+  assert.equal(shape[(8 * n + 3) * 4], 20, 'A cor da borda nova vem do desenho, não do fundo');
 }
-console.log('  ✅ 7.1 Limpeza de halo remove a borda clara e preserva o contorno (idempotente).');
+console.log('  ✅ 7.1 Limpeza de halo remove a borda clara, preserva o contorno e reconstrói a borda suave.');
 
 // 8. Economia: ticket, limite diário, tetos, step anti-duplo-clique e liquidação única
 const U = 'test_dungeon_player';
@@ -653,19 +670,33 @@ console.log('  ✅ 10. Módulo, catálogo, introspector, embeds e Visual DB sinc
     assert.ok(offlinePng.length > 10000, 'Cena da Nyx renderizada');
     assert.equal(cdnCalls, 0, 'Nenhum emoji precisou da CDN');
 
-    // 12.2 Assets da Pyxie e do Astaroth com recorte corrigido nas duas cópias (bot e site)
+    // 12.2 Assets da Pyxie e do Astaroth com recorte corrigido e borda suave nas duas cópias (bot e site)
     const sharp = require('sharp');
-    const { cleanPngBuffer } = require('../src/utils/spriteCleanup');
+    const crypto = require('crypto');
+    const emojiDir = path.join(__dirname, '..', 'assets', 'pyxie', 'emojis');
+    const manifest = JSON.parse(fs.readFileSync(path.join(emojiDir, '.cleanup-manifest.json'), 'utf8'));
+    assert.ok(Object.keys(manifest).length >= 40, 'Manifesto registra os assets limpos');
     for (const name of ['astaroth_happy.png', 'astaroth_main_icon.png', 'astaroth_sad.png', 'pyxie_sitting.png', 'pyxie_sad_face.png', 'pyxie_pose_victory.png']) {
-      const botFile = path.join(__dirname, '..', 'assets', 'pyxie', 'emojis', name);
+      const botFile = path.join(emojiDir, name);
       const siteFile = path.join(__dirname, '..', 'public', 'assets', 'pyxie', 'emojis', name);
-      const raw = await sharp(botFile).ensureAlpha().raw().toBuffer();
-      for (let i = 3; i < raw.length; i += 4) assert.ok(raw[i] === 0 || raw[i] === 255, `${name}: sem pixels semitransparentes na borda`);
-      const recleaned = await sharp(await cleanPngBuffer(fs.readFileSync(botFile))).ensureAlpha().raw().toBuffer();
-      assert.ok(recleaned.equals(raw), `${name}: já está limpo (nada muda ao limpar de novo)`);
-      assert.ok(fs.readFileSync(siteFile).equals(fs.readFileSync(botFile)), `${name}: cópia do site igual à do bot`);
+      const bytes = fs.readFileSync(botFile);
+      assert.equal(manifest[name], crypto.createHash('sha256').update(bytes).digest('hex'), `${name}: registrado como limpo`);
+      assert.ok(fs.readFileSync(siteFile).equals(bytes), `${name}: cópia do site igual à do bot`);
+      const { data: raw, info } = await sharp(bytes).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+      let soft = 0;
+      let halo = 0;
+      for (let p = 0; p < info.width * info.height; p++) {
+        const al = raw[p * 4 + 3];
+        if (al > 0 && al < 255) soft++;
+        const [r, g, b] = [raw[p * 4], raw[p * 4 + 1], raw[p * 4 + 2]];
+        if (name.startsWith('astaroth') && al > 0 && al < 200 && 0.2126 * r + 0.7152 * g + 0.0722 * b > 170 && Math.max(r, g, b) - Math.min(r, g, b) < 40) halo++;
+      }
+      assert.ok(soft > 10, `${name}: borda antisserrilhada (alfa parcial)`);
+      assert.ok(halo <= 3, `${name}: sem halo claro (${halo} px)`);
     }
-    console.log('  ✅ 12.1 Cena funciona offline; assets da Pyxie e do Astaroth sem halo no bot e no site.');
+    const dry = spawnSync(process.execPath, [path.join(__dirname, '..', 'scripts', 'clean_pyxie_assets.js')], { encoding: 'utf8' });
+    assert.ok(/Nada a limpar/.test(dry.stdout), `Rodar a limpeza de novo não muda nada: ${dry.stdout}`);
+    console.log('  ✅ 12.1 Cena funciona offline; assets da Pyxie e do Astaroth sem halo e com borda suave no bot e no site.');
 
     // 13. Fluxo completo pelos botões do Discord (mock de interação), com liquidação real
     const cmd = require('../src/modules/dungeon/commands/pyDungeon');

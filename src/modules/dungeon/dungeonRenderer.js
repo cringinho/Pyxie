@@ -14,10 +14,12 @@ const { CHARMS, ENEMIES } = require('./dungeonData');
  * - Inimigos, chefe, ícones e bênçãos usam os Application Emojis do próprio bot (catálogo do
  *   Developer Portal): arquivo empacotado em assets/dungeon/emojis (scripts/sync_dungeon_emojis.js),
  *   senão a CDN do Discord, e só em último caso o glifo Twemoji de reserva.
- * - Tudo vira sprite pixelado: reduzido para poucos pixels e ampliado sem suavização, com
- *   contorno de 1px (lilás em sprites escuros, escuro nos demais).
- * - A Pyxie e o Astaroth vêm dos assets oficiais em assets/pyxie (recorte corrigido por
- *   scripts/clean_pyxie_assets.js), também pixelados.
+ * - Emojis do bot, o Astaroth e as poses da Pyxie são desenhados na arte original com escala
+ *   suave (bordas antisserrilhadas); sprites escuros ganham um brilho lilás macio para não
+ *   sumirem no fundo. A Pyxie heroína (pyxie_pixelart.png), os baús e os glifos de reserva
+ *   seguem em pixel art, ampliados sem suavização.
+ * - Os assets da Pyxie e do Astaroth vêm de assets/pyxie, com o recorte corrigido por
+ *   scripts/clean_pyxie_assets.js.
  * - Nenhuma palavra fixa: todo texto humano chega pronto (localizado) em `options.text`.
  */
 
@@ -425,18 +427,25 @@ function glyphSprite(glyph, size = 22, outlineColor) {
 function emojiSprite(ref, size, fallbackGlyph, outlineColor) {
   const entry = ref ? emojiImages.get(ref) : null;
   if (!entry || !entry.img) return glyphSprite(fallbackGlyph, size, outlineColor);
-  const key = `e:${ref}:${size}:${outlineColor}`;
+  return smoothSource(`e:${ref}`, entry.img);
+}
+
+/** Arte original pronta para escala suave; sprites escuros recebem `glow` lilás. */
+function smoothSource(key, img) {
   if (spriteCache.has(key)) return spriteCache.get(key);
-  const img = entry.img;
-  const ratio = size / Math.max(img.width, img.height);
-  const w = Math.max(1, Math.round(img.width * ratio));
-  const h = Math.max(1, Math.round(img.height * ratio));
-  const canvas = createCanvas(w + 2, h + 2);
+  const canvas = createCanvas(img.width, img.height);
   const ctx = canvas.getContext('2d');
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(img, 1, 1, w, h);
-  crispen(canvas, outlineColor);
+  ctx.drawImage(img, 0, 0);
+  const d = ctx.getImageData(0, 0, img.width, img.height).data;
+  let lumSum = 0;
+  let count = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    if (d[i + 3] < 128) continue;
+    lumSum += (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255;
+    count++;
+  }
+  canvas.smooth = true;
+  canvas.glow = count > 0 && lumSum / count < 0.22 ? DARK_OUTLINE : null;
   spriteCache.set(key, canvas);
   return canvas;
 }
@@ -481,6 +490,8 @@ function assetSprite(name, size) {
   if (spriteCache.has(key)) return spriteCache.get(key);
   const img = imageCache.get(name);
   if (!img) return null;
+  // Só a Pyxie heroína é pixel art de verdade; Astaroth e poses usam a arte com borda suave
+  if (name !== 'pyxie') return smoothSource(`as:${name}`, img);
   const ratio = size / Math.max(img.width, img.height);
   const w = Math.max(1, Math.round(img.width * ratio));
   const h = Math.max(1, Math.round(img.height * ratio));
@@ -495,24 +506,40 @@ function assetSprite(name, size) {
   return canvas;
 }
 
-/** Desenha um sprite com escala inteira, ancorado pelo centro horizontal e pela base. */
+/** Tamanho final: escala livre e suave para arte original, inteira para pixel art. */
+function spriteSize(sprite, targetHeight) {
+  const scale = sprite.smooth ? targetHeight / sprite.height : Math.max(1, Math.round(targetHeight / sprite.height));
+  return { w: Math.round(sprite.width * scale), h: Math.round(sprite.height * scale) };
+}
+
+/** Desenha um sprite ancorado pelo centro horizontal e pela base. */
 function drawSprite(ctx, sprite, cx, bottom, targetHeight, { alpha = 1 } = {}) {
   if (!sprite) return { w: 0, h: 0 };
-  const scale = Math.max(1, Math.round(targetHeight / sprite.height));
-  const w = sprite.width * scale;
-  const h = sprite.height * scale;
+  const { w, h } = spriteSize(sprite, targetHeight);
+  const x = Math.round(cx - w / 2);
+  const y = Math.round(bottom - h);
   ctx.save();
-  ctx.imageSmoothingEnabled = false;
   ctx.globalAlpha = alpha;
-  ctx.drawImage(sprite, Math.round(cx - w / 2), Math.round(bottom - h), w, h);
+  if (sprite.smooth) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    if (sprite.glow) {
+      ctx.shadowColor = sprite.glow;
+      ctx.shadowBlur = Math.max(6, Math.round(h * 0.06));
+      ctx.drawImage(sprite, x, y, w, h);
+      ctx.shadowBlur = 0;
+    }
+  } else {
+    ctx.imageSmoothingEnabled = false;
+  }
+  ctx.drawImage(sprite, x, y, w, h);
   ctx.restore();
   return { w, h };
 }
 
 function drawSpriteCentered(ctx, sprite, cx, cy, targetHeight, options) {
   if (!sprite) return { w: 0, h: 0 };
-  const scale = Math.max(1, Math.round(targetHeight / sprite.height));
-  return drawSprite(ctx, sprite, cx, cy + (sprite.height * scale) / 2, targetHeight, options);
+  return drawSprite(ctx, sprite, cx, cy + spriteSize(sprite, targetHeight).h / 2, targetHeight, options);
 }
 
 function shadow(ctx, cx, y, w) {

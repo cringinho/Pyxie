@@ -56,23 +56,25 @@ máximo vencem a Nyx.
 
 ## Visual: emojis do bot e assets sem halo
 - Cada inimigo tem um `sprite` com o nome de um Application Emoji do bot (o catálogo do Developer
-  Portal em `src/data/discordAppEmojis.json`). O mesmo emoji aparece no texto do embed e, pixelado, na cena.
+  Portal em `src/data/discordAppEmojis.json`). O mesmo emoji aparece no texto do embed e na cena, desenhado na
+  arte original com escala suave (bordas antisserrilhadas). Sprites escuros ganham um brilho lilás macio.
   Ícones do HUD, do mapa, das intenções, da mercadora e das bênçãos também são emojis do bot, assim como
   os botões. Se o Discord recusar um emoji, a mensagem é reenviada com Unicode.
 - `node scripts/sync_dungeon_emojis.js` baixa da CDN do Discord os emojis usados para `assets/dungeon/emojis`
   e apaga os que deixaram de ser usados. Sem o arquivo, o renderizador busca na CDN e, por último, usa o glifo Unicode.
-- `node scripts/clean_pyxie_assets.js --write` corrige o recorte dos PNGs da Pyxie e do Astaroth (halo
-  claro semitransparente da remoção de fundo) em `assets/pyxie/emojis` e `public/assets/pyxie/emojis`.
-  O script é idempotente e deixa de fora os stickers, cuja borda branca é proposital.
+- `node scripts/clean_pyxie_assets.js --write` corrige o recorte dos PNGs da Pyxie e do Astaroth em
+  `assets/pyxie/emojis` e `public/assets/pyxie/emojis`: remove o halo claro da remoção de fundo e reconstrói a
+  borda antisserrilhada. Os arquivos tratados ficam registrados em `assets/pyxie/emojis/.cleanup-manifest.json`,
+  então rodar de novo não reprocessa nada. Os stickers ficam de fora (a borda branca deles é proposital).
 
 ## Arquivos
 - `dungeonData.js`: conteúdo bilíngue (andares, inimigos, amuletos, talentos, salas vazias).
 - `dungeonEngine.js`: motor puro e determinístico (mapa, eventos, combate, liquidação).
 - `dungeonStore.js`: persistência atômica, ticket, limites, tetos, talentos e métricas.
 - `dungeonViews.js`: embeds, botões e textos localizados da cena.
-- `dungeonRenderer.js`: cena pixel art 800x640 (`@napi-rs/canvas`) com os assets da Pyxie e do Astaroth
+- `dungeonRenderer.js`: cena 800x640 (`@napi-rs/canvas`) com cenário em pixel art, os assets da Pyxie e do Astaroth
   e os emojis do bot.
-- `src/utils/spriteCleanup.js`: limpeza de halo e de ilhas soltas em sprites PNG.
+- `src/utils/spriteCleanup.js`: limpeza de halo e de ilhas soltas em sprites PNG, com borda suave ou binária.
 - `commands/pyDungeon.js`: comando e roteador de botões (`dgn:*`).
 
 ## Painel, API e testes
