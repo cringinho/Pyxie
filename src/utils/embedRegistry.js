@@ -4,6 +4,7 @@ const { EmbedBuilder } = require('discord.js');
 const { getThemeEmojiData } = require('./themeEmojis');
 const { getEmoji, reloadEmojiConfig } = require('./appEmojis');
 const { getLanguage } = require('./i18n');
+const { emojify } = require('./emojify');
 
 const EMOJIS_FILE = path.join(__dirname, '..', 'data', 'emojis.json');
 const DISCORD_APP_EMOJIS_FILE = path.join(__dirname, '..', 'data', 'discordAppEmojis.json');
@@ -434,7 +435,21 @@ registerEmbed({
   ],
 });
 
-registerEmbed({
+/**
+ * Schemas dos minigames de quiz: textos de preview com os emojis do bot em vez de Unicode
+ * (o mesmo critério dos embeds reais, via src/utils/emojify.js).
+ */
+function emojifySchema(schema) {
+  return {
+    ...schema,
+    name: emojify(schema.name),
+    previewTitle: emojify(schema.previewTitle),
+    previewDesc: emojify(schema.previewDesc),
+    previewFields: (schema.previewFields || []).map((f) => ({ ...f, name: emojify(f.name), value: emojify(f.value) })),
+  };
+}
+
+registerEmbed(emojifySchema({
   id: 'quiz_duel',
   name: '⚔️ Duelo de Quiz',
   category: 'minigames',
@@ -446,12 +461,12 @@ registerEmbed({
     { name: '📊 Placar', value: '`<@111>` `1` x `0` `<@222>`', inline: false },
   ],
   slots: [
-    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '⚔️', defaultEmojiKey: 'CONTROLLER', description: 'Exibido no título do duelo' },
-    { key: 'coins', label: 'Moedas do Prêmio', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Prêmio do vencedor' },
+    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '⚔️', defaultEmojiKey: '54416purplepixelknife', description: 'Exibido no título do duelo' },
+    { key: 'coins', label: 'Moedas do Prêmio', fallback: '🪙', defaultEmojiKey: 'COIN', description: 'Prêmio do vencedor' },
   ],
-});
+}));
 
-registerEmbed({
+registerEmbed(emojifySchema({
   id: 'daily_challenge',
   name: '🧩 Desafio do Dia',
   category: 'minigames',
@@ -464,12 +479,12 @@ registerEmbed({
     { name: '🪙 Prêmio se acertar', value: '`5` {coins}', inline: true },
   ],
   slots: [
-    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🧩', defaultEmojiKey: 'SPARKLES', description: 'Exibido no título do desafio' },
-    { key: 'coins', label: 'Moedas do Prêmio', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Prêmio por acerto' },
+    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🧩', defaultEmojiKey: '47995starryquestions', description: 'Exibido no título do desafio' },
+    { key: 'coins', label: 'Moedas do Prêmio', fallback: '🪙', defaultEmojiKey: 'COIN', description: 'Prêmio por acerto' },
   ],
-});
+}));
 
-registerEmbed({
+registerEmbed(emojifySchema({
   id: 'anime_marathon',
   name: '🎴 Maratona Otaku',
   category: 'minigames',
@@ -482,10 +497,10 @@ registerEmbed({
     { name: '✨ Por acerto', value: '`+1` {coins}', inline: true },
   ],
   slots: [
-    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🎴', defaultEmojiKey: 'SPARKLES', description: 'Exibido no título da maratona' },
-    { key: 'coins', label: 'Moedas por Acerto', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Moedas ganhas' },
+    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🎴', defaultEmojiKey: '9070magiccards', description: 'Exibido no título da maratona' },
+    { key: 'coins', label: 'Moedas por Acerto', fallback: '🪙', defaultEmojiKey: 'COIN', description: 'Moedas ganhas' },
   ],
-});
+}));
 
 registerEmbed({
   id: 'dungeon_lobby',

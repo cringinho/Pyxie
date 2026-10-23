@@ -9,7 +9,11 @@ const { CHALLENGE } = require('./commandNames');
 const challengeService = require('../services/dailyChallengeService');
 const { addCoins } = require('../services/economy');
 const { loadQuizQuestions } = require('./quiz');
-const { formatCoins, formatRemaining, getLanguage, t } = require('../utils/i18n');
+const { formatCoins, formatRemaining, getLanguage, t: baseT } = require('../utils/i18n');
+const { emojify, buttonEmojiFor } = require('../utils/emojify');
+
+// Todo texto do minigame passa pelo emojify: emojis do bot em vez de Unicode
+const t = (key, source, replacements) => emojify(baseT(key, source, replacements));
 const { msUntilNextBrtMidnight } = require('../utils/brtDate');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 
@@ -161,7 +165,7 @@ module.exports = {
       new ButtonBuilder()
         .setCustomId('dch:open')
         .setLabel(t('challenge.openButton', lang))
-        .setEmoji('🧩')
+        .setEmoji(buttonEmojiFor('🧩'))
         .setStyle(ButtonStyle.Primary)
     );
     await message.reply({

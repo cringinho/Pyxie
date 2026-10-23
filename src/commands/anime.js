@@ -8,7 +8,11 @@ const {
 const { ANIME } = require('./commandNames');
 const animeService = require('../services/animeQuizService');
 const { addCoins, getBalance } = require('../services/economy');
-const { formatCoins, formatRemaining, getLanguage, t } = require('../utils/i18n');
+const { formatCoins, formatRemaining, getLanguage, t: baseT } = require('../utils/i18n');
+const { emojify, buttonEmojiFor } = require('../utils/emojify');
+
+// Todo texto do minigame passa pelo emojify: emojis do bot em vez de Unicode
+const t = (key, source, replacements) => emojify(baseT(key, source, replacements));
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 
 const QUESTION_TIMEOUT_MS = 45 * 1000;
@@ -199,7 +203,7 @@ module.exports = {
       new ButtonBuilder()
         .setCustomId('anq:open')
         .setLabel(t('anime.openButton', lang))
-        .setEmoji('🎴')
+        .setEmoji(buttonEmojiFor('🎴'))
         .setStyle(ButtonStyle.Primary)
     );
     await message.reply({

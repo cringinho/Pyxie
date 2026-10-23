@@ -222,6 +222,36 @@ assert.equal(COMMAND_CATEGORY_MAP['py-challenge'], 'economia');
 assert.equal(COMMAND_CATEGORY_MAP['py-anime'], 'economia');
 console.log('  ✅ 8. Comandos, canal de jogos opcional, embeds e catálogo validados.');
 
+// 8.1 Emojis do bot em vez de Unicode nos embeds dos três minigames
+{
+  const { emojify, appEmojiFor, UNICODE_TO_APP } = require('../src/utils/emojify');
+  const custom = /<a?:[\w~]+:\d+>/;
+  const pictographic = /[\u{1F300}-\u{1FAFF}\u2600-\u27BF\u2B50\u231B\u23F3]/u;
+  assert.ok(custom.test(emojify('⚔️ Duelo ✅ ❌ 🪙')), 'emojify troca por emojis do bot');
+  assert.equal(emojify('sem emoji'), 'sem emoji');
+  for (const unicode of Object.keys(UNICODE_TO_APP)) assert.ok(appEmojiFor(unicode), `${unicode} precisa de um emoji do bot no catálogo`);
+  const sample = [
+    animeCommand.startRunView({ id: 'test_emoji_runner' }, 'pt'),
+    animeCommand.startRunView({ id: 'test_emoji_runner2' }, 'en'),
+  ];
+  animeCommand.activeRuns.clear();
+  for (const view of sample) {
+    const json = view.embeds[0].toJSON();
+    assert.ok(custom.test(json.title), `Título com emoji do bot: ${json.title}`);
+    assert.ok(!pictographic.test(json.title + json.description + json.fields.map((f) => f.name + f.value).join('')), 'Sem emoji Unicode no embed');
+  }
+  const duelEmbed = ok.payload.embeds[0].toJSON();
+  assert.ok(custom.test(duelEmbed.title) && !pictographic.test(duelEmbed.title + duelEmbed.description), 'Duelo sem Unicode');
+  const challengeView = challengeCommand.buildQuestionView('test_emoji_user', 'pt');
+  const challengeJson = challengeView.embeds[0].toJSON();
+  assert.ok(custom.test(challengeJson.title) && !pictographic.test(challengeJson.title + challengeJson.description), 'Desafio sem Unicode');
+  for (const id of ['quiz_duel', 'daily_challenge', 'anime_marathon']) {
+    const schema = EMBED_REGISTRY.get(id);
+    assert.ok(custom.test(schema.previewFields[0].name) && !pictographic.test(schema.previewDesc), `Preview ${id} com emojis do bot`);
+  }
+  console.log('  ✅ 8.1 Duelo, Desafio do Dia e Maratona Otaku usam emojis do bot, sem Unicode.');
+}
+
 // 9. Guardrail dos agentes (.agents/hooks): o código novo passa no veto PreToolUse
 const hook = path.join(__dirname, '..', '.agents', 'hooks', 'pre-tool-validator.sh');
 const bash = spawnSync('bash', ['--version']);
@@ -234,6 +264,7 @@ if (fs.existsSync(hook) && bash.status === 0) {
     'src/services/dailyChallengeService.js',
     'src/services/animeQuizService.js',
     'src/utils/brtDate.js',
+    'src/utils/emojify.js',
   ];
   for (const rel of newFiles) {
     const abs = path.join(__dirname, '..', rel);
