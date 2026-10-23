@@ -3973,6 +3973,10 @@
                 <a href="/admin/sazonal" class="btn btn-secondary" style="text-decoration: none; justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Painel dedicado do evento sazonal">
                   ⚙️ Acessar Painel
                 </a>
+              ` : (mod.id === 'dungeon') ? `
+                <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Ticket, descidas por dia, tetos de pagamento e métricas reais" onclick="openModuleConfigModal('${mod.id}')">
+                  ⚙️ Configurar
+                </button>
               ` : (mod.id === 'museum') ? `
                 <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Configurar canal e cargos" onclick="openModuleConfigModal('${mod.id}')">
                   ⚙️ Configurar
@@ -4110,6 +4114,45 @@
                 </div>
               </div>
             `;
+          } else if (id === 'dungeon') {
+            title.textContent = '🕯️ Configurar Catacumbas de Veludo';
+            const st = data.stats || {};
+            const totals = st.totals || {};
+            const bounds = data.bounds || {};
+            const field = (key, label, hint) => {
+              const [min, max] = bounds[key] || [0, 99999];
+              return `
+                <div class="form-field" style="margin-bottom: 14px;">
+                  <label for="dungeon_${key}" style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">${label}</label>
+                  <input type="number" id="dungeon_${key}" min="${min}" max="${max}" step="1" value="${cfg[key] ?? ''}" style="width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;" />
+                  <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">${hint} (faixa ${min} a ${max})</span>
+                </div>`;
+            };
+            const stat = (label, value, color = '#fff') => `
+              <div style="background: rgba(0,0,0,0.25); padding: 8px 10px; border-radius: 8px;">
+                <span style="color: var(--text-muted); display: block;">${label}</span>
+                <strong style="font-size: 0.95rem; color: ${color};">${value}</strong>
+              </div>`;
+            body.innerHTML = `
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+                Ajustes econômicos do dungeon crawler. Valem na próxima descida, sem reiniciar o bot. Ecos nunca viram moedinhas.
+              </p>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 18px; font-size: 0.78rem;">
+                ${stat('Descidas', totals.runs || 0)}
+                ${stat('Em andamento', st.activeRuns || 0, '#38bdf8')}
+                ${stat('Tickets recebidos', `${totals.coinsIn || 0} 🪙`, '#f59e0b')}
+                ${stat('Moedinhas pagas', `${totals.coinsOut || 0} 🪙`, '#10b981')}
+                ${stat('Vitórias sobre a Nyx', totals.victories || 0, '#c084fc')}
+                ${stat('Fugas / Mortes', `${totals.extractions || 0} / ${(totals.deaths || 0) + (totals.forfeits || 0) + (totals.abandoned || 0)}`)}
+                ${stat('Andar mais fundo', st.deepestFloor || 0)}
+                ${stat('Jogadores', st.players || 0)}
+              </div>
+              ${field('ticket', '🎟️ Ticket de entrada (moedinhas)', 'Debitado ao iniciar cada descida')}
+              ${field('dailyEntries', '🌙 Descidas por dia (BRT)', 'Limite de tickets por jogador por dia')}
+              ${field('runPayoutCap', '🔒 Teto de pagamento por descida', 'Máximo convertido em moedinhas num único run')}
+              ${field('dailyPayoutCap', '🔒 Teto de pagamento diário', 'Máximo somado por jogador por dia')}
+              ${field('abandonAfterHours', '⏳ Encerrar runs parados após (horas)', 'Runs esquecidos são resgatados pelo Astaroth com 10% do ouro')}
+            `;
           } else if (id === 'museum') {
             title.textContent = '🏛️ Configurar Museu da Comunidade';
             const h = data.harvester || {};
@@ -4204,6 +4247,11 @@
             artChannelId: document.getElementById('museumArtChannelId')?.value || '',
             adminRoleIds: document.getElementById('museumAdminRoleIds')?.value || '',
           };
+        } else if (currentConfigModuleId === 'dungeon') {
+          for (const key of ['ticket', 'dailyEntries', 'runPayoutCap', 'dailyPayoutCap', 'abandonAfterHours']) {
+            const value = document.getElementById(`dungeon_${key}`)?.value;
+            if (value !== undefined && value !== '') payload[key] = Number(value);
+          }
         }
 
         const saveBtn = document.getElementById('moduleConfigSaveBtn');

@@ -47,6 +47,13 @@ const METADATA_DICTIONARY = {
   active: { label: 'Ativação do Módulo', icon: '🟢', type: 'boolean', description: 'Indica se o subsistema está ativo na Pyxie.' },
   eventTitle: { label: 'Título do Evento', icon: '🎃', type: 'string', description: 'Nome público do evento sazonal ativo exibido no /py-infoevento.' },
   status: { label: 'Condição Operacional', icon: '📊', type: 'string', description: 'Estado atual de integridade, escopo de servidores e saúde do serviço.' },
+
+  // Catacumbas de Veludo (data/dungeon.json)
+  dungeonRuns: { label: 'Descidas nas Catacumbas', icon: '🕯️', type: 'number', description: 'Total de descidas iniciadas no /py-dungeon (cada uma cobra o ticket de entrada).' },
+  dungeonActiveRuns: { label: 'Descidas em Andamento', icon: '🗺️', type: 'number', description: 'Runs abertos agora, retomáveis pelo botão Continuar descida.' },
+  dungeonCoinsIn: { label: 'Moedinhas em Tickets', icon: '🎟️', type: 'number', description: 'Soma real dos tickets debitados na entrada das Catacumbas.' },
+  dungeonCoinsOut: { label: 'Moedinhas Pagas', icon: '🪙', type: 'number', description: 'Soma real paga em fugas, vitórias e salvamentos (já com tetos por run e por dia).' },
+  dungeonDeepestFloor: { label: 'Andar Mais Fundo', icon: '🏆', type: 'number', description: 'Recorde global de profundidade alcançada (1 a 5).' },
 };
 
 function safeAtomicWrite(filePath, data) {
@@ -136,6 +143,31 @@ function resolveUserIdentity(userId) {
     username: `user_${userId.slice(-4)}`,
     displayName: `Membro ${userId.slice(-4)}`,
     avatarUrl: 'https://cdn.discordapp.com/embed/avatars/2.png',
+  };
+}
+
+/**
+ * Estado real do módulo Catacumbas de Veludo (data/dungeon.json + data/modulesConfig.json)
+ */
+function buildDungeonRecord() {
+  const modulesCfg = readJsonSafe(process.env.MODULES_CONFIG_PATH || path.join(DATA_DIR, 'modulesConfig.json'));
+  const entry = modulesCfg.modules?.dungeon;
+  const active = entry && entry.enabled !== undefined ? Boolean(entry.enabled) : true;
+  let stats = { totals: {}, activeRuns: 0, deepestFloor: 0 };
+  try {
+    stats = require('../modules/dungeon/dungeonStore').getDungeonStats();
+  } catch (_) {}
+  return {
+    id: 'dungeon_state',
+    name: 'Catacumbas de Veludo (Dungeon)',
+    active,
+    status: active ? '🟢 Ativo (Global)' : '⏸️ Pausado',
+    scope: 'Global',
+    dungeonRuns: Number(stats.totals.runs) || 0,
+    dungeonActiveRuns: Number(stats.activeRuns) || 0,
+    dungeonCoinsIn: Number(stats.totals.coinsIn) || 0,
+    dungeonCoinsOut: Number(stats.totals.coinsOut) || 0,
+    dungeonDeepestFloor: Number(stats.deepestFloor) || 0,
   };
 }
 
@@ -245,6 +277,7 @@ function queryPartition({ partition = 'users', page = 1, limit = 15, search = ''
         status: '🟢 Ativo (Escopo: Mary Store)',
         guildId: mary.guildId || CRINGELANDIA_GUILD_ID,
       },
+      buildDungeonRecord(),
     ];
   }
 
