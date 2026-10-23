@@ -202,6 +202,8 @@ function registerSlashCommands() {
 
 const { processTopggVote, verifyWebhookAuth, getVoteUrl } = require('./src/services/topgg');
 const growthFunnel = require('./src/services/growthFunnel');
+const tarotCardPages = require('./src/services/tarotCardPages');
+const { getCardById, localizeCard } = require('./src/data/tarotCardsCatalog');
 const { buildGuildInviteUrl, buildUserInstallUrl, resolvePreset } = require('./src/services/inviteLinks');
 const { getBotListStatus } = require('./src/services/botListStats');
 const { verifyAndClaimBonus } = require('./src/services/bonusTimer');
@@ -490,6 +492,24 @@ app.get('/', serveLocalizedPage('index', publicDir));
 
 app.get('/tarot', serveLocalizedPage('tarot', publicDir));
 
+// Páginas de significado das 78 cartas (HTML completo no servidor; idioma só pela URL: ?lang=en)
+app.get('/tarot/cartas', (req, res) => {
+  const lang = req.query.lang === 'en' ? 'en' : 'pt';
+  res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.send(tarotCardPages.renderHubPage(lang));
+});
+
+app.get('/tarot/carta/:slug', (req, res) => {
+  const lang = req.query.lang === 'en' ? 'en' : 'pt';
+  const resolved = tarotCardPages.resolveCardRequest(req.params.slug);
+  if (resolved.redirect) return res.redirect(301, resolved.redirect);
+  if (!resolved.card) return res.status(404).sendFile(path.join(publicDir, '404.html'));
+  res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  return res.send(tarotCardPages.renderCardPage(resolved.card, lang));
+});
+
 app.get('/wiki', serveLocalizedPage('wiki', publicDir));
 
 app.get(['/parcerias', '/partnerships'], serveLocalizedPage('partnerships', publicDir));
@@ -636,8 +656,18 @@ app.get(['/rss-pinterest.xml', '/pinterest.xml', '/feed-pinterest.xml', '/museu/
 });
 
 // APIs do Oráculo de Tarot & Imagens Renderizadas para Pinterest e Redes Sociais
+// Cada carta traz o slug da página de significado e a versão em inglês (en)
 app.get('/api/tarot/cards', (req, res) => {
-  res.json({ success: true, count: tarotCardsList.length, cards: tarotCardsList });
+  const cards = tarotCardsList.map((card) => {
+    const catalogCard = getCardById(card.id);
+    const english = localizeCard(card, 'en');
+    return {
+      ...card,
+      slug: catalogCard?.slug || null,
+      en: { name: english.name, keywords: english.keywords, upright: english.upright, reversed: english.reversed },
+    };
+  });
+  res.json({ success: true, count: cards.length, cards });
 });
 
 app.get('/api/tarot/card-image', (req, res) => {

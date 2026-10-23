@@ -1,5 +1,7 @@
 const path = require('node:path');
 const tarotCards = require('../data/tarot.json');
+const { localizeCard, getCardById } = require('../data/tarotCardsCatalog');
+const { cardUrl } = require('./tarotCardPages');
 const museumManager = require('../modules/museum/museumManager');
 const partnershipManager = require('../modules/partnerships/partnershipManager');
 
@@ -72,8 +74,9 @@ function getFeedItems(lang = 'pt') {
   const items = [];
   const now = new Date();
   const daily = getDailyTarotCard();
-  const card = daily.card;
+  const card = localizeCard(daily.card, lang);
   const isReversed = daily.orientation === 'REVERSED';
+  const catalogCard = getCardById(daily.card.id);
 
   const cardPosLabel = isReversed
     ? (isEn ? 'Reversed' : 'Invertida')
@@ -87,7 +90,9 @@ function getFeedItems(lang = 'pt') {
     title: isEn
       ? `🔮 Daily Tarot: ${card.name} (${cardPosLabel}) • Pyxie Oracle`
       : `🔮 Carta do Dia: ${card.name} (${cardPosLabel}) • Oráculo da Pyxie`,
-    link: `${SITE_URL}/tarot?id=${card.id}&pos=${isReversed ? 'reversed' : 'upright'}&utm_source=rss_daily_tarot&lang=${lang}`,
+    link: catalogCard
+      ? `${cardUrl(catalogCard, lang)}${isEn ? '&' : '?'}utm_source=rss_daily_tarot`
+      : `${SITE_URL}/tarot?id=${card.id}&pos=${isReversed ? 'reversed' : 'upright'}&utm_source=rss_daily_tarot&lang=${lang}`,
     guid: `tarot-${daily.dateStr}-${card.id}`,
     pubDate: now.toUTCString(),
     description: isEn

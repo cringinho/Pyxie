@@ -647,6 +647,9 @@
           <a href="/invite?ref=tarot-page" target="_blank" rel="noopener noreferrer" class="btn-share btn-discord-cta" id="ctaDiscord">
             <span>🟣</span> <span id="lblCtaDiscord">Adicionar Pyxie ao Discord</span>
           </a>
+          <a href="/tarot/cartas" class="btn-share btn-discord-cta" id="ctaMeaning" style="display: none;">
+            <span>📜</span> <span id="lblCtaMeaning">Significado completo da carta</span>
+          </a>
         </div>
       </div>
     </section>
@@ -661,6 +664,7 @@
       <a href="/parcerias">Parcerias</a> •
       <a href="/museu">Museu</a> •
       <a href="/bonus">Bônus Diário</a> •
+      <a href="/tarot/cartas" id="footerCards">Significado das 78 cartas</a> •
       <a href="/rss.xml">Feed RSS</a>
     </p>
   </footer>
@@ -685,6 +689,8 @@
         shareWhatsapp: 'WhatsApp',
         shareTwitter: 'Postar no X',
         ctaDiscord: 'Adicionar Pyxie ao Discord',
+        ctaMeaning: 'Significado completo da carta',
+        footerCards: 'Significado das 78 cartas',
       },
       en: {
         metaTitle: 'Free Daily Tarot Card Reading Online • Pyxie Oracle',
@@ -704,6 +710,8 @@
         shareWhatsapp: 'WhatsApp',
         shareTwitter: 'Post on X',
         ctaDiscord: 'Add Pyxie to Discord',
+        ctaMeaning: 'Full card meaning',
+        footerCards: 'All 78 card meanings',
       }
     };
 
@@ -753,6 +761,9 @@
       document.getElementById('lblShareWhatsapp').textContent = S.shareWhatsapp;
       document.getElementById('lblShareTwitter').textContent = S.shareTwitter;
       document.getElementById('lblCtaDiscord').textContent = S.ctaDiscord;
+      document.getElementById('lblCtaMeaning').textContent = S.ctaMeaning;
+      document.getElementById('footerCards').textContent = S.footerCards;
+      document.getElementById('footerCards').href = `/tarot/cartas${currentLang === 'en' ? '?lang=en' : ''}`;
 
       if (currentCard) {
         renderCardDetails(currentCard, currentOrientation);
@@ -769,9 +780,10 @@
       } catch (_) {}
     }
 
-    function renderCardDetails(card, orientation) {
-      currentCard = card;
+    function renderCardDetails(baseCard, orientation) {
+      currentCard = baseCard;
       currentOrientation = orientation;
+      const card = currentLang === 'en' && baseCard.en ? { ...baseCard, ...baseCard.en } : baseCard;
       const S = I18N[currentLang];
       const isReversed = orientation === 'REVERSED';
 
@@ -799,6 +811,13 @@
       // Interpretação
       const text = isReversed ? (card.reversed || card.upright) : card.upright;
       document.getElementById('readingText').textContent = text;
+
+      // Página de significado completo da carta
+      const meaningLink = document.getElementById('ctaMeaning');
+      if (meaningLink && card.slug) {
+        meaningLink.href = `/tarot/carta/${card.slug}${currentLang === 'en' ? '?lang=en' : ''}`;
+        meaningLink.style.display = '';
+      }
 
       // Monta URLs de Compartilhamento Viral
       const shareUrl = `https://pyxie.com.br/tarot?id=${card.id}&pos=${isReversed ? 'reversed' : 'upright'}&utm_source=social_share&lang=${currentLang}`;

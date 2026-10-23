@@ -805,6 +805,7 @@ const TRANSLATIONS = {
     },
     "tarot": {
       "bribeBtn": "Tentar Nova Tiragem (350 🪙)",
+      "meaningBtn": "Significado completo",
       "cardLabel": "CARTA",
       "orientationReversed": "INVERTIDA",
       "orientationUpright": "DIRETA",
@@ -2126,6 +2127,7 @@ const TRANSLATIONS = {
     },
     "tarot": {
       "bribeBtn": "Try New Reading (350 🪙)",
+      "meaningBtn": "Full meaning",
       "cardLabel": "CARD",
       "orientationReversed": "REVERSED",
       "orientationUpright": "UPRIGHT",

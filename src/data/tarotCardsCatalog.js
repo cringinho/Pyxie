@@ -1,5 +1,6 @@
 const path = require('node:path');
 const rawCards = require('./tarot.json');
+const englishCards = require('./tarot_en.json');
 
 const SUIT_CONFIG = {
   major: { namePt: 'Arcanos Maiores', nameEn: 'Major Arcana', emoji: '🔮' },
@@ -8,6 +9,16 @@ const SUIT_CONFIG = {
   cups: { namePt: 'Naipe de Copas', nameEn: 'Suit of Cups', emoji: '🏆' },
   pentacles: { namePt: 'Naipe de Ouros', nameEn: 'Suit of Pentacles', emoji: '🪙' },
 };
+
+/** "ÁS DE PAUS" → "as-de-paus" (URL das páginas /tarot/carta/:slug). */
+function slugify(name) {
+  return String(name || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
 function getSuitFromId(id, index) {
   if (id.startsWith('major_') || index < 22) return 'major';
@@ -37,6 +48,8 @@ const TAROT_CATALOG = rawCards.map((card, idx) => {
     upright: card.upright || '',
     reversed: card.reversed || '',
     fileName: `card_${pad}.webp`,
+    slug: slugify(card.name),
+    slugEn: slugify(englishCards[card.id]?.name || card.name),
   };
 });
 
@@ -54,6 +67,46 @@ function getCardByNumber(num) {
 function getCardById(id) {
   if (!id) return null;
   return CARD_BY_ID.get(id) || null;
+}
+
+function getCardBySlug(slug) {
+  const key = String(slug || '').toLowerCase();
+  return TAROT_CATALOG.find((card) => card.slug === key) || null;
+}
+
+function getCardByEnglishSlug(slug) {
+  const key = String(slug || '').toLowerCase();
+  return TAROT_CATALOG.find((card) => card.slugEn === key) || null;
+}
+
+const COURT_NUM_EN = { 'ÁS': 'ACE', PAJEM: 'PAGE', CAVALEIRO: 'KNIGHT', RAINHA: 'QUEEN', REI: 'KING' };
+
+const ARCANA_EN = {
+  'Arcanos Maiores': 'Major Arcana',
+  'Arcanos Menores • Paus': 'Minor Arcana • Wands',
+  'Arcanos Menores • Copas': 'Minor Arcana • Cups',
+  'Arcanos Menores • Espadas': 'Minor Arcana • Swords',
+  'Arcanos Menores • Ouros': 'Minor Arcana • Pentacles',
+};
+
+/**
+ * Carta no idioma pedido: nome, palavras-chave e significados em inglês para 'en'.
+ * Aceita tanto o item do catálogo quanto o objeto cru de tarot.json (mesmo id).
+ */
+function localizeCard(card, lang = 'pt') {
+  if (!card) return card;
+  if (lang !== 'en') return card;
+  const en = englishCards[card.id];
+  if (!en) return card;
+  return {
+    ...card,
+    name: en.name,
+    keywords: en.keywords,
+    upright: en.upright,
+    reversed: en.reversed,
+    arcana: ARCANA_EN[card.arcana] || card.arcana,
+    num: COURT_NUM_EN[card.num] || card.num,
+  };
 }
 
 function getCardAssetPath(num) {
@@ -75,6 +128,11 @@ module.exports = {
   TAROT_CATALOG,
   getCardByNumber,
   getCardById,
+  getCardBySlug,
+  getCardByEnglishSlug,
+  localizeCard,
+  slugify,
+  SUIT_CONFIG,
   getCardAssetPath,
   getLockedAssetPath,
   getCoverAssetPath,

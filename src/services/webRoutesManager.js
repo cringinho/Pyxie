@@ -15,6 +15,8 @@ const INITIAL_ROUTES = [
   { id: 'termos', path: '/termos', name: 'Termos de Serviço', type: 'legal', enabled: true, httpStatus: 200 },
   { id: 'privacidade', path: '/privacidade', name: 'Política de Privacidade', type: 'legal', enabled: true, httpStatus: 200 },
 
+  { id: 'tarot_cards', path: '/tarot/cartas', name: 'Significado das 78 Cartas (índice)', type: 'public', enabled: true, httpStatus: 200 },
+
   // Redirecionamentos do funil de crescimento (contam a origem ?ref= em data/growthInvites.json)
   { id: 'invite', path: '/invite', name: 'Convite para Servidor (permissões mínimas)', type: 'public', enabled: true, httpStatus: 302 },
   { id: 'install', path: '/install', name: 'Instalação na Conta (User App)', type: 'public', enabled: true, httpStatus: 302 },
