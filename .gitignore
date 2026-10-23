@@ -25,3 +25,4 @@ scratch/
 *.tar.gz
 *.sql
 data/cache/
+data/*.corrupt-*

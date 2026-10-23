@@ -89,23 +89,59 @@ function normalizeNumber(value, fallback = 0) {
   return Number.isFinite(num) ? num : fallback;
 }
 
+const ECONOMY_BACKUP_INTERVAL_MS = 60 * 1000;
+let lastEconomyBackupAt = 0;
+
+function parseEconomyFile(file) {
+  const raw = fs.readFileSync(file, 'utf8');
+  return raw ? JSON.parse(raw) : {};
+}
+
+/**
+ * Lê data/economy.json. Se o arquivo estiver corrompido, ele é preservado como
+ * economy.json.corrupt-<ts> e a leitura cai para o backup economy.json.bak,
+ * evitando que a próxima gravação sobrescreva todos os saldos com {}.
+ */
 function readEconomy() {
   const directory = path.dirname(economyFile);
   if (!fs.existsSync(directory)) fs.mkdirSync(directory, { recursive: true });
   if (!fs.existsSync(economyFile)) return {};
 
   try {
-    const raw = fs.readFileSync(economyFile, 'utf8');
-    return raw ? JSON.parse(raw) : {};
+    return parseEconomyFile(economyFile);
   } catch (error) {
+    console.error('[economy] economy.json ilegível:', error.message);
+    try {
+      fs.renameSync(economyFile, `${economyFile}.corrupt-${Date.now()}`);
+    } catch (_) {}
+    const backupFile = `${economyFile}.bak`;
+    if (fs.existsSync(backupFile)) {
+      try {
+        const restored = parseEconomyFile(backupFile);
+        console.error('[economy] Saldos restaurados a partir de economy.json.bak.');
+        return restored;
+      } catch (backupError) {
+        console.error('[economy] Backup também ilegível:', backupError.message);
+      }
+    }
     return {};
   }
 }
 
+/** Gravação atômica (tmp + rename) com backup rotativo a cada minuto. */
 function writeEconomy(economy) {
   const directory = path.dirname(economyFile);
   if (!fs.existsSync(directory)) fs.mkdirSync(directory, { recursive: true });
-  fs.writeFileSync(economyFile, JSON.stringify(economy, null, 2), 'utf8');
+  const tmp = `${economyFile}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(economy, null, 2), 'utf8');
+  const now = Date.now();
+  if (now - lastEconomyBackupAt >= ECONOMY_BACKUP_INTERVAL_MS && fs.existsSync(economyFile)) {
+    try {
+      fs.copyFileSync(economyFile, `${economyFile}.bak`);
+      lastEconomyBackupAt = now;
+    } catch (_) {}
+  }
+  fs.renameSync(tmp, economyFile);
 }
 
 function normalizeAccount(account) {

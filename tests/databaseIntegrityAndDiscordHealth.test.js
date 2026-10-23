@@ -14,7 +14,9 @@ const dataDir = path.join(__dirname, '..', 'data');
 const auditResult = auditDatabase(dataDir, { autoCleanStale: true });
 
 assert.strictEqual(typeof auditResult.totalCheckedFiles, 'number', 'totalCheckedFiles deve ser numérico');
-assert.ok(auditResult.totalCheckedFiles >= 25, 'Deve auditar ao menos 25 arquivos JSON canônicos');
+// Na VM, data/ tem ao menos 25 JSONs canônicos. No CI (PYXIE_CI_FIXTURES=1) só existem as fixtures mínimas.
+const minCanonicalFiles = process.env.PYXIE_CI_FIXTURES === '1' ? 1 : 25;
+assert.ok(auditResult.totalCheckedFiles >= minCanonicalFiles, `Deve auditar ao menos ${minCanonicalFiles} arquivos JSON canônicos`);
 assert.strictEqual(auditResult.totalStaleFiles, 0, 'Não deve haver arquivos residuais ou legados no diretório data/');
 assert.strictEqual(auditResult.issuesFound, 0, 'O banco de dados não deve conter nenhuma anomalia estrutural');
 console.log(`  ✅ 1. Integridade do banco de dados real em data/ validada com sucesso (${auditResult.totalCheckedFiles} arquivos 100% íntegros).`);
