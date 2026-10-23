@@ -1894,6 +1894,10 @@ app.get('/api/admin/modules/:id/config', requireAdminAuth, (req, res) => {
       const mm = require('./src/modules/museum/museumManager');
       return res.json({ success: true, config: mm.getConfig(), harvester: mm.getHarvesterStatus() });
     }
+    if (id === 'dungeon') {
+      const ds = require('./src/modules/dungeon/dungeonStore');
+      return res.json({ success: true, config: ds.getSettings(), defaults: ds.DEFAULT_SETTINGS, bounds: ds.SETTINGS_BOUNDS, stats: ds.getDungeonStats() });
+    }
     return res.status(404).json({ success: false, error: `Módulo '${id}' não possui configuração customizada.` });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
@@ -1914,6 +1918,16 @@ app.post('/api/admin/modules/:id/config', requireAdminAuth, (req, res) => {
       const saved = mm.saveConfig(req.body || {});
       sendIpcToBot({ type: 'MODULE_RELOAD', moduleId: id });
       return res.json({ success: true, config: saved, harvester: mm.getHarvesterStatus(), message: 'Configurações do museu salvas com sucesso!' });
+    }
+    if (id === 'dungeon') {
+      // Os ajustes valem na hora: o bot relê modulesConfig.json a cada descida
+      const ds = require('./src/modules/dungeon/dungeonStore');
+      const cfg = moduleManager.loadConfig();
+      if (!cfg.modules) cfg.modules = {};
+      const current = cfg.modules.dungeon || { enabled: true };
+      cfg.modules.dungeon = { ...current, data: { ...(current.data || {}), ...ds.sanitizeSettings(req.body || {}) }, updatedAt: Date.now() };
+      moduleManager.saveConfig(cfg);
+      return res.json({ success: true, config: ds.getSettings(), stats: ds.getDungeonStats(), message: 'Configurações das Catacumbas salvas com sucesso!' });
     }
     return res.status(404).json({ success: false, error: `Módulo '${id}' não possui configuração customizada.` });
   } catch (err) {

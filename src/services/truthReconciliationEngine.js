@@ -334,6 +334,12 @@ class TruthReconciliationEngine extends EventEmitter {
       const workScenariosCount = acervoStats.careers?.totalQuestions || 2836;
       const quizQuestionsCount = acervoStats.quiz?.totalQuestions || 600;
 
+      // 5. Catacumbas de Veludo (dungeon crawler): números reais de data/dungeon.json
+      let dungeonStats = { totals: {}, deepestFloor: 0, settings: {} };
+      try {
+        dungeonStats = require('../modules/dungeon/dungeonStore').getDungeonStats();
+      } catch (_) {}
+
       const truthPayload = {
         updatedAt: now,
         formattedDate: new Date(now).toISOString(),
@@ -386,6 +392,13 @@ class TruthReconciliationEngine extends EventEmitter {
           tarotCards: 78,
           activeGuilds: guilds.length,
           cringelandiaHelped: cringelandiaHelpedCount,
+          dungeon: {
+            runs: Number(dungeonStats.totals.runs) || 0,
+            victories: Number(dungeonStats.totals.victories) || 0,
+            deepestFloor: Number(dungeonStats.deepestFloor) || 0,
+            floors: 5,
+            ticket: Number(dungeonStats.settings.ticket) || 0,
+          },
         },
       };
 

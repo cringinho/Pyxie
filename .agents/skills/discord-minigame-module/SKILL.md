@@ -1,0 +1,48 @@
+---
+name: discord-minigame-module
+description: "Constrói minigames longos e interativos por botões como módulos da Pyxie (src/modules/<id>/): motor puro e determinístico, persistência atômica com travas econômicas, cena pixel art no canvas, embeds bilíngues e simulação de balanceamento. Utiliza-se ao criar ou alterar jogos com várias etapas, apostas ou recompensas em moedinhas (ex.: /py-dungeon)."
+---
+
+# Protocolo de Minigame Modular (referência: `src/modules/dungeon/`)
+
+## 1. Separação em camadas
+
+| Arquivo | Papel | Regra |
+| --- | --- | --- |
+| `<id>Data.js` | Conteúdo do jogo | Todo texto em pares `{ pt, en }`; emojis por chave do `appEmojis.js` |
+| `<id>Engine.js` | Regras puras | Sem I/O, sem `Date.now()` escondido, sem `Math.random()` |
+| `<id>Store.js` | Persistência e economia | `writeJsonAtomic` em `data/<id>.json`, travas do AGENTS.md §5 |
+| `<id>Views.js` | Embeds, botões e textos da cena | Só `t()` e `localized()`; AGENTS.md §9 |
+| `<id>Renderer.js` | Imagem (`@napi-rs/canvas`) | Recebe textos já localizados; nunca escreve palavras fixas |
+| `commands/py<Id>.js` | Slash, prefixo e roteador de botões | Aliases PT e EN, `setDescriptionLocalizations` |
+
+## 2. Motor determinístico
+- Guarde o estado do RNG (ex.: mulberry32) dentro do próprio run. Sair e voltar nunca rerrola um resultado.
+- Exponha `getAvailableActions(run)` e faça `applyAction` recusar, sem mutar nada, qualquer ação fora dessa lista.
+- Registre a narrativa como entradas estruturadas `{ k, p }`. As views traduzem com `t('<ns>.log.<k>')`, e um teste confere que toda chave usada no motor existe em PT e EN.
+- Incremente `run.step` a cada ação válida.
+
+## 3. Botões seguros
+- Formato do customId: `<prefixo>:<tipo>:<dono>:<tag do run>:<step>:<ação>[:<arg>]`, com no máximo 100 caracteres.
+- Clique de outra pessoa: resposta privada (`flags: 64`).
+- Step ou run divergente: atualize a mensagem para o estado real em vez de só recusar.
+- Registre o listener no `onLoad` com `ctx.registerListener('interactionCreate', ...)`. O profiler do moduleManager mede CPU e rede automaticamente.
+
+## 4. Economia (AGENTS.md §5)
+- Debite a entrada antes de criar o run e devolva-a se a gravação falhar.
+- Ao liquidar, remova o run do arquivo **antes** de creditar. Guarde o crédito que falhar em `pendingPayout`.
+- Aplique teto por run, teto diário e limite de entradas por dia (BRT, `src/utils/brtDate.js`).
+- Deixe os ajustes em `data/modulesConfig.json` (`modules.<id>.data`), sanitizados por faixas e editáveis no modal do módulo no `/admin`.
+- Antes de definir números, rode uma simulação com uma política heurística (milhares de runs por perfil: iniciante, hábil e com progressão). Ajuste até que jogar mal perca moedas e só o risco real dê lucro.
+
+## 5. Visual mobile-first
+- A cena tem 800x640, fonte mínima de 24px e contraste de 4.5:1. Use `ensureCanvasFonts()` e `withEmojiFallback()`.
+- Para emojis em estilo pixel art, desenhe a ~20px num canvas minúsculo e amplie com `imageSmoothingEnabled = false`. Contorne sprites escuros com 1px. Evite sequências ZWJ.
+- Mantenha o render abaixo de ~150 ms com cache de sprites no módulo. Na view, faça `Promise.race` com um timeout para responder sem imagem se algo travar.
+- Nas mensagens com imagem, envie `files` junto com `attachments: []` para substituir a cena anterior.
+
+## 6. Sincronização tripla e homologação
+- Registre os nomes e aliases no `COMMAND_CATEGORY_MAP`, os schemas no `embedRegistry.js` e os emojis no `appEmojis.js`.
+- Exponha métricas reais em `visualDbExplorer.js` (Estado Global) e `truthReconciliationEngine.js` (`milestones`).
+- Crie `scripts/dispatch_<id>_previews.js` usando `homologationPreviewDispatcher.js` (AGENTS.md §11).
+- Escreva `tests/<id>.test.js` e inclua-o no `npm test`. Cubra o mapa ou estado, o determinismo, a economia (ticket, tetos, duplo clique, liquidação única), embeds e botões (títulos de até 8 palavras, rótulos de até 34 caracteres), o renderizador, o fluxo completo com interações mock e o hook `.agents/hooks/pre-tool-validator.sh`. Faça backup e restaure `data/economy.json`.

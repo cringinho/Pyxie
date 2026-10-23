@@ -488,6 +488,79 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'dungeon_lobby',
+  name: '🕯️ Catacumbas de Veludo: Menu',
+  category: 'minigames',
+  description: 'Menu público do /py-dungeon: regras do ticket, descidas do dia, tetos de pagamento, Ecos e recorde.',
+  defaultColor: '#8a2be2',
+  previewTitle: '{header} Catacumbas de Veludo',
+  previewDesc: 'Sob a sua torre dorme um labirinto de velas tortas, ossos floridos e tesouros esquecidos.\n\n### 🎟️ Regras da Descida\n\n• **Ticket:** `50` moedinhas por descida.\n\n• **Descidas hoje:** `3/3` restantes.\n\n• **Teto:** até `500` por descida e mais `600` hoje.',
+  previewFields: [
+    { name: '🪙 Saldo', value: '`230` {coins}', inline: true },
+    { name: '🌙 Ecos', value: '`12` {echoes}', inline: true },
+    { name: '🏆 Recorde', value: 'Andar `3`', inline: true },
+  ],
+  slots: [
+    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🕯️', defaultEmojiKey: 'DUNGEON_CANDLE', description: 'Vela animada no título do menu' },
+    { key: 'coins', label: 'Moedinhas', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Saldo e ticket' },
+    { key: 'echoes', label: 'Ecos', fallback: '🌙', defaultEmojiKey: 'DUNGEON_MOON', description: 'Moeda de talentos (não conversível)' },
+  ],
+});
+
+registerEmbed({
+  id: 'dungeon_explore',
+  name: '🗺️ Catacumbas de Veludo: Exploração',
+  category: 'minigames',
+  description: 'Tela de exploração com mapa pixel art, névoa de guerra, luz de vela e status do run.',
+  defaultColor: '#8a2be2',
+  previewTitle: '{map} Andar 2 • Biblioteca Sussurrante',
+  previewDesc: '🗺️ Você chega ao **Andar 2: Biblioteca Sussurrante**.\n\n> *Prateleiras infinitas cochicham segredos. Os livros daqui mordem.*\n\n-# Use as setas para andar. Cada sala gasta `6` de luz.',
+  previewFields: [
+    { name: '❤️ Vida', value: '`27/33`', inline: true },
+    { name: '🕯️ Luz', value: '`88/100`', inline: true },
+    { name: '💰 Ouro', value: '`48` {gold}', inline: true },
+  ],
+  slots: [
+    { key: 'map', label: 'Mapa', fallback: '🗺️', defaultEmojiKey: 'MAP', description: 'Navegação entre salas' },
+    { key: 'gold', label: 'Ouro do Run', fallback: '🪙', defaultEmojiKey: 'DUNGEON_GOLD', description: 'Ouro acumulado na descida' },
+  ],
+});
+
+registerEmbed({
+  id: 'dungeon_combat',
+  name: '⚔️ Catacumbas de Veludo: Combate',
+  category: 'minigames',
+  description: 'Combate por turnos com intenção telegrafada do inimigo, brilho, patada do Astaroth e poções.',
+  defaultColor: '#ef4444',
+  previewTitle: '{enemy} Guardião: Vovó Aranha',
+  previewDesc: '### 🕷️ Vovó Aranha\n\n❤️ `22/30` • 🛡️ Escudo `6`\n\n### 🔮 Próxima ação do inimigo\n\n💥 **GOLPE PESADO:** `9` de dano!\n\n-# 🛡️ Defender bloqueia `5` • 🔮 Raio Lunar custa `2` ✨ • {pet} Patada custa `1` ✨',
+  previewFields: [
+    { name: '❤️ Vida', value: '`17/24`', inline: true },
+    { name: '🕯️ Luz', value: '`61/100`', inline: true },
+    { name: '💰 Ouro', value: '`32`', inline: true },
+  ],
+  slots: [
+    { key: 'enemy', label: 'Ícone do Inimigo', fallback: '💀', defaultEmojiKey: 'DUNGEON_SKULL', description: 'Exibido no título do combate' },
+    { key: 'pet', label: 'Astaroth', fallback: '🐈‍⬛', defaultEmojiKey: 'ASTAROTH', description: 'Habilidade do pet' },
+  ],
+});
+
+registerEmbed({
+  id: 'dungeon_end',
+  name: '👑 Catacumbas de Veludo: Fim da Descida',
+  category: 'minigames',
+  description: 'Liquidação do run: ouro coletado, Taxa da Lanterna, tetos, moedinhas recebidas, Ecos e recorde.',
+  defaultColor: '#f59e0b',
+  previewTitle: '{header} Fuga com o Tesouro',
+  previewDesc: 'Você escapou do **Andar 3** com o saco de ouro!\n\n### 💰 Ouro coletado: `182`\n\n🪙 **Moedinhas recebidas:** `+163`\n\n-# 🏮 Taxa da Lanterna: `10%` por fugir cedo.\n\n🌙 **Ecos ganhos:** `+6` (use em Talentos)',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Ícone de Resultado', fallback: '💰', defaultEmojiKey: 'DUNGEON_GOLD', description: 'Exibido no título da liquidação' },
+    { key: 'pet', label: 'Astaroth', fallback: '🐈‍⬛', defaultEmojiKey: 'ASTAROTH_LAUGH', description: 'Reação do pet ao resultado' },
+  ],
+});
+
+registerEmbed({
   id: 'tarot_draw',
   name: '🔮 Tiragem Diária de Tarot',
   category: 'tarot',

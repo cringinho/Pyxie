@@ -253,6 +253,6 @@ Antes de encerrar qualquer tarefa ou responder ao criador que o trabalho foi con
 
 ### 4. Arquivos de Governança do Agente
 - `.agents/rules/*.md`: regras com frontmatter YAML (`trigger`: `always_on`, `model_decision`, `glob` ou `manual`), sem subpastas.
-- `.agents/skills/<nome>/SKILL.md`: procedimentos sob demanda (`discord-v2-multi-tenant`, `sharp-image-and-seo-saas`).
+- `.agents/skills/<nome>/SKILL.md`: procedimentos sob demanda (`discord-v2-multi-tenant`, `sharp-image-and-seo-saas`, `discord-minigame-module`).
 - `.agents/hooks.json` + `.agents/hooks/pre-tool-validator.sh`: veto `PreToolUse` contra mocks, nomes de tenant em novos arquivos do núcleo e payloads Components V2 inválidos.
 - `AGENTS.md` e `GEMINI.md` são mantidos idênticos.
