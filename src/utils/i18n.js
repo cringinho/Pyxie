@@ -93,13 +93,13 @@ const CANVAS_STRINGS = {
       verdictHigh: 'Isso está perigosamente romântico.',
       person1: 'Pessoa 1',
       person2: 'Pessoa 2',
-      footer: '✦ AFINIDADE & ROMANCE NO SERVIDOR ✦',
+      footer: '✦ AFINIDADE & ROMANCE • PYXIE.COM.BR ✦',
     },
     tarot: {
       arcana: 'ARCANOS',
       uprightBadge: '✦ POSIÇÃO DIRETA ✦',
       reversedBadge: '✦ POSIÇÃO INVERTIDA ✦',
-      footer: 'TAROT • ORÁCULO DA PYXIE',
+      footer: 'TAROT • ORÁCULO DA PYXIE • PYXIE.COM.BR',
     },
   },
   en: {
@@ -113,13 +113,13 @@ const CANVAS_STRINGS = {
       verdictHigh: 'This is dangerously romantic.',
       person1: 'Person 1',
       person2: 'Person 2',
-      footer: '✦ LOVE & ROMANCE COMPATIBILITY ✦',
+      footer: '✦ LOVE & ROMANCE • PYXIE.COM.BR ✦',
     },
     tarot: {
       arcana: 'ARCANA',
       uprightBadge: '✦ UPRIGHT POSITION ✦',
       reversedBadge: '✦ REVERSED POSITION ✦',
-      footer: 'TAROT • PYXIE ORACLE',
+      footer: 'TAROT • PYXIE ORACLE • PYXIE.COM.BR',
     },
   },
 };

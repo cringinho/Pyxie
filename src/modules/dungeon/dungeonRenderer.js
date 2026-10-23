@@ -552,6 +552,20 @@ function shadow(ctx, cx, y, w) {
 }
 
 // ---------------------------------------------------------------- HUD
+/** Marca discreta no canto: quem recebe o print encaminhado sabe de onde veio. */
+function drawWatermark(ctx) {
+  ctx.save();
+  ctx.globalAlpha = 0.6;
+  drawText(ctx, 'pyxie.com.br', 12, RENDER_HEIGHT - 12, {
+    size: 15,
+    color: UI.text,
+    align: 'left',
+    baseline: 'bottom',
+    strokeWidth: 4,
+  });
+  ctx.restore();
+}
+
 function drawHud(ctx, run, text, palette) {
   const p = run.player;
   const bg = ctx.createLinearGradient(0, 0, 0, HUD_HEIGHT);
@@ -1412,6 +1426,7 @@ async function renderDungeonScene(run, options = {}) {
       break;
   }
   drawHud(ctx, run, text, palette);
+  drawWatermark(ctx);
   return canvas.toBuffer('image/png');
 }
 

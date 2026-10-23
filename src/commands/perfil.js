@@ -160,7 +160,7 @@ async function buildProfileView(targetUser, viewerId, source = null) {
       .setLabel(isEn ? 'Invite Pyxie' : 'Convidar a Pyxie')
       .setEmoji('➕')
       .setStyle(ButtonStyle.Link)
-      .setURL('https://pyxie.com.br/convite')
+      .setURL('https://pyxie.com.br/invite?ref=profile')
   );
   components.push(linkRow);
 
