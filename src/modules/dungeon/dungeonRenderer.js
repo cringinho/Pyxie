@@ -1,17 +1,23 @@
+const fs = require('node:fs');
 const path = require('node:path');
 const { createCanvas, loadImage } = require('@napi-rs/canvas');
 const { ensureCanvasFonts, withEmojiFallback, EMOJI_FONT_FAMILY } = require('../../utils/canvasFonts');
+const { getEmoji } = require('../../utils/appEmojis');
 const engine = require('./dungeonEngine');
-const { CHARMS } = require('./dungeonData');
+const { CHARMS, ENEMIES } = require('./dungeonData');
 
 /**
  * Renderizador pixel art das Catacumbas de Veludo ("fofo e sombrio").
  *
  * - 800x640, pensado para o celular: o Discord mostra a imagem com ~340px de largura,
  *   então todo texto tem no mínimo 24px e contorno escuro para contraste.
- * - Emojis viram sprites pixelados: desenhados em ~20px num canvas minúsculo e ampliados
- *   sem suavização, com contorno de 1px (claro em sprites escuros, escuro nos demais).
- * - A Pyxie e o Astaroth vêm dos assets oficiais em assets/pyxie, também pixelados.
+ * - Inimigos, chefe, ícones e bênçãos usam os Application Emojis do próprio bot (catálogo do
+ *   Developer Portal): arquivo empacotado em assets/dungeon/emojis (scripts/sync_dungeon_emojis.js),
+ *   senão a CDN do Discord, e só em último caso o glifo Twemoji de reserva.
+ * - Tudo vira sprite pixelado: reduzido para poucos pixels e ampliado sem suavização, com
+ *   contorno de 1px (lilás em sprites escuros, escuro nos demais).
+ * - A Pyxie e o Astaroth vêm dos assets oficiais em assets/pyxie (recorte corrigido por
+ *   scripts/clean_pyxie_assets.js), também pixelados.
  * - Nenhuma palavra fixa: todo texto humano chega pronto (localizado) em `options.text`.
  */
 
@@ -23,6 +29,10 @@ const HUD_HEIGHT = 96;
 const SCENE_TOP = HUD_HEIGHT;
 const FLOOR_Y = 474;
 const ASSET_DIR = path.join(__dirname, '..', '..', '..', 'assets', 'pyxie');
+const EMOJI_DIRS = [path.join(ASSET_DIR, 'emojis'), path.join(__dirname, '..', '..', '..', 'assets', 'dungeon', 'emojis')];
+const CDN_TIMEOUT_MS = 3000;
+const CDN_RETRY_MS = 10 * 60 * 1000;
+const DARK_OUTLINE = '#c9b3f2';
 
 const INK = '#0d0714';
 const UI = {
@@ -44,39 +54,72 @@ const UI = {
 // 🪽 não existe na fonte Twemoji embarcada
 const GLYPH_OVERRIDES = { '🪽': '🛡️' };
 
-const ROOM_GLYPHS = {
-  start: '✨',
-  monster: '⚔️',
-  treasure: '💎',
-  merchant: '🐈‍⬛',
-  shrine: '🌙',
-  shrine_used: '🌙',
-  fountain: '⛲',
-  chest: '🧰',
-  trap: '⚠️',
+// Ícones da cena: [Application Emoji do bot, glifo de reserva]
+const ICONS = {
+  heart: ['9909pixelheart', '❤️'],
+  candle: ['6942burningcandle', '🕯️'],
+  candles: ['2101candle', '🕯️'],
+  coin: ['goldcoin', '🪙'],
+  coins: ['shineygoldcoinsi', '💰'],
+  potion: ['44332darkpotion', '🧪'],
+  poison: ['4422bottledpoison', '🧪'],
+  key: ['38632pinkkey', '🗝️'],
+  shield: ['badge_brick_wall_shield', '🛡️'],
+  gem: ['206204pixeldiamond', '💎'],
+  sparkle: ['8881shootingstars', '✨'],
+  moon: ['984953pixelmoon', '🌙'],
+  pool: ['8144bluecrystalmoon', '⛲'],
+  lock: ['xtaken', '🔒'],
+  fire: ['purpleflame', '🔥'],
+  grave: ['914694pixelheadstone', '🪦'],
+  crown: ['293484crown', '👑'],
+  merchant: ['603398pixelcat', '🐈‍⬛'],
+  knife: ['54416purplepixelknife', '🗡️'],
+  knives: ['77510cyanpixelknife', '⚔️'],
+  bomb: ['bomb', '💥'],
+  web: ['9130heartweb', '🕸️'],
+  heal: ['37775purplecrystalheart', '💚'],
+  chest: ['54187box', '🧰'],
+  trap: [null, '⚠️'],
+  alert: [null, '❗'],
+  done: [null, '✅'],
+  crit: [null, '💥'],
+  miss: [null, '💨'],
 };
 
-const INTENT_GLYPHS = {
-  attack: '🗡️',
-  heavy: '💥',
-  multi: '⚔️',
-  drain: '🕯️',
-  poison: '🧪',
-  steal: '💰',
-  web: '🕸️',
-  charge: '⚡',
-  defend: '🛡️',
-  heal: '💚',
+const ROOM_ICONS = {
+  start: 'sparkle',
+  monster: 'knife',
+  treasure: 'gem',
+  merchant: 'merchant',
+  shrine: 'moon',
+  shrine_used: 'moon',
+  fountain: 'pool',
+  chest: 'chest',
+  trap: 'trap',
 };
 
-const MERCHANT_GLYPHS = { potion: '🧪', candle: '🕯️', key: '🗝️' };
+const INTENT_ICONS = {
+  attack: 'knife',
+  heavy: 'bomb',
+  multi: 'knives',
+  drain: 'candle',
+  poison: 'poison',
+  steal: 'coins',
+  web: 'web',
+  charge: 'fire',
+  defend: 'shield',
+  heal: 'heal',
+};
+
+const MERCHANT_ICONS = { potion: 'potion', candle: 'candle', key: 'key' };
 
 const ASSETS = {
   pyxie: 'pyxie_pixelart.png',
   pyxieSitting: 'emojis/pyxie_sitting.png',
   pyxieVictory: 'emojis/pyxie_pose_victory.png',
   pyxieSad: 'emojis/pyxie_sad_face.png',
-  pyxieHappy: 'emojis/pyxie_happy_sticker.png',
+  pyxieShowing: 'emojis/pyxie_exibiting.png',
   astaroth_happy: 'emojis/astaroth_happy.png',
   astaroth_serious: 'emojis/astaroth_serious.png',
   astaroth_angry: 'emojis/astaroth_angry.png',
@@ -129,6 +172,7 @@ const CHEST_COLORS = {
 
 const imageCache = new Map();
 const spriteCache = new Map();
+const emojiImages = new Map(); // ref -> { img, failedAt }
 let assetsReady = null;
 
 // ---------------------------------------------------------------- utilidades de cor e texto
@@ -264,6 +308,58 @@ async function loadAssets() {
   return assetsReady;
 }
 
+/** Nome e ID do Application Emoji a partir de uma chave do appEmojis.js ou do nome no catálogo. */
+function resolveEmojiRef(ref) {
+  if (!ref) return null;
+  const match = /^<a?:([\w~]+):(\d+)>$/.exec(String(getEmoji(ref) || ''));
+  return match ? { name: match[1], id: match[2] } : null;
+}
+
+/** Todos os emojis do bot que a cena pode desenhar (ícones, inimigos e bênçãos). */
+function listEmojiRefs() {
+  const refs = new Set();
+  for (const [ref] of Object.values(ICONS)) if (ref) refs.add(ref);
+  for (const def of Object.values(ENEMIES)) if (def.sprite) refs.add(def.sprite);
+  for (const charm of Object.values(CHARMS)) if (charm.emoji) refs.add(charm.emoji);
+  return [...refs];
+}
+
+async function fetchEmojiFromCdn(id) {
+  if (typeof fetch !== 'function') return null;
+  try {
+    const res = await fetch(`https://cdn.discordapp.com/emojis/${id}.png?size=128`, { signal: AbortSignal.timeout(CDN_TIMEOUT_MS) });
+    if (!res.ok) return null;
+    return await loadImage(Buffer.from(await res.arrayBuffer()));
+  } catch (_) {
+    return null;
+  }
+}
+
+/** Arquivo local (assets da Pyxie ou pacote da dungeon), senão a CDN do Discord. */
+async function loadEmojiImage(ref) {
+  const cached = emojiImages.get(ref);
+  if (cached && (cached.img || Date.now() - cached.failedAt < CDN_RETRY_MS)) return cached.img;
+  const info = resolveEmojiRef(ref);
+  let img = null;
+  if (info) {
+    for (const dir of EMOJI_DIRS) {
+      const file = path.join(dir, `${info.name}.png`);
+      if (!fs.existsSync(file)) continue;
+      try {
+        img = await loadImage(file);
+        break;
+      } catch (_) {}
+    }
+    if (!img) img = await fetchEmojiFromCdn(info.id);
+  }
+  emojiImages.set(ref, { img, failedAt: img ? 0 : Date.now() });
+  return img;
+}
+
+function ensureEmojis() {
+  return Promise.all(listEmojiRefs().map((ref) => loadEmojiImage(ref)));
+}
+
 /** Limiar de alfa + contorno de 1px: deixa as bordas nítidas como pixel art. */
 function crispen(canvas, outlineColor) {
   const ctx = canvas.getContext('2d');
@@ -283,7 +379,7 @@ function crispen(canvas, outlineColor) {
   }
   if (outlineColor !== null) {
     const isDarkSprite = count > 0 && lumSum / count < 0.22;
-    const { r, g, b } = hexToRgb(outlineColor || (isDarkSprite ? '#e9d8ff' : INK));
+    const { r, g, b } = hexToRgb(outlineColor || (isDarkSprite ? DARK_OUTLINE : INK));
     const opaque = new Uint8Array(width * height);
     for (let p = 0; p < width * height; p++) opaque[p] = d[p * 4 + 3] === 255 ? 1 : 0;
     for (let y = 0; y < height; y++) {
@@ -325,6 +421,32 @@ function glyphSprite(glyph, size = 22, outlineColor) {
   return canvas;
 }
 
+/** Application Emoji do bot pixelado para `size` px (lado maior); sem imagem, usa o glifo de reserva. */
+function emojiSprite(ref, size, fallbackGlyph, outlineColor) {
+  const entry = ref ? emojiImages.get(ref) : null;
+  if (!entry || !entry.img) return glyphSprite(fallbackGlyph, size, outlineColor);
+  const key = `e:${ref}:${size}:${outlineColor}`;
+  if (spriteCache.has(key)) return spriteCache.get(key);
+  const img = entry.img;
+  const ratio = size / Math.max(img.width, img.height);
+  const w = Math.max(1, Math.round(img.width * ratio));
+  const h = Math.max(1, Math.round(img.height * ratio));
+  const canvas = createCanvas(w + 2, h + 2);
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 1, 1, w, h);
+  crispen(canvas, outlineColor);
+  spriteCache.set(key, canvas);
+  return canvas;
+}
+
+/** Ícone da tabela ICONS no tamanho pedido. */
+function icon(name, size = 18, outlineColor) {
+  const [ref, glyph] = ICONS[name] || [null, '❔'];
+  return emojiSprite(ref, size, glyph, outlineColor);
+}
+
 function pixelArtSprite(key, rows, colors) {
   const cacheKey = `p:${key}`;
   if (spriteCache.has(cacheKey)) return spriteCache.get(cacheKey);
@@ -350,7 +472,7 @@ function chestSprite(kind = 'wood') {
 
 function enemySprite(enemyId, def) {
   if (enemyId === 'mimic') return chestSprite('mimic');
-  return glyphSprite(def?.glyph, 24);
+  return emojiSprite(def?.sprite, def?.boss ? 64 : def?.guardian ? 46 : 38, def?.glyph);
 }
 
 /** Asset oficial reduzido para `size` px (lado maior) e pronto para ampliar sem suavização. */
@@ -362,12 +484,13 @@ function assetSprite(name, size) {
   const ratio = size / Math.max(img.width, img.height);
   const w = Math.max(1, Math.round(img.width * ratio));
   const h = Math.max(1, Math.round(img.height * ratio));
-  const canvas = createCanvas(w, h);
+  const pad = name.startsWith('astaroth') ? 1 : 0;
+  const canvas = createCanvas(w + pad * 2, h + pad * 2);
   const ctx = canvas.getContext('2d');
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(img, 0, 0, w, h);
-  crispen(canvas, null);
+  ctx.drawImage(img, pad, pad, w, h);
+  crispen(canvas, name.startsWith('astaroth') ? DARK_OUTLINE : null);
   spriteCache.set(key, canvas);
   return canvas;
 }
@@ -423,9 +546,9 @@ function drawHud(ctx, run, text, palette) {
 
   // Contadores à direita: ouro, poções, chaves
   const counters = [
-    { glyph: '🗝️', value: p.keys },
-    { glyph: '🧪', value: p.potions },
-    { glyph: '🪙', value: p.gold, color: UI.gold },
+    { icon: 'key', value: p.keys },
+    { icon: 'potion', value: p.potions },
+    { icon: 'coin', value: p.gold, color: UI.gold },
   ];
   let right = RENDER_WIDTH - 14;
   for (const counter of counters) {
@@ -433,7 +556,7 @@ function drawHud(ctx, run, text, palette) {
     const valueText = String(counter.value);
     const w = ctx.measureText(valueText).width;
     drawText(ctx, valueText, right, 31, { size: 28, color: counter.color || UI.text, align: 'right' });
-    drawSpriteCentered(ctx, glyphSprite(counter.glyph, 18), right - w - 22, 30, 36);
+    drawSpriteCentered(ctx, icon(counter.icon, 18), right - w - 22, 30, 36);
     right -= w + 62;
   }
   drawText(ctx, text.floorName, 28 + tagW, 31, { size: 26, color: UI.text, maxWidth: right - (28 + tagW) - 8 });
@@ -455,7 +578,7 @@ function drawHud(ctx, run, text, palette) {
   }
   drawText(ctx, text.hpLabel, hpX + 12, barY + 15, { size: 24, maxWidth: 110 });
   drawText(ctx, `${Math.max(0, p.hp)}/${p.maxHp}`, hpX + hpW - 10, barY + 15, { size: 24, align: 'right' });
-  drawSpriteCentered(ctx, glyphSprite('❤️', 18), 28, barY + 14, 40);
+  drawSpriteCentered(ctx, icon('heart', 18), 28, barY + 14, 40);
 
   // Brilho (pips em losango)
   let sx = 326;
@@ -491,7 +614,7 @@ function drawHud(ctx, run, text, palette) {
   }
   drawText(ctx, text.lightLabel, lx + 38, barY + 15, { size: 24, maxWidth: lw - 130 });
   drawText(ctx, `${p.light}/${p.maxLight}`, lx + lw - 10, barY + 15, { size: 24, align: 'right' });
-  drawSpriteCentered(ctx, glyphSprite('🕯️', 18), lx + 16, barY + 12, 40);
+  drawSpriteCentered(ctx, icon('candle', 18), lx + 16, barY + 12, 40);
 }
 
 // ---------------------------------------------------------------- cenários
@@ -546,7 +669,7 @@ function drawBackdrop(ctx, palette, { dark = false, seed = 1, archX = 400, candl
   // Velas de parede (apagadas quando escurece)
   for (const cx of candles) {
     glow(ctx, cx, candleY - 32, dark ? 60 : 150, palette.glow, dark ? 0.12 : 0.38);
-    drawSprite(ctx, glyphSprite('🕯️', 18), cx, candleY, 54, { alpha: dark ? 0.5 : 1 });
+    drawSprite(ctx, icon('candle', 18), cx, candleY, 54, { alpha: dark ? 0.5 : 1 });
   }
 }
 
@@ -596,9 +719,9 @@ function astarothMood(run) {
 function drawFxChips(ctx, run, x, y) {
   const chips = [];
   for (const f of run.fx) {
-    if (f.type === 'gold' && f.amount) chips.push({ glyph: '🪙', label: `+${f.amount}`, color: UI.gold });
-    if (f.type === 'heal' && f.amount) chips.push({ glyph: '💚', label: `+${f.amount}`, color: UI.heal });
-    if (f.type === 'dmgPlayer' && f.amount) chips.push({ glyph: '💔', label: `-${f.amount}`, color: UI.danger });
+    if (f.type === 'gold' && f.amount) chips.push({ sprite: icon('coin', 18), label: `+${f.amount}`, color: UI.gold });
+    if (f.type === 'heal' && f.amount) chips.push({ sprite: icon('heal', 18), label: `+${f.amount}`, color: UI.heal });
+    if (f.type === 'dmgPlayer' && f.amount) chips.push({ sprite: glyphSprite('💔', 18), label: `-${f.amount}`, color: UI.danger });
   }
   let cx = x;
   for (const chip of chips.slice(0, 4)) {
@@ -610,7 +733,7 @@ function drawFxChips(ctx, run, x, y) {
     ctx.lineWidth = 3;
     ctx.strokeStyle = chip.color;
     ctx.stroke();
-    drawSpriteCentered(ctx, glyphSprite(chip.glyph, 18), cx + 26, y + 24, 36);
+    drawSpriteCentered(ctx, chip.sprite, cx + 26, y + 24, 36);
     drawText(ctx, chip.label, cx + 48, y + 25, { size: 28, color: chip.color });
     cx += w + 10;
   }
@@ -728,13 +851,13 @@ function drawExplore(ctx, run, text, palette) {
       ctx.fillRect(cx - 4, cy - 4, 8, 8);
       continue;
     }
-    let glyphChar = ROOM_GLYPHS[room.display];
     const data = run.map.rooms[room.key];
+    let iconSprite = icon(ROOM_ICONS[room.display] || 'sparkle', 20);
     if ((room.display === 'guardian' || (room.display === 'monster' && room.visited)) && data?.enemy) {
-      glyphChar = engine.getEnemyDef(data.enemy)?.glyph || glyphChar;
+      const enemyDef = engine.getEnemyDef(data.enemy);
+      iconSprite = emojiSprite(enemyDef?.sprite, 22, enemyDef?.glyph);
     }
     if (isGuardian) glow(ctx, cx, cy, tile * 0.6, UI.danger, 0.35);
-    let iconSprite = glyphSprite(glyphChar, 20);
     if (room.display === 'chest') iconSprite = chestSprite('wood');
     if (room.display === 'monster' && room.visited && data?.enemy === 'mimic') iconSprite = chestSprite('mimic');
     drawSpriteCentered(ctx, iconSprite, cx, cy, iconSize, { alpha: room.display === 'shrine_used' ? 0.4 : 1 });
@@ -767,26 +890,26 @@ function drawPopups(ctx, run, anchors) {
     switch (f.type) {
       case 'dmgEnemy':
         push('enemy', (x, y) => {
-          if (f.crit) drawSpriteCentered(ctx, glyphSprite('💥', 18), x - 70, y, 50);
+          if (f.crit) drawSpriteCentered(ctx, icon('crit', 18), x - 70, y, 50);
           if (f.cat) drawSpriteCentered(ctx, assetSprite('astaroth_power', 18), x - 70, y, 44);
           drawText(ctx, `-${f.amount}${f.crit ? '!' : ''}`, x, y, { size: f.crit ? 52 : 44, color: f.crit ? UI.gold : f.spell ? '#c9a6ff' : '#ffffff', align: 'center', strokeWidth: 8 });
         });
         break;
       case 'enemyBlock':
         push('enemy', (x, y) => {
-          drawSpriteCentered(ctx, glyphSprite('🛡️', 18), x - 40, y, 40);
+          drawSpriteCentered(ctx, icon('shield', 18), x - 40, y, 40);
           drawText(ctx, String(f.amount), x + 4, y, { size: 36, color: UI.block, strokeWidth: 7 });
         });
         break;
       case 'dmgPlayer':
         push('player', (x, y) => {
-          if (f.poison) drawSpriteCentered(ctx, glyphSprite('🧪', 18), x - 56, y, 40);
+          if (f.poison) drawSpriteCentered(ctx, icon('poison', 18), x - 56, y, 40);
           drawText(ctx, `-${f.amount}`, x, y, { size: 44, color: f.poison ? UI.poison : UI.danger, align: 'center', strokeWidth: 8 });
         });
         break;
       case 'block':
         push('player', (x, y) => {
-          drawSpriteCentered(ctx, glyphSprite('🛡️', 18), x - 36, y, 40);
+          drawSpriteCentered(ctx, icon('shield', 18), x - 36, y, 40);
           drawText(ctx, String(f.amount), x + 6, y, { size: 36, color: UI.block, strokeWidth: 7 });
         });
         break;
@@ -797,12 +920,12 @@ function drawPopups(ctx, run, anchors) {
         break;
       case 'miss':
         push(f.target === 'player' ? 'player' : 'enemy', (x, y) => {
-          drawSpriteCentered(ctx, glyphSprite('💨', 18), x, y, 56);
+          drawSpriteCentered(ctx, icon('miss', 18), x, y, 56);
         });
         break;
       case 'gold':
         push('top', (x, y) => {
-          drawSpriteCentered(ctx, glyphSprite('🪙', 18), x - 34, y, 40);
+          drawSpriteCentered(ctx, icon('coin', 18), x - 34, y, 40);
           drawText(ctx, `+${f.amount}`, x, y, { size: 34, color: UI.gold, strokeWidth: 7 });
         });
         break;
@@ -837,7 +960,8 @@ function drawCombat(ctx, run, text, palette) {
   if (def.boss || def.guardian) glow(ctx, ex, eBottom - enemySize / 2, enemySize * 0.85, def.boss ? '#ffd36b' : palette.accent, def.boss ? 0.4 : 0.3);
   shadow(ctx, ex, eBottom - 4, enemySize * 0.8);
   const hit = run.fx.some((f) => f.type === 'dmgEnemy');
-  drawSprite(ctx, enemySprite(c.enemyId, def), ex + (hit ? 6 : 0), eBottom, c.enemyId === 'mimic' ? enemySize * 0.8 : enemySize);
+  const drawn = drawSprite(ctx, enemySprite(c.enemyId, def), ex + (hit ? 6 : 0), eBottom, c.enemyId === 'mimic' ? enemySize * 0.8 : enemySize);
+  if (def.crowned) drawSprite(ctx, icon('crown', 20), ex + (hit ? 6 : 0), eBottom - drawn.h + 24, 72);
 
   // Pyxie e Astaroth
   const guarding = run.fx.some((f) => f.type === 'guard');
@@ -855,7 +979,7 @@ function drawCombat(ctx, run, text, palette) {
   drawSprite(ctx, assetSprite('pyxie', 42), px, pBottom, 168);
   drawSprite(ctx, assetSprite(astarothMood(run), 28), px + 135, pBottom, 84);
   if (run.player.poisonTurns > 0) {
-    drawSpriteCentered(ctx, glyphSprite('🧪', 18), px - 70, pBottom - 190, 40);
+    drawSpriteCentered(ctx, icon('poison', 18), px - 70, pBottom - 190, 40);
     drawText(ctx, String(run.player.poisonTurns), px - 44, pBottom - 190, { size: 28, color: UI.poison });
   }
 
@@ -884,7 +1008,7 @@ function drawCombat(ctx, run, text, palette) {
   }
   drawText(ctx, `${c.hp}/${c.maxHp}`, barX + barW / 2, barY + 14, { size: 24, align: 'center' });
   if (shieldW) {
-    drawSpriteCentered(ctx, glyphSprite('🛡️', 18), barX + barW + 26, barY + 12, 38);
+    drawSpriteCentered(ctx, icon('shield', 18), barX + barW + 26, barY + 12, 38);
     drawText(ctx, String(c.shield), barX + barW + 48, barY + 14, { size: 26, color: UI.block });
   }
 
@@ -904,7 +1028,7 @@ function drawCombat(ctx, run, text, palette) {
     ctx.lineTo(ex, by + bh + 22);
     ctx.closePath();
     ctx.fill();
-    drawSpriteCentered(ctx, glyphSprite(INTENT_GLYPHS[intent.type] || '❔', 18), bx + 36, by + bh / 2, 42);
+    drawSpriteCentered(ctx, icon(INTENT_ICONS[intent.type] || 'knife', 18), bx + 36, by + bh / 2, 42);
     const danger = ['heavy', 'charge'].includes(intent.type);
     drawText(ctx, text.intentText, bx + 66, by + bh / 2 + 1, { size: 28, color: danger ? '#b3123a' : INK, stroke: null, maxWidth: bw - 82 });
   }
@@ -971,7 +1095,7 @@ function drawMerchant(ctx, run, palette) {
   }
   ctx.fillStyle = INK;
   ctx.fillRect(140, 170, 520, 8);
-  drawSprite(ctx, glyphSprite('🐈‍⬛', 24), 400, 360, 160);
+  drawSprite(ctx, icon('merchant', 32), 400, 360, 160);
   ctx.fillStyle = '#5b3a29';
   ctx.fillRect(110, 352, 580, 30);
   ctx.fillStyle = '#7a5038';
@@ -984,7 +1108,10 @@ function drawMerchant(ctx, run, palette) {
   const totalW = stock.length * slot + Math.max(0, stock.length - 1) * gap;
   let sx = (RENDER_WIDTH - totalW) / 2;
   for (const offer of stock) {
-    const glyphChar = offer.item === 'charm' ? CHARMS[offer.charmId]?.glyph : MERCHANT_GLYPHS[offer.item];
+    const offerSprite =
+      offer.item === 'charm'
+        ? emojiSprite(CHARMS[offer.charmId]?.emoji, 20, CHARMS[offer.charmId]?.glyph)
+        : icon(MERCHANT_ICONS[offer.item], 20);
     const affordable = run.player.gold >= offer.price;
     roundRect(ctx, sx, 410, slot, slot, 16);
     ctx.fillStyle = offer.sold ? 'rgba(13, 7, 20, 0.55)' : 'rgba(30, 16, 44, 0.95)';
@@ -992,11 +1119,11 @@ function drawMerchant(ctx, run, palette) {
     ctx.lineWidth = 4;
     ctx.strokeStyle = offer.sold ? '#4a3c5c' : affordable ? UI.gold : '#7d6a96';
     ctx.stroke();
-    drawSpriteCentered(ctx, glyphSprite(glyphChar, 20), sx + slot / 2, 460, 66, { alpha: offer.sold ? 0.3 : 1 });
+    drawSpriteCentered(ctx, offerSprite, sx + slot / 2, 460, 66, { alpha: offer.sold ? 0.3 : 1 });
     if (offer.sold) {
-      drawSpriteCentered(ctx, glyphSprite('✅', 18), sx + slot / 2, 460, 44);
+      drawSpriteCentered(ctx, icon('done', 18), sx + slot / 2, 460, 44);
     } else {
-      drawSpriteCentered(ctx, glyphSprite('🪙', 16), sx + 30, 510, 30);
+      drawSpriteCentered(ctx, icon('coin', 16), sx + 30, 510, 30);
       drawText(ctx, String(offer.price), sx + 50, 511, { size: 26, color: affordable ? UI.gold : '#b9a8cf' });
     }
     sx += slot + gap;
@@ -1017,17 +1144,17 @@ function drawEvent(ctx, run, text, palette) {
     shadow(ctx, cx, bottom - 4, 260);
     drawSprite(ctx, chestSprite(ev.type === 'treasure' ? 'velvet' : 'wood'), cx, bottom, 196);
     if (ev.type === 'treasure') {
-      drawSpriteCentered(ctx, glyphSprite('🔒', 18), cx, bottom - 210, 72);
-      drawSpriteCentered(ctx, glyphSprite('💎', 18), cx - 170, bottom - 200, 54);
-      drawSpriteCentered(ctx, glyphSprite('✨', 18), cx + 170, bottom - 180, 54);
+      drawSpriteCentered(ctx, icon('lock', 20), cx, bottom - 210, 72);
+      drawSpriteCentered(ctx, icon('gem', 18), cx - 170, bottom - 200, 54);
+      drawSpriteCentered(ctx, icon('sparkle', 18), cx + 170, bottom - 180, 54);
     }
-    if (ev.sniffed) drawSpriteCentered(ctx, glyphSprite('❗', 18), cx + 120, bottom - 250, 70);
+    if (ev.sniffed) drawSpriteCentered(ctx, icon('alert', 18), cx + 120, bottom - 250, 70);
   } else if (ev.type === 'shrine') {
     glow(ctx, cx, 270, 200, '#d9c8ff', 0.45);
     drawAltar(ctx, cx, bottom, palette);
-    drawSpriteCentered(ctx, glyphSprite('🌙', 20), cx, 300, 140);
-    drawSprite(ctx, glyphSprite('🕯️', 16), cx - 80, bottom - 130, 60);
-    drawSprite(ctx, glyphSprite('🕯️', 16), cx + 80, bottom - 130, 60);
+    drawSpriteCentered(ctx, icon('moon', 28), cx, 300, 140);
+    drawSprite(ctx, icon('candles', 18), cx - 80, bottom - 130, 60);
+    drawSprite(ctx, icon('candles', 18), cx + 80, bottom - 130, 60);
   } else if (ev.type === 'fountain') {
     const beam = ctx.createLinearGradient(0, SCENE_TOP, 0, bottom);
     beam.addColorStop(0, 'rgba(200, 220, 255, 0.45)');
@@ -1041,11 +1168,11 @@ function drawEvent(ctx, run, text, palette) {
     ctx.closePath();
     ctx.fill();
     shadow(ctx, cx, bottom - 4, 240);
-    drawSprite(ctx, glyphSprite('⛲', 22), cx, bottom, 230);
+    drawSprite(ctx, icon('pool', 40), cx, bottom, 230);
   } else if (ev.type === 'trap') {
     glow(ctx, cx, bottom - 60, 200, UI.danger, 0.3);
     drawSpikes(ctx, cx, bottom);
-    drawSpriteCentered(ctx, glyphSprite('⚠️', 20), cx, 300, 130);
+    drawSpriteCentered(ctx, icon('trap', 20), cx, 300, 130);
   }
 
   if (ev.type !== 'merchant') {
@@ -1091,7 +1218,7 @@ function drawReward(ctx, run, text, palette) {
     drawText(ctx, String(index + 1), x + 34, y + 36, { size: 30, color: INK, align: 'center', stroke: null });
 
     glow(ctx, x + cardW / 2, y + 140, 90, palette.glow, 0.35);
-    drawSpriteCentered(ctx, glyphSprite(CHARMS[id]?.glyph, 22), x + cardW / 2, y + 140, 130);
+    drawSpriteCentered(ctx, emojiSprite(CHARMS[id]?.emoji, 30, CHARMS[id]?.glyph), x + cardW / 2, y + 140, 130);
 
     ctx.font = font(26);
     const lines = wrapLines(ctx, str(names[index]), cardW - 28, 3);
@@ -1131,7 +1258,7 @@ function drawCamp(ctx, run, text, palette) {
     ctx.fillStyle = i % 2 === 0 ? '#5d5670' : '#7a7390';
     ctx.fillRect(fx + i * 30 - 12, 576, 24, 16);
   }
-  drawSprite(ctx, glyphSprite('🔥', 22), fx, 556, 144);
+  drawSprite(ctx, icon('fire', 32), fx, 556, 144);
   drawSprite(ctx, assetSprite('pyxie', 42), 200, 590, 168);
   drawSprite(ctx, assetSprite('astaroth_sleeping', 30), 610, 590, 120);
   drawBanner(ctx, text.campTitle, RENDER_WIDTH / 2, SCENE_TOP + 16, { color: '#ffe2b8', accent: '#ff9a3d' });
@@ -1182,21 +1309,21 @@ function drawEnding(ctx, run, text, palette) {
 
   if (phase === 'dead') {
     glow(ctx, 400, 330, 220, UI.danger, 0.25);
-    drawSprite(ctx, glyphSprite('🪦', 22), 400, 520, 240, { alpha: 0.95 });
+    drawSprite(ctx, icon('grave', 40), 400, 520, 240, { alpha: 0.95 });
     drawSprite(ctx, assetSprite('pyxieSad', 40), 190, 520, 160);
     drawSprite(ctx, assetSprite('astaroth_sad', 30), 610, 520, 120);
   } else if (phase === 'extracted') {
     glow(ctx, 400, 320, 230, '#9ec1ff', 0.3);
-    drawSprite(ctx, glyphSprite('💰', 22), 400, 470, 200);
-    drawSprite(ctx, assetSprite('pyxieHappy', 44), 180, 520, 176);
+    drawSprite(ctx, icon('coins', 36), 400, 470, 200);
+    drawSprite(ctx, assetSprite('pyxieShowing', 44), 180, 520, 176);
     drawSprite(ctx, assetSprite('astaroth_smug', 30), 620, 520, 120);
   } else {
     glow(ctx, 400, 330, 260, UI.gold, 0.45);
-    drawSprite(ctx, glyphSprite('👑', 22), 400, 300, 120);
+    drawSprite(ctx, icon('crown', 26), 400, 300, 120);
     drawSprite(ctx, assetSprite('pyxieVictory', 48), 400, 520, 200);
     drawSprite(ctx, assetSprite('astaroth_laugh', 30), 610, 520, 120);
-    drawSpriteCentered(ctx, glyphSprite('✨', 18), 180, 300, 70);
-    drawSpriteCentered(ctx, glyphSprite('✨', 18), 640, 260, 54);
+    drawSpriteCentered(ctx, icon('sparkle', 18), 180, 300, 70);
+    drawSpriteCentered(ctx, icon('sparkle', 18), 640, 260, 54);
   }
 
   const payout = str(text.payoutText);
@@ -1209,7 +1336,7 @@ function drawEnding(ctx, run, text, palette) {
     ctx.lineWidth = 4;
     ctx.strokeStyle = accent;
     ctx.stroke();
-    drawSpriteCentered(ctx, glyphSprite('🪙', 18), 400 - w / 2 + 48, 579, 48);
+    drawSpriteCentered(ctx, icon('coin', 18), 400 - w / 2 + 48, 579, 48);
     drawText(ctx, payout, 400 + 24, 580, { size: 52, color: phase === 'dead' ? '#ffd0d8' : UI.gold, align: 'center', maxWidth: w - 120, strokeWidth: 0 });
   }
 }
@@ -1225,6 +1352,7 @@ const canvas = createCanvas(RENDER_WIDTH, RENDER_HEIGHT);
  */
 async function renderDungeonScene(run, options = {}) {
   await loadAssets();
+  await ensureEmojis();
   const text = options.text || {};
   const ctx = canvas.getContext('2d');
   ctx.imageSmoothingEnabled = false;
@@ -1262,6 +1390,8 @@ async function renderDungeonScene(run, options = {}) {
 
 module.exports = {
   renderDungeonScene,
+  listEmojiRefs,
+  resolveEmojiRef,
   RENDER_WIDTH,
   RENDER_HEIGHT,
 };

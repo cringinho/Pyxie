@@ -22,6 +22,20 @@ function ephemeral(payload) {
   return { ...payload, flags: MessageFlags.Ephemeral };
 }
 
+/**
+ * Responde com os emojis do bot nos botões. Se o Discord recusar algum emoji (50035, por exemplo
+ * um emoji apagado do Developer Portal), refaz a mensagem só com Unicode e tenta de novo.
+ */
+async function respond(target, method, build) {
+  try {
+    return await target[method](await build());
+  } catch (err) {
+    if (err?.code !== 50035 || !/emoji/i.test(String(err?.message || ''))) throw err;
+    views.setPlainButtonEmojis(true);
+    return target[method](await build());
+  }
+}
+
 function isDungeonInteraction(interaction) {
   return interaction.isButton() && String(interaction.customId || '').startsWith(`${views.PREFIX}:`);
 }
@@ -35,9 +49,9 @@ async function handleLobbyButton(interaction, what) {
   const lang = getLanguage(interaction);
 
   if (what === 'help') return interaction.reply(ephemeral(views.buildHelpView(interaction)));
-  if (what === 'tal') return interaction.reply(ephemeral(views.buildTalentsView(user, interaction)));
+  if (what === 'tal') return respond(interaction, 'reply', () => ephemeral(views.buildTalentsView(user, interaction)));
   if (what === 'hall') return interaction.reply(ephemeral(views.buildHallView(interaction)));
-  if (what === 'lobby') return interaction.update(views.buildLobbyView(user, interaction));
+  if (what === 'lobby') return respond(interaction, 'update', () => views.buildLobbyView(user, interaction));
 
   if (what === 'bag') {
     const run = store.getActiveRun(user.id);
@@ -47,13 +61,13 @@ async function handleLobbyButton(interaction, what) {
 
   if (what === 'cont') {
     const run = store.getActiveRun(user.id);
-    if (!run) return interaction.update(views.buildLobbyView(user, interaction, { notice: t('dungeon.errors.missing', lang) }));
-    return interaction.update(await views.buildRunView(run, interaction));
+    if (!run) return respond(interaction, 'update', () => views.buildLobbyView(user, interaction, { notice: t('dungeon.errors.missing', lang) }));
+    return respond(interaction, 'update', () => views.buildRunView(run, interaction));
   }
 
   if (what === 'start') {
     const result = store.startRun(user.id, { lang });
-    if (result.ok || result.reason === 'active') return interaction.update(await views.buildRunView(result.run, interaction));
+    if (result.ok || result.reason === 'active') return respond(interaction, 'update', () => views.buildRunView(result.run, interaction));
     if (result.reason === 'limit') return interaction.reply(ephemeral({ content: views.limitMessage(interaction) }));
     if (result.reason === 'coins') {
       return replyError(interaction, 'coins', { ticket: store.getSettings().ticket, balance: result.balance });
@@ -78,7 +92,7 @@ async function handleTalentButton(interaction, talentId) {
   } else {
     notice = t('dungeon.errors.save', lang);
   }
-  return interaction.update(views.buildTalentsView(interaction.user, interaction, { notice }));
+  return respond(interaction, 'update', () => views.buildTalentsView(interaction.user, interaction, { notice }));
 }
 
 async function handleActionButton(interaction, parsed) {
@@ -86,23 +100,23 @@ async function handleActionButton(interaction, parsed) {
   const lang = getLanguage(interaction);
   const active = store.getActiveRun(user.id);
   if (!active) {
-    return interaction.update(views.buildLobbyView(user, interaction, { notice: t('dungeon.errors.missing', lang) }));
+    return respond(interaction, 'update', () => views.buildLobbyView(user, interaction, { notice: t('dungeon.errors.missing', lang) }));
   }
   // Botão de um run anterior ou de um passo antigo: atualiza a tela para o estado real
   if (views.runTag(active) !== parsed.tag) {
-    return interaction.update(await views.buildRunView(active, interaction, { notice: t('dungeon.errors.stale', lang) }));
+    return respond(interaction, 'update', () => views.buildRunView(active, interaction, { notice: t('dungeon.errors.stale', lang) }));
   }
 
   const result = store.performAction(user.id, active.id, parsed.step, parsed.action, parsed.arg);
   if (result.ok) {
     const settlement = result.settlement ? { ...result.settlement, balance: result.balance } : null;
-    return interaction.update(await views.buildRunView(result.run, interaction, { settlement }));
+    return respond(interaction, 'update', () => views.buildRunView(result.run, interaction, { settlement }));
   }
   if (result.reason === 'stale') {
-    return interaction.update(await views.buildRunView(result.run, interaction, { notice: t('dungeon.errors.stale', lang) }));
+    return respond(interaction, 'update', () => views.buildRunView(result.run, interaction, { notice: t('dungeon.errors.stale', lang) }));
   }
   if (result.reason === 'missing') {
-    return interaction.update(views.buildLobbyView(user, interaction, { notice: t('dungeon.errors.missing', lang) }));
+    return respond(interaction, 'update', () => views.buildLobbyView(user, interaction, { notice: t('dungeon.errors.missing', lang) }));
   }
   if (result.reason === 'save') return replyError(interaction, 'save');
   return replyError(interaction, result.reason === 'disabled' ? 'disabled' : 'invalid');
@@ -133,16 +147,17 @@ module.exports = {
     }),
   isDungeonInteraction,
   handleDungeonInteraction,
+  respond,
   async executeSlash({ interaction }) {
-    await interaction.editReply(views.buildLobbyView(interaction.user, interaction));
+    await respond(interaction, 'editReply', () => views.buildLobbyView(interaction.user, interaction));
   },
   async execute(interaction) {
     return this.executeSlash({ interaction });
   },
   async executePrefix({ message }) {
-    await message.reply({
+    await respond(message, 'reply', () => ({
       ...views.buildLobbyView(message.author, message),
       allowedMentions: { parse: [], repliedUser: false },
-    });
+    }));
   },
 };

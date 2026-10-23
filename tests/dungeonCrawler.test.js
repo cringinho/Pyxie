@@ -318,15 +318,33 @@ console.log('  ✅ 5. Fogueira, bênçãos, Taxa da Lanterna, salvamento e vitó
 }
 console.log('  ✅ 6. Narrativa e conteúdo 100% bilíngues (PT/EN).');
 
-// 7. Emojis do repertório do bot: as chaves do conteúdo resolvem Application Emojis reais
+// 7. Emojis do repertório do bot (Developer Portal): inimigos, chefe, ícones e bênçãos resolvem
+//    Application Emojis reais e estão empacotados para a cena funcionar offline
 {
   const { getEmoji } = require('../src/utils/appEmojis');
+  const { listEmojiRefs, resolveEmojiRef } = require('../src/modules/dungeon/dungeonRenderer');
   const keys = new Set();
-  for (const group of [data.ENEMIES, data.CHARMS]) for (const entry of Object.values(group)) keys.add(entry.emoji);
+  for (const entry of Object.values(data.ENEMIES)) {
+    assert.ok(entry.sprite, `Inimigo ${entry.name.pt} precisa de um emoji do bot (sprite)`);
+    keys.add(entry.sprite);
+  }
+  for (const entry of Object.values(data.CHARMS)) keys.add(entry.emoji);
   for (const k of ['ASTAROTH', 'ASTAROTH_HAPPY', 'DUNGEON_CANDLE', 'DUNGEON_GOLD', 'DUNGEON_KEY', 'DUNGEON_SKULL']) keys.add(k);
   for (const key of keys) {
     assert.ok(/^<a?:[\w~]+:\d+>$/.test(getEmoji(key)), `Emoji ${key} deve vir do catálogo de Application Emojis (veio ${getEmoji(key)})`);
   }
+  assert.equal(data.ENEMIES.nyx.sprite, '255208butterfly', 'A Nyx é a borboleta roxa pixel do bot');
+  const bundleDir = path.join(__dirname, '..', 'assets', 'dungeon', 'emojis');
+  const ownDir = path.join(__dirname, '..', 'assets', 'pyxie', 'emojis');
+  const used = new Set();
+  for (const ref of listEmojiRefs()) {
+    const info = resolveEmojiRef(ref);
+    assert.ok(info, `Emoji da cena ${ref} não está no catálogo do bot`);
+    const local = fs.existsSync(path.join(ownDir, `${info.name}.png`)) || fs.existsSync(path.join(bundleDir, `${info.name}.png`));
+    assert.ok(local, `Emoji ${info.name} não está empacotado (rode scripts/sync_dungeon_emojis.js)`);
+    used.add(`${info.name}.png`);
+  }
+  for (const file of fs.readdirSync(bundleDir)) assert.ok(used.has(file), `Emoji empacotado sem uso: ${file}`);
   const portal = fs.readFileSync(path.join(__dirname, '..', 'src', 'utils', 'appEmojis.js'), 'utf8');
   for (const file of ['dungeonData.js', 'dungeonEngine.js', 'dungeonViews.js', 'dungeonRenderer.js', 'dungeonStore.js', 'index.js']) {
     const src = fs.readFileSync(path.join(__dirname, '..', 'src', 'modules', 'dungeon', file), 'utf8');
@@ -334,7 +352,32 @@ console.log('  ✅ 6. Narrativa e conteúdo 100% bilíngues (PT/EN).');
   }
   assert.ok(portal.includes("ASTAROTH: { name: 'astaroth_main_icon'"));
 }
-console.log('  ✅ 7. Emojis resolvidos pelo appEmojis.js (Astaroth e repertório pixel do bot).');
+console.log('  ✅ 7. Inimigos, Nyx, ícones e bênçãos usam Application Emojis do bot, empacotados para uso offline.');
+
+// 7.1 Recorte corrigido: o halo claro semitransparente sai e o contorno escuro fica
+{
+  const { defringeRgba } = require('../src/utils/spriteCleanup');
+  // Sprite sintético 7x7: miolo escuro, contorno escuro e anel claro semitransparente por fora
+  const w = 7;
+  const img = new Uint8ClampedArray(w * w * 4);
+  const set = (x, y, r, g, b, a) => img.set([r, g, b, a], (y * w + x) * 4);
+  for (let y = 0; y < w; y++) for (let x = 0; x < w; x++) {
+    const ring = Math.max(Math.abs(x - 3), Math.abs(y - 3));
+    if (ring <= 1) set(x, y, 30, 25, 35, 255);
+    else if (ring === 2) set(x, y, 20, 15, 25, 255);
+    else set(x, y, 225, 225, 230, 180);
+  }
+  set(0, 0, 230, 230, 230, 120);
+  defringeRgba(img, w, w);
+  const alpha = (x, y) => img[(y * w + x) * 4 + 3];
+  assert.equal(alpha(0, 3), 0, 'Halo claro removido');
+  assert.equal(alpha(1, 3), 255, 'Contorno escuro preservado');
+  assert.equal(alpha(3, 3), 255, 'Miolo preservado');
+  const again = Uint8ClampedArray.from(img);
+  defringeRgba(again, w, w);
+  assert.deepEqual(again, img, 'Limpeza idempotente');
+}
+console.log('  ✅ 7.1 Limpeza de halo remove a borda clara e preserva o contorno (idempotente).');
 
 // 8. Economia: ticket, limite diário, tetos, step anti-duplo-clique e liquidação única
 const U = 'test_dungeon_player';
@@ -547,15 +590,24 @@ console.log('  ✅ 10. Módulo, catálogo, introspector, embeds e Visual DB sinc
   const hook = path.join(__dirname, '..', '.agents', 'hooks', 'pre-tool-validator.sh');
   const bash = spawnSync('bash', ['--version']);
   if (fs.existsSync(hook) && bash.status === 0) {
-    const files = ['index.js', 'dungeonData.js', 'dungeonEngine.js', 'dungeonStore.js', 'dungeonViews.js', 'dungeonRenderer.js', 'commands/pyDungeon.js'];
+    const files = [
+      'src/modules/dungeon/index.js',
+      'src/modules/dungeon/dungeonData.js',
+      'src/modules/dungeon/dungeonEngine.js',
+      'src/modules/dungeon/dungeonStore.js',
+      'src/modules/dungeon/dungeonViews.js',
+      'src/modules/dungeon/dungeonRenderer.js',
+      'src/modules/dungeon/commands/pyDungeon.js',
+      'src/utils/spriteCleanup.js',
+    ];
     for (const rel of files) {
-      const abs = path.join(__dirname, '..', 'src', 'modules', 'dungeon', rel);
+      const abs = path.join(__dirname, '..', rel);
       const candidate = abs.replace(/\.js$/, '.hookcheck.js');
       const payload = JSON.stringify({ toolCall: { args: { TargetFile: candidate, CodeContent: fs.readFileSync(abs, 'utf8') } } });
       const out = spawnSync('bash', [hook], { input: payload, encoding: 'utf8' });
       assert.ok(/"allow_tool": true/.test(out.stdout), `Hook vetou ${rel}: ${out.stdout}`);
     }
-    console.log('  ✅ 11. Hook PreToolUse aprova os 7 arquivos do módulo.');
+    console.log('  ✅ 11. Hook PreToolUse aprova os 8 arquivos novos.');
   } else {
     console.log('  ⏭️ 11. bash indisponível: verificação do hook pulada.');
   }
@@ -585,6 +637,35 @@ console.log('  ✅ 10. Módulo, catálogo, introspector, embeds e Visual DB sinc
       assert.ok(Date.now() - started < 2000, 'Render abaixo do tempo limite');
     }
     console.log('  ✅ 12. Renderizador gera cenas 800x640 em todas as fases.');
+
+    // 12.1 Sem rede: a cena usa só os emojis empacotados (a CDN nem é chamada)
+    const originalFetch = global.fetch;
+    let cdnCalls = 0;
+    global.fetch = async () => {
+      cdnCalls++;
+      throw new Error('offline');
+    };
+    const boss = engine.createRun({ ownerId: 'u', seed: 2 });
+    boss.floor = 5;
+    engine._internals.startCombat(boss, 'nyx', { roomKey: boss.map.start, kind: 'guardian' });
+    const offlinePng = await renderDungeonScene(boss, { lang: 'en', text: views.buildRenderText(boss, 'en') });
+    global.fetch = originalFetch;
+    assert.ok(offlinePng.length > 10000, 'Cena da Nyx renderizada');
+    assert.equal(cdnCalls, 0, 'Nenhum emoji precisou da CDN');
+
+    // 12.2 Assets da Pyxie e do Astaroth com recorte corrigido nas duas cópias (bot e site)
+    const sharp = require('sharp');
+    const { cleanPngBuffer } = require('../src/utils/spriteCleanup');
+    for (const name of ['astaroth_happy.png', 'astaroth_main_icon.png', 'astaroth_sad.png', 'pyxie_sitting.png', 'pyxie_sad_face.png', 'pyxie_pose_victory.png']) {
+      const botFile = path.join(__dirname, '..', 'assets', 'pyxie', 'emojis', name);
+      const siteFile = path.join(__dirname, '..', 'public', 'assets', 'pyxie', 'emojis', name);
+      const raw = await sharp(botFile).ensureAlpha().raw().toBuffer();
+      for (let i = 3; i < raw.length; i += 4) assert.ok(raw[i] === 0 || raw[i] === 255, `${name}: sem pixels semitransparentes na borda`);
+      const recleaned = await sharp(await cleanPngBuffer(fs.readFileSync(botFile))).ensureAlpha().raw().toBuffer();
+      assert.ok(recleaned.equals(raw), `${name}: já está limpo (nada muda ao limpar de novo)`);
+      assert.ok(fs.readFileSync(siteFile).equals(fs.readFileSync(botFile)), `${name}: cópia do site igual à do bot`);
+    }
+    console.log('  ✅ 12.1 Cena funciona offline; assets da Pyxie e do Astaroth sem halo no bot e no site.');
 
     // 13. Fluxo completo pelos botões do Discord (mock de interação), com liquidação real
     const cmd = require('../src/modules/dungeon/commands/pyDungeon');
@@ -648,6 +729,32 @@ console.log('  ✅ 10. Módulo, catálogo, introspector, embeds e Visual DB sinc
       assert.equal(it.calls[0][1].flags, 64, `${what} abre em modo privado`);
     }
     console.log('  ✅ 13. Fluxo completo pelos botões: início, jogo, liquidação, botões antigos e telas privadas.');
+
+    // 14. Botões com emojis do bot e reserva Unicode quando o Discord recusa um emoji (50035)
+    const fresh = engine.createRun({ ownerId: '100000000000000002', seed: 4 });
+    engine._internals.startCombat(fresh, 'rat', { roomKey: fresh.map.start, kind: 'monster' });
+    const emojiOf = (rows, action) =>
+      rows.flatMap((r) => r.toJSON().components).find((c) => c.custom_id.includes(`:${action}`)).emoji;
+    const custom = emojiOf(views.buildRunComponents(fresh, 'pt'), 'attack');
+    assert.ok(custom.id && custom.name === '54416purplepixelknife', 'Atacar usa a faca pixel do bot');
+    let tries = 0;
+    const flaky = {
+      update: async (payload) => {
+        tries++;
+        if (tries === 1) {
+          const err = new Error('Invalid Form Body: components[0].components[0].emoji.id: Invalid emoji');
+          err.code = 50035;
+          throw err;
+        }
+        return payload;
+      },
+    };
+    const sent = await cmd.respond(flaky, 'update', () => ({ components: views.buildRunComponents(fresh, 'pt') }));
+    assert.equal(tries, 2, 'Reenvia uma vez após a recusa');
+    const plain = emojiOf(sent.components, 'attack');
+    assert.ok(!plain.id && plain.name === '⚔️', 'Na segunda tentativa os botões usam Unicode');
+    views.setPlainButtonEmojis(false);
+    console.log('  ✅ 14. Botões com emojis do bot e reserva Unicode automática.');
 
     restoreEconomy();
     fs.rmSync(tmpDir, { recursive: true, force: true });

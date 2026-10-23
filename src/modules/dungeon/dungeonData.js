@@ -3,8 +3,10 @@
  * Todo texto de jogo vem em pares { pt, en } (AGENTS.md §1.6). Textos de interface ficam
  * em src/utils/i18n.js, no namespace "dungeon".
  *
- * `glyph` é o emoji Unicode usado pelo renderizador (pixelado no canvas);
- * `emoji` é a chave canônica de src/utils/appEmojis.js usada nos embeds.
+ * `sprite` é o nome do Application Emoji do bot (catálogo src/data/discordAppEmojis.json, o mesmo
+ * do Developer Portal): aparece nos embeds e, pixelado, na cena do renderizador.
+ * `emoji` (amuletos) é a chave canônica de src/utils/appEmojis.js.
+ * `glyph` é o emoji Unicode de reserva, usado só se o emoji do bot não estiver disponível.
  */
 
 const FLOORS = [
@@ -17,7 +19,7 @@ const FLOORS = [
       en: 'Melted candles drip purple wax on the floor. Something small scratches the walls.',
     },
     palette: { floor: '#2a1838', wall: '#160c20', accent: '#f5a742', glow: '#ffb35c' },
-    enemies: ['rat', 'bat', 'candle', 'spider'],
+    enemies: ['rat', 'bat', 'candle', 'bow_skull'],
     guardian: 'granny_spider',
   },
   {
@@ -41,20 +43,20 @@ const FLOORS = [
       en: 'Pale flowers sprout from ancient ribs. The air smells of wet soil and old tea.',
     },
     palette: { floor: '#17261c', wall: '#0a140d', accent: '#8be28b', glow: '#b6ff9e' },
-    enemies: ['skeleton', 'shroom', 'pumpkin'],
-    guardian: 'gardener',
+    enemies: ['skeleton_cat', 'shroom', 'witch_pumpkin'],
+    guardian: 'hydra',
   },
   {
     id: 4,
     rooms: 10,
     name: { pt: 'Salão dos Espelhos Rachados', en: 'Hall of Cracked Mirrors' },
     flavor: {
-      pt: 'Seu reflexo sorri um segundo atrasado. Bonecas observam de cima dos lustres.',
-      en: 'Your reflection smiles one second too late. Dolls watch from the chandeliers.',
+      pt: 'Seu reflexo sorri um segundo atrasado. Brinquedos de corda observam de cima dos lustres.',
+      en: 'Your reflection smiles one second too late. Wind-up toys watch from the chandeliers.',
     },
     palette: { floor: '#2b1630', wall: '#14081a', accent: '#ff8fd6', glow: '#ffc2ec' },
-    enemies: ['doll', 'gargoyle', 'shade'],
-    guardian: 'porcelain_queen',
+    enemies: ['tin_toy', 'gargoyle', 'masked_imp'],
+    guardian: 'dragon_queen',
   },
   {
     id: 5,
@@ -65,7 +67,7 @@ const FLOORS = [
       en: 'No more candles. Only the beating of huge wings in the dark… and a golden glow far below.',
     },
     palette: { floor: '#24090f', wall: '#0c0306', accent: '#ff5c7a', glow: '#ffd36b' },
-    enemies: ['doll', 'shade', 'gargoyle'],
+    enemies: ['tin_toy', 'masked_imp', 'gargoyle'],
     guardian: 'nyx',
   },
 ];
@@ -79,7 +81,7 @@ const ENEMIES = {
   // Andar 1
   rat: {
     glyph: '🐀',
-    emoji: 'DUNGEON_SKULL',
+    sprite: '3179pixelmouse',
     name: { pt: 'Ratinho Sonâmbulo', en: 'Sleepwalking Rat' },
     hp: 9,
     atk: 3,
@@ -91,7 +93,7 @@ const ENEMIES = {
   },
   bat: {
     glyph: '🦇',
-    emoji: 'BAT',
+    sprite: '6391purplebat',
     name: { pt: 'Morceguinho Faminto', en: 'Hungry Little Bat' },
     hp: 7,
     atk: 2,
@@ -104,7 +106,7 @@ const ENEMIES = {
   },
   candle: {
     glyph: '🕯️',
-    emoji: 'DUNGEON_CANDLE',
+    sprite: '2101candle',
     name: { pt: 'Vela Rabugenta', en: 'Grumpy Candle' },
     hp: 11,
     atk: 3,
@@ -114,24 +116,24 @@ const ENEMIES = {
       { type: 'drain', mult: 0.6, light: 12, w: 2 },
     ],
   },
-  spider: {
-    glyph: '🕷️',
-    emoji: 'DUNGEON_SPIDER',
-    name: { pt: 'Aranha Costureira', en: 'Seamstress Spider' },
+  bow_skull: {
+    glyph: '💀',
+    sprite: '631562skull',
+    name: { pt: 'Caveirinha de Laço', en: 'Bow-Tied Skull' },
     hp: 10,
     atk: 3,
     gold: [4, 7],
     moves: [
       { type: 'attack', mult: 1, w: 2 },
       { type: 'poison', mult: 0.5, poison: 2, turns: 3, w: 1 },
-      { type: 'web', mult: 0.6, w: 1 },
+      { type: 'multi', hits: 2, mult: 0.6, w: 1 },
     ],
   },
 
   // Andar 2
   grimoire: {
     glyph: '📖',
-    emoji: 'SPELLBOOK',
+    sprite: '3546_grimoire',
     name: { pt: 'Grimório Mordedor', en: 'Biting Grimoire' },
     hp: 15,
     atk: 5,
@@ -143,7 +145,7 @@ const ENEMIES = {
   },
   ghost: {
     glyph: '👻',
-    emoji: 'DUNGEON_GHOST',
+    sprite: '583042purplefloatyghost',
     name: { pt: 'Fantasminha Tímido', en: 'Shy Little Ghost' },
     hp: 13,
     atk: 4,
@@ -157,7 +159,7 @@ const ENEMIES = {
   },
   crow: {
     glyph: '🐦',
-    emoji: 'DUNGEON_CROW',
+    sprite: '862801pixelcrow',
     name: { pt: 'Corvo Fofoqueiro', en: 'Gossiping Crow' },
     hp: 12,
     atk: 4,
@@ -170,10 +172,10 @@ const ENEMIES = {
   },
 
   // Andar 3
-  skeleton: {
+  skeleton_cat: {
     glyph: '💀',
-    emoji: 'DUNGEON_SKULL',
-    name: { pt: 'Esqueleto Dançarino', en: 'Dancing Skeleton' },
+    sprite: '249777skullcatyay',
+    name: { pt: 'Gato-Esqueleto Dançarino', en: 'Dancing Skeleton Cat' },
     hp: 19,
     atk: 6,
     gold: [9, 13],
@@ -185,7 +187,7 @@ const ENEMIES = {
   },
   shroom: {
     glyph: '🍄',
-    emoji: 'DUNGEON_MUSHROOM',
+    sprite: '438165bouncymushie',
     name: { pt: 'Cogumelo Sonolento', en: 'Sleepy Shroom' },
     hp: 17,
     atk: 5,
@@ -196,10 +198,10 @@ const ENEMIES = {
       { type: 'heal', value: 6, w: 1 },
     ],
   },
-  pumpkin: {
+  witch_pumpkin: {
     glyph: '🎃',
-    emoji: 'DUNGEON_PUMPKIN',
-    name: { pt: 'Abóbora Risonha', en: 'Giggling Pumpkin' },
+    sprite: '9957witchpumpkin',
+    name: { pt: 'Abóbora Bruxinha', en: 'Little Witch Pumpkin' },
     hp: 22,
     atk: 6,
     gold: [10, 14],
@@ -210,10 +212,10 @@ const ENEMIES = {
   },
 
   // Andar 4
-  doll: {
-    glyph: '🪆',
-    emoji: 'DUNGEON_BOW',
-    name: { pt: 'Boneca de Porcelana', en: 'Porcelain Doll' },
+  tin_toy: {
+    glyph: '🤖',
+    sprite: '712715colorflashrobot',
+    name: { pt: 'Boneco de Lata Quebrado', en: 'Broken Tin Toy' },
     hp: 24,
     atk: 7,
     gold: [12, 17],
@@ -225,7 +227,7 @@ const ENEMIES = {
   },
   gargoyle: {
     glyph: '🗿',
-    emoji: 'DUNGEON_HEADSTONE',
+    sprite: '1158blackcatroll',
     name: { pt: 'Gárgula Preguiçosa', en: 'Lazy Gargoyle' },
     hp: 32,
     atk: 6,
@@ -236,10 +238,10 @@ const ENEMIES = {
       { type: 'charge', w: 1 },
     ],
   },
-  shade: {
-    glyph: '👁️',
-    emoji: 'DUNGEON_EYE',
-    name: { pt: 'Sombra do Espelho', en: 'Mirror Shade' },
+  masked_imp: {
+    glyph: '😈',
+    sprite: '20247goblinbandana',
+    name: { pt: 'Diabrete Mascarado', en: 'Masked Imp' },
     hp: 22,
     atk: 8,
     gold: [12, 18],
@@ -253,7 +255,7 @@ const ENEMIES = {
   // Mímico (aparece em baús)
   mimic: {
     glyph: '🧰',
-    emoji: 'DUNGEON_CHEST',
+    sprite: 'rarecrate',
     name: { pt: 'Baú Mímico', en: 'Mimic Chest' },
     hp: 14,
     atk: 3,
@@ -269,7 +271,7 @@ const ENEMIES = {
   // Guardiões (ciclo fixo de intenções)
   granny_spider: {
     glyph: '🕷️',
-    emoji: 'DUNGEON_SPIDER',
+    sprite: '18826kawaiispider',
     guardian: true,
     name: { pt: 'Vovó Aranha', en: 'Granny Spider' },
     hp: 30,
@@ -285,9 +287,9 @@ const ENEMIES = {
   },
   librarian: {
     glyph: '📚',
-    emoji: 'SPELLBOOK',
+    sprite: '91577purpleghost',
     guardian: true,
-    name: { pt: 'Bibliotecário Sem Cabeça', en: 'Headless Librarian' },
+    name: { pt: 'Bibliotecário Fantasma', en: 'Phantom Librarian' },
     hp: 44,
     atk: 6,
     gold: [28, 36],
@@ -299,11 +301,11 @@ const ENEMIES = {
       { type: 'multi', hits: 3, mult: 0.6 },
     ],
   },
-  gardener: {
-    glyph: '🌹',
-    emoji: 'DUNGEON_ROSE',
+  hydra: {
+    glyph: '🐉',
+    sprite: '420144threeheadeddragon',
     guardian: true,
-    name: { pt: 'Jardineiro de Ossos', en: 'Bone Gardener' },
+    name: { pt: 'Hidra do Jardim de Ossos', en: 'Bone Garden Hydra' },
     hp: 58,
     atk: 7,
     gold: [34, 42],
@@ -313,14 +315,15 @@ const ENEMIES = {
       { type: 'defend', value: 10 },
       { type: 'charge' },
       { type: 'heal', value: 8 },
-      { type: 'multi', hits: 2, mult: 0.8 },
+      { type: 'multi', hits: 3, mult: 0.55 },
     ],
   },
-  porcelain_queen: {
-    glyph: '👑',
-    emoji: 'CROWN',
+  dragon_queen: {
+    glyph: '🐉',
+    sprite: '1598gummydragonbounce',
+    crowned: true,
     guardian: true,
-    name: { pt: 'Rainha de Porcelana', en: 'Porcelain Queen' },
+    name: { pt: 'Rainha Dragão de Ametista', en: 'Amethyst Dragon Queen' },
     hp: 80,
     atk: 8,
     gold: [45, 56],
@@ -334,7 +337,7 @@ const ENEMIES = {
   },
   nyx: {
     glyph: '🦋',
-    emoji: 'BUTTERFLY',
+    sprite: '255208butterfly',
     guardian: true,
     boss: true,
     name: { pt: 'Nyx, a Mariposa Devora-Luz', en: 'Nyx, the Light-Eating Moth' },

@@ -9,11 +9,15 @@ acompanhada do Astaroth, descendo 5 andares procedurais em busca de ouro.
 - **Andares:** grade 7x7 gerada como árvore de salas (estilo Isaac), com névoa de guerra.
   Salas: monstro, baú (pode ser mímico), tesouro trancado, altar, mercadora, poça de luar, armadilha,
   estoque de velas e o **guardião** na ponta mais distante.
-  1. Porão das Velas Tortas
-  2. Biblioteca Sussurrante
-  3. Jardim de Ossos
-  4. Salão dos Espelhos Rachados
-  5. Coração da Cripta, com a chefe final Nyx, a Mariposa Devora-Luz
+
+| Andar | Monstros | Guardião |
+| --- | --- | --- |
+| 1. Porão das Velas Tortas | Ratinho Sonâmbulo, Morceguinho Faminto, Vela Rabugenta, Caveirinha de Laço | Vovó Aranha |
+| 2. Biblioteca Sussurrante | Grimório Mordedor, Fantasminha Tímido, Corvo Fofoqueiro | Bibliotecário Fantasma |
+| 3. Jardim de Ossos | Gato-Esqueleto Dançarino, Cogumelo Sonolento, Abóbora Bruxinha | Hidra do Jardim de Ossos |
+| 4. Salão dos Espelhos Rachados | Boneco de Lata Quebrado, Gárgula Preguiçosa, Diabrete Mascarado | Rainha Dragão de Ametista |
+| 5. Coração da Cripta | versões de elite do andar 4 | Nyx, a Mariposa Devora-Luz |
+
 - **Luz de vela:** cada sala gasta luz. Abaixo de 25 fica escuro: os monstros batem 25% mais
   forte e a névoa esconde tudo.
 - **Combate por turnos:** a intenção do inimigo é sempre telegrafada. Ações: Atacar, Defender
@@ -50,12 +54,25 @@ moedinhas por ticket de 50. Sem talentos, quem joga bem ainda perde um pouco. Co
 profundo o retorno fica entre ~100 e ~200 por descida, e só ~9% das descidas de quem tem talentos no
 máximo vencem a Nyx.
 
+## Visual: emojis do bot e assets sem halo
+- Cada inimigo tem um `sprite` com o nome de um Application Emoji do bot (o catálogo do Developer
+  Portal em `src/data/discordAppEmojis.json`). O mesmo emoji aparece no texto do embed e, pixelado, na cena.
+  Ícones do HUD, do mapa, das intenções, da mercadora e das bênçãos também são emojis do bot, assim como
+  os botões. Se o Discord recusar um emoji, a mensagem é reenviada com Unicode.
+- `node scripts/sync_dungeon_emojis.js` baixa da CDN do Discord os emojis usados para `assets/dungeon/emojis`
+  e apaga os que deixaram de ser usados. Sem o arquivo, o renderizador busca na CDN e, por último, usa o glifo Unicode.
+- `node scripts/clean_pyxie_assets.js --write` corrige o recorte dos PNGs da Pyxie e do Astaroth (halo
+  claro semitransparente da remoção de fundo) em `assets/pyxie/emojis` e `public/assets/pyxie/emojis`.
+  O script é idempotente e deixa de fora os stickers, cuja borda branca é proposital.
+
 ## Arquivos
 - `dungeonData.js`: conteúdo bilíngue (andares, inimigos, amuletos, talentos, salas vazias).
 - `dungeonEngine.js`: motor puro e determinístico (mapa, eventos, combate, liquidação).
 - `dungeonStore.js`: persistência atômica, ticket, limites, tetos, talentos e métricas.
 - `dungeonViews.js`: embeds, botões e textos localizados da cena.
-- `dungeonRenderer.js`: cena pixel art 800x640 (`@napi-rs/canvas`) com os assets da Pyxie e do Astaroth.
+- `dungeonRenderer.js`: cena pixel art 800x640 (`@napi-rs/canvas`) com os assets da Pyxie e do Astaroth
+  e os emojis do bot.
+- `src/utils/spriteCleanup.js`: limpeza de halo e de ilhas soltas em sprites PNG.
 - `commands/pyDungeon.js`: comando e roteador de botões (`dgn:*`).
 
 ## Painel, API e testes

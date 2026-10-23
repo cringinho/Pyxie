@@ -37,7 +37,11 @@ description: "Constrói minigames longos e interativos por botões como módulos
 
 ## 5. Visual mobile-first
 - A cena tem 800x640, fonte mínima de 24px e contraste de 4.5:1. Use `ensureCanvasFonts()` e `withEmojiFallback()`.
-- Para emojis em estilo pixel art, desenhe a ~20px num canvas minúsculo e amplie com `imageSmoothingEnabled = false`. Contorne sprites escuros com 1px. Evite sequências ZWJ.
+- Personagens, inimigos e ícones vêm dos **Application Emojis do bot** (catálogo do Developer Portal em `src/data/discordAppEmojis.json`, mais de mil emojis). Escolha-os visualmente montando folhas de contato a partir da CDN (`https://cdn.discordapp.com/emojis/<id>.png?size=128`). Empacote os escolhidos em `assets/<id>/emojis` com um script de sincronização e mantenha a CDN e o glifo Twemoji apenas como reserva.
+- Cuidado com emojis animados: a CDN entrega o primeiro quadro, que pode ser ruim (uma moeda girando aparece de lado). Prefira versões estáticas.
+- Para o estilo pixel art, reduza para ~20 a 64px e amplie com `imageSmoothingEnabled = false`. Contorne sprites escuros com 1px.
+- Antes de usar PNGs transparentes da Pyxie ou do Astaroth, passe `src/utils/spriteCleanup.js` (`scripts/clean_pyxie_assets.js`), que remove o halo claro da remoção de fundo.
+- Botões podem usar emojis do bot, desde que exista uma reserva Unicode reenviada automaticamente quando o Discord responder 50035.
 - Mantenha o render abaixo de ~150 ms com cache de sprites no módulo. Na view, faça `Promise.race` com um timeout para responder sem imagem se algo travar.
 - Nas mensagens com imagem, envie `files` junto com `attachments: []` para substituir a cena anterior.
 

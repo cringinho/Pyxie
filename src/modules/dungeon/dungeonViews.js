@@ -20,6 +20,51 @@ const LOBBY_THUMB = path.join(__dirname, '..', '..', '..', 'assets', 'pyxie', 'p
 const RENDER_TIMEOUT_MS = 2000;
 const LABEL_MAX = 34;
 
+// Emojis dos botões: Application Emoji do bot + reserva Unicode (usada se o Discord recusar o emoji)
+const BUTTON_EMOJIS = {
+  attack: ['54416purplepixelknife', '⚔️'],
+  guard: ['badge_brick_wall_shield', '🛡️'],
+  shield: ['badge_brick_wall_shield', '🛡️'],
+  bolt: ['9830moonwand', '🔮'],
+  astaroth: ['ASTAROTH_POWER', '🐈‍⬛'],
+  potion: ['44332darkpotion', '🧪'],
+  open: ['54187box', '🔓'],
+  useKey: ['38632pinkkey', '🗝️'],
+  poke: ['338372pinkpixelknife', '🪄'],
+  pray: ['984953pixelmoon', '🙏'],
+  offer: ['goldcoin', '💰'],
+  drink: ['8144bluecrystalmoon', '💧'],
+  extract: ['goldcoin', '💰'],
+  candle: ['DUNGEON_CANDLE', '🕯️'],
+  key: ['38632pinkkey', '🗝️'],
+  help: ['SPELLBOOK', '📜'],
+  talents: ['DUNGEON_MOON', '🌙'],
+  hall: ['TROPHY', '🏆'],
+  bag: ['BAG', '🎒'],
+};
+
+let plainButtonEmojis = false;
+
+/** Depois de uma recusa do Discord (emoji inválido), os botões voltam a usar só Unicode. */
+function setPlainButtonEmojis(value) {
+  plainButtonEmojis = Boolean(value);
+}
+
+/** Emoji do bot no formato <:nome:id>, ou a reserva quando ele não existe no catálogo. */
+function appEmoji(ref, fallback) {
+  const formatted = ref ? getEmoji(ref) : '';
+  return /^<a?:[\w~]+:\d+>$/.test(formatted || '') ? formatted : fallback;
+}
+
+function buttonEmoji(key, fallback) {
+  const [ref, unicode] = BUTTON_EMOJIS[key] || [null, fallback];
+  return plainButtonEmojis ? unicode : appEmoji(ref, unicode);
+}
+
+function enemyEmoji(def) {
+  return appEmoji(def?.sprite, def?.glyph || '👾');
+}
+
 const PHASE_COLORS = {
   explore: PYXIE_COLORS.violet,
   combat: PYXIE_COLORS.crimson,
@@ -105,8 +150,7 @@ function floorName(floor, lang) {
 function formatLogEntry(entry, lang) {
   const p = { ...(entry.p || {}) };
   if (p.enemy) {
-    const def = ENEMIES[p.enemy];
-    p.emoji = getEmoji(def?.emoji || 'MONSTER');
+    p.emoji = enemyEmoji(ENEMIES[p.enemy]);
     p.enemy = enemyName(p.enemy, lang);
   }
   if (p.charm) p.charm = charmName(p.charm, lang);
@@ -232,7 +276,7 @@ function phaseBlock(run, lang, settlement) {
       const c = run.combat;
       const parts = [
         t('dungeon.combat.enemyLine', lang, {
-          emoji: getEmoji(ENEMIES[c.enemyId]?.emoji || 'MONSTER'),
+          emoji: enemyEmoji(ENEMIES[c.enemyId]),
           enemy: enemyName(c.enemyId, lang),
           hp: c.hp,
           max: c.maxHp,
@@ -314,32 +358,34 @@ function endBlock(run, lang, settlement) {
 }
 
 const ACTION_STYLE = {
-  attack: { emoji: '⚔️', style: ButtonStyle.Primary, label: 'attack' },
-  guard: { emoji: '🛡️', style: ButtonStyle.Secondary, label: 'guard' },
-  bolt: { emoji: '🔮', style: ButtonStyle.Primary, label: 'bolt' },
-  astaroth: { emoji: '🐈‍⬛', style: ButtonStyle.Success, label: 'astaroth' },
-  flee: { emoji: '🏃', style: ButtonStyle.Secondary, label: 'flee' },
-  poke: { emoji: '🪄', style: ButtonStyle.Secondary, label: 'poke' },
-  force: { emoji: '💪', style: ButtonStyle.Danger, label: 'force' },
-  pray: { emoji: '🙏', style: ButtonStyle.Primary, label: 'pray' },
-  drink: { emoji: '💧', style: ButtonStyle.Primary, label: 'drink' },
-  jump: { emoji: '🦘', style: ButtonStyle.Primary, label: 'jump' },
-  shield: { emoji: '🛡️', style: ButtonStyle.Secondary, label: 'shield' },
-  disarm: { emoji: '🔧', style: ButtonStyle.Secondary, label: 'disarm' },
-  forfeit: { emoji: '🏳️', style: ButtonStyle.Secondary, label: 'forfeit' },
-  forfeit_confirm: { emoji: '🏳️', style: ButtonStyle.Danger, label: 'forfeitYes' },
-  forfeit_cancel: { emoji: '↩️', style: ButtonStyle.Secondary, label: 'forfeitNo' },
+  attack: { emoji: () => buttonEmoji('attack', '⚔️'), style: ButtonStyle.Primary, label: 'attack' },
+  guard: { emoji: () => buttonEmoji('guard', '🛡️'), style: ButtonStyle.Secondary, label: 'guard' },
+  flee: { emoji: () => '🏃', style: ButtonStyle.Secondary, label: 'flee' },
+  poke: { emoji: () => buttonEmoji('poke', '🪄'), style: ButtonStyle.Secondary, label: 'poke' },
+  force: { emoji: () => '💪', style: ButtonStyle.Danger, label: 'force' },
+  pray: { emoji: () => buttonEmoji('pray', '🙏'), style: ButtonStyle.Primary, label: 'pray' },
+  drink: { emoji: () => buttonEmoji('drink', '💧'), style: ButtonStyle.Primary, label: 'drink' },
+  jump: { emoji: () => '🦘', style: ButtonStyle.Primary, label: 'jump' },
+  shield: { emoji: () => buttonEmoji('shield', '🛡️'), style: ButtonStyle.Secondary, label: 'shield' },
+  disarm: { emoji: () => '🔧', style: ButtonStyle.Secondary, label: 'disarm' },
+  forfeit: { emoji: () => '🏳️', style: ButtonStyle.Secondary, label: 'forfeit' },
+  forfeit_confirm: { emoji: () => '🏳️', style: ButtonStyle.Danger, label: 'forfeitYes' },
+  forfeit_cancel: { emoji: () => '↩️', style: ButtonStyle.Secondary, label: 'forfeitNo' },
 };
 
 const MOVE_EMOJI = { w: '⬅️', n: '⬆️', s: '⬇️', e: '➡️' };
-const ITEM_EMOJI = { potion: '🧪', candle: '🕯️', key: '🗝️', charm: '✨' };
 const PICK_EMOJI = ['1️⃣', '2️⃣', '3️⃣'];
+
+function itemEmoji(offer) {
+  if (offer.item === 'charm') return plainButtonEmojis ? '✨' : appEmoji(CHARMS[offer.charmId]?.emoji, '✨');
+  return buttonEmoji(offer.item, { potion: '🧪', candle: '🕯️', key: '🗝️' }[offer.item]);
+}
 
 function buildRunComponents(run, lang) {
   const owner = run.ownerId;
   if (engine.isTerminal(run)) {
     return rowsOf([
-      button({ id: lobbyId(owner, 'start'), label: t('dungeon.buttons.newRun', lang), emoji: '🕯️', style: ButtonStyle.Primary }),
+      button({ id: lobbyId(owner, 'start'), label: t('dungeon.buttons.newRun', lang), emoji: buttonEmoji('candle', '🕯️'), style: ButtonStyle.Primary }),
       button({ id: lobbyId(owner, 'lobby'), label: t('dungeon.buttons.lobby', lang), emoji: '🏰' }),
     ]);
   }
@@ -350,20 +396,20 @@ function buildRunComponents(run, lang) {
     const p = run.player;
     if (a.id === 'move') return button({ id, emoji: MOVE_EMOJI[a.arg], disabled: !a.enabled });
     if (a.id === 'potion') {
-      return button({ id, label: t('dungeon.buttons.potion', lang, { count: p.potions }), emoji: '🧪', style: ButtonStyle.Success, disabled: !a.enabled });
+      return button({ id, label: t('dungeon.buttons.potion', lang, { count: p.potions }), emoji: buttonEmoji('potion', '🧪'), style: ButtonStyle.Success, disabled: !a.enabled });
     }
     if (a.id === 'bolt') {
-      return button({ id, label: t('dungeon.buttons.bolt', lang, { cost: engine.boltCost(run) }), emoji: '🔮', style: ButtonStyle.Primary, disabled: !a.enabled });
+      return button({ id, label: t('dungeon.buttons.bolt', lang, { cost: engine.boltCost(run) }), emoji: buttonEmoji('bolt', '🔮'), style: ButtonStyle.Primary, disabled: !a.enabled });
     }
     if (a.id === 'astaroth') {
-      return button({ id, label: t('dungeon.buttons.astaroth', lang, { cost: engine.swipeCost(run) }), emoji: '🐈‍⬛', style: ButtonStyle.Success, disabled: !a.enabled });
+      return button({ id, label: t('dungeon.buttons.astaroth', lang, { cost: engine.swipeCost(run) }), emoji: buttonEmoji('astaroth', '🐈‍⬛'), style: ButtonStyle.Success, disabled: !a.enabled });
     }
     if (a.id === 'open') {
       const isTreasure = run.event?.type === 'treasure';
       return button({
         id,
         label: t(`dungeon.buttons.${isTreasure ? 'useKey' : 'open'}`, lang),
-        emoji: isTreasure ? '🗝️' : '🔓',
+        emoji: isTreasure ? buttonEmoji('useKey', '🗝️') : buttonEmoji('open', '🔓'),
         style: ButtonStyle.Primary,
         disabled: !a.enabled,
       });
@@ -375,10 +421,10 @@ function buildRunComponents(run, lang) {
     if (a.id === 'buy') {
       const offer = run.map.rooms[run.event.roomKey].stock[Number(a.arg)];
       const item = offer.item === 'charm' ? charmName(offer.charmId, lang, false) : t(`dungeon.items.${offer.item}`, lang);
-      return button({ id, label: t('dungeon.buttons.buy', lang, { item, price: offer.price }), emoji: ITEM_EMOJI[offer.item], style: ButtonStyle.Success, disabled: !a.enabled });
+      return button({ id, label: t('dungeon.buttons.buy', lang, { item, price: offer.price }), emoji: itemEmoji(offer), style: ButtonStyle.Success, disabled: !a.enabled });
     }
     if (a.id === 'offer') {
-      return button({ id, label: t('dungeon.buttons.offer', lang, { price: engine.shrineOfferPrice(run) }), emoji: '💰', style: ButtonStyle.Success, disabled: !a.enabled });
+      return button({ id, label: t('dungeon.buttons.offer', lang, { price: engine.shrineOfferPrice(run) }), emoji: buttonEmoji('offer', '💰'), style: ButtonStyle.Success, disabled: !a.enabled });
     }
     if (a.id === 'pick') {
       const charmId = run.reward.options[Number(a.arg)];
@@ -388,17 +434,17 @@ function buildRunComponents(run, lang) {
       return button({ id, label: t('dungeon.buttons.descend', lang, { floor: run.floor + 1 }), emoji: '⬇️', style: ButtonStyle.Danger });
     }
     if (a.id === 'extract') {
-      return button({ id, label: t('dungeon.buttons.extract', lang, { amount: extractTake(run) }), emoji: '💰', style: ButtonStyle.Success });
+      return button({ id, label: t('dungeon.buttons.extract', lang, { amount: extractTake(run) }), emoji: buttonEmoji('extract', '💰'), style: ButtonStyle.Success });
     }
-    const style = ACTION_STYLE[a.id] || { emoji: '✨', style: ButtonStyle.Secondary, label: a.id };
-    return button({ id, label: t(`dungeon.buttons.${style.label}`, lang), emoji: style.emoji, style: style.style, disabled: !a.enabled });
+    const style = ACTION_STYLE[a.id] || { emoji: () => '✨', style: ButtonStyle.Secondary, label: a.id };
+    return button({ id, label: t(`dungeon.buttons.${style.label}`, lang), emoji: style.emoji(), style: style.style, disabled: !a.enabled });
   };
 
   if (run.phase === 'explore' && !run.confirmForfeit) {
     const moves = actions.filter((a) => a.id === 'move').map(make);
     const potion = actions.find((a) => a.id === 'potion');
     const forfeit = actions.find((a) => a.id === 'forfeit');
-    const bag = button({ id: lobbyId(owner, 'bag'), label: t('dungeon.buttons.bag', lang), emoji: '🎒' });
+    const bag = button({ id: lobbyId(owner, 'bag'), label: t('dungeon.buttons.bag', lang), emoji: buttonEmoji('bag', '🎒') });
     return [new ActionRowBuilder().addComponents(moves), new ActionRowBuilder().addComponents([make(potion), bag, make(forfeit)])];
   }
   return rowsOf(actions.map(make), 3);
@@ -503,7 +549,7 @@ function buildLobbyView(user, source, { notice = null } = {}) {
     : button({
         id: lobbyId(user.id, 'start'),
         label: t('dungeon.lobby.btnStart', lang, { ticket: s.ticket }),
-        emoji: '🕯️',
+        emoji: buttonEmoji('candle', '🕯️'),
         style: ButtonStyle.Primary,
         disabled: status.entriesLeft <= 0,
       });
@@ -511,11 +557,11 @@ function buildLobbyView(user, source, { notice = null } = {}) {
   const components = [
     new ActionRowBuilder().addComponents(
       main,
-      button({ id: lobbyId(user.id, 'help'), label: t('dungeon.lobby.btnHelp', lang), emoji: '📜' })
+      button({ id: lobbyId(user.id, 'help'), label: t('dungeon.lobby.btnHelp', lang), emoji: buttonEmoji('help', '📜') })
     ),
     new ActionRowBuilder().addComponents(
-      button({ id: lobbyId(user.id, 'tal'), label: t('dungeon.lobby.btnTalents', lang), emoji: '🌙' }),
-      button({ id: lobbyId(user.id, 'hall'), label: t('dungeon.lobby.btnHall', lang), emoji: '🏆' })
+      button({ id: lobbyId(user.id, 'tal'), label: t('dungeon.lobby.btnTalents', lang), emoji: buttonEmoji('talents', '🌙') }),
+      button({ id: lobbyId(user.id, 'hall'), label: t('dungeon.lobby.btnHall', lang), emoji: buttonEmoji('hall', '🏆') })
     ),
   ];
 
@@ -618,6 +664,8 @@ function limitMessage(source) {
 
 module.exports = {
   PREFIX,
+  setPlainButtonEmojis,
+  appEmoji,
   parseCustomId,
   actionId,
   lobbyId,

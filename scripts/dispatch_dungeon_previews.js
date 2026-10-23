@@ -67,7 +67,11 @@ async function main() {
   const combat = driveUntil(engine.createRun({ ownerId: PREVIEW_OWNER, lang, seed: 7 }), 'combat');
   await send('/py-dungeon', 'Combate com intenção telegrafada', combat);
 
-  const camp = driveUntil(engine.createRun({ ownerId: PREVIEW_OWNER, lang, seed: 7, talents: { vitality: 3, wand: 1 } }), 'camp');
+  // Primeira semente que chega à fogueira com a política simples de preview
+  let camp = null;
+  for (let seed = 1; seed <= 60 && camp?.phase !== 'camp'; seed++) {
+    camp = driveUntil(engine.createRun({ ownerId: PREVIEW_OWNER, lang, seed, talents: { vitality: 3, wand: 1 } }), 'camp');
+  }
   await send('/py-dungeon', 'Fogueira: descer ou fugir com o tesouro', camp);
 
   if (camp.phase === 'camp') {
