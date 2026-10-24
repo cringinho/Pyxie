@@ -663,6 +663,34 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'dungeon_idle_summary',
+  name: '🕯️ Catacumbas de Veludo: Game Over por Inatividade',
+  category: 'minigames',
+  description: 'Enviado por DM quando a descida fica parada pelo tempo de inatividade (20 min por padrão): salvamento de 10%, Ecos, itens e dica de fugir na fogueira. Sem DM aberta, vai na thread da descida antes de ela ser trancada.',
+  defaultColor: '#3b0d2e',
+  previewTitle: '{header} A vela apagou',
+  previewDesc: 'Você sumiu por **20 minutos** no **Andar 3** e a vela não aguentou… o Astaroth te puxou pra fora, como sempre. E-eu não fiquei preocupada, tá?\n\n### 📜 Resumo da descida\n\n### 💰 Ouro coletado: `240`\n\n🪙 **Moedinhas recebidas:** `+24`\n\n-# 🐈‍⬛ O Astaroth salvou `10%` do ouro na boquinha.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Vela', fallback: '🕯️', defaultEmojiKey: 'DUNGEON_CANDLE', description: 'Ícone no título do resumo' },
+  ],
+});
+
+registerEmbed({
+  id: 'dungeon_hall',
+  name: '🏆 Catacumbas de Veludo: Rankings',
+  category: 'minigames',
+  description: 'Hall dos Corajosos com abas: de sempre (andar mais fundo), da semana (zera segunda 00:00 BRT) e do servidor (quem desceu a partir dele nesta semana).',
+  defaultColor: '#f59e0b',
+  previewTitle: '{header} Ranking da semana',
+  previewDesc: 'Quem desceu mais fundo desde segunda-feira:\n\n`1.` @Bea • Andar `4` • 👑 `0` • ⚔️ `12`\n\n`2.` @Ana • Andar `3` • 👑 `0` • ⚔️ `9`\n\n-# 📅 A semana vira toda segunda à meia-noite (Brasília).',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Calendário', fallback: '📅', defaultEmojiKey: 'TROPHY', description: 'Ícone no título do ranking' },
+  ],
+});
+
+registerEmbed({
   id: 'tarot_draw',
   name: '🔮 Tiragem Diária de Tarot',
   category: 'tarot',

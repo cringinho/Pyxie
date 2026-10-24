@@ -1815,7 +1815,17 @@ const TRANSLATIONS = {
         "title": "🏆 Hall dos Corajosos",
         "desc": "Quem desceu mais fundo nas Catacumbas de Veludo:\n\n{lines}",
         "line": "`{pos}.` {user} • Andar `{floor}` • 👑 `{victories}` • 🪙 recorde `{payout}`",
-        "empty": "-# Ninguém desceu ainda. Que tal ser a primeira pessoa?"
+        "empty": "-# Ninguém desceu ainda. Que tal ser a primeira pessoa?",
+        "titleWeek": "📅 Ranking da semana",
+        "titleGuild": "🏰 Ranking da semana no servidor",
+        "descWeek": "Quem desceu mais fundo desde segunda-feira:\n\n{lines}",
+        "descGuild": "Quem desceu mais fundo esta semana em **{server}**:\n\n{lines}",
+        "lineWeek": "`{pos}.` {user} • Andar `{floor}` • 👑 `{victories}` • ⚔️ `{kills}`",
+        "you": "-# Você está em **#{pos}**. Falta pouco… eu acho.",
+        "weekReset": "-# 📅 A semana vira toda segunda à meia-noite (Brasília).",
+        "btnAll": "De sempre",
+        "btnWeek": "Semana",
+        "btnGuild": "Servidor"
       },
       "help": {
         "title": "📜 Guia das Catacumbas",
@@ -1841,6 +1851,23 @@ const TRANSLATIONS = {
         "shrine": "Altar da Lua",
         "fountain": "Poça de Luar",
         "trap": "Armadilha!"
+      },
+      "thread": {
+        "name": "🕯️ Catacumbas de {user}",
+        "reason": "Descida nas Catacumbas de Veludo",
+        "started": "🕯️ Sua descida começou em {thread}. Te espero lá… n-não demora.",
+        "btnGo": "Ir para a descida",
+        "here": "🕯️ Sua descida continua em {thread}.",
+        "warn": "🕯️ {user}, a vela tá quase apagando… se ninguém mexer em **{minutes} minutos**, eu fecho a descida.",
+        "closed": "🕯️ A vela apagou de tanto esperar. Fechei esta descida e mandei o resumo pra DM de {user}.",
+        "closedNoDm": "🕯️ A vela apagou de tanto esperar. Fechei esta descida; o resumo tá aqui embaixo, já que a DM de {user} tá fechada."
+      },
+      "idle": {
+        "title": "🕯️ A vela apagou",
+        "intro": "Você sumiu por **{minutes} minutos** no **Andar {floor}** e a vela não aguentou… o Astaroth te puxou pra fora, como sempre. E-eu não fiquei preocupada, tá?",
+        "summaryHeader": "### 📜 Resumo da descida",
+        "tip": "-# Da próxima vez, se precisar sair, use **Fugir** na fogueira: o ouro vai junto com você.",
+        "footer": "Pyxie • Catacumbas de Veludo"
       }
     },
     "mary": {
@@ -3514,7 +3541,17 @@ const TRANSLATIONS = {
         "title": "🏆 Hall of the Brave",
         "desc": "Who went deepest into the Velvet Catacombs:\n\n{lines}",
         "line": "`{pos}.` {user} • Floor `{floor}` • 👑 `{victories}` • 🪙 best `{payout}`",
-        "empty": "-# Nobody has gone down yet. Why not be the first?"
+        "empty": "-# Nobody has gone down yet. Why not be the first?",
+        "titleWeek": "📅 This week's ranking",
+        "titleGuild": "🏰 This week's server ranking",
+        "descWeek": "Who went deepest since Monday:\n\n{lines}",
+        "descGuild": "Who went deepest this week in **{server}**:\n\n{lines}",
+        "lineWeek": "`{pos}.` {user} • Floor `{floor}` • 👑 `{victories}` • ⚔️ `{kills}`",
+        "you": "-# You're at **#{pos}**. Almost there… I think.",
+        "weekReset": "-# 📅 The week resets every Monday at midnight (Brasília time).",
+        "btnAll": "All time",
+        "btnWeek": "Week",
+        "btnGuild": "Server"
       },
       "help": {
         "title": "📜 Catacombs Guide",
@@ -3540,6 +3577,23 @@ const TRANSLATIONS = {
         "shrine": "Moon Shrine",
         "fountain": "Moonlit Pool",
         "trap": "Trap!"
+      },
+      "thread": {
+        "name": "🕯️ {user}'s Catacombs",
+        "reason": "Velvet Catacombs descent",
+        "started": "🕯️ Your descent started in {thread}. I'll wait for you there… d-don't take long.",
+        "btnGo": "Go to the descent",
+        "here": "🕯️ Your descent continues in {thread}.",
+        "warn": "🕯️ {user}, the candle is almost out… if nobody moves in **{minutes} minutes**, I'll close the descent.",
+        "closed": "🕯️ The candle went out from waiting so long. I closed this descent and sent the summary to {user} by DM.",
+        "closedNoDm": "🕯️ The candle went out from waiting so long. I closed this descent; the summary is below, since {user}'s DMs are closed."
+      },
+      "idle": {
+        "title": "🕯️ The candle went out",
+        "intro": "You disappeared for **{minutes} minutes** on **Floor {floor}** and the candle couldn't hold on… Astaroth dragged you out, as always. I-I wasn't worried, okay?",
+        "summaryHeader": "### 📜 Descent summary",
+        "tip": "-# Next time, if you need to leave, use **Escape** at the campfire: your gold goes with you.",
+        "footer": "Pyxie • Velvet Catacombs"
       }
     },
     "mary": {

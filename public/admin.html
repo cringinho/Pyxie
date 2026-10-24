@@ -4236,7 +4236,7 @@
               ${field('dailyEntries', '🌙 Descidas por dia (BRT)', 'Limite de tickets por jogador por dia')}
               ${field('runPayoutCap', '🔒 Teto de pagamento por descida', 'Máximo convertido em moedinhas num único run')}
               ${field('dailyPayoutCap', '🔒 Teto de pagamento diário', 'Máximo somado por jogador por dia')}
-              ${field('abandonAfterHours', '⏳ Encerrar runs parados após (horas)', 'Runs esquecidos são resgatados pelo Astaroth com 10% do ouro')}
+              ${field('idleMinutes', '⏳ Game over por inatividade (minutos)', 'Descida parada vira game over: o Astaroth salva 10% do ouro, o resumo vai por DM e a thread é fechada')}
             `;
           } else if (id === 'museum') {
             title.textContent = '🏛️ Configurar Museu da Comunidade';
@@ -4333,7 +4333,7 @@
             adminRoleIds: document.getElementById('museumAdminRoleIds')?.value || '',
           };
         } else if (currentConfigModuleId === 'dungeon') {
-          for (const key of ['ticket', 'dailyEntries', 'runPayoutCap', 'dailyPayoutCap', 'abandonAfterHours']) {
+          for (const key of ['ticket', 'dailyEntries', 'runPayoutCap', 'dailyPayoutCap', 'idleMinutes']) {
             const value = document.getElementById(`dungeon_${key}`)?.value;
             if (value !== undefined && value !== '') payload[key] = Number(value);
           }

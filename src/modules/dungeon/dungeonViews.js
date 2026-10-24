@@ -636,18 +636,100 @@ function buildTalentsView(user, source, { notice = null } = {}) {
   return { embeds: [embed], components: rowsOf(buttons, 3) };
 }
 
-function buildHallView(source) {
+const HALL_SCOPES = { hall: 'all', halla: 'all', hallw: 'week', hallg: 'guild' };
+
+/**
+ * Rankings das Catacumbas: de sempre (andar mais fundo), da semana (zera segunda 00:00 BRT) e do
+ * servidor (quem desceu a partir daqui). Os botões trocam a lista na mesma mensagem.
+ */
+function buildHallView(source, { what = 'hall', ownerId = null, now = Date.now() } = {}) {
   const lang = getLanguage(source);
-  const top = store.getHallOfFame(10);
+  const guildId = source?.guildId || source?.guild?.id || null;
+  // 'hall' abre a lista (botão do menu); dentro dela, as abas usam halla/hallw/hallg
+  const scopeKey = HALL_SCOPES[what] && what !== 'hall' && (what !== 'hallg' || guildId) ? what : 'halla';
+  const scope = HALL_SCOPES[scopeKey];
+  const ranked = store.getLeaderboard({ scope: scope === 'guild' ? 'week' : scope, guildId: scope === 'guild' ? guildId : null, now });
+  const top = ranked.slice(0, 10);
+  const lineKey = scope === 'all' ? 'dungeon.hall.line' : 'dungeon.hall.lineWeek';
   const lines = top.map((entry, index) =>
-    t('dungeon.hall.line', lang, { pos: index + 1, user: `<@${entry.userId}>`, floor: entry.bestFloor, victories: entry.victories, payout: entry.bestPayout })
+    t(lineKey, lang, { pos: index + 1, user: `<@${entry.userId}>`, floor: entry.bestFloor, victories: entry.victories, payout: entry.coins, kills: entry.kills })
   );
+  const viewerId = ownerId || source?.user?.id || source?.author?.id || null;
+  const position = viewerId ? ranked.findIndex((entry) => entry.userId === String(viewerId)) + 1 : 0;
+
+  const titleKey = { all: 'dungeon.hall.title', week: 'dungeon.hall.titleWeek', guild: 'dungeon.hall.titleGuild' }[scope];
+  const descKey = { all: 'dungeon.hall.desc', week: 'dungeon.hall.descWeek', guild: 'dungeon.hall.descGuild' }[scope];
+  const parts = [t(descKey, lang, { lines: lines.length > 0 ? lines.join('\n\n') : t('dungeon.hall.empty', lang), server: source?.guild?.name || '' })];
+  if (position > 10) parts.push(t('dungeon.hall.you', lang, { pos: position }));
+  if (scope !== 'all') parts.push(t('dungeon.hall.weekReset', lang));
+
   const embed = new EmbedBuilder()
     .setColor(PYXIE_COLORS.gold)
-    .setTitle(t('dungeon.hall.title', lang))
-    .setDescription(t('dungeon.hall.desc', lang, { lines: lines.length > 0 ? lines.join('\n\n') : t('dungeon.hall.empty', lang) }))
+    .setTitle(t(titleKey, lang))
+    .setDescription(parts.join('\n\n'))
     .setFooter(footerFor(source, lang));
-  return { embeds: [embed], allowedMentions: { parse: [] } };
+
+  const payload = { embeds: [embed], allowedMentions: { parse: [] } };
+  if (viewerId) {
+    const tabs = [
+      ['halla', 'btnAll', buttonEmoji('hall', '🏆')],
+      ['hallw', 'btnWeek', '📅'],
+      ...(guildId ? [['hallg', 'btnGuild', '🏰']] : []),
+    ].map(([id, label, emoji]) =>
+      button({
+        id: lobbyId(viewerId, id),
+        label: t(`dungeon.hall.${label}`, lang),
+        emoji,
+        style: id === scopeKey ? ButtonStyle.Primary : ButtonStyle.Secondary,
+        disabled: id === scopeKey,
+      })
+    );
+    payload.components = [new ActionRowBuilder().addComponents(...tabs)];
+  }
+  return payload;
+}
+
+// ---------------------------------------------------------------- threads e inatividade
+/** Mensagem que fica no canal quando a descida vai para a thread. */
+function buildThreadNotice(thread, source) {
+  const lang = getLanguage(source);
+  const url = `https://discord.com/channels/${thread.guildId || source?.guildId}/${thread.id}`;
+  return {
+    content: t('dungeon.thread.started', lang, { thread: `<#${thread.id}>` }),
+    embeds: [],
+    files: [],
+    attachments: [],
+    components: [
+      new ActionRowBuilder().addComponents(
+        new ButtonBuilder().setStyle(ButtonStyle.Link).setURL(url).setLabel(t('dungeon.thread.btnGo', lang)).setEmoji('🕯️')
+      ),
+    ],
+    allowedMentions: { parse: [] },
+  };
+}
+
+/** Resumo de game over por inatividade (vai por DM; sem DM aberta, vai na thread). */
+function buildIdleSummaryView(notice) {
+  const lang = notice.lang === 'en' ? 'en' : 'pt';
+  const s = notice.settlement || {};
+  const lines = [
+    t('dungeon.idle.intro', lang, { minutes: notice.idleMinutes, floor: notice.floor }),
+    t('dungeon.idle.summaryHeader', lang),
+    t('dungeon.end.gold', lang, { gold: s.gold || 0 }),
+    t('dungeon.end.payout', lang, { payout: s.payout || 0 }),
+    t('dungeon.end.salvage', lang),
+    t('dungeon.end.echoes', lang, { echoes: s.echoes || 0 }),
+  ];
+  if (Array.isArray(s.drops) && s.drops.length) lines.push(t('dungeon.end.drops', lang, { items: dropNames(s.drops, lang) }));
+  if (s.newBest) lines.push(t('dungeon.end.best', lang, { floor: notice.floor }));
+  lines.push(t('dungeon.end.stats', lang, { rooms: notice.rooms || 0, kills: notice.kills || 0 }), t('dungeon.idle.tip', lang));
+  const embed = new EmbedBuilder()
+    .setColor(PHASE_COLORS.dead)
+    .setTitle(t('dungeon.idle.title', lang))
+    .setDescription(lines.join('\n\n'))
+    .setFooter({ text: t('dungeon.idle.footer', lang) })
+    .setTimestamp(notice.endedAt || Date.now());
+  return { embeds: [embed] };
 }
 
 function buildBagView(run, source) {
@@ -694,6 +776,8 @@ module.exports = {
   buildHelpView,
   buildTalentsView,
   buildHallView,
+  buildThreadNotice,
+  buildIdleSummaryView,
   buildBagView,
   limitMessage,
 };

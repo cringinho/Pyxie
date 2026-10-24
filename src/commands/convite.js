@@ -12,8 +12,9 @@ const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 // Permissões recomendadas:
 // View Channel (1024) + Send Messages (2048) + Send in Threads (274877906944) +
 // Embed Links (16384) + Attach Files (32768) + Read History (65536) +
-// Add Reactions (64) + Use External Emojis (262144) + Manage Messages (8192)
-const RECOMMENDED_PERMISSIONS = 277025770560n;
+// Add Reactions (64) + Use External Emojis (262144) + Manage Messages (8192) +
+// Create Public Threads (34359738368) + Manage Threads (17179869184): thread de cada descida
+const RECOMMENDED_PERMISSIONS = 328565378112n;
 
 const DEFAULT_BOT_ID = '1543650200718155897';
 function getWebBonusUrl() {

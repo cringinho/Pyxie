@@ -15,6 +15,8 @@ const { TALENTS } = require('./dungeonData');
  * - Cada ação carrega o `step` do run: botões antigos ou cliques duplos são recusados.
  * - O run é removido do arquivo ANTES do crédito: um segundo clique nunca paga de novo.
  * - Ecos (talentos) nunca viram moedinhas.
+ * - Descida parada há mais de `idleMinutes` (20 por padrão) vira game over: o Astaroth resgata
+ *   10% do ouro, o resumo vai por DM e a thread da descida é fechada (fila `notices`).
  */
 
 let DATA_FILE = process.env.DUNGEON_DATA_PATH || path.join(__dirname, '..', '..', '..', 'data', 'dungeon.json');
@@ -24,7 +26,7 @@ const DEFAULT_SETTINGS = {
   dailyEntries: 3,
   runPayoutCap: 500,
   dailyPayoutCap: 600,
-  abandonAfterHours: 48,
+  idleMinutes: 20,
 };
 
 // Faixas aceitas para cada ajuste (painel /admin e modulesConfig.json)
@@ -33,7 +35,7 @@ const SETTINGS_BOUNDS = {
   dailyEntries: [1, 20],
   runPayoutCap: [0, 5000],
   dailyPayoutCap: [0, 20000],
-  abandonAfterHours: [1, 720],
+  idleMinutes: [5, 1440],
 };
 
 let settingsProvider = null;
@@ -81,7 +83,24 @@ function loadState() {
     players: data.players && typeof data.players === 'object' ? data.players : {},
     runs: data.runs && typeof data.runs === 'object' ? data.runs : {},
     totals: { ...emptyTotals(), ...(data.totals || {}) },
+    notices: Array.isArray(data.notices) ? data.notices : [],
   };
+}
+
+/** Semana do ranking: começa na segunda-feira 00:00 de Brasília (chave = data da segunda). */
+function brtWeekKey(now = Date.now()) {
+  const d = new Date(now - 3 * 60 * 60 * 1000);
+  const sinceMonday = (d.getUTCDay() + 6) % 7;
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - sinceMonday)).toISOString().slice(0, 10);
+}
+
+/** Números da semana atual da pessoa (zera sozinho quando a semana vira). */
+function weeklyStats(player, now) {
+  const week = brtWeekKey(now);
+  if (!player.weekly || player.weekly.week !== week) {
+    player.weekly = { week, runs: 0, bestFloor: 0, victories: 0, kills: 0, coins: 0 };
+  }
+  return player.weekly;
 }
 
 function saveState(state) {
@@ -135,7 +154,7 @@ function flushPendingPayout(state, userId) {
   }
 }
 
-/** Fecha runs esquecidos por mais tempo que o limite como "resgatados pelo Astaroth" (salvamento de 10%). */
+/** Fecha a descida parada há mais de idleMinutes como "resgatada pelo Astaroth" (salvamento de 10%). */
 function resolveAbandoned(state, userId, now) {
   const player = getPlayer(state, userId);
   const run = player.activeRunId ? state.runs[player.activeRunId] : null;
@@ -144,11 +163,14 @@ function resolveAbandoned(state, userId, now) {
     return null;
   }
   if (!run) return null;
-  const limitMs = getSettings().abandonAfterHours * 60 * 60 * 1000;
-  if (now - (Number(run.updatedAt) || 0) < limitMs) return null;
+  if (now - (Number(run.updatedAt) || 0) < idleLimitMs()) return null;
   run.phase = 'dead';
   run.outcome = 'abandoned';
   return settleRun(state, userId, run, now);
+}
+
+function idleLimitMs() {
+  return getSettings().idleMinutes * 60 * 1000;
 }
 
 function buildSettlement(state, userId, run, now) {
@@ -199,6 +221,12 @@ function settleRun(state, userId, run, now) {
   else if (run.outcome === 'extracted') s.extractions = (s.extractions || 0) + 1;
   else s.deaths = (s.deaths || 0) + 1;
 
+  const week = weeklyStats(player, now);
+  week.bestFloor = Math.max(week.bestFloor, run.floor);
+  week.kills += run.stats.kills;
+  week.coins += settlement.payout;
+  if (run.outcome === 'victory') week.victories += 1;
+
   t.coinsOut += settlement.payout;
   t.echoesEarned += settlement.echoes;
   if (run.outcome === 'victory') t.victories++;
@@ -214,6 +242,24 @@ function settleRun(state, userId, run, now) {
     player.pendingDrops = [...(player.pendingDrops || []), ...settlement.drops.map((itemId) => ({ itemId, runId: run.id, floor: run.floor }))];
   }
   delete state.runs[run.id];
+
+  // Game over por inatividade: o bot manda o resumo por DM e fecha a thread da descida
+  if (run.outcome === 'abandoned') {
+    state.notices.push({
+      userId: String(userId),
+      runId: run.id,
+      threadId: run.threadId || null,
+      guildId: run.guildId || null,
+      lang: run.lang || 'pt',
+      floor: run.floor,
+      rooms: run.stats.rooms,
+      kills: run.stats.kills,
+      idleMinutes: getSettings().idleMinutes,
+      settlement: { ...settlement },
+      endedAt: now,
+    });
+    state.notices = state.notices.slice(-200);
+  }
   return settlement;
 }
 
@@ -293,7 +339,7 @@ function getActiveRun(userId, now = Date.now()) {
  * Cobra o ticket e abre um run novo.
  * @returns {{ ok: boolean, reason?: 'active'|'limit'|'coins'|'save', run?: object, balance?: number }}
  */
-function startRun(userId, { lang = 'pt', now = Date.now(), seed = null } = {}) {
+function startRun(userId, { lang = 'pt', now = Date.now(), seed = null, guildId = null } = {}) {
   const state = loadState();
   const abandoned = resolveAbandoned(state, userId, now);
   if (abandoned) commitAndPay(state, userId);
@@ -313,7 +359,13 @@ function startRun(userId, { lang = 'pt', now = Date.now(), seed = null } = {}) {
   if (!payment.spent) return { ok: false, reason: 'coins', balance: payment.balance };
 
   const run = engine.createRun({ ownerId: userId, lang, talents: player.talents, seed, now });
+  run.guildId = guildId ? String(guildId) : null;
   state.runs[run.id] = run;
+  if (run.guildId) {
+    player.guilds = player.guilds && typeof player.guilds === 'object' ? player.guilds : {};
+    player.guilds[run.guildId] = now;
+  }
+  weeklyStats(player, now).runs += 1;
   player.activeRunId = run.id;
   player.entries.count += 1;
   player.stats.runs = (player.stats.runs || 0) + 1;
@@ -354,6 +406,108 @@ function performAction(userId, runId, step, action, arg = null, now = Date.now()
   return { ok: true, run, settlement };
 }
 
+/** Liga a descida à thread aberta para ela (o fechamento por inatividade arquiva a thread). */
+function setRunThread(userId, runId, threadId) {
+  const state = loadState();
+  const run = state.runs[runId];
+  if (!run || run.ownerId !== String(userId)) return false;
+  run.threadId = threadId ? String(threadId) : null;
+  return saveState(state);
+}
+
+/**
+ * Fecha todas as descidas paradas há mais de idleMinutes (rodado a cada minuto pelo módulo).
+ * Paga o salvamento de cada pessoa depois de gravar e devolve quantas foram fechadas.
+ */
+function closeIdleRuns(now = Date.now()) {
+  const state = loadState();
+  const limit = idleLimitMs();
+  const owners = [];
+  for (const run of Object.values(state.runs)) {
+    if (now - (Number(run.updatedAt) || 0) < limit) continue;
+    run.phase = 'dead';
+    run.outcome = 'abandoned';
+    settleRun(state, run.ownerId, run, now);
+    owners.push(run.ownerId);
+  }
+  if (!owners.length) return 0;
+  if (!saveState(state)) throw new Error('DUNGEON_SAVE_FAILED');
+  for (const userId of new Set(owners)) {
+    flushPendingPayout(state, userId);
+    flushPendingDrops(state, userId);
+  }
+  return owners.length;
+}
+
+// A thread recebe um aviso 5 minutos antes do game over (uma vez por pausa)
+const IDLE_WARNING_MS = 5 * 60 * 1000;
+
+/** Descidas em thread perto do game over que ainda não receberam o aviso desta pausa. */
+function collectIdleWarnings(now = Date.now()) {
+  const state = loadState();
+  const limit = idleLimitMs();
+  const warnAt = Math.max(limit - IDLE_WARNING_MS, Math.floor(limit / 2));
+  const warnings = [];
+  for (const run of Object.values(state.runs)) {
+    if (!run.threadId) continue;
+    const idle = now - (Number(run.updatedAt) || 0);
+    if (idle < warnAt || idle >= limit || run.idleWarnedFor === run.updatedAt) continue;
+    run.idleWarnedFor = run.updatedAt;
+    warnings.push({
+      userId: run.ownerId,
+      threadId: run.threadId,
+      lang: run.lang || 'pt',
+      minutesLeft: Math.max(1, Math.ceil((limit - idle) / 60000)),
+    });
+  }
+  if (warnings.length && !saveState(state)) return [];
+  return warnings;
+}
+
+/** Retira da fila os avisos de game over por inatividade (cada um é entregue uma vez). */
+function takeNotices() {
+  const state = loadState();
+  if (!state.notices.length) return [];
+  const notices = state.notices;
+  state.notices = [];
+  if (!saveState(state)) return [];
+  return notices;
+}
+
+/**
+ * Ranking das Catacumbas. scope 'all' (recorde de sempre) ou 'week' (semana atual, desde segunda
+ * 00:00 BRT); com guildId, só quem já desceu a partir daquele servidor.
+ */
+function getLeaderboard({ scope = 'all', guildId = null, now = Date.now() } = {}) {
+  const state = loadState();
+  const week = brtWeekKey(now);
+  return Object.entries(state.players)
+    .filter(([userId, p]) => !economy.isTestUser?.(userId) && (!guildId || (p.guilds && p.guilds[String(guildId)])))
+    .map(([userId, p]) => {
+      if (scope === 'week') {
+        const w = p.weekly && p.weekly.week === week ? p.weekly : null;
+        return {
+          userId,
+          runs: Number(w?.runs) || 0,
+          bestFloor: Number(w?.bestFloor) || 0,
+          victories: Number(w?.victories) || 0,
+          kills: Number(w?.kills) || 0,
+          coins: Number(w?.coins) || 0,
+        };
+      }
+      return {
+        userId,
+        runs: Number(p.stats?.runs) || 0,
+        bestFloor: Number(p.stats?.bestFloor) || 0,
+        victories: Number(p.stats?.victories) || 0,
+        kills: Number(p.stats?.kills) || 0,
+        coins: Number(p.stats?.bestPayout) || 0,
+      };
+    })
+    .filter((row) => row.runs > 0)
+    .sort((a, b) => b.bestFloor - a.bestFloor || b.victories - a.victories || b.kills - a.kills || b.coins - a.coins);
+}
+
 /** Compra um nível de talento com Ecos. */
 function buyTalent(userId, talentId) {
   const talent = TALENTS[talentId];
@@ -370,20 +524,11 @@ function buyTalent(userId, talentId) {
   return { ok: true, rank: rank + 1, cost, echoes: player.echoes };
 }
 
-/** Ranking do Hall dos Corajosos: andar mais fundo, depois vitórias e maior pagamento. */
+/** Ranking do Hall dos Corajosos de sempre (atalho mantido para chamadas antigas). */
 function getHallOfFame(limit = 5) {
-  const state = loadState();
-  return Object.entries(state.players)
-    .map(([userId, p]) => ({
-      userId,
-      bestFloor: Number(p.stats?.bestFloor) || 0,
-      victories: Number(p.stats?.victories) || 0,
-      bestPayout: Number(p.stats?.bestPayout) || 0,
-      runs: Number(p.stats?.runs) || 0,
-    }))
-    .filter((p) => p.runs > 0 && !economy.isTestUser?.(p.userId))
-    .sort((a, b) => b.bestFloor - a.bestFloor || b.victories - a.victories || b.bestPayout - a.bestPayout)
-    .slice(0, limit);
+  return getLeaderboard({ scope: 'all' })
+    .slice(0, limit)
+    .map((row) => ({ userId: row.userId, bestFloor: row.bestFloor, victories: row.victories, bestPayout: row.coins, runs: row.runs }));
 }
 
 /** Métricas reais para o /admin, Visual DB e /api/public/system-truth. */
@@ -423,6 +568,12 @@ module.exports = {
   performAction,
   buyTalent,
   getHallOfFame,
+  getLeaderboard,
+  brtWeekKey,
+  setRunThread,
+  closeIdleRuns,
+  collectIdleWarnings,
+  takeNotices,
   getDungeonStats,
   getPlayerStats,
   _setDataFileForTests,

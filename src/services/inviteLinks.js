@@ -5,7 +5,8 @@ const { PermissionsBitField, PermissionFlagsBits: P } = require('discord.js');
  *
  * O convite padrão pede só o que os sistemas usam de fato, em vez de Administrador:
  * falar, mandar embeds e imagens, reagir, apagar as próprias mensagens de evento,
- * criar canais de ticket e entregar o cargo automático de boas-vindas.
+ * criar canais de ticket, entregar o cargo automático de boas-vindas e abrir/fechar a thread
+ * de cada descida nas Catacumbas.
  */
 
 const DEFAULT_CLIENT_ID = '1543650200718155897';
@@ -16,6 +17,8 @@ const PERMISSION_PRESETS = {
     P.ViewChannel,
     P.SendMessages,
     P.SendMessagesInThreads,
+    P.CreatePublicThreads,
+    P.ManageThreads,
     P.EmbedLinks,
     P.AttachFiles,
     P.ReadMessageHistory,
@@ -25,11 +28,12 @@ const PERMISSION_PRESETS = {
     P.ManageChannels,
     P.ManageRoles,
   ],
-  // Só jogos, economia e tarot: nenhuma permissão de gerenciamento
+  // Só jogos, economia e tarot: nenhuma permissão de gerenciamento (as Catacumbas abrem thread)
   basic: [
     P.ViewChannel,
     P.SendMessages,
     P.SendMessagesInThreads,
+    P.CreatePublicThreads,
     P.EmbedLinks,
     P.AttachFiles,
     P.ReadMessageHistory,

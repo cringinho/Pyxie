@@ -80,6 +80,15 @@ async function main() {
     const settlement = { outcome: camp.outcome, floor: camp.floor, gold: camp.player.gold, gross, payout: gross, cappedBy: null, fee: engine.lanternFee(camp.floor), echoes: engine.computeEchoes(camp), newBest: true };
     await send('/py-dungeon', 'Liquidação da fuga (Taxa da Lanterna)', camp, settlement);
   }
+
+  // Thread da descida, resumo de game over por inatividade (DM) e ranking da semana
+  const notice = { lang, floor: 3, rooms: 14, kills: 9, idleMinutes: 20, endedAt: Date.now(), settlement: { gold: 240, payout: 24, echoes: 4, drops: [], newBest: false } };
+  const fakeThread = { id: '100000000000000999', guildId: '100000000000000777' };
+  const threadNotice = views.buildThreadNotice(fakeThread, source);
+  await dispatchHomologationPreview({ commandName: '/py-dungeon', context: `Descida aberta em thread (${lang})`, content: threadNotice.content, components: threadNotice.components });
+  await dispatchHomologationPreview({ commandName: '/py-dungeon', context: `Game over por inatividade, DM (${lang})`, embeds: views.buildIdleSummaryView(notice).embeds });
+  const hall = views.buildHallView({ ...source, guildId: fakeThread.guildId, user: { id: PREVIEW_OWNER } }, { what: 'hallw', ownerId: PREVIEW_OWNER });
+  await dispatchHomologationPreview({ commandName: '/py-dungeon', context: `Ranking da semana (${lang})`, embeds: hall.embeds, components: hall.components });
 }
 
 main().catch((err) => {
