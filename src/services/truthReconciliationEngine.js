@@ -347,6 +347,10 @@ class TruthReconciliationEngine extends EventEmitter {
       try {
         homeStats = require('../modules/home/homeStore').getHomeStats();
       } catch (_) {}
+      let serverModes = { configured: 0, full: 0, trial: 0, classic: 0 };
+      try {
+        serverModes = require('./guildFeatures').getFeatureStats();
+      } catch (_) {}
       let achievementStats = { catalog: 0, unlocked: 0 };
       try {
         achievementStats = require('./achievements').getAchievementStats();
@@ -440,6 +444,12 @@ class TruthReconciliationEngine extends EventEmitter {
           achievements: {
             catalog: Number(achievementStats.catalog) || 0,
             unlocked: Number(achievementStats.unlocked) || 0,
+          },
+          serverModes: {
+            configured: Number(serverModes.configured) || 0,
+            mmoFull: Number(serverModes.full) || 0,
+            mmoTrial: Number(serverModes.trial) || 0,
+            mmoClassic: Number(serverModes.classic) || 0,
           },
         },
       };

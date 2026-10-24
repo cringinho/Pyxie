@@ -50,6 +50,7 @@ function buildWelcomeMessage(guild, client, lang) {
     tarot: commandMention(client, 'py-tarot'),
     dungeon: commandMention(client, 'py-dungeon'),
     help: commandMention(client, 'py-help'),
+    setup: commandMention(client, 'py-setup'),
     languageCmd: commandMention(client, 'py-language'),
     language: t(`growth.languageName.${lang}`, source),
     coin: icon('COIN', '🪙'),
@@ -66,6 +67,7 @@ function buildWelcomeMessage(guild, client, lang) {
     t('growth.welcome.tarot', source, replacements),
     t('growth.welcome.dungeon', source, replacements),
     t('growth.welcome.help', source, replacements),
+    t('growth.welcome.setup', source, replacements),
     t('growth.welcome.languageHeader', source, replacements),
     t('growth.welcome.languageBody', source, replacements),
   ].join('\n\n');

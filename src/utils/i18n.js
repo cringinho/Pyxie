@@ -1091,6 +1091,157 @@ const TRANSLATIONS = {
     "set": {
       "gamesSuccess": "✅ Canal de jogos definido para <#{channel}>! A partir de agora os duelos de quiz só podem ser iniciados lá."
     },
+    "setup": {
+      "footer": "Pyxie • Central do servidor",
+      "notSet": "não configurado",
+      "refresh": "Atualizar",
+      "saved": "Pronto, salvei!",
+      "adminOnlyAction": "Esse painel é só pra quem administra o servidor… desculpa.",
+      "nav": {
+        "placeholder": "Escolhe uma seção…"
+      },
+      "sections": {
+        "overview": {
+          "label": "Visão geral",
+          "desc": "Tudo do servidor num lugar só"
+        },
+        "mmo": {
+          "label": "Mundo Pyxie",
+          "desc": "Catacumbas, Casinha, itens e o modo clássico"
+        },
+        "channels": {
+          "label": "Canais permitidos",
+          "desc": "Onde o RPG/MMO e os minigames podem rodar"
+        },
+        "modules": {
+          "label": "Módulos",
+          "desc": "Liga e desliga minigames, casamento e tarot"
+        },
+        "welcome": {
+          "label": "Boas-vindas",
+          "desc": "Canal e mensagem de quem chega"
+        },
+        "vent": {
+          "label": "Desabafos",
+          "desc": "Canal de apoio com mensagem fixa e desabafo anônimo"
+        },
+        "tarot": {
+          "label": "Tarot diário",
+          "desc": "Canal da carta do dia, postada à meia-noite"
+        },
+        "tickets": {
+          "label": "Tickets",
+          "desc": "Painel de atendimento e categoria"
+        },
+        "language": {
+          "label": "Idioma",
+          "desc": "Português ou inglês"
+        }
+      },
+      "groups": {
+        "mmo": "Mundo Pyxie",
+        "games": "Minigames",
+        "marriage": "Casamento",
+        "tarot": "Tarot"
+      },
+      "overview": {
+        "title": "⚙️ Painel de Configuração da Pyxie",
+        "intro": "E-eu juntei tudo do **{server}** aqui… escolhe uma seção no menu. Não precisa mexer em tudo, tá? Só no que você quiser.",
+        "demand": "-# 🔔 **{count}** pessoa(s) tentaram jogar o Mundo Pyxie aqui nos últimos 7 dias.",
+        "trialHint": "-# 🧪 Dá pra testar o Mundo Pyxie por 7 dias, uma vez só. Depois ele volta pro clássico sozinho.",
+        "systems": "Sistemas do servidor",
+        "adminOnly": "-# 🔒 Só quem administra o servidor vê este painel."
+      },
+      "mmo": {
+        "title": "🗺️ Mundo Pyxie neste servidor",
+        "stateFull": "**Ligado.** Catacumbas, Casinha, itens raros e conquistas funcionando aqui.",
+        "stateTrial": "**Em teste** até {time}. Depois volta pro modo clássico sozinho, sem ninguém perder nada.",
+        "stateClassic": "**Modo clássico.** Aqui só tem moedinhas pelo trabalho e o perfil padrão.",
+        "whatTitle": "O que vem no Mundo Pyxie",
+        "features": {
+          "dungeon": "• **Catacumbas de Veludo:** dungeon roguelike em pixel art, com cinco andares, guardiões, a Nyx no fim e tesouro pra quem consegue fugir.",
+          "home": "• **Casinha:** cada pessoa decora o próprio quartinho em pixel art, com mais de 180 móveis, pets e uma lojinha que muda todo dia.",
+          "vault": "• **Itens raros com número de série:** lendários e míticos limitados, com a origem de cada um registrada.",
+          "achievements": "• **Conquistas difíceis:** títulos com letras especiais que ficam mais bonitos a cada meta."
+        },
+        "classicTitle": "E o modo clássico?",
+        "classicWhat": "• **O que sai:** Catacumbas, Casinha, bolsa, loja e itens deixam de funcionar aqui. As moedinhas continuam vindo do trabalho e o perfil fica no padrão.",
+        "classicKeeps": "• **O que fica:** ninguém perde nada. Itens e casinhas continuam guardados e voltam quando o Mundo Pyxie for ligado de novo.",
+        "trialAlreadyUsed": "-# O teste de 7 dias deste servidor já foi usado, mas dá pra ligar de vez quando quiser.",
+        "btnEnable": "Ligar o Mundo Pyxie",
+        "btnTrial": "Testar por 7 dias",
+        "btnClassic": "Modo clássico",
+        "btnConfirmClassic": "Sim, modo clássico",
+        "btnKeep": "Deixa como está",
+        "confirmTitle": "🪙 Voltar pro modo clássico?",
+        "confirmBody": "Tem certeza? As Catacumbas, a Casinha, a bolsa, a loja e os itens param de funcionar neste servidor.",
+        "enabled": "✨ Pronto, o Mundo Pyxie tá ligado aqui! F-fico feliz… quer dizer, tá ótimo.",
+        "trialStarted": "🧪 Teste ligado até {time}. Depois ele volta pro clássico sozinho, sem ninguém perder nada.",
+        "alreadyFull": "O Mundo Pyxie já tá ligado aqui, nem precisa de teste.",
+        "classicDone": "Tá… voltei pro modo clássico aqui. Se mudar de ideia, é só voltar nesta seção."
+      },
+      "channels": {
+        "title": "📍 Canais permitidos",
+        "intro": "Escolhe onde cada tipo de comando pode rodar. Sem nenhum canal marcado, vale em todos.",
+        "everywhere": "todos os canais",
+        "threads": "-# 🧵 Threads contam como o canal de onde saíram.",
+        "pick_mmo": "Canais do RPG/MMO (vazio = todos)",
+        "pick_games": "Canais dos minigames (vazio = todos)",
+        "clear_mmo": "RPG/MMO em todos os canais",
+        "clear_games": "Minigames em todos os canais",
+        "saved": "Canais salvos!",
+        "cleared": "Liberado em todos os canais."
+      },
+      "modules": {
+        "title": "🧩 Módulos do servidor",
+        "intro": "Desliga o que não combina com o servidor. Dá pra ligar de novo quando quiser, e ninguém perde nada.",
+        "on": "✅ ligado",
+        "off": "⛔ desligado",
+        "onShort": "ligado",
+        "offShort": "desligado",
+        "desc_games": "-# Quiz, duelos, jokenpô, jogo da velha, campo minado, ship e companhia.",
+        "desc_marriage": "-# Pedidos de casamento, divórcio e filhos.",
+        "desc_tarot": "-# Tiragem de tarot e álbum de cartas.",
+        "mmoHint": "-# 🗺️ O Mundo Pyxie tem uma seção só dele, no menu.",
+        "turnedOn": "**{group}** ligado de novo!",
+        "turnedOff": "**{group}** desligado neste servidor."
+      },
+      "dedicated": {
+        "current": "Canal atual",
+        "pick": "Escolhe o canal…",
+        "unique": "-# Cada canal só pode ter uma função. Se ele já tinha outra, eu troco e aviso.",
+        "saved": "Pronto, agora é {channel}!",
+        "welcome": {
+          "title": "👋 Boas-vindas",
+          "body": "Quando alguém entra, eu mando a mensagem de boas-vindas neste canal.",
+          "editBtn": "Editar mensagem e cargo"
+        },
+        "vent": {
+          "title": "🫂 Canal de desabafos",
+          "body": "Um canal de apoio com mensagem fixa de acolhimento, autoajuda na DM e desabafo anônimo."
+        },
+        "tarot": {
+          "title": "🔮 Tarot diário",
+          "body": "Toda meia-noite (horário de Brasília) eu posto a carta do dia neste canal."
+        },
+        "tickets": {
+          "title": "🎫 Tickets",
+          "body": "Eu posto o painel de atendimento neste canal. Depois você escolhe a categoria e o canal de registros."
+        }
+      },
+      "language": {
+        "title": "🌐 Idioma do servidor",
+        "body": "É o idioma em que eu falo aqui no servidor. Cada pessoa ainda pode escolher o próprio no `/py-language`.",
+        "changed": "Pronto, agora eu falo português aqui!"
+      },
+      "blocked": {
+        "classicAdmin": "Esse servidor tá no modo clássico, então o Mundo Pyxie fica desligado aqui. Como você administra o servidor… quer dar uma olhadinha no que tem? Prometo que não é chato.",
+        "classicMember": "Ah… aqui o servidor tá no modo clássico, então as Catacumbas, a Casinha e os itens ficam desligados. N-não fui eu que escolhi, tá? Se quiser, pede pra administração ligar no `/py-setup`. Na nossa DM funciona sempre.",
+        "demand": "-# 🔔 Contei teu pedido. Já são **{count}** pessoa(s) querendo esta semana.",
+        "disabled": "A administração desligou **{group}** neste servidor… dá pra religar no `/py-setup`.",
+        "channel": "Aqui não dá… **{group}** só funciona em {channels}. Me chama lá?"
+      }
+    },
     "quiz": {
       "cooldown": "⏰ Você já disputou o Quiz recentemente! Aguarde **{time}** para tentar um novo desafio.",
       "title": "🧠  ✦  Desafio do Quiz Pyxie",
@@ -1323,6 +1474,7 @@ const TRANSLATIONS = {
         "tarot": "• **Tarot ilustrado:** {tarotIcon} {tarot} tira a sua carta do dia e guarda no álbum.",
         "dungeon": "• **Catacumbas de Veludo:** {dungeonIcon} {dungeon} é um roguelike difícil com ticket de `50` moedinhas.",
         "help": "• **Todos os comandos:** {helpIcon} {help} abre o guia completo.",
+        "setup": "• **Pra quem administra:** ⚙️ {setup} liga e desliga módulos, escolhe os canais e o modo do Mundo Pyxie. Tudo num painel só.",
         "languageHeader": "### {globe} Idioma",
         "languageBody": "Estou falando **{language}** aqui. Quem pode **Gerenciar Servidor** troca o idioma nos botões abaixo ou com {languageCmd}.",
         "footer": "Pyxie • {guild} • Dica: /py-help mostra tudo",
@@ -2583,6 +2735,157 @@ const TRANSLATIONS = {
     "set": {
       "gamesSuccess": "✅ Games channel set to <#{channel}>! From now on quiz duels can only be started there."
     },
+    "setup": {
+      "footer": "Pyxie • Server hub",
+      "notSet": "not set",
+      "refresh": "Refresh",
+      "saved": "Done, saved it!",
+      "adminOnlyAction": "This panel is only for server admins… sorry.",
+      "nav": {
+        "placeholder": "Pick a section…"
+      },
+      "sections": {
+        "overview": {
+          "label": "Overview",
+          "desc": "Everything about the server in one place"
+        },
+        "mmo": {
+          "label": "Pyxie World",
+          "desc": "Catacombs, Cozy Room, items and classic mode"
+        },
+        "channels": {
+          "label": "Allowed channels",
+          "desc": "Where RPG/MMO and minigames can run"
+        },
+        "modules": {
+          "label": "Modules",
+          "desc": "Turn minigames, marriage and tarot on or off"
+        },
+        "welcome": {
+          "label": "Welcome",
+          "desc": "Channel and message for newcomers"
+        },
+        "vent": {
+          "label": "Vent channel",
+          "desc": "Support channel with a pinned note and anonymous venting"
+        },
+        "tarot": {
+          "label": "Daily tarot",
+          "desc": "Channel for the card of the day, posted at midnight"
+        },
+        "tickets": {
+          "label": "Tickets",
+          "desc": "Support panel and category"
+        },
+        "language": {
+          "label": "Language",
+          "desc": "Portuguese or English"
+        }
+      },
+      "groups": {
+        "mmo": "Pyxie World",
+        "games": "Minigames",
+        "marriage": "Marriage",
+        "tarot": "Tarot"
+      },
+      "overview": {
+        "title": "⚙️ Pyxie Server Configuration Panel",
+        "intro": "I-I put everything for **{server}** in here… pick a section from the menu. You don't have to touch everything, okay? Just what you want.",
+        "demand": "-# 🔔 **{count}** person(s) tried to play Pyxie World here in the last 7 days.",
+        "trialHint": "-# 🧪 You can try Pyxie World for 7 days, once. After that it goes back to classic on its own.",
+        "systems": "Server systems",
+        "adminOnly": "-# 🔒 Only server admins can see this panel."
+      },
+      "mmo": {
+        "title": "🗺️ Pyxie World on this server",
+        "stateFull": "**On.** Catacombs, Cozy Room, rare items and achievements all work here.",
+        "stateTrial": "**On trial** until {time}. Then it goes back to classic mode on its own, and nobody loses anything.",
+        "stateClassic": "**Classic mode.** Only coins from work and the default profile here.",
+        "whatTitle": "What Pyxie World brings",
+        "features": {
+          "dungeon": "• **Velvet Catacombs:** a pixel art roguelike dungeon with five floors, guardians, Nyx at the end and treasure for whoever makes it out.",
+          "home": "• **Cozy Room:** everyone decorates their own pixel art room, with over 180 pieces of furniture, pets and a shop that changes every day.",
+          "vault": "• **Serial-numbered rare items:** limited legendaries and mythics, each one with its origin on record.",
+          "achievements": "• **Hard achievements:** titles in special lettering that get fancier with every milestone."
+        },
+        "classicTitle": "What about classic mode?",
+        "classicWhat": "• **What goes away:** Catacombs, Cozy Room, bag, shop and items stop working here. Coins still come from work and profiles stay default.",
+        "classicKeeps": "• **What stays:** nobody loses anything. Items and rooms stay saved and come back when Pyxie World is turned on again.",
+        "trialAlreadyUsed": "-# This server already used its 7-day trial, but you can turn it on for good whenever you want.",
+        "btnEnable": "Turn on Pyxie World",
+        "btnTrial": "Try it for 7 days",
+        "btnClassic": "Classic mode",
+        "btnConfirmClassic": "Yes, classic mode",
+        "btnKeep": "Keep it as is",
+        "confirmTitle": "🪙 Switch to classic mode?",
+        "confirmBody": "Are you sure? Catacombs, Cozy Room, bag, shop and items stop working on this server.",
+        "enabled": "✨ Done, Pyxie World is on here! I-I'm happy… I mean, that's great.",
+        "trialStarted": "🧪 Trial on until {time}. Then it goes back to classic on its own, and nobody loses anything.",
+        "alreadyFull": "Pyxie World is already on here, no trial needed.",
+        "classicDone": "Okay… switched back to classic mode here. If you change your mind, just come back to this section."
+      },
+      "channels": {
+        "title": "📍 Allowed channels",
+        "intro": "Choose where each kind of command can run. With no channel selected, it works everywhere.",
+        "everywhere": "every channel",
+        "threads": "-# 🧵 Threads count as the channel they came from.",
+        "pick_mmo": "RPG/MMO channels (empty = all)",
+        "pick_games": "Minigame channels (empty = all)",
+        "clear_mmo": "RPG/MMO in every channel",
+        "clear_games": "Minigames in every channel",
+        "saved": "Channels saved!",
+        "cleared": "Allowed in every channel."
+      },
+      "modules": {
+        "title": "🧩 Server modules",
+        "intro": "Turn off what doesn't fit the server. You can turn it back on anytime, and nobody loses anything.",
+        "on": "✅ on",
+        "off": "⛔ off",
+        "onShort": "on",
+        "offShort": "off",
+        "desc_games": "-# Quiz, duels, rock-paper-scissors, tic-tac-toe, minesweeper, ship and friends.",
+        "desc_marriage": "-# Marriage proposals, divorce and children.",
+        "desc_tarot": "-# Tarot readings and the card album.",
+        "mmoHint": "-# 🗺️ Pyxie World has its own section in the menu.",
+        "turnedOn": "**{group}** is back on!",
+        "turnedOff": "**{group}** is off on this server."
+      },
+      "dedicated": {
+        "current": "Current channel",
+        "pick": "Pick the channel…",
+        "unique": "-# Each channel can only have one job. If it already had another, I'll swap it and let you know.",
+        "saved": "Done, it's {channel} now!",
+        "welcome": {
+          "title": "👋 Welcome",
+          "body": "When someone joins, I send the welcome message in this channel.",
+          "editBtn": "Edit message and role"
+        },
+        "vent": {
+          "title": "🫂 Vent channel",
+          "body": "A support channel with a pinned comforting note, self-help in DMs and anonymous venting."
+        },
+        "tarot": {
+          "title": "🔮 Daily tarot",
+          "body": "Every midnight (Brasília time) I post the card of the day in this channel."
+        },
+        "tickets": {
+          "title": "🎫 Tickets",
+          "body": "I post the support panel in this channel. Then you pick the category and the log channel."
+        }
+      },
+      "language": {
+        "title": "🌐 Server language",
+        "body": "This is the language I speak on this server. Each person can still pick their own with `/py-language`.",
+        "changed": "Okay, I'll speak English here now!"
+      },
+      "blocked": {
+        "classicAdmin": "This server is in classic mode, so Pyxie World is off here. Since you run the server… want to take a little look at what it has? I promise it's not boring.",
+        "classicMember": "Oh… this server is in classic mode, so Catacombs, Cozy Room and items are off. I-it wasn't my choice, okay? If you want, ask the admins to turn it on in `/py-setup`. It always works in our DMs.",
+        "demand": "-# 🔔 I counted your request. That's **{count}** person(s) asking this week.",
+        "disabled": "The admins turned off **{group}** on this server… they can turn it back on in `/py-setup`.",
+        "channel": "Not here… **{group}** only works in {channels}. Call me over there?"
+      }
+    },
     "quiz": {
       "cooldown": "⏰ You already played the Quiz recently! Please wait **{time}** before taking a new challenge.",
       "title": "🧠  ✦  Pyxie Quiz Challenge",
@@ -2815,6 +3118,7 @@ const TRANSLATIONS = {
         "tarot": "• **Illustrated tarot:** {tarotIcon} {tarot} draws your card of the day and saves it to your album.",
         "dungeon": "• **Velvet Catacombs:** {dungeonIcon} {dungeon} is a hard roguelike with a `50` coin ticket.",
         "help": "• **Every command:** {helpIcon} {help} opens the full guide.",
+        "setup": "• **For admins:** ⚙️ {setup} turns modules on and off, picks channels and sets the Pyxie World mode. All in one panel.",
         "languageHeader": "### {globe} Language",
         "languageBody": "I'm speaking **{language}** here. Members with **Manage Server** can switch languages with the buttons below or with {languageCmd}.",
         "footer": "Pyxie • {guild} • Tip: /py-help shows everything",

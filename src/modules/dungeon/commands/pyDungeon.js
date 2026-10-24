@@ -133,6 +133,8 @@ async function handleDungeonInteraction(interaction) {
 
 module.exports = {
   name,
+  // Parte do Mundo Pyxie: some no modo clássico do servidor (/py-setup)
+  mmo: true,
   aliases,
   category: 'economia',
   description: 'Velvet Catacombs: a long, hard roguelike dungeon. Pay 50 coins, dive deep and escape rich.',

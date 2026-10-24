@@ -195,7 +195,7 @@ function buildSeasonalRestrictionsView(userId, guildOrSource = null, args = []) 
 module.exports = {
   name: ADMIN,
   ephemeral: true,
-  aliases: ['admin', 'painel', 'py-admin', 'dashboard', 'paineldono', 'owner'],
+  aliases: ['admin', 'py-admin', 'dashboard', 'paineldono', 'owner'],
   buildAdminView,
   buildModulesView,
   buildSeasonalRestrictionsView,

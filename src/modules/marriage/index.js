@@ -49,6 +49,8 @@ module.exports = {
         if (!interaction.isButton()) return;
         const customId = interaction.customId || '';
         if (!customId.startsWith('marr:')) return;
+        // Casamento desligado neste servidor pelo /py-setup
+        if (await require('../../commands/setup').denyInteractionIfBlocked(interaction, 'py-marriage')) return;
 
         const parts = customId.split(':');
         const action = parts[1];

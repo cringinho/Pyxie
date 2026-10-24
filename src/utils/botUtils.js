@@ -92,7 +92,8 @@ function getCommandList() {
   const prefix = getPrefix();
   const { commands } = require('../commands');
 
-  return commands.map((command) => {
+  // Atalhos só de prefixo (ex.: py!set, que abre o /py-setup) não têm slash próprio
+  return commands.filter((command) => command.data).map((command) => {
     const slashCommand = command.data.toJSON();
     const commandInfo = {
       name: `/${command.name}`,

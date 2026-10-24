@@ -63,6 +63,11 @@ const METADATA_DICTIONARY = {
   homeBestCharm: { label: 'Maior Charme', icon: '✨', type: 'number', description: 'Maior pontuação de Charme entre todas as casinhas.' },
   vaultItems: { label: 'Itens no Cofre', icon: '🎒', type: 'number', description: 'Instâncias de itens que as pessoas possuem (loja, dungeon, conquistas, kit inicial).' },
   vaultMythic: { label: 'Itens Míticos', icon: '🌌', type: 'number', description: 'Itens míticos em circulação (todos numerados).' },
+  // Recursos por servidor no /py-setup (data/guildFeatures.json)
+  mmoMode: { label: 'Modo do Mundo Pyxie', icon: '🗺️', type: 'string', description: 'full = Mundo Pyxie ligado, trial = teste de 7 dias em andamento, classic = só moedinhas pelo trabalho e perfil padrão.' },
+  mmoChannels: { label: 'Canais do RPG/MMO', icon: '📍', type: 'array', description: 'Canais liberados para os comandos do Mundo Pyxie (vazio = todos). Threads herdam o canal pai.' },
+  disabledGroups: { label: 'Módulos Desligados', icon: '🧩', type: 'array', description: 'Grupos de comandos que a administração desligou no servidor (minigames, casamento, tarot).' },
+  mmoDemand7d: { label: 'Pedidos do Mundo Pyxie (7d)', icon: '🔔', type: 'number', description: 'Pessoas diferentes que tentaram usar o Mundo Pyxie no modo clássico nos últimos 7 dias.' },
   achievementsUnlocked: { label: 'Conquistas Desbloqueadas', icon: '🏆', type: 'number', description: 'Total de conquistas desbloqueadas (cada uma paga a recompensa uma única vez).' },
 };
 
@@ -269,6 +274,12 @@ function queryPartition({ partition = 'users', page = 1, limit = 15, search = ''
     allItems.sort((a, b) => (b.coins + b.bank) - (a.coins + a.bank));
   } else if (partition === 'guilds') {
     const cfgs = readJsonSafe(GUILD_CONFIGS_FILE);
+    // Servidores que só mexeram no /py-setup (modo do Mundo Pyxie, canais, módulos) também aparecem
+    const guildFeatures = require('./guildFeatures');
+    const featureGuilds = readJsonSafe(guildFeatures.stateFile()).guilds || {};
+    for (const guildId of Object.keys(featureGuilds)) {
+      if (!cfgs[guildId]) cfgs[guildId] = {};
+    }
     for (const [guildId, g] of Object.entries(cfgs)) {
       if (s && !guildId.includes(s) && !String(g.prefix || '').toLowerCase().includes(s)) {
         continue;
@@ -280,6 +291,10 @@ function queryPartition({ partition = 'users', page = 1, limit = 15, search = ''
         welcomeChannelId: g.welcomeChannelId || null,
         activeModules: Array.isArray(g.activeModules) ? g.activeModules : ['default'],
         adminRoleIds: Array.isArray(g.adminRoleIds) ? g.adminRoleIds : [],
+        mmoMode: guildFeatures.getMmoState(guildId),
+        mmoChannels: guildFeatures.getGuildFeatures(guildId).channels.mmo,
+        disabledGroups: guildFeatures.getGuildFeatures(guildId).disabled,
+        mmoDemand7d: guildFeatures.getMmoDemand(guildId),
       });
     }
   } else if (partition === 'global') {

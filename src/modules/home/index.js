@@ -36,6 +36,8 @@ module.exports = {
       if (!pyHome.isHomeInteraction(interaction)) return;
       const { isBlacklisted } = require('../../services/trustAndSafety');
       if (isBlacklisted({ guildId: interaction.guildId, userId: interaction.user?.id }).blacklisted) return;
+      // Servidor no modo clássico ou canal não liberado no /py-setup
+      if (await require('../../commands/setup').denyInteractionIfBlocked(interaction, 'py-home')) return;
       try {
         await pyHome.handleHomeInteraction(interaction);
       } catch (err) {

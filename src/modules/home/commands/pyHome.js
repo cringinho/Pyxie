@@ -288,6 +288,8 @@ async function showHome(source, target, method, user, member, targetUser, target
 
 module.exports = {
   name,
+  // Parte do Mundo Pyxie: some no modo clássico do servidor (/py-setup)
+  mmo: true,
   aliases,
   category: 'economia',
   isHomeInteraction,

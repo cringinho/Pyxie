@@ -69,6 +69,7 @@ const growthFunnel = require('./src/services/growthFunnel');
 const { sendGuildWelcome, isWelcomeLanguageButton, handleWelcomeLanguageButton } = require('./src/services/guildOnboarding');
 const { startBotListStats } = require('./src/services/botListStats');
 const achievements = require('./src/services/achievements');
+const guildFeatures = require('./src/services/guildFeatures');
 const achievementsCommand = require('./src/commands/conquistas');
 const {
   onGuildMemberAdd: onCheckinMemberAdd,
@@ -871,6 +872,13 @@ client.on(Events.MessageCreate, async (message) => {
     }
   }
 
+  // Recursos por servidor (/py-setup): modo clássico, módulo desligado ou canal não liberado
+  const access = guildFeatures.checkCommandAccess({ guildId: message.guildId, channel: message.channel, command });
+  if (!access.allowed) {
+    await message.reply(setupCommand.handleAccessDenied(access, message, message.member)).catch(() => null);
+    return;
+  }
+
   incrementCommand();
   const startTime = Date.now();
   let success = true;
@@ -1141,6 +1149,18 @@ client.on(Events.InteractionCreate, async (interaction) => {
       'bonus', 'py-bonus',
       'biscoito', 'cookie', 'py-cookie',
     ]);
+
+    if (command) {
+      const access = guildFeatures.checkCommandAccess({
+        guildId: interaction.guildId,
+        channel: interaction.channel || { id: interaction.channelId },
+        command,
+      });
+      if (!access.allowed) {
+        await interaction.reply({ ...setupCommand.handleAccessDenied(access, interaction, interaction.member), flags: MessageFlags.Ephemeral });
+        return;
+      }
+    }
 
     const isEphemeral = Boolean(
       command?.ephemeral ||

@@ -562,6 +562,34 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'setup_hub',
+  name: '⚙️ Central do Servidor (/py-setup)',
+  category: 'system',
+  description: 'Painel privado de quem administra: idioma, modo do Mundo Pyxie, canais permitidos, módulos e canais de boas-vindas, desabafos, tarot e tickets.',
+  defaultColor: '#8a2be2',
+  previewTitle: '{header} Painel de Configuração da Pyxie',
+  previewDesc: 'E-eu juntei tudo do **Servidor** aqui… escolhe uma seção no menu.\n\n### 🗺️ Mundo Pyxie\n\n**Ligado.** Catacumbas, Casinha, itens raros e conquistas funcionando aqui.\n\n### 📍 Canais permitidos\n\n• **Mundo Pyxie:** todos os canais\n\n-# 🔒 Só quem administra o servidor vê este painel.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Engrenagem', fallback: '⚙️', defaultEmojiKey: 'helpCommands', description: 'Ícone no título' },
+  ],
+});
+
+registerEmbed({
+  id: 'setup_mmo_pitch',
+  name: '🗺️ Vitrine do Mundo Pyxie (modo clássico)',
+  category: 'system',
+  description: 'Mostrada só para quem administra quando o servidor está no modo clássico: o que o Mundo Pyxie oferece, o teste de 7 dias e a procura dos membros.',
+  defaultColor: '#8a2be2',
+  previewTitle: '{header} Mundo Pyxie neste servidor',
+  previewDesc: '**Modo clássico.** Aqui só tem moedinhas pelo trabalho e o perfil padrão.\n\n### O que vem no Mundo Pyxie\n\n• **Catacumbas de Veludo:** dungeon roguelike em pixel art.\n\n• **Casinha:** quartinho em pixel art com mais de 180 móveis e pets.\n\n-# 🔔 **4** pessoa(s) tentaram jogar o Mundo Pyxie aqui nos últimos 7 dias.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Mapa', fallback: '🗺️', defaultEmojiKey: 'MAP', description: 'Ícone no título' },
+  ],
+});
+
+registerEmbed({
   id: 'dungeon_lobby',
   name: '🕯️ Catacumbas de Veludo: Menu',
   category: 'minigames',

@@ -36,6 +36,8 @@ module.exports = {
       // A Blacklist Global já é respondida pelo handler principal do index.js
       const { isBlacklisted } = require('../../services/trustAndSafety');
       if (isBlacklisted({ guildId: interaction.guildId, userId: interaction.user?.id }).blacklisted) return;
+      // Servidor no modo clássico ou canal não liberado no /py-setup
+      if (await require('../../commands/setup').denyInteractionIfBlocked(interaction, 'py-dungeon')) return;
       try {
         await pyDungeon.handleDungeonInteraction(interaction);
       } catch (err) {
