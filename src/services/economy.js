@@ -910,67 +910,61 @@ function hasActiveVote(userId, now = Date.now()) {
   return (now - voteTime) < VOTE_VALIDITY_MS;
 }
 
+// Cada dia seguido vale +1 moedinha no diário (dia 1 = +1, dia 30 = +30). O teto só existe para
+// a conta nunca crescer sem limite: na prática quase ninguém passa de um ano.
+const DAILY_STREAK_BONUS_CAP = 365;
+// Xícaras da Pyxie: minigame de uma jogada por diário resgatado, 1 chance em 3
+const DAILY_CUPS_PRIZE = 15;
+const DAILY_CUPS_COUNT = 3;
+
 function claimDaily(userId, now = Date.now()) {
   const status = getDailyStatus(userId, now);
-  if (!status.available) {
-    const acc = getUserAccount(userId);
-    return {
-      claimed: false,
-      amount: 0,
-      streak: acc.dailyStreak || 0,
-      streakBonus: 0,
-      voteBonus: 0,
-      hasVoted: hasActiveVote(userId, now),
-      totalAmount: 0,
-      balance: acc.coins,
-      magicBeans: acc.magicBeans,
-      magicBeanBonus: false,
-      ...status,
-    };
-  }
-
-  const accBefore = getUserAccount(userId);
-  let streak = 1;
-  if (accBefore.lastDailyAt) {
-    const lastDailyTime = new Date(accBefore.lastDailyAt).getTime();
-    const diff = now - lastDailyTime;
-    if (diff <= STREAK_GRACE_MS) {
-      streak = (accBefore.dailyStreak || 0) + 1;
-    } else {
-      streak = 1; // Quebrou a sequência após 48h
-    }
-  }
-
-  // Bônus moderado de streak exclusivamente em moedinhas:
-  // Streak 1: 0 (início)
-  // Streak 2: 4 moedas
-  // Streak 3: 6 moedas
-  // Streak 4: 8 moedas
-  // Streak 5: 10 moedas 🔥
-  // Cap em 25 moedas para manter equilíbrio econômico
-  const streakBonus = streak > 1 ? Math.min(streak * 2, 25) : 0;
-
-  // Votos no Top.gg agora são puramente voluntários (sem bônus de moedas)
-  const hasVoted = false;
-  const voteBonus = 0;
+  const notClaimed = (acc) => ({
+    claimed: false,
+    amount: 0,
+    streak: acc.dailyStreak || 0,
+    streakBonus: 0,
+    voteBonus: 0,
+    hasVoted: hasActiveVote(userId, now),
+    totalAmount: 0,
+    balance: acc.coins,
+    magicBeans: acc.magicBeans,
+    magicBeanBonus: false,
+    cupsPlayed: Boolean(acc.lastDailyAt && acc.dailyCupsAt === acc.lastDailyAt),
+    ...getDailyStatus(userId, now),
+  });
+  if (!status.available) return notClaimed(getUserAccount(userId));
 
   const { minimum, maximum } = getEconomyConfig();
   const amount = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
   const wonMagicBean = Math.random() < 0.01; // 1% de chance de Feijão Mágico
 
+  // A disponibilidade é conferida de novo dentro da trava: dois cliques ao mesmo tempo pagam uma vez
+  let claimed = false;
+  let streak = 1;
+  let previousStreak = 0;
+  let streakBonus = 0;
   const updated = updateUserAccount(userId, (acc) => {
-    acc.coins += (amount + streakBonus);
+    const last = acc.lastDailyAt ? new Date(acc.lastDailyAt).getTime() : 0;
+    previousStreak = acc.dailyStreak || 0;
+    if (last && now - last < DAILY_COOLDOWN_MS) return;
+    streak = last && now - last <= STREAK_GRACE_MS ? previousStreak + 1 : 1;
+    streakBonus = Math.min(streak, DAILY_STREAK_BONUS_CAP);
+    acc.coins += amount + streakBonus;
     acc.dailyStreak = streak;
-    if (wonMagicBean) {
-      acc.magicBeans = (acc.magicBeans || 0) + 1;
-    }
+    if (wonMagicBean) acc.magicBeans = (acc.magicBeans || 0) + 1;
     acc.lastDailyAt = new Date(now).toISOString();
+    claimed = true;
   });
+  if (!claimed) return notClaimed(updated);
 
   return {
     claimed: true,
     amount,
     streak,
+    previousStreak,
+    // Sequência longa que acabou (voltou a 1 depois de mais de 48h sem diário)
+    streakBroken: streak === 1 && previousStreak > 1,
     streakBonus,
     voteBonus: 0,
     hasVoted: false,
@@ -978,9 +972,50 @@ function claimDaily(userId, now = Date.now()) {
     magicBeanBonus: wonMagicBean,
     balance: updated.coins,
     magicBeans: updated.magicBeans,
+    cupsPlayed: false,
     nextClaimAt: new Date(now + DAILY_COOLDOWN_MS).toISOString(),
     remainingMs: DAILY_COOLDOWN_MS,
   };
+}
+
+function hashText(text) {
+  let h = 2166136261;
+  for (const ch of String(text)) {
+    h ^= ch.codePointAt(0);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+/**
+ * Xícaras da Pyxie: uma jogada por diário resgatado. A xícara do biscoito vem do próprio resgate
+ * (não dá para tentar de novo até acertar) e o prêmio é pago sob a trava da economia.
+ */
+function playDailyCups(userId, pick, now = Date.now()) {
+  const choice = Number(pick);
+  if (!Number.isInteger(choice) || choice < 0 || choice >= DAILY_CUPS_COUNT) return { ok: false, reason: 'invalid' };
+  let result = { ok: false, reason: 'not_claimed' };
+  updateUserAccount(userId, (acc) => {
+    const last = acc.lastDailyAt ? new Date(acc.lastDailyAt).getTime() : 0;
+    if (!last || now - last >= DAILY_COOLDOWN_MS) return;
+    if (acc.dailyCupsAt === acc.lastDailyAt) {
+      result = { ok: false, reason: 'already_played' };
+      return;
+    }
+    const winningCup = hashText(`${userId}:${acc.lastDailyAt}`) % DAILY_CUPS_COUNT;
+    const win = choice === winningCup;
+    acc.dailyCupsAt = acc.lastDailyAt;
+    if (win) acc.coins += DAILY_CUPS_PRIZE;
+    result = { ok: true, win, pick: choice, winningCup, prize: win ? DAILY_CUPS_PRIZE : 0, balance: acc.coins };
+  });
+  return result;
+}
+
+/** As xícaras de hoje ainda podem ser jogadas? */
+function canPlayDailyCups(userId, now = Date.now()) {
+  const acc = getUserAccount(userId);
+  const last = acc.lastDailyAt ? new Date(acc.lastDailyAt).getTime() : 0;
+  return Boolean(last && now - last < DAILY_COOLDOWN_MS && acc.dailyCupsAt !== acc.lastDailyAt);
 }
 
 function getRanking(limit = 10, userIds = null) {
@@ -1248,6 +1283,11 @@ module.exports = {
   setCareerLevel,
   getDailyStatus,
   claimDaily,
+  playDailyCups,
+  canPlayDailyCups,
+  DAILY_STREAK_BONUS_CAP,
+  DAILY_CUPS_PRIZE,
+  DAILY_CUPS_COUNT,
   getRanking,
   getUserRank,
   getStreakRanking,

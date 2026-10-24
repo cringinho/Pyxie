@@ -51,7 +51,7 @@ try {
   const firstClaim = claimDaily('economy-test-user', Date.parse('2026-01-01T00:00:00.000Z'));
   assert.equal(firstClaim.claimed, true, 'O primeiro daily deve ser aceito.');
   assert.equal(firstClaim.amount, 10, 'O daily deve respeitar o mínimo e máximo configurados.');
-  assert.equal(getBalance('economy-test-user'), 10, 'O saldo deve ser persistido.');
+  assert.equal(getBalance('economy-test-user'), 11, 'O saldo deve ser persistido (10 do diário + 1 do primeiro dia da sequência).');
 
   const secondClaim = claimDaily('economy-test-user', Date.parse('2026-01-01T12:00:00.000Z'));
   assert.equal(secondClaim.claimed, false, 'O segundo daily antes de 24h deve ser bloqueado.');
@@ -64,8 +64,8 @@ try {
   fs.writeFileSync(economyFile, JSON.stringify({ 'string-balance': { coins: '150', lastDailyAt: null } }), 'utf8');
   setEconomyConfig(1, 1);
   const stringBalanceClaim = claimDaily('string-balance', Date.parse('2026-01-01T00:00:00.000Z'));
-  assert.equal(stringBalanceClaim.balance, 151, 'O diário deve tratar saldos persistidos como números.');
-  assert.equal(getBalance('string-balance'), 151, 'O saldo não deve concatenar a recompensa como texto.');
+  assert.equal(stringBalanceClaim.balance, 152, 'O diário deve tratar saldos persistidos como números (1 + 1 da sequência).');
+  assert.equal(getBalance('string-balance'), 152, 'O saldo não deve concatenar a recompensa como texto.');
 
   fs.writeFileSync(economyFile, JSON.stringify({ proposer: { coins: 1200, lastDailyAt: null } }), 'utf8');
   assert.equal(getCurrencyBalances('proposer')[0].label, 'Moedinhas');
@@ -314,20 +314,20 @@ try {
   const sDay1 = claimDaily('streak-user', Date.parse('2026-03-01T12:00:00.000Z'));
   assert.equal(sDay1.claimed, true);
   assert.equal(sDay1.streak, 1, 'Primeiro dia deve ter streak 1');
-  assert.equal(sDay1.streakBonus, 0, 'Streak 1 não tem bônus extra');
-  assert.equal(sDay1.totalAmount, 20);
+  assert.equal(sDay1.streakBonus, 1, 'Cada dia da sequência vale +1 moedinha');
+  assert.equal(sDay1.totalAmount, 21);
 
   const sDay2 = claimDaily('streak-user', Date.parse('2026-03-02T13:00:00.000Z'));
   assert.equal(sDay2.claimed, true);
   assert.equal(sDay2.streak, 2, 'Segundo dia consecutivo deve ter streak 2');
-  assert.equal(sDay2.streakBonus, 4, 'Streak 2 deve pagar +4 moedas');
-  assert.equal(sDay2.totalAmount, 24);
+  assert.equal(sDay2.streakBonus, 2, 'Streak 2 deve pagar +2 moedas');
+  assert.equal(sDay2.totalAmount, 22);
 
   const sDay3 = claimDaily('streak-user', Date.parse('2026-03-03T14:00:00.000Z'));
   assert.equal(sDay3.claimed, true);
   assert.equal(sDay3.streak, 3, 'Terceiro dia consecutivo deve ter streak 3');
-  assert.equal(sDay3.streakBonus, 6, 'Streak 3 deve pagar +6 moedas');
-  assert.equal(sDay3.totalAmount, 26);
+  assert.equal(sDay3.streakBonus, 3, 'Streak 3 deve pagar +3 moedas');
+  assert.equal(sDay3.totalAmount, 23);
 
   // Testes de Voto no Top.gg e Bônus no /py-daily
   const voteTime = Date.parse('2026-04-01T10:00:00.000Z');
@@ -343,7 +343,7 @@ try {
   assert.equal(voteClaim.claimed, true);
   assert.equal(voteClaim.hasVoted, false, 'Claim diário não deve atribuir hasVoted de bônus');
   assert.equal(voteClaim.voteBonus, 0, 'Claim diário não deve conceder bônus pelo voto');
-  assert.equal(voteClaim.totalAmount, 15, 'Total deve ser apenas o base (15)');
+  assert.equal(voteClaim.totalAmount, 16, 'Total deve ser o base (15) + 1 do primeiro dia da sequência, sem bônus de voto');
 
   // Teste de ranking com dailyStreak exposto
   const rankList = getRanking(10);

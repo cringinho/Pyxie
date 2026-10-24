@@ -6,6 +6,8 @@ const BONUS_SECRET = process.env.BONUS_SECRET || 'pyxie_magic_bonus_secret_key_2
 const MIN_WAIT_SECONDS = 8; // Mínimo de 8-10s no servidor para evitar trapaça
 const TOKEN_MAX_AGE_MS = 15 * 60 * 1000; // Válido por 15 minutos
 const WEB_BONUS_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 1 vez ao dia (24h)
+// Moedinhas do biscoito extra pelo portal web (o /py-cookie mostra este valor)
+const COOKIE_BONUS_COINS = 25;
 const claimedTokens = new Set();
 
 /**
@@ -129,7 +131,7 @@ function verifyAndClaimBonus(token) {
   if (data.action === 'cookie_bonus') {
     const { grantExtraCookie } = require('./cookie');
     grantExtraCookie(data.userId);
-    addCoins(data.userId, 25);
+    addCoins(data.userId, COOKIE_BONUS_COINS);
     const message = isEn
       ? '🥠 **Extra Fortune Cookie Unlocked!** You received **+25 Coins 🪙** and 1 extra fortune cookie spin!'
       : '🥠 **Biscoito da Sorte Extra Desbloqueado!** Você recebeu **+25 Moedinhas 🪙** e 1 giro adicional no biscoito!';
@@ -179,6 +181,7 @@ module.exports = {
   BONUS_SECRET,
   MIN_WAIT_SECONDS,
   WEB_BONUS_COOLDOWN_MS,
+  COOKIE_BONUS_COINS,
   getWebBonusStatus,
   createBonusSession,
   verifyAndClaimBonus,

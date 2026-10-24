@@ -15,28 +15,24 @@ function buildCurrencyFields(currencies, source = null) {
 function buildWalletEmbed(user, currencies, position, source = null) {
   const lang = getLanguage(source);
   const currencyLines = currencies.map((currency) =>
-    `> ${currency.emoji} **${currency.label}:** ${(Number(currency.amount) || 0).toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR')}`
+    `• ${currency.emoji} **${currency.label}:** \`${(Number(currency.amount) || 0).toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR')}\``
   );
-
-  const placementText = position ? `#${position}` : t('wallet.unranked', source);
+  const placementText = position ? `\`#${position}\`` : t('wallet.unranked', source);
 
   const desc = [
     t('wallet.desc', source),
-    '',
     t('wallet.balancesHeader', source),
-    ...currencyLines,
-    '',
+    currencyLines.join('\n\n'),
     t('wallet.rankingHeader', source),
     t('wallet.placement', source, { rank: placementText }),
-  ].join('\n');
+  ].join('\n\n');
 
   return new EmbedBuilder()
     .setColor(PYXIE_COLORS.gold)
     .setTitle(t('wallet.title', source, { user: user.displayName || user.username }))
     .setDescription(desc)
     .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 256 }))
-    .setFooter({ text: 'Pyxie' })
-    .setTimestamp();
+    .setFooter({ text: 'Pyxie' });
 }
 
 /**

@@ -14,7 +14,7 @@ function buildPingView(client, source = null) {
     .setColor(PYXIE_COLORS.green || '#22c55e')
     .setTitle(t('ping.title', source))
     .setDescription(desc)
-    .setFooter({ text: pyxieFooter('Pyxie Core Engine') })
+    .setFooter({ text: 'Pyxie' })
     .setTimestamp();
 
   return { embeds: [embed] };
