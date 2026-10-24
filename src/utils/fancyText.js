@@ -61,6 +61,9 @@ const TITLE_STYLES = {
   prism: { alphabet: 'circled', left: '❀', right: '❀', colors: ['#db2777', '#38bdf8'] },
   stardust: { alphabet: 'sansBoldItalic', left: '⋆｡˚', right: '˚｡⋆', colors: ['#1e1b4b', '#fde68a'] },
   bloom: { alphabet: 'monospace', left: '✿', right: '✿', colors: ['#9d174d', '#fbcfe8'] },
+  // Estilos de séries que evoluem (meta 1 → 4): cada degrau fica mais enfeitado
+  spark: { alphabet: 'sansBold', left: '✦', right: '✦', colors: ['#4c1d95', '#a78bfa'] },
+  celestial: { alphabet: 'boldFraktur', left: '꧁༺', right: '༻꧂', colors: ['#020617', '#fde68a'] },
 };
 
 /** Título pronto para o Discord: moldura + alfabeto do estilo. Sem estilo, devolve o texto. */

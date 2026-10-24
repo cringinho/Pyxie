@@ -334,6 +334,20 @@ async function run() {
   assert.equal(economy.equipTitle(userA, 'coroa_oficios').success, false, 'Só equipa quem desbloqueou.');
   assert.equal(economy.getTitleDefinition('magnata').display, economy.TITLES_CATALOG.magnata.name, 'Títulos comprados continuam iguais.');
 
+  // Títulos que evoluem: quem usa o degrau anterior da série sobe sozinho para o novo
+  economy.grantTitle(userA, 'constancia');
+  assert.equal(economy.equipTitle(userA, 'constancia').success, true);
+  economy.updateUserAccount(userA, (acc) => { acc.dailyStreak = 30; });
+  const streakUnlocked = achievements.checkAndGrant(userA).map((u) => u.entry.id);
+  assert.ok(streakUnlocked.includes('streak_30'));
+  assert.equal(economy.getUserAccount(userA).equippedTitle, 'rotina_de_fada', 'Título equipado evoluiu para o degrau 2.');
+  const { seriesTitles } = require('../src/data/achievementTitles');
+  for (const series of ['streak', 'nyx', 'likes']) {
+    const ladder = seriesTitles(series);
+    assert.deepEqual(ladder.map((tt) => tt.tier), [1, 2, 3, 4], `Série ${series} com 4 degraus.`);
+    assert.deepEqual(ladder.map((tt) => tt.style), ['spark', 'arcane', 'eclipse', 'celestial'], `Série ${series} fica mais enfeitada a cada meta.`);
+  }
+
   const unlockEmbed = achievements.buildUnlockEmbed([{ entry: ACHIEVEMENTS.find((e) => e.id === 'work_500'), delivered: { coins: 0, beans: 0, items: [], title: 'coroa_oficios' } }], { lang: 'en' }).toJSON();
   assert.ok(unlockEmbed.title.startsWith('🏆'));
   assert.ok(unlockEmbed.description.includes('♛'), 'Aviso mostra o título formatado.');

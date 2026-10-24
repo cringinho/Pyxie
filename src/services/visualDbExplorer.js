@@ -1,4 +1,5 @@
 const fs = require('node:fs');
+const { withFileLock } = require('../utils/fileLock');
 const path = require('node:path');
 const { CAREER_HIERARCHIES } = require('./careerHierarchy');
 
@@ -361,20 +362,24 @@ function updateRecord({ partition, recordId, field, value }) {
   let fileData = {};
 
   if (partition === 'users') {
-    targetFile = ECONOMY_FILE;
-    fileData = readJsonSafe(targetFile);
-    if (!fileData[recordId]) fileData[recordId] = {};
+    // Ler-alterar-gravar travado: o bot grava o mesmo economy.json em outro processo
+    withFileLock(ECONOMY_FILE, () => {
+      const ecoData = readJsonSafe(ECONOMY_FILE);
+      if (!ecoData[recordId]) ecoData[recordId] = {};
 
-    // Sincroniza polimorficamente carreira/profissão
-    if (field === 'career' || field === 'profession') {
-      fileData[recordId].career = sanitizedValue;
-      fileData[recordId].profession = sanitizedValue;
-    } else if (field === 'careerLevel') {
-      fileData[recordId].careerLevel = sanitizedValue;
-      fileData[recordId].professionLevel = sanitizedValue;
-    } else {
-      fileData[recordId][field] = sanitizedValue;
-    }
+      // Sincroniza polimorficamente carreira/profissão
+      if (field === 'career' || field === 'profession') {
+        ecoData[recordId].career = sanitizedValue;
+        ecoData[recordId].profession = sanitizedValue;
+      } else if (field === 'careerLevel') {
+        ecoData[recordId].careerLevel = sanitizedValue;
+        ecoData[recordId].professionLevel = sanitizedValue;
+      } else {
+        ecoData[recordId][field] = sanitizedValue;
+      }
+      safeAtomicWrite(ECONOMY_FILE, ecoData);
+    });
+    broadcastDbDiff({ partition, recordId, field, value: sanitizedValue });
   } else if (partition === 'guilds') {
     targetFile = GUILD_CONFIGS_FILE;
     fileData = readJsonSafe(targetFile);

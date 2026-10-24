@@ -4,6 +4,7 @@ const { getEconomyConfig } = require('./database');
 const professions = require('./professions');
 const { normalizeProfileStyle } = require('./profileStyle');
 const { getEmoji } = require('../utils/appEmojis');
+const { withFileLock } = require('../utils/fileLock');
 
 const economyFile = path.join(__dirname, '..', '..', 'data', 'economy.json');
 const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
@@ -176,13 +177,19 @@ function getUserAccount(userId) {
   return normalizeAccount(economy[userId]);
 }
 
+/**
+ * Ler-alterar-gravar de uma conta com o economy.json travado entre processos (o web também
+ * credita votos e bônus). Sem a trava, uma gravação do outro processo podia sumir.
+ */
 function updateUserAccount(userId, updater) {
-  const economy = readEconomy();
-  const account = normalizeAccount(economy[userId]);
-  updater(account);
-  economy[userId] = account;
-  writeEconomy(economy);
-  return account;
+  return withFileLock(economyFile, () => {
+    const economy = readEconomy();
+    const account = normalizeAccount(economy[userId]);
+    updater(account);
+    economy[userId] = account;
+    writeEconomy(economy);
+    return account;
+  });
 }
 
 function getBalance(userId) {
@@ -215,15 +222,14 @@ function addMagicBeans(userId, amount) {
 
 function spendMagicBeans(userId, amount) {
   const qty = Math.max(0, normalizeNumber(amount, 0));
-  const account = getUserAccount(userId);
-  if (account.magicBeans < qty) {
-    return { spent: false, balance: account.magicBeans };
-  }
-
-  const updated = updateUserAccount(userId, (acc) => {
-    acc.magicBeans -= qty;
+  return withFileLock(economyFile, () => {
+    const account = getUserAccount(userId);
+    if (account.magicBeans < qty) return { spent: false, balance: account.magicBeans };
+    const updated = updateUserAccount(userId, (acc) => {
+      acc.magicBeans -= qty;
+    });
+    return { spent: true, balance: updated.magicBeans };
   });
-  return { spent: true, balance: updated.magicBeans };
 }
 
 function getCurrencyBalances(userId, source = null) {
@@ -250,16 +256,16 @@ function getCurrencyBalances(userId, source = null) {
 }
 
 function spendCoins(userId, amount) {
-  const account = getUserAccount(userId);
-  const cost = normalizeNumber(amount, 0);
-  if (account.coins < cost) {
-    return { spent: false, balance: account.coins };
-  }
-
-  const updated = updateUserAccount(userId, (acc) => {
-    acc.coins -= cost;
+  const cost = Math.max(0, normalizeNumber(amount, 0));
+  // Saldo conferido e debitado dentro da mesma trava: duas compras ao mesmo tempo não ficam negativas
+  return withFileLock(economyFile, () => {
+    const account = getUserAccount(userId);
+    if (account.coins < cost) return { spent: false, balance: account.coins };
+    const updated = updateUserAccount(userId, (acc) => {
+      acc.coins -= cost;
+    });
+    return { spent: true, balance: updated.coins };
   });
-  return { spent: true, balance: updated.coins };
 }
 
 function setUserBalance(userId, amount) {
@@ -622,18 +628,20 @@ function isTestUser(userId) {
 }
 
 function purgeTestAccounts() {
-  const current = readEconomy();
-  let changed = false;
-  for (const uid of Object.keys(current)) {
-    if (isTestUser(uid)) {
-      delete current[uid];
-      changed = true;
+  return withFileLock(economyFile, () => {
+    const current = readEconomy();
+    let changed = false;
+    for (const uid of Object.keys(current)) {
+      if (isTestUser(uid)) {
+        delete current[uid];
+        changed = true;
+      }
     }
-  }
-  if (changed) {
-    writeEconomy(current);
-  }
-  return changed;
+    if (changed) {
+      writeEconomy(current);
+    }
+    return changed;
+  });
 }
 
 function startWork(userId, data = {}, now = Date.now()) {

@@ -26,3 +26,4 @@ scratch/
 *.sql
 data/cache/
 data/*.corrupt-*
+data/*.lock

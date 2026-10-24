@@ -107,6 +107,18 @@ function evaluate(userId, { now = Date.now() } = {}) {
   });
 }
 
+/**
+ * Títulos que evoluem: se a pessoa está usando um degrau mais baixo da mesma série, o título
+ * equipado sobe sozinho para o novo (o visual fica mais enfeitado a cada meta).
+ */
+function upgradeEquippedSeriesTitle(userId, title) {
+  if (!title.series) return false;
+  const economy = require('./economy');
+  const equipped = ACHIEVEMENT_TITLES[economy.getUserAccount(userId).equippedTitle];
+  if (!equipped || equipped.series !== title.series || equipped.tier >= title.tier) return false;
+  return economy.equipTitle(userId, title.id).success;
+}
+
 /** Entrega a recompensa de uma conquista. Itens que esgotaram viram nada (o resto é entregue). */
 function grantReward(userId, entry, now) {
   const delivered = { coins: 0, beans: 0, items: [], title: null };
@@ -127,6 +139,7 @@ function grantReward(userId, entry, now) {
   if (reward.title && ACHIEVEMENT_TITLES[reward.title]) {
     economy.grantTitle(userId, reward.title);
     delivered.title = reward.title;
+    upgradeEquippedSeriesTitle(userId, ACHIEVEMENT_TITLES[reward.title]);
   }
   return delivered;
 }
