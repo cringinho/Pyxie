@@ -32,6 +32,8 @@ const economy = require('../src/services/economy');
 const { t, TRANSLATIONS } = require('../src/utils/i18n');
 
 store._setDataFileForTests(path.join(tmpDir, 'dungeon.json'));
+// Itens que caem das descidas vão para o cofre da Casinha: no teste, num diretório temporário
+process.env.PYXIE_DATA_DIR = tmpDir;
 
 console.log('🕯️ Iniciando testes das Catacumbas de Veludo (dungeon crawler)...');
 

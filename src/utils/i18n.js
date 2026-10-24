@@ -1141,6 +1141,175 @@ const TRANSLATIONS = {
       "topicGamesTitle": "🎲 Minigames & Diversão Comunitária",
       "topicGamesDesc": "Aproveite momentos leves em comunidade com `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados` e `/py-likely`. Comandos rápidos e integrados para animar qualquer chat de Discord."
     },
+    "home": {
+      "beans": "feijões",
+      "coins": "moedinhas",
+      "notForSale": "não está à venda",
+      "private": "Privado",
+      "scene": {
+        "title": "Casinha de {name}",
+        "likes": "♥ {likes} curtidas",
+        "items": "{items} itens",
+        "charm": "✦ Charme {charm}"
+      },
+      "errors": {
+        "noHome": "{name} ainda não tem casinha. Hmpf, quem sabe um dia.",
+        "expired": "Essa edição expirou. Comece de novo pelo botão Decorar.",
+        "invalid": "Botão desconhecido. Use `/py-home` de novo.",
+        "notYours": "Ei! Só a dona dessa casinha pode mexer aqui. A sua é `/py-home`.",
+        "save": "Não consegui salvar a casinha agora. Nada foi cobrado; tente de novo daqui a pouco."
+      },
+      "btn": {
+        "myHome": "Minha casinha",
+        "decorate": "Decorar",
+        "arrange": "Arrumar",
+        "shop": "Loja do dia",
+        "bag": "Mochila",
+        "surface": "Parede e piso",
+        "rank": "Ranking",
+        "like": "Curtir",
+        "back": "Voltar",
+        "put": "Colocar aqui",
+        "cancel": "Cancelar",
+        "toFloor": "Ir para o piso",
+        "toWall": "Ir para a parede",
+        "move": "Mover",
+        "store": "Guardar",
+        "done": "Pronto",
+        "buy": "Comprar {name}"
+      },
+      "view": {
+        "title": "{icon} Casinha de {name}",
+        "introOwner": "N-não é como se eu tivesse arrumado tudo esperando você voltar... Mas a casinha é sua. Deixe do seu jeito.",
+        "introVisitor": "Você está visitando a casinha de **{name}**. Sem mexer em nada, viu? Curtir pode.",
+        "charmHeader": "### ✨ Charme da casinha",
+        "charmLine": "• **Charme:** `{charm}` (recorde: `{best}`)",
+        "setsLine": "• **Conjuntos ativos:** {sets}",
+        "noSets": "nenhum ainda",
+        "socialLine": "• **Curtidas:** `{likes}` · **Visitas:** `{visits}`",
+        "tipOwner": "-# 🌷 Junte {min} peças do mesmo tema para ativar um conjunto e ganhar Charme extra.",
+        "tipVisitor": "-# 🌷 Cada pessoa pode curtir uma casinha por dia."
+      },
+      "pick": {
+        "title": "{icon} Decorar a casinha",
+        "desc": "Escolha um item da mochila. Depois é só arrastar pelas setas e colocar no lugar.",
+        "empty": "Sua mochila está vazia (ou tudo já está à mostra). Passe na **Loja do dia** ou desça nas Catacumbas atrás de tesouros.",
+        "limits": "-# Itens no quarto: `{placed}/{max}` · até `{pets}` pets.",
+        "placeholder": "Escolha um item para colocar…"
+      },
+      "kinds": {
+        "floor": "Móvel",
+        "wall": "Parede",
+        "rug": "Tapete",
+        "pet": "Pet",
+        "wallpaper": "Papel de parede",
+        "flooring": "Piso"
+      },
+      "areas": {
+        "wall": "parede",
+        "floor": "piso"
+      },
+      "place": {
+        "title": "{icon} Posicionar item",
+        "item": "• **Item:** {name} · {rarity} · `{w}x{h}`",
+        "where": "• **Posição:** {area}, coluna `{x}`, fileira `{y}`",
+        "fits": "✅ Cabe direitinho aqui.",
+        "help": "-# Use as setas para mover, ↔️ para espelhar e **Colocar aqui** quando estiver bonito."
+      },
+      "arrange": {
+        "title": "🧹 Arrumar a casinha",
+        "target": "• **Aqui está:** {name} · {rarity}",
+        "empty": "Não tem nada nesse quadradinho.",
+        "help": "-# Mova o cursor amarelo até um item: **Mover** muda de lugar, **Guardar** volta para a mochila."
+      },
+      "reasons": {
+        "not_placeable": "Esse item não vai no quarto.",
+        "bounds": "❌ Não cabe aí: passa da borda do quarto.",
+        "full": "❌ O quarto já está cheio. Guarde alguma coisa antes.",
+        "pets": "❌ Pets demais! O Astaroth disse que não divide o quarto com mais ninguém.",
+        "occupied": "❌ Já tem coisa nesse lugar.",
+        "not_owned": "Você não tem mais esse item.",
+        "already_placed": "Esse item já está no quarto.",
+        "not_placed": "Esse item não está mais no quarto.",
+        "not_surface": "Isso não é parede nem piso.",
+        "not_in_shop": "Esse item saiu da loja. A vitrine muda à meia-noite.",
+        "premium_limit": "Itens premium: um de cada por dia. Volte amanhã!",
+        "beans": "Feijões insuficientes: custa `{price}` e você tem `{balance}`.",
+        "coins": "Moedinhas insuficientes: custa `{price}` e você tem `{balance}`.",
+        "unknown_item": "Item desconhecido.",
+        "sold_out": "Esgotado! Todas as unidades numeradas já têm dona.",
+        "full_vault": "Sua mochila está cheia.",
+        "save": "Não consegui salvar agora. Nada foi cobrado; tente de novo.",
+        "own_home": "Curtir a própria casinha? Que convencida. Não vale.",
+        "no_home": "Essa pessoa ainda não tem casinha.",
+        "already_liked": "Você já curtiu essa casinha hoje. Volte amanhã!"
+      },
+      "shop": {
+        "title": "{icon} Loja do dia",
+        "intro": "A vitrine muda todo dia à meia-noite. E-eu escolhi essas peças com carinho, não que eu ligue.",
+        "balance": "• **Seu saldo:** {coinIcon} `{coins}` · {beanIcon} `{beans}`",
+        "line": "• **{n}. {name}** · {rarity} · {price}",
+        "rotation": "-# 🌷 Os dois últimos itens são premium (feijões mágicos): um de cada por dia.",
+        "placeholder": "Escolha o que comprar…",
+        "shelfTitle": "Loja do dia"
+      },
+      "bag": {
+        "title": "{icon} Mochila de itens",
+        "summary": "• **Itens:** `{total}` · **Diferentes:** `{distinct}`",
+        "rarities": "• **Épicos:** `{epic}` · **Lendários:** `{legendary}` · **Míticos:** `{mythic}`",
+        "hint": "-# Lendários e míticos são numerados (#). Use **Decorar** para colocar no quarto.",
+        "count": "×{count} ({shown} 🏠)",
+        "shelfTitle": "Mochila · página {page}/{pages}"
+      },
+      "surface": {
+        "title": "🎨 Parede e piso",
+        "current": "• **Parede:** {wallpaper}\n\n• **Piso:** {flooring}",
+        "desc": "Escolha um papel de parede ou piso que você já tem. Os novos aparecem na Loja do dia.",
+        "placeholder": "Trocar parede ou piso…"
+      },
+      "rank": {
+        "title": "{icon} Casinhas mais charmosas",
+        "intro": "As casinhas com mais Charme de toda a Pyxie. Hmpf, a minha seria a primeira, claro.",
+        "line": "{pos} {user} · ✦ `{charm}` · ♥ `{likes}`",
+        "empty": "Ninguém decorou nada ainda. Seja a primeira!"
+      },
+      "notices": {
+        "placed": "**{name}** está no lugar. Ficou bonito, vai.",
+        "stored": "**{name}** voltou para a mochila.",
+        "bought": "Comprado: **{name}**! Agora escolha onde colocar.",
+        "surface": "Pronto, agora é **{name}**.",
+        "liked": "Curtida enviada! Essa casinha já tem `{likes}` curtidas."
+      }
+    },
+    "achievements": {
+      "view": {
+        "title": "{icon} Conquistas de {name}",
+        "summary": "• **Conquistadas:** `{done}/{total}` · **Míticas:** `{mythic}/{mythicTotal}`",
+        "categoryHeader": "### {emoji} {name}",
+        "line": "{tier} **{name}** · `{current}/{target}`{check}\n-# {desc} · 🎁 {rewards}",
+        "hidden": "🔒 **???** · `?/?`\n-# Conquista secreta. Continue explorando a Pyxie… eu não vou contar.",
+        "placeholder": "Escolha uma categoria…",
+        "titlesHint": "-# 👑 As conquistas míticas dão títulos especiais: equipe em `/py-profile` → Títulos.",
+        "notYours": "Esse menu é de outra pessoa. Use `/py-achievements` para abrir o seu."
+      },
+      "reward": {
+        "coins": "• **Moedinhas:** `+{coins}`",
+        "beans": "• **Feijões mágicos:** `+{beans}`",
+        "item": "• **Item para a Casinha:** {name}{serial}",
+        "title": "• **Título especial:** {title}"
+      },
+      "short": {
+        "coins": "{coins} moedinhas",
+        "beans": "{beans} feijões",
+        "item": "item para a Casinha"
+      },
+      "unlock": {
+        "title": "🏆 Conquista desbloqueada!",
+        "titleMany": "🏆 {count} conquistas desbloqueadas!",
+        "line": "### {tier} {name}\n\n> *{desc}*",
+        "tip": "-# Tudo já foi entregue. Veja as outras em `/py-achievements`."
+      }
+    },
     "growth": {
       "languageName": {
         "pt": "Português",
@@ -1366,6 +1535,7 @@ const TRANSLATIONS = {
         "capRun": "-# 🔒 Teto de `{cap}` moedinhas por descida aplicado.",
         "capDaily": "-# 🔒 Teto diário atingido: o resto do ouro virou poeira de estrela.",
         "echoes": "🌙 **Ecos ganhos:** `+{echoes}` (use em Talentos)",
+        "drops": "🎁 **Achado para a Casinha:** {items}\n\n-# Os itens já estão na sua mochila: abra `/py-home` para decorar.",
         "best": "🏅 **Novo recorde:** Andar `{floor}`!",
         "balance": "-# 🪙 Saldo atual: `{balance}`",
         "stats": "-# 📊 `{rooms}` salas exploradas • `{kills}` monstros derrotados"
@@ -2463,6 +2633,175 @@ const TRANSLATIONS = {
           "topicGamesTitle": "🎲 Community Minigames & Casual Fun",
           "topicGamesDesc": "Enjoy lightweight community fun with `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados`, and `/py-likely`. Fast, engaging commands designed to bring energy to every Discord chat."
     },
+    "home": {
+      "beans": "beans",
+      "coins": "coins",
+      "notForSale": "not for sale",
+      "private": "Private",
+      "scene": {
+        "title": "{name}'s Room",
+        "likes": "♥ {likes} likes",
+        "items": "{items} items",
+        "charm": "✦ Charm {charm}"
+      },
+      "errors": {
+        "noHome": "{name} doesn't have a room yet. Hmph, maybe someday.",
+        "expired": "That edit expired. Start again from the Decorate button.",
+        "invalid": "Unknown button. Use `/py-home` again.",
+        "notYours": "Hey! Only this room's owner can change things here. Yours is `/py-home`.",
+        "save": "I couldn't save the room right now. Nothing was charged; try again in a moment."
+      },
+      "btn": {
+        "myHome": "My room",
+        "decorate": "Decorate",
+        "arrange": "Arrange",
+        "shop": "Daily shop",
+        "bag": "Bag",
+        "surface": "Wall & floor",
+        "rank": "Ranking",
+        "like": "Like",
+        "back": "Back",
+        "put": "Place here",
+        "cancel": "Cancel",
+        "toFloor": "Go to floor",
+        "toWall": "Go to wall",
+        "move": "Move",
+        "store": "Store",
+        "done": "Done",
+        "buy": "Buy {name}"
+      },
+      "view": {
+        "title": "{icon} {name}'s Room",
+        "introOwner": "I-it's not like I tidied up waiting for you to come back... But the room is yours. Make it your own.",
+        "introVisitor": "You're visiting **{name}**'s room. Don't touch anything, okay? Liking is allowed.",
+        "charmHeader": "### ✨ Room charm",
+        "charmLine": "• **Charm:** `{charm}` (record: `{best}`)",
+        "setsLine": "• **Active sets:** {sets}",
+        "noSets": "none yet",
+        "socialLine": "• **Likes:** `{likes}` · **Visits:** `{visits}`",
+        "tipOwner": "-# 🌷 Gather {min} pieces of the same theme to activate a set and earn bonus Charm.",
+        "tipVisitor": "-# 🌷 Everyone can like a room once a day."
+      },
+      "pick": {
+        "title": "{icon} Decorate the room",
+        "desc": "Pick an item from your bag. Then move it with the arrows and place it.",
+        "empty": "Your bag is empty (or everything is already on display). Visit the **Daily shop** or dive into the Catacombs for treasure.",
+        "limits": "-# Items in the room: `{placed}/{max}` · up to `{pets}` pets.",
+        "placeholder": "Pick an item to place…"
+      },
+      "kinds": {
+        "floor": "Furniture",
+        "wall": "Wall",
+        "rug": "Rug",
+        "pet": "Pet",
+        "wallpaper": "Wallpaper",
+        "flooring": "Floor"
+      },
+      "areas": {
+        "wall": "wall",
+        "floor": "floor"
+      },
+      "place": {
+        "title": "{icon} Place item",
+        "item": "• **Item:** {name} · {rarity} · `{w}x{h}`",
+        "where": "• **Position:** {area}, column `{x}`, row `{y}`",
+        "fits": "✅ It fits right here.",
+        "help": "-# Use the arrows to move, ↔️ to mirror and **Place here** when it looks nice."
+      },
+      "arrange": {
+        "title": "🧹 Arrange the room",
+        "target": "• **Here:** {name} · {rarity}",
+        "empty": "There's nothing on this square.",
+        "help": "-# Move the yellow cursor onto an item: **Move** relocates it, **Store** sends it back to your bag."
+      },
+      "reasons": {
+        "not_placeable": "This item doesn't go in the room.",
+        "bounds": "❌ It doesn't fit there: it goes past the edge of the room.",
+        "full": "❌ The room is full. Store something first.",
+        "pets": "❌ Too many pets! Astaroth says he won't share the room with anyone else.",
+        "occupied": "❌ There's already something there.",
+        "not_owned": "You don't have this item anymore.",
+        "already_placed": "This item is already in the room.",
+        "not_placed": "This item isn't in the room anymore.",
+        "not_surface": "That isn't a wall or a floor.",
+        "not_in_shop": "That item left the shop. The display changes at midnight.",
+        "premium_limit": "Premium items: one of each per day. Come back tomorrow!",
+        "beans": "Not enough beans: it costs `{price}` and you have `{balance}`.",
+        "coins": "Not enough coins: it costs `{price}` and you have `{balance}`.",
+        "unknown_item": "Unknown item.",
+        "sold_out": "Sold out! Every numbered unit already has an owner.",
+        "full_vault": "Your bag is full.",
+        "save": "I couldn't save right now. Nothing was charged; try again.",
+        "own_home": "Liking your own room? So full of yourself. Not allowed.",
+        "no_home": "This person doesn't have a room yet.",
+        "already_liked": "You already liked this room today. Come back tomorrow!"
+      },
+      "shop": {
+        "title": "{icon} Daily shop",
+        "intro": "The display changes every day at midnight. I-I picked these pieces with care, not that I care.",
+        "balance": "• **Your balance:** {coinIcon} `{coins}` · {beanIcon} `{beans}`",
+        "line": "• **{n}. {name}** · {rarity} · {price}",
+        "rotation": "-# 🌷 The last two items are premium (magic beans): one of each per day.",
+        "placeholder": "Choose what to buy…",
+        "shelfTitle": "Daily shop"
+      },
+      "bag": {
+        "title": "{icon} Item bag",
+        "summary": "• **Items:** `{total}` · **Unique:** `{distinct}`",
+        "rarities": "• **Epic:** `{epic}` · **Legendary:** `{legendary}` · **Mythic:** `{mythic}`",
+        "hint": "-# Legendary and mythic items are numbered (#). Use **Decorate** to place them in the room.",
+        "count": "×{count} ({shown} 🏠)",
+        "shelfTitle": "Bag · page {page}/{pages}"
+      },
+      "surface": {
+        "title": "🎨 Wall & floor",
+        "current": "• **Wall:** {wallpaper}\n\n• **Floor:** {flooring}",
+        "desc": "Pick a wallpaper or floor you own. New ones show up in the Daily shop.",
+        "placeholder": "Change wall or floor…"
+      },
+      "rank": {
+        "title": "{icon} Most charming rooms",
+        "intro": "The rooms with the most Charm in all of Pyxie. Hmph, mine would be first, obviously.",
+        "line": "{pos} {user} · ✦ `{charm}` · ♥ `{likes}`",
+        "empty": "Nobody has decorated anything yet. Be the first!"
+      },
+      "notices": {
+        "placed": "**{name}** is in place. Fine, it looks nice.",
+        "stored": "**{name}** went back to your bag.",
+        "bought": "Bought: **{name}**! Now choose where to put it.",
+        "surface": "Done, now it's **{name}**.",
+        "liked": "Like sent! This room now has `{likes}` likes."
+      }
+    },
+    "achievements": {
+      "view": {
+        "title": "{icon} {name}'s Achievements",
+        "summary": "• **Unlocked:** `{done}/{total}` · **Mythic:** `{mythic}/{mythicTotal}`",
+        "categoryHeader": "### {emoji} {name}",
+        "line": "{tier} **{name}** · `{current}/{target}`{check}\n-# {desc} · 🎁 {rewards}",
+        "hidden": "🔒 **???** · `?/?`\n-# Secret achievement. Keep exploring Pyxie… I'm not telling.",
+        "placeholder": "Choose a category…",
+        "titlesHint": "-# 👑 Mythic achievements grant special titles: equip them in `/py-profile` → Titles.",
+        "notYours": "This menu belongs to someone else. Use `/py-achievements` to open yours."
+      },
+      "reward": {
+        "coins": "• **Coins:** `+{coins}`",
+        "beans": "• **Magic beans:** `+{beans}`",
+        "item": "• **Room item:** {name}{serial}",
+        "title": "• **Special title:** {title}"
+      },
+      "short": {
+        "coins": "{coins} coins",
+        "beans": "{beans} beans",
+        "item": "room item"
+      },
+      "unlock": {
+        "title": "🏆 Achievement unlocked!",
+        "titleMany": "🏆 {count} achievements unlocked!",
+        "line": "### {tier} {name}\n\n> *{desc}*",
+        "tip": "-# Everything has been delivered. See the rest in `/py-achievements`."
+      }
+    },
     "growth": {
       "languageName": {
         "pt": "Português",
@@ -2688,6 +3027,7 @@ const TRANSLATIONS = {
         "capRun": "-# 🔒 Cap of `{cap}` coins per descent applied.",
         "capDaily": "-# 🔒 Daily cap reached: the rest of the gold turned into stardust.",
         "echoes": "🌙 **Echoes earned:** `+{echoes}` (spend them in Talents)",
+        "drops": "🎁 **Found for your room:** {items}\n\n-# The items are already in your bag: open `/py-home` to decorate.",
         "best": "🏅 **New record:** Floor `{floor}`!",
         "balance": "-# 🪙 Current balance: `{balance}`",
         "stats": "-# 📊 `{rooms}` rooms explored • `{kills}` monsters defeated"

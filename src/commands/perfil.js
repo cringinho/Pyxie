@@ -16,6 +16,7 @@ const {
   getUserAccount,
   getUserRank,
   getTitlesCatalog,
+  getTitleDefinition,
   getUserTitles,
   buyTitle,
   equipTitle,
@@ -44,6 +45,13 @@ function getTargetUser(source) {
   return source.options?.getUser('user') || source.options?.getUser('usuario') || source.user || source.author;
 }
 
+/** Título comprado (com emoji do bot) ou de conquista (com formatação especial em display). */
+function resolveTitle(titleId, titlesCatalog, lang) {
+  if (!titleId) return null;
+  if (titlesCatalog[titleId]) return { ...titlesCatalog[titleId], display: titlesCatalog[titleId].name };
+  return getTitleDefinition(titleId, lang);
+}
+
 async function buildProfileView(targetUser, viewerId, source = null) {
   const lang = getLanguage(source);
   const isEn = lang === 'en';
@@ -51,7 +59,7 @@ async function buildProfileView(targetUser, viewerId, source = null) {
   const spouseId = getSpouseId(targetUser.id);
   const rank = getUserRank(targetUser.id);
   const titlesCatalog = getTitlesCatalog();
-  const equippedTitle = account.equippedTitle ? titlesCatalog[account.equippedTitle] : null;
+  const equippedTitle = resolveTitle(account.equippedTitle, titlesCatalog, lang);
 
   const professionKey = account.profession;
   const professionLabel = professionKey
@@ -290,8 +298,9 @@ function buildTitlesView(targetUser, viewerId, source = null) {
   const ownedTitles = account.titles || [];
   const equippedId = account.equippedTitle;
 
-  const equippedDisplay = equippedId && titlesCatalog[equippedId]
-    ? `> ${titlesCatalog[equippedId].emoji} **${titlesCatalog[equippedId].name}**\n> *« ${titlesCatalog[equippedId].desc} »*`
+  const equippedTitle = resolveTitle(equippedId, titlesCatalog, lang);
+  const equippedDisplay = equippedTitle
+    ? `> ${equippedTitle.emoji} **${equippedTitle.display}**\n> *« ${equippedTitle.desc} »*`
     : (isEn ? '> 🕊️ *No title equipped (Default display)*' : '> 🕊️ *Nenhum título equipado (Exibição padrão)*');
 
   const beanEmoji = getEmoji('MAGIC_BEAN') || '🌱';
@@ -361,6 +370,21 @@ function buildTitlesView(targetUser, viewerId, source = null) {
       default: isEquipped,
     };
   });
+
+  // Títulos de conquista: só aparecem para quem desbloqueou (não estão à venda)
+  for (const titleId of ownedTitles) {
+    if (titlesCatalog[titleId]) continue;
+    const title = getTitleDefinition(titleId, lang);
+    if (!title) continue;
+    const isEquipped = equippedId === titleId;
+    options.push({
+      label: `${title.name}${isEquipped ? (isEn ? ' [EQUIPPED]' : ' [EQUIPADO]') : (isEn ? ' [ACHIEVEMENT]' : ' [CONQUISTA]')}`.slice(0, 100),
+      description: title.display.slice(0, 100),
+      value: isEquipped ? `equipped:${titleId}` : `equip:${titleId}`,
+      emoji: title.emoji,
+      default: isEquipped,
+    });
+  }
 
   const selectRow = new ActionRowBuilder().addComponents(
     new StringSelectMenuBuilder()

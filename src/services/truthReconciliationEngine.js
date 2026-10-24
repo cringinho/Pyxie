@@ -343,6 +343,18 @@ class TruthReconciliationEngine extends EventEmitter {
       try {
         voteStats = require('./topgg').getVoteStats();
       } catch (_) {}
+      let homeStats = { homes: 0, placedItems: 0, bestCharm: 0, vault: { totalItems: 0, byRarity: {} } };
+      try {
+        homeStats = require('../modules/home/homeStore').getHomeStats();
+      } catch (_) {}
+      let achievementStats = { catalog: 0, unlocked: 0 };
+      try {
+        achievementStats = require('./achievements').getAchievementStats();
+      } catch (_) {}
+      let homeCatalogSize = 0;
+      try {
+        homeCatalogSize = require('../modules/home/homeCatalog').ITEMS.length;
+      } catch (_) {}
       let dungeonStats = { totals: {}, deepestFloor: 0, settings: {} };
       try {
         dungeonStats = require('../modules/dungeon/dungeonStore').getDungeonStats();
@@ -416,6 +428,18 @@ class TruthReconciliationEngine extends EventEmitter {
           votes: {
             total: Number(voteStats.totalVotes) || 0,
             beansGiven: Number(voteStats.totalBeans) || 0,
+          },
+          home: {
+            homes: Number(homeStats.homes) || 0,
+            placedItems: Number(homeStats.placedItems) || 0,
+            bestCharm: Number(homeStats.bestCharm) || 0,
+            catalogItems: homeCatalogSize,
+            itemsOwned: Number(homeStats.vault?.totalItems) || 0,
+            mythicItems: Number(homeStats.vault?.byRarity?.mythic) || 0,
+          },
+          achievements: {
+            catalog: Number(achievementStats.catalog) || 0,
+            unlocked: Number(achievementStats.unlocked) || 0,
           },
         },
       };

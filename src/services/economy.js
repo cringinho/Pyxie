@@ -346,6 +346,38 @@ function buyTitle(userId, titleId) {
   };
 }
 
+/**
+ * Título por id: os comprados com feijões (TITLES_CATALOG) e os de conquista
+ * (src/data/achievementTitles.js, com formatação especial em `display`).
+ */
+function getTitleDefinition(titleId, lang = 'pt') {
+  if (!titleId) return null;
+  if (TITLES_CATALOG[titleId]) return { ...TITLES_CATALOG[titleId], display: TITLES_CATALOG[titleId].name, achievement: false };
+  const { ACHIEVEMENT_TITLES } = require('../data/achievementTitles');
+  const title = ACHIEVEMENT_TITLES[titleId];
+  if (!title) return null;
+  const { formatStyledTitle } = require('../utils/fancyText');
+  const key = lang === 'en' ? 'en' : 'pt';
+  return {
+    id: title.id,
+    name: title.name[key],
+    desc: title.desc[key],
+    emoji: title.emoji,
+    style: title.style,
+    display: formatStyledTitle(title.name[key], title.style),
+    achievement: true,
+  };
+}
+
+/** Entrega um título de conquista (idempotente). */
+function grantTitle(userId, titleId) {
+  return updateUserAccount(userId, (acc) => {
+    const titles = Array.isArray(acc.titles) ? acc.titles : [];
+    if (!titles.includes(titleId)) titles.push(titleId);
+    acc.titles = titles;
+  });
+}
+
 function equipTitle(userId, titleId) {
   if (!titleId) {
     updateUserAccount(userId, (acc) => {
@@ -354,7 +386,7 @@ function equipTitle(userId, titleId) {
     return { success: true, equipped: null, message: 'Você desequipou seu título atual.' };
   }
 
-  const title = TITLES_CATALOG[titleId];
+  const title = getTitleDefinition(titleId);
   if (!title) {
     return { success: false, reason: 'title_not_found', message: 'Título não encontrado.' };
   }
@@ -372,7 +404,7 @@ function equipTitle(userId, titleId) {
   return {
     success: true,
     title,
-    message: `✨ Título **${title.emoji} ${title.name}** equipado com sucesso!`,
+    message: `✨ Título **${title.emoji} ${title.display || title.name}** equipado com sucesso!`,
   };
 }
 
@@ -1180,6 +1212,8 @@ module.exports = {
   resetUserEconomy,
   updateUserAccount,
   getTitlesCatalog,
+  getTitleDefinition,
+  grantTitle,
   getUserTitles,
   buyTitle,
   equipTitle,

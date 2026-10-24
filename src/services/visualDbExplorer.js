@@ -54,6 +54,15 @@ const METADATA_DICTIONARY = {
   dungeonCoinsIn: { label: 'Moedinhas em Tickets', icon: '🎟️', type: 'number', description: 'Soma real dos tickets debitados na entrada das Catacumbas.' },
   dungeonCoinsOut: { label: 'Moedinhas Pagas', icon: '🪙', type: 'number', description: 'Soma real paga em fugas, vitórias e salvamentos (já com tetos por run e por dia).' },
   dungeonDeepestFloor: { label: 'Andar Mais Fundo', icon: '🏆', type: 'number', description: 'Recorde global de profundidade alcançada (1 a 5).' },
+  // Casinha da Pyxie (data/homes.json + data/itemVault.json) e conquistas (data/achievements.json)
+  homesCount: { label: 'Casinhas Criadas', icon: '🏡', type: 'number', description: 'Pessoas que já abriram o /py-home (cada uma ganha o kit inicial).' },
+  homePlacedItems: { label: 'Itens à Mostra', icon: '🛋️', type: 'number', description: 'Soma real dos móveis, pets e decorações posicionados em todas as casinhas.' },
+  homeCoinsSpent: { label: 'Moedinhas na Loja do Dia', icon: '🪙', type: 'number', description: 'Moedinhas que saíram da economia em compras da Casinha (dreno anti-inflação).' },
+  homeBeansSpent: { label: 'Feijões na Loja Premium', icon: '🌱', type: 'number', description: 'Feijões mágicos gastos nos itens premium da Loja do dia.' },
+  homeBestCharm: { label: 'Maior Charme', icon: '✨', type: 'number', description: 'Maior pontuação de Charme entre todas as casinhas.' },
+  vaultItems: { label: 'Itens no Cofre', icon: '🎒', type: 'number', description: 'Instâncias de itens que as pessoas possuem (loja, dungeon, conquistas, kit inicial).' },
+  vaultMythic: { label: 'Itens Míticos', icon: '🌌', type: 'number', description: 'Itens míticos em circulação (todos numerados).' },
+  achievementsUnlocked: { label: 'Conquistas Desbloqueadas', icon: '🏆', type: 'number', description: 'Total de conquistas desbloqueadas (cada uma paga a recompensa uma única vez).' },
 };
 
 function safeAtomicWrite(filePath, data) {
@@ -172,6 +181,38 @@ function buildDungeonRecord() {
 }
 
 /**
+ * Estado real da Casinha da Pyxie, do cofre de itens e das conquistas
+ */
+function buildHomeRecord() {
+  const modulesCfg = readJsonSafe(process.env.MODULES_CONFIG_PATH || path.join(DATA_DIR, 'modulesConfig.json'));
+  const entry = modulesCfg.modules?.home;
+  const active = entry && entry.enabled !== undefined ? Boolean(entry.enabled) : true;
+  let stats = { homes: 0, placedItems: 0, coinsSpent: 0, beansSpent: 0, bestCharm: 0, vault: { totalItems: 0, byRarity: {} } };
+  let achievementStats = { unlocked: 0 };
+  try {
+    stats = require('../modules/home/homeStore').getHomeStats();
+  } catch (_) {}
+  try {
+    achievementStats = require('./achievements').getAchievementStats();
+  } catch (_) {}
+  return {
+    id: 'home_state',
+    name: 'Casinha da Pyxie (Itens e Conquistas)',
+    active,
+    status: active ? '🟢 Ativo (Global)' : '⏸️ Pausado',
+    scope: 'Global',
+    homesCount: Number(stats.homes) || 0,
+    homePlacedItems: Number(stats.placedItems) || 0,
+    homeCoinsSpent: Number(stats.coinsSpent) || 0,
+    homeBeansSpent: Number(stats.beansSpent) || 0,
+    homeBestCharm: Number(stats.bestCharm) || 0,
+    vaultItems: Number(stats.vault?.totalItems) || 0,
+    vaultMythic: Number(stats.vault?.byRarity?.mythic) || 0,
+    achievementsUnlocked: Number(achievementStats.unlocked) || 0,
+  };
+}
+
+/**
  * Consulta registros paginados por partição
  * @param {Object} options
  * @param {'users'|'guilds'|'global'} [options.partition='users']
@@ -278,6 +319,7 @@ function queryPartition({ partition = 'users', page = 1, limit = 15, search = ''
         guildId: mary.guildId || CRINGELANDIA_GUILD_ID,
       },
       buildDungeonRecord(),
+      buildHomeRecord(),
     ];
   }
 

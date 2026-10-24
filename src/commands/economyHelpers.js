@@ -58,7 +58,7 @@ function buildProfileEmbed({
 }) {
   const lang = getLanguage(source);
   const isEn = lang === 'en';
-  const titlePrefix = equippedTitle ? `[${equippedTitle.emoji} ${equippedTitle.name}] ` : '';
+  const titlePrefix = equippedTitle ? `[${equippedTitle.emoji} ${equippedTitle.display || equippedTitle.name}] ` : '';
   const coinsVal = Number(account?.coins) || 0;
   const magicBeansVal = Number(account?.magicBeans) || 0;
   const workVal = Number(account?.workCount) || 0;

@@ -83,3 +83,12 @@ máximo vencem a Nyx.
 - Preview obrigatória: `node scripts/dispatch_dungeon_previews.js [pt|en]` envia as telas para o
   canal de homologação.
 - Testes: `tests/dungeonCrawler.test.js`, incluído no `npm test`.
+
+## Itens para a Casinha
+As descidas podem render itens para o `/py-home` (`dungeonDrops.js`), sorteados pela id da
+descida (sem rerrolagem):
+- **Vitória sobre a Nyx:** 1 lendário garantido (dragõezinhos, unicórnio, grifo, mímico,
+  gárgula, cama da meia-noite, pilha de ouro) e 1 raro, com 25% de chance de virar épico.
+- **Fuga com o tesouro:** 15% no andar 1, +10% por andar (máximo de 45%).
+- **Morte a partir do andar 3:** 10% de chance de um item comum.
+Os itens ficam pendentes no estado da dungeon até entrarem no cofre, como as moedinhas.

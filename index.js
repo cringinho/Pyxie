@@ -68,6 +68,8 @@ const { updateGuildsSnapshot } = require('./src/services/guildDirectory');
 const growthFunnel = require('./src/services/growthFunnel');
 const { sendGuildWelcome, isWelcomeLanguageButton, handleWelcomeLanguageButton } = require('./src/services/guildOnboarding');
 const { startBotListStats } = require('./src/services/botListStats');
+const achievements = require('./src/services/achievements');
+const achievementsCommand = require('./src/commands/conquistas');
 const {
   onGuildMemberAdd: onCheckinMemberAdd,
   onMessageCreate: onCheckinMessageCreate,
@@ -875,6 +877,10 @@ client.on(Events.MessageCreate, async (message) => {
   let cmdErr = null;
   try {
     await command.executePrefix({ message, args, prefix });
+    if (command !== achievementsCommand) {
+      // Conquistas alcançadas pelo comando (limite de uma verificação a cada 15s por pessoa)
+      achievements.notifyForMessage(message).catch(() => null);
+    }
   } catch (error) {
     success = false;
     cmdErr = error;
@@ -965,6 +971,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
         }
         return interaction.update(view);
       }
+    }
+
+    if (achievementsCommand.isAchievementsInteraction(interaction)) {
+      await achievementsCommand.handleAchievementsInteraction(interaction);
+      return;
     }
 
     if (interaction.isButton() && isWelcomeLanguageButton(interaction.customId)) {
@@ -1195,6 +1206,17 @@ client.on(Events.InteractionCreate, async (interaction) => {
       await interaction.reply({ content: t('common.actionErrorShort', interaction), flags: MessageFlags.Ephemeral }).catch(() => null);
     }
   }
+});
+
+// Conquistas: depois de cada comando ou clique (inclusive dos módulos), verifica com limite de
+// uma vez a cada 15s por pessoa e avisa em mensagem privada. O atraso deixa o comando terminar.
+client.on(Events.InteractionCreate, (interaction) => {
+  if (!interaction.isChatInputCommand() && !interaction.isButton() && !interaction.isStringSelectMenu()) return;
+  if (interaction.isChatInputCommand() && interaction.commandName === achievementsCommand.name) return;
+  const timer = setTimeout(() => {
+    achievements.notifyNewAchievements(interaction).catch(() => null);
+  }, 2500);
+  if (typeof timer.unref === 'function') timer.unref();
 });
 
 client.on(Events.Error, (error) => {

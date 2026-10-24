@@ -831,9 +831,35 @@
     "type": 1
   },
   {
+    "options": [
+      {
+        "name": "user",
+        "description": "See someone else’s achievements.",
+        "required": false,
+        "type": 6
+      }
+    ],
+    "name": "py-achievements",
+    "description": "See your achievements, rewards and the special titles you can unlock.",
+    "type": 1
+  },
+  {
     "options": [],
     "name": "py-dungeon",
     "description": "Velvet Catacombs: a long, hard roguelike dungeon. Pay 50 coins, dive deep and escape rich.",
+    "type": 1
+  },
+  {
+    "options": [
+      {
+        "name": "user",
+        "description": "Visit someone else’s room.",
+        "required": false,
+        "type": 6
+      }
+    ],
+    "name": "py-home",
+    "description": "Your pixel art cozy room: decorate, buy furniture and pets, and visit friends.",
     "type": 1
   },
   {

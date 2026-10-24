@@ -1,4 +1,5 @@
 const path = require('path');
+const { rollDrops } = require('./dungeonDrops');
 const { readJson, writeJsonAtomic } = require('../../utils/atomicJson');
 const { getBrtDateKey, msUntilNextBrtMidnight } = require('../../utils/brtDate');
 const economy = require('../../services/economy');
@@ -177,6 +178,7 @@ function buildSettlement(state, userId, run, now) {
     newBest,
     kills: run.stats.kills,
     rooms: run.stats.rooms,
+    drops: rollDrops(run),
   };
 }
 
@@ -208,14 +210,45 @@ function settleRun(state, userId, run, now) {
   player.lastRun = { ...settlement, endedAt: now };
   player.activeRunId = null;
   player.pendingPayout += settlement.payout;
+  if (settlement.drops.length) {
+    player.pendingDrops = [...(player.pendingDrops || []), ...settlement.drops.map((itemId) => ({ itemId, runId: run.id, floor: run.floor }))];
+  }
   delete state.runs[run.id];
   return settlement;
 }
 
-/** Grava o estado e só então credita as moedas pendentes da liquidação. */
+/**
+ * Entrega os itens pendentes no cofre da Casinha. Como as moedas, ficam pendentes no estado
+ * da dungeon até a entrega dar certo, então uma queda no meio nunca perde nem duplica item.
+ */
+function flushPendingDrops(state, userId) {
+  const player = getPlayer(state, userId);
+  const pending = Array.isArray(player.pendingDrops) ? player.pendingDrops : [];
+  if (!pending.length) return [];
+  let vault;
+  try {
+    vault = require('../../services/itemVault');
+  } catch (_) {
+    return [];
+  }
+  const delivered = [];
+  const remaining = [];
+  for (const drop of pending) {
+    const result = vault.grantItem(userId, drop.itemId, { source: 'dungeon', detail: `floor ${drop.floor}` });
+    if (result.ok) delivered.push(result.instance);
+    else if (result.reason === 'save') remaining.push(drop);
+  }
+  player.pendingDrops = remaining;
+  saveState(state);
+  return delivered;
+}
+
+/** Grava o estado e só então credita as moedas e os itens pendentes da liquidação. */
 function commitAndPay(state, userId) {
   if (!saveState(state)) throw new Error('DUNGEON_SAVE_FAILED');
-  return flushPendingPayout(state, userId);
+  const paid = flushPendingPayout(state, userId);
+  flushPendingDrops(state, userId);
+  return paid;
 }
 
 function getLobbyStatus(userId, now = Date.now()) {
@@ -367,6 +400,13 @@ function getDungeonStats() {
   };
 }
 
+/** Estatísticas de uma pessoa nas Catacumbas (para as conquistas). */
+function getPlayerStats(userId) {
+  const state = loadState();
+  const player = state.players[String(userId)];
+  return { ...(player?.stats || {}) };
+}
+
 function _setDataFileForTests(file) {
   DATA_FILE = file;
 }
@@ -384,5 +424,6 @@ module.exports = {
   buyTalent,
   getHallOfFame,
   getDungeonStats,
+  getPlayerStats,
   _setDataFileForTests,
 };

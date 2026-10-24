@@ -337,6 +337,20 @@ function phaseBlock(run, lang, settlement) {
   }
 }
 
+/** Nome e raridade dos itens que a descida rendeu (catálogo da Casinha). */
+function dropNames(itemIds, lang) {
+  try {
+    const { getItem, itemName, rarityInfo } = require('../home/homeCatalog');
+    return itemIds
+      .map(getItem)
+      .filter(Boolean)
+      .map((entry) => `**${itemName(entry, lang)}** (${rarityInfo(entry.rarity)[lang === 'en' ? 'en' : 'pt']})`)
+      .join(', ');
+  } catch (_) {
+    return itemIds.join(', ');
+  }
+}
+
 function endBlock(run, lang, settlement) {
   const s = settlement || { gold: run.player.gold, payout: engine.computeGrossPayout(run), echoes: engine.computeEchoes(run), fee: 0, cappedBy: null };
   const outcome = run.outcome || run.phase;
@@ -351,6 +365,7 @@ function endBlock(run, lang, settlement) {
   if (s.cappedBy === 'run') lines.push(t('dungeon.end.capRun', lang, { cap: store.getSettings().runPayoutCap }));
   if (s.cappedBy === 'daily') lines.push(t('dungeon.end.capDaily', lang));
   lines.push(t('dungeon.end.echoes', lang, { echoes: s.echoes }));
+  if (Array.isArray(s.drops) && s.drops.length) lines.push(t('dungeon.end.drops', lang, { items: dropNames(s.drops, lang) }));
   if (s.newBest) lines.push(t('dungeon.end.best', lang, { floor: run.floor }));
   lines.push(t('dungeon.end.stats', lang, { rooms: run.stats.rooms, kills: run.stats.kills }));
   if (Number.isFinite(settlement?.balance)) lines.push(t('dungeon.end.balance', lang, { balance: settlement.balance }));

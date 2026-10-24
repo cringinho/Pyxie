@@ -503,6 +503,65 @@ registerEmbed(emojifySchema({
 }));
 
 registerEmbed({
+  id: 'home_room',
+  name: '🏡 Casinha da Pyxie',
+  category: 'minigames',
+  description: 'Tela principal do /py-home: quarto em pixel art, Charme, conjuntos ativos, curtidas e visitas.',
+  defaultColor: '#a855f7',
+  previewTitle: '{header} Casinha de Zulu',
+  previewDesc: 'N-não é como se eu tivesse arrumado tudo esperando você voltar... Mas a casinha é sua.\n\n### {charm} Charme da casinha\n\n• **Charme:** `396` (recorde: `400`)\n\n• **Conjuntos ativos:** **Sonho Lilás** `9` · **Salão Real** `8`\n\n• **Curtidas:** `7` · **Visitas:** `12`',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Casinha', fallback: '🏡', defaultEmojiKey: '73584mushroomhouses', description: 'Ícone no título da casinha' },
+    { key: 'charm', label: 'Charme', fallback: '✨', defaultEmojiKey: 'SPARKLES', description: 'Seção de Charme' },
+  ],
+});
+
+registerEmbed({
+  id: 'home_shop',
+  name: '🛍️ Loja do Dia da Casinha',
+  category: 'economy',
+  description: 'Vitrine do dia: 8 itens por moedinhas e 2 premium por feijões, girando à meia-noite de Brasília.',
+  defaultColor: '#f59e0b',
+  previewTitle: '{header} Loja do dia',
+  previewDesc: 'A vitrine muda todo dia à meia-noite.\n\n• **Seu saldo:** {coins} `230` · {beans} `3`\n\n• **1. Cadeira Lilás** · Raro · {coins} `320`\n\n• **2. Cama dos Sonhos Lilás** · Épico · {beans} `4`',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Loja', fallback: '🛍️', defaultEmojiKey: 'Pink_bag', description: 'Ícone no título da loja' },
+    { key: 'coins', label: 'Moedinhas', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Preço em moedinhas' },
+    { key: 'beans', label: 'Feijões Mágicos', fallback: '🌱', defaultEmojiKey: 'magic_bean', description: 'Preço premium' },
+  ],
+});
+
+registerEmbed({
+  id: 'achievements_view',
+  name: '🏆 Conquistas',
+  category: 'economy',
+  description: 'Tela do /py-achievements: progresso real por categoria, recompensas e títulos especiais das míticas.',
+  defaultColor: '#f472b6',
+  previewTitle: '{header} Conquistas de Zulu',
+  previewDesc: '• **Conquistadas:** `12/36` · **Míticas:** `1/9`\n\n### 🕯️ Catacumbas\n\n🥉 **Primeira Descida** · `1/1` ✅\n-# Termine uma descida nas Catacumbas de Veludo.\n\n🌌 **Eclipse da Nyx** · `0/1`\n-# Derrote a Nyx · 🎁 Trono da Nyx · ☾ 𝕰𝖈𝖑𝖎𝖕𝖘𝖊 𝖉𝖆 𝕹𝖞𝖝 ☽',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Troféu', fallback: '🏆', defaultEmojiKey: 'win', description: 'Ícone no título' },
+  ],
+});
+
+registerEmbed({
+  id: 'achievement_unlock',
+  name: '🏆 Conquista Desbloqueada',
+  category: 'economy',
+  description: 'Aviso privado que aparece depois de qualquer comando quando uma conquista é alcançada, já com as recompensas entregues.',
+  defaultColor: '#fbbf24',
+  previewTitle: '{header} Conquista desbloqueada!',
+  previewDesc: '### 🌌 Eclipse da Nyx\n\n> *Derrote a Nyx, a Mariposa Devora-Luz.*\n\n• **Item para a Casinha:** Trono da Nyx #1\n\n• **Título especial:** ☾ 𝕰𝖈𝖑𝖎𝖕𝖘𝖊 𝖉𝖆 𝕹𝖞𝖝 ☽',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Troféu', fallback: '🏆', defaultEmojiKey: 'win', description: 'Ícone no título' },
+  ],
+});
+
+registerEmbed({
   id: 'dungeon_lobby',
   name: '🕯️ Catacumbas de Veludo: Menu',
   category: 'minigames',
