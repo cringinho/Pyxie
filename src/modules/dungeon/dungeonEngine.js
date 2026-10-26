@@ -818,7 +818,7 @@ function startCombat(run, enemyId, { roomKey, kind, hp = null, surprise = 0 } = 
     maxHp = def.hp + 5 * (f - 1);
     atk = def.atk + f;
   } else if (f >= FLOOR_COUNT && !def.guardian) {
-    // No Coração da Cripta os monstros comuns são versões de elite
+    // Na Fenda de Nyxiel os servos da Nyx são versões de elite
     maxHp = Math.round(def.hp * 1.35);
     atk = Math.round(def.atk * 1.35);
   }

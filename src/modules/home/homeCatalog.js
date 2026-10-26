@@ -162,7 +162,7 @@ const FURNITURE = [
   item('potion_cabinet', 'Armário de Poções', 'Potion Cabinet', 'floor', 'rare', I(20, 17), { price: coins(560), sets: ['arcano'] }),
   item('training_dummy', 'Alvo de Treino', 'Training Target', 'floor', 'common', T(95), { price: coins(70) }),
   // Exclusivos de conquista (nunca à venda)
-  item('throne_nyx', 'Trono da Nyx', "Nyx's Throne", 'floor', 'mythic', I(0, 6, 1, 1, { recolor: { from: [0, 360], to: 272, minSat: 0, satMul: 1.6, lightAdd: -0.1 } }), { source: 'achievement', light: 2, sets: ['gotico', 'real'], maxSupply: 0 }),
+  item('throne_nyx', 'Trono da Nyx', "Nyx's Throne", 'floor', 'mythic', I(0, 6, 1, 1, { recolor: { from: [0, 360], to: 350, minSat: 0, satMul: 1.6, lightAdd: -0.1 } }), { source: 'achievement', light: 2, sets: ['gotico', 'real'], maxSupply: 0 }),
   item('golden_piano', 'Piano Dourado', 'Golden Piano', 'floor', 'mythic', I(23, 8, 2, 2, { recolor: { from: [0, 360], to: 45, minSat: 0, satMul: 1.4, lightAdd: 0.08 } }), { source: 'achievement', sets: ['real'] }),
 ];
 
@@ -268,7 +268,7 @@ const PETS = [
   pet('slime_orange', 'Slime de Abóbora', 'Pumpkin Slime', 'common', SLIME(6), { price: coins(100), sets: ['laranja'] }),
   pet('slime_gray', 'Slime de Nuvem', 'Cloud Slime', 'common', SLIME(7), { price: coins(100) }),
   // Gatinhos desenhados à mão (pixel art própria da Pyxie)
-  pet('pet_astaroth', 'Astaroth Pequenino', 'Tiny Astaroth', 'rare', CAT({ o: '#0b0710', b: '#2a2035', s: '#1a1324', e: '#d8b4fe', n: '#f9a8d4', w: '#4b3d5c' }), { source: 'starter', sets: ['gotico'] }),
+  pet('pet_astaroth', 'Astaroth Pequenino', 'Tiny Astaroth', 'rare', CAT({ o: '#0b0710', b: '#2a2035', s: '#1a1324', e: '#4ade80', n: '#f9a8d4', w: '#b794f6' }), { source: 'starter', sets: ['gotico'] }),
   pet('pet_cat_orange', 'Gatinho Laranja', 'Orange Kitten', 'uncommon', CAT({ o: '#3b1d0a', b: '#f59e0b', s: '#d97706', e: '#14532d', n: '#fda4af', w: '#fcd34d' }), { price: coins(240), sets: ['laranja'] }),
   pet('pet_cat_white', 'Gatinha Nuvem', 'Cloud Kitten', 'uncommon', CAT({ o: '#3b3446', b: '#f8fafc', s: '#cbd5e1', e: '#3b82f6', n: '#f9a8d4', w: '#ffffff' }), { price: coins(240) }),
   pet('pet_cat_lilac', 'Gatinha Lilás', 'Lilac Kitten', 'epic', CAT({ o: '#2e1065', b: '#c4b5fd', s: '#a78bfa', e: '#fdf4ff', n: '#f0abfc', w: '#ede9fe' }), { price: beans(3), source: 'premium', sets: ['lilas'] }),

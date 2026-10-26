@@ -1,5 +1,6 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const { t, getLanguage } = require('../../utils/i18n');
+const { columns, decorate, field, buttonEmoji } = require('../../utils/embedLayout');
 const bond = require('./coupleBond');
 const { getItem, itemName } = require('../home/homeCatalog');
 
@@ -17,11 +18,11 @@ const ts = (ms, style) => `<t:${Math.floor(ms / 1000)}:${style}>`;
 
 function bar(value, max) {
   const filled = max > 0 ? Math.max(0, Math.min(BAR, Math.round((value / max) * BAR))) : BAR;
-  return `${'💗'.repeat(filled)}${'🤍'.repeat(BAR - filled)}`;
+  return `💗 ${'▰'.repeat(filled)}${'▱'.repeat(BAR - filled)}`;
 }
 
 function gestureLabel(gesture, lang) {
-  return `${bond.GESTURES[gesture].emoji} ${t(`bond.gestures.${gesture}.label`, lang)}`;
+  return `${bond.GESTURES[gesture].emoji} **${t(`bond.gestures.${gesture}.label`, lang)}**`;
 }
 
 /** Texto do resultado de um gesto (mostrado no topo da tela). */
@@ -52,29 +53,35 @@ function buildBondView({ viewerId, source, notice = null, now = Date.now() }) {
     status.nextLevelXp !== null
       ? t('bond.levelBar', lang, { bar: bar(status.xp - status.levelStart, status.nextLevelXp - status.levelStart), into: status.xp - status.levelStart, need: status.nextLevelXp - status.levelStart })
       : t('bond.levelMax', lang, { bar: bar(1, 1) }),
-    t('bond.love', lang, { love: status.love }),
-    t('bond.streak', lang, { streak: status.streak, best: status.bestStreak }),
-    t('bond.todayHeader', lang),
-    t('bond.me', lang, { gesture: status.mine ? gestureLabel(status.mine, lang) : t('bond.pending', lang) }),
-    t('bond.spouse', lang, { spouse, gesture: status.theirs ? gestureLabel(status.theirs, lang) : t('bond.pending', lang) }),
-    t('bond.syncHint', lang, { xp: bond.SYNC_XP }),
-    t('bond.weekHeader', lang),
-    `> ${t(`bond.quests.${week.quest}`, lang, { target: week.target })}`,
-    t('bond.weekBar', lang, { bar: bar(week.progress, week.target), progress: week.progress, target: week.target, relative: ts(week.endsAt, 'R') }),
-    week.done ? t('bond.weekDone', lang, { item: keepsake }) : t('bond.weekReward', lang, { xp: bond.WEEKLY_XP, item: keepsake }),
   ];
-  const embed = new EmbedBuilder()
-    .setColor(COLOR)
-    .setTitle(t('bond.title', lang))
-    .setDescription(lines.filter(Boolean).join('\n\n'))
-    .setFooter({ text: t('bond.footer', lang) })
-    .setTimestamp(now);
+  const pending = t('bond.pending', lang);
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(COLOR)
+      .setTitle(t('bond.title', lang))
+      .setDescription(lines.filter(Boolean).join('\n\n'))
+      .addFields(
+        ...columns([t('bond.loveName', lang), t('bond.loveValue', lang, { love: status.love })], [t('bond.streakName', lang), t('bond.streakValue', lang, { streak: status.streak, best: status.bestStreak })]),
+        field(t('bond.todayHeader', lang), t('bond.syncHint', lang, { xp: bond.SYNC_XP })),
+        ...columns([t('bond.meName', lang), status.mine ? gestureLabel(status.mine, lang) : pending], [t('bond.spouseName', lang), `${spouse}\n${status.theirs ? gestureLabel(status.theirs, lang) : pending}`]),
+        field(
+          t('bond.weekHeader', lang),
+          [
+            `> ${t(`bond.quests.${week.quest}`, lang, { target: week.target })}`,
+            t('bond.weekBar', lang, { bar: bar(week.progress, week.target), progress: week.progress, target: week.target, relative: ts(week.endsAt, 'R') }),
+            week.done ? t('bond.weekDone', lang, { item: keepsake }) : t('bond.weekReward', lang, { xp: bond.WEEKLY_XP, item: keepsake }),
+          ].join('\n\n')
+        )
+      )
+      .setFooter({ text: t('bond.footer', lang) })
+      .setTimestamp(now)
+  );
   const row = new ActionRowBuilder().addComponents(
     ...Object.keys(bond.GESTURES).map((gesture) =>
       new ButtonBuilder()
         .setCustomId(id('g', viewerId, gesture))
         .setLabel(t(`bond.gestures.${gesture}.label`, lang))
-        .setEmoji(bond.GESTURES[gesture].emoji)
+        .setEmoji(buttonEmoji(bond.GESTURES[gesture].emoji))
         .setStyle(status.mine === gesture ? ButtonStyle.Success : ButtonStyle.Secondary)
         .setDisabled(Boolean(status.mine))
     ),
@@ -86,7 +93,7 @@ function buildBondView({ viewerId, source, notice = null, now = Date.now() }) {
 /** Botão do painel do casamento que abre a Força do Laço. */
 function bondButtonRow(viewerId, lang) {
   return new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId(id('home', viewerId)).setLabel(t('bond.btnOpen', lang)).setEmoji('💞').setStyle(ButtonStyle.Primary)
+    new ButtonBuilder().setCustomId(id('home', viewerId)).setLabel(t('bond.btnOpen', lang)).setEmoji(buttonEmoji('💞')).setStyle(ButtonStyle.Primary)
   );
 }
 

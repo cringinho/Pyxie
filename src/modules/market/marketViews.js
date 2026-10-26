@@ -11,6 +11,7 @@ const {
 } = require('discord.js');
 const { t, getLanguage } = require('../../utils/i18n');
 const { getEmoji } = require('../../utils/appEmojis');
+const { BLANK, columns, decorate, emojify, field, buttonEmoji } = require('../../utils/embedLayout');
 const market = require('../../services/market');
 const { getItem, itemName, rarityInfo } = require('../home/homeCatalog');
 
@@ -61,8 +62,8 @@ async function buildMarketView({ viewerId, source, page = 0, notice = null, now 
   const pages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
   const current = Math.min(Math.max(0, page), pages - 1);
   const slice = all.slice(current * PAGE_SIZE, current * PAGE_SIZE + PAGE_SIZE);
-  const lines = slice.map((l) =>
-    t('market.line', lang, {
+  const cards = slice.map((l) =>
+    t('market.card', lang, {
       id: l.id,
       name: listingName(l, lang),
       qty: l.qty,
@@ -72,15 +73,19 @@ async function buildMarketView({ viewerId, source, page = 0, notice = null, now 
       private: l.buyerId ? t('market.privateTag', lang) : '',
     })
   );
-  const embed = new EmbedBuilder()
-    .setColor(COLOR)
-    .setTitle(t('market.title', lang))
-    .setDescription(
-      [notice ? `> ${notice}` : null, t('market.intro', lang), t('market.shelfHeader', lang), lines.length ? lines.join('\n\n') : t('market.empty', lang), t('market.page', lang, { page: current + 1, pages })]
-        .filter(Boolean)
-        .join('\n\n')
-    )
-    .setFooter(footer(lang));
+  // Vitrine em duas colunas: metade dos anúncios de cada lado
+  const half = Math.ceil(cards.length / 2);
+  const shelf = cards.length
+    ? columns([t('market.shelfHeader', lang), cards.slice(0, half).join('\n\n')], [BLANK, cards.slice(half).join('\n\n') || BLANK])
+    : [field(t('market.shelfHeader', lang), t('market.empty', lang))];
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(COLOR)
+      .setTitle(t('market.title', lang))
+      .setDescription([notice ? `> ${notice}` : null, t('market.intro', lang)].filter(Boolean).join('\n\n'))
+      .addFields(...shelf, field(BLANK, t('market.page', lang, { page: current + 1, pages })))
+      .setFooter(footer(lang))
+  );
   const files = withImage(embed, await shelfFile(slice.filter((l) => l.kind === 'item').map((l) => l.itemId), lang));
 
   const components = [];
@@ -100,9 +105,9 @@ async function buildMarketView({ viewerId, source, page = 0, notice = null, now 
       new ButtonBuilder().setCustomId(id('page', viewerId, current + 1)).setLabel(t('market.btnNext', lang)).setEmoji('▶️').setStyle(ButtonStyle.Secondary).setDisabled(current >= pages - 1)
     ),
     new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId(id('sell', viewerId)).setLabel(t('market.btnSellItem', lang)).setEmoji('💰').setStyle(ButtonStyle.Success),
-      new ButtonBuilder().setCustomId(id('sellmat', viewerId)).setLabel(t('market.btnSellMaterial', lang)).setEmoji('🧺').setStyle(ButtonStyle.Success),
-      new ButtonBuilder().setCustomId(id('mine', viewerId)).setLabel(t('market.btnMine', lang)).setEmoji('📦').setStyle(ButtonStyle.Secondary)
+      new ButtonBuilder().setCustomId(id('sell', viewerId)).setLabel(t('market.btnSellItem', lang)).setEmoji(buttonEmoji('💰')).setStyle(ButtonStyle.Success),
+      new ButtonBuilder().setCustomId(id('sellmat', viewerId)).setLabel(t('market.btnSellMaterial', lang)).setEmoji(buttonEmoji('🧺')).setStyle(ButtonStyle.Success),
+      new ButtonBuilder().setCustomId(id('mine', viewerId)).setLabel(t('market.btnMine', lang)).setEmoji(buttonEmoji('📦')).setStyle(ButtonStyle.Secondary)
     )
   );
   return { content: '', embeds: [embed], components, files, attachments: [], allowedMentions: { parse: [] } };
@@ -114,28 +119,33 @@ async function buildListingView({ viewerId, source, listingId, notice = null, no
   if (!listing) return buildMarketView({ viewerId, source, notice: t('market.reasons.missing', lang), now });
   const summary = market.priceSummary(market.keyOf(listing), { now });
   const unit = Math.round((listing.price / listing.qty) * 100) / 100;
-  const lines = [
-    notice ? `> ${notice}` : null,
-    t('market.detailPrice', lang, { price: listing.price, unit, coin: coinIcon() }),
+  const details = [
     t('market.detailSeller', lang, { seller: `<@${listing.sellerId}>` }),
     listing.instance?.serial ? t('market.detailSerial', lang, { serial: listing.instance.serial }) : null,
     listing.buyerId ? t('market.detailPrivate', lang, { buyer: `<@${listing.buyerId}>` }) : null,
     t('market.detailExpires', lang, { time: `<t:${Math.floor(listing.expiresAt / 1000)}:R>` }),
-    t('market.historyHeader', lang),
-    summary.totalSales ? t('market.historyLine', lang, { last: summary.last, avg: summary.avg ?? summary.last, count: summary.count, coin: coinIcon() }) : t('market.historyNone', lang),
   ].filter(Boolean);
+  const history = summary.totalSales
+    ? t('market.historyLine', lang, { last: summary.last, avg: summary.avg ?? summary.last, count: summary.count, coin: coinIcon() }).replaceAll(' • ', '\n')
+    : t('market.historyNone', lang);
   const entry = listing.kind === 'item' ? getItem(listing.itemId) : null;
-  const embed = new EmbedBuilder()
-    .setColor(entry ? rarityInfo(entry.rarity).color || COLOR : COLOR)
-    .setTitle(t('market.detailTitle', lang, { name: listingName(listing, lang) }))
-    .setDescription(lines.join('\n\n'))
-    .setFooter(footer(lang));
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(entry ? rarityInfo(entry.rarity).color || COLOR : COLOR)
+      .setTitle(t('market.detailTitle', lang, { name: listingName(listing, lang) }))
+      .addFields(
+        ...columns([t('market.detailPriceName', lang), t('market.detailPriceValue', lang, { price: listing.price, unit, coin: coinIcon() })], [t('market.detailInfoName', lang), details.join('\n')]),
+        field(t('market.historyHeader', lang), history)
+      )
+      .setFooter(footer(lang))
+  );
+  if (notice) embed.setDescription(emojify(`> ${notice}`));
   const files = withImage(embed, entry ? await shelfFile([entry.id], lang) : null);
   const own = listing.sellerId === String(viewerId);
   const row = new ActionRowBuilder().addComponents(
     own
       ? new ButtonBuilder().setCustomId(id('cancel', viewerId, listing.id)).setLabel(t('market.btnCancel', lang)).setEmoji('🗑️').setStyle(ButtonStyle.Danger)
-      : new ButtonBuilder().setCustomId(id('buy', viewerId, listing.id)).setLabel(t('market.btnBuy', lang, { price: listing.price })).setEmoji('🛒').setStyle(ButtonStyle.Success),
+      : new ButtonBuilder().setCustomId(id('buy', viewerId, listing.id)).setLabel(t('market.btnBuy', lang, { price: listing.price })).setEmoji(buttonEmoji('🛒')).setStyle(ButtonStyle.Success),
     new ButtonBuilder().setCustomId(id('home', viewerId)).setLabel(t('market.btnBack', lang)).setEmoji('↩️').setStyle(ButtonStyle.Secondary)
   );
   return { content: '', embeds: [embed], components: [row], files, attachments: [], allowedMentions: { parse: [] } };
@@ -156,11 +166,13 @@ function buildSellItemView({ viewerId, source, notice = null }) {
     available = require('../../services/itemVault').listInstances(viewerId);
   }
   const tradable = available.filter((it) => getItem(it.itemId)?.tradable !== false).slice(0, 25);
-  const embed = new EmbedBuilder()
-    .setColor(COLOR)
-    .setTitle(t('market.sellItemTitle', lang))
-    .setDescription([notice ? `> ${notice}` : null, t('market.sellItemBody', lang), tradable.length ? null : t('market.sellItemNone', lang)].filter(Boolean).join('\n\n'))
-    .setFooter(footer(lang));
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(COLOR)
+      .setTitle(t('market.sellItemTitle', lang))
+      .setDescription([notice ? `> ${notice}` : null, t('market.sellItemBody', lang), tradable.length ? null : t('market.sellItemNone', lang)].filter(Boolean).join('\n\n'))
+      .setFooter(footer(lang))
+  );
   const components = [];
   if (tradable.length) {
     components.push(
@@ -188,11 +200,13 @@ function buildSellItemView({ viewerId, source, notice = null }) {
 function buildSellMaterialView({ viewerId, source, notice = null }) {
   const lang = getLanguage(source);
   const owned = Object.entries(market.resourceBalances(viewerId)).filter(([, qty]) => qty > 0);
-  const embed = new EmbedBuilder()
-    .setColor(COLOR)
-    .setTitle(t('market.sellMatTitle', lang))
-    .setDescription([notice ? `> ${notice}` : null, t('market.sellMatBody', lang), owned.length ? null : t('market.reasons.not_enough', lang)].filter(Boolean).join('\n\n'))
-    .setFooter(footer(lang));
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(COLOR)
+      .setTitle(t('market.sellMatTitle', lang))
+      .setDescription([notice ? `> ${notice}` : null, t('market.sellMatBody', lang), owned.length ? null : t('market.reasons.not_enough', lang)].filter(Boolean).join('\n\n'))
+      .setFooter(footer(lang))
+  );
   const components = [];
   if (owned.length) {
     components.push(
@@ -214,18 +228,20 @@ function buildSellMaterialView({ viewerId, source, notice = null }) {
 function buildMineView({ viewerId, source, notice = null }) {
   const lang = getLanguage(source);
   const mine = market.myListings(viewerId);
-  const embed = new EmbedBuilder()
-    .setColor(COLOR)
-    .setTitle(t('market.mineTitle', lang))
-    .setDescription(
-      [
-        notice ? `> ${notice}` : null,
-        mine.length
-          ? mine.map((l) => t('market.mineLine', lang, { id: l.id, name: listingName(l, lang), qty: l.qty, price: l.price, coin: coinIcon(), time: `<t:${Math.floor(l.expiresAt / 1000)}:R>` })).join('\n\n')
-          : t('market.mineEmpty', lang),
-      ].filter(Boolean).join('\n\n')
-    )
-    .setFooter(footer(lang));
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(COLOR)
+      .setTitle(t('market.mineTitle', lang))
+      .setDescription(
+        [
+          notice ? `> ${notice}` : null,
+          mine.length
+            ? mine.map((l) => t('market.mineLine', lang, { id: l.id, name: listingName(l, lang), qty: l.qty, price: l.price, coin: coinIcon(), time: `<t:${Math.floor(l.expiresAt / 1000)}:R>` })).join('\n\n')
+            : t('market.mineEmpty', lang),
+        ].filter(Boolean).join('\n\n')
+      )
+      .setFooter(footer(lang))
+  );
   const components = [];
   if (mine.length) {
     components.push(

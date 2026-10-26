@@ -16,7 +16,7 @@ acompanhada do Astaroth, descendo 5 andares procedurais em busca de ouro.
 | 2. Biblioteca Sussurrante | Grimório Mordedor, Fantasminha Tímido, Corvo Fofoqueiro | Bibliotecário Fantasma |
 | 3. Jardim de Ossos | Gato-Esqueleto Dançarino, Cogumelo Sonolento, Abóbora Bruxinha | Hidra do Jardim de Ossos |
 | 4. Salão dos Espelhos Rachados | Boneco de Lata Quebrado, Gárgula Preguiçosa, Diabrete Mascarado | Rainha Dragão de Ametista |
-| 5. Coração da Cripta | versões de elite do andar 4 | Nyx, a Mariposa Devora-Luz |
+| 5. Fenda de Nyxiel | servos da Nyx em versão de elite: Gárgula Acorrentada, Cavaleiro do Erro, Oráculo Corrompido, Brutamontes Sem Sinal | Nyx, a Ceifadora de Nyxiel (no Eclipse ela ergue a foice) |
 
 - **Luz de vela:** cada sala gasta luz. Abaixo de 25 fica escuro: os monstros batem 25% mais
   forte e a névoa esconde tudo.

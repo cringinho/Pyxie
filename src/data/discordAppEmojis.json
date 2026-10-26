@@ -7271,17 +7271,17 @@
       "animated": false
     },
     {
-      "id": "1556461939142430750",
+      "id": "1564372299258269776",
       "name": "astaroth_angry",
       "animated": false
     },
     {
-      "id": "1556461940782534737",
+      "id": "1564372315154817035",
       "name": "astaroth_blink",
       "animated": false
     },
     {
-      "id": "1556461943051784253",
+      "id": "1564372307454066860",
       "name": "astaroth_curious",
       "animated": false
     },
@@ -7291,7 +7291,7 @@
       "animated": false
     },
     {
-      "id": "1556461946532925532",
+      "id": "1564372295290462258",
       "name": "astaroth_happy",
       "animated": false
     },
@@ -7311,12 +7311,12 @@
       "animated": false
     },
     {
-      "id": "1556461953965359215",
+      "id": "1564372319277813911",
       "name": "astaroth_laugh",
       "animated": false
     },
     {
-      "id": "1556461956192538774",
+      "id": "1564372348734279760",
       "name": "astaroth_main_icon",
       "animated": false
     },
@@ -7326,32 +7326,32 @@
       "animated": false
     },
     {
-      "id": "1556461959854039183",
+      "id": "1564372352563679333",
       "name": "astaroth_power",
       "animated": false
     },
     {
-      "id": "1556461961737404477",
+      "id": "1564372303427665920",
       "name": "astaroth_sad",
       "animated": false
     },
     {
-      "id": "1556461963268202516",
+      "id": "1564372331319791765",
       "name": "astaroth_serious",
       "animated": false
     },
     {
-      "id": "1556461964690071703",
+      "id": "1564372323166064843",
       "name": "astaroth_sleeping",
       "animated": false
     },
     {
-      "id": "1556461967047135263",
+      "id": "1564372311413358754",
       "name": "astaroth_smug",
       "animated": false
     },
     {
-      "id": "1556461969123577947",
+      "id": "1564372326991003668",
       "name": "astaroth_surprised",
       "animated": false
     },
@@ -8408,6 +8408,71 @@
     {
       "id": "1559356095607341076",
       "name": "meanaj",
+      "animated": false
+    },
+    {
+      "id": "1564372354182815907",
+      "name": "nyx_idle",
+      "animated": false
+    },
+    {
+      "id": "1564372356401729786",
+      "name": "nyx_float",
+      "animated": false
+    },
+    {
+      "id": "1564372358079193098",
+      "name": "nyx_reap",
+      "animated": false
+    },
+    {
+      "id": "1564372359669092544",
+      "name": "nyx_smirk",
+      "animated": false
+    },
+    {
+      "id": "1564372361312993340",
+      "name": "nyx_gargoyle",
+      "animated": false
+    },
+    {
+      "id": "1564372363062026343",
+      "name": "nyx_knight",
+      "animated": false
+    },
+    {
+      "id": "1564372365071355925",
+      "name": "nyx_oracle",
+      "animated": false
+    },
+    {
+      "id": "1564372367013322832",
+      "name": "nyx_tvbrute",
+      "animated": false
+    },
+    {
+      "id": "1564372368749494292",
+      "name": "pyxie_lock",
+      "animated": false
+    },
+    {
+      "id": "1564372370339270726",
+      "name": "pyxie_cart",
+      "animated": false
+    },
+    {
+      "id": "1564372371836502137",
+      "name": "pyxie_chart",
+      "animated": false
+    },
+    {
+      "id": "1564372373526945984",
+      "name": "pyxie_calendar",
+      "animated": false
+    },
+    {
+      "id": "1564372375011598446",
+      "name": "pyxie_basket",
       "animated": false
     }
   ]

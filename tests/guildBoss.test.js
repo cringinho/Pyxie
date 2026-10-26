@@ -111,7 +111,8 @@ console.log('👹 Iniciando testes do Chefe da Semana...');
     for (const lang of ['pt', 'en']) {
       const view = views.buildBossView({ guildId: G, userId: U[0], source: { lang }, now: t0 + 7 * DAY });
       const data = view.embeds[0].data;
-      assert.ok(/^\p{Extended_Pictographic}/u.test(data.title) && wordCount(data.title) <= 8, data.title);
+      assert.ok(/^(\p{Extended_Pictographic}|<a?:\w+:\d+>)/u.test(data.title) && wordCount(data.title) <= 8, data.title);
+      assert.ok(data.fields.every((f) => f.value.length <= 1024 && !f.value.includes('{')), 'campos do painel completos');
       assert.ok(!/━|═|-{6,}/.test(data.description));
       assert.deepEqual(view.components[0].toJSON().components.map((c) => c.custom_id), ['boss:hit:strike', 'boss:hit:guard', 'boss:hit:spell', 'boss:view']);
       assert.deepEqual(view.allowedMentions, { parse: [] });

@@ -86,7 +86,7 @@ const ACHIEVEMENT_TITLES = {
     style: 'spark',
     emoji: '🌑',
     name: { pt: 'Eclipse da Nyx', en: "Nyx's Eclipse" },
-    desc: { pt: 'Derrotou a Mariposa Devora-Luz no fundo das Catacumbas.', en: 'Defeated the Light-Eating Moth at the bottom of the Catacombs.' },
+    desc: { pt: 'Derrotou a Ceifadora de Nyxiel no fundo das Catacumbas.', en: 'Defeated the Reaper of Nyxiel at the bottom of the Catacombs.' },
   },
   lenda_catacumbas: {
     id: 'lenda_catacumbas',

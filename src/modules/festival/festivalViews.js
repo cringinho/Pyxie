@@ -1,6 +1,7 @@
 const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const { t, getLanguage } = require('../../utils/i18n');
 const { getEmoji } = require('../../utils/appEmojis');
+const { columns, decorate, field, section, buttonEmoji } = require('../../utils/embedLayout');
 const festival = require('../../services/festival');
 const { itemName, rarityInfo } = require('../home/homeCatalog');
 const { renderShelf } = require('../home/homeRenderer');
@@ -48,16 +49,16 @@ function boxButtons(viewerId, lang, status) {
     new ButtonBuilder()
       .setCustomId(id('open', viewerId, 'sparks'))
       .setLabel(t('festival.btnSparks', lang, { price: sparks.price.sparks }))
-      .setEmoji(festival.CURRENCY.emoji)
+      .setEmoji(buttonEmoji(festival.CURRENCY.emoji))
       .setStyle(ButtonStyle.Success)
       .setDisabled(status.sparks < sparks.price.sparks),
     new ButtonBuilder()
       .setCustomId(id('open', viewerId, 'coins'))
       .setLabel(t('festival.btnCoins', lang, { price: coins.price.coins }))
-      .setEmoji('🧰')
+      .setEmoji(buttonEmoji('🧰'))
       .setStyle(ButtonStyle.Primary)
       .setDisabled(status.coinBoxesLeft <= 0),
-    new ButtonBuilder().setCustomId(id('odds', viewerId)).setLabel(t('festival.btnOdds', lang)).setEmoji('📜').setStyle(ButtonStyle.Secondary)
+    new ButtonBuilder().setCustomId(id('odds', viewerId)).setLabel(t('festival.btnOdds', lang)).setEmoji(buttonEmoji('📜')).setStyle(ButtonStyle.Secondary)
   );
 }
 
@@ -72,42 +73,49 @@ async function buildFestivalView({ viewerId, source, notice = null, now = Date.n
 
   if (!season) {
     const next = festival.getNextSeason(now);
-    const embed = new EmbedBuilder()
-      .setColor(COLOR)
-      .setTitle(t('festival.closedTitle', lang))
-      .setDescription(
-        [
-          notice ? `> ${notice}` : null,
-          t('festival.closedBody', lang),
-          walletLine(status, lang),
-          next ? t('festival.next', lang, { season: festival.seasonName(next, lang), date: ts(next.start, 'D'), relative: ts(next.start, 'R') }) : null,
-          t('festival.howHeader', lang),
-          t('festival.howMarket', lang),
-        ].filter(Boolean).join('\n\n')
-      )
-      .setFooter(footer(lang));
+    const embed = decorate(
+      new EmbedBuilder()
+        .setColor(COLOR)
+        .setTitle(t('festival.closedTitle', lang))
+        .setDescription([notice ? `> ${notice}` : null, t('festival.closedBody', lang), walletLine(status, lang)].filter(Boolean).join('\n\n'))
+        .addFields(
+          ...(next ? [field(...section(t('festival.next', lang, { season: festival.seasonName(next, lang), date: ts(next.start, 'D'), relative: ts(next.start, 'R') })))] : []),
+          field(t('festival.howHeader', lang), t('festival.howMarket', lang))
+        )
+        .setFooter(footer(lang))
+    );
     return { content: '', embeds: [embed], components: [], files: [], attachments: [], allowedMentions: { parse: [] } };
   }
 
   const { sparks, coins } = festival.BOXES;
+  const key = lang === 'en' ? 'en' : 'pt';
   const lines = [
     notice ? `> ${notice}` : null,
     t(`festival.intro.${season.id}`, lang),
     t('festival.ends', lang, { date: ts(season.end, 'f'), relative: ts(season.end, 'R') }),
     walletLine(status, lang),
-    t('festival.boxesHeader', lang),
-    t('festival.sparksBox', lang, { price: sparks.price.sparks, currency: festival.currencyLabel(lang, 2), left: status.pitySparksLeft, rarity: rarityInfo(sparks.pity.rarity)[lang === 'en' ? 'en' : 'pt'] }),
-    t('festival.coinsBox', lang, { price: coins.price.coins, coin: coinIcon(), left: status.pityCoinsLeft, rarity: rarityInfo(coins.pity.rarity)[lang === 'en' ? 'en' : 'pt'], today: status.coinBoxesLeft, limit: coins.dailyLimit }),
-    t('festival.howHeader', lang),
-    t('festival.howDungeon', lang, { chance: Math.round(festival.RUN_CHANCE * 100) }),
-    t('festival.howWork', lang, { chance: Math.round(festival.WORK_CHANCE * 100) }),
-    t('festival.howMarket', lang),
   ];
-  const embed = new EmbedBuilder()
-    .setColor(season.color || COLOR)
-    .setTitle(t('festival.title', lang, { season: festival.seasonName(season, lang) }))
-    .setDescription(lines.filter(Boolean).join('\n\n'))
-    .setFooter(footer(lang));
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(season.color || COLOR)
+      .setTitle(t('festival.title', lang, { season: festival.seasonName(season, lang) }))
+      .setDescription(lines.filter(Boolean).join('\n\n'))
+      .addFields(
+        ...columns(
+          [t('festival.sparksBoxName', lang), t('festival.sparksBoxValue', lang, { price: sparks.price.sparks, currency: festival.currencyLabel(lang, 2), left: status.pitySparksLeft, rarity: rarityInfo(sparks.pity.rarity)[key] })],
+          [t('festival.coinsBoxName', lang), t('festival.coinsBoxValue', lang, { price: coins.price.coins, coin: coinIcon(), left: status.pityCoinsLeft, rarity: rarityInfo(coins.pity.rarity)[key], today: status.coinBoxesLeft, limit: coins.dailyLimit })]
+        ),
+        field(
+          t('festival.howHeader', lang),
+          [
+            t('festival.howDungeon', lang, { chance: Math.round(festival.RUN_CHANCE * 100) }),
+            t('festival.howWork', lang, { chance: Math.round(festival.WORK_CHANCE * 100) }),
+            t('festival.howMarket', lang),
+          ].join('\n')
+        )
+      )
+      .setFooter(footer(lang))
+  );
   const file = await shelfFile(highlights(season.id), lang, t('festival.shelfTitle', lang));
   if (file) embed.setImage('attachment://festival.png');
   return { content: '', embeds: [embed], components: [boxButtons(viewerId, lang, status)], files: file ? [file] : [], attachments: [], allowedMentions: { parse: [] } };
@@ -130,19 +138,20 @@ function buildOddsView({ viewerId, source, now = Date.now() }) {
     })
   );
   const { sparks, coins } = festival.BOXES;
-  const embed = new EmbedBuilder()
-    .setColor(season.color || COLOR)
-    .setTitle(t('festival.oddsTitle', lang))
-    .setDescription(
-      [
-        t('festival.oddsSparks', lang, { odds: oddsLine('sparks'), every: sparks.pity.every, rarity: rarityInfo(sparks.pity.rarity)[lang === 'en' ? 'en' : 'pt'] }),
-        t('festival.oddsCoins', lang, { odds: oddsLine('coins'), every: coins.pity.every, rarity: rarityInfo(coins.pity.rarity)[lang === 'en' ? 'en' : 'pt'] }),
-        t('festival.prizesHeader', lang),
-        ...prizes,
-        t('festival.oddsNote', lang),
-      ].join('\n\n')
-    )
-    .setFooter(footer(lang));
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(season.color || COLOR)
+      .setTitle(t('festival.oddsTitle', lang))
+      .setDescription(t('festival.oddsNote', lang))
+      .addFields(
+        ...columns(
+          section(t('festival.oddsSparks', lang, { odds: oddsLine('sparks').replaceAll(' • ', '\n'), every: sparks.pity.every, rarity: rarityInfo(sparks.pity.rarity)[lang === 'en' ? 'en' : 'pt'] })),
+          section(t('festival.oddsCoins', lang, { odds: oddsLine('coins').replaceAll(' • ', '\n'), every: coins.pity.every, rarity: rarityInfo(coins.pity.rarity)[lang === 'en' ? 'en' : 'pt'] }))
+        ),
+        field(t('festival.prizesHeader', lang), prizes.join('\n\n'))
+      )
+      .setFooter(footer(lang))
+  );
   const back = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId(id('home', viewerId)).setLabel(t('festival.btnBack', lang)).setEmoji('↩️').setStyle(ButtonStyle.Secondary)
   );
@@ -156,18 +165,20 @@ async function buildPrizeView({ viewerId, source, result }) {
   const rarity = rarityInfo(entry.rarity);
   const serial = result.instance?.serial ? ` \`#${result.instance.serial}\`` : '';
   const status = result.status;
-  const embed = new EmbedBuilder()
-    .setColor(rarity.color || COLOR)
-    .setTitle(t('festival.prizeTitle', lang))
-    .setDescription(
-      [
-        t('festival.prize', lang, { item: itemName(entry, lang), serial, rarity: rarity[lang === 'en' ? 'en' : 'pt'] }),
-        result.pityHit ? t('festival.pityHit', lang) : null,
-        entry.kind === 'pet' ? t('festival.prizePet', lang) : t('festival.prizeItem', lang),
-        walletLine(status, lang),
-      ].filter(Boolean).join('\n\n')
-    )
-    .setFooter(footer(lang));
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(rarity.color || COLOR)
+      .setTitle(t('festival.prizeTitle', lang))
+      .setDescription(
+        [
+          t('festival.prize', lang, { item: itemName(entry, lang), serial, rarity: rarity[lang === 'en' ? 'en' : 'pt'] }),
+          result.pityHit ? t('festival.pityHit', lang) : null,
+          entry.kind === 'pet' ? t('festival.prizePet', lang) : t('festival.prizeItem', lang),
+          walletLine(status, lang),
+        ].filter(Boolean).join('\n\n')
+      )
+      .setFooter(footer(lang))
+  );
   const file = await shelfFile([entry.id], lang, itemName(entry, lang));
   if (file) embed.setImage('attachment://festival.png');
   const rows = [boxButtons(viewerId, lang, status)];

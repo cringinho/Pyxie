@@ -18,6 +18,7 @@ process.env.DUNGEON_DATA_PATH = path.join(tmpDir, 'dungeon.json');
 const manager = require('../src/modules/marriage/marriageManager');
 const bond = require('../src/modules/marriage/coupleBond');
 const bondViews = require('../src/modules/marriage/bondViews');
+const { emojify } = require('../src/utils/emojify');
 const pyCasamento = require('../src/modules/marriage/commands/pyCasamento');
 const economy = require('../src/services/economy');
 const vault = require('../src/services/itemVault');
@@ -147,8 +148,10 @@ console.log('💞 Iniciando testes da Força do Laço...');
     for (const locale of ['pt-BR', 'en-US']) {
       const lang = locale.startsWith('pt') ? 'pt' : 'en';
       const view = bondViews.buildBondView({ viewerId: B, source: { locale }, now: T0 + 10 * DAY });
-      assert.equal(view.embeds[0].data.title, t('bond.title', lang));
+      assert.equal(view.embeds[0].data.title, emojify(t('bond.title', lang)));
       assert.ok(!view.embeds[0].data.description.includes('{'));
+      assert.ok(view.embeds[0].data.fields.every((f) => !f.name.includes('{') && !f.value.includes('{')), 'campos sem marcador sobrando');
+      assert.equal(view.embeds[0].data.fields.filter((f) => f.inline).length, 4, 'duas linhas de colunas duplas');
       const buttons = view.components[0].components;
       assert.equal(buttons.length, 5);
       assert.ok(buttons.slice(0, 4).every((b) => b.data.custom_id.startsWith(`bond:g:${B}:`) && !b.data.disabled), 'B ainda não fez o gesto');
@@ -166,7 +169,7 @@ console.log('💞 Iniciando testes da Força do Laço...');
     assert.equal(replied.content, t('bond.reasons.not_yours', 'pt'));
     let updated = null;
     await bondViews.handleBondInteraction({ customId: `bond:g:${B}:note`, user: { id: B }, locale: 'en-US', isButton: () => true, update: async (p) => { updated = p; } });
-    assert.ok(updated.embeds[0].data.description.startsWith('> 💌'), 'gesto pelo botão');
+    assert.ok(updated.embeds[0].data.description.startsWith(`> ${emojify('💌')}`), 'gesto pelo botão');
     console.log('  ✅ 7. Tela PT/EN, botões e gestos pelo botão.');
 
     // 8. Painel do casamento mostra o Laço e abre a tela; "carinho" é o abraço do dia
@@ -176,7 +179,7 @@ console.log('💞 Iniciando testes da Força do Laço...');
     assert.ok(payload.embeds[0].data.fields.some((f) => f.name === t('bond.fieldName', 'pt')));
     assert.equal(payload.components[0].components[0].data.custom_id, `bond:home:${A}`);
     await pyCasamento.executeSlash({ interaction: { ...interaction, options: { getSubcommand: () => 'bond' } } });
-    assert.equal(payload.embeds[0].data.title, t('bond.title', 'pt'));
+    assert.equal(payload.embeds[0].data.title, emojify(t('bond.title', 'pt')));
     await pyCasamento.executeSlash({ interaction: { ...interaction, user: { id: C }, options: { getSubcommand: () => 'affection' } } });
     assert.equal(payload, t('marriage.notMarried', 'pt'));
     const json = pyCasamento.data.toJSON();

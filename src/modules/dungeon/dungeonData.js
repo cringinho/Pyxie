@@ -61,13 +61,13 @@ const FLOORS = [
   {
     id: 5,
     rooms: 6,
-    name: { pt: 'Coração da Cripta', en: 'Heart of the Crypt' },
+    name: { pt: 'Fenda de Nyxiel', en: 'Nyxiel Breach' },
     flavor: {
-      pt: 'Não há mais velas. Só o bater de asas enormes no escuro… e um brilho dourado lá no fundo.',
-      en: 'No more candles. Only the beating of huge wings in the dark… and a golden glow far below.',
+      pt: 'As velas acabam onde a cripta encosta em Nyxiel. Monitores quebrados piscam no escuro, janelas de erro flutuam no ar… e alguém ri baixinho lá no fundo.',
+      en: 'The candles end where the crypt touches Nyxiel. Broken monitors flicker in the dark, error windows float in the air… and someone giggles far below.',
     },
-    palette: { floor: '#24090f', wall: '#0c0306', accent: '#ff5c7a', glow: '#ffd36b' },
-    enemies: ['tin_toy', 'masked_imp', 'gargoyle'],
+    palette: { floor: '#1a0a12', wall: '#08040a', accent: '#ff2e55', glow: '#3dff8f' },
+    enemies: ['nyx_gargoyle', 'nyx_knight', 'nyx_oracle', 'nyx_tvbrute'],
     guardian: 'nyx',
   },
 ];
@@ -252,6 +252,60 @@ const ENEMIES = {
     ],
   },
 
+  // Servos da Nyx (andar 5, a Fenda de Nyxiel)
+  nyx_gargoyle: {
+    glyph: '🦇',
+    sprite: 'nyx_gargoyle',
+    name: { pt: 'Gárgula Acorrentada', en: 'Chained Gargoyle' },
+    hp: 28,
+    atk: 7,
+    gold: [13, 19],
+    moves: [
+      { type: 'multi', hits: 2, mult: 0.7, w: 2 },
+      { type: 'attack', mult: 1.1, w: 2 },
+      { type: 'charge', w: 1 },
+    ],
+  },
+  nyx_knight: {
+    glyph: '🛡️',
+    sprite: 'nyx_knight',
+    name: { pt: 'Cavaleiro do Erro', en: 'Error Knight' },
+    hp: 30,
+    atk: 6,
+    gold: [13, 19],
+    moves: [
+      { type: 'defend', value: 10, w: 2 },
+      { type: 'attack', mult: 1.2, w: 2 },
+      { type: 'charge', w: 1 },
+    ],
+  },
+  nyx_oracle: {
+    glyph: '🎲',
+    sprite: 'nyx_oracle',
+    name: { pt: 'Oráculo Corrompido', en: 'Corrupted Oracle' },
+    hp: 22,
+    atk: 8,
+    gold: [14, 20],
+    moves: [
+      { type: 'drain', mult: 0.6, light: 12, w: 2 },
+      { type: 'poison', mult: 0.5, poison: 2, turns: 3, w: 1 },
+      { type: 'attack', mult: 1, w: 1 },
+    ],
+  },
+  nyx_tvbrute: {
+    glyph: '📺',
+    sprite: 'nyx_tvbrute',
+    name: { pt: 'Brutamontes Sem Sinal', en: 'No-Signal Brute' },
+    hp: 32,
+    atk: 7,
+    gold: [15, 21],
+    moves: [
+      { type: 'charge', w: 2 },
+      { type: 'attack', mult: 1, w: 2 },
+      { type: 'web', mult: 0.6, w: 1 },
+    ],
+  },
+
   // Mímico (aparece em baús)
   mimic: {
     glyph: '🧰',
@@ -336,11 +390,14 @@ const ENEMIES = {
     ],
   },
   nyx: {
-    glyph: '🦋',
-    sprite: '255208butterfly',
+    glyph: '💀',
+    sprite: 'nyx_idle',
+    // No Eclipse (metade da vida) ela ergue a foice
+    phase2Sprite: 'nyx_reap',
+    aura: '#ff2e55',
     guardian: true,
     boss: true,
-    name: { pt: 'Nyx, a Mariposa Devora-Luz', en: 'Nyx, the Light-Eating Moth' },
+    name: { pt: 'Nyx, a Ceifadora de Nyxiel', en: 'Nyx, the Reaper of Nyxiel' },
     hp: 130,
     atk: 10,
     gold: [120, 150],

@@ -1,6 +1,7 @@
 const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageFlags, SlashCommandBuilder, StringSelectMenuBuilder } = require('discord.js');
 const { t, getLanguage } = require('../../../utils/i18n');
 const { getEmoji } = require('../../../utils/appEmojis');
+const { BLANK, columns, decorate, emojify, field, buttonEmoji } = require('../../../utils/embedLayout');
 const crafting = require('../../../services/crafting');
 const { getItem, itemName, rarityInfo } = require('../homeCatalog');
 const { renderShelf } = require('../homeRenderer');
@@ -16,11 +17,12 @@ const COLOR = '#b45309';
 
 const coinIcon = () => getEmoji('COIN') || '🪙';
 
-function materialsBlock(userId, lang) {
+/** Materiais em duas colunas (metade de cada lado). */
+function materialsColumns(userId, lang) {
   const materials = crafting.getMaterials(userId);
-  return Object.keys(crafting.MATERIALS)
-    .map((key) => t('craft.materialLine', lang, { label: crafting.materialLabel(key, lang), qty: materials[key] }))
-    .join(' • ');
+  const lines = Object.keys(crafting.MATERIALS).map((key) => t('craft.materialLine', lang, { label: crafting.materialLabel(key, lang), qty: materials[key] }));
+  const half = Math.ceil(lines.length / 2);
+  return columns([t('craft.materialsHeader', lang), lines.slice(0, half).join('\n')], [BLANK, lines.slice(half).join('\n') || BLANK]);
 }
 
 function recipeMenu(ownerId, lang, selected = null) {
@@ -55,20 +57,14 @@ async function shelfFile(itemIds, lang, title) {
 
 async function buildWorkshopView({ owner, source, notice = null }) {
   const lang = getLanguage(source);
-  const embed = new EmbedBuilder()
-    .setColor(COLOR)
-    .setTitle(t('craft.title', lang))
-    .setDescription(
-      [
-        notice ? `> ${notice}` : null,
-        t('craft.intro', lang),
-        t('craft.materialsHeader', lang),
-        materialsBlock(owner.id, lang),
-        t('craft.recipesHeader', lang),
-        t('craft.recipesHint', lang),
-      ].filter(Boolean).join('\n\n')
-    )
-    .setFooter({ text: t('craft.footer', lang) });
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(COLOR)
+      .setTitle(t('craft.title', lang))
+      .setDescription([notice ? `> ${notice}` : null, t('craft.intro', lang)].filter(Boolean).join('\n\n'))
+      .addFields(...materialsColumns(owner.id, lang), field(t('craft.recipesHeader', lang), t('craft.recipesHint', lang)))
+      .setFooter({ text: t('craft.footer', lang) })
+  );
   const file = await shelfFile(crafting.RECIPES.map((r) => r.itemId), lang, t('craft.title', lang).replace(/^\S+\s/, ''));
   if (file) embed.setImage('attachment://oficina.png');
   return { content: '', embeds: [embed], components: [recipeMenu(owner.id, lang)], files: file ? [file] : [], attachments: [], allowedMentions: { parse: [] } };
@@ -80,22 +76,24 @@ async function buildRecipeView({ owner, source, itemId, notice = null }) {
   const entry = getItem(itemId);
   const materials = crafting.getMaterials(owner.id);
   const ready = Object.entries(recipe.materials).every(([key, qty]) => materials[key] >= qty);
-  const lines = [
-    notice ? `> ${notice}` : null,
-    t('craft.recipeNeeds', lang),
-    ...Object.entries(recipe.materials).map(([key, qty]) => t('craft.recipeLine', lang, { label: crafting.materialLabel(key, lang), need: qty, have: materials[key] })),
-    t('craft.recipeCoins', lang, { coins: recipe.coins, coin: coinIcon() }),
-    t(ready ? 'craft.recipeReady' : 'craft.recipeMissing', lang),
-  ].filter(Boolean);
-  const embed = new EmbedBuilder()
-    .setColor(rarityInfo(entry.rarity).color || COLOR)
-    .setTitle(t('craft.recipeTitle', lang, { item: itemName(entry, lang) }))
-    .setDescription(lines.join('\n\n'))
-    .setFooter({ text: t('craft.footer', lang) });
+  const needs = Object.entries(recipe.materials).map(([key, qty]) => t('craft.recipeLine', lang, { label: crafting.materialLabel(key, lang), need: qty, have: materials[key] }));
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(rarityInfo(entry.rarity).color || COLOR)
+      .setTitle(t('craft.recipeTitle', lang, { item: itemName(entry, lang) }))
+      .addFields(
+        ...columns(
+          [t('craft.recipeNeeds', lang), needs.join('\n')],
+          [t('craft.costName', lang), [t('craft.recipeCoins', lang, { coins: recipe.coins, coin: coinIcon() }), t(ready ? 'craft.recipeReady' : 'craft.recipeMissing', lang)].join('\n')]
+        )
+      )
+      .setFooter({ text: t('craft.footer', lang) })
+  );
+  if (notice) embed.setDescription(emojify(`> ${notice}`));
   const file = await shelfFile([itemId], lang, itemName(entry, lang));
   if (file) embed.setImage('attachment://oficina.png');
   const buttons = new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId(`craft:make:${owner.id}:${itemId}`).setLabel(t('craft.btnCraft', lang)).setEmoji('🔨').setStyle(ButtonStyle.Success).setDisabled(!ready),
+    new ButtonBuilder().setCustomId(`craft:make:${owner.id}:${itemId}`).setLabel(t('craft.btnCraft', lang)).setEmoji(buttonEmoji('🔨')).setStyle(ButtonStyle.Success).setDisabled(!ready),
     new ButtonBuilder().setCustomId(`craft:back:${owner.id}`).setLabel(t('craft.btnBack', lang)).setEmoji('↩️').setStyle(ButtonStyle.Secondary)
   );
   return { content: '', embeds: [embed], components: [recipeMenu(owner.id, lang, itemId), buttons], files: file ? [file] : [], attachments: [], allowedMentions: { parse: [] } };

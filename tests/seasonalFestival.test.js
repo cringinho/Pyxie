@@ -23,6 +23,7 @@ const dungeonViews = require('../src/modules/dungeon/dungeonViews');
 const { ITEMS, SETS } = require('../src/modules/home/homeCatalog');
 const { SHEETS, getSprite } = require('../src/modules/home/homeSprites');
 const views = require('../src/modules/festival/festivalViews');
+const { emojify } = require('../src/utils/emojify');
 const pyFestival = require('../src/modules/festival/commands/pyFestival');
 const { t } = require('../src/utils/i18n');
 
@@ -210,15 +211,18 @@ console.log('🎇 Iniciando testes do Festival da Temporada...');
     for (const locale of ['pt-BR', 'en-US']) {
       const source = { locale };
       const open = await views.buildFestivalView({ viewerId: U, source, now: HALLOWEEN });
-      assert.ok(open.embeds[0].data.title.startsWith('🎃'));
+      assert.ok(open.embeds[0].data.title.startsWith(emojify('🎃')), 'abóbora pixel do bot no título');
       assert.ok(!open.embeds[0].data.description.includes('{'));
+      assert.equal(open.embeds[0].data.fields.filter((f) => f.inline).length, 2, 'as duas caixas lado a lado');
+      assert.ok(open.embeds[0].data.fields.every((f) => !f.value.includes('{')));
       const ids = open.components[0].components.map((c) => c.data.custom_id);
       assert.deepEqual(ids, [`fest:open:${U}:sparks`, `fest:open:${U}:coins`, `fest:odds:${U}`]);
       const closed = await views.buildFestivalView({ viewerId: U, source, now: OFF });
       assert.equal(closed.components.length, 0);
-      assert.ok(closed.embeds[0].data.description.includes('<t:'));
+      assert.ok(closed.embeds[0].data.fields.some((f) => f.value.includes('<t:')), 'data da próxima temporada');
       const odds = views.buildOddsView({ viewerId: U, source, now: HALLOWEEN });
       assert.ok(odds.embeds[0].data.description.length < 4096);
+      assert.ok(odds.embeds[0].data.fields.every((f) => f.value.length <= 1024), 'chances e prêmios cabem nos campos');
       assert.equal(views.buildOddsView({ viewerId: U, source, now: OFF }), null);
       const prize = await views.buildPrizeView({ viewerId: U, source, result: lucky });
       assert.equal(prize.files.length, 1);

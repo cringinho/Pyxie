@@ -554,7 +554,7 @@ registerEmbed({
   description: 'Aviso privado que aparece depois de qualquer comando quando uma conquista é alcançada, já com as recompensas entregues.',
   defaultColor: '#fbbf24',
   previewTitle: '{header} Conquista desbloqueada!',
-  previewDesc: '### 🌌 Eclipse da Nyx\n\n> *Derrote a Nyx, a Mariposa Devora-Luz.*\n\n• **Item para a Casinha:** Trono da Nyx #1\n\n• **Título especial:** ☾ 𝕰𝖈𝖑𝖎𝖕𝖘𝖊 𝖉𝖆 𝕹𝖞𝖝 ☽',
+  previewDesc: '### 🌌 Eclipse da Nyx\n\n> *Derrote a Nyx, a Ceifadora de Nyxiel.*\n\n• **Item para a Casinha:** Trono da Nyx #1\n\n• **Título especial:** ☾ 𝕰𝖈𝖑𝖎𝖕𝖘𝖊 𝖉𝖆 𝕹𝖞𝖝 ☽',
   previewFields: [],
   slots: [
     { key: 'header', label: 'Troféu', fallback: '🏆', defaultEmojiKey: 'win', description: 'Ícone no título' },

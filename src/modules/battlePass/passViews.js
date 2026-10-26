@@ -1,6 +1,7 @@
 const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const { t, getLanguage } = require('../../utils/i18n');
 const { getEmoji } = require('../../utils/appEmojis');
+const { BLANK, columns, decorate, field, buttonEmoji } = require('../../utils/embedLayout');
 const battlePass = require('../../services/battlePass');
 const payments = require('../../services/passPayments');
 const { getItem, itemName, rarityInfo } = require('../home/homeCatalog');
@@ -77,14 +78,14 @@ function claimButton(viewerId, lang, status) {
   return new ButtonBuilder()
     .setCustomId(id('claim', viewerId))
     .setLabel(t('pass.btnClaim', lang, { count: status.claimable }))
-    .setEmoji('🎁')
+    .setEmoji(buttonEmoji('🎁'))
     .setStyle(ButtonStyle.Success)
     .setDisabled(status.claimable <= 0);
 }
 
 function premiumButton(viewerId, lang, status) {
   if (status.premium) return null;
-  return new ButtonBuilder().setLabel(t('pass.btnPremium', lang)).setEmoji('💎').setStyle(ButtonStyle.Link).setURL(payments.passUrl(viewerId, { lang }));
+  return new ButtonBuilder().setLabel(t('pass.btnPremium', lang)).setEmoji(buttonEmoji('💎')).setStyle(ButtonStyle.Link).setURL(payments.passUrl(viewerId, { lang }));
 }
 
 async function buildPassView({ viewerId, source, notice = null, now = Date.now() }) {
@@ -92,29 +93,30 @@ async function buildPassView({ viewerId, source, notice = null, now = Date.now()
   const status = battlePass.getStatus(viewerId, now);
   const next = status.track.find((row) => row.level > status.level) || status.track[status.track.length - 1];
   const finale = status.track[status.track.length - 1];
+  const lock = status.premium ? '' : ' 🔒';
   const lines = [
     notice ? `> ${notice}` : null,
     t('pass.intro', lang, { month: monthLabel(status.month, lang), date: ts(status.endsAt, 'f'), relative: ts(status.endsAt, 'R') }),
     t('pass.levelLine', lang, { level: status.level, max: battlePass.MAX_LEVEL, bar: progressBar(status), into: status.intoLevel, need: battlePass.XP_PER_LEVEL }),
     status.premium ? t('pass.premiumOn', lang) : t('pass.premiumOff', lang, { brl: battlePass.PRICE.BRL, usd: battlePass.PRICE.USD }),
-    t('pass.nextHeader', lang, { level: next.level }),
-    t('pass.freeLine', lang, { reward: rewardLabel(next.free, lang) }),
-    t('pass.premiumLine', lang, { reward: rewardLabel(next.premium, lang), lock: status.premium ? '' : ' 🔒' }),
-    t('pass.finaleHeader', lang),
-    t('pass.premiumLine', lang, { reward: rewardLabel(finale.premium, lang), lock: status.premium ? '' : ' 🔒' }),
-    t('pass.xpHeader', lang),
-    t('pass.xpSources', lang, { ...battlePass.XP_SOURCES }),
   ];
-  const embed = new EmbedBuilder()
-    .setColor(COLOR)
-    .setTitle(t('pass.title', lang, { month: monthLabel(status.month, lang) }))
-    .setDescription(lines.filter(Boolean).join('\n\n'))
-    .setFooter(footer(lang));
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(COLOR)
+      .setTitle(t('pass.title', lang, { month: monthLabel(status.month, lang) }))
+      .setDescription(lines.filter(Boolean).join('\n\n'))
+      .addFields(
+        ...columns([t('pass.freeName', lang, { level: next.level }), rewardLabel(next.free, lang)], [t('pass.premiumName', lang, { level: next.level }), `${rewardLabel(next.premium, lang)}${lock}`]),
+        field(t('pass.finaleHeader', lang), `${rewardLabel(finale.premium, lang)}${lock}`),
+        ...columns([t('pass.xpHeader', lang), t('pass.xpLeft', lang, { ...battlePass.XP_SOURCES })], [BLANK, t('pass.xpRight', lang, { ...battlePass.XP_SOURCES })])
+      )
+      .setFooter(footer(lang))
+  );
   const file = await shelfFile(status.month, lang);
   if (file) embed.setImage('attachment://passe.png');
   const row = new ActionRowBuilder().addComponents(
     claimButton(viewerId, lang, status),
-    new ButtonBuilder().setCustomId(id('page', viewerId, Math.floor(Math.max(0, status.level - 1) / PAGE_SIZE))).setLabel(t('pass.btnLevels', lang)).setEmoji('📜').setStyle(ButtonStyle.Secondary)
+    new ButtonBuilder().setCustomId(id('page', viewerId, Math.floor(Math.max(0, status.level - 1) / PAGE_SIZE))).setLabel(t('pass.btnLevels', lang)).setEmoji(buttonEmoji('📜')).setStyle(ButtonStyle.Secondary)
   );
   const premium = premiumButton(viewerId, lang, status);
   if (premium) row.addComponents(premium);
@@ -141,11 +143,14 @@ function buildLevelsView({ viewerId, source, page = 0, now = Date.now() }) {
       premiumMark: mark(row, 'premium'),
     })
   );
-  const embed = new EmbedBuilder()
-    .setColor(COLOR)
-    .setTitle(t('pass.levelsTitle', lang, { from: current * PAGE_SIZE + 1, to: (current + 1) * PAGE_SIZE }))
-    .setDescription([t('pass.legend', lang), ...rows].join('\n\n'))
-    .setFooter(footer(lang));
+  const embed = decorate(
+    new EmbedBuilder()
+      .setColor(COLOR)
+      .setTitle(t('pass.levelsTitle', lang, { from: current * PAGE_SIZE + 1, to: (current + 1) * PAGE_SIZE }))
+      .setDescription(t('pass.legend', lang))
+      .addFields(...columns([BLANK, rows.slice(0, 5).join('\n\n')], [BLANK, rows.slice(5).join('\n\n')]))
+      .setFooter(footer(lang))
+  );
   const nav = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId(id('page', viewerId, current - 1)).setEmoji('⬅️').setStyle(ButtonStyle.Secondary).setDisabled(current === 0),
     new ButtonBuilder().setCustomId(id('page', viewerId, current + 1)).setEmoji('➡️').setStyle(ButtonStyle.Secondary).setDisabled(current >= pages - 1),

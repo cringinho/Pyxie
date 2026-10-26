@@ -335,7 +335,9 @@ console.log('  ✅ 6. Narrativa e conteúdo 100% bilíngues (PT/EN).');
   for (const key of keys) {
     assert.ok(/^<a?:[\w~]+:\d+>$/.test(getEmoji(key)), `Emoji ${key} deve vir do catálogo de Application Emojis (veio ${getEmoji(key)})`);
   }
-  assert.equal(data.ENEMIES.nyx.sprite, '255208butterfly', 'A Nyx é a borboleta roxa pixel do bot');
+  assert.equal(data.ENEMIES.nyx.sprite, 'nyx_idle', 'A Nyx é a ceifadora de Nyxiel (arte própria do bot)');
+  assert.equal(data.ENEMIES.nyx.phase2Sprite, 'nyx_reap', 'No Eclipse a Nyx ergue a foice');
+  assert.deepEqual(data.FLOORS[4].enemies, ['nyx_gargoyle', 'nyx_knight', 'nyx_oracle', 'nyx_tvbrute'], 'O último andar é guardado pelos servos da Nyx');
   const bundleDir = path.join(__dirname, '..', 'assets', 'dungeon', 'emojis');
   const ownDir = path.join(__dirname, '..', 'assets', 'pyxie', 'emojis');
   const used = new Set();

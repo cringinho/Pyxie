@@ -22,6 +22,7 @@ const profissao = require('../src/commands/profissao');
 const pyCraft = require('../src/modules/home/commands/pyCraft');
 const { getItem } = require('../src/modules/home/homeCatalog');
 const { t } = require('../src/utils/i18n');
+const { emojify } = require('../src/utils/emojify');
 
 const runId = Date.now();
 const U = `user_test_craft_${runId}`;
@@ -88,7 +89,8 @@ console.log('🛠️ Iniciando testes da oficina e das profissões novas...');
     // 5. Telas da oficina
     crafting.addMaterials(U, { fabric: 4 });
     const view = await pyCraft.buildWorkshopView({ owner: { id: U }, source: { lang: 'pt' } });
-    assert.equal(view.embeds[0].data.title, t('craft.title', 'pt'));
+    assert.equal(view.embeds[0].data.title, emojify(t('craft.title', 'pt')));
+    assert.equal(view.embeds[0].data.fields.filter((f) => f.inline).length, 2, 'materiais em duas colunas');
     assert.equal(view.components[0].toJSON().components[0].options.length, crafting.RECIPES.length);
     assert.equal(view.files.length, 1, 'Vitrine das receitas renderizada');
     const recipe = await pyCraft.buildRecipeView({ owner: { id: U }, source: { lang: 'en' }, itemId: 'craft_quilt' });

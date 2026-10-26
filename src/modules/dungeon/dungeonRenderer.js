@@ -371,7 +371,10 @@ function resolveEmojiRef(ref) {
 function listEmojiRefs() {
   const refs = new Set();
   for (const [ref] of Object.values(ICONS)) if (ref) refs.add(ref);
-  for (const def of Object.values(ENEMIES)) if (def.sprite) refs.add(def.sprite);
+  for (const def of Object.values(ENEMIES)) {
+    if (def.sprite) refs.add(def.sprite);
+    if (def.phase2Sprite) refs.add(def.phase2Sprite);
+  }
   for (const charm of Object.values(CHARMS)) if (charm.emoji) refs.add(charm.emoji);
   return [...refs];
 }
@@ -529,9 +532,10 @@ function chestSprite(kind = 'wood') {
   return pixelArtSprite(`chest_${kind}`, CHEST_ART, CHEST_COLORS[kind] || CHEST_COLORS.wood);
 }
 
-function enemySprite(enemyId, def) {
+function enemySprite(enemyId, def, phase2 = false) {
   if (enemyId === 'mimic') return chestSprite('mimic');
-  return emojiSprite(def?.sprite, def?.boss ? 64 : def?.guardian ? 46 : 38, def?.glyph);
+  const sprite = phase2 && def?.phase2Sprite ? def.phase2Sprite : def?.sprite;
+  return emojiSprite(sprite, def?.boss ? 64 : def?.guardian ? 46 : 38, def?.glyph);
 }
 
 /** Asset oficial reduzido para `size` px (lado maior) e pronto para ampliar sem suavização. */
@@ -1042,16 +1046,22 @@ function drawCombat(ctx, run, text, palette) {
     ctx.beginPath();
     ctx.arc(575, 330, 120, 0, Math.PI * 2);
     ctx.fill();
+    // Faixas de glitch de Nyxiel (vermelho e verde), sempre no mesmo lugar para a cena não tremer
+    const stripes = [[96, 0.18, '#ff2e55'], [214, 0.12, '#3dff8f'], [348, 0.16, '#ff2e55'], [462, 0.1, '#3dff8f'], [530, 0.14, '#ff2e55']];
+    for (const [y, alpha, color] of stripes) {
+      ctx.fillStyle = rgba(color, alpha);
+      ctx.fillRect(0, SCENE_TOP + y, RENDER_WIDTH, 6);
+    }
   }
 
   // Inimigo
   const enemySize = def.boss ? 300 : def.guardian ? 250 : 200;
   const ex = 575;
   const eBottom = 590;
-  if (def.boss || def.guardian) glow(ctx, ex, eBottom - enemySize / 2, enemySize * 0.85, def.boss ? '#ffd36b' : palette.accent, def.boss ? 0.4 : 0.3);
+  if (def.boss || def.guardian) glow(ctx, ex, eBottom - enemySize / 2, enemySize * 0.85, def.aura || (def.boss ? '#ffd36b' : palette.accent), def.boss ? 0.4 : 0.3);
   shadow(ctx, ex, eBottom - 4, enemySize * 0.8);
   const hit = run.fx.some((f) => f.type === 'dmgEnemy');
-  const body = enemySprite(c.enemyId, def);
+  const body = enemySprite(c.enemyId, def, c.phase2);
   const drawn = drawSprite(ctx, body, ex + (hit ? 6 : 0), eBottom, c.enemyId === 'mimic' ? enemySize * 0.8 : enemySize);
   if (def.crowned) drawSprite(ctx, icon('crown', 20), ex + (hit ? 6 : 0), eBottom - drawn.h + 24, 72);
   else if (run.festival && drawn.h > 0) {

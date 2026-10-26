@@ -27,6 +27,7 @@ const store = require('../src/modules/dungeon/dungeonStore');
 const { getItem } = require('../src/modules/home/homeCatalog');
 const { getSprite } = require('../src/modules/home/homeSprites');
 const views = require('../src/modules/battlePass/passViews');
+const { emojify } = require('../src/utils/emojify');
 const pyPass = require('../src/modules/battlePass/commands/pyPass');
 const { t } = require('../src/utils/i18n');
 
@@ -251,8 +252,10 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
     for (const locale of ['pt-BR', 'en-US']) {
       const source = { locale };
       const home = await views.buildPassView({ viewerId: D, source, now: OCT });
-      assert.ok(home.embeds[0].data.title.startsWith('💎'));
+      assert.ok(home.embeds[0].data.title.startsWith(emojify('💎')), 'título com o diamante pixel do bot');
       assert.ok(!home.embeds[0].data.description.includes('{'));
+      assert.ok(home.embeds[0].data.fields.every((f) => !f.name.includes('{') && !f.value.includes('{')));
+      assert.equal(home.embeds[0].data.fields.filter((f) => f.inline).length, 4, 'grátis/premium e XP em colunas duplas');
       const buttons = home.components[0].components;
       assert.equal(buttons[0].data.custom_id, `bp:claim:${D}`);
       assert.ok(home.files.length === 1);
@@ -264,6 +267,7 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
         const levels = views.buildLevelsView({ viewerId: D, source, page, now: OCT });
         assert.ok(levels.embeds[0].data.description.length < 4096, `página ${page}`);
         assert.ok(!levels.embeds[0].data.description.includes('{'));
+        assert.ok(levels.embeds[0].data.fields.every((f) => f.value.length <= 1024 && !f.value.includes('{')), `colunas da página ${page}`);
       }
       assert.ok(views.claimNotice({ delivered: [], blocked: true }, locale.startsWith('pt') ? 'pt' : 'en').length > 0);
     }
