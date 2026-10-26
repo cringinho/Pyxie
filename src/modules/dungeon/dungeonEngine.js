@@ -1201,6 +1201,12 @@ function winCombat(run) {
   }
   run.stats.kills++;
   log(run, c.guardian ? 'guardianDefeated' : 'enemyDefeated', { enemy: c.enemyId, gold });
+  // Festival: monstros fantasiados soltam Fagulhas (creditadas no fim da descida)
+  if (run.festival) {
+    const sparks = c.guardian ? Number(run.festival.perGuardian) || 3 : Number(run.festival.perKill) || 1;
+    run.festival.collected = (Number(run.festival.collected) || 0) + sparks;
+    log(run, 'festivalSpark', { sparks });
+  }
   fx(run, 'victory');
   if (hasCharm(run, 'amethyst_heart')) {
     const healed = heal(run, 4);

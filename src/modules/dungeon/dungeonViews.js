@@ -133,6 +133,15 @@ function footerFor(source, lang) {
   return { text: t('dungeon.footer', lang, { server: guild ? guild.name : t('dungeon.private', lang) }) };
 }
 
+function festivalCurrency(lang, qty) {
+  return require('../../services/festival').currencyLabel(lang, qty);
+}
+
+function festivalSeasonName(seasonId, lang) {
+  const festival = require('../../services/festival');
+  return festival.seasonName({ id: seasonId, ...festival.SEASONS[seasonId] }, lang);
+}
+
 function enemyName(id, lang) {
   return localized(ENEMIES[id]?.name, lang);
 }
@@ -162,6 +171,8 @@ function formatLogEntry(entry, lang) {
   }
   if (entry.k === 'emptyRoom') p.flavor = localized(EMPTY_FLAVORS[p.flavor], lang);
   if (entry.k === 'bought') p.item = t(`dungeon.items.${p.item}`, lang);
+  if (p.season || entry.k === 'festivalSpark') p.currency = festivalCurrency(lang, p.sparks);
+  if (p.season) p.season = festivalSeasonName(p.season, lang);
   return t(`dungeon.log.${entry.k}`, lang, p);
 }
 
@@ -284,11 +295,12 @@ function phaseBlock(run, lang, settlement) {
           max: c.maxHp,
           shield: c.shield > 0 ? t('dungeon.combat.shield', lang, { value: c.shield }) : '',
         }),
+        run.festival ? t('dungeon.festival.combatLine', lang, { season: festivalSeasonName(run.festival.season, lang), sparks: c.guardian ? run.festival.perGuardian || 3 : run.festival.perKill || 1, currency: festivalCurrency(lang, 2) }) : null,
         intentTexts(run, lang).long,
         t('dungeon.combat.hint', lang, { block: 4 + run.floor + p.def, bolt: engine.boltCost(run), swipe: engine.swipeCost(run) }),
       ];
       if (c.guardian) parts.push(t('dungeon.combat.noFlee', lang));
-      return parts.join('\n\n');
+      return parts.filter(Boolean).join('\n\n');
     }
     case 'event': {
       const ev = run.event;
@@ -387,6 +399,7 @@ function endBlock(run, lang, settlement) {
   if (Array.isArray(s.drops) && s.drops.length) lines.push(t('dungeon.end.drops', lang, { items: dropNames(s.drops, lang) }));
   if (s.newBest) lines.push(t('dungeon.end.best', lang, { floor: run.floor }));
   if (settlement && hasNewHouseKey(run)) lines.push(t('dungeon.end.houseKey', lang));
+  if (s.festival > 0) lines.push(t('dungeon.end.festival', lang, { sparks: s.festival, currency: festivalCurrency(lang, s.festival) }));
   lines.push(t('dungeon.end.stats', lang, { rooms: run.stats.rooms, kills: run.stats.kills }));
   if (Number.isFinite(settlement?.balance)) lines.push(t('dungeon.end.balance', lang, { balance: settlement.balance }));
   return lines.join('\n\n');

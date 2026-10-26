@@ -221,6 +221,7 @@ function buildSettlement(state, userId, run, now) {
     kills: run.stats.kills,
     rooms: run.stats.rooms,
     drops: rollDrops(run),
+    festival: Math.max(0, Math.floor(Number(run.festival?.collected) || 0)),
   };
 }
 
@@ -264,6 +265,14 @@ function settleRun(state, userId, run, now) {
   delete state.runs[run.id];
 
   if (run.outcome === 'dead') createGrave(state, userId, run, settlement, now);
+
+  if (settlement.festival > 0) {
+    try {
+      require('../../services/festival').addSparks(userId, settlement.festival, 'dungeon');
+    } catch (err) {
+      console.error('[dungeon] Falha ao creditar Fagulhas:', err.message);
+    }
+  }
 
   // Game over por inatividade: o bot manda o resumo por DM e fecha a thread da descida
   if (run.outcome === 'abandoned') {
@@ -382,6 +391,11 @@ function startRun(userId, { lang = 'pt', now = Date.now(), seed = null, guildId 
 
   const run = engine.createRun({ ownerId: userId, lang, talents: player.talents, seed, now });
   run.guildId = guildId ? String(guildId) : null;
+  try {
+    require('../../services/festival').decorateRun(run, now);
+  } catch (err) {
+    console.warn('[dungeon] Festival indisponível:', err.message);
+  }
   state.runs[run.id] = run;
   if (run.guildId) {
     player.guilds = player.guilds && typeof player.guilds === 'object' ? player.guilds : {};

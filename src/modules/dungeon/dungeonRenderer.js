@@ -168,6 +168,55 @@ const MIMIC_ART = [
   'KggggggggggggggggK',
   '.KKKKKKKKKKKKKKKK.',
 ];
+// Fantasias do Festival (/py-festival): chapéu desenhado por cima dos monstros fantasiados
+const FESTIVAL_HATS = {
+  halloween: {
+    rows: ['.......KK.......', '......KPPK......', '.....KPPPK......', '.....KPPPPK.....', '....KPPPPPK.....', '....KPOOOOPK....', '...KPPPPPPPPK...', 'KKKPPPPPPPPPPKKK', 'KPPPPPPPPPPPPPPK', '.KKKKKKKKKKKKKK.'],
+    colors: { K: '#1a0d12', P: '#6b2fa0', O: '#f97316' },
+  },
+  christmas: {
+    rows: ['............WW..', '..........KWWWK.', '.........KRRWK..', '.......KKRRRK...', '.....KKRRRRRK...', '....KRRRRRRRRK..', '...KRRRRRRRRRK..', '..KWWWWWWWWWWWWK', '..KWWWWWWWWWWWWK', '...KKKKKKKKKKKK.'],
+    colors: { K: '#1a0d12', R: '#dc2626', W: '#f8fafc' },
+  },
+  easter: {
+    rows: ['..KK........KK..', '.KWWK......KWWK.', '.KWPK......KPWK.', '.KWPK......KPWK.', '.KWPK......KPWK.', '.KWPK......KPWK.', '..KWPK....KPWK..', '..KWWKKKKKKWWK..', '...KWWWWWWWWK...', '....KKKKKKKK....'],
+    colors: { K: '#1a0d12', W: '#f8fafc', P: '#f9a8d4' },
+  },
+  newyear: {
+    rows: ['.......YY.......', '......KYYK......', '......KGVK......', '.....KGVVGK.....', '.....KVVGGK.....', '....KGGVVGGK....', '....KVVGGVVK....', '...KGGVVGGVVK...', '...KKKKKKKKKK...'],
+    colors: { K: '#1a0d12', Y: '#fde047', G: '#eab308', V: '#8b5cf6' },
+  },
+  summer: {
+    rows: ['.....KKKKKK.....', '....KYYYYYYK....', '...KYYYYYYYYK...', '...KRRRRRRRRK...', 'KKKYYYYYYYYYYKKK', 'KYYYYYYYYYYYYYYK', '.KKKKKKKKKKKKKK.'],
+    colors: { K: '#1a0d12', Y: '#fcd34d', R: '#06b6d4' },
+  },
+};
+
+/** Fração da altura do sprite acima do primeiro pixel visível (para o chapéu assentar na cabeça). */
+function opaqueTopRatio(sprite) {
+  if (!sprite) return 0;
+  if (sprite.opaqueTop !== undefined) return sprite.opaqueTop;
+  let ratio = 0;
+  try {
+    const data = sprite.getContext('2d').getImageData(0, 0, sprite.width, sprite.height).data;
+    outer: for (let y = 0; y < sprite.height; y++) {
+      for (let x = 0; x < sprite.width; x++) {
+        if (data[(y * sprite.width + x) * 4 + 3] > 40) {
+          ratio = y / sprite.height;
+          break outer;
+        }
+      }
+    }
+  } catch (_) {}
+  sprite.opaqueTop = ratio;
+  return ratio;
+}
+
+function festivalHat(season) {
+  const hat = FESTIVAL_HATS[season];
+  return hat ? pixelArtSprite(`hat_${season}`, hat.rows, hat.colors) : null;
+}
+
 const CHEST_COLORS = {
   wood: { K: '#1a0d12', L: '#c98a4b', W: '#9a5a2b', B: '#5e3418', G: '#ffcf4a', g: '#c48a1a', Y: '#fff1a8', R: '#ff2b55', T: '#fff7ff', M: '#3a0610', P: '#ff6fa0' },
   velvet: { K: '#1a0d12', L: '#b98be0', W: '#7a3fa8', B: '#4a2068', G: '#ffd76a', g: '#c99422', Y: '#fff1a8', R: '#ff2b55', T: '#fff7ff', M: '#3a0610', P: '#ff6fa0' },
@@ -1002,8 +1051,13 @@ function drawCombat(ctx, run, text, palette) {
   if (def.boss || def.guardian) glow(ctx, ex, eBottom - enemySize / 2, enemySize * 0.85, def.boss ? '#ffd36b' : palette.accent, def.boss ? 0.4 : 0.3);
   shadow(ctx, ex, eBottom - 4, enemySize * 0.8);
   const hit = run.fx.some((f) => f.type === 'dmgEnemy');
-  const drawn = drawSprite(ctx, enemySprite(c.enemyId, def), ex + (hit ? 6 : 0), eBottom, c.enemyId === 'mimic' ? enemySize * 0.8 : enemySize);
+  const body = enemySprite(c.enemyId, def);
+  const drawn = drawSprite(ctx, body, ex + (hit ? 6 : 0), eBottom, c.enemyId === 'mimic' ? enemySize * 0.8 : enemySize);
   if (def.crowned) drawSprite(ctx, icon('crown', 20), ex + (hit ? 6 : 0), eBottom - drawn.h + 24, 72);
+  else if (run.festival && drawn.h > 0) {
+    const headTop = eBottom - drawn.h + Math.round(drawn.h * opaqueTopRatio(body));
+    drawSprite(ctx, festivalHat(run.festival.season), ex + (hit ? 6 : 0), headTop + Math.round(enemySize * 0.1), Math.round(enemySize * 0.4));
+  }
 
   // Pyxie e Astaroth
   const guarding = run.fx.some((f) => f.type === 'guard');

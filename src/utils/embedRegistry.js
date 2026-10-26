@@ -719,6 +719,20 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'seasonal_festival',
+  name: '🎇 Festival da Temporada (/py-festival)',
+  category: 'economy',
+  description: 'Vitrine da temporada global: Fagulhas, Caixa da Temporada e Baú de Moedinhas com chances públicas e garantia, lista completa de prêmios e tela do prêmio com o sprite do item.',
+  defaultColor: '#f97316',
+  previewTitle: '{header} Noite das Abóboras',
+  previewDesc: 'As abóboras acordaram e os monstros das Catacumbas se fantasiaram.\n\n### 🎁 Caixas\n\n• **Caixa da Temporada:** `25` 🎇 Fagulhas\n\n• **Baú de Moedinhas:** `450` 🪙\n\n-# Chances públicas no botão 📜',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Temporada', fallback: '🎃', defaultEmojiKey: 'DUNGEON_PUMPKIN', description: 'Ícone no título do festival' },
+  ],
+});
+
+registerEmbed({
   id: 'player_market',
   name: '🏪 Mercado entre Jogadores (/py-market)',
   category: 'economy',

@@ -32,7 +32,7 @@ const DEDICATED = { welcome: 'welcome', vent: 'vent', tarot: 'tarot', tickets: '
 const TOGGLEABLE_GROUPS = Object.keys(guildFeatures.FEATURE_GROUPS).filter((g) => guildFeatures.FEATURE_GROUPS[g].toggleable);
 
 /** O que o Mundo Pyxie oferece. Sistemas novos entram aqui e em setup.mmo.features.<id>. */
-const MMO_SHOWCASE = ['dungeon', 'boss', 'home', 'market', 'vault', 'achievements'];
+const MMO_SHOWCASE = ['dungeon', 'boss', 'home', 'market', 'festival', 'vault', 'achievements'];
 
 function langOf(source, guildId) {
   if (source === 'pt' || source === 'en') return source;

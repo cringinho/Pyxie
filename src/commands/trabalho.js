@@ -2605,6 +2605,11 @@ async function handleWorkInteraction(interaction) {
   const result = finishWork(sessionUserId, true, finalSalary, isCriticalBonus);
   // Material da profissão para a oficina (/py-craft)
   const materialDrops = grantWorkMaterials(sessionUserId, session.professionKey, { golden: session.isGoldenShift, level: session.userLevel });
+  // Festival (/py-festival): 5% de chance de Fagulhas em turno certo durante uma temporada
+  let festivalDrop = null;
+  try {
+    festivalDrop = require('../services/festival').rollWorkDrop(sessionUserId);
+  } catch (_) {}
 
   const currentRoleTitle = getRoleTitle(session.professionKey, result.careerLevel, lang);
   const desc = [
@@ -2621,6 +2626,10 @@ async function handleWorkInteraction(interaction) {
 
   for (const drop of materialDrops) {
     desc.push(t('workMinigame.materialDrop', lang, { qty: drop.qty, material: materialLabel(drop.material, lang) }));
+  }
+  if (festivalDrop) {
+    const festival = require('../services/festival');
+    desc.push(t('workMinigame.festivalDrop', lang, { qty: festivalDrop.qty, currency: festival.currencyLabel(lang, festivalDrop.qty), season: festival.seasonName(festivalDrop.season, lang) }));
   }
   if (session.isGoldenShift) {
     desc.push(t('workMinigame.goldenShiftBadge', lang));

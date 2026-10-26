@@ -19,6 +19,13 @@ const SHEETS = {
   creatures: { file: 'tiny-creatures.png', stride: 16, columns: 10, base: 1 },
   slimes: { file: 'blob-slimes.png', stride: 16 },
 };
+// Folhas sazonais e extras (seasonal-*, extra-*): chave = nome do arquivo sem .png
+for (const meta of require('../../../assets/home/seasonal-candidates.json').sheets) {
+  const key = meta.file.replace(/\.png$/, '');
+  if (!Object.values(SHEETS).some((known) => known.file === meta.file)) {
+    SHEETS[key] = { file: meta.file, stride: meta.stride, tile: meta.tile, columns: meta.columns, base: 0 };
+  }
+}
 
 const sheetCache = new Map();
 const spriteCache = new Map();
@@ -114,14 +121,14 @@ async function getSprite(def) {
     if (def.pattern) return drawPattern(def.pattern);
     if (def.pixels) return drawPixelArt(def.pixels);
     const sheet = await loadSheet(def.sheet);
-    const { stride } = SHEETS[def.sheet];
+    const { stride, tile = TILE } = SHEETS[def.sheet];
     const cell = resolveCell(def);
     const canvas = createCanvas(cell.w * TILE, cell.h * TILE);
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
     for (let dy = 0; dy < cell.h; dy++) {
       for (let dx = 0; dx < cell.w; dx++) {
-        ctx.drawImage(sheet, (cell.x + dx) * stride, (cell.y + dy) * stride, TILE, TILE, dx * TILE, dy * TILE, TILE, TILE);
+        ctx.drawImage(sheet, (cell.x + dx) * stride, (cell.y + dy) * stride, tile, tile, dx * TILE, dy * TILE, TILE, TILE);
       }
     }
     if (def.recolor) applyRecolor(ctx, canvas.width, canvas.height, def.recolor);

@@ -67,6 +67,37 @@ function validPrice(price) {
   return Number.isFinite(value) && value >= MIN_PRICE && value <= MAX_PRICE ? value : null;
 }
 
+// Recursos vendidos em lote: materiais da oficina e as Fagulhas do Festival (/py-festival)
+const SPARKS = 'sparks';
+
+function isResource(key) {
+  return key === SPARKS || Boolean(crafting.MATERIALS[key]);
+}
+
+function resourceDef(key) {
+  if (key === SPARKS) {
+    const { CURRENCY } = require('./festival');
+    return { emoji: CURRENCY.emoji, pt: CURRENCY.pt, en: CURRENCY.en };
+  }
+  return crafting.MATERIALS[key] || null;
+}
+
+function resourceLabel(key, lang) {
+  const def = resourceDef(key);
+  return def ? `${def.emoji} ${def[lang === 'en' ? 'en' : 'pt']}` : key;
+}
+
+/** Quanto a pessoa tem de cada recurso negociável (materiais + Fagulhas). */
+function resourceBalances(userId) {
+  return { ...crafting.getMaterials(userId), [SPARKS]: require('./festival').getSparks(userId) };
+}
+
+/** Soma ou tira um recurso; falso quando não há o bastante. */
+function adjustResource(userId, key, qty) {
+  if (key === SPARKS) return require('./festival').addSparks(userId, qty, 'market').ok;
+  return crafting.addMaterials(userId, { [key]: qty }).ok;
+}
+
 function activeCount(state, userId) {
   return Object.values(state.listings).filter((l) => l.sellerId === String(userId)).length;
 }
@@ -111,18 +142,18 @@ function listItem(sellerId, uid, price, { buyerId = null, now = Date.now() } = {
   });
 }
 
-/** Anuncia materiais da oficina (o lote inteiro sai junto por um preço). */
+/** Anuncia materiais da oficina ou Fagulhas (o lote inteiro sai junto por um preço). */
 function listMaterial(sellerId, material, qty, price, { buyerId = null, now = Date.now() } = {}) {
   const value = validPrice(price);
   const amount = Math.floor(Number(qty));
   if (!value) return { ok: false, reason: 'price' };
-  if (!crafting.MATERIALS[material] || !Number.isFinite(amount) || amount < 1) return { ok: false, reason: 'qty' };
+  if (!isResource(material) || !Number.isFinite(amount) || amount < 1) return { ok: false, reason: 'qty' };
   const seller = String(sellerId);
   if (buyerId && String(buyerId) === seller) return { ok: false, reason: 'self' };
   return locked(() => {
     const state = load();
     if (activeCount(state, seller) >= MAX_LISTINGS_PER_USER) return { ok: false, reason: 'limit' };
-    if (!crafting.addMaterials(seller, { [material]: -amount }).ok) return { ok: false, reason: 'not_enough' };
+    if (!adjustResource(seller, material, -amount)) return { ok: false, reason: 'not_enough' };
     const listing = {
       id: newId(),
       sellerId: seller,
@@ -137,7 +168,7 @@ function listMaterial(sellerId, material, qty, price, { buyerId = null, now = Da
     state.listings[listing.id] = listing;
     state.totals.listed += 1;
     if (!save(state)) {
-      crafting.addMaterials(seller, { [material]: amount });
+      adjustResource(seller, material, amount);
       return { ok: false, reason: 'save' };
     }
     return { ok: true, listing };
@@ -146,7 +177,7 @@ function listMaterial(sellerId, material, qty, price, { buyerId = null, now = Da
 
 /** Devolve o que estava na garantia para quem anunciou. */
 function returnEscrow(listing) {
-  if (listing.kind === 'material') return crafting.addMaterials(listing.sellerId, { [listing.material]: listing.qty }).ok;
+  if (listing.kind === 'material') return adjustResource(listing.sellerId, listing.material, listing.qty);
   return vault.putInstance(listing.sellerId, listing.instance).ok;
 }
 
@@ -206,7 +237,7 @@ function buy(buyerId, listingId, now = Date.now()) {
     }
     const delivered =
       listing.kind === 'material'
-        ? crafting.addMaterials(buyer, { [listing.material]: listing.qty }).ok
+        ? adjustResource(buyer, listing.material, listing.qty)
         : vault.putInstance(buyer, listing.instance, { from: listing.sellerId, to: buyer, price: listing.price, at: now }).ok;
     if (!delivered) {
       economy.addCoins(buyer, listing.price);
@@ -302,7 +333,10 @@ module.exports = {
   MAX_LISTINGS_PER_USER,
   LISTING_TTL_MS,
   MAX_PRICE,
+  SPARKS,
   stateFile,
+  resourceLabel,
+  resourceBalances,
   taxFor,
   keyOf,
   listItem,

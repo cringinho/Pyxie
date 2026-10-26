@@ -1003,7 +1003,8 @@ const TRANSLATIONS = {
       "masteryBonusBadge": "> 🏆 **Bônus de Currículo:** +{percent}% de salário por carreiras dominadas!",
       "newlyMasteredTitle": "⭐  ✦  NOVA PROFISSÃO DOMINADA!",
       "newlyMasteredDesc": "Parabéns! Você alcançou a Maestria Máxima em **{profession}** (Nível 4) e garantiu mais **+3% de bônus salarial permanente** em qualquer trabalho!",
-      "materialDrop": "🧺 **Material pra oficina:** `+{qty}` {material} (use em `/py-craft`)"
+      "materialDrop": "🧺 **Material pra oficina:** `+{qty}` {material} (use em `/py-craft`)",
+      "festivalDrop": "🎭 **{season}:** você achou `+{qty}` {currency} no caminho! (gaste no `/py-festival`)"
     },
     "workDilemma": {
       "buttonAccept": "🕵️ Aceitar Esquema",
@@ -1191,7 +1192,8 @@ const TRANSLATIONS = {
           "vault": "• **Itens raros com número de série:** lendários e míticos limitados, com a origem de cada um registrada.",
           "achievements": "• **Conquistas difíceis:** títulos com letras especiais que ficam mais bonitos a cada meta.",
           "boss": "• **Chefe da semana:** um guardião das Catacumbas aparece no servidor toda segunda; todo mundo bate junto, tem ranking e recompensa quando ele cai.",
-          "market": "• **Mercado entre jogadores:** compra e venda de itens e materiais com garantia, taxa de 5% e histórico de preços."
+          "market": "• **Mercado entre jogadores:** compra e venda de itens e materiais com garantia, taxa de 5% e histórico de preços.",
+          "festival": "• **Festival da temporada:** Halloween, Natal, Virada, Páscoa e Verão com Fagulhas, monstros fantasiados e caixas com chances públicas."
         },
         "classicTitle": "E o modo clássico?",
         "classicWhat": "• **O que sai:** Catacumbas, Casinha, bolsa, loja e itens deixam de funcionar aqui. As moedinhas continuam vindo do trabalho e o perfil fica no padrão.",
@@ -1395,7 +1397,7 @@ const TRANSLATIONS = {
       "sellItemNone": "-# Nada pra vender agora… itens de conquista e do kit inicial ficam com você pra sempre.",
       "sellItemPick": "Escolhe o item…",
       "sellMatTitle": "🧺 Vender material",
-      "sellMatBody": "Escolhe o material da oficina. O lote inteiro vai junto por um preço só.",
+      "sellMatBody": "Escolhe um material da oficina ou suas Fagulhas do Festival. O lote inteiro vai junto por um preço só.",
       "sellMatPick": "Escolhe o material…",
       "modalTitle": "Anunciar no mercado",
       "modalPrice": "Preço total (moedinhas)",
@@ -1426,6 +1428,56 @@ const TRANSLATIONS = {
       },
       "notYours": "Essa tela é de outra pessoa… abre a sua com `/py-market`.",
       "footer": "Pyxie • mercado"
+    },
+    "festival": {
+      "title": "{season}",
+      "closedTitle": "🎇 Festival da Pyxie",
+      "closedBody": "Nenhuma temporada aberta agora… mas relaxa, suas Fagulhas não somem. Eu guardo direitinho até a próxima festa.",
+      "next": "### 📅 Próxima temporada\n\n**{season}** abre em {date} ({relative}).",
+      "wallet": "💰 **Sua carteira:** `{sparks}` {currency}",
+      "intro": {
+        "halloween": "As abóboras acordaram e os monstros das Catacumbas resolveram se fantasiar. Não que eu tenha ajudado a escolher as fantasias… tá, ajudei um pouquinho.",
+        "christmas": "Neve no Bosque da Penumbra, presentes empilhados e até os monstros de gorrinho. Não fica me olhando assim, o meu gorro é bonito sim.",
+        "newyear": "Fogos, brindes e a contagem regressiva mais fofa do Discord. Bora fechar o ano com a casinha brilhando?",
+        "easter": "Tem coelhinho escondendo ovo pelas Catacumbas. Se achar chocolate, divide comigo, tá? Não é um pedido, é uma ordem.",
+        "summer": "Férias! Picolé, piscina e monstros de chapéu de palha. Passa protetor antes de descer pras Catacumbas."
+      },
+      "ends": "-# A temporada fecha em {date} ({relative}). Depois disso, os itens dela só aparecem no mercado.",
+      "boxesHeader": "### 🎁 Caixas",
+      "sparksBox": "• **Caixa da Temporada:** `{price}` {currency} • garantia de **{rarity}** em `{left}` caixa(s)",
+      "coinsBox": "• **Baú de Moedinhas:** `{price}` {coin} • garantia de **{rarity}** em `{left}` • hoje ainda dá pra abrir `{today}` de `{limit}`",
+      "howHeader": "### 🌟 Como ganhar Fagulhas",
+      "howDungeon": "• **Catacumbas:** em `{chance}%` das descidas os monstros vêm fantasiados e cada um que cair solta Fagulhas (`/py-dungeon`).",
+      "howWork": "• **Trabalho:** `{chance}%` de chance de achar Fagulhas em cada turno certo do `/py-work`.",
+      "howMarket": "• **Mercado:** dá pra comprar e vender Fagulhas e itens de temporada no `/py-market`.",
+      "shelfTitle": "Destaques da temporada",
+      "btnSparks": "Caixa ({price})",
+      "btnCoins": "Baú ({price})",
+      "btnOdds": "Chances",
+      "btnBack": "Voltar",
+      "oddsTitle": "📜 Chances e prêmios",
+      "oddsSparks": "### 🎇 Caixa da Temporada\n\n{odds}\n\n-# A cada `{every}` caixas sem **{rarity}** ou melhor, a próxima vem garantida.",
+      "oddsCoins": "### 🧰 Baú de Moedinhas\n\n{odds}\n\n-# A cada `{every}` baús sem **{rarity}** ou melhor, o próximo vem garantido.",
+      "prizesHeader": "### 🏆 Todos os prêmios",
+      "prizeLine": "• **{rarity}:** {items}",
+      "oddsNote": "-# As chances valem pra cada caixa, sem truque. Se a temporada não tem itens de uma raridade, a chance dela passa pra raridade de baixo.",
+      "prizeTitle": "🎁 Caixa aberta!",
+      "prize": "> Saiu **{item}**{serial} • {rarity}",
+      "pityHit": "✨ **Garantia ativada!** Eu disse que cumpria, né? Não precisa agradecer.",
+      "prizePet": "🐾 Pet novo na família! Coloca ele na Casinha com `/py-home`.",
+      "prizeItem": "🏠 Já tá na sua mochila. Decora a Casinha com `/py-home` ou vende no `/py-market`.",
+      "footer": "Pyxie • Festival da Temporada",
+      "notYours": "Essa caixa é de outra pessoa… abre a sua com `/py-festival`.",
+      "reasons": {
+        "closed": "Não tem temporada aberta agora. Guarda as Fagulhas que a próxima festa já vem.",
+        "sparks": "Faltam Fagulhas: a caixa custa `{price}` e você tem `{balance}`.",
+        "coins": "Faltam moedinhas: o baú custa `{price}` e você tem `{balance}`.",
+        "daily_limit": "Chega de baú por hoje: o limite é `{limit}` por dia. Volta amanhã!",
+        "full": "Sua mochila tá lotada. Vende ou guarda alguma coisa antes de abrir outra caixa.",
+        "sold_out": "Esse item esgotou bem agora. Nada foi cobrado, pode tentar de novo.",
+        "unknown_box": "Essa caixa não existe… de onde você tirou isso?",
+        "save": "Deu um tropeço aqui e nada foi cobrado. Tenta de novo daqui a pouco?"
+      }
     },
     "quiz": {
       "cooldown": "⏰ Você já disputou o Quiz recentemente! Aguarde **{time}** para tentar um novo desafio.",
@@ -1839,7 +1891,9 @@ const TRANSLATIONS = {
         "reviveFailed": "🕯️ Ninguém respondeu… essa alma já seguiu em frente (passou de 24h ou já começou outra descida).",
         "helpedHeal": "🤝 {user} entrou na luta e te curou: `+{amount}` de vida.",
         "helpedHit": "🤝 {user} entrou na luta e acertou o inimigo: `-{amount}`.",
-        "revived": "✨ Você abre os olhos no chão frio. Alguém rezou por você: {user}."
+        "revived": "✨ Você abre os olhos no chão frio. Alguém rezou por você: {user}.",
+        "festivalRun": "🎭 Os monstros vieram fantasiados pra **{season}**! Cada um que cair solta {currency}.",
+        "festivalSpark": "🎭 `+{sparks}` {currency} pro Festival!"
       },
       "items": {
         "potion": "Poção",
@@ -1921,7 +1975,8 @@ const TRANSLATIONS = {
         "best": "🏅 **Novo recorde:** Andar `{floor}`!",
         "balance": "-# 🪙 Saldo atual: `{balance}`",
         "stats": "-# 📊 `{rooms}` salas exploradas • `{kills}` monstros derrotados",
-        "houseKey": "🗝️ **Você achou a chave de uma casinha!** Abra `/py-home` pra pegar a sua."
+        "houseKey": "🗝️ **Você achou a chave de uma casinha!** Abra `/py-home` pra pegar a sua.",
+        "festival": "🎭 **Festival:** `+{sparks}` {currency} (gaste no `/py-festival`)"
       },
       "outcome": {
         "dead": "💀 morte",
@@ -2059,6 +2114,9 @@ const TRANSLATIONS = {
       "revive": {
         "title": "🙏 Alguém rezou por você",
         "body": "{user} achou seu túmulo no **Andar {floor}** e rezou… e a vela acendeu de novo. Sua descida voltou com metade da vida e o ouro que sobrou.\n\nAbre `/py-dungeon` e clica em **Continuar descida**. Ela te espera por até 24 horas. E-eu não fiquei emocionada. Nem um pouco."
+      },
+      "festival": {
+        "combatLine": "-# 🎭 Fantasiado pra {season}: vale `+{sparks}` {currency}."
       }
     },
     "mary": {
@@ -2920,7 +2978,8 @@ const TRANSLATIONS = {
       "masteryBonusBadge": "> 🏆 **Resume Bonus:** +{percent}% salary from mastered careers!",
       "newlyMasteredTitle": "⭐  ✦  NEW MASTERED CAREER!",
       "newlyMasteredDesc": "Congratulations! You reached Max Mastery in **{profession}** (Level 4) and unlocked a **+3% permanent salary bonus** across all jobs!",
-      "materialDrop": "🧺 **Workshop material:** `+{qty}` {material} (use it in `/py-craft`)"
+      "materialDrop": "🧺 **Workshop material:** `+{qty}` {material} (use it in `/py-craft`)",
+      "festivalDrop": "🎭 **{season}:** you found `+{qty}` {currency} on the way! (spend them on `/py-festival`)"
     },
     "workDilemma": {
       "buttonAccept": "🕵️ Accept Scheme",
@@ -3108,7 +3167,8 @@ const TRANSLATIONS = {
           "vault": "• **Serial-numbered rare items:** limited legendaries and mythics, each one with its origin on record.",
           "achievements": "• **Hard achievements:** titles in special lettering that get fancier with every milestone.",
           "boss": "• **Weekly boss:** a Catacombs guardian shows up in the server every Monday; everyone fights together, with a ranking and rewards when it falls.",
-          "market": "• **Player market:** buy and sell items and materials with escrow, a 5% fee and price history."
+          "market": "• **Player market:** buy and sell items and materials with escrow, a 5% fee and price history.",
+          "festival": "• **Seasonal festival:** Halloween, Christmas, New Year, Easter and Summer with Sparks, costumed monsters and boxes with public odds."
         },
         "classicTitle": "What about classic mode?",
         "classicWhat": "• **What goes away:** Catacombs, Cozy Room, bag, shop and items stop working here. Coins still come from work and profiles stay default.",
@@ -3312,7 +3372,7 @@ const TRANSLATIONS = {
       "sellItemNone": "-# Nothing to sell right now… achievement and starter items stay with you forever.",
       "sellItemPick": "Pick the item…",
       "sellMatTitle": "🧺 Sell materials",
-      "sellMatBody": "Pick a workshop material. The whole batch goes for a single price.",
+      "sellMatBody": "Pick a workshop material or your Festival Sparks. The whole batch goes for a single price.",
       "sellMatPick": "Pick the material…",
       "modalTitle": "List on the market",
       "modalPrice": "Total price (coins)",
@@ -3343,6 +3403,56 @@ const TRANSLATIONS = {
       },
       "notYours": "This screen belongs to someone else… open yours with `/py-market`.",
       "footer": "Pyxie • market"
+    },
+    "festival": {
+      "title": "{season}",
+      "closedTitle": "🎇 Pyxie's Festival",
+      "closedBody": "No season is open right now… but relax, your Sparks don't vanish. I'll keep them safe until the next party.",
+      "next": "### 📅 Next season\n\n**{season}** opens on {date} ({relative}).",
+      "wallet": "💰 **Your wallet:** `{sparks}` {currency}",
+      "intro": {
+        "halloween": "The pumpkins woke up and the Catacombs monsters decided to dress up. Not that I helped pick the costumes… okay, maybe a little.",
+        "christmas": "Snow in the Gloomwood, presents piled up and even the monsters wear beanies. Stop staring, my beanie looks great.",
+        "newyear": "Fireworks, toasts and the cutest countdown on Discord. Shall we close the year with a sparkling room?",
+        "easter": "There's a bunny hiding eggs all over the Catacombs. If you find chocolate, share it with me, okay? That's not a request, it's an order.",
+        "summer": "Vacation! Popsicles, pools and monsters in straw hats. Put on sunscreen before heading into the Catacombs."
+      },
+      "ends": "-# The season closes on {date} ({relative}). After that, its items only show up on the market.",
+      "boxesHeader": "### 🎁 Boxes",
+      "sparksBox": "• **Season Box:** `{price}` {currency} • guaranteed **{rarity}** in `{left}` box(es)",
+      "coinsBox": "• **Coin Chest:** `{price}` {coin} • guaranteed **{rarity}** in `{left}` • `{today}` of `{limit}` left today",
+      "howHeader": "### 🌟 How to earn Sparks",
+      "howDungeon": "• **Catacombs:** in `{chance}%` of runs the monsters wear costumes and every one you defeat drops Sparks (`/py-dungeon`).",
+      "howWork": "• **Work:** `{chance}%` chance to find Sparks on every correct `/py-work` shift.",
+      "howMarket": "• **Market:** you can buy and sell Sparks and seasonal items on `/py-market`.",
+      "shelfTitle": "Season highlights",
+      "btnSparks": "Box ({price})",
+      "btnCoins": "Chest ({price})",
+      "btnOdds": "Odds",
+      "btnBack": "Back",
+      "oddsTitle": "📜 Odds and prizes",
+      "oddsSparks": "### 🎇 Season Box\n\n{odds}\n\n-# After `{every}` boxes without **{rarity}** or better, the next one is guaranteed.",
+      "oddsCoins": "### 🧰 Coin Chest\n\n{odds}\n\n-# After `{every}` chests without **{rarity}** or better, the next one is guaranteed.",
+      "prizesHeader": "### 🏆 Every prize",
+      "prizeLine": "• **{rarity}:** {items}",
+      "oddsNote": "-# Odds apply to every box, no tricks. If the season has no items of a rarity, its chance rolls down to the rarity below.",
+      "prizeTitle": "🎁 Box opened!",
+      "prize": "> You got **{item}**{serial} • {rarity}",
+      "pityHit": "✨ **Guarantee triggered!** Told you I'd keep my word. No need to thank me.",
+      "prizePet": "🐾 New pet in the family! Place it in your room with `/py-home`.",
+      "prizeItem": "🏠 It's already in your backpack. Decorate your room with `/py-home` or sell it on `/py-market`.",
+      "footer": "Pyxie • Seasonal Festival",
+      "notYours": "This box belongs to someone else… open yours with `/py-festival`.",
+      "reasons": {
+        "closed": "No season is open right now. Keep your Sparks, the next party is coming.",
+        "sparks": "Not enough Sparks: the box costs `{price}` and you have `{balance}`.",
+        "coins": "Not enough coins: the chest costs `{price}` and you have `{balance}`.",
+        "daily_limit": "That's enough chests for today: the limit is `{limit}` per day. Come back tomorrow!",
+        "full": "Your backpack is full. Sell or store something before opening another box.",
+        "sold_out": "That item just sold out. Nothing was charged, try again.",
+        "unknown_box": "That box doesn't exist… where did you even get it?",
+        "save": "Something tripped up and nothing was charged. Try again in a bit?"
+      }
     },
     "quiz": {
       "cooldown": "⏰ You already played the Quiz recently! Please wait **{time}** before taking a new challenge.",
@@ -3756,7 +3866,9 @@ const TRANSLATIONS = {
         "reviveFailed": "🕯️ Nobody answered… that soul has already moved on (over 24h, or they started another descent).",
         "helpedHeal": "🤝 {user} jumped into the fight and healed you: `+{amount}` HP.",
         "helpedHit": "🤝 {user} jumped into the fight and hit the enemy: `-{amount}`.",
-        "revived": "✨ You open your eyes on the cold floor. Someone prayed for you: {user}."
+        "revived": "✨ You open your eyes on the cold floor. Someone prayed for you: {user}.",
+        "festivalRun": "🎭 The monsters showed up in costume for **{season}**! Each one you defeat drops {currency}.",
+        "festivalSpark": "🎭 `+{sparks}` {currency} for the Festival!"
       },
       "items": {
         "potion": "Potion",
@@ -3838,7 +3950,8 @@ const TRANSLATIONS = {
         "best": "🏅 **New record:** Floor `{floor}`!",
         "balance": "-# 🪙 Current balance: `{balance}`",
         "stats": "-# 📊 `{rooms}` rooms explored • `{kills}` monsters defeated",
-        "houseKey": "🗝️ **You found the key to a cozy room!** Open `/py-home` to claim yours."
+        "houseKey": "🗝️ **You found the key to a cozy room!** Open `/py-home` to claim yours.",
+        "festival": "🎭 **Festival:** `+{sparks}` {currency} (spend them on `/py-festival`)"
       },
       "outcome": {
         "dead": "💀 death",
@@ -3976,6 +4089,9 @@ const TRANSLATIONS = {
       "revive": {
         "title": "🙏 Someone prayed for you",
         "body": "{user} found your grave on **Floor {floor}** and prayed… and the candle lit up again. Your descent came back with half HP and the gold that was left.\n\nOpen `/py-dungeon` and click **Continue descent**. It waits for you for up to 24 hours. I-I'm not emotional. Not at all."
+      },
+      "festival": {
+        "combatLine": "-# 🎭 Dressed up for {season}: worth `+{sparks}` {currency}."
       }
     },
     "mary": {

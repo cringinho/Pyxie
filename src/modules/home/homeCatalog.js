@@ -7,7 +7,8 @@
  * kind:      floor (móvel no piso) · wall (parede) · rug (tapete, fica por baixo) · pet ·
  *            wallpaper · flooring
  * source:    shop (loja do dia, moedinhas) · premium (feijões) · dungeon (drop) ·
- *            achievement (conquista) · starter (presente de boas-vindas)
+ *            achievement (conquista) · starter (presente de boas-vindas) · craft (oficina) ·
+ *            boss (chefe da semana) · festival (caixas da temporada, /py-festival)
  * footprint: células ocupadas; o sprite pode ser mais alto que o footprint (desenhado para cima).
  * tradable:  preparado para a fase de trocas. Itens premium, de conquista e iniciais nunca são trocáveis.
  */
@@ -33,6 +34,11 @@ const SETS = {
   real: { pt: 'Salão Real', en: 'Royal Hall' },
   cozinha: { pt: 'Cozinha da Vovó', en: "Grandma's Kitchen" },
   artesao: { pt: 'Feito à Mão', en: 'Handcrafted' },
+  season_halloween: { pt: 'Noite das Abóboras', en: 'Pumpkin Night' },
+  season_christmas: { pt: 'Natal Encantado', en: 'Enchanted Christmas' },
+  season_newyear: { pt: 'Virada Estrelada', en: 'Starry New Year' },
+  season_easter: { pt: 'Caça aos Ovos', en: 'Egg Hunt' },
+  season_summer: { pt: 'Férias de Verão', en: 'Summer Break' },
 };
 
 // Recolorações do tecido laranja/verde da Kenney para as paletas da Pyxie
@@ -325,7 +331,39 @@ const CRAFTED = [
   crafted('craft_fishing_net', 'Rede de Pesca', 'Fishing Net', 'wall', 'uncommon', 'clothesline', hue(195), { sets: ['verde'] }),
 ];
 
-const ITEMS = [...FURNITURE, ...WALL, ...RUGS, ...PETS, ...WALLPAPERS, ...FLOORINGS, ...CRAFTED];
+// Itens sazonais e extras: folhas CC0 listadas em assets/home/seasonal-candidates.json.
+// Os de temporada (source 'festival') só saem das caixas do Festival (/py-festival) enquanto a
+// temporada está aberta; os gerais entram na rotação da loja do dia.
+const CANDIDATES = require('../../../assets/home/seasonal-candidates.json');
+const EXTRA_PRICE = { common: 70, uncommon: 200, rare: 520, epic: 1500, legendary: 3200 };
+const SHEET_KEYS = {
+  'kenney-roguelike-indoors.png': 'indoors',
+  'kenney-roguelike-rpg.png': 'rpg',
+  'kenney-tiny-town.png': 'town',
+  'kenney-tiny-dungeon.png': 'dungeon',
+  'tiny-creatures.png': 'creatures',
+  'blob-slimes.png': 'slimes',
+};
+const sheetKeyOf = (file) => SHEET_KEYS[file] || file.replace(/\.png$/, '');
+
+const EXTRAS = CANDIDATES.items.map((c) => {
+  const general = c.season === 'general';
+  const { sheet, n, x, y, w, h } = c.sprite;
+  const sprite = n !== undefined && SHEET_KEYS[sheet] ? { sheet: sheetKeyOf(sheet), n } : { sheet: sheetKeyOf(sheet), x, y, w, h };
+  // Parede tem 2 linhas: peças mais altas ocupam 2 e o desenho sobe
+  const footprint = c.kind === 'wall' ? [c.footprint[0], Math.min(2, c.footprint[1])] : c.footprint;
+  const entry = item(c.id, c.name.pt, c.name.en, c.kind, c.rarity, sprite, {
+    footprint,
+    source: general ? 'shop' : 'festival',
+    price: general ? coins(EXTRA_PRICE[c.rarity] || 70) : null,
+    sets: general ? [] : [`season_${c.season}`],
+    light: c.light || 0,
+  });
+  if (!general) entry.season = c.season;
+  return entry;
+});
+
+const ITEMS = [...FURNITURE, ...WALL, ...RUGS, ...PETS, ...WALLPAPERS, ...FLOORINGS, ...CRAFTED, ...EXTRAS];
 const ITEM_BY_ID = new Map(ITEMS.map((entry) => [entry.id, entry]));
 
 const STARTER_ITEMS = ['pet_astaroth', 'wp_cream', 'fl_oak', 'chair_wood', 'table_small', 'plant_pot', 'pet_bed_orange', 'window', 'candle', 'runner_cream'];

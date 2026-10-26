@@ -528,12 +528,11 @@ app.get('/api/market/prices', (req, res) => {
   try {
     const market = require('./src/services/market');
     const { getItem, itemName } = require('./src/modules/home/homeCatalog');
-    const crafting = require('./src/services/crafting');
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
     const stats = market.getMarketStats();
     const items = market.topTraded({ days: 30, limit: 24 }).map((row) => ({
       key: row.key,
-      name: row.key.startsWith('mat:') ? crafting.materialLabel(row.key.slice(4), lang) : itemName(getItem(row.key), lang),
+      name: row.key.startsWith('mat:') ? market.resourceLabel(row.key.slice(4), lang) : itemName(getItem(row.key), lang),
       last: row.last,
       avg: row.avg,
       sales: row.sales,

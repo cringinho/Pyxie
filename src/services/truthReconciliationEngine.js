@@ -355,6 +355,10 @@ class TruthReconciliationEngine extends EventEmitter {
       try {
         marketStats = require('./market').getMarketStats();
       } catch (_) {}
+      let festivalStats = { activeSeason: null, sparksInCirculation: 0, earned: 0, boxes: 0, coinBoxes: 0, coinsRemoved: 0 };
+      try {
+        festivalStats = require('./festival').getFestivalStats();
+      } catch (_) {}
       let serverModes = { configured: 0, full: 0, trial: 0, classic: 0 };
       try {
         serverModes = require('./guildFeatures').getFeatureStats();
@@ -458,6 +462,13 @@ class TruthReconciliationEngine extends EventEmitter {
             totalSales: Number(marketStats.sold) || 0,
             sales7d: Number(marketStats.sales7d) || 0,
             coinsRemovedByFee: Number(marketStats.taxCollected) || 0,
+          },
+          festival: {
+            activeSeason: festivalStats.activeSeason || null,
+            sparksInCirculation: Number(festivalStats.sparksInCirculation) || 0,
+            sparksEarned: Number(festivalStats.earned) || 0,
+            boxesOpened: (Number(festivalStats.boxes) || 0) + (Number(festivalStats.coinBoxes) || 0),
+            coinsRemovedByChests: Number(festivalStats.coinsRemoved) || 0,
           },
           weeklyBoss: {
             activeThisWeek: Number(bossStats.activeThisWeek) || 0,

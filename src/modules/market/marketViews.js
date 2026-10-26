@@ -12,7 +12,6 @@ const {
 const { t, getLanguage } = require('../../utils/i18n');
 const { getEmoji } = require('../../utils/appEmojis');
 const market = require('../../services/market');
-const crafting = require('../../services/crafting');
 const { getItem, itemName, rarityInfo } = require('../home/homeCatalog');
 
 /**
@@ -29,7 +28,7 @@ const coinIcon = () => getEmoji('COIN') || '🪙';
 const id = (action, viewerId, arg = null) => [PREFIX, action, viewerId, arg].filter((p) => p !== null && p !== undefined).join(':');
 
 function listingName(listing, lang) {
-  if (listing.kind === 'material') return crafting.materialLabel(listing.material, lang);
+  if (listing.kind === 'material') return market.resourceLabel(listing.material, lang);
   const entry = getItem(listing.itemId);
   const serial = listing.instance?.serial ? ` #${listing.instance.serial}` : '';
   return `${itemName(entry, lang)}${serial}`;
@@ -188,8 +187,7 @@ function buildSellItemView({ viewerId, source, notice = null }) {
 
 function buildSellMaterialView({ viewerId, source, notice = null }) {
   const lang = getLanguage(source);
-  const materials = crafting.getMaterials(viewerId);
-  const owned = Object.entries(materials).filter(([, qty]) => qty > 0);
+  const owned = Object.entries(market.resourceBalances(viewerId)).filter(([, qty]) => qty > 0);
   const embed = new EmbedBuilder()
     .setColor(COLOR)
     .setTitle(t('market.sellMatTitle', lang))
@@ -202,7 +200,10 @@ function buildSellMaterialView({ viewerId, source, notice = null }) {
         new StringSelectMenuBuilder()
           .setCustomId(id('selmat', viewerId))
           .setPlaceholder(t('market.sellMatPick', lang))
-          .addOptions(owned.map(([key, qty]) => ({ label: `${crafting.MATERIALS[key][lang === 'en' ? 'en' : 'pt']} (${qty})`, value: key, emoji: crafting.MATERIALS[key].emoji })))
+          .addOptions(owned.map(([key, qty]) => {
+            const [emoji, ...words] = market.resourceLabel(key, lang).split(' ');
+            return { label: `${words.join(' ')} (${qty})`, value: key, emoji };
+          }))
       )
     );
   }
