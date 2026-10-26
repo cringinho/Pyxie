@@ -101,7 +101,25 @@ if [ -f "${BACKUP_DIR}/src_data/emojis.json" ]; then
     } catch (e) {}
   " "${BACKUP_DIR}/src_data/emojis.json" || true
 fi
-[ -f "${BACKUP_DIR}/src_data/discordAppEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/discordAppEmojis.json" src/data/discordAppEmojis.json
+# Catálogo de emojis: o da VM (gravado pelo bot ao iniciar) vale para os nomes que ele já conhece;
+# emojis enviados depois do último início chegam pelo repositório e entram na lista.
+if [ -f "${BACKUP_DIR}/src_data/discordAppEmojis.json" ]; then
+  node -e "
+    const fs = require('fs');
+    try {
+      const list = (file) => { const d = JSON.parse(fs.readFileSync(file, 'utf8')); return Array.isArray(d) ? d : (d.items || []); };
+      const vm = list(process.argv[1]);
+      const repo = list('src/data/discordAppEmojis.json');
+      const names = new Set(vm.map((e) => String(e.name).toLowerCase()));
+      const ids = new Set(vm.map((e) => String(e.id)));
+      const added = repo.filter((e) => e && e.name && e.id && !names.has(String(e.name).toLowerCase()) && !ids.has(String(e.id)));
+      fs.writeFileSync('src/data/discordAppEmojis.json', JSON.stringify({ items: [...vm, ...added] }, null, 2));
+      console.log('🎨 Catálogo de emojis: ' + vm.length + ' da VM + ' + added.length + ' novos do repositório.');
+    } catch (e) {
+      fs.copyFileSync(process.argv[1], 'src/data/discordAppEmojis.json');
+    }
+  " "${BACKUP_DIR}/src_data/discordAppEmojis.json" || true
+fi
 cp -a "${BACKUP_DIR}/data/." data/
 rm -f data/gloom.json data/gloom.json.bak data/encounters.json data/world_boss.json data/stats.json.*.tmp
 if [ -f data/inventory.json ]; then
