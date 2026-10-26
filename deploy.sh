@@ -151,10 +151,12 @@ if [ -d "client" ] && [ -f "client/package.json" ]; then
   fi
 fi
 
-if [ "${FORCE_DEPLOY}" = true ] || git diff "${LOCAL_REV}" "${REMOTE_REV}" --name-only | grep -qE '^(src/commands|src/registerSlashCommands\.js)'; then
-  echo "📜 Registrando slash commands..."
-  node src/registerSlashCommands.js || echo "Aviso: falha não-fatal ao registrar slash commands."
-fi
+# Sempre verifica: o script compara os comandos atuais (src/commands e src/modules) com o último
+# registro e só chama a API do Discord quando há comando novo ou alterado.
+echo "📜 Verificando slash commands novos ou alterados..."
+REGISTER_ARGS=()
+[ "${FORCE_DEPLOY}" = true ] && REGISTER_ARGS+=(--force)
+node src/registerSlashCommands.js "${REGISTER_ARGS[@]}" || echo "Aviso: falha não-fatal ao registrar slash commands."
 
 echo "🔄 Reiniciando processo no PM2..."
 pm2 reload ecosystem.config.js --update-env || pm2 restart ecosystem.config.js --update-env || pm2 startOrReload ecosystem.config.js --update-env

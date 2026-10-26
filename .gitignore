@@ -11,6 +11,7 @@ data/*.tmp
 data/backup/
 minhasnote/
 .botmelody.lock
+.slash-commands.hash
 prefix.json
 public/uploads/*
 !public/uploads/.gitkeep

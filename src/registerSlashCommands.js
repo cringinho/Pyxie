@@ -1,3 +1,6 @@
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const { REST, Routes } = require('discord.js');
 const { DISCORD_TOKEN, DISCORD_CLIENT_ID, CRINGELANDIA_GUILD_ID } = require('./config');
 const { commands: rootCommands } = require('./commands');
@@ -9,6 +12,12 @@ const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
 // em servidores sem a Pyxie, grupos e DMs. Os comandos da raiz já são marcados em src/commands/index.js.
 const USER_INSTALLABLE_MODULE_COMMANDS = new Set(['py-tarot', 'py-album', 'py-dungeon', 'py-home', 'py-craft', 'py-market', 'py-festival', 'py-pass']);
 const TARGET_GUILD_ID = process.env.CRINGELANDIA_GUILD_ID || CRINGELANDIA_GUILD_ID || '1453890868980482090';
+
+// Impressão digital do último payload enviado ao Discord. O deploy roda este script sempre;
+// ele só chama a API quando algum comando (de src/commands ou de qualquer módulo) mudou.
+// Use --force para registrar mesmo sem mudanças.
+const HASH_FILE = path.join(__dirname, '..', '.slash-commands.hash');
+const FORCE = process.argv.includes('--force');
 
 (async () => {
   try {
@@ -57,6 +66,16 @@ const TARGET_GUILD_ID = process.env.CRINGELANDIA_GUILD_ID || CRINGELANDIA_GUILD_
     const globalCommands = Array.from(globalCommandMap.values());
     const guildCommands = Array.from(guildCommandMap.values());
 
+    const payloadHash = crypto
+      .createHash('sha256')
+      .update(JSON.stringify({ clientId: DISCORD_CLIENT_ID, guildId: TARGET_GUILD_ID, globalCommands, guildCommands }))
+      .digest('hex');
+    const lastHash = fs.existsSync(HASH_FILE) ? fs.readFileSync(HASH_FILE, 'utf8').trim() : '';
+    if (!FORCE && lastHash === payloadHash) {
+      console.log(`✅ Nenhum slash command novo ou alterado (${globalCommands.length} globais, ${guildCommands.length} da guilda). Registro ignorado.`);
+      return;
+    }
+
     console.log(`📡 [Zona A - Global]: Enviando ${globalCommands.length} slash commands universais para a API do Discord...`);
     await rest.put(Routes.applicationCommands(DISCORD_CLIENT_ID), { body: globalCommands });
     console.log('✅ Slash commands universais registrados globalmente com sucesso!');
@@ -64,6 +83,8 @@ const TARGET_GUILD_ID = process.env.CRINGELANDIA_GUILD_ID || CRINGELANDIA_GUILD_
     console.log(`🧪 [Zona B - Cringelândia Lab]: Enviando ${guildCommands.length} slash commands para a guilda ${TARGET_GUILD_ID}...`);
     await rest.put(Routes.applicationGuildCommands(DISCORD_CLIENT_ID, TARGET_GUILD_ID), { body: guildCommands });
     console.log(`✅ Slash commands exclusivos da Cringelândia registrados com sucesso (${TARGET_GUILD_ID})!`);
+
+    fs.writeFileSync(HASH_FILE, `${payloadHash}\n`);
   } catch (error) {
     console.error('Erro ao registrar slash commands:', error);
     process.exit(1);

@@ -185,7 +185,7 @@ async function restartBot() {
 
 function registerSlashCommands() {
   return new Promise((resolve, reject) => {
-    execFile('node', ['src/registerSlashCommands.js'], { cwd: appRoot }, (error, stdout, stderr) => {
+    execFile('node', ['src/registerSlashCommands.js', '--force'], { cwd: appRoot }, (error, stdout, stderr) => {
       const output = [stdout, stderr].filter(Boolean).join('\n').trim();
 
       if (error) {
