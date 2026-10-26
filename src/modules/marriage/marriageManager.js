@@ -25,6 +25,8 @@ const HOUSE_COST_COINS = 2000;
 const HOUSE_COST_BEANS = 2;
 const HOUSE_REQUIRED_LOVE = 50;
 const VAULT_INTEREST_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h
+// Teto do rendimento diário do Cofre do Amor (AGENTS.md §5: sem inflação por depósito ilimitado)
+const VAULT_DAILY_CAP = 200;
 const DATE_COOLDOWN_MS = 12 * 60 * 60 * 1000; // 12h
 const AFFECTION_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h
 const MAX_CHILDREN = 5;
@@ -444,6 +446,14 @@ function depositVault(userId, amount) {
   return { success: true, newBalance: mar.house.vaultBalance, deposited: qty };
 }
 
+/** Rendimento de um dia: até 5% do cofre (proporcional ao amor), no máximo VAULT_DAILY_CAP. */
+function estimateVaultYield(vaultBalance, loveBar) {
+  const balance = Math.max(0, Number(vaultBalance) || 0);
+  if (!balance) return 0;
+  const raw = Math.max(1, Math.floor(balance * ((Number(loveBar) || 0) / 100) * 0.05));
+  return Math.min(VAULT_DAILY_CAP, raw);
+}
+
 /**
  * Resgata rendimento diário do Cofre do Amor Eterno:
  * Rendimento = SaldoNoCofre * ((loveBar / 100) * 0.05)
@@ -469,9 +479,10 @@ function claimVaultInterest(userId) {
     };
   }
 
-  // Rendimento = SaldoNoCofre * ((loveBar / 100) * 0.05)
-  const interestRate = (marriage.loveBar / 100) * 0.05;
-  const yieldAmount = Math.max(1, Math.floor(vault * interestRate));
+  // Rendimento = SaldoNoCofre * ((loveBar / 100) * 0.05), com teto diário de VAULT_DAILY_CAP
+  const yieldAmount = estimateVaultYield(vault, marriage.loveBar);
+  const interestRate = yieldAmount / vault;
+  const capped = yieldAmount >= VAULT_DAILY_CAP;
 
   addCoins(userId, yieldAmount);
 
@@ -483,6 +494,7 @@ function claimVaultInterest(userId) {
   return {
     success: true,
     yieldAmount,
+    capped,
     interestRate: Number((interestRate * 100).toFixed(1)),
     vaultBalance: vault,
   };
@@ -747,6 +759,8 @@ module.exports = {
   HOUSE_COST_BEANS,
   HOUSE_REQUIRED_LOVE,
   VAULT_INTEREST_COOLDOWN_MS,
+  VAULT_DAILY_CAP,
+  estimateVaultYield,
   DATE_COOLDOWN_MS,
   AFFECTION_COOLDOWN_MS,
   MAX_CHILDREN,

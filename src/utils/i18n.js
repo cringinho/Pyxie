@@ -683,7 +683,8 @@ const TRANSLATIONS = {
       "dateOutcomeDivergent": "🥂💔 Respostas diferentes! O amor é feito de opostos... A Pyxie solta uma risadinha sarcástica!\n> 💖 **+3% na Barra do Amor** (Atual: **{love}%**)",
       "houseRedirect": "🏡 A casa do casal agora é a **Casinha** (`/py-home`): quem tem uma casinha chama o cônjuge pra morar junto. Quem não tem ganha uma chegando ao **Andar {floor}** das Catacumbas ou compra por `{coins}` moedinhas + `{beans}` feijões mágicos.",
       "houseTogether": "🏡 Moram juntos na Casinha",
-      "houseApart": "🏠 Ainda não moram juntos"
+      "houseApart": "🏠 Ainda não moram juntos",
+      "vaultCapNote": "-# O rendimento do Cofre do Amor tem teto de {cap} por dia."
     },
     "divorce": {
       "title": "💔  ✦  Divórcio",
@@ -2752,7 +2753,8 @@ const TRANSLATIONS = {
       "dateOutcomeDivergent": "🥂💔 Divergent answers! Love is made of contrasts... Pyxie giggles sarcastically!\n> 💖 **+3% Love Bar** (Current: **{love}%**)",
       "houseRedirect": "🏡 The couple's home is now the **Cozy Room** (`/py-home`): whoever has a room invites their spouse to move in. Without one, you get it by reaching **Floor {floor}** of the Catacombs or buy it for `{coins}` coins + `{beans}` magic beans.",
       "houseTogether": "🏡 Living together in the Cozy Room",
-      "houseApart": "🏠 Not living together yet"
+      "houseApart": "🏠 Not living together yet",
+      "vaultCapNote": "-# The Love Vault yield is capped at {cap} per day."
     },
     "divorce": {
       "title": "💔  ✦  Divorce",

@@ -19,6 +19,8 @@ const {
   cultivateTree,
   depositVault,
   claimVaultInterest,
+  estimateVaultYield,
+  VAULT_DAILY_CAP,
   canStartDateNight,
   getRandomDateQuestion,
   sanitizeDateQuestionText,
@@ -126,7 +128,7 @@ async function handleStatus(source, reply) {
   const houseStatus = together ? t('marriage.houseTogether', source) : t('marriage.houseApart', source);
 
   const vaultBalance = marriage.house?.vaultBalance || 0;
-  const estYield = Math.floor(vaultBalance * ((marriage.loveBar / 100) * 0.05));
+  const estYield = estimateVaultYield(vaultBalance, marriage.loveBar);
   const vaultText = together
     ? `${formatCoins(vaultBalance, source)} (${t('marriage.vaultEstYield', source, { yield: formatCoins(estYield, source) })})`
     : t('marriage.houseRequiredForVault', source);
@@ -283,22 +285,21 @@ async function handleVault(source, action, amount, reply) {
       }
       return reply(t('marriage.genericError', source));
     }
-    return reply(
-      t('marriage.vaultClaimSuccess', source, {
-        yield: formatCoins(res.yieldAmount, source),
-        rate: res.interestRate,
-      })
-    );
+    const claimText = t('marriage.vaultClaimSuccess', source, {
+      yield: formatCoins(res.yieldAmount, source),
+      rate: res.interestRate,
+    });
+    return reply(res.capped ? `${claimText}\n\n${t('marriage.vaultCapNote', source, { cap: formatCoins(VAULT_DAILY_CAP, source) })}` : claimText);
   }
 
   // Mostra resumo do cofre se não especificou ação
   const vaultBal = marriage.house?.vaultBalance || 0;
-  const estYield = Math.floor(vaultBal * ((marriage.loveBar / 100) * 0.05));
+  const estYield = estimateVaultYield(vaultBal, marriage.loveBar);
   return reply(
-    t('marriage.vaultSummary', source, {
+    `${t('marriage.vaultSummary', source, {
       balance: formatCoins(vaultBal, source),
       yield: formatCoins(estYield, source),
-    })
+    })}\n\n${t('marriage.vaultCapNote', source, { cap: formatCoins(VAULT_DAILY_CAP, source) })}`
   );
 }
 
