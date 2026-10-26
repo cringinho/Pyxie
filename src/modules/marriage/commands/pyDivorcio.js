@@ -33,8 +33,13 @@ async function executeDivorce(source, reply) {
     return;
   }
 
-  endMarriage(user.id);
-  await reply(t('divorce.success', source, { cost: formatCoins(DIVORCE_COST, source) }));
+  const result = endMarriage(user.id);
+  const lines = [t('divorce.success', source, { cost: formatCoins(DIVORCE_COST, source) })];
+  // Separar bens: avisa quantos itens de cada pessoa saíram da casinha do casal
+  for (const [personId, count] of Object.entries(result?.separation?.returned || {})) {
+    if (count > 0) lines.push(t('divorce.separated', source, { count, user: `<@${personId}>` }));
+  }
+  await reply({ content: lines.join('\n\n'), allowedMentions: { parse: [] } });
 }
 
 module.exports = {

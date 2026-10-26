@@ -272,7 +272,31 @@ function endMarriage(userId) {
 
   delete data.marriages[marriageIdToRemove];
   writeData(data);
-  return { ended: true, spouseId };
+
+  // Separar bens: a casinha fica com a dona original e os itens da outra pessoa voltam para ela
+  let separation = { separated: false, returned: {} };
+  try {
+    separation = require('../home/homeStore').separateHomes(userId, spouseId);
+  } catch (err) {
+    console.warn('[marriage] Falha ao separar os bens da casinha:', err.message);
+  }
+  return { ended: true, spouseId, separation };
+}
+
+/**
+ * A casa do casal agora é a Casinha (/py-home): o casal "tem casa" quando mora junto nela.
+ * Quem comprou a casa no casamento antigo continua com ela: a compra vira a casinha do casal.
+ */
+function hasSharedHome(marriage) {
+  if (!marriage || !Array.isArray(marriage.spouses)) return false;
+  try {
+    const homeStore = require('../home/homeStore');
+    if (homeStore.livingTogether(marriage.spouses[0], marriage.spouses[1])) return true;
+    if (marriage.house?.unlocked) return homeStore.honorLegacyCoupleHouse(marriage.spouses);
+  } catch (_) {
+    return Boolean(marriage.house?.unlocked);
+  }
+  return false;
 }
 
 /**
@@ -396,7 +420,7 @@ function giveAffection(userId) {
 function depositVault(userId, amount) {
   const marriage = getMarriage(userId);
   if (!marriage) return { success: false, reason: 'not_married' };
-  if (!marriage.house?.unlocked) return { success: false, reason: 'no_house' };
+  if (!hasSharedHome(marriage)) return { success: false, reason: 'no_house' };
 
   const qty = Math.floor(Number(amount));
   if (isNaN(qty) || qty <= 0) return { success: false, reason: 'invalid_amount' };
@@ -426,7 +450,7 @@ function depositVault(userId, amount) {
 function claimVaultInterest(userId) {
   const marriage = getMarriage(userId);
   if (!marriage) return { success: false, reason: 'not_married' };
-  if (!marriage.house?.unlocked) return { success: false, reason: 'no_house' };
+  if (!hasSharedHome(marriage)) return { success: false, reason: 'no_house' };
 
   const vault = marriage.house.vaultBalance || 0;
   if (vault <= 0) return { success: false, reason: 'vault_empty' };
@@ -547,7 +571,7 @@ function resolveDateNight(marriageId, match) {
 function canHaveChild(userId) {
   const marriage = getMarriage(userId);
   if (!marriage) return { allowed: false, reason: 'not_married' };
-  if (!marriage.house?.unlocked) return { allowed: false, reason: 'no_house' };
+  if (!hasSharedHome(marriage)) return { allowed: false, reason: 'no_house' };
 
   const currentCount = (marriage.children || []).length;
   if (currentCount >= MAX_CHILDREN) {
@@ -713,6 +737,7 @@ module.exports = {
   DIVORCE_COST,
   TREE_COST_BEANS,
   TREE_COOLDOWN_MS,
+  hasSharedHome,
   HOUSE_COST_COINS,
   HOUSE_COST_BEANS,
   HOUSE_REQUIRED_LOVE,

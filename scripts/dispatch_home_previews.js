@@ -46,6 +46,12 @@ async function main() {
   await send('py-achievements', `Conquista desbloqueada (${lang})`, { embeds: [achievements.buildUnlockEmbed(unlocked, source)] });
   const { buildAchievementsView } = require('../src/commands/conquistas');
   await send('py-achievements', `Conquistas (${lang})`, buildAchievementsView({ owner, viewerId: owner.id, source, category: 'dungeon' }));
+
+  // Quem ainda não tem casinha e o convite para morar junto
+  const newcomer = { id: '100000000000000003', username: 'semcasa', displayName: 'Sem Casa' };
+  await send('py-home', `Sem casinha: chave nas Catacumbas ou compra (${lang})`, views.buildNoHomeView({ owner: newcomer, source }));
+  const invite = views.buildInviteMessage({ ownerId: owner.id, spouseId: newcomer.id, source });
+  await dispatchHomologationPreview({ commandName: 'py-home', context: `Convite para morar junto (${lang})`, content: invite.content, components: invite.components });
 }
 
 main().catch((error) => {

@@ -94,7 +94,29 @@ async function handleOwnerAction(interaction, action, arg, owner) {
   const lang = getLanguage(interaction);
   const userId = owner.id;
 
+  // Sem casinha ainda: só dá para pegar a chave (Catacumbas) ou comprar
+  if (action === 'claim' || action === 'buyhouse') {
+    const result = action === 'claim' ? store.claimFreeHome(userId) : store.buyHouse(userId);
+    if (!result.ok) {
+      const notice = reasonText(result.reason, lang, { floor: store.FREE_HOUSE_FLOOR, price: result.price ?? '', balance: result.balance ?? '' });
+      return respond(interaction, 'update', () => views.buildHomeView({ owner, viewer: owner, source: interaction, notice }));
+    }
+    await respond(interaction, 'update', () => views.buildHomeView({ owner, viewer: owner, source: interaction, notice: t(action === 'claim' ? 'home.notices.claimed' : 'home.notices.houseBought', { lang }) }));
+    return checkAchievements(interaction);
+  }
+  if (!store.getHome(userId)) {
+    return respond(interaction, 'update', () => views.buildNoHomeView({ owner, source: interaction }));
+  }
+
   switch (action) {
+    case 'invite': {
+      const spouseId = require('../../../services/marriage').getSpouseId(userId);
+      if (!spouseId || !views.canInviteSpouse(userId)) {
+        return interaction.reply(ephemeral({ content: reasonText(spouseId ? 'already_together' : 'not_spouse', lang) }));
+      }
+      return interaction.reply(views.buildInviteMessage({ ownerId: userId, spouseId, source: interaction }));
+    }
+
     case 'home':
       sessions.delete(userId);
       return respond(interaction, 'update', () => views.buildHomeView({ owner, viewer: owner, source: interaction }));
@@ -259,6 +281,17 @@ async function handleHomeInteraction(interaction) {
     return respond(interaction, 'update', () => views.buildHomeView({ owner: viewer, viewer, source: interaction }));
   }
   if (action === 'rank') return interaction.reply(ephemeral(views.buildRankView({ source: interaction })));
+  // Convite para morar junto: só o cônjuge convidado responde
+  if (action === 'movein' || action === 'stay') {
+    if (viewer.id !== arg) return interaction.reply(ephemeral({ content: t('home.invite.notForYou', { lang }) }));
+    if (action === 'stay') return interaction.update({ content: t('home.invite.declined', { lang }), components: [], allowedMentions: { parse: [] } });
+    const result = store.moveIn(ownerId, viewer.id);
+    const content = result.ok
+      ? t('home.invite.accepted', { lang }, { spouse: `<@${viewer.id}>`, owner: `<@${ownerId}>` })
+      : reasonText(result.reason, lang);
+    if (!result.ok) return interaction.reply(ephemeral({ content }));
+    return interaction.update({ content, components: [], allowedMentions: { parse: [] } });
+  }
   if (action === 'like') {
     const result = store.likeHome(viewer.id, ownerId);
     const content = result.ok

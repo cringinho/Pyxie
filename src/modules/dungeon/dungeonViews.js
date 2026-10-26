@@ -351,6 +351,16 @@ function dropNames(itemIds, lang) {
   }
 }
 
+/** Chegou ao andar da chave da casinha e ainda não tem casa: avisa no fim da descida. */
+function hasNewHouseKey(run) {
+  try {
+    const homeStore = require('../home/homeStore');
+    return run.floor >= homeStore.FREE_HOUSE_FLOOR && homeStore.getHomeAccess(run.ownerId).canClaimFree;
+  } catch (_) {
+    return false;
+  }
+}
+
 function endBlock(run, lang, settlement) {
   const s = settlement || { gold: run.player.gold, payout: engine.computeGrossPayout(run), echoes: engine.computeEchoes(run), fee: 0, cappedBy: null };
   const outcome = run.outcome || run.phase;
@@ -367,6 +377,7 @@ function endBlock(run, lang, settlement) {
   lines.push(t('dungeon.end.echoes', lang, { echoes: s.echoes }));
   if (Array.isArray(s.drops) && s.drops.length) lines.push(t('dungeon.end.drops', lang, { items: dropNames(s.drops, lang) }));
   if (s.newBest) lines.push(t('dungeon.end.best', lang, { floor: run.floor }));
+  if (settlement && hasNewHouseKey(run)) lines.push(t('dungeon.end.houseKey', lang));
   lines.push(t('dungeon.end.stats', lang, { rooms: run.stats.rooms, kills: run.stats.kills }));
   if (Number.isFinite(settlement?.balance)) lines.push(t('dungeon.end.balance', lang, { balance: settlement.balance }));
   return lines.join('\n\n');

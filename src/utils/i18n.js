@@ -680,13 +680,17 @@ const TRANSLATIONS = {
       "dateNotYourSession": "❌ Você não faz parte deste encontro de casal.",
       "dateAnswerRecorded": "💌 Sua resposta foi gravada em segredo! Aguardando o parceiro(a)...",
       "dateOutcomeMatch": "🥂✨ **SINTONIA PERFEITA!** Vocês escolheram a mesma opção!\n> 💖 **+15% na Barra do Amor** (Atual: **{love}%**)\n> 🪙 **{coins}** concedidas para cada um!",
-      "dateOutcomeDivergent": "🥂💔 Respostas diferentes! O amor é feito de opostos... A Pyxie solta uma risadinha sarcástica!\n> 💖 **+3% na Barra do Amor** (Atual: **{love}%**)"
+      "dateOutcomeDivergent": "🥂💔 Respostas diferentes! O amor é feito de opostos... A Pyxie solta uma risadinha sarcástica!\n> 💖 **+3% na Barra do Amor** (Atual: **{love}%**)",
+      "houseRedirect": "🏡 A casa do casal agora é a **Casinha** (`/py-home`): quem tem uma casinha chama o cônjuge pra morar junto. Quem não tem ganha uma chegando ao **Andar {floor}** das Catacumbas ou compra por `{coins}` moedinhas + `{beans}` feijões mágicos.",
+      "houseTogether": "🏡 Moram juntos na Casinha",
+      "houseApart": "🏠 Ainda não moram juntos"
     },
     "divorce": {
       "title": "💔  ✦  Divórcio",
       "success": "💔 Divórcio concluído. Foram cobradas **{cost}**.",
       "notMarried": "❌ Você não está casado(a).",
-      "insufficientCoins": "❌ O divórcio custa **{cost}**. Seu saldo é **{balance}**."
+      "insufficientCoins": "❌ O divórcio custa **{cost}**. Seu saldo é **{balance}**.",
+      "separated": "📦 **Separar bens:** a casa ficou com quem já era dona, e `{count}` item(ns) de {user} voltaram pra mochila dessa pessoa."
     },
     "profession": {
       "sameProfession": "❌ Você já é **{profession}**. Escolha uma carreira diferente.",
@@ -1176,7 +1180,7 @@ const TRANSLATIONS = {
         "whatTitle": "O que vem no Mundo Pyxie",
         "features": {
           "dungeon": "• **Catacumbas de Veludo:** dungeon roguelike em pixel art, com cinco andares, guardiões, a Nyx no fim e tesouro pra quem consegue fugir.",
-          "home": "• **Casinha:** cada pessoa decora o próprio quartinho em pixel art, com mais de 180 móveis, pets e uma lojinha que muda todo dia.",
+          "home": "• **Casinha:** um quartinho em pixel art com mais de 180 móveis e pets. A chave sai nas Catacumbas (ou dá pra comprar), e quem é casado pode morar junto.",
           "vault": "• **Itens raros com número de série:** lendários e míticos limitados, com a origem de cada um registrada.",
           "achievements": "• **Conquistas difíceis:** títulos com letras especiais que ficam mais bonitos a cada meta."
         },
@@ -1382,7 +1386,10 @@ const TRANSLATIONS = {
         "move": "Mover",
         "store": "Guardar",
         "done": "Pronto",
-        "buy": "Comprar {name}"
+        "buy": "Comprar {name}",
+        "claim": "Pegar a chave",
+        "buyHouse": "Comprar casinha",
+        "invite": "Chamar pra morar junto"
       },
       "view": {
         "title": "{icon} Casinha de {name}",
@@ -1394,7 +1401,8 @@ const TRANSLATIONS = {
         "noSets": "nenhum ainda",
         "socialLine": "• **Curtidas:** `{likes}` · **Visitas:** `{visits}`",
         "tipOwner": "-# 🌷 Junte {min} peças do mesmo tema para ativar um conjunto e ganhar Charme extra.",
-        "tipVisitor": "-# 🌷 Cada pessoa pode curtir uma casinha por dia."
+        "tipVisitor": "-# 🌷 Cada pessoa pode curtir uma casinha por dia.",
+        "shared": "💞 **Casa do casal:** {people} moram aqui. Cada pessoa decora com os próprios itens."
       },
       "pick": {
         "title": "{icon} Decorar a casinha",
@@ -1448,7 +1456,14 @@ const TRANSLATIONS = {
         "save": "Não consegui salvar agora. Nada foi cobrado; tente de novo.",
         "own_home": "Curtir a própria casinha? Que convencida. Não vale.",
         "no_home": "Essa pessoa ainda não tem casinha.",
-        "already_liked": "Você já curtiu essa casinha hoje. Volte amanhã!"
+        "already_liked": "Você já curtiu essa casinha hoje. Volte amanhã!",
+        "has_home": "Você já tem uma casinha.",
+        "need_dungeon": "A chave fica no **Andar {floor}** das Catacumbas. Ainda não deu…",
+        "house_coins": "A casinha custa `{price}` moedinhas e você tem `{balance}`.",
+        "house_beans": "A casinha também pede `{price}` feijões mágicos e você tem `{balance}`. Nada foi cobrado.",
+        "not_spouse": "Só dá pra dividir a casinha com quem é casado com você.",
+        "already_together": "Vocês já moram juntos!",
+        "owner_lives_elsewhere": "Quem chamou já mora em outra casa…"
       },
       "shop": {
         "title": "{icon} Loja do dia",
@@ -1484,7 +1499,26 @@ const TRANSLATIONS = {
         "stored": "**{name}** voltou para a mochila.",
         "bought": "Comprado: **{name}**! Agora escolha onde colocar.",
         "surface": "Pronto, agora é **{name}**.",
-        "liked": "Curtida enviada! Essa casinha já tem `{likes}` curtidas."
+        "liked": "Curtida enviada! Essa casinha já tem `{likes}` curtidas.",
+        "claimed": "🗝️ A casinha é sua! Deixei um kit inicial lá dentro… n-não precisa agradecer.",
+        "houseBought": "🏡 Comprada! Agora é oficialmente sua casa. Eu ajudei a escolher as cortinas, tá?"
+      },
+      "nohome": {
+        "title": "🏡 Você ainda não tem casinha",
+        "intro": "E-eu queria te mostrar sua casinha, mas… você ainda não tem uma. Tem três jeitos de conseguir:",
+        "dungeon": "• **Catacumbas:** chegue ao **Andar {floor}** e a chave é sua, de graça. Seu recorde: Andar `{best}`.",
+        "buy": "• **Comprar:** `{coins}` {coin} + `{beans}` {bean}, as mesmas condições da casa do casamento.",
+        "marry": "• **Morar junto:** casando com alguém que tem casinha, a pessoa pode te chamar pra morar lá.",
+        "ready": "-# 🗝️ Você já chegou ao Andar {floor}! A chave tá te esperando."
+      },
+      "invite": {
+        "message": "💞 {spouse}, {owner} quer que você more junto na casinha! Vocês decoram a mesma casa, cada um com os próprios itens.",
+        "btnAccept": "Mudar pra lá",
+        "btnDecline": "Agora não",
+        "accepted": "🏡 Pronto! Agora {spouse} e {owner} moram juntos. Eu… fiquei feliz. Só um pouquinho.",
+        "declined": "Tudo bem… fica pra outra hora.",
+        "notForYou": "Esse convite não é pra você…",
+        "sent": "Convite enviado! Agora é com seu amor."
       }
     },
     "achievements": {
@@ -1745,7 +1779,8 @@ const TRANSLATIONS = {
         "drops": "🎁 **Achado para a Casinha:** {items}\n\n-# Os itens já estão na sua mochila: abra `/py-home` para decorar.",
         "best": "🏅 **Novo recorde:** Andar `{floor}`!",
         "balance": "-# 🪙 Saldo atual: `{balance}`",
-        "stats": "-# 📊 `{rooms}` salas exploradas • `{kills}` monstros derrotados"
+        "stats": "-# 📊 `{rooms}` salas exploradas • `{kills}` monstros derrotados",
+        "houseKey": "🗝️ **Você achou a chave de uma casinha!** Abra `/py-home` pra pegar a sua."
       },
       "outcome": {
         "dead": "💀 morte",
@@ -2406,13 +2441,17 @@ const TRANSLATIONS = {
       "dateNotYourSession": "❌ You are not part of this couple date.",
       "dateAnswerRecorded": "💌 Your answer was secretly recorded! Awaiting your spouse...",
       "dateOutcomeMatch": "🥂✨ **PERFECT HARMONY!** You chose the exact same option!\n> 💖 **+15% Love Bar** (Current: **{love}%**)\n> 🪙 **{coins}** awarded to each of you!",
-      "dateOutcomeDivergent": "🥂💔 Divergent answers! Love is made of contrasts... Pyxie giggles sarcastically!\n> 💖 **+3% Love Bar** (Current: **{love}%**)"
+      "dateOutcomeDivergent": "🥂💔 Divergent answers! Love is made of contrasts... Pyxie giggles sarcastically!\n> 💖 **+3% Love Bar** (Current: **{love}%**)",
+      "houseRedirect": "🏡 The couple's home is now the **Cozy Room** (`/py-home`): whoever has a room invites their spouse to move in. Without one, you get it by reaching **Floor {floor}** of the Catacombs or buy it for `{coins}` coins + `{beans}` magic beans.",
+      "houseTogether": "🏡 Living together in the Cozy Room",
+      "houseApart": "🏠 Not living together yet"
     },
     "divorce": {
       "title": "💔  ✦  Divorce",
       "success": "💔 Divorce completed. **{cost}** was charged.",
       "notMarried": "❌ You are not married.",
-      "insufficientCoins": "❌ Divorce costs **{cost}**. Your balance is **{balance}**."
+      "insufficientCoins": "❌ Divorce costs **{cost}**. Your balance is **{balance}**.",
+      "separated": "📦 **Splitting belongings:** the home stayed with its original owner, and `{count}` item(s) from {user} went back to that person's bag."
     },
     "profession": {
       "sameProfession": "❌ You are already a **{profession}**. Choose a different career.",
@@ -2902,7 +2941,7 @@ const TRANSLATIONS = {
         "whatTitle": "What Pyxie World brings",
         "features": {
           "dungeon": "• **Velvet Catacombs:** a pixel art roguelike dungeon with five floors, guardians, Nyx at the end and treasure for whoever makes it out.",
-          "home": "• **Cozy Room:** everyone decorates their own pixel art room, with over 180 pieces of furniture, pets and a shop that changes every day.",
+          "home": "• **Cozy Room:** a pixel art room with over 180 pieces of furniture and pets. The key drops in the Catacombs (or you can buy it), and married couples can move in together.",
           "vault": "• **Serial-numbered rare items:** limited legendaries and mythics, each one with its origin on record.",
           "achievements": "• **Hard achievements:** titles in special lettering that get fancier with every milestone."
         },
@@ -3108,7 +3147,10 @@ const TRANSLATIONS = {
         "move": "Move",
         "store": "Store",
         "done": "Done",
-        "buy": "Buy {name}"
+        "buy": "Buy {name}",
+        "claim": "Take the key",
+        "buyHouse": "Buy a room",
+        "invite": "Invite to move in"
       },
       "view": {
         "title": "{icon} {name}'s Room",
@@ -3120,7 +3162,8 @@ const TRANSLATIONS = {
         "noSets": "none yet",
         "socialLine": "• **Likes:** `{likes}` · **Visits:** `{visits}`",
         "tipOwner": "-# 🌷 Gather {min} pieces of the same theme to activate a set and earn bonus Charm.",
-        "tipVisitor": "-# 🌷 Everyone can like a room once a day."
+        "tipVisitor": "-# 🌷 Everyone can like a room once a day.",
+        "shared": "💞 **Couple's home:** {people} live here. Each person decorates with their own items."
       },
       "pick": {
         "title": "{icon} Decorate the room",
@@ -3174,7 +3217,14 @@ const TRANSLATIONS = {
         "save": "I couldn't save right now. Nothing was charged; try again.",
         "own_home": "Liking your own room? So full of yourself. Not allowed.",
         "no_home": "This person doesn't have a room yet.",
-        "already_liked": "You already liked this room today. Come back tomorrow!"
+        "already_liked": "You already liked this room today. Come back tomorrow!",
+        "has_home": "You already have a room.",
+        "need_dungeon": "The key is on **Floor {floor}** of the Catacombs. Not there yet…",
+        "house_coins": "The room costs `{price}` coins and you have `{balance}`.",
+        "house_beans": "The room also needs `{price}` magic beans and you have `{balance}`. Nothing was charged.",
+        "not_spouse": "You can only share your room with your spouse.",
+        "already_together": "You already live together!",
+        "owner_lives_elsewhere": "The person who invited you already lives somewhere else…"
       },
       "shop": {
         "title": "{icon} Daily shop",
@@ -3210,7 +3260,26 @@ const TRANSLATIONS = {
         "stored": "**{name}** went back to your bag.",
         "bought": "Bought: **{name}**! Now choose where to put it.",
         "surface": "Done, now it's **{name}**.",
-        "liked": "Like sent! This room now has `{likes}` likes."
+        "liked": "Like sent! This room now has `{likes}` likes.",
+        "claimed": "🗝️ The room is yours! I left a starter kit inside… y-you don't have to thank me.",
+        "houseBought": "🏡 Bought! It is officially your home now. I helped pick the curtains, okay?"
+      },
+      "nohome": {
+        "title": "🏡 You don't have a cozy room yet",
+        "intro": "I-I wanted to show you your room, but… you don't have one yet. There are three ways to get one:",
+        "dungeon": "• **Catacombs:** reach **Floor {floor}** and the key is yours, for free. Your best: Floor `{best}`.",
+        "buy": "• **Buy it:** `{coins}` {coin} + `{beans}` {bean}, the same terms as the old marriage house.",
+        "marry": "• **Move in together:** marry someone who has a room and they can invite you to live there.",
+        "ready": "-# 🗝️ You already reached Floor {floor}! The key is waiting for you."
+      },
+      "invite": {
+        "message": "💞 {spouse}, {owner} wants you to move into their cozy room! You decorate the same home, each with your own items.",
+        "btnAccept": "Move in",
+        "btnDecline": "Not now",
+        "accepted": "🏡 Done! {spouse} and {owner} live together now. I'm… happy. Just a little.",
+        "declined": "That's okay… maybe another time.",
+        "notForYou": "This invite isn't for you…",
+        "sent": "Invite sent! It's up to your love now."
       }
     },
     "achievements": {
@@ -3471,7 +3540,8 @@ const TRANSLATIONS = {
         "drops": "🎁 **Found for your room:** {items}\n\n-# The items are already in your bag: open `/py-home` to decorate.",
         "best": "🏅 **New record:** Floor `{floor}`!",
         "balance": "-# 🪙 Current balance: `{balance}`",
-        "stats": "-# 📊 `{rooms}` rooms explored • `{kills}` monsters defeated"
+        "stats": "-# 📊 `{rooms}` rooms explored • `{kills}` monsters defeated",
+        "houseKey": "🗝️ **You found the key to a cozy room!** Open `/py-home` to claim yours."
       },
       "outcome": {
         "dead": "💀 death",

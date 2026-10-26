@@ -8,10 +8,8 @@ const {
 const { getBalance, spendCoins, getMagicBeans } = require('../../../services/economy');
 const {
   MARRIAGE_COST,
-  HOUSE_COST_COINS,
-  HOUSE_COST_BEANS,
-  HOUSE_REQUIRED_LOVE,
   TREE_COST_BEANS,
+  hasSharedHome,
   getMarriage,
   getSpouseId,
   createMarriageProposal,
@@ -123,13 +121,12 @@ async function handleStatus(source, reply) {
     ? t('marriage.treeUnlockedLabel', source)
     : t('marriage.treeLockedLabel', source);
 
-  const houseStatus = marriage.house?.unlocked
-    ? t('marriage.houseUnlockedLabel', source)
-    : t('marriage.houseLockedLabel', source);
+  const together = hasSharedHome(marriage);
+  const houseStatus = together ? t('marriage.houseTogether', source) : t('marriage.houseApart', source);
 
   const vaultBalance = marriage.house?.vaultBalance || 0;
   const estYield = Math.floor(vaultBalance * ((marriage.loveBar / 100) * 0.05));
-  const vaultText = marriage.house?.unlocked
+  const vaultText = together
     ? `${formatCoins(vaultBalance, source)} (${t('marriage.vaultEstYield', source, { yield: formatCoins(estYield, source) })})`
     : t('marriage.houseRequiredForVault', source);
 
@@ -221,38 +218,13 @@ async function handleTree(source, action, reply) {
   );
 }
 
-// 4. Casa Familiar
+// 4. Casa do casal: agora é a Casinha (/py-home), onde quem tem casa chama o cônjuge para morar junto
 async function handleHouse(source, reply) {
   const user = source.user || source.author;
   const marriage = getMarriage(user.id);
   if (!marriage) return reply(t('marriage.notMarried', source));
-
-  if (marriage.house?.unlocked) {
-    return reply(t('marriage.houseAlreadyUnlocked', source));
-  }
-
-  if (marriage.loveBar < HOUSE_REQUIRED_LOVE) {
-    return reply(
-      t('marriage.houseNeedLove', source, {
-        required: HOUSE_REQUIRED_LOVE,
-        current: marriage.loveBar,
-      })
-    );
-  }
-
-  if (getBalance(user.id) < HOUSE_COST_COINS) {
-    return reply(t('marriage.houseNeedCoins', source, { cost: formatCoins(HOUSE_COST_COINS, source) }));
-  }
-  if (getMagicBeans(user.id) < HOUSE_COST_BEANS) {
-    return reply(t('marriage.houseNeedBeans', source, { cost: HOUSE_COST_BEANS }));
-  }
-
-  const result = unlockSharedFeature(marriage.id, 'house', user.id, HOUSE_COST_COINS, HOUSE_COST_BEANS);
-  if (!result.success) {
-    return reply(t('marriage.genericError', source));
-  }
-
-  return reply(t('marriage.houseUnlockedSuccess', source));
+  const { HOUSE_PRICE, FREE_HOUSE_FLOOR } = require('../../home/homeStore');
+  return reply(t('marriage.houseRedirect', source, { floor: FREE_HOUSE_FLOOR, coins: HOUSE_PRICE.coins, beans: HOUSE_PRICE.beans }));
 }
 
 // 5. Cofre do Amor Eterno
@@ -261,7 +233,7 @@ async function handleVault(source, action, amount, reply) {
   const marriage = getMarriage(user.id);
   if (!marriage) return reply(t('marriage.notMarried', source));
 
-  if (!marriage.house?.unlocked) {
+  if (!hasSharedHome(marriage)) {
     return reply(t('marriage.vaultRequiresHouse', source));
   }
 

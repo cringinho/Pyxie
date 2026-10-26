@@ -95,10 +95,53 @@ async function sceneFile(home, ownerName, lang, options = {}) {
 // Casinha (dona ou visita)
 // ---------------------------------------------------------------------------
 
+/**
+ * Quem ainda não tem casinha: chave grátis no Andar 3 das Catacumbas, compra nas condições do
+ * casamento ou morar junto com o cônjuge.
+ */
+function buildNoHomeView({ owner, source, notice = null }) {
+  const lang = getLanguage(source);
+  const access = store.getHomeAccess(owner.id);
+  const lines = [
+    notice ? `> ${notice}` : null,
+    t('home.nohome.intro', { lang }),
+    t('home.nohome.dungeon', { lang }, { floor: access.freeFloor, best: access.bestFloor }),
+    t('home.nohome.buy', { lang }, { coins: access.price.coins, beans: access.price.beans, coin: icon('COIN', '🪙'), bean: icon('MAGIC_BEAN', '🌱') }),
+    t('home.nohome.marry', { lang }),
+    access.canClaimFree ? t('home.nohome.ready', { lang }, { floor: access.freeFloor }) : null,
+  ].filter(Boolean);
+  const embed = new EmbedBuilder()
+    .setColor(COLOR)
+    .setTitle(t('home.nohome.title', { lang }))
+    .setDescription(lines.join('\n\n'))
+    .setFooter(footer(source, lang));
+  const row = new ActionRowBuilder().addComponents(
+    button('claim', owner.id, t('home.btn.claim', { lang }), '🗝️', access.canClaimFree ? ButtonStyle.Success : ButtonStyle.Secondary, null, !access.canClaimFree),
+    button('buyhouse', owner.id, t('home.btn.buyHouse', { lang }), btnEmoji('73584mushroomhouses', '🏡'), ButtonStyle.Primary)
+  );
+  return { content: null, embeds: [embed], components: [row], files: [], attachments: [], allowedMentions: { parse: [] } };
+}
+
+/** Convite para o cônjuge morar junto (só o cônjuge aceita). */
+function buildInviteMessage({ ownerId, spouseId, source }) {
+  const lang = getLanguage(source);
+  return {
+    content: t('home.invite.message', { lang }, { spouse: `<@${spouseId}>`, owner: `<@${ownerId}>` }),
+    components: [
+      new ActionRowBuilder().addComponents(
+        button('movein', ownerId, t('home.invite.btnAccept', { lang }), '🏡', ButtonStyle.Success, spouseId),
+        button('stay', ownerId, t('home.invite.btnDecline', { lang }), null, ButtonStyle.Secondary, spouseId)
+      ),
+    ],
+    allowedMentions: { users: [String(spouseId)], parse: [] },
+  };
+}
+
 async function buildHomeView({ owner, viewer, source, notice = null }) {
   const lang = getLanguage(source);
   const isOwner = owner.id === viewer.id;
-  const home = isOwner ? store.ensureHome(owner.id) : store.getHome(owner.id);
+  const home = store.getHome(owner.id);
+  if (!home && isOwner) return buildNoHomeView({ owner, source, notice });
   if (!home) {
     return {
       content: t('home.errors.noHome', { lang }, { name: owner.displayName || owner.username }),
@@ -112,9 +155,12 @@ async function buildHomeView({ owner, viewer, source, notice = null }) {
   const charm = engine.computeCharm(home);
   const sets = charm.activeSets.map((s) => `**${engine.setName(s.id, lang)}** \`${s.count}\``).join(' · ') || t('home.view.noSets', { lang });
 
+  const homeOwnerId = store.getHomeOwnerId(owner.id);
+  const people = [homeOwnerId, ...home.residents];
   const lines = [
     notice ? `> ${notice}` : null,
     isOwner ? t('home.view.introOwner', { lang }) : t('home.view.introVisitor', { lang }, { name: ownerName }),
+    home.residents.length ? t('home.view.shared', { lang }, { people: people.map((p) => `<@${p}>`).join(lang === 'en' ? ' and ' : ' e ') }) : null,
     t('home.view.charmHeader', { lang }),
     t('home.view.charmLine', { lang }, { charm: charm.score, best: Math.max(home.bestCharm, charm.score) }),
     t('home.view.setsLine', { lang }, { sets }),
@@ -140,6 +186,7 @@ async function buildHomeView({ owner, viewer, source, notice = null }) {
           button('bag', owner.id, t('home.btn.bag', { lang }), btnEmoji('54936emptybox', '🎒'), ButtonStyle.Secondary, 0),
           button('surface', owner.id, t('home.btn.surface', { lang }), '🎨'),
           button('rank', owner.id, t('home.btn.rank', { lang }), btnEmoji('win', '🏆')),
+          ...(canInviteSpouse(owner.id) ? [button('invite', owner.id, t('home.btn.invite', { lang }), '💞', ButtonStyle.Success)] : []),
         ),
       ]
     : [
@@ -158,6 +205,18 @@ async function buildHomeView({ owner, viewer, source, notice = null }) {
     attachments: [],
     allowedMentions: { parse: [] },
   };
+}
+
+/** Dona da própria casa, casada, e o cônjuge ainda não mora junto. */
+function canInviteSpouse(userId) {
+  if (store.getHomeOwnerId(userId) !== String(userId) || !store.getOwnHome(userId)) return false;
+  let spouseId = null;
+  try {
+    spouseId = require('../../services/marriage').getSpouseId(String(userId));
+  } catch (_) {
+    spouseId = null;
+  }
+  return Boolean(spouseId) && !store.livingTogether(userId, spouseId);
 }
 
 // ---------------------------------------------------------------------------
@@ -531,6 +590,9 @@ function buildRankView({ source }) {
 
 module.exports = {
   PREFIX,
+  buildNoHomeView,
+  buildInviteMessage,
+  canInviteSpouse,
   setPlainButtonEmojis,
   buildHomeView,
   buildPickView,
