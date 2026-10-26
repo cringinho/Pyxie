@@ -135,6 +135,38 @@ function chatCompletion(body, { label = 'Groq', maxRetries = DEFAULT_MAX_RETRIES
   });
 }
 
+/**
+ * Uma chamada só, fora da fila dos geradores: para quem está esperando resposta (a narradora do
+ * roleplay). Não espera nem tenta de novo; num 429 devolve quanto tempo aguardar.
+ * @returns {Promise<{ ok: boolean, data?: object, rateLimited?: boolean, retryAfterMs?: number, error?: string }>}
+ */
+async function chatCompletionNow(body, { label = 'Groq' } = {}) {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) return { ok: false, error: 'missing_api_key' };
+  try {
+    const response = await fetch(CHAT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(45000),
+    });
+    if (response.status === 429) {
+      const errJson = await response.json().catch(() => ({}));
+      const retryAfterMs = parseRetryDelayMs(response.headers.get('retry-after'), errJson.error?.message) ?? FALLBACK_BACKOFF_MS;
+      console.log(`[Groq] ${label}: limite (429), tentar de novo em ${Math.ceil(retryAfterMs / 1000)}s.`);
+      return { ok: false, rateLimited: true, retryAfterMs };
+    }
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      console.warn(`[Groq] ${label}: erro HTTP ${response.status}: ${errText.slice(0, 120)}`);
+      return { ok: false, status: response.status, error: 'http_error' };
+    }
+    return { ok: true, data: await response.json() };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
 /** Escolhe o primeiro modelo disponível da lista (consulta /models uma vez por lista). */
 async function resolveModel(candidates, fallback = candidates[0]) {
   const key = candidates.join('|');
@@ -180,6 +212,7 @@ function getQueueStatus() {
 
 module.exports = {
   chatCompletion,
+  chatCompletionNow,
   resolveModel,
   parseRetryDelayMs,
   computeFirstRunDelay,

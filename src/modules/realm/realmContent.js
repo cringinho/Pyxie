@@ -81,4 +81,20 @@ const SUPPORT = {
   removed: "Pyxie removed your reply in a **Just Listening** post at #support-pods: that person asked for no replies. A reaction is the kindest answer there. 💜",
 };
 
-module.exports = { LAWS, SUPPORT };
+// Painel do #realm-status (em inglês, a língua da plaza)
+const STATUS = {
+  title: '🗺️ The Realm right now',
+  bossName: '⚔️ Weekly boss',
+  bossAlive: '**{boss}**\n{bar} `{hp}`/`{max}`\n-# Fight it with /py-boss in the frontline.',
+  bossDown: '**{boss}** fell this week. A new one arrives on Monday.',
+  seasonName: '🎇 Season',
+  seasonOn: '**{season}**\n-# Boxes and costumed monsters with /py-festival.',
+  seasonOff: 'No festival right now.',
+  talesName: '📖 Latest tales',
+  talesEmpty: 'No tales yet. Create a sheet with /py-character create and open a post in the roleplay forum.',
+  taleLine: '<#{thread}>: {summary}',
+  talesCount: '-# `{active}` tale(s) active this week • `{characters}` character(s) in the Realm',
+  footer: 'Pyxie • Realm status',
+};
+
+module.exports = { LAWS, SUPPORT, STATUS };

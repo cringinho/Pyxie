@@ -1,6 +1,6 @@
 const { emojify } = require('../../utils/emojify');
 const { GUILD_ID, COLORS, CATEGORIES } = require('./realmBlueprint');
-const { LAWS, SUPPORT } = require('./realmContent');
+const { LAWS, SUPPORT, STATUS } = require('./realmContent');
 
 /**
  * Módulo do servidor oficial Pyxie's Realm (só age na guild oficial):
@@ -70,6 +70,51 @@ function applyCommandRoutes(client) {
   return routes;
 }
 
+const STATUS_NAME = CATEGORIES.flatMap((c) => c.channels).find((c) => c.key === 'status').name;
+const fill = (text, vars) => String(text).replace(/\{(\w+)\}/g, (m, k) => (vars[k] !== undefined ? vars[k] : m));
+
+/** Painel do #realm-status: chefe da semana, temporada e as histórias de roleplay mais recentes. */
+function buildStatusEmbed(guildId = GUILD_ID, now = Date.now()) {
+  const fields = [];
+  try {
+    const bossStore = require('../guildBoss/bossStore');
+    const { bossName, hpBar } = require('../guildBoss/bossViews');
+    const status = bossStore.getStatus(guildId, null, now);
+    const boss = bossName(status.bossId, 'en');
+    fields.push({ name: STATUS.bossName, value: status.defeatedAt ? fill(STATUS.bossDown, { boss }) : fill(STATUS.bossAlive, { boss, bar: hpBar(status.hp, status.maxHp), hp: status.hp, max: status.maxHp }), inline: true });
+  } catch (_) {}
+  try {
+    const festival = require('../../services/festival');
+    const season = festival.getActiveSeason(now);
+    fields.push({ name: STATUS.seasonName, value: season ? fill(STATUS.seasonOn, { season: festival.seasonName(season, 'en') }) : STATUS.seasonOff, inline: true });
+  } catch (_) {}
+  const rp = require('../roleplay/characterStore');
+  const week = now - 7 * 24 * 60 * 60 * 1000;
+  const scenes = rp.listScenes().filter((s) => s.guildId === guildId && s.summary);
+  const recent = scenes.sort((a, b) => (b.lastNarratedAt || 0) - (a.lastNarratedAt || 0)).slice(0, 3);
+  const tales = recent.map((s) => fill(STATUS.taleLine, { thread: s.id, summary: s.summary.slice(0, 220) }));
+  tales.push(fill(STATUS.talesCount, { active: scenes.filter((s) => (s.lastNarratedAt || 0) >= week).length, characters: rp.countCharacters() }));
+  fields.push({ name: STATUS.talesName, value: (recent.length ? tales.join('\n\n') : `${STATUS.talesEmpty}\n\n${tales[tales.length - 1]}`).slice(0, 1024), inline: false });
+  return {
+    title: emojify(STATUS.title),
+    color: COLORS.violet,
+    fields: fields.map((f) => ({ ...f, name: emojify(f.name), value: emojify(f.value) })),
+    footer: { text: STATUS.footer },
+    timestamp: new Date(now).toISOString(),
+  };
+}
+
+/** Edita o painel já publicado pelo bot (ou publica um novo) no #realm-status. */
+async function publishStatus(client) {
+  const guild = client?.guilds?.cache?.get(GUILD_ID);
+  const channel = guild?.channels.cache.find((c) => c.name === STATUS_NAME);
+  if (!channel?.isTextBased?.()) return null;
+  const embed = buildStatusEmbed(GUILD_ID);
+  const recent = await channel.messages.fetch({ limit: 20 }).catch(() => null);
+  const mine = recent?.find((m) => m.author.id === client.user.id && m.embeds[0]?.footer?.text === STATUS.footer);
+  return mine ? mine.edit({ embeds: [embed] }) : channel.send({ embeds: [embed] });
+}
+
 async function onLawsButton(interaction) {
   const [, , lang] = interaction.customId.split(':');
   await interaction.reply({ ...buildLawsMessage(lang === 'es' ? 'es' : 'pt'), flags: 64 });
@@ -119,8 +164,17 @@ module.exports = {
         console.error('[realm] Erro ao aplicar rotas de comandos:', err.message);
       }
     };
-    if (ctx.client.isReady?.()) routeNow();
-    else ctx.client.once('clientReady', routeNow);
+    const statusNow = () => publishStatus(ctx.client).catch((err) => console.error('[realm] Erro no painel de status:', err.message));
+    if (ctx.client.isReady?.()) {
+      routeNow();
+      statusNow();
+    } else {
+      ctx.client.once('clientReady', () => {
+        routeNow();
+        statusNow();
+      });
+    }
+    ctx.registerCron('*/30 * * * *', statusNow);
     ctx.registerListener('interactionCreate', async (interaction) => {
       if (!interaction.isButton?.() || !String(interaction.customId || '').startsWith(`${PREFIX}:laws:`)) return;
       try {
@@ -135,6 +189,8 @@ module.exports = {
 
   PREFIX,
   applyCommandRoutes,
+  buildStatusEmbed,
+  publishStatus,
   buildLawsMessage,
   buildSupportMessage,
   isListeningThread,

@@ -163,6 +163,13 @@ fórum de idiomas, botões de tradução efêmera, Guia do servidor.
    dão timeout de 1 h; avisa o dono por DM com botão para desfazer; um alvo só sofre isso uma vez
    por dia; abuso de denúncia tira o direito de denunciar.
 
+**Fase 3.5 — Roleplay com IA (feito, módulo `roleplay`)**: ficha `/py-character` (Força, Magia,
+Agilidade, Espírito, origens da lore, vida e mana, mochila narrativa, XP por cena), narradora com IA nos
+posts de `#roleplay-tales` (lore no prompt, NPCs da lore por webhook, d20 + atributo por botão, efeitos
+limitados, nunca mata personagem, SFW com filtro na entrada e na saída, sinais de crise viram linhas de
+apoio) e o painel `#realm-status` (chefe, temporada e histórias recentes, a cada 30 min). Separado das
+Catacumbas e sem geração de imagens. Detalhes em `src/modules/roleplay/README.md`.
+
 **Fase 4 — Parcerias automáticas**: allowlist de domínios, checagem do convite
 (`nsfw_level`, membros, validade) e revisão do dono por botão quando algo for duvidoso.
 

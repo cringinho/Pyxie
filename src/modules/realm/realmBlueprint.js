@@ -76,6 +76,7 @@ const CATEGORIES = [
     name: '✦ THE FAIRY GATEWAY',
     channels: [
       { key: 'rules', name: '╭📜・realm-laws', type: 'text', access: ACCESS.readonly, topic: "⚖️ The laws of Pyxie's Realm and the story of our war against Nyxiel. Buttons below translate them to Português and Español." },
+      { key: 'status', name: '┃🗺️・realm-status', type: 'text', access: ACCESS.readonly, topic: '🗺️ What is happening in the Realm right now: the weekly boss, the season and the latest roleplay tales. Pyxie updates it every 30 minutes.' },
       { key: 'announcements', name: '╰📢・dramatic-supervision', type: 'announcement', access: ACCESS.readonly, topic: '🦇 Updates, events and dramatic announcements from Pyxie. "It\'s not affection. It\'s dramatic supervision."' },
     ],
   },
@@ -143,7 +144,8 @@ const CATEGORIES = [
         key: 'tales',
         name: '╰🎭・roleplay-tales',
         type: 'forum',
-        topic: '📖 Roleplay stories set in the Realm and Nyxiel. Keep it SFW, tag your genre and add a content warning when needed.',
+        topic:
+          '📖 Tales in the Realm and Nyxiel, narrated by Pyxie. Create your sheet with /py-character create, open a post and write *actions* and "speech". Pyxie answers a few seconds after the last message, voices the NPCs and asks for d20 rolls. ((double parentheses)) = out of character. SFW only, tag your genre and add a content warning when needed.',
         tags: [
           { name: 'Adventure', emoji: '⚔️' },
           { name: 'Slice of Life', emoji: '🏡' },
