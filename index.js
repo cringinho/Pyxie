@@ -57,7 +57,7 @@ const {
   KUROMI_STARTUP_EMOJI,
 } = require('./src/config');
 const { incrementCommand, incrementMessages, recordUniqueUser, updateStats, flushSync } = require('./src/services/logging');
-const { setGuildLanguage } = require('./src/utils/i18n');
+const { t } = require('./src/utils/i18n');
 const { flushInventorySync } = require('./src/services/inventory');
 const { getBrasiliaDate, resetDailyDraws, readState, wasAnnouncedToday, markAnnouncedToday } = require('./src/services/tarot');
 const { getAnimatedEmoji } = require('./src/utils/serverEmojis');
@@ -65,6 +65,12 @@ const { recordCommand, flushSync: flushTelemetrySync } = require('./src/services
 const { isBlacklisted, recordActivity, forceLeaveGuild } = require('./src/services/trustAndSafety');
 const { checkPostCrash, attachProcessWatchdog } = require('./src/services/schedulerWatchdog');
 const { updateGuildsSnapshot } = require('./src/services/guildDirectory');
+const growthFunnel = require('./src/services/growthFunnel');
+const { sendGuildWelcome, isWelcomeLanguageButton, handleWelcomeLanguageButton } = require('./src/services/guildOnboarding');
+const { startBotListStats } = require('./src/services/botListStats');
+const achievements = require('./src/services/achievements');
+const guildFeatures = require('./src/services/guildFeatures');
+const achievementsCommand = require('./src/commands/conquistas');
 const {
   onGuildMemberAdd: onCheckinMemberAdd,
   onMessageCreate: onCheckinMessageCreate,
@@ -546,6 +552,9 @@ client.once(Events.ClientReady, async () => {
   startPresenceRotator(client);
 
   updateLiveStats();
+  growthFunnel.backfillGuilds(client.guilds.cache.values());
+  client.application?.commands.fetch().catch(() => null);
+  startBotListStats(client);
   attachProcessWatchdog(client);
   try {
     const truthEngine = require('./src/services/truthReconciliationEngine');
@@ -669,54 +678,17 @@ client.on(Events.GuildCreate, async (guild) => {
   }
 
   updateLiveStats();
+  growthFunnel.recordGuildJoin(guild);
 
-  // Em servidores externos, define explicitamente o idioma padrão como inglês
-  if (guild.id !== '1453890868980482090') {
-    setGuildLanguage(guild.id, 'en');
-  }
-
-  // Envia mensagem introdutória oficial no canal padrão do servidor
-  const botMember = guild.members.me || await guild.members.fetchMe().catch(() => null);
-  const targetChannel =
-    guild.systemChannel ||
-    guild.channels.cache.find(
-      (c) =>
-        c.isTextBased() &&
-        botMember &&
-        c.permissionsFor(botMember)?.has(['ViewChannel', 'SendMessages', 'EmbedLinks'])
-    );
-
-  if (targetChannel) {
-    const isEn = guild.id !== '1453890868980482090';
-    const embed = new EmbedBuilder()
-      .setColor('#8b5cf6')
-      .setTitle(isEn ? '🧚  ✦  Hello! I am Pyxie!' : '🧚  ✦  Olá! Eu sou a Pyxie!')
-      .setDescription(
-        isEn
-          ? `Thank you for inviting me to **${guild.name}**!\n\n` +
-            `🌐 **Default Language:** \`English\`.\n` +
-            `You can change the server language anytime with </py-language:0> (or \`py!language\`).\n\n` +
-            `✨ **Get Started:**\n` +
-            `> 💼 </py-work:0> — Choose from 10 professions and solve job shift minigames\n` +
-            `> 🪙 </py-daily:0> — Claim your daily coins\n` +
-            `> 🔮 </py-tarot:0> — Draw your illustrated daily Tarot card\n` +
-            `> 📖 </py-help:0> — Browse the full interactive command guide`
-          : `Obrigada por me adicionar a **${guild.name}**!\n\n` +
-            `🌐 **Idioma do Servidor:** \`Português (pt-BR)\`.\n` +
-            `Altere a qualquer momento com </py-language:0>.\n\n` +
-            `✨ **Comece agora:**\n` +
-            `> 💼 </py-work:0> — Escolha uma profissão e trabalhe nos turnos\n` +
-            `> 🪙 </py-daily:0> — Colete suas moedinhas diárias\n` +
-            `> 🔮 </py-tarot:0> — Tire sua carta do Tarot\n` +
-            `> 📖 </py-help:0> — Veja a lista completa de comandos`
-      )
-      .setFooter({ text: isEn ? 'Pyxie • Ready for adventure!' : 'Pyxie • Pronta para novas aventuras!' })
-      .setTimestamp();
-
-    await targetChannel.send({ embeds: [embed] }).catch(() => null);
-  }
+  // Idioma inicial pelo idioma preferido do servidor + boas-vindas com botões de idioma
+  await sendGuildWelcome(guild, client).catch((error) => {
+    console.error(`[Onboarding] Falha ao enviar boas-vindas em ${guild.id}:`, error.message);
+  });
 });
-client.on(Events.GuildDelete, () => updateLiveStats());
+client.on(Events.GuildDelete, (guild) => {
+  growthFunnel.recordGuildLeave(guild);
+  updateLiveStats();
+});
 client.on(Events.GuildUpdate, () => updateLiveStats());
 client.on(Events.GuildMemberRemove, () => updateLiveStats());
 
@@ -900,17 +872,28 @@ client.on(Events.MessageCreate, async (message) => {
     }
   }
 
+  // Recursos por servidor (/py-setup): modo clássico, módulo desligado ou canal não liberado
+  const access = guildFeatures.checkCommandAccess({ guildId: message.guildId, channel: message.channel, command });
+  if (!access.allowed) {
+    await message.reply(setupCommand.handleAccessDenied(access, message, message.member)).catch(() => null);
+    return;
+  }
+
   incrementCommand();
   const startTime = Date.now();
   let success = true;
   let cmdErr = null;
   try {
     await command.executePrefix({ message, args, prefix });
+    if (command !== achievementsCommand) {
+      // Conquistas alcançadas pelo comando (limite de uma verificação a cada 15s por pessoa)
+      achievements.notifyForMessage(message).catch(() => null);
+    }
   } catch (error) {
     success = false;
     cmdErr = error;
     console.error(`Erro ao executar prefix command ${prefix}${cmd}:`, error);
-    await message.reply('❌ Ocorreu um erro ao executar este comando. Tente novamente mais tarde.').catch(() => null);
+    await message.reply(t('common.actionError', message)).catch(() => null);
   } finally {
     const durationMs = Date.now() - startTime;
     recordCommand({
@@ -939,8 +922,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
   const bl = isBlacklisted({ guildId: interaction.guildId, userId: interaction.user?.id });
   if (bl.blacklisted) {
     if (interaction.isRepliable()) {
-      return interaction.reply({ content: '🚫 Você ou este servidor estão na Blacklist Global da Pyxie.', flags: MessageFlags.Ephemeral }).catch(() => null);
+      return interaction.reply({ content: t('common.blacklisted', interaction), flags: MessageFlags.Ephemeral }).catch(() => null);
     }
+    return;
+  }
+
+  // Autocompletar das opções de slash (ex.: /py-profession com mais de 25 profissões)
+  if (interaction.isAutocomplete()) {
+    const command = commandsByName.get(interaction.commandName);
+    if (typeof command?.autocomplete === 'function') await command.autocomplete(interaction).catch(() => null);
     return;
   }
 
@@ -976,7 +966,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       const adminCmd = require('./src/commands/admin');
       const { OWNER_SNOWFLAKE } = require('./src/services/adminAuth');
       if (interaction.user.id !== OWNER_SNOWFLAKE) {
-        return interaction.reply({ content: '❌ Apenas o criador da Pyxie pode gerenciar o painel administrativo!', flags: MessageFlags.Ephemeral });
+        return interaction.reply({ content: t('common.ownerPanelOnly', interaction), flags: MessageFlags.Ephemeral });
       }
       if (interaction.customId.startsWith('admin_modules_view')) {
         const view = adminCmd.buildModulesView(interaction.user.id, interaction);
@@ -996,6 +986,16 @@ client.on(Events.InteractionCreate, async (interaction) => {
         }
         return interaction.update(view);
       }
+    }
+
+    if (achievementsCommand.isAchievementsInteraction(interaction)) {
+      await achievementsCommand.handleAchievementsInteraction(interaction);
+      return;
+    }
+
+    if (interaction.isButton() && isWelcomeLanguageButton(interaction.customId)) {
+      await handleWelcomeLanguageButton(interaction);
+      return;
     }
 
     if (interaction.isButton() && (interaction.customId.startsWith('seasonal_art_') || interaction.customId.startsWith('seasonal_multi_art_'))) {
@@ -1157,6 +1157,18 @@ client.on(Events.InteractionCreate, async (interaction) => {
       'biscoito', 'cookie', 'py-cookie',
     ]);
 
+    if (command) {
+      const access = guildFeatures.checkCommandAccess({
+        guildId: interaction.guildId,
+        channel: interaction.channel || { id: interaction.channelId },
+        command,
+      });
+      if (!access.allowed) {
+        await interaction.reply({ ...setupCommand.handleAccessDenied(access, interaction, interaction.member), flags: MessageFlags.Ephemeral });
+        return;
+      }
+    }
+
     const isEphemeral = Boolean(
       command?.ephemeral ||
       ephemeralCommands.has(command?.name) ||
@@ -1164,14 +1176,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
     );
     await interaction.deferReply({ flags: isEphemeral ? MessageFlags.Ephemeral : undefined });
     if (!command) {
-      await interaction.editReply({ content: 'Esse comando ainda não está disponível. Não olhe para mim assim; eu também estou investigando.' });
+      await interaction.editReply({ content: t('common.commandUnavailable', interaction) });
       return;
     }
 
     // Guarda de Escopo de Guilda (Zona B - Cringelândia Lab)
     if (Array.isArray(command.guildScope) && command.guildScope.length > 0) {
       if (!interaction.guildId || !command.guildScope.includes(interaction.guildId)) {
-        await interaction.editReply({ content: '❌ Este comando ou recurso é exclusivo do laboratório da Cringelândia.' });
+        await interaction.editReply({ content: t('common.guildScopeOnly', interaction) });
         return;
       }
     }
@@ -1185,7 +1197,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       } else if (typeof command.execute === 'function') {
         await command.execute(interaction);
       } else {
-        await interaction.editReply({ content: 'Esse comando ainda não está disponível. Não olhe para mim assim; eu também estou investigando.' });
+        await interaction.editReply({ content: t('common.commandUnavailable', interaction) });
         return;
       }
     } catch (cmdError) {
@@ -1194,6 +1206,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       throw cmdError;
     } finally {
       const durationMs = Date.now() - startTime;
+      if (interaction.guild) growthFunnel.recordGuildCommand(interaction.guildId);
       recordCommand({
         name: interaction.commandName,
         type: 'slash',
@@ -1215,11 +1228,22 @@ client.on(Events.InteractionCreate, async (interaction) => {
   } catch (error) {
     console.error(`Erro ao processar interaction (${interaction.commandName || interaction.customId}):`, error);
     if (interaction.deferred || interaction.replied) {
-      await interaction.editReply({ content: '❌ Ocorreu um erro ao processar esta ação. Tente novamente mais tarde.' }).catch(() => null);
+      await interaction.editReply({ content: t('common.actionError', interaction) }).catch(() => null);
     } else {
-      await interaction.reply({ content: '❌ Ocorreu um erro ao processar esta ação.', flags: MessageFlags.Ephemeral }).catch(() => null);
+      await interaction.reply({ content: t('common.actionErrorShort', interaction), flags: MessageFlags.Ephemeral }).catch(() => null);
     }
   }
+});
+
+// Conquistas: depois de cada comando ou clique (inclusive dos módulos), verifica com limite de
+// uma vez a cada 15s por pessoa e avisa em mensagem privada. O atraso deixa o comando terminar.
+client.on(Events.InteractionCreate, (interaction) => {
+  if (!interaction.isChatInputCommand() && !interaction.isButton() && !interaction.isStringSelectMenu()) return;
+  if (interaction.isChatInputCommand() && interaction.commandName === achievementsCommand.name) return;
+  const timer = setTimeout(() => {
+    achievements.notifyNewAchievements(interaction).catch(() => null);
+  }, 2500);
+  if (typeof timer.unref === 'function') timer.unref();
 });
 
 client.on(Events.Error, (error) => {
@@ -1450,6 +1474,7 @@ function handleBotShutdown() {
   try { flushSync(); } catch (_) {}
   try { flushInventorySync(); } catch (_) {}
   try { flushTelemetrySync(); } catch (_) {}
+  try { growthFunnel.flushGuildState(); } catch (_) {}
   try {
     if (client && typeof client.destroy === 'function') {
       client.destroy();

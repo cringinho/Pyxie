@@ -1,7 +1,6 @@
 const {
   ChannelType,
   PermissionFlagsBits,
-  SlashCommandBuilder,
   EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
@@ -208,104 +207,7 @@ module.exports = {
   aliases: ['set', 'py-set', 'configurar', 'py-configurar'],
   // Configurações respondem em privado: o index.js abre o deferReply efêmero
   ephemeral: true,
-  data: new SlashCommandBuilder()
-    .setName(SET)
-    .setDescription('Configures channels and server features (Welcome, Vent, Tarot, Tickets, Games).')
-    .setDescriptionLocalizations({
-      'pt-BR': 'Configura canais e recursos avançados da Pyxie no servidor.',
-    })
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
-    .addSubcommand((sub) =>
-      sub
-        .setName('welcome')
-        .setNameLocalizations({ 'pt-BR': 'boas-vindas' })
-        .setDescription('Configures the customizable welcome channel and auto-role.')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Configura o canal de boas-vindas customizável e cargo automático.',
-        })
-        .addChannelOption((option) =>
-          option
-            .setName('channel')
-            .setNameLocalizations({ 'pt-BR': 'canal' })
-            .setDescription('Text channel for welcome messages.')
-            .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto para envio de boas-vindas.' })
-            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('vent')
-        .setNameLocalizations({ 'pt-BR': 'desabafos' })
-        .setDescription('Configures the vent channel with sticky messages and anonymous venting.')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Configura o canal de desabafos com mensagem fixa e desabafo anônimo.',
-        })
-        .addChannelOption((option) =>
-          option
-            .setName('channel')
-            .setNameLocalizations({ 'pt-BR': 'canal' })
-            .setDescription('Text channel for vents and mutual support.')
-            .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto para desabafos e apoio mútuo.' })
-            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('tarot')
-        .setNameLocalizations({ 'pt-BR': 'tarot' })
-        .setDescription('Configures the channel for daily automatic tarot announcements.')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Configura o canal para postagem diária automática do Tarot.',
-        })
-        .addChannelOption((option) =>
-          option
-            .setName('channel')
-            .setNameLocalizations({ 'pt-BR': 'canal' })
-            .setDescription('Text channel for daily tarot announcements.')
-            .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto para anúncios diários do Tarot.' })
-            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('tickets')
-        .setNameLocalizations({ 'pt-BR': 'tickets' })
-        .setDescription('Configures the ticket panel channel and category.')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Configura o canal do painel de tickets e categoria de atendimento.',
-        })
-        .addChannelOption((option) =>
-          option
-            .setName('channel')
-            .setNameLocalizations({ 'pt-BR': 'canal' })
-            .setDescription('Text channel for the ticket panel.')
-            .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto onde o painel de tickets será postado.' })
-            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('games')
-        .setNameLocalizations({ 'pt-BR': 'jogos' })
-        .setDescription('Restricts multiplayer games (quiz duels) to a single channel.')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Restringe os jogos multiplayer (duelos de quiz) a um único canal.',
-        })
-        .addChannelOption((option) =>
-          option
-            .setName('channel')
-            .setNameLocalizations({ 'pt-BR': 'canal' })
-            .setDescription('Text channel for games and duels.')
-            .setDescriptionLocalizations({ 'pt-BR': 'Canal de texto para jogos e duelos.' })
-            .addChannelTypes(ChannelType.GuildText)
-            .setRequired(true)
-        )
-    ),
-
+  // Sem slash próprio: o /py-setup é a central de configuração. py!set <função> #canal segue como atalho.
   async executePrefix({ message, args, prefix }) {
     if (
       !message.member?.permissions?.has(PermissionFlagsBits.ManageChannels) &&
@@ -318,22 +220,10 @@ module.exports = {
 
     const sub = (args[0] || '').toLowerCase();
 
-    // Se executado sem argumentos, lista as opções
+    // Sem função conhecida, abre a central do /py-setup
     if (!sub || !['boas-vindas', 'boasvindas', 'welcome', 'desabafos', 'desabafo', 'vent', 'tarot', 'tickets', 'ticket', 'atendimento', 'jogos', 'games', 'minigames'].includes(sub)) {
-      const helpEmbed = new EmbedBuilder()
-        .setColor('#8b5cf6')
-        .setTitle('⚙️  ✦  Central de Configuração `py!set`')
-        .setDescription(
-          `Utilize o comando \`${prefix || 'py!'}set\` para ativar os recursos oficiais da Pyxie no seu servidor:\n\n` +
-          `• \`${prefix || 'py!'}set boas-vindas <#canal>\` — Configura o sistema de Boas-Vindas customizável e Auto-Role.\n\n` +
-          `• \`${prefix || 'py!'}set desabafos <#canal>\` — Configura o canal de Desabafos com mensagem Sticky, Autoajuda na DM e Desabafo Anônimo.\n\n` +
-          `• \`${prefix || 'py!'}set tarot <#canal>\` — Configura o canal para postagem diária automática do Tarot às 00:00 BRT.\n\n` +
-          `• \`${prefix || 'py!'}set tickets <#canal>\` — Configura o canal do painel de Tickets e categoria de atendimento.\n\n` +
-          `• \`${prefix || 'py!'}set jogos <#canal>\` — Restringe os duelos de quiz a um canal de jogos.`
-        )
-        .setFooter({ text: 'Pyxie • Configurações Globais do Servidor' });
-
-      await message.reply({ embeds: [helpEmbed] });
+      const { buildSetupView } = require('./setup');
+      await message.reply(buildSetupView(message.guild, 'overview', message));
       return;
     }
 
@@ -432,18 +322,8 @@ module.exports = {
     const sub = interaction.options.getSubcommand(false);
 
     if (!sub) {
-      const helpEmbed = new EmbedBuilder()
-        .setColor('#8b5cf6')
-        .setTitle('⚙️  ✦  Central de Configuração `/py-set`')
-        .setDescription(
-          `Escolha uma das opções abaixo para configurar seu servidor:\n\n` +
-          `• \`/py-set boas-vindas canal:#canal\` — Boas-Vindas customizáveis e Auto-Role.\n\n` +
-          `• \`/py-set desabafos canal:#canal\` — Canal de Desabafos, Sticky e Anônimo.\n\n` +
-          `• \`/py-set tickets canal:#canal\` — Sistema de Tickets e Atendimento.\n\n` +
-          `• \`/py-set tarot canal:#canal\` — Postagem diária do Tarot às 00:00 BRT.\n\n` +
-          `• \`/py-set jogos canal:#canal\` — Restringe os duelos de quiz a um canal de jogos.`
-        );
-      await respond({ embeds: [helpEmbed], ephemeral: true });
+      const { buildSetupView } = require('./setup');
+      await respond(buildSetupView(interaction.guild, 'overview', interaction));
       return;
     }
 

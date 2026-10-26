@@ -4,9 +4,11 @@ const path = require('node:path');
 
 const { getBalance, addCoins, addMagicBeans, buyTheme, equipTheme, getUserAccount, hasActiveVote } = require('../src/services/economy');
 const { addItem, hasItem } = require('../src/services/inventory');
-const { processTopggVote, verifyWebhookAuth } = require('../src/services/topgg');
+const { processTopggVote, verifyWebhookAuth, getUserVoteStatus, VOTE_BEANS, WEEKEND_VOTE_BEANS } = require('../src/services/topgg');
 
 const testRunId = Date.now();
+const voteStatsFile = path.join(__dirname, '..', 'data', 'topggVotes.json');
+const voteStatsSnapshot = fs.existsSync(voteStatsFile) ? fs.readFileSync(voteStatsFile, 'utf8') : null;
 const testUserA = `user_test_a_${testRunId}`;
 const testUserB = `user_test_b_${testRunId}`;
 
@@ -22,18 +24,43 @@ try {
   const userAcc = getUserAccount(testUserA);
   assert.equal(userAcc.equippedTheme, 'ouro', 'Tema Ouro deve estar equipado no perfil.');
 
-  // 4. Teste de Votos Top.gg (Sem recompensas / voluntário)
-  assert.equal(verifyWebhookAuth('teste'), true, 'Sem secret configurado deve validar webhook.');
+  // 4. Votos no Top.gg: feijões mágicos (nunca moedinhas), sem pagar duas vezes o mesmo voto
+  assert.equal(verifyWebhookAuth('teste', {}), false, 'Sem segredo configurado o webhook deve recusar tudo.');
+  assert.equal(verifyWebhookAuth('errado', { TOPGG_WEBHOOK_AUTH: 'segredo' }), false, 'Segredo errado deve ser recusado.');
+  assert.equal(verifyWebhookAuth(undefined, { TOPGG_WEBHOOK_AUTH: 'segredo' }), false, 'Header ausente deve ser recusado.');
+  assert.equal(verifyWebhookAuth('segredo', { TOPGG_WEBHOOK_AUTH: 'segredo' }), true, 'Segredo correto deve ser aceito.');
 
+  const beansBeforeA = getUserAccount(testUserA).magicBeans;
   const voteNormal = processTopggVote({ user: testUserA, isWeekend: false });
   assert.equal(voteNormal.success, true, 'Voto comum no Top.gg deve ser processado.');
-  assert.equal(voteNormal.coins, 0, 'Recompensa comum deve ser 0 moedas (sem recompensas).');
+  assert.equal(voteNormal.coins, 0, 'Voto nunca concede moedinhas.');
+  assert.equal(voteNormal.magicBeans, VOTE_BEANS, 'Voto comum concede o feijão configurado.');
+  assert.equal(getUserAccount(testUserA).magicBeans, beansBeforeA + VOTE_BEANS, 'Feijão deve cair na conta.');
+
+  const voteRetry = processTopggVote({ user: testUserA, isWeekend: false });
+  assert.equal(voteRetry.duplicate, true, 'Reenvio do mesmo voto deve ser marcado como duplicado.');
+  assert.equal(voteRetry.magicBeans, 0, 'Reenvio do mesmo voto não paga de novo.');
+  assert.equal(getUserAccount(testUserA).magicBeans, beansBeforeA + VOTE_BEANS, 'Saldo não muda no reenvio.');
+
+  const nextWindow = Date.now() + 12 * 60 * 60 * 1000 + 1000;
+  const voteLater = processTopggVote({ user: testUserA, isWeekend: false }, nextWindow);
+  assert.equal(voteLater.magicBeans, VOTE_BEANS, 'Novo voto após 12h volta a pagar.');
+  assert.equal(getUserAccount(testUserA).voteCount, 2, 'voteCount conta apenas votos pagos.');
 
   const voteWeekend = processTopggVote({ user: testUserB, isWeekend: true });
   assert.equal(voteWeekend.success, true, 'Voto no fim de semana no Top.gg deve ser processado.');
-  assert.equal(voteWeekend.coins, 0, 'Recompensa de fim de semana deve ser 0 moedas.');
-  const accB = getUserAccount(testUserB);
-  assert.equal(accB.magicBeans, 0, 'Fim de semana não deve conceder Feijão Mágico.');
+  assert.equal(voteWeekend.coins, 0, 'Fim de semana também não concede moedinhas.');
+  assert.equal(getUserAccount(testUserB).magicBeans, WEEKEND_VOTE_BEANS, 'Fim de semana concede o bônus de feijões.');
+
+  const voteTest = processTopggVote({ user: `${testUserB}_x`, type: 'test' });
+  assert.equal(voteTest.test, true, 'Webhook de teste do Top.gg deve ser reconhecido.');
+  assert.equal(getUserAccount(`${testUserB}_x`).magicBeans, 0, 'Webhook de teste não paga feijões.');
+  assert.equal(processTopggVote({ user: '' }).success, false, 'Payload sem usuário deve ser recusado.');
+  assert.equal(processTopggVote({ user: '../../etc' }).success, false, 'ID de usuário inválido deve ser recusado.');
+
+  const status = getUserVoteStatus(testUserB);
+  assert.equal(status.canVote, false, 'Logo após votar, o próximo voto fica em espera.');
+  assert.ok(status.remainingMs > 0, 'Tempo restante até o próximo voto deve ser positivo.');
 
   // 5. Teste do Gerenciador de Afiliados Shopee & Smartlink
   const shopeeManager = require('../src/services/shopeeManager');
@@ -159,6 +186,13 @@ try {
 
   console.log('Verificação de Top.gg, Temas Visuais e Afiliados Shopee: OK');
 } finally {
+  // As estatísticas de voto são reais na VM: devolve o arquivo exatamente como estava
+  if (voteStatsSnapshot === null) {
+    try { fs.unlinkSync(voteStatsFile); } catch (_) {}
+  } else {
+    fs.writeFileSync(voteStatsFile, voteStatsSnapshot, 'utf8');
+  }
+
   const cleanFiles = [
     path.join(__dirname, '..', 'data', 'economy.json'),
     path.join(__dirname, '..', 'data', 'inventory.json'),
@@ -170,6 +204,7 @@ try {
         const data = JSON.parse(fs.readFileSync(file, 'utf8'));
         delete data[testUserA];
         delete data[testUserB];
+        delete data[`${testUserB}_x`];
         fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
       } catch (_) {}
     }

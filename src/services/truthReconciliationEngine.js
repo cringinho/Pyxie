@@ -335,6 +335,46 @@ class TruthReconciliationEngine extends EventEmitter {
       const quizQuestionsCount = acervoStats.quiz?.totalQuestions || 600;
 
       // 5. Catacumbas de Veludo (dungeon crawler): números reais de data/dungeon.json
+      let growthSummary = { periodJoins: 0, periodNet: 0, activation24h: {}, retention: { d7: {} } };
+      try {
+        growthSummary = require('./growthFunnel').getFunnelSummary({ days: 30 });
+      } catch (_) {}
+      let voteStats = { totalVotes: 0, totalBeans: 0 };
+      try {
+        voteStats = require('./topgg').getVoteStats();
+      } catch (_) {}
+      let homeStats = { homes: 0, placedItems: 0, bestCharm: 0, vault: { totalItems: 0, byRarity: {} } };
+      try {
+        homeStats = require('../modules/home/homeStore').getHomeStats();
+      } catch (_) {}
+      let bossStats = { spawned: 0, defeated: 0, attacks: 0, activeThisWeek: 0, defeatedThisWeek: 0 };
+      try {
+        bossStats = require('../modules/guildBoss/bossStore').getBossStats();
+      } catch (_) {}
+      let marketStats = { activeListings: 0, sold: 0, sales7d: 0, taxCollected: 0 };
+      try {
+        marketStats = require('./market').getMarketStats();
+      } catch (_) {}
+      let passStats = { month: null, players: 0, premiumThisMonth: 0, maxed: 0, claims: 0 };
+      try {
+        passStats = require('./battlePass').getPassStats();
+      } catch (_) {}
+      let festivalStats = { activeSeason: null, sparksInCirculation: 0, earned: 0, boxes: 0, coinBoxes: 0, coinsRemoved: 0 };
+      try {
+        festivalStats = require('./festival').getFestivalStats();
+      } catch (_) {}
+      let serverModes = { configured: 0, full: 0, trial: 0, classic: 0 };
+      try {
+        serverModes = require('./guildFeatures').getFeatureStats();
+      } catch (_) {}
+      let achievementStats = { catalog: 0, unlocked: 0 };
+      try {
+        achievementStats = require('./achievements').getAchievementStats();
+      } catch (_) {}
+      let homeCatalogSize = 0;
+      try {
+        homeCatalogSize = require('../modules/home/homeCatalog').ITEMS.length;
+      } catch (_) {}
       let dungeonStats = { totals: {}, deepestFloor: 0, settings: {} };
       try {
         dungeonStats = require('../modules/dungeon/dungeonStore').getDungeonStats();
@@ -398,6 +438,60 @@ class TruthReconciliationEngine extends EventEmitter {
             deepestFloor: Number(dungeonStats.deepestFloor) || 0,
             floors: 5,
             ticket: Number(dungeonStats.settings.ticket) || 0,
+          },
+          growth: {
+            guildsJoined30d: Number(growthSummary.periodJoins) || 0,
+            netGuilds30d: Number(growthSummary.periodNet) || 0,
+            activation24hRate: growthSummary.activation24h?.rate ?? null,
+            retentionD7Rate: growthSummary.retention?.d7?.rate ?? null,
+          },
+          votes: {
+            total: Number(voteStats.totalVotes) || 0,
+            beansGiven: Number(voteStats.totalBeans) || 0,
+          },
+          home: {
+            homes: Number(homeStats.homes) || 0,
+            placedItems: Number(homeStats.placedItems) || 0,
+            bestCharm: Number(homeStats.bestCharm) || 0,
+            catalogItems: homeCatalogSize,
+            itemsOwned: Number(homeStats.vault?.totalItems) || 0,
+            mythicItems: Number(homeStats.vault?.byRarity?.mythic) || 0,
+          },
+          achievements: {
+            catalog: Number(achievementStats.catalog) || 0,
+            unlocked: Number(achievementStats.unlocked) || 0,
+          },
+          market: {
+            activeListings: Number(marketStats.activeListings) || 0,
+            totalSales: Number(marketStats.sold) || 0,
+            sales7d: Number(marketStats.sales7d) || 0,
+            coinsRemovedByFee: Number(marketStats.taxCollected) || 0,
+          },
+          battlePass: {
+            month: passStats.month || null,
+            players: Number(passStats.players) || 0,
+            premiumThisMonth: Number(passStats.premiumThisMonth) || 0,
+            reachedLevel50: Number(passStats.maxed) || 0,
+            rewardsClaimed: Number(passStats.claims) || 0,
+          },
+          festival: {
+            activeSeason: festivalStats.activeSeason || null,
+            sparksInCirculation: Number(festivalStats.sparksInCirculation) || 0,
+            sparksEarned: Number(festivalStats.earned) || 0,
+            boxesOpened: (Number(festivalStats.boxes) || 0) + (Number(festivalStats.coinBoxes) || 0),
+            coinsRemovedByChests: Number(festivalStats.coinsRemoved) || 0,
+          },
+          weeklyBoss: {
+            activeThisWeek: Number(bossStats.activeThisWeek) || 0,
+            defeatedThisWeek: Number(bossStats.defeatedThisWeek) || 0,
+            totalDefeated: Number(bossStats.defeated) || 0,
+            attacks: Number(bossStats.attacks) || 0,
+          },
+          serverModes: {
+            configured: Number(serverModes.configured) || 0,
+            mmoFull: Number(serverModes.full) || 0,
+            mmoTrial: Number(serverModes.trial) || 0,
+            mmoClassic: Number(serverModes.classic) || 0,
           },
         },
       };

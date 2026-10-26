@@ -13,6 +13,7 @@ const { FLOORS, ENEMIES, CHARMS, TALENTS, EMPTY_FLAVORS, localized } = require('
  *   dgn:l:<dono>:<tela>                 menu, guia, talentos, hall, mochila, iniciar/continuar
  *   dgn:t:<dono>:<talento>              compra de talento
  *   dgn:a:<dono>:<run>:<step>:<ação>[:<arg>]
+ *   dgn:h:<dono>:<run>                  ajuda de quem assiste (qualquer pessoa menos a dona)
  */
 
 const PREFIX = 'dgn';
@@ -100,6 +101,7 @@ function parseCustomId(customId) {
   const [, kind, ownerId] = parts;
   if (kind === 'l') return { kind, ownerId, what: parts[3] };
   if (kind === 't') return { kind, ownerId, talentId: parts[3] };
+  if (kind === 'h') return { kind, ownerId, tag: parts[3] };
   if (kind === 'a') {
     return { kind, ownerId, tag: parts[3], step: Number(parts[4]), action: parts[5], arg: parts.length > 6 ? parts[6] : null };
   }
@@ -131,6 +133,15 @@ function footerFor(source, lang) {
   return { text: t('dungeon.footer', lang, { server: guild ? guild.name : t('dungeon.private', lang) }) };
 }
 
+function festivalCurrency(lang, qty) {
+  return require('../../services/festival').currencyLabel(lang, qty);
+}
+
+function festivalSeasonName(seasonId, lang) {
+  const festival = require('../../services/festival');
+  return festival.seasonName({ id: seasonId, ...festival.SEASONS[seasonId] }, lang);
+}
+
 function enemyName(id, lang) {
   return localized(ENEMIES[id]?.name, lang);
 }
@@ -160,6 +171,8 @@ function formatLogEntry(entry, lang) {
   }
   if (entry.k === 'emptyRoom') p.flavor = localized(EMPTY_FLAVORS[p.flavor], lang);
   if (entry.k === 'bought') p.item = t(`dungeon.items.${p.item}`, lang);
+  if (p.season || entry.k === 'festivalSpark') p.currency = festivalCurrency(lang, p.sparks);
+  if (p.season) p.season = festivalSeasonName(p.season, lang);
   return t(`dungeon.log.${entry.k}`, lang, p);
 }
 
@@ -282,11 +295,12 @@ function phaseBlock(run, lang, settlement) {
           max: c.maxHp,
           shield: c.shield > 0 ? t('dungeon.combat.shield', lang, { value: c.shield }) : '',
         }),
+        run.festival ? t('dungeon.festival.combatLine', lang, { season: festivalSeasonName(run.festival.season, lang), sparks: c.guardian ? run.festival.perGuardian || 3 : run.festival.perKill || 1, currency: festivalCurrency(lang, 2) }) : null,
         intentTexts(run, lang).long,
         t('dungeon.combat.hint', lang, { block: 4 + run.floor + p.def, bolt: engine.boltCost(run), swipe: engine.swipeCost(run) }),
       ];
       if (c.guardian) parts.push(t('dungeon.combat.noFlee', lang));
-      return parts.join('\n\n');
+      return parts.filter(Boolean).join('\n\n');
     }
     case 'event': {
       const ev = run.event;
@@ -310,6 +324,13 @@ function phaseBlock(run, lang, settlement) {
       }
       if (ev.type === 'fountain') return t('dungeon.events.fountain', lang);
       if (ev.type === 'trap') return t('dungeon.events.trap', lang, { damage: ev.damage, jump: trapJumpChance(run) });
+      if (ev.type === 'grave') {
+        return [
+          t('dungeon.events.grave', lang, { user: `<@${ev.grave.ownerId}>` }),
+          Number(ev.grave.lootShare) > 0 && !ev.looted ? t('dungeon.events.graveLoot', lang, { gold: ev.grave.lootShare }) : null,
+          ev.grave.revivable && !ev.prayed ? t('dungeon.events.graveRevive', lang) : t('dungeon.events.graveGone', lang),
+        ].filter(Boolean).join('\n\n');
+      }
       return '';
     }
     case 'reward': {
@@ -337,6 +358,30 @@ function phaseBlock(run, lang, settlement) {
   }
 }
 
+/** Nome e raridade dos itens que a descida rendeu (catálogo da Casinha). */
+function dropNames(itemIds, lang) {
+  try {
+    const { getItem, itemName, rarityInfo } = require('../home/homeCatalog');
+    return itemIds
+      .map(getItem)
+      .filter(Boolean)
+      .map((entry) => `**${itemName(entry, lang)}** (${rarityInfo(entry.rarity)[lang === 'en' ? 'en' : 'pt']})`)
+      .join(', ');
+  } catch (_) {
+    return itemIds.join(', ');
+  }
+}
+
+/** Chegou ao andar da chave da casinha e ainda não tem casa: avisa no fim da descida. */
+function hasNewHouseKey(run) {
+  try {
+    const homeStore = require('../home/homeStore');
+    return run.floor >= homeStore.FREE_HOUSE_FLOOR && homeStore.getHomeAccess(run.ownerId).canClaimFree;
+  } catch (_) {
+    return false;
+  }
+}
+
 function endBlock(run, lang, settlement) {
   const s = settlement || { gold: run.player.gold, payout: engine.computeGrossPayout(run), echoes: engine.computeEchoes(run), fee: 0, cappedBy: null };
   const outcome = run.outcome || run.phase;
@@ -351,7 +396,10 @@ function endBlock(run, lang, settlement) {
   if (s.cappedBy === 'run') lines.push(t('dungeon.end.capRun', lang, { cap: store.getSettings().runPayoutCap }));
   if (s.cappedBy === 'daily') lines.push(t('dungeon.end.capDaily', lang));
   lines.push(t('dungeon.end.echoes', lang, { echoes: s.echoes }));
+  if (Array.isArray(s.drops) && s.drops.length) lines.push(t('dungeon.end.drops', lang, { items: dropNames(s.drops, lang) }));
   if (s.newBest) lines.push(t('dungeon.end.best', lang, { floor: run.floor }));
+  if (settlement && hasNewHouseKey(run)) lines.push(t('dungeon.end.houseKey', lang));
+  if (s.festival > 0) lines.push(t('dungeon.end.festival', lang, { sparks: s.festival, currency: festivalCurrency(lang, s.festival) }));
   lines.push(t('dungeon.end.stats', lang, { rooms: run.stats.rooms, kills: run.stats.kills }));
   if (Number.isFinite(settlement?.balance)) lines.push(t('dungeon.end.balance', lang, { balance: settlement.balance }));
   return lines.join('\n\n');
@@ -369,6 +417,8 @@ const ACTION_STYLE = {
   shield: { emoji: () => buttonEmoji('shield', '🛡️'), style: ButtonStyle.Secondary, label: 'shield' },
   disarm: { emoji: () => '🔧', style: ButtonStyle.Secondary, label: 'disarm' },
   forfeit: { emoji: () => '🏳️', style: ButtonStyle.Secondary, label: 'forfeit' },
+  loot: { emoji: () => buttonEmoji('offer', '💰'), style: ButtonStyle.Success, label: 'loot' },
+  revive: { emoji: () => buttonEmoji('pray', '🙏'), style: ButtonStyle.Primary, label: 'revive' },
   forfeit_confirm: { emoji: () => '🏳️', style: ButtonStyle.Danger, label: 'forfeitYes' },
   forfeit_cancel: { emoji: () => '↩️', style: ButtonStyle.Secondary, label: 'forfeitNo' },
 };
@@ -447,7 +497,16 @@ function buildRunComponents(run, lang) {
     const bag = button({ id: lobbyId(owner, 'bag'), label: t('dungeon.buttons.bag', lang), emoji: buttonEmoji('bag', '🎒') });
     return [new ActionRowBuilder().addComponents(moves), new ActionRowBuilder().addComponents([make(potion), bag, make(forfeit)])];
   }
-  return rowsOf(actions.map(make), 3);
+  const rows = rowsOf(actions.map(make), 3);
+  // Luta em servidor: quem assiste pode dar uma mãozinha (até engine.MAX_HELPERS pessoas)
+  if (run.phase === 'combat' && run.guildId && (run.helpers || []).length < engine.MAX_HELPERS && rows.length < 5) {
+    rows.push(
+      new ActionRowBuilder().addComponents(
+        button({ id: `${PREFIX}:h:${owner}:${runTag(run)}`, label: t('dungeon.buttons.help', lang, { left: engine.MAX_HELPERS - (run.helpers || []).length }), emoji: '🤝' })
+      )
+    );
+  }
+  return rows;
 }
 
 function buildRunEmbed(run, source, lang, { settlement = null, notice = null } = {}) {
@@ -515,6 +574,7 @@ function buildLobbyView(user, source, { notice = null } = {}) {
     })
   );
   if (status.activeRun) {
+    if (status.activeRun.awaitingReturn) lines.push(t('dungeon.lobby.revived', lang));
     lines.push(t('dungeon.lobby.activeRun', lang, { floor: status.activeRun.floor, gold: status.activeRun.player.gold }));
   } else if (status.lastRun) {
     lines.push(
@@ -621,18 +681,112 @@ function buildTalentsView(user, source, { notice = null } = {}) {
   return { embeds: [embed], components: rowsOf(buttons, 3) };
 }
 
-function buildHallView(source) {
+const HALL_SCOPES = { hall: 'all', halla: 'all', hallw: 'week', hallg: 'guild' };
+
+/**
+ * Rankings das Catacumbas: de sempre (andar mais fundo), da semana (zera segunda 00:00 BRT) e do
+ * servidor (quem desceu a partir daqui). Os botões trocam a lista na mesma mensagem.
+ */
+function buildHallView(source, { what = 'hall', ownerId = null, now = Date.now() } = {}) {
   const lang = getLanguage(source);
-  const top = store.getHallOfFame(10);
+  const guildId = source?.guildId || source?.guild?.id || null;
+  // 'hall' abre a lista (botão do menu); dentro dela, as abas usam halla/hallw/hallg
+  const scopeKey = HALL_SCOPES[what] && what !== 'hall' && (what !== 'hallg' || guildId) ? what : 'halla';
+  const scope = HALL_SCOPES[scopeKey];
+  const ranked = store.getLeaderboard({ scope: scope === 'guild' ? 'week' : scope, guildId: scope === 'guild' ? guildId : null, now });
+  const top = ranked.slice(0, 10);
+  const lineKey = scope === 'all' ? 'dungeon.hall.line' : 'dungeon.hall.lineWeek';
   const lines = top.map((entry, index) =>
-    t('dungeon.hall.line', lang, { pos: index + 1, user: `<@${entry.userId}>`, floor: entry.bestFloor, victories: entry.victories, payout: entry.bestPayout })
+    t(lineKey, lang, { pos: index + 1, user: `<@${entry.userId}>`, floor: entry.bestFloor, victories: entry.victories, payout: entry.coins, kills: entry.kills })
   );
+  const viewerId = ownerId || source?.user?.id || source?.author?.id || null;
+  const position = viewerId ? ranked.findIndex((entry) => entry.userId === String(viewerId)) + 1 : 0;
+
+  const titleKey = { all: 'dungeon.hall.title', week: 'dungeon.hall.titleWeek', guild: 'dungeon.hall.titleGuild' }[scope];
+  const descKey = { all: 'dungeon.hall.desc', week: 'dungeon.hall.descWeek', guild: 'dungeon.hall.descGuild' }[scope];
+  const parts = [t(descKey, lang, { lines: lines.length > 0 ? lines.join('\n\n') : t('dungeon.hall.empty', lang), server: source?.guild?.name || '' })];
+  if (position > 10) parts.push(t('dungeon.hall.you', lang, { pos: position }));
+  if (scope !== 'all') parts.push(t('dungeon.hall.weekReset', lang));
+
   const embed = new EmbedBuilder()
     .setColor(PYXIE_COLORS.gold)
-    .setTitle(t('dungeon.hall.title', lang))
-    .setDescription(t('dungeon.hall.desc', lang, { lines: lines.length > 0 ? lines.join('\n\n') : t('dungeon.hall.empty', lang) }))
+    .setTitle(t(titleKey, lang))
+    .setDescription(parts.join('\n\n'))
     .setFooter(footerFor(source, lang));
+
+  const payload = { embeds: [embed], allowedMentions: { parse: [] } };
+  if (viewerId) {
+    const tabs = [
+      ['halla', 'btnAll', buttonEmoji('hall', '🏆')],
+      ['hallw', 'btnWeek', '📅'],
+      ...(guildId ? [['hallg', 'btnGuild', '🏰']] : []),
+    ].map(([id, label, emoji]) =>
+      button({
+        id: lobbyId(viewerId, id),
+        label: t(`dungeon.hall.${label}`, lang),
+        emoji,
+        style: id === scopeKey ? ButtonStyle.Primary : ButtonStyle.Secondary,
+        disabled: id === scopeKey,
+      })
+    );
+    payload.components = [new ActionRowBuilder().addComponents(...tabs)];
+  }
+  return payload;
+}
+
+// ---------------------------------------------------------------- threads e inatividade
+/** Mensagem que fica no canal quando a descida vai para a thread. */
+function buildThreadNotice(thread, source) {
+  const lang = getLanguage(source);
+  const url = `https://discord.com/channels/${thread.guildId || source?.guildId}/${thread.id}`;
+  return {
+    content: t('dungeon.thread.started', lang, { thread: `<#${thread.id}>` }),
+    embeds: [],
+    files: [],
+    attachments: [],
+    components: [
+      new ActionRowBuilder().addComponents(
+        new ButtonBuilder().setStyle(ButtonStyle.Link).setURL(url).setLabel(t('dungeon.thread.btnGo', lang)).setEmoji('🕯️')
+      ),
+    ],
+    allowedMentions: { parse: [] },
+  };
+}
+
+/** DM para quem morreu: outra pessoa rezou no túmulo e a descida voltou. */
+function buildReviveNoticeView(notice) {
+  const lang = notice.lang === 'en' ? 'en' : 'pt';
+  const embed = new EmbedBuilder()
+    .setColor(PYXIE_COLORS.gold)
+    .setTitle(t('dungeon.revive.title', lang))
+    .setDescription(t('dungeon.revive.body', lang, { user: `<@${notice.prayerId}>`, floor: notice.floor }))
+    .setFooter({ text: t('dungeon.idle.footer', lang) })
+    .setTimestamp(notice.at || Date.now());
   return { embeds: [embed], allowedMentions: { parse: [] } };
+}
+
+/** Resumo de game over por inatividade (vai por DM; sem DM aberta, vai na thread). */
+function buildIdleSummaryView(notice) {
+  const lang = notice.lang === 'en' ? 'en' : 'pt';
+  const s = notice.settlement || {};
+  const lines = [
+    t('dungeon.idle.intro', lang, { minutes: notice.idleMinutes, floor: notice.floor }),
+    t('dungeon.idle.summaryHeader', lang),
+    t('dungeon.end.gold', lang, { gold: s.gold || 0 }),
+    t('dungeon.end.payout', lang, { payout: s.payout || 0 }),
+    t('dungeon.end.salvage', lang),
+    t('dungeon.end.echoes', lang, { echoes: s.echoes || 0 }),
+  ];
+  if (Array.isArray(s.drops) && s.drops.length) lines.push(t('dungeon.end.drops', lang, { items: dropNames(s.drops, lang) }));
+  if (s.newBest) lines.push(t('dungeon.end.best', lang, { floor: notice.floor }));
+  lines.push(t('dungeon.end.stats', lang, { rooms: notice.rooms || 0, kills: notice.kills || 0 }), t('dungeon.idle.tip', lang));
+  const embed = new EmbedBuilder()
+    .setColor(PHASE_COLORS.dead)
+    .setTitle(t('dungeon.idle.title', lang))
+    .setDescription(lines.join('\n\n'))
+    .setFooter({ text: t('dungeon.idle.footer', lang) })
+    .setTimestamp(notice.endedAt || Date.now());
+  return { embeds: [embed] };
 }
 
 function buildBagView(run, source) {
@@ -679,6 +833,9 @@ module.exports = {
   buildHelpView,
   buildTalentsView,
   buildHallView,
+  buildThreadNotice,
+  buildIdleSummaryView,
+  buildReviveNoticeView,
   buildBagView,
   limitMessage,
 };

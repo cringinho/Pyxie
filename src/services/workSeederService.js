@@ -28,6 +28,12 @@ const PROFESSIONS = [
   'telemarketing',
   'animador_festa',
   'advogada',
+  'minerador',
+  'pescador',
+  'florista',
+  'marceneiro',
+  'costureiro',
+  'arqueologo',
   'alquimista',
   'mago',
   'ferreiro',
@@ -38,6 +44,12 @@ const PROFESSIONS = [
 
 // Matriz temática para garantir máxima variedade e zero repetição de situações
 const PROFESSION_SUBTHEMES = {
+  minerador: ['Segurança em galerias, escoramento e ventilação', 'Gases de mina, detectores e evacuação', 'Extração de cristais e minérios sem danificar a peça', 'Geologia de veios, sondagem e planejamento de lavra', 'Ferramentas, explosivos controlados e equipamentos de proteção'],
+  pescador: ['Iscas, anzóis e técnicas de pesca de rio e mar', 'Segurança no barco, clima e coletes salva-vidas', 'Conservação do pescado na cadeia de frio', 'Redes, nós e manutenção de equipamento', 'Defeso, tamanhos mínimos e pesca sustentável'],
+  florista: ['Conservação de flores de corte e câmara fria', 'Arranjos para eventos, casamentos e homenagens', 'Pragas, doenças e cuidado com mudas', 'Luz, rega e substrato para cada espécie', 'Gestão da floricultura e datas sazonais'],
+  marceneiro: ['Segurança com serras, lixadeiras e ferramentas de corte', 'Secagem, empenamento e escolha de madeira', 'Encaixes, colagem e montagem sem pregos aparentes', 'Acabamentos, vernizes, óleos e ceras', 'Orçamento, prazos e organização da oficina'],
+  costureiro: ['Máquina de costura, linha, bobina e manutenção', 'Medidas, moldes e modelagem sob medida', 'Tecidos, encolhimento, viés e caimento', 'Provas, ajustes, pences e bainhas', 'Precificação e gestão de ateliê'],
+  arqueologo: ['Registro de achados, fotografia e mapa do sítio', 'Ferramentas de escavação e objetos frágeis', 'Estratigrafia e camadas do solo', 'Datação por carbono-14 e outros métodos', 'Ética, comunidades e conservação de acervo'],
   programador: [
     'Arquitetura de Microsserviços, Mensageria e Filas (Kafka/RabbitMQ)',
     'Otimização de Queries SQL, Índices Compostos e Lock de Transações',

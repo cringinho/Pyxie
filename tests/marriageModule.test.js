@@ -116,6 +116,11 @@ try {
   const claimRes = marriageManager.claimVaultInterest(userB);
   assert.equal(claimRes.success, true, 'Resgate de juros diários deve ser liberado');
   assert.equal(claimRes.yieldAmount, 25, 'Com 50% de amor, o rendimento de 1000 moedas deve ser 25 moedas');
+  // Teto diário do Cofre do Amor (§5): cofre gigante com amor cheio rende no máximo 200
+  assert.equal(marriageManager.VAULT_DAILY_CAP, 200);
+  assert.equal(marriageManager.estimateVaultYield(1000000, 100), 200, 'Rendimento diário limitado a 200 moedas');
+  assert.equal(marriageManager.estimateVaultYield(1000, 50), 25, 'Abaixo do teto, a regra de 5% continua igual');
+  assert.equal(marriageManager.estimateVaultYield(0, 100), 0, 'Cofre vazio não rende');
   assert.equal(getBalance(userB), balBeforeInterest + 25, 'Juros devem ser creditados');
 
   // Tentativa durante o cooldown de 24h

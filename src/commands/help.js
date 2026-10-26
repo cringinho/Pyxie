@@ -32,7 +32,7 @@ async function executeButton({ interaction }) {
 function getModuleChoices() {
   return Object.values(MODULE_METADATA).map((m) => ({
     name: `${m.emoji} ${m.labelEn || m.label}`,
-    nameLocalizations: {
+    name_localizations: {
       'pt-BR': `${m.emoji} ${m.label}`,
     },
     value: m.id,

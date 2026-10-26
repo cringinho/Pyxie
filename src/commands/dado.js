@@ -1,7 +1,7 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const { DICE } = require('./commandNames');
-const { getLanguage } = require('../utils/i18n');
-const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
+const { getLanguage, t } = require('../utils/i18n');
+const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { getThemeEmoji } = require('../utils/themeEmojis');
 
 function rollDice(sides = 6, count = 1) {
@@ -25,46 +25,30 @@ function rollDice(sides = 6, count = 1) {
 
 function buildDiceEmbed(user, result, source = null) {
   const lang = getLanguage(source);
-  const isEn = lang === 'en';
-
   const isD20 = result.sides === 20 && result.count === 1;
   const isNat20 = isD20 && result.rolls[0] === 20;
   const isNat1 = isD20 && result.rolls[0] === 1;
 
-  let highlight = '';
   let color = PYXIE_COLORS.purple || '#9b5de5';
-
-  if (isNat20) {
-    color = '#facc15'; // Dourado
-    highlight = isEn
-      ? '\n🌟 **COSMIC CRITICAL SUCCESS! (NAT 20)** Destiny bends to your will!'
-      : '\n🌟 **SUCESSO CRÍTICO CÓSMICO! (NAT 20)** O destino se curva à sua vontade!';
-  } else if (isNat1) {
-    color = '#ef4444'; // Vermelho
-    highlight = isEn
-      ? '\n💀 **CRITICAL CRINGE FAILURE! (NAT 1)** Even Pyxie\'s fairies felt second-hand embarrassment...'
-      : '\n💀 **FALHA CRÍTICA CRINGE! (NAT 1)** Até as fadinhas da Pyxie sentiram vergonha alheia...';
-  }
+  if (isNat20) color = '#facc15';
+  if (isNat1) color = '#ef4444';
 
   const rollsStr = result.rolls.length > 1
-    ? `\`${result.rolls.join('` + `')}\` = **${result.total}**`
+    ? `\`${result.rolls.join('\` + \`')}\` = **${result.total}**`
     : `**${result.total}**`;
 
-  const diceEmoji = getThemeEmoji('dice');
-  const title = isEn
-    ? `${diceEmoji} ✦ Roll Dice — d${result.sides}`
-    : `${diceEmoji} ✦ Rolar Dados — d${result.sides}`;
-
-  const desc = isEn
-    ? `**${user.displayName || user.username}** shook the pouch and rolled **${result.count}d${result.sides}**!\n\n### 🎯 Result: ${rollsStr}${highlight}`
-    : `**${user.displayName || user.username}** sacudiu a sacola mágica e rolou **${result.count}d${result.sides}**!\n\n### 🎯 Resultado: ${rollsStr}${highlight}`;
+  const lines = [
+    t('dice.body', lang, { user: user.displayName || user.username }),
+    t('dice.result', lang, { result: rollsStr }),
+  ];
+  if (isNat20) lines.push(t('dice.nat20', lang));
+  if (isNat1) lines.push(t('dice.nat1', lang));
 
   return new EmbedBuilder()
     .setColor(color)
-    .setTitle(title)
-    .setDescription(desc)
-    .setFooter({ text: `Total: ${result.total}` })
-    .setTimestamp();
+    .setTitle(t('dice.title', lang, { dice: getThemeEmoji('dice'), count: result.count, sides: result.sides }))
+    .setDescription(lines.join('\n\n'))
+    .setFooter({ text: t('dice.footer', lang, { total: result.total }) });
 }
 
 module.exports = {

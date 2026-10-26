@@ -1,84 +1,44 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const { COINFLIP } = require('./commandNames');
 const { getBalance, spendCoins, addCoins } = require('../services/economy');
-const { getLanguage } = require('../utils/i18n');
-const { pyxieFooter } = require('../utils/pyxieVoice');
+const { getLanguage, t } = require('../utils/i18n');
+const { getEmoji } = require('../utils/appEmojis');
+
+const coinIcon = () => getEmoji('COIN') || '🪙';
+const SIDE_EMOJI = { cara: '🪙', coroa: '👑' };
 
 function flipCoin(userChoice, bet, userId, source = null) {
   const lang = getLanguage(source);
-  const isEn = lang === 'en';
-
   const safeBet = Math.max(10, Number(bet) || 10);
-  const balance = getBalance(userId);
-
-  if (balance < safeBet) {
-    return {
-      success: false,
-      error: isEn
-        ? `❌ You don't have enough coins! Your current balance is **${balance} Coins 💰**.`
-        : `❌ Você não possui saldo suficiente! Seu saldo atual é **${balance} Moedas 💰**.`,
-    };
-  }
 
   const normalizedChoice = String(userChoice).toLowerCase().trim();
   const choice = (normalizedChoice.startsWith('cor') || normalizedChoice.startsWith('tail')) ? 'coroa' : 'cara';
-
   const outcome = Math.random() < 0.5 ? 'cara' : 'coroa';
   const won = choice === outcome;
 
-  let newBalance = balance;
-  if (won) {
-    newBalance = addCoins(userId, safeBet);
-  } else {
-    const spentRes = spendCoins(userId, safeBet);
-    newBalance = spentRes.balance;
+  // A aposta sai da carteira sob a trava da economia; se não der, nada acontece
+  const spent = spendCoins(userId, safeBet);
+  if (!spent.spent) {
+    return {
+      success: false,
+      error: t('coinflip.noFunds', lang, { balance: getBalance(userId), bet: safeBet, coin: coinIcon() }),
+    };
   }
+  const newBalance = won ? addCoins(userId, safeBet * 2) : spent.balance;
 
-  const choiceEmoji = choice === 'cara' ? '🪙' : '👑';
-  const outcomeEmoji = outcome === 'cara' ? '🪙' : '👑';
-
-  const choiceLabel = isEn ? (choice === 'cara' ? 'HEADS' : 'TAILS') : choice.toUpperCase();
-  const outcomeLabel = isEn ? (outcome === 'cara' ? 'HEADS' : 'TAILS') : outcome.toUpperCase();
-
+  const sideName = (side) => t(side === 'cara' ? 'coinflip.heads' : 'coinflip.tails', lang);
   const embed = new EmbedBuilder()
-    .setTimestamp()
-    .setFooter({ text: isEn ? `Bet: ${safeBet} Coins • Heads or Tails` : `Aposta: ${safeBet} Moedas • Cara ou Coroa` });
-
-  if (won) {
-    embed
-      .setColor('#10b981')
-      .setTitle(isEn ? `🪙 ✦ It's ${outcomeLabel}! You Won!` : `🪙 ✦ Deu ${outcomeLabel}! Você Venceu!`)
-      .setDescription(
-        isEn
-          ? `*The magic coin spun through the air with stellar sparks and landed face up!*\n\n` +
-            `🎲 **Result:** **${outcomeLabel} ${outcomeEmoji}**\n` +
-            `🎯 **Your Pick:** **${choiceLabel} ${choiceEmoji}**\n\n` +
-            `🎉 **Congratulations!** You predicted correctly and won **+${safeBet} Coins 💰**!\n` +
-            `💳 **New Balance:** **${newBalance} Coins**`
-          : `*A moeda mágica girou no ar, cintilou com faíscas estelares e pousou com a face voltada para cima!*\n\n` +
-            `🎲 **Resultado:** **${outcomeLabel} ${outcomeEmoji}**\n` +
-            `🎯 **Sua Escolha:** **${choiceLabel} ${choiceEmoji}**\n\n` +
-            `🎉 **Parabéns!** Você acertou e faturou **+${safeBet} Moedas 💰**!\n` +
-            `💳 **Novo Saldo:** **${newBalance} Moedas**`
-      );
-  } else {
-    embed
-      .setColor('#ef4444')
-      .setTitle(isEn ? `🪙 ✦ It's ${outcomeLabel}! Better luck next time...` : `🪙 ✦ Deu ${outcomeLabel}! Não foi dessa vez...`)
-      .setDescription(
-        isEn
-          ? `*The coin spun in the air and whimsically landed on the other side!*\n\n` +
-            `🎲 **Result:** **${outcomeLabel} ${outcomeEmoji}**\n` +
-            `🎯 **Your Pick:** **${choiceLabel} ${choiceEmoji}**\n\n` +
-            `💀 You lost **${safeBet} Coins** to Pyxie's cauldron!\n` +
-            `💳 **New Balance:** **${newBalance} Coins**`
-          : `*A moeda mágica girou no ar e caprichosamente caiu na outra face!*\n\n` +
-            `🎲 **Resultado:** **${outcomeLabel} ${outcomeEmoji}**\n` +
-            `🎯 **Sua Escolha:** **${choiceLabel} ${choiceEmoji}**\n\n` +
-            `💀 Você perdeu **${safeBet} Moedas** para a Pyxie!\n` +
-            `💳 **Novo Saldo:** **${newBalance} Moedas**`
-      );
-  }
+    .setColor(won ? '#10b981' : '#ef4444')
+    .setTitle(t(won ? 'coinflip.winTitle' : 'coinflip.loseTitle', lang, { side: sideName(outcome) }))
+    .setDescription(
+      [
+        t(won ? 'coinflip.winBody' : 'coinflip.loseBody', lang, { bet: safeBet, coin: coinIcon() }),
+        t('coinflip.pick', lang, { pickEmoji: SIDE_EMOJI[choice], pick: sideName(choice) }),
+        t('coinflip.result', lang, { resultEmoji: SIDE_EMOJI[outcome], result: sideName(outcome) }),
+        t('coinflip.balance', lang, { balance: Number(newBalance).toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR'), coin: coinIcon() }),
+      ].join('\n\n')
+    )
+    .setFooter({ text: t('coinflip.footer', lang, { bet: safeBet }) });
 
   return { success: true, won, outcome, newBalance, embed };
 }
@@ -141,9 +101,7 @@ module.exports = {
       bet = Number(foundBet);
     } else {
       const isEn = getLanguage(message) === 'en';
-      return message.reply(isEn
-        ? '❌ Provide your choice and bet amount! Example: `py!coinflip heads 50`'
-        : '❌ Informe sua escolha e o valor da aposta! Exemplo: `py!coinflip cara 50`');
+      return message.reply(t('coinflip.usage', message, { example: isEn ? 'py!coinflip heads 50' : 'py!coinflip cara 50' }));
     }
 
     const result = flipCoin(choice, bet, message.author.id, message);

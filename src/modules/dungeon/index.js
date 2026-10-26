@@ -5,6 +5,8 @@ const store = require('./dungeonStore');
  * Módulo Catacumbas de Veludo (Cog Pattern): dungeon crawler roguelike da Pyxie.
  *
  * - Ticket de 50 moedinhas, 5 andares procedurais, guardiões e a chefe final Nyx.
+ * - Cada descida num servidor ganha uma thread própria; parada por 20 minutos vira game over
+ *   com resumo por DM. Rankings de sempre, da semana e do servidor.
  * - Combate por turnos com intenções telegrafadas, luz de vela e fuga com tesouro.
  * - Meta-progressão por Ecos (talentos permanentes, nunca convertidos em moedinhas).
  * - Tetos de pagamento e limite diário ajustáveis em data/modulesConfig.json (modules.dungeon.data)
@@ -36,6 +38,8 @@ module.exports = {
       // A Blacklist Global já é respondida pelo handler principal do index.js
       const { isBlacklisted } = require('../../services/trustAndSafety');
       if (isBlacklisted({ guildId: interaction.guildId, userId: interaction.user?.id }).blacklisted) return;
+      // Servidor no modo clássico ou canal não liberado no /py-setup
+      if (await require('../../commands/setup').denyInteractionIfBlocked(interaction, 'py-dungeon')) return;
       try {
         await pyDungeon.handleDungeonInteraction(interaction);
       } catch (err) {
@@ -46,6 +50,20 @@ module.exports = {
         else await interaction.reply(payload).catch(() => null);
       }
     });
+
+    // Game over por inatividade: aviso na thread, resumo por DM e thread fechada (a cada minuto)
+    let sweeping = false;
+    ctx.registerInterval(async () => {
+      if (sweeping) return;
+      sweeping = true;
+      try {
+        await require('./dungeonIdle').sweep(ctx.client);
+      } catch (err) {
+        console.warn('[dungeon] Falha ao fechar descidas paradas:', err.message);
+      } finally {
+        sweeping = false;
+      }
+    }, 60 * 1000);
 
     // Aquece o cache de sprites para o primeiro clique não pagar o carregamento dos assets
     ctx.registerTimeout(async () => {

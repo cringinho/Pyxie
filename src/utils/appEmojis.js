@@ -111,13 +111,15 @@ const EMOJI_DEFINITIONS = {
   WITCH: { name: 'witchwumpus', aliases: ['bruxa', 'witch'], fallback: '🧙' },
   BOOK: { name: '6449spellbook', aliases: ['livro', 'book', 'book2716'], fallback: '📖' },
   SHIELD: { name: 'shieldsuccess22', aliases: ['escudo', 'shield'], fallback: '🛡️' },
-  ZAP: { name: 'zap65', aliases: ['energia', 'zap'], fallback: '⚡' },
+  // zap65 é o logo do WhatsApp, não um raio: ZAP fica no Unicode até existir um raio no catálogo
+  ZAP: { name: 'energia', aliases: [], fallback: '⚡' },
   CONTROLLER: { name: 'ykawaiicontrolle', aliases: ['controle', 'game'], fallback: '🎮' },
   CODING: { name: 'coding41', aliases: ['trabalho', 'work'], fallback: '💼' },
 
   // UI & Notificações
-  CHECK: { name: 'shieldsuccess22', aliases: ['check_mark', 'check', '6586_TickYes_RainbowGif', '9434purpleverification'], fallback: '✅' },
-  CROSS: { name: 'x_', aliases: ['cross_mark', 'cross', 'erro'], fallback: '❌' },
+  CHECK: { name: '5707lightpurplecheck', aliases: ['shieldsuccess22', 'check_mark', 'check', '6586_TickYes_RainbowGif', '9434purpleverification'], fallback: '✅' },
+  // x_ é o logo do X (Twitter): a falha usa o dado de "critical failure" do catálogo
+  CROSS: { name: '41077criticalfailure', aliases: ['cross_mark', 'cross', 'erro'], fallback: '❌' },
   CLOCK: { name: 'relogio', aliases: ['clock', 'timer', 'ampulheta', 'hourglass'], fallback: '⏰' },
   HOURGLASS: { name: 'relogio', aliases: ['clock', 'timer', 'ampulheta', 'hourglass'], fallback: '⏰' },
   GIFT: { name: 'qbgifts48', aliases: ['presente', 'gift', 'acgift70'], fallback: '🎁' },

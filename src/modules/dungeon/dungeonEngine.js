@@ -482,6 +482,15 @@ function enterRoom(run, room, key, firstVisit) {
       run.phase = 'event';
       log(run, 'trapTriggered');
       return null;
+    case 'grave':
+      if (!room.grave) {
+        room.cleared = true;
+        return null;
+      }
+      run.event = { type: 'grave', roomKey: key, grave: room.grave, looted: false, prayed: false };
+      run.phase = 'event';
+      log(run, 'graveFound', { user: room.grave.ownerName || `<@${room.grave.ownerId}>`, floor: f });
+      return null;
     case 'candle': {
       room.cleared = true;
       const before = run.player.light;
@@ -726,6 +735,37 @@ function resolveEvent(run, action, arg) {
         p.poisonTurns = 3;
         log(run, 'fountainMurky');
       }
+      return finishEvent(run);
+    }
+  }
+
+  if (ev.type === 'grave') {
+    const grave = ev.grave;
+    if (action === 'leave') {
+      log(run, 'graveLeft');
+      room.cleared = true;
+      return finishEvent(run);
+    }
+    // Espólios: a parte do ouro perdido que o store reservou para esta pessoa
+    if (action === 'loot') {
+      const amount = Math.max(0, Math.floor(Number(grave.lootShare) || 0));
+      p.gold += amount;
+      ev.looted = true;
+      run.coop = [...(run.coop || []), { type: 'loot', graveId: grave.id, amount }];
+      log(run, 'graveLooted', { gold: amount });
+      if (!grave.revivable) {
+        room.cleared = true;
+        return finishEvent(run);
+      }
+      return null;
+    }
+    // Oração: gasta vela; quem decide se a alma volta é o store (regra das 24h)
+    if (action === 'revive') {
+      p.light = Math.max(0, p.light - 10);
+      ev.prayed = true;
+      run.coop = [...(run.coop || []), { type: 'revive', graveId: grave.id }];
+      log(run, 'gravePrayed', { user: grave.ownerName || `<@${grave.ownerId}>` });
+      room.cleared = true;
       return finishEvent(run);
     }
   }
@@ -1161,6 +1201,12 @@ function winCombat(run) {
   }
   run.stats.kills++;
   log(run, c.guardian ? 'guardianDefeated' : 'enemyDefeated', { enemy: c.enemyId, gold });
+  // Festival: monstros fantasiados soltam Fagulhas (creditadas no fim da descida)
+  if (run.festival) {
+    const sparks = c.guardian ? Number(run.festival.perGuardian) || 3 : Number(run.festival.perKill) || 1;
+    run.festival.collected = (Number(run.festival.collected) || 0) + sparks;
+    log(run, 'festivalSpark', { sparks });
+  }
   fx(run, 'victory');
   if (hasCharm(run, 'amethyst_heart')) {
     const healed = heal(run, 4);
@@ -1282,6 +1328,10 @@ function getAvailableActions(run) {
         add('jump');
         add('shield');
         add('disarm');
+      } else if (ev.type === 'grave') {
+        add('loot', !ev.looted && Number(ev.grave.lootShare) > 0);
+        add('revive', Boolean(ev.grave.revivable) && !ev.prayed);
+        add('leave');
       }
       break;
     }
@@ -1364,6 +1414,73 @@ function applyAction(run, action, arg = null, now = Date.now()) {
   return { ok: true };
 }
 
+// ---------------------------------------------------------------- cooperação
+const MAX_HELPERS = 2;
+
+/**
+ * Ajuda de quem assiste à descida (thread pública): uma vez por pessoa, até MAX_HELPERS por
+ * descida e só em combate. Com pouca vida, cura 30%; senão, um golpe de 20% da vida do inimigo
+ * que nunca termina a luta sozinho (a vitória é sempre de quem desce).
+ */
+function applyHelp(run, helperId, now = Date.now()) {
+  if (!run || isTerminal(run)) return { ok: false, reason: 'finished' };
+  if (run.phase !== 'combat' || !run.combat) return { ok: false, reason: 'not_combat' };
+  const id = String(helperId);
+  if (id === run.ownerId) return { ok: false, reason: 'self' };
+  run.helpers = Array.isArray(run.helpers) ? run.helpers : [];
+  if (run.helpers.includes(id)) return { ok: false, reason: 'already' };
+  if (run.helpers.length >= MAX_HELPERS) return { ok: false, reason: 'limit' };
+
+  run.log = [];
+  run.fx = [];
+  const p = run.player;
+  let kind;
+  let amount;
+  if (p.hp < p.maxHp / 2) {
+    kind = 'heal';
+    amount = heal(run, Math.ceil(p.maxHp * 0.3));
+    log(run, 'helpedHeal', { user: `<@${id}>`, amount });
+  } else {
+    kind = 'hit';
+    const c = run.combat;
+    amount = Math.min(Math.ceil(c.maxHp * 0.2), Math.max(0, c.hp - 1));
+    c.hp -= amount;
+    fx(run, 'dmgEnemy', { amount });
+    log(run, 'helpedHit', { user: `<@${id}>`, amount });
+  }
+  run.helpers.push(id);
+  run.step++;
+  run.updatedAt = now;
+  return { ok: true, kind, amount };
+}
+
+/**
+ * Volta da morte depois da oração de outra pessoa: a descida continua na sala em que caiu,
+ * fora de combate, com metade da vida e o ouro que sobrou (sem o resgate já pago e o saqueado).
+ */
+function reviveRun(run, { gold, now = Date.now(), prayerId = null } = {}) {
+  const p = run.player;
+  p.hp = Math.max(1, Math.ceil(p.maxHp / 2));
+  p.gold = Math.max(0, Math.floor(gold));
+  p.light = Math.max(p.light, 30);
+  p.poison = 0;
+  p.poisonTurns = 0;
+  const room = run.map?.rooms?.[run.map.pos];
+  if (room) room.cleared = true;
+  run.phase = 'explore';
+  run.outcome = null;
+  run.combat = null;
+  run.event = null;
+  run.reward = null;
+  run.confirmForfeit = false;
+  run.log = [];
+  run.fx = [];
+  log(run, 'revived', { user: prayerId ? `<@${prayerId}>` : '' });
+  run.step++;
+  run.updatedAt = now;
+  return run;
+}
+
 // ---------------------------------------------------------------- liquidação
 function lanternFee(floor) {
   return LANTERN_FEE[floor] || 0;
@@ -1392,8 +1509,11 @@ module.exports = {
   DARK_THRESHOLD,
   DEATH_SALVAGE,
   NYX_TREASURE,
+  MAX_HELPERS,
   createRun,
   applyAction,
+  applyHelp,
+  reviveRun,
   getAvailableActions,
   getVisibleMap,
   describeIntent,

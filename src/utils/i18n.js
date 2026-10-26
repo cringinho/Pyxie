@@ -50,6 +50,13 @@ function getLanguage(source) {
       return 'pt';
     }
 
+    // 2.1 User App em servidor onde a Pyxie não está (interaction.guild nulo): segue o idioma do Discord da pessoa
+    const isUserAppInForeignGuild =
+      typeof source === 'object' && 'guild' in source && !source.guild && typeof source.locale === 'string';
+    if (isUserAppInForeignGuild) {
+      return source.locale.toLowerCase().startsWith('pt') ? 'pt' : 'en';
+    }
+
     // 3. REGRA MANDATÓRIA: Qualquer outro servidor do Discord é ESTRITAMENTE 'en' por padrão!
     return 'en';
   }
@@ -86,13 +93,13 @@ const CANVAS_STRINGS = {
       verdictHigh: 'Isso está perigosamente romântico.',
       person1: 'Pessoa 1',
       person2: 'Pessoa 2',
-      footer: '✦ AFINIDADE & ROMANCE NO SERVIDOR ✦',
+      footer: '✦ AFINIDADE & ROMANCE • PYXIE.COM.BR ✦',
     },
     tarot: {
       arcana: 'ARCANOS',
       uprightBadge: '✦ POSIÇÃO DIRETA ✦',
       reversedBadge: '✦ POSIÇÃO INVERTIDA ✦',
-      footer: 'TAROT • ORÁCULO DA PYXIE',
+      footer: 'TAROT • ORÁCULO DA PYXIE • PYXIE.COM.BR',
     },
   },
   en: {
@@ -106,13 +113,13 @@ const CANVAS_STRINGS = {
       verdictHigh: 'This is dangerously romantic.',
       person1: 'Person 1',
       person2: 'Person 2',
-      footer: '✦ LOVE & ROMANCE COMPATIBILITY ✦',
+      footer: '✦ LOVE & ROMANCE • PYXIE.COM.BR ✦',
     },
     tarot: {
       arcana: 'ARCANA',
       uprightBadge: '✦ UPRIGHT POSITION ✦',
       reversedBadge: '✦ REVERSED POSITION ✦',
-      footer: 'TAROT • PYXIE ORACLE',
+      footer: 'TAROT • PYXIE ORACLE • PYXIE.COM.BR',
     },
   },
 };
@@ -394,7 +401,13 @@ const TRANSLATIONS = {
       "coins": "Moedinhas",
       "magicBeans": "Feijões Mágicos",
       "ranking": "Ranking",
-      "unranked": "Ainda sem colocação"
+      "unranked": "Ainda sem colocação",
+      "blacklisted": "🚫 Você ou este servidor estão na blacklist global da Pyxie.",
+      "ownerPanelOnly": "❌ Só o criador da Pyxie pode mexer neste painel.",
+      "commandUnavailable": "Esse comando ainda não está disponível. Não olhe para mim assim; eu também estou investigando.",
+      "guildScopeOnly": "❌ Este comando é exclusivo do laboratório da Cringelândia.",
+      "actionError": "❌ Ocorreu um erro ao processar esta ação. Tente novamente mais tarde.",
+      "actionErrorShort": "❌ Ocorreu um erro ao processar esta ação."
     },
     "status": {
       "title": "🌸  ✦  Status Operacional — Pyxie",
@@ -404,55 +417,71 @@ const TRANSLATIONS = {
       "users": "👥 **Usuários Ativos:** `{users}`"
     },
     "ping": {
-      "title": "🏓  ✦  Latência & Performance",
-      "wsLatency": "⚡ **Latência do WebSocket:** `{latency}ms`",
-      "apiLatency": "🌐 **Tempo de Resposta:** `{latency}ms`"
+      "title": "🏓 Pong! Tô aqui",
+      "wsLatency": "• **Conexão com o Discord:** `{latency}ms`",
+      "apiLatency": "• **Tempo pra te responder:** `{latency}ms`"
     },
     "vote": {
-      "title": "🗳️  ✦  Vote na Pyxie no Top.gg",
-      "desc": "Apoie o crescimento da nossa comunidade votando na Pyxie no **Top.gg** a cada 12 horas!\n\nSeu voto voluntário ajuda o bot a ser descoberto por novos servidores e comunidades.",
-      "supportNote": "💜 *Votar no Top.gg não concede moedas ou bônus no jogo, mas é a melhor forma de apoiar o nosso projeto!*",
-      "rewardsTitle": "🎁 **APOIO VOLUNTÁRIO:**",
-      "rewardCoins": "> 🌟 Ajude a Pyxie a alcançar mais servidores e comunidades!",
-      "rewardDailyBonus": "> 💜 Divulgação comunitária para o crescimento do bot.",
-      "weekendActive": "🌟 *Obrigado pelo seu voto e apoio contínuo!*",
-      "weekendTip": "🌟 *Obrigado pelo seu voto e apoio contínuo!*",
-      "cta": "👉 *Clique no botão abaixo para abrir a página oficial de votação:*",
+      "title": "🌱 Vote na Pyxie no Top.gg",
+      "desc": "Cada voto no **Top.gg** ajuda a Pyxie a ser encontrada por novos servidores. E-eu não preciso disso, tá? Mas aceito.",
+      "rewardsTitle": "### 🌱 Recompensa por voto",
+      "rewardLine": "• **Por voto:** `{beans}` feijão mágico, a cada `12h`.",
+      "weekendLine": "• **Fim de semana:** `{beans}` feijões por voto (sexta a domingo).",
+      "statusReady": "> ✅ **Seu voto está liberado agora!**",
+      "statusCooldown": "> ⏳ **Você já votou.** Próximo voto em `{time}`.",
+      "totalLine": "-# 🌱 Você já ganhou `{beans}` feijões com `{votes}` votos. Obrigada!",
+      "cta": "-# Os feijões caem na sua conta poucos segundos depois do voto.",
       "btnLabel": "Votar no Top.gg",
-      "footerText": "Obrigado por apoiar a Pyxie e a Cringelândia!",
-      "rewardBean": "> 🌱 Apoio voluntário à comunidade."
+      "footerText": "Obrigada por apoiar a Pyxie",
+      "dailyReminder": "-# 🌱 Votar no Top.gg rende `{beans}` feijão mágico: {voteCmd}"
     },
     "daily": {
-      "titleClaimed": "<:gift62:1548443978414817331>  ✦  Recompensa Diária Coletada!",
-      "descClaimed": "Sua recompensa diária foi entregue com sucesso no seu cofre!",
-      "summaryTitle": "🎁 **RESUMO DA RECOMPENSA**",
-      "streakLine": "> 🔥 **Sequência Diária:** **x{streak}** {compliment}",
-      "streakCooldown": "> 🔥 **Sequência Atual:** **x{streak}** dias consecutivos",
-      "complimentTier1": "*(Começo promissor! Continue firme!)*",
-      "complimentTier2": "*(Foco impecável! O fogo está crescendo!)*",
-      "complimentTier3": "*(Impressionante! Sua disciplina é admirável!)*",
-      "complimentTier4": "*(Mestre da consistência! Quase imparável!)*",
-      "complimentTier5": "*(Lendário! Uma verdadeira lenda viva da Pyxie!)*",
-      "collected": "> <a:coin:1548443880066777098> **Moedas Coletadas:** **+{amount}**",
-      "collectedStreak": "> <a:coin:1548443880066777098> **Moedas Coletadas:** **+{normal}** *(+ {streakBonus} bônus de sequência)*",
-      "streakActive": "> 🔥 **Sequência Ativa:** **x{streak}** dias seguidos!",
-      "topggVoteBonusActive": "> 🎁 **Bônus Comunitário:** *(obrigado por fazer parte da Pyxie!)*",
-      "topggVoteBonusPrompt": "💡 *Dica: Use /py-work para trabalhar na sua carreira e ganhar mais moedas!*",
-      "balance": "> 🏦 **Saldo Atual:** **{balance}**",
-      "magicBean": "> ✨ **SORTE ÉPICA (1% de Chance):** **+1x Feijão Mágico <:peakmagicbean:1548444140532928642>** (Total: **{total} <:peakmagicbean:1548444140532928642>**)",
-      "titleCooldown": "<:gift62:1548443978414817331>  ✦  Recompensa Diária em Cooldown",
-      "descCooldown": "⏰ Você já coletou sua recompensa diária hoje. Espere **{time}** para abrir novamente!",
-      "voteWeekendBonus": "🌟 *Use seu tempo para explorar minigames e trabalhar com /py-work!*",
-      "voteWeekdayBonus": "🌟 *Aproveite os minigames e o Tarot da Pyxie enquanto espera!*",
-      "btnLabel": "Apoie a Pyxie",
-      "btnLabelCooldown": "Apoie a Pyxie",
+      "titleFirst": "☀️ Oi… você veio hoje",
+      "titleStreak": "🔥 {streak} dias seguidos!",
+      "titleCooldown": "⏰ Já foi hoje, viu?",
+      "rewardHeader": "### 🎁 O que eu separei pra você",
+      "coins": "• **Moedinhas:** `+{amount}` {coin}",
+      "streakBonus": "• **Bônus da sequência:** `+{bonus}` {coin} (um a mais por dia seguido)",
+      "bean": "• **Feijão mágico:** `+1` {bean} Sorte rara, viu? Agora são `{total}`.",
+      "balance": "• **Saldo:** `{balance}` {coin}",
+      "streakBroken": "-# 💔 Sua sequência de **{previous}** dias acabou… e-eu não fiquei contando, tá? Recomeça comigo.",
+      "energyHeader": "### 🔮 Sua energia de hoje",
+      "energyAsk": "-# Acertei?",
+      "nextMilestone": "-# 🔥 Faltam **{left}** dia(s) pro marco de **{target}**.",
+      "milestone": {
+        "7": "### 🏆 Uma semana inteira!\n\nSete dias seguidos. Eu… fiz uma marquinha no calendário. Não é nada demais.",
+        "30": "### 🏆 Um mês inteiro!\n\nTrinta dias. Você é oficialmente a pessoa mais constante que eu conheço. Isso é um elogio, aceita.",
+        "100": "### 🏆 Cem dias!\n\nCem. Dias. Eu nem sei o que dizer… obrigada por voltar sempre. Pronto, falei.",
+        "365": "### 🏆 Um ano inteiro!\n\nUm ano. Eu… preciso de um minutinho. Você é a melhor parte da minha rotina."
+      },
+      "cooldownBody": "Você já pegou o diário hoje. Volta em **{time}**… n-não que eu vá ficar contando.",
+      "cooldownStreak": "• **Sequência:** `{streak}` dia(s) 🔥",
+      "cooldownEnergy": "• **Energia de hoje:** {emoji} {name}",
+      "cooldownCups": "-# ☕ Ainda dá pra jogar as xícaras de hoje.",
+      "cooldownIdle": "-# Enquanto isso: `/py-work`, `/py-tarot` ou só… fica por aqui.",
+      "reactionRight": "-# 💬 {line}",
+      "reactionWrong": "-# 💬 {line}",
+      "btnRight": "Acertou",
+      "btnWrong": "Errou feio",
+      "btnCups": "Xícaras",
       "btnWebBonus": "Bônus Web (+75🪙)",
-      "footer": "Recompensa renovada a cada 24 horas",
-      "footerCooldown": "Recompensa diária renovada a cada 24 horas"
+      "notYours": "Esse diário é de outra pessoa… pega o seu com `/py-daily`.",
+      "footer": "Pyxie • volta amanhã, tá?",
+      "footerCooldown": "Pyxie • o diário renova a cada 24 horas",
+      "cups": {
+        "title": "☕ Xícaras da Pyxie",
+        "intro": "Escondi um biscoito debaixo de uma dessas xícaras. Se achar, ele é seu… e umas moedinhas também.\n\n-# Só uma chance por diário, hein.",
+        "btnCup": "Xícara {n}",
+        "win": "🍪 Achou! Toma: `+{prize}` {coin}. Não fica se achando… tá, pode se achar um pouquinho.",
+        "lose": "Era a xícara **{cup}**. Errou… mas foi uma boa tentativa. Amanhã eu escondo de novo.",
+        "balance": "-# Saldo: `{balance}` {coin}",
+        "already": "Você já jogou as xícaras hoje. Amanhã eu escondo de novo.",
+        "notClaimed": "Primeiro pega o diário com `/py-daily`, depois a gente joga."
+      }
     },
     "invite": {
-      "title": "✨  ✦  Convide a Pyxie para o seu Servidor!",
-      "desc": "Leve a magia da **Pyxie** para a sua comunidade! Um bot completo de economia mágica, carreiras, minigames sociais, tarot místico e interações para animar seus membros.",
+      "title": "✨ Convide a Pyxie… se quiser",
+      "desc": "Se você quiser… eu posso ir pro seu servidor. Levo moedinhas, carreiras, minigames, tarot ilustrado, as Catacumbas e uma casinha pra cada pessoa. N-não precisa, mas eu ia gostar.",
       "dungeonsTitle": "🎮 Minigames & Diversão",
       "dungeonsDesc": "Jokenpô PvP com apostas, enquetes ao vivo de \"Quem é mais provável\", cara ou coroa, dados de RPG e biscoito da sorte.",
       "economyTitle": "🪙 Economia, Carreiras & Mochila",
@@ -461,15 +490,17 @@ const TRANSLATIONS = {
       "tarotDesc": "Tiragem de 78 cartas de tarot com arte em Canvas, calculadora de afinidade (ship) e sistema de casamentos.",
       "btnRecommended": "Adicionar Pyxie (Recomendado)",
       "btnAdmin": "Convite Administrador",
+      "btnUserInstall": "Instalar na minha conta",
+      "btnWebBonus": "Bônus Web (10s)",
       "btnSupport": "Servidor de Suporte",
       "btnVote": "Votar no Top.gg",
-      "footer": "Pyxie • Magia, Lazer & Comunidade para o seu Servidor",
+      "footer": "Pyxie • prometo me comportar (quase sempre)",
       "careersTitle": "💼 Carreiras & Vocações",
       "careersDesc": "Escolha sua profissão, cumpra expedientes diários, ganhe moedinhas e suba de nível profissional!"
     },
     "languageCmd": {
-      "current": "🌐 O idioma deste servidor está configurado como: **Português 🇧🇷**.",
-      "updated": "✅ Idioma do servidor atualizado com sucesso para: **{lang}**!"
+      "current": "🌐 Aqui eu falo **Português 🇧🇷**.",
+      "updated": "✅ Pronto, agora eu falo **{lang}** aqui!"
     },
     "help": {
       "title": "{emoji}  ✦  Central de Ajuda — {label}",
@@ -512,12 +543,12 @@ const TRANSLATIONS = {
       }
     },
     "wallet": {
-      "title": "<a:coin:1548443880066777098>  ✦  Carteira de {user}",
-      "desc": "Patrimônio e recursos acumulados em sua jornada:",
-      "balancesHeader": "💎 **SALDOS DISPONÍVEIS**",
-      "rankingHeader": "🏆 **POSIÇÃO NO RANKING**",
-      "placement": "> 🏅 **Colocação:** {rank}",
-      "unranked": "Ainda sem colocação"
+      "title": "👛 Carteira de {user}",
+      "desc": "Eu contei tudo direitinho, duas vezes. Não que eu fique olhando a carteira dos outros…",
+      "balancesHeader": "### 💎 Saldos",
+      "rankingHeader": "### 🏆 No ranking",
+      "placement": "• **Posição:** {rank}",
+      "unranked": "ainda sem posição"
     },
     "profile": {
       "title": "<:3861memberpurple:1551355544185344112>  ✦  {title}{user}",
@@ -549,24 +580,24 @@ const TRANSLATIONS = {
       "masteredCareers": "> 🏆 **Carreiras Dominadas:** **{count}/22** (+{bonus}% Bônus Salarial Global)"
     },
     "ranking": {
-      "mainTitle": "🏆  ✦  Ranking Oficial do Reino",
-      "coinsTitle": "<a:coin:1548443880066777098>  ✦  Ranking de Moedinhas Mágicas",
-      "beansTitle": "🌱  ✦  Ranking de Feijões Mágicos",
-      "coinsDesc": "Os aventureiros mais prósperos do reino:",
-      "beansDesc": "Os maiores mestres cultivadores de Feijões Mágicos:",
-      "emptyCoins": "*Nenhum registro de moedas ainda.*",
-      "emptyBeans": "*Nenhum feijão cultivado ainda.*",
-      "footer": "Atualizado em tempo real • Use os botões para alternar",
+      "mainTitle": "🏆 Ranking da Pyxie",
+      "coinsTitle": "🪙 Quem tem mais moedinhas",
+      "beansTitle": "🌱 Quem tem mais feijões",
+      "coinsDesc": "Eu fiz a lista sozinha. Se seu nome não tá aqui… ainda dá tempo, tá?",
+      "beansDesc": "Quem cuida melhor dos feijões mágicos. Eu reparo nessas coisas.",
+      "emptyCoins": "*Ninguém juntou moedinhas ainda… começa com `/py-daily`?*",
+      "emptyBeans": "*Nenhum feijão por aqui ainda.*",
+      "footer": "Pyxie • atualiza na hora • troca a lista nos botões",
       "btnCoins": "Moedas",
       "btnBeans": "Feijões",
       "btnStreaks": "Streaks",
-      "streaksTitle": "🔥  ✦  Ranking de Maiores Streaks",
-      "streaksDesc": "Os aventureiros com as ofensivas diárias mais longas e lendárias:",
-      "emptyStreaks": "*Nenhum aventureiro com streak ativo ainda. Use /py-daily para iniciar!*",
+      "streaksTitle": "🔥 Quem nunca falta",
+      "streaksDesc": "As sequências de diário mais longas. Essas pessoas eu já espero todo dia.",
+      "emptyStreaks": "*Ninguém com sequência ainda. Usa `/py-daily` e eu começo a contar.*",
       "streakSingleDay": "dia consecutivo",
       "streakMultiDays": "dias consecutivos",
-      "viewerPlacement": "👤 Sua Colocação Atual",
-      "viewerLine": "> 🏅 **Posição #{position}** com **{amount}**",
+      "viewerPlacement": "👤 Onde você tá",
+      "viewerLine": "• **Posição #{position}** com **{amount}**",
       "btnWebLeaderboard": "Placar & Galeria Web",
       "webLeaderboardLink": "🌐 [Abrir Placar & Galeria de Artes no Site]({url})"
     },
@@ -649,13 +680,18 @@ const TRANSLATIONS = {
       "dateNotYourSession": "❌ Você não faz parte deste encontro de casal.",
       "dateAnswerRecorded": "💌 Sua resposta foi gravada em segredo! Aguardando o parceiro(a)...",
       "dateOutcomeMatch": "🥂✨ **SINTONIA PERFEITA!** Vocês escolheram a mesma opção!\n> 💖 **+15% na Barra do Amor** (Atual: **{love}%**)\n> 🪙 **{coins}** concedidas para cada um!",
-      "dateOutcomeDivergent": "🥂💔 Respostas diferentes! O amor é feito de opostos... A Pyxie solta uma risadinha sarcástica!\n> 💖 **+3% na Barra do Amor** (Atual: **{love}%**)"
+      "dateOutcomeDivergent": "🥂💔 Respostas diferentes! O amor é feito de opostos... A Pyxie solta uma risadinha sarcástica!\n> 💖 **+3% na Barra do Amor** (Atual: **{love}%**)",
+      "houseRedirect": "🏡 A casa do casal agora é a **Casinha** (`/py-home`): quem tem uma casinha chama o cônjuge pra morar junto. Quem não tem ganha uma chegando ao **Andar {floor}** das Catacumbas ou compra por `{coins}` moedinhas + `{beans}` feijões mágicos.",
+      "houseTogether": "🏡 Moram juntos na Casinha",
+      "houseApart": "🏠 Ainda não moram juntos",
+      "vaultCapNote": "-# O rendimento do Cofre do Amor tem teto de {cap} por dia."
     },
     "divorce": {
       "title": "💔  ✦  Divórcio",
       "success": "💔 Divórcio concluído. Foram cobradas **{cost}**.",
       "notMarried": "❌ Você não está casado(a).",
-      "insufficientCoins": "❌ O divórcio custa **{cost}**. Seu saldo é **{balance}**."
+      "insufficientCoins": "❌ O divórcio custa **{cost}**. Seu saldo é **{balance}**.",
+      "separated": "📦 **Separar bens:** a casa ficou com quem já era dona, e `{count}` item(ns) de {user} voltaram pra mochila dessa pessoa."
     },
     "profession": {
       "sameProfession": "❌ Você já é **{profession}**. Escolha uma carreira diferente.",
@@ -706,7 +742,13 @@ const TRANSLATIONS = {
         "ferreiro": "Ferreiro(a)",
         "rei_rainha": "Rei / Rainha",
         "domador_feras": "Domador(a) de Feras",
-        "aniquilador_vegetais": "Aniquilador(a) de Vegetais"
+        "aniquilador_vegetais": "Aniquilador(a) de Vegetais",
+        "minerador": "Minerador(a)",
+        "pescador": "Pescador(a)",
+        "florista": "Florista",
+        "marceneiro": "Marceneiro(a)",
+        "costureiro": "Costureiro(a)",
+        "arqueologo": "Arqueólogo(a)"
       }
     },
     "shop": {
@@ -790,6 +832,7 @@ const TRANSLATIONS = {
     },
     "tarot": {
       "bribeBtn": "Tentar Nova Tiragem (350 🪙)",
+      "meaningBtn": "Significado completo",
       "cardLabel": "CARTA",
       "orientationReversed": "INVERTIDA",
       "orientationUpright": "DIRETA",
@@ -960,7 +1003,9 @@ const TRANSLATIONS = {
       "envelopeBeanBalanceLine": "> 🌱 **Novo Saldo de Feijões:** **{beans} 🌱**",
       "masteryBonusBadge": "> 🏆 **Bônus de Currículo:** +{percent}% de salário por carreiras dominadas!",
       "newlyMasteredTitle": "⭐  ✦  NOVA PROFISSÃO DOMINADA!",
-      "newlyMasteredDesc": "Parabéns! Você alcançou a Maestria Máxima em **{profession}** (Nível 4) e garantiu mais **+3% de bônus salarial permanente** em qualquer trabalho!"
+      "newlyMasteredDesc": "Parabéns! Você alcançou a Maestria Máxima em **{profession}** (Nível 4) e garantiu mais **+3% de bônus salarial permanente** em qualquer trabalho!",
+      "materialDrop": "🧺 **Material pra oficina:** `+{qty}` {material} (use em `/py-craft`)",
+      "festivalDrop": "🎭 **{season}:** você achou `+{qty}` {currency} no caminho! (gaste no `/py-festival`)"
     },
     "workDilemma": {
       "buttonAccept": "🕵️ Aceitar Esquema",
@@ -1075,6 +1120,460 @@ const TRANSLATIONS = {
     "set": {
       "gamesSuccess": "✅ Canal de jogos definido para <#{channel}>! A partir de agora os duelos de quiz só podem ser iniciados lá."
     },
+    "setup": {
+      "footer": "Pyxie • Central do servidor",
+      "notSet": "não configurado",
+      "refresh": "Atualizar",
+      "saved": "Pronto, salvei!",
+      "adminOnlyAction": "Esse painel é só pra quem administra o servidor… desculpa.",
+      "nav": {
+        "placeholder": "Escolhe uma seção…"
+      },
+      "sections": {
+        "overview": {
+          "label": "Visão geral",
+          "desc": "Tudo do servidor num lugar só"
+        },
+        "mmo": {
+          "label": "Mundo Pyxie",
+          "desc": "Catacumbas, Casinha, itens e o modo clássico"
+        },
+        "channels": {
+          "label": "Canais permitidos",
+          "desc": "Onde o RPG/MMO e os minigames podem rodar"
+        },
+        "modules": {
+          "label": "Módulos",
+          "desc": "Liga e desliga minigames, casamento e tarot"
+        },
+        "welcome": {
+          "label": "Boas-vindas",
+          "desc": "Canal e mensagem de quem chega"
+        },
+        "vent": {
+          "label": "Desabafos",
+          "desc": "Canal de apoio com mensagem fixa e desabafo anônimo"
+        },
+        "tarot": {
+          "label": "Tarot diário",
+          "desc": "Canal da carta do dia, postada à meia-noite"
+        },
+        "tickets": {
+          "label": "Tickets",
+          "desc": "Painel de atendimento e categoria"
+        },
+        "language": {
+          "label": "Idioma",
+          "desc": "Português ou inglês"
+        }
+      },
+      "groups": {
+        "mmo": "Mundo Pyxie",
+        "games": "Minigames",
+        "marriage": "Casamento",
+        "tarot": "Tarot"
+      },
+      "overview": {
+        "title": "⚙️ Painel de Configuração da Pyxie",
+        "intro": "E-eu juntei tudo do **{server}** aqui… escolhe uma seção no menu. Não precisa mexer em tudo, tá? Só no que você quiser.",
+        "demand": "-# 🔔 **{count}** pessoa(s) tentaram jogar o Mundo Pyxie aqui nos últimos 7 dias.",
+        "trialHint": "-# 🧪 Dá pra testar o Mundo Pyxie por 7 dias, uma vez só. Depois ele volta pro clássico sozinho.",
+        "systems": "Sistemas do servidor",
+        "adminOnly": "-# 🔒 Só quem administra o servidor vê este painel."
+      },
+      "mmo": {
+        "title": "🗺️ Mundo Pyxie neste servidor",
+        "stateFull": "**Ligado.** Catacumbas, Casinha, itens raros e conquistas funcionando aqui.",
+        "stateTrial": "**Em teste** até {time}. Depois volta pro modo clássico sozinho, sem ninguém perder nada.",
+        "stateClassic": "**Modo clássico.** Aqui só tem moedinhas pelo trabalho e o perfil padrão.",
+        "whatTitle": "O que vem no Mundo Pyxie",
+        "features": {
+          "dungeon": "• **Catacumbas de Veludo:** dungeon roguelike em pixel art, com cinco andares, guardiões, a Nyx no fim e tesouro pra quem consegue fugir.",
+          "home": "• **Casinha:** um quartinho em pixel art com mais de 180 móveis e pets. A chave sai nas Catacumbas (ou dá pra comprar), e quem é casado pode morar junto.",
+          "vault": "• **Itens raros com número de série:** lendários e míticos limitados, com a origem de cada um registrada.",
+          "achievements": "• **Conquistas difíceis:** títulos com letras especiais que ficam mais bonitos a cada meta.",
+          "boss": "• **Chefe da semana:** um guardião das Catacumbas aparece no servidor toda segunda; todo mundo bate junto, tem ranking e recompensa quando ele cai.",
+          "market": "• **Mercado entre jogadores:** compra e venda de itens e materiais com garantia, taxa de 5% e histórico de preços.",
+          "festival": "• **Festival da temporada:** Halloween, Natal, Virada, Páscoa e Verão com Fagulhas, monstros fantasiados e caixas com chances públicas."
+        },
+        "classicTitle": "E o modo clássico?",
+        "classicWhat": "• **O que sai:** Catacumbas, Casinha, bolsa, loja e itens deixam de funcionar aqui. As moedinhas continuam vindo do trabalho e o perfil fica no padrão.",
+        "classicKeeps": "• **O que fica:** ninguém perde nada. Itens e casinhas continuam guardados e voltam quando o Mundo Pyxie for ligado de novo.",
+        "trialAlreadyUsed": "-# O teste de 7 dias deste servidor já foi usado, mas dá pra ligar de vez quando quiser.",
+        "btnEnable": "Ligar o Mundo Pyxie",
+        "btnTrial": "Testar por 7 dias",
+        "btnClassic": "Modo clássico",
+        "btnConfirmClassic": "Sim, modo clássico",
+        "btnKeep": "Deixa como está",
+        "confirmTitle": "🪙 Voltar pro modo clássico?",
+        "confirmBody": "Tem certeza? As Catacumbas, a Casinha, a bolsa, a loja e os itens param de funcionar neste servidor.",
+        "enabled": "✨ Pronto, o Mundo Pyxie tá ligado aqui! F-fico feliz… quer dizer, tá ótimo.",
+        "trialStarted": "🧪 Teste ligado até {time}. Depois ele volta pro clássico sozinho, sem ninguém perder nada.",
+        "alreadyFull": "O Mundo Pyxie já tá ligado aqui, nem precisa de teste.",
+        "classicDone": "Tá… voltei pro modo clássico aqui. Se mudar de ideia, é só voltar nesta seção."
+      },
+      "channels": {
+        "title": "📍 Canais permitidos",
+        "intro": "Escolhe onde cada tipo de comando pode rodar. Sem nenhum canal marcado, vale em todos.",
+        "everywhere": "todos os canais",
+        "threads": "-# 🧵 Threads contam como o canal de onde saíram.",
+        "pick_mmo": "Canais do RPG/MMO (vazio = todos)",
+        "pick_games": "Canais dos minigames (vazio = todos)",
+        "clear_mmo": "RPG/MMO em todos os canais",
+        "clear_games": "Minigames em todos os canais",
+        "saved": "Canais salvos!",
+        "cleared": "Liberado em todos os canais."
+      },
+      "modules": {
+        "title": "🧩 Módulos do servidor",
+        "intro": "Desliga o que não combina com o servidor. Dá pra ligar de novo quando quiser, e ninguém perde nada.",
+        "on": "✅ ligado",
+        "off": "⛔ desligado",
+        "onShort": "ligado",
+        "offShort": "desligado",
+        "desc_games": "-# Quiz, duelos, jokenpô, jogo da velha, campo minado, ship e companhia.",
+        "desc_marriage": "-# Pedidos de casamento, divórcio e filhos.",
+        "desc_tarot": "-# Tiragem de tarot e álbum de cartas.",
+        "mmoHint": "-# 🗺️ O Mundo Pyxie tem uma seção só dele, no menu.",
+        "turnedOn": "**{group}** ligado de novo!",
+        "turnedOff": "**{group}** desligado neste servidor."
+      },
+      "dedicated": {
+        "current": "Canal atual",
+        "pick": "Escolhe o canal…",
+        "unique": "-# Cada canal só pode ter uma função. Se ele já tinha outra, eu troco e aviso.",
+        "saved": "Pronto, agora é {channel}!",
+        "welcome": {
+          "title": "👋 Boas-vindas",
+          "body": "Quando alguém entra, eu mando a mensagem de boas-vindas neste canal.",
+          "editBtn": "Editar mensagem e cargo"
+        },
+        "vent": {
+          "title": "🫂 Canal de desabafos",
+          "body": "Um canal de apoio com mensagem fixa de acolhimento, autoajuda na DM e desabafo anônimo."
+        },
+        "tarot": {
+          "title": "🔮 Tarot diário",
+          "body": "Toda meia-noite (horário de Brasília) eu posto a carta do dia neste canal."
+        },
+        "tickets": {
+          "title": "🎫 Tickets",
+          "body": "Eu posto o painel de atendimento neste canal. Depois você escolhe a categoria e o canal de registros."
+        }
+      },
+      "language": {
+        "title": "🌐 Idioma do servidor",
+        "body": "É o idioma em que eu falo aqui no servidor. Cada pessoa ainda pode escolher o próprio no `/py-language`.",
+        "changed": "Pronto, agora eu falo português aqui!"
+      },
+      "blocked": {
+        "classicAdmin": "Esse servidor tá no modo clássico, então o Mundo Pyxie fica desligado aqui. Como você administra o servidor… quer dar uma olhadinha no que tem? Prometo que não é chato.",
+        "classicMember": "Ah… aqui o servidor tá no modo clássico, então as Catacumbas, a Casinha e os itens ficam desligados. N-não fui eu que escolhi, tá? Se quiser, pede pra administração ligar no `/py-setup`. Na nossa DM funciona sempre.",
+        "demand": "-# 🔔 Contei teu pedido. Já são **{count}** pessoa(s) querendo esta semana.",
+        "disabled": "A administração desligou **{group}** neste servidor… dá pra religar no `/py-setup`.",
+        "channel": "Aqui não dá… **{group}** só funciona em {channels}. Me chama lá?"
+      }
+    },
+    "cookie": {
+      "title": "🥠 Biscoito da sorte",
+      "intro": "*Você quebra a casquinha e cai um papelzinho dobrado:*",
+      "wisdom": "> 📜 **\"{wisdom}\"**",
+      "goodHeader": "### ✨ A sorte gostou de você",
+      "goodBody": "`+{coins}` {coin} caíram da casquinha. N-não fui eu que coloquei lá, tá?",
+      "badHeader": "### 🍂 Hoje não deu",
+      "badBody": "Um ventinho levou `{coins}` {coin} da sua bolsa. Eu tentei segurar… juro.",
+      "footerExtra": "Pyxie • ainda sobra(m) {count} biscoito(s) extra",
+      "footerTomorrow": "Pyxie • amanhã eu asso outro",
+      "cooldownTitle": "⏰ O de hoje já foi",
+      "cooldownBody": "Você já comeu o biscoito de hoje. O próximo sai do forno em **{time}**.",
+      "cooldownExtraHeader": "### ✨ Quer um extra agora?",
+      "cooldownExtraBody": "No portal da Pyxie você espera 10 segundinhos e ganha **1 biscoito extra** e `+{coins}` {coin}. Eu deixo, vai.",
+      "cooldownFooter": "Pyxie • um biscoito por dia (e os extras)",
+      "btnExtra": "Biscoito extra (10s)"
+    },
+    "coinflip": {
+      "heads": "cara",
+      "tails": "coroa",
+      "winTitle": "🪙 Deu {side}! Você ganhou",
+      "loseTitle": "🪙 Deu {side}… não foi dessa vez",
+      "winBody": "A moeda girou, girou… e caiu do seu lado. Hmpf. Toma suas `+{bet}` {coin}, ganhou justo.",
+      "loseBody": "A moeda girou e caiu do outro lado. As `{bet}` {coin} ficam comigo… n-não fica bravo, foi a moeda.",
+      "pick": "• **Você escolheu:** {pickEmoji} {pick}",
+      "result": "• **Caiu:** {resultEmoji} {result}",
+      "balance": "• **Saldo:** `{balance}` {coin}",
+      "footer": "Pyxie • aposta de {bet} moedinhas",
+      "noFunds": "Você só tem `{balance}` {coin}… não dá pra apostar `{bet}`. Guarda pra outra hora, tá?",
+      "usage": "Me fala o lado e quanto quer apostar, tipo `{example}`."
+    },
+    "dice": {
+      "title": "{dice} Rolando {count}d{sides}",
+      "body": "**{user}** sacudiu os dados na mão e soltou na mesa.",
+      "result": "### 🎯 Deu {result}",
+      "nat20": "🌟 **Vinte natural!** E-eu não tô impressionada. Tá, um pouquinho.",
+      "nat1": "💀 **Um natural…** Ai. Finge que não aconteceu, eu não conto pra ninguém.",
+      "footer": "Pyxie • total {total}"
+    },
+    "boss": {
+      "intro": "Ele subiu das Catacumbas e tá rondando o servidor a semana inteira… junta o pessoal, eu ajudo na torcida!",
+      "hpLine": "{bar} `{hp}` / `{max}` de vida",
+      "fighters": "-# 👥 `{count}` pessoa(s) na luta. Cada pessoa nova deixa ele mais forte.",
+      "intentHeader": "### {emoji} Plano de hoje: {intent}",
+      "rankHeader": "### 🏆 Quem mais bateu",
+      "rankLine": "`{pos}.` {user} • `{damage}` de dano",
+      "rankEmpty": "-# Ninguém bateu ainda… vai ser você?",
+      "attacksInfo": "-# Cada pessoa tem `{n}` ataques por dia. A postura certa dobra o dano.",
+      "defeatedHeader": "### 🎉 Caiu!",
+      "defeatedBy": "{user} deu o golpe final. Todo mundo que bateu já recebeu a parte dele.",
+      "rewardLine": "• **Quem bateu:** `{coins}` {coin}, `{echoes}` Ecos e o Estandarte da Vitória.",
+      "podiumLine": "• **Pódio:** moedinhas extras pro top 3 e o Troféu do Chefe pra quem mais bateu.",
+      "lastWeekWin": "-# Semana passada: {boss} caiu. Quem mais bateu: {user}.",
+      "lastWeekLose": "-# Semana passada: {boss} escapou… essa semana a gente pega.",
+      "footer": "Pyxie • um chefe novo toda segunda",
+      "hitNotice": "{emoji} {user} acertou `{damage}`{extra}",
+      "extraCounter": " (postura certa, dano dobrado!)",
+      "extraWeak": " (postura fraca contra o plano de hoje…)",
+      "extraCrit": " (crítico!)",
+      "left": "Você ainda tem `{left}` ataque(s) hoje. Seu dano na semana: `{total}`.",
+      "noAttacks": "Seus ataques de hoje acabaram… volta amanhã, tá? Eu seguro ele pra você.",
+      "defeated": "Esse chefe já caiu! Um novo aparece na segunda.",
+      "guildOnly": "O chefe da semana mora nos servidores… me chama num servidor!",
+      "killer": "🎉 Foi você que derrubou! Já entreguei: `{coins}` {coin}, `{echoes}` Ecos e itens pra Casinha.",
+      "reward": "🎁 Ele caiu! Sua parte já tá com você: `{coins}` {coin}, `{echoes}` Ecos e itens pra Casinha.",
+      "btnStrike": "Golpe",
+      "btnGuard": "Defender",
+      "btnSpell": "Magia",
+      "btnRefresh": "Atualizar"
+    },
+    "craft": {
+      "title": "🛠️ Oficina da Pyxie",
+      "intro": "Aqui a gente transforma o que você traz do trabalho em móveis que não existem na loja. E-eu separei as ferramentas, viu?",
+      "materialsHeader": "### 🧺 Seus materiais",
+      "materialLine": "{label}: `{qty}`",
+      "recipesHeader": "### 📜 Receitas",
+      "recipesHint": "Escolhe uma receita no menu pra ver o que precisa. Cada profissão traz um material diferente do `/py-work`.",
+      "pick": "Escolhe o que fazer…",
+      "recipeTitle": "🛠️ {item}",
+      "recipeNeeds": "### 🧾 Precisa de",
+      "recipeLine": "• {label}: `{need}` (você tem `{have}`)",
+      "recipeCoins": "• **Taxa da oficina:** `{coins}` {coin}",
+      "recipeReady": "-# ✅ Dá pra fazer agora!",
+      "recipeMissing": "-# Ainda falta material. Os turnos certos do `/py-work` trazem mais.",
+      "btnCraft": "Fazer",
+      "btnBack": "Voltar",
+      "crafted": "🎉 Pronto, fiz **{item}**! Já tá na sua mochila da Casinha (`/py-home`). Ficou lindo… quer dizer, ficou ok.",
+      "missing": "Falta material: {list}.",
+      "coins": "A oficina cobra `{price}` moedinhas e você tem `{balance}`.",
+      "notYours": "Essa oficina é de outra pessoa… a sua abre com `/py-craft`.",
+      "error": "Não consegui terminar agora. Nada foi gasto; tenta de novo daqui a pouco.",
+      "footer": "Pyxie • oficina"
+    },
+    "market": {
+      "title": "🏪 Mercado da Pyxie",
+      "intro": "Aqui o pessoal vende o que achou nas Catacumbas, fez na oficina ou ganhou por aí. Eu fico de olho pra ninguém ser passado pra trás, tá?",
+      "shelfHeader": "### 🛒 À venda",
+      "line": "`{id}` • {name} ×`{qty}` • `{price}` {coin} • {seller}{private}",
+      "privateTag": " • 🔒 só pra você",
+      "empty": "-# A vitrine tá vazia… que tal ser a primeira pessoa a anunciar?",
+      "page": "-# Página `{page}` de `{pages}` • taxa de `5%` em cada venda (ela some da economia)",
+      "pick": "Escolhe um anúncio…",
+      "btnSellItem": "Vender item",
+      "btnSellMaterial": "Vender material",
+      "btnMine": "Meus anúncios",
+      "btnPrev": "Anterior",
+      "btnNext": "Próxima",
+      "btnBuy": "Comprar por {price}",
+      "btnCancel": "Cancelar anúncio",
+      "btnBack": "Voltar",
+      "detailTitle": "🏷️ {name}",
+      "detailPrice": "• **Preço:** `{price}` {coin} (`{unit}` por unidade)",
+      "detailSeller": "• **Quem vende:** {seller}",
+      "detailSerial": "• **Número de série:** `#{serial}`",
+      "detailExpires": "• **Sai da vitrine:** {time}",
+      "detailPrivate": "• **Oferta particular para:** {buyer}",
+      "historyHeader": "### 📈 Preço no mercado",
+      "historyLine": "• **Última venda:** `{last}` {coin} • **média em 7 dias:** `{avg}` {coin} • `{count}` venda(s)",
+      "historyNone": "-# Ainda não teve venda disso. Você define o preço justo!",
+      "sellItemTitle": "💰 Vender item",
+      "sellItemBody": "Escolhe um item da mochila. Só aparecem itens que dá pra negociar e que não estão à mostra na Casinha.",
+      "sellItemNone": "-# Nada pra vender agora… itens de conquista e do kit inicial ficam com você pra sempre.",
+      "sellItemPick": "Escolhe o item…",
+      "sellMatTitle": "🧺 Vender material",
+      "sellMatBody": "Escolhe um material da oficina ou suas Fagulhas do Festival. O lote inteiro vai junto por um preço só.",
+      "sellMatPick": "Escolhe o material…",
+      "modalTitle": "Anunciar no mercado",
+      "modalPrice": "Preço total (moedinhas)",
+      "modalQty": "Quantidade",
+      "modalBuyer": "Oferta particular: ID ou menção (opcional)",
+      "mineTitle": "📦 Meus anúncios",
+      "mineEmpty": "-# Você não tem nada à venda.",
+      "mineLine": "`{id}` • {name} ×`{qty}` • `{price}` {coin} • sai {time}",
+      "listed": "✅ Anunciado! `{id}` tá na vitrine por `{price}` moedinhas. Se ninguém comprar em 7 dias, volta pra você.",
+      "cancelled": "Anúncio cancelado. Devolvi tudo pra você.",
+      "bought": "🎉 Comprou **{name}** por `{price}` moedinhas! Já tá com você.",
+      "soldDm": "🏪 **Vendeu!** Alguém comprou **{name}** ×`{qty}` por `{price}` moedinhas. Você recebeu `{gets}` (taxa de `{tax}`).",
+      "reasons": {
+        "price": "Preço inválido. Use um número entre `1` e `1000000`.",
+        "qty": "Quantidade inválida.",
+        "not_owned": "Esse item não tá mais na sua mochila.",
+        "not_tradable": "Esse item fica com você pra sempre, não dá pra vender.",
+        "placed": "Esse item tá à mostra na Casinha. Guarda ele antes de vender.",
+        "self": "Você não pode negociar com você mesmo… eu entendo a vontade, mas não.",
+        "limit": "Você já tem `10` anúncios. Cancela algum ou espera vender.",
+        "not_enough": "Você não tem material suficiente.",
+        "missing": "Esse anúncio não existe mais (alguém comprou ou venceu).",
+        "not_yours": "Esse anúncio é de outra pessoa.",
+        "private": "Essa oferta é particular, pra outra pessoa.",
+        "full": "Sua mochila tá cheia.",
+        "coins": "Custa `{price}` moedinhas e você tem `{balance}`.",
+        "save": "Não consegui salvar agora. Nada mudou; tenta de novo daqui a pouco."
+      },
+      "notYours": "Essa tela é de outra pessoa… abre a sua com `/py-market`.",
+      "footer": "Pyxie • mercado"
+    },
+    "festival": {
+      "title": "{season}",
+      "closedTitle": "🎇 Festival da Pyxie",
+      "closedBody": "Nenhuma temporada aberta agora… mas relaxa, suas Fagulhas não somem. Eu guardo direitinho até a próxima festa.",
+      "next": "### 📅 Próxima temporada\n\n**{season}** abre em {date} ({relative}).",
+      "wallet": "💰 **Sua carteira:** `{sparks}` {currency}",
+      "intro": {
+        "halloween": "As abóboras acordaram e os monstros das Catacumbas resolveram se fantasiar. Não que eu tenha ajudado a escolher as fantasias… tá, ajudei um pouquinho.",
+        "christmas": "Neve no Bosque da Penumbra, presentes empilhados e até os monstros de gorrinho. Não fica me olhando assim, o meu gorro é bonito sim.",
+        "newyear": "Fogos, brindes e a contagem regressiva mais fofa do Discord. Bora fechar o ano com a casinha brilhando?",
+        "easter": "Tem coelhinho escondendo ovo pelas Catacumbas. Se achar chocolate, divide comigo, tá? Não é um pedido, é uma ordem.",
+        "summer": "Férias! Picolé, piscina e monstros de chapéu de palha. Passa protetor antes de descer pras Catacumbas."
+      },
+      "ends": "-# A temporada fecha em {date} ({relative}). Depois disso, os itens dela só aparecem no mercado.",
+      "boxesHeader": "### 🎁 Caixas",
+      "sparksBox": "• **Caixa da Temporada:** `{price}` {currency} • garantia de **{rarity}** em `{left}` caixa(s)",
+      "coinsBox": "• **Baú de Moedinhas:** `{price}` {coin} • garantia de **{rarity}** em `{left}` • hoje ainda dá pra abrir `{today}` de `{limit}`",
+      "howHeader": "### 🌟 Como ganhar Fagulhas",
+      "howDungeon": "• **Catacumbas:** em `{chance}%` das descidas os monstros vêm fantasiados e cada um que cair solta Fagulhas (`/py-dungeon`).",
+      "howWork": "• **Trabalho:** `{chance}%` de chance de achar Fagulhas em cada turno certo do `/py-work`.",
+      "howMarket": "• **Mercado:** dá pra comprar e vender Fagulhas e itens de temporada no `/py-market`.",
+      "shelfTitle": "Destaques da temporada",
+      "btnSparks": "Caixa ({price})",
+      "btnCoins": "Baú ({price})",
+      "btnOdds": "Chances",
+      "btnBack": "Voltar",
+      "oddsTitle": "📜 Chances e prêmios",
+      "oddsSparks": "### 🎇 Caixa da Temporada\n\n{odds}\n\n-# A cada `{every}` caixas sem **{rarity}** ou melhor, a próxima vem garantida.",
+      "oddsCoins": "### 🧰 Baú de Moedinhas\n\n{odds}\n\n-# A cada `{every}` baús sem **{rarity}** ou melhor, o próximo vem garantido.",
+      "prizesHeader": "### 🏆 Todos os prêmios",
+      "prizeLine": "• **{rarity}:** {items}",
+      "oddsNote": "-# As chances valem pra cada caixa, sem truque. Se a temporada não tem itens de uma raridade, a chance dela passa pra raridade de baixo.",
+      "prizeTitle": "🎁 Caixa aberta!",
+      "prize": "> Saiu **{item}**{serial} • {rarity}",
+      "pityHit": "✨ **Garantia ativada!** Eu disse que cumpria, né? Não precisa agradecer.",
+      "prizePet": "🐾 Pet novo na família! Coloca ele na Casinha com `/py-home`.",
+      "prizeItem": "🏠 Já tá na sua mochila. Decora a Casinha com `/py-home` ou vende no `/py-market`.",
+      "footer": "Pyxie • Festival da Temporada",
+      "notYours": "Essa caixa é de outra pessoa… abre a sua com `/py-festival`.",
+      "reasons": {
+        "closed": "Não tem temporada aberta agora. Guarda as Fagulhas que a próxima festa já vem.",
+        "sparks": "Faltam Fagulhas: a caixa custa `{price}` e você tem `{balance}`.",
+        "coins": "Faltam moedinhas: o baú custa `{price}` e você tem `{balance}`.",
+        "daily_limit": "Chega de baú por hoje: o limite é `{limit}` por dia. Volta amanhã!",
+        "full": "Sua mochila tá lotada. Vende ou guarda alguma coisa antes de abrir outra caixa.",
+        "sold_out": "Esse item esgotou bem agora. Nada foi cobrado, pode tentar de novo.",
+        "unknown_box": "Essa caixa não existe… de onde você tirou isso?",
+        "save": "Deu um tropeço aqui e nada foi cobrado. Tenta de novo daqui a pouco?"
+      }
+    },
+    "pass": {
+      "title": "💎 Passe da Pyxie • {month}",
+      "intro": "Tudo o que você já faz por aqui rende XP: diário, trabalho, Catacumbas, chefe, oficina, mercado e Festival. A temporada fecha em {date} ({relative}).",
+      "levelLine": "### 🌟 Nível `{level}`/`{max}`\n\n{bar} `{into}`/`{need}` XP",
+      "premiumOn": "💎 **Premium ativo!** Obrigada por apoiar a Pyxie… não que eu esteja emocionada nem nada.",
+      "premiumOff": "🔒 **Trilha Premium:** `R$ {brl}` (Pix ou cartão) ou `US$ {usd}` (PayPal). Libera tudo que você já alcançou, na hora.",
+      "nextHeader": "### 🎁 Próximo nível (`{level}`)",
+      "freeLine": "• **Grátis:** {reward}",
+      "premiumLine": "• **Premium:** {reward}{lock}",
+      "finaleHeader": "### 🌌 Nível 50: só deste mês",
+      "xpHeader": "### ✨ Como ganhar XP",
+      "xpSources": "-# Diário `{daily}` • Turno do trabalho `{work}` • Descida `{dungeon}`+ • Golpe no chefe `{boss}` • Oficina `{craft}` • Venda ou compra no mercado `{market}` • Caixa do Festival `{festival}`",
+      "shelfTitle": "Prêmios de {month}",
+      "btnClaim": "Resgatar ({count})",
+      "btnPremium": "Quero o Premium",
+      "btnLevels": "Níveis",
+      "btnBack": "Voltar",
+      "levelsTitle": "📜 Níveis {from} a {to}",
+      "legend": "-# 🎁 pronto pra resgatar • ✅ resgatado • 🔒 precisa do Premium • ▫️ ainda não chegou",
+      "levelRow": "**`{level}`** {freeMark} {free}\n{premiumMark} 💎 {premium}",
+      "rewards": {
+        "echoes": "`{qty}` Ecos",
+        "petAndTitle": "{pet} + título {title}"
+      },
+      "claimed": "🎁 **Resgatado:** {list}",
+      "claimMore": " e mais `{count}`",
+      "claimFull": "Sua mochila tá cheia: os itens ficaram guardados aqui no Passe. Libera espaço e resgata de novo.",
+      "claimNothing": "Nada pra resgatar agora. Sobe mais um nível que eu te espero.",
+      "notYours": "Esse Passe é de outra pessoa… abre o seu com `/py-pass`.",
+      "sentDm": "💌 Mandei seu Passe na DM (o botão do Premium leva um link só seu).",
+      "useSlash": "Não consegui te mandar DM. Usa `/py-pass` que eu abro só pra você ver.",
+      "error": "Deu um tropeço no Passe. Tenta de novo daqui a pouco?",
+      "footer": "Pyxie • Passe mensal",
+      "premiumDm": "💎 **Seu Passe Premium chegou!** Abre o `/py-pass` e toca em Resgatar: tudo o que você já alcançou tá te esperando. Obrigada por apoiar a Pyxie de verdade."
+    },
+    "bond": {
+      "title": "💞 Força do Laço",
+      "footer": "Pyxie • Força do Laço",
+      "statusFooter": "Pyxie • Casamento e Família",
+      "fieldName": "💞 Força do Laço",
+      "fieldValue": "Nível `{level}` • **{name}** • sintonia de `{streak}` dia(s)",
+      "btnOpen": "Força do Laço",
+      "together": "Você e {spouse} • juntos há `{days}` dia(s)",
+      "togetherUnknown": "Você e {spouse}",
+      "levelHeader": "### 💞 Nível `{level}` • {name}",
+      "levelBar": "{bar} `{into}`/`{need}`",
+      "levelMax": "{bar} **Nível máximo!** Eu nem sabia que dava pra gostar tanto assim de alguém.",
+      "love": "• **Barra do Amor:** `{love}%`",
+      "streak": "• **Sintonia:** `{streak}` dia(s) seguidos • recorde `{best}`",
+      "todayHeader": "### ☀️ Gesto de hoje",
+      "me": "• **Você:** {gesture}",
+      "spouse": "• **{spouse}:** {gesture}",
+      "pending": "⏳ ainda não",
+      "syncHint": "-# Quando as duas pessoas fazem o gesto no mesmo dia, é dia de Sintonia: `+{xp}` de Laço e a sequência cresce.",
+      "weekHeader": "### 📅 Missão da semana",
+      "quests": {
+        "dates": "Tenham `{target}` Date Nights juntos (`/py-marriage date`).",
+        "gestures": "Façam `{target}` gestos do dia, somando os dois.",
+        "sync": "Fiquem em sintonia `{target}` dias da semana.",
+        "tree": "Cuidem da Árvore da Vida `{target}` vezes.",
+        "work": "Façam `{target}` turnos certos no `/py-work`, somando os dois.",
+        "dungeon": "Desçam `{target}` vezes nas Catacumbas, somando os dois."
+      },
+      "weekBar": "{bar} `{progress}`/`{target}` • termina {relative}",
+      "weekReward": "-# Prêmio: `+{xp}` de Laço, Barra do Amor cheia e **{item}** para a Casinha de cada pessoa.",
+      "weekDone": "✅ **Missão concluída!** {item} já tá na mochila de vocês dois.",
+      "gestures": {
+        "note": {
+          "label": "Bilhete",
+          "done": "💌 Você deixou um bilhetinho no travesseiro de {spouse}. Eu li. Brincadeira… li só um pouquinho."
+        },
+        "coffee": {
+          "label": "Café",
+          "done": "☕ Café passado na hora pra {spouse}, do jeitinho que gosta."
+        },
+        "hug": {
+          "label": "Abraço",
+          "done": "🫂 Abraço demorado em {spouse}. Desses que arrumam o dia."
+        },
+        "stars": {
+          "label": "Estrelas",
+          "done": "🌙 Você chamou {spouse} pra ver as estrelas. Romântico demais pro meu gosto… mas tá aprovado."
+        }
+      },
+      "synced": "✨ **Dia de Sintonia!** Vocês dois fizeram o gesto hoje: `{streak}` dia(s) seguidos.",
+      "levelUp": "💞 **O Laço subiu pro nível `{level}`: {name}!**",
+      "weekCompleted": "📅 **Missão da semana concluída!** {item} chegou na mochila de vocês.",
+      "reasons": {
+        "not_married": "A Força do Laço é pra casais. Quando encontrar seu par, usa `/py-marriage propose`.",
+        "done_today": "Seu gesto de hoje já foi ({gesture}). Amanhã tem mais, tá?",
+        "invalid": "Esse gesto não existe… criatividade é bom, mas escolhe um dos botões.",
+        "not_yours": "Esse painel é de outro casal. Abre o seu com `/py-marriage bond`."
+      }
+    },
     "quiz": {
       "cooldown": "⏰ Você já disputou o Quiz recentemente! Aguarde **{time}** para tentar um novo desafio.",
       "title": "🧠  ✦  Desafio do Quiz Pyxie",
@@ -1125,6 +1624,229 @@ const TRANSLATIONS = {
       "topicGamesTitle": "🎲 Minigames & Diversão Comunitária",
       "topicGamesDesc": "Aproveite momentos leves em comunidade com `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados` e `/py-likely`. Comandos rápidos e integrados para animar qualquer chat de Discord."
     },
+    "home": {
+      "beans": "feijões",
+      "coins": "moedinhas",
+      "notForSale": "não está à venda",
+      "private": "Privado",
+      "scene": {
+        "title": "Casinha de {name}",
+        "likes": "♥ {likes} curtidas",
+        "items": "{items} itens",
+        "charm": "✦ Charme {charm}"
+      },
+      "errors": {
+        "noHome": "{name} ainda não tem casinha. Hmpf, quem sabe um dia.",
+        "expired": "Essa edição expirou. Comece de novo pelo botão Decorar.",
+        "invalid": "Botão desconhecido. Use `/py-home` de novo.",
+        "notYours": "Ei! Só a dona dessa casinha pode mexer aqui. A sua é `/py-home`.",
+        "save": "Não consegui salvar a casinha agora. Nada foi cobrado; tente de novo daqui a pouco."
+      },
+      "btn": {
+        "myHome": "Minha casinha",
+        "decorate": "Decorar",
+        "arrange": "Arrumar",
+        "shop": "Loja do dia",
+        "bag": "Mochila",
+        "surface": "Parede e piso",
+        "rank": "Ranking",
+        "like": "Curtir",
+        "back": "Voltar",
+        "put": "Colocar aqui",
+        "cancel": "Cancelar",
+        "toFloor": "Ir para o piso",
+        "toWall": "Ir para a parede",
+        "move": "Mover",
+        "store": "Guardar",
+        "done": "Pronto",
+        "buy": "Comprar {name}",
+        "claim": "Pegar a chave",
+        "buyHouse": "Comprar casinha",
+        "invite": "Chamar pra morar junto"
+      },
+      "view": {
+        "title": "{icon} Casinha de {name}",
+        "introOwner": "N-não é como se eu tivesse arrumado tudo esperando você voltar... Mas a casinha é sua. Deixe do seu jeito.",
+        "introVisitor": "Você está visitando a casinha de **{name}**. Sem mexer em nada, viu? Curtir pode.",
+        "charmHeader": "### ✨ Charme da casinha",
+        "charmLine": "• **Charme:** `{charm}` (recorde: `{best}`)",
+        "setsLine": "• **Conjuntos ativos:** {sets}",
+        "noSets": "nenhum ainda",
+        "socialLine": "• **Curtidas:** `{likes}` · **Visitas:** `{visits}`",
+        "tipOwner": "-# 🌷 Junte {min} peças do mesmo tema para ativar um conjunto e ganhar Charme extra.",
+        "tipVisitor": "-# 🌷 Cada pessoa pode curtir uma casinha por dia.",
+        "shared": "💞 **Casa do casal:** {people} moram aqui. Cada pessoa decora com os próprios itens."
+      },
+      "pick": {
+        "title": "{icon} Decorar a casinha",
+        "desc": "Escolha um item da mochila. Depois é só arrastar pelas setas e colocar no lugar.",
+        "empty": "Sua mochila está vazia (ou tudo já está à mostra). Passe na **Loja do dia** ou desça nas Catacumbas atrás de tesouros.",
+        "limits": "-# Itens no quarto: `{placed}/{max}` · até `{pets}` pets.",
+        "placeholder": "Escolha um item para colocar…"
+      },
+      "kinds": {
+        "floor": "Móvel",
+        "wall": "Parede",
+        "rug": "Tapete",
+        "pet": "Pet",
+        "wallpaper": "Papel de parede",
+        "flooring": "Piso"
+      },
+      "areas": {
+        "wall": "parede",
+        "floor": "piso"
+      },
+      "place": {
+        "title": "{icon} Posicionar item",
+        "item": "• **Item:** {name} · {rarity} · `{w}x{h}`",
+        "where": "• **Posição:** {area}, coluna `{x}`, fileira `{y}`",
+        "fits": "✅ Cabe direitinho aqui.",
+        "help": "-# Use as setas para mover, ↔️ para espelhar e **Colocar aqui** quando estiver bonito."
+      },
+      "arrange": {
+        "title": "🧹 Arrumar a casinha",
+        "target": "• **Aqui está:** {name} · {rarity}",
+        "empty": "Não tem nada nesse quadradinho.",
+        "help": "-# Mova o cursor amarelo até um item: **Mover** muda de lugar, **Guardar** volta para a mochila."
+      },
+      "reasons": {
+        "not_placeable": "Esse item não vai no quarto.",
+        "bounds": "❌ Não cabe aí: passa da borda do quarto.",
+        "full": "❌ O quarto já está cheio. Guarde alguma coisa antes.",
+        "pets": "❌ Pets demais! O Astaroth disse que não divide o quarto com mais ninguém.",
+        "occupied": "❌ Já tem coisa nesse lugar.",
+        "not_owned": "Você não tem mais esse item.",
+        "already_placed": "Esse item já está no quarto.",
+        "not_placed": "Esse item não está mais no quarto.",
+        "not_surface": "Isso não é parede nem piso.",
+        "not_in_shop": "Esse item saiu da loja. A vitrine muda à meia-noite.",
+        "premium_limit": "Itens premium: um de cada por dia. Volte amanhã!",
+        "beans": "Feijões insuficientes: custa `{price}` e você tem `{balance}`.",
+        "coins": "Moedinhas insuficientes: custa `{price}` e você tem `{balance}`.",
+        "unknown_item": "Item desconhecido.",
+        "sold_out": "Esgotado! Todas as unidades numeradas já têm dona.",
+        "full_vault": "Sua mochila está cheia.",
+        "save": "Não consegui salvar agora. Nada foi cobrado; tente de novo.",
+        "own_home": "Curtir a própria casinha? Que convencida. Não vale.",
+        "no_home": "Essa pessoa ainda não tem casinha.",
+        "already_liked": "Você já curtiu essa casinha hoje. Volte amanhã!",
+        "has_home": "Você já tem uma casinha.",
+        "need_dungeon": "A chave fica no **Andar {floor}** das Catacumbas. Ainda não deu…",
+        "house_coins": "A casinha custa `{price}` moedinhas e você tem `{balance}`.",
+        "house_beans": "A casinha também pede `{price}` feijões mágicos e você tem `{balance}`. Nada foi cobrado.",
+        "not_spouse": "Só dá pra dividir a casinha com quem é casado com você.",
+        "already_together": "Vocês já moram juntos!",
+        "owner_lives_elsewhere": "Quem chamou já mora em outra casa…"
+      },
+      "shop": {
+        "title": "{icon} Loja do dia",
+        "intro": "A vitrine muda todo dia à meia-noite. E-eu escolhi essas peças com carinho, não que eu ligue.",
+        "balance": "• **Seu saldo:** {coinIcon} `{coins}` · {beanIcon} `{beans}`",
+        "line": "• **{n}. {name}** · {rarity} · {price}",
+        "rotation": "-# 🌷 Os dois últimos itens são premium (feijões mágicos): um de cada por dia.",
+        "placeholder": "Escolha o que comprar…",
+        "shelfTitle": "Loja do dia"
+      },
+      "bag": {
+        "title": "{icon} Mochila de itens",
+        "summary": "• **Itens:** `{total}` · **Diferentes:** `{distinct}`",
+        "rarities": "• **Épicos:** `{epic}` · **Lendários:** `{legendary}` · **Míticos:** `{mythic}`",
+        "hint": "-# Lendários e míticos são numerados (#). Use **Decorar** para colocar no quarto.",
+        "count": "×{count} ({shown} 🏠)",
+        "shelfTitle": "Mochila · página {page}/{pages}"
+      },
+      "surface": {
+        "title": "🎨 Parede e piso",
+        "current": "• **Parede:** {wallpaper}\n\n• **Piso:** {flooring}",
+        "desc": "Escolha um papel de parede ou piso que você já tem. Os novos aparecem na Loja do dia.",
+        "placeholder": "Trocar parede ou piso…"
+      },
+      "rank": {
+        "title": "{icon} Casinhas mais charmosas",
+        "intro": "As casinhas com mais Charme de toda a Pyxie. Hmpf, a minha seria a primeira, claro.",
+        "line": "{pos} {user} · ✦ `{charm}` · ♥ `{likes}`",
+        "empty": "Ninguém decorou nada ainda. Seja a primeira!"
+      },
+      "notices": {
+        "placed": "**{name}** está no lugar. Ficou bonito, vai.",
+        "stored": "**{name}** voltou para a mochila.",
+        "bought": "Comprado: **{name}**! Agora escolha onde colocar.",
+        "surface": "Pronto, agora é **{name}**.",
+        "liked": "Curtida enviada! Essa casinha já tem `{likes}` curtidas.",
+        "claimed": "🗝️ A casinha é sua! Deixei um kit inicial lá dentro… n-não precisa agradecer.",
+        "houseBought": "🏡 Comprada! Agora é oficialmente sua casa. Eu ajudei a escolher as cortinas, tá?"
+      },
+      "nohome": {
+        "title": "🏡 Você ainda não tem casinha",
+        "intro": "E-eu queria te mostrar sua casinha, mas… você ainda não tem uma. Tem três jeitos de conseguir:",
+        "dungeon": "• **Catacumbas:** chegue ao **Andar {floor}** e a chave é sua, de graça. Seu recorde: Andar `{best}`.",
+        "buy": "• **Comprar:** `{coins}` {coin} + `{beans}` {bean}, as mesmas condições da casa do casamento.",
+        "marry": "• **Morar junto:** casando com alguém que tem casinha, a pessoa pode te chamar pra morar lá.",
+        "ready": "-# 🗝️ Você já chegou ao Andar {floor}! A chave tá te esperando."
+      },
+      "invite": {
+        "message": "💞 {spouse}, {owner} quer que você more junto na casinha! Vocês decoram a mesma casa, cada um com os próprios itens.",
+        "btnAccept": "Mudar pra lá",
+        "btnDecline": "Agora não",
+        "accepted": "🏡 Pronto! Agora {spouse} e {owner} moram juntos. Eu… fiquei feliz. Só um pouquinho.",
+        "declined": "Tudo bem… fica pra outra hora.",
+        "notForYou": "Esse convite não é pra você…",
+        "sent": "Convite enviado! Agora é com seu amor."
+      }
+    },
+    "achievements": {
+      "view": {
+        "title": "{icon} Conquistas de {name}",
+        "summary": "• **Conquistadas:** `{done}/{total}` · **Míticas:** `{mythic}/{mythicTotal}`",
+        "categoryHeader": "### {emoji} {name}",
+        "line": "{tier} **{name}** · `{current}/{target}`{check}\n-# {desc} · 🎁 {rewards}",
+        "hidden": "🔒 **???** · `?/?`\n-# Conquista secreta. Continue explorando a Pyxie… eu não vou contar.",
+        "placeholder": "Escolha uma categoria…",
+        "titlesHint": "-# 👑 As conquistas míticas dão títulos especiais: equipe em `/py-profile` → Títulos.",
+        "notYours": "Esse menu é de outra pessoa. Use `/py-achievements` para abrir o seu."
+      },
+      "reward": {
+        "coins": "• **Moedinhas:** `+{coins}`",
+        "beans": "• **Feijões mágicos:** `+{beans}`",
+        "item": "• **Item para a Casinha:** {name}{serial}",
+        "title": "• **Título especial:** {title}"
+      },
+      "short": {
+        "coins": "{coins} moedinhas",
+        "beans": "{beans} feijões",
+        "item": "item para a Casinha"
+      },
+      "unlock": {
+        "title": "🏆 Conquista desbloqueada!",
+        "titleMany": "🏆 {count} conquistas desbloqueadas!",
+        "line": "### {tier} {name}\n\n> *{desc}*",
+        "tip": "-# Tudo já foi entregue. Veja as outras em `/py-achievements`."
+      }
+    },
+    "growth": {
+      "languageName": {
+        "pt": "Português",
+        "en": "English"
+      },
+      "welcome": {
+        "title": "{fairy} Oi! Eu sou a Pyxie",
+        "intro": "Obrigada por me chamar para **{guild}**. N-não que eu estivesse esperando o convite… mas já que estou aqui, vamos começar direito.",
+        "startHeader": "### ✨ Comece por aqui",
+        "daily": "• **Moedinhas diárias:** {coin} {daily} entrega seu bônus todo dia, e a sequência rende mais.",
+        "tarot": "• **Tarot ilustrado:** {tarotIcon} {tarot} tira a sua carta do dia e guarda no álbum.",
+        "dungeon": "• **Catacumbas de Veludo:** {dungeonIcon} {dungeon} é um roguelike difícil com ticket de `50` moedinhas.",
+        "help": "• **Todos os comandos:** {helpIcon} {help} abre o guia completo.",
+        "setup": "• **Pra quem administra:** ⚙️ {setup} liga e desliga módulos, escolhe os canais e o modo do Mundo Pyxie. Tudo num painel só.",
+        "languageHeader": "### {globe} Idioma",
+        "languageBody": "Estou falando **{language}** aqui. Quem pode **Gerenciar Servidor** troca o idioma nos botões abaixo ou com {languageCmd}.",
+        "footer": "Pyxie • {guild} • Dica: /py-help mostra tudo",
+        "btnSite": "Site",
+        "btnSupport": "Suporte",
+        "btnVote": "Votar (+feijão)",
+        "langChanged": "Pronto! A partir de agora eu falo **{language}** neste servidor.",
+        "langNoPermission": "Só quem pode **Gerenciar Servidor** escolhe o meu idioma aqui. Peça para a staff, tá?"
+      }
+    },
     "dungeon": {
       "name": "Catacumbas de Veludo",
       "private": "Mensagem privada",
@@ -1144,7 +1866,8 @@ const TRANSLATIONS = {
         "btnContinue": "Continuar descida",
         "btnHelp": "Como jogar",
         "btnTalents": "Talentos",
-        "btnHall": "Hall"
+        "btnHall": "Hall",
+        "revived": "> 🙏 Alguém rezou no seu túmulo e você voltou! Sua descida espera por até 24 horas."
       },
       "errors": {
         "notYours": "👀 Ei! Essa descida é de outra pessoa. Use `/py-dungeon` para abrir a sua.",
@@ -1174,7 +1897,8 @@ const TRANSLATIONS = {
         "abandoned": "🐈‍⬛ Resgatada pelo Astaroth",
         "extracted": "💰 Fuga com o Tesouro",
         "victory": "👑 Vitória nas Catacumbas",
-        "confirm": "🏳️ Desistir da Descida?"
+        "confirm": "🏳️ Desistir da Descida?",
+        "grave": "🪦 Lápide nas Catacumbas"
       },
       "log": {
         "floorEnter": "🗺️ Você chega ao **Andar {floor}: {floorName}**.\n\n> *{flavor}*",
@@ -1253,7 +1977,18 @@ const TRANSLATIONS = {
         "nyxTreasure": "💎 Atrás da Nyx brilha o **Tesouro do Coração**: `+{gold}` de ouro!",
         "campfire": "🔥 Você acende uma fogueira: `+{amount}` de vida e `+{light}` de luz. O Astaroth ronrona no seu colo.",
         "forfeited": "🏳️ Você desiste e corre para a saída.",
-        "extracted": "💰 Você sobe as escadas abraçada ao saco de ouro!"
+        "extracted": "💰 Você sobe as escadas abraçada ao saco de ouro!",
+        "graveFound": "🪦 Uma lápide fresquinha… aqui caiu {user}. Ainda tem uma vela acesa do lado.",
+        "graveLeft": "🚶 Você deixa a lápide em paz.",
+        "graveLooted": "💰 Você junta os espólios que ficaram no chão: `+{gold}` de ouro. Desculpa, viu…",
+        "gravePrayed": "🙏 Você reza por {user}. A vela da lápide tremula.",
+        "reviveWorked": "✨ A vela acendeu de novo! {user} voltou pra descida. Você ganhou `+{echoes}` Ecos.",
+        "reviveFailed": "🕯️ Ninguém respondeu… essa alma já seguiu em frente (passou de 24h ou já começou outra descida).",
+        "helpedHeal": "🤝 {user} entrou na luta e te curou: `+{amount}` de vida.",
+        "helpedHit": "🤝 {user} entrou na luta e acertou o inimigo: `-{amount}`.",
+        "revived": "✨ Você abre os olhos no chão frio. Alguém rezou por você: {user}.",
+        "festivalRun": "🎭 Os monstros vieram fantasiados pra **{season}**! Cada um que cair solta {currency}.",
+        "festivalSpark": "🎭 `+{sparks}` {currency} pro Festival!"
       },
       "items": {
         "potion": "Poção",
@@ -1304,7 +2039,11 @@ const TRANSLATIONS = {
         "soldOut": "-# A barraca está vazia. A Senhorita Cinza boceja.",
         "shrine": "• **Orar:** custa `{hp}` de vida e concede uma bênção aleatória.\n\n• **Oferenda:** `{price}` de ouro para curar tudo e remover o veneno.",
         "fountain": "Beber pode curar, revelar o andar… ou dar dor de barriga.",
-        "trap": "Agulhas vão disparar: `{damage}` de dano!\n\n• **Saltar:** `{jump}%` de chance de escapar ilesa.\n\n• **Escudo:** leva metade do dano com certeza.\n\n• **Desarmar:** gasta `8` de luz e tem `80%` de chance de render ouro."
+        "trap": "Agulhas vão disparar: `{damage}` de dano!\n\n• **Saltar:** `{jump}%` de chance de escapar ilesa.\n\n• **Escudo:** leva metade do dano com certeza.\n\n• **Desarmar:** gasta `8` de luz e tem `80%` de chance de render ouro.",
+        "grave": "Aqui caiu {user}. O que sobrou da descida ainda está pelo chão.",
+        "graveLoot": "• **Saquear:** leva `{gold}` de ouro que ficou caído.",
+        "graveRevive": "• **Rezar:** custa `10` de vela. Se a alma ainda não seguiu, a pessoa volta pra descida dela.",
+        "graveGone": "-# Essa alma já seguiu em frente. Só dá pra deixar uma flor."
       },
       "reward": {
         "desc": "O guardião deixou para trás um brilho morno. Escolha **uma** bênção para levar:",
@@ -1327,9 +2066,12 @@ const TRANSLATIONS = {
         "capRun": "-# 🔒 Teto de `{cap}` moedinhas por descida aplicado.",
         "capDaily": "-# 🔒 Teto diário atingido: o resto do ouro virou poeira de estrela.",
         "echoes": "🌙 **Ecos ganhos:** `+{echoes}` (use em Talentos)",
+        "drops": "🎁 **Achado para a Casinha:** {items}\n\n-# Os itens já estão na sua mochila: abra `/py-home` para decorar.",
         "best": "🏅 **Novo recorde:** Andar `{floor}`!",
         "balance": "-# 🪙 Saldo atual: `{balance}`",
-        "stats": "-# 📊 `{rooms}` salas exploradas • `{kills}` monstros derrotados"
+        "stats": "-# 📊 `{rooms}` salas exploradas • `{kills}` monstros derrotados",
+        "houseKey": "🗝️ **Você achou a chave de uma casinha!** Abra `/py-home` pra pegar a sua.",
+        "festival": "🎭 **Festival:** `+{sparks}` {currency} (gaste no `/py-festival`)"
       },
       "outcome": {
         "dead": "💀 morte",
@@ -1365,7 +2107,10 @@ const TRANSLATIONS = {
         "forfeitYes": "Sim, desistir",
         "forfeitNo": "Continuar",
         "newRun": "Nova descida",
-        "lobby": "Menu"
+        "lobby": "Menu",
+        "loot": "Saquear",
+        "revive": "Rezar",
+        "help": "Ajudar ({left})"
       },
       "fields": {
         "hp": "❤️ Vida",
@@ -1399,7 +2144,17 @@ const TRANSLATIONS = {
         "title": "🏆 Hall dos Corajosos",
         "desc": "Quem desceu mais fundo nas Catacumbas de Veludo:\n\n{lines}",
         "line": "`{pos}.` {user} • Andar `{floor}` • 👑 `{victories}` • 🪙 recorde `{payout}`",
-        "empty": "-# Ninguém desceu ainda. Que tal ser a primeira pessoa?"
+        "empty": "-# Ninguém desceu ainda. Que tal ser a primeira pessoa?",
+        "titleWeek": "📅 Ranking da semana",
+        "titleGuild": "🏰 Ranking da semana no servidor",
+        "descWeek": "Quem desceu mais fundo desde segunda-feira:\n\n{lines}",
+        "descGuild": "Quem desceu mais fundo esta semana em **{server}**:\n\n{lines}",
+        "lineWeek": "`{pos}.` {user} • Andar `{floor}` • 👑 `{victories}` • ⚔️ `{kills}`",
+        "you": "-# Você está em **#{pos}**. Falta pouco… eu acho.",
+        "weekReset": "-# 📅 A semana vira toda segunda à meia-noite (Brasília).",
+        "btnAll": "De sempre",
+        "btnWeek": "Semana",
+        "btnGuild": "Servidor"
       },
       "help": {
         "title": "📜 Guia das Catacumbas",
@@ -1424,7 +2179,39 @@ const TRANSLATIONS = {
         "merchant": "Senhorita Cinza",
         "shrine": "Altar da Lua",
         "fountain": "Poça de Luar",
-        "trap": "Armadilha!"
+        "trap": "Armadilha!",
+        "grave": "Lápide"
+      },
+      "thread": {
+        "name": "🕯️ Catacumbas de {user}",
+        "reason": "Descida nas Catacumbas de Veludo",
+        "started": "🕯️ Sua descida começou em {thread}. Te espero lá… n-não demora.",
+        "btnGo": "Ir para a descida",
+        "here": "🕯️ Sua descida continua em {thread}.",
+        "warn": "🕯️ {user}, a vela tá quase apagando… se ninguém mexer em **{minutes} minutos**, eu fecho a descida.",
+        "closed": "🕯️ A vela apagou de tanto esperar. Fechei esta descida e mandei o resumo pra DM de {user}.",
+        "closedNoDm": "🕯️ A vela apagou de tanto esperar. Fechei esta descida; o resumo tá aqui embaixo, já que a DM de {user} tá fechada."
+      },
+      "idle": {
+        "title": "🕯️ A vela apagou",
+        "intro": "Você sumiu por **{minutes} minutos** no **Andar {floor}** e a vela não aguentou… o Astaroth te puxou pra fora, como sempre. E-eu não fiquei preocupada, tá?",
+        "summaryHeader": "### 📜 Resumo da descida",
+        "tip": "-# Da próxima vez, se precisar sair, use **Fugir** na fogueira: o ouro vai junto com você.",
+        "footer": "Pyxie • Catacumbas de Veludo"
+      },
+      "coop": {
+        "self": "Você não pode se ajudar… mas eu torço por você, tá?",
+        "already": "Você já ajudou nessa descida. Agora é com ela.",
+        "limit": "Já tem gente demais ajudando. Deixa um pouco de glória pra ela!",
+        "not_combat": "Só dá pra ajudar durante uma luta.",
+        "missing": "Essa descida já acabou."
+      },
+      "revive": {
+        "title": "🙏 Alguém rezou por você",
+        "body": "{user} achou seu túmulo no **Andar {floor}** e rezou… e a vela acendeu de novo. Sua descida voltou com metade da vida e o ouro que sobrou.\n\nAbre `/py-dungeon` e clica em **Continuar descida**. Ela te espera por até 24 horas. E-eu não fiquei emocionada. Nem um pouco."
+      },
+      "festival": {
+        "combatLine": "-# 🎭 Fantasiado pra {season}: vale `+{sparks}` {currency}."
       }
     },
     "mary": {
@@ -1684,7 +2471,13 @@ const TRANSLATIONS = {
       "coins": "Coins",
       "magicBeans": "Magic Beans",
       "ranking": "Leaderboard",
-      "unranked": "Not ranked yet"
+      "unranked": "Not ranked yet",
+      "blacklisted": "🚫 You or this server are on Pyxie's global blacklist.",
+      "ownerPanelOnly": "❌ Only Pyxie's creator can use this panel.",
+      "commandUnavailable": "This command isn't available yet. Don't look at me like that; I'm investigating too.",
+      "guildScopeOnly": "❌ This command is exclusive to the Cringelândia lab.",
+      "actionError": "❌ Something went wrong while processing this action. Please try again later.",
+      "actionErrorShort": "❌ Something went wrong while processing this action."
     },
     "status": {
       "title": "🌸  ✦  Operational Status — Pyxie",
@@ -1694,55 +2487,71 @@ const TRANSLATIONS = {
       "users": "👥 **Active Users:** `{users}`"
     },
     "ping": {
-      "title": "🏓  ✦  Latency & Performance",
-      "wsLatency": "⚡ **WebSocket Latency:** `{latency}ms`",
-      "apiLatency": "🌐 **API Response Time:** `{latency}ms`"
+      "title": "🏓 Pong! I'm here",
+      "wsLatency": "• **Connection to Discord:** `{latency}ms`",
+      "apiLatency": "• **Time to answer you:** `{latency}ms`"
     },
     "vote": {
-      "title": "🗳️  ✦  Vote for Pyxie on Top.gg",
-      "desc": "Support our community by voting for Pyxie on **Top.gg** every 12 hours!\n\nYour voluntary vote helps the bot be discovered by new servers and communities.",
-      "supportNote": "💜 *Voting on Top.gg does not grant in-game coins or bonuses, but it is the best way to support our project!*",
-      "rewardsTitle": "🎁 **VOLUNTARY SUPPORT:**",
-      "rewardCoins": "> 🌟 Help Pyxie reach more servers and communities!",
-      "rewardDailyBonus": "> 💜 Community exposure for the bot's growth.",
-      "weekendActive": "🌟 *Thank you for your vote and ongoing support!*",
-      "weekendTip": "🌟 *Thank you for your vote and ongoing support!*",
-      "cta": "👉 *Click the button below to open the official voting page:*",
+      "title": "🌱 Vote for Pyxie on Top.gg",
+      "desc": "Every vote on **Top.gg** helps new servers find Pyxie. I-I don't need it, okay? But I'll take it.",
+      "rewardsTitle": "### 🌱 Vote reward",
+      "rewardLine": "• **Per vote:** `{beans}` magic bean, every `12h`.",
+      "weekendLine": "• **Weekends:** `{beans}` beans per vote (Friday to Sunday).",
+      "statusReady": "> ✅ **Your vote is ready now!**",
+      "statusCooldown": "> ⏳ **You already voted.** Next vote in `{time}`.",
+      "totalLine": "-# 🌱 You have earned `{beans}` beans from `{votes}` votes. Thank you!",
+      "cta": "-# Beans land in your account a few seconds after you vote.",
       "btnLabel": "Vote on Top.gg",
-      "footerText": "Thank you for supporting Pyxie and Cringelândia!",
-      "rewardBean": "> 🌱 Voluntary community support."
+      "footerText": "Thanks for supporting Pyxie",
+      "dailyReminder": "-# 🌱 Voting on Top.gg gives `{beans}` magic bean: {voteCmd}"
     },
     "daily": {
-      "titleClaimed": "<:gift62:1548443978414817331>  ✦  Daily Reward Collected!",
-      "descClaimed": "Your daily reward has been safely deposited into your vault!",
-      "summaryTitle": "🎁 **REWARD SUMMARY**",
-      "streakLine": "> 🔥 **Daily Streak:** **x{streak}** {compliment}",
-      "streakCooldown": "> 🔥 **Current Streak:** **x{streak}** consecutive days",
-      "complimentTier1": "*(Great start! Keep it up!)*",
-      "complimentTier2": "*(Flawless focus! The flame is growing!)*",
-      "complimentTier3": "*(Impressive! Your discipline is admirable!)*",
-      "complimentTier4": "*(Master of consistency! Almost unstoppable!)*",
-      "complimentTier5": "*(Legendary! A true living legend of Pyxie!)*",
-      "collected": "> <a:coin:1548443880066777098> **Coins Collected:** **+{amount}**",
-      "collectedStreak": "> <a:coin:1548443880066777098> **Coins Collected:** **+{normal}** *(+ {streakBonus} streak bonus)*",
-      "streakActive": "> 🔥 **Active Streak:** **x{streak}** days in a row!",
-      "topggVoteBonusActive": "> 🎁 **Community Bonus:** *(thank you for being part of Pyxie!)*",
-      "topggVoteBonusPrompt": "💡 *Tip: Use /py-work to complete shifts in your career and earn more coins!*",
-      "balance": "> 🏦 **Current Balance:** **{balance}**",
-      "magicBean": "> ✨ **EPIC LUCK (1% Chance):** **+1x Magic Bean <:peakmagicbean:1548444140532928642>** (Total: **{total} <:peakmagicbean:1548444140532928642>**)",
-      "titleCooldown": "<:gift62:1548443978414817331>  ✦  Daily Reward on Cooldown",
-      "descCooldown": "⏰ You already claimed your daily reward today. Please wait **{time}** before claiming again!",
-      "voteWeekendBonus": "🌟 *Take this time to explore minigames and complete shifts with /py-work!*",
-      "voteWeekdayBonus": "🌟 *Enjoy minigames and Pyxie Tarot while you wait!*",
-      "btnLabel": "Support Pyxie",
-      "btnLabelCooldown": "Support Pyxie",
+      "titleFirst": "☀️ Oh… you came today",
+      "titleStreak": "🔥 {streak} days in a row!",
+      "titleCooldown": "⏰ You already came today",
+      "rewardHeader": "### 🎁 What I set aside for you",
+      "coins": "• **Coins:** `+{amount}` {coin}",
+      "streakBonus": "• **Streak bonus:** `+{bonus}` {coin} (one more for every day in a row)",
+      "bean": "• **Magic bean:** `+1` {bean} Rare luck, you know? You have `{total}` now.",
+      "balance": "• **Balance:** `{balance}` {coin}",
+      "streakBroken": "-# 💔 Your **{previous}**-day streak ended… I-I wasn't counting, okay? Start again with me.",
+      "energyHeader": "### 🔮 Today's energy",
+      "energyAsk": "-# Did I get it right?",
+      "nextMilestone": "-# 🔥 **{left}** day(s) left until the **{target}**-day milestone.",
+      "milestone": {
+        "7": "### 🏆 A whole week!\n\nSeven days in a row. I… made a little mark on the calendar. It's no big deal.",
+        "30": "### 🏆 A whole month!\n\nThirty days. You're officially the most consistent person I know. That's a compliment, take it.",
+        "100": "### 🏆 A hundred days!\n\nA hundred. Days. I don't even know what to say… thanks for always coming back. There, I said it.",
+        "365": "### 🏆 A whole year!\n\nA year. I… need a minute. You're the best part of my routine."
+      },
+      "cooldownBody": "You already got your daily today. Come back in **{time}**… n-not that I'll be counting.",
+      "cooldownStreak": "• **Streak:** `{streak}` day(s) 🔥",
+      "cooldownEnergy": "• **Today's energy:** {emoji} {name}",
+      "cooldownCups": "-# ☕ You can still play today's cups.",
+      "cooldownIdle": "-# Meanwhile: `/py-work`, `/py-tarot` or just… stay here.",
+      "reactionRight": "-# 💬 {line}",
+      "reactionWrong": "-# 💬 {line}",
+      "btnRight": "Nailed it",
+      "btnWrong": "Way off",
+      "btnCups": "Cups",
       "btnWebBonus": "Web Bonus (+75🪙)",
-      "footer": "Reward resets every 24 hours",
-      "footerCooldown": "Daily reward resets every 24 hours"
+      "notYours": "This daily belongs to someone else… get yours with `/py-daily`.",
+      "footer": "Pyxie • come back tomorrow, okay?",
+      "footerCooldown": "Pyxie • the daily resets every 24 hours",
+      "cups": {
+        "title": "☕ Pyxie's Cups",
+        "intro": "I hid a cookie under one of these cups. If you find it, it's yours… and some coins too.\n\n-# Only one try per daily, okay?",
+        "btnCup": "Cup {n}",
+        "win": "🍪 You found it! Here: `+{prize}` {coin}. Don't get cocky… okay, you can be a little cocky.",
+        "lose": "It was cup **{cup}**. You missed… but it was a good try. I'll hide it again tomorrow.",
+        "balance": "-# Balance: `{balance}` {coin}",
+        "already": "You already played the cups today. I'll hide it again tomorrow.",
+        "notClaimed": "Get your daily with `/py-daily` first, then we'll play."
+      }
     },
     "invite": {
-      "title": "✨  ✦  Invite Pyxie to your Discord Server!",
-      "desc": "Bring the magic of **Pyxie** to your community! A feature-packed Discord bot with magical economy, careers, social minigames, mystical tarot, and interactions to liven up your members.",
+      "title": "✨ Invite Pyxie… if you want",
+      "desc": "If you want… I could come to your server. I'd bring coins, careers, minigames, illustrated tarot, the Catacombs and a cozy room for everyone. Y-you don't have to, but I'd like that.",
       "dungeonsTitle": "🎮 Community Minigames & Fun",
       "dungeonsDesc": "PvP Rock-Paper-Scissors with coin bets, live \"Who is most likely to\" polls, coinflip, dice rolls, and fortune cookies.",
       "economyTitle": "🪙 Economy, Careers & Inventory",
@@ -1751,15 +2560,17 @@ const TRANSLATIONS = {
       "tarotDesc": "Full 78-card tarot spreads with rendered canvas art, love compatibility ship meter, and marriage system.",
       "btnRecommended": "Add Pyxie (Recommended)",
       "btnAdmin": "Admin Invite",
+      "btnUserInstall": "Install on my account",
+      "btnWebBonus": "Web Bonus (10s)",
       "btnSupport": "Support Server",
       "btnVote": "Vote on Top.gg",
-      "footer": "Pyxie • Magic, Leisure & Community for your Server",
+      "footer": "Pyxie • I promise to behave (mostly)",
       "careersTitle": "💼 Careers & Vocations",
       "careersDesc": "Choose your profession, complete work shifts, earn coins, and advance your career level!"
     },
     "languageCmd": {
-      "current": "🌐 This server language is set to: **English 🇺🇸**.",
-      "updated": "✅ Server language successfully updated to: **{lang}**!"
+      "current": "🌐 I speak **English 🇺🇸** here.",
+      "updated": "✅ Done, I'll speak **{lang}** here now!"
     },
     "help": {
       "title": "{emoji}  ✦  Help Center — {label}",
@@ -1802,12 +2613,12 @@ const TRANSLATIONS = {
       }
     },
     "wallet": {
-      "title": "<a:coin:1548443880066777098>  ✦  {user}’s Wallet",
-      "desc": "Assets and resources accumulated during your journey:",
-      "balancesHeader": "💎 **AVAILABLE BALANCES**",
-      "rankingHeader": "🏆 **LEADERBOARD POSITION**",
-      "placement": "> 🏅 **Rank:** {rank}",
-      "unranked": "Not ranked yet"
+      "title": "👛 {user}'s wallet",
+      "desc": "I counted everything carefully, twice. Not that I go around looking at people's wallets…",
+      "balancesHeader": "### 💎 Balances",
+      "rankingHeader": "### 🏆 On the leaderboard",
+      "placement": "• **Rank:** {rank}",
+      "unranked": "not ranked yet"
     },
     "profile": {
       "title": "<:3861memberpurple:1551355544185344112>  ✦  {title}{user}",
@@ -1839,24 +2650,24 @@ const TRANSLATIONS = {
       "masteredCareers": "> 🏆 **Mastered Careers:** **{count}/22** (+{bonus}% Global Salary Bonus)"
     },
     "ranking": {
-      "mainTitle": "🏆  ✦  Official Realm Leaderboard",
-      "coinsTitle": "<a:coin:1548443880066777098>  ✦  Magic Coins Leaderboard",
-      "beansTitle": "🌱  ✦  Magic Beans Leaderboard",
-      "coinsDesc": "The most prosperous adventurers in the realm:",
-      "beansDesc": "The greatest master cultivators of Magic Beans:",
-      "emptyCoins": "*No coin records yet.*",
-      "emptyBeans": "*No magic beans cultivated yet.*",
-      "footer": "Updated in real-time • Use buttons to switch",
+      "mainTitle": "🏆 Pyxie's leaderboard",
+      "coinsTitle": "🪙 Who has the most coins",
+      "beansTitle": "🌱 Who has the most beans",
+      "coinsDesc": "I made the list myself. If your name isn't here… there's still time, okay?",
+      "beansDesc": "Who takes the best care of magic beans. I notice these things.",
+      "emptyCoins": "*Nobody has saved any coins yet… start with `/py-daily`?*",
+      "emptyBeans": "*No beans around here yet.*",
+      "footer": "Pyxie • updates live • switch lists with the buttons",
       "btnCoins": "Coins",
       "btnBeans": "Beans",
       "btnStreaks": "Streaks",
-      "streaksTitle": "🔥  ✦  Highest Daily Streaks Leaderboard",
-      "streaksDesc": "The adventurers with the longest and most legendary daily streaks:",
-      "emptyStreaks": "*No adventurers with an active streak yet. Use /py-daily to start!*",
+      "streaksTitle": "🔥 Who never misses a day",
+      "streaksDesc": "The longest daily streaks. I wait for these people every day.",
+      "emptyStreaks": "*No streaks yet. Use `/py-daily` and I'll start counting.*",
       "streakSingleDay": "consecutive day",
       "streakMultiDays": "consecutive days",
-      "viewerPlacement": "👤 Your Current Placement",
-      "viewerLine": "> 🏅 **Rank #{position}** with **{amount}**",
+      "viewerPlacement": "👤 Where you are",
+      "viewerLine": "• **Rank #{position}** with **{amount}**",
       "btnWebLeaderboard": "Live Web Leaderboard",
       "webLeaderboardLink": "🌐 [Open Live Web Leaderboard & Gallery]({url})"
     },
@@ -1939,13 +2750,18 @@ const TRANSLATIONS = {
       "dateNotYourSession": "❌ You are not part of this couple date.",
       "dateAnswerRecorded": "💌 Your answer was secretly recorded! Awaiting your spouse...",
       "dateOutcomeMatch": "🥂✨ **PERFECT HARMONY!** You chose the exact same option!\n> 💖 **+15% Love Bar** (Current: **{love}%**)\n> 🪙 **{coins}** awarded to each of you!",
-      "dateOutcomeDivergent": "🥂💔 Divergent answers! Love is made of contrasts... Pyxie giggles sarcastically!\n> 💖 **+3% Love Bar** (Current: **{love}%**)"
+      "dateOutcomeDivergent": "🥂💔 Divergent answers! Love is made of contrasts... Pyxie giggles sarcastically!\n> 💖 **+3% Love Bar** (Current: **{love}%**)",
+      "houseRedirect": "🏡 The couple's home is now the **Cozy Room** (`/py-home`): whoever has a room invites their spouse to move in. Without one, you get it by reaching **Floor {floor}** of the Catacombs or buy it for `{coins}` coins + `{beans}` magic beans.",
+      "houseTogether": "🏡 Living together in the Cozy Room",
+      "houseApart": "🏠 Not living together yet",
+      "vaultCapNote": "-# The Love Vault yield is capped at {cap} per day."
     },
     "divorce": {
       "title": "💔  ✦  Divorce",
       "success": "💔 Divorce completed. **{cost}** was charged.",
       "notMarried": "❌ You are not married.",
-      "insufficientCoins": "❌ Divorce costs **{cost}**. Your balance is **{balance}**."
+      "insufficientCoins": "❌ Divorce costs **{cost}**. Your balance is **{balance}**.",
+      "separated": "📦 **Splitting belongings:** the home stayed with its original owner, and `{count}` item(s) from {user} went back to that person's bag."
     },
     "profession": {
       "sameProfession": "❌ You are already a **{profession}**. Choose a different career.",
@@ -1996,7 +2812,13 @@ const TRANSLATIONS = {
         "ferreiro": "Blacksmith",
         "rei_rainha": "King / Queen",
         "domador_feras": "Beast Tamer",
-        "aniquilador_vegetais": "Vegetable Slayer"
+        "aniquilador_vegetais": "Vegetable Slayer",
+        "minerador": "Miner",
+        "pescador": "Fisher",
+        "florista": "Florist",
+        "marceneiro": "Woodworker",
+        "costureiro": "Tailor",
+        "arqueologo": "Archaeologist"
       }
     },
     "shop": {
@@ -2080,6 +2902,7 @@ const TRANSLATIONS = {
     },
     "tarot": {
       "bribeBtn": "Try New Reading (350 🪙)",
+      "meaningBtn": "Full meaning",
       "cardLabel": "CARD",
       "orientationReversed": "REVERSED",
       "orientationUpright": "UPRIGHT",
@@ -2250,7 +3073,9 @@ const TRANSLATIONS = {
       "envelopeBeanBalanceLine": "> 🌱 **New Magic Bean Balance:** **{beans} 🌱**",
       "masteryBonusBadge": "> 🏆 **Resume Bonus:** +{percent}% salary from mastered careers!",
       "newlyMasteredTitle": "⭐  ✦  NEW MASTERED CAREER!",
-      "newlyMasteredDesc": "Congratulations! You reached Max Mastery in **{profession}** (Level 4) and unlocked a **+3% permanent salary bonus** across all jobs!"
+      "newlyMasteredDesc": "Congratulations! You reached Max Mastery in **{profession}** (Level 4) and unlocked a **+3% permanent salary bonus** across all jobs!",
+      "materialDrop": "🧺 **Workshop material:** `+{qty}` {material} (use it in `/py-craft`)",
+      "festivalDrop": "🎭 **{season}:** you found `+{qty}` {currency} on the way! (spend them on `/py-festival`)"
     },
     "workDilemma": {
       "buttonAccept": "🕵️ Accept Scheme",
@@ -2365,6 +3190,460 @@ const TRANSLATIONS = {
     "set": {
       "gamesSuccess": "✅ Games channel set to <#{channel}>! From now on quiz duels can only be started there."
     },
+    "setup": {
+      "footer": "Pyxie • Server hub",
+      "notSet": "not set",
+      "refresh": "Refresh",
+      "saved": "Done, saved it!",
+      "adminOnlyAction": "This panel is only for server admins… sorry.",
+      "nav": {
+        "placeholder": "Pick a section…"
+      },
+      "sections": {
+        "overview": {
+          "label": "Overview",
+          "desc": "Everything about the server in one place"
+        },
+        "mmo": {
+          "label": "Pyxie World",
+          "desc": "Catacombs, Cozy Room, items and classic mode"
+        },
+        "channels": {
+          "label": "Allowed channels",
+          "desc": "Where RPG/MMO and minigames can run"
+        },
+        "modules": {
+          "label": "Modules",
+          "desc": "Turn minigames, marriage and tarot on or off"
+        },
+        "welcome": {
+          "label": "Welcome",
+          "desc": "Channel and message for newcomers"
+        },
+        "vent": {
+          "label": "Vent channel",
+          "desc": "Support channel with a pinned note and anonymous venting"
+        },
+        "tarot": {
+          "label": "Daily tarot",
+          "desc": "Channel for the card of the day, posted at midnight"
+        },
+        "tickets": {
+          "label": "Tickets",
+          "desc": "Support panel and category"
+        },
+        "language": {
+          "label": "Language",
+          "desc": "Portuguese or English"
+        }
+      },
+      "groups": {
+        "mmo": "Pyxie World",
+        "games": "Minigames",
+        "marriage": "Marriage",
+        "tarot": "Tarot"
+      },
+      "overview": {
+        "title": "⚙️ Pyxie Server Configuration Panel",
+        "intro": "I-I put everything for **{server}** in here… pick a section from the menu. You don't have to touch everything, okay? Just what you want.",
+        "demand": "-# 🔔 **{count}** person(s) tried to play Pyxie World here in the last 7 days.",
+        "trialHint": "-# 🧪 You can try Pyxie World for 7 days, once. After that it goes back to classic on its own.",
+        "systems": "Server systems",
+        "adminOnly": "-# 🔒 Only server admins can see this panel."
+      },
+      "mmo": {
+        "title": "🗺️ Pyxie World on this server",
+        "stateFull": "**On.** Catacombs, Cozy Room, rare items and achievements all work here.",
+        "stateTrial": "**On trial** until {time}. Then it goes back to classic mode on its own, and nobody loses anything.",
+        "stateClassic": "**Classic mode.** Only coins from work and the default profile here.",
+        "whatTitle": "What Pyxie World brings",
+        "features": {
+          "dungeon": "• **Velvet Catacombs:** a pixel art roguelike dungeon with five floors, guardians, Nyx at the end and treasure for whoever makes it out.",
+          "home": "• **Cozy Room:** a pixel art room with over 180 pieces of furniture and pets. The key drops in the Catacombs (or you can buy it), and married couples can move in together.",
+          "vault": "• **Serial-numbered rare items:** limited legendaries and mythics, each one with its origin on record.",
+          "achievements": "• **Hard achievements:** titles in special lettering that get fancier with every milestone.",
+          "boss": "• **Weekly boss:** a Catacombs guardian shows up in the server every Monday; everyone fights together, with a ranking and rewards when it falls.",
+          "market": "• **Player market:** buy and sell items and materials with escrow, a 5% fee and price history.",
+          "festival": "• **Seasonal festival:** Halloween, Christmas, New Year, Easter and Summer with Sparks, costumed monsters and boxes with public odds."
+        },
+        "classicTitle": "What about classic mode?",
+        "classicWhat": "• **What goes away:** Catacombs, Cozy Room, bag, shop and items stop working here. Coins still come from work and profiles stay default.",
+        "classicKeeps": "• **What stays:** nobody loses anything. Items and rooms stay saved and come back when Pyxie World is turned on again.",
+        "trialAlreadyUsed": "-# This server already used its 7-day trial, but you can turn it on for good whenever you want.",
+        "btnEnable": "Turn on Pyxie World",
+        "btnTrial": "Try it for 7 days",
+        "btnClassic": "Classic mode",
+        "btnConfirmClassic": "Yes, classic mode",
+        "btnKeep": "Keep it as is",
+        "confirmTitle": "🪙 Switch to classic mode?",
+        "confirmBody": "Are you sure? Catacombs, Cozy Room, bag, shop and items stop working on this server.",
+        "enabled": "✨ Done, Pyxie World is on here! I-I'm happy… I mean, that's great.",
+        "trialStarted": "🧪 Trial on until {time}. Then it goes back to classic on its own, and nobody loses anything.",
+        "alreadyFull": "Pyxie World is already on here, no trial needed.",
+        "classicDone": "Okay… switched back to classic mode here. If you change your mind, just come back to this section."
+      },
+      "channels": {
+        "title": "📍 Allowed channels",
+        "intro": "Choose where each kind of command can run. With no channel selected, it works everywhere.",
+        "everywhere": "every channel",
+        "threads": "-# 🧵 Threads count as the channel they came from.",
+        "pick_mmo": "RPG/MMO channels (empty = all)",
+        "pick_games": "Minigame channels (empty = all)",
+        "clear_mmo": "RPG/MMO in every channel",
+        "clear_games": "Minigames in every channel",
+        "saved": "Channels saved!",
+        "cleared": "Allowed in every channel."
+      },
+      "modules": {
+        "title": "🧩 Server modules",
+        "intro": "Turn off what doesn't fit the server. You can turn it back on anytime, and nobody loses anything.",
+        "on": "✅ on",
+        "off": "⛔ off",
+        "onShort": "on",
+        "offShort": "off",
+        "desc_games": "-# Quiz, duels, rock-paper-scissors, tic-tac-toe, minesweeper, ship and friends.",
+        "desc_marriage": "-# Marriage proposals, divorce and children.",
+        "desc_tarot": "-# Tarot readings and the card album.",
+        "mmoHint": "-# 🗺️ Pyxie World has its own section in the menu.",
+        "turnedOn": "**{group}** is back on!",
+        "turnedOff": "**{group}** is off on this server."
+      },
+      "dedicated": {
+        "current": "Current channel",
+        "pick": "Pick the channel…",
+        "unique": "-# Each channel can only have one job. If it already had another, I'll swap it and let you know.",
+        "saved": "Done, it's {channel} now!",
+        "welcome": {
+          "title": "👋 Welcome",
+          "body": "When someone joins, I send the welcome message in this channel.",
+          "editBtn": "Edit message and role"
+        },
+        "vent": {
+          "title": "🫂 Vent channel",
+          "body": "A support channel with a pinned comforting note, self-help in DMs and anonymous venting."
+        },
+        "tarot": {
+          "title": "🔮 Daily tarot",
+          "body": "Every midnight (Brasília time) I post the card of the day in this channel."
+        },
+        "tickets": {
+          "title": "🎫 Tickets",
+          "body": "I post the support panel in this channel. Then you pick the category and the log channel."
+        }
+      },
+      "language": {
+        "title": "🌐 Server language",
+        "body": "This is the language I speak on this server. Each person can still pick their own with `/py-language`.",
+        "changed": "Okay, I'll speak English here now!"
+      },
+      "blocked": {
+        "classicAdmin": "This server is in classic mode, so Pyxie World is off here. Since you run the server… want to take a little look at what it has? I promise it's not boring.",
+        "classicMember": "Oh… this server is in classic mode, so Catacombs, Cozy Room and items are off. I-it wasn't my choice, okay? If you want, ask the admins to turn it on in `/py-setup`. It always works in our DMs.",
+        "demand": "-# 🔔 I counted your request. That's **{count}** person(s) asking this week.",
+        "disabled": "The admins turned off **{group}** on this server… they can turn it back on in `/py-setup`.",
+        "channel": "Not here… **{group}** only works in {channels}. Call me over there?"
+      }
+    },
+    "cookie": {
+      "title": "🥠 Fortune cookie",
+      "intro": "*You crack the shell and a little folded note falls out:*",
+      "wisdom": "> 📜 **\"{wisdom}\"**",
+      "goodHeader": "### ✨ Luck likes you",
+      "goodBody": "`+{coins}` {coin} fell out of the shell. I-it wasn't me who put them there, okay?",
+      "badHeader": "### 🍂 Not today",
+      "badBody": "A little breeze took `{coins}` {coin} from your pouch. I tried to hold on… I swear.",
+      "footerExtra": "Pyxie • {count} extra cookie(s) left",
+      "footerTomorrow": "Pyxie • I'll bake another one tomorrow",
+      "cooldownTitle": "⏰ Today's cookie is gone",
+      "cooldownBody": "You already ate today's cookie. The next one comes out of the oven in **{time}**.",
+      "cooldownExtraHeader": "### ✨ Want an extra one now?",
+      "cooldownExtraBody": "On Pyxie's portal you wait 10 little seconds and get **1 extra cookie** and `+{coins}` {coin}. Fine, I'll allow it.",
+      "cooldownFooter": "Pyxie • one cookie a day (plus extras)",
+      "btnExtra": "Extra cookie (10s)"
+    },
+    "coinflip": {
+      "heads": "heads",
+      "tails": "tails",
+      "winTitle": "🪙 It's {side}! You won",
+      "loseTitle": "🪙 It's {side}… not this time",
+      "winBody": "The coin spun and spun… and landed on your side. Hmph. Here are your `+{bet}` {coin}, fair and square.",
+      "loseBody": "The coin spun and landed on the other side. The `{bet}` {coin} stay with me… d-don't be mad, it was the coin.",
+      "pick": "• **You picked:** {pickEmoji} {pick}",
+      "result": "• **It landed on:** {resultEmoji} {result}",
+      "balance": "• **Balance:** `{balance}` {coin}",
+      "footer": "Pyxie • {bet}-coin bet",
+      "noFunds": "You only have `{balance}` {coin}… you can't bet `{bet}`. Save it for later, okay?",
+      "usage": "Tell me the side and how much you want to bet, like `{example}`."
+    },
+    "dice": {
+      "title": "{dice} Rolling {count}d{sides}",
+      "body": "**{user}** shook the dice and let them go on the table.",
+      "result": "### 🎯 It rolled {result}",
+      "nat20": "🌟 **Natural twenty!** I-I'm not impressed. Okay, a little.",
+      "nat1": "💀 **Natural one…** Ouch. Pretend it didn't happen, I won't tell anyone.",
+      "footer": "Pyxie • total {total}"
+    },
+    "boss": {
+      "intro": "It climbed out of the Catacombs and is prowling the server all week… gather everyone, I'll cheer for you!",
+      "hpLine": "{bar} `{hp}` / `{max}` HP",
+      "fighters": "-# 👥 `{count}` person(s) fighting. Every newcomer makes it stronger.",
+      "intentHeader": "### {emoji} Today's plan: {intent}",
+      "rankHeader": "### 🏆 Who hit the hardest",
+      "rankLine": "`{pos}.` {user} • `{damage}` damage",
+      "rankEmpty": "-# Nobody has hit it yet… will it be you?",
+      "attacksInfo": "-# Everyone gets `{n}` attacks per day. The right stance doubles the damage.",
+      "defeatedHeader": "### 🎉 It fell!",
+      "defeatedBy": "{user} landed the final blow. Everyone who hit it already got their share.",
+      "rewardLine": "• **Everyone who hit it:** `{coins}` {coin}, `{echoes}` Echoes and the Victory Banner.",
+      "podiumLine": "• **Podium:** extra coins for the top 3 and the Boss Trophy for the top hitter.",
+      "lastWeekWin": "-# Last week: {boss} fell. Top hitter: {user}.",
+      "lastWeekLose": "-# Last week: {boss} got away… we'll get this one.",
+      "footer": "Pyxie • a new boss every Monday",
+      "hitNotice": "{emoji} {user} hit for `{damage}`{extra}",
+      "extraCounter": " (right stance, double damage!)",
+      "extraWeak": " (weak stance against today's plan…)",
+      "extraCrit": " (critical!)",
+      "left": "You still have `{left}` attack(s) today. Your damage this week: `{total}`.",
+      "noAttacks": "You're out of attacks for today… come back tomorrow, okay? I'll hold it for you.",
+      "defeated": "This boss already fell! A new one shows up on Monday.",
+      "guildOnly": "The weekly boss lives in servers… call me in a server!",
+      "killer": "🎉 You took it down! Already delivered: `{coins}` {coin}, `{echoes}` Echoes and items for your Cozy Room.",
+      "reward": "🎁 It fell! Your share is already with you: `{coins}` {coin}, `{echoes}` Echoes and items for your Cozy Room.",
+      "btnStrike": "Strike",
+      "btnGuard": "Guard",
+      "btnSpell": "Spell",
+      "btnRefresh": "Refresh"
+    },
+    "craft": {
+      "title": "🛠️ Pyxie's Workshop",
+      "intro": "This is where we turn what you bring from work into furniture the shop doesn't sell. I-I set the tools out for you, okay?",
+      "materialsHeader": "### 🧺 Your materials",
+      "materialLine": "{label}: `{qty}`",
+      "recipesHeader": "### 📜 Recipes",
+      "recipesHint": "Pick a recipe from the menu to see what it needs. Each profession brings a different material from `/py-work`.",
+      "pick": "Pick something to make…",
+      "recipeTitle": "🛠️ {item}",
+      "recipeNeeds": "### 🧾 Needs",
+      "recipeLine": "• {label}: `{need}` (you have `{have}`)",
+      "recipeCoins": "• **Workshop fee:** `{coins}` {coin}",
+      "recipeReady": "-# ✅ You can make it now!",
+      "recipeMissing": "-# Still missing materials. Correct `/py-work` shifts bring more.",
+      "btnCraft": "Make it",
+      "btnBack": "Back",
+      "crafted": "🎉 Done, I made **{item}**! It's already in your Cozy Room bag (`/py-home`). It looks lovely… I mean, it looks okay.",
+      "missing": "Missing materials: {list}.",
+      "coins": "The workshop charges `{price}` coins and you have `{balance}`.",
+      "notYours": "This workshop belongs to someone else… yours opens with `/py-craft`.",
+      "error": "I couldn't finish it right now. Nothing was spent; try again in a bit.",
+      "footer": "Pyxie • workshop"
+    },
+    "market": {
+      "title": "🏪 Pyxie's Market",
+      "intro": "This is where people sell what they found in the Catacombs, made in the workshop or picked up somewhere. I keep an eye out so nobody gets cheated, okay?",
+      "shelfHeader": "### 🛒 For sale",
+      "line": "`{id}` • {name} ×`{qty}` • `{price}` {coin} • {seller}{private}",
+      "privateTag": " • 🔒 just for you",
+      "empty": "-# The shelf is empty… why not be the first to list something?",
+      "page": "-# Page `{page}` of `{pages}` • `5%` fee on every sale (it leaves the economy)",
+      "pick": "Pick a listing…",
+      "btnSellItem": "Sell an item",
+      "btnSellMaterial": "Sell materials",
+      "btnMine": "My listings",
+      "btnPrev": "Previous",
+      "btnNext": "Next",
+      "btnBuy": "Buy for {price}",
+      "btnCancel": "Cancel listing",
+      "btnBack": "Back",
+      "detailTitle": "🏷️ {name}",
+      "detailPrice": "• **Price:** `{price}` {coin} (`{unit}` each)",
+      "detailSeller": "• **Seller:** {seller}",
+      "detailSerial": "• **Serial number:** `#{serial}`",
+      "detailExpires": "• **Leaves the shelf:** {time}",
+      "detailPrivate": "• **Private offer for:** {buyer}",
+      "historyHeader": "### 📈 Market price",
+      "historyLine": "• **Last sale:** `{last}` {coin} • **7-day average:** `{avg}` {coin} • `{count}` sale(s)",
+      "historyNone": "-# Nobody has sold this yet. You set the fair price!",
+      "sellItemTitle": "💰 Sell an item",
+      "sellItemBody": "Pick an item from your bag. Only tradable items that are not on display in your Cozy Room show up.",
+      "sellItemNone": "-# Nothing to sell right now… achievement and starter items stay with you forever.",
+      "sellItemPick": "Pick the item…",
+      "sellMatTitle": "🧺 Sell materials",
+      "sellMatBody": "Pick a workshop material or your Festival Sparks. The whole batch goes for a single price.",
+      "sellMatPick": "Pick the material…",
+      "modalTitle": "List on the market",
+      "modalPrice": "Total price (coins)",
+      "modalQty": "Quantity",
+      "modalBuyer": "Private offer: ID or mention (optional)",
+      "mineTitle": "📦 My listings",
+      "mineEmpty": "-# You have nothing for sale.",
+      "mineLine": "`{id}` • {name} ×`{qty}` • `{price}` {coin} • leaves {time}",
+      "listed": "✅ Listed! `{id}` is on the shelf for `{price}` coins. If nobody buys it in 7 days, it comes back to you.",
+      "cancelled": "Listing cancelled. I gave everything back to you.",
+      "bought": "🎉 You bought **{name}** for `{price}` coins! It's yours now.",
+      "soldDm": "🏪 **Sold!** Someone bought **{name}** ×`{qty}` for `{price}` coins. You received `{gets}` (fee of `{tax}`).",
+      "reasons": {
+        "price": "Invalid price. Use a number between `1` and `1000000`.",
+        "qty": "Invalid quantity.",
+        "not_owned": "That item isn't in your bag anymore.",
+        "not_tradable": "That item stays with you forever, it can't be sold.",
+        "placed": "That item is on display in your Cozy Room. Store it before selling.",
+        "self": "You can't trade with yourself… I get the urge, but no.",
+        "limit": "You already have `10` listings. Cancel one or wait for a sale.",
+        "not_enough": "You don't have enough of that material.",
+        "missing": "That listing doesn't exist anymore (someone bought it or it expired).",
+        "not_yours": "That listing belongs to someone else.",
+        "private": "That's a private offer for someone else.",
+        "full": "Your bag is full.",
+        "coins": "It costs `{price}` coins and you have `{balance}`.",
+        "save": "I couldn't save right now. Nothing changed; try again in a bit."
+      },
+      "notYours": "This screen belongs to someone else… open yours with `/py-market`.",
+      "footer": "Pyxie • market"
+    },
+    "festival": {
+      "title": "{season}",
+      "closedTitle": "🎇 Pyxie's Festival",
+      "closedBody": "No season is open right now… but relax, your Sparks don't vanish. I'll keep them safe until the next party.",
+      "next": "### 📅 Next season\n\n**{season}** opens on {date} ({relative}).",
+      "wallet": "💰 **Your wallet:** `{sparks}` {currency}",
+      "intro": {
+        "halloween": "The pumpkins woke up and the Catacombs monsters decided to dress up. Not that I helped pick the costumes… okay, maybe a little.",
+        "christmas": "Snow in the Gloomwood, presents piled up and even the monsters wear beanies. Stop staring, my beanie looks great.",
+        "newyear": "Fireworks, toasts and the cutest countdown on Discord. Shall we close the year with a sparkling room?",
+        "easter": "There's a bunny hiding eggs all over the Catacombs. If you find chocolate, share it with me, okay? That's not a request, it's an order.",
+        "summer": "Vacation! Popsicles, pools and monsters in straw hats. Put on sunscreen before heading into the Catacombs."
+      },
+      "ends": "-# The season closes on {date} ({relative}). After that, its items only show up on the market.",
+      "boxesHeader": "### 🎁 Boxes",
+      "sparksBox": "• **Season Box:** `{price}` {currency} • guaranteed **{rarity}** in `{left}` box(es)",
+      "coinsBox": "• **Coin Chest:** `{price}` {coin} • guaranteed **{rarity}** in `{left}` • `{today}` of `{limit}` left today",
+      "howHeader": "### 🌟 How to earn Sparks",
+      "howDungeon": "• **Catacombs:** in `{chance}%` of runs the monsters wear costumes and every one you defeat drops Sparks (`/py-dungeon`).",
+      "howWork": "• **Work:** `{chance}%` chance to find Sparks on every correct `/py-work` shift.",
+      "howMarket": "• **Market:** you can buy and sell Sparks and seasonal items on `/py-market`.",
+      "shelfTitle": "Season highlights",
+      "btnSparks": "Box ({price})",
+      "btnCoins": "Chest ({price})",
+      "btnOdds": "Odds",
+      "btnBack": "Back",
+      "oddsTitle": "📜 Odds and prizes",
+      "oddsSparks": "### 🎇 Season Box\n\n{odds}\n\n-# After `{every}` boxes without **{rarity}** or better, the next one is guaranteed.",
+      "oddsCoins": "### 🧰 Coin Chest\n\n{odds}\n\n-# After `{every}` chests without **{rarity}** or better, the next one is guaranteed.",
+      "prizesHeader": "### 🏆 Every prize",
+      "prizeLine": "• **{rarity}:** {items}",
+      "oddsNote": "-# Odds apply to every box, no tricks. If the season has no items of a rarity, its chance rolls down to the rarity below.",
+      "prizeTitle": "🎁 Box opened!",
+      "prize": "> You got **{item}**{serial} • {rarity}",
+      "pityHit": "✨ **Guarantee triggered!** Told you I'd keep my word. No need to thank me.",
+      "prizePet": "🐾 New pet in the family! Place it in your room with `/py-home`.",
+      "prizeItem": "🏠 It's already in your backpack. Decorate your room with `/py-home` or sell it on `/py-market`.",
+      "footer": "Pyxie • Seasonal Festival",
+      "notYours": "This box belongs to someone else… open yours with `/py-festival`.",
+      "reasons": {
+        "closed": "No season is open right now. Keep your Sparks, the next party is coming.",
+        "sparks": "Not enough Sparks: the box costs `{price}` and you have `{balance}`.",
+        "coins": "Not enough coins: the chest costs `{price}` and you have `{balance}`.",
+        "daily_limit": "That's enough chests for today: the limit is `{limit}` per day. Come back tomorrow!",
+        "full": "Your backpack is full. Sell or store something before opening another box.",
+        "sold_out": "That item just sold out. Nothing was charged, try again.",
+        "unknown_box": "That box doesn't exist… where did you even get it?",
+        "save": "Something tripped up and nothing was charged. Try again in a bit?"
+      }
+    },
+    "pass": {
+      "title": "💎 Pyxie Pass • {month}",
+      "intro": "Everything you already do here earns XP: daily, work, Catacombs, boss, workshop, market and Festival. The season closes on {date} ({relative}).",
+      "levelLine": "### 🌟 Level `{level}`/`{max}`\n\n{bar} `{into}`/`{need}` XP",
+      "premiumOn": "💎 **Premium active!** Thank you for supporting Pyxie… not that I'm emotional or anything.",
+      "premiumOff": "🔒 **Premium track:** `R$ {brl}` (Pix or card) or `US$ {usd}` (PayPal). Unlocks everything you already reached, instantly.",
+      "nextHeader": "### 🎁 Next level (`{level}`)",
+      "freeLine": "• **Free:** {reward}",
+      "premiumLine": "• **Premium:** {reward}{lock}",
+      "finaleHeader": "### 🌌 Level 50: this month only",
+      "xpHeader": "### ✨ How to earn XP",
+      "xpSources": "-# Daily `{daily}` • Work shift `{work}` • Catacombs run `{dungeon}`+ • Boss hit `{boss}` • Workshop `{craft}` • Market sale or purchase `{market}` • Festival box `{festival}`",
+      "shelfTitle": "{month} prizes",
+      "btnClaim": "Claim ({count})",
+      "btnPremium": "Get Premium",
+      "btnLevels": "Levels",
+      "btnBack": "Back",
+      "levelsTitle": "📜 Levels {from} to {to}",
+      "legend": "-# 🎁 ready to claim • ✅ claimed • 🔒 needs Premium • ▫️ not reached yet",
+      "levelRow": "**`{level}`** {freeMark} {free}\n{premiumMark} 💎 {premium}",
+      "rewards": {
+        "echoes": "`{qty}` Echoes",
+        "petAndTitle": "{pet} + title {title}"
+      },
+      "claimed": "🎁 **Claimed:** {list}",
+      "claimMore": " and `{count}` more",
+      "claimFull": "Your backpack is full: the items are waiting here in the Pass. Free some space and claim again.",
+      "claimNothing": "Nothing to claim right now. Reach one more level, I'll wait.",
+      "notYours": "This Pass belongs to someone else… open yours with `/py-pass`.",
+      "sentDm": "💌 I sent your Pass to your DMs (the Premium button carries a link just for you).",
+      "useSlash": "I couldn't DM you. Use `/py-pass` and I'll open it just for you.",
+      "error": "The Pass tripped up. Try again in a bit?",
+      "footer": "Pyxie • Monthly pass",
+      "premiumDm": "💎 **Your Premium Pass is here!** Open `/py-pass` and tap Claim: everything you already reached is waiting. Thank you for truly supporting Pyxie."
+    },
+    "bond": {
+      "title": "💞 Bond Strength",
+      "footer": "Pyxie • Bond Strength",
+      "statusFooter": "Pyxie • Marriage and Family",
+      "fieldName": "💞 Bond Strength",
+      "fieldValue": "Level `{level}` • **{name}** • `{streak}`-day sync streak",
+      "btnOpen": "Bond Strength",
+      "together": "You and {spouse} • together for `{days}` day(s)",
+      "togetherUnknown": "You and {spouse}",
+      "levelHeader": "### 💞 Level `{level}` • {name}",
+      "levelBar": "{bar} `{into}`/`{need}`",
+      "levelMax": "{bar} **Max level!** I didn't even know you could like someone this much.",
+      "love": "• **Love Bar:** `{love}%`",
+      "streak": "• **Sync:** `{streak}` day(s) in a row • best `{best}`",
+      "todayHeader": "### ☀️ Today's gesture",
+      "me": "• **You:** {gesture}",
+      "spouse": "• **{spouse}:** {gesture}",
+      "pending": "⏳ not yet",
+      "syncHint": "-# When both of you make a gesture on the same day, it is a Sync day: `+{xp}` Bond and the streak grows.",
+      "weekHeader": "### 📅 This week's quest",
+      "quests": {
+        "dates": "Have `{target}` Date Nights together (`/py-marriage date`).",
+        "gestures": "Make `{target}` daily gestures between the two of you.",
+        "sync": "Stay in sync on `{target}` days this week.",
+        "tree": "Tend the Tree of Life `{target}` times.",
+        "work": "Complete `{target}` correct `/py-work` shifts between the two of you.",
+        "dungeon": "Head into the Catacombs `{target}` times between the two of you."
+      },
+      "weekBar": "{bar} `{progress}`/`{target}` • ends {relative}",
+      "weekReward": "-# Reward: `+{xp}` Bond, a full Love Bar and **{item}** for each of your Cozy Rooms.",
+      "weekDone": "✅ **Quest complete!** {item} is already in both your backpacks.",
+      "gestures": {
+        "note": {
+          "label": "Note",
+          "done": "💌 You left a little note on {spouse}'s pillow. I read it. Kidding… just a tiny bit."
+        },
+        "coffee": {
+          "label": "Coffee",
+          "done": "☕ Fresh coffee for {spouse}, exactly how they like it."
+        },
+        "hug": {
+          "label": "Hug",
+          "done": "🫂 A long hug for {spouse}. The kind that fixes the whole day."
+        },
+        "stars": {
+          "label": "Stars",
+          "done": "🌙 You invited {spouse} to watch the stars. Way too romantic for my taste… but approved."
+        }
+      },
+      "synced": "✨ **Sync day!** You both made your gesture today: `{streak}` day(s) in a row.",
+      "levelUp": "💞 **Your Bond reached level `{level}`: {name}!**",
+      "weekCompleted": "📅 **Weekly quest complete!** {item} landed in both your backpacks.",
+      "reasons": {
+        "not_married": "Bond Strength is for couples. When you find your person, use `/py-marriage propose`.",
+        "done_today": "Today's gesture is done ({gesture}). More tomorrow, okay?",
+        "invalid": "That gesture doesn't exist… creativity is nice, but pick one of the buttons.",
+        "not_yours": "This panel belongs to another couple. Open yours with `/py-marriage bond`."
+      }
+    },
     "quiz": {
       "cooldown": "⏰ You already played the Quiz recently! Please wait **{time}** before taking a new challenge.",
       "title": "🧠  ✦  Pyxie Quiz Challenge",
@@ -2415,6 +3694,229 @@ const TRANSLATIONS = {
           "topicGamesTitle": "🎲 Community Minigames & Casual Fun",
           "topicGamesDesc": "Enjoy lightweight community fun with `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados`, and `/py-likely`. Fast, engaging commands designed to bring energy to every Discord chat."
     },
+    "home": {
+      "beans": "beans",
+      "coins": "coins",
+      "notForSale": "not for sale",
+      "private": "Private",
+      "scene": {
+        "title": "{name}'s Room",
+        "likes": "♥ {likes} likes",
+        "items": "{items} items",
+        "charm": "✦ Charm {charm}"
+      },
+      "errors": {
+        "noHome": "{name} doesn't have a room yet. Hmph, maybe someday.",
+        "expired": "That edit expired. Start again from the Decorate button.",
+        "invalid": "Unknown button. Use `/py-home` again.",
+        "notYours": "Hey! Only this room's owner can change things here. Yours is `/py-home`.",
+        "save": "I couldn't save the room right now. Nothing was charged; try again in a moment."
+      },
+      "btn": {
+        "myHome": "My room",
+        "decorate": "Decorate",
+        "arrange": "Arrange",
+        "shop": "Daily shop",
+        "bag": "Bag",
+        "surface": "Wall & floor",
+        "rank": "Ranking",
+        "like": "Like",
+        "back": "Back",
+        "put": "Place here",
+        "cancel": "Cancel",
+        "toFloor": "Go to floor",
+        "toWall": "Go to wall",
+        "move": "Move",
+        "store": "Store",
+        "done": "Done",
+        "buy": "Buy {name}",
+        "claim": "Take the key",
+        "buyHouse": "Buy a room",
+        "invite": "Invite to move in"
+      },
+      "view": {
+        "title": "{icon} {name}'s Room",
+        "introOwner": "I-it's not like I tidied up waiting for you to come back... But the room is yours. Make it your own.",
+        "introVisitor": "You're visiting **{name}**'s room. Don't touch anything, okay? Liking is allowed.",
+        "charmHeader": "### ✨ Room charm",
+        "charmLine": "• **Charm:** `{charm}` (record: `{best}`)",
+        "setsLine": "• **Active sets:** {sets}",
+        "noSets": "none yet",
+        "socialLine": "• **Likes:** `{likes}` · **Visits:** `{visits}`",
+        "tipOwner": "-# 🌷 Gather {min} pieces of the same theme to activate a set and earn bonus Charm.",
+        "tipVisitor": "-# 🌷 Everyone can like a room once a day.",
+        "shared": "💞 **Couple's home:** {people} live here. Each person decorates with their own items."
+      },
+      "pick": {
+        "title": "{icon} Decorate the room",
+        "desc": "Pick an item from your bag. Then move it with the arrows and place it.",
+        "empty": "Your bag is empty (or everything is already on display). Visit the **Daily shop** or dive into the Catacombs for treasure.",
+        "limits": "-# Items in the room: `{placed}/{max}` · up to `{pets}` pets.",
+        "placeholder": "Pick an item to place…"
+      },
+      "kinds": {
+        "floor": "Furniture",
+        "wall": "Wall",
+        "rug": "Rug",
+        "pet": "Pet",
+        "wallpaper": "Wallpaper",
+        "flooring": "Floor"
+      },
+      "areas": {
+        "wall": "wall",
+        "floor": "floor"
+      },
+      "place": {
+        "title": "{icon} Place item",
+        "item": "• **Item:** {name} · {rarity} · `{w}x{h}`",
+        "where": "• **Position:** {area}, column `{x}`, row `{y}`",
+        "fits": "✅ It fits right here.",
+        "help": "-# Use the arrows to move, ↔️ to mirror and **Place here** when it looks nice."
+      },
+      "arrange": {
+        "title": "🧹 Arrange the room",
+        "target": "• **Here:** {name} · {rarity}",
+        "empty": "There's nothing on this square.",
+        "help": "-# Move the yellow cursor onto an item: **Move** relocates it, **Store** sends it back to your bag."
+      },
+      "reasons": {
+        "not_placeable": "This item doesn't go in the room.",
+        "bounds": "❌ It doesn't fit there: it goes past the edge of the room.",
+        "full": "❌ The room is full. Store something first.",
+        "pets": "❌ Too many pets! Astaroth says he won't share the room with anyone else.",
+        "occupied": "❌ There's already something there.",
+        "not_owned": "You don't have this item anymore.",
+        "already_placed": "This item is already in the room.",
+        "not_placed": "This item isn't in the room anymore.",
+        "not_surface": "That isn't a wall or a floor.",
+        "not_in_shop": "That item left the shop. The display changes at midnight.",
+        "premium_limit": "Premium items: one of each per day. Come back tomorrow!",
+        "beans": "Not enough beans: it costs `{price}` and you have `{balance}`.",
+        "coins": "Not enough coins: it costs `{price}` and you have `{balance}`.",
+        "unknown_item": "Unknown item.",
+        "sold_out": "Sold out! Every numbered unit already has an owner.",
+        "full_vault": "Your bag is full.",
+        "save": "I couldn't save right now. Nothing was charged; try again.",
+        "own_home": "Liking your own room? So full of yourself. Not allowed.",
+        "no_home": "This person doesn't have a room yet.",
+        "already_liked": "You already liked this room today. Come back tomorrow!",
+        "has_home": "You already have a room.",
+        "need_dungeon": "The key is on **Floor {floor}** of the Catacombs. Not there yet…",
+        "house_coins": "The room costs `{price}` coins and you have `{balance}`.",
+        "house_beans": "The room also needs `{price}` magic beans and you have `{balance}`. Nothing was charged.",
+        "not_spouse": "You can only share your room with your spouse.",
+        "already_together": "You already live together!",
+        "owner_lives_elsewhere": "The person who invited you already lives somewhere else…"
+      },
+      "shop": {
+        "title": "{icon} Daily shop",
+        "intro": "The display changes every day at midnight. I-I picked these pieces with care, not that I care.",
+        "balance": "• **Your balance:** {coinIcon} `{coins}` · {beanIcon} `{beans}`",
+        "line": "• **{n}. {name}** · {rarity} · {price}",
+        "rotation": "-# 🌷 The last two items are premium (magic beans): one of each per day.",
+        "placeholder": "Choose what to buy…",
+        "shelfTitle": "Daily shop"
+      },
+      "bag": {
+        "title": "{icon} Item bag",
+        "summary": "• **Items:** `{total}` · **Unique:** `{distinct}`",
+        "rarities": "• **Epic:** `{epic}` · **Legendary:** `{legendary}` · **Mythic:** `{mythic}`",
+        "hint": "-# Legendary and mythic items are numbered (#). Use **Decorate** to place them in the room.",
+        "count": "×{count} ({shown} 🏠)",
+        "shelfTitle": "Bag · page {page}/{pages}"
+      },
+      "surface": {
+        "title": "🎨 Wall & floor",
+        "current": "• **Wall:** {wallpaper}\n\n• **Floor:** {flooring}",
+        "desc": "Pick a wallpaper or floor you own. New ones show up in the Daily shop.",
+        "placeholder": "Change wall or floor…"
+      },
+      "rank": {
+        "title": "{icon} Most charming rooms",
+        "intro": "The rooms with the most Charm in all of Pyxie. Hmph, mine would be first, obviously.",
+        "line": "{pos} {user} · ✦ `{charm}` · ♥ `{likes}`",
+        "empty": "Nobody has decorated anything yet. Be the first!"
+      },
+      "notices": {
+        "placed": "**{name}** is in place. Fine, it looks nice.",
+        "stored": "**{name}** went back to your bag.",
+        "bought": "Bought: **{name}**! Now choose where to put it.",
+        "surface": "Done, now it's **{name}**.",
+        "liked": "Like sent! This room now has `{likes}` likes.",
+        "claimed": "🗝️ The room is yours! I left a starter kit inside… y-you don't have to thank me.",
+        "houseBought": "🏡 Bought! It is officially your home now. I helped pick the curtains, okay?"
+      },
+      "nohome": {
+        "title": "🏡 You don't have a cozy room yet",
+        "intro": "I-I wanted to show you your room, but… you don't have one yet. There are three ways to get one:",
+        "dungeon": "• **Catacombs:** reach **Floor {floor}** and the key is yours, for free. Your best: Floor `{best}`.",
+        "buy": "• **Buy it:** `{coins}` {coin} + `{beans}` {bean}, the same terms as the old marriage house.",
+        "marry": "• **Move in together:** marry someone who has a room and they can invite you to live there.",
+        "ready": "-# 🗝️ You already reached Floor {floor}! The key is waiting for you."
+      },
+      "invite": {
+        "message": "💞 {spouse}, {owner} wants you to move into their cozy room! You decorate the same home, each with your own items.",
+        "btnAccept": "Move in",
+        "btnDecline": "Not now",
+        "accepted": "🏡 Done! {spouse} and {owner} live together now. I'm… happy. Just a little.",
+        "declined": "That's okay… maybe another time.",
+        "notForYou": "This invite isn't for you…",
+        "sent": "Invite sent! It's up to your love now."
+      }
+    },
+    "achievements": {
+      "view": {
+        "title": "{icon} {name}'s Achievements",
+        "summary": "• **Unlocked:** `{done}/{total}` · **Mythic:** `{mythic}/{mythicTotal}`",
+        "categoryHeader": "### {emoji} {name}",
+        "line": "{tier} **{name}** · `{current}/{target}`{check}\n-# {desc} · 🎁 {rewards}",
+        "hidden": "🔒 **???** · `?/?`\n-# Secret achievement. Keep exploring Pyxie… I'm not telling.",
+        "placeholder": "Choose a category…",
+        "titlesHint": "-# 👑 Mythic achievements grant special titles: equip them in `/py-profile` → Titles.",
+        "notYours": "This menu belongs to someone else. Use `/py-achievements` to open yours."
+      },
+      "reward": {
+        "coins": "• **Coins:** `+{coins}`",
+        "beans": "• **Magic beans:** `+{beans}`",
+        "item": "• **Room item:** {name}{serial}",
+        "title": "• **Special title:** {title}"
+      },
+      "short": {
+        "coins": "{coins} coins",
+        "beans": "{beans} beans",
+        "item": "room item"
+      },
+      "unlock": {
+        "title": "🏆 Achievement unlocked!",
+        "titleMany": "🏆 {count} achievements unlocked!",
+        "line": "### {tier} {name}\n\n> *{desc}*",
+        "tip": "-# Everything has been delivered. See the rest in `/py-achievements`."
+      }
+    },
+    "growth": {
+      "languageName": {
+        "pt": "Português",
+        "en": "English"
+      },
+      "welcome": {
+        "title": "{fairy} Hi! I'm Pyxie",
+        "intro": "Thanks for inviting me to **{guild}**. N-not that I was waiting for it… but since I'm here, let's do this properly.",
+        "startHeader": "### ✨ Start here",
+        "daily": "• **Daily coins:** {coin} {daily} hands out your daily bonus, and streaks pay more.",
+        "tarot": "• **Illustrated tarot:** {tarotIcon} {tarot} draws your card of the day and saves it to your album.",
+        "dungeon": "• **Velvet Catacombs:** {dungeonIcon} {dungeon} is a hard roguelike with a `50` coin ticket.",
+        "help": "• **Every command:** {helpIcon} {help} opens the full guide.",
+        "setup": "• **For admins:** ⚙️ {setup} turns modules on and off, picks channels and sets the Pyxie World mode. All in one panel.",
+        "languageHeader": "### {globe} Language",
+        "languageBody": "I'm speaking **{language}** here. Members with **Manage Server** can switch languages with the buttons below or with {languageCmd}.",
+        "footer": "Pyxie • {guild} • Tip: /py-help shows everything",
+        "btnSite": "Website",
+        "btnSupport": "Support",
+        "btnVote": "Vote (+bean)",
+        "langChanged": "Done! From now on I speak **{language}** in this server.",
+        "langNoPermission": "Only members with **Manage Server** can pick my language here. Ask your staff, okay?"
+      }
+    },
     "dungeon": {
       "name": "Velvet Catacombs",
       "private": "Direct message",
@@ -2434,7 +3936,8 @@ const TRANSLATIONS = {
         "btnContinue": "Continue descent",
         "btnHelp": "How to play",
         "btnTalents": "Talents",
-        "btnHall": "Hall"
+        "btnHall": "Hall",
+        "revived": "> 🙏 Someone prayed at your grave and you came back! Your descent waits for up to 24 hours."
       },
       "errors": {
         "notYours": "👀 Hey! This descent belongs to someone else. Use `/py-dungeon` to open your own.",
@@ -2464,7 +3967,8 @@ const TRANSLATIONS = {
         "abandoned": "🐈‍⬛ Rescued by Astaroth",
         "extracted": "💰 Escaped with the Treasure",
         "victory": "👑 Victory in the Catacombs",
-        "confirm": "🏳️ Give Up the Descent?"
+        "confirm": "🏳️ Give Up the Descent?",
+        "grave": "🪦 A Headstone in the Catacombs"
       },
       "log": {
         "floorEnter": "🗺️ You arrive at **Floor {floor}: {floorName}**.\n\n> *{flavor}*",
@@ -2543,7 +4047,18 @@ const TRANSLATIONS = {
         "nyxTreasure": "💎 Behind Nyx glows the **Heart's Treasure**: `+{gold}` gold!",
         "campfire": "🔥 You light a campfire: `+{amount}` HP and `+{light}` light. Astaroth purrs in your lap.",
         "forfeited": "🏳️ You give up and run for the exit.",
-        "extracted": "💰 You climb the stairs hugging your bag of gold!"
+        "extracted": "💰 You climb the stairs hugging your bag of gold!",
+        "graveFound": "🪦 A fresh headstone… {user} fell here. There is still a candle lit beside it.",
+        "graveLeft": "🚶 You leave the headstone in peace.",
+        "graveLooted": "💰 You gather the spoils left on the floor: `+{gold}` gold. Sorry, okay…",
+        "gravePrayed": "🙏 You pray for {user}. The headstone candle flickers.",
+        "reviveWorked": "✨ The candle lit up again! {user} is back in their descent. You earned `+{echoes}` Echoes.",
+        "reviveFailed": "🕯️ Nobody answered… that soul has already moved on (over 24h, or they started another descent).",
+        "helpedHeal": "🤝 {user} jumped into the fight and healed you: `+{amount}` HP.",
+        "helpedHit": "🤝 {user} jumped into the fight and hit the enemy: `-{amount}`.",
+        "revived": "✨ You open your eyes on the cold floor. Someone prayed for you: {user}.",
+        "festivalRun": "🎭 The monsters showed up in costume for **{season}**! Each one you defeat drops {currency}.",
+        "festivalSpark": "🎭 `+{sparks}` {currency} for the Festival!"
       },
       "items": {
         "potion": "Potion",
@@ -2594,7 +4109,11 @@ const TRANSLATIONS = {
         "soldOut": "-# The stall is empty. Miss Grey yawns.",
         "shrine": "• **Pray:** costs `{hp}` HP and grants a random blessing.\n\n• **Offering:** `{price}` gold to fully heal and cure poison.",
         "fountain": "Drinking may heal you, reveal the floor… or give you a tummy ache.",
-        "trap": "Needles are about to fire: `{damage}` damage!\n\n• **Jump:** `{jump}%` chance to escape unharmed.\n\n• **Shield:** take half the damage, guaranteed.\n\n• **Disarm:** costs `8` light with an `80%` chance to earn gold."
+        "trap": "Needles are about to fire: `{damage}` damage!\n\n• **Jump:** `{jump}%` chance to escape unharmed.\n\n• **Shield:** take half the damage, guaranteed.\n\n• **Disarm:** costs `8` light with an `80%` chance to earn gold.",
+        "grave": "{user} fell here. What was left of their descent is still on the floor.",
+        "graveLoot": "• **Loot:** take `{gold}` gold left on the floor.",
+        "graveRevive": "• **Pray:** costs `10` light. If the soul hasn't moved on, they come back to their descent.",
+        "graveGone": "-# This soul has already moved on. All you can do is leave a flower."
       },
       "reward": {
         "desc": "The guardian left behind a warm glow. Choose **one** blessing to take with you:",
@@ -2617,9 +4136,12 @@ const TRANSLATIONS = {
         "capRun": "-# 🔒 Cap of `{cap}` coins per descent applied.",
         "capDaily": "-# 🔒 Daily cap reached: the rest of the gold turned into stardust.",
         "echoes": "🌙 **Echoes earned:** `+{echoes}` (spend them in Talents)",
+        "drops": "🎁 **Found for your room:** {items}\n\n-# The items are already in your bag: open `/py-home` to decorate.",
         "best": "🏅 **New record:** Floor `{floor}`!",
         "balance": "-# 🪙 Current balance: `{balance}`",
-        "stats": "-# 📊 `{rooms}` rooms explored • `{kills}` monsters defeated"
+        "stats": "-# 📊 `{rooms}` rooms explored • `{kills}` monsters defeated",
+        "houseKey": "🗝️ **You found the key to a cozy room!** Open `/py-home` to claim yours.",
+        "festival": "🎭 **Festival:** `+{sparks}` {currency} (spend them on `/py-festival`)"
       },
       "outcome": {
         "dead": "💀 death",
@@ -2655,7 +4177,10 @@ const TRANSLATIONS = {
         "forfeitYes": "Yes, give up",
         "forfeitNo": "Keep going",
         "newRun": "New descent",
-        "lobby": "Menu"
+        "lobby": "Menu",
+        "loot": "Loot",
+        "revive": "Pray",
+        "help": "Help ({left})"
       },
       "fields": {
         "hp": "❤️ HP",
@@ -2689,7 +4214,17 @@ const TRANSLATIONS = {
         "title": "🏆 Hall of the Brave",
         "desc": "Who went deepest into the Velvet Catacombs:\n\n{lines}",
         "line": "`{pos}.` {user} • Floor `{floor}` • 👑 `{victories}` • 🪙 best `{payout}`",
-        "empty": "-# Nobody has gone down yet. Why not be the first?"
+        "empty": "-# Nobody has gone down yet. Why not be the first?",
+        "titleWeek": "📅 This week's ranking",
+        "titleGuild": "🏰 This week's server ranking",
+        "descWeek": "Who went deepest since Monday:\n\n{lines}",
+        "descGuild": "Who went deepest this week in **{server}**:\n\n{lines}",
+        "lineWeek": "`{pos}.` {user} • Floor `{floor}` • 👑 `{victories}` • ⚔️ `{kills}`",
+        "you": "-# You're at **#{pos}**. Almost there… I think.",
+        "weekReset": "-# 📅 The week resets every Monday at midnight (Brasília time).",
+        "btnAll": "All time",
+        "btnWeek": "Week",
+        "btnGuild": "Server"
       },
       "help": {
         "title": "📜 Catacombs Guide",
@@ -2714,7 +4249,39 @@ const TRANSLATIONS = {
         "merchant": "Miss Grey",
         "shrine": "Moon Shrine",
         "fountain": "Moonlit Pool",
-        "trap": "Trap!"
+        "trap": "Trap!",
+        "grave": "Headstone"
+      },
+      "thread": {
+        "name": "🕯️ {user}'s Catacombs",
+        "reason": "Velvet Catacombs descent",
+        "started": "🕯️ Your descent started in {thread}. I'll wait for you there… d-don't take long.",
+        "btnGo": "Go to the descent",
+        "here": "🕯️ Your descent continues in {thread}.",
+        "warn": "🕯️ {user}, the candle is almost out… if nobody moves in **{minutes} minutes**, I'll close the descent.",
+        "closed": "🕯️ The candle went out from waiting so long. I closed this descent and sent the summary to {user} by DM.",
+        "closedNoDm": "🕯️ The candle went out from waiting so long. I closed this descent; the summary is below, since {user}'s DMs are closed."
+      },
+      "idle": {
+        "title": "🕯️ The candle went out",
+        "intro": "You disappeared for **{minutes} minutes** on **Floor {floor}** and the candle couldn't hold on… Astaroth dragged you out, as always. I-I wasn't worried, okay?",
+        "summaryHeader": "### 📜 Descent summary",
+        "tip": "-# Next time, if you need to leave, use **Escape** at the campfire: your gold goes with you.",
+        "footer": "Pyxie • Velvet Catacombs"
+      },
+      "coop": {
+        "self": "You can't help yourself… but I'm rooting for you, okay?",
+        "already": "You already helped in this descent. It's up to them now.",
+        "limit": "Too many people are helping already. Leave some glory for them!",
+        "not_combat": "You can only help during a fight.",
+        "missing": "This descent is already over."
+      },
+      "revive": {
+        "title": "🙏 Someone prayed for you",
+        "body": "{user} found your grave on **Floor {floor}** and prayed… and the candle lit up again. Your descent came back with half HP and the gold that was left.\n\nOpen `/py-dungeon` and click **Continue descent**. It waits for you for up to 24 hours. I-I'm not emotional. Not at all."
+      },
+      "festival": {
+        "combatLine": "-# 🎭 Dressed up for {season}: worth `+{sparks}` {currency}."
       }
     },
     "mary": {

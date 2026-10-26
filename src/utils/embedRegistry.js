@@ -4,6 +4,7 @@ const { EmbedBuilder } = require('discord.js');
 const { getThemeEmojiData } = require('./themeEmojis');
 const { getEmoji, reloadEmojiConfig } = require('./appEmojis');
 const { getLanguage } = require('./i18n');
+const { emojify } = require('./emojify');
 
 const EMOJIS_FILE = path.join(__dirname, '..', 'data', 'emojis.json');
 const DISCORD_APP_EMOJIS_FILE = path.join(__dirname, '..', 'data', 'discordAppEmojis.json');
@@ -434,7 +435,21 @@ registerEmbed({
   ],
 });
 
-registerEmbed({
+/**
+ * Schemas dos minigames de quiz: textos de preview com os emojis do bot em vez de Unicode
+ * (o mesmo critério dos embeds reais, via src/utils/emojify.js).
+ */
+function emojifySchema(schema) {
+  return {
+    ...schema,
+    name: emojify(schema.name),
+    previewTitle: emojify(schema.previewTitle),
+    previewDesc: emojify(schema.previewDesc),
+    previewFields: (schema.previewFields || []).map((f) => ({ ...f, name: emojify(f.name), value: emojify(f.value) })),
+  };
+}
+
+registerEmbed(emojifySchema({
   id: 'quiz_duel',
   name: '⚔️ Duelo de Quiz',
   category: 'minigames',
@@ -446,12 +461,12 @@ registerEmbed({
     { name: '📊 Placar', value: '`<@111>` `1` x `0` `<@222>`', inline: false },
   ],
   slots: [
-    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '⚔️', defaultEmojiKey: 'CONTROLLER', description: 'Exibido no título do duelo' },
-    { key: 'coins', label: 'Moedas do Prêmio', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Prêmio do vencedor' },
+    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '⚔️', defaultEmojiKey: '54416purplepixelknife', description: 'Exibido no título do duelo' },
+    { key: 'coins', label: 'Moedas do Prêmio', fallback: '🪙', defaultEmojiKey: 'COIN', description: 'Prêmio do vencedor' },
   ],
-});
+}));
 
-registerEmbed({
+registerEmbed(emojifySchema({
   id: 'daily_challenge',
   name: '🧩 Desafio do Dia',
   category: 'minigames',
@@ -464,12 +479,12 @@ registerEmbed({
     { name: '🪙 Prêmio se acertar', value: '`5` {coins}', inline: true },
   ],
   slots: [
-    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🧩', defaultEmojiKey: 'SPARKLES', description: 'Exibido no título do desafio' },
-    { key: 'coins', label: 'Moedas do Prêmio', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Prêmio por acerto' },
+    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🧩', defaultEmojiKey: '47995starryquestions', description: 'Exibido no título do desafio' },
+    { key: 'coins', label: 'Moedas do Prêmio', fallback: '🪙', defaultEmojiKey: 'COIN', description: 'Prêmio por acerto' },
   ],
-});
+}));
 
-registerEmbed({
+registerEmbed(emojifySchema({
   id: 'anime_marathon',
   name: '🎴 Maratona Otaku',
   category: 'minigames',
@@ -482,8 +497,95 @@ registerEmbed({
     { name: '✨ Por acerto', value: '`+1` {coins}', inline: true },
   ],
   slots: [
-    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🎴', defaultEmojiKey: 'SPARKLES', description: 'Exibido no título da maratona' },
-    { key: 'coins', label: 'Moedas por Acerto', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Moedas ganhas' },
+    { key: 'header', label: 'Ícone de Cabeçalho', fallback: '🎴', defaultEmojiKey: '9070magiccards', description: 'Exibido no título da maratona' },
+    { key: 'coins', label: 'Moedas por Acerto', fallback: '🪙', defaultEmojiKey: 'COIN', description: 'Moedas ganhas' },
+  ],
+}));
+
+registerEmbed({
+  id: 'home_room',
+  name: '🏡 Casinha da Pyxie',
+  category: 'minigames',
+  description: 'Tela principal do /py-home: quarto em pixel art, Charme, conjuntos ativos, curtidas e visitas.',
+  defaultColor: '#a855f7',
+  previewTitle: '{header} Casinha de Zulu',
+  previewDesc: 'N-não é como se eu tivesse arrumado tudo esperando você voltar... Mas a casinha é sua.\n\n### {charm} Charme da casinha\n\n• **Charme:** `396` (recorde: `400`)\n\n• **Conjuntos ativos:** **Sonho Lilás** `9` · **Salão Real** `8`\n\n• **Curtidas:** `7` · **Visitas:** `12`',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Casinha', fallback: '🏡', defaultEmojiKey: '73584mushroomhouses', description: 'Ícone no título da casinha' },
+    { key: 'charm', label: 'Charme', fallback: '✨', defaultEmojiKey: 'SPARKLES', description: 'Seção de Charme' },
+  ],
+});
+
+registerEmbed({
+  id: 'home_shop',
+  name: '🛍️ Loja do Dia da Casinha',
+  category: 'economy',
+  description: 'Vitrine do dia: 8 itens por moedinhas e 2 premium por feijões, girando à meia-noite de Brasília.',
+  defaultColor: '#f59e0b',
+  previewTitle: '{header} Loja do dia',
+  previewDesc: 'A vitrine muda todo dia à meia-noite.\n\n• **Seu saldo:** {coins} `230` · {beans} `3`\n\n• **1. Cadeira Lilás** · Raro · {coins} `320`\n\n• **2. Cama dos Sonhos Lilás** · Épico · {beans} `4`',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Loja', fallback: '🛍️', defaultEmojiKey: 'Pink_bag', description: 'Ícone no título da loja' },
+    { key: 'coins', label: 'Moedinhas', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Preço em moedinhas' },
+    { key: 'beans', label: 'Feijões Mágicos', fallback: '🌱', defaultEmojiKey: 'magic_bean', description: 'Preço premium' },
+  ],
+});
+
+registerEmbed({
+  id: 'achievements_view',
+  name: '🏆 Conquistas',
+  category: 'economy',
+  description: 'Tela do /py-achievements: progresso real por categoria, recompensas e títulos especiais das míticas.',
+  defaultColor: '#f472b6',
+  previewTitle: '{header} Conquistas de Zulu',
+  previewDesc: '• **Conquistadas:** `12/36` · **Míticas:** `1/9`\n\n### 🕯️ Catacumbas\n\n🥉 **Primeira Descida** · `1/1` ✅\n-# Termine uma descida nas Catacumbas de Veludo.\n\n🌌 **Eclipse da Nyx** · `0/1`\n-# Derrote a Nyx · 🎁 Trono da Nyx · ☾ 𝕰𝖈𝖑𝖎𝖕𝖘𝖊 𝖉𝖆 𝕹𝖞𝖝 ☽',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Troféu', fallback: '🏆', defaultEmojiKey: 'win', description: 'Ícone no título' },
+  ],
+});
+
+registerEmbed({
+  id: 'achievement_unlock',
+  name: '🏆 Conquista Desbloqueada',
+  category: 'economy',
+  description: 'Aviso privado que aparece depois de qualquer comando quando uma conquista é alcançada, já com as recompensas entregues.',
+  defaultColor: '#fbbf24',
+  previewTitle: '{header} Conquista desbloqueada!',
+  previewDesc: '### 🌌 Eclipse da Nyx\n\n> *Derrote a Nyx, a Mariposa Devora-Luz.*\n\n• **Item para a Casinha:** Trono da Nyx #1\n\n• **Título especial:** ☾ 𝕰𝖈𝖑𝖎𝖕𝖘𝖊 𝖉𝖆 𝕹𝖞𝖝 ☽',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Troféu', fallback: '🏆', defaultEmojiKey: 'win', description: 'Ícone no título' },
+  ],
+});
+
+registerEmbed({
+  id: 'setup_hub',
+  name: '⚙️ Central do Servidor (/py-setup)',
+  category: 'system',
+  description: 'Painel privado de quem administra: idioma, modo do Mundo Pyxie, canais permitidos, módulos e canais de boas-vindas, desabafos, tarot e tickets.',
+  defaultColor: '#8a2be2',
+  previewTitle: '{header} Painel de Configuração da Pyxie',
+  previewDesc: 'E-eu juntei tudo do **Servidor** aqui… escolhe uma seção no menu.\n\n### 🗺️ Mundo Pyxie\n\n**Ligado.** Catacumbas, Casinha, itens raros e conquistas funcionando aqui.\n\n### 📍 Canais permitidos\n\n• **Mundo Pyxie:** todos os canais\n\n-# 🔒 Só quem administra o servidor vê este painel.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Engrenagem', fallback: '⚙️', defaultEmojiKey: 'helpCommands', description: 'Ícone no título' },
+  ],
+});
+
+registerEmbed({
+  id: 'setup_mmo_pitch',
+  name: '🗺️ Vitrine do Mundo Pyxie (modo clássico)',
+  category: 'system',
+  description: 'Mostrada só para quem administra quando o servidor está no modo clássico: o que o Mundo Pyxie oferece, o teste de 7 dias e a procura dos membros.',
+  defaultColor: '#8a2be2',
+  previewTitle: '{header} Mundo Pyxie neste servidor',
+  previewDesc: '**Modo clássico.** Aqui só tem moedinhas pelo trabalho e o perfil padrão.\n\n### O que vem no Mundo Pyxie\n\n• **Catacumbas de Veludo:** dungeon roguelike em pixel art.\n\n• **Casinha:** quartinho em pixel art com mais de 180 móveis e pets.\n\n-# 🔔 **4** pessoa(s) tentaram jogar o Mundo Pyxie aqui nos últimos 7 dias.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Mapa', fallback: '🗺️', defaultEmojiKey: 'MAP', description: 'Ícone no título' },
   ],
 });
 
@@ -561,6 +663,132 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'dungeon_idle_summary',
+  name: '🕯️ Catacumbas de Veludo: Game Over por Inatividade',
+  category: 'minigames',
+  description: 'Enviado por DM quando a descida fica parada pelo tempo de inatividade (20 min por padrão): salvamento de 10%, Ecos, itens e dica de fugir na fogueira. Sem DM aberta, vai na thread da descida antes de ela ser trancada.',
+  defaultColor: '#3b0d2e',
+  previewTitle: '{header} A vela apagou',
+  previewDesc: 'Você sumiu por **20 minutos** no **Andar 3** e a vela não aguentou… o Astaroth te puxou pra fora, como sempre. E-eu não fiquei preocupada, tá?\n\n### 📜 Resumo da descida\n\n### 💰 Ouro coletado: `240`\n\n🪙 **Moedinhas recebidas:** `+24`\n\n-# 🐈‍⬛ O Astaroth salvou `10%` do ouro na boquinha.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Vela', fallback: '🕯️', defaultEmojiKey: 'DUNGEON_CANDLE', description: 'Ícone no título do resumo' },
+  ],
+});
+
+registerEmbed({
+  id: 'dungeon_revive_notice',
+  name: '🙏 Catacumbas de Veludo: Alguém Rezou por Você',
+  category: 'minigames',
+  description: 'DM para quem morreu: outra pessoa achou o túmulo no mesmo andar e rezou. A descida volta com metade da vida e o ouro não saqueado, e espera a dona por até 24h.',
+  defaultColor: '#f59e0b',
+  previewTitle: '{header} Alguém rezou por você',
+  previewDesc: '@Bea achou seu túmulo no **Andar 2** e rezou… e a vela acendeu de novo. Sua descida voltou com metade da vida e o ouro que sobrou.\n\nAbre `/py-dungeon` e clica em **Continuar descida**.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Oração', fallback: '🙏', defaultEmojiKey: 'DUNGEON_MOON', description: 'Ícone no título do aviso' },
+  ],
+});
+
+registerEmbed({
+  id: 'guild_boss',
+  name: '👹 Chefe da Semana do Servidor',
+  category: 'minigames',
+  description: 'Painel público do /py-boss: vida do chefe, plano do dia (postura certa dobra o dano), ranking de dano e recompensas quando ele cai. O que é de cada pessoa vai em resposta privada.',
+  defaultColor: '#7f1d1d',
+  previewTitle: '{header} Hidra do Jardim de Ossos',
+  previewDesc: 'Ele subiu das Catacumbas e tá rondando o servidor a semana inteira… junta o pessoal!\n\n▰▰▰▰▰▰▰▱▱▱▱▱ `2140` / `3800` de vida\n\n### 🪨 Plano de hoje: Casca de Pedra\n\n> *Magia atravessa; espada só arranha.*\n\n### 🏆 Quem mais bateu\n\n`1.` @Bea • `860` de dano',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Chefe', fallback: '👹', defaultEmojiKey: 'DUNGEON_SKULL', description: 'Ícone no título do chefe' },
+  ],
+});
+
+registerEmbed({
+  id: 'craft_workshop',
+  name: '🛠️ Oficina da Pyxie (/py-craft)',
+  category: 'economy',
+  description: 'Oficina: materiais que cada profissão traz do /py-work viram móveis exclusivos de artesanato (conjunto Feito à Mão), com taxa pequena em moedinhas.',
+  defaultColor: '#b45309',
+  previewTitle: '{header} Oficina da Pyxie',
+  previewDesc: 'Aqui a gente transforma o que você traz do trabalho em móveis que não existem na loja.\n\n### 🧺 Seus materiais\n\n🪵 Madeira: `4` • 🐚 Concha: `3` • 🧶 Tecido: `2`\n\n### 📜 Receitas\n\nEscolhe uma receita no menu pra ver o que precisa.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Ferramentas', fallback: '🛠️', defaultEmojiKey: 'Pink_bag', description: 'Ícone no título da oficina' },
+  ],
+});
+
+registerEmbed({
+  id: 'couple_bond',
+  name: '💞 Força do Laço (/py-marriage bond)',
+  category: 'social',
+  description: 'Painel do casal: nível do Laço com nome, Barra do Amor, sequência de Sintonia, gesto do dia das duas pessoas e missão da semana com lembrança para a Casinha.',
+  defaultColor: '#e60067',
+  previewTitle: '{header} Força do Laço',
+  previewDesc: 'Você e @Bea • juntos há `42` dias\n\n### 💞 Nível `4` • Porto Seguro\n\n💗💗💗💗🤍🤍🤍🤍🤍🤍 `100`/`250`\n\n### ☀️ Gesto de hoje\n\n• **Você:** 💌 Bilhete\n\n• **@Bea:** ⏳ ainda não',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Laço', fallback: '💞', description: 'Ícone no título da Força do Laço' },
+  ],
+});
+
+registerEmbed({
+  id: 'battle_pass',
+  name: '💎 Passe da Pyxie (/py-pass)',
+  category: 'economy',
+  description: 'Passe mensal em privado: nível e barra de XP, próximas recompensas grátis e Premium, nível 50 com pet e título míticos do mês, lista de níveis paginada, resgate e botão de link assinado para o Premium.',
+  defaultColor: '#7c3aed',
+  previewTitle: '{header} Passe da Pyxie • Outubro 2026',
+  previewDesc: 'Tudo o que você já faz por aqui rende XP.\n\n### 🌟 Nível `12`/`50`\n\n▰▰▰▰▰▰▱▱▱▱▱▱ `150`/`300` XP\n\n### 🎁 Próximo nível (`13`)\n\n• **Grátis:** `2` 📜 Pergaminho\n\n• **Premium:** `6` 🎇 Fagulhas 🔒',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Passe', fallback: '💎', defaultEmojiKey: 'MAGIC_BEAN', description: 'Ícone no título do Passe' },
+  ],
+});
+
+registerEmbed({
+  id: 'seasonal_festival',
+  name: '🎇 Festival da Temporada (/py-festival)',
+  category: 'economy',
+  description: 'Vitrine da temporada global: Fagulhas, Caixa da Temporada e Baú de Moedinhas com chances públicas e garantia, lista completa de prêmios e tela do prêmio com o sprite do item.',
+  defaultColor: '#f97316',
+  previewTitle: '{header} Noite das Abóboras',
+  previewDesc: 'As abóboras acordaram e os monstros das Catacumbas se fantasiaram.\n\n### 🎁 Caixas\n\n• **Caixa da Temporada:** `25` 🎇 Fagulhas\n\n• **Baú de Moedinhas:** `450` 🪙\n\n-# Chances públicas no botão 📜',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Temporada', fallback: '🎃', defaultEmojiKey: 'DUNGEON_PUMPKIN', description: 'Ícone no título do festival' },
+  ],
+});
+
+registerEmbed({
+  id: 'player_market',
+  name: '🏪 Mercado entre Jogadores (/py-market)',
+  category: 'economy',
+  description: 'Vitrine privada do mercado: anúncios com garantia, ofertas particulares, detalhe com histórico de preços, venda de itens e de materiais por modal e aviso por DM para quem vendeu.',
+  defaultColor: '#0f766e',
+  previewTitle: '{header} Mercado da Pyxie',
+  previewDesc: 'Aqui o pessoal vende o que achou nas Catacumbas, fez na oficina ou ganhou por aí.\n\n### 🛒 À venda\n\n`a1b2c3` • Abajur de Cristal ×`1` • `220` 🪙 • @Bea\n\n`d4e5f6` • 🐚 Concha ×`6` • `90` 🪙 • @Ana\n\n-# Página `1` de `1` • taxa de `5%` em cada venda',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Loja', fallback: '🏪', defaultEmojiKey: 'Pink_bag', description: 'Ícone no título do mercado' },
+  ],
+});
+
+registerEmbed({
+  id: 'dungeon_hall',
+  name: '🏆 Catacumbas de Veludo: Rankings',
+  category: 'minigames',
+  description: 'Hall dos Corajosos com abas: de sempre (andar mais fundo), da semana (zera segunda 00:00 BRT) e do servidor (quem desceu a partir dele nesta semana).',
+  defaultColor: '#f59e0b',
+  previewTitle: '{header} Ranking da semana',
+  previewDesc: 'Quem desceu mais fundo desde segunda-feira:\n\n`1.` @Bea • Andar `4` • 👑 `0` • ⚔️ `12`\n\n`2.` @Ana • Andar `3` • 👑 `0` • ⚔️ `9`\n\n-# 📅 A semana vira toda segunda à meia-noite (Brasília).',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Calendário', fallback: '📅', defaultEmojiKey: 'TROPHY', description: 'Ícone no título do ranking' },
+  ],
+});
+
+registerEmbed({
   id: 'tarot_draw',
   name: '🔮 Tiragem Diária de Tarot',
   category: 'tarot',
@@ -602,20 +830,49 @@ registerEmbed({
   id: 'daily_reward',
   name: '🎁 Bônus Diário & Web',
   category: 'economy',
-  description: 'Embed do comando /py-daily e do portal de resgate web.',
-  defaultColor: '#10b981',
-  previewTitle: '{header} Recompensa Diária Coletada!',
-  previewDesc: 'Você resgatou com sucesso seu bônus diário e manteve a chama viva!',
-  previewFields: [
-    { name: '💰 Moedinhas Recebidas', value: '+100 {coins}', inline: true },
-    { name: '🌱 Feijões Mágicos', value: '+1 {beans}', inline: true },
-    { name: '🔥 Streak Ativo', value: '7 dias consecutivos {streak}', inline: true },
-  ],
+  description: 'Diário da Pyxie (/py-daily): ela entrega as moedinhas falando com a pessoa, lê a energia do dia, comemora os marcos 7/30/100/365 e oferece as Xícaras (uma jogada por diário).',
+  defaultColor: '#f59e0b',
+  previewTitle: '{streak} 7 dias seguidos!',
+  previewDesc: 'Você não esquece de mim, né? Isso é… bom. Muito bom. Quer dizer, normal.\n\n### 🏆 Uma semana inteira!\n\nSete dias seguidos. Eu… fiz uma marquinha no calendário.\n\n### {header} O que eu separei pra você\n\n• **Moedinhas:** \`+42\` {coins}\n\n• **Bônus da sequência:** \`+7\` {coins}\n\n### 🔮 Sua energia de hoje\n\n> **🐈 Gato no sol**\n> *Hoje você merece se esticar e não fazer nada.*',
+  previewFields: [],
   slots: [
     { key: 'header', label: 'Ícone de Presente', fallback: '🎁', defaultEmojiKey: 'daily_bonus', description: 'Ícone no título do bônus' },
     { key: 'coins', label: 'Moedas Gerais', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Moedas creditadas' },
     { key: 'beans', label: 'Feijões Mágicos', fallback: '🌱', defaultEmojiKey: 'magic_bean', description: 'Feijões mágicos obtidos' },
     { key: 'streak', label: 'Fogo de Streak', fallback: '🔥', defaultEmojiKey: 'PURPLE_FLAME', description: 'Indicador de dias seguidos' },
+  ],
+});
+
+registerEmbed({
+  id: 'topgg_vote',
+  name: '🗳️ Voto no Top.gg',
+  category: 'economy',
+  description: 'Embed do /py-vote: recompensa em feijões mágicos por voto, bônus de fim de semana e status do próximo voto.',
+  defaultColor: '#9b5de5',
+  previewTitle: '{header} Vote na Pyxie no Top.gg',
+  previewDesc: 'Cada voto no **Top.gg** ajuda a Pyxie a ser encontrada por novos servidores.\n\n### {beans} Recompensa por voto\n\n• **Por voto:** `1` feijão mágico, a cada `12h`.\n\n• **Fim de semana:** `2` feijões por voto (sexta a domingo).\n\n> ✅ **Seu voto está liberado agora!**',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Ícone de Voto', fallback: '🗳️', defaultEmojiKey: '5707lightpurplecheck', description: 'Ícone no título do voto' },
+    { key: 'beans', label: 'Feijões Mágicos', fallback: '🌱', defaultEmojiKey: 'magic_bean', description: 'Recompensa por voto' },
+  ],
+});
+
+registerEmbed({
+  id: 'guild_welcome',
+  name: '🧚 Boas-vindas ao Entrar num Servidor',
+  category: 'system',
+  description: 'Primeira mensagem da Pyxie num servidor novo (guildCreate): comandos de início, idioma com botões e links.',
+  defaultColor: '#8b5cf6',
+  previewTitle: '{header} Oi! Eu sou a Pyxie',
+  previewDesc: 'Obrigada por me chamar para **Servidor**. N-não que eu estivesse esperando o convite… mas já que estou aqui, vamos começar direito.\n\n### ✨ Comece por aqui\n\n• **Moedinhas diárias:** {coins} `/py-daily` entrega seu bônus todo dia, e a sequência rende mais.\n\n• **Tarot ilustrado:** {tarot} `/py-tarot` tira a sua carta do dia e guarda no álbum.\n\n• **Catacumbas de Veludo:** {dungeon} `/py-dungeon` é um roguelike difícil com ticket de `50` moedinhas.\n\n### {globe} Idioma\n\nEstou falando **Português** aqui.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Fada da Pyxie', fallback: '🧚', defaultEmojiKey: 'fairy', description: 'Âncora visual do título' },
+    { key: 'coins', label: 'Moedinhas', fallback: '🪙', defaultEmojiKey: 'coins', description: 'Linha do /py-daily' },
+    { key: 'tarot', label: 'Tarot', fallback: '🔮', defaultEmojiKey: 'TAROT', description: 'Linha do /py-tarot' },
+    { key: 'dungeon', label: 'Catacumbas', fallback: '🕯️', defaultEmojiKey: 'DUNGEON', description: 'Linha do /py-dungeon' },
+    { key: 'globe', label: 'Idioma', fallback: '🌐', defaultEmojiKey: '16017pinkearth', description: 'Seção de idioma' },
   ],
 });
 

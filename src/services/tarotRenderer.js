@@ -1,4 +1,5 @@
 const { createCanvas } = require('@napi-rs/canvas');
+const { localizeCard } = require('../data/tarotCardsCatalog');
 const { ensureCanvasFonts, withEmojiFallback } = require('../utils/canvasFonts');
 const { AttachmentBuilder } = require('discord.js');
 const { getCanvasStrings, getLanguage } = require('../utils/i18n');
@@ -278,8 +279,9 @@ const MAX_TAROT_CACHE_SIZE = 40;
  * @param {'UPRIGHT'|'REVERSED'} orientation
  * @returns {Buffer}
  */
-function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
+function renderTarotCard(baseCard, orientation = 'UPRIGHT', lang = 'pt') {
   const langKey = getLanguage(lang);
+  const card = localizeCard(baseCard, langKey);
   const cacheKey = `${card?.id || card?.name || 'unknown'}_${orientation}_${langKey}`;
   if (tarotCardCache.has(cacheKey)) {
     return tarotCardCache.get(cacheKey);
@@ -353,7 +355,7 @@ function renderTarotCard(card, orientation = 'UPRIGHT', lang = 'pt') {
   ctx.shadowBlur = 0;
   ctx.fillStyle = accentColor;
   ctx.font = withEmojiFallback('bold 13px sans-serif');
-  const arcanaLabel = card.arcana ? (langKey === 'en' ? 'MAJOR ARCANA' : card.arcana.toUpperCase()) : cStrs.arcana;
+  const arcanaLabel = card.arcana ? card.arcana.toUpperCase() : cStrs.arcana;
   ctx.fillText(arcanaLabel, 300, 98);
 
   // 4. Central Portal (Rotatable)

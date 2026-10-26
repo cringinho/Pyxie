@@ -25,6 +25,8 @@ const HOUSE_COST_COINS = 2000;
 const HOUSE_COST_BEANS = 2;
 const HOUSE_REQUIRED_LOVE = 50;
 const VAULT_INTEREST_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h
+// Teto do rendimento diário do Cofre do Amor (AGENTS.md §5: sem inflação por depósito ilimitado)
+const VAULT_DAILY_CAP = 200;
 const DATE_COOLDOWN_MS = 12 * 60 * 60 * 1000; // 12h
 const AFFECTION_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h
 const MAX_CHILDREN = 5;
@@ -229,6 +231,7 @@ function resolveMarriageProposal(requestId, targetId, accepted) {
   data.marriages[marId] = {
     id: marId,
     spouses: [req.requesterId, req.targetId],
+    createdAt: Date.now(),
     loveBar: 100,
     lastLoveDecay: Date.now(),
     treeOfLife: {
@@ -272,7 +275,31 @@ function endMarriage(userId) {
 
   delete data.marriages[marriageIdToRemove];
   writeData(data);
-  return { ended: true, spouseId };
+
+  // Separar bens: a casinha fica com a dona original e os itens da outra pessoa voltam para ela
+  let separation = { separated: false, returned: {} };
+  try {
+    separation = require('../home/homeStore').separateHomes(userId, spouseId);
+  } catch (err) {
+    console.warn('[marriage] Falha ao separar os bens da casinha:', err.message);
+  }
+  return { ended: true, spouseId, separation };
+}
+
+/**
+ * A casa do casal agora é a Casinha (/py-home): o casal "tem casa" quando mora junto nela.
+ * Quem comprou a casa no casamento antigo continua com ela: a compra vira a casinha do casal.
+ */
+function hasSharedHome(marriage) {
+  if (!marriage || !Array.isArray(marriage.spouses)) return false;
+  try {
+    const homeStore = require('../home/homeStore');
+    if (homeStore.livingTogether(marriage.spouses[0], marriage.spouses[1])) return true;
+    if (marriage.house?.unlocked) return homeStore.honorLegacyCoupleHouse(marriage.spouses);
+  } catch (_) {
+    return Boolean(marriage.house?.unlocked);
+  }
+  return false;
 }
 
 /**
@@ -358,6 +385,7 @@ function cultivateTree(userId) {
   mar.loveBar = Math.min(100, (mar.loveBar || 0) + 10);
   mar.treeOfLife.lastCultivatedAt = now;
   writeData(data);
+  require('./coupleBond').recordActivity(userId, 'tree');
 
   return { success: true, newLove: mar.loveBar, marriage: mar };
 }
@@ -396,7 +424,7 @@ function giveAffection(userId) {
 function depositVault(userId, amount) {
   const marriage = getMarriage(userId);
   if (!marriage) return { success: false, reason: 'not_married' };
-  if (!marriage.house?.unlocked) return { success: false, reason: 'no_house' };
+  if (!hasSharedHome(marriage)) return { success: false, reason: 'no_house' };
 
   const qty = Math.floor(Number(amount));
   if (isNaN(qty) || qty <= 0) return { success: false, reason: 'invalid_amount' };
@@ -418,6 +446,14 @@ function depositVault(userId, amount) {
   return { success: true, newBalance: mar.house.vaultBalance, deposited: qty };
 }
 
+/** Rendimento de um dia: até 5% do cofre (proporcional ao amor), no máximo VAULT_DAILY_CAP. */
+function estimateVaultYield(vaultBalance, loveBar) {
+  const balance = Math.max(0, Number(vaultBalance) || 0);
+  if (!balance) return 0;
+  const raw = Math.max(1, Math.floor(balance * ((Number(loveBar) || 0) / 100) * 0.05));
+  return Math.min(VAULT_DAILY_CAP, raw);
+}
+
 /**
  * Resgata rendimento diário do Cofre do Amor Eterno:
  * Rendimento = SaldoNoCofre * ((loveBar / 100) * 0.05)
@@ -426,7 +462,7 @@ function depositVault(userId, amount) {
 function claimVaultInterest(userId) {
   const marriage = getMarriage(userId);
   if (!marriage) return { success: false, reason: 'not_married' };
-  if (!marriage.house?.unlocked) return { success: false, reason: 'no_house' };
+  if (!hasSharedHome(marriage)) return { success: false, reason: 'no_house' };
 
   const vault = marriage.house.vaultBalance || 0;
   if (vault <= 0) return { success: false, reason: 'vault_empty' };
@@ -443,9 +479,10 @@ function claimVaultInterest(userId) {
     };
   }
 
-  // Rendimento = SaldoNoCofre * ((loveBar / 100) * 0.05)
-  const interestRate = (marriage.loveBar / 100) * 0.05;
-  const yieldAmount = Math.max(1, Math.floor(vault * interestRate));
+  // Rendimento = SaldoNoCofre * ((loveBar / 100) * 0.05), com teto diário de VAULT_DAILY_CAP
+  const yieldAmount = estimateVaultYield(vault, marriage.loveBar);
+  const interestRate = yieldAmount / vault;
+  const capped = yieldAmount >= VAULT_DAILY_CAP;
 
   addCoins(userId, yieldAmount);
 
@@ -457,6 +494,7 @@ function claimVaultInterest(userId) {
   return {
     success: true,
     yieldAmount,
+    capped,
     interestRate: Number((interestRate * 100).toFixed(1)),
     vaultBalance: vault,
   };
@@ -533,10 +571,13 @@ function resolveDateNight(marriageId, match) {
       addCoins(spouse, 100);
     }
     writeData(data);
+    // Missão da semana (Força do Laço): conta depois de gravar o resultado do date
+    require('./coupleBond').recordActivity(marriage.spouses[0], 'dates');
     return { success: true, match: true, newLove: marriage.loveBar, coinsRewarded: 100 };
   } else {
     marriage.loveBar = Math.min(100, (marriage.loveBar || 0) + 3);
     writeData(data);
+    require('./coupleBond').recordActivity(marriage.spouses[0], 'dates');
     return { success: true, match: false, newLove: marriage.loveBar, coinsRewarded: 0 };
   }
 }
@@ -547,7 +588,7 @@ function resolveDateNight(marriageId, match) {
 function canHaveChild(userId) {
   const marriage = getMarriage(userId);
   if (!marriage) return { allowed: false, reason: 'not_married' };
-  if (!marriage.house?.unlocked) return { allowed: false, reason: 'no_house' };
+  if (!hasSharedHome(marriage)) return { allowed: false, reason: 'no_house' };
 
   const currentCount = (marriage.children || []).length;
   if (currentCount >= MAX_CHILDREN) {
@@ -713,10 +754,13 @@ module.exports = {
   DIVORCE_COST,
   TREE_COST_BEANS,
   TREE_COOLDOWN_MS,
+  hasSharedHome,
   HOUSE_COST_COINS,
   HOUSE_COST_BEANS,
   HOUSE_REQUIRED_LOVE,
   VAULT_INTEREST_COOLDOWN_MS,
+  VAULT_DAILY_CAP,
+  estimateVaultYield,
   DATE_COOLDOWN_MS,
   AFFECTION_COOLDOWN_MS,
   MAX_CHILDREN,

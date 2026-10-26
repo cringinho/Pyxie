@@ -8,6 +8,7 @@ const {
   SlashCommandBuilder,
 } = require('discord.js');
 const professions = require('../services/professions');
+const { grantWorkMaterials, materialLabel } = require('../services/crafting');
 const {
   claimProjectBonus,
   finishWork,
@@ -1966,6 +1967,9 @@ const PROFESSION_MINIGAMES = {
   ],
 };
 
+// Profissões da oficina (minerador, pescador, florista, marceneiro, costureiro, arqueólogo)
+Object.assign(PROFESSION_MINIGAMES, require('../data/newProfessionMinigames'));
+
 function shuffleArray(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -2114,6 +2118,22 @@ async function handleEnvelopeInteraction(interaction) {
 // DILEMAS DE CORRUPÇÃO / PROPOSTA SOMBRIA (Papers, Please & Reigns)
 // ══════════════════════════════════════════════════════════════════════════════
 const PROFESSION_DILEMMAS = {
+  florista: {
+    pt: 'Um cliente rico oferece uma gorjeta enorme para você arrancar as orquídeas raras do jardim público e montar o buquê dele.',
+    en: 'A wealthy client offers a huge tip for you to pull the rare orchids out of the public garden for his bouquet.',
+  },
+  marceneiro: {
+    pt: 'Um comprador oferece pagar o dobro se você vender como maciça uma mesa feita de compensado pintado.',
+    en: 'A buyer offers to pay double if you sell a painted plywood table as solid hardwood.',
+  },
+  costureiro: {
+    pt: 'Uma grife oferece um contrato gordo para você copiar ponto a ponto o vestido de uma estilista independente.',
+    en: 'A fashion label offers a fat contract for you to copy an independent designer\'s dress stitch for stitch.',
+  },
+  arqueologo: {
+    pt: 'Um colecionador oferece uma fortuna para você "esquecer" de registrar uma estatueta e entregá-la a ele.',
+    en: 'A collector offers a fortune for you to "forget" to log a statuette and hand it over to him.',
+  },
   programador: {
     pt: 'Um intermediário da dark web oferece propina para você injetar uma backdoor silenciosa no servidor central da guilda.',
     en: 'A dark web broker offers a bribe for you to inject a silent backdoor into the guild\'s central server.',
@@ -2583,6 +2603,16 @@ async function handleWorkInteraction(interaction) {
 
   const isCriticalBonus = Math.random() < 0.02; // 2% de chance de bônus de Feijão Mágico em acertos
   const result = finishWork(sessionUserId, true, finalSalary, isCriticalBonus);
+  // Material da profissão para a oficina (/py-craft)
+  const materialDrops = grantWorkMaterials(sessionUserId, session.professionKey, { golden: session.isGoldenShift, level: session.userLevel });
+  // XP do Passe da Pyxie (/py-pass) e missão da semana do casal (Força do Laço)
+  require('../services/battlePass').safeAddXp(sessionUserId, 'work');
+  require('../modules/marriage/coupleBond').recordActivity(sessionUserId, 'work');
+  // Festival (/py-festival): 5% de chance de Fagulhas em turno certo durante uma temporada
+  let festivalDrop = null;
+  try {
+    festivalDrop = require('../services/festival').rollWorkDrop(sessionUserId);
+  } catch (_) {}
 
   const currentRoleTitle = getRoleTitle(session.professionKey, result.careerLevel, lang);
   const desc = [
@@ -2597,6 +2627,13 @@ async function handleWorkInteraction(interaction) {
     t('workMinigame.workCountLine', lang, { count: getUserAccount(sessionUserId).workCount }),
   ];
 
+  for (const drop of materialDrops) {
+    desc.push(t('workMinigame.materialDrop', lang, { qty: drop.qty, material: materialLabel(drop.material, lang) }));
+  }
+  if (festivalDrop) {
+    const festival = require('../services/festival');
+    desc.push(t('workMinigame.festivalDrop', lang, { qty: festivalDrop.qty, currency: festival.currencyLabel(lang, festivalDrop.qty), season: festival.seasonName(festivalDrop.season, lang) }));
+  }
   if (session.isGoldenShift) {
     desc.push(t('workMinigame.goldenShiftBadge', lang));
   }

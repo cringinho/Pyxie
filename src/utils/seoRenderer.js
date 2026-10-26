@@ -96,6 +96,42 @@ const SEO_CONFIG = {
       locale: 'en_US'
     }
   },
+  market: {
+    file: 'mercado.html',
+    canonical: 'https://pyxie.com.br/mercado',
+    pt: {
+      title: 'Pyxie • Mercado e Histórico de Preços',
+      description: 'Veja os preços reais do mercado entre jogadores da Pyxie no Discord: itens da Casinha, móveis de artesanato e materiais, com última venda, média de 7 dias e gráfico.',
+      ogTitle: 'Pyxie • Mercado e Histórico de Preços',
+      ogDesc: 'Preços reais do mercado entre jogadores da Pyxie: última venda, média de 7 dias e gráfico de 30 dias de cada item e material.',
+      locale: 'pt_BR'
+    },
+    en: {
+      title: "Pyxie • Market and Price History",
+      description: "See real prices from Pyxie's player market on Discord: Cozy Room items, handcrafted furniture and materials, with last sale, 7-day average and a chart.",
+      ogTitle: "Pyxie • Market and Price History",
+      ogDesc: "Real prices from Pyxie's player market: last sale, 7-day average and a 30-day chart for every item and material.",
+      locale: 'en_US'
+    }
+  },
+  pass: {
+    file: 'passe.html',
+    canonical: 'https://pyxie.com.br/passe',
+    pt: {
+      title: 'Pyxie • Passe Mensal Premium',
+      description: 'Passe mensal da Pyxie no Discord: 50 níveis com trilha grátis e Premium, pet e título míticos exclusivos de cada mês. Premium por R$ 5 no Pix ou US$ 3 no PayPal.',
+      ogTitle: 'Pyxie • Passe Mensal Premium',
+      ogDesc: '50 níveis por mês com recompensas grátis e Premium, pet e título míticos que nunca voltam.',
+      locale: 'pt_BR'
+    },
+    en: {
+      title: 'Pyxie • Monthly Premium Pass',
+      description: "Pyxie's monthly pass on Discord: 50 levels with free and Premium tracks, plus a mythic pet and title unique to each month. Premium for US$ 3 on PayPal or R$ 5 via Pix.",
+      ogTitle: 'Pyxie • Monthly Premium Pass',
+      ogDesc: '50 levels every month with free and Premium rewards, and a mythic pet and title that never come back.',
+      locale: 'en_US'
+    }
+  },
   bonus: {
     file: 'bonus.html',
     canonical: 'https://pyxie.com.br/bonus',

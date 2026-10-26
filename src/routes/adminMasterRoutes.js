@@ -98,6 +98,14 @@ function createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }) {
     res.json({ success: true, count: guilds.length, guilds });
   });
 
+  // 2.1 Funil de crescimento: convites por origem, entradas/saídas, ativação, retenção e listas de bots
+  router.get('/api/admin/growth', requireAdminAuth, (req, res) => {
+    const { getFunnelSummary } = require('../services/growthFunnel');
+    const { getBotListStatus } = require('../services/botListStats');
+    const days = Math.min(90, Math.max(7, Number(req.query.days) || 30));
+    res.json({ success: true, funnel: getFunnelSummary({ days }), botLists: getBotListStatus() });
+  });
+
   router.post('/api/admin/guilds/:id/force-leave', requireAdminAuth, async (req, res) => {
     const guildId = req.params.id;
     const sent = sendIpcToBot({ type: 'FORCE_LEAVE_GUILD', guildId });

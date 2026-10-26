@@ -21,8 +21,17 @@ const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { getEmoji } = require('../utils/appEmojis');
 
 function getProfessionChoices() {
+  const choiceLabel = (value, profession, lang) => {
+    const label = t(`profession.labels.${value}`, { lang }) || profession.label;
+    const beanWord = lang === 'pt'
+      ? (profession.beanCost === 1 ? 'Feijão' : 'Feijões')
+      : (profession.beanCost === 1 ? 'Bean' : 'Beans');
+    const cost = profession.isMagic ? ` (${profession.beanCost} ${beanWord})` : '';
+    return `${profession.isMagic ? '✨ ' : ''}${label}${cost}`.slice(0, 100);
+  };
   return Object.entries(professions).map(([value, profession]) => ({
-    name: `${profession.isMagic ? '✨ ' : ''}${profession.label}${profession.isMagic ? ` (${profession.beanCost} Feijões)` : ''}`.slice(0, 100),
+    name: choiceLabel(value, profession, 'en'),
+    name_localizations: { 'pt-BR': choiceLabel(value, profession, 'pt') },
     value,
   }));
 }
@@ -60,6 +69,23 @@ function getReply(result, professionKey, source = null) {
 }
 
 const PROFESSION_ALIASES = {
+  mineradora: 'minerador',
+  miner: 'minerador',
+  mineiro: 'minerador',
+  pescadora: 'pescador',
+  fisher: 'pescador',
+  fisherman: 'pescador',
+  florist: 'florista',
+  marceneira: 'marceneiro',
+  carpinteiro: 'marceneiro',
+  carpinteira: 'marceneiro',
+  woodworker: 'marceneiro',
+  carpenter: 'marceneiro',
+  costureira: 'costureiro',
+  tailor: 'costureiro',
+  seamstress: 'costureiro',
+  arqueologa: 'arqueologo',
+  archaeologist: 'arqueologo',
   gamedev: 'desenvolvedor_jogos',
   game_dev: 'desenvolvedor_jogos',
   'desenvolvedor de jogos': 'desenvolvedor_jogos',
@@ -253,11 +279,23 @@ function buildProfessionEmbed(userId, source) {
   return embed;
 }
 
-function buildProfessionSelectRow(userId, source) {
+/**
+ * Menus de escolha: carreiras convencionais e vocações arcanas em menus separados (o Discord
+ * aceita no máximo 25 opções por menu).
+ */
+function buildProfessionSelectRows(userId, source) {
+  const entries = Object.entries(professions);
+  return [
+    buildProfessionSelectRow(userId, source, entries.filter(([, prof]) => !prof.isMagic), `profession_select_${userId}`),
+    buildProfessionSelectRow(userId, source, entries.filter(([, prof]) => prof.isMagic), `profession_select_magic_${userId}`),
+  ];
+}
+
+function buildProfessionSelectRow(userId, source, entries = Object.entries(professions).filter(([, prof]) => !prof.isMagic), customId = `profession_select_${userId}`) {
   const account = getUserAccount(userId);
   const unlocked = account.unlockedProfessions || [];
   const mastered = Array.isArray(account.masteredProfessions) ? account.masteredProfessions : [];
-  const options = Object.entries(professions).map(([value, prof]) => {
+  const options = entries.map(([value, prof]) => {
     const isMaster = mastered.includes(value);
     const masterPrefix = isMaster ? `⭐ ${t('profession.masterBadge', source)} • ` : '';
     const isMagic = Boolean(prof.isMagic);
@@ -286,7 +324,7 @@ function buildProfessionSelectRow(userId, source) {
   });
 
   const selectMenu = new StringSelectMenuBuilder()
-    .setCustomId(`profession_select_${userId}`)
+    .setCustomId(customId)
     .setPlaceholder(t('profession.selectPlaceholder', source))
     .addOptions(options);
 
@@ -297,7 +335,7 @@ function attachCollector(responseMsg, source, userId) {
   if (!responseMsg || typeof responseMsg.createMessageComponentCollector !== 'function') return;
   const collector = responseMsg.createMessageComponentCollector({
     componentType: ComponentType.StringSelect,
-    filter: (i) => i.user.id === userId && i.customId === `profession_select_${userId}`,
+    filter: (i) => i.user.id === userId && (i.customId === `profession_select_${userId}` || i.customId === `profession_select_magic_${userId}`),
     time: 60_000,
   });
 
@@ -306,23 +344,21 @@ function attachCollector(responseMsg, source, userId) {
     const result = setProfession(userId, chosenKey);
     const feedback = getReply(result, chosenKey, source);
     const updatedEmbed = buildProfessionEmbed(userId, source);
-    const updatedRow = buildProfessionSelectRow(userId, source);
+    const updatedRows = buildProfessionSelectRows(userId, source);
 
     await i.update({
       content: feedback,
       embeds: [updatedEmbed],
-      components: [updatedRow],
+      components: updatedRows,
     }).catch(() => {});
   });
 
   collector.on('end', async () => {
     try {
-      const disabledRow = buildProfessionSelectRow(userId, source);
-      if (disabledRow.components && disabledRow.components[0]) {
-        disabledRow.components[0].setDisabled(true);
-      }
+      const disabledRows = buildProfessionSelectRows(userId, source);
+      for (const row of disabledRows) row.components[0]?.setDisabled(true);
       if (responseMsg.edit) {
-        await responseMsg.edit({ components: [disabledRow] }).catch(() => {});
+        await responseMsg.edit({ components: disabledRows }).catch(() => {});
       }
     } catch (_) {}
   });
@@ -334,8 +370,8 @@ async function execute(source, reply, value) {
 
   if (!cleanVal) {
     const embed = buildProfessionEmbed(userId, source);
-    const row = buildProfessionSelectRow(userId, source);
-    const responseMsg = await reply({ embeds: [embed], components: [row] });
+    const rows = buildProfessionSelectRows(userId, source);
+    const responseMsg = await reply({ embeds: [embed], components: rows });
     attachCollector(responseMsg, source, userId);
     return;
   }
@@ -351,8 +387,8 @@ async function execute(source, reply, value) {
   const result = setProfession(userId, key);
   const feedback = getReply(result, key, source);
   const embed = buildProfessionEmbed(userId, source);
-  const row = buildProfessionSelectRow(userId, source);
-  const responseMsg = await reply({ content: feedback, embeds: [embed], components: [row] });
+  const rows = buildProfessionSelectRows(userId, source);
+  const responseMsg = await reply({ content: feedback, embeds: [embed], components: rows });
   attachCollector(responseMsg, source, userId);
 }
 
@@ -362,6 +398,7 @@ module.exports = {
   resolveProfession,
   buildProfessionEmbed,
   buildProfessionSelectRow,
+  buildProfessionSelectRows,
   data: new SlashCommandBuilder()
     .setName(PROFESSION)
     .setDescription('Choose or change your profession.')
@@ -381,8 +418,21 @@ module.exports = {
           'pt-BR': 'Profissão desejada para escolher.',
         })
         .setRequired(false)
-        .addChoices(...getProfessionChoices())
+        .setAutocomplete(true)
     ),
+  /** Sugestões enquanto a pessoa digita (são mais de 25 profissões, o limite de escolhas fixas). */
+  async autocomplete(interaction) {
+    const typed = String(interaction.options.getFocused() || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+    const isPt = String(interaction.locale || '').startsWith('pt');
+    const matches = getProfessionChoices()
+      .map((choice) => ({ name: isPt ? choice.name_localizations['pt-BR'] : choice.name, value: choice.value }))
+      .filter((choice) => !typed || choice.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(typed) || choice.value.includes(typed))
+      .slice(0, 25);
+    return interaction.respond(matches);
+  },
   async executePrefix({ message, args }) {
     const rawVal = Array.isArray(args) && args.length > 0 ? args.join(' ') : null;
     await execute(message, (payload) => message.reply(payload), rawVal);

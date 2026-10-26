@@ -38,6 +38,7 @@ module.exports = {
   TERMS: 'py-terms',
   CHILD: 'py-child',
   MATH: 'py-math',
+  ACHIEVEMENTS: 'py-achievements',
   TICTACTOE: 'py-tictactoe',
   MINESWEEPER: 'py-minesweeper',
   GIVEAWAY: 'py-giveaway',

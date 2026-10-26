@@ -133,6 +133,20 @@ function buildHeaderEmbed({ commandName, context, extraInfo }) {
  * @param {boolean} [params.includeHeader=true] - Se deve incluir o banner oficial de homologação
  * @returns {Promise<{ success: boolean, messageId?: string, error?: string, simulated?: boolean }>}
  */
+/** Converte AttachmentBuilder / { attachment, name } em bytes para o envio por REST. */
+async function restAttachments(files = []) {
+  const out = [];
+  for (const file of files || []) {
+    const raw = file?.attachment ?? file?.data?.attachment ?? file;
+    const name = file?.name || file?.data?.name || `preview-${out.length}.png`;
+    try {
+      if (Buffer.isBuffer(raw)) out.push({ name, data: raw });
+      else if (typeof raw === 'string') out.push({ name, data: require('fs').readFileSync(raw) });
+    } catch (_) {}
+  }
+  return out;
+}
+
 async function dispatchHomologationPreview({
   client,
   commandName = 'Geral',
@@ -206,22 +220,38 @@ async function dispatchHomologationPreview({
         },
       };
 
-      const res = await globalThis.fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bot ${botToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(restPayload),
-      });
+      // Imagens (cena da dungeon, quarto da Casinha) vão como multipart; sem arquivos, JSON simples
+      const attachments = await restAttachments(files);
+      const buildRequest = () => {
+        if (!attachments.length) {
+          return { headers: { Authorization: `Bot ${botToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify(restPayload) };
+        }
+        const form = new FormData();
+        form.append('payload_json', JSON.stringify({ ...restPayload, attachments: attachments.map((a, id) => ({ id, filename: a.name })) }));
+        attachments.forEach((a, id) => form.append(`files[${id}]`, new Blob([a.data]), a.name));
+        return { headers: { Authorization: `Bot ${botToken}` }, body: form };
+      };
 
-      if (res.ok) {
-        const data = await res.json();
-        console.log(`[HomologationPreview] ✅ Preview despachada via Discord REST no canal ${channelId} (Msg ID: ${data.id})`);
-        return { success: true, messageId: data.id, channelId };
-      } else {
+      // Respeita o Retry-After do Discord (429) em até 3 tentativas
+      for (let attempt = 1; attempt <= 3; attempt += 1) {
+        const request = buildRequest();
+        const res = await globalThis.fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, { method: 'POST', ...request });
+        if (res.ok) {
+          const data = await res.json();
+          console.log(`[HomologationPreview] ✅ Preview despachada via Discord REST no canal ${channelId} (Msg ID: ${data.id})`);
+          return { success: true, messageId: data.id, channelId };
+        }
         const errorText = await res.text();
+        if (res.status === 429 && attempt < 3) {
+          let waitSec = Number(res.headers.get('retry-after')) || 1;
+          try {
+            waitSec = Number(JSON.parse(errorText).retry_after) || waitSec;
+          } catch (_) {}
+          await new Promise((resolve) => setTimeout(resolve, Math.ceil(waitSec * 1000) + 100));
+          continue;
+        }
         console.warn(`[HomologationPreview] Resposta HTTP ${res.status} da API do Discord: ${errorText}`);
+        break;
       }
     } catch (err) {
       console.warn(`[HomologationPreview] Falha ao despachar via REST: ${err.message}`);

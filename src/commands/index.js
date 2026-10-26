@@ -41,6 +41,7 @@ const commands = [
   require('./duelo'),
   require('./desafio'),
   require('./anime'),
+  require('./conquistas'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');

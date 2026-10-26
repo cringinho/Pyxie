@@ -4,6 +4,7 @@ const { getEconomyConfig } = require('./database');
 const professions = require('./professions');
 const { normalizeProfileStyle } = require('./profileStyle');
 const { getEmoji } = require('../utils/appEmojis');
+const { withFileLock } = require('../utils/fileLock');
 
 const economyFile = path.join(__dirname, '..', '..', 'data', 'economy.json');
 const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
@@ -89,23 +90,59 @@ function normalizeNumber(value, fallback = 0) {
   return Number.isFinite(num) ? num : fallback;
 }
 
+const ECONOMY_BACKUP_INTERVAL_MS = 60 * 1000;
+let lastEconomyBackupAt = 0;
+
+function parseEconomyFile(file) {
+  const raw = fs.readFileSync(file, 'utf8');
+  return raw ? JSON.parse(raw) : {};
+}
+
+/**
+ * Lê data/economy.json. Se o arquivo estiver corrompido, ele é preservado como
+ * economy.json.corrupt-<ts> e a leitura cai para o backup economy.json.bak,
+ * evitando que a próxima gravação sobrescreva todos os saldos com {}.
+ */
 function readEconomy() {
   const directory = path.dirname(economyFile);
   if (!fs.existsSync(directory)) fs.mkdirSync(directory, { recursive: true });
   if (!fs.existsSync(economyFile)) return {};
 
   try {
-    const raw = fs.readFileSync(economyFile, 'utf8');
-    return raw ? JSON.parse(raw) : {};
+    return parseEconomyFile(economyFile);
   } catch (error) {
+    console.error('[economy] economy.json ilegível:', error.message);
+    try {
+      fs.renameSync(economyFile, `${economyFile}.corrupt-${Date.now()}`);
+    } catch (_) {}
+    const backupFile = `${economyFile}.bak`;
+    if (fs.existsSync(backupFile)) {
+      try {
+        const restored = parseEconomyFile(backupFile);
+        console.error('[economy] Saldos restaurados a partir de economy.json.bak.');
+        return restored;
+      } catch (backupError) {
+        console.error('[economy] Backup também ilegível:', backupError.message);
+      }
+    }
     return {};
   }
 }
 
+/** Gravação atômica (tmp + rename) com backup rotativo a cada minuto. */
 function writeEconomy(economy) {
   const directory = path.dirname(economyFile);
   if (!fs.existsSync(directory)) fs.mkdirSync(directory, { recursive: true });
-  fs.writeFileSync(economyFile, JSON.stringify(economy, null, 2), 'utf8');
+  const tmp = `${economyFile}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(economy, null, 2), 'utf8');
+  const now = Date.now();
+  if (now - lastEconomyBackupAt >= ECONOMY_BACKUP_INTERVAL_MS && fs.existsSync(economyFile)) {
+    try {
+      fs.copyFileSync(economyFile, `${economyFile}.bak`);
+      lastEconomyBackupAt = now;
+    } catch (_) {}
+  }
+  fs.renameSync(tmp, economyFile);
 }
 
 function normalizeAccount(account) {
@@ -140,13 +177,19 @@ function getUserAccount(userId) {
   return normalizeAccount(economy[userId]);
 }
 
+/**
+ * Ler-alterar-gravar de uma conta com o economy.json travado entre processos (o web também
+ * credita votos e bônus). Sem a trava, uma gravação do outro processo podia sumir.
+ */
 function updateUserAccount(userId, updater) {
-  const economy = readEconomy();
-  const account = normalizeAccount(economy[userId]);
-  updater(account);
-  economy[userId] = account;
-  writeEconomy(economy);
-  return account;
+  return withFileLock(economyFile, () => {
+    const economy = readEconomy();
+    const account = normalizeAccount(economy[userId]);
+    updater(account);
+    economy[userId] = account;
+    writeEconomy(economy);
+    return account;
+  });
 }
 
 function getBalance(userId) {
@@ -179,15 +222,14 @@ function addMagicBeans(userId, amount) {
 
 function spendMagicBeans(userId, amount) {
   const qty = Math.max(0, normalizeNumber(amount, 0));
-  const account = getUserAccount(userId);
-  if (account.magicBeans < qty) {
-    return { spent: false, balance: account.magicBeans };
-  }
-
-  const updated = updateUserAccount(userId, (acc) => {
-    acc.magicBeans -= qty;
+  return withFileLock(economyFile, () => {
+    const account = getUserAccount(userId);
+    if (account.magicBeans < qty) return { spent: false, balance: account.magicBeans };
+    const updated = updateUserAccount(userId, (acc) => {
+      acc.magicBeans -= qty;
+    });
+    return { spent: true, balance: updated.magicBeans };
   });
-  return { spent: true, balance: updated.magicBeans };
 }
 
 function getCurrencyBalances(userId, source = null) {
@@ -214,16 +256,16 @@ function getCurrencyBalances(userId, source = null) {
 }
 
 function spendCoins(userId, amount) {
-  const account = getUserAccount(userId);
-  const cost = normalizeNumber(amount, 0);
-  if (account.coins < cost) {
-    return { spent: false, balance: account.coins };
-  }
-
-  const updated = updateUserAccount(userId, (acc) => {
-    acc.coins -= cost;
+  const cost = Math.max(0, normalizeNumber(amount, 0));
+  // Saldo conferido e debitado dentro da mesma trava: duas compras ao mesmo tempo não ficam negativas
+  return withFileLock(economyFile, () => {
+    const account = getUserAccount(userId);
+    if (account.coins < cost) return { spent: false, balance: account.coins };
+    const updated = updateUserAccount(userId, (acc) => {
+      acc.coins -= cost;
+    });
+    return { spent: true, balance: updated.coins };
   });
-  return { spent: true, balance: updated.coins };
 }
 
 function setUserBalance(userId, amount) {
@@ -310,6 +352,39 @@ function buyTitle(userId, titleId) {
   };
 }
 
+/**
+ * Título por id: os comprados com feijões (TITLES_CATALOG) e os de conquista
+ * (src/data/achievementTitles.js, com formatação especial em `display`).
+ */
+function getTitleDefinition(titleId, lang = 'pt') {
+  if (!titleId) return null;
+  if (TITLES_CATALOG[titleId]) return { ...TITLES_CATALOG[titleId], display: TITLES_CATALOG[titleId].name, achievement: false };
+  const { ACHIEVEMENT_TITLES } = require('../data/achievementTitles');
+  // Títulos míticos do Passe (um por mês) são gerados a partir do id
+  const title = ACHIEVEMENT_TITLES[titleId] || (/^pass_title_/.test(titleId) ? require('./battlePass').buildMonthlyTitle(require('./battlePass').titleIdToMonth(titleId)) : null);
+  if (!title) return null;
+  const { formatStyledTitle } = require('../utils/fancyText');
+  const key = lang === 'en' ? 'en' : 'pt';
+  return {
+    id: title.id,
+    name: title.name[key],
+    desc: title.desc[key],
+    emoji: title.emoji,
+    style: title.style,
+    display: formatStyledTitle(title.name[key], title.style),
+    achievement: true,
+  };
+}
+
+/** Entrega um título de conquista (idempotente). */
+function grantTitle(userId, titleId) {
+  return updateUserAccount(userId, (acc) => {
+    const titles = Array.isArray(acc.titles) ? acc.titles : [];
+    if (!titles.includes(titleId)) titles.push(titleId);
+    acc.titles = titles;
+  });
+}
+
 function equipTitle(userId, titleId) {
   if (!titleId) {
     updateUserAccount(userId, (acc) => {
@@ -318,7 +393,7 @@ function equipTitle(userId, titleId) {
     return { success: true, equipped: null, message: 'Você desequipou seu título atual.' };
   }
 
-  const title = TITLES_CATALOG[titleId];
+  const title = getTitleDefinition(titleId);
   if (!title) {
     return { success: false, reason: 'title_not_found', message: 'Título não encontrado.' };
   }
@@ -336,7 +411,7 @@ function equipTitle(userId, titleId) {
   return {
     success: true,
     title,
-    message: `✨ Título **${title.emoji} ${title.name}** equipado com sucesso!`,
+    message: `✨ Título **${title.emoji} ${title.display || title.name}** equipado com sucesso!`,
   };
 }
 
@@ -554,18 +629,20 @@ function isTestUser(userId) {
 }
 
 function purgeTestAccounts() {
-  const current = readEconomy();
-  let changed = false;
-  for (const uid of Object.keys(current)) {
-    if (isTestUser(uid)) {
-      delete current[uid];
-      changed = true;
+  return withFileLock(economyFile, () => {
+    const current = readEconomy();
+    let changed = false;
+    for (const uid of Object.keys(current)) {
+      if (isTestUser(uid)) {
+        delete current[uid];
+        changed = true;
+      }
     }
-  }
-  if (changed) {
-    writeEconomy(current);
-  }
-  return changed;
+    if (changed) {
+      writeEconomy(current);
+    }
+    return changed;
+  });
 }
 
 function startWork(userId, data = {}, now = Date.now()) {
@@ -834,67 +911,63 @@ function hasActiveVote(userId, now = Date.now()) {
   return (now - voteTime) < VOTE_VALIDITY_MS;
 }
 
+// Cada dia seguido vale +1 moedinha no diário (dia 1 = +1, dia 30 = +30). O teto só existe para
+// a conta nunca crescer sem limite: na prática quase ninguém passa de um ano.
+const DAILY_STREAK_BONUS_CAP = 365;
+// Xícaras da Pyxie: minigame de uma jogada por diário resgatado, 1 chance em 3
+const DAILY_CUPS_PRIZE = 15;
+const DAILY_CUPS_COUNT = 3;
+
 function claimDaily(userId, now = Date.now()) {
   const status = getDailyStatus(userId, now);
-  if (!status.available) {
-    const acc = getUserAccount(userId);
-    return {
-      claimed: false,
-      amount: 0,
-      streak: acc.dailyStreak || 0,
-      streakBonus: 0,
-      voteBonus: 0,
-      hasVoted: hasActiveVote(userId, now),
-      totalAmount: 0,
-      balance: acc.coins,
-      magicBeans: acc.magicBeans,
-      magicBeanBonus: false,
-      ...status,
-    };
-  }
-
-  const accBefore = getUserAccount(userId);
-  let streak = 1;
-  if (accBefore.lastDailyAt) {
-    const lastDailyTime = new Date(accBefore.lastDailyAt).getTime();
-    const diff = now - lastDailyTime;
-    if (diff <= STREAK_GRACE_MS) {
-      streak = (accBefore.dailyStreak || 0) + 1;
-    } else {
-      streak = 1; // Quebrou a sequência após 48h
-    }
-  }
-
-  // Bônus moderado de streak exclusivamente em moedinhas:
-  // Streak 1: 0 (início)
-  // Streak 2: 4 moedas
-  // Streak 3: 6 moedas
-  // Streak 4: 8 moedas
-  // Streak 5: 10 moedas 🔥
-  // Cap em 25 moedas para manter equilíbrio econômico
-  const streakBonus = streak > 1 ? Math.min(streak * 2, 25) : 0;
-
-  // Votos no Top.gg agora são puramente voluntários (sem bônus de moedas)
-  const hasVoted = false;
-  const voteBonus = 0;
+  const notClaimed = (acc) => ({
+    claimed: false,
+    amount: 0,
+    streak: acc.dailyStreak || 0,
+    streakBonus: 0,
+    voteBonus: 0,
+    hasVoted: hasActiveVote(userId, now),
+    totalAmount: 0,
+    balance: acc.coins,
+    magicBeans: acc.magicBeans,
+    magicBeanBonus: false,
+    cupsPlayed: Boolean(acc.lastDailyAt && acc.dailyCupsAt === acc.lastDailyAt),
+    ...getDailyStatus(userId, now),
+  });
+  if (!status.available) return notClaimed(getUserAccount(userId));
 
   const { minimum, maximum } = getEconomyConfig();
   const amount = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
   const wonMagicBean = Math.random() < 0.01; // 1% de chance de Feijão Mágico
 
+  // A disponibilidade é conferida de novo dentro da trava: dois cliques ao mesmo tempo pagam uma vez
+  let claimed = false;
+  let streak = 1;
+  let previousStreak = 0;
+  let streakBonus = 0;
   const updated = updateUserAccount(userId, (acc) => {
-    acc.coins += (amount + streakBonus);
+    const last = acc.lastDailyAt ? new Date(acc.lastDailyAt).getTime() : 0;
+    previousStreak = acc.dailyStreak || 0;
+    if (last && now - last < DAILY_COOLDOWN_MS) return;
+    streak = last && now - last <= STREAK_GRACE_MS ? previousStreak + 1 : 1;
+    streakBonus = Math.min(streak, DAILY_STREAK_BONUS_CAP);
+    acc.coins += amount + streakBonus;
     acc.dailyStreak = streak;
-    if (wonMagicBean) {
-      acc.magicBeans = (acc.magicBeans || 0) + 1;
-    }
+    if (wonMagicBean) acc.magicBeans = (acc.magicBeans || 0) + 1;
     acc.lastDailyAt = new Date(now).toISOString();
+    claimed = true;
   });
+  if (!claimed) return notClaimed(updated);
+  // XP do Passe da Pyxie (/py-pass)
+  require('./battlePass').safeAddXp(userId, 'daily', { now });
 
   return {
     claimed: true,
     amount,
     streak,
+    previousStreak,
+    // Sequência longa que acabou (voltou a 1 depois de mais de 48h sem diário)
+    streakBroken: streak === 1 && previousStreak > 1,
     streakBonus,
     voteBonus: 0,
     hasVoted: false,
@@ -902,9 +975,50 @@ function claimDaily(userId, now = Date.now()) {
     magicBeanBonus: wonMagicBean,
     balance: updated.coins,
     magicBeans: updated.magicBeans,
+    cupsPlayed: false,
     nextClaimAt: new Date(now + DAILY_COOLDOWN_MS).toISOString(),
     remainingMs: DAILY_COOLDOWN_MS,
   };
+}
+
+function hashText(text) {
+  let h = 2166136261;
+  for (const ch of String(text)) {
+    h ^= ch.codePointAt(0);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+/**
+ * Xícaras da Pyxie: uma jogada por diário resgatado. A xícara do biscoito vem do próprio resgate
+ * (não dá para tentar de novo até acertar) e o prêmio é pago sob a trava da economia.
+ */
+function playDailyCups(userId, pick, now = Date.now()) {
+  const choice = Number(pick);
+  if (!Number.isInteger(choice) || choice < 0 || choice >= DAILY_CUPS_COUNT) return { ok: false, reason: 'invalid' };
+  let result = { ok: false, reason: 'not_claimed' };
+  updateUserAccount(userId, (acc) => {
+    const last = acc.lastDailyAt ? new Date(acc.lastDailyAt).getTime() : 0;
+    if (!last || now - last >= DAILY_COOLDOWN_MS) return;
+    if (acc.dailyCupsAt === acc.lastDailyAt) {
+      result = { ok: false, reason: 'already_played' };
+      return;
+    }
+    const winningCup = hashText(`${userId}:${acc.lastDailyAt}`) % DAILY_CUPS_COUNT;
+    const win = choice === winningCup;
+    acc.dailyCupsAt = acc.lastDailyAt;
+    if (win) acc.coins += DAILY_CUPS_PRIZE;
+    result = { ok: true, win, pick: choice, winningCup, prize: win ? DAILY_CUPS_PRIZE : 0, balance: acc.coins };
+  });
+  return result;
+}
+
+/** As xícaras de hoje ainda podem ser jogadas? */
+function canPlayDailyCups(userId, now = Date.now()) {
+  const acc = getUserAccount(userId);
+  const last = acc.lastDailyAt ? new Date(acc.lastDailyAt).getTime() : 0;
+  return Boolean(last && now - last < DAILY_COOLDOWN_MS && acc.dailyCupsAt !== acc.lastDailyAt);
 }
 
 function getRanking(limit = 10, userIds = null) {
@@ -1144,6 +1258,8 @@ module.exports = {
   resetUserEconomy,
   updateUserAccount,
   getTitlesCatalog,
+  getTitleDefinition,
+  grantTitle,
   getUserTitles,
   buyTitle,
   equipTitle,
@@ -1170,6 +1286,11 @@ module.exports = {
   setCareerLevel,
   getDailyStatus,
   claimDaily,
+  playDailyCups,
+  canPlayDailyCups,
+  DAILY_STREAK_BONUS_CAP,
+  DAILY_CUPS_PRIZE,
+  DAILY_CUPS_COUNT,
   getRanking,
   getUserRank,
   getStreakRanking,

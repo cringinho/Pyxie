@@ -168,7 +168,7 @@ const { t } = require('../src/utils/i18n');
 const bonusTimer = require('../src/services/bonusTimer');
 
 const activeProfessions = Object.keys(professionsDef);
-assert.equal(activeProfessions.length, 22, 'Devem existir 22 profissões no sistema (16 convencionais + 6 mágicas).');
+assert.equal(activeProfessions.length, 28, 'Devem existir 28 profissões no sistema (22 convencionais + 6 mágicas).');
 
 for (const profKey of activeProfessions) {
   const games = PROFESSION_MINIGAMES[profKey];
@@ -325,7 +325,7 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
 
   // 14. Testes dos Geradores Autônomos de IA (Work Seeder com 16 Carreiras e Quiz Seeder)
   const workSeeder = require('../src/services/workSeederService');
-  assert.equal(workSeeder.PROFESSIONS.length, 22, 'Work Seeder deve ter 22 profissões (16 convencionais + 6 mágicas).');
+  assert.equal(workSeeder.PROFESSIONS.length, 28, 'Work Seeder deve ter 28 profissões (22 convencionais + 6 mágicas).');
   assert.ok(workSeeder.PROFESSIONS.includes('dublador'), 'Work Seeder deve incluir dublador.');
   assert.ok(workSeeder.PROFESSIONS.includes('desenvolvedor_jogos'), 'Work Seeder deve incluir desenvolvedor_jogos.');
   assert.ok(workSeeder.PROFESSIONS.includes('psicologo'), 'Work Seeder deve incluir psicologo.');
@@ -340,8 +340,8 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
   assert.ok(workSeeder.PROFESSIONS.includes('aniquilador_vegetais'), 'Work Seeder deve incluir aniquilador_vegetais.');
 
   const workStatus = workSeeder.getStatus();
-  assert.equal(workStatus.targetTotal, 2200, 'Work Seeder targetTotal deve ser 2200 (22 profissões x 100).');
-  assert.equal(Object.keys(workStatus.perProfession).length, 22, 'Work Seeder perProfession deve conter 22 profissões.');
+  assert.equal(workStatus.targetTotal, 2800, 'Work Seeder targetTotal deve ser 2800 (28 profissões x 100).');
+  assert.equal(Object.keys(workStatus.perProfession).length, 28, 'Work Seeder perProfession deve conter 28 profissões.');
 
   const quizStatus = quizSeeder.getStatus();
   assert.equal(quizStatus.targetTotal, 600, 'Quiz Seeder targetTotal deve ser 600.');
@@ -411,7 +411,7 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
   // 16. Testes do Serviço de Auditoria de Acervo (acervoAuditService)
   const acervoAuditService = require('../src/services/acervoAuditService');
   const levelDist = acervoAuditService.auditLevelDistribution({ targetPerLevel: 10 });
-  assert.equal(levelDist.totalProfessions, 22, 'Deve auditar exatamente 22 profissões.');
+  assert.equal(levelDist.totalProfessions, 28, 'Deve auditar exatamente 28 profissões.');
   assert.ok(typeof levelDist.complianceRate === 'number', 'complianceRate deve ser numérico.');
   assert.ok(Array.isArray(levelDist.underTargetProfessions), 'underTargetProfessions deve ser array.');
 
@@ -524,7 +524,7 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
 
   assert.ok(profReply && profReply.embeds && profReply.embeds.length > 0);
   const profEmbedDesc = profReply.embeds[0].data.description;
-  assert.ok(profEmbedDesc.includes('Carreiras Dominadas: 2/22 (+6% de Bônus Salarial Global)'), 'Embed deve exibir contador de maestria no topo.');
+  assert.ok(profEmbedDesc.includes('Carreiras Dominadas: 2/28 (+6% de Bônus Salarial Global)'), 'Embed deve exibir contador de maestria no topo.');
 
   // Verifica se o ícone ⭐ Mestre aparece na listagem
   const fields = profReply.embeds[0].data.fields;
@@ -539,7 +539,7 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
     handleDilemmaInteraction,
   } = trabalhoCommand;
 
-  // 19.1 Verifica cenários contextuais bilíngues para todas as 22 profissões canônicas
+  // 19.1 Verifica cenários contextuais bilíngues para todas as 28 profissões canônicas
   assert.ok(Object.keys(PROFESSION_DILEMMAS).length >= 22, 'Devem existir no mínimo 22 cenários de dilema.');
   for (const profKey of activeProfessions) {
     const ptScenario = getDilemmaScenario(profKey, 'pt');

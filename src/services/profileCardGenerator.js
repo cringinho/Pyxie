@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const satori = require('satori').default || require('satori');
 const { Resvg } = require('@resvg/resvg-js');
-const { getUserAccount, getUserRank, TITLES_CATALOG } = require('./economy');
+const { getUserAccount, getUserRank, getTitleDefinition } = require('./economy');
+const { TITLE_STYLES } = require('../utils/fancyText');
 const { getAlbumStats, getUserAlbum } = require('./tarotAlbumService');
 const marriageManager = require('../modules/marriage/marriageManager');
 const professions = require('./professions');
@@ -553,7 +554,10 @@ async function generateProfileCard({ targetUser, guild, source = null, client = 
   const guildName = guild?.name ? prepareCardText(guild.name, 28) : tr('dm');
   const guildIconUrl = guild?.iconURL ? guild.iconURL({ extension: 'png', size: 128 }) : null;
 
-  const equippedTitle = account.equippedTitle ? TITLES_CATALOG[account.equippedTitle] : null;
+  // Títulos de conquista usam o nome comum no cartão (a fonte não tem os alfabetos especiais)
+  // e ganham um selo com as cores do estilo.
+  const equippedTitle = getTitleDefinition(account.equippedTitle, lang);
+  const titleStyle = equippedTitle?.style ? TITLE_STYLES[equippedTitle.style] : null;
 
   const [avatarBase64, guildIconBase64, stickerUri, titleEmojiUri] = await Promise.all([
     fetchImageBase64(avatarUrl),
@@ -635,7 +639,14 @@ async function generateProfileCard({ targetUser, guild, source = null, client = 
         ? buildChip([
           ...(titleEmojiUri ? [img(titleEmojiUri, 28)] : []),
           text(prepareCardText(equippedTitle.name, 26), { fontSize: '24px', color: tokens.text }),
-        ], tokens, { backgroundImage: `linear-gradient(90deg, ${tokens.accent}55 0%, ${tokens.accent2}33 100%)`, alignSelf: 'flex-start' })
+        ], tokens, titleStyle
+          ? {
+            backgroundImage: `linear-gradient(90deg, ${titleStyle.colors[0]} 0%, ${titleStyle.colors[1]} 100%)`,
+            border: `2px solid ${titleStyle.colors[1]}`,
+            boxShadow: `0 0 18px ${titleStyle.colors[1]}`,
+            alignSelf: 'flex-start',
+          }
+          : { backgroundImage: `linear-gradient(90deg, ${tokens.accent}55 0%, ${tokens.accent2}33 100%)`, alignSelf: 'flex-start' })
         : text(prepareCardText(professionLabel, 26), { fontSize: '24px', color: tokens.muted }),
     ]),
   ]);

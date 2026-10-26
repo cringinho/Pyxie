@@ -1899,6 +1899,42 @@
 
       <!-- TAB: DIRETÓRIO DE SERVIDORES (ITEM 2) -->
       <section id="tab-guilds" class="tab-panel">
+        <!-- Funil de crescimento (data/growthGuilds.json + data/growthInvites.json + data/botListStats.json) -->
+        <div class="stats-grid" id="growthKpis">
+          <div class="stat-card"><span class="stat-label">🏰 Servidores Ativos</span><span id="growthActive" class="stat-val">—</span></div>
+          <div class="stat-card"><span class="stat-label">📥 Entradas (30d)</span><span id="growthJoins" class="stat-val" style="color: #34d399;">—</span></div>
+          <div class="stat-card"><span class="stat-label">📤 Saídas (30d)</span><span id="growthLeaves" class="stat-val" style="color: #fca5a5;">—</span></div>
+          <div class="stat-card"><span class="stat-label">⚡ Ativação 24h</span><span id="growthActivation" class="stat-val" style="color: #c084fc;">—</span></div>
+          <div class="stat-card"><span class="stat-label">🔁 Retenção D1 / D7 / D30</span><span id="growthRetention" class="stat-val" style="color: #38bdf8; font-size: 1.1rem;">—</span></div>
+        </div>
+        <div class="admin-table-wrap" style="margin-bottom: 18px; padding: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong>📈 Entradas × saídas por dia (30d)</strong>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">verde = entradas · vermelho = saídas · roxo = cliques em /invite</span>
+          </div>
+          <div id="growthChart" style="display: flex; align-items: flex-end; gap: 3px; height: 90px;"></div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 18px;">
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Origem do convite (?ref=)</th><th>Servidor</th><th>Conta</th><th>Total</th></tr></thead>
+              <tbody id="growthSourcesBody"><tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Carregando...</td></tr></tbody>
+            </table>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Lista de bots</th><th>Token</th><th>Último envio</th></tr></thead>
+              <tbody id="growthListsBody"><tr><td colspan="3" style="text-align:center;color:var(--text-muted);">Carregando...</td></tr></tbody>
+            </table>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Saídas recentes</th><th>Ficou</th><th>Comandos</th></tr></thead>
+              <tbody id="growthLeavesBody"><tr><td colspan="3" style="text-align:center;color:var(--text-muted);">Carregando...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
         <div class="shopee-toolbar">
           <div class="search-box">
             <span class="search-icon">🔍</span>
@@ -3227,7 +3263,56 @@
       // 3. DIRETÓRIO DE SERVIDORES (ITEM 2)
       // -------------------------------------------------------------
       let cachedGuilds = [];
+      function formatRate(entry) {
+        if (!entry || entry.rate === null || entry.rate === undefined) return '—';
+        return `${entry.rate}%`;
+      }
+
+      async function fetchGrowth() {
+        try {
+          const res = await fetch('/api/admin/growth?days=30');
+          const data = await res.json();
+          if (!data.success) return;
+          const f = data.funnel;
+          document.getElementById('growthActive').innerText = f.activeGuilds;
+          document.getElementById('growthJoins').innerText = f.periodJoins;
+          document.getElementById('growthLeaves').innerText = f.periodLeaves;
+          document.getElementById('growthActivation').innerText = `${formatRate(f.activation24h)} (${f.activation24h.activated}/${f.activation24h.cohort})`;
+          document.getElementById('growthRetention').innerText = ['d1', 'd7', 'd30'].map((k) => formatRate(f.retention[k])).join(' / ');
+
+          const max = Math.max(1, ...f.series.map((d) => Math.max(d.joins, d.leaves, d.inviteClicks)));
+          document.getElementById('growthChart').innerHTML = f.series.map((d) => {
+            const h = (n) => Math.round((n / max) * 86);
+            const tip = escapeLogHtml(`${d.date}: +${d.joins} / -${d.leaves} · ${d.inviteClicks} cliques`);
+            return `<div title="${tip}" style="flex:1;display:flex;align-items:flex-end;gap:1px;height:100%;">`
+              + `<div style="flex:1;height:${h(d.joins)}px;background:#34d399;border-radius:2px;"></div>`
+              + `<div style="flex:1;height:${h(d.leaves)}px;background:#f87171;border-radius:2px;"></div>`
+              + `<div style="flex:1;height:${h(d.inviteClicks)}px;background:#a78bfa;border-radius:2px;"></div></div>`;
+          }).join('');
+
+          const sources = Object.entries(f.inviteSources || {}).sort((a, b) => b[1].total - a[1].total);
+          document.getElementById('growthSourcesBody').innerHTML = sources.length
+            ? sources.map(([ref, v]) => `<tr><td><code>${escapeLogHtml(ref)}</code></td><td>${v.guild}</td><td>${v.user}</td><td><strong>${v.total}</strong></td></tr>`).join('')
+            : '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Nenhum clique em /invite ou /install ainda.</td></tr>';
+
+          document.getElementById('growthListsBody').innerHTML = data.botLists.lists.map((l) => {
+            const token = l.configured ? '<span class="badge badge-success">configurado</span>' : '<span class="badge badge-warning">sem token</span>';
+            const last = l.at
+              ? `${l.ok ? '✅' : '❌'} ${new Date(l.at).toLocaleString('pt-BR')} (${l.status || escapeLogHtml(l.error || '')})`
+              : '—';
+            return `<tr><td>${escapeLogHtml(l.name)}</td><td>${token}</td><td>${last}</td></tr>`;
+          }).join('');
+
+          document.getElementById('growthLeavesBody').innerHTML = f.recentLeaves.length
+            ? f.recentLeaves.map((g) => `<tr><td>${escapeLogHtml(g.name || g.id)}</td><td>${g.stayedHours === null ? '—' : `${g.stayedHours}h`}</td><td>${g.commands}</td></tr>`).join('')
+            : '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);">Nenhuma saída registrada.</td></tr>';
+        } catch (err) {
+          console.error('Erro ao carregar funil de crescimento:', err);
+        }
+      }
+
       async function fetchGuilds() {
+        fetchGrowth();
         try {
           const res = await fetch('/api/admin/guilds');
           const data = await res.json();
@@ -3977,6 +4062,10 @@
                 <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Ticket, descidas por dia, tetos de pagamento e métricas reais" onclick="openModuleConfigModal('${mod.id}')">
                   ⚙️ Configurar
                 </button>
+              ` : (mod.id === 'battlePass') ? `
+                <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Métricas do Passe, formas de pagamento e liberação manual do Premium" onclick="openModuleConfigModal('${mod.id}')">
+                  ⚙️ Configurar
+                </button>
               ` : (mod.id === 'museum') ? `
                 <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Configurar canal e cargos" onclick="openModuleConfigModal('${mod.id}')">
                   ⚙️ Configurar
@@ -4114,8 +4203,45 @@
                 </div>
               </div>
             `;
-          } else if (id === 'dungeon') {
-            title.textContent = '🕯️ Configurar Catacumbas de Veludo';
+          } else if (id === 'battlePass') {
+            title.textContent = '💎 Passe da Pyxie';
+            const st = data.stats || {};
+            const prov = data.providers || {};
+            const stat = (label, value, color = '#fff') => `
+              <div style="background: rgba(0,0,0,0.25); padding: 8px 10px; border-radius: 8px;">
+                <span style="color: var(--text-muted); display: block;">${label}</span>
+                <strong style="font-size: 0.95rem; color: ${color};">${value}</strong>
+              </div>`;
+            const inputStyle = 'width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;';
+            body.innerHTML = `
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+                Temporada <strong>${data.month || ''}</strong>, gerada sozinha todo mês. Pagamentos: Mercado Pago ${prov.mercadopago ? '🟢 ligado' : '⚪ sem credenciais'} • PayPal ${prov.paypal ? '🟢 ligado' : '⚪ sem credenciais'}.
+              </p>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 18px; font-size: 0.78rem;">
+                ${stat('Jogando este mês', st.players || 0)}
+                ${stat('Premium este mês', st.premiumThisMonth || 0, '#c084fc')}
+                ${stat('Nível 50', st.maxed || 0, '#f472b6')}
+                ${stat('Nível médio', st.averageLevel || 0)}
+                ${stat('Receita (R$)', (st.revenueBRL || 0).toFixed(2), '#10b981')}
+                ${stat('Receita (US$)', (st.revenueUSD || 0).toFixed(2), '#10b981')}
+                ${stat('Pagamentos', st.payments || 0)}
+                ${stat('Recompensas resgatadas', st.claims || 0)}
+              </div>
+              <h4 style="margin: 0 0 8px;">Liberar Premium manualmente</h4>
+              <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">Para Pix direto (ex.: Nubank) conferido por você. Fica registrado como pagamento manual.</p>
+              <div class="form-field" style="margin-bottom: 10px;">
+                <label for="passGrantUserId" style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">ID do Discord</label>
+                <input type="text" id="passGrantUserId" inputmode="numeric" placeholder="214153735281180673" style="${inputStyle}" />
+              </div>
+              <div class="form-field" style="margin-bottom: 10px;">
+                <label for="passGrantMonth" style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Mês (AAAA-MM)</label>
+                <input type="text" id="passGrantMonth" value="${data.month || ''}" style="${inputStyle}" />
+              </div>
+              <div class="form-field" style="margin-bottom: 10px;">
+                <label for="passGrantAmount" style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Valor recebido (R$)</label>
+                <input type="number" id="passGrantAmount" min="0" step="0.01" value="5" style="${inputStyle}" />
+              </div>
+            `;
             const st = data.stats || {};
             const totals = st.totals || {};
             const bounds = data.bounds || {};
@@ -4151,7 +4277,7 @@
               ${field('dailyEntries', '🌙 Descidas por dia (BRT)', 'Limite de tickets por jogador por dia')}
               ${field('runPayoutCap', '🔒 Teto de pagamento por descida', 'Máximo convertido em moedinhas num único run')}
               ${field('dailyPayoutCap', '🔒 Teto de pagamento diário', 'Máximo somado por jogador por dia')}
-              ${field('abandonAfterHours', '⏳ Encerrar runs parados após (horas)', 'Runs esquecidos são resgatados pelo Astaroth com 10% do ouro')}
+              ${field('idleMinutes', '⏳ Game over por inatividade (minutos)', 'Descida parada vira game over: o Astaroth salva 10% do ouro, o resumo vai por DM e a thread é fechada')}
             `;
           } else if (id === 'museum') {
             title.textContent = '🏛️ Configurar Museu da Comunidade';
@@ -4247,8 +4373,15 @@
             artChannelId: document.getElementById('museumArtChannelId')?.value || '',
             adminRoleIds: document.getElementById('museumAdminRoleIds')?.value || '',
           };
+        } else if (currentConfigModuleId === 'battlePass') {
+          payload = {
+            grantUserId: document.getElementById('passGrantUserId')?.value.trim() || '',
+            grantMonth: document.getElementById('passGrantMonth')?.value.trim() || '',
+            amount: Number(document.getElementById('passGrantAmount')?.value || 0),
+            currency: 'BRL',
+          };
         } else if (currentConfigModuleId === 'dungeon') {
-          for (const key of ['ticket', 'dailyEntries', 'runPayoutCap', 'dailyPayoutCap', 'abandonAfterHours']) {
+          for (const key of ['ticket', 'dailyEntries', 'runPayoutCap', 'dailyPayoutCap', 'idleMinutes']) {
             const value = document.getElementById(`dungeon_${key}`)?.value;
             if (value !== undefined && value !== '') payload[key] = Number(value);
           }

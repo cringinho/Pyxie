@@ -11,7 +11,11 @@ const { getGuildConfig } = require('../services/guildConfigService');
 const { addCoins } = require('../services/economy');
 const { loadQuizQuestions } = require('./quiz');
 const { loadAnimeQuestions } = require('../services/animeQuizService');
-const { formatCoins, getLanguage, t } = require('../utils/i18n');
+const { formatCoins, getLanguage, t: baseT } = require('../utils/i18n');
+const { emojify, buttonEmojiFor } = require('../utils/emojify');
+
+// Todo texto do minigame passa pelo emojify: emojis do bot em vez de Unicode
+const t = (key, source, replacements) => emojify(baseT(key, source, replacements));
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 
 const ACCEPT_TIMEOUT_MS = 60 * 1000;
@@ -81,12 +85,12 @@ function buildChallengeView(duel, guild) {
     new ButtonBuilder()
       .setCustomId(`qd:acc:${duel.id}`)
       .setLabel(t('duel.acceptButton', lang))
-      .setEmoji('⚔️')
+      .setEmoji(buttonEmojiFor('⚔️'))
       .setStyle(ButtonStyle.Success),
     new ButtonBuilder()
       .setCustomId(`qd:dec:${duel.id}`)
       .setLabel(t('duel.declineButton', lang))
-      .setEmoji('🏳️')
+      .setEmoji(buttonEmojiFor('🏳️'))
       .setStyle(ButtonStyle.Secondary)
   );
 

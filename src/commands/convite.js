@@ -12,12 +12,11 @@ const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 // Permissões recomendadas:
 // View Channel (1024) + Send Messages (2048) + Send in Threads (274877906944) +
 // Embed Links (16384) + Attach Files (32768) + Read History (65536) +
-// Add Reactions (64) + Use External Emojis (262144) + Manage Messages (8192)
-const RECOMMENDED_PERMISSIONS = 277025770560n;
-const ADMIN_PERMISSIONS = 8;
+// Add Reactions (64) + Use External Emojis (262144) + Manage Messages (8192) +
+// Create Public Threads (34359738368) + Manage Threads (17179869184): thread de cada descida
+const RECOMMENDED_PERMISSIONS = 328565378112n;
 
 const DEFAULT_BOT_ID = '1543650200718155897';
-const COMMUNITY_SERVER_URL = 'https://disboard.org/pt-br/server/1453890868980482090';
 function getWebBonusUrl() {
   const base = process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br';
   return `${base.replace(/\/$/, '')}/bonus`;
@@ -28,39 +27,48 @@ function getInviteUrl(clientId = null, permissions = RECOMMENDED_PERMISSIONS) {
   return `https://discord.com/oauth2/authorize?client_id=${id}&permissions=${permissions}&scope=bot%20applications.commands`;
 }
 
+function getSiteUrl() {
+  return (process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br').replace(/\/$/, '');
+}
+
+/** Links pelo site: passam por /invite e /install, que contam a origem no funil do /admin. */
 function buildInviteComponents(clientId, isEn = false) {
   const { getEmoji } = require('../utils/appEmojis');
-  const recommendedUrl = getInviteUrl(clientId, RECOMMENDED_PERMISSIONS);
-  const adminUrl = getInviteUrl(clientId, ADMIN_PERMISSIONS);
   const { getVoteUrl } = require('../services/topgg');
-  const voteUrl = getVoteUrl();
+  const source = { lang: isEn ? 'en' : 'pt' };
+  const site = getSiteUrl();
 
   const row1 = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setLabel(isEn ? 'Add Pyxie (Recommended)' : 'Adicionar Pyxie (Recomendado)')
+      .setLabel(t('invite.btnRecommended', source))
       .setEmoji(getEmoji('SPARKLES'))
       .setStyle(ButtonStyle.Link)
-      .setURL(recommendedUrl),
+      .setURL(`${site}/invite?ref=command`),
     new ButtonBuilder()
-      .setLabel(isEn ? 'Admin Invite' : 'Convite Administrador')
+      .setLabel(t('invite.btnUserInstall', source))
+      .setEmoji(getEmoji('fairy'))
+      .setStyle(ButtonStyle.Link)
+      .setURL(`${site}/install?ref=command`),
+    new ButtonBuilder()
+      .setLabel(t('invite.btnAdmin', source))
       .setEmoji(getEmoji('CROWN'))
       .setStyle(ButtonStyle.Link)
-      .setURL(adminUrl)
+      .setURL(`${site}/invite?perms=admin&ref=command`)
   );
 
   const row2 = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setLabel(isEn ? 'Community Server' : 'Servidor da Comunidade')
-      .setEmoji('🏰')
+      .setLabel(t('invite.btnSupport', source))
+      .setEmoji(getEmoji('chat92'))
       .setStyle(ButtonStyle.Link)
-      .setURL(COMMUNITY_SERVER_URL),
+      .setURL(`${site}/discord?ref=command`),
     new ButtonBuilder()
-      .setLabel(isEn ? 'Vote on Top.gg' : 'Votar no Top.gg')
-      .setEmoji(getEmoji('STAR'))
+      .setLabel(t('invite.btnVote', source))
+      .setEmoji(getEmoji('MAGIC_BEAN'))
       .setStyle(ButtonStyle.Link)
-      .setURL(voteUrl),
+      .setURL(getVoteUrl(clientId)),
     new ButtonBuilder()
-      .setLabel(isEn ? 'Web Bonus (10s)' : 'Bônus Web (10s)')
+      .setLabel(t('invite.btnWebBonus', source))
       .setEmoji(getEmoji('GIFT'))
       .setStyle(ButtonStyle.Link)
       .setURL(getWebBonusUrl())

@@ -17,7 +17,9 @@ const { formatCoins } = require('./economyHelpers');
 const { getThemeEmoji } = require('../utils/themeEmojis');
 const { TAROT_LOG_CHANNEL_ID } = require('../config');
 const { TAROT } = require('./commandNames');
-const { t } = require('../utils/i18n');
+const { t, getLanguage } = require('../utils/i18n');
+const { localizeCard, getCardById } = require('../data/tarotCardsCatalog');
+const { cardUrl } = require('../services/tarotCardPages');
 
 const name = TAROT || 'py-tarot';
 
@@ -32,20 +34,33 @@ function getDisplayOrientation(orientation, source = null) {
     : t('tarot.orientationUpright', source);
 }
 
-function buildBribeRow(source = null) {
-  return new ActionRowBuilder().addComponents(
+function buildBribeRow(source = null, card = null) {
+  const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId('tarot_subornar')
       .setLabel(t('tarot.bribeBtn', source))
       .setStyle(ButtonStyle.Secondary)
       .setEmoji('🔮')
   );
+  // Leva para a página da carta no site (significado completo, em pé e invertido)
+  const catalogCard = card ? getCardById(card.id) : null;
+  if (catalogCard) {
+    row.addComponents(
+      new ButtonBuilder()
+        .setLabel(t('tarot.meaningBtn', source))
+        .setStyle(ButtonStyle.Link)
+        .setEmoji('📜')
+        .setURL(`${cardUrl(catalogCard, getLanguage(source))}${getLanguage(source) === 'en' ? '&' : '?'}utm_source=discord_tarot`)
+    );
+  }
+  return row;
 }
 
 const { recordCardDiscovery, getAlbumStats } = require('../services/tarotAlbumService');
 
 function buildTarotEmbed(result, guildOrSource) {
-  const { card, orientation, paid, discovery } = result;
+  const { orientation, paid, discovery } = result;
+  const card = localizeCard(result.card, getLanguage(guildOrSource));
   const isReversed = orientation === 'REVERSED';
   const guild = guildOrSource?.guild || (guildOrSource?.name ? guildOrSource : null);
   const guildName = guild?.name || '';
@@ -224,7 +239,7 @@ async function executeButton({ interaction, logTarotResult }) {
     await interaction.reply({
       embeds: [embed],
       files: [attachment],
-      components: [buildBribeRow(interaction)],
+      components: [buildBribeRow(interaction, result.card)],
       flags: 64,
     });
 
@@ -257,7 +272,7 @@ async function executeButton({ interaction, logTarotResult }) {
     await interaction.editReply({
       embeds: [embed],
       files: [attachment],
-      components: [buildBribeRow(interaction)],
+      components: [buildBribeRow(interaction, result.card)],
     });
 
     await logTarotToPublicChannel(interaction.client, { user: interaction.user, result, guild: interaction.guild });
@@ -304,7 +319,7 @@ module.exports = {
     await interaction.editReply({
       embeds: [embed],
       files: [attachment],
-      components: [buildBribeRow(interaction)],
+      components: [buildBribeRow(interaction, result.card)],
     });
 
     await logTarotToPublicChannel(interaction.client, { user: interaction.user, result, guild: interaction.guild });
@@ -331,7 +346,7 @@ module.exports = {
     await message.reply({
       embeds: [embed],
       files: [attachment],
-      components: [buildBribeRow(message)],
+      components: [buildBribeRow(message, result.card)],
     });
 
     await logTarotToPublicChannel(message.client, { user: message.author, result, guild: message.guild });

@@ -159,9 +159,9 @@ module.exports = {
         })
         .setRequired(false)
         .addChoices(
-          { name: '🪙 Coins', nameLocalizations: { 'pt-BR': '🪙 Moedas' }, value: 'coins' },
-          { name: '🌱 Magic Beans', nameLocalizations: { 'pt-BR': '🌱 Feijões Mágicos' }, value: 'beans' },
-          { name: '🔥 Daily Streaks', nameLocalizations: { 'pt-BR': '🔥 Maiores Streaks' }, value: 'streaks' }
+          { name: '🪙 Coins', name_localizations: { 'pt-BR': '🪙 Moedas' }, value: 'coins' },
+          { name: '🌱 Magic Beans', name_localizations: { 'pt-BR': '🌱 Feijões Mágicos' }, value: 'beans' },
+          { name: '🔥 Daily Streaks', name_localizations: { 'pt-BR': '🔥 Maiores Streaks' }, value: 'streaks' }
         )
     ),
   async executePrefix({ message, args }) {
