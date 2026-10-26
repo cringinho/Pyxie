@@ -33,7 +33,7 @@ const FEATURE_GROUPS = {
     emoji: '🗺️',
     toggleable: false, // controlado pelo modo (completo, teste ou clássico)
     channelScoped: true,
-    names: ['py-dungeon', 'py-home', 'py-boss'],
+    names: ['py-dungeon', 'py-home', 'py-boss', 'py-craft'],
   },
   games: {
     emoji: '🎲',

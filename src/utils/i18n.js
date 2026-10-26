@@ -741,7 +741,13 @@ const TRANSLATIONS = {
         "ferreiro": "Ferreiro(a)",
         "rei_rainha": "Rei / Rainha",
         "domador_feras": "Domador(a) de Feras",
-        "aniquilador_vegetais": "Aniquilador(a) de Vegetais"
+        "aniquilador_vegetais": "Aniquilador(a) de Vegetais",
+        "minerador": "Minerador(a)",
+        "pescador": "Pescador(a)",
+        "florista": "Florista",
+        "marceneiro": "Marceneiro(a)",
+        "costureiro": "Costureiro(a)",
+        "arqueologo": "Arqueólogo(a)"
       }
     },
     "shop": {
@@ -996,7 +1002,8 @@ const TRANSLATIONS = {
       "envelopeBeanBalanceLine": "> 🌱 **Novo Saldo de Feijões:** **{beans} 🌱**",
       "masteryBonusBadge": "> 🏆 **Bônus de Currículo:** +{percent}% de salário por carreiras dominadas!",
       "newlyMasteredTitle": "⭐  ✦  NOVA PROFISSÃO DOMINADA!",
-      "newlyMasteredDesc": "Parabéns! Você alcançou a Maestria Máxima em **{profession}** (Nível 4) e garantiu mais **+3% de bônus salarial permanente** em qualquer trabalho!"
+      "newlyMasteredDesc": "Parabéns! Você alcançou a Maestria Máxima em **{profession}** (Nível 4) e garantiu mais **+3% de bônus salarial permanente** em qualquer trabalho!",
+      "materialDrop": "🧺 **Material pra oficina:** `+{qty}` {material} (use em `/py-craft`)"
     },
     "workDilemma": {
       "buttonAccept": "🕵️ Aceitar Esquema",
@@ -1332,6 +1339,29 @@ const TRANSLATIONS = {
       "btnGuard": "Defender",
       "btnSpell": "Magia",
       "btnRefresh": "Atualizar"
+    },
+    "craft": {
+      "title": "🛠️ Oficina da Pyxie",
+      "intro": "Aqui a gente transforma o que você traz do trabalho em móveis que não existem na loja. E-eu separei as ferramentas, viu?",
+      "materialsHeader": "### 🧺 Seus materiais",
+      "materialLine": "{label}: `{qty}`",
+      "recipesHeader": "### 📜 Receitas",
+      "recipesHint": "Escolhe uma receita no menu pra ver o que precisa. Cada profissão traz um material diferente do `/py-work`.",
+      "pick": "Escolhe o que fazer…",
+      "recipeTitle": "🛠️ {item}",
+      "recipeNeeds": "### 🧾 Precisa de",
+      "recipeLine": "• {label}: `{need}` (você tem `{have}`)",
+      "recipeCoins": "• **Taxa da oficina:** `{coins}` {coin}",
+      "recipeReady": "-# ✅ Dá pra fazer agora!",
+      "recipeMissing": "-# Ainda falta material. Os turnos certos do `/py-work` trazem mais.",
+      "btnCraft": "Fazer",
+      "btnBack": "Voltar",
+      "crafted": "🎉 Pronto, fiz **{item}**! Já tá na sua mochila da Casinha (`/py-home`). Ficou lindo… quer dizer, ficou ok.",
+      "missing": "Falta material: {list}.",
+      "coins": "A oficina cobra `{price}` moedinhas e você tem `{balance}`.",
+      "notYours": "Essa oficina é de outra pessoa… a sua abre com `/py-craft`.",
+      "error": "Não consegui terminar agora. Nada foi gasto; tenta de novo daqui a pouco.",
+      "footer": "Pyxie • oficina"
     },
     "quiz": {
       "cooldown": "⏰ Você já disputou o Quiz recentemente! Aguarde **{time}** para tentar um novo desafio.",
@@ -2564,7 +2594,13 @@ const TRANSLATIONS = {
         "ferreiro": "Blacksmith",
         "rei_rainha": "King / Queen",
         "domador_feras": "Beast Tamer",
-        "aniquilador_vegetais": "Vegetable Slayer"
+        "aniquilador_vegetais": "Vegetable Slayer",
+        "minerador": "Miner",
+        "pescador": "Fisher",
+        "florista": "Florist",
+        "marceneiro": "Woodworker",
+        "costureiro": "Tailor",
+        "arqueologo": "Archaeologist"
       }
     },
     "shop": {
@@ -2819,7 +2855,8 @@ const TRANSLATIONS = {
       "envelopeBeanBalanceLine": "> 🌱 **New Magic Bean Balance:** **{beans} 🌱**",
       "masteryBonusBadge": "> 🏆 **Resume Bonus:** +{percent}% salary from mastered careers!",
       "newlyMasteredTitle": "⭐  ✦  NEW MASTERED CAREER!",
-      "newlyMasteredDesc": "Congratulations! You reached Max Mastery in **{profession}** (Level 4) and unlocked a **+3% permanent salary bonus** across all jobs!"
+      "newlyMasteredDesc": "Congratulations! You reached Max Mastery in **{profession}** (Level 4) and unlocked a **+3% permanent salary bonus** across all jobs!",
+      "materialDrop": "🧺 **Workshop material:** `+{qty}` {material} (use it in `/py-craft`)"
     },
     "workDilemma": {
       "buttonAccept": "🕵️ Accept Scheme",
@@ -3155,6 +3192,29 @@ const TRANSLATIONS = {
       "btnGuard": "Guard",
       "btnSpell": "Spell",
       "btnRefresh": "Refresh"
+    },
+    "craft": {
+      "title": "🛠️ Pyxie's Workshop",
+      "intro": "This is where we turn what you bring from work into furniture the shop doesn't sell. I-I set the tools out for you, okay?",
+      "materialsHeader": "### 🧺 Your materials",
+      "materialLine": "{label}: `{qty}`",
+      "recipesHeader": "### 📜 Recipes",
+      "recipesHint": "Pick a recipe from the menu to see what it needs. Each profession brings a different material from `/py-work`.",
+      "pick": "Pick something to make…",
+      "recipeTitle": "🛠️ {item}",
+      "recipeNeeds": "### 🧾 Needs",
+      "recipeLine": "• {label}: `{need}` (you have `{have}`)",
+      "recipeCoins": "• **Workshop fee:** `{coins}` {coin}",
+      "recipeReady": "-# ✅ You can make it now!",
+      "recipeMissing": "-# Still missing materials. Correct `/py-work` shifts bring more.",
+      "btnCraft": "Make it",
+      "btnBack": "Back",
+      "crafted": "🎉 Done, I made **{item}**! It's already in your Cozy Room bag (`/py-home`). It looks lovely… I mean, it looks okay.",
+      "missing": "Missing materials: {list}.",
+      "coins": "The workshop charges `{price}` coins and you have `{balance}`.",
+      "notYours": "This workshop belongs to someone else… yours opens with `/py-craft`.",
+      "error": "I couldn't finish it right now. Nothing was spent; try again in a bit.",
+      "footer": "Pyxie • workshop"
     },
     "quiz": {
       "cooldown": "⏰ You already played the Quiz recently! Please wait **{time}** before taking a new challenge.",

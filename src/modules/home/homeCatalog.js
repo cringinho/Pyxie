@@ -32,6 +32,7 @@ const SETS = {
   festa: { pt: 'Festa no Quarto', en: 'Bedroom Party' },
   real: { pt: 'Salão Real', en: 'Royal Hall' },
   cozinha: { pt: 'Cozinha da Vovó', en: "Grandma's Kitchen" },
+  artesao: { pt: 'Feito à Mão', en: 'Handcrafted' },
 };
 
 // Recolorações do tecido laranja/verde da Kenney para as paletas da Pyxie
@@ -297,7 +298,34 @@ const FLOORINGS = [
   item('fl_cloud', 'Carpete de Nuvem', 'Cloud Carpet', 'flooring', 'epic', pattern('carpet', ['#ede9fe', '#ddd6fe']), { price: beans(2), source: 'premium', sets: ['lilas'] }),
 ];
 
-const ITEMS = [...FURNITURE, ...WALL, ...RUGS, ...PETS, ...WALLPAPERS, ...FLOORINGS];
+// Artesanato (/py-craft): só saem da oficina, feitos com os materiais do trabalho.
+// A arte reaproveita peças do catálogo com cores novas.
+const craftBase = (id, recolor) => {
+  const base = [...FURNITURE, ...WALL, ...RUGS].find((entry) => entry.id === id);
+  return { sprite: { ...base.sprite, recolor }, footprint: base.footprint };
+};
+const crafted = (id, pt, en, kind, rarity, baseId, recolor, opts = {}) => {
+  const { sprite, footprint } = craftBase(baseId, recolor);
+  return item(id, pt, en, kind, rarity, sprite, { ...opts, source: 'craft', footprint, sets: ['artesao', ...(opts.sets || [])] });
+};
+const hue = (to, extra = {}) => ({ from: [0, 360], to, minSat: 0, satMul: 1.2, ...extra });
+
+const CRAFTED = [
+  crafted('craft_lantern', 'Lanterna Artesanal', 'Handmade Lantern', 'floor', 'rare', 'floor_lamp', hue(35, { lightAdd: 0.05 }), { light: 2, sets: ['laranja'] }),
+  crafted('craft_bookcase', 'Estante do Arqueólogo', "Archaeologist's Bookcase", 'floor', 'rare', 'bookshelf_tall', hue(25, { satMul: 0.9 }), { sets: ['arcano'] }),
+  crafted('craft_quilt', 'Tapete de Retalhos', 'Patchwork Rug', 'rug', 'rare', 'rug_square_orange', hue(330, { satMul: 1.1 }), { sets: ['rosa'] }),
+  crafted('craft_flowerbed', 'Canteiro de Flores', 'Flower Bed', 'floor', 'uncommon', 'flowers_blue', hue(300), { sets: ['jardim'] }),
+  crafted('craft_shell_mirror', 'Espelho de Conchas', 'Shell Mirror', 'wall', 'rare', 'mirror_round', hue(185)),
+  crafted('craft_crystal_lamp', 'Abajur de Cristal', 'Crystal Lamp', 'floor', 'epic', 'crystal_orb', hue(190, { lightAdd: 0.08 }), { light: 2, sets: ['arcano'] }),
+  crafted('craft_tapestry', 'Tapeçaria Bordada', 'Embroidered Tapestry', 'wall', 'rare', 'tapestry_teal', hue(280), { sets: ['lilas'] }),
+  crafted('craft_shell_jar', 'Pote de Conchas', 'Jar of Shells', 'floor', 'uncommon', 'vase_silver', hue(170, { satMul: 1.4 })),
+  crafted('craft_alchemy_table', 'Mesa de Alquimia', 'Alchemy Table', 'floor', 'epic', 'table_potion', hue(270, { satMul: 1.5 }), { sets: ['arcano', 'gotico'] }),
+  crafted('craft_star_globe', 'Globo Estelar', 'Star Globe', 'floor', 'epic', 'crystal_orb', hue(48, { satMul: 1.5, lightAdd: 0.1 }), { light: 3, sets: ['real'] }),
+  crafted('craft_polished_anvil', 'Bigorna Polida', 'Polished Anvil', 'floor', 'uncommon', 'anvil', hue(210, { lightAdd: 0.1 }), { sets: ['real'] }),
+  crafted('craft_fishing_net', 'Rede de Pesca', 'Fishing Net', 'wall', 'uncommon', 'clothesline', hue(195), { sets: ['verde'] }),
+];
+
+const ITEMS = [...FURNITURE, ...WALL, ...RUGS, ...PETS, ...WALLPAPERS, ...FLOORINGS, ...CRAFTED];
 const ITEM_BY_ID = new Map(ITEMS.map((entry) => [entry.id, entry]));
 
 const STARTER_ITEMS = ['pet_astaroth', 'wp_cream', 'fl_oak', 'chair_wood', 'table_small', 'plant_pot', 'pet_bed_orange', 'window', 'candle', 'runner_cream'];

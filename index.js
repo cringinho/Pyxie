@@ -927,6 +927,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
     return;
   }
 
+  // Autocompletar das opções de slash (ex.: /py-profession com mais de 25 profissões)
+  if (interaction.isAutocomplete()) {
+    const command = commandsByName.get(interaction.commandName);
+    if (typeof command?.autocomplete === 'function') await command.autocomplete(interaction).catch(() => null);
+    return;
+  }
+
   if (interaction.isModalSubmit()) {
     for (const row of interaction.components || []) {
       for (const comp of row.components || []) {

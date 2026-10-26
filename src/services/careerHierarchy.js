@@ -6,6 +6,42 @@
  */
 
 const CAREER_HIERARCHIES = {
+  minerador: [
+    { level: 1, pt: 'Ajudante de Galeria', en: 'Gallery Helper' },
+    { level: 2, pt: 'Minerador(a) de Frente', en: 'Face Miner' },
+    { level: 3, pt: 'Encarregado(a) de Turno', en: 'Shift Foreman' },
+    { level: 4, pt: 'Engenheiro(a) de Minas', en: 'Mining Engineer' },
+  ],
+  pescador: [
+    { level: 1, pt: 'Aprendiz de Barco', en: 'Deckhand Apprentice' },
+    { level: 2, pt: 'Pescador(a) Artesanal', en: 'Artisanal Fisher' },
+    { level: 3, pt: 'Mestre de Embarcação', en: 'Boat Master' },
+    { level: 4, pt: 'Líder da Colônia de Pesca', en: 'Fishing Colony Leader' },
+  ],
+  florista: [
+    { level: 1, pt: 'Ajudante de Floricultura', en: 'Flower Shop Helper' },
+    { level: 2, pt: 'Florista Arranjador(a)', en: 'Floral Arranger' },
+    { level: 3, pt: 'Decorador(a) de Eventos', en: 'Event Florist' },
+    { level: 4, pt: 'Dono(a) de Floricultura', en: 'Flower Shop Owner' },
+  ],
+  marceneiro: [
+    { level: 1, pt: 'Aprendiz de Oficina', en: 'Workshop Apprentice' },
+    { level: 2, pt: 'Marceneiro(a)', en: 'Woodworker' },
+    { level: 3, pt: 'Marceneiro(a) de Móveis Finos', en: 'Fine Furniture Maker' },
+    { level: 4, pt: 'Mestre(a) Marceneiro(a)', en: 'Master Woodworker' },
+  ],
+  costureiro: [
+    { level: 1, pt: 'Ajudante de Ateliê', en: 'Atelier Helper' },
+    { level: 2, pt: 'Costureiro(a)', en: 'Seamster' },
+    { level: 3, pt: 'Modelista', en: 'Pattern Maker' },
+    { level: 4, pt: 'Estilista do Ateliê', en: 'Atelier Designer' },
+  ],
+  arqueologo: [
+    { level: 1, pt: 'Voluntário(a) de Escavação', en: 'Dig Volunteer' },
+    { level: 2, pt: 'Arqueólogo(a) de Campo', en: 'Field Archaeologist' },
+    { level: 3, pt: 'Curador(a) de Acervo', en: 'Collection Curator' },
+    { level: 4, pt: 'Diretor(a) de Expedição', en: 'Expedition Director' },
+  ],
   programador: [
     { level: 1, pt: 'Estagiário de Desenvolvimento', en: 'Development Intern' },
     { level: 2, pt: 'Desenvolvedor Júnior', en: 'Junior Developer' },

@@ -1,4 +1,5 @@
 const pyHome = require('./commands/pyHome');
+const pyCraft = require('./commands/pyCraft');
 const store = require('./homeStore');
 
 /**
@@ -27,10 +28,27 @@ module.exports = {
   author: 'Pyxie Team',
   defaultEnabled: true,
 
-  commands: [pyHome],
+  commands: [pyHome, pyCraft],
 
   async onLoad(ctx) {
     if (!ctx.client) return;
+
+    // Oficina (/py-craft): materiais do trabalho viram móveis
+    ctx.registerListener('interactionCreate', async (interaction) => {
+      if (!pyCraft.isCraftInteraction(interaction)) return;
+      const { isBlacklisted } = require('../../services/trustAndSafety');
+      if (isBlacklisted({ guildId: interaction.guildId, userId: interaction.user?.id }).blacklisted) return;
+      if (await require('../../commands/setup').denyInteractionIfBlocked(interaction, 'py-craft')) return;
+      try {
+        await pyCraft.handleCraftInteraction(interaction);
+      } catch (err) {
+        console.error('[home] Erro na oficina:', err);
+        const { t, getLanguage } = require('../../utils/i18n');
+        const payload = { content: t('craft.error', getLanguage(interaction)), flags: 64 };
+        if (interaction.replied || interaction.deferred) await interaction.followUp(payload).catch(() => null);
+        else await interaction.reply(payload).catch(() => null);
+      }
+    });
 
     ctx.registerListener('interactionCreate', async (interaction) => {
       if (!pyHome.isHomeInteraction(interaction)) return;

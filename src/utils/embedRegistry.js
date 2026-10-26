@@ -705,6 +705,20 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'craft_workshop',
+  name: '🛠️ Oficina da Pyxie (/py-craft)',
+  category: 'economy',
+  description: 'Oficina: materiais que cada profissão traz do /py-work viram móveis exclusivos de artesanato (conjunto Feito à Mão), com taxa pequena em moedinhas.',
+  defaultColor: '#b45309',
+  previewTitle: '{header} Oficina da Pyxie',
+  previewDesc: 'Aqui a gente transforma o que você traz do trabalho em móveis que não existem na loja.\n\n### 🧺 Seus materiais\n\n🪵 Madeira: `4` • 🐚 Concha: `3` • 🧶 Tecido: `2`\n\n### 📜 Receitas\n\nEscolhe uma receita no menu pra ver o que precisa.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Ferramentas', fallback: '🛠️', defaultEmojiKey: 'Pink_bag', description: 'Ícone no título da oficina' },
+  ],
+});
+
+registerEmbed({
   id: 'dungeon_hall',
   name: '🏆 Catacumbas de Veludo: Rankings',
   category: 'minigames',

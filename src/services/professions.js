@@ -79,6 +79,36 @@ const professions = {
     emoji: '⚖️',
     words: 'direito processo lei constituicao tribunal juiz audiencia julgamento peticao recurso liminar acordao jurisprudencia contrato honorarios cliente defesa acusacao ministerio publico oab vara comarca sentenca despacho inicial contestacao apelacao habeas-corpus mandado-seguranca prova testemunha pericia parecer consultoria litigio acordo conciliacao mediacao estatuto codigo penal civil trabalhista tributario administrativo empresarial sustentacao-oral prazo preclusao revelia intimacao citacao certidao procuracao instrumento estagiario assessor promotor magistrado desembargador plenário júri réu autor peticionamento protocolo custodia tutela cautelar dano-moral responsabilidade-civil cumprimento-sentenca execucao embargos agravo transito-em-julgado sumula repercussao-geral'.split(' '),
   },
+  minerador: {
+    label: 'Minerador(a)',
+    emoji: '⛏️',
+    words: 'mina tunel galeria picareta capacete lanterna veio minerio cristal rocha pedra carvao ferro cobre ouro prata diamante esmeralda quartzo ametista britadeira vagonete trilho escora poeira detonacao geologia jazida extracao peneira bateia cascalho subsolo ventilacao gas metano canario mapa sondagem amostra lavra frente-de-lavra barreira capataz turno lampiao'.split(' '),
+  },
+  pescador: {
+    label: 'Pescador(a)',
+    emoji: '🎣',
+    words: 'anzol isca vara molinete linha rede tarrafa barco canoa remo motor rio lago mar mare onda peixe tilapia tucunare sardinha atum robalo camarao siri caranguejo concha perola cardume boia chumbada gelo isopor peixaria colonia defeso piracema porto cais farol vento correnteza nadadeira escama guelra colete'.split(' '),
+  },
+  florista: {
+    label: 'Florista',
+    emoji: '💐',
+    words: 'flor rosa girassol orquidea lirio tulipa margarida violeta hortensia cravo buque arranjo vaso jarra espuma-floral fita laco cesta coroa muda semente terra adubo regador tesoura poda caule petala folha botao perfume estufa jardim vitrine casamento aniversario homenagem orvalho polen abelha ramalhete'.split(' '),
+  },
+  marceneiro: {
+    label: 'Marceneiro(a)',
+    emoji: '🪚',
+    words: 'madeira tabua serrote serra plaina formao lixa verniz cola grampo esquadro trena prego parafuso furadeira bancada oficina carvalho pinho cedro mogno compensado mdf encaixe espiga moldura gaveta armario mesa cadeira estante porta janela acabamento cupim serragem nivel prumo torno entalhe projeto'.split(' '),
+  },
+  costureiro: {
+    label: 'Costureiro(a)',
+    emoji: '🧵',
+    words: 'agulha linha tesoura alfinete dedal maquina pedal bobina carretel tecido algodao seda linho jeans veludo renda viés molde fita-metrica medida prova bainha barra pence ziper botao casa-de-botao forro costura overloque retalho estampa bordado croche trico ateliê manequim giz desenho figurino'.split(' '),
+  },
+  arqueologo: {
+    label: 'Arqueólogo(a)',
+    emoji: '🏺',
+    words: 'escavacao sitio artefato caco ceramica fossil osso cranio ruina templo piramide tumba sarcofago mumia pergaminho inscricao hieroglifo moeda reliquia pincel espatula peneira estratigrafia camada datacao carbono museu catalogo mapa quadricula expedicao deserto caverna pintura-rupestre civilizacao antiguidade conservacao laboratorio relatorio'.split(' '),
+  },
   alquimista: {
     label: 'Alquimista',
     isMagic: true,

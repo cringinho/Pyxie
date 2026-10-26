@@ -115,7 +115,7 @@ console.log('  📚 7. Testando Inspetor de Acervo e Contagem Matemática em Tem
 const acervoAuditService = require('../src/services/acervoAuditService');
 const acervoStats = acervoAuditService.getAcervoStats();
 assert(acervoStats.quiz.totalQuestions === 600, `Quiz deve totalizar 600 perguntas, encontrado: ${acervoStats.quiz.totalQuestions}`);
-assert(acervoStats.careers.totalProfessions === 22, 'Deve conter exatamente 22 profissões');
+assert(acervoStats.careers.totalProfessions === 28, 'Deve conter exatamente 28 profissões');
 const sampleProf = acervoStats.careers.items.find((i) => i.key === 'mago');
 assert(sampleProf && sampleProf.iconHtml && sampleProf.iconHtml.includes('<img'), 'Ícone da profissão deve ser fornecido em HTML inline');
 console.log('    ✅ 7. Contagem matemática real e ícones CDN validados no Acervo.');
@@ -134,7 +134,7 @@ truthReconciliationEngine
 
     const truth = JSON.parse(fs.readFileSync(publicTruthFile, 'utf8'));
     assert(truth.commands && truth.commands.total > 0, 'Verdade pública deve conter catálogo de comandos');
-    assert(truth.professions && truth.professions.total === 22, 'Verdade pública deve ter 22 profissões');
+    assert(truth.professions && truth.professions.total === 28, 'Verdade pública deve ter 28 profissões');
     assert(truth.milestones && truth.milestones.tarotCards === 78, 'Verdade pública deve ter 78 arcanos de Tarot');
 
     // Comandos de owner NÃO podem vazar para a verdade pública

@@ -372,7 +372,11 @@ try {
 
   const selectRow = buildProfessionSelectRow(magicCandidate, fakeSource);
   assert.ok(selectRow.components && selectRow.components[0], 'SelectRow deve conter o select menu');
-  assert.equal(selectRow.components[0].options.length, 22, 'Deve ter 22 opções no menu de profissões (16 comuns + 6 mágicas)');
+  assert.equal(selectRow.components[0].options.length, 22, 'Menu de carreiras convencionais com 22 opções');
+  const { buildProfessionSelectRows } = require('../src/commands/profissao');
+  const rows = buildProfessionSelectRows(magicCandidate, fakeSource);
+  assert.equal(rows.length, 2, 'Convencionais e arcanas em menus separados (limite de 25 do Discord)');
+  assert.equal(rows[1].components[0].options.length, 6, 'Menu das 6 vocações arcanas');
 
     // Testes de Dilemas de Corrupção / Proposta Sombria (resolveCorruptionDilemma)
   const dilUserId = 'test_dilemma_user';
