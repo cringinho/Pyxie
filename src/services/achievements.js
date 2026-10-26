@@ -88,6 +88,7 @@ function collectStats(userId, { now = Date.now(), best = {} } = {}) {
     legendaryDistinct: collection.byRarity?.legendary || 0,
     mythicDistinct: collection.byRarity?.mythic || 0,
     married,
+    bondLevel: safe(() => require('../modules/marriage/coupleBond').bondLevelOf(id), 0),
     nightOwl: brtHour(now) === 3 ? 1 : 0,
   };
 }

@@ -719,6 +719,20 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'couple_bond',
+  name: '💞 Força do Laço (/py-marriage bond)',
+  category: 'social',
+  description: 'Painel do casal: nível do Laço com nome, Barra do Amor, sequência de Sintonia, gesto do dia das duas pessoas e missão da semana com lembrança para a Casinha.',
+  defaultColor: '#e60067',
+  previewTitle: '{header} Força do Laço',
+  previewDesc: 'Você e @Bea • juntos há `42` dias\n\n### 💞 Nível `4` • Porto Seguro\n\n💗💗💗💗🤍🤍🤍🤍🤍🤍 `100`/`250`\n\n### ☀️ Gesto de hoje\n\n• **Você:** 💌 Bilhete\n\n• **@Bea:** ⏳ ainda não',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Laço', fallback: '💞', description: 'Ícone no título da Força do Laço' },
+  ],
+});
+
+registerEmbed({
   id: 'battle_pass',
   name: '💎 Passe da Pyxie (/py-pass)',
   category: 'economy',

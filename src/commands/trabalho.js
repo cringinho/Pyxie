@@ -2605,8 +2605,9 @@ async function handleWorkInteraction(interaction) {
   const result = finishWork(sessionUserId, true, finalSalary, isCriticalBonus);
   // Material da profissão para a oficina (/py-craft)
   const materialDrops = grantWorkMaterials(sessionUserId, session.professionKey, { golden: session.isGoldenShift, level: session.userLevel });
-  // XP do Passe da Pyxie (/py-pass)
+  // XP do Passe da Pyxie (/py-pass) e missão da semana do casal (Força do Laço)
   require('../services/battlePass').safeAddXp(sessionUserId, 'work');
+  require('../modules/marriage/coupleBond').recordActivity(sessionUserId, 'work');
   // Festival (/py-festival): 5% de chance de Fagulhas em turno certo durante uma temporada
   let festivalDrop = null;
   try {

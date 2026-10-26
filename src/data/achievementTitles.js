@@ -224,6 +224,34 @@ const ACHIEVEMENT_TITLES = {
     name: { pt: 'Lenda da Amizade', en: 'Legend of Friendship' },
     desc: { pt: 'Ajudou em 100 lutas. Ninguém desce sozinho com você por perto.', en: 'Helped in 100 fights. Nobody descends alone with you around.' },
   },
+  // Série "bond" (Força do Laço do casal): nível 3 → 7 → 10
+  laco_firme: {
+    id: 'laco_firme',
+    series: 'bond',
+    tier: 1,
+    style: 'bloom',
+    emoji: '🎀',
+    name: { pt: 'Laço Firme', en: 'Steady Bond' },
+    desc: { pt: 'Chegou ao nível 3 da Força do Laço.', en: 'Reached Bond level 3.' },
+  },
+  alma_gemea: {
+    id: 'alma_gemea',
+    series: 'bond',
+    tier: 3,
+    style: 'prism',
+    emoji: '💞',
+    name: { pt: 'Alma Gêmea', en: 'Soulmate' },
+    desc: { pt: 'Chegou ao nível 7 da Força do Laço.', en: 'Reached Bond level 7.' },
+  },
+  laco_eterno: {
+    id: 'laco_eterno',
+    series: 'bond',
+    tier: 4,
+    style: 'aurora',
+    emoji: '♾️',
+    name: { pt: 'Laço Eterno', en: 'Eternal Bond' },
+    desc: { pt: 'Chegou ao nível máximo da Força do Laço.', en: 'Reached the maximum Bond level.' },
+  },
 };
 
 /** Títulos de uma série em ordem de meta (para trocar o equipado pelo próximo degrau). */

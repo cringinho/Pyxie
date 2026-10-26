@@ -45,6 +45,20 @@ module.exports = {
   async onLoad(ctx) {
     // Registrar Listener de Interações Stateless para botões marr:*
     if (ctx.registerListener) {
+      // Força do Laço: botões bond:*
+      ctx.registerListener('interactionCreate', async (interaction) => {
+        const bondViews = require('./bondViews');
+        if (!bondViews.isBondInteraction(interaction)) return;
+        if (await require('../../commands/setup').denyInteractionIfBlocked(interaction, 'py-marriage')) return;
+        try {
+          await bondViews.handleBondInteraction(interaction);
+        } catch (err) {
+          console.error('[marriage] Erro na Força do Laço:', err);
+          const payload = { content: t('marriage.genericError', interaction), flags: 64 };
+          if (interaction.replied || interaction.deferred) await interaction.followUp(payload).catch(() => null);
+          else await interaction.reply(payload).catch(() => null);
+        }
+      });
       ctx.registerListener('interactionCreate', async (interaction) => {
         if (!interaction.isButton()) return;
         const customId = interaction.customId || '';

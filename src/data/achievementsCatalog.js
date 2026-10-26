@@ -235,6 +235,19 @@ const ACHIEVEMENTS = [
     ['Mesa para Dois', 'Case-se com alguém na Pyxie.'],
     ['Table for Two', 'Get married on Pyxie.'],
     { items: ['table_oval_cloth'] }),
+  // Força do Laço (/py-marriage bond): títulos para as duas pessoas do casal
+  a('bond_3', 'social', 'silver', 'bondLevel', 3,
+    ['Laço Firme', 'Chegue ao nível 3 da Força do Laço com seu par.'],
+    ['Steady Bond', 'Reach Bond level 3 with your partner.'],
+    { title: 'laco_firme' }),
+  a('bond_7', 'social', 'gold', 'bondLevel', 7,
+    ['Alma Gêmea', 'Chegue ao nível 7 da Força do Laço com seu par.'],
+    ['Soulmate', 'Reach Bond level 7 with your partner.'],
+    { title: 'alma_gemea', beans: 1 }),
+  a('bond_10', 'social', 'mythic', 'bondLevel', 10,
+    ['Laço Eterno', 'Chegue ao nível máximo da Força do Laço.'],
+    ['Eternal Bond', 'Reach the maximum Bond level.'],
+    { title: 'laco_eterno', items: ['mirror_gilded'] }),
 
   // Segredos
   a('night_owl', 'segredos', 'bronze', 'nightOwl', 1,

@@ -229,6 +229,7 @@ function resolveMarriageProposal(requestId, targetId, accepted) {
   data.marriages[marId] = {
     id: marId,
     spouses: [req.requesterId, req.targetId],
+    createdAt: Date.now(),
     loveBar: 100,
     lastLoveDecay: Date.now(),
     treeOfLife: {
@@ -382,6 +383,7 @@ function cultivateTree(userId) {
   mar.loveBar = Math.min(100, (mar.loveBar || 0) + 10);
   mar.treeOfLife.lastCultivatedAt = now;
   writeData(data);
+  require('./coupleBond').recordActivity(userId, 'tree');
 
   return { success: true, newLove: mar.loveBar, marriage: mar };
 }
@@ -557,10 +559,13 @@ function resolveDateNight(marriageId, match) {
       addCoins(spouse, 100);
     }
     writeData(data);
+    // Missão da semana (Força do Laço): conta depois de gravar o resultado do date
+    require('./coupleBond').recordActivity(marriage.spouses[0], 'dates');
     return { success: true, match: true, newLove: marriage.loveBar, coinsRewarded: 100 };
   } else {
     marriage.loveBar = Math.min(100, (marriage.loveBar || 0) + 3);
     writeData(data);
+    require('./coupleBond').recordActivity(marriage.spouses[0], 'dates');
     return { success: true, match: false, newLove: marriage.loveBar, coinsRewarded: 0 };
   }
 }

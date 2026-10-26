@@ -52,6 +52,8 @@ function dieWith(userId, gold, now) {
     run.player.hp = 1;
     run.player.def = 0;
     engine._internals.startCombat(run, 'rat', { roomKey: run.map.pos, kind: 'monster' });
+    // O rato não pode cair antes (uma vitória somaria ouro e mudaria o túmulo)
+    run.combat.hp = 999;
   });
   for (let i = 0; i < 60; i++) {
     const run = store.getActiveRun(userId, now);
@@ -60,6 +62,7 @@ function dieWith(userId, gold, now) {
       editRun(userId, (r) => {
         r.player.hp = 1;
         engine._internals.startCombat(r, 'rat', { roomKey: r.map.pos, kind: 'monster' });
+        r.combat.hp = 999;
       });
       continue;
     }

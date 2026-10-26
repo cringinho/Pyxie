@@ -1514,6 +1514,65 @@ const TRANSLATIONS = {
       "footer": "Pyxie • Passe mensal",
       "premiumDm": "💎 **Seu Passe Premium chegou!** Abre o `/py-pass` e toca em Resgatar: tudo o que você já alcançou tá te esperando. Obrigada por apoiar a Pyxie de verdade."
     },
+    "bond": {
+      "title": "💞 Força do Laço",
+      "footer": "Pyxie • Força do Laço",
+      "statusFooter": "Pyxie • Casamento e Família",
+      "fieldName": "💞 Força do Laço",
+      "fieldValue": "Nível `{level}` • **{name}** • sintonia de `{streak}` dia(s)",
+      "btnOpen": "Força do Laço",
+      "together": "Você e {spouse} • juntos há `{days}` dia(s)",
+      "togetherUnknown": "Você e {spouse}",
+      "levelHeader": "### 💞 Nível `{level}` • {name}",
+      "levelBar": "{bar} `{into}`/`{need}`",
+      "levelMax": "{bar} **Nível máximo!** Eu nem sabia que dava pra gostar tanto assim de alguém.",
+      "love": "• **Barra do Amor:** `{love}%`",
+      "streak": "• **Sintonia:** `{streak}` dia(s) seguidos • recorde `{best}`",
+      "todayHeader": "### ☀️ Gesto de hoje",
+      "me": "• **Você:** {gesture}",
+      "spouse": "• **{spouse}:** {gesture}",
+      "pending": "⏳ ainda não",
+      "syncHint": "-# Quando as duas pessoas fazem o gesto no mesmo dia, é dia de Sintonia: `+{xp}` de Laço e a sequência cresce.",
+      "weekHeader": "### 📅 Missão da semana",
+      "quests": {
+        "dates": "Tenham `{target}` Date Nights juntos (`/py-marriage date`).",
+        "gestures": "Façam `{target}` gestos do dia, somando os dois.",
+        "sync": "Fiquem em sintonia `{target}` dias da semana.",
+        "tree": "Cuidem da Árvore da Vida `{target}` vezes.",
+        "work": "Façam `{target}` turnos certos no `/py-work`, somando os dois.",
+        "dungeon": "Desçam `{target}` vezes nas Catacumbas, somando os dois."
+      },
+      "weekBar": "{bar} `{progress}`/`{target}` • termina {relative}",
+      "weekReward": "-# Prêmio: `+{xp}` de Laço, Barra do Amor cheia e **{item}** para a Casinha de cada pessoa.",
+      "weekDone": "✅ **Missão concluída!** {item} já tá na mochila de vocês dois.",
+      "gestures": {
+        "note": {
+          "label": "Bilhete",
+          "done": "💌 Você deixou um bilhetinho no travesseiro de {spouse}. Eu li. Brincadeira… li só um pouquinho."
+        },
+        "coffee": {
+          "label": "Café",
+          "done": "☕ Café passado na hora pra {spouse}, do jeitinho que gosta."
+        },
+        "hug": {
+          "label": "Abraço",
+          "done": "🫂 Abraço demorado em {spouse}. Desses que arrumam o dia."
+        },
+        "stars": {
+          "label": "Estrelas",
+          "done": "🌙 Você chamou {spouse} pra ver as estrelas. Romântico demais pro meu gosto… mas tá aprovado."
+        }
+      },
+      "synced": "✨ **Dia de Sintonia!** Vocês dois fizeram o gesto hoje: `{streak}` dia(s) seguidos.",
+      "levelUp": "💞 **O Laço subiu pro nível `{level}`: {name}!**",
+      "weekCompleted": "📅 **Missão da semana concluída!** {item} chegou na mochila de vocês.",
+      "reasons": {
+        "not_married": "A Força do Laço é pra casais. Quando encontrar seu par, usa `/py-marriage propose`.",
+        "done_today": "Seu gesto de hoje já foi ({gesture}). Amanhã tem mais, tá?",
+        "invalid": "Esse gesto não existe… criatividade é bom, mas escolhe um dos botões.",
+        "not_yours": "Esse painel é de outro casal. Abre o seu com `/py-marriage bond`."
+      }
+    },
     "quiz": {
       "cooldown": "⏰ Você já disputou o Quiz recentemente! Aguarde **{time}** para tentar um novo desafio.",
       "title": "🧠  ✦  Desafio do Quiz Pyxie",
@@ -3523,6 +3582,65 @@ const TRANSLATIONS = {
       "error": "The Pass tripped up. Try again in a bit?",
       "footer": "Pyxie • Monthly pass",
       "premiumDm": "💎 **Your Premium Pass is here!** Open `/py-pass` and tap Claim: everything you already reached is waiting. Thank you for truly supporting Pyxie."
+    },
+    "bond": {
+      "title": "💞 Bond Strength",
+      "footer": "Pyxie • Bond Strength",
+      "statusFooter": "Pyxie • Marriage and Family",
+      "fieldName": "💞 Bond Strength",
+      "fieldValue": "Level `{level}` • **{name}** • `{streak}`-day sync streak",
+      "btnOpen": "Bond Strength",
+      "together": "You and {spouse} • together for `{days}` day(s)",
+      "togetherUnknown": "You and {spouse}",
+      "levelHeader": "### 💞 Level `{level}` • {name}",
+      "levelBar": "{bar} `{into}`/`{need}`",
+      "levelMax": "{bar} **Max level!** I didn't even know you could like someone this much.",
+      "love": "• **Love Bar:** `{love}%`",
+      "streak": "• **Sync:** `{streak}` day(s) in a row • best `{best}`",
+      "todayHeader": "### ☀️ Today's gesture",
+      "me": "• **You:** {gesture}",
+      "spouse": "• **{spouse}:** {gesture}",
+      "pending": "⏳ not yet",
+      "syncHint": "-# When both of you make a gesture on the same day, it is a Sync day: `+{xp}` Bond and the streak grows.",
+      "weekHeader": "### 📅 This week's quest",
+      "quests": {
+        "dates": "Have `{target}` Date Nights together (`/py-marriage date`).",
+        "gestures": "Make `{target}` daily gestures between the two of you.",
+        "sync": "Stay in sync on `{target}` days this week.",
+        "tree": "Tend the Tree of Life `{target}` times.",
+        "work": "Complete `{target}` correct `/py-work` shifts between the two of you.",
+        "dungeon": "Head into the Catacombs `{target}` times between the two of you."
+      },
+      "weekBar": "{bar} `{progress}`/`{target}` • ends {relative}",
+      "weekReward": "-# Reward: `+{xp}` Bond, a full Love Bar and **{item}** for each of your Cozy Rooms.",
+      "weekDone": "✅ **Quest complete!** {item} is already in both your backpacks.",
+      "gestures": {
+        "note": {
+          "label": "Note",
+          "done": "💌 You left a little note on {spouse}'s pillow. I read it. Kidding… just a tiny bit."
+        },
+        "coffee": {
+          "label": "Coffee",
+          "done": "☕ Fresh coffee for {spouse}, exactly how they like it."
+        },
+        "hug": {
+          "label": "Hug",
+          "done": "🫂 A long hug for {spouse}. The kind that fixes the whole day."
+        },
+        "stars": {
+          "label": "Stars",
+          "done": "🌙 You invited {spouse} to watch the stars. Way too romantic for my taste… but approved."
+        }
+      },
+      "synced": "✨ **Sync day!** You both made your gesture today: `{streak}` day(s) in a row.",
+      "levelUp": "💞 **Your Bond reached level `{level}`: {name}!**",
+      "weekCompleted": "📅 **Weekly quest complete!** {item} landed in both your backpacks.",
+      "reasons": {
+        "not_married": "Bond Strength is for couples. When you find your person, use `/py-marriage propose`.",
+        "done_today": "Today's gesture is done ({gesture}). More tomorrow, okay?",
+        "invalid": "That gesture doesn't exist… creativity is nice, but pick one of the buttons.",
+        "not_yours": "This panel belongs to another couple. Open yours with `/py-marriage bond`."
+      }
     },
     "quiz": {
       "cooldown": "⏰ You already played the Quiz recently! Please wait **{time}** before taking a new challenge.",

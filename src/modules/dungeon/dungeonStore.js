@@ -267,6 +267,7 @@ function settleRun(state, userId, run, now) {
   if (run.outcome === 'dead') createGrave(state, userId, run, settlement, now);
 
   require('../../services/battlePass').safeAddXp(userId, 'dungeon', { amount: Math.min(120, 40 + 15 * (run.floor - 1)), now });
+  require('../marriage/coupleBond').recordActivity(userId, 'dungeon', 1, now);
 
   if (settlement.festival > 0) {
     try {

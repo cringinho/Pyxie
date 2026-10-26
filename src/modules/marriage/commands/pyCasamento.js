@@ -17,7 +17,6 @@ const {
   cancelMarriageProposal,
   unlockSharedFeature,
   cultivateTree,
-  giveAffection,
   depositVault,
   claimVaultInterest,
   canStartDateNight,
@@ -28,6 +27,8 @@ const {
   addChild,
 } = require('../marriageManager');
 const { playChildBirthAnimation } = require('../marriageAnimations');
+const bondViews = require('../bondViews');
+const coupleBond = require('../coupleBond');
 const { formatCoins, getLanguage, t } = require('../../../utils/i18n');
 const { MARRIAGE } = require('../../../commands/commandNames');
 
@@ -131,6 +132,8 @@ async function handleStatus(source, reply) {
     : t('marriage.houseRequiredForVault', source);
 
   const childrenCount = (marriage.children || []).length;
+  const bondStatus = coupleBond.getBondStatus(user.id);
+  const lang = getLanguage(source);
 
   const embed = new EmbedBuilder()
     .setColor('#e60067')
@@ -145,6 +148,13 @@ async function handleStatus(source, reply) {
       {
         name: t('marriage.fieldLoveBar', source),
         value: loveBarDisplay,
+        inline: false,
+      },
+      {
+        name: t('bond.fieldName', source),
+        value: bondStatus
+          ? t('bond.fieldValue', source, { level: bondStatus.level, name: bondStatus.levelName[lang === 'en' ? 'en' : 'pt'], streak: bondStatus.streak })
+          : '-',
         inline: false,
       },
       {
@@ -168,10 +178,10 @@ async function handleStatus(source, reply) {
         inline: true,
       }
     )
-    .setFooter({ text: 'Pyxie • Marriage & Family Core' })
+    .setFooter({ text: t('bond.statusFooter', source) })
     .setTimestamp();
 
-  return reply({ embeds: [embed] });
+  return reply({ embeds: [embed], components: [bondViews.bondButtonRow(user.id, lang)] });
 }
 
 // 3. Árvore da Vida
@@ -294,25 +304,18 @@ async function handleVault(source, action, amount, reply) {
 
 // 6. Carinho diário
 async function handleAffection(source, reply) {
+  // O carinho agora é o gesto do dia (abraço) da Força do Laço
   const user = source.user || source.author;
-  const result = giveAffection(user.id);
-  if (!result.success) {
-    if (result.reason === 'not_married') {
-      return reply(t('marriage.notMarried', source));
-    }
-    if (result.reason === 'cooldown') {
-      const timeTag = `<t:${Math.floor(result.nextAvailable / 1000)}:R>`;
-      return reply(t('marriage.affectionCooldown', source, { time: timeTag }));
-    }
-    return reply(t('marriage.genericError', source));
-  }
+  const result = coupleBond.doGesture(user.id, 'hug');
+  if (!result.ok && result.reason === 'not_married') return reply(t('marriage.notMarried', source));
+  return reply(bondViews.buildBondView({ viewerId: user.id, source, notice: bondViews.gestureNotice(result, getLanguage(source)) }));
+}
 
-  const loveBarDisplay = buildLoveProgressBar(result.newLove);
-  return reply(
-    t('marriage.affectionSuccess', source, {
-      loveBar: loveBarDisplay,
-    })
-  );
+// Força do Laço: nível, gestos do dia e missão da semana
+async function handleBond(source, reply) {
+  const user = source.user || source.author;
+  if (!getMarriage(user.id)) return reply(t('marriage.notMarried', source));
+  return reply(bondViews.buildBondView({ viewerId: user.id, source }));
 }
 
 // Armazenamento em memória para sessões ativas de Date Night (Zero Memory Leak)
@@ -555,9 +558,17 @@ module.exports = {
     .addSubcommand((sub) =>
       sub
         .setName('affection')
-        .setDescription('Give daily affection to your spouse (+5% Love, 24h cooldown)')
+        .setDescription("Hug your spouse: today's gesture for the Bond (+5% Love)")
         .setDescriptionLocalizations({
-          'pt-BR': 'Dê um carinho diário ao seu amor (+5% Amor, 24h cooldown)',
+          'pt-BR': 'Abrace seu amor: o gesto de hoje na Força do Laço (+5% Amor)',
+        })
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName('bond')
+        .setDescription('Bond strength: level, daily gestures and the weekly couple quest')
+        .setDescriptionLocalizations({
+          'pt-BR': 'Força do Laço: nível, gestos do dia e missão da semana do casal',
         })
     )
     .addSubcommand((sub) =>
@@ -573,7 +584,7 @@ module.exports = {
     const sub = (args[0] || '').toLowerCase();
 
     // py!casamento @user -> proposta direta
-    if (message.mentions.users.size > 0 && !['status', 'arvore', 'casa', 'cofre', 'date', 'carinho', 'filho'].includes(sub)) {
+    if (message.mentions.users.size > 0 && !['status', 'arvore', 'casa', 'cofre', 'date', 'carinho', 'filho', 'laco', 'laço', 'bond'].includes(sub)) {
       return handlePropose(message, (c) => message.reply(c));
     }
 
@@ -590,6 +601,7 @@ module.exports = {
       return handleAffection(message, (c) => message.reply(c));
     }
     if (sub === 'filho' || sub === 'child') return handleChildProposal(message, (c) => message.reply(c));
+    if (sub === 'laco' || sub === 'laço' || sub === 'bond') return handleBond(message, (c) => message.reply(c));
 
     // Padrão: se for casado, mostra status; se não, instrui sobre propor
     const marriage = getMarriage(message.author.id);
@@ -618,6 +630,7 @@ module.exports = {
     if (sub === 'date') return handleDateNight(interaction, (c) => interaction.editReply(c));
     if (sub === 'affection' || sub === 'carinho') return handleAffection(interaction, (c) => interaction.editReply(c));
     if (sub === 'child' || sub === 'filho') return handleChildProposal(interaction, (c) => interaction.editReply(c));
+    if (sub === 'bond' || sub === 'laco') return handleBond(interaction, (c) => interaction.editReply(c));
 
     return handleStatus(interaction, (c) => interaction.editReply(c));
   },
