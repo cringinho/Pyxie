@@ -149,6 +149,7 @@ function craft(userId, itemId, now = Date.now()) {
     });
     return { ok: false, reason: granted.reason || 'save' };
   }
+  require('./battlePass').safeAddXp(id, 'craft', { now });
   return { ok: true, instance: granted.instance, recipe };
 }
 

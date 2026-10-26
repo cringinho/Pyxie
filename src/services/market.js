@@ -260,6 +260,9 @@ function buy(buyerId, listingId, now = Date.now()) {
     state.totals.taxCollected += tax;
     state.totals.volume += listing.price;
     save(state);
+    const battlePass = require('./battlePass');
+    battlePass.safeAddXp(buyer, 'market', { now });
+    battlePass.safeAddXp(listing.sellerId, 'market', { now });
     return { ok: true, listing, tax, sellerGets: listing.price - tax, balance: payment.balance };
   });
 }

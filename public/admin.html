@@ -4062,6 +4062,10 @@
                 <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Ticket, descidas por dia, tetos de pagamento e métricas reais" onclick="openModuleConfigModal('${mod.id}')">
                   ⚙️ Configurar
                 </button>
+              ` : (mod.id === 'battlePass') ? `
+                <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Métricas do Passe, formas de pagamento e liberação manual do Premium" onclick="openModuleConfigModal('${mod.id}')">
+                  ⚙️ Configurar
+                </button>
               ` : (mod.id === 'museum') ? `
                 <button class="btn btn-secondary" style="justify-content: center; display: inline-flex; align-items: center; gap: 6px;" title="Configurar canal e cargos" onclick="openModuleConfigModal('${mod.id}')">
                   ⚙️ Configurar
@@ -4199,8 +4203,45 @@
                 </div>
               </div>
             `;
-          } else if (id === 'dungeon') {
-            title.textContent = '🕯️ Configurar Catacumbas de Veludo';
+          } else if (id === 'battlePass') {
+            title.textContent = '💎 Passe da Pyxie';
+            const st = data.stats || {};
+            const prov = data.providers || {};
+            const stat = (label, value, color = '#fff') => `
+              <div style="background: rgba(0,0,0,0.25); padding: 8px 10px; border-radius: 8px;">
+                <span style="color: var(--text-muted); display: block;">${label}</span>
+                <strong style="font-size: 0.95rem; color: ${color};">${value}</strong>
+              </div>`;
+            const inputStyle = 'width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: #fff;';
+            body.innerHTML = `
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+                Temporada <strong>${data.month || ''}</strong>, gerada sozinha todo mês. Pagamentos: Mercado Pago ${prov.mercadopago ? '🟢 ligado' : '⚪ sem credenciais'} • PayPal ${prov.paypal ? '🟢 ligado' : '⚪ sem credenciais'}.
+              </p>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 18px; font-size: 0.78rem;">
+                ${stat('Jogando este mês', st.players || 0)}
+                ${stat('Premium este mês', st.premiumThisMonth || 0, '#c084fc')}
+                ${stat('Nível 50', st.maxed || 0, '#f472b6')}
+                ${stat('Nível médio', st.averageLevel || 0)}
+                ${stat('Receita (R$)', (st.revenueBRL || 0).toFixed(2), '#10b981')}
+                ${stat('Receita (US$)', (st.revenueUSD || 0).toFixed(2), '#10b981')}
+                ${stat('Pagamentos', st.payments || 0)}
+                ${stat('Recompensas resgatadas', st.claims || 0)}
+              </div>
+              <h4 style="margin: 0 0 8px;">Liberar Premium manualmente</h4>
+              <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">Para Pix direto (ex.: Nubank) conferido por você. Fica registrado como pagamento manual.</p>
+              <div class="form-field" style="margin-bottom: 10px;">
+                <label for="passGrantUserId" style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">ID do Discord</label>
+                <input type="text" id="passGrantUserId" inputmode="numeric" placeholder="214153735281180673" style="${inputStyle}" />
+              </div>
+              <div class="form-field" style="margin-bottom: 10px;">
+                <label for="passGrantMonth" style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Mês (AAAA-MM)</label>
+                <input type="text" id="passGrantMonth" value="${data.month || ''}" style="${inputStyle}" />
+              </div>
+              <div class="form-field" style="margin-bottom: 10px;">
+                <label for="passGrantAmount" style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Valor recebido (R$)</label>
+                <input type="number" id="passGrantAmount" min="0" step="0.01" value="5" style="${inputStyle}" />
+              </div>
+            `;
             const st = data.stats || {};
             const totals = st.totals || {};
             const bounds = data.bounds || {};
@@ -4331,6 +4372,13 @@
           payload = {
             artChannelId: document.getElementById('museumArtChannelId')?.value || '',
             adminRoleIds: document.getElementById('museumAdminRoleIds')?.value || '',
+          };
+        } else if (currentConfigModuleId === 'battlePass') {
+          payload = {
+            grantUserId: document.getElementById('passGrantUserId')?.value.trim() || '',
+            grantMonth: document.getElementById('passGrantMonth')?.value.trim() || '',
+            amount: Number(document.getElementById('passGrantAmount')?.value || 0),
+            currency: 'BRL',
           };
         } else if (currentConfigModuleId === 'dungeon') {
           for (const key of ['ticket', 'dailyEntries', 'runPayoutCap', 'dailyPayoutCap', 'idleMinutes']) {

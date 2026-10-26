@@ -192,6 +192,7 @@ function attack(guildId, userId, stance, now = Date.now(), random = Math.random)
     }
     if (!save(state)) return { ok: false, reason: 'save' };
     if (rewards) deliverRewards(rewards, guildId, entry.week);
+    require('../../services/battlePass').safeAddXp(id, 'boss', { now });
     return { ok: true, damage, counter, weak, crit, intent, defeated: Boolean(rewards), rewards, hp: entry.hp, maxHp: entry.maxHp };
   });
 }

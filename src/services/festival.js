@@ -373,6 +373,7 @@ function openBox(userId, kind, { now = Date.now(), random = Math.random } = {}) 
     });
     return { ok: false, reason: granted.reason === 'sold_out' ? 'sold_out' : 'save' };
   }
+  require('./battlePass').safeAddXp(id, 'festival', { now });
   return { ok: true, kind, season, item: reserved.prize, instance: granted.instance, pityHit: reserved.pityHit, status: getBoxStatus(id, now) };
 }
 

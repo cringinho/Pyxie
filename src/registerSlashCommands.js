@@ -7,7 +7,7 @@ const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
 
 // Comandos de módulos que também funcionam instalados na conta do usuário (User App),
 // em servidores sem a Pyxie, grupos e DMs. Os comandos da raiz já são marcados em src/commands/index.js.
-const USER_INSTALLABLE_MODULE_COMMANDS = new Set(['py-tarot', 'py-album', 'py-dungeon', 'py-home', 'py-craft', 'py-market', 'py-festival']);
+const USER_INSTALLABLE_MODULE_COMMANDS = new Set(['py-tarot', 'py-album', 'py-dungeon', 'py-home', 'py-craft', 'py-market', 'py-festival', 'py-pass']);
 const TARGET_GUILD_ID = process.env.CRINGELANDIA_GUILD_ID || CRINGELANDIA_GUILD_ID || '1453890868980482090';
 
 (async () => {

@@ -370,8 +370,23 @@ const STARTER_ITEMS = ['pet_astaroth', 'wp_cream', 'fl_oak', 'chair_wood', 'tabl
 const DEFAULT_WALLPAPER = 'wp_cream';
 const DEFAULT_FLOORING = 'fl_oak';
 
-function getItem(id) {
+/** Item fixo do catálogo (sem os gerados por mês). */
+function getBaseItem(id) {
   return ITEM_BY_ID.get(id) || null;
+}
+
+/**
+ * Item por id. O pet mítico de cada mês do Passe (`pass_pet_AAAA_MM`) é gerado na hora a partir
+ * de um pet do catálogo (src/services/battlePass.js) e fica guardado no mapa.
+ */
+function getItem(id) {
+  const found = ITEM_BY_ID.get(id);
+  if (found) return found;
+  const match = /^pass_pet_(\d{4})_(\d{2})$/.exec(String(id || ''));
+  if (!match) return null;
+  const entry = require('../../services/battlePass').buildMonthlyPet(`${match[1]}-${match[2]}`);
+  if (entry) ITEM_BY_ID.set(entry.id, entry);
+  return entry;
 }
 
 function itemName(entry, lang = 'pt') {
@@ -390,6 +405,7 @@ module.exports = {
   DEFAULT_WALLPAPER,
   DEFAULT_FLOORING,
   getItem,
+  getBaseItem,
   itemName,
   rarityInfo,
 };

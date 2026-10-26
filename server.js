@@ -545,6 +545,104 @@ app.get('/api/market/prices', (req, res) => {
   }
 });
 
+// Passe da Pyxie: página /passe, pagamento do Premium (Mercado Pago / PayPal) e avisos de pagamento
+app.get(['/passe', '/pass'], serveLocalizedPage('pass', publicDir));
+app.get('/api/pass/info', publicApiLimiter, (req, res) => {
+  try {
+    const battlePass = require('./src/services/battlePass');
+    const payments = require('./src/services/passPayments');
+    const { getItem, itemName } = require('./src/modules/home/homeCatalog');
+    const economy = require('./src/services/economy');
+    const lang = req.query.lang === 'en' ? 'en' : 'pt';
+    const month = battlePass.monthKey();
+    const track = battlePass.getTrack(month);
+    const finale = track[track.length - 1];
+    const theme = battlePass.themeFor(month);
+    const session = req.query.token ? payments.verifyPassToken(req.query.token) : null;
+    let user = null;
+    if (session) {
+      const status = battlePass.getStatus(session.userId);
+      user = { level: status.level, xp: status.xp, premium: status.premium, sameMonth: session.month === month };
+    }
+    res.setHeader('Cache-Control', 'no-store');
+    res.json({
+      month,
+      monthLabel: `${theme.months[lang]} ${month.slice(0, 4)}`,
+      endsAt: battlePass.monthBounds(month).end,
+      maxLevel: battlePass.MAX_LEVEL,
+      xpPerLevel: battlePass.XP_PER_LEVEL,
+      xpSources: battlePass.XP_SOURCES,
+      price: battlePass.PRICE,
+      providers: payments.providers(),
+      finale: {
+        pet: itemName(getItem(finale.premium.itemId), lang),
+        title: economy.getTitleDefinition(finale.premium.title, lang)?.display || '',
+        freeItem: itemName(getItem(finale.free.itemId), lang),
+      },
+      highlights: track
+        .filter((row) => row.premium.type === 'item' || row.free.type === 'item')
+        .map((row) => ({ level: row.level, free: row.free.itemId ? itemName(getItem(row.free.itemId), lang) : null, premium: row.premium.itemId ? itemName(getItem(row.premium.itemId), lang) : null })),
+      user,
+      tokenValid: Boolean(session),
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'pass_unavailable' });
+  }
+});
+app.post('/api/pass/checkout', sensitiveRouteLimiter, async (req, res) => {
+  try {
+    const payments = require('./src/services/passPayments');
+    const { provider, token } = req.body || {};
+    const result = await payments.createCheckout(String(provider || ''), String(token || ''));
+    if (!result.ok) return res.status(result.reason === 'unavailable' ? 503 : 400).json({ error: result.reason });
+    return res.json({ url: result.url });
+  } catch (err) {
+    console.error('[pass] Falha ao abrir pagamento:', err.message);
+    return res.status(502).json({ error: 'provider' });
+  }
+});
+/**
+ * Avisa a pessoa por DM quando o Premium é liberado. O site roda no supervisor (sem gateway), então
+ * a DM vai pela REST do Discord; sem DM aberta, ela vê o Premium no /py-pass.
+ */
+async function notifyPassPremium(result) {
+  if (!result?.ok || result.duplicate || !result.userId || !process.env.DISCORD_TOKEN) return;
+  try {
+    const { REST, Routes } = require('discord.js');
+    const { t } = require('./src/utils/i18n');
+    const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+    const dm = await rest.post(Routes.userChannels(), { body: { recipient_id: String(result.userId) } });
+    const content = `${t('pass.premiumDm', 'pt')}\n\n${t('pass.premiumDm', 'en')}`;
+    await rest.post(Routes.channelMessages(dm.id), { body: { content, allowed_mentions: { parse: [] } } });
+  } catch (_) {}
+}
+app.post('/api/pass/webhook/mercadopago', async (req, res) => {
+  try {
+    const payments = require('./src/services/passPayments');
+    const result = await payments.handleMercadoPagoWebhook({ body: req.body || {}, query: req.query || {}, headers: req.headers || {} });
+    if (!result.ok && result.reason === 'signature') return res.status(401).json({ error: 'signature' });
+    // Falha do lado do Mercado Pago: 502 faz o aviso ser reenviado
+    if (!result.ok && result.reason === 'provider') return res.status(502).json({ error: 'provider' });
+    res.status(200).json({ received: true });
+    return notifyPassPremium(result);
+  } catch (err) {
+    console.error('[pass] Falha no aviso do Mercado Pago:', err.message);
+    return res.status(500).json({ error: 'webhook' });
+  }
+});
+app.get('/api/pass/paypal/return', sensitiveRouteLimiter, async (req, res) => {
+  const lang = req.query.lang === 'en' ? '&lang=en' : '';
+  try {
+    const payments = require('./src/services/passPayments');
+    const result = await payments.capturePayPalOrder(String(req.query.token || ''));
+    notifyPassPremium(result);
+    return res.redirect(`/passe?status=${result.ok ? 'ok' : 'fail'}${lang}`);
+  } catch (err) {
+    console.error('[pass] Falha ao capturar PayPal:', err.message);
+    return res.redirect(`/passe?status=fail${lang}`);
+  }
+});
+
 app.get('/ads.txt', (req, res) => {
   res.setHeader('Content-Type', 'text/plain; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=86400');
@@ -1962,6 +2060,10 @@ app.get('/api/admin/modules/:id/config', requireAdminAuth, (req, res) => {
       const ds = require('./src/modules/dungeon/dungeonStore');
       return res.json({ success: true, config: ds.getSettings(), defaults: ds.DEFAULT_SETTINGS, bounds: ds.SETTINGS_BOUNDS, stats: ds.getDungeonStats() });
     }
+    if (id === 'battlePass') {
+      const bp = require('./src/services/battlePass');
+      return res.json({ success: true, config: {}, stats: bp.getPassStats(), providers: require('./src/services/passPayments').providers(), month: bp.monthKey() });
+    }
     return res.status(404).json({ success: false, error: `Módulo '${id}' não possui configuração customizada.` });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
@@ -1992,6 +2094,17 @@ app.post('/api/admin/modules/:id/config', requireAdminAuth, (req, res) => {
       cfg.modules.dungeon = { ...current, data: { ...(current.data || {}), ...ds.sanitizeSettings(req.body || {}) }, updatedAt: Date.now() };
       moduleManager.saveConfig(cfg);
       return res.json({ success: true, config: ds.getSettings(), stats: ds.getDungeonStats(), message: 'Configurações das Catacumbas salvas com sucesso!' });
+    }
+    if (id === 'battlePass') {
+      // Liberação manual do Premium (ex.: Pix direto na conta Nubank, conferido pelo Criador)
+      const bp = require('./src/services/battlePass');
+      const { grantUserId, grantMonth, amount, currency } = req.body || {};
+      if (!/^\d{17,20}$/.test(String(grantUserId || ''))) return res.status(400).json({ success: false, error: 'ID de usuário inválido.' });
+      const month = /^\d{4}-\d{2}$/.test(String(grantMonth || '')) ? String(grantMonth) : bp.monthKey();
+      const result = bp.activatePremium(String(grantUserId), month, { paymentId: `manual:${Date.now()}:${grantUserId}`, provider: 'manual', amount: Number(amount) || 0, currency: currency === 'USD' ? 'USD' : 'BRL' });
+      if (!result.ok) return res.status(400).json({ success: false, error: result.reason });
+      notifyPassPremium({ ...result, userId: String(grantUserId) });
+      return res.json({ success: true, stats: bp.getPassStats(), message: result.already ? `Premium de ${month} já estava ativo.` : `Premium de ${month} liberado para ${grantUserId}.` });
     }
     return res.status(404).json({ success: false, error: `Módulo '${id}' não possui configuração customizada.` });
   } catch (err) {

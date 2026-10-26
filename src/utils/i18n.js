@@ -1479,6 +1479,41 @@ const TRANSLATIONS = {
         "save": "Deu um tropeço aqui e nada foi cobrado. Tenta de novo daqui a pouco?"
       }
     },
+    "pass": {
+      "title": "💎 Passe da Pyxie • {month}",
+      "intro": "Tudo o que você já faz por aqui rende XP: diário, trabalho, Catacumbas, chefe, oficina, mercado e Festival. A temporada fecha em {date} ({relative}).",
+      "levelLine": "### 🌟 Nível `{level}`/`{max}`\n\n{bar} `{into}`/`{need}` XP",
+      "premiumOn": "💎 **Premium ativo!** Obrigada por apoiar a Pyxie… não que eu esteja emocionada nem nada.",
+      "premiumOff": "🔒 **Trilha Premium:** `R$ {brl}` (Pix ou cartão) ou `US$ {usd}` (PayPal). Libera tudo que você já alcançou, na hora.",
+      "nextHeader": "### 🎁 Próximo nível (`{level}`)",
+      "freeLine": "• **Grátis:** {reward}",
+      "premiumLine": "• **Premium:** {reward}{lock}",
+      "finaleHeader": "### 🌌 Nível 50: só deste mês",
+      "xpHeader": "### ✨ Como ganhar XP",
+      "xpSources": "-# Diário `{daily}` • Turno do trabalho `{work}` • Descida `{dungeon}`+ • Golpe no chefe `{boss}` • Oficina `{craft}` • Venda ou compra no mercado `{market}` • Caixa do Festival `{festival}`",
+      "shelfTitle": "Prêmios de {month}",
+      "btnClaim": "Resgatar ({count})",
+      "btnPremium": "Quero o Premium",
+      "btnLevels": "Níveis",
+      "btnBack": "Voltar",
+      "levelsTitle": "📜 Níveis {from} a {to}",
+      "legend": "-# 🎁 pronto pra resgatar • ✅ resgatado • 🔒 precisa do Premium • ▫️ ainda não chegou",
+      "levelRow": "**`{level}`** {freeMark} {free}\n{premiumMark} 💎 {premium}",
+      "rewards": {
+        "echoes": "`{qty}` Ecos",
+        "petAndTitle": "{pet} + título {title}"
+      },
+      "claimed": "🎁 **Resgatado:** {list}",
+      "claimMore": " e mais `{count}`",
+      "claimFull": "Sua mochila tá cheia: os itens ficaram guardados aqui no Passe. Libera espaço e resgata de novo.",
+      "claimNothing": "Nada pra resgatar agora. Sobe mais um nível que eu te espero.",
+      "notYours": "Esse Passe é de outra pessoa… abre o seu com `/py-pass`.",
+      "sentDm": "💌 Mandei seu Passe na DM (o botão do Premium leva um link só seu).",
+      "useSlash": "Não consegui te mandar DM. Usa `/py-pass` que eu abro só pra você ver.",
+      "error": "Deu um tropeço no Passe. Tenta de novo daqui a pouco?",
+      "footer": "Pyxie • Passe mensal",
+      "premiumDm": "💎 **Seu Passe Premium chegou!** Abre o `/py-pass` e toca em Resgatar: tudo o que você já alcançou tá te esperando. Obrigada por apoiar a Pyxie de verdade."
+    },
     "quiz": {
       "cooldown": "⏰ Você já disputou o Quiz recentemente! Aguarde **{time}** para tentar um novo desafio.",
       "title": "🧠  ✦  Desafio do Quiz Pyxie",
@@ -3453,6 +3488,41 @@ const TRANSLATIONS = {
         "unknown_box": "That box doesn't exist… where did you even get it?",
         "save": "Something tripped up and nothing was charged. Try again in a bit?"
       }
+    },
+    "pass": {
+      "title": "💎 Pyxie Pass • {month}",
+      "intro": "Everything you already do here earns XP: daily, work, Catacombs, boss, workshop, market and Festival. The season closes on {date} ({relative}).",
+      "levelLine": "### 🌟 Level `{level}`/`{max}`\n\n{bar} `{into}`/`{need}` XP",
+      "premiumOn": "💎 **Premium active!** Thank you for supporting Pyxie… not that I'm emotional or anything.",
+      "premiumOff": "🔒 **Premium track:** `R$ {brl}` (Pix or card) or `US$ {usd}` (PayPal). Unlocks everything you already reached, instantly.",
+      "nextHeader": "### 🎁 Next level (`{level}`)",
+      "freeLine": "• **Free:** {reward}",
+      "premiumLine": "• **Premium:** {reward}{lock}",
+      "finaleHeader": "### 🌌 Level 50: this month only",
+      "xpHeader": "### ✨ How to earn XP",
+      "xpSources": "-# Daily `{daily}` • Work shift `{work}` • Catacombs run `{dungeon}`+ • Boss hit `{boss}` • Workshop `{craft}` • Market sale or purchase `{market}` • Festival box `{festival}`",
+      "shelfTitle": "{month} prizes",
+      "btnClaim": "Claim ({count})",
+      "btnPremium": "Get Premium",
+      "btnLevels": "Levels",
+      "btnBack": "Back",
+      "levelsTitle": "📜 Levels {from} to {to}",
+      "legend": "-# 🎁 ready to claim • ✅ claimed • 🔒 needs Premium • ▫️ not reached yet",
+      "levelRow": "**`{level}`** {freeMark} {free}\n{premiumMark} 💎 {premium}",
+      "rewards": {
+        "echoes": "`{qty}` Echoes",
+        "petAndTitle": "{pet} + title {title}"
+      },
+      "claimed": "🎁 **Claimed:** {list}",
+      "claimMore": " and `{count}` more",
+      "claimFull": "Your backpack is full: the items are waiting here in the Pass. Free some space and claim again.",
+      "claimNothing": "Nothing to claim right now. Reach one more level, I'll wait.",
+      "notYours": "This Pass belongs to someone else… open yours with `/py-pass`.",
+      "sentDm": "💌 I sent your Pass to your DMs (the Premium button carries a link just for you).",
+      "useSlash": "I couldn't DM you. Use `/py-pass` and I'll open it just for you.",
+      "error": "The Pass tripped up. Try again in a bit?",
+      "footer": "Pyxie • Monthly pass",
+      "premiumDm": "💎 **Your Premium Pass is here!** Open `/py-pass` and tap Claim: everything you already reached is waiting. Thank you for truly supporting Pyxie."
     },
     "quiz": {
       "cooldown": "⏰ You already played the Quiz recently! Please wait **{time}** before taking a new challenge.",

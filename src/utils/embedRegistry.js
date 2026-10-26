@@ -719,6 +719,20 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'battle_pass',
+  name: '💎 Passe da Pyxie (/py-pass)',
+  category: 'economy',
+  description: 'Passe mensal em privado: nível e barra de XP, próximas recompensas grátis e Premium, nível 50 com pet e título míticos do mês, lista de níveis paginada, resgate e botão de link assinado para o Premium.',
+  defaultColor: '#7c3aed',
+  previewTitle: '{header} Passe da Pyxie • Outubro 2026',
+  previewDesc: 'Tudo o que você já faz por aqui rende XP.\n\n### 🌟 Nível `12`/`50`\n\n▰▰▰▰▰▰▱▱▱▱▱▱ `150`/`300` XP\n\n### 🎁 Próximo nível (`13`)\n\n• **Grátis:** `2` 📜 Pergaminho\n\n• **Premium:** `6` 🎇 Fagulhas 🔒',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Passe', fallback: '💎', defaultEmojiKey: 'MAGIC_BEAN', description: 'Ícone no título do Passe' },
+  ],
+});
+
+registerEmbed({
   id: 'seasonal_festival',
   name: '🎇 Festival da Temporada (/py-festival)',
   category: 'economy',

@@ -360,7 +360,8 @@ function getTitleDefinition(titleId, lang = 'pt') {
   if (!titleId) return null;
   if (TITLES_CATALOG[titleId]) return { ...TITLES_CATALOG[titleId], display: TITLES_CATALOG[titleId].name, achievement: false };
   const { ACHIEVEMENT_TITLES } = require('../data/achievementTitles');
-  const title = ACHIEVEMENT_TITLES[titleId];
+  // Títulos míticos do Passe (um por mês) são gerados a partir do id
+  const title = ACHIEVEMENT_TITLES[titleId] || (/^pass_title_/.test(titleId) ? require('./battlePass').buildMonthlyTitle(require('./battlePass').titleIdToMonth(titleId)) : null);
   if (!title) return null;
   const { formatStyledTitle } = require('../utils/fancyText');
   const key = lang === 'en' ? 'en' : 'pt';
@@ -957,6 +958,8 @@ function claimDaily(userId, now = Date.now()) {
     claimed = true;
   });
   if (!claimed) return notClaimed(updated);
+  // XP do Passe da Pyxie (/py-pass)
+  require('./battlePass').safeAddXp(userId, 'daily', { now });
 
   return {
     claimed: true,

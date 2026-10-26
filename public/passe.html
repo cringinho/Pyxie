@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>Pyxie • Passe Mensal Premium</title>
+    <meta name="description" content="Passe mensal da Pyxie no Discord: 50 níveis com trilha grátis e Premium, pet e título míticos exclusivos de cada mês. Premium por R$ 5 no Pix ou US$ 3 no PayPal." />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://pyxie.com.br/passe" />
+    <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/passe?lang=pt" />
+    <link rel="alternate" hreflang="en" href="https://pyxie.com.br/passe?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/passe" />
+    <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pyxie.com.br/passe" />
+    <meta property="og:title" content="Pyxie • Passe Mensal Premium" />
+    <meta property="og:description" content="50 níveis por mês com recompensas grátis e Premium, pet e título míticos que nunca voltam." />
+    <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Pyxie apresentando o Passe mensal" />
+    <meta property="og:site_name" content="Pyxie Discord Bot" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Pyxie • Passe Mensal Premium" />
+    <meta name="twitter:description" content="50 níveis por mês com recompensas grátis e Premium, pet e título míticos que nunca voltam." />
+    <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Passe da Pyxie",
+        "url": "https://pyxie.com.br/passe",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Discord",
+        "inLanguage": ["pt-BR", "en"],
+        "description": "Passe mensal de 50 níveis da Pyxie no Discord, com trilha grátis e Premium.",
+        "offers": [
+          { "@type": "Offer", "name": "Passe Premium (Brasil)", "price": "5.00", "priceCurrency": "BRL" },
+          { "@type": "Offer", "name": "Premium Pass (international)", "price": "3.00", "priceCurrency": "USD" }
+        ]
+      }
+    </script>
+    <style>
+      :root { --bg: #120b1f; --card: #1d1330; --line: #33244d; --text: #f3e8ff; --muted: #b9a7d6; --accent: #a78bfa; --pink: #f472b6; --ok: #34d399; --warn: #fbbf24; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; }
+      header { max-width: 900px; margin: 0 auto; padding: 32px 16px 8px; display: flex; gap: 16px; align-items: center; }
+      header img { width: 72px; height: 72px; border-radius: 18px; }
+      h1 { font-size: 1.8rem; margin: 0; }
+      header p { margin: 4px 0 0; color: var(--muted); }
+      main { max-width: 900px; margin: 0 auto; padding: 8px 16px 48px; }
+      h2 { font-size: 1.2rem; margin: 28px 0 12px; }
+      .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+      .finale { border-color: var(--pink); box-shadow: 0 0 24px rgba(244, 114, 182, 0.15); }
+      .finale b { color: var(--pink); }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+      .muted { color: var(--muted); }
+      .notice { border-radius: 12px; padding: 12px 14px; margin: 12px 0; background: rgba(167, 139, 250, 0.12); border: 1px solid var(--line); }
+      .notice.ok { border-color: var(--ok); }
+      .notice.warn { border-color: var(--warn); }
+      .buy { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+      .buy button { flex: 1 1 220px; font-size: 1rem; font-weight: 700; padding: 14px; border-radius: 12px; border: 0; cursor: pointer; color: #120b1f; }
+      .buy .mp { background: #34d399; }
+      .buy .pp { background: #fbbf24; }
+      .buy button:disabled { opacity: .45; cursor: not-allowed; }
+      ul { padding-left: 20px; }
+      li { margin-bottom: 8px; }
+      a { color: var(--accent); }
+      .lang { margin-left: auto; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="/assets/pyxie/pyxie_pixelart.png" alt="Pyxie em pixel art segurando o Passe" width="72" height="72" />
+      <div>
+        <h1 data-i18n="title">Passe da Pyxie: 50 níveis todo mês</h1>
+        <p id="subtitle" class="muted">…</p>
+      </div>
+      <button class="lang" id="langBtn" type="button">EN</button>
+    </header>
+    <main>
+      <div id="statusBox"></div>
+
+      <section class="card finale" aria-live="polite">
+        <h2 data-i18n="finaleTitle" style="margin-top: 0">Nível 50 Premium: só deste mês</h2>
+        <p id="finale" class="muted">…</p>
+      </section>
+
+      <section class="card" id="buyCard">
+        <h2 data-i18n="buyTitle" style="margin-top: 0">Trilha Premium</h2>
+        <p id="price" class="muted">…</p>
+        <div id="userLine"></div>
+        <div class="buy" id="buyButtons"></div>
+        <p class="muted" data-i18n="minors" style="font-size: .9rem">Tem menos de 18 anos? Peça para um responsável antes de comprar.</p>
+      </section>
+
+      <h2 data-i18n="howTitle">Como funciona</h2>
+      <div class="grid">
+        <div class="card"><h3 data-i18n="freeTitle">Trilha grátis</h3><p class="muted" data-i18n="freeText">Para todo mundo: materiais da oficina, Ecos, Fagulhas, moedinhas e um móvel raro a cada 10 níveis.</p></div>
+        <div class="card"><h3 data-i18n="premiumTitle">Trilha Premium</h3><p class="muted" data-i18n="premiumText">Recompensas em dobro, feijões mágicos, móveis Premium e, no nível 50, um pet e um título míticos que nunca mais voltam.</p></div>
+        <div class="card"><h3 data-i18n="xpTitle">XP</h3><p class="muted" id="xpText">…</p></div>
+      </div>
+
+      <h2 data-i18n="rulesTitle">Regras do Passe</h2>
+      <ul>
+        <li data-i18n="rule1">O Premium vale só para o mês em que foi comprado e libera também o que você já alcançou.</li>
+        <li data-i18n="rule2">O pagamento é feito no Mercado Pago (Pix ou cartão) ou no PayPal. A Pyxie não vê nem guarda dados de cartão.</li>
+        <li data-i18n="rule3">Nada no bot exige pagamento. O Premium é um apoio opcional ao projeto.</li>
+        <li data-i18n="rule4">Arrependimento em até 7 dias, se as recompensas Premium ainda não foram resgatadas.</li>
+      </ul>
+      <p class="muted"><a href="/termos" data-i18n="termsLink">Termos completos</a></p>
+    </main>
+    <script>
+      const I18N = {
+        pt: {
+          title: 'Passe da Pyxie: 50 níveis todo mês',
+          subtitle: 'Temporada de {month} • vai até {date}',
+          finaleTitle: 'Nível 50 Premium: só deste mês',
+          finale: 'Pet mítico <b>{pet}</b> e o título <b>{titleName}</b>. Na trilha grátis, o nível 50 dá <b>{free}</b>.',
+          buyTitle: 'Trilha Premium',
+          price: 'R$ {brl} no Pix ou cartão (Mercado Pago) • US$ {usd} no PayPal',
+          userLine: 'Seu nível agora: <b>{level}</b>/50',
+          premiumActive: '💎 Seu Premium deste mês já está ativo. Obrigada pelo apoio!',
+          needToken: 'Para comprar, abra <b>/py-pass</b> no Discord e toque em <b>Quero o Premium</b>. O link que a Pyxie te der já sabe quem você é.',
+          tokenExpired: 'Esse link venceu. Abra <b>/py-pass</b> no Discord de novo para gerar outro.',
+          payMp: 'Pagar com Pix ou cartão',
+          payPp: 'Pagar com PayPal',
+          soon: 'em breve',
+          paymentsOff: 'Os pagamentos ainda estão sendo ligados. Volte em breve!',
+          redirecting: 'Abrindo o pagamento…',
+          error: 'Não consegui abrir o pagamento agora. Tente de novo em alguns minutos.',
+          statusOk: '🎉 Pagamento recebido! Em instantes o Premium aparece no /py-pass (a Pyxie também te avisa por DM).',
+          statusPending: '⏳ Pagamento em análise. Assim que for aprovado, o Premium é liberado sozinho.',
+          statusFail: 'O pagamento não foi concluído. Nada foi cobrado.',
+          statusCancel: 'Pagamento cancelado. Quando quiser, é só tentar de novo.',
+          minors: 'Tem menos de 18 anos? Peça para um responsável antes de comprar.',
+          howTitle: 'Como funciona',
+          freeTitle: 'Trilha grátis',
+          freeText: 'Para todo mundo: materiais da oficina, Ecos, Fagulhas, moedinhas e um móvel raro a cada 10 níveis.',
+          premiumTitle: 'Trilha Premium',
+          premiumText: 'Recompensas em dobro, feijões mágicos, móveis Premium e, no nível 50, um pet e um título míticos que nunca mais voltam.',
+          xpTitle: 'XP',
+          xpText: 'Cada nível pede {per} XP. Diário {daily} • trabalho {work} • Catacumbas {dungeon}+ • chefe {boss} • oficina {craft} • mercado {market} • Festival {festival}.',
+          rulesTitle: 'Regras do Passe',
+          rule1: 'O Premium vale só para o mês em que foi comprado e libera também o que você já alcançou.',
+          rule2: 'O pagamento é feito no Mercado Pago (Pix ou cartão) ou no PayPal. A Pyxie não vê nem guarda dados de cartão.',
+          rule3: 'Nada no bot exige pagamento. O Premium é um apoio opcional ao projeto.',
+          rule4: 'Arrependimento em até 7 dias, se as recompensas Premium ainda não foram resgatadas.',
+          termsLink: 'Termos completos',
+          btn: 'EN',
+        },
+        en: {
+          title: 'Pyxie Pass: 50 levels every month',
+          subtitle: '{month} season • runs until {date}',
+          finaleTitle: 'Premium level 50: this month only',
+          finale: 'Mythic pet <b>{pet}</b> and the title <b>{titleName}</b>. On the free track, level 50 gives <b>{free}</b>.',
+          buyTitle: 'Premium track',
+          price: 'US$ {usd} with PayPal • R$ {brl} with Pix or card (Mercado Pago, Brazil)',
+          userLine: 'Your level right now: <b>{level}</b>/50',
+          premiumActive: "💎 Your Premium for this month is already active. Thank you for the support!",
+          needToken: 'To buy, open <b>/py-pass</b> on Discord and tap <b>Get Premium</b>. The link Pyxie gives you already knows who you are.',
+          tokenExpired: 'This link expired. Open <b>/py-pass</b> on Discord again to get a new one.',
+          payMp: 'Pix or card (Brazil)',
+          payPp: 'Pay with PayPal',
+          soon: 'coming soon',
+          paymentsOff: 'Payments are still being switched on. Come back soon!',
+          redirecting: 'Opening checkout…',
+          error: "I couldn't open the checkout right now. Try again in a few minutes.",
+          statusOk: '🎉 Payment received! Premium shows up on /py-pass in a moment (Pyxie also lets you know by DM).',
+          statusPending: '⏳ Payment under review. Premium unlocks by itself once it is approved.',
+          statusFail: 'The payment was not completed. Nothing was charged.',
+          statusCancel: 'Payment cancelled. Try again whenever you want.',
+          minors: 'Under 18? Ask a parent or guardian before buying.',
+          howTitle: 'How it works',
+          freeTitle: 'Free track',
+          freeText: 'For everyone: workshop materials, Echoes, Sparks, coins and a rare piece of furniture every 10 levels.',
+          premiumTitle: 'Premium track',
+          premiumText: 'Double rewards, magic beans, Premium furniture and, at level 50, a mythic pet and title that never come back.',
+          xpTitle: 'XP',
+          xpText: 'Each level takes {per} XP. Daily {daily} • work {work} • Catacombs {dungeon}+ • boss {boss} • workshop {craft} • market {market} • Festival {festival}.',
+          rulesTitle: 'Pass rules',
+          rule1: 'Premium only covers the month it was bought in and also unlocks everything you already reached.',
+          rule2: "Payment happens on Mercado Pago (Pix or card) or PayPal. Pyxie never sees or stores card data.",
+          rule3: 'Nothing in the bot requires payment. Premium is an optional way to support the project.',
+          rule4: 'Refunds within 7 days, as long as the Premium rewards were not claimed yet.',
+          termsLink: 'Full terms',
+          btn: 'PT',
+        },
+      };
+      const params = new URLSearchParams(location.search);
+      const token = params.get('token') || '';
+      const status = params.get('status') || '';
+      let lang = params.get('lang') || ((navigator.language || 'pt').toLowerCase().startsWith('pt') ? 'pt' : 'en');
+      if (!I18N[lang]) lang = 'pt';
+
+      const fill = (text, values) => text.replace(/\{(\w+)\}/g, (_, key) => (values[key] ?? `{${key}}`));
+      function escapeHtml(text) {
+        return String(text).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+      }
+
+      async function checkout(provider) {
+        const dict = I18N[lang];
+        const box = document.getElementById('statusBox');
+        box.innerHTML = `<div class="notice">${dict.redirecting}</div>`;
+        try {
+          const res = await fetch('/api/pass/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider, token }) });
+          const data = await res.json();
+          if (data.url) {
+            location.href = data.url;
+            return;
+          }
+          const key = data.error === 'token' || data.error === 'expired' ? 'tokenExpired' : data.error === 'already' ? 'premiumActive' : 'error';
+          box.innerHTML = `<div class="notice warn">${dict[key]}</div>`;
+        } catch (_) {
+          box.innerHTML = `<div class="notice warn">${dict.error}</div>`;
+        }
+      }
+
+      async function render() {
+        const dict = I18N[lang];
+        document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+        document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = dict[el.dataset.i18n] || el.textContent; });
+        document.getElementById('langBtn').textContent = dict.btn;
+        const statusKey = { ok: 'statusOk', pending: 'statusPending', fail: 'statusFail', cancel: 'statusCancel' }[status];
+        document.getElementById('statusBox').innerHTML = statusKey ? `<div class="notice ${status === 'ok' ? 'ok' : 'warn'}">${dict[statusKey]}</div>` : '';
+        try {
+          const res = await fetch(`/api/pass/info?lang=${lang}${token ? `&token=${encodeURIComponent(token)}` : ''}`);
+          const data = await res.json();
+          const ends = new Date(data.endsAt - 1).toLocaleDateString(lang === 'en' ? 'en-US' : 'pt-BR', { day: 'numeric', month: 'long' });
+          document.getElementById('subtitle').textContent = fill(dict.subtitle, { month: data.monthLabel, date: ends });
+          document.getElementById('finale').innerHTML = fill(dict.finale, { pet: escapeHtml(data.finale.pet), titleName: escapeHtml(data.finale.title), free: escapeHtml(data.finale.freeItem) });
+          document.getElementById('price').textContent = fill(dict.price, { brl: data.price.BRL, usd: data.price.USD });
+          document.getElementById('xpText').textContent = fill(dict.xpText, { per: data.xpPerLevel, ...data.xpSources });
+          const userLine = document.getElementById('userLine');
+          const buttons = document.getElementById('buyButtons');
+          buttons.innerHTML = '';
+          if (!token) {
+            userLine.innerHTML = `<div class="notice">${dict.needToken}</div>`;
+            return;
+          }
+          if (!data.tokenValid || (data.user && !data.user.sameMonth)) {
+            userLine.innerHTML = `<div class="notice warn">${dict.tokenExpired}</div>`;
+            return;
+          }
+          if (data.user.premium) {
+            userLine.innerHTML = `<div class="notice ok">${dict.premiumActive}</div>`;
+            return;
+          }
+          userLine.innerHTML = `<p>${fill(dict.userLine, { level: data.user.level })}</p>`;
+          const order = lang === 'en' ? ['paypal', 'mercadopago'] : ['mercadopago', 'paypal'];
+          for (const provider of order) {
+            const on = data.providers[provider];
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = provider === 'paypal' ? 'pp' : 'mp';
+            button.textContent = `${provider === 'paypal' ? dict.payPp : dict.payMp}${on ? '' : ` (${dict.soon})`}`;
+            button.disabled = !on;
+            button.addEventListener('click', () => checkout(provider));
+            buttons.appendChild(button);
+          }
+          if (!data.providers.mercadopago && !data.providers.paypal) userLine.innerHTML += `<div class="notice">${dict.paymentsOff}</div>`;
+        } catch (_) {
+          document.getElementById('statusBox').innerHTML = `<div class="notice warn">${dict.error}</div>`;
+        }
+      }
+
+      document.getElementById('langBtn').addEventListener('click', () => {
+        lang = lang === 'pt' ? 'en' : 'pt';
+        const next = new URLSearchParams(location.search);
+        next.set('lang', lang);
+        history.replaceState(null, '', `?${next.toString()}`);
+        render();
+      });
+      render();
+    </script>
+  </body>
+</html>

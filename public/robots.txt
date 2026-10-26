@@ -3,6 +3,7 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/
 Disallow: /api/admin/
+Disallow: /api/pass/
 Disallow: /api/private/
 Disallow: /auth/
 Disallow: /console
