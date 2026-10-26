@@ -17,6 +17,10 @@ const { TALENTS } = require('./dungeonData');
  * - Ecos (talentos) nunca viram moedinhas.
  * - Descida parada há mais de `idleMinutes` (20 por padrão) vira game over: o Astaroth resgata
  *   10% do ouro, o resumo vai por DM e a thread da descida é fechada (fila `notices`).
+ * - Túmulos (cooperação): toda morte deixa um túmulo no andar por 48h. Quem desce depois pode
+ *   achar o túmulo, saquear parte do ouro perdido (metade dele, dividida em partes de 25%) e
+ *   rezar para trazer a pessoa de volta, se ela não começou outra descida e morreu há menos de
+ *   24h. Ajudar e reviver rendem Ecos (nunca moedinhas) e contam para títulos que evoluem.
  */
 
 let DATA_FILE = process.env.DUNGEON_DATA_PATH || path.join(__dirname, '..', '..', '..', 'data', 'dungeon.json');
@@ -84,8 +88,19 @@ function loadState() {
     runs: data.runs && typeof data.runs === 'object' ? data.runs : {},
     totals: { ...emptyTotals(), ...(data.totals || {}) },
     notices: Array.isArray(data.notices) ? data.notices : [],
+    graves: data.graves && typeof data.graves === 'object' ? data.graves : {},
+    reviveNotices: Array.isArray(data.reviveNotices) ? data.reviveNotices : [],
   };
 }
+
+const GRAVE_TTL_MS = 48 * 60 * 60 * 1000;
+const REVIVE_WINDOW_MS = 24 * 60 * 60 * 1000;
+const GRAVE_LOOT_POOL = 0.5; // metade do ouro perdido vira espólio
+const GRAVE_LOOT_SHARE = 0.25; // cada saque leva 25% do ouro perdido
+const GRAVE_CHANCE = 0.6; // chance de um túmulo disponível aparecer no andar
+const MAX_GRAVES = 300;
+const REVIVE_ECHOES = 2;
+const HELP_ECHOES = 1;
 
 /** Semana do ranking: começa na segunda-feira 00:00 de Brasília (chave = data da segunda). */
 function brtWeekKey(now = Date.now()) {
@@ -120,7 +135,7 @@ function getPlayer(state, userId) {
   player.pendingPayout = Number(player.pendingPayout) || 0;
   player.lastRun = player.lastRun || null;
   if (!player.stats || typeof player.stats !== 'object') player.stats = {};
-  for (const key of ['runs', 'deaths', 'extractions', 'victories', 'bestFloor', 'bestPayout', 'kills', 'coinsWon', 'coinsSpent']) {
+  for (const key of ['runs', 'deaths', 'extractions', 'victories', 'bestFloor', 'bestPayout', 'kills', 'coinsWon', 'coinsSpent', 'revives', 'helps', 'looted']) {
     player.stats[key] = Number(player.stats[key]) || 0;
   }
   return player;
@@ -163,7 +178,7 @@ function resolveAbandoned(state, userId, now) {
     return null;
   }
   if (!run) return null;
-  if (now - (Number(run.updatedAt) || 0) < idleLimitMs()) return null;
+  if (now - (Number(run.updatedAt) || 0) < idleLimitFor(run)) return null;
   run.phase = 'dead';
   run.outcome = 'abandoned';
   return settleRun(state, userId, run, now);
@@ -171,6 +186,11 @@ function resolveAbandoned(state, userId, now) {
 
 function idleLimitMs() {
   return getSettings().idleMinutes * 60 * 1000;
+}
+
+/** Descida revivida por outra pessoa fica esperando a dona voltar (até 24h) em vez de 20 min. */
+function idleLimitFor(run) {
+  return run.awaitingReturn ? REVIVE_WINDOW_MS : idleLimitMs();
 }
 
 function buildSettlement(state, userId, run, now) {
@@ -242,6 +262,8 @@ function settleRun(state, userId, run, now) {
     player.pendingDrops = [...(player.pendingDrops || []), ...settlement.drops.map((itemId) => ({ itemId, runId: run.id, floor: run.floor }))];
   }
   delete state.runs[run.id];
+
+  if (run.outcome === 'dead') createGrave(state, userId, run, settlement, now);
 
   // Game over por inatividade: o bot manda o resumo por DM e fecha a thread da descida
   if (run.outcome === 'abandoned') {
@@ -366,6 +388,7 @@ function startRun(userId, { lang = 'pt', now = Date.now(), seed = null, guildId 
     player.guilds[run.guildId] = now;
   }
   weeklyStats(player, now).runs += 1;
+  injectGrave(state, run, now);
   player.activeRunId = run.id;
   player.entries.count += 1;
   player.stats.runs = (player.stats.runs || 0) + 1;
@@ -393,8 +416,13 @@ function performAction(userId, runId, step, action, arg = null, now = Date.now()
   }
   if (Number(step) !== run.step) return { ok: false, reason: 'stale', run };
 
+  const floorBefore = run.floor;
   const result = engine.applyAction(run, action, arg, now);
   if (!result.ok) return { ok: false, reason: result.reason, run };
+  // A dona da descida revivida voltou: a partir daqui vale o tempo normal de inatividade
+  run.awaitingReturn = false;
+  processCoop(state, run, now);
+  if (run.floor !== floorBefore && !engine.isTerminal(run)) injectGrave(state, run, now);
 
   let settlement = null;
   if (engine.isTerminal(run)) {
@@ -404,6 +432,150 @@ function performAction(userId, runId, step, action, arg = null, now = Date.now()
   }
   if (!saveState(state)) return { ok: false, reason: 'save', run };
   return { ok: true, run, settlement };
+}
+
+// ---------------------------------------------------------------- túmulos e cooperação
+function createGrave(state, userId, run, settlement, now) {
+  const goldLost = Math.max(0, Math.floor(run.player.gold) - settlement.payout);
+  const snapshot = JSON.parse(JSON.stringify(run));
+  delete snapshot.coop;
+  state.graves[`g_${run.id}`] = {
+    id: `g_${run.id}`,
+    ownerId: String(userId),
+    floor: run.floor,
+    guildId: run.guildId || null,
+    lang: run.lang || 'pt',
+    goldLost,
+    lootLeft: Math.floor(goldLost * GRAVE_LOOT_POOL),
+    looted: 0,
+    payout: settlement.payout,
+    runsAtDeath: getPlayer(state, userId).stats.runs,
+    createdAt: now,
+    visitedBy: [],
+    revivedBy: null,
+    snapshot,
+  };
+  pruneGraves(state, now);
+}
+
+function pruneGraves(state, now) {
+  for (const [id, grave] of Object.entries(state.graves)) {
+    if (grave.revivedBy || now - grave.createdAt > GRAVE_TTL_MS) delete state.graves[id];
+  }
+  const ids = Object.keys(state.graves);
+  if (ids.length > MAX_GRAVES) {
+    ids.sort((a, b) => state.graves[a].createdAt - state.graves[b].createdAt);
+    for (const id of ids.slice(0, ids.length - MAX_GRAVES)) delete state.graves[id];
+  }
+}
+
+/** A alma ainda pode voltar: menos de 24h, sem descida nova e sem descida ativa. */
+function canRevive(state, grave, now) {
+  if (!grave || grave.revivedBy || now - grave.createdAt > REVIVE_WINDOW_MS) return false;
+  const owner = getPlayer(state, grave.ownerId);
+  return owner.stats.runs === grave.runsAtDeath && !(owner.activeRunId && state.runs[owner.activeRunId]);
+}
+
+/**
+ * Ao entrar num andar, pode aparecer o túmulo de outra pessoa que morreu nele (prioriza quem
+ * desceu a partir do mesmo servidor). Cada pessoa encontra cada túmulo uma vez só.
+ */
+function injectGrave(state, run, now, random = Math.random) {
+  const floorKey = `f${run.floor}`;
+  run.graveFloors = Array.isArray(run.graveFloors) ? run.graveFloors : [];
+  if (run.graveFloors.includes(floorKey)) return null;
+  run.graveFloors.push(floorKey);
+  pruneGraves(state, now);
+  const candidates = Object.values(state.graves).filter(
+    (g) =>
+      g.floor === run.floor &&
+      g.ownerId !== run.ownerId &&
+      !g.visitedBy.includes(run.ownerId) &&
+      (g.lootLeft > 0 || canRevive(state, g, now))
+  );
+  if (!candidates.length || random() >= GRAVE_CHANCE) return null;
+  candidates.sort((a, b) => Number(b.guildId === run.guildId) - Number(a.guildId === run.guildId) || b.createdAt - a.createdAt);
+  const grave = candidates[0];
+  const rooms = Object.entries(run.map.rooms).filter(([key, room]) => key !== run.map.pos && ['empty', 'candle', 'fountain'].includes(room.type) && !room.visited);
+  if (!rooms.length) return null;
+  const [key, room] = rooms[Math.floor(random() * rooms.length)];
+  room.type = 'grave';
+  room.cleared = false;
+  room.grave = {
+    id: grave.id,
+    ownerId: grave.ownerId,
+    lootShare: Math.min(grave.lootLeft, Math.ceil(grave.goldLost * GRAVE_LOOT_SHARE)),
+    revivable: canRevive(state, grave, now),
+  };
+  grave.visitedBy.push(run.ownerId);
+  return key;
+}
+
+/** Aplica o que aconteceu no túmulo (saque e oração) fora do motor, com os números reais. */
+function processCoop(state, run, now) {
+  const events = Array.isArray(run.coop) ? run.coop : [];
+  run.coop = [];
+  const runner = getPlayer(state, run.ownerId);
+  for (const event of events) {
+    const grave = state.graves[event.graveId];
+    if (event.type === 'loot') {
+      const take = Math.min(event.amount, grave ? grave.lootLeft : 0);
+      if (take < event.amount) run.player.gold = Math.max(0, run.player.gold - (event.amount - take));
+      if (grave) {
+        grave.lootLeft -= take;
+        grave.looted += take;
+      }
+      runner.stats.looted += take;
+    }
+    if (event.type === 'revive') {
+      if (!canRevive(state, grave, now)) {
+        run.log = [...(run.log || []), { k: 'reviveFailed', p: {} }];
+        continue;
+      }
+      const revived = JSON.parse(JSON.stringify(grave.snapshot));
+      engine.reviveRun(revived, { gold: Math.max(0, grave.goldLost - grave.looted), now, prayerId: run.ownerId });
+      revived.awaitingReturn = true;
+      revived.threadId = null;
+      state.runs[revived.id] = revived;
+      const owner = getPlayer(state, grave.ownerId);
+      owner.activeRunId = revived.id;
+      grave.revivedBy = run.ownerId;
+      // A pessoa voltou: o túmulo (e o que sobrou de espólio) some do andar
+      delete state.graves[grave.id];
+      runner.stats.revives += 1;
+      runner.echoes += REVIVE_ECHOES;
+      state.totals.revives = (Number(state.totals.revives) || 0) + 1;
+      state.reviveNotices.push({ ownerId: grave.ownerId, prayerId: run.ownerId, floor: grave.floor, lang: grave.lang, at: now });
+      state.reviveNotices = state.reviveNotices.slice(-200);
+      run.log = [...(run.log || []), { k: 'reviveWorked', p: { user: `<@${grave.ownerId}>`, echoes: REVIVE_ECHOES } }];
+    }
+  }
+}
+
+/** Ajuda de quem assiste à descida (botão 🤝 na luta). Rende 1 Eco para quem ajudou. */
+function helpRun(helperId, ownerId, tag, now = Date.now()) {
+  const state = loadState();
+  const owner = getPlayer(state, ownerId);
+  const run = owner.activeRunId ? state.runs[owner.activeRunId] : null;
+  if (!run || String(run.id).slice(-6) !== tag) return { ok: false, reason: 'missing' };
+  const result = engine.applyHelp(run, helperId, now);
+  if (!result.ok) return { ...result, run };
+  const helper = getPlayer(state, helperId);
+  helper.stats.helps += 1;
+  helper.echoes += HELP_ECHOES;
+  state.totals.helps = (Number(state.totals.helps) || 0) + 1;
+  if (!saveState(state)) return { ok: false, reason: 'save', run };
+  return { ...result, run };
+}
+
+/** Avisos de "alguém rezou por você" para a DM (entregues uma vez). */
+function takeReviveNotices() {
+  const state = loadState();
+  if (!state.reviveNotices.length) return [];
+  const notices = state.reviveNotices;
+  state.reviveNotices = [];
+  if (!saveState(state)) return [];
+  return notices;
 }
 
 /** Liga a descida à thread aberta para ela (o fechamento por inatividade arquiva a thread). */
@@ -424,7 +596,7 @@ function closeIdleRuns(now = Date.now()) {
   const limit = idleLimitMs();
   const owners = [];
   for (const run of Object.values(state.runs)) {
-    if (now - (Number(run.updatedAt) || 0) < limit) continue;
+    if (now - (Number(run.updatedAt) || 0) < (run.awaitingReturn ? REVIVE_WINDOW_MS : limit)) continue;
     run.phase = 'dead';
     run.outcome = 'abandoned';
     settleRun(state, run.ownerId, run, now);
@@ -449,7 +621,7 @@ function collectIdleWarnings(now = Date.now()) {
   const warnAt = Math.max(limit - IDLE_WARNING_MS, Math.floor(limit / 2));
   const warnings = [];
   for (const run of Object.values(state.runs)) {
-    if (!run.threadId) continue;
+    if (!run.threadId || run.awaitingReturn) continue;
     const idle = now - (Number(run.updatedAt) || 0);
     if (idle < warnAt || idle >= limit || run.idleWarnedFor === run.updatedAt) continue;
     run.idleWarnedFor = run.updatedAt;
@@ -552,6 +724,11 @@ function getPlayerStats(userId) {
   return { ...(player?.stats || {}) };
 }
 
+/** Túmulos ainda no chão (para o /admin e testes). */
+function getGraves() {
+  return Object.values(loadState().graves).map(({ snapshot, ...grave }) => grave);
+}
+
 function _setDataFileForTests(file) {
   DATA_FILE = file;
 }
@@ -574,7 +751,14 @@ module.exports = {
   closeIdleRuns,
   collectIdleWarnings,
   takeNotices,
+  takeReviveNotices,
+  helpRun,
+  injectGrave,
+  canRevive,
+  GRAVE_LOOT_SHARE,
+  REVIVE_WINDOW_MS,
   getDungeonStats,
   getPlayerStats,
+  getGraves,
   _setDataFileForTests,
 };

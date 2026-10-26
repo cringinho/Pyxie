@@ -81,6 +81,19 @@ async function main() {
     await send('/py-dungeon', 'Liquidação da fuga (Taxa da Lanterna)', camp, settlement);
   }
 
+  // Catacumbas em grupo: túmulo de outra pessoa, luta com o botão de ajuda e o aviso de volta
+  const graveRun = engine.createRun({ ownerId: PREVIEW_OWNER, lang, seed: 31 });
+  graveRun.guildId = '100000000000000777';
+  graveRun.event = { type: 'grave', roomKey: graveRun.map.pos, grave: { id: 'g_preview', ownerId: '100000000000000005', lootShare: 45, revivable: true }, looted: false, prayed: false };
+  graveRun.phase = 'event';
+  graveRun.log = [{ k: 'graveFound', p: { user: '<@100000000000000005>', floor: 1 } }];
+  await send('/py-dungeon', `Lápide de outra pessoa: saquear ou rezar (${lang})`, graveRun);
+  const helpRun = driveUntil(engine.createRun({ ownerId: PREVIEW_OWNER, lang, seed: 7 }), 'combat');
+  helpRun.guildId = '100000000000000777';
+  engine.applyHelp(helpRun, '100000000000000006');
+  await send('/py-dungeon', `Luta com ajuda de quem assiste (${lang})`, helpRun);
+  await dispatchHomologationPreview({ commandName: '/py-dungeon', context: `Alguém rezou por você, DM (${lang})`, embeds: views.buildReviveNoticeView({ prayerId: '100000000000000006', floor: 2, lang, at: Date.now() }).embeds });
+
   // Thread da descida, resumo de game over por inatividade (DM) e ranking da semana
   const notice = { lang, floor: 3, rooms: 14, kills: 9, idleMinutes: 20, endedAt: Date.now(), settlement: { gold: 240, payout: 24, echoes: 4, drops: [], newBest: false } };
   const fakeThread = { id: '100000000000000999', guildId: '100000000000000777' };

@@ -161,6 +161,18 @@ async function continueRun(interaction, run) {
   return respond(interaction, 'update', () => views.buildRunView(run, interaction));
 }
 
+/** 🤝 Ajuda de quem assiste: atualiza a própria mensagem da descida para todo mundo ver. */
+async function handleHelpButton(interaction, parsed) {
+  const lang = getLanguage(interaction);
+  const result = store.helpRun(interaction.user.id, parsed.ownerId, parsed.tag);
+  if (!result.ok) {
+    const key = ['self', 'already', 'limit', 'not_combat'].includes(result.reason) ? result.reason : 'missing';
+    return interaction.reply(ephemeral({ content: t(`dungeon.coop.${key}`, lang) }));
+  }
+  const run = result.run;
+  return respond(interaction, 'update', () => views.buildRunView(run, interaction));
+}
+
 async function handleTalentButton(interaction, talentId) {
   const lang = getLanguage(interaction);
   const result = store.buyTalent(interaction.user.id, talentId);
@@ -209,6 +221,7 @@ async function handleActionButton(interaction, parsed) {
 async function handleDungeonInteraction(interaction) {
   const parsed = views.parseCustomId(interaction.customId);
   if (!parsed) return;
+  if (parsed.kind === 'h') return handleHelpButton(interaction, parsed);
   if (parsed.ownerId !== interaction.user.id) return replyError(interaction, 'notYours');
   if (parsed.kind === 'l') return handleLobbyButton(interaction, parsed.what);
   if (parsed.kind === 't') return handleTalentButton(interaction, parsed.talentId);

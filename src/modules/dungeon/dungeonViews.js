@@ -13,6 +13,7 @@ const { FLOORS, ENEMIES, CHARMS, TALENTS, EMPTY_FLAVORS, localized } = require('
  *   dgn:l:<dono>:<tela>                 menu, guia, talentos, hall, mochila, iniciar/continuar
  *   dgn:t:<dono>:<talento>              compra de talento
  *   dgn:a:<dono>:<run>:<step>:<ação>[:<arg>]
+ *   dgn:h:<dono>:<run>                  ajuda de quem assiste (qualquer pessoa menos a dona)
  */
 
 const PREFIX = 'dgn';
@@ -100,6 +101,7 @@ function parseCustomId(customId) {
   const [, kind, ownerId] = parts;
   if (kind === 'l') return { kind, ownerId, what: parts[3] };
   if (kind === 't') return { kind, ownerId, talentId: parts[3] };
+  if (kind === 'h') return { kind, ownerId, tag: parts[3] };
   if (kind === 'a') {
     return { kind, ownerId, tag: parts[3], step: Number(parts[4]), action: parts[5], arg: parts.length > 6 ? parts[6] : null };
   }
@@ -310,6 +312,13 @@ function phaseBlock(run, lang, settlement) {
       }
       if (ev.type === 'fountain') return t('dungeon.events.fountain', lang);
       if (ev.type === 'trap') return t('dungeon.events.trap', lang, { damage: ev.damage, jump: trapJumpChance(run) });
+      if (ev.type === 'grave') {
+        return [
+          t('dungeon.events.grave', lang, { user: `<@${ev.grave.ownerId}>` }),
+          Number(ev.grave.lootShare) > 0 && !ev.looted ? t('dungeon.events.graveLoot', lang, { gold: ev.grave.lootShare }) : null,
+          ev.grave.revivable && !ev.prayed ? t('dungeon.events.graveRevive', lang) : t('dungeon.events.graveGone', lang),
+        ].filter(Boolean).join('\n\n');
+      }
       return '';
     }
     case 'reward': {
@@ -395,6 +404,8 @@ const ACTION_STYLE = {
   shield: { emoji: () => buttonEmoji('shield', '🛡️'), style: ButtonStyle.Secondary, label: 'shield' },
   disarm: { emoji: () => '🔧', style: ButtonStyle.Secondary, label: 'disarm' },
   forfeit: { emoji: () => '🏳️', style: ButtonStyle.Secondary, label: 'forfeit' },
+  loot: { emoji: () => buttonEmoji('offer', '💰'), style: ButtonStyle.Success, label: 'loot' },
+  revive: { emoji: () => buttonEmoji('pray', '🙏'), style: ButtonStyle.Primary, label: 'revive' },
   forfeit_confirm: { emoji: () => '🏳️', style: ButtonStyle.Danger, label: 'forfeitYes' },
   forfeit_cancel: { emoji: () => '↩️', style: ButtonStyle.Secondary, label: 'forfeitNo' },
 };
@@ -473,7 +484,16 @@ function buildRunComponents(run, lang) {
     const bag = button({ id: lobbyId(owner, 'bag'), label: t('dungeon.buttons.bag', lang), emoji: buttonEmoji('bag', '🎒') });
     return [new ActionRowBuilder().addComponents(moves), new ActionRowBuilder().addComponents([make(potion), bag, make(forfeit)])];
   }
-  return rowsOf(actions.map(make), 3);
+  const rows = rowsOf(actions.map(make), 3);
+  // Luta em servidor: quem assiste pode dar uma mãozinha (até engine.MAX_HELPERS pessoas)
+  if (run.phase === 'combat' && run.guildId && (run.helpers || []).length < engine.MAX_HELPERS && rows.length < 5) {
+    rows.push(
+      new ActionRowBuilder().addComponents(
+        button({ id: `${PREFIX}:h:${owner}:${runTag(run)}`, label: t('dungeon.buttons.help', lang, { left: engine.MAX_HELPERS - (run.helpers || []).length }), emoji: '🤝' })
+      )
+    );
+  }
+  return rows;
 }
 
 function buildRunEmbed(run, source, lang, { settlement = null, notice = null } = {}) {
@@ -541,6 +561,7 @@ function buildLobbyView(user, source, { notice = null } = {}) {
     })
   );
   if (status.activeRun) {
+    if (status.activeRun.awaitingReturn) lines.push(t('dungeon.lobby.revived', lang));
     lines.push(t('dungeon.lobby.activeRun', lang, { floor: status.activeRun.floor, gold: status.activeRun.player.gold }));
   } else if (status.lastRun) {
     lines.push(
@@ -719,6 +740,18 @@ function buildThreadNotice(thread, source) {
   };
 }
 
+/** DM para quem morreu: outra pessoa rezou no túmulo e a descida voltou. */
+function buildReviveNoticeView(notice) {
+  const lang = notice.lang === 'en' ? 'en' : 'pt';
+  const embed = new EmbedBuilder()
+    .setColor(PYXIE_COLORS.gold)
+    .setTitle(t('dungeon.revive.title', lang))
+    .setDescription(t('dungeon.revive.body', lang, { user: `<@${notice.prayerId}>`, floor: notice.floor }))
+    .setFooter({ text: t('dungeon.idle.footer', lang) })
+    .setTimestamp(notice.at || Date.now());
+  return { embeds: [embed], allowedMentions: { parse: [] } };
+}
+
 /** Resumo de game over por inatividade (vai por DM; sem DM aberta, vai na thread). */
 function buildIdleSummaryView(notice) {
   const lang = notice.lang === 'en' ? 'en' : 'pt';
@@ -789,6 +822,7 @@ module.exports = {
   buildHallView,
   buildThreadNotice,
   buildIdleSummaryView,
+  buildReviveNoticeView,
   buildBagView,
   limitMessage,
 };

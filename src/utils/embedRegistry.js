@@ -677,6 +677,20 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'dungeon_revive_notice',
+  name: '🙏 Catacumbas de Veludo: Alguém Rezou por Você',
+  category: 'minigames',
+  description: 'DM para quem morreu: outra pessoa achou o túmulo no mesmo andar e rezou. A descida volta com metade da vida e o ouro não saqueado, e espera a dona por até 24h.',
+  defaultColor: '#f59e0b',
+  previewTitle: '{header} Alguém rezou por você',
+  previewDesc: '@Bea achou seu túmulo no **Andar 2** e rezou… e a vela acendeu de novo. Sua descida voltou com metade da vida e o ouro que sobrou.\n\nAbre `/py-dungeon` e clica em **Continuar descida**.',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Oração', fallback: '🙏', defaultEmojiKey: 'DUNGEON_MOON', description: 'Ícone no título do aviso' },
+  ],
+});
+
+registerEmbed({
   id: 'dungeon_hall',
   name: '🏆 Catacumbas de Veludo: Rankings',
   category: 'minigames',

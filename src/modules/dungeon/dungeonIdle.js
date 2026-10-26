@@ -8,6 +8,7 @@ const views = require('./dungeonViews');
  * 2. Fecha as descidas paradas há mais de idleMinutes (o Astaroth salva 10% do ouro).
  * 3. Entrega cada game over: resumo por DM, aviso na thread e a thread trancada e arquivada.
  *    Sem DM aberta, o resumo vai na própria thread.
+ * 4. Avisa por DM quem foi revivida pela oração de outra pessoa num túmulo.
  */
 
 async function fetchThread(client, threadId) {
@@ -63,6 +64,14 @@ async function sweep(client, now = Date.now()) {
   const notices = store.takeNotices();
   const results = [];
   for (const notice of notices) results.push(await deliverNotice(client, notice));
+  for (const revive of store.takeReviveNotices()) {
+    try {
+      const user = await client.users.fetch(revive.ownerId);
+      await user.send(views.buildReviveNoticeView(revive));
+    } catch (_) {
+      // DM fechada: a pessoa vê a descida esperando no /py-dungeon
+    }
+  }
   return results;
 }
 

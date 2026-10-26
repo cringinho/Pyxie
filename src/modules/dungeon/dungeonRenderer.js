@@ -99,6 +99,7 @@ const ROOM_ICONS = {
   fountain: 'pool',
   chest: 'chest',
   trap: 'trap',
+  grave: 'grave',
 };
 
 const INTENT_ICONS = {
@@ -1210,6 +1211,13 @@ function drawEvent(ctx, run, text, palette) {
     ctx.fill();
     shadow(ctx, cx, bottom - 4, 240);
     drawSprite(ctx, icon('pool', 40), cx, bottom, 230);
+  } else if (ev.type === 'grave') {
+    // Túmulo de outra pessoa: lápide pixel com velinhas e brilho frio
+    glow(ctx, cx, bottom - 120, 220, '#a5b4fc', 0.35);
+    shadow(ctx, cx, bottom - 4, 220);
+    drawSprite(ctx, icon('grave', 40), cx, bottom, 220);
+    drawSprite(ctx, icon('candles', 18), cx - 130, bottom - 10, 60);
+    drawSprite(ctx, icon('candles', 18), cx + 130, bottom - 10, 60);
   } else if (ev.type === 'trap') {
     glow(ctx, cx, bottom - 60, 200, UI.danger, 0.3);
     drawSpikes(ctx, cx, bottom);

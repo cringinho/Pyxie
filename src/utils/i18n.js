@@ -1593,7 +1593,8 @@ const TRANSLATIONS = {
         "btnContinue": "Continuar descida",
         "btnHelp": "Como jogar",
         "btnTalents": "Talentos",
-        "btnHall": "Hall"
+        "btnHall": "Hall",
+        "revived": "> 🙏 Alguém rezou no seu túmulo e você voltou! Sua descida espera por até 24 horas."
       },
       "errors": {
         "notYours": "👀 Ei! Essa descida é de outra pessoa. Use `/py-dungeon` para abrir a sua.",
@@ -1623,7 +1624,8 @@ const TRANSLATIONS = {
         "abandoned": "🐈‍⬛ Resgatada pelo Astaroth",
         "extracted": "💰 Fuga com o Tesouro",
         "victory": "👑 Vitória nas Catacumbas",
-        "confirm": "🏳️ Desistir da Descida?"
+        "confirm": "🏳️ Desistir da Descida?",
+        "grave": "🪦 Lápide nas Catacumbas"
       },
       "log": {
         "floorEnter": "🗺️ Você chega ao **Andar {floor}: {floorName}**.\n\n> *{flavor}*",
@@ -1702,7 +1704,16 @@ const TRANSLATIONS = {
         "nyxTreasure": "💎 Atrás da Nyx brilha o **Tesouro do Coração**: `+{gold}` de ouro!",
         "campfire": "🔥 Você acende uma fogueira: `+{amount}` de vida e `+{light}` de luz. O Astaroth ronrona no seu colo.",
         "forfeited": "🏳️ Você desiste e corre para a saída.",
-        "extracted": "💰 Você sobe as escadas abraçada ao saco de ouro!"
+        "extracted": "💰 Você sobe as escadas abraçada ao saco de ouro!",
+        "graveFound": "🪦 Uma lápide fresquinha… aqui caiu {user}. Ainda tem uma vela acesa do lado.",
+        "graveLeft": "🚶 Você deixa a lápide em paz.",
+        "graveLooted": "💰 Você junta os espólios que ficaram no chão: `+{gold}` de ouro. Desculpa, viu…",
+        "gravePrayed": "🙏 Você reza por {user}. A vela da lápide tremula.",
+        "reviveWorked": "✨ A vela acendeu de novo! {user} voltou pra descida. Você ganhou `+{echoes}` Ecos.",
+        "reviveFailed": "🕯️ Ninguém respondeu… essa alma já seguiu em frente (passou de 24h ou já começou outra descida).",
+        "helpedHeal": "🤝 {user} entrou na luta e te curou: `+{amount}` de vida.",
+        "helpedHit": "🤝 {user} entrou na luta e acertou o inimigo: `-{amount}`.",
+        "revived": "✨ Você abre os olhos no chão frio. Alguém rezou por você: {user}."
       },
       "items": {
         "potion": "Poção",
@@ -1753,7 +1764,11 @@ const TRANSLATIONS = {
         "soldOut": "-# A barraca está vazia. A Senhorita Cinza boceja.",
         "shrine": "• **Orar:** custa `{hp}` de vida e concede uma bênção aleatória.\n\n• **Oferenda:** `{price}` de ouro para curar tudo e remover o veneno.",
         "fountain": "Beber pode curar, revelar o andar… ou dar dor de barriga.",
-        "trap": "Agulhas vão disparar: `{damage}` de dano!\n\n• **Saltar:** `{jump}%` de chance de escapar ilesa.\n\n• **Escudo:** leva metade do dano com certeza.\n\n• **Desarmar:** gasta `8` de luz e tem `80%` de chance de render ouro."
+        "trap": "Agulhas vão disparar: `{damage}` de dano!\n\n• **Saltar:** `{jump}%` de chance de escapar ilesa.\n\n• **Escudo:** leva metade do dano com certeza.\n\n• **Desarmar:** gasta `8` de luz e tem `80%` de chance de render ouro.",
+        "grave": "Aqui caiu {user}. O que sobrou da descida ainda está pelo chão.",
+        "graveLoot": "• **Saquear:** leva `{gold}` de ouro que ficou caído.",
+        "graveRevive": "• **Rezar:** custa `10` de vela. Se a alma ainda não seguiu, a pessoa volta pra descida dela.",
+        "graveGone": "-# Essa alma já seguiu em frente. Só dá pra deixar uma flor."
       },
       "reward": {
         "desc": "O guardião deixou para trás um brilho morno. Escolha **uma** bênção para levar:",
@@ -1816,7 +1831,10 @@ const TRANSLATIONS = {
         "forfeitYes": "Sim, desistir",
         "forfeitNo": "Continuar",
         "newRun": "Nova descida",
-        "lobby": "Menu"
+        "lobby": "Menu",
+        "loot": "Saquear",
+        "revive": "Rezar",
+        "help": "Ajudar ({left})"
       },
       "fields": {
         "hp": "❤️ Vida",
@@ -1885,7 +1903,8 @@ const TRANSLATIONS = {
         "merchant": "Senhorita Cinza",
         "shrine": "Altar da Lua",
         "fountain": "Poça de Luar",
-        "trap": "Armadilha!"
+        "trap": "Armadilha!",
+        "grave": "Lápide"
       },
       "thread": {
         "name": "🕯️ Catacumbas de {user}",
@@ -1903,6 +1922,17 @@ const TRANSLATIONS = {
         "summaryHeader": "### 📜 Resumo da descida",
         "tip": "-# Da próxima vez, se precisar sair, use **Fugir** na fogueira: o ouro vai junto com você.",
         "footer": "Pyxie • Catacumbas de Veludo"
+      },
+      "coop": {
+        "self": "Você não pode se ajudar… mas eu torço por você, tá?",
+        "already": "Você já ajudou nessa descida. Agora é com ela.",
+        "limit": "Já tem gente demais ajudando. Deixa um pouco de glória pra ela!",
+        "not_combat": "Só dá pra ajudar durante uma luta.",
+        "missing": "Essa descida já acabou."
+      },
+      "revive": {
+        "title": "🙏 Alguém rezou por você",
+        "body": "{user} achou seu túmulo no **Andar {floor}** e rezou… e a vela acendeu de novo. Sua descida voltou com metade da vida e o ouro que sobrou.\n\nAbre `/py-dungeon` e clica em **Continuar descida**. Ela te espera por até 24 horas. E-eu não fiquei emocionada. Nem um pouco."
       }
     },
     "mary": {
@@ -3354,7 +3384,8 @@ const TRANSLATIONS = {
         "btnContinue": "Continue descent",
         "btnHelp": "How to play",
         "btnTalents": "Talents",
-        "btnHall": "Hall"
+        "btnHall": "Hall",
+        "revived": "> 🙏 Someone prayed at your grave and you came back! Your descent waits for up to 24 hours."
       },
       "errors": {
         "notYours": "👀 Hey! This descent belongs to someone else. Use `/py-dungeon` to open your own.",
@@ -3384,7 +3415,8 @@ const TRANSLATIONS = {
         "abandoned": "🐈‍⬛ Rescued by Astaroth",
         "extracted": "💰 Escaped with the Treasure",
         "victory": "👑 Victory in the Catacombs",
-        "confirm": "🏳️ Give Up the Descent?"
+        "confirm": "🏳️ Give Up the Descent?",
+        "grave": "🪦 A Headstone in the Catacombs"
       },
       "log": {
         "floorEnter": "🗺️ You arrive at **Floor {floor}: {floorName}**.\n\n> *{flavor}*",
@@ -3463,7 +3495,16 @@ const TRANSLATIONS = {
         "nyxTreasure": "💎 Behind Nyx glows the **Heart's Treasure**: `+{gold}` gold!",
         "campfire": "🔥 You light a campfire: `+{amount}` HP and `+{light}` light. Astaroth purrs in your lap.",
         "forfeited": "🏳️ You give up and run for the exit.",
-        "extracted": "💰 You climb the stairs hugging your bag of gold!"
+        "extracted": "💰 You climb the stairs hugging your bag of gold!",
+        "graveFound": "🪦 A fresh headstone… {user} fell here. There is still a candle lit beside it.",
+        "graveLeft": "🚶 You leave the headstone in peace.",
+        "graveLooted": "💰 You gather the spoils left on the floor: `+{gold}` gold. Sorry, okay…",
+        "gravePrayed": "🙏 You pray for {user}. The headstone candle flickers.",
+        "reviveWorked": "✨ The candle lit up again! {user} is back in their descent. You earned `+{echoes}` Echoes.",
+        "reviveFailed": "🕯️ Nobody answered… that soul has already moved on (over 24h, or they started another descent).",
+        "helpedHeal": "🤝 {user} jumped into the fight and healed you: `+{amount}` HP.",
+        "helpedHit": "🤝 {user} jumped into the fight and hit the enemy: `-{amount}`.",
+        "revived": "✨ You open your eyes on the cold floor. Someone prayed for you: {user}."
       },
       "items": {
         "potion": "Potion",
@@ -3514,7 +3555,11 @@ const TRANSLATIONS = {
         "soldOut": "-# The stall is empty. Miss Grey yawns.",
         "shrine": "• **Pray:** costs `{hp}` HP and grants a random blessing.\n\n• **Offering:** `{price}` gold to fully heal and cure poison.",
         "fountain": "Drinking may heal you, reveal the floor… or give you a tummy ache.",
-        "trap": "Needles are about to fire: `{damage}` damage!\n\n• **Jump:** `{jump}%` chance to escape unharmed.\n\n• **Shield:** take half the damage, guaranteed.\n\n• **Disarm:** costs `8` light with an `80%` chance to earn gold."
+        "trap": "Needles are about to fire: `{damage}` damage!\n\n• **Jump:** `{jump}%` chance to escape unharmed.\n\n• **Shield:** take half the damage, guaranteed.\n\n• **Disarm:** costs `8` light with an `80%` chance to earn gold.",
+        "grave": "{user} fell here. What was left of their descent is still on the floor.",
+        "graveLoot": "• **Loot:** take `{gold}` gold left on the floor.",
+        "graveRevive": "• **Pray:** costs `10` light. If the soul hasn't moved on, they come back to their descent.",
+        "graveGone": "-# This soul has already moved on. All you can do is leave a flower."
       },
       "reward": {
         "desc": "The guardian left behind a warm glow. Choose **one** blessing to take with you:",
@@ -3577,7 +3622,10 @@ const TRANSLATIONS = {
         "forfeitYes": "Yes, give up",
         "forfeitNo": "Keep going",
         "newRun": "New descent",
-        "lobby": "Menu"
+        "lobby": "Menu",
+        "loot": "Loot",
+        "revive": "Pray",
+        "help": "Help ({left})"
       },
       "fields": {
         "hp": "❤️ HP",
@@ -3646,7 +3694,8 @@ const TRANSLATIONS = {
         "merchant": "Miss Grey",
         "shrine": "Moon Shrine",
         "fountain": "Moonlit Pool",
-        "trap": "Trap!"
+        "trap": "Trap!",
+        "grave": "Headstone"
       },
       "thread": {
         "name": "🕯️ {user}'s Catacombs",
@@ -3664,6 +3713,17 @@ const TRANSLATIONS = {
         "summaryHeader": "### 📜 Descent summary",
         "tip": "-# Next time, if you need to leave, use **Escape** at the campfire: your gold goes with you.",
         "footer": "Pyxie • Velvet Catacombs"
+      },
+      "coop": {
+        "self": "You can't help yourself… but I'm rooting for you, okay?",
+        "already": "You already helped in this descent. It's up to them now.",
+        "limit": "Too many people are helping already. Leave some glory for them!",
+        "not_combat": "You can only help during a fight.",
+        "missing": "This descent is already over."
+      },
+      "revive": {
+        "title": "🙏 Someone prayed for you",
+        "body": "{user} found your grave on **Floor {floor}** and prayed… and the candle lit up again. Your descent came back with half HP and the gold that was left.\n\nOpen `/py-dungeon` and click **Continue descent**. It waits for you for up to 24 hours. I-I'm not emotional. Not at all."
       }
     },
     "mary": {

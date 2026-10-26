@@ -77,6 +77,8 @@ function collectStats(userId, { now = Date.now(), best = {} } = {}) {
     dungeonVictories: Number(dungeon.victories) || 0,
     dungeonBestFloor: Number(dungeon.bestFloor) || 0,
     dungeonKills: Number(dungeon.kills) || 0,
+    dungeonRevives: Number(dungeon.revives) || 0,
+    dungeonHelps: Number(dungeon.helps) || 0,
     homePlaced: home ? home.placements.length : 0,
     homeLikes: home ? home.likes : 0,
     homeBestCharm: Math.max(home?.bestCharm || 0, charm?.score || 0),
