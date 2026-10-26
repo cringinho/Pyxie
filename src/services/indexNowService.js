@@ -106,6 +106,8 @@ function getDefaultUrlList() {
     `https://${INDEXNOW_HOST}/museu?lang=en`,
     `https://${INDEXNOW_HOST}/bonus`,
     `https://${INDEXNOW_HOST}/bonus?lang=en`,
+    `https://${INDEXNOW_HOST}/mercado`,
+    `https://${INDEXNOW_HOST}/mercado?lang=en`,
     `https://${INDEXNOW_HOST}/rss.xml`,
     ...require('./tarotCardPages').getAllTarotPageUrls(),
   ];

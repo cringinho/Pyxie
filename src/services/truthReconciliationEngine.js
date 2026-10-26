@@ -351,6 +351,10 @@ class TruthReconciliationEngine extends EventEmitter {
       try {
         bossStats = require('../modules/guildBoss/bossStore').getBossStats();
       } catch (_) {}
+      let marketStats = { activeListings: 0, sold: 0, sales7d: 0, taxCollected: 0 };
+      try {
+        marketStats = require('./market').getMarketStats();
+      } catch (_) {}
       let serverModes = { configured: 0, full: 0, trial: 0, classic: 0 };
       try {
         serverModes = require('./guildFeatures').getFeatureStats();
@@ -448,6 +452,12 @@ class TruthReconciliationEngine extends EventEmitter {
           achievements: {
             catalog: Number(achievementStats.catalog) || 0,
             unlocked: Number(achievementStats.unlocked) || 0,
+          },
+          market: {
+            activeListings: Number(marketStats.activeListings) || 0,
+            totalSales: Number(marketStats.sold) || 0,
+            sales7d: Number(marketStats.sales7d) || 0,
+            coinsRemovedByFee: Number(marketStats.taxCollected) || 0,
           },
           weeklyBoss: {
             activeThisWeek: Number(bossStats.activeThisWeek) || 0,

@@ -284,6 +284,21 @@ function mutateHome(userId, now, mutator) {
   return { ok: true, home, ...(result || {}) };
 }
 
+/**
+ * O item está em uso numa casa (à mostra no quarto, ou é a única cópia do papel de parede / piso
+ * aplicado)? Usado pelo mercado para não deixar vender o que está na casa.
+ */
+function isInUse(userId, uid) {
+  const instance = vault.getInstance(userId, uid);
+  if (!instance) return false;
+  const homes = [getHome(userId), getOwnHome(userId)].filter(Boolean);
+  if (homes.some((home) => (home.placements || []).some((p) => p.uid === uid))) return true;
+  const entry = getItem(instance.itemId);
+  if (!entry || !['wallpaper', 'flooring'].includes(entry.kind)) return false;
+  const applied = homes.some((home) => home[entry.kind] === instance.itemId && home[`${entry.kind}By`] === String(userId));
+  return applied && vault.listInstances(userId).filter((it) => it.itemId === instance.itemId).length <= 1;
+}
+
 /** Itens da mochila que ainda não estão à mostra (só os que vão para o quarto). */
 function getAvailableInstances(userId, home = getHome(userId)) {
   // Um item à mostra na própria casa ou na casa do casal não aparece de novo
@@ -471,6 +486,7 @@ module.exports = {
   honorLegacyCoupleHouse,
   ensureHome,
   getAvailableInstances,
+  isInUse,
   placeItem,
   moveItem,
   storeItem,

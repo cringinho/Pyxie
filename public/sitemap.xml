@@ -117,6 +117,26 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/bonus?lang=en" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/bonus" />
   </url>
+  <!-- Mercado e histórico de preços (Português) -->
+  <url>
+    <loc>https://pyxie.com.br/mercado</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/mercado?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/mercado?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/mercado" />
+  </url>
+  <!-- Market and price history (English) -->
+  <url>
+    <loc>https://pyxie.com.br/mercado?lang=en</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/mercado?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/mercado?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/mercado" />
+  </url>
   <!-- Magic Web Bonus (English) -->
   <url>
     <loc>https://pyxie.com.br/bonus?lang=en</loc>

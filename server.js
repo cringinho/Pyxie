@@ -522,6 +522,30 @@ app.get(['/privacidade', '/privacy'], serveLocalizedPage('privacy', publicDir));
 
 app.get('/cringelandia', serveLocalizedPage('cringelandia', publicDir));
 
+// Mercado entre jogadores: página pública de preços e a API que ela lê (data/market.json)
+app.get(['/mercado', '/market'], serveLocalizedPage('market', publicDir));
+app.get('/api/market/prices', (req, res) => {
+  try {
+    const market = require('./src/services/market');
+    const { getItem, itemName } = require('./src/modules/home/homeCatalog');
+    const crafting = require('./src/services/crafting');
+    const lang = req.query.lang === 'en' ? 'en' : 'pt';
+    const stats = market.getMarketStats();
+    const items = market.topTraded({ days: 30, limit: 24 }).map((row) => ({
+      key: row.key,
+      name: row.key.startsWith('mat:') ? crafting.materialLabel(row.key.slice(4), lang) : itemName(getItem(row.key), lang),
+      last: row.last,
+      avg: row.avg,
+      sales: row.sales,
+      history: row.history,
+    }));
+    res.setHeader('Cache-Control', 'public, max-age=60');
+    res.json({ stats: { activeListings: stats.activeListings, sales7d: stats.sales7d, coinsRemovedByFee: stats.taxCollected }, items });
+  } catch (err) {
+    res.status(500).json({ error: 'market_unavailable' });
+  }
+});
+
 app.get('/ads.txt', (req, res) => {
   res.setHeader('Content-Type', 'text/plain; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=86400');

@@ -719,6 +719,20 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'player_market',
+  name: '🏪 Mercado entre Jogadores (/py-market)',
+  category: 'economy',
+  description: 'Vitrine privada do mercado: anúncios com garantia, ofertas particulares, detalhe com histórico de preços, venda de itens e de materiais por modal e aviso por DM para quem vendeu.',
+  defaultColor: '#0f766e',
+  previewTitle: '{header} Mercado da Pyxie',
+  previewDesc: 'Aqui o pessoal vende o que achou nas Catacumbas, fez na oficina ou ganhou por aí.\n\n### 🛒 À venda\n\n`a1b2c3` • Abajur de Cristal ×`1` • `220` 🪙 • @Bea\n\n`d4e5f6` • 🐚 Concha ×`6` • `90` 🪙 • @Ana\n\n-# Página `1` de `1` • taxa de `5%` em cada venda',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Loja', fallback: '🏪', defaultEmojiKey: 'Pink_bag', description: 'Ícone no título do mercado' },
+  ],
+});
+
+registerEmbed({
   id: 'dungeon_hall',
   name: '🏆 Catacumbas de Veludo: Rankings',
   category: 'minigames',

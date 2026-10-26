@@ -85,6 +85,38 @@ function removeInstance(userId, uid) {
   return save(state);
 }
 
+/**
+ * Tira a instância do cofre e devolve ela inteira (para a garantia do mercado). Uid, número de
+ * série e origem continuam os mesmos quando ela voltar com putInstance.
+ */
+function takeInstance(userId, uid) {
+  const state = load();
+  const bucket = userBucket(state, userId);
+  const index = bucket.items.findIndex((it) => it.uid === uid);
+  if (index === -1) return null;
+  const [instance] = bucket.items.splice(index, 1);
+  if (!save(state)) return null;
+  return instance;
+}
+
+/** Devolve/entrega uma instância existente (venda no mercado ou anúncio cancelado). */
+function putInstance(userId, instance, transfer = null) {
+  if (!instance || !getItem(instance.itemId)) return { ok: false, reason: 'unknown_item' };
+  const state = load();
+  const bucket = userBucket(state, userId);
+  if (bucket.items.length >= MAX_ITEMS_PER_USER) return { ok: false, reason: 'full' };
+  const copy = { ...instance };
+  if (transfer) copy.history = [...(Array.isArray(instance.history) ? instance.history : []), transfer].slice(-20);
+  bucket.items.push(copy);
+  if (!save(state)) return { ok: false, reason: 'save' };
+  return { ok: true, instance: copy };
+}
+
+/** Tem espaço para mais um item? */
+function hasRoom(userId) {
+  return listInstances(userId).length < MAX_ITEMS_PER_USER;
+}
+
 function listInstances(userId) {
   const state = load();
   return (state.users[String(userId)]?.items || []).filter((it) => getItem(it.itemId));
@@ -148,6 +180,9 @@ function getVaultStats() {
 }
 
 module.exports = {
+  takeInstance,
+  putInstance,
+  hasRoom,
   NUMBERED_RARITIES,
   MAX_ITEMS_PER_USER,
   grantItem,

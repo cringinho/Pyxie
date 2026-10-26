@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>Pyxie • Mercado e Histórico de Preços</title>
+    <meta name="description" content="Veja os preços reais do mercado entre jogadores da Pyxie no Discord: itens da Casinha, móveis de artesanato e materiais, com última venda, média de 7 dias e gráfico." />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://pyxie.com.br/mercado" />
+    <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/mercado?lang=pt" />
+    <link rel="alternate" hreflang="en" href="https://pyxie.com.br/mercado?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/mercado" />
+    <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pyxie.com.br/mercado" />
+    <meta property="og:title" content="Pyxie • Mercado e Histórico de Preços" />
+    <meta property="og:description" content="Preços reais do mercado entre jogadores da Pyxie: última venda, média de 7 dias e gráfico de 30 dias de cada item e material." />
+    <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Pyxie apresentando o mercado entre jogadores" />
+    <meta property="og:site_name" content="Pyxie Discord Bot" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Pyxie • Mercado e Histórico de Preços" />
+    <meta name="twitter:description" content="Preços reais do mercado entre jogadores da Pyxie: última venda, média de 7 dias e gráfico de 30 dias de cada item e material." />
+    <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Mercado da Pyxie",
+        "url": "https://pyxie.com.br/mercado",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Discord",
+        "inLanguage": ["pt-BR", "en"],
+        "description": "Histórico público de preços do mercado entre jogadores da Pyxie no Discord.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" }
+      }
+    </script>
+    <style>
+      :root { --bg: #120b1f; --card: #1d1330; --line: #33244d; --text: #f3e8ff; --muted: #b9a7d6; --accent: #2dd4bf; --gold: #fbbf24; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+      header { max-width: 980px; margin: 0 auto; padding: 32px 16px 8px; display: flex; gap: 16px; align-items: center; }
+      header img { width: 72px; height: 72px; border-radius: 18px; }
+      h1 { font-size: 1.8rem; margin: 0; }
+      header p { margin: 4px 0 0; color: var(--muted); }
+      main { max-width: 980px; margin: 0 auto; padding: 8px 16px 48px; }
+      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 16px 0 24px; }
+      .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+      .stat b { display: block; font-size: 1.5rem; color: var(--accent); }
+      h2 { font-size: 1.2rem; margin: 24px 0 12px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+      .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+      .card h3 { margin: 0 0 6px; font-size: 1rem; }
+      .card .meta { color: var(--muted); font-size: .9rem; }
+      .card svg { width: 100%; height: 56px; margin-top: 8px; }
+      .empty { color: var(--muted); }
+      a { color: var(--accent); }
+      .lang { margin-left: auto; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="/assets/pyxie/pyxie_pixelart.png" alt="Pyxie em pixel art" width="72" height="72" />
+      <div>
+        <h1 data-i18n="title">Mercado da Pyxie: histórico de preços</h1>
+        <p data-i18n="subtitle">Preços reais das vendas entre jogadores no Discord, atualizados a cada venda.</p>
+      </div>
+      <button class="lang" id="langBtn" type="button">EN</button>
+    </header>
+    <main>
+      <section class="stats" aria-live="polite">
+        <div class="stat"><b id="statActive">–</b><span data-i18n="active">anúncios na vitrine</span></div>
+        <div class="stat"><b id="statSales">–</b><span data-i18n="sales7d">vendas em 7 dias</span></div>
+        <div class="stat"><b id="statFee">–</b><span data-i18n="fee">moedinhas retiradas pela taxa</span></div>
+      </section>
+      <h2 data-i18n="topTitle">Mais negociados nos últimos 30 dias</h2>
+      <div class="grid" id="grid"><p class="empty" data-i18n="loading">Carregando…</p></div>
+      <h2 data-i18n="howTitle">Como funciona</h2>
+      <p data-i18n="how">Use /py-market no Discord para anunciar itens e materiais. O item fica guardado em garantia até ser vendido, e cada venda paga uma taxa de 5% que sai da economia.</p>
+    </main>
+    <script>
+      const I18N = {
+        pt: { title: 'Mercado da Pyxie: histórico de preços', subtitle: 'Preços reais das vendas entre jogadores no Discord, atualizados a cada venda.', active: 'anúncios na vitrine', sales7d: 'vendas em 7 dias', fee: 'moedinhas retiradas pela taxa', topTitle: 'Mais negociados nos últimos 30 dias', loading: 'Carregando…', empty: 'Ainda não teve venda no mercado. Que tal ser a primeira pessoa?', howTitle: 'Como funciona', how: 'Use /py-market no Discord para anunciar itens e materiais. O item fica guardado em garantia até ser vendido, e cada venda paga uma taxa de 5% que sai da economia.', last: 'Última venda', avg: 'Média 7 dias', sales: 'vendas', coins: 'moedinhas', btn: 'EN' },
+        en: { title: "Pyxie's Market: price history", subtitle: 'Real prices from player-to-player sales on Discord, updated with every sale.', active: 'listings on the shelf', sales7d: 'sales in 7 days', fee: 'coins removed by the fee', topTitle: 'Most traded in the last 30 days', loading: 'Loading…', empty: 'No market sales yet. Why not be the first?', howTitle: 'How it works', how: 'Use /py-market on Discord to list items and materials. The item is held in escrow until it sells, and every sale pays a 5% fee that leaves the economy.', last: 'Last sale', avg: '7-day average', sales: 'sales', coins: 'coins', btn: 'PT' },
+      };
+      const params = new URLSearchParams(location.search);
+      let lang = params.get('lang') || ((navigator.language || 'pt').toLowerCase().startsWith('pt') ? 'pt' : 'en');
+      if (!I18N[lang]) lang = 'pt';
+
+      function sparkline(points) {
+        if (!points.length) return '';
+        const values = points.map((p) => p.avg);
+        const max = Math.max(...values), min = Math.min(...values);
+        const span = max - min || 1;
+        const step = points.length > 1 ? 300 / (points.length - 1) : 0;
+        const coords = values.map((v, i) => `${(i * step).toFixed(1)},${(50 - ((v - min) / span) * 44 + 3).toFixed(1)}`).join(' ');
+        return `<svg viewBox="0 0 300 56" role="img" aria-label="${I18N[lang].avg}"><polyline fill="none" stroke="#2dd4bf" stroke-width="3" points="${coords}"/></svg>`;
+      }
+
+      function escapeHtml(text) {
+        return String(text).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+      }
+
+      async function render() {
+        const dict = I18N[lang];
+        document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+        document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = dict[el.dataset.i18n] || el.textContent; });
+        document.getElementById('langBtn').textContent = dict.btn;
+        try {
+          const res = await fetch(`/api/market/prices?lang=${lang}`);
+          const data = await res.json();
+          document.getElementById('statActive').textContent = data.stats.activeListings;
+          document.getElementById('statSales').textContent = data.stats.sales7d;
+          document.getElementById('statFee').textContent = data.stats.coinsRemovedByFee;
+          const grid = document.getElementById('grid');
+          grid.innerHTML = data.items.length
+            ? data.items.map((item) => `<article class="card"><h3>${escapeHtml(item.name)}</h3><div class="meta">${dict.last}: <b>${item.last ?? '–'}</b> ${dict.coins} · ${dict.avg}: <b>${item.avg ?? '–'}</b> · ${item.sales} ${dict.sales}</div>${sparkline(item.history)}</article>`).join('')
+            : `<p class="empty">${dict.empty}</p>`;
+        } catch (_) {
+          document.getElementById('grid').innerHTML = `<p class="empty">${dict.empty}</p>`;
+        }
+      }
+
+      document.getElementById('langBtn').addEventListener('click', () => {
+        lang = lang === 'pt' ? 'en' : 'pt';
+        history.replaceState(null, '', `?lang=${lang}`);
+        render();
+      });
+      render();
+    </script>
+  </body>
+</html>
