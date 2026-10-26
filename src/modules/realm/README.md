@@ -12,6 +12,16 @@ Módulo do servidor oficial **Pyxie's Realm** (guild `1564375898851909653`). Só
   findahelpline.com). Respostas de outras pessoas são apagadas e quem respondeu recebe uma DM
   explicando; reações continuam liberadas.
 
+- **Cada comando no seu canal:** os canais do blueprint têm `commands` (ex.: `/py-dungeon` em
+  `#catacombs`, jogos em `#arcade`). Quando o bot liga, o módulo grava essas rotas em
+  `guildFeatures` (`setCommandChannels`); fora do canal certo, a porta central de comandos responde
+  só para a pessoa onde o comando mora. Threads contam como o canal pai. Utilitários (`/py-help`,
+  `/py-profile`, `/py-setup`…) continuam livres.
+
+## Idiomas
+O inglês é a língua da plaza. Cada outra língua tem uma casinha (texto + voz) na categoria
+**LANGUAGE COTTAGES**, visível só para quem tem o cargo da língua, escolhido no onboarding.
+
 ## Arquivos
 | Arquivo | Papel |
 | :--- | :--- |

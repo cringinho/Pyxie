@@ -52,6 +52,24 @@ function isListeningThread(thread) {
   return Boolean(tag && (thread.appliedTags || []).includes(tag.id));
 }
 
+/**
+ * Manda cada comando pro canal dele (rotas do blueprint), achando os canais pelo nome. Fora do canal
+ * certo, a porta central (guildFeatures.checkCommandAccess) responde em privado onde o comando mora.
+ */
+function applyCommandRoutes(client) {
+  const guild = client?.guilds?.cache?.get(GUILD_ID);
+  if (!guild) return null;
+  const routes = {};
+  for (const def of CATEGORIES.flatMap((c) => c.channels)) {
+    if (!def.commands) continue;
+    const channel = guild.channels.cache.find((c) => c.name === def.name);
+    if (!channel) continue;
+    for (const name of def.commands) routes[name] = [...(routes[name] || []), channel.id];
+  }
+  require('../../services/guildFeatures').setCommandChannels(GUILD_ID, routes);
+  return routes;
+}
+
 async function onLawsButton(interaction) {
   const [, , lang] = interaction.customId.split(':');
   await interaction.reply({ ...buildLawsMessage(lang === 'es' ? 'es' : 'pt'), flags: 64 });
@@ -93,6 +111,16 @@ module.exports = {
 
   async onLoad(ctx) {
     if (!ctx.client) return;
+    const routeNow = () => {
+      try {
+        const routes = applyCommandRoutes(ctx.client);
+        if (routes) console.log(`[realm] Rotas de comandos aplicadas: ${Object.keys(routes).length} comando(s).`);
+      } catch (err) {
+        console.error('[realm] Erro ao aplicar rotas de comandos:', err.message);
+      }
+    };
+    if (ctx.client.isReady?.()) routeNow();
+    else ctx.client.once('clientReady', routeNow);
     ctx.registerListener('interactionCreate', async (interaction) => {
       if (!interaction.isButton?.() || !String(interaction.customId || '').startsWith(`${PREFIX}:laws:`)) return;
       try {
@@ -106,6 +134,7 @@ module.exports = {
   },
 
   PREFIX,
+  applyCommandRoutes,
   buildLawsMessage,
   buildSupportMessage,
   isListeningThread,

@@ -105,6 +105,12 @@ function normalize(raw = {}) {
       mmo: Array.isArray(raw.channels?.mmo) ? raw.channels.mmo.map(String).slice(0, MAX_CHANNELS) : [],
       games: Array.isArray(raw.channels?.games) ? raw.channels.games.map(String).slice(0, MAX_CHANNELS) : [],
     },
+    // Rotas por comando (nome do slash → canais onde ele pode rodar), mais finas que os grupos
+    commandChannels: Object.fromEntries(
+      Object.entries(raw.commandChannels && typeof raw.commandChannels === 'object' ? raw.commandChannels : {})
+        .map(([name, ids]) => [name, Array.isArray(ids) ? ids.map(String).slice(0, MAX_CHANNELS) : []])
+        .filter(([, ids]) => ids.length > 0)
+    ),
     demand: Array.isArray(raw.demand) ? raw.demand.filter((d) => d && d.userId && Number(d.at)) : [],
   };
 }
@@ -192,6 +198,25 @@ function setGroupChannels(guildId, group, channelIds = []) {
   });
 }
 
+/** Troca todas as rotas por comando do servidor (ex.: o Pyxie's Realm manda cada comando pro seu canal). */
+function setCommandChannels(guildId, routes = {}) {
+  if (!guildId) return null;
+  const clean = {};
+  for (const [name, ids] of Object.entries(routes || {})) {
+    const valid = [...new Set((ids || []).map(String).filter((id) => /^\d{5,25}$/.test(id)))].slice(0, MAX_CHANNELS);
+    if (valid.length) clean[name] = valid;
+  }
+  return mutate(guildId, (features) => {
+    features.commandChannels = clean;
+  });
+}
+
+/** Canais onde um comando pode rodar por rota própria ([] = sem rota). */
+function commandRoute(guildId, command) {
+  const name = typeof command === 'string' ? command : command?.data?.name || command?.name;
+  return (name && getGuildFeatures(guildId).commandChannels[name]) || [];
+}
+
 /** Threads contam como o canal pai: a dungeon roda em threads abertas no canal liberado. */
 function isChannelAllowed(guildId, group, channel) {
   if (!guildId || !FEATURE_GROUPS[group]?.channelScoped) return true;
@@ -222,6 +247,10 @@ function getCommandGroup(command) {
  */
 function checkCommandAccess({ guildId, channel = null, command, now = Date.now() } = {}) {
   const group = getCommandGroup(command);
+  const route = guildId ? commandRoute(guildId, command) : [];
+  if (route.length && channel && ![channel.id, channel.parentId].filter(Boolean).map(String).some((id) => route.includes(id))) {
+    return { allowed: false, reason: 'route', group, channels: route };
+  }
   if (!guildId || !group) return { allowed: true, group };
   if (group === 'mmo' && !isMmoActive(guildId, now)) {
     return { allowed: false, reason: 'classic', group };
@@ -283,6 +312,8 @@ module.exports = {
   setGroupEnabled,
   isGroupEnabled,
   setGroupChannels,
+  setCommandChannels,
+  commandRoute,
   isChannelAllowed,
   getCommandGroup,
   checkCommandAccess,

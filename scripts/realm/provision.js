@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
  * Provisionador idempotente do servidor oficial Pyxie's Realm (blueprint em src/modules/realm/realmBlueprint.js).
- * Ordem: cargos → canais do portão e logs → modo Comunidade → demais canais → anúncios → AutoMod → Onboarding
- * → tela de boas-vindas. Itens são achados pelo ID salvo em data/realmState.json ou pelo nome; o script nunca
- * apaga nada. Sem --apply ele só mostra o que faria.
+ * Ordem: cargos → canais do portão e logs → modo Comunidade → demais canais → anúncios → Onboarding
+ * → tela de boas-vindas → canais aposentados → ordem → AutoMod. Itens são achados pelo ID salvo em
+ * data/realmState.json ou pelo nome. Só apaga canais listados em RETIRED_CHANNELS que ele mesmo criou
+ * (ID no estado); nada do servidor fora do blueprint é tocado. Sem --apply ele só mostra o que faria.
  * Uso: node scripts/realm/provision.js [--apply]
  */
 const fs = require('fs');
@@ -63,6 +64,13 @@ async function write(method, route, body, label) {
 }
 
 function overwrites(access) {
+  if (access && access.role) {
+    // Só quem tem o cargo vê (ex.: casinha de uma língua)
+    return [
+      { id: G, type: 0, allow: '0', deny: String(P.VIEW) },
+      { id: state.roles[access.role], type: 0, allow: String(P.VIEW), deny: '0' },
+    ];
+  }
   if (access === BP.ACCESS.readonly) {
     return [{ id: G, type: 0, allow: String(P.VIEW | P.HISTORY | P.REACT), deny: String(P.SEND | P.SEND_THREADS | P.PUBLIC_THREADS | P.PRIVATE_THREADS) }];
   }
@@ -121,6 +129,13 @@ async function ensureChannel(channels, def, parentId) {
     channels.push(ch);
   } else {
     const patch = {};
+    if (ch.name !== def.name) patch.name = def.name;
+    const wantOverwrites = overwrites(def.access);
+    const mismatch = wantOverwrites.some((w) => {
+      const have = (ch.permission_overwrites || []).find((o) => o.id === w.id);
+      return !have || String(have.allow) !== w.allow || String(have.deny) !== w.deny;
+    });
+    if (mismatch) patch.permission_overwrites = [...(ch.permission_overwrites || []).filter((o) => !wantOverwrites.some((w) => w.id === o.id)), ...wantOverwrites];
     if (def.topic && def.type !== 'voice' && ch.topic !== def.topic) patch.topic = def.topic;
     if ((def.slowmode || 0) !== (ch.rate_limit_per_user || 0) && def.type !== 'voice') patch.rate_limit_per_user = def.slowmode || 0;
     if (parentId && ch.parent_id !== parentId) patch.parent_id = parentId;
@@ -149,6 +164,17 @@ async function ensureCategories(onlyKeys = null) {
     for (const def of defs) await ensureChannel(channels, def, parent.id);
   }
   return channels;
+}
+
+/** Apaga canais que saíram do blueprint, mas só os que este script criou (ID guardado no estado). */
+async function retireChannels() {
+  const channels = await api('GET', `/guilds/${G}/channels`);
+  for (const key of BP.RETIRED_CHANNELS || []) {
+    const id = state.channels[key];
+    const ch = id && channels.find((c) => c.id === id);
+    if (ch) await write('DELETE', `/channels/${id}`, undefined, `canal aposentado removido: ${ch.name}`);
+    if (APPLY) delete state.channels[key];
+  }
 }
 
 /** Categorias e canais na ordem do blueprint (os canais antigos do servidor ficam depois). */
@@ -309,10 +335,11 @@ async function ensureWelcomeScreen() {
   await ensureCommunity();
   await ensureCategories();
   await ensureAnnouncementTypes();
-  await ensurePositions();
-  await ensureAutomod();
   await ensureOnboarding();
   await ensureWelcomeScreen();
+  await retireChannels();
+  await ensurePositions();
+  await ensureAutomod();
   if (APPLY) {
     fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
     fs.writeFileSync(STATE_FILE, `${JSON.stringify(state, null, 2)}\n`);

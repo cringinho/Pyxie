@@ -339,6 +339,9 @@ function handleAccessDenied(access, source, member, now = Date.now()) {
   if (access.reason === 'disabled') {
     return { content: t('setup.blocked.disabled', lang, { group: groupName }), allowedMentions: { parse: [] } };
   }
+  if (access.reason === 'route') {
+    return { content: t('setup.blocked.route', lang, { channels: channelList(access.channels, lang) }), allowedMentions: { parse: [] } };
+  }
   return {
     content: t('setup.blocked.channel', lang, { group: groupName, channels: channelList(access.channels, lang) }),
     allowedMentions: { parse: [] },

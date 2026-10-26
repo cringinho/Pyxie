@@ -1271,7 +1271,8 @@ const TRANSLATIONS = {
         "classicMember": "Ah… aqui o servidor tá no modo clássico, então as Catacumbas, a Casinha e os itens ficam desligados. N-não fui eu que escolhi, tá? Se quiser, pede pra administração ligar no `/py-setup`. Na nossa DM funciona sempre.",
         "demand": "-# 🔔 Contei teu pedido. Já são **{count}** pessoa(s) querendo esta semana.",
         "disabled": "A administração desligou **{group}** neste servidor… dá pra religar no `/py-setup`.",
-        "channel": "Aqui não dá… **{group}** só funciona em {channels}. Me chama lá?"
+        "channel": "Aqui não dá… **{group}** só funciona em {channels}. Me chama lá?",
+        "route": "Esse comando mora em {channels}. Me chama lá, tá? Aqui eu só atrapalharia a conversa."
       }
     },
     "cookie": {
@@ -3363,7 +3364,8 @@ const TRANSLATIONS = {
         "classicMember": "Oh… this server is in classic mode, so Catacombs, Cozy Room and items are off. I-it wasn't my choice, okay? If you want, ask the admins to turn it on in `/py-setup`. It always works in our DMs.",
         "demand": "-# 🔔 I counted your request. That's **{count}** person(s) asking this week.",
         "disabled": "The admins turned off **{group}** on this server… they can turn it back on in `/py-setup`.",
-        "channel": "Not here… **{group}** only works in {channels}. Call me over there?"
+        "channel": "Not here… **{group}** only works in {channels}. Call me over there?",
+        "route": "This command lives in {channels}. Call me over there, okay? Here I'd just get in the way of the chat."
       }
     },
     "cookie": {

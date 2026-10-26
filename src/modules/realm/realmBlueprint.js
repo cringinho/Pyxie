@@ -83,24 +83,35 @@ const CATEGORIES = [
     key: 'heart',
     name: '✦ HEART OF THE REALM',
     channels: [
-      { key: 'plaza', name: '╭💬・crystal-plaza', type: 'text', topic: '💜 Main lounge, in English. Check people\'s interaction roles before joking around. Every language has its own cottage in #world-cottages.' },
-      {
-        key: 'cottages',
-        name: '┃🌎・world-cottages',
-        type: 'forum',
-        topic: '🏠 A cottage for every language. Open the post of your language and chat there. Need a new one? Create a post with the right tag.',
-        tags: [
-          { name: 'Português', emoji: '🇧🇷' },
-          { name: 'Español', emoji: '🇪🇸' },
-          { name: 'Français', emoji: '🇫🇷' },
-          { name: 'Deutsch', emoji: '🇩🇪' },
-          { name: '日本語', emoji: '🇯🇵' },
-          { name: 'Other', emoji: '🌐' },
-        ],
-        defaultReaction: '💜',
-      },
-      { key: 'introductions', name: '┃🪪・introductions', type: 'forum', topic: '✨ Tell the realm who you are: name, pronouns, what you love, what you\'re playing. Share only what you want to share.', defaultReaction: '🌸' },
-      { key: 'breeze', name: '╰🔊・whispering-breeze', type: 'voice' },
+      { key: 'plaza', name: '╭💬・crystal-plaza', type: 'text', topic: "💜 Main lounge, in English. Check people's interaction roles before joking around. Speak another language? Pick it in Channels & Roles and your cottage shows up." },
+      { key: 'introductions', name: '╰🪪・introductions', type: 'forum', topic: '✨ Tell the realm who you are: name, pronouns, what you love, what you\'re playing. Share only what you want to share.', defaultReaction: '🌸' },
+    ],
+  },
+  {
+    key: 'voice',
+    name: '✦ VOICE LOUNGES',
+    channels: [
+      { key: 'breeze', name: '╭🌙・whispering-breeze', type: 'voice' },
+      { key: 'voice_en', name: '╰🇬🇧・english-lounge', type: 'voice' },
+    ],
+  },
+  {
+    // Cada casinha (texto + voz) só aparece para quem tem o cargo da língua, escolhido no onboarding
+    key: 'cottages',
+    name: '✦ LANGUAGE COTTAGES',
+    channels: [
+      { key: 'cottage_pt', name: '🇧🇷・casinha-português', type: 'text', access: { role: 'lang_pt' }, topic: '🏡 A casinha de quem fala português. Conversa à vontade!' },
+      { key: 'voice_pt', name: '🇧🇷・sala-português', type: 'voice', access: { role: 'lang_pt' } },
+      { key: 'cottage_es', name: '🇪🇸・casita-español', type: 'text', access: { role: 'lang_es' }, topic: '🏡 La casita de quienes hablan español. ¡Siéntete en casa!' },
+      { key: 'voice_es', name: '🇪🇸・sala-español', type: 'voice', access: { role: 'lang_es' } },
+      { key: 'cottage_fr', name: '🇫🇷・maisonnette-français', type: 'text', access: { role: 'lang_fr' }, topic: '🏡 La maisonnette des francophones. Fais comme chez toi !' },
+      { key: 'voice_fr', name: '🇫🇷・salon-français', type: 'voice', access: { role: 'lang_fr' } },
+      { key: 'cottage_de', name: '🇩🇪・häuschen-deutsch', type: 'text', access: { role: 'lang_de' }, topic: '🏡 Das Häuschen für alle, die Deutsch sprechen. Fühl dich wie zu Hause!' },
+      { key: 'voice_de', name: '🇩🇪・lounge-deutsch', type: 'voice', access: { role: 'lang_de' } },
+      { key: 'cottage_ja', name: '🇯🇵・日本語コテージ', type: 'text', access: { role: 'lang_ja' }, topic: '🏡 日本語を話す人のためのコテージです。ゆっくりしていってね！' },
+      { key: 'voice_ja', name: '🇯🇵・日本語ラウンジ', type: 'voice', access: { role: 'lang_ja' } },
+      { key: 'cottage_other', name: '🌐・polyglot-cottage', type: 'text', access: { role: 'lang_other' }, topic: '🏡 For every other language. Say which one you speak and find your people.' },
+      { key: 'voice_other', name: '🌐・polyglot-lounge', type: 'voice', access: { role: 'lang_other' } },
     ],
   },
   {
@@ -115,19 +126,19 @@ const CATEGORIES = [
     key: 'pavilion',
     name: '✦ MYSTIC PAVILION',
     channels: [
-      { key: 'tarot', name: '╭🔮・tarot-and-oracles', type: 'text', topic: '🃏 Draw your fate with /py-tarot and show off your 78-card binder with /py-album.' },
-      { key: 'vocations', name: '┃💼・guild-of-vocations', type: 'text', topic: '🛠️ Work shifts with /py-work, change careers with /py-profession, claim /py-daily and craft furniture with /py-craft.' },
-      { key: 'love', name: '┃💍・love-and-cottages', type: 'text', topic: '💖 /py-ship, /py-marriage and your cozy cottage with /py-home.' },
-      { key: 'market', name: '┃🛒・market-square', type: 'text', topic: '🪙 Trade items with /py-market, open Festival boxes with /py-festival and level your /py-pass.' },
-      { key: 'arcade', name: '╰🎲・arcade', type: 'text', topic: '🎮 /py-quiz, /py-likely, /py-jokenpo, /py-coinflip and /py-dice.' },
+      { key: 'tarot', name: '╭🔮・tarot-and-oracles', type: 'text', commands: ['py-tarot', 'py-album'], topic: '🃏 Draw your fate with /py-tarot and show off your 78-card binder with /py-album.' },
+      { key: 'vocations', name: '┃💼・guild-of-vocations', type: 'text', commands: ['py-work', 'py-profession', 'py-daily', 'py-wallet', 'py-craft', 'py-rank'], topic: '🛠️ Work shifts with /py-work, change careers with /py-profession, claim /py-daily and craft furniture with /py-craft.' },
+      { key: 'love', name: '┃💍・love-and-cottages', type: 'text', commands: ['py-ship', 'py-marriage', 'py-divorce', 'py-child', 'py-home'], topic: '💖 /py-ship, /py-marriage and your cozy cottage with /py-home.' },
+      { key: 'market', name: '┃🛒・market-square', type: 'text', commands: ['py-market', 'py-festival', 'py-pass'], topic: '🪙 Trade items with /py-market, open Festival boxes with /py-festival and level your /py-pass.' },
+      { key: 'arcade', name: '╰🎲・arcade', type: 'text', commands: ['py-quiz', 'py-likely', 'py-jokenpo', 'py-coinflip', 'py-dice', 'py-duel', 'py-challenge', 'py-anime', 'py-sixseven', 'py-math', 'py-minesweeper', 'py-tictactoe'], topic: '🎮 /py-quiz, /py-likely, /py-jokenpo, /py-coinflip and /py-dice.' },
     ],
   },
   {
     key: 'border',
     name: '✦ NYXIEL BORDER',
     channels: [
-      { key: 'frontline', name: '╭⚔️・nyxiel-frontline', type: 'text', topic: "⚠️ The border with Nyxiel. The weekly boss (/py-boss) lands here, and Nyx's rifts open without warning." },
-      { key: 'catacombs', name: '┃🕯️・catacombs', type: 'text', topic: '🕯️ Descend into the Velvet Catacombs with /py-dungeon. Every run gets its own thread. Nyx waits on the last floor.' },
+      { key: 'frontline', name: '╭⚔️・nyxiel-frontline', type: 'text', commands: ['py-boss'], topic: "⚠️ The border with Nyxiel. The weekly boss (/py-boss) lands here, and Nyx's rifts open without warning." },
+      { key: 'catacombs', name: '┃🕯️・catacombs', type: 'text', commands: ['py-dungeon'], topic: '🕯️ Descend into the Velvet Catacombs with /py-dungeon. Every run gets its own thread. Nyx waits on the last floor.' },
       {
         key: 'tales',
         name: '╰🎭・roleplay-tales',
@@ -148,9 +159,9 @@ const CATEGORIES = [
     key: 'museum',
     name: '✦ MUSEUM & ALLIANCES',
     channels: [
-      { key: 'art', name: '╭🎨・art-museum', type: 'text', topic: '🖼️ Share your original art (attachments only). Credit other artists, always.' },
+      { key: 'art', name: '╭🎨・art-museum', type: 'text', commands: ['py-museum'], topic: '🖼️ Share your original art (attachments only). Credit other artists, always.' },
       { key: 'alliances', name: '┃🤝・realm-alliances', type: 'text', access: ACCESS.readonly, topic: '🌐 Communities, creators and projects allied with the Realm.' },
-      { key: 'partners', name: '╰📋・partnership-requests', type: 'text', access: ACCESS.readonly, topic: '✨ Want to partner with the Realm? Use the panel here.' },
+      { key: 'partners', name: '╰📋・partnership-requests', type: 'text', commands: ['py-partner'], access: ACCESS.readonly, topic: '✨ Want to partner with the Realm? Use the panel here.' },
     ],
   },
   {
@@ -189,9 +200,12 @@ const AUTOMOD = [
 
 const TIMEOUT_SECONDS = 600;
 
+// Canais criados antes e tirados do blueprint (o provisionador só apaga se o ID estiver no próprio estado)
+const RETIRED_CHANNELS = ['cottages'];
+
 // Onboarding nativo: idioma é obrigatório (e dá o cargo de cidadão); o resto é opcional
 const ONBOARDING = {
-  defaultChannels: ['rules', 'announcements', 'plaza', 'cottages', 'introductions', 'sanctuary', 'tarot', 'vocations', 'arcade', 'frontline', 'catacombs', 'art'],
+  defaultChannels: ['rules', 'announcements', 'plaza', 'introductions', 'sanctuary', 'tarot', 'vocations', 'arcade', 'frontline', 'catacombs', 'art'],
   prompts: [
     {
       title: 'Which languages do you speak?',
@@ -199,12 +213,12 @@ const ONBOARDING = {
       single: false,
       options: [
         { title: 'English', emoji: '🇬🇧', roles: ['lang_en', 'citizen'] },
-        { title: 'Português', emoji: '🇧🇷', roles: ['lang_pt', 'citizen'], channels: ['cottages'] },
-        { title: 'Español', emoji: '🇪🇸', roles: ['lang_es', 'citizen'], channels: ['cottages'] },
-        { title: 'Français', emoji: '🇫🇷', roles: ['lang_fr', 'citizen'], channels: ['cottages'] },
-        { title: 'Deutsch', emoji: '🇩🇪', roles: ['lang_de', 'citizen'], channels: ['cottages'] },
-        { title: '日本語', emoji: '🇯🇵', roles: ['lang_ja', 'citizen'], channels: ['cottages'] },
-        { title: 'Other languages', emoji: '🌐', roles: ['lang_other', 'citizen'], channels: ['cottages'] },
+        { title: 'Português', emoji: '🇧🇷', roles: ['lang_pt', 'citizen'] },
+        { title: 'Español', emoji: '🇪🇸', roles: ['lang_es', 'citizen'] },
+        { title: 'Français', emoji: '🇫🇷', roles: ['lang_fr', 'citizen'] },
+        { title: 'Deutsch', emoji: '🇩🇪', roles: ['lang_de', 'citizen'] },
+        { title: '日本語', emoji: '🇯🇵', roles: ['lang_ja', 'citizen'] },
+        { title: 'Other languages', emoji: '🌐', roles: ['lang_other', 'citizen'] },
       ],
     },
     {
@@ -256,10 +270,10 @@ const WELCOME_SCREEN = {
   channels: [
     { channel: 'rules', description: 'Read the laws of the Realm', emoji: '📜' },
     { channel: 'plaza', description: 'Say hi in the main lounge', emoji: '💬' },
-    { channel: 'cottages', description: 'Chat in your own language', emoji: '🌎' },
+    { channel: 'tarot', description: 'Draw your fate with Pyxie', emoji: '🔮' },
     { channel: 'introductions', description: 'Introduce yourself', emoji: '🪪' },
     { channel: 'catacombs', description: 'Fight Nyx in the Catacombs', emoji: '⚔️' },
   ],
 };
 
-module.exports = { GUILD_ID, OWNER_ID, COLORS, ROLES, CATEGORIES, ACCESS, COMMUNITY, AUTOMOD, TIMEOUT_SECONDS, ONBOARDING, WELCOME_SCREEN };
+module.exports = { GUILD_ID, OWNER_ID, COLORS, ROLES, CATEGORIES, ACCESS, COMMUNITY, AUTOMOD, TIMEOUT_SECONDS, RETIRED_CHANNELS, ONBOARDING, WELCOME_SCREEN };

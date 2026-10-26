@@ -60,7 +60,7 @@ Docs e `src/services/moduleManager.js` (`registerListener`, `registerCron`).
 1. **Modo Comunidade**: verificação nível médio (e-mail + conta com 5 min), filtro de conteúdo
    explícito para todos, canal de regras e canal de avisos da comunidade.
 2. **Onboarding nativo** (`PUT /guilds/{id}/onboarding`) no lugar do "wizard efêmero":
-   - Pergunta obrigatória: idiomas (dá o cargo de idioma e mostra a casinha da língua).
+   - Pergunta obrigatória: idiomas (dá o cargo da língua, que libera a casinha dela, e o de cidadão).
    - Perguntas opcionais: pronomes, protocolo de interação (indicadores de tom, literal e direto,
      bateria social, sem pings), interesses (tarot, Catacumbas, casinhas, arte, roleplay).
    - Canais padrão: plaza, regras, anúncios.
@@ -102,9 +102,11 @@ Quem quiser se apresentar faz isso no post de apresentação.
 - `✦ THE FAIRY GATEWAY`: `╭📜・realm-laws` (regras + lore, canal de regras da Comunidade, botões
   "Ler em Português / Leer en Español" com resposta efêmera), `╰📢・dramatic-supervision`
   (anúncios da Pyxie).
-- `✦ HEART OF THE REALM`: `╭💬・crystal-plaza` (chat principal em inglês),
-  `┃🌎・world-cottages` (fórum por idioma, um post fixo por língua), `┃🖼️・introductions`
-  (fórum de apresentação), `╰🔊・whispering-breeze` (voz de baixo estímulo).
+- `✦ HEART OF THE REALM`: `╭💬・crystal-plaza` (chat principal em inglês), `╰🪪・introductions`
+  (fórum de apresentação).
+- `✦ VOICE LOUNGES`: `╭🌙・whispering-breeze` (voz de baixo estímulo), `╰🇬🇧・english-lounge`.
+- `✦ LANGUAGE COTTAGES`: uma casinha de texto e uma sala de voz por língua (PT, ES, FR, DE, JA,
+  outras), visíveis **só para quem tem o cargo da língua**. Quem não fala espanhol não vê o espanhol.
 - `✦ SAFE HAVEN`: `╭🦋・cozy-sanctuary` (slowmode 10s), `╰🕯️・support-pods` (fórum com tags
   "Needs Comfort", "Advice Welcome", "Just Listening").
 - `✦ MYSTIC PAVILION`: `╭🔮・tarot-and-oracles`, `┃💼・guild-of-vocations`,
@@ -118,6 +120,11 @@ Quem quiser se apresentar faz isso no post de apresentação.
 
 A Safe Haven fica **aberta a todos os cidadãos**: nada de verificação por laudo ou relato de
 saúde. O que protege o espaço é slowmode, AutoMod mais rígido nos dois canais e as regras.
+
+## 3.1 Cada comando no seu canal
+Cada canal temático tem uma lista de comandos (`commands` no blueprint). O módulo `realm` grava
+essas rotas no `guildFeatures` quando o bot liga, e a porta central de comandos responde só para a
+pessoa onde o comando mora quando ele é usado fora do lugar. Utilitários ficam livres.
 
 ## 4. Regras do Reino (EN no canal, PT/ES por botão)
 1. Everyone is welcome: no hate for language, nationality, gender, sexuality, neurotype or
