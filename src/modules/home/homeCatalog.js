@@ -146,6 +146,9 @@ const FURNITURE = [
   item('crystal_orb', 'Orbe Arcano', 'Arcane Orb', 'floor', 'epic', R(50, 9), { price: coins(1500), light: 2, sets: ['arcano'] }),
   item('gargoyle', 'Gárgula Guardiã', 'Guardian Gargoyle', 'floor', 'legendary', R(50, 10, 1, 2), { source: 'dungeon', sets: ['gotico'], footprint: [1, 1] }),
   item('gold_pile', 'Pilha de Ouro', 'Gold Pile', 'floor', 'legendary', R(41, 11), { source: 'dungeon', light: 1, sets: ['real'] }),
+  // Chefe semanal do servidor (src/modules/guildBoss): troféu de quem mais bateu, estandarte de quem participou
+  item('boss_trophy', 'Troféu do Chefe da Semana', 'Weekly Boss Trophy', 'floor', 'legendary', R(50, 10, 1, 2, { recolor: { from: [0, 360], to: 45, minSat: 0, satMul: 1.5, lightAdd: 0.12 } }), { source: 'boss', light: 1, sets: ['real'], footprint: [1, 1] }),
+  item('boss_banner', 'Estandarte da Vitória', 'Victory Banner', 'wall', 'epic', R(49, 0, 1, 2, { recolor: { from: [0, 360], to: 275, minSat: 0, satMul: 1.3 } }), { source: 'boss', sets: ['real', 'gotico'] }),
   item('gems', 'Cristais Brilhantes', 'Shiny Crystals', 'floor', 'rare', R(32, 9), { price: coins(520), light: 1, sets: ['arcano'] }),
   item('potion_red', 'Poção do Amor', 'Love Potion', 'floor', 'uncommon', D(115), { price: coins(110), sets: ['arcano'] }),
   item('potion_blue', 'Poção de Mana', 'Mana Potion', 'floor', 'uncommon', D(116), { price: coins(110), sets: ['arcano'] }),

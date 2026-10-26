@@ -680,6 +680,17 @@ function getLeaderboard({ scope = 'all', guildId = null, now = Date.now() } = {}
     .sort((a, b) => b.bestFloor - a.bestFloor || b.victories - a.victories || b.kills - a.kills || b.coins - a.coins);
 }
 
+/** Ecos vindos de fora das Catacumbas (chefe semanal do servidor). Nunca viram moedinhas. */
+function addEchoes(userId, amount) {
+  const qty = Math.max(0, Math.floor(Number(amount) || 0));
+  if (!qty) return 0;
+  const state = loadState();
+  const player = getPlayer(state, userId);
+  player.echoes += qty;
+  saveState(state);
+  return player.echoes;
+}
+
 /** Compra um nível de talento com Ecos. */
 function buyTalent(userId, talentId) {
   const talent = TALENTS[talentId];
@@ -753,6 +764,7 @@ module.exports = {
   takeNotices,
   takeReviveNotices,
   helpRun,
+  addEchoes,
   injectGrave,
   canRevive,
   GRAVE_LOOT_SHARE,

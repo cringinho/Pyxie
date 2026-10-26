@@ -691,6 +691,20 @@ registerEmbed({
 });
 
 registerEmbed({
+  id: 'guild_boss',
+  name: '👹 Chefe da Semana do Servidor',
+  category: 'minigames',
+  description: 'Painel público do /py-boss: vida do chefe, plano do dia (postura certa dobra o dano), ranking de dano e recompensas quando ele cai. O que é de cada pessoa vai em resposta privada.',
+  defaultColor: '#7f1d1d',
+  previewTitle: '{header} Hidra do Jardim de Ossos',
+  previewDesc: 'Ele subiu das Catacumbas e tá rondando o servidor a semana inteira… junta o pessoal!\n\n▰▰▰▰▰▰▰▱▱▱▱▱ `2140` / `3800` de vida\n\n### 🪨 Plano de hoje: Casca de Pedra\n\n> *Magia atravessa; espada só arranha.*\n\n### 🏆 Quem mais bateu\n\n`1.` @Bea • `860` de dano',
+  previewFields: [],
+  slots: [
+    { key: 'header', label: 'Chefe', fallback: '👹', defaultEmojiKey: 'DUNGEON_SKULL', description: 'Ícone no título do chefe' },
+  ],
+});
+
+registerEmbed({
   id: 'dungeon_hall',
   name: '🏆 Catacumbas de Veludo: Rankings',
   category: 'minigames',
