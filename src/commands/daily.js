@@ -112,7 +112,19 @@ function buildDailyView(userId, guildOrSource = null, clientId = null, now = Dat
     .setFooter({ text: t('daily.footer', lang) })
     .setTimestamp(now);
 
-  return { embeds: [embed], components: dailyButtons(userId, lang, { bonusUrl: bonusSession.url }) };
+  return { embeds: [embed], components: dailyButtons(userId, lang, { bonusUrl: bonusSession.url }), claimed: true, streak: result.streak };
+}
+
+// Fala da Pyxie (voz com Groq na Cringelândia, falas prontas fora) no fim do embed do diário.
+async function withVoice(view, source) {
+  if (!view.claimed) return view;
+  const { claimed, streak, ...rest } = view;
+  const text = await require('../services/pyxieVoice').lineFor('daily', source, { streak });
+  if (text) {
+    const embed = rest.embeds[0];
+    embed.setDescription(`${embed.data.description}\n\n-# 🧚 ${text}`);
+  }
+  return rest;
 }
 
 function buildCupsView(userId, lang, outcome = null) {
@@ -181,11 +193,11 @@ module.exports = {
       'pt-BR': 'Pegue suas moedinhas diárias com a Pyxie, mantenha a sequência e jogue as xícaras.',
     }),
   async executePrefix({ message, client }) {
-    const view = buildDailyView(message.author.id, message, client?.user?.id);
+    const view = await withVoice(buildDailyView(message.author.id, message, client?.user?.id), message);
     await message.reply({ ...view, allowedMentions: { repliedUser: false } });
   },
   async executeSlash({ interaction }) {
-    const view = buildDailyView(interaction.user.id, interaction, interaction.client?.user?.id);
+    const view = await withVoice(buildDailyView(interaction.user.id, interaction, interaction.client?.user?.id), interaction);
     await interaction.editReply(view);
   },
 

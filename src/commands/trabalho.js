@@ -2731,7 +2731,14 @@ async function handleWorkInteraction(interaction) {
     .setFooter({ text: 'Pyxie' })
     .setTimestamp();
 
-  return interaction.update({ embeds: [successEmbed], components });
+  await interaction.update({ embeds: [successEmbed], components });
+  // A fala da Pyxie chega depois (o botão precisa ser respondido em até 3 s).
+  const voice = await require('../services/pyxieVoice').lineFor('work', interaction, { profession: session.professionLabel, success: true });
+  if (voice && typeof interaction.editReply === 'function') {
+    successEmbed.setDescription(`${desc.join('\n')}\n\n-# 🧚 ${voice}`);
+    await interaction.editReply({ embeds: [successEmbed], components }).catch(() => null);
+  }
+  return undefined;
 }
 
 async function runWork(source, reply) {

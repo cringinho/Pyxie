@@ -406,6 +406,18 @@ function buildTitlesView(targetUser, viewerId, source = null) {
       .setStyle(ButtonStyle.Danger)
       .setDisabled(!equippedId)
   );
+  // [Título] Nick: só no servidor oficial e só para a própria pessoa.
+  const guildId = source?.guildId || source?.guild?.id;
+  if (guildId === require('../config/scopes').CRINGELANDIA_GUILD_ID && targetUser.id === viewerId) {
+    const on = require('../services/titleNick').isEnabled(guildId, targetUser.id);
+    buttonRow.addComponents(
+      new ButtonBuilder()
+        .setCustomId(`profile_titlenick:${targetUser.id}:${viewerId}`)
+        .setLabel(t(on ? 'titleNick.btnOff' : 'titleNick.btnOn', source))
+        .setEmoji('🏷️')
+        .setStyle(on ? ButtonStyle.Secondary : ButtonStyle.Primary)
+    );
+  }
 
   return { embeds: [embed], components: [selectRow, buttonRow], attachments: [] };
 }
@@ -633,9 +645,23 @@ async function handleProfileInteraction(interaction) {
     return interaction.editReply(view);
   }
 
+  // 6b. [Título] Nick (liga/desliga o título antes do apelido)
+  if (action === 'profile_titlenick') {
+    if (interaction.user.id !== targetId || !interaction.member) {
+      return interaction.reply({ content: t('titleNick.onlyYou', interaction), flags: 64 });
+    }
+    const equipped = getTitleDefinition(getUserAccount(targetId).equippedTitle, getLanguage(interaction));
+    const res = await require('../services/titleNick').toggle(interaction.member, equipped?.name || null).catch(() => ({ ok: false, reason: 'error' }));
+    if (!res.ok) return interaction.reply({ content: t('titleNick.cannot', interaction), flags: 64 });
+    const view = buildTitlesView(interaction.user, interaction.user.id, interaction);
+    await interaction.update(view);
+    return interaction.followUp({ content: t(res.enabled ? 'titleNick.enabled' : 'titleNick.disabled', interaction, { nick: res.nick || '' }), flags: 64 });
+  }
+
   // 7. Desequipar Título
   if (action === 'profile_unequip') {
     unequipTitle(targetId);
+    if (interaction.member && interaction.user.id === targetId) require('../services/titleNick').sync(interaction.member, null).catch(() => null);
     const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
     const view = buildTitlesView(targetUser, interaction.user.id, interaction);
     return interaction.update(view);
@@ -655,6 +681,10 @@ async function handleProfileInteraction(interaction) {
 
     if (operation === 'equip') {
       equipTitle(targetId, titleId);
+      if (interaction.member && interaction.user.id === targetId) {
+        const def = getTitleDefinition(titleId, getLanguage(interaction));
+        require('../services/titleNick').sync(interaction.member, def?.name || null).catch(() => null);
+      }
       const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
       const view = buildTitlesView(targetUser, interaction.user.id, interaction);
       return interaction.update(view);

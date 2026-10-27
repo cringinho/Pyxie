@@ -4,6 +4,7 @@ import { detectLang, makeT } from './i18n';
 import { Button, Card, GuildIcon, MultiSelect, Notice, Spinner, Toggle } from './ui';
 import Studio from './Studio';
 import { Links, Moderation } from './Safety';
+import { Assets, CommunitySettings } from './Community';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
 function parseHash() {
@@ -224,6 +225,7 @@ function GuildView({ t, lang, guildId, section, me }) {
       {current === 'studio' && <Studio t={t} guildId={guildId} guildName={guild?.name || ''} isOwner={me.user.isOwner} />}
       {current === 'features' && <Features t={t} guildId={guildId} />}
       {current === 'moderation' && <Moderation t={t} guildId={guildId} />}
+      {current === 'community' && <CommunitySettings t={t} guildId={guildId} />}
       {current === 'channels' && <Channels t={t} guildId={guildId} />}
       {current === 'roles' && <Roles t={t} guildId={guildId} />}
       {current === 'access' && <Access t={t} guildId={guildId} />}
@@ -547,7 +549,7 @@ function PartnershipDm({ t, guildId }) {
 }
 
 function GlobalView({ t, lang, section }) {
-  const tabs = ['health', 'errors', 'modules', 'links'].map((id) => ({ id, label: t(`section.${id}`) }));
+  const tabs = ['health', 'errors', 'modules', 'links', 'assets'].map((id) => ({ id, label: t(`section.${id}`) }));
   const current = tabs.some((x) => x.id === section) ? section : 'health';
   return (
     <div>
@@ -562,6 +564,7 @@ function GlobalView({ t, lang, section }) {
       {current === 'errors' && <Errors t={t} />}
       {current === 'modules' && <Modules t={t} lang={lang} />}
       {current === 'links' && <Links t={t} />}
+      {current === 'assets' && <Assets t={t} />}
     </div>
   );
 }

@@ -369,6 +369,60 @@ const TRANSLATIONS = {
       "muted": "🔕 Silenciado por 7 dias.",
       "ownerOnly": "🔒 Só o dono da Pyxie mexe no monitor de links."
     },
+    "pyxieVoice": {
+      "daily": {
+        "1": "Pegou o diário de novo? Hmpf. Não que eu tenha ficado esperando, tá?",
+        "2": "Moedinhas entregues. Gaste com sabedoria… ou não, eu não sou sua mãe.",
+        "3": "Olha só quem lembrou de mim hoje. Anotado. Não que eu ligue.",
+        "4": "Mais um dia, mais moedinhas. Eu sou generosa demais, eu sei.",
+        "5": "Se essa sequência quebrar, eu vou fingir que não vi. Mentira, vou ver sim.",
+        "6": "Diário pego. Agora vai beber água, que fã desidratado eu não aceito."
+      },
+      "work": {
+        "1": "Turno concluído. Até que você não é tão ruim nisso. Até que.",
+        "2": "Trabalhou direitinho. Vou contar pra ninguém, pra não subir à cabeça.",
+        "3": "Salário na conta. Agora não vai gastar tudo em besteira… né?",
+        "4": "Profissionalismo nível aceitável. Eu esperava menos, sinceramente.",
+        "5": "Mais um expediente. O chefe ficou orgulhoso. O chefe sou eu. Hmpf."
+      },
+      "tarot": {
+        "1": "As cartas falaram. Eu só traduzi, então não reclama comigo.",
+        "2": "Essa carta tem a sua cara. Interprete como quiser.",
+        "3": "O universo mandou recado. Eu só sou a fada carteira, tá?",
+        "4": "Guardei essa no seu álbum. De nada, viu?",
+        "5": "Se não gostou da carta, a culpa é do baralho, não minha."
+      }
+    },
+    "hyperfocus": {
+      "genericTopic": "esse hiperfoco",
+      "reward": "-# 🪙 Ganhou {coins} moedinhas por abrir um tópico caprichado. Uma vez por dia, tá? Não abusa.",
+      "comments": {
+        "1": "Ninguém respondeu ainda? Hmpf, então eu respondo. Conta mais sobre {topic}, {name}, que eu fiquei curiosa. Só um pouquinho.",
+        "2": "Olha, {name}, eu não entendo nada de {topic}, mas li tudo. Alguém aí que entende aparece, por favor!",
+        "3": "{name} trouxe {topic} e o fórum ficou quieto? Inaceitável. Quem também curte, chega mais!",
+        "4": "Anotado no meu caderninho de hiperfocos: {topic}. Agora alguém comenta, que eu não vou fazer tudo sozinha."
+      }
+    },
+    "radar": {
+      "approve": "Aprovar",
+      "discard": "Descartar",
+      "reviewHint": "Revise antes de publicar. A publicação leva o link da fonte e o aviso de que não é orientação jurídica nem médica.",
+      "noSummary": "Sem resumo automático: leia na fonte antes de aprovar.",
+      "redditNoSummary": "Do Reddit: só título e link (não copiamos o texto das pessoas).",
+      "source": "Ler na fonte",
+      "disclaimer": "Isto não é orientação jurídica nem médica. Em dúvida, procure um profissional ou a Defensoria Pública.",
+      "published": "✅ Publicado por {user}.",
+      "discarded": "🗑️ Descartado por {user}.",
+      "staffOnly": "🔒 Só a staff aprova o radar."
+    },
+    "titleNick": {
+      "btnOn": "Mostrar no apelido",
+      "btnOff": "Tirar do apelido",
+      "onlyYou": "🏷️ Só a própria pessoa escolhe o título no apelido.",
+      "cannot": "😿 Não consigo mudar seu apelido (meu cargo está abaixo do seu ou estou sem permissão).",
+      "enabled": "🏷️ Pronto! Seu apelido agora é **{nick}**.",
+      "disabled": "🏷️ Tirei o título do seu apelido."
+    },
     "messageStudio": {
       "role_added": "✨ Pronto! Você agora tem o cargo **{role}**.",
       "role_removed": "🍃 Tirei o cargo **{role}** de você.",
@@ -2521,6 +2575,60 @@ const TRANSLATIONS = {
       "retestFail": "😿 Still down: {diagnosis}.",
       "muted": "🔕 Muted for 7 days.",
       "ownerOnly": "🔒 Only Pyxie's owner can manage the link monitor."
+    },
+    "pyxieVoice": {
+      "daily": {
+        "1": "Grabbing your daily again? Hmph. Not that I was waiting, okay?",
+        "2": "Coins delivered. Spend them wisely… or don't, I'm not your mom.",
+        "3": "Look who remembered me today. Noted. Not that I care.",
+        "4": "Another day, more coins. I'm way too generous, I know.",
+        "5": "If that streak breaks, I'll pretend I didn't see. Lie, I'll totally see.",
+        "6": "Daily claimed. Now go drink some water, I refuse to have a dehydrated fan."
+      },
+      "work": {
+        "1": "Shift done. You're not that bad at this. Not that bad.",
+        "2": "You worked well. I won't tell anyone so it doesn't go to your head.",
+        "3": "Paycheck in. Now don't blow it all on nonsense… right?",
+        "4": "Professionalism at an acceptable level. Honestly, I expected less.",
+        "5": "Another shift. The boss is proud. I'm the boss. Hmph."
+      },
+      "tarot": {
+        "1": "The cards spoke. I just translated, so don't complain to me.",
+        "2": "This card looks just like you. Read it however you want.",
+        "3": "The universe sent a message. I'm just the fairy mail carrier, okay?",
+        "4": "I put this one in your album. You're welcome, by the way.",
+        "5": "If you don't like the card, blame the deck, not me."
+      }
+    },
+    "hyperfocus": {
+      "genericTopic": "this hyperfocus",
+      "reward": "-# 🪙 You got {coins} coins for opening a thoughtful post. Once a day, okay? Don't push it.",
+      "comments": {
+        "1": "Nobody answered yet? Hmph, then I will. Tell me more about {topic}, {name}, I got curious. Just a little.",
+        "2": "Look, {name}, I know nothing about {topic}, but I read it all. Anyone who gets it, please show up!",
+        "3": "{name} brought {topic} and the forum went quiet? Unacceptable. Anyone else into it, come over!",
+        "4": "Written in my hyperfocus notebook: {topic}. Now somebody comment, I won't do everything myself."
+      }
+    },
+    "radar": {
+      "approve": "Approve",
+      "discard": "Discard",
+      "reviewHint": "Review before publishing. The post includes the source link and a note that this is not legal or medical advice.",
+      "noSummary": "No automatic summary: read the source before approving.",
+      "redditNoSummary": "From Reddit: title and link only (we don't copy people's posts).",
+      "source": "Read the source",
+      "disclaimer": "This is not legal or medical advice. When in doubt, talk to a professional or a public defender.",
+      "published": "✅ Published by {user}.",
+      "discarded": "🗑️ Discarded by {user}.",
+      "staffOnly": "🔒 Only the staff approves the radar."
+    },
+    "titleNick": {
+      "btnOn": "Show in nickname",
+      "btnOff": "Remove from nickname",
+      "onlyYou": "🏷️ Only the person can choose the title in their nickname.",
+      "cannot": "😿 I can't change your nickname (my role is below yours or I lack permission).",
+      "enabled": "🏷️ Done! Your nickname is now **{nick}**.",
+      "disabled": "🏷️ I removed the title from your nickname."
     },
     "messageStudio": {
       "role_added": "✨ Done! You now have the **{role}** role.",

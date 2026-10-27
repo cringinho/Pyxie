@@ -26,7 +26,7 @@ function registerDashboardSection(section) {
 function getSections(guildAccess) {
   const base = ['overview', 'studio', 'features', 'channels', 'roles'];
   if (guildAccess.canManageAccess) base.push('access');
-  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('moderation');
+  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('moderation', 'community');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
     .filter((s) => !s.roles || s.roles.includes(guildAccess.role))
     .map((s) => s.id);
@@ -374,6 +374,15 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, conflict });
   });
 
+  // ---------- Comunidade da Cringelândia: fórum de hiperfocos e radar ----------
+  router.get('/api/dashboard/guilds/:guildId/community', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    return res.json({ success: true, community: require('../services/communityConfig').getCommunityConfig(req.params.guildId) });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/community', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    return res.json({ success: true, community: require('../services/communityConfig').saveCommunityConfig(req.params.guildId, req.body || {}) });
+  });
+
   // Área global: só o dono da Pyxie.
   function requireOwner(req, res, next) {
     if (!access.isOwner(req.panelSession.userId)) return res.status(403).json({ success: false, error: 'owner_only' });
@@ -436,6 +445,31 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const link = sentinel.listLinks().find((l) => l.id === String(req.params.id));
     if (!link) return res.status(404).json({ success: false, error: 'link_not_found' });
     return res.json({ success: true, result: await sentinel.probe(link.url, doFetch) });
+  });
+
+  // Registro das artes da Pyxie (origem IA/humana e crédito do artista)
+  router.get('/api/dashboard/global/assets', requireSession, requireOwner, (req, res) => {
+    const assets = require('../services/pyxieAssets');
+    return res.json({ success: true, assets: assets.listAssets(), summary: assets.summary() });
+  });
+
+  router.put('/api/dashboard/global/assets', requireSession, requireOwner, (req, res) => {
+    try {
+      const { file, ...patch } = req.body || {};
+      return res.json({ success: true, asset: require('../services/pyxieAssets').updateAsset(String(file || ''), patch) });
+    } catch (err) {
+      return res.status(404).json({ success: false, error: err.code || 'asset_not_found' });
+    }
+  });
+
+  // Créditos públicos para o site (só artes humanas com artista informado).
+  router.get('/api/public/asset-credits', (req, res) => {
+    const list = require('../services/pyxieAssets')
+      .listAssets()
+      .filter((a) => a.origin === 'human' && a.artist)
+      .map(({ url, artist, artistUrl }) => ({ url, artist, artistUrl }));
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    return res.json({ success: true, credits: list });
   });
 
   router.get('/api/dashboard/global/modules', requireSession, requireOwner, (req, res) => {
