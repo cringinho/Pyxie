@@ -130,7 +130,7 @@ function getGuildsDirectory() {
   } catch (_) {}
 
   // Lê Mary Studio para detectar guilda vinculada
-  let maryGuildId = CRINGELANDIA_GUILD_ID;
+  let maryGuildId = require('../config/scopes').MARY_GUILD_ID;
   try {
     if (fs.existsSync(MARY_CONFIG_FILE)) {
       const mCfg = JSON.parse(fs.readFileSync(MARY_CONFIG_FILE, 'utf8')) || {};

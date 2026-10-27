@@ -8,7 +8,11 @@ const TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutos para link mágico
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 dias de sessão
 
 function getSecretKey() {
-  return process.env.MARY_STUDIO_SECRET || process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET || 'mary_studio_secret_super_safe_2026';
+  const secret = process.env.MARY_STUDIO_SECRET || process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET || null;
+  if (!secret) {
+    console.error('[MarySecurity] MARY_STUDIO_SECRET não configurado no .env: links mágicos do estúdio recusados.');
+  }
+  return secret;
 }
 
 function getSecurityFile() {
@@ -66,10 +70,8 @@ function isAuthorizedUser(userId) {
 }
 
 function normalizeIp(req) {
-  let ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || req.ip || '';
-  if (typeof ip === 'string' && ip.includes(',')) {
-    ip = ip.split(',')[0].trim();
-  }
+  // req.ip só confia em X-Forwarded-For vindo do Caddy local (trust proxy 'loopback').
+  let ip = req.ip || req.socket?.remoteAddress || '';
   if (typeof ip === 'string' && ip.startsWith('::ffff:')) {
     ip = ip.substring(7);
   }
@@ -117,6 +119,9 @@ function createMagicLink(userId, options = {}, customBaseUrl = null) {
   });
 
   const secret = getSecretKey();
+  if (!secret) {
+    return { success: false, error: 'MARY_STUDIO_SECRET não configurado no .env da VM.' };
+  }
   const sig = crypto.createHmac('sha256', secret).update(payload).digest('hex');
   const token = Buffer.from(JSON.stringify({ payload, sig })).toString('base64url');
 
@@ -153,8 +158,13 @@ function consumeMagicToken(token, req, client = null) {
   }
 
   const secret = getSecretKey();
+  if (!secret) {
+    return { valid: false, error: 'MARY_STUDIO_SECRET não configurado no .env da VM.' };
+  }
   const expectedSig = crypto.createHmac('sha256', secret).update(parsedToken.payload).digest('hex');
-  if (parsedToken.sig !== expectedSig) {
+  const sigBuf = Buffer.from(String(parsedToken.sig));
+  const expectedBuf = Buffer.from(expectedSig);
+  if (sigBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(sigBuf, expectedBuf)) {
     return { valid: false, error: 'Assinatura inválida do token.' };
   }
 

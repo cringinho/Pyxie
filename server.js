@@ -235,20 +235,12 @@ function requireAdminAuth(req, res, next) {
   if (sessionCookie && isValidAdminSession(sessionCookie)) return next();
   if (bearerToken && isValidAdminSession(bearerToken)) return next();
 
-  const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
-  if (!secret && isIpAllowed(req)) {
-    return next();
-  }
-
-  const token = bearerToken || queryToken;
-  if (secret && token === secret) {
-    return next();
-  }
-
   return res.status(401).json({ error: 'Acesso administrativo não autorizado.' });
 }
 
 app.disable('x-powered-by');
+// O Caddy roda na mesma máquina: só ele pode informar o IP real via X-Forwarded-For.
+app.set('trust proxy', 'loopback');
 
 // Compressão HTTP Gzip/Deflate para otimização extrema de performance e Core Web Vitals
 app.use(compression({
@@ -292,7 +284,7 @@ function createRateLimiter({ windowMs = 60 * 1000, max = 120, message = 'Muitas 
   if (cleanupTimer.unref) cleanupTimer.unref();
 
   return (req, res, next) => {
-    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket?.remoteAddress || req.ip || '127.0.0.1';
+    const ip = req.ip || req.socket?.remoteAddress || '127.0.0.1';
     const now = Date.now();
     const record = store.get(ip);
 
@@ -963,8 +955,7 @@ app.get('/api/cringelandia/impact', (req, res) => {
 
 app.post('/api/cringelandia/track-help-click', (req, res) => {
   try {
-    const forwarded = req.headers['x-forwarded-for'];
-    const ip = forwarded ? forwarded.split(',')[0].trim() : (req.socket.remoteAddress || '127.0.0.1');
+    const ip = req.ip || req.socket.remoteAddress || '127.0.0.1';
     const result = cringelandiaService.trackHelpClick(ip);
     return res.json(result);
   } catch (err) {
@@ -1230,13 +1221,12 @@ app.post('/api/admin/quiz-seeder/trigger', requireAdminAuth, async (req, res) =>
 // Rota Visual de Mapeamento de Emojis (/admin/emojis)
 app.get('/admin/emojis', async (req, res) => {
   const token = req.query.token;
-  const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
 
   const isAuth =
     isIpAllowed(req) ||
     (sessionCookie && isValidAdminSession(sessionCookie)) ||
-    (token && ((secret && token === secret) || isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
+    (token && (isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
 
   if (!isAuth) {
     return res.status(401).send('401 Unauthorized');
@@ -1714,13 +1704,12 @@ app.get('/admin/emojis', async (req, res) => {
 
 app.post('/admin/emojis', (req, res) => {
   const token = req.query.token;
-  const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
 
   const isAuth =
     isIpAllowed(req) ||
     (sessionCookie && isValidAdminSession(sessionCookie)) ||
-    (token && ((secret && token === secret) || isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
+    (token && (isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
 
   if (!isAuth) {
     return res.status(401).send('401 Unauthorized');

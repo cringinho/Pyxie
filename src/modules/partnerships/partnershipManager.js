@@ -822,7 +822,7 @@ class PartnershipManager {
 
     app.post('/api/partnerships/bump/:id', async (req, res) => {
       const lang = detectLang(req);
-      const ip = String(req.headers['x-forwarded-for'] || req.ip || '').split(',')[0].trim() || 'unknown';
+      const ip = String(req.ip || req.socket?.remoteAddress || '').trim() || 'unknown';
       if (this.rateLimited(ip)) {
         return res.status(429).json({ success: false, message: t('partnerships.rate_limited', lang) });
       }

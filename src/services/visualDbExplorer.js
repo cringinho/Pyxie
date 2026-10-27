@@ -332,7 +332,7 @@ function queryPartition({ partition = 'users', page = 1, limit = 15, search = ''
         name: 'Estúdio da Mary (SaaS)',
         active: Boolean(mary.active ?? true),
         status: '🟢 Ativo (Escopo: Mary Store)',
-        guildId: mary.guildId || CRINGELANDIA_GUILD_ID,
+        guildId: mary.guildId || require('../config/scopes').MARY_GUILD_ID,
       },
       buildDungeonRecord(),
       buildHomeRecord(),
