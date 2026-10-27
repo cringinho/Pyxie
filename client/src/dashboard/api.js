@@ -1,9 +1,10 @@
 // Chamadas à API do painel. Pedidos que mudam algo levam o cabeçalho X-Pyxie-Panel (proteção CSRF).
 export class ApiError extends Error {
-  constructor(code, status) {
+  constructor(code, status, data = {}) {
     super(code);
     this.code = code;
     this.status = status;
+    this.data = data;
   }
 }
 
@@ -21,7 +22,7 @@ async function request(path, { method = 'GET', body } = {}) {
   try {
     data = await res.json();
   } catch (_) {}
-  if (!res.ok || data.success === false) throw new ApiError(data.error || `http_${res.status}`, res.status);
+  if (!res.ok || data.success === false) throw new ApiError(data.error || `http_${res.status}`, res.status, data);
   return data;
 }
 
@@ -35,6 +36,15 @@ export const api = {
   saveFeatures: (id, body) => request(`/api/dashboard/guilds/${id}/features`, { method: 'PUT', body }),
   access: (id) => request(`/api/dashboard/guilds/${id}/access`),
   saveAccess: (id, body) => request(`/api/dashboard/guilds/${id}/access`, { method: 'PUT', body }),
+  studioList: (id) => request(`/api/dashboard/guilds/${id}/studio`),
+  studioEmojis: (id) => request(`/api/dashboard/guilds/${id}/studio-emojis`),
+  studioGet: (id, msg) => request(`/api/dashboard/guilds/${id}/studio/${msg}`),
+  studioSave: (id, msg, body) => request(`/api/dashboard/guilds/${id}/studio/${msg}`, { method: 'PUT', body }),
+  studioDelete: (id, msg) => request(`/api/dashboard/guilds/${id}/studio/${msg}`, { method: 'DELETE' }),
+  studioRestore: (id, msg, index) => request(`/api/dashboard/guilds/${id}/studio/${msg}/restore`, { method: 'POST', body: { index } }),
+  studioSend: (id, msg, channelId) => request(`/api/dashboard/guilds/${id}/studio/${msg}/send`, { method: 'POST', body: { channelId } }),
+  studioUpdateSent: (id, msg) => request(`/api/dashboard/guilds/${id}/studio/${msg}/update-sent`, { method: 'POST', body: {} }),
+  studioPreview: (id, msg) => request(`/api/dashboard/guilds/${id}/studio/${msg}/preview`, { method: 'POST', body: {} }),
   health: () => request('/api/dashboard/global/health'),
   errors: (window) => request(`/api/dashboard/global/errors?window=${window}`),
   modules: () => request('/api/dashboard/global/modules'),

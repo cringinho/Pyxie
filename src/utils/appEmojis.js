@@ -294,5 +294,6 @@ module.exports = {
   getEmoji,
   reloadEmojiConfig,
   getCustomEmojiConfig: () => ({ ...customEmojiConfig }),
+  listCanonicalKeys: () => [...new Set([...Object.keys(EMOJI_DEFINITIONS), ...Object.keys(KEY_TO_SLOT_MAP)])],
 };
 

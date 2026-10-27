@@ -329,6 +329,18 @@ const TRANSLATIONS = {
       "link_hint": "🏛️ Acesse a nossa Galeria de Artes Virtual: {url}",
       "stats": "🖼️ {count} obras no acervo"
     },
+    "messageStudio": {
+      "role_added": "✨ Pronto! Você agora tem o cargo **{role}**.",
+      "role_removed": "🍃 Tirei o cargo **{role}** de você.",
+      "role_error": "😿 Não consigo mexer nesse cargo. Avise a staff: ele pode estar acima do meu ou eu estou sem permissão.",
+      "modal_sent": "📨 Recebido! Sua resposta foi entregue à staff.",
+      "modal_error": "😿 Não achei o canal que recebe este formulário. Avise a staff, por favor.",
+      "modal_entry_by": "Enviado por {user}",
+      "not_found": "🔍 Este botão não existe mais. A mensagem pode ter sido alterada no painel.",
+      "silent_on": "🔕 Marcação silenciosa ligada: nos anúncios eu escrevo seu nome em negrito, sem notificar.",
+      "silent_off": "🔔 Marcação silenciosa desligada: voltei a te marcar normalmente nos anúncios.",
+      "generic_error": "😿 Algo deu errado com este botão. Tente de novo em instantes."
+    },
     "partnerships": {
       "title": "🤝 Central de Parcerias • Cringelândia",
       "btn_confirm": "Confirmar",
@@ -2483,6 +2495,18 @@ const TRANSLATIONS = {
       "desc": "Permanent archive of our members' creations, with retro browsing.",
       "link_hint": "🏛️ Access our Virtual Community Art Museum: {url}",
       "stats": "🖼️ {count} artworks in the archive"
+    },
+    "messageStudio": {
+      "role_added": "✨ Done! You now have the **{role}** role.",
+      "role_removed": "🍃 I removed the **{role}** role from you.",
+      "role_error": "😿 I can't manage that role. Please tell the staff: it may be above mine or I'm missing permissions.",
+      "modal_sent": "📨 Got it! Your answer was delivered to the staff.",
+      "modal_error": "😿 I couldn't find the channel that receives this form. Please tell the staff.",
+      "modal_entry_by": "Sent by {user}",
+      "not_found": "🔍 This button no longer exists. The message may have been changed in the dashboard.",
+      "silent_on": "🔕 Silent mentions on: in announcements I'll write your name in bold, without notifying you.",
+      "silent_off": "🔔 Silent mentions off: I'll mention you normally in announcements again.",
+      "generic_error": "😿 Something went wrong with this button. Try again in a moment."
     },
     "partnerships": {
       "title": "🤝 Partnership Hub • Cringelândia",

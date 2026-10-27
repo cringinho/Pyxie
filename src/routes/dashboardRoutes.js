@@ -10,6 +10,8 @@ const sessions = require('../services/panelSessions');
 const access = require('../services/panelAccess');
 const guildFeatures = require('../services/guildFeatures');
 const commandTelemetry = require('../services/commandTelemetry');
+const messageStudio = require('../services/messageStudio');
+const studioStore = require('../services/messageStudioStore');
 
 const STATE_COOKIE = 'pyxie_oauth_state';
 const GUILD_ID_RE = /^\d{17,20}$/;
@@ -22,7 +24,7 @@ function registerDashboardSection(section) {
 }
 
 function getSections(guildAccess) {
-  const base = ['overview', 'features', 'channels', 'roles'];
+  const base = ['overview', 'studio', 'features', 'channels', 'roles'];
   if (guildAccess.canManageAccess) base.push('access');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
     .filter((s) => !s.roles || s.roles.includes(guildAccess.role))
@@ -250,6 +252,77 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, features: serializeFeatures(guildId, req.guildAccess.zone) });
   });
 
+  // ---------- Estúdio de mensagens ----------
+  const MSG_ID_RE = /^[a-z0-9-]{1,40}$/;
+  function requireMsgId(req, res, next) {
+    if (!MSG_ID_RE.test(req.params.msgId)) return res.status(400).json({ success: false, error: 'invalid_message_id' });
+    return next();
+  }
+  const studioError = (res, err) => {
+    const status = err.code === 'message_not_found' ? 404 : err.code === 'channel_not_in_guild' ? 403 : 502;
+    return res.status(status).json({ success: false, error: err.code || 'studio_error' });
+  };
+
+  router.get('/api/dashboard/guilds/:guildId/studio', requireSession, requireGuild, (req, res) => {
+    return res.json({ success: true, messages: studioStore.listMessages(req.params.guildId), limits: messageStudio.LIMITS });
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/studio-emojis', requireSession, requireGuild, (req, res) => {
+    return res.json({ success: true, emojis: messageStudio.listAppEmojis() });
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/studio/:msgId', requireSession, requireGuild, requireMsgId, (req, res) => {
+    const doc = studioStore.getMessage(req.params.guildId, req.params.msgId);
+    if (!doc) return res.status(404).json({ success: false, error: 'message_not_found' });
+    return res.json({ success: true, message: doc });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/studio/:msgId', requireSession, requireGuild, requireMsgId, (req, res) => {
+    const result = studioStore.saveMessage(req.params.guildId, { ...(req.body || {}), id: req.params.msgId }, { by: req.panelSession.userId });
+    if (!result.ok) return res.status(422).json({ success: false, error: 'validation_failed', errors: result.errors });
+    return res.json({ success: true, message: result.doc });
+  });
+
+  router.delete('/api/dashboard/guilds/:guildId/studio/:msgId', requireSession, requireGuild, requireMsgId, (req, res) => {
+    if (!studioStore.deleteMessage(req.params.guildId, req.params.msgId)) return res.status(404).json({ success: false, error: 'message_not_found' });
+    return res.json({ success: true });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/studio/:msgId/restore', requireSession, requireGuild, requireMsgId, (req, res) => {
+    const result = studioStore.restoreVersion(req.params.guildId, req.params.msgId, Number(req.body?.index), { by: req.panelSession.userId });
+    if (!result.ok) return res.status(422).json({ success: false, error: 'validation_failed', errors: result.errors });
+    return res.json({ success: true, message: result.doc });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/studio/:msgId/send', requireSession, requireGuild, requireMsgId, async (req, res) => {
+    const channelId = String(req.body?.channelId || '');
+    if (!GUILD_ID_RE.test(channelId)) return res.status(400).json({ success: false, error: 'invalid_channel' });
+    try {
+      const sent = await studioStore.sendMessage(req.params.guildId, req.params.msgId, channelId, { fetchImpl: doFetch, by: req.panelSession.userId });
+      return res.json({ success: true, sent });
+    } catch (err) {
+      return studioError(res, err);
+    }
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/studio/:msgId/update-sent', requireSession, requireGuild, requireMsgId, async (req, res) => {
+    try {
+      return res.json({ success: true, results: await studioStore.updateSent(req.params.guildId, req.params.msgId, { fetchImpl: doFetch }) });
+    } catch (err) {
+      return studioError(res, err);
+    }
+  });
+
+  // O canal de homologação é da staff da Pyxie: só o dono manda prévias para lá.
+  router.post('/api/dashboard/guilds/:guildId/studio/:msgId/preview', requireSession, requireGuild, requireMsgId, async (req, res) => {
+    if (!access.isOwner(req.panelSession.userId)) return res.status(403).json({ success: false, error: 'owner_only' });
+    try {
+      return res.json({ success: true, sent: await studioStore.sendHomologationPreview(req.params.guildId, req.params.msgId, { fetchImpl: doFetch }) });
+    } catch (err) {
+      return studioError(res, err);
+    }
+  });
+
   // Área global: só o dono da Pyxie.
   function requireOwner(req, res, next) {
     if (!access.isOwner(req.panelSession.userId)) return res.status(403).json({ success: false, error: 'owner_only' });
@@ -293,8 +366,11 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const modules = moduleManager.getAllModules().map((m) => ({
       id: m.id,
       icon: m.icon || null,
-      name: m.nameLocalized || { 'pt-BR': m.name, en: m.name },
-      description: m.descriptionLocalized || { 'pt-BR': m.description, en: m.description },
+      name: typeof m.nameLocalized === 'object' && m.nameLocalized ? m.nameLocalized : { 'pt-BR': m.name, en: m.name },
+      description:
+        typeof m.descriptionLocalized === 'object' && m.descriptionLocalized
+          ? m.descriptionLocalized
+          : { 'pt-BR': m.description, en: m.description },
       enabled: Boolean(m.enabled ?? m.active),
       guildScope: m.guildScope || null,
     }));

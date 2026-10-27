@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from './api';
 import { detectLang, makeT } from './i18n';
 import { Button, Card, GuildIcon, MultiSelect, Notice, Spinner, Toggle } from './ui';
+import Studio from './Studio';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
 function parseHash() {
@@ -219,6 +220,7 @@ function GuildView({ t, lang, guildId, section, me }) {
       </div>
       <Tabs items={tabs} active={current} onSelect={(id) => go(`#/guild/${guildId}/${id}`)} />
       {current === 'overview' && <Overview t={t} guild={guild} zone={zone} role={role} />}
+      {current === 'studio' && <Studio t={t} guildId={guildId} guildName={guild?.name || ''} isOwner={me.user.isOwner} />}
       {current === 'features' && <Features t={t} guildId={guildId} />}
       {current === 'channels' && <Channels t={t} guildId={guildId} />}
       {current === 'roles' && <Roles t={t} guildId={guildId} />}
