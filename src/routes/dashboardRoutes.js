@@ -2,10 +2,14 @@
 // Toda rota de servidor confere a permissão ao vivo pelo bot (panelAccess.checkGuildAccess):
 // esconder na tela não basta, o backend recusa.
 const crypto = require('node:crypto');
+const fs = require('node:fs');
+const path = require('node:path');
 const express = require('express');
 const oauth = require('../services/discordOAuth');
 const sessions = require('../services/panelSessions');
 const access = require('../services/panelAccess');
+const guildFeatures = require('../services/guildFeatures');
+const commandTelemetry = require('../services/commandTelemetry');
 
 const STATE_COOKIE = 'pyxie_oauth_state';
 const GUILD_ID_RE = /^\d{17,20}$/;
@@ -18,7 +22,7 @@ function registerDashboardSection(section) {
 }
 
 function getSections(guildAccess) {
-  const base = ['overview', 'channels', 'roles'];
+  const base = ['overview', 'features', 'channels', 'roles'];
   if (guildAccess.canManageAccess) base.push('access');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
     .filter((s) => !s.roles || s.roles.includes(guildAccess.role))
@@ -36,7 +40,48 @@ function logMissingConfig() {
   );
 }
 
-function createDashboardRouter({ bridge, fetchImpl } = {}) {
+// Tamanho da pasta data/ (cache de 1 minuto: a pasta tem milhares de arquivos).
+let dataSizeCache = { at: 0, bytes: 0 };
+function getDataDirBytes() {
+  if (Date.now() - dataSizeCache.at < 60000) return dataSizeCache.bytes;
+  const root = process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data');
+  let total = 0;
+  const walk = (dir) => {
+    let entries = [];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch (_) {
+      return;
+    }
+    for (const e of entries) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) walk(full);
+      else {
+        try {
+          total += fs.statSync(full).size;
+        } catch (_) {}
+      }
+    }
+  };
+  walk(root);
+  dataSizeCache = { at: Date.now(), bytes: total };
+  return total;
+}
+
+function serializeFeatures(guildId, zone) {
+  const f = guildFeatures.getGuildFeatures(guildId);
+  const groups = Object.entries(guildFeatures.FEATURE_GROUPS)
+    .filter(([, def]) => def.toggleable)
+    .map(([id, def]) => ({ id, emoji: def.emoji, enabled: !f.disabled.includes(id), channelScoped: def.channelScoped, commands: def.names }));
+  return {
+    groups,
+    channels: { games: f.channels.games || [] },
+    // Rotas por comando: só a Cringelândia usa (ex.: /py-dungeon só no canal das Catacumbas).
+    commandChannels: zone === 'cringelandia' ? f.commandChannels : null,
+  };
+}
+
+function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot, getWebStatus } = {}) {
   const router = express.Router();
   const doFetch = fetchImpl || ((...args) => fetch(...args));
 
@@ -66,6 +111,13 @@ function createDashboardRouter({ bridge, fetchImpl } = {}) {
     req.guildAccess = result;
     return next();
   }
+
+  // Tela do painel (React em client/, build em public/dist/dashboard). Fora dos buscadores.
+  router.get(['/dashboard', '/dashboard/'], (req, res) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    res.setHeader('Cache-Control', 'no-store');
+    return res.sendFile(path.join(__dirname, '..', '..', 'public', 'dist', 'dashboard', 'dashboard.html'));
+  });
 
   router.get('/auth/discord', (req, res) => {
     if (!oauth.isConfigured()) {
@@ -176,6 +228,87 @@ function createDashboardRouter({ bridge, fetchImpl } = {}) {
     if (!req.guildAccess.canManageAccess) return res.status(403).json({ success: false, error: 'guild_owner_only' });
     const whitelist = access.writeWhitelist(req.params.guildId, req.body || {});
     return res.json({ success: true, whitelist });
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/features', requireSession, requireGuild, (req, res) => {
+    return res.json({ success: true, features: serializeFeatures(req.params.guildId, req.guildAccess.zone) });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/features', requireSession, requireGuild, (req, res) => {
+    const { guildId } = req.params;
+    const body = req.body || {};
+    if (body.groups && typeof body.groups === 'object') {
+      for (const [group, enabled] of Object.entries(body.groups)) {
+        if (guildFeatures.FEATURE_GROUPS[group]?.toggleable) guildFeatures.setGroupEnabled(guildId, group, Boolean(enabled));
+      }
+    }
+    if (Array.isArray(body.channels?.games)) guildFeatures.setGroupChannels(guildId, 'games', body.channels.games);
+    if (body.commandChannels && typeof body.commandChannels === 'object') {
+      if (req.guildAccess.zone !== 'cringelandia') return res.status(403).json({ success: false, error: 'cringelandia_only' });
+      guildFeatures.setCommandChannels(guildId, body.commandChannels);
+    }
+    return res.json({ success: true, features: serializeFeatures(guildId, req.guildAccess.zone) });
+  });
+
+  // Área global: só o dono da Pyxie.
+  function requireOwner(req, res, next) {
+    if (!access.isOwner(req.panelSession.userId)) return res.status(403).json({ success: false, error: 'owner_only' });
+    return next();
+  }
+
+  router.get('/api/dashboard/global/health', requireSession, requireOwner, async (req, res) => {
+    let bot = null;
+    try {
+      bot = await bridge.request('BOT_HEALTH');
+    } catch (err) {
+      bot = { error: err.code || 'bridge_error' };
+    }
+    const mem = process.memoryUsage();
+    return res.json({
+      success: true,
+      web: {
+        rssMb: +(mem.rss / 1024 / 1024).toFixed(1),
+        uptimeSec: Math.floor(process.uptime()),
+        node: process.version,
+        ...(typeof getWebStatus === 'function' ? getWebStatus() : {}),
+      },
+      bot,
+      dataDirMb: +(getDataDirBytes() / 1024 / 1024).toFixed(1),
+    });
+  });
+
+  router.get('/api/dashboard/global/errors', requireSession, requireOwner, (req, res) => {
+    const timeWindow = ['24h', '7d', '30d'].includes(req.query.window) ? req.query.window : '7d';
+    const ranking = commandTelemetry.getRanking({ timeWindow });
+    const list = (Array.isArray(ranking) ? ranking : ranking.commands || [])
+      .filter((c) => c.errors > 0)
+      .sort((a, b) => b.errors - a.errors)
+      .slice(0, 50)
+      .map((c) => ({ name: c.name, errors: c.errors, total: c.total, lastUsed: c.lastUsed || 0 }));
+    return res.json({ success: true, window: timeWindow, commands: list });
+  });
+
+  router.get('/api/dashboard/global/modules', requireSession, requireOwner, (req, res) => {
+    if (!moduleManager) return res.status(503).json({ success: false, error: 'modules_unavailable' });
+    const modules = moduleManager.getAllModules().map((m) => ({
+      id: m.id,
+      icon: m.icon || null,
+      name: m.nameLocalized || { 'pt-BR': m.name, en: m.name },
+      description: m.descriptionLocalized || { 'pt-BR': m.description, en: m.description },
+      enabled: Boolean(m.enabled ?? m.active),
+      guildScope: m.guildScope || null,
+    }));
+    return res.json({ success: true, modules });
+  });
+
+  router.post('/api/dashboard/global/modules/:id/toggle', requireSession, requireOwner, (req, res) => {
+    if (!moduleManager) return res.status(503).json({ success: false, error: 'modules_unavailable' });
+    const { id } = req.params;
+    if (!moduleManager.getAllModules().some((m) => m.id === id)) return res.status(404).json({ success: false, error: 'module_not_found' });
+    const enabled = Boolean(req.body?.enabled);
+    moduleManager.setModuleConfigState(id, enabled);
+    if (typeof sendIpcToBot === 'function') sendIpcToBot({ type: 'MODULE_TOGGLE', moduleId: id, enabled });
+    return res.json({ success: true, moduleId: id, enabled });
   });
 
   return router;

@@ -831,13 +831,13 @@ class PartnershipManager {
       res.status(status).json(body);
     });
 
-    const { requireAdminAuth, isValidAdminSession, isIpAllowed } = require('../../services/adminAuth');
+    const { requireAdminAuth, isValidAdminSession, isIpAllowed, hasOwnerPanelSession } = require('../../services/adminAuth');
 
     // Rota de visualização da página administrativa dedicada (/admin/parcerias)
     app.get('/admin/parcerias', (req, res) => {
       const cookieHeader = req.headers.cookie;
       const sessionCookie = cookieHeader ? (cookieHeader.match(/(?:^|;\s*)pyxie_admin_session=([^;]*)/)?.[1] || null) : null;
-      const isAuthed = (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
+      const isAuthed = hasOwnerPanelSession(req) || (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
 
       if (!isAuthed) {
         return res.redirect('/admin');

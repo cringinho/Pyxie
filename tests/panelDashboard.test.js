@@ -206,7 +206,17 @@ function cookieFor(userId, guilds = []) {
     process.env.PANEL_SECRET = saved;
     console.log('  ✅ 7. Logout e recusa sem segredo configurado.');
 
-    console.log('🎉 [TEST] Painel novo (etapa 1) validado!');
+    // 8. Dicionário das telas do painel: mesmas chaves e placeholders em pt e en.
+    const { DASH_I18N } = await import(require('node:url').pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'dashboard', 'i18n.js')).href);
+    const ptKeys = Object.keys(DASH_I18N.pt).sort();
+    assert.deepEqual(Object.keys(DASH_I18N.en).sort(), ptKeys, 'Painel: chaves pt e en idênticas');
+    for (const k of ptKeys) {
+      const ph = (s) => (s.match(/\{\w+\}/g) || []).sort().join();
+      assert.equal(ph(DASH_I18N.en[k]), ph(DASH_I18N.pt[k]), `Painel: placeholders iguais em ${k}`);
+    }
+    console.log('  ✅ 8. Telas do painel bilíngues (pt/en).');
+
+    console.log('🎉 [TEST] Painel novo validado!');
   } finally {
     server.close();
     fs.rmSync(tmpDir, { recursive: true, force: true });

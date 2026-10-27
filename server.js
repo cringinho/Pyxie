@@ -224,6 +224,7 @@ const {
   isValidAdminSession,
   isMasterSecretValid,
   createMasterAdminSession,
+  hasOwnerPanelSession,
 } = require('./src/services/adminAuth');
 const { getHelpModules } = require('./src/commands/commandHelpers');
 
@@ -240,6 +241,7 @@ function requireAdminAuth(req, res, next) {
   const queryToken = req.query.token || req.headers['x-api-key'];
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
 
+  if (hasOwnerPanelSession(req)) return next();
   if (bearerToken && isMasterSecretValid(bearerToken)) return next();
   if (queryToken && isMasterSecretValid(queryToken)) return next();
   if (sessionCookie && isValidAdminSession(sessionCookie)) return next();
@@ -324,7 +326,18 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rotas da API Master SaaS Dashboard
 app.use('/', createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }));
-app.use('/', createDashboardRouter({ bridge: botBridge, sendIpcToBot }));
+app.use(
+  '/',
+  createDashboardRouter({
+    bridge: botBridge,
+    sendIpcToBot,
+    moduleManager,
+    getWebStatus: () => {
+      const { running, pid } = getBotStatus();
+      return { botProcessRunning: running, botPid: pid };
+    },
+  })
+);
 
 // Tratamento gracioso de payloads JSON malformados
 app.use((err, req, res, next) => {
@@ -1068,7 +1081,7 @@ app.get('/admin', (req, res) => {
   }
 
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
-  const hasValidSession = (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
+  const hasValidSession = hasOwnerPanelSession(req) || (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
 
   if (!hasValidSession) {
     return res.sendFile(path.join(__dirname, 'public', 'admin_login.html'));
@@ -1235,6 +1248,7 @@ app.get('/admin/emojis', async (req, res) => {
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
 
   const isAuth =
+    hasOwnerPanelSession(req) ||
     isIpAllowed(req) ||
     (sessionCookie && isValidAdminSession(sessionCookie)) ||
     (token && (isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
@@ -1718,6 +1732,7 @@ app.post('/admin/emojis', (req, res) => {
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
 
   const isAuth =
+    hasOwnerPanelSession(req) ||
     isIpAllowed(req) ||
     (sessionCookie && isValidAdminSession(sessionCookie)) ||
     (token && (isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
@@ -2261,148 +2276,6 @@ app.get('/api/logs', requireAdminAuth, (req, res) => {
     count: rawLogs.length,
     telemetry: getSystemTelemetry(),
   });
-});
-
-app.post('/api/admin/terminal/exec', requireAdminAuth, async (req, res) => {
-  const cmd = String(req.body?.command || '').trim();
-  if (!cmd) return res.json({ success: false, output: 'Comando vazio.' });
-
-  const parts = cmd.split(/\s+/);
-  const action = parts[0].toLowerCase();
-  const args = parts.slice(1);
-
-  try {
-    if (action === 'help') {
-      return res.json({
-        success: true,
-        output: [
-          '⚡ Pyxie Administrative CLI v2.0',
-          '====================================================',
-          '  help             - Exibe este manual com comandos disponíveis',
-          '  status           - Telemetria de memória, CPU, PID e Uptime',
-          '  stats            - Estatísticas de uso da Pyxie (comandos, usuários)',
-          '  ping             - Testa latência e tempo de resposta do servidor',
-          '  shopee           - Resumo e diagnóstico dos links de afiliados',
-          '  eco              - Parâmetros vigentes da economia do bot',
-          '  test-log <msg>   - Dispara uma linha de log para teste do terminal',
-          '  reload-emojis    - Recarrega mapeamentos de emojis em tempo real',
-          '  clear            - Limpa o visor do terminal',
-          '  restart          - Reinicia o processo da Pyxie',
-          '====================================================',
-        ].join('\n'),
-      });
-    }
-
-    if (action === 'status') {
-      const t = getSystemTelemetry();
-      const ramPercent = Math.min(100, Math.round((t.processMemRssMb / 160) * 100));
-      return res.json({
-        success: true,
-        output: [
-          `🤖 Status da Pyxie • ${t.platform} [Node ${t.nodeVersion}]`,
-          `├─ Servidor Web: PID ${t.pid} | Uptime: ${Math.floor(t.serverUptimeSec / 3600)}h ${Math.floor((t.serverUptimeSec % 3600) / 60)}m ${t.serverUptimeSec % 60}s`,
-          `├─ Bot Discord: ${t.botRunning ? '🟢 ONLINE' : '🔴 OFFLINE'} (PID ${t.botPid || 'PM2 gerenciado'}) | Uptime: ${Math.floor(t.botUptimeSec / 3600)}h ${Math.floor((t.botUptimeSec % 3600) / 60)}m`,
-          `├─ RAM do Processo (RSS): ${t.processMemRssMb} MB / 160 MB (${ramPercent}%) | Heap: ${t.heapUsedMb} MB / ${t.heapTotalMb} MB`,
-          `├─ Memória do Sistema: ${t.freeMemMb} MB livres de ${t.totalMemMb} MB totais`,
-          `└─ Atividade: ${t.stats.commands} comandos executados | ${t.stats.messages} msgs | ${t.stats.uniqueUsersCount} usuários ativos`,
-        ].join('\n'),
-      });
-    }
-
-    if (action === 'stats') {
-      const s = getStats();
-      return res.json({
-        success: true,
-        output: JSON.stringify(s, null, 2),
-      });
-    }
-
-    if (action === 'ping') {
-      const mem = process.memoryUsage();
-      return res.json({
-        success: true,
-        output: `🏓 Pong! Latência interna do servidor: < 1ms | RSS: ${(mem.rss / 1024 / 1024).toFixed(1)}MB | Loop de eventos operacional.`,
-      });
-    }
-
-    if (action === 'shopee') {
-      const items = shopeeManager.getAllItems();
-      const active = items.filter((i) => i.active !== false).length;
-      return res.json({
-        success: true,
-        output: [
-          `🛍️ Afiliados Shopee • ${active}/${items.length} ativos`,
-          `├─ Produtos cadastrados: ${items.length}`,
-          `├─ Produtos ativos no bot e web: ${active}`,
-          `└─ Link canônico: https://s.shopee.com.br/BU6Bod6Sw`,
-        ].join('\n'),
-      });
-    }
-
-    if (action === 'clear') {
-      return res.json({
-        success: true,
-        clear: true,
-        output: 'Terminal limpo.',
-      });
-    }
-
-    if (action === 'eco') {
-      const eco = getEconomyConfig();
-      return res.json({
-        success: true,
-        output: [
-          `🪙 Configuração de Economia`,
-          `├─ Bônus Mínimo: ${eco.minimum} moedinhas`,
-          `├─ Bônus Máximo: ${eco.maximum} moedinhas`,
-          `└─ Cooldown Diário: 24 horas`,
-        ].join('\n'),
-      });
-    }
-
-    if (action === 'test-log') {
-      const msg = args.join(' ') || 'Log de teste disparado manualmente pelo console administrativo.';
-      addLog(`[DIAGNOSTIC] ${msg}`);
-      return res.json({
-        success: true,
-        output: `✅ Log de teste registrado: "${msg}"`,
-      });
-    }
-
-    if (action === 'reload-emojis') {
-      reloadEmojiConfig();
-      sendIpcToBot({ type: 'RELOAD_EMOJIS' });
-      return res.json({
-        success: true,
-        output: '✨ Configuração de emojis recarregada em tempo real com sucesso!',
-      });
-    }
-
-    if (action === 'setup-ssh' || action === 'sync-ssh') {
-      const resSsh = ensureSshKeys();
-      return res.json({
-        success: resSsh.success,
-        output: resSsh.message,
-      });
-    }
-
-    if (action === 'restart') {
-      setTimeout(async () => {
-        await restartBot();
-      }, 500);
-      return res.json({
-        success: true,
-        output: '🔄 Sinal de reinício enviado para o bot Pyxie.',
-      });
-    }
-
-    return res.json({
-      success: false,
-      output: `Comando desconhecido: "${action}". Digite "help" para ver a lista de comandos disponíveis.`,
-    });
-  } catch (err) {
-    return res.status(500).json({ success: false, output: `Erro ao executar comando: ${err.message}` });
-  }
 });
 
 app.get('/api/stats', (req, res) => {

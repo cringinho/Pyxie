@@ -239,7 +239,15 @@ function getCookie(req, name) {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
+// O dono logado no painel novo (login com Discord) também abre as telas antigas na transição.
+function hasOwnerPanelSession(req) {
+  const panelSessions = require('./panelSessions');
+  const session = panelSessions.readCookieValue(panelSessions.getCookie(req));
+  return Boolean(session && session.userId === OWNER_SNOWFLAKE);
+}
+
 function requireAdminAuth(req, res, next) {
+  if (hasOwnerPanelSession(req)) return next();
   const authHeader = req.headers?.authorization;
   const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
   const queryToken = req.query?.token || req.headers?.['x-api-key'];
@@ -268,6 +276,7 @@ module.exports = {
   verifyMagicToken,
   isValidAdminSession,
   isMasterSecretValid,
+  hasOwnerPanelSession,
   requireAdminAuth,
   getCookie,
 };

@@ -15,6 +15,20 @@ const handlers = {
     }));
   },
 
+  // Saúde do processo do bot e da conexão com o Discord.
+  async BOT_HEALTH(client) {
+    const mem = process.memoryUsage();
+    return {
+      ready: client.isReady(),
+      wsPingMs: Math.round(client.ws.ping),
+      wsStatus: client.ws.status,
+      guildCount: client.guilds.cache.size,
+      uptimeMs: client.uptime || 0,
+      rssMb: +(mem.rss / 1024 / 1024).toFixed(1),
+      heapUsedMb: +(mem.heapUsed / 1024 / 1024).toFixed(1),
+    };
+  },
+
   // Permissão atual de um membro: dono da guild, Administrator e cargos.
   async MEMBER_ACCESS(client, { guildId, userId }) {
     const guild = client.guilds.cache.get(String(guildId));
