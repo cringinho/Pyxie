@@ -225,7 +225,7 @@ function GuildView({ t, lang, guildId, section, me }) {
       {current === 'channels' && <Channels t={t} guildId={guildId} />}
       {current === 'roles' && <Roles t={t} guildId={guildId} />}
       {current === 'access' && <Access t={t} guildId={guildId} />}
-      {current === 'tools' && <Tools t={t} zone={zone} lang={lang} />}
+      {current === 'tools' && <Tools t={t} zone={zone} lang={lang} guildId={guildId} isOwner={me.user.isOwner} />}
     </div>
   );
 }
@@ -466,7 +466,7 @@ function Access({ t, guildId }) {
   );
 }
 
-function Tools({ t, zone, lang }) {
+function Tools({ t, zone, lang, guildId, isOwner }) {
   const suffix = lang === 'en' ? '?lang=en' : '';
   if (zone === 'mary') {
     return (
@@ -484,14 +484,61 @@ function Tools({ t, zone, lang }) {
     { href: '/admin', label: t('tools.legacy') },
   ];
   return (
-    <Card title={t('tools.title')}>
-      <p className="mb-4 text-sm text-white/70">{t('tools.hint')}</p>
-      <div className="grid gap-2">
-        {links.map((l) => (
-          <a key={l.href} href={l.href} className="flex min-h-[48px] items-center rounded-xl bg-white/5 px-4 font-semibold hover:bg-white/10">
-            {l.label}
-          </a>
-        ))}
+    <div className="space-y-4">
+      <Card title={t('tools.title')}>
+        <p className="mb-4 text-sm text-white/70">{t('tools.hint')}</p>
+        <div className="grid gap-2">
+          {links.map((l) => (
+            <a key={l.href} href={l.href} className="flex min-h-[48px] items-center rounded-xl bg-white/5 px-4 font-semibold hover:bg-white/10">
+              {l.label}
+            </a>
+          ))}
+        </div>
+      </Card>
+      {isOwner && <PartnershipDm t={t} guildId={guildId} />}
+    </div>
+  );
+}
+
+// Texto da DM de aprovação de parceria puxado do fórum (só o dono, só na Cringelândia).
+function PartnershipDm({ t, guildId }) {
+  const source = useLoad(() => api.partnershipDm(guildId), [guildId]);
+  const [draft, setDraft] = useState(null);
+  const [status, setStatus] = useState(null);
+  useEffect(() => {
+    if (source.data) setDraft(source.data.dmSource);
+  }, [source.data]);
+  if (!draft) return source.error ? <ErrorNotice t={t} code={source.error} /> : <Spinner label={t('app.loading')} />;
+  const digits = (v) => v.replace(/\D/g, '');
+  const save = async () => {
+    setStatus(null);
+    try {
+      const res = await api.savePartnershipDm(guildId, draft);
+      setDraft(res.dmSource);
+      setStatus('ok');
+    } catch (err) {
+      setStatus(err.code || 'generic');
+    }
+  };
+  const input = (key, label) => (
+    <label className="block">
+      <span className="mb-1 block text-xs font-semibold text-white/70">{label}</span>
+      <input value={draft[key] || ''} onChange={(e) => setDraft({ ...draft, [key]: digits(e.target.value) })} inputMode="numeric" className="min-h-[44px] w-full rounded-xl border border-white/10 bg-white/5 px-3 font-mono text-sm" />
+    </label>
+  );
+  return (
+    <Card title={t('partnerDm.title')}>
+      <p className="mb-3 text-sm text-white/70">{t('partnerDm.hint')}</p>
+      <div className="space-y-3">
+        {input('threadId', t('partnerDm.thread'))}
+        {input('authorId', t('partnerDm.author'))}
+        {input('reportChannelId', t('partnerDm.report'))}
+        <p className="text-xs text-white/50">{t('partnerDm.fallback')}</p>
+        {status === 'ok' && <Notice tone="ok">{t('features.saved')}</Notice>}
+        {status && status !== 'ok' && <ErrorNotice t={t} code={status} />}
+        <Button onClick={save} className="w-full">
+          {t('features.save')}
+        </Button>
       </div>
     </Card>
   );

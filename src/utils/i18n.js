@@ -339,7 +339,8 @@ const TRANSLATIONS = {
       "not_found": "🔍 Este botão não existe mais. A mensagem pode ter sido alterada no painel.",
       "silent_on": "🔕 Marcação silenciosa ligada: nos anúncios eu escrevo seu nome em negrito, sem notificar.",
       "silent_off": "🔔 Marcação silenciosa desligada: voltei a te marcar normalmente nos anúncios.",
-      "generic_error": "😿 Algo deu errado com este botão. Tente de novo em instantes."
+      "generic_error": "😿 Algo deu errado com este botão. Tente de novo em instantes.",
+      "silent_button": "Marcação silenciosa"
     },
     "partnerships": {
       "title": "🤝 Central de Parcerias • Cringelândia",
@@ -394,6 +395,11 @@ const TRANSLATIONS = {
       "public_web_mural": "🌐 **Mural no Site:** {url}",
       "public_bump_streak": "⚡ **Impulsos no Site:** {count}",
       "dm_approved": "🎉 Sua solicitação para **{project}** foi aprovada e já está publicada em nosso canal oficial!",
+      "dm_source_sent": "✅ Mandei para {user} a sua mensagem do fórum de parcerias.",
+      "dm_source_copy": "📄 Cópia do texto enviado:\n>>> {text}",
+      "dm_source_missing": "🔍 Não achei seu texto no tópico do fórum de parcerias. Mande você para {user} (ID `{id}`).",
+      "dm_source_closed": "📪 A DM de {user} está fechada (ID `{id}`). Mande por outro caminho.",
+      "dm_source_failed": "😿 Não consegui mandar a DM para {user} (ID `{id}`): {error}",
       "dm_rejected": "Olá. A sua solicitação de parceria para **{project}** não foi aceita no momento pela equipe da Cringelândia.",
       "contact_hint": "Para conversar com o responsável, abra um tópico ou mencione {user}.",
       "radar_msg": "🚀 O projeto **{project}** acabou de ser promovido no mural do site! Acesse: {url}",
@@ -2506,7 +2512,8 @@ const TRANSLATIONS = {
       "not_found": "🔍 This button no longer exists. The message may have been changed in the dashboard.",
       "silent_on": "🔕 Silent mentions on: in announcements I'll write your name in bold, without notifying you.",
       "silent_off": "🔔 Silent mentions off: I'll mention you normally in announcements again.",
-      "generic_error": "😿 Something went wrong with this button. Try again in a moment."
+      "generic_error": "😿 Something went wrong with this button. Try again in a moment.",
+      "silent_button": "Silent mentions"
     },
     "partnerships": {
       "title": "🤝 Partnership Hub • Cringelândia",
@@ -2561,6 +2568,11 @@ const TRANSLATIONS = {
       "public_web_mural": "🌐 **Web Board:** {url}",
       "public_bump_streak": "⚡ **Website Bumps:** {count}",
       "dm_approved": "🎉 Your request for **{project}** was approved and is now live in our official channel!",
+      "dm_source_sent": "✅ I sent {user} your message from the partnership forum.",
+      "dm_source_copy": "📄 Copy of the text sent:\n>>> {text}",
+      "dm_source_missing": "🔍 I couldn't find your text in the partnership forum thread. Please send it to {user} yourself (ID `{id}`).",
+      "dm_source_closed": "📪 {user}'s DMs are closed (ID `{id}`). Please reach them another way.",
+      "dm_source_failed": "😿 I couldn't DM {user} (ID `{id}`): {error}",
       "dm_rejected": "Hello. Your partnership request for **{project}** was not accepted at this time by the Cringelândia team.",
       "contact_hint": "To talk to the applicant, open a thread or mention {user}.",
       "radar_msg": "🚀 The project **{project}** was just promoted on the website board! Check it out: {url}",

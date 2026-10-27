@@ -45,6 +45,8 @@ export const api = {
   studioSend: (id, msg, channelId) => request(`/api/dashboard/guilds/${id}/studio/${msg}/send`, { method: 'POST', body: { channelId } }),
   studioUpdateSent: (id, msg) => request(`/api/dashboard/guilds/${id}/studio/${msg}/update-sent`, { method: 'POST', body: {} }),
   studioPreview: (id, msg) => request(`/api/dashboard/guilds/${id}/studio/${msg}/preview`, { method: 'POST', body: {} }),
+  partnershipDm: (id) => request(`/api/dashboard/guilds/${id}/partnership-dm`),
+  savePartnershipDm: (id, body) => request(`/api/dashboard/guilds/${id}/partnership-dm`, { method: 'PUT', body }),
   health: () => request('/api/dashboard/global/health'),
   errors: (window) => request(`/api/dashboard/global/errors?window=${window}`),
   modules: () => request('/api/dashboard/global/modules'),

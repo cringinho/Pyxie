@@ -504,6 +504,83 @@ function EmojiPicker({ emojis, t, onClose }) {
   );
 }
 
+// Data e hora no horário do aparelho (datetime-local) <-> epoch em ms.
+const toLocalInput = (ms) => {
+  if (!ms) return '';
+  const d = new Date(ms);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
+function DeliveryEditor({ t, doc, channels, onChange }) {
+  const d = doc.delivery;
+  const identity = doc.envelope.identity;
+  const channelOpts = [{ value: '', label: '—' }, ...channels.map((c) => ({ value: c.id, label: `#${c.name}` }))];
+  const setDelivery = (patch) => onChange({ delivery: { ...d, ...patch } });
+  const setIdentity = (patch) => onChange({ envelope: { ...doc.envelope, identity: { ...identity, ...patch } } });
+  return (
+    <Card title={t('studio.delivery')}>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Toggle label={t('studio.schedule')} checked={Boolean(d.schedule)} onChange={(v) => setDelivery({ schedule: v ? { at: Date.now() + 3600000, channelId: '' } : null })} />
+          {d.schedule && (
+            <>
+              <label className="block">
+                <Label>{t('studio.scheduleAt')}</Label>
+                <input type="datetime-local" value={toLocalInput(d.schedule.at)} onChange={(e) => setDelivery({ schedule: { ...d.schedule, at: new Date(e.target.value).getTime() || 0 } })} className={field} />
+              </label>
+              <Select label={t('studio.channel')} value={d.schedule.channelId} onChange={(v) => setDelivery({ schedule: { ...d.schedule, channelId: v } })} options={channelOpts} />
+            </>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Toggle label={t('studio.repeat')} checked={Boolean(d.repeat)} onChange={(v) => setDelivery({ repeat: v ? { everyHours: 24, minMessages: 20, channelId: '' } : null })} />
+          {d.repeat && (
+            <>
+              <div className="grid grid-cols-2 gap-2">
+                <Input type="number" label={t('studio.everyHours')} value={String(d.repeat.everyHours)} onChange={(v) => setDelivery({ repeat: { ...d.repeat, everyHours: Number(v) } })} />
+                <Input type="number" label={t('studio.minMessages')} value={String(d.repeat.minMessages)} onChange={(v) => setDelivery({ repeat: { ...d.repeat, minMessages: Number(v) } })} />
+              </div>
+              <Select label={t('studio.channel')} value={d.repeat.channelId} onChange={(v) => setDelivery({ repeat: { ...d.repeat, channelId: v } })} options={channelOpts} />
+              <p className="text-xs text-white/50">{t('studio.repeatHint')}</p>
+            </>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Toggle label={t('studio.sticky')} checked={Boolean(d.sticky)} onChange={(v) => setDelivery({ sticky: v ? { channelId: '', delaySec: 15 } : null })} />
+          {d.sticky && (
+            <>
+              <Select label={t('studio.channel')} value={d.sticky.channelId} onChange={(v) => setDelivery({ sticky: { ...d.sticky, channelId: v } })} options={channelOpts} />
+              <Input type="number" label={t('studio.stickyDelay')} value={String(d.sticky.delaySec)} onChange={(v) => setDelivery({ sticky: { ...d.sticky, delaySec: Number(v) } })} />
+              <p className="text-xs text-white/50">{t('studio.stickyHint')}</p>
+            </>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Toggle label={t('studio.source')} checked={Boolean(d.source)} onChange={(v) => setDelivery({ source: v ? { threadId: '', authorId: '' } : null })} />
+          {d.source && (
+            <>
+              <Input label={t('studio.sourceThread')} value={d.source.threadId} onChange={(v) => setDelivery({ source: { ...d.source, threadId: v.replace(/\D/g, '') } })} />
+              <Input label={t('studio.sourceAuthor')} value={d.source.authorId} onChange={(v) => setDelivery({ source: { ...d.source, authorId: v.replace(/\D/g, '') } })} />
+              <p className="text-xs text-white/50">{t('studio.sourceHint')}</p>
+            </>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Toggle label={t('studio.identity')} checked={identity.useWebhook} onChange={(v) => setIdentity({ useWebhook: v })} />
+          {identity.useWebhook && (
+            <>
+              <Input label={t('studio.identityName')} value={identity.username} maxLength={80} onChange={(v) => setIdentity({ username: v })} />
+              <Input label={t('studio.identityAvatar')} value={identity.avatarUrl} placeholder="https://" onChange={(v) => setIdentity({ avatarUrl: v })} />
+              <p className="text-xs text-white/50">{t('studio.identityHint')}</p>
+            </>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 function validationText(t, err) {
   return t(`studio.err.${err.code}`, { path: err.path, limit: err.limit ?? '' });
 }
@@ -776,6 +853,8 @@ function Editor({ t, guildId, guildName, isOwner, limits, initial, onClose }) {
           </div>
         </Card>
       )}
+
+      <DeliveryEditor t={t} doc={doc} channels={channels} onChange={(patch) => set(patch)} />
 
       <Card title={t('studio.actions')}>
         <div className="space-y-3">

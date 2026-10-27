@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
 const {
   loadConfig,
   loadData,
@@ -171,27 +171,62 @@ function trackMessage(message) {
 }
 
 /**
- * Divide uma lista de menções para garantir que caiba no limite de 2000 caracteres do Discord.
+ * Divide os premiados em mensagens de até ~1800 caracteres. Quem ligou a marcação silenciosa
+ * (mentionPrefs) aparece em **negrito**, sem ping; os outros são marcados normalmente.
+ * Devolve [{ text, allowedUserIds }].
  */
-function splitMentions(userIds, maxChars = 1800) {
+function splitMentions(userIds, guild = null, maxChars = 1800) {
+  const mentionPrefs = require('../../services/mentionPrefs');
   const chunks = [];
-  let current = '';
+  let current = { parts: [], users: [] };
+  let length = 0;
 
   for (const id of userIds) {
-    const mention = `<@${id}> `;
-    if ((current + mention).length > maxChars) {
-      if (current.trim().length > 0) chunks.push(current.trim());
-      current = mention;
-    } else {
-      current += mention;
+    const member = guild?.members?.cache?.get(id);
+    const { text, allowedUserIds } = guild
+      ? mentionPrefs.formatMentions(guild.id, [{ id, displayName: member?.displayName || member?.user?.username }], ' ')
+      : { text: `<@${id}>`, allowedUserIds: [id] };
+    // O Discord aceita no máximo 100 IDs em allowedMentions.users por mensagem.
+    if (current.parts.length && (length + text.length + 1 > maxChars || current.users.length + allowedUserIds.length > 100)) {
+      chunks.push({ text: current.parts.join(' '), allowedUserIds: current.users });
+      current = { parts: [], users: [] };
+      length = 0;
     }
+    current.parts.push(text);
+    current.users.push(...allowedUserIds);
+    length += text.length + 1;
   }
 
-  if (current.trim().length > 0) {
-    chunks.push(current.trim());
-  }
-
+  if (current.parts.length) chunks.push({ text: current.parts.join(' '), allowedUserIds: current.users });
   return chunks;
+}
+
+// Botão do próprio anúncio para a pessoa ligar ou desligar a marcação silenciosa (tratado pelo message-studio).
+function silentToggleRow(guild) {
+  const { t } = require('../../utils/i18n');
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId('pyxs:silent:seasonal:toggle')
+      .setStyle(ButtonStyle.Secondary)
+      .setEmoji('🔕')
+      .setLabel(t('messageStudio.silent_button', guild || 'pt'))
+  );
+}
+
+async function announceWinners(channel, header, embed, userIds, config) {
+  const chunks = splitMentions(userIds, channel.guild);
+  const flags = config.silentAnnouncements ? MessageFlags.SuppressNotifications : undefined;
+  for (let i = 0; i < chunks.length; i++) {
+    await channel
+      .send({
+        content: i === 0 ? `${header}\n${chunks[i].text}` : chunks[i].text,
+        embeds: i === 0 ? [embed] : [],
+        components: i === chunks.length - 1 ? [silentToggleRow(channel.guild)] : [],
+        allowedMentions: { parse: [], users: chunks[i].allowedUserIds },
+        flags,
+      })
+      .catch(() => null);
+  }
 }
 
 /**
@@ -236,18 +271,7 @@ async function tallyMorning(client) {
           .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!' })
           .setTimestamp();
 
-        const mentionChunks = splitMentions(userIds);
-        if (mentionChunks.length > 0) {
-          await channel.send({
-            content: `📢 **Membros premiados pela presença matinal:**\n${mentionChunks[0]}`,
-            embeds: [embed],
-          }).catch(() => null);
-
-          // Se houver mais menções devido a muitos usuários
-          for (let i = 1; i < mentionChunks.length; i++) {
-            await channel.send({ content: mentionChunks[i] }).catch(() => null);
-          }
-        }
+        await announceWinners(channel, '📢 **Membros premiados pela presença matinal:**', embed, userIds, config);
       }
     } catch (err) {
       console.error('[Seasonal:Activity] Erro ao enviar anúncio matinal no canal:', err);
@@ -300,18 +324,7 @@ async function tallyNight(client) {
           .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!' })
           .setTimestamp();
 
-        const mentionChunks = splitMentions(userIds);
-        if (mentionChunks.length > 0) {
-          await channel.send({
-            content: `📢 **Membros premiados pela vigília noturna:**\n${mentionChunks[0]}`,
-            embeds: [embed],
-          }).catch(() => null);
-
-          // Se houver mais menções devido a muitos usuários
-          for (let i = 1; i < mentionChunks.length; i++) {
-            await channel.send({ content: mentionChunks[i] }).catch(() => null);
-          }
-        }
+        await announceWinners(channel, '📢 **Membros premiados pela vigília noturna:**', embed, userIds, config);
       }
     } catch (err) {
       console.error('[Seasonal:Activity] Erro ao enviar anúncio noturno no canal:', err);

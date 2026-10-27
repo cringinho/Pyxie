@@ -155,6 +155,91 @@ const ROLE = '444444444444444444';
     assert.equal(mentionPrefs.toggleSilent(GUILD, '555555555555555555'), false);
     console.log('  ✅ 7. Preferência de marcação silenciosa.');
 
+    // 7b. Agendador: envio agendado uma vez, repetição só com atividade mínima, fonte de fórum e webhook.
+    const delivery = require('../src/services/messageStudioDelivery');
+    const posts = [];
+    let afterCount = 0;
+    const deliveryFetch = async (url, init = {}) => {
+      const ok = (body, status = 200) => ({ ok: true, status, json: async () => body });
+      const method = init.method || 'GET';
+      if (method === 'GET' && url.endsWith(`/channels/${CHANNEL}`)) return ok({ id: CHANNEL, guild_id: GUILD, type: 0 });
+      if (method === 'GET' && url.endsWith(`/guilds/${GUILD}`)) return ok({ id: GUILD, name: 'Cring', icon: null });
+      if (method === 'GET' && url.endsWith('/users/@me')) return ok({ id: '1', avatar: null });
+      if (method === 'GET' && url.includes('/messages?after=')) return ok(Array.from({ length: afterCount }, () => ({ author: { bot: false } })));
+      if (method === 'GET' && url.includes('/channels/888888888888888888/messages')) {
+        return ok([
+          { author: { id: '2' }, content: 'outra pessoa' },
+          { author: { id: '214153735281180673' }, content: 'Texto do dono no fórum', attachments: [{ url: 'https://cdn.example/arte.png' }], embeds: [] },
+        ]);
+      }
+      if (method === 'GET' && url.endsWith(`/channels/${CHANNEL}/webhooks`)) return ok([]);
+      if (method === 'POST' && url.endsWith(`/channels/${CHANNEL}/webhooks`)) return ok({ id: '5', token: 'hooktoken', application_id: '1' });
+      if (method === 'POST') {
+        posts.push({ url, body: JSON.parse(init.body) });
+        return ok({ id: String(900000000000000000 + posts.length) });
+      }
+      if (method === 'DELETE') return ok({}, 204);
+      return { ok: false, status: 404, json: async () => ({}) };
+    };
+    const at = Date.now() - 1000;
+    const scheduled = store.saveMessage(GUILD, {
+      name: 'Agendada',
+      envelope: { content: 'base', identity: { useWebhook: true, username: 'Pyxie Avisos', avatarUrl: 'https://cdn.example/a.png' } },
+      delivery: {
+        schedule: { at, channelId: CHANNEL },
+        repeat: { everyHours: 1, minMessages: 3, channelId: CHANNEL },
+        source: { threadId: '888888888888888888', authorId: '214153735281180673' },
+      },
+    });
+    assert.equal(scheduled.ok, true);
+    await delivery.tick({ now: Date.now(), fetchImpl: deliveryFetch });
+    const webhookPost = posts.find((p) => p.url.includes('/webhooks/5/hooktoken'));
+    assert(webhookPost, 'Identidade própria envia pelo webhook da Pyxie');
+    assert.equal(webhookPost.body.username, 'Pyxie Avisos');
+    assert.match(webhookPost.body.content, /Texto do dono no fórum\nhttps:\/\/cdn\.example\/arte\.png/, 'Texto puxado do fórum, anexo como link');
+    const firstRound = posts.length;
+    assert.equal(firstRound, 2, 'Agendamento e primeira repetição enviados');
+    await delivery.tick({ now: Date.now() + 2 * 3600000, fetchImpl: deliveryFetch });
+    assert.equal(posts.length, firstRound, 'Repetição não sai sem atividade mínima no canal');
+    afterCount = 3;
+    await delivery.tick({ now: Date.now() + 3 * 3600000, fetchImpl: deliveryFetch });
+    assert.equal(posts.length, firstRound + 1, 'Repetição sai quando o canal teve mensagens suficientes');
+    assert.equal(posts.filter((p) => p.url.includes('/webhooks/')).length, posts.length, 'Agendamento não repete o envio único');
+    console.log('  ✅ 7b. Agendamento, repetição com atividade mínima, fonte de fórum e webhook.');
+
+    // 7c. DM de parceria pelo fórum (plano 5.4): copia a última mensagem do dono e avisa o resultado.
+    const partnerships = require('../src/modules/partnerships/partnershipManager');
+    const OWNER = '214153735281180673';
+    const reports = [];
+    const dms = [];
+    const ownerUser = { send: async (p) => reports.push(p) };
+    const fakeThreadMessages = new Map([
+      ['m2', { author: { id: '2' }, content: 'não é do dono', attachments: new Map(), embeds: [] }],
+      ['m1', { author: { id: OWNER }, content: 'Bem-vinda à rede de parcerias!', attachments: new Map([['a', { url: 'https://cdn.example/banner.png' }]]), embeds: [] }],
+    ]);
+    partnerships.client = {
+      channels: { fetch: async (id) => (id === '777777777777777777' ? { messages: { fetch: async () => fakeThreadMessages } } : null) },
+      users: { fetch: async () => ownerUser },
+    };
+    partnerships.config.dmSource = { threadId: '777777777777777777', authorId: OWNER, reportChannelId: '' };
+    const partner = { id: '555555555555555555', send: async (p) => dms.push(p) };
+    const r1 = await partnerships.sendApprovalDm(partner, { projectName: 'Projeto' }, 'pt');
+    assert.equal(r1.mode, 'forum');
+    assert.match(dms[0].content, /Bem-vinda à rede de parcerias!\nhttps:\/\/cdn\.example\/banner\.png/);
+    assert.match(reports[0].content, /Mandei para <@555555555555555555>/);
+    const closed = { id: '555555555555555555', send: async () => { const e = new Error('closed'); e.code = 50007; throw e; } };
+    const r2 = await partnerships.sendApprovalDm(closed, { projectName: 'Projeto' }, 'pt');
+    assert.equal(r2.mode, 'failed');
+    assert.match(reports.at(-1).content, /DM de <@555555555555555555> está fechada/);
+    fakeThreadMessages.delete('m1');
+    const r3 = await partnerships.sendApprovalDm(partner, { projectName: 'Projeto' }, 'pt');
+    assert.equal(r3.mode, 'missing');
+    assert.match(reports.at(-1).content, /Não achei seu texto/);
+    partnerships.config.dmSource = { threadId: '', authorId: '', reportChannelId: '' };
+    const r4 = await partnerships.sendApprovalDm(partner, { projectName: 'Projeto' }, 'pt');
+    assert.equal(r4.mode, 'fixed', 'Sem fonte configurada usa o texto fixo');
+    console.log('  ✅ 7c. DM de parceria pelo fórum com retorno ao dono.');
+
     // 8. Textos do estúdio em pt e en.
     assert.deepEqual(Object.keys(TRANSLATIONS.pt.messageStudio).sort(), Object.keys(TRANSLATIONS.en.messageStudio).sort());
     console.log('  ✅ 8. Textos do estúdio bilíngues.');

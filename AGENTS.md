@@ -256,3 +256,9 @@ Antes de encerrar qualquer tarefa ou responder ao criador que o trabalho foi con
 - `.agents/skills/<nome>/SKILL.md`: procedimentos sob demanda (`discord-v2-multi-tenant`, `sharp-image-and-seo-saas`, `discord-minigame-module`).
 - `.agents/hooks.json` + `.agents/hooks/pre-tool-validator.sh`: veto `PreToolUse` contra mocks, nomes de tenant em novos arquivos do núcleo e payloads Components V2 inválidos.
 - `AGENTS.md` e `GEMINI.md` são mantidos idênticos.
+
+---
+
+## 13. Estúdio de Mensagens
+- Mensagens customizadas de servidor (boas-vindas, regras, painéis de cargos, avisos fixos) nascem no estúdio do painel (`/dashboard` → Mensagens), não em código. Guia: `docs/GUIA-ESTUDIO-MENSAGENS.md`.
+- Embeds de sistema do bot continuam no `src/utils/embedRegistry.js`.

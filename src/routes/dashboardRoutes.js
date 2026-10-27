@@ -323,6 +323,25 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     }
   });
 
+  // ---------- Parcerias da Cringelândia: texto da DM de aprovação puxado do fórum (plano 5.4) ----------
+  function requireCringelandiaOwner(req, res, next) {
+    if (req.guildAccess.zone !== 'cringelandia' || req.guildAccess.role !== 'owner') {
+      return res.status(403).json({ success: false, error: 'cringelandia_owner_only' });
+    }
+    return next();
+  }
+
+  router.get('/api/dashboard/guilds/:guildId/partnership-dm', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const partnerships = require('../modules/partnerships/partnershipManager');
+    return res.json({ success: true, dmSource: partnerships.getConfig().dmSource });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/partnership-dm', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const partnerships = require('../modules/partnerships/partnershipManager');
+    const saved = partnerships.saveConfig({ dmSource: req.body || {} });
+    return res.json({ success: true, dmSource: saved.dmSource });
+  });
+
   // Área global: só o dono da Pyxie.
   function requireOwner(req, res, next) {
     if (!access.isOwner(req.panelSession.userId)) return res.status(403).json({ success: false, error: 'owner_only' });

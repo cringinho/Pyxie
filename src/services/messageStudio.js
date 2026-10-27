@@ -145,6 +145,26 @@ function normalizeTab(raw = {}, index = 0) {
   };
 }
 
+const snowflake = (v) => (SNOWFLAKE_RE.test(String(v || '')) ? String(v) : '');
+const clampInt = (v, min, max) => Math.min(max, Math.max(min, Math.round(Number(v) || 0)));
+
+// Envio: agendado (data e hora), repetição com atividade mínima, fixa no fim do canal e fonte de fórum.
+function normalizeDelivery(raw = {}) {
+  const schedule = raw?.schedule && Number(raw.schedule.at) > 0 && snowflake(raw.schedule.channelId)
+    ? { at: Number(raw.schedule.at), channelId: snowflake(raw.schedule.channelId) }
+    : null;
+  const repeat = raw?.repeat && snowflake(raw.repeat.channelId) && Number(raw.repeat.everyHours) > 0
+    ? { everyHours: clampInt(raw.repeat.everyHours, 1, 168), minMessages: clampInt(raw.repeat.minMessages, 0, 100), channelId: snowflake(raw.repeat.channelId) }
+    : null;
+  const sticky = raw?.sticky && snowflake(raw.sticky.channelId)
+    ? { channelId: snowflake(raw.sticky.channelId), delaySec: clampInt(raw.sticky.delaySec || 15, 5, 120) }
+    : null;
+  const source = raw?.source && snowflake(raw.source.threadId) && snowflake(raw.source.authorId)
+    ? { threadId: snowflake(raw.source.threadId), authorId: snowflake(raw.source.authorId) }
+    : null;
+  return { channelId: snowflake(raw?.channelId), schedule, repeat, sticky, source };
+}
+
 // Documento limpo e completo, com os campos do modelo do plano (seção 5.3).
 function normalizeMessage(raw = {}) {
   const mode = raw.mode === 'v2' ? 'v2' : 'classic';
@@ -165,13 +185,7 @@ function normalizeMessage(raw = {}) {
     v2: mode === 'v2' ? normalizeV2(raw.v2) : null,
     tabs: (Array.isArray(raw.tabs) ? raw.tabs : []).slice(0, 10).map(normalizeTab),
     buttons: (Array.isArray(raw.buttons) ? raw.buttons : []).slice(0, 30).map(normalizeButton),
-    delivery: {
-      channelId: SNOWFLAKE_RE.test(raw.delivery?.channelId || '') ? raw.delivery.channelId : '',
-      schedule: raw.delivery?.schedule || null,
-      repeat: raw.delivery?.repeat || null,
-      sticky: raw.delivery?.sticky || null,
-      source: raw.delivery?.source || null,
-    },
+    delivery: normalizeDelivery(raw.delivery),
   };
 }
 

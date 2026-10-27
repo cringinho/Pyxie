@@ -133,6 +133,20 @@ module.exports = {
   handleInteraction,
 
   async onLoad(ctx) {
+    // Agendador e mensagens fixas só no processo do bot (o site também carrega os módulos).
+    if (!ctx.isBotProcess) return;
+    const delivery = require('../../services/messageStudioDelivery');
+    ctx.registerInterval(() => {
+      delivery.tick().catch((err) => console.error('[MessageStudio] Erro no agendador:', err));
+    }, 60000);
+    ctx.registerListener('messageCreate', (message) => {
+      try {
+        delivery.onMessage(message);
+      } catch (err) {
+        console.error('[MessageStudio] Erro na mensagem fixa:', err);
+      }
+    });
+
     ctx.registerListener('interactionCreate', async (interaction) => {
       try {
         await handleInteraction(interaction);
@@ -143,5 +157,9 @@ module.exports = {
         }
       }
     });
+  },
+
+  async onUnload() {
+    require('../../services/messageStudioDelivery').clearTimers();
   },
 };
