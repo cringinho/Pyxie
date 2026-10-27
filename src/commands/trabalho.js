@@ -2603,16 +2603,21 @@ async function handleWorkInteraction(interaction) {
 
   const isCriticalBonus = Math.random() < 0.02; // 2% de chance de bônus de Feijão Mágico em acertos
   const result = finishWork(sessionUserId, true, finalSalary, isCriticalBonus);
-  // Material da profissão para a oficina (/py-craft)
-  const materialDrops = grantWorkMaterials(sessionUserId, session.professionKey, { golden: session.isGoldenShift, level: session.userLevel });
-  // XP do Passe da Pyxie (/py-pass) e missão da semana do casal (Força do Laço)
-  require('../services/battlePass').safeAddXp(sessionUserId, 'work');
+  // Oficina, Passe e Festival são da Cringelândia: materiais, XP e Fagulhas só caem em turnos feitos lá.
+  const inCringelandia = interaction.guildId === require('../config/scopes').CRINGELANDIA_GUILD_ID;
+  const materialDrops = inCringelandia
+    ? grantWorkMaterials(sessionUserId, session.professionKey, { golden: session.isGoldenShift, level: session.userLevel })
+    : [];
+  require('../services/battlePass').safeAddXp(sessionUserId, 'work', { guildId: interaction.guildId });
+  // Missão da semana do casal (Força do Laço): o casamento é global
   require('../modules/marriage/coupleBond').recordActivity(sessionUserId, 'work');
   // Festival (/py-festival): 5% de chance de Fagulhas em turno certo durante uma temporada
   let festivalDrop = null;
-  try {
-    festivalDrop = require('../services/festival').rollWorkDrop(sessionUserId);
-  } catch (_) {}
+  if (inCringelandia) {
+    try {
+      festivalDrop = require('../services/festival').rollWorkDrop(sessionUserId);
+    } catch (_) {}
+  }
 
   const currentRoleTitle = getRoleTitle(session.professionKey, result.careerLevel, lang);
   const desc = [

@@ -918,7 +918,7 @@ const DAILY_STREAK_BONUS_CAP = 365;
 const DAILY_CUPS_PRIZE = 15;
 const DAILY_CUPS_COUNT = 3;
 
-function claimDaily(userId, now = Date.now()) {
+function claimDaily(userId, now = Date.now(), { guildId } = {}) {
   const status = getDailyStatus(userId, now);
   const notClaimed = (acc) => ({
     claimed: false,
@@ -959,7 +959,8 @@ function claimDaily(userId, now = Date.now()) {
   });
   if (!claimed) return notClaimed(updated);
   // XP do Passe da Pyxie (/py-pass)
-  require('./battlePass').safeAddXp(userId, 'daily', { now });
+  // Sem servidor informado (scripts e testes) conta como antes; o /py-daily sempre informa.
+  require('./battlePass').safeAddXp(userId, 'daily', guildId === undefined ? { now } : { now, guildId });
 
   return {
     claimed: true,

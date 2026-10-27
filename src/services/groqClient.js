@@ -136,8 +136,8 @@ function chatCompletion(body, { label = 'Groq', maxRetries = DEFAULT_MAX_RETRIES
 }
 
 /**
- * Uma chamada só, fora da fila dos geradores: para quem está esperando resposta (a narradora do
- * roleplay). Não espera nem tenta de novo; num 429 devolve quanto tempo aguardar.
+ * Uma chamada só, fora da fila dos geradores: para quem está esperando resposta (falas da
+ * Pyxie e moderação). Não espera nem tenta de novo; num 429 devolve quanto tempo aguardar.
  * @returns {Promise<{ ok: boolean, data?: object, rateLimited?: boolean, retryAfterMs?: number, error?: string }>}
  */
 async function chatCompletionNow(body, { label = 'Groq' } = {}) {

@@ -14,6 +14,8 @@ const store = require('./dungeonStore');
  */
 module.exports = {
   id: 'dungeon',
+  // Exclusivo do servidor oficial (plano D5): comandos registrados só em CRINGELANDIA_GUILD_ID.
+  guildScope: [require('../../config/scopes').CRINGELANDIA_GUILD_ID],
   name: {
     'pt-BR': 'Catacumbas de Veludo',
     en: 'Velvet Catacombs',

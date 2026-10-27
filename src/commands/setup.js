@@ -24,7 +24,8 @@ const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const name = 'py-setup';
 const aliases = ['setup', 'config', 'py-config', 'configurar', 'py-configurar', 'servidor', 'py-servidor', 'painel', 'py-painel'];
 
-const SECTIONS = ['overview', 'mmo', 'channels', 'modules', 'welcome', 'vent', 'tarot', 'tickets', 'language'];
+const SECTIONS = ['overview', 'channels', 'modules', 'welcome', 'vent', 'tarot', 'tickets', 'language'];
+const isCringelandia = (guildId) => String(guildId || '') === require('../config/scopes').CRINGELANDIA_GUILD_ID;
 const SECTION_EMOJI = {
   overview: '⚙️', mmo: '🗺️', channels: '📍', modules: '🧩', welcome: '👋', vent: '🫂', tarot: '🔮', tickets: '🎫', language: '🌐',
 };
@@ -63,14 +64,6 @@ function dedicatedChannelOf(guildId, feature) {
   return null;
 }
 
-function mmoStateLine(guildId, lang, now = Date.now()) {
-  const state = guildFeatures.getMmoState(guildId, now);
-  if (state === 'trial') {
-    return t('setup.mmo.stateTrial', lang, { time: ts(guildFeatures.getGuildFeatures(guildId).mmoTrialUntil) });
-  }
-  return t(state === 'full' ? 'setup.mmo.stateFull' : 'setup.mmo.stateClassic', lang);
-}
-
 function navRow(current, lang) {
   return new ActionRowBuilder().addComponents(
     new StringSelectMenuBuilder()
@@ -102,23 +95,15 @@ function baseEmbed(title, lang) {
 function buildOverview(guild, lang, now = Date.now()) {
   const guildId = guild?.id;
   const features = guildFeatures.getGuildFeatures(guildId);
-  const state = guildFeatures.getMmoState(guildId, now);
-  const demand = state === 'classic' ? guildFeatures.getMmoDemand(guildId, now) : 0;
   const on = t('setup.modules.on', lang);
   const off = t('setup.modules.off', lang);
   const notSet = t('setup.notSet', lang);
 
-  const lines = [
-    t('setup.overview.intro', lang, { server: guild?.name || 'Discord' }),
-    `### ${SECTION_EMOJI.mmo} ${t('setup.sections.mmo.label', lang)}`,
-    mmoStateLine(guildId, lang, now),
-  ];
-  if (demand > 0) lines.push(t('setup.overview.demand', lang, { count: demand }));
-  if (state === 'classic' && !features.mmoTrialUsed) lines.push(t('setup.overview.trialHint', lang));
+  const lines = [t('setup.overview.intro', lang, { server: guild?.name || 'Discord' })];
 
   lines.push(
     `### ${SECTION_EMOJI.channels} ${t('setup.sections.channels.label', lang)}`,
-    `• **${t('setup.groups.mmo', lang)}:** ${channelList(features.channels.mmo, lang)}`,
+    ...(isCringelandia(guildId) ? [`• **${t('setup.groups.mmo', lang)}:** ${channelList(features.channels.mmo, lang)}`] : []),
     `• **${t('setup.groups.games', lang)}:** ${channelList(features.channels.games, lang)}`,
     `### ${SECTION_EMOJI.modules} ${t('setup.sections.modules.label', lang)}`,
     ...TOGGLEABLE_GROUPS.map(
@@ -139,58 +124,10 @@ function buildOverview(guild, lang, now = Date.now()) {
   if (icon) embed.setThumbnail(icon);
 
   const quick = new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId('setup:go:mmo').setLabel(t('setup.sections.mmo.label', lang)).setEmoji(SECTION_EMOJI.mmo).setStyle(ButtonStyle.Primary),
     new ButtonBuilder().setCustomId('setup:go:channels').setLabel(t('setup.sections.channels.label', lang)).setEmoji(SECTION_EMOJI.channels).setStyle(ButtonStyle.Secondary),
     new ButtonBuilder().setCustomId('setup:go:overview').setLabel(t('setup.refresh', lang)).setEmoji('🔄').setStyle(ButtonStyle.Secondary)
   );
   return { embeds: [embed], components: [navRow('overview', lang), quick] };
-}
-
-/** Vitrine do Mundo Pyxie com os botões de ligar, testar e voltar ao clássico. */
-function buildMmoSection(guild, lang, now = Date.now()) {
-  const guildId = guild?.id;
-  const features = guildFeatures.getGuildFeatures(guildId);
-  const state = guildFeatures.getMmoState(guildId, now);
-  const demand = guildFeatures.getMmoDemand(guildId, now);
-
-  const lines = [
-    mmoStateLine(guildId, lang, now),
-    `### ${t('setup.mmo.whatTitle', lang)}`,
-    ...MMO_SHOWCASE.map((feature) => t(`setup.mmo.features.${feature}`, lang)),
-    `### ${t('setup.mmo.classicTitle', lang)}`,
-    t('setup.mmo.classicWhat', lang),
-    t('setup.mmo.classicKeeps', lang),
-  ];
-  if (state === 'classic' && demand > 0) lines.push(t('setup.overview.demand', lang, { count: demand }));
-  if (state === 'classic' && features.mmoTrialUsed) lines.push(t('setup.mmo.trialAlreadyUsed', lang));
-  lines.push(t('setup.overview.adminOnly', lang));
-
-  const buttons = [];
-  if (state !== 'full') {
-    buttons.push(new ButtonBuilder().setCustomId('setup:mmo:full').setLabel(t('setup.mmo.btnEnable', lang)).setEmoji('✨').setStyle(ButtonStyle.Success));
-  }
-  if (state === 'classic' && !features.mmoTrialUsed) {
-    buttons.push(new ButtonBuilder().setCustomId('setup:mmo:trial').setLabel(t('setup.mmo.btnTrial', lang)).setEmoji('🧪').setStyle(ButtonStyle.Primary));
-  }
-  if (state !== 'classic') {
-    buttons.push(new ButtonBuilder().setCustomId('setup:mmo:classic').setLabel(t('setup.mmo.btnClassic', lang)).setEmoji('🪙').setStyle(ButtonStyle.Secondary));
-  }
-
-  const embed = baseEmbed(t('setup.mmo.title', lang), lang).setDescription(lines.join('\n\n'));
-  const components = [navRow('mmo', lang)];
-  if (buttons.length) components.push(new ActionRowBuilder().addComponents(...buttons));
-  return { embeds: [embed], components };
-}
-
-function buildClassicConfirm(lang) {
-  const embed = baseEmbed(t('setup.mmo.confirmTitle', lang), lang)
-    .setColor(PYXIE_COLORS.gold || '#f59e0b')
-    .setDescription([t('setup.mmo.confirmBody', lang), t('setup.mmo.classicKeeps', lang)].join('\n\n'));
-  const row = new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId('setup:mmo:classic_confirm').setLabel(t('setup.mmo.btnConfirmClassic', lang)).setStyle(ButtonStyle.Danger),
-    new ButtonBuilder().setCustomId('setup:go:mmo').setLabel(t('setup.mmo.btnKeep', lang)).setStyle(ButtonStyle.Secondary)
-  );
-  return { embeds: [embed], components: [navRow('mmo', lang), row] };
 }
 
 function buildChannelsSection(guild, lang) {
@@ -198,8 +135,9 @@ function buildChannelsSection(guild, lang) {
   const embed = baseEmbed(t('setup.channels.title', lang), lang).setDescription(
     [
       t('setup.channels.intro', lang),
-      `### ${guildFeatures.FEATURE_GROUPS.mmo.emoji} ${t('setup.groups.mmo', lang)}`,
-      channelList(features.channels.mmo, lang),
+      ...(isCringelandia(guild?.id)
+        ? [`### ${guildFeatures.FEATURE_GROUPS.mmo.emoji} ${t('setup.groups.mmo', lang)}`, channelList(features.channels.mmo, lang)]
+        : []),
       `### ${guildFeatures.FEATURE_GROUPS.games.emoji} ${t('setup.groups.games', lang)}`,
       channelList(features.channels.games, lang),
       t('setup.channels.threads', lang),
@@ -216,11 +154,13 @@ function buildChannelsSection(guild, lang) {
         .setMaxValues(guildFeatures.MAX_CHANNELS)
         .setDefaultChannels(features.channels[group].slice(0, guildFeatures.MAX_CHANNELS))
     );
+  // Canais do RPG/MMO só existem na Cringelândia, onde o Mundo Pyxie mora.
+  const cring = isCringelandia(guild?.id);
   const clear = new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId('setup:chanclear:mmo').setLabel(t('setup.channels.clear_mmo', lang)).setStyle(ButtonStyle.Secondary),
+    ...(cring ? [new ButtonBuilder().setCustomId('setup:chanclear:mmo').setLabel(t('setup.channels.clear_mmo', lang)).setStyle(ButtonStyle.Secondary)] : []),
     new ButtonBuilder().setCustomId('setup:chanclear:games').setLabel(t('setup.channels.clear_games', lang)).setStyle(ButtonStyle.Secondary)
   );
-  return { embeds: [embed], components: [navRow('channels', lang), picker('mmo'), picker('games'), clear] };
+  return { embeds: [embed], components: [navRow('channels', lang), ...(cring ? [picker('mmo')] : []), picker('games'), clear] };
 }
 
 function buildModulesSection(guild, lang) {
@@ -290,8 +230,7 @@ function buildLanguageSection(guild, lang) {
 function buildSetupView(guild, section = 'overview', source = null, { notice = null, now = Date.now() } = {}) {
   const lang = langOf(source, guild?.id);
   let view;
-  if (section === 'mmo') view = buildMmoSection(guild, lang, now);
-  else if (section === 'channels') view = buildChannelsSection(guild, lang);
+  if (section === 'channels') view = buildChannelsSection(guild, lang);
   else if (section === 'modules') view = buildModulesSection(guild, lang);
   else if (DEDICATED[section]) view = buildDedicatedSection(guild, section, lang);
   else if (section === 'language') view = buildLanguageSection(guild, lang);
@@ -308,33 +247,15 @@ function buildSetupDashboard(guild, source = null) {
 // Bloqueios por servidor (modo clássico, módulo desligado, canal não liberado)
 // ---------------------------------------------------------------------------------------------
 
-/**
- * Resposta para quem tentou um comando bloqueado aqui. Quem administra recebe a vitrine do
- * Mundo Pyxie com os botões; as demais pessoas ficam sabendo como pedir, e o pedido entra na
- * contagem de procura que a administração vê no painel.
- */
+/** Resposta para quem tentou um comando bloqueado aqui (exclusivo da Cringelândia, desligado ou fora do canal). */
+// eslint-disable-next-line no-unused-vars
 function handleAccessDenied(access, source, member, now = Date.now()) {
   const lang = langOf(source);
-  const guildId = source?.guildId || source?.guild?.id;
   const groupName = t(`setup.groups.${access.group}`, lang);
-  const isAdmin = hasAdminPerms(member);
 
+  // Comando do Mundo Pyxie fora da Cringelândia: é exclusivo de lá.
   if (access.reason === 'classic') {
-    if (isAdmin) {
-      const pitch = buildMmoSection(source?.guild || { id: guildId }, lang, now);
-      return {
-        content: t('setup.blocked.classicAdmin', lang),
-        embeds: pitch.embeds,
-        components: pitch.components.slice(1),
-        allowedMentions: { parse: [] },
-      };
-    }
-    const userId = member?.user?.id || member?.id || source?.user?.id || source?.author?.id;
-    const count = guildFeatures.recordMmoDemand(guildId, userId, now);
-    return {
-      content: [t('setup.blocked.classicMember', lang), t('setup.blocked.demand', lang, { count })].join('\n\n'),
-      allowedMentions: { parse: [] },
-    };
+    return { content: t('setup.blocked.cringelandiaOnly', lang), allowedMentions: { parse: [] } };
   }
   if (access.reason === 'disabled') {
     return { content: t('setup.blocked.disabled', lang, { group: groupName }), allowedMentions: { parse: [] } };
@@ -481,34 +402,6 @@ module.exports = {
 
     if (action === 'nav') return show(SECTIONS.includes(interaction.values?.[0]) ? interaction.values[0] : 'overview');
     if (action === 'go') return show(SECTIONS.includes(arg) ? arg : 'overview');
-
-    if (action === 'mmo') {
-      // Vindo de uma mensagem pública (comando bloqueado), a resposta vai em privado
-      const reply = (section, notice) =>
-        interaction.message?.flags?.has?.(64)
-          ? show(section, notice)
-          : interaction.reply({ ...buildSetupView(guild, section, interaction, { notice }), ephemeral: true });
-
-      if (arg === 'full') {
-        guildFeatures.setMmoMode(guildId, 'full', { by: interaction.user.id });
-        return reply('mmo', t('setup.mmo.enabled', lang));
-      }
-      if (arg === 'trial') {
-        const result = guildFeatures.startMmoTrial(guildId, { by: interaction.user.id });
-        const notice = result.ok
-          ? t('setup.mmo.trialStarted', lang, { time: ts(result.until) })
-          : t(result.reason === 'already_full' ? 'setup.mmo.alreadyFull' : 'setup.mmo.trialAlreadyUsed', lang);
-        return reply('mmo', notice);
-      }
-      if (arg === 'classic') {
-        const view = { content: '', ...buildClassicConfirm(lang), allowedMentions: { parse: [] } };
-        return interaction.message?.flags?.has?.(64) ? interaction.update(view) : interaction.reply({ ...view, ephemeral: true });
-      }
-      if (arg === 'classic_confirm') {
-        guildFeatures.setMmoMode(guildId, 'classic', { by: interaction.user.id });
-        return show('mmo', t('setup.mmo.classicDone', lang));
-      }
-    }
 
     if (action === 'chan' && (arg === 'mmo' || arg === 'games')) {
       guildFeatures.setGroupChannels(guildId, arg, interaction.values || []);

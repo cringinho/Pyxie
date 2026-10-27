@@ -9,6 +9,8 @@ const payments = require('../../services/passPayments');
  */
 module.exports = {
   id: 'battlePass',
+  // Exclusivo do servidor oficial (plano D5): comandos registrados só em CRINGELANDIA_GUILD_ID.
+  guildScope: [require('../../config/scopes').CRINGELANDIA_GUILD_ID],
   name: {
     'pt-BR': 'Passe da Pyxie',
     en: 'Pyxie Pass',

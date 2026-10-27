@@ -9,6 +9,8 @@ const store = require('./bossStore');
  */
 module.exports = {
   id: 'guildBoss',
+  // Exclusivo do servidor oficial (plano D5): comandos registrados só em CRINGELANDIA_GUILD_ID.
+  guildScope: [require('../../config/scopes').CRINGELANDIA_GUILD_ID],
   name: {
     'pt-BR': 'Chefe da Semana',
     en: 'Weekly Boss',

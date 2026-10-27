@@ -24,33 +24,20 @@ const now = Date.UTC(2026, 9, 24, 15, 0, 0);
 
 console.log('⚙️ Iniciando testes da Central do servidor (/py-setup)...');
 
-// 1. Padrão: Mundo Pyxie ligado, DMs sempre liberadas
-assert.equal(guildFeatures.getMmoState(G, now), 'full');
-assert.equal(guildFeatures.checkCommandAccess({ guildId: G, command: 'py-dungeon', now }).allowed, true);
-guildFeatures.setMmoMode(G, 'classic', { by: 'admin1', now });
+// 1. Mundo Pyxie é da Cringelândia (plano D5): sempre ligado lá, desligado nos outros, sem modo nem teste
+const { CRINGELANDIA_GUILD_ID } = require('../src/config/scopes');
+assert.equal(guildFeatures.getMmoState(CRINGELANDIA_GUILD_ID, now), 'full');
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, command: 'py-dungeon', now }).allowed, true);
 assert.equal(guildFeatures.getMmoState(G, now), 'classic');
+guildFeatures.setMmoMode(G, 'full', { by: 'admin1', now });
+assert.equal(guildFeatures.getMmoState(G, now), 'classic', 'Nenhum modo liga o Mundo Pyxie fora da Cringelândia');
 assert.deepEqual(
   guildFeatures.checkCommandAccess({ guildId: G, command: 'py-dungeon', now }),
   { allowed: false, reason: 'classic', group: 'mmo' }
 );
-assert.equal(guildFeatures.checkCommandAccess({ guildId: null, command: 'py-dungeon', now }).allowed, true, 'DM continua liberada');
-assert.equal(guildFeatures.checkCommandAccess({ guildId: G, command: 'py-daily', now }).allowed, true, 'Moedinhas do diário seguem no clássico');
+assert.equal(guildFeatures.checkCommandAccess({ guildId: G, command: 'py-daily', now }).allowed, true, 'Moedinhas do diário seguem globais');
 assert.equal(guildFeatures.checkCommandAccess({ guildId: G, command: { name: 'py-nova', mmo: true }, now }).reason, 'classic', 'Comandos marcados com mmo: true entram no grupo');
-console.log('  ✅ 1. Modo clássico bloqueia o Mundo Pyxie e mantém o resto.');
-
-// 2. Teste de 7 dias: uma vez por servidor, volta ao clássico sozinho
-const trial = guildFeatures.startMmoTrial(G, { by: 'admin1', now });
-assert.equal(trial.ok, true);
-assert.equal(trial.until, now + 7 * DAY);
-assert.equal(guildFeatures.getMmoState(G, now + DAY), 'trial');
-assert.equal(guildFeatures.checkCommandAccess({ guildId: G, command: 'py-home', now: now + DAY }).allowed, true);
-assert.equal(guildFeatures.startMmoTrial(G, { now: now + DAY }).reason, 'trial_running');
-assert.equal(guildFeatures.getMmoState(G, now + 8 * DAY), 'classic', 'O teste acaba sozinho');
-assert.equal(guildFeatures.startMmoTrial(G, { now: now + 8 * DAY }).reason, 'trial_used');
-guildFeatures.setMmoMode(G, 'full', { now: now + 8 * DAY });
-assert.equal(guildFeatures.getMmoState(G, now + 8 * DAY), 'full');
-assert.equal(guildFeatures.startMmoTrial(G, { now: now + 8 * DAY }).reason, 'already_full');
-console.log('  ✅ 2. Teste de 7 dias único, com fim automático.');
+console.log('  ✅ 1. Mundo Pyxie só na Cringelândia; o resto segue global.');
 
 // 3. Módulos por servidor
 guildFeatures.setGroupEnabled(G, 'games', false);
@@ -62,14 +49,14 @@ assert.equal(guildFeatures.checkCommandAccess({ guildId: G, command: 'py-quiz', 
 console.log('  ✅ 3. Minigames, casamento e tarot ligam e desligam por servidor.');
 
 // 4. Canais permitidos (threads herdam o canal pai)
-guildFeatures.setGroupChannels(G, 'mmo', ['111111', 'lixo', '111111']);
-assert.deepEqual(guildFeatures.getGuildFeatures(G).channels.mmo, ['111111'], 'Ids inválidos e repetidos saem');
-assert.equal(guildFeatures.checkCommandAccess({ guildId: G, channel: { id: '222222' }, command: 'py-dungeon', now }).reason, 'channel');
-assert.equal(guildFeatures.checkCommandAccess({ guildId: G, channel: { id: '111111' }, command: 'py-dungeon', now }).allowed, true);
-assert.equal(guildFeatures.checkCommandAccess({ guildId: G, channel: { id: '333333', parentId: '111111' }, command: 'py-dungeon', now }).allowed, true);
-assert.equal(guildFeatures.checkCommandAccess({ guildId: G, channel: { id: '222222' }, command: 'py-tarot', now }).allowed, true, 'Tarot não é limitado por canal');
-guildFeatures.setGroupChannels(G, 'mmo', []);
-assert.equal(guildFeatures.checkCommandAccess({ guildId: G, channel: { id: '222222' }, command: 'py-dungeon', now }).allowed, true);
+guildFeatures.setGroupChannels(CRINGELANDIA_GUILD_ID, 'mmo', ['111111', 'lixo', '111111']);
+assert.deepEqual(guildFeatures.getGuildFeatures(CRINGELANDIA_GUILD_ID).channels.mmo, ['111111'], 'Ids inválidos e repetidos saem');
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '222222' }, command: 'py-dungeon', now }).reason, 'channel');
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '111111' }, command: 'py-dungeon', now }).allowed, true);
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '333333', parentId: '111111' }, command: 'py-dungeon', now }).allowed, true);
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '222222' }, command: 'py-tarot', now }).allowed, true, 'Tarot não é limitado por canal');
+guildFeatures.setGroupChannels(CRINGELANDIA_GUILD_ID, 'mmo', []);
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '222222' }, command: 'py-dungeon', now }).allowed, true);
 console.log('  ✅ 4. Canais do RPG/MMO e threads.');
 
 // 5. Procura: pessoas diferentes nos últimos 7 dias
@@ -129,26 +116,25 @@ assert.ok(overviewPt.embeds[0].data.title.includes('Painel de Configuração'));
 assert.ok(setup.buildSetupDashboard(guild, 'en').embeds[0].data.title.includes('Server Configuration Panel'));
 console.log('  ✅ 7. Seções do painel em PT/EN dentro dos limites.');
 
-// 8. Vitrine para quem administra e aviso com contagem para os membros
+// 8. Fora da Cringelândia: aviso de exclusividade, sem vitrine nem contagem de procura
 const C = 'guild_classic_view';
-guildFeatures.setMmoMode(C, 'classic', { now });
 const adminMember = { id: 'adm', permissions: { has: () => true } };
 const plainMember = { id: 'm1', user: { id: 'm1' }, permissions: { has: () => false } };
-const source = { guildId: C, guild: { id: C, name: 'Clássico' }, lang: 'pt' };
+const source = { guildId: C, guild: { id: C, name: 'Outro servidor' }, lang: 'pt' };
 const access = guildFeatures.checkCommandAccess({ guildId: C, command: 'py-dungeon', now });
-const adminView = setup.handleAccessDenied(access, source, adminMember, now);
-assert.ok(adminView.embeds.length === 1 && adminView.components.length === 1, 'Admin recebe a vitrine com botões');
-const ids = adminView.components[0].toJSON().components.map((c) => c.custom_id);
-assert.deepEqual(ids, ['setup:mmo:full', 'setup:mmo:trial']);
-assert.equal(guildFeatures.getMmoDemand(C, now), 0, 'Admin não conta como procura');
-const memberView = setup.handleAccessDenied(access, source, plainMember, now);
-assert.ok(!memberView.embeds, 'Membro não vê a vitrine');
-assert.ok(memberView.content.includes('**1**'));
-assert.equal(guildFeatures.getMmoDemand(C, now), 1);
-const channelView = setup.handleAccessDenied({ allowed: false, reason: 'channel', group: 'mmo', channels: ['999999'] }, source, plainMember, now);
+for (const member of [adminMember, plainMember]) {
+  const view = setup.handleAccessDenied(access, source, member, now);
+  assert.equal(view.content, t('setup.blocked.cringelandiaOnly', 'pt'));
+  assert.ok(!view.embeds && !view.components, 'Sem vitrine do Mundo Pyxie fora da Cringelândia');
+  assert.deepEqual(view.allowedMentions, { parse: [] });
+}
+assert.equal(guildFeatures.getMmoDemand(C, now), 0, 'Sem contagem de procura');
+const channelView = setup.handleAccessDenied({ allowed: false, reason: 'channel', group: 'games', channels: ['999999'] }, source, plainMember, now);
 assert.ok(channelView.content.includes('<#999999>'));
-assert.deepEqual(memberView.allowedMentions, { parse: [] });
-console.log('  ✅ 8. Vitrine só para quem administra; membros entram na contagem.');
+const overviewOther = setup.buildSetupView({ id: C, name: 'Outro', iconURL: () => null }, 'overview', 'pt', { now });
+assert.ok(!overviewOther.embeds[0].data.description.includes(t('setup.sections.mmo.label', 'pt')), 'Painel sem o Mundo Pyxie fora da Cringelândia');
+assert.ok(!setup.SECTIONS.includes('mmo'));
+console.log('  ✅ 8. Fora da Cringelândia: aviso de exclusividade, sem propaganda.');
 
 // 9. Botões do painel
 function mockInteraction({ customId, values = null, admin = true, ephemeralMessage = true }) {
@@ -176,48 +162,26 @@ function mockInteraction({ customId, values = null, admin = true, ephemeralMessa
 }
 
 (async () => {
-  const denied = mockInteraction({ customId: 'setup:mmo:full', admin: false });
+  const denied = mockInteraction({ customId: 'setup:mod:marriage', admin: false });
   await setup.handleSetupInteraction(denied.interaction);
   assert.equal(denied.calls.reply.length, 1);
   assert.equal(denied.calls.reply[0].content, t('setup.adminOnlyAction', 'pt'));
-  assert.equal(guildFeatures.getMmoState(C, now), 'classic', 'Quem não administra não muda nada');
-
-  const trialClick = mockInteraction({ customId: 'setup:mmo:trial' });
-  assert.ok(setup.isSetupInteraction(trialClick.interaction));
-  await setup.handleSetupInteraction(trialClick.interaction);
-  assert.equal(trialClick.calls.update.length, 1, 'No painel privado a mensagem é atualizada');
-  assert.equal(guildFeatures.getMmoState(C), 'trial');
-
-  // Vindo do aviso público de comando bloqueado, a resposta vai em privado
-  guildFeatures.setMmoMode(C, 'classic');
-  const publicClick = mockInteraction({ customId: 'setup:mmo:full', ephemeralMessage: false });
-  await setup.handleSetupInteraction(publicClick.interaction);
-  assert.equal(publicClick.calls.reply.length, 1);
-  assert.equal(publicClick.calls.reply[0].ephemeral, true);
-  assert.equal(guildFeatures.getMmoState(C), 'full');
-
-  const classicAsk = mockInteraction({ customId: 'setup:mmo:classic' });
-  await setup.handleSetupInteraction(classicAsk.interaction);
-  assert.equal(guildFeatures.getMmoState(C), 'full', 'Pede confirmação antes do clássico');
-  const confirmIds = classicAsk.calls.update[0].components[1].toJSON().components.map((c) => c.custom_id);
-  assert.ok(confirmIds.includes('setup:mmo:classic_confirm'));
-  await setup.handleSetupInteraction(mockInteraction({ customId: 'setup:mmo:classic_confirm' }).interaction);
-  assert.equal(guildFeatures.getMmoState(C), 'classic');
+  assert.equal(guildFeatures.isGroupEnabled(C, 'marriage'), true, 'Quem não administra não muda nada');
 
   await setup.handleSetupInteraction(mockInteraction({ customId: 'setup:mod:marriage' }).interaction);
   assert.equal(guildFeatures.isGroupEnabled(C, 'marriage'), false);
   await setup.handleSetupInteraction(mockInteraction({ customId: 'setup:mod:marriage' }).interaction);
   assert.equal(guildFeatures.isGroupEnabled(C, 'marriage'), true);
 
-  await setup.handleSetupInteraction(mockInteraction({ customId: 'setup:chan:mmo', values: ['444444', '555555'] }).interaction);
-  assert.deepEqual(guildFeatures.getGuildFeatures(C).channels.mmo, ['444444', '555555']);
-  await setup.handleSetupInteraction(mockInteraction({ customId: 'setup:chanclear:mmo' }).interaction);
-  assert.deepEqual(guildFeatures.getGuildFeatures(C).channels.mmo, []);
+  await setup.handleSetupInteraction(mockInteraction({ customId: 'setup:chan:games', values: ['444444', '555555'] }).interaction);
+  assert.deepEqual(guildFeatures.getGuildFeatures(C).channels.games, ['444444', '555555']);
+  await setup.handleSetupInteraction(mockInteraction({ customId: 'setup:chanclear:games' }).interaction);
+  assert.deepEqual(guildFeatures.getGuildFeatures(C).channels.games, []);
 
   const nav = mockInteraction({ customId: 'setup:nav', values: ['modules'] });
   await setup.handleSetupInteraction(nav.interaction);
   assert.ok(nav.calls.update[0].embeds[0].data.title.includes('Módulos'));
-  console.log('  ✅ 9. Botões, menus e confirmação do modo clássico.');
+  console.log('  ✅ 9. Botões e menus do painel.');
 
   // 10. /py-setup substitui o /py-set: um único slash, py!set vira atalho
   const json = setup.data.toJSON();

@@ -11,6 +11,8 @@ const securityGuard = require('../utils/securityGuard');
 const { t } = require('../../../utils/i18n');
 
 module.exports = {
+  // Zona da Mary (plano 5.1): registrado e usado só no servidor dela.
+  guildScope: [require('../../../config/scopes').MARY_GUILD_ID],
   name: 'py-mary-edit-context',
   category: 'utilidades',
   data: new ContextMenuCommandBuilder()

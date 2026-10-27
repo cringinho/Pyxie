@@ -21586,7 +21586,7 @@
     },
     {
       "level": 4,
-      "scenario": "🐉 **Aliança Milenar entre Humanos e Criaturas Místicas!**\nPara consolidar a harmonia entre o império e os seres feéricos do Bosque da Penumbra, qual acordo sagrado sela o pacto?",
+      "scenario": "🐉 **Aliança Milenar entre Humanos e Criaturas Místicas!**\nPara consolidar a harmonia entre o império e os seres feéricos de Nyxiel, qual acordo sagrado sela o pacto?",
       "correct": "Demarcação inviolável das florestas antigas sob proteção imperial e intercâmbio de conhecimento arcano e botânico entre as espécies",
       "wrongs": [
         "Caçar todas as fadas e dragões para transformá-los em animais de zoológico",
@@ -21594,7 +21594,7 @@
         "Jogar lixo tóxico nas nascentes sagradas dos elfos da floresta"
       ],
       "pt": {
-        "scenario": "🐉 **Aliança Milenar entre Humanos e Criaturas Místicas!**\nPara consolidar a harmonia entre o império e os seres feéricos do Bosque da Penumbra, qual acordo sagrado sela o pacto?",
+        "scenario": "🐉 **Aliança Milenar entre Humanos e Criaturas Místicas!**\nPara consolidar a harmonia entre o império e os seres feéricos de Nyxiel, qual acordo sagrado sela o pacto?",
         "correct": "Demarcação inviolável das florestas antigas sob proteção imperial e intercâmbio de conhecimento arcano e botânico entre as espécies",
         "wrongs": [
           "Caçar todas as fadas e dragões para transformá-los em animais de zoológico",
@@ -21603,7 +21603,7 @@
         ]
       },
       "en": {
-        "scenario": "🐉 **Millennial Human & Fey Sylvan Alliance!**\nTo establish eternal harmony between the mortal empire and mystical denizens of the Gloomwood, what treaty consecrates the accord?",
+        "scenario": "🐉 **Millennial Human & Fey Sylvan Alliance!**\nTo establish eternal harmony between the mortal empire and mystical denizens of Nyxiel, what treaty consecrates the accord?",
         "correct": "Inviolate demarcation of primordial groves under imperial protection, paired with scholarly botanical and magical knowledge exchange",
         "wrongs": [
           "Hunt wild pixies and wyrms down to confine them inside private royal amusement parks",

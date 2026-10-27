@@ -661,6 +661,13 @@ function getHelpModules(customCommands = null, source = null) {
         'Comando da Pyxie';
     }
 
+    // Zonas (plano 5.1): comandos da Mary nunca aparecem; os da Cringelândia aparecem marcados (é vitrine do servidor).
+    const { CRINGELANDIA_GUILD_ID, MARY_GUILD_ID } = require('../config/scopes');
+    const scope = Array.isArray(cmd.guildScope) ? cmd.guildScope.map(String) : [];
+    if (scope.includes(MARY_GUILD_ID)) continue;
+    const cringelandiaOnly = scope.length === 1 && scope[0] === CRINGELANDIA_GUILD_ID;
+    if (cringelandiaOnly) desc = `${desc} · ${t('help.cringelandiaTag', source)}`;
+
     const category = cmd.category || COMMAND_CATEGORY_MAP[name] || 'utilidades';
     const targetBucket = moduleCommands[category] || moduleCommands.utilidades;
     const iconUrl = getModuleIconUrl(category) || null;
@@ -669,6 +676,7 @@ function getHelpModules(customCommands = null, source = null) {
     targetBucket.push({
       name: `/${String(name).replace(/^\/+/, '')}`,
       desc,
+      cringelandiaOnly,
       aliases: cmd.aliases || [],
       category,
       emoji,

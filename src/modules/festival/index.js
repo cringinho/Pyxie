@@ -8,6 +8,8 @@ const festival = require('../../services/festival');
  */
 module.exports = {
   id: 'festival',
+  // Exclusivo do servidor oficial (plano D5): comandos registrados só em CRINGELANDIA_GUILD_ID.
+  guildScope: [require('../../config/scopes').CRINGELANDIA_GUILD_ID],
   name: {
     'pt-BR': 'Festival da Temporada',
     en: 'Seasonal Festival',

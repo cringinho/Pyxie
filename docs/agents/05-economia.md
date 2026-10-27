@@ -1,0 +1,4 @@
+# 5. Política de Integridade e Proteção Econômica (Zero Impacto Não Planejado)
+- **Minigames de Recreação Pura**: Jogos casuais focados em entretenimento (ex: Matemática Arcana `/py-matematica`, Jogo da Velha `/py-jogodavelha`, Campo Minado `/py-campominado`, Biscoito da Sorte, Provável) NÃO devem conceder saldo, moedas ou feijões mágicos sem cálculo e autorização explícita do criador.
+- **Proteção Anti-Inflação**: O ganho de moedas é restrito estritamente a fluxos econômicos regulados: trabalho formal com turnos (`/py-work`), bônus diário regular (`/py-daily`), bônus web cronometrado (24h de cooldown) e recompensas limitadas de oráculo/conquistas.
+- **Prevenção de Exploits**: Nenhuma funcionalidade nova de comunidade, mini-evento ou utilidade pode injetar moeda no banco sem travas de cooldown, atomicidade e validação de permissões.

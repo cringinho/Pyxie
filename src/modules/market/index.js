@@ -8,6 +8,8 @@ const market = require('../../services/market');
  */
 module.exports = {
   id: 'market',
+  // Exclusivo do servidor oficial (plano D5): comandos registrados só em CRINGELANDIA_GUILD_ID.
+  guildScope: [require('../../config/scopes').CRINGELANDIA_GUILD_ID],
   name: {
     'pt-BR': 'Mercado entre Jogadores',
     en: 'Player Market',

@@ -533,6 +533,7 @@ const TRANSLATIONS = {
       "btnWebsite": "Website",
       "btnWiki": "Wiki & Guia",
       "btnSupport": "Suporte",
+      "cringelandiaTag": "🏰 Exclusivo da Cringelândia",
       "categories": {
         "todos": {
           "label": "Visão Geral / Todos",
@@ -1286,6 +1287,7 @@ const TRANSLATIONS = {
       },
       "blocked": {
         "classicAdmin": "Esse servidor tá no modo clássico, então o Mundo Pyxie fica desligado aqui. Como você administra o servidor… quer dar uma olhadinha no que tem? Prometo que não é chato.",
+        "cringelandiaOnly": "🏰 Catacumbas, Casinha, Oficina, Mercado, Festival e Passe são exclusivos da Cringelândia. Não é que eu não goste daqui, tá? É que lá é a minha casa. Vem jogar comigo: https://pyxie.com.br/discord",
         "classicMember": "Ah… aqui o servidor tá no modo clássico, então as Catacumbas, a Casinha e os itens ficam desligados. N-não fui eu que escolhi, tá? Se quiser, pede pra administração ligar no `/py-setup`. Na nossa DM funciona sempre.",
         "demand": "-# 🔔 Contei teu pedido. Já são **{count}** pessoa(s) querendo esta semana.",
         "disabled": "A administração desligou **{group}** neste servidor… dá pra religar no `/py-setup`.",
@@ -1465,7 +1467,7 @@ const TRANSLATIONS = {
       "wallet": "💰 **Sua carteira:** `{sparks}` {currency}",
       "intro": {
         "halloween": "As abóboras acordaram e os monstros das Catacumbas resolveram se fantasiar. Não que eu tenha ajudado a escolher as fantasias… tá, ajudei um pouquinho.",
-        "christmas": "Neve no Bosque da Penumbra, presentes empilhados e até os monstros de gorrinho. Não fica me olhando assim, o meu gorro é bonito sim.",
+        "christmas": "Neve na Cringelândia, presentes empilhados e até os monstros de gorrinho. Não fica me olhando assim, o meu gorro é bonito sim.",
         "newyear": "Fogos, brindes e a contagem regressiva mais fofa do Discord. Bora fechar o ano com a casinha brilhando?",
         "easter": "Tem coelhinho escondendo ovo pelas Catacumbas. Se achar chocolate, divide comigo, tá? Não é um pedido, é uma ordem.",
         "summer": "Férias! Picolé, piscina e monstros de chapéu de palha. Passa protetor antes de descer pras Catacumbas."
@@ -1549,68 +1551,6 @@ const TRANSLATIONS = {
       "error": "Deu um tropeço no Passe. Tenta de novo daqui a pouco?",
       "footer": "Pyxie • Passe mensal",
       "premiumDm": "💎 **Seu Passe Premium chegou!** Abre o `/py-pass` e toca em Resgatar: tudo o que você já alcançou tá te esperando. Obrigada por apoiar a Pyxie de verdade."
-    },
-    "roleplay": {
-      "sceneTitle": "📖 Uma nova história começa",
-      "sceneBody": "Eu narro este post. Escreva o que seu personagem faz: *ações em itálico* e \"falas entre aspas\". Respondo alguns segundos depois da última mensagem. Fora do personagem? Use ((parênteses duplos)).\n\nAinda sem ficha? Crie com `/py-character create`.",
-      "needSheet": "{user}, pra jogar você precisa de uma ficha: `/py-character create`. Te espero aqui.",
-      "narrationLabel": "Narração",
-      "rollPrompt": "🎲 **{name}**, role **{stat}** (CD `{dc}`): {reason}",
-      "rollButton": "Rolar {stat}",
-      "rollSuccess": "🎲 **{name}** tirou `{die}` + `{mod}` = **{total}** contra CD `{dc}`: **sucesso!**",
-      "rollFail": "🎲 **{name}** tirou `{die}` + `{mod}` = **{total}** contra CD `{dc}`: **falhou.**",
-      "rollCrit": "🎲 **{name}** tirou um **20** natural! **Sucesso crítico!**",
-      "rollFumble": "🎲 **{name}** tirou **1** natural… **falha crítica.**",
-      "rollNotYours": "Essa rolagem é do personagem de outra pessoa.",
-      "rollGone": "Essa rolagem já foi feita.",
-      "resting": "✨ Recuperando o fôlego mágico… a história continua em instantes.",
-      "capReached": "📖 Essa história já teve muita narração hoje. Volto amanhã; até lá vocês podem continuar entre si.",
-      "unsafe": "🌸 Esse caminho não existe no Reino (aqui tudo é SFW). Tenta outra ação?",
-      "crisis": "💜 {user}, isso pareceu pesado, e importa mais do que qualquer história. Se estiver difícil agora, fala com alguém que pode ajudar:\n🇧🇷 CVV: ligue `188` (24h, gratuito) • 🇺🇸 `988` • 🌍 findahelpline.com",
-      "effectHp": "❤️ {name} {delta} ({hp}/{max})",
-      "effectMp": "🔮 {name} {delta} MP ({mp}/{max})",
-      "effectItemAdd": "🎒 {name} +{item}",
-      "effectItemRemove": "🎒 {name} −{item}",
-      "effectConditionAdd": "🌀 {name}: {condition}",
-      "effectConditionRemove": "✨ {name} se livrou de {condition}",
-      "levelUp": "⬆️ **{name}** chegou ao nível `{level}`! Gaste o ponto com `/py-character train`.",
-      "stats": {
-        "str": "Força",
-        "mag": "Magia",
-        "agi": "Agilidade",
-        "spi": "Espírito"
-      },
-      "character": {
-        "title": "📜 {name}",
-        "subtitle": "{ancestry} • Nível `{level}` • XP `{xp}`/`{next}`",
-        "vitals": "❤️ Vida `{hp}`/`{max}`\n🔮 Mana `{mp}`/`{mpMax}`",
-        "vitalsName": "💗 Vitais",
-        "statsName": "✨ Atributos",
-        "statLine": "**{stat}:** `{value}`",
-        "bagName": "🎒 Mochila",
-        "conditionsName": "🌀 Condições",
-        "none": "-# nada",
-        "unspent": "-# `{points}` ponto(s) para gastar com `/py-character train`",
-        "footer": "Pyxie • Roleplay",
-        "created": "✨ **{name}** nasceu! A ficha está aqui embaixo. Abre um post em #roleplay-tales e começa uma história.",
-        "noSheet": "Você ainda não tem personagem. Crie com `/py-character create`.",
-        "otherNoSheet": "Essa pessoa ainda não tem personagem.",
-        "bioSaved": "📖 História atualizada.",
-        "trained": "💪 **{stat}** agora é `{value}`.",
-        "rested": "🌙 Você descansou: vida e mana cheias, e as condições passaram.",
-        "restCooldown": "Você descansou há pouco. Tenta de novo {time}.",
-        "reasons": {
-          "name": "O nome precisa ter de 2 a 32 caracteres.",
-          "ancestry": "Essa origem não existe.",
-          "stat_range": "Cada atributo vai de `1` a `5` na criação.",
-          "stat_total": "Os quatro atributos precisam somar `{points}` (você usou `{total}`).",
-          "exists": "Você já tem um personagem. Veja com `/py-character view`.",
-          "missing": "Você ainda não tem personagem. Crie com `/py-character create`.",
-          "no_points": "Você não tem pontos para gastar. Eles vêm a cada nível.",
-          "stat_max": "Esse atributo já está no máximo (`8`).",
-          "stat": "Atributo inválido."
-        }
-      }
     },
     "bond": {
       "title": "💞 Força do Laço",
@@ -2706,6 +2646,7 @@ const TRANSLATIONS = {
       "btnWebsite": "Website",
       "btnWiki": "Wiki & Guide",
       "btnSupport": "Support",
+      "cringelandiaTag": "🏰 Cringelândia only",
       "categories": {
         "todos": {
           "label": "Overview / All",
@@ -3459,6 +3400,7 @@ const TRANSLATIONS = {
       },
       "blocked": {
         "classicAdmin": "This server is in classic mode, so Pyxie World is off here. Since you run the server… want to take a little look at what it has? I promise it's not boring.",
+        "cringelandiaOnly": "🏰 Catacombs, Cozy Room, Workshop, Market, Festival and Pass are exclusive to Cringelândia. It's not that I dislike it here, okay? That's just my home. Come play with me: https://pyxie.com.br/discord",
         "classicMember": "Oh… this server is in classic mode, so Catacombs, Cozy Room and items are off. I-it wasn't my choice, okay? If you want, ask the admins to turn it on in `/py-setup`. It always works in our DMs.",
         "demand": "-# 🔔 I counted your request. That's **{count}** person(s) asking this week.",
         "disabled": "The admins turned off **{group}** on this server… they can turn it back on in `/py-setup`.",
@@ -3638,7 +3580,7 @@ const TRANSLATIONS = {
       "wallet": "💰 **Your wallet:** `{sparks}` {currency}",
       "intro": {
         "halloween": "The pumpkins woke up and the Catacombs monsters decided to dress up. Not that I helped pick the costumes… okay, maybe a little.",
-        "christmas": "Snow in the Gloomwood, presents piled up and even the monsters wear beanies. Stop staring, my beanie looks great.",
+        "christmas": "Snow in Cringelândia, presents piled up and even the monsters wear beanies. Stop staring, my beanie looks great.",
         "newyear": "Fireworks, toasts and the cutest countdown on Discord. Shall we close the year with a sparkling room?",
         "easter": "There's a bunny hiding eggs all over the Catacombs. If you find chocolate, share it with me, okay? That's not a request, it's an order.",
         "summer": "Vacation! Popsicles, pools and monsters in straw hats. Put on sunscreen before heading into the Catacombs."
@@ -3722,68 +3664,6 @@ const TRANSLATIONS = {
       "error": "The Pass tripped up. Try again in a bit?",
       "footer": "Pyxie • Monthly pass",
       "premiumDm": "💎 **Your Premium Pass is here!** Open `/py-pass` and tap Claim: everything you already reached is waiting. Thank you for truly supporting Pyxie."
-    },
-    "roleplay": {
-      "sceneTitle": "📖 A new tale begins",
-      "sceneBody": "I narrate this post. Write what your character does: *actions in italics* and \"speech in quotes\". I answer a few seconds after the last message. Out of character? Use ((double parentheses)).\n\nNo sheet yet? Create one with `/py-character create`.",
-      "needSheet": "{user}, you need a character sheet to play: `/py-character create`. I'll wait right here.",
-      "narrationLabel": "Narration",
-      "rollPrompt": "🎲 **{name}**, roll **{stat}** (DC `{dc}`): {reason}",
-      "rollButton": "Roll {stat}",
-      "rollSuccess": "🎲 **{name}** rolled `{die}` + `{mod}` = **{total}** vs DC `{dc}`: **success!**",
-      "rollFail": "🎲 **{name}** rolled `{die}` + `{mod}` = **{total}** vs DC `{dc}`: **failure.**",
-      "rollCrit": "🎲 **{name}** rolled a natural **20**! **Critical success!**",
-      "rollFumble": "🎲 **{name}** rolled a natural **1**… **critical failure.**",
-      "rollNotYours": "That roll belongs to someone else's character.",
-      "rollGone": "That roll was already made.",
-      "resting": "✨ Catching my magical breath… the story continues in a moment.",
-      "capReached": "📖 This tale has had a lot of narration today. I'll be back tomorrow; until then you can keep playing among yourselves.",
-      "unsafe": "🌸 That path doesn't exist in the Realm (we keep everything SFW). Try another action?",
-      "crisis": "💜 {user}, that sounded heavy, and it matters more than any story. If things are hard right now, please talk to someone who can help:\n🇺🇸 call or text `988` • 🇧🇷 CVV `188` • 🌍 findahelpline.com",
-      "effectHp": "❤️ {name} {delta} ({hp}/{max})",
-      "effectMp": "🔮 {name} {delta} MP ({mp}/{max})",
-      "effectItemAdd": "🎒 {name} +{item}",
-      "effectItemRemove": "🎒 {name} −{item}",
-      "effectConditionAdd": "🌀 {name}: {condition}",
-      "effectConditionRemove": "✨ {name} shook off {condition}",
-      "levelUp": "⬆️ **{name}** reached level `{level}`! Spend the point with `/py-character train`.",
-      "stats": {
-        "str": "Strength",
-        "mag": "Magic",
-        "agi": "Agility",
-        "spi": "Spirit"
-      },
-      "character": {
-        "title": "📜 {name}",
-        "subtitle": "{ancestry} • Level `{level}` • XP `{xp}`/`{next}`",
-        "vitals": "❤️ HP `{hp}`/`{max}`\n🔮 MP `{mp}`/`{mpMax}`",
-        "vitalsName": "💗 Vitals",
-        "statsName": "✨ Attributes",
-        "statLine": "**{stat}:** `{value}`",
-        "bagName": "🎒 Bag",
-        "conditionsName": "🌀 Conditions",
-        "none": "-# nothing",
-        "unspent": "-# `{points}` point(s) to spend with `/py-character train`",
-        "footer": "Pyxie • Roleplay",
-        "created": "✨ **{name}** is born! Your sheet is below. Open a post in #roleplay-tales and start a tale.",
-        "noSheet": "You don't have a character yet. Create one with `/py-character create`.",
-        "otherNoSheet": "This person has no character yet.",
-        "bioSaved": "📖 Story updated.",
-        "trained": "💪 **{stat}** is now `{value}`.",
-        "rested": "🌙 You rested: HP and MP are full and your conditions are gone.",
-        "restCooldown": "You rested recently. Try again {time}.",
-        "reasons": {
-          "name": "The name needs 2 to 32 characters.",
-          "ancestry": "That origin doesn't exist.",
-          "stat_range": "Each attribute goes from `1` to `5` at creation.",
-          "stat_total": "The four attributes must add up to `{points}` (you used `{total}`).",
-          "exists": "You already have a character. See it with `/py-character view`.",
-          "missing": "You don't have a character yet. Create one with `/py-character create`.",
-          "no_points": "You have no points to spend. You get one per level.",
-          "stat_max": "That attribute is already maxed (`8`).",
-          "stat": "Invalid attribute."
-        }
-      }
     },
     "bond": {
       "title": "💞 Bond Strength",

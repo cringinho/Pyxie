@@ -204,7 +204,12 @@ fi
 # 10. Garante que os bancos de dados em data/ continuem sendo estritamente os da VM
 # (data/*.json é ignorado no git, mas sincronizamos qualquer arquivo necessário)
 cp -a "${BACKUP_DIR}/data/." data/
-rm -f data/gloom.json data/gloom.json.bak data/encounters.json data/world_boss.json data/stats.json.*.tmp
+rm -f data/encounters.json data/world_boss.json data/stats.json.*.tmp
+# Realm, roleplay e gloom saíram do código: os arquivos vão para data/_arquivados em vez de sumir.
+mkdir -p data/_arquivados
+for f in roleplay.json realmState.json gloom.json gloom.json.bak; do
+  if [ -f "data/$f" ]; then mv "data/$f" "data/_arquivados/$f.$(date +%Y%m%d)"; fi
+done
 if [ -f data/inventory.json ]; then
   node -e "
     const fs = require('fs');

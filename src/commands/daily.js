@@ -55,7 +55,9 @@ function dailyButtons(userId, lang, { reacted = false, cupsAvailable = true, bon
 
 function buildDailyView(userId, guildOrSource = null, clientId = null, now = Date.now()) {
   const lang = getLanguage(guildOrSource);
-  const result = claimDaily(userId, now);
+  // XP do Passe só conta no daily feito na Cringelândia (o Passe é de lá).
+  const guildId = guildOrSource?.guildId ?? guildOrSource?.guild?.id ?? null;
+  const result = claimDaily(userId, now, { guildId });
   const bonusSession = createBonusSession(userId, 'item_bonus', {}, lang);
   const { lines: energyLines, energy } = energyBlock(userId, lang, now);
 

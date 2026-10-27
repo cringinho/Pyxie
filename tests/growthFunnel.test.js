@@ -192,8 +192,13 @@ async function run() {
   assert.equal(getLanguage({ guildId: '900000000000000002', guild: null, locale: 'en-US' }), 'en');
   assert.equal(getLanguage({ guildId: '900000000000000002', locale: 'pt-BR' }), 'en', 'Servidor com a Pyxie mantém o padrão do servidor.');
   const registerSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'registerSlashCommands.js'), 'utf8');
-  for (const name of ['py-tarot', 'py-album', 'py-dungeon']) {
+  for (const name of ['py-tarot', 'py-album']) {
     assert.ok(registerSource.includes(`'${name}'`), `${name} instalável na conta.`);
+  }
+  // Comandos da Cringelândia são de servidor (plano D5): fora da instalação na conta.
+  const installLine = registerSource.split('\n').find((l) => l.includes('USER_INSTALLABLE_MODULE_COMMANDS = new Set'));
+  for (const name of ['py-dungeon', 'py-home', 'py-pass']) {
+    assert.ok(!installLine.includes(`'${name}'`), `${name} não é instalável na conta.`);
   }
   console.log('  ✅ 6. User App: idioma pela conta e comandos de módulo instaláveis.');
 }

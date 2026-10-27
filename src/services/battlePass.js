@@ -246,8 +246,15 @@ function addXp(userId, source, { amount = null, now = Date.now() } = {}) {
   });
 }
 
-/** Atalho para os ganchos: nunca deixa uma falha do Passe atrapalhar o comando que deu XP. */
+/**
+ * Atalho para os ganchos: nunca deixa uma falha do Passe atrapalhar o comando que deu XP.
+ * O Passe é da Cringelândia: quando o gancho informa o servidor (options.guildId), só conta lá.
+ */
 function safeAddXp(userId, source, options) {
+  if (options && Object.prototype.hasOwnProperty.call(options, 'guildId')) {
+    const { CRINGELANDIA_GUILD_ID } = require('../config/scopes');
+    if (String(options.guildId || '') !== CRINGELANDIA_GUILD_ID) return null;
+  }
   try {
     return addXp(userId, source, options);
   } catch (err) {

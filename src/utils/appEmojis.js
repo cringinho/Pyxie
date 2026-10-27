@@ -144,7 +144,7 @@ const EMOJI_DEFINITIONS = {
   MUSEUM: { name: '2663tarotcards', aliases: ['museu', 'museum', 'arte'], fallback: '🏛️' },
   PARTNERSHIPS: { name: '3849purplebutterflies', aliases: ['parcerias', 'partnerships', 'comunidade'], fallback: '🤝' },
   MARRIAGE: { name: 'anelrosa', aliases: ['marriage', 'casamento', 'matrimonio'], fallback: '💍' },
-  SEASONAL: { name: 'cogumelo', aliases: ['seasonal', 'sazonal', 'bosque'], fallback: '🎃' },
+  SEASONAL: { name: 'cogumelo', aliases: ['seasonal', 'sazonal'], fallback: '🎃' },
   MATH: { name: '6449spellbook', aliases: ['math', 'matematica', 'calculo'], fallback: '🧮' },
   TICTACTOE: { name: 'pixdreamsmooncha', aliases: ['tictactoe', 'velha', 'jogodavelha'], fallback: '🌙' },
   MINESWEEPER: { name: '4693toxicpotion', aliases: ['minesweeper', 'campominado', 'minas'], fallback: '💥' },

@@ -391,7 +391,7 @@ async function run() {
   const topgg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'topgg_commands.json'), 'utf8')).map((c) => c.name);
   assert.ok(topgg.includes('py-home') && topgg.includes('py-achievements'), 'Listagem do Top.gg atualizada.');
   const registerSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'registerSlashCommands.js'), 'utf8');
-  assert.ok(registerSource.includes("'py-home'"), '/py-home instalável na conta.');
+  assert.ok(!registerSource.split('\n').find((l) => l.includes('USER_INSTALLABLE_MODULE_COMMANDS = new Set')).includes("'py-home'"), '/py-home é exclusivo da Cringelândia (não instalável na conta).');
   console.log('  ✅ 10. Módulo, catálogo de comandos, Visual DB, embedRegistry e Top.gg sincronizados.');
 }
 

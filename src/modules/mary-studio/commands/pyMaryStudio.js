@@ -96,6 +96,8 @@ function buildQuickHubView(userId, source) {
 }
 
 module.exports = {
+  // Zona da Mary (plano 5.1): registrado e usado só no servidor dela.
+  guildScope: [require('../../../config/scopes').MARY_GUILD_ID],
   name,
   aliases,
   category: 'utilidades',
