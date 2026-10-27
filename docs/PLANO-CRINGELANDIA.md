@@ -1,7 +1,8 @@
 # Plano Cringelândia: foco, painel novo, estúdio de mensagens e comunidade
 
 > **Status:** aprovado pelo dono em 27/10/2026. Nada deste plano foi implementado ainda.
-> **Base do código conferida:** `main` no commit `f27affd` (merge do PR #2).
+> **Base do código conferida:** `main` no commit `d49d465` (inclui o PR #2 e os commits do Realm e do
+> roleplay de 26/10).
 > **Origem:** conversa com o Gemini ("Plano Diretor de Reestruturação da Pyxie", 6 mensagens do dono),
 > revisada contra o código real, mais as respostas do dono às perguntas da revisão.
 
@@ -20,6 +21,8 @@
    `communityShield`, `ephemeralTranslator`, `publicCommandsCatalog`, `customEmbeds.json`, `/py-sue`,
    módulo `gloom` ativo, repositório `zululuga/kuromi`. O repositório é `cringinho/Pyxie`, clonado na
    VM em `~/kuromi`.
+7. Quando o Gemini fala em "módulo de RP", o módulo real é o **`roleplay`** (`/py-character` e a
+   narradora com IA no fórum do Pyxie's Realm), não o antigo "Bosque" (`gloom`), que já saiu do código.
 
 ---
 
@@ -48,8 +51,8 @@
 | # | Assunto | Decisão |
 |---|---|---|
 | D1 | Foco | 100% Cringelândia. Bot global continua, sem obrigação com estrangeiros. |
-| D2 | Pyxie's Realm | Só lore. Remover do código o que não for lore (conferido: não há nada além de texto de lore). |
-| D3 | Módulo de RP | Abandonado. Limpar sobras. |
+| D2 | Pyxie's Realm | Só lore. Remover do código o que não for lore: o módulo `realm`, os scripts `scripts/realm/`, o `docs/realm/` e os testes do Realm. A lore (Nyx, Nyxiel, fadas) fica. |
+| D3 | Módulo de RP | O RP "chato" é o módulo `roleplay` (ficha + narradora com IA). Fica **desligado por enquanto**; apagar ou não é pergunta aberta (seção 11). Mestre de RPG por IA não é viável de graça por ser fácil de burlar: o RPG da comunidade é com mestres humanos. O antigo `gloom` já saiu; só limpar sobras. |
 | D4 | Museu | "Museu da Pyxie" é o museu da Cringelândia. Mantém o nome no site. |
 | D5 | Escopo Cringelândia | Sazonal, Catacumbas (`/py-dungeon`), chefe semanal (`/py-boss`), Festival (`/py-festival`), **Casinha (`/py-home`)**, **mercado (`/py-market`)** e **Passe (`/py-pass`)** ficam só na Cringelândia. |
 | D6 | Repositório da VM | `~/kuromi` aponta para `github.com/cringinho/Pyxie`. |
@@ -72,8 +75,12 @@
   Cringelândia: está errado). O certo, em `src/modules/mary-studio/maryStudioManager.js`, é
   `1557399041443111025`.
 - Só `seasonal` declara `guildScope` no módulo hoje. `giveaways` declara `guildScope: null`.
-- `deploy.sh` só registra os comandos de novo quando muda algo em `src/commands` ou
-  `src/registerSlashCommands.js`. Comandos dentro de `src/modules/*/commands` não disparam o registro.
+- Desde o commit `7d95acc`, o `deploy.sh` roda `src/registerSlashCommands.js` em todo deploy, e o
+  script só chama a API quando a impressão digital dos comandos muda (`.slash-commands.hash`). Mas
+  ele continua mandando os comandos de servidor para **um único** servidor (`TARGET_GUILD_ID`).
+- `guildFeatures.js` ganhou rotas por comando (`commandChannels`, `setCommandChannels`,
+  `commandRoute`): cada comando pode morar num canal. Feito para o Realm, mas útil para a
+  Cringelândia.
 - Os comandos `py-dungeon`, `py-home`, `py-craft`, `py-market`, `py-festival` e `py-pass` estão na lista
   de comandos instaláveis no perfil do usuário (`USER_INSTALLABLE_MODULE_COMMANDS`).
 - `src/services/guildFeatures.js` tem o "modo Mundo Pyxie" (MMO) ligado por padrão em todos os
@@ -81,13 +88,21 @@
   Cringelândia.
 
 **RP e Realm**
-- O módulo de RP (`gloom`, "Bosque") **não existe mais** no repositório. Sobras: chaves de emoji e
-  textos sobre o "Bosque da Penumbra" em `src/utils/appEmojis.js`, `src/data/emojis.json`,
-  `src/utils/i18n.js`, `src/services/professions.js`, `src/data/generated_work_minigames.json`, a chave
-  `grimorio` em `server.js` e a linha que apaga `data/gloom.json` em `deploy.sh` e
-  `scripts/auto_deploy.sh`. O `AGENTS.md` §7 cita o Bosque da Penumbra.
-- "Realm" só aparece em texto de lore (profissões e minigames). O botão de suporte do bot já leva à
-  Cringelândia (`/discord`).
+- **Módulo `realm`** (`src/modules/realm/`, servidor `1564375898851909653`): leis em EN/PT/ES, posts
+  "Just Listening" protegidos, rotas de comando por canal. Junto: `scripts/realm/provision.js`
+  (cria cargos, canais, modo Comunidade, AutoMod, Onboarding e tela de boas-vindas pela API; mostra o
+  que mudaria e só aplica com `--apply`; nunca apaga), `scripts/realm/publish.js`,
+  `docs/realm/PROMPT-PYXIES-REALM.md` e `tests/realmServer.test.js`.
+- **Módulo `roleplay`** (`src/modules/roleplay/`): `/py-character` é **global** e está ligado
+  (`defaultEnabled: true`); a narradora com IA só age no fórum `#roleplay-tales` do Realm (Groq
+  `openai/gpt-oss-120b`, tetos de 60 narrações por cena e 500 por dia, filtros de conteúdo sexual e de
+  crise). Fichas em `data/roleplay.json`. Teste: `tests/roleplay.test.js`.
+- O antigo RP `gloom` ("Bosque") **não existe mais**. Sobras: chaves de emoji e textos sobre o
+  "Bosque da Penumbra" em `src/utils/appEmojis.js`, `src/data/emojis.json`, `src/utils/i18n.js`,
+  `src/services/professions.js`, `src/data/generated_work_minigames.json`, a chave `grimorio` em
+  `server.js` e a linha que apaga `data/gloom.json` em `deploy.sh` e `scripts/auto_deploy.sh`. O
+  `AGENTS.md` §7 cita o Bosque da Penumbra.
+- O botão de suporte do bot leva à Cringelândia (`/discord`).
 
 **Painel atual**
 - `public/admin.html` tem 6.457 linhas e 13 abas: `bot`, `database`, `emojis`, `guilds`, `logs`,
@@ -122,11 +137,16 @@
   `src/modules/partnerships/partnershipManager.js` (~linha 474).
 - Evento sazonal: os premiados por presença no chat recebem **ping normal**
   (`src/modules/seasonal/activityHandler.js`, ~linhas 181 a 312).
-- Groq: hoje só em `quizSeederService.js`, `workSeederService.js` e `arcaneMathService.js`.
+- Groq: nos geradores de perguntas (`quizSeederService.js`, `workSeederService.js`,
+  `arcaneMathService.js`, com fila e cota) e na narradora do `roleplay`, que usa `chatCompletionNow`
+  (chamada imediata, fora da fila) em `src/services/groqClient.js`.
 - Tickets: o botão de **remoção de arte** já existe (`src/modules/tickets/ticketManager.js`, canal
   `1557534749310976141`).
 - Acolhimento: `welcomeCheckinService.js` (check-in de novatos) e `ventService.js` já existem.
-- Nenhuma integração com o AutoMod nativo do Discord.
+- AutoMod e Onboarding nativos: o bot em si não gerencia nada disso. Só o script
+  `scripts/realm/provision.js` cria e atualiza regras do AutoMod (`/guilds/{id}/auto-moderation/rules`)
+  e o Onboarding (`PUT /guilds/{id}/onboarding`). Esse código é a base para o "modo blindagem" (5.7) e
+  para o Onboarding da Cringelândia (5.9).
 - `npm audit --omit=dev`: 5 alertas (1 crítico `proxy-addr`, 2 altos `body-parser` e `undici`,
   2 moderados `fflate`/`satori`). Os três primeiros se resolvem com atualização simples.
 - discord.js instalado: 14.27.0 (suporta Components V2).
@@ -141,6 +161,7 @@
 | Cringelândia | `1453890868980482090` |
 | Servidor da Mary | `1557399041443111025` |
 | Usuária Mary | `1463644930080637140` |
+| Pyxie's Realm (servidor a abandonar) | `1564375898851909653` |
 | Canal de homologação (prévias) | `1461937203214024891` |
 | Canal da staff para remoção de arte | `1557534749310976141` |
 
@@ -194,8 +215,8 @@ Mudanças necessárias:
   Cringelândia ele fica sempre ligado.
 - Dados existentes ficam como estão (`data/dungeon.json`, `data/homes.json` etc.). Quem jogava em outro
   servidor continua com tudo e pode jogar entrando na Cringelândia: isso vira chamada no site e na ajuda.
-- `deploy.sh` e `scripts/auto_deploy.sh`: registrar os comandos também quando mudar algo em
-  `src/modules/**/commands/` ou em qualquer `src/modules/*/index.js`.
+- Rotas por comando (`commandChannels`) passam a ser configuráveis no painel para a Cringelândia
+  (ex.: `/py-dungeon` só no canal das Catacumbas).
 - Ajuda (`commandHelpers.js`), `/api/commands` e catálogo do site: comandos da Cringelândia aparecem
   marcados como "exclusivo da Cringelândia" (é propaganda do servidor, não segredo). Os da Mary nunca
   aparecem.
@@ -375,6 +396,8 @@ sticky) para servir a qualquer servidor. O estúdio da Mary vira só uma configu
 
 - **Segurar a mensagem antes de aparecer só é possível com o AutoMod nativo do Discord.** A Pyxie
   cria, liga e desliga regras de palavras-chave com mensagem personalizada (precisa de `ManageGuild`).
+  Reaproveitar a lógica de criar/atualizar regras de `scripts/realm/provision.js`, levada para um
+  serviço do bot.
   Interruptor "🛡️ Modo blindagem" no painel (eleições, tragédias): lista de termos editável, canais
   isentos (ex.: um canal de debate com regras próprias).
 - **Detector de troca rápida:** em memória, conta respostas diretas entre duas pessoas (ex.: mais de 4
@@ -399,6 +422,7 @@ sticky) para servir a qualquer servidor. O estúdio da Mary vira só uma configu
 
 - Serviço único `src/services/pyxieVoice.js`: persona, regras, contexto, limite de tamanho,
   temperatura, cache curto e **falas prontas como reserva** se o Groq falhar ou demorar mais de 3s.
+  Usar `chatCompletionNow` do `groqClient.js` (como a narradora do `roleplay`), com teto diário próprio.
 - Usar primeiro em: `/py-daily` (o diário é o maior sucesso), `/py-work`, reações do tarot, ship,
   drops e prêmios.
 - Contexto enviado: apelido, horário, profissão, se é casada no bot, última carta. **Nunca o texto
@@ -413,6 +437,10 @@ sticky) para servir a qualquer servidor. O estúdio da Mary vira só uma configu
 **Estrutura do servidor (feita pelo dono no Discord, com apoio do bot)**
 - Onboarding nativo do Discord só com o básico (idioma, idade +18/-18, pronomes). Conferir os limites
   atuais do Onboarding antes de planejar as perguntas.
+- Mudanças de estrutura (cargos, canais, tags de fórum, AutoMod, Onboarding) podem sair de um
+  "blueprint" da Cringelândia, no modelo de `scripts/realm/provision.js`: primeiro mostra o que
+  mudaria, só aplica com `--apply` depois de o dono revisar, e nunca apaga nada. É um servidor vivo com
+  ~500 pessoas: nada roda sem a revisão do dono.
 - Lá dentro, um painel da Pyxie com botões que liberam setores aos poucos: Arte e Escrita, RPG e Jogos,
   Estudos e Superação, Poliglota / Mora no Exterior, Acolhimento e Saúde Mental. Feito com o estúdio
   (botões de cargo).
@@ -510,8 +538,8 @@ demoradas primeiro.
 - [ ] Não confiar em `X-Forwarded-For` vindo do cliente (`trust proxy` só para o loopback).
 - [ ] `npm audit fix` (sem atualizações que quebrem compatibilidade) e rodar a suíte.
 - [ ] `src/config/scopes.js` com os IDs, corrigir o ID da Mary em `commandIntrospector.js`.
-- [ ] `registerSlashCommands.js` agrupando por servidor.
-- [ ] `deploy.sh` e `scripts/auto_deploy.sh` registrando comandos quando mudar `src/modules/**`.
+- [ ] `registerSlashCommands.js` agrupando por servidor (um registro por guild de algum `guildScope`),
+      mantendo a impressão digital que evita chamadas desnecessárias.
 - [ ] `scripts/test-safe.sh`: faz backup de `data/`, roda a suíte com segredos em branco e restaura
       (hoje isso é feito à mão em toda sessão).
 - **Pronto quando:** `npm test` 100% e o painel antigo recusa acesso sem segredo configurado.
@@ -545,7 +573,13 @@ demoradas primeiro.
 ### Etapa 5 — Escopo Cringelândia
 - [ ] `guildScope` nos módulos do D5, fora da instalação no perfil, ganchos do `/py-work` e do Passe só
       na Cringelândia (confirmar), `/py-setup` sem o pitch do Mundo Pyxie fora dela.
-- [ ] Limpar as sobras do RP (seção 3) e o §7 do `AGENTS.md`.
+- [ ] Remover o Realm do código (D2): `src/modules/realm/`, `scripts/realm/`, `docs/realm/`,
+      `tests/realmServer.test.js` (e a entrada no `package.json`), textos `realm` no `i18n.js` e
+      referências em `setup.js`/`guildFeatures.js` que só servem ao Realm (manter as rotas por comando,
+      que são genéricas).
+- [ ] Desligar o `roleplay` (D3): `defaultEnabled: false` e `/py-character` fora do registro, sem
+      apagar `data/roleplay.json`. Ajustar `tests/roleplay.test.js`.
+- [ ] Limpar as sobras do `gloom` (seção 3) e o §7 do `AGENTS.md`.
 - [ ] Ajuda, `/api/commands`, site e `README` com "exclusivo da Cringelândia".
 - [ ] Teste automático que roda o handler de **todos** os comandos com interação simulada em PT e EN e
       lista os que quebram.
@@ -605,9 +639,8 @@ cp /tmp/economy.bak.json data/economy.json
 **Prévias de homologação:** seguir o padrão de `scripts/dispatch_*_previews.js` (dados temporários,
 contas `user_test_*`, `economy.purgeTestAccounts()` no fim), em PT e EN.
 
-**Deploy:** é feito pelo dono na VM com `./deploy.sh` (exige estar na `main`). Quando uma etapa mudar
-comandos de módulo, avisar o dono para rodar `./deploy.sh --force` até a etapa 0 corrigir o registro
-automático.
+**Deploy:** é feito pelo dono na VM com `./deploy.sh` (exige estar na `main`). O deploy já verifica e
+registra os slash commands sozinho quando eles mudam (`--force` registra mesmo sem mudança).
 
 **Acesso à VM:** uma sessão na nuvem não alcança a VM. Para trabalhar direto nela, o dono roda
 `claude remote-control` dentro de `~/kuromi` na VM (ou usa o app Desktop). Sem isso, pedir ao dono a
@@ -673,3 +706,7 @@ Conferir os links antes de usar em mensagens públicas (é o próprio caso de us
    troca)?
 5. **`AGENTS.md` enxuto:** pode dividir em núcleo + `docs/`?
 6. **Música:** resultado da enquete (5.10).
+7. **Servidor Pyxie's Realm no Discord** (`1564375898851909653`): o dono apaga, arquiva ou deixa
+   parado? (Ação do dono no Discord; o código sai de qualquer jeito.)
+8. **`roleplay`:** depois de desligado, apagar o código e as fichas (`data/roleplay.json`) ou guardar
+   para um RP futuro com mestres humanos?
