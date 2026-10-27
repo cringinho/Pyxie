@@ -371,7 +371,8 @@ function buildButton(doc, b, ctx) {
   const out = { type: 2, style: BUTTON_STYLES[b.style] || 1 };
   if (b.label) out.label = resolveText(b.label, ctx).slice(0, LIMITS.buttonLabel);
   if (emojiRaw) out.emoji = parseEmoji(emojiRaw);
-  if (b.action.type === 'link') out.url = b.action.url;
+  // Link fora do ar (monitor de links): usa o reserva ou a cópia do Web Archive enquanto isso.
+  if (b.action.type === 'link') out.url = require('./linkSentinel').resolveLiveUrl(b.action.url);
   else out.custom_id = `pyxs:${b.action.type}:${doc.id}:${b.id}`;
   return out;
 }

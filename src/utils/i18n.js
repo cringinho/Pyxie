@@ -329,6 +329,46 @@ const TRANSLATIONS = {
       "link_hint": "🏛️ Acesse a nossa Galeria de Artes Virtual: {url}",
       "stats": "🖼️ {count} obras no acervo"
     },
+    "moderation": {
+      "warn": "🍵 Ei, {a} e {b}, a conversa esquentou um pouquinho. Que tal respirar e voltar daqui a pouco? Ninguém aqui é inimigo, tá? (E não, eu não tô preocupada, só… cuidando do chá.)",
+      "slowmode": "🐢 Liguei o modo lento por {minutes} minutos ({seconds}s entre mensagens) para todo mundo respirar. Depois volta ao normal sozinho.",
+      "timeoutDm": "💜 Oi. A conversa em **{server}** continuou pesada mesmo depois do aviso, então você ficou 15 minutos sem mandar mensagens. Não é castigo pra sempre nem quer dizer que você é uma pessoa ruim: é só uma pausa para todo mundo se acalmar. Se quiser conversar com a staff sobre o que aconteceu, é só abrir um ticket.",
+      "logTitle": "🛡️ Controle de brigas · nível {level}",
+      "logWho": "**Quem:** {a} e {b} em {channel}",
+      "logVerdict": "**Leitura da conversa:** `{label}`",
+      "logAction": "**Ação:** {action}",
+      "logExcerpt": "📄 Trecho",
+        "shieldBlocked": "🛡️ A Cringelândia está em modo blindagem: esse assunto está pausado por enquanto. Obrigada por entender.",
+      "action": {
+        "none": "nenhuma (sem leitura confiável, staff decide)",
+        "warn": "aviso leve no canal",
+        "slowmode": "modo lento temporário",
+        "timeout": "castigo de 15 min nas duas pessoas, com DM"
+      }
+    },
+    "linkSentinel": {
+      "title": "🔗 Link com problema",
+      "downIntro": "Um link falhou duas vezes seguidas.",
+      "redirectIntro": "Um link agora leva para outro site. Não troquei sozinha: confira antes.",
+      "where": "Onde",
+      "link": "Link",
+      "diagnosis": "Diagnóstico",
+      "action": "O que eu fiz",
+      "usingReplacement": "enquanto isso, estou mostrando {url}",
+      "noReplacement": "não há reserva nem cópia no Web Archive",
+      "proposal": "proposta de troca para {url}",
+      "btnSwap": "Trocar link",
+      "btnRetest": "Testar de novo",
+      "btnMute": "Silenciar 7 dias",
+      "newUrl": "Novo link (https://…)",
+      "swapped": "✅ Link trocado para {url}.",
+      "invalidUrl": "😿 Esse link não parece válido. Use http:// ou https://.",
+      "notFound": "🔍 Esse link não está mais no monitor.",
+      "retestOk": "✅ Voltou a responder (HTTP {status}).",
+      "retestFail": "😿 Continua fora: {diagnosis}.",
+      "muted": "🔕 Silenciado por 7 dias.",
+      "ownerOnly": "🔒 Só o dono da Pyxie mexe no monitor de links."
+    },
     "messageStudio": {
       "role_added": "✨ Pronto! Você agora tem o cargo **{role}**.",
       "role_removed": "🍃 Tirei o cargo **{role}** de você.",
@@ -2441,6 +2481,46 @@ const TRANSLATIONS = {
       "desc": "Permanent archive of our members' creations, with retro browsing.",
       "link_hint": "🏛️ Access our Virtual Community Art Museum: {url}",
       "stats": "🖼️ {count} artworks in the archive"
+    },
+    "moderation": {
+      "warn": "🍵 Hey, {a} and {b}, things got a little heated. How about a breather and coming back in a bit? Nobody here is an enemy, okay? (And no, I'm not worried, I'm just… tending to the tea.)",
+      "slowmode": "🐢 I turned on slow mode for {minutes} minutes ({seconds}s between messages) so everyone can breathe. It goes back to normal on its own.",
+      "timeoutDm": "💜 Hi. The conversation in **{server}** stayed heavy even after the warning, so you're paused from sending messages for 15 minutes. It isn't forever and it doesn't mean you're a bad person: it's just a pause so everyone can calm down. If you want to talk to the staff about it, just open a ticket.",
+      "logTitle": "🛡️ Conflict care · level {level}",
+      "logWho": "**Who:** {a} and {b} in {channel}",
+      "logVerdict": "**Conversation read:** `{label}`",
+      "logAction": "**Action:** {action}",
+      "logExcerpt": "📄 Excerpt",
+        "shieldBlocked": "🛡️ This server is in shield mode: this topic is paused for now. Thanks for understanding.",
+      "action": {
+        "none": "none (no reliable read, staff decides)",
+        "warn": "light warning in the channel",
+        "slowmode": "temporary slow mode",
+        "timeout": "15-min timeout for both, with DM"
+      }
+    },
+    "linkSentinel": {
+      "title": "🔗 Link with a problem",
+      "downIntro": "A link failed twice in a row.",
+      "redirectIntro": "A link now leads to another site. I didn't swap it on my own: check it first.",
+      "where": "Where",
+      "link": "Link",
+      "diagnosis": "Diagnosis",
+      "action": "What I did",
+      "usingReplacement": "meanwhile I'm showing {url}",
+      "noReplacement": "there is no backup nor Web Archive copy",
+      "proposal": "suggested swap to {url}",
+      "btnSwap": "Swap link",
+      "btnRetest": "Test again",
+      "btnMute": "Mute 7 days",
+      "newUrl": "New link (https://…)",
+      "swapped": "✅ Link swapped to {url}.",
+      "invalidUrl": "😿 That link doesn't look valid. Use http:// or https://.",
+      "notFound": "🔍 That link is no longer in the monitor.",
+      "retestOk": "✅ It's answering again (HTTP {status}).",
+      "retestFail": "😿 Still down: {diagnosis}.",
+      "muted": "🔕 Muted for 7 days.",
+      "ownerOnly": "🔒 Only Pyxie's owner can manage the link monitor."
     },
     "messageStudio": {
       "role_added": "✨ Done! You now have the **{role}** role.",

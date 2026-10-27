@@ -26,6 +26,7 @@ function registerDashboardSection(section) {
 function getSections(guildAccess) {
   const base = ['overview', 'studio', 'features', 'channels', 'roles'];
   if (guildAccess.canManageAccess) base.push('access');
+  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('moderation');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
     .filter((s) => !s.roles || s.roles.includes(guildAccess.role))
     .map((s) => s.id);
@@ -342,6 +343,37 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, dmSource: saved.dmSource });
   });
 
+  // ---------- Moderação da Cringelândia: modo blindagem (AutoMod) e controle de brigas ----------
+  router.get('/api/dashboard/guilds/:guildId/moderation', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const shieldMode = require('../services/shieldMode');
+    const conflictWatch = require('../services/conflictWatch');
+    return res.json({
+      success: true,
+      shield: shieldMode.getShield(req.params.guildId),
+      conflict: conflictWatch.getConfig(req.params.guildId),
+      incidents: conflictWatch.listIncidents(req.params.guildId),
+    });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/moderation/shield', requireSession, requireGuild, requireCringelandiaOwner, async (req, res) => {
+    const shieldMode = require('../services/shieldMode');
+    const { t } = require('../utils/i18n');
+    try {
+      const shield = await shieldMode.applyShield(req.params.guildId, req.body || {}, {
+        discord: (method, route, body) => studioStore.discord(method, route, body, doFetch),
+        defaultMessage: t('moderation.shieldBlocked', 'pt'),
+      });
+      return res.json({ success: true, shield });
+    } catch (err) {
+      return res.status(502).json({ success: false, error: err.code || 'automod_error' });
+    }
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/moderation/conflict', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const conflict = require('../services/conflictWatch').saveConfig(req.params.guildId, req.body || {});
+    return res.json({ success: true, conflict });
+  });
+
   // Área global: só o dono da Pyxie.
   function requireOwner(req, res, next) {
     if (!access.isOwner(req.panelSession.userId)) return res.status(403).json({ success: false, error: 'owner_only' });
@@ -378,6 +410,32 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       .slice(0, 50)
       .map((c) => ({ name: c.name, errors: c.errors, total: c.total, lastUsed: c.lastUsed || 0 }));
     return res.json({ success: true, window: timeWindow, commands: list });
+  });
+
+  // Monitor de links (plano 5.6)
+  router.get('/api/dashboard/global/links', requireSession, requireOwner, (req, res) => {
+    return res.json({ success: true, links: require('../services/linkSentinel').listLinks() });
+  });
+
+  router.post('/api/dashboard/global/links', requireSession, requireOwner, (req, res) => {
+    try {
+      const link = require('../services/linkSentinel').upsertLink({ ...(req.body || {}), source: 'panel' });
+      return res.json({ success: true, link });
+    } catch (err) {
+      return res.status(400).json({ success: false, error: err.code || 'invalid_url' });
+    }
+  });
+
+  router.delete('/api/dashboard/global/links/:id', requireSession, requireOwner, (req, res) => {
+    const ok = require('../services/linkSentinel').removeLink(String(req.params.id));
+    return ok ? res.json({ success: true }) : res.status(404).json({ success: false, error: 'link_not_found' });
+  });
+
+  router.post('/api/dashboard/global/links/:id/test', requireSession, requireOwner, async (req, res) => {
+    const sentinel = require('../services/linkSentinel');
+    const link = sentinel.listLinks().find((l) => l.id === String(req.params.id));
+    if (!link) return res.status(404).json({ success: false, error: 'link_not_found' });
+    return res.json({ success: true, result: await sentinel.probe(link.url, doFetch) });
   });
 
   router.get('/api/dashboard/global/modules', requireSession, requireOwner, (req, res) => {
