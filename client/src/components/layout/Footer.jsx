@@ -34,6 +34,12 @@ export default function Footer({ t, lang = 'pt' }) {
             <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
             {t('footer.terms')}
           </a>
+          <a href={`/pais-e-profissionais?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+            {t('footer.parents')}
+          </a>
+          <a href={`/transparencia?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+            {t('footer.transparency')}
+          </a>
           <a href="/promo" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">
             Shopee
           </a>

@@ -537,6 +537,18 @@ app.get(['/termos', '/terms'], serveLocalizedPage('terms', publicDir));
 app.get(['/privacidade', '/privacy'], serveLocalizedPage('privacy', publicDir));
 
 app.get('/cringelandia', serveLocalizedPage('cringelandia', publicDir));
+app.get(['/pais-e-profissionais', '/parents'], serveLocalizedPage('parents', publicDir));
+app.get(['/transparencia', '/transparency'], serveLocalizedPage('transparency', publicDir));
+// Registro público das doações (src/data/transparency.json, versionado com os comprovantes).
+app.get('/api/public/transparency', (req, res) => {
+  try {
+    const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'src', 'data', 'transparency.json'), 'utf8'));
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    return res.json({ success: true, donations: Array.isArray(data.donations) ? data.donations : [] });
+  } catch (_) {
+    return res.json({ success: true, donations: [] });
+  }
+});
 
 // Mercado entre jogadores: página pública de preços e a API que ela lê (data/market.json)
 app.get(['/mercado', '/market'], serveLocalizedPage('market', publicDir));
