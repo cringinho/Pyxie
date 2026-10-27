@@ -31,6 +31,8 @@ const { TAROT_ACHIEVEMENTS } = require('./src/data/tarotAchievements');
 const embedRegistry = require('./src/utils/embedRegistry');
 const acervoAuditService = require('./src/services/acervoAuditService');
 const { createAdminMasterRouter } = require('./src/routes/adminMasterRoutes');
+const { createDashboardRouter } = require('./src/routes/dashboardRoutes');
+const { createBotBridge } = require('./src/services/botBridge');
 const { createExpressTelemetryMiddleware } = require('./src/services/resourceTelemetry');
 const { createRouteGateMiddleware } = require('./src/services/webRoutesManager');
 const cringelandiaService = require('./src/services/cringelandiaService');
@@ -59,6 +61,8 @@ function sendIpcToBot(payload) {
   }
   return false;
 }
+
+const botBridge = createBotBridge({ send: sendIpcToBot });
 
 function cleanupOrphanBotProcess() {
   try {
@@ -121,9 +125,15 @@ function startBot() {
     env: process.env,
   });
 
+  let stdoutBuffer = '';
   botProcess.stdout.on('data', (chunk) => {
-    const text = chunk.toString();
-    text.split(/\r?\n/).filter(Boolean).forEach((line) => addLog(line));
+    // Respostas da ponte podem chegar quebradas em vários pedaços: só processa linhas completas.
+    stdoutBuffer += chunk.toString();
+    const lines = stdoutBuffer.split(/\r?\n/);
+    stdoutBuffer = lines.pop();
+    lines.filter(Boolean).forEach((line) => {
+      if (!botBridge.handleLine(line)) addLog(line);
+    });
   });
 
   botProcess.stderr.on('data', (chunk) => {
@@ -314,6 +324,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rotas da API Master SaaS Dashboard
 app.use('/', createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }));
+app.use('/', createDashboardRouter({ bridge: botBridge, sendIpcToBot }));
 
 // Tratamento gracioso de payloads JSON malformados
 app.use((err, req, res, next) => {
