@@ -424,9 +424,9 @@ const TRANSLATIONS = {
       "disabled": "🏷️ Tirei o título do seu apelido."
     },
     "colors": {
-      "groupTitle": "🎨 Cores {from} a {to}",
+      "groupTitle": "🎨 Cores ({part}/{total})",
       "intro": "> *Escolha uma cor no menu abaixo de cada bloco. Trocar de cor tira a anterior, então não precisa se preocupar.*",
-      "placeholder": "Escolha uma cor ({from} a {to})",
+      "placeholder": "Escolha uma cor ({part}/{total})",
       "removeTitle": "🧽 Tirar minha cor",
       "removeDesc": "Ficou com cor travada ou quer voltar ao normal? Toque no botão e eu tiro todas as cores do seu perfil.",
       "removeButton": "Tirar minha cor",
@@ -2642,9 +2642,9 @@ const TRANSLATIONS = {
       "disabled": "🏷️ I removed the title from your nickname."
     },
     "colors": {
-      "groupTitle": "🎨 Colors {from} to {to}",
+      "groupTitle": "🎨 Colors ({part}/{total})",
       "intro": "> *Pick a color from the menu under each block. Switching colors removes the old one, so no worries.*",
-      "placeholder": "Pick a color ({from} to {to})",
+      "placeholder": "Pick a color ({part}/{total})",
       "removeTitle": "🧽 Remove my color",
       "removeDesc": "Got a stuck color or want to go back to normal? Tap the button and I'll remove every color from your profile.",
       "removeButton": "Remove my color",
