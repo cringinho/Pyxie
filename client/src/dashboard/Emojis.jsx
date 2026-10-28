@@ -39,9 +39,11 @@ export default function Emojis({ t }) {
   const [notice, setNotice] = useState(null);
   const [query, setQuery] = useState('');
   const [editing, setEditing] = useState(null);
+  const [currencies, setCurrencies] = useState(null);
 
   const load = useCallback(() => {
     api.embedSlots().then(setData).catch((e) => setError(e.code || 'generic'));
+    api.currencies().then((d) => setCurrencies(d.currencies)).catch(() => {});
   }, []);
   useEffect(load, [load]);
 
@@ -53,6 +55,17 @@ export default function Emojis({ t }) {
 
   if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
   if (!data) return <Spinner label={t('app.loading')} />;
+
+  const saveCurrency = async (key, emojiId) => {
+    setNotice(null);
+    try {
+      const res = await api.saveCurrency(key, emojiId);
+      setCurrencies(res.currencies);
+      setNotice({ tone: 'ok', text: t('emojis.saved') });
+    } catch (e) {
+      setNotice({ tone: 'error', text: t('error.generic', { error: e.code || 'generic' }) });
+    }
+  };
 
   const save = async (embedId, slotKey, emojiId) => {
     setNotice(null);
@@ -67,6 +80,31 @@ export default function Emojis({ t }) {
 
   return (
     <div className="space-y-4">
+      {currencies && (
+        <div className="dash-card rounded-2xl p-4">
+          <p className="mb-3 font-title font-bold">{t('emojis.currencies')}</p>
+          <ul className="space-y-2">
+            {['coins', 'magicBeans'].map((key) => {
+              const c = currencies[key];
+              if (!c) return null;
+              return (
+                <li key={key} className="flex items-center gap-3 text-sm">
+                  <img src={c.currentUrl} alt={t(`emojis.currency.${key}`)} width="28" height="28" className="h-7 w-7 object-contain" />
+                  <span className="min-w-0 flex-1 font-semibold">{t(`emojis.currency.${key}`)}</span>
+                  <Button variant="ghost" className="min-h-[36px] px-3" onClick={() => setEditing({ currencyKey: key })}>
+                    {t('emojis.change')}
+                  </Button>
+                  {c.isCustomized && (
+                    <button type="button" className="text-xs text-white/50 hover:text-white" onClick={() => saveCurrency(key, c.defaultId)}>
+                      {t('emojis.default')}
+                    </button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
       <p className="text-sm text-white/60">{t('emojis.hint', { count: data.count })}</p>
       <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('emojis.search')} aria-label={t('emojis.search')} className={field} />
       {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
@@ -103,7 +141,8 @@ export default function Emojis({ t }) {
           emojis={data.appEmojis}
           onClose={() => setEditing(null)}
           onPick={(e) => {
-            save(editing.embedId, editing.slotKey, e.id);
+            if (editing.currencyKey) saveCurrency(editing.currencyKey, e.id);
+            else save(editing.embedId, editing.slotKey, e.id);
             setEditing(null);
           }}
         />

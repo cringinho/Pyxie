@@ -690,6 +690,9 @@ export const DASH_I18N = {
     "health.loop": "Atraso do processamento (p99)",
     "health.normal": "normal",
     "health.pressure": "disjuntor ligado: imagens pesadas pausadas",
+    "emojis.currencies": "Emojis das moedas",
+    "emojis.currency.coins": "Moedinhas",
+    "emojis.currency.magicBeans": "Feijões Mágicos",
   },
   en: {
     'app.title': 'Pyxie Dashboard',
@@ -1381,6 +1384,9 @@ export const DASH_I18N = {
     "health.loop": "Processing delay (p99)",
     "health.normal": "normal",
     "health.pressure": "guard on: heavy images paused",
+    "emojis.currencies": "Currency emojis",
+    "emojis.currency.coins": "Coins",
+    "emojis.currency.magicBeans": "Magic Beans",
   },
 };
 
