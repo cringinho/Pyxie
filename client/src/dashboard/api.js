@@ -79,6 +79,8 @@ export const api = {
   shopeeSyncImages: () => request('/api/admin/shopee/sync-all-images', { method: 'POST', body: {} }),
   shopeeSyncImage: (id) => request('/api/admin/shopee/sync-image', { method: 'POST', body: { id } }),
   shopeeDelete: (id) => request(`/api/admin/shopee/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  embedSlots: () => request('/api/admin/embeds'),
+  saveEmbedSlot: (embedId, slotKey, emojiId) => request('/api/admin/embeds/slot', { method: 'POST', body: { embedId, slotKey, emojiId } }),
   museumArts: (page, q) => request(`/api/admin/modules/museum/arts?page=${page}&limit=24&q=${encodeURIComponent(q || '')}`),
   museumEdit: (id, body) => request(`/api/admin/modules/museum/art/${encodeURIComponent(id)}`, { method: 'PATCH', body }),
   museumDelete: (id) => request(`/api/admin/modules/museum/art/${encodeURIComponent(id)}`, { method: 'DELETE' }),

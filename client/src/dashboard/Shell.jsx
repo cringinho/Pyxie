@@ -19,6 +19,7 @@ import {
   ShieldAlert,
   ShoppingBag,
   ShieldCheck,
+  Smile,
   Sparkles,
   ToggleRight,
   UsersRound,
@@ -54,6 +55,7 @@ export const SECTION_META = {
   assets: { icon: Image, group: 'content' },
   museum: { icon: Landmark, group: 'content' },
   shopee: { icon: ShoppingBag, group: 'content' },
+  emojis: { icon: Smile, group: 'content' },
 };
 
 const GROUP_ORDER = ['core', 'messages', 'config', 'safety', 'system', 'content', 'more'];
