@@ -29,6 +29,11 @@ function markActive(guildId, until) {
   state.set(guildId, entry);
 }
 
+// Pausa de raid ainda valendo (outros módulos ficam quietos durante um ataque).
+function isActive(guildId, now = Date.now()) {
+  return (state.get(guildId)?.activeUntil || 0) > now;
+}
+
 function clearActive(guildId) {
   const entry = state.get(guildId);
   if (entry) entry.activeUntil = 0;
@@ -43,4 +48,4 @@ function resetMemory() {
   state.clear();
 }
 
-module.exports = { trackJoin, markActive, clearActive, sweep, resetMemory, threshold, YOUNG_MS };
+module.exports = { trackJoin, markActive, isActive, clearActive, sweep, resetMemory, threshold, YOUNG_MS };

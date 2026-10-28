@@ -282,6 +282,18 @@ function cookieFor(userId, guilds = []) {
     res = await call(`/api/dashboard/guilds/${GUILD_A}/injections`, { cookie: adminCookie, method: 'POST', body: { pack: 'gender', options: { publish: false } } });
     assert.equal((await res.json()).jobId, 'abc123');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/injections`, { cookie: adminCookie })).status, 403);
+    // Automações: o mesmo esquema monta a tela e valida; canal de fora é recusado.
+    const autoData = await (await call(`/api/dashboard/guilds/${GUILD_A}/automations`, { cookie: adminCookie })).json();
+    assert(autoData.schema.animator.fields.some((f) => f.key === 'enabled'), 'Esquema do animador com o liga/desliga');
+    assert.equal(autoData.configs.animator.enabled, false, 'Animador desligado por padrão');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/automations/animator`, { cookie: adminCookie, method: 'PUT', body: { enabled: true, channelIds: ['888888888888888888'] } });
+    assert.equal(res.status, 400, 'Canal de outro servidor é recusado');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/automations/animator`, { cookie: adminCookie, method: 'PUT', body: { enabled: true, channelIds: ['777777777777777777'], maxPerDay: 99, tone: 'rude' } });
+    const savedAuto = (await res.json()).config;
+    assert.equal(savedAuto.maxPerDay, 6, 'Número fora do limite é ajustado');
+    assert.equal(savedAuto.tone, 'cute', 'Opção desconhecida volta ao padrão');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/automations/nada`, { cookie: adminCookie, method: 'PUT', body: {} })).status, 404);
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/automations`, { cookie: adminCookie })).status, 403);
     const act = await (await call(`/api/dashboard/guilds/${GUILD_A}/activity`, { cookie: adminCookie })).json();
     assert.equal(act.series.length, 30, 'Atividade: série de 30 dias');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/activity`, { cookie: adminCookie })).status, 403);

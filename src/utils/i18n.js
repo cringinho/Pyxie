@@ -404,6 +404,28 @@ const TRANSLATIONS = {
       "nothing": "Nada mudou.",
       "done": "Pronto! Adicionado: {added}. Tirado: {removed}."
     },
+    "animator": {
+      "tone": {
+        "cute": "✨ O chat deu uma pausinha... que tal isso?",
+        "neutral": "💬 Para quem estiver por aqui:",
+        "tsundere": "Hmph, esse chat ficou quieto demais. Não que eu me importe, mas responde aí:"
+      },
+      "type": {
+        "question": "Pergunta",
+        "creative": "Desafio criativo",
+        "fact": "Curiosidade",
+        "scramble": "Palavra embaralhada",
+        "house": "Pergunta da casa"
+      },
+      "or": "ou",
+      "scramble": "Desembaralhe: {word}. A primeira resposta certa no chat em 10 minutos leva a glória.",
+      "scrambleWin": "🎉 {user} acertou: {word}!",
+      "footer": "Animador da Pyxie · a staff pode pausar por 24 h",
+      "pause": "Pausar 24 h (staff)",
+      "pauseStaff": "Só a staff (Gerenciar Mensagens) pode pausar o animador.",
+      "paused": "Animador pausado por 24 horas neste canal.",
+      "voteClosed": "Essa votação já fechou."
+    },
     "linkShield": {
       "brandUnknown": "um site conhecido",
       "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
@@ -2844,6 +2866,28 @@ const TRANSLATIONS = {
       "notAllowed": "This panel is only for some roles in the server.",
       "nothing": "Nothing changed.",
       "done": "Done! Added: {added}. Removed: {removed}."
+    },
+    "animator": {
+      "tone": {
+        "cute": "✨ Chat took a little break... how about this?",
+        "neutral": "💬 For whoever is around:",
+        "tsundere": "Hmph, this chat got way too quiet. Not that I care, but answer this:"
+      },
+      "type": {
+        "question": "Question",
+        "creative": "Creative challenge",
+        "fact": "Fun fact",
+        "scramble": "Scrambled word",
+        "house": "House question"
+      },
+      "or": "or",
+      "scramble": "Unscramble: {word}. The first right answer in chat within 10 minutes takes the glory.",
+      "scrambleWin": "🎉 {user} got it: {word}!",
+      "footer": "Pyxie's chat animator · staff can pause for 24 h",
+      "pause": "Pause 24 h (staff)",
+      "pauseStaff": "Only staff (Manage Messages) can pause the animator.",
+      "paused": "Animator paused for 24 hours in this channel.",
+      "voteClosed": "This vote is already closed."
     },
     "linkShield": {
       "brandUnknown": "a well-known site",

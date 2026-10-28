@@ -24,7 +24,7 @@ function registerDashboardSection(section) {
 }
 
 function getSections(guildAccess) {
-  const base = ['overview', 'commands', 'studio', 'features', 'injections', 'security', 'channels', 'roles', 'emojiUsage'];
+  const base = ['overview', 'commands', 'studio', 'features', 'automations', 'injections', 'security', 'channels', 'roles', 'emojiUsage'];
   if (guildAccess.canManageAccess) base.push('access');
   if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
@@ -369,6 +369,34 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     } catch (err) {
       return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
     }
+  });
+
+  // ---------- Automações (esquema declarativo: o mesmo esquema monta a tela e valida aqui) ----------
+  router.get('/api/dashboard/guilds/:guildId/automations', requireSession, requireGuild, (req, res) => {
+    const auto = require('../services/automations');
+    const schema = auto.publicSchema();
+    const configs = Object.fromEntries(Object.keys(schema).map((k) => [k, auto.getConfig(req.params.guildId, k, { fresh: true })]));
+    return res.json({ success: true, schema, configs, stats: require('../services/automationStats').read(req.params.guildId) });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/automations/:key', requireSession, requireGuild, async (req, res) => {
+    const auto = require('../services/automations');
+    const config = auto.normalize(req.params.key, req.body || {});
+    if (!config) return res.status(404).json({ success: false, error: 'unknown_automation' });
+    const want = auto.idsToCheck(req.params.key, config);
+    try {
+      if (want.channels.length) {
+        const channels = await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId });
+        if (!want.channels.every((id) => channels.some((c) => c.id === id))) return res.status(400).json({ success: false, error: 'invalid_channel' });
+      }
+      if (want.roles.length) {
+        const roles = await bridge.request('GUILD_ROLES', { guildId: req.params.guildId });
+        if (!want.roles.every((id) => roles.some((r) => r.id === id))) return res.status(400).json({ success: false, error: 'invalid_role' });
+      }
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+    return res.json({ success: true, config: auto.saveConfig(req.params.guildId, req.params.key, config) });
   });
 
   // ---------- Injeções: catálogo de pacotes (fixo no código) e ações pelo bot ----------
