@@ -28,3 +28,6 @@ scratch/
 data/cache/
 data/*.corrupt-*
 data/*.lock
+
+# Configurações pessoais do Claude Code
+.claude/settings.local.json
