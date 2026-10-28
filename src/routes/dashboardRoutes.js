@@ -394,11 +394,8 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       const channel = await discord('GET', `/channels/${channelId}`);
       if (String(channel.guild_id) !== req.params.guildId) return res.status(403).json({ success: false, error: 'channel_not_in_guild' });
       const sync = await colorRoles.syncRoles(req.params.guildId, discord);
-      const sent = [];
-      for (const message of colorRoles.buildPanel(req.params.guildId, 'pt')) {
-        sent.push((await discord('POST', `/channels/${channelId}/messages`, message)).id);
-      }
-      return res.json({ success: true, created: sync.created, reused: sync.reused, messages: sent.length });
+      const panel = await colorRoles.publishPanel(req.params.guildId, channelId, discord, 'pt');
+      return res.json({ success: true, created: sync.created, reused: sync.reused, renamed: sync.renamed, messages: panel.messages, edited: panel.edited });
     } catch (err) {
       return res.status(502).json({ success: false, error: err.code || 'colors_error' });
     }

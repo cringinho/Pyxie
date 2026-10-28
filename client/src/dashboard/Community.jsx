@@ -105,7 +105,7 @@ function ColorsCard({ t, guildId, texts }) {
     setState(null);
     try {
       const res = await api.publishColors(guildId, channelId);
-      setState({ ok: true, text: t('colorsPanel.done', { created: res.created, reused: res.reused }) });
+      setState({ ok: true, text: t(res.edited ? 'colorsPanel.updated' : 'colorsPanel.done', { created: res.created, reused: res.reused, renamed: res.renamed || 0 }) });
     } catch (e) {
       setState({ ok: false, text: t('error.generic', { error: e.code }) });
     }
