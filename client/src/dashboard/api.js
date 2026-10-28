@@ -102,5 +102,7 @@ export const api = {
   health: () => request('/api/dashboard/global/health'),
   errors: (window) => request(`/api/dashboard/global/errors?window=${window}`),
   modules: () => request('/api/dashboard/global/modules'),
+  moduleConfig: (id) => request(`/api/admin/modules/${encodeURIComponent(id)}/config`),
+  saveModuleConfig: (id, body) => request(`/api/admin/modules/${encodeURIComponent(id)}/config`, { method: 'POST', body }),
   toggleModule: (id, enabled) => request(`/api/dashboard/global/modules/${id}/toggle`, { method: 'POST', body: { enabled } }),
 };

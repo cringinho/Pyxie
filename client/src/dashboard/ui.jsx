@@ -173,3 +173,29 @@ export function MultiSelect({ options, value, onChange, emptyLabel }) {
     </div>
   );
 }
+
+// Gaveta lateral de configuração (direita). Fecha com Esc ou tocando fora; o link da página abre ela direto.
+export function Drawer({ title, subtitle, onClose, closeLabel, children }) {
+  React.useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+  return (
+    <div className="fixed inset-0 z-40">
+      <button type="button" aria-label={closeLabel} className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <aside role="dialog" aria-modal="true" aria-label={title} className="dash-surface absolute inset-y-0 right-0 flex w-full flex-col border-l border-white/10 sm:w-[460px]">
+        <header className="flex items-start justify-between gap-3 border-b border-white/10 p-4">
+          <div className="min-w-0">
+            <h2 className="truncate font-title text-lg font-bold">{title}</h2>
+            {subtitle && <p className="text-xs text-white/50">{subtitle}</p>}
+          </div>
+          <button type="button" autoFocus onClick={onClose} aria-label={closeLabel} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl hover:bg-white/10">
+            ✕
+          </button>
+        </header>
+        <div className="flex-1 space-y-4 overflow-y-auto p-4">{children}</div>
+      </aside>
+    </div>
+  );
+}

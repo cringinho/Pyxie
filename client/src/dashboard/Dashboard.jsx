@@ -14,13 +14,14 @@ import Shopee from './Shopee';
 import Emojis from './Emojis';
 import Seasonal from './Seasonal';
 import Partnerships from './Partnerships';
+import ModuleDrawer from './ModuleDrawer';
 import BotPermissions from './Permissions';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
 function parseHash() {
   const parts = window.location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (parts[0] === 'guild' && parts[1]) return { view: 'guild', guildId: parts[1], section: parts[2] || 'overview' };
-  if (parts[0] === 'global') return { view: 'global', section: parts[1] || 'health' };
+  if (parts[0] === 'global') return { view: 'global', section: parts[1] || 'health', item: parts[2] || null };
   return { view: 'picker' };
 }
 
@@ -28,8 +29,12 @@ function useHashRoute() {
   const [route, setRoute] = useState(parseHash);
   useEffect(() => {
     const onChange = () => {
-      setRoute(parseHash());
-      window.scrollTo(0, 0);
+      const next = parseHash();
+      // Abrir ou fechar a gaveta (mesma seção) não volta a página para o topo.
+      setRoute((prev) => {
+        if (prev.view !== next.view || prev.section !== next.section || prev.guildId !== next.guildId) window.scrollTo(0, 0);
+        return next;
+      });
     };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
@@ -91,7 +96,7 @@ export default function Dashboard() {
 
   const shell = { t, lang, setLang, me, onLogout: logout };
   if (route.view === 'guild') return <GuildView shell={shell} guildId={route.guildId} section={route.section} />;
-  if (route.view === 'global' && me?.user?.isOwner) return <GlobalView shell={shell} section={route.section} />;
+  if (route.view === 'global' && me?.user?.isOwner) return <GlobalView shell={shell} section={route.section} item={route.item} />;
   return <Picker shell={shell} />;
 }
 
@@ -549,7 +554,7 @@ function Features({ t, guildId }) {
 }
 
 // Cartão de módulo/grupo com selo Ligado/Desligado e interruptor.
-function ModuleTile({ t, emoji, icon: Icon, name, description, extra, enabled, disabled, onChange }) {
+function ModuleTile({ t, emoji, icon: Icon, name, description, extra, enabled, disabled, onChange, onOpen }) {
   return (
     <div className={`dash-card flex h-full flex-col gap-3 rounded-2xl p-4 transition ${enabled ? 'shadow-[0_0_22px_rgba(236,72,153,0.18)]' : 'opacity-80'}`}>
       <div className="flex items-start justify-between gap-3">
@@ -563,8 +568,13 @@ function ModuleTile({ t, emoji, icon: Icon, name, description, extra, enabled, d
         {description && <p className="mt-1 text-sm text-white/60">{description}</p>}
         {extra}
       </div>
-      <div>
+      <div className="flex items-center justify-between gap-2">
         <Badge tone={enabled ? 'green' : 'muted'}>{t(enabled ? 'status.on' : 'status.off')}</Badge>
+        {onOpen && (
+          <button type="button" onClick={onOpen} className="rounded-lg px-2 py-1 text-xs font-semibold text-mystic-glow hover:bg-white/5">
+            {t('drawer.open')} →
+          </button>
+        )}
       </div>
     </div>
   );
@@ -759,7 +769,7 @@ function PartnershipDm({ t, guildId }) {
   );
 }
 
-function GlobalView({ shell, section }) {
+function GlobalView({ shell, section, item }) {
   const { t, lang } = shell;
   const ids = ['health', 'servers', 'errors', 'modules', 'links', 'assets', 'museum', 'shopee', 'emojis'];
   const current = ids.includes(section) ? section : 'health';
@@ -772,7 +782,7 @@ function GlobalView({ shell, section }) {
         {current === 'health' && <Health t={t} />}
         {current === 'servers' && <ServerDirectory t={t} />}
         {current === 'errors' && <Errors t={t} />}
-        {current === 'modules' && <Modules t={t} lang={lang} />}
+        {current === 'modules' && <Modules t={t} lang={lang} item={item} />}
         {current === 'links' && <Links t={t} />}
         {current === 'assets' && <Assets t={t} />}
         {current === 'museum' && <Museum t={t} />}
@@ -891,12 +901,13 @@ function Errors({ t }) {
   );
 }
 
-function Modules({ t, lang }) {
+function Modules({ t, lang, item }) {
   const modules = useLoad(() => api.modules(), []);
   const [busy, setBusy] = useState(null);
   const [error, setError] = useState(null);
   if (!modules.data) return modules.error ? <ErrorNotice t={t} code={modules.error} /> : <Spinner label={t('app.loading')} />;
   const key = lang === 'pt' ? 'pt-BR' : 'en';
+  const opened = item ? modules.data.modules.find((m) => m.id === item) : null;
 
   const toggle = async (m, enabled) => {
     setBusy(m.id);
@@ -925,10 +936,12 @@ function Modules({ t, lang }) {
               enabled={m.enabled}
               disabled={busy === m.id}
               onChange={(v) => toggle(m, v)}
+              onOpen={() => go(`#/global/modules/${m.id}`)}
             />
           </li>
         ))}
       </ul>
+      {opened && <ModuleDrawer t={t} lang={lang} module={opened} busy={busy === opened.id} onToggle={(v) => toggle(opened, v)} onClose={() => go('#/global/modules')} />}
     </div>
   );
 }
