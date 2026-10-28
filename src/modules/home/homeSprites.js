@@ -29,6 +29,10 @@ for (const meta of require('../../../assets/home/seasonal-candidates.json').shee
 
 const sheetCache = new Map();
 const spriteCache = new Map();
+require('../../services/memoryGuard').onPressure(() => {
+  sheetCache.clear();
+  spriteCache.clear();
+});
 
 async function loadSheet(name) {
   if (!sheetCache.has(name)) {

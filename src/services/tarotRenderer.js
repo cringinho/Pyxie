@@ -271,6 +271,7 @@ function drawKuromi(ctx, cx, cy, isReversed) {
 
 // Cache LRU em memória para buffers de imagens renderizadas (economiza CPU/RAM)
 const tarotCardCache = new Map();
+require('./memoryGuard').onPressure(() => tarotCardCache.clear());
 const MAX_TAROT_CACHE_SIZE = 40;
 
 /**

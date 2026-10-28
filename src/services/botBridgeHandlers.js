@@ -26,6 +26,7 @@ const handlers = {
       uptimeMs: client.uptime || 0,
       rssMb: +(mem.rss / 1024 / 1024).toFixed(1),
       heapUsedMb: +(mem.heapUsed / 1024 / 1024).toFixed(1),
+      memory: require('./memoryGuard').status(),
     };
   },
 

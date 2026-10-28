@@ -224,6 +224,10 @@ const CHEST_COLORS = {
 
 const imageCache = new Map();
 const spriteCache = new Map();
+require('../../services/memoryGuard').onPressure(() => {
+  imageCache.clear();
+  spriteCache.clear();
+});
 const emojiImages = new Map(); // ref -> { img, failedAt }
 let assetsReady = null;
 

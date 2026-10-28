@@ -686,6 +686,10 @@ export const DASH_I18N = {
     "sec.appealsLink": "Link para pôr nas regras ou na mensagem de banimento:",
     "perm.why.appeals": "Ver o motivo do banimento e desbanir quando a staff aceita um pedido.",
     "perm.name.BanMembers": "Banir membros",
+    "health.heap": "Memória do bot (heap)",
+    "health.loop": "Atraso do processamento (p99)",
+    "health.normal": "normal",
+    "health.pressure": "disjuntor ligado: imagens pesadas pausadas",
   },
   en: {
     'app.title': 'Pyxie Dashboard',
@@ -1373,6 +1377,10 @@ export const DASH_I18N = {
     "sec.appealsLink": "Link to put in the rules or the ban message:",
     "perm.why.appeals": "See the ban reason and unban when staff accepts a request.",
     "perm.name.BanMembers": "Ban Members",
+    "health.heap": "Bot memory (heap)",
+    "health.loop": "Processing delay (p99)",
+    "health.normal": "normal",
+    "health.pressure": "guard on: heavy images paused",
   },
 };
 

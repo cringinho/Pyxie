@@ -358,6 +358,9 @@ const TRANSLATIONS = {
       "dmApproved": "🕊️ Seu pedido para voltar a **{server}** foi aceito. Você pode entrar de novo pelo convite do servidor. Que bom ter você de volta.",
       "dmRejected": "💜 Seu pedido para voltar a **{server}** não foi aceito desta vez. Daqui a 30 dias você pode pedir de novo pelo painel. Se precisar conversar com alguém agora, procure uma pessoa de confiança."
     },
+    "memoryGuard": {
+      "dm": "🧯 A memória da Pyxie chegou a {used} de {limit} MB. Esvaziei os caches de imagem e o cartão de perfil está saindo só em texto até baixar. Moderação, segurança e economia seguem normais."
+    },
     "linkShield": {
       "brandUnknown": "um site conhecido",
       "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
@@ -2741,6 +2744,9 @@ const TRANSLATIONS = {
       "alreadyDecided": "This request already has an answer.",
       "dmApproved": "🕊️ Your request to come back to **{server}** was accepted. You can join again through the server invite. It's good to have you back.",
       "dmRejected": "💜 Your request to come back to **{server}** wasn't accepted this time. In 30 days you can ask again through the dashboard. If you need to talk to someone right now, reach out to someone you trust."
+    },
+    "memoryGuard": {
+      "dm": "🧯 Pyxie's memory reached {used} of {limit} MB. I emptied the image caches and the profile card is text-only until it drops. Moderation, safety and economy keep running normally."
     },
     "linkShield": {
       "brandUnknown": "a well-known site",

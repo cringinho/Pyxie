@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Boxes, Check, Feather, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
+import { ArrowRight, Boxes, Check, Feather, Gauge, Timer, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
 import { api } from './api';
 import { detectLang, makeT } from './i18n';
 import { Badge, Button, Card, GuildIcon, MultiSelect, Notice, Spinner, StatTile, StatusDot, Switch, Toggle } from './ui';
@@ -884,6 +884,18 @@ function Health({ t }) {
             <StatTile icon={Server} accent="violet" label={t('health.guilds')} value={bot.guildCount} />
             <StatTile icon={Cpu} label={t('health.memory')} value={`${bot.rssMb} MB`} />
             <StatTile icon={Clock} accent="cyan" label={t('health.uptime')} value={formatUptime(Math.floor(bot.uptimeMs / 1000))} />
+            {bot.memory && (
+              <>
+                <StatTile
+                  icon={Gauge}
+                  accent={bot.memory.state === 'pressure' ? 'pink' : 'green'}
+                  label={t('health.heap')}
+                  value={`${bot.memory.heapUsedMb} / ${bot.memory.heapLimitMb} MB`}
+                  hint={t(bot.memory.state === 'pressure' ? 'health.pressure' : 'health.normal')}
+                />
+                <StatTile icon={Timer} accent="violet" label={t('health.loop')} value={`${bot.memory.loopP99Ms} ms`} />
+              </>
+            )}
           </div>
         )}
       </div>

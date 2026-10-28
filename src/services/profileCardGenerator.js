@@ -47,6 +47,7 @@ async function loadAdditionalAsset(languageCode, segment) {
 // =========================================================================
 
 const imageBase64Cache = new Map();
+require('./memoryGuard').onPressure(() => imageBase64Cache.clear());
 const CACHE_TTL_MS = 10 * 60 * 1000;
 
 async function fetchImageBase64(url) {
@@ -533,6 +534,8 @@ function buildChip(children, tokens, extra = {}) {
  * `overrides` permite pré-visualizar tema/estilo sem salvar (Estúdio do Perfil).
  */
 async function generateProfileCard({ targetUser, guild, source = null, client = null, overrides = null }) {
+  // Disjuntor de memória: sob pressão o perfil sai só em texto (quem chama já trata o null).
+  if (require('./memoryGuard').isUnderPressure()) return null;
   const lang = getLanguage(source);
   const fonts = loadFonts();
   const tr = (key, rep) => t(`profileCard.${key}`, source, rep);

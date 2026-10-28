@@ -350,6 +350,26 @@ const CHANNEL = '555555555555555555';
     assert.deepEqual(await banAppeals.listForUser(aclient, { userId: V }), [], 'Servidor com apelação desligada não aparece');
     console.log('  ✅ 10. Apelação de banimento: regras, staff sem ping, desbanir com permissão.');
 
+    // 11. Disjuntor de memória: entra a 85%, esvazia caches, volta abaixo de 75%.
+    const mg = require('../src/services/memoryGuard');
+    mg.reset();
+    let cleared = 0;
+    const changes = [];
+    mg.onPressure(() => cleared++);
+    mg.onStateChange((st) => changes.push(st));
+    const at = (ratio) => () => ({ heapUsedMb: Math.round(768 * ratio), heapLimitMb: 768, ratio, loopP99Ms: 5 });
+    assert.equal(mg.check(1, at(0.8)), 'normal');
+    assert.equal(mg.check(2, at(0.86)), 'pressure');
+    assert.equal(mg.isUnderPressure(), true);
+    assert.equal(cleared, 1, 'Caches esvaziados ao entrar');
+    assert.equal(mg.check(3, at(0.8)), 'pressure', 'Entre 75% e 85% continua (folga)');
+    assert.equal(mg.check(4, at(0.7)), 'normal');
+    assert.deepEqual(changes, ['pressure', 'normal']);
+    mg.check(5, at(0.9));
+    assert.equal(await require('../src/services/profileCardGenerator').generateProfileCard({ targetUser: { id: '1' } }), null, 'Sob pressão o perfil sai sem imagem');
+    mg.reset();
+    console.log('  ✅ 11. Disjuntor de memória com folga e caches esvaziados.');
+
     console.log('🎉 Escudo de links e guardião do servidor validados!');
   } finally {
     fs.rmSync(process.env.PYXIE_DATA_DIR, { recursive: true, force: true });
