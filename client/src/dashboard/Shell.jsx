@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Activity,
+  Ban,
   Boxes,
+  Coins,
   Bug,
   Hash,
   Ghost,
@@ -53,6 +55,8 @@ export const SECTION_META = {
   tools: { icon: Wrench, group: 'more' },
   health: { icon: Activity, group: 'system' },
   servers: { icon: Server, group: 'system' },
+  trust: { icon: Ban, group: 'system' },
+  economy: { icon: Coins, group: 'system' },
   errors: { icon: Bug, group: 'system' },
   modules: { icon: Boxes, group: 'system' },
   links: { icon: Link2, group: 'content' },

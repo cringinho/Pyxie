@@ -39,6 +39,21 @@ function loadBlacklist() {
 
 loadBlacklist();
 
+// O painel (processo web) grava a lista; o bot relê quando o arquivo muda (conferido a cada 10 s).
+let lastMtime = 0;
+let lastCheck = 0;
+function refreshBlacklistIfChanged(now = Date.now()) {
+  if (now - lastCheck < 10000) return;
+  lastCheck = now;
+  try {
+    const mtime = fs.statSync(BLACKLIST_FILE).mtimeMs;
+    if (mtime !== lastMtime) {
+      lastMtime = mtime;
+      loadBlacklist();
+    }
+  } catch (_) {}
+}
+
 // In-Memory Anomaly Tracker (Sliding Window 5 minutos)
 const userStats = new Map();
 const guildStats = new Map();
@@ -85,6 +100,7 @@ if (cleanupInterval.unref) cleanupInterval.unref();
  * @returns {{ blacklisted: boolean, type: 'guild'|'user'|null, reason: string|null }}
  */
 function isBlacklisted({ guildId = null, userId = null } = {}) {
+  refreshBlacklistIfChanged();
   if (guildId && blacklistData.guilds[guildId]) {
     return {
       blacklisted: true,

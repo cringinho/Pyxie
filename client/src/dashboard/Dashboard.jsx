@@ -15,6 +15,7 @@ import Emojis from './Emojis';
 import Seasonal from './Seasonal';
 import Partnerships from './Partnerships';
 import ModuleDrawer from './ModuleDrawer';
+import { Economy, Trust } from './OwnerTools';
 import BotPermissions from './Permissions';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
@@ -771,7 +772,7 @@ function PartnershipDm({ t, guildId }) {
 
 function GlobalView({ shell, section, item }) {
   const { t, lang } = shell;
-  const ids = ['health', 'servers', 'errors', 'modules', 'links', 'assets', 'museum', 'shopee', 'emojis'];
+  const ids = ['health', 'servers', 'trust', 'economy', 'errors', 'modules', 'links', 'assets', 'museum', 'shopee', 'emojis'];
   const current = ids.includes(section) ? section : 'health';
   const nav = { title: t('picker.global'), subtitle: t('sectionDesc.global'), groups: buildNav(t, ids, current, (id) => `#/global/${id}`) };
   const crumbs = [{ label: t('app.title'), href: '#/' }, { label: t('picker.global'), href: '#/global/health' }, { label: t(`section.${current}`) }];
@@ -781,6 +782,8 @@ function GlobalView({ shell, section, item }) {
       <div className={['health', 'modules', 'servers', 'museum', 'shopee', 'emojis'].includes(current) ? '' : 'max-w-3xl'}>
         {current === 'health' && <Health t={t} />}
         {current === 'servers' && <ServerDirectory t={t} />}
+        {current === 'trust' && <Trust t={t} />}
+        {current === 'economy' && <Economy t={t} />}
         {current === 'errors' && <Errors t={t} />}
         {current === 'modules' && <Modules t={t} lang={lang} item={item} />}
         {current === 'links' && <Links t={t} />}
