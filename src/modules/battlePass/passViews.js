@@ -98,7 +98,7 @@ async function buildPassView({ viewerId, source, notice = null, now = Date.now()
     notice ? `> ${notice}` : null,
     t('pass.intro', lang, { month: monthLabel(status.month, lang), date: ts(status.endsAt, 'f'), relative: ts(status.endsAt, 'R') }),
     t('pass.levelLine', lang, { level: status.level, max: battlePass.MAX_LEVEL, bar: progressBar(status), into: status.intoLevel, need: battlePass.XP_PER_LEVEL }),
-    status.premium ? t('pass.premiumOn', lang) : t('pass.premiumOff', lang, { brl: battlePass.PRICE.BRL, usd: battlePass.PRICE.USD }),
+    status.premium ? t('pass.premiumOn', lang) : t('pass.premiumOff', lang, { brl: battlePass.PRICE.BRL }),
   ];
   const embed = decorate(
     new EmbedBuilder()

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>Pyxie • Passe Mensal Premium</title>
-    <meta name="description" content="Passe mensal da Pyxie no Discord: 50 níveis com trilha grátis e Premium, pet e título míticos exclusivos de cada mês. Premium por R$ 5 no Pix ou US$ 3 no PayPal." />
+    <meta name="description" content="Passe mensal da Pyxie no Discord: 50 níveis com trilha grátis e Premium, pet e título míticos exclusivos de cada mês. Premium por R$ 5 no Pix ou cartão." />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href="https://pyxie.com.br/passe" />
     <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/passe?lang=pt" />
@@ -39,8 +39,7 @@
         "inLanguage": ["pt-BR", "en"],
         "description": "Passe mensal de 50 níveis da Pyxie no Discord, com trilha grátis e Premium.",
         "offers": [
-          { "@type": "Offer", "name": "Passe Premium (Brasil)", "price": "5.00", "priceCurrency": "BRL" },
-          { "@type": "Offer", "name": "Premium Pass (international)", "price": "3.00", "priceCurrency": "USD" }
+          { "@type": "Offer", "name": "Passe Premium (Brasil)", "price": "5.00", "priceCurrency": "BRL" }
         ]
       }
     </script>
@@ -65,7 +64,6 @@
       .buy { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
       .buy button { flex: 1 1 220px; font-size: 1rem; font-weight: 700; padding: 14px; border-radius: 12px; border: 0; cursor: pointer; color: #120b1f; }
       .buy .mp { background: #34d399; }
-      .buy .pp { background: #fbbf24; }
       .buy button:disabled { opacity: .45; cursor: not-allowed; }
       ul { padding-left: 20px; }
       li { margin-bottom: 8px; }
@@ -108,7 +106,7 @@
       <h2 data-i18n="rulesTitle">Regras do Passe</h2>
       <ul>
         <li data-i18n="rule1">O Premium vale só para o mês em que foi comprado e libera também o que você já alcançou.</li>
-        <li data-i18n="rule2">O pagamento é feito no Mercado Pago (Pix ou cartão) ou no PayPal. A Pyxie não vê nem guarda dados de cartão.</li>
+        <li data-i18n="rule2">O pagamento é feito no Mercado Pago (Pix ou cartão). A Pyxie não vê nem guarda dados de cartão.</li>
         <li data-i18n="rule3">Nada no bot exige pagamento. O Premium é um apoio opcional ao projeto.</li>
         <li data-i18n="rule4">Arrependimento em até 7 dias, se as recompensas Premium ainda não foram resgatadas.</li>
       </ul>
@@ -122,13 +120,12 @@
           finaleTitle: 'Nível 50 Premium: só deste mês',
           finale: 'Pet mítico <b>{pet}</b> e o título <b>{titleName}</b>. Na trilha grátis, o nível 50 dá <b>{free}</b>.',
           buyTitle: 'Trilha Premium',
-          price: 'R$ {brl} no Pix ou cartão (Mercado Pago) • US$ {usd} no PayPal',
+          price: 'R$ {brl} no Pix ou cartão (Mercado Pago)',
           userLine: 'Seu nível agora: <b>{level}</b>/50',
           premiumActive: '💎 Seu Premium deste mês já está ativo. Obrigada pelo apoio!',
           needToken: 'Para comprar, abra <b>/py-pass</b> no Discord e toque em <b>Quero o Premium</b>. O link que a Pyxie te der já sabe quem você é.',
           tokenExpired: 'Esse link venceu. Abra <b>/py-pass</b> no Discord de novo para gerar outro.',
           payMp: 'Pagar com Pix ou cartão',
-          payPp: 'Pagar com PayPal',
           soon: 'em breve',
           paymentsOff: 'Os pagamentos ainda estão sendo ligados. Volte em breve!',
           redirecting: 'Abrindo o pagamento…',
@@ -147,7 +144,7 @@
           xpText: 'Cada nível pede {per} XP. Diário {daily} • trabalho {work} • Catacumbas {dungeon}+ • chefe {boss} • oficina {craft} • mercado {market} • Festival {festival}.',
           rulesTitle: 'Regras do Passe',
           rule1: 'O Premium vale só para o mês em que foi comprado e libera também o que você já alcançou.',
-          rule2: 'O pagamento é feito no Mercado Pago (Pix ou cartão) ou no PayPal. A Pyxie não vê nem guarda dados de cartão.',
+          rule2: 'O pagamento é feito no Mercado Pago (Pix ou cartão). A Pyxie não vê nem guarda dados de cartão.',
           rule3: 'Nada no bot exige pagamento. O Premium é um apoio opcional ao projeto.',
           rule4: 'Arrependimento em até 7 dias, se as recompensas Premium ainda não foram resgatadas.',
           termsLink: 'Termos completos',
@@ -159,13 +156,12 @@
           finaleTitle: 'Premium level 50: this month only',
           finale: 'Mythic pet <b>{pet}</b> and the title <b>{titleName}</b>. On the free track, level 50 gives <b>{free}</b>.',
           buyTitle: 'Premium track',
-          price: 'US$ {usd} with PayPal • R$ {brl} with Pix or card (Mercado Pago, Brazil)',
+          price: 'R$ {brl} with Pix or card (Mercado Pago, Brazil)',
           userLine: 'Your level right now: <b>{level}</b>/50',
           premiumActive: "💎 Your Premium for this month is already active. Thank you for the support!",
           needToken: 'To buy, open <b>/py-pass</b> on Discord and tap <b>Get Premium</b>. The link Pyxie gives you already knows who you are.',
           tokenExpired: 'This link expired. Open <b>/py-pass</b> on Discord again to get a new one.',
           payMp: 'Pix or card (Brazil)',
-          payPp: 'Pay with PayPal',
           soon: 'coming soon',
           paymentsOff: 'Payments are still being switched on. Come back soon!',
           redirecting: 'Opening checkout…',
@@ -184,7 +180,7 @@
           xpText: 'Each level takes {per} XP. Daily {daily} • work {work} • Catacombs {dungeon}+ • boss {boss} • workshop {craft} • market {market} • Festival {festival}.',
           rulesTitle: 'Pass rules',
           rule1: 'Premium only covers the month it was bought in and also unlocks everything you already reached.',
-          rule2: "Payment happens on Mercado Pago (Pix or card) or PayPal. Pyxie never sees or stores card data.",
+          rule2: "Payment happens on Mercado Pago (Pix or card). Pyxie never sees or stores card data.",
           rule3: 'Nothing in the bot requires payment. Premium is an optional way to support the project.',
           rule4: 'Refunds within 7 days, as long as the Premium rewards were not claimed yet.',
           termsLink: 'Full terms',
@@ -233,7 +229,7 @@
           const ends = new Date(data.endsAt - 1).toLocaleDateString(lang === 'en' ? 'en-US' : 'pt-BR', { day: 'numeric', month: 'long' });
           document.getElementById('subtitle').textContent = fill(dict.subtitle, { month: data.monthLabel, date: ends });
           document.getElementById('finale').innerHTML = fill(dict.finale, { pet: escapeHtml(data.finale.pet), titleName: escapeHtml(data.finale.title), free: escapeHtml(data.finale.freeItem) });
-          document.getElementById('price').textContent = fill(dict.price, { brl: data.price.BRL, usd: data.price.USD });
+          document.getElementById('price').textContent = fill(dict.price, { brl: data.price.BRL });
           document.getElementById('xpText').textContent = fill(dict.xpText, { per: data.xpPerLevel, ...data.xpSources });
           const userLine = document.getElementById('userLine');
           const buttons = document.getElementById('buyButtons');
@@ -251,18 +247,15 @@
             return;
           }
           userLine.innerHTML = `<p>${fill(dict.userLine, { level: data.user.level })}</p>`;
-          const order = lang === 'en' ? ['paypal', 'mercadopago'] : ['mercadopago', 'paypal'];
-          for (const provider of order) {
-            const on = data.providers[provider];
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = provider === 'paypal' ? 'pp' : 'mp';
-            button.textContent = `${provider === 'paypal' ? dict.payPp : dict.payMp}${on ? '' : ` (${dict.soon})`}`;
-            button.disabled = !on;
-            button.addEventListener('click', () => checkout(provider));
-            buttons.appendChild(button);
-          }
-          if (!data.providers.mercadopago && !data.providers.paypal) userLine.innerHTML += `<div class="notice">${dict.paymentsOff}</div>`;
+          const on = data.providers.mercadopago;
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'mp';
+          button.textContent = `${dict.payMp}${on ? '' : ` (${dict.soon})`}`;
+          button.disabled = !on;
+          button.addEventListener('click', () => checkout('mercadopago'));
+          buttons.appendChild(button);
+          if (!on) userLine.innerHTML += `<div class="notice">${dict.paymentsOff}</div>`;
         } catch (_) {
           document.getElementById('statusBox').innerHTML = `<div class="notice warn">${dict.error}</div>`;
         }

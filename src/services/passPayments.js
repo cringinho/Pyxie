@@ -8,18 +8,15 @@ const battlePass = require('./battlePass');
  *   qualquer banco) usa o Pix do Mercado Pago; o Nubank não tem API de cobrança para terceiros.
  *   Confirmação pelo webhook (/api/pass/webhook/mercadopago), conferido na API do Mercado Pago
  *   e, se MERCADOPAGO_WEBHOOK_SECRET existir, pela assinatura x-signature.
- * - PayPal (resto do mundo, US$ 3): Orders v2. A pessoa aprova no PayPal, volta para
- *   /api/pass/paypal/return e o pedido é capturado no servidor.
  * - Sem credenciais, cada forma de pagamento fica desligada (o site mostra "em breve").
  *
  * A pessoa chega no site por um link assinado gerado no /py-pass (token com id e mês).
- * Variáveis: MERCADOPAGO_ACCESS_TOKEN, MERCADOPAGO_WEBHOOK_SECRET, PAYPAL_CLIENT_ID,
- * PAYPAL_CLIENT_SECRET, PAYPAL_ENV (sandbox|live), PASS_PUBLIC_URL, PASS_TOKEN_SECRET.
+ * Variáveis: MERCADOPAGO_ACCESS_TOKEN, MERCADOPAGO_WEBHOOK_SECRET, PASS_PUBLIC_URL,
+ * PASS_TOKEN_SECRET.
  */
 
 const TOKEN_TTL_MS = 2 * 60 * 60 * 1000;
 const MP_API = 'https://api.mercadopago.com';
-const PAYPAL_API = { live: 'https://api-m.paypal.com', sandbox: 'https://api-m.sandbox.paypal.com' };
 
 let fetchImpl = (...args) => fetch(...args);
 let fallbackSecret = null;
@@ -43,7 +40,6 @@ function tokenSecret() {
 function providers() {
   return {
     mercadopago: Boolean(process.env.MERCADOPAGO_ACCESS_TOKEN),
-    paypal: Boolean(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET),
   };
 }
 
@@ -155,74 +151,6 @@ async function handleMercadoPagoWebhook({ body = {}, query = {}, headers = {} })
   return { ...result, userId: ref.userId, month: ref.month };
 }
 
-// ---------------------------------------------------------------- PayPal
-function paypalBase() {
-  return process.env.PAYPAL_ENV === 'live' ? PAYPAL_API.live : PAYPAL_API.sandbox;
-}
-
-async function paypalToken() {
-  const auth = Buffer.from(`${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_CLIENT_SECRET}`).toString('base64');
-  const res = await fetchImpl(`${paypalBase()}/v1/oauth2/token`, {
-    method: 'POST',
-    headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'grant_type=client_credentials',
-  });
-  const data = await readJsonResponse(res);
-  return res.ok ? data.access_token : null;
-}
-
-async function createPayPalCheckout({ userId, month, lang = 'pt' }) {
-  if (!providers().paypal) return { ok: false, reason: 'unavailable' };
-  const token = await paypalToken();
-  if (!token) return { ok: false, reason: 'provider' };
-  const res = await fetchImpl(`${paypalBase()}/v2/checkout/orders`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      intent: 'CAPTURE',
-      purchase_units: [{
-        custom_id: reference(userId, month),
-        description: lang === 'en' ? `Pyxie Premium Pass ${month}` : `Passe Premium da Pyxie ${month}`,
-        amount: { currency_code: 'USD', value: battlePass.PRICE.USD.toFixed(2) },
-      }],
-      application_context: {
-        brand_name: 'Pyxie',
-        user_action: 'PAY_NOW',
-        shipping_preference: 'NO_SHIPPING',
-        return_url: `${publicUrl()}/api/pass/paypal/return${lang === 'en' ? '?lang=en' : ''}`,
-        cancel_url: `${publicUrl()}/passe?status=cancel${lang === 'en' ? '&lang=en' : ''}`,
-      },
-    }),
-  });
-  const data = await readJsonResponse(res);
-  const approve = (data.links || []).find((link) => link.rel === 'approve' || link.rel === 'payer-action');
-  if (!res.ok || !approve) return { ok: false, reason: 'provider', status: res.status };
-  return { ok: true, url: approve.href, id: data.id };
-}
-
-/** Captura o pedido aprovado e libera o Premium (valor e referência conferidos na resposta). */
-async function capturePayPalOrder(orderId) {
-  if (!providers().paypal) return { ok: false, reason: 'unavailable' };
-  if (!/^[A-Z0-9]{8,40}$/.test(String(orderId || ''))) return { ok: false, reason: 'order' };
-  const token = await paypalToken();
-  if (!token) return { ok: false, reason: 'provider' };
-  const res = await fetchImpl(`${paypalBase()}/v2/checkout/orders/${orderId}/capture`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-  });
-  const data = await readJsonResponse(res);
-  if (!res.ok || data.status !== 'COMPLETED') return { ok: false, reason: 'provider', status: res.status };
-  const unit = data.purchase_units?.[0] || {};
-  const capture = unit.payments?.captures?.[0] || {};
-  const ref = parseReference(unit.custom_id || capture.custom_id);
-  if (!ref) return { ok: false, reason: 'reference' };
-  const amount = Number(capture.amount?.value || unit.amount?.value || 0);
-  const currency = capture.amount?.currency_code || unit.amount?.currency_code;
-  if (currency !== 'USD' || amount < battlePass.PRICE.USD) return { ok: false, reason: 'amount' };
-  const result = battlePass.activatePremium(ref.userId, ref.month, { paymentId: `pp:${data.id}`, provider: 'paypal', amount, currency: 'USD' });
-  return { ...result, userId: ref.userId, month: ref.month };
-}
-
 /** Começa o pagamento escolhido para quem chegou pelo link assinado. */
 async function createCheckout(provider, token, now = Date.now()) {
   const session = verifyPassToken(token, now);
@@ -230,7 +158,6 @@ async function createCheckout(provider, token, now = Date.now()) {
   if (session.month !== battlePass.monthKey(now)) return { ok: false, reason: 'expired' };
   if (battlePass.isPremium(session.userId, session.month)) return { ok: false, reason: 'already' };
   if (provider === 'mercadopago') return createMercadoPagoCheckout(session);
-  if (provider === 'paypal') return createPayPalCheckout(session);
   return { ok: false, reason: 'provider' };
 }
 
@@ -247,6 +174,4 @@ module.exports = {
   createMercadoPagoCheckout,
   verifyMercadoPagoSignature,
   handleMercadoPagoWebhook,
-  createPayPalCheckout,
-  capturePayPalOrder,
 };

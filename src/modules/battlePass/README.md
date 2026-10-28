@@ -28,28 +28,26 @@ recarga próprios):
 - O resgate entrega tudo o que já foi liberado. Se a mochila estiver cheia, os itens ficam guardados
   no Passe. O mês anterior ainda pode ser resgatado por 7 dias.
 
-## Pagamento do Premium (R$ 5 / US$ 3)
+## Pagamento do Premium (R$ 5)
 - O botão **Quero o Premium** leva a `/passe?token=…`, um link assinado (HMAC) com o id da pessoa e
   o mês, válido por 2 horas.
 - **Mercado Pago** (Pix e cartão, Brasil): Checkout Pro. O webhook `/api/pass/webhook/mercadopago`
   confere a assinatura `x-signature` (se `MERCADOPAGO_WEBHOOK_SECRET` existir) e busca o pagamento
   na API do Mercado Pago antes de liberar. Quem usa Nubank paga pelo Pix do Mercado Pago (o Nubank
   não tem API de cobrança para terceiros).
-- **PayPal** (resto do mundo): Orders v2. A volta em `/api/pass/paypal/return` captura o pedido no
-  servidor e confere valor e referência.
 - **Pix direto (manual):** o Criador libera pelo `/admin` → Módulos → Passe da Pyxie → Configurar.
 - Cada pagamento é registrado pelo id (avisos repetidos não liberam duas vezes). A pessoa recebe
   uma DM quando o Premium é liberado.
 - Sem credenciais, cada forma de pagamento fica desligada e o site mostra "em breve".
 
-Variáveis: `MERCADOPAGO_ACCESS_TOKEN`, `MERCADOPAGO_WEBHOOK_SECRET`, `PAYPAL_CLIENT_ID`,
-`PAYPAL_CLIENT_SECRET`, `PAYPAL_ENV` (`sandbox` ou `live`), `PASS_PUBLIC_URL`, `PASS_TOKEN_SECRET`.
+Variáveis: `MERCADOPAGO_ACCESS_TOKEN`, `MERCADOPAGO_WEBHOOK_SECRET`, `PASS_PUBLIC_URL`,
+`PASS_TOKEN_SECRET`.
 
 ## Arquivos
 - `src/services/battlePass.js`: calendário, trilhas do mês, XP, resgate, Premium e estatísticas
   (`data/battlePass.json`). Pet e título do mês são gerados a partir do id
   (`homeCatalog.getItem('pass_pet_AAAA_MM')`, `economy.getTitleDefinition('pass_title_AAAA_MM')`).
-- `src/services/passPayments.js`: link assinado, Mercado Pago e PayPal.
+- `src/services/passPayments.js`: link assinado e Mercado Pago.
 - `passViews.js` e `commands/pyPass.js`: telas e botões `bp:*`.
 - `public/passe.html`: página bilíngue do Passe; termos na seção 6 de `/termos`.
 

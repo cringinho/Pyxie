@@ -578,7 +578,7 @@ app.get('/api/market/prices', (req, res) => {
   }
 });
 
-// Passe da Pyxie: página /passe, pagamento do Premium (Mercado Pago / PayPal) e avisos de pagamento
+// Passe da Pyxie: página /passe, pagamento do Premium (Mercado Pago) e avisos de pagamento
 app.get(['/passe', '/pass'], serveLocalizedPage('pass', publicDir));
 app.get('/api/pass/info', publicApiLimiter, (req, res) => {
   try {
@@ -661,18 +661,6 @@ app.post('/api/pass/webhook/mercadopago', async (req, res) => {
   } catch (err) {
     console.error('[pass] Falha no aviso do Mercado Pago:', err.message);
     return res.status(500).json({ error: 'webhook' });
-  }
-});
-app.get('/api/pass/paypal/return', sensitiveRouteLimiter, async (req, res) => {
-  const lang = req.query.lang === 'en' ? '&lang=en' : '';
-  try {
-    const payments = require('./src/services/passPayments');
-    const result = await payments.capturePayPalOrder(String(req.query.token || ''));
-    notifyPassPremium(result);
-    return res.redirect(`/passe?status=${result.ok ? 'ok' : 'fail'}${lang}`);
-  } catch (err) {
-    console.error('[pass] Falha ao capturar PayPal:', err.message);
-    return res.redirect(`/passe?status=fail${lang}`);
   }
 });
 

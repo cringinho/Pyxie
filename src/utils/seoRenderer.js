@@ -119,14 +119,14 @@ const SEO_CONFIG = {
     canonical: 'https://pyxie.com.br/passe',
     pt: {
       title: 'Pyxie • Passe Mensal Premium',
-      description: 'Passe mensal da Pyxie no Discord: 50 níveis com trilha grátis e Premium, pet e título míticos exclusivos de cada mês. Premium por R$ 5 no Pix ou US$ 3 no PayPal.',
+      description: 'Passe mensal da Pyxie no Discord: 50 níveis com trilha grátis e Premium, pet e título míticos exclusivos de cada mês. Premium por R$ 5 no Pix ou cartão.',
       ogTitle: 'Pyxie • Passe Mensal Premium',
       ogDesc: '50 níveis por mês com recompensas grátis e Premium, pet e título míticos que nunca voltam.',
       locale: 'pt_BR'
     },
     en: {
       title: 'Pyxie • Monthly Premium Pass',
-      description: "Pyxie's monthly pass on Discord: 50 levels with free and Premium tracks, plus a mythic pet and title unique to each month. Premium for US$ 3 on PayPal or R$ 5 via Pix.",
+      description: "Pyxie's monthly pass on Discord: 50 levels with free and Premium tracks, plus a mythic pet and title unique to each month. Premium for R$ 5 via Pix or card.",
       ogTitle: 'Pyxie • Monthly Premium Pass',
       ogDesc: '50 levels every month with free and Premium rewards, and a mythic pet and title that never come back.',
       locale: 'en_US'

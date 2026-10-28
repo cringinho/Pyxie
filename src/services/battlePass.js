@@ -9,8 +9,7 @@ const economy = require('./economy');
  *
  * - 50 níveis, 300 XP cada. XP vem do que a pessoa já faz: bônus diário, turnos do /py-work,
  *   descidas nas Catacumbas, ataques no chefe da semana, oficina, mercado e caixas do Festival.
- * - Trilha grátis para todo mundo; trilha premium por R$ 5 (Pix/cartão no Mercado Pago) ou
- *   US$ 3 (PayPal), liberada pelo pagamento confirmado (src/services/passPayments.js).
+ * - Trilha grátis para todo mundo; trilha premium por R$ 5 (Pix/cartão no Mercado Pago), liberada pelo pagamento confirmado (src/services/passPayments.js).
  * - As recompensas de cada mês saem de uma semente do próprio mês: mesmas para todo mundo,
  *   diferentes a cada mês. O nível 50 premium dá um pet mítico e um título mítico exclusivos
  *   daquele mês (nunca voltam).
@@ -23,7 +22,7 @@ const economy = require('./economy');
 const MAX_LEVEL = 50;
 const XP_PER_LEVEL = 300;
 const CLAIM_GRACE_DAYS = 7;
-const PRICE = { BRL: 5, USD: 3 };
+const PRICE = { BRL: 5 };
 const BRT_OFFSET = 3 * 60 * 60 * 1000;
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -66,7 +65,7 @@ function load() {
   return {
     users: stored.users && typeof stored.users === 'object' ? stored.users : {},
     payments: stored.payments && typeof stored.payments === 'object' ? stored.payments : {},
-    totals: { xp: 0, premium: 0, claims: 0, revenueBRL: 0, revenueUSD: 0, ...(stored.totals || {}) },
+    totals: { xp: 0, premium: 0, claims: 0, revenueBRL: 0, ...(stored.totals || {}) },
   };
 }
 
@@ -373,7 +372,7 @@ function claimAll(userId, { now = Date.now() } = {}) {
 // ---------------------------------------------------------------- premium
 /**
  * Libera a trilha premium de um mês. Idempotente pelo id do pagamento (o mesmo aviso do
- * Mercado Pago ou do PayPal pode chegar mais de uma vez).
+ * Mercado Pago pode chegar mais de uma vez).
  */
 function activatePremium(userId, month, { paymentId, provider, amount = 0, currency = 'BRL', now = Date.now() } = {}) {
   if (!/^\d{17,20}$/.test(String(userId)) && !String(userId).startsWith('user_test_')) return { ok: false, reason: 'user' };
@@ -388,7 +387,6 @@ function activatePremium(userId, month, { paymentId, provider, amount = 0, curre
     state.payments[paymentId] = { userId: String(userId), month, provider, amount: Number(amount) || 0, currency, at: now, already };
     if (!already) state.totals.premium += 1;
     if (currency === 'BRL') state.totals.revenueBRL = Math.round((state.totals.revenueBRL + (Number(amount) || 0)) * 100) / 100;
-    if (currency === 'USD') state.totals.revenueUSD = Math.round((state.totals.revenueUSD + (Number(amount) || 0)) * 100) / 100;
     if (!save(state)) return { ok: false, reason: 'save' };
     return { ok: true, month, already };
   });

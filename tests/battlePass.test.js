@@ -7,13 +7,13 @@ const path = require('node:path');
 /**
  * Passe da Pyxie (/py-pass): trilhas geradas por mês, pet e título míticos do mês, XP das
  * atividades, resgate (grátis, Premium retroativo, mochila cheia, mês anterior), Premium
- * idempotente por pagamento, link assinado, Mercado Pago e PayPal (rede simulada) e as telas.
+ * idempotente por pagamento, link assinado, Mercado Pago (rede simulada) e as telas.
  */
 
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pyxie-pass-'));
 process.env.MODULES_CONFIG_PATH = path.join(tmpDir, 'modulesConfig.json');
 process.env.PYXIE_DATA_DIR = tmpDir;
-for (const key of ['MERCADOPAGO_ACCESS_TOKEN', 'MERCADOPAGO_WEBHOOK_SECRET', 'PAYPAL_CLIENT_ID', 'PAYPAL_CLIENT_SECRET', 'PAYPAL_ENV']) delete process.env[key];
+for (const key of ['MERCADOPAGO_ACCESS_TOKEN', 'MERCADOPAGO_WEBHOOK_SECRET']) delete process.env[key];
 process.env.PASS_TOKEN_SECRET = 'test-pass-secret';
 process.env.PASS_PUBLIC_URL = 'https://pyxie.test';
 
@@ -133,7 +133,7 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
     console.log('  ✅ 5. Premium idempotente e retroativo.');
 
     // 6. Nível 50 Premium entrega pet e título míticos
-    battlePass.activatePremium(F, '2026-10', { paymentId: 'pp:FULL1', provider: 'paypal', amount: 3, currency: 'USD', now: OCT });
+    battlePass.activatePremium(F, '2026-10', { paymentId: 'mp:FULL1', provider: 'mercadopago', amount: 5, currency: 'BRL', now: OCT });
     const full = battlePass.claimAll(F, { now: OCT });
     assert.equal(full.delivered.length, 100);
     assert.ok(vault.listInstances(F).some((it) => it.itemId === 'pass_pet_2026_10'));
@@ -171,9 +171,9 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
     console.log('  ✅ 8. Link assinado e referência do pagamento.');
 
     // 9. Sem credenciais, tudo desligado
-    assert.deepEqual(payments.providers(), { mercadopago: false, paypal: false });
+    assert.deepEqual(payments.providers(), { mercadopago: false });
     assert.equal((await payments.createCheckout('mercadopago', token)).reason, 'unavailable');
-    assert.equal((await payments.createCheckout('paypal', token)).reason, 'unavailable');
+    assert.equal((await payments.createCheckout('paypal', token)).reason, 'provider', 'PayPal não existe mais');
     assert.equal((await payments.createCheckout('mercadopago', 'lixo')).reason, 'token');
     assert.equal((await payments.handleMercadoPagoWebhook({ body: { type: 'payment', data: { id: '1' } } })).reason, 'unavailable');
     console.log('  ✅ 9. Pagamentos desligados sem credenciais.');
@@ -215,40 +215,10 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
     assert.equal((await payments.createCheckout('mercadopago', token)).reason, 'already', 'quem já tem Premium não paga de novo');
     console.log('  ✅ 10. Mercado Pago: checkout, assinatura, valor e aviso repetido.');
 
-    // 11. PayPal (rede simulada): pedido, aprovação e captura no servidor
-    process.env.PAYPAL_CLIENT_ID = 'cid';
-    process.env.PAYPAL_CLIENT_SECRET = 'csecret';
-    const Q = `user_test_pass_q_${runId}`;
-    const qToken = payments.createPassToken(Q);
-    let captureBody = null;
-    payments.setFetch(async (url, opts = {}) => {
-      if (url.endsWith('/v1/oauth2/token')) return json(200, { access_token: 'pp-token' });
-      if (url.endsWith('/v2/checkout/orders')) {
-        captureBody = JSON.parse(opts.body);
-        return json(201, { id: 'ORDER12345', links: [{ rel: 'approve', href: 'https://paypal.test/approve/ORDER12345' }] });
-      }
-      if (url.endsWith('/v2/checkout/orders/ORDER12345/capture')) {
-        return json(201, { id: 'ORDER12345', status: 'COMPLETED', purchase_units: [{ custom_id: captureBody.purchase_units[0].custom_id, payments: { captures: [{ amount: { currency_code: 'USD', value: '3.00' } }] } }] });
-      }
-      if (url.endsWith('/v2/checkout/orders/ORDERCHEAP1/capture')) {
-        return json(201, { id: 'ORDERCHEAP1', status: 'COMPLETED', purchase_units: [{ custom_id: payments.reference(Q, battlePass.monthKey()), payments: { captures: [{ amount: { currency_code: 'USD', value: '0.50' } }] } }] });
-      }
-      return json(404, {});
-    });
-    assert.equal((await payments.createCheckout('paypal', qToken)).url, 'https://paypal.test/approve/ORDER12345');
-    assert.equal(captureBody.purchase_units[0].amount.value, '3.00');
-    assert.equal(captureBody.purchase_units[0].amount.currency_code, 'USD');
-    assert.equal((await payments.capturePayPalOrder('ORDERCHEAP1')).reason, 'amount');
-    assert.equal((await payments.capturePayPalOrder('../etc')).reason, 'order');
-    assert.equal(battlePass.isPremium(Q), false);
-    assert.equal((await payments.capturePayPalOrder('ORDER12345')).ok, true);
-    assert.equal(battlePass.isPremium(Q), true);
-    assert.equal(battlePass.getPassStats().revenueUSD >= 3, true);
     payments.setFetch(null);
-    for (const key of ['MERCADOPAGO_ACCESS_TOKEN', 'MERCADOPAGO_WEBHOOK_SECRET', 'PAYPAL_CLIENT_ID', 'PAYPAL_CLIENT_SECRET']) delete process.env[key];
-    console.log('  ✅ 11. PayPal: pedido, captura e conferência do valor.');
+    for (const key of ['MERCADOPAGO_ACCESS_TOKEN', 'MERCADOPAGO_WEBHOOK_SECRET']) delete process.env[key];
 
-    // 12. Telas PT/EN
+    // 11. Telas PT/EN
     for (const locale of ['pt-BR', 'en-US']) {
       const source = { locale };
       const home = await views.buildPassView({ viewerId: D, source, now: OCT });
@@ -275,7 +245,7 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
     await pyPass.handlePassInteraction({ customId: `bp:claim:${D}`, user: { id: U }, locale: 'pt-BR', isButton: () => true, reply: async (payload) => { replied = payload; } });
     assert.equal(replied.content, t('pass.notYours', 'pt'));
     for (const key of ['premiumDm', 'claimFull', 'claimNothing', 'sentDm', 'useSlash', 'error']) for (const lang of ['pt', 'en']) assert.ok(!t(`pass.${key}`, lang).startsWith('pass.'), `${key} (${lang})`);
-    console.log('  ✅ 12. Telas PT/EN, níveis paginados e botões travados para a dona.');
+    console.log('  ✅ 11. Telas PT/EN, níveis paginados e botões travados para a dona.');
 
     console.log('🎉 [TEST] Passe da Pyxie passou com 100% de sucesso!');
     economy.purgeTestAccounts();

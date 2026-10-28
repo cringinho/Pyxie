@@ -4,7 +4,7 @@ const payments = require('../../services/passPayments');
 
 /**
  * Módulo Passe da Pyxie (Cog Pattern): temporada mensal de 50 níveis gerada sozinha, XP das
- * atividades do bot, trilha grátis e Premium (Mercado Pago / PayPal). Estado em
+ * atividades do bot, trilha grátis e Premium (Mercado Pago). Estado em
  * data/battlePass.json; rotas de pagamento e a página /passe ficam no server.js.
  */
 module.exports = {
