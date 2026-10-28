@@ -383,6 +383,27 @@ const TRANSLATIONS = {
       "card": "🔥 A call {channel} está animada agora, com {count} pessoas conversando. Chega mais!",
       "join": "Entrar na call"
     },
+    "injections": {
+      "pack": {
+        "gender": "Gêneros",
+        "sexuality": "Sexualidades",
+        "neuro": "Neurodivergências",
+        "colors24": "Cores",
+        "colors48": "Cores",
+        "colors75": "Cores"
+      },
+      "panelSingle": "Escolha **uma** opção no menu abaixo. Para trocar, é só escolher outra.",
+      "panelMulti": "Escolha quantas opções quiser no menu abaixo.",
+      "panelNote": "É opcional e dá para tirar quando quiser no botão 🧹.",
+      "footer": "Pyxie · escolha só o que fizer sentido para você",
+      "pick": "Escolha aqui",
+      "pickPart": "Parte {part} de {total}",
+      "clear": "Tirar tudo",
+      "gone": "Este painel não está mais ativo.",
+      "notAllowed": "Este painel é só para alguns cargos do servidor.",
+      "nothing": "Nada mudou.",
+      "done": "Pronto! Adicionado: {added}. Tirado: {removed}."
+    },
     "linkShield": {
       "brandUnknown": "um site conhecido",
       "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
@@ -2802,6 +2823,27 @@ const TRANSLATIONS = {
     "campfire": {
       "card": "🔥 The {channel} call is lively right now, with {count} people chatting. Come join!",
       "join": "Join the call"
+    },
+    "injections": {
+      "pack": {
+        "gender": "Genders",
+        "sexuality": "Sexualities",
+        "neuro": "Neurodivergences",
+        "colors24": "Colors",
+        "colors48": "Colors",
+        "colors75": "Colors"
+      },
+      "panelSingle": "Pick **one** option in the menu below. To switch, just pick another.",
+      "panelMulti": "Pick as many options as you like in the menu below.",
+      "panelNote": "It's optional and you can remove it anytime with the 🧹 button.",
+      "footer": "Pyxie · pick only what feels right for you",
+      "pick": "Pick here",
+      "pickPart": "Part {part} of {total}",
+      "clear": "Remove all",
+      "gone": "This panel is no longer active.",
+      "notAllowed": "This panel is only for some roles in the server.",
+      "nothing": "Nothing changed.",
+      "done": "Done! Added: {added}. Removed: {removed}."
     },
     "linkShield": {
       "brandUnknown": "a well-known site",

@@ -53,6 +53,10 @@ function fakeBotSend(msg) {
       data = [{ id: '1', name: 'geral', type: 0 }, { id: '777777777777777777', name: 'staff', type: 0 }];
     } else if (request === 'GUILD_DIRECTORY') {
       data = [{ id: GUILD_A, name: 'A', icon: null, description: '', memberCount: 10, ownerId: OWNER_A, ownerName: 'dona', createdAt: 1, joinedAt: 2 }];
+    } else if (request === 'INJECT_INFO') {
+      data = { roleIcons: false, community: false, canManageRoles: true, injections: [] };
+    } else if (request === 'INJECT_START') {
+      data = { jobId: 'abc123' };
     } else if (request === 'RED_FLAGS') {
       data = [{ id: 'f1', targetType: 'user', targetId: ADMIN_A, severity: 'HIGH', reason: 'pico' }];
     } else if (request === 'APPEAL_LIST') {
@@ -268,6 +272,16 @@ function cookieFor(userId, guilds = []) {
     const allCmds = (await (await call('/api/dashboard/global/commands', { cookie: cookieFor(OWNER_SNOWFLAKE) })).json()).commands;
     assert(allCmds.length >= cringeCmds.length, 'Visão global tem todos');
     assert.equal((await call('/api/dashboard/global/commands', { cookie: adminCookie })).status, 403);
+    // Injeções: catálogo vem do código; pedido inválido é recusado antes de chegar no bot.
+    const injData = await (await call(`/api/dashboard/guilds/${GUILD_A}/injections`, { cookie: adminCookie })).json();
+    assert(injData.packs.sexuality.items.length >= 25 && injData.packs.gender.items.length >= 10, 'Pacotes no painel');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/injections`, { cookie: adminCookie, method: 'POST', body: { pack: 'nada' } });
+    assert.equal(res.status, 400);
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/injections`, { cookie: adminCookie, method: 'POST', body: { pack: 'gender', options: { publish: true, channelId: '888888888888888888' } } });
+    assert.equal(res.status, 400, 'Canal de outro servidor é recusado');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/injections`, { cookie: adminCookie, method: 'POST', body: { pack: 'gender', options: { publish: false } } });
+    assert.equal((await res.json()).jobId, 'abc123');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/injections`, { cookie: adminCookie })).status, 403);
     const act = await (await call(`/api/dashboard/guilds/${GUILD_A}/activity`, { cookie: adminCookie })).json();
     assert.equal(act.series.length, 30, 'Atividade: série de 30 dias');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/activity`, { cookie: adminCookie })).status, 403);

@@ -24,7 +24,7 @@ function registerDashboardSection(section) {
 }
 
 function getSections(guildAccess) {
-  const base = ['overview', 'commands', 'studio', 'features', 'security', 'channels', 'roles', 'emojiUsage'];
+  const base = ['overview', 'commands', 'studio', 'features', 'injections', 'security', 'channels', 'roles', 'emojiUsage'];
   if (guildAccess.canManageAccess) base.push('access');
   if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
@@ -368,6 +368,53 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       return res.json({ success: true, ...(await bridge.request('BOT_PERMISSIONS', { guildId: req.params.guildId })) });
     } catch (err) {
       return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+  });
+
+  // ---------- Injeções: catálogo de pacotes (fixo no código) e ações pelo bot ----------
+  router.get('/api/dashboard/guilds/:guildId/injections', requireSession, requireGuild, async (req, res) => {
+    const { PACKS } = require('../data/injectionPacks');
+    const packs = Object.fromEntries(Object.entries(PACKS).map(([id, p]) => [id, { emoji: p.emoji, defaultMode: p.defaultMode, items: p.items.map(({ id: itemId, pt, en, stripes, emoji }) => ({ id: itemId, pt, en, stripes, emoji })) }]));
+    try {
+      return res.json({ success: true, packs, info: await bridge.request('INJECT_INFO', { guildId: req.params.guildId }) });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/injections', requireSession, requireGuild, async (req, res) => {
+    const { pack, options, lang } = req.body || {};
+    const opts = require('../services/injections').normalizeOptions(String(pack || ''), options || {});
+    if (!opts) return res.status(400).json({ success: false, error: 'invalid_request' });
+    if (opts.publish && opts.channelId) {
+      try {
+        const channels = await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId });
+        if (!channels.some((c) => c.id === opts.channelId)) return res.status(400).json({ success: false, error: 'invalid_channel' });
+      } catch (err) {
+        return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+      }
+    }
+    try {
+      const started = await bridge.request('INJECT_START', { guildId: req.params.guildId, pack, options: opts, lang: lang === 'en' ? 'en' : 'pt', by: req.panelSession.userId });
+      return res.json({ success: true, ...started });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/injections/jobs/:jobId', requireSession, requireGuild, async (req, res) => {
+    try {
+      return res.json({ success: true, job: await bridge.request('INJECT_STATUS', { jobId: String(req.params.jobId).slice(0, 16) }) });
+    } catch (err) {
+      return res.status(404).json({ success: false, error: err.code || 'job_not_found' });
+    }
+  });
+
+  router.delete('/api/dashboard/guilds/:guildId/injections/:injectionId', requireSession, requireGuild, async (req, res) => {
+    try {
+      return res.json({ success: true, ...(await bridge.request('INJECT_REMOVE', { guildId: req.params.guildId, injectionId: String(req.params.injectionId).slice(0, 16), deleteRoles: req.query.roles === '1' })) });
+    } catch (err) {
+      return res.status(400).json({ success: false, error: err.code || 'bridge_error' });
     }
   });
 
