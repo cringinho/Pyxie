@@ -12,6 +12,7 @@ import Security from './Security';
 import Museum from './Museum';
 import Shopee from './Shopee';
 import Emojis from './Emojis';
+import Seasonal from './Seasonal';
 import BotPermissions from './Permissions';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
@@ -345,6 +346,7 @@ function GuildView({ shell, guildId, section }) {
         {current === 'features' && <Features t={t} guildId={guildId} />}
         {current === 'embeds' && <Embeds t={t} guildId={guildId} />}
         {current === 'security' && <Security t={t} guildId={guildId} />}
+        {current === 'seasonal' && <Seasonal t={t} guildId={guildId} />}
         {current === 'moderation' && <Moderation t={t} guildId={guildId} />}
         {current === 'community' && (
           <div className="space-y-4">
@@ -687,7 +689,6 @@ function Tools({ t, zone, lang, guildId, isOwner }) {
     );
   }
   const links = [
-    { href: `/admin/sazonal${suffix}`, label: t('tools.seasonal') },
     { href: `/admin/parcerias${suffix}`, label: t('tools.partnerships') },
     { href: '/admin', label: t('tools.legacy') },
   ];

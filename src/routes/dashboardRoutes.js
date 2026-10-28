@@ -26,7 +26,7 @@ function registerDashboardSection(section) {
 function getSections(guildAccess) {
   const base = ['overview', 'studio', 'features', 'security', 'channels', 'roles'];
   if (guildAccess.canManageAccess) base.push('access');
-  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community');
+  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
     .filter((s) => !s.roles || s.roles.includes(guildAccess.role))
     .map((s) => s.id);
