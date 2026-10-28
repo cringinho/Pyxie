@@ -47,6 +47,18 @@ const handlers = {
     };
   },
 
+  // Permissões da Pyxie no servidor (o painel mostra o que falta para cada recurso).
+  async BOT_PERMISSIONS(client, { guildId }) {
+    const guild = client.guilds.cache.get(String(guildId));
+    if (!guild) throw new Error('guild_not_found');
+    const me = guild.members.me;
+    const names = ['Administrator', 'ManageGuild', 'ManageRoles', 'ManageChannels', 'ManageMessages', 'ModerateMembers', 'ViewAuditLog', 'ManageWebhooks', 'SendMessages', 'EmbedLinks'];
+    return {
+      permissions: Object.fromEntries(names.map((n) => [n, Boolean(me?.permissions.has(PermissionFlagsBits[n]))])),
+      roleName: me?.roles.highest?.name || '',
+    };
+  },
+
   async GUILD_CHANNELS(client, { guildId }) {
     const guild = client.guilds.cache.get(String(guildId));
     if (!guild) throw new Error('guild_not_found');

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api } from './api';
+import BotPermissions from './Permissions';
 import { Button, Card, MultiSelect, Notice, Spinner, Toggle } from './ui';
 
 const field = 'min-h-[44px] w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm';
@@ -75,6 +76,15 @@ export function Moderation({ t, guildId }) {
 
   return (
     <div className="space-y-4">
+      <BotPermissions
+        t={t}
+        guildId={guildId}
+        needs={[
+          { perm: 'ManageGuild', why: 'perm.why.automod' },
+          { perm: 'ManageChannels', why: 'perm.why.slowmode' },
+          { perm: 'ModerateMembers', why: 'perm.why.timeout' },
+        ]}
+      />
       <Card title={t('mod.shieldTitle')}>
         <p className="mb-3 text-sm text-white/70">{t('mod.shieldHint')}</p>
         <div className="space-y-3">

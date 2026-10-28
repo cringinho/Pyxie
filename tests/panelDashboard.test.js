@@ -51,6 +51,8 @@ function fakeBotSend(msg) {
       data = m ? { inGuild: true, botInGuild, ...m } : { inGuild: false, botInGuild };
     } else if (request === 'GUILD_CHANNELS') {
       data = [{ id: '1', name: 'geral', type: 0 }, { id: '777777777777777777', name: 'staff', type: 0 }];
+    } else if (request === 'BOT_PERMISSIONS') {
+      data = { permissions: { ManageMessages: true, ViewAuditLog: false }, roleName: 'Pyxie' };
     } else if (request === 'GUILD_ROLES') {
       data = [{ id: '2', name: 'Staff' }];
     }
@@ -219,6 +221,9 @@ function cookieFor(userId, guilds = []) {
     assert.equal(sec.security.guard.mode, 'auto');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/security`, { cookie: adminCookie })).status, 403, 'Segurança de outro servidor é recusada');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie, method: 'PUT', body: {}, panelHeader: false })).status, 403, 'Sem cabeçalho do painel (CSRF)');
+    const perms = await (await call(`/api/dashboard/guilds/${GUILD_A}/bot-permissions`, { cookie: adminCookie })).json();
+    assert.deepEqual(perms.permissions, { ManageMessages: true, ViewAuditLog: false }, 'Permissões da Pyxie conferidas ao vivo');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/bot-permissions`, { cookie: adminCookie })).status, 403);
     console.log('  ✅ 6b. Segurança: padrões, canal conferido ao vivo, domínios limpos e acesso por servidor.');
 
     // 7. Logout e painel sem segredo.

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link2Off, ShieldCheck, ShieldHalf, KeyRound, Hash } from 'lucide-react';
 import { api } from './api';
+import BotPermissions from './Permissions';
 import { Button, Card, Notice, Spinner, StatTile, Toggle } from './ui';
 
 const field = 'min-h-[44px] w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm';
@@ -74,6 +75,17 @@ export default function Security({ t, guildId }) {
         <StatTile icon={KeyRound} accent="violet" label={t('sec.statRoles')} value={counters.role} />
         <StatTile icon={Hash} accent="cyan" label={t('sec.statChannels')} value={counters.channel} />
       </div>
+
+      <BotPermissions
+        t={t}
+        guildId={guildId}
+        needs={[
+          { perm: 'ManageMessages', why: 'perm.why.deleteLinks' },
+          { perm: 'ViewAuditLog', why: 'perm.why.auditLog' },
+          { perm: 'ManageRoles', why: 'perm.why.revertRoles' },
+          { perm: 'ManageChannels', why: 'perm.why.lockChannels' },
+        ]}
+      />
 
       <Card title={t('sec.staffTitle')}>
         <p className="mb-3 text-sm text-white/70">{t('sec.staffHint')}</p>

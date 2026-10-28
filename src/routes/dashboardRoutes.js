@@ -343,6 +343,14 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, dmSource: saved.dmSource });
   });
 
+  router.get('/api/dashboard/guilds/:guildId/bot-permissions', requireSession, requireGuild, async (req, res) => {
+    try {
+      return res.json({ success: true, ...(await bridge.request('BOT_PERMISSIONS', { guildId: req.params.guildId })) });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+  });
+
   // ---------- Segurança (todos os servidores): escudo de links e guardião do servidor ----------
   router.get('/api/dashboard/guilds/:guildId/security', requireSession, requireGuild, (req, res) => {
     const safety = require('../services/guildSafety');
