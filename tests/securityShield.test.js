@@ -276,6 +276,28 @@ const CHANNEL = '555555555555555555';
     for (let i = 0; i < 20; i++) assert.equal(await antiRaid.onMemberAdd(joiner(), rclient, T0 + i), null);
     console.log('  ✅ 8. Anti-raid: limite, contas novas, servidor grande, pausa com prazo e botão.');
 
+    // 9. Atividade: soma em memória, grava em lote, guarda 30 dias, dia de Brasília.
+    const activity = require('../src/services/guildActivity');
+    activity.resetMemory();
+    const D = Date.UTC(2026, 9, 28, 12);
+    assert.equal(activity.dayKey(Date.UTC(2026, 9, 28, 2)), '2026-10-27', '23h de Brasília ainda é o dia anterior');
+    for (let i = 0; i < 5; i++) activity.bump(G, 'messages', D);
+    activity.bump(G, 'joins', D);
+    activity.bump(G, 'nada', D);
+    activity.bump(G, 'messages', D - 40 * 86400000);
+    assert.equal(activity.summary(G, D).hasData, false, 'Nada no disco antes de gravar');
+    activity.flush(D);
+    activity.bump(G, 'messages', D);
+    activity.flush(D);
+    const sum = activity.summary(G, D);
+    assert.equal(sum.today.messages, 6, 'Soma o que já estava gravado');
+    assert.equal(sum.week.joins, 1);
+    assert.equal(sum.series.length, 30);
+    const stored = JSON.parse(fs.readFileSync(path.join(process.env.PYXIE_DATA_DIR, 'guilds', G, 'activity.json'), 'utf8'));
+    assert.deepEqual(Object.keys(stored.days), ['2026-10-28'], 'Dia com mais de 30 dias é descartado');
+    assert(!JSON.stringify(stored).includes('222222222222222222'), 'Nenhum ID de pessoa guardado');
+    console.log('  ✅ 9. Atividade do servidor: contagens em lote, 30 dias, sem dados pessoais.');
+
     console.log('🎉 Escudo de links e guardião do servidor validados!');
   } finally {
     fs.rmSync(process.env.PYXIE_DATA_DIR, { recursive: true, force: true });

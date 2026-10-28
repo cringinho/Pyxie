@@ -47,6 +47,7 @@ export const api = {
   studioPreview: (id, msg) => request(`/api/dashboard/guilds/${id}/studio/${msg}/preview`, { method: 'POST', body: {} }),
   partnershipDm: (id) => request(`/api/dashboard/guilds/${id}/partnership-dm`),
   savePartnershipDm: (id, body) => request(`/api/dashboard/guilds/${id}/partnership-dm`, { method: 'PUT', body }),
+  activity: (id) => request(`/api/dashboard/guilds/${id}/activity`),
   botPermissions: (id) => request(`/api/dashboard/guilds/${id}/bot-permissions`),
   security: (id) => request(`/api/dashboard/guilds/${id}/security`),
   saveSecurity: (id, body) => request(`/api/dashboard/guilds/${id}/security`, { method: 'PUT', body }),

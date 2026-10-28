@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Boxes, Check, Clock, Cpu, Crown, HardDrive, Layers, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
+import { ArrowRight, Boxes, Check, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
 import { api } from './api';
 import { detectLang, makeT } from './i18n';
 import { Badge, Button, Card, GuildIcon, MultiSelect, Notice, Spinner, StatTile, StatusDot, Switch, Toggle } from './ui';
@@ -248,6 +248,43 @@ const SECTION_NEEDS = {
   ],
 };
 
+// Atividade real do servidor (contagens diárias gravadas pelo bot a cada 5 minutos).
+function Activity({ t, guildId }) {
+  const activity = useLoad(() => api.activity(guildId), [guildId]);
+  if (!activity.data) return activity.error ? <ErrorNotice t={t} code={activity.error} /> : <Spinner label={t('app.loading')} />;
+  const { today, week, series, hasData } = activity.data;
+  const max = Math.max(1, ...series.map((d) => d.messages));
+  const fmt = (n) => n.toLocaleString();
+  return (
+    <div>
+      <h2 className="mb-1 font-title text-lg font-bold">{t('activity.title')}</h2>
+      <p className="mb-3 text-sm text-white/60">{t(hasData ? 'activity.hint' : 'activity.empty')}</p>
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <StatTile icon={MessageCircle} label={t('activity.messagesToday')} value={fmt(today.messages)} />
+        <StatTile icon={LogIn} accent="green" label={t('activity.joinsWeek')} value={fmt(week.joins)} />
+        <StatTile icon={DoorOpen} accent="violet" label={t('activity.leavesWeek')} value={fmt(week.leaves)} />
+        <StatTile icon={Terminal} accent="cyan" label={t('activity.commandsWeek')} value={fmt(week.commands)} />
+      </div>
+      <Card className="mt-3" title={t('activity.chartTitle')}>
+        <div className="flex h-28 items-end gap-[3px]" role="img" aria-label={t('activity.chartLabel', { total: fmt(series.reduce((a, d) => a + d.messages, 0)) })}>
+          {series.map((d) => (
+            <span
+              key={d.day}
+              title={`${d.day.split('-').reverse().slice(0, 2).join('/')}: ${fmt(d.messages)}`}
+              style={{ height: `${Math.max(2, (d.messages / max) * 100)}%` }}
+              className="flex-1 rounded-t bg-gradient-to-t from-mystic-violet/60 to-pyxie-bright"
+            />
+          ))}
+        </div>
+        <div className="mt-1 flex justify-between text-[11px] text-white/40">
+          <span>{series[0].day.split('-').reverse().slice(0, 2).join('/')}</span>
+          <span>{t('activity.today')}</span>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 // Seções de formulário ficam numa coluna mais estreita; as de grade usam a largura toda.
 const WIDE_SECTIONS = new Set(['overview', 'features', 'embeds']);
 
@@ -378,6 +415,7 @@ function Overview({ t, guild, zone, role, ids, guildId, botOnline }) {
           hint={t('overview.sections', { count: shortcuts.length })}
         />
       </div>
+      <Activity t={t} guildId={guildId} />
       <div>
         <h2 className="mb-1 font-title text-lg font-bold">{t('overview.shortcuts')}</h2>
         <p className="mb-3 text-sm text-white/60">{t('overview.hint')}</p>

@@ -1,0 +1,79 @@
+// Atividade por servidor: só contagens diárias (mensagens, entradas, saídas, comandos), sem
+// conteúdo nem quem mandou. O bot soma em memória e grava em lote a cada 5 minutos em
+// data/guilds/<id>/activity.json (escrita atômica, últimos 30 dias). O painel só lê o arquivo.
+const fs = require('node:fs');
+const path = require('node:path');
+
+const FIELDS = ['messages', 'joins', 'leaves', 'commands'];
+const KEEP_DAYS = 30;
+const BRT_OFFSET_MS = 3 * 60 * 60 * 1000; // Brasília, sem horário de verão desde 2019
+
+const pending = new Map(); // guildId -> Map(day -> counts)
+
+function dayKey(now = Date.now()) {
+  return new Date(now - BRT_OFFSET_MS).toISOString().slice(0, 10);
+}
+
+function fileFor(guildId) {
+  return path.join(process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data'), 'guilds', String(guildId), 'activity.json');
+}
+
+function empty() {
+  return Object.fromEntries(FIELDS.map((f) => [f, 0]));
+}
+
+function bump(guildId, field, now = Date.now()) {
+  if (!FIELDS.includes(field)) return;
+  let days = pending.get(guildId);
+  if (!days) pending.set(guildId, (days = new Map()));
+  const key = dayKey(now);
+  if (!days.has(key)) days.set(key, empty());
+  days.get(key)[field] += 1;
+}
+
+function readFile(guildId) {
+  try {
+    const raw = JSON.parse(fs.readFileSync(fileFor(guildId), 'utf8'));
+    return raw && typeof raw.days === 'object' ? raw : { days: {} };
+  } catch (_) {
+    return { days: {} };
+  }
+}
+
+// Soma o pendente no arquivo de cada servidor e esvazia a memória.
+function flush(now = Date.now()) {
+  const oldest = dayKey(now - (KEEP_DAYS - 1) * 86400000);
+  for (const [guildId, days] of pending) {
+    const data = readFile(guildId);
+    for (const [key, counts] of days) {
+      const day = { ...empty(), ...(data.days[key] || {}) };
+      for (const f of FIELDS) day[f] += counts[f];
+      data.days[key] = day;
+    }
+    for (const key of Object.keys(data.days)) if (key < oldest) delete data.days[key];
+    const file = fileFor(guildId);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(`${file}.tmp`, JSON.stringify(data));
+    fs.renameSync(`${file}.tmp`, file);
+  }
+  pending.clear();
+}
+
+// Resumo para o painel: hoje, últimos 7 dias e a série de 30 dias de mensagens.
+function summary(guildId, now = Date.now()) {
+  const { days } = readFile(guildId);
+  const series = [];
+  for (let i = KEEP_DAYS - 1; i >= 0; i--) {
+    const key = dayKey(now - i * 86400000);
+    series.push({ day: key, ...empty(), ...(days[key] || {}) });
+  }
+  const week = empty();
+  for (const d of series.slice(-7)) for (const f of FIELDS) week[f] += d[f];
+  return { today: series[series.length - 1], week, series, hasData: Object.keys(days).length > 0 };
+}
+
+function resetMemory() {
+  pending.clear();
+}
+
+module.exports = { bump, flush, summary, dayKey, resetMemory, FIELDS };

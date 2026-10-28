@@ -343,6 +343,10 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, dmSource: saved.dmSource });
   });
 
+  router.get('/api/dashboard/guilds/:guildId/activity', requireSession, requireGuild, (req, res) => {
+    return res.json({ success: true, ...require('../services/guildActivity').summary(req.params.guildId) });
+  });
+
   router.get('/api/dashboard/guilds/:guildId/bot-permissions', requireSession, requireGuild, async (req, res) => {
     try {
       return res.json({ success: true, ...(await bridge.request('BOT_PERMISSIONS', { guildId: req.params.guildId })) });

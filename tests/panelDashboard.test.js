@@ -221,6 +221,9 @@ function cookieFor(userId, guilds = []) {
     assert.equal(sec.security.guard.mode, 'auto');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/security`, { cookie: adminCookie })).status, 403, 'Segurança de outro servidor é recusada');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie, method: 'PUT', body: {}, panelHeader: false })).status, 403, 'Sem cabeçalho do painel (CSRF)');
+    const act = await (await call(`/api/dashboard/guilds/${GUILD_A}/activity`, { cookie: adminCookie })).json();
+    assert.equal(act.series.length, 30, 'Atividade: série de 30 dias');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/activity`, { cookie: adminCookie })).status, 403);
     const perms = await (await call(`/api/dashboard/guilds/${GUILD_A}/bot-permissions`, { cookie: adminCookie })).json();
     assert.deepEqual(perms.permissions, { ManageMessages: true, ViewAuditLog: false }, 'Permissões da Pyxie conferidas ao vivo');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/bot-permissions`, { cookie: adminCookie })).status, 403);
