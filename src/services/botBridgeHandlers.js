@@ -68,6 +68,11 @@ const handlers = {
     return out.sort((a, b) => b.memberCount - a.memberCount);
   },
 
+  // Alertas automáticos de uso estranho: são contados no processo do bot.
+  async RED_FLAGS() {
+    return require('./trustAndSafety').getActiveRedFlags();
+  },
+
   // Permissões da Pyxie no servidor (o painel mostra o que falta para cada recurso).
   async BOT_PERMISSIONS(client, { guildId }) {
     const guild = client.guilds.cache.get(String(guildId));

@@ -530,6 +530,14 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return next();
   }
 
+  router.get('/api/dashboard/global/red-flags', requireSession, requireOwner, async (req, res) => {
+    try {
+      return res.json({ success: true, redFlags: await bridge.request('RED_FLAGS') });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+  });
+
   router.get('/api/dashboard/global/servers', requireSession, requireOwner, async (req, res) => {
     try {
       return res.json({ success: true, servers: await bridge.request('GUILD_DIRECTORY') });

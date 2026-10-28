@@ -53,6 +53,8 @@ function fakeBotSend(msg) {
       data = [{ id: '1', name: 'geral', type: 0 }, { id: '777777777777777777', name: 'staff', type: 0 }];
     } else if (request === 'GUILD_DIRECTORY') {
       data = [{ id: GUILD_A, name: 'A', icon: null, description: '', memberCount: 10, ownerId: OWNER_A, ownerName: 'dona', createdAt: 1, joinedAt: 2 }];
+    } else if (request === 'RED_FLAGS') {
+      data = [{ id: 'f1', targetType: 'user', targetId: ADMIN_A, severity: 'HIGH', reason: 'pico' }];
     } else if (request === 'APPEAL_LIST') {
       data = [{ guildId: GUILD_A, name: 'A', banned: true, banReason: 'spam', appeal: null, canAppeal: true }];
     } else if (request === 'APPEAL_SUBMIT') {
@@ -177,6 +179,9 @@ function cookieFor(userId, guilds = []) {
     const dir = await (await call('/api/dashboard/global/servers', { cookie: ownerCookie })).json();
     assert.deepEqual(Object.keys(dir.servers[0]).sort(), ['createdAt', 'description', 'icon', 'id', 'joinedAt', 'memberCount', 'name', 'ownerId', 'ownerName'], 'Lista só com dados públicos');
     assert.equal((await call('/api/dashboard/global/servers', { cookie: cookieFor(ADMIN_A) })).status, 403, 'Lista de servidores é só do dono');
+    const flags = await (await call('/api/dashboard/global/red-flags', { cookie: ownerCookie })).json();
+    assert.equal(flags.redFlags[0].severity, 'HIGH', 'Alertas vêm do processo do bot pela ponte');
+    assert.equal((await call('/api/dashboard/global/red-flags', { cookie: cookieFor(ADMIN_A) })).status, 403);
     console.log('  ✅ 4. Backend recusa servidores de outra pessoa, Cringelândia e Mary.');
 
     // 5. Permissão conferida ao vivo: perdeu o cargo, perdeu o acesso.
