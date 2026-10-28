@@ -58,6 +58,7 @@ export const api = {
   saveCommunity: (id, body) => request(`/api/dashboard/guilds/${id}/community`, { method: 'PUT', body }),
   assets: () => request('/api/dashboard/global/assets'),
   saveAsset: (body) => request('/api/dashboard/global/assets', { method: 'PUT', body }),
+  publishColors: (id, channelId) => request(`/api/dashboard/guilds/${id}/colors/publish`, { method: 'POST', body: { channelId } }),
   health: () => request('/api/dashboard/global/health'),
   errors: (window) => request(`/api/dashboard/global/errors?window=${window}`),
   modules: () => request('/api/dashboard/global/modules'),

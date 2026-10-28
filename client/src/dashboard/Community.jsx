@@ -89,7 +89,43 @@ export function CommunitySettings({ t, guildId }) {
       <Button onClick={save} className="w-full">
         {t('features.save')}
       </Button>
+      <ColorsCard t={t} guildId={guildId} texts={texts} />
     </div>
+  );
+}
+
+// Canal de cores: cria os 75 cargos (reaproveitando os 1–51) e publica o painel no canal escolhido.
+function ColorsCard({ t, guildId, texts }) {
+  const [channelId, setChannelId] = useState('1453897828941168670');
+  const [state, setState] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const publish = async () => {
+    if (!window.confirm(t('colorsPanel.confirm'))) return;
+    setBusy(true);
+    setState(null);
+    try {
+      const res = await api.publishColors(guildId, channelId);
+      setState({ ok: true, text: t('colorsPanel.done', { created: res.created, reused: res.reused }) });
+    } catch (e) {
+      setState({ ok: false, text: t('error.generic', { error: e.code }) });
+    }
+    setBusy(false);
+  };
+  return (
+    <Card title={t('colorsPanel.title')}>
+      <p className="mb-3 text-sm text-white/70">{t('colorsPanel.hint')}</p>
+      <select value={channelId} onChange={(e) => setChannelId(e.target.value)} aria-label={t('colorsPanel.title')} className={`${field} mb-3 bg-[#160d2a]`}>
+        {texts.map((c) => (
+          <option key={c.id} value={c.id}>
+            #{c.name}
+          </option>
+        ))}
+      </select>
+      {state && <Notice tone={state.ok ? 'ok' : 'error'}>{state.text}</Notice>}
+      <Button onClick={publish} disabled={busy} className="mt-3 w-full">
+        {t('colorsPanel.publish')}
+      </Button>
+    </Card>
   );
 }
 

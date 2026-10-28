@@ -423,6 +423,17 @@ const TRANSLATIONS = {
       "enabled": "🏷️ Pronto! Seu apelido agora é **{nick}**.",
       "disabled": "🏷️ Tirei o título do seu apelido."
     },
+    "colors": {
+      "groupTitle": "🎨 Cores {from} a {to}",
+      "intro": "> *Escolha uma cor no menu abaixo de cada bloco. Trocar de cor tira a anterior, então não precisa se preocupar.*",
+      "placeholder": "Escolha uma cor ({from} a {to})",
+      "removeTitle": "🧽 Tirar minha cor",
+      "removeDesc": "Ficou com cor travada ou quer voltar ao normal? Toque no botão e eu tiro todas as cores do seu perfil.",
+      "removeButton": "Tirar minha cor",
+      "applied": "🎨 Pronto, agora você está de {color}. Combina com você, não que eu tenha reparado.",
+      "cleared": "🧽 Tirei suas cores. Perfil limpinho.",
+      "error": "😿 Não consegui mexer nesse cargo de cor. Avise a staff, por favor."
+    },
     "messageStudio": {
       "role_added": "✨ Pronto! Você agora tem o cargo **{role}**.",
       "role_removed": "🍃 Tirei o cargo **{role}** de você.",
@@ -2629,6 +2640,17 @@ const TRANSLATIONS = {
       "cannot": "😿 I can't change your nickname (my role is below yours or I lack permission).",
       "enabled": "🏷️ Done! Your nickname is now **{nick}**.",
       "disabled": "🏷️ I removed the title from your nickname."
+    },
+    "colors": {
+      "groupTitle": "🎨 Colors {from} to {to}",
+      "intro": "> *Pick a color from the menu under each block. Switching colors removes the old one, so no worries.*",
+      "placeholder": "Pick a color ({from} to {to})",
+      "removeTitle": "🧽 Remove my color",
+      "removeDesc": "Got a stuck color or want to go back to normal? Tap the button and I'll remove every color from your profile.",
+      "removeButton": "Remove my color",
+      "applied": "🎨 Done, you're now wearing {color}. It suits you, not that I noticed.",
+      "cleared": "🧽 I removed your colors. Squeaky clean profile.",
+      "error": "😿 I couldn't change that color role. Please tell the staff."
     },
     "messageStudio": {
       "role_added": "✨ Done! You now have the **{role}** role.",

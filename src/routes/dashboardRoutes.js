@@ -383,6 +383,27 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, community: require('../services/communityConfig').saveCommunityConfig(req.params.guildId, req.body || {}) });
   });
 
+  // ---------- Canal de cores (plano 5.13): cria os 75 cargos e publica o painel ----------
+  router.post('/api/dashboard/guilds/:guildId/colors/publish', requireSession, requireGuild, requireCringelandiaOwner, async (req, res) => {
+    const colorRoles = require('../services/colorRoles');
+    const { COLORS_CHANNEL_ID } = require('../config');
+    const channelId = String(req.body?.channelId || COLORS_CHANNEL_ID);
+    if (!GUILD_ID_RE.test(channelId)) return res.status(400).json({ success: false, error: 'invalid_channel' });
+    const discord = (method, route, body) => studioStore.discord(method, route, body, doFetch);
+    try {
+      const channel = await discord('GET', `/channels/${channelId}`);
+      if (String(channel.guild_id) !== req.params.guildId) return res.status(403).json({ success: false, error: 'channel_not_in_guild' });
+      const sync = await colorRoles.syncRoles(req.params.guildId, discord);
+      const sent = [];
+      for (const message of colorRoles.buildPanel(req.params.guildId, 'pt')) {
+        sent.push((await discord('POST', `/channels/${channelId}/messages`, message)).id);
+      }
+      return res.json({ success: true, created: sync.created, reused: sync.reused, messages: sent.length });
+    } catch (err) {
+      return res.status(502).json({ success: false, error: err.code || 'colors_error' });
+    }
+  });
+
   // Área global: só o dono da Pyxie.
   function requireOwner(req, res, next) {
     if (!access.isOwner(req.panelSession.userId)) return res.status(403).json({ success: false, error: 'owner_only' });
