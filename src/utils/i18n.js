@@ -342,6 +342,22 @@ const TRANSLATIONS = {
       "noPermission": "Só quem é dono do servidor ou tem Gerenciar Servidor pode encerrar a pausa.",
       "endFailed": "Não consegui encerrar a pausa. Dá para encerrar à mão no menu do servidor, em Ações de segurança."
     },
+    "appeals": {
+      "staffTitle": "🕊️ Pedido para voltar",
+      "staffWho": "**Quem pede:** {name} {user} {id}",
+      "staffReason": "**Motivo do banimento:** {reason}",
+      "noReason": "sem motivo registrado",
+      "staffText": "O que a pessoa escreveu",
+      "btnApprove": "Desbanir",
+      "btnReject": "Recusar",
+      "decidedApproved": "Desbanido por {user}.",
+      "decidedRejected": "Recusado por {user}. A pessoa pode pedir de novo daqui a 30 dias.",
+      "noPermission": "Só quem pode banir membros decide apelações.",
+      "failed": "Não consegui. A Pyxie precisa de Banir Membros neste servidor.",
+      "alreadyDecided": "Esse pedido já teve resposta.",
+      "dmApproved": "🕊️ Seu pedido para voltar a **{server}** foi aceito. Você pode entrar de novo pelo convite do servidor. Que bom ter você de volta.",
+      "dmRejected": "💜 Seu pedido para voltar a **{server}** não foi aceito desta vez. Daqui a 30 dias você pode pedir de novo pelo painel. Se precisar conversar com alguém agora, procure uma pessoa de confiança."
+    },
     "linkShield": {
       "brandUnknown": "um site conhecido",
       "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
@@ -2709,6 +2725,22 @@ const TRANSLATIONS = {
       "ended": "🔓 Pause ended by {user}.",
       "noPermission": "Only the server owner or someone with Manage Server can end the pause.",
       "endFailed": "I couldn't end the pause. You can end it by hand from the server menu, under Security Actions."
+    },
+    "appeals": {
+      "staffTitle": "🕊️ Request to come back",
+      "staffWho": "**Requested by:** {name} {user} {id}",
+      "staffReason": "**Ban reason:** {reason}",
+      "noReason": "no reason recorded",
+      "staffText": "What they wrote",
+      "btnApprove": "Unban",
+      "btnReject": "Decline",
+      "decidedApproved": "Unbanned by {user}.",
+      "decidedRejected": "Declined by {user}. They can ask again in 30 days.",
+      "noPermission": "Only people who can ban members decide appeals.",
+      "failed": "I couldn't do it. Pyxie needs Ban Members in this server.",
+      "alreadyDecided": "This request already has an answer.",
+      "dmApproved": "🕊️ Your request to come back to **{server}** was accepted. You can join again through the server invite. It's good to have you back.",
+      "dmRejected": "💜 Your request to come back to **{server}** wasn't accepted this time. In 30 days you can ask again through the dashboard. If you need to talk to someone right now, reach out to someone you trust."
     },
     "linkShield": {
       "brandUnknown": "a well-known site",

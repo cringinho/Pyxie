@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Boxes, Check, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
+import { ArrowRight, Boxes, Check, Feather, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
 import { api } from './api';
 import { detectLang, makeT } from './i18n';
 import { Badge, Button, Card, GuildIcon, MultiSelect, Notice, Spinner, StatTile, StatusDot, Switch, Toggle } from './ui';
@@ -16,12 +16,14 @@ import Seasonal from './Seasonal';
 import Partnerships from './Partnerships';
 import ModuleDrawer from './ModuleDrawer';
 import { Economy, Trust } from './OwnerTools';
+import Appeal from './Appeal';
 import BotPermissions from './Permissions';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
 function parseHash() {
   const parts = window.location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (parts[0] === 'guild' && parts[1]) return { view: 'guild', guildId: parts[1], section: parts[2] || 'overview' };
+  if (parts[0] === 'appeal') return { view: 'appeal' };
   if (parts[0] === 'global') return { view: 'global', section: parts[1] || 'health', item: parts[2] || null };
   return { view: 'picker' };
 }
@@ -74,6 +76,13 @@ export default function Dashboard() {
       .then((data) => {
         setMe(data);
         setAuthState('in');
+        try {
+          const back = sessionStorage.getItem('pyxie_after_login');
+          if (back) {
+            sessionStorage.removeItem('pyxie_after_login');
+            window.location.hash = back;
+          }
+        } catch (_) {}
       })
       .catch(() => setAuthState('out'));
   }, []);
@@ -96,6 +105,14 @@ export default function Dashboard() {
   if (authState === 'out') return <Login t={t} lang={lang} setLang={setLang} error={loginError} />;
 
   const shell = { t, lang, setLang, me, onLogout: logout };
+  if (route.view === 'appeal') {
+    return (
+      <Layout {...shell} nav={pickerNav(t, me, 'appeal')} crumbs={[{ label: t('app.title'), href: '#/' }, { label: t('appeal.title') }]}>
+        <PageHeader icon={<SectionBadge icon={Feather} />} title={t('appeal.title')} />
+        <Appeal t={t} />
+      </Layout>
+    );
+  }
   if (route.view === 'guild') return <GuildView shell={shell} guildId={route.guildId} section={route.section} />;
   if (route.view === 'global' && me?.user?.isOwner) return <GlobalView shell={shell} section={route.section} item={route.item} />;
   return <Picker shell={shell} />;
@@ -155,6 +172,11 @@ function Login({ t, lang, setLang, error }) {
         )}
         <a
           href="/auth/discord"
+          onClick={() => {
+            try {
+              if (window.location.hash) sessionStorage.setItem('pyxie_after_login', window.location.hash);
+            } catch (_) {}
+          }}
           className="flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pyxie-bright via-fuchsia-500 to-mystic-violet px-6 font-semibold shadow-[0_0_24px_rgba(236,72,153,0.5)] transition hover:brightness-110"
         >
           {t('login.button')} <ArrowRight size={18} aria-hidden="true" />
@@ -165,9 +187,10 @@ function Login({ t, lang, setLang, error }) {
   );
 }
 
-function pickerNav(t, me) {
-  const groups = [{ id: 'core', label: t('nav.group.core'), items: [{ id: 'picker', label: t('picker.title'), icon: Server, href: '#/', active: true }] }];
+function pickerNav(t, me, active = 'picker') {
+  const groups = [{ id: 'core', label: t('nav.group.core'), items: [{ id: 'picker', label: t('picker.title'), icon: Server, href: '#/', active: active === 'picker' }] }];
   if (me.user.isOwner) groups[0].items.push({ id: 'global', label: t('picker.global'), icon: Sparkles, href: '#/global/health', active: false });
+  groups[0].items.push({ id: 'appeal', label: t('appeal.title'), icon: Feather, href: '#/appeal', active: active === 'appeal' });
   return { title: t('app.title'), subtitle: me.user.globalName || me.user.username, groups };
 }
 

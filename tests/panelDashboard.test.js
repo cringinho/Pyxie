@@ -53,6 +53,11 @@ function fakeBotSend(msg) {
       data = [{ id: '1', name: 'geral', type: 0 }, { id: '777777777777777777', name: 'staff', type: 0 }];
     } else if (request === 'GUILD_DIRECTORY') {
       data = [{ id: GUILD_A, name: 'A', icon: null, description: '', memberCount: 10, ownerId: OWNER_A, ownerName: 'dona', createdAt: 1, joinedAt: 2 }];
+    } else if (request === 'APPEAL_LIST') {
+      data = [{ guildId: GUILD_A, name: 'A', banned: true, banReason: 'spam', appeal: null, canAppeal: true }];
+    } else if (request === 'APPEAL_SUBMIT') {
+      bridge.handleLine(`${BRIDGE_PREFIX}${JSON.stringify(payload.text.includes('pendente') ? { id, ok: false, error: 'pending' } : { id, ok: true, data: { status: 'pending', createdAt: 1, decidedAt: null } })}`);
+      return;
     } else if (request === 'BOT_PERMISSIONS') {
       data = { permissions: { ManageMessages: true, ViewAuditLog: false }, roleName: 'Pyxie' };
     } else if (request === 'GUILD_ROLES') {
@@ -229,6 +234,21 @@ function cookieFor(userId, guilds = []) {
     assert.equal(sec.security.guard.mode, 'auto');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/security`, { cookie: adminCookie })).status, 403, 'Segurança de outro servidor é recusada');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie, method: 'PUT', body: {}, panelHeader: false })).status, 403, 'Sem cabeçalho do painel (CSRF)');
+    // Apelação: qualquer pessoa logada vê os próprios banimentos e manda pedido.
+    const memberCookie = cookieFor(MEMBER_A);
+    const ap = await (await call('/api/dashboard/appeals', { cookie: memberCookie })).json();
+    assert.equal(ap.servers[0].canAppeal, true, 'Membro comum abre a apelação');
+    assert.equal((await call('/api/dashboard/appeals')).status, 401, 'Apelação exige login');
+    res = await call(`/api/dashboard/appeals/${GUILD_A}`, { cookie: memberCookie, method: 'POST', body: { text: 'curto' } });
+    assert.equal(res.status, 400, 'Texto curto é recusado no site');
+    res = await call(`/api/dashboard/appeals/${GUILD_A}`, { cookie: memberCookie, method: 'POST', body: { text: 'Peço para voltar, entendi o erro.' } });
+    assert.equal((await res.json()).appeal.status, 'pending');
+    res = await call(`/api/dashboard/appeals/${GUILD_A}`, { cookie: memberCookie, method: 'POST', body: { text: 'Pedido pendente de novo, por favor.' } });
+    assert.equal((await res.json()).error, 'pending', 'Erro do bot chega no site');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie, method: 'PUT', body: { antiRaid: { joins: 25 }, appeals: { enabled: true, channelId: '777777777777777777' } } });
+    sec = await res.json();
+    assert.equal(sec.security.antiRaid.joins, 25, 'Ajustes do anti-raid são salvos');
+    assert.deepEqual(sec.security.appeals, { enabled: true, channelId: '777777777777777777' });
     const act = await (await call(`/api/dashboard/guilds/${GUILD_A}/activity`, { cookie: adminCookie })).json();
     assert.equal(act.series.length, 30, 'Atividade: série de 30 dias');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/activity`, { cookie: adminCookie })).status, 403);

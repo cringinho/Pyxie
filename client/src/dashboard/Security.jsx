@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link2Off, ShieldCheck, ShieldHalf, KeyRound, Hash, Siren } from 'lucide-react';
+import { Feather, Link2Off, ShieldCheck, ShieldHalf, KeyRound, Hash, Siren } from 'lucide-react';
 import { api } from './api';
 import BotPermissions from './Permissions';
 import { Button, Card, Notice, Spinner, StatTile, Toggle } from './ui';
@@ -49,6 +49,7 @@ export default function Security({ t, guildId }) {
   if (!data || !draft) return <Spinner label={t('app.loading')} />;
 
   const setLink = (patch) => setDraft({ ...draft, linkShield: { ...draft.linkShield, ...patch } });
+  const setAppeals = (patch) => setDraft({ ...draft, appeals: { ...draft.appeals, ...patch } });
   const setRaid = (patch) => setDraft({ ...draft, antiRaid: { ...draft.antiRaid, ...patch } });
   const setGuard = (patch) => setDraft({ ...draft, guard: { ...draft.guard, ...patch } });
 
@@ -61,6 +62,7 @@ export default function Security({ t, guildId }) {
         linkShield: { ...draft.linkShield, allowDomains: draft.allowText.split(/[\s,]+/).filter(Boolean) },
         guard: draft.guard,
         antiRaid: draft.antiRaid,
+        appeals: draft.appeals,
       });
       setDraft({ ...res.security, allowText: res.security.linkShield.allowDomains.join('\n') });
       setStatus('ok');
@@ -89,6 +91,7 @@ export default function Security({ t, guildId }) {
           { perm: 'ManageRoles', why: 'perm.why.revertRoles' },
           { perm: 'ManageChannels', why: 'perm.why.lockChannels' },
           { perm: 'ManageGuild', why: 'perm.why.raidPause' },
+          { perm: 'BanMembers', why: 'perm.why.appeals' },
         ]}
       />
 
@@ -169,6 +172,26 @@ export default function Security({ t, guildId }) {
             </label>
           </div>
           <p className="text-xs text-white/50">{t('sec.raidYoung')}</p>
+        </div>
+      </Card>
+
+      <Card title={t('sec.appealsTitle')} icon={Feather}>
+        <p className="mb-3 text-sm text-white/70">{t('sec.appealsHint')}</p>
+        <div className="space-y-3">
+          <Toggle label={t('sec.appealsOn')} checked={draft.appeals.enabled} onChange={(v) => setAppeals({ enabled: v })} />
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.appealsChannel')}</span>
+            <select value={draft.appeals.channelId} onChange={(e) => setAppeals({ channelId: e.target.value })} className={`${field} bg-[#160d2a]`}>
+              <option value="">—</option>
+              {channels.map((c) => (
+                <option key={c.id} value={c.id}>
+                  #{c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p className="text-xs text-white/50">{t('sec.appealsLink')}</p>
+          <code className="block break-all rounded-xl bg-white/5 p-2 text-xs">{`${window.location.origin}/dashboard#/appeal`}</code>
         </div>
       </Card>
 

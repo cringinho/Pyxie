@@ -355,6 +355,30 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     }
   });
 
+  // ---------- Apelação de banimento: qualquer pessoa logada vê os próprios banimentos ----------
+  router.get('/api/dashboard/appeals', requireSession, async (req, res) => {
+    try {
+      return res.json({ success: true, servers: await bridge.request('APPEAL_LIST', { userId: req.panelSession.userId }) });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+  });
+
+  router.post('/api/dashboard/appeals/:guildId', requireSession, async (req, res) => {
+    if (!GUILD_ID_RE.test(req.params.guildId)) return res.status(400).json({ success: false, error: 'invalid_guild' });
+    const text = String(req.body?.text || '').trim();
+    if (text.length < 20) return res.status(400).json({ success: false, error: 'too_short' });
+    if (text.length > 1500) return res.status(400).json({ success: false, error: 'too_long' });
+    const s = req.panelSession;
+    try {
+      const appeal = await bridge.request('APPEAL_SUBMIT', { guildId: req.params.guildId, userId: s.userId, username: s.globalName || s.username, text });
+      return res.json({ success: true, appeal });
+    } catch (err) {
+      const code = err.code || 'bridge_error';
+      return res.status(['bridge_offline', 'bridge_timeout'].includes(code) ? 503 : 400).json({ success: false, error: code });
+    }
+  });
+
   // ---------- Segurança (todos os servidores): escudo de links e guardião do servidor ----------
   router.get('/api/dashboard/guilds/:guildId/security', requireSession, requireGuild, (req, res) => {
     const safety = require('../services/guildSafety');
@@ -366,16 +390,24 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const safety = require('../services/guildSafety');
     const body = req.body || {};
     const staffLogChannelId = String(body.staffLogChannelId || '');
-    // O canal de alertas precisa ser deste servidor (o bot confere ao vivo).
-    if (staffLogChannelId) {
+    const appealsChannelId = String(body.appeals?.channelId || '');
+    // Os canais escolhidos precisam ser deste servidor (o bot confere ao vivo).
+    const wanted = [staffLogChannelId, appealsChannelId].filter(Boolean);
+    if (wanted.length) {
       try {
         const channels = await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId });
-        if (!channels.some((c) => c.id === staffLogChannelId)) return res.status(400).json({ success: false, error: 'invalid_channel' });
+        if (!wanted.every((id) => channels.some((c) => c.id === id))) return res.status(400).json({ success: false, error: 'invalid_channel' });
       } catch (err) {
         return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
       }
     }
-    const security = safety.saveConfig(req.params.guildId, { staffLogChannelId, linkShield: body.linkShield || {}, guard: body.guard || {} });
+    const security = safety.saveConfig(req.params.guildId, {
+      staffLogChannelId,
+      linkShield: body.linkShield || {},
+      guard: body.guard || {},
+      antiRaid: body.antiRaid || {},
+      appeals: body.appeals ? { enabled: body.appeals.enabled === true, channelId: appealsChannelId } : {},
+    });
     return res.json({ success: true, security });
   });
 

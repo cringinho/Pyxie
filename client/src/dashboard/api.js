@@ -27,6 +27,8 @@ async function request(path, { method = 'GET', body } = {}) {
 }
 
 export const api = {
+  appeals: () => request('/api/dashboard/appeals'),
+  sendAppeal: (guildId, text) => request(`/api/dashboard/appeals/${guildId}`, { method: 'POST', body: { text } }),
   me: () => request('/api/dashboard/me'),
   logout: () => request('/auth/logout', { method: 'POST' }),
   guild: (id) => request(`/api/dashboard/guilds/${id}`),

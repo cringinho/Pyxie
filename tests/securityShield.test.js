@@ -213,7 +213,7 @@ const CHANNEL = '555555555555555555';
 
     // 7. Textos: mesmas chaves e marcadores em pt e en; todo motivo tem texto.
     const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (typeof v === 'object' ? flat(v, `${p}${k}.`) : [[`${p}${k}`, v]]));
-    for (const ns of ['linkShield', 'serverGuard', 'securityAlerts', 'antiRaid']) {
+    for (const ns of ['linkShield', 'serverGuard', 'securityAlerts', 'antiRaid', 'appeals']) {
       const pt = Object.fromEntries(flat(TRANSLATIONS.pt[ns]));
       const en = Object.fromEntries(flat(TRANSLATIONS.en[ns]));
       assert.deepEqual(Object.keys(en).sort(), Object.keys(pt).sort(), `${ns}: mesmas chaves`);
@@ -297,6 +297,58 @@ const CHANNEL = '555555555555555555';
     assert.deepEqual(Object.keys(stored.days), ['2026-10-28'], 'Dia com mais de 30 dias é descartado');
     assert(!JSON.stringify(stored).includes('222222222222222222'), 'Nenhum ID de pessoa guardado');
     console.log('  ✅ 9. Atividade do servidor: contagens em lote, 30 dias, sem dados pessoais.');
+
+    // 10. Apelação de banimento: regras, envio para a staff, decisão e permissões.
+    const appealsSvc = require('../src/services/banAppeals');
+    const banAppeals = require('../src/modules/ban-appeals');
+    const U = '777000000000000001';
+    const N0 = 2_000_000_000_000;
+    assert.equal(appealsSvc.create(G, { userId: U, username: 'x', text: 'curto' }, N0).reason, 'too_short');
+    const first = appealsSvc.create(G, { userId: U, username: 'x', text: 'Peço desculpas, entendi o que fiz de errado.' }, N0);
+    assert.equal(first.ok, true);
+    assert.equal(appealsSvc.canAppeal(G, U, N0).reason, 'pending', 'Um pedido pendente por vez');
+    assert.equal(appealsSvc.decide(G, first.appeal.id, { approved: false, by: 'm' }, N0 + 1).ok, true);
+    assert.equal(appealsSvc.decide(G, first.appeal.id, { approved: true, by: 'm' }, N0 + 2).reason, 'already_decided', 'Decide uma vez só');
+    assert.equal(appealsSvc.canAppeal(G, U, N0 + 10 * 86400000).reason, 'cooldown', 'Depois de recusa espera 30 dias');
+    assert.equal(appealsSvc.canAppeal(G, U, N0 + 31 * 86400000).ok, true);
+    assert.deepEqual(Object.keys(appealsSvc.publicView(first.appeal)).sort(), ['createdAt', 'decidedAt', 'status'], 'A pessoa não vê quem decidiu');
+
+    banAppeals._setActive(true);
+    safety.saveConfig(G, { appeals: { enabled: true, channelId: STAFF } });
+    const V = '777000000000000002';
+    const posted = [];
+    let unbanned = null;
+    const aguild = {
+      ...guild,
+      ownerId: '111111111111111111',
+      iconURL: () => null,
+      members: { me: { permissions: { has: (f) => f === PermissionFlagsBits.BanMembers } }, fetch: async (id) => ({ permissions: { has: (f) => id === '333333333333333333' && f === PermissionFlagsBits.BanMembers } }) },
+      bans: { fetch: async ({ user }) => (user === V ? { reason: 'spam <@1> @everyone' } : null), remove: async (id) => (unbanned = id) },
+      channels: { cache: new Map([[STAFF, { isTextBased: () => true, send: async (p) => (posted.push(p), { id: '999000000000000001' }) }]]), fetch: async () => null },
+    };
+    const aclient = { user: client.user, guilds: { cache: new Map([[G, aguild]]) }, users: { fetch: async () => ({ send: async () => {} }) } };
+    const listed = await banAppeals.listForUser(aclient, { userId: V });
+    assert.equal(listed[0].banned, true);
+    assert.equal(listed[0].canAppeal, true);
+    await assert.rejects(banAppeals.submit(aclient, { guildId: G, userId: U, username: 'x', text: 'x'.repeat(30) }), /not_banned/, 'Só quem está banido pede');
+    await banAppeals.submit(aclient, { guildId: G, userId: V, username: 'Vi @everyone', text: 'Quero voltar, prometo respeitar as regras.' });
+    assert.equal(posted.length, 1);
+    assert.deepEqual(posted[0].allowedMentions.parse, [], 'Pedido na staff não notifica ninguém');
+    assert(!posted[0].embeds[0].data.description.includes('@everyone'), 'Menções do texto ficam neutralizadas');
+    await assert.rejects(banAppeals.submit(aclient, { guildId: G, userId: V, username: 'Vi', text: 'Mais um pedido para voltar, por favor.' }), /pending/);
+    const appealId = appealsSvc.latestFor(G, V).id;
+    const areplies = [];
+    const aupdates = [];
+    const press = (userId, choice) => ({ isButton: () => true, customId: `appeal:${choice}:${G}:${appealId}`, user: { id: userId, tag: 't' }, reply: async (p) => areplies.push(p), update: async (p) => aupdates.push(p) });
+    await banAppeals.handleInteraction(press('444444444444444444', 'yes'), aclient);
+    assert.equal(unbanned, null, 'Sem Banir Membros não desbane');
+    await banAppeals.handleInteraction(press('333333333333333333', 'yes'), aclient);
+    assert.equal(unbanned, V, 'Staff com Banir Membros desbane');
+    assert.deepEqual(aupdates[0].components, [], 'Botões somem depois da decisão');
+    assert.equal(appealsSvc.latestFor(G, V).status, 'approved');
+    safety.saveConfig(G, { appeals: { enabled: false } });
+    assert.deepEqual(await banAppeals.listForUser(aclient, { userId: V }), [], 'Servidor com apelação desligada não aparece');
+    console.log('  ✅ 10. Apelação de banimento: regras, staff sem ping, desbanir com permissão.');
 
     console.log('🎉 Escudo de links e guardião do servidor validados!');
   } finally {

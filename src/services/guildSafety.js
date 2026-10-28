@@ -39,6 +39,7 @@ function defaultConfig() {
     linkShield: { enabled: true, action: 'delete', allowDomains: [] },
     guard: { enabled: true, mode: 'alert' },
     antiRaid: { enabled: true, joins: 10, seconds: 30, pauseMinutes: 60 },
+    appeals: { enabled: false, channelId: '' },
   };
 }
 
@@ -50,6 +51,7 @@ function normalizeConfig(raw = {}) {
   const link = { ...base.linkShield, ...(raw.linkShield || {}) };
   const guard = { ...base.guard, ...(raw.guard || {}) };
   const raid = { ...base.antiRaid, ...(raw.antiRaid || {}) };
+  const appeals = { ...base.appeals, ...(raw.appeals || {}) };
   return {
     staffLogChannelId: ID_RE.test(String(raw.staffLogChannelId || '')) ? String(raw.staffLogChannelId) : '',
     linkShield: {
@@ -66,6 +68,10 @@ function normalizeConfig(raw = {}) {
       joins: clamp(raid.joins, 3, 100, 10),
       seconds: clamp(raid.seconds, 10, 120, 30),
       pauseMinutes: PAUSE_OPTIONS.includes(Number(raid.pauseMinutes)) ? Number(raid.pauseMinutes) : 60,
+    },
+    appeals: {
+      enabled: appeals.enabled === true,
+      channelId: ID_RE.test(String(appeals.channelId || '')) ? String(appeals.channelId) : '',
     },
   };
 }
@@ -88,6 +94,7 @@ function saveConfig(guildId, input = {}) {
     linkShield: { ...current.linkShield, ...(input.linkShield || {}) },
     guard: { ...current.guard, ...(input.guard || {}) },
     antiRaid: { ...current.antiRaid, ...(input.antiRaid || {}) },
+    appeals: { ...current.appeals, ...(input.appeals || {}) },
   });
   writeAtomic(fileFor(guildId, 'security.json'), next);
   cache.set(guildId, { at: Date.now(), config: next });
