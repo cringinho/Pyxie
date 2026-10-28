@@ -24,9 +24,13 @@ const FOOTER_MOODS = ['happy', 'sad', 'smile', 'worried'];
 const footerIconUrl = (mood) => `${(process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br').replace(/\/+$/, '')}/assets/pyxie/sticker/footer/${mood}.png`;
 const MOOD_RULES = [
   ['worried', /❌|⚠️|⛔|🚫|⏳|\berr(o|or)\b|falh|\bfail|não consegu|couldn.t|can.t|cannot|não pode|negad|denied|sem permiss|permission|aguarde|espere|cooldown|\bwait\b|inválid|invalid/i],
-  ['sad', /perdeu|derrota|\blost\b|defeat|game over|morreu|\bdied\b|faliu|que pena|too bad|acabou o tempo|time.s up/i],
+  ['sad', /perdeu|derrota|\blost\b|defeat|game over|morreu|\bdied\b|faliu|que pena|too bad|acabou o tempo|time.s up|errou|errad|\bwrong\b|incorrect|recusad|rejected|declined/i],
   ['happy', /✅|🎉|🏆|🥳|vitória|victory|venceu|\bwon\b|parabéns|congrat|ganhou|recompensa|reward|subiu de nível|level up|conquist|achievement/i],
 ];
+
+// Acolhimento, desabafo e crise: nada de rostinho nem miniatura (o tom ali é outro, AGENTS §12).
+const SENSITIVE_RE = /desabaf|acolhiment|\bvent(ing)?\b|cvv|\b188\b|\bcrise\b|crisis|sa[uú]de mental|mental health|apoio emocional|emotional support/i;
+const isSensitive = (embed) => SENSITIVE_RE.test(`${embed?.title || ''} ${embed?.author?.name || ''} ${embed?.description || ''} ${embed?.footer?.text || ''}`);
 
 function pickMood(embed) {
   const text = `${embed?.title || ''} ${embed?.author?.name || ''} ${String(embed?.description || '').slice(0, 300)}`;
@@ -37,6 +41,7 @@ function pickMood(embed) {
 /** Põe o rostinho no rodapé quando o embed tem texto de rodapé e ainda não tem ícone. */
 function decorateFooter(embed, choice = 'auto') {
   if (!embed?.footer?.text || embed.footer.icon_url || choice === 'none') return embed;
+  if (choice === 'auto' && isSensitive(embed)) return embed;
   const mood = FOOTER_MOODS.includes(choice) ? choice : pickMood(embed);
   return { ...embed, footer: { ...embed.footer, icon_url: footerIconUrl(mood) } };
 }
@@ -47,7 +52,7 @@ const assetUrl = (rel) => `${(process.env.PANEL_PUBLIC_URL || 'https://pyxie.com
 const THUMBS = { pixel: assetUrl('pyxie_pixelart.png'), victory: assetUrl('sticker/sticker_win_victory.png') };
 
 function decorateThumb(embed) {
-  if (!embed || embed.thumbnail?.url || embed.image?.url) return embed;
+  if (!embed || embed.thumbnail?.url || embed.image?.url || isSensitive(embed)) return embed;
   const short = String(embed.description || '').length <= 400 && (embed.fields || []).length <= 3;
   if (!short || pickMood(embed) !== 'happy') return embed;
   return { ...embed, thumbnail: { url: THUMBS.victory } };
@@ -330,15 +335,18 @@ function transformBody(guildId, body, ctx = {}) {
   const seen = [];
   const next = { ...target };
   if (Array.isArray(target.embeds)) {
-    // Fala da Pyxie (pyxieQuips.js) só no primeiro embed dos comandos interativos e nunca em erro.
-    const quip = target.embeds[0] && pickMood(target.embeds[0]) !== 'worried' ? quips.quipFor(ctx.command, ctx.lang, ctx.seed) : null;
+    // Fala da Pyxie (pyxieQuips.js) só no primeiro embed dos comandos interativos, nunca em erro nem em acolhimento.
+    const first = target.embeds[0];
+    const quip = first && !ctx.sensitive && !isSensitive(first) && pickMood(first) !== 'worried' ? quips.quipFor(ctx.command, ctx.lang, ctx.seed) : null;
+    // No canal de desabafos nada é decorado.
+    const finish = (embed) => (ctx.sensitive ? embed : decorate(embed));
     next.embeds = target.embeds.map((embed, index) => {
       const withQuip = index === 0 && quip ? quips.addQuip(embed, quip) : embed;
-      if (!enabled) return decorate(withQuip);
+      if (!enabled) return finish(withQuip);
       const id = embedKey(ctx.command, embed, ctx.names);
       seen.push({ id, index, original: embed });
       const o = overrides[id.key];
-      return o || global.emojiSwaps.length ? applyToEmbed(withQuip, o, global.emojiSwaps) : decorate(withQuip);
+      return o || global.emojiSwaps.length ? applyToEmbed(withQuip, o, global.emojiSwaps) : finish(withQuip);
     });
   }
   if (Array.isArray(target.components) && global.emojiSwaps.length) next.components = applyToComponents(target.components, global.emojiSwaps);
@@ -380,7 +388,8 @@ function install(client) {
         guildId = ctx.guildId || null;
       }
       if (isMessage) {
-        const out = transformBody(guildId, options.body, ctx);
+        const ventId = guildId ? (() => { try { return require('./guildConfigService').getVentChannelId(guildId); } catch (_) { return null; } })() : null;
+        const out = transformBody(guildId, options.body, ventId && channelId === ventId ? { ...ctx, sensitive: true } : ctx);
         seen = out.seen;
         if (out.body !== options.body) options = { ...options, body: out.body };
       }

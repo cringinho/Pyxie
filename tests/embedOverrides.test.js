@@ -46,6 +46,14 @@ const OTHER = '999999999999999999';
     assert.equal(eo.decorateFooter({ title: 'sem rodapé' }).footer, undefined, 'Sem rodapé, sem ícone');
     assert.equal(eo.applyToEmbed(embed, eo.normalizeOverride({ footerIcon: 'none' })).footer.icon_url, undefined);
     assert.ok(eo.applyToEmbed(embed, eo.normalizeOverride({ footerIcon: 'sad' })).footer.icon_url.endsWith('/sad.png'));
+    // Acolhimento e desabafo: nunca rostinho nem miniatura; erro de quiz e recusa ficam tristes
+    assert.equal(eo.decorateFooter({ title: '🎭 Desabafo Anônimo', footer: { text: 'Pyxie' } }).footer.icon_url, undefined);
+    assert.equal(eo.decorateFooter({ title: 'Oi', description: 'Ligue 188 (CVV)', footer: { text: 'Pyxie' } }).footer.icon_url, undefined);
+    assert.equal(eo.decorateThumb({ title: '🏆 Vitória no espaço de acolhimento' }).thumbnail, undefined);
+    assert.equal(eo.transformBody(OTHER, { embeds: [{ title: '🏆 Vitória', footer: { text: 'P' } }] }, { sensitive: true }).body.embeds[0].footer.icon_url, undefined, 'Canal de desabafo');
+    assert.equal(eo.pickMood({ title: '💥 Você Errou o Quiz!' }), 'sad');
+    assert.equal(eo.pickMood({ title: '❌ Parceria RECUSADA' }), 'worried');
+    assert.equal(eo.pickMood({ title: 'Parceria recusada' }), 'sad');
     // Miniatura automática só em embed curto de comemoração, sem imagem própria; 'none' tira
     assert.ok(eo.decorateThumb({ title: '🏆 Vitória!', description: 'curto' }).thumbnail.url.endsWith('/sticker/sticker_win_victory.png'));
     assert.equal(eo.decorateThumb({ title: '🔮 Sua carta', description: 'curto' }).thumbnail, undefined, 'Embed comum fica sem');
