@@ -9,6 +9,7 @@ import { Links, Moderation } from './Safety';
 import { Assets, CommunitySettings } from './Community';
 import Embeds from './Embeds';
 import Security from './Security';
+import BotPermissions from './Permissions';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
 function parseHash() {
@@ -233,6 +234,20 @@ function ErrorNotice({ t, code }) {
   return <Notice tone="error">{known.startsWith('error.') ? t('error.generic', { error: code }) : known}</Notice>;
 }
 
+// Permissões que a Pyxie precisa em cada seção (o cartão confere ao vivo).
+const SECTION_NEEDS = {
+  studio: [
+    { perm: 'SendMessages', why: 'perm.why.studioSend' },
+    { perm: 'EmbedLinks', why: 'perm.why.studioEmbeds' },
+    { perm: 'ManageRoles', why: 'perm.why.studioRoles' },
+  ],
+  community: [
+    { perm: 'SendMessages', why: 'perm.why.communitySend' },
+    { perm: 'EmbedLinks', why: 'perm.why.radarEmbeds' },
+    { perm: 'ManageRoles', why: 'perm.why.colorRoles' },
+  ],
+};
+
 // Seções de formulário ficam numa coluna mais estreita; as de grade usam a largura toda.
 const WIDE_SECTIONS = new Set(['overview', 'features', 'embeds']);
 
@@ -281,12 +296,22 @@ function GuildView({ shell, guildId, section }) {
       />
       <div className={WIDE_SECTIONS.has(current) ? '' : 'max-w-3xl'}>
         {current === 'overview' && <Overview t={t} guild={g} zone={zone} role={role} ids={ids} guildId={guildId} botOnline={me.botOnline} />}
-        {current === 'studio' && <Studio t={t} guildId={guildId} guildName={name} isOwner={me.user.isOwner} />}
+        {current === 'studio' && (
+          <div className="space-y-4">
+            <BotPermissions t={t} guildId={guildId} needs={SECTION_NEEDS.studio} />
+            <Studio t={t} guildId={guildId} guildName={name} isOwner={me.user.isOwner} />
+          </div>
+        )}
         {current === 'features' && <Features t={t} guildId={guildId} />}
         {current === 'embeds' && <Embeds t={t} guildId={guildId} />}
         {current === 'security' && <Security t={t} guildId={guildId} />}
         {current === 'moderation' && <Moderation t={t} guildId={guildId} />}
-        {current === 'community' && <CommunitySettings t={t} guildId={guildId} />}
+        {current === 'community' && (
+          <div className="space-y-4">
+            <BotPermissions t={t} guildId={guildId} needs={SECTION_NEEDS.community} />
+            <CommunitySettings t={t} guildId={guildId} />
+          </div>
+        )}
         {current === 'channels' && <Channels t={t} guildId={guildId} />}
         {current === 'roles' && <Roles t={t} guildId={guildId} />}
         {current === 'access' && <Access t={t} guildId={guildId} />}
