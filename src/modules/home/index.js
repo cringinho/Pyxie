@@ -14,6 +14,8 @@ const store = require('./homeStore');
  */
 module.exports = {
   id: 'home',
+  // Exclusivo do servidor oficial (plano D5): comandos registrados só em CRINGELANDIA_GUILD_ID.
+  guildScope: [require('../../config/scopes').CRINGELANDIA_GUILD_ID],
   name: {
     'pt-BR': 'Casinha da Pyxie',
     en: "Pyxie's Cozy Room",

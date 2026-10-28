@@ -268,6 +268,9 @@ async function executeButton({ interaction, logTarotResult }) {
 
     const attachment = createTarotAttachment(result.card, result.orientation, interaction);
     const embed = buildTarotEmbed(result, interaction);
+    // Reação da Pyxie à carta (Groq na Cringelândia, falas prontas fora; espera máxima de 3 s).
+    const voice = await require('../services/pyxieVoice').lineFor('tarot', interaction, { card: localizeCard(result.card, getLanguage(interaction)).name });
+    if (voice) embed.setDescription(`${embed.data.description}\n\n-# 🧚 ${voice}`);
 
     await interaction.editReply({
       embeds: [embed],
@@ -315,6 +318,9 @@ module.exports = {
 
     const attachment = createTarotAttachment(result.card, result.orientation, interaction);
     const embed = buildTarotEmbed(result, interaction);
+    // Reação da Pyxie à carta (Groq na Cringelândia, falas prontas fora; espera máxima de 3 s).
+    const voice = await require('../services/pyxieVoice').lineFor('tarot', interaction, { card: localizeCard(result.card, getLanguage(interaction)).name });
+    if (voice) embed.setDescription(`${embed.data.description}\n\n-# 🧚 ${voice}`);
 
     await interaction.editReply({
       embeds: [embed],

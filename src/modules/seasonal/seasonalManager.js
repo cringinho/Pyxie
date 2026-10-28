@@ -1136,8 +1136,8 @@ function setupWebRoutes(app) {
   app.get('/admin/sazonal', (req, res) => {
     const cookieHeader = req.headers.cookie;
     const sessionCookie = cookieHeader ? (cookieHeader.match(/(?:^|;\s*)pyxie_admin_session=([^;]*)/)?.[1] || null) : null;
-    const { isValidAdminSession, isIpAllowed } = require('../../services/adminAuth');
-    const isAuthed = (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
+    const { isValidAdminSession, isIpAllowed, hasOwnerPanelSession } = require('../../services/adminAuth');
+    const isAuthed = hasOwnerPanelSession(req) || (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
 
     if (!isAuthed) {
       return res.redirect('/admin');

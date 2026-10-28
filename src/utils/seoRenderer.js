@@ -186,6 +186,42 @@ const SEO_CONFIG = {
       locale: 'en_US'
     }
   },
+  parents: {
+    file: 'pais-e-profissionais.html',
+    canonical: 'https://pyxie.com.br/pais-e-profissionais',
+    pt: {
+      title: 'Para pais e profissionais • Cringelândia & Pyxie',
+      description: 'Como a Cringelândia cuida de adolescentes e adultos neurodivergentes: separação +18/-18, moderação, ECA, Estatuto da Pessoa com Deficiência, LGPD e contatos de ajuda real.',
+      ogTitle: 'Para pais, responsáveis e profissionais • Cringelândia',
+      ogDesc: 'Regras, moderação, proteção de menores e leis que seguimos na comunidade neurodivergente da Pyxie.',
+      locale: 'pt_BR'
+    },
+    en: {
+      title: 'For parents and professionals • Cringelândia & Pyxie',
+      description: 'How Cringelândia looks after neurodivergent teens and adults: 18+/under-18 separation, moderation, child protection and disability laws, data protection and real help contacts.',
+      ogTitle: 'For parents, guardians and professionals • Cringelândia',
+      ogDesc: 'Rules, moderation, protection of minors and the laws we follow in the Pyxie neurodivergent community.',
+      locale: 'en_US'
+    }
+  },
+  transparency: {
+    file: 'transparencia.html',
+    canonical: 'https://pyxie.com.br/transparencia',
+    pt: {
+      title: 'Transparência e impacto • Cringelândia & Pyxie',
+      description: 'Doações da Cringelândia e da Pyxie a ONGs, com comprovantes (dados bancários tarjados) e recibos das próprias organizações.',
+      ogTitle: 'Transparência e impacto • Cringelândia',
+      ogDesc: 'Para onde vai o dinheiro: doações a ONGs com comprovante e recibo.',
+      locale: 'pt_BR'
+    },
+    en: {
+      title: 'Transparency and impact • Cringelândia & Pyxie',
+      description: 'Donations from Cringelândia and Pyxie to NGOs, with proofs of payment (bank details blacked out) and receipts issued by the organizations.',
+      ogTitle: 'Transparency and impact • Cringelândia',
+      ogDesc: 'Where the money goes: donations to NGOs with proof and receipt.',
+      locale: 'en_US'
+    }
+  },
   cringelandia: {
     file: 'cringelandia.html',
     canonical: 'https://pyxie.com.br/cringelandia',

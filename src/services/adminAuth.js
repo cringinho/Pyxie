@@ -4,7 +4,17 @@ const OWNER_SNOWFLAKE = '214153735281180673';
 const TOKEN_TTL_MS = 15 * 60 * 1000; // 15 minutos
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000; // 12 horas
 
-const ADMIN_SECRET = process.env.PANEL_SECRET || process.env.API_SECRET_TOKEN || 'pyxie_owner_master_secret_2026';
+// Sem segredo reserva no código: sem PANEL_SECRET/API_SECRET_TOKEN no .env, o painel recusa tudo.
+function getAdminSecret() {
+  return process.env.PANEL_SECRET || process.env.API_SECRET_TOKEN || null;
+}
+
+let missingSecretLogged = false;
+function warnMissingSecret() {
+  if (missingSecretLogged) return;
+  missingSecretLogged = true;
+  console.error('[AdminAuth] PANEL_SECRET não configurado no .env: o painel administrativo recusa todos os acessos até ele existir.');
+}
 
 // IPs autorizados para o painel administrativo
 const DEFAULT_ALLOWED_IPS = new Set([
@@ -28,13 +38,11 @@ const consumedMagicTokens = new Set();
 const magicTokenToSession = new Map();
 
 /**
- * Normaliza endereços IP recebidos pelo Express (trata IPv6-mapped IPv4 e proxies).
+ * Normaliza o IP do cliente. Usa req.ip, que só considera X-Forwarded-For quando a
+ * conexão vem de um proxy confiável (app.set('trust proxy', 'loopback') no server.js).
  */
 function normalizeClientIp(req) {
-  let ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || req.ip || '';
-  if (typeof ip === 'string' && ip.includes(',')) {
-    ip = ip.split(',')[0].trim();
-  }
+  let ip = req.ip || req.socket?.remoteAddress || '';
   if (typeof ip === 'string' && ip.startsWith('::ffff:')) {
     ip = ip.substring(7);
   }
@@ -45,6 +53,10 @@ function normalizeClientIp(req) {
  * Verifica se um IP pertence à allowlist do administrador.
  */
 function isIpAllowed(req) {
+  if (!getAdminSecret()) {
+    warnMissingSecret();
+    return false;
+  }
   const ip = normalizeClientIp(req);
   if (!ip) return false;
 
@@ -78,6 +90,11 @@ function createOwnerMagicToken(userId) {
   if (userId !== OWNER_SNOWFLAKE) {
     return { success: false, error: 'Acesso restrito ao proprietário da Pyxie.' };
   }
+  const secret = getAdminSecret();
+  if (!secret) {
+    warnMissingSecret();
+    return { success: false, error: 'PANEL_SECRET não configurado no .env da VM.' };
+  }
 
   const nonce = crypto.randomBytes(16).toString('hex');
   const createdAt = Date.now();
@@ -91,7 +108,7 @@ function createOwnerMagicToken(userId) {
     expiresAt,
   });
 
-  const sig = crypto.createHmac('sha256', ADMIN_SECRET).update(payload).digest('hex');
+  const sig = crypto.createHmac('sha256', secret).update(payload).digest('hex');
   const token = Buffer.from(JSON.stringify({ payload, sig })).toString('base64url');
 
   const baseUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br';
@@ -130,11 +147,17 @@ function verifyMagicToken(token) {
     return { valid: false, error: 'Este link mágico de acesso já foi utilizado. Gere um novo no Discord!' };
   }
 
+  const secret = getAdminSecret();
+  if (!secret) {
+    warnMissingSecret();
+    return { valid: false, error: 'PANEL_SECRET não configurado no .env da VM.' };
+  }
+
   try {
     const raw = Buffer.from(token, 'base64url').toString('utf8');
     const { payload, sig } = JSON.parse(raw);
 
-    const expectedSig = crypto.createHmac('sha256', ADMIN_SECRET).update(payload).digest('hex');
+    const expectedSig = crypto.createHmac('sha256', secret).update(payload).digest('hex');
     if (!crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expectedSig, 'hex'))) {
       return { valid: false, error: 'Assinatura criptográfica do token inválida.' };
     }
@@ -202,8 +225,11 @@ function isValidAdminSession(sessionToken) {
  */
 function isMasterSecretValid(tokenOrSecret) {
   if (!tokenOrSecret || typeof tokenOrSecret !== 'string') return false;
-  const secret = process.env.PANEL_SECRET || process.env.API_SECRET_TOKEN || ADMIN_SECRET;
-  return tokenOrSecret === secret;
+  const secret = getAdminSecret();
+  if (!secret) return false;
+  const a = Buffer.from(tokenOrSecret);
+  const b = Buffer.from(secret);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
 function getCookie(req, name) {
@@ -213,7 +239,15 @@ function getCookie(req, name) {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
+// O dono logado no painel novo (login com Discord) também abre as telas antigas na transição.
+function hasOwnerPanelSession(req) {
+  const panelSessions = require('./panelSessions');
+  const session = panelSessions.readCookieValue(panelSessions.getCookie(req));
+  return Boolean(session && session.userId === OWNER_SNOWFLAKE);
+}
+
 function requireAdminAuth(req, res, next) {
+  if (hasOwnerPanelSession(req)) return next();
   const authHeader = req.headers?.authorization;
   const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
   const queryToken = req.query?.token || req.headers?.['x-api-key'];
@@ -224,16 +258,6 @@ function requireAdminAuth(req, res, next) {
   if (sessionCookie && isValidAdminSession(sessionCookie)) return next();
   if (bearerToken && isValidAdminSession(bearerToken)) return next();
 
-  const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
-  if (!secret && isIpAllowed(req)) {
-    return next();
-  }
-
-  const token = bearerToken || queryToken;
-  if (secret && token === secret) {
-    return next();
-  }
-
   if (isIpAllowed(req)) {
     return next();
   }
@@ -243,6 +267,7 @@ function requireAdminAuth(req, res, next) {
 
 module.exports = {
   OWNER_SNOWFLAKE,
+  getAdminSecret,
   DEFAULT_ALLOWED_IPS,
   normalizeClientIp,
   isIpAllowed,
@@ -251,6 +276,7 @@ module.exports = {
   verifyMagicToken,
   isValidAdminSession,
   isMasterSecretValid,
+  hasOwnerPanelSession,
   requireAdminAuth,
   getCookie,
 };

@@ -31,6 +31,8 @@ const { TAROT_ACHIEVEMENTS } = require('./src/data/tarotAchievements');
 const embedRegistry = require('./src/utils/embedRegistry');
 const acervoAuditService = require('./src/services/acervoAuditService');
 const { createAdminMasterRouter } = require('./src/routes/adminMasterRoutes');
+const { createDashboardRouter } = require('./src/routes/dashboardRoutes');
+const { createBotBridge } = require('./src/services/botBridge');
 const { createExpressTelemetryMiddleware } = require('./src/services/resourceTelemetry');
 const { createRouteGateMiddleware } = require('./src/services/webRoutesManager');
 const cringelandiaService = require('./src/services/cringelandiaService');
@@ -59,6 +61,8 @@ function sendIpcToBot(payload) {
   }
   return false;
 }
+
+const botBridge = createBotBridge({ send: sendIpcToBot });
 
 function cleanupOrphanBotProcess() {
   try {
@@ -121,9 +125,15 @@ function startBot() {
     env: process.env,
   });
 
+  let stdoutBuffer = '';
   botProcess.stdout.on('data', (chunk) => {
-    const text = chunk.toString();
-    text.split(/\r?\n/).filter(Boolean).forEach((line) => addLog(line));
+    // Respostas da ponte podem chegar quebradas em vários pedaços: só processa linhas completas.
+    stdoutBuffer += chunk.toString();
+    const lines = stdoutBuffer.split(/\r?\n/);
+    stdoutBuffer = lines.pop();
+    lines.filter(Boolean).forEach((line) => {
+      if (!botBridge.handleLine(line)) addLog(line);
+    });
   });
 
   botProcess.stderr.on('data', (chunk) => {
@@ -214,6 +224,7 @@ const {
   isValidAdminSession,
   isMasterSecretValid,
   createMasterAdminSession,
+  hasOwnerPanelSession,
 } = require('./src/services/adminAuth');
 const { getHelpModules } = require('./src/commands/commandHelpers');
 
@@ -230,25 +241,18 @@ function requireAdminAuth(req, res, next) {
   const queryToken = req.query.token || req.headers['x-api-key'];
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
 
+  if (hasOwnerPanelSession(req)) return next();
   if (bearerToken && isMasterSecretValid(bearerToken)) return next();
   if (queryToken && isMasterSecretValid(queryToken)) return next();
   if (sessionCookie && isValidAdminSession(sessionCookie)) return next();
   if (bearerToken && isValidAdminSession(bearerToken)) return next();
 
-  const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
-  if (!secret && isIpAllowed(req)) {
-    return next();
-  }
-
-  const token = bearerToken || queryToken;
-  if (secret && token === secret) {
-    return next();
-  }
-
   return res.status(401).json({ error: 'Acesso administrativo não autorizado.' });
 }
 
 app.disable('x-powered-by');
+// O Caddy roda na mesma máquina: só ele pode informar o IP real via X-Forwarded-For.
+app.set('trust proxy', 'loopback');
 
 // Compressão HTTP Gzip/Deflate para otimização extrema de performance e Core Web Vitals
 app.use(compression({
@@ -292,7 +296,7 @@ function createRateLimiter({ windowMs = 60 * 1000, max = 120, message = 'Muitas 
   if (cleanupTimer.unref) cleanupTimer.unref();
 
   return (req, res, next) => {
-    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket?.remoteAddress || req.ip || '127.0.0.1';
+    const ip = req.ip || req.socket?.remoteAddress || '127.0.0.1';
     const now = Date.now();
     const record = store.get(ip);
 
@@ -322,6 +326,18 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rotas da API Master SaaS Dashboard
 app.use('/', createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }));
+app.use(
+  '/',
+  createDashboardRouter({
+    bridge: botBridge,
+    sendIpcToBot,
+    moduleManager,
+    getWebStatus: () => {
+      const { running, pid } = getBotStatus();
+      return { botProcessRunning: running, botPid: pid };
+    },
+  })
+);
 
 // Tratamento gracioso de payloads JSON malformados
 app.use((err, req, res, next) => {
@@ -521,6 +537,18 @@ app.get(['/termos', '/terms'], serveLocalizedPage('terms', publicDir));
 app.get(['/privacidade', '/privacy'], serveLocalizedPage('privacy', publicDir));
 
 app.get('/cringelandia', serveLocalizedPage('cringelandia', publicDir));
+app.get(['/pais-e-profissionais', '/parents'], serveLocalizedPage('parents', publicDir));
+app.get(['/transparencia', '/transparency'], serveLocalizedPage('transparency', publicDir));
+// Registro público das doações (src/data/transparency.json, versionado com os comprovantes).
+app.get('/api/public/transparency', (req, res) => {
+  try {
+    const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'src', 'data', 'transparency.json'), 'utf8'));
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    return res.json({ success: true, donations: Array.isArray(data.donations) ? data.donations : [] });
+  } catch (_) {
+    return res.json({ success: true, donations: [] });
+  }
+});
 
 // Mercado entre jogadores: página pública de preços e a API que ela lê (data/market.json)
 app.get(['/mercado', '/market'], serveLocalizedPage('market', publicDir));
@@ -963,8 +991,7 @@ app.get('/api/cringelandia/impact', (req, res) => {
 
 app.post('/api/cringelandia/track-help-click', (req, res) => {
   try {
-    const forwarded = req.headers['x-forwarded-for'];
-    const ip = forwarded ? forwarded.split(',')[0].trim() : (req.socket.remoteAddress || '127.0.0.1');
+    const ip = req.ip || req.socket.remoteAddress || '127.0.0.1';
     const result = cringelandiaService.trackHelpClick(ip);
     return res.json(result);
   } catch (err) {
@@ -1066,7 +1093,7 @@ app.get('/admin', (req, res) => {
   }
 
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
-  const hasValidSession = (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
+  const hasValidSession = hasOwnerPanelSession(req) || (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
 
   if (!hasValidSession) {
     return res.sendFile(path.join(__dirname, 'public', 'admin_login.html'));
@@ -1230,13 +1257,13 @@ app.post('/api/admin/quiz-seeder/trigger', requireAdminAuth, async (req, res) =>
 // Rota Visual de Mapeamento de Emojis (/admin/emojis)
 app.get('/admin/emojis', async (req, res) => {
   const token = req.query.token;
-  const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
 
   const isAuth =
+    hasOwnerPanelSession(req) ||
     isIpAllowed(req) ||
     (sessionCookie && isValidAdminSession(sessionCookie)) ||
-    (token && ((secret && token === secret) || isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
+    (token && (isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
 
   if (!isAuth) {
     return res.status(401).send('401 Unauthorized');
@@ -1714,13 +1741,13 @@ app.get('/admin/emojis', async (req, res) => {
 
 app.post('/admin/emojis', (req, res) => {
   const token = req.query.token;
-  const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
   const sessionCookie = getCookie(req, 'pyxie_admin_session');
 
   const isAuth =
+    hasOwnerPanelSession(req) ||
     isIpAllowed(req) ||
     (sessionCookie && isValidAdminSession(sessionCookie)) ||
-    (token && ((secret && token === secret) || isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
+    (token && (isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
 
   if (!isAuth) {
     return res.status(401).send('401 Unauthorized');
@@ -2261,148 +2288,6 @@ app.get('/api/logs', requireAdminAuth, (req, res) => {
     count: rawLogs.length,
     telemetry: getSystemTelemetry(),
   });
-});
-
-app.post('/api/admin/terminal/exec', requireAdminAuth, async (req, res) => {
-  const cmd = String(req.body?.command || '').trim();
-  if (!cmd) return res.json({ success: false, output: 'Comando vazio.' });
-
-  const parts = cmd.split(/\s+/);
-  const action = parts[0].toLowerCase();
-  const args = parts.slice(1);
-
-  try {
-    if (action === 'help') {
-      return res.json({
-        success: true,
-        output: [
-          '⚡ Pyxie Administrative CLI v2.0',
-          '====================================================',
-          '  help             - Exibe este manual com comandos disponíveis',
-          '  status           - Telemetria de memória, CPU, PID e Uptime',
-          '  stats            - Estatísticas de uso da Pyxie (comandos, usuários)',
-          '  ping             - Testa latência e tempo de resposta do servidor',
-          '  shopee           - Resumo e diagnóstico dos links de afiliados',
-          '  eco              - Parâmetros vigentes da economia do bot',
-          '  test-log <msg>   - Dispara uma linha de log para teste do terminal',
-          '  reload-emojis    - Recarrega mapeamentos de emojis em tempo real',
-          '  clear            - Limpa o visor do terminal',
-          '  restart          - Reinicia o processo da Pyxie',
-          '====================================================',
-        ].join('\n'),
-      });
-    }
-
-    if (action === 'status') {
-      const t = getSystemTelemetry();
-      const ramPercent = Math.min(100, Math.round((t.processMemRssMb / 160) * 100));
-      return res.json({
-        success: true,
-        output: [
-          `🤖 Status da Pyxie • ${t.platform} [Node ${t.nodeVersion}]`,
-          `├─ Servidor Web: PID ${t.pid} | Uptime: ${Math.floor(t.serverUptimeSec / 3600)}h ${Math.floor((t.serverUptimeSec % 3600) / 60)}m ${t.serverUptimeSec % 60}s`,
-          `├─ Bot Discord: ${t.botRunning ? '🟢 ONLINE' : '🔴 OFFLINE'} (PID ${t.botPid || 'PM2 gerenciado'}) | Uptime: ${Math.floor(t.botUptimeSec / 3600)}h ${Math.floor((t.botUptimeSec % 3600) / 60)}m`,
-          `├─ RAM do Processo (RSS): ${t.processMemRssMb} MB / 160 MB (${ramPercent}%) | Heap: ${t.heapUsedMb} MB / ${t.heapTotalMb} MB`,
-          `├─ Memória do Sistema: ${t.freeMemMb} MB livres de ${t.totalMemMb} MB totais`,
-          `└─ Atividade: ${t.stats.commands} comandos executados | ${t.stats.messages} msgs | ${t.stats.uniqueUsersCount} usuários ativos`,
-        ].join('\n'),
-      });
-    }
-
-    if (action === 'stats') {
-      const s = getStats();
-      return res.json({
-        success: true,
-        output: JSON.stringify(s, null, 2),
-      });
-    }
-
-    if (action === 'ping') {
-      const mem = process.memoryUsage();
-      return res.json({
-        success: true,
-        output: `🏓 Pong! Latência interna do servidor: < 1ms | RSS: ${(mem.rss / 1024 / 1024).toFixed(1)}MB | Loop de eventos operacional.`,
-      });
-    }
-
-    if (action === 'shopee') {
-      const items = shopeeManager.getAllItems();
-      const active = items.filter((i) => i.active !== false).length;
-      return res.json({
-        success: true,
-        output: [
-          `🛍️ Afiliados Shopee • ${active}/${items.length} ativos`,
-          `├─ Produtos cadastrados: ${items.length}`,
-          `├─ Produtos ativos no bot e web: ${active}`,
-          `└─ Link canônico: https://s.shopee.com.br/BU6Bod6Sw`,
-        ].join('\n'),
-      });
-    }
-
-    if (action === 'clear') {
-      return res.json({
-        success: true,
-        clear: true,
-        output: 'Terminal limpo.',
-      });
-    }
-
-    if (action === 'eco') {
-      const eco = getEconomyConfig();
-      return res.json({
-        success: true,
-        output: [
-          `🪙 Configuração de Economia`,
-          `├─ Bônus Mínimo: ${eco.minimum} moedinhas`,
-          `├─ Bônus Máximo: ${eco.maximum} moedinhas`,
-          `└─ Cooldown Diário: 24 horas`,
-        ].join('\n'),
-      });
-    }
-
-    if (action === 'test-log') {
-      const msg = args.join(' ') || 'Log de teste disparado manualmente pelo console administrativo.';
-      addLog(`[DIAGNOSTIC] ${msg}`);
-      return res.json({
-        success: true,
-        output: `✅ Log de teste registrado: "${msg}"`,
-      });
-    }
-
-    if (action === 'reload-emojis') {
-      reloadEmojiConfig();
-      sendIpcToBot({ type: 'RELOAD_EMOJIS' });
-      return res.json({
-        success: true,
-        output: '✨ Configuração de emojis recarregada em tempo real com sucesso!',
-      });
-    }
-
-    if (action === 'setup-ssh' || action === 'sync-ssh') {
-      const resSsh = ensureSshKeys();
-      return res.json({
-        success: resSsh.success,
-        output: resSsh.message,
-      });
-    }
-
-    if (action === 'restart') {
-      setTimeout(async () => {
-        await restartBot();
-      }, 500);
-      return res.json({
-        success: true,
-        output: '🔄 Sinal de reinício enviado para o bot Pyxie.',
-      });
-    }
-
-    return res.json({
-      success: false,
-      output: `Comando desconhecido: "${action}". Digite "help" para ver a lista de comandos disponíveis.`,
-    });
-  } catch (err) {
-    return res.status(500).json({ success: false, output: `Erro ao executar comando: ${err.message}` });
-  }
 });
 
 app.get('/api/stats', (req, res) => {

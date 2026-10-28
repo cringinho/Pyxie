@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-WT98JB6H');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T4CBHKWHH6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T4CBHKWHH6');
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8113298456573494" crossorigin="anonymous"></script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Transparência e impacto • Cringelândia & Pyxie</title>
+  <meta name="description" content="Doações da Cringelândia e da Pyxie a ONGs, com comprovantes (dados bancários tarjados) e recibos das próprias organizações." />
+  <meta name="author" content="Pyxie Team & Comunidade Cringelândia" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+  <link rel="canonical" href="https://pyxie.com.br/transparencia" />
+  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/transparencia" />
+  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/transparencia?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/transparencia" />
+
+  <meta name="google-site-verification" content="-IygB84cSAXZkubvjj5e9O_HYJ1PNABOZGyBmETicJQ" />
+  <meta name="google-adsense-account" content="ca-pub-8113298456573494" />
+
+  <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pyxie.com.br/transparencia" />
+  <meta property="og:title" content="Transparência e impacto • Cringelândia" />
+  <meta property="og:description" content="Para onde vai o dinheiro: doações a ONGs com comprovante e recibo." />
+  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/og_banner_hd.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Transparência e impacto • Cringelândia" />
+  <meta property="og:site_name" content="Pyxie Discord Bot" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@PyxieBot" />
+  <meta name="twitter:title" content="Transparência e impacto • Cringelândia" />
+  <meta name="twitter:description" content="Para onde vai o dinheiro: doações a ONGs com comprovante e recibo." />
+  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/og_banner_hd.png" />
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://pyxie.com.br/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Transparência",
+          "item": "https://pyxie.com.br/transparencia"
+        }
+      ]
+    },
+    {
+      "@type": "AboutPage",
+      "headline": "Transparência e impacto",
+      "inLanguage": [
+        "pt-BR",
+        "en"
+      ],
+      "url": "https://pyxie.com.br/transparencia",
+      "author": {
+        "@type": "Organization",
+        "name": "Pyxie & Comunidade Cringelândia",
+        "url": "https://pyxie.com.br"
+      },
+      "description": "Registro público das doações a ONGs feitas pela comunidade Cringelândia e pela Pyxie, com comprovantes."
+    }
+  ]
+}
+  </script>
+
+  <style>
+    :root {
+      --bg: #07040d;
+      --card-bg: rgba(22, 12, 36, 0.75);
+      --card-border: rgba(139, 92, 246, 0.25);
+      --card-hover: rgba(139, 92, 246, 0.4);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --pink: #e60067;
+      --purple: #8b5cf6;
+      --cyan: #06b6d4;
+      --gold: #facc15;
+      --green: #10b981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at top center, #1b0c2e 0%, #07040d 70%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.65;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(7, 4, 13, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+    .brand img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--pink);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: #fff;
+    }
+
+    .lang-btn {
+      background: rgba(230, 0, 103, 0.15);
+      border: 1px solid var(--pink);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .lang-btn:hover {
+      background: var(--pink);
+      transform: translateY(-1px);
+    }
+
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    .hero-box {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 12px;
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      color: #c084fc;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #f472b6 60%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transition: border-color 0.2s;
+    }
+    .section-card:hover {
+      border-color: var(--card-hover);
+    }
+    h2 {
+      font-size: 1.35rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    h3 {
+      font-size: 1.05rem;
+      color: #f472b6;
+      margin: 18px 0 8px;
+    }
+    p {
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    p strong {
+      color: #e2e8f0;
+    }
+    ul {
+      list-style-position: inside;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    li strong {
+      color: #e2e8f0;
+    }
+
+    .highlight-banner {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin: 16px 0;
+    }
+    .highlight-banner p {
+      color: #a7f3d0;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      background: rgba(5, 3, 10, 0.95);
+      border-top: 1px solid var(--card-border);
+      padding: 28px 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .footer-links a {
+      color: #c084fc;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WT98JB6H"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <header>
+    <a href="/" class="brand">
+      <img src="/assets/pyxie/pyxie_mascot.png" alt="Avatar da Pyxie" />
+      <span>Pyxie</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" data-i18n="nav.home">Início</a>
+      <a href="/tarot" data-i18n="nav.tarot">Tarot</a>
+      <a href="/wiki" data-i18n="nav.wiki">Wiki</a>
+      <a href="/parcerias" data-i18n="nav.partners">Parcerias</a>
+      <a href="/museu" data-i18n="nav.museum">Museu</a>
+      <a href="/termos" data-i18n="nav.terms">Termos</a>
+      <a href="/pais-e-profissionais" data-i18n="nav.parents">Para pais</a>
+      <a href="/transparencia" data-i18n="nav.transparency">Transparência</a>
+      <button id="langToggleBtn" class="lang-btn" onclick="toggleLanguage()">
+        🌐 <span id="langBtnText">EN</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero-box">
+      <span class="hero-badge" data-i18n="badge">Prestação de contas</span>
+      <h1 data-i18n="title">Transparência e impacto</h1>
+      <p class="hero-sub" data-i18n="subtitle">Quando a comunidade ajuda alguém, a gente mostra. Cada doação tem comprovante e, quando a ONG emite, recibo dela.</p>
+    </div>
+
+    <section class="section-card">
+      <h2><span style="color: var(--pink);">01.</span> <span data-i18n="s1.title">Como funciona</span></h2>
+      <p data-i18n="s1.p1">Cada registro abaixo mostra a data, a organização, o valor e os documentos.</p>
+      <ul>
+        <li data-i18n="s1.l1"><strong>Comprovantes com dados bancários tarjados</strong>, para proteger quem doou e quem recebeu.</li>
+        <li data-i18n="s1.l2"><strong>Recibo da própria ONG</strong> sempre que ela emitir.</li>
+        <li data-i18n="s1.l3"><strong>Nada é apagado:</strong> correções aparecem como um registro novo.</li>
+      </ul>
+    </section>
+
+    <section class="section-card">
+      <h2><span style="color: var(--purple);">02.</span> <span data-i18n="s2.title">Doações registradas</span></h2>
+      <div id="donationsList" aria-live="polite"><p data-i18n="s2.loading">Carregando registros...</p></div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-links">
+      <a href="/" data-i18n="nav.home">Início</a>
+      <a href="/tarot" data-i18n="nav.tarot">Tarot</a>
+      <a href="/wiki" data-i18n="nav.wiki">Wiki</a>
+      <a href="/parcerias" data-i18n="nav.partners">Parcerias</a>
+      <a href="/museu" data-i18n="nav.museum">Museu</a>
+      <a href="/termos" data-i18n="nav.terms">Termos de Uso</a>
+      <a href="/privacidade" data-i18n="nav.privacy">Política de Privacidade</a>
+      <a href="/pais-e-profissionais" data-i18n="nav.parents">Para pais</a>
+      <a href="/transparencia" data-i18n="nav.transparency">Transparência</a>
+    </div>
+    <p>© 2026 Pyxie • Cringelândia. Todos os direitos reservados. Feito com amor e magia.</p>
+  </footer>
+
+  <script>
+    const I18N = {
+  "pt": {
+    "nav.home": "Início",
+    "nav.tarot": "Tarot",
+    "nav.wiki": "Wiki",
+    "nav.partners": "Parcerias",
+    "nav.museum": "Museu",
+    "nav.terms": "Termos",
+    "nav.privacy": "Privacidade",
+    "nav.parents": "Para pais",
+    "nav.transparency": "Transparência",
+    "badge": "Prestação de contas",
+    "title": "Transparência e impacto",
+    "subtitle": "Quando a comunidade ajuda alguém, a gente mostra. Cada doação tem comprovante e, quando a ONG emite, recibo dela.",
+    "s1.title": "Como funciona",
+    "s1.p1": "Cada registro abaixo mostra a data, a organização, o valor e os documentos.",
+    "s1.l1": "<strong>Comprovantes com dados bancários tarjados</strong>, para proteger quem doou e quem recebeu.",
+    "s1.l2": "<strong>Recibo da própria ONG</strong> sempre que ela emitir.",
+    "s1.l3": "<strong>Nada é apagado:</strong> correções aparecem como um registro novo.",
+    "s2.title": "Doações registradas",
+    "s2.loading": "Carregando registros...",
+    "s2.empty": "Ainda não há doações registradas. Quando houver, elas aparecem aqui com os comprovantes.",
+    "s2.error": "Não foi possível carregar os registros agora. Tente de novo em instantes.",
+    "s2.proof": "Comprovante",
+    "s2.receipt": "Recibo da ONG"
+  },
+  "en": {
+    "nav.home": "Home",
+    "nav.tarot": "Tarot",
+    "nav.wiki": "Wiki",
+    "nav.partners": "Partners",
+    "nav.museum": "Museum",
+    "nav.terms": "Terms",
+    "nav.privacy": "Privacy",
+    "nav.parents": "For parents",
+    "nav.transparency": "Transparency",
+    "badge": "Accountability",
+    "title": "Transparency and impact",
+    "subtitle": "When the community helps someone, we show it. Every donation has a proof of payment and, when the NGO issues one, their receipt.",
+    "s1.title": "How it works",
+    "s1.p1": "Each record below shows the date, the organization, the amount and the documents.",
+    "s1.l1": "<strong>Proofs of payment with bank details blacked out</strong>, to protect donors and recipients.",
+    "s1.l2": "<strong>The NGO's own receipt</strong> whenever they issue one.",
+    "s1.l3": "<strong>Nothing is deleted:</strong> corrections show up as a new record.",
+    "s2.title": "Recorded donations",
+    "s2.loading": "Loading records...",
+    "s2.empty": "No donations recorded yet. When there are, they show up here with their documents.",
+    "s2.error": "Couldn't load the records right now. Please try again shortly.",
+    "s2.proof": "Proof of payment",
+    "s2.receipt": "NGO receipt"
+  }
+};
+
+    async function loadDonations(lang) {
+      const box = document.getElementById('donationsList');
+      const dict = I18N[lang] || I18N.pt;
+      try {
+        const res = await fetch('/api/public/transparency');
+        const data = await res.json();
+        const list = (data && data.donations) || [];
+        if (!list.length) { box.innerHTML = '<p>' + dict['s2.empty'] + '</p>'; return; }
+        const fmt = (n, c) => new Intl.NumberFormat(lang === 'en' ? 'en-US' : 'pt-BR', { style: 'currency', currency: c || 'BRL' }).format(n);
+        const esc = (s) => String(s || '').replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+        box.innerHTML = '<ul>' + list.map((d) => '<li><strong>' + esc(d.org) + '</strong> · ' + esc(d.date) + ' · ' + fmt(d.amount, d.currency) + (d.note ? '<br>' + esc(d.note) : '') + (d.proofUrl ? ' · <a href="' + esc(d.proofUrl) + '" target="_blank" rel="noopener noreferrer">' + dict['s2.proof'] + '</a>' : '') + (d.receiptUrl ? ' · <a href="' + esc(d.receiptUrl) + '" target="_blank" rel="noopener noreferrer">' + dict['s2.receipt'] + '</a>' : '') + '</li>').join('') + '</ul>';
+      } catch (_) {
+        box.innerHTML = '<p>' + dict['s2.error'] + '</p>';
+      }
+    }
+    document.addEventListener('pyxie:lang', (e) => loadDonations(e.detail));
+
+        let currentLang = 'pt';
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      const dict = I18N[lang] || I18N.pt;
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.innerHTML = dict[key];
+        }
+      });
+      document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+      const btnText = document.getElementById('langBtnText');
+      if (btnText) btnText.textContent = lang === 'en' ? 'PT' : 'EN';
+      try { localStorage.setItem('pyxie_lang', lang); } catch (_) {}
+      document.dispatchEvent(new CustomEvent('pyxie:lang', { detail: lang }));
+    }
+
+    function toggleLanguage() {
+      const next = currentLang === 'en' ? 'pt' : 'en';
+      applyLanguage(next);
+    }
+
+    (function init() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryLang = urlParams.get('lang');
+      const savedLang = localStorage.getItem('pyxie_lang');
+      const browserLang = (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'pt';
+      const initial = (queryLang === 'en' || queryLang === 'pt') ? queryLang : (savedLang || browserLang);
+      applyLanguage(initial);
+    })();
+  </script>
+</body>
+</html>
+

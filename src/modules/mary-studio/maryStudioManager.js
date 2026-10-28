@@ -22,7 +22,7 @@ const CONFIG_FILE = path.join(DATA_DIR, 'maryStudioConfig.json');
 const MESSAGES_FILE = path.join(DATA_DIR, 'marySavedMessages.json');
 const STORE_FILE = path.join(DATA_DIR, 'maryStoreData.json');
 
-const MARY_DEFAULT_GUILD_ID = '1557399041443111025';
+const { MARY_GUILD_ID: MARY_DEFAULT_GUILD_ID } = require('../../config/scopes');
 
 class MaryStudioManager {
   constructor() {
@@ -737,7 +737,7 @@ class MaryStudioManager {
       // Seta Cookie seguro
       res.cookie('mary_session', result.sessionToken, {
         httpOnly: true,
-        secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+        secure: req.secure,
         sameSite: 'strict',
         maxAge: securityGuard.SESSION_TTL_MS,
         path: '/',

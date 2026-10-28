@@ -1365,6 +1365,9 @@ if (process.stdin) {
       const data = JSON.parse(trimmed);
       if (data && data.type) {
         switch (data.type) {
+          case 'BRIDGE_REQUEST':
+            require('./src/services/botBridgeHandlers').handleBridgeRequest(client, data);
+            break;
           case 'SEND_EMBED':
             handleSendEmbedCommand(data);
             break;

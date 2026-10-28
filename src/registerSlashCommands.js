@@ -10,7 +10,8 @@ const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
 
 // Comandos de módulos que também funcionam instalados na conta do usuário (User App),
 // em servidores sem a Pyxie, grupos e DMs. Os comandos da raiz já são marcados em src/commands/index.js.
-const USER_INSTALLABLE_MODULE_COMMANDS = new Set(['py-tarot', 'py-album', 'py-dungeon', 'py-home', 'py-craft', 'py-market', 'py-festival', 'py-pass']);
+// Os comandos da Cringelândia (Catacumbas, Casinha, Oficina, Mercado, Festival, Passe) são de servidor: não entram aqui.
+const USER_INSTALLABLE_MODULE_COMMANDS = new Set(['py-tarot', 'py-album']);
 const TARGET_GUILD_ID = process.env.CRINGELANDIA_GUILD_ID || CRINGELANDIA_GUILD_ID || '1453890868980482090';
 
 // Impressão digital do último payload enviado ao Discord. O deploy roda este script sempre;
@@ -21,7 +22,7 @@ const FORCE = process.argv.includes('--force');
 
 (async () => {
   try {
-    console.log('Descobrindo comandos da Pyxie (Zona A - Global vs Zona B - Cringelândia Lab)...');
+    console.log('Descobrindo comandos da Pyxie (Global e por servidor)...');
     const discovered = moduleManager.discoverModules();
 
     // Reúne todos os comandos (raiz + módulos)
@@ -38,7 +39,10 @@ const FORCE = process.argv.includes('--force');
     }
 
     const globalCommandMap = new Map();
-    const guildCommandMap = new Map();
+    // guildId -> Map(nome -> json). Cada servidor de algum guildScope recebe o próprio registro.
+    const guildCommandMaps = new Map();
+    // A Cringelândia sempre recebe um PUT (mesmo vazio) para limpar comandos que saíram do escopo dela.
+    guildCommandMaps.set(TARGET_GUILD_ID, new Map());
 
     for (const cmd of allDiscoveredCommands) {
       if (!cmd || !cmd.data || typeof cmd.data.toJSON !== 'function') continue;
@@ -49,40 +53,54 @@ const FORCE = process.argv.includes('--force');
         json.contexts = [0, 1, 2];
       }
 
-      const isGuildScoped = Array.isArray(cmd.guildScope) && cmd.guildScope.length > 0;
-      if (isGuildScoped) {
-        // Se for restrito à guilda, adiciona ao mapa da guilda
-        guildCommandMap.set(json.name, json);
-        // Garante que não esteja no mapa global
+      const scope = Array.isArray(cmd.guildScope) ? cmd.guildScope.filter(Boolean).map(String) : [];
+      if (scope.length > 0) {
         globalCommandMap.delete(json.name);
-      } else {
-        // Se já foi registrado como comando de guilda, mantém como guilda
-        if (!guildCommandMap.has(json.name)) {
-          globalCommandMap.set(json.name, json);
+        for (const guildId of scope) {
+          if (!guildCommandMaps.has(guildId)) guildCommandMaps.set(guildId, new Map());
+          guildCommandMaps.get(guildId).set(json.name, json);
         }
+      } else if (![...guildCommandMaps.values()].some((m) => m.has(json.name))) {
+        globalCommandMap.set(json.name, json);
       }
     }
 
     const globalCommands = Array.from(globalCommandMap.values());
-    const guildCommands = Array.from(guildCommandMap.values());
+    const guildCommands = Object.fromEntries(
+      [...guildCommandMaps.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([id, m]) => [id, Array.from(m.values())])
+    );
+    const guildSummary = Object.entries(guildCommands).map(([id, list]) => `${id}: ${list.length}`).join(', ');
 
     const payloadHash = crypto
       .createHash('sha256')
-      .update(JSON.stringify({ clientId: DISCORD_CLIENT_ID, guildId: TARGET_GUILD_ID, globalCommands, guildCommands }))
+      .update(JSON.stringify({ clientId: DISCORD_CLIENT_ID, globalCommands, guildCommands }))
       .digest('hex');
     const lastHash = fs.existsSync(HASH_FILE) ? fs.readFileSync(HASH_FILE, 'utf8').trim() : '';
     if (!FORCE && lastHash === payloadHash) {
-      console.log(`✅ Nenhum slash command novo ou alterado (${globalCommands.length} globais, ${guildCommands.length} da guilda). Registro ignorado.`);
+      console.log(`✅ Nenhum slash command novo ou alterado (${globalCommands.length} globais; por servidor: ${guildSummary}). Registro ignorado.`);
       return;
     }
 
-    console.log(`📡 [Zona A - Global]: Enviando ${globalCommands.length} slash commands universais para a API do Discord...`);
+    console.log(`📡 [Global]: Enviando ${globalCommands.length} slash commands universais para a API do Discord...`);
     await rest.put(Routes.applicationCommands(DISCORD_CLIENT_ID), { body: globalCommands });
     console.log('✅ Slash commands universais registrados globalmente com sucesso!');
 
-    console.log(`🧪 [Zona B - Cringelândia Lab]: Enviando ${guildCommands.length} slash commands para a guilda ${TARGET_GUILD_ID}...`);
-    await rest.put(Routes.applicationGuildCommands(DISCORD_CLIENT_ID, TARGET_GUILD_ID), { body: guildCommands });
-    console.log(`✅ Slash commands exclusivos da Cringelândia registrados com sucesso (${TARGET_GUILD_ID})!`);
+    let failedGuilds = 0;
+    for (const [guildId, list] of Object.entries(guildCommands)) {
+      console.log(`🏠 [Servidor ${guildId}]: Enviando ${list.length} slash commands exclusivos...`);
+      try {
+        await rest.put(Routes.applicationGuildCommands(DISCORD_CLIENT_ID, guildId), { body: list });
+        console.log(`✅ Slash commands do servidor ${guildId} registrados.`);
+      } catch (err) {
+        // Servidor sem a Pyxie (ex.: 50001 Missing Access) não pode derrubar o registro dos outros.
+        console.warn(`⚠️ Não foi possível registrar no servidor ${guildId}: ${err.code || ''} ${err.message}`);
+        if (guildId === TARGET_GUILD_ID) throw err;
+        failedGuilds++;
+      }
+    }
+
+    // Sem gravar a impressão digital, o próximo deploy tenta de novo os servidores que falharam.
+    if (failedGuilds > 0) return;
 
     fs.writeFileSync(HASH_FILE, `${payloadHash}\n`);
   } catch (error) {

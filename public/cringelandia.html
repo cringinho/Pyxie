@@ -1022,6 +1022,48 @@
       box-shadow: 0 0 10px var(--purple-glow);
     }
 
+    /* Celular (plano 5.11): seletor nativo no lugar da grade larga e acordeões nas seções longas */
+    .state-select-wrap {
+      display: none;
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+
+    .state-select {
+      display: block;
+      width: 100%;
+      min-height: 48px;
+      margin-top: 8px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-bright);
+      background: #110920;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .mobile-toggle {
+      display: none;
+      width: 100%;
+      min-height: 48px;
+      margin-top: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-bright);
+      background: rgba(139, 92, 246, 0.15);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .state-select-wrap { display: block; }
+      .ciptea-selector-box .search-filter-row { display: none; }
+      .states-grid { max-height: none; overflow: visible; grid-template-columns: 1fr; }
+      .mobile-toggle { display: block; }
+      .mobile-collapsed { display: none; }
+      html, body { overflow-x: hidden; }
+    }
+
     .states-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -2145,6 +2187,12 @@
         <div class="search-filter-row">
           <input type="text" id="stateSearchInput" class="search-input" placeholder="🔍 Digite a sigla ou nome do seu Estado (ex: SP, Rio de Janeiro, Bahia, MG...)" oninput="filterStates()" aria-label="Filtrar Estados para emissão de CIPTEA" />
         </div>
+        <label class="state-select-wrap" for="stateSelect">
+          <span data-i18n="ciptea.pick">Escolha seu estado</span>
+          <select id="stateSelect" class="state-select" onchange="selectState(this.value)">
+            <option value="" data-i18n="ciptea.pickHint">Selecione o estado para ver o órgão, os documentos e o portal oficial.</option>
+          </select>
+        </label>
         <div class="states-grid" id="statesGrid">
           <!-- Carregado via JS dinamicamente com as 27 UFs -->
         </div>
@@ -2441,7 +2489,11 @@
         'fun.title': 'Diversão Saudável, Discord ao Vivo & Projetos Oficiais',
         'fun.lead': 'Além de suporte emocional, oferecemos um ambiente leve e acolhedor para fazer amizades, jogar e se divertir com a Pyxie.',
         'discord.live': 'Servidor Discord Ao Vivo',
-        'roblox.title': 'Grupo Roblox Oficial'
+        'roblox.title': 'Grupo Roblox Oficial',
+        'ciptea.pick': 'Escolha seu estado',
+        'ciptea.pickHint': 'Selecione o estado para ver o órgão, os documentos e o portal oficial.',
+        'mobile.more': 'Ver tudo',
+        'mobile.less': 'Ver menos'
       },
       en: {
         'nav.manifesto': 'Manifesto',
@@ -2510,7 +2562,11 @@
         'fun.title': 'Wholesome Fun, Live Discord & Official Projects',
         'fun.lead': 'Beyond emotional support, we provide an engaging, safe space to build lasting friendships, play minigames, and enjoy life together.',
         'discord.live': 'Live Discord Server',
-        'roblox.title': 'Official Roblox Group'
+        'roblox.title': 'Official Roblox Group',
+        'ciptea.pick': 'Choose your state',
+        'ciptea.pickHint': 'Pick a state to see the agency, the documents and the official portal.',
+        'mobile.more': 'Show all',
+        'mobile.less': 'Show less'
       }
     };
 
@@ -2646,7 +2702,9 @@
           const data = await res.json();
           if (data && Array.isArray(data.states)) {
             allStates = data.states;
-            renderStates(allStates);
+            fillStateSelect(allStates);
+            if (isMobile()) document.getElementById('statesGrid').innerHTML = '';
+            else renderStates(allStates);
             return;
           }
         }
@@ -2682,7 +2740,9 @@
         { uf: 'SE', state: 'Sergipe', organ: 'SEASC Sergipe', url: 'https://www.se.gov.br', docs: 'Laudo com CID, RG, CPF, Residência SE' },
         { uf: 'TO', state: 'Tocantins', organ: 'SEDS Tocantins', url: 'https://www.to.gov.br', docs: 'Laudo médico com CID, RG, CPF, Residência TO' }
       ];
-      renderStates(allStates);
+      fillStateSelect(allStates);
+      if (isMobile()) document.getElementById('statesGrid').innerHTML = '';
+      else renderStates(allStates);
     }
 
     function renderStates(list) {
@@ -2707,6 +2767,55 @@
           </a>
         </div>
       `).join('');
+    }
+
+    const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+
+    function fillStateSelect(list) {
+      const select = document.getElementById('stateSelect');
+      if (!select || select.options.length > 1) return;
+      list.forEach((st) => {
+        const opt = document.createElement('option');
+        opt.value = st.uf;
+        opt.textContent = `${st.state} (${st.uf})`;
+        select.appendChild(opt);
+      });
+    }
+
+    // No celular mostra só o estado escolhido (nada de 27 cartões empilhados).
+    function selectState(uf) {
+      const chosen = allStates.filter((s) => s.uf === uf);
+      if (chosen.length) renderStates(chosen);
+      else document.getElementById('statesGrid').innerHTML = '';
+    }
+
+    // Seções longas viram acordeão no celular: título visível, conteúdo atrás de "Ver tudo".
+    function setupMobileAccordions() {
+      if (!isMobile()) return;
+      ['enciclopedia', 'autoajuda', 'laudo'].forEach((id) => {
+        const section = document.getElementById(id);
+        const head = section && section.querySelector('.section-head');
+        if (!head || section.dataset.accordion) return;
+        section.dataset.accordion = '1';
+        const body = document.createElement('div');
+        body.className = 'mobile-collapsed';
+        while (head.nextSibling) body.appendChild(head.nextSibling);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'mobile-toggle';
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-controls', `${id}Body`);
+        body.id = `${id}Body`;
+        const label = () => ((I18N[currentLang] || I18N.pt)[body.classList.contains('mobile-collapsed') ? 'mobile.more' : 'mobile.less']);
+        btn.textContent = label();
+        btn.addEventListener('click', () => {
+          body.classList.toggle('mobile-collapsed');
+          btn.setAttribute('aria-expanded', String(!body.classList.contains('mobile-collapsed')));
+          btn.textContent = label();
+        });
+        section.appendChild(btn);
+        section.appendChild(body);
+      });
     }
 
     function filterStates() {
@@ -2810,6 +2919,7 @@
       fetchImpact();
       loadShopeeShowcase();
       loadCipteaStates();
+      setupMobileAccordions();
       loadDiscordLiveGuild();
       loadCommunityArts();
     });

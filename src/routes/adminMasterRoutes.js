@@ -18,7 +18,6 @@ const {
   METADATA_DICTIONARY,
   queryPartition,
   updateRecord,
-  registerSseClient,
 } = require('../services/visualDbExplorer');
 const {
   getEcosystemMap,
@@ -199,29 +198,6 @@ function createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }) {
     } catch (err) {
       res.status(400).json({ success: false, error: err.message });
     }
-  });
-
-  router.get('/api/admin/db/stream', requireAdminAuth, (req, res) => {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache, no-transform');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('X-Accel-Buffering', 'no');
-    if (typeof res.flushHeaders === 'function') res.flushHeaders();
-
-    res.write(`event: connected\ndata: ${JSON.stringify({ status: 'db_stream_connected', time: Date.now() })}\n\n`);
-    registerSseClient(res);
-
-    const heartbeat = setInterval(() => {
-      try {
-        res.write(': heartbeat\n\n');
-      } catch (_) {
-        clearInterval(heartbeat);
-      }
-    }, 25000);
-
-    req.on('close', () => {
-      clearInterval(heartbeat);
-    });
   });
 
   // 6. Interactive Web Ecosystem Map (Task 8)

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build -c vite.dashboard.config.js",
+    "dev:dashboard": "vite -c vite.dashboard.config.js",
     "preview": "vite preview"
   },
   "dependencies": {

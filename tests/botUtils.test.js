@@ -242,16 +242,15 @@ try {
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'server.js')]);
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'index.js')]);
 
-  // 13. Teste do Terminal Operacional de Logs e Telemetria
+  // 13. Painel antigo sem terminal nem stream de logs (D13: saem do painel)
   const adminHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'admin.html'), 'utf8');
-  assert.ok(adminHtml.includes('telemetry-grid'), 'admin.html deve conter a grade de telemetria HUD');
-  assert.ok(adminHtml.includes('terminal-window'), 'admin.html deve conter a janela do terminal operacional');
-  assert.ok(adminHtml.includes('terminal-cli-bar'), 'admin.html deve conter o prompt interativo de CLI');
-  assert.ok(!adminHtml.includes('terminal.innerText = data.logs.join'), 'admin.html não pode utilizar join direto de objetos de logs');
+  assert.ok(!adminHtml.includes('terminal-cli-bar'), 'admin.html não pode ter o terminal de comandos');
+  assert.ok(!adminHtml.includes("switchTab('logs')"), 'admin.html não pode ter a aba de logs');
 
   const serverSource = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
-  assert.ok(serverSource.includes('/api/admin/terminal/exec'), 'server.js deve implementar o endpoint de execução CLI do terminal');
-  assert.ok(serverSource.includes('getSystemTelemetry'), 'server.js deve implementar a telemetria do sistema');
+  assert.ok(!serverSource.includes('/api/admin/terminal/exec'), 'server.js não pode expor execução de comandos pelo painel');
+  const masterRoutesSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'routes', 'adminMasterRoutes.js'), 'utf8');
+  assert.ok(!masterRoutesSource.includes('/api/admin/db/stream'), 'O stream SSE do banco saiu do painel');
 
   const { lockFilePath: exportedLockPath, isProcessAlive } = require('../src/utils/botUtils');
   assert.equal(exportedLockPath, lockFile, 'lockFilePath exportado deve apontar para .botmelody.lock');

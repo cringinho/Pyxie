@@ -229,6 +229,47 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
   </url>
 
+  <!-- Para pais e profissionais (Default / pt-BR) -->
+  <url>
+    <loc>https://pyxie.com.br/pais-e-profissionais</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/pais-e-profissionais" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/pais-e-profissionais?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/pais-e-profissionais" />
+  </url>
+  <!-- Para pais e profissionais (English) -->
+  <url>
+    <loc>https://pyxie.com.br/pais-e-profissionais?lang=en</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/pais-e-profissionais" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/pais-e-profissionais?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/pais-e-profissionais" />
+  </url>
+  <!-- Transparencia (Default / pt-BR) -->
+  <url>
+    <loc>https://pyxie.com.br/transparencia</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/transparencia" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/transparencia?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/transparencia" />
+  </url>
+  <!-- Transparencia (English) -->
+  <url>
+    <loc>https://pyxie.com.br/transparencia?lang=en</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/transparencia" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/transparencia?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/transparencia" />
+  </url>
+
   <!-- tarot-cards:start (gerado por scripts/generate_tarot_sitemap.js) -->
   <url>
     <loc>https://pyxie.com.br/tarot/cartas</loc>

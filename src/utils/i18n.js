@@ -329,6 +329,124 @@ const TRANSLATIONS = {
       "link_hint": "🏛️ Acesse a nossa Galeria de Artes Virtual: {url}",
       "stats": "🖼️ {count} obras no acervo"
     },
+    "moderation": {
+      "warn": "🍵 Ei, {a} e {b}, a conversa esquentou um pouquinho. Que tal respirar e voltar daqui a pouco? Ninguém aqui é inimigo, tá? (E não, eu não tô preocupada, só… cuidando do chá.)",
+      "slowmode": "🐢 Liguei o modo lento por {minutes} minutos ({seconds}s entre mensagens) para todo mundo respirar. Depois volta ao normal sozinho.",
+      "timeoutDm": "💜 Oi. A conversa em **{server}** continuou pesada mesmo depois do aviso, então você ficou 15 minutos sem mandar mensagens. Não é castigo pra sempre nem quer dizer que você é uma pessoa ruim: é só uma pausa para todo mundo se acalmar. Se quiser conversar com a staff sobre o que aconteceu, é só abrir um ticket.",
+      "logTitle": "🛡️ Controle de brigas · nível {level}",
+      "logWho": "**Quem:** {a} e {b} em {channel}",
+      "logVerdict": "**Leitura da conversa:** `{label}`",
+      "logAction": "**Ação:** {action}",
+      "logExcerpt": "📄 Trecho",
+        "shieldBlocked": "🛡️ A Cringelândia está em modo blindagem: esse assunto está pausado por enquanto. Obrigada por entender.",
+      "action": {
+        "none": "nenhuma (sem leitura confiável, staff decide)",
+        "warn": "aviso leve no canal",
+        "slowmode": "modo lento temporário",
+        "timeout": "castigo de 15 min nas duas pessoas, com DM"
+      }
+    },
+    "linkSentinel": {
+      "title": "🔗 Link com problema",
+      "downIntro": "Um link falhou duas vezes seguidas.",
+      "redirectIntro": "Um link agora leva para outro site. Não troquei sozinha: confira antes.",
+      "where": "Onde",
+      "link": "Link",
+      "diagnosis": "Diagnóstico",
+      "action": "O que eu fiz",
+      "usingReplacement": "enquanto isso, estou mostrando {url}",
+      "noReplacement": "não há reserva nem cópia no Web Archive",
+      "proposal": "proposta de troca para {url}",
+      "btnSwap": "Trocar link",
+      "btnRetest": "Testar de novo",
+      "btnMute": "Silenciar 7 dias",
+      "newUrl": "Novo link (https://…)",
+      "swapped": "✅ Link trocado para {url}.",
+      "invalidUrl": "😿 Esse link não parece válido. Use http:// ou https://.",
+      "notFound": "🔍 Esse link não está mais no monitor.",
+      "retestOk": "✅ Voltou a responder (HTTP {status}).",
+      "retestFail": "😿 Continua fora: {diagnosis}.",
+      "muted": "🔕 Silenciado por 7 dias.",
+      "ownerOnly": "🔒 Só o dono da Pyxie mexe no monitor de links."
+    },
+    "pyxieVoice": {
+      "daily": {
+        "1": "Pegou o diário de novo? Hmpf. Não que eu tenha ficado esperando, tá?",
+        "2": "Moedinhas entregues. Gaste com sabedoria… ou não, eu não sou sua mãe.",
+        "3": "Olha só quem lembrou de mim hoje. Anotado. Não que eu ligue.",
+        "4": "Mais um dia, mais moedinhas. Eu sou generosa demais, eu sei.",
+        "5": "Se essa sequência quebrar, eu vou fingir que não vi. Mentira, vou ver sim.",
+        "6": "Diário pego. Agora vai beber água, que fã desidratado eu não aceito."
+      },
+      "work": {
+        "1": "Turno concluído. Até que você não é tão ruim nisso. Até que.",
+        "2": "Trabalhou direitinho. Vou contar pra ninguém, pra não subir à cabeça.",
+        "3": "Salário na conta. Agora não vai gastar tudo em besteira… né?",
+        "4": "Profissionalismo nível aceitável. Eu esperava menos, sinceramente.",
+        "5": "Mais um expediente. O chefe ficou orgulhoso. O chefe sou eu. Hmpf."
+      },
+      "tarot": {
+        "1": "As cartas falaram. Eu só traduzi, então não reclama comigo.",
+        "2": "Essa carta tem a sua cara. Interprete como quiser.",
+        "3": "O universo mandou recado. Eu só sou a fada carteira, tá?",
+        "4": "Guardei essa no seu álbum. De nada, viu?",
+        "5": "Se não gostou da carta, a culpa é do baralho, não minha."
+      }
+    },
+    "hyperfocus": {
+      "genericTopic": "esse hiperfoco",
+      "reward": "-# 🪙 Ganhou {coins} moedinhas por abrir um tópico caprichado. Uma vez por dia, tá? Não abusa.",
+      "comments": {
+        "1": "Ninguém respondeu ainda? Hmpf, então eu respondo. Conta mais sobre {topic}, {name}, que eu fiquei curiosa. Só um pouquinho.",
+        "2": "Olha, {name}, eu não entendo nada de {topic}, mas li tudo. Alguém aí que entende aparece, por favor!",
+        "3": "{name} trouxe {topic} e o fórum ficou quieto? Inaceitável. Quem também curte, chega mais!",
+        "4": "Anotado no meu caderninho de hiperfocos: {topic}. Agora alguém comenta, que eu não vou fazer tudo sozinha."
+      }
+    },
+    "radar": {
+      "approve": "Aprovar",
+      "discard": "Descartar",
+      "reviewHint": "Revise antes de publicar. A publicação leva o link da fonte e o aviso de que não é orientação jurídica nem médica.",
+      "noSummary": "Sem resumo automático: leia na fonte antes de aprovar.",
+      "redditNoSummary": "Do Reddit: só título e link (não copiamos o texto das pessoas).",
+      "source": "Ler na fonte",
+      "disclaimer": "Isto não é orientação jurídica nem médica. Em dúvida, procure um profissional ou a Defensoria Pública.",
+      "published": "✅ Publicado por {user}.",
+      "discarded": "🗑️ Descartado por {user}.",
+      "staffOnly": "🔒 Só a staff aprova o radar."
+    },
+    "titleNick": {
+      "btnOn": "Mostrar no apelido",
+      "btnOff": "Tirar do apelido",
+      "onlyYou": "🏷️ Só a própria pessoa escolhe o título no apelido.",
+      "cannot": "😿 Não consigo mudar seu apelido (meu cargo está abaixo do seu ou estou sem permissão).",
+      "enabled": "🏷️ Pronto! Seu apelido agora é **{nick}**.",
+      "disabled": "🏷️ Tirei o título do seu apelido."
+    },
+    "colors": {
+      "groupTitle": "🎨 Cores {from} a {to}",
+      "intro": "> *Escolha uma cor no menu abaixo de cada bloco. Trocar de cor tira a anterior, então não precisa se preocupar.*",
+      "placeholder": "Escolha uma cor ({from} a {to})",
+      "removeTitle": "🧽 Tirar minha cor",
+      "removeDesc": "Ficou com cor travada ou quer voltar ao normal? Toque no botão e eu tiro todas as cores do seu perfil.",
+      "removeButton": "Tirar minha cor",
+      "applied": "🎨 Pronto, agora você está de {color}. Combina com você, não que eu tenha reparado.",
+      "cleared": "🧽 Tirei suas cores. Perfil limpinho.",
+      "error": "😿 Não consegui mexer nesse cargo de cor. Avise a staff, por favor."
+    },
+    "messageStudio": {
+      "role_added": "✨ Pronto! Você agora tem o cargo **{role}**.",
+      "role_removed": "🍃 Tirei o cargo **{role}** de você.",
+      "role_error": "😿 Não consigo mexer nesse cargo. Avise a staff: ele pode estar acima do meu ou eu estou sem permissão.",
+      "modal_sent": "📨 Recebido! Sua resposta foi entregue à staff.",
+      "modal_error": "😿 Não achei o canal que recebe este formulário. Avise a staff, por favor.",
+      "modal_entry_by": "Enviado por {user}",
+      "not_found": "🔍 Este botão não existe mais. A mensagem pode ter sido alterada no painel.",
+      "silent_on": "🔕 Marcação silenciosa ligada: nos anúncios eu escrevo seu nome em negrito, sem notificar.",
+      "silent_off": "🔔 Marcação silenciosa desligada: voltei a te marcar normalmente nos anúncios.",
+      "generic_error": "😿 Algo deu errado com este botão. Tente de novo em instantes.",
+      "silent_button": "Marcação silenciosa"
+    },
     "partnerships": {
       "title": "🤝 Central de Parcerias • Cringelândia",
       "btn_confirm": "Confirmar",
@@ -382,6 +500,11 @@ const TRANSLATIONS = {
       "public_web_mural": "🌐 **Mural no Site:** {url}",
       "public_bump_streak": "⚡ **Impulsos no Site:** {count}",
       "dm_approved": "🎉 Sua solicitação para **{project}** foi aprovada e já está publicada em nosso canal oficial!",
+      "dm_source_sent": "✅ Mandei para {user} a sua mensagem do fórum de parcerias.",
+      "dm_source_copy": "📄 Cópia do texto enviado:\n>>> {text}",
+      "dm_source_missing": "🔍 Não achei seu texto no tópico do fórum de parcerias. Mande você para {user} (ID `{id}`).",
+      "dm_source_closed": "📪 A DM de {user} está fechada (ID `{id}`). Mande por outro caminho.",
+      "dm_source_failed": "😿 Não consegui mandar a DM para {user} (ID `{id}`): {error}",
       "dm_rejected": "Olá. A sua solicitação de parceria para **{project}** não foi aceita no momento pela equipe da Cringelândia.",
       "contact_hint": "Para conversar com o responsável, abra um tópico ou mencione {user}.",
       "radar_msg": "🚀 O projeto **{project}** acabou de ser promovido no mural do site! Acesse: {url}",
@@ -515,6 +638,7 @@ const TRANSLATIONS = {
       "btnWebsite": "Website",
       "btnWiki": "Wiki & Guia",
       "btnSupport": "Suporte",
+      "cringelandiaTag": "🏰 Exclusivo da Cringelândia",
       "categories": {
         "todos": {
           "label": "Visão Geral / Todos",
@@ -1268,6 +1392,7 @@ const TRANSLATIONS = {
       },
       "blocked": {
         "classicAdmin": "Esse servidor tá no modo clássico, então o Mundo Pyxie fica desligado aqui. Como você administra o servidor… quer dar uma olhadinha no que tem? Prometo que não é chato.",
+        "cringelandiaOnly": "🏰 Catacumbas, Casinha, Oficina, Mercado, Festival e Passe são exclusivos da Cringelândia. Não é que eu não goste daqui, tá? É que lá é a minha casa. Vem jogar comigo: https://pyxie.com.br/discord",
         "classicMember": "Ah… aqui o servidor tá no modo clássico, então as Catacumbas, a Casinha e os itens ficam desligados. N-não fui eu que escolhi, tá? Se quiser, pede pra administração ligar no `/py-setup`. Na nossa DM funciona sempre.",
         "demand": "-# 🔔 Contei teu pedido. Já são **{count}** pessoa(s) querendo esta semana.",
         "disabled": "A administração desligou **{group}** neste servidor… dá pra religar no `/py-setup`.",
@@ -1447,7 +1572,7 @@ const TRANSLATIONS = {
       "wallet": "💰 **Sua carteira:** `{sparks}` {currency}",
       "intro": {
         "halloween": "As abóboras acordaram e os monstros das Catacumbas resolveram se fantasiar. Não que eu tenha ajudado a escolher as fantasias… tá, ajudei um pouquinho.",
-        "christmas": "Neve no Bosque da Penumbra, presentes empilhados e até os monstros de gorrinho. Não fica me olhando assim, o meu gorro é bonito sim.",
+        "christmas": "Neve na Cringelândia, presentes empilhados e até os monstros de gorrinho. Não fica me olhando assim, o meu gorro é bonito sim.",
         "newyear": "Fogos, brindes e a contagem regressiva mais fofa do Discord. Bora fechar o ano com a casinha brilhando?",
         "easter": "Tem coelhinho escondendo ovo pelas Catacumbas. Se achar chocolate, divide comigo, tá? Não é um pedido, é uma ordem.",
         "summer": "Férias! Picolé, piscina e monstros de chapéu de palha. Passa protetor antes de descer pras Catacumbas."
@@ -1531,68 +1656,6 @@ const TRANSLATIONS = {
       "error": "Deu um tropeço no Passe. Tenta de novo daqui a pouco?",
       "footer": "Pyxie • Passe mensal",
       "premiumDm": "💎 **Seu Passe Premium chegou!** Abre o `/py-pass` e toca em Resgatar: tudo o que você já alcançou tá te esperando. Obrigada por apoiar a Pyxie de verdade."
-    },
-    "roleplay": {
-      "sceneTitle": "📖 Uma nova história começa",
-      "sceneBody": "Eu narro este post. Escreva o que seu personagem faz: *ações em itálico* e \"falas entre aspas\". Respondo alguns segundos depois da última mensagem. Fora do personagem? Use ((parênteses duplos)).\n\nAinda sem ficha? Crie com `/py-character create`.",
-      "needSheet": "{user}, pra jogar você precisa de uma ficha: `/py-character create`. Te espero aqui.",
-      "narrationLabel": "Narração",
-      "rollPrompt": "🎲 **{name}**, role **{stat}** (CD `{dc}`): {reason}",
-      "rollButton": "Rolar {stat}",
-      "rollSuccess": "🎲 **{name}** tirou `{die}` + `{mod}` = **{total}** contra CD `{dc}`: **sucesso!**",
-      "rollFail": "🎲 **{name}** tirou `{die}` + `{mod}` = **{total}** contra CD `{dc}`: **falhou.**",
-      "rollCrit": "🎲 **{name}** tirou um **20** natural! **Sucesso crítico!**",
-      "rollFumble": "🎲 **{name}** tirou **1** natural… **falha crítica.**",
-      "rollNotYours": "Essa rolagem é do personagem de outra pessoa.",
-      "rollGone": "Essa rolagem já foi feita.",
-      "resting": "✨ Recuperando o fôlego mágico… a história continua em instantes.",
-      "capReached": "📖 Essa história já teve muita narração hoje. Volto amanhã; até lá vocês podem continuar entre si.",
-      "unsafe": "🌸 Esse caminho não existe no Reino (aqui tudo é SFW). Tenta outra ação?",
-      "crisis": "💜 {user}, isso pareceu pesado, e importa mais do que qualquer história. Se estiver difícil agora, fala com alguém que pode ajudar:\n🇧🇷 CVV: ligue `188` (24h, gratuito) • 🇺🇸 `988` • 🌍 findahelpline.com",
-      "effectHp": "❤️ {name} {delta} ({hp}/{max})",
-      "effectMp": "🔮 {name} {delta} MP ({mp}/{max})",
-      "effectItemAdd": "🎒 {name} +{item}",
-      "effectItemRemove": "🎒 {name} −{item}",
-      "effectConditionAdd": "🌀 {name}: {condition}",
-      "effectConditionRemove": "✨ {name} se livrou de {condition}",
-      "levelUp": "⬆️ **{name}** chegou ao nível `{level}`! Gaste o ponto com `/py-character train`.",
-      "stats": {
-        "str": "Força",
-        "mag": "Magia",
-        "agi": "Agilidade",
-        "spi": "Espírito"
-      },
-      "character": {
-        "title": "📜 {name}",
-        "subtitle": "{ancestry} • Nível `{level}` • XP `{xp}`/`{next}`",
-        "vitals": "❤️ Vida `{hp}`/`{max}`\n🔮 Mana `{mp}`/`{mpMax}`",
-        "vitalsName": "💗 Vitais",
-        "statsName": "✨ Atributos",
-        "statLine": "**{stat}:** `{value}`",
-        "bagName": "🎒 Mochila",
-        "conditionsName": "🌀 Condições",
-        "none": "-# nada",
-        "unspent": "-# `{points}` ponto(s) para gastar com `/py-character train`",
-        "footer": "Pyxie • Roleplay",
-        "created": "✨ **{name}** nasceu! A ficha está aqui embaixo. Abre um post em #roleplay-tales e começa uma história.",
-        "noSheet": "Você ainda não tem personagem. Crie com `/py-character create`.",
-        "otherNoSheet": "Essa pessoa ainda não tem personagem.",
-        "bioSaved": "📖 História atualizada.",
-        "trained": "💪 **{stat}** agora é `{value}`.",
-        "rested": "🌙 Você descansou: vida e mana cheias, e as condições passaram.",
-        "restCooldown": "Você descansou há pouco. Tenta de novo {time}.",
-        "reasons": {
-          "name": "O nome precisa ter de 2 a 32 caracteres.",
-          "ancestry": "Essa origem não existe.",
-          "stat_range": "Cada atributo vai de `1` a `5` na criação.",
-          "stat_total": "Os quatro atributos precisam somar `{points}` (você usou `{total}`).",
-          "exists": "Você já tem um personagem. Veja com `/py-character view`.",
-          "missing": "Você ainda não tem personagem. Crie com `/py-character create`.",
-          "no_points": "Você não tem pontos para gastar. Eles vêm a cada nível.",
-          "stat_max": "Esse atributo já está no máximo (`8`).",
-          "stat": "Atributo inválido."
-        }
-      }
     },
     "bond": {
       "title": "💞 Força do Laço",
@@ -2484,6 +2547,124 @@ const TRANSLATIONS = {
       "link_hint": "🏛️ Access our Virtual Community Art Museum: {url}",
       "stats": "🖼️ {count} artworks in the archive"
     },
+    "moderation": {
+      "warn": "🍵 Hey, {a} and {b}, things got a little heated. How about a breather and coming back in a bit? Nobody here is an enemy, okay? (And no, I'm not worried, I'm just… tending to the tea.)",
+      "slowmode": "🐢 I turned on slow mode for {minutes} minutes ({seconds}s between messages) so everyone can breathe. It goes back to normal on its own.",
+      "timeoutDm": "💜 Hi. The conversation in **{server}** stayed heavy even after the warning, so you're paused from sending messages for 15 minutes. It isn't forever and it doesn't mean you're a bad person: it's just a pause so everyone can calm down. If you want to talk to the staff about it, just open a ticket.",
+      "logTitle": "🛡️ Conflict care · level {level}",
+      "logWho": "**Who:** {a} and {b} in {channel}",
+      "logVerdict": "**Conversation read:** `{label}`",
+      "logAction": "**Action:** {action}",
+      "logExcerpt": "📄 Excerpt",
+        "shieldBlocked": "🛡️ This server is in shield mode: this topic is paused for now. Thanks for understanding.",
+      "action": {
+        "none": "none (no reliable read, staff decides)",
+        "warn": "light warning in the channel",
+        "slowmode": "temporary slow mode",
+        "timeout": "15-min timeout for both, with DM"
+      }
+    },
+    "linkSentinel": {
+      "title": "🔗 Link with a problem",
+      "downIntro": "A link failed twice in a row.",
+      "redirectIntro": "A link now leads to another site. I didn't swap it on my own: check it first.",
+      "where": "Where",
+      "link": "Link",
+      "diagnosis": "Diagnosis",
+      "action": "What I did",
+      "usingReplacement": "meanwhile I'm showing {url}",
+      "noReplacement": "there is no backup nor Web Archive copy",
+      "proposal": "suggested swap to {url}",
+      "btnSwap": "Swap link",
+      "btnRetest": "Test again",
+      "btnMute": "Mute 7 days",
+      "newUrl": "New link (https://…)",
+      "swapped": "✅ Link swapped to {url}.",
+      "invalidUrl": "😿 That link doesn't look valid. Use http:// or https://.",
+      "notFound": "🔍 That link is no longer in the monitor.",
+      "retestOk": "✅ It's answering again (HTTP {status}).",
+      "retestFail": "😿 Still down: {diagnosis}.",
+      "muted": "🔕 Muted for 7 days.",
+      "ownerOnly": "🔒 Only Pyxie's owner can manage the link monitor."
+    },
+    "pyxieVoice": {
+      "daily": {
+        "1": "Grabbing your daily again? Hmph. Not that I was waiting, okay?",
+        "2": "Coins delivered. Spend them wisely… or don't, I'm not your mom.",
+        "3": "Look who remembered me today. Noted. Not that I care.",
+        "4": "Another day, more coins. I'm way too generous, I know.",
+        "5": "If that streak breaks, I'll pretend I didn't see. Lie, I'll totally see.",
+        "6": "Daily claimed. Now go drink some water, I refuse to have a dehydrated fan."
+      },
+      "work": {
+        "1": "Shift done. You're not that bad at this. Not that bad.",
+        "2": "You worked well. I won't tell anyone so it doesn't go to your head.",
+        "3": "Paycheck in. Now don't blow it all on nonsense… right?",
+        "4": "Professionalism at an acceptable level. Honestly, I expected less.",
+        "5": "Another shift. The boss is proud. I'm the boss. Hmph."
+      },
+      "tarot": {
+        "1": "The cards spoke. I just translated, so don't complain to me.",
+        "2": "This card looks just like you. Read it however you want.",
+        "3": "The universe sent a message. I'm just the fairy mail carrier, okay?",
+        "4": "I put this one in your album. You're welcome, by the way.",
+        "5": "If you don't like the card, blame the deck, not me."
+      }
+    },
+    "hyperfocus": {
+      "genericTopic": "this hyperfocus",
+      "reward": "-# 🪙 You got {coins} coins for opening a thoughtful post. Once a day, okay? Don't push it.",
+      "comments": {
+        "1": "Nobody answered yet? Hmph, then I will. Tell me more about {topic}, {name}, I got curious. Just a little.",
+        "2": "Look, {name}, I know nothing about {topic}, but I read it all. Anyone who gets it, please show up!",
+        "3": "{name} brought {topic} and the forum went quiet? Unacceptable. Anyone else into it, come over!",
+        "4": "Written in my hyperfocus notebook: {topic}. Now somebody comment, I won't do everything myself."
+      }
+    },
+    "radar": {
+      "approve": "Approve",
+      "discard": "Discard",
+      "reviewHint": "Review before publishing. The post includes the source link and a note that this is not legal or medical advice.",
+      "noSummary": "No automatic summary: read the source before approving.",
+      "redditNoSummary": "From Reddit: title and link only (we don't copy people's posts).",
+      "source": "Read the source",
+      "disclaimer": "This is not legal or medical advice. When in doubt, talk to a professional or a public defender.",
+      "published": "✅ Published by {user}.",
+      "discarded": "🗑️ Discarded by {user}.",
+      "staffOnly": "🔒 Only the staff approves the radar."
+    },
+    "titleNick": {
+      "btnOn": "Show in nickname",
+      "btnOff": "Remove from nickname",
+      "onlyYou": "🏷️ Only the person can choose the title in their nickname.",
+      "cannot": "😿 I can't change your nickname (my role is below yours or I lack permission).",
+      "enabled": "🏷️ Done! Your nickname is now **{nick}**.",
+      "disabled": "🏷️ I removed the title from your nickname."
+    },
+    "colors": {
+      "groupTitle": "🎨 Colors {from} to {to}",
+      "intro": "> *Pick a color from the menu under each block. Switching colors removes the old one, so no worries.*",
+      "placeholder": "Pick a color ({from} to {to})",
+      "removeTitle": "🧽 Remove my color",
+      "removeDesc": "Got a stuck color or want to go back to normal? Tap the button and I'll remove every color from your profile.",
+      "removeButton": "Remove my color",
+      "applied": "🎨 Done, you're now wearing {color}. It suits you, not that I noticed.",
+      "cleared": "🧽 I removed your colors. Squeaky clean profile.",
+      "error": "😿 I couldn't change that color role. Please tell the staff."
+    },
+    "messageStudio": {
+      "role_added": "✨ Done! You now have the **{role}** role.",
+      "role_removed": "🍃 I removed the **{role}** role from you.",
+      "role_error": "😿 I can't manage that role. Please tell the staff: it may be above mine or I'm missing permissions.",
+      "modal_sent": "📨 Got it! Your answer was delivered to the staff.",
+      "modal_error": "😿 I couldn't find the channel that receives this form. Please tell the staff.",
+      "modal_entry_by": "Sent by {user}",
+      "not_found": "🔍 This button no longer exists. The message may have been changed in the dashboard.",
+      "silent_on": "🔕 Silent mentions on: in announcements I'll write your name in bold, without notifying you.",
+      "silent_off": "🔔 Silent mentions off: I'll mention you normally in announcements again.",
+      "generic_error": "😿 Something went wrong with this button. Try again in a moment.",
+      "silent_button": "Silent mentions"
+    },
     "partnerships": {
       "title": "🤝 Partnership Hub • Cringelândia",
       "btn_confirm": "Confirm",
@@ -2537,6 +2718,11 @@ const TRANSLATIONS = {
       "public_web_mural": "🌐 **Web Board:** {url}",
       "public_bump_streak": "⚡ **Website Bumps:** {count}",
       "dm_approved": "🎉 Your request for **{project}** was approved and is now live in our official channel!",
+      "dm_source_sent": "✅ I sent {user} your message from the partnership forum.",
+      "dm_source_copy": "📄 Copy of the text sent:\n>>> {text}",
+      "dm_source_missing": "🔍 I couldn't find your text in the partnership forum thread. Please send it to {user} yourself (ID `{id}`).",
+      "dm_source_closed": "📪 {user}'s DMs are closed (ID `{id}`). Please reach them another way.",
+      "dm_source_failed": "😿 I couldn't DM {user} (ID `{id}`): {error}",
       "dm_rejected": "Hello. Your partnership request for **{project}** was not accepted at this time by the Cringelândia team.",
       "contact_hint": "To talk to the applicant, open a thread or mention {user}.",
       "radar_msg": "🚀 The project **{project}** was just promoted on the website board! Check it out: {url}",
@@ -2670,6 +2856,7 @@ const TRANSLATIONS = {
       "btnWebsite": "Website",
       "btnWiki": "Wiki & Guide",
       "btnSupport": "Support",
+      "cringelandiaTag": "🏰 Cringelândia only",
       "categories": {
         "todos": {
           "label": "Overview / All",
@@ -3423,6 +3610,7 @@ const TRANSLATIONS = {
       },
       "blocked": {
         "classicAdmin": "This server is in classic mode, so Pyxie World is off here. Since you run the server… want to take a little look at what it has? I promise it's not boring.",
+        "cringelandiaOnly": "🏰 Catacombs, Cozy Room, Workshop, Market, Festival and Pass are exclusive to Cringelândia. It's not that I dislike it here, okay? That's just my home. Come play with me: https://pyxie.com.br/discord",
         "classicMember": "Oh… this server is in classic mode, so Catacombs, Cozy Room and items are off. I-it wasn't my choice, okay? If you want, ask the admins to turn it on in `/py-setup`. It always works in our DMs.",
         "demand": "-# 🔔 I counted your request. That's **{count}** person(s) asking this week.",
         "disabled": "The admins turned off **{group}** on this server… they can turn it back on in `/py-setup`.",
@@ -3602,7 +3790,7 @@ const TRANSLATIONS = {
       "wallet": "💰 **Your wallet:** `{sparks}` {currency}",
       "intro": {
         "halloween": "The pumpkins woke up and the Catacombs monsters decided to dress up. Not that I helped pick the costumes… okay, maybe a little.",
-        "christmas": "Snow in the Gloomwood, presents piled up and even the monsters wear beanies. Stop staring, my beanie looks great.",
+        "christmas": "Snow in Cringelândia, presents piled up and even the monsters wear beanies. Stop staring, my beanie looks great.",
         "newyear": "Fireworks, toasts and the cutest countdown on Discord. Shall we close the year with a sparkling room?",
         "easter": "There's a bunny hiding eggs all over the Catacombs. If you find chocolate, share it with me, okay? That's not a request, it's an order.",
         "summer": "Vacation! Popsicles, pools and monsters in straw hats. Put on sunscreen before heading into the Catacombs."
@@ -3686,68 +3874,6 @@ const TRANSLATIONS = {
       "error": "The Pass tripped up. Try again in a bit?",
       "footer": "Pyxie • Monthly pass",
       "premiumDm": "💎 **Your Premium Pass is here!** Open `/py-pass` and tap Claim: everything you already reached is waiting. Thank you for truly supporting Pyxie."
-    },
-    "roleplay": {
-      "sceneTitle": "📖 A new tale begins",
-      "sceneBody": "I narrate this post. Write what your character does: *actions in italics* and \"speech in quotes\". I answer a few seconds after the last message. Out of character? Use ((double parentheses)).\n\nNo sheet yet? Create one with `/py-character create`.",
-      "needSheet": "{user}, you need a character sheet to play: `/py-character create`. I'll wait right here.",
-      "narrationLabel": "Narration",
-      "rollPrompt": "🎲 **{name}**, roll **{stat}** (DC `{dc}`): {reason}",
-      "rollButton": "Roll {stat}",
-      "rollSuccess": "🎲 **{name}** rolled `{die}` + `{mod}` = **{total}** vs DC `{dc}`: **success!**",
-      "rollFail": "🎲 **{name}** rolled `{die}` + `{mod}` = **{total}** vs DC `{dc}`: **failure.**",
-      "rollCrit": "🎲 **{name}** rolled a natural **20**! **Critical success!**",
-      "rollFumble": "🎲 **{name}** rolled a natural **1**… **critical failure.**",
-      "rollNotYours": "That roll belongs to someone else's character.",
-      "rollGone": "That roll was already made.",
-      "resting": "✨ Catching my magical breath… the story continues in a moment.",
-      "capReached": "📖 This tale has had a lot of narration today. I'll be back tomorrow; until then you can keep playing among yourselves.",
-      "unsafe": "🌸 That path doesn't exist in the Realm (we keep everything SFW). Try another action?",
-      "crisis": "💜 {user}, that sounded heavy, and it matters more than any story. If things are hard right now, please talk to someone who can help:\n🇺🇸 call or text `988` • 🇧🇷 CVV `188` • 🌍 findahelpline.com",
-      "effectHp": "❤️ {name} {delta} ({hp}/{max})",
-      "effectMp": "🔮 {name} {delta} MP ({mp}/{max})",
-      "effectItemAdd": "🎒 {name} +{item}",
-      "effectItemRemove": "🎒 {name} −{item}",
-      "effectConditionAdd": "🌀 {name}: {condition}",
-      "effectConditionRemove": "✨ {name} shook off {condition}",
-      "levelUp": "⬆️ **{name}** reached level `{level}`! Spend the point with `/py-character train`.",
-      "stats": {
-        "str": "Strength",
-        "mag": "Magic",
-        "agi": "Agility",
-        "spi": "Spirit"
-      },
-      "character": {
-        "title": "📜 {name}",
-        "subtitle": "{ancestry} • Level `{level}` • XP `{xp}`/`{next}`",
-        "vitals": "❤️ HP `{hp}`/`{max}`\n🔮 MP `{mp}`/`{mpMax}`",
-        "vitalsName": "💗 Vitals",
-        "statsName": "✨ Attributes",
-        "statLine": "**{stat}:** `{value}`",
-        "bagName": "🎒 Bag",
-        "conditionsName": "🌀 Conditions",
-        "none": "-# nothing",
-        "unspent": "-# `{points}` point(s) to spend with `/py-character train`",
-        "footer": "Pyxie • Roleplay",
-        "created": "✨ **{name}** is born! Your sheet is below. Open a post in #roleplay-tales and start a tale.",
-        "noSheet": "You don't have a character yet. Create one with `/py-character create`.",
-        "otherNoSheet": "This person has no character yet.",
-        "bioSaved": "📖 Story updated.",
-        "trained": "💪 **{stat}** is now `{value}`.",
-        "rested": "🌙 You rested: HP and MP are full and your conditions are gone.",
-        "restCooldown": "You rested recently. Try again {time}.",
-        "reasons": {
-          "name": "The name needs 2 to 32 characters.",
-          "ancestry": "That origin doesn't exist.",
-          "stat_range": "Each attribute goes from `1` to `5` at creation.",
-          "stat_total": "The four attributes must add up to `{points}` (you used `{total}`).",
-          "exists": "You already have a character. See it with `/py-character view`.",
-          "missing": "You don't have a character yet. Create one with `/py-character create`.",
-          "no_points": "You have no points to spend. You get one per level.",
-          "stat_max": "That attribute is already maxed (`8`).",
-          "stat": "Invalid attribute."
-        }
-      }
     },
     "bond": {
       "title": "💞 Bond Strength",

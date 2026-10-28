@@ -29,6 +29,8 @@ const EPHEMERAL = MessageFlags.Ephemeral;
 const DEFAULT_CONFIG = {
   channels: { welcomeChannelId: '', requestChannelId: '', modReviewChannelId: '', publishedChannelId: '', radarChannelId: '' },
   roles: { screeningRoleId: '', adminRoleIds: [] },
+  // Texto da DM de aprovação puxado da última mensagem do dono num tópico de fórum (plano 5.4).
+  dmSource: { threadId: '', authorId: '', reportChannelId: '' },
 };
 
 const trunc = (s, n) => (String(s).length > n ? `${String(s).slice(0, n - 3)}...` : String(s));
@@ -66,6 +68,7 @@ class PartnershipManager {
     this.config = {
       channels: { ...DEFAULT_CONFIG.channels, ...(cfg.channels || {}) },
       roles: { ...DEFAULT_CONFIG.roles, ...(cfg.roles || {}) },
+      dmSource: { ...DEFAULT_CONFIG.dmSource, ...(cfg.dmSource || {}) },
     };
     const data = readJson(DATA_PATH, null);
     if (data) {
@@ -96,6 +99,7 @@ class PartnershipManager {
         screeningRoleId: this.config.roles?.screeningRoleId || '',
         adminRoleIds: Array.isArray(this.config.roles?.adminRoleIds) ? [...this.config.roles.adminRoleIds] : [],
       },
+      dmSource: { ...this.config.dmSource },
     };
   }
 
@@ -126,9 +130,65 @@ class PartnershipManager {
       adminRoleIds,
     };
 
-    this.config = { channels, roles };
+    const updatedSource = updates.dmSource || {};
+    const pickId = (key) => {
+      const v = String(updatedSource[key] !== undefined ? updatedSource[key] : this.config.dmSource?.[key] || '').trim();
+      return /^\d{17,20}$/.test(v) ? v : '';
+    };
+    const dmSource = { threadId: pickId('threadId'), authorId: pickId('authorId'), reportChannelId: pickId('reportChannelId') };
+
+    this.config = { channels, roles, dmSource };
     writeJsonAtomic(CONFIG_PATH, this.config);
     return this.config;
+  }
+
+  /**
+   * DM de aprovação. Com a fonte configurada, copia a última mensagem do dono no tópico de fórum
+   * (texto, embeds e anexos como link) e avisa o dono do resultado. Sem fonte, usa o texto fixo.
+   */
+  async sendApprovalDm(member, req, lang) {
+    const src = this.config.dmSource || {};
+    if (!src.threadId || !src.authorId) {
+      await member.send({ content: t('partnerships.dm_approved', lang, { project: req.projectName }) }).catch(() => null);
+      return { mode: 'fixed' };
+    }
+
+    const report = async (key, extra = {}) => {
+      const content = t(key, 'pt', { user: `<@${member.id}>`, id: member.id, ...extra });
+      const target = src.reportChannelId
+        ? await this.client.channels.fetch(src.reportChannelId).catch(() => null)
+        : await this.client.users.fetch(src.authorId).catch(() => null);
+      if (target) await target.send({ content, ...(extra.copy || {}), allowedMentions: { parse: [] } }).catch(() => null);
+    };
+
+    const thread = await this.client.channels.fetch(src.threadId).catch(() => null);
+    const recent = thread?.messages ? await thread.messages.fetch({ limit: 50 }).catch(() => null) : null;
+    const source = recent ? [...recent.values()].find((m) => m.author.id === src.authorId) : null;
+    if (!source) {
+      await report('partnerships.dm_source_missing');
+      return { mode: 'missing' };
+    }
+
+    const links = [...source.attachments.values()].map((a) => a.url);
+    let text = [source.content, ...links].filter(Boolean).join('\n');
+    const embeds = source.embeds.slice(0, 9).map((e) => e.toJSON());
+    // Acima de 2.000 caracteres o texto vai num embed (até 4.096).
+    if (text.length > 2000) {
+      embeds.unshift({ color: 0x8b5cf6, description: text.slice(0, 4096) });
+      text = '';
+    }
+    const payload = { content: text || undefined, embeds, allowedMentions: { parse: [] } };
+
+    try {
+      await member.send(payload);
+      await report('partnerships.dm_source_sent', { copy: { embeds } });
+      if (text) await report('partnerships.dm_source_copy', { text: text.slice(0, 1800) });
+      return { mode: 'forum' };
+    } catch (err) {
+      if (err.code === 50007) await report('partnerships.dm_source_closed');
+      else await report('partnerships.dm_source_failed', { error: err.message || String(err.code) });
+      return { mode: 'failed', code: err.code };
+    }
   }
 
   isConfigured() {
@@ -471,7 +531,7 @@ class PartnershipManager {
 
       if (member) {
         if (screeningRoleId) await this.roleSafeExecutor(interaction.guild, screeningRoleId, member, 'remove');
-        await member.send({ content: t('partnerships.dm_approved', applicantLang, { project: req.projectName }) }).catch(() => null);
+        await this.sendApprovalDm(member, req, applicantLang);
       }
 
       // Recarrega: o web pode ter mexido nos arquivos durante os awaits
@@ -822,7 +882,7 @@ class PartnershipManager {
 
     app.post('/api/partnerships/bump/:id', async (req, res) => {
       const lang = detectLang(req);
-      const ip = String(req.headers['x-forwarded-for'] || req.ip || '').split(',')[0].trim() || 'unknown';
+      const ip = String(req.ip || req.socket?.remoteAddress || '').trim() || 'unknown';
       if (this.rateLimited(ip)) {
         return res.status(429).json({ success: false, message: t('partnerships.rate_limited', lang) });
       }
@@ -831,13 +891,13 @@ class PartnershipManager {
       res.status(status).json(body);
     });
 
-    const { requireAdminAuth, isValidAdminSession, isIpAllowed } = require('../../services/adminAuth');
+    const { requireAdminAuth, isValidAdminSession, isIpAllowed, hasOwnerPanelSession } = require('../../services/adminAuth');
 
     // Rota de visualização da página administrativa dedicada (/admin/parcerias)
     app.get('/admin/parcerias', (req, res) => {
       const cookieHeader = req.headers.cookie;
       const sessionCookie = cookieHeader ? (cookieHeader.match(/(?:^|;\s*)pyxie_admin_session=([^;]*)/)?.[1] || null) : null;
-      const isAuthed = (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
+      const isAuthed = hasOwnerPanelSession(req) || (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
 
       if (!isAuthed) {
         return res.redirect('/admin');

@@ -9,6 +9,7 @@ const testDataDir = path.join(__dirname, 'test-data-mary');
 if (!fs.existsSync(testDataDir)) fs.mkdirSync(testDataDir, { recursive: true });
 
 process.env.MARY_SECURITY_PATH = path.join(testDataDir, 'marySecurity.test.json');
+process.env.MARY_STUDIO_SECRET = 'mary-studio-test-secret-only-for-ci';
 
 const securityGuard = require('../src/modules/mary-studio/utils/securityGuard');
 const robloxHelper = require('../src/modules/mary-studio/utils/robloxHelper');

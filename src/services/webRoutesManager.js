@@ -12,6 +12,8 @@ const INITIAL_ROUTES = [
   { id: 'bonus', path: '/bonus', name: 'Portal de Bônus Diário', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'evento', path: '/evento', name: 'Página de Evento Sazonal', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'cringelandia', path: '/cringelandia', name: 'Cringelândia Hub', type: 'public', enabled: true, httpStatus: 200 },
+  { id: 'parents', path: '/pais-e-profissionais', name: 'Para pais e profissionais', type: 'public', enabled: true, httpStatus: 200 },
+  { id: 'transparency', path: '/transparencia', name: 'Transparência e impacto', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'termos', path: '/termos', name: 'Termos de Serviço', type: 'legal', enabled: true, httpStatus: 200 },
   { id: 'privacidade', path: '/privacidade', name: 'Política de Privacidade', type: 'legal', enabled: true, httpStatus: 200 },
 

@@ -136,12 +136,11 @@ function mutate(guildId, fn) {
 }
 
 /** Estado efetivo do Mundo Pyxie: `full`, `trial` (teste em andamento) ou `classic`. */
-function getMmoState(guildId, now = Date.now()) {
+// O Mundo Pyxie é da Cringelândia (plano D5): sempre ligado lá e desligado nos outros servidores,
+// sem modo nem teste de 7 dias. Os comandos dele também só são registrados na Cringelândia.
+function getMmoState(guildId) {
   if (!guildId) return 'full';
-  const features = getGuildFeatures(guildId);
-  if (features.mmoMode === 'full') return 'full';
-  if (features.mmoTrialUntil > now) return 'trial';
-  return 'classic';
+  return String(guildId) === require('../config/scopes').CRINGELANDIA_GUILD_ID ? 'full' : 'classic';
 }
 
 function isMmoActive(guildId, now = Date.now()) {
@@ -198,7 +197,7 @@ function setGroupChannels(guildId, group, channelIds = []) {
   });
 }
 
-/** Troca todas as rotas por comando do servidor (ex.: o Pyxie's Realm manda cada comando pro seu canal). */
+/** Troca todas as rotas por comando do servidor (ex.: /py-dungeon só no canal das Catacumbas). */
 function setCommandChannels(guildId, routes = {}) {
   if (!guildId) return null;
   const clean = {};

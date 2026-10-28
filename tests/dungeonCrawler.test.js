@@ -593,7 +593,7 @@ console.log('  ✅ 9. Embeds (título curto, emoji, sem ASCII, footer) e botões
   const introspected = getIntrospectedCommandMap(true).get('py-dungeon');
   assert.ok(introspected, 'Introspector enxerga o comando');
   assert.equal(introspected.moduleId, 'dungeon');
-  assert.equal(introspected.discordScope, 'global');
+  assert.equal(introspected.discordScope, 'cringelandia', 'Catacumbas são exclusivas da Cringelândia (plano D5)');
   assert.equal(introspected.accessLevel, 'public');
 
   const { EMBED_REGISTRY } = require('../src/utils/embedRegistry');

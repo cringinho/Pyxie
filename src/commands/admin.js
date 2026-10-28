@@ -71,9 +71,9 @@ function buildModulesView(userId, guildOrSource = null) {
       ? `🟢 **${t('admin.moduleActive', guildOrSource)}**`
       : `⚪ **${t('admin.moduleInactive', guildOrSource)}**`;
     const name = isEn ? (m.nameLocalized?.en || m.name) : (m.nameLocalized?.['pt-BR'] || m.name);
-    const desc = isEn ? (m.descriptionLocalized?.en || m.description) : (m.descriptionLocalized?.['pt-BR'] || m.description);
-    const cmdList = m.commands.map((c) => `\`${c.name}\``).join(', ') || 'Nenhum';
-    return `${m.icon} **${name}** (v${m.version}) — ${statusText}\n> *${desc}*\n> 🏷️ **Categoria:** \`${m.category}\` • ⌨️ **${t('admin.moduleCommands', guildOrSource)}** ${cmdList}`;
+    const cmdList = m.commands.map((c) => `\`${c.name}\``).join(', ') || '—';
+    // Compacto: com 20+ módulos a descrição completa passa do limite de 4.096 do embed (ela está no /dashboard).
+    return `${m.icon} **${name}** — ${statusText}\n-# ⌨️ ${t('admin.moduleCommands', guildOrSource)} ${cmdList}`;
   });
 
   const embed = new EmbedBuilder()

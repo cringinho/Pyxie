@@ -219,6 +219,16 @@ console.log(`✅ Sincronização Dinâmica Web/Help validada: ${ptCmdCount} coma
 // 7. Validação de Segurança do Dono (Snowflake 214153735281180673 & HMAC)
 assert.equal(OWNER_SNOWFLAKE, '214153735281180673', 'Snowflake do dono deve ser estritamente 214153735281180673');
 
+// Sem segredo no .env não existe segredo reserva: tudo é recusado.
+const savedPanelSecret = process.env.PANEL_SECRET;
+const savedApiSecret = process.env.API_SECRET_TOKEN;
+delete process.env.PANEL_SECRET;
+delete process.env.API_SECRET_TOKEN;
+assert.equal(createOwnerMagicToken(OWNER_SNOWFLAKE).success, false, 'Sem PANEL_SECRET não pode gerar link mágico');
+assert.equal(isIpAllowed({ ip: '127.0.0.1', headers: {} }), false, 'Sem PANEL_SECRET nem localhost entra');
+assert.equal(require('../src/services/adminAuth').isMasterSecretValid('pyxie_owner_master_secret_2026'), false, 'Segredo reserva antigo não pode valer');
+process.env.PANEL_SECRET = 'panel-test-secret-only-for-ci';
+
 const forbiddenRes = createOwnerMagicToken('999999999999999999');
 assert.equal(forbiddenRes.success, false, 'Usuário aleatório não pode gerar token de admin');
 
@@ -236,6 +246,13 @@ assert.equal(replayRes.valid, false, 'Anti-replay: token consumido não pode ser
 assert.equal(isIpAllowed({ ip: '127.0.0.1', headers: {} }), true, 'Localhost deve ser autorizado');
 assert.equal(isIpAllowed({ ip: '179.153.90.39', headers: {} }), true, 'IP do criador deve ser autorizado');
 assert.equal(isIpAllowed({ ip: '198.51.100.23', headers: {} }), false, 'IP desconhecido deve ser bloqueado');
+assert.equal(
+  isIpAllowed({ ip: '198.51.100.23', headers: { 'x-forwarded-for': '127.0.0.1' } }),
+  false,
+  'X-Forwarded-For enviado pelo cliente não pode liberar o painel'
+);
+if (savedPanelSecret === undefined) delete process.env.PANEL_SECRET; else process.env.PANEL_SECRET = savedPanelSecret;
+if (savedApiSecret !== undefined) process.env.API_SECRET_TOKEN = savedApiSecret;
 console.log('✅ Segurança do Dono validada: Snowflake, HMAC Magic Tokens e IP Allowlist operando perfeitamente.');
 
 // 7.1 Validação de Bloqueio em Comandos de Economia por Não-Donos

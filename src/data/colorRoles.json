@@ -1,0 +1,379 @@
+{
+  "colors": [
+    {
+      "n": 1,
+      "name": "Preto",
+      "hex": "#050005"
+    },
+    {
+      "n": 2,
+      "name": "Cinza",
+      "hex": "#7c7c7c"
+    },
+    {
+      "n": 3,
+      "name": "Branco",
+      "hex": "#ffffff"
+    },
+    {
+      "n": 4,
+      "name": "Vermelho-Escuro",
+      "hex": "#b30000"
+    },
+    {
+      "n": 5,
+      "name": "Rosé",
+      "hex": "#b93838"
+    },
+    {
+      "n": 6,
+      "name": "Mona",
+      "hex": "#bd7070"
+    },
+    {
+      "n": 7,
+      "name": "Vermelho",
+      "hex": "#ff0000"
+    },
+    {
+      "n": 8,
+      "name": "Vermilion",
+      "hex": "#ff4f4f"
+    },
+    {
+      "n": 9,
+      "name": "Tangerina",
+      "hex": "#ff9999"
+    },
+    {
+      "n": 10,
+      "name": "Laranja",
+      "hex": "#ff6100"
+    },
+    {
+      "n": 11,
+      "name": "Manga",
+      "hex": "#ff914a"
+    },
+    {
+      "n": 12,
+      "name": "Koromiko",
+      "hex": "#ffbd93"
+    },
+    {
+      "n": 13,
+      "name": "Amarelo",
+      "hex": "#ffff00"
+    },
+    {
+      "n": 14,
+      "name": "Siciliano",
+      "hex": "#ffff4b"
+    },
+    {
+      "n": 15,
+      "name": "Canário-Pálido",
+      "hex": "#ffff9e"
+    },
+    {
+      "n": 16,
+      "name": "Lima",
+      "hex": "#a2ff00"
+    },
+    {
+      "n": 17,
+      "name": "Verde-Amarelo",
+      "hex": "#beff4d"
+    },
+    {
+      "n": 18,
+      "name": "Recife",
+      "hex": "#dcffa1"
+    },
+    {
+      "n": 19,
+      "name": "Verde",
+      "hex": "#1eff00"
+    },
+    {
+      "n": 20,
+      "name": "Verde-Gritante",
+      "hex": "#70ff5d"
+    },
+    {
+      "n": 21,
+      "name": "Menta",
+      "hex": "#acffa0"
+    },
+    {
+      "n": 22,
+      "name": "Verde-Primavera",
+      "hex": "#00ff7a"
+    },
+    {
+      "n": 23,
+      "name": "Aquamarine",
+      "hex": "#55ffaa"
+    },
+    {
+      "n": 24,
+      "name": "Aero",
+      "hex": "#a9ffd5"
+    },
+    {
+      "n": 25,
+      "name": "Tartaruga-Marinha",
+      "hex": "#00ffcd"
+    },
+    {
+      "n": 26,
+      "name": "Aqua",
+      "hex": "#56ffee"
+    },
+    {
+      "n": 27,
+      "name": "Ar",
+      "hex": "#adfff6"
+    },
+    {
+      "n": 28,
+      "name": "Ciano",
+      "hex": "#00d4ff"
+    },
+    {
+      "n": 29,
+      "name": "Malibu",
+      "hex": "#57e1ff"
+    },
+    {
+      "n": 30,
+      "name": "Água-Limpa",
+      "hex": "#a9f1ff"
+    },
+    {
+      "n": 31,
+      "name": "Azure",
+      "hex": "#0090ff"
+    },
+    {
+      "n": 32,
+      "name": "Blueberry",
+      "hex": "#57b4ff"
+    },
+    {
+      "n": 33,
+      "name": "Anakiwa",
+      "hex": "#9fd5ff"
+    },
+    {
+      "n": 34,
+      "name": "Indigo",
+      "hex": "#7d98ff"
+    },
+    {
+      "n": 35,
+      "name": "Melrose",
+      "hex": "#b8c9ff"
+    },
+    {
+      "n": 36,
+      "name": "Laço-Azul",
+      "hex": "#004cff"
+    },
+    {
+      "n": 37,
+      "name": "Azul",
+      "hex": "#0f00ff"
+    },
+    {
+      "n": 38,
+      "name": "Azul-Royal",
+      "hex": "#6f66ff"
+    },
+    {
+      "n": 39,
+      "name": "Cova de Navio",
+      "hex": "#bda9ff"
+    },
+    {
+      "n": 40,
+      "name": "Violeta-Eletrizante",
+      "hex": "#6900ff"
+    },
+    {
+      "n": 41,
+      "name": "Heliotrope",
+      "hex": "#9f5eff"
+    },
+    {
+      "n": 42,
+      "name": "Mauve",
+      "hex": "#cdacff"
+    },
+    {
+      "n": 43,
+      "name": "Violeta",
+      "hex": "#be00ff"
+    },
+    {
+      "n": 44,
+      "name": "East Side",
+      "hex": "#efb8ff"
+    },
+    {
+      "n": 45,
+      "name": "Ametista",
+      "hex": "#d860ff"
+    },
+    {
+      "n": 46,
+      "name": "Magenta",
+      "hex": "#ff00f3"
+    },
+    {
+      "n": 47,
+      "name": "Lavanda",
+      "hex": "#ffaafa"
+    },
+    {
+      "n": 48,
+      "name": "Flamingo",
+      "hex": "#ff60f8"
+    },
+    {
+      "n": 49,
+      "name": "Cerise",
+      "hex": "#ff00a9"
+    },
+    {
+      "n": 50,
+      "name": "Hot Pink",
+      "hex": "#ff69cc"
+    },
+    {
+      "n": 51,
+      "name": "Algodão-Doce",
+      "hex": "#ffb8e7"
+    },
+    {
+      "n": 52,
+      "name": "Bordô",
+      "hex": "#7a1f3d"
+    },
+    {
+      "n": 53,
+      "name": "Coral",
+      "hex": "#ff7f6b"
+    },
+    {
+      "n": 54,
+      "name": "Pêssego",
+      "hex": "#ffcba4"
+    },
+    {
+      "n": 55,
+      "name": "Caramelo",
+      "hex": "#c47a3a"
+    },
+    {
+      "n": 56,
+      "name": "Mostarda",
+      "hex": "#e1ad01"
+    },
+    {
+      "n": 57,
+      "name": "Dourado",
+      "hex": "#ffd700"
+    },
+    {
+      "n": 58,
+      "name": "Oliva",
+      "hex": "#8a9a3b"
+    },
+    {
+      "n": 59,
+      "name": "Musgo",
+      "hex": "#4f7942"
+    },
+    {
+      "n": 60,
+      "name": "Esmeralda",
+      "hex": "#2ecc71"
+    },
+    {
+      "n": 61,
+      "name": "Jade",
+      "hex": "#00a86b"
+    },
+    {
+      "n": 62,
+      "name": "Turquesa",
+      "hex": "#30d5c8"
+    },
+    {
+      "n": 63,
+      "name": "Petróleo",
+      "hex": "#1f6f78"
+    },
+    {
+      "n": 64,
+      "name": "Azul-Céu",
+      "hex": "#87ceeb"
+    },
+    {
+      "n": 65,
+      "name": "Azul-Bebê",
+      "hex": "#bfe3ff"
+    },
+    {
+      "n": 66,
+      "name": "Cobalto",
+      "hex": "#2b5fd9"
+    },
+    {
+      "n": 67,
+      "name": "Azul-Noite",
+      "hex": "#2c3e7a"
+    },
+    {
+      "n": 68,
+      "name": "Lilás",
+      "hex": "#c8a2c8"
+    },
+    {
+      "n": 69,
+      "name": "Uva",
+      "hex": "#6f2da8"
+    },
+    {
+      "n": 70,
+      "name": "Orquídea",
+      "hex": "#da70d6"
+    },
+    {
+      "n": 71,
+      "name": "Fúcsia",
+      "hex": "#e0218a"
+    },
+    {
+      "n": 72,
+      "name": "Rosa-Chiclete",
+      "hex": "#ff8fc7"
+    },
+    {
+      "n": 73,
+      "name": "Salmão",
+      "hex": "#fa8072"
+    },
+    {
+      "n": 74,
+      "name": "Areia",
+      "hex": "#e2cfa3"
+    },
+    {
+      "n": 75,
+      "name": "Prata",
+      "hex": "#c0c0c0"
+    }
+  ]
+}

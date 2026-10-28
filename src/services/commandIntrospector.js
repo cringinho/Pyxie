@@ -2,8 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { COMMAND_CATEGORY_MAP, MODULE_METADATA } = require('../commands/commandHelpers');
 
-const CRINGELANDIA_GUILD_ID = '1453890868980482090';
-const MARY_DEFAULT_GUILD_ID = '1453890868980482090'; // Guilda padrão do Estúdio da Mary
+const { CRINGELANDIA_GUILD_ID, MARY_GUILD_ID: MARY_DEFAULT_GUILD_ID } = require('../config/scopes');
 
 // Comandos exclusivos do criador (Owner Only)
 const OWNER_COMMANDS = new Set([

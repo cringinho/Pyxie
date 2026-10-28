@@ -60,10 +60,9 @@ export default function HeroSection({ t, stats }) {
                 <span>{t('hero.btnInvite')}</span>
               </a>
 
+              {/* 50/50 (plano 5.11): o segundo botão do topo leva para a Cringelândia */}
               <a
-                href="/discord"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/cringelandia"
                 className="w-full sm:w-auto px-7 py-4 rounded-2xl text-base font-bold text-slate-200 bg-white/5 hover:bg-white/10 border border-purple-500/30 hover:border-purple-500/60 transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2.5 backdrop-blur-xl"
               >
                 <MessageCircle className="w-5 h-5 text-purple-400" />
