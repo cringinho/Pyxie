@@ -513,6 +513,93 @@ const TRANSLATIONS = {
         "resolved": "O problema no Discord foi resolvido: **{name}**."
       }
     },
+    "autos3": {
+      "names": {"animator": "Animador de chat", "newAccountGate": "Conta nova em quarentena", "nameSanitizer": "Nome limpo", "staffImpersonation": "Imitação da staff", "crossChannelSpam": "Spam em vários canais", "massMention": "Menções em massa", "inviteFilter": "Convites de fora", "automodPresets": "Filtros prontos do AutoMod", "modCanary": "Alarme de moderação", "modLog": "Registro de moderação", "autoSlowmode": "Modo lento automático", "roleContrast": "Cor de cargo legível", "channelCleanup": "Limpeza de canais", "starboard": "Mural de destaques", "autoThread": "Tópico automático", "autoReactions": "Reações automáticas", "autoPublish": "Publicar anúncios", "stickyMessage": "Mensagem fixa no fim", "linkFixer": "Links com prévia", "longPaste": "Mensagem longa vira arquivo", "discordStatus": "Aviso de instabilidade", "voiceRole": "Cargo de quem está em call", "breakReminder": "Pausa de hiperfoco", "quietHours": "Horário de descanso", "welcomeBuddy": "Primeira mensagem acolhida", "noOneUnanswered": "Ninguém sem resposta", "crisisCare": "Cuidado em crise", "memberMilestones": "Marcos de membros", "boostThanks": "Obrigada pelo boost", "ghostPing": "Menção fantasma", "voiceLog": "Registro de calls", "capsCalm": "Sem caps lock", "mediaOnly": "Canal só de mídia", "selfPromoLimit": "Limite de divulgação", "spoilerGuard": "Imagem como spoiler", "inviteTracker": "Quem convidou", "tempVoice": "Call temporária", "memberCounter": "Contador de membros", "faqReplies": "Respostas automáticas", "scheduledMessages": "Recado agendado", "weeklyDigest": "Resumo semanal", "pinArchive": "Arquivo de fixadas", "bumpReminder": "Lembrete de bump"},
+      "break": {
+        "text": "☕ {user}, você está aqui há mais de {minutes}. Que tal uma pausa rapidinha? Água, alongar, olhar pela janela. O chat continua aqui quando você voltar 💜"
+      },
+      "quiet": {
+        "start": "🌙 Hora de descansar. Este canal fica {mode} até {end}. Durma bem, a gente se vê amanhã 💜",
+        "end": "☀️ Bom dia! O canal está aberto de novo.",
+        "modeSlow": "em modo lento",
+        "modeLock": "fechado"
+      },
+      "welcome": {
+        "lines": [
+          "👋 Oi, {user}! Que bom te ver por aqui. Fica à vontade 💜",
+          "✨ Seja bem-vinde, {user}! Pode chegar devagar, ninguém tem pressa aqui.",
+          "🌱 {user}, primeira mensagem! A gente fica feliz que você veio."
+        ]
+      },
+      "unanswered": {
+        "text": "💜 {user}, ainda ninguém respondeu, mas sua mensagem foi vista. Alguém já já aparece.",
+        "helper": "{role}, tem alguém esperando resposta aqui."
+      },
+      "crisis": {
+        "dmTitle": "💜 Você não está sozinhe",
+        "dm": "Oi. Vi uma mensagem sua em **{server}** e quis vir aqui com cuidado. Se estiver difícil agora, falar com alguém ajuda, e tem gente pronta para ouvir sem julgar, de graça e a qualquer hora.",
+        "br": "**No Brasil:** CVV, ligue `188` ou acesse [cvv.org.br](https://www.cvv.org.br).",
+        "world": "**Em outros países:** [findahelpline.com](https://findahelpline.com).",
+        "emergency": "Se você estiver em perigo agora, ligue `192` (SAMU) ou vá a um pronto-socorro.",
+        "stay": "Você importa. Se quiser, chame alguém da staff também.",
+        "channel": "💜 {user}, mandei uma mensagem no seu privado com lugares onde dá para conversar com alguém agora. Você importa.",
+        "staffTitle": "💜 Alguém pode precisar de apoio",
+        "staff": "{user} escreveu algo que parece sofrimento em {channel}. Mandei recursos de apoio por DM.",
+        "staffHint": "Se puder, chegue com calma e sem expor a pessoa. [Ver mensagem]({url})"
+      },
+      "milestone": {
+        "text": "🎉 Chegamos a **{count}** pessoas! Obrigada por fazerem deste lugar um cantinho seguro 💜"
+      },
+      "boost": {
+        "text": "💖 {user} deu boost no servidor! Muito obrigada pelo carinho."
+      },
+      "ghost": {
+        "text": "👻 {author} marcou {users} e apagou a mensagem em seguida."
+      },
+      "voice": {
+        "join": "🔊 {user} entrou em {channel}",
+        "leave": "🔇 {user} saiu de {channel}",
+        "move": "🔁 {user} foi de {from} para {to}"
+      },
+      "caps": {
+        "text": "🔡 {user}, dá para escrever sem caps lock? Em letra maiúscula parece grito 💜"
+      },
+      "media": {
+        "text": "🖼️ {user}, este canal é só para imagens e vídeos. Para conversar, use o tópico da postagem."
+      },
+      "promo": {
+        "text": "⏳ {user}, você pode divulgar de novo aqui {when}."
+      },
+      "spoiler": {
+        "text": "🙈 {user} mandou (escondi a imagem como spoiler):"
+      },
+      "invites": {
+        "title": "📨 Quem convidou",
+        "by": "{member} entrou pelo convite `{code}` de {inviter} (`{uses}` usos).",
+        "unknown": "{member} entrou, mas não deu para saber o convite (link personalizado ou convite de uso único)."
+      },
+      "temp": {
+        "name": "Sala de {user}"
+      },
+      "counter": {
+        "default": "👥 Membros: {count}"
+      },
+      "digest": {
+        "title": "📊 Resumo da semana",
+        "body": "**Mensagens:** `{messages}`\n**Entradas:** `{joins}`\n**Saídas:** `{leaves}`\n**Comandos:** `{commands}`",
+        "autos": "**Automações que mais agiram:**",
+        "none": "Nenhuma automação agiu esta semana."
+      },
+      "pins": {
+        "title": "📌 Fixada arquivada",
+        "moved": "Em {channel}, por {user}.",
+        "jump": "Ver original"
+      },
+      "bump": {
+        "text": "⏰ Já dá para dar `/bump` de novo!",
+        "withRole": "⏰ {role}, já dá para dar `/bump` de novo!"
+      }
+    },
     "linkShield": {
       "brandUnknown": "um site conhecido",
       "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
@@ -3061,6 +3148,93 @@ const TRANSLATIONS = {
         "follow": "Follow updates",
         "resolvedTitle": "✅ Discord is back to normal",
         "resolved": "The Discord problem was resolved: **{name}**."
+      }
+    },
+    "autos3": {
+      "names": {"animator": "Chat animator", "newAccountGate": "New-account quarantine", "nameSanitizer": "Clean names", "staffImpersonation": "Staff impersonation", "crossChannelSpam": "Cross-channel spam", "massMention": "Mass mentions", "inviteFilter": "Outside invites", "automodPresets": "AutoMod presets", "modCanary": "Moderation alarm", "modLog": "Moderation log", "autoSlowmode": "Automatic slow mode", "roleContrast": "Readable role colors", "channelCleanup": "Channel cleanup", "starboard": "Starboard", "autoThread": "Automatic threads", "autoReactions": "Automatic reactions", "autoPublish": "Auto-publish announcements", "stickyMessage": "Sticky message", "linkFixer": "Link previews", "longPaste": "Long messages as files", "discordStatus": "Outage notice", "voiceRole": "In-voice role", "breakReminder": "Hyperfocus break", "quietHours": "Quiet hours", "welcomeBuddy": "Welcomed first message", "noOneUnanswered": "Nobody left unanswered", "crisisCare": "Crisis care", "memberMilestones": "Member milestones", "boostThanks": "Boost thanks", "ghostPing": "Ghost pings", "voiceLog": "Voice log", "capsCalm": "No caps lock", "mediaOnly": "Media-only channel", "selfPromoLimit": "Self-promo limit", "spoilerGuard": "Images as spoilers", "inviteTracker": "Invite tracking", "tempVoice": "Temporary voice rooms", "memberCounter": "Member counter", "faqReplies": "Automatic replies", "scheduledMessages": "Scheduled message", "weeklyDigest": "Weekly summary", "pinArchive": "Pin archive", "bumpReminder": "Bump reminder"},
+      "break": {
+        "text": "☕ {user}, you've been here for over {minutes}. How about a quick break? Water, a stretch, a look out the window. The chat will still be here when you're back 💜"
+      },
+      "quiet": {
+        "start": "🌙 Time to rest. This channel is {mode} until {end}. Sleep well, see you tomorrow 💜",
+        "end": "☀️ Good morning! The channel is open again.",
+        "modeSlow": "in slow mode",
+        "modeLock": "closed"
+      },
+      "welcome": {
+        "lines": [
+          "👋 Hi, {user}! So good to see you here. Make yourself at home 💜",
+          "✨ Welcome, {user}! Take your time, nobody's in a hurry here.",
+          "🌱 {user}, first message! We're glad you came."
+        ]
+      },
+      "unanswered": {
+        "text": "💜 {user}, nobody has replied yet, but your message was seen. Someone will be here soon.",
+        "helper": "{role}, someone is waiting for a reply here."
+      },
+      "crisis": {
+        "dmTitle": "💜 You're not alone",
+        "dm": "Hi. I saw a message of yours in **{server}** and wanted to check in gently. If things are hard right now, talking to someone helps, and there are people ready to listen without judgment, free and at any hour.",
+        "br": "**In Brazil:** CVV, call `188` or visit [cvv.org.br](https://www.cvv.org.br).",
+        "world": "**Other countries:** [findahelpline.com](https://findahelpline.com).",
+        "emergency": "If you're in danger right now, call your local emergency number or go to an emergency room.",
+        "stay": "You matter. If you want, reach out to someone on staff too.",
+        "channel": "💜 {user}, I sent you a DM with places where you can talk to someone right now. You matter.",
+        "staffTitle": "💜 Someone may need support",
+        "staff": "{user} wrote something that sounds like distress in {channel}. I sent support resources by DM.",
+        "staffHint": "If you can, reach out gently and without exposing them. [See message]({url})"
+      },
+      "milestone": {
+        "text": "🎉 We reached **{count}** people! Thank you for making this a safe little corner 💜"
+      },
+      "boost": {
+        "text": "💖 {user} boosted the server! Thank you so much for the love."
+      },
+      "ghost": {
+        "text": "👻 {author} mentioned {users} and deleted the message right after."
+      },
+      "voice": {
+        "join": "🔊 {user} joined {channel}",
+        "leave": "🔇 {user} left {channel}",
+        "move": "🔁 {user} moved from {from} to {to}"
+      },
+      "caps": {
+        "text": "🔡 {user}, could you write without caps lock? All caps reads like shouting 💜"
+      },
+      "media": {
+        "text": "🖼️ {user}, this channel is for images and videos only. To chat, use the post's thread."
+      },
+      "promo": {
+        "text": "⏳ {user}, you can promote here again {when}."
+      },
+      "spoiler": {
+        "text": "🙈 {user} sent (I hid the image as a spoiler):"
+      },
+      "invites": {
+        "title": "📨 Who invited",
+        "by": "{member} joined with invite `{code}` from {inviter} (`{uses}` uses).",
+        "unknown": "{member} joined, but I couldn't tell the invite (vanity link or single-use invite)."
+      },
+      "temp": {
+        "name": "{user}'s room"
+      },
+      "counter": {
+        "default": "👥 Members: {count}"
+      },
+      "digest": {
+        "title": "📊 Weekly summary",
+        "body": "**Messages:** `{messages}`\n**Joins:** `{joins}`\n**Leaves:** `{leaves}`\n**Commands:** `{commands}`",
+        "autos": "**Most active automations:**",
+        "none": "No automation acted this week."
+      },
+      "pins": {
+        "title": "📌 Pin archived",
+        "moved": "In {channel}, by {user}.",
+        "jump": "See original"
+      },
+      "bump": {
+        "text": "⏰ You can `/bump` again!",
+        "withRole": "⏰ {role}, you can `/bump` again!"
       }
     },
     "linkShield": {

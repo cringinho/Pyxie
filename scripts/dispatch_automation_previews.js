@@ -29,6 +29,29 @@ async function main() {
     first = false;
     console.log('[AutomationPreview]', key, r.simulated ? 'simulado' : `enviado (${r.messageId})`);
   }
+  // Lote 3: mensagens de texto e o cuidado em crise (DM).
+  const texts = [
+    ['autos3.break.text', { user: U, minutes: '`2` h' }],
+    ['autos3.quiet.start', { mode: t('autos3.quiet.modeSlow', lang), end: '`06:00`' }],
+    ['autos3.unanswered.text', { user: U }],
+    ['autos3.crisis.channel', { user: U }],
+    ['autos3.milestone.text', { count: 500 }],
+    ['autos3.ghost.text', { author: U, users: '`@amiga`' }],
+    ['autos3.caps.text', { user: U }],
+    ['autos3.media.text', { user: U }],
+    ['autos3.bump.text', {}],
+  ];
+  for (const [key, vars] of texts) {
+    const r = await dispatchHomologationPreview({ commandName: 'Automações', context: `${key} (${lang})`, content: t(key, lang, vars), allowedMentions: { parse: [] } });
+    console.log('[AutomationPreview]', key, r.simulated ? 'simulado' : `enviado (${r.messageId})`);
+  }
+  const crisis = embed(lang, {
+    title: t('autos3.crisis.dmTitle', lang),
+    color: 'ok',
+    lines: [t('autos3.crisis.dm', lang, { server: 'Cringelândia' }), t('autos3.crisis.br', lang), t('autos3.crisis.world', lang), `> ${t('autos3.crisis.emergency', lang)}`, t('autos3.crisis.stay', lang)],
+  });
+  const rc = await dispatchHomologationPreview({ commandName: 'Automações', context: `crisis DM (${lang})`, embeds: [crisis], allowedMentions: { parse: [] } });
+  console.log('[AutomationPreview] crisis', rc.simulated ? 'simulado' : `enviado (${rc.messageId})`);
   for (const key of ['invite.notice', 'longPaste.notice']) {
     const r = await dispatchHomologationPreview({ commandName: 'Automações', context: `${key} (${lang})`, content: t(`autos.${key}`, lang, { user: U, lines: '`58`' }), allowedMentions: { parse: [] } });
     console.log('[AutomationPreview]', key, r.simulated ? 'simulado' : `enviado (${r.messageId})`);

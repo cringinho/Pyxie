@@ -252,7 +252,8 @@ export function SchemaForm({ t, schemaKey, fields, value, onChange, channels = [
           );
         }
         if (f.type === 'channel' || f.type === 'role') {
-          const opts = f.type === 'channel' ? text : roleOpts;
+          const anyCh = channels.filter((c) => c.type !== 4).map((c) => ({ id: c.id, label: [2, 13].includes(c.type) ? `🔊 ${c.name}` : `# ${c.name}` }));
+          const opts = f.type === 'role' ? roleOpts : f.kind === 'voice' ? voice : f.kind === 'any' ? anyCh : text;
           return (
             <Wrap key={f.key} label={label(f)}>
               <select value={v} onChange={(e) => set(f.key, e.target.value)} className={field}>

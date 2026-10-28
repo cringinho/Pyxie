@@ -1,5 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
+  Coffee,
+  Moon,
+  HandHeart,
+  MessageCircleHeart,
+  LifeBuoy,
+  Trophy,
+  Gem,
+  Ghost,
+  AudioLines,
+  CaseUpper,
+  Images,
+  Timer,
+  EyeOff,
+  Route,
+  DoorOpen,
+  Users,
+  MessageCircleQuestion,
+  CalendarClock,
+  ChartNoAxesColumn,
+  Archive,
+  AlarmClock,
   Activity,
   AtSign,
   Bot,
@@ -24,20 +45,34 @@ import {
   Unlink,
   UserRoundX,
   VenetianMask,
-} from "lucide-react";
-import { api } from "./api";
-import BotPermissions from "./Permissions";
-import {
-  ConfigAside,
-  DiscordPreview,
-  HubGroup,
-  HubLayout,
-  ModuleCard,
-  SchemaForm,
-} from "./hub";
-import { Notice, Spinner } from "./ui";
+} from 'lucide-react';
+import { api } from './api';
+import BotPermissions from './Permissions';
+import { ConfigAside, DiscordPreview, HubGroup, HubLayout, ModuleCard, SchemaForm } from './hub';
+import { Notice, Spinner } from './ui';
 
 const ICONS = {
+  Coffee,
+  Moon,
+  HandHeart,
+  MessageCircleHeart,
+  LifeBuoy,
+  Trophy,
+  Gem,
+  Ghost,
+  AudioLines,
+  CaseUpper,
+  Images,
+  Timer,
+  EyeOff,
+  Route,
+  DoorOpen,
+  Users,
+  MessageCircleQuestion,
+  CalendarClock,
+  ChartNoAxesColumn,
+  Archive,
+  AlarmClock,
   Activity,
   AtSign,
   Bot,
@@ -64,76 +99,85 @@ const ICONS = {
 };
 // Automações que mandam embed (prévia com título e texto) ou só texto.
 const EMBED_PREVIEW = [
-  "newAccountGate",
-  "staffImpersonation",
-  "crossChannelSpam",
-  "massMention",
-  "modCanary",
-  "modLog",
-  "roleContrast",
-  "discordStatus",
+  'newAccountGate',
+  'staffImpersonation',
+  'crossChannelSpam',
+  'massMention',
+  'modCanary',
+  'modLog',
+  'roleContrast',
+  'discordStatus',
+  'crisisCare',
+  'inviteTracker',
+  'weeklyDigest',
+  'pinArchive',
 ];
-const TEXT_PREVIEW = ["inviteFilter", "autoSlowmode", "linkFixer", "longPaste"];
-const KNOWN_ERRORS = [
-  "invalid_channel",
-  "invalid_role",
-  "unknown_automation",
-  "bridge_error",
-  "automod_exists",
-  "missing_permission",
-  "automod_error",
+const TEXT_PREVIEW = [
+  'inviteFilter',
+  'autoSlowmode',
+  'linkFixer',
+  'longPaste',
+  'breakReminder',
+  'quietHours',
+  'welcomeBuddy',
+  'noOneUnanswered',
+  'memberMilestones',
+  'boostThanks',
+  'ghostPing',
+  'voiceLog',
+  'capsCalm',
+  'mediaOnly',
+  'selfPromoLimit',
+  'spoilerGuard',
+  'tempVoice',
+  'memberCounter',
+  'faqReplies',
+  'scheduledMessages',
+  'bumpReminder',
 ];
-const GROUP_ORDER = ["community", "safety", "moderation", "utility"];
+const KNOWN_ERRORS = ['invalid_channel', 'invalid_role', 'unknown_automation', 'bridge_error', 'automod_exists', 'missing_permission', 'automod_error'];
+const GROUP_ORDER = ['community', 'safety', 'moderation', 'utility'];
 
 // Prévia de cada automação. Recebe o rascunho e um número que troca o exemplo.
 const PREVIEWS = {
   animator: (t, cfg, n) => {
-    const types = cfg.types.length ? cfg.types : ["question"];
+    const types = cfg.types.length ? cfg.types : ['question'];
     const type = types[n % types.length];
     const intro = t(`auto.animator.prev.tone.${cfg.tone}`);
-    const footer = `-# ${t("auto.animator.prev.footer")}`;
-    const pause = { label: t("auto.animator.prev.pause"), style: "secondary" };
-    if (type === "poll") {
-      const [question, ...answers] = t("auto.animator.prev.sample.poll").split(
-        "|",
-      );
+    const footer = `-# ${t('auto.animator.prev.footer')}`;
+    const pause = { label: t('auto.animator.prev.pause'), style: 'secondary' };
+    if (type === 'poll') {
+      const [question, ...answers] = t('auto.animator.prev.sample.poll').split('|');
       return {
         content: `${intro}\n${footer}`,
         poll: { question, answers },
         buttons: [pause],
       };
     }
-    if (type === "thisOrThat") {
-      const [a, b] = t("auto.animator.prev.sample.thisOrThat").split("|");
+    if (type === 'thisOrThat') {
+      const [a, b] = t('auto.animator.prev.sample.thisOrThat').split('|');
       return {
-        content: `${intro}\n### ${a} ${t("auto.animator.prev.or")} ${b}?\n${footer}`,
-        buttons: [
-          { label: a, style: "primary" },
-          { label: b, style: "primary" },
-          pause,
-        ],
+        content: `${intro}\n### ${a} ${t('auto.animator.prev.or')} ${b}?\n${footer}`,
+        buttons: [{ label: a, style: 'primary' }, { label: b, style: 'primary' }, pause],
       };
     }
-    const sample =
-      type === "house" && cfg.houseLines?.[0]
-        ? cfg.houseLines[0]
-        : t(`auto.animator.prev.sample.${type}`);
+    const sample = type === 'house' && cfg.houseLines?.[0] ? cfg.houseLines[0] : t(`auto.animator.prev.sample.${type}`);
     return {
       content: `${intro}\n### ${t(`auto.animator.types.${type}`)}\n> ${sample}\n${footer}`,
       buttons: [pause],
     };
   },
   starboard: (t, cfg) => ({
-    content: `${cfg.emoji || "⭐"} \`${cfg.threshold}\` · #geral`,
+    content: `${cfg.emoji || '⭐'} \`${cfg.threshold}\` · #geral`,
     embed: {
-      color: "#f59e0b",
-      title: t("auto.starboard.prev.title"),
-      description: t("auto.starboard.prev.body"),
-      footer: t("auto.footer"),
+      color: '#f59e0b',
+      title: t('auto.starboard.prev.title'),
+      description: t('auto.starboard.prev.body'),
+      footer: t('auto.footer'),
     },
   }),
   stickyMessage: (t, cfg) => ({
-    content: `${cfg.text?.trim() || t("auto.stickyMessage.prev.content")}\n-# ${t("auto.stickyMessage.prev.label")}`,
+    content: `${cfg.text?.trim() || t('auto.stickyMessage.prev.content')}\n-# ${t('auto.stickyMessage.prev.label')}`,
   }),
   ...Object.fromEntries(
     EMBED_PREVIEW.map((k) => [
@@ -142,26 +186,21 @@ const PREVIEWS = {
         embed: {
           title: t(`auto.${k}.prev.title`),
           description: t(`auto.${k}.prev.body`),
-          footer: t("auto.footer"),
+          footer: t('auto.footer'),
         },
       }),
     ]),
   ),
-  ...Object.fromEntries(
-    TEXT_PREVIEW.map((k) => [
-      k,
-      (t) => ({ content: t(`auto.${k}.prev.content`) }),
-    ]),
-  ),
+  ...Object.fromEntries(TEXT_PREVIEW.map((k) => [k, (t) => ({ content: t(`auto.${k}.prev.content`) })])),
 };
 
 function metaFor(t, key, stats) {
-  if (key === "animator" && stats?.posts)
-    return t("auto.animator.stats", {
+  if (key === 'animator' && stats?.posts)
+    return t('auto.animator.stats', {
       posts: stats.posts,
       answered: stats.answered || 0,
     });
-  if (stats?.hits) return t("auto.hits", { n: stats.hits });
+  if (stats?.hits) return t('auto.hits', { n: stats.hits });
   return null;
 }
 
@@ -181,7 +220,7 @@ export default function Automations({ t, guildId }) {
     api
       .automations(guildId)
       .then(setData)
-      .catch((e) => setError(e.code || "generic"));
+      .catch((e) => setError(e.code || 'generic'));
     api
       .channels(guildId)
       .then((d) => setChannels(d.channels))
@@ -192,15 +231,11 @@ export default function Automations({ t, guildId }) {
       .catch(() => {});
   }, [guildId]);
 
-  if (error)
-    return <Notice tone="error">{t("error.generic", { error })}</Notice>;
-  if (!data) return <Spinner label={t("app.loading")} />;
+  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (!data) return <Spinner label={t('app.loading')} />;
 
   const keys = Object.keys(data.schema);
-  const groups = GROUP_ORDER.map((g) => [
-    g,
-    keys.filter((k) => data.schema[k].group === g),
-  ]).filter(([, ks]) => ks.length);
+  const groups = GROUP_ORDER.map((g) => [g, keys.filter((k) => data.schema[k].group === g)]).filter(([, ks]) => ks.length);
   const choose = (key) => {
     setOpen(key);
     setDraft({ ...data.configs[key] });
@@ -218,9 +253,9 @@ export default function Automations({ t, guildId }) {
       const res = await api.saveAutomation(guildId, open, draft);
       setData({ ...data, configs: { ...data.configs, [open]: res.config } });
       setDraft({ ...res.config });
-      setStatus("ok");
+      setStatus('ok');
     } catch (e) {
-      setStatus(e.code || "generic");
+      setStatus(e.code || 'generic');
     } finally {
       setSaving(false);
     }
@@ -234,19 +269,15 @@ export default function Automations({ t, guildId }) {
       title={t(`auto.${open}.title`)}
       subtitle={t(`auto.group.${def.group}`)}
       onBack={close}
-      backLabel={t("auto.back")}
+      backLabel={t('auto.back')}
       onSave={save}
-      saveLabel={t("auto.save")}
+      saveLabel={t('auto.save')}
       saving={saving}
       footerNote={
         status && (
           <div className="mb-2" role="status">
-            <Notice tone={status === "ok" ? "ok" : "error"}>
-              {status === "ok"
-                ? t("auto.saved")
-                : KNOWN_ERRORS.includes(status)
-                  ? t(`auto.error.${status}`)
-                  : t("error.generic", { error: status })}
+            <Notice tone={status === 'ok' ? 'ok' : 'error'}>
+              {status === 'ok' ? t('auto.saved') : KNOWN_ERRORS.includes(status) ? t(`auto.error.${status}`) : t('error.generic', { error: status })}
             </Notice>
           </div>
         )
@@ -255,37 +286,23 @@ export default function Automations({ t, guildId }) {
       <p className="text-sm text-white/70">{t(`auto.${open}.desc`)}</p>
       {preview && (
         <div className="space-y-2">
-          <DiscordPreview label={t("auto.preview")} {...preview} />
-          {open === "animator" && (
-            <button
-              type="button"
-              onClick={() => setSample(sample + 1)}
-              className="flex min-h-[36px] items-center gap-2 rounded-lg px-2 text-xs font-semibold text-mystic-glow hover:bg-white/5"
-            >
+          <DiscordPreview label={t('auto.preview')} {...preview} />
+          {open === 'animator' && (
+            <button type="button" onClick={() => setSample(sample + 1)} className="flex min-h-[36px] items-center gap-2 rounded-lg px-2 text-xs font-semibold text-mystic-glow hover:bg-white/5">
               <RefreshCw size={14} aria-hidden="true" />
-              {t("auto.otherSample")}
+              {t('auto.otherSample')}
             </button>
           )}
         </div>
       )}
-      <SchemaForm
-        t={t}
-        schemaKey={open}
-        fields={def.fields}
-        value={draft}
-        onChange={setDraft}
-        channels={channels}
-        roles={roles}
-      />
-      {def.needs.length > 0 && (
-        <BotPermissions t={t} guildId={guildId} needs={def.needs} />
-      )}
+      <SchemaForm t={t} schemaKey={open} fields={def.fields} value={draft} onChange={setDraft} channels={channels} roles={roles} />
+      {def.needs.length > 0 && <BotPermissions t={t} guildId={guildId} needs={def.needs} />}
     </ConfigAside>
   );
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-white/70">{t("auto.intro")}</p>
+      <p className="text-sm text-white/70">{t('auto.intro')}</p>
       <HubLayout aside={aside}>
         {groups.map(([g, ks]) => (
           <HubGroup key={g} title={t(`auto.group.${g}`)}>
@@ -298,7 +315,7 @@ export default function Automations({ t, guildId }) {
                   title={t(`auto.${k}.title`)}
                   desc={t(`auto.${k}.desc`)}
                   on={on}
-                  statusLabel={on ? t("auto.on") : t("auto.off")}
+                  statusLabel={on ? t('auto.on') : t('auto.off')}
                   meta={metaFor(t, k, data.stats[k])}
                   active={open === k}
                   onClick={() => choose(k)}

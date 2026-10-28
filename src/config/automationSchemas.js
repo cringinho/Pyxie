@@ -218,4 +218,193 @@ module.exports = {
       { key: 'excludeChannelIds', type: 'channels', kind: 'voice', default: [], max: 10 },
     ],
   },
+
+  // ---------- Bem-estar e comunidade (lote 3) ----------
+  breakReminder: {
+    group: 'community',
+    icon: 'Coffee',
+    needs: [],
+    fields: [
+      { key: 'roleId', type: 'role', default: '' },
+      { key: 'minutes', type: 'number', min: 45, max: 300, default: 120 },
+      { key: 'messages', type: 'number', min: 20, max: 400, default: 80 },
+    ],
+  },
+  quietHours: {
+    group: 'community',
+    icon: 'Moon',
+    needs: [{ perm: 'ManageChannels', why: 'perm.why.quietHours' }],
+    fields: [
+      { key: 'channelIds', type: 'channels', default: [], max: 10 },
+      { key: 'hourStart', type: 'hour', default: 1 },
+      { key: 'hourEnd', type: 'hour', default: 6 },
+      { key: 'mode', type: 'select', options: ['slow', 'lock'], default: 'slow' },
+    ],
+  },
+  welcomeBuddy: {
+    group: 'community',
+    icon: 'HandHeart',
+    needs: [],
+    fields: [
+      { key: 'channelIds', type: 'channels', default: [], max: 5 },
+      { key: 'lines', type: 'lines', max: 20, maxLength: 300, default: [] },
+    ],
+  },
+  noOneUnanswered: {
+    group: 'community',
+    icon: 'MessageCircleHeart',
+    needs: [],
+    fields: [
+      { key: 'channelIds', type: 'channels', default: [], max: 10 },
+      { key: 'minutes', type: 'number', min: 10, max: 240, default: 30 },
+      { key: 'helperRoleId', type: 'role', default: '' },
+    ],
+  },
+  crisisCare: {
+    group: 'community',
+    icon: 'LifeBuoy',
+    needs: [],
+    fields: [
+      { key: 'alertStaff', type: 'toggle', default: true },
+      { key: 'exemptChannelIds', type: 'channels', default: [], max: 10 },
+    ],
+  },
+  memberMilestones: {
+    group: 'community',
+    icon: 'Trophy',
+    needs: [],
+    fields: [{ key: 'channelId', type: 'channel', default: '' }],
+  },
+  boostThanks: {
+    group: 'community',
+    icon: 'Gem',
+    needs: [],
+    fields: [
+      { key: 'channelId', type: 'channel', default: '' },
+      { key: 'text', type: 'text', maxLength: 300, default: '' },
+    ],
+  },
+  // ---------- Moderação leve (lote 3) ----------
+  ghostPing: {
+    group: 'moderation',
+    icon: 'Ghost',
+    needs: [],
+    fields: [{ key: 'seconds', type: 'number', min: 10, max: 600, default: 60 }],
+  },
+  voiceLog: {
+    group: 'moderation',
+    icon: 'AudioLines',
+    needs: [],
+    fields: [{ key: 'channelId', type: 'channel', default: '' }],
+  },
+  capsCalm: {
+    group: 'moderation',
+    icon: 'CaseUpper',
+    needs: [{ perm: 'ManageMessages', why: 'perm.why.deleteSpam' }],
+    fields: [
+      { key: 'minLength', type: 'number', min: 10, max: 200, default: 20 },
+      { key: 'percent', type: 'number', min: 60, max: 100, default: 75 },
+      { key: 'action', type: 'select', options: ['warn', 'delete'], default: 'warn' },
+    ],
+  },
+  mediaOnly: {
+    group: 'moderation',
+    icon: 'Images',
+    needs: [{ perm: 'ManageMessages', why: 'perm.why.deleteSpam' }],
+    fields: [
+      { key: 'channelIds', type: 'channels', default: [], max: 10 },
+      { key: 'allowLinks', type: 'toggle', default: true },
+    ],
+  },
+  selfPromoLimit: {
+    group: 'moderation',
+    icon: 'Timer',
+    needs: [{ perm: 'ManageMessages', why: 'perm.why.deleteSpam' }],
+    fields: [
+      { key: 'channelIds', type: 'channels', default: [], max: 10 },
+      { key: 'hours', type: 'number', min: 1, max: 168, default: 24 },
+    ],
+  },
+  spoilerGuard: {
+    group: 'moderation',
+    icon: 'EyeOff',
+    needs: [
+      { perm: 'ManageMessages', why: 'perm.why.cleanup' },
+      { perm: 'AttachFiles', why: 'perm.why.spoilerReupload' },
+    ],
+    fields: [{ key: 'channelIds', type: 'channels', default: [], max: 10 }],
+  },
+  inviteTracker: {
+    group: 'moderation',
+    icon: 'Route',
+    needs: [{ perm: 'ManageGuild', why: 'perm.why.invitesRead' }],
+    fields: [{ key: 'channelId', type: 'channel', default: '' }],
+  },
+  // ---------- Ferramentas (lote 3) ----------
+  tempVoice: {
+    group: 'utility',
+    icon: 'DoorOpen',
+    needs: [
+      { perm: 'ManageChannels', why: 'perm.why.tempVoice' },
+      { perm: 'MoveMembers', why: 'perm.why.moveMembers' },
+    ],
+    fields: [
+      { key: 'hubChannelId', type: 'channel', kind: 'voice', default: '' },
+      { key: 'nameTemplate', type: 'text', maxLength: 60, default: '' },
+      { key: 'userLimit', type: 'number', min: 0, max: 25, default: 0 },
+    ],
+  },
+  memberCounter: {
+    group: 'utility',
+    icon: 'Users',
+    needs: [{ perm: 'ManageChannels', why: 'perm.why.rename' }],
+    fields: [
+      { key: 'channelId', type: 'channel', kind: 'any', default: '' },
+      { key: 'template', type: 'text', maxLength: 60, default: '' },
+    ],
+  },
+  faqReplies: {
+    group: 'utility',
+    icon: 'MessageCircleQuestion',
+    needs: [],
+    fields: [
+      { key: 'pairs', type: 'lines', max: 30, maxLength: 400, default: [] },
+      { key: 'channelIds', type: 'channels', default: [], max: 15 },
+    ],
+  },
+  scheduledMessages: {
+    group: 'utility',
+    icon: 'CalendarClock',
+    needs: [],
+    fields: [
+      { key: 'channelId', type: 'channel', default: '' },
+      { key: 'weekdays', type: 'multi', options: ['0', '1', '2', '3', '4', '5', '6'], default: ['1'] },
+      { key: 'hour', type: 'hour', default: 10 },
+      { key: 'text', type: 'text', maxLength: 1500, default: '' },
+    ],
+  },
+  weeklyDigest: {
+    group: 'utility',
+    icon: 'ChartNoAxesColumn',
+    needs: [],
+    fields: [
+      { key: 'channelId', type: 'channel', default: '' },
+      { key: 'weekday', type: 'select', options: ['0', '1', '2', '3', '4', '5', '6'], default: '1' },
+    ],
+  },
+  pinArchive: {
+    group: 'utility',
+    icon: 'Archive',
+    needs: [{ perm: 'ManageMessages', why: 'perm.why.pins' }],
+    fields: [
+      { key: 'archiveChannelId', type: 'channel', default: '' },
+      { key: 'keep', type: 'number', min: 30, max: 49, default: 45 },
+    ],
+  },
+  bumpReminder: {
+    group: 'utility',
+    icon: 'AlarmClock',
+    needs: [],
+    fields: [{ key: 'roleId', type: 'role', default: '' }],
+  },
 };
