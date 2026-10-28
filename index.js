@@ -13,6 +13,7 @@ const {
   MessageFlags,
   Options,
   Events,
+  Partials,
 } = require('discord.js');
 const { acquireBotLock, releaseBotLock, getPrefix } = require('./src/utils/botUtils');
 const { getWelcomeChannel, normalizeChannelValue } = require('./src/services/database');
@@ -125,7 +126,11 @@ const client = new Client({
     GatewayIntentBits.GuildMessageReactions,
     // Fogueira de voz: só contagem de quem está em cada call (intent leve, não privilegiado).
     GatewayIntentBits.GuildVoiceStates,
+    // Automações: alarme de conta de moderação (eventos do registro de auditoria).
+    GatewayIntentBits.GuildModeration,
   ],
+  // Automações: mural de destaques e registro de moderação também em mensagens fora do cache.
+  partials: [Partials.Message, Partials.Reaction],
   // Otimização de memória e cache para execução em nuvem (Oracle Cloud / PM2)
   makeCache: Options.cacheWithLimits({
     MessageManager: 25, // Mantém apenas 25 mensagens recentes por canal

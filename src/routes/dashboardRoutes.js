@@ -396,6 +396,15 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     } catch (err) {
       return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
     }
+    // Filtros prontos do AutoMod: a regra nativa é criada/ajustada antes de salvar.
+    if (req.params.key === 'automodPresets') {
+      try {
+        await require('../services/automodPresets').sync(req.params.guildId, config, { discord: (method, route, body) => studioStore.discord(method, route, body, doFetch) });
+      } catch (err) {
+        const error = err.code === 'automod_exists' ? 'automod_exists' : err.status === 403 ? 'missing_permission' : 'automod_error';
+        return res.status(err.code === 'automod_exists' ? 409 : 502).json({ success: false, error });
+      }
+    }
     return res.json({ success: true, config: auto.saveConfig(req.params.guildId, req.params.key, config) });
   });
 

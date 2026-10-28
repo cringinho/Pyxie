@@ -426,6 +426,93 @@ const TRANSLATIONS = {
       "paused": "Animador pausado por 24 horas neste canal.",
       "voteClosed": "Essa votação já fechou."
     },
+    "autos": {
+      "footer": "Pyxie · Automações",
+      "newAccount": {
+        "title": "🐣 Conta nova entrou",
+        "body": "{user} entrou com uma conta criada há {age}.",
+        "quarantined": "Coloquei o cargo {role} até a staff conferir.",
+        "noRole": "Nenhum cargo de quarentena foi escolhido, então só estou avisando."
+      },
+      "impersonation": {
+        "title": "🎭 Nome parecido com a staff",
+        "body": "{user} está usando o nome **{name}**, muito parecido com {staff}.",
+        "hint": "Pode ser golpe. Confira antes que alguém caia."
+      },
+      "spam": {
+        "title": "📨 Mesma mensagem em vários canais",
+        "body": "{user} mandou a mesma mensagem em {count} canais em menos de 1 minuto. Apaguei todas.",
+        "timeout": "Castigo de {minutes} min aplicado.",
+        "dm": "💜 Oi. Sua conta mandou a mesma mensagem em vários canais de **{server}** muito rápido, e isso costuma ser conta invadida. Apaguei as mensagens.\n\nSe não foi você, troque a senha do Discord e ligue a verificação em duas etapas."
+      },
+      "mentions": {
+        "title": "📣 Muitas menções",
+        "body": "{user} marcou {count} pessoas numa mensagem em {channel}. Apaguei a mensagem."
+      },
+      "invite": {
+        "notice": "🔗 {user}, convites de outros servidores não são permitidos aqui."
+      },
+      "canary": {
+        "title": "🚨 Moderação fora do normal",
+        "body": "{user} fez {count} ações de moderação (banir, expulsar ou castigar) em {minutes} min.",
+        "stripped": "Tirei os cargos de moderação dessa pessoa até a staff conferir.",
+        "alertOnly": "Se não era esperado, a conta pode ter sido invadida.",
+        "strip": "Tirar cargos de moderação",
+        "stripDone": "Cargos de moderação tirados de {user}.",
+        "adminOnly": "Só quem tem Administrador pode fazer isso."
+      },
+      "modLog": {
+        "delete": "🗑️ Mensagem apagada",
+        "edit": "✏️ Mensagem editada",
+        "join": "📥 Entrou no servidor",
+        "leave": "📤 Saiu do servidor",
+        "nick": "🏷️ Apelido mudou",
+        "roles": "🎭 Cargos mudaram",
+        "who": "**Quem:** {user}",
+        "where": "**Onde:** {channel}",
+        "before": "**Antes:**",
+        "after": "**Depois:**",
+        "added": "**Ganhou:** {roles}",
+        "removed": "**Perdeu:** {roles}",
+        "created": "**Conta criada:** {when}",
+        "uncached": "*conteúdo fora do cache*",
+        "jump": "Ir para a mensagem"
+      },
+      "slowmode": {
+        "notice": "-# 🐢 Conversa rápida! Modo lento de {seconds}s por alguns minutos."
+      },
+      "contrast": {
+        "title": "🎨 Cargo difícil de ler",
+        "body": "O cargo {role} usa `#{hex}`, com contraste `{ratio}:1` no tema escuro (o mínimo escolhido é `{min}:1`).",
+        "suggest": "Sugestão: `#{hex}`, com contraste `{ratio}:1`.",
+        "apply": "Aplicar sugestão",
+        "applied": "Cor do cargo trocada para `#{hex}`.",
+        "staffOnly": "Só quem pode Gerenciar Cargos aplica a sugestão."
+      },
+      "starboard": {
+        "jump": "Ir para a mensagem"
+      },
+      "thread": {
+        "name": "Conversa de {user}"
+      },
+      "sticky": {
+        "label": "📌 Mensagem fixa"
+      },
+      "linkFixer": {
+        "label": "Prévia"
+      },
+      "longPaste": {
+        "notice": "📄 {user}, sua mensagem era longa ({lines} linhas), então virou arquivo para não empurrar o chat."
+      },
+      "status": {
+        "title": "🛰️ Instabilidade no Discord",
+        "body": "O Discord está com um problema agora: **{name}** (`{status}`).",
+        "hint": "Se algo falhar por aqui, não é o servidor.",
+        "follow": "Acompanhar",
+        "resolvedTitle": "✅ Discord normalizado",
+        "resolved": "O problema no Discord foi resolvido: **{name}**."
+      }
+    },
     "linkShield": {
       "brandUnknown": "um site conhecido",
       "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
@@ -2888,6 +2975,93 @@ const TRANSLATIONS = {
       "pauseStaff": "Only staff (Manage Messages) can pause the animator.",
       "paused": "Animator paused for 24 hours in this channel.",
       "voteClosed": "This vote is already closed."
+    },
+    "autos": {
+      "footer": "Pyxie · Automations",
+      "newAccount": {
+        "title": "🐣 New account joined",
+        "body": "{user} joined with an account created {age} ago.",
+        "quarantined": "I gave them {role} until staff checks.",
+        "noRole": "No quarantine role was chosen, so I'm only letting you know."
+      },
+      "impersonation": {
+        "title": "🎭 Name looks like staff",
+        "body": "{user} is using the name **{name}**, very close to {staff}.",
+        "hint": "It may be a scam. Check before anyone falls for it."
+      },
+      "spam": {
+        "title": "📨 Same message in many channels",
+        "body": "{user} sent the same message in {count} channels in under 1 minute. I deleted them all.",
+        "timeout": "{minutes} min timeout applied.",
+        "dm": "💜 Hi. Your account sent the same message in several channels of **{server}** very quickly, which usually means a hacked account. I deleted the messages.\n\nIf it wasn't you, change your Discord password and turn on two-factor authentication."
+      },
+      "mentions": {
+        "title": "📣 Too many mentions",
+        "body": "{user} mentioned {count} people in one message in {channel}. I deleted the message."
+      },
+      "invite": {
+        "notice": "🔗 {user}, invites to other servers aren't allowed here."
+      },
+      "canary": {
+        "title": "🚨 Unusual moderation",
+        "body": "{user} did {count} moderation actions (ban, kick or timeout) in {minutes} min.",
+        "stripped": "I removed this person's moderation roles until staff checks.",
+        "alertOnly": "If this wasn't expected, the account may have been hacked.",
+        "strip": "Remove moderation roles",
+        "stripDone": "Moderation roles removed from {user}.",
+        "adminOnly": "Only someone with Administrator can do this."
+      },
+      "modLog": {
+        "delete": "🗑️ Message deleted",
+        "edit": "✏️ Message edited",
+        "join": "📥 Joined the server",
+        "leave": "📤 Left the server",
+        "nick": "🏷️ Nickname changed",
+        "roles": "🎭 Roles changed",
+        "who": "**Who:** {user}",
+        "where": "**Where:** {channel}",
+        "before": "**Before:**",
+        "after": "**After:**",
+        "added": "**Gained:** {roles}",
+        "removed": "**Lost:** {roles}",
+        "created": "**Account created:** {when}",
+        "uncached": "*content not in cache*",
+        "jump": "Jump to message"
+      },
+      "slowmode": {
+        "notice": "-# 🐢 Fast chat! {seconds}s slow mode for a few minutes."
+      },
+      "contrast": {
+        "title": "🎨 Hard-to-read role",
+        "body": "The role {role} uses `#{hex}`, with `{ratio}:1` contrast on the dark theme (the chosen minimum is `{min}:1`).",
+        "suggest": "Suggestion: `#{hex}`, with `{ratio}:1` contrast.",
+        "apply": "Apply suggestion",
+        "applied": "Role color changed to `#{hex}`.",
+        "staffOnly": "Only someone who can Manage Roles can apply it."
+      },
+      "starboard": {
+        "jump": "Jump to message"
+      },
+      "thread": {
+        "name": "{user}'s conversation"
+      },
+      "sticky": {
+        "label": "📌 Sticky message"
+      },
+      "linkFixer": {
+        "label": "Preview"
+      },
+      "longPaste": {
+        "notice": "📄 {user}, your message was long ({lines} lines), so it became a file to keep the chat readable."
+      },
+      "status": {
+        "title": "🛰️ Discord is having issues",
+        "body": "Discord has a problem right now: **{name}** (`{status}`).",
+        "hint": "If something fails here, it isn't the server.",
+        "follow": "Follow updates",
+        "resolvedTitle": "✅ Discord is back to normal",
+        "resolved": "The Discord problem was resolved: **{name}**."
+      }
     },
     "linkShield": {
       "brandUnknown": "a well-known site",

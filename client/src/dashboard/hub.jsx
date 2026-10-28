@@ -186,6 +186,7 @@ export function SchemaForm({ t, schemaKey, fields, value, onChange, channels = [
   const set = (k, v) => onChange({ ...value, [k]: v });
   const label = (f) => t(`auto.${schemaKey}.${f.key}`);
   const text = channels.filter((c) => [0, 5, 15].includes(c.type)).map((c) => ({ id: c.id, label: `# ${c.name}` }));
+  const voice = channels.filter((c) => [2, 13].includes(c.type)).map((c) => ({ id: c.id, label: `🔊 ${c.name}` }));
   const roleOpts = roles.filter((r) => !r.managed && r.name !== '@everyone').map((r) => ({ id: r.id, label: r.name }));
   return (
     <div className="space-y-4">
@@ -246,7 +247,7 @@ export function SchemaForm({ t, schemaKey, fields, value, onChange, channels = [
           return (
             <fieldset key={f.key}>
               <legend className="mb-1 text-xs font-semibold text-white/70">{label(f)}</legend>
-              <MultiSelect options={f.type === 'channels' ? text : roleOpts} value={v} onChange={(x) => set(f.key, x)} emptyLabel={t('auto.none')} />
+              <MultiSelect options={f.type === 'roles' ? roleOpts : f.kind === 'voice' ? voice : text} value={v} onChange={(x) => set(f.key, x)} emptyLabel={t('auto.none')} />
             </fieldset>
           );
         }
