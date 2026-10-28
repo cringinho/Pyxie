@@ -14,6 +14,8 @@ const { getGuildConfig, getWelcomeConfig, assignDedicatedChannel, updateGuildCon
 const guildFeatures = require('../services/guildFeatures');
 const { getLanguage, setGuildLanguage, t } = require('../utils/i18n');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
+const { OWNER_SNOWFLAKE } = require('../services/adminAuth');
+const { getPublicUrl } = require('../services/discordOAuth');
 
 /**
  * Central da Pyxie (/py-setup): um painel só para quem administra o servidor, no lugar do
@@ -92,7 +94,7 @@ function baseEmbed(title, lang) {
 // Seções
 // ---------------------------------------------------------------------------------------------
 
-function buildOverview(guild, lang, now = Date.now()) {
+function buildOverview(guild, lang, now = Date.now(), viewerId = null) {
   const guildId = guild?.id;
   const features = guildFeatures.getGuildFeatures(guildId);
   const on = t('setup.modules.on', lang);
@@ -125,9 +127,28 @@ function buildOverview(guild, lang, now = Date.now()) {
 
   const quick = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId('setup:go:channels').setLabel(t('setup.sections.channels.label', lang)).setEmoji(SECTION_EMOJI.channels).setStyle(ButtonStyle.Secondary),
-    new ButtonBuilder().setCustomId('setup:go:overview').setLabel(t('setup.refresh', lang)).setEmoji('🔄').setStyle(ButtonStyle.Secondary)
+    new ButtonBuilder().setCustomId('setup:go:overview').setLabel(t('setup.refresh', lang)).setEmoji('🔄').setStyle(ButtonStyle.Secondary),
+    new ButtonBuilder().setURL(panelUrl(guildId)).setLabel(t('setup.openPanel', lang)).setEmoji('🖥️').setStyle(ButtonStyle.Link)
   );
+  if (viewerId === OWNER_SNOWFLAKE) {
+    quick.addComponents(new ButtonBuilder().setCustomId('setup:go:owner').setLabel(t('setup.ownerArea', lang)).setEmoji('👑').setStyle(ButtonStyle.Primary));
+  }
   return { embeds: [embed], components: [navRow('overview', lang), quick] };
+}
+
+function panelUrl(guildId) {
+  return `${getPublicUrl()}/dashboard${guildId ? `#/guild/${guildId}/overview` : ''}`;
+}
+
+// Área do dono da Pyxie (era o /py-admin): painel global, módulos e restrições sazonais.
+function buildOwnerSection(viewerId, source, lang) {
+  const view = require('./admin').buildAdminView(viewerId, source);
+  if (viewerId !== OWNER_SNOWFLAKE) return view;
+  const extra = new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setURL(`${getPublicUrl()}/dashboard#/global/health`).setLabel(t('setup.ownerPanel', lang)).setEmoji('🖥️').setStyle(ButtonStyle.Link),
+    new ButtonBuilder().setCustomId('setup:go:overview').setLabel(t('setup.back', lang)).setEmoji('↩️').setStyle(ButtonStyle.Secondary)
+  );
+  return { embeds: view.embeds, components: [...view.components, extra] };
 }
 
 function buildChannelsSection(guild, lang) {
@@ -227,6 +248,8 @@ function buildLanguageSection(guild, lang) {
   return { embeds: [embed], components: [navRow('language', lang), row] };
 }
 
+const viewerOf = (source) => source?.user?.id || source?.author?.id || null;
+
 function buildSetupView(guild, section = 'overview', source = null, { notice = null, now = Date.now() } = {}) {
   const lang = langOf(source, guild?.id);
   let view;
@@ -234,7 +257,8 @@ function buildSetupView(guild, section = 'overview', source = null, { notice = n
   else if (section === 'modules') view = buildModulesSection(guild, lang);
   else if (DEDICATED[section]) view = buildDedicatedSection(guild, section, lang);
   else if (section === 'language') view = buildLanguageSection(guild, lang);
-  else view = buildOverview(guild, lang, now);
+  else if (section === 'owner') view = buildOwnerSection(viewerOf(source), source, lang);
+  else view = buildOverview(guild, lang, now, viewerOf(source));
   return { content: notice || '', ...view, allowedMentions: { parse: [] } };
 }
 
@@ -291,6 +315,7 @@ async function denyInteractionIfBlocked(interaction, commandName) {
 // ---------------------------------------------------------------------------------------------
 
 module.exports = {
+  buildOwnerSection,
   name,
   aliases,
   category: 'utilidades',
@@ -370,7 +395,7 @@ module.exports = {
       return message.reply(t('setup.language.changed', selected));
     }
 
-    const aliasesBySection = { mmo: 'mmo', canais: 'channels', channels: 'channels', modulos: 'modules', modules: 'modules', tarot: 'tarot', tickets: 'tickets', desabafos: 'vent', vent: 'vent' };
+    const aliasesBySection = { dono: 'owner', owner: 'owner', admin: 'owner', mmo: 'mmo', canais: 'channels', channels: 'channels', modulos: 'modules', modules: 'modules', tarot: 'tarot', tickets: 'tickets', desabafos: 'vent', vent: 'vent' };
     return message.reply(buildSetupView(message.guild, aliasesBySection[sub] || 'overview', message));
   },
 
@@ -401,7 +426,7 @@ module.exports = {
     if (prefix === 'setup_refresh') return show('overview');
 
     if (action === 'nav') return show(SECTIONS.includes(interaction.values?.[0]) ? interaction.values[0] : 'overview');
-    if (action === 'go') return show(SECTIONS.includes(arg) ? arg : 'overview');
+    if (action === 'go') return show(SECTIONS.includes(arg) || (arg === 'owner' && interaction.user.id === OWNER_SNOWFLAKE) ? arg : 'overview');
 
     if (action === 'chan' && (arg === 'mmo' || arg === 'games')) {
       guildFeatures.setGroupChannels(guildId, arg, interaction.values || []);

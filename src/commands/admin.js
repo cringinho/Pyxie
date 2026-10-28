@@ -3,7 +3,6 @@ const {
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
-  SlashCommandBuilder,
 } = require('discord.js');
 const { ADMIN } = require('./commandNames');
 const { OWNER_SNOWFLAKE, createOwnerMagicToken } = require('../services/adminAuth');
@@ -199,29 +198,8 @@ module.exports = {
   buildAdminView,
   buildModulesView,
   buildSeasonalRestrictionsView,
-  data: new SlashCommandBuilder()
-    .setName(ADMIN)
-    .setDescription('Access Pyxie\'s secure owner administration dashboard.')
-    .setDescriptionLocalizations({
-      'pt-BR': 'Acesse o painel seguro de administração exclusivo do criador da Pyxie.',
-    })
-    .addStringOption((opt) =>
-      opt
-        .setName('menu')
-        .setNameLocalizations({
-          'pt-BR': 'menu',
-        })
-        .setDescription('Select administrative management menu.')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Selecione o menu de gerenciamento administrativo.',
-        })
-        .setRequired(false)
-        .addChoices(
-          { name: 'Dashboard', value: 'dashboard' },
-          { name: 'Modules & Plugins', value: 'modules' },
-          { name: 'Seasonal Restrictions', value: 'seasonal' }
-        )
-    ),
+  // Desde a central única, o /py-admin não é mais slash: py!admin abre a Área do dono no /py-setup.
+  data: undefined,
   async executePrefix({ message, args }) {
     if (args && (args[0] === 'modulos' || args[0] === 'modules')) {
       const view = buildModulesView(message.author.id, message);
@@ -233,8 +211,8 @@ module.exports = {
       await message.reply(view);
       return;
     }
-    const view = buildAdminView(message.author.id, message);
-    await message.reply(view);
+    const { buildOwnerSection } = require('./setup');
+    await message.reply(buildOwnerSection(message.author.id, message, getLanguage(message)));
   },
   async executeSlash({ interaction }) {
     const menu = interaction.options?.getString ? interaction.options.getString('menu') : null;

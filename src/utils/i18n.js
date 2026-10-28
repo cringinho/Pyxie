@@ -1359,6 +1359,10 @@ const TRANSLATIONS = {
       "gamesSuccess": "✅ Canal de jogos definido para <#{channel}>! A partir de agora os duelos de quiz só podem ser iniciados lá."
     },
     "setup": {
+      "openPanel": "Abrir painel",
+      "ownerArea": "Área do dono",
+      "ownerPanel": "Painel global",
+      "back": "Voltar",
       "footer": "Pyxie • Central do servidor",
       "notSet": "não configurado",
       "refresh": "Atualizar",
@@ -3691,6 +3695,10 @@ const TRANSLATIONS = {
       "gamesSuccess": "✅ Games channel set to <#{channel}>! From now on quiz duels can only be started there."
     },
     "setup": {
+      "openPanel": "Open dashboard",
+      "ownerArea": "Owner area",
+      "ownerPanel": "Global dashboard",
+      "back": "Back",
       "footer": "Pyxie • Server hub",
       "notSet": "not set",
       "refresh": "Refresh",
