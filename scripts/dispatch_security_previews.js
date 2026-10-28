@@ -29,6 +29,8 @@ async function main() {
   await send('Registro da staff', alerts.linkStaffLog(lang, { serverName: 'Cringelândia', userId: USER, channelId: '1453890869538197567', hit, deleted: true }));
   await send('Cargo: alerta', alerts.roleAlert(lang, { ...base, roleId: '1453890868980482091', roleName: 'Moderação', names: ['Administrator', 'BanMembers'], executorId: USER, reverted: false, viaDm: false }));
   await send('Cargo: desfeito sozinho', alerts.roleAlert(lang, { ...base, roleId: '1453890868980482091', roleName: 'Moderação', names: ['Administrator'], executorId: USER, reverted: true, viaDm: false }));
+  await send('Anti-raid: pausado', alerts.raidAlert(lang, { ...base, total: 14, young: 11, seconds: 30, paused: true, until: Date.now() + 3600000, viaDm: false }));
+  await send('Anti-raid: sem permissão', alerts.raidAlert(lang, { ...base, total: 14, young: 11, seconds: 30, paused: false, until: 0, viaDm: false }));
   await send('Canal: alerta por DM', alerts.channelAlert(lang, { ...base, channelId: '1453890869538197567', categoryName: 'Staff', executorId: null, locked: false, viaDm: true }));
 }
 

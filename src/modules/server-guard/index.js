@@ -25,16 +25,6 @@ async function findExecutor(guild, types, targetId) {
   return null;
 }
 
-// Canal de alertas da staff; sem ele, DM para o dono do servidor.
-async function resolveDestination(guild, config) {
-  if (config.staffLogChannelId) {
-    const channel = guild.channels.cache.get(config.staffLogChannelId) || (await guild.channels.fetch(config.staffLogChannelId).catch(() => null));
-    if (channel?.isTextBased?.()) return { target: channel, viaDm: false };
-  }
-  const owner = await guild.fetchOwner().catch(() => null);
-  return owner ? { target: owner, viaDm: true } : null;
-}
-
 function panelUrl(guildId) {
   return `${getPublicUrl()}/dashboard#/guild/${guildId}/security`;
 }
@@ -55,7 +45,7 @@ async function onRoleChange(oldRole, role, client) {
     reverted = await role.setPermissions(next, 'Pyxie: permissão perigosa dada sem o dono').then(() => true).catch(() => false);
   }
 
-  const dest = await resolveDestination(guild, config);
+  const dest = await alerts.resolveDestination(guild, config);
   if (dest) {
     const payload = alerts.roleAlert(guild, { guildId: guild.id, serverName: guild.name, roleId: role.id, roleName: role.name, names, executorId, reverted, viaDm: dest.viaDm, panelUrl: panelUrl(guild.id) });
     await dest.target.send(payload).catch(() => null);
@@ -94,7 +84,7 @@ async function onChannelChange(oldChannel, channel, client) {
       .catch(() => false);
   }
 
-  const dest = await resolveDestination(guild, config);
+  const dest = await alerts.resolveDestination(guild, config);
   if (dest) {
     const payload = alerts.channelAlert(guild, { guildId: guild.id, serverName: guild.name, channelId: channel.id, categoryName: channel.parent.name, executorId, locked, viaDm: dest.viaDm, panelUrl: panelUrl(guild.id) });
     await dest.target.send(payload).catch(() => null);

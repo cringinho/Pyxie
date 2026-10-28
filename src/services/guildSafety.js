@@ -38,13 +38,18 @@ function defaultConfig() {
     staffLogChannelId: '',
     linkShield: { enabled: true, action: 'delete', allowDomains: [] },
     guard: { enabled: true, mode: 'alert' },
+    antiRaid: { enabled: true, joins: 10, seconds: 30, pauseMinutes: 60 },
   };
 }
+
+const PAUSE_OPTIONS = [30, 60, 120, 360, 1440];
+const clamp = (n, min, max, fallback) => (Number.isFinite(Number(n)) ? Math.min(max, Math.max(min, Math.round(Number(n)))) : fallback);
 
 function normalizeConfig(raw = {}) {
   const base = defaultConfig();
   const link = { ...base.linkShield, ...(raw.linkShield || {}) };
   const guard = { ...base.guard, ...(raw.guard || {}) };
+  const raid = { ...base.antiRaid, ...(raw.antiRaid || {}) };
   return {
     staffLogChannelId: ID_RE.test(String(raw.staffLogChannelId || '')) ? String(raw.staffLogChannelId) : '',
     linkShield: {
@@ -55,6 +60,12 @@ function normalizeConfig(raw = {}) {
     guard: {
       enabled: guard.enabled !== false,
       mode: guard.mode === 'auto' ? 'auto' : 'alert',
+    },
+    antiRaid: {
+      enabled: raid.enabled !== false,
+      joins: clamp(raid.joins, 3, 100, 10),
+      seconds: clamp(raid.seconds, 10, 120, 30),
+      pauseMinutes: PAUSE_OPTIONS.includes(Number(raid.pauseMinutes)) ? Number(raid.pauseMinutes) : 60,
     },
   };
 }
@@ -76,6 +87,7 @@ function saveConfig(guildId, input = {}) {
     ...input,
     linkShield: { ...current.linkShield, ...(input.linkShield || {}) },
     guard: { ...current.guard, ...(input.guard || {}) },
+    antiRaid: { ...current.antiRaid, ...(input.antiRaid || {}) },
   });
   writeAtomic(fileFor(guildId, 'security.json'), next);
   cache.set(guildId, { at: Date.now(), config: next });
@@ -85,7 +97,7 @@ function saveConfig(guildId, input = {}) {
 function readEvents(guildId) {
   const raw = readJson(fileFor(guildId, 'securityEvents.json')) || {};
   return {
-    counters: { link: 0, role: 0, channel: 0, ...(raw.counters || {}) },
+    counters: { link: 0, role: 0, channel: 0, raid: 0, ...(raw.counters || {}) },
     events: Array.isArray(raw.events) ? raw.events : [],
   };
 }
@@ -103,4 +115,4 @@ function resetCache() {
   cache.clear();
 }
 
-module.exports = { getConfig, saveConfig, normalizeConfig, readEvents, recordEvent, resetCache, defaultConfig };
+module.exports = { PAUSE_OPTIONS, getConfig, saveConfig, normalizeConfig, readEvents, recordEvent, resetCache, defaultConfig };

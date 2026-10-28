@@ -332,6 +332,16 @@ const TRANSLATIONS = {
     "securityAlerts": {
       "footer": "Pyxie · {server}"
     },
+    "antiRaid": {
+      "title": "🚨 Entrada em massa",
+      "what": "{total} contas entraram em {seconds} ({young} com menos de 7 dias de conta).",
+      "paused": "Pausei convites e DMs entre membros até {until}. Quando acabar, volta tudo sozinho. Membros que já estão aqui continuam conversando normalmente.",
+      "failed": "Não consegui pausar convites e DMs: a Pyxie precisa de Gerenciar Servidor. Dá para pausar à mão no menu do servidor, em Ações de segurança.",
+      "btnEnd": "Encerrar pausa agora",
+      "ended": "🔓 Pausa encerrada por {user}.",
+      "noPermission": "Só quem é dono do servidor ou tem Gerenciar Servidor pode encerrar a pausa.",
+      "endFailed": "Não consegui encerrar a pausa. Dá para encerrar à mão no menu do servidor, em Ações de segurança."
+    },
     "linkShield": {
       "brandUnknown": "um site conhecido",
       "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
@@ -2653,6 +2663,16 @@ const TRANSLATIONS = {
     },
     "securityAlerts": {
       "footer": "Pyxie · {server}"
+    },
+    "antiRaid": {
+      "title": "🚨 Mass join",
+      "what": "{total} accounts joined in {seconds} ({young} of them less than 7 days old).",
+      "paused": "I paused invites and DMs between members until {until}. When it ends, everything goes back on its own. Members already here keep chatting normally.",
+      "failed": "I couldn't pause invites and DMs: Pyxie needs Manage Server. You can pause them by hand from the server menu, under Security Actions.",
+      "btnEnd": "End the pause now",
+      "ended": "🔓 Pause ended by {user}.",
+      "noPermission": "Only the server owner or someone with Manage Server can end the pause.",
+      "endFailed": "I couldn't end the pause. You can end it by hand from the server menu, under Security Actions."
     },
     "linkShield": {
       "brandUnknown": "a well-known site",

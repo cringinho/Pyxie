@@ -14,6 +14,8 @@ const guard = require('../src/services/serverGuard');
 const alerts = require('../src/services/securityAlerts');
 const linkShield = require('../src/modules/link-shield');
 const serverGuard = require('../src/modules/server-guard');
+const antiRaid = require('../src/modules/anti-raid');
+const raid = require('../src/services/raidWatch');
 const { TRANSLATIONS } = require('../src/utils/i18n');
 
 const G = '1453890868980482090';
@@ -211,7 +213,7 @@ const CHANNEL = '555555555555555555';
 
     // 7. Textos: mesmas chaves e marcadores em pt e en; todo motivo tem texto.
     const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (typeof v === 'object' ? flat(v, `${p}${k}.`) : [[`${p}${k}`, v]]));
-    for (const ns of ['linkShield', 'serverGuard', 'securityAlerts']) {
+    for (const ns of ['linkShield', 'serverGuard', 'securityAlerts', 'antiRaid']) {
       const pt = Object.fromEntries(flat(TRANSLATIONS.pt[ns]));
       const en = Object.fromEntries(flat(TRANSLATIONS.en[ns]));
       assert.deepEqual(Object.keys(en).sort(), Object.keys(pt).sort(), `${ns}: mesmas chaves`);
@@ -226,6 +228,53 @@ const CHANNEL = '555555555555555555';
     assert.match(chAlert.embeds[0].data.description, /\[dashboard\]\(https:\/\/pyxie\.test\/dashboard\)/, 'Link mascarado para o painel na DM');
     assert(!/━|═/.test(JSON.stringify(chAlert)), 'Sem divisores ASCII');
     console.log('  ✅ 7. Textos bilíngues e embeds no padrão.');
+
+    // 8. Anti-raid: limite, contas novas, piso em servidor grande, pausa nativa e botão.
+    raid.resetMemory();
+    const T0 = 1_000_000_000_000;
+    const old = T0 - 400 * 24 * 3600 * 1000;
+    let r8;
+    for (let i = 0; i < 9; i++) r8 = raid.trackJoin('g1', { now: T0 + i * 1000, accountCreatedAt: old, joins: 10, seconds: 30 });
+    assert.equal(r8.triggered, false, '9 contas antigas em 30 s não disparam');
+    assert.equal(raid.trackJoin('g1', { now: T0 + 9000, accountCreatedAt: old, joins: 10, seconds: 30 }).triggered, true, 'A 10ª dispara');
+    for (let i = 0; i < 5; i++) r8 = raid.trackJoin('g2', { now: T0 + i, accountCreatedAt: T0, joins: 10, seconds: 30 });
+    assert.equal(r8.triggered, true, 'Metade do limite só de contas novas dispara');
+    for (let i = 0; i < 20; i++) r8 = raid.trackJoin('g3', { now: T0 + i * 100, accountCreatedAt: old, joins: 10, seconds: 30, memberCount: 100000 });
+    assert.equal(r8.triggered, false, 'Servidor de 100 mil membros precisa de 50');
+    for (let i = 0; i < 10; i++) raid.trackJoin('g4', { now: T0 + i * 5000, accountCreatedAt: old, joins: 10, seconds: 30 });
+    assert.equal(raid.trackJoin('g4', { now: T0 + 50000, accountCreatedAt: old, joins: 10, seconds: 30 }).triggered, false, 'Entradas espaçadas não disparam');
+
+    raid.resetMemory();
+    out.staff.length = 0;
+    const puts = [];
+    const rclient = { user: client.user, rest: { put: async (route, opts) => puts.push({ route, body: opts.body }) } };
+    const rguild = { ...guild, memberCount: 50 };
+    const joiner = () => ({ guild: rguild, user: { createdTimestamp: T0 } });
+    let res8 = null;
+    for (let i = 0; i < 5; i++) res8 = (await antiRaid.onMemberAdd(joiner(), rclient, T0 + i)) || res8;
+    assert.equal(res8.paused, true);
+    assert.equal(puts[0].route, `/guilds/${G}/incident-actions`);
+    assert.equal(puts[0].body.invites_disabled_until, new Date(T0 + 4 + 60 * 60000).toISOString(), 'Pausa de 60 min por padrão');
+    assert.equal(puts[0].body.dms_disabled_until, puts[0].body.invites_disabled_until);
+    assert.equal(await antiRaid.onMemberAdd(joiner(), rclient, T0 + 10), null, 'Durante a pausa não dispara de novo');
+    assert.equal(out.staff.length, 1, 'Um alerta por ataque');
+    assert.equal(out.staff[0].components[0].components[0].data.custom_id, `ar:end:${G}`);
+    assert.equal(safety.readEvents(G).counters.raid, 1);
+
+    const rreplies = [];
+    const rupdates = [];
+    const g8 = { ...rguild, members: { fetch: async (id) => ({ permissions: { has: (f) => id === '333333333333333333' && f === PermissionFlagsBits.ManageGuild } }) } };
+    const rbclient = { ...rclient, guilds: { cache: new Map([[G, g8]]) } };
+    const end = (userId) => ({ isButton: () => true, customId: `ar:end:${G}`, user: { id: userId }, reply: async (p) => rreplies.push(p), update: async (p) => rupdates.push(p) });
+    await antiRaid.handleInteraction(end('444444444444444444'), rbclient);
+    assert.equal(rreplies.length, 1, 'Sem Gerenciar Servidor: recusa');
+    await antiRaid.handleInteraction(end('333333333333333333'), rbclient);
+    assert.equal(puts.at(-1).body.invites_disabled_until, null, 'Encerrar zera a pausa');
+    assert.deepEqual(rupdates[0].components, []);
+    safety.saveConfig(G, { antiRaid: { enabled: false } });
+    raid.resetMemory();
+    for (let i = 0; i < 20; i++) assert.equal(await antiRaid.onMemberAdd(joiner(), rclient, T0 + i), null);
+    console.log('  ✅ 8. Anti-raid: limite, contas novas, servidor grande, pausa com prazo e botão.');
 
     console.log('🎉 Escudo de links e guardião do servidor validados!');
   } finally {

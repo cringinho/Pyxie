@@ -114,6 +114,8 @@ console.log('✅ Formatação de metadados para painel administrativo validada.'
   const scope = moduleManager.activeScopes.get('seasonal');
   assert(scope, 'Escopo ativo de seasonal deve existir');
 
+  // Outros módulos (ex.: anti-raid) também escutam guildMemberAdd: conta só o que é do seasonal.
+  const otherMemberAddListeners = mockClient.listenerCount('guildMemberAdd');
   let dummyEventFired = false;
   const dummyHandler = () => { dummyEventFired = true; };
   mockClient.on('guildMemberAdd', dummyHandler);
@@ -133,7 +135,7 @@ console.log('✅ Formatação de metadados para painel administrativo validada.'
   assert.equal(mockCommandsByName.has('infoevento'), false, 'Comando infoevento DEVE ser removido de commandsByName');
   assert.equal(mockCommandsByName.has('py-infoevento'), false, 'Alias py-infoevento DEVE ser removido de commandsByName');
   assert.equal(mockCommandsByName.has('evento'), false, 'Alias evento DEVE ser removido de commandsByName');
-  assert.equal(mockClient.listenerCount('guildMemberAdd'), 0, 'Listeners registrados pelo módulo DEVEM ser desvinculados do Client');
+  assert.equal(mockClient.listenerCount('guildMemberAdd'), otherMemberAddListeners, 'Listeners registrados pelo módulo DEVEM ser desvinculados do Client');
 
   const postDisableHelp = getHelpModules(null, 'pt');
   const postEconomia = postDisableHelp.find((m) => m.id === 'economia');

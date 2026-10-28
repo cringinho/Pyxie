@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link2Off, ShieldCheck, ShieldHalf, KeyRound, Hash } from 'lucide-react';
+import { Link2Off, ShieldCheck, ShieldHalf, KeyRound, Hash, Siren } from 'lucide-react';
 import { api } from './api';
 import BotPermissions from './Permissions';
 import { Button, Card, Notice, Spinner, StatTile, Toggle } from './ui';
@@ -20,6 +20,7 @@ function eventText(t, e) {
     const host = e.unicodeHost && e.unicodeHost !== e.host ? `${e.unicodeHost} (${e.host})` : e.host;
     return t('sec.event.link', { host, brand: e.imitates || t('sec.unknownBrand') });
   }
+  if (e.type === 'raid') return t('sec.event.raid', { joins: e.joins, young: e.young });
   if (e.type === 'role') return t('sec.event.role', { role: e.roleName, perms: (e.perms || []).map((p) => t(`sec.perm.${p}`)).join(', ') });
   return t('sec.event.channel', { channel: e.channelName });
 }
@@ -48,6 +49,7 @@ export default function Security({ t, guildId }) {
   if (!data || !draft) return <Spinner label={t('app.loading')} />;
 
   const setLink = (patch) => setDraft({ ...draft, linkShield: { ...draft.linkShield, ...patch } });
+  const setRaid = (patch) => setDraft({ ...draft, antiRaid: { ...draft.antiRaid, ...patch } });
   const setGuard = (patch) => setDraft({ ...draft, guard: { ...draft.guard, ...patch } });
 
   const save = async () => {
@@ -58,6 +60,7 @@ export default function Security({ t, guildId }) {
         staffLogChannelId: draft.staffLogChannelId,
         linkShield: { ...draft.linkShield, allowDomains: draft.allowText.split(/[\s,]+/).filter(Boolean) },
         guard: draft.guard,
+        antiRaid: draft.antiRaid,
       });
       setDraft({ ...res.security, allowText: res.security.linkShield.allowDomains.join('\n') });
       setStatus('ok');
@@ -70,10 +73,11 @@ export default function Security({ t, guildId }) {
   const { counters, events } = data;
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <StatTile icon={Link2Off} label={t('sec.statLinks')} value={counters.link} />
         <StatTile icon={KeyRound} accent="violet" label={t('sec.statRoles')} value={counters.role} />
         <StatTile icon={Hash} accent="cyan" label={t('sec.statChannels')} value={counters.channel} />
+        <StatTile icon={Siren} accent="green" label={t('sec.statRaids')} value={counters.raid || 0} />
       </div>
 
       <BotPermissions
@@ -84,6 +88,7 @@ export default function Security({ t, guildId }) {
           { perm: 'ViewAuditLog', why: 'perm.why.auditLog' },
           { perm: 'ManageRoles', why: 'perm.why.revertRoles' },
           { perm: 'ManageChannels', why: 'perm.why.lockChannels' },
+          { perm: 'ManageGuild', why: 'perm.why.raidPause' },
         ]}
       />
 
@@ -136,6 +141,34 @@ export default function Security({ t, guildId }) {
             <Choice name="sg-mode" value="auto" current={draft.guard.mode} label={t('sec.modeAuto')} onChange={(v) => setGuard({ mode: v })} />
           </div>
           <p className="text-xs text-white/50">{t('sec.modeAutoHint')}</p>
+        </div>
+      </Card>
+
+      <Card title={t('sec.raidTitle')} icon={Siren}>
+        <p className="mb-3 text-sm text-white/70">{t('sec.raidHint')}</p>
+        <div className="space-y-3">
+          <Toggle label={t('sec.raidOn')} checked={draft.antiRaid.enabled} onChange={(v) => setRaid({ enabled: v })} />
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.raidJoins')}</span>
+              <input type="number" min="3" max="100" value={draft.antiRaid.joins} onChange={(e) => setRaid({ joins: e.target.value })} className={field} />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.raidSeconds')}</span>
+              <input type="number" min="10" max="120" value={draft.antiRaid.seconds} onChange={(e) => setRaid({ seconds: e.target.value })} className={field} />
+            </label>
+            <label className="col-span-2 block sm:col-span-1">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.raidPause')}</span>
+              <select value={draft.antiRaid.pauseMinutes} onChange={(e) => setRaid({ pauseMinutes: Number(e.target.value) })} className={`${field} bg-[#160d2a]`}>
+                {[30, 60, 120, 360, 1440].map((m) => (
+                  <option key={m} value={m}>
+                    {m < 60 ? t('sec.minutes', { count: m }) : t('sec.hours', { count: m / 60 })}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <p className="text-xs text-white/50">{t('sec.raidYoung')}</p>
         </div>
       </Card>
 

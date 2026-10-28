@@ -100,4 +100,30 @@ function channelAlert(lang, { guildId, serverName, channelId, categoryName, exec
   return { embeds: [footer(embed, lang, serverName)], components, allowedMentions: NO_PING };
 }
 
-module.exports = { linkChannelNotice, linkAuthorDm, linkStaffLog, roleAlert, channelAlert, NO_PING };
+// Canal de alertas da staff; sem ele, DM para o dono do servidor.
+async function resolveDestination(guild, config) {
+  if (config.staffLogChannelId) {
+    const channel = guild.channels.cache.get(config.staffLogChannelId) || (await guild.channels.fetch(config.staffLogChannelId).catch(() => null));
+    if (channel?.isTextBased?.()) return { target: channel, viaDm: false };
+  }
+  const owner = await guild.fetchOwner().catch(() => null);
+  return owner ? { target: owner, viaDm: true } : null;
+}
+
+// Alerta de entrada em massa. paused = a pausa nativa de convites e DMs foi aplicada.
+function raidAlert(lang, { guildId, serverName, total, young, seconds, paused, until, viaDm, panelUrl }) {
+  const lines = [
+    t('antiRaid.what', lang, { total: `\`${total}\``, seconds: `\`${seconds}s\``, young: `\`${young}\`` }),
+    paused ? `> ${t('antiRaid.paused', lang, { until: `<t:${Math.floor(until / 1000)}:t>` })}` : `> ${t('antiRaid.failed', lang)}`,
+  ];
+  if (viaDm) lines.push(`-# ${t('serverGuard.dmNote', lang, { server: serverName, panel: `[${t('serverGuard.panel', lang)}](${panelUrl})` })}`);
+  const embed = new EmbedBuilder().setColor(paused ? COLORS.warn : COLORS.danger).setTitle(t('antiRaid.title', lang)).setDescription(lines.join('\n\n'));
+  const components = paused
+    ? [new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId(`ar:end:${guildId}`).setLabel(t('antiRaid.btnEnd', lang)).setEmoji('🔓').setStyle(ButtonStyle.Secondary))]
+    : [];
+  return { embeds: [footer(embed, lang, serverName)], components, allowedMentions: NO_PING };
+}
+
+module.exports = {
+  resolveDestination,
+  raidAlert, linkChannelNotice, linkAuthorDm, linkStaffLog, roleAlert, channelAlert, NO_PING };
