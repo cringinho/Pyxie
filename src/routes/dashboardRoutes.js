@@ -24,7 +24,7 @@ function registerDashboardSection(section) {
 }
 
 function getSections(guildAccess) {
-  const base = ['overview', 'commands', 'studio', 'features', 'security', 'channels', 'roles'];
+  const base = ['overview', 'commands', 'studio', 'features', 'security', 'channels', 'roles', 'emojiUsage'];
   if (guildAccess.canManageAccess) base.push('access');
   if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
@@ -347,6 +347,16 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   router.get('/api/dashboard/guilds/:guildId/commands', requireSession, requireGuild, (req, res) => {
     const catalog = require('../services/commandCatalog');
     return res.json({ success: true, commands: catalog.forGuild(req.params.guildId, { isOwner: access.isOwner(req.panelSession.userId) }) });
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/emoji-usage', requireSession, requireGuild, async (req, res) => {
+    try {
+      const emojis = await bridge.request('GUILD_EMOJIS', { guildId: req.params.guildId });
+      const usage = require('../services/guildActivity').readEmojiUsage(req.params.guildId);
+      return res.json({ success: true, since: usage.since, emojis: emojis.map((e) => ({ ...e, count: usage.emojis[e.id]?.count || 0, lastUsedAt: usage.emojis[e.id]?.last || null })) });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
   });
 
   router.get('/api/dashboard/guilds/:guildId/activity', requireSession, requireGuild, (req, res) => {

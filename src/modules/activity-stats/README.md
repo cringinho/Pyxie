@@ -8,6 +8,7 @@ Conta quantas mensagens, entradas, saídas e comandos o servidor teve em cada di
 
 - **Contagem diária:** mensagens (sem contar bots), entradas, saídas e comandos (barra e `py!`).
 - **Leve:** soma em memória e grava no disco só a cada 5 minutos, em lote.
+- **Emojis do servidor:** conta quantas vezes cada emoji próprio do servidor aparece em mensagens e reações (só os dele, sem contar bots) e quando foi o último uso. Tela: painel → **Emojis do servidor**.
 - **30 dias:** guarda o último mês; o resto é apagado sozinho.
 - **Dia de Brasília:** o dia vira à meia-noite no horário de Brasília.
 

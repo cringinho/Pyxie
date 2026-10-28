@@ -439,6 +439,24 @@ const CHANNEL = '555555555555555555';
     await assert.rejects(cleaner.listStale(iclient, { guildId: G, days: 7 }), /missing_manage_guild/);
     console.log('  ✅ 13. Faxina de convites.');
 
+    // 14. Uso dos emojis do servidor: só os dele, somados em lote.
+    const act = require('../src/services/guildActivity');
+    act.resetMemory();
+    const statsMod = require('../src/modules/activity-stats');
+    const listeners = {};
+    await statsMod.onLoad({ isBotProcess: true, registerListener: (ev, fn) => (listeners[ev] = fn), registerInterval: () => {} });
+    const OWN = '111222333444555666';
+    const eguild = { id: G, emojis: { cache: new Map([[OWN, {}]]) } };
+    listeners.messageCreate({ guildId: G, guild: eguild, author: { bot: false }, content: `oi <:pyxie:${OWN}> <a:alheio:999888777666555444> <:pyxie:${OWN}>` });
+    listeners.messageReactionAdd({ message: { guild: eguild }, emoji: { id: OWN } }, { bot: false });
+    listeners.messageReactionAdd({ message: { guild: eguild }, emoji: { id: OWN } }, { bot: true });
+    act.flush();
+    const usage = act.readEmojiUsage(G);
+    assert.equal(usage.emojis[OWN].count, 3, 'Duas na mensagem + uma reação (bots não contam)');
+    assert.equal(usage.emojis['999888777666555444'], undefined, 'Emoji de outro servidor não conta');
+    assert(usage.since, 'Guarda desde quando conta');
+    console.log('  ✅ 14. Uso dos emojis do servidor.');
+
     console.log('🎉 Escudo de links e guardião do servidor validados!');
   } finally {
     fs.rmSync(process.env.PYXIE_DATA_DIR, { recursive: true, force: true });

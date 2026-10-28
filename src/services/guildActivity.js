@@ -9,6 +9,7 @@ const KEEP_DAYS = 30;
 const BRT_OFFSET_MS = 3 * 60 * 60 * 1000; // Brasília, sem horário de verão desde 2019
 
 const pending = new Map(); // guildId -> Map(day -> counts)
+const emojiPending = new Map(); // guildId -> Map(emojiId -> { count, last })
 
 function dayKey(now = Date.now()) {
   return new Date(now - BRT_OFFSET_MS).toISOString().slice(0, 10);
@@ -29,6 +30,45 @@ function bump(guildId, field, now = Date.now()) {
   const key = dayKey(now);
   if (!days.has(key)) days.set(key, empty());
   days.get(key)[field] += 1;
+}
+
+// Uso dos emojis do próprio servidor (mensagens e reações): total e último uso.
+function bumpEmoji(guildId, emojiId, now = Date.now()) {
+  let map = emojiPending.get(guildId);
+  if (!map) emojiPending.set(guildId, (map = new Map()));
+  const cur = map.get(emojiId) || { count: 0, last: 0 };
+  cur.count += 1;
+  cur.last = now;
+  map.set(emojiId, cur);
+}
+
+function emojiFile(guildId) {
+  return path.join(path.dirname(fileFor(guildId)), 'emojiUsage.json');
+}
+
+function readEmojiUsage(guildId) {
+  try {
+    const raw = JSON.parse(fs.readFileSync(emojiFile(guildId), 'utf8'));
+    return { since: raw.since || null, emojis: raw.emojis || {} };
+  } catch (_) {
+    return { since: null, emojis: {} };
+  }
+}
+
+function flushEmojis(now = Date.now()) {
+  for (const [guildId, map] of emojiPending) {
+    const data = readEmojiUsage(guildId);
+    if (!data.since) data.since = now;
+    for (const [id, { count, last }] of map) {
+      const cur = data.emojis[id] || { count: 0, last: 0 };
+      data.emojis[id] = { count: cur.count + count, last: Math.max(cur.last, last) };
+    }
+    const file = emojiFile(guildId);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(`${file}.tmp`, JSON.stringify(data));
+    fs.renameSync(`${file}.tmp`, file);
+  }
+  emojiPending.clear();
 }
 
 function readFile(guildId) {
@@ -57,6 +97,7 @@ function flush(now = Date.now()) {
     fs.renameSync(`${file}.tmp`, file);
   }
   pending.clear();
+  flushEmojis(now);
 }
 
 // Resumo para o painel: hoje, últimos 7 dias e a série de 30 dias de mensagens.
@@ -74,6 +115,7 @@ function summary(guildId, now = Date.now()) {
 
 function resetMemory() {
   pending.clear();
+  emojiPending.clear();
 }
 
-module.exports = { bump, flush, summary, dayKey, resetMemory, FIELDS };
+module.exports = { bump, bumpEmoji, readEmojiUsage, flush, summary, dayKey, resetMemory, FIELDS };

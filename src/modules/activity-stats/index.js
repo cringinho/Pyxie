@@ -19,9 +19,17 @@ module.exports = {
     ctx.registerListener('messageCreate', (message) => {
       if (!message.guildId || message.author?.bot) return;
       activity.bump(message.guildId, 'messages');
+      // Emojis do próprio servidor usados na mensagem (só conta os que pertencem a ele).
+      const own = message.guild?.emojis?.cache;
+      if (own?.size) for (const [, id] of String(message.content || '').matchAll(/<a?:\w{2,32}:(\d{17,20})>/g)) if (own.has(id)) activity.bumpEmoji(message.guildId, id);
       if (/^py!/i.test(message.content || '')) activity.bump(message.guildId, 'commands');
     });
     ctx.registerListener('guildMemberAdd', (member) => activity.bump(member.guild.id, 'joins'));
+    ctx.registerListener('messageReactionAdd', (reaction, user) => {
+      const guild = reaction.message?.guild;
+      if (!guild || user?.bot || !reaction.emoji?.id || !guild.emojis.cache.has(reaction.emoji.id)) return;
+      activity.bumpEmoji(guild.id, reaction.emoji.id);
+    });
     ctx.registerListener('guildMemberRemove', (member) => activity.bump(member.guild.id, 'leaves'));
     ctx.registerListener('interactionCreate', (interaction) => {
       if (interaction.guildId && interaction.isChatInputCommand?.()) activity.bump(interaction.guildId, 'commands');

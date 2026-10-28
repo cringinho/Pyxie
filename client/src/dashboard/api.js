@@ -51,6 +51,7 @@ export const api = {
   savePartnershipDm: (id, body) => request(`/api/dashboard/guilds/${id}/partnership-dm`, { method: 'PUT', body }),
   guildCommands: (id) => request(`/api/dashboard/guilds/${id}/commands`),
   allCommands: () => request('/api/dashboard/global/commands'),
+  emojiUsage: (id) => request(`/api/dashboard/guilds/${id}/emoji-usage`),
   activity: (id) => request(`/api/dashboard/guilds/${id}/activity`),
   botPermissions: (id) => request(`/api/dashboard/guilds/${id}/bot-permissions`),
   staleInvites: (id, days) => request(`/api/dashboard/guilds/${id}/invites/stale?days=${days}`),

@@ -18,6 +18,7 @@ import ModuleDrawer from './ModuleDrawer';
 import { Economy, Trust } from './OwnerTools';
 import Appeal from './Appeal';
 import Commands from './Commands';
+import EmojiUsage from './EmojiUsage';
 import BotPermissions from './Permissions';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
@@ -321,7 +322,7 @@ function Activity({ t, guildId }) {
 }
 
 // Seções de formulário ficam numa coluna mais estreita; as de grade usam a largura toda.
-const WIDE_SECTIONS = new Set(['overview', 'features', 'embeds', 'commands']);
+const WIDE_SECTIONS = new Set(['overview', 'features', 'embeds', 'commands', 'emojiUsage']);
 
 function GuildView({ shell, guildId, section }) {
   const { t, lang, me } = shell;
@@ -377,6 +378,7 @@ function GuildView({ shell, guildId, section }) {
         {current === 'features' && <Features t={t} guildId={guildId} />}
         {current === 'embeds' && <Embeds t={t} guildId={guildId} />}
         {current === 'commands' && <Commands t={t} lang={lang} guildId={guildId} />}
+        {current === 'emojiUsage' && <EmojiUsage t={t} guildId={guildId} />}
         {current === 'security' && <Security t={t} guildId={guildId} />}
         {current === 'seasonal' && <Seasonal t={t} guildId={guildId} />}
         {current === 'partnerships' && (

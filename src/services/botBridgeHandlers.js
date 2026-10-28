@@ -68,6 +68,13 @@ const handlers = {
     return out.sort((a, b) => b.memberCount - a.memberCount);
   },
 
+  // Emojis do servidor (para a tela de uso dos emojis).
+  async GUILD_EMOJIS(client, { guildId }) {
+    const guild = client.guilds.cache.get(String(guildId));
+    if (!guild) throw new Error('guild_not_found');
+    return guild.emojis.cache.map((e) => ({ id: e.id, name: e.name, animated: Boolean(e.animated), url: e.imageURL({ size: 64 }), createdAt: e.createdTimestamp }));
+  },
+
   // Alertas automáticos de uso estranho: são contados no processo do bot.
   async RED_FLAGS() {
     return require('./trustAndSafety').getActiveRedFlags();
