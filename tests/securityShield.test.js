@@ -213,7 +213,7 @@ const CHANNEL = '555555555555555555';
 
     // 7. Textos: mesmas chaves e marcadores em pt e en; todo motivo tem texto.
     const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (typeof v === 'object' ? flat(v, `${p}${k}.`) : [[`${p}${k}`, v]]));
-    for (const ns of ['linkShield', 'serverGuard', 'securityAlerts', 'antiRaid', 'appeals', 'fileShield']) {
+    for (const ns of ['linkShield', 'serverGuard', 'securityAlerts', 'antiRaid', 'appeals', 'fileShield', 'campfire']) {
       const pt = Object.fromEntries(flat(TRANSLATIONS.pt[ns]));
       const en = Object.fromEntries(flat(TRANSLATIONS.en[ns]));
       assert.deepEqual(Object.keys(en).sort(), Object.keys(pt).sort(), `${ns}: mesmas chaves`);
@@ -456,6 +456,43 @@ const CHANNEL = '555555555555555555';
     assert.equal(usage.emojis['999888777666555444'], undefined, 'Emoji de outro servidor não conta');
     assert(usage.since, 'Guarda desde quando conta');
     console.log('  ✅ 14. Uso dos emojis do servidor.');
+
+    // 15. Fogueira de voz: anuncia depois do tempo, respeita pausa, some quando esvazia, ignora privada.
+    const cf = require('../src/services/campfire');
+    const cfg = cf.normalize({ enabled: true, channelId: STAFF, minPeople: 5, minMinutes: 10, cooldownMinutes: 120 });
+    const M = 60000;
+    assert.equal(cf.decide({ people: 6, since: 0, announcedMessageId: null, lastAnnouncedAt: 0 }, cfg, 9 * M), null, 'Antes de 10 min não anuncia');
+    assert.equal(cf.decide({ people: 6, since: 0, announcedMessageId: null, lastAnnouncedAt: 0 }, cfg, 10 * M), 'announce');
+    assert.equal(cf.decide({ people: 6, since: 0, announcedMessageId: null, lastAnnouncedAt: 5 * M }, cfg, 60 * M), null, 'Respeita a pausa');
+    assert.equal(cf.decide({ people: 1, since: 0, announcedMessageId: 'm', lastAnnouncedAt: 0 }, cfg, 60 * M), 'remove', 'Esvaziou: apaga');
+    const campMod = require('../src/modules/voice-campfire');
+    cf.saveConfig(G, { enabled: true, channelId: STAFF, minPeople: 5, minMinutes: 10 });
+    const posts = [];
+    const removedMsgs = [];
+    const members = (n) => ({ filter: () => ({ size: n }) });
+    let open = true;
+    const vguild = { id: G, name: 'S', afkChannelId: null, roles: { everyone: {} } };
+    const vchan = { id: '444000000000000001', type: 2, guild: vguild, members: members(6), permissionsFor: () => ({ has: () => open }) };
+    vguild.channels = { cache: new Map([[vchan.id, vchan], [STAFF, { id: STAFF, isTextBased: () => true, send: async (p) => (posts.push(p), { id: 'card1' }), messages: { delete: async (id) => removedMsgs.push(id) } }]]) };
+    const vclient = { guilds: { cache: new Map([[G, vguild]]) } };
+    campMod._calls.clear();
+    campMod.onVoiceState(null, { channel: vchan });
+    campMod._calls.get(vchan.id).since -= 11 * M;
+    await campMod.tick(vclient);
+    assert.equal(posts.length, 1, 'Call animada vira convite');
+    assert.deepEqual(posts[0].allowedMentions.parse, [], 'Convite sem ping');
+    assert.match(posts[0].content, /`6`/);
+    vchan.members = members(1);
+    await campMod.tick(vclient);
+    assert.deepEqual(removedMsgs, ['card1'], 'Convite some quando a call esvazia');
+    open = false;
+    vchan.members = members(6);
+    campMod._calls.clear();
+    campMod.onVoiceState(null, { channel: vchan });
+    campMod._calls.get(vchan.id).since -= 11 * M;
+    await campMod.tick(vclient);
+    assert.equal(posts.length, 1, 'Call privada nunca é anunciada');
+    console.log('  ✅ 15. Fogueira de voz.');
 
     console.log('🎉 Escudo de links e guardião do servidor validados!');
   } finally {

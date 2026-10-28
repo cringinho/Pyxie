@@ -379,6 +379,10 @@ const TRANSLATIONS = {
         "exec": "programa executável enviado no chat"
       }
     },
+    "campfire": {
+      "card": "🔥 A call {channel} está animada agora, com {count} pessoas conversando. Chega mais!",
+      "join": "Entrar na call"
+    },
     "linkShield": {
       "brandUnknown": "um site conhecido",
       "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
@@ -2794,6 +2798,10 @@ const TRANSLATIONS = {
         "grabber": "script that looks for tokens/passwords and sends them out",
         "exec": "executable program posted in chat"
       }
+    },
+    "campfire": {
+      "card": "🔥 The {channel} call is lively right now, with {count} people chatting. Come join!",
+      "join": "Join the call"
     },
     "linkShield": {
       "brandUnknown": "a well-known site",

@@ -19,6 +19,7 @@ import { Economy, Trust } from './OwnerTools';
 import Appeal from './Appeal';
 import Commands from './Commands';
 import EmojiUsage from './EmojiUsage';
+import Campfire from './Campfire';
 import BotPermissions from './Permissions';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
@@ -375,7 +376,12 @@ function GuildView({ shell, guildId, section }) {
             <Studio t={t} guildId={guildId} guildName={name} isOwner={me.user.isOwner} />
           </div>
         )}
-        {current === 'features' && <Features t={t} guildId={guildId} />}
+        {current === 'features' && (
+          <div className="space-y-4">
+            <Features t={t} guildId={guildId} />
+            <Campfire t={t} guildId={guildId} />
+          </div>
+        )}
         {current === 'embeds' && <Embeds t={t} guildId={guildId} />}
         {current === 'commands' && <Commands t={t} lang={lang} guildId={guildId} />}
         {current === 'emojiUsage' && <EmojiUsage t={t} guildId={guildId} />}

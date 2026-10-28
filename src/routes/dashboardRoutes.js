@@ -371,6 +371,25 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     }
   });
 
+  // ---------- Fogueira de voz (todos os servidores, desligada por padrão) ----------
+  router.get('/api/dashboard/guilds/:guildId/campfire', requireSession, requireGuild, (req, res) => {
+    return res.json({ success: true, campfire: require('../services/campfire').getConfig(req.params.guildId) });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/campfire', requireSession, requireGuild, async (req, res) => {
+    const body = req.body || {};
+    const channelId = String(body.channelId || '');
+    if (channelId) {
+      try {
+        const channels = await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId });
+        if (!channels.some((c) => c.id === channelId)) return res.status(400).json({ success: false, error: 'invalid_channel' });
+      } catch (err) {
+        return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+      }
+    }
+    return res.json({ success: true, campfire: require('../services/campfire').saveConfig(req.params.guildId, body) });
+  });
+
   // ---------- Faxina de convites (o bot lista e revoga; precisa de Gerenciar Servidor) ----------
   router.get('/api/dashboard/guilds/:guildId/invites/stale', requireSession, requireGuild, async (req, res) => {
     const days = Math.min(90, Math.max(3, parseInt(req.query.days, 10) || require('../services/guildSafety').getConfig(req.params.guildId).invites.days));

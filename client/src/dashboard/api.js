@@ -52,6 +52,8 @@ export const api = {
   guildCommands: (id) => request(`/api/dashboard/guilds/${id}/commands`),
   allCommands: () => request('/api/dashboard/global/commands'),
   emojiUsage: (id) => request(`/api/dashboard/guilds/${id}/emoji-usage`),
+  campfire: (id) => request(`/api/dashboard/guilds/${id}/campfire`),
+  saveCampfire: (id, body) => request(`/api/dashboard/guilds/${id}/campfire`, { method: 'PUT', body }),
   activity: (id) => request(`/api/dashboard/guilds/${id}/activity`),
   botPermissions: (id) => request(`/api/dashboard/guilds/${id}/bot-permissions`),
   staleInvites: (id, days) => request(`/api/dashboard/guilds/${id}/invites/stale?days=${days}`),

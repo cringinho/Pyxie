@@ -34,6 +34,7 @@ async function main() {
   await send('Arquivo: registro da staff', alerts.fileStaffLog(lang, { serverName: 'Cringelândia', userId: USER, channelId: '1453890869538197567', fileName: 'nitro_gratis.py', reason: 'grabber', deleted: true }));
   await send('Arquivo: aviso no canal e DM', asText({ content: [alerts.fileChannelNotice(lang, { userId: USER, reason: 'grabber', deleted: true }).content, alerts.fileAuthorDm(lang, { serverName: 'Cringelândia' }).content].join('\n\n') }, '💬 Canal + DM'));
   await send('Webhook suspeito', alerts.webhookAlert(lang, { ...base, webhookId: '1453890868980482099', webhookName: 'Avisos', channelId: '1453890869538197567', reason: 'everyone', removed: false, viaDm: false }));
+  await send('Fogueira de voz: convite', require('../src/modules/voice-campfire').card({ id: G, name: 'Cringelândia', lang }, { id: '1453890869538197567' }, 6));
   await send('Canal: alerta por DM', alerts.channelAlert(lang, { ...base, channelId: '1453890869538197567', categoryName: 'Staff', executorId: null, locked: false, viaDm: true }));
 }
 

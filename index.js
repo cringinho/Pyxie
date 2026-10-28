@@ -123,12 +123,13 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessageReactions,
+    // Fogueira de voz: só contagem de quem está em cada call (intent leve, não privilegiado).
+    GatewayIntentBits.GuildVoiceStates,
   ],
   // Otimização de memória e cache para execução em nuvem (Oracle Cloud / PM2)
   makeCache: Options.cacheWithLimits({
     MessageManager: 25, // Mantém apenas 25 mensagens recentes por canal
     StageInstanceManager: 0,
-    VoiceStateManager: 0,
     AutoModerationRuleManager: 0,
     GuildScheduledEventManager: 0,
     ThreadMemberManager: 0,
