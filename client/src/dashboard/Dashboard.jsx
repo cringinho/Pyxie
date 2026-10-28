@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ArrowRight, Boxes, Check, Clock, Cpu, Crown, HardDrive, Layers, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
 import { api } from './api';
 import { detectLang, makeT } from './i18n';
-import { Button, Card, GuildIcon, MultiSelect, Notice, Spinner, Toggle } from './ui';
+import { Badge, Button, Card, GuildIcon, MultiSelect, Notice, Spinner, StatTile, StatusDot, Switch, Toggle } from './ui';
+import { Layout, Starfield, buildNav, go, sectionIcon } from './Shell';
 import Studio from './Studio';
 import { Links, Moderation } from './Safety';
 import { Assets, CommunitySettings } from './Community';
@@ -18,16 +20,15 @@ function parseHash() {
 function useHashRoute() {
   const [route, setRoute] = useState(parseHash);
   useEffect(() => {
-    const onChange = () => setRoute(parseHash());
+    const onChange = () => {
+      setRoute(parseHash());
+      window.scrollTo(0, 0);
+    };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
   }, []);
   return route;
 }
-
-const go = (hash) => {
-  window.location.hash = hash;
-};
 
 function formatUptime(sec) {
   const d = Math.floor(sec / 86400);
@@ -35,6 +36,8 @@ function formatUptime(sec) {
   const m = Math.floor((sec % 3600) / 60);
   return d > 0 ? `${d}d ${h}h` : `${h}h ${m}min`;
 }
+
+const PYXIE_ICON = 'https://cdn.discordapp.com/emojis/1548443951596306552.webp';
 
 export default function Dashboard() {
   const [lang, setLang] = useState(detectLang);
@@ -69,117 +72,145 @@ export default function Dashboard() {
     window.location.href = '/dashboard';
   };
 
-  return (
-    <div className="mx-auto min-h-screen w-full max-w-3xl px-4 pb-16 pt-4">
-      <header className="mb-5 flex items-center justify-between gap-3">
-        <a href="#/" className="flex min-w-0 items-center gap-2">
-          <img src="https://cdn.discordapp.com/emojis/1548443951596306552.webp" alt="Pyxie" width="32" height="32" />
-          <h1 className="truncate font-title text-xl font-extrabold">{t('app.title')}</h1>
-        </a>
-        <div className="flex shrink-0 items-center gap-2">
-          <Button variant="ghost" onClick={() => setLang(lang === 'pt' ? 'en' : 'pt')}>
-            {t('app.lang')}
-          </Button>
-          {authState === 'in' && (
-            <Button variant="ghost" onClick={logout}>
-              {t('app.logout')}
-            </Button>
-          )}
-        </div>
-      </header>
+  if (authState === 'loading') {
+    return (
+      <div className="min-h-screen">
+        <Starfield />
+        <Spinner label={t('app.loading')} />
+      </div>
+    );
+  }
+  if (authState === 'out') return <Login t={t} lang={lang} setLang={setLang} error={loginError} />;
 
-      {authState === 'loading' && <Spinner label={t('app.loading')} />}
-      {authState === 'out' && <Login t={t} error={loginError} />}
-      {authState === 'in' && route.view === 'picker' && <Picker t={t} me={me} />}
-      {authState === 'in' && route.view === 'guild' && (
-        <GuildView t={t} lang={lang} guildId={route.guildId} section={route.section} me={me} />
-      )}
-      {authState === 'in' && route.view === 'global' && me?.user?.isOwner && <GlobalView t={t} lang={lang} section={route.section} />}
+  const shell = { t, lang, setLang, me, onLogout: logout };
+  if (route.view === 'guild') return <GuildView shell={shell} guildId={route.guildId} section={route.section} />;
+  if (route.view === 'global' && me?.user?.isOwner) return <GlobalView shell={shell} section={route.section} />;
+  return <Picker shell={shell} />;
+}
+
+// Título da página (o único <h1>) com ícone e selos.
+function PageHeader({ icon, title, subtitle, badges }) {
+  return (
+    <div className="mb-5 flex items-center gap-4">
+      {icon}
+      <div className="min-w-0">
+        <h1 className="truncate font-title text-2xl font-extrabold sm:text-3xl">{title}</h1>
+        {subtitle && <p className="truncate text-sm text-white/60">{subtitle}</p>}
+        {badges && <div className="mt-1.5 flex flex-wrap gap-1.5">{badges}</div>}
+      </div>
     </div>
   );
 }
 
-function Login({ t, error }) {
+function Login({ t, lang, setLang, error }) {
+  const perms = ['login.perm.identify', 'login.perm.guilds', 'login.perm.noEmail'];
   return (
-    <Card>
-      <div className="flex flex-col items-center gap-4 py-6 text-center">
-        <h2 className="font-title text-2xl font-bold">{t('login.title')}</h2>
-        <p className="text-white/70">{t('login.subtitle')}</p>
-        {error && <Notice tone="error">{t(`error.${error}`)}</Notice>}
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
+      <Starfield />
+      <button
+        type="button"
+        onClick={() => setLang(lang === 'pt' ? 'en' : 'pt')}
+        className="absolute right-4 top-4 h-10 rounded-xl px-3 text-sm font-semibold text-white/70 hover:bg-white/10 hover:text-white"
+      >
+        {t('app.lang')}
+      </button>
+      <section className="dash-card relative w-full max-w-md rounded-3xl p-6 text-center shadow-[0_0_60px_rgba(236,72,153,0.25)] sm:p-8">
+        <span className="absolute -left-3 -top-3 text-2xl text-pyxie-glow drop-shadow-[0_0_8px_#F472B6]" aria-hidden="true">✦</span>
+        <span className="absolute -bottom-3 -right-2 text-xl text-mystic-glow drop-shadow-[0_0_8px_#C084FC]" aria-hidden="true">✧</span>
+        <p className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-pyxie-glow/30 bg-pyxie-bright/10 px-3 py-1 text-xs font-semibold text-pyxie-glow">
+          <Sparkles size={13} aria-hidden="true" /> {t('app.title')}
+        </p>
+        <div className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-pyxie-bright/40 to-mystic-violet/40 p-1 shadow-[0_0_40px_rgba(236,72,153,0.45)]">
+          <img src={PYXIE_ICON} alt="Pyxie" width="80" height="80" className="h-20 w-20 rounded-full bg-obsidian-900 object-contain p-2" />
+        </div>
+        <h1 className="font-title text-2xl font-extrabold">{t('login.title')}</h1>
+        <p className="mt-2 text-sm text-white/70">{t('login.subtitle')}</p>
+        <ul className="my-6 space-y-2 text-left">
+          {perms.map((key) => (
+            <li key={key} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-pyxie-bright to-mystic-violet" aria-hidden="true">
+                <Check size={14} />
+              </span>
+              {t(key)}
+            </li>
+          ))}
+        </ul>
+        {error && (
+          <div className="mb-4">
+            <Notice tone="error">{t(`error.${error}`)}</Notice>
+          </div>
+        )}
         <a
           href="/auth/discord"
-          className="flex min-h-[48px] items-center rounded-xl bg-[#5865F2] px-6 font-semibold hover:bg-[#4752c4]"
+          className="flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pyxie-bright via-fuchsia-500 to-mystic-violet px-6 font-semibold shadow-[0_0_24px_rgba(236,72,153,0.5)] transition hover:brightness-110"
         >
-          {t('login.button')}
+          {t('login.button')} <ArrowRight size={18} aria-hidden="true" />
         </a>
-        <p className="text-xs text-white/50">{t('login.note')}</p>
-      </div>
-    </Card>
+        <p className="mt-4 text-xs text-white/50">{t('login.note')}</p>
+      </section>
+    </div>
   );
 }
 
-function Picker({ t, me }) {
+function pickerNav(t, me) {
+  const groups = [{ id: 'core', label: t('nav.group.core'), items: [{ id: 'picker', label: t('picker.title'), icon: Server, href: '#/', active: true }] }];
+  if (me.user.isOwner) groups[0].items.push({ id: 'global', label: t('picker.global'), icon: Sparkles, href: '#/global/health', active: false });
+  return { title: t('app.title'), subtitle: me.user.globalName || me.user.username, groups };
+}
+
+function Picker({ shell }) {
+  const { t, me } = shell;
   return (
-    <div className="space-y-4">
-      {!me.botOnline && <Notice tone="error">{t('picker.botOffline')}</Notice>}
-      {me.user.isOwner && (
-        <button
-          type="button"
-          onClick={() => go('#/global/health')}
-          className="glass-panel glass-panel-hover flex w-full items-center gap-3 rounded-2xl p-4 text-left"
-        >
-          <span className="text-2xl" aria-hidden="true">🧚</span>
-          <span className="font-semibold">{t('picker.global')}</span>
-        </button>
-      )}
-      <Card title={t('picker.title')}>
-        {me.guilds.length === 0 && <p className="text-sm text-white/60">{t('picker.empty')}</p>}
-        <ul className="space-y-2">
+    <Layout {...shell} nav={pickerNav(t, me)} crumbs={[{ label: t('app.title') }]}>
+      <PageHeader title={t('picker.title')} subtitle={t('picker.subtitle')} />
+      <div className="space-y-4">
+        {!me.botOnline && <Notice tone="error">{t('picker.botOffline')}</Notice>}
+        {me.user.isOwner && (
+          <button
+            type="button"
+            onClick={() => go('#/global/health')}
+            className="dash-card dash-card-hover flex w-full items-center gap-4 rounded-2xl p-4 text-left"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-pyxie-bright to-mystic-violet shadow-[0_0_18px_rgba(236,72,153,0.5)]" aria-hidden="true">
+              <Sparkles size={22} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-title text-lg font-bold">{t('picker.global')}</span>
+              <span className="block text-sm text-white/60">{t('sectionDesc.global')}</span>
+            </span>
+            <ArrowRight size={18} className="shrink-0 text-pyxie-glow" aria-hidden="true" />
+          </button>
+        )}
+        {me.guilds.length === 0 && (
+          <Card>
+            <p className="text-sm text-white/60">{t('picker.empty')}</p>
+          </Card>
+        )}
+        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {me.guilds.map((g) => (
             <li key={g.id}>
               <button
                 type="button"
                 onClick={() => go(`#/guild/${g.id}/overview`)}
-                className="flex min-h-[56px] w-full items-center gap-3 rounded-xl px-2 text-left hover:bg-white/5"
+                className="dash-card dash-card-hover flex h-full min-h-[88px] w-full items-center gap-3 rounded-2xl p-4 text-left"
               >
-                <GuildIcon guild={g} />
+                <GuildIcon guild={g} size={52} className="rounded-2xl" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-semibold">{g.name}</span>
-                  <span className="block text-xs text-white/60">
-                    {t(`zone.${g.zone}`)} · {t(`role.${g.role}`)}
+                  <span className="mt-1 flex flex-wrap gap-1.5">
+                    <Badge tone={g.zone === 'global' ? 'muted' : 'pink'}>{t(`zone.${g.zone}`)}</Badge>
+                    <Badge>{t(`role.${g.role}`)}</Badge>
                   </span>
                 </span>
               </button>
             </li>
           ))}
         </ul>
-        <a href="/auth/discord" className="mt-3 inline-block text-sm text-mystic-glow underline">
+        <a href="/auth/discord" className="inline-block text-sm text-mystic-glow underline">
           {t('picker.refresh')}
         </a>
-      </Card>
-    </div>
-  );
-}
-
-function Tabs({ items, active, onSelect }) {
-  return (
-    <nav className="-mx-4 mb-4 overflow-x-auto px-4" aria-label="sections">
-      <div className="flex w-max gap-2">
-        {items.map((it) => (
-          <button
-            key={it.id}
-            type="button"
-            onClick={() => onSelect(it.id)}
-            aria-current={active === it.id ? 'page' : undefined}
-            className={`min-h-[40px] rounded-full px-4 text-sm font-semibold ${
-              active === it.id ? 'bg-pyxie-pink text-white' : 'bg-white/5 text-white/80 hover:bg-white/10'
-            }`}
-          >
-            {it.label}
-          </button>
-        ))}
       </div>
-    </nav>
+    </Layout>
   );
 }
 
@@ -201,60 +232,131 @@ function ErrorNotice({ t, code }) {
   return <Notice tone="error">{known.startsWith('error.') ? t('error.generic', { error: code }) : known}</Notice>;
 }
 
-function GuildView({ t, lang, guildId, section, me }) {
+// Seções de formulário ficam numa coluna mais estreita; as de grade usam a largura toda.
+const WIDE_SECTIONS = new Set(['overview', 'features', 'embeds']);
+
+function GuildView({ shell, guildId, section }) {
+  const { t, lang, me } = shell;
   const info = useLoad(() => api.guild(guildId), [guildId]);
-  if (info.loading) return <Spinner label={t('app.loading')} />;
-  if (info.error) return <ErrorNotice t={t} code={info.error} />;
+  const fallbackGuild = me.guilds.find((g) => g.id === guildId);
+  const loadingNav = { title: fallbackGuild?.name || guildId, groups: [] };
+
+  if (info.loading || info.error) {
+    return (
+      <Layout {...shell} nav={loadingNav} crumbs={[{ label: t('app.title'), href: '#/' }, { label: loadingNav.title }]} activeGuildId={guildId}>
+        {info.error ? <ErrorNotice t={t} code={info.error} /> : <Spinner label={t('app.loading')} />}
+      </Layout>
+    );
+  }
+
   const { guild, zone, role, sections } = info.data;
-  const tabs = sections.map((id) => ({ id, label: t(`section.${id}`) }));
-  if (zone === 'cringelandia' || zone === 'mary') tabs.push({ id: 'tools', label: t('section.tools') });
-  const current = tabs.some((x) => x.id === section) ? section : 'overview';
+  const ids = [...sections];
+  if (zone === 'cringelandia' || zone === 'mary') ids.push('tools');
+  const current = ids.includes(section) ? section : 'overview';
+  const g = guild || fallbackGuild;
+  const name = g?.name || guildId;
+  const nav = {
+    title: name,
+    subtitle: `${t(`zone.${zone}`)} · ${t(`role.${role}`)}`,
+    groups: buildNav(t, ids, current, (id) => `#/guild/${guildId}/${id}`),
+  };
+  const crumbs = [{ label: t('app.title'), href: '#/' }, { label: name, href: `#/guild/${guildId}/overview` }, { label: t(`section.${current}`) }];
+  const CurrentIcon = sectionIcon(current);
 
   return (
-    <div>
-      <div className="mb-4 flex items-center gap-3">
-        <GuildIcon guild={guild || me.guilds.find((g) => g.id === guildId)} size={48} />
-        <div className="min-w-0">
-          <h2 className="truncate font-title text-xl font-bold">{guild?.name || guildId}</h2>
-          <p className="text-xs text-white/60">
-            {t(`zone.${zone}`)} · {t(`role.${role}`)}
-          </p>
-        </div>
+    <Layout {...shell} nav={nav} crumbs={crumbs} activeGuildId={guildId}>
+      <PageHeader
+        icon={current === 'overview' ? <GuildIcon guild={g} size={64} className="rounded-2xl ring-2 ring-pyxie-glow/40" /> : <SectionBadge icon={CurrentIcon} />}
+        title={current === 'overview' ? name : t(`section.${current}`)}
+        subtitle={current === 'overview' ? null : name}
+        badges={
+          current === 'overview' && (
+            <>
+              <Badge tone="pink">{t(`zone.${zone}`)}</Badge>
+              <Badge>{t(`role.${role}`)}</Badge>
+            </>
+          )
+        }
+      />
+      <div className={WIDE_SECTIONS.has(current) ? '' : 'max-w-3xl'}>
+        {current === 'overview' && <Overview t={t} guild={g} zone={zone} role={role} ids={ids} guildId={guildId} botOnline={me.botOnline} />}
+        {current === 'studio' && <Studio t={t} guildId={guildId} guildName={name} isOwner={me.user.isOwner} />}
+        {current === 'features' && <Features t={t} guildId={guildId} />}
+        {current === 'embeds' && <Embeds t={t} guildId={guildId} />}
+        {current === 'moderation' && <Moderation t={t} guildId={guildId} />}
+        {current === 'community' && <CommunitySettings t={t} guildId={guildId} />}
+        {current === 'channels' && <Channels t={t} guildId={guildId} />}
+        {current === 'roles' && <Roles t={t} guildId={guildId} />}
+        {current === 'access' && <Access t={t} guildId={guildId} />}
+        {current === 'tools' && <Tools t={t} zone={zone} lang={lang} guildId={guildId} isOwner={me.user.isOwner} />}
       </div>
-      <Tabs items={tabs} active={current} onSelect={(id) => go(`#/guild/${guildId}/${id}`)} />
-      {current === 'overview' && <Overview t={t} guild={guild} zone={zone} role={role} />}
-      {current === 'studio' && <Studio t={t} guildId={guildId} guildName={guild?.name || ''} isOwner={me.user.isOwner} />}
-      {current === 'features' && <Features t={t} guildId={guildId} />}
-      {current === 'embeds' && <Embeds t={t} guildId={guildId} />}
-      {current === 'moderation' && <Moderation t={t} guildId={guildId} />}
-      {current === 'community' && <CommunitySettings t={t} guildId={guildId} />}
-      {current === 'channels' && <Channels t={t} guildId={guildId} />}
-      {current === 'roles' && <Roles t={t} guildId={guildId} />}
-      {current === 'access' && <Access t={t} guildId={guildId} />}
-      {current === 'tools' && <Tools t={t} zone={zone} lang={lang} guildId={guildId} isOwner={me.user.isOwner} />}
-    </div>
+    </Layout>
   );
 }
 
-function Overview({ t, guild, zone, role }) {
+function SectionBadge({ icon: Icon }) {
   return (
-    <Card>
-      <dl className="grid grid-cols-2 gap-3 text-sm">
-        <div>
-          <dt className="text-white/60">{t('overview.members')}</dt>
-          <dd className="font-mono text-lg">{guild?.memberCount ?? '—'}</dd>
-        </div>
-        <div>
-          <dt className="text-white/60">{t('overview.zone')}</dt>
-          <dd className="font-semibold">{t(`zone.${zone}`)}</dd>
-        </div>
-        <div className="col-span-2">
-          <dt className="text-white/60">{t('overview.role')}</dt>
-          <dd className="font-semibold">{t(`role.${role}`)}</dd>
-        </div>
-      </dl>
-      <p className="mt-4 text-sm text-white/60">{t('overview.hint')}</p>
-    </Card>
+    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-pyxie-bright/30 to-mystic-violet/30 text-pyxie-glow shadow-[0_0_20px_rgba(236,72,153,0.3)]" aria-hidden="true">
+      <Icon size={26} />
+    </span>
+  );
+}
+
+// Atalhos em grade para cada seção liberada, com a descrição de cada uma.
+function SectionGrid({ t, ids, hrefFor }) {
+  return (
+    <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      {ids.map((id) => {
+        const Icon = sectionIcon(id);
+        const desc = t(`sectionDesc.${id}`);
+        return (
+          <li key={id}>
+            <a href={hrefFor(id)} className="dash-card dash-card-hover flex h-full flex-col gap-3 rounded-2xl p-4">
+              <span className="flex items-center justify-between">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pyxie-bright/25 to-mystic-violet/25 text-pyxie-glow" aria-hidden="true">
+                  <Icon size={19} />
+                </span>
+                <ArrowRight size={16} className="text-white/40" aria-hidden="true" />
+              </span>
+              <span>
+                <span className="block font-title font-bold">{t(`section.${id}`)}</span>
+                {!desc.startsWith('sectionDesc.') && <span className="mt-1 block text-sm text-white/60">{desc}</span>}
+              </span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function Overview({ t, guild, zone, role, ids, guildId, botOnline }) {
+  const shortcuts = ids.filter((id) => id !== 'overview');
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <StatTile icon={UsersRound} label={t('overview.members')} value={guild?.memberCount != null ? guild.memberCount.toLocaleString() : '—'} />
+        <StatTile icon={MapPin} accent="violet" label={t('overview.zone')} value={t(`zone.${zone}`)} />
+        <StatTile icon={Crown} accent="cyan" label={t('overview.role')} value={t(`role.${role}`)} />
+        <StatTile
+          icon={Wifi}
+          accent="green"
+          label={t('overview.status')}
+          value={
+            <span className="flex items-center gap-2">
+              <StatusDot online={botOnline} />
+              {t(botOnline ? 'health.online' : 'health.offline')}
+            </span>
+          }
+          hint={t('overview.sections', { count: shortcuts.length })}
+        />
+      </div>
+      <div>
+        <h2 className="mb-1 font-title text-lg font-bold">{t('overview.shortcuts')}</h2>
+        <p className="mb-3 text-sm text-white/60">{t('overview.hint')}</p>
+        <SectionGrid t={t} ids={shortcuts} hrefFor={(id) => `#/guild/${guildId}/${id}`} />
+      </div>
+    </div>
   );
 }
 
@@ -297,16 +399,23 @@ function Features({ t, guildId }) {
 
   return (
     <div className="space-y-4">
-      <Card title={t('features.title')}>
-        {draft.groups.map((g) => (
-          <Toggle
-            key={g.id}
-            label={`${g.emoji} ${t(`group.${g.id}`)}`}
-            checked={g.enabled}
-            onChange={(v) => setDraft({ ...draft, groups: draft.groups.map((x) => (x.id === g.id ? { ...x, enabled: v } : x)) })}
-          />
-        ))}
-      </Card>
+      <div>
+        <h2 className="mb-3 font-title text-lg font-bold">{t('features.title')}</h2>
+        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {draft.groups.map((g) => (
+            <li key={g.id}>
+              <ModuleTile
+                t={t}
+                emoji={g.emoji}
+                name={t(`group.${g.id}`)}
+                enabled={g.enabled}
+                onChange={(v) => setDraft({ ...draft, groups: draft.groups.map((x) => (x.id === g.id ? { ...x, enabled: v } : x)) })}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="grid gap-4 xl:grid-cols-2">
       <Card title={t('features.gamesChannels')}>
         <p className="mb-2 text-xs text-white/60">{t('features.gamesChannelsHint')}</p>
         <MultiSelect
@@ -351,11 +460,36 @@ function Features({ t, guildId }) {
           </div>
         </Card>
       )}
+      </div>
       {status === 'ok' && <Notice tone="ok">{t('features.saved')}</Notice>}
       {status && status !== 'ok' && <ErrorNotice t={t} code={status} />}
-      <Button onClick={save} className="w-full">
-        {t('features.save')}
-      </Button>
+      <div className="dash-surface sticky bottom-3 z-10 rounded-2xl p-2">
+        <Button onClick={save} className="w-full">
+          {t('features.save')}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// Cartão de módulo/grupo com selo Ligado/Desligado e interruptor.
+function ModuleTile({ t, emoji, icon: Icon, name, description, extra, enabled, disabled, onChange }) {
+  return (
+    <div className={`dash-card flex h-full flex-col gap-3 rounded-2xl p-4 transition ${enabled ? 'shadow-[0_0_22px_rgba(236,72,153,0.18)]' : 'opacity-80'}`}>
+      <div className="flex items-start justify-between gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-pyxie-bright/25 to-mystic-violet/25 text-xl text-pyxie-glow" aria-hidden="true">
+          {emoji || (Icon && <Icon size={19} />)}
+        </span>
+        <Switch checked={enabled} onChange={onChange} label={name} disabled={disabled} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="font-title font-bold">{name}</p>
+        {description && <p className="mt-1 text-sm text-white/60">{description}</p>}
+        {extra}
+      </div>
+      <div>
+        <Badge tone={enabled ? 'green' : 'muted'}>{t(enabled ? 'status.on' : 'status.off')}</Badge>
+      </div>
     </div>
   );
 }
@@ -550,33 +684,23 @@ function PartnershipDm({ t, guildId }) {
   );
 }
 
-function GlobalView({ t, lang, section }) {
-  const tabs = ['health', 'errors', 'modules', 'links', 'assets'].map((id) => ({ id, label: t(`section.${id}`) }));
-  const current = tabs.some((x) => x.id === section) ? section : 'health';
+function GlobalView({ shell, section }) {
+  const { t, lang } = shell;
+  const ids = ['health', 'errors', 'modules', 'links', 'assets'];
+  const current = ids.includes(section) ? section : 'health';
+  const nav = { title: t('picker.global'), subtitle: t('sectionDesc.global'), groups: buildNav(t, ids, current, (id) => `#/global/${id}`) };
+  const crumbs = [{ label: t('app.title'), href: '#/' }, { label: t('picker.global'), href: '#/global/health' }, { label: t(`section.${current}`) }];
   return (
-    <div>
-      <div className="mb-4 flex items-center gap-2">
-        <Button variant="ghost" onClick={() => go('#/')}>
-          ← {t('nav.back')}
-        </Button>
-        <h2 className="font-title text-xl font-bold">{t('picker.global')}</h2>
+    <Layout {...shell} nav={nav} crumbs={crumbs} globalActive>
+      <PageHeader icon={<SectionBadge icon={sectionIcon(current)} />} title={t(`section.${current}`)} subtitle={t(`sectionDesc.${current}`)} />
+      <div className={current === 'health' || current === 'modules' ? '' : 'max-w-3xl'}>
+        {current === 'health' && <Health t={t} />}
+        {current === 'errors' && <Errors t={t} />}
+        {current === 'modules' && <Modules t={t} lang={lang} />}
+        {current === 'links' && <Links t={t} />}
+        {current === 'assets' && <Assets t={t} />}
       </div>
-      <Tabs items={tabs} active={current} onSelect={(id) => go(`#/global/${id}`)} />
-      {current === 'health' && <Health t={t} />}
-      {current === 'errors' && <Errors t={t} />}
-      {current === 'modules' && <Modules t={t} lang={lang} />}
-      {current === 'links' && <Links t={t} />}
-      {current === 'assets' && <Assets t={t} />}
-    </div>
-  );
-}
-
-function Stat({ label, value }) {
-  return (
-    <div>
-      <dt className="text-xs text-white/60">{label}</dt>
-      <dd className="font-mono text-base">{value}</dd>
-    </div>
+    </Layout>
   );
 }
 
@@ -589,27 +713,32 @@ function Health({ t }) {
   if (!health.data) return health.error ? <ErrorNotice t={t} code={health.error} /> : <Spinner label={t('app.loading')} />;
   const { web, bot, dataDirMb } = health.data;
   return (
-    <div className="space-y-4">
-      <Card title={t('health.bot')}>
+    <div className="space-y-6">
+      <div>
+        <h2 className="mb-3 flex items-center gap-2 font-title text-lg font-bold">
+          {!bot.error && <StatusDot online={bot.ready} />}
+          {t('health.bot')}
+        </h2>
         {bot.error ? (
           <ErrorNotice t={t} code={bot.error} />
         ) : (
-          <dl className="grid grid-cols-2 gap-3">
-            <Stat label={t('health.ping')} value={bot.ready ? `${bot.wsPingMs} ms` : t('health.offline')} />
-            <Stat label={t('health.guilds')} value={bot.guildCount} />
-            <Stat label={t('health.memory')} value={`${bot.rssMb} MB`} />
-            <Stat label={t('health.uptime')} value={formatUptime(Math.floor(bot.uptimeMs / 1000))} />
-          </dl>
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+            <StatTile icon={Wifi} accent="green" label={t('health.ping')} value={bot.ready ? `${bot.wsPingMs} ms` : t('health.offline')} />
+            <StatTile icon={Server} accent="violet" label={t('health.guilds')} value={bot.guildCount} />
+            <StatTile icon={Cpu} label={t('health.memory')} value={`${bot.rssMb} MB`} />
+            <StatTile icon={Clock} accent="cyan" label={t('health.uptime')} value={formatUptime(Math.floor(bot.uptimeMs / 1000))} />
+          </div>
         )}
-      </Card>
-      <Card title={t('health.web')}>
-        <dl className="grid grid-cols-2 gap-3">
-          <Stat label={t('health.memory')} value={`${web.rssMb} MB`} />
-          <Stat label={t('health.uptime')} value={formatUptime(web.uptimeSec)} />
-          <Stat label={t('health.data')} value={`${dataDirMb} MB`} />
-          <Stat label="Node" value={web.node} />
-        </dl>
-      </Card>
+      </div>
+      <div>
+        <h2 className="mb-3 font-title text-lg font-bold">{t('health.web')}</h2>
+        <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+          <StatTile icon={Cpu} label={t('health.memory')} value={`${web.rssMb} MB`} />
+          <StatTile icon={Clock} accent="cyan" label={t('health.uptime')} value={formatUptime(web.uptimeSec)} />
+          <StatTile icon={HardDrive} accent="violet" label={t('health.data')} value={`${dataDirMb} MB`} />
+          <StatTile icon={Layers} accent="green" label="Node" value={web.node} />
+        </div>
+      </div>
     </div>
   );
 }
@@ -661,23 +790,24 @@ function Modules({ t, lang }) {
   };
 
   return (
-    <Card>
-      <p className="mb-3 text-sm text-white/60">{t('modules.hint')}</p>
+    <div className="space-y-4">
       {error && <ErrorNotice t={t} code={error} />}
-      <ul className="divide-y divide-white/5">
+      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {modules.data.modules.map((m) => (
-          <li key={m.id} className="py-2">
-            <Toggle
-              label={`${m.name?.[key] || m.id}`}
-              checked={m.enabled}
+          <li key={m.id}>
+            <ModuleTile
+              t={t}
+              icon={Boxes}
+              name={m.name?.[key] || m.id}
+              description={m.description?.[key]}
+              extra={m.guildScope && <p className="mt-1 text-xs text-mystic-glow">{t('modules.scoped', { guilds: m.guildScope.join(', ') })}</p>}
+              enabled={m.enabled}
               disabled={busy === m.id}
               onChange={(v) => toggle(m, v)}
             />
-            <p className="text-xs text-white/50">{m.description?.[key]}</p>
-            {m.guildScope && <p className="text-xs text-mystic-glow">{t('modules.scoped', { guilds: m.guildScope.join(', ') })}</p>}
           </li>
         ))}
       </ul>
-    </Card>
+    </div>
   );
 }

@@ -1,9 +1,25 @@
 import React from 'react';
 
-export function Card({ title, children, className = '' }) {
+// Cartão base do painel: borda neon em degradê; `eyebrow` é a etiqueta pequena acima do título.
+export function Card({ title, eyebrow, icon: Icon, action, children, className = '' }) {
   return (
-    <section className={`glass-panel rounded-2xl p-4 sm:p-5 ${className}`}>
-      {title && <h2 className="font-title text-lg font-bold mb-3">{title}</h2>}
+    <section className={`dash-card rounded-2xl p-4 sm:p-5 ${className}`}>
+      {(title || eyebrow || action) && (
+        <header className="mb-3 flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            {Icon && (
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-pyxie-bright/25 to-mystic-violet/25 text-pyxie-glow" aria-hidden="true">
+                <Icon size={18} />
+              </span>
+            )}
+            <div className="min-w-0">
+              {title && <h2 className="truncate font-title text-lg font-bold">{title}</h2>}
+              {eyebrow && <p className="text-[11px] font-semibold uppercase tracking-wider text-mystic-glow/80">{eyebrow}</p>}
+            </div>
+          </div>
+          {action}
+        </header>
+      )}
       {children}
     </section>
   );
@@ -13,24 +29,33 @@ export function Toggle({ checked, onChange, label, disabled = false }) {
   return (
     <label className={`flex items-center justify-between gap-3 py-2 ${disabled ? 'opacity-50' : 'cursor-pointer'}`}>
       <span className="text-sm">{label}</span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        aria-label={label}
-        disabled={disabled}
-        onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition ${checked ? 'bg-pyxie-pink' : 'bg-white/15'}`}
-      >
-        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${checked ? 'left-[22px]' : 'left-0.5'}`} />
-      </button>
+      <Switch checked={checked} onChange={onChange} label={label} disabled={disabled} />
     </label>
+  );
+}
+
+export function Switch({ checked, onChange, label, disabled = false }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+      className={`relative h-6 w-11 shrink-0 rounded-full transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pyxie-glow ${
+        checked ? 'bg-gradient-to-r from-pyxie-bright to-mystic-violet shadow-[0_0_14px_rgba(236,72,153,0.55)]' : 'bg-white/15'
+      }`}
+    >
+      <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${checked ? 'left-[22px]' : 'left-0.5'}`} />
+    </button>
   );
 }
 
 export function Button({ children, onClick, variant = 'primary', type = 'button', disabled = false, className = '' }) {
   const styles = {
-    primary: 'bg-pyxie-pink hover:bg-pyxie-neon text-white',
+    primary:
+      'bg-gradient-to-r from-pyxie-bright to-mystic-violet text-white shadow-[0_0_18px_rgba(236,72,153,0.35)] hover:shadow-[0_0_26px_rgba(236,72,153,0.55)] hover:brightness-110',
     ghost: 'bg-white/5 hover:bg-white/10 text-white border border-white/10',
   };
   return (
@@ -56,21 +81,67 @@ export function Notice({ children, tone = 'info' }) {
 
 export function Spinner({ label }) {
   return (
-    <p className="py-8 text-center text-sm text-white/60" role="status">
+    <p className="flex items-center justify-center gap-2 py-10 text-sm text-white/60" role="status">
+      <span className="h-4 w-4 animate-spin rounded-full border-2 border-pyxie-glow/30 border-t-pyxie-glow motion-reduce:animate-none" aria-hidden="true" />
       {label}
     </p>
   );
 }
 
-export function GuildIcon({ guild, size = 40 }) {
+// Selo de estado (Ligado/Desligado, zona, papel).
+export function Badge({ children, tone = 'violet' }) {
+  const tones = {
+    violet: 'border-mystic-violet/40 bg-mystic-violet/15 text-mystic-glow',
+    pink: 'border-pyxie-bright/40 bg-pyxie-bright/15 text-pyxie-glow',
+    green: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300',
+    muted: 'border-white/10 bg-white/5 text-white/60',
+    red: 'border-red-400/40 bg-red-400/10 text-red-300',
+  };
+  return <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-semibold ${tones[tone]}`}>{children}</span>;
+}
+
+export function StatusDot({ online }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`inline-block h-2 w-2 shrink-0 rounded-full ${online ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]' : 'bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.9)]'}`}
+    />
+  );
+}
+
+// Número grande em destaque, como os blocos do topo do painel.
+export function StatTile({ label, value, icon: Icon, accent = 'pink', hint }) {
+  const accents = {
+    pink: 'from-pyxie-bright/30 to-pyxie-bright/5 text-pyxie-glow',
+    violet: 'from-mystic-violet/30 to-mystic-violet/5 text-mystic-glow',
+    cyan: 'from-cyber-cyan/30 to-cyber-cyan/5 text-cyber-cyan',
+    green: 'from-cyber-emerald/30 to-cyber-emerald/5 text-emerald-300',
+  };
+  return (
+    <div className="dash-card flex min-w-0 items-center gap-3 rounded-2xl p-3 sm:p-4">
+      {Icon && (
+        <span className={`hidden h-11 sm:flex w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${accents[accent]}`} aria-hidden="true">
+          <Icon size={20} />
+        </span>
+      )}
+      <dl className="min-w-0">
+        <dt className="truncate text-xs text-white/60">{label}</dt>
+        <dd className="truncate font-title text-base font-bold sm:text-xl">{value}</dd>
+        {hint && <dd className="truncate text-[11px] text-white/45">{hint}</dd>}
+      </dl>
+    </div>
+  );
+}
+
+export function GuildIcon({ guild, size = 40, className = 'rounded-xl' }) {
   if (guild?.icon) {
-    return <img src={guild.icon} alt={guild.name} width={size} height={size} className="rounded-xl" />;
+    return <img src={guild.icon} alt={guild.name} width={size} height={size} className={className} />;
   }
   return (
     <span
       aria-hidden="true"
       style={{ width: size, height: size }}
-      className="flex items-center justify-center rounded-xl bg-mystic-deep font-bold"
+      className={`flex shrink-0 items-center justify-center bg-gradient-to-br from-mystic-deep to-pyxie-pink/60 font-bold ${className}`}
     >
       {Array.from((guild?.name || '').replace(/[^\p{L}\p{N}]/gu, ''))[0] || '?'}
     </span>

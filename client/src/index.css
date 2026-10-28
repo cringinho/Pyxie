@@ -80,3 +80,80 @@ body {
   background: rgba(230, 0, 103, 0.6);
 }
 
+
+/* Painel (/dashboard): cartões com borda neon, céu estrelado e trilha de servidores. */
+.dash-card {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(18, 10, 34, 0.86), rgba(18, 10, 34, 0.86)) padding-box,
+    linear-gradient(135deg, rgba(236, 72, 153, 0.55), rgba(139, 92, 246, 0.35) 45%, rgba(56, 189, 248, 0.22)) border-box;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 24px rgba(168, 85, 247, 0.08);
+}
+
+.dash-card-hover {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+.dash-card-hover:hover,
+.dash-card-hover:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 28px rgba(236, 72, 153, 0.25);
+}
+
+.dash-surface {
+  background: rgba(12, 7, 24, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.dash-field {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(192, 132, 252, 0.2);
+}
+.dash-field:focus {
+  outline: none;
+  border-color: rgba(236, 72, 153, 0.7);
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.18);
+}
+
+.dash-sky {
+  background:
+    radial-gradient(ellipse at 15% 0%, rgba(147, 51, 234, 0.28), transparent 55%),
+    radial-gradient(ellipse at 90% 15%, rgba(236, 72, 153, 0.16), transparent 50%),
+    radial-gradient(ellipse at 50% 110%, rgba(56, 189, 248, 0.1), transparent 55%),
+    #07040d;
+}
+
+.dash-star {
+  position: absolute;
+  border-radius: 9999px;
+  background: #fff;
+  animation: dash-twinkle 4s ease-in-out infinite;
+}
+
+.dash-sparkle {
+  position: absolute;
+  line-height: 1;
+  animation: dash-float 9s ease-in-out infinite;
+  text-shadow: 0 0 12px currentColor;
+}
+
+@keyframes dash-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
+@keyframes dash-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(12deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-star,
+  .dash-sparkle {
+    animation: none;
+  }
+  .dash-card-hover:hover,
+  .dash-card-hover:focus-visible {
+    transform: none;
+  }
+}
