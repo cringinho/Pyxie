@@ -108,7 +108,8 @@ function buildPanel(guildId, lang = 'pt') {
         {
           color: hexToInt(group[Math.floor(group.length / 2)].hex),
           title: t('colors.groupTitle', lang, { part: g + 1, total }),
-          ...(g === 0 ? { description: t('colors.intro', lang) } : {}),
+          // Painel fixo: a pixel art da Pyxie decora só o primeiro bloco.
+          ...(g === 0 ? { description: t('colors.intro', lang), thumbnail: { url: require('./embedOverrides').THUMBS.pixel } } : {}),
           fields: columns.map((col) => ({ name: '​', value: col.map(line).join('\n'), inline: true })),
         },
       ],

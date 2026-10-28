@@ -152,6 +152,9 @@ const client = new Client({
   },
 });
 
+// Embeds personalizados pelo dono no painel (cor, textos, imagens, emojis do app), aplicados no envio.
+require('./src/services/embedOverrides').install(client);
+
 // Envia uma mensagem de inicialização para o canal de alerta do servidor.
 async function sendStartupAnnouncement() {
   const channel = await client.channels.fetch(STARTUP_CHANNEL_ID).catch(() => null);

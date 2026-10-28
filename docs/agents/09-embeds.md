@@ -31,3 +31,4 @@ Sempre que estruturar e implementar embeds do Discord no bot (utilizando `new Em
    - O rodapé deve ser dinâmico e contextual: exibir o nome da aplicação (`Pyxie`) e o nome do servidor quando aplicável (`guild ? guild.name : 'Privado'`), com texto ou dicas rotativas de outros comandos e funções do bot.
    - Minigames rápidos, notificações efêmeras ou embeds compactos podem utilizar rodapés simplificados para priorizar a agilidade e evitar sobrecarga visual na tela.
    - Utilize `.setTimestamp()` nativo com a data/hora do evento em embeds que representem ações com temporalidade relevante (transações, logs, alertas).
+   - **Rostinho no rodapé:** todo embed com texto de rodapé ganha sozinho o ícone da Pyxie (`assets/pyxie/sticker/footer/`: `smile`, `happy`, `worried`, `sad`), escolhido pelo tom do embed em `src/services/embedOverrides.js`. Não ponha `iconURL` no rodapé à mão, a não ser que o embed precise de outro ícone.
