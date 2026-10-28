@@ -17,6 +17,7 @@ import {
   Search,
   Server,
   ShieldAlert,
+  ShoppingBag,
   ShieldCheck,
   Sparkles,
   ToggleRight,
@@ -52,6 +53,7 @@ export const SECTION_META = {
   links: { icon: Link2, group: 'content' },
   assets: { icon: Image, group: 'content' },
   museum: { icon: Landmark, group: 'content' },
+  shopee: { icon: ShoppingBag, group: 'content' },
 };
 
 const GROUP_ORDER = ['core', 'messages', 'config', 'safety', 'system', 'content', 'more'];
