@@ -40,6 +40,7 @@ function defaultConfig() {
     guard: { enabled: true, mode: 'alert' },
     antiRaid: { enabled: true, joins: 10, seconds: 30, pauseMinutes: 60 },
     appeals: { enabled: false, channelId: '' },
+    fileShield: { enabled: true, action: 'delete', blockExecutables: true },
   };
 }
 
@@ -52,6 +53,7 @@ function normalizeConfig(raw = {}) {
   const guard = { ...base.guard, ...(raw.guard || {}) };
   const raid = { ...base.antiRaid, ...(raw.antiRaid || {}) };
   const appeals = { ...base.appeals, ...(raw.appeals || {}) };
+  const files = { ...base.fileShield, ...(raw.fileShield || {}) };
   return {
     staffLogChannelId: ID_RE.test(String(raw.staffLogChannelId || '')) ? String(raw.staffLogChannelId) : '',
     linkShield: {
@@ -72,6 +74,11 @@ function normalizeConfig(raw = {}) {
     appeals: {
       enabled: appeals.enabled === true,
       channelId: ID_RE.test(String(appeals.channelId || '')) ? String(appeals.channelId) : '',
+    },
+    fileShield: {
+      enabled: files.enabled !== false,
+      action: files.action === 'warn' ? 'warn' : 'delete',
+      blockExecutables: files.blockExecutables !== false,
     },
   };
 }
@@ -95,6 +102,7 @@ function saveConfig(guildId, input = {}) {
     guard: { ...current.guard, ...(input.guard || {}) },
     antiRaid: { ...current.antiRaid, ...(input.antiRaid || {}) },
     appeals: { ...current.appeals, ...(input.appeals || {}) },
+    fileShield: { ...current.fileShield, ...(input.fileShield || {}) },
   });
   writeAtomic(fileFor(guildId, 'security.json'), next);
   cache.set(guildId, { at: Date.now(), config: next });
@@ -104,7 +112,7 @@ function saveConfig(guildId, input = {}) {
 function readEvents(guildId) {
   const raw = readJson(fileFor(guildId, 'securityEvents.json')) || {};
   return {
-    counters: { link: 0, role: 0, channel: 0, raid: 0, ...(raw.counters || {}) },
+    counters: { link: 0, role: 0, channel: 0, raid: 0, file: 0, webhook: 0, ...(raw.counters || {}) },
     events: Array.isArray(raw.events) ? raw.events : [],
   };
 }

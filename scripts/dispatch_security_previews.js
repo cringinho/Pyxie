@@ -31,6 +31,9 @@ async function main() {
   await send('Cargo: desfeito sozinho', alerts.roleAlert(lang, { ...base, roleId: '1453890868980482091', roleName: 'Moderação', names: ['Administrator'], executorId: USER, reverted: true, viaDm: false }));
   await send('Anti-raid: pausado', alerts.raidAlert(lang, { ...base, total: 14, young: 11, seconds: 30, paused: true, until: Date.now() + 3600000, viaDm: false }));
   await send('Anti-raid: sem permissão', alerts.raidAlert(lang, { ...base, total: 14, young: 11, seconds: 30, paused: false, until: 0, viaDm: false }));
+  await send('Arquivo: registro da staff', alerts.fileStaffLog(lang, { serverName: 'Cringelândia', userId: USER, channelId: '1453890869538197567', fileName: 'nitro_gratis.py', reason: 'grabber', deleted: true }));
+  await send('Arquivo: aviso no canal e DM', asText({ content: [alerts.fileChannelNotice(lang, { userId: USER, reason: 'grabber', deleted: true }).content, alerts.fileAuthorDm(lang, { serverName: 'Cringelândia' }).content].join('\n\n') }, '💬 Canal + DM'));
+  await send('Webhook suspeito', alerts.webhookAlert(lang, { ...base, webhookId: '1453890868980482099', webhookName: 'Avisos', channelId: '1453890869538197567', reason: 'everyone', removed: false, viaDm: false }));
   await send('Canal: alerta por DM', alerts.channelAlert(lang, { ...base, channelId: '1453890869538197567', categoryName: 'Staff', executorId: null, locked: false, viaDm: true }));
 }
 

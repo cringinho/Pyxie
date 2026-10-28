@@ -361,6 +361,24 @@ const TRANSLATIONS = {
     "memoryGuard": {
       "dm": "🧯 A memória da Pyxie chegou a {used} de {limit} MB. Esvaziei os caches de imagem e o cartão de perfil está saindo só em texto até baixar. Moderação, segurança e economia seguem normais."
     },
+    "fileShield": {
+      "channelDeleted": {
+        "grabber": "🛡️ Apaguei um arquivo de {user} que tenta roubar contas (token ou senha). Não baixe nem rode arquivos assim, tá?",
+        "exec": "🛡️ Apaguei um programa (.exe e parecidos) enviado por {user}. Aqui não rodamos programas mandados no chat, por segurança."
+      },
+      "channelWarned": {
+        "grabber": "⚠️ Cuidado: o arquivo de {user} tenta roubar contas (token ou senha). Não baixe nem rode.",
+        "exec": "⚠️ Cuidado: {user} mandou um programa (.exe e parecidos). Não rode programas recebidos no chat."
+      },
+      "dm": "💜 Oi. Um arquivo que você mandou em **{server}** tenta roubar contas (token ou senha), então eu tirei do ar.\n\nSe não foi você, alguém pode estar usando a sua conta: troque a senha do Discord e ligue a verificação em duas etapas. Se você rodou esse arquivo no seu computador, troque também as senhas salvas no navegador.\n\nNinguém foi punido.",
+      "logTitleDeleted": "🧪 Arquivo perigoso apagado",
+      "logTitleWarned": "🧪 Arquivo perigoso avisado",
+      "logFile": "**Arquivo:** {file}",
+      "reason": {
+        "grabber": "script que procura token/senhas e manda para fora",
+        "exec": "programa executável enviado no chat"
+      }
+    },
     "linkShield": {
       "brandUnknown": "um site conhecido",
       "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
@@ -385,6 +403,17 @@ const TRANSLATIONS = {
       }
     },
     "serverGuard": {
+      "webhookTitle": "🪝 Webhook suspeito",
+      "webhookWhat": "**Webhook:** {name} {id} em {channel}",
+      "webhookAsk": "Apaguei a mensagem. Se ninguém da staff usa esse webhook para isso, toque em **Apagar webhook**: quem tiver o link dele perde o acesso.",
+      "webhookRemoved": "Já apaguei a mensagem e o webhook.",
+      "btnDeleteWebhook": "Apagar webhook",
+      "doneWebhook": "🪝 Webhook apagado por {user}.",
+      "webhookReason": {
+        "everyone": "marcou @everyone ou @here",
+        "lookalike": "mandou link que imita site conhecido",
+        "massMention": "marcou muita gente de uma vez"
+      },
       "roleTitle": "🔐 Permissão perigosa num cargo",
       "roleWhat": "**Cargo:** {role} {id}",
       "roleGained": "**Ganhou:** {perms}",
@@ -2748,6 +2777,24 @@ const TRANSLATIONS = {
     "memoryGuard": {
       "dm": "🧯 Pyxie's memory reached {used} of {limit} MB. I emptied the image caches and the profile card is text-only until it drops. Moderation, safety and economy keep running normally."
     },
+    "fileShield": {
+      "channelDeleted": {
+        "grabber": "🛡️ I deleted a file from {user} that tries to steal accounts (token or password). Please don't download or run files like that.",
+        "exec": "🛡️ I deleted a program (.exe and similar) sent by {user}. We don't run programs posted in chat here, for safety."
+      },
+      "channelWarned": {
+        "grabber": "⚠️ Careful: {user}'s file tries to steal accounts (token or password). Don't download or run it.",
+        "exec": "⚠️ Careful: {user} sent a program (.exe and similar). Don't run programs received in chat."
+      },
+      "dm": "💜 Hi. A file you sent in **{server}** tries to steal accounts (token or password), so I took it down.\n\nIf you didn't send it, someone may be using your account: change your Discord password and turn on two-factor authentication. If you ran that file on your computer, also change the passwords saved in your browser.\n\nNobody was punished.",
+      "logTitleDeleted": "🧪 Dangerous file deleted",
+      "logTitleWarned": "🧪 Dangerous file flagged",
+      "logFile": "**File:** {file}",
+      "reason": {
+        "grabber": "script that looks for tokens/passwords and sends them out",
+        "exec": "executable program posted in chat"
+      }
+    },
     "linkShield": {
       "brandUnknown": "a well-known site",
       "channelDeleted": "🛡️ I deleted a message from {user} with a link that imitates {brand}. Links like that are used to steal accounts, so please don't open it.",
@@ -2772,6 +2819,17 @@ const TRANSLATIONS = {
       }
     },
     "serverGuard": {
+      "webhookTitle": "🪝 Suspicious webhook",
+      "webhookWhat": "**Webhook:** {name} {id} in {channel}",
+      "webhookAsk": "I deleted the message. If no one on staff uses this webhook for that, tap **Delete webhook**: whoever has its link loses access.",
+      "webhookRemoved": "I already deleted the message and the webhook.",
+      "btnDeleteWebhook": "Delete webhook",
+      "doneWebhook": "🪝 Webhook deleted by {user}.",
+      "webhookReason": {
+        "everyone": "pinged @everyone or @here",
+        "lookalike": "sent a link that imitates a well-known site",
+        "massMention": "pinged lots of people at once"
+      },
       "roleTitle": "🔐 Dangerous permission on a role",
       "roleWhat": "**Role:** {role} {id}",
       "roleGained": "**Gained:** {perms}",

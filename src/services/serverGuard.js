@@ -61,7 +61,7 @@ function parseId(customId) {
   if (!/^\d{17,20}$/.test(guildId || '')) return null;
   if (kind === 'keep') return { kind, guildId };
   if (!/^\d{17,20}$/.test(targetId || '')) return null;
-  if (kind === 'lock') return { kind, guildId, targetId };
+  if (kind === 'lock' || kind === 'hook') return { kind, guildId, targetId };
   if (kind === 'role' && /^[0-9a-z]+$/.test(bits || '')) {
     const value = [...bits].reduce((acc, ch) => acc * 36n + BigInt(parseInt(ch, 36)), 0n);
     return { kind, guildId, targetId, names: namesOf(value) };

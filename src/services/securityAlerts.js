@@ -124,6 +124,54 @@ function raidAlert(lang, { guildId, serverName, total, young, seconds, paused, u
   return { embeds: [footer(embed, lang, serverName)], components, allowedMentions: NO_PING };
 }
 
+// Escudo de arquivos: aviso no canal, DM para quem mandou (conta pode estar invadida) e registro.
+function fileChannelNotice(lang, { userId, reason, deleted }) {
+  const key = deleted ? `fileShield.channelDeleted.${reason}` : `fileShield.channelWarned.${reason}`;
+  return { content: t(key, lang, { user: `<@${userId}>` }), allowedMentions: NO_PING };
+}
+
+function fileAuthorDm(lang, { serverName }) {
+  return { content: t('fileShield.dm', lang, { server: serverName }), allowedMentions: NO_PING };
+}
+
+function fileStaffLog(lang, { serverName, userId, channelId, fileName, reason, deleted }) {
+  const embed = new EmbedBuilder()
+    .setColor(deleted ? COLORS.danger : COLORS.warn)
+    .setTitle(t(deleted ? 'fileShield.logTitleDeleted' : 'fileShield.logTitleWarned', lang))
+    .setDescription(
+      [
+        t('linkShield.logWho', lang, { user: `\`<@${userId}>\``, channel: `<#${channelId}>` }),
+        t('fileShield.logFile', lang, { file: `\`${String(fileName).replace(/`/g, '').slice(0, 80)}\`` }),
+        t('linkShield.logReason', lang, { reason: t(`fileShield.reason.${reason}`, lang) }),
+      ].join('\n\n')
+    );
+  return { embeds: [footer(embed, lang, serverName)], allowedMentions: NO_PING };
+}
+
+// Webhook mandando coisa suspeita: botão para apagar o webhook (corta o acesso de quem o vazou).
+function webhookAlert(lang, { guildId, serverName, webhookId, webhookName, channelId, reason, removed, viaDm, panelUrl }) {
+  const lines = [
+    t('serverGuard.webhookWhat', lang, { name: `**${String(webhookName || 'webhook').replace(/[*_`]/g, '')}**`, id: `\`${webhookId}\``, channel: `<#${channelId}>` }),
+    t('linkShield.logReason', lang, { reason: t(`serverGuard.webhookReason.${reason}`, lang) }),
+    removed ? `> ${t('serverGuard.webhookRemoved', lang)}` : `> ${t('serverGuard.webhookAsk', lang)}`,
+  ];
+  if (viaDm) lines.push(`-# ${t('serverGuard.dmNote', lang, { server: serverName, panel: `[${t('serverGuard.panel', lang)}](${panelUrl})` })}`);
+  const embed = new EmbedBuilder().setColor(removed ? COLORS.ok : COLORS.danger).setTitle(t('serverGuard.webhookTitle', lang)).setDescription(lines.join('\n\n'));
+  const components = removed
+    ? []
+    : [
+        new ActionRowBuilder().addComponents(
+          new ButtonBuilder().setCustomId(`sg:hook:${guildId}:${webhookId}`).setLabel(t('serverGuard.btnDeleteWebhook', lang)).setEmoji('🪝').setStyle(ButtonStyle.Danger),
+          new ButtonBuilder().setCustomId(guard.ids.keep(guildId)).setLabel(t('serverGuard.btnKeep', lang)).setStyle(ButtonStyle.Secondary)
+        ),
+      ];
+  return { embeds: [footer(embed, lang, serverName)], components, allowedMentions: NO_PING };
+}
+
 module.exports = {
+  fileChannelNotice,
+  fileAuthorDm,
+  fileStaffLog,
+  webhookAlert,
   resolveDestination,
   raidAlert, linkChannelNotice, linkAuthorDm, linkStaffLog, roleAlert, channelAlert, NO_PING };

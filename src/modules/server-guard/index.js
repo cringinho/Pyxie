@@ -1,7 +1,8 @@
 // Guardião do servidor: avisa a staff quando um cargo ganha permissão perigosa ou quando um
 // canal fica aberto a todo mundo dentro de uma categoria fechada. Por padrão só alerta, com
 // botão de desfazer; no modo automático, a Pyxie desfaz sozinha. Vale em todos os servidores.
-const { AuditLogEvent, ChannelType, PermissionFlagsBits } = require('discord.js');
+const { AuditLogEvent, ChannelType, MessageFlags, PermissionFlagsBits, WebhookType } = require('discord.js');
+const { findLookalikes } = require('../../services/lookalikeLinks');
 const guard = require('../../services/serverGuard');
 const safety = require('../../services/guildSafety');
 const alerts = require('../../services/securityAlerts');
@@ -93,6 +94,37 @@ async function onChannelChange(oldChannel, channel, client) {
   return { locked };
 }
 
+// Webhook mandando @everyone, link falso ou menção em massa: quem vaza um webhook costuma fazer isso.
+async function onWebhookMessage(message, client) {
+  if (!message?.guild || !message.webhookId) return null;
+  if (message.applicationId && message.applicationId === message.webhookId) return null; // resposta de comando de bot
+  if (message.flags?.has?.(MessageFlags.IsCrosspost)) return null; // anúncio de canal seguido
+  const { guild } = message;
+  const config = safety.getConfig(guild.id);
+  if (!config.guard.enabled) return null;
+  let reason = null;
+  if (message.mentions?.everyone) reason = 'everyone';
+  else if (findLookalikes(message.content).length) reason = 'lookalike';
+  else if ((message.mentions?.users?.size || 0) >= 8) reason = 'massMention';
+  if (!reason || !guard.shouldAlert(`sg:hook:${message.webhookId}`)) return null;
+
+  const hooks = await message.channel?.fetchWebhooks?.().catch(() => null);
+  const hook = hooks?.get?.(message.webhookId) || null;
+  if (hook && (hook.owner?.id === client.user.id || hook.type === WebhookType.ChannelFollower)) return null;
+
+  if (message.deletable) await message.delete().catch(() => null);
+  let removed = false;
+  if (config.guard.mode === 'auto' && hook?.delete) removed = await hook.delete('Pyxie: webhook mandou mensagem suspeita').then(() => true).catch(() => false);
+
+  const dest = await alerts.resolveDestination(guild, config);
+  if (dest) {
+    const payload = alerts.webhookAlert(guild, { guildId: guild.id, serverName: guild.name, webhookId: message.webhookId, webhookName: hook?.name || message.author?.username, channelId: message.channel.id, reason, removed, viaDm: dest.viaDm, panelUrl: panelUrl(guild.id) });
+    await dest.target.send(payload).catch(() => null);
+  }
+  safety.recordEvent(guild.id, { type: 'webhook', webhookId: message.webhookId, channelId: message.channel.id, reason, action: removed ? 'removed' : 'alerted' });
+  return { reason, removed };
+}
+
 // Botões dos alertas (no canal da staff ou na DM do dono).
 async function handleInteraction(interaction, client) {
   if (!interaction.isButton?.()) return;
@@ -106,7 +138,9 @@ async function handleInteraction(interaction, client) {
   const isOwner = guild.ownerId === interaction.user.id;
   const isAdmin = Boolean(member?.permissions.has(PermissionFlagsBits.Administrator));
   const canLock = isOwner || isAdmin || Boolean(member?.permissions.has(PermissionFlagsBits.ManageChannels));
-  if (parsed.kind === 'lock' ? !canLock : !(isOwner || isAdmin)) return reply('serverGuard.noPermission');
+  const canHook = isOwner || isAdmin || Boolean(member?.permissions.has(PermissionFlagsBits.ManageWebhooks));
+  const allowed = parsed.kind === 'lock' ? canLock : parsed.kind === 'hook' ? canHook : isOwner || isAdmin;
+  if (!allowed) return reply('serverGuard.noPermission');
 
   const done = (key) =>
     interaction.update({ content: t(key, guild, { user: `\`<@${interaction.user.id}>\`` }), components: [], allowedMentions: alerts.NO_PING });
@@ -123,6 +157,19 @@ async function handleInteraction(interaction, client) {
     if (!ok) return reply('serverGuard.failed');
     safety.recordEvent(guild.id, { type: 'role', roleId: role.id, roleName: role.name, perms: parsed.names, executorId: interaction.user.id, action: 'reverted' });
     return done('serverGuard.doneReverted');
+  }
+
+  if (parsed.kind === 'hook') {
+    const ok = await guild
+      .fetchWebhooks()
+      .then((hooks) => {
+        const hook = hooks.get(parsed.targetId);
+        return hook ? hook.delete(`Pyxie: apagado por ${interaction.user.tag}`).then(() => true) : false;
+      })
+      .catch(() => false);
+    if (!ok) return reply('serverGuard.failed');
+    safety.recordEvent(guild.id, { type: 'webhook', webhookId: parsed.targetId, executorId: interaction.user.id, action: 'removed' });
+    return done('serverGuard.doneWebhook');
   }
 
   const channel = guild.channels.cache.get(parsed.targetId);
@@ -147,6 +194,7 @@ module.exports = {
   defaultEnabled: true,
   onRoleChange,
   onChannelChange,
+  onWebhookMessage,
   handleInteraction,
 
   async onLoad(ctx) {
@@ -156,6 +204,7 @@ module.exports = {
     ctx.registerListener('roleUpdate', run('roleUpdate', onRoleChange));
     ctx.registerListener('channelCreate', run('channelCreate', (channel, client) => onChannelChange(null, channel, client)));
     ctx.registerListener('channelUpdate', run('channelUpdate', onChannelChange));
+    ctx.registerListener('messageCreate', run('messageCreate', onWebhookMessage));
     ctx.registerListener('interactionCreate', run('interactionCreate', handleInteraction));
   },
 

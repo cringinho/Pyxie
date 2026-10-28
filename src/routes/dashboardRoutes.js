@@ -413,6 +413,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       guard: body.guard || {},
       antiRaid: body.antiRaid || {},
       appeals: body.appeals ? { enabled: body.appeals.enabled === true, channelId: appealsChannelId } : {},
+      fileShield: body.fileShield || {},
     });
     return res.json({ success: true, security });
   });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Feather, Link2Off, ShieldCheck, ShieldHalf, KeyRound, Hash, Siren } from 'lucide-react';
+import { Feather, FileWarning, Link2Off, ShieldCheck, ShieldHalf, KeyRound, Hash, Siren } from 'lucide-react';
 import { api } from './api';
 import BotPermissions from './Permissions';
 import { Button, Card, Notice, Spinner, StatTile, Toggle } from './ui';
@@ -20,6 +20,8 @@ function eventText(t, e) {
     const host = e.unicodeHost && e.unicodeHost !== e.host ? `${e.unicodeHost} (${e.host})` : e.host;
     return t('sec.event.link', { host, brand: e.imitates || t('sec.unknownBrand') });
   }
+  if (e.type === 'file') return t('sec.event.file', { file: e.fileName, reason: t(`sec.fileReason.${e.reason}`) });
+  if (e.type === 'webhook') return t('sec.event.webhook', { id: e.webhookId });
   if (e.type === 'raid') return t('sec.event.raid', { joins: e.joins, young: e.young });
   if (e.type === 'role') return t('sec.event.role', { role: e.roleName, perms: (e.perms || []).map((p) => t(`sec.perm.${p}`)).join(', ') });
   return t('sec.event.channel', { channel: e.channelName });
@@ -49,6 +51,7 @@ export default function Security({ t, guildId }) {
   if (!data || !draft) return <Spinner label={t('app.loading')} />;
 
   const setLink = (patch) => setDraft({ ...draft, linkShield: { ...draft.linkShield, ...patch } });
+  const setFiles = (patch) => setDraft({ ...draft, fileShield: { ...draft.fileShield, ...patch } });
   const setAppeals = (patch) => setDraft({ ...draft, appeals: { ...draft.appeals, ...patch } });
   const setRaid = (patch) => setDraft({ ...draft, antiRaid: { ...draft.antiRaid, ...patch } });
   const setGuard = (patch) => setDraft({ ...draft, guard: { ...draft.guard, ...patch } });
@@ -63,6 +66,7 @@ export default function Security({ t, guildId }) {
         guard: draft.guard,
         antiRaid: draft.antiRaid,
         appeals: draft.appeals,
+        fileShield: draft.fileShield,
       });
       setDraft({ ...res.security, allowText: res.security.linkShield.allowDomains.join('\n') });
       setStatus('ok');
@@ -92,6 +96,7 @@ export default function Security({ t, guildId }) {
           { perm: 'ManageChannels', why: 'perm.why.lockChannels' },
           { perm: 'ManageGuild', why: 'perm.why.raidPause' },
           { perm: 'BanMembers', why: 'perm.why.appeals' },
+          { perm: 'ManageWebhooks', why: 'perm.why.webhooks' },
         ]}
       />
 
@@ -132,6 +137,18 @@ export default function Security({ t, guildId }) {
             />
             <span className="mt-1 block text-xs text-white/50">{t('sec.allowHint')}</span>
           </label>
+        </div>
+      </Card>
+
+      <Card title={t('sec.fileTitle')} icon={FileWarning}>
+        <p className="mb-3 text-sm text-white/70">{t('sec.fileHint')}</p>
+        <div className="space-y-3">
+          <Toggle label={t('sec.fileOn')} checked={draft.fileShield.enabled} onChange={(v) => setFiles({ enabled: v })} />
+          <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label={t('sec.fileTitle')}>
+            <Choice name="fs-action" value="delete" current={draft.fileShield.action} label={t('sec.actionDelete')} onChange={(v) => setFiles({ action: v })} />
+            <Choice name="fs-action" value="warn" current={draft.fileShield.action} label={t('sec.actionWarn')} onChange={(v) => setFiles({ action: v })} />
+          </div>
+          <Toggle label={t('sec.fileExec')} checked={draft.fileShield.blockExecutables} onChange={(v) => setFiles({ blockExecutables: v })} />
         </div>
       </Card>
 

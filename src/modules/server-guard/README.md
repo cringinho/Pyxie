@@ -10,6 +10,7 @@ Por padrão ele só alerta: quem decide é a staff. Se o servidor preferir, o mo
 
 - **Permissão perigosa num cargo:** avisa quando um cargo novo ou existente ganha Administrador, Gerenciar Servidor, Gerenciar Cargos, Gerenciar Webhooks ou Banir Membros. O botão **Desfazer** tira só essas permissões e deixa o resto como estava.
 - **Canal privado que ficou aberto:** avisa quando um canal fica visível para `@everyone` dentro de uma categoria fechada (canal novo, alterado ou trazido de outra categoria). O botão **Trancar** esconde o canal de novo.
+- **Webhook vazado:** se um webhook mandar `@everyone`/`@here`, link que imita site conhecido ou marcar 8+ pessoas, a mensagem some e a staff recebe o botão **Apagar webhook** (dono, Administrador ou Gerenciar Webhooks). Ignora respostas de comandos de bots, anúncios de canais seguidos e webhooks da própria Pyxie. No modo automático, o webhook é apagado na hora.
 - **Quem fez:** mostra quem mudou, pelo registro de auditoria.
 - **Dono não gera alerta:** mudanças feitas por quem é dono do servidor passam em silêncio.
 - **Modo automático:** desfaz sozinho quando sabe quem mudou (precisa do registro de auditoria). Com ele ligado, só quem é dono do servidor consegue dar essas permissões.
