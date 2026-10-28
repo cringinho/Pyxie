@@ -1,12 +1,10 @@
 const express = require('express');
 const { getRanking, getTimeseries, getSummary, getCategoryBreakdown } = require('../services/commandTelemetry');
 const {
-  isBlacklisted,
   blacklistTarget,
   unblacklistTarget,
   getBlacklist,
   getActiveRedFlags,
-  forceLeaveGuild,
   exportComplianceDossier,
 } = require('../services/trustAndSafety');
 const {
@@ -14,21 +12,6 @@ const {
   getModuleMetrics,
   getSubpanelMetrics,
 } = require('../services/resourceTelemetry');
-const {
-  METADATA_DICTIONARY,
-  queryPartition,
-  updateRecord,
-} = require('../services/visualDbExplorer');
-const {
-  getEcosystemMap,
-  toggleRoute,
-} = require('../services/webRoutesManager');
-const {
-  getAllCommandScopes,
-  updateCommandScope,
-  simulateVisibility,
-} = require('../services/commandScopeManager');
-const { getGuildsDirectory } = require('../services/guildDirectory');
 const { getEmbedTheme } = require('../utils/embedBuilderHelper');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -65,55 +48,12 @@ function createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }) {
     res.json({ success: true, count: categories.length, categories });
   });
 
-  // Verification Waves Engine: Reconciliação com Força Real, Retry e Sem Cache (Seção 2)
-  router.post('/api/admin/reconcile', requireAdminAuth, async (req, res) => {
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-
-    const tab = req.query.tab || req.body?.tab || null;
-    const force = req.query.force === 'true' || req.body?.force === true;
-
-    try {
-      const truthEngine = require('../services/truthReconciliationEngine');
-      const waveResult = await truthEngine.runVerificationWave({
-        force: true,
-        trigger: `reconcile_api:${tab || 'all'}`,
-        tab,
-      });
-
-      res.json({
-        success: true,
-        ...waveResult,
-      });
-    } catch (err) {
-      res.status(500).json({ success: false, error: err.message });
-    }
-  });
-
-  // 2. Servers Directory (Task 4)
-  router.get('/api/admin/guilds', requireAdminAuth, (req, res) => {
-    const guilds = getGuildsDirectory();
-    res.json({ success: true, count: guilds.length, guilds });
-  });
-
   // 2.1 Funil de crescimento: convites por origem, entradas/saídas, ativação, retenção e listas de bots
   router.get('/api/admin/growth', requireAdminAuth, (req, res) => {
     const { getFunnelSummary } = require('../services/growthFunnel');
     const { getBotListStatus } = require('../services/botListStats');
     const days = Math.min(90, Math.max(7, Number(req.query.days) || 30));
     res.json({ success: true, funnel: getFunnelSummary({ days }), botLists: getBotListStatus() });
-  });
-
-  router.post('/api/admin/guilds/:id/force-leave', requireAdminAuth, async (req, res) => {
-    const guildId = req.params.id;
-    const sent = sendIpcToBot({ type: 'FORCE_LEAVE_GUILD', guildId });
-    res.json({ success: true, message: `Ordem de Force Leave enviada para o servidor ${guildId}.`, ipcSent: sent });
-  });
-
-  router.post('/api/admin/guilds/sync', requireAdminAuth, (req, res) => {
-    const sent = sendIpcToBot({ type: 'SYNC_GUILDS' });
-    res.json({ success: true, message: 'Ordem de sincronização enviada.', ipcSent: sent });
   });
 
   // 3. Trust & Safety & Legal Compliance (Task 2)
@@ -177,64 +117,6 @@ function createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }) {
 
   router.get('/api/admin/vm/subpanels', requireAdminAuth, (req, res) => {
     res.json({ success: true, subpanels: getSubpanelMetrics() });
-  });
-
-  // 5. Visual Database Explorer (Task 6)
-  router.get('/api/admin/db/dictionary', requireAdminAuth, (req, res) => {
-    res.json({ success: true, dictionary: METADATA_DICTIONARY });
-  });
-
-  router.get('/api/admin/db/explore', requireAdminAuth, (req, res) => {
-    const { partition, page, limit, search } = req.query;
-    const data = queryPartition({ partition, page, limit, search });
-    res.json({ success: true, ...data });
-  });
-
-  router.post('/api/admin/db/update', requireAdminAuth, (req, res) => {
-    const { partition, recordId, field, value } = req.body;
-    try {
-      const result = updateRecord({ partition, recordId, field, value });
-      res.json(result);
-    } catch (err) {
-      res.status(400).json({ success: false, error: err.message });
-    }
-  });
-
-  // 6. Interactive Web Ecosystem Map (Task 8)
-  router.get('/api/admin/routes/map', requireAdminAuth, (req, res) => {
-    res.json({ success: true, ...getEcosystemMap() });
-  });
-
-  router.post('/api/admin/routes/:id/toggle', requireAdminAuth, (req, res) => {
-    const { id } = req.params;
-    const { enabled } = req.body;
-    try {
-      const updated = toggleRoute(id, enabled);
-      res.json({ success: true, route: updated });
-    } catch (err) {
-      res.status(400).json({ success: false, error: err.message });
-    }
-  });
-
-  // 7. Command Scope & Access Control Matrix (Task 9)
-  router.get('/api/admin/scopes', requireAdminAuth, (req, res) => {
-    const scopes = getAllCommandScopes();
-    res.json({ success: true, count: scopes.length, scopes });
-  });
-
-  router.post('/api/admin/scopes/:name', requireAdminAuth, (req, res) => {
-    const { name } = req.params;
-    try {
-      const updated = updateCommandScope(name, req.body);
-      res.json({ success: true, command: name, scope: updated });
-    } catch (err) {
-      res.status(400).json({ success: false, error: err.message });
-    }
-  });
-
-  router.post('/api/admin/scopes/simulate', requireAdminAuth, (req, res) => {
-    const sim = simulateVisibility(req.body);
-    res.json({ success: true, ...sim });
   });
 
   // 8. Embeds Theme (Task 10)

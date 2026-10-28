@@ -1079,28 +1079,6 @@ app.get('/api/cringelandia/art-samples', (req, res) => {
 // O painel antigo mudou para o /dashboard (área global do dono). As APIs /api/admin/* continuam.
 app.get('/admin', (req, res) => res.redirect('/dashboard#/global/health'));
 
-// Autenticação direta por Senha Mestra (PANEL_SECRET)
-app.post('/api/admin/login', sensitiveRouteLimiter, (req, res) => {
-  const { password, secret } = req.body || {};
-  const token = password || secret;
-  if (!token || typeof token !== 'string') {
-    return res.status(400).json({ success: false, error: 'Chave mestra é obrigatória.' });
-  }
-
-  if (isMasterSecretValid(token.trim())) {
-    const sessionToken = createMasterAdminSession();
-    res.setHeader('Set-Cookie', `pyxie_admin_session=${sessionToken}; HttpOnly; SameSite=Lax; Max-Age=43200; Path=/`);
-    return res.json({ success: true, sessionToken });
-  }
-
-  return res.status(401).json({ success: false, error: 'Chave mestra incorreta.' });
-});
-
-app.post('/api/admin/logout', (req, res) => {
-  res.setHeader('Set-Cookie', 'pyxie_admin_session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/');
-  return res.json({ success: true });
-});
-
 // APIs de Controle e Gestão da Shopee para o Dono
 app.get('/api/admin/shopee', requireAdminAuth, (req, res) => {
   try {
@@ -1184,48 +1162,6 @@ app.delete('/api/admin/shopee/:id', requireAdminAuth, (req, res) => {
   try {
     const result = shopeeManager.deleteItem(req.params.id);
     return res.json(result);
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// APIs do Seeder Autônomo de Carreiras da Groq AI
-app.get('/api/admin/work-seeder/status', requireAdminAuth, (req, res) => {
-  try {
-    return res.json({ success: true, ...workSeederService.getStatus() });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.post('/api/admin/work-seeder/trigger', requireAdminAuth, async (req, res) => {
-  try {
-    const count = parseInt(req.body?.count, 10) || 1;
-    workSeederService.generateBatch({ countPerProfession: count }).catch((e) => {
-      console.error('[Groq Seeder] Erro no lote disparado manualmente:', e.message);
-    });
-    return res.json({ success: true, message: 'Lote de geração iniciado em background!' });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// APIs do Seeder de Perguntas de Quiz
-app.get('/api/admin/quiz-seeder/status', requireAdminAuth, (req, res) => {
-  try {
-    return res.json({ success: true, ...quizSeederService.getStatus() });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.post('/api/admin/quiz-seeder/trigger', requireAdminAuth, async (req, res) => {
-  try {
-    const count = parseInt(req.body?.count, 10) || 4;
-    quizSeederService.generateBatch({ count }).catch((e) => {
-      console.error('[Quiz Seeder] Erro no lote disparado manualmente:', e.message);
-    });
-    return res.json({ success: true, message: 'Lote de perguntas do quiz iniciado em background!' });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }
@@ -1481,53 +1417,11 @@ app.post('/api/admin/currencies', requireAdminAuth, (req, res) => {
   }
 });
 
-// API de Introspecção em Tempo Real do Processo do Bot
-app.get('/api/admin/introspect', requireAdminAuth, (req, res) => {
-  try {
-    const modules = moduleManager.getAllModules();
-    const embeds = embedRegistry.getAllEmbedsWithResolvedSlots();
-    const acervo = acervoAuditService.getAcervoStats();
-    const currencies = embedRegistry.getCurrenciesConfig();
-
-    return res.json({
-      success: true,
-      timestamp: Date.now(),
-      bot: {
-        running: !!botProcess && !botProcess.killed && botProcess.exitCode === null,
-        pid: botProcess ? botProcess.pid : null,
-        uptime: botStartTime ? Date.now() - botStartTime : 0,
-        stats: getStats(),
-      },
-      modules,
-      embeds,
-      currencies,
-      acervo,
-    });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
 // API de Auditoria Real de Acervo (Carreiras & Quiz)
 app.get('/api/admin/acervo/stats', requireAdminAuth, (req, res) => {
   try {
     const stats = acervoAuditService.getAcervoStats();
     return res.json({ success: true, ...stats });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// API de Simulação de Sorteio de Minigame ao Vivo
-app.post('/api/admin/acervo/test-draw', requireAdminAuth, (req, res) => {
-  try {
-    const { type, profession, level, userLevel, lang } = req.body || {};
-    const result = acervoAuditService.simulateDraw(type || 'career', {
-      profession,
-      level: level !== undefined ? level : userLevel,
-      lang: lang || 'pt',
-    });
-    return res.json(result);
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }
@@ -1635,35 +1529,6 @@ app.post('/api/admin/modules/:id/config', requireAdminAuth, (req, res) => {
   }
 });
 
-app.post('/api/admin/verify', (req, res) => {
-  const { token, secret } = req.body || {};
-  if (token) {
-    const magic = verifyMagicToken(token);
-    if (magic.valid) {
-      res.setHeader('Set-Cookie', `pyxie_admin_session=${magic.sessionToken}; HttpOnly; SameSite=Lax; Max-Age=43200; Path=/`);
-      return res.json({ success: true, sessionToken: magic.sessionToken });
-    }
-    return res.status(401).json({ success: false, message: magic.error });
-  }
-
-  if (secret && isMasterSecretValid(secret)) {
-    const sessionToken = createMasterAdminSession();
-    res.setHeader('Set-Cookie', `pyxie_admin_session=${sessionToken}; HttpOnly; SameSite=Lax; Max-Age=43200; Path=/`);
-    return res.json({ success: true, sessionToken });
-  }
-
-  const sessionCookie = getCookie(req, 'pyxie_admin_session');
-  if (sessionCookie && isValidAdminSession(sessionCookie)) {
-    return res.json({ success: true, sessionToken: sessionCookie });
-  }
-
-  if (!isIpAllowed(req)) {
-    return res.status(403).json({ success: false, message: 'IP não autorizado.' });
-  }
-
-  return res.status(401).json({ success: false, message: 'Credenciais inválidas ou sessão expirada.' });
-});
-
 // 4. Webhook do Top.gg (Votos e Recompensas a cada 12h)
 app.post('/api/topgg/webhook', (req, res) => {
   const authHeader = req.headers.authorization;
@@ -1722,13 +1587,6 @@ app.get('/api/config', requireAdminAuth, (req, res) => {
     welcomeChannelId: getWelcomeChannel('global') || null,
     economy: getEconomyConfig(),
   });
-});
-
-app.post('/api/config/welcome-channel', requireAdminAuth, (req, res) => {
-  const { channelId } = req.body || {};
-  const normalized = String(channelId || '').trim();
-  const result = setWelcomeChannel('global', normalized);
-  res.json({ success: true, welcomeChannelId: result });
 });
 
 app.post('/api/config/economy', requireAdminAuth, (req, res) => {
@@ -1801,14 +1659,6 @@ app.post('/api/logs/clear', requireAdminAuth, (req, res) => {
   botLogs = [];
   clearLogs();
   res.json({ success: true, message: 'Logs limpos com sucesso.' });
-});
-
-app.post('/api/admin/tarot/post-daily', requireAdminAuth, (req, res) => {
-  const sent = sendIpcToBot({ type: 'TAROT_DAILY_TRIGGER' });
-  if (sent) {
-    return res.json({ success: true, message: 'Comando de postagem do Tarot enviado ao bot via IPC.' });
-  }
-  return res.status(503).json({ success: false, error: 'Bot offline ou IPC indisponível.' });
 });
 
 app.post('/api/embed/send', requireAdminAuth, (req, res) => {
