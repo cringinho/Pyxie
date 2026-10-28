@@ -9,6 +9,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { AsyncLocalStorage } = require('node:async_hooks');
 const { CRINGELANDIA_GUILD_ID } = require('../config/scopes');
+const quips = require('./pyxieQuips');
 
 // Só o servidor oficial por enquanto (o painel também só mostra para o dono de lá).
 const ENABLED_GUILDS = new Set([CRINGELANDIA_GUILD_ID]);
@@ -244,16 +245,26 @@ function applyToComponents(components, globalSwaps) {
 
 // ---------- Contexto (quem e qual comando originou o envio) ----------
 
+function langOf(source) {
+  try {
+    return require('../utils/i18n').getLanguage(source) === 'en' ? 'en' : 'pt';
+  } catch (_) {
+    return 'pt';
+  }
+}
+
 function contextFromInteraction(i) {
   const names = [i.user?.username, i.user?.globalName, i.member?.nickname, i.member?.displayName].filter(Boolean);
   const command = i.commandName ? `/${i.commandName}` : i.message?.interaction?.commandName ? `/${i.message.interaction.commandName}` : i.customId ? `botão:${String(i.customId).split(/[:_|]/)[0]}` : null;
-  return { guildId: i.guildId || null, command, names };
+  // Semente da fala da Pyxie: a interação que abriu a mensagem, para a fala não mudar a cada botão.
+  const seed = i.message?.interactionMetadata?.id || i.message?.interaction?.id || i.id || null;
+  return { guildId: i.guildId || null, command, names, lang: langOf(i), seed };
 }
 
 function contextFromMessage(m) {
   const names = [m.author?.username, m.author?.globalName, m.member?.nickname, m.member?.displayName].filter(Boolean);
   const word = String(m.content || '').match(/^\s*py[!.]?\s*([\w-]+)/i);
-  return { guildId: m.guildId || null, command: word ? `py!${word[1].toLowerCase()}` : 'mensagem', names };
+  return { guildId: m.guildId || null, command: word ? `py!${word[1].toLowerCase()}` : 'mensagem', names, lang: langOf(m), seed: m.id || null };
 }
 
 // ---------- Catálogo (processo do bot) ----------
@@ -319,12 +330,15 @@ function transformBody(guildId, body, ctx = {}) {
   const seen = [];
   const next = { ...target };
   if (Array.isArray(target.embeds)) {
+    // Fala da Pyxie (pyxieQuips.js) só no primeiro embed dos comandos interativos e nunca em erro.
+    const quip = target.embeds[0] && pickMood(target.embeds[0]) !== 'worried' ? quips.quipFor(ctx.command, ctx.lang, ctx.seed) : null;
     next.embeds = target.embeds.map((embed, index) => {
-      if (!enabled) return decorate(embed);
+      const withQuip = index === 0 && quip ? quips.addQuip(embed, quip) : embed;
+      if (!enabled) return decorate(withQuip);
       const id = embedKey(ctx.command, embed, ctx.names);
       seen.push({ id, index, original: embed });
       const o = overrides[id.key];
-      return o || global.emojiSwaps.length ? applyToEmbed(embed, o, global.emojiSwaps) : decorate(embed);
+      return o || global.emojiSwaps.length ? applyToEmbed(withQuip, o, global.emojiSwaps) : decorate(withQuip);
     });
   }
   if (Array.isArray(target.components) && global.emojiSwaps.length) next.components = applyToComponents(target.components, global.emojiSwaps);
