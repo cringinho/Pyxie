@@ -1,4 +1,3 @@
-const { SlashCommandBuilder } = require('discord.js');
 const { getBalance, spendCoins } = require('../../../services/economy');
 const { endMarriage, getSpouseId, DIVORCE_COST } = require('../marriageManager');
 const { DIVORCE } = require('../../../commands/commandNames');
@@ -44,14 +43,11 @@ async function executeDivorce(source, reply) {
 
 module.exports = {
   name: DIVORCE || 'py-divorce',
+  executeDivorce,
   aliases: ['divorce', 'divorcio', 'py-divorcio', 'py-divorce', 'separar'],
   DIVORCE_COST,
-  data: new SlashCommandBuilder()
-    .setName(DIVORCE || 'py-divorce')
-    .setDescription('End marriage for 500 coins.')
-    .setDescriptionLocalizations({
-      'pt-BR': 'Encerra seu casamento por 500 Moedinhas.',
-    }),
+  // Agora é botão no painel do /py-marriage; o atalho py! continua funcionando.
+  data: undefined,
   async executePrefix({ message }) {
     await executeDivorce(message, (content) => message.reply(content));
   },

@@ -459,127 +459,14 @@ module.exports = {
   ],
   MARRIAGE_COST,
   activeDateSessions,
+  handlers: { handlePropose, handleStatus, handleTree, handleHouse, handleVault, handleDateNight, handleAffection, handleChildProposal, handleBond },
 
   data: new SlashCommandBuilder()
     .setName(name)
     .setDescription('Full Marriage, Romance, Family & Tree of Life system.')
     .setDescriptionLocalizations({
       'pt-BR': 'Sistema completo de Matrimônio, Romance, Família e Árvore da Vida.',
-    })
-    .addSubcommand((sub) =>
-      sub
-        .setName('propose')
-        .setDescription('Propose marriage to someone for 1000 coins')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Pede alguém em casamento por 1000 Moedinhas',
-        })
-        .addUserOption((opt) =>
-          opt
-            .setName('user')
-            .setDescription('User to propose to')
-            .setDescriptionLocalizations({
-              'pt-BR': 'Usuário para pedir em casamento',
-            })
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('status')
-        .setDescription('View your marriage stats, Love Bar, house, tree and family')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Visualiza o status matrimonial, Barra do Amor, casa, árvore e família',
-        })
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('tree')
-        .setDescription('Buy or cultivate the Tree of Life for +10% Love')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Compre ou cultive a Árvore da Vida para +10% de Amor',
-        })
-        .addStringOption((opt) =>
-          opt
-            .setName('action')
-            .setDescription('Action: cultivate or buy')
-            .setDescriptionLocalizations({
-              'pt-BR': 'Ação: cultivar ou comprar',
-            })
-            .addChoices(
-              { name: 'Cultivate (+10% Love)', value: 'cultivate' },
-              { name: 'Buy / Unlock (1 Magic Bean)', value: 'buy' }
-            )
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('house')
-        .setDescription('Purchase the Family House (2000 coins, 2 beans, love >= 50%)')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Adquire a Casa Familiar (2000 moedas, 2 feijões, amor >= 50%)',
-        })
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('vault')
-        .setDescription('Manage the Eternal Love Vault and daily interest')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Gerencie o Cofre do Amor Eterno e os rendimentos diários',
-        })
-        .addStringOption((opt) =>
-          opt
-            .setName('action')
-            .setDescription('Action: deposit or claim')
-            .setDescriptionLocalizations({
-              'pt-BR': 'Ação: depositar ou resgatar',
-            })
-            .addChoices(
-              { name: 'Deposit Coins', value: 'deposit' },
-              { name: 'Claim Daily Interest', value: 'claim' }
-            )
-        )
-        .addIntegerOption((opt) =>
-          opt
-            .setName('amount')
-            .setDescription('Amount of coins to deposit')
-            .setDescriptionLocalizations({
-              'pt-BR': 'Quantidade de moedas a depositar',
-            })
-            .setMinValue(1)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('date')
-        .setDescription('Start a Date Night couple harmony trivia (12h cooldown)')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Inicia um Date Night com teste de sintonia a dois (12h cooldown)',
-        })
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('affection')
-        .setDescription("Hug your spouse: today's gesture for the Bond (+5% Love)")
-        .setDescriptionLocalizations({
-          'pt-BR': 'Abrace seu amor: o gesto de hoje na Força do Laço (+5% Amor)',
-        })
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('bond')
-        .setDescription('Bond strength: level, daily gestures and the weekly couple quest')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Força do Laço: nível, gestos do dia e missão da semana do casal',
-        })
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('child')
-        .setDescription('Adopt or expand your family with a new child')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Adote ou aumente a família com um novo filho',
-        })
-    ),
+    }),
 
   async executePrefix({ message, args = [] }) {
     const sub = (args[0] || '').toLowerCase();
@@ -604,36 +491,12 @@ module.exports = {
     if (sub === 'filho' || sub === 'child') return handleChildProposal(message, (c) => message.reply(c));
     if (sub === 'laco' || sub === 'laço' || sub === 'bond') return handleBond(message, (c) => message.reply(c));
 
-    // Padrão: se for casado, mostra status; se não, instrui sobre propor
-    const marriage = getMarriage(message.author.id);
-    if (marriage) {
-      return handleStatus(message, (c) => message.reply(c));
-    }
-    return handlePropose(message, (c) => message.reply(c));
+    // Padrão: painel com botões para tudo do casamento.
+    return message.reply(require('../hubViews').buildHub(message));
   },
 
+  // Um comando só: abre o painel com botões (os subcomandos antigos viraram botões).
   async executeSlash({ interaction }) {
-    const sub = interaction.options.getSubcommand();
-    if (sub === 'propose' || sub === 'propor') {
-      return handlePropose(interaction, (c) => interaction.editReply(c));
-    }
-    if (sub === 'status') return handleStatus(interaction, (c) => interaction.editReply(c));
-    if (sub === 'tree' || sub === 'arvore') {
-      const action = interaction.options.getString('action') || interaction.options.getString('acao') || 'cultivate';
-      return handleTree(interaction, action, (c) => interaction.editReply(c));
-    }
-    if (sub === 'house' || sub === 'casa') return handleHouse(interaction, (c) => interaction.editReply(c));
-    if (sub === 'vault' || sub === 'cofre') {
-      const action = interaction.options.getString('action') || interaction.options.getString('acao') || 'claim';
-      const amount = interaction.options.getInteger('amount') || interaction.options.getInteger('valor') || 0;
-      return handleVault(interaction, action, amount, (c) => interaction.editReply(c));
-    }
-    if (sub === 'date') return handleDateNight(interaction, (c) => interaction.editReply(c));
-    if (sub === 'affection' || sub === 'carinho') return handleAffection(interaction, (c) => interaction.editReply(c));
-    if (sub === 'child' || sub === 'filho') return handleChildProposal(interaction, (c) => interaction.editReply(c));
-    if (sub === 'bond' || sub === 'laco') return handleBond(interaction, (c) => interaction.editReply(c));
-
-    return handleStatus(interaction, (c) => interaction.editReply(c));
+    return interaction.editReply(require('../hubViews').buildHub(interaction));
   },
 };
-

@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const {
   getMarriage,
   sendChildToWork,
@@ -135,56 +135,10 @@ async function handleClaim(source, identifier, reply) {
 
 module.exports = {
   name: 'py-child',
+  handlers: { handleList, handleWork, handleClaim },
   aliases: ['child', 'filho', 'py-filho', 'children', 'filhos', 'py-children', 'py-filhos'],
-  data: new SlashCommandBuilder()
-    .setName('py-child')
-    .setDescription('Manage your marriage children, internships and rewards.')
-    .setDescriptionLocalizations({
-      'pt-BR': 'Gerencie os filhos do casal, estágios de 24h e recompensas.',
-    })
-    .addSubcommand((sub) =>
-      sub
-        .setName('list')
-        .setDescription('List all children of your marriage')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Lista todos os filhos do seu casamento',
-        })
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('work')
-        .setDescription('Send a child to a 24-hour internship for coins')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Envia um filho para um estágio de 24 horas por moedas',
-        })
-        .addStringOption((opt) =>
-          opt
-            .setName('child')
-            .setDescription('Name or ID of the child')
-            .setDescriptionLocalizations({
-              'pt-BR': 'Nome ou ID do filho',
-            })
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName('claim')
-        .setDescription('Claim coins from a completed internship')
-        .setDescriptionLocalizations({
-          'pt-BR': 'Resgata as moedas de um estágio concluído',
-        })
-        .addStringOption((opt) =>
-          opt
-            .setName('child')
-            .setDescription('Name or ID of the child')
-            .setDescriptionLocalizations({
-              'pt-BR': 'Nome ou ID do filho',
-            })
-            .setRequired(true)
-        )
-    ),
-
+  // Agora é botão no painel do /py-marriage; o atalho py! continua funcionando.
+  data: undefined,
   async executePrefix({ message, args = [] }) {
     const sub = (args[0] || '').toLowerCase();
     const target = args.slice(1).join(' ').trim();

@@ -59,6 +59,20 @@ module.exports = {
           else await interaction.reply(payload).catch(() => null);
         }
       });
+      // Painel único do casamento: mh:*
+      ctx.registerListener('interactionCreate', async (interaction) => {
+        const hub = require('./hubViews');
+        if (!hub.isHubInteraction(interaction)) return;
+        if (await require('../../commands/setup').denyInteractionIfBlocked(interaction, 'py-marriage')) return;
+        try {
+          await hub.handleHubInteraction(interaction);
+        } catch (err) {
+          console.error('[marriage] Erro no painel:', err);
+          const payload = { content: t('marriage.genericError', interaction), flags: 64 };
+          if (interaction.replied || interaction.deferred) await interaction.followUp(payload).catch(() => null);
+          else await interaction.reply(payload).catch(() => null);
+        }
+      });
       ctx.registerListener('interactionCreate', async (interaction) => {
         if (!interaction.isButton()) return;
         const customId = interaction.customId || '';

@@ -2,6 +2,10 @@
 
 Sistema completo e desacoplado de matrimônio, família e relacionamentos da Pyxie para Discord.js v14.
 
+## Um comando só
+
+`/py-marriage` (ou `py!casamento`) abre um painel com botões para tudo do módulo: pedir em casamento (escolhendo a pessoa numa lista), status, carinho, encontro, Laço, casa, árvore (cultivar e desbloquear), cofre (juros e depósito), filhos (lista, ter um filho, estágio e resgate) e divórcio (com confirmação). Só quem abriu o painel usa os botões. `/py-child` e `/py-divorce` deixaram de ser slash; os atalhos `py!filho` e `py!divorcio` continuam funcionando.
+
 ## Funcionalidades
 - **Barra do Amor & Decaimento Preguiçoso (Lazy Decay)**: Redução de 20% a cada 24 horas, calculada sob demanda para poupar CPU.
 - **Árvore da Vida**: Desbloqueio bilateral com Feijões Mágicos 🌱, cultivo a cada 12 horas e recarga de +10% de amor.

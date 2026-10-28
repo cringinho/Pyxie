@@ -174,16 +174,26 @@ console.log('💞 Iniciando testes da Força do Laço...');
 
     // 8. Painel do casamento mostra o Laço e abre a tela; "carinho" é o abraço do dia
     let payload = null;
-    const interaction = { user: { id: A }, locale: 'pt-BR', options: { getSubcommand: () => 'status' }, editReply: async (p) => { payload = p; } };
-    await pyCasamento.executeSlash({ interaction });
+    const interaction = { user: { id: A }, locale: 'pt-BR', editReply: async (p) => { payload = p; } };
+    const reply = (p) => { payload = p; };
+    const { handlers } = pyCasamento;
+    await handlers.handleStatus(interaction, reply);
     assert.ok(payload.embeds[0].data.fields.some((f) => f.name === t('bond.fieldName', 'pt')));
     assert.equal(payload.components[0].components[0].data.custom_id, `bond:home:${A}`);
-    await pyCasamento.executeSlash({ interaction: { ...interaction, options: { getSubcommand: () => 'bond' } } });
+    await handlers.handleBond(interaction, reply);
     assert.equal(payload.embeds[0].data.title, emojify(t('bond.title', 'pt')));
-    await pyCasamento.executeSlash({ interaction: { ...interaction, user: { id: C }, options: { getSubcommand: () => 'affection' } } });
+    await handlers.handleAffection({ ...interaction, user: { id: C } }, reply);
     assert.equal(payload, t('marriage.notMarried', 'pt'));
-    const json = pyCasamento.data.toJSON();
-    assert.ok(json.options.some((o) => o.name === 'bond' && o.description_localizations['pt-BR']));
+    // Um comando só: o slash abre o painel com botões; quem não é casado vê a escolha de par.
+    await pyCasamento.executeSlash({ interaction });
+    assert.equal(payload.components[0].components[0].data.custom_id, `mh:status:${A}`);
+    await pyCasamento.executeSlash({ interaction: { ...interaction, user: { id: C } } });
+    assert.equal(payload.components[0].components[0].data.custom_id, `mh:propose:${C}`);
+    assert.equal((pyCasamento.data.toJSON().options || []).length, 0, '/py-marriage sem subcomandos');
+    const hub = require('../src/modules/marriage/hubViews');
+    let denied = null;
+    await hub.handleHubInteraction({ customId: `mh:status:${A}`, user: { id: B }, locale: 'pt-BR', reply: async (p) => { denied = p; } });
+    assert.equal(denied.content, t('marriage.hub.notYours', 'pt'), 'Só quem abriu usa o painel');
     console.log('  ✅ 8. Painel do casamento com o Laço e o abraço do dia.');
 
     // 9. Divórcio leva o Laço junto
