@@ -87,6 +87,9 @@ function renderMarkdown(text, ctx) {
     const e = ctx.emojis.get(k.toLowerCase());
     return e ? `<img src="${e.url}" alt=":${e.name}:" class="inline h-5 w-5 align-text-bottom" />` : `:${k}:`;
   });
+  // Emoji do app já resolvido (<:nome:id>) e menções cruas, como aparecem nos embeds reais da Pyxie.
+  html = html.replace(/&lt;(a?):(\w+):(\d+)&gt;/g, (_, a, name, id) => `<img src="https://cdn.discordapp.com/emojis/${id}.${a ? 'gif' : 'png'}" alt=":${name}:" class="inline h-5 w-5 align-text-bottom" />`);
+  html = html.replace(/&lt;@[!&amp;]*\d+&gt;/g, '<span class="rounded bg-indigo-500/30 px-1 text-indigo-200">@membro</span>').replace(/&lt;#\d+&gt;/g, '<span class="text-sky-400">#canal</span>');
   html = html
     .replace(/\{user\}/g, '<span class="rounded bg-indigo-500/30 px-1 text-indigo-200">@você</span>')
     .replace(/\{server\}/g, escapeHtml(ctx.guildName || ''))
@@ -130,7 +133,7 @@ function PreviewButton({ b, ctx }) {
   );
 }
 
-function PreviewEmbed({ e, ctx }) {
+export function PreviewEmbed({ e, ctx }) {
   return (
     <div className="mt-1 max-w-[520px] rounded border-l-4 bg-[#2b2d31] p-3" style={{ borderColor: e.color }}>
       <div className="flex gap-3">
@@ -153,7 +156,8 @@ function PreviewEmbed({ e, ctx }) {
       </div>
       {e.imageUrl && /^https:/.test(e.imageUrl) && <img src={e.imageUrl} alt="" className="mt-2 max-h-64 rounded" />}
       {(e.footer.text || e.timestamp) && (
-        <p className="mt-2 text-xs text-white/60">
+        <p className="mt-2 flex items-center gap-1.5 text-xs text-white/60">
+          {e.footer.iconUrl && /^https:/.test(e.footer.iconUrl) && <img src={e.footer.iconUrl} alt="" className="h-5 w-5 rounded-full" />}
           {e.footer.text}
           {e.footer.text && e.timestamp ? ' • ' : ''}
           {e.timestamp ? new Date().toLocaleString('pt-BR') : ''}

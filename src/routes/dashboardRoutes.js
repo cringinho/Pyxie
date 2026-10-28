@@ -26,7 +26,7 @@ function registerDashboardSection(section) {
 function getSections(guildAccess) {
   const base = ['overview', 'studio', 'features', 'channels', 'roles'];
   if (guildAccess.canManageAccess) base.push('access');
-  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('moderation', 'community');
+  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
     .filter((s) => !s.roles || s.roles.includes(guildAccess.role))
     .map((s) => s.id);
@@ -399,6 +399,61 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     } catch (err) {
       return res.status(502).json({ success: false, error: err.code || 'colors_error' });
     }
+  });
+
+  // ---------- Embeds da Pyxie (plano 5.2): personalizar qualquer embed do bot no servidor oficial ----------
+  const embedOverrides = require('../services/embedOverrides');
+  const EMBED_KEY_RE = /^[0-9a-f]{12}$/;
+  function requireEmbedKey(req, res, next) {
+    if (!EMBED_KEY_RE.test(req.params.key)) return res.status(400).json({ success: false, error: 'invalid_key' });
+    return next();
+  }
+
+  router.get('/api/dashboard/guilds/:guildId/embeds', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    return res.json({ success: true, embeds: embedOverrides.listCatalog(req.params.guildId), global: embedOverrides.loadOverrides(req.params.guildId).global });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/embeds-global', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    return res.json({ success: true, global: embedOverrides.setGlobalSwaps(req.params.guildId, req.body?.emojiSwaps) });
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/embeds/:key', requireSession, requireGuild, requireCringelandiaOwner, requireEmbedKey, (req, res) => {
+    const found = embedOverrides.getEntry(req.params.guildId, req.params.key);
+    if (!found) return res.status(404).json({ success: false, error: 'embed_not_found' });
+    return res.json({ success: true, ...found });
+  });
+
+  // Prévia sem salvar: aplica a mudança do formulário na última amostra real do embed.
+  router.post('/api/dashboard/guilds/:guildId/embeds/:key/preview', requireSession, requireGuild, requireCringelandiaOwner, requireEmbedKey, (req, res) => {
+    const found = embedOverrides.getEntry(req.params.guildId, req.params.key);
+    if (!found) return res.status(404).json({ success: false, error: 'embed_not_found' });
+    const override = embedOverrides.normalizeOverride(req.body?.override || {});
+    return res.json({ success: true, before: found.entry.sample, after: embedOverrides.applyToEmbed(found.entry.sample, override, found.global.emojiSwaps) });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/embeds/:key', requireSession, requireGuild, requireCringelandiaOwner, requireEmbedKey, async (req, res) => {
+    const found = embedOverrides.getEntry(req.params.guildId, req.params.key);
+    if (!found) return res.status(404).json({ success: false, error: 'embed_not_found' });
+    const saved = embedOverrides.setOverride(req.params.guildId, req.params.key, req.body?.override || {});
+    // Prévia real no canal de homologação (AGENTS.md §11), sem marcar ninguém.
+    if (saved) {
+      const { HOMOLOGATION_CHANNEL_ID } = require('../config/scopes');
+      const after = embedOverrides.applyToEmbed(found.entry.sample, saved, found.global.emojiSwaps);
+      await studioStore
+        .discord('POST', `/channels/${HOMOLOGATION_CHANNEL_ID}/messages`, { content: `-# Prévia: embed personalizado \`${found.entry.command}\``, embeds: [after], allowed_mentions: { parse: [] } }, doFetch)
+        .catch(() => null);
+    }
+    return res.json({ success: true, override: saved });
+  });
+
+  router.delete('/api/dashboard/guilds/:guildId/embeds/:key', requireSession, requireGuild, requireCringelandiaOwner, requireEmbedKey, (req, res) => {
+    embedOverrides.setOverride(req.params.guildId, req.params.key, {});
+    return res.json({ success: true });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/embeds/:key/update-sent', requireSession, requireGuild, requireCringelandiaOwner, requireEmbedKey, async (req, res) => {
+    const discord = (method, route, body) => studioStore.discord(method, route, body, doFetch);
+    return res.json({ success: true, ...(await embedOverrides.updateSent(req.params.guildId, req.params.key, discord)) });
   });
 
   // Área global: só o dono da Pyxie.

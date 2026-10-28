@@ -5,6 +5,7 @@ import { Button, Card, GuildIcon, MultiSelect, Notice, Spinner, Toggle } from '.
 import Studio from './Studio';
 import { Links, Moderation } from './Safety';
 import { Assets, CommunitySettings } from './Community';
+import Embeds from './Embeds';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
 function parseHash() {
@@ -224,6 +225,7 @@ function GuildView({ t, lang, guildId, section, me }) {
       {current === 'overview' && <Overview t={t} guild={guild} zone={zone} role={role} />}
       {current === 'studio' && <Studio t={t} guildId={guildId} guildName={guild?.name || ''} isOwner={me.user.isOwner} />}
       {current === 'features' && <Features t={t} guildId={guildId} />}
+      {current === 'embeds' && <Embeds t={t} guildId={guildId} />}
       {current === 'moderation' && <Moderation t={t} guildId={guildId} />}
       {current === 'community' && <CommunitySettings t={t} guildId={guildId} />}
       {current === 'channels' && <Channels t={t} guildId={guildId} />}
