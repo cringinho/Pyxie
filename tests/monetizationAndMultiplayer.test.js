@@ -1,10 +1,11 @@
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 
 const { getBalance, addCoins, addMagicBeans, buyTheme, equipTheme, getUserAccount, hasActiveVote } = require('../src/services/economy');
 const { addItem, hasItem } = require('../src/services/inventory');
-const { processTopggVote, verifyWebhookAuth, getUserVoteStatus, VOTE_BEANS, WEEKEND_VOTE_BEANS } = require('../src/services/topgg');
+const { processTopggVote, verifyWebhookAuth, verifyWebhookRequest, getUserVoteStatus, VOTE_BEANS, WEEKEND_VOTE_BEANS } = require('../src/services/topgg');
 
 const testRunId = Date.now();
 const voteStatsFile = path.join(__dirname, '..', 'data', 'topggVotes.json');
@@ -57,6 +58,29 @@ try {
   assert.equal(getUserAccount(`${testUserB}_x`).magicBeans, 0, 'Webhook de teste não paga feijões.');
   assert.equal(processTopggVote({ user: '' }).success, false, 'Payload sem usuário deve ser recusado.');
   assert.equal(processTopggVote({ user: '../../etc' }).success, false, 'ID de usuário inválido deve ser recusado.');
+
+  // 4b. Webhook v1 do Top.gg: assinatura HMAC no x-topgg-signature e payload vote.create
+  const v1Env = { TOPGG_WEBHOOK_SECRET: 'whs_teste' };
+  const v1Now = 1_800_000_000_000;
+  const v1Body = JSON.stringify({ type: 'vote.create', data: { weight: 1, user: { platform_id: testUserB } } });
+  const sign = (body, t = v1Now / 1000, secret = 'whs_teste') => `t=${t},v1=${crypto.createHmac('sha256', secret).update(`${t}.${body}`).digest('hex')}`;
+  assert.equal(verifyWebhookRequest({ 'x-topgg-signature': sign(v1Body) }, v1Body, v1Env, v1Now), true, 'Assinatura v1 correta deve ser aceita.');
+  assert.equal(verifyWebhookRequest({ 'x-topgg-signature': sign(v1Body, v1Now / 1000, 'outro') }, v1Body, v1Env, v1Now), false, 'Assinatura com segredo errado deve ser recusada.');
+  assert.equal(verifyWebhookRequest({ 'x-topgg-signature': sign(v1Body) }, `${v1Body} `, v1Env, v1Now), false, 'Corpo alterado deve ser recusado.');
+  assert.equal(verifyWebhookRequest({ 'x-topgg-signature': sign(v1Body) }, v1Body, v1Env, v1Now + 20 * 60 * 1000), false, 'Entrega antiga (fora da janela) deve ser recusada.');
+  assert.equal(verifyWebhookRequest({ 'x-topgg-signature': 'lixo' }, v1Body, v1Env, v1Now), false, 'Header malformado deve ser recusado.');
+  assert.equal(verifyWebhookRequest({ 'x-topgg-signature': sign(v1Body) }, v1Body, {}, v1Now), false, 'Sem segredo v1 o webhook recusa tudo.');
+  assert.equal(verifyWebhookRequest({ authorization: 'segredo' }, '', { TOPGG_WEBHOOK_AUTH: 'segredo' }), true, 'Entrega legada continua aceita.');
+
+  const beansBeforeV1 = getUserAccount(testUserB).magicBeans;
+  const v1Later = Date.now() + 12 * 60 * 60 * 1000 + 1000;
+  const v1Vote = processTopggVote({ type: 'vote.create', data: { weight: 2, user: { platform_id: testUserB } } }, v1Later);
+  assert.equal(v1Vote.magicBeans, WEEKEND_VOTE_BEANS, 'vote.create com peso 2 paga o bônus de fim de semana.');
+  assert.equal(getUserAccount(testUserB).magicBeans, beansBeforeV1 + WEEKEND_VOTE_BEANS, 'Feijões do voto v1 caem na conta.');
+  const v1Test = processTopggVote({ type: 'webhook.test', data: { user: { platform_id: `${testUserB}_v1` } } });
+  assert.equal(v1Test.test, true, 'webhook.test é reconhecido como teste.');
+  assert.equal(getUserAccount(`${testUserB}_v1`).magicBeans, 0, 'webhook.test não paga feijões.');
+  assert.equal(processTopggVote({ type: 'outro.evento', data: {} }).ignored, true, 'Evento v1 desconhecido é ignorado sem erro.');
 
   const status = getUserVoteStatus(testUserB);
   assert.equal(status.canVote, false, 'Logo após votar, o próximo voto fica em espera.');

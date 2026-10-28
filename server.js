@@ -210,7 +210,7 @@ function registerSlashCommands() {
   });
 }
 
-const { processTopggVote, verifyWebhookAuth, getVoteUrl } = require('./src/services/topgg');
+const { processTopggVote, verifyWebhookRequest, getVoteUrl } = require('./src/services/topgg');
 const growthFunnel = require('./src/services/growthFunnel');
 const tarotCardPages = require('./src/services/tarotCardPages');
 const { getCardById, localizeCard } = require('./src/data/tarotCardsCatalog');
@@ -321,7 +321,12 @@ const sensitiveRouteLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 20, 
 
 app.use('/api/', publicApiLimiter);
 
-app.use(express.json());
+// O webhook v1 do Top.gg assina o corpo bruto: guarda os bytes antes do parse só nessa rota
+app.use(express.json({
+  verify: (req, _res, buf) => {
+    if (req.originalUrl.startsWith('/api/topgg/webhook')) req.rawBody = buf.toString('utf8');
+  },
+}));
 app.use(express.urlencoded({ extended: true }));
 
 // Rotas da API Master SaaS Dashboard
@@ -1531,8 +1536,7 @@ app.post('/api/admin/modules/:id/config', requireAdminAuth, (req, res) => {
 
 // 4. Webhook do Top.gg (Votos e Recompensas a cada 12h)
 app.post('/api/topgg/webhook', (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!verifyWebhookAuth(authHeader)) {
+  if (!verifyWebhookRequest(req.headers, req.rawBody)) {
     addLog('[Top.gg Webhook] Falha de autenticação no webhook.');
     return res.status(401).json({ error: 'Não autorizado.' });
   }

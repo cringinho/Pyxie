@@ -37,6 +37,43 @@ function verifyWebhookAuth(authHeader, env = process.env) {
   return expected.length === received.length && crypto.timingSafeEqual(expected, received);
 }
 
+/**
+ * Webhooks v1 do Top.gg (aba Integrations & API): o corpo bruto vem assinado no header
+ * `x-topgg-signature` (`t={unix},v1={hmac}`), HMAC SHA-256 de `{t}.{corpo}` com o segredo `whs_`.
+ * A janela de 15 min no timestamp barra a reprodução de uma entrega antiga capturada.
+ */
+const SIGNATURE_TOLERANCE_MS = 15 * 60 * 1000;
+
+function verifyWebhookSignature(signatureHeader, rawBody, env = process.env, now = Date.now()) {
+  const secret = env.TOPGG_WEBHOOK_SECRET;
+  if (!secret || typeof signatureHeader !== 'string' || typeof rawBody !== 'string') return false;
+  const parts = Object.fromEntries(signatureHeader.split(',').map((part) => {
+    const index = part.indexOf('=');
+    return [part.slice(0, index).trim(), part.slice(index + 1).trim()];
+  }));
+  const timestamp = Number(parts.t);
+  if (!Number.isFinite(timestamp) || !/^[0-9a-f]{64}$/i.test(parts.v1 || '')) return false;
+  if (Math.abs(now - timestamp * 1000) > SIGNATURE_TOLERANCE_MS) return false;
+  const expected = crypto.createHmac('sha256', secret).update(`${parts.t}.${rawBody}`).digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(parts.v1.toLowerCase()));
+}
+
+/** Aceita a entrega v1 (assinada) ou a legada (Authorization), conforme o header que chegou. */
+function verifyWebhookRequest(headers = {}, rawBody, env = process.env, now = Date.now()) {
+  const signature = headers['x-topgg-signature'];
+  if (signature) return verifyWebhookSignature(signature, rawBody, env, now);
+  return verifyWebhookAuth(headers.authorization, env);
+}
+
+/** Converte o payload v1 (`vote.create`/`webhook.test`) para o formato legado que o resto usa. */
+function normalizeTopggPayload(payload) {
+  if (!payload || typeof payload.type !== 'string' || !payload.data) return payload;
+  const userId = payload.data.user?.platform_id;
+  if (payload.type === 'vote.create') return { user: userId, type: 'upvote', isWeekend: Number(payload.data.weight) >= 2 };
+  if (payload.type === 'webhook.test') return { user: userId, type: 'test' };
+  return { user: userId, type: payload.type, ignored: true };
+}
+
 function statsFile() {
   return path.join(process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data'), 'topggVotes.json');
 }
@@ -73,7 +110,13 @@ function getVoteStats() {
  * Processa o voto recebido do Top.gg e entrega os feijões mágicos.
  * @param {Object} payload { bot, user, type, isWeekend, query }
  */
-function processTopggVote(payload, now = Date.now()) {
+function processTopggVote(rawPayload, now = Date.now()) {
+  const payload = normalizeTopggPayload(rawPayload);
+  // Evento v1 que não é voto: responde 200 para o Top.gg não reenviar, sem pagar nada
+  if (payload?.ignored) {
+    addLog(`[Top.gg Voto] Evento ${payload.type} ignorado.`);
+    return { success: true, ignored: true, type: payload.type, coins: 0, magicBeans: 0 };
+  }
   const userId = String(payload?.user || '').trim();
   if (!USER_ID_PATTERN.test(userId)) {
     return { success: false, error: 'User ID ausente ou inválido no payload do Top.gg.' };
@@ -140,6 +183,9 @@ module.exports = {
   WEEKEND_VOTE_BEANS,
   getVoteUrl,
   verifyWebhookAuth,
+  verifyWebhookSignature,
+  verifyWebhookRequest,
+  normalizeTopggPayload,
   processTopggVote,
   getUserVoteStatus,
   getVoteStats,
