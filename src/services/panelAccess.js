@@ -33,6 +33,9 @@ function hasAdminBit(permissions) {
   }
 }
 
+// Zonas do projeto onde o dono da Pyxie entra direto (Cringelândia e o estúdio da Mary).
+const OWNER_ZONES = new Set(['cringelandia', 'mary']);
+
 // Regra de zona, que vale antes de qualquer conferência de cargo.
 function zoneAllows(userId, guildId) {
   if (isOwner(userId)) return true;
@@ -73,12 +76,16 @@ function writeWhitelist(guildId, data) {
 // login com os servidores onde a Pyxie está, filtrada pelas regras de zona.
 function listAccessibleGuilds(session, botGuilds) {
   const botMap = new Map((botGuilds || []).map((g) => [String(g.id), g]));
+  const out = new Map();
+  // O dono da Pyxie só tem acesso direto às zonas do projeto; nos outros servidores, só se for admin lá.
   if (isOwner(session.userId)) {
-    return [...botMap.values()].map((g) => ({ ...g, zone: getZone(g.id), role: 'owner' }));
+    for (const g of botMap.values()) if (OWNER_ZONES.has(getZone(g.id))) out.set(String(g.id), { ...g, zone: getZone(g.id), role: 'owner' });
   }
-  return (session.guilds || [])
-    .filter((g) => botMap.has(g.id) && (g.owner || hasAdminBit(g.permissions)) && zoneAllows(session.userId, g.id))
-    .map((g) => ({ ...botMap.get(g.id), zone: getZone(g.id), role: getZone(g.id) === 'mary' ? 'mary' : 'admin' }));
+  for (const g of session.guilds || []) {
+    if (out.has(g.id) || !botMap.has(g.id) || !(g.owner || hasAdminBit(g.permissions)) || !zoneAllows(session.userId, g.id)) continue;
+    out.set(g.id, { ...botMap.get(g.id), zone: getZone(g.id), role: getZone(g.id) === 'mary' ? 'mary' : 'admin' });
+  }
+  return [...out.values()];
 }
 
 // Conferência ao vivo, feita a cada pedido de API de um servidor.
@@ -95,7 +102,7 @@ async function checkGuildAccess(bridge, userId, guildId) {
   }
   if (!member?.botInGuild) return { ok: false, reason: 'bot_not_in_guild' };
 
-  if (isOwner(userId)) {
+  if (isOwner(userId) && OWNER_ZONES.has(zone)) {
     return { ok: true, role: 'owner', zone, isGuildOwner: Boolean(member.isGuildOwner), canManageAccess: true };
   }
   if (!member.inGuild || !member.isAdmin) return { ok: false, reason: 'not_admin' };

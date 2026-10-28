@@ -51,6 +51,8 @@ function fakeBotSend(msg) {
       data = m ? { inGuild: true, botInGuild, ...m } : { inGuild: false, botInGuild };
     } else if (request === 'GUILD_CHANNELS') {
       data = [{ id: '1', name: 'geral', type: 0 }, { id: '777777777777777777', name: 'staff', type: 0 }];
+    } else if (request === 'GUILD_DIRECTORY') {
+      data = [{ id: GUILD_A, name: 'A', icon: null, description: '', memberCount: 10, ownerId: OWNER_A, ownerName: 'dona', createdAt: 1, joinedAt: 2 }];
     } else if (request === 'BOT_PERMISSIONS') {
       data = { permissions: { ManageMessages: true, ViewAuditLog: false }, roleName: 'Pyxie' };
     } else if (request === 'GUILD_ROLES') {
@@ -159,11 +161,17 @@ function cookieFor(userId, guilds = []) {
     assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}`, { cookie: maryCookie })).status, 200, 'Mary vê o servidor dela');
     assert.equal((await call(`/api/dashboard/guilds/${CRINGELANDIA_GUILD_ID}`, { cookie: maryCookie })).status, 403);
     const ownerCookie = cookieFor(OWNER_SNOWFLAKE);
-    for (const g of [CRINGELANDIA_GUILD_ID, MARY_GUILD_ID, GUILD_B]) {
+    for (const g of [CRINGELANDIA_GUILD_ID, MARY_GUILD_ID]) {
       assert.equal((await call(`/api/dashboard/guilds/${g}`, { cookie: ownerCookie })).status, 200, `Dono vê ${g}`);
     }
+    for (const g of [GUILD_A, GUILD_B]) {
+      assert.equal((await call(`/api/dashboard/guilds/${g}`, { cookie: ownerCookie })).status, 403, `Dono da Pyxie não abre servidor alheio ${g}`);
+    }
     const ownerMe = await (await call('/api/dashboard/me', { cookie: ownerCookie })).json();
-    assert.equal(ownerMe.guilds.length, 4, 'Dono vê todos os servidores da Pyxie');
+    assert.deepEqual(ownerMe.guilds.map((g) => g.id).sort(), [CRINGELANDIA_GUILD_ID, MARY_GUILD_ID].sort(), 'Dono só vê as zonas do projeto e onde é admin');
+    const dir = await (await call('/api/dashboard/global/servers', { cookie: ownerCookie })).json();
+    assert.deepEqual(Object.keys(dir.servers[0]).sort(), ['createdAt', 'description', 'icon', 'id', 'joinedAt', 'memberCount', 'name', 'ownerId', 'ownerName'], 'Lista só com dados públicos');
+    assert.equal((await call('/api/dashboard/global/servers', { cookie: cookieFor(ADMIN_A) })).status, 403, 'Lista de servidores é só do dono');
     console.log('  ✅ 4. Backend recusa servidores de outra pessoa, Cringelândia e Mary.');
 
     // 5. Permissão conferida ao vivo: perdeu o cargo, perdeu o acesso.

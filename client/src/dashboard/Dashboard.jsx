@@ -751,21 +751,64 @@ function PartnershipDm({ t, guildId }) {
 
 function GlobalView({ shell, section }) {
   const { t, lang } = shell;
-  const ids = ['health', 'errors', 'modules', 'links', 'assets'];
+  const ids = ['health', 'servers', 'errors', 'modules', 'links', 'assets'];
   const current = ids.includes(section) ? section : 'health';
   const nav = { title: t('picker.global'), subtitle: t('sectionDesc.global'), groups: buildNav(t, ids, current, (id) => `#/global/${id}`) };
   const crumbs = [{ label: t('app.title'), href: '#/' }, { label: t('picker.global'), href: '#/global/health' }, { label: t(`section.${current}`) }];
   return (
     <Layout {...shell} nav={nav} crumbs={crumbs} globalActive>
       <PageHeader icon={<SectionBadge icon={sectionIcon(current)} />} title={t(`section.${current}`)} subtitle={t(`sectionDesc.${current}`)} />
-      <div className={current === 'health' || current === 'modules' ? '' : 'max-w-3xl'}>
+      <div className={['health', 'modules', 'servers'].includes(current) ? '' : 'max-w-3xl'}>
         {current === 'health' && <Health t={t} />}
+        {current === 'servers' && <ServerDirectory t={t} />}
         {current === 'errors' && <Errors t={t} />}
         {current === 'modules' && <Modules t={t} lang={lang} />}
         {current === 'links' && <Links t={t} />}
         {current === 'assets' && <Assets t={t} />}
       </div>
     </Layout>
+  );
+}
+
+// Lista pública dos servidores com a Pyxie: só o que qualquer membro vê. Não dá acesso a nada.
+function ServerDirectory({ t }) {
+  const dir = useLoad(() => api.servers(), []);
+  const [query, setQuery] = useState('');
+  if (!dir.data) return dir.error ? <ErrorNotice t={t} code={dir.error} /> : <Spinner label={t('app.loading')} />;
+  const all = dir.data.servers;
+  const q = query.trim().toLowerCase();
+  const list = q ? all.filter((g) => `${g.name} ${g.id} ${g.ownerName} ${g.ownerId}`.toLowerCase().includes(q)) : all;
+  const date = (ms) => (ms ? new Date(ms).toLocaleDateString() : '—');
+  return (
+    <div className="space-y-4">
+      <Notice>{t('dir.privacyNote')}</Notice>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-white/60">{t('dir.total', { count: all.length, members: all.reduce((a, g) => a + g.memberCount, 0).toLocaleString() })}</p>
+        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('dir.search')} aria-label={t('dir.search')} className="dash-field min-h-[40px] w-full rounded-xl px-3 text-sm sm:w-72" />
+      </div>
+      <ul className="grid gap-3 lg:grid-cols-2">
+        {list.map((g) => (
+          <li key={g.id} className="dash-card flex gap-3 rounded-2xl p-4">
+            <GuildIcon guild={g} size={48} className="rounded-xl" />
+            <div className="min-w-0 flex-1 text-sm">
+              <p className="truncate font-title text-base font-bold">{g.name}</p>
+              <p className="font-mono text-xs text-white/50">{g.id}</p>
+              <p className="mt-2 text-white/70">{g.description || <span className="italic text-white/40">{t('dir.noDescription')}</span>}</p>
+              <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+                <dt className="text-white/50">{t('dir.owner')}</dt>
+                <dd className="truncate">
+                  {g.ownerName || '—'} <span className="font-mono text-white/40">{g.ownerId}</span>
+                </dd>
+                <dt className="text-white/50">{t('dir.members')}</dt>
+                <dd>{g.memberCount.toLocaleString()}</dd>
+                <dt className="text-white/50">{t('dir.joined')}</dt>
+                <dd>{date(g.joinedAt)}</dd>
+              </dl>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

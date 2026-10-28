@@ -10,7 +10,7 @@ Nada está pronto se existir só no código do bot. Toda entrega precisa aparece
 
 - Login com Discord (escopos `identify guilds`), sessão em `data/panelSessions.json`, cookie assinado com `PANEL_SECRET`. Sem segredo, o painel recusa tudo.
 - Papéis em `src/services/panelAccess.js`, conferidos ao vivo pelo bot (`src/services/botBridge.js`) a cada pedido:
-  - dono da Pyxie: todos os servidores + área global (saúde, erros, módulos);
+  - dono da Pyxie: Cringelândia, servidor da Mary e área global (saúde, lista pública de servidores, erros, módulos). Nos outros servidores, só se for admin lá, como qualquer pessoa. A lista de servidores mostra só dados públicos (nome, ID, dono, membros, descrição) e não dá acesso a nada;
   - Cringelândia: só o dono;
   - servidor da Mary: só a Mary e o dono;
   - outros servidores: dono da guild ou `Administrator`, com whitelist opcional (`data/guilds/<id>/panelAccess.json`).

@@ -47,6 +47,26 @@ const handlers = {
     };
   },
 
+  // Lista pública dos servidores com a Pyxie (área global do dono): só o que qualquer membro vê.
+  async GUILD_DIRECTORY(client) {
+    const out = [];
+    for (const g of client.guilds.cache.values()) {
+      const owner = client.users.cache.get(g.ownerId) || (await client.users.fetch(g.ownerId).catch(() => null));
+      out.push({
+        id: g.id,
+        name: g.name,
+        icon: g.iconURL({ size: 64 }) || null,
+        description: g.description || '',
+        memberCount: g.memberCount || 0,
+        ownerId: g.ownerId,
+        ownerName: owner ? owner.globalName || owner.username : '',
+        createdAt: g.createdTimestamp,
+        joinedAt: g.joinedTimestamp || null,
+      });
+    }
+    return out.sort((a, b) => b.memberCount - a.memberCount);
+  },
+
   // Permissões da Pyxie no servidor (o painel mostra o que falta para cada recurso).
   async BOT_PERMISSIONS(client, { guildId }) {
     const guild = client.guilds.cache.get(String(guildId));

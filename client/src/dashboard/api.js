@@ -70,6 +70,7 @@ export const api = {
   resetEmbed: (id, key) => request(`/api/dashboard/guilds/${id}/embeds/${key}`, { method: 'DELETE' }),
   updateSentEmbed: (id, key) => request(`/api/dashboard/guilds/${id}/embeds/${key}/update-sent`, { method: 'POST', body: {} }),
   publishColors:(id, channelId) => request(`/api/dashboard/guilds/${id}/colors/publish`, { method: 'POST', body: { channelId } }),
+  servers: () => request('/api/dashboard/global/servers'),
   health: () => request('/api/dashboard/global/health'),
   errors: (window) => request(`/api/dashboard/global/errors?window=${window}`),
   modules: () => request('/api/dashboard/global/modules'),
