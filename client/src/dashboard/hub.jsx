@@ -7,7 +7,7 @@ import { Badge, Button, MultiSelect, Switch } from './ui';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 
-export function ModuleCard({ icon: Icon, title, desc, on, statusLabel, meta, active, onClick }) {
+export function ModuleCard({ icon: Icon, emoji, title, desc, on, statusLabel, meta, active, onClick }) {
   return (
     <button
       type="button"
@@ -19,13 +19,13 @@ export function ModuleCard({ icon: Icon, title, desc, on, statusLabel, meta, act
     >
       <span className="flex items-start justify-between gap-2">
         <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${on ? 'bg-gradient-to-br from-pyxie-bright/35 to-mystic-violet/35 text-pyxie-glow' : 'bg-white/5 text-white/50'}`} aria-hidden="true">
-          {Icon && <Icon size={20} />}
+          {Icon ? <Icon size={20} /> : <span className="text-xl">{emoji}</span>}
         </span>
         <Badge tone={on ? 'green' : 'muted'}>{statusLabel}</Badge>
       </span>
       <span className="font-title font-bold">{title}</span>
       {desc && <span className="line-clamp-2 text-xs text-white/60">{desc}</span>}
-      {meta && <span className="mt-auto text-[11px] text-mystic-glow/80">{meta}</span>}
+      {meta && <span className="mt-auto block text-[11px] text-mystic-glow/80">{meta}</span>}
     </button>
   );
 }
@@ -49,7 +49,7 @@ export function HubGroup({ title, children }) {
   );
 }
 
-export function ConfigAside({ icon: Icon, title, subtitle, onBack, backLabel, onSave, saveLabel, saving, footerNote, children }) {
+export function ConfigAside({ icon: Icon, title, subtitle, onBack, backLabel, onSave, saveLabel, saving, saveDisabled = false, footerNote, children }) {
   React.useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onBack();
     window.addEventListener('keydown', onKey);
@@ -58,7 +58,7 @@ export function ConfigAside({ icon: Icon, title, subtitle, onBack, backLabel, on
   return (
     <aside
       aria-label={title}
-      className="dash-surface fixed inset-0 z-40 flex flex-col lg:sticky lg:inset-auto lg:top-4 lg:z-auto lg:max-h-[calc(100vh-2rem)] lg:rounded-2xl lg:border lg:border-white/10"
+      className="dash-surface fixed inset-0 z-40 flex flex-col lg:sticky lg:inset-auto lg:top-20 lg:z-auto lg:max-h-[calc(100vh-12rem)] lg:rounded-2xl lg:border lg:border-white/10"
     >
       <header className="flex items-center gap-3 border-b border-white/10 p-4">
         {Icon && (
@@ -80,7 +80,7 @@ export function ConfigAside({ icon: Icon, title, subtitle, onBack, backLabel, on
             {backLabel}
           </Button>
           {onSave && (
-            <Button onClick={onSave} disabled={saving} className="flex flex-[2] items-center justify-center gap-2">
+            <Button onClick={onSave} disabled={saving || saveDisabled} className="flex flex-[2] items-center justify-center gap-2">
               <Save size={16} aria-hidden="true" />
               {saveLabel}
             </Button>
@@ -113,8 +113,9 @@ function DiscordText({ text }) {
     });
 }
 
-// Prévia de mensagem como no Discord. buttons: [{ label, style: 'primary'|'secondary' }]; poll: { question, answers }.
-export function DiscordPreview({ label, author = 'Pyxie', avatar, botTag = 'APP', content, buttons = [], poll }) {
+// Prévia de mensagem como no Discord. buttons: [{ label, emoji, style: 'primary'|'secondary' }];
+// poll: { question, answers }; embed: { color, title, description, footer }; selects: [placeholder].
+export function DiscordPreview({ label, author = 'Pyxie', avatar, botTag = 'APP', content, buttons = [], poll, embed, selects = [], moreButtons = 0 }) {
   return (
     <figure>
       {label && <figcaption className="mb-1 text-xs font-semibold text-white/70">{label}</figcaption>}
@@ -129,7 +130,22 @@ export function DiscordPreview({ label, author = 'Pyxie', avatar, botTag = 'APP'
             <span className="font-semibold text-white">{author}</span>
             <span className="rounded bg-[#5865f2] px-1 text-[10px] font-bold text-white">{botTag}</span>
           </p>
-          <DiscordText text={content} />
+          {content && <DiscordText text={content} />}
+          {embed && (
+            <div className="mt-1 max-w-md space-y-1.5 rounded border-l-4 bg-[#2b2d31] p-3" style={{ borderColor: embed.color || '#ec4899' }}>
+              {embed.title && <p className="font-semibold text-white">{embed.title}</p>}
+              <div className="space-y-1">
+                <DiscordText text={embed.description} />
+              </div>
+              {embed.footer && <p className="pt-1 text-[11px] text-[#b5bac1]">{embed.footer}</p>}
+            </div>
+          )}
+          {selects.map((placeholder, i) => (
+            <p key={i} className="mt-1.5 flex max-w-md items-center justify-between rounded border border-[#1e1f22] bg-[#1e1f22] px-3 py-2 text-[#949ba4]">
+              {placeholder}
+              <span aria-hidden="true">⌄</span>
+            </p>
+          ))}
           {poll && (
             <div className="mt-2 max-w-sm space-y-1.5 rounded-lg bg-[#2b2d31] p-3">
               <p className="font-semibold text-white">{poll.question}</p>
@@ -142,9 +158,11 @@ export function DiscordPreview({ label, author = 'Pyxie', avatar, botTag = 'APP'
             <div className="flex flex-wrap gap-2 pt-1.5">
               {buttons.map((b) => (
                 <span key={b.label} className={`rounded px-3 py-1.5 text-xs font-medium text-white ${b.style === 'primary' ? 'bg-[#5865f2]' : 'bg-[#4e5058]'}`}>
+                  {b.emoji && `${b.emoji} `}
                   {b.label}
                 </span>
               ))}
+              {moreButtons > 0 && <span className="px-1 py-1.5 text-xs text-[#949ba4]">+{moreButtons}</span>}
             </div>
           )}
         </div>
