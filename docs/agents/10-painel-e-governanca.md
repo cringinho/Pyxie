@@ -26,7 +26,7 @@ Nada está pronto se existir só no código do bot. Toda entrega precisa aparece
 
 ## Painel antigo (`/admin`)
 
-Em transição: ficam só Shopee, Emojis, Módulos e Museu (mais `/admin/sazonal` e `/admin/parcerias`), abertos também pelo login com Discord do dono. Não adicionar nada novo lá. Terminal e streams de log saíram de vez.
+Desligado. `/admin`, `/admin/emojis`, `/admin/sazonal` e `/admin/parcerias` redirecionam para as telas do `/dashboard` (Pyxie global: Saúde, Servidores, Módulos, Museu, Shopee, Emojis; Cringelândia: Evento sazonal, Parcerias). As APIs `/api/admin/*` continuam e aceitam a sessão do dono no painel. O `py!admin` abre a Área do dono dentro do `/py-setup`.
 
 ## Antes de encerrar
 

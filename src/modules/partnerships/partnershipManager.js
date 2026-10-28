@@ -894,22 +894,8 @@ class PartnershipManager {
     const { requireAdminAuth, isValidAdminSession, isIpAllowed, hasOwnerPanelSession } = require('../../services/adminAuth');
 
     // Rota de visualização da página administrativa dedicada (/admin/parcerias)
-    app.get('/admin/parcerias', (req, res) => {
-      const cookieHeader = req.headers.cookie;
-      const sessionCookie = cookieHeader ? (cookieHeader.match(/(?:^|;\s*)pyxie_admin_session=([^;]*)/)?.[1] || null) : null;
-      const isAuthed = hasOwnerPanelSession(req) || (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
-
-      if (!isAuthed) {
-        return res.redirect('/admin');
-      }
-
-      this.refresh();
-      res.render(path.join(__dirname, 'views', 'adminParcerias.ejs'), {
-        config: this.getConfig(),
-        partners: this.getApprovedPartners(),
-        categories: CATEGORY_SCHEMAS,
-      });
-    });
+    // A tela de parcerias mudou para o painel novo (/dashboard → Cringelândia → Parcerias).
+    app.get('/admin/parcerias', (req, res) => res.redirect('/dashboard#/guild/1453890868980482090/partnerships'));
 
     app.get('/api/admin/modules/partnerships/config', requireAdminAuth, (req, res) => {
       try {

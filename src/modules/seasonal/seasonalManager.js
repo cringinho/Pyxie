@@ -1133,33 +1133,8 @@ function setupWebRoutes(app) {
   });
 
   // Rota de visualização da página administrativa (/admin/sazonal)
-  app.get('/admin/sazonal', (req, res) => {
-    const cookieHeader = req.headers.cookie;
-    const sessionCookie = cookieHeader ? (cookieHeader.match(/(?:^|;\s*)pyxie_admin_session=([^;]*)/)?.[1] || null) : null;
-    const { isValidAdminSession, isIpAllowed, hasOwnerPanelSession } = require('../../services/adminAuth');
-    const isAuthed = hasOwnerPanelSession(req) || (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
-
-    if (!isAuthed) {
-      return res.redirect('/admin');
-    }
-
-    const config = loadConfig();
-    const data = loadData();
-    const dropHandler = require('./dropHandler');
-    const nextDrops = dropHandler.getNextScheduledDrops(5);
-    const recentDrops = (data.history?.drops || []).slice(0, 20);
-    const pumpkinGains = (data.history?.pumpkinGains || []).slice(0, 30);
-
-    res.render(path.join(__dirname, 'views', 'adminSazonal.ejs'), {
-      config,
-      data,
-      active: config.active,
-      appEmojis: getSimplifiedAppEmojis(),
-      nextDrops,
-      recentDrops,
-      pumpkinGains,
-    });
-  });
+  // A tela do evento mudou para o painel novo (/dashboard → Cringelândia → Evento sazonal).
+  app.get('/admin/sazonal', (req, res) => res.redirect('/dashboard#/guild/1453890868980482090/seasonal'));
 
   // APIs do Painel Sazonal: Controle de Drops e Auditoria de Abóboras
   app.get('/api/admin/sazonal/drops-info', requireAdminAuth, (req, res) => {

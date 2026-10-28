@@ -145,7 +145,6 @@ function buildOwnerSection(viewerId, source, lang) {
   const view = require('./admin').buildAdminView(viewerId, source);
   if (viewerId !== OWNER_SNOWFLAKE) return view;
   const extra = new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setURL(`${getPublicUrl()}/dashboard#/global/health`).setLabel(t('setup.ownerPanel', lang)).setEmoji('🖥️').setStyle(ButtonStyle.Link),
     new ButtonBuilder().setCustomId('setup:go:overview').setLabel(t('setup.back', lang)).setEmoji('↩️').setStyle(ButtonStyle.Secondary)
   );
   return { embeds: view.embeds, components: [...view.components, extra] };

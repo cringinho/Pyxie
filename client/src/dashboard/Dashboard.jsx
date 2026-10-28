@@ -13,6 +13,7 @@ import Museum from './Museum';
 import Shopee from './Shopee';
 import Emojis from './Emojis';
 import Seasonal from './Seasonal';
+import Partnerships from './Partnerships';
 import BotPermissions from './Permissions';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
@@ -308,7 +309,7 @@ function GuildView({ shell, guildId, section }) {
 
   const { guild, zone, role, sections } = info.data;
   const ids = [...sections];
-  if (zone === 'cringelandia' || zone === 'mary') ids.push('tools');
+  if (zone === 'mary') ids.push('tools');
   const current = ids.includes(section) ? section : 'overview';
   const g = guild || fallbackGuild;
   const name = g?.name || guildId;
@@ -347,6 +348,11 @@ function GuildView({ shell, guildId, section }) {
         {current === 'embeds' && <Embeds t={t} guildId={guildId} />}
         {current === 'security' && <Security t={t} guildId={guildId} />}
         {current === 'seasonal' && <Seasonal t={t} guildId={guildId} />}
+        {current === 'partnerships' && (
+          <Partnerships t={t} guildId={guildId}>
+            <PartnershipDm t={t} guildId={guildId} />
+          </Partnerships>
+        )}
         {current === 'moderation' && <Moderation t={t} guildId={guildId} />}
         {current === 'community' && (
           <div className="space-y-4">

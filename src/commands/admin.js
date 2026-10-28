@@ -5,7 +5,8 @@ const {
   EmbedBuilder,
 } = require('discord.js');
 const { ADMIN } = require('./commandNames');
-const { OWNER_SNOWFLAKE, createOwnerMagicToken } = require('../services/adminAuth');
+const { OWNER_SNOWFLAKE } = require('../services/adminAuth');
+const { getPublicUrl } = require('../services/discordOAuth');
 const { getLanguage, t } = require('../utils/i18n');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 
@@ -17,18 +18,13 @@ function buildAdminView(userId, guildOrSource = null) {
     };
   }
 
-  const tokenResult = createOwnerMagicToken(userId);
-  if (!tokenResult.success) {
-    return {
-      content: `❌ ${tokenResult.error}`,
-      ephemeral: true,
-    };
-  }
+  // O painel do dono agora é o /dashboard (login com Discord), sem link mágico.
+  const panel = { url: `${getPublicUrl()}/dashboard#/global/health` };
 
   const embed = new EmbedBuilder()
     .setColor(PYXIE_COLORS.crimson || '#ef4444')
     .setTitle(t('admin.title', guildOrSource))
-    .setDescription(`${t('admin.desc', guildOrSource)}\n\n🔗 **Link de Acesso Direto:**\n[Abrir Painel Administrativo](${tokenResult.url})\n*(Válido por 15 minutos • Sessão de 12h)*`)
+    .setDescription(`${t('admin.desc', guildOrSource)}\n\n🔗 [${t('admin.btnOpen', guildOrSource)}](${panel.url})`)
     .setFooter({ text: pyxieFooter(t('admin.footer', guildOrSource)) })
     .setTimestamp();
 
@@ -37,7 +33,7 @@ function buildAdminView(userId, guildOrSource = null) {
       .setLabel(t('admin.btnOpen', guildOrSource))
       .setEmoji('🛡️')
       .setStyle(ButtonStyle.Link)
-      .setURL(tokenResult.url),
+      .setURL(panel.url),
     new ButtonBuilder()
       .setCustomId(`admin_modules_view:${userId}`)
       .setLabel(t('admin.btnModules', guildOrSource))

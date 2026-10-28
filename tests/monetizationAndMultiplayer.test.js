@@ -102,11 +102,11 @@ try {
   assert.ok(bonusHtml.includes('https://s.shopee.com.br/BU6Bod6Sw'), 'bonus.html deve conter o smartlink correto');
   assert.ok(!bonusHtml.includes('alwingulla.com'), 'bonus.html não pode conter scripts externos de anúncio');
 
-  // Verificação de Controles de Imagens no admin.html e server.js
-  const adminHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'admin.html'), 'utf8');
-  assert.ok(adminHtml.includes('btnSyncAllImages'), 'admin.html deve conter botão para sincronizar todas as imagens');
-  assert.ok(adminHtml.includes('syncSingleImage'), 'admin.html deve conter função para sincronizar imagem individual');
-  assert.ok(adminHtml.includes('handleLinkInputAutoPreview'), 'admin.html deve conter auto-preview de link da Shopee');
+  // Controles de imagens da Shopee no painel novo (/dashboard → Pyxie global → Shopee)
+  const shopeeJsx = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'dashboard', 'Shopee.jsx'), 'utf8');
+  assert.ok(shopeeJsx.includes('shopeeSyncImages'), 'Painel deve ter botão para atualizar todas as fotos');
+  assert.ok(shopeeJsx.includes('shopeeSyncImage('), 'Painel deve atualizar a foto de um anúncio');
+  assert.ok(shopeeJsx.includes('shopeePreview'), 'Painel deve puxar título e foto do link da Shopee');
 
   const serverSrc = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
   assert.ok(serverSrc.includes('/api/admin/shopee/sync-image'), 'server.js deve implementar rota /api/admin/shopee/sync-image');

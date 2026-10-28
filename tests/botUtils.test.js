@@ -243,9 +243,7 @@ try {
   execFileSync(process.execPath, ['--check', path.join(__dirname, '..', 'index.js')]);
 
   // 13. Painel antigo sem terminal nem stream de logs (D13: saem do painel)
-  const adminHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'admin.html'), 'utf8');
-  assert.ok(!adminHtml.includes('terminal-cli-bar'), 'admin.html não pode ter o terminal de comandos');
-  assert.ok(!adminHtml.includes("switchTab('logs')"), 'admin.html não pode ter a aba de logs');
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'public', 'admin.html')), 'O painel antigo saiu: tudo fica no /dashboard');
 
   const serverSource = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
   assert.ok(!serverSource.includes('/api/admin/terminal/exec'), 'server.js não pode expor execução de comandos pelo painel');
