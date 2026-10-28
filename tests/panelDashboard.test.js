@@ -50,7 +50,7 @@ function fakeBotSend(msg) {
       const m = live.members[`${payload.guildId}:${payload.userId}`];
       data = m ? { inGuild: true, botInGuild, ...m } : { inGuild: false, botInGuild };
     } else if (request === 'GUILD_CHANNELS') {
-      data = [{ id: '1', name: 'geral', type: 0 }];
+      data = [{ id: '1', name: 'geral', type: 0 }, { id: '777777777777777777', name: 'staff', type: 0 }];
     } else if (request === 'GUILD_ROLES') {
       data = [{ id: '2', name: 'Staff' }];
     }
@@ -195,6 +195,31 @@ function cookieFor(userId, guilds = []) {
     });
     assert.equal(res.status, 403, 'Pedido que muda algo sem o cabeçalho do painel é recusado (CSRF)');
     console.log('  ✅ 6. Whitelist por servidor e proteção contra CSRF.');
+
+    // 6b. Segurança (todos os servidores): padrão ligado, canal de alertas só deste servidor.
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie });
+    assert.equal(res.status, 200, 'Admin de servidor comum abre a Segurança');
+    let sec = await res.json();
+    assert.equal(sec.security.linkShield.enabled, true, 'Escudo de links nasce ligado');
+    assert.equal(sec.security.guard.mode, 'alert', 'Guardião nasce só alertando');
+    assert.deepEqual(sec.counters, { link: 0, role: 0, channel: 0 });
+    const guildInfo = await (await call(`/api/dashboard/guilds/${GUILD_A}`, { cookie: adminCookie })).json();
+    assert(guildInfo.sections.includes('security'), 'Seção Segurança aparece para todo servidor');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie, method: 'PUT', body: { staffLogChannelId: '888888888888888888' } });
+    assert.equal(res.status, 400, 'Canal de outro servidor é recusado');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/security`, {
+      cookie: adminCookie,
+      method: 'PUT',
+      body: { staffLogChannelId: '777777777777777777', linkShield: { action: 'warn', allowDomains: ['https://Exemplo.com.br/x', 'lixo'] }, guard: { mode: 'auto' } },
+    });
+    sec = await res.json();
+    assert.equal(sec.security.staffLogChannelId, '777777777777777777');
+    assert.equal(sec.security.linkShield.action, 'warn');
+    assert.deepEqual(sec.security.linkShield.allowDomains, ['exemplo.com.br'], 'Domínios liberados limpos');
+    assert.equal(sec.security.guard.mode, 'auto');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/security`, { cookie: adminCookie })).status, 403, 'Segurança de outro servidor é recusada');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie, method: 'PUT', body: {}, panelHeader: false })).status, 403, 'Sem cabeçalho do painel (CSRF)');
+    console.log('  ✅ 6b. Segurança: padrões, canal conferido ao vivo, domínios limpos e acesso por servidor.');
 
     // 7. Logout e painel sem segredo.
     await call('/auth/logout', { cookie: adminCookie, method: 'POST' });

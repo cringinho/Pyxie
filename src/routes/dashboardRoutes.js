@@ -24,7 +24,7 @@ function registerDashboardSection(section) {
 }
 
 function getSections(guildAccess) {
-  const base = ['overview', 'studio', 'features', 'channels', 'roles'];
+  const base = ['overview', 'studio', 'features', 'security', 'channels', 'roles'];
   if (guildAccess.canManageAccess) base.push('access');
   if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
@@ -341,6 +341,30 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const partnerships = require('../modules/partnerships/partnershipManager');
     const saved = partnerships.saveConfig({ dmSource: req.body || {} });
     return res.json({ success: true, dmSource: saved.dmSource });
+  });
+
+  // ---------- Segurança (todos os servidores): escudo de links e guardião do servidor ----------
+  router.get('/api/dashboard/guilds/:guildId/security', requireSession, requireGuild, (req, res) => {
+    const safety = require('../services/guildSafety');
+    const { counters, events } = safety.readEvents(req.params.guildId);
+    return res.json({ success: true, security: safety.getConfig(req.params.guildId, { fresh: true }), counters, events: events.slice(0, 20) });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/security', requireSession, requireGuild, async (req, res) => {
+    const safety = require('../services/guildSafety');
+    const body = req.body || {};
+    const staffLogChannelId = String(body.staffLogChannelId || '');
+    // O canal de alertas precisa ser deste servidor (o bot confere ao vivo).
+    if (staffLogChannelId) {
+      try {
+        const channels = await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId });
+        if (!channels.some((c) => c.id === staffLogChannelId)) return res.status(400).json({ success: false, error: 'invalid_channel' });
+      } catch (err) {
+        return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+      }
+    }
+    const security = safety.saveConfig(req.params.guildId, { staffLogChannelId, linkShield: body.linkShield || {}, guard: body.guard || {} });
+    return res.json({ success: true, security });
   });
 
   // ---------- Moderação da Cringelândia: modo blindagem (AutoMod) e controle de brigas ----------

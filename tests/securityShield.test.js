@@ -1,0 +1,237 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+
+console.log('🛡️ Testes do escudo de links e do guardião do servidor...');
+
+process.env.PYXIE_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'pyxie-security-'));
+
+const { PermissionFlagsBits } = require('discord.js');
+const links = require('../src/services/lookalikeLinks');
+const safety = require('../src/services/guildSafety');
+const guard = require('../src/services/serverGuard');
+const alerts = require('../src/services/securityAlerts');
+const linkShield = require('../src/modules/link-shield');
+const serverGuard = require('../src/modules/server-guard');
+const { TRANSLATIONS } = require('../src/utils/i18n');
+
+const G = '1453890868980482090';
+const STAFF = '777777777777777777';
+const ROLE = '666666666666666666';
+const CHANNEL = '555555555555555555';
+
+(async () => {
+  try {
+    // 1. Detector: pega golpe e deixa passar site legítimo.
+    const bad = {
+      'https://dіscord.com/gift/abc': 'homograph',
+      'https://disc0rd.com/x': 'lookalike',
+      'https://discrod.com': 'typo',
+      'https://discord.xyz/nitro': 'tld',
+      'https://discord-nitro.gift/claim': 'lure',
+      'https://free-nitro.com': 'lure',
+      'https://discord.com.login-verify.ru/a': 'subdomain',
+      'https://steamcommunlty.com/tradeoffer': 'lookalike',
+      'https://раураl.com': 'homograph',
+    };
+    for (const [url, reason] of Object.entries(bad)) {
+      const [hit] = links.findLookalikes(`olha isso ${url} !!`);
+      assert.equal(hit?.reason, reason, `Marca ${url} como ${reason}`);
+    }
+    assert.equal(links.findLookalikes('[presente](https://disc0rd.com/x)')[0]?.imitates, 'discord.com', 'Link mascarado também é conferido');
+    const good = [
+      'https://discord.com/channels/1', 'https://cdn.discordapp.com/a.png', 'https://discord.gift/abc', 'https://discords.com/servers',
+      'https://discord.me/cringe', 'https://twister.com', 'https://discord.js.org', 'https://top.gg/bot/1', 'https://www.google.com.br',
+      'https://pt.wikipedia.org/wiki/Discord', 'https://ação.com.br', 'https://discordpy.readthedocs.io', 'sem link nenhum aqui',
+    ];
+    for (const text of good) assert.deepEqual(links.findLookalikes(text), [], `Não marca ${text}`);
+    assert.deepEqual(links.findLookalikes('https://disc0rd.com/x', { allowDomains: ['disc0rd.com'] }), [], 'Domínio liberado pelo servidor passa');
+    assert.deepEqual(links.normalizeDomainList('https://Exemplo.com.br/x\n*.site.org lixo'), ['exemplo.com.br', 'site.org']);
+    assert.equal(links.findLookalikes(Array(30).fill('https://disc0rd.com/x').join(' ')).length, 1, 'Mesmo endereço repetido conta uma vez');
+    console.log('  ✅ 1. Detector de links que imitam sites conhecidos.');
+
+    // 2. Configuração por servidor e registro de ocorrências (arquivos separados, escrita atômica).
+    const def = safety.getConfig(G, { fresh: true });
+    assert.equal(def.linkShield.enabled, true);
+    assert.equal(def.guard.mode, 'alert');
+    const saved = safety.saveConfig(G, { staffLogChannelId: 'abc', linkShield: { action: 'nada' }, guard: { mode: 'auto' } });
+    assert.equal(saved.staffLogChannelId, '', 'ID inválido vira vazio');
+    assert.equal(saved.linkShield.action, 'delete', 'Ação desconhecida volta ao padrão');
+    assert.equal(saved.guard.mode, 'auto');
+    safety.saveConfig(G, { staffLogChannelId: STAFF, guard: { mode: 'alert' } });
+    for (let i = 0; i < 60; i++) safety.recordEvent(G, { type: 'link', host: 'x.com' });
+    const ev = safety.readEvents(G);
+    assert.equal(ev.counters.link, 60);
+    assert.equal(ev.events.length, 50, 'Guarda só as 50 últimas');
+    assert(!fs.existsSync(path.join(process.env.PYXIE_DATA_DIR, 'guilds', G, 'security.json.tmp')), 'Sem sobra de .tmp');
+    console.log('  ✅ 2. Configuração e ocorrências por servidor.');
+
+    // 3. Regras do guardião.
+    const A = PermissionFlagsBits.Administrator;
+    assert.deepEqual(guard.gainedDangerous(0n, A | PermissionFlagsBits.SendMessages), ['Administrator']);
+    assert.deepEqual(guard.gainedDangerous(A, A), [], 'Já tinha: não alerta');
+    assert.deepEqual(guard.gainedDangerous(A, 0n), [], 'Perder permissão não alerta');
+    assert.equal(guard.isChannelLeak({ categoryPublic: false, nowPublic: true, wasPublic: false }), true);
+    assert.equal(guard.isChannelLeak({ categoryPublic: false, nowPublic: true, isNew: true }), true);
+    assert.equal(guard.isChannelLeak({ categoryPublic: false, nowPublic: true, wasPublic: true }), false, 'Já era aberto: não alerta de novo');
+    assert.equal(guard.isChannelLeak({ categoryPublic: true, nowPublic: true, isNew: true }), false, 'Categoria aberta: normal');
+    const rid = guard.ids.revert(G, ROLE, ['Administrator', 'BanMembers']);
+    assert(rid.length <= 100, 'customId cabe no limite do Discord');
+    assert.deepEqual(guard.parseId(rid), { kind: 'role', guildId: G, targetId: ROLE, names: ['Administrator', 'BanMembers'] });
+    assert.deepEqual(guard.parseId(guard.ids.lock(G, CHANNEL)), { kind: 'lock', guildId: G, targetId: CHANNEL });
+    assert.equal(guard.parseId('sg:role:abc:1:z'), null);
+    assert.equal(guard.shouldAlert('k', 1000), true);
+    assert.equal(guard.shouldAlert('k', 2000), false, 'Mesmo alvo em menos de 1 min não repete');
+    assert.equal(guard.shouldAlert('k', 70000), true);
+    guard.resetMemory();
+    console.log('  ✅ 3. Regras do guardião (permissões, canal vazado, botões).');
+
+    // 4. Escudo de links no Discord (objetos falsos).
+    const out = { channel: [], replies: [], dms: [], staff: [] };
+    const staffChannel = { isTextBased: () => true, send: async (p) => out.staff.push(p) };
+    const guild = {
+      id: G,
+      name: 'Cringelândia',
+      ownerId: '111111111111111111',
+      channels: { cache: new Map([[STAFF, staffChannel]]), fetch: async () => null },
+    };
+    const client = { user: { id: '999999999999999999' } };
+    let deleted = 0;
+    const msg = (content, extra = {}) => ({
+      guild,
+      content,
+      deletable: true,
+      channel: { id: '444444444444444444', send: async (p) => (out.channel.push(p), { delete: async () => {} }) },
+      author: { id: '222222222222222222', bot: false, send: async (p) => out.dms.push(p) },
+      delete: async () => {
+        deleted++;
+      },
+      reply: async (p) => out.replies.push(p),
+      ...extra,
+    });
+    const r = await linkShield.onMessage(msg('ganhe nitro https://dіscord.com/gift'), client);
+    assert.equal(r.deleted, true);
+    assert.equal(deleted, 1);
+    assert.match(out.channel[0].content, /discord\.com/);
+    assert.deepEqual(out.channel[0].allowedMentions.parse, [], 'Aviso no canal não notifica ninguém');
+    assert.match(out.dms[0].content, /senha/, 'DM sugere trocar a senha');
+    assert.equal(out.staff.length, 1, 'Registro para a staff');
+    assert.equal(safety.readEvents(G).events[0].action, 'deleted');
+    assert.equal(await linkShield.onMessage(msg('https://discord.com/channels/1'), client), null, 'Link verdadeiro passa');
+    assert.equal(await linkShield.onMessage(msg('https://disc0rd.com', { author: { id: client.user.id } }), client), null, 'Ignora a própria Pyxie');
+
+    safety.saveConfig(G, { linkShield: { action: 'warn' } });
+    guard.resetMemory();
+    const w = await linkShield.onMessage(msg('https://disc0rd.com/x'), client);
+    assert.equal(w.deleted, false);
+    assert.equal(deleted, 1, 'Modo só avisar não apaga');
+    assert.equal(out.replies.length, 1, 'Responde a própria mensagem com o aviso');
+    safety.saveConfig(G, { linkShield: { enabled: false } });
+    assert.equal(await linkShield.onMessage(msg('https://disc0rd.com/x'), client), null, 'Desligado não faz nada');
+    safety.saveConfig(G, { linkShield: { enabled: true, action: 'delete' } });
+    console.log('  ✅ 4. Escudo de links: apaga, avisa sem ping, DM acolhedora, modo só avisar.');
+
+    // 5. Guardião no Discord: cargo e canal.
+    guard.resetMemory();
+    out.staff.length = 0;
+    let newBits = null;
+    const auditFor = (executorId) => ({
+      members: { me: { permissions: { has: (f) => (executorId ? f === PermissionFlagsBits.ViewAuditLog : false) } } },
+      fetchAuditLogs: async () => ({ entries: [{ targetId: ROLE, createdTimestamp: Date.now(), executorId }, { targetId: CHANNEL, createdTimestamp: Date.now(), executorId }] }),
+    });
+    const role = (g) => ({ id: ROLE, name: 'Mods', managed: false, editable: true, guild: g, permissions: { bitfield: A | PermissionFlagsBits.SendMessages }, setPermissions: async (b) => (newBits = b) });
+    const g1 = { ...guild, ...auditFor(null) };
+    const res1 = await serverGuard.onRoleChange({ permissions: { bitfield: PermissionFlagsBits.SendMessages } }, role(g1), client);
+    assert.deepEqual(res1, { names: ['Administrator'], reverted: false }, 'Sem registro de auditoria: só alerta');
+    assert.equal(out.staff.length, 1);
+    const payload = out.staff[0];
+    assert.match(payload.embeds[0].data.title, /^🔐/);
+    assert.equal(payload.components[0].components[0].data.custom_id, guard.ids.revert(G, ROLE, ['Administrator']));
+
+    safety.saveConfig(G, { guard: { mode: 'auto' } });
+    guard.resetMemory();
+    const g2 = { ...guild, ...auditFor('333333333333333333') };
+    const res2 = await serverGuard.onRoleChange(null, role(g2), client);
+    assert.equal(res2.reverted, true, 'Modo automático desfaz quando sabe quem foi');
+    assert.equal(newBits, PermissionFlagsBits.SendMessages, 'Tira só a permissão perigosa');
+    guard.resetMemory();
+    const g3 = { ...guild, ...auditFor(guild.ownerId) };
+    assert.equal(await serverGuard.onRoleChange(null, role(g3), client), null, 'Mudança do dono não gera alerta');
+
+    guard.resetMemory();
+    let locked = false;
+    const perms = (open) => ({ has: () => open });
+    const chan = (g, open, parentId = '123456789012345678') => ({
+      id: CHANNEL,
+      name: 'staff-chat',
+      type: 0,
+      guild: g,
+      parentId,
+      isThread: () => false,
+      manageable: true,
+      parent: { name: 'Staff', permissionsFor: () => perms(false) },
+      permissionsFor: () => perms(open),
+      permissionOverwrites: { edit: async () => (locked = true) },
+    });
+    const g4 = { ...g2, roles: { everyone: { id: G } } };
+    const res4 = await serverGuard.onChannelChange(chan(g4, false), chan(g4, true), client);
+    assert.deepEqual(res4, { locked: true }, 'Canal que abriu na categoria fechada é trancado no modo automático');
+    assert(locked);
+    guard.resetMemory();
+    assert.equal(await serverGuard.onChannelChange(chan(g4, true), chan(g4, true), client), null, 'Canal que já era aberto não alerta');
+    safety.saveConfig(G, { guard: { mode: 'alert' } });
+    console.log('  ✅ 5. Guardião: alerta com botão, desfaz no automático, ignora o dono, tranca canal.');
+
+    // 6. Botões: só dono ou Administrador desfazem.
+    newBits = null;
+    const replies = [];
+    const updates = [];
+    const roleObj = role(g1);
+    const g5 = {
+      ...guild,
+      roles: { cache: new Map([[ROLE, roleObj]]) },
+      members: { fetch: async (id) => ({ permissions: { has: (f) => id === '333333333333333333' && f === A } }) },
+    };
+    const bclient = { ...client, guilds: { cache: new Map([[G, g5]]) } };
+    const click = (userId) => ({
+      isButton: () => true,
+      customId: guard.ids.revert(G, ROLE, ['Administrator']),
+      user: { id: userId, tag: 'x' },
+      reply: async (p) => replies.push(p),
+      update: async (p) => updates.push(p),
+    });
+    await serverGuard.handleInteraction(click('444444444444444444'), bclient);
+    assert.equal(replies.length, 1, 'Sem Administrador: recusa');
+    assert.equal(newBits, null);
+    await serverGuard.handleInteraction(click('333333333333333333'), bclient);
+    assert.equal(newBits, PermissionFlagsBits.SendMessages, 'Administrador desfaz');
+    assert.deepEqual(updates[0].components, [], 'Botões somem depois de usados');
+    console.log('  ✅ 6. Botões do alerta conferem permissão.');
+
+    // 7. Textos: mesmas chaves e marcadores em pt e en; todo motivo tem texto.
+    const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (typeof v === 'object' ? flat(v, `${p}${k}.`) : [[`${p}${k}`, v]]));
+    for (const ns of ['linkShield', 'serverGuard', 'securityAlerts']) {
+      const pt = Object.fromEntries(flat(TRANSLATIONS.pt[ns]));
+      const en = Object.fromEntries(flat(TRANSLATIONS.en[ns]));
+      assert.deepEqual(Object.keys(en).sort(), Object.keys(pt).sort(), `${ns}: mesmas chaves`);
+      for (const k of Object.keys(pt)) {
+        const ph = (s) => (s.match(/\{\w+\}/g) || []).sort().join();
+        assert.equal(ph(en[k]), ph(pt[k]), `${ns}.${k}: mesmos marcadores`);
+      }
+    }
+    for (const reason of new Set(Object.values(bad))) assert(TRANSLATIONS.pt.linkShield.reason[reason] && TRANSLATIONS.en.linkShield.reason[reason], `Motivo ${reason} tem texto`);
+    for (const name of guard.DANGEROUS) assert(TRANSLATIONS.en.serverGuard.perm[name], `Permissão ${name} tem nome`);
+    const chAlert = alerts.channelAlert('en', { guildId: G, serverName: 'S', channelId: CHANNEL, categoryName: 'Staff', executorId: null, locked: false, viaDm: true, panelUrl: 'https://pyxie.test/dashboard' });
+    assert.match(chAlert.embeds[0].data.description, /\[dashboard\]\(https:\/\/pyxie\.test\/dashboard\)/, 'Link mascarado para o painel na DM');
+    assert(!/━|═/.test(JSON.stringify(chAlert)), 'Sem divisores ASCII');
+    console.log('  ✅ 7. Textos bilíngues e embeds no padrão.');
+
+    console.log('🎉 Escudo de links e guardião do servidor validados!');
+  } finally {
+    fs.rmSync(process.env.PYXIE_DATA_DIR, { recursive: true, force: true });
+  }
+})().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

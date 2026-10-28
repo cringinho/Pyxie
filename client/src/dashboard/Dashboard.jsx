@@ -8,6 +8,7 @@ import Studio from './Studio';
 import { Links, Moderation } from './Safety';
 import { Assets, CommunitySettings } from './Community';
 import Embeds from './Embeds';
+import Security from './Security';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
 function parseHash() {
@@ -283,6 +284,7 @@ function GuildView({ shell, guildId, section }) {
         {current === 'studio' && <Studio t={t} guildId={guildId} guildName={name} isOwner={me.user.isOwner} />}
         {current === 'features' && <Features t={t} guildId={guildId} />}
         {current === 'embeds' && <Embeds t={t} guildId={guildId} />}
+        {current === 'security' && <Security t={t} guildId={guildId} />}
         {current === 'moderation' && <Moderation t={t} guildId={guildId} />}
         {current === 'community' && <CommunitySettings t={t} guildId={guildId} />}
         {current === 'channels' && <Channels t={t} guildId={guildId} />}

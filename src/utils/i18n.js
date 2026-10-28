@@ -329,6 +329,62 @@ const TRANSLATIONS = {
       "link_hint": "🏛️ Acesse a nossa Galeria de Artes Virtual: {url}",
       "stats": "🖼️ {count} obras no acervo"
     },
+    "securityAlerts": {
+      "footer": "Pyxie · {server}"
+    },
+    "linkShield": {
+      "brandUnknown": "um site conhecido",
+      "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
+      "channelWarned": "⚠️ Cuidado: o link na mensagem de {user} imita {brand}. Não abra nem faça login por ele.",
+      "dm": "💜 Oi. Uma mensagem sua em **{server}** tinha um link que imita {brand} ({domain}), então eu tirei do ar para proteger as outras pessoas.\n\nSe não foi você que mandou, alguém pode estar usando a sua conta: troque a senha do Discord e ligue a verificação em duas etapas.\n\nSe foi sem querer, tá tudo bem. Ninguém foi punido.",
+      "logTitleDeleted": "🛡️ Link falso apagado",
+      "logTitleWarned": "⚠️ Link falso avisado",
+      "logWho": "**Quem mandou:** {user} em {channel}",
+      "logDomain": "**Endereço:** {domain}",
+      "logImitates": "**Imita:** {brand}",
+      "logReason": "**Por quê:** {reason}",
+      "logDeletedNote": "A pessoa recebeu uma DM explicando e sugerindo trocar a senha.",
+      "logWarnedNote": "A mensagem ficou no canal: a Pyxie está no modo só avisar ou não pode apagar mensagens ali.",
+      "reason": {
+        "homograph": "letras de outro alfabeto que parecem iguais",
+        "lookalike": "letras trocadas por outras parecidas (como 0 no lugar de o)",
+        "typo": "erro de digitação proposital no nome",
+        "tld": "o nome certo com o final do site errado",
+        "lure": "nome da marca com isca (nitro, presente, grátis)",
+        "subdomain": "o endereço verdadeiro no começo e outro site no fim",
+        "mixed": "alfabetos misturados no mesmo nome"
+      }
+    },
+    "serverGuard": {
+      "roleTitle": "🔐 Permissão perigosa num cargo",
+      "roleWhat": "**Cargo:** {role} {id}",
+      "roleGained": "**Ganhou:** {perms}",
+      "roleAsk": "Se não foi combinado, toque em **Desfazer**: a Pyxie tira só essas permissões.",
+      "roleReverted": "Já desfiz: tirei essas permissões do cargo. Só o dono do servidor consegue dar essas permissões com o modo automático ligado.",
+      "channelTitle": "🔓 Canal fechado ficou aberto",
+      "channelWhat": "**Canal:** {channel} na categoria {category}, que é fechada para todo mundo.",
+      "channelAsk": "Se não foi de propósito, toque em **Trancar**: a Pyxie esconde o canal de `@everyone` de novo.",
+      "channelLocked": "Já tranquei: o canal voltou a ficar escondido de `@everyone`.",
+      "who": "**Quem mudou:** {who}",
+      "whoUnknown": "não deu para ver (a Pyxie precisa de Ver registro de auditoria)",
+      "dmNote": "Você recebeu isto por DM porque **{server}** ainda não tem canal de alertas da staff. Dá para escolher um no {panel}.",
+      "panel": "painel",
+      "btnRevert": "Desfazer",
+      "btnLock": "Trancar",
+      "btnKeep": "Foi de propósito",
+      "doneReverted": "✅ Desfeito por {user}.",
+      "doneLocked": "🔒 Trancado por {user}.",
+      "doneKept": "👍 Mantido por {user}.",
+      "noPermission": "Só quem é dono do servidor ou tem Administrador pode usar esse botão (para trancar canal, Gerenciar Canais basta).",
+      "failed": "Não consegui. A Pyxie precisa de Gerenciar Cargos ou Gerenciar Canais e ficar acima desse cargo na lista.",
+      "perm": {
+        "Administrator": "Administrador",
+        "ManageGuild": "Gerenciar Servidor",
+        "ManageRoles": "Gerenciar Cargos",
+        "ManageWebhooks": "Gerenciar Webhooks",
+        "BanMembers": "Banir Membros"
+      }
+    },
     "moderation": {
       "warn": "🍵 Ei, {a} e {b}, a conversa esquentou um pouquinho. Que tal respirar e voltar daqui a pouco? Ninguém aqui é inimigo, tá? (E não, eu não tô preocupada, só… cuidando do chá.)",
       "slowmode": "🐢 Liguei o modo lento por {minutes} minutos ({seconds}s entre mensagens) para todo mundo respirar. Depois volta ao normal sozinho.",
@@ -2594,6 +2650,62 @@ const TRANSLATIONS = {
       "desc": "Permanent archive of our members' creations, with retro browsing.",
       "link_hint": "🏛️ Access our Virtual Community Art Museum: {url}",
       "stats": "🖼️ {count} artworks in the archive"
+    },
+    "securityAlerts": {
+      "footer": "Pyxie · {server}"
+    },
+    "linkShield": {
+      "brandUnknown": "a well-known site",
+      "channelDeleted": "🛡️ I deleted a message from {user} with a link that imitates {brand}. Links like that are used to steal accounts, so please don't open it.",
+      "channelWarned": "⚠️ Careful: the link in {user}'s message imitates {brand}. Don't open it or log in through it.",
+      "dm": "💜 Hi. A message you sent in **{server}** had a link that imitates {brand} ({domain}), so I took it down to keep everyone safe.\n\nIf you didn't send it, someone may be using your account: change your Discord password and turn on two-factor authentication.\n\nIf it was an accident, that's okay. Nobody was punished.",
+      "logTitleDeleted": "🛡️ Fake link deleted",
+      "logTitleWarned": "⚠️ Fake link flagged",
+      "logWho": "**Sent by:** {user} in {channel}",
+      "logDomain": "**Address:** {domain}",
+      "logImitates": "**Imitates:** {brand}",
+      "logReason": "**Why:** {reason}",
+      "logDeletedNote": "The sender got a DM explaining it and suggesting a password change.",
+      "logWarnedNote": "The message stayed in the channel: Pyxie is in warn-only mode or can't delete messages there.",
+      "reason": {
+        "homograph": "letters from another alphabet that look the same",
+        "lookalike": "letters swapped for similar ones (like 0 instead of o)",
+        "typo": "a deliberate typo in the name",
+        "tld": "the right name with the wrong site ending",
+        "lure": "brand name with bait (nitro, gift, free)",
+        "subdomain": "the real address at the start and another site at the end",
+        "mixed": "mixed alphabets in the same name"
+      }
+    },
+    "serverGuard": {
+      "roleTitle": "🔐 Dangerous permission on a role",
+      "roleWhat": "**Role:** {role} {id}",
+      "roleGained": "**Gained:** {perms}",
+      "roleAsk": "If this wasn't agreed on, tap **Undo**: Pyxie removes only these permissions.",
+      "roleReverted": "Already undone: I removed these permissions from the role. With auto mode on, only the server owner can grant them.",
+      "channelTitle": "🔓 Closed channel opened up",
+      "channelWhat": "**Channel:** {channel} in the {category} category, which is closed to everyone.",
+      "channelAsk": "If this wasn't on purpose, tap **Lock**: Pyxie hides the channel from `@everyone` again.",
+      "channelLocked": "Already locked: the channel is hidden from `@everyone` again.",
+      "who": "**Changed by:** {who}",
+      "whoUnknown": "couldn't tell (Pyxie needs View Audit Log)",
+      "dmNote": "You got this by DM because **{server}** has no staff alert channel yet. You can pick one in the {panel}.",
+      "panel": "dashboard",
+      "btnRevert": "Undo",
+      "btnLock": "Lock",
+      "btnKeep": "It was on purpose",
+      "doneReverted": "✅ Undone by {user}.",
+      "doneLocked": "🔒 Locked by {user}.",
+      "doneKept": "👍 Kept by {user}.",
+      "noPermission": "Only the server owner or someone with Administrator can use this button (Manage Channels is enough to lock a channel).",
+      "failed": "I couldn't do it. Pyxie needs Manage Roles or Manage Channels and has to sit above that role in the list.",
+      "perm": {
+        "Administrator": "Administrator",
+        "ManageGuild": "Manage Server",
+        "ManageRoles": "Manage Roles",
+        "ManageWebhooks": "Manage Webhooks",
+        "BanMembers": "Ban Members"
+      }
     },
     "moderation": {
       "warn": "🍵 Hey, {a} and {b}, things got a little heated. How about a breather and coming back in a bit? Nobody here is an enemy, okay? (And no, I'm not worried, I'm just… tending to the tea.)",
