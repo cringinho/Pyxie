@@ -24,7 +24,7 @@ function registerDashboardSection(section) {
 }
 
 function getSections(guildAccess) {
-  const base = ['overview', 'studio', 'features', 'security', 'channels', 'roles'];
+  const base = ['overview', 'commands', 'studio', 'features', 'security', 'channels', 'roles'];
   if (guildAccess.canManageAccess) base.push('access');
   if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
@@ -343,6 +343,12 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, dmSource: saved.dmSource });
   });
 
+  // Catálogo de comandos (montado do código a cada pedido): o que vale neste servidor e por quê.
+  router.get('/api/dashboard/guilds/:guildId/commands', requireSession, requireGuild, (req, res) => {
+    const catalog = require('../services/commandCatalog');
+    return res.json({ success: true, commands: catalog.forGuild(req.params.guildId, { isOwner: access.isOwner(req.panelSession.userId) }) });
+  });
+
   router.get('/api/dashboard/guilds/:guildId/activity', requireSession, requireGuild, (req, res) => {
     return res.json({ success: true, ...require('../services/guildActivity').summary(req.params.guildId) });
   });
@@ -529,6 +535,10 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     if (!access.isOwner(req.panelSession.userId)) return res.status(403).json({ success: false, error: 'owner_only' });
     return next();
   }
+
+  router.get('/api/dashboard/global/commands', requireSession, requireOwner, (req, res) => {
+    return res.json({ success: true, commands: require('../services/commandCatalog').allCommands() });
+  });
 
   router.get('/api/dashboard/global/red-flags', requireSession, requireOwner, async (req, res) => {
     try {

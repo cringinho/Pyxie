@@ -12,3 +12,4 @@
 - **Comandos de Manipulação de Economia Restritos ao Criador**:
   - Comandos que alteram saldo, resetam dados econômicos ou configuram parâmetros de economia (`/py-seteco`, `/py-reseteco`, `/py-ecoconfig`, `/py-admin`) são estritamente exclusivos do Criador da Pyxie (`OWNER_SNOWFLAKE = '214153735281180673'`). Administradores de servidor NÃO possuem permissão para executá-los.
   - Esses comandos são filtrados dinamicamente na Central de Ajuda (`/py-help`) e na Web (`/api/commands`), sendo exibidos exclusivamente quando solicitados pelo snowflake do dono (`214153735281180673`) ou sessão administrativa autenticada.
+- **Painel:** a tela Comandos (`/dashboard`, em cada servidor e na área global) lê `src/services/commandCatalog.js`, montado do código a cada pedido. Mostra o escopo, se o comando está ligado ali (mesma regra do `checkCommandAccess`) e os canais. Comandos da Mary aparecem só no painel do servidor dela, e os exclusivos do dono só para o dono.

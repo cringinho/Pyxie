@@ -25,6 +25,7 @@ import {
   ShieldCheck,
   Smile,
   Sparkles,
+  SquareTerminal,
   ToggleRight,
   UsersRound,
   Wrench,
@@ -41,6 +42,7 @@ export const go = (hash) => {
 // Ícone e grupo de cada seção. Seção nova sem entrada aqui cai em "Mais" com a chave inglesa.
 export const SECTION_META = {
   overview: { icon: LayoutDashboard, group: 'core' },
+  commands: { icon: SquareTerminal, group: 'core' },
   studio: { icon: MessageSquareText, group: 'messages' },
   embeds: { icon: Palette, group: 'messages' },
   features: { icon: ToggleRight, group: 'config' },

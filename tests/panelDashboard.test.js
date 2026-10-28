@@ -254,6 +254,20 @@ function cookieFor(userId, guilds = []) {
     sec = await res.json();
     assert.equal(sec.security.antiRaid.joins, 25, 'Ajustes do anti-raid são salvos');
     assert.deepEqual(sec.security.appeals, { enabled: true, channelId: '777777777777777777' });
+    // Comandos: catálogo automático por servidor (escopo, dono, grupo desligado).
+    const cmdsA = (await (await call(`/api/dashboard/guilds/${GUILD_A}/commands`, { cookie: adminCookie })).json()).commands;
+    assert(cmdsA.some((c) => c.name === 'py-marriage'), 'Comandos globais aparecem');
+    assert(!cmdsA.some((c) => c.ownerOnly), 'Comandos do dono não aparecem para admin comum');
+    assert(!cmdsA.some((c) => c.guildScope.includes(CRINGELANDIA_GUILD_ID)), 'Exclusivos da Cringelândia não aparecem em outro servidor');
+    await call(`/api/dashboard/guilds/${GUILD_A}/features`, { cookie: adminCookie, method: 'PUT', body: { groups: { marriage: false } } });
+    const married = (await (await call(`/api/dashboard/guilds/${GUILD_A}/commands`, { cookie: adminCookie })).json()).commands.find((c) => c.name === 'py-marriage');
+    assert.equal(married.status, 'disabled', 'Grupo desligado em Recursos aparece como desligado');
+    const cringeCmds = (await (await call(`/api/dashboard/guilds/${CRINGELANDIA_GUILD_ID}/commands`, { cookie: cookieFor(OWNER_SNOWFLAKE) })).json()).commands;
+    assert(cringeCmds.some((c) => c.guildScope.includes(CRINGELANDIA_GUILD_ID)), 'Cringelândia vê os exclusivos dela');
+    assert(cringeCmds.some((c) => c.ownerOnly), 'Dono vê os comandos dele');
+    const allCmds = (await (await call('/api/dashboard/global/commands', { cookie: cookieFor(OWNER_SNOWFLAKE) })).json()).commands;
+    assert(allCmds.length >= cringeCmds.length, 'Visão global tem todos');
+    assert.equal((await call('/api/dashboard/global/commands', { cookie: adminCookie })).status, 403);
     const act = await (await call(`/api/dashboard/guilds/${GUILD_A}/activity`, { cookie: adminCookie })).json();
     assert.equal(act.series.length, 30, 'Atividade: série de 30 dias');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/activity`, { cookie: adminCookie })).status, 403);

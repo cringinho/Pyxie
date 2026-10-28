@@ -17,6 +17,7 @@ import Partnerships from './Partnerships';
 import ModuleDrawer from './ModuleDrawer';
 import { Economy, Trust } from './OwnerTools';
 import Appeal from './Appeal';
+import Commands from './Commands';
 import BotPermissions from './Permissions';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
@@ -320,7 +321,7 @@ function Activity({ t, guildId }) {
 }
 
 // Seções de formulário ficam numa coluna mais estreita; as de grade usam a largura toda.
-const WIDE_SECTIONS = new Set(['overview', 'features', 'embeds']);
+const WIDE_SECTIONS = new Set(['overview', 'features', 'embeds', 'commands']);
 
 function GuildView({ shell, guildId, section }) {
   const { t, lang, me } = shell;
@@ -375,6 +376,7 @@ function GuildView({ shell, guildId, section }) {
         )}
         {current === 'features' && <Features t={t} guildId={guildId} />}
         {current === 'embeds' && <Embeds t={t} guildId={guildId} />}
+        {current === 'commands' && <Commands t={t} lang={lang} guildId={guildId} />}
         {current === 'security' && <Security t={t} guildId={guildId} />}
         {current === 'seasonal' && <Seasonal t={t} guildId={guildId} />}
         {current === 'partnerships' && (
@@ -795,16 +797,17 @@ function PartnershipDm({ t, guildId }) {
 
 function GlobalView({ shell, section, item }) {
   const { t, lang } = shell;
-  const ids = ['health', 'servers', 'trust', 'economy', 'errors', 'modules', 'links', 'assets', 'museum', 'shopee', 'emojis'];
+  const ids = ['health', 'servers', 'commands', 'trust', 'economy', 'errors', 'modules', 'links', 'assets', 'museum', 'shopee', 'emojis'];
   const current = ids.includes(section) ? section : 'health';
   const nav = { title: t('picker.global'), subtitle: t('sectionDesc.global'), groups: buildNav(t, ids, current, (id) => `#/global/${id}`) };
   const crumbs = [{ label: t('app.title'), href: '#/' }, { label: t('picker.global'), href: '#/global/health' }, { label: t(`section.${current}`) }];
   return (
     <Layout {...shell} nav={nav} crumbs={crumbs} globalActive>
       <PageHeader icon={<SectionBadge icon={sectionIcon(current)} />} title={t(`section.${current}`)} subtitle={t(`sectionDesc.${current}`)} />
-      <div className={['health', 'modules', 'servers', 'museum', 'shopee', 'emojis'].includes(current) ? '' : 'max-w-3xl'}>
+      <div className={['health', 'modules', 'servers', 'museum', 'shopee', 'emojis', 'commands'].includes(current) ? '' : 'max-w-3xl'}>
         {current === 'health' && <Health t={t} />}
         {current === 'servers' && <ServerDirectory t={t} />}
+        {current === 'commands' && <Commands t={t} lang={lang} />}
         {current === 'trust' && <Trust t={t} />}
         {current === 'economy' && <Economy t={t} />}
         {current === 'errors' && <Errors t={t} />}
