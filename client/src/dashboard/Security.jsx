@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Feather, FileWarning, Link2Off, ShieldCheck, ShieldHalf, KeyRound, Hash, Siren } from 'lucide-react';
+import { Feather, FileWarning, Link2Off, Ticket, ShieldCheck, ShieldHalf, KeyRound, Hash, Siren } from 'lucide-react';
 import { api } from './api';
 import BotPermissions from './Permissions';
 import { Button, Card, Notice, Spinner, StatTile, Toggle } from './ui';
@@ -21,10 +21,74 @@ function eventText(t, e) {
     return t('sec.event.link', { host, brand: e.imitates || t('sec.unknownBrand') });
   }
   if (e.type === 'file') return t('sec.event.file', { file: e.fileName, reason: t(`sec.fileReason.${e.reason}`) });
+  if (e.type === 'invites') return t('sec.event.invites', { count: e.count });
   if (e.type === 'webhook') return t('sec.event.webhook', { id: e.webhookId });
   if (e.type === 'raid') return t('sec.event.raid', { joins: e.joins, young: e.young });
   if (e.type === 'role') return t('sec.event.role', { role: e.roleName, perms: (e.perms || []).map((p) => t(`sec.perm.${p}`)).join(', ') });
   return t('sec.event.channel', { channel: e.channelName });
+}
+
+// Faxina de convites: procura os parados, mostra e revoga os escolhidos.
+function InviteCleanup({ t, guildId, cfg, onChange }) {
+  const [list, setList] = useState(null);
+  const [state, setState] = useState(null);
+  const search = async () => {
+    setState('loading');
+    try {
+      const d = await api.staleInvites(guildId, cfg.days);
+      setList(d.invites);
+      setState(null);
+    } catch (e) {
+      setState(e.code || 'generic');
+    }
+  };
+  const revokeAll = async () => {
+    if (!window.confirm(t('sec.invConfirm', { count: list.length }))) return;
+    try {
+      const d = await api.revokeInvites(guildId, list.map((i) => i.code), cfg.days);
+      setState({ ok: d.revoked });
+      setList([]);
+    } catch (e) {
+      setState(e.code || 'generic');
+    }
+  };
+  return (
+    <Card title={t('sec.invTitle')} icon={Ticket}>
+      <p className="mb-3 text-sm text-white/70">{t('sec.invHint')}</p>
+      <div className="space-y-3">
+        <label className="block">
+          <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.invDays')}</span>
+          <input type="number" min="3" max="90" value={cfg.days} onChange={(e) => onChange({ days: e.target.value })} className={field} />
+        </label>
+        <Toggle label={t('sec.invAuto')} checked={cfg.autoClean} onChange={(v) => onChange({ autoClean: v })} />
+        <Button variant="ghost" className="w-full" onClick={search} disabled={state === 'loading'}>
+          {t('sec.invSearch')}
+        </Button>
+        {state && typeof state === 'string' && state !== 'loading' && (
+          <Notice tone="error">{state === 'missing_manage_guild' ? t('sec.invNoPerm') : t('error.generic', { error: state })}</Notice>
+        )}
+        {state?.ok !== undefined && <Notice tone="ok">{t('sec.invDone', { count: state.ok })}</Notice>}
+        {list && list.length === 0 && state === null && <p className="text-sm text-white/60">{t('sec.invNone')}</p>}
+        {list && list.length > 0 && (
+          <>
+            <ul className="max-h-64 divide-y divide-white/5 overflow-y-auto text-sm">
+              {list.map((i) => (
+                <li key={i.code} className="flex items-center justify-between gap-2 py-1.5">
+                  <span className="font-mono">{i.code}</span>
+                  <span className="truncate text-xs text-white/50">
+                    {i.inviter || '—'} · #{i.channel || '—'} · {new Date(i.createdAt).toLocaleDateString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <Button className="w-full" onClick={revokeAll}>
+              {t('sec.invRevoke', { count: list.length })}
+            </Button>
+          </>
+        )}
+      </div>
+    </Card>
+  );
 }
 
 // Segurança (todos os servidores): escudo de links e guardião do servidor.
@@ -67,6 +131,7 @@ export default function Security({ t, guildId }) {
         antiRaid: draft.antiRaid,
         appeals: draft.appeals,
         fileShield: draft.fileShield,
+        invites: draft.invites,
       });
       setDraft({ ...res.security, allowText: res.security.linkShield.allowDomains.join('\n') });
       setStatus('ok');
@@ -191,6 +256,8 @@ export default function Security({ t, guildId }) {
           <p className="text-xs text-white/50">{t('sec.raidYoung')}</p>
         </div>
       </Card>
+
+      <InviteCleanup t={t} guildId={guildId} cfg={draft.invites} onChange={(patch) => setDraft({ ...draft, invites: { ...draft.invites, ...patch } })} />
 
       <Card title={t('sec.appealsTitle')} icon={Feather}>
         <p className="mb-3 text-sm text-white/70">{t('sec.appealsHint')}</p>

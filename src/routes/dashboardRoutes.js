@@ -361,6 +361,26 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     }
   });
 
+  // ---------- Faxina de convites (o bot lista e revoga; precisa de Gerenciar Servidor) ----------
+  router.get('/api/dashboard/guilds/:guildId/invites/stale', requireSession, requireGuild, async (req, res) => {
+    const days = Math.min(90, Math.max(3, parseInt(req.query.days, 10) || require('../services/guildSafety').getConfig(req.params.guildId).invites.days));
+    try {
+      return res.json({ success: true, days, invites: await bridge.request('INVITES_STALE', { guildId: req.params.guildId, days }) });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/invites/revoke', requireSession, requireGuild, async (req, res) => {
+    const codes = (Array.isArray(req.body?.codes) ? req.body.codes : []).map(String).filter((c) => /^[\w-]{2,32}$/.test(c)).slice(0, 200);
+    const days = Math.min(90, Math.max(3, parseInt(req.body?.days, 10) || 7));
+    try {
+      return res.json({ success: true, ...(await bridge.request('INVITES_REVOKE', { guildId: req.params.guildId, codes, days, by: req.panelSession.userId })) });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+  });
+
   // ---------- Apelação de banimento: qualquer pessoa logada vê os próprios banimentos ----------
   router.get('/api/dashboard/appeals', requireSession, async (req, res) => {
     try {
@@ -414,6 +434,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       antiRaid: body.antiRaid || {},
       appeals: body.appeals ? { enabled: body.appeals.enabled === true, channelId: appealsChannelId } : {},
       fileShield: body.fileShield || {},
+      invites: body.invites || {},
     });
     return res.json({ success: true, security });
   });

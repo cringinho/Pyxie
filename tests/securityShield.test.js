@@ -423,6 +423,22 @@ const CHANNEL = '555555555555555555';
     assert.deepEqual(hupdates[0].components, []);
     console.log('  ✅ 12. Escudo de arquivos e webhook vazado.');
 
+    // 13. Faxina de convites: parado = 0 usos e velho; nunca o do dono nem o personalizado.
+    const cleaner = require('../src/modules/invite-cleaner');
+    const NOW = Date.now();
+    const iguild = { ...guild, ownerId: 'dono', vanityURLCode: 'cringe', members: { me: { permissions: { has: () => true } } } };
+    const deletedCodes = [];
+    const inv = (code, uses, ageDays, inviterId = 'x') => ({ code, uses, inviterId, createdTimestamp: NOW - ageDays * 86400000, inviter: { username: 'a' }, channel: { name: 'geral' }, delete: async () => deletedCodes.push(code) });
+    const invites = [inv('velho', 0, 30), inv('usado', 3, 30), inv('novo', 0, 2), inv('dodono', 0, 30, 'dono'), inv('cringe', 0, 300)];
+    iguild.invites = { fetch: async () => new Map(invites.map((i) => [i.code, i])) };
+    const iclient = { guilds: { cache: new Map([[G, iguild]]) } };
+    assert.deepEqual((await cleaner.listStale(iclient, { guildId: G, days: 7 })).map((i) => i.code), ['velho']);
+    assert.deepEqual(await cleaner.revoke(iclient, { guildId: G, codes: ['velho', 'usado'], days: 7 }), { revoked: 1 }, 'Só revoga o que continua parado');
+    assert.deepEqual(deletedCodes, ['velho']);
+    iguild.members.me.permissions.has = () => false;
+    await assert.rejects(cleaner.listStale(iclient, { guildId: G, days: 7 }), /missing_manage_guild/);
+    console.log('  ✅ 13. Faxina de convites.');
+
     console.log('🎉 Escudo de links e guardião do servidor validados!');
   } finally {
     fs.rmSync(process.env.PYXIE_DATA_DIR, { recursive: true, force: true });

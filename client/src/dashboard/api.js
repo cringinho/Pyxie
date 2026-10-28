@@ -53,6 +53,8 @@ export const api = {
   allCommands: () => request('/api/dashboard/global/commands'),
   activity: (id) => request(`/api/dashboard/guilds/${id}/activity`),
   botPermissions: (id) => request(`/api/dashboard/guilds/${id}/bot-permissions`),
+  staleInvites: (id, days) => request(`/api/dashboard/guilds/${id}/invites/stale?days=${days}`),
+  revokeInvites: (id, codes, days) => request(`/api/dashboard/guilds/${id}/invites/revoke`, { method: 'POST', body: { codes, days } }),
   security: (id) => request(`/api/dashboard/guilds/${id}/security`),
   saveSecurity: (id, body) => request(`/api/dashboard/guilds/${id}/security`, { method: 'PUT', body }),
   moderation: (id) => request(`/api/dashboard/guilds/${id}/moderation`),

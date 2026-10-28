@@ -41,6 +41,7 @@ function defaultConfig() {
     antiRaid: { enabled: true, joins: 10, seconds: 30, pauseMinutes: 60 },
     appeals: { enabled: false, channelId: '' },
     fileShield: { enabled: true, action: 'delete', blockExecutables: true },
+    invites: { autoClean: false, days: 7 },
   };
 }
 
@@ -54,6 +55,7 @@ function normalizeConfig(raw = {}) {
   const raid = { ...base.antiRaid, ...(raw.antiRaid || {}) };
   const appeals = { ...base.appeals, ...(raw.appeals || {}) };
   const files = { ...base.fileShield, ...(raw.fileShield || {}) };
+  const inv = { ...base.invites, ...(raw.invites || {}) };
   return {
     staffLogChannelId: ID_RE.test(String(raw.staffLogChannelId || '')) ? String(raw.staffLogChannelId) : '',
     linkShield: {
@@ -80,6 +82,10 @@ function normalizeConfig(raw = {}) {
       action: files.action === 'warn' ? 'warn' : 'delete',
       blockExecutables: files.blockExecutables !== false,
     },
+    invites: {
+      autoClean: inv.autoClean === true,
+      days: clamp(inv.days, 3, 90, 7),
+    },
   };
 }
 
@@ -103,6 +109,7 @@ function saveConfig(guildId, input = {}) {
     antiRaid: { ...current.antiRaid, ...(input.antiRaid || {}) },
     appeals: { ...current.appeals, ...(input.appeals || {}) },
     fileShield: { ...current.fileShield, ...(input.fileShield || {}) },
+    invites: { ...current.invites, ...(input.invites || {}) },
   });
   writeAtomic(fileFor(guildId, 'security.json'), next);
   cache.set(guildId, { at: Date.now(), config: next });
@@ -112,7 +119,7 @@ function saveConfig(guildId, input = {}) {
 function readEvents(guildId) {
   const raw = readJson(fileFor(guildId, 'securityEvents.json')) || {};
   return {
-    counters: { link: 0, role: 0, channel: 0, raid: 0, file: 0, webhook: 0, ...(raw.counters || {}) },
+    counters: { link: 0, role: 0, channel: 0, raid: 0, file: 0, webhook: 0, invites: 0, ...(raw.counters || {}) },
     events: Array.isArray(raw.events) ? raw.events : [],
   };
 }

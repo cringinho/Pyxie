@@ -222,7 +222,7 @@ function cookieFor(userId, guilds = []) {
     let sec = await res.json();
     assert.equal(sec.security.linkShield.enabled, true, 'Escudo de links nasce ligado');
     assert.equal(sec.security.guard.mode, 'alert', 'Guardião nasce só alertando');
-    assert.deepEqual(sec.counters, { link: 0, role: 0, channel: 0, raid: 0, file: 0, webhook: 0 });
+    assert.deepEqual(sec.counters, { link: 0, role: 0, channel: 0, raid: 0, file: 0, webhook: 0, invites: 0 });
     const guildInfo = await (await call(`/api/dashboard/guilds/${GUILD_A}`, { cookie: adminCookie })).json();
     assert(guildInfo.sections.includes('security'), 'Seção Segurança aparece para todo servidor');
     res = await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie, method: 'PUT', body: { staffLogChannelId: '888888888888888888' } });
