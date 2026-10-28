@@ -9,6 +9,7 @@ import { Links, Moderation } from './Safety';
 import { Assets, CommunitySettings } from './Community';
 import Embeds from './Embeds';
 import Security from './Security';
+import Museum from './Museum';
 import BotPermissions from './Permissions';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
@@ -751,20 +752,21 @@ function PartnershipDm({ t, guildId }) {
 
 function GlobalView({ shell, section }) {
   const { t, lang } = shell;
-  const ids = ['health', 'servers', 'errors', 'modules', 'links', 'assets'];
+  const ids = ['health', 'servers', 'errors', 'modules', 'links', 'assets', 'museum'];
   const current = ids.includes(section) ? section : 'health';
   const nav = { title: t('picker.global'), subtitle: t('sectionDesc.global'), groups: buildNav(t, ids, current, (id) => `#/global/${id}`) };
   const crumbs = [{ label: t('app.title'), href: '#/' }, { label: t('picker.global'), href: '#/global/health' }, { label: t(`section.${current}`) }];
   return (
     <Layout {...shell} nav={nav} crumbs={crumbs} globalActive>
       <PageHeader icon={<SectionBadge icon={sectionIcon(current)} />} title={t(`section.${current}`)} subtitle={t(`sectionDesc.${current}`)} />
-      <div className={['health', 'modules', 'servers'].includes(current) ? '' : 'max-w-3xl'}>
+      <div className={['health', 'modules', 'servers', 'museum'].includes(current) ? '' : 'max-w-3xl'}>
         {current === 'health' && <Health t={t} />}
         {current === 'servers' && <ServerDirectory t={t} />}
         {current === 'errors' && <Errors t={t} />}
         {current === 'modules' && <Modules t={t} lang={lang} />}
         {current === 'links' && <Links t={t} />}
         {current === 'assets' && <Assets t={t} />}
+        {current === 'museum' && <Museum t={t} />}
       </div>
     </Layout>
   );

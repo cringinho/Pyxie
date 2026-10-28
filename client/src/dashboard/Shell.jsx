@@ -7,6 +7,7 @@ import {
   HeartHandshake,
   Image,
   KeyRound,
+  Landmark,
   LayoutDashboard,
   Link2,
   LogOut,
@@ -50,6 +51,7 @@ export const SECTION_META = {
   modules: { icon: Boxes, group: 'system' },
   links: { icon: Link2, group: 'content' },
   assets: { icon: Image, group: 'content' },
+  museum: { icon: Landmark, group: 'content' },
 };
 
 const GROUP_ORDER = ['core', 'messages', 'config', 'safety', 'system', 'content', 'more'];
