@@ -172,11 +172,18 @@ const TYPE_STYLE = {
   report: { emoji: '🚨', style: ButtonStyle.Danger },
 };
 
+const STYLE_ENUM = {
+  primary: ButtonStyle.Primary,
+  secondary: ButtonStyle.Secondary,
+  success: ButtonStyle.Success,
+  danger: ButtonStyle.Danger,
+};
+
 function panelTypeLine(type, gId, options) {
   const custom = options.types[type];
   if (!custom.label && !custom.description) return t(`tickets.opt_${type}`, gId);
   return t('tickets.opt_custom', gId, {
-    emoji: TYPE_STYLE[type].emoji,
+    emoji: custom.emoji || TYPE_STYLE[type].emoji,
     label: custom.label || t(`tickets.name_${type}`, gId),
     description: custom.description || t(`tickets.desc_${type}`, gId),
   });
@@ -196,19 +203,25 @@ function buildTicketPanel(guildOrGuildId, optionsOverride = null) {
   lines.push(t('tickets.panel_note', gId));
 
   const embed = new EmbedBuilder()
-    .setColor(COLOR_PRIMARY)
+    .setColor(options.panelColor || COLOR_PRIMARY)
     .setTitle(options.panelTitle || t('tickets.panel_title', gId))
     .setDescription(lines.join('\n\n'))
-    .setFooter({ text: t('tickets.panel_footer', gId, { guild: guildName }) });
+    .setFooter({ text: options.panelFooter || t('tickets.panel_footer', gId, { guild: guildName }) });
 
   const row = new ActionRowBuilder().addComponents(
-    types.map((type) =>
-      new ButtonBuilder()
+    types.map((type) => {
+      const tp = options.types[type];
+      const btn = new ButtonBuilder()
         .setCustomId(`tkt:open:${type}`)
-        .setLabel(options.types[type].label || t(`tickets.btn_${type}`, gId))
-        .setEmoji(TYPE_STYLE[type].emoji)
-        .setStyle(TYPE_STYLE[type].style)
-    )
+        .setLabel(tp.label || t(`tickets.btn_${type}`, gId))
+        .setStyle(STYLE_ENUM[tp.style] || TYPE_STYLE[type].style);
+      try {
+        btn.setEmoji(tp.emoji || TYPE_STYLE[type].emoji);
+      } catch (_) {
+        btn.setEmoji(TYPE_STYLE[type].emoji);
+      }
+      return btn;
+    })
   );
 
   if (withArt) {
@@ -480,11 +493,14 @@ async function handleOpenTicket(interaction, type) {
 
     const welcomeEmbed = buildRoomWelcomeEmbed({ source: interaction, number, type, userId: user.id, guildName: guild.name, options });
 
+    const staffPing = options.pingStaffOnOpen && options.staffRoleIds.length
+      ? ' ' + options.staffRoleIds.map((rid) => `<@&${rid}>`).join(' ')
+      : '';
     const welcomeMessage = await ticketChannel.send({
-      content: `<@${user.id}>`,
+      content: `<@${user.id}>${staffPing}`,
       embeds: [welcomeEmbed],
       components: buildRoomComponents(ticket, interaction),
-      allowedMentions: { users: [user.id] },
+      allowedMentions: { users: [user.id], roles: options.pingStaffOnOpen ? options.staffRoleIds : [] },
     });
     ticket.welcomeMessageId = welcomeMessage?.id || null;
     saveTicketsData(db);
@@ -693,6 +709,12 @@ async function handleCloseTicket(interaction, channelId) {
   }
   if (!ticket || ticket.status !== 'OPEN') {
     return replyEphemeral(interaction, t('tickets.close_not_ticket', interaction));
+  }
+
+  const options = getTicketOptions(interaction.guild.id);
+  if (options.closeConfirmation === false) {
+    await interaction.reply({ content: t('tickets.close_announce', interaction, { user: `<@${interaction.user.id}>` }), flags: 64 }).catch(() => null);
+    return performTicketClose({ guild: interaction.guild, channel, ticket, closerId: interaction.user.id });
   }
 
   const row = new ActionRowBuilder().addComponents(

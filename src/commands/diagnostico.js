@@ -2,7 +2,6 @@
 // Roda exatamente a mesma checagem do carregador de comandos e explica passo a passo por que
 // um comando funciona ou não para aquela pessoa, naquele canal e servidor.
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
-const { diagnoseCommand, inspectBotChannelPermissions } = require('../services/commandDiagnostics');
 const { t } = require('../utils/i18n');
 
 const name = 'py-diagnose';
@@ -44,6 +43,7 @@ function renderDiagnosticEmbed(report, source) {
 }
 
 function runForContext({ query, guild, channel, member, userId }) {
+  const { diagnoseCommand, inspectBotChannelPermissions } = require('../services/commandDiagnostics');
   const roleIds = member?.roles?.cache
     ? [...member.roles.cache.keys()]
     : Array.isArray(member?.roles)

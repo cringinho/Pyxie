@@ -172,11 +172,13 @@ async function relaxSlowmode(client, now = Date.now()) {
 async function checkContrast(role, before = null) {
   const cfg = on(role.guild.id, 'roleContrast');
   if (!cfg || !role.color || (before && before.color === role.color)) return null;
+  if ((cfg.ignoreRoleIds || []).includes(role.id)) return null;
   const hex = role.color.toString(16).padStart(6, '0');
   const min = Number(cfg.minRatio);
   const ratio = rules.contrast(hex, rules.BACKGROUNDS.dark);
   if (ratio >= min || !shouldAlert(`contrast:${role.id}`)) return null;
   const suggestion = rules.suggestColor(hex, min);
+  if (cfg.autoFix) await role.setColor?.(parseInt(suggestion, 16), 'Pyxie: readable role color').catch(() => null);
   const lang = getLanguage(role.guild.id);
   stats.bump(role.guild.id, 'roleContrast', 'hits');
   await staffAlert(role.guild, {

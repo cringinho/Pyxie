@@ -40,13 +40,16 @@ async function tempVoice(before, after) {
     const lang = getLanguage(guild.id);
     const user = after.member.displayName || after.member.user?.username || '?';
     const name = r3.fill(cfg.nameTemplate.trim() || t('autos3.temp.name', lang, { user: '{user}' }), { user }).slice(0, 90);
+    const bitrate = cfg.bitrateKbps && cfg.bitrateKbps !== '64' ? Number(cfg.bitrateKbps) * 1000 : undefined;
+    const overwrites = cfg.allowOwnerManage === false ? [] : [{ id: after.member.id, allow: [PermissionFlagsBits.ManageChannels, PermissionFlagsBits.MoveMembers] }];
     created = await guild.channels
       .create({
         name,
         type: ChannelType.GuildVoice,
         parent: hub?.parentId || undefined,
         userLimit: cfg.userLimit || undefined,
-        permissionOverwrites: [{ id: after.member.id, allow: [PermissionFlagsBits.ManageChannels, PermissionFlagsBits.MoveMembers] }],
+        ...(bitrate ? { bitrate } : {}),
+        permissionOverwrites: overwrites,
         reason: 'Pyxie: temporary room',
       })
       .catch(() => null);
@@ -83,7 +86,9 @@ async function counterTick(client) {
     if (!cfg || !cfg.channelId) continue;
     const ch = guild.channels.cache.get(cfg.channelId);
     if (!ch?.setName) continue;
-    const name = r3.fill(cfg.template.trim() || t('autos3.counter.default', getLanguage(guild.id), { count: '{count}' }), { count: guild.memberCount }).slice(0, 100);
+    const botCount = cfg.countBots === false && guild.members?.cache ? [...guild.members.cache.values()].filter((m) => m.user?.bot).length : 0;
+    const countVal = Math.max(0, (guild.memberCount || 0) - botCount);
+    const name = r3.fill(cfg.template.trim() || t('autos3.counter.default', getLanguage(guild.id), { count: '{count}' }), { count: countVal }).slice(0, 100);
     // O Discord só deixa renomear 2 vezes a cada 10 min: só mexe quando muda.
     if (ch.name !== name) await ch.setName(name, 'Pyxie: member counter').catch(() => null);
   }
@@ -166,6 +171,7 @@ async function pinArchive(channel) {
   if (!channel?.guild) return 0;
   const cfg = on(channel.guild.id, 'pinArchive');
   if (!cfg || !cfg.archiveChannelId || channel.id === cfg.archiveChannelId || !channel.messages?.fetchPinned) return 0;
+  if ((cfg.exemptChannelIds || []).includes(channel.id)) return 0;
   const pins = await channel.messages.fetchPinned().catch(() => null);
   if (!pins || pins.size < cfg.keep) return 0;
   const archive = channel.guild.channels.cache.get(cfg.archiveChannelId);
@@ -175,8 +181,9 @@ async function pinArchive(channel) {
   let moved = 0;
   for (const m of oldest) {
     const image = [...(m.attachments?.values?.() || [])].find((a) => /^image\//.test(a.contentType || ''));
+    const pinColor = /^#[0-9a-f]{6}$/i.test(cfg.color || '') ? cfg.color : 0x8b5cf6;
     const card = new EmbedBuilder()
-      .setColor(0x8b5cf6)
+      .setColor(pinColor)
       .setTitle(t('autos3.pins.title', lang))
       .setDescription([m.content?.slice(0, 3000), t('autos3.pins.moved', lang, { channel: `<#${channel.id}>`, user: `<@${m.author?.id}>` }), `[${t('autos3.pins.jump', lang)}](${m.url})`].filter(Boolean).join('\n\n'))
       .setFooter({ text: t('autos.footer', lang) })
@@ -184,7 +191,9 @@ async function pinArchive(channel) {
     if (image) card.setImage(image.url);
     const sent = await archive.send({ embeds: [card], allowedMentions: NO_PING }).catch(() => null);
     if (!sent) break;
-    await m.unpin('Pyxie: pin archive').catch(() => null);
+    if (cfg.unpinAfterArchive !== false) {
+      await m.unpin('Pyxie: pin archive').catch(() => null);
+    }
     moved += 1;
   }
   if (moved) stats.bump(channel.guild.id, 'pinArchive', 'hits', moved);

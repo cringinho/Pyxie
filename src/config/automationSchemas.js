@@ -18,6 +18,9 @@ module.exports = {
       { key: 'tone', type: 'select', options: ['cute', 'neutral', 'tsundere'], default: 'cute' },
       { key: 'autoDeleteMinutes', type: 'number', min: 0, max: 240, default: 60 },
       { key: 'houseLines', type: 'lines', max: 50, maxLength: 200, default: [] },
+      { key: 'useEmbed', type: 'toggle', default: false },
+      { key: 'color', type: 'color', default: '#ec4899' },
+      { key: 'pingRoleId', type: 'role', default: '' },
     ],
   },
 
@@ -104,6 +107,8 @@ module.exports = {
       { key: 'presets', type: 'multi', options: ['profanity', 'sexual', 'slurs'], default: ['slurs'] },
       { key: 'mentionLimit', type: 'number', min: 0, max: 50, default: 0 },
       { key: 'exemptChannelIds', type: 'channels', default: [], max: 10 },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'customMessage', type: 'text', maxLength: 150, default: '' },
     ],
   },
   modCanary: {
@@ -117,6 +122,8 @@ module.exports = {
       { key: 'maxActions', type: 'number', min: 3, max: 30, default: 5 },
       { key: 'windowMinutes', type: 'number', min: 1, max: 15, default: 3 },
       { key: 'action', type: 'select', options: ['alert', 'strip'], default: 'alert' },
+      { key: 'includeChannelDeletes', type: 'toggle', default: true },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
     ],
   },
   // ---------- Moderação ----------
@@ -147,7 +154,11 @@ module.exports = {
     group: 'moderation',
     icon: 'Contrast',
     needs: [],
-    fields: [{ key: 'minRatio', type: 'select', options: ['3', '4.5'], default: '3' }],
+    fields: [
+      { key: 'minRatio', type: 'select', options: ['3', '4.5'], default: '3' },
+      { key: 'autoFix', type: 'toggle', default: false },
+      { key: 'ignoreRoleIds', type: 'roles', default: [], max: 10 },
+    ],
   },
   channelCleanup: {
     group: 'moderation',
@@ -202,7 +213,11 @@ module.exports = {
     group: 'utility',
     icon: 'Megaphone',
     needs: [{ perm: 'ManageMessages', why: 'perm.why.publish' }],
-    fields: [{ key: 'channelIds', type: 'channels', default: [], max: 10 }],
+    fields: [
+      { key: 'channelIds', type: 'channels', default: [], max: 10 },
+      { key: 'ignoreBots', type: 'toggle', default: false },
+      { key: 'maxPerHour', type: 'number', min: 1, max: 10, default: 10 },
+    ],
   },
   stickyMessage: {
     group: 'utility',
@@ -235,6 +250,8 @@ module.exports = {
     ],
     fields: [
       { key: 'maxLines', type: 'number', min: 15, max: 200, default: 40 },
+      { key: 'keepPreviewLines', type: 'number', min: 0, max: 10, default: 0 },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
       { key: 'exemptChannelIds', type: 'channels', default: [], max: 10 },
     ],
   },
@@ -255,6 +272,8 @@ module.exports = {
     fields: [
       { key: 'roleId', type: 'role', default: '' },
       { key: 'excludeChannelIds', type: 'channels', kind: 'voice', default: [], max: 10 },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'dmNotice', type: 'toggle', default: false },
     ],
   },
 
@@ -433,6 +452,8 @@ module.exports = {
       { key: 'hubChannelId', type: 'channel', kind: 'voice', default: '' },
       { key: 'nameTemplate', type: 'text', maxLength: 60, default: '' },
       { key: 'userLimit', type: 'number', min: 0, max: 25, default: 0 },
+      { key: 'bitrateKbps', type: 'select', options: ['64', '96', '128'], default: '64' },
+      { key: 'allowOwnerManage', type: 'toggle', default: true },
     ],
   },
   memberCounter: {
@@ -442,6 +463,7 @@ module.exports = {
     fields: [
       { key: 'channelId', type: 'channel', kind: 'any', default: '' },
       { key: 'template', type: 'text', maxLength: 60, default: '' },
+      { key: 'countBots', type: 'toggle', default: true },
     ],
   },
   faqReplies: {
@@ -487,6 +509,9 @@ module.exports = {
     fields: [
       { key: 'archiveChannelId', type: 'channel', default: '' },
       { key: 'keep', type: 'number', min: 30, max: 49, default: 45 },
+      { key: 'color', type: 'color', default: '#8b5cf6' },
+      { key: 'exemptChannelIds', type: 'channels', default: [], max: 15 },
+      { key: 'unpinAfterArchive', type: 'toggle', default: true },
     ],
   },
   bumpReminder: {

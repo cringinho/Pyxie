@@ -51,6 +51,7 @@ function buildRuleBody(cfg, defaultMessage) {
     actions: [{ type: 1, metadata: { custom_message: cfg.customMessage || defaultMessage } }], // BLOCK_MESSAGE
     enabled: cfg.enabled && cfg.terms.length > 0,
     exempt_channels: cfg.exemptChannelIds,
+    ...(Array.isArray(cfg.exemptRoleIds) && cfg.exemptRoleIds.length ? { exempt_roles: cfg.exemptRoleIds } : {}),
   };
 }
 

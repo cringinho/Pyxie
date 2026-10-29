@@ -13,8 +13,10 @@ const LIMITS = {
   description: 200,
   panelTitle: 200,
   panelIntro: 1500,
+  panelFooter: 120,
   roomMessage: 1500,
 };
+const VALID_STYLES = ['primary', 'secondary', 'success', 'danger'];
 
 function isCringelandia(guildId) {
   return String(guildId) === String(CRINGELANDIA_GUILD_ID);
@@ -41,20 +43,29 @@ function cleanIds(list, max) {
 function normalizeTicketOptions(guildId, input = {}) {
   const src = input && typeof input === 'object' ? input : {};
   const types = {};
+  const defaultStyle = { help: 'primary', report: 'danger' };
+  const defaultEmoji = { help: '🆘', report: '🚨' };
   for (const type of TICKET_TYPES) {
     const raw = src.types?.[type] || {};
     types[type] = {
       enabled: raw.enabled !== false,
       label: cleanText(raw.label, LIMITS.label),
       description: cleanText(raw.description, LIMITS.description),
+      style: VALID_STYLES.includes(raw.style) ? raw.style : defaultStyle[type],
+      emoji: cleanText(raw.emoji, 32) || defaultEmoji[type],
     };
   }
+  const hex = String(src.panelColor || '#8b5cf6').trim().toLowerCase();
   const options = {
     maxOpenPerUser: clampInt(src.maxOpenPerUser, LIMITS.maxOpenPerUser),
     staffRoleIds: cleanIds(src.staffRoleIds, LIMITS.staffRoles),
     dmTranscript: src.dmTranscript !== false,
+    pingStaffOnOpen: src.pingStaffOnOpen === true,
+    closeConfirmation: src.closeConfirmation !== false,
+    panelColor: /^#[0-9a-f]{6}$/.test(hex) ? hex : '#8b5cf6',
     panelTitle: cleanText(src.panelTitle, LIMITS.panelTitle),
     panelIntro: cleanText(src.panelIntro, LIMITS.panelIntro),
+    panelFooter: cleanText(src.panelFooter, LIMITS.panelFooter),
     roomMessage: cleanText(src.roomMessage, LIMITS.roomMessage),
     types,
   };

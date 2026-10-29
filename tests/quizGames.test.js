@@ -271,7 +271,7 @@ if (fs.existsSync(hook) && bash.status === 0) {
     // Caminho inexistente simula a criação do arquivo, ativando também a regra de isolamento de tenant
     const candidate = abs.replace(/\.js$/, '.hookcheck.js');
     const payload = JSON.stringify({ toolCall: { args: { TargetFile: candidate, CodeContent: fs.readFileSync(abs, 'utf8') } } });
-    const out = spawnSync('bash', [hook], { input: payload, encoding: 'utf8' });
+    const out = spawnSync('bash', [path.relative(process.cwd(), hook).replace(/\\/g, '/')], { input: payload, encoding: 'utf8' });
     assert.ok(/"allow_tool": true/.test(out.stdout), `Hook vetou ${rel}: ${out.stdout}`);
   }
   console.log('  ✅ 9. Hook PreToolUse aprova os 7 arquivos novos (zero-mock e isolamento de tenant).');

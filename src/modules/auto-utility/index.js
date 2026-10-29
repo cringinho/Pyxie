@@ -89,11 +89,14 @@ async function onReaction(reaction, user) {
 async function longPaste(message) {
   const cfg = on(message.guild.id, 'longPaste');
   if (!cfg || cfg.exemptChannelIds.includes(message.channel.id)) return false;
+  if ((cfg.exemptRoleIds || []).some((id) => message.member?.roles?.cache?.has?.(id))) return false;
   const lines = rules.lineCount(message.content);
   if (lines < cfg.maxLines) return false;
   const lang = getLanguage(message.guild.id);
   const file = new AttachmentBuilder(Buffer.from(message.content, 'utf8'), { name: lang === 'en' ? 'message.txt' : 'mensagem.txt' });
-  const sent = await message.channel.send({ content: t('autos.longPaste.notice', lang, { user: `<@${message.author.id}>`, lines: `\`${lines}\`` }), files: [file], allowedMentions: NO_PING }).catch(() => null);
+  const previewN = Math.max(0, Number(cfg.keepPreviewLines) || 0);
+  const previewBlock = previewN > 0 ? `\n> ${String(message.content || '').split('\n').slice(0, previewN).join('\n> ').slice(0, 600)}\n> …` : '';
+  const sent = await message.channel.send({ content: `${t('autos.longPaste.notice', lang, { user: `<@${message.author.id}>`, lines: `\`${lines}\`` })}${previewBlock}`, files: [file], allowedMentions: NO_PING }).catch(() => null);
   if (!sent) return false;
   await message.delete().catch(() => null);
   stats.bump(message.guild.id, 'longPaste', 'hits');
@@ -146,11 +149,18 @@ async function autoReact(message) {
   return n;
 }
 
-async function autoPublish(message) {
+const publishRate = rules.createRateCounter();
+async function autoPublish(message, now = Date.now()) {
   const cfg = on(message.guild.id, 'autoPublish');
   if (!cfg || !cfg.channelIds.includes(message.channel.id) || message.channel.type !== ChannelType.GuildAnnouncement || !message.crosspostable) return false;
+  if (cfg.ignoreBots && (message.author?.bot || message.webhookId)) return false;
+  const limit = Number(cfg.maxPerHour) || 10;
+  if (publishRate.count(message.channel.id, now, 3600000) >= limit) return false;
   const ok = await message.crosspost().then(() => true).catch(() => false);
-  if (ok) stats.bump(message.guild.id, 'autoPublish', 'hits');
+  if (ok) {
+    publishRate.hit(message.channel.id, now, 3600000);
+    stats.bump(message.guild.id, 'autoPublish', 'hits');
+  }
   return ok;
 }
 
@@ -244,9 +254,17 @@ async function onVoice(before, after) {
   if (!cfg || !cfg.roleId) return null;
   const member = after.member || before.member;
   if (!member || member.user?.bot) return null;
+  if ((cfg.exemptRoleIds || []).some((id) => member.roles?.cache?.has?.(id))) return null;
   const inCall = Boolean(after.channelId) && !cfg.excludeChannelIds.includes(after.channelId);
   const has = member.roles.cache.has(cfg.roleId);
-  if (inCall && !has) return member.roles.add(cfg.roleId, 'Pyxie: in voice').then(() => 'added').catch(() => null);
+  if (inCall && !has) {
+    const added = await member.roles.add(cfg.roleId, 'Pyxie: in voice').then(() => 'added').catch(() => null);
+    if (added && cfg.dmNotice) {
+      const lang = getLanguage(guild.id);
+      member.send?.({ content: t('autos.voiceRole.dm', lang, { server: guild.name }), allowedMentions: NO_PING }).catch(() => null);
+    }
+    return added;
+  }
   if (!inCall && has) return member.roles.remove(cfg.roleId, 'Pyxie: left voice').then(() => 'removed').catch(() => null);
   return null;
 }

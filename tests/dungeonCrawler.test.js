@@ -625,7 +625,7 @@ console.log('  ✅ 10. Módulo, catálogo, introspector, embeds e Visual DB sinc
       const abs = path.join(__dirname, '..', rel);
       const candidate = abs.replace(/\.js$/, '.hookcheck.js');
       const payload = JSON.stringify({ toolCall: { args: { TargetFile: candidate, CodeContent: fs.readFileSync(abs, 'utf8') } } });
-      const out = spawnSync('bash', [hook], { input: payload, encoding: 'utf8' });
+      const out = spawnSync('bash', [path.relative(process.cwd(), hook).replace(/\\/g, '/')], { input: payload, encoding: 'utf8' });
       assert.ok(/"allow_tool": true/.test(out.stdout), `Hook vetou ${rel}: ${out.stdout}`);
     }
     console.log('  ✅ 11. Hook PreToolUse aprova os 8 arquivos novos.');

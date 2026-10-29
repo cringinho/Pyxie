@@ -18,24 +18,24 @@ const PYXIE_FOOTER = 'Pyxie';
 
 const ROTATING_TIPS = {
   pt: [
-    '💡 Dica: Use /py-daily todos os dias para acumular moedas e feijões mágicos.',
-    '💡 Dica: Suba de nível profissional completando seus turnos em /py-work.',
-    '💡 Dica: Você pode personalizar títulos e temas no seu /py-profile.',
-    '💡 Dica: Complete seu álbum de 78 cartas de Tarot e resgate conquistas em /py-album.',
-    '💡 Dica: Experimente o Tarot diário (/py-tarot) para prever seu dia.',
-    '💡 Dica: Quebre o biscoito da sorte diário em /py-cookie para ganhar moedas.',
-    '💡 Dica: Trabalhe diariamente em /py-work para subir na carreira.',
-    '💡 Dica: Calcule sua afinidade amorosa com seu par usando /py-ship.',
+    '🎀 Psst: Pega logo o /py-daily antes que eu cobre taxa por você respirar no meu chat!',
+    '🎀 Psst: Vai bater ponto em /py-work! Não tolero subordinado passando fome e pedindo esmola.',
+    '🎀 Psst: Ajeita essa vergonha de perfil no /py-profile antes que alguém printe!',
+    '🎀 Psst: Cadê as 78 cartas do seu /py-album? Até uma toupeira coleciona mais rápido.',
+    '🎀 Psst: Tira um /py-tarot agora! Não que eu me importe, mas adoro ver o destino aprontar.',
+    '🎀 Psst: Quebra logo o /py-cookie... e se vier frase cafona, nem ouse ler em voz alta!',
+    '🎀 Psst: Passa no /py-ship com seu rolinho! Se a química for um desastre, eu aviso logo!',
+    '🎀 Psst: Cansou de errar sozinho? O /py-help mostra os comandos, vai ler o manual!',
   ],
   en: [
-    '💡 Tip: Use /py-daily every day to accumulate coins and magic beans.',
-    '💡 Tip: Level up your career by completing your work shifts in /py-work.',
-    '💡 Tip: Customize your titles and visual themes in /py-profile.',
-    '💡 Tip: Complete your 78-card Tarot album and claim achievements in /py-album.',
-    '💡 Tip: Draw a daily Tarot reading (/py-tarot) to foresee your fortune.',
-    '💡 Tip: Crack open your daily fortune cookie in /py-cookie for coins.',
-    '💡 Tip: Complete shifts in /py-work to advance your professional career.',
-    '💡 Tip: Check your romance affinity with your special someone using /py-ship.',
+    '🎀 Psst: Grab your /py-daily right now before I charge rent for you breathing in my chat!',
+    '🎀 Psst: Clock in at /py-work! I won\'t have my subordinates begging for spare coins.',
+    '🎀 Psst: Fix that embarrassing card in /py-profile before someone screenshots it!',
+    '🎀 Psst: Where are the 78 cards in your /py-album? Even a mole collects faster than you.',
+    '🎀 Psst: Pull a /py-tarot card right now! Not that I care, but I love seeing fate cause chaos.',
+    '🎀 Psst: Crack open a /py-cookie... and if you get cheesy advice, don\'t tell me!',
+    '🎀 Psst: Test your crush with /py-ship! If your chemistry is a disaster, I\'ll be the first to laugh.',
+    '🎀 Psst: Tired of messing up? /py-help has the commands, go read the manual!',
   ],
 };
 
@@ -61,16 +61,16 @@ function pyxieFooter(baseText = null, source = null) {
 
 const PYXIE_PHRASES = {
   welcome: [
-    'Ora, ora... quem é esse que entrou?',
-    'Olha só quem resolveu dar as caras. Espero que traga doces ou dinheiro com ele...',
-    'Boas-vindas ao incrível e mágico recanto da Pyxie!',
-    'Mais um aventureiro pronto para acumular moedinhas, ler cartas e curtir a comunidade!',
-    'Que o seu dia seja repleto de boas risadas!',
+    'Olha só quem resolveu dar as caras. Mais um pra minha lista de subordinados... Espero que traga doces ou moedas!',
+    'Quem autorizou esse novato a entrar?! Brincadeira... Digo, entra logo e não fica parado na porta passando vergonha!',
+    'Atenção, súditos! Chegou novato no pedaço. Se você quebrar alguma coisa no servidor, anoto seu nome no meu caderninho preto!',
+    'Mais um desocupado no servidor... Sorte sua que eu sou uma líder magnânima e deixo você ficar por perto.',
+    'Entrou? Ótimo. Já vai lendo as regras e não me faz passar vergonha no chat!',
   ],
   leisure: [
-    'Uma pausa para o café e uma boa partida entre amigos!',
-    'Quem não arrisca uma moeda na sorte não conhece a verdadeira diversão.',
-    'A magia de Pyxie está no ar, iluminando cada cantinho do servidor!',
+    'Que tédio mortal... Se ninguém puxar uma fofoca boa em dois minutos, eu mesma invento um boato!',
+    'Quem não arrisca uma moeda na sorte nem devia estar acordado agora. Anda, cadê a coragem?',
+    'Tsc, chat parado parece velório de samambaia. Mexam esses dedos antes que eu passe um sermão!',
   ],
 };
 
@@ -90,4 +90,3 @@ module.exports = {
   KUROMI_FOOTER: PYXIE_FOOTER,
   kuromiFooter: pyxieFooter,
 };
-

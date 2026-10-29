@@ -121,6 +121,24 @@ export function Moderation({ t, guildId }) {
               ))}
             </select>
           </label>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('mod.repliesToTrigger')}</span>
+              <input type="number" min={2} max={10} value={conflict.repliesToTrigger || 3} onChange={(e) => setConflict({ ...conflict, repliesToTrigger: Number(e.target.value) })} className={field} />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('mod.windowSeconds')}</span>
+              <input type="number" min={10} max={120} value={conflict.windowSeconds || 40} onChange={(e) => setConflict({ ...conflict, windowSeconds: Number(e.target.value) })} className={field} />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('mod.slowmodeSeconds')}</span>
+              <input type="number" min={5} max={60} value={conflict.slowmodeSeconds || 15} onChange={(e) => setConflict({ ...conflict, slowmodeSeconds: Number(e.target.value) })} className={field} />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('mod.timeoutMinutes')}</span>
+              <input type="number" min={1} max={60} value={conflict.timeoutMinutes || 5} onChange={(e) => setConflict({ ...conflict, timeoutMinutes: Number(e.target.value) })} className={field} />
+            </label>
+          </div>
           <span className="block text-xs font-semibold text-white/70">{t('mod.conflictExempt')}</span>
           <MultiSelect options={channels} value={conflict.exemptChannelIds} emptyLabel={t('app.loading')} onChange={(v) => setConflict({ ...conflict, exemptChannelIds: v })} />
           <p className="text-xs text-white/50">{t('mod.ventNote')}</p>
@@ -132,6 +150,18 @@ export function Moderation({ t, guildId }) {
       </Card>
 
       <Card title={t('mod.incidents')}>
+        <div className="mb-3 flex justify-end">
+          <Button variant="ghost" disabled={busy || data.incidents.length === 0} onClick={async () => {
+            setBusy(true);
+            try {
+              await api.clearModerationIncidents(guildId);
+              setData({ ...data, incidents: [] });
+            } catch (_) {}
+            setBusy(false);
+          }}>
+            {t('mod.clearIncidents')}
+          </Button>
+        </div>
         {data.incidents.length === 0 && <p className="text-sm text-white/60">{t('mod.noIncidents')}</p>}
         <ul className="divide-y divide-white/5">
           {data.incidents.map((i, k) => (

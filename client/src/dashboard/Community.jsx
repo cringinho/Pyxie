@@ -60,6 +60,16 @@ export function CommunitySettings({ t, guildId }) {
         <div className="space-y-3">
           <span className="block text-xs font-semibold text-white/70">{t('community.forums')}</span>
           <MultiSelect options={forums} value={h.forumIds} emptyLabel={t('community.noForums')} onChange={(v) => setH({ forumIds: v })} />
+          <div className="grid grid-cols-2 gap-2">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('community.reactionEmoji')}</span>
+              <input value={h.reactionEmoji || '🫂'} onChange={(e) => setH({ reactionEmoji: e.target.value })} className={field} />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('community.customComment')}</span>
+              <input value={h.customComment || ''} placeholder="Ex: Que hiperfoco incrível!" onChange={(e) => setH({ customComment: e.target.value })} className={field} />
+            </label>
+          </div>
           <div className="grid grid-cols-3 gap-2">
             <Num label={t('community.wait')} value={h.waitMinutes} min={5} max={120} onChange={(v) => setH({ waitMinutes: v })} />
             <Num label={t('community.coins')} value={h.rewardCoins} min={0} max={30} onChange={(v) => setH({ rewardCoins: v })} />
@@ -78,6 +88,16 @@ export function CommunitySettings({ t, guildId }) {
             <span className="mb-1 block text-xs font-semibold text-white/70">{t('community.staffChannel')}</span>
             {select(r.staffChannelId, (v) => setR({ staffChannelId: v }))}
           </label>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('community.maxItemsPerCycle')}</span>
+              <input type="number" min={1} max={10} value={r.maxItemsPerCycle || 3} onChange={(e) => setR({ maxItemsPerCycle: Number(e.target.value) })} className={field} />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('community.radarColor')}</span>
+              <input type="color" value={r.color || '#3b82f6'} onChange={(e) => setR({ color: e.target.value })} className="h-11 w-full cursor-pointer rounded-xl border border-white/10 bg-transparent p-1" />
+            </label>
+          </div>
           <label className="block">
             <span className="mb-1 block text-xs font-semibold text-white/70">{t('community.publishChannel')}</span>
             {select(r.publishChannelId, (v) => setR({ publishChannelId: v }))}

@@ -556,6 +556,8 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
         name: c.name,
         category: c.category || 'utilidades',
         total: c.total,
+        calls: c.total,
+        errors: c.errors || 0,
         lastUsed: c.lastUsed || 0,
       }));
 
@@ -566,24 +568,39 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const per = periodic.getConfig(guildId);
     const wbCfg = wellbeing.getWellbeingGuildConfig(guildId);
     const wbStats = wellbeing.getGuildWellbeingStats(guildId);
+    const emojiData = require('../services/guildActivity').readEmojiUsage(guildId);
+    const emojiEntries = Object.values(emojiData.emojis || {});
+    const emojiStats = {
+      trackedCount: emojiEntries.length,
+      totalUses: emojiEntries.reduce((acc, e) => acc + Number(e.count || 0), 0),
+    };
+    const emergencyActive = Boolean(emergencyMode.getEmergencyStatus(guildId)?.active);
+    const campEnabled = Boolean(campfire.getConfig(guildId).enabled);
 
     return res.json({
       success: true,
       ...base,
       topCommands,
       automations: autoSummary,
+      emojiStats,
       security: {
         counters,
         totalCases: allCases.length,
         activeWarnings,
-        emergencyActive: Boolean(emergencyMode.getEmergencyStatus(guildId)?.active),
+        emergencyActive,
       },
       modules: {
         welcomeEnabled: Boolean(wf.enabled),
         checkinEnabled: Boolean(wf.checkin?.enabled),
         periodicBumpEnabled: Boolean(per.bumpGuide?.enabled),
         periodicTarotEnabled: Boolean(per.tarot?.enabled),
-        campfireEnabled: Boolean(campfire.getConfig(guildId).enabled),
+        campfireEnabled: campEnabled,
+        welcome: Boolean(wf.enabled),
+        checkin24h: Boolean(wf.checkin?.enabled),
+        bumpGuide: Boolean(per.bumpGuide?.enabled),
+        tarotDaily: Boolean(per.tarot?.enabled),
+        campfire: campEnabled,
+        emergency: emergencyActive,
         studioMessagesCount: studioStore.listMessages(guildId).length,
         wellbeing: {
           remindersEnabled: wbCfg.remindersEnabled !== false,
@@ -616,6 +633,60 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       stats: autoStats.read(req.params.guildId),
       summary: autoStats.summary(req.params.guildId),
     });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/automations/bulk', requireSession, requireGuild, async (req, res) => {
+    const auto = require('../services/automations');
+    const autoStats = require('../services/automationStats');
+    const guildId = req.params.guildId;
+    const action = req.body?.action;
+    const group = req.body?.group;
+    const configs = req.body?.configs;
+    if (action === 'enable_group' || action === 'disable_group') {
+      const enabled = action === 'enable_group';
+      const patch = {};
+      for (const [k, def] of Object.entries(auto.SCHEMA)) {
+        if (k === 'automodPresets') continue; // AutoMod preset requires Discord REST sync individually
+        if (!group || group === 'all' || def.group === group) {
+          patch[k] = { enabled };
+        }
+      }
+      const updated = auto.saveBulk(guildId, patch);
+      const schema = auto.publicSchema();
+      const allConfigs = Object.fromEntries(Object.keys(schema).map((k) => [k, auto.getConfig(guildId, k, { fresh: true })]));
+      return res.json({ success: true, updatedCount: Object.keys(updated).length, configs: allConfigs, summary: autoStats.summary(guildId) });
+    }
+    if (action === 'import' && configs && typeof configs === 'object') {
+      let guildChannels = [];
+      let guildRoles = [];
+      try {
+        guildChannels = await bridge.request('GUILD_CHANNELS', { guildId });
+        guildRoles = await bridge.request('GUILD_ROLES', { guildId });
+      } catch (_) {}
+      const chanSet = new Set((guildChannels || []).map((c) => c.id));
+      const roleSet = new Set((guildRoles || []).map((r) => r.id));
+      const validPatch = {};
+      for (const [k, cfg] of Object.entries(configs)) {
+        if (!auto.SCHEMA[k] || k === 'automodPresets' || !cfg || typeof cfg !== 'object') continue;
+        const candidate = auto.normalize(k, cfg);
+        const check = auto.idsToCheck(k, candidate);
+        const idsOk = check.channels.every((id) => chanSet.has(id)) && check.roles.every((id) => roleSet.has(id));
+        if (idsOk) {
+          validPatch[k] = cfg;
+        } else {
+          const stripped = { ...cfg };
+          for (const f of auto.SCHEMA[k].fields) {
+            if (['channel', 'channels', 'role', 'roles'].includes(f.type)) delete stripped[f.key];
+          }
+          validPatch[k] = stripped;
+        }
+      }
+      const updated = auto.saveBulk(guildId, validPatch);
+      const schema = auto.publicSchema();
+      const allConfigs = Object.fromEntries(Object.keys(schema).map((k) => [k, auto.getConfig(guildId, k, { fresh: true })]));
+      return res.json({ success: true, updatedCount: Object.keys(updated).length, configs: allConfigs, summary: autoStats.summary(guildId) });
+    }
+    return res.status(400).json({ success: false, error: 'invalid_bulk_action' });
   });
 
   router.post('/api/dashboard/guilds/:guildId/automations/:key/reset-stats', requireSession, requireGuild, (req, res) => {
@@ -1039,6 +1110,11 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   router.put('/api/dashboard/guilds/:guildId/moderation/conflict', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
     const conflict = require('../services/conflictWatch').saveConfig(req.params.guildId, req.body || {});
     return res.json({ success: true, conflict });
+  });
+
+  router.delete('/api/dashboard/guilds/:guildId/moderation/incidents', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    require('../services/conflictWatch').clearIncidents(req.params.guildId);
+    return res.json({ success: true, incidents: [] });
   });
 
   // ---------- Comunidade da Cringelândia: fórum de hiperfocos e radar ----------

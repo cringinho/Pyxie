@@ -138,9 +138,19 @@ function summary(guildId, now = Date.now()) {
   };
 
   let peakDay = series[0] || { day: dayKey(now), ...empty() };
+  const weekdayBreakdown = Array.from({ length: 7 }, (_, i) => ({ weekday: i, messages: 0, commands: 0, joins: 0, leaves: 0 }));
   for (const d of series) {
     if (d.messages >= peakDay.messages) peakDay = d;
+    const dt = new Date(`${d.day}T12:00:00Z`);
+    const wd = dt.getUTCDay();
+    if (weekdayBreakdown[wd]) {
+      weekdayBreakdown[wd].messages += d.messages;
+      weekdayBreakdown[wd].commands += d.commands;
+      weekdayBreakdown[wd].joins += d.joins;
+      weekdayBreakdown[wd].leaves += d.leaves;
+    }
   }
+  const retentionRate = month.joins > 0 ? Math.max(0, Math.min(100, Math.round(((month.joins - month.leaves) / month.joins) * 100))) : 100;
 
   return {
     today: series[series.length - 1],
@@ -150,6 +160,8 @@ function summary(guildId, now = Date.now()) {
     deltas,
     averages,
     peakDay,
+    weekdayBreakdown,
+    retentionRate,
     series,
     hasData: Object.keys(days).length > 0,
   };

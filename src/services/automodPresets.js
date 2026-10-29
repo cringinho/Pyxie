@@ -8,17 +8,20 @@ const TRIGGER = { preset: 4, mention: 5 };
 
 function desired(cfg) {
   const exempt_channels = cfg.exemptChannelIds || [];
-  const block = [{ type: 1, metadata: {} }]; // BLOCK_MESSAGE
+  const exempt_roles = cfg.exemptRoleIds || [];
+  const custom_message = cfg.customMessage?.trim() ? cfg.customMessage.trim().slice(0, 150) : undefined;
+  const block = [{ type: 1, metadata: custom_message ? { custom_message } : {} }]; // BLOCK_MESSAGE
+  const extraRoles = exempt_roles.length ? { exempt_roles } : {};
   return [
     {
       trigger_type: TRIGGER.preset,
       want: cfg.enabled && cfg.presets.length > 0,
-      body: { name: RULE_PRESET, event_type: 1, trigger_type: TRIGGER.preset, trigger_metadata: { presets: cfg.presets.map((p) => PRESET_IDS[p]).filter(Boolean), allow_list: [] }, actions: block, enabled: true, exempt_channels },
+      body: { name: RULE_PRESET, event_type: 1, trigger_type: TRIGGER.preset, trigger_metadata: { presets: cfg.presets.map((p) => PRESET_IDS[p]).filter(Boolean), allow_list: [] }, actions: block, enabled: true, exempt_channels, ...extraRoles },
     },
     {
       trigger_type: TRIGGER.mention,
       want: cfg.enabled && cfg.mentionLimit > 0,
-      body: { name: RULE_MENTION, event_type: 1, trigger_type: TRIGGER.mention, trigger_metadata: { mention_total_limit: cfg.mentionLimit, mention_raid_protection_enabled: true }, actions: block, enabled: true, exempt_channels },
+      body: { name: RULE_MENTION, event_type: 1, trigger_type: TRIGGER.mention, trigger_metadata: { mention_total_limit: cfg.mentionLimit, mention_raid_protection_enabled: true }, actions: block, enabled: true, exempt_channels, ...extraRoles },
     },
   ];
 }

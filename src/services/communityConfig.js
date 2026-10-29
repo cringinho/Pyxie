@@ -13,6 +13,7 @@ function fileFor(guildId) {
 function normalize(raw = {}) {
   const h = raw.hyperfocus || {};
   const r = raw.radar || {};
+  const hex = String(r.color || '#8b5cf6').trim().toLowerCase();
   return {
     hyperfocus: {
       forumIds: ids(h.forumIds),
@@ -20,11 +21,16 @@ function normalize(raw = {}) {
       rewardCoins: Math.min(30, Math.max(0, Math.round(Number(h.rewardCoins ?? 15)))),
       minChars: Math.min(2000, Math.max(50, Math.round(Number(h.minChars ?? 200)))),
       waitMinutes: Math.min(120, Math.max(5, Math.round(Number(h.waitMinutes ?? 15)))),
+      reactionEmoji: String(h.reactionEmoji ?? '💜').trim().slice(0, 32),
+      customComment: String(h.customComment || '').slice(0, 400),
     },
     radar: {
       feeds: [...new Set((Array.isArray(r.feeds) ? r.feeds : String(r.feeds || '').split(/\s+/)).map((u) => String(u).trim()).filter((u) => /^https:\/\/\S+$/.test(u)))].slice(0, 15),
       staffChannelId: id1(r.staffChannelId),
       publishChannelId: id1(r.publishChannelId),
+      maxItemsPerCycle: Math.min(10, Math.max(1, Math.round(Number(r.maxItemsPerCycle ?? 5)))),
+      color: /^#[0-9a-f]{6}$/.test(hex) ? hex : '#8b5cf6',
+      pingRoleId: id1(r.pingRoleId),
     },
   };
 }

@@ -40,7 +40,8 @@ function normalizeRule(raw = {}, index = 0) {
   if (!/^\d{17,20}$/.test(targetId) && !targetId.startsWith('role_test') && !targetId.startsWith('chan_test') && !targetId.startsWith('user_test')) {
     return null;
   }
-  return { id, command, targetType, targetId, action };
+  const customMessage = String(raw.customMessage || '').trim().slice(0, 200);
+  return customMessage ? { id, command, targetType, targetId, action, customMessage } : { id, command, targetType, targetId, action };
 }
 
 function getRules(guildId) {

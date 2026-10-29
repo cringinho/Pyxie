@@ -283,7 +283,10 @@ function handleAccessDenied(access, source, member, now = Date.now()) {
   if (access.reason === 'disabled') {
     return { content: t('setup.blocked.disabled', lang, { group: groupName }), allowedMentions: { parse: [] } };
   }
-  if (access.reason === 'permission') {
+  if (access.matchedRule?.customMessage) {
+    return { content: access.matchedRule.customMessage, allowedMentions: { parse: [] } };
+  }
+  if (access.reason === 'permission' || String(access.reason || '').startsWith('permission_')) {
     return { content: t('setup.blocked.permission', lang), allowedMentions: { parse: [] } };
   }
   if (access.reason === 'route') {

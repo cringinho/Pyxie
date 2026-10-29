@@ -79,6 +79,7 @@ function CommandPermissionsBox({ t, guildId, commands, channelList, roles }) {
   const [targetType, setTargetType] = useState('role');
   const [targetId, setTargetId] = useState('');
   const [action, setAction] = useState('deny');
+  const [customMsg, setCustomMsg] = useState('');
   const [status, setStatus] = useState(null);
   const [syncMsg, setSyncMsg] = useState(null);
 
@@ -92,7 +93,7 @@ function CommandPermissionsBox({ t, guildId, commands, channelList, roles }) {
   const addRule = async () => {
     const cleanId = targetId.trim();
     if (!/^\d{17,20}$/.test(cleanId)) return;
-    const next = [...rules.filter((r) => !(r.command === cmdTarget && r.targetType === targetType && r.targetId === cleanId)), { command: cmdTarget, targetType, targetId: cleanId, action }];
+    const next = [...rules.filter((r) => !(r.command === cmdTarget && r.targetType === targetType && r.targetId === cleanId)), { command: cmdTarget, targetType, targetId: cleanId, action, customMessage: customMsg.trim() || undefined }];
     try {
       const res = await api.saveCommandPermissions(guildId, next);
       setRules(res.rules || []);
@@ -181,6 +182,7 @@ function CommandPermissionsBox({ t, guildId, commands, channelList, roles }) {
           <option value="allow">{t('cmds.perm.allow')}</option>
           <option value="deny">{t('cmds.perm.deny')}</option>
         </select>
+        <input value={customMsg} onChange={(e) => setCustomMsg(e.target.value)} maxLength={150} placeholder={t('cmds.perm.customMsg')} aria-label={t('cmds.perm.customMsg')} className={field} />
         <Button onClick={addRule} disabled={!/^\d{17,20}$/.test(targetId)}>
           {t('cmds.perm.add')}
         </Button>

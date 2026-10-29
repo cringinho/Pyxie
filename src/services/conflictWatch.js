@@ -37,15 +37,33 @@ function saveState(guildId, state) {
 }
 
 function defaultConfig() {
-  return { enabled: false, staffLogChannelId: '', exemptChannelIds: [] };
+  return {
+    enabled: false,
+    staffLogChannelId: '',
+    exemptChannelIds: [],
+    repliesToTrigger: REPLIES_TO_TRIGGER,
+    windowSeconds: Math.round(WINDOW_MS / 1000),
+    slowmodeSeconds: SLOWMODE_SECONDS,
+    timeoutMinutes: Math.round(TIMEOUT_MS / 60000),
+  };
+}
+
+function clampNum(val, min, max, fallback) {
+  const n = Number(val);
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, Math.round(n))) : fallback;
 }
 
 function normalizeConfig(raw = {}) {
+  const d = defaultConfig();
   const ids = (list) => [...new Set((list || []).map(String).filter((id) => /^\d{17,20}$/.test(id)))].slice(0, 50);
   return {
     enabled: Boolean(raw.enabled),
     staffLogChannelId: /^\d{17,20}$/.test(String(raw.staffLogChannelId || '')) ? String(raw.staffLogChannelId) : '',
     exemptChannelIds: ids(raw.exemptChannelIds),
+    repliesToTrigger: clampNum(raw.repliesToTrigger, 3, 15, d.repliesToTrigger),
+    windowSeconds: clampNum(raw.windowSeconds, 30, 600, d.windowSeconds),
+    slowmodeSeconds: clampNum(raw.slowmodeSeconds, 5, 120, d.slowmodeSeconds),
+    timeoutMinutes: clampNum(raw.timeoutMinutes, 1, 60, d.timeoutMinutes),
   };
 }
 
@@ -64,6 +82,13 @@ function listIncidents(guildId, limit = 30) {
   return loadState(guildId).incidents.slice(0, limit);
 }
 
+function clearIncidents(guildId) {
+  const state = loadState(guildId);
+  state.incidents = [];
+  saveState(guildId, state);
+  return [];
+}
+
 // ---------- Detector em memória ----------
 
 const replies = new Map(); // `${guild}:${channel}:${a}:${b}` -> [timestamps]
@@ -76,13 +101,13 @@ function pairKey(guildId, channelId, a, b) {
 }
 
 // Registra uma resposta direta e devolve a chave do par quando passa do limite.
-function trackReply({ guildId, channelId, authorId, repliedToId, now = Date.now() }) {
+function trackReply({ guildId, channelId, authorId, repliedToId, windowMs = WINDOW_MS, repliesToTrigger = REPLIES_TO_TRIGGER, now = Date.now() }) {
   if (!repliedToId || authorId === repliedToId) return null;
   const key = pairKey(guildId, channelId, authorId, repliedToId);
-  const list = (replies.get(key) || []).filter((t) => now - t < WINDOW_MS);
+  const list = (replies.get(key) || []).filter((t) => now - t < windowMs);
   list.push(now);
   replies.set(key, list);
-  if (list.length < REPLIES_TO_TRIGGER) return null;
+  if (list.length < repliesToTrigger) return null;
   if (now - (pairCooldown.get(key) || 0) < PAIR_COOLDOWN_MS) return null;
   pairCooldown.set(key, now);
   replies.set(key, []);
@@ -176,6 +201,7 @@ module.exports = {
   getConfig,
   saveConfig,
   listIncidents,
+  clearIncidents,
   trackReply,
   nextLevel,
   resetMemory,

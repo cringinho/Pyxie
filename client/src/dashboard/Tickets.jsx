@@ -135,7 +135,8 @@ export default function Tickets({ t, guildId, isOwner }) {
   const withArt = Boolean(data.cringelandia && opts.artRemoval?.enabled);
   const typeLine = (type) => `• **${TYPE_EMOJI[type]} ${opts.types[type].label || defaults.types[type].name}:** ${opts.types[type].description || defaults.types[type].description}`;
   const previewEmbed = {
-    color: '#8B5CF6',
+    color: opts.panelColor || '#8B5CF6',
+    footer: opts.panelFooter ? { text: opts.panelFooter } : undefined,
     title: opts.panelTitle || defaults.panelTitle,
     description: [opts.panelIntro || defaults.panelIntro, defaults.panelSection, ...enabledTypes.map(typeLine), ...(withArt ? [defaults.optArt] : []), defaults.panelNote].join('\n\n'),
   };
@@ -187,6 +188,21 @@ export default function Tickets({ t, guildId, isOwner }) {
           <Labeled label={t('tickets.panelIntro')} hint={t('tickets.emptyDefault')}>
             <textarea rows={3} value={opts.panelIntro} maxLength={limits.panelIntro} placeholder={defaults.panelIntro} onChange={(e) => setOpt({ panelIntro: e.target.value })} className={`${field} py-2`} />
           </Labeled>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Labeled label={t('tickets.panelColor')}>
+              <div className="flex items-center gap-2">
+                <input type="color" value={opts.panelColor || '#8B5CF6'} onChange={(e) => setOpt({ panelColor: e.target.value })} className="h-10 w-14 cursor-pointer rounded-xl border border-white/10 bg-transparent p-1" />
+                <input value={opts.panelColor || '#8B5CF6'} onChange={(e) => setOpt({ panelColor: e.target.value })} className={field} />
+              </div>
+            </Labeled>
+            <Labeled label={t('tickets.panelFooter')}>
+              <input value={opts.panelFooter || ''} placeholder="Pyxie · Atendimento" onChange={(e) => setOpt({ panelFooter: e.target.value })} className={field} />
+            </Labeled>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Toggle label={t('tickets.pingStaffOnOpen')} checked={Boolean(opts.pingStaffOnOpen)} onChange={(v) => setOpt({ pingStaffOnOpen: v })} />
+            <Toggle label={t('tickets.closeConfirmation')} checked={Boolean(opts.closeConfirmation)} onChange={(v) => setOpt({ closeConfirmation: v })} />
+          </div>
           {TYPES.map((type) => (
             <fieldset key={type} className="space-y-2 rounded-xl border border-white/10 p-3">
               <legend className="flex w-full items-center justify-between gap-3 px-1 text-sm font-semibold">

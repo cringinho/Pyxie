@@ -4,7 +4,7 @@
 // ninguém responde. Desligado por padrão; tudo em /dashboard → Automações → Animador de chat.
 const fs = require('node:fs');
 const path = require('node:path');
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const animator = require('../../services/animator');
 const auto = require('../../services/automations');
 const stats = require('../../services/automationStats');
@@ -66,26 +66,42 @@ function buildPost(lang, cfg, content, { guildId, channelId, postKey }) {
   const intro = t(`animator.tone.${cfg.tone}`, lang);
   const footer = `-# ${t('animator.footer', lang)}`;
   const pause = pauseRow(lang, guildId, channelId);
+  const rolePrefix = cfg.pingRoleId ? `<@&${cfg.pingRoleId}> ` : '';
+  const allowedMentions = cfg.pingRoleId ? { parse: [], users: [], roles: [cfg.pingRoleId], repliedUser: false } : NO_PING;
   if (content.type === 'poll') {
     return {
-      content: `${intro}\n${footer}`,
+      content: `${rolePrefix}${intro}\n${footer}`,
       poll: { question: { text: content.text.slice(0, 300) }, answers: content.answers.map((a) => ({ text: a.slice(0, 55) })), duration: 4, allowMultiselect: false },
       components: [new ActionRowBuilder().addComponents(pause)],
-      allowedMentions: NO_PING,
+      allowedMentions,
     };
   }
   if (content.type === 'thisOrThat') {
     return {
-      content: `${intro}\n### ${content.a} ${t('animator.or', lang)} ${content.b}?\n${footer}`,
+      content: `${rolePrefix}${intro}\n### ${content.a} ${t('animator.or', lang)} ${content.b}?\n${footer}`,
       components: [voteRow(lang, postKey, content), new ActionRowBuilder().addComponents(pause)],
-      allowedMentions: NO_PING,
+      allowedMentions,
     };
   }
   const body = content.type === 'scramble' ? t('animator.scramble', lang, { word: `\`${content.text}\`` }) : content.text;
+  if (cfg.useEmbed) {
+    const colorHex = /^#[0-9a-f]{6}$/i.test(cfg.color || '') ? cfg.color : '#ec4899';
+    const card = new EmbedBuilder()
+      .setColor(colorHex)
+      .setTitle(t(`animator.type.${content.type}`, lang))
+      .setDescription(`${intro}\n\n> ${body}`)
+      .setFooter({ text: t('animator.footer', lang) });
+    return {
+      ...(rolePrefix ? { content: rolePrefix.trim() } : {}),
+      embeds: [card],
+      components: [new ActionRowBuilder().addComponents(pause)],
+      allowedMentions,
+    };
+  }
   return {
-    content: `${intro}\n### ${t(`animator.type.${content.type}`, lang)}\n> ${body}\n${footer}`,
+    content: `${rolePrefix}${intro}\n### ${t(`animator.type.${content.type}`, lang)}\n> ${body}\n${footer}`,
     components: [new ActionRowBuilder().addComponents(pause)],
-    allowedMentions: NO_PING,
+    allowedMentions,
   };
 }
 

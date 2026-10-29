@@ -593,6 +593,9 @@ const TRANSLATIONS = {
       "linkFixer": {
         "label": "Prévia"
       },
+      "voiceRole": {
+        "dm": "🎧 Você entrou em chamada de voz no servidor **{server}** e recebeu o cargo temporário de call!"
+      },
       "longPaste": {
         "notice": "📄 {user}, sua mensagem era longa ({lines} linhas), então virou arquivo para não empurrar o chat."
       },
@@ -3566,6 +3569,9 @@ const TRANSLATIONS = {
       },
       "linkFixer": {
         "label": "Preview"
+      },
+      "voiceRole": {
+        "dm": "🎧 You joined a voice channel in **{server}** and received the temporary in-voice role!"
       },
       "longPaste": {
         "notice": "📄 {user}, your message was long ({lines} lines), so it became a file to keep the chat readable."

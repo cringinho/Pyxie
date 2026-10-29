@@ -71,9 +71,16 @@ async function processHyperfocus(client, now = Date.now()) {
     if (list.some((m) => m.author.id !== entry.ownerId && !m.author.bot)) continue;
     const starter = await thread.fetchStarterMessage().catch(() => null);
     const owner = await thread.guild.members.fetch(entry.ownerId).catch(() => null);
+    if (cfg.reactionEmoji && starter?.react) {
+      await starter.react(cfg.reactionEmoji).catch(() => null);
+    }
     const lang = 'pt';
     const tags = (thread.parent?.availableTags || []).filter((tg) => thread.appliedTags?.includes(tg.id)).map((tg) => tg.name);
-    let text = pickComment(lang, { name: owner?.displayName || '', topic: tags[0] || t('hyperfocus.genericTopic', lang) });
+    const topicLabel = tags[0] || t('hyperfocus.genericTopic', lang);
+    const displayName = owner?.displayName || '';
+    let text = cfg.customComment && cfg.customComment.trim()
+      ? cfg.customComment.replace(/\{name\}/g, displayName).replace(/\{topic\}/g, topicLabel)
+      : pickComment(lang, { name: displayName, topic: topicLabel });
     // Recompensa: texto mínimo no post original (sem contar edições) e uma vez por dia por pessoa.
     const original = starter?.editedTimestamp ? '' : starter?.content || '';
     if (cfg.rewardCoins > 0 && original.length >= cfg.minChars && !state.rewarded[entry.ownerId]) {
@@ -92,14 +99,15 @@ async function runRadar(client, now = Date.now()) {
   if (now - radar.lastRunAt() < RADAR_EVERY_MS) return [];
   const cfg = getCommunityConfig(CRINGELANDIA_GUILD_ID).radar;
   if (!cfg.feeds.length || !cfg.staffChannelId || !cfg.publishChannelId) return [];
-  const created = await radar.collect(cfg.feeds, { now });
+  const created = (await radar.collect(cfg.feeds, { now })).slice(0, cfg.maxItemsPerCycle || 5);
+  const colorInt = cfg.color ? parseInt(cfg.color.slice(1), 16) : 0x8b5cf6;
   const staff = await client.channels.fetch(cfg.staffChannelId).catch(() => null);
   for (const item of created) {
     await staff
       ?.send({
         embeds: [
           {
-            color: 0x8b5cf6,
+            color: Number.isFinite(colorInt) ? colorInt : 0x8b5cf6,
             title: `📡 ${item.title}`.slice(0, 256),
             url: item.link,
             description: [item.summary || t(item.reddit ? 'radar.redditNoSummary' : 'radar.noSummary', 'pt'), `-# ${t('radar.reviewHint', 'pt')}`].join('\n\n'),
@@ -131,18 +139,20 @@ async function handleInteraction(interaction) {
   if (!item) return interaction.update({ components: [] });
   if (action === 'ok') {
     const cfg = getCommunityConfig(interaction.guildId).radar;
+    const colorInt = cfg.color ? parseInt(cfg.color.slice(1), 16) : 0x8b5cf6;
     const channel = await interaction.client.channels.fetch(cfg.publishChannelId).catch(() => null);
     await channel
       ?.send({
+        ...(cfg.pingRoleId ? { content: `<@&${cfg.pingRoleId}>` } : {}),
         embeds: [
           {
-            color: 0x8b5cf6,
+            color: Number.isFinite(colorInt) ? colorInt : 0x8b5cf6,
             title: `📡 ${item.title}`.slice(0, 256),
             description: [item.summary || '', `🔗 [${t('radar.source', 'pt')}](${item.link})`, `-# ${t('radar.disclaimer', 'pt')}`].filter(Boolean).join('\n\n'),
             timestamp: new Date().toISOString(),
           },
         ],
-        allowedMentions: noPing,
+        allowedMentions: cfg.pingRoleId ? { roles: [cfg.pingRoleId] } : noPing,
       })
       .catch(() => null);
   }

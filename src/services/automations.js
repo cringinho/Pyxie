@@ -93,6 +93,23 @@ function saveConfig(guildId, key, input = {}) {
   return config;
 }
 
+function saveBulk(guildId, patchMap = {}) {
+  const all = readAll(guildId);
+  const updated = {};
+  for (const [key, patch] of Object.entries(patchMap || {})) {
+    if (!SCHEMA[key] || !patch || typeof patch !== 'object') continue;
+    const config = normalize(key, { ...getConfig(guildId, key, { fresh: true }), ...patch });
+    all[key] = config;
+    cache.set(`${guildId}:${key}`, { at: Date.now(), config });
+    updated[key] = config;
+  }
+  const file = fileFor(guildId);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(`${file}.tmp`, JSON.stringify(all, null, 2));
+  fs.renameSync(`${file}.tmp`, file);
+  return updated;
+}
+
 // Campos de canal/cargo para o site conferir que pertencem ao servidor.
 function idsToCheck(key, config) {
   const out = { channels: [], roles: [] };
@@ -117,4 +134,4 @@ function resetCache() {
 
 for (const [key, def] of Object.entries(require('../config/automationSchemas'))) register(key, def);
 
-module.exports = { register, normalize, getConfig, saveConfig, readAll, idsToCheck, publicSchema, resetCache, SCHEMA };
+module.exports = { register, normalize, getConfig, saveConfig, saveBulk, readAll, idsToCheck, publicSchema, resetCache, SCHEMA };

@@ -70,16 +70,18 @@ async function act(message, key, a, b) {
   if (level === 1) {
     await channel.send({ content: t('moderation.warn', guild, { a: `<@${a}>`, b: `<@${b}>` }), allowedMentions: noPing }).catch(() => null);
   } else if (level === 2 && guild.members.me?.permissionsIn(channel).has(PermissionFlagsBits.ManageChannels) && channel.setRateLimitPerUser) {
+    const slowSec = Number(config.slowmodeSeconds) || watch.SLOWMODE_SECONDS;
     watch.rememberSlowmode(guild.id, channel.id, channel.rateLimitPerUser || 0, Date.now() + watch.SLOWMODE_MS);
-    await channel.setRateLimitPerUser(watch.SLOWMODE_SECONDS, 'Pyxie: conversa esquentou').catch(() => null);
-    await channel.send({ content: t('moderation.slowmode', guild, { seconds: watch.SLOWMODE_SECONDS, minutes: watch.SLOWMODE_MS / 60000 }), allowedMentions: noPing }).catch(() => null);
+    await channel.setRateLimitPerUser(slowSec, 'Pyxie: conversa esquentou').catch(() => null);
+    await channel.send({ content: t('moderation.slowmode', guild, { seconds: slowSec, minutes: watch.SLOWMODE_MS / 60000 }), allowedMentions: noPing }).catch(() => null);
     action = 'slowmode';
   } else if (level >= 3) {
     action = 'timeout';
+    const timeoutMs = (Number(config.timeoutMinutes) || 15) * 60000;
     for (const id of [a, b]) {
       const member = await guild.members.fetch(id).catch(() => null);
       if (!member?.moderatable) continue;
-      await member.timeout(watch.TIMEOUT_MS, 'Pyxie: discussão continuou depois do aviso e do modo lento').catch(() => null);
+      await member.timeout(timeoutMs, 'Pyxie: discussão continuou depois do aviso e do modo lento').catch(() => null);
       await member.send({ content: t('moderation.timeoutDm', guild, { server: guild.name }), allowedMentions: noPing }).catch(() => null);
     }
   }
@@ -98,7 +100,14 @@ async function onMessage(message) {
   if (channelIds.some((id) => id === ventId || config.exemptChannelIds.includes(id))) return null;
   const replied = await message.fetchReference().catch(() => null);
   if (!replied || replied.author.bot) return null;
-  const key = watch.trackReply({ guildId: message.guild.id, channelId: message.channel.id, authorId: message.author.id, repliedToId: replied.author.id });
+  const key = watch.trackReply({
+    guildId: message.guild.id,
+    channelId: message.channel.id,
+    authorId: message.author.id,
+    repliedToId: replied.author.id,
+    windowMs: (Number(config.windowSeconds) || 120) * 1000,
+    repliesToTrigger: Number(config.repliesToTrigger) || watch.REPLIES_TO_TRIGGER,
+  });
   if (!key) return null;
   return act(message, key, message.author.id, replied.author.id);
 }

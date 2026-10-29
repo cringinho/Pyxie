@@ -190,8 +190,9 @@ async function onMessage(message, client) {
 
 // ---------- Alarme de moderação ----------
 const COUNTED = new Set([AuditLogEvent.MemberBanAdd, AuditLogEvent.MemberKick, AuditLogEvent.MemberPrune]);
-function isModAction(entry) {
+function isModAction(entry, cfg = {}) {
   if (COUNTED.has(entry.action)) return true;
+  if (cfg.includeChannelDeletes !== false && (entry.action === AuditLogEvent.ChannelDelete || entry.action === AuditLogEvent.RoleDelete)) return true;
   return entry.action === AuditLogEvent.MemberUpdate && (entry.changes || []).some((c) => c.key === 'communication_disabled_until' && c.new);
 }
 
@@ -206,8 +207,10 @@ async function stripModRoles(guild, userId) {
 
 async function onAuditLog(entry, guild, client, now = Date.now()) {
   const cfg = on(guild.id, 'modCanary');
-  if (!cfg || !isModAction(entry) || !entry.executorId) return null;
+  if (!cfg || !isModAction(entry, cfg) || !entry.executorId) return null;
   if (entry.executorId === client?.user?.id || entry.executorId === guild.ownerId) return null;
+  const execMember = guild.members?.cache?.get?.(entry.executorId);
+  if ((cfg.exemptRoleIds || []).some((id) => execMember?.roles?.cache?.has?.(id))) return null;
   const count = modActions.hit(`${guild.id}:${entry.executorId}`, now, cfg.windowMinutes * 60000);
   if (count < cfg.maxActions || !shouldAlert(`canary:${guild.id}:${entry.executorId}`, now)) return null;
   const lang = getLanguage(guild.id);
