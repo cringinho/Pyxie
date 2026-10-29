@@ -483,6 +483,55 @@ function buildPayload(doc, ctx = {}, options = {}) {
   return payload;
 }
 
+/**
+ * Monta um modelo pronto de "Escolha seus cargos" (Item #7) com até 25 botões de cargo
+ * no Estúdio de Mensagens, verificando limites e organizando em linhas de 5.
+ */
+function buildRolePanelPreset({ id = '', name = '', title = '', description = '', roles = [], channelId = '' } = {}) {
+  const validRoles = (Array.isArray(roles) ? roles : [])
+    .filter((r) => r && SNOWFLAKE_RE.test(String(r.id || r.roleId || '')))
+    .slice(0, LIMITS.buttons);
+
+  const buttons = validRoles.map((r, idx) => ({
+    id: `r${idx + 1}`,
+    label: str(r.label || r.name || `Cargo ${idx + 1}`, LIMITS.buttonLabel),
+    emoji: str(r.emoji || '🏷️', 60),
+    style: BUTTON_STYLES[r.style] ? r.style : 'secondary',
+    row: Math.floor(idx / LIMITS.buttonsPerRow),
+    action: {
+      type: 'role',
+      roleId: String(r.id || r.roleId),
+      mode: ['toggle', 'add', 'remove'].includes(r.mode) ? r.mode : 'toggle',
+    },
+  }));
+
+  const roleLines = validRoles.map((r) => `• ${r.emoji || '🏷️'} **${str(r.label || r.name, 80)}**`);
+  const defaultDesc = [
+    description || 'Clique nos botões abaixo para adicionar ou remover seus cargos quando quiser.',
+    roleLines.length ? roleLines.join('\n') : '',
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+
+  return normalizeMessage({
+    id: id || `cargos-${Date.now().toString(36)}`,
+    name: name || 'Escolha seus cargos',
+    mode: 'classic',
+    envelope: { content: '', silent: true },
+    embeds: [
+      {
+        color: '#8b5cf6',
+        title: title || '🏷️ Escolha seus cargos',
+        description: defaultDesc,
+        footer: { text: '{server}' },
+        timestamp: false,
+      },
+    ],
+    buttons,
+    delivery: { channelId: snowflake(channelId) },
+  });
+}
+
 module.exports = {
   LIMITS,
   MESSAGE_FLAGS,
@@ -494,4 +543,5 @@ module.exports = {
   resolveText,
   listAppEmojis,
   buildPayload,
+  buildRolePanelPreset,
 };

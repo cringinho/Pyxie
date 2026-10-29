@@ -37,6 +37,7 @@ const idiomaCommand = require('./src/commands/idioma');
 const jokenpoCommand = require('./src/commands/jokenpo');
 const likelyCommand = require('./src/commands/provavel');
 const quizCommand = require('./src/commands/quiz');
+const privacidadeCommand = require('./src/commands/privacidade');
 const { syncApplicationEmojis } = require('./src/utils/appEmojis');
 const periodicMessages = require('./src/services/periodicMessages');
 const welcomeFlow = require('./src/services/welcomeFlow');
@@ -653,8 +654,17 @@ client.on(Events.MessageCreate, async (message) => {
     }
   }
 
-  // Recursos por servidor (/py-setup): modo clássico, módulo desligado ou canal não liberado
-  const access = guildFeatures.checkCommandAccess({ guildId: message.guildId, channel: message.channel, command });
+  // Recursos por servidor (/py-setup): modo clássico, módulo desligado, regra de permissão ou canal não liberado
+  const roleIds = message.member?.roles?.cache ? [...message.member.roles.cache.keys()] : [];
+  const access = guildFeatures.checkCommandAccess({
+    guildId: message.guildId,
+    channel: message.channel,
+    command,
+    userId: message.author?.id,
+    roleIds,
+    isAdmin: setupCommand.hasAdminPerms(message.member),
+    isOwner: Boolean(message.guild?.ownerId && message.guild.ownerId === message.author?.id),
+  });
   if (!access.allowed) {
     await message.reply(setupCommand.handleAccessDenied(access, message, message.member)).catch(() => null);
     return;
@@ -767,6 +777,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
         }
         return interaction.update(view);
       }
+    }
+
+    if (typeof privacidadeCommand?.isPrivacyInteraction === 'function' && privacidadeCommand.isPrivacyInteraction(interaction)) {
+      incrementCommand();
+      recordUniqueUser(interaction.user.id);
+      await privacidadeCommand.handlePrivacyInteraction(interaction);
+      return;
     }
 
     if (achievementsCommand.isAchievementsInteraction(interaction)) {
@@ -939,10 +956,19 @@ client.on(Events.InteractionCreate, async (interaction) => {
     ]);
 
     if (command) {
+      const roleIds = interaction.member?.roles?.cache
+        ? [...interaction.member.roles.cache.keys()]
+        : Array.isArray(interaction.member?.roles)
+          ? interaction.member.roles
+          : [];
       const access = guildFeatures.checkCommandAccess({
         guildId: interaction.guildId,
         channel: interaction.channel || { id: interaction.channelId },
         command,
+        userId: interaction.user?.id,
+        roleIds,
+        isAdmin: setupCommand.hasAdminPerms(interaction.member),
+        isOwner: Boolean(interaction.guild?.ownerId && interaction.guild.ownerId === interaction.user?.id),
       });
       if (!access.allowed) {
         await interaction.reply({ ...setupCommand.handleAccessDenied(access, interaction, interaction.member), flags: MessageFlags.Ephemeral });

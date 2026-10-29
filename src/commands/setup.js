@@ -267,10 +267,10 @@ function buildSetupDashboard(guild, source = null) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Bloqueios por servidor (modo clássico, módulo desligado, canal não liberado)
+// Bloqueios por servidor (modo clássico, módulo desligado, regra de permissão, canal não liberado)
 // ---------------------------------------------------------------------------------------------
 
-/** Resposta para quem tentou um comando bloqueado aqui (exclusivo da Cringelândia, desligado ou fora do canal). */
+/** Resposta para quem tentou um comando bloqueado aqui (exclusivo da Cringelândia, desligado, regra ou fora do canal). */
 // eslint-disable-next-line no-unused-vars
 function handleAccessDenied(access, source, member, now = Date.now()) {
   const lang = langOf(source);
@@ -282,6 +282,9 @@ function handleAccessDenied(access, source, member, now = Date.now()) {
   }
   if (access.reason === 'disabled') {
     return { content: t('setup.blocked.disabled', lang, { group: groupName }), allowedMentions: { parse: [] } };
+  }
+  if (access.reason === 'permission') {
+    return { content: t('setup.blocked.permission', lang), allowedMentions: { parse: [] } };
   }
   if (access.reason === 'route') {
     return { content: t('setup.blocked.route', lang, { channels: channelList(access.channels, lang) }), allowedMentions: { parse: [] } };
@@ -297,10 +300,19 @@ function handleAccessDenied(access, source, member, now = Date.now()) {
  * devolve true para o módulo parar.
  */
 async function denyInteractionIfBlocked(interaction, commandName) {
+  const roleIds = interaction.member?.roles?.cache
+    ? [...interaction.member.roles.cache.keys()]
+    : Array.isArray(interaction.member?.roles)
+      ? interaction.member.roles
+      : [];
   const access = guildFeatures.checkCommandAccess({
     guildId: interaction.guildId,
     channel: interaction.channel || { id: interaction.channelId },
     command: commandName,
+    userId: interaction.user?.id,
+    roleIds,
+    isAdmin: hasAdminPerms(interaction.member),
+    isOwner: Boolean(interaction.guild?.ownerId && interaction.guild.ownerId === interaction.user?.id),
   });
   if (access.allowed) return false;
   const payload = { ...handleAccessDenied(access, interaction, interaction.member), ephemeral: true };

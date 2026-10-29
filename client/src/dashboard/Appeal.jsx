@@ -36,7 +36,59 @@ function AppealForm({ t, server, onSent }) {
   );
 }
 
-// Página de quem foi banido: motivo, pedido para voltar e resposta da staff.
+function PrivacyCard({ t }) {
+  const [summary, setSummary] = useState(null);
+  const [receipt, setReceipt] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+
+  const load = useCallback(() => {
+    api
+      .myPrivacy()
+      .then((d) => setSummary(d.summary))
+      .catch(() => {});
+  }, []);
+
+  useEffect(load, [load]);
+
+  const erase = async () => {
+    if (!window.confirm(t('privacy.confirmErase'))) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await api.eraseMyData();
+      setReceipt(res.receipt);
+      load();
+    } catch (e) {
+      setError(e.code || 'generic');
+    }
+    setBusy(false);
+  };
+
+  return (
+    <Card title={t('privacy.title')}>
+      <p className="mb-3 text-sm text-white/70">{t('privacy.hint')}</p>
+      {summary && (
+        <p className="mb-3 text-xs text-white/60">
+          {t('privacy.summary', { count: summary.totalRecordsFound || 0 })}
+        </p>
+      )}
+      {receipt && (
+        <div className="mb-3">
+          <Notice tone="ok">
+            {t('privacy.erased', { code: receipt.code, removed: receipt.totalRemoved || 0 })}
+          </Notice>
+        </div>
+      )}
+      {error && <Notice tone="error">{t('error.generic', { error })}</Notice>}
+      <Button variant="ghost" onClick={erase} disabled={busy} className="w-full">
+        {t('privacy.eraseBtn')}
+      </Button>
+    </Card>
+  );
+}
+
+// Página de quem foi banido: motivo, pedido para voltar, resposta da staff e exclusão LGPD.
 export default function Appeal({ t }) {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -73,6 +125,7 @@ export default function Appeal({ t }) {
           )}
         </Card>
       ))}
+      <PrivacyCard t={t} />
     </div>
   );
 }

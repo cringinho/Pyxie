@@ -59,11 +59,46 @@ const cringelandiaLab = pgTable('cringelandia_lab', {
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
+// 7. Casos de Moderação Numerados por Servidor (#1, #2...)
+const modCases = pgTable('mod_cases', {
+  id: text('id').primaryKey(), // '<guildId>:<caseNumber>'
+  guildId: text('guild_id').notNull(),
+  caseNumber: integer('case_number').notNull(),
+  action: text('action').notNull(), // 'warn' | 'timeout' | 'kick' | 'ban' | 'unban' | 'note'
+  targetId: text('target_id').notNull(),
+  moderatorId: text('moderator_id').notNull(),
+  reason: text('reason').default('').notNull(),
+  points: integer('points').default(0).notNull(),
+  durationMs: bigint('duration_ms', { mode: 'number' }).default(0).notNull(),
+  expiresAt: timestamp('expires_at'),
+  active: integer('active').default(1).notNull(),
+  metadata: jsonb('metadata').default({}).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull()
+});
+
+// 8. Advertências por Pontos com Validade
+const modWarnings = pgTable('mod_warnings', {
+  id: text('id').primaryKey(),
+  guildId: text('guild_id').notNull(),
+  userId: text('user_id').notNull(),
+  moderatorId: text('moderator_id').notNull(),
+  caseNumber: integer('case_number').notNull(),
+  points: integer('points').default(1).notNull(),
+  reason: text('reason').default('').notNull(),
+  expiresAt: timestamp('expires_at'),
+  revokedAt: timestamp('revoked_at'),
+  revokedBy: text('revoked_by'),
+  createdAt: timestamp('created_at').defaultNow().notNull()
+});
+
 module.exports = {
   guildConfigs,
   users,
   tarotAlbums,
   marriages,
   schedulerState,
-  cringelandiaLab
+  cringelandiaLab,
+  modCases,
+  modWarnings
 };

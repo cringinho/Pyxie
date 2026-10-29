@@ -35,5 +35,5 @@ function isHttpUrl(value) {
   }
 }
 
-module.exports = { readJson, writeJsonAtomic, isHttpUrl };
+module.exports = { readJson, readJsonSafe: readJson, writeJsonAtomic, writeAtomic: writeJsonAtomic, isHttpUrl };
 

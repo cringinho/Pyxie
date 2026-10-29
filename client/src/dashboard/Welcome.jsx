@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DoorOpen, Flower2 } from 'lucide-react';
+import { DoorOpen, Flower2, HeartHandshake } from 'lucide-react';
 import { api } from './api';
 import { Button, Card, Notice, Spinner, Toggle } from './ui';
 
@@ -30,14 +30,16 @@ function Picker({ value, onChange, items, prefix, empty }) {
   );
 }
 
-// Acolhimento inicial: boas-vindas de quem chega e o abraço de 24h para quem ainda não falou.
+// Acolhimento inicial: boas-vindas de quem chega, abraço de 24h e pacote de bem-estar (lembretes, AFK e aniversários).
 export default function Welcome({ t, guildId }) {
   const [cfg, setCfg] = useState(null);
+  const [wb, setWb] = useState(null);
   const [channels, setChannels] = useState([]);
   const [roles, setRoles] = useState([]);
   const [status, setStatus] = useState(null);
   useEffect(() => {
     api.welcome(guildId).then((d) => setCfg(d.welcome)).catch((e) => setStatus(e.code || 'generic'));
+    api.wellbeing(guildId).then((d) => setWb(d.wellbeing)).catch(() => {});
     api.channels(guildId).then((d) => setChannels(d.channels.filter((c) => [0, 5].includes(c.type)))).catch(() => {});
     api.roles(guildId).then((d) => setRoles(d.roles.filter((r) => !r.managed))).catch(() => {});
   }, [guildId]);
@@ -52,6 +54,10 @@ export default function Welcome({ t, guildId }) {
     try {
       const res = await api.saveWelcome(guildId, cfg);
       setCfg(res.welcome);
+      if (wb) {
+        const wRes = await api.saveWellbeing(guildId, wb);
+        setWb(wRes.wellbeing);
+      }
       setStatus('ok');
     } catch (e) {
       setStatus(e.code || 'generic');
@@ -137,6 +143,23 @@ export default function Welcome({ t, guildId }) {
           </Labeled>
         </div>
       </Card>
+
+      {wb && (
+        <Card title={t('welcome.wb.title')} icon={HeartHandshake}>
+          <p className="mb-3 text-sm text-white/70">{t('welcome.wb.hint')}</p>
+          <div className="space-y-3">
+            <Toggle label={t('welcome.wb.reminders')} checked={wb.remindersEnabled !== false} onChange={(v) => setWb({ ...wb, remindersEnabled: v })} />
+            <Toggle label={t('welcome.wb.afk')} checked={wb.afkEnabled !== false} onChange={(v) => setWb({ ...wb, afkEnabled: v })} />
+            <Toggle label={t('welcome.wb.birthdays')} checked={wb.birthdaysEnabled !== false} onChange={(v) => setWb({ ...wb, birthdaysEnabled: v })} />
+            <Labeled label={t('welcome.wb.bdayChannel')}>
+              <Picker value={wb.birthdayChannelId || ''} onChange={(v) => setWb({ ...wb, birthdayChannelId: v })} items={channels} prefix="#" empty={none} />
+            </Labeled>
+            <Labeled label={t('welcome.wb.bdayRole')}>
+              <Picker value={wb.birthdayRoleId || ''} onChange={(v) => setWb({ ...wb, birthdayRoleId: v })} items={roles.filter((r) => r.assignable !== false)} prefix="@" empty={none} />
+            </Labeled>
+          </div>
+        </Card>
+      )}
 
       {status === 'ok' && <Notice tone="ok">{t('features.saved')}</Notice>}
       {known && <Notice tone="error">{known.startsWith('error.') ? t('error.generic', { error: status }) : known}</Notice>}

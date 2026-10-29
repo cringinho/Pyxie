@@ -210,9 +210,24 @@ function setCommandChannels(guildId, routes = {}) {
   });
 }
 
+/** Nome canônico de um comando (ex.: 'py-dungeon', 'matematica'). */
+function canonicalCommandName(command) {
+  if (!command) return '';
+  if (typeof command === 'string') {
+    const clean = command.trim().toLowerCase().replace(/^(\/|py!)/, '');
+    try {
+      const { commandsByName } = require('../commands');
+      const found = commandsByName?.get(clean) || commandsByName?.get(`py-${clean}`);
+      if (found) return found.data?.name || found.name || clean;
+    } catch (_) {}
+    return clean;
+  }
+  return String(command.data?.name || command.name || '').trim().toLowerCase();
+}
+
 /** Canais onde um comando pode rodar por rota própria ([] = sem rota). */
 function commandRoute(guildId, command) {
-  const name = typeof command === 'string' ? command : command?.data?.name || command?.name;
+  const name = canonicalCommandName(command);
   return (name && getGuildFeatures(guildId).commandChannels[name]) || [];
 }
 
@@ -229,7 +244,10 @@ function isChannelAllowed(guildId, group, channel) {
 /** Grupo de um comando: marcação no próprio comando, depois nome canônico e apelidos. */
 function getCommandGroup(command) {
   if (!command) return null;
-  if (typeof command === 'string') return NAME_TO_GROUP.get(command) || null;
+  if (typeof command === 'string') {
+    const canon = canonicalCommandName(command);
+    return NAME_TO_GROUP.get(command) || NAME_TO_GROUP.get(canon) || null;
+  }
   if (command.featureGroup && FEATURE_GROUPS[command.featureGroup]) return command.featureGroup;
   if (command.mmo === true) return 'mmo';
   const names = [command.name, command.data?.name, ...(Array.isArray(command.aliases) ? command.aliases : [])].filter(Boolean);
@@ -242,25 +260,74 @@ function getCommandGroup(command) {
 
 /**
  * Pode rodar este comando aqui? DMs e instalações de usuário sem servidor sempre podem.
- * Devolve { allowed, reason?: 'classic'|'disabled'|'channel', group?, channels? }.
+ * Devolve { allowed, reason?: 'classic'|'disabled'|'channel'|'route'|'permission_rule'..., group?, channels?, matchedRule? }.
  */
-function checkCommandAccess({ guildId, channel = null, command, now = Date.now() } = {}) {
+function checkCommandAccess({
+  guildId,
+  channel = null,
+  command,
+  userId = null,
+  roleIds = [],
+  isAdmin = false,
+  isOwner = false,
+  skipPermissionRules = false,
+  now = Date.now(),
+} = {}) {
   const group = getCommandGroup(command);
+  const canon = canonicalCommandName(command);
+
+  // 1. Regras granulares de permissão (comando/categoria × cargo/canal/pessoa × permitir/negar).
+  // Uma regra explícita de 'allow' no canal vence rotas de grupo; uma regra 'deny' bloqueia no ato.
+  let permResult = { allowed: true, matchedRule: null };
+  if (guildId && canon && !skipPermissionRules) {
+    try {
+      const commandPermissions = require('./commandPermissions');
+      const channelId = channel?.id ? String(channel.id) : null;
+      permResult = commandPermissions.evaluateCommandPermissions(guildId, canon, {
+        channelId,
+        userId,
+        roleIds,
+        isAdmin,
+        isOwner,
+      });
+      if (!permResult.allowed) {
+        return {
+          allowed: false,
+          reason: permResult.reason || 'permission_rule',
+          group,
+          matchedRule: permResult.matchedRule || null,
+          channels: permResult.allowedChannels || [],
+          roles: permResult.allowedRoles || [],
+        };
+      }
+    } catch (_) {}
+  }
+
   const route = guildId ? commandRoute(guildId, command) : [];
-  if (route.length && channel && ![channel.id, channel.parentId].filter(Boolean).map(String).some((id) => route.includes(id))) {
+  const channelExplicitlyAllowed =
+    permResult.matchedRule &&
+    permResult.matchedRule.action === 'allow' &&
+    permResult.matchedRule.targetType === 'channel';
+
+  if (
+    route.length &&
+    channel &&
+    !channelExplicitlyAllowed &&
+    ![channel.id, channel.parentId].filter(Boolean).map(String).some((id) => route.includes(id))
+  ) {
     return { allowed: false, reason: 'route', group, channels: route };
   }
-  if (!guildId || !group) return { allowed: true, group };
+  if (!guildId || !group) return { allowed: true, group, matchedRule: permResult.matchedRule };
   if (group === 'mmo' && !isMmoActive(guildId, now)) {
     return { allowed: false, reason: 'classic', group };
   }
   if (group !== 'mmo' && !isGroupEnabled(guildId, group, now)) {
     return { allowed: false, reason: 'disabled', group };
   }
-  if (!isChannelAllowed(guildId, group, channel)) {
+  if (!channelExplicitlyAllowed && !isChannelAllowed(guildId, group, channel)) {
     return { allowed: false, reason: 'channel', group, channels: getGuildFeatures(guildId).channels[group] };
   }
-  return { allowed: true, group };
+  return { allowed: true, group, matchedRule: permResult.matchedRule };
 }
 
 /** Registra que alguém tentou usar o Mundo Pyxie num servidor clássico. */
@@ -303,6 +370,7 @@ module.exports = {
   MAX_CHANNELS,
   FEATURE_GROUPS,
   stateFile,
+  canonicalCommandName,
   getGuildFeatures,
   getMmoState,
   isMmoActive,

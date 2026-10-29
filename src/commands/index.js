@@ -42,6 +42,14 @@ const commands = [
   require('./desafio'),
   require('./anime'),
   require('./conquistas'),
+  require('./privacidade'),
+  require('./diagnostico'),
+  require('./advertencia'),
+  require('./casos'),
+  require('./emergencia'),
+  require('./lembrete'),
+  require('./afk'),
+  require('./aniversario'),
 ];
 
 const { setLoadedCommands } = require('./commandHelpers');
@@ -60,6 +68,9 @@ const GUILD_ONLY_COMMANDS = new Set([
   'fechar', 'py-fechar', 'closeticket', 'fecharticket', 'ticket-close', 'py-close',
   'sorteio', 'py-sorteio', 'giveaway', 'py-giveaway', 'sorteios', 'py-sorteios',
   'duel', 'py-duel', 'duelo', 'py-duelo', 'quizduel', 'py-quizduel', 'duelquiz',
+  'warn', 'py-warn', 'advertir', 'py-advertir', 'advertencia', 'py-advertencia',
+  'case', 'py-case', 'caso', 'py-caso', 'casos', 'py-casos',
+  'emergency', 'py-emergency', 'emergencia', 'py-emergencia', 'lockdown', 'py-lockdown',
 ]);
 
 // Suporte nativo a User Apps (Discord Apps v2)

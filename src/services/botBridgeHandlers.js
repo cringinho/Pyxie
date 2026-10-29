@@ -123,6 +123,57 @@ const handlers = {
       }))
       .sort((a, b) => b.position - a.position);
   },
+
+  // Ativa ou desativa o Modo de Emergência Global ao vivo no servidor.
+  async EMERGENCY_TOGGLE(client, { guildId, active, actorId, reason }) {
+    const guild = client.guilds.cache.get(String(guildId));
+    if (!guild) throw new Error('guild_not_found');
+    const emergencyMode = require('./emergencyMode');
+    const alerts = require('./securityAlerts');
+    const safety = require('./guildSafety');
+    const res = active
+      ? await emergencyMode.activateEmergency(guild, { actorId, reason })
+      : await emergencyMode.deactivateEmergency(guild, { actorId });
+
+    const config = safety.getConfig(guild.id);
+    const dest = await alerts.resolveDestination(guild, config);
+    if (dest) {
+      const payload = alerts.emergencyAlert(guild, {
+        guildId: guild.id,
+        serverName: guild.name,
+        active: Boolean(active),
+        actorId,
+        reason: res.reason || reason || '',
+        lockedCount: res.lockedCount || 0,
+        restoredCount: res.restoredCount || 0,
+      });
+      await dest.target.send(payload).catch(() => null);
+    }
+    return res;
+  },
+
+  // Publica o painel de Verificação por Botão no canal configurado.
+  async VERIFICATION_PUBLISH(client, { guildId }) {
+    const guild = client.guilds.cache.get(String(guildId));
+    if (!guild) throw new Error('guild_not_found');
+    const safety = require('./guildSafety');
+    const alerts = require('./securityAlerts');
+    const cfg = safety.getConfig(guild.id, { fresh: true });
+    if (!cfg.verification?.channelId || !cfg.verification?.verifiedRoleId) {
+      throw new Error('verification_not_configured');
+    }
+    const channel = guild.channels.cache.get(cfg.verification.channelId) || (await guild.channels.fetch(cfg.verification.channelId).catch(() => null));
+    if (!channel?.isTextBased?.()) throw new Error('invalid_channel');
+    const payload = alerts.verificationPanelPayload(guild, {
+      guildId: guild.id,
+      serverName: guild.name,
+      title: cfg.verification.title,
+      description: cfg.verification.description,
+      buttonLabel: cfg.verification.buttonLabel,
+    });
+    const sent = await channel.send(payload);
+    return { messageId: sent.id, channelId: channel.id };
+  },
 };
 
 function registerBridgeHandler(type, fn) {

@@ -4,7 +4,7 @@ const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('
 const { t } = require('../utils/i18n');
 const guard = require('./serverGuard');
 
-const COLORS = { danger: 0xef4444, warn: 0xf59e0b, ok: 0x10b981 };
+const COLORS = { danger: 0xef4444, warn: 0xf59e0b, ok: 0x10b981, info: 0x6366f1 };
 const NO_PING = { parse: [], users: [], roles: [], repliedUser: false };
 
 function brandName(lang, domain) {
@@ -168,10 +168,114 @@ function webhookAlert(lang, { guildId, serverName, webhookId, webhookName, chann
   return { embeds: [footer(embed, lang, serverName)], components, allowedMentions: NO_PING };
 }
 
+// Alerta de Antinuke por limite (ações destrutivas em sequência rápida).
+function antiNukeAlert(lang, { guildId, serverName, executorId, actionType, count, windowSeconds, stripped, viaDm, panelUrl }) {
+  const lines = [
+    t('serverGuard.antiNukeWhat', lang, {
+      who: whoText(lang, executorId),
+      count: `\`${count}\``,
+      seconds: `\`${windowSeconds}s\``,
+      action: `\`${t(`serverGuard.nukeAction.${actionType}`, lang)}\``,
+    }),
+    stripped ? `> ${t('serverGuard.antiNukeStripped', lang)}` : `> ${t('serverGuard.antiNukeAsk', lang)}`,
+  ];
+  if (viaDm && panelUrl) {
+    lines.push(`-# ${t('serverGuard.dmNote', lang, { server: serverName, panel: `[${t('serverGuard.panel', lang)}](${panelUrl})` })}`);
+  }
+  const embed = new EmbedBuilder()
+    .setColor(stripped ? COLORS.ok : COLORS.danger)
+    .setTitle(t('serverGuard.antiNukeTitle', lang))
+    .setDescription(lines.join('\n\n'));
+
+  const components =
+    stripped || !executorId
+      ? []
+      : [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId(guard.ids.strip(guildId, executorId))
+              .setLabel(t('serverGuard.btnStripDangerous', lang))
+              .setEmoji('🛡️')
+              .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder().setCustomId(guard.ids.keep(guildId)).setLabel(t('serverGuard.btnKeep', lang)).setStyle(ButtonStyle.Secondary)
+          ),
+        ];
+  return { embeds: [footer(embed, lang, serverName)], components, allowedMentions: NO_PING };
+}
+
+// Alerta de Modo de Emergência Global ativado/desativado.
+function emergencyAlert(lang, { guildId, serverName, active, actorId, reason, lockedCount = 0, restoredCount = 0 }) {
+  const lines = active
+    ? [
+        t('serverGuard.emergencyActivatedBody', lang, {
+          who: whoText(lang, actorId),
+          count: `\`${lockedCount}\``,
+        }),
+        reason ? `> ${t('serverGuard.emergencyReason', lang, { reason })}` : `> ${t('serverGuard.emergencyHint', lang)}`,
+      ]
+    : [
+        t('serverGuard.emergencyDeactivatedBody', lang, {
+          who: whoText(lang, actorId),
+          count: `\`${restoredCount}\``,
+        }),
+      ];
+
+  const embed = new EmbedBuilder()
+    .setColor(active ? COLORS.danger : COLORS.ok)
+    .setTitle(t(active ? 'serverGuard.emergencyTitleOn' : 'serverGuard.emergencyTitleOff', lang))
+    .setDescription(lines.join('\n\n'));
+
+  const components = active
+    ? [
+        new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId(guard.ids.emgoff(guildId))
+            .setLabel(t('serverGuard.btnEmergencyOff', lang))
+            .setEmoji('🔓')
+            .setStyle(ButtonStyle.Success)
+        ),
+      ]
+    : [];
+  return { embeds: [footer(embed, lang, serverName)], components, allowedMentions: NO_PING };
+}
+
+// Painel de verificação acessível por botão (sem captcha visual difícil).
+function verificationPanelPayload(lang, { guildId, serverName, title, description, buttonLabel }) {
+  const embed = new EmbedBuilder()
+    .setColor(COLORS.info)
+    .setTitle(title || t('verification.defaultTitle', lang))
+    .setDescription(
+      [
+        description || t('verification.defaultDesc', lang, { server: serverName }),
+        `-# ${t('verification.accessibleHint', lang)}`,
+      ].join('\n\n')
+    );
+
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(guard.ids.verify(guildId))
+      .setLabel(buttonLabel || t('verification.defaultButton', lang))
+      .setEmoji('✅')
+      .setStyle(ButtonStyle.Success)
+  );
+
+  return { embeds: [footer(embed, lang, serverName)], components: [row], allowedMentions: NO_PING };
+}
+
 module.exports = {
   fileChannelNotice,
   fileAuthorDm,
   fileStaffLog,
   webhookAlert,
+  antiNukeAlert,
+  emergencyAlert,
+  verificationPanelPayload,
   resolveDestination,
-  raidAlert, linkChannelNotice, linkAuthorDm, linkStaffLog, roleAlert, channelAlert, NO_PING };
+  raidAlert,
+  linkChannelNotice,
+  linkAuthorDm,
+  linkStaffLog,
+  roleAlert,
+  channelAlert,
+  NO_PING,
+};

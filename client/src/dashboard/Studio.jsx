@@ -600,6 +600,62 @@ function validationText(t, err) {
   return t(`studio.err.${err.code}`, { path: err.path, limit: err.limit ?? '' });
 }
 
+function RolePanelPresetCard({ t, guildId, onCreated }) {
+  const [roles, setRoles] = useState([]);
+  const [picked, setPicked] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState(null);
+
+  useEffect(() => {
+    api
+      .roles(guildId)
+      .then((d) => setRoles((d.roles || []).filter((r) => r.assignable)))
+      .catch(() => {});
+  }, [guildId]);
+
+  const createPreset = async () => {
+    if (!picked.length) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      const selectedRoles = picked
+        .map((id) => roles.find((r) => r.id === id))
+        .filter(Boolean)
+        .map((r) => ({ id: r.id, name: r.name }));
+      const res = await api.createRolePanelPreset(guildId, { roles: selectedRoles });
+      onCreated(res.message);
+    } catch (e) {
+      setErr(e.code || 'generic');
+    }
+    setBusy(false);
+  };
+
+  if (!roles.length) return null;
+
+  return (
+    <Card title={t('studio.rolePreset.title')}>
+      <p className="mb-3 text-sm text-white/70">{t('studio.rolePreset.hint')}</p>
+      <div className="mb-3 grid max-h-48 grid-cols-2 gap-1.5 overflow-y-auto sm:grid-cols-3">
+        {roles.map((r) => (
+          <label key={r.id} className="flex min-h-[36px] cursor-pointer items-center gap-2 rounded-lg bg-white/5 px-2.5 text-xs">
+            <input
+              type="checkbox"
+              className="h-4 w-4 accent-pink-500"
+              checked={picked.includes(r.id)}
+              onChange={(e) => setPicked(e.target.checked ? [...picked, r.id].slice(0, 25) : picked.filter((x) => x !== r.id))}
+            />
+            <span className="truncate">@{r.name}</span>
+          </label>
+        ))}
+      </div>
+      {err && <div className="mb-2"><Notice tone="error">{t('error.generic', { error: err })}</Notice></div>}
+      <Button variant="ghost" onClick={createPreset} disabled={busy || picked.length === 0} className="w-full">
+        {t('studio.rolePreset.btn', { count: picked.length })}
+      </Button>
+    </Card>
+  );
+}
+
 // ---------- Tela ----------
 
 export default function Studio({ t, guildId, guildName, isOwner, zone, openId }) {
@@ -652,32 +708,35 @@ export default function Studio({ t, guildId, guildName, isOwner, zone, openId })
     );
   }
   return (
-    <Card title={t('studio.title')}>
-      <p className="mb-3 text-sm text-white/60">{t('studio.hint')}</p>
-      {list.length === 0 && <p className="mb-3 text-sm text-white/60">{t('studio.empty')}</p>}
-      <ul className="mb-3 divide-y divide-white/5">
-        {list.map((m) => (
-          <li key={m.id}>
-            <button
-              type="button"
-              onClick={() => api.studioGet(guildId, m.id).then((d) => setEditing(d.message))}
-              className="flex min-h-[52px] w-full items-center justify-between gap-3 text-left"
-            >
-              <span className="min-w-0">
-                <span className="block truncate font-semibold">{m.name}</span>
-                <span className="block text-xs text-white/50">
-                  {t(`studio.mode.${m.mode}`)} · {t('studio.sentCount', { count: m.sentCount })}
+    <div className="space-y-4">
+      <Card title={t('studio.title')}>
+        <p className="mb-3 text-sm text-white/60">{t('studio.hint')}</p>
+        {list.length === 0 && <p className="mb-3 text-sm text-white/60">{t('studio.empty')}</p>}
+        <ul className="mb-3 divide-y divide-white/5">
+          {list.map((m) => (
+            <li key={m.id}>
+              <button
+                type="button"
+                onClick={() => api.studioGet(guildId, m.id).then((d) => setEditing(d.message))}
+                className="flex min-h-[52px] w-full items-center justify-between gap-3 text-left"
+              >
+                <span className="min-w-0">
+                  <span className="block truncate font-semibold">{m.name}</span>
+                  <span className="block text-xs text-white/50">
+                    {t(`studio.mode.${m.mode}`)} · {t('studio.sentCount', { count: m.sentCount })}
+                  </span>
                 </span>
-              </span>
-              <span aria-hidden="true">›</span>
-            </button>
-          </li>
-        ))}
-      </ul>
-      <Button onClick={() => setEditing(emptyMessage())} className="w-full">
-        + {t('studio.new')}
-      </Button>
-    </Card>
+                <span aria-hidden="true">›</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <Button onClick={() => setEditing(emptyMessage())} className="w-full">
+          + {t('studio.new')}
+        </Button>
+      </Card>
+      <RolePanelPresetCard t={t} guildId={guildId} onCreated={(msg) => setEditing(msg)} />
+    </div>
   );
 }
 
@@ -955,7 +1014,7 @@ function slug(text) {
   return String(text || '')
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 40);

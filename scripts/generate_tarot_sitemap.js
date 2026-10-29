@@ -15,17 +15,18 @@ const IMAGE_NS = 'xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"'
 const sitemapPath = path.join(__dirname, '..', 'public', 'sitemap.xml');
 
 function updateSitemap(xml, lastmod) {
+  const eol = xml.includes('\r\n') ? '\r\n' : '\n';
   let out = xml;
   if (!out.includes(IMAGE_NS)) {
-    out = out.replace('xmlns:xhtml="http://www.w3.org/1999/xhtml">', `xmlns:xhtml="http://www.w3.org/1999/xhtml"\n        ${IMAGE_NS}>`);
+    out = out.replace('xmlns:xhtml="http://www.w3.org/1999/xhtml">', `xmlns:xhtml="http://www.w3.org/1999/xhtml"${eol}        ${IMAGE_NS}>`);
   }
-  const block = `${START}\n${buildSitemapEntries(lastmod)}\n${END}`;
+  const block = `${START}\n${buildSitemapEntries(lastmod)}\n${END}`.replace(/\r?\n/g, eol);
   const startIndex = out.indexOf(START);
   if (startIndex !== -1) {
     const endIndex = out.indexOf(END, startIndex) + END.length;
     return `${out.slice(0, startIndex)}${block}${out.slice(endIndex)}`;
   }
-  return out.replace('</urlset>', `\n${block}\n</urlset>`);
+  return out.replace('</urlset>', `${eol}${block}${eol}</urlset>`);
 }
 
 if (require.main === module) {

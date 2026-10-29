@@ -196,6 +196,19 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     });
   });
 
+  // ---------- Item #1: Apagar meus dados (LGPD) ----------
+  router.get('/api/dashboard/me/privacy', requireSession, (req, res) => {
+    const privacyService = require('../services/privacyService');
+    return res.json({ success: true, summary: privacyService.inspectUserData(req.panelSession.userId) });
+  });
+
+  router.post('/api/dashboard/me/privacy/erase', requireSession, async (req, res) => {
+    if (req.body?.confirm !== true) return res.status(400).json({ success: false, error: 'confirmation_required' });
+    const privacyService = require('../services/privacyService');
+    const receipt = await privacyService.eraseUserData(req.panelSession.userId);
+    return res.json({ success: true, receipt });
+  });
+
   router.get('/api/dashboard/guilds/:guildId', requireSession, requireGuild, async (req, res) => {
     let guild = null;
     try {
@@ -285,6 +298,27 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
 
   router.get('/api/dashboard/guilds/:guildId/studio-emojis', requireSession, requireGuild, (req, res) => {
     return res.json({ success: true, emojis: messageStudio.listAppEmojis() });
+  });
+
+  // Item #7: Modelo rápido de "Escolha seus cargos" por botão no Estúdio
+  router.post('/api/dashboard/guilds/:guildId/studio-presets/role-panel', requireSession, requireGuild, async (req, res) => {
+    const body = req.body || {};
+    const wantedRoles = (Array.isArray(body.roles) ? body.roles : []).map((r) => String(r?.id || r?.roleId || '')).filter(Boolean);
+    if (!wantedRoles.length) return res.status(400).json({ success: false, error: 'missing_roles' });
+    try {
+      const guildRoles = await bridge.request('GUILD_ROLES', { guildId: req.params.guildId });
+      for (const rid of wantedRoles) {
+        const found = guildRoles.find((gr) => gr.id === rid);
+        if (!found) return res.status(400).json({ success: false, error: 'invalid_role' });
+        if (!found.assignable) return res.status(400).json({ success: false, error: 'role_not_assignable', roleName: found.name });
+      }
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+    const presetDoc = messageStudio.buildRolePanelPreset(body);
+    const saved = studioStore.saveMessage(req.params.guildId, presetDoc, { by: req.panelSession.userId });
+    if (!saved.ok) return res.status(422).json({ success: false, error: 'validation_failed', errors: saved.errors });
+    return res.json({ success: true, message: saved.doc });
   });
 
   router.get('/api/dashboard/guilds/:guildId/studio/:msgId', requireSession, requireGuild, requireMsgId, (req, res) => {
@@ -435,7 +469,53 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   // Catálogo de comandos (montado do código a cada pedido): o que vale neste servidor e por quê.
   router.get('/api/dashboard/guilds/:guildId/commands', requireSession, requireGuild, (req, res) => {
     const catalog = require('../services/commandCatalog');
-    return res.json({ success: true, commands: catalog.forGuild(req.params.guildId, { isOwner: access.isOwner(req.panelSession.userId) }) });
+    const perms = require('../services/commandPermissions');
+    return res.json({
+      success: true,
+      commands: catalog.forGuild(req.params.guildId, { isOwner: access.isOwner(req.panelSession.userId) }),
+      permissionRules: perms.getRules(req.params.guildId),
+    });
+  });
+
+  // ---------- Item #2 & #5: Diagnóstico de comando, Regras de permissão e Sincronização do Menu de Barra ----------
+  router.get('/api/dashboard/guilds/:guildId/commands/:commandName/diagnose', requireSession, requireGuild, (req, res) => {
+    const diag = require('../services/commandDiagnostics');
+    const channelId = GUILD_ID_RE.test(String(req.query.channelId || '')) ? String(req.query.channelId) : '';
+    const userId = GUILD_ID_RE.test(String(req.query.userId || '')) ? String(req.query.userId) : req.panelSession.userId;
+    const roleIds = String(req.query.roleIds || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => GUILD_ID_RE.test(s));
+    const report = diag.diagnoseCommand({
+      commandName: String(req.params.commandName || ''),
+      guildId: req.params.guildId,
+      channelId: channelId || null,
+      userId,
+      roleIds,
+      isAdmin: req.query.asMember === '1' ? false : req.guildAccess.role === 'owner' || req.guildAccess.role === 'admin',
+    });
+    return res.json({ success: true, report });
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/command-permissions', requireSession, requireGuild, (req, res) => {
+    const perms = require('../services/commandPermissions');
+    return res.json({ success: true, rules: perms.getRules(req.params.guildId), syncStatus: perms.getMenuSyncStatus(req.params.guildId) });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/command-permissions', requireSession, requireGuild, (req, res) => {
+    const perms = require('../services/commandPermissions');
+    const rules = perms.setRules(req.params.guildId, Array.isArray(req.body?.rules) ? req.body.rules : []);
+    return res.json({ success: true, rules });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/commands/sync-menu', requireSession, requireGuild, async (req, res) => {
+    const perms = require('../services/commandPermissions');
+    const result = await perms.syncGuildSlashMenu(req.params.guildId);
+    if (!result.ok) {
+      const status = result.error === 'cooldown' ? 429 : 502;
+      return res.status(status).json({ success: false, error: result.error, retryAfterSec: result.retryAfterSeconds });
+    }
+    return res.json({ success: true, syncedCount: result.syncedCount, hiddenCount: result.hiddenCount });
   });
 
   router.get('/api/dashboard/guilds/:guildId/emoji-usage', requireSession, requireGuild, async (req, res) => {
@@ -613,10 +693,16 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, periodic: periodicView(guildId) });
   });
 
-  // ---------- Acolhimento inicial: boas-vindas e acolhimento de 24h (todos os servidores) ----------
+  // ---------- Acolhimento inicial: boas-vindas, verificação e pacote de bem-estar (todos os servidores) ----------
   router.get('/api/dashboard/guilds/:guildId/welcome', requireSession, requireGuild, (req, res) => {
     const welcomeFlow = require('../services/welcomeFlow');
-    return res.json({ success: true, welcome: welcomeFlow.getView(req.params.guildId), layouts: welcomeFlow.LAYOUTS });
+    const wellbeing = require('../services/wellbeingService');
+    return res.json({
+      success: true,
+      welcome: welcomeFlow.getView(req.params.guildId),
+      layouts: welcomeFlow.LAYOUTS,
+      wellbeing: wellbeing.getWellbeingGuildConfig(req.params.guildId),
+    });
   });
 
   router.put('/api/dashboard/guilds/:guildId/welcome', requireSession, requireGuild, async (req, res) => {
@@ -655,6 +741,30 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     if (channelId !== welcomeFlow.welcomeChannelId(guildId)) gcs.setWelcomeConfig(guildId, { channelId: channelId || null });
     gcs.setWelcomeConfig(guildId, rest);
     return res.json({ success: true, welcome: welcomeFlow.getView(guildId) });
+  });
+
+  // ---------- Item #6: Pacote de Bem-Estar e Convivência (Lembretes, AFK e Aniversários) ----------
+  router.get('/api/dashboard/guilds/:guildId/wellbeing', requireSession, requireGuild, (req, res) => {
+    const wellbeing = require('../services/wellbeingService');
+    return res.json({ success: true, wellbeing: wellbeing.getWellbeingGuildConfig(req.params.guildId) });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/wellbeing', requireSession, requireGuild, async (req, res) => {
+    const wellbeing = require('../services/wellbeingService');
+    const body = req.body || {};
+    const bdayChannel = String(body.birthdayChannelId || '');
+    const bdayRole = String(body.birthdayRoleId || '');
+    try {
+      const bad = await checkGuildIds(req.params.guildId, {
+        channels: bdayChannel ? [bdayChannel] : [],
+        roles: bdayRole ? [bdayRole] : [],
+      });
+      if (bad) return res.status(400).json({ success: false, error: bad });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+    const saved = wellbeing.setWellbeingGuildConfig(req.params.guildId, body);
+    return res.json({ success: true, wellbeing: saved });
   });
 
   // ---------- Faxina de convites (o bot lista e revoga; precisa de Gerenciar Servidor) ----------
@@ -701,11 +811,21 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     }
   });
 
-  // ---------- Segurança (todos os servidores): escudo de links e guardião do servidor ----------
+  // ---------- Segurança (todos os servidores): escudo de links, guardião, antinuke, emergência, verificação e casos ----------
   router.get('/api/dashboard/guilds/:guildId/security', requireSession, requireGuild, (req, res) => {
     const safety = require('../services/guildSafety');
+    const emergencyMode = require('../services/emergencyMode');
+    const modCases = require('../services/modCasesService');
     const { counters, events } = safety.readEvents(req.params.guildId);
-    return res.json({ success: true, security: safety.getConfig(req.params.guildId, { fresh: true }), counters, events: events.slice(0, 20) });
+    return res.json({
+      success: true,
+      security: safety.getConfig(req.params.guildId, { fresh: true }),
+      emergencyStatus: emergencyMode.getEmergencyStatus(req.params.guildId),
+      warningsConfig: modCases.getGuildWarningsConfig(req.params.guildId),
+      cases: modCases.listCases(req.params.guildId, { limit: 25 }),
+      counters,
+      events: events.slice(0, 20),
+    });
   });
 
   router.put('/api/dashboard/guilds/:guildId/security', requireSession, requireGuild, async (req, res) => {
@@ -713,26 +833,90 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const body = req.body || {};
     const staffLogChannelId = String(body.staffLogChannelId || '');
     const appealsChannelId = String(body.appeals?.channelId || '');
-    // Os canais escolhidos precisam ser deste servidor (o bot confere ao vivo).
-    const wanted = [staffLogChannelId, appealsChannelId].filter(Boolean);
-    if (wanted.length) {
-      try {
-        const channels = await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId });
-        if (!wanted.every((id) => channels.some((c) => c.id === id))) return res.status(400).json({ success: false, error: 'invalid_channel' });
-      } catch (err) {
-        return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
-      }
+    const verChannelId = String(body.verification?.channelId || '');
+    const verRoleId = String(body.verification?.verifiedRoleId || '');
+    const unverRoleId = String(body.verification?.unverifiedRoleId || '');
+    // Os canais e cargos escolhidos precisam ser deste servidor (o bot confere ao vivo).
+    try {
+      const bad = await checkGuildIds(req.params.guildId, {
+        channels: [staffLogChannelId, appealsChannelId, verChannelId].filter(Boolean),
+        roles: [verRoleId, unverRoleId].filter(Boolean),
+      });
+      if (bad) return res.status(400).json({ success: false, error: bad });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
     }
     const security = safety.saveConfig(req.params.guildId, {
       staffLogChannelId,
       linkShield: body.linkShield || {},
       guard: body.guard || {},
+      antiNuke: body.antiNuke || {},
+      verification: body.verification || {},
       antiRaid: body.antiRaid || {},
       appeals: body.appeals ? { enabled: body.appeals.enabled === true, channelId: appealsChannelId } : {},
       fileShield: body.fileShield || {},
       invites: body.invites || {},
     });
     return res.json({ success: true, security });
+  });
+
+  // Item #4: Modo de Emergência Global pelo painel
+  router.post('/api/dashboard/guilds/:guildId/emergency', requireSession, requireGuild, async (req, res) => {
+    const active = Boolean(req.body?.active);
+    const reason = String(req.body?.reason || '').trim().slice(0, 200);
+    try {
+      const result = await bridge.request('EMERGENCY_TOGGLE', {
+        guildId: req.params.guildId,
+        active,
+        actorId: req.panelSession.userId,
+        reason,
+      });
+      return res.json({ success: true, emergency: result });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+  });
+
+  // Item #7: Publicar painel de Verificação Acessível por Botão
+  router.post('/api/dashboard/guilds/:guildId/verification/publish', requireSession, requireGuild, async (req, res) => {
+    try {
+      const result = await bridge.request('VERIFICATION_PUBLISH', { guildId: req.params.guildId });
+      return res.json({ success: true, ...result });
+    } catch (err) {
+      return res.status(400).json({ success: false, error: err.code || err.message || 'bridge_error' });
+    }
+  });
+
+  // ---------- Item #3: Casos de moderação numerados (#123) e Advertências por pontos ----------
+  router.get('/api/dashboard/guilds/:guildId/cases', requireSession, requireGuild, (req, res) => {
+    const modCases = require('../services/modCasesService');
+    const targetId = GUILD_ID_RE.test(String(req.query.userId || '')) ? String(req.query.userId) : '';
+    return res.json({
+      success: true,
+      config: modCases.getGuildWarningsConfig(req.params.guildId),
+      cases: modCases.listCases(req.params.guildId, { targetId, limit: 50 }),
+    });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/warnings-config', requireSession, requireGuild, (req, res) => {
+    const modCases = require('../services/modCasesService');
+    const config = modCases.setGuildWarningsConfig(req.params.guildId, req.body || {});
+    return res.json({ success: true, config });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/cases/:caseNumber', requireSession, requireGuild, async (req, res) => {
+    const modCases = require('../services/modCasesService');
+    const num = Number(req.params.caseNumber);
+    if (!Number.isInteger(num) || num < 1) return res.status(400).json({ success: false, error: 'invalid_case_number' });
+    if (req.body?.revoke === true) {
+      await modCases.revokeWarningByCase(req.params.guildId, num, req.panelSession.userId);
+    }
+    if (typeof req.body?.reason === 'string' && req.body.reason.trim()) {
+      await modCases.updateCaseReason(req.params.guildId, num, req.body.reason, req.panelSession.userId);
+    }
+    const updated = modCases.getCase(req.params.guildId, num);
+    if (!updated) return res.status(404).json({ success: false, error: 'case_not_found' });
+    return res.json({ success: true, caseRecord: updated });
   });
 
   // ---------- Moderação da Cringelândia: modo blindagem (AutoMod) e controle de brigas ----------
@@ -1068,4 +1252,4 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
 // Tickets: tela (client/src/dashboard/Tickets.jsx) e API acima existem em todo servidor.
 registerDashboardSection({ id: 'tickets' });
 
-module.exports ={ createDashboardRouter, registerDashboardSection, getSections, GUILD_ID_RE };
+module.exports = { createDashboardRouter, registerDashboardSection, getSections, GUILD_ID_RE };

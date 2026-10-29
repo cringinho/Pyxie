@@ -2,50 +2,6 @@
 
 Levantamento de 29/10/2026 sobre dois bots abertos, para decidir o que a Pyxie ganha portando ideias deles:
 
-- **ZyroX** ([RayExo/ZyroX-CV2-AIO-With-Dashboard](https://github.com/RayExo/ZyroX-CV2-AIO-With-Dashboard)): bot "tudo em um" em Python (discord.py 2 com Components V2), API em FastAPI e painel em Next.js 14. Licença **MIT**. 103 estrelas.
-- **Red** ([Cog-Creators/Red-DiscordBot](https://github.com/Cog-Creators/Red-DiscordBot)): bot modular em Python, maduro (desde 2016), em que cada função é um "cog" instalável. Licença **GPL-3.0**. 5,7 mil estrelas.
-
-## Resumo
-
-- **O ZyroX faz melhor** na quantidade de recursos prontos de segurança e engajamento: antinuke por limite, modo de emergência, níveis por conversa, música, jogos clássicos, aniversários, AFK. É abrangente, mas raso, e o painel tem uma falha grave de segurança (ver abaixo).
-- **O Red faz melhor** na engenharia do núcleo: uma camada de configuração por escopo, regras de permissão por comando, casos de moderação numerados com advertências por pontos, um diagnóstico de "por que não consigo usar este comando" e uma API para apagar os dados de uma pessoa em todos os módulos.
-- **A Pyxie já está à frente** em segurança do painel, bilinguismo, testes, estúdio de mensagens, acolhimento e na separação por zonas (Global, Cringelândia, Mary).
-
-## Licença: o que "apropriar" pode significar
-
-Os dois são em Python e a Pyxie é Node 22 (CommonJS). Nada é copiado arquivo por arquivo: a Pyxie porta ideias, desenhos e regras.
-
-| Repositório | Licença | O que a Pyxie pode fazer |
-| - | - | - |
-| ZyroX | MIT | Traduzir trechos de lógica para JS à vontade. Se um trecho for adaptado de perto, manter o aviso de copyright do MIT num `docs/CREDITOS-TERCEIROS.md`. |
-| Red | GPL-3.0 | Usar ideias, arquitetura e nomes de conceito livremente. **Não** copiar nem traduzir código linha a linha: isso faria a Pyxie inteira ter de ser distribuída como GPL-3.0. |
-
-Regra prática: com o ZyroX, pode adaptar de perto e dar o crédito. Com o Red, leia, entenda e escreva do zero.
-
-## Onde a Pyxie já é melhor
-
-| Tema | Pyxie | ZyroX | Red |
-| - | - | - | - |
-| Segurança do painel | Login com Discord. A cada pedido, o bot confere ao vivo se a pessoa é admin daquele servidor, e canais e cargos são conferidos como do servidor. Há um teste que barra rota de servidor sem essa checagem (`tests/panelDashboard.test.js`). | O painel fala com a API usando **uma chave única exposta no navegador** (`NEXT_PUBLIC_DASHBOARD_API_KEY` em `dashboard/lib/api.ts`), e as rotas `/{guild_id}/...` não conferem quem pede. Quem pegar a chave altera qualquer servidor. | Sem painel web oficial. |
-| Idiomas | PT-BR e EN em tudo, com paridade testada. | Só `lang.en.json`. | Traduções por cog via Crowdin; boa ferramenta, mas o bot não é bilíngue por servidor. |
-| Testes | `npm test` com teste de fumaça de todos os comandos; o deploy reverte sozinho se algo falhar. | Sem testes. | Testes unitários e CI. |
-| Dados | PostgreSQL + Drizzle para transações e JSON com escrita atômica. | Mais de 30 arquivos SQLite, **com dados de uso versionados no repositório** (`bot/db/*.db`). | Camada `Config` com drivers (JSON ou PostgreSQL). |
-| Mensagens customizadas | Estúdio no painel (embeds e Components V2, agendamento, webhook, histórico). | Comando `embed` no Discord. | Não tem. |
-| Acolhimento e segurança emocional | Crise (188/CVV), acolhimento de 24 h, "ninguém sem resposta", persona calorosa fora dos jogos. | Não tem. | Não tem. |
-| Zonas | Funções exclusivas por servidor (`src/config/scopes.js`). | Não tem. | Não tem. |
-
-## Diferenças técnicas que valem portar
-
-### 1. Camada de configuração por escopo (Red: `Config`)
-No Red, cada módulo declara os padrões e o escopo (global, servidor, canal, cargo, membro, usuário) e lê e grava pela mesma API, com cache e driver trocável. Na Pyxie, cada módulo tem seu `getConfig/saveConfig`, com o próprio arquivo e a própria normalização.
-
-**Para a Pyxie:** um `src/services/scopedConfig.js` com `define({ guild: {...}, member: {...} })`, normalização por esquema, escrita atômica e cache. Os módulos novos usariam esse serviço, e os antigos migrariam aos poucos. Isso reduz bugs como o de hoje, em que o acolhimento ignorava o `PYXIE_DATA_DIR`.
-
-### 2. Apagar os dados de uma pessoa em todos os módulos (Red: `red_delete_data_for_user`)
-No Red, cada cog implementa um método para apagar os dados de um usuário, e o núcleo chama todos. É exatamente o que a LGPD pede.
-
-**Para a Pyxie:** cada módulo exporta `deleteUserData(userId)`. Um comando `/py-privacidade apagar` (com confirmação e espera de 24 h) chama todos e gera um recibo. Entra também no painel e na página de privacidade. **Prioridade alta**, pela missão e pelo público.
-
 ### 3. Regras de permissão por comando (Red: cog `permissions`)
 No Red, o servidor escolhe permitir ou negar cada comando (ou categoria) por cargo, canal ou pessoa, com hierarquia: regra de canal vence regra de servidor.
 
@@ -54,7 +10,7 @@ No Red, o servidor escolhe permitir ou negar cada comando (ou categoria) por car
 ### 4. Diagnóstico "por que este comando não funciona aqui?" (Red: `_diagnoser.py`)
 O Red verifica passo a passo (comando desligado, regra de permissão, permissão do bot no canal, cooldown) e explica qual falhou.
 
-**Para a Pyxie:** muitas dúvidas da staff são "a Pyxie não responde". Um `/py-diagnostico <comando>` e um botão no painel que rodam as mesmas checagens e dizem o motivo em linguagem simples, nos dois idiomas.
+**Para a Pyxie:** muitas dúvidas do owner são "a Pyxie não responde". Um `/py-diagnostico <comando>` e um botão no painel que rodam as mesmas checagens e dizem o motivo em linguagem simples, nos dois idiomas.
 
 ### 5. Casos de moderação numerados e advertências por pontos (Red: `modlog` + `warnings`)
 No Red, toda ação vira o "caso #123", com motivo editável e moderador. As advertências somam pontos, e passar de um limite dispara uma ação configurada (silenciar 1 h, expulsar etc.).
@@ -108,7 +64,6 @@ Avaliados pela missão (comunidade segura para pessoas neurodivergentes e em sof
 | **Jogos clássicos** (termo/wordle em PT, ligue 4, batalha naval, 2048, digitação) | ZyroX (`games/`) | Sim, para recreação. | Sem moedas (§5); em PT e EN; Components V2. | Médio |
 | **Alertas de live e vídeo** (Twitch/YouTube) | Red (`streams`) | Talvez. Útil para parceiros e criadores da comunidade. | Respeitar limites das APIs; sem ping em massa por padrão. | Médio |
 | **Níveis por conversa + ranking** | ZyroX (`leveling`) | Talvez, desligado por padrão. | Pode criar pressão para falar e incentivar spam, o que vai contra a missão. Se entrar: sem ranking público obrigatório, sem moedas, com teto diário. | Médio |
-| **Música (Lavalink)** | ZyroX (`music`) | Talvez, mas caro. | Lavalink pesa na VM Oracle; questões de direitos autorais nas fontes. | Alto |
 | **Tradução de mensagens** | ZyroX (`translate`) | Talvez. Ajuda em servidores mistos. | Conteúdo vai para serviço externo: avisar e não usar em canais de desabafo. | Baixo |
 
 ## O que não trazer
