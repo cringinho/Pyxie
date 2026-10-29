@@ -20,6 +20,8 @@ import Appeal from './Appeal';
 import Commands from './Commands';
 import EmojiUsage from './EmojiUsage';
 import Campfire from './Campfire';
+import Agenda from './Agenda';
+import Periodic from './Periodic';
 import Injections from './Injections';
 import Automations from './Automations';
 import BotPermissions from './Permissions';
@@ -424,6 +426,8 @@ function GuildView({ shell, guildId, section }) {
         {current === 'roles' && <Roles t={t} guildId={guildId} />}
         {current === 'access' && <Access t={t} guildId={guildId} />}
         {current === 'tools' && <Tools t={t} zone={zone} lang={lang} guildId={guildId} isOwner={me.user.isOwner} />}
+        {current === 'agenda' && <Agenda t={t} lang={lang} guildId={guildId} />}
+        {current === 'periodic' && <Periodic t={t} lang={lang} guildId={guildId} />}
       </div>
     </Layout>
   );

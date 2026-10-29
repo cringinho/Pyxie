@@ -38,23 +38,18 @@ const jokenpoCommand = require('./src/commands/jokenpo');
 const likelyCommand = require('./src/commands/provavel');
 const quizCommand = require('./src/commands/quiz');
 const { syncApplicationEmojis } = require('./src/utils/appEmojis');
-const { registerAutomation, updateAutomation } = require('./src/services/automationSchedule');
+const periodicMessages = require('./src/services/periodicMessages');
 const { startPresenceRotator } = require('./src/services/presenceRotator');
 const {
   DISCORD_TOKEN,
   STARTUP_CHANNEL_ID,
   STATUS_IMAGE_URL,
-  BUMP_GUIDE_CHANNEL_ID,
-  BUMP_GUIDE_INTERVAL_MS,
-  SERVER_REVIEW_URL,
   WELCOME_ROLE_ID,
   WELCOME_CHANNEL_ID,
   RULES_CHANNEL_ID,
   GUIDES_CHANNEL_ID,
   COLORS_CHANNEL_ID,
-  TAROT_CHANNEL_ID,
   TAROT_LOG_CHANNEL_ID,
-  TAROT_ROLE_ID,
   KUROMI_STARTUP_EMOJI,
 } = require('./src/config');
 const { incrementCommand, incrementMessages, recordUniqueUser, updateStats, flushSync } = require('./src/services/logging');
@@ -82,7 +77,6 @@ const {
   handleVentInteraction,
 } = require('./src/services/ventService');
 const {
-  getAllTarotGuildConfigs,
   getWelcomeConfig,
 } = require('./src/services/guildConfigService');
 const {
@@ -228,110 +222,6 @@ async function sendStartupAnnouncement() {
   });
 }
 
-function buildBumpGuideEmbed(guild) {
-  const guildName = guild?.name || 'nosso servidor';
-  return new EmbedBuilder()
-    .setColor('#E60067')
-    .setTitle(`${getAnimatedEmoji(guild, ['rocket', 'boost', 'star'], '🚀')}  ✦  Como apoiar ${guildName}`)
-    .setDescription(
-      'Cada interação aumenta a visibilidade do servidor e ajuda novos membros a encontrarem nossa comunidade. Escolha uma forma de ajudar:'
-    )
-    .addFields(
-      {
-        name: '📌 DISBOARD — `/bump`',
-        value: 'Use **/bump** quando o DISBOARD permitir para impulsionar o servidor na lista.',
-      },
-      {
-        name: '🐢 Canudinho — `/bump`',
-        value: 'Execute **/bump** com o bot Canudinho para registrar o apoio da comunidade.',
-      },
-      {
-        name: '💜 Discadia — `/bump`',
-        value: 'No Discadia, execute **/bump** para manter o servidor em destaque.',
-      },
-      {
-        name: '🗳️ Top.gg — `/votar`',
-        value: 'Use o comando **/votar** para abrir a página oficial e confirmar seu voto diário.',
-      },
-      {
-        name: '⭐ Review no DISBOARD',
-        value: 'Deixe uma avaliação sincera contando como tem sido sua experiência conosco.',
-      }
-    )
-    .setFooter({ text: `${guildName} • Obrigado pelo seu apoio!` })
-    .setTimestamp();
-}
-
-function buildBumpGuideComponents() {
-  return [
-    new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setLabel('Deixar review')
-        .setStyle(ButtonStyle.Link)
-        .setURL(SERVER_REVIEW_URL),
-      new ButtonBuilder()
-        .setLabel('Abrir DISBOARD')
-        .setStyle(ButtonStyle.Link)
-        .setURL('https://disboard.org/pt-br/server/1453890868980482090')
-    ),
-  ];
-}
-
-async function postBumpGuide() {
-  const channel = await client.channels.fetch(BUMP_GUIDE_CHANNEL_ID).catch(() => null);
-
-  if (!channel || !channel.isTextBased()) {
-    console.warn(`Canal do guia de bump não encontrado ou inválido: ${BUMP_GUIDE_CHANNEL_ID}`);
-    return;
-  }
-
-  const recentMessages = await channel.messages.fetch({ limit: 50 }).catch(() => null);
-  const lastGuide = recentMessages?.find(
-    (message) =>
-      message.author.id === client.user.id &&
-      message.embeds.some(
-        (embed) =>
-          embed.title?.includes('Como apoiar') ||
-          embed.title?.includes('Como ajudar')
-      )
-  );
-
-  if (lastGuide && Date.now() - lastGuide.createdTimestamp < BUMP_GUIDE_INTERVAL_MS) {
-    console.log('Guia de bump já foi publicado recentemente. Ignorando reenvio na inicialização.');
-    return;
-  }
-
-  await channel.send({
-    embeds: [buildBumpGuideEmbed(channel.guild)],
-    components: buildBumpGuideComponents(),
-    allowedMentions: { parse: [] },
-  });
-  console.log('Guia de bump publicado com sucesso.');
-}
-
-function startBumpGuideScheduler() {
-  registerAutomation({
-    id: 'bump-guide',
-    emoji: '🚀',
-    name: 'Guia de apoio / bump',
-    action: 'verificação',
-    nextAt: Date.now() + BUMP_GUIDE_INTERVAL_MS,
-    channelId: BUMP_GUIDE_CHANNEL_ID,
-    frequency: 'a cada 12 horas',
-  });
-
-  postBumpGuide().catch((error) => {
-    console.error('Erro ao publicar o guia de bump:', error);
-  });
-
-  setInterval(() => {
-    updateAutomation('bump-guide', { nextAt: Date.now() + BUMP_GUIDE_INTERVAL_MS });
-    postBumpGuide().catch((error) => {
-      console.error('Erro ao publicar o guia de bump:', error);
-    });
-  }, BUMP_GUIDE_INTERVAL_MS);
-}
-
 function buildTarotDailyEmbed(guild, isExternal = false) {
   const guildName = guild?.name || '';
   let description =
@@ -376,36 +266,23 @@ async function postTarotDailyAnnouncement(now = Date.now(), { force = false } = 
     resetDailyDraws(now);
   }
 
-  // 1. Envio para a Cringelândia (Canal oficial principal)
-  const channel = await client.channels.fetch(TAROT_CHANNEL_ID).catch(() => null);
-  if (channel && channel.isTextBased()) {
-    await channel.send({
-      content: `<@&${TAROT_ROLE_ID}>`,
-      embeds: [buildTarotDailyEmbed(channel.guild, false)],
-      components: buildTarotDailyComponents(),
-      allowedMentions: { roles: [TAROT_ROLE_ID] },
-    }).catch((err) => console.error('[TarotScheduler] Erro no envio principal:', err.message));
-  } else {
-    console.warn(`Canal do Tarot não encontrado ou inválido: ${TAROT_CHANNEL_ID}`);
-  }
-
-  // 2. Envio para todos os demais servidores configurados via py!set tarot <#canal>
-  const externalConfigs = getAllTarotGuildConfigs();
-  for (const item of externalConfigs) {
-    if (item.channelId === TAROT_CHANNEL_ID) continue; // Evita duplicar canal principal
-
-    await new Promise((r) => setTimeout(r, 500)); // Espaçamento de 500ms para rate limit
+  // Cada servidor com canal do tarot e anúncio ligado (painel → Mensagens periódicas).
+  // A Cringelândia usa o canal e o cargo que antes eram fixos; os outros levam o crédito.
+  const targets = periodicMessages.tarotTargets([...client.guilds.cache.keys()]);
+  for (const item of targets) {
     try {
-      const extChannel = await client.channels.fetch(item.channelId).catch(() => null);
-      if (extChannel && extChannel.isTextBased()) {
-        await extChannel.send({
-          embeds: [buildTarotDailyEmbed(extChannel.guild, true)],
-          components: buildTarotDailyComponents(),
-        });
-      }
+      const channel = await client.channels.fetch(item.channelId).catch(() => null);
+      if (!channel || !channel.isTextBased() || channel.guild?.id !== item.guildId) continue;
+      await channel.send({
+        content: item.roleId ? `<@&${item.roleId}>` : undefined,
+        embeds: [buildTarotDailyEmbed(channel.guild, item.credit)],
+        components: buildTarotDailyComponents(),
+        allowedMentions: { parse: [], roles: item.roleId ? [item.roleId] : [] },
+      });
     } catch (err) {
       console.warn(`[TarotScheduler] Falha ao enviar tarot na guilda ${item.guildId}:`, err.message);
     }
+    await new Promise((r) => setTimeout(r, 500)); // Espaçamento de 500ms para rate limit
   }
 
   markAnnouncedToday(now);
@@ -426,21 +303,10 @@ function startTarotScheduler() {
   const nextMidnightUtc = Date.parse(`${currentCycle}T03:00:00.000Z`) + 24 * 60 * 60 * 1000;
   const delay = Math.max(1000, nextMidnightUtc - Date.now());
 
-  registerAutomation({
-    id: 'tarot-daily',
-    emoji: '🌙',
-    name: 'Tarot Diário',
-    action: 'disparo',
-    nextAt: Date.now() + delay,
-    channelId: TAROT_CHANNEL_ID,
-    frequency: 'diário, à 00:00 BRT',
-  });
 
   setTimeout(() => {
-    updateAutomation('tarot-daily', { nextAt: Date.now() + 24 * 60 * 60 * 1000 });
     postTarotDailyAnnouncement().catch((error) => console.error('Erro no anúncio diário do Tarot:', error));
     setInterval(() => {
-      updateAutomation('tarot-daily', { nextAt: Date.now() + 24 * 60 * 60 * 1000 });
       postTarotDailyAnnouncement().catch((error) => console.error('Erro no anúncio diário do Tarot:', error));
     }, 24 * 60 * 60 * 1000);
   }, delay);
@@ -581,7 +447,6 @@ client.once(Events.ClientReady, async () => {
   });
   await sendStartupAnnouncement();
   await syncApplicationEmojis(client).catch(() => null);
-  startBumpGuideScheduler();
   startTarotScheduler();
   setInterval(() => {
     checkAndDispatchBatch(client).catch((err) => console.error('[welcomeCheckin] Erro no agendador:', err.message));

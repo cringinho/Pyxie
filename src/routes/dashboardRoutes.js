@@ -23,6 +23,9 @@ function registerDashboardSection(section) {
   SECTION_REGISTRY.push(section);
 }
 
+// Módulos que antes só se configuravam pelo Discord: tela e API para todo servidor.
+['agenda', 'periodic'].forEach((id) => registerDashboardSection({ id }));
+
 function getSections(guildAccess) {
   const base = ['overview', 'commands', 'studio', 'features', 'automations', 'injections', 'security', 'channels', 'roles', 'emojiUsage'];
   if (guildAccess.canManageAccess) base.push('access');
@@ -482,6 +485,56 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       }
     }
     return res.json({ success: true, campfire: require('../services/campfire').saveConfig(req.params.guildId, body) });
+  });
+
+  // ---------- Agenda e mensagens periódicas (todos os servidores) ----------
+  // Confere ao vivo que canais e cargos escolhidos são deste servidor (o cargo @everyone não vale).
+  async function checkGuildIds(guildId, { channels = [], roles = [] }) {
+    const want = { channels: channels.filter(Boolean), roles: roles.filter(Boolean) };
+    if (want.roles.includes(guildId)) return 'invalid_role';
+    if (want.channels.length) {
+      const list = await bridge.request('GUILD_CHANNELS', { guildId });
+      if (!want.channels.every((id) => list.some((c) => c.id === id))) return 'invalid_channel';
+    }
+    if (want.roles.length) {
+      const list = await bridge.request('GUILD_ROLES', { guildId });
+      if (!want.roles.every((id) => list.some((r) => r.id === id))) return 'invalid_role';
+    }
+    return null;
+  }
+
+  router.get('/api/dashboard/guilds/:guildId/agenda', requireSession, requireGuild, (req, res) => {
+    return res.json({ success: true, agenda: require('../services/guildAgenda').getGuildAgenda(req.params.guildId) });
+  });
+
+  function periodicView(guildId) {
+    const periodic = require('../services/periodicMessages');
+    return { ...periodic.getConfig(guildId), tarotChannelId: periodic.tarotChannelId(guildId), lastBumpGuideAt: periodic.readState(guildId).bumpGuideAt || null, sites: periodic.SITES };
+  }
+
+  router.get('/api/dashboard/guilds/:guildId/periodic', requireSession, requireGuild, (req, res) => {
+    return res.json({ success: true, periodic: periodicView(req.params.guildId) });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/periodic', requireSession, requireGuild, async (req, res) => {
+    const periodic = require('../services/periodicMessages');
+    const { guildId } = req.params;
+    const body = req.body || {};
+    const next = periodic.normalize({ bumpGuide: body.bumpGuide, tarot: body.tarot }, guildId);
+    const tarotChannelId = body.tarotChannelId === undefined ? null : GUILD_ID_RE.test(String(body.tarotChannelId)) ? String(body.tarotChannelId) : '';
+    try {
+      const bad = await checkGuildIds(guildId, { channels: [next.bumpGuide.channelId, tarotChannelId], roles: [next.tarot.roleId] });
+      if (bad) return res.status(400).json({ success: false, error: bad });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+    periodic.saveConfig(guildId, next);
+    if (tarotChannelId !== null && tarotChannelId !== periodic.tarotChannelId(guildId)) {
+      const gcs = require('../services/guildConfigService');
+      if (tarotChannelId) gcs.setTarotChannelId(guildId, tarotChannelId);
+      else gcs.updateGuildConfig(guildId, { tarotChannelId: null });
+    }
+    return res.json({ success: true, periodic: periodicView(guildId) });
   });
 
   // ---------- Faxina de convites (o bot lista e revoga; precisa de Gerenciar Servidor) ----------

@@ -383,6 +383,67 @@ const TRANSLATIONS = {
       "card": "🔥 A call {channel} está animada agora, com {count} pessoas conversando. Chega mais!",
       "join": "Entrar na call"
     },
+    "periodic": {
+      "bump": {
+        "title": "🚀 Como apoiar {server}",
+        "fallbackServer": "nosso servidor",
+        "intro": "Cada apoio deixa o servidor mais visível e ajuda pessoas novas a encontrarem a comunidade. Escolha um jeito de ajudar:",
+        "footer": "{server} • Obrigado pelo seu apoio!",
+        "btnReview": "Deixar review",
+        "btnDisboard": "Abrir DISBOARD",
+        "site": {
+          "disboard": {
+            "title": "📌 DISBOARD",
+            "text": "> Use `/bump` quando o DISBOARD deixar, para impulsionar o servidor na lista."
+          },
+          "canudinho": {
+            "title": "🐢 Canudinho",
+            "text": "> Use `/bump` com o bot Canudinho para registrar o apoio da comunidade."
+          },
+          "discadia": {
+            "title": "💜 Discadia",
+            "text": "> No Discadia, use `/bump` para manter o servidor em destaque."
+          },
+          "topgg": {
+            "title": "🗳️ Top.gg",
+            "text": "> Use `/py-vote` para abrir a página da Pyxie e confirmar seu voto do dia."
+          },
+          "review": {
+            "title": "⭐ Review no DISBOARD",
+            "text": "> Deixe uma avaliação sincera contando como tem sido sua experiência aqui."
+          }
+        }
+      },
+      "agenda": {
+        "name": {
+          "bumpGuide": "Guia de apoio",
+          "tarotDaily": "Tarot diário",
+          "scheduledMessages": "Recado agendado",
+          "weeklyDigest": "Resumo semanal",
+          "bumpReminder": "Lembrete de bump",
+          "welcomeCheckin": "Acolhimento de 24h"
+        },
+        "next": "Próximo disparo:",
+        "channel": "Canal:",
+        "frequency": "Frequência:",
+        "everyHours": "a cada {hours} horas",
+        "daily": "todo dia às {time} (Brasília)",
+        "weekly": "{days}, às {hour} (Brasília)",
+        "afterBump": "{hours} horas depois de cada bump",
+        "weekday": {
+          "0": "domingo",
+          "1": "segunda",
+          "2": "terça",
+          "3": "quarta",
+          "4": "quinta",
+          "5": "sexta",
+          "6": "sábado"
+        },
+        "empty": "Nenhuma automação programada neste servidor.",
+        "hint": "Ajuste tudo no painel: /dashboard → Mensagens periódicas, Acolhimento e Automações.",
+        "footer": "Cronograma e lembretes"
+      }
+    },
     "injections": {
       "pack": {
         "gender": "Gêneros",
@@ -3021,6 +3082,67 @@ const TRANSLATIONS = {
     "campfire": {
       "card": "🔥 The {channel} call is lively right now, with {count} people chatting. Come join!",
       "join": "Join the call"
+    },
+    "periodic": {
+      "bump": {
+        "title": "🚀 How to support {server}",
+        "fallbackServer": "our server",
+        "intro": "Every bit of support makes the server easier to find and helps new people reach the community. Pick a way to help:",
+        "footer": "{server} • Thank you for your support!",
+        "btnReview": "Leave a review",
+        "btnDisboard": "Open DISBOARD",
+        "site": {
+          "disboard": {
+            "title": "📌 DISBOARD",
+            "text": "> Use `/bump` whenever DISBOARD allows it, to push the server up the list."
+          },
+          "canudinho": {
+            "title": "🐢 Canudinho",
+            "text": "> Use `/bump` with the Canudinho bot to log the community's support."
+          },
+          "discadia": {
+            "title": "💜 Discadia",
+            "text": "> On Discadia, use `/bump` to keep the server featured."
+          },
+          "topgg": {
+            "title": "🗳️ Top.gg",
+            "text": "> Use `/py-vote` to open Pyxie's page and confirm today's vote."
+          },
+          "review": {
+            "title": "⭐ DISBOARD review",
+            "text": "> Leave an honest review about how your time here has been."
+          }
+        }
+      },
+      "agenda": {
+        "name": {
+          "bumpGuide": "Support guide",
+          "tarotDaily": "Daily tarot",
+          "scheduledMessages": "Scheduled message",
+          "weeklyDigest": "Weekly summary",
+          "bumpReminder": "Bump reminder",
+          "welcomeCheckin": "24h welcome check-in"
+        },
+        "next": "Next run:",
+        "channel": "Channel:",
+        "frequency": "Frequency:",
+        "everyHours": "every {hours} hours",
+        "daily": "every day at {time} (Brasília)",
+        "weekly": "{days}, at {hour} (Brasília)",
+        "afterBump": "{hours} hours after each bump",
+        "weekday": {
+          "0": "Sunday",
+          "1": "Monday",
+          "2": "Tuesday",
+          "3": "Wednesday",
+          "4": "Thursday",
+          "5": "Friday",
+          "6": "Saturday"
+        },
+        "empty": "No automations scheduled in this server.",
+        "hint": "Adjust everything in the dashboard: /dashboard → Periodic messages, Welcome and Automations.",
+        "footer": "Schedule and reminders"
+      }
     },
     "injections": {
       "pack": {
