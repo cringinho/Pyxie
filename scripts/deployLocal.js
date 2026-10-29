@@ -14,8 +14,10 @@ console.log('====================================================');
 console.log('📦 Iniciando Pipeline Automático de Deploy da Pyxie');
 console.log('====================================================');
 
-// 1. Quality Gate Automático
-run('npm test', '1/4 Executando suíte de testes (npm test)');
+// 1. Quality Gate Automático (AGENTS.md §2: test-safe protege data/)
+const fs = require('fs');
+const testCmd = fs.existsSync('scripts/test-safe.sh') ? 'bash scripts/test-safe.sh' : 'npm test';
+run(testCmd, `1/4 Executando suíte de testes (${testCmd})`);
 
 // 2. Commit local de alterações pendentes
 try {
