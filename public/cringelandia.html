@@ -351,7 +351,7 @@
 
     .join-panel {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
       gap: 28px;
       max-width: 980px;
@@ -403,7 +403,7 @@
       font-weight: 900;
       color: #fff;
       margin: 6px 0 6px;
-      overflow-wrap: anywhere;
+      overflow-wrap: break-word;
     }
 
     .join-desc {
@@ -450,6 +450,12 @@
     .app-secondary { background: transparent; border: 1px solid #5865f2; }
 
     .app-secondary:hover { background: rgba(88, 101, 242, 0.18); }
+
+    /* Tablet e notebook estreito: painel empilhado, botão em cima da largura toda */
+    @media (max-width: 1024px) {
+      .join-panel { grid-template-columns: 1fr; }
+      .join-actions { min-width: 0; }
+    }
 
     @media (max-width: 820px) {
       /* Celular: menu numa linha só (logo, entrar, idioma) e o convite como primeira coisa da página */
