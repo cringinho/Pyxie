@@ -156,7 +156,9 @@ console.log('🪦 Iniciando testes das Catacumbas em grupo...');
     console.log('  ✅ 3. Oração revive com metade da vida e o ouro restante; a descida espera a dona.');
 
     // 4. Sem volta: descida nova depois da morte (ou mais de 24h)
-    assert.equal(store.startRun(C, { now: t0, guildId: 'g1' }).ok, true);
+    economy.setUserBalance(C, 1000);
+    const startC = store.startRun(C, { now: t0, guildId: 'g1' });
+    assert.equal(startC.ok, true, `C deve iniciar descida: ${startC.reason}`);
     dieWith(C, 100, t0 + 1000);
     const graveC = store.getGraves().find((g) => g.ownerId === C);
     assert.ok(graveC);
