@@ -13,7 +13,7 @@ Conta também com um ranking visual público para premiar os membros mais ativos
 - **Classificação Competitiva:** Acompanha quem acumulou mais itens ou pontos ao longo do evento.
 - **Cartões de Ranking em Imagem:** Gera cartões ilustrados em imagem PNG com a foto de perfil, posição e pontuação do usuário.
 - **Página de Ranking no Site:** Página web dinâmica (`/evento`) com o placar ao vivo dos líderes da temporada.
-- **Painel Administrativo Próprio:** Página externa (`/admin/sazonal`) onde administradores alteram temas, datas de início/fim e itens especiais.
+- **Painel:** `/dashboard` → Cringelândia → **Evento sazonal** (só o dono): liga o evento, canais, prêmios, textos, drops de teste e restrições. O antigo `/admin/sazonal` redireciona para lá.
 
 ---
 
@@ -37,7 +37,7 @@ Conta também com um ranking visual público para premiar os membros mais ativos
 
 ## 🌐 Recursos na Web
 - **Placar do Evento:** Acessível em `/evento` enquanto o evento estiver aberto.
-- **Painel Administrativo Dedicado:** Acessível em `/admin/sazonal` para a gerência da temporada.
+- **Painel:** `/dashboard#/guild/1453890868980482090/seasonal` (o `/admin/sazonal` só redireciona).
 
 ---
 
@@ -46,3 +46,14 @@ Conta também com um ranking visual público para premiar os membros mais ativos
 - **Discord.js (v14):** Para detectar conversas ativas e sortear drops.
 - **Express & EJS:** Para exibir a página web do placar e o painel de controle.
 
+---
+
+## 🧭 Por que fica só na Cringelândia (avaliação de outubro de 2026)
+
+Ao levar ao painel os módulos que só se configuravam pelo Discord, o sazonal foi avaliado para todos os servidores e **continua exclusivo da Cringelândia**:
+
+- **É uma economia, não um enfeite:** a moeda do evento tem um saldo único por pessoa (`data/cringelandia/seasonalData.json`), um ranking único e prêmios reais definidos pelo dono. Abrir para outros servidores exigiria uma moeda e um placar por servidor, com teto, cooldown, atomicidade e permissão próprios (AGENTS.md §5), e deixaria administradores de fora criarem prêmios numa economia que não é deles.
+- **Ganhos automáticos marcam muita gente:** as apurações de manhã e madrugada e a Arte da Semana anunciam premiados em massa; fora de um servidor que já combinou isso com a comunidade, viraria ping indesejado.
+- **O que já é configurável está no painel:** canais, datas, prêmios, textos e restrições ficam em **Evento sazonal**, sem nada fixo no código além do ID da Cringelândia (escopo do módulo).
+
+O que serve para qualquer servidor e saiu daqui para o painel geral: a **agenda** (`/py-agenda`, painel → Agenda) e as **mensagens periódicas** (guia de apoio e tarot diário).

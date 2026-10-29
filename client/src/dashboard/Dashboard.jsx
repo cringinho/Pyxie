@@ -22,6 +22,7 @@ import EmojiUsage from './EmojiUsage';
 import Campfire from './Campfire';
 import Agenda from './Agenda';
 import Periodic from './Periodic';
+import Welcome from './Welcome';
 import Injections from './Injections';
 import Automations from './Automations';
 import BotPermissions from './Permissions';
@@ -428,6 +429,7 @@ function GuildView({ shell, guildId, section }) {
         {current === 'tools' && <Tools t={t} zone={zone} lang={lang} guildId={guildId} isOwner={me.user.isOwner} />}
         {current === 'agenda' && <Agenda t={t} lang={lang} guildId={guildId} />}
         {current === 'periodic' && <Periodic t={t} lang={lang} guildId={guildId} />}
+        {current === 'welcome' && <Welcome t={t} guildId={guildId} />}
       </div>
     </Layout>
   );

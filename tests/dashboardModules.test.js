@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-console.log('🗓️ Testes dos módulos que ganharam tela no painel: mensagens periódicas e agenda...');
+console.log('🗓️ Testes dos módulos que ganharam tela no painel: mensagens periódicas, agenda e acolhimento...');
 
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pyxie-dashmods-'));
 process.env.PYXIE_DATA_DIR = tmpDir;
@@ -166,6 +166,71 @@ function cookieFor(userId) {
     const ag = await (await call(`/api/dashboard/guilds/${G}/agenda`, { cookie: admin })).json();
     assert.ok(Array.isArray(ag.agenda));
     console.log('  ✅ 6. Rotas do painel com conferência ao vivo de canal e cargo.');
+
+    // 7. Acolhimento: Cringelândia com os valores antigos; outros servidores configuram tudo.
+    const welcomeFlow = require('../src/services/welcomeFlow');
+    const checkin = require('../src/services/welcomeCheckinService');
+    const w = welcomeFlow.getConfig(CRINGE);
+    assert.equal(w.layout, 'guide');
+    assert.equal(w.pingRoleId, config.WELCOME_ROLE_ID);
+    assert.deepEqual([w.rulesChannelId, w.guidesChannelId, w.rolesChannelId], [config.RULES_CHANNEL_ID, config.GUIDES_CHANNEL_ID, config.COLORS_CHANNEL_ID]);
+    assert.deepEqual(w.checkin, { enabled: true, channelId: config.WELCOME_CHANNEL_ID, silentRoleId: checkin.SILENT_ROLE_ID });
+    const member = (guild, uid = '777777777777777777') => ({ id: uid, guild, displayName: 'Lua', user: { username: 'lua', bot: false, displayAvatarURL: () => null }, roles: { cache: new Map() }, joinedTimestamp: now - 25 * HOUR, toString: () => `<@${uid}>` });
+    const cg = { id: CRINGE, name: 'Cringelândia', memberCount: 10 };
+    const guideMsg = welcomeFlow.buildWelcomeMessage(member(cg), { ...w, ...welcomeFlow.getView(CRINGE) });
+    assert.equal(guideMsg.content, `<@777777777777777777> chegou! <@&${config.WELCOME_ROLE_ID}>, recebam nossa nova pessoa com carinho 💗`);
+    assert.deepEqual(guideMsg.allowedMentions, { parse: [], users: ['777777777777777777'], roles: [config.WELCOME_ROLE_ID] });
+    assert.ok(guideMsg.embeds[0].data.description.includes(`<#${config.RULES_CHANNEL_ID}>`));
+    assert.ok(guideMsg.embeds[0].data.image.url.startsWith('https://cdn.discordapp.com/'));
+    assert.equal(welcomeFlow.reactionsFor({ layout: 'guide', autoReactions: ['🔥'] }).length, 1, 'Guia: um coração sorteado');
+    const gv = welcomeFlow.getView(G);
+    assert.equal(gv.layout, 'custom');
+    assert.equal(gv.channelId, '');
+    const customMsg = welcomeFlow.buildWelcomeMessage(member({ id: G, name: 'G', memberCount: 3 }), { ...gv, title: 'Oi {username} em {server}' });
+    assert.equal(customMsg.embeds[0].data.title, 'Oi lua em G');
+    assert.equal(customMsg.content, 'Welcome <@777777777777777777> to **G**! ✨');
+    console.log('  ✅ 7. Boas-vindas por servidor, com a Cringelândia igual a antes.');
+
+    // 8. Acolhimento de 24h por servidor: desligado não entra na fila; ligado manda um lote por dia.
+    const uid = `9${String(now).slice(-17).padStart(17, '0')}`;
+    const gGuild = { id: G, name: 'G', memberCount: 3 };
+    checkin.onGuildMemberAdd(member(gGuild, uid));
+    assert.equal(checkin._pendingNewcomers.has(`${G}:${uid}`), false);
+    welcomeFlow.saveConfig(G, { checkin: { enabled: true, channelId: CH, silentRoleId: ROLE } });
+    const silent = member(gGuild, `${uid.slice(0, -1)}1`);
+    silent.roles.cache.set(ROLE, {});
+    checkin.onGuildMemberAdd(silent);
+    assert.equal(checkin._pendingNewcomers.has(`${G}:${silent.id}`), false, 'Cargo de silêncio nunca entra');
+    checkin.onGuildMemberAdd(member(gGuild, uid));
+    assert.equal(checkin._pendingNewcomers.has(`${G}:${uid}`), true);
+    assert.ok(checkin.nextBatchAt(G, now) >= now);
+    assert.ok(getGuildAgenda(G, now).some((i) => i.id === 'welcomeCheckin'));
+    const posted = [];
+    const ch = { id: CH, isTextBased: () => true, send: async (p) => posted.push(p) || { id: 'm1' } };
+    const fakeGuild = { ...gGuild, members: { cache: new Map([[uid, member(gGuild, uid)]]), fetch: async () => null }, channels: { cache: new Map([[CH, ch]]), fetch: async () => null } };
+    const res1 = await checkin.checkAndDispatchBatch({ guilds: { cache: new Map([[G, fakeGuild]]) } }, { now });
+    assert.equal(res1[G].dispatched, true);
+    assert.equal(posted[0].content, `🌸 A warm hug to our new friends: <@${uid}>`);
+    assert.deepEqual(posted[0].allowedMentions.users, [uid]);
+    assert.ok(posted[0].embeds[0].data.footer.text.startsWith('G • '));
+    const res2 = await checkin.checkAndDispatchBatch({ guilds: { cache: new Map([[G, fakeGuild]]) } }, { now: now + HOUR });
+    assert.equal(res2[G].reason, 'COOLDOWN_ACTIVE');
+    console.log('  ✅ 8. Acolhimento de 24h por servidor, com cargo de silêncio e um lote por dia.');
+
+    // 9. Painel do acolhimento: canal e cargos conferidos ao vivo; py!set lê os mesmos campos.
+    res = await call(`/api/dashboard/guilds/${G}/welcome`, { cookie: admin, method: 'PUT', body: { channelId: '888888888888888888' } });
+    assert.equal((await res.json()).error, 'invalid_channel');
+    res = await call(`/api/dashboard/guilds/${G}/welcome`, { cookie: admin, method: 'PUT', body: { channelId: CH, checkin: { silentRoleId: '999999999999999999' } } });
+    assert.equal((await res.json()).error, 'invalid_role');
+    res = await call(`/api/dashboard/guilds/${G}/welcome`, { cookie: admin, method: 'PUT', body: { channelId: CH, layout: 'guide', pingRoleId: ROLE, title: 'Oi', imageUrl: 'javascript:alert(1)', autoReactions: ['💗', '✨', '🌸', '🌙', '⭐', '🔥'] } });
+    const wv = (await res.json()).welcome;
+    assert.equal(wv.channelId, CH);
+    assert.equal(wv.layout, 'guide');
+    assert.equal(wv.imageUrl, '', 'Só links https');
+    assert.equal(wv.autoReactions.length, 5);
+    assert.equal(require('../src/services/guildConfigService').getWelcomeConfig(G).channelId, CH, 'Mesmo campo do py!set welcome');
+    assert.ok(getSections({ zone: 'global', role: 'admin' }).includes('welcome'));
+    console.log('  ✅ 9. Rotas do acolhimento com conferência ao vivo.');
 
     console.log('💜 Módulos no painel: tudo certo.');
   } finally {

@@ -13,6 +13,7 @@ function describeEvery(every, lang) {
   if (every.hours) return t('periodic.agenda.everyHours', lang, { hours: `\`${every.hours}\`` });
   if (every.daily) return t('periodic.agenda.daily', lang, { time: `\`${every.daily}\`` });
   if (every.afterBump) return t('periodic.agenda.afterBump', lang, { hours: `\`${every.afterBump}\`` });
+  if (every.afterJoin) return t('periodic.agenda.afterJoin', lang, { hours: `\`${every.afterJoin}\`` });
   const days = (every.weekdays || []).map((d) => t(`periodic.agenda.weekday.${d}`, lang)).join(', ');
   return t('periodic.agenda.weekly', lang, { days, hour: `\`${String(every.hour).padStart(2, '0')}:00\`` });
 }

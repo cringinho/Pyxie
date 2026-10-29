@@ -24,7 +24,7 @@ function registerDashboardSection(section) {
 }
 
 // Módulos que antes só se configuravam pelo Discord: tela e API para todo servidor.
-['agenda', 'periodic'].forEach((id) => registerDashboardSection({ id }));
+['agenda', 'periodic', 'welcome'].forEach((id) => registerDashboardSection({ id }));
 
 function getSections(guildAccess) {
   const base = ['overview', 'commands', 'studio', 'features', 'automations', 'injections', 'security', 'channels', 'roles', 'emojiUsage'];
@@ -535,6 +535,50 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       else gcs.updateGuildConfig(guildId, { tarotChannelId: null });
     }
     return res.json({ success: true, periodic: periodicView(guildId) });
+  });
+
+  // ---------- Acolhimento inicial: boas-vindas e acolhimento de 24h (todos os servidores) ----------
+  router.get('/api/dashboard/guilds/:guildId/welcome', requireSession, requireGuild, (req, res) => {
+    const welcomeFlow = require('../services/welcomeFlow');
+    return res.json({ success: true, welcome: welcomeFlow.getView(req.params.guildId), layouts: welcomeFlow.LAYOUTS });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/welcome', requireSession, requireGuild, async (req, res) => {
+    const welcomeFlow = require('../services/welcomeFlow');
+    const { guildId } = req.params;
+    const body = req.body || {};
+    const flow = welcomeFlow.normalize({ ...welcomeFlow.getConfig(guildId), ...body, checkin: { ...welcomeFlow.getConfig(guildId).checkin, ...(body.checkin || {}) } }, guildId);
+    const idOrEmpty = (v) => (GUILD_ID_RE.test(String(v || '')) ? String(v) : '');
+    const https = (v) => (/^https:\/\/\S{1,500}$/.test(String(v || '')) ? String(v) : '');
+    const message = {
+      channelId: idOrEmpty(body.channelId),
+      title: String(body.title || '').slice(0, 256),
+      description: String(body.description || '').slice(0, 2000),
+      color: /^#[0-9a-f]{6}$/i.test(String(body.color || '')) ? String(body.color) : '#8b5cf6',
+      imageUrl: https(body.imageUrl),
+      autoReactions: (Array.isArray(body.autoReactions) ? body.autoReactions : []).map((e) => String(e).trim().slice(0, 64)).filter(Boolean).slice(0, 5),
+      autoRoleId: idOrEmpty(body.autoRoleId),
+    };
+    try {
+      const bad = await checkGuildIds(guildId, {
+        channels: [message.channelId, flow.rulesChannelId, flow.guidesChannelId, flow.rolesChannelId, flow.checkin.channelId],
+        roles: [message.autoRoleId, flow.pingRoleId, flow.checkin.silentRoleId],
+      });
+      if (bad) return res.status(400).json({ success: false, error: bad });
+      // O cargo automático precisa estar abaixo do cargo da Pyxie.
+      if (message.autoRoleId) {
+        const roles = await bridge.request('GUILD_ROLES', { guildId });
+        if (roles.find((r) => r.id === message.autoRoleId)?.assignable === false) return res.status(400).json({ success: false, error: 'role_not_assignable' });
+      }
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+    welcomeFlow.saveConfig(guildId, flow);
+    const gcs = require('../services/guildConfigService');
+    const { channelId, ...rest } = message;
+    if (channelId !== welcomeFlow.welcomeChannelId(guildId)) gcs.setWelcomeConfig(guildId, { channelId: channelId || null });
+    gcs.setWelcomeConfig(guildId, rest);
+    return res.json({ success: true, welcome: welcomeFlow.getView(guildId) });
   });
 
   // ---------- Faxina de convites (o bot lista e revoga; precisa de Gerenciar Servidor) ----------

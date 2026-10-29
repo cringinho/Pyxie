@@ -116,7 +116,7 @@ Define manualmente o saldo de moedas de um usuário.
 Zera as moedas e o cooldown diário de um usuário.
 
 ### `/py-schedule` *(Admin)* (ou `py!schedule` / `py!agenda`)
-Exibe as próximas tarefas agendadas e automações em execução.
+Exibe a agenda do próprio servidor: guia de apoio, tarot diário, recado agendado, resumo semanal, lembrete de bump e acolhimento de 24h, com o próximo horário de cada um. A mesma agenda aparece no painel (`/dashboard` → Agenda), e cada item é ajustado em Mensagens periódicas, Acolhimento ou Automações.
 
 ### `/py-emojis` *(Admin)*
 Exporta um catálogo em JSON com todos os emojis customizados do servidor.

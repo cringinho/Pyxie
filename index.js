@@ -16,7 +16,7 @@ const {
   Partials,
 } = require('discord.js');
 const { acquireBotLock, releaseBotLock, getPrefix } = require('./src/utils/botUtils');
-const { getWelcomeChannel, normalizeChannelValue } = require('./src/services/database');
+const { normalizeChannelValue } = require('./src/services/database');
 const { commandsByName, slashCommands } = require('./src/commands');
 const moduleManager = require('./src/services/moduleManager');
 const seasonalManager = require('./src/modules/seasonal/seasonalManager');
@@ -39,16 +39,12 @@ const likelyCommand = require('./src/commands/provavel');
 const quizCommand = require('./src/commands/quiz');
 const { syncApplicationEmojis } = require('./src/utils/appEmojis');
 const periodicMessages = require('./src/services/periodicMessages');
+const welcomeFlow = require('./src/services/welcomeFlow');
 const { startPresenceRotator } = require('./src/services/presenceRotator');
 const {
   DISCORD_TOKEN,
   STARTUP_CHANNEL_ID,
   STATUS_IMAGE_URL,
-  WELCOME_ROLE_ID,
-  WELCOME_CHANNEL_ID,
-  RULES_CHANNEL_ID,
-  GUIDES_CHANNEL_ID,
-  COLORS_CHANNEL_ID,
   TAROT_LOG_CHANNEL_ID,
   KUROMI_STARTUP_EMOJI,
 } = require('./src/config');
@@ -77,14 +73,9 @@ const {
   handleVentInteraction,
 } = require('./src/services/ventService');
 const {
-  getWelcomeConfig,
-} = require('./src/services/guildConfigService');
-const {
   handleWelcomeInteraction,
-  buildWelcomePreviewEmbed,
 } = require('./src/commands/set');
 
-const welcomeHeartReactions = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🩷', '🩵', '🖤', '🤍', '🤎'];
 const CRINGE_PHRASE_COOLDOWN_MS = 60 * 1000;
 const CRINGE_CHANNEL_COOLDOWN_MS = 30 * 1000;
 const cringePhraseCooldowns = new Map();
@@ -98,10 +89,6 @@ let sapatonaInFlight = false;
 const recentWelcomes = new Map();
 const processedMessageIds = new Map();
 const processedInteractionIds = new Map();
-
-function getRandomWelcomeHeart() {
-  return welcomeHeartReactions[Math.floor(Math.random() * welcomeHeartReactions.length)];
-}
 
 // Protege o bot contra duas instâncias rodando ao mesmo tempo.
 const lockAcquired = acquireBotLock();
@@ -589,112 +576,32 @@ client.on(Events.GuildMemberAdd, async (member) => {
     }
   }
 
-  const isCringelandia = member.guild.id === '1453890868980482090';
+  // Acolhimento de 24h (cada servidor liga no painel → Acolhimento).
+  onCheckinMemberAdd(member);
 
-  // Sistema de Acolhimento Tardio para novatos na Cringelândia
-  if (isCringelandia) {
-    onCheckinMemberAdd(member);
-  }
-
-  // 1. Tratamento para Servidores Externos via Boas-Vindas Premium Customizáveis
-  if (!isCringelandia) {
-    const welcomeCfg = getWelcomeConfig(member.guild.id);
-    if (welcomeCfg && welcomeCfg.channelId) {
-      try {
-        const extChannel = member.guild.channels.cache.get(welcomeCfg.channelId) || (await member.guild.channels.fetch(welcomeCfg.channelId).catch(() => null));
-        if (extChannel && extChannel.isTextBased()) {
-          const customEmbed = buildWelcomePreviewEmbed(member, welcomeCfg);
-          const welcomeMessage = await extChannel.send({
-            content: `Bem-vindo(a) ${member} a **${member.guild.name}**! ✨`,
-            embeds: [customEmbed],
-            allowedMentions: { users: [member.id] },
-          });
-
-          // Reações automáticas configuradas
-          if (Array.isArray(welcomeCfg.autoReactions)) {
-            for (const emoji of welcomeCfg.autoReactions) {
-              await welcomeMessage.react(emoji).catch(() => null);
-            }
-          }
-
-          // Atribuição de Auto-Role com proteção de hierarquia
-          if (welcomeCfg.autoRoleId) {
-            await member.roles.add(welcomeCfg.autoRoleId).catch((err) => {
-              console.warn(`[AutoRole] Falha ao atribuir cargo automático em ${member.guild.id}: ${err.message}`);
-            });
-          }
-        }
-      } catch (err) {
-        console.warn(`[WelcomePremium] Erro ao enviar boas-vindas na guilda ${member.guild.id}: ${err.message}`);
-      }
-    }
-    return;
-  }
-
-  // 2. Tratamento Canônico Original da Cringelândia (100% Preservado)
-  const configuredWelcomeChannelId = getWelcomeChannel(member.guild.id);
-  const targetChannelId =
-    configuredWelcomeChannelId ||
-    (isCringelandia ? (getWelcomeChannel('global') || WELCOME_CHANNEL_ID) : null);
-
-  let welcomeChannel = null;
-  if (targetChannelId) {
-    welcomeChannel =
-      member.guild.channels.cache.get(targetChannelId) ||
-      (await member.guild.channels.fetch(targetChannelId).catch(() => null));
-  }
-
-  if (!welcomeChannel && isCringelandia) {
-    welcomeChannel =
-      member.guild.systemChannelId ||
-      member.guild.channels.cache.find(
-        (channel) =>
-          channel.isTextBased() &&
-          ['welcome', 'bem-vindos', 'entrada', 'chat-geral'].includes(channel.name)
-      );
-  }
-
-  if (!welcomeChannel) return;
-
-  const guildName = member.guild?.name || 'nosso servidor';
-  const welcomeEmbed = new EmbedBuilder()
-    .setColor('#8b5cf6')
-    .setTitle(`${getAnimatedEmoji(member.guild, ['heart', 'welcome', 'love'], '🎉')}  ✦  Uma nova pessoa chegou`)
-    .setDescription(`Que bom ter você aqui, **${member.displayName}**! Seja muito bem-vindo(a) a **${guildName}**!`)
-    .addFields(
-      {
-        name: '📜 Regras do Servidor',
-        value: `Consulte <#${RULES_CHANNEL_ID}> para conhecer nossas diretrizes e manter um ambiente acolhedor.`,
-      },
-      {
-        name: '🧭 Explore o Servidor',
-        value: `Veja tutoriais e canais importantes em <#${GUIDES_CHANNEL_ID}>.`,
-      },
-      {
-        name: '🎨 Personalize sua Experiência',
-        value: `Escolha suas cores e cargos em <#${COLORS_CHANNEL_ID}>.`,
-      }
-    )
-    .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 256 }))
-    .setImage('https://cdn.discordapp.com/attachments/1533657882862686218/1541908904487690321/dhj7hfn-842bcc59-b41f-4ef3-888b-dbfc210f4a5c.gif?ex=6a9b2b92&is=6a99da12&hm=7a41318a2f477b04a295a5b209c43de9517cfa47ac6ecf15e351c045aa104714&')
-    .setFooter({ text: `${guildName} • Desejamos ótimos momentos na comunidade!` })
-    .setTimestamp();
+  // Boas-vindas: formato guia ou personalizado, canal e cargos de cada servidor
+  // (src/services/welcomeFlow.js; a Cringelândia usa os valores que eram fixos aqui).
+  const view = welcomeFlow.getView(member.guild.id);
+  if (!view.enabled || !view.channelId) return;
+  const welcomeChannel =
+    member.guild.channels.cache.get(view.channelId) ||
+    (await member.guild.channels.fetch(view.channelId).catch(() => null));
+  if (!welcomeChannel || !welcomeChannel.isTextBased()) return;
 
   try {
-    const welcomeMessage = await welcomeChannel.send({
-      content: `${member} chegou! <@&${WELCOME_ROLE_ID}>, recebam nossa nova pessoa com carinho 💗`,
-      embeds: [welcomeEmbed],
-      allowedMentions: {
-        users: [member.id],
-        roles: [WELCOME_ROLE_ID],
-      },
-    });
-
-    await welcomeMessage.react(getRandomWelcomeHeart()).catch((error) => {
-      console.warn('Não foi possível reagir à mensagem de boas-vindas:', error.message);
-    });
+    const welcomeMessage = await welcomeChannel.send(welcomeFlow.buildWelcomeMessage(member, view));
+    for (const emoji of welcomeFlow.reactionsFor(view)) {
+      await welcomeMessage.react(emoji).catch(() => null);
+    }
   } catch (err) {
-    console.warn('Falha ao enviar mensagem de boas-vindas:', err.message);
+    console.warn(`[Welcome] Falha ao enviar boas-vindas na guilda ${member.guild.id}: ${err.message}`);
+  }
+
+  // Cargo automático com proteção de hierarquia
+  if (view.autoRoleId) {
+    await member.roles.add(view.autoRoleId).catch((err) => {
+      console.warn(`[AutoRole] Falha ao atribuir cargo automático em ${member.guild.id}: ${err.message}`);
+    });
   }
 });
 

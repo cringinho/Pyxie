@@ -50,6 +50,11 @@ function getGuildAgenda(guildId, now = Date.now()) {
   if (bump.enabled && bumpState.at && !bumpState.reminded && bumpState.channelId) {
     items.push({ id: 'bumpReminder', emoji: '⏰', section: 'automations', channelId: bumpState.channelId, nextAt: Math.max(now, bumpState.at + 2 * HOUR), every: { afterBump: 2 } });
   }
+  const checkin = require('./welcomeFlow').getConfig(guildId).checkin;
+  if (checkin.enabled && checkin.channelId) {
+    const nextAt = require('./welcomeCheckinService').nextBatchAt(guildId, now);
+    if (nextAt) items.push({ id: 'welcomeCheckin', emoji: '🌸', section: 'welcome', channelId: checkin.channelId, nextAt, every: { afterJoin: 24 } });
+  }
   return items.map((i) => ({ ...i, remainingMs: Math.max(0, i.nextAt - now) })).sort((a, b) => a.nextAt - b.nextAt);
 }
 

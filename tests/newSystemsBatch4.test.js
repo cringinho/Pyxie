@@ -55,7 +55,7 @@ const mockMemberWithSilentRole = {
   roles: { cache: new Map([[SILENT_ROLE_ID, { id: SILENT_ROLE_ID }]]) },
 };
 onGuildMemberAdd(mockMemberWithSilentRole);
-assert.strictEqual(_pendingNewcomers.has('silent_user_1'), false, 'Usuário com cargo de silêncio NUNCA deve entrar na fila');
+assert.strictEqual(_pendingNewcomers.has(`${TARGET_GUILD_ID}:silent_user_1`), false, 'Usuário com cargo de silêncio NUNCA deve entrar na fila');
 console.log('  ✅ 2. Exclusão estrita por cargo de silêncio (1455923442560925929) validada.');
 
 // Teste de entrada de novato tímido e filtro de 3 mensagens
@@ -66,22 +66,22 @@ const mockNormalMember = {
   roles: { cache: new Map() },
   joinedTimestamp: Date.now() - 25 * 60 * 60 * 1000, // Entrou há 25h
 };
-_welcomedOnceSet.delete('shy_newcomer_123');
+_welcomedOnceSet.delete(`${TARGET_GUILD_ID}:shy_newcomer_123`);
 onGuildMemberAdd(mockNormalMember);
-assert.strictEqual(_pendingNewcomers.has('shy_newcomer_123'), true, 'Novato sem cargo de silêncio deve entrar na fila');
+assert.strictEqual(_pendingNewcomers.has(`${TARGET_GUILD_ID}:shy_newcomer_123`), true, 'Novato sem cargo de silêncio deve entrar na fila');
 
 // Usuário envia 1 mensagem
-onCheckinMessage({ author: { id: 'shy_newcomer_123', bot: false } });
-assert.strictEqual(_pendingNewcomers.get('shy_newcomer_123').msgCount, 1);
+onCheckinMessage({ guildId: TARGET_GUILD_ID, author: { id: 'shy_newcomer_123', bot: false } });
+assert.strictEqual(_pendingNewcomers.get(`${TARGET_GUILD_ID}:shy_newcomer_123`).msgCount, 1);
 
 // Usuário envia 2 mensagens
-onCheckinMessage({ author: { id: 'shy_newcomer_123', bot: false } });
-assert.strictEqual(_pendingNewcomers.get('shy_newcomer_123').msgCount, 2);
+onCheckinMessage({ guildId: TARGET_GUILD_ID, author: { id: 'shy_newcomer_123', bot: false } });
+assert.strictEqual(_pendingNewcomers.get(`${TARGET_GUILD_ID}:shy_newcomer_123`).msgCount, 2);
 
 // Usuário atinge 3 mensagens (remove da fila e marca como acolhido)
-onCheckinMessage({ author: { id: 'shy_newcomer_123', bot: false } });
-assert.strictEqual(_pendingNewcomers.has('shy_newcomer_123'), false, '3 mensagens devem remover da fila de tímidos');
-assert.strictEqual(_welcomedOnceSet.has('shy_newcomer_123'), true, 'Deve ser adicionado a welcomedOnceSet');
+onCheckinMessage({ guildId: TARGET_GUILD_ID, author: { id: 'shy_newcomer_123', bot: false } });
+assert.strictEqual(_pendingNewcomers.has(`${TARGET_GUILD_ID}:shy_newcomer_123`), false, '3 mensagens devem remover da fila de tímidos');
+assert.strictEqual(_welcomedOnceSet.has(`${TARGET_GUILD_ID}:shy_newcomer_123`), true, 'Deve ser adicionado a welcomedOnceSet');
 console.log('  ✅ 3. Filtro de mensagens (< 3) e acolhimento autônomo validados.');
 
 // Teste de construção do payload com menções e tutorial de canais e cargos

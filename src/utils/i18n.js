@@ -383,6 +383,29 @@ const TRANSLATIONS = {
       "card": "🔥 A call {channel} está animada agora, com {count} pessoas conversando. Chega mais!",
       "join": "Entrar na call"
     },
+    "welcomeFlow": {
+      "customTitle": "🎉 Boas-vindas a {server}!",
+      "customDescription": "Que bom ter você aqui, {user}! Seja muito bem-vindo(a) à nossa comunidade.\n\nAtualmente somos **{memberCount}** pessoas.",
+      "customFooter": "{server} • Membro #{count}",
+      "customContent": "Bem-vindo(a) {user} a **{server}**! ✨",
+      "contentRole": "{user} chegou! {role}, recebam nossa nova pessoa com carinho 💗",
+      "content": "{user} chegou! Recebam nossa nova pessoa com carinho 💗",
+      "guideTitle": "Uma nova pessoa chegou",
+      "guideIntro": "Que bom ter você aqui, **{name}**! Seja muito bem-vindo(a) a **{server}**!",
+      "rulesTitle": "📜 Regras do servidor",
+      "rulesText": "Consulte {channel} para conhecer nossas diretrizes e manter um ambiente acolhedor.",
+      "guidesTitle": "🧭 Explore o servidor",
+      "guidesText": "Veja tutoriais e canais importantes em {channel}.",
+      "rolesTitle": "🎨 Personalize sua experiência",
+      "rolesText": "Escolha suas cores e cargos em {channel}.",
+      "guideFooter": "{server} • Desejamos ótimos momentos na comunidade!",
+      "checkinRolesTitle": "💡 Canais e Cargos",
+      "checkinRolesText": "No topo da lista de canais, clique na opção **Canais e Cargos** (<id:customize>) para escolher pronomes, cores e ativar notificações sem receber menções indesejadas!",
+      "checkinNote": "🌸 Sinta-se em casa para explorar tudo no seu próprio ritmo.",
+      "checkinFooter": "{server} • Acolhimento 100% Neuroafirmativo & Gentil",
+      "checkinButton": "👋 Ir para Apresentações",
+      "checkinContent": "🌸 Um abraço afetuoso aos nossos novos amigos: {users}"
+    },
     "periodic": {
       "bump": {
         "title": "🚀 Como apoiar {server}",
@@ -430,6 +453,7 @@ const TRANSLATIONS = {
         "daily": "todo dia às {time} (Brasília)",
         "weekly": "{days}, às {hour} (Brasília)",
         "afterBump": "{hours} horas depois de cada bump",
+        "afterJoin": "lote diário para quem entrou há {hours} horas ou mais e ainda não puxou conversa",
         "weekday": {
           "0": "domingo",
           "1": "segunda",
@@ -3083,6 +3107,29 @@ const TRANSLATIONS = {
       "card": "🔥 The {channel} call is lively right now, with {count} people chatting. Come join!",
       "join": "Join the call"
     },
+    "welcomeFlow": {
+      "customTitle": "🎉 Welcome to {server}!",
+      "customDescription": "So glad you're here, {user}! Welcome to our community.\n\nThere are **{memberCount}** of us right now.",
+      "customFooter": "{server} • Member #{count}",
+      "customContent": "Welcome {user} to **{server}**! ✨",
+      "contentRole": "{user} just arrived! {role}, please give our new person a warm welcome 💗",
+      "content": "{user} just arrived! Please give our new person a warm welcome 💗",
+      "guideTitle": "Someone new just arrived",
+      "guideIntro": "So glad you're here, **{name}**! Welcome to **{server}**!",
+      "rulesTitle": "📜 Server rules",
+      "rulesText": "Check {channel} to learn our guidelines and help keep this a welcoming place.",
+      "guidesTitle": "🧭 Explore the server",
+      "guidesText": "Find tutorials and key channels in {channel}.",
+      "rolesTitle": "🎨 Make it yours",
+      "rolesText": "Pick your colors and roles in {channel}.",
+      "guideFooter": "{server} • We hope you have a great time here!",
+      "checkinRolesTitle": "💡 Channels & Roles",
+      "checkinRolesText": "At the top of the channel list, click **Channels & Roles** (<id:customize>) to pick pronouns, colors and notifications without getting unwanted pings!",
+      "checkinNote": "🌸 Make yourself at home and explore everything at your own pace.",
+      "checkinFooter": "{server} • 100% Neuro-affirming & Gentle Welcome",
+      "checkinButton": "👋 Go to introductions",
+      "checkinContent": "🌸 A warm hug to our new friends: {users}"
+    },
     "periodic": {
       "bump": {
         "title": "🚀 How to support {server}",
@@ -3130,6 +3177,7 @@ const TRANSLATIONS = {
         "daily": "every day at {time} (Brasília)",
         "weekly": "{days}, at {hour} (Brasília)",
         "afterBump": "{hours} hours after each bump",
+        "afterJoin": "daily batch for people who joined {hours} hours ago or more and have not started chatting yet",
         "weekday": {
           "0": "Sunday",
           "1": "Monday",
