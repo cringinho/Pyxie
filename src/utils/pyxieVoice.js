@@ -82,6 +82,8 @@ function getRandomPhrase(category = 'welcome') {
 module.exports = {
   PYXIE_COLORS,
   PYXIE_FOOTER,
+  ROTATING_TIPS,
+  getRandomTip,
   pyxieFooter,
   PYXIE_PHRASES,
   getRandomPhrase,

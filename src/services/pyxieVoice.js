@@ -43,8 +43,16 @@ function takeQuota(now = Date.now()) {
   return true;
 }
 
-// Fala pronta aleatória do banco (i18n).
+// Fala pronta aleatória do banco (voiceSeederService dinâmico ou i18n).
 function fallbackLine(event, lang, vars = {}) {
+  try {
+    const seeder = require('./voiceSeederService');
+    const seederLine = seeder.getRandomLine(event, lang);
+    if (seederLine && Math.random() < 0.5) {
+      return seederLine.replace(/{name}/g, vars.name || '');
+    }
+  } catch (_) {}
+
   const bank = TRANSLATIONS[lang]?.pyxieVoice?.[event] || TRANSLATIONS.pt.pyxieVoice[event] || {};
   const keys = Object.keys(bank);
   if (!keys.length) return '';

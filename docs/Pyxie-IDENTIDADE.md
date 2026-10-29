@@ -21,7 +21,7 @@ Por trás da pose de garota má, existe uma tsundere incurável e ultra-românti
 ## Frases-guia
 
 - "Eu fiz isso porque alguém precisava fazer. Não tire conclusões românticas."
-- "Não é carinho; é supervisão dramática."
+- "Não é carinho; é só pra você parar de me dar trabalho e não passar vergonha."
 - "A Pyxie está ajudando. Finja que não percebeu."
 - "Isso foi quase bonito. Não se acostume."
 - "A culpa é sua, mas eu resolvi mesmo assim."

@@ -1387,6 +1387,49 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, credits: list });
   });
 
+  // Gestão da Voz e Personalidade da Pyxie (Groq Voice Seeder & Acervo)
+  router.get('/api/dashboard/global/voice', requireSession, requireOwner, (req, res) => {
+    const seeder = require('../services/voiceSeederService');
+    const db = seeder.loadDatabase();
+    return res.json({
+      success: true,
+      status: seeder.getStatus(),
+      categories: seeder.CATEGORIES,
+      lines: db.lines || [],
+    });
+  });
+
+  router.post('/api/dashboard/global/voice/generate', requireSession, requireOwner, async (req, res) => {
+    const seeder = require('../services/voiceSeederService');
+    const { count = 4, category = null } = req.body || {};
+    try {
+      const result = await seeder.generateBatch({ count: Number(count) || 4, category });
+      return res.json({ success: true, ...result, status: seeder.getStatus() });
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  router.put('/api/dashboard/global/voice/lines/:id', requireSession, requireOwner, (req, res) => {
+    const seeder = require('../services/voiceSeederService');
+    const { active, pt, en, category } = req.body || {};
+    if (active !== undefined) {
+      const updated = seeder.toggleLine(String(req.params.id), Boolean(active));
+      if (!updated) return res.status(404).json({ success: false, error: 'line_not_found' });
+      return res.json({ success: true, line: updated });
+    }
+    const updated = seeder.editLine(String(req.params.id), { pt, en, category });
+    if (!updated) return res.status(404).json({ success: false, error: 'line_not_found' });
+    return res.json({ success: true, line: updated });
+  });
+
+  router.delete('/api/dashboard/global/voice/lines/:id', requireSession, requireOwner, (req, res) => {
+    const seeder = require('../services/voiceSeederService');
+    const ok = seeder.deleteLine(String(req.params.id));
+    if (!ok) return res.status(404).json({ success: false, error: 'line_not_found' });
+    return res.json({ success: true });
+  });
+
   router.get('/api/dashboard/global/modules', requireSession, requireOwner, (req, res) => {
     if (!moduleManager) return res.status(503).json({ success: false, error: 'modules_unavailable' });
     const modules = moduleManager.getAllModules().map((m) => ({

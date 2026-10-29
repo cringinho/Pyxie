@@ -17,6 +17,7 @@ const { reloadEmojiConfig } = require('./src/utils/appEmojis');
 const shopeeManager = require('./src/services/shopeeManager');
 const workSeederService = require('./src/services/workSeederService');
 const quizSeederService = require('./src/services/quizSeederService');
+const voiceSeederService = require('./src/services/voiceSeederService');
 const seasonalManager = require('./src/modules/seasonal/seasonalManager');
 const moduleManager = require('./src/services/moduleManager');
 const { serveLocalizedPage } = require('./src/utils/seoRenderer');
@@ -1727,6 +1728,7 @@ const server = app.listen(PORT, HOST, () => {
   startBot();
   workSeederService.startScheduler();
   quizSeederService.startScheduler();
+  voiceSeederService.startScheduler();
 
   // Motor de Ondas de Verificação Contínua (SSOT: VM <-> Painel <-> Site)
   try {
@@ -1756,6 +1758,7 @@ server.on('clientError', (err, socket) => {
 function handleServerShutdown() {
   workSeederService.stopScheduler();
   quizSeederService.stopScheduler();
+  voiceSeederService.stopScheduler();
   flushSync();
   if (botProcess && !botProcess.killed) {
     try { botProcess.kill('SIGTERM'); } catch (_) {}

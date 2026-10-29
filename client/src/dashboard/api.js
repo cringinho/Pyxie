@@ -155,4 +155,9 @@ export const api = {
   publishVerification: (id) => request(`/api/dashboard/guilds/${id}/security/verification/publish`, { method: 'POST', body: {} }),
   saveWarningsConfig: (id, body) => request(`/api/dashboard/guilds/${id}/moderation/warnings-config`, { method: 'PUT', body }),
   updateModCase: (id, caseNumber, body) => request(`/api/dashboard/guilds/${id}/moderation/cases/${encodeURIComponent(caseNumber)}`, { method: 'PATCH', body }),
+  voiceStatus: () => request('/api/dashboard/global/voice'),
+  voiceGenerate: (body) => request('/api/dashboard/global/voice/generate', { method: 'POST', body }),
+  voiceToggle: (id, active) => request(`/api/dashboard/global/voice/lines/${encodeURIComponent(id)}`, { method: 'PUT', body: { active } }),
+  voiceEdit: (id, body) => request(`/api/dashboard/global/voice/lines/${encodeURIComponent(id)}`, { method: 'PUT', body }),
+  voiceDelete: (id) => request(`/api/dashboard/global/voice/lines/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 };
