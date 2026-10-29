@@ -1,4 +1,9 @@
 const { execSync } = require('child_process');
+const path = require('path');
+const nodeDir = path.dirname(process.execPath);
+const gitBin = 'C:\\Program Files\\Git\\bin';
+process.env.PATH = `${nodeDir};${gitBin};${process.env.PATH}`;
+
 
 function run(cmd, desc) {
   console.log(`\n🚀 [Deploy] ${desc}...`);

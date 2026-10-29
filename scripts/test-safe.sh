@@ -10,6 +10,7 @@
 # Uso: ./scripts/test-safe.sh [arquivo de log]   (padrão: test.log)
 # Sai com o mesmo código da suíte.
 set -u
+export PATH="$PATH:/c/Program Files/nodejs:/c/Program Files/Git/cmd:/c/Program Files/Git/bin"
 
 cd "$(dirname "$0")/.." || exit 1
 
