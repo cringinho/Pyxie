@@ -28,11 +28,15 @@ class GiveawayHandler {
     }
   }
 
-  async createGiveaway({ channelId, prize, durationMinutes = 60, winnersCount = 1 }) {
-    if (!this.manager.client) throw new Error('Cliente Discord offline.');
-    const channel = await this.manager.client.channels.fetch(channelId).catch(() => null);
-    if (!channel || typeof channel.send !== 'function') {
-      throw new Error('Canal de sorteio não encontrado.');
+  // post(channelId, body): envio pelo REST quando quem chama é o site (o painel não tem o cliente do bot).
+  async createGiveaway({ channelId, prize, durationMinutes = 60, winnersCount = 1 }, { post = null } = {}) {
+    let channel = null;
+    if (!post) {
+      if (!this.manager.client) throw new Error('Cliente Discord offline.');
+      channel = await this.manager.client.channels.fetch(channelId).catch(() => null);
+      if (!channel || typeof channel.send !== 'function') {
+        throw new Error('Canal de sorteio não encontrado.');
+      }
     }
 
     const durationMs = (Number(durationMinutes) || 60) * 60 * 1000;
@@ -59,7 +63,9 @@ class GiveawayHandler {
         .setStyle(ButtonStyle.Success)
     );
 
-    const message = await channel.send({ embeds: [embed], components: [row] });
+    const message = post
+      ? await post(channelId, { embeds: [embed.toJSON()], components: [row.toJSON()], allowed_mentions: { parse: [] } })
+      : await channel.send({ embeds: [embed], components: [row] });
 
     const storeData = this.manager.loadStoreData();
     storeData.giveaways[giveawayId] = {

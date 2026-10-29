@@ -190,6 +190,43 @@ function cookieFor(userId, guilds = []) {
     assert.equal((await call('/api/dashboard/global/red-flags', { cookie: cookieFor(ADMIN_A) })).status, 403);
     console.log('  ✅ 4. Backend recusa servidores de outra pessoa, Cringelândia e Mary.');
 
+    // 4b. Estúdio da Mary no painel: só na zona mary, IDs conferidos, ação da lojinha só no servidor dela.
+    const maryInfo = await (await call(`/api/dashboard/guilds/${MARY_GUILD_ID}`, { cookie: maryCookie })).json();
+    for (const id of ['maryStore', 'maryTools', 'maryProfile']) assert.ok(maryInfo.sections.includes(id), `Mary tem a seção ${id}`);
+    const adminInfo = await (await call(`/api/dashboard/guilds/${GUILD_A}`, { cookie: adminCookie })).json();
+    assert.ok(!adminInfo.sections.some((s) => s.startsWith('mary')), 'Outros servidores não veem as telas da Mary');
+    assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/store`, { cookie: maryCookie })).status, 200);
+    assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/store`, { cookie: ownerCookie })).status, 200, 'O dono também abre a lojinha');
+    assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/store`, { cookie: adminCookie })).status, 403, 'Admin comum não abre a lojinha');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/mary/store`, { cookie: adminCookie })).status, 403, 'Rotas da Mary recusam outra zona');
+    let maryRes = await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/store`, { cookie: maryCookie, method: 'PUT', body: { statusLoja: 'fila', estoqueRobux: 5000, preco1k: 35.5 } });
+    const savedStore = (await maryRes.json()).store;
+    assert.equal(savedStore.statusLoja, 'fila');
+    assert.equal(savedStore.variables.preco_1k, 'R$ 35,50', 'Variáveis das mensagens seguem a lojinha');
+    assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/store`, { cookie: maryCookie, method: 'PUT', body: { channelReviews: '888888888888888888' } })).status, 400, 'Canal de fora é recusado');
+    assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/store`, { cookie: maryCookie, method: 'PUT', body: { channelReviews: '777777777777777777' } })).status, 200);
+    assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/store`, { cookie: maryCookie, method: 'PUT', body: { statusLoja: 'aberta' } })).status, 400);
+    const calc = await (await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/calc`, { cookie: maryCookie, method: 'POST', body: { robux: 1000 } })).json();
+    assert.equal(calc.result.gamepass, 1429, 'Calculadora dos 30%');
+    maryRes = await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/templates/vitrine_principal`, { cookie: maryCookie, method: 'POST', body: {} });
+    const tplId = (await maryRes.json()).id;
+    const tplDoc = (await (await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/studio/${tplId}`, { cookie: maryCookie })).json()).message;
+    assert.ok(tplDoc.buttons.some((b) => b.action.type === 'mary' && b.action.kind === 'ticket'), 'Modelo traz botão de ticket da lojinha');
+    assert.ok(tplDoc.buttons.some((b) => b.action.type === 'tab') && tplDoc.tabs.length > 0, 'Card explicativo vira aba privada');
+    const maryButton = { id: 'b1', label: 'Calcular', style: 'success', action: { type: 'mary', kind: 'calculator' } };
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/studio/loja`, { cookie: adminCookie, method: 'PUT', body: { name: 'Loja', buttons: [maryButton] } })).status, 403, 'Ação da lojinha só no servidor da Mary');
+    assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/studio/loja`, { cookie: maryCookie, method: 'PUT', body: { name: 'Loja', envelope: { content: 'Estoque: {estoque}' }, buttons: [maryButton] } })).status, 200);
+    const maryPayload = require('../src/services/messageStudio').buildPayload(require('../src/services/messageStudioStore').getMessage(MARY_GUILD_ID, 'loja'), { vars: require('../src/services/messageStudio').guildVars(MARY_GUILD_ID) });
+    assert.equal(maryPayload.components[0].components[0].custom_id, 'mary_btn:calculator:b1', 'Botão vai para o handler da lojinha');
+    assert.equal(maryPayload.content, 'Estoque: 5.000 R$', 'Variável da lojinha resolvida no envio');
+    const upload = (body, type) => fetch(`${base}/api/dashboard/guilds/${MARY_GUILD_ID}/mary/upload`, { method: 'POST', headers: { Cookie: maryCookie, 'X-Pyxie-Panel': '1', 'Content-Type': type }, body });
+    const png = Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8cfc0f01f0005000201a5c2b5e10000000049454e44ae426082', 'hex');
+    maryRes = await upload(png, 'image/png');
+    assert.equal(maryRes.status, 200, 'PNG de verdade é aceito');
+    assert.match((await maryRes.json()).url, /\/api\/mary\/media\/mary_\w+\.png$/);
+    assert.equal((await upload(Buffer.from('<script>alert(1)</script>'), 'image/png')).status, 400, 'Arquivo que não é imagem é recusado');
+    console.log('  ✅ 4b. Telas da Mary: zona, canais conferidos, modelos, botões da lojinha e upload seguro.');
+
     // 5. Permissão conferida ao vivo: perdeu o cargo, perdeu o acesso.
     live.members[`${GUILD_A}:${ADMIN_A}`].isAdmin = false;
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}`, { cookie: adminCookie })).status, 403);

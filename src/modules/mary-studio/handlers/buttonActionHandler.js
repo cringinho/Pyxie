@@ -9,6 +9,7 @@ const {
 } = require('discord.js');
 
 const robloxHelper = require('../utils/robloxHelper');
+const { MARY_GUILD_ID } = require('../../../config/scopes');
 
 class ButtonActionHandler {
   constructor() {
@@ -25,8 +26,15 @@ class ButtonActionHandler {
     }
   }
 
+  // Os botões da lojinha só valem no servidor da Mary.
+  isMaryGuild(guildId) {
+    if (!guildId) return false;
+    return guildId === MARY_GUILD_ID || guildId === this.manager?.loadConfig()?.guildId;
+  }
+
   async handleInteraction(interaction) {
     try {
+      if (!this.isMaryGuild(interaction.guildId)) return;
       if (interaction.isButton() && interaction.customId.startsWith('mary_btn:')) {
         await this.handleButton(interaction);
       } else if (interaction.isModalSubmit() && interaction.customId.startsWith('mary_modal:')) {

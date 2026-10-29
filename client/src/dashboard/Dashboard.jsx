@@ -24,11 +24,12 @@ import Injections from './Injections';
 import Automations from './Automations';
 import BotPermissions from './Permissions';
 import Tickets from './Tickets';
+import { MaryProfile, MaryStore, MaryTools } from './Mary';
 
-// Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
+// Rotas por hash: #/ (seletor), #/guild/<id>/<seção>[/<item>], #/global/<seção>.
 function parseHash() {
   const parts = window.location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
-  if (parts[0] === 'guild' && parts[1]) return { view: 'guild', guildId: parts[1], section: parts[2] || 'overview' };
+  if (parts[0] === 'guild' && parts[1]) return { view: 'guild', guildId: parts[1], section: parts[2] || 'overview', item: parts[3] || null };
   if (parts[0] === 'appeal') return { view: 'appeal' };
   if (parts[0] === 'global') return { view: 'global', section: parts[1] || 'health', item: parts[2] || null };
   return { view: 'picker' };
@@ -120,7 +121,7 @@ export default function Dashboard() {
       </Layout>
     );
   }
-  if (route.view === 'guild') return <GuildView shell={shell} guildId={route.guildId} section={route.section} />;
+  if (route.view === 'guild') return <GuildView shell={shell} guildId={route.guildId} section={route.section} item={route.item} />;
   if (route.view === 'global' && me?.user?.isOwner) return <GlobalView shell={shell} section={route.section} item={route.item} />;
   return <Picker shell={shell} />;
 }
@@ -345,7 +346,7 @@ function Activity({ t, guildId }) {
 // Seções de formulário ficam numa coluna mais estreita; as de grade usam a largura toda.
 const WIDE_SECTIONS = new Set(['overview', 'features', 'embeds', 'commands', 'emojiUsage', 'injections', 'automations']);
 
-function GuildView({ shell, guildId, section }) {
+function GuildView({ shell, guildId, section, item }) {
   const { t, lang, me } = shell;
   const info = useLoad(() => api.guild(guildId), [guildId]);
   const fallbackGuild = me.guilds.find((g) => g.id === guildId);
@@ -361,7 +362,6 @@ function GuildView({ shell, guildId, section }) {
 
   const { guild, zone, role, sections } = info.data;
   const ids = [...sections];
-  if (zone === 'mary') ids.push('tools');
   const current = ids.includes(section) ? section : 'overview';
   const g = guild || fallbackGuild;
   const name = g?.name || guildId;
@@ -393,7 +393,7 @@ function GuildView({ shell, guildId, section }) {
         {current === 'studio' && (
           <div className="space-y-4">
             <BotPermissions t={t} guildId={guildId} needs={SECTION_NEEDS.studio} />
-            <Studio t={t} guildId={guildId} guildName={name} isOwner={me.user.isOwner} />
+            <Studio t={t} guildId={guildId} guildName={name} isOwner={me.user.isOwner} zone={zone} openId={item} />
           </div>
         )}
         {current === 'features' && (
@@ -426,6 +426,9 @@ function GuildView({ shell, guildId, section }) {
         {current === 'roles' && <Roles t={t} guildId={guildId} />}
         {current === 'access' && <Access t={t} guildId={guildId} />}
         {current === 'tools' && <Tools t={t} zone={zone} lang={lang} guildId={guildId} isOwner={me.user.isOwner} />}
+        {current === 'maryStore' && <MaryStore t={t} guildId={guildId} />}
+        {current === 'maryTools' && <MaryTools t={t} guildId={guildId} />}
+        {current === 'maryProfile' && <MaryProfile t={t} guildId={guildId} />}
       </div>
     </Layout>
   );
@@ -751,16 +754,6 @@ function Access({ t, guildId }) {
 
 function Tools({ t, zone, lang, guildId, isOwner }) {
   const suffix = lang === 'en' ? '?lang=en' : '';
-  if (zone === 'mary') {
-    return (
-      <Card title={t('tools.mary')}>
-        <p className="mb-4 text-sm text-white/70">{t('tools.maryHint')}</p>
-        <a href="/mary" className="flex min-h-[44px] items-center justify-center rounded-xl bg-pyxie-pink font-semibold">
-          {t('tools.mary')}
-        </a>
-      </Card>
-    );
-  }
   const links = [
     { href: `/admin/parcerias${suffix}`, label: t('tools.partnerships') },
     { href: '/admin', label: t('tools.legacy') },

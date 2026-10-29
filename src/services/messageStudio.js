@@ -34,6 +34,7 @@ const BUTTON_STYLES = { primary: 1, secondary: 2, success: 3, danger: 4, link: 5
 const ID_RE = /^[a-z0-9-]{1,40}$/;
 const BUTTON_ID_RE = /^[a-z0-9]{1,12}$/;
 const SNOWFLAKE_RE = /^\d{17,20}$/;
+const MARY_KINDS = ['calculator', 'roblox_check', 'ticket', 'review'];
 
 const str = (v, max = 10000) => (typeof v === 'string' ? v.slice(0, max) : '');
 const isUrl = (v) => typeof v === 'string' && /^https:\/\/\S+$/i.test(v);
@@ -70,7 +71,7 @@ function normalizeEmbed(raw = {}) {
 
 function normalizeButton(raw = {}, index = 0) {
   const action = raw.action || {};
-  const type = ['link', 'role', 'modal', 'tab', 'silent'].includes(action.type) ? action.type : 'link';
+  const type = ['link', 'role', 'modal', 'tab', 'silent', 'mary'].includes(action.type) ? action.type : 'link';
   const clean = {
     id: BUTTON_ID_RE.test(raw.id || '') ? raw.id : `b${index}`,
     label: str(raw.label, 100),
@@ -98,6 +99,8 @@ function normalizeButton(raw = {}, index = 0) {
       required: f?.required !== false,
     }));
   }
+  // Ações da lojinha da Mary (calculadora, conferir nick, ticket, avaliação): só no servidor dela.
+  if (type === 'mary') clean.action.kind = MARY_KINDS.includes(action.kind) ? action.kind : 'calculator';
   if (type === 'tab') {
     clean.action.tabId = BUTTON_ID_RE.test(action.tabId || '') ? action.tabId : '';
     clean.action.private = action.private !== false;
@@ -352,7 +355,18 @@ function resolveText(text, ctx = {}) {
     .replace(/\{server\.icon\}/g, ctx.guild?.iconUrl || '')
     .replace(/\{server\}/g, ctx.guild?.name || '')
     .replace(/\{bot\.avatar\}/g, ctx.botAvatarUrl || '')
-    .replace(/\{date\}/g, date);
+    .replace(/\{date\}/g, date)
+    .replace(/\{([a-z0-9_]+)\}/g, (m, k) => (ctx.vars && Object.prototype.hasOwnProperty.call(ctx.vars, k) ? ctx.vars[k] : m));
+}
+
+// Variáveis próprias de um servidor ({estoque}, {preco_1k}... na lojinha da Mary).
+function guildVars(guildId) {
+  if (String(guildId) !== require('../config/scopes').MARY_GUILD_ID) return null;
+  try {
+    return require('../modules/mary-studio/maryStudioManager').getVariables();
+  } catch (_) {
+    return null;
+  }
 }
 
 // ---------- Montagem do payload ----------
@@ -373,6 +387,7 @@ function buildButton(doc, b, ctx) {
   if (emojiRaw) out.emoji = parseEmoji(emojiRaw);
   // Link fora do ar (monitor de links): usa o reserva ou a cópia do Web Archive enquanto isso.
   if (b.action.type === 'link') out.url = require('./linkSentinel').resolveLiveUrl(b.action.url);
+  else if (b.action.type === 'mary') out.custom_id = `mary_btn:${b.action.kind}:${b.id}`;
   else out.custom_id = `pyxs:${b.action.type}:${doc.id}:${b.id}`;
   return out;
 }
@@ -471,6 +486,8 @@ function buildPayload(doc, ctx = {}, options = {}) {
 module.exports = {
   LIMITS,
   MESSAGE_FLAGS,
+  MARY_KINDS,
+  guildVars,
   slugify,
   normalizeMessage,
   validateMessage,

@@ -4,7 +4,7 @@ O teste automático `node scripts/smoke_all_commands.js` já roda todos os 59 co
 
 ## 0. Antes de tudo (na VM)
 
-- [ ] `PANEL_SECRET`, `MARY_STUDIO_SECRET` e `DISCORD_CLIENT_SECRET` no `.env` (`cut -d= -f1 .env` mostra os nomes).
+- [ ] `PANEL_SECRET` e `DISCORD_CLIENT_SECRET` no `.env` (`cut -d= -f1 .env` mostra os nomes).
 - [ ] `https://pyxie.com.br/auth/discord/callback` cadastrado em Developer Portal → OAuth2 → Redirects.
 - [ ] `./deploy.sh` rodou e o log mostra um registro de slash commands para a Cringelândia e outro para o servidor da Mary.
 
@@ -14,7 +14,7 @@ O teste automático `node scripts/smoke_all_commands.js` já roda todos os 59 co
 - [ ] Você vê "Pyxie (global)" e todos os servidores; Saúde, Erros e Módulos mostram números reais.
 - [ ] Na Cringelândia: aba **Ferramentas** abre Sazonal, Parcerias e o painel antigo sem pedir senha.
 - [ ] Peça para alguém que é admin de outro servidor (e não da Cringelândia) entrar: essa pessoa **não** vê a Cringelândia nem o servidor da Mary.
-- [ ] A Mary entra e vê o servidor dela, com o botão do `/mary`.
+- [ ] A Mary entra e vê o servidor dela, com Lojinha, Ferramentas Robux e Aparência da Pyxie no menu. O `py!mary` manda o link do painel na DM.
 - [ ] `/admin` antigo: só Shopee, Emojis, Módulos e Museu.
 
 ## 2. Estúdio de mensagens

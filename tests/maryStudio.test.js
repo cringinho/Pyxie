@@ -6,16 +6,21 @@ console.log('🎀 Iniciando suíte de testes de Engenharia: Módulo Mary Studio 
 
 // 1. Isola os caminhos de dados para testes limpos
 const testDataDir = path.join(__dirname, 'test-data-mary');
-if (!fs.existsSync(testDataDir)) fs.mkdirSync(testDataDir, { recursive: true });
+fs.rmSync(testDataDir, { recursive: true, force: true });
+fs.mkdirSync(testDataDir, { recursive: true });
 
-process.env.MARY_SECURITY_PATH = path.join(testDataDir, 'marySecurity.test.json');
-process.env.MARY_STUDIO_SECRET = 'mary-studio-test-secret-only-for-ci';
+// Os dados da Mary e do estúdio do painel vão para a pasta do teste (nada toca em data/).
+process.env.PYXIE_DATA_DIR = testDataDir;
 
 const securityGuard = require('../src/modules/mary-studio/utils/securityGuard');
 const robloxHelper = require('../src/modules/mary-studio/utils/robloxHelper');
 const templatesCatalog = require('../src/modules/mary-studio/utils/templatesCatalog');
 const maryStudioManager = require('../src/modules/mary-studio/maryStudioManager');
 const maryStudioModule = require('../src/modules/mary-studio/index');
+const maryDashboard = require('../src/modules/mary-studio/maryDashboard');
+const studioConvert = require('../src/modules/mary-studio/studioConvert');
+const studioStore = require('../src/services/messageStudioStore');
+const { MARY_GUILD_ID } = require('../src/config/scopes');
 const buttonActionHandler = require('../src/modules/mary-studio/handlers/buttonActionHandler');
 const reviewHandler = require('../src/modules/mary-studio/handlers/reviewHandler');
 const { COMMAND_CATEGORY_MAP } = require('../src/commands/commandHelpers');
@@ -24,77 +29,27 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
 (async () => {
   try {
     // =========================================================================
-    // 1. SEGURANÇA E CONTROLE DE ACESSO ESTRITO (securityGuard.js)
+    // 1. QUEM PODE USAR AS AÇÕES DA MARY NO DISCORD (securityGuard.js)
     // =========================================================================
-    console.log('  🔒 1. Testando segurança e controle de acesso...');
+    console.log('  🔒 1. Testando quem pode usar as ações da Mary...');
 
-    // 1.1 Whitelist de Identidade
     assert.equal(securityGuard.isAuthorizedUser(securityGuard.MARY_DISCORD_ID), true, 'Mary deve ser autorizada');
     assert.equal(securityGuard.isAuthorizedUser(securityGuard.OWNER_SNOWFLAKE), true, 'Owner deve ser autorizado');
     assert.equal(securityGuard.isAuthorizedUser('999999999999999999'), false, 'Usuário estranho deve ser bloqueado');
     assert.equal(securityGuard.isAuthorizedUser(''), false, 'ID vazio deve ser bloqueado');
+    assert.equal(typeof securityGuard.createMagicLink, 'undefined', 'O link mágico do app antigo não existe mais');
+    assert.ok(!fs.existsSync(path.join(__dirname, '..', 'src', 'modules', 'mary-studio', 'public')), 'O app web antigo foi apagado');
 
-    // 1.2 Link Mágico HMAC de Uso Único
-    const magic = securityGuard.createMagicLink(securityGuard.MARY_DISCORD_ID, { editMessageId: 'msg_test_123' });
-    assert.equal(magic.success, true, 'Link mágico deve ser criado com sucesso');
-    assert.ok(magic.token, 'Token deve existir');
-    assert.ok(magic.url.includes('/mary/auth/magic?token='), 'URL deve apontar para a rota de passagem');
+    // Endereços antigos levam à lojinha no painel; imagens antigas continuam servidas.
+    const routes = [];
+    maryStudioModule.setupWebRoutes({ get: (p, h) => routes.push({ p, h }), use: (p) => routes.push({ p }) });
+    assert.ok(routes.some((r) => r.p === '/api/mary/media'), 'Imagens antigas continuam em /api/mary/media');
+    const legacyRoute = routes.find((r) => Array.isArray(r.p) && r.p.includes('/mary'));
+    let redirectedTo = null;
+    legacyRoute.h({}, { setHeader: () => {}, redirect: (code, url) => { redirectedTo = url; } });
+    assert.ok(/^\/dashboard#\/guild\/\d+\/maryStore$/.test(redirectedTo), '/mary redireciona para a Lojinha do painel');
 
-    // 1.3 Consumo do Token (Primeira vez: Sucesso)
-    const mockReq = {
-      headers: { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0' },
-      ip: '192.168.1.100',
-    };
-    const firstConsume = securityGuard.consumeMagicToken(magic.token, mockReq);
-    assert.equal(firstConsume.valid, true, 'Primeiro consumo do link mágico deve ser válido');
-    assert.ok(firstConsume.sessionToken, 'Deve retornar sessionToken seguro');
-    assert.equal(firstConsume.editMessageId, 'msg_test_123', 'Deve propagar editMessageId');
-
-    // 1.4 Consumo do Token (Segunda vez: Single-Use Token Replay Block)
-    const secondConsume = securityGuard.consumeMagicToken(magic.token, mockReq);
-    assert.equal(secondConsume.valid, false, 'Segundo consumo do mesmo link mágico DEVE ser rejeitado');
-    assert.ok(secondConsume.error.includes('já foi consumido'), 'Mensagem de erro deve indicar reutilização proibida');
-
-    // 1.5 Token Adulterado (Assinatura Inválida)
-    const badToken = Buffer.from(JSON.stringify({ payload: JSON.stringify({ userId: securityGuard.MARY_DISCORD_ID }), sig: 'fake_signature' })).toString('base64url');
-    const tamperedConsume = securityGuard.consumeMagicToken(badToken, mockReq);
-    assert.equal(tamperedConsume.valid, false, 'Token com assinatura adulterada deve falhar');
-
-    // 1.6 Anti-Crawler Detection (Discordbot / Googlebot / WhatsApp)
-    assert.equal(securityGuard.isCrawler('Mozilla/5.0 (compatible; Discordbot/2.0; +https://discord.com)'), true, 'Discordbot deve ser detectado como crawler');
-    assert.equal(securityGuard.isCrawler('Twitterbot/1.0'), true, 'Twitterbot deve ser detectado como crawler');
-    assert.equal(securityGuard.isCrawler('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148'), false, 'Navegador de celular real não deve ser crawler');
-
-    // 1.7 Rate Limiter e Bloqueio Automático de IP
-    const testIp = '10.0.0.99';
-    for (let i = 0; i < 5; i++) {
-      securityGuard.recordFailedAttempt(testIp);
-    }
-    assert.equal(securityGuard.isIpBlocked(testIp), true, 'Após 5 tentativas falhas, IP deve ser bloqueado');
-    assert.equal(securityGuard.isIpBlocked('10.0.0.100'), false, 'IP limpo não deve ser bloqueado');
-
-    // 1.8 Validação de Sessão Ativa
-    assert.equal(securityGuard.isValidSession(firstConsume.sessionToken), true, 'Sessão recém-criada deve ser válida');
-    assert.equal(securityGuard.isValidSession('invalid_session_token_xyz'), false, 'Sessão inexistente deve ser inválida');
-
-    // 1.9 CSRF Protection Middleware
-    let nextCalled = false;
-    const mockCsrfReq = { method: 'POST', path: '/api/mary/messages/send', headers: { 'x-mary-csrf': '1' } };
-    const mockRes = { status: (code) => ({ json: (data) => ({ code, data }) }) };
-    securityGuard.csrfProtection(mockCsrfReq, mockRes, () => { nextCalled = true; });
-    assert.equal(nextCalled, true, 'Request com X-Mary-CSRF: 1 deve passar');
-
-    let csrfBlocked = false;
-    const mockBadCsrfReq = { method: 'POST', path: '/api/mary/messages/send', headers: {} };
-    securityGuard.csrfProtection(mockBadCsrfReq, {
-      status: (code) => {
-        if (code === 403) csrfBlocked = true;
-        return { json: () => {} };
-      },
-    }, () => {});
-    assert.equal(csrfBlocked, true, 'Request sem X-Mary-CSRF deve receber 403');
-
-    console.log('  ✅ 1. Todas as 6 camadas de segurança e controle de acesso validadas com 100% de sucesso.');
+    console.log('  ✅ 1. Acesso da Mary e do dono, sem link mágico, e endereços antigos redirecionados.');
 
     // =========================================================================
     // 2. CICLO DE VIDA E ZERO MEMORY LEAK NO MODULEMANAGER
@@ -191,93 +146,65 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
     console.log('  ✅ 4. Calculadora Roblox 30% e Gerador PIX EMV validados com sucesso.');
 
     // =========================================================================
-    // 5. ENVIO, EDIÇÃO (message.edit) E DESFAZER (Undo) DE EMBEDS
+    // 5. MENSAGENS DO ESTÚDIO ANTIGO → ESTÚDIO DO PAINEL (sem perder nada)
     // =========================================================================
-    console.log('  ✏️ 5. Testando Envio, Edição e Desfazer (Undo 5 versões)...');
+    console.log('  ✏️ 5. Testando a migração das mensagens antigas para o estúdio do painel...');
 
-    let discordMessageEdited = null;
-    const fakeSentDiscordMsg = {
-      id: 'discord_msg_8888',
-      channelId: 'ch_loja_1',
-      async edit(payload) {
-        discordMessageEdited = payload;
-        return this;
-      },
-    };
-
-    const mockChannel = {
-      id: 'ch_loja_1',
-      name: 'vitrine-robux',
-      guild: { id: 'guild_mary_roblox_777' },
-      async send(payload) {
-        return fakeSentDiscordMsg;
-      },
-      messages: {
-        fetch: async (id) => (id === fakeSentDiscordMsg.id ? fakeSentDiscordMsg : null),
-      },
-    };
-
-    mockDiscordClient.channels = {
-      fetch: async (id) => (id === 'ch_loja_1' ? mockChannel : null),
-    };
-
-    maryStudioManager.init(mockDiscordClient, mockCtx);
-
-    // 5.1 Enviar mensagem
-    const sendResult = await maryStudioManager.sendMessage('ch_loja_1', {
+    const legacyStore = maryStudioManager.loadMessages();
+    legacyStore.messages.msg_1712345_ab12 = {
+      recordId: 'msg_1712345_ab12',
+      guildId: MARY_GUILD_ID,
+      channelId: '1600000000000000001',
+      channelName: 'vitrine-robux',
+      messageId: '1600000000000000002',
       content: 'Avisos da Loja',
-      embed: {
-        title: '💎 Tabela de Robux da Mary',
-        description: 'Temos {estoque} Robux disponíveis por apenas R$ {preco_1k} o pacote de 1k!',
-        color: '#ec4899',
-      },
+      embed: { title: '💎 Tabela de Robux', description: 'Temos {estoque} por {preco_1k}!', color: '#ec4899', footerText: 'Mary Store', showTimestamp: true },
       buttons: [
-        { label: '📘 Como Criar Gamepass', style: 'Secondary', actionType: 'custom', id: 'btn_help' },
+        { id: 'btn_calc', label: 'Calcular', emoji: '🧮', style: 'Success', actionType: 'calculator' },
+        { id: 'btn_help', label: 'Como Criar Gamepass', style: 'Secondary', actionType: 'image_response', responseText: 'Passo a passo', responseImageUrl: 'https://example.com/guia.png' },
+        { id: 'btn_site', label: 'Site', style: 'Link', url: 'https://example.com' },
       ],
-    });
+      versions: [],
+      createdAt: 1712345000000,
+    };
+    maryStudioManager.saveMessages(legacyStore);
 
-    assert.equal(sendResult.success, true, 'Envio deve ser bem-sucedido');
-    assert.ok(sendResult.recordId, 'Deve gerar recordId');
+    assert.equal(maryDashboard.migrateLegacyMessages(MARY_GUILD_ID), 1, 'Mensagem antiga levada para o painel');
+    assert.equal(maryDashboard.migrateLegacyMessages(MARY_GUILD_ID), 0, 'Migração roda uma vez só');
+    assert.ok(maryStudioManager.loadMessages().messages.msg_1712345_ab12, 'O arquivo antigo continua intacto');
+    const migrated = studioStore.getMessage(MARY_GUILD_ID, 'mary-msg-1712345-ab12');
+    assert.ok(migrated, 'Documento criado no estúdio do servidor da Mary');
+    assert.equal(migrated.embeds[0].footer.text, 'Mary Store');
+    assert.equal(migrated.sent[0].messageId, '1600000000000000002', 'Ligada à mensagem já postada (dá para atualizar pelo painel)');
+    assert.deepEqual(migrated.buttons.map((b) => b.action.type), ['mary', 'tab', 'link']);
+    assert.equal(migrated.buttons[0].action.kind, 'calculator');
+    assert.equal(migrated.tabs[0].embeds[0].imageUrl, 'https://example.com/guia.png', 'Card explicativo vira aba privada com a imagem');
 
-    // 5.2 Editar mensagem enviada
-    const editResult = await maryStudioManager.editMessage(sendResult.recordId, {
-      content: 'Avisos da Loja (Atualizado)',
-      embed: {
-        title: '💎 Tabela de Robux da Mary [PROMOÇÃO]',
-        description: 'Super oferta de Robux com entrega rápida!',
-        color: '#a855f7',
-      },
-      buttons: [],
-    });
+    // Mensagem postada pela Pyxie → estúdio (menu "✏️ Editar na Pyxie")
+    const posted = {
+      id: '1600000000000000099',
+      channelId: '1600000000000000001',
+      content: 'Oi',
+      embeds: [{ title: 'Vitrine', description: 'Texto', color: 0xec4899, footer: { text: 'Mary' } }],
+      components: [{ type: 1, components: [{ type: 2, style: 3, label: 'Ticket', custom_id: 'mary_btn:ticket:b1' }, { type: 2, style: 5, label: 'Site', url: 'https://example.com' }] }],
+    };
+    const imported = maryDashboard.importDiscordMessage(MARY_GUILD_ID, posted);
+    assert.equal(imported.ok, true);
+    assert.equal(maryDashboard.importDiscordMessage(MARY_GUILD_ID, posted).id, imported.id, 'A mesma mensagem abre o mesmo documento');
+    assert.equal(maryDashboard.importDiscordMessage(MARY_GUILD_ID, { id: '1600000000000000002', channelId: '1', embeds: [], components: [] }).id, 'mary-msg-1712345-ab12', 'Mensagem já migrada é achada pelo envio');
+    const giveawayMsg = { ...posted, id: '1600000000000000100', components: [{ type: 1, components: [{ type: 2, style: 3, label: 'Participar', custom_id: 'mary_giveaway:enter:gw_1' }] }] };
+    assert.equal(maryDashboard.importDiscordMessage(MARY_GUILD_ID, giveawayMsg).error, 'unsupported_buttons', 'Não importa mensagem cujo botão sumiria');
+    assert.equal(studioConvert.fromDiscordMessage(posted).doc.embeds[0].color, '#ec4899');
 
-    assert.equal(editResult.success, true, 'Edição deve ser bem-sucedida');
-    assert.ok(discordMessageEdited, 'Deve chamar message.edit no Discord');
-
-    const savedAfterEdit = maryStudioManager.loadMessages().messages[sendResult.recordId];
-    assert.equal(savedAfterEdit.versions.length, 1, 'Deve guardar versão anterior para Undo');
-    assert.equal(savedAfterEdit.versions[0].content, 'Avisos da Loja', 'Versão arquivada deve ter o conteúdo original');
-
-    // 5.3 Desfazer Edição (Undo)
-    const undoResult = await maryStudioManager.undoMessage(sendResult.recordId);
-    assert.equal(undoResult.success, true, 'Desfazer deve ser bem-sucedido');
-
-    const savedAfterUndo = maryStudioManager.loadMessages().messages[sendResult.recordId];
-    assert.equal(savedAfterUndo.content, 'Avisos da Loja', 'Conteúdo deve ser revertido para o original');
-    assert.equal(savedAfterUndo.versions.length, 0, 'Histórico deve consumir a versão restaurada');
-
-    // 5.4 Prevenção de duplicidade de emoji em botões (Anti-Duplicação Visual)
+    // Prevenção de duplicidade de emoji em botões (handlers antigos ainda usam buildActionRows)
     const testRows = maryStudioManager.buildActionRows([
       { label: '📘 Como Criar Gamepass', emoji: '📘', style: 'Primary' },
       { label: '💰 Tabela de Preços', emoji: '💰', style: 'Secondary' },
     ]);
-    const btn1Json = testRows[0].components[0].toJSON();
-    const btn2Json = testRows[0].components[1].toJSON();
-    assert.equal(btn1Json.label, 'Como Criar Gamepass', 'Emoji duplicado 📘 deve ser removido do label');
-    assert.equal(btn1Json.emoji.name, '📘', 'Emoji nativo deve ser preservado');
-    assert.equal(btn2Json.label, 'Tabela de Preços', 'Emoji duplicado 💰 deve ser removido do label');
-    assert.equal(btn2Json.emoji.name, '💰', 'Emoji nativo deve ser preservado');
+    assert.equal(testRows[0].components[0].toJSON().label, 'Como Criar Gamepass', 'Emoji duplicado 📘 deve ser removido do label');
+    assert.equal(testRows[0].components[1].toJSON().emoji.name, '💰', 'Emoji nativo deve ser preservado');
 
-    console.log('  ✅ 5. Envio, edição com message.edit(), histórico Undo e desduplicação de botões validados com sucesso.');
+    console.log('  ✅ 5. Migração única, arquivo antigo preservado, botões e cards convertidos, menu de editar.');
 
     // =========================================================================
     // 6. CLIQUE NOS BOTÕES INTERATIVOS (buttonActionHandler.js)
@@ -371,11 +298,13 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
     assert.equal(restPatchCalled.data.body.avatar, null, 'Reset deve enviar null para avatar no Discord');
     assert.equal(restPatchCalled.data.body.banner, null, 'Reset deve enviar null para banner no Discord');
 
-    // Teste de Banner no Hub Rápido (/py-mary)
+    // Central rápida (/py-mary): link para a Lojinha no painel, sem link mágico
     const { buildQuickHubView } = require('../src/modules/mary-studio/commands/pyMaryStudio');
-    await maryStudioManager.updateLocalProfile(null, { banner: 'https://cdn.discordapp.com/banners/test_banner.png' });
     const quickHubView = buildQuickHubView(securityGuard.MARY_DISCORD_ID, { user: { id: securityGuard.MARY_DISCORD_ID } });
-    assert.ok(quickHubView.embeds?.[0]?.data?.image?.url === 'https://cdn.discordapp.com/banners/test_banner.png', 'Quick Hub deve exibir banner local no embed.image');
+    const hubLink = quickHubView.components[0].components[0].toJSON().url;
+    assert.match(hubLink, /\/dashboard#\/guild\/\d+\/maryStore$/, 'O botão abre a Lojinha no painel (login com Discord)');
+    assert.ok(!quickHubView.components.some((row) => row.components.some((c) => c.toJSON().custom_id === 'mary_quick:logout_all')), 'Sem botão de sessões do app antigo');
+    assert.equal(buildQuickHubView('999999999999999999', {}).ephemeral, true, 'Estranho recebe só o aviso de acesso negado');
 
     console.log('  ✅ 7. Isolamento de Feature Flags e atualização do Perfil Local (@me) com Foto, Banner e Bio validados.');
 
@@ -398,8 +327,11 @@ const { TRANSLATIONS } = require('../src/utils/i18n');
 
     assert.ok(TRANSLATIONS.pt.mary, 'TRANSLATIONS.pt deve conter chave mary');
     assert.ok(TRANSLATIONS.en.mary, 'TRANSLATIONS.en deve conter chave mary');
-    assert.equal(TRANSLATIONS.pt.mary.access_denied, '🔒 Acesso negado. Este estúdio administrativo é exclusivo da Mary.');
-    assert.equal(TRANSLATIONS.en.mary.access_denied, '🔒 Access denied. This administrative studio is exclusive to Mary.');
+    assert.deepEqual(Object.keys(TRANSLATIONS.pt.mary).sort(), Object.keys(TRANSLATIONS.en.mary).sort(), 'Mesmas chaves mary em pt e en');
+    for (const key of Object.keys(TRANSLATIONS.pt.mary)) {
+      const vars = (txt) => (txt.match(/\{\w+\}/g) || []).sort().join(',');
+      assert.equal(vars(TRANSLATIONS.pt.mary[key]), vars(TRANSLATIONS.en.mary[key]), `Placeholders iguais em mary.${key}`);
+    }
 
     assert.ok('mary' in COMMAND_CATEGORY_MAP, 'mary deve estar mapeado em COMMAND_CATEGORY_MAP');
     assert.ok('py-mary' in COMMAND_CATEGORY_MAP, 'py-mary deve estar mapeado em COMMAND_CATEGORY_MAP');

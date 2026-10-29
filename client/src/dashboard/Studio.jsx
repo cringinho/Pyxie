@@ -387,7 +387,10 @@ function V2Editor({ v2, buttons, onChange, t }) {
   );
 }
 
-function ButtonEditor({ b, onChange, onRemove, t, roles, channels, tabs }) {
+// Botões da lojinha da Mary (calculadora, conferir nick, ticket, avaliação) só aparecem no servidor dela.
+const MARY_KINDS = ['calculator', 'roblox_check', 'ticket', 'review'];
+
+function ButtonEditor({ b, onChange, onRemove, t, roles, channels, tabs, zone }) {
   const set = (patch) => onChange({ ...b, ...patch });
   const setAction = (patch) => onChange({ ...b, action: { ...b.action, ...patch } });
   return (
@@ -399,9 +402,17 @@ function ButtonEditor({ b, onChange, onRemove, t, roles, channels, tabs }) {
       <Select
         label={t('studio.action')}
         value={b.action.type}
-        onChange={(type) => onChange({ ...b, style: type === 'link' ? 'link' : b.style === 'link' ? 'primary' : b.style, action: { type } })}
-        options={['link', 'role', 'modal', 'tab', 'silent'].map((v) => ({ value: v, label: t(`studio.actionType.${v}`) }))}
+        onChange={(type) => onChange({ ...b, style: type === 'link' ? 'link' : b.style === 'link' ? 'primary' : b.style, action: type === 'mary' ? { type, kind: 'calculator' } : { type } })}
+        options={['link', 'role', 'modal', 'tab', 'silent', ...(zone === 'mary' || b.action.type === 'mary' ? ['mary'] : [])].map((v) => ({ value: v, label: t(`studio.actionType.${v}`) }))}
       />
+      {b.action.type === 'mary' && (
+        <Select
+          label={t('studio.maryKind')}
+          value={b.action.kind || 'calculator'}
+          onChange={(v) => setAction({ kind: v })}
+          options={MARY_KINDS.map((v) => ({ value: v, label: t(`studio.maryKindName.${v}`) }))}
+        />
+      )}
       {b.action.type !== 'link' && (
         <Select
           label={t('studio.style')}
@@ -591,7 +602,7 @@ function validationText(t, err) {
 
 // ---------- Tela ----------
 
-export default function Studio({ t, guildId, guildName, isOwner }) {
+export default function Studio({ t, guildId, guildName, isOwner, zone, openId }) {
   const [list, setList] = useState(null);
   const [limits, setLimits] = useState(null);
   const [editing, setEditing] = useState(null);
@@ -611,6 +622,15 @@ export default function Studio({ t, guildId, guildName, isOwner }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guildId]);
 
+  // #/guild/<id>/studio/<mensagem>: abre direto no editor (link do "✏️ Editar na Pyxie").
+  useEffect(() => {
+    if (!openId) return;
+    api
+      .studioGet(guildId, openId)
+      .then((d) => setEditing(d.message))
+      .catch((e) => setError(e.code));
+  }, [guildId, openId]);
+
   if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
   if (!list || !limits) return <Spinner label={t('app.loading')} />;
   if (editing) {
@@ -620,10 +640,12 @@ export default function Studio({ t, guildId, guildName, isOwner }) {
         guildId={guildId}
         guildName={guildName}
         isOwner={isOwner}
+        zone={zone}
         limits={limits}
         initial={editing}
         onClose={() => {
           setEditing(null);
+          if (openId) window.location.hash = `#/guild/${guildId}/studio`;
           loadList();
         }}
       />
@@ -659,7 +681,7 @@ export default function Studio({ t, guildId, guildName, isOwner }) {
   );
 }
 
-function Editor({ t, guildId, guildName, isOwner, limits, initial, onClose }) {
+function Editor({ t, guildId, guildName, isOwner, zone, limits, initial, onClose }) {
   const [doc, setDoc] = useState(() => ({ ...emptyMessage(), ...initial, v2: initial.v2 || emptyMessage().v2 }));
   const [isNew] = useState(!initial.id);
   const [roles, setRoles] = useState([]);
@@ -811,6 +833,7 @@ function Editor({ t, guildId, guildName, isOwner, limits, initial, onClose }) {
               roles={roles}
               channels={channels}
               tabs={doc.tabs}
+              zone={zone}
               onChange={(nb) => set({ buttons: doc.buttons.map((x, j) => (j === i ? nb : x)) })}
               onRemove={() => set({ buttons: doc.buttons.filter((_, j) => j !== i) })}
             />

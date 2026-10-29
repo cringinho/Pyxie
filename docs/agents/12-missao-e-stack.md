@@ -14,7 +14,7 @@
 - É proibido introduzir Next.js, Prisma, TypeScript, PNPM/Turborepo, Redis ou outro framework sem decisão explícita do criador. Propostas de migração são registradas como plano, nunca aplicadas de forma parcial.
 
 ### 3. Política Zero-Mock
-- Painéis (`/admin`, `/mary`), APIs e embeds leem dados reais (PostgreSQL, `data/`, telemetria). Proibido `mockData`, `placeholderData`, `TODO: implement` ou botões sem handler.
+- Painéis (`/dashboard`), APIs e embeds leem dados reais (PostgreSQL, `data/`, telemetria). Proibido `mockData`, `placeholderData`, `TODO: implement` ou botões sem handler.
 
 ### 4. Arquivos de Governança do Agente
 - `.agents/rules/*.md`: regras com frontmatter YAML (`trigger`: `always_on`, `model_decision`, `glob` ou `manual`), sem subpastas.

@@ -3,6 +3,7 @@ import {
   Activity,
   Ban,
   Boxes,
+  Calculator,
   Coins,
   Bug,
   Hash,
@@ -28,6 +29,7 @@ import {
   SmilePlus,
   Sparkles,
   SquareTerminal,
+  Store,
   Syringe,
   Ticket,
   ToggleRight,
@@ -64,6 +66,9 @@ export const SECTION_META = {
   seasonal: { icon: Ghost, group: 'more' },
   partnerships: { icon: Handshake, group: 'more' },
   tools: { icon: Wrench, group: 'more' },
+  maryStore: { icon: Store, group: 'mary' },
+  maryTools: { icon: Calculator, group: 'mary' },
+  maryProfile: { icon: Sparkles, group: 'mary' },
   health: { icon: Activity, group: 'system' },
   servers: { icon: Server, group: 'system' },
   trust: { icon: Ban, group: 'system' },
@@ -77,7 +82,7 @@ export const SECTION_META = {
   emojis: { icon: Smile, group: 'content' },
 };
 
-const GROUP_ORDER = ['core', 'messages', 'config', 'safety', 'system', 'content', 'more'];
+const GROUP_ORDER = ['core', 'mary', 'messages', 'config', 'safety', 'system', 'content', 'more'];
 
 export function sectionIcon(id) {
   return SECTION_META[id]?.icon || Wrench;
