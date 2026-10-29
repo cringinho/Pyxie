@@ -154,16 +154,18 @@ async function runJob(client, jobId, { guildId, pack, options, lang, by }) {
 
 function start(client, payload) {
   const jobId = inj.newId();
-  jobs.set(jobId, { state: 'running', done: 0, total: 0, result: null, error: null, at: Date.now() });
+  jobs.set(jobId, { guildId: String(payload.guildId), state: 'running', done: 0, total: 0, result: null, error: null, at: Date.now() });
   runJob(client, jobId, payload);
   for (const [id, j] of jobs) if (Date.now() - j.at > 3600000) jobs.delete(id);
   return { jobId };
 }
 
-function status(client, { jobId }) {
+// O job só aparece para o painel do mesmo servidor (quem é admin de um não vê o de outro).
+function status(client, { jobId, guildId }) {
   const job = jobs.get(jobId);
-  if (!job) throw new Error('job_not_found');
-  return job;
+  if (!job || job.guildId !== String(guildId)) throw new Error('job_not_found');
+  const { guildId: _guild, ...publicJob } = job;
+  return publicJob;
 }
 
 // Tira o painel (e, se pedido, apaga os cargos criados).

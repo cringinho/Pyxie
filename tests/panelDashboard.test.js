@@ -294,6 +294,16 @@ function cookieFor(userId, guilds = []) {
     assert.equal(savedAuto.tone, 'cute', 'Opção desconhecida volta ao padrão');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/automations/nada`, { cookie: adminCookie, method: 'PUT', body: {} })).status, 404);
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/automations`, { cookie: adminCookie })).status, 403);
+    // Canal de jogos de outro servidor não entra; o deste servidor entra
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/features`, { cookie: adminCookie, method: 'PUT', body: { channels: { games: ['888888888888888888'] } } })).status, 400, 'Canal de jogos de outro servidor é recusado');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/features`, { cookie: adminCookie, method: 'PUT', body: { channels: { games: ['777777777777777777'] } } })).status, 200);
+    // Nenhuma rota de servidor pode existir sem a conferência ao vivo (requireGuild)
+    const routeSrc = fs.readFileSync(path.join(__dirname, '..', 'src', 'routes', 'dashboardRoutes.js'), 'utf8');
+    const guildRoutes = [...routeSrc.matchAll(/router\.(?:get|post|put|patch|delete)\('(\/api\/dashboard\/guilds\/:guildId[^']*)',([^\n]*)/g)];
+    assert.ok(guildRoutes.length > 20, 'achou as rotas de servidor');
+    for (const [, route, rest] of guildRoutes) assert.ok(/requireSession,\s*requireGuild\b/.test(rest), `Rota ${route} sem requireSession + requireGuild`);
+    const globalRoutes = [...routeSrc.matchAll(/router\.(?:get|post|put|patch|delete)\('(\/api\/dashboard\/global\/[^']*)',([^\n]*)/g)];
+    for (const [, route, rest] of globalRoutes) assert.ok(/requireSession,\s*requireOwner\b/.test(rest), `Rota global ${route} sem requireOwner`);
     const act = await (await call(`/api/dashboard/guilds/${GUILD_A}/activity`, { cookie: adminCookie })).json();
     assert.equal(act.series.length, 30, 'Atividade: série de 30 dias');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/activity`, { cookie: adminCookie })).status, 403);

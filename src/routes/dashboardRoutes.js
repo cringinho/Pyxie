@@ -237,9 +237,19 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, features: serializeFeatures(req.params.guildId, req.guildAccess.zone) });
   });
 
-  router.put('/api/dashboard/guilds/:guildId/features', requireSession, requireGuild, (req, res) => {
+  router.put('/api/dashboard/guilds/:guildId/features', requireSession, requireGuild, async (req, res) => {
     const { guildId } = req.params;
     const body = req.body || {};
+    // Canais de jogos e rotas por comando precisam ser deste servidor (o bot confere ao vivo).
+    const wanted = [...(Array.isArray(body.channels?.games) ? body.channels.games : []), ...Object.values(body.commandChannels && typeof body.commandChannels === 'object' ? body.commandChannels : {}).flat()].map(String).filter(Boolean);
+    if (wanted.length) {
+      try {
+        const channels = await bridge.request('GUILD_CHANNELS', { guildId });
+        if (!wanted.every((id) => channels.some((c) => c.id === id))) return res.status(400).json({ success: false, error: 'invalid_channel' });
+      } catch (err) {
+        return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+      }
+    }
     if (body.groups && typeof body.groups === 'object') {
       for (const [group, enabled] of Object.entries(body.groups)) {
         if (guildFeatures.FEATURE_GROUPS[group]?.toggleable) guildFeatures.setGroupEnabled(guildId, group, Boolean(enabled));
@@ -441,7 +451,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
 
   router.get('/api/dashboard/guilds/:guildId/injections/jobs/:jobId', requireSession, requireGuild, async (req, res) => {
     try {
-      return res.json({ success: true, job: await bridge.request('INJECT_STATUS', { jobId: String(req.params.jobId).slice(0, 16) }) });
+      return res.json({ success: true, job: await bridge.request('INJECT_STATUS', { guildId: req.params.guildId, jobId: String(req.params.jobId).slice(0, 16) }) });
     } catch (err) {
       return res.status(404).json({ success: false, error: err.code || 'job_not_found' });
     }
