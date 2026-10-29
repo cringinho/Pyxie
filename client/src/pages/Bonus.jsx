@@ -174,11 +174,13 @@ export default function Bonus({ t, lang }) {
 
         {/* Reactive Mascot & Speech Bubble */}
         <div className="flex flex-col sm:flex-row items-center gap-4 relative z-10 max-w-lg">
-          <div className="relative w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-pink-500 to-purple-600 shadow-neon-pink flex-shrink-0 animate-bounce-slow">
+          <div className="relative w-20 h-20 flex-shrink-0 animate-bounce-slow">
             <img
-              src="/assets/pyxie/pyxie_mascot.png"
+              src="/assets/pyxie/sticker/sticker_smile.png"
               alt="Mascote Pyxie"
-              className="w-full h-full object-contain rounded-full bg-[#0e071a] p-1.5"
+              width="80"
+              height="80"
+              className="w-full h-full object-contain"
             />
           </div>
           <div className="relative p-3.5 rounded-2xl bg-white/10 border border-purple-500/30 text-xs sm:text-sm text-slate-100 font-medium text-left shadow-lg">

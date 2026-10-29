@@ -385,11 +385,11 @@ async function triggerDrop(client, force = false) {
           `<@${user.id}> foi mais rápido que a luz e abriu o baú primeiro!\n\n` +
           `💰 **Saque:** +${amount} ${currencyEmoji} ${config.currencyName || 'Abóboras'}!\n` +
           `💳 **Saldo Atual:** ${updatedBalance} ${currencyEmoji}\n\n` +
-          `🌐 **Placar Geral:** [Ver Ranking e Galeria de Artes no Site](${process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org'}/ranking-sazonal)\n\n` +
+          `🌐 **Placar Geral:** [Ver Ranking e Galeria de Artes no Site](${process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br'}/ranking-sazonal)\n\n` +
           `*Os outros que fiquem comendo poeira.*`
         )
         .setImage(chestImageUrl)
-        .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-rank ou acesse pyxie.duckdns.org/ranking-sazonal' })
+        .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-rank ou acesse pyxie.com.br/ranking-sazonal' })
         .setTimestamp();
 
       await dropMsg.edit({ embeds: [winEmbed] }).catch(() => null);

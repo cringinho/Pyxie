@@ -59,7 +59,7 @@ function normalizeImageUrl(url) {
 
 // Safe image component with 2-tier fallback: direct -> server proxy -> Pyxie mascot
 function PartnerImage({ src, alt, className = '' }) {
-  const cleanSrc = useMemo(() => normalizeImageUrl(src) || '/assets/pyxie/pyxie_mascot.png', [src]);
+  const cleanSrc = useMemo(() => normalizeImageUrl(src) || '/assets/pyxie/sticker/sticker_smile.png', [src]);
   const [currentSrc, setCurrentSrc] = useState(cleanSrc);
   const [attempt, setAttempt] = useState(0); // 0: direct, 1: proxy, 2: default
   const [loaded, setLoaded] = useState(false);
@@ -78,7 +78,7 @@ function PartnerImage({ src, alt, className = '' }) {
     } else if (attempt <= 1) {
       // 2nd Fallback: official Pyxie mascot fallback
       setAttempt(2);
-      setCurrentSrc('/assets/pyxie/pyxie_mascot.png');
+      setCurrentSrc('/assets/pyxie/sticker/sticker_smile.png');
     }
   };
 
@@ -148,7 +148,7 @@ function PartnerCard({ partner, isFeatured = false, t, lang, onBump, bumpingId, 
         <PartnerImage
           src={partner.imageUrl}
           alt={`Parceria: ${partner.projectName}`}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#120a24] via-[#120a24]/40 to-transparent" />
       </div>

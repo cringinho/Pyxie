@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Boxes, Check, Feather, Gauge, Timer, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
+import { ArrowRight, Boxes, Check, Feather, UserPlus, Gauge, Timer, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
 import { api } from './api';
 import { detectLang, makeT } from './i18n';
 import { Badge, Button, Card, GuildIcon, MultiSelect, Notice, Spinner, StatTile, StatusDot, Switch, Toggle } from './ui';
@@ -57,7 +57,8 @@ function formatUptime(sec) {
   return d > 0 ? `${d}d ${h}h` : `${h}h ${m}min`;
 }
 
-const PYXIE_ICON = 'https://cdn.discordapp.com/emojis/1548443951596306552.webp';
+// Asset quadrado da Pyxie servido pelo próprio site (o emoji do Discord era pequeno e saía cortado)
+const PYXIE_ICON = '/assets/pyxie/sticker/sticker_smile.png';
 
 export default function Dashboard() {
   const [lang, setLang] = useState(detectLang);
@@ -156,7 +157,7 @@ function Login({ t, lang, setLang, error }) {
           <Sparkles size={13} aria-hidden="true" /> {t('app.title')}
         </p>
         <div className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-pyxie-bright/40 to-mystic-violet/40 p-1 shadow-[0_0_40px_rgba(236,72,153,0.45)]">
-          <img src={PYXIE_ICON} alt="Pyxie" width="80" height="80" className="h-20 w-20 rounded-full bg-obsidian-900 object-contain p-2" />
+          <img src={PYXIE_ICON} alt="Pyxie" width="80" height="80" className="h-20 w-20 rounded-full bg-obsidian-900 object-contain" />
         </div>
         <h1 className="font-title text-2xl font-extrabold">{t('login.title')}</h1>
         <p className="mt-2 text-sm text-white/70">{t('login.subtitle')}</p>
@@ -247,6 +248,22 @@ function Picker({ shell }) {
             </li>
           ))}
         </ul>
+        <Card>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <span className="min-w-0 flex-1">
+              <span className="block font-title text-lg font-bold">{t('picker.appTitle')}</span>
+              <span className="block text-sm text-white/60">{t('picker.appDesc')}</span>
+            </span>
+            <span className="flex flex-col gap-2 sm:flex-row">
+              <a href="/invite?ref=dashboard&perms=basic" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#5865f2] px-4 text-sm font-semibold hover:bg-[#4752c4]">
+                <Server size={16} aria-hidden="true" /> {t('picker.addServer')}
+              </a>
+              <a href="/install?ref=dashboard" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[#5865f2] px-4 text-sm font-semibold hover:bg-[#5865f2]/20">
+                <UserPlus size={16} aria-hidden="true" /> {t('picker.addAccount')}
+              </a>
+            </span>
+          </div>
+        </Card>
         <a href="/auth/discord" className="inline-block text-sm text-mystic-glow underline">
           {t('picker.refresh')}
         </a>

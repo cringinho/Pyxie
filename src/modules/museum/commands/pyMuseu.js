@@ -7,7 +7,7 @@ const aliases = ['museu', 'py-museu', 'museum'];
 
 function buildView(source) {
   const lang = getLanguage(source);
-  const base = (process.env.PUBLIC_BASE_URL || 'http://pyxie.duckdns.org').replace(/\/+$/, '');
+  const base = (process.env.PUBLIC_BASE_URL || 'https://pyxie.com.br').replace(/\/+$/, '');
   const url = `${base}/museum.html?lang=${lang}`;
   const embed = new EmbedBuilder()
     .setColor('#8B5CF6')

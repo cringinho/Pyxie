@@ -20,9 +20,11 @@ export default function Navbar({ lang, setLang, t }) {
         <a href="/" className="flex items-center gap-2.5 group shrink-0">
           <div className="relative">
             <img
-              src="/assets/pyxie/pyxie_pixelart_face.png"
+              src="/assets/pyxie/sticker/sticker_smile.png"
               alt="Pyxie Mascot"
-              className="w-9 h-9 object-contain rounded-xl border border-pink-500/30 group-hover:border-pink-500/60 transition-all shadow-neon-pink"
+              width="36"
+              height="36"
+              className="w-9 h-9 object-contain transition-transform group-hover:scale-105"
             />
             <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#080410] animate-pulse" />
           </div>
@@ -104,7 +106,7 @@ export default function Navbar({ lang, setLang, t }) {
           </button>
 
           <a
-            href="/invite"
+            href="/invite?ref=site"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-neon-pink transition-all transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap"
@@ -184,12 +186,20 @@ export default function Navbar({ lang, setLang, t }) {
           </a>
           <div className="pt-2 border-t border-purple-500/15 flex flex-col gap-2">
             <a
-              href="/invite"
+              href="/invite?ref=site-menu"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r from-pink-600 to-purple-600 shadow-neon-pink"
             >
               {t('nav.invite')}
+            </a>
+            <a
+              href="/install?ref=site-menu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full text-center py-3 rounded-xl font-bold text-slate-100 border border-purple-500/40 hover:bg-white/5"
+            >
+              {t('nav.install')}
             </a>
           </div>
         </div>

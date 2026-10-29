@@ -183,7 +183,7 @@ async function sendStartupAnnouncement() {
     }
   } catch (_) {}
 
-  const panelUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
+  const panelUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br';
 
   const startupEmbed = new EmbedBuilder()
     .setColor('#5E2B8C')

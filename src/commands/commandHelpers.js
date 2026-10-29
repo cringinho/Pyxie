@@ -784,7 +784,7 @@ function buildModularHelpComponents(currentModuleId = 'todos', userId = '', sour
       .setLabel(t('help.btnSupport', ctx))
       .setEmoji('💬')
       .setStyle(ButtonStyle.Link)
-      .setURL('https://discord.gg/b3uZK3ssfX')
+      .setURL('https://pyxie.com.br/discord?ref=bot')
   );
 
   return [selectRow, buttonRow];

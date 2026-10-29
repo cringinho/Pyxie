@@ -501,8 +501,11 @@ app.get('/install', (req, res) => {
   res.redirect(buildUserInstallUrl());
 });
 
-app.get('/discord', (req, res) => {
-  res.redirect('https://discord.gg/b3uZK3ssfX');
+// /discord?ref=site → convite vivo da Cringelândia (os códigos fixos expiravam)
+app.get('/discord', async (req, res) => {
+  try { growthFunnel.recordInviteClick(req.query.ref, 'community', { visitorKey: req.ip }); } catch (_) {}
+  const url = await require('./src/services/cringelandiaInvite').getInviteUrl().catch(() => null);
+  res.redirect(url || '/cringelandia#comunidade');
 });
 
 app.get('/vote', (req, res) => {
@@ -1001,41 +1004,11 @@ app.get('/api/cringelandia/ciptea-states', (req, res) => {
   }
 });
 
-let liveGuildCache = { data: null, fetchedAt: 0 };
 app.get('/api/cringelandia/live-guild', async (req, res) => {
-  const now = Date.now();
-  if (liveGuildCache.data && (now - liveGuildCache.fetchedAt < 60000)) {
-    res.setHeader('Cache-Control', 'public, max-age=60');
-    return res.json({ success: true, guild: liveGuildCache.data });
-  }
-  try {
-    const response = await fetch('https://discord.com/api/guilds/1453890868980482090/widget.json', {
-      headers: { 'User-Agent': 'Pyxie-Bot/1.0 (+https://pyxie.com.br)' },
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!response.ok) {
-      throw new Error(`Discord widget HTTP ${response.status}`);
-    }
-    const data = await response.json();
-    liveGuildCache = { data, fetchedAt: now };
-    res.setHeader('Cache-Control', 'public, max-age=60');
-    return res.json({ success: true, guild: data });
-  } catch (err) {
-    if (liveGuildCache.data) {
-      return res.json({ success: true, guild: liveGuildCache.data, stale: true });
-    }
-    return res.json({
-      success: true,
-      guild: {
-        id: '1453890868980482090',
-        name: 'Cringelândia 🌸 Comunidade & Acolhimento',
-        instant_invite: 'https://discord.gg/cringelandia',
-        presence_count: 50,
-        members: []
-      },
-      fallback: true
-    });
-  }
+  const guild = await require('./src/services/cringelandiaInvite').getLiveGuild().catch(() => null);
+  res.setHeader('Cache-Control', 'public, max-age=60');
+  if (!guild) return res.json({ success: false });
+  return res.json({ success: true, guild });
 });
 
 app.get('/api/cringelandia/art-samples', (req, res) => {
@@ -1048,19 +1021,14 @@ app.get('/api/cringelandia/art-samples', (req, res) => {
         arts = parsed.arts;
       }
     }
-    let formatted = arts.slice(0, 16).map((art) => ({
+    // Sem arte no museu, a galeria do site fica escondida (nada de imagem da Pyxie fingindo ser arte)
+    const formatted = arts.slice(0, 16).map((art) => ({
       id: art.id,
       author: art.cachedAuthor || art.authorUsername || 'Membro da Cringelândia',
       url: `/api/museum/art-image/${encodeURIComponent(art.id)}.jpg`,
       description: art.description || 'Arte da Comunidade Cringelândia'
     }));
 
-    if (formatted.length === 0) {
-      formatted = [
-        { id: 'sample_1', author: 'Comunidade Cringelândia', url: '/assets/pyxie/pyxie_mascot.png', description: 'Mascote Pyxie' },
-        { id: 'sample_2', author: 'Cantinho Criativo', url: '/assets/pyxie/pyxie_pixelart_face.png', description: 'Pixel Art Pyxie' }
-      ];
-    }
     res.setHeader('Cache-Control', 'public, max-age=120');
     return res.json({ success: true, arts: formatted });
   } catch (err) {
@@ -1752,7 +1720,7 @@ app.use((err, req, res, next) => {
 });
 
 const server = app.listen(PORT, HOST, () => {
-  const publicUrl = process.env.PANEL_PUBLIC_URL || 'http://pyxie.duckdns.org';
+  const publicUrl = process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br';
   addLog(`Painel web da Pyxie iniciado em ${publicUrl}`);
   console.log(`Painel da Pyxie rodando em ${publicUrl}`);
   ensureSshKeys();

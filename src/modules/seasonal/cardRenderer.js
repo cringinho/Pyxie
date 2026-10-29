@@ -188,8 +188,8 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
     inviteSub: isEn
       ? 'Animes, RPG, live chat drops & real Gift Card prizes!'
       : 'Animes, RPG, drops ao vivo no chat & prêmios em Gift Cards!',
-    inviteLink: 'discord.gg/b3uZK3ssfX',
-    botCredit: 'Pyxie • pyxie.duckdns.org',
+    inviteLink: 'pyxie.com.br/discord',
+    botCredit: 'Pyxie • pyxie.com.br',
     botDesc: isEn ? 'Official RPG Fairy Bot' : 'Mascote & Bot Oficial',
   };
 
@@ -576,7 +576,7 @@ async function renderLeaderboardCard(leaderboard = [], config = {}, options = {}
   ctx.fillStyle = PALETTE.textMuted;
   ctx.fillText(T.inviteSub, footX + 36, footY + 70);
 
-  // 7.2 Botão / Banner do Convite Permanente (discord.gg/b3uZK3ssfX)
+  // 7.2 Botão / Banner do Convite (pyxie.com.br/discord)
   const btnX = footX + 36;
   const btnY = footY + 115;
   const btnW = 540;

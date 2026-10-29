@@ -102,11 +102,13 @@ export default function Profile({ t, lang, userId }) {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
             {/* User Avatar */}
-            <div className="relative w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-pink-500 via-purple-600 to-cyan-400 shadow-neon-pink flex-shrink-0">
+            <div className="relative w-24 h-24 flex-shrink-0">
               <img
-                src="/assets/pyxie/pyxie_mascot.png"
+                src="/assets/pyxie/sticker/sticker_smile.png"
                 alt="Avatar"
-                className="w-full h-full object-cover rounded-full bg-[#0e071a]"
+                width="96"
+                height="96"
+                className="w-full h-full object-contain"
               />
               <span className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-emerald-400 border-2 border-[#0e071a] flex items-center justify-center text-[10px] text-black font-bold">
                 ✓

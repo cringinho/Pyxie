@@ -708,7 +708,7 @@ class PartnershipManager {
   }
 
   getPublicWebUrl() {
-    const base = (process.env.PANEL_PUBLIC_URL || 'https://pyxie.duckdns.org').replace(/\/+$/, '');
+    const base = (process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br').replace(/\/+$/, '');
     return `${base}/parcerias`;
   }
 

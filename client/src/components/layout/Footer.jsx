@@ -7,9 +7,11 @@ export default function Footer({ t, lang = 'pt' }) {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
         <div className="flex items-center gap-3">
           <img
-            src="/assets/pyxie/pyxie_pixelart_face.png"
+            src="/assets/pyxie/sticker/sticker_smile.png"
             alt="Pyxie Mascot Mini"
-            className="w-8 h-8 rounded-lg border border-purple-500/30"
+            width="32"
+            height="32"
+            className="w-8 h-8 object-contain"
           />
           <div>
             <span className="font-title font-bold text-white text-base">Pyxie</span>
@@ -43,8 +45,11 @@ export default function Footer({ t, lang = 'pt' }) {
           <a href="/promo" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">
             Shopee
           </a>
-          <a href="/discord" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">
-            Discord
+          <a href="/install?ref=site-footer" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">
+            {t('footer.install')}
+          </a>
+          <a href="/discord?ref=site-footer" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">
+            {t('footer.community')}
           </a>
         </div>
       </div>

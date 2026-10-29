@@ -82,7 +82,10 @@
   }
   </script>
 
-  <link rel="icon" type="image/png" href="/assets/pyxie/pyxie_pixelart_face.png" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
 
   <style>
     :root {
@@ -133,139 +136,60 @@
       }
     }
 
-    /* Ambient Marquee Background (Mobile Only) */
-    .mobile-ambient-art {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.08;
-      overflow: hidden;
+    /* Galeria de artes da comunidade: obra inteira, sem corte */
+    .art-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 28px;
     }
 
-    .ambient-marquee-track {
+    .art-tile {
       display: flex;
       flex-direction: column;
-      gap: 30px;
-      animation: ambientMarquee 45s linear infinite;
-    }
-
-    @keyframes ambientMarquee {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-50%); }
-    }
-
-    .ambient-art-row {
-      display: flex;
-      gap: 20px;
-      white-space: nowrap;
-    }
-
-    .ambient-art-row img {
-      width: 140px;
-      height: 140px;
-      border-radius: var(--radius-sm);
-      object-fit: cover;
-      filter: saturate(0.8) blur(1px);
-    }
-
-    @media (max-width: 900px) {
-      .mobile-ambient-art {
-        display: block;
-      }
-    }
-
-    /* Floating Art Frames (Desktop PC Only) */
-    .floating-art-container {
-      display: block;
-      position: fixed;
-      z-index: 40;
-      pointer-events: none;
-    }
-
-    .floating-art-frame {
-      position: fixed;
-      bottom: 24px;
-      pointer-events: auto;
-      background: rgba(20, 13, 36, 0.88);
-      border: 1px solid var(--border-bright);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: var(--radius-md);
-      padding: 10px;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 20px var(--purple-glow);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      max-width: 290px;
-      transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-
-    .floating-art-frame:hover {
-      transform: translateY(-4px) scale(1.02);
-      border-color: var(--purple-light);
-    }
-
-    .floating-art-frame.left-frame {
-      left: 20px;
-    }
-
-    .floating-art-frame.right-frame {
-      right: 20px;
-    }
-
-    .floating-art-thumb {
-      width: 58px;
-      height: 58px;
-      border-radius: var(--radius-sm);
-      object-fit: cover;
+      text-decoration: none;
+      color: var(--text-main);
+      background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      flex-shrink: 0;
-    }
-
-    .floating-art-info {
+      border-radius: var(--radius-md);
       overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
     }
 
-    .floating-art-badge {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--purple-light);
-      background: rgba(168, 85, 247, 0.15);
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-bottom: 2px;
+    .art-tile:hover { border-color: var(--border-bright); transform: translateY(-2px); }
+
+    .art-tile img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      background: #0d0716;
+      display: block;
     }
 
-    .floating-art-author {
+    .art-tile span {
+      padding: 10px 12px;
       font-size: 13px;
       font-weight: 600;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: block;
-    }
-
-    .floating-art-desc {
-      font-size: 11px;
-      color: var(--text-dim);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    @media (max-width: 1024px) {
-      .floating-art-frame {
-        display: none;
-      }
+    .art-gallery-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .art-gallery-head h3 { font-size: 20px; font-weight: 800; color: #fff; }
+
+    .art-gallery-head a { color: var(--purple-light); font-weight: 700; font-size: 14px; }
+
+    @media (max-width: 820px) {
+      .art-gallery { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     }
 
     /* Page Container */
@@ -298,9 +222,7 @@
     .nav-brand img {
       width: 44px;
       height: 44px;
-      border-radius: 50%;
-      border: 2px solid var(--purple-primary);
-      box-shadow: 0 0 12px var(--purple-glow);
+      object-fit: contain;
     }
 
     .nav-brand-text {
@@ -407,6 +329,146 @@
       max-width: 820px;
       margin: 0 auto 35px;
       line-height: 1.6;
+    }
+
+    /* Botão de entrar no menu */
+    .nav-join {
+      background: #5865f2;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+    }
+
+    .nav-join:hover { background: #4752c4; }
+
+    /* Convite grande no topo: a primeira coisa da página em qualquer tela */
+    .hero-section { display: flex; flex-direction: column; }
+    .hero-section .join-panel { order: -1; margin-bottom: 30px; }
+    .hero-section .hero-tag { align-self: center; }
+
+    .join-panel {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 28px;
+      max-width: 980px;
+      margin: 0 auto 10px;
+      padding: 28px 32px;
+      text-align: left;
+      background: linear-gradient(135deg, #1b1640 0%, #120d26 100%);
+      border: 1px solid rgba(88, 101, 242, 0.55);
+      border-radius: var(--radius-lg);
+    }
+
+    .join-guild {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .join-icon {
+      flex: 0 0 96px;
+      width: 96px;
+      height: 96px;
+      border-radius: 26px;
+      background: #5865f2 center / cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .join-icon.has-img { font-size: 0; }
+
+    .join-live {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 14px;
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    .join-dot { color: var(--text-dim); }
+
+    .join-name {
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 900;
+      color: #fff;
+      margin: 6px 0 6px;
+      overflow-wrap: anywhere;
+    }
+
+    .join-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .join-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      min-width: 260px;
+    }
+
+    .join-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #5865f2;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 18px;
+      padding: 18px 26px;
+      border-radius: var(--radius-md);
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .join-btn:hover { background: #4752c4; transform: translateY(-2px); }
+
+    .join-app {
+      color: var(--purple-light);
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .app-actions { display: flex; flex-direction: column; gap: 10px; }
+
+    .app-secondary { background: transparent; border: 1px solid #5865f2; }
+
+    .app-secondary:hover { background: rgba(88, 101, 242, 0.18); }
+
+    @media (max-width: 820px) {
+      /* Celular: menu numa linha só (logo, entrar, idioma) e o convite como primeira coisa da página */
+      .site-nav { gap: 10px; padding: 12px 0; margin-bottom: 16px; }
+      .nav-brand { gap: 8px; min-width: 0; }
+      .nav-brand-title { font-size: 15px; }
+      .nav-brand-subtitle { display: none; }
+      .nav-links { flex-wrap: nowrap; gap: 8px; }
+      .nav-link { display: none; }
+      .nav-join { padding: 9px 12px; font-size: 13px; white-space: nowrap; }
+      .lang-toggle { padding: 7px 10px; }
+      .hero-section { padding: 4px 0 30px; }
+      .join-dot { display: none; }
+      .join-live { column-gap: 14px; }
+      .hero-tag { align-self: center; font-size: 12px; padding: 5px 12px; margin-bottom: 16px; }
+      .join-panel { grid-template-columns: 1fr; padding: 22px 18px; gap: 20px; }
+      .join-guild { gap: 16px; }
+      .join-icon { flex-basis: 72px; width: 72px; height: 72px; border-radius: 20px; font-size: 30px; }
+      .join-actions { min-width: 0; }
     }
 
     /* 3 Institutional Pillars */
@@ -537,12 +599,8 @@
     .mascot-avatar {
       width: 72px;
       height: 72px;
-      border-radius: 50%;
-      border: 2px solid var(--purple-light);
-      background: var(--bg-card);
-      padding: 4px;
+      object-fit: contain;
       flex-shrink: 0;
-      box-shadow: 0 0 20px var(--purple-glow);
     }
 
     .speech-bubble {
@@ -651,7 +709,7 @@
 
     .product-img-box {
       width: 100%;
-      height: 160px;
+      aspect-ratio: 1 / 1;
       background: #0d0716;
       display: flex;
       align-items: center;
@@ -663,7 +721,7 @@
     .product-img-box img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       transition: transform 0.3s ease;
     }
 
@@ -1559,42 +1617,11 @@
 </head>
 <body>
 
-  <!-- Ambient Art Background for Mobile Viewports -->
-  <div class="mobile-ambient-art" aria-hidden="true" id="mobileAmbientArt">
-    <div class="ambient-marquee-track" id="ambientTrack">
-      <div class="ambient-art-row" id="ambientRow1"></div>
-      <div class="ambient-art-row" id="ambientRow2"></div>
-      <div class="ambient-art-row" id="ambientRow3"></div>
-      <div class="ambient-art-row" id="ambientRow4"></div>
-    </div>
-  </div>
-
-  <!-- Floating Art Frames for Desktop (PC) -->
-  <div class="floating-art-container" aria-label="Artes em destaque da comunidade">
-    <div class="floating-art-frame left-frame" id="floatingLeftFrame" style="display: none;">
-      <img src="/assets/pyxie/pyxie_mascot.png" alt="Arte da Comunidade Cringelândia" class="floating-art-thumb" id="floatingLeftThumb" />
-      <div class="floating-art-info">
-        <span class="floating-art-badge">🎨 Museu Comunitário</span>
-        <span class="floating-art-author" id="floatingLeftAuthor">@Membro</span>
-        <span class="floating-art-desc" id="floatingLeftDesc">Obra de arte no Museu da Pyxie</span>
-      </div>
-    </div>
-
-    <div class="floating-art-frame right-frame" id="floatingRightFrame" style="display: none;">
-      <img src="/assets/pyxie/pyxie_pixelart_face.png" alt="Ilustração da Comunidade Cringelândia" class="floating-art-thumb" id="floatingRightThumb" />
-      <div class="floating-art-info">
-        <span class="floating-art-badge">✨ Acervo Cultural</span>
-        <span class="floating-art-author" id="floatingRightAuthor">@Membro</span>
-        <span class="floating-art-desc" id="floatingRightDesc">Obra em destaque na comunidade</span>
-      </div>
-    </div>
-  </div>
-
   <div class="page-wrap">
     <!-- Navbar -->
     <header class="site-nav">
       <a href="/" class="nav-brand" aria-label="Página Inicial da Pyxie">
-        <img src="/assets/pyxie/pyxie_mascot.png" alt="Logotipo Oficial da Pyxie" />
+        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Logotipo Oficial da Pyxie" width="44" height="44" />
         <div class="nav-brand-text">
           <span class="nav-brand-title">Pyxie & Cringelândia</span>
           <span class="nav-brand-subtitle">Comunidade & Acolhimento</span>
@@ -1607,6 +1634,7 @@
         <a href="#ciptea" class="nav-link" data-i18n="nav.ciptea">Guia CIPTEA</a>
         <a href="#laudo" class="nav-link" data-i18n="nav.laudo">Laudo Válido</a>
         <a href="#comunidade" class="nav-link" data-i18n="nav.community">Discord & Roblox</a>
+        <a href="/discord?ref=cringelandia-nav" class="nav-join" target="_blank" rel="noopener noreferrer" data-i18n="nav.join">Entrar no Discord</a>
         <button class="lang-toggle" id="langToggleBtn" onclick="toggleLanguage()" aria-label="Alternar Idioma">
           🌐 <span id="langLabel">EN</span>
         </button>
@@ -1625,6 +1653,22 @@
       <p class="hero-lead" data-i18n="hero.lead">
         Acolhimento humanizado, escuta atenta, inclusão autista, suporte psicológico e celebração da neurodiversidade em um refúgio acolhedor e seguro. Aqui ninguém caminha sozinho.
       </p>
+
+      <!-- Convite grande: o jeito mais fácil de entrar -->
+      <div class="join-panel" id="entrar">
+        <div class="join-guild">
+          <div class="join-icon" id="guildIcon" aria-hidden="true">C</div>
+          <div class="join-info">
+            <div class="join-live" id="guildLive" hidden><span class="discord-pulse-dot"></span><span><strong id="guildOnline">--</strong> <span data-i18n="join.online">online agora</span></span><span class="join-dot">•</span><span><strong id="guildMembers">--</strong> <span data-i18n="join.members">membros</span></span></div>
+            <h2 class="join-name" id="guildName">Cringelândia</h2>
+            <p class="join-desc" data-i18n="join.desc">Desabafo protegido, jogos com a Pyxie, arte, amizades e acolhimento. Entra quando quiser, no seu ritmo.</p>
+          </div>
+        </div>
+        <div class="join-actions">
+          <a href="/discord?ref=cringelandia-hero" id="discordInviteLink" class="join-btn" target="_blank" rel="noopener noreferrer" onclick="trackClick(this.href)"><span data-i18n="join.cta">Entrar no Discord da Cringelândia</span></a>
+          <a href="/install?ref=cringelandia-hero" class="join-app" target="_blank" rel="noopener noreferrer" data-i18n="join.app">Usar a Pyxie em qualquer conversa (adicionar à minha conta)</a>
+        </div>
+      </div>
 
       <!-- 3 Institutional Pillars -->
       <div class="pillars-grid">
@@ -1667,7 +1711,7 @@
     <!-- 3. Ethical Monetization: Single Shopee Slider + Pyxie Speech Bubble -->
     <section class="shopee-section" aria-label="Vitrine de Achadinhos da Shopee">
       <div class="mascot-speech-wrap">
-        <img src="/assets/pyxie/pyxie_mascot.png" alt="Mascote Pyxie com balão de fala transparente" class="mascot-avatar" />
+        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Mascote Pyxie com balão de fala transparente" class="mascot-avatar" width="72" height="72" />
         <div class="speech-bubble">
           <p data-i18n="shopee.speech">
             <strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee é o que viabiliza o funcionamento 100% gratuito do bot e dos nossos projetos de acolhimento, e ainda ajuda nossos membros e visitantes a encontrarem itens úteis de regulação sensorial, abafadores e presentes legais!
@@ -2356,31 +2400,19 @@
           </div>
         </article>
 
-        <!-- Discord Live Server Embed -->
+        <!-- Pyxie no seu Discord: servidor ou conta -->
         <article class="fun-card discord-live-card">
           <div>
-            <div class="discord-badge-live">
-              <span class="discord-pulse-dot"></span>
-              <span data-i18n="discord.live">Servidor Discord Ao Vivo</span>
+            <div class="fun-card-head">
+              <span class="fun-icon">🧚</span>
+              <h3 class="fun-title" data-i18n="app.title">Pyxie no seu Discord</h3>
             </div>
-            <div class="discord-guild-meta">
-              <div class="discord-guild-icon" id="guildIcon">C</div>
-              <div class="discord-guild-info">
-                <h4 id="guildName">Cringelândia</h4>
-                <div class="discord-guild-stats">
-                  <span class="stat-online"><strong id="guildOnline">--</strong> online</span>
-                  <span>•</span>
-                  <span><strong id="guildMembers">Comunidade Ativa</strong></span>
-                </div>
-              </div>
-            </div>
-            <p class="fun-desc" style="margin-bottom: 16px;" data-i18n="discord.desc">
-              Junte-se a nós agora mesmo! Salas de desabafo protegido, jogos, canais de arte, bots musicais e acolhimento esperando por você.
-            </p>
+            <p class="fun-desc" data-i18n="app.desc">Leve a Pyxie pro seu servidor ou adicione à sua conta pra usar os jogos dela em qualquer DM ou grupo, mesmo onde ela não está.</p>
           </div>
-          <a href="https://discord.gg/cringelandia" id="discordInviteLink" target="_blank" rel="noopener noreferrer" class="discord-join-btn" onclick="trackClick(this.href)">
-            <span>Entrar no Discord da Cringelândia</span> 💬
-          </a>
+          <div class="app-actions">
+            <a href="/invite?ref=cringelandia&amp;perms=basic" class="discord-join-btn" target="_blank" rel="noopener noreferrer" data-i18n="app.server">Adicionar a um servidor</a>
+            <a href="/install?ref=cringelandia" class="discord-join-btn app-secondary" target="_blank" rel="noopener noreferrer" data-i18n="app.account">Adicionar à minha conta</a>
+          </div>
         </article>
 
         <!-- Roblox Official Group Card -->
@@ -2398,6 +2430,13 @@
             <span>Acessar Grupo no Roblox</span> ↗
           </a>
         </article>
+      </div>
+      <div id="artGalleryWrap" hidden>
+        <div class="art-gallery-head">
+          <h3 data-i18n="arts.title">Artes da comunidade</h3>
+          <a href="/museu" data-i18n="arts.more">Ver tudo no Museu →</a>
+        </div>
+        <div class="art-gallery" id="artGallery"></div>
       </div>
     </section>
 
@@ -2488,7 +2527,18 @@
         'fun.pill': 'Descontração, Amizades & Criatividade',
         'fun.title': 'Diversão Saudável, Discord ao Vivo & Projetos Oficiais',
         'fun.lead': 'Além de suporte emocional, oferecemos um ambiente leve e acolhedor para fazer amizades, jogar e se divertir com a Pyxie.',
-        'discord.live': 'Servidor Discord Ao Vivo',
+        'nav.join': 'Entrar no Discord',
+        'arts.title': 'Artes da comunidade',
+        'arts.more': 'Ver tudo no Museu →',
+        'join.online': 'online agora',
+        'join.members': 'membros',
+        'join.desc': 'Desabafo protegido, jogos com a Pyxie, arte, amizades e acolhimento. Entra quando quiser, no seu ritmo.',
+        'join.cta': 'Entrar no Discord da Cringelândia',
+        'join.app': 'Usar a Pyxie em qualquer conversa (adicionar à minha conta)',
+        'app.title': 'Pyxie no seu Discord',
+        'app.desc': 'Leve a Pyxie pro seu servidor ou adicione à sua conta pra usar os jogos dela em qualquer DM ou grupo, mesmo onde ela não está.',
+        'app.server': 'Adicionar a um servidor',
+        'app.account': 'Adicionar à minha conta',
         'roblox.title': 'Grupo Roblox Oficial',
         'ciptea.pick': 'Escolha seu estado',
         'ciptea.pickHint': 'Selecione o estado para ver o órgão, os documentos e o portal oficial.',
@@ -2561,7 +2611,18 @@
         'fun.pill': 'Leisure, Friendships & Creativity',
         'fun.title': 'Wholesome Fun, Live Discord & Official Projects',
         'fun.lead': 'Beyond emotional support, we provide an engaging, safe space to build lasting friendships, play minigames, and enjoy life together.',
-        'discord.live': 'Live Discord Server',
+        'nav.join': 'Join the Discord',
+        'arts.title': 'Community art',
+        'arts.more': 'See everything in the Museum →',
+        'join.online': 'online now',
+        'join.members': 'members',
+        'join.desc': 'Safe venting, games with Pyxie, art, friendships and support. Join whenever you want, at your own pace.',
+        'join.cta': 'Join the Cringelândia Discord',
+        'join.app': 'Use Pyxie in any chat (add to my account)',
+        'app.title': 'Pyxie in your Discord',
+        'app.desc': 'Bring Pyxie to your server or add her to your account to play her games in any DM or group, even where she is not.',
+        'app.server': 'Add to a server',
+        'app.account': 'Add to my account',
         'roblox.title': 'Official Roblox Group',
         'ciptea.pick': 'Choose your state',
         'ciptea.pickHint': 'Pick a state to see the agency, the documents and the official portal.',
@@ -2836,79 +2897,45 @@
         const res = await fetch('/api/cringelandia/live-guild');
         if (!res.ok) return;
         const json = await res.json();
-        if (json && json.success && json.guild) {
-          const g = json.guild;
-          const nameEl = document.getElementById('guildName');
-          const onlineEl = document.getElementById('guildOnline');
-          const membersEl = document.getElementById('guildMembers');
-          const inviteLink = document.getElementById('discordInviteLink');
-
-          if (nameEl && g.name) nameEl.textContent = g.name;
-          if (onlineEl && typeof g.presence_count === 'number') {
-            onlineEl.textContent = g.presence_count;
-          }
-          if (membersEl) {
-            membersEl.textContent = g.members && g.members.length ? `${g.members.length}+ membros online` : 'Comunidade Ativa';
-          }
-          if (inviteLink && g.instant_invite) {
-            inviteLink.href = g.instant_invite;
-          }
+        if (!json || !json.success || !json.guild) return;
+        const g = json.guild;
+        const fmt = (n) => Number(n).toLocaleString(currentLang === 'en' ? 'en-US' : 'pt-BR');
+        const nameEl = document.getElementById('guildName');
+        const onlineEl = document.getElementById('guildOnline');
+        const membersEl = document.getElementById('guildMembers');
+        const iconEl = document.getElementById('guildIcon');
+        if (nameEl && g.name) nameEl.textContent = g.name;
+        if (onlineEl && typeof g.presence_count === 'number') onlineEl.textContent = fmt(g.presence_count);
+        if (membersEl && typeof g.member_count === 'number') membersEl.textContent = fmt(g.member_count);
+        const liveEl = document.getElementById('guildLive');
+        if (liveEl && typeof g.presence_count === 'number' && typeof g.member_count === 'number') liveEl.hidden = false;
+        if (iconEl && g.icon_url) {
+          iconEl.style.backgroundImage = `url("${g.icon_url}")`;
+          iconEl.classList.add('has-img');
         }
       } catch (err) {
         console.warn('Live Discord widget fetch fallback:', err);
       }
     }
 
-    // Community Art from Museum (Desktop floating + Mobile ambient)
+    // Artes da comunidade (Museu): galeria dentro da página
     async function loadCommunityArts() {
       try {
         const res = await fetch('/api/cringelandia/art-samples');
         if (!res.ok) return;
         const data = await res.json();
-        if (data && data.success && Array.isArray(data.arts) && data.arts.length > 0) {
-          const arts = data.arts;
-
-          // 1. Desktop Floating Frames
-          const leftFrame = document.getElementById('floatingLeftFrame');
-          const rightFrame = document.getElementById('floatingRightFrame');
-
-          if (arts.length > 0 && leftFrame) {
-            const artLeft = arts[0];
-            const leftThumb = document.getElementById('floatingLeftThumb');
-            const leftAuthor = document.getElementById('floatingLeftAuthor');
-            const leftDesc = document.getElementById('floatingLeftDesc');
-            if (leftThumb) leftThumb.src = artLeft.url;
-            if (leftAuthor) leftAuthor.textContent = `@${artLeft.author.replace(/^@+/, '')}`;
-            if (leftDesc && artLeft.description) leftDesc.textContent = artLeft.description.slice(0, 45);
-            leftFrame.style.display = 'flex';
-          }
-
-          if (arts.length > 1 && rightFrame) {
-            const artRight = arts[1];
-            const rightThumb = document.getElementById('floatingRightThumb');
-            const rightAuthor = document.getElementById('floatingRightAuthor');
-            const rightDesc = document.getElementById('floatingRightDesc');
-            if (rightThumb) rightThumb.src = artRight.url;
-            if (rightAuthor) rightAuthor.textContent = `@${artRight.author.replace(/^@+/, '')}`;
-            if (rightDesc && artRight.description) rightDesc.textContent = artRight.description.slice(0, 45);
-            rightFrame.style.display = 'flex';
-          }
-
-          // 2. Mobile Ambient Marquee
-          const row1 = document.getElementById('ambientRow1');
-          const row2 = document.getElementById('ambientRow2');
-          const row3 = document.getElementById('ambientRow3');
-          const row4 = document.getElementById('ambientRow4');
-
-          const makeRowHtml = (subset) => subset.map(a => `<img src="${a.url}" alt="Arte Comunitária Cringelândia" loading="lazy" />`).join('');
-
-          if (row1) row1.innerHTML = makeRowHtml(arts.slice(0, 4)) + makeRowHtml(arts.slice(0, 4));
-          if (row2) row2.innerHTML = makeRowHtml(arts.slice(2, 6)) + makeRowHtml(arts.slice(2, 6));
-          if (row3) row3.innerHTML = makeRowHtml(arts.slice(4, 8)) + makeRowHtml(arts.slice(4, 8));
-          if (row4) row4.innerHTML = makeRowHtml(arts.slice(0, 4)) + makeRowHtml(arts.slice(0, 4));
-        }
+        const arts = data && data.success && Array.isArray(data.arts) ? data.arts.slice(0, 8) : [];
+        const wrap = document.getElementById('artGalleryWrap');
+        const grid = document.getElementById('artGallery');
+        if (!arts.length || !wrap || !grid) return;
+        const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        grid.innerHTML = arts.map((a) => {
+          const author = '@' + String(a.author || '').replace(/^@+/, '');
+          return `<a class="art-tile" href="/museu?art=${encodeURIComponent(a.id)}"><img src="${esc(a.url)}" alt="${esc(a.description)} (${esc(author)})" loading="lazy" /><span>${esc(author)}</span></a>`;
+        }).join('');
+        wrap.hidden = false;
       } catch (err) {
-        console.warn('Artes comunitárias fallback mantido:', err);
+        console.warn('Artes comunitárias indisponíveis:', err);
       }
     }
 

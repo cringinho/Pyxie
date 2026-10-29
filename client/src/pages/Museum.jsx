@@ -274,7 +274,7 @@ export default function Museum({ t, lang }) {
                     alt={`Arte por ${getAuthorHandle(art)} no Museu da Pyxie • Visite https://pyxie.com.br/`}
                     data-canonical-url="https://pyxie.com.br/"
                     loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
+                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 pointer-events-none"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0e071a] via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
 

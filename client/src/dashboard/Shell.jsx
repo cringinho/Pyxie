@@ -36,7 +36,8 @@ import {
 } from 'lucide-react';
 import { GuildIcon, StatusDot } from './ui';
 
-const PYXIE_ICON = 'https://cdn.discordapp.com/emojis/1548443951596306552.webp';
+// Asset quadrado da Pyxie servido pelo próprio site (o emoji do Discord era pequeno e saía cortado)
+const PYXIE_ICON = '/assets/pyxie/sticker/sticker_smile.png';
 
 export const go = (hash) => {
   window.location.hash = hash;
@@ -156,7 +157,7 @@ function ServerRail({ t, me, activeGuildId, globalActive, onNavigate }) {
     <nav aria-label={t('picker.title')} className="flex w-[72px] shrink-0 flex-col items-center gap-2 overflow-y-auto border-r border-white/5 bg-black/30 py-3">
       <ul className="flex flex-col gap-2">
         {item('home', !activeGuildId && !globalActive, t('nav.home'), () => go('#/'), (
-          <img src={PYXIE_ICON} alt="" width="48" height="48" className="h-12 w-12 bg-mystic-deep/60 object-contain p-1.5" />
+          <img src={PYXIE_ICON} alt="" width="48" height="48" className="h-12 w-12 bg-mystic-deep/60 object-contain p-0.5" />
         ))}
         {me?.user?.isOwner &&
           item('global', globalActive, t('picker.global'), () => go('#/global/health'), (

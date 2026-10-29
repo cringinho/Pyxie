@@ -465,7 +465,7 @@ export default function MuseumScene({ t }) {
                   src={art.imageUrl}
                   alt={`Arte por @${art.author || 'Artista'} no Museu da Pyxie • Visite https://pyxie.com.br/`}
                   data-canonical-url="https://pyxie.com.br/"
-                  className="w-full h-64 object-cover rounded-xl"
+                  className="w-full h-64 object-contain rounded-xl bg-black/40"
                 />
                 <div className="mt-3 text-left">
                   <div className="text-pink-400 font-bold text-sm">@{art.author}</div>
@@ -507,12 +507,12 @@ export default function MuseumScene({ t }) {
             </button>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-              <div className="relative rounded-2xl overflow-hidden border border-purple-500/30 shadow-neon-pink group">
+              <div className="relative rounded-2xl overflow-hidden border border-purple-500/30 bg-black/40 group">
                 <img
                   src={selectedArt.imageUrl}
                   alt={`Arte por @${selectedArt.author || 'Artista'} no Museu da Pyxie • Visite https://pyxie.com.br/`}
                   data-canonical-url="https://pyxie.com.br/"
-                  className="w-full h-80 object-cover pointer-events-none select-none"
+                  className="w-full h-80 object-contain pointer-events-none select-none"
                 />
                 {/* Honeypot Ribbon para Screenshots */}
                 <div className="absolute inset-x-0 bottom-0 py-2 px-3 bg-black/85 backdrop-blur-md border-t border-pink-500/40 flex items-center justify-between text-[11px] font-mono tracking-wide z-10 shadow-lg select-none pointer-events-none">

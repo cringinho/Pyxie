@@ -14,20 +14,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= config.eventName %> — Placar & Ranking Oficial | Pyxie</title>
   <meta name="description" content="Acompanhe o ranking em tempo real do evento <%= config.eventName %> na Cringelândia! Veja quem está liderando os baús e artes." />
-  <link rel="icon" type="image/png" href="https://cdn.discordapp.com/emojis/1551355734577381447.png" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
   
   <!-- Social Media & OpenGraph Meta Tags -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="<%= config.eventName %> — Placar & Ranking Oficial | Cringelândia" />
   <meta property="og:description" content="Acompanhe o ranking em tempo real do evento <%= config.eventName %> na Cringelândia com a Pyxie! Veja quem está liderando os baús e artes." />
-  <meta property="og:image" content="https://pyxie.duckdns.org/api/sazonal/card.png?lang=<%= lang %>" />
+  <meta property="og:image" content="https://pyxie.com.br/api/sazonal/card.png?lang=<%= lang %>" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1080" />
   <meta property="og:image:height" content="1080" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="<%= config.eventName %> — Placar Oficial | Cringelândia" />
   <meta name="twitter:description" content="Acompanhe o ranking em tempo real do evento <%= config.eventName %> na Cringelândia com a Pyxie!" />
-  <meta name="twitter:image" content="https://pyxie.duckdns.org/api/sazonal/card.png?lang=<%= lang %>" />
+  <meta name="twitter:image" content="https://pyxie.com.br/api/sazonal/card.png?lang=<%= lang %>" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2079,18 +2082,18 @@
     function shareTwitter() {
       const dict = I18N[currentLang] || I18N.pt;
       const text = encodeURIComponent(dict['share.tweetText']);
-      const url = encodeURIComponent('https://pyxie.duckdns.org/evento?lang=' + currentLang);
+      const url = encodeURIComponent('https://pyxie.com.br/evento?lang=' + currentLang);
       window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}&hashtags=Cringelandia,PyxieBot,Discord`, '_blank');
     }
 
     function shareWhatsApp() {
       const dict = I18N[currentLang] || I18N.pt;
-      const text = encodeURIComponent(dict['share.tweetText'] + ' https://pyxie.duckdns.org/evento?lang=' + currentLang + ' (Convite: https://discord.gg/b3uZK3ssfX)');
+      const text = encodeURIComponent(dict['share.tweetText'] + ' https://pyxie.com.br/evento?lang=' + currentLang + ' (Convite: https://pyxie.com.br/discord?ref=evento)');
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     }
 
     async function copyDiscordInvite() {
-      const inviteUrl = 'https://discord.gg/b3uZK3ssfX';
+      const inviteUrl = 'https://pyxie.com.br/discord?ref=evento';
       try {
         await navigator.clipboard.writeText(inviteUrl);
         showShareToast('Convite do Discord copiado!');
