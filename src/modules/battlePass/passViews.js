@@ -1,7 +1,7 @@
 const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const { t, getLanguage } = require('../../utils/i18n');
 const { getEmoji } = require('../../utils/appEmojis');
-const { BLANK, columns, decorate, field, buttonEmoji } = require('../../utils/embedLayout');
+const { BLANK, columns, decorate, buttonEmoji } = require('../../utils/embedLayout');
 const battlePass = require('../../services/battlePass');
 const payments = require('../../services/passPayments');
 const { getItem, itemName, rarityInfo } = require('../home/homeCatalog');
@@ -88,28 +88,48 @@ function premiumButton(viewerId, lang, status) {
   return new ButtonBuilder().setLabel(t('pass.btnPremium', lang)).setEmoji(buttonEmoji('💎')).setStyle(ButtonStyle.Link).setURL(payments.passUrl(viewerId, { lang }));
 }
 
+/** Prêmio final sem o título decorado, que quebra linha no celular (a imagem já mostra o pet). */
+function finaleLabel(reward, lang) {
+  if (!reward.title) return rewardLabel(reward, lang);
+  const entry = getItem(reward.itemId);
+  const pet = `**${itemName(entry, lang)}** (${rarityInfo(entry?.rarity)[lang === 'en' ? 'en' : 'pt']})`;
+  return t('pass.rewards.petAndTitleShort', lang, { pet });
+}
+
+/**
+ * Tela principal pensada para leitura rápida (TDAH): um assunto por bloco, na ordem
+ * onde estou → o que ganho a seguir → o que fazer agora → como ganhar XP.
+ */
 async function buildPassView({ viewerId, source, notice = null, now = Date.now() }) {
   const lang = getLanguage(source);
   const status = battlePass.getStatus(viewerId, now);
+  const maxed = status.level >= battlePass.MAX_LEVEL;
   const next = status.track.find((row) => row.level > status.level) || status.track[status.track.length - 1];
   const finale = status.track[status.track.length - 1];
   const lock = status.premium ? '' : ' 🔒';
   const lines = [
     notice ? `> ${notice}` : null,
-    t('pass.intro', lang, { month: monthLabel(status.month, lang), date: ts(status.endsAt, 'f'), relative: ts(status.endsAt, 'R') }),
-    t('pass.levelLine', lang, { level: status.level, max: battlePass.MAX_LEVEL, bar: progressBar(status), into: status.intoLevel, need: battlePass.XP_PER_LEVEL }),
-    status.premium ? t('pass.premiumOn', lang) : t('pass.premiumOff', lang, { brl: battlePass.PRICE.BRL }),
+    t('pass.intro', lang, { date: ts(status.endsAt, 'D'), relative: ts(status.endsAt, 'R') }),
+    maxed
+      ? t('pass.levelMax', lang, { max: battlePass.MAX_LEVEL, bar: progressBar(status) })
+      : t('pass.levelLine', lang, { level: status.level, max: battlePass.MAX_LEVEL, bar: progressBar(status), into: status.intoLevel, need: battlePass.XP_PER_LEVEL, left: battlePass.XP_PER_LEVEL - status.intoLevel, nextLevel: next.level }),
+    maxed ? null : [
+      t('pass.nextHeader', lang, { level: next.level }),
+      t('pass.freeLine', lang, { reward: rewardLabel(next.free, lang) }),
+      t('pass.premiumLine', lang, { reward: rewardLabel(next.premium, lang), lock }),
+    ].join('\n'),
+    `${t('pass.todoHeader', lang)}\n${status.claimable > 0 ? t('pass.todoClaim', lang, { count: status.claimable }) : t('pass.todoPlay', lang)}`,
+    maxed ? null : `${t('pass.xpHeader', lang)}\n${t('pass.xpSources', lang, { ...battlePass.XP_SOURCES })}`,
+    [
+      status.premium ? t('pass.premiumOn', lang) : t('pass.premiumOff', lang, { brl: battlePass.PRICE.BRL }),
+      t('pass.finaleLine', lang, { reward: finaleLabel(finale.premium, lang), lock }),
+    ].join('\n'),
   ];
   const embed = decorate(
     new EmbedBuilder()
       .setColor(COLOR)
       .setTitle(t('pass.title', lang, { month: monthLabel(status.month, lang) }))
       .setDescription(lines.filter(Boolean).join('\n\n'))
-      .addFields(
-        ...columns([t('pass.freeName', lang, { level: next.level }), rewardLabel(next.free, lang)], [t('pass.premiumName', lang, { level: next.level }), `${rewardLabel(next.premium, lang)}${lock}`]),
-        field(t('pass.finaleHeader', lang), `${rewardLabel(finale.premium, lang)}${lock}`),
-        ...columns([t('pass.xpHeader', lang), t('pass.xpLeft', lang, { ...battlePass.XP_SOURCES })], [BLANK, t('pass.xpRight', lang, { ...battlePass.XP_SOURCES })])
-      )
       .setFooter(footer(lang))
   );
   const file = await shelfFile(status.month, lang);
