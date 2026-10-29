@@ -322,8 +322,8 @@ O bot executa em ambiente de produção com limite estrito de memória (`--max-o
    - **NUNCA** registre `client.on('interactionCreate', ...)` dentro do seu manager de módulo se o bot já despacha interações centralmente em `index.js`.
    - Listeners duplicados causam **execuções em dobro**, respostas rejeitadas pelo Discord com erro `"Unknown interaction"` e modais abrindo duas vezes.
 
-3. **Ciclo de Vida da Agenda Automática (`automationSchedule`):**
-   - Se o módulo registrar tarefas visíveis no comando `/py-agenda` via `registerAutomation({ id, ... })`, é **obrigatório** invocar `unregisterAutomation(id)` dentro do método `onUnload()` para evitar que tarefas órfãs continuem sendo exibidas após a desativação.
+3. **Agenda do servidor (`/py-agenda` e painel → Agenda):**
+   - A agenda é calculada da config salva em `src/services/guildAgenda.js` (vale nos dois processos, sem registro em memória). Um disparo novo que deva aparecer lá entra como item nesse arquivo, lido da config do servidor.
 
 4. **Limpeza Explícita no `onUnload()`:**
    - Limpe estruturas em memória como `Map` ou `Set` que acumulam dados transitórios (ex: rate-limits por IP, caches de usuários):
@@ -332,7 +332,6 @@ O bot executa em ambiente de produção com limite estrito de memória (`--max-o
        this.client = null;
        this.bumpHits.clear();
        this.activeSessions = {};
-       unregisterAutomation('meu-modulo-job');
      }
      ```
 

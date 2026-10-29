@@ -34,11 +34,12 @@ O projeto foi projetado sob o padrão **Dual-Tier Multi-Tenant**:
 A **Cringelândia** (`Guild ID: 1453890868980482090`) é o laboratório de inovação, servidor oficial do criador e ambiente de acolhimento imersivo.
 
 ### 2.1 Identificadores Estáticos de Infraestrutura (`src/config.js`)
-A matriz possui canais e cargos dedicados monitorados pelo bot:
+Boas-vindas, acolhimento de 24h, guia de apoio (bump) e anúncio do tarot agora são configuração por servidor (painel → Acolhimento e Mensagens periódicas, guardada em `data/guilds/<id>/`). Os IDs abaixo viraram só o **padrão da Cringelândia** (`src/services/welcomeFlow.js` e `src/services/periodicMessages.js`); o dono muda tudo pelo painel:
 - `WELCOME_CHANNEL_ID`: Canal de recepção com reações automáticas de corações temáticos.
 - `WELCOME_ROLE_ID`: Cargo notificado para acolher novas pessoas.
 - `RULES_CHANNEL_ID`, `GUIDES_CHANNEL_ID`, `COLORS_CHANNEL_ID`: Canais fixos apresentados no embed de boas-vindas.
 - `TAROT_CHANNEL_ID` & `TAROT_ROLE_ID`: Canal de disparo diário do Tarot à 00:00 BRT com ping no cargo de tarólogos.
+- `BUMP_GUIDE_CHANNEL_ID` & `BUMP_GUIDE_INTERVAL_MS`: Canal e intervalo (12h) do guia de apoio.
 - `STARTUP_CHANNEL_ID`: Canal de notificação de boot/reinicialização do bot.
 
 ### 2.2 Isolamento de Módulos via `guildScope`

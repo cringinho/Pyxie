@@ -6,6 +6,9 @@ import {
   Calculator,
   Coins,
   Bug,
+  CalendarDays,
+  DoorOpen,
+  Repeat,
   Hash,
   Ghost,
   Handshake,
@@ -80,6 +83,9 @@ export const SECTION_META = {
   museum: { icon: Landmark, group: 'content' },
   shopee: { icon: ShoppingBag, group: 'content' },
   emojis: { icon: Smile, group: 'content' },
+  agenda: { icon: CalendarDays, group: 'config' },
+  periodic: { icon: Repeat, group: 'messages' },
+  welcome: { icon: DoorOpen, group: 'messages' },
 };
 
 const GROUP_ORDER = ['core', 'mary', 'messages', 'config', 'safety', 'system', 'content', 'more'];

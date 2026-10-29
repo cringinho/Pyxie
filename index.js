@@ -16,7 +16,7 @@ const {
   Partials,
 } = require('discord.js');
 const { acquireBotLock, releaseBotLock, getPrefix } = require('./src/utils/botUtils');
-const { getWelcomeChannel, normalizeChannelValue } = require('./src/services/database');
+const { normalizeChannelValue } = require('./src/services/database');
 const { commandsByName, slashCommands } = require('./src/commands');
 const moduleManager = require('./src/services/moduleManager');
 const seasonalManager = require('./src/modules/seasonal/seasonalManager');
@@ -38,23 +38,14 @@ const jokenpoCommand = require('./src/commands/jokenpo');
 const likelyCommand = require('./src/commands/provavel');
 const quizCommand = require('./src/commands/quiz');
 const { syncApplicationEmojis } = require('./src/utils/appEmojis');
-const { registerAutomation, updateAutomation } = require('./src/services/automationSchedule');
+const periodicMessages = require('./src/services/periodicMessages');
+const welcomeFlow = require('./src/services/welcomeFlow');
 const { startPresenceRotator } = require('./src/services/presenceRotator');
 const {
   DISCORD_TOKEN,
   STARTUP_CHANNEL_ID,
   STATUS_IMAGE_URL,
-  BUMP_GUIDE_CHANNEL_ID,
-  BUMP_GUIDE_INTERVAL_MS,
-  SERVER_REVIEW_URL,
-  WELCOME_ROLE_ID,
-  WELCOME_CHANNEL_ID,
-  RULES_CHANNEL_ID,
-  GUIDES_CHANNEL_ID,
-  COLORS_CHANNEL_ID,
-  TAROT_CHANNEL_ID,
   TAROT_LOG_CHANNEL_ID,
-  TAROT_ROLE_ID,
   KUROMI_STARTUP_EMOJI,
 } = require('./src/config');
 const { incrementCommand, incrementMessages, recordUniqueUser, updateStats, flushSync } = require('./src/services/logging');
@@ -82,15 +73,9 @@ const {
   handleVentInteraction,
 } = require('./src/services/ventService');
 const {
-  getAllTarotGuildConfigs,
-  getWelcomeConfig,
-} = require('./src/services/guildConfigService');
-const {
   handleWelcomeInteraction,
-  buildWelcomePreviewEmbed,
 } = require('./src/commands/set');
 
-const welcomeHeartReactions = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🩷', '🩵', '🖤', '🤍', '🤎'];
 const CRINGE_PHRASE_COOLDOWN_MS = 60 * 1000;
 const CRINGE_CHANNEL_COOLDOWN_MS = 30 * 1000;
 const cringePhraseCooldowns = new Map();
@@ -104,10 +89,6 @@ let sapatonaInFlight = false;
 const recentWelcomes = new Map();
 const processedMessageIds = new Map();
 const processedInteractionIds = new Map();
-
-function getRandomWelcomeHeart() {
-  return welcomeHeartReactions[Math.floor(Math.random() * welcomeHeartReactions.length)];
-}
 
 // Protege o bot contra duas instâncias rodando ao mesmo tempo.
 const lockAcquired = acquireBotLock();
@@ -228,110 +209,6 @@ async function sendStartupAnnouncement() {
   });
 }
 
-function buildBumpGuideEmbed(guild) {
-  const guildName = guild?.name || 'nosso servidor';
-  return new EmbedBuilder()
-    .setColor('#E60067')
-    .setTitle(`${getAnimatedEmoji(guild, ['rocket', 'boost', 'star'], '🚀')}  ✦  Como apoiar ${guildName}`)
-    .setDescription(
-      'Cada interação aumenta a visibilidade do servidor e ajuda novos membros a encontrarem nossa comunidade. Escolha uma forma de ajudar:'
-    )
-    .addFields(
-      {
-        name: '📌 DISBOARD — `/bump`',
-        value: 'Use **/bump** quando o DISBOARD permitir para impulsionar o servidor na lista.',
-      },
-      {
-        name: '🐢 Canudinho — `/bump`',
-        value: 'Execute **/bump** com o bot Canudinho para registrar o apoio da comunidade.',
-      },
-      {
-        name: '💜 Discadia — `/bump`',
-        value: 'No Discadia, execute **/bump** para manter o servidor em destaque.',
-      },
-      {
-        name: '🗳️ Top.gg — `/votar`',
-        value: 'Use o comando **/votar** para abrir a página oficial e confirmar seu voto diário.',
-      },
-      {
-        name: '⭐ Review no DISBOARD',
-        value: 'Deixe uma avaliação sincera contando como tem sido sua experiência conosco.',
-      }
-    )
-    .setFooter({ text: `${guildName} • Obrigado pelo seu apoio!` })
-    .setTimestamp();
-}
-
-function buildBumpGuideComponents() {
-  return [
-    new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setLabel('Deixar review')
-        .setStyle(ButtonStyle.Link)
-        .setURL(SERVER_REVIEW_URL),
-      new ButtonBuilder()
-        .setLabel('Abrir DISBOARD')
-        .setStyle(ButtonStyle.Link)
-        .setURL('https://disboard.org/pt-br/server/1453890868980482090')
-    ),
-  ];
-}
-
-async function postBumpGuide() {
-  const channel = await client.channels.fetch(BUMP_GUIDE_CHANNEL_ID).catch(() => null);
-
-  if (!channel || !channel.isTextBased()) {
-    console.warn(`Canal do guia de bump não encontrado ou inválido: ${BUMP_GUIDE_CHANNEL_ID}`);
-    return;
-  }
-
-  const recentMessages = await channel.messages.fetch({ limit: 50 }).catch(() => null);
-  const lastGuide = recentMessages?.find(
-    (message) =>
-      message.author.id === client.user.id &&
-      message.embeds.some(
-        (embed) =>
-          embed.title?.includes('Como apoiar') ||
-          embed.title?.includes('Como ajudar')
-      )
-  );
-
-  if (lastGuide && Date.now() - lastGuide.createdTimestamp < BUMP_GUIDE_INTERVAL_MS) {
-    console.log('Guia de bump já foi publicado recentemente. Ignorando reenvio na inicialização.');
-    return;
-  }
-
-  await channel.send({
-    embeds: [buildBumpGuideEmbed(channel.guild)],
-    components: buildBumpGuideComponents(),
-    allowedMentions: { parse: [] },
-  });
-  console.log('Guia de bump publicado com sucesso.');
-}
-
-function startBumpGuideScheduler() {
-  registerAutomation({
-    id: 'bump-guide',
-    emoji: '🚀',
-    name: 'Guia de apoio / bump',
-    action: 'verificação',
-    nextAt: Date.now() + BUMP_GUIDE_INTERVAL_MS,
-    channelId: BUMP_GUIDE_CHANNEL_ID,
-    frequency: 'a cada 12 horas',
-  });
-
-  postBumpGuide().catch((error) => {
-    console.error('Erro ao publicar o guia de bump:', error);
-  });
-
-  setInterval(() => {
-    updateAutomation('bump-guide', { nextAt: Date.now() + BUMP_GUIDE_INTERVAL_MS });
-    postBumpGuide().catch((error) => {
-      console.error('Erro ao publicar o guia de bump:', error);
-    });
-  }, BUMP_GUIDE_INTERVAL_MS);
-}
-
 function buildTarotDailyEmbed(guild, isExternal = false) {
   const guildName = guild?.name || '';
   let description =
@@ -376,36 +253,23 @@ async function postTarotDailyAnnouncement(now = Date.now(), { force = false } = 
     resetDailyDraws(now);
   }
 
-  // 1. Envio para a Cringelândia (Canal oficial principal)
-  const channel = await client.channels.fetch(TAROT_CHANNEL_ID).catch(() => null);
-  if (channel && channel.isTextBased()) {
-    await channel.send({
-      content: `<@&${TAROT_ROLE_ID}>`,
-      embeds: [buildTarotDailyEmbed(channel.guild, false)],
-      components: buildTarotDailyComponents(),
-      allowedMentions: { roles: [TAROT_ROLE_ID] },
-    }).catch((err) => console.error('[TarotScheduler] Erro no envio principal:', err.message));
-  } else {
-    console.warn(`Canal do Tarot não encontrado ou inválido: ${TAROT_CHANNEL_ID}`);
-  }
-
-  // 2. Envio para todos os demais servidores configurados via py!set tarot <#canal>
-  const externalConfigs = getAllTarotGuildConfigs();
-  for (const item of externalConfigs) {
-    if (item.channelId === TAROT_CHANNEL_ID) continue; // Evita duplicar canal principal
-
-    await new Promise((r) => setTimeout(r, 500)); // Espaçamento de 500ms para rate limit
+  // Cada servidor com canal do tarot e anúncio ligado (painel → Mensagens periódicas).
+  // A Cringelândia usa o canal e o cargo que antes eram fixos; os outros levam o crédito.
+  const targets = periodicMessages.tarotTargets([...client.guilds.cache.keys()]);
+  for (const item of targets) {
     try {
-      const extChannel = await client.channels.fetch(item.channelId).catch(() => null);
-      if (extChannel && extChannel.isTextBased()) {
-        await extChannel.send({
-          embeds: [buildTarotDailyEmbed(extChannel.guild, true)],
-          components: buildTarotDailyComponents(),
-        });
-      }
+      const channel = await client.channels.fetch(item.channelId).catch(() => null);
+      if (!channel || !channel.isTextBased() || channel.guild?.id !== item.guildId) continue;
+      await channel.send({
+        content: item.roleId ? `<@&${item.roleId}>` : undefined,
+        embeds: [buildTarotDailyEmbed(channel.guild, item.credit)],
+        components: buildTarotDailyComponents(),
+        allowedMentions: { parse: [], roles: item.roleId ? [item.roleId] : [] },
+      });
     } catch (err) {
       console.warn(`[TarotScheduler] Falha ao enviar tarot na guilda ${item.guildId}:`, err.message);
     }
+    await new Promise((r) => setTimeout(r, 500)); // Espaçamento de 500ms para rate limit
   }
 
   markAnnouncedToday(now);
@@ -426,21 +290,10 @@ function startTarotScheduler() {
   const nextMidnightUtc = Date.parse(`${currentCycle}T03:00:00.000Z`) + 24 * 60 * 60 * 1000;
   const delay = Math.max(1000, nextMidnightUtc - Date.now());
 
-  registerAutomation({
-    id: 'tarot-daily',
-    emoji: '🌙',
-    name: 'Tarot Diário',
-    action: 'disparo',
-    nextAt: Date.now() + delay,
-    channelId: TAROT_CHANNEL_ID,
-    frequency: 'diário, à 00:00 BRT',
-  });
 
   setTimeout(() => {
-    updateAutomation('tarot-daily', { nextAt: Date.now() + 24 * 60 * 60 * 1000 });
     postTarotDailyAnnouncement().catch((error) => console.error('Erro no anúncio diário do Tarot:', error));
     setInterval(() => {
-      updateAutomation('tarot-daily', { nextAt: Date.now() + 24 * 60 * 60 * 1000 });
       postTarotDailyAnnouncement().catch((error) => console.error('Erro no anúncio diário do Tarot:', error));
     }, 24 * 60 * 60 * 1000);
   }, delay);
@@ -581,7 +434,6 @@ client.once(Events.ClientReady, async () => {
   });
   await sendStartupAnnouncement();
   await syncApplicationEmojis(client).catch(() => null);
-  startBumpGuideScheduler();
   startTarotScheduler();
   setInterval(() => {
     checkAndDispatchBatch(client).catch((err) => console.error('[welcomeCheckin] Erro no agendador:', err.message));
@@ -724,112 +576,32 @@ client.on(Events.GuildMemberAdd, async (member) => {
     }
   }
 
-  const isCringelandia = member.guild.id === '1453890868980482090';
+  // Acolhimento de 24h (cada servidor liga no painel → Acolhimento).
+  onCheckinMemberAdd(member);
 
-  // Sistema de Acolhimento Tardio para novatos na Cringelândia
-  if (isCringelandia) {
-    onCheckinMemberAdd(member);
-  }
-
-  // 1. Tratamento para Servidores Externos via Boas-Vindas Premium Customizáveis
-  if (!isCringelandia) {
-    const welcomeCfg = getWelcomeConfig(member.guild.id);
-    if (welcomeCfg && welcomeCfg.channelId) {
-      try {
-        const extChannel = member.guild.channels.cache.get(welcomeCfg.channelId) || (await member.guild.channels.fetch(welcomeCfg.channelId).catch(() => null));
-        if (extChannel && extChannel.isTextBased()) {
-          const customEmbed = buildWelcomePreviewEmbed(member, welcomeCfg);
-          const welcomeMessage = await extChannel.send({
-            content: `Bem-vindo(a) ${member} a **${member.guild.name}**! ✨`,
-            embeds: [customEmbed],
-            allowedMentions: { users: [member.id] },
-          });
-
-          // Reações automáticas configuradas
-          if (Array.isArray(welcomeCfg.autoReactions)) {
-            for (const emoji of welcomeCfg.autoReactions) {
-              await welcomeMessage.react(emoji).catch(() => null);
-            }
-          }
-
-          // Atribuição de Auto-Role com proteção de hierarquia
-          if (welcomeCfg.autoRoleId) {
-            await member.roles.add(welcomeCfg.autoRoleId).catch((err) => {
-              console.warn(`[AutoRole] Falha ao atribuir cargo automático em ${member.guild.id}: ${err.message}`);
-            });
-          }
-        }
-      } catch (err) {
-        console.warn(`[WelcomePremium] Erro ao enviar boas-vindas na guilda ${member.guild.id}: ${err.message}`);
-      }
-    }
-    return;
-  }
-
-  // 2. Tratamento Canônico Original da Cringelândia (100% Preservado)
-  const configuredWelcomeChannelId = getWelcomeChannel(member.guild.id);
-  const targetChannelId =
-    configuredWelcomeChannelId ||
-    (isCringelandia ? (getWelcomeChannel('global') || WELCOME_CHANNEL_ID) : null);
-
-  let welcomeChannel = null;
-  if (targetChannelId) {
-    welcomeChannel =
-      member.guild.channels.cache.get(targetChannelId) ||
-      (await member.guild.channels.fetch(targetChannelId).catch(() => null));
-  }
-
-  if (!welcomeChannel && isCringelandia) {
-    welcomeChannel =
-      member.guild.systemChannelId ||
-      member.guild.channels.cache.find(
-        (channel) =>
-          channel.isTextBased() &&
-          ['welcome', 'bem-vindos', 'entrada', 'chat-geral'].includes(channel.name)
-      );
-  }
-
-  if (!welcomeChannel) return;
-
-  const guildName = member.guild?.name || 'nosso servidor';
-  const welcomeEmbed = new EmbedBuilder()
-    .setColor('#8b5cf6')
-    .setTitle(`${getAnimatedEmoji(member.guild, ['heart', 'welcome', 'love'], '🎉')}  ✦  Uma nova pessoa chegou`)
-    .setDescription(`Que bom ter você aqui, **${member.displayName}**! Seja muito bem-vindo(a) a **${guildName}**!`)
-    .addFields(
-      {
-        name: '📜 Regras do Servidor',
-        value: `Consulte <#${RULES_CHANNEL_ID}> para conhecer nossas diretrizes e manter um ambiente acolhedor.`,
-      },
-      {
-        name: '🧭 Explore o Servidor',
-        value: `Veja tutoriais e canais importantes em <#${GUIDES_CHANNEL_ID}>.`,
-      },
-      {
-        name: '🎨 Personalize sua Experiência',
-        value: `Escolha suas cores e cargos em <#${COLORS_CHANNEL_ID}>.`,
-      }
-    )
-    .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 256 }))
-    .setImage('https://cdn.discordapp.com/attachments/1533657882862686218/1541908904487690321/dhj7hfn-842bcc59-b41f-4ef3-888b-dbfc210f4a5c.gif?ex=6a9b2b92&is=6a99da12&hm=7a41318a2f477b04a295a5b209c43de9517cfa47ac6ecf15e351c045aa104714&')
-    .setFooter({ text: `${guildName} • Desejamos ótimos momentos na comunidade!` })
-    .setTimestamp();
+  // Boas-vindas: formato guia ou personalizado, canal e cargos de cada servidor
+  // (src/services/welcomeFlow.js; a Cringelândia usa os valores que eram fixos aqui).
+  const view = welcomeFlow.getView(member.guild.id);
+  if (!view.enabled || !view.channelId) return;
+  const welcomeChannel =
+    member.guild.channels.cache.get(view.channelId) ||
+    (await member.guild.channels.fetch(view.channelId).catch(() => null));
+  if (!welcomeChannel || !welcomeChannel.isTextBased()) return;
 
   try {
-    const welcomeMessage = await welcomeChannel.send({
-      content: `${member} chegou! <@&${WELCOME_ROLE_ID}>, recebam nossa nova pessoa com carinho 💗`,
-      embeds: [welcomeEmbed],
-      allowedMentions: {
-        users: [member.id],
-        roles: [WELCOME_ROLE_ID],
-      },
-    });
-
-    await welcomeMessage.react(getRandomWelcomeHeart()).catch((error) => {
-      console.warn('Não foi possível reagir à mensagem de boas-vindas:', error.message);
-    });
+    const welcomeMessage = await welcomeChannel.send(welcomeFlow.buildWelcomeMessage(member, view));
+    for (const emoji of welcomeFlow.reactionsFor(view)) {
+      await welcomeMessage.react(emoji).catch(() => null);
+    }
   } catch (err) {
-    console.warn('Falha ao enviar mensagem de boas-vindas:', err.message);
+    console.warn(`[Welcome] Falha ao enviar boas-vindas na guilda ${member.guild.id}: ${err.message}`);
+  }
+
+  // Cargo automático com proteção de hierarquia
+  if (view.autoRoleId) {
+    await member.roles.add(view.autoRoleId).catch((err) => {
+      console.warn(`[AutoRole] Falha ao atribuir cargo automático em ${member.guild.id}: ${err.message}`);
+    });
   }
 });
 

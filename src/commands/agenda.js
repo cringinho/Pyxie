@@ -1,65 +1,46 @@
 const { PermissionFlagsBits, EmbedBuilder, SlashCommandBuilder } = require('discord.js');
-const { BUMP_GUIDE_CHANNEL_ID, BUMP_GUIDE_INTERVAL_MS, TAROT_CHANNEL_ID } = require('../config');
-const { getAutomationSchedule } = require('../services/automationSchedule');
+const { getGuildAgenda } = require('../services/guildAgenda');
 const { AGENDA } = require('./commandNames');
 const { getAnimatedEmoji } = require('../utils/serverEmojis');
-const { getLanguage, t } = require('../utils/i18n');
+const { t } = require('../utils/i18n');
 
 function isManager(source) {
   return source.member?.permissions?.has(PermissionFlagsBits.ManageGuild);
 }
 
-function formatDate(timestamp, lang = 'pt') {
-  return new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'pt-BR', {
-    timeZone: 'America/Sao_Paulo',
-    dateStyle: 'short',
-    timeStyle: 'short',
-  }).format(new Date(timestamp));
-}
-
-function formatRemaining(remainingMs) {
-  const totalMinutes = Math.max(0, Math.ceil(remainingMs / 60000));
-  const days = Math.floor(totalMinutes / 1440);
-  const hours = Math.floor((totalMinutes % 1440) / 60);
-  const minutes = totalMinutes % 60;
-  return [days ? `${days}d` : '', hours ? `${hours}h` : '', `${minutes}min`].filter(Boolean).join(' ');
+// Frequência legível de um item da agenda (src/services/guildAgenda.js).
+function describeEvery(every, lang) {
+  if (every.hours) return t('periodic.agenda.everyHours', lang, { hours: `\`${every.hours}\`` });
+  if (every.daily) return t('periodic.agenda.daily', lang, { time: `\`${every.daily}\`` });
+  if (every.afterBump) return t('periodic.agenda.afterBump', lang, { hours: `\`${every.afterBump}\`` });
+  if (every.afterJoin) return t('periodic.agenda.afterJoin', lang, { hours: `\`${every.afterJoin}\`` });
+  const days = (every.weekdays || []).map((d) => t(`periodic.agenda.weekday.${d}`, lang)).join(', ');
+  return t('periodic.agenda.weekly', lang, { days, hour: `\`${String(every.hour).padStart(2, '0')}:00\`` });
 }
 
 function buildAgendaEmbed(guild, now = Date.now(), source = null) {
-  const schedule = getAutomationSchedule(now);
+  const ctx = source || guild;
+  const schedule = guild?.id ? getGuildAgenda(guild.id, now) : [];
   const guildName = guild?.name || '';
-  const lang = getLanguage(source || guild);
 
-  const autoLines = schedule.length
-    ? schedule.map((automation) => {
-        const emoji = getAnimatedEmoji(guild, [automation.id, 'calendar', 'clock'], automation.emoji);
-        const nextLabel = lang === 'en' ? `Next ${automation.action}:` : `Próxima ${automation.action}:`;
-        const timeLabel = lang === 'en' ? 'Time:' : 'Horário:';
-        const leftLabel = lang === 'en' ? 'Time Left:' : 'Tempo Restante:';
-        const channelLabel = lang === 'en' ? 'Channel:' : 'Canal:';
-        const freqLabel = lang === 'en' ? 'Frequency:' : 'Frequência:';
+  const lines = schedule.length
+    ? schedule.map((item) => {
+        const emoji = getAnimatedEmoji(guild, [item.id, 'calendar', 'clock'], item.emoji);
+        const at = Math.floor(item.nextAt / 1000);
         return [
-          `**${emoji} ${automation.name}**`,
-          `> ⏰ **${nextLabel}** <t:${Math.floor(automation.nextAt / 1000)}:F>`,
-          `> 📅 **${timeLabel}** ${formatDate(automation.nextAt, lang)} (Brasília)`,
-          `> ⏱️ **${leftLabel}** ${formatRemaining(automation.remainingMs)}`,
-          `> 📢 **${channelLabel}** <#${automation.channelId}>`,
-          `> 🔁 **${freqLabel}** ${automation.frequency}`,
+          `### ${emoji} ${t(`periodic.agenda.name.${item.id}`, ctx)}`,
+          `> ⏰ **${t('periodic.agenda.next', ctx)}** <t:${at}:F> (<t:${at}:R>)`,
+          `> 📢 **${t('periodic.agenda.channel', ctx)}** <#${item.channelId}>`,
+          `> 🔁 **${t('periodic.agenda.frequency', ctx)}** ${describeEvery(item.every, ctx)}`,
         ].join('\n');
       })
-    : [lang === 'en' ? '> *No automations currently scheduled.*' : '> *Nenhuma automação programada no momento.*'];
-
-  const desc = [
-    t('admin.agendaDesc', source || guild),
-    '',
-    autoLines.join('\n\n'),
-  ].join('\n');
+    : [`> *${t('periodic.agenda.empty', ctx)}*`];
 
   return new EmbedBuilder()
     .setColor('#8b5cf6')
-    .setTitle(t('admin.agendaTitle', source || guild, { server: guildName ? ` — ${guildName}` : '' }))
-    .setDescription(desc)
-    .setFooter({ text: `${guildName ? `${guildName} • ` : ''}${lang === 'en' ? 'Schedule & Reminders' : 'Cronograma e Lembretes'}` })
+    .setTitle(t('admin.agendaTitle', ctx, { server: guildName ? ` — ${guildName}` : '' }))
+    .setDescription([t('admin.agendaDesc', ctx), ...lines, `-# ${t('periodic.agenda.hint', ctx)}`].join('\n\n'))
+    .setFooter({ text: `${guildName ? `${guildName} • ` : ''}${t('periodic.agenda.footer', ctx)}` })
     .setTimestamp();
 }
 
@@ -71,6 +52,7 @@ module.exports = {
   name: AGENDA,
   aliases: ['schedule', 'agenda', 'py-agenda', 'py-schedule', 'automacoes'],
   buildAgendaEmbed,
+  describeEvery,
   data: new SlashCommandBuilder()
     .setName(AGENDA)
     .setDescription('Shows upcoming scheduled automations and tasks.')
@@ -85,9 +67,5 @@ module.exports = {
   async executeSlash({ interaction }) {
     if (!isManager(interaction)) return interaction.editReply(buildUsage(interaction));
     await interaction.editReply({ embeds: [buildAgendaEmbed(interaction.guild, Date.now(), interaction)] });
-  },
-  automationDefaults: {
-    bump: { channelId: BUMP_GUIDE_CHANNEL_ID, intervalMs: BUMP_GUIDE_INTERVAL_MS },
-    tarot: { channelId: TAROT_CHANNEL_ID },
   },
 };
