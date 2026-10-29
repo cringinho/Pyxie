@@ -89,6 +89,7 @@ async function handleTab(interaction, doc, button) {
     user: { id: interaction.user.id, avatarUrl: interaction.user.displayAvatarURL({ size: 256 }) },
     guild: { name: interaction.guild.name, iconUrl: interaction.guild.iconURL({ size: 256 }) || '' },
     botAvatarUrl: interaction.client.user.displayAvatarURL({ size: 256 }),
+    vars: studio.guildVars(interaction.guildId),
   };
   const payload = studio.buildPayload(doc, ctx, { tab: button.action.tabId });
   if (button.action.private) return interaction.reply(toDiscordJs(payload, true));

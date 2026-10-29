@@ -23,6 +23,9 @@ function registerDashboardSection(section) {
   SECTION_REGISTRY.push(section);
 }
 
+// Telas da zona da Mary (client/src/dashboard/Mary.jsx; API no bloco "Estúdio da Mary" abaixo).
+for (const id of ['maryStore', 'maryTools', 'maryProfile']) registerDashboardSection({ id, zones: ['mary'] });
+
 function getSections(guildAccess) {
   const base = ['overview', 'commands', 'studio', 'features', 'automations', 'injections', 'security', 'channels', 'roles', 'emojiUsage'];
   if (guildAccess.canManageAccess) base.push('access');
@@ -289,6 +292,10 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   });
 
   router.put('/api/dashboard/guilds/:guildId/studio/:msgId', requireSession, requireGuild, requireMsgId, (req, res) => {
+    // Botões da lojinha (calculadora, ticket...) só existem no servidor da Mary.
+    if (req.guildAccess.zone !== 'mary' && (Array.isArray(req.body?.buttons) ? req.body.buttons : []).some((b) => b?.action?.type === 'mary')) {
+      return res.status(403).json({ success: false, error: 'mary_only' });
+    }
     const result = studioStore.saveMessage(req.params.guildId, { ...(req.body || {}), id: req.params.msgId }, { by: req.panelSession.userId });
     if (!result.ok) return res.status(422).json({ success: false, error: 'validation_failed', errors: result.errors });
     return res.json({ success: true, message: result.doc });
@@ -332,6 +339,76 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     } catch (err) {
       return studioError(res, err);
     }
+  });
+
+  // ---------- Estúdio da Mary: lojinha, ferramentas Robux e aparência da Pyxie (zona mary: a Mary e o dono) ----------
+  function requireMary(req, res, next) {
+    if (req.guildAccess.zone !== 'mary') return res.status(403).json({ success: false, error: 'mary_only' });
+    return next();
+  }
+  const mary = () => require('../modules/mary-studio/maryDashboard');
+  const maryReply = (res, result, okBody) => (result.ok ? res.json({ success: true, ...okBody(result) }) : res.status(result.error === 'roblox_not_found' ? 404 : 400).json({ success: false, error: result.error }));
+  const maryUpload = express.raw({ type: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], limit: '8mb' });
+
+  router.get('/api/dashboard/guilds/:guildId/mary/store', requireSession, requireGuild, requireMary, (req, res) => {
+    return res.json({ success: true, store: mary().getStore(), templates: mary().listTemplates() });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/mary/store', requireSession, requireGuild, requireMary, async (req, res) => {
+    const body = req.body || {};
+    const lists = { channels: [], roles: [] };
+    try {
+      if (body.channelTickets || body.channelReviews) lists.channels = await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId });
+      if (body.roleClient) lists.roles = await bridge.request('GUILD_ROLES', { guildId: req.params.guildId });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+    return maryReply(res, mary().saveStore(body, lists), (r) => ({ store: r.store }));
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/mary/calc', requireSession, requireGuild, requireMary, (req, res) => {
+    return maryReply(res, mary().calc(req.body || {}), ({ ok, ...r }) => ({ result: r }));
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/mary/roblox/gamepass', requireSession, requireGuild, requireMary, async (req, res) => {
+    return maryReply(res, await mary().inspectGamepass(req.query.input), (r) => ({ gamepass: r.gamepass }));
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/mary/roblox/user', requireSession, requireGuild, requireMary, async (req, res) => {
+    return maryReply(res, await mary().inspectUser(req.query.username), (r) => ({ user: r.user }));
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/mary/receipt', requireSession, requireGuild, requireMary, async (req, res) => {
+    try {
+      return maryReply(res, await mary().sendReceipt(req.params.guildId, req.body || {}, { fetchImpl: doFetch }), (r) => ({ messageId: r.messageId }));
+    } catch (err) {
+      return studioError(res, err);
+    }
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/mary/giveaway', requireSession, requireGuild, requireMary, async (req, res) => {
+    try {
+      return maryReply(res, await mary().createGiveaway(req.params.guildId, req.body || {}, { fetchImpl: doFetch }), ({ ok, ...r }) => r);
+    } catch (err) {
+      return studioError(res, err);
+    }
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/mary/profile', requireSession, requireGuild, requireMary, (req, res) => {
+    return res.json({ success: true, profile: mary().getProfile() });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/mary/profile', requireSession, requireGuild, requireMary, async (req, res) => {
+    return maryReply(res, await mary().saveProfile(req.params.guildId, req.body || {}), (r) => ({ profile: r.profile }));
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/mary/upload', requireSession, requireGuild, requireMary, maryUpload, (req, res) => {
+    const result = require('../modules/mary-studio/maryStudioManager').saveUpload(req.body);
+    return result.ok ? res.json({ success: true, url: result.url }) : res.status(result.error === 'file_too_large' ? 413 : 400).json({ success: false, error: result.error });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/mary/templates/:templateId', requireSession, requireGuild, requireMary, (req, res) => {
+    return maryReply(res, mary().createFromTemplate(req.params.guildId, req.params.templateId, { by: req.panelSession.userId }), (r) => ({ id: r.id }));
   });
 
   // ---------- Parcerias da Cringelândia: texto da DM de aprovação puxado do fórum (plano 5.4) ----------

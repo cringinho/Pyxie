@@ -1,18 +1,30 @@
-# Módulo Mary Studio & Hub (Pyxie Robux Store & Embed Studio)
+# Módulo Mary Studio (lojinha de Robux da Mary)
 
-Módulo exclusivo de painel administrativo web e estúdio visual de mensagens, embeds, botões interativos e gestão de lojinha de Robux para a Mary (`1463644930080637140`).
+Módulo exclusivo do servidor da Mary (`1557399041443111025`, zona `mary` em `src/config/scopes.js`). Só a Mary (`1463644930080637140`) e o dono da Pyxie mexem nele.
 
-## Funcionalidades Principais
-- **Acesso Sem Códigos / Sem Senhas (Link Mágico HMAC)**: Login instantâneo de 1 clique gerado pelo comando `/py-mary` ou menu de contexto `✏️ Editar na Pyxie`, com token de uso único (HMAC-SHA256) e tela intermediária anti-crawler para proteção contra `Discordbot`.
-- **Estúdio Visual de Embeds & Mensagens**: Construtor de mensagens com preview fiel ao Discord, editor de rodapé, campos, uploads de imagens persistidos em `data/uploads/mary/` e histórico de 5 versões (Undo) via `message.edit()`.
-- **Botões Interativos com Ações Automáticas**:
-  - Resposta secreta (`ephemeral`) com imagem explicativa e sub-botões de ação.
-  - Calculadora automática da taxa de 30% do Roblox ($\lceil \text{Robux} / 0.70 \rceil$).
-  - Validador público de nick e avatar do Roblox.
-  - Sistema opcional de Tickets de atendimento com macros de 1 clique para a Mary.
-  - Sistema de avaliações (1 a 5 estrelas) com numeração sequencial.
-  - Entrega e remoção automática de cargos por botão.
-- **Customização Local de Perfil**: Edição local de avatar, banner, apelido e biografia da Pyxie exclusivamente no servidor da Mary via `PATCH /guilds/{guildId}/members/@me`.
-- **Persistência Atômica Blindada em `data/`**: Gravação segura e atômica fora de `src/` em `data/maryStudioConfig.json`, `data/marySavedMessages.json`, `data/maryStoreData.json` e `data/marySecurity.json`.
-- **Zero Memory Leak**: Gerenciamento de ciclo de vida através de `moduleManager.js` e métodos injetados por `ctx`.
+## Onde fica cada coisa
 
+- **Telas no `/dashboard`** (login com Discord; a zona `mary` só aceita a Mary e o dono, conferido ao vivo pelo bot):
+  - **Lojinha** (`#/guild/<id>/maryStore`): status, estoque, preço do 1k, PIX, tickets de compra, canal das avaliações, cargo de cliente, filtro de convites, respostas rápidas, variáveis e modelos prontos.
+  - **Ferramentas Robux** (`#/guild/<id>/maryTools`): calculadora dos 30%, conferir gamepass, conferir nick do Roblox, recibo de entrega (com botão de avaliação) e sorteios.
+  - **Aparência da Pyxie** (`#/guild/<id>/maryProfile`): apelido, foto, banner e bio da Pyxie só nesse servidor (`PATCH /guilds/{id}/members/@me`), com envio de imagem.
+  - **Mensagens** (estúdio geral, `src/services/messageStudio.js`): no servidor da Mary os botões ganham a ação **Ação da lojinha** (calculadora, conferir nick, ticket, avaliação → `customId` `mary_btn:<tipo>:<botão>`), e os textos aceitam `{estoque}`, `{preco_1k}`, `{status_loja}`, `{total_avaliacoes}`, `{nota_media}`, `{pix_key}`, `{pix_name}` e `{bio}`. Fora da zona `mary` a API recusa essa ação (`mary_only`).
+- **API**: `/api/dashboard/guilds/:guildId/mary/*` em `src/routes/dashboardRoutes.js` (sempre `requireSession, requireGuild` e zona `mary`); regras em `maryDashboard.js`.
+- **Discord**:
+  - `/py-mary` e `py!mary` (na DM): central rápida com status, estoque e o link `https://pyxie.com.br/dashboard#/guild/<id>/maryStore`. Atalhos: mudar status, estoque e preço, atalho na DM.
+  - Menu de contexto **✏️ Editar na Pyxie**: leva a mensagem da Pyxie para o estúdio do painel (ou acha a que já está lá) e manda o link `#/guild/<id>/studio/<mensagem>`. Recusa mensagens com botões que se perderiam (sorteio).
+  - `/py-gamepass`: inspetor de gamepass.
+  - Handlers dos botões `mary_btn:*` (calculadora, conferir nick, ticket, avaliação), tickets com macros, avaliações, sorteios e filtro de convites. Só respondem no servidor da Mary.
+- **Imagens**: `data/uploads/mary/`, servidas em `/api/mary/media/<arquivo>` (mensagens antigas apontam para lá). Upload pelo painel até 8 MB, só PNG, JPG, GIF ou WebP de verdade.
+- **Endereços antigos**: `/mary` e `/mary/auth/magic` redirecionam para a Lojinha no painel. Não há mais app web próprio, link mágico nem `MARY_STUDIO_SECRET`.
+
+## Dados (`data/`, escrita atômica)
+
+- `maryStudioConfig.json`: configuração da lojinha, perfil local, macros e `migratedToDashboard` (registros do estúdio antigo já levados ao painel).
+- `maryStoreData.json`: tickets, avaliações, cupons, sorteios.
+- `marySavedMessages.json`: mensagens do estúdio antigo. Não é apagado. Na subida do processo do bot, cada registro vira uma mensagem do estúdio do painel (`data/guilds/<id>/messages.json`, id `mary-<registro>`) ligada à mensagem já postada, para editar e atualizar de lá. Os cards explicativos viram abas privadas; enquanto a mensagem não é atualizada pelo painel, os botões antigos continuam respondendo pelo arquivo antigo.
+- `marySecurity.json` (sessões do app antigo): não é mais lido.
+
+## Ciclo de vida
+
+`onLoad` registra os listeners por `ctx.registerListener` e o verificador de sorteios por `ctx.registerInterval`; a migração das mensagens antigas roda só no processo do bot (`ctx.isBotProcess`). `onUnload` solta o cliente.

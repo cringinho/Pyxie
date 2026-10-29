@@ -133,6 +133,7 @@ async function getContext(guildId, fetchImpl) {
       ? { name: guild.name, iconUrl: guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=256` : '' }
       : null,
     botAvatarUrl: me?.avatar ? `https://cdn.discordapp.com/avatars/${me.id}/${me.avatar}.png?size=256` : '',
+    vars: studio.guildVars(guildId),
     now: new Date(),
   };
 }

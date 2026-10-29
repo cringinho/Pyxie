@@ -22,5 +22,5 @@ A Pyxie é um produto global. A Cringelândia (`1453890868980482090`) é o servi
 - **Núcleo global** (`src/commands/`, `src/services/`, `src/utils/`, `index.js`, módulos globais em `src/modules/`): títulos, embeds e descrições usam `guild?.name ?? 'Pyxie'`. Nunca fixe "Cringelândia", "Lojinha da Mary" ou "Estúdio da Mary" em texto exibido a servidores de terceiros.
 - **Referências de infraestrutura são permitidas**: constantes de escopo (`CRINGELANDIA_GUILD_ID`), `commandScopeManager.js`, `commandIntrospector.js`, `guildDirectory.js` e checagens `guild.id === CRINGELANDIA_GUILD_ID` são o mecanismo legítimo de roteamento.
 - **Conteúdo exclusivo da Cringelândia** fica em `src/services/cringelandiaService.js`, `data/cringelandia/` ou atrás de uma checagem explícita de guild ID.
-- **Conteúdo do Estúdio da Mary** fica confinado em `src/modules/mary-studio/`, nas rotas `/mary` e `/api/mary/*` e em `data/maryStudioConfig.json`.
+- **Conteúdo do Estúdio da Mary** fica confinado em `src/modules/mary-studio/`, nas telas da zona `mary` do `/dashboard` (`/api/dashboard/guilds/<id>/mary/*`) e em `data/mary*.json`.
 - Comandos restritos a uma guild são registrados com escopo de guild (`Routes.applicationGuildCommands`) e configurados na aba "Escopo & Acesso" do `/admin`; nunca aparecem em `/api/commands`, na Wiki ou no `/py-help` de outros servidores.
