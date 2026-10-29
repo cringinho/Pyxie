@@ -94,10 +94,11 @@ async function faq(message, now = Date.now()) {
   const cfg = on(message.guild.id, 'faqReplies');
   if (!cfg || (cfg.channelIds.length && !cfg.channelIds.includes(message.channel.id))) return null;
   const pairs = r3.parseFaq(cfg.pairs);
-  const hit = r3.matchFaq(pairs, message.content);
+  const hit = r3.matchFaq(pairs, message.content, cfg.matchMode || 'word');
   if (!hit) return null;
   const key = `${message.channel.id}:${pairs.indexOf(hit)}`;
-  if (now - (faqCooldown.get(key) || 0) < 2 * MINUTE) return null;
+  const cooldownMs = (Number(cfg.cooldownSeconds) || 120) * 1000;
+  if (now - (faqCooldown.get(key) || 0) < cooldownMs) return null;
   faqCooldown.set(key, now);
   if (faqCooldown.size > 2000) faqCooldown.delete(faqCooldown.keys().next().value);
   stats.bump(message.guild.id, 'faqReplies', 'hits');
@@ -113,7 +114,21 @@ async function scheduledTick(client, now = Date.now()) {
     const saved = state.read(guild.id, 'scheduled.json');
     if (saved.lastDay === day) continue;
     const ch = guild.channels.cache.get(cfg.channelId);
-    const sent = await ch?.send?.({ content: cfg.text, allowedMentions: NO_PING }).catch(() => null);
+    const lang = getLanguage(guild.id);
+    const payload = cfg.useEmbed
+      ? {
+          embeds: [
+            new EmbedBuilder()
+              .setColor(/^#[0-9a-f]{6}$/i.test(cfg.color || '') ? cfg.color : '#8b5cf6')
+              .setTitle(cfg.title?.trim() || null)
+              .setDescription(cfg.text)
+              .setFooter({ text: t('autos.footer', lang) })
+              .setTimestamp(now),
+          ],
+          allowedMentions: NO_PING,
+        }
+      : { content: cfg.text, allowedMentions: NO_PING };
+    const sent = await ch?.send?.(payload).catch(() => null);
     if (!sent) continue;
     state.write(guild.id, 'scheduled.json', { lastDay: day });
     stats.bump(guild.id, 'scheduledMessages', 'hits');
@@ -188,10 +203,16 @@ async function bumpTick(client, now = Date.now()) {
     const cfg = on(guild.id, 'bumpReminder');
     if (!cfg) continue;
     const saved = state.read(guild.id, 'bump.json');
-    if (!saved.at || saved.reminded || now - saved.at < BUMP_MS) continue;
+    const waitMs = (Number(cfg.cooldownMinutes) || 120) * MINUTE;
+    if (!saved.at || saved.reminded || now - saved.at < waitMs) continue;
     const ch = guild.channels.cache.get(saved.channelId);
     const lang = getLanguage(guild.id);
-    const content = cfg.roleId ? t('autos3.bump.withRole', lang, { role: `<@&${cfg.roleId}>` }) : t('autos3.bump.text', lang);
+    let content;
+    if (cfg.customMessage?.trim()) {
+      content = r3.fill(cfg.customMessage, { role: cfg.roleId ? `<@&${cfg.roleId}>` : '' });
+    } else {
+      content = cfg.roleId ? t('autos3.bump.withRole', lang, { role: `<@&${cfg.roleId}>` }) : t('autos3.bump.text', lang);
+    }
     // O cargo escolhido é marcado de propósito: é o lembrete.
     const sent = await ch?.send?.({ content, allowedMentions: { parse: [], users: [], roles: cfg.roleId ? [cfg.roleId] : [] } }).catch(() => null);
     if (!sent) continue;

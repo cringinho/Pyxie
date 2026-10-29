@@ -51,13 +51,19 @@ function parseFaq(lines) {
     })
     .filter(Boolean);
 }
-function matchFaq(pairs, text) {
+function matchFaq(pairs, text, matchMode = 'word') {
+  if (matchMode === 'contains') {
+    const raw = strip(text);
+    return pairs.find((p) => p.triggers.some((tr) => raw.includes(tr))) || null;
+  }
   const s = ` ${strip(text).replace(/[^\p{L}\p{N}\s]/gu, ' ')} `;
   return pairs.find((p) => p.triggers.some((tr) => s.includes(` ${tr} `))) || null;
 }
 
 const MILESTONES = [50, 100, 200, 250, 300, 400, 500, 750, 1000];
-function isMilestone(count) {
+function isMilestone(count, step = 'default') {
+  const n = Number(step);
+  if (Number.isFinite(n) && n >= 50) return count >= n && count % n === 0;
   return MILESTONES.includes(count) || (count > 1000 && count % 1000 === 0);
 }
 

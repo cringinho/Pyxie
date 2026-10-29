@@ -30,8 +30,10 @@ async function ghostPing(message, now = Date.now()) {
   if (!message.guild || message.partial || message.author?.bot) return null;
   const cfg = on(message.guild.id, 'ghostPing');
   if (!cfg || now - (message.createdTimestamp || 0) > cfg.seconds * 1000) return null;
+  if ((cfg.ignoreChannelIds || []).includes(message.channelId || message.channel?.id)) return null;
+  if ((cfg.ignoreRoleIds || []).some((id) => message.member?.roles?.cache?.has(id))) return null;
   const users = [...(message.mentions?.users?.values?.() || [])].filter((u) => !u.bot && u.id !== message.author.id);
-  const roles = [...(message.mentions?.roles?.keys?.() || [])];
+  const roles = cfg.includeRoles === false ? [] : [...(message.mentions?.roles?.keys?.() || [])];
   if (!users.length && !roles.length) return null;
   const targets = [...users.map((u) => `<@${u.id}>`), ...roles.map((id) => `<@&${id}>`)].slice(0, 10).join(' ');
   stats.bump(message.guild.id, 'ghostPing', 'hits');
@@ -43,16 +45,22 @@ async function voiceLog(before, after) {
   const guild = after.guild || before.guild;
   const cfg = on(guild.id, 'voiceLog');
   if (!cfg || !cfg.channelId || before.channelId === after.channelId) return null;
+  const exclude = cfg.excludeChannelIds || [];
+  if ((before.channelId && exclude.includes(before.channelId)) || (after.channelId && exclude.includes(after.channelId))) return null;
   const member = after.member || before.member;
   if (!member || member.user?.bot) return null;
+  const eventType = !before.channelId ? 'join' : !after.channelId ? 'leave' : 'move';
+  if (Array.isArray(cfg.events) && !cfg.events.includes(eventType)) return null;
   const lang = getLanguage(guild.id);
   const user = `<@${member.id}>`;
-  const text = !before.channelId
-    ? t('autos3.voice.join', lang, { user, channel: `<#${after.channelId}>` })
-    : !after.channelId
-      ? t('autos3.voice.leave', lang, { user, channel: `<#${before.channelId}>` })
-      : t('autos3.voice.move', lang, { user, from: `<#${before.channelId}>`, to: `<#${after.channelId}>` });
+  const text =
+    eventType === 'join'
+      ? t('autos3.voice.join', lang, { user, channel: `<#${after.channelId}>` })
+      : eventType === 'leave'
+        ? t('autos3.voice.leave', lang, { user, channel: `<#${before.channelId}>` })
+        : t('autos3.voice.move', lang, { user, from: `<#${before.channelId}>`, to: `<#${after.channelId}>` });
   const log = guild.channels.cache.get(cfg.channelId);
+  stats.bump(guild.id, 'voiceLog', 'hits');
   return log?.send?.({ content: `-# <t:${Math.floor(Date.now() / 1000)}:T> ${text}`, allowedMentions: NO_PING }).catch(() => null);
 }
 
@@ -60,6 +68,8 @@ async function voiceLog(before, after) {
 async function capsCalm(message, now = Date.now()) {
   const cfg = on(message.guild.id, 'capsCalm');
   if (!cfg) return null;
+  if ((cfg.exemptChannelIds || []).includes(message.channel.id)) return null;
+  if ((cfg.exemptRoleIds || []).some((id) => message.member?.roles?.cache?.has(id))) return null;
   const { letters, ratio } = r3.capsRatio(message.content);
   if (letters < cfg.minLength || ratio * 100 < cfg.percent) return null;
   const key = `${message.guild.id}:${message.author.id}`;
@@ -75,11 +85,15 @@ async function capsCalm(message, now = Date.now()) {
 async function mediaOnly(message) {
   const cfg = on(message.guild.id, 'mediaOnly');
   if (!cfg || !cfg.channelIds.includes(message.channel.id)) return false;
+  if ((cfg.exemptRoleIds || []).some((id) => message.member?.roles?.cache?.has(id))) return false;
   if ((message.attachments?.size || 0) > 0 || (message.stickers?.size || 0) > 0) return false;
   if (cfg.allowLinks && r3.hasLink(message.content)) return false;
   await message.delete().catch(() => null);
   stats.bump(message.guild.id, 'mediaOnly', 'hits');
-  await notice(message.channel, t('autos3.media.text', getLanguage(message.guild.id), { user: `<@${message.author.id}>` }));
+  const msg = cfg.customNotice?.trim()
+    ? r3.fill(cfg.customNotice, { user: `<@${message.author.id}>` })
+    : t('autos3.media.text', getLanguage(message.guild.id), { user: `<@${message.author.id}>` });
+  await notice(message.channel, msg);
   return true;
 }
 
@@ -87,6 +101,7 @@ async function mediaOnly(message) {
 async function selfPromo(message, now = Date.now()) {
   const cfg = on(message.guild.id, 'selfPromoLimit');
   if (!cfg || !cfg.channelIds.includes(message.channel.id) || !r3.hasLink(message.content)) return false;
+  if ((cfg.exemptRoleIds || []).some((id) => message.member?.roles?.cache?.has(id))) return false;
   const saved = state.read(message.guild.id, 'selfPromo.json');
   const key = `${message.channel.id}:${message.author.id}`;
   const last = saved[key] || 0;
@@ -98,7 +113,11 @@ async function selfPromo(message, now = Date.now()) {
   }
   await message.delete().catch(() => null);
   stats.bump(message.guild.id, 'selfPromoLimit', 'hits');
-  await notice(message.channel, t('autos3.promo.text', getLanguage(message.guild.id), { user: `<@${message.author.id}>`, when: `<t:${Math.floor((last + cfg.hours * 3600000) / 1000)}:R>` }), 12000);
+  const when = `<t:${Math.floor((last + cfg.hours * 3600000) / 1000)}:R>`;
+  const msg = cfg.customNotice?.trim()
+    ? r3.fill(cfg.customNotice, { user: `<@${message.author.id}>`, when })
+    : t('autos3.promo.text', getLanguage(message.guild.id), { user: `<@${message.author.id}>`, when });
+  await notice(message.channel, msg, 12000);
   return true;
 }
 
@@ -106,6 +125,7 @@ async function selfPromo(message, now = Date.now()) {
 async function spoilerGuard(message, fetchImpl = fetch) {
   const cfg = on(message.guild.id, 'spoilerGuard');
   if (!cfg || !cfg.channelIds.includes(message.channel.id)) return false;
+  if ((cfg.exemptRoleIds || []).some((id) => message.member?.roles?.cache?.has(id))) return false;
   const visible = [...(message.attachments?.values?.() || [])].filter((a) => /^(image|video)\//.test(a.contentType || '') && !a.spoiler && !String(a.name || '').startsWith('SPOILER_'));
   if (!visible.length) return false;
   const files = [];
@@ -117,7 +137,9 @@ async function spoilerGuard(message, fetchImpl = fetch) {
     files.push(new AttachmentBuilder(Buffer.from(await res.arrayBuffer()), { name: `SPOILER_${name}` }));
   }
   const lang = getLanguage(message.guild.id);
-  const header = t('autos3.spoiler.text', lang, { user: `<@${message.author.id}>` });
+  const header = cfg.customNotice?.trim()
+    ? r3.fill(cfg.customNotice, { user: `<@${message.author.id}>` })
+    : t('autos3.spoiler.text', lang, { user: `<@${message.author.id}>` });
   const body = message.content ? `\n${message.content.slice(0, 1800)}` : '';
   const sent = await message.channel.send({ content: `${header}${body}`, files, allowedMentions: NO_PING }).catch(() => null);
   if (!sent) return false;

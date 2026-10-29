@@ -302,6 +302,75 @@ async function runTests() {
   }
   console.log('  ✅ 8. Todos os 8 novos comandos Discord carregam e exportam barra + prefixo.');
 
+  // 9. Estatísticas expandidas do painel, resumo de automações e customização extra por módulo
+  const guildActivity = require('../src/services/guildActivity');
+  const automationStats = require('../src/services/automationStats');
+  const automations = require('../src/services/automations');
+  const welcomeFlow = require('../src/services/welcomeFlow');
+  const periodicMessages = require('../src/services/periodicMessages');
+  const campfire = require('../src/services/campfire');
+
+  const actSum = guildActivity.summary(testGuild);
+  assert.ok(actSum.month && typeof actSum.month.netMembers === 'number', 'guildActivity.summary deve trazer totais de 30d e saldo líquido');
+  assert.ok(actSum.deltas && typeof actSum.deltas.messages === 'number', 'guildActivity.summary deve trazer deltas 7d vs 7d anterior');
+  assert.ok(actSum.averages && actSum.averages.daily7d && actSum.averages.daily30d, 'guildActivity.summary deve trazer médias diárias 7d e 30d');
+  assert.ok(actSum.peakDay && typeof actSum.peakDay.messages === 'number', 'guildActivity.summary deve trazer peakDay');
+
+  automationStats.bump(testGuild, 'inviteFilter');
+  automationStats.flush();
+  const stAfterBump = automationStats.read(testGuild).inviteFilter;
+  assert.ok(stAfterBump.hits >= 1 && stAfterBump.lastAt > 0, 'automationStats.bump deve gravar hits e lastAt');
+  const autoSum = automationStats.summary(testGuild);
+  assert.ok(autoSum.totalCount >= 30 && autoSum.totalHits >= 1 && Array.isArray(autoSum.top), 'automationStats.summary deve agregar totais e ranking');
+  automationStats.reset(testGuild, 'inviteFilter');
+  assert.strictEqual(automationStats.read(testGuild).inviteFilter, undefined, 'automationStats.reset deve zerar o contador da automação');
+
+  const savedStarboard = automations.saveConfig(testGuild, 'starboard', { color: '#123ABC', selfStar: true });
+  assert.strictEqual(savedStarboard.color, '#123abc', 'Campo color das automações deve normalizar hex');
+  assert.strictEqual(savedStarboard.selfStar, true);
+
+  const savedWelcome = welcomeFlow.saveConfig(testGuild, {
+    dmWelcomeEnabled: true,
+    dmWelcomeText: 'Bem-vindo!',
+    showAvatar: false,
+    customFooter: 'Rodapé custom',
+    checkin: { delayHours: 36, customText: 'Oi {users}' },
+  });
+  assert.strictEqual(savedWelcome.dmWelcomeEnabled, true);
+  assert.strictEqual(savedWelcome.showAvatar, false);
+  assert.strictEqual(savedWelcome.checkin.delayHours, 36);
+
+  const savedPeriodic = periodicMessages.saveConfig(testGuild, {
+    bumpGuide: { color: '#ff00aa', customTitle: 'Apoie!' },
+    tarot: { hour: 9, customGreeting: 'Bom dia místico!' },
+  });
+  assert.strictEqual(savedPeriodic.bumpGuide.color, '#ff00aa');
+  assert.strictEqual(savedPeriodic.tarot.hour, 9);
+
+  const savedCampfire = campfire.saveConfig(testGuild, {
+    color: '#00ff88',
+    customMessage: 'Chega mais na fogueira!',
+    autoDeleteWhenEmpty: false,
+  });
+  assert.strictEqual(savedCampfire.color, '#00ff88');
+  assert.strictEqual(savedCampfire.autoDeleteWhenEmpty, false);
+
+  // Confere que todo campo de automationSchemas tem chave PT e EN no dicionário do dashboard
+  const fs = require('fs');
+  const i18nRaw = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'dashboard', 'i18n.js'), 'utf8');
+  for (const [sKey, sDef] of Object.entries(automations.SCHEMA)) {
+    for (const f of sDef.fields) {
+      if (f.key === 'enabled') continue;
+      const k = `auto.${sKey}.${f.key}`;
+      assert.ok(i18nRaw.includes(`"${k}":`) || i18nRaw.includes(`'${k}':`), `Falta tradução para o campo ${k} em client/src/dashboard/i18n.js`);
+    }
+  }
+  try {
+    fs.rmSync(path.join(__dirname, '..', 'data', 'guilds', testGuild), { recursive: true, force: true });
+    fs.rmSync(path.join(__dirname, '..', 'data', 'guilds', modGuild), { recursive: true, force: true });
+  } catch (_) {}
+  console.log('  ✅ 9. Estatísticas de 30d/deltas, resumo de automações e customização extra validados.');
+
   console.log('🎉 [TEST] Todas as 8 adições Zyrox/Red passaram nos testes!');
 }
 

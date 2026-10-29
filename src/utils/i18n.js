@@ -523,7 +523,8 @@ const TRANSLATIONS = {
         "title": "🐣 Conta nova entrou",
         "body": "{user} entrou com uma conta criada há {age}.",
         "quarantined": "Coloquei o cargo {role} até a staff conferir.",
-        "noRole": "Nenhum cargo de quarentena foi escolhido, então só estou avisando."
+        "noRole": "Nenhum cargo de quarentena foi escolhido, então só estou avisando.",
+        "dm": "Olá! O servidor **{server}** pede que contas tenham pelo menos {days} dias para proteção da comunidade."
       },
       "impersonation": {
         "title": "🎭 Nome parecido com a staff",
@@ -3496,7 +3497,8 @@ const TRANSLATIONS = {
         "title": "🐣 New account joined",
         "body": "{user} joined with an account created {age} ago.",
         "quarantined": "I gave them {role} until staff checks.",
-        "noRole": "No quarantine role was chosen, so I'm only letting you know."
+        "noRole": "No quarantine role was chosen, so I'm only letting you know.",
+        "dm": "Hi! **{server}** requires accounts to be at least {days} days old to protect the community."
       },
       "impersonation": {
         "title": "🎭 Name looks like staff",

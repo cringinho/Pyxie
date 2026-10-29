@@ -209,6 +209,13 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, receipt });
   });
 
+  router.delete('/api/dashboard/me/privacy', requireSession, async (req, res) => {
+    if (req.body?.confirm !== true) return res.status(400).json({ success: false, error: 'confirmation_required' });
+    const privacyService = require('../services/privacyService');
+    const receipt = await privacyService.eraseUserData(req.panelSession.userId);
+    return res.json({ success: true, receipt });
+  });
+
   router.get('/api/dashboard/guilds/:guildId', requireSession, requireGuild, async (req, res) => {
     let guild = null;
     try {
@@ -529,7 +536,63 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   });
 
   router.get('/api/dashboard/guilds/:guildId/activity', requireSession, requireGuild, (req, res) => {
-    return res.json({ success: true, ...require('../services/guildActivity').summary(req.params.guildId) });
+    const guildId = req.params.guildId;
+    const base = require('../services/guildActivity').summary(guildId);
+    const autoSummary = require('../services/automationStats').summary(guildId);
+    const safety = require('../services/guildSafety');
+    const modCases = require('../services/modCasesService');
+    const emergencyMode = require('../services/emergencyMode');
+    const welcomeFlow = require('../services/welcomeFlow');
+    const periodic = require('../services/periodicMessages');
+    const campfire = require('../services/campfire');
+    const wellbeing = require('../services/wellbeingService');
+
+    // Top comandos executados neste servidor (telemetria real).
+    const ranking = commandTelemetry.getRanking({ guildId }) || [];
+    const topCommands = ranking
+      .filter((c) => c.total > 0)
+      .slice(0, 8)
+      .map((c) => ({
+        name: c.name,
+        category: c.category || 'utilidades',
+        total: c.total,
+        lastUsed: c.lastUsed || 0,
+      }));
+
+    const { counters } = safety.readEvents(guildId);
+    const allCases = modCases.listCases(guildId, { limit: 200 });
+    const activeWarnings = allCases.filter((c) => c.action === 'warn' && c.active).length;
+    const wf = welcomeFlow.getConfig(guildId);
+    const per = periodic.getConfig(guildId);
+    const wbCfg = wellbeing.getWellbeingGuildConfig(guildId);
+    const wbStats = wellbeing.getGuildWellbeingStats(guildId);
+
+    return res.json({
+      success: true,
+      ...base,
+      topCommands,
+      automations: autoSummary,
+      security: {
+        counters,
+        totalCases: allCases.length,
+        activeWarnings,
+        emergencyActive: Boolean(emergencyMode.getEmergencyStatus(guildId)?.active),
+      },
+      modules: {
+        welcomeEnabled: Boolean(wf.enabled),
+        checkinEnabled: Boolean(wf.checkin?.enabled),
+        periodicBumpEnabled: Boolean(per.bumpGuide?.enabled),
+        periodicTarotEnabled: Boolean(per.tarot?.enabled),
+        campfireEnabled: Boolean(campfire.getConfig(guildId).enabled),
+        studioMessagesCount: studioStore.listMessages(guildId).length,
+        wellbeing: {
+          remindersEnabled: wbCfg.remindersEnabled !== false,
+          afkEnabled: wbCfg.afkEnabled !== false,
+          birthdaysEnabled: wbCfg.birthdaysEnabled !== false,
+          ...wbStats,
+        },
+      },
+    });
   });
 
   router.get('/api/dashboard/guilds/:guildId/bot-permissions', requireSession, requireGuild, async (req, res) => {
@@ -543,9 +606,25 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   // ---------- Automações (esquema declarativo: o mesmo esquema monta a tela e valida aqui) ----------
   router.get('/api/dashboard/guilds/:guildId/automations', requireSession, requireGuild, (req, res) => {
     const auto = require('../services/automations');
+    const autoStats = require('../services/automationStats');
     const schema = auto.publicSchema();
     const configs = Object.fromEntries(Object.keys(schema).map((k) => [k, auto.getConfig(req.params.guildId, k, { fresh: true })]));
-    return res.json({ success: true, schema, configs, stats: require('../services/automationStats').read(req.params.guildId) });
+    return res.json({
+      success: true,
+      schema,
+      configs,
+      stats: autoStats.read(req.params.guildId),
+      summary: autoStats.summary(req.params.guildId),
+    });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/automations/:key/reset-stats', requireSession, requireGuild, (req, res) => {
+    const auto = require('../services/automations');
+    const autoStats = require('../services/automationStats');
+    const key = req.params.key === 'all' ? null : req.params.key;
+    if (key && !auto.SCHEMA[key]) return res.status(404).json({ success: false, error: 'unknown_automation' });
+    const stats = autoStats.reset(req.params.guildId, key);
+    return res.json({ success: true, stats, summary: autoStats.summary(req.params.guildId) });
   });
 
   router.put('/api/dashboard/guilds/:guildId/automations/:key', requireSession, requireGuild, async (req, res) => {
@@ -632,13 +711,15 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   router.put('/api/dashboard/guilds/:guildId/campfire', requireSession, requireGuild, async (req, res) => {
     const body = req.body || {};
     const channelId = String(body.channelId || '');
-    if (channelId) {
-      try {
-        const channels = await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId });
-        if (!channels.some((c) => c.id === channelId)) return res.status(400).json({ success: false, error: 'invalid_channel' });
-      } catch (err) {
-        return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
-      }
+    const pingRoleId = String(body.pingRoleId || '');
+    try {
+      const bad = await checkGuildIds(req.params.guildId, {
+        channels: channelId ? [channelId] : [],
+        roles: pingRoleId ? [pingRoleId] : [],
+      });
+      if (bad) return res.status(400).json({ success: false, error: bad });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
     }
     return res.json({ success: true, campfire: require('../services/campfire').saveConfig(req.params.guildId, body) });
   });
@@ -679,7 +760,10 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const next = periodic.normalize({ bumpGuide: body.bumpGuide, tarot: body.tarot }, guildId);
     const tarotChannelId = body.tarotChannelId === undefined ? null : GUILD_ID_RE.test(String(body.tarotChannelId)) ? String(body.tarotChannelId) : '';
     try {
-      const bad = await checkGuildIds(guildId, { channels: [next.bumpGuide.channelId, tarotChannelId], roles: [next.tarot.roleId] });
+      const bad = await checkGuildIds(guildId, {
+        channels: [next.bumpGuide.channelId, tarotChannelId],
+        roles: [next.tarot.roleId, next.bumpGuide.pingRoleId],
+      });
       if (bad) return res.status(400).json({ success: false, error: bad });
     } catch (err) {
       return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
@@ -836,11 +920,15 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const verChannelId = String(body.verification?.channelId || '');
     const verRoleId = String(body.verification?.verifiedRoleId || '');
     const unverRoleId = String(body.verification?.unverifiedRoleId || '');
+    const linkExemptRoles = Array.isArray(body.linkShield?.exemptRoleIds) ? body.linkShield.exemptRoleIds.map(String) : [];
+    const linkExemptChans = Array.isArray(body.linkShield?.exemptChannelIds) ? body.linkShield.exemptChannelIds.map(String) : [];
+    const fileExemptRoles = Array.isArray(body.fileShield?.exemptRoleIds) ? body.fileShield.exemptRoleIds.map(String) : [];
+    const fileExemptChans = Array.isArray(body.fileShield?.exemptChannelIds) ? body.fileShield.exemptChannelIds.map(String) : [];
     // Os canais e cargos escolhidos precisam ser deste servidor (o bot confere ao vivo).
     try {
       const bad = await checkGuildIds(req.params.guildId, {
-        channels: [staffLogChannelId, appealsChannelId, verChannelId].filter(Boolean),
-        roles: [verRoleId, unverRoleId].filter(Boolean),
+        channels: [staffLogChannelId, appealsChannelId, verChannelId, ...linkExemptChans, ...fileExemptChans].filter(Boolean),
+        roles: [verRoleId, unverRoleId, ...linkExemptRoles, ...fileExemptRoles].filter(Boolean),
       });
       if (bad) return res.status(400).json({ success: false, error: bad });
     } catch (err) {
@@ -861,7 +949,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   });
 
   // Item #4: Modo de Emergência Global pelo painel
-  router.post('/api/dashboard/guilds/:guildId/emergency', requireSession, requireGuild, async (req, res) => {
+  router.post(['/api/dashboard/guilds/:guildId/emergency', '/api/dashboard/guilds/:guildId/security/emergency'], requireSession, requireGuild, async (req, res) => {
     const active = Boolean(req.body?.active);
     const reason = String(req.body?.reason || '').trim().slice(0, 200);
     try {
@@ -871,14 +959,14 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
         actorId: req.panelSession.userId,
         reason,
       });
-      return res.json({ success: true, emergency: result });
+      return res.json({ success: true, emergency: result, status: result });
     } catch (err) {
       return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
     }
   });
 
   // Item #7: Publicar painel de Verificação Acessível por Botão
-  router.post('/api/dashboard/guilds/:guildId/verification/publish', requireSession, requireGuild, async (req, res) => {
+  router.post(['/api/dashboard/guilds/:guildId/verification/publish', '/api/dashboard/guilds/:guildId/security/verification/publish'], requireSession, requireGuild, async (req, res) => {
     try {
       const result = await bridge.request('VERIFICATION_PUBLISH', { guildId: req.params.guildId });
       return res.json({ success: true, ...result });
@@ -888,7 +976,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   });
 
   // ---------- Item #3: Casos de moderação numerados (#123) e Advertências por pontos ----------
-  router.get('/api/dashboard/guilds/:guildId/cases', requireSession, requireGuild, (req, res) => {
+  router.get(['/api/dashboard/guilds/:guildId/cases', '/api/dashboard/guilds/:guildId/moderation/cases'], requireSession, requireGuild, (req, res) => {
     const modCases = require('../services/modCasesService');
     const targetId = GUILD_ID_RE.test(String(req.query.userId || '')) ? String(req.query.userId) : '';
     return res.json({
@@ -898,13 +986,13 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     });
   });
 
-  router.put('/api/dashboard/guilds/:guildId/warnings-config', requireSession, requireGuild, (req, res) => {
+  router.put(['/api/dashboard/guilds/:guildId/warnings-config', '/api/dashboard/guilds/:guildId/moderation/warnings-config'], requireSession, requireGuild, (req, res) => {
     const modCases = require('../services/modCasesService');
     const config = modCases.setGuildWarningsConfig(req.params.guildId, req.body || {});
     return res.json({ success: true, config });
   });
 
-  router.put('/api/dashboard/guilds/:guildId/cases/:caseNumber', requireSession, requireGuild, async (req, res) => {
+  const updateCaseHandler = async (req, res) => {
     const modCases = require('../services/modCasesService');
     const num = Number(req.params.caseNumber);
     if (!Number.isInteger(num) || num < 1) return res.status(400).json({ success: false, error: 'invalid_case_number' });
@@ -917,7 +1005,10 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const updated = modCases.getCase(req.params.guildId, num);
     if (!updated) return res.status(404).json({ success: false, error: 'case_not_found' });
     return res.json({ success: true, caseRecord: updated });
-  });
+  };
+
+  router.put(['/api/dashboard/guilds/:guildId/cases/:caseNumber', '/api/dashboard/guilds/:guildId/moderation/cases/:caseNumber'], requireSession, requireGuild, updateCaseHandler);
+  router.patch(['/api/dashboard/guilds/:guildId/cases/:caseNumber', '/api/dashboard/guilds/:guildId/moderation/cases/:caseNumber'], requireSession, requireGuild, updateCaseHandler);
 
   // ---------- Moderação da Cringelândia: modo blindagem (AutoMod) e controle de brigas ----------
   router.get('/api/dashboard/guilds/:guildId/moderation', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {

@@ -309,39 +309,254 @@ const SECTION_NEEDS = {
   ],
 };
 
-// Atividade real do servidor (contagens diárias gravadas pelo bot a cada 5 minutos).
+// Atividade real do servidor (contagens diárias gravadas pelo bot a cada 5 minutos) + inteligência multi-módulo.
 function Activity({ t, guildId }) {
   const activity = useLoad(() => api.activity(guildId), [guildId]);
+  const [metric, setMetric] = useState('messages');
+  const [period, setPeriod] = useState('30d');
   if (!activity.data) return activity.error ? <ErrorNotice t={t} code={activity.error} /> : <Spinner label={t('app.loading')} />;
-  const { today, week, series, hasData } = activity.data;
-  const max = Math.max(1, ...series.map((d) => d.messages));
-  const fmt = (n) => n.toLocaleString();
+  const {
+    today,
+    week,
+    month = { messages: 0, joins: 0, leaves: 0, commands: 0, netMembers: 0 },
+    deltas = {},
+    averages = { daily7d: {}, daily30d: {} },
+    peakDay = { day: '', messages: 0 },
+    series = [],
+    hasData,
+    topCommands = [],
+    automations = { totalCount: 0, enabledCount: 0, totalHits: 0, top: [] },
+    security = { counters: {}, totalCases: 0, activeWarnings: 0 },
+    modules = {},
+  } = activity.data;
+
+  const visibleSeries = period === '7d' ? series.slice(-7) : series;
+  const max = Math.max(1, ...visibleSeries.map((d) => d[metric] || 0));
+  const fmt = (n) => (Number(n) || 0).toLocaleString();
+  const deltaHint = (key) => {
+    const val = deltas[key];
+    if (val === undefined || val === null) return undefined;
+    const sign = val > 0 ? `+${val}%` : `${val}%`;
+    return `${sign} ${t('activity.vsPrevWeek')}`;
+  };
+
+  const downloadFile = (filename, content, type) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportCsv = () => {
+    const header = 'day,messages,commands,joins,leaves\n';
+    const rows = series.map((d) => `${d.day},${d.messages},${d.commands},${d.joins},${d.leaves}`).join('\n');
+    downloadFile(`pyxie-activity-${guildId}.csv`, header + rows, 'text/csv;charset=utf-8');
+  };
+
+  const exportJson = () => {
+    downloadFile(`pyxie-activity-${guildId}.json`, JSON.stringify(activity.data, null, 2), 'application/json');
+  };
+
+  const avgSource = period === '7d' ? averages.daily7d : averages.daily30d;
+  const periodTotals = period === '7d' ? week : month;
+
   return (
-    <div>
-      <h2 className="mb-1 font-title text-lg font-bold">{t('activity.title')}</h2>
-      <p className="mb-3 text-sm text-white/60">{t(hasData ? 'activity.hint' : 'activity.empty')}</p>
-      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <StatTile icon={MessageCircle} label={t('activity.messagesToday')} value={fmt(today.messages)} />
-        <StatTile icon={LogIn} accent="green" label={t('activity.joinsWeek')} value={fmt(week.joins)} />
-        <StatTile icon={DoorOpen} accent="violet" label={t('activity.leavesWeek')} value={fmt(week.leaves)} />
-        <StatTile icon={Terminal} accent="cyan" label={t('activity.commandsWeek')} value={fmt(week.commands)} />
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h2 className="font-title text-lg font-bold">{t('activity.title')}</h2>
+          <p className="text-sm text-white/60">{t(hasData ? 'activity.hint' : 'activity.empty')}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex rounded-xl border border-white/10 bg-white/5 p-0.5 text-xs">
+            {['7d', '30d'].map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setPeriod(p)}
+                className={`rounded-lg px-2.5 py-1 font-semibold transition ${period === p ? 'bg-pyxie-bright text-white' : 'text-white/60 hover:text-white'}`}
+              >
+                {t(`activity.period.${p}`)}
+              </button>
+            ))}
+          </div>
+          <Button variant="ghost" onClick={exportCsv}>
+            {t('activity.exportCsv')}
+          </Button>
+          <Button variant="ghost" onClick={exportJson}>
+            {t('activity.exportJson')}
+          </Button>
+        </div>
       </div>
-      <Card className="mt-3" title={t('activity.chartTitle')}>
-        <div className="flex h-28 items-end gap-[3px]" role="img" aria-label={t('activity.chartLabel', { total: fmt(series.reduce((a, d) => a + d.messages, 0)) })}>
-          {series.map((d) => (
+
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <StatTile
+          icon={MessageCircle}
+          label={t('activity.messagesToday')}
+          value={fmt(today.messages)}
+          hint={`${t(`activity.period.${period}`)}: ${fmt(periodTotals.messages)} · ${deltaHint('messages') || ''}`}
+        />
+        <StatTile
+          icon={LogIn}
+          accent="green"
+          label={t('activity.joinsWeek')}
+          value={fmt(periodTotals.joins)}
+          hint={`${t('activity.netFlow')}: ${(periodTotals.netMembers || 0) >= 0 ? '+' : ''}${fmt(periodTotals.netMembers || 0)}`}
+        />
+        <StatTile
+          icon={DoorOpen}
+          accent="violet"
+          label={t('activity.leavesWeek')}
+          value={fmt(periodTotals.leaves)}
+          hint={deltaHint('leaves')}
+        />
+        <StatTile
+          icon={Terminal}
+          accent="cyan"
+          label={t('activity.commandsWeek')}
+          value={fmt(periodTotals.commands)}
+          hint={deltaHint('commands')}
+        />
+      </div>
+
+      <Card title={t('activity.chartTitle')}>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap gap-1.5">
+            {['messages', 'commands', 'joins', 'leaves'].map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMetric(m)}
+                className={`rounded-xl px-3 py-1 text-xs font-semibold transition ${
+                  metric === m ? 'bg-pyxie-bright/30 text-pyxie-glow ring-1 ring-pyxie-glow/50' : 'bg-white/5 text-white/60 hover:bg-white/10'
+                }`}
+              >
+                {t(`activity.metric.${m}`)}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-3 text-xs text-white/60">
+            <span>
+              {t('activity.dailyAvg')}: <strong className="font-mono text-white">{fmt(avgSource?.[metric] || 0)}</strong>
+            </span>
+            {peakDay?.day && (
+              <span>
+                {t('activity.peakDay')}: <strong className="font-mono text-pyxie-glow">{peakDay.day.split('-').reverse().slice(0, 2).join('/')} ({fmt(peakDay.messages)})</strong>
+              </span>
+            )}
+          </div>
+        </div>
+        <div
+          className="flex h-32 items-end gap-[3px]"
+          role="img"
+          aria-label={t('activity.chartLabel', { total: fmt(visibleSeries.reduce((a, d) => a + (d[metric] || 0), 0)) })}
+        >
+          {visibleSeries.map((d) => (
             <span
               key={d.day}
-              title={`${d.day.split('-').reverse().slice(0, 2).join('/')}: ${fmt(d.messages)}`}
-              style={{ height: `${Math.max(2, (d.messages / max) * 100)}%` }}
-              className="flex-1 rounded-t bg-gradient-to-t from-mystic-violet/60 to-pyxie-bright"
+              title={`${d.day.split('-').reverse().slice(0, 2).join('/')}: ${fmt(d[metric] || 0)}`}
+              style={{ height: `${Math.max(3, ((d[metric] || 0) / max) * 100)}%` }}
+              className="flex-1 rounded-t bg-gradient-to-t from-mystic-violet/60 to-pyxie-bright transition-all"
             />
           ))}
         </div>
         <div className="mt-1 flex justify-between text-[11px] text-white/40">
-          <span>{series[0].day.split('-').reverse().slice(0, 2).join('/')}</span>
+          <span>{visibleSeries[0]?.day.split('-').reverse().slice(0, 2).join('/')}</span>
           <span>{t('activity.today')}</span>
         </div>
       </Card>
+
+      <div className="grid gap-3 md:grid-cols-2">
+        <Card title={t('activity.topCommandsTitle')}>
+          {topCommands.length === 0 ? (
+            <p className="text-xs text-white/50">{t('activity.topCommandsEmpty')}</p>
+          ) : (
+            <ul className="divide-y divide-white/5 text-sm">
+              {topCommands.map((c) => (
+                <li key={c.name} className="flex items-center justify-between gap-2 py-1.5">
+                  <span className="font-mono text-xs font-semibold text-pyxie-glow">/{c.name}</span>
+                  <span className="flex items-center gap-2 text-xs text-white/60">
+                    <Badge tone="muted">{fmt(c.calls)}x</Badge>
+                    {c.errors > 0 && <Badge tone="red">{c.errors} err</Badge>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+
+        <Card title={t('activity.autoSummaryTitle')}>
+          <div className="mb-2 flex flex-wrap gap-2 text-xs">
+            <Badge tone="pink">{t('activity.autoActiveCount', { on: automations.enabledCount || 0, total: automations.totalCount || 0 })}</Badge>
+            <Badge>{t('activity.autoHitsTotal', { hits: fmt(automations.totalHits || 0) })}</Badge>
+          </div>
+          {(automations.top || []).length === 0 ? (
+            <p className="text-xs text-white/50">{t('activity.autoEmpty')}</p>
+          ) : (
+            <ul className="divide-y divide-white/5 text-sm">
+              {automations.top.slice(0, 5).map((a) => (
+                <li key={a.key} className="flex items-center justify-between gap-2 py-1.5">
+                  <a href={`#/guild/${guildId}/automations/${a.key}`} className="truncate text-xs font-semibold hover:text-pyxie-glow">
+                    {t(`auto.${a.key}.title`)}
+                  </a>
+                  <Badge tone="muted">{fmt(a.hits)}x</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+
+        <Card title={t('activity.secSummaryTitle')}>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="rounded-xl bg-white/5 p-2.5">
+              <span className="block text-white/50">{t('sec.statLinks')}</span>
+              <strong className="font-mono text-base">{fmt(security.counters?.link || 0)}</strong>
+            </div>
+            <div className="rounded-xl bg-white/5 p-2.5">
+              <span className="block text-white/50">{t('sec.statRaids')}</span>
+              <strong className="font-mono text-base">{fmt(security.counters?.raid || 0)}</strong>
+            </div>
+            <div className="rounded-xl bg-white/5 p-2.5">
+              <span className="block text-white/50">{t('activity.secCases')}</span>
+              <strong className="font-mono text-base">{fmt(security.totalCases || 0)}</strong>
+            </div>
+            <div className="rounded-xl bg-white/5 p-2.5">
+              <span className="block text-white/50">{t('activity.secActiveWarns')}</span>
+              <strong className="font-mono text-base">{fmt(security.activeWarnings || 0)}</strong>
+            </div>
+          </div>
+        </Card>
+
+        <Card title={t('activity.modulesStatusTitle')}>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            {[
+              { key: 'welcome', label: t('welcome.title'), on: modules.welcome },
+              { key: 'checkin24h', label: t('welcome.checkin.title'), on: modules.checkin24h },
+              { key: 'bumpGuide', label: t('periodic.bump.title'), on: modules.bumpGuide },
+              { key: 'tarotDaily', label: t('periodic.tarot.title'), on: modules.tarotDaily },
+              { key: 'campfire', label: t('campfire.title'), on: modules.campfire },
+              { key: 'emergency', label: t('sec.emgTitle'), on: modules.emergency },
+            ].map((m) => (
+              <div key={m.key} className="flex items-center justify-between rounded-xl bg-white/5 px-2.5 py-2">
+                <span className="truncate text-white/80">{m.label}</span>
+                <Badge tone={m.on ? 'green' : 'muted'}>{t(m.on ? 'status.on' : 'status.off')}</Badge>
+              </div>
+            ))}
+          </div>
+          {modules.wellbeing && (
+            <p className="mt-2 text-xs text-white/60">
+              {t('activity.wellbeingSummary', {
+                reminders: modules.wellbeing.activeReminders || 0,
+                afk: modules.wellbeing.afkCount || 0,
+                birthdays: modules.wellbeing.birthdaysCount || 0,
+              })}
+            </p>
+          )}
+        </Card>
+      </div>
     </div>
   );
 }

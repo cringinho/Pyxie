@@ -38,9 +38,10 @@ async function log(guild, type, lines, color = 'info') {
 }
 
 function logDelete(message) {
-  if (!message.guild || message.author?.bot) return null;
+  if (!message.guild) return null;
   const cfg = on(message.guild.id, 'modLog');
-  if (!cfg || message.channelId === cfg.channelId) return null;
+  if (!cfg || message.channelId === cfg.channelId || (cfg.exemptChannelIds || []).includes(message.channelId)) return null;
+  if (cfg.ignoreBots !== false && message.author?.bot) return null;
   const lang = getLanguage(message.guild.id);
   return log(
     message.guild,
@@ -56,7 +57,10 @@ function logDelete(message) {
 
 function logEdit(before, after) {
   // Sem horário de edição é só a prévia de link carregando, não uma edição de verdade.
-  if (!after.guild || after.author?.bot || after.partial || !after.editedTimestamp) return null;
+  if (!after.guild || after.partial || !after.editedTimestamp) return null;
+  const cfg = on(after.guild.id, 'modLog');
+  if (!cfg || (cfg.exemptChannelIds || []).includes(after.channelId)) return null;
+  if (cfg.ignoreBots !== false && after.author?.bot) return null;
   if (before?.content === after.content) return null;
   const lang = getLanguage(after.guild.id);
   return log(after.guild, 'edit', [
@@ -138,21 +142,24 @@ async function onFlow(message, now = Date.now()) {
   writeSlow(message.guild.id, { ...state, [message.channel.id]: { previous, since: now } });
   stats.bump(message.guild.id, 'autoSlowmode', 'hits');
   const lang = getLanguage(message.guild.id);
-  await message.channel.send({ content: t('autos.slowmode.notice', lang, { seconds: `\`${cfg.seconds}\`` }), allowedMentions: NO_PING }).catch(() => null);
+  if (!cfg.silent) {
+    await message.channel.send({ content: t('autos.slowmode.notice', lang, { seconds: `\`${cfg.seconds}\`` }), allowedMentions: NO_PING }).catch(() => null);
+  }
   return cfg.seconds;
 }
 
-// Volta ao valor anterior depois de 5 min, quando o ritmo cai para menos de um terço do limite.
+// Volta ao valor anterior depois de cooldownMinutes (padrão 5 min), quando o ritmo cai para menos de um terço do limite.
 async function relaxSlowmode(client, now = Date.now()) {
   for (const guild of client.guilds.cache.values()) {
     const state = readSlow(guild.id);
     const ids = Object.keys(state);
     if (!ids.length) continue;
     const cfg = auto.getConfig(guild.id, 'autoSlowmode');
+    const waitMinutes = Number(cfg.cooldownMinutes) || 5;
     let changed = false;
     for (const id of ids) {
       const calm = !cfg.enabled || flow.count(id, now, MINUTE) < cfg.perMinute / 3;
-      if (now - state[id].since < 5 * MINUTE || !calm) continue;
+      if (now - state[id].since < waitMinutes * MINUTE || !calm) continue;
       await guild.channels.cache.get(id)?.setRateLimitPerUser?.(state[id].previous, 'Pyxie: chat calmed down').catch(() => null);
       delete state[id];
       changed = true;
@@ -207,7 +214,13 @@ async function cleanup(client, now = Date.now()) {
       if (!channel?.messages?.fetch) continue;
       const batch = await channel.messages.fetch({ limit: 100 }).catch(() => null);
       if (!batch) continue;
-      const old = [...batch.values()].filter((m) => now - m.createdTimestamp > cfg.hours * 3600000 && !(cfg.keepPinned && m.pinned));
+      const old = [...batch.values()].filter(
+        (m) =>
+          now - m.createdTimestamp > cfg.hours * 3600000 &&
+          !(cfg.keepPinned && m.pinned) &&
+          !(cfg.skipMedia && (m.attachments?.size || 0) > 0) &&
+          !(cfg.skipBots && m.author?.bot)
+      );
       const recent = old.filter((m) => now - m.createdTimestamp < 13.5 * 86400000).map((m) => m.id);
       if (recent.length > 1) await channel.bulkDelete(recent, true).catch(() => null);
       else if (recent.length === 1) await channel.messages.delete(recent[0]).catch(() => null);

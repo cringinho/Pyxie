@@ -19,6 +19,9 @@ const wellbeingConfig = registerNamespace('wellbeing', {
     birthdaysEnabled: true,
     birthdayChannelId: '',
     birthdayRoleId: '',
+    birthdayHour: 9,
+    birthdayMessage: '',
+    afkMaxLength: 120,
     lastBirthdayAnnounceDate: '', // 'MM-DD' para não anunciar duas vezes no mesmo dia
   },
   user: {
@@ -56,6 +59,7 @@ function getWellbeingGuildConfig(guildId) {
 
 function setWellbeingGuildConfig(guildId, patch = {}) {
   const current = getWellbeingGuildConfig(guildId);
+  const clamp = (n, min, max, d) => (Number.isFinite(Number(n)) ? Math.min(max, Math.max(min, Math.round(Number(n)))) : d);
   const next = {
     ...current,
     enabled: patch.enabled !== undefined ? Boolean(patch.enabled) : current.enabled !== false,
@@ -74,10 +78,22 @@ function setWellbeingGuildConfig(guildId, patch = {}) {
           ? String(patch.birthdayRoleId)
           : ''
         : current.birthdayRoleId || '',
+    birthdayHour: patch.birthdayHour !== undefined ? clamp(patch.birthdayHour, 0, 23, 9) : clamp(current.birthdayHour, 0, 23, 9),
+    birthdayMessage: patch.birthdayMessage !== undefined ? String(patch.birthdayMessage || '').slice(0, 500) : String(current.birthdayMessage || '').slice(0, 500),
+    afkMaxLength: patch.afkMaxLength !== undefined ? clamp(patch.afkMaxLength, 20, 300, 120) : clamp(current.afkMaxLength, 20, 300, 120),
     lastBirthdayAnnounceDate:
       patch.lastBirthdayAnnounceDate !== undefined ? String(patch.lastBirthdayAnnounceDate || '') : current.lastBirthdayAnnounceDate || '',
   };
   return wellbeingConfig.set('guild', String(guildId || ''), next);
+}
+
+function getGuildWellbeingStats(guildId) {
+  const gid = String(guildId || '');
+  const state = loadStore();
+  const activeRemindersCount = state.reminders.filter((r) => !r.fired && String(r.guildId || '') === gid).length;
+  const birthdaysOptInCount = Object.values(state.birthdays).filter((b) => Array.isArray(b?.guildIds) && b.guildIds.includes(gid)).length;
+  const activeAfkCount = Object.keys(state.afk || {}).length;
+  return { activeRemindersCount, birthdaysOptInCount, activeAfkCount };
 }
 
 /**
@@ -297,6 +313,7 @@ module.exports = {
   wellbeingConfig,
   getWellbeingGuildConfig,
   setWellbeingGuildConfig,
+  getGuildWellbeingStats,
   parseDurationString,
   sanitizeSafeNote,
   listUserReminders,

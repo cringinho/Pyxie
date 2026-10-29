@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Feather, FileWarning, Link2Off, Ticket, ShieldCheck, ShieldHalf, KeyRound, Hash, Siren, AlertOctagon, UserCheck, Scale } from 'lucide-react';
 import { api } from './api';
 import BotPermissions from './Permissions';
-import { Badge, Button, Card, Notice, Spinner, StatTile, Toggle } from './ui';
+import { Badge, Button, Card, MultiSelect, Notice, Spinner, StatTile, Toggle } from './ui';
 
 const field = 'min-h-[44px] w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm';
 
@@ -295,6 +295,9 @@ export default function Security({ t, guildId }) {
   const setNuke = (patch) => setDraft({ ...draft, antiNuke: { ...(draft.antiNuke || {}), ...patch } });
   const setVer = (patch) => setDraft({ ...draft, verification: { ...(draft.verification || {}), ...patch } });
 
+  const channelOpts = channels.map((c) => ({ id: c.id, label: `#${c.name}` }));
+  const roleOpts = roles.filter((r) => !r.managed).map((r) => ({ id: r.id, label: `@${r.name}` }));
+
   const save = async () => {
     setBusy(true);
     setStatus(null);
@@ -388,6 +391,17 @@ export default function Security({ t, guildId }) {
             <Choice name="ls-action" value="delete" current={draft.linkShield.action} label={t('sec.actionDelete')} onChange={(v) => setLink({ action: v })} />
             <Choice name="ls-action" value="warn" current={draft.linkShield.action} label={t('sec.actionWarn')} onChange={(v) => setLink({ action: v })} />
           </div>
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.linkTimeout')}</span>
+            <input
+              type="number"
+              min="0"
+              max="1440"
+              value={draft.linkShield.timeoutMinutes ?? 0}
+              onChange={(e) => setLink({ timeoutMinutes: Number(e.target.value) })}
+              className={field}
+            />
+          </label>
           <p className="text-xs text-white/50">{t('sec.linkPerm')}</p>
           <label className="block">
             <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.allow')}</span>
@@ -400,6 +414,16 @@ export default function Security({ t, guildId }) {
             />
             <span className="mt-1 block text-xs text-white/50">{t('sec.allowHint')}</span>
           </label>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div>
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.exemptRoles')}</span>
+              <MultiSelect options={roleOpts} value={draft.linkShield.exemptRoleIds || []} emptyLabel={t('auto.none')} onChange={(v) => setLink({ exemptRoleIds: v })} />
+            </div>
+            <div>
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.exemptChannels')}</span>
+              <MultiSelect options={channelOpts} value={draft.linkShield.exemptChannelIds || []} emptyLabel={t('auto.none')} onChange={(v) => setLink({ exemptChannelIds: v })} />
+            </div>
+          </div>
         </div>
       </Card>
 
@@ -412,6 +436,16 @@ export default function Security({ t, guildId }) {
             <Choice name="fs-action" value="warn" current={draft.fileShield.action} label={t('sec.actionWarn')} onChange={(v) => setFiles({ action: v })} />
           </div>
           <Toggle label={t('sec.fileExec')} checked={draft.fileShield.blockExecutables} onChange={(v) => setFiles({ blockExecutables: v })} />
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div>
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.exemptRoles')}</span>
+              <MultiSelect options={roleOpts} value={draft.fileShield.exemptRoleIds || []} emptyLabel={t('auto.none')} onChange={(v) => setFiles({ exemptRoleIds: v })} />
+            </div>
+            <div>
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.exemptChannels')}</span>
+              <MultiSelect options={channelOpts} value={draft.fileShield.exemptChannelIds || []} emptyLabel={t('auto.none')} onChange={(v) => setFiles({ exemptChannelIds: v })} />
+            </div>
+          </div>
         </div>
       </Card>
 
@@ -508,7 +542,7 @@ export default function Security({ t, guildId }) {
         <p className="mb-3 text-sm text-white/70">{t('sec.raidHint')}</p>
         <div className="space-y-3">
           <Toggle label={t('sec.raidOn')} checked={draft.antiRaid.enabled} onChange={(v) => setRaid({ enabled: v })} />
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <label className="block">
               <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.raidJoins')}</span>
               <input type="number" min="3" max="100" value={draft.antiRaid.joins} onChange={(e) => setRaid({ joins: e.target.value })} className={field} />
@@ -517,7 +551,7 @@ export default function Security({ t, guildId }) {
               <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.raidSeconds')}</span>
               <input type="number" min="10" max="120" value={draft.antiRaid.seconds} onChange={(e) => setRaid({ seconds: e.target.value })} className={field} />
             </label>
-            <label className="col-span-2 block sm:col-span-1">
+            <label className="block">
               <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.raidPause')}</span>
               <select value={draft.antiRaid.pauseMinutes} onChange={(e) => setRaid({ pauseMinutes: Number(e.target.value) })} className={`${field} bg-[#160d2a]`}>
                 {[30, 60, 120, 360, 1440].map((m) => (
@@ -527,7 +561,21 @@ export default function Security({ t, guildId }) {
                 ))}
               </select>
             </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.raidMinAge')}</span>
+              <input type="number" min="1" max="30" value={draft.antiRaid.minAccountAgeDays ?? 7} onChange={(e) => setRaid({ minAccountAgeDays: Number(e.target.value) })} className={field} />
+            </label>
           </div>
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-white/70">{t('sec.raidAction')}</span>
+            <select value={draft.antiRaid.action || 'pause'} onChange={(e) => setRaid({ action: e.target.value })} className={`${field} bg-[#160d2a]`}>
+              {['pause', 'kickYoung', 'alertOnly'].map((a) => (
+                <option key={a} value={a}>
+                  {t(`sec.raidAction.${a}`)}
+                </option>
+              ))}
+            </select>
+          </label>
           <p className="text-xs text-white/50">{t('sec.raidYoung')}</p>
         </div>
       </Card>

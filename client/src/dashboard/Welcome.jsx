@@ -121,12 +121,28 @@ export default function Welcome({ t, guildId }) {
               <Labeled label={t('welcome.image')}>
                 <input type="url" value={cfg.imageUrl} onChange={(e) => set({ imageUrl: e.target.value })} placeholder="https://" className={field} />
               </Labeled>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Toggle label={t('welcome.showAvatar')} checked={cfg.showAvatar !== false} onChange={(v) => set({ showAvatar: v })} />
+                <Toggle label={t('welcome.showMemberCount')} checked={cfg.showMemberCount !== false} onChange={(v) => set({ showMemberCount: v })} />
+              </div>
+              <Labeled label={t('welcome.customFooter')}>
+                <input value={cfg.customFooter || ''} maxLength={120} onChange={(e) => set({ customFooter: e.target.value })} placeholder={t('welcome.defaultText')} className={field} />
+              </Labeled>
             </>
           )}
 
           <Labeled label={t('welcome.autoRole')} hint={t('welcome.autoRoleHint')}>
             <Picker value={cfg.autoRoleId} onChange={(v) => set({ autoRoleId: v })} items={roles.filter((r) => r.assignable !== false)} prefix="@" empty={none} />
           </Labeled>
+
+          <div className="border-t border-white/10 pt-3 space-y-2">
+            <Toggle label={t('welcome.dmEnabled')} checked={Boolean(cfg.dmWelcomeEnabled)} onChange={(v) => set({ dmWelcomeEnabled: v })} />
+            {cfg.dmWelcomeEnabled && (
+              <Labeled label={t('welcome.dmText')} hint={t('welcome.vars')}>
+                <textarea value={cfg.dmWelcomeText || ''} maxLength={1000} rows={3} onChange={(e) => set({ dmWelcomeText: e.target.value })} placeholder={t('welcome.defaultText')} className={`${field} py-2`} />
+              </Labeled>
+            )}
+          </div>
           <p className="text-xs text-white/50">{t('welcome.discordToo')}</p>
         </div>
       </Card>
@@ -141,6 +157,14 @@ export default function Welcome({ t, guildId }) {
           <Labeled label={t('welcome.checkin.silent')} hint={t('welcome.checkin.silentHint')}>
             <Picker value={cfg.checkin.silentRoleId} onChange={(v) => setCheckin({ silentRoleId: v })} items={roles} prefix="@" empty={none} />
           </Labeled>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Labeled label={t('welcome.checkin.delayHours')}>
+              <input type="number" min={6} max={72} value={cfg.checkin.delayHours ?? 24} onChange={(e) => setCheckin({ delayHours: Number(e.target.value) })} className={field} />
+            </Labeled>
+            <Labeled label={t('welcome.checkin.customText')}>
+              <input value={cfg.checkin.customText || ''} maxLength={400} onChange={(e) => setCheckin({ customText: e.target.value })} placeholder={t('welcome.defaultText')} className={field} />
+            </Labeled>
+          </div>
         </div>
       </Card>
 
@@ -151,11 +175,24 @@ export default function Welcome({ t, guildId }) {
             <Toggle label={t('welcome.wb.reminders')} checked={wb.remindersEnabled !== false} onChange={(v) => setWb({ ...wb, remindersEnabled: v })} />
             <Toggle label={t('welcome.wb.afk')} checked={wb.afkEnabled !== false} onChange={(v) => setWb({ ...wb, afkEnabled: v })} />
             <Toggle label={t('welcome.wb.birthdays')} checked={wb.birthdaysEnabled !== false} onChange={(v) => setWb({ ...wb, birthdaysEnabled: v })} />
-            <Labeled label={t('welcome.wb.bdayChannel')}>
-              <Picker value={wb.birthdayChannelId || ''} onChange={(v) => setWb({ ...wb, birthdayChannelId: v })} items={channels} prefix="#" empty={none} />
-            </Labeled>
-            <Labeled label={t('welcome.wb.bdayRole')}>
-              <Picker value={wb.birthdayRoleId || ''} onChange={(v) => setWb({ ...wb, birthdayRoleId: v })} items={roles.filter((r) => r.assignable !== false)} prefix="@" empty={none} />
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Labeled label={t('welcome.wb.bdayChannel')}>
+                <Picker value={wb.birthdayChannelId || ''} onChange={(v) => setWb({ ...wb, birthdayChannelId: v })} items={channels} prefix="#" empty={none} />
+              </Labeled>
+              <Labeled label={t('welcome.wb.bdayRole')}>
+                <Picker value={wb.birthdayRoleId || ''} onChange={(v) => setWb({ ...wb, birthdayRoleId: v })} items={roles.filter((r) => r.assignable !== false)} prefix="@" empty={none} />
+              </Labeled>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Labeled label={t('welcome.wb.bdayHour')}>
+                <input type="number" min={0} max={23} value={wb.birthdayHour ?? 9} onChange={(e) => setWb({ ...wb, birthdayHour: Number(e.target.value) })} className={field} />
+              </Labeled>
+              <Labeled label={t('welcome.wb.afkMaxLength')}>
+                <input type="number" min={30} max={300} value={wb.afkMaxLength ?? 140} onChange={(e) => setWb({ ...wb, afkMaxLength: Number(e.target.value) })} className={field} />
+              </Labeled>
+            </div>
+            <Labeled label={t('welcome.wb.bdayMsg')}>
+              <input value={wb.birthdayMessage || ''} maxLength={300} onChange={(e) => setWb({ ...wb, birthdayMessage: e.target.value })} placeholder={t('welcome.defaultText')} className={field} />
             </Labeled>
           </div>
         </Card>

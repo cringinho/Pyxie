@@ -38,8 +38,16 @@ async function checkNewAccount(member, now = Date.now()) {
   const age = now - (member.user?.createdTimestamp || now);
   if (age >= cfg.minAgeDays * DAY) return null;
   const lang = getLanguage(member.guild.id);
+  if (cfg.dmNotice !== false) {
+    member.send?.({ content: t('autos.newAccount.dm', lang, { server: member.guild.name, days: `\`${cfg.minAgeDays}\`` }), allowedMentions: NO_PING }).catch(() => null);
+  }
   let added = false;
-  if (cfg.roleId) added = await member.roles.add(cfg.roleId).then(() => true).catch(() => false);
+  let kicked = false;
+  if (cfg.action === 'kick') {
+    kicked = await member.kick?.('Pyxie: newAccountGate')?.then?.(() => true)?.catch?.(() => false) || false;
+  } else if (cfg.action !== 'alertOnly' && cfg.roleId) {
+    added = await member.roles.add(cfg.roleId).then(() => true).catch(() => false);
+  }
   stats.bump(member.guild.id, 'newAccountGate', 'hits');
   if (cfg.alert) {
     await staffAlert(member.guild, {
@@ -48,13 +56,15 @@ async function checkNewAccount(member, now = Date.now()) {
       lines: [t('autos.newAccount.body', lang, { user: `<@${member.id}>`, age: ageText(lang, age) }), `> ${added ? t('autos.newAccount.quarantined', lang, { role: `<@&${cfg.roleId}>` }) : t('autos.newAccount.noRole', lang)}`],
     });
   }
-  return { quarantined: added };
+  return kicked ? { quarantined: added, kicked } : { quarantined: added };
 }
 
 async function checkName(member) {
   const cfg = on(member.guild.id, 'nameSanitizer');
   if (!cfg || member.user?.bot || member.manageable === false) return null;
-  const clean = rules.cleanName(display(member), cfg, getLanguage(member.guild.id) === 'en' ? 'Member' : 'Pessoa');
+  if ((cfg.exemptRoleIds || []).some((id) => member.roles?.cache?.has(id))) return null;
+  const fallback = cfg.fallbackName?.trim() || (getLanguage(member.guild.id) === 'en' ? 'Member' : 'Pessoa');
+  const clean = rules.cleanName(display(member), cfg, fallback);
   if (!clean) return null;
   const ok = await member.setNickname(clean).then(() => true).catch(() => false);
   if (ok) stats.bump(member.guild.id, 'nameSanitizer', 'hits');
@@ -73,6 +83,8 @@ async function checkImpersonation(member) {
       if (![display(staff), staff.user?.username].some((n) => rules.imitates(name, n))) continue;
       if (!shouldAlert(`imp:${member.guild.id}:${member.id}`)) return null;
       const lang = getLanguage(member.guild.id);
+      if (cfg.action === 'resetNick') await member.setNickname?.(lang === 'en' ? 'Member' : 'Pessoa')?.catch?.(() => null);
+      else if (cfg.action === 'timeout') await timeout(member, 60, 'Pyxie: staff impersonation');
       stats.bump(member.guild.id, 'staffImpersonation', 'hits');
       await staffAlert(member.guild, {
         title: t('autos.impersonation.title', lang),
@@ -94,6 +106,8 @@ async function timeout(member, minutes, reason) {
 async function checkSpam(message) {
   const cfg = on(message.guild.id, 'crossChannelSpam');
   if (!cfg) return null;
+  if ((cfg.exemptChannelIds || []).includes(message.channel.id)) return null;
+  if ((cfg.exemptRoleIds || []).some((id) => message.member?.roles?.cache?.has(id))) return null;
   const hit = spam.add(
     { guildId: message.guild.id, userId: message.author.id, channelId: message.channel.id, messageId: message.id, content: message.content, at: message.createdTimestamp || Date.now() },
     cfg.channels
@@ -119,8 +133,11 @@ async function checkSpam(message) {
 async function checkMentions(message) {
   const cfg = on(message.guild.id, 'massMention');
   if (!cfg) return null;
+  if ((cfg.exemptChannelIds || []).includes(message.channel.id)) return null;
+  if ((cfg.exemptRoleIds || []).some((id) => message.member?.roles?.cache?.has(id))) return null;
   const users = new Set([...(message.mentions?.users?.keys?.() || [])].filter((id) => id !== message.author.id));
-  const count = users.size + (message.mentions?.roles?.size || 0);
+  const roleMentions = cfg.countRoleMentions === false ? 0 : message.mentions?.roles?.size || 0;
+  const count = users.size + roleMentions;
   if (count < cfg.maxMentions) return null;
   await message.delete().catch(() => null);
   const lang = getLanguage(message.guild.id);
@@ -153,7 +170,8 @@ async function checkInvites(message, client) {
   for (const code of codes) {
     // Convite inválido ou expirado também sai: não leva a lugar nenhum e costuma ser golpe.
     if ((await inviteGuildId(client, code)) === message.guild.id) continue;
-    await message.delete().catch(() => null);
+    if (cfg.action !== 'warn') await message.delete().catch(() => null);
+    if (cfg.action === 'timeout' && cfg.timeoutMinutes > 0) await timeout(message.member, cfg.timeoutMinutes, 'Pyxie: outside invite');
     stats.bump(message.guild.id, 'inviteFilter', 'hits');
     const lang = getLanguage(message.guild.id);
     const notice = await message.channel.send({ content: t('autos.invite.notice', lang, { user: `<@${message.author.id}>` }), allowedMentions: NO_PING }).catch(() => null);

@@ -9,10 +9,12 @@ const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 export default function Campfire({ t, guildId }) {
   const [cfg, setCfg] = useState(null);
   const [channels, setChannels] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [status, setStatus] = useState(null);
   useEffect(() => {
     api.campfire(guildId).then((d) => setCfg(d.campfire)).catch((e) => setStatus(e.code || 'generic'));
     api.channels(guildId).then((d) => setChannels(d.channels)).catch(() => {});
+    api.roles(guildId).then((d) => setRoles(d.roles.filter((r) => !r.managed))).catch(() => {});
   }, [guildId]);
   if (!cfg) return status ? <Notice tone="error">{t('error.generic', { error: status })}</Notice> : <Spinner label={t('app.loading')} />;
 
@@ -40,22 +42,44 @@ export default function Campfire({ t, guildId }) {
       <p className="mb-3 text-sm text-white/70">{t('campfire.hint')}</p>
       <div className="space-y-3">
         <Toggle label={t('campfire.on')} checked={cfg.enabled} onChange={(v) => setCfg({ ...cfg, enabled: v })} />
-        <label className="block">
-          <span className="mb-1 block text-xs font-semibold text-white/70">{t('campfire.channel')}</span>
-          <select value={cfg.channelId} onChange={(e) => setCfg({ ...cfg, channelId: e.target.value })} className={`${field} bg-[#160d2a]`}>
-            <option value="">—</option>
-            {text.map((c) => (
-              <option key={c.id} value={c.id}>
-                #{c.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="grid gap-2 sm:grid-cols-3">
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-white/70">{t('campfire.channel')}</span>
+            <select value={cfg.channelId} onChange={(e) => setCfg({ ...cfg, channelId: e.target.value })} className={`${field} bg-[#160d2a]`}>
+              <option value="">—</option>
+              {text.map((c) => (
+                <option key={c.id} value={c.id}>
+                  #{c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-white/70">{t('campfire.pingRole')}</span>
+            <select value={cfg.pingRoleId || ''} onChange={(e) => setCfg({ ...cfg, pingRoleId: e.target.value })} className={`${field} bg-[#160d2a]`}>
+              <option value="">—</option>
+              {roles.map((r) => (
+                <option key={r.id} value={r.id}>
+                  @{r.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-white/70">{t('campfire.color')}</span>
+            <input type="color" value={cfg.color || '#FF2A85'} onChange={(e) => setCfg({ ...cfg, color: e.target.value })} className={`${field} p-1`} />
+          </label>
+        </div>
         <div className="grid grid-cols-3 gap-2">
           {num('minPeople', 3, 50)}
           {num('minMinutes', 5, 120)}
           {num('cooldownMinutes', 30, 1440)}
         </div>
+        <label className="block">
+          <span className="mb-1 block text-xs font-semibold text-white/70">{t('campfire.customMessage')}</span>
+          <input value={cfg.customMessage || ''} maxLength={300} onChange={(e) => setCfg({ ...cfg, customMessage: e.target.value })} className={field} />
+        </label>
+        <Toggle label={t('campfire.autoDeleteWhenEmpty')} checked={cfg.autoDeleteWhenEmpty !== false} onChange={(v) => setCfg({ ...cfg, autoDeleteWhenEmpty: v })} />
         <span className="block text-xs font-semibold text-white/70">{t('campfire.exclude')}</span>
         <MultiSelect options={voice} value={cfg.excludedChannelIds} emptyLabel={t('channels.empty')} onChange={(v) => setCfg({ ...cfg, excludedChannelIds: v })} />
         <p className="text-xs text-white/50">{t('campfire.privacy')}</p>

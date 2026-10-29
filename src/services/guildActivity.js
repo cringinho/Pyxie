@@ -100,7 +100,7 @@ function flush(now = Date.now()) {
   flushEmojis(now);
 }
 
-// Resumo para o painel: hoje, últimos 7 dias e a série de 30 dias de mensagens.
+// Resumo para o painel: hoje, últimos 7 dias, últimos 30 dias, comparativos e série diária.
 function summary(guildId, now = Date.now()) {
   const { days } = readFile(guildId);
   const series = [];
@@ -110,7 +110,49 @@ function summary(guildId, now = Date.now()) {
   }
   const week = empty();
   for (const d of series.slice(-7)) for (const f of FIELDS) week[f] += d[f];
-  return { today: series[series.length - 1], week, series, hasData: Object.keys(days).length > 0 };
+  week.netMembers = week.joins - week.leaves;
+
+  const prevWeek = empty();
+  for (const d of series.slice(-14, -7)) for (const f of FIELDS) prevWeek[f] += d[f];
+  prevWeek.netMembers = prevWeek.joins - prevWeek.leaves;
+
+  const month = empty();
+  for (const d of series) for (const f of FIELDS) month[f] += d[f];
+  month.netMembers = month.joins - month.leaves;
+
+  const deltas = {};
+  for (const f of FIELDS) {
+    if (prevWeek[f] > 0) deltas[f] = Math.round(((week[f] - prevWeek[f]) / prevWeek[f]) * 100);
+    else deltas[f] = week[f] > 0 ? 100 : 0;
+  }
+
+  const averages = {
+    daily7d: {
+      messages: +(week.messages / 7).toFixed(1),
+      commands: +(week.commands / 7).toFixed(1),
+    },
+    daily30d: {
+      messages: +(month.messages / KEEP_DAYS).toFixed(1),
+      commands: +(month.commands / KEEP_DAYS).toFixed(1),
+    },
+  };
+
+  let peakDay = series[0] || { day: dayKey(now), ...empty() };
+  for (const d of series) {
+    if (d.messages >= peakDay.messages) peakDay = d;
+  }
+
+  return {
+    today: series[series.length - 1],
+    week,
+    prevWeek,
+    month,
+    deltas,
+    averages,
+    peakDay,
+    series,
+    hasData: Object.keys(days).length > 0,
+  };
 }
 
 function resetMemory() {

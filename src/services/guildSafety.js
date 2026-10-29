@@ -36,7 +36,7 @@ function writeAtomic(file, data) {
 function defaultConfig() {
   return {
     staffLogChannelId: '',
-    linkShield: { enabled: true, action: 'delete', allowDomains: [] },
+    linkShield: { enabled: true, action: 'delete', allowDomains: [], exemptRoleIds: [], exemptChannelIds: [], timeoutMinutes: 0 },
     guard: { enabled: true, mode: 'alert' },
     antiNuke: { enabled: true, maxActions: 5, windowSeconds: 30, mode: 'alert', trustedIds: [] },
     emergency: { active: false, activatedAt: 0, activatedBy: '', reason: '' },
@@ -49,9 +49,9 @@ function defaultConfig() {
       description: '',
       buttonLabel: '',
     },
-    antiRaid: { enabled: true, joins: 10, seconds: 30, pauseMinutes: 60 },
+    antiRaid: { enabled: true, joins: 10, seconds: 30, pauseMinutes: 60, action: 'pause', minAccountAgeDays: 3 },
     appeals: { enabled: false, channelId: '' },
-    fileShield: { enabled: true, action: 'delete', blockExecutables: true },
+    fileShield: { enabled: true, action: 'delete', blockExecutables: true, exemptRoleIds: [], exemptChannelIds: [] },
     invites: { autoClean: false, days: 7 },
   };
 }
@@ -90,6 +90,9 @@ function normalizeConfig(raw = {}) {
       enabled: link.enabled !== false,
       action: link.action === 'warn' ? 'warn' : 'delete',
       allowDomains: normalizeDomainList(link.allowDomains),
+      exemptRoleIds: normalizeIdList(link.exemptRoleIds),
+      exemptChannelIds: normalizeIdList(link.exemptChannelIds),
+      timeoutMinutes: clamp(link.timeoutMinutes, 0, 1440, 0),
     },
     guard: {
       enabled: guard.enabled !== false,
@@ -122,6 +125,8 @@ function normalizeConfig(raw = {}) {
       joins: clamp(raid.joins, 3, 100, 10),
       seconds: clamp(raid.seconds, 10, 120, 30),
       pauseMinutes: PAUSE_OPTIONS.includes(Number(raid.pauseMinutes)) ? Number(raid.pauseMinutes) : 60,
+      action: ['pause', 'kickYoung', 'alertOnly'].includes(raid.action) ? raid.action : 'pause',
+      minAccountAgeDays: clamp(raid.minAccountAgeDays, 1, 30, 3),
     },
     appeals: {
       enabled: appeals.enabled === true,
@@ -131,6 +136,8 @@ function normalizeConfig(raw = {}) {
       enabled: files.enabled !== false,
       action: files.action === 'warn' ? 'warn' : 'delete',
       blockExecutables: files.blockExecutables !== false,
+      exemptRoleIds: normalizeIdList(files.exemptRoleIds),
+      exemptChannelIds: normalizeIdList(files.exemptChannelIds),
     },
     invites: {
       autoClean: inv.autoClean === true,

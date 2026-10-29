@@ -28,7 +28,9 @@ module.exports = {
     needs: [{ perm: 'ManageRoles', why: 'perm.why.quarantineRole' }],
     fields: [
       { key: 'minAgeDays', type: 'number', min: 1, max: 60, default: 7 },
+      { key: 'action', type: 'select', options: ['quarantine', 'kick', 'alertOnly'], default: 'quarantine' },
       { key: 'roleId', type: 'role', default: '' },
+      { key: 'dmNotice', type: 'toggle', default: true },
       { key: 'alert', type: 'toggle', default: true },
     ],
   },
@@ -40,13 +42,18 @@ module.exports = {
       { key: 'zalgo', type: 'toggle', default: true },
       { key: 'links', type: 'toggle', default: true },
       { key: 'hoist', type: 'toggle', default: false },
+      { key: 'fallbackName', type: 'text', maxLength: 32, default: '' },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
     ],
   },
   staffImpersonation: {
     group: 'safety',
     icon: 'VenetianMask',
     needs: [],
-    fields: [{ key: 'staffRoleIds', type: 'roles', default: [], max: 10 }],
+    fields: [
+      { key: 'staffRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'action', type: 'select', options: ['alert', 'resetNick', 'timeout'], default: 'alert' },
+    ],
   },
   crossChannelSpam: {
     group: 'safety',
@@ -57,7 +64,10 @@ module.exports = {
     ],
     fields: [
       { key: 'channels', type: 'number', min: 2, max: 6, default: 3 },
+      { key: 'windowSeconds', type: 'number', min: 15, max: 300, default: 60 },
       { key: 'timeoutMinutes', type: 'number', min: 0, max: 1440, default: 60 },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'exemptChannelIds', type: 'channels', default: [], max: 15 },
     ],
   },
   massMention: {
@@ -69,7 +79,10 @@ module.exports = {
     ],
     fields: [
       { key: 'maxMentions', type: 'number', min: 3, max: 30, default: 8 },
+      { key: 'countRoleMentions', type: 'toggle', default: true },
       { key: 'timeoutMinutes', type: 'number', min: 0, max: 1440, default: 10 },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'exemptChannelIds', type: 'channels', default: [], max: 15 },
     ],
   },
   inviteFilter: {
@@ -77,6 +90,8 @@ module.exports = {
     icon: 'Unlink',
     needs: [{ perm: 'ManageMessages', why: 'perm.why.deleteSpam' }],
     fields: [
+      { key: 'action', type: 'select', options: ['delete', 'warn', 'timeout'], default: 'delete' },
+      { key: 'timeoutMinutes', type: 'number', min: 0, max: 1440, default: 0 },
       { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
       { key: 'exemptChannelIds', type: 'channels', default: [], max: 10 },
     ],
@@ -112,6 +127,8 @@ module.exports = {
     fields: [
       { key: 'channelId', type: 'channel', default: '' },
       { key: 'events', type: 'multi', options: ['delete', 'edit', 'join', 'leave', 'nick', 'roles'], default: ['delete', 'edit', 'join', 'leave'] },
+      { key: 'exemptChannelIds', type: 'channels', default: [], max: 15 },
+      { key: 'ignoreBots', type: 'toggle', default: true },
     ],
   },
   autoSlowmode: {
@@ -122,6 +139,8 @@ module.exports = {
       { key: 'channelIds', type: 'channels', default: [], max: 15 },
       { key: 'perMinute', type: 'number', min: 10, max: 200, default: 40 },
       { key: 'seconds', type: 'number', min: 2, max: 60, default: 5 },
+      { key: 'cooldownMinutes', type: 'number', min: 1, max: 60, default: 5 },
+      { key: 'silent', type: 'toggle', default: false },
     ],
   },
   roleContrast: {
@@ -141,6 +160,8 @@ module.exports = {
       { key: 'channelIds', type: 'channels', default: [], max: 5 },
       { key: 'hours', type: 'number', min: 1, max: 168, default: 24 },
       { key: 'keepPinned', type: 'toggle', default: true },
+      { key: 'skipMedia', type: 'toggle', default: false },
+      { key: 'skipBots', type: 'toggle', default: false },
     ],
   },
   // ---------- Utilidade ----------
@@ -152,13 +173,20 @@ module.exports = {
       { key: 'channelId', type: 'channel', default: '' },
       { key: 'threshold', type: 'number', min: 2, max: 50, default: 5 },
       { key: 'emoji', type: 'text', maxLength: 32, default: '⭐' },
+      { key: 'color', type: 'color', default: '#f59e0b' },
+      { key: 'selfStar', type: 'toggle', default: false },
+      { key: 'ignoreChannelIds', type: 'channels', default: [], max: 15 },
     ],
   },
   autoThread: {
     group: 'utility',
     icon: 'MessagesSquare',
     needs: [{ perm: 'CreatePublicThreads', why: 'perm.why.threads' }],
-    fields: [{ key: 'channelIds', type: 'channels', default: [], max: 10 }],
+    fields: [
+      { key: 'channelIds', type: 'channels', default: [], max: 10 },
+      { key: 'nameTemplate', type: 'text', maxLength: 80, default: '' },
+      { key: 'archiveMinutes', type: 'select', options: ['60', '1440', '4320', '10080'], default: '1440' },
+    ],
   },
   autoReactions: {
     group: 'utility',
@@ -167,6 +195,7 @@ module.exports = {
     fields: [
       { key: 'channelIds', type: 'channels', default: [], max: 10 },
       { key: 'emojis', type: 'text', maxLength: 120, default: '👍 👎' },
+      { key: 'ignoreBots', type: 'toggle', default: true },
     ],
   },
   autoPublish: {
@@ -183,13 +212,19 @@ module.exports = {
       { key: 'channelId', type: 'channel', default: '' },
       { key: 'text', type: 'text', maxLength: 1500, default: '' },
       { key: 'every', type: 'number', min: 3, max: 50, default: 8 },
+      { key: 'useEmbed', type: 'toggle', default: false },
+      { key: 'color', type: 'color', default: '#8b5cf6' },
     ],
   },
   linkFixer: {
     group: 'utility',
     icon: 'Link2',
     needs: [{ perm: 'ManageMessages', why: 'perm.why.suppressEmbeds' }],
-    fields: [{ key: 'sites', type: 'multi', options: ['x', 'instagram', 'tiktok', 'reddit', 'bluesky'], default: ['x', 'instagram', 'tiktok'] }],
+    fields: [
+      { key: 'sites', type: 'multi', options: ['x', 'instagram', 'tiktok', 'reddit', 'bluesky'], default: ['x', 'instagram', 'tiktok'] },
+      { key: 'exemptChannelIds', type: 'channels', default: [], max: 15 },
+      { key: 'deleteOriginal', type: 'toggle', default: false },
+    ],
   },
   longPaste: {
     group: 'utility',
@@ -207,7 +242,11 @@ module.exports = {
     group: 'utility',
     icon: 'Activity',
     needs: [{ perm: 'SendMessages', why: 'perm.why.statusPost' }],
-    fields: [{ key: 'channelId', type: 'channel', default: '' }],
+    fields: [
+      { key: 'channelId', type: 'channel', default: '' },
+      { key: 'minImpact', type: 'select', options: ['all', 'minor', 'major', 'critical'], default: 'all' },
+      { key: 'pingRoleId', type: 'role', default: '' },
+    ],
   },
   voiceRole: {
     group: 'utility',
@@ -228,6 +267,8 @@ module.exports = {
       { key: 'roleId', type: 'role', default: '' },
       { key: 'minutes', type: 'number', min: 45, max: 300, default: 120 },
       { key: 'messages', type: 'number', min: 20, max: 400, default: 80 },
+      { key: 'channelFallback', type: 'toggle', default: true },
+      { key: 'customMessage', type: 'text', maxLength: 500, default: '' },
     ],
   },
   quietHours: {
@@ -239,6 +280,9 @@ module.exports = {
       { key: 'hourStart', type: 'hour', default: 1 },
       { key: 'hourEnd', type: 'hour', default: 6 },
       { key: 'mode', type: 'select', options: ['slow', 'lock'], default: 'slow' },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'customStartMessage', type: 'text', maxLength: 400, default: '' },
+      { key: 'customEndMessage', type: 'text', maxLength: 400, default: '' },
     ],
   },
   welcomeBuddy: {
@@ -247,6 +291,8 @@ module.exports = {
     needs: [],
     fields: [
       { key: 'channelIds', type: 'channels', default: [], max: 5 },
+      { key: 'maxJoinAgeDays', type: 'number', min: 1, max: 30, default: 7 },
+      { key: 'cooldownMinutes', type: 'number', min: 0, max: 120, default: 5 },
       { key: 'lines', type: 'lines', max: 20, maxLength: 300, default: [] },
     ],
   },
@@ -258,6 +304,8 @@ module.exports = {
       { key: 'channelIds', type: 'channels', default: [], max: 10 },
       { key: 'minutes', type: 'number', min: 10, max: 240, default: 30 },
       { key: 'helperRoleId', type: 'role', default: '' },
+      { key: 'customMessage', type: 'text', maxLength: 400, default: '' },
+      { key: 'ignoreBots', type: 'toggle', default: true },
     ],
   },
   crisisCare: {
@@ -267,13 +315,19 @@ module.exports = {
     fields: [
       { key: 'alertStaff', type: 'toggle', default: true },
       { key: 'exemptChannelIds', type: 'channels', default: [], max: 10 },
+      { key: 'customHelplineNote', type: 'text', maxLength: 400, default: '' },
     ],
   },
   memberMilestones: {
     group: 'community',
     icon: 'Trophy',
     needs: [],
-    fields: [{ key: 'channelId', type: 'channel', default: '' }],
+    fields: [
+      { key: 'channelId', type: 'channel', default: '' },
+      { key: 'step', type: 'select', options: ['default', '50', '100', '250', '500', '1000'], default: 'default' },
+      { key: 'customMessage', type: 'text', maxLength: 500, default: '' },
+      { key: 'color', type: 'color', default: '#ec4899' },
+    ],
   },
   boostThanks: {
     group: 'community',
@@ -282,6 +336,9 @@ module.exports = {
     fields: [
       { key: 'channelId', type: 'channel', default: '' },
       { key: 'text', type: 'text', maxLength: 300, default: '' },
+      { key: 'useEmbed', type: 'toggle', default: false },
+      { key: 'color', type: 'color', default: '#f472b6' },
+      { key: 'rewardRoleId', type: 'role', default: '' },
     ],
   },
   // ---------- Moderação leve (lote 3) ----------
@@ -289,13 +346,22 @@ module.exports = {
     group: 'moderation',
     icon: 'Ghost',
     needs: [],
-    fields: [{ key: 'seconds', type: 'number', min: 10, max: 600, default: 60 }],
+    fields: [
+      { key: 'seconds', type: 'number', min: 10, max: 600, default: 60 },
+      { key: 'includeRoles', type: 'toggle', default: true },
+      { key: 'ignoreRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'ignoreChannelIds', type: 'channels', default: [], max: 15 },
+    ],
   },
   voiceLog: {
     group: 'moderation',
     icon: 'AudioLines',
     needs: [],
-    fields: [{ key: 'channelId', type: 'channel', default: '' }],
+    fields: [
+      { key: 'channelId', type: 'channel', default: '' },
+      { key: 'events', type: 'multi', options: ['join', 'leave', 'move'], default: ['join', 'leave', 'move'] },
+      { key: 'excludeChannelIds', type: 'channels', kind: 'voice', default: [], max: 15 },
+    ],
   },
   capsCalm: {
     group: 'moderation',
@@ -305,6 +371,8 @@ module.exports = {
       { key: 'minLength', type: 'number', min: 10, max: 200, default: 20 },
       { key: 'percent', type: 'number', min: 60, max: 100, default: 75 },
       { key: 'action', type: 'select', options: ['warn', 'delete'], default: 'warn' },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'exemptChannelIds', type: 'channels', default: [], max: 15 },
     ],
   },
   mediaOnly: {
@@ -314,6 +382,9 @@ module.exports = {
     fields: [
       { key: 'channelIds', type: 'channels', default: [], max: 10 },
       { key: 'allowLinks', type: 'toggle', default: true },
+      { key: 'allowThreads', type: 'toggle', default: true },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'customNotice', type: 'text', maxLength: 300, default: '' },
     ],
   },
   selfPromoLimit: {
@@ -323,6 +394,8 @@ module.exports = {
     fields: [
       { key: 'channelIds', type: 'channels', default: [], max: 10 },
       { key: 'hours', type: 'number', min: 1, max: 168, default: 24 },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'customNotice', type: 'text', maxLength: 300, default: '' },
     ],
   },
   spoilerGuard: {
@@ -332,13 +405,21 @@ module.exports = {
       { perm: 'ManageMessages', why: 'perm.why.cleanup' },
       { perm: 'AttachFiles', why: 'perm.why.spoilerReupload' },
     ],
-    fields: [{ key: 'channelIds', type: 'channels', default: [], max: 10 }],
+    fields: [
+      { key: 'channelIds', type: 'channels', default: [], max: 10 },
+      { key: 'exemptRoleIds', type: 'roles', default: [], max: 10 },
+      { key: 'customNotice', type: 'text', maxLength: 300, default: '' },
+    ],
   },
   inviteTracker: {
     group: 'moderation',
     icon: 'Route',
     needs: [{ perm: 'ManageGuild', why: 'perm.why.invitesRead' }],
-    fields: [{ key: 'channelId', type: 'channel', default: '' }],
+    fields: [
+      { key: 'channelId', type: 'channel', default: '' },
+      { key: 'color', type: 'color', default: '#8b5cf6' },
+      { key: 'mentionInviter', type: 'toggle', default: false },
+    ],
   },
   // ---------- Ferramentas (lote 3) ----------
   tempVoice: {
@@ -370,6 +451,8 @@ module.exports = {
     fields: [
       { key: 'pairs', type: 'lines', max: 30, maxLength: 400, default: [] },
       { key: 'channelIds', type: 'channels', default: [], max: 15 },
+      { key: 'matchMode', type: 'select', options: ['word', 'contains'], default: 'word' },
+      { key: 'cooldownSeconds', type: 'number', min: 10, max: 3600, default: 120 },
     ],
   },
   scheduledMessages: {
@@ -381,6 +464,9 @@ module.exports = {
       { key: 'weekdays', type: 'multi', options: ['0', '1', '2', '3', '4', '5', '6'], default: ['1'] },
       { key: 'hour', type: 'hour', default: 10 },
       { key: 'text', type: 'text', maxLength: 1500, default: '' },
+      { key: 'useEmbed', type: 'toggle', default: false },
+      { key: 'title', type: 'text', maxLength: 120, default: '' },
+      { key: 'color', type: 'color', default: '#8b5cf6' },
     ],
   },
   weeklyDigest: {
@@ -390,6 +476,8 @@ module.exports = {
     fields: [
       { key: 'channelId', type: 'channel', default: '' },
       { key: 'weekday', type: 'select', options: ['0', '1', '2', '3', '4', '5', '6'], default: '1' },
+      { key: 'color', type: 'color', default: '#8b5cf6' },
+      { key: 'includeTopCommands', type: 'toggle', default: true },
     ],
   },
   pinArchive: {
@@ -405,6 +493,10 @@ module.exports = {
     group: 'utility',
     icon: 'AlarmClock',
     needs: [],
-    fields: [{ key: 'roleId', type: 'role', default: '' }],
+    fields: [
+      { key: 'roleId', type: 'role', default: '' },
+      { key: 'cooldownMinutes', type: 'number', min: 60, max: 240, default: 120 },
+      { key: 'customMessage', type: 'text', maxLength: 400, default: '' },
+    ],
   },
 };

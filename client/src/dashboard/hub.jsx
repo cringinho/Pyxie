@@ -7,26 +7,35 @@ import { Badge, Button, MultiSelect, Switch } from './ui';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 
-export function ModuleCard({ icon: Icon, emoji, title, desc, on, statusLabel, meta, active, onClick }) {
+export function ModuleCard({ icon: Icon, emoji, title, desc, on, statusLabel, meta, active, onClick, onToggle, busy }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={`dash-card group flex w-full flex-col gap-2 rounded-2xl p-4 text-left transition hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-pyxie-glow motion-reduce:transform-none ${
+    <div
+      className={`dash-card group flex w-full flex-col gap-2 rounded-2xl p-4 text-left transition hover:-translate-y-0.5 hover:brightness-110 motion-reduce:transform-none ${
         active ? 'ring-2 ring-pyxie-glow/70' : ''
       }`}
     >
-      <span className="flex items-start justify-between gap-2">
-        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${on ? 'bg-gradient-to-br from-pyxie-bright/35 to-mystic-violet/35 text-pyxie-glow' : 'bg-white/5 text-white/50'}`} aria-hidden="true">
-          {Icon ? <Icon size={20} /> : <span className="text-xl">{emoji}</span>}
-        </span>
-        <Badge tone={on ? 'green' : 'muted'}>{statusLabel}</Badge>
-      </span>
-      <span className="font-title font-bold">{title}</span>
-      {desc && <span className="line-clamp-2 text-xs text-white/60">{desc}</span>}
-      {meta && <span className="mt-auto block text-[11px] text-mystic-glow/80">{meta}</span>}
-    </button>
+      <div className="flex items-start justify-between gap-2">
+        <button
+          type="button"
+          onClick={onClick}
+          aria-pressed={active}
+          className="flex min-w-0 flex-1 items-center gap-2.5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-pyxie-glow"
+        >
+          <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${on ? 'bg-gradient-to-br from-pyxie-bright/35 to-mystic-violet/35 text-pyxie-glow' : 'bg-white/5 text-white/50'}`} aria-hidden="true">
+            {Icon ? <Icon size={20} /> : <span className="text-xl">{emoji}</span>}
+          </span>
+          <span className="truncate font-title font-bold">{title}</span>
+        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <Badge tone={on ? 'green' : 'muted'}>{statusLabel}</Badge>
+          {onToggle && <Switch checked={Boolean(on)} disabled={busy} onChange={(next) => onToggle(next)} label={title} />}
+        </div>
+      </div>
+      <button type="button" onClick={onClick} className="flex flex-1 flex-col gap-1 text-left">
+        {desc && <span className="line-clamp-2 text-xs text-white/60">{desc}</span>}
+        {meta && <span className="mt-auto block pt-1 text-[11px] text-mystic-glow/80">{meta}</span>}
+      </button>
+    </div>
   );
 }
 
@@ -277,6 +286,30 @@ export function SchemaForm({ t, schemaKey, fields, value, onChange, channels = [
           return (
             <Wrap key={f.key} label={label(f)}>
               <textarea rows={3} maxLength={f.maxLength} value={v} onChange={(e) => set(f.key, e.target.value)} className={`${field} py-2`} />
+            </Wrap>
+          );
+        }
+        if (f.type === 'color') {
+          const hex = /^#[0-9a-f]{6}$/i.test(String(v || '')) ? String(v) : f.default || '#8b5cf6';
+          const swatches = ['#ec4899', '#8b5cf6', '#38bdf8', '#10b981', '#f59e0b', '#ef4444'];
+          return (
+            <Wrap key={f.key} label={label(f)}>
+              <div className="flex flex-wrap items-center gap-2">
+                <input type="color" value={hex} onChange={(e) => set(f.key, e.target.value)} className="h-10 w-14 cursor-pointer rounded-xl border border-white/10 bg-white/5 p-1" />
+                <code className="rounded-lg bg-white/5 px-2.5 py-1.5 text-xs text-white/80">{hex}</code>
+                <div className="flex items-center gap-1.5">
+                  {swatches.map((sw) => (
+                    <button
+                      key={sw}
+                      type="button"
+                      aria-label={sw}
+                      onClick={() => set(f.key, sw)}
+                      style={{ backgroundColor: sw }}
+                      className={`h-6 w-6 rounded-full border ${hex.toLowerCase() === sw ? ' scale-110 border-white ring-2 ring-pyxie-glow' : 'border-white/20 opacity-80 hover:opacity-100'}`}
+                    />
+                  ))}
+                </div>
+              </div>
             </Wrap>
           );
         }

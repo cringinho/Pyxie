@@ -19,14 +19,34 @@ const id = (v) => (ID_RE.test(String(v || '')) ? String(v) : '');
 function defaultsFor(guildId) {
   if (String(guildId) === config.CRINGELANDIA_GUILD_ID) {
     return {
-      bumpGuide: { enabled: true, channelId: config.BUMP_GUIDE_CHANNEL_ID, intervalHours: config.BUMP_GUIDE_INTERVAL_MS / HOUR, sites: [...SITES] },
-      tarot: { enabled: true, roleId: config.TAROT_ROLE_ID, credit: false },
+      bumpGuide: {
+        enabled: true,
+        channelId: config.BUMP_GUIDE_CHANNEL_ID,
+        intervalHours: config.BUMP_GUIDE_INTERVAL_MS / HOUR,
+        sites: [...SITES],
+        color: '#E60067',
+        customTitle: '',
+        customIntro: '',
+        customFooter: '',
+        pingRoleId: '',
+      },
+      tarot: { enabled: true, roleId: config.TAROT_ROLE_ID, hour: 0, customGreeting: '', credit: false },
     };
   }
   return {
-    bumpGuide: { enabled: false, channelId: '', intervalHours: 12, sites: ['disboard', 'discadia', 'review'] },
+    bumpGuide: {
+      enabled: false,
+      channelId: '',
+      intervalHours: 12,
+      sites: ['disboard', 'discadia', 'review'],
+      color: '#E60067',
+      customTitle: '',
+      customIntro: '',
+      customFooter: '',
+      pingRoleId: '',
+    },
     // Quem já tinha canal do tarot (py!set tarot) continua recebendo o anúncio.
-    tarot: { enabled: true, roleId: '', credit: true },
+    tarot: { enabled: true, roleId: '', hour: 0, customGreeting: '', credit: true },
   };
 }
 
@@ -35,10 +55,27 @@ function normalize(raw = {}, guildId) {
   const b = { ...d.bumpGuide, ...(raw.bumpGuide || {}) };
   const tr = { ...d.tarot, ...(raw.tarot || {}) };
   const sites = Array.isArray(b.sites) ? [...new Set(b.sites.map(String).filter((s) => SITES.includes(s)))] : d.bumpGuide.sites;
+  const color = /^#[0-9a-f]{6}$/i.test(String(b.color || '')) ? String(b.color) : '#E60067';
   return {
-    bumpGuide: { enabled: b.enabled === true, channelId: id(b.channelId), intervalHours: clamp(b.intervalHours, 2, 72, 12), sites },
+    bumpGuide: {
+      enabled: b.enabled === true,
+      channelId: id(b.channelId),
+      intervalHours: clamp(b.intervalHours, 2, 72, 12),
+      sites,
+      color,
+      customTitle: String(b.customTitle || '').slice(0, 120),
+      customIntro: String(b.customIntro || '').slice(0, 600),
+      customFooter: String(b.customFooter || '').slice(0, 120),
+      pingRoleId: id(b.pingRoleId),
+    },
     // O crédito "criado por Cringelândia" é fixo: só a Cringelândia aparece sem ele.
-    tarot: { enabled: tr.enabled !== false, roleId: id(tr.roleId), credit: d.tarot.credit },
+    tarot: {
+      enabled: tr.enabled !== false,
+      roleId: id(tr.roleId),
+      hour: clamp(tr.hour, 0, 23, 0),
+      customGreeting: String(tr.customGreeting || '').slice(0, 300),
+      credit: d.tarot.credit,
+    },
   };
 }
 
@@ -122,17 +159,26 @@ function siteLinks(guildId) {
 function buildBumpGuide(guild, cfg = getConfig(guild.id).bumpGuide) {
   const server = guild?.name || t('periodic.bump.fallbackServer', guild);
   const sections = cfg.sites.map((s) => `### ${t(`periodic.bump.site.${s}.title`, guild)}\n\n${t(`periodic.bump.site.${s}.text`, guild)}`);
+  const introText = cfg.customIntro?.trim() ? cfg.customIntro.trim() : t('periodic.bump.intro', guild);
+  const titleText = cfg.customTitle?.trim() ? cfg.customTitle.trim() : t('periodic.bump.title', guild, { server });
+  const footerText = cfg.customFooter?.trim() ? cfg.customFooter.trim() : t('periodic.bump.footer', guild, { server });
   const embed = new EmbedBuilder()
-    .setColor('#E60067')
-    .setTitle(t('periodic.bump.title', guild, { server }))
-    .setDescription([t('periodic.bump.intro', guild), ...sections].join('\n\n'))
-    .setFooter({ text: t('periodic.bump.footer', guild, { server }) })
+    .setColor(cfg.color || '#E60067')
+    .setTitle(titleText)
+    .setDescription([introText, ...sections].join('\n\n'))
+    .setFooter({ text: footerText })
     .setTimestamp();
   const links = siteLinks(guild.id);
   const buttons = [];
   if (cfg.sites.includes('review')) buttons.push(new ButtonBuilder().setLabel(t('periodic.bump.btnReview', guild)).setStyle(ButtonStyle.Link).setURL(links.review));
   if (cfg.sites.includes('disboard')) buttons.push(new ButtonBuilder().setLabel(t('periodic.bump.btnDisboard', guild)).setStyle(ButtonStyle.Link).setURL(links.disboard));
-  return { embeds: [embed], components: buttons.length ? [new ActionRowBuilder().addComponents(...buttons)] : [], allowedMentions: { parse: [] } };
+  const payload = {
+    embeds: [embed],
+    components: buttons.length ? [new ActionRowBuilder().addComponents(...buttons)] : [],
+    allowedMentions: cfg.pingRoleId ? { parse: [], users: [], roles: [cfg.pingRoleId] } : { parse: [] },
+  };
+  if (cfg.pingRoleId) payload.content = `<@&${cfg.pingRoleId}>`;
+  return payload;
 }
 
 module.exports = {

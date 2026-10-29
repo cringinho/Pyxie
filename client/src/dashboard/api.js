@@ -65,6 +65,7 @@ export const api = {
   removeInjection: (id, injId, roles) => request(`/api/dashboard/guilds/${id}/injections/${injId}${roles ? '?roles=1' : ''}`, { method: 'DELETE' }),
   automations: (id) => request(`/api/dashboard/guilds/${id}/automations`),
   saveAutomation: (id, key, body) => request(`/api/dashboard/guilds/${id}/automations/${key}`, { method: 'PUT', body }),
+  resetAutomationStats: (id, key = 'all') => request(`/api/dashboard/guilds/${id}/automations/${encodeURIComponent(key)}/reset-stats`, { method: 'POST', body: {} }),
   activity: (id) => request(`/api/dashboard/guilds/${id}/activity`),
   botPermissions: (id) => request(`/api/dashboard/guilds/${id}/bot-permissions`),
   staleInvites: (id, days) => request(`/api/dashboard/guilds/${id}/invites/stale?days=${days}`),

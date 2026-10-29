@@ -11,6 +11,7 @@ function fileFor(guildId) {
 }
 
 function normalize(raw = {}) {
+  const color = /^#[0-9a-f]{6}$/i.test(String(raw.color || '')) ? String(raw.color) : '#f97316';
   return {
     enabled: raw.enabled === true,
     channelId: ID_RE.test(String(raw.channelId || '')) ? String(raw.channelId) : '',
@@ -18,6 +19,10 @@ function normalize(raw = {}) {
     minMinutes: clamp(raw.minMinutes, 5, 120, 10),
     cooldownMinutes: clamp(raw.cooldownMinutes, 30, 1440, 120),
     excludedChannelIds: [...new Set((raw.excludedChannelIds || []).map(String).filter((id) => ID_RE.test(id)))].slice(0, 50),
+    color,
+    pingRoleId: ID_RE.test(String(raw.pingRoleId || '')) ? String(raw.pingRoleId) : '',
+    customMessage: String(raw.customMessage || '').slice(0, 400),
+    autoDeleteWhenEmpty: raw.autoDeleteWhenEmpty !== false,
   };
 }
 

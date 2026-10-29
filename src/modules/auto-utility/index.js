@@ -44,8 +44,9 @@ function sameEmoji(reactionEmoji, wanted) {
 
 function starPost(message, cfg, count, lang) {
   const image = [...(message.attachments?.values?.() || [])].find((a) => /^image\//.test(a.contentType || ''));
+  const colorHex = /^#[0-9a-f]{6}$/i.test(cfg.color || '') ? cfg.color : '#f59e0b';
   const card = new EmbedBuilder()
-    .setColor(0xf59e0b)
+    .setColor(colorHex)
     .setAuthor({ name: message.member?.displayName || message.author?.username || '?', iconURL: message.author?.displayAvatarURL?.() })
     .setDescription([message.content?.slice(0, 3500), `[${t('autos.starboard.jump', lang)}](${message.url})`].filter(Boolean).join('\n\n'))
     .setFooter({ text: t('autos.footer', lang) })
@@ -54,12 +55,17 @@ function starPost(message, cfg, count, lang) {
   return { content: `${cfg.emoji} \`${count}\` · <#${message.channelId}>`, embeds: [card], allowedMentions: NO_PING };
 }
 
-async function onReaction(reaction) {
+async function onReaction(reaction, user) {
   if (reaction.partial) reaction = await reaction.fetch().catch(() => null);
   const message = reaction?.message?.partial ? await reaction.message.fetch().catch(() => null) : reaction?.message;
   if (!message?.guild) return null;
   const cfg = on(message.guild.id, 'starboard');
   if (!cfg || !cfg.channelId || message.channelId === cfg.channelId || !sameEmoji(reaction.emoji, cfg.emoji)) return null;
+  if ((cfg.ignoreChannelIds || []).includes(message.channelId)) return null;
+  if (!cfg.selfStar && user?.id && message.author?.id && user.id === message.author.id && reaction.count <= cfg.threshold) {
+    // Se o próprio autor reagiu e selfStar é false, desconta 1 se o autor estiver na contagem
+    if (reaction.count - 1 < cfg.threshold) return null;
+  }
   if (reaction.count < cfg.threshold) return null;
   const board = message.guild.channels.cache.get(cfg.channelId);
   if (!board?.isTextBased?.()) return null;
@@ -96,27 +102,36 @@ async function longPaste(message) {
 
 async function linkFixer(message) {
   const cfg = on(message.guild.id, 'linkFixer');
-  if (!cfg) return null;
+  if (!cfg || (cfg.exemptChannelIds || []).includes(message.channel?.id || message.channelId)) return null;
   const links = rules.fixLinks(message.content, cfg.sites);
   if (!links.length) return null;
-  await message.suppressEmbeds?.(true).catch(() => null);
+  if (cfg.deleteOriginal) await message.delete().catch(() => null);
+  else await message.suppressEmbeds?.(true).catch(() => null);
   const lang = getLanguage(message.guild.id);
   stats.bump(message.guild.id, 'linkFixer', 'hits');
-  return message.reply({ content: `-# ${t('autos.linkFixer.label', lang)}\n${links.join('\n')}`, allowedMentions: NO_PING }).catch(() => null);
+  const sendFn = cfg.deleteOriginal ? (p) => message.channel.send(p) : (p) => message.reply(p);
+  return sendFn({ content: `-# ${t('autos.linkFixer.label', lang)}\n${links.join('\n')}`, allowedMentions: NO_PING }).catch(() => null);
 }
 
 async function autoThread(message) {
   const cfg = on(message.guild.id, 'autoThread');
   if (!cfg || !cfg.channelIds.includes(message.channel.id) || message.hasThread || !message.startThread) return null;
   const lang = getLanguage(message.guild.id);
+  const user = message.member?.displayName || message.author.username;
   const first = String(message.content || '')
     .replace(/<[@#&!:a-z0-9]+>/gi, '')
     .replace(/https?:\/\/\S+/g, '')
     .split('\n')[0]
     .trim()
     .slice(0, 80);
-  const name = first.length >= 3 ? first : t('autos.thread.name', lang, { user: message.member?.displayName || message.author.username }).slice(0, 80);
-  const thread = await message.startThread({ name }).catch(() => null);
+  let name;
+  if (cfg.nameTemplate && cfg.nameTemplate.trim()) {
+    name = cfg.nameTemplate.replace(/\{user\}/g, user).replace(/\{channel\}/g, message.channel.name || '').slice(0, 80);
+  } else {
+    name = first.length >= 3 ? first : t('autos.thread.name', lang, { user }).slice(0, 80);
+  }
+  const autoArchiveDuration = [60, 1440, 4320, 10080].includes(Number(cfg.archiveMinutes)) ? Number(cfg.archiveMinutes) : undefined;
+  const thread = await message.startThread({ name, ...(autoArchiveDuration ? { autoArchiveDuration } : {}) }).catch(() => null);
   if (thread) stats.bump(message.guild.id, 'autoThread', 'hits');
   return thread;
 }
@@ -124,8 +139,10 @@ async function autoThread(message) {
 async function autoReact(message) {
   const cfg = on(message.guild.id, 'autoReactions');
   if (!cfg || !cfg.channelIds.includes(message.channel.id)) return 0;
+  if (cfg.ignoreBots !== false && message.author?.bot) return 0;
   let n = 0;
   for (const emoji of rules.parseEmojis(cfg.emojis)) n += (await message.react(emoji).then(() => 1).catch(() => 0));
+  if (n > 0) stats.bump(message.guild.id, 'autoReactions', 'hits');
   return n;
 }
 
@@ -147,8 +164,22 @@ async function sticky(message) {
   const state = readState(message.guild.id, 'sticky.json');
   if (state[message.channel.id]) await message.channel.messages.delete(state[message.channel.id]).catch(() => null);
   const lang = getLanguage(message.guild.id);
-  const sent = await message.channel.send({ content: `${cfg.text}\n-# ${t('autos.sticky.label', lang)}`, allowedMentions: NO_PING }).catch(() => null);
-  if (sent) writeState(message.guild.id, 'sticky.json', { ...state, [message.channel.id]: sent.id });
+  const payload = cfg.useEmbed
+    ? {
+        embeds: [
+          new EmbedBuilder()
+            .setColor(/^#[0-9a-f]{6}$/i.test(cfg.color || '') ? cfg.color : '#8b5cf6')
+            .setDescription(cfg.text)
+            .setFooter({ text: t('autos.sticky.label', lang) }),
+        ],
+        allowedMentions: NO_PING,
+      }
+    : { content: `${cfg.text}\n-# ${t('autos.sticky.label', lang)}`, allowedMentions: NO_PING };
+  const sent = await message.channel.send(payload).catch(() => null);
+  if (sent) {
+    writeState(message.guild.id, 'sticky.json', { ...state, [message.channel.id]: sent.id });
+    stats.bump(message.guild.id, 'stickyMessage', 'hits');
+  }
   return sent;
 }
 

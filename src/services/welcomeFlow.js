@@ -26,15 +26,35 @@ function defaultsFor(guildId) {
       guidesChannelId: config.GUIDES_CHANNEL_ID,
       rolesChannelId: config.COLORS_CHANNEL_ID,
       guideImageUrl: CRINGE_GIF,
-      checkin: { enabled: true, channelId: config.WELCOME_CHANNEL_ID, silentRoleId: CRINGE_SILENT_ROLE_ID },
+      dmWelcomeEnabled: false,
+      dmWelcomeText: '',
+      showAvatar: true,
+      showMemberCount: true,
+      customFooter: '',
+      checkin: { enabled: true, channelId: config.WELCOME_CHANNEL_ID, silentRoleId: CRINGE_SILENT_ROLE_ID, delayHours: 24, customText: '' },
     };
   }
-  return { enabled: true, layout: 'custom', pingRoleId: '', rulesChannelId: '', guidesChannelId: '', rolesChannelId: '', guideImageUrl: '', checkin: { enabled: false, channelId: '', silentRoleId: '' } };
+  return {
+    enabled: true,
+    layout: 'custom',
+    pingRoleId: '',
+    rulesChannelId: '',
+    guidesChannelId: '',
+    rolesChannelId: '',
+    guideImageUrl: '',
+    dmWelcomeEnabled: false,
+    dmWelcomeText: '',
+    showAvatar: true,
+    showMemberCount: true,
+    customFooter: '',
+    checkin: { enabled: false, channelId: '', silentRoleId: '', delayHours: 24, customText: '' },
+  };
 }
 
 function normalize(raw = {}, guildId) {
   const d = defaultsFor(guildId);
   const m = { ...d, ...raw, checkin: { ...d.checkin, ...(raw.checkin || {}) } };
+  const delayHours = Number.isFinite(Number(m.checkin.delayHours)) ? Math.min(72, Math.max(1, Math.round(Number(m.checkin.delayHours)))) : 24;
   return {
     enabled: m.enabled !== false,
     layout: LAYOUTS.includes(m.layout) ? m.layout : d.layout,
@@ -43,7 +63,18 @@ function normalize(raw = {}, guildId) {
     guidesChannelId: id(m.guidesChannelId),
     rolesChannelId: id(m.rolesChannelId),
     guideImageUrl: /^https:\/\/\S{1,500}$/.test(String(m.guideImageUrl || '')) ? String(m.guideImageUrl) : '',
-    checkin: { enabled: m.checkin.enabled === true, channelId: id(m.checkin.channelId), silentRoleId: id(m.checkin.silentRoleId) },
+    dmWelcomeEnabled: m.dmWelcomeEnabled === true,
+    dmWelcomeText: String(m.dmWelcomeText || '').slice(0, 1000),
+    showAvatar: m.showAvatar !== false,
+    showMemberCount: m.showMemberCount !== false,
+    customFooter: String(m.customFooter || '').slice(0, 120),
+    checkin: {
+      enabled: m.checkin.enabled === true,
+      channelId: id(m.checkin.channelId),
+      silentRoleId: id(m.checkin.silentRoleId),
+      delayHours,
+      customText: String(m.checkin.customText || '').slice(0, 500),
+    },
   };
 }
 
@@ -103,13 +134,18 @@ function buildWelcomeMessage(member, view) {
   const vars = { server, user: `${member}`, username: member.user?.username || '', memberCount: `${guild?.memberCount || 0}` };
   const mentions = { parse: [], users: [member.id], roles: view.pingRoleId ? [view.pingRoleId] : [] };
   if (view.layout === 'custom') {
+    const footerText = view.customFooter?.trim()
+      ? fill(view.customFooter, vars)
+      : view.showMemberCount === false
+        ? server
+        : t('welcomeFlow.customFooter', guild, { server, count: vars.memberCount });
     const embed = new EmbedBuilder()
       .setColor(view.color || '#8b5cf6')
       .setTitle(fill(view.title || t('welcomeFlow.customTitle', guild), vars).slice(0, 256))
       .setDescription(fill(view.description || t('welcomeFlow.customDescription', guild), vars).slice(0, 4000))
-      .setThumbnail(member.user?.displayAvatarURL?.({ size: 256 }) || null)
-      .setFooter({ text: t('welcomeFlow.customFooter', guild, { server, count: vars.memberCount }) })
+      .setFooter({ text: footerText })
       .setTimestamp();
+    if (view.showAvatar !== false) embed.setThumbnail(member.user?.displayAvatarURL?.({ size: 256 }) || null);
     if (view.imageUrl) embed.setImage(view.imageUrl);
     const content = view.pingRoleId ? t('welcomeFlow.contentRole', guild, { user: vars.user, role: `<@&${view.pingRoleId}>` }) : t('welcomeFlow.customContent', guild, { user: vars.user, server });
     return { content, embeds: [embed], allowedMentions: mentions };

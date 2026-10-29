@@ -174,7 +174,7 @@ function cookieFor(userId) {
     assert.equal(w.layout, 'guide');
     assert.equal(w.pingRoleId, config.WELCOME_ROLE_ID);
     assert.deepEqual([w.rulesChannelId, w.guidesChannelId, w.rolesChannelId], [config.RULES_CHANNEL_ID, config.GUIDES_CHANNEL_ID, config.COLORS_CHANNEL_ID]);
-    assert.deepEqual(w.checkin, { enabled: true, channelId: config.WELCOME_CHANNEL_ID, silentRoleId: checkin.SILENT_ROLE_ID });
+    assert.deepEqual(w.checkin, { enabled: true, channelId: config.WELCOME_CHANNEL_ID, silentRoleId: checkin.SILENT_ROLE_ID, delayHours: 24, customText: '' });
     const member = (guild, uid = '777777777777777777') => ({ id: uid, guild, displayName: 'Lua', user: { username: 'lua', bot: false, displayAvatarURL: () => null }, roles: { cache: new Map() }, joinedTimestamp: now - 25 * HOUR, toString: () => `<@${uid}>` });
     const cg = { id: CRINGE, name: 'Cringelândia', memberCount: 10 };
     const guideMsg = welcomeFlow.buildWelcomeMessage(member(cg), { ...w, ...welcomeFlow.getView(CRINGE) });

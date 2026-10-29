@@ -57,10 +57,27 @@ export default function Periodic({ t, guildId, lang }) {
         <div className="space-y-3">
           <Toggle label={t('periodic.bump.on')} checked={cfg.bumpGuide.enabled} onChange={(v) => bump({ enabled: v })} />
           <ChannelSelect label={t('periodic.channel')} value={cfg.bumpGuide.channelId} channels={channels} onChange={(v) => bump({ channelId: v })} />
-          <label className="block">
-            <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.bump.interval')}</span>
-            <input type="number" min={2} max={72} value={cfg.bumpGuide.intervalHours} onChange={(e) => bump({ intervalHours: e.target.value })} className={field} />
-          </label>
+          <div className="grid gap-2 sm:grid-cols-3">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.bump.interval')}</span>
+              <input type="number" min={2} max={72} value={cfg.bumpGuide.intervalHours} onChange={(e) => bump({ intervalHours: e.target.value })} className={field} />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.bump.color')}</span>
+              <input type="color" value={cfg.bumpGuide.color || '#FF2A85'} onChange={(e) => bump({ color: e.target.value })} className={`${field} p-1`} />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.bump.pingRole')}</span>
+              <select value={cfg.bumpGuide.pingRoleId || ''} onChange={(e) => bump({ pingRoleId: e.target.value })} className={select}>
+                <option value="">{t('periodic.tarot.noRole')}</option>
+                {roles.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    @{r.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           <fieldset>
             <legend className="mb-1 text-xs font-semibold text-white/70">{t('periodic.bump.sites')}</legend>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -69,6 +86,20 @@ export default function Periodic({ t, guildId, lang }) {
               ))}
             </div>
           </fieldset>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.bump.customTitle')}</span>
+              <input value={cfg.bumpGuide.customTitle || ''} maxLength={120} onChange={(e) => bump({ customTitle: e.target.value })} className={field} />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.bump.customFooter')}</span>
+              <input value={cfg.bumpGuide.customFooter || ''} maxLength={120} onChange={(e) => bump({ customFooter: e.target.value })} className={field} />
+            </label>
+          </div>
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.bump.customIntro')}</span>
+            <input value={cfg.bumpGuide.customIntro || ''} maxLength={400} onChange={(e) => bump({ customIntro: e.target.value })} className={field} />
+          </label>
           {cfg.lastBumpGuideAt && <p className="text-xs text-white/50">{t('periodic.bump.last', { date: new Date(cfg.lastBumpGuideAt).toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR') })}</p>}
         </div>
       </Card>
@@ -78,16 +109,26 @@ export default function Periodic({ t, guildId, lang }) {
         <div className="space-y-3">
           <Toggle label={t('periodic.tarot.on')} checked={cfg.tarot.enabled} onChange={(v) => tarot({ enabled: v })} />
           <ChannelSelect label={t('periodic.channel')} value={cfg.tarotChannelId} channels={channels} onChange={(v) => setCfg({ ...cfg, tarotChannelId: v })} />
+          <div className="grid gap-2 sm:grid-cols-2">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.tarot.role')}</span>
+              <select value={cfg.tarot.roleId} onChange={(e) => tarot({ roleId: e.target.value })} className={select}>
+                <option value="">{t('periodic.tarot.noRole')}</option>
+                {roles.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    @{r.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.tarot.hour')}</span>
+              <input type="number" min={0} max={23} value={cfg.tarot.hour ?? 0} onChange={(e) => tarot({ hour: Number(e.target.value) })} className={field} />
+            </label>
+          </div>
           <label className="block">
-            <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.tarot.role')}</span>
-            <select value={cfg.tarot.roleId} onChange={(e) => tarot({ roleId: e.target.value })} className={select}>
-              <option value="">{t('periodic.tarot.noRole')}</option>
-              {roles.map((r) => (
-                <option key={r.id} value={r.id}>
-                  @{r.name}
-                </option>
-              ))}
-            </select>
+            <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.tarot.customGreeting')}</span>
+            <input value={cfg.tarot.customGreeting || ''} maxLength={300} onChange={(e) => tarot({ customGreeting: e.target.value })} className={field} />
           </label>
           {cfg.tarot.credit && <p className="text-xs text-white/50">{t('periodic.tarot.credit')}</p>}
         </div>

@@ -43,6 +43,10 @@ function cleanField(f, value) {
         .slice(0, f.max || 50);
     case 'text':
       return String(value ?? d ?? '').slice(0, f.maxLength || 500);
+    case 'color': {
+      const raw = String(value ?? d ?? '#8b5cf6').trim().toLowerCase();
+      return /^#[0-9a-f]{6}$/.test(raw) ? raw : String(d || '#8b5cf6').toLowerCase();
+    }
     default:
       return d;
   }
