@@ -6,7 +6,9 @@ const { getEmoji, reloadEmojiConfig } = require('./appEmojis');
 const { getLanguage } = require('./i18n');
 const { emojify } = require('./emojify');
 
-const EMOJIS_FILE = path.join(__dirname, '..', 'data', 'emojis.json');
+const BASELINE_EMOJIS_FILE = path.join(__dirname, '..', 'data', 'emojis.json');
+const RUNTIME_DATA_DIR = process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data');
+const RUNTIME_EMOJIS_FILE = path.join(RUNTIME_DATA_DIR, 'emojis.json');
 const DISCORD_APP_EMOJIS_FILE = path.join(__dirname, '..', 'data', 'discordAppEmojis.json');
 
 // Catálogo em memória dos Application Emojis da CDN
@@ -36,15 +38,31 @@ function loadAppEmojisCatalog() {
 }
 loadAppEmojisCatalog();
 
-// Cache em memória das customizações salvas pelo Dono
+// Cache em memória das customizações salvas pelo Dono (base do repositório + sobrescritas persistentes em data/emojis.json)
 let customEmojisCache = {};
 function loadCustomEmojis() {
   try {
-    if (fs.existsSync(EMOJIS_FILE)) {
-      customEmojisCache = JSON.parse(fs.readFileSync(EMOJIS_FILE, 'utf8')) || {};
-    } else {
-      customEmojisCache = {};
+    let baseline = {};
+    if (fs.existsSync(BASELINE_EMOJIS_FILE)) {
+      baseline = JSON.parse(fs.readFileSync(BASELINE_EMOJIS_FILE, 'utf8')) || {};
     }
+    let overrides = {};
+    if (fs.existsSync(RUNTIME_EMOJIS_FILE)) {
+      overrides = JSON.parse(fs.readFileSync(RUNTIME_EMOJIS_FILE, 'utf8')) || {};
+    } else {
+      // Migração suave: se data/emojis.json ainda não existe, migra automaticamente chaves salvas
+      const customEntries = Object.entries(baseline).filter(([k]) => k.includes('.') || k === 'coins' || k === 'magic_bean');
+      if (customEntries.length > 0) {
+        overrides = Object.fromEntries(customEntries);
+        try {
+          fs.mkdirSync(RUNTIME_DATA_DIR, { recursive: true });
+          const tmp = `${RUNTIME_EMOJIS_FILE}.${Date.now()}.tmp`;
+          fs.writeFileSync(tmp, JSON.stringify(overrides, null, 2), 'utf8');
+          fs.renameSync(tmp, RUNTIME_EMOJIS_FILE);
+        } catch (_) {}
+      }
+    }
+    customEmojisCache = { ...baseline, ...overrides };
   } catch (_) {
     customEmojisCache = {};
   }
@@ -263,11 +281,15 @@ function getAllEmbedsWithResolvedSlots() {
  */
 function getCurrenciesConfig() {
   loadCustomEmojis();
-  const THEME_FILE = path.join(__dirname, '..', 'data', 'themeEmojis.json');
+  const RUNTIME_THEME_FILE = path.join(RUNTIME_DATA_DIR, 'themeEmojis.json');
+  const BASE_THEME_FILE = path.join(__dirname, '..', 'data', 'themeEmojis.json');
   let themeConfig = {};
   try {
-    if (fs.existsSync(THEME_FILE)) {
-      const parsed = JSON.parse(fs.readFileSync(THEME_FILE, 'utf8'));
+    if (fs.existsSync(RUNTIME_THEME_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(RUNTIME_THEME_FILE, 'utf8'));
+      themeConfig = parsed && parsed.themes ? parsed.themes : {};
+    } else if (fs.existsSync(BASE_THEME_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(BASE_THEME_FILE, 'utf8'));
       themeConfig = parsed && parsed.themes ? parsed.themes : {};
     }
   } catch (_) {}
@@ -309,7 +331,7 @@ function getCurrenciesConfig() {
 }
 
 /**
- * Salva a alteração de emoji de uma currency global
+ * Salva a alteração de emoji de uma currency global (persistência segura em data/emojis.json)
  */
 function saveCurrencyEmoji(currencyKey, emojiId) {
   loadCustomEmojis();
@@ -318,45 +340,69 @@ function saveCurrencyEmoji(currencyKey, emojiId) {
     cleanId = '1551355962974273546';
   }
 
-  const THEME_FILE = path.join(__dirname, '..', 'data', 'themeEmojis.json');
-  let themeJson = { themes: {} };
+  let overrides = {};
   try {
-    if (fs.existsSync(THEME_FILE)) {
-      themeJson = JSON.parse(fs.readFileSync(THEME_FILE, 'utf8'));
+    if (fs.existsSync(RUNTIME_EMOJIS_FILE)) {
+      overrides = JSON.parse(fs.readFileSync(RUNTIME_EMOJIS_FILE, 'utf8')) || {};
     }
   } catch (_) {}
 
+  const RUNTIME_THEME_FILE = path.join(RUNTIME_DATA_DIR, 'themeEmojis.json');
+  const BASE_THEME_FILE = path.join(__dirname, '..', 'data', 'themeEmojis.json');
+
+  let themeJson = { themes: {} };
+  try {
+    if (fs.existsSync(RUNTIME_THEME_FILE)) {
+      themeJson = JSON.parse(fs.readFileSync(RUNTIME_THEME_FILE, 'utf8'));
+    } else if (fs.existsSync(BASE_THEME_FILE)) {
+      themeJson = JSON.parse(fs.readFileSync(BASE_THEME_FILE, 'utf8'));
+    }
+  } catch (_) {}
+
+  const key = currencyKey === 'coins' ? 'coins' : 'magic_bean';
+  if (cleanId) {
+    overrides[key] = cleanId;
+    customEmojisCache[key] = cleanId;
+  } else {
+    delete overrides[key];
+    delete customEmojisCache[key];
+  }
+
   if (currencyKey === 'coins') {
-    if (cleanId) customEmojisCache['coins'] = cleanId;
-    else delete customEmojisCache['coins'];
     if (themeJson.themes && themeJson.themes.coins) {
       themeJson.themes.coins.primaryId = cleanId || '1548443880066777098';
     }
   } else if (currencyKey === 'magicBeans' || currencyKey === 'magic_bean' || currencyKey === 'beans') {
-    if (cleanId) customEmojisCache['magic_bean'] = cleanId;
-    else delete customEmojisCache['magic_bean'];
     if (themeJson.themes && themeJson.themes.magicBeans) {
       themeJson.themes.magicBeans.primaryId = cleanId || '1548444140532928642';
     }
   }
 
-  // Grava ambos os arquivos de forma atômica
-  const tmpEmojis = `${EMOJIS_FILE}.${Date.now()}.tmp`;
-  fs.writeFileSync(tmpEmojis, JSON.stringify(customEmojisCache, null, 2), 'utf8');
-  fs.renameSync(tmpEmojis, EMOJIS_FILE);
+  // Grava em data/ de forma atômica protegida contra git
+  fs.mkdirSync(RUNTIME_DATA_DIR, { recursive: true });
+  const tmpEmojis = `${RUNTIME_EMOJIS_FILE}.${Date.now()}.tmp`;
+  fs.writeFileSync(tmpEmojis, JSON.stringify(overrides, null, 2), 'utf8');
+  fs.renameSync(tmpEmojis, RUNTIME_EMOJIS_FILE);
 
   if (themeJson.themes) {
-    const tmpTheme = `${THEME_FILE}.${Date.now()}.tmp`;
+    const tmpTheme = `${RUNTIME_THEME_FILE}.${Date.now()}.tmp`;
     fs.writeFileSync(tmpTheme, JSON.stringify(themeJson, null, 2), 'utf8');
-    fs.renameSync(tmpTheme, THEME_FILE);
+    fs.renameSync(tmpTheme, RUNTIME_THEME_FILE);
   }
+
+  // Mantém sincronização atômica opcional no repositório de desenvolvimento
+  try {
+    const tmpBase = `${BASELINE_EMOJIS_FILE}.${Date.now()}.tmp`;
+    fs.writeFileSync(tmpBase, JSON.stringify(customEmojisCache, null, 2), 'utf8');
+    fs.renameSync(tmpBase, BASELINE_EMOJIS_FILE);
+  } catch (_) {}
 
   reloadRegistryCache();
   return { success: true, currencyKey, emojiId: cleanId };
 }
 
 /**
- * Salva a alteração de um slot de embed
+ * Salva a alteração de um slot de embed (persistência segura em data/emojis.json)
  */
 function saveEmbedSlotEmoji(embedId, slotKey, emojiId) {
   loadCustomEmojis();
@@ -366,15 +412,34 @@ function saveEmbedSlotEmoji(embedId, slotKey, emojiId) {
     cleanId = '1551355962974273546';
   }
 
+  let overrides = {};
+  try {
+    if (fs.existsSync(RUNTIME_EMOJIS_FILE)) {
+      overrides = JSON.parse(fs.readFileSync(RUNTIME_EMOJIS_FILE, 'utf8')) || {};
+    }
+  } catch (_) {}
+
   if (cleanId) {
+    overrides[key] = cleanId;
     customEmojisCache[key] = cleanId;
   } else {
+    delete overrides[key];
     delete customEmojisCache[key];
   }
 
-  const tmpEmojis = `${EMOJIS_FILE}.${Date.now()}.tmp`;
-  fs.writeFileSync(tmpEmojis, JSON.stringify(customEmojisCache, null, 2), 'utf8');
-  fs.renameSync(tmpEmojis, EMOJIS_FILE);
+  // Grava em data/emojis.json de forma atômica protegida de resets e pulls do git
+  fs.mkdirSync(RUNTIME_DATA_DIR, { recursive: true });
+  const tmpEmojis = `${RUNTIME_EMOJIS_FILE}.${Date.now()}.tmp`;
+  fs.writeFileSync(tmpEmojis, JSON.stringify(overrides, null, 2), 'utf8');
+  fs.renameSync(tmpEmojis, RUNTIME_EMOJIS_FILE);
+
+  // Mantém sincronização atômica opcional no repositório de desenvolvimento
+  try {
+    const tmpBase = `${BASELINE_EMOJIS_FILE}.${Date.now()}.tmp`;
+    fs.writeFileSync(tmpBase, JSON.stringify(customEmojisCache, null, 2), 'utf8');
+    fs.renameSync(tmpBase, BASELINE_EMOJIS_FILE);
+  } catch (_) {}
+
   reloadEmojiConfig();
   return { success: true, embedId, slotKey, emojiId: cleanId };
 }

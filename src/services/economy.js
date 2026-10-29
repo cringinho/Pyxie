@@ -6,7 +6,7 @@ const { normalizeProfileStyle } = require('./profileStyle');
 const { getEmoji } = require('../utils/appEmojis');
 const { withFileLock } = require('../utils/fileLock');
 
-const economyFile = path.join(__dirname, '..', '..', 'data', 'economy.json');
+const economyFile = path.join(process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data'), 'economy.json');
 const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 const STREAK_GRACE_MS = 48 * 60 * 60 * 1000;
 const WORK_COOLDOWN_MS = 3 * 60 * 60 * 1000;

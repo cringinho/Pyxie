@@ -33,6 +33,7 @@ const embedRegistry = require('./src/utils/embedRegistry');
 const acervoAuditService = require('./src/services/acervoAuditService');
 const { createAdminMasterRouter } = require('./src/routes/adminMasterRoutes');
 const { createDashboardRouter } = require('./src/routes/dashboardRoutes');
+const { createHyperfokusRouter } = require('./src/routes/hyperfokusRoutes');
 const { createBotBridge } = require('./src/services/botBridge');
 const { createExpressTelemetryMiddleware } = require('./src/services/resourceTelemetry');
 const { createRouteGateMiddleware } = require('./src/services/webRoutesManager');
@@ -344,6 +345,8 @@ app.use(
     },
   })
 );
+
+app.use('/', createHyperfokusRouter({ publicDir }));
 
 // Tratamento gracioso de payloads JSON malformados
 app.use((err, req, res, next) => {

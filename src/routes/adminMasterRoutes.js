@@ -125,7 +125,8 @@ function createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }) {
   });
 
   router.post('/api/admin/embeds/theme', requireAdminAuth, (req, res) => {
-    const THEME_PATH = path.join(__dirname, '..', 'data', 'embedTheme.json');
+    const RUNTIME_DATA_DIR = process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data');
+    const THEME_PATH = path.join(RUNTIME_DATA_DIR, 'embedTheme.json');
     try {
       const current = getEmbedTheme();
       const updated = {
@@ -134,7 +135,10 @@ function createAdminMasterRouter({ requireAdminAuth, sendIpcToBot }) {
         footer: { ...current.footer, ...(req.body.footer || {}) },
         updatedAt: new Date().toISOString(),
       };
-      fs.writeFileSync(THEME_PATH, JSON.stringify(updated, null, 2), 'utf8');
+      fs.mkdirSync(RUNTIME_DATA_DIR, { recursive: true });
+      const tmp = `${THEME_PATH}.${Date.now()}.tmp`;
+      fs.writeFileSync(tmp, JSON.stringify(updated, null, 2), 'utf8');
+      fs.renameSync(tmp, THEME_PATH);
       res.json({ success: true, theme: updated });
     } catch (err) {
       res.status(400).json({ success: false, error: err.message });

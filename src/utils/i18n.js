@@ -941,6 +941,22 @@ const TRANSLATIONS = {
         "21": "Vibe check do dia feito. Resultado: interessante. Muito interessante."
       }
     },
+    "hyperfokus": {
+      "draftNotice": "Ei, ei! Este tópico está em modo rascunho e é exclusivo do autor e coautores. Volta quando estiver pronto, hmpf!",
+      "draftNoticeSensitive": "Este tópico ainda está sendo preparado pelo autor. Em breve estará aberto para todos participarem com carinho.",
+      "stickyTitle": "📖 Pyxie Hyperfokus — Rascunho Editorial",
+      "stickyDesc": "Este tópico está protegido. Apenas o autor e coautores podem postar enquanto o artigo estiver em rascunho.\n\nUse `py!add @usuario` ou `/py-add` para adicionar coautores.\nQuando terminar, clique em **Concluir e postar** abaixo ou use `py!concluir`.",
+      "stickyBtnConclude": "✅ Concluir e postar",
+      "addSuccess": "✨ {user} foi adicionado como coautor deste artigo!",
+      "addAlready": "{user} já é autor ou coautor deste tópico.",
+      "addOnlyOwner": "Apenas o autor original do tópico pode adicionar coautores.",
+      "concluirSuccess": "🎉 Rascunho concluído com sucesso! O tópico agora está aberto para comentários e foi enviado para a fila editorial do site.",
+      "concluirAlready": "Este tópico já foi concluído anteriormente.",
+      "concluirOnlyAuthor": "Apenas o autor ou coautores podem concluir este rascunho.",
+      "celebrationTitle": "🎉 Artigo Publicado no Pyxie Hyperfokus!",
+      "celebrationDesc": "O artigo de {authors} foi aprovado e agora está publicado no nosso portal!\n\n🔗 [Ler no Pyxie Hyperfokus]({url})\n-# Parabéns pelo capricho autoral!",
+      "rejectedNotice": "O rascunho foi revisado pela equipe editorial e permanecerá disponível exclusivamente aqui no Discord."
+    },
     "hyperfocus": {
       "genericTopic": "esse hiperfoco",
       "reward": "-# 🪙 Ganhou {coins} moedinhas por abrir um tópico caprichado. Uma vez por dia, tá? Não abusa.",
@@ -3917,6 +3933,22 @@ const TRANSLATIONS = {
         "20": "Hmph, the card kind of suits you. Not that I noticed.",
         "21": "Daily vibe check done. Result: interesting. Very interesting."
       }
+    },
+    "hyperfokus": {
+      "draftNotice": "Hey, hey! This thread is in draft mode and exclusive to the author and collaborators. Come back when it's ready, hmpf!",
+      "draftNoticeSensitive": "This thread is still being prepared by the author. It will be open for everyone to kindly participate soon.",
+      "stickyTitle": "📖 Pyxie Hyperfokus — Editorial Draft",
+      "stickyDesc": "This thread is protected. Only the author and collaborators can post while the article is in draft.\n\nUse `py!add @user` or `/py-add` to add collaborators.\nWhen finished, click **Conclude and post** below or use `py!concluir`.",
+      "stickyBtnConclude": "✅ Conclude and post",
+      "addSuccess": "✨ {user} was added as a collaborator to this article!",
+      "addAlready": "{user} is already an author or collaborator of this thread.",
+      "addOnlyOwner": "Only the original thread author can add collaborators.",
+      "concluirSuccess": "🎉 Draft concluded successfully! The thread is now open for comments and has been sent to the editorial review queue.",
+      "concluirAlready": "This thread was already concluded previously.",
+      "concluirOnlyAuthor": "Only the author or collaborators can conclude this draft.",
+      "celebrationTitle": "🎉 Article Published on Pyxie Hyperfokus!",
+      "celebrationDesc": "The article by {authors} has been approved and is now published on our portal!\n\n🔗 [Read on Pyxie Hyperfokus]({url})\n-# Kudos for the authentic craft!",
+      "rejectedNotice": "The draft was reviewed by the editorial team and will remain available exclusively here on Discord."
     },
     "hyperfocus": {
       "genericTopic": "this hyperfocus",

@@ -1,7 +1,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const THEME_FILE = path.join(__dirname, '..', 'data', 'themeEmojis.json');
+const BASE_THEME_FILE = path.join(__dirname, '..', 'data', 'themeEmojis.json');
+const RUNTIME_DATA_DIR = process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data');
+const RUNTIME_THEME_FILE = path.join(RUNTIME_DATA_DIR, 'themeEmojis.json');
 const APP_EMOJIS_FILE = path.join(__dirname, '..', 'data', 'discordAppEmojis.json');
 
 // Cache em memória para resolução ultra-rápida
@@ -36,16 +38,27 @@ function loadAppEmojisCatalog() {
 loadAppEmojisCatalog();
 
 function getThemeConfig() {
+  let baseThemes = {};
   try {
-    if (fs.existsSync(THEME_FILE)) {
-      const raw = fs.readFileSync(THEME_FILE, 'utf8');
+    if (fs.existsSync(BASE_THEME_FILE)) {
+      const raw = fs.readFileSync(BASE_THEME_FILE, 'utf8');
       const parsed = JSON.parse(raw);
-      return parsed && parsed.themes ? parsed.themes : {};
+      baseThemes = parsed && parsed.themes ? parsed.themes : {};
     }
   } catch (err) {
-    console.warn('[themeEmojis] Aviso ao ler themeEmojis.json:', err.message);
+    console.warn('[themeEmojis] Aviso ao ler baseline themeEmojis.json:', err.message);
   }
-  return {};
+  let runtimeThemes = {};
+  try {
+    if (fs.existsSync(RUNTIME_THEME_FILE)) {
+      const raw = fs.readFileSync(RUNTIME_THEME_FILE, 'utf8');
+      const parsed = JSON.parse(raw);
+      runtimeThemes = parsed && parsed.themes ? parsed.themes : {};
+    }
+  } catch (err) {
+    console.warn('[themeEmojis] Aviso ao ler runtime themeEmojis.json:', err.message);
+  }
+  return { ...baseThemes, ...runtimeThemes };
 }
 
 /**

@@ -3,7 +3,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { resolveEmoji } = require('./emojiResolver');
 
-const THEME_PATH = path.join(__dirname, '..', 'data', 'embedTheme.json');
+const BASE_THEME_PATH = path.join(__dirname, '..', 'data', 'embedTheme.json');
+const RUNTIME_DATA_DIR = process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data');
+const RUNTIME_THEME_PATH = path.join(RUNTIME_DATA_DIR, 'embedTheme.json');
 
 const DEFAULT_THEME = {
   colors: {
@@ -22,18 +24,25 @@ const DEFAULT_THEME = {
 };
 
 function getEmbedTheme() {
+  let baseData = {};
   try {
-    if (fs.existsSync(THEME_PATH)) {
-      const data = JSON.parse(fs.readFileSync(THEME_PATH, 'utf8'));
-      return {
-        ...DEFAULT_THEME,
-        ...data,
-        colors: { ...DEFAULT_THEME.colors, ...(data.colors || {}) },
-        footer: { ...DEFAULT_THEME.footer, ...(data.footer || {}) },
-      };
+    if (fs.existsSync(BASE_THEME_PATH)) {
+      baseData = JSON.parse(fs.readFileSync(BASE_THEME_PATH, 'utf8')) || {};
     }
   } catch (_) {}
-  return DEFAULT_THEME;
+  let runtimeData = {};
+  try {
+    if (fs.existsSync(RUNTIME_THEME_PATH)) {
+      runtimeData = JSON.parse(fs.readFileSync(RUNTIME_THEME_PATH, 'utf8')) || {};
+    }
+  } catch (_) {}
+  const data = { ...baseData, ...runtimeData };
+  return {
+    ...DEFAULT_THEME,
+    ...data,
+    colors: { ...DEFAULT_THEME.colors, ...(data.colors || {}) },
+    footer: { ...DEFAULT_THEME.footer, ...(data.footer || {}) },
+  };
 }
 
 /**

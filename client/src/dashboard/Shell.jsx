@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   Activity,
   Ban,
+  BookOpen,
   Boxes,
   Calculator,
   Coins,
@@ -85,6 +86,7 @@ export const SECTION_META = {
   shopee: { icon: ShoppingBag, group: 'content' },
   emojis: { icon: Smile, group: 'content' },
   voice: { icon: MessageSquareQuote, group: 'content' },
+  hyperfokus: { icon: BookOpen, group: 'content' },
   agenda: { icon: CalendarDays, group: 'config' },
   periodic: { icon: Repeat, group: 'messages' },
   welcome: { icon: DoorOpen, group: 'messages' },

@@ -160,4 +160,10 @@ export const api = {
   voiceToggle: (id, active) => request(`/api/dashboard/global/voice/lines/${encodeURIComponent(id)}`, { method: 'PUT', body: { active } }),
   voiceEdit: (id, body) => request(`/api/dashboard/global/voice/lines/${encodeURIComponent(id)}`, { method: 'PUT', body }),
   voiceDelete: (id) => request(`/api/dashboard/global/voice/lines/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  hyperfokusQueue: (guildId) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/queue`),
+  hyperfokusArticles: (guildId, status = '') => request(`/api/dashboard/guilds/${guildId}/hyperfokus/articles${status ? `?status=${encodeURIComponent(status)}` : ''}`),
+  hyperfokusArticle: (guildId, id) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/articles/${encodeURIComponent(id)}`),
+  hyperfokusSave: (guildId, id, body) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/articles/${encodeURIComponent(id)}`, { method: 'PUT', body }),
+  hyperfokusPublish: (guildId, id, body = {}) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/articles/${encodeURIComponent(id)}/publish`, { method: 'POST', body }),
+  hyperfokusReject: (guildId, id, reason) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/articles/${encodeURIComponent(id)}/reject`, { method: 'POST', body: { reason } }),
 };

@@ -29,6 +29,7 @@ import BotPermissions from './Permissions';
 import Tickets from './Tickets';
 import { MaryProfile, MaryStore, MaryTools } from './Mary';
 import Voice from './Voice';
+import Hyperfokus from './Hyperfokus';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>[/<item>], #/global/<seção>.
 function parseHash() {
@@ -563,7 +564,7 @@ function Activity({ t, guildId }) {
 }
 
 // Seções de formulário ficam numa coluna mais estreita; as de grade usam a largura toda.
-const WIDE_SECTIONS = new Set(['overview', 'features', 'embeds', 'commands', 'emojiUsage', 'injections', 'automations']);
+const WIDE_SECTIONS = new Set(['overview', 'features', 'embeds', 'commands', 'emojiUsage', 'injections', 'automations', 'hyperfokus']);
 
 function GuildView({ shell, guildId, section, item }) {
   const { t, lang, me } = shell;
@@ -629,6 +630,7 @@ function GuildView({ shell, guildId, section, item }) {
         {current === 'security' && <Security t={t} guildId={guildId} />}
         {current === 'tickets' && <Tickets t={t} guildId={guildId} isOwner={me.user.isOwner} />}
         {current === 'seasonal' && <Seasonal t={t} guildId={guildId} />}
+        {current === 'hyperfokus' && <Hyperfokus t={t} lang={lang} guildId={guildId} />}
         {current === 'partnerships' && (
           <Partnerships t={t} guildId={guildId}>
             <PartnershipDm t={t} guildId={guildId} />

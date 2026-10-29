@@ -63,6 +63,14 @@ async function processHyperfocus(client, now = Date.now()) {
   for (const [threadId, entry] of Object.entries(state.threads)) {
     const cfg = getCommunityConfig(entry.guildId).hyperfocus;
     if (now - entry.createdAt < cfg.waitMinutes * 60000) continue;
+
+    // Se o tópico estiver em modo DRAFT do Hyperfokus, não comenta nem recompensa ainda
+    try {
+      const hfDraftStore = require('../hyperfokus/draftStore');
+      const draft = hfDraftStore.getDraft(threadId);
+      if (draft && draft.status === 'DRAFT') continue;
+    } catch (_) {}
+
     delete state.threads[threadId];
     const thread = await client.channels.fetch(threadId).catch(() => null);
     if (!thread?.messages) continue;

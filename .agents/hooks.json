@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"E:/botMelody/.agents/hooks/pre-tool-validator.sh\"",
+            "command": "bash \".agents/hooks/pre-tool-validator.sh\"",
             "timeout": 15
           }
         ]

@@ -30,8 +30,8 @@ Toda página web pública (`public/*.html`), rota servida pelo Express (`server.
   - Página inicial: tipo `SoftwareApplication` com `offers` e `applicationCategory`.
 
 ### 4. Protocolo IndexNow e Sindicação Autônoma
-- Sempre que novas rotas, páginas ou conteúdos dinâmicos forem publicados, o serviço [`src/services/indexNowService.js`](file:///e:/botMelody/src/services/indexNowService.js) DEVE ser acionado para notificar instantaneamente os mecanismos de busca parceiros (Bing, Yandex, Seznam, Naver).
-- Manter feeds de sindicação (`/rss.xml`, `/atom.xml`, `/feed.json`) sempre válidos e sincronizados via [`src/services/feedGenerator.js`](file:///e:/botMelody/src/services/feedGenerator.js) com tags de mídia enriquecidas (`<enclosure>`, `<media:content>`) para alimentar Pinterest e agregadores externos.
+- Sempre que novas rotas, páginas ou conteúdos dinâmicos forem publicados, o serviço [`src/services/indexNowService.js`](../../src/services/indexNowService.js) DEVE ser acionado para notificar instantaneamente os mecanismos de busca parceiros (Bing, Yandex, Seznam, Naver).
+- Manter feeds de sindicação (`/rss.xml`, `/atom.xml`, `/feed.json`) sempre válidos e sincronizados via [`src/services/feedGenerator.js`](../../src/services/feedGenerator.js) com tags de mídia enriquecidas (`<enclosure>`, `<media:content>`) para alimentar Pinterest e agregadores externos.
 
 ### 5. Prevenção de Erros de Desindexação e Penalidades (Anti-Blackhat)
 - **Proibido Cloaking ou Conteúdo Oculto Danoso**: O conteúdo entregue ao bot/crawler de busca deve refletir fielmente o conteúdo consumido pelo usuário humano.

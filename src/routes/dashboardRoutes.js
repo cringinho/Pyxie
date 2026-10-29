@@ -25,13 +25,14 @@ function registerDashboardSection(section) {
 
 // Telas da zona da Mary (client/src/dashboard/Mary.jsx; API no bloco "Estúdio da Mary" abaixo).
 for (const id of ['maryStore', 'maryTools', 'maryProfile']) registerDashboardSection({ id, zones: ['mary'] });
+registerDashboardSection({ id: 'hyperfokus', zones: ['cringelandia'], roles: ['owner'] });
 // Módulos que antes só se configuravam pelo Discord: tela e API para todo servidor.
 ['agenda', 'periodic', 'welcome'].forEach((id) => registerDashboardSection({ id }));
 
 function getSections(guildAccess) {
   const base = ['overview', 'commands', 'studio', 'features', 'automations', 'injections', 'security', 'channels', 'roles', 'emojiUsage'];
   if (guildAccess.canManageAccess) base.push('access');
-  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships');
+  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships', 'hyperfokus');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
     .filter((s) => !s.roles || s.roles.includes(guildAccess.role))
     .map((s) => s.id);
@@ -1115,6 +1116,116 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   router.delete('/api/dashboard/guilds/:guildId/moderation/incidents', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
     require('../services/conflictWatch').clearIncidents(req.params.guildId);
     return res.json({ success: true, incidents: [] });
+  });
+
+  // ---------- Pyxie Hyperfokus: Fila de Validação e Publicação Editorial ----------
+  router.get('/api/dashboard/guilds/:guildId/hyperfokus/queue', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const articleStore = require('../modules/hyperfokus/articleStore');
+    const result = articleStore.listArticles({ status: 'PENDING_REVIEW', limit: 50 });
+    return res.json({ success: true, queue: result.items });
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/hyperfokus/articles', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const articleStore = require('../modules/hyperfokus/articleStore');
+    const status = req.query.status || null;
+    const result = articleStore.listArticles({ status, limit: 50 });
+    return res.json({ success: true, articles: result.items, total: result.total });
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/hyperfokus/articles/:id', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const articleStore = require('../modules/hyperfokus/articleStore');
+    const art = articleStore.getArticleById(req.params.id);
+    if (!art) return res.status(404).json({ success: false, error: 'article_not_found' });
+    return res.json({ success: true, article: art });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/hyperfokus/articles/:id', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const articleStore = require('../modules/hyperfokus/articleStore');
+    const { markdownToHtml } = require('../modules/hyperfokus/markdown');
+    const { title, seoTitle, metaDescription, contentMarkdown, coverImage, categoryTags, slug } = req.body || {};
+    
+    const patch = {};
+    if (title) patch.title = String(title).slice(0, 200);
+    if (seoTitle !== undefined) patch.seoTitle = String(seoTitle || '').slice(0, 100);
+    if (metaDescription !== undefined) patch.metaDescription = String(metaDescription || '').slice(0, 250);
+    if (slug) patch.slug = String(slug).toLowerCase().replace(/[^a-z0-9-]+/g, '-');
+    if (coverImage !== undefined) patch.coverImage = coverImage ? String(coverImage) : null;
+    if (Array.isArray(categoryTags)) patch.categoryTags = categoryTags.map(String);
+    if (contentMarkdown) {
+      patch.contentMarkdown = String(contentMarkdown);
+      patch.contentHtml = markdownToHtml(patch.contentMarkdown);
+    }
+    patch.editedBy = req.session?.userId || 'owner';
+
+    const updated = articleStore.updateArticle(req.params.id, patch);
+    if (!updated) return res.status(404).json({ success: false, error: 'article_not_found' });
+    return res.json({ success: true, article: updated });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/hyperfokus/articles/:id/publish', requireSession, requireGuild, requireCringelandiaOwner, async (req, res) => {
+    const articleStore = require('../modules/hyperfokus/articleStore');
+    const indexNow = require('../services/indexNowService');
+    const art = articleStore.getArticleById(req.params.id);
+    if (!art) return res.status(404).json({ success: false, error: 'article_not_found' });
+
+    // Idempotente: se já publicado, apenas atualiza timestamp e indexNow
+    const published = articleStore.updateArticle(req.params.id, {
+      status: 'PUBLISHED',
+      publishedAt: art.publishedAt || new Date(),
+      editedBy: req.session?.userId || 'owner',
+    });
+
+    // Notifica IndexNow
+    const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://pyxie.com.br').replace(/\/+$/, '');
+    const articleUrl = `${baseUrl}/hyperfokus/${published.slug}`;
+    try {
+      await indexNow.submitIndexNowUrls([articleUrl]);
+    } catch (_) {}
+
+    // Notifica Discord se houver thread associada
+    if (published.discordThreadId && bridge?.client) {
+      try {
+        const thread = await bridge.client.channels.fetch(published.discordThreadId).catch(() => null);
+        if (thread) {
+          const { EmbedBuilder } = require('discord.js');
+          const authorNames = (published.authors || []).map((a) => a.username).join(' e ') || 'Autor';
+          const celebrationEmbed = new EmbedBuilder()
+            .setColor('#E60067')
+            .setTitle('🎉  ✦  Artigo Aprovado e Publicado!')
+            .setDescription(
+              `### 🌟 Parabéns aos Autores!\n\n` +
+              `O artigo de **${authorNames}** foi revisado e publicado com sucesso no **Pyxie Hyperfokus**!\n\n` +
+              `🔗 **[Clique aqui para ler no site](${articleUrl})**\n\n` +
+              `-# Obrigado pelo capricho autoral e por enriquecer a comunidade!`
+            )
+            .setFooter({ text: 'Pyxie Hyperfokus • Publicação Oficial' })
+            .setTimestamp();
+
+          await thread.send({ embeds: [celebrationEmbed] }).catch(() => {});
+        }
+      } catch (_) {}
+    }
+
+    return res.json({ success: true, article: published, url: articleUrl });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/hyperfokus/articles/:id/reject', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const articleStore = require('../modules/hyperfokus/articleStore');
+    const { reason = '' } = req.body || {};
+    const art = articleStore.getArticleById(req.params.id);
+    if (!art) return res.status(404).json({ success: false, error: 'article_not_found' });
+
+    const updated = articleStore.updateArticle(req.params.id, {
+      status: 'REJECTED',
+      editedBy: req.session?.userId || 'owner',
+      metadata: {
+        ...(art.metadata || {}),
+        rejectionReason: String(reason).slice(0, 500),
+        rejectedAt: Date.now(),
+      },
+    });
+
+    return res.json({ success: true, article: updated });
   });
 
   // ---------- Comunidade da Cringelândia: fórum de hiperfocos e radar ----------

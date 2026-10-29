@@ -9,16 +9,22 @@ const path = require('node:path');
 
 const APP_EMOJI_CACHE = new Map();
 const APP_EMOJI_BY_ID = new Map();
-const CUSTOM_EMOJIS_FILE = path.join(__dirname, '..', 'data', 'emojis.json');
+const BASE_EMOJIS_FILE = path.join(__dirname, '..', 'data', 'emojis.json');
+const RUNTIME_DATA_DIR = process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data');
+const RUNTIME_EMOJIS_FILE = path.join(RUNTIME_DATA_DIR, 'emojis.json');
 let customEmojiConfig = {};
 
 function reloadEmojiConfig() {
   try {
-    if (fs.existsSync(CUSTOM_EMOJIS_FILE)) {
-      customEmojiConfig = JSON.parse(fs.readFileSync(CUSTOM_EMOJIS_FILE, 'utf8'));
-    } else {
-      customEmojiConfig = {};
+    let base = {};
+    if (fs.existsSync(BASE_EMOJIS_FILE)) {
+      base = JSON.parse(fs.readFileSync(BASE_EMOJIS_FILE, 'utf8')) || {};
     }
+    let overrides = {};
+    if (fs.existsSync(RUNTIME_EMOJIS_FILE)) {
+      overrides = JSON.parse(fs.readFileSync(RUNTIME_EMOJIS_FILE, 'utf8')) || {};
+    }
+    customEmojiConfig = { ...base, ...overrides };
   } catch (_) {
     customEmojiConfig = {};
   }

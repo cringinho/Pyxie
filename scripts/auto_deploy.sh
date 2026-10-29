@@ -83,7 +83,7 @@ cp -a data "${BACKUP_DIR}/"
 [ -f prefix.json ] && cp -a prefix.json "${BACKUP_DIR}/"
 
 # Salva arquivos dinâmicos gerados em produção (minigames da IA Groq, cliques Shopee, emojis)
-for dynamic_file in generated_work_minigames.json shopee.json emojis.json discordAppEmojis.json themeEmojis.json; do
+for dynamic_file in generated_work_minigames.json shopee.json emojis.json discordAppEmojis.json themeEmojis.json embedTheme.json; do
   if [ -f "src/data/${dynamic_file}" ]; then
     cp -a "src/data/${dynamic_file}" "${BACKUP_DIR}/src_data/"
   fi
@@ -111,6 +111,7 @@ if ! git pull --ff-only origin main; then
   [ -f "${BACKUP_DIR}/src_data/emojis.json" ] && cp -a "${BACKUP_DIR}/src_data/emojis.json" src/data/emojis.json
   [ -f "${BACKUP_DIR}/src_data/themeEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/themeEmojis.json" src/data/themeEmojis.json
   [ -f "${BACKUP_DIR}/src_data/discordAppEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/discordAppEmojis.json" src/data/discordAppEmojis.json
+[ -f "${BACKUP_DIR}/src_data/embedTheme.json" ] && cp -a "${BACKUP_DIR}/src_data/embedTheme.json" src/data/embedTheme.json
   [ -f "${BACKUP_DIR}/src_data/generated_work_minigames.json" ] && cp -a "${BACKUP_DIR}/src_data/generated_work_minigames.json" src/data/generated_work_minigames.json
   cp -a "${BACKUP_DIR}/data/." data/
   exit 1
@@ -166,6 +167,8 @@ if [ -f "${BACKUP_DIR}/src_data/shopee.json" ]; then
       try { fs.copyFileSync(process.argv[1], 'src/data/shopee.json'); } catch (_) {}
     }
   " "${BACKUP_DIR}/src_data/shopee.json" || true
+fi
+
 if [ -f "${BACKUP_DIR}/src_data/themeEmojis.json" ]; then
   node -e "
     const fs = require('fs');
@@ -185,6 +188,8 @@ if [ -f "${BACKUP_DIR}/src_data/themeEmojis.json" ]; then
     } catch (_) {}
   " "${BACKUP_DIR}/src_data/themeEmojis.json" || true
 fi
+
+if [ -f "${BACKUP_DIR}/src_data/emojis.json" ]; then
   node -e "
     const fs = require('fs');
     try {
@@ -200,6 +205,7 @@ fi
   " "${BACKUP_DIR}/src_data/emojis.json" || true
 fi
 [ -f "${BACKUP_DIR}/src_data/discordAppEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/discordAppEmojis.json" src/data/discordAppEmojis.json
+[ -f "${BACKUP_DIR}/src_data/embedTheme.json" ] && cp -a "${BACKUP_DIR}/src_data/embedTheme.json" src/data/embedTheme.json
 
 # 10. Garante que os bancos de dados em data/ continuem sendo estritamente os da VM
 # (data/*.json é ignorado no git, mas sincronizamos qualquer arquivo necessário)
@@ -260,7 +266,7 @@ if ! npm test; then
   cp -a "${BACKUP_DIR}/data/." data/
   [ -f "${BACKUP_DIR}/.env" ] && cp -a "${BACKUP_DIR}/.env" .env
   [ -f "${BACKUP_DIR}/prefix.json" ] && cp -a "${BACKUP_DIR}/prefix.json" prefix.json
-  for dynamic_file in generated_work_minigames.json shopee.json emojis.json discordAppEmojis.json themeEmojis.json; do
+  for dynamic_file in generated_work_minigames.json shopee.json emojis.json discordAppEmojis.json themeEmojis.json embedTheme.json; do
     if [ -f "${BACKUP_DIR}/src_data/${dynamic_file}" ]; then
       cp -a "${BACKUP_DIR}/src_data/${dynamic_file}" "src/data/${dynamic_file}"
     fi

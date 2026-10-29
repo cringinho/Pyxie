@@ -1212,6 +1212,10 @@ if (process.stdin) {
           }
           case 'RELOAD_EMOJIS': {
             console.log('[IPC:Bot] Comando RELOAD_EMOJIS recebido do supervisor.');
+            try {
+              const { reloadRegistryCache } = require('./src/utils/embedRegistry');
+              if (typeof reloadRegistryCache === 'function') reloadRegistryCache();
+            } catch (_) {}
             const { reloadEmojiConfig } = require('./src/utils/appEmojis');
             reloadEmojiConfig();
             break;

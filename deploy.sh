@@ -60,7 +60,7 @@ cp -a data "${BACKUP_DIR}/"
 [ -f .env ] && cp -a .env "${BACKUP_DIR}/"
 [ -f prefix.json ] && cp -a prefix.json "${BACKUP_DIR}/"
 
-for dynamic_file in generated_work_minigames.json shopee.json emojis.json discordAppEmojis.json themeEmojis.json; do
+for dynamic_file in generated_work_minigames.json shopee.json emojis.json discordAppEmojis.json themeEmojis.json embedTheme.json; do
   if [ -f "src/data/${dynamic_file}" ]; then
     cp -a "src/data/${dynamic_file}" "${BACKUP_DIR}/src_data/"
   fi
@@ -86,6 +86,7 @@ fi
 [ -f "${BACKUP_DIR}/prefix.json" ] && cp -a "${BACKUP_DIR}/prefix.json" prefix.json
 [ -f "${BACKUP_DIR}/src_data/shopee.json" ] && cp -a "${BACKUP_DIR}/src_data/shopee.json" src/data/shopee.json
 [ -f "${BACKUP_DIR}/src_data/themeEmojis.json" ] && cp -a "${BACKUP_DIR}/src_data/themeEmojis.json" src/data/themeEmojis.json
+[ -f "${BACKUP_DIR}/src_data/embedTheme.json" ] && cp -a "${BACKUP_DIR}/src_data/embedTheme.json" src/data/embedTheme.json
 if [ -f "${BACKUP_DIR}/src_data/emojis.json" ]; then
   node -e "
     const fs = require('fs');
@@ -152,6 +153,11 @@ if ! npm test; then
   cp -a "${BACKUP_DIR}/data/." data/
   [ -f "${BACKUP_DIR}/.env" ] && cp -a "${BACKUP_DIR}/.env" .env
   [ -f "${BACKUP_DIR}/prefix.json" ] && cp -a "${BACKUP_DIR}/prefix.json" prefix.json
+  for dynamic_file in generated_work_minigames.json shopee.json emojis.json discordAppEmojis.json themeEmojis.json embedTheme.json; do
+    if [ -f "${BACKUP_DIR}/src_data/${dynamic_file}" ]; then
+      cp -a "${BACKUP_DIR}/src_data/${dynamic_file}" "src/data/${dynamic_file}"
+    fi
+  done
   echo "🛡️ Rollback finalizado. O bot continua operacional na versão estável."
   exit 1
 fi

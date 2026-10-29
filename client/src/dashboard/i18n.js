@@ -1800,6 +1800,8 @@ export const DASH_I18N = {
     "activity.emojiSummaryText": "{total} emojis ({idle} sem uso há +60 dias)",
     "activity.ticketsSummaryText": "{open} abertos de {total} chamados totais",
 
+        'section.hyperfokus': 'Hyperfokus (Blog)',
+    'sectionDesc.hyperfokus': 'Fila de validação, revisão editorial e métricas do blog de hiperfocos.',
     'section.voice': 'Voz & Falas',
     'sectionDesc.voice': 'Acervo dinâmico e gerador Groq de falas e dicas tsundere da Pyxie.',
     'voice.title': 'Voz & Falas da Pyxie',
@@ -3636,6 +3638,8 @@ export const DASH_I18N = {
     "activity.emojiSummaryText": "{total} emojis ({idle} idle for 60+ days)",
     "activity.ticketsSummaryText": "{open} open out of {total} total tickets",
 
+        'section.hyperfokus': 'Hyperfokus (Blog)',
+    'sectionDesc.hyperfokus': 'Editorial review queue, markdown editor, and hyperfocus blog metrics.',
     'section.voice': 'Voice & Lines',
     'sectionDesc.voice': 'Dynamic voice bank and Groq generator for Pyxie\'s tsundere quips and tips.',
     'voice.title': 'Pyxie Voice & Lines',
