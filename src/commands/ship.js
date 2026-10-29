@@ -68,7 +68,8 @@ function buildShipEmbed(memberA, memberB, percent, lang = 'pt') {
   const langKey = getLanguage(lang);
   const nameA = memberA.displayName;
   const nameB = memberB.displayName;
-  const guildName = memberA.guild?.name || (langKey === 'en' ? 'Server' : 'Servidor');
+  // Sem servidor (DM, grupo ou app instalado só na conta) o título leva o nome da Pyxie
+  const guildName = memberA.guild?.name || 'Pyxie';
   const isSpecial = isSpecialCouple(memberA, memberB);
   const verdict = getShipVerdict(percent, isSpecial, langKey);
   const shipName = buildShipName(nameA, nameB);
@@ -131,9 +132,18 @@ async function resolveSelectedMembers(source) {
   if (users.some((user) => user.bot)) throw new Error('bot');
   if (users[0].id === users[1].id) throw new Error('same_user');
 
+  // Com a Pyxie no servidor, só vale quem é membro; fora dele (DM, grupo ou app instalado só
+  // na conta) não há lista de membros, então usa o perfil que o próprio Discord mandou.
+  if (!source.guild?.members) return users.map((user) => memberFromUser(source, user));
   const members = await Promise.all(users.map((user) => source.guild.members.fetch(user.id).catch(() => null)));
   if (members.some((member) => !member)) throw new Error('not_member');
   return members;
+}
+
+/** Parece um GuildMember para o embed e a imagem: id, user, displayName (apelido se veio junto). */
+function memberFromUser(source, user) {
+  const raw = typeof source.options?.getMember === 'function' ? source.options.getMember(user.id) : null;
+  return { id: user.id, user, guild: null, displayName: raw?.nick || raw?.displayName || user.globalName || user.username };
 }
 
 function getSelectionError(error, source = null) {
@@ -155,6 +165,10 @@ async function runShip(source, reply) {
   }
 
   let pair = selectedMembers;
+  if (!pair && !source.guild?.members) {
+    await reply(t('ship.pickTwoHere', source));
+    return;
+  }
   if (!pair) {
     const members = await source.guild.members.fetch().catch(() => null);
     if (!members) {
@@ -230,4 +244,5 @@ module.exports = {
   getShipVerdict,
   getSelectedUsers,
   getSelectionError,
+  resolveSelectedMembers,
 };

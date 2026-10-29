@@ -148,6 +148,19 @@ try {
   assert.ok(shipEmbedPt.data.description.includes('NOME DO CASAL'), 'Ship PT deve conter NOME DO CASAL');
   assert.ok(shipEmbedEn.data.description.includes('COUPLE NAME'), 'Ship EN deve conter COUPLE NAME');
 
+  // 4b. Ship fora de servidor (DM, grupo ou app instalado só na conta): sem guild, sem lista de membros
+  const userA = { id: '111111111111111111', username: 'ana', globalName: 'Ana', bot: false };
+  const userB = { id: '222222222222222222', username: 'bia', globalName: null, bot: false };
+  const dmSource = { guild: null, locale: 'pt-BR', options: { getUser: (name) => ({ person1: userA, person2: userB })[name] || null, getMember: (id) => (id === userB.id ? { nick: 'Bibi' } : null) } };
+  const dmShip = shipCmd.resolveSelectedMembers(dmSource).then((pair) => {
+    assert.deepEqual(pair.map((m) => m.displayName), ['Ana', 'Bibi'], 'fora de servidor usa nome global ou apelido que o Discord mandou');
+    assert.ok(shipCmd.buildShipEmbed(pair[0], pair[1], 50, 'pt').data.title.endsWith('Pyxie'), 'título sem servidor leva o nome da Pyxie');
+  });
+  const replies = [];
+  const dmDraw = require('../src/commands/ship').runShipInteraction({ guild: null, locale: 'pt-BR', options: { getUser: () => null }, editReply: async (content) => replies.push(content) })
+    .then(() => assert.equal(replies[0], t('ship.pickTwoHere', 'pt'), 'sorteio sem servidor pede as duas pessoas'));
+  Promise.all([dmShip, dmDraw]).catch((error) => { console.error('❌ Ship fora de servidor:', error); process.exit(1); });
+
   // 5. Perfil
   assert.ok(perfilCmd.data.description.length <= 100, 'Descrição do slash /perfil deve ter <= 100 caracteres');
   const mockTargetUser = { id: 'test-user-1', username: 'TestUser', displayName: 'TestUser', displayAvatarURL: () => 'https://example.com/avatar.png' };
