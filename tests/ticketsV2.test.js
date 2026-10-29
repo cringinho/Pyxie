@@ -197,6 +197,74 @@ function makeChannel(id, sentLog) {
   assert.equal(stats.claimed, 1);
   console.log('  ✅ 9. Estatísticas de tickets expostas.');
 
+  // 10. Opções do painel web: padrões, limites e Remoção de Conteúdo só na zona da Cringelândia
+  const { normalizeTicketOptions } = require('../src/modules/tickets/ticketOptions');
+  const { MUSEUM_REMOVAL_CHANNEL_ID } = require('../src/config/scopes');
+  const defaults = normalizeTicketOptions(TEST_GUILD, {});
+  assert.equal(defaults.maxOpenPerUser, 2, 'Padrão de 2 salas por membro (como antes).');
+  assert.equal(defaults.dmTranscript, true);
+  assert.ok(defaults.types.help.enabled && defaults.types.report.enabled);
+  assert.equal(defaults.artRemoval, undefined, 'Servidor comum não tem Remoção de Conteúdo.');
+  const clamped = normalizeTicketOptions(TEST_GUILD, { maxOpenPerUser: 99, staffRoleIds: ['x', '123456789012345678'], artRemoval: { enabled: true }, types: { help: { enabled: false }, report: { enabled: false } } });
+  assert.equal(clamped.maxOpenPerUser, 5);
+  assert.deepEqual(clamped.staffRoleIds, ['123456789012345678']);
+  assert.equal(clamped.artRemoval, undefined, 'Pedido de fora não liga a Remoção de Conteúdo.');
+  assert.equal(clamped.types.help.enabled, true, 'Painel nunca fica sem botão.');
+  const cringOpts = normalizeTicketOptions(CRING, {});
+  assert.deepEqual(cringOpts.artRemoval, { enabled: true, channelId: MUSEUM_REMOVAL_CHANNEL_ID }, 'Cringelândia mantém o fluxo e o canal de sempre.');
+
+  const customPanel = tm.buildTicketPanel({ id: TEST_GUILD, name: 'G' }, { types: { report: { enabled: false }, help: { label: 'Suporte', description: 'fale com a gente' } }, panelTitle: 'Título próprio', artRemoval: { enabled: true } });
+  assert.equal(customPanel.components[0].components.length, 1, 'Tipo desligado some do painel; servidor comum nunca ganha o botão do Museu.');
+  assert.equal(customPanel.components[0].components[0].data.label, 'Suporte');
+  assert.equal(customPanel.embeds[0].data.title, 'Título próprio');
+  assert.ok(customPanel.embeds[0].data.description.includes('**🆘 Suporte:** fale com a gente'));
+  const cringNoArt = tm.buildTicketPanel({ id: CRING, name: 'Cringelândia' }, { artRemoval: { enabled: false } });
+  assert.equal(cringNoArt.components[0].components.length, 2, 'Cringelândia pode desligar a Remoção de Conteúdo.');
+  console.log('  ✅ 10. Opções normalizadas e painel personalizado, com o Museu só na Cringelândia.');
+
+  // 11. Bot aplica as opções: tipo desligado recusado, limite por membro e cargos da Staff
+  setTicketConfig(TEST_GUILD, { ticketOptions: { maxOpenPerUser: 1, staffRoleIds: ['123456789012345678'], types: { report: { enabled: false } } } });
+  const before = created.length;
+  replies.length = 0;
+  await tm.handleOpenTicket(openInteraction('report'), 'report');
+  assert.equal(created.length, before, 'Tipo desligado não abre sala (painel antigo com o botão).');
+  assert.equal(replies[0].content, TRANSLATIONS.en.tickets.type_disabled);
+  const staffByRole = { permissions: memberPerms, roles: { cache: new Map([['123456789012345678', {}]]) } };
+  assert.equal(tm.isStaffMember(staffByRole, TEST_GUILD), true, 'Cargo da equipe conta como Staff.');
+  assert.equal(tm.isStaffMember({ permissions: memberPerms, roles: { cache: new Map() } }, TEST_GUILD), false);
+  guild.roles.cache.set('123456789012345678', { id: '123456789012345678', permissions: memberPerms });
+  await tm.handleOpenTicket(openInteraction('help'), 'help');
+  const newRoom = created[created.length - 1];
+  assert.equal(created.length, before + 1);
+  replies.length = 0;
+  await tm.handleOpenTicket({ ...openInteraction('help'), user: user }, 'help');
+  assert.ok(replies[0].content.includes(TRANSLATIONS.en.tickets.already_open.split(':')[0]), 'Mesmo tipo já aberto.');
+  console.log('  ✅ 11. Tipo desligado recusado, duplicata barrada e cargos da Staff aplicados.');
+
+  // 12. Ponte do painel: conferência de tipo e dono dos canais/cargos, gravação e fechamento
+  const bridge = require('../src/modules/tickets/dashboardBridge');
+  const TXT = `${TEST_GUILD.slice(0, 17)}3`;
+  const CAT2 = `${TEST_GUILD.slice(0, 17)}4`;
+  guild.channels.cache.set(TXT, Object.assign(makeChannel(TXT, sent), { type: ChannelType.GuildText, name: 'suporte' }));
+  guild.channels.cache.set(CAT2, { id: CAT2, type: ChannelType.GuildCategory, name: 'ATENDIMENTO' });
+  const fakeClient = { user: { id: 'bot' }, guilds: { cache: new Map([[TEST_GUILD, guild]]) } };
+  await assert.rejects(bridge.save(fakeClient, { guildId: TEST_GUILD, categoryId: TXT }), /invalid_category/, 'Canal de texto não serve de categoria.');
+  await assert.rejects(bridge.save(fakeClient, { guildId: TEST_GUILD, logChannelId: CAT2 }), /invalid_channel/);
+  await assert.rejects(bridge.save(fakeClient, { guildId: TEST_GUILD, options: { staffRoleIds: ['223456789012345678'] } }), /invalid_role/);
+  const savedInfo = await bridge.save(fakeClient, { guildId: TEST_GUILD, categoryId: CAT2, logChannelId: TXT, options: { maxOpenPerUser: 3, artRemoval: { enabled: true } } });
+  assert.equal(getTicketConfig(TEST_GUILD).ticketCategoryId, CAT2);
+  assert.equal(savedInfo.options.maxOpenPerUser, 3);
+  assert.equal(savedInfo.options.artRemoval, undefined);
+  assert.equal(savedInfo.cringelandia, false);
+  assert.equal(savedInfo.artRemovals, null, 'Servidor comum não vê os pedidos do Museu.');
+  assert.ok(savedInfo.open.some((tk) => tk.channelId === newRoom.id), 'Lista de tickets abertos.');
+  const openTicket = savedInfo.open.find((tk) => tk.channelId === newRoom.id);
+  await assert.rejects(bridge.close({ ...fakeClient, guilds: { cache: new Map([['111111111111111111', { ...guild, id: '111111111111111111' }]]) } }, { guildId: '111111111111111111', ticketId: openTicket.id, by: 'x' }), /ticket_not_found/, 'Ticket de outro servidor não fecha.');
+  const closedByPanel = await bridge.close(fakeClient, { guildId: TEST_GUILD, ticketId: openTicket.id, by: 'staff1' });
+  assert.equal(closedByPanel.closed, true);
+  assert.equal(tm.loadTicketsData().tickets[openTicket.id].closedBy, 'staff1');
+  console.log('  ✅ 12. Ponte do painel confere canais, categoria e cargos, grava e fecha tickets.');
+
   // Limpeza dos registros de teste
   const db = tm.loadTicketsData();
   for (const [id, tk] of Object.entries(db.tickets)) if (tk.guildId === TEST_GUILD) delete db.tickets[id];

@@ -322,6 +322,8 @@ function getTicketConfig(guildId) {
     ticketCategoryId: cfg.ticketCategoryId || null,
     ticketPanelMessageId: cfg.ticketPanelMessageId || null,
     ticketLogChannelId: cfg.ticketLogChannelId || null,
+    // Personalização (tipos, textos, limites, cargos da Staff): normalizada em modules/tickets/ticketOptions.js
+    ticketOptions: cfg.ticketOptions && typeof cfg.ticketOptions === 'object' ? cfg.ticketOptions : {},
   };
 }
 
@@ -332,6 +334,7 @@ function setTicketConfig(guildId, updates = {}) {
     ticketCategoryId: updates.ticketCategoryId !== undefined ? normalizeChannelValue(updates.ticketCategoryId) : current.ticketCategoryId,
     ticketPanelMessageId: updates.ticketPanelMessageId !== undefined ? updates.ticketPanelMessageId : current.ticketPanelMessageId,
     ticketLogChannelId: updates.ticketLogChannelId !== undefined ? normalizeChannelValue(updates.ticketLogChannelId) : current.ticketLogChannelId,
+    ticketOptions: updates.ticketOptions !== undefined ? updates.ticketOptions : current.ticketOptions,
   };
   return updateGuildConfig(guildId, normalizedUpdates);
 }

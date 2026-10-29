@@ -128,4 +128,10 @@ export const api = {
   moduleConfig: (id) => request(`/api/admin/modules/${encodeURIComponent(id)}/config`),
   saveModuleConfig: (id, body) => request(`/api/admin/modules/${encodeURIComponent(id)}/config`, { method: 'POST', body }),
   toggleModule: (id, enabled) => request(`/api/dashboard/global/modules/${id}/toggle`, { method: 'POST', body: { enabled } }),
+  tickets: (id) => request(`/api/dashboard/guilds/${id}/tickets`),
+  saveTickets: (id, body) => request(`/api/dashboard/guilds/${id}/tickets`, { method: 'PUT', body }),
+  publishTickets: (id, repost) => request(`/api/dashboard/guilds/${id}/tickets/publish`, { method: 'POST', body: { repost } }),
+  createTicketCategory: (id) => request(`/api/dashboard/guilds/${id}/tickets/category`, { method: 'POST' }),
+  closeTicket: (id, ticketId) => request(`/api/dashboard/guilds/${id}/tickets/${encodeURIComponent(ticketId)}/close`, { method: 'POST' }),
+  ticketsPreview: (id) => request(`/api/dashboard/guilds/${id}/tickets/preview`, { method: 'POST' }),
 };

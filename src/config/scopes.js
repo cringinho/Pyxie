@@ -7,6 +7,8 @@ const CRINGELANDIA_GUILD_ID = process.env.CRINGELANDIA_GUILD_ID || '145389086898
 const MARY_GUILD_ID = process.env.MARY_GUILD_ID || '1557399041443111025';
 const MARY_USER_ID = process.env.MARY_USER_ID || '1463644930080637140';
 const HOMOLOGATION_CHANNEL_ID = process.env.HOMOLOGATION_CHANNEL_ID || '1461937203214024891';
+// Cringelândia: canal padrão dos pedidos de Remoção de Conteúdo do Museu (tickets).
+const MUSEUM_REMOVAL_CHANNEL_ID = process.env.MUSEUM_REMOVAL_CHANNEL_ID || '1557534749310976141';
 
 module.exports = {
   OWNER_SNOWFLAKE,
@@ -14,4 +16,5 @@ module.exports = {
   MARY_GUILD_ID,
   MARY_USER_ID,
   HOMOLOGATION_CHANNEL_ID,
+  MUSEUM_REMOVAL_CHANNEL_ID,
 };

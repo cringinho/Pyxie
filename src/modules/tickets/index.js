@@ -1,4 +1,4 @@
-const { ChannelType, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const ticketManager = require('./ticketManager');
 const { getTicketConfig, setTicketConfig } = require('../../services/guildConfigService');
 const { t } = require('../../utils/i18n');
@@ -26,36 +26,7 @@ async function handleCreateCategory(interaction) {
   if (!guild) return;
 
   try {
-    const staffRoles = guild.roles.cache.filter((r) => r.permissions.has(PermissionFlagsBits.ManageChannels));
-    const permissionOverwrites = [
-      { id: guild.id, deny: [PermissionFlagsBits.ViewChannel] },
-      {
-        id: interaction.client.user.id,
-        allow: [
-          PermissionFlagsBits.ViewChannel,
-          PermissionFlagsBits.SendMessages,
-          PermissionFlagsBits.ManageChannels,
-          PermissionFlagsBits.ManageMessages,
-          PermissionFlagsBits.ReadMessageHistory,
-        ],
-      },
-    ];
-    for (const [roleId] of staffRoles) {
-      permissionOverwrites.push({
-        id: roleId,
-        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory],
-      });
-    }
-
-    const newCategory = await guild.channels.create({
-      name: '📩・ATENDIMENTO',
-      type: ChannelType.GuildCategory,
-      position: 0,
-      permissionOverwrites,
-    });
-
-    setTicketConfig(guild.id, { ticketCategoryId: newCategory.id });
-    await ticketManager.publishTicketPanel(guild).catch(() => null);
+    const newCategory = await ticketManager.createTicketCategory(guild);
     const cfg = getTicketConfig(guild.id);
 
     await interaction.editReply({
@@ -175,6 +146,11 @@ module.exports = {
   getStats: () => ticketManager.getTicketStats(),
 
   async onLoad(ctx) {
+    // Seção "Tickets" do painel web: o site pede pela ponte e o bot responde daqui
+    if (ctx.isBotProcess) {
+      const { registerBridgeHandler } = require('../../services/botBridgeHandlers');
+      require('./dashboardBridge').registerTicketBridge(registerBridgeHandler);
+    }
     if (!ctx.registerListener) return;
     ctx.registerListener('interactionCreate', handleTicketInteraction);
     ctx.registerListener('channelDelete', (channel) => {

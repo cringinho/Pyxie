@@ -68,6 +68,8 @@ function fakeBotSend(msg) {
       data = { permissions: { ManageMessages: true, ViewAuditLog: false }, roleName: 'Pyxie' };
     } else if (request === 'GUILD_ROLES') {
       data = [{ id: '2', name: 'Staff' }];
+    } else if (request === 'TICKETS_INFO' || request === 'TICKETS_SAVE') {
+      data = { config: { panelChannelId: '', categoryId: '', logChannelId: payload.logChannelId || '' }, options: payload.options || {}, open: [] };
     }
     bridge.handleLine(`${BRIDGE_PREFIX}${JSON.stringify({ id, ok: true, data })}`);
   });
@@ -229,6 +231,7 @@ function cookieFor(userId, guilds = []) {
     assert.deepEqual(sec.counters, { link: 0, role: 0, channel: 0, raid: 0, file: 0, webhook: 0, invites: 0 });
     const guildInfo = await (await call(`/api/dashboard/guilds/${GUILD_A}`, { cookie: adminCookie })).json();
     assert(guildInfo.sections.includes('security'), 'Seção Segurança aparece para todo servidor');
+    assert(guildInfo.sections.includes('tickets'), 'Seção Tickets aparece para todo servidor');
     res = await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie, method: 'PUT', body: { staffLogChannelId: '888888888888888888' } });
     assert.equal(res.status, 400, 'Canal de outro servidor é recusado');
     res = await call(`/api/dashboard/guilds/${GUILD_A}/security`, {
@@ -297,6 +300,19 @@ function cookieFor(userId, guilds = []) {
     // Canal de jogos de outro servidor não entra; o deste servidor entra
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/features`, { cookie: adminCookie, method: 'PUT', body: { channels: { games: ['888888888888888888'] } } })).status, 400, 'Canal de jogos de outro servidor é recusado');
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/features`, { cookie: adminCookie, method: 'PUT', body: { channels: { games: ['777777777777777777'] } } })).status, 200);
+    // Tickets: canal/categoria/cargo conferidos ao vivo; Museu só na Cringelândia; prévia só do dono
+    const tk = await (await call(`/api/dashboard/guilds/${GUILD_A}/tickets`, { cookie: adminCookie })).json();
+    assert.equal(tk.zone, 'global');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/tickets`, { cookie: adminCookie })).status, 403);
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/tickets`, { cookie: adminCookie, method: 'PUT', body: { logChannelId: '888888888888888888' } })).status, 400, 'Canal de registros de outro servidor é recusado');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/tickets`, { cookie: adminCookie, method: 'PUT', body: { categoryId: '777777777777777777' } });
+    assert.equal((await res.json()).error, 'invalid_category', 'Canal de texto não serve de categoria');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/tickets`, { cookie: adminCookie, method: 'PUT', body: { options: { staffRoleIds: ['999999999999999999'] } } })).status, 400, 'Cargo de outro servidor é recusado');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/tickets`, { cookie: adminCookie, method: 'PUT', body: { options: { artRemoval: { enabled: true } } } })).status, 403, 'Remoção de Conteúdo só na Cringelândia');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/tickets`, { cookie: adminCookie, method: 'PUT', body: { logChannelId: '777777777777777777', options: { staffRoleIds: ['2'] } } });
+    assert.equal((await res.json()).config.logChannelId, '777777777777777777');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/tickets/preview`, { cookie: adminCookie, method: 'POST' })).status, 403, 'Prévia de homologação só do dono');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/tickets/nada/close`, { cookie: adminCookie, method: 'POST' })).status, 400);
     // Nenhuma rota de servidor pode existir sem a conferência ao vivo (requireGuild)
     const routeSrc = fs.readFileSync(path.join(__dirname, '..', 'src', 'routes', 'dashboardRoutes.js'), 'utf8');
     const guildRoutes = [...routeSrc.matchAll(/router\.(?:get|post|put|patch|delete)\('(\/api\/dashboard\/guilds\/:guildId[^']*)',([^\n]*)/g)];

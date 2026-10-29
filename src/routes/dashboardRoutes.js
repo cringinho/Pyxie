@@ -675,6 +675,85 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, ...(await embedOverrides.updateSent(req.params.guildId, req.params.key, discord)) });
   });
 
+  // ---------- Tickets (todos os servidores; a Remoção de Conteúdo do Museu só na zona da Cringelândia) ----------
+  // A configuração mora no processo do bot: tudo passa pela ponte (módulo tickets/dashboardBridge.js).
+  const TICKET_ID_RE = /^tkt_\d{17,20}_\d{10,16}_[a-z0-9]{1,8}$/;
+  const ticketsError = (res, err) => {
+    const code = err.code || 'bridge_error';
+    const status = ['bridge_offline', 'bridge_timeout'].includes(code) ? 503 : code === 'ticket_not_found' ? 404 : 400;
+    return res.status(status).json({ success: false, error: code });
+  };
+
+  router.get('/api/dashboard/guilds/:guildId/tickets', requireSession, requireGuild, async (req, res) => {
+    try {
+      return res.json({ success: true, zone: req.guildAccess.zone, ...(await bridge.request('TICKETS_INFO', { guildId: req.params.guildId })) });
+    } catch (err) {
+      return ticketsError(res, err);
+    }
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/tickets', requireSession, requireGuild, async (req, res) => {
+    const body = req.body || {};
+    const options = body.options && typeof body.options === 'object' ? body.options : {};
+    if (options.artRemoval && req.guildAccess.zone !== 'cringelandia') return res.status(403).json({ success: false, error: 'cringelandia_only' });
+    const pick = (v) => (v ? String(v) : '');
+    const textIds = [pick(body.panelChannelId), pick(body.logChannelId), pick(options.artRemoval?.channelId)].filter(Boolean);
+    const categoryId = pick(body.categoryId);
+    const roleIds = (Array.isArray(options.staffRoleIds) ? options.staffRoleIds : []).map(String);
+    // Canais, categoria e cargos precisam ser deste servidor e do tipo certo (o bot confere ao vivo).
+    try {
+      if (textIds.length || categoryId) {
+        const channels = await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId });
+        const find = (id) => channels.find((c) => c.id === id);
+        if (!textIds.every((id) => [0, 5].includes(find(id)?.type))) return res.status(400).json({ success: false, error: 'invalid_channel' });
+        if (categoryId && find(categoryId)?.type !== 4) return res.status(400).json({ success: false, error: 'invalid_category' });
+      }
+      if (roleIds.length) {
+        const roles = await bridge.request('GUILD_ROLES', { guildId: req.params.guildId });
+        if (!roleIds.every((id) => roles.some((r) => r.id === id))) return res.status(400).json({ success: false, error: 'invalid_role' });
+      }
+      const saved = await bridge.request('TICKETS_SAVE', { guildId: req.params.guildId, panelChannelId: pick(body.panelChannelId), categoryId, logChannelId: pick(body.logChannelId), options }, { timeoutMs: 15000 });
+      return res.json({ success: true, zone: req.guildAccess.zone, ...saved });
+    } catch (err) {
+      return ticketsError(res, err);
+    }
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/tickets/publish', requireSession, requireGuild, async (req, res) => {
+    try {
+      return res.json({ success: true, ...(await bridge.request('TICKETS_PUBLISH', { guildId: req.params.guildId, repost: req.body?.repost === true }, { timeoutMs: 15000 })) });
+    } catch (err) {
+      return ticketsError(res, err);
+    }
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/tickets/category', requireSession, requireGuild, async (req, res) => {
+    try {
+      return res.json({ success: true, ...(await bridge.request('TICKETS_CREATE_CATEGORY', { guildId: req.params.guildId }, { timeoutMs: 15000 })) });
+    } catch (err) {
+      return ticketsError(res, err);
+    }
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/tickets/:ticketId/close', requireSession, requireGuild, async (req, res) => {
+    if (!TICKET_ID_RE.test(req.params.ticketId)) return res.status(400).json({ success: false, error: 'invalid_ticket' });
+    try {
+      return res.json({ success: true, ...(await bridge.request('TICKETS_CLOSE', { guildId: req.params.guildId, ticketId: req.params.ticketId, by: req.panelSession.userId }, { timeoutMs: 30000 })) });
+    } catch (err) {
+      return ticketsError(res, err);
+    }
+  });
+
+  // O canal de homologação é da staff da Pyxie: só o dono manda prévias para lá.
+  router.post('/api/dashboard/guilds/:guildId/tickets/preview', requireSession, requireGuild, async (req, res) => {
+    if (!access.isOwner(req.panelSession.userId)) return res.status(403).json({ success: false, error: 'owner_only' });
+    try {
+      return res.json({ success: true, ...(await bridge.request('TICKETS_PREVIEW', { guildId: req.params.guildId }, { timeoutMs: 15000 })) });
+    } catch (err) {
+      return ticketsError(res, err);
+    }
+  });
+
   // Área global: só o dono da Pyxie.
   function requireOwner(req, res, next) {
     if (!access.isOwner(req.panelSession.userId)) return res.status(403).json({ success: false, error: 'owner_only' });
@@ -813,4 +892,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   return router;
 }
 
-module.exports = { createDashboardRouter, registerDashboardSection, getSections, GUILD_ID_RE };
+// Tickets: tela (client/src/dashboard/Tickets.jsx) e API acima existem em todo servidor.
+registerDashboardSection({ id: 'tickets' });
+
+module.exports ={ createDashboardRouter, registerDashboardSection, getSections, GUILD_ID_RE };

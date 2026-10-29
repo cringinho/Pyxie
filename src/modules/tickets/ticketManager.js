@@ -12,17 +12,19 @@ const {
   TextInputBuilder,
   TextInputStyle,
 } = require('discord.js');
-const { CRINGELANDIA_GUILD_ID } = require('../../config');
+const { CRINGELANDIA_GUILD_ID, MUSEUM_REMOVAL_CHANNEL_ID } = require('../../config/scopes');
 const { getTicketConfig, setTicketConfig } = require('../../services/guildConfigService');
 const { t, getLanguage } = require('../../utils/i18n');
+const { LIMITS, normalizeTicketOptions } = require('./ticketOptions');
 
 const DATA_DIR = path.join(__dirname, '..', '..', '..', 'data');
 const TICKETS_DATA_FILE = path.join(DATA_DIR, 'ticketsData.json');
 const TICKETS_DATA_BACKUP = `${TICKETS_DATA_FILE}.bak`;
-const ART_REMOVAL_CHANNEL_ID = '1557534749310976141';
-const CRING_ID = String(CRINGELANDIA_GUILD_ID || '1453890868980482090');
+// Padrão da Cringelândia; o canal efetivo vem de ticketOptions.artRemoval.channelId
+const ART_REMOVAL_CHANNEL_ID = MUSEUM_REMOVAL_CHANNEL_ID;
+const CRING_ID = String(CRINGELANDIA_GUILD_ID);
 
-const MAX_OPEN_TICKETS_PER_USER = 2;
+const MAX_OPEN_TICKETS_PER_USER = LIMITS.maxOpenPerUser.default;
 const CLOSE_DELETE_DELAY_MS = 5000;
 const TRANSCRIPT_MAX_MESSAGES = 1000;
 const NO_PINGS = { parse: [], users: [], roles: [], repliedUser: false };
@@ -94,8 +96,28 @@ function isCringelandiaGuild(guildOrGuildId) {
   return String(resolveGuildId(guildOrGuildId)) === CRING_ID;
 }
 
-function isStaffMember(member) {
-  return Boolean(member?.permissions?.has?.(PermissionFlagsBits.ManageChannels));
+function getTicketOptions(guildOrGuildId) {
+  const gId = String(resolveGuildId(guildOrGuildId) || '');
+  return normalizeTicketOptions(gId, getTicketConfig(gId).ticketOptions);
+}
+
+// Staff = permissão Gerenciar Canais ou um dos cargos da equipe escolhidos no painel.
+function isStaffMember(member, guildOrGuildId = member?.guild) {
+  if (member?.permissions?.has?.(PermissionFlagsBits.ManageChannels)) return true;
+  const gId = resolveGuildId(guildOrGuildId);
+  if (!gId || !member?.roles?.cache) return false;
+  return getTicketOptions(gId).staffRoleIds.some((id) => member.roles.cache.has(id));
+}
+
+// Cargos que enxergam as salas: os escolhidos no painel ou, sem escolha, quem tem Gerenciar Canais.
+function staffRoleIdsFor(guild) {
+  const chosen = getTicketOptions(guild).staffRoleIds.filter((id) => guild.roles?.cache?.has?.(id));
+  if (chosen.length) return chosen;
+  try {
+    return [...guild.roles.cache.filter((r) => r.permissions.has(PermissionFlagsBits.ManageChannels)).keys()];
+  } catch (_) {
+    return [];
+  }
 }
 
 function padNumber(n) {
@@ -123,7 +145,10 @@ function formatDuration(ms) {
   return `${m}min`;
 }
 
-function typeLabel(type, source) {
+// Nome do tipo: o texto personalizado no painel ou o padrão no idioma de quem lê.
+function typeLabel(type, source, options = null) {
+  const custom = options?.types?.[type]?.label;
+  if (custom) return custom;
   return t(type === 'report' ? 'tickets.type_report' : 'tickets.type_help', source);
 }
 
@@ -142,40 +167,51 @@ async function replyEphemeral(source, content) {
  * Constrói o embed e os botões do painel público de atendimento.
  * @param {string|object} guildOrGuildId
  */
-function buildTicketPanel(guildOrGuildId) {
+const TYPE_STYLE = {
+  help: { emoji: '🆘', style: ButtonStyle.Primary },
+  report: { emoji: '🚨', style: ButtonStyle.Danger },
+};
+
+function panelTypeLine(type, gId, options) {
+  const custom = options.types[type];
+  if (!custom.label && !custom.description) return t(`tickets.opt_${type}`, gId);
+  return t('tickets.opt_custom', gId, {
+    emoji: TYPE_STYLE[type].emoji,
+    label: custom.label || t(`tickets.name_${type}`, gId),
+    description: custom.description || t(`tickets.desc_${type}`, gId),
+  });
+}
+
+function buildTicketPanel(guildOrGuildId, optionsOverride = null) {
   const gId = String(resolveGuildId(guildOrGuildId) || '');
   const guildName = typeof guildOrGuildId === 'object' && guildOrGuildId?.name ? guildOrGuildId.name : 'Pyxie';
-  const isCring = isCringelandiaGuild(gId);
+  const options = optionsOverride ? normalizeTicketOptions(gId, optionsOverride) : getTicketOptions(gId);
+  const types = ['help', 'report'].filter((type) => options.types[type].enabled);
+  // Remoção de Conteúdo: só na zona da Cringelândia e se estiver ligada lá
+  const withArt = isCringelandiaGuild(gId) && Boolean(options.artRemoval?.enabled);
 
-  const lines = [
-    t('tickets.panel_intro', gId),
-    t('tickets.panel_section', gId),
-    t('tickets.opt_help', gId),
-    t('tickets.opt_report', gId),
-  ];
-  if (isCring) lines.push(t('tickets.opt_art', gId));
+  const lines = [options.panelIntro || t('tickets.panel_intro', gId), t('tickets.panel_section', gId)];
+  for (const type of types) lines.push(panelTypeLine(type, gId, options));
+  if (withArt) lines.push(t('tickets.opt_art', gId));
   lines.push(t('tickets.panel_note', gId));
 
   const embed = new EmbedBuilder()
     .setColor(COLOR_PRIMARY)
-    .setTitle(t('tickets.panel_title', gId))
+    .setTitle(options.panelTitle || t('tickets.panel_title', gId))
     .setDescription(lines.join('\n\n'))
     .setFooter({ text: t('tickets.panel_footer', gId, { guild: guildName }) });
 
   const row = new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setCustomId('tkt:open:help')
-      .setLabel(t('tickets.btn_help', gId))
-      .setEmoji('🆘')
-      .setStyle(ButtonStyle.Primary),
-    new ButtonBuilder()
-      .setCustomId('tkt:open:report')
-      .setLabel(t('tickets.btn_report', gId))
-      .setEmoji('🚨')
-      .setStyle(ButtonStyle.Danger)
+    types.map((type) =>
+      new ButtonBuilder()
+        .setCustomId(`tkt:open:${type}`)
+        .setLabel(options.types[type].label || t(`tickets.btn_${type}`, gId))
+        .setEmoji(TYPE_STYLE[type].emoji)
+        .setStyle(TYPE_STYLE[type].style)
+    )
   );
 
-  if (isCring) {
+  if (withArt) {
     row.addComponents(
       new ButtonBuilder()
         .setCustomId('tkt:open:art_removal')
@@ -211,6 +247,27 @@ async function publishTicketPanel(guild) {
   const sent = await panelChannel.send(buildTicketPanel(guild));
   setTicketConfig(guild.id, { ticketPanelMessageId: sent.id });
   return sent;
+}
+
+/**
+ * Atualiza o painel deste servidor editando a mensagem no lugar. Sem painel publicado,
+ * publica um novo só quando `postIfMissing` (botão do painel web); senão não faz nada.
+ * @returns {Promise<{ mode: 'edited'|'posted'|'none', messageId?: string, channelId?: string }>}
+ */
+async function updateTicketPanel(guild, { postIfMissing = false } = {}) {
+  const cfg = getTicketConfig(guild.id);
+  if (!cfg.ticketPanelChannelId) return { mode: 'none' };
+  const channel = await guild.channels.fetch(cfg.ticketPanelChannelId).catch(() => null);
+  if (!channel || !channel.isTextBased()) return { mode: 'none' };
+
+  const message = cfg.ticketPanelMessageId ? await channel.messages.fetch(cfg.ticketPanelMessageId).catch(() => null) : null;
+  if (message) {
+    await message.edit(buildTicketPanel(guild));
+    return { mode: 'edited', messageId: message.id, channelId: channel.id };
+  }
+  if (!postIfMissing) return { mode: 'none' };
+  const sent = await publishTicketPanel(guild);
+  return sent ? { mode: 'posted', messageId: sent.id, channelId: channel.id } : { mode: 'none' };
 }
 
 /**
@@ -281,6 +338,19 @@ function buildRoomComponents(ticket, source, claimedName = null) {
   return [new ActionRowBuilder().addComponents(claimButton, closeButton)];
 }
 
+// Recepção da sala. A mensagem personalizada do painel substitui os passos padrão.
+function buildRoomWelcomeEmbed({ source, number, type, userId, guildName, options }) {
+  const body = options.roomMessage
+    ? [options.roomMessage]
+    : [t('tickets.room_section', source), t('tickets.room_step1', source), t('tickets.room_step2', source), t('tickets.room_step3', source)];
+  return new EmbedBuilder()
+    .setColor(COLOR_PRIMARY)
+    .setTitle(t('tickets.room_title', source, { number: padNumber(number), type: typeLabel(type, source, options) }))
+    .setDescription([t('tickets.room_greeting', source, { user: `<@${userId}>` }), ...body, t('tickets.room_note', source)].join('\n\n'))
+    .setFooter({ text: t('tickets.room_footer', source, { guild: guildName }) })
+    .setTimestamp();
+}
+
 async function getLogChannel(guild) {
   const { ticketLogChannelId } = getTicketConfig(guild.id);
   if (!ticketLogChannelId) return null;
@@ -297,6 +367,11 @@ async function handleOpenTicket(interaction, type) {
   if (!guild) return;
 
   const config = getTicketConfig(guild.id);
+  const options = getTicketOptions(guild.id);
+  // Painéis antigos ainda podem ter o botão de um tipo desligado no painel web: o bot recusa.
+  if (!options.types[type]?.enabled) {
+    return replyEphemeral(interaction, t('tickets.type_disabled', interaction));
+  }
   if (!config.ticketCategoryId) {
     return replyEphemeral(interaction, t('tickets.no_category', interaction));
   }
@@ -333,8 +408,8 @@ async function handleOpenTicket(interaction, type) {
   if (sameType) {
     return replyEphemeral(interaction, t('tickets.already_open', interaction, { channel: `<#${sameType.channelId}>` }));
   }
-  if (stillOpen.length >= MAX_OPEN_TICKETS_PER_USER) {
-    return replyEphemeral(interaction, t('tickets.limit_reached', interaction, { limit: MAX_OPEN_TICKETS_PER_USER }));
+  if (stillOpen.length >= options.maxOpenPerUser) {
+    return replyEphemeral(interaction, t('tickets.limit_reached', interaction, { limit: options.maxOpenPerUser }));
   }
 
   openingLocks.add(lockKey);
@@ -347,27 +422,21 @@ async function handleOpenTicket(interaction, type) {
     const typeSlug = type === 'report' ? (lang === 'pt' ? 'denuncia' : 'report') : (lang === 'pt' ? 'ajuda' : 'help');
     const cleanUsername = user.username.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 15) || 'user';
 
-    const staffRolesOverwrites = [];
-    try {
-      const rolesWithManage = guild.roles.cache.filter((r) => r.permissions.has(PermissionFlagsBits.ManageChannels));
-      for (const [roleId] of rolesWithManage) {
-        staffRolesOverwrites.push({
-          id: roleId,
-          allow: [
-            PermissionFlagsBits.ViewChannel,
-            PermissionFlagsBits.SendMessages,
-            PermissionFlagsBits.ReadMessageHistory,
-            PermissionFlagsBits.ManageMessages,
-          ],
-        });
-      }
-    } catch (_) {}
+    const staffRolesOverwrites = staffRoleIdsFor(guild).map((roleId) => ({
+      id: roleId,
+      allow: [
+        PermissionFlagsBits.ViewChannel,
+        PermissionFlagsBits.SendMessages,
+        PermissionFlagsBits.ReadMessageHistory,
+        PermissionFlagsBits.ManageMessages,
+      ],
+    }));
 
     const ticketChannel = await guild.channels.create({
       name: `${typeSlug}-${numberLabel}-${cleanUsername}`,
       type: ChannelType.GuildText,
       parent: category.id,
-      topic: `Ticket #${numberLabel} • ${typeLabel(type, interaction)} • ${user.tag || user.username} (${user.id})`,
+      topic: `Ticket #${numberLabel} • ${typeLabel(type, interaction, options)} • ${user.tag || user.username} (${user.id})`,
       permissionOverwrites: [
         { id: guild.id, deny: [PermissionFlagsBits.ViewChannel] },
         {
@@ -409,21 +478,7 @@ async function handleOpenTicket(interaction, type) {
     db.tickets[ticketId] = ticket;
     saveTicketsData(db);
 
-    const welcomeEmbed = new EmbedBuilder()
-      .setColor(COLOR_PRIMARY)
-      .setTitle(t('tickets.room_title', interaction, { number: numberLabel, type: typeLabel(type, interaction) }))
-      .setDescription(
-        [
-          t('tickets.room_greeting', interaction, { user: `<@${user.id}>` }),
-          t('tickets.room_section', interaction),
-          t('tickets.room_step1', interaction),
-          t('tickets.room_step2', interaction),
-          t('tickets.room_step3', interaction),
-          t('tickets.room_note', interaction),
-        ].join('\n\n')
-      )
-      .setFooter({ text: t('tickets.room_footer', interaction, { guild: guild.name }) })
-      .setTimestamp();
+    const welcomeEmbed = buildRoomWelcomeEmbed({ source: interaction, number, type, userId: user.id, guildName: guild.name, options });
 
     const welcomeMessage = await ticketChannel.send({
       content: `<@${user.id}>`,
@@ -445,7 +500,7 @@ async function handleOpenTicket(interaction, type) {
           t('tickets.log_open_desc', guild.id, {
             user: `<@${user.id}>`,
             number: numberLabel,
-            type: typeLabel(type, guild.id),
+            type: typeLabel(type, guild.id, options),
             channel: `<#${ticketChannel.id}>`,
           })
         )
@@ -467,7 +522,7 @@ async function handleOpenTicket(interaction, type) {
 
 async function handleClaimTicket(interaction, channelId) {
   if (!interaction || interaction.replied || interaction.deferred) return;
-  if (!isStaffMember(interaction.member)) {
+  if (!isStaffMember(interaction.member, interaction.guild)) {
     return replyEphemeral(interaction, t('tickets.claim_no_permission', interaction));
   }
 
@@ -582,7 +637,7 @@ async function performTicketClose({ guild, channel, ticket, closerId, reason = n
       .setTitle(t('tickets.log_close_title', guild.id))
       .addFields(
         { name: t('tickets.log_field_author', guild.id), value: `<@${entry.userId}>`, inline: true },
-        { name: t('tickets.log_field_type', guild.id), value: `\`#${numberLabel}\` ${typeLabel(entry.type, guild.id)}`, inline: true },
+        { name: t('tickets.log_field_type', guild.id), value: `\`#${numberLabel}\` ${typeLabel(entry.type, guild.id, getTicketOptions(guild.id))}`, inline: true },
         { name: t('tickets.log_field_claimed', guild.id), value: entry.claimedBy ? `<@${entry.claimedBy}>` : none, inline: true },
         { name: t('tickets.log_field_closed', guild.id), value: `<@${closerId}>`, inline: true },
         { name: t('tickets.log_field_duration', guild.id), value: `\`${formatDuration(entry.closedAt - entry.createdAt)}\``, inline: true },
@@ -601,7 +656,8 @@ async function performTicketClose({ guild, channel, ticket, closerId, reason = n
   }
 
   try {
-    const author = await guild.client.users.fetch(entry.userId).catch(() => null);
+    // A cópia na DM do autor pode ser desligada no painel
+    const author = getTicketOptions(guild.id).dmTranscript ? await guild.client.users.fetch(entry.userId).catch(() => null) : null;
     if (author) {
       await author.send({
         content: t('tickets.close_dm', guild.id, { number: numberLabel, guild: guild.name }),
@@ -629,7 +685,7 @@ async function handleCloseTicket(interaction, channelId) {
   const ticket = channel ? findTicketByChannel(db, channel.id) : null;
   const isAuthor = Boolean(ticket && ticket.userId === interaction.user?.id);
 
-  if (!isStaffMember(interaction.member) && !isAuthor) {
+  if (!isStaffMember(interaction.member, interaction.guild) && !isAuthor) {
     return replyEphemeral(interaction, t('tickets.close_no_permission', interaction));
   }
   if (!channel || (channelId && channel.id !== channelId)) {
@@ -661,7 +717,7 @@ async function handleCloseConfirm(interaction, channelId) {
   const ticket = channel ? findTicketByChannel(db, channel.id) : null;
   const isAuthor = Boolean(ticket && ticket.userId === interaction.user?.id);
 
-  if (!isStaffMember(interaction.member) && !isAuthor) {
+  if (!isStaffMember(interaction.member, interaction.guild) && !isAuthor) {
     return replyEphemeral(interaction, t('tickets.close_no_permission', interaction));
   }
   if (!channel || channel.id !== channelId || !ticket || ticket.status !== 'OPEN') {
@@ -689,7 +745,7 @@ async function closeTicketByCommand(source, reason = null) {
   const ticket = channel ? findTicketByChannel(db, channel.id) : null;
   const isAuthor = Boolean(ticket && ticket.userId === userId);
 
-  if (!isStaffMember(member) && !isAuthor) {
+  if (!isStaffMember(member, source.guild) && !isAuthor) {
     return replyEphemeral(source, t('tickets.close_no_permission', source));
   }
   if (!ticket || ticket.status !== 'OPEN') {
@@ -735,8 +791,93 @@ function getTicketStats(guildId = null) {
       report: tickets.filter((tk) => tk.type === 'report').length,
     },
     avgResolutionMs,
-    artRemovalsPending: Object.values(db.artRemovals).filter((r) => r.status === 'PENDING').length,
+    // Os pedidos de remoção são todos da Cringelândia: nos outros servidores a conta é zero
+    artRemovalsPending: !guildId || isCringelandiaGuild(guildId) ? Object.values(db.artRemovals).filter((r) => r.status === 'PENDING').length : 0,
   };
+}
+
+// =========================================================================
+// Painel web (/dashboard): chamado pela ponte no processo do bot (dashboardBridge.js)
+// =========================================================================
+
+function listOpenTickets(guild, limit = 50) {
+  const db = loadTicketsData();
+  return Object.values(db.tickets)
+    .filter((tk) => tk.guildId === guild.id && tk.status === 'OPEN')
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .slice(0, limit)
+    .map((tk) => ({
+      id: tk.id,
+      number: tk.number || 0,
+      type: tk.type,
+      userId: tk.userId,
+      userTag: tk.userTag || '',
+      channelId: tk.channelId,
+      channelName: guild.channels?.cache?.get(tk.channelId)?.name || null,
+      claimedBy: tk.claimedBy || null,
+      createdAt: tk.createdAt,
+    }));
+}
+
+function listArtRemovals(limit = 25) {
+  const db = loadTicketsData();
+  return Object.values(db.artRemovals)
+    .filter((r) => r.status === 'PENDING')
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .slice(0, limit)
+    .map((r) => ({ requestId: r.requestId, userId: r.userId, userTag: r.userTag || '', details: String(r.details || '').slice(0, 300), createdAt: r.createdAt }));
+}
+
+/**
+ * Cria a categoria 📩・ATENDIMENTO no topo com acesso da Staff e publica o painel (botão "Crie pra mim").
+ */
+async function createTicketCategory(guild) {
+  const permissionOverwrites = [
+    { id: guild.id, deny: [PermissionFlagsBits.ViewChannel] },
+    {
+      id: guild.client.user.id,
+      allow: [
+        PermissionFlagsBits.ViewChannel,
+        PermissionFlagsBits.SendMessages,
+        PermissionFlagsBits.ManageChannels,
+        PermissionFlagsBits.ManageMessages,
+        PermissionFlagsBits.ReadMessageHistory,
+      ],
+    },
+    ...staffRoleIdsFor(guild).map((roleId) => ({
+      id: roleId,
+      allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory],
+    })),
+  ];
+  const category = await guild.channels.create({
+    name: '📩・ATENDIMENTO',
+    type: ChannelType.GuildCategory,
+    position: 0,
+    permissionOverwrites,
+  });
+  setTicketConfig(guild.id, { ticketCategoryId: category.id });
+  await publishTicketPanel(guild).catch(() => null);
+  return category;
+}
+
+/**
+ * Fecha pelo painel web: mesmo fluxo do botão (transcrição, registros, DM), sem confirmação.
+ */
+async function closeTicketFromPanel(guild, ticketId, closerId) {
+  const db = loadTicketsData();
+  const ticket = db.tickets[ticketId];
+  if (!ticket || ticket.guildId !== guild.id) throw new Error('ticket_not_found');
+  if (ticket.status !== 'OPEN') throw new Error('ticket_closed');
+  const channel = await guild.channels.fetch(ticket.channelId).catch(() => null);
+  if (!channel) {
+    ticket.status = 'CLOSED';
+    ticket.closedBy = 'channel_missing';
+    ticket.closedAt = Date.now();
+    saveTicketsData(db);
+    return { closed: true, channelMissing: true };
+  }
+  await performTicketClose({ guild, channel, ticket, closerId });
+  return { closed: true, channelMissing: false };
 }
 
 // =========================================================================
@@ -746,6 +887,9 @@ function getTicketStats(guildId = null) {
 async function handleArtRemovalClick(interaction) {
   if (!interaction || interaction.replied || interaction.deferred) return;
   if (interaction.guild && !isCringelandiaGuild(interaction.guild)) return;
+  if (!getTicketOptions(CRING_ID).artRemoval?.enabled) {
+    return replyEphemeral(interaction, t('tickets.type_disabled', interaction));
+  }
 
   const modal = new ModalBuilder()
     .setCustomId('tkt:modal:art_removal')
@@ -766,6 +910,7 @@ async function handleArtRemovalClick(interaction) {
 async function handleArtRemovalSubmit(interaction) {
   if (!interaction || interaction.replied || interaction.deferred) return;
   const { user, client } = interaction;
+  if (interaction.guild && !isCringelandiaGuild(interaction.guild)) return;
   const details = interaction.fields.getTextInputValue('tkt:art_details');
 
   const requestId = `art_rem_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
@@ -794,7 +939,8 @@ async function handleArtRemovalSubmit(interaction) {
 
   // Cartão da Staff no canal de aprovações (sempre no idioma da Cringelândia)
   try {
-    const approvalChannel = await client.channels.fetch(ART_REMOVAL_CHANNEL_ID).catch(() => null);
+    const approvalChannelId = getTicketOptions(CRING_ID).artRemoval?.channelId || ART_REMOVAL_CHANNEL_ID;
+    const approvalChannel = await client.channels.fetch(approvalChannelId).catch(() => null);
     if (approvalChannel && approvalChannel.isTextBased()) {
       const pendingEmbed = new EmbedBuilder()
         .setColor(COLOR_WARNING)
@@ -839,7 +985,7 @@ async function handleArtRemovalSubmit(interaction) {
 
 async function handleArtRemovalDone(interaction, targetUserId, requestId) {
   if (!interaction || interaction.replied || interaction.deferred) return;
-  if (!isStaffMember(interaction.member)) {
+  if (!isStaffMember(interaction.member, CRING_ID)) {
     return replyEphemeral(interaction, t('tickets.art_done_no_permission', CRING_ID));
   }
 
@@ -880,7 +1026,16 @@ module.exports = {
   saveTicketsData,
   buildTicketPanel,
   publishTicketPanel,
+  updateTicketPanel,
   refreshTicketPanels,
+  buildRoomWelcomeEmbed,
+  getTicketOptions,
+  isStaffMember,
+  staffRoleIdsFor,
+  listOpenTickets,
+  listArtRemovals,
+  createTicketCategory,
+  closeTicketFromPanel,
   isTicketPanelMessage,
   handleOpenTicket,
   handleClaimTicket,

@@ -23,6 +23,7 @@ import Campfire from './Campfire';
 import Injections from './Injections';
 import Automations from './Automations';
 import BotPermissions from './Permissions';
+import Tickets from './Tickets';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>, #/global/<seção>.
 function parseHash() {
@@ -407,6 +408,7 @@ function GuildView({ shell, guildId, section }) {
         {current === 'automations' && <Automations t={t} guildId={guildId} />}
         {current === 'injections' && <Injections t={t} lang={lang} guildId={guildId} />}
         {current === 'security' && <Security t={t} guildId={guildId} />}
+        {current === 'tickets' && <Tickets t={t} guildId={guildId} isOwner={me.user.isOwner} />}
         {current === 'seasonal' && <Seasonal t={t} guildId={guildId} />}
         {current === 'partnerships' && (
           <Partnerships t={t} guildId={guildId}>
