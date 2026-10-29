@@ -398,6 +398,9 @@
 
     .join-dot { color: var(--text-dim); }
 
+    /* Sem número real ainda, a linha nem aparece (o display: flex acima ignorava o hidden) */
+    .join-live[hidden] { display: none; }
+
     .join-name {
       font-size: clamp(22px, 3vw, 30px);
       font-weight: 900;
