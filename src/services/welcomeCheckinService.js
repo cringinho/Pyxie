@@ -8,7 +8,8 @@ const welcomeFlow = require('./welcomeFlow');
 // Acolhimento de 24h: um dia depois da entrada, quem ainda não puxou conversa (menos de 3
 // mensagens) recebe um abraço em lote, sem cobrança. Por servidor: canal, cargo de quem não
 // quer ser marcado e liga/desliga no painel (→ Acolhimento). Só o processo do bot grava o estado.
-const DATA_DIR = path.join(__dirname, '..', '..', 'data');
+// Respeita PYXIE_DATA_DIR (os testes usam uma pasta temporária e nunca tocam o estado real)
+const DATA_DIR = process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data');
 const STATE_FILE = path.join(DATA_DIR, 'welcomeCheckinState.json');
 const STATE_BACKUP = `${STATE_FILE}.bak`;
 
