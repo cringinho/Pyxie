@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import PyxieEditorField from './PyxieEditorField';
 import {
   ArrowLeft,
   BarChart3,
@@ -808,43 +809,19 @@ export default function Hyperfokus({ t, lang, guildId }) {
                 </div>
               </div>
 
-              {/* Split Editor: Markdown à esquerda, Preview à direita */}
+              {/* Editor da Pyxie (o mesmo do site): o que aparece aqui é como fica publicado. */}
               <div className="mt-6">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-mystic-glow">
-                  {lang === 'pt' ? 'Editor de Conteúdo Autoral' : 'Author Content Editor'}
+                <p id="hf-editor-label" className="mb-2 text-xs font-semibold uppercase tracking-wider text-mystic-glow">
+                  {lang === 'pt' ? 'Texto do artigo' : 'Article text'}
                 </p>
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                  <div>
-                    <textarea
-                      rows={18}
-                      value={editForm.contentMarkdown}
-                      onChange={(e) => setEditForm({ ...editForm, contentMarkdown: e.target.value })}
-                      placeholder="Conteúdo em Markdown..."
-                      className="dash-field w-full rounded-2xl p-4 font-mono text-sm leading-relaxed"
-                    />
-                  </div>
-
-                  <div className="dash-card max-h-[500px] overflow-y-auto rounded-2xl p-5">
-                    <p className="mb-3 border-b border-white/10 pb-2 text-xs font-bold text-white/50">
-                      {lang === 'pt' ? 'PRÉ-VISUALIZAÇÃO AO VIVO' : 'LIVE PREVIEW'}
-                    </p>
-                    <div className="prose prose-invert max-w-none space-y-3 text-sm leading-relaxed text-white/90">
-                      <h1 className="font-title text-xl font-bold text-pyxie-glow">
-                        {editForm.title || 'Título do Artigo'}
-                      </h1>
-                      {editForm.coverImage && (
-                        <img
-                          src={editForm.coverImage}
-                          alt="Capa"
-                          className="h-44 w-full rounded-xl object-cover"
-                        />
-                      )}
-                      <div className="whitespace-pre-wrap font-sans text-sm text-white/80">
-                        {editForm.contentMarkdown || 'Escreva algo no editor...'}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <PyxieEditorField
+                  key={selectedArticle.id}
+                  lang={lang}
+                  label={lang === 'pt' ? 'Texto do artigo' : 'Article text'}
+                  initialHtml={selectedArticle.contentHtml}
+                  initialMarkdown={selectedArticle.contentMarkdown}
+                  onChange={(md) => setEditForm((prev) => ({ ...prev, contentMarkdown: md }))}
+                />
               </div>
             </Card>
           </div>

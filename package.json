@@ -31,8 +31,10 @@
     "express": "^5.2.1",
     "node-cron": "^4.6.0",
     "pg": "^8.23.1",
+    "quill": "^2.0.3",
     "satori": "^0.35.0",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "turndown": "^7.2.0"
   },
   "devDependencies": {
     "@types/pg": "^8.23.1",

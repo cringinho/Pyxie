@@ -14,11 +14,36 @@ const {
   renderProfilePage,
   renderWebEditorPage,
   renderProjectsShowcasePage,
+  renderAuthorPage,
 } = require('../modules/hyperfokus/renderer');
 const partnershipManager = require('../modules/partnerships/partnershipManager');
 const showcaseReferrals = require('../modules/partnerships/showcaseReferrals');
 const { generateBlogRssXml, generateSitemapXml } = require('../modules/hyperfokus/seoEngine');
 const { generateOgCard, generatePinterestPin, generateWatermarkedShareImage } = require('../modules/hyperfokus/imageCards');
+
+const OWNER_ID = '214153735281180673';
+
+// Só caminhos do próprio site (evita redirecionamento aberto para fora: "//evil.com", "https://...").
+function safeRedirect(value, fallback = '/meu-perfil') {
+  const v = typeof value === 'string' ? value.trim() : '';
+  if (!v.startsWith('/') || v.startsWith('//') || v.startsWith('/\\') || /[\r\n]/.test(v)) return fallback;
+  return v;
+}
+
+// Quem está logado (preenchido pelo middleware do accountRoutes) com o nome público para comentários.
+function publicIdentity(account) {
+  if (!account) return null;
+  return {
+    userId: account.discordUserId || account.id,
+    username: account.displayName || `Leitor(a) #${String(account.id).slice(-4)}`,
+    cachedAvatarWebp: account.avatarUrl || null,
+  };
+}
+
+// Página com cabeçalho de quem está logado não pode ir para cache compartilhado.
+function cacheFor(req, seconds) {
+  return req.account ? 'private, no-cache' : `public, max-age=${seconds}`;
+}
 
 function createHyperfokusRouter({ publicDir } = {}) {
   const router = express.Router();
@@ -28,14 +53,14 @@ function createHyperfokusRouter({ publicDir } = {}) {
   router.get('/hyperfokus/rss.xml', (req, res) => {
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
     res.setHeader('Content-Type', 'application/rss+xml; charset=UTF-8');
-    res.setHeader('Cache-Control', 'public, max-age=1800');
+    res.setHeader('Cache-Control', cacheFor(req, 1800));
     return res.send(generateBlogRssXml(lang));
   });
 
   // 2. Sitemap dedicado do Hyperfokus
   router.get(['/sitemap-hyperfokus.xml', '/hyperfokus/sitemap.xml'], (req, res) => {
     res.setHeader('Content-Type', 'application/xml; charset=UTF-8');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.setHeader('Cache-Control', cacheFor(req, 3600));
     return res.send(generateSitemapXml());
   });
 
@@ -43,15 +68,15 @@ function createHyperfokusRouter({ publicDir } = {}) {
   router.get('/hyperfokus/como-participar', (req, res) => {
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
-    return res.send(renderStaticInfoPage({ pageKey: 'como-participar', lang }));
+    res.setHeader('Cache-Control', cacheFor(req, 3600));
+    return res.send(renderStaticInfoPage({ pageKey: 'como-participar', lang, user: req.account || null }));
   });
 
   router.get('/hyperfokus/termos-e-regras', (req, res) => {
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
-    return res.send(renderStaticInfoPage({ pageKey: 'termos-e-regras', lang }));
+    res.setHeader('Cache-Control', cacheFor(req, 3600));
+    return res.send(renderStaticInfoPage({ pageKey: 'termos-e-regras', lang, user: req.account || null }));
   });
 
   // 4. Imagens Dinâmicas (OG 1200x630, Pinterest Pin 1000x1500 e Share Watermark)
@@ -90,7 +115,7 @@ function createHyperfokusRouter({ publicDir } = {}) {
       const ogBuffer = await generateOgCard(art);
       const watermarked = await generateWatermarkedShareImage(ogBuffer);
       res.setHeader('Content-Type', 'image/webp');
-      res.setHeader('Cache-Control', 'public, max-age=86400');
+      res.setHeader('Cache-Control', cacheFor(req, 86400));
       return res.send(watermarked);
     } catch (err) {
       console.error('[API Hyperfokus Share Image] Erro:', err.message);
@@ -100,8 +125,9 @@ function createHyperfokusRouter({ publicDir } = {}) {
 
   // 5. Interações (Like e Comentários)
   router.post('/api/hyperfokus/articles/:id/like', (req, res) => {
-    const userId = req.session?.userId || req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'guest';
-    const result = articleStore.toggleLike(req.params.id, userId);
+    const who = publicIdentity(req.account);
+    if (!who) return res.status(401).json({ success: false, error: 'not_authenticated' });
+    const result = articleStore.toggleLike(req.params.id, who.userId);
     return res.json({ success: true, ...result });
   });
 
@@ -129,19 +155,20 @@ function createHyperfokusRouter({ publicDir } = {}) {
   });
 
   router.post('/api/hyperfokus/articles/:id/comments', (req, res) => {
-    const { content, username } = req.body || {};
+    const who = publicIdentity(req.account);
+    if (!who) return res.status(401).json({ success: false, error: 'not_authenticated' });
+    const { content } = req.body || {};
     if (!content || !String(content).trim()) {
       return res.status(400).json({ success: false, error: 'empty_content' });
     }
 
-    const userId = req.session?.userId || req.headers['x-forwarded-for'] || 'guest';
-    const authorName = username || req.session?.username || 'Leitor Autêntico';
-
     const comment = articleStore.addComment(req.params.id, {
-      userId,
-      username: authorName,
-      content,
+      userId: who.userId,
+      username: who.username,
+      cachedAvatarWebp: who.cachedAvatarWebp,
+      content: String(content).trim(),
     });
+    if (!comment) return res.status(404).json({ success: false, error: 'article_not_found' });
 
     return res.json({ success: true, comment });
   });
@@ -172,7 +199,7 @@ function createHyperfokusRouter({ publicDir } = {}) {
     });
 
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.setHeader('Cache-Control', cacheFor(req, 300));
     return res.send(renderHomePage({
       articles,
       total,
@@ -181,6 +208,8 @@ function createHyperfokusRouter({ publicDir } = {}) {
       activeTab: sort,
       activeTag: tag,
       lang,
+      user: req.account || null,
+      tags: articleStore.listPublishedTags(),
     }));
   });
 
@@ -196,7 +225,7 @@ function createHyperfokusRouter({ publicDir } = {}) {
     });
 
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-    res.setHeader('Cache-Control', 'public, max-age=600');
+    res.setHeader('Cache-Control', cacheFor(req, 600));
     return res.send(renderHomePage({
       articles,
       total,
@@ -204,6 +233,8 @@ function createHyperfokusRouter({ publicDir } = {}) {
       totalPages,
       activeTag: tag,
       lang,
+      user: req.account || null,
+      tags: articleStore.listPublishedTags(),
     }));
   });
 
@@ -211,23 +242,21 @@ function createHyperfokusRouter({ publicDir } = {}) {
   router.get('/hyperfokus/autor/:userId', (req, res) => {
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
     const userId = req.params.userId;
-    const { items: articles, total, totalPages } = articleStore.listArticles({
+    const author = articleStore.getPublicAuthor(userId);
+    if (!author) {
+      if (fallback404) return res.status(404).sendFile(fallback404);
+      return res.status(404).send('Not found');
+    }
+    const { items: articles } = articleStore.listArticles({
       status: 'PUBLISHED',
       authorId: userId,
       page: 1,
-      limit: 20,
+      limit: 50,
     });
 
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-    res.setHeader('Cache-Control', 'public, max-age=600');
-    return res.send(renderHomePage({
-      articles,
-      total,
-      page: 1,
-      totalPages,
-      activeTag: null,
-      lang,
-    }));
+    res.setHeader('Cache-Control', req.account ? 'private, no-cache' : 'public, max-age=600');
+    return res.send(renderAuthorPage({ author, articles, lang, user: req.account || null }));
   });
 
   // 9. Vitrine de Projetos & Criadores (Fase 8 - antes de /hyperfokus/:slug)
@@ -249,11 +278,12 @@ function createHyperfokusRouter({ publicDir } = {}) {
     partnersList.sort((a, b) => (b.badge?.priority || 0) - (a.badge?.priority || 0));
 
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.setHeader('Cache-Control', cacheFor(req, 300));
     return res.send(renderProjectsShowcasePage({
       partners: partnersList,
       activeCategory: category,
       lang,
+      user: req.account || null,
     }));
   });
 
@@ -269,8 +299,8 @@ function createHyperfokusRouter({ publicDir } = {}) {
     }
 
     // Apenas artigos publicados são públicos (a menos que seja o dono em modo preview)
-    const isOwner = req.session?.userId === '214153735281180673';
-    if (article.status !== 'PUBLISHED' && !isOwner && req.query.preview !== 'true') {
+    const isOwner = req.account?.discordUserId === OWNER_ID;
+    if (article.status !== 'PUBLISHED' && !isOwner) {
       if (fallback404) return res.status(404).sendFile(fallback404);
       return res.status(404).send('Artigo não disponível');
     }
@@ -290,18 +320,18 @@ function createHyperfokusRouter({ publicDir } = {}) {
     });
 
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-    res.setHeader('Cache-Control', 'public, max-age=600');
+    res.setHeader('Cache-Control', cacheFor(req, 600));
     return res.send(renderArticlePage({
       article,
       lang,
-      user: req.session || null,
+      user: req.account || null,
     }));
   });
 
   // 10. Páginas de Autenticação e Perfil de Autor (Fase 7)
   router.get('/login', (req, res) => {
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
-    const redirect = req.query.redirect || '/meu-perfil';
+    const redirect = safeRedirect(req.query.redirect);
     const cookie = accountSessions.getCookie(req);
     const session = accountSessions.readSession(cookie);
     if (session && session.accountId) {
@@ -313,7 +343,7 @@ function createHyperfokusRouter({ publicDir } = {}) {
 
   router.get('/cadastro', (req, res) => {
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
-    const redirect = req.query.redirect || '/meu-perfil';
+    const redirect = safeRedirect(req.query.redirect);
     const cookie = accountSessions.getCookie(req);
     const session = accountSessions.readSession(cookie);
     if (session && session.accountId) {
@@ -373,7 +403,7 @@ function createHyperfokusRouter({ publicDir } = {}) {
     if (ref && typeof ref === 'string' && /^\d{17,20}$/.test(ref.trim())) {
       res.setHeader('Set-Cookie', `pyxie_referrer=${encodeURIComponent(ref.trim())}; Path=/; Max-Age=2592000; SameSite=Lax`);
     }
-    const redirectUrl = req.query.redirect || '/hyperfokus/projetos';
+    const redirectUrl = safeRedirect(req.query.redirect, '/hyperfokus/projetos');
     return res.redirect(redirectUrl);
   });
 

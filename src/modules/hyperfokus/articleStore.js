@@ -172,6 +172,46 @@ function listArticles({ status = null, tag = null, authorId = null, page = 1, li
   };
 }
 
+// Tags dos artigos publicados, mais usadas primeiro (filtros da home e das categorias).
+function listPublishedTags(limit = 12) {
+  const store = loadJsonStore();
+  const counts = new Map();
+  Object.values(store.articles)
+    .filter((a) => a.status === 'PUBLISHED')
+    .forEach((a) => (a.categoryTags || []).forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)));
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, limit).map(([t]) => t);
+}
+
+// Dados públicos de um autor: o registro mais recente dele entre os artigos publicados
+// (últimos dados conhecidos, mesmo se a conta do Discord sumir) e os totais.
+function getPublicAuthor(userId) {
+  const aid = String(userId || '');
+  if (!/^[\w-]{1,40}$/.test(aid)) return null;
+  const store = loadJsonStore();
+  let latest = null;
+  let latestAt = -1;
+  let articleCount = 0;
+  let likes = 0;
+  for (const art of Object.values(store.articles)) {
+    if (art.status !== 'PUBLISHED') continue;
+    const entry = (store.authors[art.id] || []).find((a) => a.userId === aid);
+    if (!entry) continue;
+    articleCount += 1;
+    likes += art.likesCount || 0;
+    const at = Number(new Date(art.publishedAt || art.createdAt || 0));
+    if (at > latestAt) { latestAt = at; latest = entry; }
+  }
+  if (!latest) return null;
+  return {
+    userId: aid,
+    username: latest.username,
+    globalName: latest.globalName || null,
+    cachedAvatarWebp: latest.cachedAvatarWebp || null,
+    articleCount,
+    likes,
+  };
+}
+
 function updateArticle(id, updates = {}) {
   const store = loadJsonStore();
   const existing = store.articles[String(id)];
@@ -272,6 +312,8 @@ function exportBackup(dateStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Am
 }
 
 module.exports = {
+  listPublishedTags,
+  getPublicAuthor,
   getArticlesJsonFile,
   loadJsonStore,
   saveJsonStore,

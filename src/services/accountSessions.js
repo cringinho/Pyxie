@@ -94,6 +94,11 @@ function getCookie(req) {
   return null;
 }
 
+function buildCookie(value) {
+  const isSecure = process.env.NODE_ENV === 'production';
+  return `${COOKIE_NAME}=${encodeURIComponent(value)}; Path=/; Max-Age=${SESSION_TTL_MS / 1000}; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}`;
+}
+
 function setCookie(res, value) {
   const isSecure = process.env.NODE_ENV === 'production';
   const cookieStr = `${COOKIE_NAME}=${encodeURIComponent(value)}; Path=/; Max-Age=${SESSION_TTL_MS / 1000}; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}`;
@@ -110,6 +115,7 @@ module.exports = {
   destroySession,
   getCookie,
   setCookie,
+  buildCookie,
   clearCookie,
 };
 

@@ -12,8 +12,11 @@ const guildFeatures = require('../services/guildFeatures');
 const commandTelemetry = require('../services/commandTelemetry');
 const messageStudio = require('../services/messageStudio');
 const studioStore = require('../services/messageStudioStore');
+const accountStore = require('../modules/accounts/accountStore');
+const accountSessions = require('../services/accountSessions');
 
 const STATE_COOKIE = 'pyxie_oauth_state';
+const NEXT_COOKIE = 'pyxie_oauth_next';
 const GUILD_ID_RE = /^\d{17,20}$/;
 
 // Seções de cada servidor. Uma seção só entra aqui quando a tela e a API dela existem.
@@ -32,11 +35,12 @@ registerDashboardSection({ id: 'hyperfokus', zones: ['cringelandia'], roles: ['o
 function getSections(guildAccess) {
   const base = ['overview', 'commands', 'studio', 'features', 'automations', 'injections', 'security', 'channels', 'roles', 'emojiUsage'];
   if (guildAccess.canManageAccess) base.push('access');
-  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships', 'hyperfokus');
+  if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
     .filter((s) => !s.roles || s.roles.includes(guildAccess.role))
     .map((s) => s.id);
-  return [...base, ...extra];
+  // Set: uma seção registrada nos dois lugares não pode aparecer duas vezes no menu.
+  return [...new Set([...base, ...extra])];
 }
 
 let missingConfigLogged = false;
@@ -134,10 +138,11 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       return res.status(503).json({ success: false, error: 'panel_not_configured' });
     }
     const state = crypto.randomBytes(16).toString('hex');
-    res.setHeader(
-      'Set-Cookie',
-      `${STATE_COOKIE}=${state}; HttpOnly; Secure; SameSite=Lax; Path=/auth/discord; Max-Age=600`
-    );
+    // ?next=/caminho: login vindo do site (blog, perfil). Só caminhos internos, para não virar redirecionamento aberto.
+    const next = typeof req.query.next === 'string' && /^\/(?![/\\])[^\r\n]*$/.test(req.query.next) ? req.query.next : '';
+    const cookies = [`${STATE_COOKIE}=${state}; HttpOnly; Secure; SameSite=Lax; Path=/auth/discord; Max-Age=600`];
+    cookies.push(`${NEXT_COOKIE}=${encodeURIComponent(next)}; HttpOnly; Secure; SameSite=Lax; Path=/auth/discord; Max-Age=${next ? 600 : 0}`);
+    res.setHeader('Set-Cookie', cookies);
     return res.redirect(oauth.buildAuthorizeUrl(state));
   });
 
@@ -158,8 +163,13 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       const profile = await oauth.fetchProfile(token, doFetch);
       await oauth.revokeToken(token, doFetch);
       const { cookieValue } = sessions.createSession(profile);
-      res.setHeader('Set-Cookie', [clearState, sessions.buildCookie(cookieValue)]);
-      return res.redirect('/dashboard');
+      // Uma identidade só: o mesmo login abre a conta do site (blog, comentários, Meu perfil).
+      const account = accountStore.upsertDiscordAccount(profile.user);
+      const accountCookie = accountSessions.buildCookie(accountSessions.createSession(account.id));
+      const next = decodeURIComponent(sessions.getCookie(req, NEXT_COOKIE) || '');
+      const clearNext = `${NEXT_COOKIE}=; HttpOnly; Secure; SameSite=Lax; Path=/auth/discord; Max-Age=0`;
+      res.setHeader('Set-Cookie', [clearState, clearNext, sessions.buildCookie(cookieValue), accountCookie]);
+      return res.redirect(/^\/(?![/\\])[^\r\n]*$/.test(next) ? next : '/dashboard');
     } catch (err) {
       console.error('[Dashboard] Falha no login com Discord:', err.message);
       res.setHeader('Set-Cookie', clearState);

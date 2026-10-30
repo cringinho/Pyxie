@@ -416,6 +416,10 @@ app.use(express.static(path.join(__dirname, 'public'), {
     }
   }
 }));
+// Editor de texto do Hyperfokus (site e painel): Quill e Turndown servidos daqui, sem CDN (a CSP só aceita 'self').
+app.get('/vendor/quill.js', (req, res) => res.sendFile(require.resolve('quill/dist/quill.js'), { maxAge: '7d' }));
+app.get('/vendor/quill.snow.css', (req, res) => res.sendFile(require.resolve('quill/dist/quill.snow.css'), { maxAge: '7d' }));
+app.get('/vendor/turndown.js', (req, res) => res.sendFile(require.resolve('turndown/dist/turndown.js'), { maxAge: '7d' }));
 app.use('/assets', express.static(path.join(__dirname, 'assets'), {
   maxAge: '7d',
   immutable: true,

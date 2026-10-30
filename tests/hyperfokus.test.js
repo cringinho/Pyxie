@@ -506,7 +506,7 @@ const articlePageHtml = renderer.renderArticlePage({
 });
 assert.strictEqual(articlePageHtml.match(/<h1/g).length, 1, 'Exatamente um h1 na página do artigo');
 assert.ok(articlePageHtml.includes('Guia de Astronomia Amadora para Céus Urbanos'), 'Título no h1');
-assert.ok(articlePageHtml.includes('aria-label="Ferramentas de Leitura Acessível"'), 'Barra de leitura acessível presente');
+assert.ok(articlePageHtml.includes('aria-label="Ferramentas de leitura"'), 'Barra de leitura acessível presente');
 assert.ok(articlePageHtml.includes('setReaderSize'), 'Controles de tamanho de texto (A-/A+) presentes');
 assert.ok(articlePageHtml.includes('setReaderTheme'), 'Controles de tema (Escuro/Sépia/Contraste) presentes');
 assert.ok(articlePageHtml.includes('toggleReaderDyslexic'), 'Alternância de fonte para dislexia presente');
@@ -515,9 +515,9 @@ assert.ok(articlePageHtml.includes('comment-form'), 'Formulário de comentários
 
 // Páginas Institucionais
 const rulesHtml = renderer.renderStaticInfoPage({ pageKey: 'termos-e-regras', lang: 'pt' });
-assert.ok(rulesHtml.includes('Compromisso com Conteúdo 100% Humano (Anti-IA)'), 'Regras anti-IA na página de termos');
+assert.ok(rulesHtml.includes('Só texto escrito por gente') && rulesHtml.includes('188'), 'Regras anti-IA (e CVV) na página de termos');
 const howToHtml = renderer.renderStaticInfoPage({ pageKey: 'como-participar', lang: 'pt' });
-assert.ok(howToHtml.includes('Thread Guard'), 'Instruções do Thread Guard na página como participar');
+assert.ok(howToHtml.includes('só você e seus coautores conseguem escrever'), 'Trava de rascunho explicada na página como participar');
 
 // Router Express
 const router = createHyperfokusRouter();
@@ -799,6 +799,84 @@ assert.ok(showcaseHtml.includes('animated-border'), 'Borda Cyber-Pink com anima�
 assert.ok(showcaseHtml.includes('@media (prefers-reduced-motion: reduce)'), 'Suporte obrigatório a prefers-reduced-motion');
 
 console.log('    ✅ 17. Vitrine de projetos, servidores, indicações antifraude e bordas cosméticas validadas.');
+
+// 18. Correções da jornada de novos usuários (perfil de autor, entrada, segurança)
+console.log('  🧭 18. Testando página de autor, cabeçalho de entrada, comentários protegidos e redirecionamentos...');
+{
+  const { getSections } = require('../src/routes/dashboardRoutes');
+  const sections = getSections({ zone: 'cringelandia', role: 'owner', canManageAccess: true });
+  assert.equal(sections.filter((s) => s === 'hyperfokus').length, 1, 'Hyperfokus aparece uma vez só no menu da Cringelândia');
+  assert.equal(new Set(sections).size, sections.length, 'Nenhuma seção duplicada no painel');
+
+  const renderer = require('../src/modules/hyperfokus/renderer');
+  const store = require('../src/modules/hyperfokus/articleStore');
+  const authorId = '222222222222222218';
+  const published = await store.saveArticle({
+    title: 'Jornada: Página de Autor', slug: `jornada-autor-${Date.now()}`, status: 'PUBLISHED',
+    contentMarkdown: 'Texto', contentHtml: '<p>Texto</p>', categoryTags: ['jornada'], publishedAt: Date.now(),
+  }, [{ userId: authorId, username: 'autora_teste', globalName: 'Autora Teste', role: 'AUTHOR' }]);
+  const pending = await store.saveArticle({
+    title: 'Jornada: Pendente', slug: `jornada-pendente-${Date.now()}`, status: 'PENDING_REVIEW',
+    contentMarkdown: 'Segredo', contentHtml: '<p>Segredo</p>',
+  }, [{ userId: authorId, username: 'autora_teste', role: 'AUTHOR' }]);
+
+  const author = store.getPublicAuthor(authorId);
+  assert.ok(author && author.articleCount >= 1, 'Autor com artigo publicado é encontrado');
+  assert.equal(author.globalName, 'Autora Teste');
+  assert.equal(store.getPublicAuthor('999999999999999990'), null, 'Autor sem artigo publicado não tem página');
+  assert.ok(store.listPublishedTags().includes('jornada'), 'Filtros de categoria vêm das tags reais');
+
+  for (const lang of ['pt', 'en']) {
+    const page = renderer.renderAuthorPage({ author, articles: [published], lang });
+    assert.equal((page.match(/<h1/g) || []).length, 1, `Autor (${lang}): um <h1>`);
+    assert.ok(page.includes('ProfilePage'), `Autor (${lang}): JSON-LD ProfilePage`);
+    assert.ok(page.includes(`/hyperfokus/autor/${authorId}`), `Autor (${lang}): canonical`);
+  }
+
+  const guestHeader = renderer.renderSiteHeader({ lang: 'pt' });
+  assert.ok(guestHeader.includes('/login?redirect=') && guestHeader.includes('/cadastro?redirect='), 'Visitante vê Entrar e Criar conta');
+  const userHeader = renderer.renderSiteHeader({ lang: 'en', user: { id: 'acc_x' } });
+  assert.ok(userHeader.includes('/meu-perfil/escrever?lang=en') && !userHeader.includes('/cadastro'), 'Quem entrou vê Escrever e Meu perfil');
+
+  const howPt = renderer.renderStaticInfoPage({ pageKey: 'como-participar', lang: 'pt' });
+  const howEn = renderer.renderStaticInfoPage({ pageKey: 'como-participar', lang: 'en' });
+  assert.ok(howPt.includes('Pelo site') && howPt.includes('Não precisa ter Discord'), 'Como publicar (PT) explica o caminho pelo site');
+  assert.ok(howEn.includes('On the website') && !howEn.includes('Pelo site'), 'Como publicar (EN) está em inglês');
+
+  const article = renderer.renderArticlePage({ article: published, lang: 'pt' });
+  assert.ok(article.includes('hfEscape(c.content)') && article.includes('hfEscape(c.username)'), 'Comentários são escapados no navegador');
+
+  const express = require('express');
+  const { createAccountRouter } = require('../src/routes/accountRoutes');
+  const { createHyperfokusRouter } = require('../src/routes/hyperfokusRoutes');
+  const app = express();
+  app.use(express.json());
+  app.use('/', createAccountRouter());
+  app.use('/', createHyperfokusRouter({}));
+  const server = await new Promise((resolve) => { const s = app.listen(0, () => resolve(s)); });
+  const base = `http://127.0.0.1:${server.address().port}`;
+  try {
+    const authorRes = await fetch(`${base}/hyperfokus/autor/${authorId}`);
+    assert.equal(authorRes.status, 200);
+    assert.ok((await authorRes.text()).includes('Autora Teste'), 'Rota de autor mostra o perfil, não a home');
+    assert.equal((await fetch(`${base}/hyperfokus/autor/999999999999999990`)).status, 404);
+
+    assert.equal((await fetch(`${base}/hyperfokus/${pending.slug}?preview=true`)).status, 404, '?preview=true não expõe artigo pendente');
+
+    const anonComment = await fetch(`${base}/api/hyperfokus/articles/${published.id}/comments`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: '<img src=x onerror=alert(1)>', username: 'Dono da Pyxie' }),
+    });
+    assert.equal(anonComment.status, 401, 'Comentar exige login');
+    assert.equal((await fetch(`${base}/api/hyperfokus/articles/${published.id}/like`, { method: 'POST' })).status, 401, 'Curtir exige login');
+
+    const evil = await fetch(`${base}/divulgar?redirect=//evil.example`, { redirect: 'manual' });
+    assert.equal(evil.headers.get('location'), '/hyperfokus/projetos', 'Redirecionamento externo é bloqueado');
+  } finally {
+    server.close();
+  }
+}
+console.log('    ✅ 18. Página de autor, entrada no blog, comentários protegidos e redirecionamentos seguros.');
 
 console.log('🎉 TODAS AS FASES (0 A 8) DO PLANO PYXIE HYPERFOKUS CONCLUÍDAS COM 100% DE SUCESSO!\n');
 

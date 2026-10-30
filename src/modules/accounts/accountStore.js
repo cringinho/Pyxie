@@ -193,6 +193,30 @@ function getAccountByEmail(email) {
 }
 
 /**
+ * Login com Discord no site: acha a conta pelo Snowflake ou cria uma, e guarda nome e avatar públicos
+ * (os mesmos que aparecem em comentários). Retorna a conta sem o hash de senha.
+ */
+function upsertDiscordAccount(user) {
+  const discordUserId = String(user?.id || '');
+  if (!/^\d{17,20}$/.test(discordUserId)) throw new Error('invalid_discord_user');
+  const displayName = String(user.global_name || user.username || '').slice(0, 64) || null;
+  const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${discordUserId}/${user.avatar}.png?size=128` : null;
+  const store = loadAccountsStore();
+  let account = Object.values(store.accounts).find((a) => a.discordUserId === discordUserId);
+  const now = new Date().toISOString();
+  if (!account) {
+    createAccount({ discordUserId });
+    return upsertDiscordAccount(user);
+  }
+  account.displayName = displayName;
+  account.avatarUrl = avatarUrl;
+  account.updatedAt = now;
+  saveAccountsStore(store);
+  const { passwordHash: _, ...safeAccount } = account;
+  return safeAccount;
+}
+
+/**
  * Conecta ou funde conta do Discord à conta de e-mail existente (mesma pessoa = uma conta única).
  */
 function linkDiscordAccount(accountId, discordUserId) {
@@ -419,6 +443,7 @@ async function syncAccountToPostgres(account) {
 
 module.exports = {
   createAccount,
+  upsertDiscordAccount,
   authenticateWithPassword,
   getAccountById,
   getAccountByDiscordId,

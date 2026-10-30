@@ -1,5 +1,6 @@
-const { buildArticleSeo, buildHomeSeo, applyInternalLinks } = require('./seoEngine');
+const { buildArticleSeo, buildHomeSeo, buildAuthorSeo, applyInternalLinks } = require('./seoEngine');
 const { getContextualProducts } = require('./shopeeContext');
+const { markdownToHtml } = require('./markdown');
 
 function escapeHtml(str) {
   if (!str) return '';
@@ -87,7 +88,21 @@ function getSharedStyles() {
       padding: 0 1rem;
     }
 
+    .hf-nav { display: flex; gap: 1.25rem; font-size: 0.875rem; font-weight: 700; }
+    .hf-nav a { color: var(--text-muted); text-decoration: none; }
+    .hf-nav a:hover, .hf-nav a:focus-visible { color: #fff; }
+    .nav-actions { display: flex; align-items: center; gap: 0.5rem; }
+    .hf-auth { font-size: 0.8rem; white-space: nowrap; }
+    @media (max-width: 860px) { .hf-nav { display: none; } }
+    @media (max-width: 560px) {
+      .hf-hide-sm { display: none; }
+      .hf-auth, .hf-lang { padding: 6px 10px; font-size: 0.75rem; }
+      .brand { font-size: 1rem; gap: 0.4rem; }
+      .brand > span { display: none; }
+      .header-inner { gap: 0.5rem; }
+    }
     .header-inner {
+      gap: 1rem;
       max-width: 1200px;
       width: 100%;
       margin: 0 auto;
@@ -165,7 +180,7 @@ function getSharedStyles() {
     /* Bento Cards */
     .bento-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
       gap: 1.5rem;
       margin-top: 1.5rem;
     }
@@ -445,6 +460,44 @@ function getSharedStyles() {
  * Script injetado para o Leitor Acessível (Kindle-style, sem quebrar SEO e sem recarregar página).
  */
 function getReaderScript() {
+  return getReaderScriptBody();
+}
+
+/**
+ * Cabeçalho único do Hyperfokus: navegação, idioma e entrada (Entrar / Criar conta ou Escrever / Meu perfil).
+ * `path` é o caminho sem query; o botão de idioma e o redirect do login voltam para ele.
+ */
+function renderSiteHeader({ lang = 'pt', user = null, path = '/hyperfokus', brandLabel = 'Hyperfokus' } = {}) {
+  const isEn = lang === 'en';
+  const q = isEn ? '?lang=en' : '';
+  const here = `${path}${q}`;
+  const langHref = isEn ? path : `${path}?lang=en`;
+  const authHtml = user
+    ? `<a href="/meu-perfil/escrever${q}" class="btn btn-pink hf-auth">✍️ <span class="hf-hide-sm">${isEn ? 'Write' : 'Escrever'}</span></a>
+        <a href="/meu-perfil${q}" class="btn btn-outline hf-auth">${isEn ? 'My profile' : 'Meu perfil'}</a>`
+    : `<a href="/login?redirect=${encodeURIComponent(here)}${isEn ? '&lang=en' : ''}" class="btn btn-outline hf-auth">${isEn ? 'Sign in' : 'Entrar'}</a>
+        <a href="/cadastro?redirect=${encodeURIComponent(here)}${isEn ? '&lang=en' : ''}" class="btn btn-pink hf-auth">${isEn ? 'Create account' : 'Criar conta'}</a>`;
+  return `
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/hyperfokus${q}" class="brand">
+        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="${isEn ? 'Pyxie, the blog mascot' : 'Pyxie, mascote do blog'}" width="34" height="34" />
+        <span>Pyxie <span style="color:var(--accent-pink);">${escapeHtml(brandLabel)}</span></span>
+      </a>
+      <nav class="hf-nav" aria-label="${isEn ? 'Blog navigation' : 'Navegação do blog'}">
+        <a href="/${q}">${isEn ? 'Pyxie home' : 'Início da Pyxie'}</a>
+        <a href="/hyperfokus${q}">${isEn ? 'Articles' : 'Artigos'}</a>
+        <a href="/hyperfokus/como-participar${q}">${isEn ? 'How to publish' : 'Como publicar'}</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="${langHref}" class="btn btn-outline hf-lang" hreflang="${isEn ? 'pt-BR' : 'en'}" aria-label="${isEn ? 'Ler em português' : 'Read in English'}">🌐 <span class="hf-hide-sm">${isEn ? 'Português' : 'English'}</span></a>
+        ${authHtml}
+      </div>
+    </div>
+  </header>`;
+}
+
+function getReaderScriptBody() {
   return `
     <script>
       (function() {
@@ -520,7 +573,7 @@ function getReaderScript() {
 /**
  * Renderiza a Home do Blog (/hyperfokus).
  */
-function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, activeTab = 'recent', activeTag = null, lang = 'pt' } = {}) {
+function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, activeTab = 'recent', activeTag = null, lang = 'pt', user = null, tags = [] } = {}) {
   const isEn = lang === 'en';
   const seo = buildHomeSeo({ lang, tag: activeTag });
   const featured = articles[0] || null;
@@ -528,11 +581,10 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
 
   const shopeeProducts = getContextualProducts(activeTag ? [activeTag] : ['tecnologia', 'autismo'], 4);
 
-  const tags = ['autismo', 'programacao', 'games', 'tecnologia', 'setup', 'livros', 'botanica'];
 
   const tagPillsHtml = tags.map((t) => {
     const isActive = activeTag === t;
-    const url = isActive ? `/hyperfokus${isEn ? '?lang=en' : ''}` : `/hyperfokus?tag=${t}${isEn ? '&lang=en' : ''}`;
+    const url = isActive ? `/hyperfokus${isEn ? '?lang=en' : ''}` : `/hyperfokus/categoria/${encodeURIComponent(t)}${isEn ? '?lang=en' : ''}`;
     return `<a href="${url}" class="tag-pill" style="${isActive ? 'background: var(--accent-pink); color: #fff;' : ''}">#${escapeHtml(t)}</a>`;
   }).join(' ');
 
@@ -599,23 +651,7 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
-        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
-        <span>Pyxie <span style="color:var(--accent-pink);">Hyperfokus</span></span>
-        <span class="brand-tag">${isEn ? 'Portal' : 'Blog'}</span>
-      </a>
-      <div class="nav-actions">
-        <a href="${isEn ? '/hyperfokus' : '/hyperfokus?lang=en'}" class="btn btn-outline" style="font-size:0.75rem;">
-          🌐 ${isEn ? 'Português' : 'English'}
-        </a>
-        <a href="/hyperfokus/como-participar${isEn ? '?lang=en' : ''}" class="btn btn-pink">
-          ✨ ${isEn ? 'How to Publish' : 'Como Publicar'}
-        </a>
-      </div>
-    </div>
-  </header>
+  ${renderSiteHeader({ lang, user, path: activeTag ? `/hyperfokus/categoria/${encodeURIComponent(activeTag)}` : '/hyperfokus' })}
 
   <main class="main-container">
     <!-- Header Hero Banner -->
@@ -640,9 +676,9 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
     ${featured ? `
       <section style="margin-bottom: 3rem;">
         <div class="card" style="border-color: rgba(230,0,103,0.4); background: linear-gradient(135deg, #18092e 0%, #0d041a 100%);">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));">
             <a href="/hyperfokus/${encodeURIComponent(featured.slug)}${isEn ? '?lang=en' : ''}">
-              <img src="${escapeHtml(featured.coverImage || `/api/hyperfokus/og/${featured.id}`)}" alt="Capa destaque: ${escapeHtml(featured.title)}" style="width: 100%; height: 100%; min-height: 280px; max-height: 420px; object-fit: cover;" />
+              <img src="${escapeHtml(featured.coverImage || `/api/hyperfokus/og/${featured.id}`)}" alt="Capa destaque: ${escapeHtml(featured.title)}" style="width: 100%; height: auto; aspect-ratio: 1200 / 630; object-fit: cover; display: block;" />
             </a>
             <div class="card-body" style="padding: 2rem;">
               <span class="brand-tag" style="align-self: flex-start;">🌟 ${isEn ? 'Featured Hyperfocus' : 'Hiperfoco em Destaque'}</span>
@@ -815,43 +851,31 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
 </head>
 <body>
   <!-- Header do Site -->
-  <header class="site-header">
-    <div class="header-inner">
-      <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
-        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
-        <span>Pyxie <span style="color:var(--accent-pink);">Hyperfokus</span></span>
-      </a>
-      <div class="nav-actions">
-        <a href="${isEn ? `/hyperfokus/${article.slug}` : `/hyperfokus/${article.slug}?lang=en`}" class="btn btn-outline" style="font-size:0.75rem;">
-          🌐 ${isEn ? 'Português' : 'English'}
-        </a>
-      </div>
-    </div>
-  </header>
+  ${renderSiteHeader({ lang, user, path: `/hyperfokus/${encodeURIComponent(article.slug)}` })}
 
   <!-- Barra de Leitura Acessível (Kindle style) -->
-  <nav class="reader-toolbar" aria-label="Ferramentas de Leitura Acessível">
+  <nav class="reader-toolbar" aria-label="${isEn ? 'Reading tools' : 'Ferramentas de leitura'}">
     <div class="reader-controls">
-      <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">TAMANHO:</span>
-      <button class="reader-btn" onclick="setReaderSize(-1)" title="Diminuir texto">A−</button>
-      <button class="reader-btn" onclick="setReaderSize(1)" title="Aumentar texto">A+</button>
+      <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">${isEn ? 'SIZE:' : 'TAMANHO:'}</span>
+      <button class="reader-btn" onclick="setReaderSize(-1)" title="${isEn ? 'Smaller text' : 'Diminuir texto'}">A−</button>
+      <button class="reader-btn" onclick="setReaderSize(1)" title="${isEn ? 'Larger text' : 'Aumentar texto'}">A+</button>
 
-      <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700; margin-left:0.5rem;">LARGURA:</span>
-      <button class="reader-btn" onclick="setReaderWidth('compact')">Estreito</button>
-      <button class="reader-btn" onclick="setReaderWidth('normal')">Padrão</button>
-      <button class="reader-btn" onclick="setReaderWidth('wide')">Largo</button>
+      <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700; margin-left:0.5rem;">${isEn ? 'WIDTH:' : 'LARGURA:'}</span>
+      <button class="reader-btn" onclick="setReaderWidth('compact')">${isEn ? 'Narrow' : 'Estreito'}</button>
+      <button class="reader-btn" onclick="setReaderWidth('normal')">${isEn ? 'Default' : 'Padrão'}</button>
+      <button class="reader-btn" onclick="setReaderWidth('wide')">${isEn ? 'Wide' : 'Largo'}</button>
 
-      <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700; margin-left:0.5rem;">ESPAÇAMENTO:</span>
+      <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700; margin-left:0.5rem;">${isEn ? 'SPACING:' : 'ESPAÇAMENTO:'}</span>
       <button class="reader-btn" onclick="setReaderLineHeight('1.4')">1.4</button>
       <button class="reader-btn" onclick="setReaderLineHeight('1.75')">1.75</button>
       <button class="reader-btn" onclick="setReaderLineHeight('2.0')">2.0</button>
     </div>
 
     <div class="reader-controls">
-      <button class="reader-btn" onclick="toggleReaderDyslexic()" title="Fonte de alta legibilidade">Dislexia</button>
-      <button class="reader-btn" onclick="setReaderTheme('dark')">Escuro</button>
-      <button class="reader-btn" onclick="setReaderTheme('sepia')">Sépia</button>
-      <button class="reader-btn" onclick="setReaderTheme('contrast')">Contraste</button>
+      <button class="reader-btn" onclick="toggleReaderDyslexic()" title="${isEn ? 'High-legibility font' : 'Fonte de alta legibilidade'}">${isEn ? 'Dyslexia' : 'Dislexia'}</button>
+      <button class="reader-btn" onclick="setReaderTheme('dark')">${isEn ? 'Dark' : 'Escuro'}</button>
+      <button class="reader-btn" onclick="setReaderTheme('sepia')">${isEn ? 'Sepia' : 'Sépia'}</button>
+      <button class="reader-btn" onclick="setReaderTheme('contrast')">${isEn ? 'Contrast' : 'Contraste'}</button>
     </div>
   </nav>
 
@@ -859,7 +883,7 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
   <main class="article-wrap">
     <!-- Categoria Tags -->
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
-      ${(article.categoryTags || []).map((t) => `<a href="/hyperfokus?tag=${t}${isEn ? '&lang=en' : ''}" class="tag-pill">#${escapeHtml(t)}</a>`).join('')}
+      ${(article.categoryTags || []).map((t) => `<a href="/hyperfokus/categoria/${encodeURIComponent(t)}${isEn ? '?lang=en' : ''}" class="tag-pill">#${escapeHtml(t)}</a>`).join('')}
     </div>
 
     <!-- Título Único H1 Obrigatório por SEO -->
@@ -943,7 +967,14 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
       </h3>
 
       <div style="margin-bottom: 2rem;">
-        <form id="comment-form" onsubmit="submitComment(event, '${article.id}')" style="display: flex; flex-direction: column; gap: 0.75rem;">
+        ${user ? '' : `<div class="card" style="padding:1rem 1.25rem; display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; justify-content:space-between;">
+          <span style="color:var(--text-muted); font-size:0.9rem;">${isEn ? 'Sign in to like and comment. Email or Discord, your choice.' : 'Entre para curtir e comentar. Com e-mail ou Discord, como preferir.'}</span>
+          <span style="display:flex; gap:0.5rem;">
+            <a class="btn btn-outline" href="/login?redirect=${encodeURIComponent(`/hyperfokus/${article.slug}${isEn ? '?lang=en' : ''}`)}${isEn ? '&lang=en' : ''}">${isEn ? 'Sign in' : 'Entrar'}</a>
+            <a class="btn btn-pink" href="/cadastro?redirect=${encodeURIComponent(`/hyperfokus/${article.slug}${isEn ? '?lang=en' : ''}`)}${isEn ? '&lang=en' : ''}">${isEn ? 'Create account' : 'Criar conta'}</a>
+          </span>
+        </div>`}
+        <form id="comment-form" ${user ? '' : 'hidden'} onsubmit="submitComment(event, '${article.id}')" style="display: flex; flex-direction: column; gap: 0.75rem;">
           <textarea id="comment-text" rows="3" placeholder="${isEn ? 'Write a friendly comment...' : 'Deixe um comentário amigável sobre o hiperfoco...'}" style="width: 100%; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 0.75rem; padding: 0.75rem; color: #fff; font-family: inherit; font-size: 0.875rem;" maxlength="1000" required></textarea>
           <div style="display: flex; justify-content: flex-end;">
             <button type="submit" class="btn btn-pink">
@@ -955,7 +986,7 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
 
       <div id="comments-list" style="display: flex; flex-direction: column; gap: 1rem;">
         <!-- Injetado via client script -->
-        <p style="color:var(--text-muted); font-size:0.875rem;">Carregando comentários...</p>
+        <p style="color:var(--text-muted); font-size:0.875rem;">${isEn ? 'Loading comments...' : 'Carregando comentários...'}</p>
       </div>
     </section>
   </main>
@@ -1033,9 +1064,14 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
 
   <!-- Client Script para Like e Comentários -->
   <script>
+    const HF_LOGIN_URL = '/login?redirect=' + encodeURIComponent(location.pathname + location.search);
+    function hfEscape(v) {
+      return String(v == null ? '' : v).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[ch]));
+    }
     async function toggleLike(articleId) {
       try {
         const res = await fetch('/api/hyperfokus/articles/' + articleId + '/like', { method: 'POST' });
+        if (res.status === 401) { location.href = HF_LOGIN_URL; return; }
         const data = await res.json();
         if (data.success) {
           document.getElementById('likes-count').innerText = data.likesCount;
@@ -1051,17 +1087,17 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
         const data = await res.json();
         const container = document.getElementById('comments-list');
         if (!data.comments || data.comments.length === 0) {
-          container.innerHTML = '<p style="color:var(--text-muted); font-size:0.875rem;">Seja o primeiro a comentar!</p>';
+          container.innerHTML = '<p style="color:var(--text-muted); font-size:0.875rem;">${isEn ? 'No comments yet. Be the first!' : 'Seja o primeiro a comentar!'}</p>';
           return;
         }
         container.innerHTML = data.comments.map(c => \`
           <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:0.75rem; padding:1rem;">
             <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
-              <img src="\${c.cachedAvatarWebp || '/assets/pyxie/sticker/sticker_smile.png'}" alt="Foto de perfil de \${c.username}" class="author-avatar" />
-              <strong style="font-size:0.875rem; color:#fff;">\${c.username}</strong>
-              <span style="font-size:0.75rem; color:var(--text-muted); margin-left:auto;">\${new Date(c.createdAt).toLocaleDateString('pt-BR')}</span>
+              <img src="\${hfEscape(c.cachedAvatarWebp || '/assets/pyxie/sticker/sticker_smile.png')}" alt="${isEn ? 'Profile picture of' : 'Foto de perfil de'} \${hfEscape(c.username)}" class="author-avatar" />
+              <strong style="font-size:0.875rem; color:#fff;">\${hfEscape(c.username)}</strong>
+              <span style="font-size:0.75rem; color:var(--text-muted); margin-left:auto;">\${new Date(c.createdAt).toLocaleDateString('${isEn ? 'en-US' : 'pt-BR'}')}</span>
             </div>
-            <p style="font-size:0.875rem; color:var(--text-main);">\${c.content}</p>
+            <p style="font-size:0.875rem; color:var(--text-main); white-space:pre-wrap;">\${hfEscape(c.content)}</p>
           </div>
         \`).join('');
       } catch (err) {
@@ -1079,6 +1115,7 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ content: text })
         });
+        if (res.status === 401) { location.href = HF_LOGIN_URL; return; }
         const data = await res.json();
         if (data.success) {
           document.getElementById('comment-text').value = '';
@@ -1159,7 +1196,7 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
 /**
  * Renderiza Páginas Estáticas Institucionais (/como-participar e /termos-e-regras).
  */
-function renderStaticInfoPage({ pageKey = 'como-participar', lang = 'pt' } = {}) {
+function renderStaticInfoPage({ pageKey = 'como-participar', lang = 'pt', user = null } = {}) {
   const isEn = lang === 'en';
   const isRules = pageKey === 'termos-e-regras';
 
@@ -1167,28 +1204,98 @@ function renderStaticInfoPage({ pageKey = 'como-participar', lang = 'pt' } = {})
     ? (isEn ? 'Community Rules & Terms • Pyxie Hyperfokus' : 'Termos & Regras da Comunidade • Pyxie Hyperfokus')
     : (isEn ? 'How to Participate & Publish • Pyxie Hyperfokus' : 'Como Participar & Publicar • Pyxie Hyperfokus');
 
-  const contentHtml = isRules ? `
-    <h2>1. Compromisso com Conteúdo 100% Humano (Anti-IA)</h2>
-    <p>O Hyperfokus é um santuário para mentes neurodivergentes e entusiastas compartilharem experiências reais. Conteúdos gerados automaticamente por modelos de linguagem (IA) são estritamente rejeitados na moderação editorial.</p>
-    
-    <h2>2. Segurança Psicológica e Temas Sensíveis</h2>
-    <p>Artigos sobre saúde mental, autismo, luto ou crises sensoriais devem manter tom responsável e respeitoso. Não glorificamos automutilação ou sofrimento; o espaço é de acolhimento.</p>
+  const q = isEn ? '?lang=en' : '';
+  const signup = user ? `/meu-perfil/escrever${q}` : `/cadastro?redirect=${encodeURIComponent(`/meu-perfil/escrever${q}`)}${isEn ? '&lang=en' : ''}`;
+  const description = isRules
+    ? (isEn ? 'What can be published on Pyxie Hyperfokus: human-written texts only, care with sensitive topics and your copyright.' : 'O que pode ser publicado no Pyxie Hyperfokus: só texto humano, cuidado com temas sensíveis e seus direitos autorais.')
+    : (isEn ? 'Publish your hyperfocus on Pyxie Hyperfokus: write on the site with an account (email or Discord) or in the Cringelândia forum.' : 'Publique seu hiperfoco no Pyxie Hyperfokus: escreva pelo site com uma conta (e-mail ou Discord) ou pelo fórum da Cringelândia.');
 
-    <h2>3. Direitos Autorais e Licenciamento</h2>
-    <p>Você é o autor do seu texto. Ao publicar no Pyxie Hyperfokus, você concede licença de exibição e divulgação não exclusiva na web, RSS e redes sociais da Pyxie, preservando permanentemente os seus créditos.</p>
-  ` : `
-    <h2>1. Inicie seu Rascunho no Discord</h2>
-    <p>Acesse o canal de fórum <code>#hiperfocos</code> no servidor oficial da <strong>Cringelândia</strong> e crie uma nova postagem. O título do seu tópico será o título provisório do artigo.</p>
+  const rulesPt = `
+    <h2>1. Só texto escrito por gente</h2>
+    <p>O Hyperfokus existe para relatos e guias de quem vive o assunto. Texto gerado por IA é recusado na revisão. Corretor ortográfico pode; escrever por você, não.</p>
+    <h2>2. Cite as fontes</h2>
+    <p>Fato, número ou estudo citado precisa de link para a fonte. Experiência pessoal não precisa: ela é a fonte.</p>
+    <h2>3. Cuidado com temas sensíveis</h2>
+    <p>Saúde mental, autismo, luto e crises sensoriais são bem-vindos, com tom responsável. Nada de glorificar automutilação ou sofrimento. Se você estiver em crise agora, ligue para o CVV no <strong>188</strong> (24 horas, gratuito).</p>
+    <h2>4. Seu texto continua seu</h2>
+    <p>Você mantém a autoria. Ao publicar, autoriza a Pyxie a exibir e divulgar o texto (site, RSS e redes sociais da Pyxie), sempre com o seu nome. Quem copiar precisa dar crédito e link para o artigo original.</p>
+    <h2>5. Remoção</h2>
+    <p>Quer tirar um artigo do ar ou corrigir algo? Abra <a href="/meu-perfil${q}">Meu perfil</a> e use <em>Solicitar remoção</em>. A equipe responde pelo suporte.</p>`;
+  const rulesEn = `
+    <h2>1. Human-written only</h2>
+    <p>Hyperfokus is for stories and guides by people who live the topic. AI-generated text is rejected in review. Spell checkers are fine; something writing for you is not.</p>
+    <h2>2. Cite your sources</h2>
+    <p>Facts, numbers or studies need a link to the source. Personal experience doesn't: you are the source.</p>
+    <h2>3. Care with sensitive topics</h2>
+    <p>Mental health, autism, grief and sensory crises are welcome, written responsibly. No glorifying self-harm or suffering. If you are in crisis right now, please reach out to a local helpline (in Brazil, CVV: <strong>188</strong>).</p>
+    <h2>4. Your text stays yours</h2>
+    <p>You keep authorship. By publishing, you allow Pyxie to display and share the text (site, RSS and Pyxie's social media), always credited to you. Anyone reusing it must credit you and link to the original article.</p>
+    <h2>5. Removal</h2>
+    <p>Want an article taken down or fixed? Open <a href="/meu-perfil${q}">My profile</a> and use <em>Request removal</em>. The team answers through support.</p>`;
 
-    <h2>2. Escreva com Tranquilidade (Trava de Rascunho)</h2>
-    <p>Enquanto você escreve, o <strong>Thread Guard</strong> da Pyxie protege seu tópico contra intromissões: apenas você e os coautores que você adicionar podem enviar mensagens.</p>
+  const howPt = `
+    <p>Dá para publicar de dois jeitos. <strong>Não precisa ter Discord.</strong></p>
+    <h2>Pelo site</h2>
+    <ol>
+      <li><a href="${signup}">Crie sua conta</a> com e-mail e senha ou entre com o Discord.</li>
+      <li>Em <strong>Meu perfil</strong>, clique em <strong>Escrever</strong>. O texto fica salvo como rascunho na sua conta enquanto você escreve.</li>
+      <li>Quando terminar, clique em <strong>Enviar para análise</strong>.</li>
+      <li>A equipe lê o texto. Se aprovar, o artigo vai para o blog com o seu nome e aparece na sua página de autor.</li>
+    </ol>
+    <p><a class="btn btn-pink" href="${signup}">${user ? 'Escrever agora' : 'Criar conta e escrever'}</a></p>
+    <h2>Pelo Discord (Cringelândia)</h2>
+    <ol>
+      <li><a href="/discord" rel="noopener">Entre na Cringelândia</a> e abra o fórum de Hiperfocos.</li>
+      <li>Crie uma postagem. Enquanto ela é um rascunho, só você e seus coautores conseguem escrever ali; outras mensagens são removidas.</li>
+      <li>Quer escrever junto? Use <code>/py-add</code> ou <code>py!add @pessoa</code>.</li>
+      <li>Terminou? Use <code>/py-concluir</code>, <code>py!concluir</code> ou o botão na mensagem da Pyxie. O tópico abre para comentários e o texto vai para a análise.</li>
+      <li>Se aprovado, a Pyxie avisa no tópico com o link do artigo.</li>
+    </ol>
+    <h2>O que a revisão olha</h2>
+    <ul>
+      <li>Texto seu, sem IA (veja as <a href="/hyperfokus/termos-e-regras${q}">regras</a>).</li>
+      <li>Fontes nos fatos que você citar.</li>
+      <li>Formatação: títulos, negrito, listas, links e imagens (o editor tem botões para tudo isso).</li>
+    </ul>
+    <p>A equipe pode ajustar a formatação e o título que aparece no Google, sem mudar o que você disse.</p>
+    <h2>Dúvidas comuns</h2>
+    <h3>Posso editar depois de publicado?</h3>
+    <p>Peça a correção em Meu perfil, em <em>Solicitar remoção</em>, explicando o que mudar.</p>
+    <h3>Quanto tempo demora a análise?</h3>
+    <p>A equipe é pequena e humana; o andamento aparece em Meu perfil.</p>`;
+  const howEn = `
+    <p>There are two ways to publish. <strong>You don't need Discord.</strong></p>
+    <h2>On the website</h2>
+    <ol>
+      <li><a href="${signup}">Create your account</a> with email and password, or sign in with Discord.</li>
+      <li>In <strong>My profile</strong>, click <strong>Write</strong>. Your text is saved as a draft in your account while you write.</li>
+      <li>When you're done, click <strong>Submit for review</strong>.</li>
+      <li>The team reads it. If approved, it goes live on the blog with your name and shows up on your author page.</li>
+    </ol>
+    <p><a class="btn btn-pink" href="${signup}">${user ? 'Write now' : 'Create account and write'}</a></p>
+    <h2>On Discord (Cringelândia)</h2>
+    <ol>
+      <li><a href="/discord" rel="noopener">Join Cringelândia</a> and open the Hyperfocus forum.</li>
+      <li>Create a post. While it's a draft, only you and your co-authors can write there; other messages are removed.</li>
+      <li>Writing with someone? Use <code>/py-add</code> or <code>py!add @person</code>.</li>
+      <li>Done? Use <code>/py-concluir</code>, <code>py!conclude</code> or the button in Pyxie's message. The post opens for comments and goes to review.</li>
+      <li>If approved, Pyxie posts the article link in the thread.</li>
+    </ol>
+    <h2>What review checks</h2>
+    <ul>
+      <li>Your own words, no AI (see the <a href="/hyperfokus/termos-e-regras${q}">rules</a>).</li>
+      <li>Sources for the facts you cite.</li>
+      <li>Formatting: headings, bold, lists, links and images (the editor has buttons for all of it).</li>
+    </ul>
+    <p>The team may adjust formatting and the title shown on Google, without changing what you said.</p>
+    <h2>Common questions</h2>
+    <h3>Can I edit after it's published?</h3>
+    <p>Ask for a fix in My profile, under <em>Request removal</em>, explaining what to change.</p>
+    <h3>How long does review take?</h3>
+    <p>The team is small and human; you can follow the status in My profile.</p>`;
 
-    <h2>3. Adicione Coautores</h2>
-    <p>Quer escrever em conjunto com um amigo do servidor? Use o comando <code>/py-add @usuario</code> para convidá-lo como colaborador.</p>
-
-    <h2>4. Conclua e Envie para a Fila</h2>
-    <p>Quando o relato estiver completo, use <code>/py-concluir</code> ou clique no botão verde <em>"Concluir e postar"</em> na mensagem fixada. O artigo seguirá imediatamente para a revisão editorial do painel!</p>
-  `;
+  const contentHtml = isRules ? (isEn ? rulesEn : rulesPt) : (isEn ? howEn : howPt);
+  const canonical = `https://pyxie.com.br/hyperfokus/${isRules ? 'termos-e-regras' : 'como-participar'}`;
 
   return `<!DOCTYPE html>
 <html lang="${isEn ? 'en' : 'pt-BR'}">
@@ -1196,18 +1303,20 @@ function renderStaticInfoPage({ pageKey = 'como-participar', lang = 'pt' } = {})
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(description)}">
+  <link rel="canonical" href="${canonical}">
+  <link rel="alternate" hreflang="pt-BR" href="${canonical}">
+  <link rel="alternate" hreflang="en" href="${canonical}?lang=en">
+  <link rel="alternate" hreflang="x-default" href="${canonical}">
+  <meta property="og:title" content="${escapeHtml(title)}">
+  <meta property="og:description" content="${escapeHtml(description)}">
+  <meta property="og:url" content="${canonical}">
+  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/sticker/sticker_smile.png">
+  <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: title, description, url: canonical, inLanguage: isEn ? 'en' : 'pt-BR' })}</script>
   <style>${getSharedStyles()}</style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
-        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
-        <span>Pyxie <span style="color:var(--accent-pink);">Hyperfokus</span></span>
-      </a>
-      <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="btn btn-outline">← ${isEn ? 'Back to Blog' : 'Voltar ao Blog'}</a>
-    </div>
-  </header>
+  ${renderSiteHeader({ lang, user, path: `/hyperfokus/${pageKey}` })}
 
   <main class="article-wrap">
     <h1 class="article-title">${escapeHtml(title)}</h1>
@@ -1322,6 +1431,15 @@ function renderLoginPage({ lang = 'pt', redirect = '/meu-perfil', error = null, 
       ${message ? `<div class="alert-box alert-success">${escapeHtml(message)}</div>` : ''}
       <div id="client-error" class="alert-box alert-error" style="display:none;"></div>
 
+
+      <a href="/auth/discord?next=${encodeURIComponent(redirect)}" class="btn" style="width:100%; justify-content:center; background:#5865F2; color:#fff; margin-bottom:1rem;">
+        ${isEn ? 'Sign in with Discord' : 'Entrar com Discord'}
+      </a>
+      <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; color:var(--text-muted); font-size:0.8rem;">
+        <span style="flex:1; height:1px; background:var(--card-border);"></span>
+        ${isEn ? 'or with email' : 'ou com e-mail'}
+        <span style="flex:1; height:1px; background:var(--card-border);"></span>
+      </div>
       <form id="login-form">
         <div class="form-group">
           <label class="form-label" for="login-email">${isEn ? 'Email Address' : 'Endereço de E-mail'}</label>
@@ -1456,13 +1574,22 @@ function renderRegisterPage({ lang = 'pt', redirect = '/meu-perfil', error = nul
       </h1>
       <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem; font-style:italic;">
         ${isEn
-          ? '“Creating an account without Discord? Tsc, more paperwork for me... At least pick a strong password!”'
-          : '“Cadastrando conta sem Discord? Tsc, mais trabalho pra mim... Pelo menos coloca uma senha forte, subordinado!”'}
+          ? '“A new author? Tsc, more work for me... Fine. Pick Discord or a strong password, I won\'t say it twice!”'
+          : '“Autor novo? Tsc, mais trabalho pra mim... Tá. Entra com o Discord ou escolhe uma senha forte, não vou repetir!”'}
       </p>
 
       ${error ? `<div class="alert-box alert-error">${escapeHtml(error)}</div>` : ''}
       <div id="client-error" class="alert-box alert-error" style="display:none;"></div>
 
+
+      <a href="/auth/discord?next=${encodeURIComponent(redirect)}" class="btn" style="width:100%; justify-content:center; background:#5865F2; color:#fff; margin-bottom:1rem;">
+        ${isEn ? 'Sign up with Discord' : 'Criar conta com Discord'}
+      </a>
+      <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; color:var(--text-muted); font-size:0.8rem;">
+        <span style="flex:1; height:1px; background:var(--card-border);"></span>
+        ${isEn ? 'or with email' : 'ou com e-mail'}
+        <span style="flex:1; height:1px; background:var(--card-border);"></span>
+      </div>
       <form id="reg-form">
         <div class="form-group">
           <label class="form-label" for="reg-email">${isEn ? 'Email Address' : 'Endereço de E-mail'}</label>
@@ -1837,6 +1964,7 @@ function renderWebEditorPage({ account, draft = null, lang = 'pt' } = {}) {
   const contentVal = draft?.contentMarkdown || '';
   const coverVal = draft?.coverImage || '';
   const tagsVal = (draft?.categoryTags || []).join(', ');
+  const initialHtml = contentVal ? markdownToHtml(contentVal) : '';
 
   return `<!DOCTYPE html>
 <html lang="${isEn ? 'en' : 'pt-BR'}">
@@ -1984,44 +2112,45 @@ function renderWebEditorPage({ account, draft = null, lang = 'pt' } = {}) {
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="inp-markdown">
-            ${isEn ? 'Content in Markdown (headings, code blocks, bold, quotes)' : 'Conteúdo em Markdown (títulos, blocos de código, negrito, citações)'}
-          </label>
-          <textarea id="inp-markdown" class="textarea-md" placeholder="# Meu Hiperfoco&#10;&#10;Escreva sua pesquisa e experiência aqui...">${escapeHtml(contentVal)}</textarea>
+          <span class="form-label" id="lbl-content">${isEn ? 'Your article' : 'Seu artigo'}</span>
+          <div id="pyx-editor" aria-labelledby="lbl-content"></div>
+          <noscript><textarea id="inp-markdown-ns" class="textarea-md" disabled>${escapeHtml(contentVal)}</textarea></noscript>
+          <textarea id="inp-markdown" class="textarea-md" hidden aria-hidden="true">${escapeHtml(contentVal)}</textarea>
         </div>
       </div>
 
-      <!-- Coluna da Direita: Pré-Visualização ao Vivo -->
-      <div class="editor-panel">
-        <h2 style="font-size:1.1rem; font-weight:700; color:var(--text-muted); margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:0.5rem;">
-          👁️ ${isEn ? 'Live Article Preview' : 'Pré-Visualização do Artigo'}
-        </h2>
-        <div id="preview-area" class="preview-pane">
-          <h2 id="preview-title" style="font-size:1.5rem; font-weight:900; color:#fff; margin-bottom:1rem;">
-            ${escapeHtml(titleVal || (isEn ? 'Article Title' : 'Título do Artigo'))}
-          </h2>
-          <div id="preview-body" style="font-size:0.95rem; line-height:1.7; color:#e2e8f0; white-space:pre-wrap;">
-            ${escapeHtml(contentVal || (isEn ? 'Start typing in the editor on the left...' : 'Comece a escrever no editor à esquerda...'))}
-          </div>
-        </div>
-      </div>
+      <!-- Coluna da Direita: dicas de escrita -->
+      <aside class="editor-panel" aria-labelledby="tips-title">
+        <h2 id="tips-title" style="font-size:1.1rem; font-weight:800; color:#fff; margin-bottom:0.75rem;">💡 ${isEn ? 'Before you submit' : 'Antes de enviar'}</h2>
+        <ul style="display:flex; flex-direction:column; gap:0.6rem; font-size:0.9rem; color:var(--text-muted); padding-left:1.1rem;">
+          <li>${isEn ? 'Use <strong>Heading</strong> and <strong>Subheading</strong> to split the text; it helps people (and Google) read it.' : 'Use <strong>Título</strong> e <strong>Subtítulo</strong> para dividir o texto; ajuda quem lê (e o Google).'}</li>
+          <li>${isEn ? 'Link the source of every fact or number you cite.' : 'Coloque link para a fonte de cada fato ou número que citar.'}</li>
+          <li>${isEn ? 'Code from GitHub: use the GitHub button in the toolbar.' : 'Código do GitHub: use o botão do GitHub na barra do editor.'}</li>
+          <li>${isEn ? 'Your words only, no AI.' : 'Só palavras suas, sem IA.'} <a href="/hyperfokus/termos-e-regras${isEn ? '?lang=en' : ''}">${isEn ? 'Rules' : 'Regras'}</a></li>
+          <li>${isEn ? 'Save often. Drafts stay private in your account until you submit them.' : 'Salve sempre. O rascunho fica só na sua conta até você enviar.'}</li>
+        </ul>
+      </aside>
     </div>
   </main>
 
+  <script src="/js/pyxie-editor.js?v=3"></script>
   <script>
     let activeDraftId = '${draft ? draft.id : ''}';
 
     const inpTitle = document.getElementById('inp-title');
     const inpMarkdown = document.getElementById('inp-markdown');
-    const prevTitle = document.getElementById('preview-title');
-    const prevBody = document.getElementById('preview-body');
-
-    inpTitle.addEventListener('input', () => {
-      prevTitle.textContent = inpTitle.value || '${isEn ? 'Article Title' : 'Título do Artigo'}';
-    });
-
-    inpMarkdown.addEventListener('input', () => {
-      prevBody.textContent = inpMarkdown.value || '${isEn ? 'Start typing in the editor on the left...' : 'Comece a escrever no editor à esquerda...'}';
+    let editor = null;
+    function currentMarkdown() {
+      return editor ? editor.getMarkdown() : inpMarkdown.value;
+    }
+    window.PyxieEditor.mount(document.getElementById('pyx-editor'), {
+      lang: '${isEn ? 'en' : 'pt'}',
+      html: ${JSON.stringify(initialHtml).replace(/</g, '\\u003c')},
+      label: '${isEn ? 'Your article' : 'Seu artigo'}',
+      onGithub: () => document.getElementById('inp-github-url').focus(),
+    }).then((ed) => { editor = ed; }).catch(() => {
+      inpMarkdown.hidden = false;
+      inpMarkdown.removeAttribute('aria-hidden');
     });
 
     // Importador de código do GitHub
@@ -2040,12 +2169,11 @@ function renderWebEditorPage({ account, draft = null, lang = 'pt' } = {}) {
         });
         const data = await res.json();
         if (data.success && data.snippet) {
-          const snippetMd = data.snippet.markdownSnippet;
-          const cursorPos = inpMarkdown.selectionStart;
-          const textBefore = inpMarkdown.value.substring(0, cursorPos);
-          const textAfter = inpMarkdown.value.substring(cursorPos);
-          inpMarkdown.value = textBefore + '\n\n' + snippetMd + '\n\n' + textAfter;
-          prevBody.textContent = inpMarkdown.value;
+          if (editor) {
+            editor.insertCode('// ' + data.snippet.originalUrl + '\\n' + data.snippet.snippetCode, data.snippet.language);
+          } else {
+            inpMarkdown.value += '\\n\\n' + data.snippet.markdownSnippet + '\\n\\n';
+          }
           alert('${isEn ? 'Code snippet successfully imported!' : 'Trecho de código importado com sucesso!'}');
           document.getElementById('inp-github-url').value = '';
         } else {
@@ -2061,7 +2189,7 @@ function renderWebEditorPage({ account, draft = null, lang = 'pt' } = {}) {
     // Salvar Rascunho
     async function saveDraft() {
       const title = inpTitle.value.trim();
-      const contentMarkdown = inpMarkdown.value;
+      const contentMarkdown = currentMarkdown();
       const categoryTags = document.getElementById('inp-tags').value.split(',').map(s => s.trim()).filter(Boolean);
       const coverImage = document.getElementById('inp-cover').value.trim();
 
@@ -2142,7 +2270,7 @@ function renderWebEditorPage({ account, draft = null, lang = 'pt' } = {}) {
  * Fase 8: Suporte a bordas cosméticas (Neon Lilás, Cyber-Pink animada, Ouro Místico)
  * Respeita estritamente prefers-reduced-motion.
  */
-function renderProjectsShowcasePage({ partners = [], activeCategory = 'all', lang = 'pt' } = {}) {
+function renderProjectsShowcasePage({ partners = [], activeCategory = 'all', lang = 'pt', user = null } = {}) {
   const isEn = lang === 'en';
   const sharedCss = getSharedStyles();
 
@@ -2181,7 +2309,7 @@ function renderProjectsShowcasePage({ partners = [], activeCategory = 'all', lan
     }
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
       gap: 1.5rem;
       margin-top: 2rem;
     }
@@ -2200,22 +2328,7 @@ function renderProjectsShowcasePage({ partners = [], activeCategory = 'all', lan
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
-        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
-        <span>Pyxie <span style="color:var(--accent-pink);">Projetos</span></span>
-      </a>
-      <div class="nav-actions">
-        <a href="${isEn ? '/hyperfokus/projetos' : '/hyperfokus/projetos?lang=en'}" class="btn btn-outline" style="font-size:0.75rem;">
-          🌐 ${isEn ? 'Português' : 'English'}
-        </a>
-        <a href="/meu-perfil${isEn ? '?lang=en' : ''}" class="btn btn-pink" style="font-size:0.8rem;">
-          🚀 ${isEn ? 'Promote Your Project' : 'Divulgar Meu Projeto'}
-        </a>
-      </div>
-    </div>
-  </header>
+  ${renderSiteHeader({ lang, user, path: '/hyperfokus/projetos', brandLabel: isEn ? 'Projects' : 'Projetos' })}
 
   <main class="main-container">
     <div style="margin-bottom: 2rem; text-align: left;">
@@ -2286,7 +2399,90 @@ function renderProjectsShowcasePage({ partners = [], activeCategory = 'all', lan
 }
 
 
+/**
+ * Página pública de autor (/hyperfokus/autor/:userId): quem é, quantos artigos e a lista deles.
+ */
+function renderAuthorPage({ author, articles = [], lang = 'pt', user = null } = {}) {
+  const isEn = lang === 'en';
+  const q = isEn ? '?lang=en' : '';
+  const seo = buildAuthorSeo({ author, articleCount: author.articleCount, lang });
+  const name = author.globalName || author.username;
+  const avatar = author.cachedAvatarWebp || '/assets/pyxie/sticker/sticker_smile.png';
+  const isSelf = Boolean(user && user.discordUserId && user.discordUserId === author.userId);
+
+  const cardsHtml = articles.map((art) => {
+    const cover = art.coverImage || `/api/hyperfokus/og/${art.id}`;
+    const role = (art.authors || []).find((a) => a.userId === author.userId)?.role;
+    return `
+      <article class="card">
+        <a href="/hyperfokus/${encodeURIComponent(art.slug)}${q}">
+          <img src="${escapeHtml(cover)}" alt="${isEn ? 'Article cover' : 'Capa do artigo'}: ${escapeHtml(art.title)}" class="card-thumb" loading="lazy" />
+        </a>
+        <div class="card-body">
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            ${(art.categoryTags || []).slice(0, 2).map((tg) => `<a href="/hyperfokus/categoria/${encodeURIComponent(tg)}${q}" class="tag-pill">#${escapeHtml(tg)}</a>`).join('')}
+            ${role === 'COLLABORATOR' ? `<span class="tag-pill">${isEn ? 'co-author' : 'coautoria'}</span>` : ''}
+          </div>
+          <h2 class="card-title"><a href="/hyperfokus/${encodeURIComponent(art.slug)}${q}">${escapeHtml(art.title)}</a></h2>
+          <div class="card-meta">
+            <span>${formatDate(art.publishedAt || art.createdAt, lang)} • ⏳ ${art.readingTimeMinutes || 2} min</span>
+            <span style="margin-left:auto;">❤️ ${Number(art.likesCount || 0)}</span>
+          </div>
+        </div>
+      </article>`;
+  }).join('');
+
+  return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'pt-BR'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(seo.title)}</title>
+  <meta name="description" content="${escapeHtml(seo.description)}">
+  <link rel="canonical" href="${escapeHtml(seo.canonical)}">
+  ${seo.hreflangs.map((h) => `<link rel="alternate" hreflang="${h.lang}" href="${escapeHtml(h.href)}">`).join('\n  ')}
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta property="og:title" content="${escapeHtml(seo.title)}">
+  <meta property="og:description" content="${escapeHtml(seo.description)}">
+  <meta property="og:url" content="${escapeHtml(seo.canonical)}">
+  <meta property="og:image" content="${escapeHtml(seo.coverImage)}">
+  <meta property="og:type" content="profile">
+  <meta name="twitter:card" content="summary">
+  <script type="application/ld+json">${JSON.stringify(seo.jsonLd).replace(/</g, '\\u003c')}</script>
+  <style>${getSharedStyles()}</style>
+</head>
+<body>
+  ${renderSiteHeader({ lang, user, path: `/hyperfokus/autor/${encodeURIComponent(author.userId)}` })}
+  <main class="main-container">
+    <section class="card" style="padding:1.75rem; margin-bottom:2rem; display:flex; flex-wrap:wrap; align-items:center; gap:1.25rem;">
+      <img src="${escapeHtml(avatar)}" alt="${isEn ? 'Profile picture of' : 'Foto de perfil de'} ${escapeHtml(name)}" width="88" height="88" style="border-radius:50%; border:3px solid var(--accent-pink); object-fit:cover;" />
+      <div style="flex:1; min-width:220px;">
+        <h1 style="font-size:clamp(1.6rem, 4vw, 2.2rem); font-weight:900; color:#fff;">${escapeHtml(name)}</h1>
+        ${author.globalName && author.globalName !== author.username ? `<p style="color:var(--text-muted);">@${escapeHtml(author.username)}</p>` : ''}
+        <p style="color:var(--text-muted); margin-top:0.5rem;">
+          📝 <strong style="color:#fff;">${author.articleCount}</strong> ${isEn ? (author.articleCount === 1 ? 'article' : 'articles') : (author.articleCount === 1 ? 'artigo publicado' : 'artigos publicados')}
+          &nbsp;•&nbsp; ❤️ <strong style="color:#fff;">${author.likes}</strong> ${isEn ? 'likes received' : 'curtidas recebidas'}
+        </p>
+      </div>
+      ${isSelf ? `<a href="/meu-perfil${q}" class="btn btn-outline">${isEn ? 'Manage my articles' : 'Gerenciar meus artigos'}</a>` : ''}
+    </section>
+    <h2 style="font-size:1.5rem; font-weight:900; color:#fff; margin-bottom:1rem;">${isEn ? `Articles by ${escapeHtml(name)}` : `Artigos de ${escapeHtml(name)}`}</h2>
+    <div class="bento-grid">${cardsHtml}</div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="/${q}">${isEn ? 'Pyxie home' : 'Início da Pyxie'}</a>
+      <a href="/hyperfokus${q}">Blog Hyperfokus</a>
+      <a href="/hyperfokus/como-participar${q}">${isEn ? 'How to publish' : 'Como publicar'}</a>
+    </div>
+  </footer>
+</body>
+</html>`;
+}
+
 module.exports = {
+  renderAuthorPage,
+  renderSiteHeader,
   renderHomePage,
   renderArticlePage,
   renderStaticInfoPage,

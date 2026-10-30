@@ -164,7 +164,7 @@ function buildArticleSeo({ article, lang = 'pt' }) {
  */
 function buildHomeSeo({ lang = 'pt', tag = null } = {}) {
   const isEn = lang === 'en';
-  const canonical = `${SITE_URL}/hyperfokus`;
+  const canonical = tag ? `${SITE_URL}/hyperfokus/categoria/${encodeURIComponent(tag)}` : `${SITE_URL}/hyperfokus`;
   const title = tag
     ? (isEn ? `Hyperfokus: #${tag} • Pyxie Portal` : `Hiperfocos sobre #${tag} • Blog da Pyxie`)
     : (isEn ? 'Pyxie Hyperfokus • Community Editorial Portal & Authentic Stories' : 'Pyxie Hyperfokus • Portal Editorial da Comunidade & Hiperfocos Autênticos');
@@ -205,6 +205,37 @@ function buildHomeSeo({ lang = 'pt', tag = null } = {}) {
  * - Ignora blocos de código (<code>, <pre>), links já existentes (<a>), títulos (<h1>-<h6>) e blockquotes.
  * - Não vincula o artigo a ele mesmo.
  */
+function buildAuthorSeo({ author, articleCount = 0, lang = 'pt' } = {}) {
+  const isEn = lang === 'en';
+  const canonical = `${SITE_URL}/hyperfokus/autor/${author.userId}`;
+  const name = author.globalName || author.username;
+  const title = isEn ? `${name} • Hyperfokus author` : `${name} • Autor(a) no Hyperfokus`;
+  const description = isEn
+    ? `${articleCount} article(s) written by ${name} for Pyxie Hyperfokus, the Cringelândia community blog.`
+    : `${articleCount} artigo(s) escritos por ${name} no Pyxie Hyperfokus, o blog da comunidade Cringelândia.`;
+  const image = author.cachedAvatarWebp
+    ? `${SITE_URL}${author.cachedAvatarWebp.startsWith('/') ? '' : '/'}${author.cachedAvatarWebp}`
+    : `${SITE_URL}/assets/pyxie/sticker/sticker_smile.png`;
+  return {
+    title,
+    description,
+    canonical,
+    hreflangs: [
+      { lang: 'pt-BR', href: canonical },
+      { lang: 'en', href: `${canonical}?lang=en` },
+      { lang: 'x-default', href: canonical },
+    ],
+    coverImage: image,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'ProfilePage',
+      url: canonical,
+      name: title,
+      mainEntity: { '@type': 'Person', name, alternateName: author.username, identifier: author.userId, image, url: canonical },
+    },
+  };
+}
+
 function applyInternalLinks(contentHtml, currentArticleId) {
   if (!contentHtml || typeof contentHtml !== 'string') return contentHtml;
 
@@ -378,6 +409,7 @@ function generateBlogRssXml(lang = 'pt') {
 }
 
 module.exports = {
+  buildAuthorSeo,
   buildArticleSeo,
   buildHomeSeo,
   extractFaqFromHtml,

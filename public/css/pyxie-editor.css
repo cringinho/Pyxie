@@ -1,0 +1,142 @@
+/* Tema Dark-Kawaii da Pyxie para o editor (Quill "snow" por baixo). Paleta: #121216, #1A1A22, #8B5CF6, #E60067. */
+.pyx-editor {
+  --pyx-bg: #120924;
+  --pyx-bar: #1a1a22;
+  --pyx-line: rgba(139, 92, 246, 0.28);
+  --pyx-violet: #8b5cf6;
+  --pyx-pink: #e60067;
+  --pyx-text: #ece8f6;
+  --pyx-muted: #a69cc0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--pyx-line);
+  border-radius: 14px;
+  background: var(--pyx-bg);
+  overflow: hidden;
+  color: var(--pyx-text);
+}
+.pyx-editor:focus-within { border-color: var(--pyx-violet); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25); }
+
+/* Barra */
+.pyx-editor .pyx-toolbar.ql-toolbar.ql-snow {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border: 0;
+  border-bottom: 1px solid var(--pyx-line);
+  background: var(--pyx-bar);
+  padding: 6px 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 4px;
+}
+.pyx-editor .ql-toolbar.ql-snow .ql-formats { margin-right: 6px; display: inline-flex; align-items: center; }
+.pyx-editor .ql-toolbar.ql-snow button,
+.pyx-editor .pyx-github {
+  width: 34px;
+  height: 32px;
+  padding: 6px;
+  border-radius: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--pyx-muted);
+  cursor: pointer;
+}
+.pyx-editor .pyx-github svg { width: 18px; height: 18px; }
+.pyx-editor .ql-snow .ql-stroke { stroke: var(--pyx-muted); }
+.pyx-editor .ql-snow .ql-fill { fill: var(--pyx-muted); }
+.pyx-editor .ql-snow .ql-picker { color: var(--pyx-muted); font-weight: 700; }
+.pyx-editor .ql-toolbar.ql-snow button:hover,
+.pyx-editor .pyx-github:hover,
+.pyx-editor .ql-toolbar.ql-snow button:focus-visible,
+.pyx-editor .pyx-github:focus-visible { background: rgba(139, 92, 246, 0.16); color: #fff; outline: none; }
+.pyx-editor .ql-toolbar.ql-snow button:hover .ql-stroke,
+.pyx-editor .ql-toolbar.ql-snow button:focus-visible .ql-stroke { stroke: #fff; }
+.pyx-editor .ql-toolbar.ql-snow button:hover .ql-fill,
+.pyx-editor .ql-toolbar.ql-snow button:focus-visible .ql-fill { fill: #fff; }
+.pyx-editor .ql-toolbar.ql-snow button.ql-active { background: rgba(230, 0, 103, 0.18); }
+.pyx-editor .ql-toolbar.ql-snow button.ql-active .ql-stroke { stroke: var(--pyx-pink); }
+.pyx-editor .ql-toolbar.ql-snow button.ql-active .ql-fill { fill: var(--pyx-pink); }
+.pyx-editor .ql-toolbar.ql-snow .ql-picker-label { border-radius: 8px; border: 1px solid transparent; }
+.pyx-editor .ql-toolbar.ql-snow .ql-picker-label:hover,
+.pyx-editor .ql-toolbar.ql-snow .ql-picker-label.ql-active { color: var(--pyx-pink); }
+.pyx-editor .ql-toolbar.ql-snow .ql-picker-label:hover .ql-stroke,
+.pyx-editor .ql-toolbar.ql-snow .ql-picker-label.ql-active .ql-stroke { stroke: var(--pyx-pink); }
+.pyx-editor .ql-snow .ql-picker-options {
+  background: var(--pyx-bar);
+  border: 1px solid var(--pyx-line) !important;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+}
+.pyx-editor .ql-snow .ql-picker-item:hover,
+.pyx-editor .ql-snow .ql-picker-item.ql-selected { color: var(--pyx-pink); }
+/* Rótulos do seletor de estilo vêm do <option> (traduzidos), não do texto fixo em inglês do tema. */
+.pyx-editor .ql-snow .ql-picker.ql-header { width: 118px; }
+.pyx-editor .ql-snow .ql-picker.ql-header .ql-picker-label::before,
+.pyx-editor .ql-snow .ql-picker.ql-header .ql-picker-item::before { content: attr(data-label); }
+
+/* Área de escrita */
+.pyx-editor .ql-container.ql-snow { border: 0; font-family: inherit; font-size: 1.02rem; }
+.pyx-editor .ql-editor {
+  min-height: 340px;
+  padding: 20px 22px;
+  line-height: 1.75;
+  color: var(--pyx-text);
+  caret-color: var(--pyx-pink);
+}
+.pyx-editor .ql-editor.ql-blank::before { color: var(--pyx-muted); font-style: normal; left: 22px; right: 22px; opacity: 0.8; }
+.pyx-editor .ql-editor h2 { font-size: 1.5rem; font-weight: 900; color: #fff; margin: 1.1em 0 0.4em; }
+.pyx-editor .ql-editor h3 { font-size: 1.2rem; font-weight: 800; color: #e9ddff; margin: 1em 0 0.35em; }
+.pyx-editor .ql-editor a { color: #f472b6; text-decoration: underline; }
+.pyx-editor .ql-editor blockquote {
+  border-left: 4px solid var(--pyx-pink);
+  background: rgba(230, 0, 103, 0.07);
+  color: #f5d0e4;
+  margin: 0.8em 0;
+  padding: 0.5em 1em;
+  border-radius: 0 10px 10px 0;
+}
+.pyx-editor .ql-editor code { background: rgba(139, 92, 246, 0.18); color: #e9ddff; border-radius: 6px; padding: 0.1em 0.35em; }
+.pyx-editor .ql-editor .ql-code-block-container,
+.pyx-editor .ql-snow .ql-editor pre {
+  background: #0b0614;
+  color: #e2e8f0;
+  border: 1px solid var(--pyx-line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.9rem;
+}
+.pyx-editor .ql-editor li[data-list='bullet'] > .ql-ui::before { color: var(--pyx-pink); }
+
+/* Caixinha de link */
+.pyx-editor .ql-snow .ql-tooltip {
+  background: var(--pyx-bar);
+  color: var(--pyx-text);
+  border: 1px solid var(--pyx-line);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
+  z-index: 5;
+}
+.pyx-editor .ql-snow .ql-tooltip input[type='text'] { background: #0b0614; color: #fff; border: 1px solid var(--pyx-line); border-radius: 6px; }
+.pyx-editor .ql-snow .ql-tooltip a.ql-action,
+.pyx-editor .ql-snow .ql-tooltip a.ql-remove,
+.pyx-editor .ql-snow .ql-tooltip a.ql-preview { color: #f472b6; }
+
+/* Rodapé com contagem */
+.pyx-editor .pyx-status {
+  border-top: 1px solid var(--pyx-line);
+  background: var(--pyx-bar);
+  color: var(--pyx-muted);
+  font-size: 0.78rem;
+  padding: 6px 14px;
+  text-align: right;
+}
+
+@media (max-width: 560px) {
+  .pyx-editor .ql-editor { padding: 16px 14px; min-height: 280px; }
+  .pyx-editor .ql-toolbar.ql-snow button, .pyx-editor .pyx-github { width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pyx-editor, .pyx-editor * { transition: none !important; }
+}
