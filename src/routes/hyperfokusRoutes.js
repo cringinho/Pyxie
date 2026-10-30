@@ -230,7 +230,34 @@ function createHyperfokusRouter({ publicDir } = {}) {
     }));
   });
 
-  // 9. Artigo Completo (/hyperfokus/:slug)
+  // 9. Vitrine de Projetos & Criadores (Fase 8 - antes de /hyperfokus/:slug)
+  router.get('/hyperfokus/projetos', (req, res) => {
+    const lang = req.query.lang === 'en' ? 'en' : 'pt';
+    const category = req.query.category || 'all';
+
+    const partnersCatalog = partnershipManager.getPartnershipCatalog(category !== 'all' ? category : null);
+    const partnersList = (partnersCatalog.partners || []).map((p) => {
+      const stats = showcaseReferrals.getReferralStats(p.ownerId || p.id);
+      return {
+        ...p,
+        badge: stats.badge,
+        referralsCount: stats.count,
+      };
+    });
+
+    // Ordenação: badges com maior prioridade vêm primeiro (Cyber-Pink, Gold)
+    partnersList.sort((a, b) => (b.badge?.priority || 0) - (a.badge?.priority || 0));
+
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    return res.send(renderProjectsShowcasePage({
+      partners: partnersList,
+      activeCategory: category,
+      lang,
+    }));
+  });
+
+  // 10. Artigo Completo (/hyperfokus/:slug)
   router.get('/hyperfokus/:slug', (req, res) => {
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
     const slug = req.params.slug;
@@ -338,33 +365,6 @@ function createHyperfokusRouter({ publicDir } = {}) {
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
     res.setHeader('Cache-Control', 'private, no-cache');
     return res.send(renderWebEditorPage({ account, draft, lang }));
-  });
-
-  // 11. Vitrine de Projetos & Criadores (Fase 8)
-  router.get('/hyperfokus/projetos', (req, res) => {
-    const lang = req.query.lang === 'en' ? 'en' : 'pt';
-    const category = req.query.category || 'all';
-
-    const partnersCatalog = partnershipManager.getPartnershipCatalog(category !== 'all' ? category : null);
-    const partnersList = (partnersCatalog.partners || []).map((p) => {
-      const stats = showcaseReferrals.getReferralStats(p.ownerId || p.id);
-      return {
-        ...p,
-        badge: stats.badge,
-        referralsCount: stats.count,
-      };
-    });
-
-    // Ordenação: badges com maior prioridade vêm primeiro (Cyber-Pink, Gold)
-    partnersList.sort((a, b) => (b.badge?.priority || 0) - (a.badge?.priority || 0));
-
-    res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-    res.setHeader('Cache-Control', 'public, max-age=300');
-    return res.send(renderProjectsShowcasePage({
-      partners: partnersList,
-      activeCategory: category,
-      lang,
-    }));
   });
 
   // 12. Rota de Indicação com Cookie Antifraude (/divulgar?ref={snowflake})
