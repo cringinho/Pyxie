@@ -34,6 +34,7 @@ const acervoAuditService = require('./src/services/acervoAuditService');
 const { createAdminMasterRouter } = require('./src/routes/adminMasterRoutes');
 const { createDashboardRouter } = require('./src/routes/dashboardRoutes');
 const { createHyperfokusRouter } = require('./src/routes/hyperfokusRoutes');
+const { createAccountRouter } = require('./src/routes/accountRoutes');
 const { createBotBridge } = require('./src/services/botBridge');
 const { createExpressTelemetryMiddleware } = require('./src/services/resourceTelemetry');
 const { createRouteGateMiddleware } = require('./src/services/webRoutesManager');
@@ -346,6 +347,7 @@ app.use(
   })
 );
 
+app.use('/', createAccountRouter());
 app.use('/', createHyperfokusRouter({ publicDir }));
 
 // Tratamento gracioso de payloads JSON malformados

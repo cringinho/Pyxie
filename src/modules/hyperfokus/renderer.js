@@ -730,6 +730,27 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
     </div>
   </main>
 
+  <!-- Parede de Engajamento Acolhedora (Automação 10: 1x por sessão, não bloqueia leitura) -->
+  <aside id="engagement-wall" style="display:none; position:fixed; bottom:20px; right:20px; max-width:360px; background:#120924; border:2px solid #E60067; border-radius:1rem; padding:1.25rem; box-shadow:0 12px 35px rgba(0,0,0,0.7); z-index:999;" aria-label="Aviso da Comunidade">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+      <strong style="color:#fff; font-size:0.95rem;">💡 ${isEn ? 'Enjoying this read?' : 'Gostando do hiperfoco?'}</strong>
+      <button onclick="closeEngagementWall()" aria-label="Fechar" style="background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; line-height:1;">&times;</button>
+    </div>
+    <p style="font-size:0.8125rem; color:var(--text-muted); margin:0.5rem 0 1rem; line-height:1.4;">
+      ${isEn 
+        ? 'Written with authentic passion by a real human in our community. Join our Discord sanctuary to meet other neurodivergent minds!' 
+        : 'Escrito por quem realmente vive o tema, 100% livre de IA. Faça parte da Cringelândia no Discord ou compartilhe seu próprio relato!'}
+    </p>
+    <div style="display:flex; gap:0.5rem;">
+      <a href="/discord" target="_blank" rel="noopener noreferrer" onclick="trackClick('invite')" class="btn btn-pink" style="font-size:0.75rem; padding:6px 12px; flex:1; text-align:center;">
+        👾 ${isEn ? 'Join Discord' : 'Entrar no Servidor'}
+      </a>
+      <button onclick="closeEngagementWall()" class="btn btn-outline" style="font-size:0.75rem; padding:6px 12px;">
+        ${isEn ? 'Keep reading' : 'Continuar lendo'}
+      </button>
+    </div>
+  </aside>
+
   <footer class="site-footer">
     <div class="footer-links">
       <a href="/">${isEn ? 'Home' : 'Início'}</a>
@@ -983,6 +1004,27 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
     </div>
   </aside>
 
+  <!-- Parede de Engajamento Acolhedora (Automação 10: 1x por sessão, não bloqueia leitura) -->
+  <aside id="engagement-wall" style="display:none; position:fixed; bottom:20px; right:20px; max-width:360px; background:#120924; border:2px solid #E60067; border-radius:1rem; padding:1.25rem; box-shadow:0 12px 35px rgba(0,0,0,0.7); z-index:999;" aria-label="Aviso da Comunidade">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+      <strong style="color:#fff; font-size:0.95rem;">💡 ${isEn ? 'Enjoying this read?' : 'Gostando do hiperfoco?'}</strong>
+      <button onclick="closeEngagementWall()" aria-label="Fechar" style="background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; line-height:1;">&times;</button>
+    </div>
+    <p style="font-size:0.8125rem; color:var(--text-muted); margin:0.5rem 0 1rem; line-height:1.4;">
+      ${isEn 
+        ? 'Written with authentic passion by a real human in our community. Join our Discord sanctuary to meet other neurodivergent minds!' 
+        : 'Escrito por quem realmente vive o tema, 100% livre de IA. Faça parte da Cringelândia no Discord ou compartilhe seu próprio relato!'}
+    </p>
+    <div style="display:flex; gap:0.5rem;">
+      <a href="/discord" target="_blank" rel="noopener noreferrer" onclick="trackClick('invite')" class="btn btn-pink" style="font-size:0.75rem; padding:6px 12px; flex:1; text-align:center;">
+        👾 ${isEn ? 'Join Discord' : 'Entrar no Servidor'}
+      </a>
+      <button onclick="closeEngagementWall()" class="btn btn-outline" style="font-size:0.75rem; padding:6px 12px;">
+        ${isEn ? 'Keep reading' : 'Continuar lendo'}
+      </button>
+    </div>
+  </aside>
+
   <footer class="site-footer">
     <p>Pyxie Hyperfokus • Santuário de Mentes Livres</p>
   </footer>
@@ -1174,6 +1216,27 @@ function renderStaticInfoPage({ pageKey = 'como-participar', lang = 'pt' } = {})
     </div>
   </main>
 
+  <!-- Parede de Engajamento Acolhedora (Automação 10: 1x por sessão, não bloqueia leitura) -->
+  <aside id="engagement-wall" style="display:none; position:fixed; bottom:20px; right:20px; max-width:360px; background:#120924; border:2px solid #E60067; border-radius:1rem; padding:1.25rem; box-shadow:0 12px 35px rgba(0,0,0,0.7); z-index:999;" aria-label="Aviso da Comunidade">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+      <strong style="color:#fff; font-size:0.95rem;">💡 ${isEn ? 'Enjoying this read?' : 'Gostando do hiperfoco?'}</strong>
+      <button onclick="closeEngagementWall()" aria-label="Fechar" style="background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; line-height:1;">&times;</button>
+    </div>
+    <p style="font-size:0.8125rem; color:var(--text-muted); margin:0.5rem 0 1rem; line-height:1.4;">
+      ${isEn 
+        ? 'Written with authentic passion by a real human in our community. Join our Discord sanctuary to meet other neurodivergent minds!' 
+        : 'Escrito por quem realmente vive o tema, 100% livre de IA. Faça parte da Cringelândia no Discord ou compartilhe seu próprio relato!'}
+    </p>
+    <div style="display:flex; gap:0.5rem;">
+      <a href="/discord" target="_blank" rel="noopener noreferrer" onclick="trackClick('invite')" class="btn btn-pink" style="font-size:0.75rem; padding:6px 12px; flex:1; text-align:center;">
+        👾 ${isEn ? 'Join Discord' : 'Entrar no Servidor'}
+      </a>
+      <button onclick="closeEngagementWall()" class="btn btn-outline" style="font-size:0.75rem; padding:6px 12px;">
+        ${isEn ? 'Keep reading' : 'Continuar lendo'}
+      </button>
+    </div>
+  </aside>
+
   <footer class="site-footer">
     <p>Pyxie Hyperfokus • Santuário de Mentes Livres</p>
   </footer>
@@ -1181,9 +1244,1058 @@ function renderStaticInfoPage({ pageKey = 'como-participar', lang = 'pt' } = {})
 </html>`;
 }
 
+
+
+/**
+ * Página de Login de Contas Unificadas (/login)
+ */
+function renderLoginPage({ lang = 'pt', redirect = '/meu-perfil', error = null, message = null } = {}) {
+  const isEn = lang === 'en';
+  const sharedCss = getSharedStyles();
+
+  return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'pt-BR'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${isEn ? 'Login • Pyxie Hyperfokus' : 'Entrar • Pyxie Hyperfokus'}</title>
+  <meta name="robots" content="noindex, follow">
+  <link rel="icon" type="image/png" href="/assets/pyxie/sticker/sticker_smile.png">
+  <style>
+    ${sharedCss}
+    .auth-card {
+      max-width: 440px;
+      margin: 3rem auto;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+    .form-group { text-align: left; margin-bottom: 1.25rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; }
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 0.85rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .form-input:focus { outline: none; border-color: var(--accent-pink); box-shadow: 0 0 12px rgba(230, 0, 103, 0.3); }
+    .alert-box { padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 0.85rem; margin-bottom: 1.5rem; text-align: left; }
+    .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
+    .alert-success { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
+        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
+        <span>Pyxie <span style="color:var(--accent-pink);">Hyperfokus</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="${isEn ? '/login' : '/login?lang=en'}" class="btn btn-outline" style="font-size:0.75rem;">
+          🌐 ${isEn ? 'Português' : 'English'}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="auth-card">
+      <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="64" height="64" style="margin-bottom:1rem;" />
+      <h1 style="font-size:1.6rem; font-weight:900; margin-bottom:0.5rem; color:#fff;">
+        ${isEn ? 'Welcome Back!' : 'Entrar no Hyperfokus'}
+      </h1>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem; font-style:italic;">
+        ${isEn
+          ? '“Look who showed up! Get in already before I change my mind and lock the portal!”'
+          : '“Apareceu, fantasma desnutrido? Entra logo antes que eu mude de ideia e tranque o portal!”'}
+      </p>
+
+      ${error ? `<div class="alert-box alert-error">${escapeHtml(error)}</div>` : ''}
+      ${message ? `<div class="alert-box alert-success">${escapeHtml(message)}</div>` : ''}
+      <div id="client-error" class="alert-box alert-error" style="display:none;"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-email">${isEn ? 'Email Address' : 'Endereço de E-mail'}</label>
+          <input type="email" id="login-email" class="form-input" required autocomplete="email" placeholder="seu@email.com" />
+        </div>
+
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+            <label class="form-label" for="login-pass" style="margin-bottom:0;">${isEn ? 'Password' : 'Sua Senha'}</label>
+            <a href="/esqueci-senha${isEn ? '?lang=en' : ''}" style="font-size:0.75rem;">${isEn ? 'Forgot password?' : 'Esqueceu a senha?'}</a>
+          </div>
+          <input type="password" id="login-pass" class="form-input" required autocomplete="current-password" placeholder="••••••••" />
+        </div>
+
+        <button type="submit" id="btn-submit" class="btn btn-pink" style="width:100%; padding:0.85rem; font-size:1rem; margin-top:0.5rem;">
+          ✨ ${isEn ? 'Enter Portal' : 'Acessar Conta'}
+        </button>
+      </form>
+
+      <div style="margin-top:1.75rem; padding-top:1.25rem; border-top:1px solid rgba(255,255,255,0.08); font-size:0.85rem; color:var(--text-muted);">
+        ${isEn ? "Don't have an account yet?" : 'Ainda não tem uma conta?'}
+        <a href="/cadastro${isEn ? '?lang=en' : ''}" style="font-weight:700; margin-left:4px;">
+          ${isEn ? 'Sign up for free' : 'Cadastre-se grátis'}
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const errBox = document.getElementById('client-error');
+      const btn = document.getElementById('btn-submit');
+      errBox.style.display = 'none';
+
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-pass').value;
+
+      btn.disabled = true;
+      btn.innerText = '${isEn ? 'Authenticating...' : 'Autenticando...'}';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, lang: '${lang}' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          window.location.href = '${redirect}';
+        } else {
+          errBox.textContent = data.message || '${isEn ? 'Invalid credentials' : 'Credenciais inválidas'}';
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        errBox.textContent = '${isEn ? 'Connection error' : 'Erro de conexão'}';
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '✨ ${isEn ? 'Enter Portal' : 'Acessar Conta'}';
+      }
+    });
+  </script>
+</body>
+</html>`;
+}
+
+/**
+ * Página de Cadastro de Contas (/cadastro)
+ */
+function renderRegisterPage({ lang = 'pt', redirect = '/meu-perfil', error = null } = {}) {
+  const isEn = lang === 'en';
+  const sharedCss = getSharedStyles();
+
+  return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'pt-BR'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${isEn ? 'Create Account • Pyxie Hyperfokus' : 'Criar Conta • Pyxie Hyperfokus'}</title>
+  <meta name="robots" content="noindex, follow">
+  <link rel="icon" type="image/png" href="/assets/pyxie/sticker/sticker_smile.png">
+  <style>
+    ${sharedCss}
+    .auth-card {
+      max-width: 460px;
+      margin: 3rem auto;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+    .form-group { text-align: left; margin-bottom: 1.25rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; }
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 0.85rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .form-input:focus { outline: none; border-color: var(--accent-pink); box-shadow: 0 0 12px rgba(230, 0, 103, 0.3); }
+    .alert-box { padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 0.85rem; margin-bottom: 1.5rem; text-align: left; }
+    .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
+        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
+        <span>Pyxie <span style="color:var(--accent-pink);">Hyperfokus</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="${isEn ? '/cadastro' : '/cadastro?lang=en'}" class="btn btn-outline" style="font-size:0.75rem;">
+          🌐 ${isEn ? 'Português' : 'English'}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="auth-card">
+      <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="64" height="64" style="margin-bottom:1rem;" />
+      <h1 style="font-size:1.6rem; font-weight:900; margin-bottom:0.5rem; color:#fff;">
+        ${isEn ? 'Join as an Author' : 'Criar Conta de Autor'}
+      </h1>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem; font-style:italic;">
+        ${isEn
+          ? '“Creating an account without Discord? Tsc, more paperwork for me... At least pick a strong password!”'
+          : '“Cadastrando conta sem Discord? Tsc, mais trabalho pra mim... Pelo menos coloca uma senha forte, subordinado!”'}
+      </p>
+
+      ${error ? `<div class="alert-box alert-error">${escapeHtml(error)}</div>` : ''}
+      <div id="client-error" class="alert-box alert-error" style="display:none;"></div>
+
+      <form id="reg-form">
+        <div class="form-group">
+          <label class="form-label" for="reg-email">${isEn ? 'Email Address' : 'Endereço de E-mail'}</label>
+          <input type="email" id="reg-email" class="form-input" required autocomplete="email" placeholder="seu@email.com" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-pass">${isEn ? 'Password (minimum 8 characters)' : 'Senha (mínimo 8 caracteres)'}</label>
+          <input type="password" id="reg-pass" class="form-input" minlength="8" required autocomplete="new-password" placeholder="••••••••" />
+        </div>
+
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <label style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.8rem; color:var(--text-muted); cursor:pointer;">
+            <input type="checkbox" required style="margin-top:2px;" />
+            <span>
+              ${isEn
+                ? 'I pledge to write 100% human-authored content and agree to the <a href="/hyperfokus/termos-e-regras?lang=en" target="_blank">Anti-AI Terms</a>.'
+                : 'Concordo em escrever conteúdo 100% autoral humano e aceito os <a href="/hyperfokus/termos-e-regras" target="_blank">Termos Anti-IA</a>.'}
+            </span>
+          </label>
+        </div>
+
+        <button type="submit" id="btn-submit" class="btn btn-pink" style="width:100%; padding:0.85rem; font-size:1rem;">
+          📝 ${isEn ? 'Create My Account' : 'Finalizar Cadastro'}
+        </button>
+      </form>
+
+      <div style="margin-top:1.75rem; padding-top:1.25rem; border-top:1px solid rgba(255,255,255,0.08); font-size:0.85rem; color:var(--text-muted);">
+        ${isEn ? 'Already have an account?' : 'Já possui uma conta?'}
+        <a href="/login${isEn ? '?lang=en' : ''}" style="font-weight:700; margin-left:4px;">
+          ${isEn ? 'Sign in' : 'Entrar aqui'}
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('reg-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const errBox = document.getElementById('client-error');
+      const btn = document.getElementById('btn-submit');
+      errBox.style.display = 'none';
+
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-pass').value;
+
+      btn.disabled = true;
+      btn.innerText = '${isEn ? 'Creating account...' : 'Criando conta...'}';
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, lang: '${lang}' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          window.location.href = '${redirect}';
+        } else {
+          errBox.textContent = data.message || (data.error === 'email_already_registered' ? '${isEn ? 'Email already registered' : 'Este e-mail já está cadastrado'}' : '${isEn ? 'Registration error' : 'Erro no cadastro'}');
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        errBox.textContent = '${isEn ? 'Connection error' : 'Erro de conexão'}';
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '📝 ${isEn ? 'Create My Account' : 'Finalizar Cadastro'}';
+      }
+    });
+  </script>
+</body>
+</html>`;
+}
+
+/**
+ * Página de Perfil do Usuário (/meu-perfil)
+ */
+function renderProfilePage({ account, stats, lang = 'pt', message = null, error = null } = {}) {
+  const isEn = lang === 'en';
+  const sharedCss = getSharedStyles();
+  const emailPrefix = account.email ? account.email.split('@')[0] : 'Autor';
+  const userDiscord = account.discordUserId ? `@${account.discordUserId}` : null;
+  const isVerified = account.verifiedEmail === 1;
+
+  return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'pt-BR'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${isEn ? 'My Profile • Pyxie Hyperfokus' : 'Meu Perfil • Pyxie Hyperfokus'}</title>
+  <meta name="robots" content="noindex, follow">
+  <link rel="icon" type="image/png" href="/assets/pyxie/sticker/sticker_smile.png">
+  <style>
+    ${sharedCss}
+    .profile-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      padding: 1.25rem 1rem;
+      text-align: center;
+    }
+    .article-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      margin-bottom: 0.75rem;
+      transition: all 0.2s;
+    }
+    .article-item:hover { border-color: rgba(230, 0, 103, 0.3); }
+    .status-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .status-published { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .status-draft { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
+        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
+        <span>Pyxie <span style="color:var(--accent-pink);">Hyperfokus</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="/meu-perfil/escrever${isEn ? '?lang=en' : ''}" class="btn btn-pink">
+          ✍️ ${isEn ? 'Write Article' : 'Escrever Artigo'}
+        </a>
+        <button id="btn-logout" class="btn btn-outline" style="font-size:0.75rem;">
+          🚪 ${isEn ? 'Sign Out' : 'Sair'}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="profile-card">
+      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1.5rem;">
+        <div style="display:flex; align-items:center; gap:1.25rem;">
+          <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Avatar" width="68" height="68" style="border-radius:50%; border:2px solid var(--accent-pink);" />
+          <div>
+            <h1 style="font-size:1.5rem; font-weight:900; color:#fff; margin-bottom:0.25rem;">
+              ${escapeHtml(account.email || emailPrefix)}
+            </h1>
+            <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; font-size:0.8rem;">
+              <span class="status-badge ${isVerified ? 'status-published' : 'status-pending'}">
+                ${isVerified ? (isEn ? 'Verified Author' : 'E-mail Verificado') : (isEn ? 'Pending Email Verification' : 'E-mail Pendente')}
+              </span>
+              ${userDiscord ? `<span style="color:var(--text-muted);">Discord: <b>${escapeHtml(userDiscord)}</b></span>` : ''}
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.75rem;">
+          <a href="/meu-perfil/escrever${isEn ? '?lang=en' : ''}" class="btn btn-pink">
+            ✨ ${isEn ? 'New Article' : 'Novo Artigo'}
+          </a>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:1rem; margin-top:2rem;">
+        <div class="stat-pill">
+          <span style="font-size:0.75rem; color:var(--text-muted);">${isEn ? 'Total Articles' : 'Total Artigos'}</span>
+          <p style="font-size:1.6rem; font-weight:900; color:#fff; margin-top:0.25rem;">${stats.totalArticles || 0}</p>
+        </div>
+        <div class="stat-pill">
+          <span style="font-size:0.75rem; color:var(--text-muted);">${isEn ? 'Published' : 'Publicados'}</span>
+          <p style="font-size:1.6rem; font-weight:900; color:#34d399; margin-top:0.25rem;">${stats.publishedCount || 0}</p>
+        </div>
+        <div class="stat-pill">
+          <span style="font-size:0.75rem; color:var(--text-muted);">${isEn ? 'In Review' : 'Em Análise'}</span>
+          <p style="font-size:1.6rem; font-weight:900; color:#fbbf24; margin-top:0.25rem;">${stats.pendingCount || 0}</p>
+        </div>
+        <div class="stat-pill">
+          <span style="font-size:0.75rem; color:var(--text-muted);">${isEn ? 'Total Likes' : 'Curtidas Recebidas'}</span>
+          <p style="font-size:1.6rem; font-weight:900; color:var(--accent-pink); margin-top:0.25rem;">${stats.totalLikes || 0}</p>
+        </div>
+        <div class="stat-pill">
+          <span style="font-size:0.75rem; color:var(--text-muted);">${isEn ? 'Comments' : 'Comentários'}</span>
+          <p style="font-size:1.6rem; font-weight:900; color:#c084fc; margin-top:0.25rem;">${stats.totalComments || 0}</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr; gap:2rem;">
+      <div class="profile-card" style="margin-bottom:0;">
+        <h2 style="font-size:1.25rem; font-weight:900; color:#fff; margin-bottom:1.25rem;">
+          📚 ${isEn ? 'My Published & Submitted Articles' : 'Meus Artigos Publicados & Em Análise'}
+        </h2>
+
+        ${(!stats.articles || stats.articles.length === 0) ? `
+          <div style="text-align:center; padding:3rem 1rem; color:var(--text-muted); font-size:0.9rem;">
+            ${isEn ? 'You haven’t submitted any articles yet. Start writing today!' : 'Você ainda não possui artigos enviados. Clique em "Escrever Artigo" e compartilhe seu hiperfoco!'}
+          </div>
+        ` : `
+          <div style="display:flex; flex-direction:column;">
+            ${stats.articles.map((art) => `
+              <div class="article-item">
+                <div style="min-width:0; flex:1; margin-right:1rem;">
+                  <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                    <span class="status-badge ${art.status === 'PUBLISHED' ? 'status-published' : 'status-pending'}">
+                      ${art.status === 'PUBLISHED' ? (isEn ? 'Published' : 'Publicado') : (isEn ? 'In Review' : 'Em Análise')}
+                    </span>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">/${art.slug}</span>
+                  </div>
+                  <h3 style="font-size:1.05rem; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${escapeHtml(art.title)}
+                  </h3>
+                  <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">
+                    👁️ ${art.viewsCount || 0} views • ❤️ ${art.likesCount || 0} curtidas
+                  </div>
+                </div>
+                <div style="display:flex; gap:0.5rem; align-items:center;">
+                  ${art.status === 'PUBLISHED' ? `
+                    <a href="/hyperfokus/${art.slug}" class="btn btn-outline" style="font-size:0.75rem; padding:0.4rem 0.75rem;" target="_blank">
+                      🔗 ${isEn ? 'View' : 'Abrir'}
+                    </a>
+                  ` : ''}
+                  <button onclick="requestRemoval('${art.id}', '${escapeHtml(art.title)}')" class="btn btn-outline" style="font-size:0.75rem; padding:0.4rem 0.75rem; color:#fca5a5;">
+                    🗑️ ${isEn ? 'Remove' : 'Remover'}
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+
+      <div class="profile-card">
+        <h2 style="font-size:1.25rem; font-weight:900; color:#fff; margin-bottom:1.25rem;">
+          📝 ${isEn ? 'My Web Drafts' : 'Meus Rascunhos no Site'}
+        </h2>
+
+        ${(!stats.drafts || stats.drafts.length === 0) ? `
+          <div style="text-align:center; padding:2rem 1rem; color:var(--text-muted); font-size:0.9rem;">
+            ${isEn ? 'No drafts currently saved.' : 'Nenhum rascunho em aberto no momento.'}
+          </div>
+        ` : `
+          <div style="display:flex; flex-direction:column;">
+            ${stats.drafts.map((d) => `
+              <div class="article-item">
+                <div style="min-width:0; flex:1; margin-right:1rem;">
+                  <span class="status-badge status-draft">${d.status}</span>
+                  <h3 style="font-size:1.05rem; font-weight:700; color:#fff; margin-top:0.25rem;">
+                    ${escapeHtml(d.title || (isEn ? 'Untitled Draft' : 'Rascunho Sem Título'))}
+                  </h3>
+                  <span style="font-size:0.75rem; color:var(--text-muted);">
+                    ${isEn ? 'Last edited:' : 'Última edição:'} ${new Date(d.updatedAt).toLocaleDateString(isEn ? 'en-US' : 'pt-BR')}
+                  </span>
+                </div>
+                <div style="display:flex; gap:0.5rem; align-items:center;">
+                  <a href="/meu-perfil/escrever?draftId=${d.id}${isEn ? '&lang=en' : ''}" class="btn btn-pink" style="font-size:0.75rem; padding:0.4rem 0.75rem;">
+                    ✍️ ${isEn ? 'Edit' : 'Editar'}
+                  </a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+
+      <div class="profile-card">
+        <h2 style="font-size:1.25rem; font-weight:900; color:#fff; margin-bottom:0.5rem;">
+          👁️ ${isEn ? 'Saved Reader Preferences' : 'Preferências de Leitura Salvas'}
+        </h2>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem;">
+          ${isEn ? 'Synchronize your accessibility settings across all your devices.' : 'Sincronize sua experiência de leitura acessível em todos os seus dispositivos.'}
+        </p>
+
+        <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center;">
+          <div>
+            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.25rem;">${isEn ? 'Theme' : 'Tema Padrão'}</label>
+            <select id="pref-theme" style="padding:0.5rem 0.75rem; border-radius:0.75rem; background:rgba(255,255,255,0.05); color:#fff; border:1px solid var(--card-border);">
+              <option value="dark" ${account.readingPreferences?.theme === 'dark' ? 'selected' : ''}>🌙 Escuro</option>
+              <option value="sepia" ${account.readingPreferences?.theme === 'sepia' ? 'selected' : ''}>📜 Sépia</option>
+              <option value="contrast" ${account.readingPreferences?.theme === 'contrast' ? 'selected' : ''}>⚡ Alto Contraste</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.25rem;">${isEn ? 'Font Size' : 'Tamanho da Fonte'}</label>
+            <select id="pref-size" style="padding:0.5rem 0.75rem; border-radius:0.75rem; background:rgba(255,255,255,0.05); color:#fff; border:1px solid var(--card-border);">
+              <option value="small" ${account.readingPreferences?.fontSize === 'small' ? 'selected' : ''}>A- Pequeno</option>
+              <option value="normal" ${account.readingPreferences?.fontSize === 'normal' || !account.readingPreferences?.fontSize ? 'selected' : ''}>A Normal</option>
+              <option value="large" ${account.readingPreferences?.fontSize === 'large' ? 'selected' : ''}>A+ Grande</option>
+            </select>
+          </div>
+
+          <div style="margin-top:1.25rem;">
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:#fff; cursor:pointer;">
+              <input type="checkbox" id="pref-dyslexic" ${account.readingPreferences?.dyslexicFont ? 'checked' : ''} />
+              <span>${isEn ? 'Dyslexia-friendly Font' : 'Fonte para Dislexia (OpenDyslexic)'}</span>
+            </label>
+          </div>
+
+          <div style="margin-top:1.25rem;">
+            <button id="btn-save-pref" class="btn btn-outline" style="font-size:0.8rem;">
+              💾 ${isEn ? 'Save Preferences' : 'Salvar Preferências'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/hyperfokus';
+    });
+
+    document.getElementById('btn-save-pref').addEventListener('click', async () => {
+      const theme = document.getElementById('pref-theme').value;
+      const fontSize = document.getElementById('pref-size').value;
+      const dyslexicFont = document.getElementById('pref-dyslexic').checked;
+      const btn = document.getElementById('btn-save-pref');
+
+      btn.innerText = 'Salvando...';
+      await fetch('/api/user/reading-preferences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ theme, fontSize, dyslexicFont })
+      });
+      btn.innerText = '✓ Salvo com sucesso!';
+      setTimeout(() => { btn.innerText = '💾 ${isEn ? 'Save Preferences' : 'Salvar Preferências'}'; }, 2000);
+    });
+
+    async function requestRemoval(articleId, title) {
+      const reason = prompt('${isEn ? 'Please specify why you are requesting removal or revision of this article:' : 'Informe o motivo da solicitação de remoção ou revisão deste artigo:'}');
+      if (!reason) return;
+      try {
+        const res = await fetch('/api/user/removal-ticket', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ articleId, reason })
+        });
+        const data = await res.json();
+        alert(data.message || 'Ticket registrado com sucesso!');
+      } catch (_) {
+        alert('Erro ao registrar solicitação.');
+      }
+    }
+  </script>
+</body>
+</html>`;
+}
+
+/**
+ * Editor Autoral Web com Importador do GitHub (/meu-perfil/escrever)
+ */
+function renderWebEditorPage({ account, draft = null, lang = 'pt' } = {}) {
+  const isEn = lang === 'en';
+  const sharedCss = getSharedStyles();
+
+  const titleVal = draft?.title || '';
+  const contentVal = draft?.contentMarkdown || '';
+  const coverVal = draft?.coverImage || '';
+  const tagsVal = (draft?.categoryTags || []).join(', ');
+
+  return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'pt-BR'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${isEn ? 'Write Article • Pyxie Hyperfokus' : 'Escrever Hiperfoco • Pyxie Hyperfokus'}</title>
+  <meta name="robots" content="noindex, follow">
+  <link rel="icon" type="image/png" href="/assets/pyxie/sticker/sticker_smile.png">
+  <style>
+    ${sharedCss}
+    .editor-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 1024px) {
+      .editor-layout { grid-template-columns: 1fr 1fr; }
+    }
+    .editor-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+    }
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.35rem; }
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 0.85rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .form-input:focus { outline: none; border-color: var(--accent-pink); box-shadow: 0 0 12px rgba(230, 0, 103, 0.3); }
+    .textarea-md {
+      width: 100%;
+      min-height: 480px;
+      padding: 1rem;
+      border-radius: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      resize: vertical;
+    }
+    .textarea-md:focus { outline: none; border-color: var(--accent-pink); }
+    .preview-pane {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .anti-ai-banner {
+      background: rgba(230, 0, 103, 0.1);
+      border: 1px solid rgba(230, 0, 103, 0.3);
+      border-radius: 1rem;
+      padding: 1rem 1.25rem;
+      font-size: 0.85rem;
+      color: #fbcfe8;
+      margin-bottom: 1.5rem;
+    }
+    .github-tool {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/meu-perfil${isEn ? '?lang=en' : ''}" class="brand">
+        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
+        <span>Pyxie <span style="color:var(--accent-pink);">Editor</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="/meu-perfil${isEn ? '?lang=en' : ''}" class="btn btn-outline" style="font-size:0.8rem;">
+          ← ${isEn ? 'Back to Profile' : 'Voltar ao Perfil'}
+        </a>
+        <button id="btn-save-draft" class="btn btn-outline" style="font-size:0.8rem;">
+          💾 ${isEn ? 'Save Draft' : 'Salvar Rascunho'}
+        </button>
+        <button id="btn-submit-review" class="btn btn-pink" style="font-size:0.8rem;">
+          🚀 ${isEn ? 'Submit for Review' : 'Enviar para Moderação'}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <h1 style="font-size:1.8rem; font-weight:900; margin-bottom:1rem; color:#fff;">
+      ${isEn ? 'Write Your Authentic Hyperfocus' : 'Escreva seu Hiperfoco Autoral'}
+    </h1>
+
+    <div class="anti-ai-banner">
+      🛡️ <b>${isEn ? '100% Human-Authored Commitment:' : 'Compromisso 100% Humano:'}</b>
+      ${isEn
+        ? 'Pyxie Hyperfokus celebrates authentic passion and real experiences. Pure AI-generated texts will be rejected during moderation.'
+        : 'O Pyxie Hyperfokus celebra a paixão autêntica e a pesquisa aprofundada. Artigos puramente gerados por IA são terminantemente recusados na moderação.'}
+    </div>
+
+    <div class="editor-layout">
+      <!-- Coluna da Esquerda: Formulário e Markdown -->
+      <div class="editor-panel">
+        <div class="form-group">
+          <label class="form-label" for="inp-title">${isEn ? 'Article Title' : 'Título do Artigo'}</label>
+          <input type="text" id="inp-title" class="form-input" value="${escapeHtml(titleVal)}" placeholder="${isEn ? 'E.g., Complete Guide to Backyard Astronomy' : 'Ex: Guia Completo de Astronomia Amadora'}" />
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label class="form-label" for="inp-tags">${isEn ? 'Tags / Categories (comma separated)' : 'Tags / Categorias (separadas por vírgula)'}</label>
+            <input type="text" id="inp-tags" class="form-input" value="${escapeHtml(tagsVal)}" placeholder="ciência, espaço, hobbies" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inp-cover">${isEn ? 'Cover Image URL (Optional)' : 'URL da Capa (Opcional)'}</label>
+            <input type="text" id="inp-cover" class="form-input" value="${escapeHtml(coverVal)}" placeholder="https://..." />
+          </div>
+        </div>
+
+        <!-- Ferramenta de Importação do GitHub -->
+        <div class="github-tool">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+            <label class="form-label" style="margin-bottom:0; color:#c084fc;">
+              🐙 ${isEn ? 'Import Snippet from GitHub' : 'Importar Trecho de Código do GitHub'}
+            </label>
+            <span style="font-size:0.75rem; color:var(--text-muted);">github.com/.../blob/...#L10-L30</span>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <input type="text" id="inp-github-url" class="form-input" placeholder="https://github.com/owner/repo/blob/main/file.js#L1-L20" style="font-size:0.8rem;" />
+            <button type="button" id="btn-import-github" class="btn btn-outline" style="font-size:0.75rem; white-space:nowrap;">
+              ${isEn ? 'Import' : 'Importar'}
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inp-markdown">
+            ${isEn ? 'Content in Markdown (headings, code blocks, bold, quotes)' : 'Conteúdo em Markdown (títulos, blocos de código, negrito, citações)'}
+          </label>
+          <textarea id="inp-markdown" class="textarea-md" placeholder="# Meu Hiperfoco&#10;&#10;Escreva sua pesquisa e experiência aqui...">${escapeHtml(contentVal)}</textarea>
+        </div>
+      </div>
+
+      <!-- Coluna da Direita: Pré-Visualização ao Vivo -->
+      <div class="editor-panel">
+        <h2 style="font-size:1.1rem; font-weight:700; color:var(--text-muted); margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:0.5rem;">
+          👁️ ${isEn ? 'Live Article Preview' : 'Pré-Visualização do Artigo'}
+        </h2>
+        <div id="preview-area" class="preview-pane">
+          <h2 id="preview-title" style="font-size:1.5rem; font-weight:900; color:#fff; margin-bottom:1rem;">
+            ${escapeHtml(titleVal || (isEn ? 'Article Title' : 'Título do Artigo'))}
+          </h2>
+          <div id="preview-body" style="font-size:0.95rem; line-height:1.7; color:#e2e8f0; white-space:pre-wrap;">
+            ${escapeHtml(contentVal || (isEn ? 'Start typing in the editor on the left...' : 'Comece a escrever no editor à esquerda...'))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let activeDraftId = '${draft ? draft.id : ''}';
+
+    const inpTitle = document.getElementById('inp-title');
+    const inpMarkdown = document.getElementById('inp-markdown');
+    const prevTitle = document.getElementById('preview-title');
+    const prevBody = document.getElementById('preview-body');
+
+    inpTitle.addEventListener('input', () => {
+      prevTitle.textContent = inpTitle.value || '${isEn ? 'Article Title' : 'Título do Artigo'}';
+    });
+
+    inpMarkdown.addEventListener('input', () => {
+      prevBody.textContent = inpMarkdown.value || '${isEn ? 'Start typing in the editor on the left...' : 'Comece a escrever no editor à esquerda...'}';
+    });
+
+    // Importador de código do GitHub
+    document.getElementById('btn-import-github').addEventListener('click', async () => {
+      const url = document.getElementById('inp-github-url').value.trim();
+      if (!url) return alert('${isEn ? 'Please paste a valid GitHub blob URL' : 'Cole uma URL válida do GitHub'}');
+
+      const btn = document.getElementById('btn-import-github');
+      btn.innerText = 'Importando...';
+
+      try {
+        const res = await fetch('/api/hyperfokus/github-snippet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+        if (data.success && data.snippet) {
+          const snippetMd = data.snippet.markdownSnippet;
+          const cursorPos = inpMarkdown.selectionStart;
+          const textBefore = inpMarkdown.value.substring(0, cursorPos);
+          const textAfter = inpMarkdown.value.substring(cursorPos);
+          inpMarkdown.value = textBefore + '\n\n' + snippetMd + '\n\n' + textAfter;
+          prevBody.textContent = inpMarkdown.value;
+          alert('${isEn ? 'Code snippet successfully imported!' : 'Trecho de código importado com sucesso!'}');
+          document.getElementById('inp-github-url').value = '';
+        } else {
+          alert(data.error || 'Erro ao importar código do GitHub');
+        }
+      } catch (err) {
+        alert('Erro ao conectar ao GitHub.');
+      } finally {
+        btn.innerText = '${isEn ? 'Import' : 'Importar'}';
+      }
+    });
+
+    // Salvar Rascunho
+    async function saveDraft() {
+      const title = inpTitle.value.trim();
+      const contentMarkdown = inpMarkdown.value;
+      const categoryTags = document.getElementById('inp-tags').value.split(',').map(s => s.trim()).filter(Boolean);
+      const coverImage = document.getElementById('inp-cover').value.trim();
+
+      const btn = document.getElementById('btn-save-draft');
+      btn.innerText = 'Salvando...';
+
+      try {
+        let res;
+        if (activeDraftId) {
+          res = await fetch('/api/hyperfokus/web-drafts/' + activeDraftId, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, contentMarkdown, categoryTags, coverImage })
+          });
+        } else {
+          res = await fetch('/api/hyperfokus/web-drafts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, contentMarkdown, categoryTags, coverImage })
+          });
+        }
+        const data = await res.json();
+        if (data.success && data.draft) {
+          activeDraftId = data.draft.id;
+          btn.innerText = '✓ Rascunho Salvo!';
+          setTimeout(() => { btn.innerText = '💾 ${isEn ? 'Save Draft' : 'Salvar Rascunho'}'; }, 2000);
+          return data.draft;
+        } else {
+          alert(data.error || 'Erro ao salvar rascunho.');
+        }
+      } catch (_) {
+        alert('Erro ao salvar.');
+      } finally {
+        btn.innerText = '💾 ${isEn ? 'Save Draft' : 'Salvar Rascunho'}';
+      }
+    }
+
+    document.getElementById('btn-save-draft').addEventListener('click', saveDraft);
+
+    // Enviar para Moderação
+    document.getElementById('btn-submit-review').addEventListener('click', async () => {
+      const draft = await saveDraft();
+      if (!draft || !activeDraftId) return;
+
+      if (!confirm('${isEn ? 'Submit this article to the editorial moderation queue?' : 'Enviar este artigo para a fila de moderação editorial?'}')) {
+        return;
+      }
+
+      const btn = document.getElementById('btn-submit-review');
+      btn.innerText = 'Enviando...';
+
+      try {
+        const res = await fetch('/api/hyperfokus/web-drafts/' + activeDraftId + '/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(data.message || 'Artigo enviado com sucesso!');
+          window.location.href = '/meu-perfil';
+        } else {
+          alert(data.error || 'Erro ao submeter artigo.');
+        }
+      } catch (_) {
+        alert('Erro de submissão.');
+      } finally {
+        btn.innerText = '🚀 ${isEn ? 'Submit for Review' : 'Enviar para Moderação'}';
+      }
+    });
+  </script>
+</body>
+</html>`;
+}
+
+
+/**
+ * Vitrine Pública de Projetos, Criadores e Serviços (/hyperfokus/projetos)
+ * Fase 8: Suporte a bordas cosméticas (Neon Lilás, Cyber-Pink animada, Ouro Místico)
+ * Respeita estritamente prefers-reduced-motion.
+ */
+function renderProjectsShowcasePage({ partners = [], activeCategory = 'all', lang = 'pt' } = {}) {
+  const isEn = lang === 'en';
+  const sharedCss = getSharedStyles();
+
+  const categories = [
+    { id: 'all', label: { pt: 'Todos os Projetos', en: 'All Projects' } },
+    { id: 'creator', label: { pt: 'Criadores de Conteúdo', en: 'Content Creators' } },
+    { id: 'service', label: { pt: 'Lojas & Freelancers', en: 'Shops & Freelancers' } },
+    { id: 'community', label: { pt: 'Comunidades & Fóruns', en: 'Communities & Forums' } },
+    { id: 'ong', label: { pt: 'Causas Sociais & ONGs', en: 'Social Causes & NGOs' } },
+  ];
+
+  return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'pt-BR'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${isEn ? 'Projects & Creators Showcase • Pyxie Hyperfokus' : 'Vitrine de Projetos & Criadores • Pyxie Hyperfokus'}</title>
+  <meta name="description" content="${isEn ? 'Discover authentic projects, indie creators, shops and communities supported by Pyxie.' : 'Conheça projetos autorais, criadores independentes, lojinhas e causas apoiadas pela Pyxie.'}">
+  <link rel="canonical" href="https://pyxie.com.br/hyperfokus/projetos">
+  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/hyperfokus/projetos">
+  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/hyperfokus/projetos?lang=en">
+  <link rel="icon" type="image/png" href="/assets/pyxie/sticker/sticker_smile.png">
+  <style>
+    ${sharedCss}
+    @keyframes cyberPulse {
+      0%, 100% { box-shadow: 0 0 12px rgba(230, 0, 103, 0.4); border-color: #E60067; }
+      50% { box-shadow: 0 0 24px rgba(230, 0, 103, 0.8); border-color: #ff3388; }
+    }
+    .animated-border {
+      animation: cyberPulse 2.8s infinite ease-in-out;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .animated-border {
+        animation: none !important;
+      }
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .project-card {
+      background: var(--card-bg);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .project-card:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
+        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
+        <span>Pyxie <span style="color:var(--accent-pink);">Projetos</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="${isEn ? '/hyperfokus/projetos' : '/hyperfokus/projetos?lang=en'}" class="btn btn-outline" style="font-size:0.75rem;">
+          🌐 ${isEn ? 'Português' : 'English'}
+        </a>
+        <a href="/meu-perfil${isEn ? '?lang=en' : ''}" class="btn btn-pink" style="font-size:0.8rem;">
+          🚀 ${isEn ? 'Promote Your Project' : 'Divulgar Meu Projeto'}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div style="margin-bottom: 2rem; text-align: left;">
+      <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 900; color: #fff; margin-bottom: 0.5rem;">
+        ${isEn ? 'Independent Creators, Shops & Projects' : 'Projetos, Criadores Independentes & Lojas'}
+      </h1>
+      <p style="font-size: 1rem; color: var(--text-muted); max-width: 720px;">
+        ${isEn
+          ? 'Showcase of authentic creators, artisans, communities and social causes partnering with the Pyxie ecosystem.'
+          : 'Vitrine oficial de criadores, artistas, lojinhas e iniciativas parceiras da comunidade Pyxie & Cringelândia.'}
+      </p>
+    </div>
+
+    <!-- Category Tabs Filter -->
+    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.5rem;">
+      ${categories.map((c) => `
+        <a href="/hyperfokus/projetos${c.id !== 'all' ? '?category=' + c.id : ''}${isEn ? (c.id !== 'all' ? '&lang=en' : '?lang=en') : ''}"
+           class="btn ${activeCategory === c.id ? 'btn-pink' : 'btn-outline'}" style="font-size:0.8rem;">
+          ${isEn ? c.label.en : c.label.pt}
+        </a>
+      `).join('')}
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="projects-grid">
+      ${(!partners || partners.length === 0) ? `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
+          ${isEn ? 'No projects found in this category.' : 'Nenhum projeto encontrado nesta categoria.'}
+        </div>
+      ` : partners.map((p) => {
+        const borderStyle = p.badge?.borderStyle || 'border: 1px solid var(--card-border);';
+        const animatedClass = p.badge?.tier >= 2 ? 'animated-border' : '';
+        return `
+          <div class="project-card ${animatedClass}" style="${borderStyle}">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:0.75rem;">
+                <h3 style="font-size:1.2rem; font-weight:800; color:#fff;">${escapeHtml(p.projectName || p.name || 'Projeto')}</h3>
+                ${p.badge?.label ? `
+                  <span style="font-size:0.65rem; font-weight:800; padding:2px 8px; border-radius:999px; background:${p.badge.color}22; color:${p.badge.color}; border:1px solid ${p.badge.color}55; white-space:nowrap;">
+                    ${isEn ? p.badge.label.en : p.badge.label.pt}
+                  </span>
+                ` : ''}
+              </div>
+              <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.6; margin-bottom:1rem;">
+                ${escapeHtml(p.description || p.proposal || '')}
+              </p>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.06); padding-top:1rem; margin-top:0.5rem;">
+              <span style="font-size:0.75rem; color:var(--text-muted);">
+                🚀 ${p.bumpCount || 0} bumps
+              </span>
+              <a href="${p.accessLink || p.url || '#'}" target="_blank" rel="noopener noreferrer nofollow" class="btn btn-pink" style="font-size:0.75rem; padding:0.4rem 0.85rem;">
+                ${isEn ? 'Visit Project →' : 'Conhecer Projeto →'}
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Pyxie Hyperfokus • Vitrine Autoral & Parcerias</p>
+  </footer>
+</body>
+</html>`;
+}
+
+
 module.exports = {
   renderHomePage,
   renderArticlePage,
   renderStaticInfoPage,
+  renderLoginPage,
+  renderRegisterPage,
+  renderProfilePage,
+  renderWebEditorPage,
+  renderProjectsShowcasePage,
   formatDate,
 };
+
+

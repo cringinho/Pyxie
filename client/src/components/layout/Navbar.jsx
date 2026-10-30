@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Compass, BookOpen, Gift, ShieldCheck, Menu, X, ExternalLink, Globe, Terminal } from 'lucide-react';
+import { Sparkles, Compass, BookOpen, Gift, ShieldCheck, Menu, X, ExternalLink, Globe, Terminal, User } from 'lucide-react';
 
 export default function Navbar({ lang, setLang, t }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -103,6 +103,15 @@ export default function Navbar({ lang, setLang, t }) {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2.5 shrink-0">
+          <a
+            href={`/meu-perfil?lang=${lang}`}
+            className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-purple-500/20 hover:border-pink-500/40 transition-all whitespace-nowrap"
+            title={lang === 'pt' ? 'Meu Perfil de Autor' : 'My Author Profile'}
+          >
+            <User className="w-3.5 h-3.5 text-pink-400" />
+            <span>{lang === 'pt' ? 'Meu Perfil' : 'Profile'}</span>
+          </a>
+
           <button
             onClick={toggleLang}
             className="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-300 bg-white/5 hover:bg-white/10 border border-purple-500/20 hover:border-purple-500/40 transition-all flex items-center gap-1.5 whitespace-nowrap"
@@ -198,6 +207,14 @@ export default function Navbar({ lang, setLang, t }) {
             className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5"
           >
             {t('nav.support')}
+          </a>
+          <a
+            href={`/meu-perfil?lang=${lang}`}
+            onClick={() => setMobileMenuOpen(false)}
+            className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
+          >
+            <span>{lang === 'pt' ? 'Meu Perfil' : 'Profile'}</span>
+            <User className="w-4 h-4 text-pink-400" />
           </a>
           <div className="pt-2 border-t border-purple-500/15 flex flex-col gap-2">
             <a

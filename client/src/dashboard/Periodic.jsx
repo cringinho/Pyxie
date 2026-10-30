@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CalendarClock, Moon, Rocket } from 'lucide-react';
 import { api } from './api';
-import { Button, Card, Notice, Spinner, Toggle } from './ui';
+import { Button, Card, MultiSelect, Notice, Spinner, Toggle } from './ui';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 const select = `${field} bg-[#160d2a]`;
@@ -66,17 +66,15 @@ export default function Periodic({ t, guildId, lang }) {
               <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.bump.color')}</span>
               <input type="color" value={cfg.bumpGuide.color || '#FF2A85'} onChange={(e) => bump({ color: e.target.value })} className={`${field} p-1`} />
             </label>
-            <label className="block">
+            <div>
               <span className="mb-1 block text-xs font-semibold text-white/70">{t('periodic.bump.pingRole')}</span>
-              <select value={cfg.bumpGuide.pingRoleId || ''} onChange={(e) => bump({ pingRoleId: e.target.value })} className={select}>
-                <option value="">{t('periodic.tarot.noRole')}</option>
-                {roles.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    @{r.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <MultiSelect
+                options={roles.map((r) => ({ id: r.id, label: r.name }))}
+                value={cfg.bumpGuide.pingRoleIds || (cfg.bumpGuide.pingRoleId ? [cfg.bumpGuide.pingRoleId] : [])}
+                emptyLabel={t('app.loading')}
+                onChange={(v) => bump({ pingRoleIds: v, pingRoleId: v[0] || '' })}
+              />
+            </div>
           </div>
           <fieldset>
             <legend className="mb-1 text-xs font-semibold text-white/70">{t('periodic.bump.sites')}</legend>

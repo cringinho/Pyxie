@@ -2,7 +2,21 @@ const express = require('express');
 const path = require('node:path');
 const articleStore = require('../modules/hyperfokus/articleStore');
 const analyticsEngine = require('../modules/hyperfokus/analyticsEngine');
-const { renderHomePage, renderArticlePage, renderStaticInfoPage } = require('../modules/hyperfokus/renderer');
+const accountStore = require('../modules/accounts/accountStore');
+const webDraftStore = require('../modules/hyperfokus/webDraftStore');
+const accountSessions = require('../services/accountSessions');
+const {
+  renderHomePage,
+  renderArticlePage,
+  renderStaticInfoPage,
+  renderLoginPage,
+  renderRegisterPage,
+  renderProfilePage,
+  renderWebEditorPage,
+  renderProjectsShowcasePage,
+} = require('../modules/hyperfokus/renderer');
+const partnershipManager = require('../modules/partnerships/partnershipManager');
+const showcaseReferrals = require('../modules/partnerships/showcaseReferrals');
 const { generateBlogRssXml, generateSitemapXml } = require('../modules/hyperfokus/seoEngine');
 const { generateOgCard, generatePinterestPin, generateWatermarkedShareImage } = require('../modules/hyperfokus/imageCards');
 
@@ -255,6 +269,112 @@ function createHyperfokusRouter({ publicDir } = {}) {
       lang,
       user: req.session || null,
     }));
+  });
+
+  // 10. Páginas de Autenticação e Perfil de Autor (Fase 7)
+  router.get('/login', (req, res) => {
+    const lang = req.query.lang === 'en' ? 'en' : 'pt';
+    const redirect = req.query.redirect || '/meu-perfil';
+    const cookie = accountSessions.getCookie(req);
+    const session = accountSessions.readSession(cookie);
+    if (session && session.accountId) {
+      return res.redirect(redirect);
+    }
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+    return res.send(renderLoginPage({ lang, redirect }));
+  });
+
+  router.get('/cadastro', (req, res) => {
+    const lang = req.query.lang === 'en' ? 'en' : 'pt';
+    const redirect = req.query.redirect || '/meu-perfil';
+    const cookie = accountSessions.getCookie(req);
+    const session = accountSessions.readSession(cookie);
+    if (session && session.accountId) {
+      return res.redirect(redirect);
+    }
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+    return res.send(renderRegisterPage({ lang, redirect }));
+  });
+
+  router.get('/meu-perfil', (req, res) => {
+    const lang = req.query.lang === 'en' ? 'en' : 'pt';
+    const cookie = accountSessions.getCookie(req);
+    const session = accountSessions.readSession(cookie);
+    if (!session || !session.accountId) {
+      return res.redirect(`/login?redirect=${encodeURIComponent('/meu-perfil')}${lang === 'en' ? '&lang=en' : ''}`);
+    }
+
+    const account = accountStore.getAccountById(session.accountId);
+    if (!account) {
+      accountSessions.clearCookie(res);
+      return res.redirect('/login');
+    }
+
+    const stats = accountStore.getAccountStats(account.id);
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+    res.setHeader('Cache-Control', 'private, no-cache');
+    return res.send(renderProfilePage({ account, stats, lang }));
+  });
+
+  router.get('/meu-perfil/escrever', (req, res) => {
+    const lang = req.query.lang === 'en' ? 'en' : 'pt';
+    const cookie = accountSessions.getCookie(req);
+    const session = accountSessions.readSession(cookie);
+    if (!session || !session.accountId) {
+      return res.redirect(`/login?redirect=${encodeURIComponent('/meu-perfil/escrever')}${lang === 'en' ? '&lang=en' : ''}`);
+    }
+
+    const account = accountStore.getAccountById(session.accountId);
+    if (!account) {
+      accountSessions.clearCookie(res);
+      return res.redirect('/login');
+    }
+
+    let draft = null;
+    if (req.query.draftId) {
+      draft = webDraftStore.getWebDraft(req.query.draftId, account.id);
+    }
+
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+    res.setHeader('Cache-Control', 'private, no-cache');
+    return res.send(renderWebEditorPage({ account, draft, lang }));
+  });
+
+  // 11. Vitrine de Projetos & Criadores (Fase 8)
+  router.get('/hyperfokus/projetos', (req, res) => {
+    const lang = req.query.lang === 'en' ? 'en' : 'pt';
+    const category = req.query.category || 'all';
+
+    const partnersCatalog = partnershipManager.getPartnershipCatalog(category !== 'all' ? category : null);
+    const partnersList = (partnersCatalog.partners || []).map((p) => {
+      const stats = showcaseReferrals.getReferralStats(p.ownerId || p.id);
+      return {
+        ...p,
+        badge: stats.badge,
+        referralsCount: stats.count,
+      };
+    });
+
+    // Ordenação: badges com maior prioridade vêm primeiro (Cyber-Pink, Gold)
+    partnersList.sort((a, b) => (b.badge?.priority || 0) - (a.badge?.priority || 0));
+
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    return res.send(renderProjectsShowcasePage({
+      partners: partnersList,
+      activeCategory: category,
+      lang,
+    }));
+  });
+
+  // 12. Rota de Indicação com Cookie Antifraude (/divulgar?ref={snowflake})
+  router.get(['/divulgar', '/invite-ref'], (req, res) => {
+    const ref = req.query.ref;
+    if (ref && typeof ref === 'string' && /^\d{17,20}$/.test(ref.trim())) {
+      res.setHeader('Set-Cookie', `pyxie_referrer=${encodeURIComponent(ref.trim())}; Path=/; Max-Age=2592000; SameSite=Lax`);
+    }
+    const redirectUrl = req.query.redirect || '/hyperfokus/projetos';
+    return res.redirect(redirectUrl);
   });
 
   return router;

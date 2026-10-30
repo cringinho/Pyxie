@@ -590,7 +590,217 @@ assert.ok(analyticsSummary.inviteClicks >= 1, 'Entrada Discord registrada');
 assert.ok(analyticsSummary.topReferrers.some((r) => r.source === 'Google'), 'Referrer do Google catalogado');
 console.log('    ✅ 15. Analytics, filtro de robôs, anonimização LGPD e funil de leitura validados.');
 
-console.log('🎉 Fases 0 a 6 (Fundação, Discord, Painel, SSR, Motor SEO, Pinterest & Analytics) concluídas com 100% de integridade!\n');
+// 16. Testando Contas Unificadas, Web Drafts, GitHub Importer e Perfil de Autor (Fase 7)
+console.log('  👤 16. Testando Contas sem Discord, Rascunhos Web, Importador GitHub e Perfil...');
+const accountStore = require('../src/modules/accounts/accountStore');
+const webDraftStore = require('../src/modules/hyperfokus/webDraftStore');
+const { importGitHubSnippet, GITHUB_BLOB_REGEX } = require('../src/modules/hyperfokus/githubImporter');
+
+// Testando Cadastro e Hashing Scrypt
+const testEmail = `autor_teste_${Date.now()}@pyxie.com.br`;
+const testPass = 'MinhaSenhaSegura123!';
+const account = accountStore.createAccount({
+  email: testEmail,
+  password: testPass,
+});
+assert.ok(account.id, 'Conta deve ter ID gerado');
+assert.strictEqual(account.email, testEmail, 'E-mail deve bater');
+assert.strictEqual(account.passwordHash, undefined, 'Hash de senha não pode vazar');
+assert.strictEqual(account.verifiedEmail, 0, 'E-mail deve iniciar não verificado');
+
+// Testando Login com Senha Válida
+const authAcc = accountStore.authenticateWithPassword(testEmail, testPass);
+assert.strictEqual(authAcc.id, account.id, 'Autenticação com senha correta deve funcionar');
+
+// Testando Falha com Senha Incorreta
+let authFailed = false;
+try {
+  accountStore.authenticateWithPassword(testEmail, 'SenhaErrada123');
+} catch (err) {
+  authFailed = true;
+  assert.strictEqual(err.message, 'invalid_credentials');
+}
+assert.strictEqual(authFailed, true, 'Login com senha incorreta deve falhar de forma opaca');
+
+// Testando Verificação de E-mail
+const verifyToken = accountStore.createEmailVerificationToken(account.id);
+assert.ok(verifyToken, 'Token de verificação deve ser gerado');
+const verifiedAcc = accountStore.verifyEmailWithToken(verifyToken);
+assert.strictEqual(verifiedAcc.verifiedEmail, 1, 'Conta deve ser marcada como verificada');
+
+// Testando Recuperação de Senha
+const resetToken = accountStore.createPasswordResetToken(testEmail);
+assert.ok(resetToken, 'Token de recuperação de senha deve ser gerado');
+const newPass = 'NovaSenhaUltraSegura456!';
+accountStore.resetPasswordWithToken(resetToken, newPass);
+const reAuthAcc = accountStore.authenticateWithPassword(testEmail, newPass);
+assert.strictEqual(reAuthAcc.id, account.id, 'Login com nova senha deve funcionar');
+
+// Testando Preferências de Leitura Persistidas
+const prefs = accountStore.updateReadingPreferences(account.id, {
+  fontSize: 'large',
+  theme: 'sepia',
+  dyslexicFont: true,
+});
+assert.strictEqual(prefs.fontSize, 'large');
+assert.strictEqual(prefs.theme, 'sepia');
+assert.strictEqual(prefs.dyslexicFont, true);
+
+// Testando Rascunhos Web e Submissão para Moderação
+const webDraft = webDraftStore.createWebDraft(account.id, {
+  title: 'Investigação Profunda sobre Mecânica Quântica para Curiosos',
+  contentMarkdown: '# Mecânica Quântica Autêntica\n\nEste é um artigo completo com mais de cem caracteres para passar na validação estrita da equipe editorial do Pyxie Hyperfokus!',
+  categoryTags: ['física', 'ciência'],
+});
+assert.ok(webDraft.id, 'Rascunho web deve ser criado');
+assert.strictEqual(webDraft.status, 'DRAFT');
+
+// Envio para a fila editorial
+const submission = await webDraftStore.submitWebDraft(webDraft.id, account.id, {
+  authorUsername: 'FísicoCurioso',
+});
+assert.strictEqual(submission.draft.status, 'SUBMITTED', 'Rascunho web deve ser marcado como submetido');
+assert.strictEqual(submission.article.status, 'PENDING_REVIEW', 'Artigo deve entrar na fila editorial PENDING_REVIEW');
+assert.strictEqual(submission.article.metadata.source, 'site', 'Origem do artigo deve ser marcada como site');
+
+// Testando Regex do Importador de Snippets do GitHub
+const ghUrlValid = 'https://github.com/nodejs/node/blob/main/lib/fs.js#L10-L25';
+assert.ok(GITHUB_BLOB_REGEX.test(ghUrlValid), 'URL válida do GitHub blob deve passar no regex');
+const ghUrlInvalid = 'https://malicious-site.com/github.com/blob';
+assert.strictEqual(GITHUB_BLOB_REGEX.test(ghUrlInvalid), false, 'URL maliciosa deve ser barrada');
+
+// Testando Renderizadores SSR de Autenticação e Perfil
+const loginHtml = renderer.renderLoginPage({ lang: 'pt' });
+assert.strictEqual(loginHtml.match(/<h1/g).length, 1, 'Exatamente um h1 na página de login');
+assert.ok(loginHtml.includes('Entrar no Hyperfokus'), 'Título de login em português');
+
+const registerHtml = renderer.renderRegisterPage({ lang: 'pt' });
+assert.strictEqual(registerHtml.match(/<h1/g).length, 1, 'Exatamente um h1 na página de cadastro');
+assert.ok(registerHtml.includes('Criar Conta de Autor'), 'Título de cadastro');
+
+const stats = accountStore.getAccountStats(account.id);
+const profileHtml = renderer.renderProfilePage({ account: verifiedAcc, stats, lang: 'pt' });
+assert.strictEqual(profileHtml.match(/<h1/g).length, 1, 'Exatamente um h1 na página de perfil');
+assert.ok(profileHtml.includes('Meu Perfil'), 'Título de perfil');
+assert.ok(profileHtml.includes('Investigação Profunda sobre Mecânica Quântica'), 'Artigo submetido listado no perfil');
+
+const editorHtml = renderer.renderWebEditorPage({ account: verifiedAcc, lang: 'pt' });
+assert.strictEqual(editorHtml.match(/<h1/g).length, 1, 'Exatamente um h1 na página do editor');
+assert.ok(editorHtml.includes('Importar Trecho de Código do GitHub'), 'Ferramenta GitHub no editor');
+
+console.log('    ✅ 16. Contas sem Discord, segurança de senha, rascunhos web, importador GitHub e perfil validados.');
+
+// 17. Testando Divulgação, Vitrines Separadas, Indicações Antifraude e Bordas Cosméticas (Fase 8)
+console.log('  🚀 17. Testando Vitrines Separadas, Indicações Antifraude e Bordas Cosméticas...');
+const showcaseReferrals = require('../src/modules/partnerships/showcaseReferrals');
+
+// Testando Borda Cosmética Padrão
+const badge0 = showcaseReferrals.getCosmeticBadge(0);
+assert.strictEqual(badge0.tier, 0);
+
+// Testando Nível 1: Neon Lilás (1 indicação)
+const badge1 = showcaseReferrals.getCosmeticBadge(1);
+assert.strictEqual(badge1.tier, 1);
+assert.strictEqual(badge1.color, '#8B5CF6');
+assert.ok(badge1.label.pt.includes('Neon Lilás'));
+
+// Testando Nível 2: Cyber-Pink Animada (3 indicações)
+const badge3 = showcaseReferrals.getCosmeticBadge(3);
+assert.strictEqual(badge3.tier, 2);
+assert.strictEqual(badge3.color, '#E60067');
+assert.ok(badge3.badgeClass.includes('animated-border'));
+
+// Testando Nível 3: Ouro Místico (5+ indicações)
+const badge5 = showcaseReferrals.getCosmeticBadge(5);
+assert.strictEqual(badge5.tier, 3);
+assert.strictEqual(badge5.color, '#F59E0B');
+assert.ok(badge5.frames.length >= 4);
+
+// Testando Antifraude nas Indicações
+const testRunId = Date.now().toString().slice(-6) + Math.random().toString(36).slice(2, 6);
+const referrerUser = `ref_${testRunId}`;
+const referredUser1 = `target1_${testRunId}`;
+const referredUser2 = `target2_${testRunId}`;
+const testIp1 = `189.10.${Math.floor(Math.random() * 200) + 10}.${Math.floor(Math.random() * 200) + 10}`;
+const testIp2 = `189.11.${Math.floor(Math.random() * 200) + 10}.${Math.floor(Math.random() * 200) + 10}`;
+
+// 1. Auto-indicação proibida
+const selfRef = await showcaseReferrals.processReferral({
+  referrerId: referrerUser,
+  referredId: referrerUser,
+  clientIp: testIp1,
+});
+assert.strictEqual(selfRef.success, false);
+assert.strictEqual(selfRef.reason, 'self_referral_prohibited');
+
+// 2. Indicação válida
+const validRef = await showcaseReferrals.processReferral({
+  referrerId: referrerUser,
+  referredId: referredUser1,
+  clientIp: testIp1,
+});
+assert.strictEqual(validRef.success, true);
+assert.ok(validRef.referralsCount >= 1);
+
+// 3. Mesma pessoa já indicada antes
+const dupRef = await showcaseReferrals.processReferral({
+  referrerId: `other_${testRunId}`,
+  referredId: referredUser1,
+  clientIp: testIp2,
+});
+assert.strictEqual(dupRef.success, false);
+assert.strictEqual(dupRef.reason, 'already_referred');
+
+// 4. Mesmo IP no mesmo dia (antifraude)
+const sameIpRef = await showcaseReferrals.processReferral({
+  referrerId: referrerUser,
+  referredId: referredUser2,
+  clientIp: testIp1,
+});
+assert.strictEqual(sameIpRef.success, false);
+assert.strictEqual(sameIpRef.reason, 'same_ip_fraud_prevented');
+
+// Testando Vitrine de Servidores e Desativação Automática em guildDelete
+const testGuildId = '123456789012345678';
+showcaseReferrals.updateServerShowcase(testGuildId, {
+  name: 'Comunidade Gamer Teste',
+  description: 'Servidor incrível de jogos e bate-papo.',
+  inviteUrl: 'https://discord.gg/exemplo',
+}, true);
+
+let showcase = showcaseReferrals.getServerShowcase(testGuildId);
+assert.ok(showcase, 'Showcase do servidor deve existir');
+assert.strictEqual(showcase.status, 'ACTIVE');
+
+// Simula evento guildDelete (bot removido do servidor)
+showcaseReferrals.handleGuildDelete(testGuildId);
+showcase = showcaseReferrals.getServerShowcase(testGuildId);
+assert.strictEqual(showcase.status, 'PAUSED', 'Divulgação deve ser pausada quando o bot for removido');
+
+// Testando Renderizador SSR da Vitrine de Projetos (/hyperfokus/projetos)
+const showcaseHtml = renderer.renderProjectsShowcasePage({
+  partners: [
+    {
+      id: 'proj_1',
+      projectName: 'Bazar dos Emotes',
+      description: 'Emotes personalizados desenhados à mão para streamers.',
+      accessLink: 'https://bazardosemotes.com',
+      badge: badge3,
+      bumpCount: 12,
+    },
+  ],
+  activeCategory: 'service',
+  lang: 'pt',
+});
+assert.strictEqual(showcaseHtml.match(/<h1/g).length, 1, 'Exatamente um h1 na vitrine de projetos');
+assert.ok(showcaseHtml.includes('Projetos, Criadores Independentes & Lojas'), 'Título da vitrine');
+assert.ok(showcaseHtml.includes('Bazar dos Emotes'), 'Projeto listado');
+assert.ok(showcaseHtml.includes('animated-border'), 'Borda Cyber-Pink com animação presente');
+assert.ok(showcaseHtml.includes('@media (prefers-reduced-motion: reduce)'), 'Suporte obrigatório a prefers-reduced-motion');
+
+console.log('    ✅ 17. Vitrine de projetos, servidores, indicações antifraude e bordas cosméticas validadas.');
+
+console.log('🎉 TODAS AS FASES (0 A 8) DO PLANO PYXIE HYPERFOKUS CONCLUÍDAS COM 100% DE SUCESSO!\n');
 
 })().catch((err) => {
   console.error('❌ Falha nos testes de Hyperfokus:', err);

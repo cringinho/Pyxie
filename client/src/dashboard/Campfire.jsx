@@ -54,17 +54,15 @@ export default function Campfire({ t, guildId }) {
               ))}
             </select>
           </label>
-          <label className="block">
+          <div>
             <span className="mb-1 block text-xs font-semibold text-white/70">{t('campfire.pingRole')}</span>
-            <select value={cfg.pingRoleId || ''} onChange={(e) => setCfg({ ...cfg, pingRoleId: e.target.value })} className={`${field} bg-[#160d2a]`}>
-              <option value="">—</option>
-              {roles.map((r) => (
-                <option key={r.id} value={r.id}>
-                  @{r.name}
-                </option>
-              ))}
-            </select>
-          </label>
+            <MultiSelect
+              options={roles.map((r) => ({ id: r.id, label: r.name }))}
+              value={cfg.pingRoleIds || (cfg.pingRoleId ? [cfg.pingRoleId] : [])}
+              emptyLabel={t('app.loading')}
+              onChange={(v) => setCfg({ ...cfg, pingRoleIds: v, pingRoleId: v[0] || '' })}
+            />
+          </div>
           <label className="block">
             <span className="mb-1 block text-xs font-semibold text-white/70">{t('campfire.color')}</span>
             <input type="color" value={cfg.color || '#FF2A85'} onChange={(e) => setCfg({ ...cfg, color: e.target.value })} className={`${field} p-1`} />

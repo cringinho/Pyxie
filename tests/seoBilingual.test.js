@@ -120,5 +120,34 @@ assert.equal(detectRequestLang({ headers: { 'accept-language': 'pt-BR,pt;q=0.9' 
 assert.equal(detectRequestLang({}), 'pt');
 console.log('  ✅ 5. Detecção de idioma de requisição (Query, Headers, Cookies) validada.');
 
+// 6. Auditoria de SEO Bilíngue nas Rotas do Pyxie Hyperfokus
+const renderer = require('../src/modules/hyperfokus/renderer');
+const sampleArticle = {
+  id: 'art_seo_test',
+  slug: 'artigo-seo-teste',
+  title: 'Artigo SEO Teste',
+  seoTitle: 'Artigo SEO Teste • Pyxie Hyperfokus',
+  metaDescription: 'Descrição completa para teste de indexação do Google e buscadores.',
+  contentHtml: '<h2>Subtítulo</h2><p>Conteúdo autoral.</p>',
+  categoryTags: ['seo', 'teste'],
+  authors: [{ username: 'AutorTeste', userId: '123' }],
+  publishedAt: new Date(),
+};
+
+const blogHomePt = renderer.renderHomePage({ articles: [sampleArticle], total: 1, lang: 'pt' });
+const blogHomeEn = renderer.renderHomePage({ articles: [sampleArticle], total: 1, lang: 'en' });
+assert.ok(blogHomePt.includes('<html lang="pt-BR">'));
+assert.ok(blogHomeEn.includes('<html lang="en">'));
+assert.equal(blogHomePt.match(/<h1[\s>]/gi).length, 1);
+assert.equal(blogHomeEn.match(/<h1[\s>]/gi).length, 1);
+assert.ok(blogHomePt.includes('hreflang="pt-BR"'));
+assert.ok(blogHomePt.includes('hreflang="en"'));
+
+const articlePagePt = renderer.renderArticlePage({ article: sampleArticle, lang: 'pt' });
+assert.equal(articlePagePt.match(/<h1[\s>]/gi).length, 1);
+assert.ok(articlePagePt.includes('schema.org'));
+assert.ok(articlePagePt.includes('BlogPosting'));
+console.log('  ✅ 6. Rotas do Pyxie Hyperfokus validadas no Quality Gate de SEO Bilíngue.');
+
 console.log('🎉 [TEST] Quality Gate de SEO Bilíngue passou com 100% de sucesso!');
 
