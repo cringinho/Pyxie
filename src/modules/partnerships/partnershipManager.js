@@ -24,6 +24,8 @@ const COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h por projeto
 const SESSION_TTL_MS = 30 * 60 * 1000;
 const BUMP_RATE_WINDOW_MS = 15 * 60 * 1000;
 const BUMP_RATE_MAX = 10;
+const WEB_MAX_PENDING = 3; // pedidos em análise por conta, pelo site
+const DECISIONS_KEPT = 200; // recusas recentes, para a pessoa ver o resultado em Meu perfil
 const EPHEMERAL = MessageFlags.Ephemeral;
 
 const DEFAULT_CONFIG = {
@@ -76,9 +78,10 @@ class PartnershipManager {
         activeSessions: data.activeSessions || {},
         pendingRequests: data.pendingRequests || [],
         approvedPartners: data.approvedPartners || [],
+        recentDecisions: data.recentDecisions || [],
       };
     } else {
-      this.data = { activeSessions: {}, pendingRequests: [], approvedPartners: [] };
+      this.data = { activeSessions: {}, pendingRequests: [], approvedPartners: [], recentDecisions: [] };
       this.saveData();
     }
     const cutoff = Date.now() - SESSION_TTL_MS;
@@ -457,38 +460,144 @@ class PartnershipManager {
     const lang = getLanguage(interaction);
     const ticketId = `part_${Date.now().toString(36)}`;
 
-    this.data.pendingRequests.push({ id: ticketId, userId, ...session, createdAt: Date.now() });
+    const req = { id: ticketId, userId, ...session, source: 'discord', createdAt: Date.now() };
+    this.data.pendingRequests.push(req);
     delete this.data.activeSessions[userId];
     this.saveData();
 
-    const modChannel = await this.client.channels.fetch(this.config.channels.modReviewChannelId).catch(() => null);
-    if (modChannel) {
-      const emoji = schema.emoji;
-      const staffEmbed = new EmbedBuilder()
-        .setColor('#8B5CF6')
-        .setTitle(trunc(t('partnerships.staff_title', lang, { emoji, label: pick(schema.label, lang), id: ticketId }), 256))
-        .setDescription(trunc(t('partnerships.staff_desc', lang, { user: `<@${userId}>`, tag: interaction.user.tag || interaction.user.username, project: session.projectName }), 4000))
-        .setImage(session.imageUrl)
-        .setFooter({ text: t('partnerships.staff_footer', lang, { date: new Date().toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US') }) });
+    await this.postStaffReview(req, lang, `<@${userId}>`, interaction.user.tag || interaction.user.username);
+    await interaction.update({ content: t('partnerships.submitted', interaction), embeds: [], components: [] });
+  }
 
-      for (const field of schema.fields) {
-        staffEmbed.addFields({
-          name: trunc(pick(field.label, lang).replace(/:$/, ''), 256),
-          value: trunc(session.answers[field.id] || 'N/A', 1024),
-          inline: field.style === TextInputStyle.Short,
-        });
-      }
-      staffEmbed.addFields({ name: t('partnerships.staff_public_field', lang), value: trunc(session.publicDesc, 1024) });
+  /** Mensagem do pedido no canal da staff (mesmos botões para pedidos do Discord e do site). */
+  buildStaffReview(req, lang, authorMention, authorTag) {
+    const schema = CATEGORY_SCHEMAS[req.categoryKey];
+    const staffEmbed = new EmbedBuilder()
+      .setColor('#8B5CF6')
+      .setTitle(trunc(t('partnerships.staff_title', lang, { emoji: schema.emoji, label: pick(schema.label, lang), id: req.id }), 256))
+      .setDescription(trunc(t('partnerships.staff_desc', lang, { user: authorMention, tag: authorTag, project: req.projectName }), 4000))
+      .setImage(req.imageUrl)
+      .setFooter({ text: t('partnerships.staff_footer', lang, { date: new Date().toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US') }) });
 
-      const modRow = new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setCustomId(`part_staff:approve:${ticketId}`).setLabel(t('partnerships.btn_approve', lang)).setStyle(ButtonStyle.Success).setEmoji('✅'),
-        new ButtonBuilder().setCustomId(`part_staff:reject:${ticketId}`).setLabel(t('partnerships.btn_reject', lang)).setStyle(ButtonStyle.Danger).setEmoji('❌'),
-        new ButtonBuilder().setCustomId(`part_staff:contact:${ticketId}`).setLabel(t('partnerships.btn_contact', lang)).setStyle(ButtonStyle.Secondary).setEmoji('💬')
-      );
-      await modChannel.send({ embeds: [staffEmbed], components: [modRow] });
+    for (const field of schema.fields) {
+      staffEmbed.addFields({
+        name: trunc(pick(field.label, lang).replace(/:$/, ''), 256),
+        value: trunc(req.answers[field.id] || 'N/A', 1024),
+        inline: field.style === TextInputStyle.Short,
+      });
+    }
+    staffEmbed.addFields({ name: t('partnerships.staff_public_field', lang), value: trunc(req.publicDesc, 1024) });
+
+    const modRow = new ActionRowBuilder().addComponents(
+      new ButtonBuilder().setCustomId(`part_staff:approve:${req.id}`).setLabel(t('partnerships.btn_approve', lang)).setStyle(ButtonStyle.Success).setEmoji('✅'),
+      new ButtonBuilder().setCustomId(`part_staff:reject:${req.id}`).setLabel(t('partnerships.btn_reject', lang)).setStyle(ButtonStyle.Danger).setEmoji('❌'),
+      new ButtonBuilder().setCustomId(`part_staff:contact:${req.id}`).setLabel(t('partnerships.btn_contact', lang)).setStyle(ButtonStyle.Secondary).setEmoji('💬')
+    );
+    return { embeds: [staffEmbed], components: [modRow] };
+  }
+
+  /** Publica o pedido no canal da staff: pelo Client no bot, pela API REST no processo do site. */
+  async postStaffReview(req, lang, authorMention, authorTag) {
+    const channelId = this.config.channels.modReviewChannelId;
+    if (!channelId) return false;
+    const message = this.buildStaffReview(req, lang, authorMention, authorTag);
+    if (this.client) {
+      const ch = await this.client.channels.fetch(channelId).catch(() => null);
+      if (!ch) return false;
+      return Boolean(await ch.send({ ...message, allowedMentions: { parse: [] } }).catch(() => null));
+    }
+    const sent = await restPost(`/channels/${channelId}/messages`, {
+      embeds: message.embeds.map((e) => e.toJSON()),
+      components: message.components.map((c) => c.toJSON()),
+      allowed_mentions: { parse: [] },
+    }).catch(() => null);
+    return Boolean(sent);
+  }
+
+  // ---------- Divulgação pelo site (conta Pyxie: e-mail ou Discord) ----------
+
+  /** Pedido feito pelo formulário do site. Mesmos campos e mesma fila do /py-parceria. */
+  async submitFromWeb(account, input = {}, lang = 'pt') {
+    this.refresh();
+    const schema = CATEGORY_SCHEMAS[input.categoryKey];
+    if (!account) return { ok: false, status: 401, error: 'not_authenticated' };
+    if (!schema) return { ok: false, status: 400, error: 'invalid_category' };
+
+    const owned = (r) => r.accountId === account.id || (account.discordUserId && r.userId === account.discordUserId);
+    if (this.data.pendingRequests.filter(owned).length >= WEB_MAX_PENDING) {
+      return { ok: false, status: 429, error: 'too_many_pending' };
     }
 
-    await interaction.update({ content: t('partnerships.submitted', interaction), embeds: [], components: [] });
+    const answers = {};
+    for (const field of schema.fields) {
+      const value = String(input.answers?.[field.id] ?? '').trim();
+      if (!value) return { ok: false, status: 400, error: 'missing_field', field: field.id };
+      answers[field.id] = trunc(value, field.style === TextInputStyle.Paragraph ? 1000 : 300);
+    }
+    if (!isHttpUrl(answers.access_link)) return { ok: false, status: 400, error: 'invalid_url', field: 'access_link' };
+    const imageUrl = String(input.imageUrl || '').trim();
+    if (!isHttpUrl(imageUrl)) return { ok: false, status: 400, error: 'invalid_url', field: 'imageUrl' };
+    const publicDesc = String(input.publicDesc || '').trim();
+    if (!publicDesc) return { ok: false, status: 400, error: 'missing_field', field: 'publicDesc' };
+
+    const req = {
+      id: `part_${Date.now().toString(36)}`,
+      userId: account.discordUserId || null,
+      accountId: account.id,
+      source: 'web',
+      categoryKey: input.categoryKey,
+      macroCategory: schema.macroCategory,
+      projectName: trunc(answers.rep_name, 100),
+      accessLink: answers.access_link,
+      answers,
+      imageUrl,
+      publicDesc: trunc(publicDesc, 1000),
+      lang: lang === 'en' ? 'en' : 'pt',
+      createdAt: Date.now(),
+    };
+    this.data.pendingRequests.push(req);
+    this.saveData();
+
+    const who = account.discordUserId ? `<@${account.discordUserId}>` : (account.displayName || t('partnerships.web_author', lang));
+    await this.postStaffReview(req, 'pt', who, `${t('partnerships.web_source', 'pt')} ${account.id}`);
+    return { ok: true, status: 200, request: { id: req.id, projectName: req.projectName, status: 'pending' } };
+  }
+
+  /** Pedidos e divulgações da conta, para "Minhas divulgações" em Meu perfil. */
+  listForAccount(account) {
+    this.refresh();
+    if (!account) return [];
+    const owned = (r) => r.accountId === account.id || (account.discordUserId && r.userId === account.discordUserId);
+    const now = Date.now();
+    const approved = this.data.approvedPartners.filter(owned).map((p) => ({
+      ...this.sanitize(p),
+      status: 'approved',
+      nextBumpAt: (p.lastBumpedAt || 0) + COOLDOWN_MS > now ? (p.lastBumpedAt || 0) + COOLDOWN_MS : null,
+    }));
+    const pending = this.data.pendingRequests.filter(owned).map((r) => ({
+      id: r.id, projectName: r.projectName, categoryKey: r.categoryKey, createdAt: r.createdAt, status: 'pending',
+    }));
+    const rejected = (this.data.recentDecisions || []).filter((d) => d.status === 'rejected' && owned(d)).map((d) => ({
+      id: d.id, projectName: d.projectName, decidedAt: d.decidedAt, status: 'rejected',
+    }));
+    return [...pending, ...approved, ...rejected];
+  }
+
+  /** Aviso no canal da staff quando o dono edita a divulgação pelo site. */
+  async notifyOwnerEdit(partner, fields) {
+    const channelId = this.config.channels.modReviewChannelId;
+    if (!channelId) return;
+    const lines = [t('partnerships.owner_edit_notice', 'pt', { project: partner.projectName, fields: fields.join(', ') })];
+    if (fields.includes('accessLink')) lines.push(`-# ${partner.accessLink}`);
+    await this.sendToChannel(channelId, lines.join('\n'));
+  }
+
+  /** Divulgação aprovada que pertence à conta (null se não for dela). */
+  findOwnedPartner(account, partnerId) {
+    this.refresh();
+    const p = this.data.approvedPartners.find((x) => x.id === partnerId);
+    if (!p || !account) return null;
+    return p.accountId === account.id || (account.discordUserId && p.userId === account.discordUserId) ? p : null;
   }
 
   // ---------- Ações da staff ----------
@@ -507,11 +616,17 @@ class PartnershipManager {
     }
     const req = this.data.pendingRequests[idx];
 
+    if (action === 'contact' && !req.userId) {
+      // Só a staff vê (efêmero): o e-mail da conta nunca vai para mensagem pública.
+      const acc = req.accountId ? require('../accounts/accountStore').getAccountById(req.accountId) : null;
+      return interaction.reply({ content: t('partnerships.contact_hint_web', interaction, { email: acc?.email || '—' }), flags: EPHEMERAL });
+    }
     if (action === 'contact') {
       return interaction.reply({ content: t('partnerships.contact_hint', interaction, { user: `<@${req.userId}>` }), flags: EPHEMERAL });
     }
 
-    const member = await interaction.guild.members.fetch(req.userId).catch(() => null);
+    // Pedido feito só pelo site não tem usuário do Discord (fetch sem id buscaria o servidor inteiro).
+    const member = req.userId ? await interaction.guild.members.fetch(req.userId).catch(() => null) : null;
     const applicantLang = req.lang || lang;
     const screeningRoleId = this.config.roles.screeningRoleId;
     const schema = CATEGORY_SCHEMAS[req.categoryKey];
@@ -570,6 +685,10 @@ class PartnershipManager {
       }
       this.refresh();
       this.data.pendingRequests = this.data.pendingRequests.filter((r) => r.id !== ticketId);
+      this.data.recentDecisions = [
+        { id: req.id, accountId: req.accountId || null, userId: req.userId || null, projectName: req.projectName, status: 'rejected', decidedAt: Date.now() },
+        ...(this.data.recentDecisions || []),
+      ].slice(0, DECISIONS_KEPT);
       this.saveData();
 
       const rejectedEmbed = EmbedBuilder.from(interaction.message.embeds[0])
@@ -685,7 +804,15 @@ class PartnershipManager {
       approvedAt: p.approvedAt,
       lastBumpedAt: p.lastBumpedAt,
       bumpCount: p.bumpCount || 0,
+      badge: this.badgeFor(p),
     };
+  }
+
+  /** Borda cosmética pelas indicações do dono (só o necessário para pintar o cartão). */
+  badgeFor(p) {
+    if (!p.userId) return null;
+    const { badge } = require('./showcaseReferrals').getReferralStats(p.userId);
+    return badge && badge.tier > 0 ? { tier: badge.tier, color: badge.color, label: badge.label } : null;
   }
 
   getPartnershipCatalog(selectedCategory = null) {
@@ -704,7 +831,9 @@ class PartnershipManager {
       const top = all.filter((p) => p.macroCategory === m).sort(byBump)[0];
       if (top) mosaic[m] = this.sanitize(top);
     }
-    return { mosaic, catalog: list.map((p) => this.sanitize(p)) };
+    // Bordas de indicação sobem primeiro (Ouro, Cyber-Pink, Neon); dentro do mesmo nível, o bump mais recente.
+    const catalog = list.map((p) => this.sanitize(p)).sort((a, b) => (b.badge?.tier || 0) - (a.badge?.tier || 0));
+    return { mosaic, catalog };
   }
 
   getPublicWebUrl() {

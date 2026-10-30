@@ -1,5 +1,76 @@
-import React, { useState } from 'react';
-import { Sparkles, Compass, BookOpen, Gift, ShieldCheck, Menu, X, ExternalLink, Globe, Terminal, User } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Sparkles, BookOpen, Gift, ShieldCheck, Menu, X, Globe, Terminal, User, ChevronDown, Feather, Palette, Heart } from 'lucide-react';
+
+const linkBase =
+  'whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5';
+const drawerLink =
+  'px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between';
+
+// Itens do grupo "Comunidade": o blog é um item comum aqui (o destaque da home é o "Adicionar Pyxie").
+function communityItems(lang, t) {
+  return [
+    { href: `/hyperfokus?lang=${lang}`, label: t('nav.blog'), desc: t('nav.blogDesc'), Icon: Feather, color: 'text-pink-400' },
+    { href: `/museu?lang=${lang}`, label: t('nav.museum'), desc: t('nav.museumDesc'), Icon: Palette, color: 'text-fuchsia-400' },
+    { href: `/parcerias?lang=${lang}`, label: t('nav.partnerships'), desc: t('nav.partnershipsDesc'), Icon: ShieldCheck, color: 'text-emerald-400' },
+    { href: `/cringelandia?lang=${lang}`, label: t('nav.cringelandia'), desc: t('nav.cringelandiaDesc'), Icon: Heart, color: 'text-rose-400' },
+  ];
+}
+
+function CommunityMenu({ lang, t }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const onDown = (e) => wrapRef.current && !wrapRef.current.contains(e.target) && setOpen(false);
+    const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        className={`${linkBase} ${open ? 'text-white bg-white/5' : ''}`}
+        aria-expanded={open}
+        aria-haspopup="true"
+        // Com mouse o hover já abriu, então o clique só confirma; pelo teclado (detail 0) alterna.
+        onClick={(e) => setOpen((v) => (e.detail === 0 ? !v : true))}
+      >
+        <Sparkles className="w-3.5 h-3.5 text-pink-400 shrink-0" />
+        <span>{t('nav.community')}</span>
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full pt-2 z-50">
+          <ul className="w-72 rounded-2xl border border-purple-500/25 bg-[#0f0820]/95 backdrop-blur-2xl p-2 shadow-2xl shadow-black/50">
+            {communityItems(lang, t).map(({ href, label, desc, Icon, color }) => (
+              <li key={href}>
+                <a href={href} className="flex items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-white/5 focus-visible:bg-white/5 outline-none">
+                  <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${color}`} />
+                  <span>
+                    <span className="block text-sm font-semibold text-white">{label}</span>
+                    <span className="block text-xs text-slate-400">{desc}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Navbar({ lang, setLang, t }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -12,6 +83,7 @@ export default function Navbar({ lang, setLang, t }) {
     url.searchParams.set('lang', next);
     window.history.replaceState({}, '', url);
   };
+  const close = () => setMobileMenuOpen(false);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#080410]/85 backdrop-blur-2xl border-b border-purple-500/15 transition-all">
@@ -39,64 +111,24 @@ export default function Navbar({ lang, setLang, t }) {
         </a>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1 xl:gap-2 overflow-x-auto scrollbar-none">
-          <a
-            href={`/?lang=${lang}#pilares`}
-            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
-          >
+        <nav className="hidden md:flex items-center gap-1 xl:gap-2" aria-label={lang === 'pt' ? 'Menu principal' : 'Main menu'}>
+          <a href={`/?lang=${lang}#pilares`} className={linkBase}>
             {t('nav.features')}
           </a>
-          <a
-            href={`/?lang=${lang}#comandos`}
-            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
-          >
+          <a href={`/?lang=${lang}#comandos`} className={linkBase}>
             <Terminal className="w-3.5 h-3.5 text-pink-400 shrink-0" />
             <span>{t('nav.commands')}</span>
           </a>
-          <a
-            href={`/hyperfokus?lang=${lang}`}
-            className="whitespace-nowrap px-3 py-1.5 rounded-xl text-xs xl:text-sm font-bold text-white bg-pink-600/30 hover:bg-pink-600/50 border border-[#E60067]/60 shadow-[0_0_12px_rgba(230,0,103,0.35)] transition-all flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#E60067] shrink-0" />
-            <span>{t('nav.blog')}</span>
-          </a>
-          <a
-            href={`/wiki?lang=${lang}`}
-            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
-          >
+          <CommunityMenu lang={lang} t={t} />
+          <a href={`/wiki?lang=${lang}`} className={linkBase}>
             <BookOpen className="w-3.5 h-3.5 text-purple-400 shrink-0" />
             <span>{t('nav.wiki')}</span>
           </a>
-          <a
-            href={`/museu?lang=${lang}`}
-            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-pink-400 shrink-0" />
-            <span>{t('nav.museum')}</span>
-          </a>
-          <a
-            href={`/bonus?lang=${lang}`}
-            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
-          >
+          <a href={`/bonus?lang=${lang}`} className={`${linkBase} hidden lg:flex`}>
             <Gift className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <span>{t('nav.bonus')}</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">
-              10s
-            </span>
           </a>
-          <a
-            href={`/parcerias?lang=${lang}`}
-            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>{t('nav.partnerships')}</span>
-          </a>
-          <a
-            href="/discord"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
-          >
+          <a href="/discord" target="_blank" rel="noopener noreferrer" className={`${linkBase} hidden lg:flex`}>
             {t('nav.support')}
           </a>
         </nav>
@@ -106,10 +138,9 @@ export default function Navbar({ lang, setLang, t }) {
           <a
             href={`/meu-perfil?lang=${lang}`}
             className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-purple-500/20 hover:border-pink-500/40 transition-all whitespace-nowrap"
-            title={lang === 'pt' ? 'Meu Perfil de Autor' : 'My Author Profile'}
           >
             <User className="w-3.5 h-3.5 text-pink-400" />
-            <span>{lang === 'pt' ? 'Meu Perfil' : 'Profile'}</span>
+            <span>{t('nav.account')}</span>
           </a>
 
           <button
@@ -136,6 +167,7 @@ export default function Navbar({ lang, setLang, t }) {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 rounded-xl text-slate-300 hover:text-white bg-white/5 border border-purple-500/20"
             aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -144,79 +176,41 @@ export default function Navbar({ lang, setLang, t }) {
 
       {/* Mobile drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-[#080410]/95 backdrop-blur-2xl border-b border-purple-500/20 px-4 pt-3 pb-6 flex flex-col gap-2 animate-fadeIn">
-          <a
-            href={`/?lang=${lang}#pilares`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5"
-          >
+        <div className="md:hidden max-h-[calc(100vh-4rem)] overflow-y-auto bg-[#080410]/95 backdrop-blur-2xl border-b border-purple-500/20 px-4 pt-3 pb-6 flex flex-col gap-1 animate-fadeIn">
+          <a href={`/?lang=${lang}#pilares`} onClick={close} className={drawerLink}>
             {t('nav.features')}
           </a>
-          <a
-            href={`/?lang=${lang}#comandos`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
-          >
+          <a href={`/?lang=${lang}#comandos`} onClick={close} className={drawerLink}>
             <span>{t('nav.commands')}</span>
             <Terminal className="w-4 h-4 text-pink-400" />
           </a>
-          <a
-            href={`/hyperfokus?lang=${lang}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-base font-bold text-white bg-pink-600/25 border border-[#E60067]/50 flex items-center justify-between"
-          >
-            <span>{t('nav.blog')}</span>
-            <Sparkles className="w-4 h-4 text-[#E60067]" />
-          </a>
-          <a
-            href={`/wiki?lang=${lang}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
-          >
+          <a href={`/wiki?lang=${lang}`} onClick={close} className={drawerLink}>
             <span>{t('nav.wiki')}</span>
             <BookOpen className="w-4 h-4 text-purple-400" />
           </a>
-          <a
-            href={`/museu?lang=${lang}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
-          >
-            <span>{t('nav.museum')}</span>
-            <Sparkles className="w-4 h-4 text-pink-400" />
-          </a>
-          <a
-            href={`/bonus?lang=${lang}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
-          >
+          <a href={`/bonus?lang=${lang}`} onClick={close} className={drawerLink}>
             <span>{t('nav.bonus')}</span>
             <Gift className="w-4 h-4 text-amber-400" />
           </a>
-          <a
-            href={`/parcerias?lang=${lang}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
-          >
-            <span>{t('nav.partnerships')}</span>
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          </a>
-          <a
-            href="/discord"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5"
-          >
-            {t('nav.support')}
-          </a>
-          <a
-            href={`/meu-perfil?lang=${lang}`}
-            onClick={() => setMobileMenuOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 flex items-center justify-between"
-          >
-            <span>{lang === 'pt' ? 'Meu Perfil' : 'Profile'}</span>
-            <User className="w-4 h-4 text-pink-400" />
-          </a>
-          <div className="pt-2 border-t border-purple-500/15 flex flex-col gap-2">
+
+          <p className="mt-3 mb-1 px-4 text-[11px] font-bold uppercase tracking-wider text-purple-300/70">{t('nav.community')}</p>
+          {communityItems(lang, t).map(({ href, label, Icon, color }) => (
+            <a key={href} href={href} onClick={close} className={drawerLink}>
+              <span>{label}</span>
+              <Icon className={`w-4 h-4 ${color}`} />
+            </a>
+          ))}
+
+          <div className="mt-3 pt-3 border-t border-purple-500/15 flex flex-col gap-1">
+            <a href="/discord" target="_blank" rel="noopener noreferrer" className={drawerLink}>
+              {t('nav.support')}
+            </a>
+            <a href={`/meu-perfil?lang=${lang}`} onClick={close} className={drawerLink}>
+              <span>{t('nav.account')}</span>
+              <User className="w-4 h-4 text-pink-400" />
+            </a>
+          </div>
+          <div className="pt-2 flex flex-col gap-2">
             <a
               href="/invite?ref=site-menu"
               target="_blank"
@@ -239,4 +233,3 @@ export default function Navbar({ lang, setLang, t }) {
     </header>
   );
 }
-

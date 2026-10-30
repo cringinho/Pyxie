@@ -13,12 +13,10 @@ const {
   renderRegisterPage,
   renderProfilePage,
   renderWebEditorPage,
-  renderProjectsShowcasePage,
   renderAuthorPage,
   renderWelcomePage,
+  renderPartnerFormPage,
 } = require('../modules/hyperfokus/renderer');
-const partnershipManager = require('../modules/partnerships/partnershipManager');
-const showcaseReferrals = require('../modules/partnerships/showcaseReferrals');
 const { generateBlogRssXml, generateSitemapXml } = require('../modules/hyperfokus/seoEngine');
 const { generateOgCard, generatePinterestPin, generateWatermarkedShareImage } = require('../modules/hyperfokus/imageCards');
 
@@ -262,30 +260,42 @@ function createHyperfokusRouter({ publicDir } = {}) {
 
   // 9. Vitrine de Projetos & Criadores (Fase 8 - antes de /hyperfokus/:slug)
   router.get('/hyperfokus/projetos', (req, res) => {
+    // Uma vitrine só: o mural de Parcerias (evita duas páginas com o mesmo catálogo competindo no Google).
+    return res.redirect(301, req.query.lang === 'en' ? '/parcerias?lang=en' : '/parcerias');
+  });
+
+  // 9b. Formulário de divulgação (conta Pyxie). Mesmos campos e mesma fila do /py-parceria.
+  router.get('/meu-perfil/divulgar', (req, res) => {
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
-    const category = req.query.category || 'all';
-
-    const partnersCatalog = partnershipManager.getPartnershipCatalog(category !== 'all' ? category : null);
-    const partnersList = (partnersCatalog.partners || []).map((p) => {
-      const stats = showcaseReferrals.getReferralStats(p.ownerId || p.id);
-      return {
-        ...p,
-        badge: stats.badge,
-        referralsCount: stats.count,
-      };
-    });
-
-    // Ordenação: badges com maior prioridade vêm primeiro (Cyber-Pink, Gold)
-    partnersList.sort((a, b) => (b.badge?.priority || 0) - (a.badge?.priority || 0));
-
+    if (!req.account) {
+      const back = `/meu-perfil/divulgar${lang === 'en' ? '?lang=en' : ''}`;
+      return res.redirect(`/login?redirect=${encodeURIComponent(back)}${lang === 'en' ? '&lang=en' : ''}`);
+    }
+    const { CATEGORY_SCHEMAS } = require('../modules/partnerships/formSchemas');
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-    res.setHeader('Cache-Control', cacheFor(req, 300));
-    return res.send(renderProjectsShowcasePage({
-      partners: partnersList,
-      activeCategory: category,
-      lang,
-      user: req.account || null,
-    }));
+    res.setHeader('Cache-Control', 'private, no-cache');
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    return res.send(renderPartnerFormPage({ account: req.account, schemas: CATEGORY_SCHEMAS, lang }));
+  });
+
+  // 9c. Últimos artigos em JSON (seção "Do blog" na home da Pyxie).
+  router.get('/api/hyperfokus/latest', (req, res) => {
+    const limit = Math.min(6, Math.max(1, Number(req.query.limit) || 3));
+    const { items } = articleStore.listArticles({ status: 'PUBLISHED', sort: 'recent', page: 1, limit });
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    return res.json({
+      success: true,
+      articles: items.map((a) => ({
+        slug: a.slug,
+        title: a.title,
+        excerpt: String(a.metaDescription || a.contentMarkdown || '').replace(/[#*_>`~\[\]]/g, '').replace(/\s+/g, ' ').trim().slice(0, 140),
+        cover: a.coverImage || `/api/hyperfokus/og/${a.id}`,
+        tags: (a.categoryTags || []).slice(0, 2),
+        author: a.authors?.[0]?.globalName || a.authors?.[0]?.username || null,
+        publishedAt: a.publishedAt || a.createdAt,
+        readingTimeMinutes: a.readingTimeMinutes || 2,
+      })),
+    });
   });
 
   // 10. Artigo Completo (/hyperfokus/:slug)
@@ -415,7 +425,7 @@ function createHyperfokusRouter({ publicDir } = {}) {
     if (ref && typeof ref === 'string' && /^\d{17,20}$/.test(ref.trim())) {
       res.setHeader('Set-Cookie', `pyxie_referrer=${encodeURIComponent(ref.trim())}; Path=/; Max-Age=2592000; SameSite=Lax`);
     }
-    const redirectUrl = safeRedirect(req.query.redirect, '/hyperfokus/projetos');
+    const redirectUrl = safeRedirect(req.query.redirect, '/parcerias');
     return res.redirect(redirectUrl);
   });
 

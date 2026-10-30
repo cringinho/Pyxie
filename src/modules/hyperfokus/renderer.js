@@ -580,6 +580,11 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
   const list = featured ? articles.slice(1) : [];
 
   const shopeeProducts = getContextualProducts(activeTag ? [activeTag] : ['tecnologia', 'autismo'], 4);
+  // Projetos da comunidade: as 3 divulgações aprovadas mais recentes do mural de Parcerias.
+  let communityProjects = [];
+  try {
+    communityProjects = require('../partnerships/partnershipManager').getPartnershipCatalog().catalog.slice(0, 3);
+  } catch (_) {}
 
 
   const tagPillsHtml = tags.map((t) => {
@@ -730,6 +735,26 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
           <a href="/discord" target="_blank" rel="noopener noreferrer" class="btn btn-pink" style="width: 100%;">
             👾 ${isEn ? 'Join Sanctuary' : 'Entrar no Servidor'}
           </a>
+        </div>
+
+        <!-- Projetos da comunidade (mural de Parcerias) -->
+        <div class="widget">
+          <h3 class="widget-title">📣 ${isEn ? 'Community projects' : 'Projetos da comunidade'}</h3>
+          ${communityProjects.length ? `
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:0.6rem; margin-bottom:0.9rem;">
+            ${communityProjects.map((p) => `
+            <li>
+              <a href="${escapeHtml(p.accessLink)}" target="_blank" rel="noopener noreferrer nofollow" style="display:flex; gap:0.6rem; align-items:center; text-decoration:none;">
+                <img src="${escapeHtml(p.imageUrl || '/assets/pyxie/pyxie_mascot.png')}" alt="" width="40" height="40" loading="lazy" style="border-radius:0.5rem; object-fit:cover; flex:none;" />
+                <span style="min-width:0;"><strong style="color:#fff; font-size:0.875rem;">${escapeHtml(p.projectName)}</strong><br>
+                <span style="color:var(--text-muted); font-size:0.75rem;">${escapeHtml(p.categoryEmoji || '')} ${escapeHtml((p.categoryLabel && (p.categoryLabel[lang] || p.categoryLabel.pt)) || '')}</span></span>
+              </a>
+            </li>`).join('')}
+          </ul>` : `<p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:0.9rem;">${isEn ? 'Channels, shops, art and communities from people around here.' : 'Canais, lojas, artes e comunidades de quem anda por aqui.'}</p>`}
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <a href="/parcerias${isEn ? '?lang=en' : ''}" class="btn btn-outline" style="font-size:0.75rem; flex:1; justify-content:center;">${isEn ? 'See the wall' : 'Ver o mural'}</a>
+            <a href="/meu-perfil/divulgar${isEn ? '?lang=en' : ''}" class="btn btn-pink" style="font-size:0.75rem; flex:1; justify-content:center;">${isEn ? 'Promote yours' : 'Divulgar o seu'}</a>
+          </div>
         </div>
 
         <!-- Shopee Contextual Affiliate Widget -->
@@ -1748,7 +1773,7 @@ function renderProfilePage({ account, stats, lang = 'pt', message = null, error 
           <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Avatar" width="68" height="68" style="border-radius:50%; border:2px solid var(--accent-pink);" />
           <div>
             <h1 style="font-size:1.5rem; font-weight:900; color:#fff; margin-bottom:0.25rem;">
-              ${escapeHtml(account.email || emailPrefix)}
+              ${escapeHtml(account.displayName || account.email || emailPrefix)}
             </h1>
             <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; font-size:0.8rem;">
               <span class="status-badge ${isVerified ? 'status-published' : 'status-pending'}">
@@ -1867,6 +1892,17 @@ function renderProfilePage({ account, stats, lang = 'pt', message = null, error 
         `}
       </div>
 
+      <section class="profile-card" id="divulgacoes" aria-labelledby="pd-title">
+        <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
+          <h2 id="pd-title" style="font-size:1.25rem; font-weight:900; color:#fff;">📣 ${isEn ? 'My promotions' : 'Minhas divulgações'}</h2>
+          <a href="/meu-perfil/divulgar${isEn ? '?lang=en' : ''}" class="btn btn-pink" style="font-size:0.8rem;">＋ ${isEn ? 'Promote a project' : 'Divulgar um projeto'}</a>
+        </div>
+        <div id="pd-sent" role="status" style="display:none; background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.4); color:#bbf7d0; border-radius:0.75rem; padding:0.7rem 1rem; margin-bottom:0.75rem; font-size:0.9rem;">${isEn ? 'Sent! The staff will review it; the status shows up here.' : 'Enviado! A staff vai revisar; o andamento aparece aqui.'}</div>
+        <div id="pd-list" style="display:flex; flex-direction:column; gap:0.75rem;">
+          <p style="color:var(--text-muted); font-size:0.875rem;">${isEn ? 'Loading...' : 'Carregando...'}</p>
+        </div>
+      </section>
+
       <div class="profile-card">
         <h2 style="font-size:1.25rem; font-weight:900; color:#fff; margin-bottom:0.5rem;">
           👁️ ${isEn ? 'Saved Reader Preferences' : 'Preferências de Leitura Salvas'}
@@ -1932,6 +1968,101 @@ function renderProfilePage({ account, stats, lang = 'pt', message = null, error 
       btn.innerText = '✓ Salvo com sucesso!';
       setTimeout(() => { btn.innerText = '💾 ${isEn ? 'Save Preferences' : 'Salvar Preferências'}'; }, 2000);
     });
+
+    // Minhas divulgações: pedidos em análise, aprovados (editar, bump 24 h, excluir) e recusados.
+    const PD = {
+      lang: '${isEn ? 'en' : 'pt'}',
+      empty: '${isEn ? 'Nothing here yet. Promote your channel, shop, art or community and it shows up on the Partnerships wall.' : 'Nada por aqui ainda. Divulgue seu canal, loja, arte ou comunidade e ele aparece no mural de Parcerias.'}',
+      status: { pending: '${isEn ? 'Under review' : 'Em análise'}', approved: '${isEn ? 'On the wall' : 'No mural'}', rejected: '${isEn ? 'Not approved' : 'Não aprovado'}' },
+      edit: '${isEn ? 'Edit' : 'Editar'}', bump: '${isEn ? 'Bump' : 'Dar bump'}', remove: '${isEn ? 'Delete' : 'Excluir'}', save: '${isEn ? 'Save' : 'Salvar'}', cancel: '${isEn ? 'Cancel' : 'Cancelar'}',
+      view: '${isEn ? 'See on the wall' : 'Ver no mural'}',
+      nextBump: '${isEn ? 'Next bump' : 'Próximo bump'}',
+      confirmDelete: '${isEn ? 'Delete this promotion from the wall? This cannot be undone.' : 'Excluir esta divulgação do mural? Não dá para desfazer.'}',
+      fName: '${isEn ? 'Name' : 'Nome'}', fLink: '${isEn ? 'Link' : 'Link'}', fImage: '${isEn ? 'Image (link)' : 'Imagem (link)'}', fDesc: '${isEn ? 'Public description' : 'Descrição pública'}',
+      failed: '${isEn ? 'Could not save. Check the links (https://) and try again.' : 'Não deu para salvar. Confira os links (https://) e tente de novo.'}',
+    };
+    function pdEsc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c])); }
+    const pdColors = { pending: '#f59e0b', approved: '#22c55e', rejected: '#ef4444' };
+    let pdItems = [];
+
+    function pdCard(item) {
+      const chip = '<span style="font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:999px; border:1px solid ' + pdColors[item.status] + '; color:' + pdColors[item.status] + ';">' + PD.status[item.status] + '</span>';
+      let actions = '';
+      if (item.status === 'approved') {
+        const wait = item.nextBumpAt ? new Date(item.nextBumpAt).toLocaleString(PD.lang === 'en' ? 'en-US' : 'pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '';
+        actions = '<div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.6rem;">' +
+          '<button class="btn btn-outline" style="font-size:0.75rem;" data-act="edit" data-id="' + pdEsc(item.id) + '">✏️ ' + PD.edit + '</button>' +
+          '<button class="btn btn-pink" style="font-size:0.75rem;" data-act="bump" data-id="' + pdEsc(item.id) + '"' + (wait ? ' disabled title="' + PD.nextBump + ': ' + pdEsc(wait) + '"' : '') + '>🚀 ' + PD.bump + (wait ? ' · ' + pdEsc(wait) : '') + '</button>' +
+          '<a class="btn btn-outline" style="font-size:0.75rem;" href="/parcerias' + (PD.lang === 'en' ? '?lang=en' : '') + '">' + PD.view + '</a>' +
+          '<button class="btn btn-outline" style="font-size:0.75rem; margin-left:auto;" data-act="delete" data-id="' + pdEsc(item.id) + '">🗑️ ' + PD.remove + '</button>' +
+        '</div><div data-edit-slot="' + pdEsc(item.id) + '"></div>';
+      }
+      return '<article style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:0.9rem; padding:0.9rem 1rem;">' +
+        '<div style="display:flex; gap:0.75rem; align-items:center;">' +
+          (item.imageUrl ? '<img src="' + pdEsc(item.imageUrl) + '" alt="" width="48" height="48" style="border-radius:0.6rem; object-fit:cover; flex:none;" loading="lazy" />' : '') +
+          '<div style="flex:1; min-width:0;"><strong style="color:#fff;">' + pdEsc(item.projectName) + '</strong>' +
+          (item.categoryLabel ? '<div style="font-size:0.78rem; color:var(--text-muted);">' + pdEsc(item.categoryEmoji || '') + ' ' + pdEsc(item.categoryLabel[PD.lang] || item.categoryLabel.pt || '') + '</div>' : '') +
+          '</div>' + chip +
+        '</div>' + actions + '</article>';
+    }
+
+    async function pdLoad() {
+      const list = document.getElementById('pd-list');
+      try {
+        const res = await fetch('/api/user/partnerships');
+        const data = await res.json();
+        pdItems = data.items || [];
+        list.innerHTML = pdItems.length ? pdItems.map(pdCard).join('') : '<p style="color:var(--text-muted); font-size:0.9rem;">' + PD.empty + '</p>';
+      } catch (_) {
+        list.innerHTML = '<p style="color:var(--text-muted);">' + PD.failed + '</p>';
+      }
+    }
+
+    function pdEditForm(item) {
+      const field = (key, label, value, long) => '<label style="display:flex; flex-direction:column; gap:0.25rem; font-size:0.8rem; color:var(--text-muted);">' + label +
+        (long ? '<textarea data-k="' + key + '" maxlength="1000" rows="3" class="form-input">' + pdEsc(value) + '</textarea>'
+              : '<input data-k="' + key + '" class="form-input" value="' + pdEsc(value) + '" />') + '</label>';
+      return '<form data-edit-form="' + pdEsc(item.id) + '" style="display:grid; gap:0.6rem; margin-top:0.75rem;">' +
+        field('projectName', PD.fName, item.projectName) + field('accessLink', PD.fLink, item.accessLink) +
+        field('imageUrl', PD.fImage, item.imageUrl) + field('publicDesc', PD.fDesc, item.publicDesc, true) +
+        '<div style="display:flex; gap:0.5rem;"><button class="btn btn-pink" style="font-size:0.8rem;">' + PD.save + '</button>' +
+        '<button type="button" class="btn btn-outline" style="font-size:0.8rem;" data-act="cancel">' + PD.cancel + '</button></div></form>';
+    }
+
+    document.getElementById('pd-list').addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-act]');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      if (btn.dataset.act === 'cancel') return pdLoad();
+      if (btn.dataset.act === 'edit') {
+        const item = pdItems.find((x) => x.id === id);
+        document.querySelector('[data-edit-slot="' + CSS.escape(id) + '"]').innerHTML = pdEditForm(item);
+        return;
+      }
+      if (btn.dataset.act === 'delete' && !confirm(PD.confirmDelete)) return;
+      btn.disabled = true;
+      const url = '/api/user/partnerships/' + encodeURIComponent(id) + (btn.dataset.act === 'bump' ? '/bump' : '') + '?lang=' + PD.lang;
+      const res = await fetch(url, { method: btn.dataset.act === 'bump' ? 'POST' : 'DELETE' });
+      const data = await res.json().catch(() => ({}));
+      if (data.message) alert(data.message);
+      pdLoad();
+    });
+
+    document.getElementById('pd-list').addEventListener('submit', async (e) => {
+      const form = e.target.closest('[data-edit-form]');
+      if (!form) return;
+      e.preventDefault();
+      const body = {};
+      form.querySelectorAll('[data-k]').forEach((input) => { body[input.dataset.k] = input.value.trim(); });
+      const res = await fetch('/api/user/partnerships/' + encodeURIComponent(form.dataset.editForm), {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+      });
+      if (!res.ok) return alert(PD.failed);
+      pdLoad();
+    });
+
+    if (new URLSearchParams(location.search).get('sent') === '1') document.getElementById('pd-sent').style.display = 'block';
+    pdLoad();
 
     async function requestRemoval(articleId, title) {
       const reason = prompt('${isEn ? 'Please specify why you are requesting removal or revision of this article:' : 'Informe o motivo da solicitação de remoção ou revisão deste artigo:'}');
@@ -2265,138 +2396,6 @@ function renderWebEditorPage({ account, draft = null, lang = 'pt' } = {}) {
 }
 
 
-/**
- * Vitrine Pública de Projetos, Criadores e Serviços (/hyperfokus/projetos)
- * Fase 8: Suporte a bordas cosméticas (Neon Lilás, Cyber-Pink animada, Ouro Místico)
- * Respeita estritamente prefers-reduced-motion.
- */
-function renderProjectsShowcasePage({ partners = [], activeCategory = 'all', lang = 'pt', user = null } = {}) {
-  const isEn = lang === 'en';
-  const sharedCss = getSharedStyles();
-
-  const categories = [
-    { id: 'all', label: { pt: 'Todos os Projetos', en: 'All Projects' } },
-    { id: 'creator', label: { pt: 'Criadores de Conteúdo', en: 'Content Creators' } },
-    { id: 'service', label: { pt: 'Lojas & Freelancers', en: 'Shops & Freelancers' } },
-    { id: 'community', label: { pt: 'Comunidades & Fóruns', en: 'Communities & Forums' } },
-    { id: 'ong', label: { pt: 'Causas Sociais & ONGs', en: 'Social Causes & NGOs' } },
-  ];
-
-  return `<!DOCTYPE html>
-<html lang="${isEn ? 'en' : 'pt-BR'}">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${isEn ? 'Projects & Creators Showcase • Pyxie Hyperfokus' : 'Vitrine de Projetos & Criadores • Pyxie Hyperfokus'}</title>
-  <meta name="description" content="${isEn ? 'Discover authentic projects, indie creators, shops and communities supported by Pyxie.' : 'Conheça projetos autorais, criadores independentes, lojinhas e causas apoiadas pela Pyxie.'}">
-  <link rel="canonical" href="https://pyxie.com.br/hyperfokus/projetos">
-  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/hyperfokus/projetos">
-  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/hyperfokus/projetos?lang=en">
-  <link rel="icon" type="image/png" href="/assets/pyxie/sticker/sticker_smile.png">
-  <style>
-    ${sharedCss}
-    @keyframes cyberPulse {
-      0%, 100% { box-shadow: 0 0 12px rgba(230, 0, 103, 0.4); border-color: #E60067; }
-      50% { box-shadow: 0 0 24px rgba(230, 0, 103, 0.8); border-color: #ff3388; }
-    }
-    .animated-border {
-      animation: cyberPulse 2.8s infinite ease-in-out;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .animated-border {
-        animation: none !important;
-      }
-    }
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    .project-card {
-      background: var(--card-bg);
-      border-radius: 1.25rem;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .project-card:hover {
-      transform: translateY(-2px);
-    }
-  </style>
-</head>
-<body>
-  ${renderSiteHeader({ lang, user, path: '/hyperfokus/projetos', brandLabel: isEn ? 'Projects' : 'Projetos' })}
-
-  <main class="main-container">
-    <div style="margin-bottom: 2rem; text-align: left;">
-      <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 900; color: #fff; margin-bottom: 0.5rem;">
-        ${isEn ? 'Independent Creators, Shops & Projects' : 'Projetos, Criadores Independentes & Lojas'}
-      </h1>
-      <p style="font-size: 1rem; color: var(--text-muted); max-width: 720px;">
-        ${isEn
-          ? 'Showcase of authentic creators, artisans, communities and social causes partnering with the Pyxie ecosystem.'
-          : 'Vitrine oficial de criadores, artistas, lojinhas e iniciativas parceiras da comunidade Pyxie & Cringelândia.'}
-      </p>
-    </div>
-
-    <!-- Category Tabs Filter -->
-    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.5rem;">
-      ${categories.map((c) => `
-        <a href="/hyperfokus/projetos${c.id !== 'all' ? '?category=' + c.id : ''}${isEn ? (c.id !== 'all' ? '&lang=en' : '?lang=en') : ''}"
-           class="btn ${activeCategory === c.id ? 'btn-pink' : 'btn-outline'}" style="font-size:0.8rem;">
-          ${isEn ? c.label.en : c.label.pt}
-        </a>
-      `).join('')}
-    </div>
-
-    <!-- Projects Grid -->
-    <div class="projects-grid">
-      ${(!partners || partners.length === 0) ? `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
-          ${isEn ? 'No projects found in this category.' : 'Nenhum projeto encontrado nesta categoria.'}
-        </div>
-      ` : partners.map((p) => {
-        const borderStyle = p.badge?.borderStyle || 'border: 1px solid var(--card-border);';
-        const animatedClass = p.badge?.tier >= 2 ? 'animated-border' : '';
-        return `
-          <div class="project-card ${animatedClass}" style="${borderStyle}">
-            <div>
-              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:0.75rem;">
-                <h3 style="font-size:1.2rem; font-weight:800; color:#fff;">${escapeHtml(p.projectName || p.name || 'Projeto')}</h3>
-                ${p.badge?.label ? `
-                  <span style="font-size:0.65rem; font-weight:800; padding:2px 8px; border-radius:999px; background:${p.badge.color}22; color:${p.badge.color}; border:1px solid ${p.badge.color}55; white-space:nowrap;">
-                    ${isEn ? p.badge.label.en : p.badge.label.pt}
-                  </span>
-                ` : ''}
-              </div>
-              <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.6; margin-bottom:1rem;">
-                ${escapeHtml(p.description || p.proposal || '')}
-              </p>
-            </div>
-
-            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.06); padding-top:1rem; margin-top:0.5rem;">
-              <span style="font-size:0.75rem; color:var(--text-muted);">
-                🚀 ${p.bumpCount || 0} bumps
-              </span>
-              <a href="${p.accessLink || p.url || '#'}" target="_blank" rel="noopener noreferrer nofollow" class="btn btn-pink" style="font-size:0.75rem; padding:0.4rem 0.85rem;">
-                ${isEn ? 'Visit Project →' : 'Conhecer Projeto →'}
-              </a>
-            </div>
-          </div>
-        `;
-      }).join('')}
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <p>Pyxie Hyperfokus • Vitrine Autoral & Parcerias</p>
-  </footer>
-</body>
-</html>`;
-}
 
 
 /**
@@ -2549,7 +2548,152 @@ function renderWelcomePage({ account, next = '/meu-perfil', lang = 'pt' } = {}) 
 </html>`;
 }
 
+/**
+ * Formulário de divulgação no site (/meu-perfil/divulgar). Os campos vêm do mesmo esquema do /py-parceria
+ * (src/modules/partnerships/formSchemas.js), e o envio cai na mesma fila da staff.
+ */
+function renderPartnerFormPage({ account, schemas = {}, lang = 'pt' } = {}) {
+  const isEn = lang === 'en';
+  const q = isEn ? '?lang=en' : '';
+  const L = (pair) => escapeHtml((pair && (pair[lang] || pair.pt)) || '');
+  // Só o que a tela precisa (rótulos no idioma da página e se o campo é curto ou parágrafo).
+  const clientSchemas = Object.fromEntries(Object.entries(schemas).map(([key, s]) => [key, {
+    label: (s.label && (s.label[lang] || s.label.pt)) || key,
+    emoji: s.emoji || '🤝',
+    fields: s.fields.map((f) => ({
+      id: f.id,
+      long: f.style === 2,
+      label: ((f.label && (f.label[lang] || f.label.pt)) || f.id).replace(/:$/, ''),
+      placeholder: (f.placeholder && (f.placeholder[lang] || f.placeholder.pt)) || '',
+    })),
+  }]));
+  const options = Object.entries(clientSchemas)
+    .map(([key, s]) => `<option value="${escapeHtml(key)}">${escapeHtml(s.emoji)} ${escapeHtml(s.label)}</option>`).join('');
+
+  return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'pt-BR'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${isEn ? 'Promote your project • Pyxie' : 'Divulgar meu projeto • Pyxie'}</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    ${getSharedStyles()}
+    .pf-wrap { max-width: 720px; margin: 0 auto; }
+    .pf-field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+    .pf-field label { font-weight: 700; color: #fff; font-size: 0.9rem; }
+    .pf-field small { color: var(--text-muted); font-size: 0.78rem; }
+    .pf-input { width: 100%; background: #0b0614; border: 1px solid var(--card-border); border-radius: 0.75rem; padding: 0.7rem 0.85rem; color: #fff; font: inherit; font-size: 0.92rem; }
+    .pf-input:focus { outline: none; border-color: var(--accent-violet, #8b5cf6); box-shadow: 0 0 0 3px rgba(139,92,246,0.25); }
+    textarea.pf-input { min-height: 110px; resize: vertical; }
+    .pf-error { display: none; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); color: #fecaca; border-radius: 0.75rem; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  ${renderSiteHeader({ lang, user: account, path: '/meu-perfil/divulgar' })}
+  <main class="main-container pf-wrap">
+    <h1 style="font-size:clamp(1.6rem, 4vw, 2.1rem); font-weight:900; color:#fff;">${isEn ? 'Promote your project' : 'Divulgar meu projeto'}</h1>
+    <p style="color:var(--text-muted); margin:0.4rem 0 1.5rem;">
+      ${isEn
+        ? 'Fill it in once. The staff reviews it and, if approved, your card shows up on the <a href="/parcerias?lang=en">Partnerships wall</a> and in My profile, where you can edit it or bump it every 24 h.'
+        : 'Preencha uma vez. A staff revisa e, se aprovar, seu cartão aparece no <a href="/parcerias">mural de Parcerias</a> e em Meu perfil, onde você pode editar ou dar bump a cada 24 h.'}
+    </p>
+
+    <div id="pf-error" class="pf-error" role="alert"></div>
+
+    <form id="pf-form" class="card" style="padding:1.5rem;" novalidate>
+      <div class="pf-field">
+        <label for="pf-category">${isEn ? 'What do you want to promote?' : 'O que você quer divulgar?'}</label>
+        <select id="pf-category" class="pf-input" required>
+          <option value="" disabled selected>${isEn ? 'Choose a category' : 'Escolha uma categoria'}</option>
+          ${options}
+        </select>
+        <small>${isEn ? 'Discord servers: you can also promote them from the panel, with Pyxie in the server.' : 'Servidores do Discord: também dá para divulgar pelo painel, com a Pyxie no servidor.'}</small>
+      </div>
+
+      <div id="pf-dynamic"></div>
+
+      <div id="pf-common" hidden>
+        <div class="pf-field">
+          <label for="pf-image">${isEn ? 'Card image (link)' : 'Imagem do cartão (link)'}</label>
+          <input id="pf-image" class="pf-input" type="url" inputmode="url" placeholder="https://..." required />
+          <small>${isEn ? 'A banner or logo. Paste an https:// image link.' : 'Um banner ou logo. Cole um link de imagem com https://.'}</small>
+        </div>
+        <div class="pf-field">
+          <label for="pf-desc">${isEn ? 'Public description' : 'Descrição pública'}</label>
+          <textarea id="pf-desc" class="pf-input" maxlength="1000" required placeholder="${isEn ? 'What people will read on your card.' : 'O que as pessoas vão ler no seu cartão.'}"></textarea>
+        </div>
+        <label style="display:flex; gap:0.6rem; align-items:flex-start; color:var(--text-muted); font-size:0.88rem; margin-bottom:1.25rem;">
+          <input id="pf-terms" type="checkbox" required style="margin-top:0.2rem;" />
+          <span>${isEn ? 'The information is true and the project is mine or I represent it.' : 'As informações são verdadeiras e o projeto é meu ou eu o represento.'}</span>
+        </label>
+        <button type="submit" id="pf-submit" class="btn btn-pink" style="width:100%; justify-content:center;">${isEn ? 'Send for review' : 'Enviar para análise'}</button>
+      </div>
+    </form>
+    <p style="text-align:center; margin-top:1rem; font-size:0.85rem;">
+      <a href="/meu-perfil${q}#divulgacoes">← ${isEn ? 'Back to my profile' : 'Voltar para Meu perfil'}</a>
+    </p>
+  </main>
+
+  <script>
+    const SCHEMAS = ${JSON.stringify(clientSchemas).replace(/</g, '\\u003c')};
+    const LANG = '${isEn ? 'en' : 'pt'}';
+    const ERRORS = {
+      missing_field: '${isEn ? 'Please fill in every field.' : 'Preencha todos os campos.'}',
+      invalid_url: '${isEn ? 'Links must start with https://' : 'Os links precisam começar com https://'}',
+      too_many_pending: '${isEn ? 'You already have 3 requests under review. Wait for an answer first.' : 'Você já tem 3 pedidos em análise. Espere a resposta antes de enviar outro.'}',
+      not_authenticated: '${isEn ? 'Your session ended. Sign in again.' : 'Sua sessão acabou. Entre de novo.'}',
+      generic: '${isEn ? 'Something went wrong. Try again.' : 'Algo deu errado. Tente de novo.'}',
+    };
+    const el = (id) => document.getElementById(id);
+    function esc(v) { return String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c])); }
+    function showError(code) { const box = el('pf-error'); box.textContent = ERRORS[code] || ERRORS.generic; box.style.display = 'block'; box.scrollIntoView({ block: 'center' }); }
+
+    el('pf-category').addEventListener('change', (e) => {
+      const schema = SCHEMAS[e.target.value];
+      el('pf-dynamic').innerHTML = schema ? schema.fields.map((f) => (
+        '<div class="pf-field"><label for="pf-' + esc(f.id) + '">' + esc(f.label) + '</label>' +
+        (f.long
+          ? '<textarea id="pf-' + esc(f.id) + '" data-field="' + esc(f.id) + '" class="pf-input" maxlength="1000" required placeholder="' + esc(f.placeholder) + '"></textarea>'
+          : '<input id="pf-' + esc(f.id) + '" data-field="' + esc(f.id) + '" class="pf-input" maxlength="300" required ' + (f.id === 'access_link' ? 'type="url" inputmode="url" ' : '') + 'placeholder="' + esc(f.placeholder) + '" />') +
+        '</div>'
+      )).join('') : '';
+      el('pf-common').hidden = !schema;
+    });
+
+    el('pf-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      el('pf-error').style.display = 'none';
+      if (!el('pf-terms').checked) return showError('missing_field');
+      const answers = {};
+      document.querySelectorAll('[data-field]').forEach((input) => { answers[input.dataset.field] = input.value.trim(); });
+      const btn = el('pf-submit');
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/user/partnerships', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ categoryKey: el('pf-category').value, answers, imageUrl: el('pf-image').value.trim(), publicDesc: el('pf-desc').value.trim(), lang: LANG }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.success) {
+          btn.disabled = false;
+          if (data.field) { const bad = el('pf-' + (data.field === 'imageUrl' ? 'image' : data.field === 'publicDesc' ? 'desc' : data.field)); if (bad) bad.focus(); }
+          return showError(data.error);
+        }
+        location.href = '/meu-perfil?' + (LANG === 'en' ? 'lang=en&' : '') + 'sent=1#divulgacoes';
+      } catch (_) {
+        btn.disabled = false;
+        showError('generic');
+      }
+    });
+  </script>
+</body>
+</html>`;
+}
+
 module.exports = {
+  renderPartnerFormPage,
   renderWelcomePage,
   renderAuthorPage,
   renderSiteHeader,
@@ -2560,7 +2704,6 @@ module.exports = {
   renderRegisterPage,
   renderProfilePage,
   renderWebEditorPage,
-  renderProjectsShowcasePage,
   formatDate,
 };
 

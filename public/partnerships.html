@@ -961,8 +961,13 @@
       0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
       40% { opacity: 1; transform: scale(1.2); }
     }
+    .card.ref-tier-1 { border: 1.5px solid #8B5CF6; box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
+    .card.ref-tier-2 { border: 2px solid #E60067; box-shadow: 0 0 14px rgba(230, 0, 103, 0.4); animation: refPulse 2.4s ease-in-out infinite; }
+    .card.ref-tier-3 { border: 2px solid #F59E0B; box-shadow: 0 0 16px rgba(245, 158, 11, 0.45); }
+    @keyframes refPulse { 50% { box-shadow: 0 0 22px rgba(230, 0, 103, 0.65); } }
+    @media (prefers-reduced-motion: reduce) { .card.ref-tier-2 { animation: none; } }
   </style>
-  <link rel="stylesheet" href="/dist/assets/index.css" />
+  <link rel="stylesheet" href="/dist/assets/index.css?v=2.3.1" />
 </head>
 <body>
   <!-- Google Tag Manager (noscript) -->
@@ -1040,9 +1045,10 @@
         <span id="statBumpsLabel">Total de Impulsos:</span>
         <span class="meta-stat-num" id="statBumpsCount">0</span>
       </div>
-      <a href="/discord" target="_blank" rel="noopener noreferrer" class="btn-apply-partner" id="btnApply">
-        <span>✨</span> <span id="btnApplyText">Quero ser Parceiro</span>
+      <a href="/meu-perfil/divulgar" class="btn-apply-partner" id="btnApply">
+        <span>✨</span> <span id="btnApplyText">Divulgar meu projeto</span>
       </a>
+      <a href="/discord" target="_blank" rel="noopener noreferrer" id="btnApplyDiscord" style="font-size:0.8rem; color:#c4b5fd; text-decoration:underline;">ou pelo Discord, com /py-parceria</a>
     </div>
   </section>
 
@@ -1125,7 +1131,8 @@
         subtitle: 'Explore projetos parceiros, comunidades acolhedoras, canais de criadores e ferramentas aliadas da Cringelândia e Pyxie. Impulsione suas alianças favoritas!',
         statPartners: 'Parcerias:',
         statBumps: 'Total de Impulsos:',
-        btnApply: 'Quero ser Parceiro',
+        btnApply: 'Divulgar meu projeto',
+        btnApplyDiscord: 'ou pelo Discord, com /py-parceria',
         featured: '⭐ Destaques de Astaroth',
         featuredDesc: 'Alianças mais recentemente impulsionadas pela comunidade com poderes arcanos',
         all: 'Todos os Projetos Aliados',
@@ -1161,7 +1168,8 @@
         subtitle: 'Explore partner projects, welcoming communities, creator channels and allied tools of Cringelândia and Pyxie. Boost your favorite alliances!',
         statPartners: 'Partnerships:',
         statBumps: 'Total Bumps:',
-        btnApply: 'Become a Partner',
+        btnApply: 'Promote my project',
+        btnApplyDiscord: 'or on Discord, with /py-parceria',
         featured: '⭐ Astaroth Highlights',
         featuredDesc: 'Most recently boosted alliances by the community with arcane powers',
         all: 'All Allied Projects',
@@ -1222,6 +1230,11 @@
     function card(p, isFeatured = false) {
       const c = document.createElement('div');
       c.className = 'card macro-' + (p.macroCategory || 'community') + (isFeatured ? ' is-featured' : '');
+      // Borda de indicação (1, 3 e 5+ divulgadores convidados), mesma regra do Meu perfil.
+      if (p.badge && p.badge.tier) {
+        c.classList.add('ref-tier-' + p.badge.tier);
+        if (p.badge.label) c.title = p.badge.label[lang] || p.badge.label.pt;
+      }
 
       if (isFeatured) {
         const featBadge = document.createElement('div');
@@ -1368,6 +1381,8 @@
       $('statPartnersLabel').textContent = I18N[lang].statPartners;
       $('statBumpsLabel').textContent = I18N[lang].statBumps;
       $('btnApplyText').textContent = I18N[lang].btnApply;
+      $('btnApplyDiscord').textContent = I18N[lang].btnApplyDiscord;
+      $('btnApply').href = '/meu-perfil/divulgar' + (lang === 'en' ? '?lang=en' : '');
 
       $('featuredTitle').textContent = I18N[lang].featured;
       $('featuredDesc').textContent = I18N[lang].featuredDesc;
@@ -1468,6 +1483,6 @@
       load();
     }
   </script>
-  <script type="module" src="/dist/assets/index.js?v=2.2.3"></script>
+  <script type="module" src="/dist/assets/index.js?v=2.3.1"></script>
 </body>
 </html>

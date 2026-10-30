@@ -3,6 +3,7 @@ import HeroSection from '../components/hero/HeroSection';
 import MuseumScene from '../components/3d/MuseumScene';
 import PillarsSection from '../components/hero/PillarsSection';
 import CringelandiaSection from '../components/hero/CringelandiaSection';
+import BlogHighlights from '../components/hero/BlogHighlights';
 import CommandGrid from '../components/wiki/CommandGrid';
 import ShopeeBentoGrid from '../components/shopee/ShopeeBentoGrid';
 
@@ -20,6 +21,9 @@ export default function Home({ t, lang, stats }) {
 
       {/* 4. A outra metade: Cringelândia (50% bot / 50% comunidade) */}
       <CringelandiaSection t={t} />
+
+      {/* 5. Do blog: últimos artigos do Hyperfokus (some se não houver nenhum) */}
+      <BlogHighlights t={t} lang={lang} />
 
       {/* 4. Interactive Commands Catalog */}
       <CommandGrid t={t} lang={lang} />

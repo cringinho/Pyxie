@@ -111,13 +111,17 @@ function PartnerCard({ partner, isFeatured = false, t, lang, onBump, bumpingId, 
     partner.categoryKey ||
     '';
 
+  const tier = partner.badge?.tier || 0;
+  const tierRing = tier === 3 ? 'ring-2 ring-amber-400/80' : tier === 2 ? 'ring-2 ring-[#E60067]/80 motion-safe:animate-pulse' : tier === 1 ? 'ring-1 ring-violet-500/80' : '';
+  const tierTitle = partner.badge?.label ? partner.badge.label[lang] || partner.badge.label.pt : undefined;
   const isBumping = bumpingId === partner.id;
   const isCopied = copiedId === partner.id;
 
   return (
     <div
       id={`partner-${partner.id}`}
-      className={`relative group flex flex-col rounded-2xl bg-[#120a24]/80 backdrop-blur-xl border border-t-[3px] ${theme.topBorder} ${theme.border} transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl overflow-hidden ${
+      title={tierTitle}
+      className={`${tierRing} relative group flex flex-col rounded-2xl bg-[#120a24]/80 backdrop-blur-xl border border-t-[3px] ${theme.topBorder} ${theme.border} transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl overflow-hidden ${
         isFeatured ? 'ring-1 ring-amber-400/30 shadow-amber-500/10' : ''
       }`}
       style={{
@@ -377,6 +381,19 @@ export default function Partnerships({ t, lang }) {
           {t('partnerships.subtitle')}
         </p>
 
+        <div className="mt-6 flex flex-col items-center gap-2">
+          <a
+            href={`/meu-perfil/divulgar${lang === 'en' ? '?lang=en' : ''}`}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-xl shadow-pink-600/30 transition-all"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>{t('partnerships.applyBtn')}</span>
+          </a>
+          <a href="/discord" target="_blank" rel="noopener noreferrer" className="text-xs text-purple-300 hover:text-white underline">
+            {t('partnerships.applyDiscord')}
+          </a>
+        </div>
+
         {/* Quick Stats Strip */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
           <div className="flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-white/5 border border-purple-500/20 backdrop-blur-md">
@@ -529,7 +546,7 @@ export default function Partnerships({ t, lang }) {
         <div className="max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30 text-xs font-bold uppercase mb-3">
             <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-            <span>Alianças Acolhedoras</span>
+            <span>{t('nav.partnerships')}</span>
           </div>
           <h2 className="font-title font-black text-2xl sm:text-3xl text-white">
             {t('partnerships.applyTitle')}
@@ -540,12 +557,10 @@ export default function Partnerships({ t, lang }) {
         </div>
 
         <a
-          href="/discord"
-          target="_blank"
-          rel="noopener noreferrer"
+          href={`/meu-perfil/divulgar${lang === 'en' ? '?lang=en' : ''}`}
           className="shrink-0 inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-xl shadow-pink-600/30 hover:shadow-pink-600/50 transition-all transform hover:-translate-y-0.5 active:translate-y-0 text-base"
         >
-          <span>💬</span>
+          <Sparkles className="w-4 h-4" />
           <span>{t('partnerships.applyBtn')}</span>
         </a>
       </div>

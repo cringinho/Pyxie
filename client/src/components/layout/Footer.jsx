@@ -23,6 +23,9 @@ export default function Footer({ t, lang = 'pt' }) {
           <a href={`/wiki?lang=${lang}`} className="hover:text-pink-400 transition-colors">
             {t('footer.wiki')}
           </a>
+          <a href={`/hyperfokus?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+            {t('footer.blog')}
+          </a>
           <a href={`/museu?lang=${lang}`} className="hover:text-pink-400 transition-colors">
             {t('footer.museum')}
           </a>

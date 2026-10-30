@@ -258,6 +258,48 @@ function createAccountRouter() {
     }
   });
 
+  // 13. Divulgações da conta (mesma fila e mesmo mural do /py-parceria). Só mexe no que é da conta.
+  const partnerships = () => require('../modules/partnerships/partnershipManager');
+  const reqLang = (req) => (req.query.lang === 'en' || req.body?.lang === 'en' ? 'en' : 'pt');
+
+  router.get('/api/user/partnerships', requireAuth, (req, res) => {
+    return res.json({ success: true, items: partnerships().listForAccount(req.account) });
+  });
+
+  router.post('/api/user/partnerships', requireAuth, async (req, res) => {
+    const result = await partnerships().submitFromWeb(req.account, req.body || {}, reqLang(req));
+    if (!result.ok) return res.status(result.status).json({ success: false, error: result.error, field: result.field });
+    return res.json({ success: true, request: result.request });
+  });
+
+  router.put('/api/user/partnerships/:id', requireAuth, async (req, res) => {
+    const pm = partnerships();
+    if (!pm.findOwnedPartner(req.account, req.params.id)) return res.status(404).json({ success: false, error: 'not_found' });
+    const { projectName, publicDesc, accessLink, imageUrl } = req.body || {};
+    const before = pm.findOwnedPartner(req.account, req.params.id);
+    const changed = Object.entries({ projectName, publicDesc, accessLink, imageUrl })
+      .filter(([k, v]) => v !== undefined && String(v).trim() !== String(before[k] || '').trim())
+      .map(([k]) => k);
+    const result = await pm.updateApprovedPartner(req.params.id, { projectName, publicDesc, accessLink, imageUrl });
+    if (!result.ok) return res.status(result.status).json({ success: false, error: result.error });
+    // Link ou imagem trocados depois da aprovação: a staff fica sabendo (evita trocar por algo que não foi revisado).
+    if (changed.length) pm.notifyOwnerEdit(result.partner, changed).catch(() => null);
+    return res.json({ success: true, partner: pm.sanitize(result.partner) });
+  });
+
+  router.post('/api/user/partnerships/:id/bump', requireAuth, async (req, res) => {
+    const pm = partnerships();
+    if (!pm.findOwnedPartner(req.account, req.params.id)) return res.status(404).json({ success: false, error: 'not_found' });
+    const result = await pm.applyBump(req.params.id, reqLang(req));
+    return res.status(result.status).json({ success: result.success, message: result.message });
+  });
+
+  router.delete('/api/user/partnerships/:id', requireAuth, (req, res) => {
+    const pm = partnerships();
+    if (!pm.findOwnedPartner(req.account, req.params.id)) return res.status(404).json({ success: false, error: 'not_found' });
+    return res.json({ success: pm.deleteApprovedPartner(req.params.id) });
+  });
+
   return router;
 }
 

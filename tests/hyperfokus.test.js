@@ -777,26 +777,6 @@ showcaseReferrals.handleGuildDelete(testGuildId);
 showcase = showcaseReferrals.getServerShowcase(testGuildId);
 assert.strictEqual(showcase.status, 'PAUSED', 'Divulgação deve ser pausada quando o bot for removido');
 
-// Testando Renderizador SSR da Vitrine de Projetos (/hyperfokus/projetos)
-const showcaseHtml = renderer.renderProjectsShowcasePage({
-  partners: [
-    {
-      id: 'proj_1',
-      projectName: 'Bazar dos Emotes',
-      description: 'Emotes personalizados desenhados à mão para streamers.',
-      accessLink: 'https://bazardosemotes.com',
-      badge: badge3,
-      bumpCount: 12,
-    },
-  ],
-  activeCategory: 'service',
-  lang: 'pt',
-});
-assert.strictEqual(showcaseHtml.match(/<h1/g).length, 1, 'Exatamente um h1 na vitrine de projetos');
-assert.ok(showcaseHtml.includes('Projetos, Criadores Independentes & Lojas'), 'Título da vitrine');
-assert.ok(showcaseHtml.includes('Bazar dos Emotes'), 'Projeto listado');
-assert.ok(showcaseHtml.includes('animated-border'), 'Borda Cyber-Pink com animação presente');
-assert.ok(showcaseHtml.includes('@media (prefers-reduced-motion: reduce)'), 'Suporte obrigatório a prefers-reduced-motion');
 
 console.log('    ✅ 17. Vitrine de projetos, servidores, indicações antifraude e bordas cosméticas validadas.');
 
@@ -871,7 +851,7 @@ console.log('  🧭 18. Testando página de autor, cabeçalho de entrada, coment
     assert.equal((await fetch(`${base}/api/hyperfokus/articles/${published.id}/like`, { method: 'POST' })).status, 401, 'Curtir exige login');
 
     const evil = await fetch(`${base}/divulgar?redirect=//evil.example`, { redirect: 'manual' });
-    assert.equal(evil.headers.get('location'), '/hyperfokus/projetos', 'Redirecionamento externo é bloqueado');
+    assert.equal(evil.headers.get('location'), '/parcerias', 'Redirecionamento externo é bloqueado');
   } finally {
     server.close();
   }
@@ -896,6 +876,87 @@ console.log('  🧭 18. Testando página de autor, cabeçalho de entrada, coment
   assert.ok(renderer.renderWelcomePage({ lang: 'en' }).includes('Not now, continue'));
 }
 console.log('    ✅ 18. Página de autor, entrada no blog, comentários protegidos, redirecionamentos seguros e boas-vindas.');
+
+// 19. Divulgação pelo site: mesma fila do /py-parceria, Minhas divulgações e mural único
+console.log('  📣 19. Testando divulgação pelo site, Minhas divulgações e vitrine única...');
+{
+  const pm = require('../src/modules/partnerships/partnershipManager');
+  const acc = { id: `acc_div_${Date.now()}`, discordUserId: null, displayName: 'Loja Teste' };
+  const other = { id: `acc_outra_${Date.now()}`, discordUserId: null };
+  const base = {
+    categoryKey: 'seller',
+    answers: { rep_name: 'Bazar Teste', access_link: 'https://example.com/bazar', products: 'Chaveiros', proposal: 'Cupom' },
+    imageUrl: 'https://example.com/banner.png',
+    publicDesc: 'Chaveiros feitos à mão.',
+  };
+
+  assert.equal((await pm.submitFromWeb(null, base)).status, 401, 'Sem conta não envia');
+  assert.equal((await pm.submitFromWeb(acc, { ...base, categoryKey: 'nada' })).error, 'invalid_category');
+  assert.equal((await pm.submitFromWeb(acc, { ...base, answers: { ...base.answers, access_link: 'javascript:alert(1)' } })).error, 'invalid_url', 'Link precisa ser http(s)');
+  assert.equal((await pm.submitFromWeb(acc, { ...base, answers: { ...base.answers, products: '' } })).field, 'products', 'Campo vazio é recusado');
+
+  const sent = await pm.submitFromWeb(acc, base, 'pt');
+  assert.ok(sent.ok, 'Envio válido entra na fila');
+  const pending = pm.data.pendingRequests.find((r) => r.id === sent.request.id);
+  assert.equal(pending.source, 'web');
+  assert.equal(pending.accountId, acc.id);
+  assert.equal(pending.userId, null, 'Conta sem Discord não inventa Snowflake');
+  assert.deepEqual(pm.listForAccount(acc).map((i) => i.status), ['pending']);
+  assert.equal(pm.listForAccount(other).length, 0, 'Outra conta não vê o pedido');
+
+  await pm.submitFromWeb(acc, base);
+  await pm.submitFromWeb(acc, base);
+  assert.equal((await pm.submitFromWeb(acc, base)).error, 'too_many_pending', 'Máximo de 3 pedidos em análise por conta');
+
+  // Staff aprova (mesmo formato que o botão do Discord grava)
+  pm.refresh();
+  const req = pm.data.pendingRequests.find((r) => r.id === sent.request.id);
+  pm.data.pendingRequests = pm.data.pendingRequests.filter((r) => r.accountId !== acc.id);
+  pm.data.approvedPartners.push({ ...req, approvedAt: Date.now(), lastBumpedAt: 0, bumpCount: 0 });
+  pm.saveData();
+  assert.ok(pm.findOwnedPartner(acc, req.id), 'Dono acha a própria divulgação');
+  assert.equal(pm.findOwnedPartner(other, req.id), null, 'Outra conta não mexe na divulgação');
+  const mine = pm.listForAccount(acc).find((i) => i.id === req.id);
+  assert.equal(mine.status, 'approved');
+  assert.equal(mine.nextBumpAt, null, 'Bump liberado depois de 24 h');
+  assert.ok(pm.getPartnershipCatalog().catalog.some((p) => p.id === req.id), 'Aprovada aparece no mural');
+  assert.ok('badge' in pm.sanitize(req), 'Catálogo leva a borda de indicação');
+  assert.ok(pm.deleteApprovedPartner(req.id));
+
+  const renderer = require('../src/modules/hyperfokus/renderer');
+  const { CATEGORY_SCHEMAS } = require('../src/modules/partnerships/formSchemas');
+  for (const lang of ['pt', 'en']) {
+    const html = renderer.renderPartnerFormPage({ account: acc, schemas: CATEGORY_SCHEMAS, lang });
+    assert.equal((html.match(/<h1/g) || []).length, 1);
+    assert.ok(html.includes('/api/user/partnerships') && html.includes('noindex'), `Formulário (${lang})`);
+    [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].forEach((m) => new Function(m[1]));
+  }
+  const profile = renderer.renderProfilePage({ account: { id: 'a', email: 'x@y.z', readingPreferences: {} }, stats: { articles: [], drafts: [] }, lang: 'en' });
+  assert.ok(profile.includes('id="divulgacoes"') && profile.includes('My promotions'), 'Meu perfil tem Minhas divulgações');
+
+  const express = require('express');
+  const { createAccountRouter } = require('../src/routes/accountRoutes');
+  const { createHyperfokusRouter } = require('../src/routes/hyperfokusRoutes');
+  const app = express();
+  app.use(express.json());
+  app.use('/', createAccountRouter());
+  app.use('/', createHyperfokusRouter({}));
+  const server = await new Promise((resolve) => { const s = app.listen(0, () => resolve(s)); });
+  const base2 = `http://127.0.0.1:${server.address().port}`;
+  try {
+    const old = await fetch(`${base2}/hyperfokus/projetos?lang=en`, { redirect: 'manual' });
+    assert.equal(old.status, 301, 'Vitrine antiga redireciona para sempre');
+    assert.equal(old.headers.get('location'), '/parcerias?lang=en');
+    const form = await fetch(`${base2}/meu-perfil/divulgar`, { redirect: 'manual' });
+    assert.ok(form.headers.get('location').startsWith('/login?redirect='), 'Formulário pede login');
+    assert.equal((await fetch(`${base2}/api/user/partnerships`)).status, 401);
+    const latest = await (await fetch(`${base2}/api/hyperfokus/latest?limit=2`)).json();
+    assert.ok(latest.success && Array.isArray(latest.articles) && latest.articles.length <= 2, 'API de últimos artigos para a home');
+  } finally {
+    server.close();
+  }
+}
+console.log('    ✅ 19. Divulgação pelo site, Minhas divulgações, bordas no mural e vitrine única.');
 
 console.log('🎉 TODAS AS FASES (0 A 8) DO PLANO PYXIE HYPERFOKUS CONCLUÍDAS COM 100% DE SUCESSO!\n');
 
