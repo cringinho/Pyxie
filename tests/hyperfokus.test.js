@@ -876,7 +876,26 @@ console.log('  🧭 18. Testando página de autor, cabeçalho de entrada, coment
     server.close();
   }
 }
-console.log('    ✅ 18. Página de autor, entrada no blog, comentários protegidos e redirecionamentos seguros.');
+{
+  // Boas-vindas do primeiro login com Discord: oferece conta/servidor e deixa recusar.
+  const accounts = require('../src/modules/accounts/accountStore');
+  const discordUser = { id: String(223000000000000000n + BigInt(Date.now() % 100000)), username: 'nova_pessoa', global_name: 'Nova Pessoa', avatar: null };
+  assert.equal(accounts.upsertDiscordAccount(discordUser).justCreated, true, 'Primeiro login com Discord cria a conta');
+  const again = accounts.upsertDiscordAccount(discordUser);
+  assert.equal(again.justCreated, false, 'Segundo login não repete as boas-vindas');
+  assert.equal(again.displayName, 'Nova Pessoa');
+
+  const renderer = require('../src/modules/hyperfokus/renderer');
+  for (const lang of ['pt', 'en']) {
+    const html = renderer.renderWelcomePage({ account: again, next: '/hyperfokus', lang });
+    assert.ok(html.includes('/install?ref=signup') && html.includes('/invite?ref=signup'), `Boas-vindas (${lang}): conta e servidor`);
+    assert.ok(html.includes('href="/hyperfokus"'), `Boas-vindas (${lang}): "agora não" segue para o destino`);
+    assert.ok(html.includes('noindex'), `Boas-vindas (${lang}): fora dos buscadores`);
+    assert.equal((html.match(/<h1/g) || []).length, 1);
+  }
+  assert.ok(renderer.renderWelcomePage({ lang: 'en' }).includes('Not now, continue'));
+}
+console.log('    ✅ 18. Página de autor, entrada no blog, comentários protegidos, redirecionamentos seguros e boas-vindas.');
 
 console.log('🎉 TODAS AS FASES (0 A 8) DO PLANO PYXIE HYPERFOKUS CONCLUÍDAS COM 100% DE SUCESSO!\n');
 

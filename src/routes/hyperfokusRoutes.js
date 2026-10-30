@@ -15,6 +15,7 @@ const {
   renderWebEditorPage,
   renderProjectsShowcasePage,
   renderAuthorPage,
+  renderWelcomePage,
 } = require('../modules/hyperfokus/renderer');
 const partnershipManager = require('../modules/partnerships/partnershipManager');
 const showcaseReferrals = require('../modules/partnerships/showcaseReferrals');
@@ -395,6 +396,17 @@ function createHyperfokusRouter({ publicDir } = {}) {
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
     res.setHeader('Cache-Control', 'private, no-cache');
     return res.send(renderWebEditorPage({ account, draft, lang }));
+  });
+
+  // 11b. Boas-vindas depois do primeiro login com Discord: oferta de adicionar a Pyxie (opcional).
+  router.get('/boas-vindas', (req, res) => {
+    const next = safeRedirect(req.query.next, '/meu-perfil');
+    if (!req.account) return res.redirect(`/login?redirect=${encodeURIComponent(next)}`);
+    const lang = req.query.lang === 'en' || /[?&]lang=en(&|$)/.test(next) ? 'en' : 'pt';
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+    res.setHeader('Cache-Control', 'private, no-cache');
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    return res.send(renderWelcomePage({ account: req.account, next, lang }));
   });
 
   // 12. Rota de Indicação com Cookie Antifraude (/divulgar?ref={snowflake})

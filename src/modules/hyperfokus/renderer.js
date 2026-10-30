@@ -2480,7 +2480,77 @@ function renderAuthorPage({ author, articles = [], lang = 'pt', user = null } = 
 </html>`;
 }
 
+/**
+ * Boas-vindas depois do primeiro login com Discord (/boas-vindas): o que a Pyxie faz e a oferta de
+ * adicioná-la à conta ou a um servidor. Recusar é um clique e não esconde nada do site.
+ */
+function renderWelcomePage({ account, next = '/meu-perfil', lang = 'pt' } = {}) {
+  const isEn = lang === 'en';
+  const name = escapeHtml(account?.displayName || (isEn ? 'newcomer' : 'novata(o)'));
+  const icon = (file) => `/assets/pyxie/emojis/${file}`;
+  // Resumo em etiquetas curtas, com as figurinhas da Pyxie e do Astaroth (não emojis do sistema).
+  const features = isEn
+    ? [['pyxie_potion_book.png', 'Tarot'], ['custom_coin.png', 'Economy & careers'], ['pyxie_ring.png', 'Marriage & home'], ['pyxie_golden_cat_doll.png', 'Games & quiz'], ['pyxie_defending_with_pet.png', 'Moderation']]
+    : [['pyxie_potion_book.png', 'Tarot'], ['custom_coin.png', 'Economia e carreiras'], ['pyxie_ring.png', 'Casamento e casa'], ['pyxie_golden_cat_doll.png', 'Jogos e quiz'], ['pyxie_defending_with_pet.png', 'Moderação']];
+  const featuresHtml = features.map(([file, label]) => `
+        <li class="pyx-chip"><img src="${icon(file)}" alt="" width="26" height="26" loading="lazy" />${label}</li>`).join('');
+  const nextHref = escapeHtml(next);
+
+  return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'pt-BR'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${isEn ? 'Welcome • Pyxie' : 'Boas-vindas • Pyxie'}</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    ${getSharedStyles()}
+    .pyx-chip { display:inline-flex; align-items:center; gap:0.4rem; padding:0.3rem 0.75rem 0.3rem 0.35rem; border-radius:999px; background:rgba(139,92,246,0.12); border:1px solid rgba(139,92,246,0.3); color:#ece8f6; font-size:0.85rem; font-weight:700; }
+    .pyx-chip img { object-fit:contain; }
+    .pyx-option { display:flex; gap:0.9rem; align-items:center; padding:1rem 1.1rem; border-radius:1rem; text-decoration:none; background:var(--card-bg); border:1px solid var(--card-border); transition:border-color .15s, transform .15s; }
+    .pyx-option:hover, .pyx-option:focus-visible { border-color:var(--accent-pink); transform:translateY(-2px); outline:none; }
+    .pyx-option img { flex:none; object-fit:contain; }
+    @media (prefers-reduced-motion: reduce) { .pyx-option { transition:none; } .pyx-option:hover { transform:none; } }
+  </style>
+</head>
+<body>
+  <main class="main-container" style="max-width:680px;">
+    <section style="text-align:center; margin:1.5rem 0 1.25rem;">
+      <img src="${icon('pyxie_smile_sticker.png')}" alt="${isEn ? 'Pyxie smiling' : 'Pyxie sorrindo'}" width="88" height="88" style="margin:0 auto 0.75rem; object-fit:contain;" />
+      <h1 style="font-size:clamp(1.6rem, 4.5vw, 2.2rem); font-weight:900; color:#fff;">${isEn ? `Your account is ready, ${name}!` : `Sua conta está pronta, ${name}!`}</h1>
+      <p style="color:var(--text-muted); margin-top:0.5rem; font-style:italic;">
+        ${isEn
+          ? '“Hmpf. Fine, since you\'re here: I also live on Discord. Want to take me along? Just this once!”'
+          : '“Hmpf. Tá, já que você chegou: eu também moro no Discord. Quer me levar junto? Só dessa vez, viu?”'}
+      </p>
+      <ul aria-label="${isEn ? 'What Pyxie does on Discord' : 'O que a Pyxie faz no Discord'}" style="list-style:none; display:flex; flex-wrap:wrap; justify-content:center; gap:0.45rem; margin-top:1rem;">${featuresHtml}
+      </ul>
+    </section>
+
+    <div style="display:grid; gap:0.65rem; margin-bottom:1rem;">
+      <a href="/install?ref=signup" target="_blank" rel="noopener" class="pyx-option">
+        <img src="${icon('pyxie_pose_pressing_button.png')}" alt="" width="52" height="52" />
+        <span><strong style="color:#fff;">${isEn ? 'Add to my account' : 'Adicionar à minha conta'}</strong><br>
+        <span style="color:var(--text-muted); font-size:0.87rem;">${isEn ? 'Her commands in any server, group or DM. No admin needed.' : 'Os comandos dela em qualquer servidor, grupo ou DM. Não precisa ser admin.'}</span></span>
+      </a>
+      <a href="/invite?ref=signup" target="_blank" rel="noopener" class="pyx-option">
+        <img src="${icon('pyxie_victory_with_astaroth_pet.png')}" alt="" width="52" height="52" />
+        <span><strong style="color:#fff;">${isEn ? 'Add to a server' : 'Adicionar a um servidor'}</strong><br>
+        <span style="color:var(--text-muted); font-size:0.87rem;">${isEn ? 'For the whole community. You need permission to manage the server.' : 'Para a comunidade toda. Precisa poder gerenciar o servidor.'}</span></span>
+      </a>
+    </div>
+    <p style="color:var(--text-muted); font-size:0.8rem; text-align:center; margin-bottom:1.25rem;">${isEn ? 'Discord opens in a new tab and asks you to confirm. You can also do it later.' : 'O Discord abre em outra aba e pede sua confirmação. Dá para fazer depois também.'}</p>
+
+    <div style="display:flex; justify-content:center;">
+      <a href="${nextHref}" class="btn btn-outline" style="min-width:220px; justify-content:center;">${isEn ? 'Not now, continue' : 'Agora não, continuar'} →</a>
+    </div>
+  </main>
+</body>
+</html>`;
+}
+
 module.exports = {
+  renderWelcomePage,
   renderAuthorPage,
   renderSiteHeader,
   renderHomePage,

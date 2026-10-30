@@ -10,6 +10,8 @@ Disallow: /console
 Disallow: /dashboard
 Disallow: /api/dashboard/
 Disallow: /mary
+Disallow: /meu-perfil
+Disallow: /boas-vindas
 
 User-agent: Google-adstxt
 Allow: /

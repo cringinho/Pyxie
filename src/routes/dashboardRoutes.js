@@ -169,7 +169,11 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       const next = decodeURIComponent(sessions.getCookie(req, NEXT_COOKIE) || '');
       const clearNext = `${NEXT_COOKIE}=; HttpOnly; Secure; SameSite=Lax; Path=/auth/discord; Max-Age=0`;
       res.setHeader('Set-Cookie', [clearState, clearNext, sessions.buildCookie(cookieValue), accountCookie]);
-      return res.redirect(/^\/(?![/\\])[^\r\n]*$/.test(next) ? next : '/dashboard');
+      const target = /^\/(?![/\\])[^\r\n]*$/.test(next) ? next : '/dashboard';
+      // Conta nova criada a partir do site (?next=): antes de seguir, a tela de boas-vindas oferece adicionar
+      // a Pyxie (dá para recusar). Quem entra pelo painel vai direto para ele.
+      if (account.justCreated && next) return res.redirect(`/boas-vindas?next=${encodeURIComponent(target)}`);
+      return res.redirect(target);
     } catch (err) {
       console.error('[Dashboard] Falha no login com Discord:', err.message);
       res.setHeader('Set-Cookie', clearState);
