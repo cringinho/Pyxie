@@ -54,6 +54,13 @@ export default function Navbar({ lang, setLang, t }) {
             <span>{t('nav.commands')}</span>
           </a>
           <a
+            href={`/hyperfokus?lang=${lang}`}
+            className="whitespace-nowrap px-3 py-1.5 rounded-xl text-xs xl:text-sm font-bold text-white bg-pink-600/30 hover:bg-pink-600/50 border border-[#E60067]/60 shadow-[0_0_12px_rgba(230,0,103,0.35)] transition-all flex items-center gap-1.5"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#E60067] shrink-0" />
+            <span>{t('nav.blog')}</span>
+          </a>
+          <a
             href={`/wiki?lang=${lang}`}
             className="whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5"
           >
@@ -143,6 +150,14 @@ export default function Navbar({ lang, setLang, t }) {
           >
             <span>{t('nav.commands')}</span>
             <Terminal className="w-4 h-4 text-pink-400" />
+          </a>
+          <a
+            href={`/hyperfokus?lang=${lang}`}
+            onClick={() => setMobileMenuOpen(false)}
+            className="px-4 py-2.5 rounded-xl text-base font-bold text-white bg-pink-600/25 border border-[#E60067]/50 flex items-center justify-between"
+          >
+            <span>{t('nav.blog')}</span>
+            <Sparkles className="w-4 h-4 text-[#E60067]" />
           </a>
           <a
             href={`/wiki?lang=${lang}`}

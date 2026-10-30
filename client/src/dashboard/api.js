@@ -166,4 +166,8 @@ export const api = {
   hyperfokusSave: (guildId, id, body) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/articles/${encodeURIComponent(id)}`, { method: 'PUT', body }),
   hyperfokusPublish: (guildId, id, body = {}) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/articles/${encodeURIComponent(id)}/publish`, { method: 'POST', body }),
   hyperfokusReject: (guildId, id, reason) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/articles/${encodeURIComponent(id)}/reject`, { method: 'POST', body: { reason } }),
+  hyperfokusPins: (guildId) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/pins`),
+  hyperfokusTogglePin: (guildId, id) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/pins/${encodeURIComponent(id)}/toggle`, { method: 'POST' }),
+  hyperfokusDeletePin: (guildId, id) => request(`/api/dashboard/guilds/${guildId}/hyperfokus/pins/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  hyperfokusAnalytics: (guildId, days = 30, articleId = '') => request(`/api/dashboard/guilds/${guildId}/hyperfokus/analytics?days=${days}${articleId ? `&articleId=${encodeURIComponent(articleId)}` : ''}`),
 };

@@ -1162,6 +1162,35 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, article: updated });
   });
 
+  // Rotas de Gestão da Fila do Pinterest (Fase 5)
+  router.get('/api/dashboard/guilds/:guildId/hyperfokus/pins', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const pinScheduler = require('../modules/hyperfokus/pinScheduler');
+    const pins = pinScheduler.getQueuePins();
+    return res.json({ success: true, pins });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/hyperfokus/pins/:id/toggle', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const pinScheduler = require('../modules/hyperfokus/pinScheduler');
+    const updated = pinScheduler.togglePinPause(req.params.id);
+    if (!updated) return res.status(404).json({ success: false, error: 'pin_not_found' });
+    return res.json({ success: true, pin: updated });
+  });
+
+  router.delete('/api/dashboard/guilds/:guildId/hyperfokus/pins/:id', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const pinScheduler = require('../modules/hyperfokus/pinScheduler');
+    const removed = pinScheduler.removePin(req.params.id);
+    return res.json({ success: true, removed });
+  });
+
+  // Rota de Analytics Real do Blog (Fase 6)
+  router.get('/api/dashboard/guilds/:guildId/hyperfokus/analytics', requireSession, requireGuild, requireCringelandiaOwner, (req, res) => {
+    const analyticsEngine = require('../modules/hyperfokus/analyticsEngine');
+    const days = Math.min(90, Math.max(1, Number(req.query.days) || 30));
+    const articleId = req.query.articleId || null;
+    const summary = analyticsEngine.getAnalyticsSummary({ days, articleId });
+    return res.json({ success: true, summary });
+  });
+
   router.post('/api/dashboard/guilds/:guildId/hyperfokus/articles/:id/publish', requireSession, requireGuild, requireCringelandiaOwner, async (req, res) => {
     const articleStore = require('../modules/hyperfokus/articleStore');
     const indexNow = require('../services/indexNowService');
@@ -1174,6 +1203,32 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       publishedAt: art.publishedAt || new Date(),
       editedBy: req.session?.userId || 'owner',
     });
+
+    // Enfileira Pin no Pinterest (Orçamento de 3 pins/dia)
+    try {
+      const pinScheduler = require('../modules/hyperfokus/pinScheduler');
+      pinScheduler.enqueuePin({
+        source: 'hyperfokus',
+        sourceId: published.id,
+        title: published.seoTitle || published.title,
+        description: published.metaDescription || published.title,
+        imageUrl: `${baseUrl}/api/hyperfokus/pin/${published.id}`,
+        targetUrl: articleUrl,
+        altText: `Pin do artigo: ${published.title}`,
+      });
+    } catch (_) {}
+
+    // Registra fontes externas no LinkSentinel
+    try {
+      const linkSentinel = require('../services/linkSentinel');
+      const matches = (published.contentHtml || '').match(/href="(https?:\/\/[^"#]+)"/g) || [];
+      for (const m of matches) {
+        const extUrl = m.replace(/^href="|"/g, '');
+        if (!extUrl.includes('pyxie.com.br') && !extUrl.includes('discord.com')) {
+          linkSentinel.upsertLink({ url: extUrl, label: published.title, source: `hyperfokus:${published.id}` });
+        }
+      }
+    } catch (_) {}
 
     // Notifica IndexNow
     const baseUrl = (process.env.PUBLIC_BASE_URL || 'https://pyxie.com.br').replace(/\/+$/, '');

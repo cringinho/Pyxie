@@ -475,6 +475,39 @@ function generatePinterestRssXml(lang = 'pt') {
     }).join('');
   }
 
+  // Integração com a Fila do Pinterest do Pyxie Hyperfokus (Fase 5 - Orçamento de 3 pins/dia)
+  try {
+    const pinScheduler = require('../modules/hyperfokus/pinScheduler');
+    const releasedPins = pinScheduler.getReleasedPins();
+    for (const pin of releasedPins) {
+      const pinTitle = pin.title;
+      const pinDesc = pin.description;
+      const pinImg = pin.imageUrl.startsWith('http') ? pin.imageUrl : `${SITE_URL}${pin.imageUrl.startsWith('/') ? '' : '/'}${pin.imageUrl}`;
+      const pinLink = `${pin.targetUrl}${pin.targetUrl.includes('?') ? '&' : '?'}utm_source=pinterest_rss&utm_medium=social&utm_campaign=hyperfokus_pin${isEn ? '&lang=en' : ''}`;
+      const pubDate = new Date(pin.releaseAt || pin.createdAt).toUTCString();
+      itemsXml += `
+    <item>
+      <title>${escapeXml(pinTitle)}</title>
+      <link>${escapeXml(pinLink)}</link>
+      <guid isPermaLink="false">${escapeXml(pin.id)}</guid>
+      <pubDate>${pubDate}</pubDate>
+      <dc:creator>Pyxie Hyperfokus</dc:creator>
+      <category>${escapeXml(isEn ? 'Hyperfocus' : 'Hiperfoco')}</category>
+      <description><![CDATA[${pinDesc}]]></description>
+      <content:encoded><![CDATA[
+        <p><img src="${escapeXml(pinImg)}" alt="${escapeXml(pin.altText || pinTitle)}" /></p>
+        <p>${pinDesc}</p>
+        <p><a href="${escapeXml(pinLink)}">${isEn ? 'Read full article on Pyxie Hyperfokus' : 'Ler relato completo no Pyxie Hyperfokus'}</a></p>
+      ]]></content:encoded>
+      <enclosure url="${escapeXml(pinImg)}" type="image/webp" length="120000" />
+      <media:content url="${escapeXml(pinImg)}" medium="image" type="image/webp" width="1000" height="1500">
+        <media:title>${escapeXml(pinTitle)}</media:title>
+        <media:description>${escapeXml(pinDesc)}</media:description>
+      </media:content>
+    </item>`;
+    }
+  } catch (_) {}
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"
      xmlns:content="http://purl.org/rss/1.0/modules/content/"

@@ -274,38 +274,63 @@ class ModuleManager extends EventEmitter {
         return job;
       },
 
-      // Registro de Timers para cancelamento automático e profiler real
-      registerInterval: (fn, ms) => {
+      // Registro de Timers para cancelamento automatico e profiler real
+      registerInterval: (arg1, arg2, arg3) => {
+        let fn = arg1;
+        let ms = arg2;
+        if (typeof arg1 === "string" && typeof arg2 === "function") {
+          fn = arg2;
+          ms = arg3;
+        }
+        if (typeof fn !== "function") {
+          console.error(`[ModuleManager] registerInterval ignorado: fn nao e funcao no modulo "${mod.id}".`, { arg1, arg2, arg3 });
+          return null;
+        }
+        const delay = typeof ms === "number" && !isNaN(ms) ? ms : 60000;
         const wrappedFn = async () => {
           const startHr = process.hrtime.bigint();
           try {
             return await fn();
+          } catch (err) {
+            console.error(`[ModuleManager] Erro no timer de intervalo do modulo "${mod.id}":`, err);
           } finally {
             const endHr = process.hrtime.bigint();
             const durationMs = Number(endHr - startHr) / 1e6;
             resourceTelemetry.trackModuleExecution(mod.id, durationMs, 0, 0);
           }
         };
-        const id = setInterval(wrappedFn, ms);
+        const id = setInterval(wrappedFn, delay);
         scope.intervals.push(id);
         return id;
       },
-      registerTimeout: (fn, ms) => {
+      registerTimeout: (arg1, arg2, arg3) => {
+        let fn = arg1;
+        let ms = arg2;
+        if (typeof arg1 === "string" && typeof arg2 === "function") {
+          fn = arg2;
+          ms = arg3;
+        }
+        if (typeof fn !== "function") {
+          console.error(`[ModuleManager] registerTimeout ignorado: fn nao e funcao no modulo "${mod.id}".`, { arg1, arg2, arg3 });
+          return null;
+        }
+        const delay = typeof ms === "number" && !isNaN(ms) ? ms : 0;
         const wrappedFn = async () => {
           const startHr = process.hrtime.bigint();
           try {
             return await fn();
+          } catch (err) {
+            console.error(`[ModuleManager] Erro no timeout do modulo "${mod.id}":`, err);
           } finally {
             const endHr = process.hrtime.bigint();
             const durationMs = Number(endHr - startHr) / 1e6;
             resourceTelemetry.trackModuleExecution(mod.id, durationMs, 0, 0);
           }
         };
-        const id = setTimeout(wrappedFn, ms);
+        const id = setTimeout(wrappedFn, delay);
         scope.timeouts.push(id);
         return id;
       },
-
       // Configuração modular
       getConfig: () => {
         const fullConfig = this.loadConfig();

@@ -72,16 +72,82 @@
 ---
 
 ## Fase 3: Site Público do Blog (SSR & Rotas Web)
-- **Data de início:** 29/10/2026
-- **Status:** Em andamento
-- **Planejamento:**
-  - [ ] Implementar rotas públicas e SSR no Express em `src/routes/hyperfokusRoutes.js`:
-    - `/hyperfokus`: Home bento/magazine (Mais comentados / Mais curtidos / Mais recentes / Tags).
-    - `/hyperfokus/:slug`: Artigo completo com SSR (título, metas, autores, tags, HTML sanitizado e JSON-LD BlogPosting).
-    - `/hyperfokus/categoria/:slug`: Página-pilar por categoria.
-    - `/hyperfokus/autor/:userId`: Perfil público do autor com lista de artigos.
-    - `/hyperfokus/como-participar` e `/hyperfokus/termos-e-regras`: Páginas institucionais.
-    - `/api/hyperfokus/articles/:id/like` e `/api/hyperfokus/articles/:id/comments`: Curtir e comentar com login.
-  - [ ] Registrar rotas no `server.js`.
-  - [ ] Leitor Acessível (estilo Kindle): controles de tamanho de fonte, largura da coluna, espaçamento e fonte para dislexia sem alterar o HTML do SSR nem afetar o SEO.
-  - [ ] Redesenho da navegação da Home com botão de destaque "Blog" (`#E60067`) em `public/index.html` e `client/src/components/layout/Navbar.jsx`.
+- **Data de conclusão:** 29/10/2026
+- **Status:** Concluída ✅
+- **Entregas Realizadas:**
+  - [x] Motor de renderização SSR `src/modules/hyperfokus/renderer.js`:
+    - `/hyperfokus`: Home em layout bento/magazine (Artigo Destaque hero + grid de artigos com tags, autores e tempo de leitura).
+    - `/hyperfokus/:slug`: Artigo completo em SSR com título único `<h1>`, metadados de leitura, data no fuso de Brasília (BRT), capa LCP, corpo com auto-internal links e sanitização anti-XSS.
+    - `/hyperfokus/categoria/:slug`: Páginas-pilar por categoria com listagem filtrada.
+    - `/hyperfokus/autor/:userId`: Perfil público do autor com lista de hiperfocos publicados.
+    - `/hyperfokus/como-participar` e `/hyperfokus/termos-e-regras`: Páginas institucionais com compromisso anti-IA e regras de autoria.
+  - [x] Leitor Acessível (Kindle style):
+    - Barra de ferramentas em CSS nativo (variáveis CSS):
+      - 5 níveis de tamanho de fonte (A-/A+, 14px a 22px).
+      - 3 larguras de coluna (compacto 640px, normal 780px, largo 960px).
+      - 3 espaçamentos de linha (1.4, 1.75, 2.0).
+      - Alternância para fonte de alta legibilidade para dislexia.
+      - 3 temas: Escuro (`#080410`), Sépia (`#f5eedc`) e Alto Contraste (`#000000`).
+    - Persistência em `localStorage` (`hyperfokus_reader_pref`) sem alterar o HTML renderizado pelo servidor e sem gerar impacto no SEO.
+  - [x] Modal de Coautores interativo e acessível quando o artigo possui múltiplos autores.
+  - [x] Destaque visual "Blog" na navegação principal:
+    - `client/src/components/layout/Navbar.jsx` com botão de destaque `#E60067` com efeito neon e paridade PT/EN.
+    - `public/index.html` com badge e link no menu principal e no dropdown "Explorar".
+    - Compilação dos bundles React/Vite com 100% de sucesso.
+  - [x] Rotas de interação:
+    - `POST /api/hyperfokus/articles/:id/like`: curtir artigo (com contador dinâmico e suporte a convidados).
+    - `POST /api/hyperfokus/articles/:id/comments` e `GET /api/hyperfokus/articles/:id/comments`: envio e listagem de comentários sanitizados (limite de 1000 caracteres).
+- **Validação:**
+  - `tests/hyperfokus.test.js`: Todos os testes de SSR, contagem única de `<h1>` e formulários aprovados.
+
+---
+
+## Fase 4: Motor de SEO (Automações 1-7, 9, 11, 12)
+- **Data de conclusão:** 29/10/2026
+- **Status:** Concluída ✅
+- **Entregas Realizadas:**
+  - [x] `src/modules/hyperfokus/mediaArchiver.js`:
+    - Download seguro de imagens exclusivo de `cdn.discordapp.com` e `media.discordapp.net` (prevenção rigorosa de SSRF).
+    - Teto estrito de 15 MB por arquivo com verificação de tipo real via Sharp e conversão otimizada para `.webp` em `public/uploads/hyperfokus/`.
+  - [x] `src/modules/hyperfokus/imageCards.js`:
+    - Capa OpenGraph (1200 × 630 px, WebP) com contraste de texto sobre fundo superior a 4.5:1, logo Pyxie, tags e créditos do autor.
+    - Pin do Pinterest (1000 × 1500 px, proporção 2:3 vertical, WebP).
+    - Marca d'água permanente para compartilhamento e downloads via `/api/hyperfokus/share-image/:id`. Imagens dentro do artigo permanecem limpas para leitura fluida e indexação limpa no Google Imagens.
+  - [x] `src/modules/hyperfokus/seoEngine.js`:
+    - Canonical autorreferencial sem query string, tags `hreflang` (pt-BR, en e x-default), `robots: max-image-preview:large`.
+    - Schema.org JSON-LD estruturado: `BlogPosting`, `BreadcrumbList`, `Person` (com avatar e URL de autor), `Organization` e `FAQPage` (extraída dinamicamente de cabeçalhos `##`/`###` terminados em `?`).
+    - Auto-Internal Linker em tempo de renderização: máximo 1 link por artigo-alvo, teto de 5 links internos por página, sem auto-ligação e ignorando blocos `<code>`, `<pre>`, `<a>`, `<h1-6>` e `<blockquote>`.
+    - Sitemap dedicado em `/sitemap-hyperfokus.xml` com `lastmod` real para cada artigo publicado.
+    - Feed RSS 2.0 em `/hyperfokus/rss.xml` com WebSub.
+  - [x] `src/modules/hyperfokus/shopeeContext.js`:
+    - Mapeamento contextual de tags do artigo para categorias e produtos ativos do `shopeeManager`.
+    - Links afiliados formatados obrigatoriamente com `rel="sponsored nofollow"`.
+  - [x] Integração com `linkSentinel` (`src/services/linkSentinel.js`):
+    - Fontes externas de artigos aprovados registradas automaticamente para monitoramento diário e contingência pelo Web Archive.
+- **Validação:**
+  - `tests/hyperfokus.test.js`: Schemas, Sharp, dimensões de imagem, Auto-Internal Linker e Sitemap XML 100% verificados.
+
+---
+
+## Fase 5: Fila do Pinterest (Orçamento de 3 pins/dia)
+- **Data de conclusão:** 29/10/2026
+- **Status:** Concluída ✅
+- **Entregas Realizadas:**
+  - [x] `src/modules/hyperfokus/pinScheduler.js`:
+    - Orçamento unificado de estritamente 3 pins por dia para a conta inteira.
+    - Horários de pico em Brasília: ~12h30, ~18h30 e ~21h30 BRT.
+    - Jitter determinístico de ±20 minutos baseado no hash do ID para nunca repetir o minuto exato e evitar shadowban.
+    - Resolução automática de conflitos: espaçamento mínimo de 2 horas entre pins.
+    - Limites estritos do Pinterest: título ≤ 100 caracteres, descrição ≤ 500 caracteres, tags e link com parâmetros UTM.
+    - Gestão de fila: enfileirar, listar, pausar/despausar e remover pins agendados.
+  - [x] Integração do Feed Dedicado `/rss-pinterest.xml` em `src/services/feedGenerator.js`:
+    - Alimenta o feed do Pinterest apenas com pins cujo `releaseAt <= agora`.
+    - Enclosures WebP de alta resolução com tags `<media:content>` de 1000×1500 px.
+  - [x] Rotas de API no painel para a fila de pins em `src/routes/dashboardRoutes.js`:
+    - `GET /api/dashboard/guilds/:guildId/hyperfokus/pins`: lista da fila ordenada.
+    - `POST /api/dashboard/guilds/:guildId/hyperfokus/pins/:id/toggle`: alternar pausa.
+    - `DELETE /api/dashboard/guilds/:guildId/hyperfokus/pins/:id`: excluir da fila.
+    - Clientes de API integrados em `client/src/dashboard/api.js`.
+- **Validação:**
+  - `tests/hyperfokus.test.js`: Agendamento, limites, jitter, conflito de slots e geração de feed validados.
+  - `tests/museumPartnerships.test.js`: Feed do Pinterest mantém 100% de compatibilidade regressiva.

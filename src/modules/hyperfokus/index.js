@@ -50,7 +50,7 @@ module.exports = {
 
     // Agendador de backup diário (apenas no processo do bot)
     if (ctx.isBotProcess && ctx.registerInterval) {
-      ctx.registerInterval(this.id, () => {
+      ctx.registerInterval(() => {
         try {
           articleStore.exportBackup();
         } catch (err) {

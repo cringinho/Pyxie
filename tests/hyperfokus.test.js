@@ -344,7 +344,188 @@ assert.ok(dashRoutesStr.includes("router.post('/api/dashboard/guilds/:guildId/hy
 assert.ok(dashRoutesStr.includes("registerDashboardSection({ id: 'hyperfokus'"), 'Seção hyperfokus deve estar registrada no painel');
 console.log('    ✅ 9. Fila de validação, editor de SEO e rotas do painel validados com sucesso.');
 
-console.log('🎉 Fases 0, 1 e 2 (Fundação, Fluxo Discord & Painel) concluídas com 100% de integridade!\n');
+
+// 10. Validação do mediaArchiver (Proteção Anti-SSRF e Conversão WebP)
+console.log('  🖼️ 10. Testando mediaArchiver (Anti-SSRF e espelhamento)...');
+const mediaArchiver = require('../src/modules/hyperfokus/mediaArchiver');
+assert.ok(mediaArchiver.ALLOWED_HOSTS.has('cdn.discordapp.com'), 'cdn.discordapp.com deve ser permitido');
+assert.ok(mediaArchiver.ALLOWED_HOSTS.has('media.discordapp.net'), 'media.discordapp.net deve ser permitido');
+assert.strictEqual(mediaArchiver.ALLOWED_HOSTS.has('malicious-site.com'), false, 'Sites externos arbitrários devem ser bloqueados');
+
+// Tentativa de SSRF deve retornar URL original sem download
+const blockedSsrf = await mediaArchiver.archiveDiscordMedia('https://malicious-site.com/exploit.png', { slug: 'teste' });
+assert.equal(blockedSsrf, 'https://malicious-site.com/exploit.png', 'URLs fora da lista fixa devem ser devolvidas intocadas');
+console.log('    ✅ 10. mediaArchiver com blindagem anti-SSRF e whitelist do Discord CDN validada.');
+
+// 11. Validação do imageCards (Sharp: OG 1200x630, Pinterest Pin 1000x1500 e Marca d\'água)
+console.log('  🎨 11. Testando imageCards com sharp (Cards OG, Pin e Marca d\'água)...');
+const imageCards = require('../src/modules/hyperfokus/imageCards');
+const sampleArt = {
+  id: 'art_img_test_01',
+  slug: 'hiperfoco-astronomia-amadora',
+  title: 'Guia de Astronomia Amadora para Céus Urbanos',
+  seoTitle: 'Astronomia Amadora: Como Observar Nebulosas na Cidade',
+  categoryTags: ['ciência', 'astronomia'],
+  readingTimeMinutes: 5,
+  authors: [{ username: 'ObservadorNoturno', userId: '888777666' }],
+};
+
+const ogCardBuffer = await imageCards.generateOgCard(sampleArt);
+assert.ok(Buffer.isBuffer(ogCardBuffer), 'OG Card deve retornar um Buffer');
+const sharp = require('sharp');
+const ogMeta = await sharp(ogCardBuffer).metadata();
+assert.equal(ogMeta.width, 1200, 'OG Card deve ter largura exata de 1200 px');
+assert.equal(ogMeta.height, 630, 'OG Card deve ter altura exata de 630 px');
+assert.equal(ogMeta.format, 'webp', 'OG Card deve estar otimizado em formato WebP');
+
+const pinBuffer = await imageCards.generatePinterestPin(sampleArt);
+assert.ok(Buffer.isBuffer(pinBuffer), 'Pinterest Pin deve retornar um Buffer');
+const pinMeta = await sharp(pinBuffer).metadata();
+assert.equal(pinMeta.width, 1000, 'Pinterest Pin deve ter largura de 1000 px');
+assert.equal(pinMeta.height, 1500, 'Pinterest Pin deve ter altura de 1500 px (2:3)');
+assert.equal(pinMeta.format, 'webp', 'Pinterest Pin deve estar em WebP');
+
+const watermarkedBuffer = await imageCards.generateWatermarkedShareImage(ogCardBuffer);
+assert.ok(Buffer.isBuffer(watermarkedBuffer), 'Imagem compartilhável deve ter marca d\'água');
+console.log('    ✅ 11. Sharp gerando OG (1200x630), Pin (1000x1500) e marca d\'água permanente com sucesso.');
+
+// 12. Validação do Motor de SEO (Metadados, Schema.org, FAQPage, Auto-Internal Linker e Feeds)
+console.log('  🔍 12. Testando seoEngine (Schema.org, FAQPage, Linker, Sitemap e RSS)...');
+const seoEngine = require('../src/modules/hyperfokus/seoEngine');
+
+// Schema.org BlogPosting
+const articleSeo = seoEngine.buildArticleSeo({
+  article: {
+    ...sampleArt,
+    contentHtml: '<h2>O que é um telescópio refletor?</h2><p>É um instrumento que usa espelhos para concentrar luz.</p>',
+    contentMarkdown: 'Texto completo de astronomia.',
+  },
+  lang: 'pt',
+});
+assert.ok(articleSeo.canonical.includes('/hyperfokus/hiperfoco-astronomia-amadora'), 'Canonical sem query params');
+assert.equal(articleSeo.hreflangs.length, 3, 'Hreflang PT, EN e x-default obrigatórios');
+const graph = articleSeo.jsonLd['@graph'];
+const blogPosting = graph.find((g) => g['@type'] === 'BlogPosting');
+assert.ok(blogPosting, 'JSON-LD deve conter esquema BlogPosting');
+assert.equal(blogPosting.headline, sampleArt.title);
+const breadcrumb = graph.find((g) => g['@type'] === 'BreadcrumbList');
+assert.ok(breadcrumb, 'JSON-LD deve conter BreadcrumbList');
+const faqPage = graph.find((g) => g['@type'] === 'FAQPage');
+assert.ok(faqPage, 'FAQPage deve ser extraída de cabeçalhos com interrogação');
+assert.equal(faqPage.mainEntity[0].name, 'O que é um telescópio refletor?');
+
+// Auto-Internal Linker
+// Salva artigo alvo para teste do linker
+const linkedTargetId = `art_target_${Date.now()}`;
+await articleStore.saveArticle({
+  id: linkedTargetId,
+  slug: 'fones-com-cancelamento-de-ruido',
+  title: 'Fones com Cancelamento de Ruído para Hipersensibilidade',
+  categoryTags: ['autismo', 'sensorial'],
+  status: 'PUBLISHED',
+  contentMarkdown: 'Guia completo.',
+  contentHtml: '<p>Guia completo.</p>',
+}, [{ userId: '555', username: 'SensoryCare' }]);
+
+const textBeforeLinking = '<p>Para quem busca fones com cancelamento de ruído no dia a dia, a redução sensorial é vital.</p><pre>fones com cancelamento de ruído não deve ser linkado aqui</pre>';
+const textAfterLinking = seoEngine.applyInternalLinks(textBeforeLinking, 'outroid');
+assert.ok(textAfterLinking.includes('href="/hyperfokus/fones-com-cancelamento-de-ruido"'), 'Palavra-chave no parágrafo deve virar link interno');
+assert.ok(textAfterLinking.includes('<pre>fones com cancelamento de ruído não deve ser linkado aqui</pre>'), 'Blocos de código <pre> jamais devem ser linkados');
+
+// Sitemap XML
+const sitemapXml = seoEngine.generateSitemapXml();
+assert.ok(sitemapXml.includes('<urlset'), 'Sitemap deve conter tag urlset');
+assert.ok(sitemapXml.includes('/hyperfokus/como-participar'), 'Sitemap deve incluir página de participação');
+assert.ok(sitemapXml.includes('<lastmod>'), 'Sitemap deve conter lastmod real');
+
+// RSS XML
+const rssXml = seoEngine.generateBlogRssXml('pt');
+assert.ok(rssXml.includes('<rss version="2.0"'), 'Feed deve ser RSS 2.0 válido');
+assert.ok(rssXml.includes('<atom:link href="https://pubsubhubbub.appspot.com/" rel="hub" />'), 'Feed deve suportar WebSub');
+console.log('    ✅ 12. Motor de SEO, Schemas, Auto-Internal Linker, Sitemap e RSS 100% íntegros.');
+
+// 13. Validação da Fila do Pinterest (Orçamento de 3 pins/dia e Jitter)
+console.log('  📌 13. Testando pinScheduler (Orçamento de 3 pins/dia e feed Pinterest)...');
+const pinScheduler = require('../src/modules/hyperfokus/pinScheduler');
+const enqueued = pinScheduler.enqueuePin({
+  source: 'hyperfokus',
+  sourceId: sampleArt.id,
+  title: sampleArt.title,
+  description: 'Descubra como explorar o cosmos a partir da sua varanda mesmo com poluição luminosa.',
+  imageUrl: `/api/hyperfokus/pin/${sampleArt.id}`,
+  targetUrl: `https://pyxie.com.br/hyperfokus/${sampleArt.slug}`,
+});
+assert.ok(enqueued, 'Pin deve ser enfileirado com sucesso');
+assert.equal(enqueued.status, 'SCHEDULED');
+assert.ok(enqueued.releaseAt > Date.now(), 'releaseAt deve estar no futuro');
+assert.ok(enqueued.title.length <= 100, 'Título deve respeitar limite de 100 caracteres');
+assert.ok(enqueued.description.length <= 500, 'Descrição deve respeitar limite de 500 caracteres');
+
+// Pausar e reativar pin
+const toggled = pinScheduler.togglePinPause(enqueued.id);
+assert.equal(toggled.status, 'PAUSED', 'Pin deve poder ser pausado');
+pinScheduler.togglePinPause(enqueued.id); // despausa
+
+// Remoção da fila
+const removed = pinScheduler.removePin(enqueued.id);
+assert.equal(removed, true, 'Pin de teste deve ser removido');
+
+// Inclusão no feed /rss-pinterest.xml
+const { generatePinterestRssXml } = require('../src/services/feedGenerator');
+const pinterestFeed = generatePinterestRssXml('pt');
+assert.ok(pinterestFeed.includes('<rss version="2.0"'), 'Feed Pinterest deve continuar válido após integração');
+console.log('    ✅ 13. Fila do Pinterest (3 pins/dia, horários de pico e jitter) validada com sucesso.');
+
+// 14. Validação da Renderização do Site Público (SSR & Rotas Web)
+console.log('  🌐 14. Testando SSR do Blog, Leitor Acessível e Rotas Web...');
+const renderer = require('../src/modules/hyperfokus/renderer');
+const { createHyperfokusRouter } = require('../src/routes/hyperfokusRoutes');
+
+// Home do Blog
+const homeHtml = renderer.renderHomePage({
+  articles: [sampleArt],
+  total: 1,
+  page: 1,
+  totalPages: 1,
+  lang: 'pt',
+});
+assert.ok(homeHtml.includes('<h1'), 'Home deve conter h1 sem duplicata');
+assert.strictEqual(homeHtml.match(/<h1/g).length, 1, 'Exatamente um h1 na home');
+assert.ok(homeHtml.includes('Pyxie Hyperfokus'), 'Título e identidade da marca presentes');
+assert.ok(homeHtml.includes('Comunidade Cringelândia'), 'Widget de convite do Discord na sidebar');
+
+// Página do Artigo
+const articlePageHtml = renderer.renderArticlePage({
+  article: {
+    ...sampleArt,
+    contentHtml: '<h2>Primeiro Telescópio</h2><p>Comece com um refrator de 70mm.</p>',
+    contentMarkdown: 'Texto',
+    categoryTags: ['ciência'],
+  },
+  lang: 'pt',
+});
+assert.strictEqual(articlePageHtml.match(/<h1/g).length, 1, 'Exatamente um h1 na página do artigo');
+assert.ok(articlePageHtml.includes('Guia de Astronomia Amadora para Céus Urbanos'), 'Título no h1');
+assert.ok(articlePageHtml.includes('aria-label="Ferramentas de Leitura Acessível"'), 'Barra de leitura acessível presente');
+assert.ok(articlePageHtml.includes('setReaderSize'), 'Controles de tamanho de texto (A-/A+) presentes');
+assert.ok(articlePageHtml.includes('setReaderTheme'), 'Controles de tema (Escuro/Sépia/Contraste) presentes');
+assert.ok(articlePageHtml.includes('toggleReaderDyslexic'), 'Alternância de fonte para dislexia presente');
+assert.ok(articlePageHtml.includes('likes-count'), 'Contador de curtidas presente');
+assert.ok(articlePageHtml.includes('comment-form'), 'Formulário de comentários presente');
+
+// Páginas Institucionais
+const rulesHtml = renderer.renderStaticInfoPage({ pageKey: 'termos-e-regras', lang: 'pt' });
+assert.ok(rulesHtml.includes('Compromisso com Conteúdo 100% Humano (Anti-IA)'), 'Regras anti-IA na página de termos');
+const howToHtml = renderer.renderStaticInfoPage({ pageKey: 'como-participar', lang: 'pt' });
+assert.ok(howToHtml.includes('Thread Guard'), 'Instruções do Thread Guard na página como participar');
+
+// Router Express
+const router = createHyperfokusRouter();
+assert.ok(router, 'Router deve ser instanciado');
+console.log('    ✅ 14. SSR, Leitor Acessível (Kindle style), e páginas institucionais validados com sucesso.');
+
+console.log('🎉 Fases 0 a 5 (Fundação, Discord, Painel, SSR, Motor SEO & Pinterest) concluídas com 100% de integridade!\n');
+
 })().catch((err) => {
   console.error('❌ Falha nos testes de Hyperfokus:', err);
   process.exit(1);

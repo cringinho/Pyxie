@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('node:path');
 const articleStore = require('../modules/hyperfokus/articleStore');
+const analyticsEngine = require('../modules/hyperfokus/analyticsEngine');
 const { renderHomePage, renderArticlePage, renderStaticInfoPage } = require('../modules/hyperfokus/renderer');
 const { generateBlogRssXml, generateSitemapXml } = require('../modules/hyperfokus/seoEngine');
 const { generateOgCard, generatePinterestPin, generateWatermarkedShareImage } = require('../modules/hyperfokus/imageCards');
@@ -90,6 +91,24 @@ function createHyperfokusRouter({ publicDir } = {}) {
     return res.json({ success: true, ...result });
   });
 
+  // Beacon de Analytics (scroll, tempo ativo, cliques em afiliados e convite)
+  router.post('/api/hyperfokus/beacon', express.json(), express.text({ type: '*/*' }), (req, res) => {
+    let payload = req.body;
+    if (typeof payload === 'string') {
+      try { payload = JSON.parse(payload); } catch (_) { payload = {}; }
+    }
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+    analyticsEngine.recordBeacon({
+      articleId: payload.articleId,
+      ip,
+      event: payload.event,
+      depth: payload.depth,
+      seconds: payload.seconds,
+      target: payload.target,
+    });
+    return res.status(204).end();
+  });
+
   router.get('/api/hyperfokus/articles/:id/comments', (req, res) => {
     const comments = articleStore.listComments(req.params.id);
     return res.json({ success: true, comments });
@@ -119,6 +138,16 @@ function createHyperfokusRouter({ publicDir } = {}) {
     const tag = req.query.tag || null;
     const sort = req.query.sort || 'recent';
     const page = Math.max(1, Number(req.query.page) || 1);
+
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+    analyticsEngine.recordPageView({
+      articleId: 'global',
+      ip: clientIp,
+      userAgent: req.headers['user-agent'],
+      referer: req.headers['referer'],
+      utmSource: req.query.utm_source,
+      searchTerm: tag || req.query.q,
+    });
 
     const { items: articles, total, totalPages } = articleStore.listArticles({
       status: 'PUBLISHED',
@@ -210,6 +239,15 @@ function createHyperfokusRouter({ publicDir } = {}) {
       viewsCount: (article.viewsCount || 0) + 1,
     });
 
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+    analyticsEngine.recordPageView({
+      articleId: article.id,
+      ip: clientIp,
+      userAgent: req.headers['user-agent'],
+      referer: req.headers['referer'],
+      utmSource: req.query.utm_source,
+    });
+
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
     res.setHeader('Cache-Control', 'public, max-age=600');
     return res.send(renderArticlePage({
@@ -225,3 +263,4 @@ function createHyperfokusRouter({ publicDir } = {}) {
 module.exports = {
   createHyperfokusRouter,
 };
+

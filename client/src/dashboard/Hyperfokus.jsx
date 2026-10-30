@@ -557,3 +557,4 @@ export default function Hyperfokus({ t, lang, guildId }) {
     </div>
   );
 }
+

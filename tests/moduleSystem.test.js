@@ -165,6 +165,34 @@ console.log('✅ Formatação de metadados para painel administrativo validada.'
   assert(ownerView.components && ownerView.components.length > 0, 'Dono deve receber botões de alternância de módulos');
   console.log('✅ Segurança e permissões de Dono (/py-admin modulos) validadas.');
 
+  // 9. Teste de Resiliência de Timers (registerInterval e registerTimeout)
+  const testScope = moduleManager.createContext({ id: 'test_module' });
+  let timerFired = false;
+  const id1 = testScope.registerInterval(() => { timerFired = true; }, 100000);
+  assert.ok(id1, 'registerInterval com (fn, ms) deve retornar id');
+  clearInterval(id1);
+
+  const id2 = testScope.registerInterval('named_timer', () => { timerFired = true; }, 100000);
+  assert.ok(id2, 'registerInterval com (name, fn, ms) deve ser suportado');
+  clearInterval(id2);
+
+  const idInvalid = testScope.registerInterval('invalid_fn', 100000);
+  assert.strictEqual(idInvalid, null, 'registerInterval com fn inválida deve retornar null e não estourar TypeError');
+
+  const tId1 = testScope.registerTimeout(() => {}, 100000);
+  assert.ok(tId1, 'registerTimeout com (fn, ms) deve retornar id');
+  clearTimeout(tId1);
+
+  const tId2 = testScope.registerTimeout('named_timeout', () => {}, 100000);
+  assert.ok(tId2, 'registerTimeout com (name, fn, ms) deve ser suportado');
+  clearTimeout(tId2);
+
+  // 10. Validação do ciclo de vida de onLoad com isBotProcess do módulo Hyperfokus
+  const hyperfokus = require('../src/modules/hyperfokus');
+  await hyperfokus.onLoad(testScope);
+  await hyperfokus.onUnload();
+  console.log('✅ Resiliência de Timers e ciclo de vida de onLoad validada.');
+
   // Limpa arquivos de teste
   try { if (fs.existsSync(testModulesConfig)) fs.unlinkSync(testModulesConfig); } catch (_) {}
   try { if (fs.existsSync(testSeasonalConfig)) fs.unlinkSync(testSeasonalConfig); } catch (_) {}

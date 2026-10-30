@@ -53,3 +53,4 @@ REJECTED (Fica só no Discord)   PUBLISHED (Espelha mídia Discord -> WebP local
 - Persistência em PostgreSQL + Drizzle para tabelas transacionais (`hyperfokus_articles`, `hyperfokus_article_authors`, `hyperfokus_likes`, `hyperfokus_comments`, etc.).
 - Estado efêmero e rascunhos em JSON atômico (`writeJsonAtomic`).
 - Paridade 100% PT-BR e EN em todas as chaves, comandos e metadados.
+

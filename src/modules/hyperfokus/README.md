@@ -27,3 +27,4 @@ Módulo responsável pela curadoria, moderação e publicação editorial de tó
 - Módulo restrito ao escopo da Cringelândia (`CRINGELANDIA_GUILD_ID`).
 - Agendadores rodam estritamente quando `ctx.isBotProcess` for verdadeiro.
 - Zero dados de exemplo (Zero Mock Policy).
+

@@ -46,3 +46,4 @@ Pode ser executado com Node:
 const { chromium } = require('playwright');
 // Navega pelas rotas em 360, 768 e 1440px salvando em data/screenshots/hyperfokus/
 ```
+

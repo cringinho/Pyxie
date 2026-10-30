@@ -962,6 +962,27 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
     </div>
   ` : ''}
 
+  <!-- Parede de Engajamento Acolhedora (Automação 10: 1x por sessão, suave, não bloqueia leitura) -->
+  <aside id="engagement-wall" style="display:none; position:fixed; bottom:20px; right:20px; max-width:360px; background:#120924; border:2px solid #E60067; border-radius:1rem; padding:1.25rem; box-shadow:0 12px 35px rgba(0,0,0,0.7); z-index:999;" aria-label="Aviso da Comunidade">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+      <strong style="color:#fff; font-size:0.95rem;">💡 ${isEn ? 'Enjoying this read?' : 'Gostando do hiperfoco?'}</strong>
+      <button onclick="closeEngagementWall()" aria-label="Fechar" style="background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; line-height:1;">&times;</button>
+    </div>
+    <p style="font-size:0.8125rem; color:var(--text-muted); margin:0.5rem 0 1rem; line-height:1.4;">
+      ${isEn 
+        ? 'Written with authentic passion by a real human in our community. Join our Discord sanctuary to meet other neurodivergent minds!' 
+        : 'Escrito por quem realmente vive o tema, 100% livre de IA. Faça parte da Cringelândia no Discord ou compartilhe seu próprio relato!'}
+    </p>
+    <div style="display:flex; gap:0.5rem;">
+      <a href="/discord" target="_blank" rel="noopener noreferrer" onclick="trackClick('invite')" class="btn btn-pink" style="font-size:0.75rem; padding:6px 12px; flex:1; text-align:center;">
+        👾 ${isEn ? 'Join Discord' : 'Entrar no Servidor'}
+      </a>
+      <button onclick="closeEngagementWall()" class="btn btn-outline" style="font-size:0.75rem; padding:6px 12px;">
+        ${isEn ? 'Keep reading' : 'Continuar lendo'}
+      </button>
+    </div>
+  </aside>
+
   <footer class="site-footer">
     <p>Pyxie Hyperfokus • Santuário de Mentes Livres</p>
   </footer>
@@ -1027,6 +1048,67 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
     }
 
     document.addEventListener('DOMContentLoaded', () => loadComments('${article.id}'));
+
+    // Analytics Beacon (Scroll 25/50/75/100, Tempo Ativo, Cliques)
+    const trackedScroll = { 25: false, 50: false, 75: false, 100: false };
+    let readingSeconds = 0;
+
+    function sendBeacon(payload) {
+      const data = JSON.stringify(Object.assign({ articleId: '${article.id}' }, payload));
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/hyperfokus/beacon', data);
+      } else {
+        fetch('/api/hyperfokus/beacon', { method: 'POST', body: data, keepalive: true }).catch(() => {});
+      }
+    }
+
+    window.trackClick = function(target) {
+      sendBeacon({ event: 'click', target });
+    };
+
+    window.closeEngagementWall = function() {
+      const wall = document.getElementById('engagement-wall');
+      if (wall) wall.style.display = 'none';
+      try { sessionStorage.setItem('pyxie_engagement_wall', '1'); } catch (_) {}
+    };
+
+    window.addEventListener('scroll', function() {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight <= 0) return;
+      const scrolled = (window.scrollY / docHeight) * 100;
+
+      [25, 50, 75, 100].forEach(function(depth) {
+        if (scrolled >= depth && !trackedScroll[depth]) {
+          trackedScroll[depth] = true;
+          sendBeacon({ event: 'scroll', depth });
+        }
+      });
+
+      if (scrolled >= 70) {
+        try {
+          if (!sessionStorage.getItem('pyxie_engagement_wall')) {
+            const wall = document.getElementById('engagement-wall');
+            if (wall && wall.style.display === 'none') {
+              wall.style.display = 'block';
+            }
+          }
+        } catch (_) {}
+      }
+    }, { passive: true });
+
+    setInterval(function() {
+      if (!document.hidden && document.hasFocus()) {
+        readingSeconds += 5;
+        if (readingSeconds % 30 === 0) {
+          sendBeacon({ event: 'time', seconds: 30 });
+        }
+      }
+    }, 5000);
+
+    window.addEventListener('beforeunload', function() {
+      const rem = readingSeconds % 30;
+      if (rem > 0) sendBeacon({ event: 'time', seconds: rem });
+    });
   </script>
 </body>
 </html>`;

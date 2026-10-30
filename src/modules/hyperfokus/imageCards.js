@@ -55,7 +55,7 @@ async function generateOgCard(article) {
   ).join('');
 
   const svgOverlay = `
-    <svg width="${width}" height="${height}" viewBox="0 0 ${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stop-color="#0a0414" />
@@ -132,7 +132,7 @@ async function generatePinterestPin(article) {
   ).join('');
 
   const svgOverlay = `
-    <svg width="${width}" height="${height}" viewBox="0 0 ${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="pinBg" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stop-color="#080312" />
@@ -204,7 +204,7 @@ async function generateWatermarkedShareImage(imageBufferOrPath) {
   const barHeight = Math.max(50, Math.round(metadata.height * 0.08));
 
   const watermarkSvg = `
-    <svg width="${width}" height="${barHeight}" viewBox="0 0 ${width}" height="${barHeight}" xmlns="http://www.w3.org/2000/svg">
+    <svg width="${width}" height="${barHeight}" viewBox="0 0 ${width} ${barHeight}" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="rgba(8, 4, 16, 0.88)" />
       <line x1="0" y1="0" x2="${width}" y2="0" stroke="#E60067" stroke-width="3" />
       <text x="32" y="${Math.round(barHeight * 0.65)}" font-family="system-ui, -apple-system, sans-serif" font-size="${Math.round(barHeight * 0.38)}" font-weight="900" fill="#ffffff">
