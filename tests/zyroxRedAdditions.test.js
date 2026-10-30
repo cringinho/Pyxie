@@ -145,6 +145,10 @@ async function runTests() {
   });
   assert.strictEqual(diagAllowed.ok, true);
 
+  const syncStatus = cmdPerms.getMenuSyncStatus(testGuild);
+  assert.ok(typeof syncStatus.activeCount === 'number');
+  assert.ok(Array.isArray(syncStatus.hidden));
+
   cmdPerms.setRules(testGuild, []);
   console.log('  ✅ 4. Regras de permissão (canal > cargo) e diagnóstico de comando validados.');
 

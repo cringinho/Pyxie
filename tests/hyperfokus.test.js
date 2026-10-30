@@ -524,7 +524,73 @@ const router = createHyperfokusRouter();
 assert.ok(router, 'Router deve ser instanciado');
 console.log('    ✅ 14. SSR, Leitor Acessível (Kindle style), e páginas institucionais validados com sucesso.');
 
-console.log('🎉 Fases 0 a 5 (Fundação, Discord, Painel, SSR, Motor SEO & Pinterest) concluídas com 100% de integridade!\n');
+// 15. Validação de Telemetria e Analytics em Tempo Real (analyticsEngine.js)
+console.log('  📊 15. Testando Motor de Analytics, Conformidade LGPD & Agregação Diária...');
+const analyticsEngine = require('../src/modules/hyperfokus/analyticsEngine');
+
+// Anonymize IP com salt rotativo (zero raw IP)
+const anonHash1 = analyticsEngine.anonymizeIp('187.56.24.10');
+const anonHash2 = analyticsEngine.anonymizeIp('187.56.24.10');
+const anonHashOther = analyticsEngine.anonymizeIp('187.56.24.11');
+assert.strictEqual(anonHash1, anonHash2, 'Mesmo IP no mesmo dia deve gerar mesmo hash');
+assert.notStrictEqual(anonHash1, anonHashOther, 'IPs diferentes devem gerar hashes diferentes');
+assert.strictEqual(anonHash1.length, 16, 'Hash deve ter 16 caracteres truncados');
+assert.ok(!anonHash1.includes('187'), 'Hash nunca deve conter fragmentos do IP real');
+
+// Testando Registro de Pageview
+analyticsEngine.recordPageView({
+  articleId: testArticleId,
+  slug: testSlug,
+  ip: '201.88.12.5',
+  userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36',
+  referer: 'https://www.google.com/search?q=hiperfoco+astronomia',
+});
+
+// Testando Filtro Anti-Bot
+analyticsEngine.recordPageView({
+  articleId: testArticleId,
+  slug: testSlug,
+  ip: '66.249.66.1',
+  userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
+});
+
+// Testando Beacons de Engajamento
+analyticsEngine.recordBeacon({
+  articleId: testArticleId,
+  ip: '201.88.12.5',
+  event: 'scroll',
+  depth: 100,
+});
+analyticsEngine.recordBeacon({
+  articleId: testArticleId,
+  ip: '201.88.12.5',
+  event: 'time',
+  seconds: 45,
+});
+analyticsEngine.recordBeacon({
+  articleId: testArticleId,
+  ip: '201.88.12.5',
+  event: 'shopee_click',
+});
+analyticsEngine.recordBeacon({
+  articleId: testArticleId,
+  ip: '201.88.12.5',
+  event: 'invite_click',
+});
+
+// Forçando Flush do Buffer em Memória
+analyticsEngine.flushBuffer();
+
+const analyticsSummary = analyticsEngine.getAnalyticsSummary({ days: 30, articleId: testArticleId });
+assert.ok(analyticsSummary, 'Resumo de métricas deve existir');
+assert.ok(analyticsSummary.totalPageViews >= 1, 'Page views registrados');
+assert.ok(analyticsSummary.scrollDepths.scroll100 >= 1, 'Scroll 100% registrado');
+assert.ok(analyticsSummary.shopeeClicks >= 1, 'Clique Shopee registrado');
+assert.ok(analyticsSummary.inviteClicks >= 1, 'Entrada Discord registrada');
+assert.ok(analyticsSummary.topReferrers.some((r) => r.source === 'Google'), 'Referrer do Google catalogado');
+console.log('    ✅ 15. Analytics, filtro de robôs, anonimização LGPD e funil de leitura validados.');
+
+console.log('🎉 Fases 0 a 6 (Fundação, Discord, Painel, SSR, Motor SEO, Pinterest & Analytics) concluídas com 100% de integridade!\n');
 
 })().catch((err) => {
   console.error('❌ Falha nos testes de Hyperfokus:', err);

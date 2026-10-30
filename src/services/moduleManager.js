@@ -565,6 +565,22 @@ class ModuleManager extends EventEmitter {
   }
 
   /**
+   * Verifica se um módulo está habilitado para um servidor específico.
+   * @param {string} moduleId
+   * @param {string} guildId
+   * @returns {boolean}
+   */
+  isEnabledForGuild(moduleId, guildId) {
+    if (!this.isModuleEnabled(moduleId)) return false;
+    const mod = this.modules.get(moduleId);
+    if (!mod) return false;
+    if (Array.isArray(mod.guildScope) && mod.guildScope.length > 0) {
+      return mod.guildScope.includes(String(guildId));
+    }
+    return true;
+  }
+
+  /**
    * Retorna a lista de comandos fornecidos por todos os módulos atualmente ATIVOS.
    * Utilizado por commandHelpers.js para catalogação dinâmica na Web e Ajuda (/py-help).
    */

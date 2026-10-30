@@ -244,10 +244,27 @@ function simulateVisibility({
   };
 }
 
+/**
+ * Verifica se um comando específico é permitido em uma guilda específica de acordo com seu guildScope.
+ * @param {string} commandName
+ * @param {string} guildId
+ * @returns {boolean}
+ */
+function isCommandAllowedInGuild(commandName, guildId) {
+  const scopes = getAllCommandScopes();
+  const cmd = scopes.find((s) => s.id === commandName || s.name === commandName);
+  if (!cmd) return true;
+  if (Array.isArray(cmd.guildScope) && cmd.guildScope.length > 0) {
+    return cmd.guildScope.includes(String(guildId));
+  }
+  return true;
+}
+
 module.exports = {
   getAllCommandScopes,
   updateCommandScope,
   simulateVisibility,
+  isCommandAllowedInGuild,
   CRINGELANDIA_GUILD_ID,
   MARY_DEFAULT_GUILD_ID,
   OWNER_COMMANDS,

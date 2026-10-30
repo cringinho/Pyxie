@@ -93,4 +93,24 @@ function forGuild(guildId, { isOwner = false } = {}) {
     });
 }
 
-module.exports = { allCommands, forGuild };
+const COMMAND_MODULE_MAP = new Proxy({}, {
+  get(target, prop) {
+    if (typeof prop !== 'string') return undefined;
+    if (!moduleManager.modules.size) moduleManager.discoverModules();
+    for (const mod of moduleManager.modules.values()) {
+      for (const cmd of mod.commands || []) {
+        const name = cmd.data?.name || cmd.name;
+        if (!name) continue;
+        const bare = name.startsWith('py-') ? name.slice(3) : name;
+        if (name === prop || bare === prop) return mod.id;
+        for (const alias of cmd.aliases || []) {
+          const aliasBare = alias.startsWith('py-') ? alias.slice(3) : alias;
+          if (alias === prop || aliasBare === prop) return mod.id;
+        }
+      }
+    }
+    return undefined;
+  },
+});
+
+module.exports = { allCommands, forGuild, COMMAND_MODULE_MAP };

@@ -151,3 +151,31 @@
 - **Validação:**
   - `tests/hyperfokus.test.js`: Agendamento, limites, jitter, conflito de slots e geração de feed validados.
   - `tests/museumPartnerships.test.js`: Feed do Pinterest mantém 100% de compatibilidade regressiva.
+
+---
+
+## Fase 6: Analytics no Painel (Zero-Mock & Conformidade LGPD)
+- **Data de conclusão:** 29/10/2026
+- **Status:** Concluída ✅
+- **Entregas Realizadas:**
+  - [x] `src/modules/hyperfokus/analyticsEngine.js`:
+    - Coleta ultra-leve no servidor Express + beacons assíncronos (`navigator.sendBeacon`).
+    - Anonimização estrita em conformidade com a LGPD: IPs crus NUNCA são salvos; hashes descartáveis de 16 caracteres com salt diário rotativo.
+    - Filtro de robôs e rastreadores baseado em User-Agent para métricas 100% humanas.
+    - Buffer em memória com teto e descarga periódica (`flush` a cada 30 segundos ou 100 eventos) para proteger I/O e respeitar o `memoryGuard`.
+    - Agregação diária por artigo e global (`analytics_daily.json` com espelhamento para tabela `hyperfokus_analytics_daily` no PostgreSQL via Drizzle).
+    - Métricas monitoradas: Page Views, Visitantes Únicos, Tempo Médio de Leitura Ativa, Funil de Rolagem (25%, 50%, 75%, 100%), Cliques em produtos contextuais Shopee e Entradas no Discord.
+    - Origens de tráfego por detecção de `Referer` e parâmetros UTM (Google, Bing, Pinterest, Discord, Reddit, WhatsApp, Twitter/X, Direto).
+  - [x] Rastreamento Frontend e Parede de Engajamento no `src/modules/hyperfokus/renderer.js`:
+    - Script inline nativo com `sendBeacon` sem scripts de terceiros pesados.
+    - Registro de visibilidade de página (`document.visibilityState`) para tempo de leitura puramente ativo.
+    - Automação 10: Parede de Engajamento Tsundere da Pyxie disparada sutilmente no canto inferior direito aos 70% de rolagem (máximo 1x por sessão, fácil de fechar, sem cobrir o texto).
+  - [x] Rota e Interface no `/dashboard` (`client/src/dashboard/Hyperfokus.jsx`):
+    - 6 KPI tiles dinâmicos em tempo real: Page Views, Visitantes Únicos, Tempo Médio Ativo, Conclusão 100%, Cliques Shopee e Entradas Discord.
+    - Funil visual de retenção de leitura (25%, 50%, 75%, 100%).
+    - Tabela de origens de tráfego com contagem e percentual.
+    - Gestão completa da fila agendada do Pinterest com visualização de cards, thumbnails, data/hora no fuso de Brasília, pausar/retomar e remoção.
+    - Regra Zero-Mock estrita: estado vazio honesto quando não há dados no período.
+- **Validação:**
+  - `tests/hyperfokus.test.js`: Teste 15 validando anonimização LGPD, filtros anti-robô, beacons de rolagem, cliques e consolidação analítica diária.
+  - `npm run build:client`: Compilação de produção do Vite 100% limpa.

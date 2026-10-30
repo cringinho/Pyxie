@@ -207,11 +207,11 @@ function flush() {
         } else if (ev.event === 'time') {
           rec.totalReadingSeconds += ev.seconds;
           if (globalRec) globalRec.totalReadingSeconds += ev.seconds;
-        } else if (ev.event === 'click') {
-          if (ev.target === 'shopee') {
+        } else if (ev.event === 'click' || ev.event === 'shopee_click' || ev.event === 'invite_click') {
+          if (ev.target === 'shopee' || ev.event === 'shopee_click') {
             rec.shopeeClicks++;
             if (globalRec) globalRec.shopeeClicks++;
-          } else if (ev.target === 'invite') {
+          } else if (ev.target === 'invite' || ev.event === 'invite_click') {
             rec.inviteClicks++;
             if (globalRec) globalRec.inviteClicks++;
           }
@@ -363,6 +363,7 @@ module.exports = {
   recordPageView,
   recordBeacon,
   flush,
+  flushBuffer: flush,
   getAnalyticsSummary,
   anonymizeIp,
   categorizeReferrer,
