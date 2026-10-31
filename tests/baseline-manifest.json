@@ -2,7 +2,7 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 73896,
+  "totalMs": 74043,
   "totalChecks": 498,
   "steps": [
     {
@@ -1421,29 +1421,6 @@
     },
     {
       "index": 71,
-      "file": "scripts/smoke_all_commands.js",
-      "ms": 2283,
-      "exitCode": 0,
-      "timedOut": false,
-      "checks": [
-        "resumo: 134 execuções: 134 ok, 0 avisos, 0 sem resposta, 0 erros de código."
-      ],
-      "checkCount": 1,
-      "failures": [],
-      "summary": "134 execuções: 134 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
-      "summaryNumbers": {
-        "line": "134 execuções: 134 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
-        "numbers": [
-          134,
-          134,
-          0,
-          0,
-          0
-        ]
-      }
-    },
-    {
-      "index": 71,
       "file": "tests/plansLifetime.test.js",
       "ms": 48,
       "exitCode": 0,
@@ -1460,6 +1437,29 @@
       "failures": [],
       "summary": null,
       "summaryNumbers": null
+    },
+    {
+      "index": 72,
+      "file": "scripts/smoke_all_commands.js",
+      "ms": 2430,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "resumo: 136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código."
+      ],
+      "checkCount": 1,
+      "failures": [],
+      "summary": "136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
+      "summaryNumbers": {
+        "line": "136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
+        "numbers": [
+          136,
+          136,
+          0,
+          0,
+          0
+        ]
+      }
     }
   ],
   "commands": [
@@ -1536,7 +1536,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T17:20:14.221Z",
+  "updatedAt": "2026-10-31T17:24:54.199Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

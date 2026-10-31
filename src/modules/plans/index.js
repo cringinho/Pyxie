@@ -4,6 +4,7 @@ const { EmbedBuilder } = require('discord.js');
 const plans = require('../../services/guildPlans');
 const payments = require('../../services/planPayments');
 const notices = require('../../services/planNotices');
+const pyFundadorCmd = require('./commands/pyFundador');
 const { getLanguage, t } = require('../../utils/i18n');
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -90,6 +91,7 @@ module.exports = {
   },
   icon: '💳',
   defaultEnabled: true,
+  commands: [pyFundadorCmd],
   notifyActivated,
   tick,
   async onLoad(ctx) {

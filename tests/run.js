@@ -392,6 +392,14 @@ function compareManifests(baseline, current) {
     for (const check of base.checks) {
       if (!present.has(norm(check))) problems.push(`${base.file}: verificação perdida: ${check.slice(0, 90)}`);
     }
+    // Números do resumo (ex.: "136 execuções: 136 ok") são contrato: se caírem, falha.
+    const baseNums = (base.summaryNumbers && base.summaryNumbers.numbers) || [];
+    const nowNums = (now.summaryNumbers && now.summaryNumbers.numbers) || [];
+    if (baseNums.length && JSON.stringify(baseNums) !== JSON.stringify(nowNums)) {
+      problems.push(
+        `${base.file}: resumo mudou ${JSON.stringify(baseNums)} -> ${JSON.stringify(nowNums)} (atualize o baseline se for intencional)`
+      );
+    }
   }
 
   return problems;
