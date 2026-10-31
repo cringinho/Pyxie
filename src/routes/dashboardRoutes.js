@@ -347,6 +347,11 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     if (!catalog) return res.status(400).json({ success: false, error: 'invalid_addon' });
     const cycle = req.body?.cycle === 'year' ? 'year' : 'month';
     const method = req.body?.method === 'card' ? 'card' : 'pix';
+    // Extra vitalício não tem o que renovar: recusar aqui evita cobrar por nada.
+    const currentAddon = require('../services/guildAddons').status(req.params.guildId, catalog.id);
+    if (currentAddon.lifetime && currentAddon.active) {
+      return res.status(409).json({ success: false, error: 'addon_lifetime' });
+    }
     const payments = require('../services/planPayments');
     const gateway = method === 'card' ? payments.createCardSubscription : payments.createPixCharge;
     const checkout = await gateway({ guildId: req.params.guildId, addonId: catalog.id, cycle }).catch(() => ({
@@ -951,6 +956,11 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const lang = req.body?.lang === 'en' ? 'en' : 'pt';
     const cycle = req.body?.cycle === 'year' ? 'year' : 'month';
     if (!['basic', 'premium'].includes(plan)) return res.status(400).json({ success: false, error: 'invalid_plan' });
+    // Plano vitalício (cortesia) não passa por checkout: cobrar seria vender o que já tem.
+    const currentPlan = require('../services/guildPlans').getPlan(req.params.guildId);
+    if (currentPlan.lifetime && currentPlan.active) {
+      return res.status(409).json({ success: false, error: 'plan_lifetime' });
+    }
     const checkout = method === 'card'
       ? await payments.createCardSubscription({ guildId: req.params.guildId, plan, cycle, lang })
       : await payments.createPixCharge({ guildId: req.params.guildId, plan, cycle, lang });

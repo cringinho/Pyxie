@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { BadgeCheck, CreditCard, QrCode, ShieldOff } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { BadgeCheck, CreditCard, Infinity as InfinityIcon, QrCode, ShieldOff } from 'lucide-react';
 import { api } from './api';
 import { Button, Notice, Spinner } from './ui';
 
@@ -12,6 +12,9 @@ export default function Plans({ t, guildId, lang }) {
   const [extras, setExtras] = useState([]);
   // Ciclo escolhido: mensal (padrão) ou anual com 2 meses grátis.
   const [cycle, setCycle] = useState('month');
+  // Botão clicado por último: dá retorno visual imediato ("gerando…") e marca a escolha.
+  const [picked, setPicked] = useState(null);
+  const checkoutRef = useRef(null);
 
   const load = () =>
     api
@@ -27,8 +30,17 @@ export default function Plans({ t, guildId, lang }) {
       .catch(() => {});
   }, [guildId]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
-  if (!info) return <Spinner label={t('app.loading')} />;
+  // Quando o checkout chega, leva o usuário até ele (antes ficava lá embaixo e
+  // parecia que o clique não tinha feito nada).
+  useEffect(() => {
+    if (checkout && checkoutRef.current) checkoutRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [checkout]);
+
+  // A página só é substituída quando nem os dados iniciais chegaram. Erro de clique
+  // aparece como aviso dentro da tela (antes a tela inteira sumia e parecia "não abriu").
+  if (!info) {
+    return error ? <Notice tone="error">{t('error.generic', { error })}</Notice> : <Spinner label={t('app.loading')} />;
+  }
 
   const current = info.plan || {};
   const active = Boolean(current.active);
@@ -43,7 +55,10 @@ export default function Plans({ t, guildId, lang }) {
   const saving = info.annualSavingPercent?.['premium'] || 0;
 
   const buy = async (plan, method) => {
-    setBusy(`${plan}:${method}:${cycle}`);
+    const key = `plan:${plan}:${method}:${cycle}`;
+    setBusy(key);
+    setPicked(key);
+    setError(null);
     setCheckout(null);
     try {
       const res = await api.planCheckout(guildId, { plan, method, cycle, lang });
@@ -58,7 +73,10 @@ export default function Plans({ t, guildId, lang }) {
   };
 
   const buyExtra = async (addonId, cycle, method = 'pix') => {
-    setBusy(`extra:${addonId}:${cycle}:${method}`);
+    const key = `extra:${addonId}:${cycle}:${method}`;
+    setBusy(key);
+    setPicked(key);
+    setError(null);
     setCheckout(null);
     try {
       const res = await api.addonCheckout(guildId, addonId, { cycle, method });
@@ -92,6 +110,7 @@ export default function Plans({ t, guildId, lang }) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-white/70">{t('plan.intro')}</p>
+      {error && <Notice tone="error">{t('error.generic', { error })}</Notice>}
 
       <div className="dash-card flex flex-wrap items-center justify-between gap-3 rounded-2xl p-4">
         <div className="flex items-center gap-3">
@@ -175,17 +194,34 @@ export default function Plans({ t, guildId, lang }) {
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <Button disabled={Boolean(busy)} onClick={() => buyExtra(a.id, 'month')}>
-                  <QrCode size={16} aria-hidden="true" />
-                  R$ {Math.round(a.priceMonthly / 100)}/{t('plan.extras.month')}
-                </Button>
-                <Button variant="ghost" disabled={Boolean(busy)} onClick={() => buyExtra(a.id, 'year')}>
-                  R$ {Math.round(a.priceYearly / 100)}/{t('plan.extras.year')}
-                </Button>
-                <Button variant="ghost" disabled={Boolean(busy)} onClick={() => buyExtra(a.id, 'month', 'card')}>
-                  <CreditCard size={16} aria-hidden="true" />
-                  {t('plan.payCard')}
-                </Button>
+                {a.lifetime ? (
+                  // Extra vitalício não tem o que renovar: cobrar aqui seria vender nada.
+                  <span className="flex min-h-[40px] items-center gap-2 rounded-xl bg-emerald-500/15 px-3 text-sm font-semibold text-emerald-300">
+                    <InfinityIcon size={16} aria-hidden="true" />
+                    {t('plan.extras.lifetime')}
+                  </span>
+                ) : (
+                  [
+                    { c: 'month', m: 'pix', label: `R$ ${Math.round(a.priceMonthly / 100)}/${t('plan.extras.month')}`, icon: QrCode },
+                    { c: 'year', m: 'pix', label: `R$ ${Math.round(a.priceYearly / 100)}/${t('plan.extras.year')}`, icon: null },
+                    { c: 'month', m: 'card', label: t('plan.payCard'), icon: CreditCard },
+                  ].map((opt) => {
+                    const key = `extra:${a.id}:${opt.c}:${opt.m}`;
+                    const loading = busy === key;
+                    const Icon = opt.icon;
+                    return (
+                      <Button
+                        key={key}
+                        variant={opt.c === 'year' || opt.m === 'card' ? 'ghost' : undefined}
+                        disabled={Boolean(busy)}
+                        onClick={() => buyExtra(a.id, opt.c, opt.m)}
+                      >
+                        {Icon && <Icon size={16} aria-hidden="true" />}
+                        {loading ? t('plan.generating') : opt.label}
+                      </Button>
+                    );
+                  })
+                )}
               </div>
             </div>
           ))}
@@ -193,7 +229,7 @@ export default function Plans({ t, guildId, lang }) {
       )}
 
       {checkout?.qrCode && (
-        <div className="dash-card space-y-3 rounded-2xl p-4">
+        <div ref={checkoutRef} className="dash-card space-y-3 rounded-2xl p-4">
           <p className="font-title font-bold">{checkout.title || t('plan.qrTitle', { plan: planLabel(checkout.plan) })}</p>
           <p className="text-xs text-white/60">{t('plan.qrHint')}</p>
           {checkout.qrCodeBase64 && (
@@ -211,7 +247,7 @@ export default function Plans({ t, guildId, lang }) {
       )}
 
       {checkout?.initPoint && (
-        <div className="dash-card space-y-3 rounded-2xl p-4">
+        <div ref={checkoutRef} className="dash-card space-y-3 rounded-2xl p-4">
           <p className="font-title font-bold">{checkout.title || t('plan.cardTitle')}</p>
           <p className="text-xs text-white/60">{t('plan.cardHint')}</p>
           <a
