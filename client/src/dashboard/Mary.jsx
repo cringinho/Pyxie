@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Calculator, Copy, Gift, ImagePlus, LayoutTemplate, MessageSquareQuote, Receipt, Search, Sparkles, Store, UserRound, Wallet } from 'lucide-react';
+import { Calculator, Copy, Gift, ImagePlus, LayoutTemplate, MessageSquareQuote, Package, Receipt, Search, Sparkles, Store, UserRound, Wallet } from 'lucide-react';
 import { api, request, ApiError } from './api';
 import { Button, Card, Notice, Spinner, StatTile, Toggle } from './ui';
 import { go } from './Shell';
+import StoreProducts from './StoreProducts';
 
 // Telas da zona da Mary (servidor dela; só a Mary e o dono). API: /api/dashboard/guilds/:id/mary/*.
 const base = (id) => `/api/dashboard/guilds/${id}/mary`;
@@ -122,6 +123,10 @@ export function MaryStore({ t, guildId }) {
   const [status, setStatus] = useState(null);
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(null);
+  // BUG: este useState vivia DEPOIS do `if (!cfg) return ...` — o React via mais hooks no
+  // segundo render e estourava ("Rendered more hooks than during the previous render"),
+  // deixando a página em branco. Hooks sempre antes de qualquer return.
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const channels = useChannels(guildId);
   useEffect(() => {
     maryApi
@@ -136,7 +141,6 @@ export function MaryStore({ t, guildId }) {
   if (!cfg) return status ? <Status t={t} status={status} /> : <Spinner label={t('app.loading')} />;
 
   const set = (patch) => setCfg({ ...cfg, ...patch });
-  const [acceptTerms, setAcceptTerms] = useState(false);
   const save = async () => {
     setBusy(true);
     setStatus(null);
@@ -195,14 +199,21 @@ export function MaryStore({ t, guildId }) {
           ))}
         </div>
         <div className="grid grid-cols-2 gap-2">
+          <Field label={t('store.prod.storeName')} hint={t('store.prod.storeNameHint')}>
+            <input value={cfg.storeName || ''} maxLength={60} onChange={(e) => set({ storeName: e.target.value })} className={field} />
+          </Field>
           <Field label={t('mary.store.stock')}>
             <input type="number" min="0" value={cfg.estoqueRobux} onChange={(e) => set({ estoqueRobux: e.target.value })} className={field} />
           </Field>
+        </div>
+        <div className="mt-2 grid grid-cols-1 gap-2">
           <Field label={t('mary.store.price')}>
             <input type="number" min="0" step="0.5" value={cfg.preco1k} onChange={(e) => set({ preco1k: e.target.value })} className={field} />
           </Field>
         </div>
       </Card>
+
+      <StoreProducts t={t} guildId={guildId} />
 
       <Card title={t('mary.pix.title')} icon={Wallet}>
         <p className="mb-3 text-sm text-white/70">{t('mary.pix.hint')}</p>

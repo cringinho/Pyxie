@@ -29,6 +29,8 @@ function getStore(guildId = null) {
   const tickets = Object.values(store.tickets || {});
   return {
     statusLoja: STATUS.includes(cfg.statusLoja) ? cfg.statusLoja : 'online',
+    // Nome da loja: cada servidor batiza a sua (antes era "Mary Store" fixo no recibo).
+    storeName: String(cfg.storeName || '').slice(0, 60),
     estoqueRobux: Number(cfg.estoqueRobux) || 0,
     preco1k: Number(cfg.preco1k) || 37,
     pixKey: cfg.pixKey || '',
@@ -70,6 +72,7 @@ function saveStore(guildId, body = {}, { channels = [], roles = [], meta = {} } 
     next.statusLoja = body.statusLoja;
   }
   if (body.estoqueRobux !== undefined) next.estoqueRobux = Math.round(money(body.estoqueRobux, 0, 100000000));
+  if (body.storeName !== undefined) next.storeName = str(body.storeName, 60);
   if (body.preco1k !== undefined) next.preco1k = money(body.preco1k, 0, 100000);
   if (body.pixKey !== undefined) next.pixKey = str(body.pixKey, 77);
   if (body.pixName !== undefined) next.pixName = str(body.pixName, 25);
@@ -130,18 +133,21 @@ async function inspectUser(username) {
 }
 
 // Recibo de entrega (vouch) com o botão de avaliação da lojinha.
-function buildReceipt({ clientNick, clientRobux, clientPrice, proofImageUrl, notes } = {}) {
+function buildReceipt({ guildId = null, clientNick, clientRobux, clientPrice, proofImageUrl, notes } = {}) {
   const nick = str(clientNick, 40).replace(/[`@]/g, '');
   const robux = Math.floor(Number(clientRobux) || 0);
   if (!nick || robux <= 0) return { ok: false, error: 'missing_fields' };
-  const price = Number(clientPrice) > 0 ? money(clientPrice, 0, 1000000) : robloxHelper.calcPriceBRL(robux, Number(manager.loadConfig().preco1k) || 37);
+  const cfg = manager.loadConfig(guildId);
+  // BUG corrigido: loadConfig() sem guildId usava o preço de 1k da Mary em TODOS os servidores.
+  const price = Number(clientPrice) > 0 ? money(clientPrice, 0, 1000000) : robloxHelper.calcPriceBRL(robux, Number(cfg.preco1k) || 37);
+  const storeName = String(cfg.storeName || 'Loja').slice(0, 60);
   const image = str(proofImageUrl, 500);
   const note = str(notes, 300);
   const embed = {
     color: 0x10b981,
     title: '🎀 Entrega concluída',
     description: [
-      'Mais uma encomenda de Robux entregue com segurança na **Mary Store**!',
+      `Mais uma encomenda de Robux entregue com segurança na **${storeName}**!`,
       '',
       `- 👤 **Cliente:** \`${nick}\``,
       `- 💎 **Quantidade:** \`${robux.toLocaleString('pt-BR')} Robux\``,
@@ -151,7 +157,7 @@ function buildReceipt({ clientNick, clientRobux, clientPrice, proofImageUrl, not
       '',
       '-# 💖 Obrigada pela confiança! Deixe sua avaliação no botão abaixo.',
     ].join('\n'),
-    footer: { text: 'Mary Store • Entregas e comprovantes' },
+    footer: { text: `${storeName} • Entregas e comprovantes` },
   };
   if (/^https:\/\//.test(image)) embed.image = { url: image };
   return {
@@ -168,7 +174,7 @@ function buildReceipt({ clientNick, clientRobux, clientPrice, proofImageUrl, not
 async function sendReceipt(guildId, body = {}, { fetchImpl } = {}) {
   const channelId = String(body.channelId || '');
   if (!SNOWFLAKE_RE.test(channelId)) return { ok: false, error: 'invalid_channel' };
-  const built = buildReceipt(body);
+  const built = buildReceipt({ ...body, guildId });
   if (!built.ok) return built;
   const channel = await studioStore.discord('GET', `/channels/${channelId}`, null, fetchImpl);
   if (String(channel.guild_id) !== String(guildId)) return { ok: false, error: 'channel_not_in_guild' };
