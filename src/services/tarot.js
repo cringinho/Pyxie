@@ -1,9 +1,10 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const cards = require('../data/tarot.json');
 const { getBalance, spendCoins } = require('./economy');
 
-const stateFile = path.join(__dirname, '..', '..', 'data', 'tarot-state.json');
+const stateFile = pyxieDataPath( 'tarot-state.json');
 const BRIBE_COST = 350;
 
 function getBrasiliaDate(now = Date.now()) {

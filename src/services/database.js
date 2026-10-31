@@ -1,7 +1,8 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const dataDir = path.join(__dirname, '..', '..', 'data');
+const dataDir = pyxieDataDir();
 const settingsFile = path.join(dataDir, 'settings.json');
 const settingsBackupFile = `${settingsFile}.bak`;
 const legacyPrefixFile = path.join(__dirname, '..', '..', 'prefix.json');

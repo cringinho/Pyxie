@@ -1,7 +1,8 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const CONFIG_FILE = path.join(__dirname, '..', '..', 'data', 'webRoutesConfig.json');
+const CONFIG_FILE = pyxieDataPath( 'webRoutesConfig.json');
 
 const INITIAL_ROUTES = [
   // Páginas Públicas

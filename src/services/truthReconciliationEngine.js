@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -11,7 +12,7 @@ const commandScopeManager = require('./commandScopeManager');
 const acervoAuditService = require('./acervoAuditService');
 const trustAndSafety = require('./trustAndSafety');
 
-const DATA_DIR = path.join(__dirname, '..', '..', 'data');
+const DATA_DIR = pyxieDataDir();
 const PUBLIC_TRUTH_FILE = path.join(DATA_DIR, 'publicTruthSnapshot.json');
 const RECONCILE_INTERVAL_MS = 30 * 1000; // 30 segundos por onda
 

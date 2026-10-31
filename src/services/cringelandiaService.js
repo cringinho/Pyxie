@@ -1,7 +1,8 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const IMPACT_FILE = path.join(__dirname, '..', '..', 'data', 'cringelandiaImpact.json');
+const IMPACT_FILE = pyxieDataPath( 'cringelandiaImpact.json');
 
 // Base inicial honrando o histórico de acolhimentos da comunidade
 const BASE_HELPED_COUNT = 1420;

@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('fs');
 const path = require('path');
 const satori = require('satori').default || require('satori');
@@ -81,7 +82,7 @@ async function fetchImageBase64(url) {
 
 function getUserMuseumArtCount(userId) {
   try {
-    const data = readJson(path.join(process.cwd(), 'data', 'museumData.json'), { arts: [] });
+    const data = readJson(pyxieDataPath( 'museumData.json'), { arts: [] });
     if (data && Array.isArray(data.arts)) {
       return data.arts.filter((a) => a.authorId === userId).length;
     }

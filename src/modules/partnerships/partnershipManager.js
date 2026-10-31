@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../../utils/dataDir');
 const {
   ActionRowBuilder,
   ButtonBuilder,
@@ -17,8 +18,8 @@ const { readJson, writeJsonAtomic, isHttpUrl } = require('../../utils/atomicJson
 const { restPost, restPatch } = require('../../utils/discordRest');
 
 
-const CONFIG_PATH = path.join(process.cwd(), 'data', 'partnershipsConfig.json');
-const DATA_PATH = path.join(process.cwd(), 'data', 'partnershipsData.json');
+const CONFIG_PATH = pyxieDataPath( 'partnershipsConfig.json');
+const DATA_PATH = pyxieDataPath( 'partnershipsData.json');
 
 const COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h por projeto
 const SESSION_TTL_MS = 30 * 60 * 1000;

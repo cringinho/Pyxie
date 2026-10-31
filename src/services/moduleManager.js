@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
@@ -25,7 +26,7 @@ const resourceTelemetry = require('./resourceTelemetry');
 const MODULES_DIR = path.join(__dirname, '..', 'modules');
 
 function getModulesConfigFile() {
-  return process.env.MODULES_CONFIG_PATH || path.join(__dirname, '..', '..', 'data', 'modulesConfig.json');
+  return process.env.MODULES_CONFIG_PATH || pyxieDataPath( 'modulesConfig.json');
 }
 
 class ModuleManager extends EventEmitter {

@@ -1,12 +1,13 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const { isBlacklisted } = require('./trustAndSafety');
 
-const LIVE_SNAPSHOT_FILE = path.join(__dirname, '..', '..', 'data', 'liveGuildsSnapshot.json');
-const LEGACY_SNAPSHOT_FILE = path.join(__dirname, '..', '..', 'data', 'guildsSnapshot.json');
-const GUILD_CONFIGS_FILE = path.join(__dirname, '..', '..', 'data', 'guildConfigs.json');
-const SEASONAL_CONFIG_FILE = path.join(__dirname, '..', '..', 'data', 'seasonalConfig.json');
-const MARY_CONFIG_FILE = path.join(__dirname, '..', '..', 'data', 'maryStudioConfig.json');
+const LIVE_SNAPSHOT_FILE = pyxieDataPath( 'liveGuildsSnapshot.json');
+const LEGACY_SNAPSHOT_FILE = pyxieDataPath( 'guildsSnapshot.json');
+const GUILD_CONFIGS_FILE = pyxieDataPath( 'guildConfigs.json');
+const SEASONAL_CONFIG_FILE = pyxieDataPath( 'seasonalConfig.json');
+const MARY_CONFIG_FILE = pyxieDataPath( 'maryStudioConfig.json');
 
 const CRINGELANDIA_GUILD_ID = '1453890868980482090';
 
@@ -141,7 +142,7 @@ function getGuildsDirectory() {
   // Coleta volume de comandos por guilda da telemetria
   let cmdTelemetry = {};
   try {
-    const teleFile = path.join(__dirname, '..', '..', 'data', 'commandTelemetry.json');
+    const teleFile = pyxieDataPath( 'commandTelemetry.json');
     if (fs.existsSync(teleFile)) {
       const parsed = JSON.parse(fs.readFileSync(teleFile, 'utf8'));
       cmdTelemetry = parsed.commands || {};

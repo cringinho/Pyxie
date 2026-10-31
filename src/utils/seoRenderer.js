@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('./dataDir');
 /**
  * Utilitário central de SEO Multilíngue (PT & EN) para páginas da Pyxie
  * Garante paridade de SEO e entrega imediata de HTML localizado para crawlers e usuários.
@@ -431,7 +432,7 @@ function serveLocalizedPage(pageKey, publicDir) {
     if (pageKey === 'museum' && req.query && req.query.art) {
       try {
         const artId = String(req.query.art).trim();
-        const cwdDataPath = path.join(process.cwd(), 'data', 'museumData.json');
+        const cwdDataPath = pyxieDataPath( 'museumData.json');
         const fallbackDataPath = path.join(__dirname, '../../data', 'museumData.json');
         const dataPath = fs.existsSync(cwdDataPath) ? cwdDataPath : fallbackDataPath;
         if (fs.existsSync(dataPath)) {

@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('./dataDir');
 const fs = require('fs');
 const path = require('path');
 
@@ -6,7 +7,7 @@ const path = require('path');
  * e espera uma imagem. Buscamos o SVG do Twemoji uma única vez e guardamos em memória e em disco.
  */
 const TWEMOJI_BASE = 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/';
-const CACHE_DIR = path.join(__dirname, '..', '..', 'data', 'cache', 'twemoji');
+const CACHE_DIR = pyxieDataPath( 'cache', 'twemoji');
 const FETCH_TIMEOUT_MS = 3000;
 const EMPTY_SVG = `data:image/svg+xml;base64,${Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36"/>').toString('base64')}`;
 

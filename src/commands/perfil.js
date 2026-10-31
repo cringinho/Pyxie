@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const path = require('path');
 const {
   ActionRowBuilder,
@@ -97,7 +98,7 @@ async function buildProfileView(targetUser, viewerId, source = null) {
   // 3. Dados do Museu 3D
   let museumArtsCount = 0;
   try {
-    const mData = readJson(path.join(process.cwd(), 'data', 'museumData.json'), { arts: [] });
+    const mData = readJson(pyxieDataPath( 'museumData.json'), { arts: [] });
     if (mData && Array.isArray(mData.arts)) {
       museumArtsCount = mData.arts.filter((a) => a.authorId === targetUser.id).length;
     }

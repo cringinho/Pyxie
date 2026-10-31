@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const {
@@ -17,7 +18,7 @@ const { getTicketConfig, setTicketConfig } = require('../../services/guildConfig
 const { t, getLanguage } = require('../../utils/i18n');
 const { LIMITS, normalizeTicketOptions } = require('./ticketOptions');
 
-const DATA_DIR = path.join(__dirname, '..', '..', '..', 'data');
+const DATA_DIR = pyxieDataDir();
 const TICKETS_DATA_FILE = path.join(DATA_DIR, 'ticketsData.json');
 const TICKETS_DATA_BACKUP = `${TICKETS_DATA_FILE}.bak`;
 // Padrão da Cringelândia; o canal efetivo vem de ticketOptions.artRemoval.channelId

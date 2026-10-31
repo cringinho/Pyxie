@@ -1,9 +1,10 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('fs');
 const path = require('path');
 const { readJson, writeJsonAtomic } = require('../utils/atomicJson');
 const groqClient = require('./groqClient');
 
-const DATA_DIR = path.join(process.cwd(), 'data');
+const DATA_DIR = pyxieDataDir();
 const QUESTIONS_FILE = path.join(DATA_DIR, 'arcaneMathQuestions.json');
 const RANKING_FILE = path.join(DATA_DIR, 'arcaneMathRanking.json');
 const STATE_FILE = path.join(DATA_DIR, 'arcaneMathState.json');

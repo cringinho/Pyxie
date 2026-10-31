@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -13,7 +14,7 @@ const dateQuestions = require('./dateQuestions');
 function getMarriageDataFile() {
   return (
     process.env.MARRIAGE_DATA_PATH ||
-    path.join(__dirname, '..', '..', '..', 'data', 'marriageData.json')
+    pyxieDataPath( 'marriageData.json')
   );
 }
 

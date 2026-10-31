@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../../utils/dataDir');
 const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -5,8 +6,8 @@ const sharp = require('sharp');
 const { readJson, writeJsonAtomic } = require('../../utils/atomicJson');
 const { restGet } = require('../../utils/discordRest');
 
-const CONFIG_PATH = path.join(process.cwd(), 'data', 'museumConfig.json');
-const DATA_PATH = path.join(process.cwd(), 'data', 'museumData.json');
+const CONFIG_PATH = pyxieDataPath( 'museumConfig.json');
+const DATA_PATH = pyxieDataPath( 'museumData.json');
 
 const URL_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // tokens ?ex= do CDN duram ~24h; renovamos bem antes
 const AUTHOR_CACHE_TTL_MS = 60 * 60 * 1000;
@@ -19,7 +20,7 @@ function safeEqual(a, b) {
 }
 
 function getWatermarksDir() {
-  const dir = path.join(process.cwd(), 'data', 'museumWatermarks');
+  const dir = pyxieDataPath( 'museumWatermarks');
   if (!fs.existsSync(dir)) {
     try {
       fs.mkdirSync(dir, { recursive: true });

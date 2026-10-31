@@ -1,8 +1,9 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const { getIntrospectedCommands } = require('./commandIntrospector');
 
-const TELEMETRY_FILE = path.join(__dirname, '..', '..', 'data', 'commandTelemetry.json');
+const TELEMETRY_FILE = pyxieDataPath( 'commandTelemetry.json');
 const FLUSH_INTERVAL_MS = 60 * 1000; // 60 segundos
 
 let telemetryState = {

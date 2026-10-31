@@ -1,8 +1,9 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const { normalizeChannelValue, getGuildSettings, setGuildSettings } = require('./database');
 
-const DATA_DIR = path.join(__dirname, '..', '..', 'data');
+const DATA_DIR = pyxieDataDir();
 const GUILD_CONFIGS_FILE = path.join(DATA_DIR, 'guildConfigs.json');
 const GUILD_CONFIGS_BACKUP = `${GUILD_CONFIGS_FILE}.bak`;
 

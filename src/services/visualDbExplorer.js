@@ -1,9 +1,10 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const { withFileLock } = require('../utils/fileLock');
 const path = require('node:path');
 const { CAREER_HIERARCHIES } = require('./careerHierarchy');
 
-const DATA_DIR = path.join(__dirname, '..', '..', 'data');
+const DATA_DIR = pyxieDataDir();
 const ECONOMY_FILE = path.join(DATA_DIR, 'economy.json');
 const GUILD_CONFIGS_FILE = path.join(DATA_DIR, 'guildConfigs.json');
 const SEASONAL_FILE = path.join(DATA_DIR, 'seasonalState.json');

@@ -1,9 +1,10 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const { OWNER_SNOWFLAKE } = require('./adminAuth');
 const { getIntrospectedCommands, OWNER_COMMANDS, GUILD_ONLY_COMMANDS, CRINGELANDIA_GUILD_ID, MARY_DEFAULT_GUILD_ID } = require('./commandIntrospector');
 
-const SCOPES_FILE = path.join(__dirname, '..', '..', 'data', 'commandScopes.json');
+const SCOPES_FILE = pyxieDataPath( 'commandScopes.json');
 
 let scopeOverrides = {};
 

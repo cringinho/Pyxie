@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const { TOTAL_CARDS, getCardByNumber, getCardById } = require('../data/tarotCardsCatalog');
@@ -7,7 +8,7 @@ const { db } = require('../database');
 const { tarotAlbums, users } = require('../database/schema');
 const { eq, sql } = require('drizzle-orm');
 
-const ALBUM_FILE = path.join(__dirname, '..', '..', 'data', 'tarot_album.json');
+const ALBUM_FILE = pyxieDataPath( 'tarot_album.json');
 
 // Trava em memória para prevenir race conditions no resgate de conquistas
 const activeClaims = new Set();

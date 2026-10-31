@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const {
   ActionRowBuilder,
   ButtonBuilder,
@@ -11,7 +12,7 @@ const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 const { readJson, writeJsonAtomic } = require('../utils/atomicJson');
 const path = require('path');
 
-const STATS_FILE = path.join(process.cwd(), 'data', 'tictactoeStats.json');
+const STATS_FILE = pyxieDataPath( 'tictactoeStats.json');
 const activeGames = new Map();
 
 const SYMBOLS = {

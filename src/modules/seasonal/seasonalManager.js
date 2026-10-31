@@ -1,10 +1,11 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const cron = require('node-cron');
 const { EmbedBuilder } = require('discord.js');
 
-const CRINGELANDIA_DIR = path.join(__dirname, '..', '..', '..', 'data', 'cringelandia');
-const LEGACY_DIR = path.join(__dirname, '..', '..', '..', 'data');
+const CRINGELANDIA_DIR = pyxieDataPath( 'cringelandia');
+const LEGACY_DIR = pyxieDataDir();
 
 const DEFAULT_CONFIG_PATH = path.join(CRINGELANDIA_DIR, 'seasonalConfig.json');
 const DEFAULT_DATA_PATH = path.join(CRINGELANDIA_DIR, 'seasonalData.json');

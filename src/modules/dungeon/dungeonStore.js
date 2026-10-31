@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../../utils/dataDir');
 const path = require('path');
 const { rollDrops } = require('./dungeonDrops');
 const { readJson, writeJsonAtomic } = require('../../utils/atomicJson');
@@ -23,7 +24,7 @@ const { TALENTS } = require('./dungeonData');
  *   24h. Ajudar e reviver rendem Ecos (nunca moedinhas) e contam para títulos que evoluem.
  */
 
-let DATA_FILE = process.env.DUNGEON_DATA_PATH || path.join(__dirname, '..', '..', '..', 'data', 'dungeon.json');
+let DATA_FILE = process.env.DUNGEON_DATA_PATH || pyxieDataPath( 'dungeon.json');
 
 const DEFAULT_SETTINGS = {
   ticket: 50,
@@ -46,7 +47,7 @@ let settingsProvider = null;
 
 /** Lê os ajustes do criador em data/modulesConfig.json (modules.dungeon.data), nos processos do bot e da web. */
 function readModuleConfigData() {
-  const file = process.env.MODULES_CONFIG_PATH || path.join(__dirname, '..', '..', '..', 'data', 'modulesConfig.json');
+  const file = process.env.MODULES_CONFIG_PATH || pyxieDataPath( 'modulesConfig.json');
   const cfg = readJson(file, {});
   return cfg.modules?.dungeon?.data || {};
 }

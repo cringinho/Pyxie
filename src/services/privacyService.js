@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 // Serviço de Privacidade e Direitos do Titular (LGPD — Lei nº 13.709/2018).
 // Permite inspecionar quais dados pessoais de um userId estão armazenados na Pyxie
 // e apagar de forma atômica, irreversível e auditável (com comprovante criptográfico)
@@ -31,7 +32,7 @@ function economyFilePath() {
     const custom = path.join(process.env.PYXIE_DATA_DIR, 'economy.json');
     if (fs.existsSync(custom)) return custom;
   }
-  return path.join(__dirname, '..', '..', 'data', 'economy.json');
+  return pyxieDataPath( 'economy.json');
 }
 
 function albumFilePath() {
@@ -39,7 +40,7 @@ function albumFilePath() {
     const custom = path.join(process.env.PYXIE_DATA_DIR, 'tarot_album.json');
     if (fs.existsSync(custom)) return custom;
   }
-  return path.join(__dirname, '..', '..', 'data', 'tarot_album.json');
+  return pyxieDataPath( 'tarot_album.json');
 }
 
 function marriageFilePath() {
@@ -48,7 +49,7 @@ function marriageFilePath() {
     const custom = path.join(process.env.PYXIE_DATA_DIR, 'marriageData.json');
     if (fs.existsSync(custom)) return custom;
   }
-  return path.join(__dirname, '..', '..', 'data', 'marriageData.json');
+  return pyxieDataPath( 'marriageData.json');
 }
 
 /**

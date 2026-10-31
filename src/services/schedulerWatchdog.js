@@ -1,9 +1,10 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const { OWNER_SNOWFLAKE } = require('./adminAuth');
 const { buildStandardEmbed } = require('../utils/embedBuilderHelper');
 
-const STATE_FILE = path.join(__dirname, '..', '..', 'data', 'schedulerState.json');
+const STATE_FILE = pyxieDataPath( 'schedulerState.json');
 const HEARTBEAT_INTERVAL_MS = 30 * 1000; // 30 segundos
 const ALERT_COOLDOWN_MS = 60 * 1000; // 60 segundos de cooldown por tipo de erro
 

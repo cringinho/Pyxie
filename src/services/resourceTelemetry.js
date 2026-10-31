@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const os = require('node:os');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -81,7 +82,7 @@ function setModuleHeapDelta(moduleId, deltaBytes) {
  */
 function calculateModuleRamMb(moduleId) {
   let stateBytes = 0;
-  const dataDir = path.join(__dirname, '..', '..', 'data');
+  const dataDir = pyxieDataDir();
 
   try {
     if (moduleId === 'mary-studio') {

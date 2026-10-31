@@ -1,9 +1,10 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const itemsCatalog = require('../data/items.json');
 const { spendCoins, updateUserAccount, getUserAccount } = require('./economy');
 
-const dataDir = path.join(__dirname, '..', '..', 'data');
+const dataDir = pyxieDataDir();
 const inventoryFile = path.join(dataDir, 'inventory.json');
 
 const INVENTORY_FLUSH_INTERVAL_MS = 10 * 1000;

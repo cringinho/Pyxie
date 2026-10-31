@@ -9,6 +9,10 @@ console.log('🧪 [TEST] Museu & Parcerias...');
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'pyxie-mp-'));
 const repo = path.join(__dirname, '..');
 process.chdir(tmp);
+// Os managers agora resolvem data/ por PYXIE_DATA_DIR: isola também por essa via,
+// senão eles escrevem no data/ do repositório (e o teste não acha o arquivo).
+process.env.PYXIE_DATA_DIR = path.join(tmp, 'data');
+fs.mkdirSync(process.env.PYXIE_DATA_DIR, { recursive: true });
 
 const { CATEGORY_SCHEMAS, pick } = require(path.join(repo, 'src/modules/partnerships/formSchemas'));
 const partnershipManager = require(path.join(repo, 'src/modules/partnerships/partnershipManager'));
@@ -264,7 +268,7 @@ const { generatePinterestRssXml, sanitizeDiscordText } = require(path.join(repo,
   assert.strictEqual(watermarkedJpg.contentType, 'image/jpeg', 'Formato final padrão deve ser JPEG universal para Tumblr/dlvr.it');
   assert.ok(museumManager.watermarkCache.has(`${sampleArt.id}_jpg`), 'Arte deve ser salva no cache de marca d\'água');
 
-  const diskWatermarkJpgPath = path.join(process.cwd(), 'data', 'museumWatermarks', `${sampleArt.id}.jpg`);
+  const diskWatermarkJpgPath = path.join(process.env.PYXIE_DATA_DIR, 'museumWatermarks', `${sampleArt.id}.jpg`);
   assert.ok(fs.existsSync(diskWatermarkJpgPath), 'Imagem JPG com watermark deve ser persistida fisicamente no disco em data/museumWatermarks');
   assert.strictEqual(fs.readFileSync(diskWatermarkJpgPath).length, watermarkedJpg.buffer.length, 'Tamanho do arquivo JPG em disco deve bater com o buffer');
 

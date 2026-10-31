@@ -1,3 +1,4 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -16,7 +17,7 @@ const {
   PermissionFlagsBits,
 } = require('discord.js');
 
-const DATA_FILE = path.join(__dirname, '..', '..', '..', 'data', 'giveawaysData.json');
+const DATA_FILE = pyxieDataPath( 'giveawaysData.json');
 const wizardDrafts = new Map(); // userId -> draft
 const pendingUpdates = new Map(); // giveawayId -> timeoutId
 

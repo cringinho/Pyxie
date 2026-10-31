@@ -1,7 +1,8 @@
+const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const BLACKLIST_FILE = path.join(__dirname, '..', '..', 'data', 'blacklist.json');
+const BLACKLIST_FILE = pyxieDataPath( 'blacklist.json');
 
 let blacklistData = {
   guilds: {},
@@ -308,7 +309,7 @@ function exportComplianceDossier(targetType, targetId) {
   const historyLogs = [];
 
   try {
-    const ecoFile = path.join(__dirname, '..', '..', 'data', 'economy.json');
+    const ecoFile = pyxieDataPath( 'economy.json');
     if (fs.existsSync(ecoFile)) {
       const allEco = JSON.parse(fs.readFileSync(ecoFile, 'utf8'));
       if (targetType === 'user' && allEco[id]) {
@@ -318,7 +319,7 @@ function exportComplianceDossier(targetType, targetId) {
   } catch (_) {}
 
   try {
-    const cfgFile = path.join(__dirname, '..', '..', 'data', 'guildConfigs.json');
+    const cfgFile = pyxieDataPath( 'guildConfigs.json');
     if (fs.existsSync(cfgFile)) {
       const allCfg = JSON.parse(fs.readFileSync(cfgFile, 'utf8'));
       if (targetType === 'guild' && allCfg[id]) {
