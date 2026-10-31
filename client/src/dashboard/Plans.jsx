@@ -10,6 +10,8 @@ export default function Plans({ t, guildId, lang }) {
   const [busy, setBusy] = useState(null);
   const [checkout, setCheckout] = useState(null);
   const [extras, setExtras] = useState([]);
+  // Ciclo escolhido: mensal (padrão) ou anual com 2 meses grátis.
+  const [cycle, setCycle] = useState('month');
 
   const load = () =>
     api
@@ -30,13 +32,21 @@ export default function Plans({ t, guildId, lang }) {
 
   const current = info.plan || {};
   const active = Boolean(current.active);
+  // BUG: com plano vitalício `paidUntil` é 0 e a tela mostrava "Ativo até null".
   const until = current.paidUntil ? new Date(current.paidUntil).toLocaleDateString() : null;
+  const activeLine = current.lifetime
+    ? t('plan.lifetime')
+    : until
+      ? t('plan.until', { date: until })
+      : t('plan.noneHint');
+  const priceTable = (cycle === 'year' ? info.pricesAnnual : info.prices) || info.prices || {};
+  const saving = info.annualSavingPercent?.['premium'] || 0;
 
   const buy = async (plan, method) => {
-    setBusy(`${plan}:${method}`);
+    setBusy(`${plan}:${method}:${cycle}`);
     setCheckout(null);
     try {
-      const res = await api.planCheckout(guildId, { plan, method, lang });
+      const res = await api.planCheckout(guildId, { plan, method, cycle, lang });
       const data = res.checkout || {};
       if (method === 'card' && data.initPoint) window.open(data.initPoint, '_blank', 'noopener');
       else setCheckout(data);
@@ -88,9 +98,7 @@ export default function Plans({ t, guildId, lang }) {
           <BadgeCheck size={20} className={active ? 'text-emerald-400' : 'text-white/40'} aria-hidden="true" />
           <div>
             <p className="font-title font-bold">{active ? planLabel(current.plan) : t('plan.none')}</p>
-            <p className="text-xs text-white/55">
-              {active ? t('plan.until', { date: until }) : t('plan.noneHint')}
-            </p>
+            <p className="text-xs text-white/55">{active ? activeLine : t('plan.noneHint')}</p>
           </div>
         </div>
         {active && (
@@ -101,12 +109,36 @@ export default function Plans({ t, guildId, lang }) {
         )}
       </div>
 
+      <div className="flex flex-wrap items-center gap-2" role="radiogroup" aria-label={t('plan.cycle.month')}>
+        {['month', 'year'].map((c) => (
+          <button
+            key={c}
+            type="button"
+            role="radio"
+            aria-checked={cycle === c}
+            onClick={() => setCycle(c)}
+            className={`min-h-[40px] rounded-xl border px-4 text-sm font-semibold transition ${
+              cycle === c ? 'border-pyxie-glow bg-pyxie-pink/20 text-white' : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10'
+            }`}
+          >
+            {t(`plan.cycle.${c}`)}
+            {c === 'year' && saving > 0 && (
+              <span className="ml-2 rounded-full bg-emerald-500/20 px-2 py-0.5 text-[11px] text-emerald-300">
+                {t('plan.cycle.save', { percent: saving })}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
       <div className="grid gap-3 sm:grid-cols-2">
         {['basic', 'premium'].map((plan) => (
           <div key={plan} className="dash-card space-y-3 rounded-2xl p-4">
             <div className="flex items-center justify-between">
               <p className="font-title text-lg font-bold">{planLabel(plan)}</p>
-              <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold">R$ {info.prices[plan]}/mês</span>
+              <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold">
+                R$ {priceTable[plan]}/{cycle === 'year' ? t('plan.perYear') : t('plan.perMonth')}
+              </span>
             </div>
             <ul className="space-y-1 text-xs text-white/65">
               <li>• {t(`plan.perk.${plan}.1`)}</li>

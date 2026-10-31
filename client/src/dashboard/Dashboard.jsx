@@ -582,15 +582,17 @@ function GuildView({ shell, guildId, section, item }) {
     );
   }
 
-  const { guild, zone, role, sections } = info.data;
+  const { guild, zone, role, sections, lockedSections } = info.data;
   const ids = [...sections];
   const current = ids.includes(section) ? section : 'overview';
   const g = guild || fallbackGuild;
   const name = g?.name || guildId;
+  // Seções travadas pelo plano: cadeado + cor do plano exigido (estilo Probot).
+  const lockedMap = Object.fromEntries((lockedSections || []).map((s) => [s.id, s.requiredPlan]));
   const nav = {
     title: name,
     subtitle: `${t(`zone.${zone}`)} · ${t(`role.${role}`)}`,
-    groups: buildNav(t, ids, current, (id) => `#/guild/${guildId}/${id}`),
+    groups: buildNav(t, ids, current, (id) => `#/guild/${guildId}/${id}`, lockedMap),
   };
   const crumbs = [{ label: t('app.title'), href: '#/' }, { label: name, href: `#/guild/${guildId}/overview` }, { label: t(`section.${current}`) }];
   const CurrentIcon = sectionIcon(current);

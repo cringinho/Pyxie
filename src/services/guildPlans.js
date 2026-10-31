@@ -8,9 +8,18 @@ const { withFileLock } = require('../utils/fileLock');
 const PLANS = ['free', 'founder', 'basic', 'premium'];
 const DEFAULT_PLAN = 'free';
 const DAY = 24 * 60 * 60 * 1000;
-// Preços em centavos (R$ 7 e R$ 20) — usados pela cobrança mensal.
+// Preços em centavos. Mensal: R$ 7 e R$ 20. Anual: 10 meses (2 meses grátis).
 const PRICES = { basic: 700, premium: 2000 };
+const PRICES_ANNUAL = { basic: 7000, premium: 20000 };
+const CYCLES = ['month', 'year'];
+const CYCLE_MONTHS = { month: 1, year: 12 };
 const STATUSES = ['active', 'past_due', 'expired', 'canceled', 'refunded'];
+
+/** Preço em centavos do plano no ciclo escolhido. */
+function priceOf(plan, cycle = 'month') {
+  const table = cycle === 'year' ? PRICES_ANNUAL : PRICES;
+  return table[plan] || 0;
+}
 
 const fileFor = () => path.join(process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data'), 'guildPlans.json');
 
@@ -99,4 +108,20 @@ function _resetCacheForTests() {
   cache = { mtime: -1, data: null };
 }
 
-module.exports = { PLANS, DEFAULT_PLAN, DAY, PRICES, STATUSES, getPlan, setPlan, grantPlan, revokePlan, listPlans, _resetCacheForTests };
+module.exports = {
+  PLANS,
+  DEFAULT_PLAN,
+  DAY,
+  PRICES,
+  PRICES_ANNUAL,
+  CYCLES,
+  CYCLE_MONTHS,
+  priceOf,
+  STATUSES,
+  getPlan,
+  setPlan,
+  grantPlan,
+  revokePlan,
+  listPlans,
+  _resetCacheForTests,
+};

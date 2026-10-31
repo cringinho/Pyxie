@@ -254,8 +254,8 @@ console.log('  ✅ 8. Comandos, canal de jogos opcional, embeds e catálogo vali
 
 // 9. Guardrail dos agentes (.agents/hooks): o código novo passa no veto PreToolUse
 const hook = path.join(__dirname, '..', '.agents', 'hooks', 'pre-tool-validator.sh');
-const bash = spawnSync('bash', ['--version']);
-if (fs.existsSync(hook) && bash.status === 0) {
+const bashOk = require('./helpers/bashAvailable').bashAvailable();
+if (fs.existsSync(hook) && bashOk) {
   const newFiles = [
     'src/commands/duelo.js',
     'src/commands/desafio.js',

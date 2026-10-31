@@ -29,16 +29,20 @@ function providers() {
   return { pix: has, card: has };
 }
 
-const reference = (guildId, plan) => `plan|${guildId}|${plan}`;
+// Mensal mantém a referência de 3 partes (cobranças já emitidas continuam válidas);
+// o anual ganha a 4ª parte com o ciclo.
+const reference = (guildId, plan, cycle = 'month') =>
+  cycle === 'year' ? `plan|${guildId}|${plan}|year` : `plan|${guildId}|${plan}`;
 // Extras: `addon|<guildId>|<addonId>|<cycle>`. Ciclo anual dá 2 meses grátis.
 const addonReference = (guildId, addonId, cycle) => `addon|${guildId}|${addonId}|${cycle}`;
 
 function parseReference(ref) {
   const parts = String(ref || '').split('|');
   if (parts[0] === 'plan') {
-    const [, guildId, plan] = parts;
+    const [, guildId, plan, cycle] = parts;
     if (!/^\d{17,20}$/.test(guildId || '') || !['basic', 'premium'].includes(plan)) return null;
-    return { kind: 'plan', guildId, plan };
+    // 3 partes = cobrança antiga (mensal). O ciclo anual ganhou a 4ª parte.
+    return { kind: 'plan', guildId, plan, cycle: cycle === 'year' ? 'year' : 'month' };
   }
   if (parts[0] === 'addon') {
     const [, guildId, addonId, cycle] = parts;
@@ -49,7 +53,7 @@ function parseReference(ref) {
   return null;
 }
 
-const priceOf = (plan) => (plans.PRICES[plan] || 0) / 100;
+const priceOf = (plan, cycle = 'month') => plans.priceOf(plan, cycle) / 100;
 
 /** Resolve o que está sendo cobrado (plano ou extra) com valor e referência. */
 function resolveTarget({ guildId, plan, addonId = null, cycle = 'month' }) {
@@ -67,7 +71,15 @@ function resolveTarget({ guildId, plan, addonId = null, cycle = 'month' }) {
     };
   }
   if (!plans.PRICES[plan]) return null;
-  return { kind: 'plan', plan, amount: priceOf(plan), label: plan, ref: reference(guildId, plan) };
+  const cyc = cycle === 'year' ? 'year' : 'month';
+  return {
+    kind: 'plan',
+    plan,
+    cycle: cyc,
+    amount: priceOf(plan, cyc),
+    label: `${plan}-${cyc}`,
+    ref: reference(guildId, plan, cyc),
+  };
 }
 
 // ---------------------------------------------------------------- cobranças locais
@@ -235,7 +247,7 @@ async function applyApprovedPayment(payment) {
   if (payment.currency_id !== 'BRL') return { ok: false, reason: 'currency' };
 
   const expected =
-    ref.kind === 'addon' ? planAddons.priceOf(ref.addonId, ref.cycle) / 100 : priceOf(ref.plan);
+    ref.kind === 'addon' ? planAddons.priceOf(ref.addonId, ref.cycle) / 100 : priceOf(ref.plan, ref.cycle);
   if (Number(payment.transaction_amount) + 0.01 < expected) return { ok: false, reason: 'amount' };
 
   const first = markProcessed(`mp:${payment.id}`, {});
@@ -252,7 +264,11 @@ async function applyApprovedPayment(payment) {
     return { ok: true, ...ref, granted: granted.ok, until: granted.record?.until || 0 };
   }
 
-  const granted = plans.grantPlan(ref.guildId, ref.plan, { months: 1, source: 'mercadopago', note: `mp:${payment.id}` });
+  const granted = plans.grantPlan(ref.guildId, ref.plan, {
+    months: ref.cycle === 'year' ? 12 : 1,
+    source: 'mercadopago',
+    note: `mp:${payment.id}`,
+  });
   return { ok: true, ...ref, granted: granted.ok, paidUntil: granted.record?.paidUntil || 0 };
 }
 
@@ -295,7 +311,11 @@ async function handleWebhook({ body = {}, query = {}, headers = {}, now = Date.n
       );
       return { ok: true, ...ref, granted: granted.ok, until: granted.record?.until || 0 };
     }
-    const granted = plans.grantPlan(ref.guildId, ref.plan, { months: 1, source: 'mercadopago-card', note: `pre:${dataId}` });
+    const granted = plans.grantPlan(ref.guildId, ref.plan, {
+      months: ref.cycle === 'year' ? 12 : 1,
+      source: 'mercadopago-card',
+      note: `pre:${dataId}`,
+    });
     return { ok: true, ...ref, granted: granted.ok, paidUntil: granted.record?.paidUntil || 0 };
   }
 
@@ -322,7 +342,11 @@ async function handleWebhook({ body = {}, query = {}, headers = {}, now = Date.n
       );
       return { ok: true, ...ref, granted: granted.ok, until: granted.record?.until || 0 };
     }
-    const granted = plans.grantPlan(ref.guildId, ref.plan, { months: 1, source: 'mercadopago-card', note: `mp:${dataId}` });
+    const granted = plans.grantPlan(ref.guildId, ref.plan, {
+      months: ref.cycle === 'year' ? 12 : 1,
+      source: 'mercadopago-card',
+      note: `mp:${dataId}`,
+    });
     return { ok: true, ...ref, granted: granted.ok, paidUntil: granted.record?.paidUntil || 0 };
   }
 
@@ -359,6 +383,12 @@ function guildPlanInfo(guildId, now = Date.now()) {
   return {
     plan: plans.getPlan(guildId, now),
     prices: { basic: plans.PRICES.basic / 100, premium: plans.PRICES.premium / 100 },
+    pricesAnnual: { basic: plans.PRICES_ANNUAL.basic / 100, premium: plans.PRICES_ANNUAL.premium / 100 },
+    // Quanto o anual economiza em relação a 12 meses (para a tela mostrar a conta).
+    annualSavingPercent: {
+      basic: Math.round((1 - plans.PRICES_ANNUAL.basic / (plans.PRICES.basic * 12)) * 100),
+      premium: Math.round((1 - plans.PRICES_ANNUAL.premium / (plans.PRICES.premium * 12)) * 100),
+    },
     providers: providers(),
     pending,
     lastCard: own.find((charge) => charge.method === 'card') || null,

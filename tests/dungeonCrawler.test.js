@@ -609,8 +609,8 @@ console.log('  ✅ 10. Módulo, catálogo, introspector, embeds e Visual DB sinc
 // 11. Guardrail dos agentes (.agents/hooks): os arquivos novos passam no veto PreToolUse
 {
   const hook = path.join(__dirname, '..', '.agents', 'hooks', 'pre-tool-validator.sh');
-  const bash = spawnSync('bash', ['--version']);
-  if (fs.existsSync(hook) && bash.status === 0) {
+  const bashOk = require('./helpers/bashAvailable').bashAvailable();
+  if (fs.existsSync(hook) && bashOk) {
     const files = [
       'src/modules/dungeon/index.js',
       'src/modules/dungeon/dungeonData.js',

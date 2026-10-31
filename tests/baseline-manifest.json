@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 76641,
-  "totalChecks": 566,
+  "totalMs": 76712,
+  "totalChecks": 576,
   "steps": [
     {
       "index": 0,
@@ -1632,6 +1632,29 @@
       "failures": [],
       "summary": null,
       "summaryNumbers": null
+    },
+    {
+      "index": 80,
+      "file": "tests/planCycles.test.js",
+      "ms": 71,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Anual custa 10 meses (2 grátis).",
+        "2. Referência aceita ciclo e não quebra a antiga.",
+        "3. Pix anual de R$ 200,00 com referência do ciclo.",
+        "4. Pagamento anual dá 12 meses de plano.",
+        "5. Pagar preço de mês no ciclo anual é recusado.",
+        "6. Cartão anual cobra a cada 12 meses.",
+        "7. Básico libera tema; Premium libera embeds e IA.",
+        "8. Lista de recursos travados por plano.",
+        "9. Founder e Premium passam por tudo.",
+        "10. Catálogo bilíngue e completo."
+      ],
+      "checkCount": 10,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
     }
   ],
   "commands": [
@@ -1708,7 +1731,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T20:08:35.532Z",
+  "updatedAt": "2026-10-31T20:38:52.794Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

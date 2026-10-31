@@ -22,6 +22,7 @@ import {
   Landmark,
   LayoutDashboard,
   Link2,
+  Lock,
   LogOut,
   Menu,
   MessageSquareQuote,
@@ -111,12 +112,20 @@ export function sectionIcon(id) {
 }
 
 // Agrupa as seções liberadas para a barra lateral, na ordem fixa dos grupos.
-export function buildNav(t, ids, active, hrefFor) {
+export function buildNav(t, ids, active, hrefFor, locked = {}) {
   const groups = new Map();
   for (const id of ids) {
     const group = SECTION_META[id]?.group || 'more';
     if (!groups.has(group)) groups.set(group, []);
-    groups.get(group).push({ id, label: t(`section.${id}`), icon: sectionIcon(id), href: hrefFor(id), active: id === active });
+    groups.get(group).push({
+      id,
+      label: t(`section.${id}`),
+      icon: sectionIcon(id),
+      href: hrefFor(id),
+      active: id === active,
+      // Cadeado por plano: mesmo esquema do Probot (ícone + cor do plano exigido).
+      locked: locked[id] || null,
+    });
   }
   return GROUP_ORDER.filter((g) => groups.has(g)).map((g) => ({ id: g, label: t(`nav.group.${g}`), items: groups.get(g) }));
 }
@@ -219,20 +228,30 @@ function SideNav({ title, subtitle, groups, onNavigate }) {
             <ul className="space-y-0.5">
               {g.items.map((it) => {
                 const Icon = it.icon;
+                const tierColor = it.locked === 'premium' ? 'text-amber-300' : it.locked === 'basic' ? 'text-sky-300' : '';
                 return (
                   <li key={it.id}>
                     <a
                       href={it.href}
                       onClick={onNavigate}
                       aria-current={it.active ? 'page' : undefined}
+                      title={it.locked ? t(`plan.locked.${it.locked}`) : undefined}
                       className={`flex min-h-[40px] items-center gap-3 rounded-xl px-3 text-sm font-medium transition ${
                         it.active
                           ? 'bg-gradient-to-r from-pyxie-bright/25 to-mystic-violet/15 text-white shadow-[inset_2px_0_0_#F472B6]'
-                          : 'text-white/70 hover:bg-white/5 hover:text-white'
+                          : it.locked
+                            ? 'text-white/45 hover:bg-white/5 hover:text-white/70'
+                            : 'text-white/70 hover:bg-white/5 hover:text-white'
                       }`}
                     >
-                      <Icon size={17} aria-hidden="true" className={it.active ? 'text-pyxie-glow' : ''} />
+                      <Icon size={17} aria-hidden="true" className={it.active ? 'text-pyxie-glow' : it.locked ? 'text-white/35' : ''} />
                       <span className="truncate">{it.label}</span>
+                      {it.locked && (
+                        <span className={`ml-auto flex items-center gap-1 ${tierColor}`}>
+                          <Lock size={13} aria-hidden="true" />
+                          <span className="text-[10px] font-bold uppercase">{t(`plan.tier.${it.locked}`)}</span>
+                        </span>
+                      )}
                     </a>
                   </li>
                 );

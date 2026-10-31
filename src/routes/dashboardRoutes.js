@@ -22,6 +22,16 @@ const GUILD_ID_RE = /^\d{17,20}$/;
 // Seções de cada servidor. Uma seção só entra aqui quando a tela e a API dela existem.
 const SECTION_REGISTRY = [];
 
+// Prefixos de API que exigem plano (mesma lista que o `planFeatures` usa nas seções).
+// Automações, mensagens periódicas e boas-vindas continuam livres: mudar isso agora
+// tiraria recursos de servidores que já usam hoje.
+const PLAN_GATED_PREFIXES = [
+  { path: '/embeds', feature: 'embeds' },
+  { path: '/community', feature: 'community' },
+  { path: '/seasonal', feature: 'seasonal' },
+  { path: '/ai', feature: 'oracle_ai' },
+];
+
 function registerDashboardSection(section) {
   SECTION_REGISTRY.push(section);
 }
@@ -135,6 +145,35 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       return res.status(status).json({ success: false, error: result.reason });
     }
     req.guildAccess = result;
+
+    // ---------- Bloqueio por plano (AGENTS §10: a tela esconde, o backend recusa) ----------
+    // `planFeatures` é a fonte única; o caminho da rota diz qual recurso está sendo pedido.
+    // `req.path` vem completo (/api/dashboard/guilds/<id>/automations): olhamos só o que
+    // sobra depois do id do servidor.
+    const afterGuild = (() => {
+      const marker = `/${guildId}`;
+      const at = req.path.indexOf(marker);
+      return at >= 0 ? req.path.slice(at + marker.length) : req.path;
+    })();
+    const gated = PLAN_GATED_PREFIXES.find((p) => afterGuild === p.path || afterGuild.startsWith(`${p.path}/`));
+    if (gated) {
+      const plans = require('../services/guildPlans');
+      const planFeatures = require('../config/planFeatures');
+      const state = plans.getPlan(guildId);
+      const plan = state.active ? state.plan : 'free';
+      // Dono do painel e cortesias (founder/vitalício) não são barrados: quem vende é o dono.
+      const bypass = state.lifetime === true || result.role === 'owner' || result.zone === 'mary' || result.zone === 'cringelandia';
+      if (!bypass && !planFeatures.canUse(plan, gated.feature)) {
+        return res.status(403).json({
+          success: false,
+          error: 'plan_required',
+          feature: gated.feature,
+          requiredPlan: planFeatures.planFor(gated.feature),
+          currentPlan: plan,
+        });
+      }
+    }
+
     return next();
   }
 
@@ -249,13 +288,27 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     try {
       guild = (await getBotGuilds()).find((g) => g.id === req.params.guildId) || null;
     } catch (_) {}
+    // Seções liberadas + as que existem mas estão travadas pelo plano (cadeado na tela).
+    const plans = require('../services/guildPlans');
+    const planFeatures = require('../config/planFeatures');
+    const planState = plans.getPlan(req.params.guildId);
+    const plan = planState.active ? planState.plan : 'free';
+    const all = getSections({ ...req.guildAccess, zone: 'cringelandia', role: 'owner' }, req.params.guildId);
+    const allowed = getSections(req.guildAccess, req.params.guildId);
+    const lockedSections = all
+      .filter((id) => !allowed.includes(id) || !planFeatures.canUse(plan, id))
+      .filter((id) => planFeatures.feature(id))
+      .map((id) => ({ id, requiredPlan: planFeatures.planFor(id) }));
     return res.json({
       success: true,
       guild,
       zone: req.guildAccess.zone,
       role: req.guildAccess.role,
       canManageAccess: req.guildAccess.canManageAccess,
-      sections: getSections(req.guildAccess, req.params.guildId),
+      sections: [...new Set([...allowed, ...lockedSections.map((s) => s.id)])],
+      lockedSections,
+      plan: { plan, active: planState.active, lifetime: planState.lifetime === true },
+      planFeatures: planFeatures.catalog(),
     });
   });
 
@@ -896,10 +949,11 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const plan = String(req.body?.plan || '');
     const method = String(req.body?.method || 'pix');
     const lang = req.body?.lang === 'en' ? 'en' : 'pt';
+    const cycle = req.body?.cycle === 'year' ? 'year' : 'month';
     if (!['basic', 'premium'].includes(plan)) return res.status(400).json({ success: false, error: 'invalid_plan' });
     const checkout = method === 'card'
-      ? await payments.createCardSubscription({ guildId: req.params.guildId, plan, lang })
-      : await payments.createPixCharge({ guildId: req.params.guildId, plan, lang });
+      ? await payments.createCardSubscription({ guildId: req.params.guildId, plan, cycle, lang })
+      : await payments.createPixCharge({ guildId: req.params.guildId, plan, cycle, lang });
     if (!checkout.ok) return res.status(503).json({ success: false, error: checkout.reason || 'provider' });
     return res.json({ success: true, checkout });
   });

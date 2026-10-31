@@ -185,6 +185,7 @@
     "tests/addonCheckout.test.js": [],
     "tests/addonNotices.test.js": [],
     "tests/storeProducts.test.js": [],
-    "tests/automationsUpgrade.test.js": []
+    "tests/automationsUpgrade.test.js": [],
+    "tests/planCycles.test.js": []
   }
 }

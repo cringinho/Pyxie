@@ -81,7 +81,8 @@
     "node tests/addonNotices.test.js",
     "node tests/automationsUpgrade.test.js",
     "node tests/storeProducts.test.js",
+    "node tests/planCycles.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T20:08:30.259Z"
+  "updatedAt": "2026-10-31T20:35:56.223Z"
 }
