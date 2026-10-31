@@ -409,8 +409,12 @@ app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.html')) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    } else if (filePath.includes('dist') || filePath.endsWith('.js') || filePath.endsWith('.css')) {
-      res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+    } else if (filePath.includes(`${path.sep}dist${path.sep}`) || filePath.endsWith('.js') || filePath.endsWith('.css')) {
+      // Só vai para cache imutável o que tem hash no nome (ex.: MuseumScene-Db1lqsoh.js).
+      // index.js / index.css / fonts.css não têm hash: com immutable, um deploy novo não
+      // chega ao usuário e ele pede chunks antigos que já não existem (404 + React quebra).
+      const hashed = /-[A-Za-z0-9_-]{8,}\.(?:js|css)$/.test(filePath);
+      res.setHeader('Cache-Control', hashed ? 'public, max-age=604800, immutable' : 'no-cache, must-revalidate');
     } else if (/\.(png|jpe?g|gif|svg|webp|woff2?|ttf|eot|ico)$/i.test(filePath)) {
       res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
     } else {
