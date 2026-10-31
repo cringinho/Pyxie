@@ -33,7 +33,7 @@ class TicketHandler {
       return interaction.reply({ content: 'Tickets só podem ser abertos dentro do servidor.', ephemeral: true });
     }
 
-    const config = this.manager.loadConfig();
+    const config = this.manager.loadConfig(interaction.guildId);
     if (!config.featureFlags?.ticketModule) {
       return interaction.reply({
         content: '💬 O sistema de tickets está temporariamente desativado no painel. Chame a Mary diretamente!',
@@ -107,7 +107,7 @@ class TicketHandler {
       });
 
       // Salva no banco de tickets
-      const storeData = this.manager.loadStoreData();
+      const storeData = this.manager.loadStoreData(interaction.guildId);
       const ticketId = `ticket_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
       storeData.tickets[ticketId] = {
         id: ticketId,
@@ -259,8 +259,8 @@ class TicketHandler {
         return interaction.reply({ content: '🔒 Apenas a Mary pode confirmar a entrega.', ephemeral: true });
       }
 
-      const config = this.manager.loadConfig();
-      const storeData = this.manager.loadStoreData();
+      const config = this.manager.loadConfig(interaction.guildId);
+      const storeData = this.manager.loadStoreData(interaction.guildId);
       const ticket = storeData.tickets[ticketId];
 
       // Entrega cargo @Cliente se configurado
@@ -302,7 +302,7 @@ class TicketHandler {
     // 5. Fechar Ticket
     if (action === 'close') {
       await interaction.reply({ content: '🔒 O ticket foi encerrado e este canal será excluído em 5 segundos...' });
-      const storeData = this.manager.loadStoreData();
+      const storeData = this.manager.loadStoreData(interaction.guildId);
       if (storeData.tickets[ticketId]) {
         storeData.tickets[ticketId].status = 'closed';
         storeData.tickets[ticketId].closedAt = Date.now();

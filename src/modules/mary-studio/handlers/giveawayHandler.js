@@ -67,7 +67,7 @@ class GiveawayHandler {
       ? await post(channelId, { embeds: [embed.toJSON()], components: [row.toJSON()], allowed_mentions: { parse: [] } })
       : await channel.send({ embeds: [embed], components: [row] });
 
-    const storeData = this.manager.loadStoreData();
+    const storeData = this.manager.loadStoreData(interaction.guildId);
     storeData.giveaways[giveawayId] = {
       id: giveawayId,
       channelId,
@@ -88,7 +88,7 @@ class GiveawayHandler {
     const parts = interaction.customId.split(':');
     const giveawayId = parts[2];
 
-    const storeData = this.manager.loadStoreData();
+    const storeData = this.manager.loadStoreData(interaction.guildId);
     const giveaway = storeData.giveaways[giveawayId];
 
     if (!giveaway || giveaway.ended) {

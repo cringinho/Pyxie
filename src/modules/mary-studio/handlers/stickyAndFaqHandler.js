@@ -1,5 +1,6 @@
 const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const securityGuard = require('../utils/securityGuard');
+const { canUseStore } = require('../storeAccess');
 
 class StickyAndFaqHandler {
   constructor() {
@@ -20,7 +21,12 @@ class StickyAndFaqHandler {
   async handleMessage(message) {
     if (!message || message.author?.bot || !message.guild) return;
 
-    const config = this.manager.loadConfig();
+    // Este listener roda em TODOS os servidores onde a Pyxie está. Sem esta guarda ele
+    // lia a configuração da Mary e, com anti-link ligado, apagaria convites em qualquer
+    // servidor — além de gravar sticky na loja errada.
+    if (!canUseStore(message.guild.id)) return;
+
+    const config = this.manager.loadConfig(message.guild.id);
 
     // 1. Filtro Anti-Link Opcional
     if (config.featureFlags?.antiLinkModule) {
@@ -49,7 +55,7 @@ class StickyAndFaqHandler {
 
     // 2. Mensagem Fixa (Sticky Message) com Debounce
     if (config.featureFlags?.stickyModule) {
-      const storeData = this.manager.loadStoreData();
+      const storeData = this.manager.loadStoreData(message.guild.id);
       const sticky = storeData.stickyMessages?.[message.channel.id];
 
       if (sticky && (sticky.text || sticky.embed)) {

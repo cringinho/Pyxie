@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 74596,
-  "totalChecks": 514,
+  "totalMs": 74991,
+  "totalChecks": 520,
   "steps": [
     {
       "index": 0,
@@ -1502,6 +1502,25 @@
       "failures": [],
       "summary": null,
       "summaryNumbers": null
+    },
+    {
+      "index": 74,
+      "file": "tests/storeHandlersGate.test.js",
+      "ms": 395,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Servidor da Mary continua liberado.",
+        "2. Servidor sem o extra (ou sem guild) é recusado.",
+        "3. Servidor com o extra ativo passa no gate.",
+        "4. Extra revogado volta a ser recusado.",
+        "5. Sticky não lê configuração em servidor sem o extra (anti-link não vaza).",
+        "6. Com o extra ativo, o sticky volta a funcionar."
+      ],
+      "checkCount": 6,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
     }
   ],
   "commands": [
@@ -1578,7 +1597,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T17:43:01.809Z",
+  "updatedAt": "2026-10-31T18:38:02.276Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

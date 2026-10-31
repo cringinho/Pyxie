@@ -74,7 +74,7 @@ class ReviewHandler {
     const starsNum = Math.max(1, Math.min(5, parseInt(rawStars, 10) || 5));
     const starString = '⭐'.repeat(starsNum);
 
-    const storeData = this.manager.loadStoreData();
+    const storeData = this.manager.loadStoreData(interaction.guildId);
     storeData.reviews = storeData.reviews || [];
 
     const reviewIndex = storeData.reviews.length + 1;
@@ -92,7 +92,7 @@ class ReviewHandler {
     storeData.reviews.push(reviewRecord);
     this.manager.saveStoreData(storeData);
 
-    const config = this.manager.loadConfig();
+    const config = this.manager.loadConfig(interaction.guildId);
 
     // Se houver canal de avaliações configurado (ou auto-descoberto), posta o card oficial
     if (interaction.guild) {

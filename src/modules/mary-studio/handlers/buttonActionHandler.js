@@ -10,6 +10,7 @@ const {
 
 const robloxHelper = require('../utils/robloxHelper');
 const { MARY_GUILD_ID } = require('../../../config/scopes');
+const { canUseStore } = require('../storeAccess');
 
 class ButtonActionHandler {
   constructor() {
@@ -26,10 +27,9 @@ class ButtonActionHandler {
     }
   }
 
-  // Os botões da lojinha só valem no servidor da Mary.
+  // Os botões da lojinha valem na zona Mary ou em servidores com o extra `lojinha`.
   isMaryGuild(guildId) {
-    if (!guildId) return false;
-    return guildId === MARY_GUILD_ID || guildId === this.manager?.loadConfig()?.guildId;
+    return canUseStore(guildId);
   }
 
   async handleInteraction(interaction) {
@@ -156,7 +156,7 @@ class ButtonActionHandler {
     if (targetBtn && (targetBtn.responseImageUrl || targetBtn.responseText)) {
       const embed = new EmbedBuilder().setColor('#ec4899');
       if (targetBtn.responseText) {
-        embed.setDescription(this.manager.resolveVariables(targetBtn.responseText));
+        embed.setDescription(this.manager.resolveVariables(targetBtn.responseText, this.manager.loadConfig(interaction.guildId)));
       }
       if (targetBtn.responseImageUrl) {
         embed.setImage(targetBtn.responseImageUrl);
@@ -199,8 +199,8 @@ class ButtonActionHandler {
         });
       }
 
-      const config = this.manager.loadConfig();
-      const storeData = this.manager.loadStoreData();
+      const config = this.manager.loadConfig(interaction.guildId);
+      const storeData = this.manager.loadStoreData(interaction.guildId);
 
       // Checa cupom
       let discountPercent = 0;

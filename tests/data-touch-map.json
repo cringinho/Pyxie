@@ -179,6 +179,7 @@
     ],
     "tests/plansLifetime.test.js": [],
     "tests/planAddons.test.js": [],
-    "tests/storeScope.test.js": []
+    "tests/storeScope.test.js": [],
+    "tests/storeHandlersGate.test.js": []
   }
 }
