@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 74087,
-  "totalChecks": 507,
+  "totalMs": 74095,
+  "totalChecks": 508,
   "steps": [
     {
       "index": 0,
@@ -1464,7 +1464,7 @@
     {
       "index": 72,
       "file": "tests/planAddons.test.js",
-      "ms": 44,
+      "ms": 52,
       "exitCode": 0,
       "timedOut": false,
       "checks": [
@@ -1476,9 +1476,10 @@
         "6. Extra vitalício não expira (10 anos depois continua ativo).",
         "7. Revogação desliga o módulo imediatamente.",
         "8. Servidor ou extra inválido é recusado.",
-        "9. Painel recebe catálogo com estado do servidor."
+        "9. Painel recebe catálogo com estado do servidor.",
+        "10. Trava de lançamento ativa (extra não abre a loja global da Mary)."
       ],
-      "checkCount": 9,
+      "checkCount": 10,
       "failures": [],
       "summary": null,
       "summaryNumbers": null
@@ -1558,7 +1559,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T17:31:17.741Z",
+  "updatedAt": "2026-10-31T17:36:06.045Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

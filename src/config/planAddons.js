@@ -35,6 +35,20 @@ const ADDONS = {
 
 const CYCLES = ['month', 'year'];
 
+/**
+ * Trava de lançamento.
+ *
+ * O módulo `mary-studio` ainda guarda UM estado global (estoque, PIX, perfil). Enquanto
+ * os dados não forem por servidor (fase E1), abrir o extra para outros servidores
+ * vazaria os dados da Mary e deixaria qualquer comprador editar a loja dela.
+ * Só flipar para `true` quando o E1 estiver concluído e testado.
+ */
+const READY_FOR_SALE = false;
+
+function isReadyForSale() {
+  return READY_FOR_SALE;
+}
+
 function listAddons() {
   return Object.values(ADDONS).map((addon) => ({ ...addon }));
 }
@@ -57,4 +71,4 @@ function labelOf(id, lang = 'pt') {
   return addon.i18n[lang === 'en' ? 'en' : 'pt-BR'].name;
 }
 
-module.exports = { ADDONS, CYCLES, listAddons, getAddon, priceOf, labelOf };
+module.exports = { ADDONS, CYCLES, listAddons, getAddon, priceOf, labelOf, isReadyForSale };

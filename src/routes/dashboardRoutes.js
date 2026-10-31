@@ -38,11 +38,14 @@ function getSections(guildAccess, guildId = '') {
   const base = ['overview', 'commands', 'studio', 'features', 'automations', 'injections', 'security', 'channels', 'roles', 'emojiUsage', 'planos'];
   if (guildAccess.canManageAccess) base.push('access');
   if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships');
-  // Uma seção entra por zona, ou pelo extra contratado (ex.: `lojinha` fora da zona Mary).
+  // Uma seção entra por zona, ou pelo extra contratado — mas só quando o extra está
+  // liberado para venda (fase E1 concluída). Antes disso, a tela não aparece.
   let hasAddon = () => false;
   try {
     const addons = require('../services/guildAddons');
-    hasAddon = (id) => addons.isActive(guildId, id);
+    const planAddons = require('../config/planAddons');
+    const ready = planAddons.isReadyForSale();
+    hasAddon = (id) => ready && addons.isActive(guildId, id);
   } catch (_) {}
   const extra = SECTION_REGISTRY.filter(
     (s) => !s.zones || s.zones.includes(guildAccess.zone) || (s.addon && hasAddon(s.addon))
@@ -392,7 +395,8 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     );
     const storeAllowed =
       req.guildAccess.zone === 'mary' ||
-      require('../services/guildAddons').isActive(req.params.guildId, 'lojinha');
+      (require('../services/guildAddons').isActive(req.params.guildId, 'lojinha') &&
+        require('../config/planAddons').isReadyForSale());
     if (wantsStoreButtons && !storeAllowed) {
       return res.status(403).json({ success: false, error: 'addon_required', addon: 'lojinha' });
     }
@@ -444,8 +448,12 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   // ---------- Estúdio de Loja: zona Mary (Mary e dono) OU servidor com o extra `lojinha` ----------
   function requireMaryOrAddon(req, res, next) {
     if (req.guildAccess.zone === 'mary') return next();
+    const planAddons = require('../config/planAddons');
     const active = require('../services/guildAddons').isActive(req.params.guildId, 'lojinha');
-    if (active) return next();
+    if (active && planAddons.isReadyForSale()) return next();
+    // Enquanto o estado for global (fase E1 pendente), o extra não abre a loja:
+    // evita que um servidor comprador leia/edite o estoque e o PIX da Mary.
+    if (active) return res.status(409).json({ success: false, error: 'addon_not_ready', addon: 'lojinha' });
     return res.status(403).json({ success: false, error: 'addon_required', addon: 'lojinha' });
   }
   const mary = () => require('../modules/mary-studio/maryDashboard');
