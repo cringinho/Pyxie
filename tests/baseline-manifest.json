@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 73848,
-  "totalChecks": 492,
+  "totalMs": 73896,
+  "totalChecks": 498,
   "steps": [
     {
       "index": 0,
@@ -1441,6 +1441,25 @@
           0
         ]
       }
+    },
+    {
+      "index": 71,
+      "file": "tests/plansLifetime.test.js",
+      "ms": 48,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Premium vitalício concedido e ativo.",
+        "2. Vitalício continua ativo 10 anos depois.",
+        "3. Plano mensal normal expira em 30 dias (vitalício não vazou).",
+        "4. Atualização parcial preserva o vitalício.",
+        "5. Benefícios do Premium aplicados (bônus fixo 120, sem multiplicador).",
+        "6. Revogação volta para free e limpa o vitalício."
+      ],
+      "checkCount": 6,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
     }
   ],
   "commands": [
@@ -1517,7 +1536,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T16:45:09.991Z",
+  "updatedAt": "2026-10-31T17:20:14.221Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

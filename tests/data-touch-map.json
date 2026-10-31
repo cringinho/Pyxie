@@ -176,6 +176,7 @@
       "cringelandia/seasonalConfig.json",
       "tarot-state.json",
       "tarot_album.json"
-    ]
+    ],
+    "tests/plansLifetime.test.js": []
   }
 }

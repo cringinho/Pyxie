@@ -45,17 +45,20 @@ function normalizeRecord(raw = {}) {
     source: String(raw.source || 'manual').slice(0, 24),
     since: Math.max(0, Number(raw.since) || 0),
     paidUntil: Math.max(0, Number(raw.paidUntil) || 0),
+    // Vitalício: não expira nunca (Mary, Cringelândia e o servidor do dono).
+    lifetime: raw.lifetime === true,
     note: String(raw.note || '').slice(0, 200),
   };
 }
 
 const rawFor = (guildId) => normalizeRecord(load()[String(guildId)]);
 
-/** Plano efetivo: expira quando `paidUntil` passa; `active` decide os benefícios. */
+/** Plano efetivo: expira quando `paidUntil` passa (vitalício nunca expira). */
 function getPlan(guildId, now = Date.now()) {
   const record = rawFor(guildId);
   if (record.plan === DEFAULT_PLAN) return { ...record, active: false, expired: false };
-  const expired = record.status === 'expired' || (record.paidUntil > 0 && record.paidUntil <= now);
+  const expired =
+    record.status === 'expired' || (!record.lifetime && record.paidUntil > 0 && record.paidUntil <= now);
   const active = !expired && record.status !== 'canceled' && record.status !== 'refunded';
   return { ...record, active, expired };
 }
@@ -73,15 +76,19 @@ function setPlan(guildId, patch = {}, now = Date.now()) {
   });
 }
 
-function grantPlan(guildId, plan, { months = 1, source = 'manual', note = '', now = Date.now() } = {}) {
+function grantPlan(guildId, plan, { months = 1, source = 'manual', note = '', lifetime = false, now = Date.now() } = {}) {
   if (!PLANS.includes(plan) || plan === DEFAULT_PLAN) return { ok: false, reason: 'invalid_plan' };
+  if (lifetime) {
+    // Vitalício: `paidUntil` fica 0 de propósito — quem decide é a flag `lifetime`.
+    return setPlan(guildId, { plan, status: 'active', source, note, paidUntil: 0, lifetime: true }, now);
+  }
   const base = Math.max(now, rawFor(guildId).paidUntil || 0);
   const paidUntil = base + Math.max(1, Math.round(Number(months) || 1)) * 30 * DAY;
-  return setPlan(guildId, { plan, status: 'active', source, note, paidUntil }, now);
+  return setPlan(guildId, { plan, status: 'active', source, note, paidUntil, lifetime: false }, now);
 }
 
 function revokePlan(guildId, reason = 'canceled', now = Date.now()) {
-  return setPlan(guildId, { plan: DEFAULT_PLAN, status: reason, paidUntil: 0, note: reason }, now);
+  return setPlan(guildId, { plan: DEFAULT_PLAN, status: reason, paidUntil: 0, lifetime: false, note: reason }, now);
 }
 
 function listPlans() {
