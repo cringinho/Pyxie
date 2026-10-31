@@ -24,7 +24,7 @@ export default function HeroSection({ t, stats }) {
             <h1 className="font-title font-black text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.12]">
               <span className="text-white">Pyxie</span> •{' '}
               <span className="text-slate-200">{t('hero.titlePrefix')}</span>{' '}
-              <span className="gradient-text-pink">{t('hero.titleHighlight')}</span>
+              <span className="gradient-text-pink pyx-gradient-anim">{t('hero.titleHighlight')}</span>
             </h1>
 
             {/* Subtitle */}
@@ -54,7 +54,7 @@ export default function HeroSection({ t, stats }) {
                 href="/invite?ref=site-hero"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-extrabold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-neon-pink transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-3 border border-pink-400/30"
+                className="shimmer w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-extrabold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-neon-pink transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-3 border border-pink-400/30"
               >
                 <Sparkles className="w-5 h-5 text-pink-200" />
                 <span>{t('hero.btnInvite')}</span>

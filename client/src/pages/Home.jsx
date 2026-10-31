@@ -5,6 +5,7 @@ import CringelandiaSection from '../components/hero/CringelandiaSection';
 import BlogHighlights from '../components/hero/BlogHighlights';
 import CommandGrid from '../components/wiki/CommandGrid';
 import ShopeeBentoGrid from '../components/shopee/ShopeeBentoGrid';
+import Reveal from '../components/effects/Reveal';
 
 export default function Home({ t, lang, stats }) {
   // three.js (~490 KB) pesa no pacote inicial. Carregamos a cena só depois da primeira
@@ -35,19 +36,29 @@ export default function Home({ t, lang, stats }) {
       {Scene ? <Scene t={t} /> : <div className="h-64" aria-hidden="true" />}
 
       {/* 3. 5 Official Pillars */}
-      <PillarsSection t={t} />
+      <Reveal>
+        <PillarsSection t={t} />
+      </Reveal>
 
       {/* 4. A outra metade: Cringelândia (50% bot / 50% comunidade) */}
-      <CringelandiaSection t={t} />
+      <Reveal delay={60}>
+        <CringelandiaSection t={t} />
+      </Reveal>
 
       {/* 5. Do blog: últimos artigos do Hyperfokus (some se não houver nenhum) */}
-      <BlogHighlights t={t} lang={lang} />
+      <Reveal delay={90}>
+        <BlogHighlights t={t} lang={lang} />
+      </Reveal>
 
       {/* 4. Interactive Commands Catalog */}
-      <CommandGrid t={t} lang={lang} />
+      <Reveal delay={60}>
+        <CommandGrid t={t} lang={lang} />
+      </Reveal>
 
       {/* 5. Native Shopee Bento Grid (Curated Setup & Stationery) */}
-      <ShopeeBentoGrid t={t} lang={lang} />
+      <Reveal delay={60}>
+        <ShopeeBentoGrid t={t} lang={lang} />
+      </Reveal>
     </div>
   );
 }

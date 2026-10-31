@@ -156,4 +156,210 @@ body {
   .dash-card-hover:focus-visible {
     transform: none;
   }
+/* ==========================================================================
+   Camada de ambiente animada (todas as páginas): aurora, grade e glifos.
+   Só transform/opacity — nada de canvas nem listener de scroll.
+   ========================================================================== */
+.pyx-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.pyx-aurora {
+  position: absolute;
+  width: 58vmax;
+  height: 58vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(230, 0, 103, 0.22), transparent 62%);
+  filter: blur(46px);
+  will-change: transform;
+  animation: pyx-drift 26s ease-in-out infinite alternate;
+}
+.pyx-aurora-a {
+  left: -16%;
+  top: -20%;
+}
+.pyx-aurora-b {
+  left: 46%;
+  top: 28%;
+  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.24), transparent 62%);
+  animation-duration: 33s;
+  animation-delay: -6s;
+}
+.pyx-aurora-c {
+  left: 8%;
+  top: 58%;
+  background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.16), transparent 62%);
+  animation-duration: 41s;
+  animation-delay: -13s;
+}
+
+@keyframes pyx-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, 4%, 0) scale(1.12);
+  }
+  100% {
+    transform: translate3d(-5%, -6%, 0) scale(0.94);
+  }
+}
+
+.pyx-grid {
+  position: absolute;
+  inset: -12%;
+  background-image:
+    linear-gradient(rgba(192, 132, 252, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(192, 132, 252, 0.06) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 28%, #000 22%, transparent 72%);
+  mask-image: radial-gradient(ellipse at 50% 28%, #000 22%, transparent 72%);
+  animation: pyx-grid-pan 44s linear infinite;
+}
+
+@keyframes pyx-grid-pan {
+  to {
+    transform: translate3d(-46px, -46px, 0);
+  }
+}
+
+.pyx-glyphs {
+  position: absolute;
+  inset: 0;
+}
+
+.pyx-glyph {
+  position: absolute;
+  font-size: 15px;
+  color: rgba(244, 114, 182, 0.4);
+  text-shadow: 0 0 14px rgba(244, 114, 182, 0.35);
+  animation: pyx-float 13s ease-in-out infinite;
+}
+
+@keyframes pyx-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-26px) rotate(14deg);
+    opacity: 0.85;
+  }
+}
+
+.pyx-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, transparent 42%, rgba(7, 4, 13, 0.78) 100%);
+}
+
+/* Revelação no scroll (usada pelo componente Reveal) */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Luz que segue o mouse (só ponteiro fino) */
+.spot {
+  position: relative;
+}
+@media (hover: hover) and (pointer: fine) {
+  .spot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(244, 114, 182, 0.16), transparent 62%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .spot:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Título com gradiente em movimento e brilho passando nos botões */
+.pyx-gradient-anim {
+  background-size: 220% 100%;
+  animation: pyx-gradient 9s ease infinite;
+}
+@keyframes pyx-gradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.26) 50%, transparent 65%);
+  transform: translateX(-120%);
+}
+.shimmer:hover::after {
+  animation: pyx-sheen 0.9s ease;
+}
+@keyframes pyx-sheen {
+  to {
+    transform: translateX(120%);
+  }
+}
+
+/* Celular: sem blur (GPU fraca), menos glifos e grade parada */
+@media (max-width: 768px) {
+  .pyx-aurora {
+    filter: none;
+    animation: none;
+    opacity: 0.85;
+  }
+  .pyx-glyph:nth-child(n + 5) {
+    display: none;
+  }
+  .pyx-grid {
+    animation: none;
+  }
+  .shimmer::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pyx-aurora,
+  .pyx-grid,
+  .pyx-glyph,
+  .pyx-gradient-anim {
+    animation: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .spot::after,
+  .shimmer::after {
+    display: none;
+  }
+}
+
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, Coins, Heart, Brain, Gamepad2 } from 'lucide-react';
+import Spotlight from '../effects/Spotlight';
 
 export default function PillarsSection({ t }) {
   const pillars = [
@@ -64,9 +65,9 @@ export default function PillarsSection({ t }) {
         {pillars.map((p) => {
           const Icon = p.icon;
           return (
-            <div
+            <Spotlight
               key={p.id}
-              className="rounded-3xl glass-panel border border-purple-500/20 hover:border-pink-500/50 p-6 transition-all duration-300 transform hover:-translate-y-1.5 hover:shadow-neon-pink flex flex-col justify-between"
+              className="rounded-3xl glass-panel glass-panel-hover border border-purple-500/20 p-6 transition-all duration-300 transform hover:-translate-y-1.5 hover:shadow-neon-pink flex flex-col justify-between overflow-hidden"
             >
               <div>
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border mb-5 ${p.podBg}`}>
@@ -75,7 +76,7 @@ export default function PillarsSection({ t }) {
                 <h3 className="font-title font-bold text-lg text-white mb-2">{p.title}</h3>
                 <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">{p.desc}</p>
               </div>
-            </div>
+            </Spotlight>
           );
         })}
       </div>

@@ -8,6 +8,7 @@ import Museum from './pages/Museum';
 import Bonus from './pages/Bonus';
 import Profile from './pages/Profile';
 import Partnerships from './pages/Partnerships';
+import AmbientBackground from './components/effects/AmbientBackground';
 import { I18N } from './utils/i18n';
 
 export default function App() {
@@ -114,12 +115,8 @@ export default function App() {
 
   return (
     <div className="bg-[#080410] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-pink-500 selection:text-white relative overflow-x-hidden">
-      {/* Background ambient lighting */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-pink-600/10 rounded-full blur-[128px]" />
-        <div className="absolute top-[30%] right-[-10%] w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[140px]" />
-        <div className="absolute bottom-[-10%] left-[20%] w-[500px] h-[500px] bg-pink-500/5 rounded-full blur-[120px]" />
-      </div>
+      {/* Camada de ambiente: aurora animada, grade e glifos (CSS puro) */}
+      <AmbientBackground />
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar lang={lang} setLang={setLang} t={t} />
