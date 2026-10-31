@@ -23,6 +23,7 @@ import Campfire from './Campfire';
 import Agenda from './Agenda';
 import Periodic from './Periodic';
 import Plans from './Plans';
+import Founder from './Founder';
 import Welcome from './Welcome';
 import Injections from './Injections';
 import Automations from './Automations';
@@ -1047,14 +1048,14 @@ function PartnershipDm({ t, guildId }) {
 
 function GlobalView({ shell, section, item }) {
   const { t, lang } = shell;
-  const ids = ['health', 'servers', 'commands', 'trust', 'economy', 'errors', 'modules', 'voice', 'links', 'assets', 'museum', 'shopee', 'emojis'];
+  const ids = ['health', 'servers', 'commands', 'trust', 'economy', 'errors', 'modules', 'voice', 'links', 'assets', 'museum', 'shopee', 'emojis', 'founder'];
   const current = ids.includes(section) ? section : 'health';
   const nav = { title: t('picker.global'), subtitle: t('sectionDesc.global'), groups: buildNav(t, ids, current, (id) => `#/global/${id}`) };
   const crumbs = [{ label: t('app.title'), href: '#/' }, { label: t('picker.global'), href: '#/global/health' }, { label: t(`section.${current}`) }];
   return (
     <Layout {...shell} nav={nav} crumbs={crumbs} globalActive>
       <PageHeader icon={<SectionBadge icon={sectionIcon(current)} />} title={t(`section.${current}`)} subtitle={t(`sectionDesc.${current}`)} />
-      <div className={['health', 'modules', 'servers', 'museum', 'shopee', 'emojis', 'commands', 'voice'].includes(current) ? '' : 'max-w-3xl'}>
+      <div className={['health', 'modules', 'servers', 'museum', 'shopee', 'emojis', 'commands', 'voice', 'founder'].includes(current) ? '' : 'max-w-3xl'}>
         {current === 'health' && <Health t={t} />}
         {current === 'servers' && <ServerDirectory t={t} />}
         {current === 'commands' && <Commands t={t} lang={lang} />}
@@ -1068,6 +1069,7 @@ function GlobalView({ shell, section, item }) {
         {current === 'museum' && <Museum t={t} />}
         {current === 'shopee' && <Shopee t={t} />}
         {current === 'emojis' && <Emojis t={t} />}
+        {current === 'founder' && <Founder t={t} />}
       </div>
     </Layout>
   );
