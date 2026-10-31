@@ -62,7 +62,7 @@ export default function BlogHighlights({ t, lang }) {
               )}
               <h3 className="font-title font-bold text-white text-lg leading-snug group-hover:text-pink-300 transition-colors">{a.title}</h3>
               {a.excerpt && <p className="text-sm text-slate-400 line-clamp-2">{a.excerpt}</p>}
-              <p className="mt-auto text-xs text-slate-500">
+              <p className="mt-auto text-xs text-slate-400">
                 {[a.author, a.publishedAt ? dateFmt.format(new Date(a.publishedAt)) : null, t('home.blog.minutes').replace('{n}', a.readingTimeMinutes)]
                   .filter(Boolean)
                   .join(' • ')}

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import HeroSection from '../components/hero/HeroSection';
-import MuseumScene from '../components/3d/MuseumScene';
+// three.js pesa ~600 KB: entra depois da primeira pintura, só quando a seção aparece.
+const MuseumScene = lazy(() => import('../components/3d/MuseumScene'));
 import PillarsSection from '../components/hero/PillarsSection';
 import CringelandiaSection from '../components/hero/CringelandiaSection';
 import BlogHighlights from '../components/hero/BlogHighlights';
@@ -13,8 +14,10 @@ export default function Home({ t, lang, stats }) {
       {/* 1. Hero Section with 2 CTAs and Live Terminal */}
       <HeroSection t={t} stats={stats} />
 
-      {/* 2. 3D Holographic Community Deck (Three.js WebGL) */}
-      <MuseumScene t={t} />
+      {/* 2. 3D Holographic Community Deck (Three.js WebGL, sob demanda) */}
+      <Suspense fallback={<div className="h-64" aria-hidden="true" />}>
+        <MuseumScene t={t} />
+      </Suspense>
 
       {/* 3. 5 Official Pillars */}
       <PillarsSection t={t} />

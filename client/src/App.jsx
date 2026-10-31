@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Lenis from 'lenis';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
-import Wiki from './pages/Wiki';
-import Museum from './pages/Museum';
-import Bonus from './pages/Bonus';
-import Profile from './pages/Profile';
-import Partnerships from './pages/Partnerships';
+// Páginas pesadas entram sob demanda: o pacote inicial fica só com a home.
+// O Museu, por exemplo, carrega three.js (~600 KB) e não precisa vir na primeira visita.
+const Wiki = lazy(() => import('./pages/Wiki'));
+const Museum = lazy(() => import('./pages/Museum'));
+const Bonus = lazy(() => import('./pages/Bonus'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Partnerships = lazy(() => import('./pages/Partnerships'));
 import { I18N } from './utils/i18n';
 
 export default function App() {
@@ -124,7 +126,9 @@ export default function App() {
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar lang={lang} setLang={setLang} t={t} />
         <main className="flex-1">
-          <CurrentPage t={t} lang={lang} stats={stats} userId={pageUserId} />
+          <Suspense fallback={null}>
+            <CurrentPage t={t} lang={lang} stats={stats} userId={pageUserId} />
+          </Suspense>
         </main>
         <Footer t={t} lang={lang} />
       </div>

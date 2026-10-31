@@ -73,7 +73,7 @@ export default function CommandCard({ command, onSelect, t }) {
             )}
           </div>
         ) : (
-          <span className="text-[11px] text-slate-500 font-mono">Slash Oficial</span>
+          <span className="text-[11px] text-slate-400 font-mono">Slash Oficial</span>
         )}
 
         <span className="text-[11px] font-bold text-purple-300 group-hover:text-pink-300 transition-colors flex items-center gap-0.5">

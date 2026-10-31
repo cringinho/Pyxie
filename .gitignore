@@ -34,3 +34,7 @@ data/*.lock
 
 # Suíte Turbo: manifestos, backups temporários de data/ e relatórios de execução
 test-runs/
+
+# Dados de execução do bot e configuração local do editor: nunca vão para o git
+data/
+.claude/

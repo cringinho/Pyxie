@@ -108,12 +108,9 @@
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-
-  <style>
+  <link rel="preload" as="style" href="/css/fonts.css" />
+  <link rel="stylesheet" href="/css/fonts.css" />
+<style>
     :root {
       --bg-dark: #07040d;
       --bg-surface: #0e071a;
@@ -3326,14 +3323,20 @@
       }
     }
 
-        async function fetchStats() {
+    async function fetchStats() {
+      // Os elementos podem não existir (ex.: layout trocado por outra tela): sem guarda,
+      // o textContent em null derrubava o fetch inteiro com TypeError no console.
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
       try {
         const res = await fetch('/api/status');
         const data = await res.json();
         if (data && data.stats) {
-          document.getElementById('statCommands').textContent = Number(data.stats.commandsExecuted || 0).toLocaleString();
-          document.getElementById('statUsers').textContent = Number(data.stats.totalMembers || data.stats.usersEngaged || 450).toLocaleString();
-          document.getElementById('statMessages').textContent = Number(data.stats.messagesProcessed || 0).toLocaleString();
+          setText('statCommands', Number(data.stats.commandsExecuted || 0).toLocaleString());
+          setText('statUsers', Number(data.stats.totalMembers || data.stats.usersEngaged || 450).toLocaleString());
+          setText('statMessages', Number(data.stats.messagesProcessed || 0).toLocaleString());
         }
         if (typeof data.uptime === 'number' && data.uptime >= 0) {
           const totalSeconds = Math.floor(data.uptime / 1000);
@@ -3341,11 +3344,11 @@
           const hours = Math.floor((totalSeconds % 86400) / 3600);
           const mins = Math.floor((totalSeconds % 3600) / 60);
           if (days > 0) {
-            document.getElementById('statUptime').textContent = `${days}d ${hours}h ${mins}m`;
+            setText('statUptime', `${days}d ${hours}h ${mins}m`);
           } else if (hours > 0) {
-            document.getElementById('statUptime').textContent = `${hours}h ${mins}m`;
+            setText('statUptime', `${hours}h ${mins}m`);
           } else {
-            document.getElementById('statUptime').textContent = `${Math.max(1, mins)}m`;
+            setText('statUptime', `${Math.max(1, mins)}m`);
           }
         }
       } catch (err) {
