@@ -181,6 +181,7 @@
     "tests/planAddons.test.js": [],
     "tests/storeScope.test.js": [],
     "tests/storeHandlersGate.test.js": [],
-    "tests/storeTerms.test.js": []
+    "tests/storeTerms.test.js": [],
+    "tests/addonCheckout.test.js": []
   }
 }

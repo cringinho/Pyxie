@@ -71,6 +71,9 @@ export const api = {
   plan: (id) => request(`/api/dashboard/guilds/${id}/plan`),
   planCheckout: (id, body) => request(`/api/dashboard/guilds/${id}/plan/checkout`, { method: 'POST', body }),
   planCancel: (id) => request(`/api/dashboard/guilds/${id}/plan/cancel`, { method: 'POST', body: {} }),
+  addons: (id) => request(`/api/dashboard/guilds/${id}/addons`),
+  addonCheckout: (id, addonId, body) =>
+    request(`/api/dashboard/guilds/${id}/addons/${encodeURIComponent(addonId)}/checkout`, { method: 'POST', body }),
   founder: () => request('/api/dashboard/global/founder'),
   founderKey: (note) => request('/api/dashboard/global/founder/keys', { method: 'POST', body: { note } }),
   founderRedeem: (code, guildId) => request('/api/dashboard/global/founder/redeem', { method: 'POST', body: { code, guildId } }),

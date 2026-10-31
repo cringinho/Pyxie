@@ -77,7 +77,8 @@
     "node tests/storeScope.test.js",
     "node tests/storeHandlersGate.test.js",
     "node tests/storeTerms.test.js",
+    "node tests/addonCheckout.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T19:25:29.243Z"
+  "updatedAt": "2026-10-31T19:33:22.542Z"
 }

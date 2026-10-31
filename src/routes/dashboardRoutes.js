@@ -285,6 +285,22 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, addon: result.record });
   });
 
+  // Checkout do extra (Pix). Cartão/recorrente do extra entra depois; hoje é Pix avulso.
+  router.post('/api/dashboard/guilds/:guildId/addons/:addonId/checkout', requireSession, requireGuild, async (req, res) => {
+    if (!req.guildAccess.canManageAccess) {
+      return res.status(403).json({ success: false, error: 'guild_owner_only' });
+    }
+    const catalog = require('../config/planAddons').getAddon(req.params.addonId);
+    if (!catalog) return res.status(400).json({ success: false, error: 'invalid_addon' });
+    const cycle = req.body?.cycle === 'year' ? 'year' : 'month';
+    const payments = require('../services/planPayments');
+    const checkout = await payments
+      .createPixCharge({ guildId: req.params.guildId, addonId: catalog.id, cycle })
+      .catch(() => ({ ok: false, reason: 'provider' }));
+    if (!checkout.ok) return res.status(503).json({ success: false, error: checkout.reason || 'provider' });
+    return res.json({ success: true, checkout });
+  });
+
   router.get('/api/dashboard/guilds/:guildId/channels', requireSession, requireGuild, async (req, res) => {
     try {
       return res.json({ success: true, channels: await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId }) });

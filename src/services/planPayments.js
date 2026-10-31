@@ -7,6 +7,8 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const plans = require('./guildPlans');
+const planAddons = require('../config/planAddons');
+const guildAddons = require('./guildAddons');
 const { withFileLock } = require('../utils/fileLock');
 const { SUPPORT_EMAIL } = require('../config/support');
 
@@ -28,14 +30,45 @@ function providers() {
 }
 
 const reference = (guildId, plan) => `plan|${guildId}|${plan}`;
+// Extras: `addon|<guildId>|<addonId>|<cycle>`. Ciclo anual dá 2 meses grátis.
+const addonReference = (guildId, addonId, cycle) => `addon|${guildId}|${addonId}|${cycle}`;
 
 function parseReference(ref) {
-  const [kind, guildId, plan] = String(ref || '').split('|');
-  if (kind !== 'plan' || !/^\d{17,20}$/.test(guildId || '') || !['basic', 'premium'].includes(plan)) return null;
-  return { guildId, plan };
+  const parts = String(ref || '').split('|');
+  if (parts[0] === 'plan') {
+    const [, guildId, plan] = parts;
+    if (!/^\d{17,20}$/.test(guildId || '') || !['basic', 'premium'].includes(plan)) return null;
+    return { kind: 'plan', guildId, plan };
+  }
+  if (parts[0] === 'addon') {
+    const [, guildId, addonId, cycle] = parts;
+    const addon = planAddons.getAddon(addonId);
+    if (!/^\d{17,20}$/.test(guildId || '') || !addon) return null;
+    return { kind: 'addon', guildId, addonId: addon.id, cycle: cycle === 'year' ? 'year' : 'month' };
+  }
+  return null;
 }
 
 const priceOf = (plan) => (plans.PRICES[plan] || 0) / 100;
+
+/** Resolve o que está sendo cobrado (plano ou extra) com valor e referência. */
+function resolveTarget({ guildId, plan, addonId = null, cycle = 'month' }) {
+  if (addonId) {
+    const addon = planAddons.getAddon(addonId);
+    if (!addon) return null;
+    const cyc = cycle === 'year' ? 'year' : 'month';
+    return {
+      kind: 'addon',
+      addonId: addon.id,
+      cycle: cyc,
+      amount: planAddons.priceOf(addon.id, cyc) / 100,
+      label: `${addon.id}-${cyc}`,
+      ref: addonReference(guildId, addon.id, cyc),
+    };
+  }
+  if (!plans.PRICES[plan]) return null;
+  return { kind: 'plan', plan, amount: priceOf(plan), label: plan, ref: reference(guildId, plan) };
+}
 
 // ---------------------------------------------------------------- cobranças locais
 const chargesFile = () => path.join(process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data'), 'planCharges.json');
@@ -72,20 +105,21 @@ const readJson = async (res) => {
 const authHeaders = (extra = {}) => ({ Authorization: `Bearer ${token()}`, 'Content-Type': 'application/json', ...extra });
 
 // ---------------------------------------------------------------- Pix
-async function createPixCharge({ guildId, plan, lang = 'pt', now = Date.now() } = {}) {
+async function createPixCharge({ guildId, plan, addonId = null, cycle = 'month', lang = 'pt', now = Date.now() } = {}) {
   if (!providers().pix) return { ok: false, reason: 'unavailable' };
-  if (!plans.PRICES[plan]) return { ok: false, reason: 'invalid_plan' };
+  const target = resolveTarget({ guildId, plan, addonId, cycle });
+  if (!target) return { ok: false, reason: addonId ? 'invalid_addon' : 'invalid_plan' };
   if (!/^\d{17,20}$/.test(String(guildId || ''))) return { ok: false, reason: 'invalid_guild' };
 
-  const amount = priceOf(plan);
+  const amount = target.amount;
   const res = await fetchImpl(`${MP_API}/v1/payments`, {
     method: 'POST',
-    headers: authHeaders({ 'X-Idempotency-Key': `plan-${guildId}-${plan}-${now}` }),
+    headers: authHeaders({ 'X-Idempotency-Key': `${target.kind}-${guildId}-${target.label}-${now}` }),
     body: JSON.stringify({
       transaction_amount: amount,
-      description: `${lang === 'en' ? 'Pyxie server plan' : 'Plano da Pyxie'} · ${plan} · ${guildId}`,
+      description: `${lang === 'en' ? 'Pyxie' : 'Pyxie'} · ${target.label} · ${guildId}`,
       payment_method_id: 'pix',
-      external_reference: reference(guildId, plan),
+      external_reference: target.ref,
       notification_url: `${publicUrl()}/api/plans/webhook/mercadopago`,
       date_of_expiration: new Date(now + PIX_TTL_MS).toISOString().replace('Z', '-03:00'),
       payer: { email: SUPPORT_EMAIL },
@@ -196,9 +230,25 @@ async function applyApprovedPayment(payment) {
   const ref = parseReference(payment?.external_reference);
   if (!ref) return { ok: false, reason: 'reference' };
   if (payment.currency_id !== 'BRL') return { ok: false, reason: 'currency' };
-  if (Number(payment.transaction_amount) + 0.01 < priceOf(ref.plan)) return { ok: false, reason: 'amount' };
+
+  const expected =
+    ref.kind === 'addon' ? planAddons.priceOf(ref.addonId, ref.cycle) / 100 : priceOf(ref.plan);
+  if (Number(payment.transaction_amount) + 0.01 < expected) return { ok: false, reason: 'amount' };
+
   const first = markProcessed(`mp:${payment.id}`, {});
   if (!first) return { ok: true, duplicate: true, ...ref };
+
+  if (ref.kind === 'addon') {
+    const granted = guildAddons.grant(
+      ref.guildId,
+      ref.addonId,
+      ref.cycle === 'year'
+        ? { years: 1, source: 'mercadopago', note: `mp:${payment.id}` }
+        : { months: 1, source: 'mercadopago', note: `mp:${payment.id}` }
+    );
+    return { ok: true, ...ref, granted: granted.ok, until: granted.record?.until || 0 };
+  }
+
   const granted = plans.grantPlan(ref.guildId, ref.plan, { months: 1, source: 'mercadopago', note: `mp:${payment.id}` });
   return { ok: true, ...ref, granted: granted.ok, paidUntil: granted.record?.paidUntil || 0 };
 }
@@ -301,7 +351,10 @@ module.exports = {
   publicUrl,
   providers,
   reference,
+  addonReference,
   parseReference,
+  resolveTarget,
+  applyApprovedPayment,
   priceOf,
   createPixCharge,
   createCardSubscription,

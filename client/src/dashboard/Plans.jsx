@@ -9,6 +9,7 @@ export default function Plans({ t, guildId, lang }) {
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(null);
   const [checkout, setCheckout] = useState(null);
+  const [extras, setExtras] = useState([]);
 
   const load = () =>
     api
@@ -18,6 +19,10 @@ export default function Plans({ t, guildId, lang }) {
 
   useEffect(() => {
     load();
+    api
+      .addons(guildId)
+      .then((d) => setExtras(Array.isArray(d.addons) ? d.addons : []))
+      .catch(() => {});
   }, [guildId]);
 
   if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
@@ -35,6 +40,24 @@ export default function Plans({ t, guildId, lang }) {
       const data = res.checkout || {};
       if (method === 'card' && data.initPoint) window.open(data.initPoint, '_blank', 'noopener');
       else setCheckout(data);
+    } catch (e) {
+      setError(e.code || 'generic');
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const buyExtra = async (addonId, cycle) => {
+    setBusy(`extra:${addonId}:${cycle}`);
+    setCheckout(null);
+    try {
+      const res = await api.addonCheckout(guildId, addonId, { cycle });
+      const data = res.checkout || {};
+      const extra = extras.find((x) => x.id === addonId);
+      setCheckout({
+        ...data,
+        title: `${extra ? extra.name : addonId} · ${cycle === 'year' ? t('plan.extras.year') : t('plan.extras.month')}`,
+      });
     } catch (e) {
       setError(e.code || 'generic');
     } finally {
@@ -104,9 +127,38 @@ export default function Plans({ t, guildId, lang }) {
         ))}
       </div>
 
+      {extras.length > 0 && (
+        <div className="space-y-2">
+          <p className="font-title text-sm font-bold text-white/80">{t('plan.extras.title')}</p>
+          {extras.map((a) => (
+            <div key={a.id} className="dash-card flex flex-wrap items-center justify-between gap-3 rounded-2xl p-4">
+              <div className="min-w-0">
+                <p className="font-title font-bold">{a.name}</p>
+                <p className="text-xs text-white/55">
+                  {a.active
+                    ? a.lifetime
+                      ? t('plan.extras.lifetime')
+                      : t('plan.extras.activeUntil', { date: new Date(a.until).toLocaleDateString() })
+                    : t('plan.extras.hint')}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button disabled={Boolean(busy)} onClick={() => buyExtra(a.id, 'month')}>
+                  <QrCode size={16} aria-hidden="true" />
+                  R$ {Math.round(a.priceMonthly / 100)}/{t('plan.extras.month')}
+                </Button>
+                <Button variant="ghost" disabled={Boolean(busy)} onClick={() => buyExtra(a.id, 'year')}>
+                  R$ {Math.round(a.priceYearly / 100)}/{t('plan.extras.year')}
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {checkout?.qrCode && (
         <div className="dash-card space-y-3 rounded-2xl p-4">
-          <p className="font-title font-bold">{t('plan.qrTitle', { plan: planLabel(checkout.plan) })}</p>
+          <p className="font-title font-bold">{checkout.title || t('plan.qrTitle', { plan: planLabel(checkout.plan) })}</p>
           <p className="text-xs text-white/60">{t('plan.qrHint')}</p>
           {checkout.qrCodeBase64 && (
             <img

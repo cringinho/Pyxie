@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 75555,
-  "totalChecks": 525,
+  "totalMs": 75614,
+  "totalChecks": 532,
   "steps": [
     {
       "index": 0,
@@ -1539,6 +1539,26 @@
       "failures": [],
       "summary": null,
       "summaryNumbers": null
+    },
+    {
+      "index": 76,
+      "file": "tests/addonCheckout.test.js",
+      "ms": 59,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Pix mensal de R$ 3,00 com referência do extra.",
+        "2. Pix anual de R$ 30,00.",
+        "3. Extra inexistente é recusado.",
+        "4. Pagamento aprovado ativa o extra.",
+        "5. Valor abaixo do preço do ciclo é recusado.",
+        "6. Webhook repetido é ignorado (idempotência).",
+        "7. Referência de plano não foi afetada."
+      ],
+      "checkCount": 7,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
     }
   ],
   "commands": [
@@ -1615,7 +1635,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T19:26:13.915Z",
+  "updatedAt": "2026-10-31T19:33:22.739Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }
