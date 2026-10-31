@@ -208,9 +208,17 @@ function flush() {
           rec.totalReadingSeconds += ev.seconds;
           if (globalRec) globalRec.totalReadingSeconds += ev.seconds;
         } else if (ev.event === 'click' || ev.event === 'shopee_click' || ev.event === 'invite_click') {
-          if (ev.target === 'shopee' || ev.event === 'shopee_click') {
+          // target pode vir com slot: 'shopee:sidebar', 'shopee:artigo'. Conta o total e o slot.
+          if (String(ev.target).startsWith('shopee') || ev.event === 'shopee_click') {
             rec.shopeeClicks++;
             if (globalRec) globalRec.shopeeClicks++;
+            const slot = String(ev.target).split(':')[1] || 'geral';
+            rec.shopeeSlots = rec.shopeeSlots || {};
+            rec.shopeeSlots[slot] = (rec.shopeeSlots[slot] || 0) + 1;
+            if (globalRec) {
+              globalRec.shopeeSlots = globalRec.shopeeSlots || {};
+              globalRec.shopeeSlots[slot] = (globalRec.shopeeSlots[slot] || 0) + 1;
+            }
           } else if (ev.target === 'invite' || ev.event === 'invite_click') {
             rec.inviteClicks++;
             if (globalRec) globalRec.inviteClicks++;

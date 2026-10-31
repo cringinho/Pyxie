@@ -464,6 +464,22 @@ function getReaderScript() {
 }
 
 /**
+ * Tracking mínimo para páginas que não carregam o leitor (a home, por exemplo).
+ * Sem isso, `trackClick` não existia na home e o clique em afiliado não era contado.
+ */
+function getTrackingScript(articleId = 'global') {
+  return `<script>
+    if (typeof window.trackClick !== 'function') {
+      window.trackClick = function (target) {
+        const payload = JSON.stringify({ articleId: '${articleId}', event: 'click', target: String(target || '') });
+        if (navigator.sendBeacon) navigator.sendBeacon('/api/hyperfokus/beacon', payload);
+        else fetch('/api/hyperfokus/beacon', { method: 'POST', body: payload, keepalive: true }).catch(() => {});
+      };
+    }
+  </script>`;
+}
+
+/**
  * Cabeçalho único do Hyperfokus: navegação, idioma e entrada (Entrar / Criar conta ou Escrever / Meu perfil).
  * `path` é o caminho sem query; o botão de idioma e o redirect do login voltam para ele.
  */
@@ -763,7 +779,7 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
             <h3 class="widget-title">🛍️ ${isEn ? 'Curated Essentials' : 'Recomendações da Loja'}</h3>
             <div>
               ${shopeeProducts.map((p) => `
-                <a href="${escapeHtml(p.link)}" target="_blank" rel="${p.rel}" class="shopee-item">
+                <a href="${escapeHtml(p.link)}" target="_blank" rel="${p.rel}" class="shopee-item" onclick="trackClick('shopee:sidebar')">
                   <img src="${escapeHtml(p.imagem)}" alt="${escapeHtml(p.titulo)}" class="shopee-thumb" loading="lazy" />
                   <div class="shopee-info">
                     <span class="shopee-name">${escapeHtml(p.titulo)}</span>
@@ -823,6 +839,7 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
     </div>
     <p>Pyxie Hyperfokus • Santuário de Mentes Livres & Conteúdo Autêntico</p>
   </footer>
+  ${getTrackingScript('global')}
 </body>
 </html>`;
 }
@@ -973,7 +990,7 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
         <h3 style="font-size:1.125rem; font-weight:800; color:#fff; margin-bottom:1rem;">🛍️ Itens Relacionados ao Hiperfoco</h3>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
           ${shopeeProducts.map((p) => `
-            <a href="${escapeHtml(p.link)}" target="_blank" rel="${p.rel}" style="display:flex; align-items:center; gap:0.75rem; background:rgba(255,255,255,0.03); padding:0.75rem; border-radius:0.75rem; border:1px solid var(--card-border);">
+            <a href="${escapeHtml(p.link)}" target="_blank" rel="${p.rel}" onclick="trackClick('shopee:artigo')" style="display:flex; align-items:center; gap:0.75rem; background:rgba(255,255,255,0.03); padding:0.75rem; border-radius:0.75rem; border:1px solid var(--card-border);">
               <img src="${escapeHtml(p.imagem)}" alt="${escapeHtml(p.titulo)}" style="width:48px; height:48px; object-fit:cover; border-radius:0.5rem;" loading="lazy" />
               <div>
                 <span style="font-size:0.75rem; font-weight:700; color:#f1f5f9; display:block; line-height:1.2;">${escapeHtml(p.titulo)}</span>

@@ -15,6 +15,22 @@ const TAG_KEYWORD_MAP = {
 };
 
 /**
+ * Anexa UTM ao link de afiliado. Sem isso, todo clique da Shopee chega sem origem e o
+ * relatório do programa não diz de onde veio (blog, pin, WhatsApp...).
+ */
+function withUtm(url, campaign) {
+  try {
+    const u = new URL(String(url));
+    u.searchParams.set('utm_source', 'pyxie');
+    u.searchParams.set('utm_medium', 'blog');
+    if (campaign) u.searchParams.set('utm_campaign', String(campaign).slice(0, 60));
+    return u.toString();
+  } catch (_) {
+    return url;
+  }
+}
+
+/**
  * Retorna produtos Shopee contextualizados para o artigo, com rel="sponsored nofollow".
  */
 function getContextualProducts(tags = [], limit = 3) {
@@ -51,7 +67,7 @@ function getContextualProducts(tags = [], limit = 3) {
       titulo: item.titulo,
       preco: item.preco || 'Confira na loja',
       imagem: item.imagem || '/assets/pyxie/sticker/sticker_star.png',
-      link: item.link || item.productLink || 'https://s.shopee.com.br/BU6Bod6Sw',
+      link: withUtm(item.link || item.productLink || 'https://s.shopee.com.br/BU6Bod6Sw', lowerTags[0] || 'blog'),
       rel: 'sponsored nofollow',
     }));
   } catch (err) {

@@ -33,9 +33,10 @@
     "productLink": "https://shopee.com.br/product/1010587534/58265449372",
     "link": "https://s.shopee.com.br/1AfzHIvTw",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-8257t-mrez4efi09vpc3",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910115
+    "lastChecked": 1790385910115,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "54816935616",
@@ -71,9 +72,10 @@
     "productLink": "https://shopee.com.br/product/364518714/28812198611",
     "link": "https://s.shopee.com.br/LnWNtHeo2",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-7rdy7-m0j7wbk9ta7y39",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910115
+    "lastChecked": 1790385910115,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "58212898323",
@@ -90,9 +92,10 @@
     "productLink": "https://shopee.com.br/product/327741598/58212898323",
     "link": "https://s.shopee.com.br/W6waCH1T5",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820ly-mppd70swjy81c9",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910115
+    "lastChecked": 1790385910115,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "53709861240",
@@ -109,9 +112,10 @@
     "productLink": "https://shopee.com.br/product/1763103490/53709861240",
     "link": "https://s.shopee.com.br/20vkMxBJQO",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820mb-mnrkqsisapkw49",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910115
+    "lastChecked": 1790385910115,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "23099667422",
@@ -128,9 +132,10 @@
     "productLink": "https://shopee.com.br/product/481391108/23099667422",
     "link": "https://s.shopee.com.br/2BFAZGAg5R",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820m5-mrxeumetmdqef1",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910115
+    "lastChecked": 1790385910115,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "58217140837",
@@ -147,9 +152,10 @@
     "productLink": "https://shopee.com.br/product/1516734366/58217140837",
     "link": "https://s.shopee.com.br/2LYalZA2kU",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820l6-msfkb354fyf96a",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910115
+    "lastChecked": 1790385910115,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "23098082556",
@@ -166,9 +172,10 @@
     "productLink": "https://shopee.com.br/product/379665594/23098082556",
     "link": "https://s.shopee.com.br/2Vs0xs9PPX",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-7r98o-m3w0kkj0opx143",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910116
+    "lastChecked": 1790385910116,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "48711799504",
@@ -204,9 +211,10 @@
     "productLink": "https://shopee.com.br/product/1672861664/51061796738",
     "link": "https://s.shopee.com.br/1VzTm2DDRN",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-823qq-mp7yqtpunnd8d1",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910116
+    "lastChecked": 1790385910116,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "50717960447",
@@ -223,9 +231,10 @@
     "productLink": "https://shopee.com.br/product/1930362183/50717960447",
     "link": "https://s.shopee.com.br/1gItyLCa6Q",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-8258i-mt7yve0nfdaf89",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910116
+    "lastChecked": 1790385910116,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "58200714991",
@@ -242,9 +251,10 @@
     "productLink": "https://shopee.com.br/product/266299391/58200714991",
     "link": "https://s.shopee.com.br/1qcKAeBwlT",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-81z1k-mh5m4jb0krgk00",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910116
+    "lastChecked": 1790385910116,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "46568118283",
@@ -261,9 +271,10 @@
     "productLink": "https://shopee.com.br/product/1928669081/46568118283",
     "link": "https://s.shopee.com.br/3LR7xP6Eim",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-825b0-mtcclyolfk064e",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910116
+    "lastChecked": 1790385910116,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "23594291024",
@@ -280,9 +291,10 @@
     "productLink": "https://shopee.com.br/product/387151720/23594291024",
     "link": "https://s.shopee.com.br/3VkY9i5bNp",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134201-81ztc-mjg8hat4e41t09",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910116
+    "lastChecked": 1790385910116,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "41233335407",
@@ -299,9 +311,10 @@
     "productLink": "https://shopee.com.br/product/1909598407/41233335407",
     "link": "https://s.shopee.com.br/3g3yM14y2s",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134201-820mg-mrpthvht9dzaf6",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910116
+    "lastChecked": 1790385910116,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "22897558194",
@@ -337,9 +350,10 @@
     "productLink": "https://shopee.com.br/product/1917249785/58216019732",
     "link": "https://s.shopee.com.br/2gBRAB8m4i",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820lh-mrshx86teayu21",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "23298733870",
@@ -413,9 +427,10 @@
     "productLink": "https://shopee.com.br/product/1399365261/23194383379",
     "link": "https://s.shopee.com.br/4fwVXr1A1A",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-81z1k-mebtyyrp4qgxf9",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "46703273896",
@@ -527,9 +542,10 @@
     "productLink": "https://shopee.com.br/product/1441286806/22298720166",
     "link": "https://s.shopee.com.br/4LJf9F2QhC",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820m2-mo0syrnmblkxf3",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "58200546904",
@@ -603,9 +619,10 @@
     "productLink": "https://shopee.com.br/product/1441286806/58253955903",
     "link": "https://s.shopee.com.br/6L4jWuuode",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820lh-mnao3k1oy3uq21",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "23199440691",
@@ -622,9 +639,10 @@
     "productLink": "https://shopee.com.br/product/1441286806/23199440691",
     "link": "https://s.shopee.com.br/6VO9jDuBIh",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820m2-mnc0jkeyhse8d4",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "58259201521",
@@ -641,9 +659,10 @@
     "productLink": "https://shopee.com.br/product/1441286806/58259201521",
     "link": "https://s.shopee.com.br/5LCCL4ycfU",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820lu-mn9pdowmfcoyf0",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "58209207715",
@@ -660,9 +679,10 @@
     "productLink": "https://shopee.com.br/product/1441286806/58209207715",
     "link": "https://s.shopee.com.br/5VVcXNxzKX",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820lk-mn9pdowmdy4i2a",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "58259299201",
@@ -679,9 +699,10 @@
     "productLink": "https://shopee.com.br/product/1441286806/58259299201",
     "link": "https://s.shopee.com.br/5fp2jgxLza",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820m4-mnc0jkeyj6yoe2",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "19899844283",
@@ -698,9 +719,10 @@
     "productLink": "https://shopee.com.br/product/1441286806/19899844283",
     "link": "https://s.shopee.com.br/5q8Svzwied",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-7r98o-mcsag6b2y77lfd",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "18498293667",
@@ -717,9 +739,10 @@
     "productLink": "https://shopee.com.br/product/367951476/18498293667",
     "link": "https://s.shopee.com.br/7KxGikr0bw",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-7r98o-mcy38nicerk1d3",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "23498878646",
@@ -736,9 +759,10 @@
     "productLink": "https://shopee.com.br/product/1399365261/23498878646",
     "link": "https://s.shopee.com.br/7VGgv3qNGz",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-81z1k-mebs7bgal4hvc7",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "58203304101",
@@ -755,9 +779,10 @@
     "productLink": "https://shopee.com.br/product/1485078693/58203304101",
     "link": "https://s.shopee.com.br/7fa77Mpjw2",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-8261r-mjhiugo1g6x100",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "23398560196",
@@ -793,9 +818,10 @@
     "productLink": "https://shopee.com.br/product/331050574/58260523339",
     "link": "https://s.shopee.com.br/6fhZvWtXxs",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820l5-mp2q5nx8pi4j26",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910117
+    "lastChecked": 1790385910117,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "15922582654",
@@ -812,9 +838,10 @@
     "productLink": "https://shopee.com.br/product/318556087/15922582654",
     "link": "https://s.shopee.com.br/6q107psucv",
     "imagem": "https://down-br.img.susercontent.com/file/5e1d29a08bd11f00827ea00264e5f886",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "56467045490",
@@ -831,9 +858,10 @@
     "productLink": "https://shopee.com.br/product/987902592/56467045490",
     "link": "https://s.shopee.com.br/70KQK8sHHy",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-825b2-msi5pnkffjlx41",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "50067825252",
@@ -850,9 +878,10 @@
     "productLink": "https://shopee.com.br/product/987902592/50067825252",
     "link": "https://s.shopee.com.br/7AdqWRrdx1",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-8259w-mt3hr4b8xlopad",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "49667672454",
@@ -869,9 +898,10 @@
     "productLink": "https://shopee.com.br/product/987902592/49667672454",
     "link": "https://s.shopee.com.br/8fSeJClvuK",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-825a0-msxf9kua016qfb",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "58212762970",
@@ -888,9 +918,10 @@
     "productLink": "https://shopee.com.br/product/1167060112/58212762970",
     "link": "https://s.shopee.com.br/8pm4VVlIZN",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820ll-mpmajseoeole07",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "41284431274",
@@ -907,9 +938,10 @@
     "productLink": "https://shopee.com.br/product/987902592/41284431274",
     "link": "https://s.shopee.com.br/905UhokfEQ",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-825av-mt3hnafduoea9a",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "40683175184",
@@ -945,9 +977,10 @@
     "productLink": "https://shopee.com.br/product/987902592/47615453544",
     "link": "https://s.shopee.com.br/80CxVyoTGG",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-82594-mri1j9b1ibk45e",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "23793943276",
@@ -983,9 +1016,10 @@
     "productLink": "https://shopee.com.br/product/1273511292/58211239001",
     "link": "https://s.shopee.com.br/8KpnuanCaM",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-820l7-mr3s1psfaz9i75",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "58206275470",
@@ -1021,9 +1055,10 @@
     "productLink": "https://shopee.com.br/product/318556087/20499318640",
     "link": "https://s.shopee.com.br/9zy1tegrCi",
     "imagem": "https://down-br.img.susercontent.com/file/br-11134207-7r98o-lwekwuv836aaa4",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "55465826792",
@@ -1059,9 +1094,10 @@
     "productLink": "https://shopee.com.br/product/1352448085/58214366811",
     "link": "https://s.shopee.com.br/AKasIGfaWo",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-825ac-mqpwcszwav4ea9",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "43134720207",
@@ -1078,9 +1114,10 @@
     "productLink": "https://shopee.com.br/product/721595906/43134720207",
     "link": "https://s.shopee.com.br/AUuIUZexBr",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-825bc-mtgc05931hxhd7",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   },
   {
     "id": "47016910618",
@@ -1097,8 +1134,9 @@
     "productLink": "https://shopee.com.br/product/289671343/47016910618",
     "link": "https://s.shopee.com.br/9KiL6QjOYe",
     "imagem": "https://down-br.img.susercontent.com/file/sg-11134201-8259q-msewm6mqypkxc0",
-    "active": true,
+    "active": false,
     "status": "active",
-    "lastChecked": 1790385910118
+    "lastChecked": 1790385910118,
+    "pausedReason": "poda de catálogo"
   }
 ]
