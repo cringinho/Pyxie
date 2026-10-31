@@ -156,6 +156,8 @@ body {
   .dash-card-hover:focus-visible {
     transform: none;
   }
+}
+
 /* ==========================================================================
    Camada de ambiente animada (todas as páginas): aurora, grade e glifos.
    Só transform/opacity — nada de canvas nem listener de scroll.
@@ -360,6 +362,4 @@ body {
   .shimmer::after {
     display: none;
   }
-}
-
 }
