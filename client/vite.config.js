@@ -4,6 +4,9 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  // Os arquivos ficam em /dist/assets: sem base, os chunks dinâmicos eram pedidos em
+  // /assets/... e davam 404 (React quebrava ao carregar MuseumScene).
+  base: '/dist/',
   build: {
     outDir: path.resolve(__dirname, '../public/dist'),
     emptyOutDir: true,
