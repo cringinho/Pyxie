@@ -11,7 +11,7 @@ const CHECK_MS = 30 * 60 * 1000;
 const COLORS = { activated: 0x10b981, reminder: 0xf59e0b, expired: 0xef4444 };
 
 const planLabel = (plan, lang) => t(`plans.name.${plan || 'basic'}`, lang);
-const panelLink = (guildId) => `${payments.publicUrl()}/dashboard/dashboard.html#/guild/${guildId}/planos`;
+const panelLink = (guildId) => `${payments.publicUrl()}/dashboard#/guild/${guildId}/planos`;
 
 function card(lang, guildName, { title, lines, color }) {
   return new EmbedBuilder()
