@@ -43,6 +43,10 @@ async function tick(client, now = Date.now()) {
   const rec = await payments.reconcilePending({ now }).catch(() => ({ checked: 0, activated: 0 }));
   if (rec.activated) console.log(`[plans] ${rec.activated} assinatura(s) ativadas por reconciliação.`);
 
+  // Programa Fundador: inatividade e vencimento das 20 vagas.
+  const founder = require('../../services/founderProgram').sweep({ now });
+  if (founder.paused.length) console.log(`[plans] Vaga(s) fundador pausada(s): ${founder.paused.join(', ')}`);
+
   // Lembretes D-7/D-3/D-0 e corte (marca para não repetir)
   for (const record of plans.listPlans()) {
     if (record.plan === 'free') continue;

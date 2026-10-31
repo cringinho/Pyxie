@@ -36,7 +36,9 @@ Regras invioláveis (AGENTS §5 e §10):
 - Doação **não dá vantagem no jogo** (exigência das regras do Discord e da nossa ética).
 - Entra no registro público de transparência.
 
-## Programa Fundador (20 vagas) — próxima fase
+## Programa Fundador (20 vagas) — implementado
+
+`src/services/founderProgram.js` + rotas do dono em `/api/dashboard/global/founder` (listar, criar chave, resgatar, revogar, checklist). 20 vagas, chave única de 7 dias, Básico por 12 meses, checklist de contrapartida, auto-pausa (30 dias de carência + 4 semanas paradas + 7 dias de aviso) e varredura a cada 30 min no módulo `plans`.
 
 A base de planos já suporta `plan: founder` com validade. Falta apenas o painel do dono com:
 - 20 assentos (chave de resgate única por servidor, com data e checklist);

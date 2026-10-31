@@ -1515,6 +1515,39 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return next();
   }
 
+  router.get('/api/dashboard/global/founder', requireSession, requireOwner, (req, res) => {
+    const founder = require('../services/founderProgram');
+    return res.json({ success: true, stats: founder.stats(), seats: founder.list() });
+  });
+
+  router.post('/api/dashboard/global/founder/keys', requireSession, requireOwner, (req, res) => {
+    const founder = require('../services/founderProgram');
+    const result = founder.createKey({ note: req.body?.note || '', by: req.panelSession?.userId || '' });
+    if (!result.ok) return res.status(409).json({ success: false, error: result.reason });
+    return res.json({ success: true, seat: result.seat, seats: result.seats });
+  });
+
+  router.post('/api/dashboard/global/founder/redeem', requireSession, requireOwner, (req, res) => {
+    const founder = require('../services/founderProgram');
+    const result = founder.redeem(req.body?.code, req.body?.guildId, { by: req.panelSession?.userId || '' });
+    if (!result.ok) return res.status(400).json({ success: false, error: result.reason });
+    return res.json({ success: true, ...result });
+  });
+
+  router.post('/api/dashboard/global/founder/revoke', requireSession, requireOwner, (req, res) => {
+    const founder = require('../services/founderProgram');
+    const result = founder.revoke(String(req.body?.guildId || ''), { reason: req.body?.reason || 'revoked' });
+    if (!result.ok) return res.status(404).json({ success: false, error: result.reason });
+    return res.json({ success: true, ...result });
+  });
+
+  router.post('/api/dashboard/global/founder/checklist', requireSession, requireOwner, (req, res) => {
+    const founder = require('../services/founderProgram');
+    const result = founder.checklist(String(req.body?.guildId || ''), req.body?.checklist || {});
+    if (!result.ok) return res.status(404).json({ success: false, error: result.reason });
+    return res.json({ success: true, seat: result.seat });
+  });
+
   router.get('/api/dashboard/global/commands', requireSession, requireOwner, (req, res) => {
     return res.json({ success: true, commands: require('../services/commandCatalog').allCommands() });
   });
