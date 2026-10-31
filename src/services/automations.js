@@ -22,7 +22,10 @@ function cleanField(f, value) {
       return value === undefined ? d : value === true;
     case 'number':
     case 'hour': {
-      const [min, max] = f.type === 'hour' ? [0, 23] : [f.min, f.max];
+      // BUG corrigido: campo `number` sem min/max gerava NaN (Math.min(undefined) = NaN)
+      // e o painel mostrava "NaN" até alguém reabrir a tela.
+      const [min, max] =
+        f.type === 'hour' ? [0, 23] : [Number.isFinite(f.min) ? f.min : 0, Number.isFinite(f.max) ? f.max : 1_000_000];
       const n = Number(value);
       return Number.isFinite(n) ? Math.min(max, Math.max(min, Math.round(n))) : d;
     }
@@ -81,25 +84,37 @@ function readAll(guildId) {
 }
 
 const cache = new Map();
+// BUG corrigido: o cache crescia sem limite (guildId × chave) e ficava para sempre na memória.
+const CACHE_MAX = 600;
+
+function putCache(cacheKey, config) {
+  cache.set(cacheKey, { at: Date.now(), config });
+  if (cache.size <= CACHE_MAX) return;
+  // Map mantém ordem de inserção: as primeiras entradas são as mais antigas.
+  for (const key of [...cache.keys()].slice(0, cache.size - CACHE_MAX)) cache.delete(key);
+}
+
 function getConfig(guildId, key, { fresh = false } = {}) {
   const cacheKey = `${guildId}:${key}`;
   const hit = cache.get(cacheKey);
   if (!fresh && hit && Date.now() - hit.at < CACHE_MS) return hit.config;
   const config = normalize(key, readAll(guildId)[key] || {});
-  cache.set(cacheKey, { at: Date.now(), config });
+  putCache(cacheKey, config);
   return config;
 }
 
 function saveConfig(guildId, key, input = {}) {
   if (!SCHEMA[key]) return null;
   const all = readAll(guildId);
-  const config = normalize(key, { ...getConfig(guildId, key, { fresh: true }), ...input });
+  const before = getConfig(guildId, key, { fresh: true });
+  const config = normalize(key, { ...before, ...input });
   all[key] = config;
   const file = fileFor(guildId);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(`${file}.tmp`, JSON.stringify(all, null, 2));
   fs.renameSync(`${file}.tmp`, file);
-  cache.set(`${guildId}:${key}`, { at: Date.now(), config });
+  putCache(`${guildId}:${key}`, config);
+  recordChange(guildId, key, input, { before, after: config });
   return config;
 }
 
@@ -108,9 +123,11 @@ function saveBulk(guildId, patchMap = {}) {
   const updated = {};
   for (const [key, patch] of Object.entries(patchMap || {})) {
     if (!SCHEMA[key] || !patch || typeof patch !== 'object') continue;
-    const config = normalize(key, { ...getConfig(guildId, key, { fresh: true }), ...patch });
+    const before = getConfig(guildId, key, { fresh: true });
+    const config = normalize(key, { ...before, ...patch });
     all[key] = config;
-    cache.set(`${guildId}:${key}`, { at: Date.now(), config });
+    putCache(`${guildId}:${key}`, config);
+    recordChange(guildId, key, patch, { before, after: config });
     updated[key] = config;
   }
   const file = fileFor(guildId);
@@ -118,6 +135,84 @@ function saveBulk(guildId, patchMap = {}) {
   fs.writeFileSync(`${file}.tmp`, JSON.stringify(all, null, 2));
   fs.renameSync(`${file}.tmp`, file);
   return updated;
+}
+
+// ------------------------------------------------------- histórico de mudanças (novo)
+const AUDIT_MAX = 50;
+
+function auditFile(guildId) {
+  return path.join(
+    process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data'),
+    'guilds',
+    String(guildId),
+    'automationsAudit.json'
+  );
+}
+
+/** Campos que mudaram entre duas configs — usado no histórico e no aviso do painel. */
+function diffConfig(key, before = {}, after = {}) {
+  const def = SCHEMA[key];
+  if (!def) return [];
+  const changed = [];
+  for (const f of def.fields) {
+    const a = before[f.key];
+    const b = after[f.key];
+    const same = Array.isArray(a) || Array.isArray(b) ? JSON.stringify(a) === JSON.stringify(b) : a === b;
+    if (!same) changed.push(f.key);
+  }
+  return changed;
+}
+
+function readAudit(guildId) {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(auditFile(guildId), 'utf8')) || {};
+    return { entries: Array.isArray(parsed.entries) ? parsed.entries : [], meta: parsed.meta || {} };
+  } catch (_) {
+    return { entries: [], meta: {} };
+  }
+}
+
+function writeAudit(guildId, data) {
+  const file = auditFile(guildId);
+  try {
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(`${file}.tmp`, JSON.stringify(data, null, 2));
+    fs.renameSync(`${file}.tmp`, file);
+  } catch (_) {}
+}
+
+/** Registra quem mudou o quê (campos `updatedAt`/`updatedBy` por automação). */
+function recordChange(guildId, key, patch = {}, { by = 'panel', now = Date.now(), before: beforeIn, after: afterIn } = {}) {
+  try {
+    if (!SCHEMA[key]) return [];
+    const audit = readAudit(guildId);
+    // efore tem de ser a config de ANTES da gravação: ler o arquivo aqui já pegava o valor novo.
+    const before = beforeIn || audit.meta[key]?.config || getConfig(guildId, key, { fresh: true });
+    const after = afterIn || normalize(key, { ...before, ...patch });
+    const changed = diffConfig(key, before, after);
+    if (!changed.length) return [];
+
+    audit.entries = [...audit.entries, { key, changed, by, at: now }].slice(-AUDIT_MAX);
+    audit.meta[key] = { updatedAt: now, updatedBy: by, changed, config: after };
+    writeAudit(guildId, audit);
+    return changed;
+  } catch (_) {
+    return [];
+  }
+}
+
+/** `updatedAt`/`updatedBy` da última mudança de uma automação. */
+function getMeta(guildId, key) {
+  const meta = readAudit(guildId).meta[key];
+  if (!meta) return { updatedAt: 0, updatedBy: '', changed: [] };
+  return { updatedAt: meta.updatedAt || 0, updatedBy: meta.updatedBy || '', changed: meta.changed || [] };
+}
+
+/** Últimas mudanças do servidor (mais recente primeiro). */
+function auditLog(guildId, { limit = 20 } = {}) {
+  return readAudit(guildId)
+    .entries.slice(-Math.min(AUDIT_MAX, Math.max(1, limit)))
+    .reverse();
 }
 
 // Campos de canal/cargo para o site conferir que pertencem ao servidor.
@@ -153,4 +248,18 @@ function resetCache() {
 
 for (const [key, def] of Object.entries(require('../config/automationSchemas'))) register(key, def);
 
-module.exports = { register, normalize, getConfig, saveConfig, saveBulk, readAll, idsToCheck, publicSchema, resetCache, SCHEMA };
+module.exports = {
+  register,
+  normalize,
+  getConfig,
+  saveConfig,
+  saveBulk,
+  readAll,
+  idsToCheck,
+  publicSchema,
+  resetCache,
+  diffConfig,
+  getMeta,
+  auditLog,
+  SCHEMA,
+};

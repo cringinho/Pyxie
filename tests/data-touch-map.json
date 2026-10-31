@@ -183,6 +183,8 @@
     "tests/storeHandlersGate.test.js": [],
     "tests/storeTerms.test.js": [],
     "tests/addonCheckout.test.js": [],
-    "tests/addonNotices.test.js": []
+    "tests/addonNotices.test.js": [],
+    "tests/storeProducts.test.js": [],
+    "tests/automationsUpgrade.test.js": []
   }
 }

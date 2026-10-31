@@ -48,27 +48,48 @@ function normalizeRecord(raw = {}) {
     since: Math.max(0, Number(raw.since) || 0),
     until: Math.max(0, Number(raw.until) || 0),
     lifetime: raw.lifetime === true,
+    // Carência depois do vencimento: o módulo continua de pé por alguns dias.
+    // A doc prometia 7 dias e o código fechava na hora (bug corrigido).
+    graceDays: Math.min(30, Math.max(0, Math.round(Number(raw.graceDays ?? 0)))),
+    renewals: Math.max(0, Math.round(Number(raw.renewals) || 0)),
+    lastRenewedAt: Math.max(0, Number(raw.lastRenewedAt) || 0),
+    revokedAt: Math.max(0, Number(raw.revokedAt) || 0),
     note: String(raw.note || '').slice(0, 200),
   };
 }
 
-/** Estado do extra: expira por `until`, mas vitalício nunca expira. */
+/** Estado do extra: expira por `until` (+ carência), mas vitalício nunca expira. */
 function status(guildId, addonId, now = Date.now()) {
   const id = String(guildId || '');
   const all = load()[id] || {};
-  const record = normalizeRecord(all[String(addonId || '').toLowerCase()]);
-  const exists = Boolean(all[String(addonId || '').toLowerCase()]);
-  const expired =
-    record.status === 'expired' || (!record.lifetime && record.until > 0 && record.until <= now);
+  const key = String(addonId || '').toLowerCase();
+  const record = normalizeRecord(all[key]);
+  const exists = Boolean(all[key]);
+  const graceMs = record.graceDays * DAY;
+  const expiredByDate = !record.lifetime && record.until > 0 && now > record.until + graceMs;
+  const expired = record.status === 'expired' || expiredByDate;
+  const inGrace = !expired && !record.lifetime && record.until > 0 && now > record.until;
   const active = exists && !expired && record.status !== 'canceled';
-  return { guildId: id, addonId, ...record, exists, active, expired };
+  return { guildId: id, addonId, ...record, exists, active, expired, inGrace };
+}
+
+/** Dias até o vencimento (negativo = já venceu). `null` quando é vitalício. */
+function daysLeft(guildId, addonId, now = Date.now()) {
+  const state = status(guildId, addonId, now);
+  if (state.lifetime) return null;
+  if (!state.until) return 0;
+  return Math.ceil((state.until - now) / DAY);
 }
 
 function isActive(guildId, addonId, now = Date.now()) {
   return status(guildId, addonId, now).active;
 }
 
-function grant(guildId, addonId, { months = 1, years = 0, lifetime = false, source = 'manual', note = '', now = Date.now() } = {}) {
+function grant(
+  guildId,
+  addonId,
+  { months = 1, years = 0, lifetime = false, source = 'manual', note = '', graceDays, now = Date.now() } = {}
+) {
   const id = String(guildId || '').trim();
   const addon = planAddons.getAddon(addonId);
   if (!GUILD_RE.test(id)) return { ok: false, reason: 'invalid_guild' };
@@ -79,13 +100,19 @@ function grant(guildId, addonId, { months = 1, years = 0, lifetime = false, sour
     const current = { ...(guilds[id] || {}) };
     const before = normalizeRecord(current[addon.id]);
     const since = before.since || now;
+    // Campos novos: quantas vezes renovou e quando foi a última (o painel mostrava só "desde").
+    const renewals = (before.renewals || 0) + 1;
+    const keepGrace = graceDays === undefined ? before.graceDays : graceDays;
     const record = lifetime
-      ? normalizeRecord({ status: 'active', source, note, since, until: 0, lifetime: true })
+      ? normalizeRecord({ status: 'active', source, note, since, renewals, lastRenewedAt: now, graceDays: keepGrace, until: 0, lifetime: true })
       : normalizeRecord({
           status: 'active',
           source,
           note,
           since,
+          renewals,
+          lastRenewedAt: now,
+          graceDays: keepGrace,
           lifetime: false,
           until:
             Math.max(now, before.lifetime ? now : before.until || 0) +
@@ -106,7 +133,16 @@ function revoke(guildId, addonId, reason = 'canceled', now = Date.now()) {
     const guilds = { ...load() };
     const current = { ...(guilds[id] || {}) };
     if (!current[addon.id]) return { ok: false, reason: 'not_found' };
-    current[addon.id] = normalizeRecord({ status: 'canceled', source: reason, note: reason, since: now, until: 0 });
+    // BUG corrigido: revogar sobrescrevia `since`, `until` e o contador de renovações,
+    // apagando o histórico de quando o extra existiu.
+    current[addon.id] = normalizeRecord({
+      ...current[addon.id],
+      status: 'canceled',
+      note: reason,
+      revokedAt: now,
+      until: 0,
+      lifetime: false,
+    });
     guilds[id] = current;
     save(guilds);
     return { ok: true };
@@ -139,6 +175,31 @@ function listAll() {
   );
 }
 
+/**
+ * Varredura periódica (nova): grava `expired` de quem passou da carência.
+ * Antes o vencimento era só calculado na leitura — o arquivo continuava dizendo "active",
+ * então painel, logs e o DM de pausa saíam de estados diferentes.
+ */
+function sweep(now = Date.now()) {
+  return withFileLock(fileFor(), () => {
+    const guilds = load();
+    const next = { ...guilds };
+    const touched = [];
+    for (const [guildId, addons] of Object.entries(guilds)) {
+      for (const [addonId, raw] of Object.entries(addons || {})) {
+        const record = normalizeRecord(raw);
+        if (record.lifetime || record.status !== 'active' || !record.until) continue;
+        if (now > record.until + record.graceDays * DAY) {
+          next[guildId] = { ...next[guildId], [addonId]: { ...record, status: 'expired' } };
+          touched.push({ guildId, addonId, until: record.until });
+        }
+      }
+    }
+    if (touched.length) save(next);
+    return touched;
+  });
+}
+
 function _resetCacheForTests() {
   cache = { mtime: -1, data: null };
 }
@@ -152,5 +213,7 @@ module.exports = {
   revoke,
   listForGuild,
   listAll,
+  daysLeft,
+  sweep,
   _resetCacheForTests,
 };

@@ -81,6 +81,11 @@ async function tick(client, now = Date.now()) {
 
   // Extras: D-7, D-3, D-0 e expirado — uma DM por marco, sem repetir.
   try {
+    // Grava o vencimento no arquivo (antes só era calculado na leitura: painel, log e DM
+    // saíam de estados diferentes). Roda antes dos avisos para o estado estar coerente.
+    const swept = guildAddons.sweep(now);
+    if (swept.length) console.log(`[plans] ${swept.length} extra(s) marcados como vencidos.`);
+
     for (const item of addonNoticesDue({ now, list: guildAddons.listAll() })) {
       const key = `addon:${item.addonId}:${item.step}`;
       if (notices.hasCustomMark(item.guildId, key)) continue;

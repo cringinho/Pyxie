@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 76031,
-  "totalChecks": 540,
+  "totalMs": 76641,
+  "totalChecks": 566,
   "steps": [
     {
       "index": 0,
@@ -1580,6 +1580,58 @@
       "failures": [],
       "summary": null,
       "summaryNumbers": null
+    },
+    {
+      "index": 78,
+      "file": "tests/automationsUpgrade.test.js",
+      "ms": 488,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Campo numérico nunca mais vira NaN.",
+        "2. Mudança de automação fica registrada (updatedAt/updatedBy).",
+        "3. diffConfig aponta só o campo alterado.",
+        "5. Extra guarda prazo, carência e contagem de renovação.",
+        "6. Carência de 7 dias mantém o extra ativo.",
+        "7. Varredura grava o vencimento (antes só calculava na leitura).",
+        "8. Revogar preserva o histórico (since/renovações).",
+        "9. Teto diário e horário de silêncio funcionam.",
+        "10. Presença aceita lista nova e pausa.",
+        "4. Contadores e falhas aparecem no painel."
+      ],
+      "checkCount": 10,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
+    },
+    {
+      "index": 79,
+      "file": "tests/storeProducts.test.js",
+      "ms": 122,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Robux líquido e bruto com a taxa de 30%.",
+        "2. Preço sugerido usa a tabela e o preço de 1k.",
+        "3. Margem e alerta de margem apertada.",
+        "4. Produto criado com id automático.",
+        "5. Preço e link de entrega são obrigatórios.",
+        "6. Código repetido é ignorado no estoque.",
+        "7. Estoque sai em ordem (primeiro que entrou).",
+        "8. Entrega por código é imediata e baixa o estoque.",
+        "9. Estoque zerado bloqueia a venda.",
+        "10. Pedido falho devolve o código (não perde produto).",
+        "11. Pedido manual espera a confirmação do dono.",
+        "12. Order bump aponta o pacote maior e a diferença.",
+        "13. Alerta de estoque baixo lista o produto certo.",
+        "14. Catálogo público nunca mostra códigos nem custo.",
+        "15. Receita, ticket médio e campeão de vendas.",
+        "16. Limite de produtos por servidor é respeitado."
+      ],
+      "checkCount": 16,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
     }
   ],
   "commands": [
@@ -1656,7 +1708,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T19:51:50.147Z",
+  "updatedAt": "2026-10-31T20:08:35.532Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

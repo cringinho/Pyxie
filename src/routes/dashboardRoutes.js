@@ -505,6 +505,78 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   router.post('/api/dashboard/guilds/:guildId/mary/calc', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
     return maryReply(res, mary().calc(req.body || {}, req.params.guildId), ({ ok, ...r }) => ({ result: r }));
   });
+  // ---------- Lojinha: produtos, estoque, preço e pedidos (novo) ----------
+  const storeProd = () => require('../services/storeProducts');
+  const storeReply = (res, result, okBody) =>
+    result.ok
+      ? res.json({ success: true, ...okBody(result) })
+      : res.status(result.reason === 'not_found' ? 404 : 400).json({ success: false, error: result.reason || 'invalid' });
+
+  router.get('/api/dashboard/guilds/:guildId/store/products', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
+    const sp = storeProd();
+    const guildId = req.params.guildId;
+    return res.json({
+      success: true,
+      products: sp.listProducts(guildId),
+      stock: sp.stockReport(guildId),
+      sales: sp.salesStats(guildId),
+      orders: sp.listOrders(guildId, { limit: 20 }),
+    });
+  });
+
+  router.put('/api/dashboard/guilds/:guildId/store/products', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
+    // Campos de canal/cargo não existem aqui: só preço, estoque e entrega.
+    return storeReply(res, storeProd().saveProduct(req.params.guildId, req.body || {}), (r) => ({ product: r.product }));
+  });
+
+  router.delete('/api/dashboard/guilds/:guildId/store/products/:productId', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
+    return storeReply(res, storeProd().removeProduct(req.params.guildId, req.params.productId), () => ({}));
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/store/products/:productId/stock', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
+    const codes = req.body?.codes ?? req.body?.text ?? [];
+    return storeReply(res, storeProd().addStock(req.params.guildId, req.params.productId, codes), ({ ok, ...r }) => r);
+  });
+
+  router.get('/api/dashboard/guilds/:guildId/store/products/public', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
+    return res.json({ success: true, catalog: storeProd().publicCatalog(req.params.guildId) });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/store/orders/:orderId/confirm', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
+    return storeReply(
+      res,
+      storeProd().confirmOrder(req.params.guildId, req.params.orderId, { payload: req.body?.payload || '' }),
+      (r) => ({ order: r.order })
+    );
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/store/orders/:orderId/fail', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
+    return storeReply(
+      res,
+      storeProd().failOrder(req.params.guildId, req.params.orderId, req.body?.reason || 'manual'),
+      (r) => ({ order: r.order })
+    );
+  });
+
+  // Calculadora da lojinha: quantos Robux, quanto custa a gamepass e qual a margem.
+  router.post('/api/dashboard/guilds/:guildId/store/price', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
+    const sp = storeProd();
+    const robux = Math.max(0, Math.round(Number(req.body?.robux) || 0));
+    const per1kCents = Math.max(0, Math.round(Number(req.body?.per1kCents) || 3700));
+    const priceCents = Math.max(0, Math.round(Number(req.body?.priceCents) || sp.suggestPriceCents(robux, { per1kCents })));
+    return res.json({
+      success: true,
+      price: {
+        robux,
+        gamepassCost: sp.robuxGrossFor(robux),
+        priceCents,
+        suggestedCents: sp.suggestPriceCents(robux, { per1kCents }),
+        bump: sp.orderBumpFor(req.params.guildId, req.body?.productId || ''),
+        margin: sp.margin({ priceCents, costCents: Number(req.body?.costCents) || 0 }),
+      },
+    });
+  });
+
 
   router.get('/api/dashboard/guilds/:guildId/mary/roblox/gamepass', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
     return maryReply(res, await mary().inspectGamepass(req.query.input), (r) => ({ gamepass: r.gamepass }));

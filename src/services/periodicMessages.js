@@ -67,6 +67,11 @@ function normalize(raw = {}, guildId) {
       customIntro: String(b.customIntro || '').slice(0, 600),
       customFooter: String(b.customFooter || '').slice(0, 120),
       pingRoleId: id(b.pingRoleId),
+      // Campos novos: quantos guias por dia (0 = sem teto) e a janela de silêncio
+      // em horas de Brasília (-1 = desligada), para não pingar de madrugada.
+      maxPerDay: clamp(b.maxPerDay, 0, 24, 0),
+      quietFrom: clamp(b.quietFrom, -1, 23, -1),
+      quietTo: clamp(b.quietTo, -1, 23, -1),
     },
     // O crédito "criado por Cringelândia" é fixo: só a Cringelândia aparece sem ele.
     tarot: {
@@ -138,9 +143,50 @@ function nextBrtMidnight(now = Date.now()) {
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1) + BRT;
 }
 
+/** Hora atual de Brasília (0–23) para a janela de silêncio. */
+function brtHour(now = Date.now()) {
+  return new Date(now - BRT).getUTCHours();
+}
+
+/**
+ * Pode enviar agora? (novo) Respeita o teto diário e o horário de silêncio.
+ * Devolve { ok, reason, hour } — o motivo aparece no log e no painel.
+ */
+function canSendNow(guildId, now = Date.now()) {
+  const cfg = getConfig(guildId).bumpGuide;
+  const hour = brtHour(now);
+
+  if (cfg.quietFrom >= 0 && cfg.quietTo >= 0 && cfg.quietFrom !== cfg.quietTo) {
+    const quiet =
+      cfg.quietFrom < cfg.quietTo
+        ? hour >= cfg.quietFrom && hour < cfg.quietTo
+        : hour >= cfg.quietFrom || hour < cfg.quietTo;
+    if (quiet) return { ok: false, reason: 'quiet_hours', hour };
+  }
+
+  if (cfg.maxPerDay > 0) {
+    const state = readState(guildId);
+    const dayKey = new Date(now - BRT).toISOString().slice(0, 10);
+    const sent = state.dayKey === dayKey ? Number(state.sentToday) || 0 : 0;
+    if (sent >= cfg.maxPerDay) return { ok: false, reason: 'daily_cap', hour, sent };
+    return { ok: true, hour, sent };
+  }
+
+  return { ok: true, hour };
+}
+
+/** Conta mais um envio do dia (para o teto diário). */
+function noteSent(guildId, now = Date.now()) {
+  const state = readState(guildId);
+  const dayKey = new Date(now - BRT).toISOString().slice(0, 10);
+  const sentToday = (state.dayKey === dayKey ? Number(state.sentToday) || 0 : 0) + 1;
+  return writeState(guildId, { ...state, dayKey, sentToday });
+}
+
 function bumpGuideDue(guildId, now = Date.now()) {
   const cfg = getConfig(guildId).bumpGuide;
   if (!cfg.enabled || !cfg.channelId) return false;
+  if (!canSendNow(guildId, now).ok) return false;
   const last = Number(readState(guildId).bumpGuideAt) || 0;
   return now - last >= cfg.intervalHours * HOUR;
 }
@@ -195,5 +241,8 @@ module.exports = {
   nextBrtMidnight,
   bumpGuideDue,
   bumpGuideNextAt,
+  brtHour,
+  canSendNow,
+  noteSent,
   buildBumpGuide,
 };
