@@ -29,24 +29,33 @@
 estoque, chave PIX, macros e perfil da Mary. A trava existe para impedir vazamento —
 não é excesso de zelo.
 
-## 3. E1 — dados por servidor (bloqueia a venda)
+## 3. E1 — dados por servidor (em andamento)
 
-Objetivo: cada servidor com o extra tem a **sua** configuração, isolada da Mary.
+### 3.1 Feito (E1a — 31/10/2026)
 
-1. `maryStudioManager.js`: `getStore(guildId)`, `saveStore(guildId, ...)`, `getProfile(guildId)`,
-   `saveProfile(guildId, ...)`. Arquivo por servidor: `data/guilds/<guildId>/store.json`
-   (fallback de leitura no global **só** para a zona Mary, para migrar sem perder nada).
-2. `maryStoreData.json` (tickets, avaliações, cupons, sorteios) → por servidor, mesmo padrão.
-3. Uploads: `data/uploads/mary/` → `data/uploads/store/<guildId>/`; rota de mídia resolve por servidor.
-4. Handlers `mary_btn:*`, tickets, avaliações e sorteios: resolver `guildId` do interaction e
-   checar o extra (não mais "só no servidor da Mary").
-5. `commands/pyMaryStudio.js` (central na DM): listar os servidores do usuário com o extra e
-   pedir qual abrir quando houver mais de um.
-6. Migração: script `scripts/migrateMaryStoreToGuilds.js` copiando o estado atual da Mary para
-   o diretório dela, com backup antes.
+| Item | Onde | Resultado |
+|---|---|---|
+| Caminhos por servidor | `maryStudioManager` | `configFileFor`, `storeFileFor`, `uploadsDirFor` — Mary no arquivo legado, cliente em `data/guilds/<id>/store/` |
+| Padrões por servidor | `defaultConfigFor` | Mary mantém os dela; servidor novo nasce **offline, estoque 0, sem PIX e sem macros** |
+| Config e dados com escopo | `loadConfig(guildId)`, `saveConfig(data, guildId)`, `loadStoreData(guildId)`, `saveStoreData(data, guildId)` | Retrocompatível: sem argumento = Mary |
+| Uploads | `saveUpload(buffer, guildId)` + rota `/api/store/media/:guildId/:file` | Pastas e URLs separadas; `/api/mary/media/<arquivo>` continua válida |
+| Painel ligado ao escopo | `maryDashboard.getStore/saveStore/getProfile/saveProfile/calc` + rotas | Todas as chamadas passam `req.params.guildId` |
+| Perfil da Pyxie | `updateLocalProfile(guildId)` | Carrega e grava no arquivo do servidor editado |
+| Teste de isolamento | `tests/storeScope.test.js` | 6 verificações: Mary intacta, cliente neutro, arquivos separados, tickets isolados, uploads separados |
 
-**Portão do E1:** teste que cria dois servidores com o extra, grava estoques diferentes e prova
-que um não vê o outro; e que a Mary continua com os dados atuais.
+Suíte: **75 arquivos · 514 verificações · gate OK** (rodou também na VM).
+
+### 3.2 Falta (E1b) — é o que ainda bloqueia a venda
+
+1. **Handlers do Discord** (`buttonActionHandler`, `ticketHandler`, `reviewHandler`, `giveawayHandler`,
+   `stickyAndFaqHandler`): hoje só respondem no servidor da Mary. Precisam resolver o `guildId` do
+   interaction e checar o extra — sem isso o painel do cliente funciona e os botões não.
+2. **`/py-mary` (central na DM)**: escolher qual servidor abrir quando o usuário tem mais de um.
+3. **Migração**: script que leva o estado atual da Mary para `data/guilds/<MARY>/store/` com backup
+   (opcional: o fallback legado já cobre a leitura).
+4. **Aceite de termos** no primeiro acesso do cliente (checkbox + data + IP).
+5. **Flip de `READY_FOR_SALE`** para `true` — só depois de 1–4 verdes.
+
 
 ## 4. E2 — telas e cobrança
 
