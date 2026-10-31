@@ -31,3 +31,6 @@ data/*.lock
 
 # Configurações pessoais do Claude Code
 .claude/settings.local.json
+
+# Suíte Turbo: manifestos, backups temporários de data/ e relatórios de execução
+test-runs/

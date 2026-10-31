@@ -43,7 +43,7 @@ node scripts/seed_ci_fixtures.js >/dev/null
 
 DISCORD_TOKEN= GROQ_API_KEY= DATABASE_URL= \
   PANEL_SECRET= API_SECRET_TOKEN= MARY_STUDIO_SECRET= \
-  PYXIE_CI_FIXTURES=1 npm test >"$LOG_FILE" 2>&1
+  PYXIE_CI_FIXTURES=1 PYXIE_TESTS_EXTERNAL_DATA=1 npm test >"$LOG_FILE" 2>&1
 STATUS=$?
 
 echo "npm test terminou com código $STATUS (log em $LOG_FILE)"
