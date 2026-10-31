@@ -29,7 +29,7 @@ Código: `src/services/storeProducts.js` · Rotas: `/api/dashboard/guilds/:id/st
 
 ## 3. Order bump
 
-`sumpFor(guildId, id)` sugere o próximo pacote maior (ou o `orderBumpId` configurado),
+`orderBumpFor(guildId, id)` sugere o próximo pacote maior (ou o `orderBumpId` configurado),
 com `deltaCents` e `savingsPercent`. É o que sobe ticket médio sem esforço — dado, não
 achismo: quanto o cliente economiza aparece na conta.
 
