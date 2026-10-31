@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 74991,
-  "totalChecks": 520,
+  "totalMs": 75555,
+  "totalChecks": 525,
   "steps": [
     {
       "index": 0,
@@ -1464,7 +1464,7 @@
     {
       "index": 72,
       "file": "tests/planAddons.test.js",
-      "ms": 52,
+      "ms": 84,
       "exitCode": 0,
       "timedOut": false,
       "checks": [
@@ -1477,7 +1477,7 @@
         "7. Revogação desliga o módulo imediatamente.",
         "8. Servidor ou extra inválido é recusado.",
         "9. Painel recebe catálogo com estado do servidor.",
-        "10. Trava de lançamento ativa (extra não abre a loja global da Mary)."
+        "10. Extra liberado para venda (E1 concluído)."
       ],
       "checkCount": 10,
       "failures": [],
@@ -1518,6 +1518,24 @@
         "6. Com o extra ativo, o sticky volta a funcionar."
       ],
       "checkCount": 6,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
+    },
+    {
+      "index": 75,
+      "file": "tests/storeTerms.test.js",
+      "ms": 532,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Mary continua sem exigência de termos.",
+        "2. Cliente sem aceite é recusado com terms_required.",
+        "3. Com aceite, salva e registra data/versão.",
+        "4. Cada servidor mantém o próprio estoque.",
+        "5. Aceite vale para os salvamentos seguintes."
+      ],
+      "checkCount": 5,
       "failures": [],
       "summary": null,
       "summaryNumbers": null
@@ -1597,7 +1615,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T18:38:02.276Z",
+  "updatedAt": "2026-10-31T19:26:13.915Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

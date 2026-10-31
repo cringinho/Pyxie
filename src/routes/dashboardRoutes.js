@@ -473,7 +473,14 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     } catch (err) {
       return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
     }
-    return maryReply(res, mary().saveStore(req.params.guildId, body, lists), (r) => ({ store: r.store }));
+    return maryReply(
+      res,
+      mary().saveStore(req.params.guildId, body, {
+        ...lists,
+        meta: { acceptTerms: body.acceptTerms === true, ip: req.ip },
+      }),
+      (r) => ({ store: r.store })
+    );
   });
 
   router.post('/api/dashboard/guilds/:guildId/mary/calc', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {

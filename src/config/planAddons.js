@@ -36,14 +36,13 @@ const ADDONS = {
 const CYCLES = ['month', 'year'];
 
 /**
- * Trava de lançamento.
+ * Trava de lançamento — LIBERADA em 31/10/2026.
  *
- * O módulo `mary-studio` ainda guarda UM estado global (estoque, PIX, perfil). Enquanto
- * os dados não forem por servidor (fase E1), abrir o extra para outros servidores
- * vazaria os dados da Mary e deixaria qualquer comprador editar a loja dela.
- * Só flipar para `true` quando o E1 estiver concluído e testado.
+ * O módulo `mary-studio` agora guarda estado por servidor (config, tickets, uploads) e os
+ * handlers do Discord exigem o extra (`storeAccess.canUseStore`). O cliente aceita os
+ * termos no primeiro acesso. Por isso o extra pode ser vendido.
  */
-const READY_FOR_SALE = false;
+const READY_FOR_SALE = true;
 
 function isReadyForSale() {
   return READY_FOR_SALE;

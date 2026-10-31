@@ -10,6 +10,8 @@ const SNOWFLAKE_RE = /^\d{17,20}$/;
 const STATUS = ['online', 'fila', 'offline'];
 const FLAGS = ['ticketModule', 'antiLinkModule'];
 const MAX_MACROS = 25;
+// Suba a versão quando o texto dos termos mudar: quem aceitou a antiga precisa reaceitar.
+const STORE_TERMS_VERSION = '2026-10';
 
 const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const money = (v, min, max) => Math.min(max, Math.max(min, Math.round((Number(v) || 0) * 100) / 100));
@@ -19,6 +21,10 @@ const money = (v, min, max) => Math.min(max, Math.max(min, Math.round((Number(v)
 function getStore(guildId = null) {
   const cfg = manager.loadConfig(guildId);
   const store = manager.loadStoreData(guildId);
+  const termsAcceptedAt = Number(cfg.termsAcceptedAt) || 0;
+  const termsVersion = cfg.termsVersion === STORE_TERMS_VERSION ? STORE_TERMS_VERSION : '';
+  // Servidor de cliente (fora da zona Mary) só salva depois de aceitar os termos.
+  const requiresTerms = !manager.isMary(guildId) && (!termsAcceptedAt || !termsVersion);
   const reviews = Array.isArray(store.reviews) ? store.reviews : [];
   const tickets = Object.values(store.tickets || {});
   return {
@@ -39,14 +45,26 @@ function getStore(guildId = null) {
       openTickets: tickets.filter((x) => x && x.status !== 'closed').length,
       giveaways: Object.values(store.giveaways || {}).filter((g) => g && !g.ended).length,
     },
+    requiresTerms,
+    termsAcceptedAt,
+    termsVersion,
     variables: manager.getVariables(cfg),
   };
 }
 
 // channels/roles: listas do servidor (bridge) para recusar IDs de fora.
-function saveStore(guildId, body = {}, { channels = [], roles = [] } = {}) {
+function saveStore(guildId, body = {}, { channels = [], roles = [], meta = {} } = {}) {
   const cfg = manager.loadConfig(guildId);
   const next = { ...cfg, featureFlags: { ...(cfg.featureFlags || {}) } };
+
+  // Aceite de termos (só para servidores de cliente; a Mary não passa por isso).
+  const requiresTerms = !manager.isMary(guildId) && (!Number(cfg.termsAcceptedAt) || cfg.termsVersion !== STORE_TERMS_VERSION);
+  if (requiresTerms) {
+    if (meta.acceptTerms !== true) return { ok: false, error: 'terms_required' };
+    next.termsAcceptedAt = Date.now();
+    next.termsAcceptedIp = String(meta.ip || '').slice(0, 60);
+    next.termsVersion = STORE_TERMS_VERSION;
+  }
   if (body.statusLoja !== undefined) {
     if (!STATUS.includes(body.statusLoja)) return { ok: false, error: 'invalid_status' };
     next.statusLoja = body.statusLoja;

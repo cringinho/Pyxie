@@ -70,9 +70,9 @@ assert.equal(list[0].priceMonthly, 300);
 assert.equal(list[0].active, false, 'foi revogado no passo 7');
 console.log('  ✅ 9. Painel recebe catálogo com estado do servidor.');
 
-// 10. Trava de lançamento: o extra NÃO pode ser vendido antes do E1 (dados por servidor).
-// Se este teste falhar porque você flipou para true, é sinal de que o E1 precisa estar pronto.
-assert.equal(catalog.isReadyForSale(), false, 'lojinha só pode ser vendida após os dados serem por servidor');
-console.log('  ✅ 10. Trava de lançamento ativa (extra não abre a loja global da Mary).');
+// 10. Trava de lançamento: liberada depois do E1 (dados por servidor) + gate dos handlers
+// + aceite de termos. Se este teste falhar, alguém mexeu no lançamento sem querer.
+assert.equal(catalog.isReadyForSale(), true, 'extra liberado após E1 concluído');
+console.log('  ✅ 10. Extra liberado para venda (E1 concluído).');
 
 console.log('🛍️ Estúdio de Loja: tudo certo.');

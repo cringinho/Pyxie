@@ -136,14 +136,16 @@ export function MaryStore({ t, guildId }) {
   if (!cfg) return status ? <Status t={t} status={status} /> : <Spinner label={t('app.loading')} />;
 
   const set = (patch) => setCfg({ ...cfg, ...patch });
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const save = async () => {
     setBusy(true);
     setStatus(null);
     try {
-      const { stats, variables, ...body } = cfg;
-      const res = await maryApi.saveStore(guildId, body);
+      const { stats, variables, requiresTerms, termsAcceptedAt, termsVersion, ...body } = cfg;
+      const res = await maryApi.saveStore(guildId, { ...body, acceptTerms });
       setCfg(res.store);
       setData({ ...data, store: res.store });
+      setAcceptTerms(false);
       setStatus('ok');
     } catch (e) {
       setStatus(e.code || 'generic');
@@ -254,9 +256,17 @@ export function MaryStore({ t, guildId }) {
         </div>
       </Card>
 
+      {cfg.requiresTerms && (
+        <Card title={t('mary.terms.title')} icon={Sparkles}>
+          <p className="mb-3 text-sm text-white/70">{t('mary.terms.body')}</p>
+          <Toggle label={t('mary.terms.accept')} checked={acceptTerms} onChange={setAcceptTerms} />
+          <p className="mt-2 text-xs text-white/50">{t('mary.terms.hint')}</p>
+        </Card>
+      )}
+
       <div className="space-y-2">
         <Status t={t} status={status} />
-        <Button className="w-full" onClick={save} disabled={busy}>
+        <Button className="w-full" onClick={save} disabled={busy || (cfg.requiresTerms && !acceptTerms)}>
           {t('features.save')}
         </Button>
       </div>
