@@ -44,7 +44,9 @@ const app = express();
 app.set('view engine', 'ejs');
 
 const PORT = Number(process.env.PORT || 3000);
-const HOST = process.env.HOST || '0.0.0.0';
+// Só loopback por padrão: quem fala com o mundo é o Caddy (proxy 127.0.0.1:3000).
+// Antes o padrão era 0.0.0.0 e a porta 3000 ficava exposta direto na internet, sem TLS.
+const HOST = process.env.HOST || '127.0.0.1';
 const appRoot = __dirname;
 const publicDir = path.join(__dirname, 'public');
 
