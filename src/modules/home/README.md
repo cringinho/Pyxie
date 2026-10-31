@@ -54,3 +54,9 @@ papéis de parede, pisos e gatinhos são pixel art desenhada no próprio código
 - `getStatus()` alimenta a aba Módulos; o registro `home_state` aparece no Visual DB → Estado Global.
 - `/api/public/system-truth` expõe `milestones.home` e `milestones.achievements`.
 - Previews de homologação: `node scripts/dispatch_home_previews.js`.
+
+## Doações (Pix livre)
+
+- Botão próprio na loja do dia, em linha separada dos itens: R$ 5, 10, 25 ou 50.
+- O Pix é gerado no Mercado Pago (30 min) e o apoio entra no ranking do mês e no registro público de transparência.
+- Doar não dá vantagem no jogo, e quem escolhe anonimato não aparece com nome.
