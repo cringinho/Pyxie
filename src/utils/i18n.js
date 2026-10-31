@@ -2400,6 +2400,28 @@ const TRANSLATIONS = {
       "topicGamesDesc": "Aproveite momentos leves em comunidade com `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados` e `/py-likely`. Comandos rápidos e integrados para animar qualquer chat de Discord."
     },
     "home": {
+      "donate": {
+        "btn": "Doar",
+        "title": "💜 Apoiar a Pyxie",
+        "intro": "Doação é apoio voluntário, sem contrapartida: nada aqui vira vantagem no jogo.",
+        "benefits": "Escolha um valor abaixo. O Pix vale 30 minutos e o apoio entra no registro público de transparência.",
+        "placeholder": "Escolha o valor da doação",
+        "pix": "Pix de **R$ {amount}** gerado.\n\n> Escaneie o QR ou copie o código abaixo.\n\n`{code}`\n\n-# Válido até {date}",
+        "errors": {
+          "unavailable": "Doações estão desligadas no momento.",
+          "invalid_amount": "Esse valor não vale. Escolha entre R$ 2 e R$ 500.",
+          "provider": "O Pix não está disponível agora. Tenta de novo em alguns minutos."
+        }
+      },
+      "donors": {
+        "btn": "Ranking",
+        "title": "🏆 Quem apoia a Pyxie",
+        "intro": "Já foram **R$ {total}** em {count} doação(ões) voluntárias. Obrigada de verdade 💜",
+        "row": "`#{pos}` **{name}** — R$ {amount}",
+        "empty": "Ainda não há doações registradas neste mês.",
+        "anonymous": "Alguém que prefere o anonimato",
+        "note": "-# Doar não dá vantagem no jogo. É só carinho."
+      },
       "beans": "feijões",
       "coins": "moedinhas",
       "notForSale": "não está à venda",
@@ -5422,6 +5444,28 @@ const TRANSLATIONS = {
       "topicGamesDesc": "Enjoy lightweight community fun with `/py-cookie`, `/py-coinflip`, `/py-jokenpo`, `/py-dados`, and `/py-likely`. Fast, engaging commands designed to bring energy to every Discord chat."
     },
     "home": {
+      "donate": {
+        "btn": "Donate",
+        "title": "💜 Support Pyxie",
+        "intro": "Donations are voluntary support with no strings attached: nothing here becomes an in-game advantage.",
+        "benefits": "Pick an amount below. The Pix code is valid for 30 minutes and the support shows up in the public transparency log.",
+        "placeholder": "Pick the donation amount",
+        "pix": "**R$ {amount}** Pix generated.\n\n> Scan the QR or copy the code below.\n\n`{code}`\n\n-# Valid until {date}",
+        "errors": {
+          "unavailable": "Donations are turned off right now.",
+          "invalid_amount": "That amount is not valid. Pick something between R$ 2 and R$ 500.",
+          "provider": "Pix is unavailable right now. Try again in a few minutes."
+        }
+      },
+      "donors": {
+        "btn": "Leaderboard",
+        "title": "🏆 Pyxie supporters",
+        "intro": "**R$ {total}** across {count} voluntary donation(s). Thank you, really 💜",
+        "row": "`#{pos}` **{name}** — R$ {amount}",
+        "empty": "No donations recorded this month yet.",
+        "anonymous": "Someone who prefers to stay anonymous",
+        "note": "-# Donating gives no in-game advantage. It is just care."
+      },
       "beans": "beans",
       "coins": "coins",
       "notForSale": "not for sale",

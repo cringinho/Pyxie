@@ -600,6 +600,22 @@ for (const pageKey of Object.keys(SEO_CONFIG)) {
 }
 app.get(/^\/en$/, (req, res) => res.redirect(301, '/en/'));
 app.get('/en/', serveLocalizedPage('index', publicDir));
+// Ranking público das doações (mês e geral). Doação anônima continua anônima.
+app.get('/api/public/donations', (req, res) => {
+  try {
+    const donations = require('./src/services/donations');
+    res.setHeader('Cache-Control', 'public, max-age=120');
+    return res.json({
+      success: true,
+      summary: donations.summary(),
+      month: donations.ranking({ period: 'month', limit: 10 }),
+      allTime: donations.ranking({ period: 'all', limit: 10 }),
+    });
+  } catch (_) {
+    return res.json({ success: true, summary: { total: 0, count: 0, monthTotal: 0, top: [] }, month: [], allTime: [] });
+  }
+});
+
 // Registro público das doações (src/data/transparency.json, versionado com os comprovantes).
 app.get('/api/public/transparency', (req, res) => {
   try {
@@ -710,8 +726,36 @@ async function notifyPassPremium(result) {
 }
 app.post('/api/pass/webhook/mercadopago', async (req, res) => {
   try {
+    const body = req.body || {};
+    const query = req.query || {};
+    const headers = req.headers || {};
+    const type = String(body.type || query.type || body.topic || query.topic || '');
+
+    // Assinatura no cartão (Preapproval) — eventos de "Planos e assinaturas"
+    if (type.startsWith('subscription') || type === 'preapproval') {
+      const planResult = await require('./src/services/planPayments').handleWebhook({ body, query, headers });
+      if (!planResult.ok && planResult.reason === 'signature') return res.status(401).json({ error: 'signature' });
+      if (!planResult.ok && planResult.reason === 'provider') return res.status(502).json({ error: 'provider' });
+      if (planResult.ok && !planResult.ignored && !planResult.pending && !planResult.duplicate) {
+        require('./src/modules/plans').notifyActivated(planResult.guildId, planResult.plan).catch(() => null);
+      }
+      return res.status(200).json({ received: true });
+    }
+
+    // Pagamento avulso: doação, plano Pix ou Passe (decidido pelo external_reference)
+    if (type === 'payment') {
+      const donation = await require('./src/services/donations').handleWebhook({ body, query, headers }).catch(() => null);
+      if (donation?.ok && donation.donation) return res.status(200).json({ received: true });
+      const plan = await require('./src/services/planPayments').handleWebhook({ body, query, headers }).catch(() => null);
+      if (plan?.ok && plan.granted) {
+        require('./src/modules/plans').notifyActivated(plan.guildId, plan.plan).catch(() => null);
+        return res.status(200).json({ received: true });
+      }
+    }
+
     const payments = require('./src/services/passPayments');
-    const result = await payments.handleMercadoPagoWebhook({ body: req.body || {}, query: req.query || {}, headers: req.headers || {} });
+    const result = await payments.handleMercadoPagoWebhook({ body, query, headers });
+
     if (!result.ok && result.reason === 'signature') return res.status(401).json({ error: 'signature' });
     // Falha do lado do Mercado Pago: 502 faz o aviso ser reenviado
     if (!result.ok && result.reason === 'provider') return res.status(502).json({ error: 'provider' });

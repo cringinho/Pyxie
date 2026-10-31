@@ -124,6 +124,26 @@ async function handleOwnerAction(interaction, action, arg, owner) {
     case 'pick':
       return respond(interaction, 'update', () => views.buildPickView({ owner, source: interaction, page: Number(arg) || 0 }));
 
+    case 'donate':
+      return respond(interaction, 'update', () => views.buildDonateView({ owner, source: interaction }));
+
+    case 'donors':
+      return respond(interaction, 'update', () => views.buildDonorsView({ owner, source: interaction }));
+
+    case 'dsel': {
+      const cents = Number(interaction.values?.[0] || 0);
+      const donation = await require('../../../services/donations')
+        .createPixDonation({ userId, cents, name: owner.displayName || owner.username || '', lang })
+        .catch(() => ({ ok: false, reason: 'provider' }));
+      const notice = donation.ok ? null : t(`home.donate.errors.${donation.reason}`, { lang }, {});
+      return respond(interaction, 'update', () => views.buildDonateView({
+        owner,
+        source: interaction,
+        donation: donation.ok ? donation : null,
+        notice: notice && !notice.startsWith('home.') ? notice : null,
+      }));
+    }
+
     case 'select':
       return startPlacing(interaction, owner, interaction.values?.[0]);
 

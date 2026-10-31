@@ -441,6 +441,11 @@ async function buildShopView({ owner, source, selected = null, notice = null }) 
     nav.addComponents(button('buy', owner.id, t('home.btn.buy', { lang }, { name: itemName(entry, lang) }).slice(0, 80), btnEmoji('5707lightpurplecheck', '✅'), ButtonStyle.Success, selected));
   }
   rows.push(nav);
+  // Doação é apoio voluntário e fica em linha própria, separada dos itens da loja.
+  rows.push(new ActionRowBuilder().addComponents(
+    button('donate', owner.id, t('home.donate.btn', { lang }), '💜', ButtonStyle.Primary),
+    button('donors', owner.id, t('home.donors.btn', { lang }), '🏆'),
+  ));
 
   const png = await renderShelf(entries.map((entry) => ({
     itemId: entry.id,
@@ -454,6 +459,87 @@ async function buildShopView({ owner, source, selected = null, notice = null }) 
     files: [new AttachmentBuilder(png, { name: 'loja.png' })],
     attachments: [],
   };
+}
+
+// ---------------------------------------------------------------------------
+// Doações (Pix de valor livre) e ranking — botão separado na loja
+// ---------------------------------------------------------------------------
+
+async function buildDonateView({ owner, source, donation = null, notice = null }) {
+  const lang = getLanguage(source);
+  const donations = require('../../services/donations');
+  const lines = [
+    notice ? `> ${notice}` : null,
+    t('home.donate.intro', { lang }),
+    donation
+      ? t('home.donate.pix', { lang }, {
+        amount: donation.amount.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR', { minimumFractionDigits: 2 }),
+        code: donation.qrCode,
+        date: new Date(donation.expiresAt).toLocaleTimeString(lang === 'en' ? 'en-US' : 'pt-BR'),
+      })
+      : t('home.donate.benefits', { lang }),
+  ].filter(Boolean);
+
+  const embed = new EmbedBuilder()
+    .setColor('#ec4899')
+    .setTitle(t('home.donate.title', { lang }))
+    .setDescription(emojify(lines.join('\n\n')).slice(0, 4000))
+    .setFooter(footer(source, lang))
+    .setTimestamp();
+  if (donation?.qrCodeBase64) embed.setImage('attachment://doacao.png');
+
+  const rows = [];
+  if (!donation) {
+    rows.push(new ActionRowBuilder().addComponents(
+      new StringSelectMenuBuilder()
+        .setCustomId(id('dsel', owner.id))
+        .setPlaceholder(t('home.donate.placeholder', { lang }))
+        .addOptions(donations.PRESETS.map((cents) => ({ label: `R$ ${cents / 100}`, value: String(cents) }))),
+    ));
+  }
+  rows.push(new ActionRowBuilder().addComponents(
+    button('donors', owner.id, t('home.donors.btn', { lang }), '🏆'),
+    button('home', owner.id, t('home.btn.back', { lang }), '↩️'),
+  ));
+
+  const files = donation?.qrCodeBase64
+    ? [new AttachmentBuilder(Buffer.from(donation.qrCodeBase64, 'base64'), { name: 'doacao.png' })]
+    : [];
+  return { content: null, embeds: [embed], components: rows, files };
+}
+
+async function buildDonorsView({ owner, source }) {
+  const lang = getLanguage(source);
+  const donations = require('../../services/donations');
+  const top = donations.ranking({ period: 'month', limit: 10 });
+  const summary = donations.summary();
+  const rows = top.length
+    ? top.map((row, index) => t('home.donors.row', { lang }, {
+      pos: index + 1,
+      name: row.anonymous ? t('home.donors.anonymous', { lang }) : row.label,
+      amount: row.amount.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR', { minimumFractionDigits: 2 }),
+    })).join('\n\n')
+    : t('home.donors.empty', { lang });
+
+  const embed = new EmbedBuilder()
+    .setColor('#8b5cf6')
+    .setTitle(t('home.donors.title', { lang }))
+    .setDescription(emojify([
+      t('home.donors.intro', { lang }, {
+        total: summary.total.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR', { minimumFractionDigits: 2 }),
+        count: summary.count,
+      }),
+      rows,
+      t('home.donors.note', { lang }),
+    ].join('\n\n')).slice(0, 4000))
+    .setFooter(footer(source, lang))
+    .setTimestamp();
+
+  const components = [new ActionRowBuilder().addComponents(
+    button('donate', owner.id, t('home.donate.btn', { lang }), '💜', ButtonStyle.Primary),
+    button('home', owner.id, t('home.btn.back', { lang }), '↩️'),
+  )];
+  return { content: null, embeds: [embed], components };
 }
 
 // ---------------------------------------------------------------------------
@@ -599,6 +685,8 @@ module.exports = {
   buildPlaceView,
   buildArrangeView,
   buildShopView,
+  buildDonateView,
+  buildDonorsView,
   buildBagView,
   buildSurfaceView,
   buildRankView,
