@@ -95,6 +95,21 @@
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
+  <style id="pyxie-text-fallback">
+    /* Defesa: se o navegador não honrar texto com gradiente, volta para cor sólida. */
+    @media (forced-colors: active), (prefers-contrast: more) {
+      h1, h2, h3, [class*="title"], [class*="gradient"] {
+        -webkit-text-fill-color: currentColor !important;
+        background-image: none !important;
+      }
+    }
+    @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+      h1, h2, h3, [class*="title"], [class*="gradient"] {
+        -webkit-text-fill-color: currentColor !important;
+        background-image: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
   <a href="https://pyxie.com.br/?utm_source=widget" target="_blank" rel="noopener dofollow" class="pyxie-card">

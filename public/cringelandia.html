@@ -230,13 +230,16 @@
       flex-direction: column;
     }
 
+    /* Marca: cor sólida de propósito.
+       Gradiente em texto depende de -webkit-text-fill-color; em modo noturno forçado
+       (Brave/Android) e em contraste forçado o texto fica escuro sobre fundo escuro.
+       Legibilidade > efeito. */
     .nav-brand-title {
       font-weight: 800;
       font-size: 18px;
       letter-spacing: -0.3px;
-      background: linear-gradient(135deg, #fff 30%, var(--purple-light) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #ffffff;
+      text-shadow: 0 0 18px rgba(192, 132, 252, 0.35);
     }
 
     .nav-brand-subtitle {
@@ -310,14 +313,18 @@
       box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
     }
 
+    /* H1: cor sólida de propósito.
+       O gradiente anterior usava background-clip:text + text-fill transparente; em
+       modo noturno forçado (Brave/Android) e em contraste forçado o texto virava
+       escuro sobre fundo escuro. Além disso, gradiente em título de 3 linhas atrapalha
+       a leitura. Um leve brilho roxo dá o clima sem depender de suporte do navegador. */
     h1.hero-title {
       font-size: clamp(26px, 4.8vw, 46px);
       font-weight: 900;
       line-height: 1.2;
       margin-bottom: 20px;
-      background: linear-gradient(135deg, #ffffff 40%, var(--purple-light) 80%, var(--accent-pink) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #ffffff;
+      text-shadow: 0 2px 24px rgba(139, 92, 246, 0.45);
       max-width: 950px;
       margin-left: auto;
       margin-right: auto;
@@ -1623,6 +1630,21 @@
     }
   </style>
   <script src="/js/truthHydrator.js" defer></script>
+  <style id="pyxie-text-fallback">
+    /* Defesa: se o navegador não honrar texto com gradiente, volta para cor sólida. */
+    @media (forced-colors: active), (prefers-contrast: more) {
+      h1, h2, h3, [class*="title"], [class*="gradient"] {
+        -webkit-text-fill-color: currentColor !important;
+        background-image: none !important;
+      }
+    }
+    @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+      h1, h2, h3, [class*="title"], [class*="gradient"] {
+        -webkit-text-fill-color: currentColor !important;
+        background-image: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -2900,6 +2922,36 @@
       renderStates(filtered);
     }
 
+    // Nomes de servidor costumam vir com "fontes" Unicode (𝑪𝒓𝒊𝒏𝒈𝒆𝒍𝒂̂𝒏𝒅𝒊𝒂). Muitas
+    // fontes de Android não têm esses glifos e o nome vira caixinhas. Aqui devolvemos o
+    // texto ASCII só para exibição — o dado bruto do Discord continua intacto.
+    const STYLED_BLOCKS = [
+      [0x1d400, 'A'], [0x1d41a, 'a'], [0x1d434, 'A'], [0x1d44e, 'a'],
+      [0x1d468, 'A'], [0x1d482, 'a'], [0x1d49c, 'A'], [0x1d4b6, 'a'],
+      [0x1d4d0, 'A'], [0x1d4ea, 'a'], [0x1d504, 'A'], [0x1d51e, 'a'],
+      [0x1d538, 'A'], [0x1d552, 'a'], [0x1d56c, 'A'], [0x1d586, 'a'],
+      [0x1d5a0, 'A'], [0x1d5ba, 'a'], [0x1d5d4, 'A'], [0x1d5ee, 'a'],
+      [0x1d608, 'A'], [0x1d622, 'a'], [0x1d63c, 'A'], [0x1d656, 'a'],
+      [0x1d670, 'A'], [0x1d68a, 'a'],
+      [0x1d7ce, '0'], [0x1d7d8, '0'], [0x1d7e2, '0'], [0x1d7ec, '0'], [0x1d7f6, '0'],
+    ];
+
+    function pyxiePlainName(raw) {
+      return String(raw || '').replace(/[\u{1D400}-\u{1D7FF}]/gu, (ch) => {
+        const cp = ch.codePointAt(0);
+        for (let i = 0; i < STYLED_BLOCKS.length; i += 1) {
+          const start = STYLED_BLOCKS[i][0];
+          const base = STYLED_BLOCKS[i][1];
+          const offset = cp - start;
+          const limit = base === '0' ? 10 : 26;
+          if (offset >= 0 && offset < limit) {
+            return String.fromCodePoint(base.codePointAt(0) + offset);
+          }
+        }
+        return ch;
+      });
+    }
+
     // Live Discord Widget Sync
     async function loadDiscordLiveGuild() {
       try {
@@ -2913,7 +2965,7 @@
         const onlineEl = document.getElementById('guildOnline');
         const membersEl = document.getElementById('guildMembers');
         const iconEl = document.getElementById('guildIcon');
-        if (nameEl && g.name) nameEl.textContent = g.name;
+        if (nameEl && g.name) nameEl.textContent = pyxiePlainName(g.name);
         if (onlineEl && typeof g.presence_count === 'number') onlineEl.textContent = fmt(g.presence_count);
         if (membersEl && typeof g.member_count === 'number') membersEl.textContent = fmt(g.member_count);
         const liveEl = document.getElementById('guildLive');
