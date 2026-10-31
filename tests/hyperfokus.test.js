@@ -271,7 +271,7 @@ const previewRes = await dispatchHomologationPreview({
   components: stickyPayload.components,
 });
 assert.ok(previewRes.success, 'Despacho de preview deve ser bem-sucedido');
-console.log('    ✅ 8. Prévia de homologação validada com blindagem anti-ping.');
+console.log('    ✅ 8. Prévia de homologação validada com blindagem anti-ping (envio desligado por padrão).');
 
 // Limpa dados de teste
 draftStore.deleteDraft(mockThread.id);

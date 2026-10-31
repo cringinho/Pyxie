@@ -5,6 +5,7 @@ const {
   shieldAntiPing,
   sanitizeEmbed,
   buildHeaderEmbed,
+  previewsEnabled,
   dispatchHomologationPreview,
 } = require('../src/utils/homologationPreviewDispatcher');
 
@@ -67,19 +68,55 @@ assert.ok(header.data.description.includes('/py-tarot'), 'Header deve conter o n
 assert.ok(header.data.fields.some((f) => f.name.includes('Blindagem')), 'Header deve confirmar Blindagem Anti-Ping.');
 console.log('  ✅ 4. Header informativo oficial de homologação validado com sucesso.');
 
-// 5. Testar Despacho Mock / Offline (sem rede)
+// 5. Portão opt-in: por padrão NADA é enviado; com force/PYXIE_PREVIEWS=on o despacho segue.
 (async () => {
-  const result = await dispatchHomologationPreview({
+  const previous = process.env.PYXIE_PREVIEWS;
+  delete process.env.PYXIE_PREVIEWS;
+  assert.strictEqual(previewsEnabled(), false, 'Prévia desligada por padrão');
+
+  let enviado = null;
+  const fakeClient = {
+    channels: {
+      fetch: async () => ({
+        isTextBased: () => true,
+        send: async (payload) => {
+          enviado = payload;
+          return { id: 'msg-preview-1' };
+        },
+      }),
+    },
+  };
+
+  const skipped = await dispatchHomologationPreview({
     commandName: '/py-profile',
     context: 'Teste de Cobertura Unitária',
     embeds: [sourceEmbed],
     content: 'Preview disparada com menção <@123456789>',
-    client: null, // sem client
+    client: fakeClient,
   });
+  assert.strictEqual(skipped.success, true, 'Despacho deve retornar success: true');
+  assert.strictEqual(skipped.skipped, true, 'Sem pedido explícito, nada é enviado');
+  assert.strictEqual(enviado, null, 'Nenhuma mensagem chega ao Discord');
+  assert.ok(skipped.sanitizedPayload && skipped.sanitizedPayload.embedsCount >= 1, 'Payload continua sanitizado para inspeção');
 
-  assert.strictEqual(result.success, true, 'Despacho deve retornar success: true');
-  assert.ok(result.messageId || result.simulated, 'Deve retornar messageId (se REST online) ou simulated (se offline).');
-  console.log('  ✅ 5. Despacho de preview com fallback seguro validado.');
+  const forced = await dispatchHomologationPreview({
+    commandName: '/py-profile',
+    context: 'Envio sob demanda do dono',
+    embeds: [sourceEmbed],
+    content: 'Preview com menção <@123456789>',
+    client: fakeClient,
+    force: true,
+  });
+  assert.strictEqual(forced.messageId, 'msg-preview-1', 'Com force, a prévia é enviada');
+  assert.deepStrictEqual(enviado.allowedMentions, { parse: [], users: [], roles: [], repliedUser: false }, 'Sem pings mesmo no envio');
+  assert.ok(!/(?<!`)<@!?\d+>(?!`)/.test(enviado.content), 'Menção escapada entre crases');
+
+  process.env.PYXIE_PREVIEWS = 'on';
+  assert.strictEqual(previewsEnabled(), true, 'PYXIE_PREVIEWS=on liga o envio');
+  if (previous === undefined) delete process.env.PYXIE_PREVIEWS;
+  else process.env.PYXIE_PREVIEWS = previous;
+
+  console.log('  ✅ 5. Portão de prévias validado (off por padrão; force ou PYXIE_PREVIEWS=on para enviar).');
 
   console.log('\n🎉 TODOS OS TESTES DO HOMOLOGATION PREVIEW DISPATCHER PASSARAM COM 100% DE SUCESSO!\n');
 })().catch((err) => {

@@ -147,6 +147,17 @@ async function restAttachments(files = []) {
   return out;
 }
 
+// Prévia de homologação é opt-in: por padrão NADA é enviado ao canal.
+// Ligue com `PYXIE_PREVIEWS=on` (ou passe `force: true`) só quando o dono pedir.
+const PREVIEW_ENV = 'PYXIE_PREVIEWS';
+const PREVIEW_ON = ['on', '1', 'true', 'yes'];
+
+function previewsEnabled(options = {}) {
+  if (options.force === true) return true;
+  const flag = String(process.env[PREVIEW_ENV] || '').trim().toLowerCase();
+  return PREVIEW_ON.includes(flag);
+}
+
 async function dispatchHomologationPreview({
   client,
   commandName = 'Geral',
@@ -158,6 +169,7 @@ async function dispatchHomologationPreview({
   channelId = HOMOLOGATION_CHANNEL_ID,
   includeHeader = true,
   extraInfo,
+  force = false,
 } = {}) {
   // 1. Normalização e sanitização de Embeds
   const rawEmbedList = Array.isArray(embeds) ? embeds : (embeds ? [embeds] : []);
@@ -190,7 +202,23 @@ async function dispatchHomologationPreview({
     allowedMentions: strictAllowedMentions,
   };
 
-  // 3. Estratégia A: Envio direto via cliente Discord ativo na memória
+  // 3. Portão: sem pedido explícito do dono, nada sai daqui (nem via client, nem via REST).
+  if (!previewsEnabled({ force })) {
+    console.log(`[HomologationPreview] ⏸️ Envio desligado. Use ${PREVIEW_ENV}=on (ou force: true) quando o dono pedir.`);
+    return {
+      success: true,
+      skipped: true,
+      simulated: true,
+      channelId,
+      sanitizedPayload: {
+        content: payload.content,
+        embedsCount: payload.embeds.length,
+        allowedMentions: payload.allowedMentions,
+      },
+    };
+  }
+
+  // 4. Estratégia A: Envio direto via cliente Discord ativo na memória
   if (client && client.channels && typeof client.channels.fetch === 'function') {
     try {
       const channel = await client.channels.fetch(channelId).catch(() => null);
@@ -204,7 +232,7 @@ async function dispatchHomologationPreview({
     }
   }
 
-  // 4. Estratégia B: Envio autônomo via Discord REST API (Node 18+ fetch)
+  // 5. Estratégia B: Envio autônomo via Discord REST API (Node 18+ fetch)
   const botToken = process.env.DISCORD_TOKEN;
   if (botToken && typeof globalThis.fetch === 'function') {
     try {
@@ -258,7 +286,7 @@ async function dispatchHomologationPreview({
     }
   }
 
-  // 5. Estratégia C: Modo Mock / Teste Unitário (ambiente sem rede ou sem token ativo)
+  // 6. Estratégia C: Modo Mock / Teste Unitário (ambiente sem rede ou sem token ativo)
   console.log(`[HomologationPreview] ℹ️ Modo simulação/teste: Embed validado com blindagem anti-ping com sucesso.`);
   return {
     success: true,
@@ -274,6 +302,8 @@ async function dispatchHomologationPreview({
 
 module.exports = {
   HOMOLOGATION_CHANNEL_ID,
+  PREVIEW_ENV,
+  previewsEnabled,
   shieldAntiPing,
   sanitizeEmbed,
   buildHeaderEmbed,
