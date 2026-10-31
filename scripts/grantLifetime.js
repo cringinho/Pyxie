@@ -11,6 +11,7 @@
  */
 const scopes = require('../src/config/scopes');
 const plans = require('../src/services/guildPlans');
+const addons = require('../src/services/guildAddons');
 
 const args = process.argv.slice(2);
 const dry = args.includes('--dry');
@@ -27,9 +28,11 @@ for (const arg of args.filter((a) => a.startsWith('--guild='))) {
 
 function show(guildId, label) {
   const p = plans.getPlan(guildId);
+  const a = addons.status(guildId, 'lojinha');
   const until = p.lifetime ? 'vitalício' : p.paidUntil ? new Date(p.paidUntil).toISOString().slice(0, 10) : '—';
+  const addonLabel = a.active ? (a.lifetime ? 'ativo (vitalício)' : `ativo até ${new Date(a.until).toISOString().slice(0, 10)}`) : 'inativo';
   console.log(
-    `  ${label}\n    id=${guildId} plano=${p.plan} ativo=${p.active} até=${until} origem=${p.source}`
+    `  ${label}\n    id=${guildId} plano=${p.plan} ativo=${p.active} até=${until} origem=${p.source}\n    extras: lojinha ${addonLabel}`
   );
 }
 
@@ -60,6 +63,7 @@ for (const [id, label] of targets) {
     continue;
   }
   console.log(`  ✅ ${label}`);
+  addons.grant(id, 'lojinha', { lifetime: true, source: 'lifetime', note: `vitalício: ${label}` });
   show(id, 'estado final');
 }
 

@@ -177,6 +177,7 @@
       "tarot-state.json",
       "tarot_album.json"
     ],
-    "tests/plansLifetime.test.js": []
+    "tests/plansLifetime.test.js": [],
+    "tests/planAddons.test.js": []
   }
 }

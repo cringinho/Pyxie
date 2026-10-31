@@ -26,17 +26,27 @@ function registerDashboardSection(section) {
   SECTION_REGISTRY.push(section);
 }
 
-// Telas da zona da Mary (client/src/dashboard/Mary.jsx; API no bloco "Estúdio da Mary" abaixo).
-for (const id of ['maryStore', 'maryTools', 'maryProfile']) registerDashboardSection({ id, zones: ['mary'] });
+// Telas do Estúdio de Loja: zona Mary OU servidor com o extra `lojinha` contratado.
+for (const id of ['maryStore', 'maryTools', 'maryProfile']) {
+  registerDashboardSection({ id, zones: ['mary'], addon: 'lojinha' });
+}
 registerDashboardSection({ id: 'hyperfokus', zones: ['cringelandia'], roles: ['owner'] });
 // Módulos que antes só se configuravam pelo Discord: tela e API para todo servidor.
 ['agenda', 'periodic', 'welcome'].forEach((id) => registerDashboardSection({ id }));
 
-function getSections(guildAccess) {
+function getSections(guildAccess, guildId = '') {
   const base = ['overview', 'commands', 'studio', 'features', 'automations', 'injections', 'security', 'channels', 'roles', 'emojiUsage', 'planos'];
   if (guildAccess.canManageAccess) base.push('access');
   if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships');
-  const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
+  // Uma seção entra por zona, ou pelo extra contratado (ex.: `lojinha` fora da zona Mary).
+  let hasAddon = () => false;
+  try {
+    const addons = require('../services/guildAddons');
+    hasAddon = (id) => addons.isActive(guildId, id);
+  } catch (_) {}
+  const extra = SECTION_REGISTRY.filter(
+    (s) => !s.zones || s.zones.includes(guildAccess.zone) || (s.addon && hasAddon(s.addon))
+  )
     .filter((s) => !s.roles || s.roles.includes(guildAccess.role))
     .map((s) => s.id);
   // Set: uma seção registrada nos dois lugares não pode aparecer duas vezes no menu.
@@ -242,8 +252,34 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       zone: req.guildAccess.zone,
       role: req.guildAccess.role,
       canManageAccess: req.guildAccess.canManageAccess,
-      sections: getSections(req.guildAccess),
+      sections: getSections(req.guildAccess, req.params.guildId),
     });
+  });
+
+  // ---------- Extras por servidor (hoje: `lojinha` a R$ 3/mês) ----------
+  // O catálogo é público para quem administra o servidor; a concessão manual serve ao dono
+  // enquanto o checkout não existe (e para cortesias). Extra libera módulo, não economia.
+  router.get('/api/dashboard/guilds/:guildId/addons', requireSession, requireGuild, (req, res) => {
+    const addons = require('../services/guildAddons');
+    return res.json({ success: true, addons: addons.listForGuild(req.params.guildId) });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/addons/:addonId/grant', requireSession, requireGuild, (req, res) => {
+    if (!req.guildAccess.canManageAccess) {
+      return res.status(403).json({ success: false, error: 'guild_owner_only' });
+    }
+    const catalog = require('../config/planAddons').getAddon(req.params.addonId);
+    if (!catalog) return res.status(400).json({ success: false, error: 'invalid_addon' });
+    const body = req.body || {};
+    const result = require('../services/guildAddons').grant(req.params.guildId, catalog.id, {
+      months: body.months,
+      years: body.years,
+      lifetime: body.lifetime === true,
+      source: 'panel',
+      note: String(body.note || 'concessão manual').slice(0, 120),
+    });
+    if (!result.ok) return res.status(400).json({ success: false, error: result.reason });
+    return res.json({ success: true, addon: result.record });
   });
 
   router.get('/api/dashboard/guilds/:guildId/channels', requireSession, requireGuild, async (req, res) => {
@@ -350,9 +386,15 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   });
 
   router.put('/api/dashboard/guilds/:guildId/studio/:msgId', requireSession, requireGuild, requireMsgId, (req, res) => {
-    // Botões da lojinha (calculadora, ticket...) só existem no servidor da Mary.
-    if (req.guildAccess.zone !== 'mary' && (Array.isArray(req.body?.buttons) ? req.body.buttons : []).some((b) => b?.action?.type === 'mary')) {
-      return res.status(403).json({ success: false, error: 'mary_only' });
+    // Botões da lojinha (calculadora, ticket...) existem na zona Mary ou com o extra `lojinha`.
+    const wantsStoreButtons = (Array.isArray(req.body?.buttons) ? req.body.buttons : []).some(
+      (b) => b?.action?.type === 'mary'
+    );
+    const storeAllowed =
+      req.guildAccess.zone === 'mary' ||
+      require('../services/guildAddons').isActive(req.params.guildId, 'lojinha');
+    if (wantsStoreButtons && !storeAllowed) {
+      return res.status(403).json({ success: false, error: 'addon_required', addon: 'lojinha' });
     }
     const result = studioStore.saveMessage(req.params.guildId, { ...(req.body || {}), id: req.params.msgId }, { by: req.panelSession.userId });
     if (!result.ok) return res.status(422).json({ success: false, error: 'validation_failed', errors: result.errors });
@@ -399,20 +441,22 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     }
   });
 
-  // ---------- Estúdio da Mary: lojinha, ferramentas Robux e aparência da Pyxie (zona mary: a Mary e o dono) ----------
-  function requireMary(req, res, next) {
-    if (req.guildAccess.zone !== 'mary') return res.status(403).json({ success: false, error: 'mary_only' });
-    return next();
+  // ---------- Estúdio de Loja: zona Mary (Mary e dono) OU servidor com o extra `lojinha` ----------
+  function requireMaryOrAddon(req, res, next) {
+    if (req.guildAccess.zone === 'mary') return next();
+    const active = require('../services/guildAddons').isActive(req.params.guildId, 'lojinha');
+    if (active) return next();
+    return res.status(403).json({ success: false, error: 'addon_required', addon: 'lojinha' });
   }
   const mary = () => require('../modules/mary-studio/maryDashboard');
   const maryReply = (res, result, okBody) => (result.ok ? res.json({ success: true, ...okBody(result) }) : res.status(result.error === 'roblox_not_found' ? 404 : 400).json({ success: false, error: result.error }));
   const maryUpload = express.raw({ type: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], limit: '8mb' });
 
-  router.get('/api/dashboard/guilds/:guildId/mary/store', requireSession, requireGuild, requireMary, (req, res) => {
+  router.get('/api/dashboard/guilds/:guildId/mary/store', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
     return res.json({ success: true, store: mary().getStore(), templates: mary().listTemplates() });
   });
 
-  router.put('/api/dashboard/guilds/:guildId/mary/store', requireSession, requireGuild, requireMary, async (req, res) => {
+  router.put('/api/dashboard/guilds/:guildId/mary/store', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
     const body = req.body || {};
     const lists = { channels: [], roles: [] };
     try {
@@ -424,19 +468,19 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return maryReply(res, mary().saveStore(body, lists), (r) => ({ store: r.store }));
   });
 
-  router.post('/api/dashboard/guilds/:guildId/mary/calc', requireSession, requireGuild, requireMary, (req, res) => {
+  router.post('/api/dashboard/guilds/:guildId/mary/calc', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
     return maryReply(res, mary().calc(req.body || {}), ({ ok, ...r }) => ({ result: r }));
   });
 
-  router.get('/api/dashboard/guilds/:guildId/mary/roblox/gamepass', requireSession, requireGuild, requireMary, async (req, res) => {
+  router.get('/api/dashboard/guilds/:guildId/mary/roblox/gamepass', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
     return maryReply(res, await mary().inspectGamepass(req.query.input), (r) => ({ gamepass: r.gamepass }));
   });
 
-  router.get('/api/dashboard/guilds/:guildId/mary/roblox/user', requireSession, requireGuild, requireMary, async (req, res) => {
+  router.get('/api/dashboard/guilds/:guildId/mary/roblox/user', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
     return maryReply(res, await mary().inspectUser(req.query.username), (r) => ({ user: r.user }));
   });
 
-  router.post('/api/dashboard/guilds/:guildId/mary/receipt', requireSession, requireGuild, requireMary, async (req, res) => {
+  router.post('/api/dashboard/guilds/:guildId/mary/receipt', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
     try {
       return maryReply(res, await mary().sendReceipt(req.params.guildId, req.body || {}, { fetchImpl: doFetch }), (r) => ({ messageId: r.messageId }));
     } catch (err) {
@@ -444,7 +488,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     }
   });
 
-  router.post('/api/dashboard/guilds/:guildId/mary/giveaway', requireSession, requireGuild, requireMary, async (req, res) => {
+  router.post('/api/dashboard/guilds/:guildId/mary/giveaway', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
     try {
       return maryReply(res, await mary().createGiveaway(req.params.guildId, req.body || {}, { fetchImpl: doFetch }), ({ ok, ...r }) => r);
     } catch (err) {
@@ -452,20 +496,20 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     }
   });
 
-  router.get('/api/dashboard/guilds/:guildId/mary/profile', requireSession, requireGuild, requireMary, (req, res) => {
+  router.get('/api/dashboard/guilds/:guildId/mary/profile', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
     return res.json({ success: true, profile: mary().getProfile() });
   });
 
-  router.put('/api/dashboard/guilds/:guildId/mary/profile', requireSession, requireGuild, requireMary, async (req, res) => {
+  router.put('/api/dashboard/guilds/:guildId/mary/profile', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
     return maryReply(res, await mary().saveProfile(req.params.guildId, req.body || {}), (r) => ({ profile: r.profile }));
   });
 
-  router.post('/api/dashboard/guilds/:guildId/mary/upload', requireSession, requireGuild, requireMary, maryUpload, (req, res) => {
+  router.post('/api/dashboard/guilds/:guildId/mary/upload', requireSession, requireGuild, requireMaryOrAddon, maryUpload, (req, res) => {
     const result = require('../modules/mary-studio/maryStudioManager').saveUpload(req.body);
     return result.ok ? res.json({ success: true, url: result.url }) : res.status(result.error === 'file_too_large' ? 413 : 400).json({ success: false, error: result.error });
   });
 
-  router.post('/api/dashboard/guilds/:guildId/mary/templates/:templateId', requireSession, requireGuild, requireMary, (req, res) => {
+  router.post('/api/dashboard/guilds/:guildId/mary/templates/:templateId', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
     return maryReply(res, mary().createFromTemplate(req.params.guildId, req.params.templateId, { by: req.panelSession.userId }), (r) => ({ id: r.id }));
   });
 

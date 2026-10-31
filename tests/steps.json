@@ -73,7 +73,8 @@
     "node tests/voiceSeeder.test.js",
     "node tests/hyperfokus.test.js",
     "node tests/plansLifetime.test.js",
+    "node tests/planAddons.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T17:20:13.963Z"
+  "updatedAt": "2026-10-31T17:31:17.560Z"
 }
