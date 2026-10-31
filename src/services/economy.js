@@ -119,6 +119,32 @@ const THEMES_CATALOG = {
   arcade: { id: 'arcade', name: 'Arcade 8-bit', nameEn: '8-bit Arcade', emoji: '🕹️', color: '#facc15', cost: 4, desc: 'Pixels coloridos de fliperama clássico.', descEn: 'Colorful pixels from a classic arcade.' },
 };
 
+// Pacotes de AppEmojis por tema (imersão do /py-profile). Nome fora do catálogo cai no
+// emoji unicode do tema — nunca fica vazio nem quebra.
+const THEME_EMOJI_PACKS = {
+  default: ['pink_ribbon', 'heart', 'purplesparkles'],
+  ouro: ['premium_crown', 'goldcoin', 'Crown'],
+  esmeralda: ['Beans_magic', 'peakmagicbean', 'farmdcatflower'],
+  galaxia: ['Moon', 'pastelstarturn60', 'purplesparkles'],
+  cyberpunk: ['shineygoldcoinsi', 'neonheart5ae', 'ilcoin3'],
+  chama: ['padevilheart1', 'bat22', 'cafehalloweenbat'],
+  diamante: ['ace_heart', 'cekprideheart', 'pridesparkles'],
+  aurora: ['pastelstarturn60', 'purplesparkles', 'Moon'],
+  sakura: ['pink_ribbon', '1075pinkhearts', 'pinkyhearts38'],
+  vaporwave: ['music76', 'neonheart5ae', 'purplesparkles'],
+  matcha: ['Beans_magic', 'farmdcatflower', 'peakmagicbean'],
+  noir: ['pinkghost', 'boo_ghost', 'kikskull'],
+  arcade: ['coin', 'lego_coin', 'ilcoin3'],
+};
+
+function getThemeEmojiPack(themeId) {
+  const theme = THEMES_CATALOG[themeId] || THEMES_CATALOG.default;
+  const pack = (THEME_EMOJI_PACKS[theme.id] || [])
+    .map((name) => getEmoji(name))
+    .filter((value) => typeof value === 'string' && value && !value.includes('undefined'));
+  return pack.length ? pack : [theme.emoji];
+}
+
 function normalizeNumber(value, fallback = 0) {
   const num = Number(value);
   return Number.isFinite(num) ? num : fallback;
@@ -1315,6 +1341,7 @@ module.exports = {
   setUserBio,
   setProfileStyle,
   getThemesCatalog,
+  getThemeEmojiPack,
   getUserThemes,
   buyTheme,
   equipTheme,

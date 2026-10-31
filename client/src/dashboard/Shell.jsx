@@ -11,6 +11,7 @@ import {
   DoorOpen,
   Repeat,
   Hash,
+  Home,
   Ghost,
   Handshake,
   HeartHandshake,
@@ -93,6 +94,13 @@ export const SECTION_META = {
 };
 
 const GROUP_ORDER = ['core', 'mary', 'messages', 'config', 'safety', 'system', 'content', 'more'];
+
+// Atalhos para fora do painel: blog do Hyperfokus, site da Pyxie e a Cringelândia.
+const SITE_LINKS = [
+  { key: 'hyperfokus', href: '/hyperfokus', icon: BookOpen },
+  { key: 'home', href: '/', icon: Home },
+  { key: 'cringelandia', href: '/cringelandia', icon: HeartHandshake },
+];
 
 export function sectionIcon(id) {
   return SECTION_META[id]?.icon || Wrench;
@@ -392,6 +400,21 @@ export function Layout({ t, lang, setLang, me, onLogout, nav, crumbs, activeGuil
           </ol>
           <span className="truncate font-title font-bold md:hidden">{crumbs[crumbs.length - 1]?.label}</span>
           <div className="ml-auto flex shrink-0 items-center gap-2">
+            <nav aria-label={t('nav.site.title')} className="hidden items-center gap-0.5 md:flex">
+              {SITE_LINKS.map(({ key, href, icon: Icon }) => (
+                <a
+                  key={key}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={t(`nav.site.${key}`)}
+                  aria-label={t(`nav.site.${key}`)}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl text-white/55 transition hover:bg-white/10 hover:text-white"
+                >
+                  <Icon size={18} aria-hidden="true" />
+                </a>
+              ))}
+            </nav>
             <button
               type="button"
               onClick={() => setPalette(true)}

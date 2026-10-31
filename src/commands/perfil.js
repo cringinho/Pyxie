@@ -22,6 +22,7 @@ const {
   equipTitle,
   unequipTitle,
   getThemesCatalog,
+  getThemeEmojiPack,
   getUserThemes,
   buyTheme,
   equipTheme,
@@ -221,7 +222,7 @@ async function buildStudioView(targetUser, viewerId, source = null) {
       [
         t('profileStudio.intro', source),
         t('profileStudio.section_current', source),
-        t('profileStudio.line_theme', source, { value: `${theme.emoji} ${isEn ? theme.nameEn || theme.name : theme.name}` }),
+        t('profileStudio.line_theme', source, { value: `${getThemeEmojiPack(account.equippedTheme || 'default').join(' ')} ${isEn ? theme.nameEn || theme.name : theme.name}` }),
         t('profileStudio.line_layout', source, { value: t(`profileStudio.layout_${style.layout}`, source) }),
         t('profileStudio.line_frame', source, { value: t(`profileStudio.frame_${style.frame}`, source) }),
         t('profileStudio.line_showcase', source, { value: showcaseText }),
@@ -442,8 +443,8 @@ async function buildThemesView(targetUser, viewerId, source = null, previewTheme
   const attachment = await renderCardAttachment(targetUser, source, previewTheme ? { theme: previewTheme.id } : null);
 
   const headline = previewTheme
-    ? (isEn ? `### 👀 Previewing: ${previewTheme.emoji} ${nameOf(previewTheme)}` : `### 👀 Experimentando: ${previewTheme.emoji} ${nameOf(previewTheme)}`)
-    : (isEn ? `### 🎨 Current Theme: ${shownTheme.emoji} ${nameOf(shownTheme)}` : `### 🎨 Tema Atual: ${shownTheme.emoji} ${nameOf(shownTheme)}`);
+    ? (isEn ? `### 👀 Previewing: ${getThemeEmojiPack(previewTheme.id).join(' ')} ${nameOf(previewTheme)}` : `### 👀 Experimentando: ${getThemeEmojiPack(previewTheme.id).join(' ')} ${nameOf(previewTheme)}`)
+    : (isEn ? `### 🎨 Current Theme: ${getThemeEmojiPack(shownTheme.id).join(' ')} ${nameOf(shownTheme)}` : `### 🎨 Tema Atual: ${getThemeEmojiPack(shownTheme.id).join(' ')} ${nameOf(shownTheme)}`);
 
   const desc = [
     isEn

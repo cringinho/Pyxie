@@ -675,6 +675,7 @@ app.get('/api/pass/info', publicApiLimiter, (req, res) => {
         .map((row) => ({ level: row.level, free: row.free.itemId ? itemName(getItem(row.free.itemId), lang) : null, premium: row.premium.itemId ? itemName(getItem(row.premium.itemId), lang) : null })),
       user,
       tokenValid: Boolean(session),
+      support: require('./src/config/support'),
     });
   } catch (err) {
     res.status(500).json({ error: 'pass_unavailable' });
