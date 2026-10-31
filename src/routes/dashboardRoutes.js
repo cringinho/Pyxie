@@ -641,12 +641,22 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const autoStats = require('../services/automationStats');
     const schema = auto.publicSchema();
     const configs = Object.fromEntries(Object.keys(schema).map((k) => [k, auto.getConfig(req.params.guildId, k, { fresh: true })]));
+    // Ciclo do bump (bumps, sequência, ranking e próximo aviso) para o painel mostrar números reais.
+    let bumpState = null;
+    try {
+      const bump = require('../services/bumpReminder');
+      const autoState = require('../services/autoState');
+      bumpState = bump.insights(autoState.read(req.params.guildId, 'bump.json'), auto.getConfig(req.params.guildId, 'bumpReminder', { fresh: true }));
+    } catch (_) {
+      bumpState = null;
+    }
     return res.json({
       success: true,
       schema,
       configs,
       stats: autoStats.read(req.params.guildId),
       summary: autoStats.summary(req.params.guildId),
+      bumpState,
     });
   });
 
@@ -711,6 +721,18 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     if (key && !auto.SCHEMA[key]) return res.status(404).json({ success: false, error: 'unknown_automation' });
     const stats = autoStats.reset(req.params.guildId, key);
     return res.json({ success: true, stats, summary: autoStats.summary(req.params.guildId) });
+  });
+
+  // Bump: zera bumps/sequência/ranking e mantém o ciclo em andamento e a config intacta.
+  router.post('/api/dashboard/guilds/:guildId/automations/bumpReminder/reset-state', requireSession, requireGuild, (req, res) => {
+    const auto = require('../services/automations');
+    const autoState = require('../services/autoState');
+    const bump = require('../services/bumpReminder');
+    const guildId = req.params.guildId;
+    const saved = bump.normalizeState(autoState.read(guildId, 'bump.json'));
+    const reset = { ...bump.clearCounters(), lastBump: saved.lastBump, reminder: saved.reminder };
+    autoState.write(guildId, 'bump.json', reset);
+    return res.json({ success: true, bumpState: bump.insights(reset, auto.getConfig(guildId, 'bumpReminder', { fresh: true })) });
   });
 
   router.put('/api/dashboard/guilds/:guildId/automations/:key', requireSession, requireGuild, async (req, res) => {

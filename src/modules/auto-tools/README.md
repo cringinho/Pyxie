@@ -12,7 +12,7 @@ Sete ferramentas do dia a dia. Cada servidor liga em Painel → **Automações**
 - **Recado agendado** nos dias e hora escolhidos (Brasília).
 - **Resumo semanal** para a staff: mensagens, entradas, saídas, comandos e automações que mais agiram na semana.
 - **Arquivo de fixadas:** perto do limite de 50, move as mais antigas para um canal de arquivo.
-- **Lembrete de bump** do Disboard depois de 2 h.
+- **Lembrete de bump (2.0):** depois de um `/bump` no DISBOARD, avisa quando der para dar de novo. O aviso pode ir no mesmo canal ou num canal fixo, como cartão (cor, título e texto com `{user}`, `{role}`, `{count}`, `{streak}`) ou texto puro, com até três cargos marcados, botão que abre a página do servidor no DISBOARD, DM para quem bumpou, horário de silêncio (segura o aviso de madrugada e retoma às 08:00 de Brasília) e repetição opcional até alguém bumpar. Também apaga o aviso antigo quando chega bump novo, apaga o lembrete depois do tempo escolhido, agradece cada bump com a sequência de dias, celebra marcos de N bumps e guarda bumps totais, recorde, ranking de quem mais bumpa e o melhor horário/dia — tudo no painel (Automações → Lembrete de bump), com botão para zerar os contadores.
 
 ## Comandos no Discord
 

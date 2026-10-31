@@ -52,10 +52,20 @@ function cleanField(f, value) {
   }
 }
 
+// Configs antigas ganham os campos novos sem perder o que já estava salvo.
+const MIGRATIONS = {
+  // O lembrete de bump tinha um cargo só (`roleId`); agora aceita até três (`roleIds`).
+  bumpReminder: (raw, config) => {
+    if (!config.roleIds.length && ID_RE.test(String(raw.roleId || ''))) config.roleIds = [String(raw.roleId)];
+    return config;
+  },
+};
+
 function normalize(key, raw = {}) {
   const def = SCHEMA[key];
   if (!def) return null;
-  return Object.fromEntries(def.fields.map((f) => [f.key, cleanField(f, raw[f.key])]));
+  const config = Object.fromEntries(def.fields.map((f) => [f.key, cleanField(f, raw[f.key])]));
+  return MIGRATIONS[key] ? MIGRATIONS[key](raw, config) : config;
 }
 
 function fileFor(guildId) {
@@ -111,9 +121,18 @@ function saveBulk(guildId, patchMap = {}) {
 }
 
 // Campos de canal/cargo para o site conferir que pertencem ao servidor.
+// Campos escondidos pelo `showIf` (ex.: canal fixo desligado) não entram na conferência.
+function matchesShowIf(showIf, config = {}) {
+  return Object.entries(showIf || {}).every(([field, want]) => {
+    const current = config[field];
+    return Array.isArray(want) ? want.includes(current) : current === want;
+  });
+}
+
 function idsToCheck(key, config) {
   const out = { channels: [], roles: [] };
   for (const f of SCHEMA[key]?.fields || []) {
+    if (f.showIf && !matchesShowIf(f.showIf, config)) continue;
     const v = config[f.key];
     if (f.type === 'channel' && v) out.channels.push(v);
     if (f.type === 'channels') out.channels.push(...v);

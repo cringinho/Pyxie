@@ -135,7 +135,6 @@ const TEXT_PREVIEW = [
   'memberCounter',
   'faqReplies',
   'scheduledMessages',
-  'bumpReminder',
 ];
 const KNOWN_ERRORS = ['invalid_channel', 'invalid_role', 'unknown_automation', 'bridge_error', 'automod_exists', 'missing_permission', 'automod_error'];
 const GROUP_ORDER = ['community', 'safety', 'moderation', 'utility'];
@@ -194,6 +193,40 @@ const PREVIEWS = {
     ]),
   ),
   ...Object.fromEntries(TEXT_PREVIEW.map((k) => [k, (t) => ({ content: t(`auto.${k}.prev.content`) })])),
+  // Lembrete de bump: a prévia segue o rascunho (texto x cartão, cor, cargos, botão e silêncio).
+  bumpReminder: (t, cfg) => {
+    const vars = {
+      server: t('auto.bumpReminder.prev.server'),
+      user: '`@pessoa`',
+      name: 'pessoa',
+      count: '9',
+      streak: '3',
+      hours: Math.max(1, Math.round(((Number(cfg.cooldownMinutes) || 120) / 60) * 10) / 10),
+    };
+    const roles = (cfg.roleIds || []).length ? ['`@cargo`'] : [];
+    const mode = cfg.pingMode || 'roles';
+    const rolePart = mode === 'roles' || mode === 'both' ? roles : [];
+    const bumperPart = mode === 'bumper' || mode === 'both' ? ['`@quem_bumpou`'] : [];
+    const mentionLine = [...rolePart, ...bumperPart].join(' ');
+    vars.role = mentionLine;
+    const fill = (text) => String(text || '').replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
+    const custom = String(cfg.customMessage || '').trim();
+    const buttons = cfg.showButton !== false ? [{ label: t('auto.bumpReminder.prev.button'), style: 'secondary' }] : [];
+    if (cfg.useEmbed === false) {
+      const text = custom ? fill(custom) : mentionLine ? t('auto.bumpReminder.prev.withRole', { role: mentionLine }) : t('auto.bumpReminder.prev.content');
+      return { content: custom && mentionLine ? `${mentionLine}\n${text}` : text, buttons };
+    }
+    return {
+      content: mentionLine || undefined,
+      embed: {
+        color: /^#[0-9a-f]{6}$/i.test(cfg.color || '') ? cfg.color : '#ec4899',
+        title: String(cfg.cardTitle || '').trim() ? fill(cfg.cardTitle) : t('auto.bumpReminder.prev.title', vars),
+        description: custom ? fill(custom) : t('auto.bumpReminder.prev.body', vars),
+        footer: t('auto.bumpReminder.prev.footer', vars),
+      },
+      buttons,
+    };
+  },
 };
 
 function metaFor(t, key, stats) {
@@ -202,8 +235,77 @@ function metaFor(t, key, stats) {
       posts: stats.posts,
       answered: stats.answered || 0,
     });
+  if (key === 'bumpReminder' && (stats?.bumps || stats?.reminders))
+    return t('auto.bumpReminder.meta', { bumps: stats.bumps || 0, reminders: stats.reminders || 0 });
   if (stats?.hits) return t('auto.hits', { n: stats.hits });
   return null;
+}
+
+// Números do ciclo de bump: quem bumpa, sequência de dias e quando sai o próximo aviso.
+function BumpStats({ t, state, onReset, busy }) {
+  if (!state) return null;
+  const fmt = (value) => (value ? new Date(value).toLocaleString() : '—');
+  const weekday = (n) => (n === null || n === undefined ? '—' : t(`agenda.weekday.${n}`));
+  const hour = (n) => (n === null || n === undefined ? '—' : `${String(n).padStart(2, '0')}:00`);
+  const tiles = [
+    [t('auto.bumpReminder.bump.total'), state.total],
+    [t('auto.bumpReminder.bump.reminders'), state.reminders],
+    [t('auto.bumpReminder.bump.streak'), state.streak],
+    [t('auto.bumpReminder.bump.best'), state.bestStreak],
+  ];
+  return (
+    <div className="space-y-2.5 rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs">
+      <div className="grid grid-cols-2 gap-2">
+        {tiles.map(([label, value]) => (
+          <div key={label}>
+            <p className="text-[10px] uppercase tracking-wide text-white/45">{label}</p>
+            <p className="font-title text-base font-bold text-white">{value}</p>
+          </div>
+        ))}
+      </div>
+      <p className="text-white/60">
+        {t('auto.bumpReminder.bump.next')}: <span className="text-mystic-glow">{fmt(state.nextAt)}</span>
+        {state.pending ? ` · ${t('auto.bumpReminder.bump.pending')}` : ''}
+      </p>
+      {state.lastAt && (
+        <p className="text-white/60">
+          {t('auto.bumpReminder.bump.last')}:{' '}
+          {t('auto.bumpReminder.bump.lastBy', { name: state.lastUserName || '—', date: fmt(state.lastAt) })}
+        </p>
+      )}
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-white/60">
+        <p>{t('auto.bumpReminder.bump.bestHour')}: <span className="text-white">{hour(state.bestHour)}</span></p>
+        <p>{t('auto.bumpReminder.bump.bestWeekday')}: <span className="text-white">{weekday(state.bestWeekday)}</span></p>
+      </div>
+      {state.top?.length > 0 ? (
+        <div>
+          <p className="mb-1 text-[10px] uppercase tracking-wide text-white/45">{t('auto.bumpReminder.bump.top')}</p>
+          <ol className="space-y-0.5">
+            {state.top.map((u, i) => (
+              <li key={u.id} className="flex items-center justify-between gap-2 text-white/70">
+                <span className="truncate">
+                  <span className="mr-1 text-white/35">#{i + 1}</span>
+                  {u.name || u.id}
+                </span>
+                <span className="shrink-0 font-semibold text-white">{u.n}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : (
+        <p className="text-white/45">{state.total ? t('auto.bumpReminder.bump.rankingOff') : t('auto.bumpReminder.bump.empty')}</p>
+      )}
+      <button
+        type="button"
+        onClick={onReset}
+        disabled={busy}
+        className="inline-flex min-h-[32px] items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 text-[11px] font-semibold text-white/70 hover:bg-white/10 hover:text-white disabled:opacity-50"
+      >
+        <RotateCcw size={12} aria-hidden="true" />
+        {t('auto.bumpReminder.bump.reset')}
+      </button>
+    </div>
+  );
 }
 
 // Automações: cartões por grupo; o painel da direita edita a escolhida com prévia ao vivo.
@@ -221,6 +323,7 @@ export default function Automations({ t, guildId }) {
   const [statusFilter, setStatusFilter] = useState('all');
   const [groupFilter, setGroupFilter] = useState('all');
   const [togglingKey, setTogglingKey] = useState(null);
+  const [bumpBusy, setBumpBusy] = useState(false);
 
   useEffect(() => {
     api
@@ -293,6 +396,17 @@ export default function Automations({ t, guildId }) {
       setData((prev) => ({ ...prev, stats: res.stats, summary: res.summary }));
     } catch (_) {}
   };
+  const resetBump = async () => {
+    setBumpBusy(true);
+    try {
+      const res = await api.resetBumpState(guildId);
+      setData((prev) => ({ ...prev, bumpState: res.bumpState }));
+    } catch (_) {
+      // Sem estardalhaço: o botão continua disponível e nada muda na tela.
+    } finally {
+      setBumpBusy(false);
+    }
+  };
   const save = async () => {
     setSaving(true);
     setStatus(null);
@@ -312,6 +426,7 @@ export default function Automations({ t, guildId }) {
   const preview = open && PREVIEWS[open]?.(t, draft, sample);
   const openStats = open ? data.stats?.[open] : null;
   const openHits = (openStats?.hits || 0) + (openStats?.posts || 0);
+  const openMeta = open ? metaFor(t, open, openStats) : null;
   const aside = def && (
     <ConfigAside
       icon={ICONS[def.icon] || Sparkles}
@@ -333,10 +448,10 @@ export default function Automations({ t, guildId }) {
       }
     >
       <p className="text-sm text-white/70">{t(`auto.${open}.desc`)}</p>
-      {(openHits > 0 || openStats?.lastAt) && (
+      {(openHits > 0 || openMeta || openStats?.lastAt) && (
         <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs">
           <div className="space-y-0.5">
-            {openHits > 0 && <p className="font-semibold text-mystic-glow">{metaFor(t, open, openStats)}</p>}
+            {openMeta && <p className="font-semibold text-mystic-glow">{openMeta}</p>}
             {openStats?.lastAt && (
               <p className="text-white/50">
                 {t('auto.lastTriggered', { date: new Date(openStats.lastAt).toLocaleString() })}
@@ -353,6 +468,7 @@ export default function Automations({ t, guildId }) {
           </button>
         </div>
       )}
+      {open === 'bumpReminder' && <BumpStats t={t} state={data.bumpState} onReset={resetBump} busy={bumpBusy} />}
       {preview && (
         <div className="space-y-2">
           <DiscordPreview label={t('auto.preview')} {...preview} />

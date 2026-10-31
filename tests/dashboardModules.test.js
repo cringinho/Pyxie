@@ -167,6 +167,24 @@ function cookieFor(userId) {
     assert.ok(Array.isArray(ag.agenda));
     console.log('  ✅ 6. Rotas do painel com conferência ao vivo de canal e cargo.');
 
+    // 6b. Bump 2.0: o painel recebe o ciclo, migra o cargo antigo e zera os contadores.
+    const autoState = require('../src/services/autoState');
+    const bumpSvc = require('../src/services/bumpReminder');
+    const bumpMessage = { id: '777777777777777777', channel: { id: CH }, interaction: { user: { id: '214153735281180673', username: 'dono' } } };
+    autoState.write(G, 'bump.json', bumpSvc.recordBump({}, bumpMessage, Date.now()).state);
+    const auto = await (await call(`/api/dashboard/guilds/${G}/automations`, { cookie: admin })).json();
+    assert.equal(auto.bumpState.total, 1, 'GET do painel traz bumps, sequência e ranking');
+    assert.ok(auto.schema.bumpReminder.fields.length >= 20, 'Esquema com todas as opções de customização');
+    const put = await (await call(`/api/dashboard/guilds/${G}/automations/bumpReminder`, { cookie: admin, method: 'PUT', body: { enabled: true, roleId: ROLE } })).json();
+    assert.deepEqual(put.config.roleIds, [ROLE], 'Cargo antigo migra para a lista');
+    assert.equal(put.config.useEmbed, true, 'Cartão por padrão');
+    const badAuto = await call(`/api/dashboard/guilds/${G}/automations/bumpReminder`, { cookie: admin, method: 'PUT', body: { enabled: true, channelMode: 'fixed', channelId: '999999999999999999' } });
+    assert.equal(badAuto.status, 400);
+    assert.equal((await badAuto.json()).error, 'invalid_channel');
+    const resetBump = await (await call(`/api/dashboard/guilds/${G}/automations/bumpReminder/reset-state`, { cookie: admin, method: 'POST', body: {} })).json();
+    assert.equal(resetBump.bumpState.total, 0, 'Zerar contadores pelo painel');
+    console.log('  ✅ 6b. Rotas do lembrete de bump: ciclo, migração e zerar contadores.');
+
     // 7. Acolhimento: Cringelândia com os valores antigos; outros servidores configuram tudo.
     const welcomeFlow = require('../src/services/welcomeFlow');
     const checkin = require('../src/services/welcomeCheckinService');

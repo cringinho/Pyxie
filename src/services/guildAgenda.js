@@ -45,10 +45,14 @@ function getGuildAgenda(guildId, now = Date.now()) {
     const nextAt = nextWeekly(now, [digest.weekday], 10);
     if (nextAt) items.push({ id: 'weeklyDigest', emoji: '📊', section: 'automations', channelId: digest.channelId, nextAt, every: { weekdays: [digest.weekday], hour: 10 } });
   }
-  const bump = auto.getConfig(guildId, 'bumpReminder');
-  const bumpState = state.read(guildId, 'bump.json');
-  if (bump.enabled && bumpState.at && !bumpState.reminded && bumpState.channelId) {
-    items.push({ id: 'bumpReminder', emoji: '⏰', section: 'automations', channelId: bumpState.channelId, nextAt: Math.max(now, bumpState.at + 2 * HOUR), every: { afterBump: 2 } });
+  const bumpCfg = auto.getConfig(guildId, 'bumpReminder');
+  const bumpSvc = require('./bumpReminder');
+  const bumpState = bumpSvc.normalizeState(state.read(guildId, 'bump.json'));
+  const bumpNextAt = bumpSvc.nextReminderAt(bumpCfg, bumpState, now);
+  const bumpChannelId = bumpCfg.channelMode === 'fixed' && bumpCfg.channelId ? bumpCfg.channelId : bumpState.reminder.channelId;
+  if (bumpCfg.enabled && bumpNextAt && bumpChannelId) {
+    const hours = Math.max(1, Math.round(((Number(bumpCfg.cooldownMinutes) || 120) / 60) * 10) / 10);
+    items.push({ id: 'bumpReminder', emoji: '⏰', section: 'automations', channelId: bumpChannelId, nextAt: Math.max(now, bumpNextAt), every: { afterBump: hours } });
   }
   const checkin = require('./welcomeFlow').getConfig(guildId).checkin;
   if (checkin.enabled && checkin.channelId) {

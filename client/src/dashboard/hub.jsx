@@ -191,15 +191,23 @@ function Wrap({ label, children }) {
 }
 
 // Formulário montado pelo esquema das automações. Rótulos: auto.<key>.<campo>[.<opção>].
+// `showIf: { campo: valor | [valores] }` esconde controles que não se aplicam à escolha atual.
 export function SchemaForm({ t, schemaKey, fields, value, onChange, channels = [], roles = [] }) {
   const set = (k, v) => onChange({ ...value, [k]: v });
   const label = (f) => t(`auto.${schemaKey}.${f.key}`);
+  const visible = (f) => {
+    if (!f.showIf) return true;
+    return Object.entries(f.showIf).every(([key, want]) => {
+      const current = value[key];
+      return Array.isArray(want) ? want.includes(current) : current === want;
+    });
+  };
   const text = channels.filter((c) => [0, 5, 15].includes(c.type)).map((c) => ({ id: c.id, label: `# ${c.name}` }));
   const voice = channels.filter((c) => [2, 13].includes(c.type)).map((c) => ({ id: c.id, label: `🔊 ${c.name}` }));
   const roleOpts = roles.filter((r) => !r.managed && r.name !== '@everyone').map((r) => ({ id: r.id, label: r.name }));
   return (
     <div className="space-y-4">
-      {fields.map((f) => {
+      {fields.filter(visible).map((f) => {
         const v = value[f.key];
         if (f.type === 'toggle') {
           return (

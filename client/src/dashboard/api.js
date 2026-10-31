@@ -67,6 +67,7 @@ export const api = {
   saveAutomation: (id, key, body) => request(`/api/dashboard/guilds/${id}/automations/${key}`, { method: 'PUT', body }),
   bulkAutomations: (id, body) => request(`/api/dashboard/guilds/${id}/automations/bulk`, { method: 'POST', body }),
   resetAutomationStats: (id, key = 'all') => request(`/api/dashboard/guilds/${id}/automations/${encodeURIComponent(key)}/reset-stats`, { method: 'POST', body: {} }),
+  resetBumpState: (id) => request(`/api/dashboard/guilds/${id}/automations/bumpReminder/reset-state`, { method: 'POST', body: {} }),
   activity: (id) => request(`/api/dashboard/guilds/${id}/activity`),
   botPermissions: (id) => request(`/api/dashboard/guilds/${id}/bot-permissions`),
   staleInvites: (id, days) => request(`/api/dashboard/guilds/${id}/invites/stale?days=${days}`),

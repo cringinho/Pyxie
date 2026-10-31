@@ -736,7 +736,16 @@ const TRANSLATIONS = {
       },
       "bump": {
         "text": "⏰ Já dá para dar `/bump` de novo!",
-        "withRole": "⏰ {role}, já dá para dar `/bump` de novo!"
+        "withRole": "⏰ {role}, já dá para dar `/bump` de novo!",
+        "embedTitle": "⏰ Bump liberado em {server}",
+        "embedBody": "### ⏰ Já dá para dar `/bump` de novo\n\n> Um bump a cada {hours} h mantém **{server}** na vitrine do DISBOARD.\n\n-# Já são `{count}` bumps no total 💜",
+        "footer": "{server} • `{count}` bumps no total",
+        "open": "Abrir DISBOARD",
+        "someone": "alguém",
+        "fallbackServer": "nosso servidor",
+        "dm": "⏰ O bump de **{server}** liberou de novo.\n\n> Se puder dar de novo, eu agradeço. É isso que mantém o servidor visível.",
+        "thanks": "### 💜 Valeu pelo bump, {user}!\n\n> Sequência de **{streak}** dia(s) e `{count}` bumps no total.\n\n-# Continua assim que eu finjo que não me importo.",
+        "milestone": "### 🎉 {count} bumps!\n\n> O servidor chegou a `{count}` bumps. Obrigada a todo mundo que ajuda, {user}."
       }
     },
     "linkShield": {
@@ -3733,7 +3742,16 @@ const TRANSLATIONS = {
       },
       "bump": {
         "text": "⏰ You can `/bump` again!",
-        "withRole": "⏰ {role}, you can `/bump` again!"
+        "withRole": "⏰ {role}, you can `/bump` again!",
+        "embedTitle": "⏰ Bump ready on {server}",
+        "embedBody": "### ⏰ You can `/bump` again\n\n> One bump every {hours} h keeps **{server}** on DISBOARD's showcase.\n\n-# That's `{count}` bumps so far 💜",
+        "footer": "{server} • `{count}` bumps so far",
+        "open": "Open DISBOARD",
+        "someone": "someone",
+        "fallbackServer": "our server",
+        "dm": "⏰ The bump for **{server}** is ready again.\n\n> If you can bump again, I'd appreciate it. That's what keeps the server visible.",
+        "thanks": "### 💜 Thanks for the bump, {user}!\n\n> **{streak}** day streak and `{count}` bumps so far.\n\n-# Keep it up while I pretend not to care.",
+        "milestone": "### 🎉 {count} bumps!\n\n> The server just hit `{count}` bumps. Thanks to everyone helping, {user}."
       }
     },
     "linkShield": {

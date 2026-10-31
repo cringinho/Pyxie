@@ -7,10 +7,10 @@ const stats = require('../../services/automationStats');
 const state = require('../../services/autoState');
 const r3 = require('../../services/autoRules3');
 const { embed, NO_PING } = require('../../services/autoAlerts');
+const bump = require('../../services/bumpReminder');
 const { t, getLanguage } = require('../../utils/i18n');
 
 const MINUTE = 60000;
-const BUMP_MS = 2 * 3600000;
 const faqCooldown = new Map(); // canal:índice -> última resposta
 
 const on = (guildId, key) => {
@@ -201,9 +201,39 @@ async function pinArchive(channel) {
 }
 
 // ---------- Lembrete de bump ----------
+// O ciclo inteiro (contagem, aviso, agradecimento e marcos) vem de services/bumpReminder.js,
+// para a agenda do servidor e o painel lerem exatamente o mesmo cálculo.
 function noteBump(message, now = Date.now()) {
-  if (!message.guild || !r3.isBumpDone(message) || !on(message.guild.id, 'bumpReminder')) return false;
-  state.write(message.guild.id, 'bump.json', { channelId: message.channel.id, at: now, reminded: false });
+  if (!message?.guild || !r3.isBumpDone(message)) return false;
+  const cfg = on(message.guild.id, 'bumpReminder');
+  if (!cfg) return false;
+  const guild = message.guild;
+  const result = bump.recordBump(state.read(guild.id, 'bump.json'), message, now);
+  if (result.duplicate) return true;
+
+  // `cleanPrevious`: o aviso antigo sai antes de o novo bump começar outra contagem.
+  const previous = result.previous || {};
+  if (cfg.cleanPrevious && previous.messageId) {
+    const old = guild.channels.cache.get(previous.channelId);
+    old?.messages
+      ?.fetch?.(previous.messageId)
+      .then((m) => m?.delete?.().catch(() => null))
+      .catch(() => null);
+  }
+
+  const lang = getLanguage(guild.id);
+  const user = { id: result.state.lastBump.userId, name: result.state.lastBump.userName };
+  const thanks = bump.buildThanks(guild, cfg, result.state, lang, user);
+  if (thanks) message.channel?.send?.(thanks).catch(() => null);
+  const milestone = bump.milestoneFor(cfg, result.total);
+  if (milestone) {
+    const card = bump.buildMilestone(guild, result.state, milestone, lang);
+    if (card) message.channel?.send?.(card).catch(() => null);
+  }
+
+  const next = cfg.countStats === false ? bump.stripRanking(result.state) : bump.capState(result.state);
+  state.write(guild.id, 'bump.json', next);
+  stats.bump(guild.id, 'bumpReminder', 'bumps');
   return true;
 }
 
@@ -211,21 +241,44 @@ async function bumpTick(client, now = Date.now()) {
   for (const guild of client.guilds.cache.values()) {
     const cfg = on(guild.id, 'bumpReminder');
     if (!cfg) continue;
-    const saved = state.read(guild.id, 'bump.json');
-    const waitMs = (Number(cfg.cooldownMinutes) || 120) * MINUTE;
-    if (!saved.at || saved.reminded || now - saved.at < waitMs) continue;
-    const ch = guild.channels.cache.get(saved.channelId);
-    const lang = getLanguage(guild.id);
-    let content;
-    if (cfg.customMessage?.trim()) {
-      content = r3.fill(cfg.customMessage, { role: cfg.roleId ? `<@&${cfg.roleId}>` : '' });
-    } else {
-      content = cfg.roleId ? t('autos3.bump.withRole', lang, { role: `<@&${cfg.roleId}>` }) : t('autos3.bump.text', lang);
+    let saved = bump.normalizeState(state.read(guild.id, 'bump.json'));
+
+    // Aviso que já cumpriu o tempo de vida pedido (deleteAfterMinutes).
+    if (saved.reminder.messageId && saved.reminder.deleteAt && now >= saved.reminder.deleteAt) {
+      const old = guild.channels.cache.get(saved.reminder.channelId);
+      old?.messages
+        ?.fetch?.(saved.reminder.messageId)
+        .then((m) => m?.delete?.().catch(() => null))
+        .catch(() => null);
+      saved = bump.normalizeState({ ...saved, reminder: { ...saved.reminder, messageId: '', deleteAt: 0 } });
+      state.write(guild.id, 'bump.json', saved);
     }
-    // O cargo escolhido é marcado de propósito: é o lembrete.
-    const sent = await ch?.send?.({ content, allowedMentions: { parse: [], users: [], roles: cfg.roleId ? [cfg.roleId] : [] } }).catch(() => null);
+
+    const due = bump.nextReminderAt(cfg, saved, now);
+    if (!due || due > now) continue;
+
+    const channelId = cfg.channelMode === 'fixed' && cfg.channelId ? cfg.channelId : saved.reminder.channelId;
+    const ch = guild.channels.cache.get(channelId);
+    if (!ch?.send) continue;
+    const lang = getLanguage(guild.id);
+    const sent = await ch.send(bump.buildReminder(guild, cfg, saved, lang, now)).catch(() => null);
     if (!sent) continue;
-    state.write(guild.id, 'bump.json', { ...saved, reminded: true });
+
+    const deleteAfter = Math.max(0, Number(cfg.deleteAfterMinutes) || 0);
+    saved = bump.recordReminder(saved, { messageId: sent.id, channelId, deleteAt: deleteAfter ? now + deleteAfter * MINUTE : 0 }, now);
+
+    // Uma DM por ciclo, só para quem deu o bump.
+    if (cfg.dmBumper && !saved.reminder.dmSent && saved.lastBump.userId) {
+      const dm = bump.buildDM(guild, cfg, saved, lang);
+      const member = dm ? await guild.members?.fetch?.(saved.lastBump.userId).catch(() => null) : null;
+      if (member?.send) {
+        const ok = await member.send(dm).catch(() => null);
+        if (ok) saved = bump.markDmSent(saved);
+      }
+    }
+
+    state.write(guild.id, 'bump.json', saved);
+    stats.bump(guild.id, 'bumpReminder', 'reminders');
     stats.bump(guild.id, 'bumpReminder', 'hits');
   }
 }
