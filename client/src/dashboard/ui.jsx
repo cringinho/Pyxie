@@ -74,6 +74,7 @@ export function Notice({ children, tone = 'info' }) {
   const tones = {
     info: 'border-mystic-violet/40 bg-mystic-violet/10',
     error: 'border-red-500/40 bg-red-500/10 text-red-200',
+    warn: 'border-amber-500/40 bg-amber-500/10 text-amber-200',
     ok: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200',
   };
   return <p className={`rounded-xl border px-3 py-2 text-sm ${tones[tone]}`}>{children}</p>;

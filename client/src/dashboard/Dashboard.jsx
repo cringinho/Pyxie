@@ -649,7 +649,7 @@ function GuildView({ shell, guildId, section, item }) {
         )}
         {current === 'channels' && <Channels t={t} guildId={guildId} />}
         {current === 'roles' && <Roles t={t} guildId={guildId} />}
-        {current === 'access' && <Access t={t} guildId={guildId} />}
+        {current === 'access' && <Access t={t} guildId={guildId} ctx={info.data.access} />}
         {current === 'tools' && <Tools t={t} zone={zone} lang={lang} guildId={guildId} isOwner={me.user.isOwner} />}
         {current === 'maryStore' && <MaryStore t={t} guildId={guildId} />}
         {current === 'maryTools' && <MaryTools t={t} guildId={guildId} />}
@@ -920,7 +920,7 @@ function Roles({ t, guildId }) {
   );
 }
 
-function Access({ t, guildId }) {
+function Access({ t, guildId, ctx }) {
   const access = useLoad(() => api.access(guildId), [guildId]);
   const roles = useLoad(() => api.roles(guildId), [guildId]);
   const [draft, setDraft] = useState(null);
@@ -946,6 +946,13 @@ function Access({ t, guildId }) {
 
   return (
     <div className="space-y-4">
+      {ctx?.ownerOverride && (
+        <Notice tone="warn">
+          <strong>{t('access.overrideTitle')}</strong>
+          <br />
+          {t('access.overrideBody')}
+        </Notice>
+      )}
       <Card title={t('access.title')}>
         <Toggle label={t('access.enabled')} checked={draft.enabled} onChange={(v) => setDraft({ ...draft, enabled: v })} />
         {!draft.enabled && <p className="text-xs text-white/60">{t('access.off')}</p>}

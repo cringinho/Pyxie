@@ -305,6 +305,13 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       zone: req.guildAccess.zone,
       role: req.guildAccess.role,
       canManageAccess: req.guildAccess.canManageAccess,
+      // Quem é você neste servidor: o painel mostra um aviso quando quem entra não é o dono
+      // (caso do dono da Pyxie dentro da zona Mary, por exemplo).
+      access: {
+        canManageAccess: Boolean(req.guildAccess.canManageAccess),
+        isGuildOwner: req.guildAccess.isGuildOwner === true,
+        ownerOverride: Boolean(req.guildAccess.canManageAccess) && req.guildAccess.isGuildOwner !== true,
+      },
       sections: [...new Set([...allowed, ...lockedSections.map((s) => s.id)])],
       lockedSections,
       plan: { plan, active: planState.active, lifetime: planState.lifetime === true },
