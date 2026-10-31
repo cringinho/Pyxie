@@ -131,6 +131,7 @@
           radial-gradient(circle at 85% 55%, rgba(147, 51, 234, 0.12) 0%, transparent 45%);
         color: var(--text-white);
         min-height: 100vh;
+        min-height: 100dvh;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -146,6 +147,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         pointer-events: none;
         z-index: 0;
       }
@@ -866,6 +868,7 @@
       bottom: 0;
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       z-index: 999999;
       display: flex;
       flex-direction: column;
@@ -983,6 +986,16 @@
         -webkit-text-fill-color: currentColor !important;
         background-image: none !important;
       }
+    }
+  </style>
+  <style id="pyxie-mobile-perf">
+    /* O celular tem altura dinâmica (barra de endereço): 100vh corta conteúdo. */
+    @media (max-width: 768px) {
+      * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+    }
+    /* Blur é caro no GPU de celular modesto e trava o scroll. */
+    @media (prefers-reduced-transparency: reduce) {
+      * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
     }
   </style>
 </head>

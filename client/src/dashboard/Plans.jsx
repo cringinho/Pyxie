@@ -47,11 +47,11 @@ export default function Plans({ t, guildId, lang }) {
     }
   };
 
-  const buyExtra = async (addonId, cycle) => {
-    setBusy(`extra:${addonId}:${cycle}`);
+  const buyExtra = async (addonId, cycle, method = 'pix') => {
+    setBusy(`extra:${addonId}:${cycle}:${method}`);
     setCheckout(null);
     try {
-      const res = await api.addonCheckout(guildId, addonId, { cycle });
+      const res = await api.addonCheckout(guildId, addonId, { cycle, method });
       const data = res.checkout || {};
       const extra = extras.find((x) => x.id === addonId);
       setCheckout({
@@ -150,6 +150,10 @@ export default function Plans({ t, guildId, lang }) {
                 <Button variant="ghost" disabled={Boolean(busy)} onClick={() => buyExtra(a.id, 'year')}>
                   R$ {Math.round(a.priceYearly / 100)}/{t('plan.extras.year')}
                 </Button>
+                <Button variant="ghost" disabled={Boolean(busy)} onClick={() => buyExtra(a.id, 'month', 'card')}>
+                  <CreditCard size={16} aria-hidden="true" />
+                  {t('plan.payCard')}
+                </Button>
               </div>
             </div>
           ))}
@@ -171,6 +175,22 @@ export default function Plans({ t, guildId, lang }) {
           )}
           <code className="block break-all rounded-xl bg-black/40 p-3 text-[11px] text-white/80">{checkout.qrCode}</code>
           <p className="text-xs text-white/50">{t('plan.qrExpires', { date: new Date(checkout.expiresAt).toLocaleTimeString() })}</p>
+        </div>
+      )}
+
+      {checkout?.initPoint && (
+        <div className="dash-card space-y-3 rounded-2xl p-4">
+          <p className="font-title font-bold">{checkout.title || t('plan.cardTitle')}</p>
+          <p className="text-xs text-white/60">{t('plan.cardHint')}</p>
+          <a
+            href={checkout.initPoint}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-black"
+          >
+            <CreditCard size={16} aria-hidden="true" />
+            {t('plan.cardGo')}
+          </a>
         </div>
       )}
 

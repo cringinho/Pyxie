@@ -150,22 +150,22 @@ async function createPixCharge({ guildId, plan, addonId = null, cycle = 'month',
 }
 
 // ---------------------------------------------------------------- Cartão (Preapproval)
-async function createCardSubscription({ guildId, plan, lang = 'pt', now = Date.now() } = {}) {
+async function createCardSubscription({ guildId, plan, addonId = null, cycle = 'month', lang = 'pt', now = Date.now() } = {}) {
   if (!providers().card) return { ok: false, reason: 'unavailable' };
-  if (!plans.PRICES[plan]) return { ok: false, reason: 'invalid_plan' };
-  const amount = priceOf(plan);
+  const target = resolveTarget({ guildId, plan, addonId, cycle });
+  if (!target) return { ok: false, reason: addonId ? 'invalid_addon' : 'invalid_plan' };
   const res = await fetchImpl(`${MP_API}/preapproval`, {
     method: 'POST',
-    headers: authHeaders({ 'X-Idempotency-Key': `plan-sub-${guildId}-${plan}-${now}` }),
+    headers: authHeaders({ 'X-Idempotency-Key': `${target.kind}-sub-${guildId}-${target.label}-${now}` }),
     body: JSON.stringify({
-      reason: `${lang === 'en' ? 'Pyxie server plan' : 'Plano da Pyxie'} · ${plan}`,
-      external_reference: reference(guildId, plan),
+      reason: `Pyxie · ${target.label}`,
+      external_reference: target.ref,
       notification_url: `${publicUrl()}/api/plans/webhook/mercadopago`,
       back_url: `${publicUrl()}/passe?status=plan${lang === 'en' ? '&lang=en' : ''}`,
       auto_recurring: {
-        frequency: 1,
+        frequency: target.cycle === 'year' ? 12 : 1,
         frequency_type: 'months',
-        transaction_amount: amount,
+        transaction_amount: target.amount,
         currency_id: 'BRL',
       },
     }),
@@ -178,9 +178,12 @@ async function createCardSubscription({ guildId, plan, lang = 'pt', now = Date.n
     state.charges[`preapproval:${data.id}`] = {
       id: String(data.id),
       guildId: String(guildId),
-      plan,
+      kind: target.kind,
+      plan: target.plan || null,
+      addonId: target.addonId || null,
+      cycle: target.cycle || 'month',
       method: 'card',
-      amount,
+      amount: target.amount,
       status: data.status || 'pending',
       createdAt: now,
     };
@@ -282,6 +285,16 @@ async function handleWebhook({ body = {}, query = {}, headers = {}, now = Date.n
     const month = String(sub.next_payment_date || new Date(now).toISOString()).slice(0, 7);
     const first = markProcessed(`pre:${dataId}:${month}`);
     if (!first) return { ok: true, duplicate: true, ...ref };
+    if (ref.kind === 'addon') {
+      const granted = guildAddons.grant(
+        ref.guildId,
+        ref.addonId,
+        ref.cycle === 'year'
+          ? { years: 1, source: 'mercadopago-card', note: `pre:${dataId}` }
+          : { months: 1, source: 'mercadopago-card', note: `pre:${dataId}` }
+      );
+      return { ok: true, ...ref, granted: granted.ok, until: granted.record?.until || 0 };
+    }
     const granted = plans.grantPlan(ref.guildId, ref.plan, { months: 1, source: 'mercadopago-card', note: `pre:${dataId}` });
     return { ok: true, ...ref, granted: granted.ok, paidUntil: granted.record?.paidUntil || 0 };
   }
@@ -299,6 +312,16 @@ async function handleWebhook({ body = {}, query = {}, headers = {}, now = Date.n
     if (!ref) return { ok: false, reason: 'reference' };
     const first = markProcessed(`mp:${dataId}`);
     if (!first) return { ok: true, duplicate: true, ...ref };
+    if (ref.kind === 'addon') {
+      const granted = guildAddons.grant(
+        ref.guildId,
+        ref.addonId,
+        ref.cycle === 'year'
+          ? { years: 1, source: 'mercadopago-card', note: `mp:${dataId}` }
+          : { months: 1, source: 'mercadopago-card', note: `mp:${dataId}` }
+      );
+      return { ok: true, ...ref, granted: granted.ok, until: granted.record?.until || 0 };
+    }
     const granted = plans.grantPlan(ref.guildId, ref.plan, { months: 1, source: 'mercadopago-card', note: `mp:${dataId}` });
     return { ok: true, ...ref, granted: granted.ok, paidUntil: granted.record?.paidUntil || 0 };
   }

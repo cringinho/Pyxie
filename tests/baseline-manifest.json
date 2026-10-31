@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 76029,
-  "totalChecks": 538,
+  "totalMs": 76031,
+  "totalChecks": 540,
   "steps": [
     {
       "index": 0,
@@ -1543,7 +1543,7 @@
     {
       "index": 76,
       "file": "tests/addonCheckout.test.js",
-      "ms": 59,
+      "ms": 61,
       "exitCode": 0,
       "timedOut": false,
       "checks": [
@@ -1553,9 +1553,11 @@
         "4. Pagamento aprovado ativa o extra.",
         "5. Valor abaixo do preço do ciclo é recusado.",
         "6. Webhook repetido é ignorado (idempotência).",
-        "7. Referência de plano não foi afetada."
+        "7. Referência de plano não foi afetada.",
+        "8. Cartão mensal: R$ 3,00 recorrente.",
+        "9. Cartão anual: R$ 30,00 a cada 12 meses."
       ],
-      "checkCount": 7,
+      "checkCount": 9,
       "failures": [],
       "summary": null,
       "summaryNumbers": null
@@ -1654,7 +1656,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T19:41:54.776Z",
+  "updatedAt": "2026-10-31T19:51:50.147Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

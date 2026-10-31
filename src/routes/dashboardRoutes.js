@@ -293,10 +293,13 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const catalog = require('../config/planAddons').getAddon(req.params.addonId);
     if (!catalog) return res.status(400).json({ success: false, error: 'invalid_addon' });
     const cycle = req.body?.cycle === 'year' ? 'year' : 'month';
+    const method = req.body?.method === 'card' ? 'card' : 'pix';
     const payments = require('../services/planPayments');
-    const checkout = await payments
-      .createPixCharge({ guildId: req.params.guildId, addonId: catalog.id, cycle })
-      .catch(() => ({ ok: false, reason: 'provider' }));
+    const gateway = method === 'card' ? payments.createCardSubscription : payments.createPixCharge;
+    const checkout = await gateway({ guildId: req.params.guildId, addonId: catalog.id, cycle }).catch(() => ({
+      ok: false,
+      reason: 'provider',
+    }));
     if (!checkout.ok) return res.status(503).json({ success: false, error: checkout.reason || 'provider' });
     return res.json({ success: true, checkout });
   });

@@ -136,6 +136,7 @@
       color: var(--text-white);
       font-family: var(--font-body);
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       line-height: 1.7;
@@ -527,6 +528,16 @@
         -webkit-text-fill-color: currentColor !important;
         background-image: none !important;
       }
+    }
+  </style>
+  <style id="pyxie-mobile-perf">
+    /* O celular tem altura dinâmica (barra de endereço): 100vh corta conteúdo. */
+    @media (max-width: 768px) {
+      * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+    }
+    /* Blur é caro no GPU de celular modesto e trava o scroll. */
+    @media (prefers-reduced-transparency: reduce) {
+      * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
     }
   </style>
 </head>

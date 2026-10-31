@@ -86,7 +86,31 @@ payments.setFetch(async (url, opts = {}) => {
   const parsed = payments.parseReference('plan|' + G + '|premium');
   assert.equal(parsed.kind, 'plan');
   assert.equal(parsed.plan, 'premium');
-  console.log('  ✅ 7. Referência de plano não foi afetada.');
+  console.log('  \u2705 7. Refer\u00eancia de plano n\u00e3o foi afetada.');
+
+  // 8. Cart\u00e3o: assinatura mensal de R$ 3,00 (Preapproval)
+  payments.setFetch(async (url, opts = {}) => {
+    lastBody = JSON.parse(opts.body || '{}');
+    return { ok: true, status: 201, text: async () => JSON.stringify({ id: 'pre-1', init_point: 'https://mp/card' }) };
+  });
+  const cardMonthly = await payments.createCardSubscription({ guildId: G, addonId: 'lojinha', cycle: 'month' });
+  assert.equal(cardMonthly.ok, true);
+  assert.equal(cardMonthly.initPoint, 'https://mp/card');
+  assert.equal(lastBody.external_reference, `addon|${G}|lojinha|month`);
+  assert.deepEqual(lastBody.auto_recurring, {
+    frequency: 1,
+    frequency_type: 'months',
+    transaction_amount: 3,
+    currency_id: 'BRL',
+  });
+  console.log('  \u2705 8. Cart\u00e3o mensal: R$ 3,00 recorrente.');
+
+  // 9. Cart\u00e3o anual repete a cada 12 meses
+  await payments.createCardSubscription({ guildId: G, addonId: 'lojinha', cycle: 'year' });
+  assert.equal(lastBody.auto_recurring.frequency, 12);
+  assert.equal(lastBody.auto_recurring.transaction_amount, 30);
+  assert.equal(lastBody.external_reference, `addon|${G}|lojinha|year`);
+  console.log('  \u2705 9. Cart\u00e3o anual: R$ 30,00 a cada 12 meses.');
 
   console.log('💳 Checkout do extra: tudo certo.');
 })();

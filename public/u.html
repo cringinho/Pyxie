@@ -69,6 +69,16 @@
       }
     }
   </style>
+  <style id="pyxie-mobile-perf">
+    /* O celular tem altura dinâmica (barra de endereço): 100vh corta conteúdo. */
+    @media (max-width: 768px) {
+      * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+    }
+    /* Blur é caro no GPU de celular modesto e trava o scroll. */
+    @media (prefers-reduced-transparency: reduce) {
+      * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+    }
+  </style>
 </head>
 <body class="bg-[#080410] text-slate-100 min-h-screen selection:bg-pink-500 selection:text-white">
   <div id="pyxie-app">
