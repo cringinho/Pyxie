@@ -251,6 +251,7 @@ function main() {
     generatedAt: new Date().toISOString(),
     node: process.version,
     platform: `${os.platform()} ${os.arch()}`,
+    cpusCount: os.cpus().length,
     totalMs: 0,
     totalChecks: 0,
     steps: [],

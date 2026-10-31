@@ -564,6 +564,7 @@ async function main() {
   const current = {
     generatedAt: new Date().toISOString(),
     node: process.version,
+    cpusCount: os.cpus().length,
     mode,
     jobs,
     wallClockMs: wall,
@@ -577,6 +578,8 @@ async function main() {
   fs.writeFileSync(LAST_FAILED_PATH, JSON.stringify({ files: failed.map((f) => f.file), at: current.generatedAt }, null, 2), 'utf8');
 
   const baseWall = baseline && baseline.wallClockMs ? baseline.wallClockMs : 0;
+  // Comparar tempo entre máquinas diferentes engana (VM ARM x desktop).
+  const sameMachine = Boolean(baseline && baseline.cpusCount && baseline.cpusCount === os.cpus().length);
   console.log('\n────────────────────────────────────────────');
   console.log(`Arquivos:        ${ordered.length}`);
   console.log(
@@ -584,7 +587,9 @@ async function main() {
   );
   console.log(
     `Tempo de parede: ${(wall / 1000).toFixed(1)} s${
-      baseWall ? `  · baseline ${(baseWall / 1000).toFixed(1)} s · ${(baseWall / wall).toFixed(1)}x mais rápido` : ''
+      sameMachine && baseWall
+        ? `  · baseline ${(baseWall / 1000).toFixed(1)} s · ${(baseWall / wall).toFixed(1)}x mais rápido`
+        : ''
     }`
   );
   console.log(`Falhas:          ${failed.length}`);

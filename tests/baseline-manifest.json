@@ -1518,5 +1518,6 @@
     "node scripts/smoke_all_commands.js"
   ],
   "updatedAt": "2026-10-31T16:45:09.991Z",
-  "wallClockMs": 73933
+  "wallClockMs": 73933,
+  "cpusCount": 16
 }
