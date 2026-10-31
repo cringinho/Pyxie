@@ -11,9 +11,9 @@ const {
  * "the fool tarot meaning"). O HTML sai pronto do servidor: crawlers e pré-visualizações de link
  * (WhatsApp, Discord, Pinterest) leem tudo sem executar JavaScript.
  *
- * URLs (AGENTS.md §8): /tarot/carta/<slug-pt> é a canônica em PT e /tarot/carta/<slug-pt>?lang=en
+ * URLs (AGENTS.md §8): /tarot/carta/<slug-pt> é a canônica em PT e /en/tarot/carta/<slug-pt>
  * a versão em inglês, cada uma com canonical autorreferencial e hreflang bidirecional.
- * /tarot/carta/<slug-en> redireciona (301) para a versão em inglês.
+ * /tarot/carta/<slug-en> redireciona (301) para /en/tarot/carta/<slug-pt>.
  */
 
 const SITE = 'https://pyxie.com.br';
@@ -131,16 +131,17 @@ function truncate(text, max) {
   return `${cut.slice(0, cut.lastIndexOf(' '))}…`;
 }
 
-function langQuery(lang) {
-  return lang === 'en' ? '?lang=en' : '';
+// Prefixo de idioma: PT na raiz, EN em /en (uma URL por idioma, sem ?lang=).
+function langPrefix(lang) {
+  return lang === 'en' ? '/en' : '';
 }
 
 function cardUrl(card, lang = 'pt') {
-  return `${SITE}${CARD_PATH}/${card.slug}${langQuery(lang)}`;
+  return `${SITE}${langPrefix(lang)}${CARD_PATH}/${card.slug}`;
 }
 
 function hubUrl(lang = 'pt') {
-  return `${SITE}${HUB_PATH}${langQuery(lang)}`;
+  return `${SITE}${langPrefix(lang)}${HUB_PATH}`;
 }
 
 /** PT usa a arte estática; EN usa a mesma arte renderizada com os textos em inglês. */
@@ -227,13 +228,13 @@ function renderHead({ lang, title, description, canonical, ptUrl, enUrl, image, 
 
 function renderFooter(lang) {
   const copy = COPY[lang];
-  const q = langQuery(lang);
+  const q = langPrefix(lang);
   return `<footer>
       <span>${escapeHtml(copy.footer)}</span>
-      <a href="/${q}">${escapeHtml(copy.home)}</a>
-      <a href="/wiki${q}">${escapeHtml(copy.wiki)}</a>
-      <a href="/termos${q}">${escapeHtml(copy.terms)}</a>
-      <a href="/privacidade${q}">${escapeHtml(copy.privacy)}</a>
+      <a href="${q}/">${escapeHtml(copy.home)}</a>
+      <a href="${q}/wiki">${escapeHtml(copy.wiki)}</a>
+      <a href="${q}/termos">${escapeHtml(copy.terms)}</a>
+      <a href="${q}/privacidade">${escapeHtml(copy.privacy)}</a>
     </footer>`;
 }
 
@@ -269,12 +270,12 @@ function renderCardPage(baseCard, lang = 'pt') {
   const index = TAROT_CATALOG.indexOf(baseCard);
   const prev = TAROT_CATALOG[(index + TAROT_CATALOG.length - 1) % TAROT_CATALOG.length];
   const next = TAROT_CATALOG[(index + 1) % TAROT_CATALOG.length];
-  const q = langQuery(lang);
+  const q = langPrefix(lang);
   const otherLang = lang === 'en' ? 'pt' : 'en';
 
   const crumbs = [
-    { name: copy.home, url: `${SITE}/${q}` },
-    { name: copy.tarot, url: `${SITE}/tarot${q}` },
+    { name: copy.home, url: `${SITE}${q}/` },
+    { name: copy.tarot, url: `${SITE}${q}/tarot` },
     { name: copy.hub, url: hubUrl(lang) },
     { name, url: canonical },
   ];
@@ -314,10 +315,10 @@ function renderCardPage(baseCard, lang = 'pt') {
   <main class="wrap">
     <div class="top">
       <nav class="crumbs" aria-label="breadcrumb">
-        <a href="/${q}">${escapeHtml(copy.home)}</a> › <a href="/tarot${q}">${escapeHtml(copy.tarot)}</a> ›
-        <a href="${HUB_PATH}${q}">${escapeHtml(copy.hub)}</a> › <span>${escapeHtml(name)}</span>
+        <a href="${q}/">${escapeHtml(copy.home)}</a> › <a href="${q}/tarot">${escapeHtml(copy.tarot)}</a> ›
+        <a href="${q}${HUB_PATH}">${escapeHtml(copy.hub)}</a> › <span>${escapeHtml(name)}</span>
       </nav>
-      <a class="lang" href="${CARD_PATH}/${baseCard.slug}${langQuery(otherLang)}" hreflang="${COPY[otherLang].htmlLang}">${escapeHtml(copy.switchLang)}</a>
+      <a class="lang" href="${langPrefix(otherLang)}${CARD_PATH}/${baseCard.slug}" hreflang="${COPY[otherLang].htmlLang}">${escapeHtml(copy.switchLang)}</a>
     </div>
     <div class="card-layout">
       <img src="${escapeHtml(image)}" alt="${escapeHtml(imageAlt)}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" />
@@ -341,13 +342,13 @@ function renderCardPage(baseCard, lang = 'pt') {
           <p>${escapeHtml(copy.ctaBody)}</p>
           <div class="actions">
             <a class="btn btn-primary" href="/invite?ref=tarot-card" rel="nofollow">${escapeHtml(copy.ctaInvite)}</a>
-            <a class="btn btn-ghost" href="/tarot${q}">${escapeHtml(copy.ctaOnline)}</a>
+            <a class="btn btn-ghost" href="${q}/tarot">${escapeHtml(copy.ctaOnline)}</a>
           </div>
         </section>
         <div class="pager">
-          <a href="${CARD_PATH}/${prev.slug}${q}">← ${escapeHtml(copy.prev)}: ${escapeHtml(titleCase(localizeCard(prev, lang).name, lang))}</a>
-          <a href="${HUB_PATH}${q}">${escapeHtml(copy.allCards)}</a>
-          <a href="${CARD_PATH}/${next.slug}${q}">${escapeHtml(copy.next)}: ${escapeHtml(titleCase(localizeCard(next, lang).name, lang))} →</a>
+          <a href="${q}${CARD_PATH}/${prev.slug}">← ${escapeHtml(copy.prev)}: ${escapeHtml(titleCase(localizeCard(prev, lang).name, lang))}</a>
+          <a href="${q}${HUB_PATH}">${escapeHtml(copy.allCards)}</a>
+          <a href="${q}${CARD_PATH}/${next.slug}">${escapeHtml(copy.next)}: ${escapeHtml(titleCase(localizeCard(next, lang).name, lang))} →</a>
         </div>
       </article>
     </div>
@@ -359,7 +360,7 @@ function renderCardPage(baseCard, lang = 'pt') {
 
 function renderHubPage(lang = 'pt') {
   const copy = COPY[lang];
-  const q = langQuery(lang);
+  const q = langPrefix(lang);
   const otherLang = lang === 'en' ? 'pt' : 'en';
   const canonical = hubUrl(lang);
   const cover = cardImageUrl(TAROT_CATALOG[0]);
@@ -368,7 +369,7 @@ function renderHubPage(lang = 'pt') {
     const cards = TAROT_CATALOG.filter((card) => card.suit === suit);
     const items = cards.map((baseCard) => {
       const name = titleCase(localizeCard(baseCard, lang).name, lang);
-      return `<a href="${CARD_PATH}/${baseCard.slug}${q}"><img src="${cardImageUrl(baseCard)}" alt="${escapeHtml(fill(copy.imageAlt, { name }))}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" />${escapeHtml(name)}</a>`;
+      return `<a href="${q}${CARD_PATH}/${baseCard.slug}"><img src="${cardImageUrl(baseCard)}" alt="${escapeHtml(fill(copy.imageAlt, { name }))}" width="${CARD_IMAGE_WIDTH}" height="${CARD_IMAGE_HEIGHT}" loading="lazy" />${escapeHtml(name)}</a>`;
     }).join('\n        ');
     return `<section>
       <h2>${escapeHtml(suitName(suit, lang))}</h2>
@@ -399,8 +400,8 @@ function renderHubPage(lang = 'pt') {
       },
     },
     breadcrumbSchema(lang, [
-      { name: copy.home, url: `${SITE}/${q}` },
-      { name: copy.tarot, url: `${SITE}/tarot${q}` },
+      { name: copy.home, url: `${SITE}${q}/` },
+      { name: copy.tarot, url: `${SITE}${q}/tarot` },
       { name: copy.hub, url: canonical },
     ]),
   ];
@@ -422,15 +423,15 @@ function renderHubPage(lang = 'pt') {
   <main class="wrap">
     <div class="top">
       <nav class="crumbs" aria-label="breadcrumb">
-        <a href="/${q}">${escapeHtml(copy.home)}</a> › <a href="/tarot${q}">${escapeHtml(copy.tarot)}</a> › <span>${escapeHtml(copy.hub)}</span>
+        <a href="${q}/">${escapeHtml(copy.home)}</a> › <a href="${q}/tarot">${escapeHtml(copy.tarot)}</a> › <span>${escapeHtml(copy.hub)}</span>
       </nav>
-      <a class="lang" href="${HUB_PATH}${langQuery(otherLang)}" hreflang="${COPY[otherLang].htmlLang}">${escapeHtml(copy.switchLang)}</a>
+      <a class="lang" href="${langPrefix(otherLang)}${HUB_PATH}" hreflang="${COPY[otherLang].htmlLang}">${escapeHtml(copy.switchLang)}</a>
     </div>
     <h1>${escapeHtml(copy.hubH1)}</h1>
     <p class="intro">${escapeHtml(copy.hubIntro)}</p>
     <div class="actions" style="margin-bottom: 26px;">
       <a class="btn btn-primary" href="/invite?ref=tarot-hub" rel="nofollow">${escapeHtml(copy.ctaInvite)}</a>
-      <a class="btn btn-ghost" href="/tarot${q}">${escapeHtml(copy.ctaOnline)}</a>
+      <a class="btn btn-ghost" href="${q}/tarot">${escapeHtml(copy.ctaOnline)}</a>
     </div>
     ${sections}
     ${renderFooter(lang)}
@@ -474,7 +475,7 @@ function resolveCardRequest(slug) {
   const card = getCardBySlug(slug);
   if (card) return { card };
   const english = getCardByEnglishSlug(slug);
-  if (english) return { redirect: `${CARD_PATH}/${english.slug}?lang=en` };
+  if (english) return { redirect: `${langPrefix('en')}${CARD_PATH}/${english.slug}` };
   return {};
 }
 

@@ -1,7 +1,7 @@
 const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
-const { getLocalizedHtml, SEO_CONFIG, detectRequestLang } = require('../src/utils/seoRenderer');
+const { getLocalizedHtml, SEO_CONFIG, detectRequestLang, pageUrls } = require('../src/utils/seoRenderer');
 
 console.log('🌐 [TEST] Auditoria & Quality Gate de SEO Bilíngue (PT-BR & EN)...');
 
@@ -30,10 +30,11 @@ const sitemapContent = fs.readFileSync(sitemapPath, 'utf8');
 assert.ok(sitemapContent.includes('hreflang="pt-BR"'), 'sitemap deve ter anotação hreflang pt-BR');
 assert.ok(sitemapContent.includes('hreflang="en"'), 'sitemap deve ter anotação hreflang en');
 assert.ok(sitemapContent.includes('hreflang="x-default"'), 'sitemap deve ter anotação hreflang x-default');
-// Versões em inglês mapeadas no sitemap
-['https://pyxie.com.br/?lang=en', 'https://pyxie.com.br/tarot?lang=en', 'https://pyxie.com.br/wiki?lang=en', 'https://pyxie.com.br/parcerias?lang=en', 'https://pyxie.com.br/museu?lang=en', 'https://pyxie.com.br/bonus?lang=en', 'https://pyxie.com.br/termos?lang=en', 'https://pyxie.com.br/privacidade?lang=en', 'https://pyxie.com.br/cringelandia?lang=en', 'https://pyxie.com.br/pais-e-profissionais?lang=en', 'https://pyxie.com.br/transparencia?lang=en'].forEach((url) => {
-  assert.ok(sitemapContent.includes(url), `sitemap deve conter versão explicitamente em inglês ${url}`);
+// Versões em inglês com URL própria (uma página = uma URL por idioma)
+['https://pyxie.com.br/en/', 'https://pyxie.com.br/en/tarot', 'https://pyxie.com.br/en/wiki', 'https://pyxie.com.br/en/partnerships', 'https://pyxie.com.br/en/museum', 'https://pyxie.com.br/en/bonus', 'https://pyxie.com.br/en/terms', 'https://pyxie.com.br/en/privacy', 'https://pyxie.com.br/en/cringelandia', 'https://pyxie.com.br/en/parents', 'https://pyxie.com.br/en/transparency'].forEach((url) => {
+  assert.ok(sitemapContent.includes(url), `sitemap deve conter versão em inglês ${url}`);
 });
+assert.ok(!sitemapContent.includes('?lang='), 'sitemap não deve listar URLs com ?lang=');
 console.log('  ✅ 2. sitemap.xml validado com todas as URLs canônicas e hreflangs bidirecionais.');
 
 // 3. Páginas HTML públicas (Tags canônicas, hreflang, OG, Twitter, Schema.org, Alt texts, H1)
@@ -111,14 +112,27 @@ pages.forEach((key) => {
 });
 console.log('  ✅ 4. seoRenderer dinâmico validado com entrega instantânea de metadados PT e EN.');
 
-// 5. Detecção de idioma
-assert.equal(detectRequestLang({ query: { lang: 'en' } }), 'en');
-assert.equal(detectRequestLang({ query: { lang: 'pt' } }), 'pt');
-assert.equal(detectRequestLang({ cookies: { pyxie_lang: 'en' } }), 'en');
-assert.equal(detectRequestLang({ headers: { 'accept-language': 'en-US,en;q=0.9' } }), 'en');
-assert.equal(detectRequestLang({ headers: { 'accept-language': 'pt-BR,pt;q=0.9' } }), 'pt');
+// 4b. Canonical/hreflang por idioma no HTML realmente servido (uma URL por idioma, sem ?lang=)
+pages.forEach((key) => {
+  const urls = pageUrls(key);
+  const ptHtml = getLocalizedHtml(key, 'pt', publicDir);
+  const enHtml = getLocalizedHtml(key, 'en', publicDir);
+  assert.ok(ptHtml.includes(`<link rel="canonical" href="${urls.pt}" />`), `${key}: canonical PT deve ser ${urls.pt}`);
+  assert.ok(enHtml.includes(`<link rel="canonical" href="${urls.en}" />`), `${key}: canonical EN deve ser ${urls.en}`);
+  assert.ok(ptHtml.includes(`hreflang="en" href="${urls.en}"`), `${key}: hreflang en no HTML PT`);
+  assert.ok(enHtml.includes(`hreflang="pt-BR" href="${urls.pt}"`), `${key}: hreflang pt-BR no HTML EN`);
+  assert.ok(enHtml.includes(`hreflang="x-default" href="${urls.pt}"`), `${key}: x-default aponta para o PT`);
+  assert.ok(!/href="[^"]*\?lang=/.test(ptHtml + enHtml), `${key}: HTML servido sem ?lang=`);
+});
+console.log('  ✅ 4b. Canonical e hreflang recíprocos por idioma no HTML servido.');
+
+// 5. Detecção de idioma pela URL (o ?lang= antigo vira 301 no serveLocalizedPage)
+assert.equal(detectRequestLang({ originalUrl: '/en/tarot' }), 'en');
+assert.equal(detectRequestLang({ originalUrl: '/en/' }), 'en');
+assert.equal(detectRequestLang({ originalUrl: '/tarot' }), 'pt');
+assert.equal(detectRequestLang({ originalUrl: '/tarot?lang=en' }), 'pt');
 assert.equal(detectRequestLang({}), 'pt');
-console.log('  ✅ 5. Detecção de idioma de requisição (Query, Headers, Cookies) validada.');
+console.log('  ✅ 5. Detecção de idioma pela URL validada (o ?lang= antigo vira 301).');
 
 // 6. Auditoria de SEO Bilíngue nas Rotas do Pyxie Hyperfokus
 const renderer = require('../src/modules/hyperfokus/renderer');

@@ -93,7 +93,8 @@ console.log('  ✅ 2. 156 páginas de carta auditadas (H1, canonical, hreflang, 
 for (const lang of ['pt', 'en']) {
   const hub = pages.renderHubPage(lang);
   auditPage(hub, `índice (${lang})`);
-  const links = new Set(hub.match(/href="\/tarot\/carta\/[a-z0-9-]+(\?lang=en)?"/g));
+  const prefix = lang === 'en' ? '/en' : '';
+  const links = new Set(hub.match(new RegExp(`href="${prefix}/tarot/carta/[a-z0-9-]+"`, 'g')));
   assert.equal(links.size, 78, `Índice ${lang} liga as 78 cartas.`);
   assert.ok(hub.includes(`<link rel="canonical" href="${pages.hubUrl(lang)}" />`));
 }
@@ -101,7 +102,7 @@ console.log('  ✅ 3. Índice das 78 cartas em PT e EN.');
 
 // 4. Rotas
 assert.equal(pages.resolveCardRequest('o-louco').card.id, 'major_00');
-assert.deepEqual(pages.resolveCardRequest('the-fool'), { redirect: '/tarot/carta/o-louco?lang=en' }, 'Slug em inglês redireciona.');
+assert.deepEqual(pages.resolveCardRequest('the-fool'), { redirect: '/en/tarot/carta/o-louco' }, 'Slug em inglês redireciona para a URL EN.');
 assert.deepEqual(pages.resolveCardRequest('nao-existe'), {});
 assert.deepEqual(pages.resolveCardRequest('../../etc/passwd'), {});
 const serverSource = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
@@ -119,12 +120,12 @@ const lastmod = sitemap.match(/tarot-cards:start[\s\S]*?<lastmod>([^<]+)<\/lastm
 assert.equal(updateSitemap(sitemap, lastmod), sitemap, 'Gerador do sitemap é idempotente (rode scripts/generate_tarot_sitemap.js).');
 const indexNowUrls = getDefaultUrlList();
 assert.ok(indexNowUrls.includes('https://pyxie.com.br/tarot/carta/o-louco'), 'IndexNow inclui as páginas das cartas.');
-assert.ok(indexNowUrls.includes('https://pyxie.com.br/tarot/cartas?lang=en'));
+assert.ok(indexNowUrls.includes('https://pyxie.com.br/en/tarot/cartas'), 'IndexNow inclui o índice EN.');
 const robots = fs.readFileSync(path.join(__dirname, '..', 'public', 'robots.txt'), 'utf8');
 assert.ok(robots.includes('Disallow: /mary'), 'robots.txt bloqueia /mary (AGENTS.md §8).');
 const { getFeedItems } = require('../src/services/feedGenerator');
 const feedEn = getFeedItems('en')[0];
-assert.ok(/^https:\/\/pyxie\.com\.br\/tarot\/carta\/[a-z0-9-]+\?lang=en&utm_source=rss_daily_tarot$/.test(feedEn.link), 'Feed EN leva à página da carta.');
+assert.ok(/^https:\/\/pyxie\.com\.br\/en\/tarot\/carta\/[a-z0-9-]+\?utm_source=rss_daily_tarot$/.test(feedEn.link), 'Feed EN leva à página da carta em inglês.');
 assert.ok(!/[ÃÕÇÁÉÍÓÚ]/.test(feedEn.title), 'Título do feed EN com o nome da carta em inglês.');
 console.log('  ✅ 5. Sitemap com hreflang e imagens, IndexNow, robots e feed apontando para as cartas.');
 
@@ -140,7 +141,7 @@ for (const command of [pyTarot, rootTarot]) {
   assert.ok(embedPt.description.includes('O LOUCO'));
   const row = command.buildBribeRow({ lang: 'en' }, raw).toJSON().components;
   assert.equal(row.length, 2);
-  assert.equal(row[1].url, 'https://pyxie.com.br/tarot/carta/o-louco?lang=en&utm_source=discord_tarot');
+  assert.equal(row[1].url, 'https://pyxie.com.br/en/tarot/carta/o-louco?utm_source=discord_tarot');
   assert.equal(command.buildBribeRow({ lang: 'pt' }).toJSON().components.length, 1, 'Sem carta, só o botão de nova tiragem.');
 }
 console.log('  ✅ 6. /py-tarot em inglês nos servidores EN e botão para o significado completo.');

@@ -243,22 +243,114 @@ const SEO_CONFIG = {
 };
 
 const htmlCache = new Map();
+const SITE_ORIGIN = 'https://pyxie.com.br';
 
+// Slugs em inglês das páginas cujo caminho em PT não faz sentido em EN.
+// O resto repete o mesmo caminho sob o prefixo /en (ex.: /tarot → /en/tarot).
+const EN_SLUGS = {
+  '/': '/',
+  '/parcerias': '/partnerships',
+  '/museu': '/museum',
+  '/mercado': '/market',
+  '/passe': '/pass',
+  '/termos': '/terms',
+  '/privacidade': '/privacy',
+  '/pais-e-profissionais': '/parents',
+  '/transparencia': '/transparency',
+};
+
+/** Caminho público em PT (sai do canonical, fonte única de verdade). */
+function pagePath(pageKey) {
+  const conf = SEO_CONFIG[pageKey];
+  if (!conf) return null;
+  try {
+    return new URL(conf.canonical).pathname || '/';
+  } catch (_) {
+    return null;
+  }
+}
+
+/** Caminho público em EN: /en + slug traduzido. */
+function enPathFor(pageKey) {
+  const ptPath = pagePath(pageKey);
+  if (!ptPath) return null;
+  const slug = EN_SLUGS[ptPath] || ptPath;
+  return slug === '/' ? '/en/' : `/en${slug}`;
+}
+
+function pageUrls(pageKey) {
+  const ptPath = pagePath(pageKey);
+  const enPath = enPathFor(pageKey);
+  if (!ptPath || !enPath) return null;
+  return { pt: `${SITE_ORIGIN}${ptPath}`, en: `${SITE_ORIGIN}${enPath}` };
+}
+
+/** Canonical + trio hreflang recíproco de uma página (PT, EN e x-default). */
+function languageLinks(pageKey) {
+  const urls = pageUrls(pageKey);
+  if (!urls) return null;
+  return {
+    urls,
+    alternates: [
+      { hreflang: 'pt-BR', href: urls.pt },
+      { hreflang: 'en', href: urls.en },
+      { hreflang: 'x-default', href: urls.pt },
+    ],
+  };
+}
+
+/** Reescreve links antigos `?lang=` para os caminhos definitivos (/en/...). */
+function rewriteLangLinks(html, pageKey) {
+  const urls = pageUrls(pageKey);
+  if (!urls) return html;
+  const pathFor = (lang) => new URL(lang === 'en' ? urls.en : urls.pt).pathname;
+  return String(html).replace(/href=(["'])[^"']*?\?lang=(en|pt)((?:&amp;|&)[^"']*)?\1/gi, (match, quote, lang, rest) => {
+    const extra = String(rest || '').replace(/^&(amp;)?/, '');
+    return `href=${quote}${pathFor(String(lang).toLowerCase())}${extra ? `?${extra}` : ''}${quote}`;
+  });
+}
+
+/**
+ * Injeta canonical, hreflang, og:url e og:locale conformes na página, no idioma pedido.
+ * Uma página = uma URL por idioma; nada de `?lang=` no índice do Google.
+ */
+function injectSeo(html, pageKey, lang = 'pt') {
+  const links = languageLinks(pageKey);
+  if (!links) return html;
+  const isEn = lang === 'en';
+  const canonical = isEn ? links.urls.en : links.urls.pt;
+  const htmlLang = isEn ? 'en' : 'pt-BR';
+  const ogLocale = isEn ? 'en_US' : 'pt_BR';
+  const ogLocaleAlt = isEn ? 'pt_BR' : 'en_US';
+  const alternates = links.alternates.map((a) => `<link rel="alternate" hreflang="${a.hreflang}" href="${a.href}" />`).join('\n  ');
+
+  let out = String(html)
+    .replace(/<html\s+lang=["'][^"']*["']/i, `<html lang="${htmlLang}"`)
+    .replace(/<link\s+rel=["']canonical["']\s+href=["'][^"']*["']\s*\/?>/i, `<link rel="canonical" href="${canonical}" />`)
+    .replace(/(<meta\s+property=["']og:url["']\s+content=["'])[^"']*(["']\s*\/?>)/i, `$1${canonical}$2`)
+    .replace(/(<meta\s+property=["']og:locale["']\s+content=["'])[^"']*(["']\s*\/?>)/i, `$1${ogLocale}$2`);
+
+  out = out.replace(/(?:[ \t]*<link\s+rel=["']alternate["']\s+hreflang=["'][^"']*["']\s+href=["'][^"']*["']\s*\/?>\s*\r?\n?)+/gi, `${alternates}\n  `);
+
+  if (/og:locale:alternate/i.test(out)) {
+    out = out.replace(/(<meta\s+property=["']og:locale:alternate["']\s+content=["'])[^"']*(["']\s*\/?>)/i, `$1${ogLocaleAlt}$2`);
+  } else {
+    out = out.replace(/(<meta\s+property=["']og:locale["']\s+content=["'][^"']*["']\s*\/?>)/i, `$1\n  <meta property="og:locale:alternate" content="${ogLocaleAlt}" />`);
+  }
+
+  return rewriteLangLinks(out, pageKey);
+}
+
+function requestPath(req) {
+  const raw = String(req?.originalUrl || req?.url || req?.path || '');
+  const clean = raw.split('?')[0].replace(/\/+$/, '');
+  return clean || '/';
+}
+
+// O idioma é decidido pela URL (SEO de longo prazo). `?lang=` é apenas um 301 de compatibilidade.
 function detectRequestLang(req) {
-  if (req && req.query && req.query.lang) {
-    const q = String(req.query.lang).toLowerCase();
-    if (q === 'en') return 'en';
-    if (q === 'pt') return 'pt';
-  }
-  if (req && req.cookies && (req.cookies.pyxie_lang === 'en' || req.cookies.lang === 'en')) {
-    return 'en';
-  }
-  const acceptLang = req && req.headers ? req.headers['accept-language'] : '';
-  if (acceptLang) {
-    const primary = acceptLang.split(',')[0].trim().toLowerCase();
-    if (primary.startsWith('en')) return 'en';
-  }
-  return 'pt';
+  const pathname = requestPath(req);
+  return pathname === '/en' || pathname.startsWith('/en/') ? 'en' : 'pt';
 }
 
 function getLocalizedHtml(pageKey, lang, publicDir) {
@@ -287,12 +379,28 @@ function getLocalizedHtml(pageKey, lang, publicDir) {
     html = html.replace(/(<meta\s+name=["']twitter:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${meta.ogDesc}$2`);
   }
 
+  // Canonical, hreflang, og:url e og:locale sempre coerentes com a URL pedida.
+  html = injectSeo(html, pageKey, lang);
+
   htmlCache.set(cacheKey, html);
   return html;
 }
 
 function serveLocalizedPage(pageKey, publicDir) {
   return (req, res) => {
+    // `?lang=` de links antigos: 301 para o caminho definitivo daquele idioma.
+    const asked = String(req.query?.lang || '').toLowerCase();
+    if (asked === 'en' || asked === 'pt') {
+      const urls = pageUrls(pageKey);
+      if (urls) {
+        const target = new URL(asked === 'en' ? urls.en : urls.pt);
+        for (const [key, value] of Object.entries(req.query || {})) {
+          if (key === 'lang' || value === undefined) continue;
+          target.searchParams.set(key, String(value));
+        }
+        return res.redirect(301, `${target.pathname}${target.search}`);
+      }
+    }
     const lang = detectRequestLang(req);
     let html = getLocalizedHtml(pageKey, lang, publicDir);
     if (!html) {
@@ -330,7 +438,7 @@ function serveLocalizedPage(pageKey, publicDir) {
     }
 
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-    res.setHeader('Vary', 'Accept-Language');
+    res.setHeader('Content-Language', lang === 'en' ? 'en' : 'pt-BR');
     res.send(html);
   };
 }
@@ -341,6 +449,15 @@ function clearSeoCache() {
 
 module.exports = {
   SEO_CONFIG,
+  SITE_ORIGIN,
+  EN_SLUGS,
+  pagePath,
+  enPathFor,
+  pageUrls,
+  languageLinks,
+  injectSeo,
+  rewriteLangLinks,
+  requestPath,
   detectRequestLang,
   getLocalizedHtml,
   serveLocalizedPage,

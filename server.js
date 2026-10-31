@@ -20,7 +20,7 @@ const quizSeederService = require('./src/services/quizSeederService');
 const voiceSeederService = require('./src/services/voiceSeederService');
 const seasonalManager = require('./src/modules/seasonal/seasonalManager');
 const moduleManager = require('./src/services/moduleManager');
-const { serveLocalizedPage } = require('./src/utils/seoRenderer');
+const { serveLocalizedPage, SEO_CONFIG, languageLinks } = require('./src/utils/seoRenderer');
 const { renderTarotCard } = require('./src/services/tarotRenderer');
 const tarotCardsList = require('./src/data/tarot.json');
 const { generateRssXml, generateAtomXml, generateJsonFeed, generatePinterestRssXml, getDailyTarotCard } = require('./src/services/feedGenerator');
@@ -522,41 +522,84 @@ app.get('/vote', (req, res) => {
   res.redirect(getVoteUrl());
 });
 
+// ---------- Idioma por URL (AGENTS §8): PT na raiz, EN em /en/... ----------
+// Cada página tem uma URL por idioma; `?lang=` de links antigos vira 301 dentro do serveLocalizedPage.
 app.get('/', serveLocalizedPage('index', publicDir));
 
 app.get('/tarot', serveLocalizedPage('tarot', publicDir));
 
-// Páginas de significado das 78 cartas (HTML completo no servidor; idioma só pela URL: ?lang=en)
-app.get('/tarot/cartas', (req, res) => {
-  const lang = req.query.lang === 'en' ? 'en' : 'pt';
+// Páginas de significado das 78 cartas (HTML completo no servidor; idioma pela URL).
+const tarotHub = (lang) => (req, res) => {
+  if (req.query.lang) return res.redirect(301, lang === 'en' ? '/en/tarot/cartas' : '/tarot/cartas');
   res.setHeader('Content-Type', 'text/html; charset=UTF-8');
   res.setHeader('Cache-Control', 'public, max-age=3600');
-  res.send(tarotCardPages.renderHubPage(lang));
-});
+  res.setHeader('Content-Language', lang === 'en' ? 'en' : 'pt-BR');
+  return res.send(tarotCardPages.renderHubPage(lang));
+};
+app.get('/tarot/cartas', tarotHub('pt'));
+app.get('/en/tarot/cartas', tarotHub('en'));
 
-app.get('/tarot/carta/:slug', (req, res) => {
-  const lang = req.query.lang === 'en' ? 'en' : 'pt';
+const tarotCardPage = (lang) => (req, res) => {
+  const asked = String(req.query.lang || '').toLowerCase();
   const resolved = tarotCardPages.resolveCardRequest(req.params.slug);
   if (resolved.redirect) return res.redirect(301, resolved.redirect);
   if (!resolved.card) return res.status(404).sendFile(path.join(publicDir, '404.html'));
+  const wanted = asked === 'en' ? 'en' : asked === 'pt' ? 'pt' : lang;
+  if (wanted !== lang) {
+    return res.redirect(301, `${wanted === 'en' ? '/en' : ''}/tarot/carta/${resolved.card.slug}`);
+  }
   res.setHeader('Content-Type', 'text/html; charset=UTF-8');
   res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.setHeader('Content-Language', lang === 'en' ? 'en' : 'pt-BR');
   return res.send(tarotCardPages.renderCardPage(resolved.card, lang));
-});
+};
+app.get('/tarot/carta/:slug', tarotCardPage('pt'));
+app.get('/en/tarot/carta/:slug', tarotCardPage('en'));
+
+// Aliases antigos: 301 permanente para a URL canônica, já no idioma pedido (sem duplicata no índice).
+const aliasPage = (from, pageKey) =>
+  app.get(from, (req, res) => {
+    const lang = String(req.query.lang || '').toLowerCase() === 'en' ? 'en' : 'pt';
+    const target = new URL(languageLinks(pageKey).urls[lang]);
+    for (const [key, value] of Object.entries(req.query || {})) {
+      if (key === 'lang' || value === undefined) continue;
+      target.searchParams.set(key, String(value));
+    }
+    return res.redirect(301, `${target.pathname}${target.search}`);
+  });
 
 app.get('/wiki', serveLocalizedPage('wiki', publicDir));
 
-app.get(['/parcerias', '/partnerships'], serveLocalizedPage('partnerships', publicDir));
+app.get('/parcerias', serveLocalizedPage('partnerships', publicDir));
 
-app.get(['/museu', '/museum'], serveLocalizedPage('museum', publicDir));
+app.get('/museu', serveLocalizedPage('museum', publicDir));
 
-app.get(['/termos', '/terms'], serveLocalizedPage('terms', publicDir));
+app.get('/termos', serveLocalizedPage('terms', publicDir));
 
-app.get(['/privacidade', '/privacy'], serveLocalizedPage('privacy', publicDir));
+app.get('/privacidade', serveLocalizedPage('privacy', publicDir));
 
 app.get('/cringelandia', serveLocalizedPage('cringelandia', publicDir));
-app.get(['/pais-e-profissionais', '/parents'], serveLocalizedPage('parents', publicDir));
-app.get(['/transparencia', '/transparency'], serveLocalizedPage('transparency', publicDir));
+app.get('/pais-e-profissionais', serveLocalizedPage('parents', publicDir));
+app.get('/transparencia', serveLocalizedPage('transparency', publicDir));
+
+aliasPage('/partnerships', 'partnerships');
+aliasPage('/museum', 'museum');
+aliasPage('/terms', 'terms');
+aliasPage('/privacy', 'privacy');
+aliasPage('/parents', 'parents');
+aliasPage('/transparency', 'transparency');
+
+// Versões em inglês com URL própria (uma página = uma URL por idioma).
+for (const pageKey of Object.keys(SEO_CONFIG)) {
+  if (pageKey === 'index') continue;
+  const links = languageLinks(pageKey);
+  if (!links) continue;
+  const enPath = new URL(links.urls.en).pathname;
+  const alreadyRouted = enPath === '/en/tarot/cartas' || enPath.startsWith('/en/tarot/carta');
+  if (!alreadyRouted) app.get(enPath, serveLocalizedPage(pageKey, publicDir));
+}
+app.get(/^\/en$/, (req, res) => res.redirect(301, '/en/'));
+app.get('/en/', serveLocalizedPage('index', publicDir));
 // Registro público das doações (src/data/transparency.json, versionado com os comprovantes).
 app.get('/api/public/transparency', (req, res) => {
   try {
@@ -569,7 +612,8 @@ app.get('/api/public/transparency', (req, res) => {
 });
 
 // Mercado entre jogadores: página pública de preços e a API que ela lê (data/market.json)
-app.get(['/mercado', '/market'], serveLocalizedPage('market', publicDir));
+app.get('/mercado', serveLocalizedPage('market', publicDir));
+aliasPage('/market', 'market');
 app.get('/api/market/prices', (req, res) => {
   try {
     const market = require('./src/services/market');
@@ -592,7 +636,8 @@ app.get('/api/market/prices', (req, res) => {
 });
 
 // Passe da Pyxie: página /passe, pagamento do Premium (Mercado Pago) e avisos de pagamento
-app.get(['/passe', '/pass'], serveLocalizedPage('pass', publicDir));
+app.get('/passe', serveLocalizedPage('pass', publicDir));
+aliasPage('/pass', 'pass');
 app.get('/api/pass/info', publicApiLimiter, (req, res) => {
   try {
     const battlePass = require('./src/services/battlePass');
@@ -1656,7 +1701,11 @@ app.use((req, res) => {
     return res.status(404).json({ error: 'Endpoint não encontrado.' });
   }
 
-  serveLocalizedPage('index', publicDir)(req, res);
+  // Fim das rotas conhecidas: 404 de verdade (antes a home respondia 200 aqui, o que
+  // gerava "soft 404" no Search Console).
+  const file404 = path.join(publicDir, '404.html');
+  if (fs.existsSync(file404)) return res.status(404).sendFile(file404);
+  return res.status(404).send('404 Not Found');
 });
 
 function ensureSshKeys() {

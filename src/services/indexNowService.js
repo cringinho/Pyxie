@@ -93,26 +93,14 @@ function submitIndexNowUrls(urls = []) {
 }
 
 function getDefaultUrlList() {
-  return [
-    `https://${INDEXNOW_HOST}/`,
-    `https://${INDEXNOW_HOST}/?lang=en`,
-    `https://${INDEXNOW_HOST}/tarot`,
-    `https://${INDEXNOW_HOST}/tarot?lang=en`,
-    `https://${INDEXNOW_HOST}/wiki`,
-    `https://${INDEXNOW_HOST}/wiki?lang=en`,
-    `https://${INDEXNOW_HOST}/parcerias`,
-    `https://${INDEXNOW_HOST}/parcerias?lang=en`,
-    `https://${INDEXNOW_HOST}/museu`,
-    `https://${INDEXNOW_HOST}/museu?lang=en`,
-    `https://${INDEXNOW_HOST}/bonus`,
-    `https://${INDEXNOW_HOST}/bonus?lang=en`,
-    `https://${INDEXNOW_HOST}/mercado`,
-    `https://${INDEXNOW_HOST}/mercado?lang=en`,
-    `https://${INDEXNOW_HOST}/passe`,
-    `https://${INDEXNOW_HOST}/passe?lang=en`,
-    `https://${INDEXNOW_HOST}/rss.xml`,
-    ...require('./tarotCardPages').getAllTarotPageUrls(),
-  ];
+  // Uma URL por idioma (PT na raiz, EN em /en/...) + tarot + feeds.
+  const { SEO_CONFIG, languageLinks } = require('../utils/seoRenderer');
+  const pages = Object.keys(SEO_CONFIG).flatMap((key) => {
+    const links = languageLinks(key);
+    return links ? [links.urls.pt, links.urls.en] : [];
+  });
+  const urls = [...pages, `https://${INDEXNOW_HOST}/rss.xml`, ...require('./tarotCardPages').getAllTarotPageUrls()];
+  return [...new Set(urls)];
 }
 
 /**

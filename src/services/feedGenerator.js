@@ -91,7 +91,7 @@ function getFeedItems(lang = 'pt') {
       ? `🔮 Daily Tarot: ${card.name} (${cardPosLabel}) • Pyxie Oracle`
       : `🔮 Carta do Dia: ${card.name} (${cardPosLabel}) • Oráculo da Pyxie`,
     link: catalogCard
-      ? `${cardUrl(catalogCard, lang)}${isEn ? '&' : '?'}utm_source=rss_daily_tarot`
+      ? `${cardUrl(catalogCard, lang)}?utm_source=rss_daily_tarot`
       : `${SITE_URL}/tarot?id=${card.id}&pos=${isReversed ? 'reversed' : 'upright'}&utm_source=rss_daily_tarot&lang=${lang}`,
     guid: `tarot-${daily.dateStr}-${card.id}`,
     pubDate: now.toUTCString(),

@@ -2,294 +2,262 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  <!-- Homepage (Default / pt-BR) -->
+  <!-- Páginas geradas por scripts/generate_sitemap.js a partir do SEO_CONFIG (uma URL por idioma). -->
   <url>
     <loc>https://pyxie.com.br/</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/" />
   </url>
-  <!-- Homepage (English) -->
   <url>
-    <loc>https://pyxie.com.br/?lang=en</loc>
-    <lastmod>2026-10-08</lastmod>
+    <loc>https://pyxie.com.br/en/</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/" />
   </url>
-
-  <!-- Tarot Oracle (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/tarot</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.95</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot?lang=en" />
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot" />
   </url>
-  <!-- Tarot Oracle (English) -->
   <url>
-    <loc>https://pyxie.com.br/tarot?lang=en</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.95</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot?lang=en" />
+    <loc>https://pyxie.com.br/en/tarot</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot" />
   </url>
-
-  <!-- Wiki & Docs (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/wiki</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/wiki?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/wiki?lang=en" />
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/wiki" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/wiki" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/wiki" />
   </url>
-  <!-- Wiki & Docs (English) -->
   <url>
-    <loc>https://pyxie.com.br/wiki?lang=en</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/wiki?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/wiki?lang=en" />
+    <loc>https://pyxie.com.br/en/wiki</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/wiki" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/wiki" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/wiki" />
   </url>
-
-  <!-- Partnerships (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/parcerias</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>hourly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/parcerias?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/parcerias?lang=en" />
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/parcerias" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/partnerships" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/parcerias" />
   </url>
-  <!-- Partnerships (English) -->
   <url>
-    <loc>https://pyxie.com.br/parcerias?lang=en</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>hourly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/parcerias?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/parcerias?lang=en" />
+    <loc>https://pyxie.com.br/en/partnerships</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/parcerias" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/partnerships" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/parcerias" />
   </url>
-
-  <!-- Community Museum (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/museu</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/museu?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/museu?lang=en" />
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/museu" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/museum" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/museu" />
   </url>
-  <!-- Community Museum (English) -->
   <url>
-    <loc>https://pyxie.com.br/museu?lang=en</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/museu?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/museu?lang=en" />
+    <loc>https://pyxie.com.br/en/museum</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/museu" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/museum" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/museu" />
   </url>
-
-  <!-- Magic Web Bonus (Default / pt-BR) -->
-  <url>
-    <loc>https://pyxie.com.br/bonus</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/bonus?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/bonus?lang=en" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/bonus" />
-  </url>
-  <!-- Mercado e histórico de preços (Português) -->
   <url>
     <loc>https://pyxie.com.br/mercado</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/mercado?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/mercado?lang=en" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/mercado" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/market" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/mercado" />
   </url>
-  <!-- Market and price history (English) -->
   <url>
-    <loc>https://pyxie.com.br/mercado?lang=en</loc>
-    <lastmod>2026-10-26</lastmod>
+    <loc>https://pyxie.com.br/en/market</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/mercado?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/mercado?lang=en" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/mercado" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/market" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/mercado" />
   </url>
   <url>
     <loc>https://pyxie.com.br/passe</loc>
-    <lastmod>2026-10-26</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/passe?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/passe?lang=en" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/passe" />
-  </url>
-  <url>
-    <loc>https://pyxie.com.br/passe?lang=en</loc>
-    <lastmod>2026-10-26</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/passe?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/passe?lang=en" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/passe" />
-  </url>
-  <!-- Magic Web Bonus (English) -->
-  <url>
-    <loc>https://pyxie.com.br/bonus?lang=en</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/bonus?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/bonus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/passe" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/pass" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/passe" />
+  </url>
+  <url>
+    <loc>https://pyxie.com.br/en/pass</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/passe" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/pass" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/passe" />
+  </url>
+  <url>
+    <loc>https://pyxie.com.br/bonus</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/bonus" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/bonus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/bonus" />
   </url>
-
-  <!-- Terms of Use & Child Safety (Default / pt-BR) -->
+  <url>
+    <loc>https://pyxie.com.br/en/bonus</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/bonus" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/bonus" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/bonus" />
+  </url>
   <url>
     <loc>https://pyxie.com.br/termos</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/termos?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/termos?lang=en" />
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/termos" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/terms" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/termos" />
   </url>
-  <!-- Terms of Use & Child Safety (English) -->
   <url>
-    <loc>https://pyxie.com.br/termos?lang=en</loc>
-    <lastmod>2026-10-08</lastmod>
+    <loc>https://pyxie.com.br/en/terms</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/termos?lang=pt" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/termos?lang=en" />
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/termos" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/terms" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/termos" />
   </url>
-
-  <!-- Privacy Policy & LGPD (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/privacidade</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/privacidade" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/privacidade?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/privacy" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/privacidade" />
   </url>
-  <!-- Privacy Policy & GDPR (English) -->
   <url>
-    <loc>https://pyxie.com.br/privacidade?lang=en</loc>
-    <lastmod>2026-10-11</lastmod>
+    <loc>https://pyxie.com.br/en/privacy</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/privacidade" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/privacidade?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/privacy" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/privacidade" />
   </url>
-
-  <!-- Cringelandia Portal (Default / pt-BR) -->
-  <url>
-    <loc>https://pyxie.com.br/cringelandia</loc>
-    <lastmod>2026-10-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/cringelandia" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/cringelandia?lang=en" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
-  </url>
-  <!-- Cringelandia Portal (English) -->
-  <url>
-    <loc>https://pyxie.com.br/cringelandia?lang=en</loc>
-    <lastmod>2026-10-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/cringelandia" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/cringelandia?lang=en" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
-  </url>
-
-  <!-- Para pais e profissionais (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/pais-e-profissionais</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/pais-e-profissionais" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/pais-e-profissionais?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/parents" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/pais-e-profissionais" />
   </url>
-  <!-- Para pais e profissionais (English) -->
   <url>
-    <loc>https://pyxie.com.br/pais-e-profissionais?lang=en</loc>
-    <lastmod>2026-10-27</lastmod>
+    <loc>https://pyxie.com.br/en/parents</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/pais-e-profissionais" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/pais-e-profissionais?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/parents" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/pais-e-profissionais" />
   </url>
-  <!-- Transparencia (Default / pt-BR) -->
   <url>
     <loc>https://pyxie.com.br/transparencia</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/transparencia" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/transparencia?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/transparency" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/transparencia" />
   </url>
-  <!-- Transparencia (English) -->
   <url>
-    <loc>https://pyxie.com.br/transparencia?lang=en</loc>
-    <lastmod>2026-10-27</lastmod>
+    <loc>https://pyxie.com.br/en/transparency</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/transparencia" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/transparencia?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/transparency" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/transparencia" />
+  </url>
+  <url>
+    <loc>https://pyxie.com.br/cringelandia</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/cringelandia" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/cringelandia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
+  </url>
+  <url>
+    <loc>https://pyxie.com.br/en/cringelandia</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/cringelandia" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/cringelandia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
   </url>
 
   <!-- tarot-cards:start (gerado por scripts/generate_tarot_sitemap.js) -->
   <url>
     <loc>https://pyxie.com.br/tarot/cartas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/cartas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/cartas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/cartas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/cartas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_01.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/cartas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/cartas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/cartas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/cartas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/cartas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/cartas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_00&amp;lang=en</image:loc>
@@ -297,23 +265,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/o-louco</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-louco" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-louco?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-louco" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-louco" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_01.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/o-louco?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/o-louco</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-louco" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-louco?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-louco" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-louco" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_00&amp;lang=en</image:loc>
@@ -321,23 +289,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/o-mago</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-mago" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-mago?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-mago" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-mago" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_02.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/o-mago?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/o-mago</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-mago" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-mago?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-mago" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-mago" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_01&amp;lang=en</image:loc>
@@ -345,23 +313,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/a-sacerdotisa</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-sacerdotisa" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-sacerdotisa?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-sacerdotisa" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-sacerdotisa" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_03.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/a-sacerdotisa?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/a-sacerdotisa</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-sacerdotisa" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-sacerdotisa?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-sacerdotisa" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-sacerdotisa" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_02&amp;lang=en</image:loc>
@@ -369,23 +337,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/a-imperatriz</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-imperatriz" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-imperatriz?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-imperatriz" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-imperatriz" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_04.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/a-imperatriz?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/a-imperatriz</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-imperatriz" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-imperatriz?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-imperatriz" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-imperatriz" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_03&amp;lang=en</image:loc>
@@ -393,23 +361,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/o-imperador</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-imperador" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-imperador?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-imperador" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-imperador" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_05.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/o-imperador?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/o-imperador</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-imperador" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-imperador?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-imperador" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-imperador" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_04&amp;lang=en</image:loc>
@@ -417,23 +385,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/o-hierofante</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-hierofante" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-hierofante?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-hierofante" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-hierofante" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_06.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/o-hierofante?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/o-hierofante</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-hierofante" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-hierofante?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-hierofante" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-hierofante" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_05&amp;lang=en</image:loc>
@@ -441,23 +409,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/os-namorados</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/os-namorados" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/os-namorados?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/os-namorados" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/os-namorados" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_07.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/os-namorados?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/os-namorados</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/os-namorados" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/os-namorados?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/os-namorados" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/os-namorados" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_06&amp;lang=en</image:loc>
@@ -465,23 +433,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/a-carruagem</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-carruagem" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-carruagem?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-carruagem" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-carruagem" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_08.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/a-carruagem?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/a-carruagem</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-carruagem" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-carruagem?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-carruagem" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-carruagem" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_07&amp;lang=en</image:loc>
@@ -489,23 +457,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/a-forca</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-forca" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-forca?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-forca" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-forca" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_09.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/a-forca?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/a-forca</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-forca" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-forca?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-forca" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-forca" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_08&amp;lang=en</image:loc>
@@ -513,23 +481,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/o-eremita</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-eremita" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-eremita?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-eremita" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-eremita" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_10.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/o-eremita?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/o-eremita</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-eremita" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-eremita?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-eremita" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-eremita" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_09&amp;lang=en</image:loc>
@@ -537,23 +505,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/roda-da-fortuna</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/roda-da-fortuna" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/roda-da-fortuna?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/roda-da-fortuna" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/roda-da-fortuna" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_11.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/roda-da-fortuna?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/roda-da-fortuna</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/roda-da-fortuna" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/roda-da-fortuna?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/roda-da-fortuna" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/roda-da-fortuna" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_10&amp;lang=en</image:loc>
@@ -561,23 +529,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/a-justica</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-justica" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-justica?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-justica" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-justica" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_12.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/a-justica?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/a-justica</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-justica" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-justica?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-justica" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-justica" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_11&amp;lang=en</image:loc>
@@ -585,23 +553,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/o-enforcado</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-enforcado" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-enforcado?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-enforcado" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-enforcado" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_13.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/o-enforcado?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/o-enforcado</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-enforcado" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-enforcado?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-enforcado" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-enforcado" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_12&amp;lang=en</image:loc>
@@ -609,23 +577,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/a-morte</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-morte" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-morte?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-morte" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-morte" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_14.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/a-morte?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/a-morte</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-morte" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-morte?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-morte" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-morte" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_13&amp;lang=en</image:loc>
@@ -633,23 +601,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/a-temperanca</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-temperanca" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-temperanca?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-temperanca" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-temperanca" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_15.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/a-temperanca?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/a-temperanca</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-temperanca" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-temperanca?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-temperanca" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-temperanca" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_14&amp;lang=en</image:loc>
@@ -657,23 +625,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/o-diabo</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-diabo" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-diabo?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-diabo" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-diabo" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_16.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/o-diabo?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/o-diabo</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-diabo" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-diabo?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-diabo" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-diabo" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_15&amp;lang=en</image:loc>
@@ -681,23 +649,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/a-torre</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-torre" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-torre?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-torre" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-torre" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_17.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/a-torre?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/a-torre</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-torre" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-torre?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-torre" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-torre" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_16&amp;lang=en</image:loc>
@@ -705,23 +673,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/a-estrela</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-estrela" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-estrela?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-estrela" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-estrela" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_18.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/a-estrela?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/a-estrela</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-estrela" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-estrela?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-estrela" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-estrela" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_17&amp;lang=en</image:loc>
@@ -729,23 +697,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/a-lua</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-lua" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-lua?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-lua" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-lua" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_19.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/a-lua?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/a-lua</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/a-lua" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/a-lua?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/a-lua" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/a-lua" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_18&amp;lang=en</image:loc>
@@ -753,23 +721,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/o-sol</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-sol" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-sol?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-sol" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-sol" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_20.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/o-sol?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/o-sol</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-sol" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-sol?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-sol" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-sol" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_19&amp;lang=en</image:loc>
@@ -777,23 +745,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/o-julgamento</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-julgamento" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-julgamento?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-julgamento" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-julgamento" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_21.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/o-julgamento?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/o-julgamento</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-julgamento" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-julgamento?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-julgamento" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-julgamento" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_20&amp;lang=en</image:loc>
@@ -801,23 +769,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/o-mundo</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-mundo" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-mundo?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-mundo" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-mundo" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_22.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/o-mundo?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/o-mundo</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/o-mundo" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/o-mundo?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/o-mundo" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/o-mundo" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=major_21&amp;lang=en</image:loc>
@@ -825,23 +793,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/as-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/as-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/as-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/as-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/as-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_23.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/as-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/as-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/as-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/as-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/as-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/as-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_01&amp;lang=en</image:loc>
@@ -849,23 +817,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/dois-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dois-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dois-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dois-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dois-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_24.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/dois-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/dois-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dois-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dois-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dois-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dois-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_02&amp;lang=en</image:loc>
@@ -873,23 +841,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/tres-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/tres-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/tres-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/tres-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/tres-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_25.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/tres-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/tres-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/tres-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/tres-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/tres-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/tres-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_03&amp;lang=en</image:loc>
@@ -897,23 +865,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/quatro-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/quatro-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/quatro-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/quatro-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/quatro-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_26.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/quatro-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/quatro-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/quatro-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/quatro-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/quatro-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/quatro-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_04&amp;lang=en</image:loc>
@@ -921,23 +889,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/cinco-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cinco-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cinco-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cinco-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cinco-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_27.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/cinco-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/cinco-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cinco-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cinco-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cinco-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cinco-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_05&amp;lang=en</image:loc>
@@ -945,23 +913,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/seis-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/seis-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/seis-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/seis-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/seis-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_28.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/seis-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/seis-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/seis-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/seis-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/seis-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/seis-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_06&amp;lang=en</image:loc>
@@ -969,23 +937,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/sete-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/sete-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/sete-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/sete-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/sete-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_29.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/sete-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/sete-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/sete-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/sete-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/sete-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/sete-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_07&amp;lang=en</image:loc>
@@ -993,23 +961,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/oito-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/oito-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/oito-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/oito-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/oito-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_30.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/oito-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/oito-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/oito-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/oito-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/oito-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/oito-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_08&amp;lang=en</image:loc>
@@ -1017,23 +985,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/nove-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/nove-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/nove-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/nove-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/nove-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_31.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/nove-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/nove-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/nove-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/nove-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/nove-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/nove-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_09&amp;lang=en</image:loc>
@@ -1041,23 +1009,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/dez-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dez-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dez-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dez-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dez-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_32.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/dez-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/dez-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dez-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dez-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dez-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dez-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_10&amp;lang=en</image:loc>
@@ -1065,23 +1033,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/pajem-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/pajem-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/pajem-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/pajem-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/pajem-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_33.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/pajem-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/pajem-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/pajem-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/pajem-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/pajem-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/pajem-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_page&amp;lang=en</image:loc>
@@ -1089,23 +1057,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/cavaleiro-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cavaleiro-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_34.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/cavaleiro-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/cavaleiro-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cavaleiro-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_knight&amp;lang=en</image:loc>
@@ -1113,23 +1081,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/rainha-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rainha-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rainha-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rainha-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rainha-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_35.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/rainha-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/rainha-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rainha-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rainha-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rainha-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rainha-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_queen&amp;lang=en</image:loc>
@@ -1137,23 +1105,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/rei-de-paus</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rei-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rei-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rei-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rei-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_36.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/rei-de-paus?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/rei-de-paus</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rei-de-paus" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rei-de-paus?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rei-de-paus" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rei-de-paus" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=wands_king&amp;lang=en</image:loc>
@@ -1161,23 +1129,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/as-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/as-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/as-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/as-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/as-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_37.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/as-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/as-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/as-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/as-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/as-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/as-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_01&amp;lang=en</image:loc>
@@ -1185,23 +1153,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/dois-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dois-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dois-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dois-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dois-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_38.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/dois-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/dois-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dois-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dois-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dois-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dois-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_02&amp;lang=en</image:loc>
@@ -1209,23 +1177,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/tres-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/tres-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/tres-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/tres-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/tres-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_39.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/tres-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/tres-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/tres-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/tres-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/tres-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/tres-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_03&amp;lang=en</image:loc>
@@ -1233,23 +1201,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/quatro-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/quatro-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/quatro-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/quatro-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/quatro-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_40.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/quatro-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/quatro-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/quatro-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/quatro-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/quatro-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/quatro-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_04&amp;lang=en</image:loc>
@@ -1257,23 +1225,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/cinco-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cinco-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cinco-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cinco-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cinco-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_41.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/cinco-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/cinco-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cinco-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cinco-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cinco-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cinco-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_05&amp;lang=en</image:loc>
@@ -1281,23 +1249,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/seis-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/seis-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/seis-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/seis-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/seis-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_42.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/seis-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/seis-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/seis-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/seis-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/seis-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/seis-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_06&amp;lang=en</image:loc>
@@ -1305,23 +1273,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/sete-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/sete-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/sete-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/sete-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/sete-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_43.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/sete-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/sete-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/sete-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/sete-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/sete-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/sete-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_07&amp;lang=en</image:loc>
@@ -1329,23 +1297,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/oito-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/oito-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/oito-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/oito-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/oito-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_44.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/oito-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/oito-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/oito-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/oito-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/oito-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/oito-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_08&amp;lang=en</image:loc>
@@ -1353,23 +1321,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/nove-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/nove-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/nove-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/nove-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/nove-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_45.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/nove-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/nove-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/nove-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/nove-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/nove-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/nove-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_09&amp;lang=en</image:loc>
@@ -1377,23 +1345,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/dez-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dez-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dez-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dez-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dez-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_46.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/dez-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/dez-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dez-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dez-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dez-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dez-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_10&amp;lang=en</image:loc>
@@ -1401,23 +1369,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/pajem-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/pajem-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/pajem-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/pajem-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/pajem-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_47.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/pajem-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/pajem-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/pajem-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/pajem-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/pajem-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/pajem-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_page&amp;lang=en</image:loc>
@@ -1425,23 +1393,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/cavaleiro-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cavaleiro-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_48.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/cavaleiro-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/cavaleiro-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cavaleiro-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_knight&amp;lang=en</image:loc>
@@ -1449,23 +1417,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/rainha-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rainha-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rainha-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rainha-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rainha-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_49.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/rainha-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/rainha-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rainha-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rainha-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rainha-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rainha-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_queen&amp;lang=en</image:loc>
@@ -1473,23 +1441,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/rei-de-copas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rei-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rei-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rei-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rei-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_50.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/rei-de-copas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/rei-de-copas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rei-de-copas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rei-de-copas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rei-de-copas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rei-de-copas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=cups_king&amp;lang=en</image:loc>
@@ -1497,23 +1465,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/as-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/as-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/as-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/as-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/as-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_51.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/as-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/as-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/as-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/as-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/as-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/as-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_01&amp;lang=en</image:loc>
@@ -1521,23 +1489,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/dois-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dois-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dois-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dois-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dois-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_52.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/dois-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/dois-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dois-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dois-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dois-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dois-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_02&amp;lang=en</image:loc>
@@ -1545,23 +1513,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/tres-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/tres-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/tres-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/tres-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/tres-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_53.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/tres-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/tres-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/tres-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/tres-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/tres-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/tres-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_03&amp;lang=en</image:loc>
@@ -1569,23 +1537,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/quatro-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/quatro-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/quatro-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/quatro-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/quatro-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_54.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/quatro-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/quatro-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/quatro-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/quatro-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/quatro-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/quatro-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_04&amp;lang=en</image:loc>
@@ -1593,23 +1561,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/cinco-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cinco-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cinco-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cinco-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cinco-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_55.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/cinco-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/cinco-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cinco-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cinco-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cinco-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cinco-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_05&amp;lang=en</image:loc>
@@ -1617,23 +1585,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/seis-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/seis-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/seis-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/seis-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/seis-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_56.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/seis-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/seis-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/seis-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/seis-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/seis-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/seis-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_06&amp;lang=en</image:loc>
@@ -1641,23 +1609,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/sete-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/sete-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/sete-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/sete-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/sete-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_57.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/sete-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/sete-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/sete-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/sete-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/sete-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/sete-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_07&amp;lang=en</image:loc>
@@ -1665,23 +1633,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/oito-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/oito-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/oito-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/oito-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/oito-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_58.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/oito-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/oito-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/oito-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/oito-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/oito-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/oito-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_08&amp;lang=en</image:loc>
@@ -1689,23 +1657,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/nove-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/nove-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/nove-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/nove-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/nove-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_59.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/nove-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/nove-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/nove-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/nove-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/nove-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/nove-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_09&amp;lang=en</image:loc>
@@ -1713,23 +1681,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/dez-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dez-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dez-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dez-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dez-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_60.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/dez-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/dez-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dez-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dez-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dez-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dez-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_10&amp;lang=en</image:loc>
@@ -1737,23 +1705,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/pajem-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/pajem-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/pajem-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/pajem-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/pajem-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_61.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/pajem-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/pajem-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/pajem-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/pajem-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/pajem-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/pajem-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_page&amp;lang=en</image:loc>
@@ -1761,23 +1729,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/cavaleiro-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cavaleiro-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_62.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/cavaleiro-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/cavaleiro-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cavaleiro-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_knight&amp;lang=en</image:loc>
@@ -1785,23 +1753,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/rainha-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rainha-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rainha-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rainha-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rainha-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_63.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/rainha-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/rainha-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rainha-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rainha-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rainha-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rainha-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_queen&amp;lang=en</image:loc>
@@ -1809,23 +1777,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/rei-de-espadas</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rei-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rei-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rei-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rei-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_64.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/rei-de-espadas?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/rei-de-espadas</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rei-de-espadas" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rei-de-espadas?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rei-de-espadas" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rei-de-espadas" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=swords_king&amp;lang=en</image:loc>
@@ -1833,23 +1801,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/as-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/as-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/as-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/as-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/as-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_65.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/as-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/as-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/as-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/as-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/as-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/as-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_01&amp;lang=en</image:loc>
@@ -1857,23 +1825,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/dois-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dois-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dois-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dois-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dois-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_66.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/dois-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/dois-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dois-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dois-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dois-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dois-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_02&amp;lang=en</image:loc>
@@ -1881,23 +1849,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/tres-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/tres-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/tres-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/tres-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/tres-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_67.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/tres-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/tres-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/tres-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/tres-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/tres-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/tres-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_03&amp;lang=en</image:loc>
@@ -1905,23 +1873,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/quatro-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/quatro-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/quatro-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/quatro-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/quatro-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_68.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/quatro-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/quatro-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/quatro-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/quatro-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/quatro-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/quatro-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_04&amp;lang=en</image:loc>
@@ -1929,23 +1897,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/cinco-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cinco-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cinco-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cinco-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cinco-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_69.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/cinco-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/cinco-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cinco-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cinco-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cinco-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cinco-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_05&amp;lang=en</image:loc>
@@ -1953,23 +1921,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/seis-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/seis-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/seis-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/seis-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/seis-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_70.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/seis-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/seis-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/seis-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/seis-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/seis-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/seis-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_06&amp;lang=en</image:loc>
@@ -1977,23 +1945,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/sete-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/sete-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/sete-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/sete-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/sete-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_71.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/sete-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/sete-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/sete-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/sete-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/sete-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/sete-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_07&amp;lang=en</image:loc>
@@ -2001,23 +1969,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/oito-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/oito-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/oito-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/oito-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/oito-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_72.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/oito-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/oito-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/oito-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/oito-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/oito-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/oito-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_08&amp;lang=en</image:loc>
@@ -2025,23 +1993,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/nove-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/nove-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/nove-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/nove-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/nove-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_73.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/nove-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/nove-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/nove-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/nove-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/nove-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/nove-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_09&amp;lang=en</image:loc>
@@ -2049,23 +2017,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/dez-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dez-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dez-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dez-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dez-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_74.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/dez-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/dez-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/dez-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/dez-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/dez-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/dez-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_10&amp;lang=en</image:loc>
@@ -2073,23 +2041,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/pajem-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/pajem-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/pajem-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/pajem-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/pajem-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_75.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/pajem-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/pajem-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/pajem-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/pajem-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/pajem-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/pajem-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_page&amp;lang=en</image:loc>
@@ -2097,23 +2065,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/cavaleiro-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cavaleiro-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_76.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/cavaleiro-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/cavaleiro-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/cavaleiro-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/cavaleiro-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_knight&amp;lang=en</image:loc>
@@ -2121,23 +2089,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/rainha-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rainha-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rainha-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rainha-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rainha-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_77.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/rainha-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/rainha-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rainha-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rainha-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rainha-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rainha-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_queen&amp;lang=en</image:loc>
@@ -2145,23 +2113,23 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot/carta/rei-de-ouros</loc>
-    <lastmod>2026-10-23</lastmod>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rei-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rei-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rei-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rei-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/assets/tarot/cards/card_78.jpg</image:loc>
     </image:image>
   </url>
   <url>
-    <loc>https://pyxie.com.br/tarot/carta/rei-de-ouros?lang=en</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://pyxie.com.br/en/tarot/carta/rei-de-ouros</loc>
+    <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/tarot/carta/rei-de-ouros" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/tarot/carta/rei-de-ouros?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/tarot/carta/rei-de-ouros" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/tarot/carta/rei-de-ouros" />
     <image:image>
       <image:loc>https://pyxie.com.br/api/tarot/card-image?id=pentacles_king&amp;lang=en</image:loc>

@@ -50,7 +50,7 @@ function buildBribeRow(source = null, card = null) {
         .setLabel(t('tarot.meaningBtn', source))
         .setStyle(ButtonStyle.Link)
         .setEmoji('📜')
-        .setURL(`${cardUrl(catalogCard, getLanguage(source))}${getLanguage(source) === 'en' ? '&' : '?'}utm_source=discord_tarot`)
+        .setURL(`${cardUrl(catalogCard, getLanguage(source))}?utm_source=discord_tarot`)
     );
   }
   return row;
