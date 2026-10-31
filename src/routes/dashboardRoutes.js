@@ -33,7 +33,7 @@ registerDashboardSection({ id: 'hyperfokus', zones: ['cringelandia'], roles: ['o
 ['agenda', 'periodic', 'welcome'].forEach((id) => registerDashboardSection({ id }));
 
 function getSections(guildAccess) {
-  const base = ['overview', 'commands', 'studio', 'features', 'automations', 'injections', 'security', 'channels', 'roles', 'emojiUsage'];
+  const base = ['overview', 'commands', 'studio', 'features', 'automations', 'injections', 'security', 'channels', 'roles', 'emojiUsage', 'planos'];
   if (guildAccess.canManageAccess) base.push('access');
   if (guildAccess.zone === 'cringelandia' && guildAccess.role === 'owner') base.push('embeds', 'moderation', 'community', 'seasonal', 'partnerships');
   const extra = SECTION_REGISTRY.filter((s) => !s.zones || s.zones.includes(guildAccess.zone))
@@ -733,6 +733,35 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const reset = { ...bump.clearCounters(), lastBump: saved.lastBump, reminder: saved.reminder };
     autoState.write(guildId, 'bump.json', reset);
     return res.json({ success: true, bumpState: bump.insights(reset, auto.getConfig(guildId, 'bumpReminder', { fresh: true })) });
+  });
+
+  // ---------- Assinatura mensal do servidor (Básico/Premium) ----------
+  router.get('/api/dashboard/guilds/:guildId/plan', requireSession, requireGuild, (req, res) => {
+    const payments = require('../services/planPayments');
+    return res.json({ success: true, ...payments.guildPlanInfo(req.params.guildId) });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/plan/checkout', requireSession, requireGuild, async (req, res) => {
+    const payments = require('../services/planPayments');
+    const plan = String(req.body?.plan || '');
+    const method = String(req.body?.method || 'pix');
+    const lang = req.body?.lang === 'en' ? 'en' : 'pt';
+    if (!['basic', 'premium'].includes(plan)) return res.status(400).json({ success: false, error: 'invalid_plan' });
+    const checkout = method === 'card'
+      ? await payments.createCardSubscription({ guildId: req.params.guildId, plan, lang })
+      : await payments.createPixCharge({ guildId: req.params.guildId, plan, lang });
+    if (!checkout.ok) return res.status(503).json({ success: false, error: checkout.reason || 'provider' });
+    return res.json({ success: true, checkout });
+  });
+
+  router.post('/api/dashboard/guilds/:guildId/plan/cancel', requireSession, requireGuild, async (req, res) => {
+    const plansSvc = require('../services/guildPlans');
+    const payments = require('../services/planPayments');
+    const info = payments.guildPlanInfo(req.params.guildId);
+    const preapprovalId = String(req.body?.preapprovalId || info.lastCard?.id || '');
+    if (preapprovalId) await payments.cancelCardSubscription(preapprovalId).catch(() => null);
+    plansSvc.revokePlan(req.params.guildId, 'canceled');
+    return res.json({ success: true, plan: plansSvc.getPlan(req.params.guildId) });
   });
 
   router.put('/api/dashboard/guilds/:guildId/automations/:key', requireSession, requireGuild, async (req, res) => {

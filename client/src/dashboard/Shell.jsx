@@ -8,6 +8,7 @@ import {
   Coins,
   Bug,
   CalendarDays,
+  CreditCard,
   DoorOpen,
   Repeat,
   Hash,
@@ -89,6 +90,7 @@ export const SECTION_META = {
   voice: { icon: MessageSquareQuote, group: 'content' },
   hyperfokus: { icon: BookOpen, group: 'content' },
   agenda: { icon: CalendarDays, group: 'config' },
+  planos: { icon: CreditCard, group: 'config' },
   periodic: { icon: Repeat, group: 'messages' },
   welcome: { icon: DoorOpen, group: 'messages' },
 };

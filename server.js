@@ -723,6 +723,25 @@ app.post('/api/pass/webhook/mercadopago', async (req, res) => {
   }
 });
 
+// Assinatura mensal do servidor (Básico/Premium): Pix avulso e cartão recorrente.
+app.post('/api/plans/webhook/mercadopago', async (req, res) => {
+  try {
+    const payments = require('./src/services/planPayments');
+    const result = await payments.handleWebhook({ body: req.body || {}, query: req.query || {}, headers: req.headers || {} });
+    if (!result.ok && result.reason === 'signature') return res.status(401).json({ error: 'signature' });
+    if (!result.ok && result.reason === 'provider') return res.status(502).json({ error: 'provider' });
+    if (result.ok && !result.ignored && !result.pending && !result.duplicate) {
+      console.log(`[plans] Plano ativado: ${result.guildId} → ${result.plan} até ${new Date(result.paidUntil || Date.now()).toISOString()}`);
+      // Aviso imediato ao dono do servidor (o módulo plans também manda os lembretes).
+      require('./src/modules/plans').notifyActivated(result.guildId, result.plan).catch(() => null);
+    }
+    return res.status(200).json({ received: true });
+  } catch (err) {
+    console.error('[plans] Falha no aviso do Mercado Pago:', err.message);
+    return res.status(500).json({ error: 'webhook' });
+  }
+});
+
 app.get('/ads.txt', (req, res) => {
   res.setHeader('Content-Type', 'text/plain; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=86400');

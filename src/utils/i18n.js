@@ -748,6 +748,18 @@ const TRANSLATIONS = {
         "milestone": "### 🎉 {count} bumps!\n\n> O servidor chegou a `{count}` bumps. Obrigada a todo mundo que ajuda, {user}."
       }
     },
+    "plans": {
+      "name": { "free": "Sem plano", "founder": "Fundador", "basic": "Básico", "premium": "Premium" },
+      "footer": "{server} • assinatura da Pyxie",
+      "dm": {
+        "activatedTitle": "✅ Plano {plan} ativo",
+        "activatedBody": "O plano **{plan}** do servidor está ativo.\n\n> As vantagens já valem para todo mundo.",
+        "reminderTitle": "⏳ O plano vence em breve",
+        "reminderBody": "O plano **{plan}** está perto de renovar.\n\n> Renove no painel para não pausar as vantagens: {link}",
+        "expiredTitle": "⚠️ Plano pausado",
+        "expiredBody": "O plano **{plan}** venceu e as vantagens foram pausadas.\n\n> Pagando de novo, tudo volta na hora: {link}"
+      }
+    },
     "linkShield": {
       "brandUnknown": "um site conhecido",
       "channelDeleted": "🛡️ Apaguei uma mensagem de {user} com um link que imita {brand}. Links assim costumam roubar contas, então não abra, tá?",
@@ -3756,6 +3768,18 @@ const TRANSLATIONS = {
         "dm": "⏰ The bump for **{server}** is ready again.\n\n> If you can bump again, I'd appreciate it. That's what keeps the server visible.",
         "thanks": "### 💜 Thanks for the bump, {user}!\n\n> **{streak}** day streak and `{count}` bumps so far.\n\n-# Keep it up while I pretend not to care.",
         "milestone": "### 🎉 {count} bumps!\n\n> The server just hit `{count}` bumps. Thanks to everyone helping, {user}."
+      }
+    },
+    "plans": {
+      "name": { "free": "No plan", "founder": "Founder", "basic": "Basic", "premium": "Premium" },
+      "footer": "{server} • Pyxie subscription",
+      "dm": {
+        "activatedTitle": "✅ {plan} plan active",
+        "activatedBody": "The server's **{plan}** plan is active.\n\n> The perks are already live for everyone.",
+        "reminderTitle": "⏳ Your plan renews soon",
+        "reminderBody": "The **{plan}** plan is about to renew.\n\n> Renew in the dashboard to keep the perks: {link}",
+        "expiredTitle": "⚠️ Plan paused",
+        "expiredBody": "The **{plan}** plan expired and its perks were paused.\n\n> Pay again and everything comes back right away: {link}"
       }
     },
     "linkShield": {
