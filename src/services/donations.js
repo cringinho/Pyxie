@@ -164,6 +164,8 @@ async function handleWebhook({ body = {}, query = {}, headers = {}, now = Date.n
   const type = body.type || body.topic || query.type || query.topic;
   const dataId = query['data.id'] || body.data?.id || query.id || body.id;
   if (type !== 'payment' || !dataId) return { ok: true, ignored: true };
+  // Mesma assinatura x-signature do Passe/planos: o aviso só vale se veio do Mercado Pago.
+  if (!require('./planPayments').verifySignature({ headers, dataId })) return { ok: false, reason: 'signature' };
   const res = await fetchImpl(`${MP_API}/v1/payments/${dataId}`, { headers: { Authorization: `Bearer ${token()}` } });
   const payment = await readJson(res);
   if (!res.ok) return { ok: false, reason: 'provider', status: res.status };
