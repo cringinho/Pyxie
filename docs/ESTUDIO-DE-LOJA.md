@@ -66,6 +66,26 @@ Suíte: **75 arquivos · 514 verificações · gate OK** (rodou também na VM).
 3. Webhook: ramo novo em `server.js` para ativar o extra; carência de 7 dias; aviso por DM.
 4. Flip de `isReadyForSale()` para `true` **só** com E1 verde.
 
+### 4.1 Estado real (31/10/2026)
+
+Tudo acima está no ar: `READY_FOR_SALE = true`, Pix de R$ 3/R$ 30 validado em teste,
+webhook decidindo por `external_reference` (`addon|guildId|lojinha|ciclo`) e avisos
+D-7/D-3/D-0 por DM ao dono do servidor.
+
+**Formas de pagamento:**
+
+| Meio | Função | Cobrança | Ciclos |
+|---|---|---|---|
+| Pix | `createPixCharge` | única | mês e ano |
+| Cartão | `createCardSubscription` | recorrente (Preapproval) | mês (R$ 3) e ano (R$ 30 a cada 12 meses) |
+
+A rota `POST /api/dashboard/guilds/:guildId/addons/:addonId/checkout` aceita `{ cycle, method }`
+(`method: 'pix' | 'card'`). No cartão o painel exibe o `initPoint` do Mercado Pago — o mesmo
+tratamento vale para planos (era um bug: o retorno do cartão não aparecia).
+
+**Regra de ouro:** o extra libera **módulo**, nunca vantagem econômica (§5 do AGENTS.md).
+Quando expira, os dados ficam guardados e voltam na renovação.
+
 ## 5. Riscos que precisam de decisão do dono
 
 - **Roblox**: revenda de Robux fora da plataforma viola os termos do Roblox. O produto é
