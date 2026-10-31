@@ -2,7 +2,10 @@
   "files": [
     "tests/bonusTimer.test.js",
     "tests/databaseIntegrityAndDiscordHealth.test.js",
-    "tests/lightweightGames.test.js"
+    "tests/dungeonCrawler.test.js",
+    "tests/lightweightGames.test.js",
+    "tests/quizGames.test.js"
   ],
-  "updatedAt": "2026-10-31T16:56:12.445Z"
+  "note": "Rodam sozinhos: bonusTimer tem asserção de tempo; databaseIntegrity exige data/ em repouso; dungeonCrawler e quizGames chamam bash (WSL falha sob carga concorrente).",
+  "updatedAt": "2026-10-31T19:10:00.000Z"
 }

@@ -26,19 +26,41 @@ function save(state) {
   return state;
 }
 
-/** Enfileira um aviso (activated | reminder | expired). Evita repetir o mesmo em 12 h. */
-function push({ guildId, kind, plan = '', at = Date.now(), force = false } = {}) {
-  if (!/^\d{17,20}$/.test(String(guildId || '')) || !['activated', 'reminder', 'expired'].includes(kind)) return false;
+/** Enfileira um aviso (activated | reminder | expired | addon_reminder | addon_expired). */
+function push({ guildId, kind, plan = '', addonId = '', step = '', days = 0, at = Date.now(), force = false } = {}) {
+  const kinds = ['activated', 'reminder', 'expired', 'addon_reminder', 'addon_expired'];
+  if (!/^\d{17,20}$/.test(String(guildId || '')) || !kinds.includes(kind)) return false;
   return withFileLock(fileFor(), () => {
     const state = load();
     if (!force) {
-      const duplicate = state.queue.some((item) => item.guildId === String(guildId) && item.kind === kind && at - item.at < DEDUPE_MS);
+      const duplicate = state.queue.some(
+        (item) => item.guildId === String(guildId) && item.kind === kind && (item.addonId || '') === addonId && at - item.at < DEDUPE_MS
+      );
       if (duplicate) return false;
     }
-    state.queue.push({ guildId: String(guildId), kind, plan, at });
+    state.queue.push({ guildId: String(guildId), kind, plan, addonId, step, days, at });
     save(state);
     return true;
   });
+}
+
+/** Marcação livre (ex.: `addon:lojinha:7`), para extras sem mexer nas chaves do plano. */
+function markCustom(guildId, key, at = Date.now()) {
+  const clean = String(key || '').slice(0, 60);
+  if (!/^\d{17,20}$/.test(String(guildId || '')) || !clean) return false;
+  return withFileLock(fileFor(), () => {
+    const state = load();
+    const entry = state.marks[String(guildId)] || {};
+    entry[clean] = at;
+    state.marks[String(guildId)] = entry;
+    save(state);
+    return true;
+  });
+}
+
+function hasCustomMark(guildId, key) {
+  const entry = load().marks[String(guildId)] || {};
+  return Boolean(entry[String(key || '')]);
 }
 
 function takeAll() {
@@ -82,4 +104,4 @@ function resetMarks(guildId) {
   });
 }
 
-module.exports = { push, takeAll, mark, hasMark, resetMarks };
+module.exports = { push, takeAll, mark, hasMark, resetMarks, markCustom, hasCustomMark };

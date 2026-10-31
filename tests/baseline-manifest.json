@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 75614,
-  "totalChecks": 532,
+  "totalMs": 76029,
+  "totalChecks": 538,
   "steps": [
     {
       "index": 0,
@@ -1559,6 +1559,25 @@
       "failures": [],
       "summary": null,
       "summaryNumbers": null
+    },
+    {
+      "index": 77,
+      "file": "tests/addonNotices.test.js",
+      "ms": 415,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Extra vencendo em 5 dias gera aviso D-7.",
+        "2. Extra vencendo em 2 dias gera aviso D-3.",
+        "3. Extra vencido gera aviso de pausa.",
+        "4. Vitalício, inativo e longe do vencimento não avisam.",
+        "5. Aviso entra na fila e a marcação evita repetir.",
+        "6. Textos de aviso existem em PT e EN."
+      ],
+      "checkCount": 6,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
     }
   ],
   "commands": [
@@ -1635,7 +1654,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T19:33:22.739Z",
+  "updatedAt": "2026-10-31T19:41:54.776Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

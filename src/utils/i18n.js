@@ -778,7 +778,11 @@ const TRANSLATIONS = {
         "reminderTitle": "⏳ O plano vence em breve",
         "reminderBody": "O plano **{plan}** está perto de renovar.\n\n> Renove no painel para não pausar as vantagens: {link}",
         "expiredTitle": "⚠️ Plano pausado",
-        "expiredBody": "O plano **{plan}** venceu e as vantagens foram pausadas.\n\n> Pagando de novo, tudo volta na hora: {link}"
+        "expiredBody": "O plano **{plan}** venceu e as vantagens foram pausadas.\n\n> Pagando de novo, tudo volta na hora: {link}",
+        "addonReminderTitle": "⏳ Seu extra vence em breve",
+        "addonReminderBody": "O **{addon}** do seu servidor vence em **{days}** dia(s). Se não renovar, o módulo fecha — mas a configuração fica guardada. Renove no painel: {link}",
+        "addonExpiredTitle": "⚠️ Extra pausado",
+        "addonExpiredBody": "O **{addon}** foi pausado. Nada foi apagado: assim que você renovar, ele volta como estava. Painel: {link}"
       }
     },
     "linkShield": {
@@ -3843,7 +3847,11 @@ const TRANSLATIONS = {
         "reminderTitle": "⏳ Your plan renews soon",
         "reminderBody": "The **{plan}** plan is about to renew.\n\n> Renew in the dashboard to keep the perks: {link}",
         "expiredTitle": "⚠️ Plan paused",
-        "expiredBody": "The **{plan}** plan expired and its perks were paused.\n\n> Pay again and everything comes back right away: {link}"
+        "expiredBody": "The **{plan}** plan expired and its perks were paused.\n\n> Pay again and everything comes back right away: {link}",
+        "addonReminderTitle": "⏳ Your extra renews soon",
+        "addonReminderBody": "**{addon}** on your server expires in **{days}** day(s). If you do not renew, the module closes — your configuration stays saved. Renew in the panel: {link}",
+        "addonExpiredTitle": "⚠️ Extra paused",
+        "addonExpiredBody": "**{addon}** is paused. Nothing was deleted: once you renew, it comes back as it was. Panel: {link}"
       }
     },
     "linkShield": {

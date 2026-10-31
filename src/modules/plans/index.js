@@ -4,6 +4,8 @@ const { EmbedBuilder } = require('discord.js');
 const plans = require('../../services/guildPlans');
 const payments = require('../../services/planPayments');
 const notices = require('../../services/planNotices');
+const guildAddons = require('../../services/guildAddons');
+const planAddons = require('../../config/planAddons');
 const pyFundadorCmd = require('./commands/pyFundador');
 const { getLanguage, t } = require('../../utils/i18n');
 
@@ -24,6 +26,21 @@ function card(lang, guildName, { title, lines, color }) {
 }
 
 function payloadFor(notice, lang) {
+  if (notice.kind === 'addon_reminder' || notice.kind === 'addon_expired') {
+    const expired = notice.kind === 'addon_expired';
+    const addon = planAddons.labelOf(notice.addonId, lang);
+    return {
+      color: expired ? COLORS.expired : COLORS.reminder,
+      title: t(expired ? 'plans.dm.addonExpiredTitle' : 'plans.dm.addonReminderTitle', lang),
+      lines: [
+        t(expired ? 'plans.dm.addonExpiredBody' : 'plans.dm.addonReminderBody', lang, {
+          addon,
+          days: notice.days,
+          link: panelLink(notice.guildId),
+        }),
+      ],
+    };
+  }
   const plan = planLabel(notice.plan, lang);
   const link = panelLink(notice.guildId);
   if (notice.kind === 'activated') {
@@ -40,6 +57,20 @@ async function notifyActivated(guildId, plan) {
   return notices.push({ guildId, kind: 'activated', plan });
 }
 
+/** Quais extras precisam de aviso agora (D-7, D-3, D-0 e expirado). Função pura: testável. */
+function addonNoticesDue({ now = Date.now(), list = [] } = {}) {
+  const out = [];
+  for (const item of Array.isArray(list) ? list : []) {
+    if (!item || !item.addonId || item.lifetime || !item.until) continue;
+    if (!item.active && !item.expired) continue;
+    const days = Math.ceil((item.until - now) / DAY);
+    if (days <= 0) out.push({ ...item, kind: 'addon_expired', step: '0', days: 0 });
+    else if (days <= 3) out.push({ ...item, kind: 'addon_reminder', step: '3', days });
+    else if (days <= 7) out.push({ ...item, kind: 'addon_reminder', step: '7', days });
+  }
+  return out;
+}
+
 async function tick(client, now = Date.now()) {
   const rec = await payments.reconcilePending({ now }).catch(() => ({ checked: 0, activated: 0 }));
   if (rec.activated) console.log(`[plans] ${rec.activated} assinatura(s) ativadas por reconciliação.`);
@@ -47,6 +78,25 @@ async function tick(client, now = Date.now()) {
   // Programa Fundador: inatividade e vencimento das 20 vagas.
   const founder = require('../../services/founderProgram').sweep({ now });
   if (founder.paused.length) console.log(`[plans] Vaga(s) fundador pausada(s): ${founder.paused.join(', ')}`);
+
+  // Extras: D-7, D-3, D-0 e expirado — uma DM por marco, sem repetir.
+  try {
+    for (const item of addonNoticesDue({ now, list: guildAddons.listAll() })) {
+      const key = `addon:${item.addonId}:${item.step}`;
+      if (notices.hasCustomMark(item.guildId, key)) continue;
+      const queued = notices.push({
+        guildId: item.guildId,
+        kind: item.kind,
+        addonId: item.addonId,
+        step: item.step,
+        days: item.days,
+        at: now,
+      });
+      if (queued) notices.markCustom(item.guildId, key, now);
+    }
+  } catch (err) {
+    console.warn('[plans] Avisos de extra:', err.message);
+  }
 
   // Lembretes D-7/D-3/D-0 e corte (marca para não repetir)
   for (const record of plans.listPlans()) {
@@ -93,6 +143,7 @@ module.exports = {
   defaultEnabled: true,
   commands: [pyFundadorCmd],
   notifyActivated,
+  addonNoticesDue,
   tick,
   async onLoad(ctx) {
     if (!ctx.isBotProcess) return;
