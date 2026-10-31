@@ -31,8 +31,13 @@ export default function StoreProducts({ t, guildId }) {
   const [busy, setBusy] = useState(null);
   const [form, setForm] = useState({ name: '', price: '', cost: '', robux: '', delivery: 'code' });
   const [codes, setCodes] = useState({});
+  // Vitrine no Discord: escolher o canal e publicar o painel com o menu de compra.
+  const [channels, setChannels] = useState([]);
+  const [panelChannel, setPanelChannel] = useState('');
+  const [panelStatus, setPanelStatus] = useState(null);
 
-  const url = `/api/dashboard/guilds/${guildId}/store/products`;
+  const base = `/api/dashboard/guilds/${guildId}/store`;
+  const url = `${base}/products`;
   const load = () =>
     request(url)
       .then((d) => setData(d))
@@ -40,6 +45,9 @@ export default function StoreProducts({ t, guildId }) {
 
   useEffect(() => {
     load();
+    request(`/api/dashboard/guilds/${guildId}/channels`)
+      .then((d) => setChannels((d.channels || []).filter((c) => c.type === 0)))
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guildId]);
 
@@ -80,6 +88,19 @@ export default function StoreProducts({ t, guildId }) {
 
   const remove = (id) => run(`del:${id}`, () => request(`${url}/${id}`, { method: 'DELETE' }));
 
+  // Publica a vitrine no canal escolhido (o backend manda a mensagem com o token do bot).
+  const publishPanel = async () => {
+    setBusy('panel');
+    setPanelStatus(null);
+    try {
+      await request(`${base}/panel`, { method: 'POST', body: { channelId: panelChannel } });
+      setPanelStatus('ok');
+    } catch (e) {
+      setPanelStatus(e.code || 'generic');
+    }
+    setBusy(null);
+  };
+
   if (!data) return status ? <Status t={t} status={status} /> : <Spinner label={t('app.loading')} />;
 
   const products = data.products || [];
@@ -94,6 +115,33 @@ export default function StoreProducts({ t, guildId }) {
         <StatTile label={t('store.prod.sales')} value={sales.orders || 0} />
         <StatTile label={t('store.prod.revenue')} value={brl((sales.revenueCents || 0) / 100)} accent="violet" />
         <StatTile label={t('store.prod.ticket')} value={brl((sales.averageTicketCents || 0) / 100)} />
+      </div>
+
+      <div className="mb-3 rounded-xl border border-white/10 p-3">
+        <p className="font-title text-sm font-bold">{t('store.prod.panelTitle')}</p>
+        <p className="mt-1 text-xs text-white/55">{t('store.prod.panelHint')}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <select
+            value={panelChannel}
+            onChange={(e) => setPanelChannel(e.target.value)}
+            className={`${field} max-w-xs`}
+            aria-label={t('store.prod.panelChannel')}
+          >
+            <option value="">{t('store.prod.panelChannel')}</option>
+            {channels.map((c) => (
+              <option key={c.id} value={c.id}>
+                #{c.name}
+              </option>
+            ))}
+          </select>
+          <Button disabled={!panelChannel || busy === 'panel'} onClick={publishPanel}>
+            {busy === 'panel' ? t('plan.generating') : t('store.prod.panelGo')}
+          </Button>
+        </div>
+        {panelStatus === 'ok' && <Notice tone="ok">{t('store.prod.panelOk')}</Notice>}
+        {panelStatus && panelStatus !== 'ok' && (
+          <Notice tone="error">{t('error.generic', { error: panelStatus })}</Notice>
+        )}
       </div>
 
       {products.length === 0 && <p className="mb-3 text-sm text-white/60">{t('store.prod.empty')}</p>}

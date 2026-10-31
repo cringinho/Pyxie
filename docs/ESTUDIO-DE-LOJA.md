@@ -57,7 +57,27 @@ Suíte: **75 arquivos · 514 verificações · gate OK** (rodou também na VM).
 5. **Flip de `READY_FOR_SALE`** para `true` — só depois de 1–4 verdes.
 
 
-## 4. E2 — telas e cobrança
+## 4. Funções da lojinha (o que o extra entrega)
+
+Lista fechada — a mesma que aparece no painel (**Planos → O que vem no Estúdio de Loja**) e no
+site (`/planos`):
+
+1. **Vitrine no Discord**: painel de produtos publicado num canal, com botão de compra.
+2. **Pedidos e tickets**: abrir, confirmar entrega e registrar falha do pedido.
+3. **Estoque**: quantidade por produto, códigos de entrega e alerta de estoque baixo.
+4. **Preços e Pix**: preço do 1k de Robux, chave e nome do Pix e status da loja.
+5. **Avaliações**: nota média, total e canal das avaliações.
+6. **Cargo de cliente** automático e **filtro de convites**.
+7. **Respostas rápidas** com estoque, preço e status preenchidos sozinhos (`{estoque}`, `{preco_1k}`, `{status_loja}`).
+8. **Ferramentas Robux**: calculadora dos 30%, conferir gamepass e conferir nick do Roblox.
+9. **Recibo de entrega** com botão de avaliação.
+10. **Sorteios, cupons** e modelos prontos de mensagem.
+
+Cada item tem rota e serviço próprios (`storeProducts`, `maryDashboard`, `storefront`,
+`src/modules/mary-studio/*`); o teto de mensagens cíclicas e o perfil da Pyxie seguem o plano
+do servidor (ver `PLANOS-E-BLOQUEIOS.md`).
+
+## 5. E2 — telas e cobrança
 
 1. Card "Estúdio de Loja +R$ 3" na aba **Planos** do painel (`client/src/dashboard/Plans.jsx`),
    com mensal/anual e estado atual.
@@ -66,7 +86,7 @@ Suíte: **75 arquivos · 514 verificações · gate OK** (rodou também na VM).
 3. Webhook: ramo novo em `server.js` para ativar o extra; carência de 7 dias; aviso por DM.
 4. Flip de `isReadyForSale()` para `true` **só** com E1 verde.
 
-### 4.1 Estado real (31/10/2026)
+### 5.1 Estado real (31/10/2026)
 
 Tudo acima está no ar: `READY_FOR_SALE = true`, Pix de R$ 3/R$ 30 validado em teste,
 webhook decidindo por `external_reference` (`addon|guildId|lojinha|ciclo`) e avisos
@@ -83,10 +103,16 @@ A rota `POST /api/dashboard/guilds/:guildId/addons/:addonId/checkout` aceita `{ 
 (`method: 'pix' | 'card'`). No cartão o painel exibe o `initPoint` do Mercado Pago — o mesmo
 tratamento vale para planos (era um bug: o retorno do cartão não aparecia).
 
+**Venda pelo Discord (31/10/2026):** o painel publica a vitrine num canal
+(`POST /api/dashboard/guilds/:id/store/panel`) e o cliente compra pelo menu (`storefront:*`).
+O estoque baixa na hora (`storeProducts.deliver`); entrega manual fica pendente e o dono recebe DM
+com o link. Quando o estoque fica no mínimo, o módulo manda DM de reposição uma vez por dia
+(`storeAlerts.scan`, a cada 6 h).
+
 **Regra de ouro:** o extra libera **módulo**, nunca vantagem econômica (§5 do AGENTS.md).
 Quando expira, os dados ficam guardados e voltam na renovação.
 
-## 5. Riscos que precisam de decisão do dono
+## 6. Riscos que precisam de decisão do dono
 
 - **Roblox**: revenda de Robux fora da plataforma viola os termos do Roblox. O produto é
   ferramentaria de loja; o dono do servidor responde pelo que vende. Recomendo aceite de termos

@@ -214,7 +214,7 @@ function ServerRail({ t, me, activeGuildId, globalActive, onNavigate }) {
   );
 }
 
-function SideNav({ title, subtitle, groups, onNavigate }) {
+function SideNav({ t, title, subtitle, groups, onNavigate }) {
   return (
     <div className="flex w-60 shrink-0 flex-col overflow-y-auto px-3 py-4">
       <div className="mb-4 pl-2 pr-10 lg:pr-2">
@@ -370,7 +370,7 @@ export function Layout({ t, lang, setLang, me, onLogout, nav, crumbs, activeGuil
   const side = (onNavigate) => (
     <>
       <ServerRail t={t} me={me} activeGuildId={activeGuildId} globalActive={globalActive} onNavigate={onNavigate} />
-      <SideNav title={nav.title} subtitle={nav.subtitle} groups={nav.groups} onNavigate={onNavigate} />
+      <SideNav t={t} title={nav.title} subtitle={nav.subtitle} groups={nav.groups} onNavigate={onNavigate} />
     </>
   );
 

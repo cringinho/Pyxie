@@ -365,6 +365,45 @@ function cookieFor(userId, guilds = []) {
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/bot-permissions`, { cookie: adminCookie })).status, 403);
     console.log('  ✅ 6b. Segurança: padrões, canal conferido ao vivo, domínios limpos e acesso por servidor.');
 
+    // 6c. Plano do servidor: perfil da Pyxie (Básico), status da lojinha (Premium) e teto de cíclicas.
+    const ownerASeller = cookieFor(OWNER_A);
+    const grant = await call(`/api/dashboard/guilds/${GUILD_A}/addons/lojinha/grant`, { cookie: ownerASeller, method: 'POST', body: { months: 1 } });
+    assert.equal(grant.status, 200, 'o dono do servidor concede o extra de lojinha');
+    const studioList = await (await call(`/api/dashboard/guilds/${GUILD_A}/studio`, { cookie: adminCookie })).json();
+    assert.deepEqual(studioList.cycles, { plan: 'free', max: 1, used: 0 }, 'Free começa com 0 de 1 mensagem cíclica');
+
+    // Sem plano: perfil pede Básico, status da lojinha pede Premium.
+    const profileBody = { nick: 'Pyxie' };
+    let gateRes = await call(`/api/dashboard/guilds/${GUILD_A}/mary/profile`, { cookie: adminCookie, method: 'PUT', body: profileBody });
+    assert.equal(gateRes.status, 403, 'perfil da Pyxie sem plano é recusado');
+    assert.equal((await gateRes.json()).requiredPlan, 'basic', 'perfil da Pyxie pede o Básico');
+    gateRes = await call(`/api/dashboard/guilds/${GUILD_A}/mary/store`, { cookie: adminCookie, method: 'PUT', body: { statusLoja: 'fila' } });
+    assert.equal(gateRes.status, 403, 'status da lojinha sem plano é recusado');
+    assert.equal((await gateRes.json()).requiredPlan, 'premium', 'status da lojinha pede o Premium');
+    // Estoque e preço não são vantagem de plano: continuam livres no Free (aceite de termos 1x).
+    const saveStock = (body) => call(`/api/dashboard/guilds/${GUILD_A}/mary/store`, { cookie: adminCookie, method: 'PUT', body: { ...body, acceptTerms: true } });
+    assert.equal((await saveStock({ estoqueRobux: 100 })).status, 200);
+
+    // Mensagens cíclicas: a 1ª cabe no Free, a 2ª estoura o teto.
+    const ciclo = (name) => ({
+      name,
+      mode: 'classic',
+      envelope: { content: 'oi' },
+      delivery: { repeat: { everyHours: 24, minMessages: 0, channelId: '777777777777777777' } },
+    });
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/studio/ciclo-1`, { cookie: adminCookie, method: 'PUT', body: ciclo('Ciclo 1') })).status, 200);
+    gateRes = await call(`/api/dashboard/guilds/${GUILD_A}/studio/ciclo-2`, { cookie: adminCookie, method: 'PUT', body: ciclo('Ciclo 2') });
+    assert.equal(gateRes.status, 403, 'a 2ª mensagem cíclica é barrada no Free/Básico');
+    assert.equal((await gateRes.json()).limit, 1, 'Free e Básico: 1 mensagem cíclica');
+
+    // Com o Básico o perfil libera; o status da lojinha continua no Premium.
+    require('../src/services/guildPlans').grantPlan(GUILD_A, 'basic', { months: 1 });
+    const profileBasic = await call(`/api/dashboard/guilds/${GUILD_A}/mary/profile`, { cookie: adminCookie, method: 'PUT', body: profileBody });
+    assert.notEqual(profileBasic.status, 403, 'com o Básico o perfil da Pyxie deixa de ser barrado pelo plano');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}/mary/store`, { cookie: adminCookie, method: 'PUT', body: { statusLoja: 'fila' } })).status, 403, 'status segue no Premium');
+    require('../src/services/guildPlans').setPlan(GUILD_A, { plan: 'free' });
+    console.log('  ✅ 6c. Plano: perfil (Básico), status (Premium) e teto de mensagens cíclicas (1/4/10).');
+
     // 7. Logout e painel sem segredo.
     await call('/auth/logout', { cookie: adminCookie, method: 'POST' });
     assert.equal((await call('/api/dashboard/me', { cookie: adminCookie })).status, 401, 'Logout invalida a sessão');

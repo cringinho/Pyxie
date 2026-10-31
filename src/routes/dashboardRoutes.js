@@ -177,6 +177,20 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return next();
   }
 
+  // Plano mínimo de um recurso específico, com as mesmas cortesias do bloqueio por plano
+  // do `requireGuild` (dono do painel, vitalício, zona Mary e zona Cringelândia).
+  // `null` = liberado; senão devolve o corpo do 403 `plan_required`.
+  function planGate(req, featureId) {
+    const plans = require('../services/guildPlans');
+    const planFeatures = require('../config/planFeatures');
+    const state = plans.getPlan(req.params.guildId);
+    const plan = state.active ? state.plan : 'free';
+    const { zone, role } = req.guildAccess || {};
+    const bypass = state.lifetime === true || role === 'owner' || zone === 'mary' || zone === 'cringelandia';
+    if (bypass || planFeatures.canUse(plan, featureId)) return null;
+    return { feature: featureId, requiredPlan: planFeatures.planFor(featureId), currentPlan: plan };
+  }
+
   // Tela do painel (React em client/, build em public/dist/dashboard). Fora dos buscadores.
   router.get(['/dashboard', '/dashboard/'], (req, res) => {
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
@@ -295,10 +309,19 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const plan = planState.active ? planState.plan : 'free';
     const all = getSections({ ...req.guildAccess, zone: 'cringelandia', role: 'owner' }, req.params.guildId);
     const allowed = getSections(req.guildAccess, req.params.guildId);
-    const lockedSections = all
-      .filter((id) => !allowed.includes(id) || !planFeatures.canUse(plan, id))
-      .filter((id) => planFeatures.feature(id))
-      .map((id) => ({ id, requiredPlan: planFeatures.planFor(id) }));
+    // Cortesias (dono do painel, vitalício, zona Mary e Cringelândia) não veem cadeado:
+    // o backend também não as barra, e a tela tem de refletir o backend (AGENTS §10).
+    const bypass =
+      planState.lifetime === true ||
+      req.guildAccess.role === 'owner' ||
+      req.guildAccess.zone === 'mary' ||
+      req.guildAccess.zone === 'cringelandia';
+    const lockedSections = bypass
+      ? []
+      : all
+          .filter((id) => !allowed.includes(id) || !planFeatures.canUse(plan, id))
+          .filter((id) => planFeatures.feature(id))
+          .map((id) => ({ id, requiredPlan: planFeatures.planFor(id) }));
     return res.json({
       success: true,
       guild,
@@ -438,7 +461,13 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   };
 
   router.get('/api/dashboard/guilds/:guildId/studio', requireSession, requireGuild, (req, res) => {
-    return res.json({ success: true, messages: studioStore.listMessages(req.params.guildId), limits: messageStudio.LIMITS });
+    return res.json({
+      success: true,
+      messages: studioStore.listMessages(req.params.guildId),
+      limits: messageStudio.LIMITS,
+      // Teto de mensagens cíclicas (mensagens repetidas) do plano deste servidor.
+      cycles: cycleAllowance(req.params.guildId),
+    });
   });
 
   router.get('/api/dashboard/guilds/:guildId/studio-emojis', requireSession, requireGuild, (req, res) => {
@@ -483,6 +512,24 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
         require('../config/planAddons').isReadyForSale());
     if (wantsStoreButtons && !storeAllowed) {
       return res.status(403).json({ success: false, error: 'addon_required', addon: 'lojinha' });
+    }
+    // Mensagens cíclicas (repetir a cada X horas no canal): o teto é do plano.
+    const wantsRepeat = Boolean(
+      req.body?.delivery?.repeat?.channelId && Number(req.body.delivery.repeat.everyHours) > 0
+    );
+    if (wantsRepeat) {
+      const planFeatures = require('../config/planFeatures');
+      const { plan, max, used } = cycleAllowance(req.params.guildId, req.params.msgId);
+      if (used >= max) {
+        return res.status(403).json({
+          success: false,
+          error: 'plan_required',
+          feature: 'periodicMessages',
+          requiredPlan: planFeatures.planForLimit('periodicMessages', used + 1),
+          currentPlan: plan,
+          limit: max,
+        });
+      }
     }
     const result = studioStore.saveMessage(req.params.guildId, { ...(req.body || {}), id: req.params.msgId }, { by: req.panelSession.userId });
     if (!result.ok) return res.status(422).json({ success: false, error: 'validation_failed', errors: result.errors });
@@ -550,6 +597,16 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
 
   router.put('/api/dashboard/guilds/:guildId/mary/store', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
     const body = req.body || {};
+    // O status da lojinha (online/fila/fechada) é vantagem do Premium. O painel manda o
+    // formulário inteiro no save, então só barra quando o status realmente MUDA — estoque,
+    // preço e PIX continuam livres para quem está no Básico/Free.
+    if (body.statusLoja !== undefined) {
+      const current = mary().getStore(req.params.guildId).statusLoja;
+      if (String(body.statusLoja) !== String(current)) {
+        const gate = planGate(req, 'storeStatus');
+        if (gate) return res.status(403).json({ success: false, error: 'plan_required', ...gate });
+      }
+    }
     const lists = { channels: [], roles: [] };
     try {
       if (body.channelTickets || body.channelReviews) lists.channels = await bridge.request('GUILD_CHANNELS', { guildId: req.params.guildId });
@@ -643,6 +700,42 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   });
 
 
+  // Publica a vitrine da lojinha num canal: o cliente compra pelos botões do Discord.
+  // (Antes o painel só listava; a venda era combinada na mão.)
+  router.post('/api/dashboard/guilds/:guildId/store/panel', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
+    const channelId = String(req.body?.channelId || '');
+    if (!GUILD_ID_RE.test(channelId)) return res.status(400).json({ success: false, error: 'invalid_channel' });
+    try {
+      const { getLanguage } = require('../utils/i18n');
+      const storefront = require('../modules/mary-studio/storefront');
+      const guild = await getBotGuilds()
+        .then((list) => list.find((g) => g.id === req.params.guildId) || null)
+        .catch(() => null);
+      let storeName = '';
+      try {
+        storeName = mary().getStore(req.params.guildId).storeName || '';
+      } catch (_) {}
+      const panel = storefront.buildPanel(req.params.guildId, {
+        lang: getLanguage(req.params.guildId),
+        guildName: guild?.name || '',
+        storeName,
+      });
+      const sent = await studioStore.discord(
+        'POST',
+        `/channels/${channelId}/messages`,
+        {
+          embeds: panel.embeds.map((e) => e.toJSON()),
+          components: panel.components.map((c) => c.toJSON()),
+          allowed_mentions: { parse: [], users: [], roles: [] },
+        },
+        doFetch
+      );
+      return res.json({ success: true, channelId, messageId: sent.id || '', products: storefront.catalog(req.params.guildId).length });
+    } catch (err) {
+      return res.status(err.status === 404 ? 404 : 400).json({ success: false, error: err.code || 'discord_error' });
+    }
+  });
+
   router.get('/api/dashboard/guilds/:guildId/mary/roblox/gamepass', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
     return maryReply(res, await mary().inspectGamepass(req.query.input), (r) => ({ gamepass: r.gamepass }));
   });
@@ -672,6 +765,9 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   });
 
   router.put('/api/dashboard/guilds/:guildId/mary/profile', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
+    // Perfil completo da Pyxie (apelido, foto, banner e bio) entra no Básico.
+    const gate = planGate(req, 'maryProfile');
+    if (gate) return res.status(403).json({ success: false, error: 'plan_required', ...gate });
     return maryReply(res, await mary().saveProfile(req.params.guildId, req.body || {}), (r) => ({ profile: r.profile }));
   });
 
@@ -1101,6 +1197,18 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   router.get('/api/dashboard/guilds/:guildId/agenda', requireSession, requireGuild, (req, res) => {
     return res.json({ success: true, agenda: require('../services/guildAgenda').getGuildAgenda(req.params.guildId) });
   });
+
+  // Teto de mensagens cíclicas (mensagens do Estúdio repetidas) do plano do servidor:
+  // Free e Básico 1 · Fundador 4 · Premium 10 (fonte única: planFeatures `periodicMessages`).
+  function cycleAllowance(guildId, exceptId = '') {
+    const planFeatures = require('../config/planFeatures');
+    const state = require('../services/guildPlans').getPlan(guildId);
+    const plan = state.active ? state.plan : state.lifetime ? 'founder' : 'free';
+    const used = require('../services/messageStudioStore')
+      .listMessages(guildId)
+      .filter((m) => m.repeat && m.id !== exceptId).length;
+    return { plan, max: planFeatures.limitFor(plan, 'periodicMessages'), used };
+  }
 
   function periodicView(guildId) {
     const periodic = require('../services/periodicMessages');

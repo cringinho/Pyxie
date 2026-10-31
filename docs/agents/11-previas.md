@@ -16,12 +16,16 @@ Sem isso, a chamada devolve `{ success: true, skipped: true, simulated: true }` 
 Exemplos (Windows/PowerShell e Linux):
 
 ```powershell
-$env:PYXIE_PREVIEWS='on'; node scripts/dispatch_automation_previews.js pt
+$env:PYXIE_PREVIEWS='on'; node scripts/dispatch_previews.js store pt
 ```
 
 ```bash
-PYXIE_PREVIEWS=on node scripts/dispatch_automation_previews.js pt
+PYXIE_PREVIEWS=on node scripts/dispatch_previews.js store pt
 ```
+
+Módulos disponíveis no despachante: `store` (vitrine com o menu de compra), `store-stock`
+(alerta de estoque baixo) e `home` (loja do dia da Casinha). O segundo argumento é o idioma
+(`pt` ou `en`).
 
 ### 3. Blindagem anti-ping (vale sempre que houver envio)
 - No canal `1461937203214024891`, **nunca** mencione usuários, cargos, `@everyone` ou `@here` de forma ativa.

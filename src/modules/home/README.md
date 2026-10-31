@@ -53,7 +53,7 @@ papéis de parede, pisos e gatinhos são pixel art desenhada no próprio código
 ## Painel e API
 - `getStatus()` alimenta a aba Módulos; o registro `home_state` aparece no Visual DB → Estado Global.
 - `/api/public/system-truth` expõe `milestones.home` e `milestones.achievements`.
-- Previews de homologação: `node scripts/dispatch_home_previews.js`.
+- Previews de homologação: `node scripts/dispatch_previews.js home` (sob demanda, com `PYXIE_PREVIEWS=on`).
 
 ## Doações (Pix livre)
 

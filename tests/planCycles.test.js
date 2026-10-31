@@ -123,6 +123,24 @@ assert.ok(catalog.features.every((f) => f.id && f.plan && typeof f.rank === 'num
 assert.ok(catalog.features.every((f) => f.pt && f.en), 'todo recurso precisa de PT e EN');
 console.log('  ✅ 10. Catálogo bilíngue e completo.');
 
+// 11. Perfil da Pyxie (Básico) x status da lojinha (Premium) e teto de mensagens cíclicas.
+assert.equal(features.planFor('maryProfile'), 'basic', 'perfil da Pyxie entra no Básico');
+assert.equal(features.canUse('basic', 'maryProfile'), true);
+assert.equal(features.canUse('free', 'maryProfile'), false);
+assert.equal(features.planFor('storeStatus'), 'premium', 'status da lojinha é Premium');
+assert.equal(features.canUse('basic', 'storeStatus'), false);
+assert.equal(features.canUse('premium', 'storeStatus'), true);
+assert.equal(features.limitFor('free', 'periodicMessages'), 1);
+assert.equal(features.limitFor('basic', 'periodicMessages'), 1);
+assert.equal(features.limitFor('founder', 'periodicMessages'), 4);
+assert.equal(features.limitFor('premium', 'periodicMessages'), 10);
+assert.equal(features.limitFor('premium', 'nao_existe'), 0);
+assert.equal(features.planForLimit('periodicMessages', 1), 'free', '1 mensagem cabe no gratuito');
+assert.equal(features.planForLimit('periodicMessages', 2), 'premium', 'a 2ª mensagem pede Premium (Fundador é cortesia)');
+assert.equal(features.planForLimit('periodicMessages', 5), 'premium', 'acima de 4 só no Premium');
+assert.equal(catalog.limits.periodicMessages.premium, 10, 'o catálogo leva os tetos para o painel');
+console.log('  ✅ 11. Perfil (Básico), status (Premium) e teto de mensagens cíclicas 1/4/10.');
+
 console.log('💳 Plano anual e bloqueio: tudo certo.');
 
 })();

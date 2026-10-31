@@ -62,8 +62,28 @@ POST   .../store/price                 { robux, per1kCents, costCents } → game
 - Não existe "Robux de graça por convite": se um servidor promete isso, é golpe. A lojinha
   não cria esse tipo de oferta.
 
-## 7. O que falta
+## 7. O que faltava — fechado em 31/10/2026
 
-1. Botões de compra no painel do Discord (hoje a venda é confirmada pelo dono).
-2. Card na aba **Planos** do `client/` consumindo `/store/products`.
-3. Alerta automático de estoque baixo por DM (o dado já existe em `stockReport`).
+1. ~~Botões de compra no painel do Discord~~ — **feito**: `src/modules/mary-studio/storefront.js`
+   monta a vitrine (embed + menu de pacotes) e a compra (`storefront:pick` → ficha →
+   `storefront:buy:<produto>`). Código/link vai por DM e também no efêmero; pedido `manual` fica
+   pendente e avisa o dono na hora com o link do painel. Clique repetido do mesmo pacote em 30 s é
+   recusado (`repeat`) — nada de vender duas vezes por duplo clique.
+2. ~~Card na aba **Planos** consumindo `/store/products`~~ — **feito**: `client/src/dashboard/Plans.jsx`
+   mostra produtos publicados e quantos estão no fim do estoque, com atalho para a Lojinha.
+3. ~~Alerta automático de estoque baixo por DM~~ — **feito**: `src/modules/mary-studio/storeAlerts.js`
+   varre a cada 6 h (primeira passada 3 min depois de subir), manda DM sem ping ao dono e grava
+   `data/guilds/<id>/storeAlerts.json` para não repetir no mesmo dia.
+
+### Como publicar a vitrine
+
+No painel → **Lojinha** → cartão **Painel no Discord**: escolha o canal e clique em **Publicar painel**.
+A rota `POST /api/dashboard/guilds/:id/store/panel` envia a mensagem com o token do bot (gate
+`requireMaryOrAddon`, como o resto da lojinha). A vitrine só lista produto ativo com estoque e
+**nunca** mostra código nem custo.
+
+### Testes
+
+`tests/storefrontFlow.test.js` (10 verificações): painel sem vazar código/custo, ficha com botão,
+compra entregando o código mais antigo, clique repetido, estoque esgotado, pedido manual com aviso
+ao dono, alerta de estoque uma vez por dia e varredura só nos servidores com loja ativa.

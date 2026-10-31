@@ -7,9 +7,9 @@
 
 | Métrica | Antes (cadeia `&&`) | Depois (Suíte Turbo) |
 |---|---|---|
-| Arquivos | 72 | 72 |
-| Verificações | 492 | **492** |
-| Tempo de parede (suíte completa) | 73,9 s | **32,9 s** (2,3×) |
+| Arquivos | 72 | **84** |
+| Verificações | 492 | **593** |
+| Tempo de parede (suíte completa) | 73,9 s | **37,2 s** (2,0×) |
 | Loop local (`--changed`, edição-folha) | 73,9 s | **0,7 s** (109×) |
 | Falhas / instabilidade | — | 0 em 3 execuções seguidas |
 
@@ -26,7 +26,7 @@ O ganho maior vem do **loop local**, não da suíte completa: editar um módulo-
 ## 3. Como funciona
 
 ### 3.1 Fonte única da ordem: `tests/steps.json`
-Lista os 72 passos, na ordem original. **Nunca** leia `scripts.test` para isso: o
+Lista os 84 passos, na ordem original. **Nunca** leia `scripts.test` para isso: o
 `npm test` aponta para o próprio runner (isso gerou uma recursão infinita na primeira
 tentativa). Para acrescentar teste novo:
 
@@ -95,12 +95,23 @@ dinâmicos — a contagem por arquivo continua sendo exigida separadamente.
    quarentena. Correção de raiz: fake timers — fica como pendência.
 4. **Windows/PowerShell embaralha o acento na saída** quando se usa `*>`; os arquivos de
    manifesto são gravados em UTF-8 pelo Node e estão corretos.
+5. **`bash` do WSL sem distro quebra duas verificações.** `quizGames` (9) e `dungeonCrawler` (11)
+   rodam o hook `.agents/hooks` pelo `bash`. Se o PATH resolvê-lo para o atalho do WSL
+   (`C:\WINDOWS\system32\bash.exe`) sem distro instalada, o teste cai no ramo "bash indisponível"
+   e o gate acusa verificação perdida. Correção local (Windows):
+
+   ```powershell
+   $env:PATH = 'C:\Program Files\Git\bin;' + $env:PATH
+   npm test
+   ```
+
+   `scripts/test-safe.sh` já roda com o bash do Git e não sofre disso.
 
 ## 6. Arquivos criados
 
 - `tests/run.js` — runner (pool, quarentena, gate, `--changed`).
-- `tests/steps.json` — ordem oficial dos 72 passos.
-- `tests/baseline-manifest.json` — **versionado**: as 492 verificações de referência (liga o gate também na VM).
+- `tests/steps.json` — ordem oficial dos 84 passos.
+- `tests/baseline-manifest.json` — **versionado**: as 576 verificações de referência (liga o gate também na VM).
 - `tests/data-touch-map.json` — **versionado**: quais arquivos de `data/` cada teste escreve (habilita o pool na VM).
 - `tests/solo.json` — **versionado**: quarentena (testes que rodam sempre em série).
 - `scripts/capture-test-manifest.js` — gera o baseline e restaura `data/`.

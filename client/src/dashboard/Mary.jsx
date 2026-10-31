@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Calculator, Copy, Gift, ImagePlus, LayoutTemplate, MessageSquareQuote, Package, Receipt, Search, Sparkles, Store, UserRound, Wallet } from 'lucide-react';
 import { api, request, ApiError } from './api';
 import { Button, Card, Notice, Spinner, StatTile, Toggle } from './ui';
+import Paywall, { planFromCode } from './Paywall';
 import { go } from './Shell';
 import StoreProducts from './StoreProducts';
 
@@ -64,6 +65,8 @@ function Pick({ label, value, onChange, options }) {
 
 function Status({ t, status }) {
   if (!status) return null;
+  const lockedPlan = planFromCode(status);
+  if (lockedPlan) return <Paywall t={t} requiredPlan={lockedPlan} />;
   if (status === 'ok') return <Notice tone="ok">{t('features.saved')}</Notice>;
   if (status.startsWith('done:')) return <Notice tone="ok">{t(status.slice(5))}</Notice>;
   const known = t(`mary.err.${status}`);

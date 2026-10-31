@@ -25,11 +25,27 @@ Fonte única: **`src/config/planFeatures.js`**.
 | Recurso | Plano | Onde |
 |---|---|---|
 | Cores e temas do painel | Básico | seção `theme_custom` |
+| Perfil da Pyxie no servidor (apelido, foto, banner, bio) | Básico | seção `maryProfile` |
 | Mensagens personalizadas (embeds) | Premium | seção `embeds` |
 | Comunidade e eventos | Premium | seção `community` |
 | Eventos sazonais | Premium | seção `seasonal` |
+| Status da lojinha no servidor (online/fila/fechada) | Premium | recurso `storeStatus` |
 | Oráculo com IA / Quiz IA | Premium | comandos |
 | Blog Hyperfokus | Premium | módulo |
+
+### Tetos por plano (números, não recursos)
+
+Fonte: `LIMITS` em `src/config/planFeatures.js` (`limitFor(plan, chave)`).
+
+| Teto | Free | Básico | Fundador | Premium |
+|---|---|---|---|---|
+| Mensagens cíclicas (`periodicMessages`) | 1 | 1 | 4 | 10 |
+
+- **Mensagem cíclica** = mensagem do Estúdio com **Repetir de tempos em tempos** ligado
+  (`delivery.repeat`, agendador em `src/services/messageStudioDelivery.js`).
+- O teto é conferido no `PUT /api/dashboard/guilds/:id/studio/:msgId` (403 `plan_required`
+  com `limit` e `requiredPlan`) e mostrado no editor ("x de N no plano Y").
+- `planForLimit(chave, n)` devolve o plano que comporta `n` — é o que o paywall anuncia.
 
 **Por que automações, mensagens periódicas e boas-vindas ficaram livres:** já são usadas por
 servidores sem plano. Trancar agora tiraria recurso de quem está usando — diferencial de plano
@@ -59,5 +75,17 @@ repetindo a cada 12 meses, `canUse`/`planFor`/`lockedFor`, founder no topo e cat
 
 ## 4. Falta
 
-1. Paywall amigável dentro da seção bloqueada (hoje ela mostra o erro genérico de API).
-2. Site público (`/planos`) com os mesmos preços — hoje a página é estática.
+1. ~~Paywall amigável dentro da seção bloqueada~~ — **feito em 31/10/2026**: `client/src/dashboard/Paywall.jsx`
+   abre o caminho da compra com o nome do plano. A seção travada nem renderiza o formulário, e
+   `api.js` transforma o 403 `plan_required` em `plan_required:<plano>`, então qualquer rota
+   bloqueada também cai no paywall (nunca no erro genérico).
+2. ~~Site público (`/planos`) com os mesmos preços~~ — **feito em 31/10/2026**: `/planos` e
+   `/en/plans` mostram mensal **e anual** (R$ 70 / R$ 200, "2 meses grátis") e o extra de
+   R$ 3 / R$ 30, com JSON-LD das seis ofertas. `tests/plansPublicSite.test.js` compara a página
+   com `guildPlans.PRICES`/`PRICES_ANNUAL` e `planAddons.priceOf`, então preço divergente quebra o teste.
+
+## 5. Testes
+
+- Backend: `tests/planCycles.test.js`, `tests/planPayments.test.js`, `tests/planAddons.test.js`.
+- Painel + site: `tests/plansPublicSite.test.js` (preços do catálogo, SEO bilíngue, paywall e a
+  rota que publica a vitrine da lojinha).

@@ -82,7 +82,9 @@
     "node tests/automationsUpgrade.test.js",
     "node tests/storeProducts.test.js",
     "node tests/planCycles.test.js",
+    "node tests/plansPublicSite.test.js",
+    "node tests/storefrontFlow.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T20:35:56.223Z"
+  "updatedAt": "2026-10-31T22:05:26.506Z"
 }

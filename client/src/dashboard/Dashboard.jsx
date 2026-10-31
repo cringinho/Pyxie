@@ -4,6 +4,7 @@ import { api } from './api';
 import { detectLang, makeT } from './i18n';
 import { Badge, Button, Card, GuildIcon, MultiSelect, Notice, Spinner, StatTile, StatusDot, Switch, Toggle } from './ui';
 import { Layout, Starfield, buildNav, go, sectionIcon } from './Shell';
+import Paywall, { planFromCode } from './Paywall';
 import Studio from './Studio';
 import { Links, Moderation } from './Safety';
 import { Assets, CommunitySettings } from './Community';
@@ -295,6 +296,9 @@ function useLoad(loader, deps) {
 }
 
 function ErrorNotice({ t, code }) {
+  // Rota travada pelo plano: paywall com o caminho da compra, não o erro genérico.
+  const lockedPlan = planFromCode(code);
+  if (lockedPlan) return <Paywall t={t} requiredPlan={lockedPlan} />;
   const known = t(`error.${code}`);
   return <Notice tone="error">{known.startsWith('error.') ? t('error.generic', { error: code }) : known}</Notice>;
 }
@@ -582,8 +586,8 @@ function GuildView({ shell, guildId, section, item }) {
     );
   }
 
-  const { guild, zone, role, sections, lockedSections } = info.data;
-  const ids = [...sections];
+  const { guild, zone = 'global', role = 'admin', sections = [], lockedSections = [] } = info.data || {};
+  const ids = Array.isArray(sections) ? [...sections] : [];
   const current = ids.includes(section) ? section : 'overview';
   const g = guild || fallbackGuild;
   const name = g?.name || guildId;
@@ -596,6 +600,9 @@ function GuildView({ shell, guildId, section, item }) {
   };
   const crumbs = [{ label: t('app.title'), href: '#/' }, { label: name, href: `#/guild/${guildId}/overview` }, { label: t(`section.${current}`) }];
   const CurrentIcon = sectionIcon(current);
+  // Seção travada pelo plano: o painel mostra o paywall no lugar do formulário (a API
+  // recusaria de qualquer jeito — a tela esconde E o backend recusa, AGENTS §10).
+  const lockedPlan = current === 'overview' ? null : lockedMap[current] || null;
 
   return (
     <Layout {...shell} nav={nav} crumbs={crumbs} activeGuildId={guildId}>
@@ -613,6 +620,10 @@ function GuildView({ shell, guildId, section, item }) {
         }
       />
       <div className={WIDE_SECTIONS.has(current) ? '' : 'max-w-3xl'}>
+        {lockedPlan ? (
+          <Paywall t={t} requiredPlan={lockedPlan} guildId={guildId} />
+        ) : (
+          <>
         {current === 'overview' && <Overview t={t} guild={g} zone={zone} role={role} ids={ids} guildId={guildId} botOnline={me.botOnline} />}
         {current === 'studio' && (
           <div className="space-y-4">
@@ -658,6 +669,8 @@ function GuildView({ shell, guildId, section, item }) {
         {current === 'periodic' && <Periodic t={t} lang={lang} guildId={guildId} />}
         {current === 'planos' && <Plans t={t} lang={lang} guildId={guildId} />}
         {current === 'welcome' && <Welcome t={t} guildId={guildId} />}
+          </>
+        )}
       </div>
     </Layout>
   );

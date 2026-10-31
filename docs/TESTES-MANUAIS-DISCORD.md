@@ -46,3 +46,16 @@ O teste automático `node scripts/smoke_all_commands.js` já roda todos os 59 co
 - [ ] Parcerias: configurar o tópico do fórum em Ferramentas → **DM de parceria aprovada**, aprovar uma parceria de teste e receber o retorno ("mandei", "não achei" ou "DM fechada").
 - [ ] `/py-dungeon`, `/py-boss`, `/py-home`, `/py-craft`, `/py-market`, `/py-festival`, `/py-pass` funcionam na Cringelândia e não aparecem em outros servidores.
 - [ ] `/py-character` sumiu (roleplay removido). As fichas antigas foram para `data/_arquivados/` na VM.
+
+## 6. Planos, paywall e lojinha (novo em 31/10/2026)
+
+- [ ] Servidor no plano Free: abrir uma seção travada (Mensagens personalizadas, Comunidade, Sazonal ou Cores) mostra o **paywall** com o nome do plano e o botão **Ver planos e assinar** — não o erro genérico de API.
+- [ ] Clicar em **Ver planos e assinar** leva para a aba **Planos** do mesmo servidor.
+- [ ] Na aba **Planos**, alternar **Mensal/Anual**: o preço muda (R$ 7 ↔ R$ 70, R$ 20 ↔ R$ 200) e o selo de economia aparece no anual.
+- [ ] Servidor com o extra `lojinha`: o card **Lojinha do servidor** aparece na aba Planos com a contagem de produtos e atalho para a Lojinha.
+- [ ] Lojinha → **Painel no Discord** → escolher um canal → **Publicar painel**: a mensagem chega com o menu de pacotes.
+- [ ] No Discord, escolher um pacote e comprar: o código chega na DM e no efêmero; o estoque cai no painel.
+- [ ] Comprar um pacote de entrega **manual**: o pedido fica pendente e você (dono) recebe DM com o link do painel.
+- [ ] Clicar duas vezes seguidas no mesmo pacote: a segunda tentativa avisa que já levou (não vende duas vezes).
+- [ ] Deixar um produto no estoque mínimo: em até 6 h chega DM de **Estoque acabando**; a mesma DM não se repete no mesmo dia.
+- [ ] Abrir `/planos` e `/en/plans` no celular: preços mensal e anual, card do extra de R$ 3 e nenhum estouro horizontal em zoom 200%.

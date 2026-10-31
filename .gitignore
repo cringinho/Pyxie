@@ -11,6 +11,9 @@ data/*.tmp
 data/backup/
 minhasnote/
 .botmelody.lock
+.botmelody.test.lock
+# MCP local: caminho absoluto da máquina (ver scripts/mcp/README.md)
+.mcp.json
 .slash-commands.hash
 prefix.json
 public/uploads/*

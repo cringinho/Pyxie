@@ -12,6 +12,7 @@
   "git.detectSubmodules": false,
   "git.fetchOnType": false,
   "git.showInlineNotification": false,
-  "git.autorefresh": false
+  "git.autorefresh": false,
+  "python.terminal.useEnvFile": true
 }
 

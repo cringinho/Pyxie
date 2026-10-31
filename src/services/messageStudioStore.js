@@ -39,7 +39,15 @@ function listGuildsWithMessages() {
 
 function listMessages(guildId) {
   return Object.values(load(guildId).messages)
-    .map((m) => ({ id: m.id, name: m.name, mode: m.mode, updatedAt: m.updatedAt, sentCount: (m.sent || []).length }))
+    .map((m) => ({
+      id: m.id,
+      name: m.name,
+      mode: m.mode,
+      updatedAt: m.updatedAt,
+      sentCount: (m.sent || []).length,
+      // Mensagem cíclica (repetida no canal): o painel conta o teto do plano por aqui.
+      repeat: Boolean(m.delivery?.repeat?.everyHours && m.delivery.repeat.channelId),
+    }))
     .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
 }
 

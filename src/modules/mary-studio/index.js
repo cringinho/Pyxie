@@ -8,9 +8,12 @@ const giveawayHandler = require('./handlers/giveawayHandler');
 const pyMaryStudioCmd = require('./commands/pyMaryStudio');
 const pyMaryEditContextCmd = require('./commands/pyMaryEditContext');
 const pyGamepassCmd = require('./commands/pyGamepass');
+const storefront = require('./storefront');
+const storeAlerts = require('./storeAlerts');
 const securityGuard = require('./utils/securityGuard');
+const { canUseStore } = require('./storeAccess');
 const { MARY_GUILD_ID } = require('../../config/scopes');
-const { t } = require('../../utils/i18n');
+const { getLanguage, t } = require('../../utils/i18n');
 const {
   ModalBuilder,
   TextInputBuilder,
@@ -94,6 +97,69 @@ async function handleQuickInteraction(interaction) {
   return undefined;
 }
 
+// Vitrine pública da lojinha: o cliente escolhe o pacote no menu, confirma na ficha e recebe
+// o código na hora. Vale na zona Mary e em qualquer servidor com o extra `lojinha` ativo.
+const REASON_KEY = {
+  repeat: 'storeOps.alreadyBought',
+  sold_out: 'storeOps.soldOut',
+  not_found: 'storeOps.unavailable',
+  inactive: 'storeOps.unavailable',
+};
+
+async function handleStorefrontInteraction(interaction) {
+  const guildId = interaction.guildId;
+  if (!guildId || !canUseStore(guildId)) return undefined;
+  const lang = getLanguage(guildId);
+
+  if (interaction.isStringSelectMenu() && interaction.customId === storefront.PANEL_ID) {
+    const productId = (interaction.values && interaction.values[0]) || '';
+    const view = storefront.buildProduct(guildId, productId, { lang });
+    if (!view) return interaction.reply({ content: t('storeOps.unavailable', lang), ephemeral: true });
+    return interaction.reply({ ...view, ephemeral: true });
+  }
+
+  if (interaction.isButton() && interaction.customId === storefront.BACK_ID) {
+    const panel = storefront.buildPanel(guildId, { lang, guildName: interaction.guild?.name || '' });
+    return interaction.reply({ ...panel, ephemeral: true });
+  }
+
+  if (!(interaction.isButton() && storefront.isBuy(interaction.customId))) return undefined;
+
+  const productId = storefront.productIdOf(interaction.customId);
+  const result = storefront.purchase(guildId, productId, { buyerId: interaction.user.id });
+  if (!result.ok) {
+    const key = REASON_KEY[result.reason] || 'storeOps.error';
+    return interaction.reply({ content: t(key, lang), ephemeral: true });
+  }
+
+  const order = result.order;
+  const embed = storefront.receipt(order, { lang });
+
+  // O código vai por DM (fica guardado); se a DM estiver fechada, o efêmero ainda mostra tudo.
+  if (order.delivery !== 'manual') {
+    await interaction.user.send({ embeds: [embed] }).catch(() => null);
+  } else {
+    // Entrega manual: o dono recebe o pedido na hora e confirma no painel.
+    const owner = await interaction.guild?.fetchOwner?.().catch(() => null);
+    if (owner?.send) {
+      await owner
+        .send({
+          embeds: [
+            storefront.ownerNotice(order, {
+              lang,
+              guildId,
+              buyer: interaction.user.tag || interaction.user.username || order.buyerId,
+            }),
+          ],
+          allowedMentions: { parse: [], users: [], roles: [] },
+        })
+        .catch(() => null);
+    }
+  }
+
+  return interaction.reply({ embeds: [embed], ephemeral: true });
+}
+
 module.exports = {
   id: 'mary-studio',
   name: {
@@ -111,6 +177,11 @@ module.exports = {
   defaultEnabled: true,
 
   commands: [pyMaryStudioCmd, pyMaryEditContextCmd, pyGamepassCmd],
+
+  // Peças exportadas para teste (a vitrine não depende de um cliente do Discord).
+  storefront,
+  storeAlerts,
+  storefrontInteraction: handleStorefrontInteraction,
 
   async onLoad(ctx) {
     maryStudioManager.buttonActionHandler = buttonActionHandler;
@@ -139,6 +210,22 @@ module.exports = {
           console.error('[MaryStudio] Erro na interação rápida:', e);
         }
       });
+      // Vitrine da lojinha (menu + compra). Separado da central: uma falha aqui não derruba a outra.
+      ctx.registerListener('interactionCreate', async (interaction) => {
+        try {
+          await handleStorefrontInteraction(interaction);
+        } catch (e) {
+          console.error('[MaryStudio] Erro na vitrine:', e);
+        }
+      });
+    }
+
+    // Estoque baixo: DM ao dono, uma vez por dia por produto (o dado já existia, faltava o aviso).
+    if (ctx.isBotProcess) {
+      const alertCycle = () =>
+        storeAlerts.scan(ctx.client || null, {}).catch((err) => console.error('[MaryStudio] Alerta de estoque:', err));
+      if (typeof ctx.registerInterval === 'function') ctx.registerInterval(alertCycle, 6 * 60 * 60 * 1000);
+      if (typeof ctx.registerTimeout === 'function') ctx.registerTimeout(alertCycle, 3 * 60 * 1000);
     }
   },
 

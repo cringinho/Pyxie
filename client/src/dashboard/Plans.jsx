@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { BadgeCheck, CreditCard, Infinity as InfinityIcon, QrCode, ShieldOff } from 'lucide-react';
+import { BadgeCheck, CreditCard, Infinity as InfinityIcon, Package, QrCode, ShieldOff } from 'lucide-react';
 import { api } from './api';
-import { Button, Notice, Spinner } from './ui';
+import { go } from './Shell';
+import Paywall, { planFromCode } from './Paywall';
+import { Button, Card, Notice, Spinner } from './ui';
 
 // Assinatura mensal do servidor: Básico (R$ 7) e Premium (R$ 20), Pix por QR ou cartão recorrente.
 export default function Plans({ t, guildId, lang }) {
@@ -10,6 +12,8 @@ export default function Plans({ t, guildId, lang }) {
   const [busy, setBusy] = useState(null);
   const [checkout, setCheckout] = useState(null);
   const [extras, setExtras] = useState([]);
+  // Lojinha: o cartão só aparece quando o extra está ativo (ou é a zona da Mary).
+  const [store, setStore] = useState(null);
   // Ciclo escolhido: mensal (padrão) ou anual com 2 meses grátis.
   const [cycle, setCycle] = useState('month');
   // Botão clicado por último: dá retorno visual imediato ("gerando…") e marca a escolha.
@@ -28,6 +32,11 @@ export default function Plans({ t, guildId, lang }) {
       .addons(guildId)
       .then((d) => setExtras(Array.isArray(d.addons) ? d.addons : []))
       .catch(() => {});
+    // Sem o extra (ou fora da zona Mary) a rota devolve 403: o cartão simplesmente não aparece.
+    api
+      .storeProducts(guildId)
+      .then((d) => setStore(d))
+      .catch(() => setStore(null));
   }, [guildId]);
 
   // Quando o checkout chega, leva o usuário até ele (antes ficava lá embaixo e
@@ -39,6 +48,9 @@ export default function Plans({ t, guildId, lang }) {
   // A página só é substituída quando nem os dados iniciais chegaram. Erro de clique
   // aparece como aviso dentro da tela (antes a tela inteira sumia e parecia "não abriu").
   if (!info) {
+    // Recurso travado pelo plano (a API responde 403 plan_required): paywall no lugar do erro cru.
+    const lockedPlan = error ? planFromCode(error) : '';
+    if (lockedPlan) return <Paywall t={t} requiredPlan={lockedPlan} guildId={guildId} />;
     return error ? <Notice tone="error">{t('error.generic', { error })}</Notice> : <Spinner label={t('app.loading')} />;
   }
 
@@ -160,8 +172,12 @@ export default function Plans({ t, guildId, lang }) {
               </span>
             </div>
             <ul className="space-y-1 text-xs text-white/65">
-              <li>• {t(`plan.perk.${plan}.1`)}</li>
-              <li>• {t(`plan.perk.${plan}.2`)}</li>
+              {[1, 2, 3, 4, 5]
+                .map((n) => t(`plan.perk.${plan}.${n}`))
+                .filter((line) => !line.startsWith(`plan.perk.`))
+                .map((line) => (
+                  <li key={line}>• {line}</li>
+                ))}
               <li>• {t('plan.perk.support')}</li>
             </ul>
             <div className="flex flex-wrap gap-2">
@@ -177,6 +193,8 @@ export default function Plans({ t, guildId, lang }) {
           </div>
         ))}
       </div>
+
+      <p className="text-xs text-white/55">{t('plan.founder.perk')}</p>
 
       {extras.length > 0 && (
         <div className="space-y-2">
@@ -226,6 +244,45 @@ export default function Plans({ t, guildId, lang }) {
             </div>
           ))}
         </div>
+      )}
+
+      {store && (
+        <div className="dash-card flex flex-wrap items-center justify-between gap-3 rounded-2xl p-4">
+          <div className="flex min-w-0 items-start gap-3">
+            <Package size={20} className="mt-0.5 shrink-0 text-pyxie-glow" aria-hidden="true" />
+            <div className="min-w-0">
+              <p className="font-title font-bold">{t('plan.store.title')}</p>
+              <p className="text-xs text-white/55">
+                {(store.products || []).length
+                  ? t('plan.store.body', {
+                      products: (store.products || []).length,
+                      low: (store.products || []).filter(
+                        (p) => p.delivery === 'code' && (p.stock || []).length <= p.minStock
+                      ).length,
+                    })
+                  : t('plan.store.empty')}
+              </p>
+            </div>
+          </div>
+          <Button variant="ghost" onClick={() => go(`#/guild/${guildId}/maryStore`)}>
+            <Package size={16} aria-hidden="true" />
+            {t('plan.store.open')}
+          </Button>
+        </div>
+      )}
+
+      {/* O que o extra de lojinha entrega, item por item: quem compra sabe exatamente o que recebe. */}
+      {extras.some((a) => a.id === 'lojinha') && (
+        <Card title={t('plan.lojinha.title')} icon={Package}>
+          <p className="mb-2 text-sm text-white/70">{t('plan.lojinha.hint')}</p>
+          <ul className="grid gap-1 text-xs text-white/65 sm:grid-cols-2">
+            {Array.from({ length: 10 }, (_, i) => t(`plan.lojinha.f${i + 1}`))
+              .filter((line) => !line.startsWith('plan.lojinha.'))
+              .map((line) => (
+                <li key={line}>• {line}</li>
+              ))}
+          </ul>
+        </Card>
       )}
 
       {checkout?.qrCode && (

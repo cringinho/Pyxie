@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { api } from './api';
+import Paywall, { planFromCode } from './Paywall';
 import { Button, Card, Notice, Spinner, Toggle } from './ui';
 
 const field = 'min-h-[44px] w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm';
@@ -527,12 +528,17 @@ const toLocalInput = (ms) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-function DeliveryEditor({ t, doc, channels, onChange }) {
+function DeliveryEditor({ t, doc, channels, onChange, cycles }) {
   const d = doc.delivery;
   const identity = doc.envelope.identity;
   const channelOpts = [{ value: '', label: '—' }, ...channels.map((c) => ({ value: c.id, label: `#${c.name}` }))];
   const setDelivery = (patch) => onChange({ delivery: { ...d, ...patch } });
   const setIdentity = (patch) => onChange({ envelope: { ...doc.envelope, identity: { ...identity, ...patch } } });
+  // Mensagem cíclica = repetida no canal. O teto vem do plano (Free/Básico 1 · Fundador 4 · Premium 10).
+  const used = cycles?.used || 0;
+  const max = cycles?.max || 0;
+  const alreadyCyclic = Boolean(d.repeat?.channelId && Number(d.repeat.everyHours) > 0);
+  const cycleBlocked = Boolean(cycles) && used >= max && !alreadyCyclic;
   return (
     <Card title={t('studio.delivery')}>
       <div className="space-y-4">
@@ -549,7 +555,16 @@ function DeliveryEditor({ t, doc, channels, onChange }) {
           )}
         </div>
         <div className="space-y-2">
-          <Toggle label={t('studio.repeat')} checked={Boolean(d.repeat)} onChange={(v) => setDelivery({ repeat: v ? { everyHours: 24, minMessages: 20, channelId: '' } : null })} />
+          <Toggle
+            label={t('studio.repeat')}
+            checked={Boolean(d.repeat)}
+            disabled={cycleBlocked}
+            onChange={(v) => setDelivery({ repeat: v ? { everyHours: 24, minMessages: 20, channelId: '' } : null })}
+          />
+          {cycles && (
+            <p className="text-xs text-white/50">{t('studio.repeatLimit', { used, max, plan: t(`plan.tier.${cycles.plan}`) })}</p>
+          )}
+          {cycleBlocked && <p className="text-xs text-amber-300">{t('studio.repeatLocked')}</p>}
           {d.repeat && (
             <>
               <div className="grid grid-cols-2 gap-2">
@@ -661,6 +676,8 @@ function RolePanelPresetCard({ t, guildId, onCreated }) {
 export default function Studio({ t, guildId, guildName, isOwner, zone, openId }) {
   const [list, setList] = useState(null);
   const [limits, setLimits] = useState(null);
+  // Teto de mensagens cíclicas do plano (vem do servidor: planFeatures.periodicMessages).
+  const [cycles, setCycles] = useState(null);
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState(null);
 
@@ -670,6 +687,7 @@ export default function Studio({ t, guildId, guildName, isOwner, zone, openId })
       .then((d) => {
         setList(d.messages);
         setLimits(d.limits);
+        setCycles(d.cycles || null);
       })
       .catch((e) => setError(e.code));
 
@@ -698,6 +716,7 @@ export default function Studio({ t, guildId, guildName, isOwner, zone, openId })
         isOwner={isOwner}
         zone={zone}
         limits={limits}
+        cycles={cycles}
         initial={editing}
         onClose={() => {
           setEditing(null);
@@ -740,7 +759,7 @@ export default function Studio({ t, guildId, guildName, isOwner, zone, openId })
   );
 }
 
-function Editor({ t, guildId, guildName, isOwner, zone, limits, initial, onClose }) {
+function Editor({ t, guildId, guildName, isOwner, zone, limits, cycles, initial, onClose }) {
   const [doc, setDoc] = useState(() => ({ ...emptyMessage(), ...initial, v2: initial.v2 || emptyMessage().v2 }));
   const [isNew] = useState(!initial.id);
   const [roles, setRoles] = useState([]);
@@ -940,7 +959,7 @@ function Editor({ t, guildId, guildName, isOwner, zone, limits, initial, onClose
         </Card>
       )}
 
-      <DeliveryEditor t={t} doc={doc} channels={channels} onChange={(patch) => set(patch)} />
+      <DeliveryEditor t={t} doc={doc} channels={channels} cycles={cycles} onChange={(patch) => set(patch)} />
 
       <Card title={t('studio.actions')}>
         <div className="space-y-3">
@@ -954,11 +973,16 @@ function Editor({ t, guildId, guildName, isOwner, zone, limits, initial, onClose
               </ul>
             </Notice>
           )}
-          {status && status !== 'invalid' && (
-            <Notice tone={status.startsWith('error:') ? 'error' : 'ok'}>
-              {status.startsWith('error:') ? t('error.generic', { error: status.slice(6) }) : t(`studio.status.${status}`)}
-            </Notice>
-          )}
+          {(() => {
+            if (!status || status === 'invalid') return null;
+            // Código de erro do backend (o `run` prefixa com `error:`); plano travado vira paywall.
+            const code = status.startsWith('error:') ? status.slice(6) : '';
+            const locked = planFromCode(code);
+            if (locked) return <Paywall t={t} requiredPlan={locked} />;
+            return (
+              <Notice tone={code ? 'error' : 'ok'}>{code ? t('error.generic', { error: code }) : t(`studio.status.${status}`)}</Notice>
+            );
+          })()}
           <Button onClick={save} disabled={busy || !doc.name} className="w-full">
             {t('studio.save')}
           </Button>

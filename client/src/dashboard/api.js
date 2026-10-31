@@ -19,10 +19,23 @@ export async function request(path, { method = 'GET', body } = {}) {
     body: body ? JSON.stringify(body) : undefined,
   });
   let data = {};
+  let parsed = false;
   try {
     data = await res.json();
+    parsed = true;
   } catch (_) {}
-  if (!res.ok || data.success === false) throw new ApiError(data.error || `http_${res.status}`, res.status, data);
+  if (!res.ok || data.success === false) {
+    // Bloqueio por plano traz o plano exigido no corpo: a tela usa isso para abrir o
+    // paywall em vez do erro genérico (o backend continua recusando de verdade).
+    const code =
+      res.status === 403 && data.error === 'plan_required'
+        ? `plan_required:${data.requiredPlan || 'premium'}`
+        : data.error || `http_${res.status}`;
+    throw new ApiError(code, res.status, data);
+  }
+  // 200 sem JSON (proxy devolvendo HTML, deploy pela metade): erro explícito, nunca
+  // um objeto vazio que estoura a tela do painel.
+  if (!parsed) throw new ApiError('bad_response', res.status, {});
   return data;
 }
 
@@ -74,6 +87,11 @@ export const api = {
   addons: (id) => request(`/api/dashboard/guilds/${id}/addons`),
   addonCheckout: (id, addonId, body) =>
     request(`/api/dashboard/guilds/${id}/addons/${encodeURIComponent(addonId)}/checkout`, { method: 'POST', body }),
+  // Lojinha (extra `lojinha` ou zona Mary): produtos, painel do Discord e pedidos.
+  storeProducts: (id) => request(`/api/dashboard/guilds/${id}/store/products`),
+  storePanel: (id, channelId) => request(`/api/dashboard/guilds/${id}/store/panel`, { method: 'POST', body: { channelId } }),
+  storeOrderFail: (id, orderId) => request(`/api/dashboard/guilds/${id}/store/orders/${encodeURIComponent(orderId)}/fail`, { method: 'POST', body: {} }),
+  storeOrderConfirm: (id, orderId, payload = '') => request(`/api/dashboard/guilds/${id}/store/orders/${encodeURIComponent(orderId)}/confirm`, { method: 'POST', body: { payload } }),
   founder: () => request('/api/dashboard/global/founder'),
   founderKey: (note) => request('/api/dashboard/global/founder/keys', { method: 'POST', body: { note } }),
   founderRedeem: (code, guildId) => request('/api/dashboard/global/founder/redeem', { method: 'POST', body: { code, guildId } }),
