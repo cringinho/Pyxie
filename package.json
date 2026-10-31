@@ -18,7 +18,8 @@
     "test:map": "node tests/run.js --map",
     "test:file": "node tests/run.js --only",
     "test:steps": "node scripts/sync-test-steps.js",
-    "test:steps:write": "node scripts/sync-test-steps.js --write"
+    "test:steps:write": "node scripts/sync-test-steps.js --write",
+    "bot:test": "node scripts/startTestBot.js"
   },
   "keywords": [
     "discord",

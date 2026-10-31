@@ -2,7 +2,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { getGlobalPrefix, setGlobalPrefix } = require('../services/database');
 
-const lockFilePath = path.join(__dirname, '..', '..', '.botmelody.lock');
+const lockFilePath = path.join(
+  __dirname,
+  '..',
+  '..',
+  // O bot de teste tem lock próprio: dá para rodar a Pyxie de produção e o teste na mesma máquina.
+  process.env.PYXIE_TEST_BOT === '1' ? '.botmelody.test.lock' : '.botmelody.lock'
+);
 
 function isProcessAlive(pid) {
   if (!Number.isInteger(pid) || pid <= 0) {
