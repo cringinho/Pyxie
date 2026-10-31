@@ -36,7 +36,8 @@ data/*.lock
 test-runs/
 
 # Dados de execução do bot e configuração local do editor: nunca vão para o git
-data/
+# (a barra inicial é essencial: sem ela, `data/` também ignoraria `src/data/`)
+/data/
 .claude/
 
 .env.testing
