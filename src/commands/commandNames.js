@@ -23,6 +23,7 @@ module.exports = {
   EMOJIS: 'py-emojis',
   INVITE: 'py-invite',
   TAROT: 'py-tarot',
+  ORACLE: 'py-oracle',
   VOTE: 'py-vote',
   LANGUAGE: 'py-language',
   BONUS: 'py-bonus',

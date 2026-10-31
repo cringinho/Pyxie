@@ -290,6 +290,7 @@ function guildPlanInfo(guildId, now = Date.now()) {
     pending,
     lastCard: own.find((charge) => charge.method === 'card') || null,
     support: { email: SUPPORT_EMAIL },
+    ai: require('./aiQuota').snapshot(guildId, { now }),
   };
 }
 

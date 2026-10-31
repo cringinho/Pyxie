@@ -298,6 +298,9 @@ const COMMAND_CATEGORY_MAP = {
   // Tarot Místico & Álbum
   tarot: 'tarot',
   'py-tarot': 'tarot',
+  'py-oracle': 'tarot',
+  oracle: 'tarot',
+  oraculo: 'tarot',
   album: 'tarot',
   'py-album': 'tarot',
   albumdetarot: 'tarot',

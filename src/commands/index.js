@@ -16,6 +16,7 @@ const commands = [
   require('./trabalho'),
   require('./setup'),
   require('./tarot'),
+  require('./oraculo'),
   require('./album'),
   require('./agenda'),
   require('./emojis'),
