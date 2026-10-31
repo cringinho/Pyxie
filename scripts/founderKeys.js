@@ -36,9 +36,9 @@ function dmText(code, note) {
     '- Movimento: pelo menos uma conversa por semana por lá.',
     '',
     '-# A chave expira em 7 dias e vale uma vez. Se passar do prazo, me chama que eu resolvo — reclamando, mas resolvo.',
-    note ? `-# ${note}` : '',
+    note ? `-# ${note}` : null,
   ]
-    .filter((line) => line !== '')
+    .filter((line) => line !== null)
     .join('\n');
 }
 
