@@ -147,7 +147,9 @@ if [ -f data/inventory.json ]; then
 fi
 
 echo "🧪 Executando Quality Gate (npm test)..."
-if ! npm test; then
+# O deploy já faz backup e restore de data/ ao redor dos testes, então o runner NÃO deve
+# isolar o diretório por conta própria: em produção o bot está rodando e precisa do data/.
+if ! PYXIE_TESTS_EXTERNAL_DATA=1 npm test; then
   echo "❌ ERRO: Testes falharam após a atualização! Revertendo..."
   git reset --hard "${LOCAL_REV}"
   cp -a "${BACKUP_DIR}/data/." data/
