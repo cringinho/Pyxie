@@ -6,7 +6,7 @@ const { getLocalizedHtml, SEO_CONFIG, detectRequestLang, pageUrls } = require('.
 console.log('🌐 [TEST] Auditoria & Quality Gate de SEO Bilíngue (PT-BR & EN)...');
 
 const publicDir = path.join(__dirname, '..', 'public');
-const pages = ['index', 'tarot', 'wiki', 'partnerships', 'museum', 'bonus', 'terms', 'privacy', 'cringelandia', 'parents', 'transparency'];
+const pages = ['index', 'tarot', 'wiki', 'partnerships', 'museum', 'bonus', 'terms', 'privacy', 'cringelandia', 'parents', 'transparency', 'plans'];
 
 // 1. robots.txt
 const robotsPath = path.join(publicDir, 'robots.txt');

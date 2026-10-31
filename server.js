@@ -651,6 +651,9 @@ app.get('/api/market/prices', (req, res) => {
   }
 });
 
+// Planos do servidor: página pública com preços, QR no painel e ranking de doações.
+app.get('/planos', serveLocalizedPage('plans', publicDir));
+
 // Passe da Pyxie: página /passe, pagamento do Premium (Mercado Pago) e avisos de pagamento
 app.get('/passe', serveLocalizedPage('pass', publicDir));
 aliasPage('/pass', 'pass');

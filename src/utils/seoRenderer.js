@@ -60,6 +60,25 @@ const SEO_CONFIG = {
       locale: 'en_US'
     }
   },
+  plans: {
+    file: 'planos.html',
+    fileEn: 'planos.en.html',
+    canonical: 'https://pyxie.com.br/planos',
+    pt: {
+      title: 'Planos da Pyxie • Básico R$ 7 e Premium R$ 20 por mês',
+      description: 'Plano mensal para o seu servidor no Discord: Básico por R$ 7 com bônus no diário e cores próprias, Premium por R$ 20 com Oráculo de IA. Pix por QR ou cartão recorrente.',
+      ogTitle: 'Planos da Pyxie • Básico R$ 7 e Premium R$ 20',
+      ogDesc: 'Assinatura mensal do servidor: bônus no /py-daily, cores personalizadas e Oráculo com IA. Pague com Pix ou cartão.',
+      locale: 'pt_BR'
+    },
+    en: {
+      title: 'Pyxie Plans • Basic US$ 7 and Premium US$ 20 per month',
+      description: 'Monthly plan for your Discord server: Basic for R$ 7 with daily bonuses and custom colors, Premium for R$ 20 with the AI Oracle. Pay by Pix QR or recurring card.',
+      ogTitle: 'Pyxie Plans • Basic R$ 7 and Premium R$ 20',
+      ogDesc: 'Monthly server subscription: /py-daily bonus, custom colors and the AI Oracle. Pay with Pix or card.',
+      locale: 'en_US'
+    }
+  },
   partnerships: {
     file: 'partnerships.html',
     canonical: 'https://pyxie.com.br/parcerias',
@@ -257,6 +276,7 @@ const EN_SLUGS = {
   '/privacidade': '/privacy',
   '/pais-e-profissionais': '/parents',
   '/transparencia': '/transparency',
+  '/planos': '/plans',
 };
 
 /** Caminho público em PT (sai do canonical, fonte única de verdade). */
@@ -362,7 +382,7 @@ function getLocalizedHtml(pageKey, lang, publicDir) {
   const conf = SEO_CONFIG[pageKey];
   if (!conf) return null;
 
-  const filePath = path.join(publicDir, conf.file);
+  const filePath = path.join(publicDir, lang === 'en' && conf.fileEn ? conf.fileEn : conf.file);
   if (!fs.existsSync(filePath)) return null;
 
   let html = fs.readFileSync(filePath, 'utf8');
