@@ -401,7 +401,9 @@ function compareManifests(baseline, current) {
 
 async function main() {
   const steps = readSteps();
-  const cpuBudget = Math.max(1, os.cpus().length - 4);
+  // 75% dos núcleos, com piso de 3: a VM tem 4 vCPU e `cpus - 4` dava 1 job (nada
+  // paralelizava); no desktop com 16 núcleos dá 12.
+  const cpuBudget = Math.max(3, Math.min(12, Math.round(os.cpus().length * 0.75)));
   const jobs = Math.max(1, Math.min(32, Number(val('--jobs')) || cpuBudget));
   const only = val('--only');
   const repeat = Math.max(1, Number(val('--repeat')) || 1);

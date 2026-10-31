@@ -254,8 +254,10 @@ if git diff --name-only "${LOCAL_REV}" "${REMOTE_REV}" 2>/dev/null | grep -E '^p
 fi
 
 # 11. Quality Gate: Executa os testes automatizados antes de reiniciar o bot
+# data/ já foi copiado para ${BACKUP_DIR} acima e é restaurado logo depois: o runner não
+# deve isolar o diretório por conta própria (o bot está online e precisa dele).
 log "🧪 Executando bateria de testes automatizados (npm test)..."
-if ! npm test; then
+if ! PYXIE_TESTS_EXTERNAL_DATA=1 npm test; then
   log "❌ ERRO: Testes automatizados falharam no commit ${REMOTE_REV:0:7}!"
   log "Executando rollback imediato para proteger o bot em produção..."
 
