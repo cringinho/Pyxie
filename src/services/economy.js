@@ -11,6 +11,40 @@ const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 const STREAK_GRACE_MS = 48 * 60 * 60 * 1000;
 const WORK_COOLDOWN_MS = 3 * 60 * 60 * 1000;
 const QUIZ_COOLDOWN_MS = 3 * 60 * 60 * 1000;
+// Teto diário de moedinhas ganhas (AGENTS §5). Alto de propósito: protege a economia de
+// farm automatizado sem atrapalhar quem joga. Configurável em settings.economy.dailyCoinCap.
+const DAILY_COIN_CAP_DEFAULT = 50000;
+const BRT_OFFSET_MS = 3 * 60 * 60 * 1000;
+const dayKeyBr = (now = Date.now()) => new Date(now - BRT_OFFSET_MS).toISOString().slice(0, 10);
+
+function dailyCoinCap() {
+  const configured = Number(getEconomyConfig().dailyCoinCap);
+  return Number.isFinite(configured) && configured > 0 ? Math.floor(configured) : DAILY_COIN_CAP_DEFAULT;
+}
+
+// Soma moedinhas respeitando o teto do dia (horário de Brasília). Devolve quanto entrou de fato.
+function capEarnings(acc, rawAmount, now = Date.now()) {
+  const key = dayKeyBr(now);
+  if (acc.coinsDayKey !== key) {
+    acc.coinsDayKey = key;
+    acc.coinsToday = 0;
+  }
+  const remaining = Math.max(0, dailyCoinCap() - (acc.coinsToday || 0));
+  const added = Math.min(Math.max(0, Math.round(Number(rawAmount) || 0)), remaining);
+  if (added > 0) {
+    acc.coins = (acc.coins || 0) + added;
+    acc.coinsToday = (acc.coinsToday || 0) + added;
+  }
+  return added;
+}
+
+function getDailyCoinStatus(userId, now = Date.now()) {
+  const acc = getUserAccount(userId);
+  const key = dayKeyBr(now);
+  const used = acc.coinsDayKey === key ? acc.coinsToday || 0 : 0;
+  const cap = dailyCoinCap();
+  return { cap, used, remaining: Math.max(0, cap - used), dayKey: key };
+}
 
 const CURRENCY_DEFINITIONS = [
   { key: 'coins', label: 'Moedinhas', emoji: '🪙' },
@@ -196,12 +230,17 @@ function getBalance(userId) {
   return getUserAccount(userId).coins;
 }
 
-function addCoins(userId, amount) {
+function addCoins(userId, amount, { bypassCap = false, now = Date.now() } = {}) {
   const qty = Math.max(0, normalizeNumber(amount, 0));
   if (qty === 0) return getUserAccount(userId).coins;
 
   const updated = updateUserAccount(userId, (acc) => {
-    acc.coins = (acc.coins || 0) + qty;
+    if (bypassCap) {
+      // Transferência entre jogadores (mercado): não é ganho, não consome o teto do dia.
+      acc.coins = (acc.coins || 0) + qty;
+      return;
+    }
+    capEarnings(acc, qty, now);
   });
   return updated.coins;
 }
@@ -939,19 +978,23 @@ function claimDaily(userId, now = Date.now(), { guildId } = {}) {
   const { minimum, maximum } = getEconomyConfig();
   const amount = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
   const wonMagicBean = Math.random() < 0.01; // 1% de chance de Feijão Mágico
+  // Bônus fixo do plano do servidor (AGENTS §5: sem multiplicador e sem mexer no cooldown de 24 h).
+  const perk = guildId ? require('./guildPerks').forGuild(guildId, now) : { dailyBonus: 0, plan: 'free' };
+  const planBonus = Math.max(0, Number(perk.dailyBonus) || 0);
 
   // A disponibilidade é conferida de novo dentro da trava: dois cliques ao mesmo tempo pagam uma vez
   let claimed = false;
   let streak = 1;
   let previousStreak = 0;
   let streakBonus = 0;
+  let paidAmount = 0;
   const updated = updateUserAccount(userId, (acc) => {
     const last = acc.lastDailyAt ? new Date(acc.lastDailyAt).getTime() : 0;
     previousStreak = acc.dailyStreak || 0;
     if (last && now - last < DAILY_COOLDOWN_MS) return;
     streak = last && now - last <= STREAK_GRACE_MS ? previousStreak + 1 : 1;
     streakBonus = Math.min(streak, DAILY_STREAK_BONUS_CAP);
-    acc.coins += amount + streakBonus;
+    paidAmount = capEarnings(acc, amount + streakBonus + planBonus, now);
     acc.dailyStreak = streak;
     if (wonMagicBean) acc.magicBeans = (acc.magicBeans || 0) + 1;
     acc.lastDailyAt = new Date(now).toISOString();
@@ -970,9 +1013,13 @@ function claimDaily(userId, now = Date.now(), { guildId } = {}) {
     // Sequência longa que acabou (voltou a 1 depois de mais de 48h sem diário)
     streakBroken: streak === 1 && previousStreak > 1,
     streakBonus,
+    planBonus,
+    plan: perk.plan || 'free',
     voteBonus: 0,
     hasVoted: false,
-    totalAmount: amount + streakBonus,
+    totalAmount: paidAmount,
+    cappedBy: Math.max(0, amount + streakBonus + planBonus - paidAmount),
+    cap: dailyCoinCap(),
     magicBeanBonus: wonMagicBean,
     balance: updated.coins,
     magicBeans: updated.magicBeans,
@@ -1290,6 +1337,9 @@ module.exports = {
   playDailyCups,
   canPlayDailyCups,
   DAILY_STREAK_BONUS_CAP,
+  DAILY_COIN_CAP_DEFAULT,
+  dailyCoinCap,
+  getDailyCoinStatus,
   DAILY_CUPS_PRIZE,
   DAILY_CUPS_COUNT,
   getRanking,

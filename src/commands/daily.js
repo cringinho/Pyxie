@@ -88,6 +88,8 @@ function buildDailyView(userId, guildOrSource = null, clientId = null, now = Dat
   const reward = [
     t('daily.coins', lang, { amount: fmt(result.amount, lang), coin: coinIcon() }),
     t('daily.streakBonus', lang, { bonus: fmt(result.streakBonus, lang), coin: coinIcon() }),
+    ...(result.planBonus > 0 ? [t('daily.planBonus', lang, { bonus: fmt(result.planBonus, lang), coin: coinIcon() })] : []),
+    ...(result.cappedBy > 0 ? [t('daily.capped', lang, { amount: fmt(result.cappedBy, lang), cap: fmt(result.cap, lang), coin: coinIcon() })] : []),
     ...(result.magicBeanBonus ? [t('daily.bean', lang, { total: fmt(result.magicBeans, lang), bean: beanIcon() })] : []),
     t('daily.balance', lang, { balance: fmt(result.balance, lang), coin: coinIcon() }),
   ];

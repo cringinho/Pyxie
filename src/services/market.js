@@ -240,13 +240,13 @@ function buy(buyerId, listingId, now = Date.now()) {
         ? adjustResource(buyer, listing.material, listing.qty)
         : vault.putInstance(buyer, listing.instance, { from: listing.sellerId, to: buyer, price: listing.price, at: now }).ok;
     if (!delivered) {
-      economy.addCoins(buyer, listing.price);
+      economy.addCoins(buyer, listing.price, { bypassCap: true });
       restore();
       return { ok: false, reason: 'save' };
     }
 
     const tax = taxFor(listing.price);
-    economy.addCoins(listing.sellerId, listing.price - tax);
+    economy.addCoins(listing.sellerId, listing.price - tax, { bypassCap: true });
     state.sales.push({
       key: keyOf(listing),
       kind: listing.kind,

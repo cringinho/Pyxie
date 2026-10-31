@@ -82,6 +82,23 @@ assert.ok(coinflipCommand.aliases.includes('caraoucoroa'), 'Comando coinflip dev
 assert.ok(coinflipCommand.aliases.includes('coinflip'), 'Comando coinflip deve ter alias coinflip.');
 assert.ok(coinflipCommand.aliases.includes('flip'), 'Comando coinflip deve ter alias flip.');
 
+// 4b. Nerf do coinflip (AGENTS §5): pagamento 1.8x, teto de aposta e cooldown
+coinflipCommand._resetCoinflipCooldowns();
+setUserBalance(testUserId, 500);
+const nerf = coinflipCommand.flipCoin('cara', 100, testUserId, null, 1_000_000);
+assert.equal(nerf.success, true);
+assert.equal(nerf.bet, 50, 'Aposta limitada a 10% do saldo.');
+assert.equal(nerf.cap, 50);
+assert.equal(nerf.capped, true, 'Avisa quando a aposta bate no teto.');
+assert.equal(nerf.payout, nerf.won ? Math.floor(50 * coinflipCommand.PAYOUT_MULTIPLIER) : 0, 'Paga 1.8x no acerto.');
+const blockedFlip = coinflipCommand.flipCoin('coroa', 10, testUserId, null, 1_000_000 + 1000);
+assert.equal(blockedFlip.success, false, 'Cooldown de 20 s entre jogadas.');
+assert.ok(blockedFlip.cooldownMs > 0, 'Informa o tempo restante.');
+const allowedFlip = coinflipCommand.flipCoin('coroa', 10, testUserId, null, 1_000_000 + 21_000);
+assert.equal(allowedFlip.success, true, 'Libera depois do cooldown.');
+assert.equal(coinflipCommand.betCap(1_000_000), 5000, 'Teto absoluto de 5.000.');
+assert.equal(coinflipCommand.betCap(0), 10, 'Mínimo continua 10.');
+
 // 5. Teste de Jokenpô
 const jokenpoCommand = require('../src/commands/jokenpo');
 assert.ok(jokenpoCommand.name, 'Comando jokenpo deve ter nome.');

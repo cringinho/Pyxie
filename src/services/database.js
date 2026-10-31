@@ -141,8 +141,10 @@ function getEconomyConfig(guildId = 'global') {
   const economy = settings.economy || getGlobalSettings().economy || {};
   const minimum = Number.isFinite(Number(economy.minimum)) ? Math.max(0, Math.floor(Number(economy.minimum))) : 25;
   const maximum = Number.isFinite(Number(economy.maximum)) ? Math.max(minimum, Math.floor(Number(economy.maximum))) : 60;
+  // Teto diário de moedinhas ganhas (padrão alto: 50 mil/dia por pessoa).
+  const cap = Number.isFinite(Number(economy.dailyCoinCap)) ? Math.max(1000, Math.floor(Number(economy.dailyCoinCap))) : 50000;
 
-  return { minimum, maximum };
+  return { minimum, maximum, dailyCoinCap: cap };
 }
 
 function setEconomyConfig(minimum, maximum, guildId = 'global') {
