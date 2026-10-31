@@ -178,6 +178,7 @@
       "tarot_album.json"
     ],
     "tests/plansLifetime.test.js": [],
-    "tests/planAddons.test.js": []
+    "tests/planAddons.test.js": [],
+    "tests/storeScope.test.js": []
   }
 }

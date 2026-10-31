@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 74095,
-  "totalChecks": 508,
+  "totalMs": 74596,
+  "totalChecks": 514,
   "steps": [
     {
       "index": 0,
@@ -1483,6 +1483,25 @@
       "failures": [],
       "summary": null,
       "summaryNumbers": null
+    },
+    {
+      "index": 73,
+      "file": "tests/storeScope.test.js",
+      "ms": 501,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Configuração da Mary continua igual (status online, 6 macros).",
+        "2. Servidor novo nasce offline, sem estoque, sem PIX e sem macros da Mary.",
+        "3. Salvar em um servidor não altera a Mary (isolamento de configuração).",
+        "4. Cada servidor tem o seu próprio arquivo.",
+        "5. Tickets e avaliações isolados por servidor.",
+        "6. Imagens separadas por servidor, com URL própria."
+      ],
+      "checkCount": 6,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
     }
   ],
   "commands": [
@@ -1559,7 +1578,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T17:36:06.045Z",
+  "updatedAt": "2026-10-31T17:43:01.809Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

@@ -16,9 +16,9 @@ const money = (v, min, max) => Math.min(max, Math.max(min, Math.round((Number(v)
 
 // ---------- Lojinha ----------
 
-function getStore() {
-  const cfg = manager.loadConfig();
-  const store = manager.loadStoreData();
+function getStore(guildId = null) {
+  const cfg = manager.loadConfig(guildId);
+  const store = manager.loadStoreData(guildId);
   const reviews = Array.isArray(store.reviews) ? store.reviews : [];
   const tickets = Object.values(store.tickets || {});
   return {
@@ -44,8 +44,8 @@ function getStore() {
 }
 
 // channels/roles: listas do servidor (bridge) para recusar IDs de fora.
-function saveStore(body = {}, { channels = [], roles = [] } = {}) {
-  const cfg = manager.loadConfig();
+function saveStore(guildId, body = {}, { channels = [], roles = [] } = {}) {
+  const cfg = manager.loadConfig(guildId);
   const next = { ...cfg, featureFlags: { ...(cfg.featureFlags || {}) } };
   if (body.statusLoja !== undefined) {
     if (!STATUS.includes(body.statusLoja)) return { ok: false, error: 'invalid_status' };
@@ -77,14 +77,14 @@ function saveStore(body = {}, { channels = [], roles = [] } = {}) {
       text: str(m?.text, 2000),
     })).filter((m) => m.label && m.text);
   }
-  manager.saveConfig(next);
-  return { ok: true, store: getStore() };
+  manager.saveConfig(next, guildId);
+  return { ok: true, store: getStore(guildId) };
 }
 
 // ---------- Ferramentas Robux ----------
 
-function calc({ robux, brl } = {}) {
-  const rate = Number(manager.loadConfig().preco1k) || 37;
+function calc({ robux, brl } = {}, guildId = null) {
+  const rate = Number(manager.loadConfig(guildId).preco1k) || 37;
   if (robux !== undefined && robux !== '') {
     const n = Math.max(0, Math.min(10000000, Math.floor(Number(robux) || 0)));
     return { ok: true, mode: 'robux', robux: n, gamepass: robloxHelper.calcRobuxGamepass(n), price: robloxHelper.calcPriceBRL(n, rate), rate };
@@ -181,8 +181,8 @@ async function createGiveaway(guildId, body = {}, { fetchImpl } = {}) {
 
 // ---------- Aparência da Pyxie no servidor ----------
 
-function getProfile() {
-  const cfg = manager.loadConfig();
+function getProfile(guildId = null) {
+  const cfg = manager.loadConfig(guildId);
   return { nick: cfg.localNick || '', bio: cfg.localBio || '', avatarUrl: cfg.localAvatarUrl || '', bannerUrl: cfg.localBannerUrl || '' };
 }
 
@@ -199,7 +199,7 @@ async function saveProfile(guildId, body = {}) {
     patch[key] = url;
   }
   await manager.updateLocalProfile(guildId, patch);
-  return { ok: true, profile: getProfile() };
+  return { ok: true, profile: getProfile(guildId) };
 }
 
 // ---------- Mensagens: modelos, mensagens antigas e "✏️ Editar na Pyxie" ----------

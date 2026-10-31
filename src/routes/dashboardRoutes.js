@@ -461,7 +461,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   const maryUpload = express.raw({ type: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], limit: '8mb' });
 
   router.get('/api/dashboard/guilds/:guildId/mary/store', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
-    return res.json({ success: true, store: mary().getStore(), templates: mary().listTemplates() });
+    return res.json({ success: true, store: mary().getStore(req.params.guildId), templates: mary().listTemplates() });
   });
 
   router.put('/api/dashboard/guilds/:guildId/mary/store', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
@@ -473,11 +473,11 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     } catch (err) {
       return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
     }
-    return maryReply(res, mary().saveStore(body, lists), (r) => ({ store: r.store }));
+    return maryReply(res, mary().saveStore(req.params.guildId, body, lists), (r) => ({ store: r.store }));
   });
 
   router.post('/api/dashboard/guilds/:guildId/mary/calc', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
-    return maryReply(res, mary().calc(req.body || {}), ({ ok, ...r }) => ({ result: r }));
+    return maryReply(res, mary().calc(req.body || {}, req.params.guildId), ({ ok, ...r }) => ({ result: r }));
   });
 
   router.get('/api/dashboard/guilds/:guildId/mary/roblox/gamepass', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
@@ -505,7 +505,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   });
 
   router.get('/api/dashboard/guilds/:guildId/mary/profile', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
-    return res.json({ success: true, profile: mary().getProfile() });
+    return res.json({ success: true, profile: mary().getProfile(req.params.guildId) });
   });
 
   router.put('/api/dashboard/guilds/:guildId/mary/profile', requireSession, requireGuild, requireMaryOrAddon, async (req, res) => {
@@ -513,7 +513,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   });
 
   router.post('/api/dashboard/guilds/:guildId/mary/upload', requireSession, requireGuild, requireMaryOrAddon, maryUpload, (req, res) => {
-    const result = require('../modules/mary-studio/maryStudioManager').saveUpload(req.body);
+    const result = require('../modules/mary-studio/maryStudioManager').saveUpload(req.body, req.params.guildId);
     return result.ok ? res.json({ success: true, url: result.url }) : res.status(result.error === 'file_too_large' ? 413 : 400).json({ success: false, error: result.error });
   });
 

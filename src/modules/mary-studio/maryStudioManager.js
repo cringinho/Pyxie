@@ -97,62 +97,125 @@ class MaryStudioManager {
     }
   }
 
-  loadConfig() {
+  // --- ARMAZENAMENTO POR SERVIDOR (E1) ---
+  // A Mary continua no arquivo legado (data/maryStudioConfig.json). Servidores com o extra
+  // `lojinha` ganham o seu próprio diretório, sem enxergar nada da Mary.
+  isMary(guildId) {
+    return !guildId || String(guildId) === String(MARY_DEFAULT_GUILD_ID);
+  }
+
+  guildDir(guildId) {
+    return path.join(DATA_DIR, 'guilds', String(guildId), 'store');
+  }
+
+  configFileFor(guildId) {
+    return this.isMary(guildId) ? CONFIG_FILE : path.join(this.guildDir(guildId), 'config.json');
+  }
+
+  storeFileFor(guildId) {
+    return this.isMary(guildId) ? STORE_FILE : path.join(this.guildDir(guildId), 'data.json');
+  }
+
+  uploadsDirFor(guildId) {
+    return this.isMary(guildId) ? UPLOADS_DIR : path.join(DATA_DIR, 'uploads', 'store', String(guildId));
+  }
+
+  /** Configuração inicial: a Mary mantém os padrões dela; outros servidores nascem neutros. */
+  defaultConfigFor(guildId) {
+    if (!this.isMary(guildId)) {
+      return {
+        guildId: String(guildId),
+        statusLoja: 'offline',
+        localNick: '',
+        localAvatarUrl: '',
+        localBannerUrl: '',
+        localBio: '',
+        estoqueRobux: 0,
+        preco1k: 0,
+        pixKey: '',
+        pixName: '',
+        pixCity: '',
+        channelTickets: null,
+        channelReviews: null,
+        channelStockNotice: null,
+        roleClient: null,
+        roleStockAlert: null,
+        featureFlags: {
+          stockModule: true,
+          pixModule: true,
+          robloxVerifier: true,
+          ticketModule: false,
+          reviewModule: false,
+          couponsModule: false,
+          autoRoleModule: false,
+          stickyModule: false,
+          antiLinkModule: false,
+          giveawayModule: false,
+        },
+        macros: [],
+      };
+    }
+    return {
+      guildId: MARY_DEFAULT_GUILD_ID,
+      statusLoja: 'online', // 'online' | 'fila' | 'offline'
+      localNick: '',
+      localAvatarUrl: '',
+      localBannerUrl: '',
+      localBio: '',
+      estoqueRobux: 25000,
+      preco1k: 37.0,
+      pixKey: '',
+      pixName: 'MARY STORE',
+      pixCity: 'SAO PAULO',
+      channelTickets: null,
+      channelReviews: null,
+      channelStockNotice: null,
+      roleClient: null,
+      roleStockAlert: null,
+      featureFlags: {
+        stockModule: true,
+        pixModule: true,
+        robloxVerifier: true,
+        ticketModule: false,
+        reviewModule: false,
+        couponsModule: false,
+        autoRoleModule: false,
+        stickyModule: false,
+        antiLinkModule: false,
+        giveawayModule: false,
+      },
+      macros: [
+        { id: 'm1', label: '👋 Saudação', text: 'Olá! Seja muito bem-vindo(a) à Mary Store! 🎀 Já estou atendendo você. Qual a quantidade de Robux que deseja comprar hoje?' },
+        { id: 'm2', label: '⏳ Robux Pendentes', text: 'Prontinho! Seus Robux já foram comprados na sua Gamepass. Você pode acompanhar em: https://www.roblox.com/transactions (ficam pendentes por 5 dias pelo Roblox antes de cair no seu saldo).' },
+        { id: 'm3', label: '⚠️ Preços Regionais', text: 'Atenção: no painel da sua Gamepass no Creator Hub do Roblox, certifique-se de DESATIVAR a caixinha de "Preços Regionais", pois ela altera o valor final em Robux!' },
+        { id: 'm4', label: '📘 Como Criar Gamepass', text: 'Passo a passo:\n1. Acesse https://create.roblox.com/dashboard/creations\n2. Clique em sua experiência padrão (SeuNome\'s Place)\n3. No menu lateral, vá em "Passes" (Passes)\n4. Clique em "Criar Passe", coloque um nome e salve.\n5. Clique no passe criado, vá na aba "Vendas", ative "Item à Venda" e coloque o valor exato combinado!\n6. Copie e envie o link aqui no chat.' },
+        { id: 'm5', label: '💳 Chave PIX', text: 'Aqui está nossa Chave PIX para pagamento:\nChave: {pix_key}\nNome: {pix_name}\nPor favor, envie o comprovante assim que realizar a transferência!' },
+        { id: 'm6', label: '⭐ Pedir Avaliação', text: 'Muito obrigada por confiar na Mary Store! 💖 Poderia deixar uma avaliação com ⭐ no nosso canal de avaliações? Isso ajuda muito a lojinha a crescer!' },
+      ],
+    };
+  }
+
+  loadConfig(guildId = null) {
+    const file = this.configFileFor(guildId);
     try {
-      if (!fs.existsSync(CONFIG_FILE)) {
-        const initial = {
-          guildId: MARY_DEFAULT_GUILD_ID,
-          statusLoja: 'online', // 'online' | 'fila' | 'offline'
-          localNick: '',
-          localAvatarUrl: '',
-          localBannerUrl: '',
-          localBio: '',
-          estoqueRobux: 25000,
-          preco1k: 37.0,
-          pixKey: '',
-          pixName: 'MARY STORE',
-          pixCity: 'SAO PAULO',
-          channelTickets: null,
-          channelReviews: null,
-          channelStockNotice: null,
-          roleClient: null,
-          roleStockAlert: null,
-          featureFlags: {
-            stockModule: true,
-            pixModule: true,
-            robloxVerifier: true,
-            ticketModule: false,
-            reviewModule: false,
-            couponsModule: false,
-            autoRoleModule: false,
-            stickyModule: false,
-            antiLinkModule: false,
-            giveawayModule: false,
-          },
-          macros: [
-            { id: 'm1', label: '👋 Saudação', text: 'Olá! Seja muito bem-vindo(a) à Mary Store! 🎀 Já estou atendendo você. Qual a quantidade de Robux que deseja comprar hoje?' },
-            { id: 'm2', label: '⏳ Robux Pendentes', text: 'Prontinho! Seus Robux já foram comprados na sua Gamepass. Você pode acompanhar em: https://www.roblox.com/transactions (ficam pendentes por 5 dias pelo Roblox antes de cair no seu saldo).' },
-            { id: 'm3', label: '⚠️ Preços Regionais', text: 'Atenção: no painel da sua Gamepass no Creator Hub do Roblox, certifique-se de DESATIVAR a caixinha de "Preços Regionais", pois ela altera o valor final em Robux!' },
-            { id: 'm4', label: '📘 Como Criar Gamepass', text: 'Passo a passo:\n1. Acesse https://create.roblox.com/dashboard/creations\n2. Clique em sua experiência padrão (SeuNome\'s Place)\n3. No menu lateral, vá em "Passes" (Passes)\n4. Clique em "Criar Passe", coloque um nome e salve.\n5. Clique no passe criado, vá na aba "Vendas", ative "Item à Venda" e coloque o valor exato combinado!\n6. Copie e envie o link aqui no chat.' },
-            { id: 'm5', label: '💳 Chave PIX', text: 'Aqui está nossa Chave PIX para pagamento:\nChave: {pix_key}\nNome: {pix_name}\nPor favor, envie o comprovante assim que realizar a transferência!' },
-            { id: 'm6', label: '⭐ Pedir Avaliação', text: 'Muito obrigada por confiar na Mary Store! 💖 Poderia deixar uma avaliação com ⭐ no nosso canal de avaliações? Isso ajuda muito a lojinha a crescer!' },
-          ],
-        };
-        this.writeAtomic(CONFIG_FILE, initial);
+      if (!fs.existsSync(file)) {
+        const initial = this.defaultConfigFor(guildId);
+        // Só grava sozinho o legado da Mary: servidor novo nasce em memória (nasce offline).
+        if (this.isMary(guildId)) this.writeAtomic(file, initial);
         return initial;
       }
-      const data = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+      const data = JSON.parse(fs.readFileSync(file, 'utf8'));
       if (data && typeof data === 'object' && data.localBannerUrl === undefined) {
         data.localBannerUrl = '';
       }
       return data;
     } catch (_) {
-      return {};
+      return this.defaultConfigFor(guildId);
     }
   }
 
-  saveConfig(data) {
-    return this.writeAtomic(CONFIG_FILE, data);
+  saveConfig(data, guildId = null) {
+    return this.writeAtomic(this.configFileFor(guildId), data);
   }
 
   loadMessages() {
@@ -172,9 +235,10 @@ class MaryStudioManager {
     return this.writeAtomic(MESSAGES_FILE, data);
   }
 
-  loadStoreData() {
+  loadStoreData(guildId = null) {
+    const file = this.storeFileFor(guildId);
     try {
-      if (!fs.existsSync(STORE_FILE)) {
+      if (!fs.existsSync(file)) {
         const initial = {
           tickets: {},
           reviews: [],
@@ -182,17 +246,17 @@ class MaryStudioManager {
           giveaways: {},
           stickyMessages: {},
         };
-        this.writeAtomic(STORE_FILE, initial);
+        if (this.isMary(guildId)) this.writeAtomic(file, initial);
         return initial;
       }
-      return JSON.parse(fs.readFileSync(STORE_FILE, 'utf8'));
+      return JSON.parse(fs.readFileSync(file, 'utf8'));
     } catch (_) {
       return { tickets: {}, reviews: [], coupons: {}, giveaways: {}, stickyMessages: {} };
     }
   }
 
-  saveStoreData(data) {
-    return this.writeAtomic(STORE_FILE, data);
+  saveStoreData(data, guildId = null) {
+    return this.writeAtomic(this.storeFileFor(guildId), data);
   }
 
   // --- DESCOBERTA DINÂMICA DO SERVIDOR DA MARY ---
@@ -433,7 +497,8 @@ class MaryStudioManager {
 
   // --- ATUALIZAÇÃO DO PERFIL LOCAL DA PYXIE NO SERVIDOR DA MARY ---
   async updateLocalProfile(guildId, { nick, avatar, banner, bio, statusLoja }) {
-    const config = this.loadConfig();
+    // O perfil é do servidor que está sendo editado: carrega e grava no arquivo dele.
+    const config = this.loadConfig(guildId);
     const targetGuildId = guildId || config.guildId || MARY_DEFAULT_GUILD_ID;
 
     if (statusLoja) {
@@ -495,7 +560,7 @@ class MaryStudioManager {
       }
     }
 
-    this.saveConfig(config);
+    this.saveConfig(config, guildId);
     return {
       success: true,
       statusLoja: config.statusLoja,
@@ -511,6 +576,18 @@ class MaryStudioManager {
   // porque mensagens já postadas no Discord apontam para /api/mary/media/<arquivo>.
   setupWebRoutes(app) {
     app.use('/api/mary/media', express.static(UPLOADS_DIR, { fallthrough: false, index: false }));
+    // Mídia dos servidores com o extra: pasta própria, sem cruzar com a da Mary.
+    app.get('/api/store/media/:guildId/:file', (req, res) => {
+      const guildId = String(req.params.guildId || '');
+      const file = path.basename(String(req.params.file || ''));
+      if (!/^\d{17,20}$/.test(guildId) || !/^[a-zA-Z0-9_.-]+$/.test(file)) return res.status(400).end();
+      const dir = this.uploadsDirFor(guildId);
+      const full = path.join(dir, file);
+      if (!full.startsWith(dir)) return res.status(400).end();
+      if (!fs.existsSync(full)) return res.status(404).end();
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.sendFile(full);
+    });
     // Endereços do estúdio antigo (favoritos, links mágicos velhos) caem na lojinha dentro do painel.
     app.get(['/mary', '/mary/auth/magic'], (req, res) => {
       res.setHeader('X-Robots-Tag', 'noindex, nofollow');
@@ -518,19 +595,26 @@ class MaryStudioManager {
     });
   }
 
-  // Guarda uma imagem enviada pelo painel (PNG, JPG, GIF ou WebP de verdade, até 8 MB). Devolve a URL pública.
-  saveUpload(buffer) {
+  // Guarda uma imagem enviada pelo painel (PNG, JPG, GIF ou WebP de verdade, até 8 MB).
+  // Devolve a URL pública. Cada servidor tem a sua pasta; a Mary mantém a pasta legada,
+  // porque mensagens antigas apontam para /api/mary/media/<arquivo>.
+  saveUpload(buffer, guildId = null) {
     if (!Buffer.isBuffer(buffer) || buffer.length === 0) return { ok: false, error: 'empty_file' };
     if (buffer.length > MAX_UPLOAD_BYTES) return { ok: false, error: 'file_too_large' };
     const ext = imageExtension(buffer);
     if (!ext) return { ok: false, error: 'invalid_image' };
-    if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-    const fileName = `mary_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const tmp = path.join(UPLOADS_DIR, `${fileName}.tmp`);
+    const dir = this.uploadsDirFor(guildId);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const prefix = this.isMary(guildId) ? 'mary' : 'store';
+    const fileName = `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const tmp = path.join(dir, `${fileName}.tmp`);
     fs.writeFileSync(tmp, buffer);
-    fs.renameSync(tmp, path.join(UPLOADS_DIR, fileName));
+    fs.renameSync(tmp, path.join(dir, fileName));
     const baseUrl = (process.env.PUBLIC_BASE_URL || process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br').replace(/\/+$/, '');
-    return { ok: true, url: `${baseUrl}/api/mary/media/${fileName}`, fileName };
+    const url = this.isMary(guildId)
+      ? `${baseUrl}/api/mary/media/${fileName}`
+      : `${baseUrl}/api/store/media/${guildId}/${fileName}`;
+    return { ok: true, url, fileName };
   }
 }
 

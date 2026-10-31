@@ -74,7 +74,8 @@
     "node tests/hyperfokus.test.js",
     "node tests/plansLifetime.test.js",
     "node tests/planAddons.test.js",
+    "node tests/storeScope.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T17:31:17.560Z"
+  "updatedAt": "2026-10-31T17:43:01.173Z"
 }
