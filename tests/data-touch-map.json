@@ -1,0 +1,181 @@
+{
+  "generatedAt": "2026-10-31T16:48:31.454Z",
+  "touches": {
+    "tests/botUtils.test.js": [
+      "economy.json.bak",
+      "marriageData.json",
+      "settings.json",
+      "settings.json.bak"
+    ],
+    "tests/economy.test.js": [
+      "battlePass.json",
+      "economy.json.bak",
+      "settings.json.bak"
+    ],
+    "tests/dailyPlanBonus.test.js": [],
+    "tests/planPayments.test.js": [],
+    "tests/donations.test.js": [],
+    "tests/oracle.test.js": [],
+    "tests/founderProgram.test.js": [],
+    "tests/tarot.test.js": [
+      "economy.json.bak"
+    ],
+    "tests/tarotAlbum.test.js": [],
+    "tests/performance.test.js": [
+      "stats.json"
+    ],
+    "tests/monetizationAndMultiplayer.test.js": [],
+    "tests/bonusTimer.test.js": [],
+    "tests/lightweightGames.test.js": [
+      "voiceBank.json"
+    ],
+    "tests/themeEmojis.test.js": [],
+    "tests/i18nParity.test.js": [],
+    "tests/seasonalEvent.test.js": [],
+    "tests/moduleSystem.test.js": [
+      "marySavedMessages.json",
+      "maryStoreData.json",
+      "maryStudioConfig.json",
+      "museumData.json",
+      "partnershipsData.json"
+    ],
+    "tests/museumPartnerships.test.js": [],
+    "tests/seoBilingual.test.js": [],
+    "tests/seoLongTerm.test.js": [],
+    "tests/marriageModule.test.js": [
+      "homes.json",
+      "itemVault.json"
+    ],
+    "tests/postgresDrizzle.test.js": [],
+    "tests/profileCard.test.js": [
+      "cache/twemoji/2728.svg"
+    ],
+    "tests/newMinigames.test.js": [
+      "arcaneMathQuestions.json",
+      "arcaneMathRanking.json",
+      "arcaneMathState.json"
+    ],
+    "tests/maryStudio.test.js": [],
+    "tests/masterDashboard.test.js": [
+      "blacklist.json",
+      "schedulerState.json",
+      "webRoutesConfig.json"
+    ],
+    "tests/cringelandia.test.js": [
+      "cringelandiaImpact.json"
+    ],
+    "tests/phase3DashboardSass.test.js": [
+      "liveGuildsSnapshot.json",
+      "publicTruthSnapshot.json"
+    ],
+    "tests/databaseIntegrityAndDiscordHealth.test.js": [
+      "publicTruthSnapshot.json"
+    ],
+    "tests/homologationPreview.test.js": [],
+    "tests/newSystemsBatch4.test.js": [
+      "guildConfigs.json",
+      "guildConfigs.json.bak",
+      "settings.json",
+      "settings.json.bak",
+      "welcomeCheckinState.json",
+      "welcomeCheckinState.json.bak"
+    ],
+    "tests/embedRegistryParity.test.js": [
+      "emojis.json"
+    ],
+    "tests/ticketsAndGiveaways.test.js": [
+      "ticketsData.json",
+      "ticketsData.json.bak"
+    ],
+    "tests/groqClient.test.js": [],
+    "tests/ticketsV2.test.js": [
+      "guildConfigs.json",
+      "guildConfigs.json.bak",
+      "ticketsData.json.bak"
+    ],
+    "tests/quizGames.test.js": [],
+    "tests/profileStudio.test.js": [
+      "cache/twemoji/1f319.svg",
+      "cache/twemoji/1f338.svg",
+      "cache/twemoji/1f344.svg",
+      "cache/twemoji/1f353.svg",
+      "cache/twemoji/1f3a7.svg",
+      "cache/twemoji/1f3ae.svg",
+      "cache/twemoji/1f409.svg",
+      "cache/twemoji/1f431.svg",
+      "cache/twemoji/1f451.svg",
+      "cache/twemoji/1f52e.svg",
+      "cache/twemoji/1f98b.svg",
+      "cache/twemoji/2b50.svg"
+    ],
+    "tests/profileThemeEmojis.test.js": [],
+    "tests/dungeonCrawler.test.js": [],
+    "tests/growthFunnel.test.js": [],
+    "tests/tarotCardPages.test.js": [],
+    "tests/homeAndAchievements.test.js": [],
+    "tests/serverSetup.test.js": [
+      "guildConfigs.json",
+      "guildConfigs.json.bak"
+    ],
+    "tests/dailyRevamp.test.js": [
+      "battlePass.json"
+    ],
+    "tests/dungeonThreads.test.js": [],
+    "tests/homeMarriage.test.js": [],
+    "tests/dungeonCoop.test.js": [],
+    "tests/guildBoss.test.js": [],
+    "tests/craftingProfessions.test.js": [],
+    "tests/playerMarket.test.js": [],
+    "tests/seasonalFestival.test.js": [],
+    "tests/battlePass.test.js": [],
+    "tests/coupleBond.test.js": [],
+    "tests/panelDashboard.test.js": [
+      "modulesConfig.json"
+    ],
+    "tests/messageStudio.test.js": [],
+    "tests/cringelandiaScope.test.js": [],
+    "tests/moderationAndLinks.test.js": [],
+    "tests/voiceAndCommunity.test.js": [],
+    "tests/colorRoles.test.js": [],
+    "tests/embedOverrides.test.js": [],
+    "tests/pyxieQuips.test.js": [],
+    "tests/securityShield.test.js": [],
+    "tests/injections.test.js": [],
+    "tests/chatAnimator.test.js": [],
+    "tests/automationsBatch.test.js": [],
+    "tests/automationsCare.test.js": [],
+    "tests/bumpReminder.test.js": [],
+    "tests/dashboardModules.test.js": [
+      "guildConfigs.json",
+      "guildConfigs.json.bak",
+      "settings.json",
+      "settings.json.bak"
+    ],
+    "tests/zyroxRedAdditions.test.js": [
+      "scoped_config/command_permissions.json",
+      "scoped_config/emergency_mode.json",
+      "scoped_config/moderation_warnings.json",
+      "scoped_config/privacy.json",
+      "scoped_config/test_zyrox_scope.json",
+      "scoped_config/wellbeing.json",
+      "wellbeing.json"
+    ],
+    "tests/voiceSeeder.test.js": [],
+    "tests/hyperfokus.test.js": [
+      "accounts.json",
+      "backups/hyperfokus/backup_2026-10-29.json",
+      "hyperfokus/analytics_daily.json",
+      "hyperfokus/articles.json",
+      "hyperfokus/drafts.json",
+      "hyperfokus/pin_queue.json",
+      "hyperfokus/web_drafts.json",
+      "referrals.json"
+    ],
+    "scripts/smoke_all_commands.js": [
+      "animeQuiz.json",
+      "cringelandia/seasonalConfig.json",
+      "tarot-state.json",
+      "tarot_album.json"
+    ]
+  }
+}

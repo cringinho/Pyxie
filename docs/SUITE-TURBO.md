@@ -100,7 +100,23 @@ dinâmicos — a contagem por arquivo continua sendo exigida separadamente.
 
 - `tests/run.js` — runner (pool, quarentena, gate, `--changed`).
 - `tests/steps.json` — ordem oficial dos 72 passos.
+- `tests/baseline-manifest.json` — **versionado**: as 492 verificações de referência (liga o gate também na VM).
+- `tests/data-touch-map.json` — **versionado**: quais arquivos de `data/` cada teste escreve (habilita o pool na VM).
+- `tests/solo.json` — **versionado**: quarentena (testes que rodam sempre em série).
 - `scripts/capture-test-manifest.js` — gera o baseline e restaura `data/`.
 - `scripts/sync-test-steps.js` — acusa teste novo fora da lista.
 - `scripts/lib/test-output.js` — parser único de saída (✅ e `: OK`).
-- `test-runs/` — manifestos, mapa de conflitos e logs (ignorado no git).
+- `test-runs/` — saídas da execução (manifesto atual, logs, backup de `data/`), ignorado no git.
+
+## 7. Resultado na VM de produção
+
+`deploy.sh` roda `npm test` antes de recarregar o PM2. Medido em 31/10/2026:
+
+| Cenário | Tempo |
+|---|---|
+| Suíte serial na VM (4 vCPU ARM), sem o mapa | 98,5 s |
+| Suíte com o mapa versionado | ver `~/deploy-now.log` do próximo deploy |
+
+O deploy também passa a ser protegido pelo gate: se uma verificação desaparecer,
+o `deploy.sh` reverte automaticamente (ele já faz rollback quando o `npm test` falha).
+

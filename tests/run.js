@@ -26,12 +26,14 @@ const { spawn } = require('node:child_process');
 const ROOT = path.join(__dirname, '..');
 const DATA_DIR = path.join(ROOT, 'data');
 const OUT_DIR = path.join(ROOT, 'test-runs');
-const MAP_PATH = path.join(OUT_DIR, 'data-touch-map.json');
+// Artefatos versionados: o deploy também se beneficia do paralelismo e do gate.
+const MAP_PATH = path.join(__dirname, 'data-touch-map.json');
+const BASELINE_PATH = path.join(__dirname, 'baseline-manifest.json');
+const SOLO_PATH = path.join(__dirname, 'solo.json');
+// Saídas da execução ficam fora do git.
 const STATE_PATH = path.join(OUT_DIR, 'runner-state.json');
 const LAST_FAILED_PATH = path.join(OUT_DIR, 'last-failed.json');
-const BASELINE_PATH = path.join(OUT_DIR, 'manifest.baseline.json');
 const RESULT_PATH = path.join(OUT_DIR, 'manifest.current.json');
-const SOLO_PATH = path.join(OUT_DIR, 'solo.json');
 
 const STEP_TIMEOUT_MS = 300000;
 const MAX_BUFFER = 16 * 1024 * 1024;

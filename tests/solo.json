@@ -1,0 +1,8 @@
+{
+  "files": [
+    "tests/bonusTimer.test.js",
+    "tests/databaseIntegrityAndDiscordHealth.test.js",
+    "tests/lightweightGames.test.js"
+  ],
+  "updatedAt": "2026-10-31T16:56:12.445Z"
+}

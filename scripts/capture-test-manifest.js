@@ -24,7 +24,7 @@ const { spawnSync } = require('node:child_process');
 const ROOT = path.join(__dirname, '..');
 const DATA_DIR = path.join(ROOT, 'data');
 const OUT_DIR = path.join(ROOT, 'test-runs');
-const MANIFEST_PATH = path.join(OUT_DIR, 'manifest.baseline.json');
+const MANIFEST_PATH = path.join(ROOT, 'tests', 'baseline-manifest.json');
 const STATE_PATH = path.join(OUT_DIR, 'baseline-state.json');
 
 const STEP_TIMEOUT_MS = 300000; // 5 min por arquivo: pega travamento sem matar teste lento
