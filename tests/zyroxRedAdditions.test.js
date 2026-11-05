@@ -193,6 +193,13 @@ async function runTests() {
   const activeAfterRevoke = modCases.getUserWarnings(modGuild, testUser);
   assert.strictEqual(activeAfterRevoke.totalPoints, 2, 'Pontos devem cair após revogar o caso #2');
 
+  // Q148: limites vindos do painel são recusados com motivo, não corrigidos calados.
+  assert.deepStrictEqual(modCases.validateThresholds([{ points: 3, action: 'timeout', durationMinutes: 60 }, { points: 7, action: 'ban' }]), { ok: true });
+  assert.strictEqual(modCases.validateThresholds([{ points: 0, action: 'ban' }]).reason, 'invalid_threshold_points');
+  assert.strictEqual(modCases.validateThresholds([{ points: 3, action: 'ban' }, { points: 3, action: 'kick' }]).reason, 'duplicate_threshold_points');
+  assert.strictEqual(modCases.validateThresholds([{ points: 3, action: 'explodir' }]).reason, 'invalid_threshold_action');
+  assert.strictEqual(modCases.validateThresholds([{ points: 3, action: 'timeout', durationMinutes: 99999 }]).reason, 'invalid_threshold_duration');
+
   console.log('  ✅ 5. Advertências por pontos e casos numerados (#1, #2) validados.');
 
   // 6. Antinuke por limite + Modo de emergência global (serverGuard + emergencyMode)

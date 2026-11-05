@@ -217,6 +217,23 @@ function countV2Components(doc) {
   return n;
 }
 
+// Campos que a normalização corta (título e perguntas do formulário, 45 no Discord): confere o
+// texto ORIGINAL para recusar com o motivo, em vez de a pergunta chegar pela metade (Q128).
+const MODAL_TEXT_LIMIT = 45;
+function rawLimitErrors(raw = {}) {
+  const errors = [];
+  const buttons = Array.isArray(raw.buttons) ? raw.buttons : [];
+  buttons.forEach((b, i) => {
+    const action = b?.action || {};
+    if (action.type !== 'modal') return;
+    if (String(action.title || '').trim().length > MODAL_TEXT_LIMIT) errors.push({ code: 'too_long', path: `buttons.${i}.title`, limit: MODAL_TEXT_LIMIT });
+    (Array.isArray(action.fields) ? action.fields : []).forEach((f, j) => {
+      if (String(f?.label || '').trim().length > MODAL_TEXT_LIMIT) errors.push({ code: 'too_long', path: `buttons.${i}.fields.${j}.label`, limit: MODAL_TEXT_LIMIT });
+    });
+  });
+  return errors;
+}
+
 // Devolve uma lista de { code, path, limit? }; vazia quando está tudo certo.
 function validateMessage(doc) {
   const errors = [];
@@ -540,6 +557,7 @@ module.exports = {
   slugify,
   normalizeMessage,
   validateMessage,
+  rawLimitErrors,
   resolveText,
   listAppEmojis,
   buildPayload,

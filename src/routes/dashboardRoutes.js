@@ -307,7 +307,6 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const planFeatures = require('../config/planFeatures');
     const planState = plans.getPlan(req.params.guildId);
     const plan = planState.active ? planState.plan : 'free';
-    const all = getSections({ ...req.guildAccess, zone: 'cringelandia', role: 'owner' }, req.params.guildId);
     const allowed = getSections(req.guildAccess, req.params.guildId);
     // Cortesias (dono do painel, vitalício, zona Mary e Cringelândia) não veem cadeado:
     // o backend também não as barra, e a tela tem de refletir o backend (AGENTS §10).
@@ -316,10 +315,13 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       req.guildAccess.role === 'owner' ||
       req.guildAccess.zone === 'mary' ||
       req.guildAccess.zone === 'cringelandia';
+    // Só ganha cadeado a tela que a compra do plano de fato libera NESTE servidor: telas
+    // de zona (Cringelândia, Mary) ou de extra (Lojinha) que o servidor não tem nem
+    // aparecem, porque assinar um plano não as liberaria (auditoria Q103).
     const lockedSections = bypass
       ? []
-      : all
-          .filter((id) => !allowed.includes(id) || !planFeatures.canUse(plan, id))
+      : allowed
+          .filter((id) => !planFeatures.canUse(plan, id))
           .filter((id) => planFeatures.feature(id))
           .map((id) => ({ id, requiredPlan: planFeatures.planFor(id) }));
     return res.json({
@@ -408,6 +410,18 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     }
   });
 
+  // Quem é quem: nome e avatar de até 50 IDs deste servidor (?ids=1,2,3). Usado para mostrar
+  // pessoas por nome nos casos, na lista de confiáveis e no acesso ao painel.
+  router.get('/api/dashboard/guilds/:guildId/members/lookup', requireSession, requireGuild, async (req, res) => {
+    const ids = [...new Set(String(req.query.ids || '').split(',').map((s) => s.trim()).filter((id) => GUILD_ID_RE.test(id)))].slice(0, 50);
+    if (!ids.length) return res.json({ success: true, members: [] });
+    try {
+      return res.json({ success: true, members: await bridge.request('GUILD_MEMBERS_LOOKUP', { guildId: req.params.guildId, userIds: ids }) });
+    } catch (err) {
+      return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+    }
+  });
+
   router.get('/api/dashboard/guilds/:guildId/access', requireSession, requireGuild, (req, res) => {
     if (!req.guildAccess.canManageAccess) return res.status(403).json({ success: false, error: 'guild_owner_only' });
     return res.json({ success: true, whitelist: access.readWhitelist(req.params.guildId) });
@@ -415,7 +429,16 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
 
   router.put('/api/dashboard/guilds/:guildId/access', requireSession, requireGuild, (req, res) => {
     if (!req.guildAccess.canManageAccess) return res.status(403).json({ success: false, error: 'guild_owner_only' });
-    const whitelist = access.writeWhitelist(req.params.guildId, req.body || {});
+    // Recusa com motivo em vez de descartar calado: "@fulano" ou nome não é ID (Q119).
+    const body = req.body || {};
+    const userIds = Array.isArray(body.userIds) ? body.userIds.map((id) => String(id).trim()) : [];
+    const badUser = userIds.find((id) => !GUILD_ID_RE.test(id));
+    if (badUser !== undefined) return res.status(400).json({ success: false, error: 'invalid_user_id', value: badUser.slice(0, 40) });
+    if (new Set(userIds).size > 100) return res.status(400).json({ success: false, error: 'too_many_users' });
+    const roleIds = Array.isArray(body.roleIds) ? body.roleIds.map(String) : [];
+    if (roleIds.some((id) => !GUILD_ID_RE.test(id))) return res.status(400).json({ success: false, error: 'invalid_role' });
+    if (new Set(roleIds).size > 50) return res.status(400).json({ success: false, error: 'too_many_roles' });
+    const whitelist = access.writeWhitelist(req.params.guildId, { ...body, userIds, roleIds });
     return res.json({ success: true, whitelist });
   });
 
@@ -589,7 +612,15 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
   }
   const mary = () => require('../modules/mary-studio/maryDashboard');
   const maryReply = (res, result, okBody) => (result.ok ? res.json({ success: true, ...okBody(result) }) : res.status(result.error === 'roblox_not_found' ? 404 : 400).json({ success: false, error: result.error }));
-  const maryUpload = express.raw({ type: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], limit: '8mb' });
+  const maryUploadRaw = express.raw({ type: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], limit: '8mb' });
+  // Arquivo acima de 8 MB virava 500 "Erro interno" no tratador geral: aqui vira o código
+  // que a tela já traduz ("Imagem grande demais, até 8 MB") (Q133).
+  const maryUpload = (req, res, next) =>
+    maryUploadRaw(req, res, (err) => {
+      if (!err) return next();
+      if (err.type === 'entity.too.large' || err.status === 413) return res.status(413).json({ success: false, error: 'file_too_large' });
+      return res.status(400).json({ success: false, error: 'bad_upload' });
+    });
 
   router.get('/api/dashboard/guilds/:guildId/mary/store', requireSession, requireGuild, requireMaryOrAddon, (req, res) => {
     return res.json({ success: true, store: mary().getStore(req.params.guildId), templates: mary().listTemplates() });
@@ -1223,6 +1254,11 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const periodic = require('../services/periodicMessages');
     const { guildId } = req.params;
     const body = req.body || {};
+    // Número fora da faixa é recusado com motivo; vazio vira o padrão no normalize (Q130).
+    const outOfRange = (v, min, max) => v !== undefined && v !== null && v !== '' && (!Number.isInteger(Number(v)) || Number(v) < min || Number(v) > max);
+    if (outOfRange(body.bumpGuide?.intervalHours, 2, 72)) return res.status(400).json({ success: false, error: 'invalid_interval_hours' });
+    if (outOfRange(body.tarot?.hour, 0, 23)) return res.status(400).json({ success: false, error: 'invalid_hour' });
+    if (Array.isArray(body.bumpGuide?.pingRoleIds) && body.bumpGuide.pingRoleIds.length > 1) return res.status(400).json({ success: false, error: 'single_ping_role' });
     const next = periodic.normalize({ bumpGuide: body.bumpGuide, tarot: body.tarot }, guildId);
     const tarotChannelId = body.tarotChannelId === undefined ? null : GUILD_ID_RE.test(String(body.tarotChannelId)) ? String(body.tarotChannelId) : '';
     try {
@@ -1390,6 +1426,12 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const linkExemptChans = Array.isArray(body.linkShield?.exemptChannelIds) ? body.linkShield.exemptChannelIds.map(String) : [];
     const fileExemptRoles = Array.isArray(body.fileShield?.exemptRoleIds) ? body.fileShield.exemptRoleIds.map(String) : [];
     const fileExemptChans = Array.isArray(body.fileShield?.exemptChannelIds) ? body.fileShield.exemptChannelIds.map(String) : [];
+    // Lista branca do antinuke: ID fora do formato é recusado com motivo, não jogado fora calado (Q141).
+    if (body.antiNuke?.trustedIds !== undefined) {
+      const trusted = Array.isArray(body.antiNuke.trustedIds) ? body.antiNuke.trustedIds.map((id) => String(id).trim()) : null;
+      if (!trusted || trusted.some((id) => !GUILD_ID_RE.test(id))) return res.status(400).json({ success: false, error: 'invalid_trusted_id' });
+      if (new Set(trusted).size > 50) return res.status(400).json({ success: false, error: 'too_many_trusted' });
+    }
     // Os canais e cargos escolhidos precisam ser deste servidor (o bot confere ao vivo).
     try {
       const bad = await checkGuildIds(req.params.guildId, {
@@ -1452,9 +1494,30 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     });
   });
 
-  router.put(['/api/dashboard/guilds/:guildId/warnings-config', '/api/dashboard/guilds/:guildId/moderation/warnings-config'], requireSession, requireGuild, (req, res) => {
+  router.put(['/api/dashboard/guilds/:guildId/warnings-config', '/api/dashboard/guilds/:guildId/moderation/warnings-config'], requireSession, requireGuild, async (req, res) => {
     const modCases = require('../services/modCasesService');
-    const config = modCases.setGuildWarningsConfig(req.params.guildId, req.body || {});
+    const body = req.body || {};
+    // Recusa em vez de corrigir calado (Q148): a tela mostra o motivo.
+    if (body.defaultExpireDays !== undefined) {
+      const days = Number(body.defaultExpireDays);
+      if (!Number.isInteger(days) || days < 1 || days > 365) return res.status(400).json({ success: false, error: 'invalid_expire_days' });
+    }
+    if (body.thresholds !== undefined) {
+      const check = modCases.validateThresholds(body.thresholds);
+      if (!check.ok) return res.status(400).json({ success: false, error: check.reason });
+    }
+    // O canal de registro precisa ser deste servidor, igual à configuração de segurança (Q156).
+    const logChannelId = body.logChannelId ? String(body.logChannelId) : '';
+    if (logChannelId) {
+      if (!GUILD_ID_RE.test(logChannelId)) return res.status(400).json({ success: false, error: 'invalid_channel' });
+      try {
+        const bad = await checkGuildIds(req.params.guildId, { channels: [logChannelId] });
+        if (bad) return res.status(400).json({ success: false, error: bad });
+      } catch (err) {
+        return res.status(503).json({ success: false, error: err.code || 'bridge_error' });
+      }
+    }
+    const config = modCases.setGuildWarningsConfig(req.params.guildId, body);
     return res.json({ success: true, config });
   });
 

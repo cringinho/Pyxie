@@ -544,7 +544,8 @@ function resetUserSeasonalBalance(userId) {
   if (changed) {
     saveData(data);
   }
-  return true;
+  // `changed` diz se havia saldo de verdade: o painel avisa quando o ID não tinha nada (Q142).
+  return changed;
 }
 
 function excludeUser(userId) {
@@ -1311,7 +1312,7 @@ function setupWebRoutes(app) {
   app.post('/api/admin/sazonal/restrictions/exclude-user', requireAdminAuth, (req, res) => {
     try {
       const { userId } = req.body || {};
-      if (!userId) return res.status(400).json({ success: false, error: 'userId obrigatório' });
+      if (!/^\d{17,20}$/.test(String(userId || '').trim())) return res.status(400).json({ success: false, error: 'invalid_user' });
       excludeUser(userId);
       res.json({ success: true, restrictions: getRestrictions() });
     } catch (err) {
@@ -1322,7 +1323,7 @@ function setupWebRoutes(app) {
   app.post('/api/admin/sazonal/restrictions/unexclude-user', requireAdminAuth, (req, res) => {
     try {
       const { userId } = req.body || {};
-      if (!userId) return res.status(400).json({ success: false, error: 'userId obrigatório' });
+      if (!/^\d{17,20}$/.test(String(userId || '').trim())) return res.status(400).json({ success: false, error: 'invalid_user' });
       unexcludeUser(userId);
       res.json({ success: true, restrictions: getRestrictions() });
     } catch (err) {
@@ -1333,7 +1334,7 @@ function setupWebRoutes(app) {
   app.post('/api/admin/sazonal/restrictions/exclude-role', requireAdminAuth, (req, res) => {
     try {
       const { roleId } = req.body || {};
-      if (!roleId) return res.status(400).json({ success: false, error: 'roleId obrigatório' });
+      if (!/^\d{17,20}$/.test(String(roleId || '').trim())) return res.status(400).json({ success: false, error: 'invalid_role' });
       excludeRole(roleId);
       res.json({ success: true, restrictions: getRestrictions() });
     } catch (err) {
@@ -1344,7 +1345,7 @@ function setupWebRoutes(app) {
   app.post('/api/admin/sazonal/restrictions/unexclude-role', requireAdminAuth, (req, res) => {
     try {
       const { roleId } = req.body || {};
-      if (!roleId) return res.status(400).json({ success: false, error: 'roleId obrigatório' });
+      if (!/^\d{17,20}$/.test(String(roleId || '').trim())) return res.status(400).json({ success: false, error: 'invalid_role' });
       unexcludeRole(roleId);
       res.json({ success: true, restrictions: getRestrictions() });
     } catch (err) {
@@ -1355,9 +1356,10 @@ function setupWebRoutes(app) {
   app.post('/api/admin/sazonal/reset-user', requireAdminAuth, (req, res) => {
     try {
       const { userId } = req.body || {};
-      if (!userId) return res.status(400).json({ success: false, error: 'userId obrigatório' });
-      resetUserSeasonalBalance(userId);
-      res.json({ success: true, message: `Saldo sazonal de ${userId} zerado com sucesso.` });
+      if (!/^\d{17,20}$/.test(String(userId || '').trim())) return res.status(400).json({ success: false, error: 'invalid_user' });
+      // Sem saldo nem perfil sazonal: recusa em vez de dizer "zerado com sucesso" (Q142).
+      if (!resetUserSeasonalBalance(String(userId).trim())) return res.status(404).json({ success: false, error: 'no_seasonal_balance' });
+      res.json({ success: true, reset: true });
     } catch (err) {
       res.status(500).json({ success: false, error: err.message });
     }

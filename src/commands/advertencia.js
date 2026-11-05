@@ -23,6 +23,19 @@ function canModerate(member, guild, userId) {
   );
 }
 
+// Registro do caso no canal escolhido no painel (Segurança › Advertências). Sem canal, ou se a
+// Pyxie não puder escrever lá, segue só com a resposta no próprio canal (Q156). Sem pings.
+async function postCaseLog(guild, cfg, embed, sourceChannelId) {
+  const channelId = cfg?.logChannelId;
+  if (!guild || !channelId || channelId === sourceChannelId) return false;
+  const channel = guild.channels?.cache?.get(channelId) || (await guild.channels?.fetch?.(channelId).catch(() => null));
+  if (!channel || typeof channel.send !== 'function') return false;
+  return channel
+    .send({ embeds: [embed], allowedMentions: NO_PING })
+    .then(() => true)
+    .catch(() => false);
+}
+
 async function applyThresholdAction(guild, targetId, thresholdAction, caseNumber) {
   if (!thresholdAction || !guild) return { applied: false, action: null };
   const member = guild.members?.cache?.get(targetId) || (await guild.members?.fetch?.(targetId).catch(() => null));
@@ -195,6 +208,7 @@ module.exports = {
     }
 
     const staffEmbed = buildStaffConfirmEmbed(interaction, fullResult);
+    await postCaseLog(interaction.guild, cfg, staffEmbed, interaction.channelId);
     return respond({ embeds: [staffEmbed], allowedMentions: NO_PING });
   },
 
@@ -236,6 +250,7 @@ module.exports = {
     }
 
     const staffEmbed = buildStaffConfirmEmbed(message, fullResult);
+    await postCaseLog(message.guild, cfg, staffEmbed, message.channelId);
     return message.reply({ embeds: [staffEmbed], allowedMentions: NO_PING });
   },
 };

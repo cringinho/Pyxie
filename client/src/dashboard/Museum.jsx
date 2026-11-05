@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Images, Pencil, RefreshCw, Trash2, UsersRound } from 'lucide-react';
 import { api } from './api';
 import { Button, Notice, Spinner, StatTile } from './ui';
+import { errorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 
@@ -20,7 +21,7 @@ export default function Museum({ t }) {
   }, [page, search]);
   useEffect(load, [load]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!data) return <Spinner label={t('app.loading')} />;
 
   const run = async (fn, okKey) => {
@@ -30,7 +31,7 @@ export default function Museum({ t }) {
       setNotice({ tone: 'ok', text: t(okKey) });
       load();
     } catch (e) {
-      setNotice({ tone: 'error', text: t('error.generic', { error: e.code || 'generic' }) });
+      setNotice({ tone: 'error', text: errorText(t, e.code || 'generic') });
     }
   };
 
@@ -62,7 +63,7 @@ export default function Museum({ t }) {
       {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
       {data.arts.length === 0 && <p className="text-sm text-white/60">{t('museum.empty')}</p>}
 
-      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {data.arts.map((art) => (
           <li key={art.id} className="dash-card overflow-hidden rounded-2xl">
             <img src={art.imageUrl} alt={art.description || t('museum.artBy', { author: art.author })} loading="lazy" className="aspect-square w-full bg-black/40 object-cover" />

@@ -4,6 +4,7 @@ import BotPermissions from './Permissions';
 import { Syringe } from 'lucide-react';
 import { ConfigAside, DiscordPreview, HubLayout, ModuleCard } from './hub';
 import { Card, MultiSelect, Notice, Spinner, Toggle } from './ui';
+import { errorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 // Mesma cor que o bot usa no embed: a listra mais saturada da bandeira.
@@ -71,7 +72,7 @@ export default function Injections({ t, lang, guildId }) {
     return () => clearInterval(id);
   }, [job, guildId, load]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!data) return <Spinner label={t('app.loading')} />;
   const { packs, info } = data;
   const name = (item) => (lang === 'en' ? item.en : item.pt);
@@ -96,7 +97,7 @@ export default function Injections({ t, lang, guildId }) {
     await api.removeInjection(guildId, i.id, roles).catch(() => null);
     load();
   };
-  const errorText = (code) => (t(`inj.error.${code}`).startsWith('inj.') ? t('error.generic', { error: code }) : t(`inj.error.${code}`));
+  const errorText = (code) => (t(`inj.error.${code}`).startsWith('inj.') ? errorText(t, code) : t(`inj.error.${code}`));
 
   const count = opts?.items.length || 0;
   const roleCountOf = (id) => info.injections.filter((i) => i.pack === id).length;
@@ -172,7 +173,7 @@ export default function Injections({ t, lang, guildId }) {
             {t('inj.none')}
           </button>
         </div>
-        <ul className="grid max-h-72 gap-1 overflow-y-auto rounded-xl border border-white/10 p-1 sm:grid-cols-2">
+        <ul className="grid grid-cols-1 max-h-72 gap-1 overflow-y-auto rounded-xl border border-white/10 p-1 sm:grid-cols-2">
           {packs[pack].items.map((i) => (
             <li key={i.id}>
               <label className="flex min-h-[40px] cursor-pointer items-center gap-2 rounded-lg px-2 text-sm hover:bg-white/5">
@@ -188,14 +189,14 @@ export default function Injections({ t, lang, guildId }) {
       <section className="space-y-4">
         <div>
           <p className="mb-1 text-xs font-semibold text-white/70">{t('inj.position')}</p>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Choice name="pos" value="top" current={opts.position} label={t('inj.posTop')} onChange={(v) => setOpts({ ...opts, position: v })} />
             <Choice name="pos" value="bottom" current={opts.position} label={t('inj.posBottom')} onChange={(v) => setOpts({ ...opts, position: v })} />
           </div>
         </div>
         <div>
           <p className="mb-1 text-xs font-semibold text-white/70">{t('inj.mode')}</p>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Choice name="mode" value="multi" current={opts.mode} label={t('inj.modeMulti')} onChange={(v) => setOpts({ ...opts, mode: v })} />
             <Choice name="mode" value="single" current={opts.mode} label={t('inj.modeSingle')} onChange={(v) => setOpts({ ...opts, mode: v })} />
           </div>
@@ -214,7 +215,7 @@ export default function Injections({ t, lang, guildId }) {
                 ))}
               </select>
             </label>
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <Choice name="fmt" value="select" current={opts.format} label={t('inj.fmtSelect')} onChange={(v) => setOpts({ ...opts, format: v })} />
               <Choice name="fmt" value="buttons" current={opts.format} label={t('inj.fmtButtons')} disabled={count > 20} onChange={(v) => setOpts({ ...opts, format: v })} />
             </div>
@@ -224,7 +225,7 @@ export default function Injections({ t, lang, guildId }) {
         )}
         <div>
           <p className="mb-1 text-xs font-semibold text-white/70">{t('inj.whoCan')}</p>
-          <MultiSelect options={roles.map((r) => ({ id: r.id, label: r.name }))} value={opts.allowedRoleIds} emptyLabel={t('app.loading')} onChange={(v) => setOpts({ ...opts, allowedRoleIds: v })} />
+          <MultiSelect options={roles.map((r) => ({ id: r.id, label: r.name }))} value={opts.allowedRoleIds} emptyLabel={t('common.noOptions')} onChange={(v) => setOpts({ ...opts, allowedRoleIds: v })} />
           <p className="mt-1 text-xs text-white/50">{t('inj.whoCanHint')}</p>
         </div>
         <Toggle label={t('inj.onboarding')} checked={opts.onboarding} disabled={!info.community} onChange={(v) => setOpts({ ...opts, onboarding: v })} />

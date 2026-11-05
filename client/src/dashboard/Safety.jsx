@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from './api';
 import BotPermissions from './Permissions';
 import { Button, Card, MultiSelect, Notice, Spinner, Toggle } from './ui';
+import { errorText } from './i18n';
 
 const field = 'min-h-[44px] w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm';
 
@@ -16,7 +17,7 @@ function useChannels(guildId) {
 function Status({ t, status }) {
   if (!status) return null;
   if (status === 'ok') return <Notice tone="ok">{t('features.saved')}</Notice>;
-  return <Notice tone="error">{t('error.generic', { error: status })}</Notice>;
+  return <Notice tone="error">{errorText(t, status)}</Notice>;
 }
 
 // Moderação da Cringelândia: modo blindagem (AutoMod nativo) e controle de brigas.
@@ -41,7 +42,7 @@ export function Moderation({ t, guildId }) {
       .catch((e) => setError(e.code));
   }, [guildId]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!data || !shield || !conflict) return <Spinner label={t('app.loading')} />;
 
   const saveShield = async (patch = {}) => {
@@ -98,7 +99,7 @@ export function Moderation({ t, guildId }) {
             <input value={shield.customMessage} maxLength={150} onChange={(e) => setShield({ ...shield, customMessage: e.target.value })} className={field} />
           </label>
           <span className="block text-xs font-semibold text-white/70">{t('mod.exempt')}</span>
-          <MultiSelect options={channels} value={shield.exemptChannelIds} emptyLabel={t('app.loading')} onChange={(v) => setShield({ ...shield, exemptChannelIds: v })} />
+          <MultiSelect options={channels} value={shield.exemptChannelIds} emptyLabel={t('common.noOptions')} onChange={(v) => setShield({ ...shield, exemptChannelIds: v })} />
           <Status t={t} status={shieldStatus} />
           <Button onClick={() => saveShield()} disabled={busy} className="w-full">
             {t('features.save')}
@@ -140,7 +141,7 @@ export function Moderation({ t, guildId }) {
             </label>
           </div>
           <span className="block text-xs font-semibold text-white/70">{t('mod.conflictExempt')}</span>
-          <MultiSelect options={channels} value={conflict.exemptChannelIds} emptyLabel={t('app.loading')} onChange={(v) => setConflict({ ...conflict, exemptChannelIds: v })} />
+          <MultiSelect options={channels} value={conflict.exemptChannelIds} emptyLabel={t('common.noOptions')} onChange={(v) => setConflict({ ...conflict, exemptChannelIds: v })} />
           <p className="text-xs text-white/50">{t('mod.ventNote')}</p>
           <Status t={t} status={conflictStatus} />
           <Button onClick={saveConflict} className="w-full">
@@ -182,6 +183,9 @@ export function Links({ t }) {
   const [error, setError] = useState(null);
   const [draft, setDraft] = useState({ url: '', fallbackUrl: '', label: '' });
   const [results, setResults] = useState({});
+  // Erro de adicionar/remover fica embaixo do formulário: a lista e o texto digitado continuam (Q152).
+  const [addErr, setAddErr] = useState(null);
+  const [rowErr, setRowErr] = useState(null);
 
   const load = () =>
     api
@@ -192,25 +196,39 @@ export function Links({ t }) {
     load();
   }, []);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!links) return <Spinner label={t('app.loading')} />;
 
+  const urlOk = (v) => /^https?:\/\/\S+\.\S+/.test(String(v || '').trim());
+  const draftProblem = !urlOk(draft.url) ? 'links.err.url' : draft.fallbackUrl && !urlOk(draft.fallbackUrl) ? 'links.err.fallback' : null;
   const add = async () => {
+    setAddErr(null);
+    if (draftProblem) {
+      setAddErr(t(draftProblem));
+      return;
+    }
     try {
       await api.addLink(draft);
       setDraft({ url: '', fallbackUrl: '', label: '' });
       load();
     } catch (e) {
-      setError(e.code);
+      setAddErr(errorText(t, e.code));
     }
   };
   const test = async (id) => {
     const res = await api.testLink(id).catch((e) => ({ result: { ok: false, diagnosis: e.code } }));
     setResults({ ...results, [id]: res.result });
   };
-  const remove = async (id) => {
-    await api.removeLink(id).catch(() => {});
-    load();
+  const remove = async (l) => {
+    // eslint-disable-next-line no-alert
+    if (!window.confirm(t('links.removeConfirm', { url: l.url }))) return;
+    setRowErr(null);
+    try {
+      await api.removeLink(l.id);
+      load();
+    } catch (e) {
+      setRowErr({ id: l.id, text: errorText(t, e.code) });
+    }
   };
   const tone = { ok: 'text-emerald-300', down: 'text-red-300', suspect: 'text-amber-300', redirect: 'text-amber-300', unknown: 'text-white/50' };
 
@@ -232,10 +250,11 @@ export function Links({ t }) {
                 <Button variant="ghost" onClick={() => test(l.id)}>
                   {t('links.test')}
                 </Button>
-                <Button variant="ghost" onClick={() => remove(l.id)}>
+                <Button variant="ghost" aria-label={t('links.removeAria', { url: l.url })} onClick={() => remove(l)}>
                   {t('studio.remove')}
                 </Button>
               </div>
+              {rowErr?.id === l.id && <Notice tone="error">{rowErr.text}</Notice>}
             </li>
           ))}
         </ul>
@@ -245,6 +264,7 @@ export function Links({ t }) {
           <input value={draft.url} onChange={(e) => setDraft({ ...draft, url: e.target.value })} placeholder="https://" aria-label="URL" className={field} />
           <input value={draft.fallbackUrl} onChange={(e) => setDraft({ ...draft, fallbackUrl: e.target.value })} placeholder={t('links.fallback')} aria-label={t('links.fallback')} className={field} />
           <input value={draft.label} onChange={(e) => setDraft({ ...draft, label: e.target.value })} placeholder={t('links.label')} aria-label={t('links.label')} className={field} />
+          {addErr && <Notice tone="error">{addErr}</Notice>}
           <Button onClick={add} disabled={!draft.url} className="w-full">
             {t('links.add')}
           </Button>

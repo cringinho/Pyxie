@@ -124,6 +124,28 @@ const handlers = {
       .sort((a, b) => b.position - a.position);
   },
 
+  // Nome e avatar de até 50 IDs (casos de moderação, lista de confiáveis, acesso ao painel):
+  // o painel mostra quem é cada pessoa em vez de só o número. Só o que qualquer membro vê.
+  async GUILD_MEMBERS_LOOKUP(client, { guildId, userIds = [] }) {
+    const guild = client.guilds.cache.get(String(guildId));
+    if (!guild) throw new Error('guild_not_found');
+    const ids = [...new Set((Array.isArray(userIds) ? userIds : []).map(String).filter((id) => /^\d{17,20}$/.test(id)))].slice(0, 50);
+    const out = [];
+    for (const id of ids) {
+      const member = guild.members.cache.get(id) || (await guild.members.fetch(id).catch(() => null));
+      const user = member?.user || client.users.cache.get(id) || (await client.users.fetch(id).catch(() => null));
+      out.push({
+        id,
+        exists: Boolean(user),
+        inGuild: Boolean(member),
+        name: member?.displayName || user?.globalName || user?.username || '',
+        username: user?.username || '',
+        avatar: (member || user)?.displayAvatarURL?.({ size: 64 }) || null,
+      });
+    }
+    return out;
+  },
+
   // Ativa ou desativa o Modo de Emergência Global ao vivo no servidor.
   async EMERGENCY_TOGGLE(client, { guildId, active, actorId, reason }) {
     const guild = client.guilds.cache.get(String(guildId));

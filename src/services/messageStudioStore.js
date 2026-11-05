@@ -59,7 +59,7 @@ function getMessage(guildId, id) {
 // Devolve { ok, doc } ou { ok: false, errors }.
 function saveMessage(guildId, raw, { by = null } = {}) {
   const doc = studio.normalizeMessage(raw);
-  const errors = studio.validateMessage(doc);
+  const errors = [...studio.rawLimitErrors(raw), ...studio.validateMessage(doc)];
   if (errors.length) return { ok: false, errors };
   const state = load(guildId);
   const prev = state.messages[doc.id];

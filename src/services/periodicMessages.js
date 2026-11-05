@@ -13,7 +13,8 @@ const HOUR = 3600000;
 const DAY = 24 * HOUR;
 const BRT = 3 * HOUR;
 const SITES = ['disboard', 'canudinho', 'discadia', 'topgg', 'review'];
-const clamp = (n, min, max, d) => (Number.isFinite(Number(n)) ? Math.min(max, Math.max(min, Math.round(Number(n)))) : d);
+// Vazio/nulo é "usar o padrão": Number('') daria 0 e viraria o mínimo (2h de intervalo, meia-noite) (Q130).
+const clamp = (n, min, max, d) => (n === '' || n === null || n === undefined || !Number.isFinite(Number(n)) ? d : Math.min(max, Math.max(min, Math.round(Number(n)))));
 const id = (v) => (ID_RE.test(String(v || '')) ? String(v) : '');
 
 function defaultsFor(guildId) {

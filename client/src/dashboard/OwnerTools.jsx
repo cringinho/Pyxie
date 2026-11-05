@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { api } from './api';
 import { Badge, Button, Card, Notice, Spinner } from './ui';
+import { errorText, apiErrorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 
@@ -13,7 +14,7 @@ function useRunner(load, t) {
       setNotice({ tone: 'ok', text: t(okKey) });
       load();
     } catch (e) {
-      setNotice({ tone: 'error', text: e.data?.error || e.data?.message || t('error.generic', { error: e.code || 'generic' }) });
+      setNotice({ tone: 'error', text: apiErrorText(t, e) });
     }
   };
   return [notice, run];
@@ -80,7 +81,7 @@ export function Trust({ t }) {
       </Card>
       <Card title={t('trust.addTitle')}>
         <form
-          className="grid gap-2 sm:grid-cols-[auto_1fr]"
+          className="grid grid-cols-1 gap-2 sm:grid-cols-[auto_1fr]"
           onSubmit={(e) => {
             e.preventDefault();
             block(form.type, form.id, form.reason || undefined);

@@ -68,6 +68,8 @@ function fakeBotSend(msg) {
       data = { permissions: { ManageMessages: true, ViewAuditLog: false }, roleName: 'Pyxie' };
     } else if (request === 'GUILD_ROLES') {
       data = [{ id: '2', name: 'Staff' }];
+    } else if (request === 'GUILD_MEMBERS_LOOKUP') {
+      data = payload.userIds.map((uid) => ({ id: uid, exists: true, inGuild: true, name: `Pessoa ${uid.slice(0, 3)}`, username: 'p', avatar: null }));
     } else if (request === 'TICKETS_INFO' || request === 'TICKETS_SAVE') {
       data = { config: { panelChannelId: '', categoryId: '', logChannelId: payload.logChannelId || '' }, options: payload.options || {}, open: [] };
     }
@@ -195,6 +197,11 @@ function cookieFor(userId, guilds = []) {
     for (const id of ['maryStore', 'maryTools', 'maryProfile']) assert.ok(maryInfo.sections.includes(id), `Mary tem a seção ${id}`);
     const adminInfo = await (await call(`/api/dashboard/guilds/${GUILD_A}`, { cookie: adminCookie })).json();
     assert.ok(!adminInfo.sections.some((s) => s.startsWith('mary')), 'Outros servidores não veem as telas da Mary');
+    // Q103: servidor comum não ganha cadeado que a compra do plano não resolve (telas de zona).
+    for (const id of ['embeds', 'community', 'seasonal', 'hyperfokus']) {
+      assert.ok(!adminInfo.sections.includes(id), `Servidor comum não vê ${id} (depende de zona, plano não libera)`);
+    }
+    assert.ok(adminInfo.lockedSections.every((s) => adminInfo.sections.includes(s.id)), 'Todo cadeado é de uma seção do próprio servidor');
     assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/store`, { cookie: maryCookie })).status, 200);
     assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/store`, { cookie: ownerCookie })).status, 200, 'O dono também abre a lojinha');
     assert.equal((await call(`/api/dashboard/guilds/${MARY_GUILD_ID}/mary/store`, { cookie: adminCookie })).status, 403, 'Admin comum não abre a lojinha');
@@ -225,6 +232,10 @@ function cookieFor(userId, guilds = []) {
     assert.equal(maryRes.status, 200, 'PNG de verdade é aceito');
     assert.match((await maryRes.json()).url, /\/api\/mary\/media\/mary_\w+\.png$/);
     assert.equal((await upload(Buffer.from('<script>alert(1)</script>'), 'image/png')).status, 400, 'Arquivo que não é imagem é recusado');
+    // Q133: acima de 8 MB vira "file_too_large" (antes caía no 500 "Erro interno").
+    const big = await upload(Buffer.alloc(8 * 1024 * 1024 + 10), 'image/png');
+    assert.equal(big.status, 413);
+    assert.equal((await big.json()).error, 'file_too_large');
     console.log('  ✅ 4b. Telas da Mary: zona, canais conferidos, modelos, botões da lojinha e upload seguro.');
 
     // 5. Permissão conferida ao vivo: perdeu o cargo, perdeu o acesso.
@@ -250,6 +261,11 @@ function cookieFor(userId, guilds = []) {
       body: { enabled: true, userIds: [], roleIds: ['900000000000000001'] },
     });
     assert.equal((await call(`/api/dashboard/guilds/${GUILD_A}`, { cookie: adminCookie })).status, 200, 'Whitelist por cargo libera');
+    // Q119: "@fulano" não some calado; o servidor recusa e diz qual linha está errada.
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/access`, { cookie: ownerACookie, method: 'PUT', body: { enabled: true, userIds: ['@fulano'], roleIds: ['900000000000000001'] } });
+    assert.equal(res.status, 400);
+    assert.deepEqual(await res.json(), { success: false, error: 'invalid_user_id', value: '@fulano' });
+    assert.deepEqual(panelAccess.readWhitelist(GUILD_A).roleIds, ['900000000000000001'], 'Pedido recusado não muda a whitelist');
     res = await call(`/api/dashboard/guilds/${GUILD_A}/access`, {
       cookie: ownerACookie,
       method: 'PUT',
@@ -298,6 +314,32 @@ function cookieFor(userId, guilds = []) {
     sec = await res.json();
     assert.equal(sec.security.antiRaid.joins, 25, 'Ajustes do anti-raid são salvos');
     assert.deepEqual(sec.security.appeals, { enabled: true, channelId: '777777777777777777' });
+    // Q141: ID confiável fora do formato é recusado com motivo (antes sumia calado).
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie, method: 'PUT', body: { antiNuke: { trustedIds: ['123', '777777777777777777'] } } });
+    assert.equal(res.status, 400);
+    assert.equal((await res.json()).error, 'invalid_trusted_id');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/security`, { cookie: adminCookie, method: 'PUT', body: { antiNuke: { trustedIds: ['777777777777777777'] } } });
+    assert.deepEqual((await res.json()).security.antiNuke.trustedIds, ['777777777777777777']);
+    // Q148/Q156: advertências recusam limite inválido e canal de registro de outro servidor.
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/moderation/warnings-config`, { cookie: adminCookie, method: 'PUT', body: { logChannelId: '888888888888888888' } });
+    assert.equal((await res.json()).error, 'invalid_channel', 'Canal de registro de casos precisa ser deste servidor');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/moderation/warnings-config`, { cookie: adminCookie, method: 'PUT', body: { thresholds: [{ points: 3, action: 'ban' }, { points: 3, action: 'kick' }] } });
+    assert.equal((await res.json()).error, 'duplicate_threshold_points');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/moderation/warnings-config`, { cookie: adminCookie, method: 'PUT', body: { defaultExpireDays: 0 } });
+    assert.equal((await res.json()).error, 'invalid_expire_days');
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/moderation/warnings-config`, {
+      cookie: adminCookie,
+      method: 'PUT',
+      body: { logChannelId: '777777777777777777', dmOnWarn: false, thresholds: [{ points: 4, action: 'timeout', durationMinutes: 30 }, { points: 9, action: 'ban' }] },
+    });
+    const warnCfg = (await res.json()).config;
+    assert.equal(warnCfg.logChannelId, '777777777777777777');
+    assert.equal(warnCfg.dmOnWarn, false);
+    assert.deepEqual(warnCfg.thresholds.map((th) => th.points), [4, 9]);
+    // Nome e avatar por ID (casos, confiáveis, acesso).
+    res = await call(`/api/dashboard/guilds/${GUILD_A}/members/lookup?ids=777777777777777777,lixo`, { cookie: adminCookie });
+    assert.deepEqual((await res.json()).members.map((m) => m.id), ['777777777777777777'], 'Lookup só aceita IDs válidos');
+    assert.equal((await call(`/api/dashboard/guilds/${GUILD_B}/members/lookup?ids=777777777777777777`, { cookie: adminCookie })).status, 403, 'Lookup de outro servidor é recusado');
     // Comandos: catálogo automático por servidor (escopo, dono, grupo desligado).
     const cmdsA = (await (await call(`/api/dashboard/guilds/${GUILD_A}/commands`, { cookie: adminCookie })).json()).commands;
     assert(cmdsA.some((c) => c.name === 'py-marriage'), 'Comandos globais aparecem');

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { api } from './api';
 import { Button, Card, MultiSelect, Notice, Spinner } from './ui';
+import { errorText, apiErrorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 const CHANNELS = ['welcomeChannelId', 'requestChannelId', 'modReviewChannelId', 'publishedChannelId', 'radarChannelId'];
@@ -27,7 +28,7 @@ export default function Partnerships({ t, guildId, children }) {
     api.roles(guildId).then((d) => setRoles(d.roles)).catch(() => {});
   }, [guildId, load]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!cfg) return <Spinner label={t('app.loading')} />;
 
   const run = async (fn, okKey) => {
@@ -38,7 +39,7 @@ export default function Partnerships({ t, guildId, children }) {
       setNotice({ tone: 'ok', text: t(okKey) });
       load();
     } catch (e) {
-      setNotice({ tone: 'error', text: e.data?.error || t('error.generic', { error: e.code || 'generic' }) });
+      setNotice({ tone: 'error', text: apiErrorText(t, e) });
     }
     setBusy(false);
   };
@@ -48,7 +49,7 @@ export default function Partnerships({ t, guildId, children }) {
     <div className="space-y-4">
       {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
       <Card title={t('partners.configTitle')}>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {CHANNELS.map((key) => (
             <label key={key} className="block">
               <span className="mb-1 block text-xs font-semibold text-white/70">{t(`partners.ch.${key}`)}</span>
@@ -78,7 +79,7 @@ export default function Partnerships({ t, guildId, children }) {
         <MultiSelect
           options={roles.map((r) => ({ id: r.id, label: r.name }))}
           value={cfg.roles?.adminRoleIds || []}
-          emptyLabel={t('app.loading')}
+          emptyLabel={t('common.noOptions')}
           onChange={(v) => setCfg({ ...cfg, roles: { ...cfg.roles, adminRoleIds: v } })}
         />
         <div className="mt-3 flex flex-wrap gap-2">

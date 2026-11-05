@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { api } from './api';
 import { PreviewEmbed } from './Studio';
-import { Button, Card, Notice, Spinner } from './ui';
+import { Button, Card, Notice, Spinner, confirmLeave, useUnsavedGuard } from './ui';
+import { errorText } from './i18n';
 
 // Embeds da Pyxie na Cringelândia (plano 5.2): qualquer embed que o bot manda aparece aqui sozinho e
 // pode ganhar cor, textos, imagens e emojis do app. A mudança vale no próximo envio.
-const field = 'min-h-[44px] w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm';
+// `fieldBase` não traz largura: o `w-full` de `field` venceria qualquer `w-20` no CSS gerado (Q124).
+const fieldBase = 'min-h-[44px] rounded-xl border border-white/10 bg-white/5 px-3 text-sm';
+const field = `${fieldBase} w-full`;
 const area = 'w-full rounded-xl border border-white/10 bg-white/5 p-3 text-sm';
 const emptyOverride = () => ({ color: '', title: '', description: '', footer: '', author: '', thumbnailUrl: '', imageUrl: '', footerIcon: 'auto', emojiSwaps: [] });
 const FOOTER_ICONS = ['auto', 'smile', 'happy', 'worried', 'sad', 'none'];
@@ -72,16 +75,21 @@ function SwapList({ t, guildId, swaps, onChange }) {
   return (
     <div className="space-y-2">
       {swaps.map((s, i) => (
-        <div key={i} className="flex items-center gap-2">
-          <input value={s.from} onChange={(e) => set(i, { from: e.target.value })} placeholder="🪙" aria-label={t('embeds.swapFrom')} className={`${field} w-20 shrink-0 text-center`} />
-          <span aria-hidden="true">→</span>
-          <input value={s.to} onChange={(e) => set(i, { to: e.target.value })} placeholder="{emoji:pyxie_coin}" aria-label={t('embeds.swapTo')} className={field} />
-          <Button variant="ghost" onClick={() => setPicking(i)}>
-            🙂
-          </Button>
-          <Button variant="ghost" onClick={() => onChange(swaps.filter((_, j) => j !== i))}>
-            ✕
-          </Button>
+        // Celular: origem → destino numa linha e os botões embaixo; do sm em diante tudo numa linha só.
+        <div key={i} className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
+          <div className="flex min-w-0 flex-1 basis-full items-center gap-2 sm:basis-auto">
+            <input value={s.from} onChange={(e) => set(i, { from: e.target.value })} placeholder="🪙" aria-label={t('embeds.swapFrom')} className={`${fieldBase} w-20 shrink-0 text-center`} />
+            <span aria-hidden="true">→</span>
+            <input value={s.to} onChange={(e) => set(i, { to: e.target.value })} placeholder="{emoji:pyxie_coin}" aria-label={t('embeds.swapTo')} className={`${fieldBase} min-w-0 flex-1`} />
+          </div>
+          <div className="ml-auto flex shrink-0 gap-2">
+            <Button variant="ghost" aria-label={t('embeds.pickEmojiFor', { n: i + 1 })} onClick={() => setPicking(i)}>
+              🙂
+            </Button>
+            <Button variant="ghost" aria-label={t('embeds.removeSwap', { n: i + 1 })} onClick={() => onChange(swaps.filter((_, j) => j !== i))}>
+              ✕
+            </Button>
+          </div>
         </div>
       ))}
       <Button variant="ghost" onClick={() => onChange([...swaps, { from: '', to: '' }])}>
@@ -111,7 +119,7 @@ function GlobalSwaps({ t, guildId, initial }) {
       setSwaps(res.global.emojiSwaps);
       setStatus({ ok: true, text: t('embeds.saved') });
     } catch (e) {
-      setStatus({ ok: false, text: t('error.generic', { error: e.code }) });
+      setStatus({ ok: false, text: errorText(t, e.code) });
     }
   };
   return (
@@ -121,7 +129,7 @@ function GlobalSwaps({ t, guildId, initial }) {
       <Button onClick={save} className="mt-3 w-full sm:w-auto">
         {t('embeds.save')}
       </Button>
-      {status && <Notice tone={status.ok ? 'success' : 'error'}>{status.text}</Notice>}
+      {status && <Notice tone={status.ok ? 'ok' : 'error'}>{status.text}</Notice>}
     </Card>
   );
 }
@@ -148,15 +156,25 @@ function Editor({ t, guildId, embedKey, onClose, onSaved }) {
   const [picking, setPicking] = useState(null);
   const [status, setStatus] = useState(null);
   const [busy, setBusy] = useState(false);
+  // Cópia do último estado salvo: diferença = rascunho que se perderia ao sair (Q140).
+  const [savedSnap, setSavedSnap] = useState(null);
+  const dirty = savedSnap !== null && JSON.stringify(o) !== savedSnap;
+  useUnsavedGuard(dirty, t('common.leaveUnsaved'));
+  const close = () => {
+    if (dirty && !confirmLeave()) return;
+    onClose();
+  };
 
   useEffect(() => {
     api
       .embed(guildId, embedKey)
       .then((d) => {
         setData(d);
-        setO({ ...emptyOverride(), ...d.override });
+        const loaded = { ...emptyOverride(), ...d.override };
+        setO(loaded);
+        setSavedSnap(JSON.stringify(loaded));
       })
-      .catch((e) => setStatus({ ok: false, text: t('error.generic', { error: e.code }) }));
+      .catch((e) => setStatus({ ok: false, text: errorText(t, e.code) }));
   }, [guildId, embedKey]);
 
   // Prévia com a mesma regra do bot (feita no servidor), meio segundo depois de parar de digitar.
@@ -178,7 +196,7 @@ function Editor({ t, guildId, embedKey, onClose, onSaved }) {
       setStatus({ ok: true, text: typeof okText === 'function' ? okText(res) : okText });
       onSaved();
     } catch (e) {
-      setStatus({ ok: false, text: t('error.generic', { error: e.code }) });
+      setStatus({ ok: false, text: errorText(t, e.code) });
     }
     setBusy(false);
   };
@@ -187,11 +205,11 @@ function Editor({ t, guildId, embedKey, onClose, onSaved }) {
 
   return (
     <div className="space-y-4">
-      <Button variant="ghost" onClick={onClose}>
+      <Button variant="ghost" onClick={close}>
         ← {t('embeds.back')}
       </Button>
       <Card title={`${data.entry.command} · ${data.entry.sample?.title || data.entry.shape}`}>
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <div className="min-w-0">
             <p className="mb-1 text-xs font-semibold text-white/60">{t('embeds.original')}</p>
             <PreviewEmbed e={toPreview(data.entry.sample)} ctx={ctx} />
@@ -265,7 +283,18 @@ function Editor({ t, guildId, embedKey, onClose, onSaved }) {
           </div>
         </div>
         <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-          <Button disabled={busy} onClick={() => run(() => api.saveEmbed(guildId, embedKey, { ...o, emojiSwaps: o.emojiSwaps.filter((s) => s.from && s.to) }), t('embeds.saved'))}>
+          <Button
+            disabled={busy}
+            onClick={() =>
+              run(async () => {
+                const next = { ...o, emojiSwaps: o.emojiSwaps.filter((s) => s.from && s.to) };
+                const res = await api.saveEmbed(guildId, embedKey, next);
+                setO(next);
+                setSavedSnap(JSON.stringify(next));
+                return res;
+              }, t('embeds.saved'))
+            }
+          >
             {t('embeds.save')}
           </Button>
           <Button
@@ -275,6 +304,7 @@ function Editor({ t, guildId, embedKey, onClose, onSaved }) {
               run(async () => {
                 await api.resetEmbed(guildId, embedKey);
                 setO(emptyOverride());
+                setSavedSnap(JSON.stringify(emptyOverride()));
               }, t('embeds.resetDone'))
             }
           >
@@ -286,7 +316,7 @@ function Editor({ t, guildId, embedKey, onClose, onSaved }) {
             </Button>
           )}
         </div>
-        {status && <Notice tone={status.ok ? 'success' : 'error'}>{status.text}</Notice>}
+        {status && <Notice tone={status.ok ? 'ok' : 'error'}>{status.text}</Notice>}
       </Card>
       {picking && (
         <EmojiPicker
@@ -325,7 +355,7 @@ export default function Embeds({ t, guildId }) {
     return [...map.entries()];
   }, [data, q]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!data) return <Spinner label={t('app.loading')} />;
   if (open) return <Editor t={t} guildId={guildId} embedKey={open} onClose={() => setOpen(null)} onSaved={load} />;
 

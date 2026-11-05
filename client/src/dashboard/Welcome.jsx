@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DoorOpen, Flower2, HeartHandshake } from 'lucide-react';
 import { api } from './api';
 import { Button, Card, Notice, Spinner, Toggle } from './ui';
+import { errorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 const select = `${field} bg-[#160d2a]`;
@@ -43,14 +44,16 @@ export default function Welcome({ t, guildId }) {
     api.channels(guildId).then((d) => setChannels(d.channels.filter((c) => [0, 5].includes(c.type)))).catch(() => {});
     api.roles(guildId).then((d) => setRoles(d.roles.filter((r) => !r.managed))).catch(() => {});
   }, [guildId]);
-  if (!cfg) return status ? <Notice tone="error">{t('error.generic', { error: status })}</Notice> : <Spinner label={t('app.loading')} />;
+  if (!cfg) return status ? <Notice tone="error">{errorText(t, status)}</Notice> : <Spinner label={t('app.loading')} />;
 
   const set = (patch) => setCfg({ ...cfg, ...patch });
   const setCheckin = (patch) => setCfg({ ...cfg, checkin: { ...cfg.checkin, ...patch } });
   const none = t('welcome.none');
   const channelPicker = (key) => <Picker value={cfg[key]} onChange={(v) => set({ [key]: v })} items={channels} prefix="#" empty={none} />;
+  const bdayHourOk = !wb || wb.birthdayHour === '' || wb.birthdayHour === undefined || (Number.isInteger(Number(wb.birthdayHour)) && Number(wb.birthdayHour) >= 0 && Number(wb.birthdayHour) <= 23);
   const save = async () => {
     setStatus(null);
+    if (!bdayHourOk) return;
     try {
       const res = await api.saveWelcome(guildId, cfg);
       setCfg(res.welcome);
@@ -74,7 +77,7 @@ export default function Welcome({ t, guildId }) {
           <Labeled label={t('welcome.channel')}>{channelPicker('channelId')}</Labeled>
           <fieldset>
             <legend className="mb-1 text-xs font-semibold text-white/70">{t('welcome.layout')}</legend>
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {['guide', 'custom'].map((l) => (
                 <button
                   key={l}
@@ -121,7 +124,7 @@ export default function Welcome({ t, guildId }) {
               <Labeled label={t('welcome.image')}>
                 <input type="url" value={cfg.imageUrl} onChange={(e) => set({ imageUrl: e.target.value })} placeholder="https://" className={field} />
               </Labeled>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <Toggle label={t('welcome.showAvatar')} checked={cfg.showAvatar !== false} onChange={(v) => set({ showAvatar: v })} />
                 <Toggle label={t('welcome.showMemberCount')} checked={cfg.showMemberCount !== false} onChange={(v) => set({ showMemberCount: v })} />
               </div>
@@ -157,7 +160,7 @@ export default function Welcome({ t, guildId }) {
           <Labeled label={t('welcome.checkin.silent')} hint={t('welcome.checkin.silentHint')}>
             <Picker value={cfg.checkin.silentRoleId} onChange={(v) => setCheckin({ silentRoleId: v })} items={roles} prefix="@" empty={none} />
           </Labeled>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Labeled label={t('welcome.checkin.delayHours')}>
               <input type="number" min={6} max={72} value={cfg.checkin.delayHours ?? 24} onChange={(e) => setCheckin({ delayHours: Number(e.target.value) })} className={field} />
             </Labeled>
@@ -175,7 +178,7 @@ export default function Welcome({ t, guildId }) {
             <Toggle label={t('welcome.wb.reminders')} checked={wb.remindersEnabled !== false} onChange={(v) => setWb({ ...wb, remindersEnabled: v })} />
             <Toggle label={t('welcome.wb.afk')} checked={wb.afkEnabled !== false} onChange={(v) => setWb({ ...wb, afkEnabled: v })} />
             <Toggle label={t('welcome.wb.birthdays')} checked={wb.birthdaysEnabled !== false} onChange={(v) => setWb({ ...wb, birthdaysEnabled: v })} />
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <Labeled label={t('welcome.wb.bdayChannel')}>
                 <Picker value={wb.birthdayChannelId || ''} onChange={(v) => setWb({ ...wb, birthdayChannelId: v })} items={channels} prefix="#" empty={none} />
               </Labeled>
@@ -183,9 +186,20 @@ export default function Welcome({ t, guildId }) {
                 <Picker value={wb.birthdayRoleId || ''} onChange={(v) => setWb({ ...wb, birthdayRoleId: v })} items={roles.filter((r) => r.assignable !== false)} prefix="@" empty={none} />
               </Labeled>
             </div>
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <Labeled label={t('welcome.wb.bdayHour')}>
-                <input type="number" min={0} max={23} value={wb.birthdayHour ?? 9} onChange={(e) => setWb({ ...wb, birthdayHour: Number(e.target.value) })} className={field} />
+                <input
+                  type="number"
+                  min={0}
+                  max={23}
+                  value={wb.birthdayHour ?? 9}
+                  placeholder="9"
+                  aria-invalid={!bdayHourOk}
+                  onChange={(e) => setWb({ ...wb, birthdayHour: e.target.value === '' ? '' : Number(e.target.value) })}
+                  className={`${field} ${bdayHourOk ? '' : 'border border-red-400'}`}
+                />
+                {!bdayHourOk && <span className="mt-1 block text-xs text-red-300">{t('error.invalid_hour')}</span>}
+                {wb.birthdayHour === '' && <span className="mt-1 block text-xs text-white/50">{t('welcome.wb.bdayHourEmpty')}</span>}
               </Labeled>
               <Labeled label={t('welcome.wb.afkMaxLength')}>
                 <input type="number" min={30} max={300} value={wb.afkMaxLength ?? 140} onChange={(e) => setWb({ ...wb, afkMaxLength: Number(e.target.value) })} className={field} />
@@ -199,7 +213,7 @@ export default function Welcome({ t, guildId }) {
       )}
 
       {status === 'ok' && <Notice tone="ok">{t('features.saved')}</Notice>}
-      {known && <Notice tone="error">{known.startsWith('error.') ? t('error.generic', { error: status }) : known}</Notice>}
+      {known && <Notice tone="error">{known.startsWith('error.') ? errorText(t, status) : known}</Notice>}
       <Button className="w-full" onClick={save}>
         {t('features.save')}
       </Button>

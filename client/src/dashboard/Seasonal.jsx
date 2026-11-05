@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { api } from './api';
-import { Button, Card, Notice, Spinner, Toggle } from './ui';
+import { Button, Card, MemberChip, Notice, Spinner, Toggle, useMemberLookup } from './ui';
+import { apiErrorText, errorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 const area = 'dash-field w-full rounded-xl p-3 text-sm';
@@ -23,6 +24,10 @@ export default function Seasonal({ t, guildId }) {
   const [broadcast, setBroadcast] = useState(false);
   const [newUser, setNewUser] = useState('');
   const [resetId, setResetId] = useState('');
+  const excludedNames = useMemberLookup(guildId, restr?.excludedUserIds || []);
+  // Mesma regra do backend: ID do Discord tem 17 a 20 números (Q142).
+  const isId = (v) => /^\d{17,20}$/.test(v);
+  const resetInfo = useMemberLookup(guildId, isId(resetId) ? [resetId] : []).get(resetId);
 
   const load = useCallback(() => {
     api
@@ -41,18 +46,19 @@ export default function Seasonal({ t, guildId }) {
     api.roles(guildId).then((d) => setRoles(d.roles)).catch(() => {});
   }, [guildId, load]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!cfg) return <Spinner label={t('app.loading')} />;
 
   const run = async (fn, okKey) => {
     setBusy(true);
     setNotice(null);
     try {
-      const res = await fn();
-      setNotice({ tone: 'ok', text: res?.message || t(okKey) });
+      await fn();
+      setNotice({ tone: 'ok', text: t(okKey) });
       load();
     } catch (e) {
-      setNotice({ tone: 'error', text: e.data?.error || t('error.generic', { error: e.code || 'generic' }) });
+      // Código conhecido vira texto em PT/EN; mensagem antiga do backend (só PT) só aparece em PT (Q154).
+      setNotice({ tone: 'error', text: apiErrorText(t, e) });
     }
     setBusy(false);
   };
@@ -147,7 +153,7 @@ export default function Seasonal({ t, guildId }) {
       </Card>
 
       <Card title={t('seasonal.eventTitle')}>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {text('eventName', t('seasonal.eventName'))}
           {text('currencyName', t('seasonal.currencyName'))}
           {channelSelect('dropsChannelId')}
@@ -201,8 +207,8 @@ export default function Seasonal({ t, guildId }) {
         <p className="mb-3 text-xs text-white/50">{t('seasonal.restrHint')}</p>
         <ul className="mb-3 space-y-1 text-sm">
           {(restr?.excludedUserIds || []).map((id) => (
-            <li key={id} className="flex items-center justify-between gap-2">
-              <span className="font-mono">{id}</span>
+            <li key={id} className="flex min-w-0 items-center justify-between gap-2">
+              <MemberChip id={id} info={excludedNames.get(id)} t={t} />
               <button type="button" className="text-xs text-pyxie-glow hover:underline" onClick={() => run(() => api.seasonalRestrict('unexclude-user', { userId: id }), 'features.saved')}>
                 {t('seasonal.readmit')}
               </button>
@@ -217,16 +223,17 @@ export default function Seasonal({ t, guildId }) {
             </li>
           ))}
         </ul>
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <form
             className="flex gap-2"
             onSubmit={(e) => {
               e.preventDefault();
+              if (!isId(newUser)) return;
               run(() => api.seasonalRestrict('exclude-user', { userId: newUser.trim() }), 'features.saved').then(() => setNewUser(''));
             }}
           >
-            <input value={newUser} onChange={(e) => setNewUser(e.target.value.replace(/\D/g, ''))} placeholder={t('seasonal.userId')} aria-label={t('seasonal.userId')} className={`${field} font-mono`} />
-            <Button variant="ghost" type="submit" disabled={!newUser}>
+            <input value={newUser} maxLength={20} inputMode="numeric" onChange={(e) => setNewUser(e.target.value.replace(/\D/g, ''))} placeholder={t('seasonal.userId')} aria-label={t('seasonal.userId')} aria-invalid={Boolean(newUser) && !isId(newUser)} className={`${field} min-w-0 font-mono`} />
+            <Button variant="ghost" type="submit" disabled={!isId(newUser)}>
               {t('seasonal.exclude')}
             </Button>
           </form>
@@ -244,18 +251,27 @@ export default function Seasonal({ t, guildId }) {
             ))}
           </select>
         </div>
+        {newUser && !isId(newUser) && <p className="mt-1 text-xs text-red-300">{t('error.invalid_user')}</p>}
         <form
           className="mt-3 flex gap-2"
           onSubmit={(e) => {
             e.preventDefault();
-            if (window.confirm(t('seasonal.confirmReset', { id: resetId }))) run(() => api.seasonalReset(resetId), 'features.saved').then(() => setResetId(''));
+            if (!isId(resetId)) return;
+            const who = resetInfo?.name ? `${resetInfo.name} (${resetId})` : resetId;
+            if (window.confirm(t('seasonal.confirmReset', { id: who }))) run(() => api.seasonalReset(resetId), 'seasonal.resetDone').then(() => setResetId(''));
           }}
         >
-          <input value={resetId} onChange={(e) => setResetId(e.target.value.replace(/\D/g, ''))} placeholder={t('seasonal.resetUser')} aria-label={t('seasonal.resetUser')} className={`${field} font-mono`} />
-          <Button variant="ghost" type="submit" disabled={!resetId} className="text-red-300">
+          <input value={resetId} maxLength={20} inputMode="numeric" onChange={(e) => setResetId(e.target.value.replace(/\D/g, ''))} placeholder={t('seasonal.resetUser')} aria-label={t('seasonal.resetUser')} aria-invalid={Boolean(resetId) && !isId(resetId)} className={`${field} min-w-0 font-mono`} />
+          <Button variant="ghost" type="submit" disabled={!isId(resetId)} className="text-red-300">
             {t('seasonal.reset')}
           </Button>
         </form>
+        {resetId && !isId(resetId) && <p className="mt-1 text-xs text-red-300">{t('error.invalid_user')}</p>}
+        {isId(resetId) && resetInfo && (
+          <p className="mt-1 flex items-center gap-1 text-xs text-white/60">
+            {t('seasonal.resetWho')} <MemberChip id={resetId} info={resetInfo} t={t} />
+          </p>
+        )}
       </Card>
     </div>
   );

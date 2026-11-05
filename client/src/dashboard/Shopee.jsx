@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ImageDown, PackageCheck, PauseCircle, ShoppingBag, Trash2, PackageX } from 'lucide-react';
 import { api } from './api';
 import { Badge, Button, Card, Notice, Spinner, StatTile, Switch } from './ui';
+import { errorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 const OUT = new Set(['out_of_stock', 'inactive']);
@@ -20,7 +21,7 @@ export default function Shopee({ t }) {
   }, []);
   useEffect(load, [load]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!data) return <Spinner label={t('app.loading')} />;
 
   const run = async (fn, okKey) => {
@@ -31,7 +32,7 @@ export default function Shopee({ t }) {
       setNotice({ tone: 'ok', text: t(okKey) });
       load();
     } catch (e) {
-      setNotice({ tone: 'error', text: t('error.generic', { error: e.code || 'generic' }) });
+      setNotice({ tone: 'error', text: errorText(t, e.code || 'generic') });
     }
     setBusy(false);
   };
@@ -67,7 +68,7 @@ export default function Shopee({ t }) {
 
       <Card title={t('shopee.addTitle')}>
         <form
-          className="grid gap-3 sm:grid-cols-2"
+          className="grid grid-cols-1 gap-3 sm:grid-cols-2"
           onSubmit={(e) => {
             e.preventDefault();
             run(() => api.shopeeAdd(form), 'shopee.added').then(() => setForm(EMPTY));
@@ -100,10 +101,17 @@ export default function Shopee({ t }) {
       </div>
       {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
 
-      <ul className="grid gap-3 lg:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         {items.map((item) => (
-          <li key={item.id} className="dash-card flex gap-3 rounded-2xl p-3">
-            <img src={item.imagem} alt={item.titulo} loading="lazy" className="h-20 w-20 shrink-0 rounded-xl bg-black/40 object-cover" />
+          <li key={item.id} className="dash-card flex min-w-0 gap-3 rounded-2xl p-3">
+            {/* Sem foto: quadrado com sacola em vez de imagem quebrada. alt vazio porque o título já está ao lado (Q134). */}
+            {item.imagem ? (
+              <img src={item.imagem} alt="" loading="lazy" className="h-20 w-20 shrink-0 rounded-xl bg-black/40 object-cover" />
+            ) : (
+              <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-black/40 text-white/40" aria-hidden="true">
+                <ShoppingBag size={28} />
+              </span>
+            )}
             <div className="min-w-0 flex-1 text-sm">
               <div className="flex items-start justify-between gap-2">
                 <a href={item.link} target="_blank" rel="noopener noreferrer" className="line-clamp-2 font-semibold hover:underline">
@@ -116,14 +124,14 @@ export default function Shopee({ t }) {
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <Badge tone={OUT.has(item.status) ? 'red' : item.active === false ? 'muted' : 'green'}>{t(`shopee.status.${OUT.has(item.status) ? 'out' : item.active === false ? 'paused' : 'active'}`)}</Badge>
-                <button type="button" className="text-xs text-mystic-glow hover:underline" onClick={() => run(() => api.shopeeSyncImage(item.id), 'shopee.synced')}>
+                <button type="button" className="min-h-[44px] px-1 text-xs text-mystic-glow hover:underline" onClick={() => run(() => api.shopeeSyncImage(item.id), 'shopee.synced')}>
                   <ImageDown size={13} className="mr-1 inline" aria-hidden="true" />
                   {t('shopee.syncOne')}
                 </button>
                 <button
                   type="button"
-                  className="ml-auto text-red-300"
-                  aria-label={t('shopee.delete')}
+                  className="ml-auto flex h-11 w-11 items-center justify-center rounded-xl text-red-300 hover:bg-red-500/10"
+                  aria-label={`${t('shopee.delete')}: ${item.titulo}`}
                   onClick={() => window.confirm(t('shopee.confirmDelete', { title: item.titulo })) && run(() => api.shopeeDelete(item.id), 'shopee.deleted')}
                 >
                   <Trash2 size={15} />

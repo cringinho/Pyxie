@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { api } from './api';
 import Paywall, { planFromCode } from './Paywall';
-import { Button, Card, Notice, Spinner, Toggle } from './ui';
+import { Button, Card, Notice, Spinner, Toggle, confirmLeave, useUnsavedGuard } from './ui';
+import { errorText } from './i18n';
 
 const field = 'min-h-[44px] w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm';
 const area = 'w-full rounded-xl border border-white/10 bg-white/5 p-3 text-sm';
@@ -449,13 +450,24 @@ function ButtonEditor({ b, onChange, onRemove, t, roles, channels, tabs, zone })
             options={[{ value: '', label: '—' }, ...channels.map((c) => ({ value: c.id, label: `#${c.name}` }))]}
           />
           {(b.action.fields || []).map((f, i) => (
-            <div key={i} className="flex gap-2">
-              <input value={f.label} placeholder={t('studio.question')} aria-label={t('studio.question')} onChange={(e) => setAction({ fields: b.action.fields.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)) })} className={field} />
-              <select value={f.style} aria-label={t('studio.style')} onChange={(e) => setAction({ fields: b.action.fields.map((x, j) => (j === i ? { ...x, style: e.target.value } : x)) })} className={`${field} w-28 bg-[#160d2a]`}>
+            // Celular: a pergunta ocupa a linha inteira; tipo e apagar ficam embaixo (Q128).
+            <div key={i} className="flex flex-wrap items-start gap-2 sm:flex-nowrap">
+              <div className="min-w-0 flex-1 basis-full sm:basis-auto">
+                <input
+                  value={f.label}
+                  maxLength={45}
+                  placeholder={t('studio.question')}
+                  aria-label={t('studio.questionN', { n: i + 1 })}
+                  onChange={(e) => setAction({ fields: b.action.fields.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)) })}
+                  className={`${field} w-full`}
+                />
+                <span className={`mt-0.5 block text-right text-[11px] ${f.label.length >= 45 ? 'text-amber-300' : 'text-white/40'}`}>{f.label.length}/45</span>
+              </div>
+              <select value={f.style} aria-label={t('studio.style')} onChange={(e) => setAction({ fields: b.action.fields.map((x, j) => (j === i ? { ...x, style: e.target.value } : x)) })} className={`${field} w-auto min-w-[7rem] flex-1 bg-[#160d2a] sm:w-28 sm:flex-none`}>
                 <option value="short">{t('studio.short')}</option>
                 <option value="paragraph">{t('studio.long')}</option>
               </select>
-              <Button variant="ghost" onClick={() => setAction({ fields: b.action.fields.filter((_, j) => j !== i) })}>×</Button>
+              <Button variant="ghost" aria-label={t('studio.removeQuestion', { n: i + 1 })} onClick={() => setAction({ fields: b.action.fields.filter((_, j) => j !== i) })}>×</Button>
             </div>
           ))}
           {(b.action.fields || []).length < 5 && (
@@ -611,8 +623,41 @@ function DeliveryEditor({ t, doc, channels, onChange, cycles }) {
   );
 }
 
+// "embeds.0.fields.2.value" -> "Embed 1 › Campo 3 › Valor" (contando a partir de 1) (Q127).
+const PATH_ITEM = { embeds: 'embed', fields: 'field', buttons: 'button', blocks: 'block', images: 'image' };
+export function studioPathLabel(t, path) {
+  const parts = String(path || '').split('.').filter(Boolean);
+  const out = [];
+  for (let i = 0; i < parts.length; i += 1) {
+    const part = parts[i];
+    const next = parts[i + 1];
+    if (part === 'v2' || part === 'author' || part === 'footer' || part === 'envelope') {
+      if (part === 'envelope' && next === 'content') {
+        out.push(t('studio.path.content'));
+        i += 1;
+      }
+      continue;
+    }
+    if (PATH_ITEM[part] && next !== undefined && /^\d+$/.test(next)) {
+      out.push(t(`studio.path.${PATH_ITEM[part]}`, { n: Number(next) + 1 }));
+      i += 1;
+      continue;
+    }
+    if (/^row\d+$/.test(part)) {
+      out.push(t('studio.path.row', { n: Number(part.slice(3)) + 1 }));
+      continue;
+    }
+    // Pergunta do formulário: "fields.N.label" dentro de um botão.
+    const key = `studio.path.${part}`;
+    const label = t(key);
+    out.push(label === key ? part : label);
+  }
+  return out.join(' › ') || t('studio.path.message');
+}
+
 function validationText(t, err) {
-  return t(`studio.err.${err.code}`, { path: err.path, limit: err.limit ?? '' });
+  const path = studioPathLabel(t, err.path).replace(/(Campo|Field) (\d+) › (Texto|Text)$/, (_, _w, n) => t('studio.path.question', { n }));
+  return t(`studio.err.${err.code}`, { path, limit: err.limit ?? '' });
 }
 
 function RolePanelPresetCard({ t, guildId, onCreated }) {
@@ -663,7 +708,7 @@ function RolePanelPresetCard({ t, guildId, onCreated }) {
           </label>
         ))}
       </div>
-      {err && <div className="mb-2"><Notice tone="error">{t('error.generic', { error: err })}</Notice></div>}
+      {err && <div className="mb-2"><Notice tone="error">{errorText(t, err)}</Notice></div>}
       <Button variant="ghost" onClick={createPreset} disabled={busy || picked.length === 0} className="w-full">
         {t('studio.rolePreset.btn', { count: picked.length })}
       </Button>
@@ -705,7 +750,7 @@ export default function Studio({ t, guildId, guildName, isOwner, zone, openId })
       .catch((e) => setError(e.code));
   }, [guildId, openId]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!list || !limits) return <Spinner label={t('app.loading')} />;
   if (editing) {
     return (
@@ -772,6 +817,15 @@ function Editor({ t, guildId, guildName, isOwner, zone, limits, cycles, initial,
   const [busy, setBusy] = useState(false);
   const [history, setHistory] = useState(initial.history || []);
   const [sentCount, setSentCount] = useState((initial.sent || []).length);
+  // Cópia do último salvo (mensagem + canal): diferença = rascunho que se perderia ao sair (Q140).
+  const snapOf = (d, ch) => JSON.stringify({ d, ch });
+  const [savedSnap, setSavedSnap] = useState(() => snapOf({ ...emptyMessage(), ...initial, v2: initial.v2 || emptyMessage().v2 }, initial.delivery?.channelId || ''));
+  const dirty = snapOf(doc, target) !== savedSnap;
+  useUnsavedGuard(dirty, t('common.leaveUnsaved'));
+  const close = () => {
+    if (dirty && !confirmLeave()) return;
+    onClose();
+  };
 
   useEffect(() => {
     api.roles(guildId).then((d) => setRoles(d.roles)).catch(() => {});
@@ -804,7 +858,9 @@ function Editor({ t, guildId, guildName, isOwner, zone, limits, cycles, initial,
         throw err;
       });
       setErrors([]);
-      setDoc({ ...res.message, v2: res.message.v2 || emptyMessage().v2 });
+      const nextDoc = { ...res.message, v2: res.message.v2 || emptyMessage().v2 };
+      setDoc(nextDoc);
+      setSavedSnap(snapOf(nextDoc, target));
       setHistory(res.message.history || []);
       setStatus('saved');
     });
@@ -832,7 +888,9 @@ function Editor({ t, guildId, guildName, isOwner, zone, limits, cycles, initial,
   const restore = (index) =>
     run(async () => {
       const res = await api.studioRestore(guildId, msgId, index);
-      setDoc({ ...res.message, v2: res.message.v2 || emptyMessage().v2 });
+      const restored = { ...res.message, v2: res.message.v2 || emptyMessage().v2 };
+      setDoc(restored);
+      setSavedSnap(snapOf(restored, target));
       setHistory(res.message.history || []);
       setStatus('saved');
     });
@@ -841,6 +899,7 @@ function Editor({ t, guildId, guildName, isOwner, zone, limits, cycles, initial,
     run(async () => {
       if (!window.confirm(t('studio.confirmDelete'))) return;
       await api.studioDelete(guildId, msgId);
+      setSavedSnap(snapOf(doc, target));
       onClose();
     });
 
@@ -848,7 +907,7 @@ function Editor({ t, guildId, guildName, isOwner, zone, limits, cycles, initial,
 
   return (
     <div className="space-y-4">
-      <Button variant="ghost" onClick={onClose}>
+      <Button variant="ghost" onClick={close}>
         ← {t('nav.back')}
       </Button>
       <Card>
@@ -980,7 +1039,7 @@ function Editor({ t, guildId, guildName, isOwner, zone, limits, cycles, initial,
             const locked = planFromCode(code);
             if (locked) return <Paywall t={t} requiredPlan={locked} />;
             return (
-              <Notice tone={code ? 'error' : 'ok'}>{code ? t('error.generic', { error: code }) : t(`studio.status.${status}`)}</Notice>
+              <Notice tone={code ? 'error' : 'ok'}>{code ? errorText(t, code) : t(`studio.status.${status}`)}</Notice>
             );
           })()}
           <Button onClick={save} disabled={busy || !doc.name} className="w-full">
@@ -993,7 +1052,7 @@ function Editor({ t, guildId, guildName, isOwner, zone, limits, cycles, initial,
             options={[{ value: '', label: '—' }, ...channels.map((c) => ({ value: c.id, label: `#${c.name}` }))]}
           />
           <p className="text-xs text-white/50">{t('studio.saveFirst')}</p>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Button variant="ghost" onClick={send} disabled={busy || !saved || !target}>
               {t('studio.send')}
             </Button>

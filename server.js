@@ -1682,7 +1682,8 @@ app.post('/api/config/economy', requireAdminAuth, (req, res) => {
   const maximum = Number(req.body?.maximum);
 
   if (!Number.isInteger(minimum) || !Number.isInteger(maximum) || minimum < 0 || maximum < minimum) {
-    return res.status(400).json({ success: false, message: 'Informe valores inteiros válidos.' });
+    // Código de erro (a tela traduz em PT/EN), não frase fixa em português (Q154).
+    return res.status(400).json({ success: false, error: 'invalid_economy_range', message: 'Informe valores inteiros válidos.' });
   }
 
   res.json({ success: true, economy: setEconomyConfig(minimum, maximum) });

@@ -78,6 +78,10 @@ function cookieFor(userId) {
     assert.equal(saved.bumpGuide.intervalHours, 72, 'Intervalo tem teto');
     assert.deepEqual(saved.bumpGuide.sites, ['disboard']);
     assert.equal(saved.tarot.credit, true, 'O crédito não é editável');
+    // Q130: campo apagado ('') volta ao padrão (12h, meia-noite), não ao mínimo de 2h.
+    const blank = periodic.normalize({ bumpGuide: { intervalHours: '' }, tarot: { hour: '' } }, G);
+    assert.equal(blank.bumpGuide.intervalHours, 12, 'Intervalo vazio usa o padrão de 12h');
+    assert.equal(blank.tarot.hour, 0);
     assert.ok(fs.existsSync(path.join(tmpDir, 'guilds', G, 'periodic.json')));
     assert.ok(!fs.existsSync(path.join(tmpDir, 'guilds', G, 'periodic.json.tmp')), 'Escrita atômica');
     console.log('  ✅ 1. Config por servidor com os valores antigos da Cringelândia.');
@@ -156,6 +160,10 @@ function cookieFor(userId) {
     assert.equal((await res.json()).error, 'invalid_channel');
     res = await call(`/api/dashboard/guilds/${G}/periodic`, { cookie: admin, method: 'PUT', body: { tarot: { roleId: G } } });
     assert.equal((await res.json()).error, 'invalid_role', '@everyone não vale');
+    res = await call(`/api/dashboard/guilds/${G}/periodic`, { cookie: admin, method: 'PUT', body: { bumpGuide: { intervalHours: 1 } } });
+    assert.equal((await res.json()).error, 'invalid_interval_hours', 'Intervalo fora de 2-72h é recusado com motivo');
+    res = await call(`/api/dashboard/guilds/${G}/periodic`, { cookie: admin, method: 'PUT', body: { tarot: { hour: 24 } } });
+    assert.equal((await res.json()).error, 'invalid_hour');
     res = await call(`/api/dashboard/guilds/${G}/periodic`, { cookie: admin, method: 'PUT', body: { tarotChannelId: CH, tarot: { roleId: ROLE } } });
     const ok = await res.json();
     assert.equal(ok.periodic.tarotChannelId, CH);
