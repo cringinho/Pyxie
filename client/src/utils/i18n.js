@@ -605,6 +605,4 @@ export const I18N = {
   }
 };
 
-// Idioma vem do caminho (/en/...), igual ao canonical/hreflang. Ver utils/langPath.js.
-export { pathLang as getInitialLang } from './langPath';
 
