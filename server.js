@@ -14,6 +14,7 @@ const { setWelcomeChannel, getWelcomeChannel, normalizeChannelValue, getEconomyC
 const { addLog: savePersistentLog, getLogs, getStats, updateStats, resetStats, clearLogs, flushSync } = require('./src/services/logging');
 const { lockFilePath, isProcessAlive } = require('./src/utils/botUtils');
 const { reloadEmojiConfig } = require('./src/utils/appEmojis');
+const { escapeHtml, replaceKeep } = require('./src/utils/htmlEscape');
 const shopeeManager = require('./src/services/shopeeManager');
 const workSeederService = require('./src/services/workSeederService');
 const quizSeederService = require('./src/services/quizSeederService');
@@ -805,7 +806,9 @@ app.get('/ads.txt', (req, res) => {
 app.get('/u/:userId', (req, res) => {
   const userId = String(req.params.userId || '').trim();
   const uHtmlPath = path.join(publicDir, 'u.html');
-  if (!fs.existsSync(uHtmlPath)) {
+  // Só IDs do Discord (mesma regra da API). Qualquer outra coisa vira 404:
+  // impede código malicioso na URL e páginas fantasmas (auditoria Q033/Q221).
+  if (!/^\d{15,25}$/.test(userId) || !fs.existsSync(uHtmlPath)) {
     return res.status(404).sendFile(path.join(publicDir, '404.html'));
   }
 
@@ -821,15 +824,18 @@ app.get('/u/:userId', (req, res) => {
     const title = `Perfil de ${name} • Universo Pyxie`;
     const desc = `Colecionou ${discoveredCount}/78 Arcanos de Tarot e atua como ${profession} no Discord!`;
     const canonical = `https://pyxie.com.br/u/${userId}`;
+    // Nome e profissão vêm do usuário: tudo escapado antes de entrar no HTML.
+    const t = escapeHtml(title);
+    const d = escapeHtml(desc);
+    const c = escapeHtml(canonical);
 
-    html = html
-      .replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`)
-      .replace(/(<link\s+rel=["']canonical["']\s+href=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${canonical}$2`)
-      .replace(/(<meta\s+property=["']og:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${title}$2`)
-      .replace(/(<meta\s+property=["']og:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${desc}$2`)
-      .replace(/(<meta\s+property=["']og:url["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${canonical}$2`)
-      .replace(/(<meta\s+name=["']twitter:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${title}$2`)
-      .replace(/(<meta\s+name=["']twitter:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${desc}$2`);
+    html = html.replace(/<title>[\s\S]*?<\/title>/i, () => `<title>${t}</title>`);
+    html = replaceKeep(html, /(<link\s+rel=["']canonical["']\s+href=["'])[\s\S]*?(["']\s*\/?>)/i, c);
+    html = replaceKeep(html, /(<meta\s+property=["']og:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, t);
+    html = replaceKeep(html, /(<meta\s+property=["']og:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, d);
+    html = replaceKeep(html, /(<meta\s+property=["']og:url["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, c);
+    html = replaceKeep(html, /(<meta\s+name=["']twitter:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, t);
+    html = replaceKeep(html, /(<meta\s+name=["']twitter:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, d);
   } catch (err) {
     console.error('[Profile OpenGraph] Erro ao injetar metadados:', err.message);
   }

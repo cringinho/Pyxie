@@ -90,11 +90,35 @@ function mock(handler) {
   assert.equal(subBody.auto_recurring.frequency_type, 'months');
   assert.equal(subBody.auto_recurring.transaction_amount, 20);
 
+  const before = plans.getPlan(G);
   mock(() => json({ id: 'pre-1', status: 'authorized', external_reference: `plan|${G}|premium`, next_payment_date: '2026-12-01T00:00:00.000Z' }));
   const subHook = await payments.handleWebhook({ body: { type: 'subscription_preapproval', data: { id: 'pre-1' } } });
   assert.equal(subHook.ok, true);
+  assert.equal(plans.getPlan(G).paidUntil, before.paidUntil, 'Assinatura autorizada sozinha não libera tempo (Q241)');
+  // A cobrança aprovada é quem libera, uma vez só e com valor conferido.
+  mock((url) =>
+    url.includes('/authorized_payments/')
+      ? json({ id: 'ap-1', status: 'approved', preapproval_id: 'pre-1', transaction_amount: 20, currency_id: 'BRL' })
+      : json({ id: 'pre-1', status: 'authorized', external_reference: `plan|${G}|premium` }),
+  );
+  const paid = await payments.handleWebhook({ body: { type: 'subscription_authorized_payment', data: { id: 'ap-1' } } });
+  assert.equal(paid.ok, true);
+  assert.equal(paid.granted, true);
   assert.equal(plans.getPlan(G).plan, 'premium');
-  console.log('  ✅ 4. Cartão recorrente (Preapproval) ativa o plano.');
+  const paidUntilAfter = plans.getPlan(G).paidUntil;
+  const paidAgain = await payments.handleWebhook({ body: { type: 'subscription_authorized_payment', data: { id: 'ap-1' } } });
+  assert.equal(paidAgain.duplicate, true);
+  const preAgain = await payments.handleWebhook({ body: { type: 'subscription_preapproval', data: { id: 'pre-1' } } });
+  assert.equal(preAgain.ok, true);
+  assert.equal(plans.getPlan(G).paidUntil, paidUntilAfter, 'Aviso repetido da assinatura não soma tempo');
+  mock((url) =>
+    url.includes('/authorized_payments/')
+      ? json({ id: 'ap-2', status: 'approved', preapproval_id: 'pre-1', transaction_amount: 1, currency_id: 'BRL' })
+      : json({ id: 'pre-1', status: 'authorized', external_reference: `plan|${G}|premium` }),
+  );
+  const cheapCard = await payments.handleWebhook({ body: { type: 'subscription_authorized_payment', data: { id: 'ap-2' } } });
+  assert.equal(cheapCard.reason, 'amount', 'Cobrança no cartão abaixo do preço é recusada');
+  console.log('  ✅ 4. Cartão recorrente: só a cobrança aprovada libera, uma vez e com valor conferido.');
 
   // 5. Reconciliação do Pix pendente (webhook atrasado)
   mock((url) =>

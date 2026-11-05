@@ -1,3 +1,4 @@
+const { escapeHtml, replaceKeep } = require('./htmlEscape');
 const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('./dataDir');
 /**
  * Utilitário central de SEO Multilíngue (PT & EN) para páginas da Pyxie
@@ -445,14 +446,17 @@ function serveLocalizedPage(pageKey, publicDir) {
             const artDesc = `Obra de arte criada por @${authorHandle} no acervo cultural da Pyxie.`;
             const artImg = `https://pyxie.com.br/api/museum/art-image/${encodeURIComponent(art.id)}.jpg`;
 
-            html = html
-              .replace(/<title>[\s\S]*?<\/title>/i, `<title>${artTitle}</title>`)
-              .replace(/(<meta\s+property=["']og:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artTitle}$2`)
-              .replace(/(<meta\s+property=["']og:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artDesc}$2`)
-              .replace(/(<meta\s+property=["']og:image["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artImg}$2`)
-              .replace(/(<meta\s+name=["']twitter:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artTitle}$2`)
-              .replace(/(<meta\s+name=["']twitter:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artDesc}$2`)
-              .replace(/(<meta\s+name=["']twitter:image["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${artImg}$2`);
+            // Texto da obra vem do Discord: escapado antes de entrar no HTML (auditoria Q222/Q099).
+            const t = escapeHtml(artTitle);
+            const d = escapeHtml(artDesc);
+            const img = escapeHtml(artImg);
+            html = html.replace(/<title>[\s\S]*?<\/title>/i, () => `<title>${t}</title>`);
+            html = replaceKeep(html, /(<meta\s+property=["']og:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, t);
+            html = replaceKeep(html, /(<meta\s+property=["']og:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, d);
+            html = replaceKeep(html, /(<meta\s+property=["']og:image["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, img);
+            html = replaceKeep(html, /(<meta\s+name=["']twitter:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, t);
+            html = replaceKeep(html, /(<meta\s+name=["']twitter:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, d);
+            html = replaceKeep(html, /(<meta\s+name=["']twitter:image["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, img);
           }
         }
       } catch (_) {}

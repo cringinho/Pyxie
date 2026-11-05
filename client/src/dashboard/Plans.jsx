@@ -19,6 +19,16 @@ export default function Plans({ t, guildId, lang }) {
   // Botão clicado por último: dá retorno visual imediato ("gerando…") e marca a escolha.
   const [picked, setPicked] = useState(null);
   const checkoutRef = useRef(null);
+  // Cancelar pede confirmação na própria tela (auditoria Q143/Q252).
+  const [confirmCancel, setConfirmCancel] = useState(false);
+  const [notice, setNotice] = useState(() => {
+    // Volta do Mercado Pago depois de assinar no cartão (auditoria Q065).
+    try {
+      return new URLSearchParams(window.location.search).get('paid') === 'plan' ? 'paid' : null;
+    } catch (_) {
+      return null;
+    }
+  });
 
   const load = () =>
     api
@@ -75,8 +85,14 @@ export default function Plans({ t, guildId, lang }) {
     try {
       const res = await api.planCheckout(guildId, { plan, method, cycle, lang });
       const data = res.checkout || {};
-      if (method === 'card' && data.initPoint) window.open(data.initPoint, '_blank', 'noopener');
-      else setCheckout(data);
+      // O link do cartão aparece SEMPRE na tela: se o navegador bloquear a nova aba,
+      // a pessoa ainda tem o botão (auditoria Q144/Q251).
+      setCheckout(data);
+      if (method === 'card' && data.initPoint) {
+        try {
+          window.open(data.initPoint, '_blank', 'noopener');
+        } catch (_) {}
+      }
     } catch (e) {
       setError(e.code || 'generic');
     } finally {
@@ -107,8 +123,11 @@ export default function Plans({ t, guildId, lang }) {
 
   const cancel = async () => {
     setBusy('cancel');
+    setError(null);
     try {
       await api.planCancel(guildId);
+      setConfirmCancel(false);
+      setNotice('canceled');
       await load();
     } catch (e) {
       setError(e.code || 'generic');
@@ -122,7 +141,9 @@ export default function Plans({ t, guildId, lang }) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-white/70">{t('plan.intro')}</p>
-      {error && <Notice tone="error">{t('error.generic', { error })}</Notice>}
+      {error && <Notice tone="error">{t(`plan.err.${error}`) !== `plan.err.${error}` ? t(`plan.err.${error}`) : t('error.generic', { error })}</Notice>}
+      {notice === 'paid' && <Notice tone="ok">{t('plan.paidReturn')}</Notice>}
+      {notice === 'canceled' && <Notice tone="ok">{t('plan.renewalCanceled', { date: until || '—' })}</Notice>}
 
       <div className="dash-card flex flex-wrap items-center justify-between gap-3 rounded-2xl p-4">
         <div className="flex items-center gap-3">
@@ -132,13 +153,30 @@ export default function Plans({ t, guildId, lang }) {
             <p className="text-xs text-white/55">{active ? activeLine : t('plan.noneHint')}</p>
           </div>
         </div>
-        {active && (
-          <Button variant="ghost" disabled={busy === 'cancel'} onClick={cancel}>
+        {/* Só aparece com cartão renovando; vitalício e Pix não têm o que cancelar. */}
+        {active && !current.lifetime && info.canCancelRenewal && !confirmCancel && (
+          <Button variant="ghost" disabled={Boolean(busy)} onClick={() => setConfirmCancel(true)}>
             <ShieldOff size={16} aria-hidden="true" />
             {t('plan.cancel')}
           </Button>
         )}
       </div>
+
+      {confirmCancel && (
+        <div className="dash-card space-y-3 rounded-2xl border border-amber-400/30 p-4" role="alertdialog" aria-labelledby="plan-cancel-title">
+          <p id="plan-cancel-title" className="font-title font-bold">{t('plan.cancelConfirmTitle')}</p>
+          <p className="text-sm text-white/70">{t('plan.cancelConfirmBody', { date: until || '—' })}</p>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="ghost" disabled={busy === 'cancel'} onClick={cancel}>
+              <ShieldOff size={16} aria-hidden="true" />
+              {busy === 'cancel' ? t('app.loading') : t('plan.cancelYes')}
+            </Button>
+            <Button disabled={busy === 'cancel'} onClick={() => setConfirmCancel(false)}>
+              {t('plan.cancelNo')}
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-2" role="radiogroup" aria-label={t('plan.cycle.month')}>
         {['month', 'year'].map((c) => (

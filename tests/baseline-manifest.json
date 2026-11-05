@@ -59,7 +59,7 @@
         "1. Pix com QR, valor travado e referência do servidor.",
         "2. Webhook aprovado ativa o plano uma única vez.",
         "3. Pagamento abaixo do preço não ativa nada.",
-        "4. Cartão recorrente (Preapproval) ativa o plano.",
+        "4. Cartão recorrente: só a cobrança aprovada libera, uma vez e com valor conferido.",
         "5. Reconciliação de Pix pendente sem duplicar.",
         "6. Assinatura x-signature do webhook validada.",
         "7. Fila de DMs, dedupe e expiração do plano."

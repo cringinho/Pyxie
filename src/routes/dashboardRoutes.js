@@ -1071,14 +1071,23 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, checkout });
   });
 
+  // Cancelar = parar a renovação do cartão. O tempo já pago continua valendo até o fim
+  // (auditoria Q143/Q242/Q252). Só o dono do servidor (ou o dono da Pyxie) cancela,
+  // só a assinatura guardada DESTE servidor, e plano vitalício nunca é cancelado aqui.
   router.post('/api/dashboard/guilds/:guildId/plan/cancel', requireSession, requireGuild, async (req, res) => {
     const plansSvc = require('../services/guildPlans');
     const payments = require('../services/planPayments');
-    const info = payments.guildPlanInfo(req.params.guildId);
-    const preapprovalId = String(req.body?.preapprovalId || info.lastCard?.id || '');
-    if (preapprovalId) await payments.cancelCardSubscription(preapprovalId).catch(() => null);
-    plansSvc.revokePlan(req.params.guildId, 'canceled');
-    return res.json({ success: true, plan: plansSvc.getPlan(req.params.guildId) });
+    const guildId = req.params.guildId;
+    if (req.guildAccess.isGuildOwner !== true && !access.isOwner(req.panelSession.userId)) {
+      return res.status(403).json({ success: false, error: 'guild_owner_only' });
+    }
+    const current = plansSvc.getPlan(guildId);
+    if (current.lifetime) return res.status(409).json({ success: false, error: 'plan_lifetime' });
+    const card = payments.activeCardSubscription(guildId);
+    if (!card) return res.status(409).json({ success: false, error: 'no_renewal' });
+    const result = await payments.cancelCardSubscription(card.id).catch(() => ({ ok: false }));
+    if (!result.ok) return res.status(503).json({ success: false, error: 'provider' });
+    return res.json({ success: true, renewalCanceled: true, plan: plansSvc.getPlan(guildId) });
   });
 
   router.put('/api/dashboard/guilds/:guildId/automations/:key', requireSession, requireGuild, async (req, res) => {

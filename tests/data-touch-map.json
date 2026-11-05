@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T22:10:06.798Z",
+  "generatedAt": "2026-11-05T12:17:52.107Z",
   "touches": {
     "tests/botUtils.test.js": [
       "economy.json.bak",
@@ -47,9 +47,7 @@
       "itemVault.json"
     ],
     "tests/postgresDrizzle.test.js": [],
-    "tests/profileCard.test.js": [
-      "cache/twemoji/2728.svg"
-    ],
+    "tests/profileCard.test.js": [],
     "tests/newMinigames.test.js": [
       "arcaneMathQuestions.json",
       "arcaneMathRanking.json",
@@ -94,20 +92,7 @@
       "ticketsData.json.bak"
     ],
     "tests/quizGames.test.js": [],
-    "tests/profileStudio.test.js": [
-      "cache/twemoji/1f319.svg",
-      "cache/twemoji/1f338.svg",
-      "cache/twemoji/1f344.svg",
-      "cache/twemoji/1f353.svg",
-      "cache/twemoji/1f3a7.svg",
-      "cache/twemoji/1f3ae.svg",
-      "cache/twemoji/1f409.svg",
-      "cache/twemoji/1f431.svg",
-      "cache/twemoji/1f451.svg",
-      "cache/twemoji/1f52e.svg",
-      "cache/twemoji/1f98b.svg",
-      "cache/twemoji/2b50.svg"
-    ],
+    "tests/profileStudio.test.js": [],
     "tests/profileThemeEmojis.test.js": [],
     "tests/dungeonCrawler.test.js": [],
     "tests/growthFunnel.test.js": [],
@@ -176,6 +161,7 @@
     "tests/automationsUpgrade.test.js": [],
     "tests/planCycles.test.js": [],
     "tests/plansPublicSite.test.js": [],
-    "tests/storefrontFlow.test.js": []
+    "tests/storefrontFlow.test.js": [],
+    "tests/auditoriaCriticos.test.js": []
   }
 }

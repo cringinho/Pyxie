@@ -43,8 +43,23 @@ function parseHash() {
   return { view: 'picker' };
 }
 
+// Volta do Mercado Pago (/dashboard?paid=plan&guild=<id>): abre direto a aba Planos
+// do servidor, que mostra "assinatura recebida" (auditoria Q065).
+function applyPaymentReturn() {
+  try {
+    const q = new URLSearchParams(window.location.search);
+    const guild = q.get('guild');
+    if (q.get('paid') === 'plan' && /^\d{15,25}$/.test(guild || '') && !window.location.hash) {
+      window.location.hash = `#/guild/${guild}/planos`;
+    }
+  } catch (_) {}
+}
+
 function useHashRoute() {
-  const [route, setRoute] = useState(parseHash);
+  const [route, setRoute] = useState(() => {
+    applyPaymentReturn();
+    return parseHash();
+  });
   useEffect(() => {
     const onChange = () => {
       const next = parseHash();

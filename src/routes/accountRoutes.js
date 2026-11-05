@@ -113,12 +113,14 @@ function createAccountRouter() {
   // 5. Esqueci a Senha
   router.post('/api/auth/forgot-password', (req, res) => {
     const { email, lang = 'pt' } = req.body || {};
-    const token = accountStore.createPasswordResetToken(email);
+    // O código de redefinição NUNCA volta na resposta: quem pede não pode ser
+    // quem recebe (senão qualquer um troca a senha de outra pessoa). Ele fica
+    // guardado para a rotina de envio por e-mail (auditoria Q261).
+    accountStore.createPasswordResetToken(email);
 
     // Mensagem opaca por segurança (não confirma se o e-mail existe)
     return res.json({
       success: true,
-      token, // exposto para testes locais e rotina de envio
       message: lang === 'pt'
         ? 'Se o e-mail estiver cadastrado, as instruções para redefinição foram enviadas.'
         : 'If the email is registered, password reset instructions have been sent.',
@@ -130,6 +132,9 @@ function createAccountRouter() {
     const { token, newPassword, lang = 'pt' } = req.body || {};
     try {
       const account = accountStore.resetPasswordWithToken(token, newPassword);
+      // Senha nova = todas as sessões antigas caem (quem invadiu perde o acesso).
+      accountSessions.destroyAllForAccount(account.id);
+      accountSessions.clearCookie(res);
       return res.json({
         success: true,
         message: lang === 'pt' ? 'Senha redefinida com sucesso!' : 'Password reset successfully!',

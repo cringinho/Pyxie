@@ -84,6 +84,21 @@ function destroySession(cookieValue) {
   }
 }
 
+// Derruba todas as sessões de uma conta (ex.: depois de redefinir a senha).
+function destroyAllForAccount(accountId) {
+  if (!accountId) return 0;
+  const state = load();
+  let removed = 0;
+  for (const [id, s] of Object.entries(state.sessions)) {
+    if (s && s.accountId === accountId) {
+      delete state.sessions[id];
+      removed++;
+    }
+  }
+  if (removed) save();
+  return removed;
+}
+
 function getCookie(req) {
   const h = req.headers.cookie;
   if (!h) return null;
@@ -113,6 +128,7 @@ module.exports = {
   createSession,
   readSession,
   destroySession,
+  destroyAllForAccount,
   getCookie,
   setCookie,
   buildCookie,

@@ -173,7 +173,8 @@ async function createCardSubscription({ guildId, plan, addonId = null, cycle = '
       reason: `Pyxie · ${target.label}`,
       external_reference: target.ref,
       notification_url: `${publicUrl()}/api/plans/webhook/mercadopago`,
-      back_url: `${publicUrl()}/passe?status=plan${lang === 'en' ? '&lang=en' : ''}`,
+      // Volta para a aba Planos do painel, que confirma o pagamento (auditoria Q065).
+      back_url: `${publicUrl()}/dashboard?paid=plan&guild=${encodeURIComponent(guildId)}${lang === 'en' ? '&lang=en' : ''}`,
       auto_recurring: {
         frequency: target.cycle === 'year' ? 12 : 1,
         frequency_type: 'months',
@@ -209,10 +210,28 @@ async function cancelCardSubscription(preapprovalId) {
   const res = await fetchImpl(`${MP_API}/preapproval/${encodeURIComponent(preapprovalId)}`, {
     method: 'PUT',
     headers: authHeaders(),
-    body: JSON.stringify({ status: 'canceled' }),
+    body: JSON.stringify({ status: 'cancelled' }),
   });
   if (!res.ok) return { ok: false, reason: 'provider', status: res.status };
+  withFileLock(chargesFile(), () => {
+    const state = loadCharges();
+    const key = `preapproval:${preapprovalId}`;
+    if (state.charges[key]) {
+      state.charges[key] = { ...state.charges[key], status: 'cancelled', canceledAt: Date.now() };
+      saveCharges(state);
+    }
+  });
   return { ok: true };
+}
+
+/** Assinatura de cartão do plano deste servidor que ainda renova (nunca a de outro servidor). */
+function activeCardSubscription(guildId) {
+  const own = Object.values(loadCharges().charges)
+    .filter((c) => c.method === 'card' && c.kind !== 'addon' && c.guildId === String(guildId))
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  const last = own[0];
+  if (!last || ['cancelled', 'canceled'].includes(last.status)) return null;
+  return last;
 }
 
 // ---------------------------------------------------------------- Webhook
@@ -289,34 +308,25 @@ async function handleWebhook({ body = {}, query = {}, headers = {}, now = Date.n
     return applyApprovedPayment(payment);
   }
 
-  // Assinatura no cartão (Preapproval autorizado = plano ativo)
+  // Assinatura no cartão autorizada: só registra o status. Quem libera tempo de
+  // plano é a COBRANÇA aprovada (subscription_authorized_payment) logo abaixo;
+  // liberar aqui também dava ~2 meses pagando 1 (auditoria Q241).
   if (type === 'subscription_preapproval' || type === 'preapproval') {
     if (!verifySignature({ headers, dataId })) return { ok: false, reason: 'signature' };
     const res = await fetchImpl(`${MP_API}/preapproval/${dataId}`, { headers: authHeaders() });
     const sub = await readJson(res);
     if (!res.ok) return { ok: false, reason: 'provider', status: res.status };
-    if (sub.status !== 'authorized') return { ok: true, pending: true, status: sub.status };
     const ref = parseReference(sub.external_reference);
     if (!ref) return { ok: false, reason: 'reference' };
-    const month = String(sub.next_payment_date || new Date(now).toISOString()).slice(0, 7);
-    const first = markProcessed(`pre:${dataId}:${month}`);
-    if (!first) return { ok: true, duplicate: true, ...ref };
-    if (ref.kind === 'addon') {
-      const granted = guildAddons.grant(
-        ref.guildId,
-        ref.addonId,
-        ref.cycle === 'year'
-          ? { years: 1, source: 'mercadopago-card', note: `pre:${dataId}` }
-          : { months: 1, source: 'mercadopago-card', note: `pre:${dataId}` }
-      );
-      return { ok: true, ...ref, granted: granted.ok, until: granted.record?.until || 0 };
-    }
-    const granted = plans.grantPlan(ref.guildId, ref.plan, {
-      months: ref.cycle === 'year' ? 12 : 1,
-      source: 'mercadopago-card',
-      note: `pre:${dataId}`,
+    withFileLock(chargesFile(), () => {
+      const state = loadCharges();
+      const id = `preapproval:${dataId}`;
+      if (state.charges[id]) {
+        state.charges[id] = { ...state.charges[id], status: String(sub.status || state.charges[id].status), updatedAt: now };
+        saveCharges(state);
+      }
     });
-    return { ok: true, ...ref, granted: granted.ok, paidUntil: granted.record?.paidUntil || 0 };
+    return { ok: true, subscription: true, status: sub.status, ...ref };
   }
 
   // Cobrança mensal de uma assinatura de cartão
@@ -330,6 +340,11 @@ async function handleWebhook({ body = {}, query = {}, headers = {}, now = Date.n
     const sub = await readJson(subRes);
     const ref = parseReference(sub.external_reference);
     if (!ref) return { ok: false, reason: 'reference' };
+    // Mesmo cuidado do Pix: moeda e valor conferidos antes de liberar.
+    if (charge.currency_id && charge.currency_id !== 'BRL') return { ok: false, reason: 'currency' };
+    const expectedCard =
+      ref.kind === 'addon' ? planAddons.priceOf(ref.addonId, ref.cycle) / 100 : priceOf(ref.plan, ref.cycle);
+    if (Number(charge.transaction_amount) + 0.01 < expectedCard) return { ok: false, reason: 'amount' };
     const first = markProcessed(`mp:${dataId}`);
     if (!first) return { ok: true, duplicate: true, ...ref };
     if (ref.kind === 'addon') {
@@ -392,6 +407,8 @@ function guildPlanInfo(guildId, now = Date.now()) {
     providers: providers(),
     pending,
     lastCard: own.find((charge) => charge.method === 'card') || null,
+    // Só existe o que cancelar quando há cartão do plano ainda renovando.
+    canCancelRenewal: Boolean(activeCardSubscription(guildId)),
     support: { email: SUPPORT_EMAIL },
     ai: require('./aiQuota').snapshot(guildId, { now }),
   };
@@ -412,6 +429,7 @@ module.exports = {
   createPixCharge,
   createCardSubscription,
   cancelCardSubscription,
+  activeCardSubscription,
   verifySignature,
   handleWebhook,
   reconcilePending,

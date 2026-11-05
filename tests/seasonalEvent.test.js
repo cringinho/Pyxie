@@ -19,7 +19,11 @@ console.log('🎃 Iniciando suíte de testes de Engenharia: Módulo Sazonal Desa
 
 // Garante que o estado inicial esteja desligado (active: false) e limpo
 seasonalManager.stop();
-seasonalManager.saveConfig(seasonalManager.DEFAULT_CONFIG, true);
+// Data de término sempre no futuro: com a data padrão já vencida, start() encerraria o evento na hora.
+seasonalManager.saveConfig({
+  ...seasonalManager.DEFAULT_CONFIG,
+  dates: { ...seasonalManager.DEFAULT_CONFIG.dates, endDate: new Date(Date.now() + 30 * 86400000).toISOString() },
+}, true);
 seasonalManager.saveData({ balances: {}, currentWeekArt: [], history: { lastDropMessageId: null, lastWinners: null } });
 assert.equal(seasonalManager.isSeasonalActive(), false, 'O evento deve nascer DESLIGADO por padrão (active: false).');
 console.log('✅ Estado padrão desligado (active: false) validado com sucesso.');
