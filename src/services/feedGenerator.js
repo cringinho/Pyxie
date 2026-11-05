@@ -152,13 +152,13 @@ function getFeedItems(lang = 'pt') {
   items.push({
     title: isEn
       ? '📖 Complete Guide: 22 Interactive Careers & Living Economy in Pyxie'
-      : '📖 Guia Completo: 22 Profissões com Minigames & Economia Viva na Pyxie',
+      : '📖 Guia Completo: 28 Profissões com Minigames & Economia Viva na Pyxie',
     link: `${SITE_URL}/wiki?sec=profissoes&utm_source=rss_wiki&lang=${lang}`,
     guid: 'wiki-professions-guide-22',
     pubDate: new Date(Date.now() - 86400000).toUTCString(),
     description: isEn
       ? 'Explore the 22 full careers available in Pyxie bot, including Programmer, Doctor, Game Developer, Musician, and more with interactive turn-based minigames.'
-      : 'Conheça as 22 profissões completas da Pyxie, incluindo Programador, Médico, Desenvolvedor de Jogos, Músico e mais com minigames práticos no Discord.',
+      : 'Conheça as 28 profissões completas da Pyxie, incluindo Programador, Médico, Desenvolvedor de Jogos, Músico e mais com minigames práticos no Discord.',
     imageUrl: `${SITE_URL}/assets/pyxie/pyxie_mascot.png`,
     category: isEn ? 'Documentation' : 'Documentação',
   });

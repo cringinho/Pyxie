@@ -44,7 +44,7 @@ function shuffleArray(array) {
 }
 
 /**
- * 1. Auditoria de Distribuição de Questões por Nível nas 22 Profissões
+ * 1. Auditoria de Distribuição de Questões por Nível nas 28 Profissões
  */
 function auditLevelDistribution({ targetPerLevel = 10 } = {}) {
   const careersData = loadCareersData();
