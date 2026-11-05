@@ -29,7 +29,7 @@
   <meta property="og:url" content="https://pyxie.com.br/cringelandia" />
   <meta property="og:title" content="Cringelândia • Comunidade Neurodivergente & Apoio Psicológico" />
   <meta property="og:description" content="Comunidade segura e acolhedora no Discord para autistas, TDAH, PCDs e mentes neurodivergentes com canais de apoio, enciclopédia e guia de direitos." />
-  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/og_banner_hd.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:type" content="image/png" />
@@ -44,7 +44,7 @@
   <meta name="twitter:creator" content="@PyxieBot" />
   <meta name="twitter:title" content="Cringelândia • Comunidade Neurodivergente & Apoio Psicológico" />
   <meta name="twitter:description" content="Comunidade segura e acolhedora no Discord para autistas, TDAH, PCDs e mentes neurodivergentes com canais de apoio, enciclopédia e guia de direitos." />
-  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/og_banner_hd.png" />
   <meta name="twitter:image:alt" content="Cringelândia Comunidade Neurodivergente & Apoio Psicológico" />
 
   <!-- Schema.org JSON-LD Structured Data -->
@@ -1705,7 +1705,7 @@
           </div>
         </div>
         <div class="join-actions">
-          <a href="/discord?ref=cringelandia-hero" id="discordInviteLink" class="join-btn" target="_blank" rel="noopener noreferrer" onclick="trackClick(this.href)"><span data-i18n="join.cta">Entrar no Discord da Cringelândia</span></a>
+          <a href="/discord?ref=cringelandia-hero" id="discordInviteLink" class="join-btn" target="_blank" rel="noopener noreferrer"><span data-i18n="join.cta">Entrar no Discord da Cringelândia</span></a>
           <a href="/install?ref=cringelandia-hero" class="join-app" target="_blank" rel="noopener noreferrer" data-i18n="join.app">Usar a Pyxie em qualquer conversa (adicionar à minha conta)</a>
         </div>
       </div>
@@ -1741,20 +1741,20 @@
     <!-- 2. Social Impact Counter Banner -->
     <section class="impact-banner" aria-label="Contador de Pessoas Ajudadas">
       <h2 class="impact-headline" id="impactBannerText">
-        💜 A Cringelândia já direcionou e ajudou <span class="impact-number" id="helpedCount" data-truth="cringelandia.helped">1.420</span> pessoas através de nossos links de autoajuda e ONGs!
+        💜 A Cringelândia já direcionou e ajudou <span class="impact-number" id="helpedCount" data-truth="cringelandia.helped">–</span> pessoas através de nossos links de autoajuda e ONGs!
       </h2>
       <p class="impact-desc" data-i18n="impact.desc">
-        Cada clique em telefones de crise, órgãos públicos, cartilhas de direitos ou redes de apoio contabiliza nosso impacto social real. Se precisar de ajuda neste instante, os canais abaixo estão sempre abertos.
+        Cada pessoa que abre um telefone de crise, órgão público, cartilha de direitos ou rede de apoio por aqui conta uma vez por dia no nosso impacto social. Se precisar de ajuda neste instante, os canais abaixo estão sempre abertos.
       </p>
     </section>
 
     <!-- 3. Ethical Monetization: Single Shopee Slider + Pyxie Speech Bubble -->
-    <section class="shopee-section" aria-label="Vitrine de Achadinhos da Shopee">
+    <section class="shopee-section" id="shopeeSection" aria-label="Vitrine de Achadinhos da Shopee" hidden>
       <div class="mascot-speech-wrap">
         <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Mascote Pyxie com balão de fala transparente" class="mascot-avatar" width="72" height="72" />
         <div class="speech-bubble">
           <p data-i18n="shopee.speech">
-            <strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee é o que viabiliza o funcionamento 100% gratuito do bot e dos nossos projetos de acolhimento, e ainda ajuda nossos membros e visitantes a encontrarem itens úteis de regulação sensorial, abafadores e presentes legais!
+            <strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee ajuda a manter o bot e os nossos projetos de acolhimento. O essencial da Pyxie é grátis; <a href="/planos">planos</a> e Passe são opcionais e também ajudam o projeto. E ainda dá para achar itens úteis de regulação sensorial, abafadores e presentes legais!
           </p>
         </div>
       </div>
@@ -1770,63 +1770,9 @@
         </div>
       </div>
 
+      <p class="impact-desc" data-i18n="shopee.affiliate" style="margin:0 0 12px">Publi: são links de afiliado. A Pyxie recebe uma comissão quando você compra, sem custo extra para você. Os preços podem mudar na Shopee.</p>
       <div class="shopee-slider-track" id="shopeeTrack">
-        <!-- Itens carregados dinamicamente via /api/showcase com fallback -->
-        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
-          <div class="product-img-box">
-            <img src="/assets/pyxie/pyxie_mascot.png" alt="Abafador de Ruído Sensorial Confortável" />
-            <span class="product-tag">Regulação Sensorial</span>
-          </div>
-          <div class="product-body">
-            <span class="product-title">Abafador de Ruído Auditivo Confortável Infantil e Adulto</span>
-            <div class="product-price-row">
-              <span class="product-price">R$ 54,90</span>
-              <span class="product-btn" data-i18n="shopee.cta">Ver na Shopee</span>
-            </div>
-          </div>
-        </a>
-
-        <a href="https://s.shopee.com.br/1BMdNQEU79" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
-          <div class="product-img-box">
-            <img src="/assets/pyxie/pyxie_pixelart_face.png" alt="Fidget Cube e Brinquedos Antiestresse" />
-            <span class="product-tag">Fidget & Foco</span>
-          </div>
-          <div class="product-body">
-            <span class="product-title">Fidget Pad Sensorial 6 Lados para Concentração e Ansiedade</span>
-            <div class="product-price-row">
-              <span class="product-price">R$ 29,90</span>
-              <span class="product-btn" data-i18n="shopee.cta">Ver na Shopee</span>
-            </div>
-          </div>
-        </a>
-
-        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
-          <div class="product-img-box">
-            <img src="/assets/pyxie/pyxie_mascot.png" alt="Luminária Projetora Galáxia Relaxante" />
-            <span class="product-tag">Conforto Visual</span>
-          </div>
-          <div class="product-body">
-            <span class="product-title">Luminária Projetora de Céu Estrelado e Galáxia Calmante</span>
-            <div class="product-price-row">
-              <span class="product-price">R$ 68,00</span>
-              <span class="product-btn" data-i18n="shopee.cta">Ver na Shopee</span>
-            </div>
-          </div>
-        </a>
-
-        <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
-          <div class="product-img-box">
-            <img src="/assets/pyxie/pyxie_pixelart_face.png" alt="Pelúcia Macia Reversível" />
-            <span class="product-tag">Pelúcias & Geek</span>
-          </div>
-          <div class="product-body">
-            <span class="product-title">Pelúcia de Humor Reversível Super Macia para Regulação Emocional</span>
-            <div class="product-price-row">
-              <span class="product-price">R$ 24,90</span>
-              <span class="product-btn" data-i18n="shopee.cta">Ver na Shopee</span>
-            </div>
-          </div>
-        </a>
+        <!-- Itens reais vêm só de /api/showcase; sem resposta, a seção fica escondida (sem cards inventados). -->
       </div>
     </section>
 
@@ -2466,7 +2412,7 @@
               Conheça nossas criações de jogos, mapas acolhedores e experiências sensoriais relaxantes desenvolvidas no Roblox pelo time da Cringelândia!
             </p>
           </div>
-          <a href="https://www.roblox.com/share/g/35473881" target="_blank" rel="noopener noreferrer" class="roblox-join-btn" onclick="trackClick(this.href)">
+          <a href="https://www.roblox.com/share/g/35473881" target="_blank" rel="noopener noreferrer" class="roblox-join-btn">
             <span>Acessar Grupo no Roblox</span> ↗
           </a>
         </article>
@@ -2518,10 +2464,12 @@
         'pillar3.title': 'Rede de Autoajuda & Convivência',
         'pillar3.desc': 'Canais de desabafo seguro, regulação emocional mútua, escuta atenta, compartilhamento de hiperfocos e integração social no ritmo de cada mente.',
         'impact.text': '💜 A Cringelândia já direcionou e ajudou {count} pessoas através de nossos links de autoajuda e ONGs!',
-        'impact.desc': 'Cada clique em telefones de crise, órgãos públicos, cartilhas de direitos ou redes de apoio contabiliza nosso impacto social real. Se precisar de ajuda neste instante, os canais abaixo estão sempre abertos.',
-        'shopee.speech': '<strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee é o que viabiliza o funcionamento 100% gratuito do bot e dos nossos projetos de acolhimento, e ainda ajuda nossos membros e visitantes a encontrarem itens úteis de regulação sensorial, abafadores e presentes legais!',
+        'impact.desc': 'Cada pessoa que abre um telefone de crise, órgão público, cartilha de direitos ou rede de apoio por aqui conta uma vez por dia no nosso impacto social. Se precisar de ajuda neste instante, os canais abaixo estão sempre abertos.',
+        'shopee.speech': '<strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee ajuda a manter o bot e os nossos projetos de acolhimento. O essencial da Pyxie é grátis; <a href="/planos">planos</a> e Passe são opcionais e também ajudam o projeto. E ainda dá para achar itens úteis de regulação sensorial, abafadores e presentes legais!',
         'shopee.title': 'Achadinhos Úteis da Shopee & Regulação Sensorial',
       'shopee.cta': 'Ver na Shopee',
+        'shopee.affiliate': 'Publi: são links de afiliado. A Pyxie recebe uma comissão quando você compra, sem custo extra para você. Os preços podem mudar na Shopee.',
+        'shopee.view': 'Ver preço na Shopee',
       'help.podeFalar': 'Conversar com Pode Falar',
       'help.mpf': 'Sala de Atendimento MPF',
       'help.dpu': 'Buscar Defensoria Pública',
@@ -2609,10 +2557,12 @@
         'pillar3.title': 'Peer Support & Safe Haven',
         'pillar3.desc': 'Safe venting channels, mutual emotional co-regulation, attentive listening, hyperfocus spaces, and social integration at each person\'s unique pace.',
         'impact.text': '💜 Cringelândia has already guided and helped {count} people through our crisis hotlines and NGOs!',
-        'impact.desc': 'Every click on emergency hotlines, public agencies, rights directories, or support resources counts toward our real social impact. If you need help right now, our channels are always open.',
-        'shopee.speech': '<strong>Psst! 🌸</strong> Here on Cringelândia\'s portal, we <em>do not display intrusive ads or pop-ups</em>. This single curated Shopee showcase is what powers our 100% free bot and mental support projects, while helping our visitors find helpful sensory toys, noise-canceling earplugs, and cool items!',
+        'impact.desc': 'Each person who opens a crisis hotline, public agency, rights directory or support network from here counts once per day toward our social impact. If you need help right now, our channels are always open.',
+        'shopee.speech': '<strong>Psst! 🌸</strong> Here on Cringelândia\'s portal, we <em>do not display intrusive ads or pop-ups</em>. This single curated Shopee showcase helps keep the bot and our mental support projects running. Pyxie\'s essentials are free; <a href="/en/plans">plans</a> and the Pass are optional and also help the project. Plus you can find helpful sensory toys, noise-canceling earplugs, and cool items!',
         'shopee.title': 'Helpful Shopee Finds & Sensory Regulation',
       'shopee.cta': 'View on Shopee',
+        'shopee.affiliate': 'Ad: these are affiliate links. Pyxie earns a commission when you buy, at no extra cost to you. Prices may change on Shopee.',
+        'shopee.view': 'See price on Shopee',
       'help.podeFalar': 'Talk to Pode Falar',
       'help.mpf': 'MPF Service Desk',
       'help.dpu': 'Find Public Defender',
@@ -2688,15 +2638,15 @@
     let currentLang = 'pt';
     // Atalho de tradução para textos montados em JS (mesma fonte do data-i18n).
     const tr = (key) => (I18N[currentLang] && I18N[currentLang][key]) || (I18N.pt && I18N.pt[key]) || key;
-    let currentHelpedCount = 1420;
+    let currentHelpedCount = null; // null = ainda sem resposta da API (mostra –)
     let allStates = [];
 
     function detectInitialLang() {
       const urlParams = new URLSearchParams(window.location.search);
       const queryLang = urlParams.get('lang');
       if (queryLang === 'en' || queryLang === 'pt') return queryLang;
-      const navLang = navigator.language || navigator.userLanguage || '';
-      return navLang.toLowerCase().startsWith('en') ? 'en' : 'pt';
+      // Idioma: o caminho manda (/en/... = inglês, sem /en = português), como o canonical e o hreflang.
+      return ((location.pathname === '/en' || location.pathname.startsWith('/en/')) ? 'en' : 'pt');
     }
 
     function applyLanguage(lang) {
@@ -2733,7 +2683,7 @@
       if (!el) return;
       const dict = I18N[currentLang] || I18N.pt;
       const textTemplate = dict['impact.text'] || '💜 A Cringelândia já direcionou e ajudou {count} pessoas através de nossos links de autoajuda e ONGs!';
-      const formatted = Number(currentHelpedCount).toLocaleString(currentLang === 'en' ? 'en-US' : 'pt-BR');
+      const formatted = typeof currentHelpedCount === 'number' ? Number(currentHelpedCount).toLocaleString(currentLang === 'en' ? 'en-US' : 'pt-BR') : '–';
       el.innerHTML = textTemplate.replace('{count}', `<span class="impact-number" id="helpedCount">${formatted}</span>`);
     }
 
@@ -2754,16 +2704,18 @@
     }
 
     async function trackClick(url) {
+      // Só links de ajuda chamam isto. O servidor conta cada pessoa uma vez por dia,
+      // então o número da tela só muda quando a API confirma.
       try {
-        // Incrementa visualmente imediatamente para resposta tátil
-        currentHelpedCount += 1;
-        updateImpactBanner();
-
-        // Envia telemetria com rate-limit ao backend
-        fetch('/api/cringelandia/track-help-click', {
+        const res = await fetch('/api/cringelandia/track-help-click', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
-        }).catch(() => null);
+        });
+        const data = await res.json().catch(() => null);
+        if (data && typeof data.count === 'number') {
+          currentHelpedCount = data.count;
+          updateImpactBanner();
+        }
       } catch (_) {}
     }
 
@@ -2776,38 +2728,49 @@
     }
 
     async function loadShopeeShowcase() {
+      // Só mostra produtos reais da vitrine do servidor. Sem resposta ou vazia: seção escondida.
+      const section = document.getElementById('shopeeSection');
+      const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      const safeUrl = (u) => (/^https:\/\//i.test(String(u || '')) ? String(u) : '');
+      const localUrl = (u) => (/^\/[^/]/.test(String(u || '')) ? String(u) : '');
       try {
         const res = await fetch('/api/showcase');
         if (!res.ok) return;
         const data = await res.json();
-        if (data && data.success && Array.isArray(data.items) && data.items.length > 0) {
-          const track = document.getElementById('shopeeTrack');
-          if (!track) return;
-          track.innerHTML = data.items.map((item) => {
-            const title = currentLang === 'en' ? (item.titulo_en || item.titulo || item.title) : (item.titulo || item.title);
-            const price = currentLang === 'en' ? (item.preco_en || item.preco || item.price) : (item.preco || item.price);
-            const tag = currentLang === 'en' ? (item.tag_en || item.tag || 'Sensorial & Geek') : (item.tag || 'Sensorial & Geek');
-            const img = item.imagem || item.image || '/assets/pyxie/pyxie_mascot.png';
-            const link = item.link || item.productLink || 'https://s.shopee.com.br/BU6Bod6Sw';
-            return `
-              <a href="${link}" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
+        const items = (data && data.success && Array.isArray(data.items) ? data.items : [])
+          .filter((item) => safeUrl(item.link || item.productLink));
+        if (!items.length) return;
+        const track = document.getElementById('shopeeTrack');
+        if (!track) return;
+        track.innerHTML = items.map((item) => {
+          const title = currentLang === 'en' ? (item.titulo_en || item.titulo || item.title || '') : (item.titulo || item.title || '');
+          const price = currentLang === 'en' ? (item.preco_en || item.preco || item.price) : (item.preco || item.price);
+          const tag = currentLang === 'en' ? (item.tag_en || item.tag || '') : (item.tag || '');
+          const rawImg = item.imagem || item.image;
+          const img = safeUrl(rawImg) || localUrl(rawImg);
+          const link = safeUrl(item.link || item.productLink);
+          const imgBox = img
+            ? `<img src="${esc(img)}" alt="${esc(title)}" loading="lazy" />`
+            : `<span aria-hidden="true" style="font-size:3rem">🛍️</span>`;
+          return `
+              <a href="${esc(link)}" target="_blank" rel="noopener noreferrer sponsored" class="shopee-product-card">
                 <div class="product-img-box">
-                  <img src="${img}" alt="${title.replace(/"/g, '&quot;')}" loading="lazy" />
-                  <span class="product-tag">${tag}</span>
+                  ${imgBox}
+                  ${tag ? `<span class="product-tag">${esc(tag)}</span>` : ''}
                 </div>
                 <div class="product-body">
-                  <span class="product-title">${title}</span>
+                  <span class="product-title">${esc(title)}</span>
                   <div class="product-price-row">
-                    <span class="product-price">${price}</span>
-                    <span class="product-btn">${currentLang === 'en' ? 'View on Shopee' : 'Ver na Shopee'}</span>
+                    <span class="product-price">${esc(price || tr('shopee.view'))}</span>
+                    <span class="product-btn">${esc(tr('shopee.cta'))}</span>
                   </div>
                 </div>
               </a>
             `;
-          }).join('');
-        }
+        }).join('');
+        if (section) section.hidden = false;
       } catch (err) {
-        console.warn('Shopee showcase fallback mantido:', err);
+        console.warn('Vitrine da Shopee indisponível:', err);
       }
     }
 

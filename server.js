@@ -289,11 +289,15 @@ app.use(createRouteGateMiddleware());
 // Security & Hardening Headers
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  // O widget (/widget/card) existe para ser embutido no site de parceiros: só ele aceita
+  // moldura de qualquer origem. Todo o resto continua SAMEORIGIN.
+  const embeddable = req.path === '/widget/card';
+  if (!embeddable) res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader(
     'Content-Security-Policy',
+    (embeddable ? 'frame-ancestors *; ' : "frame-ancestors 'self'; ") +
     "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google; frame-src 'self' https://www.googletagmanager.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.google.com; object-src 'none'; base-uri 'self';"
   );
   next();
@@ -817,17 +821,27 @@ app.get('/ads.txt', (req, res) => {
 app.get('/u/:userId', (req, res) => {
   const userId = String(req.params.userId || '').trim();
   const uHtmlPath = path.join(publicDir, 'u.html');
-  // Só IDs do Discord (mesma regra da API). Qualquer outra coisa vira 404:
-  // impede código malicioso na URL e páginas fantasmas (auditoria Q033/Q221).
-  if (!/^\d{15,25}$/.test(userId) || !fs.existsSync(uHtmlPath)) {
-    return res.status(404).sendFile(path.join(publicDir, '404.html'));
+  const notFound = () => res.status(404).sendFile(path.join(publicDir, '404.html'));
+  if (!fs.existsSync(uHtmlPath)) return notFound();
+  // ID do Discord: só dígitos (15 a 25). ID inválido ou de conta que não existe = 404,
+  // não um perfil vazio "Membro (...)" com status 200 para o Google indexar.
+  if (!/^\d{15,25}$/.test(userId)) return notFound();
+  const albumCheck = tarotAlbumService.getUserAlbum(userId);
+  if (!require('./src/services/economy').hasAccount(userId) && !(albumCheck?.discoveredCards?.length > 0)) {
+    return notFound();
   }
 
   let html = fs.readFileSync(uHtmlPath, 'utf8');
+  // O perfil não tem versão /en própria: tira o hreflang fixo que apontava para /u (inexistente).
+  html = html.replace(/\s*<link\s+rel=["']alternate["']\s+hreflang=["'][^"']*["']\s+href=["']https:\/\/pyxie\.com\.br\/u[^"']*["']\s*\/?>/gi, '');
   try {
     const account = getUserAccount(userId);
-    const album = tarotAlbumService.getUserAlbum(userId);
+    const album = albumCheck;
     const discoveredCount = album?.discoveredCards?.length || 0;
+    // Perfil sem nada para mostrar (sem cartas e sem profissão): fora do índice.
+    if (discoveredCount === 0 && !account?.profession) {
+      html = html.replace(/<head>/i, '<head>\n  <meta name="robots" content="noindex, follow" />');
+    }
     const profession = account?.profession
       ? (account.profession.charAt(0).toUpperCase() + account.profession.slice(1).replace(/_/g, ' '))
       : 'Aventureiro Místico';
@@ -979,6 +993,26 @@ app.get('/api/tarot/card-image', (req, res) => {
 // Widget embutível para blogs, sites e parceiros (gera backlinks e autoridade de domínio)
 app.get('/widget/card', (req, res) => {
   res.sendFile(path.join(publicDir, 'widget.html'));
+});
+
+// Resumo público e enxuto para o widget: status real do bot e contagens vindas do código
+// (sem logs, sem IDs de usuários). Se o bot não está rodando, `online` é false.
+app.get('/api/widget/summary', (req, res) => {
+  const running = !!botProcess && !botProcess.killed && botProcess.exitCode === null;
+  const stats = getStats();
+  let professions = 0;
+  try {
+    professions = Object.keys(require('./src/services/professions')).length;
+  } catch (_) {}
+  res.setHeader('Cache-Control', 'public, max-age=60');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  return res.json({
+    success: true,
+    online: running,
+    guilds: Number(stats.guildsCount || 0),
+    professions,
+    tarotCards: Array.isArray(tarotCardsList) ? tarotCardsList.length : 0,
+  });
 });
 
 // 1. Healthcheck e status público

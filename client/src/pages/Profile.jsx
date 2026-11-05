@@ -5,6 +5,10 @@ import {
 } from 'lucide-react';
 
 export default function Profile({ t, lang, userId }) {
+  const fmt = (key, vars = {}) => t(key).replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? `{${k}}`));
+  const numLocale = lang === 'en' ? 'en-US' : 'pt-BR';
+  // A API de cartas manda o texto em PT e a versão em inglês em `card.en`.
+  const localCard = (card) => (lang === 'en' && card?.en ? { ...card, ...card.en } : card);
   const [profileData, setProfileData] = useState(null);
   const [tarotCards, setTarotCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
@@ -49,8 +53,8 @@ export default function Profile({ t, lang, userId }) {
     const url = window.location.href;
     if (navigator.share) {
       navigator.share({
-        title: `Perfil de Membro da Pyxie`,
-        text: `Confira minha coleção de Tarot e status na Pyxie!`,
+        title: t('profile.shareTitle'),
+        text: t('profile.shareText'),
         url,
       }).catch(() => {});
     } else {
@@ -64,7 +68,7 @@ export default function Profile({ t, lang, userId }) {
     return (
       <div className="min-h-screen flex items-center justify-center text-slate-400 font-mono text-sm">
         <Sparkles className="w-5 h-5 text-pink-400 animate-spin mr-2" />
-        <span>Sintonizando perfil cósmico...</span>
+        <span>{t('profile.loading')}</span>
       </div>
     );
   }
@@ -75,15 +79,15 @@ export default function Profile({ t, lang, userId }) {
         <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
           <User className="w-8 h-8" />
         </div>
-        <h2 className="font-title font-bold text-2xl text-white">Perfil Não Encontrado</h2>
-        <p className="text-slate-400 text-sm max-w-md">
-          Nenhum registro cósmico associado ao ID {resolvedUserId} foi localizado no banco de dados.
+        <h1 className="font-title font-bold text-2xl text-white">{t('profile.notFoundTitle')}</h1>
+        <p className="text-slate-300 text-sm max-w-md">
+          {fmt('profile.notFoundText', { id: resolvedUserId })}
         </p>
         <a
           href="/"
           className="px-6 py-2.5 rounded-xl bg-pink-600 text-white font-bold text-xs shadow-neon-pink"
         >
-          Voltar para o Início
+          {t('profile.backHome')}
         </a>
       </div>
     );
@@ -105,7 +109,7 @@ export default function Profile({ t, lang, userId }) {
             <div className="relative w-24 h-24 flex-shrink-0">
               <img
                 src="/assets/pyxie/sticker/sticker_smile.png"
-                alt="Avatar"
+                alt={t('profile.avatarAlt')}
                 width="96"
                 height="96"
                 className="w-full h-full object-contain"
@@ -119,7 +123,7 @@ export default function Profile({ t, lang, userId }) {
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                 <h1 className="font-title font-black text-2xl sm:text-3xl text-white">
-                  Membro ({resolvedUserId.slice(-4)})
+                  {fmt('profile.member', { id: resolvedUserId.slice(-4) })}
                 </h1>
                 {account.activeTitle && (
                   <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono text-xs font-bold">
@@ -131,17 +135,17 @@ export default function Profile({ t, lang, userId }) {
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-slate-300">
                 <span className="flex items-center gap-1 text-pink-300">
                   <Compass className="w-3.5 h-3.5" />
-                  <span>Profissão: {account.profession || 'Aventureiro Místico'}</span>
+                  <span>{fmt('profile.profession', { name: account.profession || t('profile.noProfession') })}</span>
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1 text-amber-300">
                   <Coins className="w-3.5 h-3.5" />
-                  <span>{account.balance.toLocaleString('pt-BR')} Moedas</span>
+                  <span>{fmt('profile.coins', { n: Number(account.balance || 0).toLocaleString(numLocale) })}</span>
                 </span>
                 {account.dailyStreak > 0 && (
                   <>
                     <span>•</span>
-                    <span className="text-orange-400 font-bold">🔥 {account.dailyStreak} dias</span>
+                    <span className="text-orange-400 font-bold">{fmt('profile.streak', { n: account.dailyStreak })}</span>
                   </>
                 )}
               </div>
@@ -154,7 +158,7 @@ export default function Profile({ t, lang, userId }) {
             className="px-5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-purple-500/30 text-white font-title font-bold text-xs flex items-center gap-2 transition-all transform hover:scale-105 shadow-lg"
           >
             {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4 text-pink-400" />}
-            <span>{copiedLink ? 'Link Copiado! 🔗' : 'Compartilhar Perfil'}</span>
+            <span>{copiedLink ? t('profile.copied') : t('profile.share')}</span>
           </button>
         </div>
 
@@ -167,10 +171,10 @@ export default function Profile({ t, lang, userId }) {
               </div>
               <div>
                 <span className="font-title font-bold text-sm text-white block">
-                  Laço Matrimonial Ativo
+                  {t('profile.marriage')}
                 </span>
                 <span className="text-xs text-purple-300/80">
-                  Árvore da Vida: Nível {marriage.treeLevel} • Cofre: {marriage.vaultCoins} 🪙
+                  {fmt('profile.marriageInfo', { level: marriage.treeLevel, coins: marriage.vaultCoins })}
                 </span>
               </div>
             </div>
@@ -178,7 +182,7 @@ export default function Profile({ t, lang, userId }) {
             {/* Love Bar Progress */}
             <div className="w-full sm:w-60 space-y-1">
               <div className="flex justify-between text-[11px] font-mono text-pink-300 font-bold">
-                <span>Barra do Amor</span>
+                <span>{t('profile.loveBar')}</span>
                 <span>{marriage.love}%</span>
               </div>
               <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
@@ -203,7 +207,7 @@ export default function Profile({ t, lang, userId }) {
           }`}
         >
           <BookOpen className="w-4 h-4" />
-          <span>Álbum de Tarot ({tarot.discoveredCount}/78)</span>
+          <span>{fmt('profile.tabTarot', { n: tarot.discoveredCount })}</span>
         </button>
 
         <button
@@ -215,16 +219,16 @@ export default function Profile({ t, lang, userId }) {
           }`}
         >
           <Award className="w-4 h-4" />
-          <span>Conquistas Arcanas</span>
+          <span>{t('profile.tabAchievements')}</span>
         </button>
       </div>
 
       {/* Tab 1: 3D Tarot Cards Showcase */}
       {activeTab === 'tarot' && (
         <section className="space-y-6">
-          <div className="flex items-center justify-between text-xs text-slate-400 px-2 font-mono">
-            <span>Progresso da Coleção: {tarot.discoveredCount} de 78 cartas ({Math.round((tarot.discoveredCount / 78) * 100)}%)</span>
-            <span>Clique na carta para inspecionar</span>
+          <div className="flex flex-wrap gap-2 items-center justify-between text-xs text-slate-300 px-2 font-mono">
+            <span>{fmt('profile.progress', { n: tarot.discoveredCount, pct: Math.round((tarot.discoveredCount / 78) * 100) })}</span>
+            <span>{t('profile.inspectHint')}</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -235,11 +239,11 @@ export default function Profile({ t, lang, userId }) {
               return (
                 <div
                   key={card.id || idx}
-                  onClick={() => isDiscovered && setSelectedCard(card)}
+                  onClick={() => isDiscovered && setSelectedCard(localCard(card))}
                   className={`group relative rounded-2xl p-2.5 border transition-all duration-300 transform flex flex-col items-center justify-between aspect-[2/3] ${
                     isDiscovered
                       ? 'bg-[#140a28]/80 border-purple-500/40 hover:border-pink-500 hover:shadow-neon-pink hover:-translate-y-1.5 cursor-pointer'
-                      : 'bg-black/40 border-white/5 opacity-50 cursor-not-allowed'
+                      : 'bg-black/40 border-white/10 cursor-not-allowed'
                   }`}
                   style={{ perspective: '1000px' }}
                 >
@@ -248,23 +252,23 @@ export default function Profile({ t, lang, userId }) {
                     {isDiscovered ? (
                       <img
                         src={`/api/tarot/card-image?id=${card.id}`}
-                        alt={card.name}
+                        alt={localCard(card).name}
                         loading="lazy"
                         className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform"
                       />
                     ) : (
-                      <div className="flex flex-col items-center justify-center p-3 text-center space-y-2 text-slate-500">
-                        <Lock className="w-5 h-5 text-slate-600" />
-                        <span className="font-mono text-[10px] tracking-wider">#{String(cardNum).padStart(2, '0')}</span>
-                        <span className="text-[9px] uppercase tracking-widest text-slate-600">Bloqueado</span>
+                      <div className="flex flex-col items-center justify-center p-3 text-center space-y-2 text-slate-300">
+                        <Lock className="w-5 h-5 text-slate-400" aria-hidden="true" />
+                        <span className="font-mono text-[11px] tracking-wider">#{String(cardNum).padStart(2, '0')}</span>
+                        <span className="text-[11px] uppercase tracking-wider text-slate-300">{t('profile.locked')}</span>
                       </div>
                     )}
                   </div>
 
                   {/* Card Name Footer */}
                   <div className="w-full pt-2 text-center">
-                    <span className={`text-[11px] font-bold block truncate ${isDiscovered ? 'text-white group-hover:text-pink-300' : 'text-slate-600'}`}>
-                      {isDiscovered ? card.name : '???'}
+                    <span className={`text-[11px] font-bold block truncate ${isDiscovered ? 'text-white group-hover:text-pink-300' : 'text-slate-400'}`}>
+                      {isDiscovered ? localCard(card).name : '???'}
                     </span>
                   </div>
                 </div>
@@ -340,6 +344,7 @@ export default function Profile({ t, lang, userId }) {
               <button
                 onClick={() => setSelectedCard(null)}
                 className="p-1 rounded-lg text-slate-400 hover:text-white"
+                aria-label={t('profile.close')}
               >
                 ✕
               </button>
@@ -355,11 +360,11 @@ export default function Profile({ t, lang, userId }) {
 
             <div className="space-y-2 text-xs text-slate-300">
               <div>
-                <span className="font-bold text-pink-300 block mb-0.5">Significado Direto:</span>
+                <span className="font-bold text-pink-300 block mb-0.5">{t('profile.upright')}</span>
                 <p className="leading-relaxed">{selectedCard.upright}</p>
               </div>
               <div>
-                <span className="font-bold text-purple-300 block mb-0.5">Significado Invertido:</span>
+                <span className="font-bold text-purple-300 block mb-0.5">{t('profile.reversed')}</span>
                 <p className="leading-relaxed">{selectedCard.reversed}</p>
               </div>
             </div>

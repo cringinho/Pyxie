@@ -65,6 +65,20 @@ try {
   assert.equal(claimCookieRes.success, true, 'Resgate de cookie_bonus deve ser aprovado.');
   assert.ok(claimCookieRes.message.includes('Biscoito da Sorte Extra Desbloqueado'), 'Mensagem de biscoito deve constar.');
 
+  // 5b. Q100: teto do biscoito extra (1 por 24h) e token usado gravado em disco
+  const cookiePayload2 = JSON.stringify({ userId: userCookie, action: 'cookie_bonus', metadata: {}, createdAt: pastCreatedAt, nonce: crypto.randomBytes(8).toString('hex'), lang: 'pt' });
+  const cookieToken2 = Buffer.from(JSON.stringify({ payload: cookiePayload2, sig: crypto.createHmac('sha256', BONUS_SECRET).update(cookiePayload2).digest('hex') })).toString('base64url');
+  const secondCookie = verifyAndClaimBonus(cookieToken2);
+  assert.equal(secondCookie.success, false, 'Segundo link de biscoito no mesmo dia não paga de novo.');
+  assert.equal(secondCookie.code, 'cookie_cooldown');
+  assert.equal(getUserAccount(userCookie).coins, 25, 'Biscoito extra paga só +25 por dia.');
+  const replay = verifyAndClaimBonus(validCookieToken);
+  assert.equal(replay.success, false, 'O mesmo token não pode ser resgatado duas vezes.');
+  assert.equal(replay.code, 'already_claimed');
+  assert.ok(getUserAccount(userCookie).bonusClaimedTokens, 'Token usado fica gravado na conta (sobrevive a reinício).');
+  assert.notEqual(BONUS_SECRET, 'pyxie_magic_bonus_secret_key_2026', 'Sem chave fixa no código.');
+  assert.ok(BONUS_SECRET.length >= 16, 'Segredo do bônus precisa existir.');
+
   // 6. Teste de token adulterado
   const fakeToken = 'eyJmb28iOiJiYXIifQ';
   const fakeRes = verifyAndClaimBonus(fakeToken);

@@ -30,7 +30,7 @@ export default function MuseumScene({ t, lang = 'pt' }) {
   useEffect(() => {
     let alive = true;
     fetch('/api/museum/arts?limit=12')
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (!alive) return;
         const list = data && data.success && Array.isArray(data.arts) ? data.arts.filter((a) => a && a.imageUrl) : [];

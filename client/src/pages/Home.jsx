@@ -6,12 +6,20 @@ import BlogHighlights from '../components/hero/BlogHighlights';
 import CommandGrid from '../components/wiki/CommandGrid';
 import ShopeeBentoGrid from '../components/shopee/ShopeeBentoGrid';
 import Reveal from '../components/effects/Reveal';
+import MuseumMural from '../components/3d/MuseumMural';
+
+// Celular/tablet de toque: a cena 3D nem é desenhada, então nem baixamos o three.js.
+const isMobileViewport = () =>
+  typeof window !== 'undefined' &&
+  (window.innerWidth < 768 || ('ontouchstart' in window && window.innerWidth < 1024));
 
 export default function Home({ t, lang, stats }) {
   // three.js (~490 KB) pesa no pacote inicial. Carregamos a cena só depois da primeira
   // pintura, via import dinâmico + estado — sem Suspense, para não mexer na árvore do React.
   const [Scene, setScene] = useState(null);
+  const [mobile] = useState(isMobileViewport);
   useEffect(() => {
+    if (mobile) return undefined;
     let alive = true;
     const load = () => {
       import('../components/3d/MuseumScene')
@@ -33,8 +41,11 @@ export default function Home({ t, lang, stats }) {
       <HeroSection t={t} lang={lang} stats={stats} />
 
       {/* 2. 3D Holographic Community Deck (Three.js WebGL, sob demanda) */}
-      {/* A reserva tem a altura real da seção do Museu, para a cena não empurrar as âncoras (#pilares, #comandos) */}
-      {Scene ? (
+      {/* Celular: mural 2D sem three.js. Computador: a reserva tem a altura real da seção do
+          Museu, para a cena não empurrar as âncoras (#pilares, #comandos). */}
+      {mobile ? (
+        <MuseumMural t={t} lang={lang} />
+      ) : Scene ? (
         <Scene t={t} lang={lang} />
       ) : (
         <div className="min-h-[780px] sm:min-h-[860px] md:min-h-[920px] lg:min-h-[980px]" aria-hidden="true" />

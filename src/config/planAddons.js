@@ -21,13 +21,13 @@ const ADDONS = {
         name: 'Estúdio de Loja',
         tagline: 'Sua lojinha pronta, sem montar nada do zero.',
         description:
-          'Status da loja, estoque, preço, PIX, tickets de compra, avaliações, calculadora de taxa, conferência de gamepass e recibos — tudo no painel e nos botões da Pyxie.',
+          'Estoque, preço, PIX, tickets de compra, avaliações, calculadora de taxa, conferência de gamepass e recibos — tudo no painel e nos botões da Pyxie. Trocar o status da loja (online, fila, fechada) é do plano Premium.',
       },
       en: {
         name: 'Store Studio',
         tagline: 'Your store ready to go, nothing to build from scratch.',
         description:
-          'Store status, stock, price, PIX, purchase tickets, reviews, fee calculator, gamepass check and receipts — all in the panel and in Pyxie buttons.',
+          'Stock, price, PIX, purchase tickets, reviews, fee calculator, gamepass check and receipts — all in the panel and in Pyxie buttons. Switching the store status (online, queue, closed) is a Premium plan perk.',
       },
     },
   },

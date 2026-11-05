@@ -8,12 +8,15 @@ export default function Bonus({ t, lang }) {
   const [isClaimed, setIsClaimed] = useState(false);
   const [claimResult, setClaimResult] = useState(null);
   const [claiming, setClaiming] = useState(false);
+  const [claimError, setClaimError] = useState('');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const canvasRef = useRef(null);
+  const actionRef = useRef(null);
 
   // Parse token from query
   const queryParams = new URLSearchParams(window.location.search);
   const token = queryParams.get('token') || '';
+  const fmt = (key, vars = {}) => t(key).replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? `{${k}}`));
 
   // Sound beep effect (Web Audio API synthetic chime)
   const playChime = () => {
@@ -45,6 +48,10 @@ export default function Bonus({ t, lang }) {
       setIsReady(true);
       playChime();
       triggerConfetti();
+      // No celular o botão fica abaixo da dobra: ao zerar, a tela desce até ele.
+      try {
+        actionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } catch (_) {}
     }
   }, [secondsLeft]);
 
@@ -93,25 +100,22 @@ export default function Bonus({ t, lang }) {
   // Dynamic speech bubble quotes for reactive mascot
   const getMascotSpeech = () => {
     if (isClaimed) {
-      return 'Moedinhas entregues no seu cofre com sucesso! Volte amanhã para mais! 🎉';
+      const coins = Number(claimResult?.coinsAwarded) || 0;
+      return fmt(claimResult?.action === 'cookie_bonus' ? 'bonus.speech.claimedCookie' : 'bonus.speech.claimedDaily', { coins });
     }
-    if (secondsLeft > 7) {
-      return 'Canalizando a energia estelar do seu cofre mágico... ⚡';
-    }
-    if (secondsLeft > 3) {
-      return 'Quase lá! As moedas estão brilhando na penumbra cósmica... ✨';
-    }
-    if (secondsLeft > 0) {
-      return 'Sintonização quase concluída! Prepare seu cofre! 🌟';
-    }
-    return 'Energia cósmica pronta! Clique no botão abaixo para resgatar! 🎁';
+    if (claimError) return t('bonus.speech.error');
+    if (secondsLeft > 7) return t('bonus.speech.s1');
+    if (secondsLeft > 3) return t('bonus.speech.s2');
+    if (secondsLeft > 0) return t('bonus.speech.s3');
+    return t('bonus.speech.ready');
   };
 
   const handleClaim = async () => {
     if (!token) {
-      alert('Token de bônus não informado na URL. Abra o link gerado pelo comando /py-bonus no Discord.');
+      setClaimError(t('bonus.noToken'));
       return;
     }
+    setClaimError('');
     setClaiming(true);
     try {
       const res = await fetch('/api/bonus/claim', {
@@ -126,11 +130,13 @@ export default function Bonus({ t, lang }) {
         setClaimResult(data);
         playChime();
       } else {
-        alert(data.error || 'Falha ao reivindicar bônus.');
+        // Erro dentro do card, no idioma da página, com o próximo passo (código vem do servidor).
+        const key = `bonus.err.${data?.code || 'generic'}`;
+        setClaimError(t(key) !== key ? t(key) : t('bonus.err.generic'));
       }
     } catch (_) {
       setClaiming(false);
-      alert('Erro na requisição com o servidor.');
+      setClaimError(t('bonus.err.network'));
     }
   };
 
@@ -140,14 +146,14 @@ export default function Bonus({ t, lang }) {
   const strokeDashoffset = circumference - ((10 - secondsLeft) / 10) * circumference;
 
   return (
-    <div className="min-h-screen py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="min-h-screen py-6 sm:py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
       {/* Header */}
       <div className="text-center space-y-3">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-xs font-bold shadow-sm">
+        <div className="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-xs font-bold shadow-sm">
           <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-          <span>Canalização de Recompensas Cósmicas</span>
+          <span>{t('bonus.badge')}</span>
         </div>
-        <h1 className="font-title font-black text-3xl sm:text-5xl text-white tracking-tight">
+        <h1 className="font-title font-black text-2xl sm:text-5xl text-white tracking-tight">
           {t('bonus.title')}
         </h1>
         <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto">
@@ -156,7 +162,7 @@ export default function Bonus({ t, lang }) {
       </div>
 
       {/* Main Countdown & Mascot Stage */}
-      <div className="max-w-2xl mx-auto relative rounded-3xl glass-panel border border-purple-500/30 p-8 sm:p-10 shadow-2xl flex flex-col items-center text-center space-y-8 overflow-hidden">
+      <div className="max-w-2xl mx-auto relative rounded-3xl glass-panel border border-purple-500/30 p-5 sm:p-10 shadow-2xl flex flex-col items-center text-center space-y-5 sm:space-y-8 overflow-hidden">
         {/* Confetti canvas overlay */}
         <canvas
           ref={canvasRef}
@@ -167,17 +173,18 @@ export default function Bonus({ t, lang }) {
         <button
           onClick={() => setSoundEnabled(!soundEnabled)}
           className="absolute top-5 right-5 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors z-30"
-          title={soundEnabled ? 'Silenciar Áudio' : 'Ativar Efeitos Sonoros'}
+          title={soundEnabled ? t('bonus.mute') : t('bonus.unmute')}
+          aria-label={soundEnabled ? t('bonus.mute') : t('bonus.unmute')}
         >
           {soundEnabled ? <Volume2 className="w-4 h-4 text-pink-400" /> : <VolumeX className="w-4 h-4" />}
         </button>
 
         {/* Reactive Mascot & Speech Bubble */}
         <div className="flex flex-col sm:flex-row items-center gap-4 relative z-10 max-w-lg">
-          <div className="relative w-20 h-20 flex-shrink-0 animate-bounce-slow">
+          <div className="relative w-14 h-14 sm:w-20 sm:h-20 flex-shrink-0 animate-bounce-slow">
             <img
               src="/assets/pyxie/sticker/sticker_smile.png"
-              alt="Mascote Pyxie"
+              alt={t('bonus.mascotAlt')}
               width="80"
               height="80"
               className="w-full h-full object-contain"
@@ -190,8 +197,8 @@ export default function Bonus({ t, lang }) {
         </div>
 
         {/* Holographic Radial SVG Timer Ring */}
-        <div className="relative w-44 h-44 flex items-center justify-center z-10">
-          <svg className="w-full h-full transform -rotate-90">
+        <div className="relative w-32 h-32 sm:w-44 sm:h-44 flex items-center justify-center z-10">
+          <svg className="w-full h-full transform -rotate-90" viewBox="0 0 176 176">
             {/* Background Track */}
             <circle
               cx="88"
@@ -230,29 +237,43 @@ export default function Bonus({ t, lang }) {
             ) : isReady ? (
               <Sparkles className="w-12 h-12 text-pink-400 animate-spin-slow" />
             ) : (
-              <span className="font-black text-4xl sm:text-5xl text-white tracking-tighter">
+              <span className="font-black text-3xl sm:text-5xl text-white tracking-tighter">
                 {secondsLeft}s
               </span>
             )}
             <span className="text-[11px] font-mono text-purple-300/80 uppercase tracking-widest mt-1">
-              {isClaimed ? 'Resgatado' : isReady ? 'Pronto!' : 'Canalizando'}
+              {isClaimed ? t('bonus.status.claimed') : isReady ? t('bonus.status.ready') : t('bonus.status.channeling')}
             </span>
           </div>
         </div>
 
         {/* Claim Action Button */}
-        <div className="w-full max-w-sm space-y-3 z-10">
+        <div ref={actionRef} className="w-full max-w-sm space-y-3 z-10">
           {!token && (
             <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2 text-left">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              <span>Abra o link enviado pelo comando <strong>/py-bonus</strong> no Discord para validar seu token.</span>
+              <span>{t('bonus.noToken')}</span>
+            </div>
+          )}
+
+          {claimError && !isClaimed && (
+            <div role="alert" className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/40 text-rose-200 text-sm flex items-start gap-2 text-left">
+              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <span>{claimError}</span>
             </div>
           )}
 
           {isClaimed ? (
-            <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-bold text-sm flex items-center justify-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <span>{t('bonus.claimed')}</span>
+            <div role="status" className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-bold text-sm flex flex-col items-center justify-center gap-1">
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                <span>{t('bonus.claimed')}</span>
+              </span>
+              <span className="text-base text-white">
+                {fmt(claimResult?.action === 'cookie_bonus' ? 'bonus.result.cookie' : 'bonus.result.daily', {
+                  coins: Number(claimResult?.coinsAwarded) || 0,
+                })}
+              </span>
             </div>
           ) : (
             <button
@@ -267,10 +288,10 @@ export default function Bonus({ t, lang }) {
               <Gift className="w-4 h-4" />
               <span>
                 {claiming
-                  ? 'Creditando no cofre...'
+                  ? t('bonus.claiming')
                   : isReady
                   ? t('bonus.claim')
-                  : `Aguarde ${secondsLeft}s para liberar ✨`}
+                  : fmt('bonus.wait', { s: secondsLeft })}
               </span>
             </button>
           )}

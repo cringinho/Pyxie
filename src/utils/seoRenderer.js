@@ -68,14 +68,14 @@ const SEO_CONFIG = {
     canonical: 'https://pyxie.com.br/planos',
     pt: {
       title: 'Planos da Pyxie • Básico R$ 7 e Premium R$ 20 por mês ou no anual',
-      description: 'Plano para o seu servidor no Discord: Básico por R$ 7 com perfil completo da Pyxie, cores próprias e 1 mensagem cíclica; Premium por R$ 20 com status da lojinha, 10 mensagens cíclicas e Oráculo de IA. No anual, 2 meses grátis. Extra de lojinha por R$ 3. Pix por QR ou cartão recorrente.',
+      description: 'Plano para o seu servidor no Discord: Básico por R$ 7 com perfil completo da Pyxie e cores próprias; Premium por R$ 20 com status da lojinha, 10 mensagens cíclicas e Oráculo de IA. No anual, 2 meses grátis. Extra de lojinha por R$ 3. Pix por QR ou cartão recorrente.',
       ogTitle: 'Planos da Pyxie • Básico R$ 7 e Premium R$ 20',
       ogDesc: 'Assinatura mensal ou anual (2 meses grátis) do servidor: perfil completo da Pyxie, mensagens cíclicas por plano, status da lojinha e Oráculo com IA. Extra de lojinha por R$ 3.',
       locale: 'pt_BR'
     },
     en: {
       title: 'Pyxie Plans • Basic R$ 7 and Premium R$ 20 monthly or yearly',
-      description: 'Plan for your Discord server: Basic for R$ 7 with the full Pyxie profile, custom colors and 1 cyclic message; Premium for R$ 20 with store status, 10 cyclic messages and the AI Oracle. Yearly gets 2 months free. Store extra for R$ 3. Pay by Pix QR or recurring card.',
+      description: 'Plan for your Discord server: Basic for R$ 7 with the full Pyxie profile and custom colors; Premium for R$ 20 with store status, 10 cyclic messages and the AI Oracle. Yearly gets 2 months free. Store extra for R$ 3. Pay by Pix QR or recurring card.',
       ogTitle: 'Pyxie Plans • Basic R$ 7 and Premium R$ 20',
       ogDesc: 'Monthly or yearly subscription (2 months free) for your server: full Pyxie profile, cyclic messages per plan, store status and the AI Oracle. Store extra for R$ 3.',
       locale: 'en_US'

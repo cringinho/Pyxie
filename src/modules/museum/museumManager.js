@@ -559,25 +559,33 @@ class MuseumManager {
     const safePage = Math.min(Math.max(parseInt(page, 10) || 1, 1), totalPages);
     const slice = list.slice((safePage - 1) * safeLimit, safePage * safeLimit);
 
-    const arts = await Promise.all(
-      slice.map(async (art) => {
-        const resolved = await this.resolveAuthor(art.userId, art.cachedAuthor);
-        const authorName = (resolved && typeof resolved === 'object') ? resolved.name : (resolved || art.cachedAuthor || 'Artista');
-        const authorUsername = (resolved && typeof resolved === 'object') ? resolved.username : (art.authorUsername || art.cachedAuthor || 'Artista');
-        return {
-          id: art.id,
-          userId: art.userId,
-          author: authorName,
-          authorName: authorName,
-          authorUsername: authorUsername,
-          description: art.description,
-          createdAt: art.createdAt,
-          // Imagem passa pela rota persistente com extensão .webp
-          imageUrl: `/api/museum/art-image/${encodeURIComponent(art.id)}.webp`,
-        };
-      })
-    );
+    const arts = await Promise.all(slice.map((art) => this.toPublicArt(art)));
     return { arts, page: safePage, totalPages, total: list.length };
+  }
+
+  /** Formato público de uma obra (lista e link direto /museu?art=ID usam o mesmo). */
+  async toPublicArt(art) {
+    const resolved = await this.resolveAuthor(art.userId, art.cachedAuthor);
+    const authorName = (resolved && typeof resolved === 'object') ? resolved.name : (resolved || art.cachedAuthor || 'Artista');
+    const authorUsername = (resolved && typeof resolved === 'object') ? resolved.username : (art.authorUsername || art.cachedAuthor || 'Artista');
+    return {
+      id: art.id,
+      userId: art.userId,
+      author: authorName,
+      authorName: authorName,
+      authorUsername: authorUsername,
+      description: art.description,
+      createdAt: art.createdAt,
+      // Imagem passa pela rota persistente com extensão .webp
+      imageUrl: `/api/museum/art-image/${encodeURIComponent(art.id)}.webp`,
+    };
+  }
+
+  /** Uma obra pelo ID, em qualquer página do acervo (ou null). */
+  async getPublicArt(artId) {
+    this.refresh();
+    const art = this.data.arts.find((a) => a.id === String(artId || ''));
+    return art ? this.toPublicArt(art) : null;
   }
 
   getCount() {
@@ -697,6 +705,21 @@ class MuseumManager {
       } catch (err) {
         console.error('[Museum] /api/museum/arts:', err);
         res.status(500).json({ success: false });
+      }
+    });
+
+    // Link direto de obra (/museu?art=ID): acha a obra mesmo fora da 1ª página da lista.
+    app.get('/api/museum/art/:id', async (req, res) => {
+      try {
+        const id = String(req.params.id || '');
+        if (!id || id.length > 120) return res.status(400).json({ success: false, error: 'invalid_id' });
+        const art = await this.getPublicArt(id);
+        if (!art) return res.status(404).json({ success: false, error: 'not_found' });
+        res.setHeader('Cache-Control', 'public, max-age=300');
+        return res.json({ success: true, art });
+      } catch (err) {
+        console.error('[Museum] /api/museum/art/:id:', err);
+        return res.status(500).json({ success: false });
       }
     });
 

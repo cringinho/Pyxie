@@ -616,6 +616,7 @@
     </p>
 
     <!-- Tarot Stage -->
+    <p id="tarotError" role="alert" style="display:none;color:#fda4af;margin:0 auto 12px;max-width:560px;text-align:center"></p>
     <div class="tarot-stage">
       <div class="card-flipper" id="cardFlipper" onclick="handleCardClick()" title="Toque para virar a carta">
         <div class="card-inner">
@@ -710,6 +711,7 @@
         titleHighlight: 'Online Grátis',
         desc: 'Conecte-se com o destino e receba a revelação mágica da Pyxie. Mentalize sua pergunta ou seu dia e toque na carta misteriosa abaixo para revelar seu arcano.',
         cardPrompt: 'Revelar Arcano',
+        loadError: 'Não consegui carregar as cartas agora. Confira a internet e toque na carta para tentar de novo.',
         btnDraw: 'Tirar Outra Carta',
         upright: 'Posição em Pé (Direta)',
         reversed: 'Posição Invertida',
@@ -731,6 +733,7 @@
         titleHighlight: 'Free Online',
         desc: 'Tune into your intuition and receive Pyxie\'s mystical reading. Focus on your question or today\'s destiny and tap the mysterious card below to reveal your arcana.',
         cardPrompt: 'Reveal Arcana',
+        loadError: 'I could not load the cards right now. Check your connection and tap the card to try again.',
         btnDraw: 'Draw Another Card',
         upright: 'Upright Position',
         reversed: 'Reversed Position',
@@ -750,7 +753,8 @@
     let allTarotCards = [];
 
     const urlParams = new URLSearchParams(window.location.search);
-    const initialLang = urlParams.get('lang') || ((navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en');
+    // Idioma: o caminho manda (/en/... = inglês, sem /en = português), como o canonical e o hreflang.
+    const initialLang = (urlParams.get('lang') === 'en' || urlParams.get('lang') === 'pt') ? urlParams.get('lang') : ((location.pathname === '/en' || location.pathname.startsWith('/en/')) ? 'en' : 'pt');
     const paramCardId = urlParams.get('id');
     const paramPos = urlParams.get('pos');
 
@@ -762,6 +766,14 @@
           allTarotCards = data.cards || [];
         }
       } catch (_) {}
+      // Sem cartas, tocar não faria nada em silêncio: avisa no idioma da página.
+      const errEl = document.getElementById('tarotError');
+      if (errEl) {
+        const failed = !allTarotCards || allTarotCards.length === 0;
+        errEl.textContent = failed ? I18N[currentLang].loadError : '';
+        errEl.style.display = failed ? 'block' : 'none';
+      }
+      return allTarotCards.length > 0;
     }
 
     function applyLang(lang) {
@@ -875,8 +887,10 @@
       }
     }
 
-    function drawNewCard() {
-      if (!allTarotCards || allTarotCards.length === 0) return;
+    async function drawNewCard() {
+      if (!allTarotCards || allTarotCards.length === 0) {
+        if (!(await loadTarotData())) return;
+      }
       const flipper = document.getElementById('cardFlipper');
       flipper.classList.remove('revealed');
 
@@ -903,11 +917,8 @@
         }
       }
 
-      // Senão, já sorteia determinística a Carta do Dia de hoje
-      if (allTarotCards.length > 0) {
-        const todayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % allTarotCards.length;
-        renderCardDetails(allTarotCards[todayIndex], 'UPRIGHT');
-      }
+      // Senão a carta fica virada: o texto promete "toque na carta para revelar", e o
+      // sorteio (com chance de invertida) só acontece no toque.
     })();
   </script>
 </body>

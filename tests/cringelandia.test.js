@@ -17,8 +17,12 @@ assert.equal(res1.count, initialCount + 1, 'Contador deve incrementar em 1');
 
 // Teste de rate limit (mesmo IP dentro do cooldown)
 const res2 = cringelandiaService.trackHelpClick(testIp1);
-assert.equal(res2.success, false, 'Segundo clique do mesmo IP deve ser barrado por cooldown');
-assert.equal(res2.rateLimited, true, 'Flag rateLimited deve ser true');
+assert.equal(res2.success, false, 'Segundo clique do mesmo IP no mesmo dia não conta outra pessoa');
+assert.equal(res2.alreadyCounted, true, 'Flag alreadyCounted deve ser true');
+assert.equal(res2.count, initialCount + 1, 'Contador não muda com clique repetido');
+// Mesma pessoa, 10 s depois (o antigo cooldown de 5 s deixava contar de novo): continua sem contar.
+const res2b = cringelandiaService.trackHelpClick(testIp1, Date.now() + 10_000);
+assert.equal(res2b.success, false, 'Clique repetido no mesmo dia não conta, mesmo após alguns segundos');
 
 // Teste de IP diferente
 const testIp2 = `test_ip_${Date.now()}_2`;
@@ -55,6 +59,12 @@ assert.ok(!html.includes('portalframe98'), 'cringelandia.html NÃO pode conter e
 
 // Elementos obrigatórios
 assert.ok(html.includes('shopee-slider-track'), 'Deve conter slider de produtos Shopee');
+// Q078/Q077: clique de compra não é "pessoa ajudada" e não há cards de produto fixos.
+assert.ok(!/class="shopee-product-card"[^>]*trackClick|trackClick[^>]*class="shopee-product-card"/.test(html), 'Card da Shopee não pode somar no contador de ajuda');
+assert.ok(!/class="join-btn"[^>]*trackClick/.test(html), 'Botão do Discord não pode somar no contador de ajuda');
+assert.ok(!/R\$ 54,90|R\$ 68,00/.test(html), 'Sem preços de produto escritos à mão');
+assert.ok(html.includes('shopee.affiliate'), 'Vitrine deve avisar que são links de afiliado (PT/EN)');
+assert.ok(!html.includes('100% gratuito do bot') && !html.includes('100% free bot'), 'Sem a promessa de bot 100% gratuito');
 assert.ok(html.includes('mascot-avatar'), 'Deve conter mascote Pyxie com balão de fala');
 assert.ok(html.includes('tenorioadvogados.com/laudo-de-autista'), 'Deve conter link de referência jurídica de Tenório Advogados');
 assert.ok(html.includes('roblox.com/share/g/35473881'), 'Deve conter link oficial do grupo Roblox da Cringelândia');

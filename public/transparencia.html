@@ -193,6 +193,15 @@
       transform: translateY(-1px);
     }
 
+    /* Celular e tablet: o menu quebra em linhas e o botão de idioma vem primeiro,
+       sempre visível (sem rolagem lateral). */
+    @media (max-width: 800px) {
+      header { flex-wrap: wrap; gap: 10px; padding: 10px 16px; }
+      .nav-links { flex-wrap: wrap; gap: 8px 14px; width: 100%; }
+      .nav-links a { padding: 6px 0; }
+      .lang-btn { order: -1; flex-basis: 100%; justify-content: center; min-height: 40px; }
+    }
+
     main {
       flex: 1;
       max-width: 900px;

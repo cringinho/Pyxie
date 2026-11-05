@@ -14,6 +14,7 @@
     ],
     "tests/dailyPlanBonus.test.js": [],
     "tests/planPayments.test.js": [],
+    "tests/safeImageFetch.test.js": [],
     "tests/donations.test.js": [],
     "tests/oracle.test.js": [],
     "tests/founderProgram.test.js": [],

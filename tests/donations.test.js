@@ -61,6 +61,14 @@ function mock(handler) {
   const month = donations.ranking({ period: 'month' });
   assert.equal(month[0].cents, 2500, 'Maior doação primeiro');
   assert.equal(month.find((row) => row.anonymous)?.label, null, 'Anônimo sem nome');
+  // Q075: o apelido do Pix (id 900) chega ao ranking pelo webhook; o ID do Discord nunca sai.
+  assert.equal(month.find((row) => !row.anonymous)?.label, 'Ana', 'Apelido salvo na criação do Pix aparece no ranking');
+  assert.ok(month.every((row) => !('userId' in row)), 'Ranking público não expõe o ID do Discord');
+  // Q066: validade do Pix em UTC de verdade (30 min), sem trocar só o rótulo do fuso.
+  const { pixExpiration, PIX_TTL_MS } = require('../src/services/planPayments');
+  const now0 = Date.UTC(2026, 0, 1, 12, 0, 0);
+  assert.equal(Date.parse(pixExpiration(now0)) - now0, PIX_TTL_MS, 'Pix expira em 30 min reais');
+  assert.equal(Date.parse(body.date_of_expiration) - Date.now() <= PIX_TTL_MS, true, 'Pedido ao Mercado Pago com validade de até 30 min');
   const summary = donations.summary();
   assert.equal(summary.total, 35);
   assert.equal(summary.count, 2);

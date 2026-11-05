@@ -45,21 +45,34 @@ function loadImpactData() {
 
 loadImpactData();
 
-// Rate limiting de cliques por IP (máximo 1 clique a cada 5 segundos por IP)
-const ipClickCooldowns = new Map();
+// O contador promete PESSOAS, não cliques: cada pessoa (IP) conta no máximo uma vez por dia.
+// Guardamos só um hash do IP (com o dia como sal), nunca o IP, e a lista zera na virada do dia.
+const crypto = require('node:crypto');
+let seenDay = '';
+const seenToday = new Set();
+const MAX_SEEN_PER_DAY = 200000;
+
+function dayKey(now) {
+  return new Date(now).toISOString().slice(0, 10);
+}
 
 /**
- * Incrementa o contador de pessoas ajudadas
+ * Soma +1 pessoa ajudada se este visitante ainda não contou hoje.
  * @param {string} ip
- * @returns {{ success: boolean, count: number }}
+ * @param {number} [now]
+ * @returns {{ success: boolean, count: number, alreadyCounted?: boolean }}
  */
-function trackHelpClick(ip = '127.0.0.1') {
-  const now = Date.now();
-  const lastClick = ipClickCooldowns.get(ip) || 0;
-  if (now - lastClick < 5000) {
-    return { success: false, rateLimited: true, count: impactData.helpedCount };
+function trackHelpClick(ip = '127.0.0.1', now = Date.now()) {
+  const day = dayKey(now);
+  if (day !== seenDay) {
+    seenDay = day;
+    seenToday.clear();
   }
-  ipClickCooldowns.set(ip, now);
+  const key = crypto.createHash('sha256').update(`${day}:${String(ip)}`).digest('hex').slice(0, 32);
+  if (seenToday.has(key) || seenToday.size >= MAX_SEEN_PER_DAY) {
+    return { success: false, alreadyCounted: true, count: impactData.helpedCount };
+  }
+  seenToday.add(key);
 
   impactData.helpedCount += 1;
   impactData.lastUpdated = new Date().toISOString();

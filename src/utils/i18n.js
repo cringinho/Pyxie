@@ -2099,6 +2099,7 @@ const TRANSLATIONS = {
       "cooldownBody": "Você já comeu o biscoito de hoje. O próximo sai do forno em **{time}**.",
       "cooldownExtraHeader": "### ✨ Quer um extra agora?",
       "cooldownExtraBody": "No portal da Pyxie você espera 10 segundinhos e ganha **1 biscoito extra** e `+{coins}` {coin}. Eu deixo, vai.",
+      "cooldownExtraUsed": "-# O biscoito extra do portal você já pegou hoje. Amanhã tem mais, e não vem chorar no meu caderninho.",
       "cooldownFooter": "Pyxie • um biscoito por dia (e os extras)",
       "btnExtra": "Biscoito extra (10s)"
     },
@@ -2481,6 +2482,7 @@ const TRANSLATIONS = {
         "row": "`#{pos}` **{name}** — R$ {amount}",
         "empty": "Ainda não há doações registradas neste mês.",
         "anonymous": "Alguém que prefere o anonimato",
+        "supporter": "Apoiador(a)",
         "note": "-# Doar não dá vantagem no jogo. É só carinho."
       },
       "beans": "feijões",
@@ -5204,6 +5206,7 @@ const TRANSLATIONS = {
       "cooldownBody": "You already ate today's cookie. The next one comes out of the oven in **{time}**.",
       "cooldownExtraHeader": "### ✨ Want an extra one now?",
       "cooldownExtraBody": "On Pyxie's portal you wait 10 little seconds and get **1 extra cookie** and `+{coins}` {coin}. Fine, I'll allow it.",
+      "cooldownExtraUsed": "-# You already grabbed today's extra cookie from the portal. More tomorrow, and no crying in my little black book.",
       "cooldownFooter": "Pyxie • one cookie a day (plus extras)",
       "btnExtra": "Extra cookie (10s)"
     },
@@ -5586,6 +5589,7 @@ const TRANSLATIONS = {
         "row": "`#{pos}` **{name}** — R$ {amount}",
         "empty": "No donations recorded this month yet.",
         "anonymous": "Someone who prefers to stay anonymous",
+        "supporter": "Supporter",
         "note": "-# Donating gives no in-game advantage. It is just care."
       },
       "beans": "beans",

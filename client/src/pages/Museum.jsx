@@ -6,17 +6,23 @@ import {
 } from 'lucide-react';
 
 const getAuthorName = (art) => {
-  return art?.authorName || art?.author || art?.authorUsername || 'Artista';
-};
-
-const getAuthorHandle = (art) => {
-  const raw = art?.authorUsername || art?.authorName || art?.author || 'Artista';
-  const clean = String(raw).trim().replace(/^@+/, '');
-  return clean && clean.toLowerCase() !== 'artista' ? `@${clean}` : (art?.userId ? `@Membro` : `@Artista`);
+  return art?.authorName || art?.author || art?.authorUsername || 'A';
 };
 
 export default function Museum({ t, lang }) {
+  const fmt = (key, vars = {}) => t(key).replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? `{${k}}`));
+  const dateLocale = lang === 'en' ? 'en-US' : 'pt-BR';
+  // 'Artista' é o marcador que o servidor usa quando não acha o nome.
+  const getAuthorHandle = (art) => {
+    const raw = art?.authorUsername || art?.authorName || art?.author || '';
+    const clean = String(raw).trim().replace(/^@+/, '');
+    return clean && clean.toLowerCase() !== 'artista' ? `@${clean}` : art?.userId ? `@${t('museum.member')}` : `@${t('museum.author')}`;
+  };
+  const artAlt = (art) => fmt('museum.artAlt', { author: getAuthorHandle(art) });
+
   const [arts, setArts] = useState([]);
+  // 'loading' | 'ready' | 'error': "nenhuma obra" só aparece quando a API respondeu de verdade.
+  const [loadState, setLoadState] = useState('loading');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedUser, setSelectedUser] = useState('');
@@ -39,29 +45,40 @@ export default function Museum({ t, lang }) {
     let url = `/api/museum/arts?page=${p}&limit=24`;
     if (user) url += `&user=${encodeURIComponent(user)}`;
 
+    setLoadState('loading');
     fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.success) {
-          setArts(data.arts || []);
-          setPage(data.page || 1);
-          setTotalPages(data.totalPages || 1);
-
-          // Deep link support: if ?art=ID is in URL, open Lightbox
-          const params = new URLSearchParams(window.location.search);
-          const artParam = params.get('art');
-          if (artParam) {
-            const found = (data.arts || []).find((a) => a.id === artParam);
-            if (found) setSelectedArt(found);
-          }
-        }
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
       })
-      .catch((err) => console.error(err));
+      .then((data) => {
+        if (!data || !data.success) throw new Error('museum_unavailable');
+        setArts(data.arts || []);
+        setPage(data.page || 1);
+        setTotalPages(data.totalPages || 1);
+        setLoadState('ready');
+      })
+      .catch(() => setLoadState('error'));
   };
 
   useEffect(() => {
     fetchArts(1);
   }, [selectedUser]);
+
+  // Link direto (/museu?art=ID): busca a obra pelo ID, mesmo fora da 1ª página.
+  useEffect(() => {
+    const artParam = new URLSearchParams(window.location.search).get('art');
+    if (!artParam) return;
+    fetch(`/api/museum/art/${encodeURIComponent(artParam)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && data.success && data.art) {
+          setSelectedArt(data.art);
+          setLightboxZoom(1);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Extract unique authors for filter pills
   const authorPills = useMemo(() => {
@@ -98,7 +115,7 @@ export default function Museum({ t, lang }) {
 
   const handleDelete = async (id, e) => {
     e.stopPropagation();
-    if (!confirm('Deseja realmente remover esta arte da galeria?')) return;
+    if (!confirm(t('museum.confirmDelete'))) return;
     try {
       const res = await fetch(`/api/museum/art/${id}`, {
         method: 'DELETE',
@@ -109,10 +126,10 @@ export default function Museum({ t, lang }) {
         if (selectedArt?.id === id) setSelectedArt(null);
         fetchArts(page);
       } else {
-        alert('Falha ao remover arte.');
+        alert(t('museum.deleteFail'));
       }
     } catch (_) {
-      alert('Erro na requisição.');
+      alert(t('museum.requestFail'));
     }
   };
 
@@ -132,10 +149,10 @@ export default function Museum({ t, lang }) {
         setEditingArt(null);
         fetchArts(page);
       } else {
-        alert('Falha ao atualizar descrição.');
+        alert(t('museum.editFail'));
       }
     } catch (_) {
-      alert('Erro na requisição.');
+      alert(t('museum.requestFail'));
     }
   };
 
@@ -148,7 +165,7 @@ export default function Museum({ t, lang }) {
     const selection = window.getSelection()?.toString();
     if (selection && selection.length > 3) {
       e.preventDefault();
-      const textWithAttribution = `${selection}\n\nFonte: Galeria Oficial da Comunidade Pyxie (https://pyxie.com.br/)`;
+      const textWithAttribution = `${selection}\n\n${t('museum.copySource')} (https://pyxie.com.br/)`;
       if (e.clipboardData) {
         e.clipboardData.setData('text/plain', textWithAttribution);
       }
@@ -164,10 +181,10 @@ export default function Museum({ t, lang }) {
           <span>{t('museum.badge')}</span>
         </div>
         <h1 className="font-title font-black text-3xl sm:text-5xl md:text-6xl bg-gradient-to-r from-white via-pink-200 to-purple-300 bg-clip-text text-transparent tracking-tight">
-          {t('museum.title')}
+          {t('museum.mobileTitle')}
         </h1>
         <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
-          {t('museum.subtitle')}
+          {t('museum.mobileSubtitle')}
         </p>
       </div>
 
@@ -180,12 +197,14 @@ export default function Museum({ t, lang }) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar por obra ou artista..."
+            placeholder={t('museum.searchPlaceholder')}
+            aria-label={t('museum.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/5 border border-purple-500/20 text-xs text-white placeholder-slate-400 outline-none focus:border-pink-500 transition-colors"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
+              aria-label={t('museum.clearSearch')}
               className="absolute right-3 text-slate-400 hover:text-white"
             >
               <X className="w-3.5 h-3.5" />
@@ -204,7 +223,7 @@ export default function Museum({ t, lang }) {
             }`}
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span>Mural Grid</span>
+            <span>{t('museum.viewGrid')}</span>
           </button>
           <button
             onClick={() => setViewMode('forum')}
@@ -215,7 +234,7 @@ export default function Museum({ t, lang }) {
             }`}
           >
             <MessageSquare className="w-3.5 h-3.5" />
-            <span>Modo Fórum</span>
+            <span>{t('museum.viewForum')}</span>
           </button>
         </div>
       </div>
@@ -231,7 +250,7 @@ export default function Museum({ t, lang }) {
                 : 'bg-white/5 border border-purple-500/20 text-slate-300 hover:bg-white/10'
             }`}
           >
-            Todos os Artistas
+            {t('museum.allArtists')}
           </button>
           {authorPills.map(({ userId, name }) => (
             <button
@@ -251,7 +270,29 @@ export default function Museum({ t, lang }) {
       )}
 
       {/* Gallery Render: Grid vs Forum Mode */}
-      {filteredArts.length > 0 ? (
+      {loadState === 'loading' && arts.length === 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" aria-busy="true" aria-label={t('museum.loading')}>
+          {Array.from({ length: 8 }, (_, i) => (
+            <div key={i} className="rounded-2xl glass-panel border border-purple-500/20 overflow-hidden animate-pulse">
+              <div className="aspect-square bg-white/5" />
+              <div className="p-4 space-y-2">
+                <div className="h-3 w-1/2 rounded bg-white/10" />
+                <div className="h-3 w-3/4 rounded bg-white/5" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : loadState === 'error' ? (
+        <div role="alert" className="text-center py-20 space-y-4">
+          <p className="text-slate-300 text-sm">{t('museum.loadError')}</p>
+          <button
+            onClick={() => fetchArts(page)}
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white text-xs font-bold"
+          >
+            {t('museum.retry')}
+          </button>
+        </div>
+      ) : filteredArts.length > 0 ? (
         viewMode === 'grid' ? (
           /* Masonry Grid */
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -271,7 +312,7 @@ export default function Museum({ t, lang }) {
                 >
                   <img
                     src={art.imageUrl || `/api/museum/art-image/${art.id}`}
-                    alt={`Arte por ${getAuthorHandle(art)} no Museu da Pyxie • Visite https://pyxie.com.br/`}
+                    alt={artAlt(art)}
                     data-canonical-url="https://pyxie.com.br/"
                     loading="lazy"
                     className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 pointer-events-none"
@@ -282,7 +323,8 @@ export default function Museum({ t, lang }) {
                   <button
                     onClick={(e) => handleShare(art, e)}
                     className="absolute top-2.5 right-2.5 p-2 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110"
-                    title="Compartilhar Obra"
+                    title={t('museum.shareArt')}
+                    aria-label={t('museum.shareArt')}
                   >
                     <Share2 className="w-3.5 h-3.5" />
                   </button>
@@ -295,7 +337,7 @@ export default function Museum({ t, lang }) {
                       {getAuthorHandle(art)}
                     </span>
                     <span className="text-[11px] font-mono text-slate-400">
-                      {art.createdAt ? new Date(art.createdAt).toLocaleDateString('pt-BR') : ''}
+                      {art.createdAt ? new Date(art.createdAt).toLocaleDateString(dateLocale) : ''}
                     </span>
                   </div>
                   {art.description && (
@@ -350,7 +392,7 @@ export default function Museum({ t, lang }) {
                         {getAuthorHandle(art)}
                       </span>
                       <span className="text-[11px] font-mono text-purple-300/70">
-                        Publicado em {art.createdAt ? new Date(art.createdAt).toLocaleDateString('pt-BR') : 'Data cósmica'}
+                        {fmt('museum.publishedOn', { date: art.createdAt ? new Date(art.createdAt).toLocaleDateString(dateLocale) : t('museum.noDate') })}
                       </span>
                     </div>
                   </div>
@@ -360,7 +402,7 @@ export default function Museum({ t, lang }) {
                     className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-purple-300 flex items-center gap-1.5 text-xs font-semibold"
                   >
                     <Share2 className="w-3.5 h-3.5" />
-                    <span>Compartilhar</span>
+                    <span>{t('museum.share')}</span>
                   </button>
                 </div>
 
@@ -382,7 +424,7 @@ export default function Museum({ t, lang }) {
                 >
                   <img
                     src={art.imageUrl || `/api/museum/art-image/${art.id}`}
-                    alt={`Arte por ${getAuthorHandle(art)} no Museu da Pyxie • Visite https://pyxie.com.br/`}
+                    alt={artAlt(art)}
                     data-canonical-url="https://pyxie.com.br/"
                     loading="lazy"
                     className="w-full h-full object-contain max-h-[500px] pointer-events-none"
@@ -393,8 +435,8 @@ export default function Museum({ t, lang }) {
           </div>
         )
       ) : (
-        <div className="text-center py-24 text-slate-400 text-sm">
-          Nenhuma obra encontrada para esta pesquisa ou artista.
+        <div className="text-center py-24 text-slate-300 text-sm">
+          {arts.length === 0 && !selectedUser ? t('museum.emptyGallery') : t('museum.emptySearch')}
         </div>
       )}
 
@@ -404,16 +446,18 @@ export default function Museum({ t, lang }) {
           <button
             onClick={() => fetchArts(page - 1)}
             disabled={page <= 1}
+            aria-label={t('museum.prevPage')}
             className="p-2.5 rounded-xl bg-white/5 border border-purple-500/20 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <span className="font-mono text-xs text-slate-300">
-            Página {page} de {totalPages}
+            {fmt('museum.pageOf', { page, total: totalPages })}
           </span>
           <button
             onClick={() => fetchArts(page + 1)}
             disabled={page >= totalPages}
+            aria-label={t('museum.nextPage')}
             className="p-2.5 rounded-xl bg-white/5 border border-purple-500/20 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10"
           >
             <ChevronRight className="w-4 h-4" />
@@ -438,7 +482,7 @@ export default function Museum({ t, lang }) {
                   {getAuthorHandle(selectedArt)}
                 </span>
                 <span className="text-xs font-mono text-slate-400">
-                  ID: {selectedArt.id?.slice(0, 10)}...
+                  {t('museum.id')}: {selectedArt.id?.slice(0, 10)}...
                 </span>
               </div>
 
@@ -446,29 +490,32 @@ export default function Museum({ t, lang }) {
                 <button
                   onClick={() => setLightboxZoom((z) => Math.min(z + 0.25, 2.5))}
                   className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white"
-                  title="Aumentar Zoom"
+                  title={t('museum.zoomIn')}
+                  aria-label={t('museum.zoomIn')}
                 >
                   <ZoomIn className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setLightboxZoom((z) => Math.max(z - 0.25, 0.75))}
                   className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white"
-                  title="Diminuir Zoom"
+                  title={t('museum.zoomOut')}
+                  aria-label={t('museum.zoomOut')}
                 >
                   <ZoomOut className="w-4 h-4" />
                 </button>
                 <button
                   onClick={(e) => handleShare(selectedArt, e)}
                   className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center gap-1.5 text-xs font-bold"
-                  title="Copiar Link"
+                  title={t('museum.shareArt')}
                 >
                   {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
-                  <span>{copiedLink ? 'Copiado!' : 'Compartilhar'}</span>
+                  <span>{copiedLink ? t('museum.copied') : t('museum.share')}</span>
                 </button>
                 <button
                   onClick={() => setSelectedArt(null)}
                   className="p-2 rounded-xl bg-white/10 hover:bg-rose-600 text-white ml-2 transition-colors"
-                  title="Fechar (ESC)"
+                  title={t('museum.close')}
+                  aria-label={t('museum.close')}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -482,7 +529,7 @@ export default function Museum({ t, lang }) {
             >
               <img
                 src={selectedArt.imageUrl || `/api/museum/art-image/${selectedArt.id}`}
-                alt={`Arte por ${getAuthorHandle(selectedArt)} no Museu da Pyxie • Visite https://pyxie.com.br/`}
+                alt={artAlt(selectedArt)}
                 data-canonical-url="https://pyxie.com.br/"
                 style={{ transform: `scale(${lightboxZoom})`, transition: 'transform 0.2s ease-out' }}
                 className="max-h-[72vh] max-w-full object-contain pointer-events-none rounded-lg"
@@ -494,7 +541,7 @@ export default function Museum({ t, lang }) {
                   pyxie.com.br • {getAuthorHandle(selectedArt)}
                 </span>
                 <span className="text-purple-300/80 text-[11px] shrink-0 ml-2 hidden sm:inline">
-                  Galeria Oficial da Comunidade
+                  {t('museum.officialGallery')}
                 </span>
               </div>
             </div>
@@ -513,25 +560,25 @@ export default function Museum({ t, lang }) {
       {editingArt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
           <div className="bg-[#0e071a] border border-purple-500/30 rounded-2xl p-6 w-full max-w-md space-y-4">
-            <h3 className="font-title font-bold text-white text-lg">Editar Descrição</h3>
+            <h3 className="font-title font-bold text-white text-lg">{t('museum.editTitle')}</h3>
             <textarea
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
               className="w-full h-32 p-3 rounded-xl bg-white/5 border border-purple-500/25 text-white text-sm outline-none focus:border-pink-500"
-              placeholder="Digite a nova descrição da obra..."
+              placeholder={t('museum.editPlaceholder')}
             />
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setEditingArt(null)}
                 className="px-4 py-2 rounded-xl bg-white/5 text-slate-300 text-xs font-bold"
               >
-                Cancelar
+                {t('museum.cancel')}
               </button>
               <button
                 onClick={handleEditSave}
                 className="px-4 py-2 rounded-xl bg-pink-600 text-white text-xs font-bold shadow-neon-pink"
               >
-                Salvar Alterações
+                {t('museum.save')}
               </button>
             </div>
           </div>
@@ -552,16 +599,16 @@ export default function Museum({ t, lang }) {
               <ShieldAlert className="w-6 h-6" />
             </div>
             <h4 className="font-title font-bold text-white text-lg">
-              Proteção de Autoria
+              {t('museum.artShieldTitle')}
             </h4>
             <p className="text-xs text-slate-300 leading-relaxed">
-              {t('museum.artShield') || 'Esta obra foi criada com amor por um membro da nossa comunidade. O download direto é bloqueado para proteger a autoria do artista. Compartilhe o link do museu!'}
+              {t('museum.artShield')}
             </p>
             <button
               onClick={() => setShieldModalOpen(false)}
               className="w-full py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white text-xs font-bold shadow-neon-pink"
             >
-              Compreendido ✨
+              {t('museum.modalUnderstood')} ✨
             </button>
           </div>
         </div>

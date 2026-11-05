@@ -14,6 +14,11 @@ const { SUPPORT_EMAIL } = require('../config/support');
 
 const MP_API = 'https://api.mercadopago.com';
 const PIX_TTL_MS = 30 * 60 * 1000;
+
+/** Data de expiração do Pix no formato do Mercado Pago (ISO 8601 com fuso), em UTC real. */
+function pixExpiration(now = Date.now()) {
+  return new Date(now + PIX_TTL_MS).toISOString().replace(/\.\d{3}Z$/, '.000+00:00');
+}
 const CHARGE_LIMIT = 500;
 
 let fetchImpl = (...args) => fetch(...args);
@@ -133,7 +138,9 @@ async function createPixCharge({ guildId, plan, addonId = null, cycle = 'month',
       payment_method_id: 'pix',
       external_reference: target.ref,
       notification_url: `${publicUrl()}/api/plans/webhook/mercadopago`,
-      date_of_expiration: new Date(now + PIX_TTL_MS).toISOString().replace('Z', '-03:00'),
+      // Validade em UTC de verdade. Antes trocava o "Z" por "-03:00" sem converter a hora,
+      // e o QR valia ~3h30 no banco em vez de 30 min (cliente podia pagar dois QRs).
+      date_of_expiration: pixExpiration(now),
       payer: { email: SUPPORT_EMAIL },
     }),
   });
@@ -417,6 +424,7 @@ function guildPlanInfo(guildId, now = Date.now()) {
 module.exports = {
   MP_API,
   PIX_TTL_MS,
+  pixExpiration,
   setFetch,
   publicUrl,
   providers,

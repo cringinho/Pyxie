@@ -48,7 +48,7 @@
   <meta property="og:url" content="https://pyxie.com.br/museu" />
   <meta property="og:title" content="Museu da Comunidade • Pyxie" />
   <meta property="og:description" content="Acervo permanente de artes, ilustrações e criações da comunidade da Cringelândia com a Pyxie." />
-  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/og_banner_hd.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:type" content="image/png" />
@@ -62,7 +62,7 @@
   <meta name="twitter:creator" content="@PyxieBot" />
   <meta name="twitter:title" content="Museu da Comunidade • Pyxie" />
   <meta name="twitter:description" content="Acervo permanente de artes, ilustrações e criações da comunidade da Cringelândia com a Pyxie." />
-  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/og_banner_hd.png" />
   <meta name="twitter:image:alt" content="Museu de Artes da Comunidade Pyxie" />
 
   <!-- Schema.org JSON-LD for Community Museum -->
@@ -626,8 +626,8 @@
 
   <!-- Cabeçalho Principal -->
   <header class="museum-legacy-hero">
-    <h1 id="title"></h1>
-    <p class="sub" id="subtitle"></p>
+    <h1 id="title">Mural das Artes Mágicas da Pyxie</h1>
+    <p class="sub" id="subtitle">Mural especial com as criações e ilustrações da comunidade da Cringelândia.</p>
   </header>
 
   <main class="container">
@@ -722,7 +722,8 @@
 
     const params = new URLSearchParams(location.search);
     const qLang = params.get('lang');
-    let lang = (qLang === 'pt' || qLang === 'en') ? qLang : ((navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en');
+    // Idioma: o caminho manda (/en/... = inglês, sem /en = português), como o canonical e o hreflang.
+    let lang = (qLang === 'pt' || qLang === 'en') ? qLang : ((location.pathname === '/en' || location.pathname.startsWith('/en/')) ? 'en' : 'pt');
     let page = 1, totalPages = 1;
 
     const $ = (id) => document.getElementById(id);
