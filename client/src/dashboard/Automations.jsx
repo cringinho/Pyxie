@@ -52,6 +52,7 @@ import { api } from './api';
 import BotPermissions from './Permissions';
 import { ConfigAside, DiscordPreview, HubGroup, HubLayout, ModuleCard, SchemaForm } from './hub';
 import { Button, Notice, Spinner, StatTile } from './ui';
+import { errorText } from './i18n';
 
 const ICONS = {
   Coffee,
@@ -340,7 +341,7 @@ export default function Automations({ t, guildId }) {
       .catch(() => {});
   }, [guildId]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!data) return <Spinner label={t('app.loading')} />;
 
   const keys = Object.keys(data.schema);
@@ -441,7 +442,7 @@ export default function Automations({ t, guildId }) {
         status && (
           <div className="mb-2" role="status">
             <Notice tone={status === 'ok' ? 'ok' : 'error'}>
-              {status === 'ok' ? t('auto.saved') : KNOWN_ERRORS.includes(status) ? t(`auto.error.${status}`) : t('error.generic', { error: status })}
+              {status === 'ok' ? t('auto.saved') : KNOWN_ERRORS.includes(status) ? t(`auto.error.${status}`) : errorText(t, status)}
             </Notice>
           </div>
         )

@@ -42,6 +42,10 @@ const ROLE = '444444444444444444';
       buttons: Array.from({ length: 6 }, (_, i) => ({ id: `b${i}`, label: 'x', row: 0, action: { type: 'link', url: 'https://pyxie.com.br' } })),
     });
     assert(studio.validateMessage(buttons).some((e) => e.path === 'buttons.row0'), 'Mais de 5 botões numa fileira é recusado');
+    // Q128: pergunta de formulário acima de 45 letras é recusada, não cortada calada.
+    const longQuestion = { buttons: [{ label: 'F', action: { type: 'modal', title: 'Ok', fields: [{ label: 'x'.repeat(46) }] } }] };
+    assert.deepStrictEqual(studio.rawLimitErrors(longQuestion), [{ code: 'too_long', path: 'buttons.0.fields.0.label', limit: 45 }]);
+    assert.deepStrictEqual(studio.rawLimitErrors({ buttons: [{ action: { type: 'modal', fields: [{ label: 'x'.repeat(45) }] } }] }), []);
     assert(
       studio.validateMessage(studio.normalizeMessage({ name: 'L', envelope: { content: 'oi' }, buttons: [{ label: 'x', action: { type: 'link', url: 'http://inseguro' } }] }))
         .some((e) => e.code === 'invalid_url'),

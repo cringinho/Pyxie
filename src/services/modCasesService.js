@@ -61,6 +61,31 @@ function normalizeThreshold(raw = {}) {
   return { points, action, durationMinutes };
 }
 
+const THRESHOLD_ACTIONS = new Set(['timeout', 'kick', 'ban', 'none']);
+const MAX_THRESHOLDS = 10;
+
+/**
+ * Confere a lista de limites vinda do painel sem corrigir nada calado: pontos 1-100 sem
+ * repetir, ação conhecida e castigo de 1 min a 28 dias (o teto do Discord).
+ */
+function validateThresholds(list) {
+  if (!Array.isArray(list)) return { ok: false, reason: 'invalid_thresholds' };
+  if (list.length > MAX_THRESHOLDS) return { ok: false, reason: 'too_many_thresholds' };
+  const seen = new Set();
+  for (const raw of list) {
+    const points = Number(raw?.points);
+    if (!Number.isInteger(points) || points < 1 || points > 100) return { ok: false, reason: 'invalid_threshold_points' };
+    if (seen.has(points)) return { ok: false, reason: 'duplicate_threshold_points' };
+    seen.add(points);
+    if (!THRESHOLD_ACTIONS.has(raw?.action)) return { ok: false, reason: 'invalid_threshold_action' };
+    if (raw.action === 'timeout') {
+      const minutes = Number(raw.durationMinutes);
+      if (!Number.isInteger(minutes) || minutes < 1 || minutes > 40320) return { ok: false, reason: 'invalid_threshold_duration' };
+    }
+  }
+  return { ok: true };
+}
+
 function getGuildWarningsConfig(guildId) {
   const raw = warningsConfig.guild(guildId).get();
   const thresholds = (Array.isArray(raw.thresholds) ? raw.thresholds : DEFAULT_THRESHOLDS)
@@ -431,6 +456,7 @@ module.exports = {
   warningsConfig,
   getGuildWarningsConfig,
   setGuildWarningsConfig,
+  validateThresholds,
   createCase,
   issueWarning,
   updateCaseReason,

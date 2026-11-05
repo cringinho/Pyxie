@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Award, Check, KeyRound, RotateCcw, Trash2, UserPlus } from 'lucide-react';
 import { api } from './api';
 import { Badge, Button, Notice, Spinner, StatTile } from './ui';
+import { errorText } from './i18n';
 
 // Programa Fundador: 20 vagas de Básico grátis por 12 meses para servidores parceiros.
 // Painel do dono: gerar chave, resgatar, checklist de contrapartida e revogar.
@@ -25,8 +26,14 @@ export default function Founder({ t }) {
       })
       .catch((e) => setError(e.code || 'generic'));
 
+  // Nome de cada servidor (diretório público do dono) para a linha não mostrar só o ID.
+  const [serverNames, setServerNames] = useState({});
   useEffect(() => {
     load();
+    api
+      .servers()
+      .then((d) => setServerNames(Object.fromEntries((d.servers || []).map((g) => [g.id, g.name]))))
+      .catch(() => {});
   }, []);
 
   const run = async (key, action) => {
@@ -36,13 +43,15 @@ export default function Founder({ t }) {
       await action();
       await load();
     } catch (e) {
-      setNotice({ tone: 'error', text: t(`founder.error.${e.code || 'generic'}`) });
+      const key = `founder.error.${e.code || 'generic'}`;
+      const known = t(key);
+      setNotice({ tone: 'error', text: known === key ? errorText(t, e.code) : known });
     } finally {
       setBusy(null);
     }
   };
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!data) return <Spinner label={t('app.loading')} />;
 
   const { stats, seats } = data;
@@ -66,7 +75,14 @@ export default function Founder({ t }) {
   const toggle = (seat, key) =>
     run(`check:${seat.guildId}:${key}`, () => api.founderChecklist(seat.guildId, { [key]: !seat.checklist[key] }));
 
-  const revoke = (seat) => run(`revoke:${seat.guildId}`, () => api.founderRevoke(seat.guildId));
+  const serverName = (id) => serverNames[id] || '';
+  // Revogar tira o plano grátis na hora: confirma com o nome do servidor (Q157).
+  const revoke = (seat) => {
+    const name = serverName(seat.guildId) || seat.guildId;
+    // eslint-disable-next-line no-alert
+    if (!window.confirm(t('founder.revokeConfirm', { name }))) return;
+    run(`revoke:${seat.guildId}`, () => api.founderRevoke(seat.guildId));
+  };
 
   return (
     <div className="space-y-4">
@@ -81,7 +97,7 @@ export default function Founder({ t }) {
 
       {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
 
-      <div className="grid gap-3 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         <div className="dash-card space-y-3 rounded-2xl p-4">
           <p className="font-title font-bold">{t('founder.generate')}</p>
           <input
@@ -126,7 +142,15 @@ export default function Founder({ t }) {
           <div key={seat.code} className="dash-card flex flex-wrap items-center gap-3 rounded-2xl p-3 text-sm">
             <code className="rounded-lg bg-white/5 px-2 py-1 font-mono text-xs">{seat.code}</code>
             <Badge tone={seat.status === 'active' ? 'green' : seat.status === 'available' ? 'violet' : 'muted'}>{statusLabel(seat.status)}</Badge>
-            <span className="font-mono text-xs text-white/50">{seat.guildId || '—'}</span>
+            <span className="min-w-0 truncate text-xs">
+              {seat.guildId ? (
+                <>
+                  <span className="font-semibold">{serverName(seat.guildId) || t('founder.unknownServer')}</span> <span className="font-mono text-white/40">{seat.guildId}</span>
+                </>
+              ) : (
+                '—'
+              )}
+            </span>
             {seat.note && <span className="truncate text-xs text-white/60">{seat.note}</span>}
             <span className="text-xs text-white/50">{t('founder.days', { n: seat.daysLeft })}</span>
 
@@ -146,16 +170,19 @@ export default function Founder({ t }) {
                     {t(`founder.checklist.${key}`)}
                   </button>
                 ))}
-                <button
-                  type="button"
-                  onClick={() => revoke(seat)}
-                  disabled={busy === `revoke:${seat.guildId}`}
-                  aria-label={t('founder.revoke')}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-400/40 text-red-300 hover:bg-red-500/10"
-                >
-                  <Trash2 size={14} aria-hidden="true" />
-                </button>
               </div>
+            )}
+            {seat.guildId && seat.status !== 'revoked' && (
+              // Lixeira afastada do checklist e com área de toque de 44px, para não errar no celular.
+              <button
+                type="button"
+                onClick={() => revoke(seat)}
+                disabled={busy === `revoke:${seat.guildId}`}
+                aria-label={t('founder.revokeAria', { name: serverName(seat.guildId) || seat.guildId })}
+                className="ml-3 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-red-400/40 text-red-300 hover:bg-red-500/10"
+              >
+                <Trash2 size={16} aria-hidden="true" />
+              </button>
             )}
           </div>
         ))}

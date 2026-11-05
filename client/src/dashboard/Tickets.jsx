@@ -4,6 +4,7 @@ import { api } from './api';
 import BotPermissions from './Permissions';
 import { DiscordPreview } from './hub';
 import { Badge, Button, Card, MultiSelect, Notice, Spinner, StatTile, Switch, Toggle } from './ui';
+import { errorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 const TYPES = ['help', 'report'];
@@ -76,7 +77,7 @@ export default function Tickets({ t, guildId, isOwner }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guildId]);
 
-  if (!data || !form) return status ? <Notice tone="error">{t('error.generic', { error: status.code })}</Notice> : <Spinner label={t('app.loading')} />;
+  if (!data || !form) return status ? <Notice tone="error">{errorText(t, status.code)}</Notice> : <Spinner label={t('app.loading')} />;
 
   const { defaults, limits, stats } = data;
   const opts = form.options;
@@ -85,10 +86,6 @@ export default function Tickets({ t, guildId, isOwner }) {
   const textChannels = channels.filter((c) => [0, 5].includes(c.type)).map((c) => ({ id: c.id, label: `# ${c.name}` }));
   const categories = channels.filter((c) => c.type === 4).map((c) => ({ id: c.id, label: `📁 ${c.name}` }));
   const roleOpts = roles.filter((r) => !r.managed && r.name !== '@everyone').map((r) => ({ id: r.id, label: r.name }));
-  const errorText = (code) => {
-    const known = t(`error.${code}`);
-    return known.startsWith('error.') ? t('error.generic', { error: code }) : known;
-  };
 
   const run = async (fn, okKey) => {
     setBusy(true);
@@ -98,7 +95,7 @@ export default function Tickets({ t, guildId, isOwner }) {
       setStatus({ tone: 'ok', text: typeof okKey === 'function' ? okKey(res) : t(okKey) });
       return res;
     } catch (e) {
-      setStatus({ tone: 'error', text: errorText(e.code || 'generic') });
+      setStatus({ tone: 'error', text: errorText(t, e.code || 'generic') });
       return null;
     } finally {
       setBusy(false);
@@ -188,7 +185,7 @@ export default function Tickets({ t, guildId, isOwner }) {
           <Labeled label={t('tickets.panelIntro')} hint={t('tickets.emptyDefault')}>
             <textarea rows={3} value={opts.panelIntro} maxLength={limits.panelIntro} placeholder={defaults.panelIntro} onChange={(e) => setOpt({ panelIntro: e.target.value })} className={`${field} py-2`} />
           </Labeled>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Labeled label={t('tickets.panelColor')}>
               <div className="flex items-center gap-2">
                 <input type="color" value={opts.panelColor || '#8B5CF6'} onChange={(e) => setOpt({ panelColor: e.target.value })} className="h-10 w-14 cursor-pointer rounded-xl border border-white/10 bg-transparent p-1" />
@@ -196,10 +193,10 @@ export default function Tickets({ t, guildId, isOwner }) {
               </div>
             </Labeled>
             <Labeled label={t('tickets.panelFooter')}>
-              <input value={opts.panelFooter || ''} placeholder="Pyxie · Atendimento" onChange={(e) => setOpt({ panelFooter: e.target.value })} className={field} />
+              <input value={opts.panelFooter || ''} placeholder={t('tickets.panelFooterPh')} onChange={(e) => setOpt({ panelFooter: e.target.value })} className={field} />
             </Labeled>
           </div>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Toggle label={t('tickets.pingStaffOnOpen')} checked={Boolean(opts.pingStaffOnOpen)} onChange={(v) => setOpt({ pingStaffOnOpen: v })} />
             <Toggle label={t('tickets.closeConfirmation')} checked={Boolean(opts.closeConfirmation)} onChange={(v) => setOpt({ closeConfirmation: v })} />
           </div>
@@ -211,7 +208,7 @@ export default function Tickets({ t, guildId, isOwner }) {
                 </span>
                 <Switch checked={opts.types[type].enabled} onChange={(v) => setType(type, { enabled: v })} label={t('tickets.typeOn', { type: t(`tickets.type.${type}`) })} />
               </legend>
-              <div className="grid gap-2 sm:grid-cols-[1fr_2fr]">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_2fr]">
                 <Labeled label={t('tickets.typeLabel')}>
                   <input value={opts.types[type].label} maxLength={limits.label} placeholder={defaults.types[type].label} onChange={(e) => setType(type, { label: e.target.value })} className={field} />
                 </Labeled>
@@ -287,7 +284,7 @@ export default function Tickets({ t, guildId, isOwner }) {
         </Card>
       )}
 
-      {status && <Notice tone={status.tone === 'ok' ? 'ok' : 'error'}>{status.text || errorText(status.code)}</Notice>}
+      {status && <Notice tone={status.tone === 'ok' ? 'ok' : 'error'}>{status.text || errorText(t, status.code)}</Notice>}
       <Button className="w-full" disabled={busy} onClick={save}>
         {t('features.save')}
       </Button>

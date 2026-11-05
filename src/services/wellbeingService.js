@@ -59,7 +59,8 @@ function getWellbeingGuildConfig(guildId) {
 
 function setWellbeingGuildConfig(guildId, patch = {}) {
   const current = getWellbeingGuildConfig(guildId);
-  const clamp = (n, min, max, d) => (Number.isFinite(Number(n)) ? Math.min(max, Math.max(min, Math.round(Number(n)))) : d);
+  // Vazio é "usar o padrão" (9h), não meia-noite: Number('') daria 0 (Q130).
+  const clamp = (n, min, max, d) => (n === '' || n === null || n === undefined || !Number.isFinite(Number(n)) ? d : Math.min(max, Math.max(min, Math.round(Number(n)))));
   const next = {
     ...current,
     enabled: patch.enabled !== undefined ? Boolean(patch.enabled) : current.enabled !== false,

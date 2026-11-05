@@ -5,6 +5,7 @@ import { Button, Card, Notice, Spinner, StatTile, Toggle } from './ui';
 import Paywall, { planFromCode } from './Paywall';
 import { go } from './Shell';
 import StoreProducts from './StoreProducts';
+import { errorText } from './i18n';
 
 // Telas da zona da Mary (servidor dela; só a Mary e o dono). API: /api/dashboard/guilds/:id/mary/*.
 const base = (id) => `/api/dashboard/guilds/${id}/mary`;
@@ -22,7 +23,11 @@ const maryApi = {
 };
 
 // A imagem vai crua (sem JSON) para caber até 8 MB.
+// Mesmo teto do servidor (express.raw 8mb): recusa antes de enviar, com o motivo (Q133).
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+
 async function uploadImage(guildId, file) {
+  if (file.size > MAX_UPLOAD_BYTES) throw new ApiError('file_too_large', 413, {});
   const res = await fetch(`${base(guildId)}/upload`, {
     method: 'POST',
     credentials: 'same-origin',
@@ -70,7 +75,7 @@ function Status({ t, status }) {
   if (status === 'ok') return <Notice tone="ok">{t('features.saved')}</Notice>;
   if (status.startsWith('done:')) return <Notice tone="ok">{t(status.slice(5))}</Notice>;
   const known = t(`mary.err.${status}`);
-  return <Notice tone="error">{known.startsWith('mary.err.') ? t('error.generic', { error: status }) : known}</Notice>;
+  return <Notice tone="error">{known.startsWith('mary.err.') ? errorText(t, status) : known}</Notice>;
 }
 
 function useChannels(guildId) {
@@ -348,7 +353,7 @@ function CalcCard({ t, guildId }) {
   return (
     <Card title={t('mary.calc.title')} icon={Calculator}>
       <p className="mb-3 text-sm text-white/70">{t('mary.calc.hint')}</p>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="flex items-end gap-2">
           <Field label={t('mary.calc.robux')}>
             <input type="number" min="1" value={input.robux} onChange={(e) => setInput({ ...input, robux: e.target.value })} className={field} />

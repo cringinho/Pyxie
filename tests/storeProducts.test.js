@@ -53,6 +53,19 @@ assert.equal(
   store.saveProduct(G, { name: 'Link', priceCents: 500, delivery: 'message' }).reason,
   'delivery_url_required'
 );
+// Q121: preço vazio, zero, abaixo de R$ 1,00 ou acima do teto é recusado (antes virava R$ 1,00 calado).
+assert.equal(store.saveProduct(G, { name: 'Vazio', priceCents: '' }).reason, 'price_required');
+assert.equal(store.saveProduct(G, { name: 'Zero', priceCents: 0 }).reason, 'price_required');
+assert.equal(store.saveProduct(G, { name: 'Baratinho', priceCents: 50 }).reason, 'price_out_of_range');
+assert.equal(store.saveProduct(G, { name: 'Caro', priceCents: 99999999 }).reason, 'price_out_of_range');
+assert.equal(store.saveProduct(G, { name: 'Custo', priceCents: 500, costCents: -1 }).reason, 'cost_out_of_range');
+assert.equal(store.saveProduct(G, { name: 'Link ruim', priceCents: 500, delivery: 'message', deliveryUrl: 'roblox.com' }).reason, 'delivery_url_invalid');
+// Editar só o preço de um produto que já existe mantém o resto (estoque incluído).
+const edited = store.saveProduct(G, { id: '400-robux', priceCents: 1500 });
+assert.equal(edited.ok, true);
+assert.equal(edited.product.priceCents, 1500);
+assert.equal(edited.product.robux, 400);
+assert.equal(store.saveProduct(G, { id: '400-robux', priceCents: 1400 }).product.priceCents, 1400, 'Volta ao preço original');
 console.log('  ✅ 5. Preço e link de entrega são obrigatórios.');
 
 // 6. Estoque com código repetido não duplica

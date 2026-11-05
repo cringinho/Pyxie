@@ -43,7 +43,7 @@ export function ModuleCard({ icon: Icon, emoji, title, desc, on, statusLabel, me
 export function HubLayout({ aside, children }) {
   return (
     <div className={aside ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start lg:gap-4' : ''}>
-      <div className={`grid gap-3 sm:grid-cols-2 ${aside ? '' : 'xl:grid-cols-3'}`}>{children}</div>
+      <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 ${aside ? '' : 'xl:grid-cols-3'}`}>{children}</div>
       {aside}
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from './api';
 import { Button, Card, MultiSelect, Notice, Spinner } from './ui';
+import { errorText } from './i18n';
 
 const field = 'min-h-[44px] w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm';
 
@@ -24,7 +25,7 @@ export function CommunitySettings({ t, guildId }) {
     api.channels(guildId).then((d) => setChannels(d.channels)).catch(() => {});
   }, [guildId]);
 
-  if (!cfg) return status ? <Notice tone="error">{t('error.generic', { error: status })}</Notice> : <Spinner label={t('app.loading')} />;
+  if (!cfg) return status ? <Notice tone="error">{errorText(t, status)}</Notice> : <Spinner label={t('app.loading')} />;
   const forums = channels.filter((c) => c.type === 15).map((c) => ({ id: c.id, label: `#${c.name}` }));
   const texts = channels.filter((c) => [0, 5].includes(c.type));
   const h = cfg.hyperfocus;
@@ -67,7 +68,7 @@ export function CommunitySettings({ t, guildId }) {
             </label>
             <label className="block">
               <span className="mb-1 block text-xs font-semibold text-white/70">{t('community.customComment')}</span>
-              <input value={h.customComment || ''} placeholder="Ex: Que hiperfoco incrível!" onChange={(e) => setH({ customComment: e.target.value })} className={field} />
+              <input value={h.customComment || ''} placeholder={t('community.customCommentPh')} onChange={(e) => setH({ customComment: e.target.value })} className={field} />
             </label>
           </div>
           <div className="grid grid-cols-3 gap-2">
@@ -105,7 +106,7 @@ export function CommunitySettings({ t, guildId }) {
         </div>
       </Card>
       {status === 'ok' && <Notice tone="ok">{t('features.saved')}</Notice>}
-      {status && status !== 'ok' && <Notice tone="error">{t('error.generic', { error: status })}</Notice>}
+      {status && status !== 'ok' && <Notice tone="error">{errorText(t, status)}</Notice>}
       <Button onClick={save} className="w-full">
         {t('features.save')}
       </Button>
@@ -127,7 +128,7 @@ function ColorsCard({ t, guildId, texts }) {
       const res = await api.publishColors(guildId, channelId);
       setState({ ok: true, text: t(res.edited ? 'colorsPanel.updated' : 'colorsPanel.done', { created: res.created, reused: res.reused, renamed: res.renamed || 0 }) });
     } catch (e) {
-      setState({ ok: false, text: t('error.generic', { error: e.code }) });
+      setState({ ok: false, text: errorText(t, e.code) });
     }
     setBusy(false);
   };
@@ -158,7 +159,7 @@ export function Assets({ t }) {
   useEffect(() => {
     load();
   }, []);
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!data) return <Spinner label={t('app.loading')} />;
 
   const update = async (file, patch) => {
@@ -178,7 +179,7 @@ export function Assets({ t }) {
           </Button>
         ))}
       </div>
-      <ul className="grid gap-3 sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {list.map((a) => (
           <li key={a.file} className="rounded-xl border border-white/10 p-3">
             <img src={a.url} alt={a.file} loading="lazy" className="mb-2 h-28 w-full rounded-lg bg-black/30 object-contain" />

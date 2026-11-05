@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from './api';
 import { Button, Drawer, Notice, Spinner, Toggle } from './ui';
+import { errorText, apiErrorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 const CRINGELANDIA = '1453890868980482090';
@@ -40,7 +41,7 @@ function ModuleConfig({ t, id }) {
 
   if (state === 'loading') return <Spinner label={t('app.loading')} />;
   if (state === 'none') return <p className="text-sm text-white/60">{t('drawer.noConfig')}</p>;
-  if (state !== 'ok') return <Notice tone="error">{t('error.generic', { error: state })}</Notice>;
+  if (state !== 'ok') return <Notice tone="error">{errorText(t, state)}</Notice>;
 
   const save = async (body, okKey = 'features.saved') => {
     setNotice(null);
@@ -50,7 +51,7 @@ function ModuleConfig({ t, id }) {
       if (res.stats) setData({ ...data, stats: res.stats });
       setNotice({ tone: 'ok', text: res.message || t(okKey) });
     } catch (e) {
-      setNotice({ tone: 'error', text: e.data?.error || t('error.generic', { error: e.code || 'generic' }) });
+      setNotice({ tone: 'error', text: apiErrorText(t, e) });
     }
   };
 

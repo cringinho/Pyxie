@@ -31,6 +31,13 @@ export async function request(path, { method = 'GET', body } = {}) {
       res.status === 403 && data.error === 'plan_required'
         ? `plan_required:${data.requiredPlan || 'premium'}`
         : data.error || `http_${res.status}`;
+    // Login vencido com o painel aberto: avisa a casca do painel, que mostra "Sua sessão
+    // expirou" com o botão de entrar de novo (Q111), em vez de erro técnico em cada tela.
+    if (res.status === 401) {
+      try {
+        window.dispatchEvent(new CustomEvent('pyxie:session-expired'));
+      } catch (_) {}
+    }
     throw new ApiError(code, res.status, data);
   }
   // 200 sem JSON (proxy devolvendo HTML, deploy pela metade): erro explícito, nunca
@@ -47,6 +54,7 @@ export const api = {
   guild: (id) => request(`/api/dashboard/guilds/${id}`),
   channels: (id) => request(`/api/dashboard/guilds/${id}/channels`),
   roles: (id) => request(`/api/dashboard/guilds/${id}/roles`),
+  lookupMembers: (id, ids) => request(`/api/dashboard/guilds/${id}/members/lookup?ids=${encodeURIComponent([...new Set(ids)].slice(0, 50).join(','))}`),
   features: (id) => request(`/api/dashboard/guilds/${id}/features`),
   saveFeatures: (id, body) => request(`/api/dashboard/guilds/${id}/features`, { method: 'PUT', body }),
   access: (id) => request(`/api/dashboard/guilds/${id}/access`),

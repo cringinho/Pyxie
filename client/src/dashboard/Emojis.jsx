@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from './api';
 import { Button, Notice, Spinner } from './ui';
+import { errorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 
@@ -53,7 +54,7 @@ export default function Emojis({ t }) {
     return q ? all.filter((e) => `${e.name} ${e.id} ${e.category}`.toLowerCase().includes(q)) : all;
   }, [data, query]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!data) return <Spinner label={t('app.loading')} />;
 
   const saveCurrency = async (key, emojiId) => {
@@ -63,7 +64,7 @@ export default function Emojis({ t }) {
       setCurrencies(res.currencies);
       setNotice({ tone: 'ok', text: t('emojis.saved') });
     } catch (e) {
-      setNotice({ tone: 'error', text: t('error.generic', { error: e.code || 'generic' }) });
+      setNotice({ tone: 'error', text: errorText(t, e.code || 'generic') });
     }
   };
 
@@ -74,7 +75,7 @@ export default function Emojis({ t }) {
       setNotice({ tone: 'ok', text: t(emojiId ? 'emojis.saved' : 'emojis.reset') });
       load();
     } catch (e) {
-      setNotice({ tone: 'error', text: t('error.generic', { error: e.code || 'generic' }) });
+      setNotice({ tone: 'error', text: errorText(t, e.code || 'generic') });
     }
   };
 
@@ -88,17 +89,24 @@ export default function Emojis({ t }) {
               const c = currencies[key];
               if (!c) return null;
               return (
-                <li key={key} className="flex items-center gap-3 text-sm">
-                  <img src={c.currentUrl} alt={t(`emojis.currency.${key}`)} width="28" height="28" className="h-7 w-7 object-contain" />
-                  <span className="min-w-0 flex-1 font-semibold">{t(`emojis.currency.${key}`)}</span>
-                  <Button variant="ghost" className="min-h-[36px] px-3" onClick={() => setEditing({ currencyKey: key })}>
-                    {t('emojis.change')}
-                  </Button>
-                  {c.isCustomized && (
-                    <button type="button" className="text-xs text-white/50 hover:text-white" onClick={() => saveCurrency(key, c.defaultId)}>
-                      {t('emojis.default')}
-                    </button>
-                  )}
+                <li key={key} className="flex flex-wrap items-center gap-3 text-sm">
+                  <img src={c.currentUrl} alt="" width="28" height="28" className="h-7 w-7 shrink-0 object-contain" />
+                  <span className="min-w-0 flex-1 truncate font-semibold">{t(`emojis.currency.${key}`)}</span>
+                  <span className="flex shrink-0 gap-2">
+                    <Button variant="ghost" className="px-3" onClick={() => setEditing({ currencyKey: key })}>
+                      {t('emojis.change')}
+                    </Button>
+                    {c.isCustomized && (
+                      <Button
+                        variant="ghost"
+                        className="px-3"
+                        aria-label={t('emojis.defaultAria', { name: t(`emojis.currency.${key}`) })}
+                        onClick={() => window.confirm(t('emojis.defaultConfirm', { name: t(`emojis.currency.${key}`) })) && saveCurrency(key, c.defaultId)}
+                      >
+                        {t('emojis.default')}
+                      </Button>
+                    )}
+                  </span>
                 </li>
               );
             })}
@@ -108,27 +116,35 @@ export default function Emojis({ t }) {
       <p className="text-sm text-white/60">{t('emojis.hint', { count: data.count })}</p>
       <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('emojis.search')} aria-label={t('emojis.search')} className={field} />
       {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
-      <ul className="grid gap-3 lg:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         {embeds.map((embed) => (
-          <li key={embed.id} className="dash-card rounded-2xl p-4">
+          <li key={embed.id} className="dash-card min-w-0 rounded-2xl p-4">
             <p className="font-title font-bold">{embed.name}</p>
-            <p className="mb-3 text-xs text-white/50">
+            <p className="mb-3 break-words text-xs text-white/50">
               {embed.category} · <span className="font-mono">{embed.id}</span>
             </p>
             <ul className="space-y-2">
               {embed.slots.map((slot) => (
-                <li key={slot.key} className="flex items-center gap-3 text-sm">
+                // Celular: texto em cima e os botões "Trocar"/"Padrão" numa linha própria embaixo (Q125).
+                <li key={slot.key} className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2 text-sm">
                   <SlotEmoji slot={slot} />
-                  <span className="min-w-0 flex-1">
+                  <span className="min-w-0 flex-1 basis-40">
                     <span className="block truncate font-semibold">{slot.label}</span>
                     {slot.description && <span className="block truncate text-xs text-white/50">{slot.description}</span>}
                   </span>
-                  <Button variant="ghost" className="min-h-[36px] px-3" onClick={() => setEditing({ embedId: embed.id, slotKey: slot.key })}>
-                    {t('emojis.change')}
-                  </Button>
-                  <button type="button" className="text-xs text-white/50 hover:text-white" onClick={() => save(embed.id, slot.key, '')}>
-                    {t('emojis.default')}
-                  </button>
+                  <span className="ml-auto flex shrink-0 gap-2">
+                    <Button variant="ghost" className="px-3" onClick={() => setEditing({ embedId: embed.id, slotKey: slot.key })}>
+                      {t('emojis.change')}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="px-3"
+                      aria-label={t('emojis.defaultAria', { name: slot.label })}
+                      onClick={() => window.confirm(t('emojis.defaultConfirm', { name: slot.label })) && save(embed.id, slot.key, '')}
+                    >
+                      {t('emojis.default')}
+                    </Button>
+                  </span>
                 </li>
               ))}
             </ul>

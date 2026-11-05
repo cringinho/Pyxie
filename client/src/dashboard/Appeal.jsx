@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { api } from './api';
 import { Badge, Button, Card, GuildIcon, Notice, Spinner } from './ui';
+import { errorText } from './i18n';
 
 const MIN = 20;
 const MAX = 1500;
@@ -28,7 +29,7 @@ function AppealForm({ t, server, onSent }) {
         <textarea value={text} onChange={(e) => setText(e.target.value.slice(0, MAX))} rows={6} className="dash-field w-full rounded-xl p-3 text-sm" />
       </label>
       <p className="text-xs text-white/50">{t('appeal.counter', { count: text.trim().length, max: MAX })}</p>
-      {status && <Notice tone="error">{t(`appeal.error.${status}`).startsWith('appeal.') ? t('error.generic', { error: status }) : t(`appeal.error.${status}`)}</Notice>}
+      {status && <Notice tone="error">{t(`appeal.error.${status}`).startsWith('appeal.') ? errorText(t, status) : t(`appeal.error.${status}`)}</Notice>}
       <Button type="submit" disabled={busy || text.trim().length < MIN} className="w-full">
         {t('appeal.send')}
       </Button>
@@ -80,7 +81,7 @@ function PrivacyCard({ t }) {
           </Notice>
         </div>
       )}
-      {error && <Notice tone="error">{t('error.generic', { error })}</Notice>}
+      {error && <Notice tone="error">{errorText(t, error)}</Notice>}
       <Button variant="ghost" onClick={erase} disabled={busy} className="w-full">
         {t('privacy.eraseBtn')}
       </Button>
@@ -97,7 +98,7 @@ export default function Appeal({ t }) {
   }, []);
   useEffect(load, [load]);
 
-  if (error) return <Notice tone="error">{t(`error.${error}`).startsWith('error.') ? t('error.generic', { error }) : t(`error.${error}`)}</Notice>;
+  if (error) return <Notice tone="error">{t(`error.${error}`).startsWith('error.') ? errorText(t, error) : t(`error.${error}`)}</Notice>;
   if (!data) return <Spinner label={t('app.loading')} />;
   const date = (ms) => new Date(ms).toLocaleDateString();
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Flame } from 'lucide-react';
 import { api } from './api';
 import { Button, Card, MultiSelect, Notice, Spinner, Toggle } from './ui';
+import { errorText } from './i18n';
 
 const field = 'dash-field min-h-[40px] w-full rounded-xl px-3 text-sm';
 
@@ -16,7 +17,7 @@ export default function Campfire({ t, guildId }) {
     api.channels(guildId).then((d) => setChannels(d.channels)).catch(() => {});
     api.roles(guildId).then((d) => setRoles(d.roles.filter((r) => !r.managed))).catch(() => {});
   }, [guildId]);
-  if (!cfg) return status ? <Notice tone="error">{t('error.generic', { error: status })}</Notice> : <Spinner label={t('app.loading')} />;
+  if (!cfg) return status ? <Notice tone="error">{errorText(t, status)}</Notice> : <Spinner label={t('app.loading')} />;
 
   const text = channels.filter((c) => [0, 5].includes(c.type));
   const voice = channels.filter((c) => [2, 13].includes(c.type)).map((c) => ({ id: c.id, label: `🔊 ${c.name}` }));
@@ -42,7 +43,7 @@ export default function Campfire({ t, guildId }) {
       <p className="mb-3 text-sm text-white/70">{t('campfire.hint')}</p>
       <div className="space-y-3">
         <Toggle label={t('campfire.on')} checked={cfg.enabled} onChange={(v) => setCfg({ ...cfg, enabled: v })} />
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <label className="block">
             <span className="mb-1 block text-xs font-semibold text-white/70">{t('campfire.channel')}</span>
             <select value={cfg.channelId} onChange={(e) => setCfg({ ...cfg, channelId: e.target.value })} className={`${field} bg-[#160d2a]`}>
@@ -59,7 +60,7 @@ export default function Campfire({ t, guildId }) {
             <MultiSelect
               options={roles.map((r) => ({ id: r.id, label: r.name }))}
               value={cfg.pingRoleIds || (cfg.pingRoleId ? [cfg.pingRoleId] : [])}
-              emptyLabel={t('app.loading')}
+              emptyLabel={t('common.noOptions')}
               onChange={(v) => setCfg({ ...cfg, pingRoleIds: v, pingRoleId: v[0] || '' })}
             />
           </div>
@@ -82,7 +83,7 @@ export default function Campfire({ t, guildId }) {
         <MultiSelect options={voice} value={cfg.excludedChannelIds} emptyLabel={t('channels.empty')} onChange={(v) => setCfg({ ...cfg, excludedChannelIds: v })} />
         <p className="text-xs text-white/50">{t('campfire.privacy')}</p>
         {status === 'ok' && <Notice tone="ok">{t('features.saved')}</Notice>}
-        {status && status !== 'ok' && <Notice tone="error">{t('error.generic', { error: status })}</Notice>}
+        {status && status !== 'ok' && <Notice tone="error">{errorText(t, status)}</Notice>}
         <Button className="w-full" onClick={save}>
           {t('features.save')}
         </Button>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   Ban,
@@ -46,12 +46,14 @@ import {
   Wrench,
   X,
 } from 'lucide-react';
-import { GuildIcon, StatusDot } from './ui';
+import { GuildIcon, StatusDot, confirmLeave } from './ui';
 
 // Asset quadrado da Pyxie servido pelo próprio site (o emoji do Discord era pequeno e saía cortado)
 const PYXIE_ICON = '/assets/pyxie/sticker/sticker_smile.png';
 
 export const go = (hash) => {
+  // Rascunho sem salvar na tela atual: pergunta antes de trocar (Q140).
+  if (!confirmLeave()) return;
   window.location.hash = hash;
 };
 
@@ -280,6 +282,12 @@ function CommandPalette({ t, open, onClose, entries }) {
     return q ? entries.filter((e) => `${e.label} ${e.hint || ''}`.toLowerCase().includes(q)) : entries;
   }, [entries, query]);
 
+  // Mantém o item escolhido pelas setas visível na lista (Q107).
+  useEffect(() => {
+    if (!open) return;
+    document.getElementById(`palette-opt-${index}`)?.scrollIntoView?.({ block: 'nearest' });
+  }, [index, open]);
+
   if (!open) return null;
 
   const pick = (entry) => {
@@ -313,17 +321,22 @@ function CommandPalette({ t, open, onClose, entries }) {
             onKeyDown={onKeyDown}
             placeholder={t('search.placeholder')}
             aria-label={t('search.placeholder')}
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="palette-list"
+            aria-activedescendant={results[index] ? `palette-opt-${index}` : undefined}
             className="min-h-[52px] flex-1 bg-transparent text-sm outline-none placeholder:text-white/40"
           />
         </div>
-        <ul className="max-h-80 overflow-y-auto p-2" role="listbox" aria-label={t('search.open')}>
+        <ul id="palette-list" className="max-h-80 overflow-y-auto p-2" role="listbox" aria-label={t('search.open')}>
           {results.length === 0 && <li className="px-3 py-6 text-center text-sm text-white/50">{t('search.empty')}</li>}
           {results.map((r, i) => {
             const Icon = r.icon;
             return (
-              <li key={r.key} role="option" aria-selected={i === index}>
+              <li key={r.key} id={`palette-opt-${i}`} role="option" aria-selected={i === index}>
                 <button
                   type="button"
+                  tabIndex={-1}
                   onMouseEnter={() => setIndex(i)}
                   onClick={() => pick(r)}
                   className={`flex min-h-[44px] w-full items-center gap-3 rounded-xl px-3 text-left text-sm ${i === index ? 'bg-gradient-to-r from-pyxie-bright/25 to-mystic-violet/15' : ''}`}
@@ -346,6 +359,39 @@ function CommandPalette({ t, open, onClose, entries }) {
 export function Layout({ t, lang, setLang, me, onLogout, nav, crumbs, activeGuildId, globalActive, children }) {
   const [drawer, setDrawer] = useState(false);
   const [palette, setPalette] = useState(false);
+  const menuButtonRef = useRef(null);
+  const drawerRef = useRef(null);
+  const drawerWasOpen = useRef(false);
+
+  // Gaveta do celular como diálogo de verdade (Q106): ao abrir, o foco vai para o primeiro
+  // link; Tab fica preso dentro dela; ao fechar, o foco volta para o botão ☰.
+  useEffect(() => {
+    if (drawer) {
+      drawerWasOpen.current = true;
+      const first = drawerRef.current?.querySelector('a[href], button:not([disabled])');
+      first?.focus();
+      return undefined;
+    }
+    if (drawerWasOpen.current) {
+      drawerWasOpen.current = false;
+      menuButtonRef.current?.focus();
+    }
+    return undefined;
+  }, [drawer]);
+  const trapTab = (e) => {
+    if (e.key !== 'Tab' || !drawerRef.current) return;
+    const items = [...drawerRef.current.querySelectorAll('a[href], button:not([disabled]), input, select, textarea')].filter((el) => el.offsetParent !== null);
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
 
   useEffect(() => {
     const onKey = (e) => {
@@ -383,7 +429,7 @@ export function Layout({ t, lang, setLang, me, onLogout, nav, crumbs, activeGuil
       {drawer && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <button type="button" aria-label={t('nav.close')} className="absolute inset-0 bg-black/60" onClick={() => setDrawer(false)} />
-          <aside className="dash-surface absolute inset-y-0 left-0 flex max-w-[90vw] border-r border-white/10">
+          <aside ref={drawerRef} role="dialog" aria-modal="true" aria-label={t('nav.menu')} onKeyDown={trapTab} className="dash-surface absolute inset-y-0 left-0 flex max-w-[90vw] border-r border-white/10">
             {side(() => setDrawer(false))}
             <button
               type="button"
@@ -400,8 +446,10 @@ export function Layout({ t, lang, setLang, me, onLogout, nav, crumbs, activeGuil
       <div className="lg:pl-[312px]">
         <header className="dash-surface sticky top-0 z-20 flex min-h-[60px] items-center gap-2 border-b border-white/5 px-3 sm:px-5">
           <button
+            ref={menuButtonRef}
             type="button"
             aria-label={t('nav.menu')}
+            aria-expanded={drawer}
             onClick={() => setDrawer(true)}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl hover:bg-white/10 lg:hidden"
           >

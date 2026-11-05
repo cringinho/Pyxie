@@ -189,6 +189,22 @@ function saveProduct(guildId, input = {}, now = Date.now()) {
     const id = existing ? existing.id : slugify(input.name);
     if (!existing && products[id]) return { ok: false, reason: 'duplicate_id' };
 
+    // Preço e custo fora da faixa são recusados com motivo, nunca "corrigidos" calados para
+    // R$ 1,00 ou para o teto (auditoria Q121). Produto novo precisa de preço.
+    const hasPrice = input.priceCents !== undefined && input.priceCents !== null && input.priceCents !== '';
+    if (!existing || hasPrice) {
+      const price = Number(input.priceCents);
+      if (!hasPrice || !Number.isFinite(price) || price <= 0) return { ok: false, reason: 'price_required' };
+      if (!Number.isInteger(price) || price < MIN_PRICE_CENTS || price > MAX_PRICE_CENTS) {
+        return { ok: false, reason: 'price_out_of_range', min: MIN_PRICE_CENTS, max: MAX_PRICE_CENTS };
+      }
+    }
+    if (input.costCents !== undefined && input.costCents !== null && input.costCents !== '') {
+      const cost = Number(input.costCents);
+      if (!Number.isInteger(cost) || cost < 0 || cost > MAX_PRICE_CENTS) return { ok: false, reason: 'cost_out_of_range', max: MAX_PRICE_CENTS };
+    }
+    if (input.deliveryUrl && !/^https?:\/\/\S{4,280}$/.test(String(input.deliveryUrl))) return { ok: false, reason: 'delivery_url_invalid' };
+
     const merged = normalizeProduct(
       {
         ...(existing || {}),
@@ -240,7 +256,11 @@ function addStock(guildId, id, codes = []) {
       .map((c) => text(c, 200))
       .filter(Boolean);
     const before = product.stock.length;
-    const merged = [...new Set([...product.stock, ...incoming])].slice(0, MAX_STOCK);
+    const all = [...new Set([...product.stock, ...incoming])];
+    const merged = all.slice(0, MAX_STOCK);
+    // A tela mostra quantos eram repetidos e quantos ficaram de fora pelo teto (Q123).
+    const cut = all.length - merged.length;
+    const duplicates = incoming.length - (all.length - before);
     product.stock = merged;
     product.updatedAt = Date.now();
     products[key] = product;
@@ -249,6 +269,9 @@ function addStock(guildId, id, codes = []) {
       ok: true,
       added: merged.length - before,
       skipped: incoming.length - (merged.length - before),
+      duplicates,
+      cut,
+      max: MAX_STOCK,
       stockCount: merged.length,
       lowStock: merged.length <= product.minStock,
     };

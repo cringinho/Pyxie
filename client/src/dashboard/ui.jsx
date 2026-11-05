@@ -1,4 +1,5 @@
 import React from 'react';
+import { api } from './api';
 
 // Cartão base do painel: borda neon em degradê; `eyebrow` é a etiqueta pequena acima do título.
 export function Card({ title, eyebrow, icon: Icon, action, children, className = '' }) {
@@ -52,7 +53,8 @@ export function Switch({ checked, onChange, label, disabled = false }) {
   );
 }
 
-export function Button({ children, onClick, variant = 'primary', type = 'button', disabled = false, className = '' }) {
+// `rest` repassa aria-label, title etc.: botão só com ícone/emoji precisa de nome para o leitor de tela.
+export function Button({ children, onClick, variant = 'primary', type = 'button', disabled = false, className = '', ...rest }) {
   const styles = {
     primary:
       'bg-gradient-to-r from-pyxie-bright to-mystic-violet text-white shadow-[0_0_18px_rgba(236,72,153,0.35)] hover:shadow-[0_0_26px_rgba(236,72,153,0.55)] hover:brightness-110',
@@ -60,6 +62,7 @@ export function Button({ children, onClick, variant = 'primary', type = 'button'
   };
   return (
     <button
+      {...rest}
       type={type}
       onClick={onClick}
       disabled={disabled}
@@ -199,4 +202,82 @@ export function Drawer({ title, subtitle, onClose, closeLabel, children }) {
       </aside>
     </div>
   );
+}
+
+// Nome e avatar de pessoas a partir dos IDs (consulta ao bot, até 50 por vez). Devolve um
+// Map id -> { name, avatar, exists, inGuild }; IDs sem resposta ficam fora do mapa.
+export function useMemberLookup(guildId, ids) {
+  const key = [...new Set((ids || []).filter((id) => /^\d{17,20}$/.test(String(id))))].sort().join(',');
+  const [map, setMap] = React.useState(() => new Map());
+  React.useEffect(() => {
+    if (!guildId || !key) return undefined;
+    let alive = true;
+    api
+      .lookupMembers(guildId, key.split(','))
+      .then((d) => {
+        if (alive) setMap(new Map((d.members || []).map((m) => [m.id, m])));
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [guildId, key]);
+  return map;
+}
+
+// Pessoa com avatar e nome; sem nome conhecido, mostra o ID em fonte de código.
+export function MemberChip({ id, info, t }) {
+  if (!info?.exists) {
+    return (
+      <span className="inline-flex min-w-0 max-w-full items-center gap-1.5">
+        <code className="truncate text-xs">{id}</code>
+        {info && t && <Badge tone="red">{t('member.notFound')}</Badge>}
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex min-w-0 max-w-full items-center gap-1.5" title={id}>
+      {info.avatar ? <img src={info.avatar} alt="" width={20} height={20} className="h-5 w-5 shrink-0 rounded-full" /> : null}
+      <span className="truncate">{info.name || info.username || id}</span>
+    </span>
+  );
+}
+
+// Aviso de "sair sem salvar" (Q140). Uma tela com rascunho diferente do salvo chama
+// `useUnsavedGuard(dirty, texto)`: fechar/recarregar a aba, tocar num link do menu
+// (#/...) ou trocar de tela por `go()` passa a perguntar antes de jogar o rascunho fora.
+let unsavedMessage = null;
+
+export function confirmLeave() {
+  if (!unsavedMessage) return true;
+  // eslint-disable-next-line no-alert
+  if (!window.confirm(unsavedMessage)) return false;
+  unsavedMessage = null;
+  return true;
+}
+
+export function useUnsavedGuard(dirty, message) {
+  React.useEffect(() => {
+    if (!dirty) return undefined;
+    unsavedMessage = message;
+    const onBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    const onClick = (e) => {
+      const link = e.target?.closest?.('a[href^="#"]');
+      if (!link || !unsavedMessage) return;
+      if (!confirmLeave()) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    document.addEventListener('click', onClick, true);
+    return () => {
+      if (unsavedMessage === message) unsavedMessage = null;
+      window.removeEventListener('beforeunload', onBeforeUnload);
+      document.removeEventListener('click', onClick, true);
+    };
+  }, [dirty, message]);
 }

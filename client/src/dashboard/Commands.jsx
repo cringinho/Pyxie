@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { api } from './api';
 import { Badge, Button, Card, Notice, Spinner } from './ui';
+import { errorText } from './i18n';
 
 const CRINGELANDIA = '1453890868980482090';
 const MARY = '1557399041443111025';
@@ -33,7 +34,7 @@ function CommandDiagnosticBox({ t, guildId, commands, channelList }) {
   return (
     <Card title={t('cmds.diag.title')}>
       <p className="mb-3 text-sm text-white/70">{t('cmds.diag.hint')}</p>
-      <div className="grid gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         <select value={cmd} onChange={(e) => setCmd(e.target.value)} aria-label={t('cmds.diag.cmd')} className={`${field} bg-[#160d2a]`}>
           {commands.map((c) => (
             <option key={c.name} value={c.name}>
@@ -118,7 +119,7 @@ function CommandPermissionsBox({ t, guildId, commands, channelList, roles }) {
       const res = await api.syncCommandMenu(guildId);
       setSyncMsg(t('cmds.perm.synced', { count: res.syncedCount || 0 }));
     } catch (e) {
-      setSyncMsg(e.code === 'cooldown' ? t('cmds.perm.cooldown') : t('error.generic', { error: e.code || 'generic' }));
+      setSyncMsg(e.code === 'cooldown' ? t('cmds.perm.cooldown') : errorText(t, e.code || 'generic'));
     }
   };
 
@@ -128,7 +129,7 @@ function CommandPermissionsBox({ t, guildId, commands, channelList, roles }) {
   return (
     <Card title={t('cmds.perm.title')}>
       <p className="mb-3 text-sm text-white/70">{t('cmds.perm.hint')}</p>
-      <div className="grid gap-2 sm:grid-cols-5">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-5">
         <select value={cmdTarget} onChange={(e) => setCmdTarget(e.target.value)} aria-label={t('cmds.perm.cmd')} className={`${field} bg-[#160d2a]`}>
           <option value="*">{t('cmds.perm.allCmds')}</option>
           {CATEGORY_ORDER.map((cat) => (
@@ -263,7 +264,7 @@ export default function Commands({ t, lang, guildId = null }) {
     return [...byCat.entries()].sort(([a], [b]) => rank(a) - rank(b));
   }, [list, query, filter, guildId]);
 
-  if (error) return <Notice tone="error">{t('error.generic', { error })}</Notice>;
+  if (error) return <Notice tone="error">{errorText(t, error)}</Notice>;
   if (!list) return <Spinner label={t('app.loading')} />;
 
   const onCount = list.filter((c) => (guildId ? c.status === 'on' : c.moduleEnabled)).length;
@@ -277,7 +278,7 @@ export default function Commands({ t, lang, guildId = null }) {
     <div className="space-y-4">
       <p className="text-sm text-white/60">{t(guildId ? 'cmds.hintGuild' : 'cmds.hintGlobal', { on: onCount, total: list.length })}</p>
       {guildId && (
-        <div className="grid gap-4 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <CommandDiagnosticBox t={t} guildId={guildId} commands={list} channelList={channelList} />
           <CommandPermissionsBox t={t} guildId={guildId} commands={list} channelList={channelList} roles={roles} />
         </div>
@@ -304,7 +305,7 @@ export default function Commands({ t, lang, guildId = null }) {
       {groups.map(([cat, cmds]) => (
         <section key={cat}>
           <h2 className="mb-2 font-title text-lg font-bold">{t(`cmds.cat.${cat}`).startsWith('cmds.') ? cat : t(`cmds.cat.${cat}`)}</h2>
-          <ul className="grid gap-2 lg:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">
             {cmds.map((c) => {
               const link = fixLink(c);
               const status = guildId ? c.status : c.moduleEnabled ? 'on' : 'module_off';

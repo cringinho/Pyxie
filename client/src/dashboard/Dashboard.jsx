@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Boxes, Check, Feather, UserPlus, Gauge, Timer, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
+import { ArrowRight, Boxes, Check, Feather, UserPlus, Gauge, Timer, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, Lock, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
 import { api } from './api';
-import { detectLang, makeT } from './i18n';
-import { Badge, Button, Card, GuildIcon, MultiSelect, Notice, Spinner, StatTile, StatusDot, Switch, Toggle } from './ui';
+import { detectLang, makeT, errorText } from './i18n';
+import { Badge, Button, Card, GuildIcon, MemberChip, MultiSelect, Notice, Spinner, StatTile, StatusDot, Switch, Toggle, useMemberLookup } from './ui';
 import { Layout, Starfield, buildNav, go, sectionIcon } from './Shell';
 import Paywall, { planFromCode } from './Paywall';
 import Studio from './Studio';
@@ -33,6 +33,7 @@ import Tickets from './Tickets';
 import { MaryProfile, MaryStore, MaryTools } from './Mary';
 import Voice from './Voice';
 import Hyperfokus from './Hyperfokus';
+import ErrorBoundary from './ErrorBoundary';
 
 // Rotas por hash: #/ (seletor), #/guild/<id>/<seção>[/<item>], #/global/<seção>.
 function parseHash() {
@@ -91,7 +92,15 @@ export default function Dashboard() {
   const route = useHashRoute();
   const [me, setMe] = useState(null);
   const [authState, setAuthState] = useState('loading');
+  const [sessionExpired, setSessionExpired] = useState(false);
   const loginError = new URLSearchParams(window.location.search).get('error');
+
+  // Qualquer chamada que volte 401 (login vencido) abre o aviso único de sessão expirada (Q111).
+  useEffect(() => {
+    const onExpired = () => setSessionExpired(true);
+    window.addEventListener('pyxie:session-expired', onExpired);
+    return () => window.removeEventListener('pyxie:session-expired', onExpired);
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
@@ -135,6 +144,42 @@ export default function Dashboard() {
   }
   if (authState === 'out') return <Login t={t} lang={lang} setLang={setLang} error={loginError} />;
 
+  return (
+    <>
+      <RoutedView t={t} lang={lang} setLang={setLang} me={me} logout={logout} route={route} />
+      {sessionExpired && <SessionExpired t={t} />}
+    </>
+  );
+}
+
+// Aviso de sessão vencida: guarda a tela atual e leva ao login (o Login já devolve a pessoa
+// para `pyxie_after_login` quando ela volta).
+function SessionExpired({ t }) {
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4" role="alertdialog" aria-modal="true" aria-labelledby="session-expired-title">
+      <section className="dash-card w-full max-w-md space-y-3 rounded-3xl p-6 text-center">
+        <h2 id="session-expired-title" className="font-title text-xl font-extrabold">
+          {t('session.expiredTitle')}
+        </h2>
+        <p className="text-sm text-white/70">{t('session.expiredBody')}</p>
+        <a
+          href="/auth/discord"
+          autoFocus
+          onClick={() => {
+            try {
+              if (window.location.hash) sessionStorage.setItem('pyxie_after_login', window.location.hash);
+            } catch (_) {}
+          }}
+          className="flex min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pyxie-bright to-mystic-violet px-6 font-semibold"
+        >
+          <LogIn size={18} aria-hidden="true" /> {t('session.signIn')}
+        </a>
+      </section>
+    </div>
+  );
+}
+
+function RoutedView({ t, lang, setLang, me, logout, route }) {
   const shell = { t, lang, setLang, me, onLogout: logout };
   if (route.view === 'appeal') {
     return (
@@ -253,9 +298,9 @@ function Picker({ shell }) {
             <p className="text-sm text-white/60">{t('picker.empty')}</p>
           </Card>
         )}
-        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {me.guilds.map((g) => (
-            <li key={g.id}>
+            <li key={g.id} className="min-w-0">
               <button
                 type="button"
                 onClick={() => go(`#/guild/${g.id}/overview`)}
@@ -310,12 +355,19 @@ function useLoad(loader, deps) {
   return { ...state, reload, setData: (data) => setState({ loading: false, data, error: null }) };
 }
 
-function ErrorNotice({ t, code }) {
+function ErrorNotice({ t, code, onRetry }) {
   // Rota travada pelo plano: paywall com o caminho da compra, não o erro genérico.
   const lockedPlan = planFromCode(code);
   if (lockedPlan) return <Paywall t={t} requiredPlan={lockedPlan} />;
-  const known = t(`error.${code}`);
-  return <Notice tone="error">{known.startsWith('error.') ? t('error.generic', { error: code }) : known}</Notice>;
+  if (!onRetry) return <Notice tone="error">{errorText(t, code)}</Notice>;
+  return (
+    <div className="space-y-2">
+      <Notice tone="error">{errorText(t, code)}</Notice>
+      <Button variant="ghost" onClick={onRetry}>
+        {t('common.retry')}
+      </Button>
+    </div>
+  );
 }
 
 // Permissões que a Pyxie precisa em cada seção (o cartão confere ao vivo).
@@ -356,6 +408,13 @@ function Activity({ t, guildId }) {
   const visibleSeries = period === '7d' ? series.slice(-7) : series;
   const max = Math.max(1, ...visibleSeries.map((d) => d[metric] || 0));
   const fmt = (n) => (Number(n) || 0).toLocaleString();
+  // Dia "AAAA-MM-DD" no formato do idioma ativo (30/10 em PT, 10/30 em EN).
+  const fmtDay = (day) => {
+    const [y, m, d] = String(day || '').split('-').map(Number);
+    if (!y || !m || !d) return '';
+    return new Date(y, m - 1, d).toLocaleDateString(document.documentElement.lang || undefined, { day: '2-digit', month: '2-digit' });
+  };
+  const periodLabel = t(`activity.period.${period}`);
   const deltaHint = (key) => {
     const val = deltas[key];
     if (val === undefined || val === null) return undefined;
@@ -425,21 +484,21 @@ function Activity({ t, guildId }) {
         <StatTile
           icon={LogIn}
           accent="green"
-          label={t('activity.joinsWeek')}
+          label={t('activity.joinsWeek', { period: periodLabel })}
           value={fmt(periodTotals.joins)}
           hint={`${t('activity.netFlow')}: ${(periodTotals.netMembers || 0) >= 0 ? '+' : ''}${fmt(periodTotals.netMembers || 0)}`}
         />
         <StatTile
           icon={DoorOpen}
           accent="violet"
-          label={t('activity.leavesWeek')}
+          label={t('activity.leavesWeek', { period: periodLabel })}
           value={fmt(periodTotals.leaves)}
           hint={deltaHint('leaves')}
         />
         <StatTile
           icon={Terminal}
           accent="cyan"
-          label={t('activity.commandsWeek')}
+          label={t('activity.commandsWeek', { period: periodLabel })}
           value={fmt(periodTotals.commands)}
           hint={deltaHint('commands')}
         />
@@ -467,7 +526,7 @@ function Activity({ t, guildId }) {
             </span>
             {peakDay?.day && (
               <span>
-                {t('activity.peakDay')}: <strong className="font-mono text-pyxie-glow">{peakDay.day.split('-').reverse().slice(0, 2).join('/')} ({fmt(peakDay.messages)})</strong>
+                {t('activity.peakDay')}: <strong className="font-mono text-pyxie-glow">{fmtDay(peakDay.day)} ({fmt(peakDay.messages)})</strong>
               </span>
             )}
           </div>
@@ -480,19 +539,19 @@ function Activity({ t, guildId }) {
           {visibleSeries.map((d) => (
             <span
               key={d.day}
-              title={`${d.day.split('-').reverse().slice(0, 2).join('/')}: ${fmt(d[metric] || 0)}`}
+              title={`${fmtDay(d.day)}: ${fmt(d[metric] || 0)}`}
               style={{ height: `${Math.max(3, ((d[metric] || 0) / max) * 100)}%` }}
               className="flex-1 rounded-t bg-gradient-to-t from-mystic-violet/60 to-pyxie-bright transition-all"
             />
           ))}
         </div>
         <div className="mt-1 flex justify-between text-[11px] text-white/40">
-          <span>{visibleSeries[0]?.day.split('-').reverse().slice(0, 2).join('/')}</span>
+          <span>{fmtDay(visibleSeries[0]?.day)}</span>
           <span>{t('activity.today')}</span>
         </div>
       </Card>
 
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <Card title={t('activity.topCommandsTitle')}>
           {topCommands.length === 0 ? (
             <p className="text-xs text-white/50">{t('activity.topCommandsEmpty')}</p>
@@ -503,7 +562,7 @@ function Activity({ t, guildId }) {
                   <span className="font-mono text-xs font-semibold text-pyxie-glow">/{c.name}</span>
                   <span className="flex items-center gap-2 text-xs text-white/60">
                     <Badge tone="muted">{fmt(c.calls)}x</Badge>
-                    {c.errors > 0 && <Badge tone="red">{c.errors} err</Badge>}
+                    {c.errors > 0 && <Badge tone="red">{t('activity.errorsCount', { count: c.errors })}</Badge>}
                   </span>
                 </li>
               ))}
@@ -596,7 +655,7 @@ function GuildView({ shell, guildId, section, item }) {
   if (info.loading || info.error) {
     return (
       <Layout {...shell} nav={loadingNav} crumbs={[{ label: t('app.title'), href: '#/' }, { label: loadingNav.title }]} activeGuildId={guildId}>
-        {info.error ? <ErrorNotice t={t} code={info.error} /> : <Spinner label={t('app.loading')} />}
+        {info.error ? <ErrorNotice t={t} code={info.error} onRetry={info.reload} /> : <Spinner label={t('app.loading')} />}
       </Layout>
     );
   }
@@ -635,11 +694,13 @@ function GuildView({ shell, guildId, section, item }) {
         }
       />
       <div className={WIDE_SECTIONS.has(current) ? '' : 'max-w-3xl'}>
+        {/* Erro numa tela fica só nela: menu, troca de servidor e topo continuam (Q108). */}
+        <ErrorBoundary key={`${guildId}/${current}/${item || ''}`} inline>
         {lockedPlan ? (
           <Paywall t={t} requiredPlan={lockedPlan} guildId={guildId} />
         ) : (
           <>
-        {current === 'overview' && <Overview t={t} guild={g} zone={zone} role={role} ids={ids} guildId={guildId} botOnline={me.botOnline} />}
+        {current === 'overview' && <Overview t={t} guild={g} zone={zone} role={role} ids={ids} lockedMap={lockedMap} guildId={guildId} botOnline={me.botOnline} />}
         {current === 'studio' && (
           <div className="space-y-4">
             <BotPermissions t={t} guildId={guildId} needs={SECTION_NEEDS.studio} />
@@ -686,6 +747,7 @@ function GuildView({ shell, guildId, section, item }) {
         {current === 'welcome' && <Welcome t={t} guildId={guildId} />}
           </>
         )}
+        </ErrorBoundary>
       </div>
     </Layout>
   );
@@ -700,20 +762,27 @@ function SectionBadge({ icon: Icon }) {
 }
 
 // Atalhos em grade para cada seção liberada, com a descrição de cada uma.
-function SectionGrid({ t, ids, hrefFor }) {
+function SectionGrid({ t, ids, hrefFor, lockedMap = {} }) {
   return (
-    <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {ids.map((id) => {
         const Icon = sectionIcon(id);
         const desc = t(`sectionDesc.${id}`);
+        const lockedPlan = lockedMap[id];
         return (
-          <li key={id}>
-            <a href={hrefFor(id)} className="dash-card dash-card-hover flex h-full flex-col gap-3 rounded-2xl p-4">
-              <span className="flex items-center justify-between">
+          <li key={id} className="min-w-0">
+            <a href={hrefFor(id)} className={`dash-card dash-card-hover flex h-full flex-col gap-3 rounded-2xl p-4 ${lockedPlan ? 'opacity-80' : ''}`}>
+              <span className="flex items-center justify-between gap-2">
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pyxie-bright/25 to-mystic-violet/25 text-pyxie-glow" aria-hidden="true">
                   <Icon size={19} />
                 </span>
-                <ArrowRight size={16} className="text-white/40" aria-hidden="true" />
+                {lockedPlan ? (
+                  <Badge tone={lockedPlan === 'basic' ? 'violet' : 'pink'}>
+                    <Lock size={11} aria-hidden="true" /> {t(`plan.tier.${lockedPlan}`)}
+                  </Badge>
+                ) : (
+                  <ArrowRight size={16} className="text-white/40" aria-hidden="true" />
+                )}
               </span>
               <span>
                 <span className="block font-title font-bold">{t(`section.${id}`)}</span>
@@ -727,8 +796,10 @@ function SectionGrid({ t, ids, hrefFor }) {
   );
 }
 
-function Overview({ t, guild, zone, role, ids, guildId, botOnline }) {
+function Overview({ t, guild, zone, role, ids, lockedMap = {}, guildId, botOnline }) {
   const shortcuts = ids.filter((id) => id !== 'overview');
+  // "Seções liberadas" conta só as que abrem de verdade; as com cadeado ficam de fora (Q113).
+  const unlockedCount = shortcuts.filter((id) => !lockedMap[id]).length;
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
@@ -745,14 +816,14 @@ function Overview({ t, guild, zone, role, ids, guildId, botOnline }) {
               {t(botOnline ? 'health.online' : 'health.offline')}
             </span>
           }
-          hint={t('overview.sections', { count: shortcuts.length })}
+          hint={t('overview.sections', { count: unlockedCount })}
         />
       </div>
       <Activity t={t} guildId={guildId} />
       <div>
         <h2 className="mb-1 font-title text-lg font-bold">{t('overview.shortcuts')}</h2>
         <p className="mb-3 text-sm text-white/60">{t('overview.hint')}</p>
-        <SectionGrid t={t} ids={shortcuts} hrefFor={(id) => `#/guild/${guildId}/${id}`} />
+        <SectionGrid t={t} ids={shortcuts} lockedMap={lockedMap} hrefFor={(id) => `#/guild/${guildId}/${id}`} />
       </div>
     </div>
   );
@@ -775,8 +846,9 @@ function Features({ t, guildId }) {
     if (features.data) setDraft(structuredClone(features.data.features));
   }, [features.data]);
 
+  // Erro antes do spinner: com falha o rascunho nunca chega e a tela ficava carregando para sempre (Q105).
+  if (features.error) return <ErrorNotice t={t} code={features.error} onRetry={features.reload} />;
   if (features.loading || !draft) return <Spinner label={t('app.loading')} />;
-  if (features.error) return <ErrorNotice t={t} code={features.error} />;
   const opts = channelOptions(channels.data?.channels || []);
 
   const save = async () => {
@@ -799,7 +871,7 @@ function Features({ t, guildId }) {
     <div className="space-y-4">
       <div>
         <h2 className="mb-3 font-title text-lg font-bold">{t('features.title')}</h2>
-        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {draft.groups.map((g) => (
             <li key={g.id}>
               <ModuleTile
@@ -813,7 +885,7 @@ function Features({ t, guildId }) {
           ))}
         </ul>
       </div>
-      <div className="grid gap-4 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
       <Card title={t('features.gamesChannels')}>
         <p className="mb-2 text-xs text-white/60">{t('features.gamesChannelsHint')}</p>
         <MultiSelect
@@ -958,13 +1030,22 @@ function Access({ t, guildId, ctx }) {
     if (access.data) setDraft({ ...access.data.whitelist, userText: access.data.whitelist.userIds.join('\n') });
   }, [access.data]);
 
-  if (access.loading || !draft) return access.error ? <ErrorNotice t={t} code={access.error} /> : <Spinner label={t('app.loading')} />;
+  const lines = (draft?.userText || '').split(/[\s,]+/).map((x) => x.trim()).filter(Boolean);
+  // Aceita <@123> colado do Discord; o resto precisa ser só o número do ID (Q119).
+  const userIds = [...new Set(lines.map((x) => x.replace(/^<@!?(\d+)>$/, '$1')))];
+  const invalid = userIds.filter((x) => !/^\d{17,20}$/.test(x));
+  const validIds = userIds.filter((x) => /^\d{17,20}$/.test(x));
+  const people = useMemberLookup(guildId, validIds);
+  if (access.error) return <ErrorNotice t={t} code={access.error} onRetry={access.reload} />;
+  if (access.loading || !draft) return <Spinner label={t('app.loading')} />;
+  const tooMany = userIds.length > 100;
+  const blocked = draft.enabled && (invalid.length > 0 || tooMany);
 
   const save = async () => {
     setStatus(null);
+    if (blocked) return;
     try {
-      const userIds = draft.userText.split(/[\s,]+/).filter(Boolean);
-      const res = await api.saveAccess(guildId, { enabled: draft.enabled, userIds, roleIds: draft.roleIds });
+      const res = await api.saveAccess(guildId, { enabled: draft.enabled, userIds: draft.enabled ? userIds : validIds, roleIds: draft.roleIds });
       setDraft({ ...res.whitelist, userText: res.whitelist.userIds.join('\n') });
       setStatus('ok');
     } catch (err) {
@@ -989,27 +1070,51 @@ function Access({ t, guildId, ctx }) {
       {draft.enabled && (
         <>
           <Card title={t('access.users')}>
+            <p className="mb-2 text-xs text-white/60">{t('access.usersHint')}</p>
             <textarea
               value={draft.userText}
               onChange={(e) => setDraft({ ...draft, userText: e.target.value })}
               rows={4}
               aria-label={t('access.users')}
-              className="w-full rounded-xl border border-white/10 bg-white/5 p-3 font-mono text-sm"
+              aria-invalid={invalid.length > 0 || tooMany}
+              aria-describedby="access-users-help"
+              placeholder="214153735281180673"
+              className={`w-full rounded-xl border bg-white/5 p-3 font-mono text-sm ${invalid.length || tooMany ? 'border-red-400' : 'border-white/10'}`}
             />
+            <div id="access-users-help" className="mt-1 space-y-1 text-xs">
+              <p className={tooMany ? 'text-red-300' : 'text-white/50'}>{t('access.usersCount', { count: userIds.length, max: 100 })}</p>
+              {invalid.length > 0 && <p className="text-red-300">{t('access.invalidIds', { list: invalid.slice(0, 5).join(', ') })}</p>}
+              <p className="text-white/40">{t('access.howToCopyId')}</p>
+            </div>
+            {validIds.length > 0 && (
+              <ul className="mt-2 flex flex-wrap gap-2">
+                {validIds.slice(0, 100).map((id) => (
+                  <li key={id} className="flex min-w-0 max-w-full rounded-lg bg-white/5 px-2 py-1 text-sm">
+                    <MemberChip id={id} info={people.get(id)} t={t} />
+                  </li>
+                ))}
+              </ul>
+            )}
           </Card>
           <Card title={t('access.roles')}>
-            <MultiSelect
-              options={(roles.data?.roles || []).map((r) => ({ id: r.id, label: r.name }))}
-              value={draft.roleIds}
-              emptyLabel={t('app.loading')}
-              onChange={(v) => setDraft({ ...draft, roleIds: v })}
-            />
+            {roles.error ? (
+              <Notice tone="error">{t('roles.loadFailed')}</Notice>
+            ) : roles.loading ? (
+              <Spinner label={t('app.loading')} />
+            ) : (
+              <MultiSelect
+                options={(roles.data?.roles || []).map((r) => ({ id: r.id, label: r.name }))}
+                value={draft.roleIds}
+                emptyLabel={t('roles.emptyList')}
+                onChange={(v) => setDraft({ ...draft, roleIds: v })}
+              />
+            )}
           </Card>
         </>
       )}
       {status === 'ok' && <Notice tone="ok">{t('features.saved')}</Notice>}
       {status && status !== 'ok' && <ErrorNotice t={t} code={status} />}
-      <Button onClick={save} className="w-full">
+      <Button onClick={save} disabled={blocked} className="w-full">
         {t('features.save')}
       </Button>
     </div>
@@ -1093,6 +1198,8 @@ function GlobalView({ shell, section, item }) {
     <Layout {...shell} nav={nav} crumbs={crumbs} globalActive>
       <PageHeader icon={<SectionBadge icon={sectionIcon(current)} />} title={t(`section.${current}`)} subtitle={t(`sectionDesc.${current}`)} />
       <div className={['health', 'modules', 'servers', 'museum', 'shopee', 'emojis', 'commands', 'voice', 'founder'].includes(current) ? '' : 'max-w-3xl'}>
+        {/* Erro numa tela fica só nela: menu e barra do topo continuam (Q108). */}
+        <ErrorBoundary key={`global/${current}/${item || ''}`} inline>
         {current === 'health' && <Health t={t} />}
         {current === 'servers' && <ServerDirectory t={t} />}
         {current === 'commands' && <Commands t={t} lang={lang} />}
@@ -1107,6 +1214,7 @@ function GlobalView({ shell, section, item }) {
         {current === 'shopee' && <Shopee t={t} />}
         {current === 'emojis' && <Emojis t={t} />}
         {current === 'founder' && <Founder t={t} />}
+        </ErrorBoundary>
       </div>
     </Layout>
   );
@@ -1128,7 +1236,7 @@ function ServerDirectory({ t }) {
         <p className="text-sm text-white/60">{t('dir.total', { count: all.length, members: all.reduce((a, g) => a + g.memberCount, 0).toLocaleString() })}</p>
         <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('dir.search')} aria-label={t('dir.search')} className="dash-field min-h-[40px] w-full rounded-xl px-3 text-sm sm:w-72" />
       </div>
-      <ul className="grid gap-3 lg:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         {list.map((g) => (
           <li key={g.id} className="dash-card flex gap-3 rounded-2xl p-4">
             <GuildIcon guild={g} size={48} className="rounded-xl" />
@@ -1255,7 +1363,7 @@ function Modules({ t, lang, item }) {
   return (
     <div className="space-y-4">
       {error && <ErrorNotice t={t} code={error} />}
-      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {modules.data.modules.map((m) => (
           <li key={m.id}>
             <ModuleTile

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CalendarDays } from 'lucide-react';
 import { api } from './api';
 import { Badge, Card, Notice, Spinner } from './ui';
+import { errorText } from './i18n';
 
 function every(t, e) {
   if (e.hours) return t('agenda.everyHours', { hours: e.hours });
@@ -21,7 +22,7 @@ export default function Agenda({ t, guildId, lang }) {
     api.agenda(guildId).then((d) => setItems(d.agenda)).catch((e) => setError(e.code || 'generic'));
     api.channels(guildId).then((d) => setChannels(d.channels)).catch(() => {});
   }, [guildId]);
-  if (!items) return error ? <Notice tone="error">{t('error.generic', { error })}</Notice> : <Spinner label={t('app.loading')} />;
+  if (!items) return error ? <Notice tone="error">{errorText(t, error)}</Notice> : <Spinner label={t('app.loading')} />;
 
   const locale = lang === 'en' ? 'en-US' : 'pt-BR';
   const channelName = (id) => channels.find((c) => c.id === id)?.name || id;
