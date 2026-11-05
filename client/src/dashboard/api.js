@@ -93,6 +93,7 @@ export const api = {
   storeOrderFail: (id, orderId) => request(`/api/dashboard/guilds/${id}/store/orders/${encodeURIComponent(orderId)}/fail`, { method: 'POST', body: {} }),
   storeOrderConfirm: (id, orderId, payload = '') => request(`/api/dashboard/guilds/${id}/store/orders/${encodeURIComponent(orderId)}/confirm`, { method: 'POST', body: { payload } }),
   founder: () => request('/api/dashboard/global/founder'),
+  refundPayment: (paymentId) => request('/api/dashboard/global/payments/refund', { method: 'POST', body: { paymentId } }),
   founderKey: (note) => request('/api/dashboard/global/founder/keys', { method: 'POST', body: { note } }),
   founderRedeem: (code, guildId) => request('/api/dashboard/global/founder/redeem', { method: 'POST', body: { code, guildId } }),
   founderRevoke: (guildId) => request('/api/dashboard/global/founder/revoke', { method: 'POST', body: { guildId } }),

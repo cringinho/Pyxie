@@ -241,8 +241,8 @@
         "Catálogo do Help & Web validado: 100% dos 52 comandos estão categorizados.",
         "Sincronização Dinâmica Web/Help validada: 48 comandos ativos em 5 módulos.",
         "Sincronização Dinâmica Web/Help validada: 48 comandos públicos e 52 comandos de dono em 5 módulos.",
-        "Segurança do Dono validada: Snowflake, HMAC Magic Tokens e IP Allowlist operando perfeitamente.",
-        "Segurança do Dono validada: Snowflake, HMAC Magic Tokens, IP Allowlist e Comandos de Economia operando perfeitamente."
+        "Segurança do Dono validada: Snowflake, sessão do painel e chave mestra só por cabeçalho (sem IP nem link mágico).",
+        "Segurança do Dono validada: Snowflake, acesso do painel e Comandos de Economia operando perfeitamente."
       ],
       "checkCount": 8,
       "failures": [],

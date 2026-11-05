@@ -116,6 +116,9 @@ async function createMercadoPagoCheckout({ userId, month, lang = 'pt' }) {
   return { ok: true, url: data.init_point, id: data.id };
 }
 
+// Status do Mercado Pago que devolvem o dinheiro: o benefício sai junto.
+const REFUND_STATUSES = new Set(['refunded', 'charged_back']);
+
 /** Confere a assinatura x-signature do webhook (manifesto id/request-id/ts, HMAC-SHA256). */
 function verifyMercadoPagoSignature({ headers = {}, dataId }) {
   const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
@@ -143,6 +146,13 @@ async function handleMercadoPagoWebhook({ body = {}, query = {}, headers = {} })
   const res = await fetchImpl(`${MP_API}/v1/payments/${dataId}`, { headers: { Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}` } });
   const payment = await readJsonResponse(res);
   if (!res.ok) return { ok: false, reason: 'provider', status: res.status };
+  // Estorno, devolução ou contestação: retira o Premium que aquele pagamento liberou (Q245).
+  if (REFUND_STATUSES.has(payment.status)) {
+    const refRefund = parseReference(payment.external_reference);
+    if (!refRefund) return { ok: true, ignored: true };
+    const refunded = battlePass.refundPremium(`mp:${payment.id}`, { userId: refRefund.userId, month: refRefund.month });
+    return { ...refunded, refund: true, userId: refRefund.userId, month: refRefund.month };
+  }
   if (payment.status !== 'approved') return { ok: true, pending: true, status: payment.status };
   const ref = parseReference(payment.external_reference);
   if (!ref) return { ok: false, reason: 'reference' };
@@ -162,6 +172,7 @@ async function createCheckout(provider, token, now = Date.now()) {
 }
 
 module.exports = {
+  REFUND_STATUSES,
   setFetch,
   providers,
   publicUrl,

@@ -12,8 +12,10 @@ function getSessionsFile() {
   return path.join(process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data'), 'panelSessions.json');
 }
 
+// PANEL_SESSION_SECRET (opcional) separa a assinatura das sessões da chave mestra de
+// máquina (auditoria Q267). Sem ela, continua usando PANEL_SECRET como antes.
 function getSecret() {
-  return process.env.PANEL_SECRET || process.env.API_SECRET_TOKEN || null;
+  return process.env.PANEL_SESSION_SECRET || process.env.PANEL_SECRET || process.env.API_SECRET_TOKEN || null;
 }
 
 let cache = null;

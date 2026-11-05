@@ -524,25 +524,16 @@ module.exports = {
 
 ---
 
-### Passo 4: Página Externa Administrativa (`views/adminModulo.ejs`)
-Se o módulo tiver 4 ou mais configurações ou manipulação de listas, crie a view em `views/adminMeuModulo.ejs` e configure a rota com autenticação administrativa em `setupWebRoutes`:
+### Passo 4: Tela de configuração do módulo (painel `/dashboard`)
+Telas novas nascem no painel React (`client/src/dashboard/`), nunca em página `/admin` antiga (AGENTS.md §10). As rotas que a tela chama ficam em `setupWebRoutes` com `requireAdminAuth`, que só aceita o dono logado no painel com Discord (pedido que muda algo exige o cabeçalho `X-Pyxie-Panel: 1`, que o `request()` do painel já manda) ou a chave mestra num cabeçalho. Não existe liberação por IP, link mágico nem `?token=` na URL.
 
 ```javascript
 // Dentro de setupWebRoutes em meuModuloManager.js
-const { requireAdminAuth, isValidAdminSession, isIpAllowed } = require('../../services/adminAuth');
+const { requireAdminAuth } = require('../../services/adminAuth');
 
-app.get('/admin/meu-modulo', (req, res) => {
-  const cookieHeader = req.headers.cookie;
-  const sessionCookie = cookieHeader ? (cookieHeader.match(/(?:^|;\s*)pyxie_admin_session=([^;]*)/)?.[1] || null) : null;
-  const isAuthed = (sessionCookie && isValidAdminSession(sessionCookie)) || isIpAllowed(req);
-
-  if (!isAuthed) return res.redirect('/admin');
-
+app.get('/api/admin/modules/meu-modulo/items', requireAdminAuth, (req, res) => {
   this.refresh();
-  res.render(path.join(__dirname, 'views', 'adminMeuModulo.ejs'), {
-    config: this.config,
-    items: this.data.items,
-  });
+  res.json({ success: true, config: this.config, items: this.data.items });
 });
 
 app.delete('/api/admin/modules/meu-modulo/items/:id', requireAdminAuth, (req, res) => {

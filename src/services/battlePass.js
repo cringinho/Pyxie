@@ -392,6 +392,41 @@ function activatePremium(userId, month, { paymentId, provider, amount = 0, curre
   });
 }
 
+/**
+ * Estorno/contestação do Premium (auditoria Q245): retira a trilha premium daquele mês,
+ * a menos que outro pagamento válido cubra o mesmo mês. Idempotente pelo id do pagamento.
+ * Se o estorno chegar antes da aprovação, o id fica reservado e a aprovação não libera nada.
+ */
+function refundPremium(paymentId, { userId = '', month = '', now = Date.now() } = {}) {
+  if (!paymentId) return { ok: false, reason: 'payment' };
+  return locked(() => {
+    const state = load();
+    const pay = state.payments[paymentId];
+    if (pay?.refunded) return { ok: true, duplicate: true };
+    if (!pay) {
+      if (!userId || !validMonth(month)) return { ok: false, reason: 'unknown' };
+      state.payments[paymentId] = { userId: String(userId), month, provider: 'refund', amount: 0, currency: 'BRL', at: now, refunded: true, refundedAt: now };
+      if (!save(state)) return { ok: false, reason: 'save' };
+      return { ok: true, revoked: false, userId: String(userId), month };
+    }
+    pay.refunded = true;
+    pay.refundedAt = now;
+    const covered = Object.entries(state.payments).some(
+      ([id, other]) => id !== paymentId && other.userId === pay.userId && other.month === pay.month && !other.refunded && other.provider !== 'refund'
+    );
+    const entry = state.users[pay.userId]?.months?.[pay.month];
+    let revoked = false;
+    if (!covered && entry?.premium) {
+      entry.premium = false;
+      revoked = true;
+      state.totals.premium = Math.max(0, (state.totals.premium || 0) - 1);
+    }
+    if (pay.currency === 'BRL') state.totals.revenueBRL = Math.max(0, Math.round((state.totals.revenueBRL - (Number(pay.amount) || 0)) * 100) / 100);
+    if (!save(state)) return { ok: false, reason: 'save' };
+    return { ok: true, revoked, userId: pay.userId, month: pay.month };
+  });
+}
+
 function isPremium(userId, month = monthKey()) {
   const user = load().users[String(userId)];
   return Boolean(user?.months?.[month]?.premium);
@@ -413,6 +448,7 @@ function getPassStats(now = Date.now()) {
 }
 
 module.exports = {
+  refundPremium,
   MAX_LEVEL,
   XP_PER_LEVEL,
   XP_SOURCES,

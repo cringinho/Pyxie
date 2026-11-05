@@ -5,6 +5,9 @@ import { go } from './Shell';
 import Paywall, { planFromCode } from './Paywall';
 import { Button, Card, Notice, Spinner } from './ui';
 
+// Ordem dos planos (igual a src/config/planFeatures.js): comprar um menor com um maior ativo é recusado.
+const PLAN_RANK = { free: 0, basic: 1, premium: 2, founder: 3 };
+
 // Assinatura mensal do servidor: Básico (R$ 7) e Premium (R$ 20), Pix por QR ou cartão recorrente.
 export default function Plans({ t, guildId, lang }) {
   const [info, setInfo] = useState(null);
@@ -137,11 +140,19 @@ export default function Plans({ t, guildId, lang }) {
   };
 
   const planLabel = (plan) => t(`plan.name.${plan}`);
+  // Código de erro cru nunca aparece: cada um tem texto com o próximo passo (Q257).
+  const errorText = (code) => {
+    const key = `plan.err.${String(code || '').split(':')[0]}`;
+    const text = t(key);
+    return text !== key ? text : t('plan.err.unknown');
+  };
+  // Pix já gerado e ainda válido: a tela mostra de novo depois de recarregar (Q249).
+  const pending = !checkout && info.pending && info.pending.qrCode && info.pending.expiresAt > Date.now() ? info.pending : null;
 
   return (
     <div className="space-y-4">
       <p className="text-sm text-white/70">{t('plan.intro')}</p>
-      {error && <Notice tone="error">{t(`plan.err.${error}`) !== `plan.err.${error}` ? t(`plan.err.${error}`) : t('error.generic', { error })}</Notice>}
+      {error && <Notice tone="error">{errorText(error)}</Notice>}
       {notice === 'paid' && <Notice tone="ok">{t('plan.paidReturn')}</Notice>}
       {notice === 'canceled' && <Notice tone="ok">{t('plan.renewalCanceled', { date: until || '—' })}</Notice>}
 
@@ -200,14 +211,32 @@ export default function Plans({ t, guildId, lang }) {
         ))}
       </div>
 
+      {pending && (
+        <div className="dash-card space-y-3 rounded-2xl border border-amber-400/30 p-4">
+          <p className="font-title font-bold">{t('plan.pendingTitle')}</p>
+          <p className="text-xs text-white/60">{t('plan.pendingHint')}</p>
+          <code className="block break-all rounded-xl bg-black/40 p-3 text-[11px] text-white/80">{pending.qrCode}</code>
+          <p className="text-xs text-white/50">{t('plan.qrExpires', { date: new Date(pending.expiresAt).toLocaleTimeString() })}</p>
+        </div>
+      )}
+
       <div className="grid gap-3 sm:grid-cols-2">
-        {['basic', 'premium'].map((plan) => (
-          <div key={plan} className="dash-card space-y-3 rounded-2xl p-4">
-            <div className="flex items-center justify-between">
+        {['basic', 'premium'].map((plan) => {
+          const isCurrent = active && current.plan === plan;
+          // Plano menor com um maior ativo: o backend recusa (plan_downgrade), a tela explica.
+          const lockedDown = active && (PLAN_RANK[current.plan] || 0) > PLAN_RANK[plan];
+          return (
+          <div key={plan} className={`dash-card space-y-3 rounded-2xl p-4 ${isCurrent ? 'border border-emerald-400/40' : ''}`}>
+            <div className="flex items-center justify-between gap-2">
               <p className="font-title text-lg font-bold">{planLabel(plan)}</p>
-              <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold">
-                R$ {priceTable[plan]}/{cycle === 'year' ? t('plan.perYear') : t('plan.perMonth')}
-              </span>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {isCurrent && (
+                  <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-300">{t('plan.current')}</span>
+                )}
+                <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold">
+                  R$ {priceTable[plan]}/{cycle === 'year' ? t('plan.perYear') : t('plan.perMonth')}
+                </span>
+              </div>
             </div>
             <ul className="space-y-1 text-xs text-white/65">
               {[1, 2, 3, 4, 5]
@@ -218,18 +247,25 @@ export default function Plans({ t, guildId, lang }) {
                 ))}
               <li>• {t('plan.perk.support')}</li>
             </ul>
-            <div className="flex flex-wrap gap-2">
-              <Button disabled={Boolean(busy)} onClick={() => buy(plan, 'pix')}>
-                <QrCode size={16} aria-hidden="true" />
-                {t('plan.payPix')}
-              </Button>
-              <Button variant="ghost" disabled={Boolean(busy)} onClick={() => buy(plan, 'card')}>
-                <CreditCard size={16} aria-hidden="true" />
-                {t('plan.payCard')}
-              </Button>
-            </div>
+            {current.lifetime && active ? (
+              <p className="text-xs text-emerald-300">{t('plan.lifetime')}</p>
+            ) : lockedDown ? (
+              <p className="text-xs text-white/55">{t('plan.downgradeLocked', { date: until || '—' })}</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                <Button disabled={Boolean(busy)} onClick={() => buy(plan, 'pix')}>
+                  <QrCode size={16} aria-hidden="true" />
+                  {t('plan.payPix')}
+                </Button>
+                <Button variant="ghost" disabled={Boolean(busy)} onClick={() => buy(plan, 'card')}>
+                  <CreditCard size={16} aria-hidden="true" />
+                  {t('plan.payCard')}
+                </Button>
+              </div>
+            )}
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <p className="text-xs text-white/55">{t('plan.founder.perk')}</p>

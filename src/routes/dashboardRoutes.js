@@ -1064,6 +1064,12 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     if (currentPlan.lifetime && currentPlan.active) {
       return res.status(409).json({ success: false, error: 'plan_lifetime' });
     }
+    // Plano menor com um maior ativo: o pagamento rebaixaria o servidor e os dias pagos do
+    // plano maior virariam dias do menor. A tela esconde o botão; o backend recusa (Q253).
+    const { rankOf } = require('../config/planFeatures');
+    if (currentPlan.active && rankOf(currentPlan.plan) > rankOf(plan)) {
+      return res.status(409).json({ success: false, error: 'plan_downgrade', currentPlan: currentPlan.plan });
+    }
     const checkout = method === 'card'
       ? await payments.createCardSubscription({ guildId: req.params.guildId, plan, cycle, lang })
       : await payments.createPixCharge({ guildId: req.params.guildId, plan, cycle, lang });
@@ -1870,6 +1876,23 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     const result = founder.redeem(req.body?.code, req.body?.guildId, { by: req.panelSession?.userId || '' });
     if (!result.ok) return res.status(400).json({ success: false, error: result.reason });
     return res.json({ success: true, ...result });
+  });
+
+  // Reembolso pelo painel (Q245): devolve no Mercado Pago e retira o benefício na hora.
+  router.post('/api/dashboard/global/payments/refund', requireSession, requireOwner, async (req, res) => {
+    const paymentId = String(req.body?.paymentId || '').trim();
+    if (!/^\d{1,20}$/.test(paymentId)) return res.status(400).json({ success: false, error: 'payment_id' });
+    const result = await require('../services/planPayments')
+      .refundPayment(paymentId)
+      .catch(() => ({ ok: false, reason: 'provider' }));
+    if (!result.ok) {
+      const status = result.reason === 'provider' || result.reason === 'unavailable' ? 503 : 409;
+      return res.status(status).json({ success: false, error: result.reason });
+    }
+    return res.json({
+      success: true,
+      refund: { kind: result.kind || null, revoked: result.revoked !== false, duplicate: Boolean(result.duplicate) },
+    });
   });
 
   router.post('/api/dashboard/global/founder/revoke', requireSession, requireOwner, (req, res) => {

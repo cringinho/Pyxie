@@ -163,6 +163,7 @@
           statusPending: '⏳ Pagamento em análise. Assim que for aprovado, o Premium é liberado sozinho.',
           statusFail: 'O pagamento não foi concluído. Nada foi cobrado.',
           statusCancel: 'Pagamento cancelado. Quando quiser, é só tentar de novo.',
+          statusPlan: '🎉 Assinatura do plano do servidor recebida! Ela ativa sozinha quando o Mercado Pago confirmar a cobrança. Acompanhe em <a href="/dashboard">Painel → Planos</a>.',
           minors: 'Tem menos de 18 anos? Peça para um responsável antes de comprar.',
           howTitle: 'Como funciona',
           freeTitle: 'Trilha grátis',
@@ -199,6 +200,7 @@
           statusPending: '⏳ Payment under review. Premium unlocks by itself once it is approved.',
           statusFail: 'The payment was not completed. Nothing was charged.',
           statusCancel: 'Payment cancelled. Try again whenever you want.',
+          statusPlan: '🎉 Server plan subscription received! It turns on by itself once Mercado Pago confirms the charge. Follow it in <a href="/dashboard">Dashboard → Plans</a>.',
           minors: 'Under 18? Ask a parent or guardian before buying.',
           howTitle: 'How it works',
           freeTitle: 'Free track',
@@ -250,8 +252,9 @@
         document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
         document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = dict[el.dataset.i18n] || el.textContent; });
         document.getElementById('langBtn').textContent = dict.btn;
-        const statusKey = { ok: 'statusOk', pending: 'statusPending', fail: 'statusFail', cancel: 'statusCancel' }[status];
-        document.getElementById('statusBox').innerHTML = statusKey ? `<div class="notice ${status === 'ok' ? 'ok' : 'warn'}">${dict[statusKey]}</div>` : '';
+        // `plan`: assinaturas de plano antigas ainda voltam para cá (as novas voltam ao painel).
+        const statusKey = { ok: 'statusOk', pending: 'statusPending', fail: 'statusFail', cancel: 'statusCancel', plan: 'statusPlan' }[status];
+        document.getElementById('statusBox').innerHTML = statusKey ? `<div class="notice ${status === 'ok' || status === 'plan' ? 'ok' : 'warn'}">${dict[statusKey]}</div>` : '';
         try {
           const res = await fetch(`/api/pass/info?lang=${lang}${token ? `&token=${encodeURIComponent(token)}` : ''}`);
           const data = await res.json();
@@ -264,7 +267,8 @@
           const buttons = document.getElementById('buyButtons');
           buttons.innerHTML = '';
           if (!token) {
-            userLine.innerHTML = `<div class="notice">${dict.needToken}</div>`;
+            // Voltando do pagamento (com status na URL), o convite para comprar confunde: some.
+            userLine.innerHTML = statusKey ? '' : `<div class="notice">${dict.needToken}</div>`;
             return;
           }
           if (!data.tokenValid || (data.user && !data.user.sameMonth)) {

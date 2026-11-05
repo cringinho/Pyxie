@@ -104,6 +104,49 @@ export function Trust({ t }) {
   );
 }
 
+// Reembolso (Q245): devolve o pagamento no Mercado Pago e já retira o benefício.
+function RefundCard({ t }) {
+  const [paymentId, setPaymentId] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState(null);
+  const submit = async (e) => {
+    e.preventDefault();
+    const id = paymentId.trim();
+    if (!/^\d{1,20}$/.test(id)) {
+      setNotice({ tone: 'error', text: t('refund.err.payment_id') });
+      return;
+    }
+    if (!window.confirm(t('refund.confirm', { id }))) return;
+    setBusy(true);
+    setNotice(null);
+    try {
+      const res = await api.refundPayment(id);
+      setNotice({ tone: 'ok', text: res.refund?.duplicate ? t('refund.already') : t('refund.done') });
+      setPaymentId('');
+    } catch (err) {
+      const key = `refund.err.${err.code}`;
+      setNotice({ tone: 'error', text: t(key) !== key ? t(key) : t('refund.err.unknown') });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Card title={t('refund.title')}>
+      <p className="mb-3 text-sm text-white/70">{t('refund.hint')}</p>
+      <form className="flex flex-wrap items-end gap-3" onSubmit={submit}>
+        <label className="block min-w-[200px] flex-1">
+          <span className="mb-1 block text-xs font-semibold text-white/70">{t('refund.id')}</span>
+          <input inputMode="numeric" value={paymentId} onChange={(e) => setPaymentId(e.target.value)} className={field} />
+        </label>
+        <Button type="submit" variant="ghost" disabled={busy}>
+          {busy ? t('app.loading') : t('refund.go')}
+        </Button>
+      </form>
+      {notice && <div className="mt-3"><Notice tone={notice.tone}>{notice.text}</Notice></div>}
+    </Card>
+  );
+}
+
 // Economia (área global do dono): faixa de moedas do bônus diário.
 export function Economy({ t }) {
   const [cfg, setCfg] = useState(null);
@@ -114,6 +157,7 @@ export function Economy({ t }) {
   const [notice, run] = useRunner(load, t);
   if (!cfg) return <Spinner label={t('app.loading')} />;
   return (
+    <div className="space-y-4">
     <Card title={t('economy.dailyTitle')}>
       <p className="mb-3 text-sm text-white/70">{t('economy.dailyHint')}</p>
       <form
@@ -137,5 +181,7 @@ export function Economy({ t }) {
       </form>
       {notice && <div className="mt-3"><Notice tone={notice.tone}>{notice.text}</Notice></div>}
     </Card>
+    <RefundCard t={t} />
+    </div>
   );
 }

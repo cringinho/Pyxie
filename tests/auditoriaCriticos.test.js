@@ -128,6 +128,79 @@ const { escapeHtml, replaceKeep } = require('../src/utils/htmlEscape');
   assert.ok(!cancelBody.includes('req.body?.preapprovalId'), 'Não aceita id de assinatura vindo do navegador');
   console.log('  ✅ 5. Cancelamento só para a renovação, do próprio servidor, sem apagar o pago.');
 
+  // 6. Rotas antigas do dono: sem IP liberado, sem formulário escondido (Q263/Q267)
+  process.env.PANEL_SECRET = 'panel-test-secret-only-for-ci';
+  const panelSessions = require('../src/services/panelSessions');
+  const { requireAdminAuth } = require('../src/services/adminAuth');
+  const { OWNER_SNOWFLAKE } = require('../src/config/scopes');
+  const ownerCookie = `${panelSessions.COOKIE_NAME}=${encodeURIComponent(panelSessions.createSession({ user: { id: OWNER_SNOWFLAKE, username: 'dono' }, guilds: [] }).cookieValue)}`;
+  const otherCookie = `${panelSessions.COOKIE_NAME}=${encodeURIComponent(panelSessions.createSession({ user: { id: '700000000000000001', username: 'outra' }, guilds: [] }).cookieValue)}`;
+  const adminApp = express();
+  adminApp.use(express.urlencoded({ extended: true }));
+  adminApp.use(express.json());
+  adminApp.get('/api/admin/x', requireAdminAuth, (req, res) => res.json({ success: true }));
+  adminApp.post('/api/admin/x', requireAdminAuth, (req, res) => res.json({ success: true }));
+  const aServer = await new Promise((resolve) => { const srv = adminApp.listen(0, '127.0.0.1', () => resolve(srv)); });
+  const aBase = `http://127.0.0.1:${aServer.address().port}`;
+  try {
+    // Pedido vindo de 127.0.0.1 (IP que antes liberava tudo) sem login: recusado.
+    assert.equal((await fetch(`${aBase}/api/admin/x`, { method: 'POST' })).status, 401, 'IP local sozinho não entra');
+    assert.equal((await fetch(`${aBase}/api/admin/x?token=panel-test-secret-only-for-ci`)).status, 401, 'Chave mestra na URL é recusada');
+    // Formulário escondido de outro site: leva o cookie, mas não consegue mandar X-Pyxie-Panel.
+    const csrf = await fetch(`${aBase}/api/admin/x`, {
+      method: 'POST',
+      headers: { Cookie: ownerCookie, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'enabled=false',
+    });
+    assert.equal(csrf.status, 403, 'Formulário sem o cabeçalho do painel é recusado');
+    const ok = await fetch(`${aBase}/api/admin/x`, { method: 'POST', headers: { Cookie: ownerCookie, 'X-Pyxie-Panel': '1' } });
+    assert.equal(ok.status, 200, 'Dono logado no painel com o cabeçalho entra');
+    assert.equal((await fetch(`${aBase}/api/admin/x`, { headers: { Cookie: ownerCookie } })).status, 200, 'Leitura do dono não precisa do cabeçalho');
+    assert.equal((await fetch(`${aBase}/api/admin/x`, { headers: { Cookie: otherCookie } })).status, 401, 'Outra pessoa logada não é dono');
+    assert.equal((await fetch(`${aBase}/api/admin/x`, { method: 'POST', headers: { Authorization: 'Bearer panel-test-secret-only-for-ci' } })).status, 200, 'Máquina com a chave no cabeçalho entra');
+  } finally {
+    aServer.close();
+  }
+  const serverSrc2 = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+  const emojiRoute = serverSrc2.slice(serverSrc2.indexOf("app.post('/admin/emojis'"), serverSrc2.indexOf("app.post('/admin/emojis'") + 200);
+  assert.ok(emojiRoute.includes('requireAdminAuth'), 'POST /admin/emojis usa a mesma proteção');
+  assert.ok(!/isIpAllowed|req\.query\.token && isMasterSecretValid/.test(serverSrc2), 'server.js não libera por IP nem por chave na URL');
+  const museumSrc = fs.readFileSync(path.join(__dirname, '..', 'src', 'modules', 'museum', 'museumManager.js'), 'utf8');
+  assert.ok(!museumSrc.includes("req.headers['x-admin-token']"), 'Museu não aceita a chave mestra do navegador');
+  const museumPage = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'pages', 'Museum.jsx'), 'utf8');
+  assert.ok(!museumPage.includes("getItem('pyxie_admin_token')") && museumPage.includes("'X-Pyxie-Panel': '1'"), 'Página do Museu usa a sessão do painel');
+  console.log('  ✅ 6. Rotas do dono exigem a sessão do painel e o cabeçalho anti-CSRF (sem IP nem chave na URL).');
+
+  // 7. Cadastro não devolve o código de verificação do e-mail (Q262)
+  const regApp = express();
+  regApp.use(express.json());
+  regApp.use('/', createAccountRouter());
+  const rServer = await new Promise((resolve) => { const srv = regApp.listen(0, () => resolve(srv)); });
+  try {
+    const reg = await fetch(`http://127.0.0.1:${rServer.address().port}/api/auth/register`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: 'outra-pessoa@example.com', password: 'senha-forte-123' }),
+    });
+    const regBody = await reg.json();
+    assert.equal(regBody.success, true);
+    assert.equal('verifyToken' in regBody, false, 'Código de verificação não volta na resposta');
+  } finally {
+    rServer.close();
+  }
+  console.log('  ✅ 7. Cadastro sem o código de verificação na resposta.');
+
+  // 8. Widget embutível e vitrine Shopee escapada (Q277/Q269)
+  const widgetRoute = serverSrc2.slice(serverSrc2.indexOf("app.get('/widget/card'"), serverSrc2.indexOf("app.get('/widget/card'") + 400);
+  assert.ok(widgetRoute.includes("removeHeader('X-Frame-Options')") && widgetRoute.includes('frame-ancestors *'), 'Só o widget pode ser embutido');
+  const cringe = fs.readFileSync(path.join(__dirname, '..', 'public', 'cringelandia.html'), 'utf8');
+  const shopee = cringe.slice(cringe.indexOf('async function loadShopeeShowcase'), cringe.indexOf('async function loadShopeeShowcase') + 2600);
+  assert.ok(shopee.includes('const title = esc(') && shopee.includes('const link = safeUrl(') && shopee.includes('const img = safeUrl('), 'Cards da Shopee escapam título e aceitam só https');
+  console.log('  ✅ 8. Widget embutível e vitrine Shopee escapada.');
+
+  // 9. Reembolso pelo painel só para o dono da Pyxie (Q245)
+  const refundRoute = routesSrc.slice(routesSrc.indexOf("'/api/dashboard/global/payments/refund'"), routesSrc.indexOf("'/api/dashboard/global/payments/refund'") + 200);
+  assert.ok(refundRoute.includes('requireSession, requireOwner'), 'Reembolso exige sessão e dono');
+  console.log('  ✅ 9. Reembolso pelo painel exclusivo do dono.');
+
   console.log('🛡️ Críticos da auditoria: tudo certo.');
   process.exit(0);
 })().catch((err) => {

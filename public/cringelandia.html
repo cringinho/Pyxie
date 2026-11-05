@@ -2781,16 +2781,24 @@
         if (data && data.success && Array.isArray(data.items) && data.items.length > 0) {
           const track = document.getElementById('shopeeTrack');
           if (!track) return;
+          // Tudo que vem do cadastro (ou do og:title da Shopee) entra escapado, e link/imagem
+          // só valem em https (ou caminho do próprio site). Auditoria Q269.
+          const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+          const safeUrl = (v, fallback) => {
+            const url = String(v || '').trim();
+            if (/^https:\/\//i.test(url) || /^\/(?!\/)/.test(url)) return esc(url);
+            return esc(fallback);
+          };
           track.innerHTML = data.items.map((item) => {
-            const title = currentLang === 'en' ? (item.titulo_en || item.titulo || item.title) : (item.titulo || item.title);
-            const price = currentLang === 'en' ? (item.preco_en || item.preco || item.price) : (item.preco || item.price);
-            const tag = currentLang === 'en' ? (item.tag_en || item.tag || 'Sensorial & Geek') : (item.tag || 'Sensorial & Geek');
-            const img = item.imagem || item.image || '/assets/pyxie/pyxie_mascot.png';
-            const link = item.link || item.productLink || 'https://s.shopee.com.br/BU6Bod6Sw';
+            const title = esc(currentLang === 'en' ? (item.titulo_en || item.titulo || item.title) : (item.titulo || item.title));
+            const price = esc(currentLang === 'en' ? (item.preco_en || item.preco || item.price) : (item.preco || item.price));
+            const tag = esc(currentLang === 'en' ? (item.tag_en || item.tag || 'Sensorial & Geek') : (item.tag || 'Sensorial & Geek'));
+            const img = safeUrl(item.imagem || item.image, '/assets/pyxie/pyxie_mascot.png');
+            const link = safeUrl(item.link || item.productLink, 'https://s.shopee.com.br/BU6Bod6Sw');
             return `
               <a href="${link}" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
                 <div class="product-img-box">
-                  <img src="${img}" alt="${title.replace(/"/g, '&quot;')}" loading="lazy" />
+                  <img src="${img}" alt="${title}" loading="lazy" />
                   <span class="product-tag">${tag}</span>
                 </div>
                 <div class="product-body">
