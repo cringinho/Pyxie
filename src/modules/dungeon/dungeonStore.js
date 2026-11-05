@@ -1,7 +1,7 @@
 const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../../utils/dataDir');
 const path = require('path');
 const { rollDrops } = require('./dungeonDrops');
-const { readJson, writeJsonAtomic } = require('../../utils/atomicJson');
+const { readJson, readJsonProtected, writeJsonAtomicWithBackup } = require('../../utils/atomicJson');
 const { getBrtDateKey, msUntilNextBrtMidnight } = require('../../utils/brtDate');
 const economy = require('../../services/economy');
 const engine = require('./dungeonEngine');
@@ -83,7 +83,7 @@ function emptyTotals() {
 }
 
 function loadState() {
-  const data = readJson(DATA_FILE, {});
+  const data = readJsonProtected(DATA_FILE, {}); // Q288: corrompido -> .corrupt + .bak
   return {
     players: data.players && typeof data.players === 'object' ? data.players : {},
     runs: data.runs && typeof data.runs === 'object' ? data.runs : {},
@@ -120,7 +120,7 @@ function weeklyStats(player, now) {
 }
 
 function saveState(state) {
-  return writeJsonAtomic(DATA_FILE, state);
+  return writeJsonAtomicWithBackup(DATA_FILE, state);
 }
 
 /** Normaliza o jogador no próprio objeto do estado: chamadas repetidas devolvem a mesma referência. */

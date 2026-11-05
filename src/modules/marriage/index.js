@@ -195,9 +195,11 @@ module.exports = {
         if (action === 'date_ans') {
           const sessionId = parts[2];
           const optIdx = parseInt(parts[3], 10);
-          const session = pyCasamento.activeDateSessions?.get(sessionId);
+          // Q282: gravar a resposta, ver se os dois responderam e pagar é síncrono e
+          // atômico (recordDateAnswer), então só um clique consegue resolver o encontro.
+          const answer = pyCasamento.recordDateAnswer(sessionId, interaction.user.id, optIdx);
 
-          if (!session) {
+          if (answer.status === 'expired') {
             await interaction.reply({
               content: t('marriage.dateSessionExpired', interaction),
               flags: 64,
@@ -205,7 +207,7 @@ module.exports = {
             return;
           }
 
-          if (!session.spouses.includes(interaction.user.id)) {
+          if (answer.status === 'not_yours') {
             await interaction.reply({
               content: t('marriage.dateNotYourSession', interaction),
               flags: 64,
@@ -213,19 +215,19 @@ module.exports = {
             return;
           }
 
-          session.answers[interaction.user.id] = optIdx;
+          const bothAnswered = answer.status === 'resolved';
+          const { isMatch, outcome } = answer;
+
           await interaction.reply({
             content: t('marriage.dateAnswerRecorded', interaction),
             flags: 64,
           });
 
-          // Se ambos responderam, resolve a rodada
-          const spouseA = session.spouses[0];
-          const spouseB = session.spouses[1];
-          if (session.answers[spouseA] !== undefined && session.answers[spouseB] !== undefined) {
-            const isMatch = session.answers[spouseA] === session.answers[spouseB];
-            const outcome = marriageManager.resolveDateNight(session.marriageId, isMatch);
-            pyCasamento.activeDateSessions.delete(sessionId);
+          if (bothAnswered) {
+            if (!outcome || !outcome.success) {
+              await interaction.followUp({ content: t('marriage.dateSessionExpired', interaction), flags: 64 }).catch(() => null);
+              return;
+            }
 
             const resultText = isMatch
               ? t('marriage.dateOutcomeMatch', interaction, {

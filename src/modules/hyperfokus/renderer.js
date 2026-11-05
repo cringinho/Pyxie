@@ -245,14 +245,17 @@ function getSharedStyles() {
     /* Layout com Sidebar */
     .layout-sidebar {
       display: grid;
-      grid-template-columns: 1fr 340px;
+      grid-template-columns: minmax(0, 1fr) 340px;
       gap: 2.5rem;
       margin-top: 2rem;
     }
 
     @media (max-width: 900px) {
       .layout-sidebar {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .layout-sidebar > * {
+        min-width: 0;
       }
     }
 
@@ -723,11 +726,11 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
     <!-- Layout Bento + Sidebar -->
     <div class="layout-sidebar">
       <div>
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
           <h2 style="font-size: 1.5rem; font-weight: 900; color: #fff;">
             ${isEn ? 'Explore Articles' : 'Explorar Artigos'}
           </h2>
-          <div style="display: flex; gap: 0.5rem;">
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
             <a href="/hyperfokus?sort=recent${activeTag ? `&tag=${activeTag}` : ''}${isEn ? '&lang=en' : ''}" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;">${isEn ? 'Recent' : 'Recentes'}</a>
             <a href="/hyperfokus?sort=likes${activeTag ? `&tag=${activeTag}` : ''}${isEn ? '&lang=en' : ''}" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;">❤️ ${isEn ? 'Popular' : 'Curtidos'}</a>
           </div>

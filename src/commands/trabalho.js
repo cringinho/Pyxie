@@ -2545,7 +2545,9 @@ async function handleWorkInteraction(interaction) {
   const isProjectCompletionShift = (Number(userAccount.projectProgress) || 0) >= 2;
   const triggerDilemma = !isProjectCompletionShift && (session.triggerDilemma !== undefined ? Boolean(session.triggerDilemma) : (Math.random() < 0.10));
   if (triggerDilemma) {
-    activeDilemmaSessions.set(sessionUserId, {
+    const DILEMMA_TTL_MS = 5 * 60 * 1000;
+    const dilemmaExpiresAt = Date.now() + DILEMMA_TTL_MS;
+    const dilemmaSession = {
       userId: sessionUserId,
       professionKey: session.professionKey,
       professionLabel: session.professionLabel,
@@ -2556,13 +2558,19 @@ async function handleWorkInteraction(interaction) {
       masteryBonusPercent: session.masteryBonusPercent,
       lang,
       createdAt: Date.now(),
-    });
+    };
+    activeDilemmaSessions.set(sessionUserId, dilemmaSession);
 
+    // Q290: se a pessoa não escolher a tempo, ela não perde o turno: paga o salário base.
     const dilemmaTimeout = setTimeout(() => {
-      if (activeDilemmaSessions.has(sessionUserId)) {
-        activeDilemmaSessions.delete(sessionUserId);
+      if (activeDilemmaSessions.get(sessionUserId) !== dilemmaSession) return;
+      activeDilemmaSessions.delete(sessionUserId);
+      try {
+        finishWork(sessionUserId, true, dilemmaSession.baseSalary, false);
+      } catch (err) {
+        console.error('[py-work] Falha ao pagar salário base do dilema expirado:', err.message);
       }
-    }, 5 * 60 * 1000);
+    }, DILEMMA_TTL_MS);
     if (dilemmaTimeout && typeof dilemmaTimeout.unref === 'function') {
       dilemmaTimeout.unref();
     }
@@ -2578,6 +2586,8 @@ async function handleWorkInteraction(interaction) {
       t('workDilemma.choicePrompt', lang),
       t('workDilemma.optAcceptDesc', lang),
       t('workDilemma.optReportDesc', lang),
+      '',
+      t('workDilemma.deadline', lang, { time: `<t:${Math.floor(dilemmaExpiresAt / 1000)}:R>` }),
     ].join('\n');
 
     const dilemmaEmbed = new EmbedBuilder()
@@ -2923,6 +2933,22 @@ module.exports = {
     await runWork(message, (payload) => message.reply(payload));
   },
   async executeSlash({ interaction }) {
-    await runWork(interaction, (payload) => interaction.editReply(payload));
+    // Q293: o /py-work é adiado em público pelo index.js, e o editReply ignora "ephemeral".
+    // Avisos pessoais (sem profissão, cooldown) apagam o "pensando..." público e vão em privado.
+    await runWork(interaction, async (payload) => {
+      if (payload && payload.ephemeral) {
+        const { ephemeral, ...rest } = payload;
+        const canSwap = typeof interaction.deleteReply === 'function' && typeof interaction.followUp === 'function';
+        if ((interaction.deferred || interaction.replied) && canSwap) {
+          await interaction.deleteReply().catch(() => null);
+          return interaction.followUp({ ...rest, flags: 64 });
+        }
+        if (!interaction.deferred && !interaction.replied && typeof interaction.reply === 'function') {
+          return interaction.reply({ ...rest, flags: 64 });
+        }
+        return interaction.editReply(rest);
+      }
+      return interaction.editReply(payload);
+    });
   },
 };

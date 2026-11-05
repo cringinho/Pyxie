@@ -1,6 +1,6 @@
 const path = require('node:path');
 const crypto = require('node:crypto');
-const { readJson, writeJsonAtomic } = require('../utils/atomicJson');
+const { readJsonProtected, writeJsonAtomicWithBackup } = require('../utils/atomicJson');
 const { withFileLock } = require('../utils/fileLock');
 const economy = require('./economy');
 const vault = require('./itemVault');
@@ -33,7 +33,7 @@ function stateFile() {
 }
 
 function load() {
-  const stored = readJson(stateFile(), {});
+  const stored = readJsonProtected(stateFile(), {}); // Q288: corrompido -> .corrupt + .bak
   return {
     listings: stored.listings && typeof stored.listings === 'object' ? stored.listings : {},
     sales: Array.isArray(stored.sales) ? stored.sales : [],
@@ -42,7 +42,7 @@ function load() {
 }
 
 function save(state) {
-  return writeJsonAtomic(stateFile(), state);
+  return writeJsonAtomicWithBackup(stateFile(), state);
 }
 
 function locked(fn) {
