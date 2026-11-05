@@ -742,6 +742,12 @@ function getHelpModules(customCommands = null, source = null) {
     const iconUrl = getModuleIconUrl(category) || null;
     const emoji = MODULE_EMOJIS[category] || '⚙️';
 
+    // Recarga e permissão só quando o próprio comando declara (o site esconde o campo se for null).
+    const cooldownRaw = Number(cmd.cooldown);
+    const cooldownSeconds = Number.isFinite(cooldownRaw) && cooldownRaw > 0 ? cooldownRaw : null;
+    const perms = cmd.data?.default_member_permissions;
+    const permission = perms !== undefined && perms !== null ? 'staff' : 'everyone';
+
     targetBucket.push({
       name: `/${String(name).replace(/^\/+/, '')}`,
       desc,
@@ -750,6 +756,8 @@ function getHelpModules(customCommands = null, source = null) {
       category,
       emoji,
       iconUrl,
+      cooldownSeconds,
+      permission,
     });
   }
 

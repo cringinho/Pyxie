@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Consentimento de cookies (LGPD): precisa vir antes do GTM, gtag e AdSense -->
+  <script src="/js/consent.js"></script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -331,6 +333,18 @@
       }
     }
   </style>
+  <style id="pyxie-mobile-nav">
+    /* Celular: o menu quebra em linhas e o botão de idioma fica sempre ao lado da logo
+       (antes a página ficava mais larga que a tela; auditoria Q021). */
+    @media (max-width: 768px) {
+      header { flex-wrap: wrap; justify-content: center; gap: 8px 12px; padding: 10px 16px; }
+      header .brand { flex: 1 1 auto; }
+      header .nav-links { display: contents; }
+      header .nav-links a { order: 3; font-size: 0.9rem; padding: 4px 6px; }
+      header .lang-btn { order: 2; }
+      header::after { content: ''; order: 2; flex-basis: 100%; height: 0; }
+    }
+  </style>
   <style id="pyxie-mobile-perf">
     /* O celular tem altura dinâmica (barra de endereço): 100vh corta conteúdo. */
     @media (max-width: 768px) {
@@ -407,6 +421,7 @@
     <p>© 2026 Pyxie • Cringelândia. Todos os direitos reservados. Feito com amor e magia.</p>
   </footer>
 
+  <script src="/js/pageLang.js"></script>
   <script>
     const I18N = {
   "pt": {
@@ -498,16 +513,15 @@
 
     function toggleLanguage() {
       const next = currentLang === 'en' ? 'pt' : 'en';
+      // Vai para a URL do outro idioma (/privacidade <-> /en/privacy); sem ela, troca aqui mesmo.
+      if (window.PyxiePageLang && window.PyxiePageLang.go(next)) return;
       applyLanguage(next);
     }
 
+    // Mesma regra em todas as páginas institucionais (public/js/pageLang.js): o idioma é o
+    // da URL, que o servidor já colocou em <html lang>.
     (function init() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const queryLang = urlParams.get('lang');
-      const savedLang = localStorage.getItem('pyxie_lang');
-      const browserLang = (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'pt';
-      const initial = (queryLang === 'en' || queryLang === 'pt') ? queryLang : (savedLang || browserLang);
-      applyLanguage(initial);
+      applyLanguage(window.PyxiePageLang ? window.PyxiePageLang.initial() : 'pt');
     })();
   </script>
 </body>

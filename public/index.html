@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Consentimento de cookies (LGPD): precisa vir antes do GTM, gtag e AdSense -->
+  <script src="/js/consent.js"></script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -2893,6 +2895,8 @@
       }
 
       function render() {
+        // O React substitui #pyxie-app (e este canvas): para o loop em vez de animar no vazio.
+        if (window.__PYXIE_REACT_ACTIVE__ || !canvas.isConnected) return;
         ctx.clearRect(0, 0, width, height);
 
         for (let i = 0; i < particles.length; i++) {
@@ -3162,6 +3166,10 @@
     }
 
     function resolveInitialLang() {
+      // A URL manda (o servidor já entregou /en/ em inglês e / em português).
+      const path = window.location.pathname.toLowerCase();
+      if (path === '/en' || path.indexOf('/en/') === 0) return 'en';
+      if (path === '/' || path === '') return 'pt';
       const urlParams = new URLSearchParams(window.location.search);
       const urlLang = urlParams.get('lang');
       const savedLang = getSavedLang();
@@ -3348,7 +3356,7 @@
         const data = await res.json();
         if (data && data.stats) {
           setText('statCommands', Number(data.stats.commandsExecuted || 0).toLocaleString());
-          setText('statUsers', Number(data.stats.totalMembers || data.stats.usersEngaged || 450).toLocaleString());
+          setText('statUsers', Number(data.stats.totalMembers || data.stats.usersEngaged || 0).toLocaleString());
           setText('statMessages', Number(data.stats.messagesProcessed || 0).toLocaleString());
         }
         if (typeof data.uptime === 'number' && data.uptime >= 0) {
@@ -3628,16 +3636,27 @@
       } catch (_) {}
     }
 
-    initLang();
-    fetchStats();
-    checkSeasonalEvent();
-    checkModuleDynamicLinks();
-    initLiveSync();
-    setInterval(fetchStats, 15000);
-    setInterval(checkSeasonalEvent, 30000);
-    setInterval(checkModuleDynamicLinks, 30000);
-    initPyxieTip();
-    syncHourlyPromoLinks();
+    // Esta Home estática é só a casca de SEO e o plano B se o React não carregar.
+    // O módulo do React roda antes do DOMContentLoaded: se ele montou, nada daqui fica
+    // rodando (sem SSE, sem consultas a cada 15/30 s, sem gastar bateria à toa).
+    function bootLegacyHome() {
+      if (window.__PYXIE_REACT_ACTIVE__) return;
+      initLang();
+      fetchStats();
+      checkSeasonalEvent();
+      checkModuleDynamicLinks();
+      initLiveSync();
+      setInterval(fetchStats, 15000);
+      setInterval(checkSeasonalEvent, 30000);
+      setInterval(checkModuleDynamicLinks, 30000);
+      initPyxieTip();
+      syncHourlyPromoLinks();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bootLegacyHome);
+    } else {
+      bootLegacyHome();
+    }
   </script>
   <script type="module" src="/dist/assets/index.js"></script>
 </body>

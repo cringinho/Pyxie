@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { Sparkles, ShieldAlert, X, ExternalLink, User, Calendar, Image as ImageIcon } from 'lucide-react';
+import { localeHref } from '../../utils/localePath';
 
-export default function MuseumScene({ t }) {
+export default function MuseumScene({ t, lang = 'pt' }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const [arts, setArts] = useState([]);
@@ -23,52 +24,25 @@ export default function MuseumScene({ t }) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Fallback default artworks in case /api/museum/arts has few or 0 items
-  const defaultArts = [
-    {
-      id: 'art-01',
-      author: 'Pyxie Core',
-      description: 'Astaroth no Portal Arcano • Ilustração oficial do Bosque Violeta.',
-      imageUrl: '/assets/pyxie/pyxie_space_banner.jpg',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: 'art-02',
-      author: 'Melody Labs',
-      description: 'O Arcano O Mago • Pintura digital inspirada nos 78 arcanos da Pyxie.',
-      imageUrl: '/assets/pyxie/og_banner_hd.png',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: 'art-03',
-      author: 'Cringelândia Art',
-      description: 'Pyxie Tsundere Rebelde • Mascote da comunidade em alta resolução.',
-      imageUrl: '/assets/pyxie/pyxie_mascot.png',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: 'art-04',
-      author: 'Pixel Guild',
-      description: 'Pixelart Nostálgica • Render retrô em 32x32 da fada gótica.',
-      imageUrl: '/assets/pyxie/pyxie_pixelart.png',
-      createdAt: new Date().toISOString(),
-    },
-  ];
-
-  // Fetch arts from backend
+  // Só artes reais do Museu (AGENTS.md §12, zero mock). Sem artes, ou se a API falhar,
+  // mostramos um estado vazio honesto em vez de inventar artistas.
+  const [status, setStatus] = useState('loading'); // loading | ready | empty | error
   useEffect(() => {
+    let alive = true;
     fetch('/api/museum/arts?limit=12')
       .then((res) => res.json())
       .then((data) => {
-        if (data && data.success && Array.isArray(data.arts) && data.arts.length > 0) {
-          setArts(data.arts);
-        } else {
-          setArts(defaultArts);
-        }
+        if (!alive) return;
+        const list = data && data.success && Array.isArray(data.arts) ? data.arts.filter((a) => a && a.imageUrl) : [];
+        setArts(list);
+        setStatus(list.length > 0 ? 'ready' : 'empty');
       })
       .catch(() => {
-        setArts(defaultArts);
+        if (alive) setStatus('error');
       });
+    return () => {
+      alive = false;
+    };
   }, []);
 
   // IntersectionObserver to lazy-initialize WebGL only when approaching viewport (Core Web Vitals LCP)
@@ -443,27 +417,49 @@ export default function MuseumScene({ t }) {
         </p>
       </div>
 
-      {/* 3D Canvas Container */}
+      {status === 'empty' || status === 'error' ? (
+        /* Estado vazio honesto: nada de artistas inventados */
+        <div className="max-w-xl mx-auto px-4 text-center">
+          <div className="glass-panel rounded-2xl border border-pink-500/25 p-8 space-y-4">
+            <ImageIcon className="w-10 h-10 mx-auto text-pink-400" aria-hidden="true" />
+            <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
+              {t(status === 'error' ? 'museum.loadError' : 'museum.emptyState')}
+            </p>
+            <a
+              href={localeHref('/museu', lang)}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 border border-purple-400/30"
+            >
+              <Sparkles className="w-4 h-4 text-pink-200" aria-hidden="true" />
+              <span>{t('museum.emptyCta')}</span>
+            </a>
+          </div>
+        </div>
+      ) : (
+      <>
+      {/* 3D Canvas Container (a altura fica reservada desde o início para não empurrar a página) */}
       <div
         ref={containerRef}
         onContextMenu={handleContextMenu}
-        style={{ touchAction: 'none' }}
-        className="art-shield relative w-full max-w-6xl mx-auto h-[380px] sm:h-[480px] lg:h-[540px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none"
+        style={{ touchAction: isMobile ? 'pan-x pan-y' : 'none' }}
+        className="art-shield relative w-full max-w-6xl mx-auto h-[420px] sm:h-[480px] lg:h-[540px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none"
       >
-        {isWebGLSupported && !isMobile ? (
+        {status === 'loading' ? (
+          <div className="text-slate-400 text-sm" role="status">{t('museum.loading')}</div>
+        ) : isWebGLSupported && !isMobile ? (
           <canvas ref={canvasRef} className="w-full h-full block" />
         ) : (
-          /* Mobile CSS 3D Tilt Fallback */
-          <div className="flex gap-4 overflow-x-auto px-4 py-8 w-full scrollbar-none snap-x">
+          /* Mural do celular (sem WebGL) */
+          <div className="flex gap-4 overflow-x-auto px-4 py-4 w-full scrollbar-none snap-x">
             {arts.map((art) => (
-              <div
+              <button
+                type="button"
                 key={art.id}
                 onClick={() => setSelectedArt(art)}
-                className="shrink-0 w-64 h-[352px] rounded-2xl glass-panel p-3 border border-pink-500/30 snap-center cursor-pointer shadow-lg transform hover:scale-105 transition-all"
+                className="shrink-0 w-64 h-[352px] rounded-2xl glass-panel p-3 border border-pink-500/30 snap-center cursor-pointer shadow-lg transform hover:scale-105 transition-all text-left"
               >
                 <img
                   src={art.imageUrl}
-                  alt={`Arte por @${art.author || 'Artista'} no Museu da Pyxie • Visite https://pyxie.com.br/`}
+                  alt={`${t('museum.artBy')} @${art.author || t('museum.author')}`}
                   data-canonical-url="https://pyxie.com.br/"
                   className="w-full h-64 object-contain rounded-xl bg-black/40"
                 />
@@ -471,26 +467,32 @@ export default function MuseumScene({ t }) {
                   <div className="text-pink-400 font-bold text-sm">@{art.author}</div>
                   <div className="text-slate-300 text-xs truncate">{art.description}</div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         )}
 
-        {/* Ambient Overlay Vignette */}
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#07040D] to-transparent pointer-events-none" />
-        <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#07040D] to-transparent pointer-events-none" />
+        {/* Vinheta só no globo 3D; no mural do celular ela cobria o crédito do artista */}
+        {!isMobile && (
+          <>
+            <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#07040D] to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#07040D] to-transparent pointer-events-none" />
+          </>
+        )}
       </div>
 
       {/* CTA Button */}
-      <div className="mt-8 text-center">
+      <div className="mt-8 px-4 text-center">
         <a
-          href="/museu"
-          className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-extrabold text-white bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-neon-violet transition-all transform hover:-translate-y-1 active:translate-y-0 border border-purple-400/30"
+          href={localeHref('/museu', lang)}
+          className="inline-flex max-w-full items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-extrabold text-white bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-neon-violet transition-all transform hover:-translate-y-1 active:translate-y-0 border border-purple-400/30"
         >
           <Sparkles className="w-4 h-4 text-pink-300" />
           <span>{t('museum.exploreAll')}</span>
         </a>
       </div>
+      </>
+      )}
 
       {/* INSPECTION MODAL */}
       {selectedArt && (
@@ -501,6 +503,7 @@ export default function MuseumScene({ t }) {
           >
             <button
               onClick={() => setSelectedArt(null)}
+              aria-label={t('common.close')}
               className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-all z-20"
             >
               <X className="w-5 h-5" />
@@ -510,7 +513,7 @@ export default function MuseumScene({ t }) {
               <div className="relative rounded-2xl overflow-hidden border border-purple-500/30 bg-black/40 group">
                 <img
                   src={selectedArt.imageUrl}
-                  alt={`Arte por @${selectedArt.author || 'Artista'} no Museu da Pyxie • Visite https://pyxie.com.br/`}
+                  alt={`${t('museum.artBy')} @${selectedArt.author || t('museum.author')}`}
                   data-canonical-url="https://pyxie.com.br/"
                   className="w-full h-80 object-contain pointer-events-none select-none"
                 />
@@ -518,10 +521,10 @@ export default function MuseumScene({ t }) {
                 <div className="absolute inset-x-0 bottom-0 py-2 px-3 bg-black/85 backdrop-blur-md border-t border-pink-500/40 flex items-center justify-between text-[11px] font-mono tracking-wide z-10 shadow-lg select-none pointer-events-none">
                   <span className="text-white font-bold truncate">
                     <span className="text-pink-400 font-extrabold mr-1">✦</span>
-                    pyxie.com.br • @{selectedArt.author || 'Artista'}
+                    pyxie.com.br • @{selectedArt.author || t('museum.author')}
                   </span>
                   <span className="text-purple-300/80 text-[10px] shrink-0 ml-2 hidden sm:inline">
-                    Galeria Oficial
+                    {t('museum.officialGallery')}
                   </span>
                 </div>
                 <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-black/70 backdrop-blur-md text-[10px] font-mono text-pink-300 border border-pink-500/30 z-10">
@@ -540,19 +543,19 @@ export default function MuseumScene({ t }) {
                 </div>
 
                 <p className="text-slate-300 text-sm leading-relaxed">
-                  {selectedArt.description || 'Obra compartilhada na galeria oficial da comunidade Pyxie.'}
+                  {selectedArt.description || t('museum.noDescription')}
                 </p>
 
                 <div className="pt-2 border-t border-purple-500/15 flex items-center gap-2 text-xs text-purple-300/80">
                   <Calendar className="w-4 h-4 text-pink-400" />
                   <span>
-                    {new Date(selectedArt.createdAt || Date.now()).toLocaleDateString('pt-BR')}
+                    {selectedArt.createdAt ? new Date(selectedArt.createdAt).toLocaleDateString(lang === 'en' ? 'en-US' : 'pt-BR') : ''}
                   </span>
                 </div>
 
                 <div className="pt-3">
                   <a
-                    href="/museu"
+                    href={localeHref('/museu', lang)}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-purple-500/30 hover:border-pink-500/50 transition-all"
                   >
                     <span>{t('museum.modalForum')}</span>

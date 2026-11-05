@@ -62,6 +62,9 @@ assert(inactiveView.content && inactiveView.content.includes('Nenhum evento sazo
 console.log('✅ Resposta de evento inativo no /py-infoevento validada.');
 
 // 4. Teste de Ativação (start) e Resposta do /py-infoevento Ativo
+// A data final padrão é fixa (fim do Halloween); o teste usa uma data futura para não
+// "vencer" com o calendário e derrubar a suíte.
+seasonalManager.saveConfig({ dates: { endDate: new Date(Date.now() + 30 * 86400000).toISOString() } });
 seasonalManager.start();
 assert.equal(seasonalManager.isSeasonalActive(), true, 'Evento deve estar ativo após seasonalManager.start()');
 

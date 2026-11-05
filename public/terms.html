@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Consentimento de cookies (LGPD): precisa vir antes do GTM, gtag e AdSense -->
+  <script src="/js/consent.js"></script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -530,6 +532,30 @@
       }
     }
   </style>
+  <style id="pyxie-terms-extra">
+    .terms-updated { margin-top: 10px; font-size: 0.85rem; color: rgba(255,255,255,0.7); }
+    .terms-toc {
+      background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px;
+      padding: 16px 22px; margin: 0 0 24px;
+    }
+    .terms-toc-title { font-size: 1rem; margin: 0 0 8px; color: #fff; }
+    .terms-toc ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+    .terms-toc a { color: #f9a8d4; text-decoration: underline; text-underline-offset: 3px; }
+    .terms-section { scroll-margin-top: 90px; }
+    .helpline-phone a, .helpline-card p a { text-decoration: underline; text-underline-offset: 3px; }
+    /* Celular: topo numa linha só (só ícones; o texto fica para leitor de tela) e sem grudar no alto */
+    @media (max-width: 640px) {
+      .navbar { position: static; padding: 8px 0; }
+      .nav-wrapper { gap: 8px; }
+      .nav-actions { flex-wrap: nowrap; gap: 6px; }
+      .btn-nav { padding: 6px 10px; }
+      .brand-text { display: none; }
+      .btn-home span[data-i18n], .btn-discord span:last-child {
+        position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+      }
+      .terms-section { scroll-margin-top: 12px; }
+    }
+  </style>
   <style id="pyxie-mobile-perf">
     /* O celular tem altura dinâmica (barra de endereço): 100vh corta conteúdo. */
     @media (max-width: 768px) {
@@ -579,6 +605,7 @@
       <p class="terms-slogan" data-i18n="header.slogan">
         "O acolhimento de pessoas que sofrem. Um lugar seguro para quem acha que o mundo é barulhento demais."
       </p>
+      <p class="terms-updated"><time datetime="2026-11-05" data-i18n="updated">Última atualização: 5 de novembro de 2026</time></p>
 
       <div class="terms-intro-card">
         <h3 data-i18n="intro.title">💜 Nossa Missão Inegociável de Proteção</h3>
@@ -588,9 +615,21 @@
       </div>
     </section>
 
+    <nav class="terms-toc" aria-labelledby="toc-title">
+      <h2 id="toc-title" class="terms-toc-title" data-i18n="toc.title">Nesta página</h2>
+      <ol>
+          <li><a href="#secao-1" data-i18n="toc.s1">1. Base legal</a></li>
+          <li><a href="#secao-2" data-i18n="toc.s2">2. Proteção a menores</a></li>
+          <li><a href="#secao-3" data-i18n="toc.s3">3. Apoio emocional e linhas de ajuda</a></li>
+          <li><a href="#secao-4" data-i18n="toc.s4">4. Artes e direitos autorais</a></li>
+          <li><a href="#secao-5" data-i18n="toc.s5">5. Exclusão e contato</a></li>
+          <li><a href="#passe" data-i18n="toc.s6">6. Passe da Pyxie</a></li>
+      </ol>
+    </nav>
+
     <div class="terms-content">
       <!-- 1. FUNDAMENTAÇÃO LEGAL -->
-      <section class="terms-section">
+      <section class="terms-section" id="secao-1">
         <h2 class="section-heading">
           <span class="section-icon">⚖️</span>
           <span data-i18n="sec1.title">1. Fundamentação Legal e Marco Regulatório</span>
@@ -599,17 +638,17 @@
           O presente instrumento fundamenta-se estritamente na legislação brasileira vigente e nas diretrizes internacionais de segurança digital:
         </p>
         <ul class="terms-list">
-          <li><strong>Estatuto da Criança e do Adolescente — ECA (Lei nº 8.069/1990) e Lei nº 14.811/2024:</strong> Artigos 17 e 18 do ECA e disposições de proteção digital, assegurando a preservação da dignidade, identidade, imagem e integridade física e psicológica de crianças e adolescentes contra qualquer forma de assédio, intimidação sistemática (bullying/cyberbullying) ou abuso.</li>
-          <li><strong>Termos de Serviço do Discord e Idade Mínima:</strong> Cumprimento estrito da idade mínima exigida pelo Discord no Brasil (13 anos completos). Menores de 13 anos identificados na plataforma são imediatamente removidos para preservação de sua integridade jurídica e pessoal.</li>
-          <li><strong>Lei Geral de Proteção de Dados Pessoais — LGPD (Lei nº 13.709/2018):</strong> Artigo 7º, inciso I, e Artigo 14, dispondo sobre o tratamento ético de dados cadastrais, identificadores e consentimento específico para o melhor interesse de menores de idade.</li>
-          <li><strong>Lei de Direitos Autorais (Lei nº 9.610/1998):</strong> Artigos 28, 29 e 49, regulando a licença não exclusiva para reprodução de criações artísticas e literárias submetidas na comunidade.</li>
-          <li><strong>Código Civil Brasileiro (Lei nº 10.406/2002):</strong> Artigo 20, referente à inviolabilidade dos direitos da personalidade e proteção contra uso ofensivo ou vexatório de imagens.</li>
-          <li><strong>Marco Civil da Internet (Lei nº 12.965/2014):</strong> Artigo 7º, assegurando direitos de privacidade, liberdade de expressão consciente e salvaguarda de registros.</li>
+          <li data-i18n="sec1.li1"><strong>Estatuto da Criança e do Adolescente — ECA (Lei nº 8.069/1990) e Lei nº 14.811/2024:</strong> Artigos 17 e 18 do ECA e disposições de proteção digital, assegurando a preservação da dignidade, identidade, imagem e integridade física e psicológica de crianças e adolescentes contra qualquer forma de assédio, intimidação sistemática (bullying/cyberbullying) ou abuso.</li>
+          <li data-i18n="sec1.li2"><strong>Termos de Serviço do Discord e Idade Mínima:</strong> Cumprimento estrito da idade mínima exigida pelo Discord no Brasil (13 anos completos). Menores de 13 anos identificados na plataforma são imediatamente removidos para preservação de sua integridade jurídica e pessoal.</li>
+          <li data-i18n="sec1.li3"><strong>Lei Geral de Proteção de Dados Pessoais — LGPD (Lei nº 13.709/2018):</strong> Artigo 7º, inciso I, e Artigo 14, dispondo sobre o tratamento ético de dados cadastrais, identificadores e consentimento específico para o melhor interesse de menores de idade.</li>
+          <li data-i18n="sec1.li4"><strong>Lei de Direitos Autorais (Lei nº 9.610/1998):</strong> Artigos 28, 29 e 49, regulando a licença não exclusiva para reprodução de criações artísticas e literárias submetidas na comunidade.</li>
+          <li data-i18n="sec1.li5"><strong>Código Civil Brasileiro (Lei nº 10.406/2002):</strong> Artigo 20, referente à inviolabilidade dos direitos da personalidade e proteção contra uso ofensivo ou vexatório de imagens.</li>
+          <li data-i18n="sec1.li6"><strong>Marco Civil da Internet (Lei nº 12.965/2014):</strong> Artigo 7º, assegurando direitos de privacidade, liberdade de expressão consciente e salvaguarda de registros.</li>
         </ul>
       </section>
 
       <!-- 2. PROTEÇÃO INTEGRAL A MENORES E CANAIS RESTRITOS -->
-      <section class="terms-section">
+      <section class="terms-section" id="secao-2">
         <h2 class="section-heading">
           <span class="section-icon">🚸</span>
           <span data-i18n="sec2.title">2. Proteção Integral a Menores e Escopo de Canais Protegidos</span>
@@ -623,7 +662,7 @@
           <div class="alert-body">
             <h4 data-i18n="sec2.box1Title">Canais de Divulgação de Imagens do Rosto (Estritamente +18)</h4>
             <p data-i18n="sec2.box1Desc">
-              O compartilhamento de fotografias pessoais, retratos de rosto ou identificadores físicos é <strong>estritamente restrito a maiores de idade (+18)</strong> em canais fechados, isolados por cargos verificados. É <strong>expressamente proibido</strong> que menores de 18 anos enviem fotos de seus rostos ou corpos em qualquer área do servidor, com exclusão imediata e advertência pela equipe de moderação.
+              O compartilhamento de fotografias pessoais, retratos de rosto ou identificadores físicos é <strong>estritamente restrito a maiores de idade (+18)</strong> em canais fechados para quem declarou ter 18 anos ou mais. A idade é informada pela própria pessoa ao entrar (não há verificação de documentos); a staff revê casos suspeitos. É <strong>expressamente proibido</strong> que menores de 18 anos enviem fotos de seus rostos ou corpos em qualquer área do servidor, com exclusão imediata e advertência pela equipe de moderação.
             </p>
           </div>
         </div>
@@ -639,13 +678,13 @@
         </div>
 
         <ul class="terms-list">
-          <li><strong>Tolerância Zero contra Grooming ou Assédio:</strong> Qualquer tentativa de abordagem imprópria, solicitação de fotos íntimas ou mensagens privadas (DMs) não consentidas direcionadas a menores resultará em <strong>banimento sumário e irrevogável</strong>, com preservação de logs e cooperação imediata com as autoridades policiais competentes.</li>
-          <li><strong>Direito de Remoção pelos Responsáveis Legais:</strong> Pais ou responsáveis legais podem solicitar a qualquer momento a exclusão imediata de qualquer conteúdo referente aos seus tutelados através de nossa ouvidoria oficial.</li>
+          <li data-i18n="sec2.li1"><strong>Tolerância Zero contra Grooming ou Assédio:</strong> Qualquer tentativa de abordagem imprópria, solicitação de fotos íntimas ou mensagens privadas (DMs) não consentidas direcionadas a menores resultará em <strong>banimento sumário e irrevogável</strong>, com preservação de logs e cooperação imediata com as autoridades policiais competentes.</li>
+          <li data-i18n="sec2.li2"><strong>Direito de Remoção pelos Responsáveis Legais:</strong> Pais ou responsáveis legais podem pedir a qualquer momento a exclusão imediata de qualquer conteúdo sobre seus tutelados, por e-mail (<a href="mailto:contato@pyxie.com.br" style="color: #f472b6;">contato@pyxie.com.br</a>) ou ticket no servidor (veja a seção 5). Não é preciso ter conta no Discord para pedir por e-mail.</li>
         </ul>
       </section>
 
       <!-- 3. SISTEMA DE AUTOAJUDA E SUPORTE EMOCIONAL -->
-      <section class="terms-section">
+      <section class="terms-section" id="secao-3">
         <h2 class="section-heading">
           <span class="section-icon">❤️‍🩹</span>
           <span data-i18n="sec3.title">3. Sistema de Acolhimento, Autoajuda e Suporte Emocional</span>
@@ -666,33 +705,33 @@
 
         <div class="helpline-grid">
           <div class="helpline-card">
-            <h4><span>🇧🇷</span> CVV — Brasil <span class="helpline-badge">Gratuito • 24h</span></h4>
-            <div class="helpline-phone">Ligue 188</div>
-            <p>Centro de Valorização da Vida. Apoio emocional confidencial e prevenção do suicídio por telefone, chat ou e-mail (cvv.org.br).</p>
+            <h4><span>🇧🇷</span> <span data-i18n="help.cvvTitle">CVV — Brasil</span> <span class="helpline-badge" data-i18n="help.cvvBadge">Gratuito • 24h</span></h4>
+            <div class="helpline-phone" data-i18n="help.cvvPhone">Ligue <a href="tel:188" style="color: #f472b6;">188</a></div>
+            <p data-i18n="help.cvvDesc">Centro de Valorização da Vida. Apoio emocional confidencial e prevenção do suicídio por telefone, chat ou e-mail (<a href="https://cvv.org.br" target="_blank" rel="noopener noreferrer" style="color: #f472b6;">cvv.org.br</a>).</p>
           </div>
 
           <div class="helpline-card">
-            <h4><span>🇧🇷</span> Disque 100 / 180 <span class="helpline-badge">Direitos Humanos</span></h4>
-            <div class="helpline-phone">Ligue 100 ou 180</div>
-            <p>Denúncia de violações de direitos de crianças e adolescentes (Disque 100) e atendimento à mulher em situação de violência (Ligue 180).</p>
+            <h4><span>🇧🇷</span> <span data-i18n="help.dhTitle">Disque 100 / 180</span> <span class="helpline-badge" data-i18n="help.dhBadge">Direitos Humanos</span></h4>
+            <div class="helpline-phone" data-i18n="help.dhPhone">Ligue <a href="tel:100" style="color: #f472b6;">100</a> ou <a href="tel:180" style="color: #f472b6;">180</a></div>
+            <p data-i18n="help.dhDesc">Denúncia de violações de direitos de crianças e adolescentes (Disque 100) e atendimento à mulher em situação de violência (Ligue 180).</p>
           </div>
 
           <div class="helpline-card">
-            <h4><span>🇵🇹</span> SOS Voz Amiga — Portugal <span class="helpline-badge">24 Horas</span></h4>
-            <div class="helpline-phone">21 354 45 45</div>
-            <p>Linha de apoio emocional em Portugal, confidencial e anônima para pessoas em sofrimento ou solidão (sosvozamiga.org).</p>
+            <h4><span>🇵🇹</span> <span data-i18n="help.sosTitle">SOS Voz Amiga — Portugal</span> <span class="helpline-badge" data-i18n="help.sosBadge">24 Horas</span></h4>
+            <div class="helpline-phone" data-i18n="help.sosPhone"><a href="tel:+351213544545" style="color: #f472b6;">21 354 45 45</a></div>
+            <p data-i18n="help.sosDesc">Linha de apoio emocional em Portugal, confidencial e anônima para pessoas em sofrimento ou solidão (<a href="https://www.sosvozamiga.org" target="_blank" rel="noopener noreferrer" style="color: #f472b6;">sosvozamiga.org</a>).</p>
           </div>
 
           <div class="helpline-card">
-            <h4><span>🌐</span> Linhas Internacionais <span class="helpline-badge">Global</span></h4>
-            <div class="helpline-phone">findahelpline.com</div>
-            <p>Befrienders Worldwide e IASP. Encontre linhas de crise gratuitas e acolhimento em mais de 130 países e múltiplos idiomas.</p>
+            <h4><span>🌐</span> <span data-i18n="help.intlTitle">Linhas Internacionais</span> <span class="helpline-badge" data-i18n="help.intlBadge">Global</span></h4>
+            <div class="helpline-phone" data-i18n="help.intlPhone"><a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" style="color: #f472b6;">findahelpline.com</a></div>
+            <p data-i18n="help.intlDesc">Befrienders Worldwide e IASP. Encontre linhas de crise gratuitas e acolhimento em mais de 130 países e múltiplos idiomas.</p>
           </div>
         </div>
       </section>
 
       <!-- 4. LICENÇA DE USO DE IMAGEM E CRIAÇÕES ARTÍSTICAS -->
-      <section class="terms-section">
+      <section class="terms-section" id="secao-4">
         <h2 class="section-heading">
           <span class="section-icon">🎨</span>
           <span data-i18n="sec4.title">4. Licença de Conteúdo, Fanarts e Propriedade Intelectual</span>
@@ -705,47 +744,47 @@
           <table class="terms-table">
             <thead>
               <tr>
-                <th>Elemento Legal</th>
-                <th>Tratamento Jurídico</th>
-                <th>Garantia ao Usuário</th>
+                <th data-i18n="table.th1">Elemento Legal</th>
+                <th data-i18n="table.th2">Tratamento Jurídico</th>
+                <th data-i18n="table.th3">Garantia ao Usuário</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><strong>Direitos Morais de Autor</strong></td>
-                <td>Inalienáveis e irrenunciáveis (Art. 24, Lei 9.610/98).</td>
-                <td>Manutenção irrestrita do crédito autoral e assinatura artística.</td>
+                <td data-i18n="table.r1a"><strong>Direitos Morais de Autor</strong></td>
+                <td data-i18n="table.r1b">Inalienáveis e irrenunciáveis (Art. 24, Lei 9.610/98).</td>
+                <td data-i18n="table.r1c">Manutenção irrestrita do crédito autoral e assinatura artística.</td>
               </tr>
               <tr>
-                <td><strong>Direitos Patrimoniais</strong></td>
-                <td>Licenciamento não exclusivo e gratuito (Art. 49, Lei 9.610/98).</td>
-                <td>Sem cobrança de royalties; autor mantém pleno direito sobre a obra original.</td>
+                <td data-i18n="table.r2a"><strong>Direitos Patrimoniais</strong></td>
+                <td data-i18n="table.r2b">Licenciamento não exclusivo e gratuito (Art. 49, Lei 9.610/98).</td>
+                <td data-i18n="table.r2c">Sem cobrança de royalties; autor mantém pleno direito sobre a obra original.</td>
               </tr>
               <tr>
-                <td><strong>Dados Pessoais & Nicknames</strong></td>
-                <td>Tratamento fundamentado no consentimento (Art. 7º, I, LGPD).</td>
-                <td>Direito de solicitar desanonimização ou remoção a qualquer tempo.</td>
+                <td data-i18n="table.r3a"><strong>Dados Pessoais & Nicknames</strong></td>
+                <td data-i18n="table.r3b">Tratamento fundamentado no consentimento (Art. 7º, I, LGPD).</td>
+                <td data-i18n="table.r3c">Direito de solicitar desanonimização ou remoção a qualquer tempo.</td>
               </tr>
               <tr>
-                <td><strong>Proteção Integral a Menores</strong></td>
-                <td>Conformidade com ECA (Lei 8.069/90 e Lei 14.811/24).</td>
-                <td>Vedada qualquer exposição vexatória, constrangedora ou comercial.</td>
+                <td data-i18n="table.r4a"><strong>Proteção Integral a Menores</strong></td>
+                <td data-i18n="table.r4b">Conformidade com ECA (Lei 8.069/90 e Lei 14.811/24).</td>
+                <td data-i18n="table.r4c">Vedada qualquer exposição vexatória, constrangedora ou comercial.</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <ul class="terms-list">
-          <li><strong>Proibição de Fins Lucrativos Diretos:</strong> É terminantemente proibida a comercialização, venda ou exploração econômica direta de artes de membros sem contrato prévio e formal por escrito com o autor.</li>
-          <li><strong>Divulgação Promocional Comunitária:</strong> Os materiais submetidos voluntariamente nos canais de arte poderão ser exibidos no acervo do Museu Web da Pyxie, no Pinterest oficial da comunidade ou em agregadores de comunidades (ex: Disboard).</li>
+          <li data-i18n="sec4.li1"><strong>Proibição de Fins Lucrativos Diretos:</strong> É terminantemente proibida a comercialização, venda ou exploração econômica direta de artes de membros sem contrato prévio e formal por escrito com o autor.</li>
+          <li data-i18n="sec4.li2"><strong>Divulgação Promocional Comunitária:</strong> Os materiais submetidos voluntariamente nos canais de arte poderão ser exibidos no acervo do Museu Web da Pyxie, no Pinterest oficial da comunidade ou em agregadores de comunidades (ex: Disboard).</li>
         </ul>
       </section>
 
       <!-- 5. DIREITO DE REVOGAÇÃO E CANAIS DE SUPORTE -->
-      <section class="terms-section">
+      <section class="terms-section" id="secao-5">
         <h2 class="section-heading">
           <span class="section-icon">📩</span>
-          <span data-i18n="sec5.title">5. Manifestação de Aceite, Revogação & Ouvidoria</span>
+          <span data-i18n="sec5.title">5. Manifestação de Aceite, Revogação & Contato</span>
         </h2>
         <p class="terms-text" data-i18n="sec5.text1">
           O aceite aos presentes termos ocorre mediante a permanência voluntária no servidor, interação com botões de verificação nas regras, ou envio ativo de materiais nos canais públicos da comunidade.
@@ -754,8 +793,9 @@
           <strong>Direito de Exclusão (Art. 8º, § 5º da LGPD):</strong> Qualquer membro ou responsável legal poderá revogar a autorização ou solicitar a exclusão definitiva de publicações ou artes através de:
         </p>
         <ul class="terms-list">
-          <li>Abertura de ticket interno de suporte no servidor Discord da Cringelândia (canal <code>#suporte</code> ou atendimento privado).</li>
-          <li>Tempo de resposta para exclusão de mídias sob controle direto da administração: até <strong>48 horas úteis</strong>.</li>
+          <li data-i18n="sec5.li1">Abertura de ticket interno de suporte no servidor Discord da Cringelândia (canal <code>#suporte</code> ou atendimento privado).</li>
+          <li data-i18n="sec5.li2">E-mail para <a href="mailto:contato@pyxie.com.br" style="color: #f472b6;">contato@pyxie.com.br</a>, inclusive para pais e responsáveis sem conta no Discord.</li>
+          <li data-i18n="sec5.li3">Tempo de resposta para exclusão de mídias sob controle direto da administração: até <strong>48 horas úteis</strong>.</li>
         </ul>
       </section>
 
@@ -795,6 +835,7 @@
     </div>
   </footer>
 
+  <script src="/js/pageLang.js"></script>
   <script>
     const I18N = {
       pt: {
@@ -810,7 +851,6 @@
         'sec2.title': '2. Proteção Integral a Menores e Escopo de Canais Protegidos',
         'sec2.text1': 'A Cringelândia implementa uma arquitetura técnica e hierárquica rigorosa com canais segregados para garantir que menores de idade nunca sejam expostos a situações de risco, assédio ou conteúdos pesados:',
         'sec2.box1Title': 'Canais de Divulgação de Imagens do Rosto (Estritamente +18)',
-        'sec2.box1Desc': 'O compartilhamento de fotografias pessoais, retratos de rosto ou identificadores físicos é estritamente restrito a maiores de idade (+18) em canais fechados, isolados por cargos verificados. É expressamente proibido que menores de 18 anos enviem fotos de seus rostos ou corpos em qualquer área do servidor, com exclusão imediata e advertência pela equipe de moderação.',
         'sec2.box2Title': 'Canais de Desabafos & Temas Sensíveis (Apenas para Maiores)',
         'sec2.box2Desc': 'Os canais destinados a desabafos e partilhas emocionais profundas possuem acesso bloqueado a menores de idade por abordarem temáticas delicadas, angústias severas e vivências adultas. Essa barreira impede que menores sejam sobrecarregados emocionalmente ou expostos a gatilhos psíquicos inadequados ao seu estágio de desenvolvimento.',
         'sec3.title': '3. Sistema de Acolhimento, Autoajuda e Suporte Emocional',
@@ -819,7 +859,6 @@
         'sec3.alertDesc': 'Se você ou alguém que você conhece estiver passando por um momento de desespero ou sofrimento extremo, entre em contato imediatamente com os serviços de apoio emocional disponíveis 24 horas por dia:',
         'sec4.title': '4. Licença de Conteúdo, Fanarts e Propriedade Intelectual',
         'sec4.intro': 'Para viabilizar a exposição comunitária, concursos e murais de arte (como o Museu da Comunidade e postagens no Pinterest), estabelecemos as seguintes condições sobre materiais voluntariamente compartilhados:',
-        'sec5.title': '5. Manifestação de Aceite, Revogação & Ouvidoria',
         'sec5.text1': 'O aceite aos presentes termos ocorre mediante a permanência voluntária no servidor, interação com botões de verificação nas regras, ou envio ativo de materiais nos canais públicos da comunidade.',
         'sec5.text2': 'Direito de Exclusão (Art. 8º, § 5º da LGPD): Qualquer membro ou responsável legal poderá revogar a autorização ou solicitar a exclusão definitiva de publicações ou artes através de:',
         'sec6.title': '6. Passe da Pyxie e Compras Digitais',
@@ -829,6 +868,60 @@
         'sec6.li3': 'Menores de 18 anos só devem comprar com autorização de um responsável legal. Compras feitas sem autorização são estornadas a pedido do responsável.',
         'sec6.li4': 'Direito de arrependimento (Art. 49 do CDC): até 7 dias após a compra, o valor é devolvido se as recompensas Premium ainda não tiverem sido resgatadas. Dúvidas sobre pagamento: ticket de suporte no servidor oficial.',
         'sec6.li5': 'As caixas do Festival mostram as chances de cada raridade no próprio bot e só aceitam Fagulhas ou moedinhas ganhas jogando: não existe caixa paga com dinheiro.',
+        'updated': 'Última atualização: 5 de novembro de 2026',
+        'toc.title': 'Nesta página',
+        'toc.s1': '1. Base legal',
+        'toc.s2': '2. Proteção a menores',
+        'toc.s3': '3. Apoio emocional e linhas de ajuda',
+        'toc.s4': '4. Artes e direitos autorais',
+        'toc.s5': '5. Exclusão e contato',
+        'toc.s6': '6. Passe da Pyxie',
+        'sec1.li1': '<strong>Estatuto da Criança e do Adolescente — ECA (Lei nº 8.069/1990) e Lei nº 14.811/2024:</strong> Artigos 17 e 18 do ECA e disposições de proteção digital, assegurando a preservação da dignidade, identidade, imagem e integridade física e psicológica de crianças e adolescentes contra qualquer forma de assédio, intimidação sistemática (bullying/cyberbullying) ou abuso.',
+        'sec1.li2': '<strong>Termos de Serviço do Discord e Idade Mínima:</strong> Cumprimento estrito da idade mínima exigida pelo Discord no Brasil (13 anos completos). Menores de 13 anos identificados na plataforma são imediatamente removidos para preservação de sua integridade jurídica e pessoal.',
+        'sec1.li3': '<strong>Lei Geral de Proteção de Dados Pessoais — LGPD (Lei nº 13.709/2018):</strong> Artigo 7º, inciso I, e Artigo 14, dispondo sobre o tratamento ético de dados cadastrais, identificadores e consentimento específico para o melhor interesse de menores de idade.',
+        'sec1.li4': '<strong>Lei de Direitos Autorais (Lei nº 9.610/1998):</strong> Artigos 28, 29 e 49, regulando a licença não exclusiva para reprodução de criações artísticas e literárias submetidas na comunidade.',
+        'sec1.li5': '<strong>Código Civil Brasileiro (Lei nº 10.406/2002):</strong> Artigo 20, referente à inviolabilidade dos direitos da personalidade e proteção contra uso ofensivo ou vexatório de imagens.',
+        'sec1.li6': '<strong>Marco Civil da Internet (Lei nº 12.965/2014):</strong> Artigo 7º, assegurando direitos de privacidade, liberdade de expressão consciente e salvaguarda de registros.',
+        'sec2.box1Desc': 'O compartilhamento de fotografias pessoais, retratos de rosto ou identificadores físicos é <strong>estritamente restrito a maiores de idade (+18)</strong> em canais fechados para quem declarou ter 18 anos ou mais. A idade é informada pela própria pessoa ao entrar (não há verificação de documentos); a staff revê casos suspeitos. É <strong>expressamente proibido</strong> que menores de 18 anos enviem fotos de seus rostos ou corpos em qualquer área do servidor, com exclusão imediata e advertência pela equipe de moderação.',
+        'sec2.li1': '<strong>Tolerância Zero contra Grooming ou Assédio:</strong> Qualquer tentativa de abordagem imprópria, solicitação de fotos íntimas ou mensagens privadas (DMs) não consentidas direcionadas a menores resultará em <strong>banimento sumário e irrevogável</strong>, com preservação de logs e cooperação imediata com as autoridades policiais competentes.',
+        'sec2.li2': '<strong>Direito de Remoção pelos Responsáveis Legais:</strong> Pais ou responsáveis legais podem pedir a qualquer momento a exclusão imediata de qualquer conteúdo sobre seus tutelados, por e-mail (<a href="mailto:contato@pyxie.com.br" style="color: #f472b6;">contato@pyxie.com.br</a>) ou ticket no servidor (veja a seção 5). Não é preciso ter conta no Discord para pedir por e-mail.',
+        'help.cvvTitle': 'CVV — Brasil',
+        'help.cvvBadge': 'Gratuito • 24h',
+        'help.cvvPhone': 'Ligue <a href="tel:188" style="color: #f472b6;">188</a>',
+        'help.cvvDesc': 'Centro de Valorização da Vida. Apoio emocional confidencial e prevenção do suicídio por telefone, chat ou e-mail (<a href="https://cvv.org.br" target="_blank" rel="noopener noreferrer" style="color: #f472b6;">cvv.org.br</a>).',
+        'help.dhTitle': 'Disque 100 / 180',
+        'help.dhBadge': 'Direitos Humanos',
+        'help.dhPhone': 'Ligue <a href="tel:100" style="color: #f472b6;">100</a> ou <a href="tel:180" style="color: #f472b6;">180</a>',
+        'help.dhDesc': 'Denúncia de violações de direitos de crianças e adolescentes (Disque 100) e atendimento à mulher em situação de violência (Ligue 180).',
+        'help.sosTitle': 'SOS Voz Amiga — Portugal',
+        'help.sosBadge': '24 Horas',
+        'help.sosPhone': '<a href="tel:+351213544545" style="color: #f472b6;">21 354 45 45</a>',
+        'help.sosDesc': 'Linha de apoio emocional em Portugal, confidencial e anônima para pessoas em sofrimento ou solidão (<a href="https://www.sosvozamiga.org" target="_blank" rel="noopener noreferrer" style="color: #f472b6;">sosvozamiga.org</a>).',
+        'help.intlTitle': 'Linhas Internacionais',
+        'help.intlBadge': 'Global',
+        'help.intlPhone': '<a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" style="color: #f472b6;">findahelpline.com</a>',
+        'help.intlDesc': 'Befrienders Worldwide e IASP. Encontre linhas de crise gratuitas e acolhimento em mais de 130 países e múltiplos idiomas.',
+        'table.th1': 'Elemento Legal',
+        'table.th2': 'Tratamento Jurídico',
+        'table.th3': 'Garantia ao Usuário',
+        'table.r1a': '<strong>Direitos Morais de Autor</strong>',
+        'table.r1b': 'Inalienáveis e irrenunciáveis (Art. 24, Lei 9.610/98).',
+        'table.r1c': 'Manutenção irrestrita do crédito autoral e assinatura artística.',
+        'table.r2a': '<strong>Direitos Patrimoniais</strong>',
+        'table.r2b': 'Licenciamento não exclusivo e gratuito (Art. 49, Lei 9.610/98).',
+        'table.r2c': 'Sem cobrança de royalties; autor mantém pleno direito sobre a obra original.',
+        'table.r3a': '<strong>Dados Pessoais & Nicknames</strong>',
+        'table.r3b': 'Tratamento fundamentado no consentimento (Art. 7º, I, LGPD).',
+        'table.r3c': 'Direito de solicitar desanonimização ou remoção a qualquer tempo.',
+        'table.r4a': '<strong>Proteção Integral a Menores</strong>',
+        'table.r4b': 'Conformidade com ECA (Lei 8.069/90 e Lei 14.811/24).',
+        'table.r4c': 'Vedada qualquer exposição vexatória, constrangedora ou comercial.',
+        'sec4.li1': '<strong>Proibição de Fins Lucrativos Diretos:</strong> É terminantemente proibida a comercialização, venda ou exploração econômica direta de artes de membros sem contrato prévio e formal por escrito com o autor.',
+        'sec4.li2': '<strong>Divulgação Promocional Comunitária:</strong> Os materiais submetidos voluntariamente nos canais de arte poderão ser exibidos no acervo do Museu Web da Pyxie, no Pinterest oficial da comunidade ou em agregadores de comunidades (ex: Disboard).',
+        'sec5.li1': 'Abertura de ticket interno de suporte no servidor Discord da Cringelândia (canal <code>#suporte</code> ou atendimento privado).',
+        'sec5.li2': 'E-mail para <a href="mailto:contato@pyxie.com.br" style="color: #f472b6;">contato@pyxie.com.br</a>, inclusive para pais e responsáveis sem conta no Discord.',
+        'sec5.li3': 'Tempo de resposta para exclusão de mídias sob controle direto da administração: até <strong>48 horas úteis</strong>.',
+        'sec5.title': '5. Manifestação de Aceite, Revogação & Contato',
         'footer.credits': 'Pyxie © 2026 • Comunidade Cringelândia. Um lugar seguro para quem acha que o mundo é barulhento demais.'
       },
       en: {
@@ -844,7 +937,6 @@
         'sec2.title': '2. Child Safety & Channel Segregation Architecture',
         'sec2.text1': 'Cringelândia enforces strict technical and role-based segregation so minors are never exposed to harassment, adult risks, or heavy themes:',
         'sec2.box1Title': 'Face & Personal Photo Channels (Strictly 18+)',
-        'sec2.box1Desc': 'Sharing personal face pictures or physical appearance media is strictly confined to verified adults (18+) in gated private channels. Minors are strictly prohibited from uploading photos of themselves anywhere on the server, subject to immediate media deletion and staff intervention.',
         'sec2.box2Title': 'Emotional Vent & Heavy Topic Channels (Adults Only)',
         'sec2.box2Desc': 'Channels dedicated to deep emotional venting and severe mental health talks are locked for minors. This prevents younger members from encountering psychological triggers or adult crisis content unsuited for their developmental stage.',
         'sec3.title': '3. Emotional Support & Crisis Helpline Network',
@@ -853,7 +945,6 @@
         'sec3.alertDesc': 'If you or someone you know is in extreme despair, please connect with 24/7 free emotional crisis lines:',
         'sec4.title': '4. Artwork License, Fanart & Intellectual Property',
         'sec4.intro': 'To enable community showcases, art galleries, and Pinterest pins, we establish clear terms for voluntarily submitted content:',
-        'sec5.title': '5. Consent, Revocation & Support Channels',
         'sec5.text1': 'Consent is given through continued server membership, verification button clicks, or active submissions to public community channels.',
         'sec5.text2': 'Right to Deletion: Any member or legal guardian may revoke image or artwork permissions at any time via:',
         'sec6.title': '6. Pyxie Pass and Digital Purchases',
@@ -863,19 +954,70 @@
         'sec6.li3': 'Anyone under 18 should only buy with permission from a parent or legal guardian. Purchases made without permission are refunded at the guardian\'s request.',
         'sec6.li4': 'Refund window: within 7 days of purchase, the amount is refunded as long as the Premium rewards were not claimed yet. Payment questions: open a support ticket on the official server.',
         'sec6.li5': 'Festival boxes show the odds of every rarity inside the bot and only take Sparks or coins earned by playing: there is no box paid with real money.',
+        'updated': 'Last updated: November 5, 2026',
+        'toc.title': 'On this page',
+        'toc.s1': '1. Legal basis',
+        'toc.s2': '2. Child safety',
+        'toc.s3': '3. Emotional support and helplines',
+        'toc.s4': '4. Art and copyright',
+        'toc.s5': '5. Deletion and contact',
+        'toc.s6': '6. Pyxie Pass',
+        'sec1.li1': '<strong>Brazilian Child and Adolescent Statute — ECA (Law 8,069/1990) and Law 14,811/2024:</strong> Articles 17 and 18 of the ECA and digital protection rules, protecting the dignity, identity, image and physical and psychological integrity of children and teenagers against any form of harassment, bullying/cyberbullying or abuse.',
+        'sec1.li2': '<strong>Discord Terms of Service and Minimum Age:</strong> Strict compliance with the minimum age required by Discord in Brazil (13 years old). Anyone under 13 identified on the platform is removed right away to protect their legal and personal integrity.',
+        'sec1.li3': '<strong>Brazilian General Data Protection Law — LGPD (Law 13,709/2018):</strong> Article 7, item I, and Article 14, on the ethical processing of account data, identifiers and specific consent in the best interest of minors.',
+        'sec1.li4': '<strong>Brazilian Copyright Law (Law 9,610/1998):</strong> Articles 28, 29 and 49, governing the non-exclusive license to reproduce artistic and literary works shared in the community.',
+        'sec1.li5': '<strong>Brazilian Civil Code (Law 10,406/2002):</strong> Article 20, on the inviolability of personality rights and protection against offensive or humiliating use of images.',
+        'sec1.li6': '<strong>Brazilian Internet Bill of Rights (Law 12,965/2014):</strong> Article 7, ensuring privacy rights, responsible freedom of expression and protection of records.',
+        'sec2.box1Desc': 'Sharing personal face pictures or physical appearance media is <strong>strictly limited to adults (18+)</strong> in closed channels for people who stated they are 18 or older. Age is self-reported by each person when joining (there is no document check); the staff reviews suspicious cases. Minors are strictly prohibited from uploading photos of their faces or bodies anywhere on the server, subject to immediate deletion and a staff warning.',
+        'sec2.li1': '<strong>Zero Tolerance for Grooming or Harassment:</strong> Any inappropriate approach, request for intimate photos or unwanted private messages (DMs) aimed at minors leads to an <strong>immediate and permanent ban</strong>, with logs preserved and immediate cooperation with the police.',
+        'sec2.li2': '<strong>Removal Right for Legal Guardians:</strong> Parents or legal guardians can ask at any time for the immediate deletion of any content about the minors in their care, by email (<a href="mailto:contato@pyxie.com.br" style="color: #f472b6;">contato@pyxie.com.br</a>) or by ticket on the server (see section 5). You do not need a Discord account to ask by email.',
+        'help.cvvTitle': 'CVV — Brazil',
+        'help.cvvBadge': 'Free • 24h',
+        'help.cvvPhone': 'Call <a href="tel:188" style="color: #f472b6;">188</a>',
+        'help.cvvDesc': 'Centro de Valorização da Vida (Brazil). Confidential emotional support and suicide prevention by phone, chat or email (<a href="https://cvv.org.br" target="_blank" rel="noopener noreferrer" style="color: #f472b6;">cvv.org.br</a>).',
+        'help.dhTitle': 'Dial 100 / 180 (Brazil)',
+        'help.dhBadge': 'Human Rights',
+        'help.dhPhone': 'Call <a href="tel:100" style="color: #f472b6;">100</a> or <a href="tel:180" style="color: #f472b6;">180</a>',
+        'help.dhDesc': 'Report violations of the rights of children and teenagers (Dial 100) and support for women facing violence (Call 180).',
+        'help.sosTitle': 'SOS Voz Amiga — Portugal',
+        'help.sosBadge': '24 Hours',
+        'help.sosPhone': '<a href="tel:+351213544545" style="color: #f472b6;">+351 21 354 45 45</a>',
+        'help.sosDesc': 'Emotional support line in Portugal, confidential and anonymous, for people who are suffering or lonely (<a href="https://www.sosvozamiga.org" target="_blank" rel="noopener noreferrer" style="color: #f472b6;">sosvozamiga.org</a>).',
+        'help.intlTitle': 'International Helplines',
+        'help.intlBadge': 'Global',
+        'help.intlPhone': '<a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" style="color: #f472b6;">findahelpline.com</a>',
+        'help.intlDesc': 'Befrienders Worldwide and IASP. Find free crisis lines and support in more than 130 countries and many languages.',
+        'table.th1': 'Legal Element',
+        'table.th2': 'Legal Treatment',
+        'table.th3': 'User Guarantee',
+        'table.r1a': '<strong>Moral Rights of the Author</strong>',
+        'table.r1b': 'Inalienable and cannot be waived (Art. 24, Law 9,610/98).',
+        'table.r1c': 'Author credit and artistic signature are always kept.',
+        'table.r2a': '<strong>Economic Rights</strong>',
+        'table.r2b': 'Non-exclusive, free license (Art. 49, Law 9,610/98).',
+        'table.r2c': 'No royalties charged; the author keeps full rights over the original work.',
+        'table.r3a': '<strong>Personal Data & Nicknames</strong>',
+        'table.r3b': 'Processing based on consent (Art. 7, I, LGPD).',
+        'table.r3c': 'Right to request anonymization or removal at any time.',
+        'table.r4a': '<strong>Full Protection of Minors</strong>',
+        'table.r4b': 'Compliance with the ECA (Law 8,069/90 and Law 14,811/24).',
+        'table.r4c': 'Any humiliating, embarrassing or commercial exposure is forbidden.',
+        'sec4.li1': '<strong>No Direct Commercial Use:</strong> Selling or directly profiting from members\' artwork is strictly forbidden without a prior, formal written agreement with the author.',
+        'sec4.li2': '<strong>Community Promotion:</strong> Works voluntarily shared in the art channels may be shown in the Pyxie Web Museum, on the community\'s official Pinterest or on community directories (e.g. Disboard).',
+        'sec5.li1': 'Opening a support ticket on the Cringelândia Discord server (<code>#suporte</code> channel or private support).',
+        'sec5.li2': 'Email to <a href="mailto:contato@pyxie.com.br" style="color: #f472b6;">contato@pyxie.com.br</a>, including parents and guardians without a Discord account.',
+        'sec5.li3': 'Response time for deleting media under the administration\'s direct control: up to <strong>48 business hours</strong>.',
+        'sec5.title': '5. Consent, Revocation & Contact',
         'footer.credits': 'Pyxie © 2026 • Cringelândia Community. A safe place for those who feel the world is simply too loud.'
       }
     };
 
     let currentLang = 'pt';
 
+    // Mesma regra em todas as páginas institucionais (public/js/pageLang.js): o idioma é o
+    // da URL, que o servidor já colocou em <html lang>.
     function initLang() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlLang = urlParams.get('lang');
-      const savedLang = localStorage.getItem('pyxie_lang');
-      const browserLang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
-      currentLang = urlLang || savedLang || browserLang;
-      if (currentLang !== 'en') currentLang = 'pt';
+      currentLang = window.PyxiePageLang ? window.PyxiePageLang.initial() : 'pt';
       applyLang(currentLang);
     }
 
@@ -892,17 +1034,14 @@
       if (langBtn) {
         langBtn.innerHTML = lang === 'en' ? '<span>🇺🇸</span> <span>EN-US</span>' : '<span>🇧🇷</span> <span>PT-BR</span>';
       }
-      localStorage.setItem('pyxie_lang', lang);
+      try { localStorage.setItem('pyxie_lang', lang); } catch (_) {}
     }
 
     function toggleLanguage() {
       const next = currentLang === 'pt' ? 'en' : 'pt';
+      // Vai para a URL do outro idioma (/termos <-> /en/terms); sem ela, troca aqui mesmo.
+      if (window.PyxiePageLang && window.PyxiePageLang.go(next)) return;
       applyLang(next);
-      try {
-        const url = new URL(window.location.href);
-        url.searchParams.set('lang', next);
-        window.history.replaceState({}, '', url);
-      } catch (_) {}
     }
 
     initLang();

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Consentimento de cookies (LGPD): precisa vir antes do GTM, gtag e AdSense -->
+  <script src="/js/consent.js"></script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -333,6 +335,18 @@
       }
     }
   </style>
+  <style id="pyxie-mobile-nav">
+    /* Celular: o menu quebra em linhas e o botão de idioma fica sempre ao lado da logo
+       (antes a página ficava mais larga que a tela; auditoria Q021). */
+    @media (max-width: 768px) {
+      header { flex-wrap: wrap; justify-content: center; gap: 8px 12px; padding: 10px 16px; }
+      header .brand { flex: 1 1 auto; }
+      header .nav-links { display: contents; }
+      header .nav-links a { order: 3; font-size: 0.9rem; padding: 4px 6px; }
+      header .lang-btn { order: 2; }
+      header::after { content: ''; order: 2; flex-basis: 100%; height: 0; }
+    }
+  </style>
   <style id="pyxie-mobile-perf">
     /* O celular tem altura dinâmica (barra de endereço): 100vh corta conteúdo. */
     @media (max-width: 768px) {
@@ -375,6 +389,7 @@
       <p class="hero-sub" data-i18n="subtitle">
         Transparência inegociável, respeito absoluto à privacidade dos usuários do Discord e conformidade total com as leis de proteção de dados.
       </p>
+      <p class="hero-sub" style="font-size:0.85rem;opacity:0.85;"><time datetime="2026-11-05" data-i18n="updated">Última atualização: 5 de novembro de 2026</time></p>
     </div>
 
     <!-- Seção 1 -->
@@ -437,7 +452,7 @@
       <ul>
         <li data-i18n="sec4.l1"><strong>Execução de Contrato e Termos (Art. 7º, V):</strong> Para entrega dos comandos, funcionalidades do bot e manutenção do progresso dos minigames solicitados pelo usuário.</li>
         <li data-i18n="sec4.l2"><strong>Legítimo Interesse (Art. 7º, IX):</strong> Para auditoria de segurança da infraestrutura, combate a spammers e proteção contra fraudes.</li>
-        <li data-i18n="sec4.l3"><strong>Consentimento (Art. 7º, I):</strong> Aplicável aos cookies de publicidade e navegação que podem ser gerenciados livremente pelo usuário.</li>
+        <li data-i18n="sec4.l3"><strong>Consentimento (Art. 7º, I):</strong> Aplicável aos cookies de estatística e de anúncios do Google. Eles só são ativados depois que você clica em <em>Aceitar</em> no aviso de cookies; em <em>Só os necessários</em>, os anúncios continuam aparecendo, mas sem personalização. Você muda a escolha quando quiser em <em>Preferências de cookies</em>, no rodapé.</li>
       </ul>
     </div>
 
@@ -461,7 +476,7 @@
       <ul>
         <li data-i18n="sec6.l1">Confirmação da existência de tratamento e acesso aos dados da sua conta.</li>
         <li data-i18n="sec6.l2">Correção de dados incompletos ou inexatos.</li>
-        <li data-i18n="sec6.l3"><strong>Eliminação total dos seus dados de jogo:</strong> Você pode resetar e apagar seu perfil econômico e de casamento a qualquer momento utilizando o comando <code>/py-reseteco</code> no Discord ou abrindo um chamado em nosso servidor de suporte.</li>
+        <li data-i18n="sec6.l3"><strong>Eliminação total dos seus dados:</strong> use o comando <code>/py-privacy</code> no Discord (ou <code>py!privacidade</code>). Ele mostra o que existe sobre você e pede sua confirmação antes de apagar tudo. Se preferir, abra um chamado no nosso servidor de suporte ou escreva para o e-mail abaixo.</li>
       </ul>
     </div>
 
@@ -487,10 +502,12 @@
       <a href="/museu" data-i18n="nav.museum">Museu</a>
       <a href="/termos" data-i18n="nav.terms">Termos de Uso</a>
       <a href="/privacidade" style="color: #fff; font-weight: 700;" data-i18n="nav.privacy">Política de Privacidade</a>
+      <a href="#cookies" onclick="if (window.PyxieConsent) { window.PyxieConsent.open(); } return false;" data-i18n="cookies">Preferências de cookies</a>
     </div>
     <p>© 2026 Pyxie • Cringelândia. Todos os direitos reservados. Feito com amor e magia.</p>
   </footer>
 
+  <script src="/js/pageLang.js"></script>
   <script>
     const I18N = {
       pt: {
@@ -522,12 +539,12 @@
         'sec3.p1': 'Nosso portal web utiliza serviços de terceiros para veiculação de anúncios (Google AdSense) e análise de tráfego (Google Analytics e Google Tag Manager).',
         'sec3.alert': '<strong>Aviso de Publicidade:</strong> Terceiros, incluindo o Google, usam cookies para veicular anúncios com base em visitas anteriores dos usuários ao nosso website ou a outros sites na internet.',
         'sec3.p2': 'Com os cookies de publicidade, o Google e os parceiros dele podem veicular anúncios para os usuários com base nas visitas feitas ao <code>pyxie.com.br</code> e a outros sites na Internet.',
-        'sec3.p3': 'Os usuários podem desativar a publicidade personalizada acessando as Configurações de Anúncios do Google ou desativar o uso de cookies de terceiros em aboutads.info.',
+        'sec3.p3': 'Os usuários podem desativar a publicidade personalizada acessando as <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style="color: #38bdf8;">Configurações de Anúncios do Google</a> ou optar por desativar o uso de cookies de terceiros visitando <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" style="color: #38bdf8;">aboutads.info</a>.',
         'sec4.title': 'Bases Legais de Tratamento (LGPD & GDPR)',
         'sec4.p1': 'O tratamento de dados realizado pela Pyxie baseia-se nos seguintes fundamentos da LGPD e do GDPR:',
         'sec4.l1': '<strong>Execução de Contrato e Termos (Art. 7º, V):</strong> Para entrega dos comandos, funcionalidades do bot e manutenção do progresso dos minigames.',
         'sec4.l2': '<strong>Legítimo Interesse (Art. 7º, IX):</strong> Para auditoria de segurança da infraestrutura, combate a spammers e proteção contra fraudes.',
-        'sec4.l3': '<strong>Consentimento (Art. 7º, I):</strong> Aplicável aos cookies de publicidade e navegação que podem ser gerenciados livremente pelo usuário.',
+        'sec4.l3': '<strong>Consentimento (Art. 7º, I):</strong> Aplicável aos cookies de estatística e de anúncios do Google. Eles só são ativados depois que você clica em <em>Aceitar</em> no aviso de cookies; em <em>Só os necessários</em>, os anúncios continuam aparecendo, mas sem personalização. Você muda a escolha quando quiser em <em>Preferências de cookies</em>, no rodapé.',
         'sec5.title': 'Proteção a Menores de Idade (ECA & Lei 14.811/2024)',
         'sec5.p1': 'Em conformidade absoluta com o ECA e a Lei nº 14.811/2024, a Pyxie e a Cringelândia mantêm uma política inegociável de Tolerância Zero contra exploração infantil, assédio e conteúdos impróprios.',
         'sec5.p2': 'Não comercializamos dados de crianças ou adolescentes, e todos os recursos do bot contam com filtros ativos de moderação e proteção.',
@@ -535,7 +552,9 @@
         'sec6.p1': 'Em conformidade com a LGPD e GDPR, você possui direitos assegurados para:',
         'sec6.l1': 'Confirmação da existência de tratamento e acesso aos seus dados de jogo.',
         'sec6.l2': 'Correção de dados incompletos ou inexatos.',
-        'sec6.l3': '<strong>Eliminação total dos dados:</strong> Você pode resetar e apagar seu perfil econômico e de casamento a qualquer momento usando <code>/py-reseteco</code> no Discord ou contatando o suporte.',
+        'sec6.l3': '<strong>Eliminação total dos seus dados:</strong> use o comando <code>/py-privacy</code> no Discord (ou <code>py!privacidade</code>). Ele mostra o que existe sobre você e pede sua confirmação antes de apagar tudo. Se preferir, abra um chamado no nosso servidor de suporte ou escreva para o e-mail abaixo.',
+        'updated': 'Última atualização: 5 de novembro de 2026',
+        'cookies': 'Preferências de cookies',
         'sec7.title': 'Canal de Contato & DPO',
         'sec7.p1': 'Para dúvidas, solicitações ou denúncias, contate diretamente nosso Encarregado de Proteção de Dados (DPO):'
       },
@@ -568,12 +587,12 @@
         'sec3.p1': 'Our website employs trusted third-party services for advertising (Google AdSense) and telemetry analytics (Google Analytics & Google Tag Manager).',
         'sec3.alert': '<strong>Advertising Notice:</strong> Third-party vendors, including Google, use cookies to serve ads based on a user\'s prior visits to our website or other websites.',
         'sec3.p2': 'Google\'s use of advertising cookies enables it and its partners to serve ads to users based on their visit to <code>pyxie.com.br</code> and/or other sites on the Internet.',
-        'sec3.p3': 'Users may opt out of personalized advertising by visiting Google Ads Settings or by visiting aboutads.info.',
+        'sec3.p3': 'Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style="color: #38bdf8;">Google Ads Settings</a> or opt out of third-party cookies at <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" style="color: #38bdf8;">aboutads.info</a>.',
         'sec4.title': 'Legal Basis for Processing (LGPD & GDPR)',
         'sec4.p1': 'Data processing conducted by Pyxie rests upon recognized legal grounds under LGPD and GDPR frameworks:',
         'sec4.l1': '<strong>Contractual Performance:</strong> Fulfilling requested commands, game features, and saving member progress across minigames.',
         'sec4.l2': '<strong>Legitimate Interest:</strong> Safeguarding network security, preventing automated spammers, and investigating abuse.',
-        'sec4.l3': '<strong>Consent:</strong> Freely managed cookies for preferences and advertising cookies.',
+        'sec4.l3': '<strong>Consent (Art. 7, I):</strong> Applies to Google statistics and advertising cookies. They are only turned on after you click <em>Accept</em> on the cookie notice; with <em>Necessary only</em>, ads still show, but without personalization. You can change your choice anytime under <em>Cookie preferences</em> in the footer.',
         'sec5.title': 'Child Protection (ECA & Strict Safeguards)',
         'sec5.p1': 'In complete compliance with Brazilian Child Safeguarding laws (ECA & Law 14,811/2024), Pyxie enforces a Zero-Tolerance policy against child endangerment, harassment, and inappropriate content.',
         'sec5.p2': 'We never sell children\'s or teen data, and all bot commands utilize active safety filtering.',
@@ -581,7 +600,9 @@
         'sec6.p1': 'Under LGPD and GDPR, you have the guaranteed right to:',
         'sec6.l1': 'Confirm the existence of data processing and access your stored records.',
         'sec6.l2': 'Request correction of inaccurate or incomplete records.',
-        'sec6.l3': '<strong>Total Data Erasure:</strong> You can completely erase your economy and marriage records at any moment by using <code>/py-reseteco</code> in Discord or opening a ticket on our support server.',
+        'sec6.l3': '<strong>Full deletion of your data:</strong> use the <code>/py-privacy</code> command on Discord (or <code>py!privacy</code>). It shows what exists about you and asks for your confirmation before erasing everything. You can also open a ticket on our support server or write to the email below.',
+        'updated': 'Last updated: November 5, 2026',
+        'cookies': 'Cookie preferences',
         'sec7.title': 'Contact & Data Protection Officer (DPO)',
         'sec7.p1': 'For any privacy inquiries, data deletion requests, or compliance questions, contact our DPO team directly:'
       }
@@ -606,16 +627,15 @@
 
     function toggleLanguage() {
       const next = currentLang === 'en' ? 'pt' : 'en';
+      // Vai para a URL do outro idioma (/privacidade <-> /en/privacy); sem ela, troca aqui mesmo.
+      if (window.PyxiePageLang && window.PyxiePageLang.go(next)) return;
       applyLanguage(next);
     }
 
+    // Mesma regra em todas as páginas institucionais (public/js/pageLang.js): o idioma é o
+    // da URL, que o servidor já colocou em <html lang>.
     (function init() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const queryLang = urlParams.get('lang');
-      const savedLang = localStorage.getItem('pyxie_lang');
-      const browserLang = (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'pt';
-      const initial = (queryLang === 'en' || queryLang === 'pt') ? queryLang : (savedLang || browserLang);
-      applyLanguage(initial);
+      applyLanguage(window.PyxiePageLang ? window.PyxiePageLang.initial() : 'pt');
     })();
   </script>
 </body>

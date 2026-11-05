@@ -17,6 +17,7 @@ const {
   getUserAccount,
   getWorkStatus,
   startWork,
+  WORK_COOLDOWN_MS,
 } = require('../services/economy');
 const {
   getRoleTitle,
@@ -2901,6 +2902,8 @@ async function runWork(source, reply) {
 module.exports = {
   name: WORK,
   aliases: ['work', 'trabalho', 'py-trabalho', 'py-work', 'trampo', 'job'],
+  // Recarga real (economy.js), mostrada no catálogo do site (/api/commands).
+  cooldown: WORK_COOLDOWN_MS / 1000,
   isWorkInteraction,
   handleWorkInteraction,
   handleEnvelopeInteraction,

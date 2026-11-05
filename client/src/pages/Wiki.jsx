@@ -7,7 +7,31 @@ import {
   Zap, Star, TreePine, Vault, Baby, Scroll
 } from 'lucide-react';
 
+// Vocações reais do /py-work (/api/professions): a contagem e a lista saem do código.
+function useProfessions(lang) {
+  const [state, setState] = useState({ status: 'loading', list: [], total: 0, standard: 0, magic: 0 });
+  useEffect(() => {
+    let alive = true;
+    fetch(`/api/professions?lang=${lang}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!alive) return;
+        if (data && data.success && Array.isArray(data.professions)) {
+          setState({ status: 'ready', list: data.professions, total: data.total, standard: data.standard, magic: data.magic });
+        } else {
+          setState((prev) => ({ ...prev, status: 'error' }));
+        }
+      })
+      .catch(() => alive && setState((prev) => ({ ...prev, status: 'error' })));
+    return () => {
+      alive = false;
+    };
+  }, [lang]);
+  return state;
+}
+
 export default function Wiki({ t, lang }) {
+  const prof = useProfessions(lang);
   const isEn = lang === 'en';
   const [activeTab, setActiveTab] = useState(() => {
     const rawHash = (window.location.hash || '').toLowerCase().replace('#', '').trim();
@@ -57,7 +81,7 @@ export default function Wiki({ t, lang }) {
   const tabs = [
     { id: 'overview', label: isEn ? 'Community & Sanctuary' : 'Comunidade & Santuário', icon: Compass, badge: 'Lore' },
     { id: 'economy', label: isEn ? 'Living Economy' : 'Economia Viva', icon: Coins, badge: 'Coins' },
-    { id: 'careers', label: isEn ? '16 Vocations & Work' : '16 Vocações & Trabalho', icon: Briefcase, badge: 'Minigames' },
+    { id: 'careers', label: isEn ? 'Vocations & Work' : 'Vocações & Trabalho', icon: Briefcase, badge: 'Minigames' },
     { id: 'tarot', label: isEn ? '78 Arcana Tarot' : 'Tarot dos 78 Arcanos', icon: Sparkles, badge: 'HD Canvas' },
     { id: 'marriage', label: isEn ? 'Marriage & Family' : 'Casamento & Família', icon: Heart, badge: 'Social' },
     { id: 'commands', label: isEn ? 'Commands Catalog' : 'Catálogo de Comandos', icon: Terminal, badge: 'Ctrl+K' },
@@ -87,7 +111,7 @@ export default function Wiki({ t, lang }) {
     },
     {
       q: 'Is Pyxie completely free to use?',
-      a: '100% free! All economic commands, minigames, tarot cards, and careers are accessible without any paywalls.',
+      a: 'Yes! All commands, economy systems, minigames, tarot and marriage are free.',
     },
   ] : [
     {
@@ -104,7 +128,7 @@ export default function Wiki({ t, lang }) {
     },
     {
       q: 'Como evoluir o casamento no bot?',
-      a: 'Após casar (/py-casamento), você e seu cônjuge podem regar a Árvore da Vida a cada 12h, depositar no Cofre do Casal e ter encontros românticos!',
+      a: 'Após casar (/py-marriage ou py!casamento), você e seu cônjuge podem regar a Árvore da Vida a cada 12h, depositar no Cofre do Casal e ter encontros românticos!',
     },
     {
       q: 'Com que frequência posso trabalhar?',
@@ -112,7 +136,7 @@ export default function Wiki({ t, lang }) {
     },
     {
       q: 'A Pyxie é totalmente gratuita?',
-      a: 'Sim! Todos os 37 comandos, sistemas de economia, minigames, tarot e casamento são 100% acessíveis e gratuitos.',
+      a: 'Sim! Todos os comandos, sistemas de economia, minigames, tarot e casamento são gratuitos.',
     },
   ];
 
@@ -129,23 +153,24 @@ export default function Wiki({ t, lang }) {
         </h1>
         <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
           {isEn
-            ? 'Explore deep documentation for Pyxie: live economy, 22 vocations, 78 Tarot Arcana, marriage dynamics and command catalog.'
-            : 'Explore explicações detalhadas sobre a economia mágica, 22 vocações profissionais, o oráculo de tarot dos 78 arcanos, matrimônio e comandos oficiais.'}
+            ? 'Explore deep documentation for Pyxie: live economy, vocations, 78 Tarot Arcana, marriage dynamics and command catalog.'
+            : 'Explore explicações detalhadas sobre a economia mágica, as vocações profissionais, o oráculo de tarot dos 78 arcanos, matrimônio e comandos oficiais.'}
         </p>
 
         {/* Quick Highlights Chips */}
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           <span className="px-3 py-1 rounded-xl bg-white/5 border border-purple-500/20 text-xs font-mono text-pink-300 flex items-center gap-1.5">
-            <Sparkles className="w-3 h-3" /> 78 Arcanos em HD
+            <Sparkles className="w-3 h-3" /> {isEn ? '78 Arcana in HD' : '78 Arcanos em HD'}
           </span>
           <span className="px-3 py-1 rounded-xl bg-white/5 border border-purple-500/20 text-xs font-mono text-purple-300 flex items-center gap-1.5">
-            <Briefcase className="w-3 h-3" /> 22 Vocações Únicas
+            <Briefcase className="w-3 h-3" />{' '}
+            {prof.total > 0 ? (isEn ? `${prof.total} vocations` : `${prof.total} vocações`) : isEn ? 'Vocations' : 'Vocações'}
           </span>
           <span className="px-3 py-1 rounded-xl bg-white/5 border border-purple-500/20 text-xs font-mono text-emerald-300 flex items-center gap-1.5">
-            <Shield className="w-3 h-3" /> 100% Gratuita & Segura
+            <Shield className="w-3 h-3" /> {isEn ? 'Free to use' : 'Gratuita'}
           </span>
           <span className="px-3 py-1 rounded-xl bg-white/5 border border-purple-500/20 text-xs font-mono text-amber-300 flex items-center gap-1.5">
-            <Zap className="w-3 h-3" /> Bilíngue PT-BR & EN
+            <Zap className="w-3 h-3" /> {isEn ? 'Bilingual PT-BR & EN' : 'Bilíngue PT-BR & EN'}
           </span>
         </div>
       </div>
@@ -316,7 +341,7 @@ export default function Wiki({ t, lang }) {
                     <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">Capítulo 03</span>
                   </div>
                   <h4 className="font-title font-bold text-white text-base group-hover:text-purple-300 transition-colors">
-                    {isEn ? '22 Vocations & Work' : '22 Vocações & Trabalho'}
+                    {isEn ? 'Vocations & Work' : 'Vocações & Trabalho'}
                   </h4>
                   <p className="text-xs text-slate-300 mt-1 leading-relaxed">
                     {isEn ? 'Clock in every 3h, solve 45s thematic challenges, earn XP and senior promotions.' : 'Turnos de 3 horas com minigames técnicos de 45 segundos, XP e promoções.'}
@@ -453,7 +478,7 @@ export default function Wiki({ t, lang }) {
                     : 'A moeda principal para salários de profissão, alianças de casamento, minigames, bônus e presentes. Obtida no /py-daily, nos turnos de /py-work e no portal de bônus web.'}
                 </p>
                 <div className="font-mono text-[11px] text-pink-300 bg-black/40 px-3 py-1.5 rounded-lg border border-pink-500/20">
-                  /py-carteira • /py-daily • /py-bonus
+                  /py-wallet • /py-daily • /py-bonus
                 </div>
               </div>
 
@@ -468,7 +493,7 @@ export default function Wiki({ t, lang }) {
                     : 'A moeda sagrada e rara necessária para promoções nos escalões mais altos de carreira, subornos arcanos de cartas no Álbum de Tarot e artefatos lendários.'}
                 </p>
                 <div className="font-mono text-[11px] text-emerald-300 bg-black/40 px-3 py-1.5 rounded-lg border border-emerald-500/20">
-                  /py-work • /py-suborno • Recompensas de Streaks
+                  {isEn ? '/py-work • Bribe button in /py-tarot' : '/py-work • botão Suborno no /py-tarot'}
                 </div>
               </div>
             </div>
@@ -507,64 +532,62 @@ export default function Wiki({ t, lang }) {
               </div>
               <div>
                 <h2 className="font-title font-extrabold text-2xl sm:text-3xl text-white">
-                  {isEn ? '22 Unique Vocations & 45s Technical Minigames' : '22 Carreiras Únicas & Minigames de 45s'}
+                  {isEn ? 'Vocations & 45s Technical Minigames' : 'Vocações & Minigames de 45s'}
                 </h2>
                 <p className="text-slate-400 text-xs sm:text-sm">
-                  {isEn ? '16 standard careers & 6 bean-unlocked magic vocations' : '16 profissões comuns e 6 vocações mágicas arcanas'}
+                  {prof.total > 0
+                    ? isEn
+                      ? `${prof.standard} standard careers & ${prof.magic} bean-unlocked magic vocations`
+                      : `${prof.standard} profissões comuns e ${prof.magic} vocações mágicas arcanas`
+                    : isEn
+                      ? 'Standard careers & bean-unlocked magic vocations'
+                      : 'Profissões comuns e vocações mágicas arcanas'}
                 </p>
               </div>
             </div>
 
             <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
               {isEn
-                ? 'Every 3 hours, you can clock in with /py-work. Each of the 22 vocations features custom thematic challenges with 45-second timers. Correct choices grant bonuses, XP, and unlock senior promotions with higher salaries! You can also unlock 6 mystical professions using rare Magic Beans.'
-                : 'A cada 3 horas você pode bater ponto com o comando /py-work. Cada uma das 22 vocações possui desafios técnicos imersivos com cronômetro de 45 segundos. Acertos perfeitos garantem bônus salariais, XP de carreira e abrem caminho para promoções de alto nível! Além das 16 comuns, há 6 vocações mágicas desbloqueadas com Feijões Mágicos.'}
+                ? 'Every 3 hours, you can clock in with /py-work. Each vocation features custom thematic challenges with 45-second timers. Correct choices grant bonuses, XP, and unlock senior promotions with higher salaries! Some mystical professions are unlocked with rare Magic Beans.'
+                : 'A cada 3 horas você pode bater ponto com o comando /py-work. Cada vocação possui desafios técnicos imersivos com cronômetro de 45 segundos. Acertos perfeitos garantem bônus salariais, XP de carreira e abrem caminho para promoções de alto nível! Algumas vocações mágicas são desbloqueadas com Feijões Mágicos.'}
             </p>
 
-            {/* List of Careers */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2.5 pt-2">
-              {[
-                { name: 'Programador(a)', icon: '💻', desc: 'Sistemas & Bugs' },
-                { name: 'Cozinheiro(a)', icon: '🍳', desc: 'Pratos & Temperos' },
-                { name: 'Professor(a)', icon: '📚', desc: 'Aulas & Ensino' },
-                { name: 'Médico(a)', icon: '🩺', desc: 'Saúde & Diagnósticos' },
-                { name: 'Agricultor(a)', icon: '🌾', desc: 'Safras & Terra' },
-                { name: 'Músico(a)', icon: '🎵', desc: 'Melodias & Acordes' },
-                { name: 'Fotógrafo(a)', icon: '📷', desc: 'Foco & Luz' },
-                { name: 'Mecânico(a)', icon: '🔧', desc: 'Motores & Peças' },
-                { name: 'Vendedor(a)', icon: '🏷️', desc: 'Metas & Negócios' },
-                { name: 'Artista', icon: '🎨', desc: 'Pintura & Telas' },
-                { name: 'Dublador(a)', icon: '🎙️', desc: 'Voz & Personagens' },
-                { name: 'Dev de Jogos', icon: '🎮', desc: 'Física & Engines' },
-                { name: 'Psicólogo(a)', icon: '🧠', desc: 'Escuta & Empatia' },
-                { name: 'Telemarketing', icon: '🎧', desc: 'SAC & Chamadas' },
-                { name: 'Animador de Festa', icon: '🎈', desc: 'Recreação & Alegria' },
-                { name: 'Advogado(a)', icon: '⚖️', desc: 'Leis & Processos' },
-                { name: 'Alquimista ✨', icon: '🧪', desc: 'Poções & Transmutação', isMagic: true },
-                { name: 'Mago(a) ✨', icon: '🔮', desc: 'Mana & Encantamento', isMagic: true },
-                { name: 'Ferreiro(a) ✨', icon: '⚒️', desc: 'Forja & Aço Lendário', isMagic: true },
-                { name: 'Rei / Rainha ✨', icon: '👑', desc: 'Coroa & Diplomacia', isMagic: true },
-                { name: 'Domador de Feras ✨', icon: '🐉', desc: 'Dragões & Instinto', isMagic: true },
-                { name: 'Anti-Vegetais ✨', icon: '🍆', desc: 'Ódio a Legumes & Caos', isMagic: true },
-              ].map((job, idx) => (
-                <div
-                  key={idx}
-                  className={`p-2.5 rounded-xl border transition-all ${
-                    job.isMagic
-                      ? 'bg-gradient-to-b from-purple-900/30 to-pink-900/20 border-pink-500/40 hover:border-pink-400'
-                      : 'bg-white/5 border-purple-500/15 hover:border-purple-500/35'
-                  }`}
-                >
-                  <span className="text-lg">{job.icon}</span>
-                  <div className="font-title font-bold text-xs text-white mt-1 truncate">{job.name}</div>
-                  <div className="text-[10px] text-slate-400 truncate">{job.desc}</div>
-                </div>
-              ))}
-            </div>
+            {/* Lista real de vocações (/api/professions) */}
+            {prof.status === 'loading' && (
+              <p className="text-xs text-slate-400" role="status">{isEn ? 'Loading vocations...' : 'Carregando vocações...'}</p>
+            )}
+            {prof.status === 'error' && (
+              <p className="text-xs text-slate-400">{isEn ? 'Could not load the vocations list right now.' : 'Não deu para carregar a lista de vocações agora.'}</p>
+            )}
+            {prof.list.length > 0 && (
+              <ul className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2.5 pt-2">
+                {prof.list.map((job) => (
+                  <li
+                    key={job.id}
+                    className={`p-2.5 rounded-xl border transition-all ${
+                      job.magic
+                        ? 'bg-gradient-to-b from-purple-900/30 to-pink-900/20 border-pink-500/40 hover:border-pink-400'
+                        : 'bg-white/5 border-purple-500/15 hover:border-purple-500/35'
+                    }`}
+                  >
+                    <span className="text-lg" aria-hidden="true">{job.emoji || (job.magic ? '✨' : '💼')}</span>
+                    <div className="font-title font-bold text-xs text-white mt-1 truncate">
+                      {job.label}
+                      {job.magic ? ' ✨' : ''}
+                    </div>
+                    {job.magic && job.beanCost > 0 && (
+                      <div className="text-[10px] text-slate-400 truncate">
+                        {isEn ? `${job.beanCost} Magic Bean${job.beanCost > 1 ? 's' : ''}` : `${job.beanCost} ${job.beanCost > 1 ? 'Feijões Mágicos' : 'Feijão Mágico'}`}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
 
             <div className="pt-2 text-center">
               <span className="text-xs font-mono text-purple-300">
-                {isEn ? 'Commands: /py-profissao • /py-work' : 'Comandos: /py-profissao (escolher) • /py-work (trabalhar)'}
+                {isEn ? 'Commands: /py-profession (choose) • /py-work (work)' : 'Comandos: /py-profession (escolher) • /py-work (trabalhar)'}
               </span>
             </div>
           </div>
@@ -617,7 +640,7 @@ export default function Wiki({ t, lang }) {
                 <p className="text-xs text-slate-300">
                   {isEn ? 'Spend magic beans to summon a guaranteed missing card!' : 'Gaste Feijões Mágicos para invocar cartas faltantes no álbum!'}
                 </p>
-                <div className="font-mono text-[10px] text-purple-300">/py-suborno</div>
+                <div className="font-mono text-[10px] text-purple-300">{isEn ? 'Bribe button in /py-tarot' : 'Botão Suborno no /py-tarot'}</div>
               </div>
             </div>
           </div>
@@ -683,7 +706,9 @@ export default function Wiki({ t, lang }) {
             </div>
 
             <div className="pt-2 text-center font-mono text-xs text-pink-300">
-              /py-casamento • /py-filho • /py-divorcio • /py-ship
+              {isEn
+                ? '/py-marriage (or py!casamento) • children and divorce are buttons inside /py-marriage • /py-ship'
+                : '/py-marriage (ou py!casamento) • filhos e divórcio são botões dentro do /py-marriage • /py-ship'}
             </div>
           </div>
         </div>

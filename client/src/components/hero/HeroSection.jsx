@@ -1,8 +1,21 @@
 import React from 'react';
 import { Sparkles, MessageCircle, Coins, Briefcase, Activity } from 'lucide-react';
 import TerminalSimulator from './TerminalSimulator';
+import { localeHref } from '../../utils/localePath';
 
-export default function HeroSection({ t, stats }) {
+// "No ar há 3 dias" a partir do tempo real do processo do bot (nada de 99.9% fixo).
+export function formatUptime(ms, t) {
+  const minutes = Math.floor((Number(ms) || 0) / 60000);
+  if (minutes < 1) return null;
+  const days = Math.floor(minutes / 1440);
+  if (days >= 1) return t(days === 1 ? 'hero.uptimeDay' : 'hero.uptimeDays', { n: days });
+  const hours = Math.floor(minutes / 60);
+  if (hours >= 1) return t('hero.uptimeHours', { n: hours });
+  return t('hero.uptimeMinutes', { n: minutes });
+}
+
+export default function HeroSection({ t, lang = 'pt', stats }) {
+  const uptimeLabel = stats?.online ? formatUptime(stats.uptimeMs, t) : null;
   return (
     <section className="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden">
       {/* Background ambient glows */}
@@ -14,9 +27,9 @@ export default function HeroSection({ t, stats }) {
           
           {/* Left Column: Hero Narrative & Clean CTAs */}
           <div className="lg:col-span-7 text-center lg:text-left space-y-6">
-            {/* Status Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold tracking-wide shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            {/* Selo de benefício (o status real fica no selo de tempo no ar, abaixo) */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-200 text-xs font-bold tracking-wide shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-pink-400" aria-hidden="true" />
               <span>{t('hero.badge')}</span>
             </div>
 
@@ -42,10 +55,12 @@ export default function HeroSection({ t, stats }) {
                 <Briefcase className="w-4 h-4 text-purple-400" />
                 <span>{t('hero.badgeCareers')}</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-emerald-500/25 text-xs font-semibold text-emerald-300">
-                <Activity className="w-4 h-4 text-emerald-400" />
-                <span>{stats?.uptime || '99.9% Uptime'}</span>
-              </div>
+              {uptimeLabel && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-emerald-500/25 text-xs font-semibold text-emerald-300">
+                  <Activity className="w-4 h-4 text-emerald-400" aria-hidden="true" />
+                  <span>{uptimeLabel}</span>
+                </div>
+              )}
             </div>
 
             {/* TWO CLEAN HIGH-CONVERTING CTAs */}
@@ -62,7 +77,7 @@ export default function HeroSection({ t, stats }) {
 
               {/* 50/50 (plano 5.11): o segundo botão do topo leva para a Cringelândia */}
               <a
-                href="/cringelandia"
+                href={localeHref('/cringelandia', lang)}
                 className="w-full sm:w-auto px-7 py-4 rounded-2xl text-base font-bold text-slate-200 bg-white/5 hover:bg-white/10 border border-purple-500/30 hover:border-purple-500/60 transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2.5 backdrop-blur-xl"
               >
                 <MessageCircle className="w-5 h-5 text-purple-400" />

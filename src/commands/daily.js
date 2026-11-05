@@ -6,7 +6,7 @@ const {
   MessageFlags,
   SlashCommandBuilder,
 } = require('discord.js');
-const { claimDaily, playDailyCups, canPlayDailyCups, getUserAccount, DAILY_CUPS_COUNT } = require('../services/economy');
+const { claimDaily, playDailyCups, canPlayDailyCups, getUserAccount, DAILY_CUPS_COUNT, DAILY_COOLDOWN_MS } = require('../services/economy');
 const { createBonusSession } = require('../services/bonusTimer');
 const { t, getLanguage, formatRemaining } = require('../utils/i18n');
 const { DAILY, VOTE } = require('./commandNames');
@@ -186,6 +186,8 @@ function rebuildRows(message, { removeReactions = false, disableCups = false } =
 module.exports = {
   name: DAILY,
   aliases: ['daily', 'diario', 'py-diario', 'diaria', 'py-daily'],
+  // Recarga real (economy.js), mostrada no catálogo do site (/api/commands).
+  cooldown: DAILY_COOLDOWN_MS / 1000,
   buildDailyView,
   buildCupsView,
   data: new SlashCommandBuilder()
