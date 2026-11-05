@@ -124,6 +124,22 @@ pages.forEach((key) => {
   assert.ok(enHtml.includes(`hreflang="x-default" href="${urls.pt}"`), `${key}: x-default aponta para o PT`);
   assert.ok(!/href="[^"]*\?lang=/.test(ptHtml + enHtml), `${key}: HTML servido sem ?lang=`);
 });
+// 4c. Casca de SEO da Home: o corpo sai no idioma da URL, sem depender de JavaScript.
+{
+  const ptHome = getLocalizedHtml('index', 'pt', publicDir);
+  const enHome = getLocalizedHtml('index', 'en', publicDir);
+  const h1 = (html) => (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1] || '';
+  assert.ok(/Discord/.test(h1(ptHome)) && h1(ptHome) !== h1(enHome), 'index: h1 traduzido no HTML EN');
+  assert.ok(/companion fairy/i.test(h1(enHome)), 'index: h1 em inglês em /en/');
+  for (const href of ['/en/wiki', '/en/plans', '/en/museum', '/en/terms', '/en/privacy', '/invite?ref=site']) {
+    assert.ok(enHome.includes(`href="${href}"`), `index EN: link real para ${href}`);
+  }
+  for (const href of ['/wiki', '/planos', '/museu', '/termos', '/privacidade', '/invite?ref=site']) {
+    assert.ok(ptHome.includes(`href="${href}"`), `index PT: link real para ${href}`);
+  }
+  assert.ok(!/id=["']page-i18n["']/.test(ptHome + enHome), 'index: dicionário do servidor não vai para o navegador');
+  assert.ok(ptHome.includes('<div id="pyxie-app">') && enHome.includes('src="/dist/assets/index.js"'), 'index: o React continua montando em #pyxie-app');
+}
 console.log('  ✅ 4b. Canonical e hreflang recíprocos por idioma no HTML servido.');
 
 // 5. Detecção de idioma pela URL (o ?lang= antigo vira 301 no serveLocalizedPage)

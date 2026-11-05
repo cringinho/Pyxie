@@ -154,7 +154,16 @@ try {
 
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
   const wikiHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'wiki.html'), 'utf8');
-  assert.ok(indexHtml.includes('href="/promo"'), 'index.html deve conter links direcionando para /promo');
+  // A Home estática virou casca de SEO (o React monta em #pyxie-app e troca tudo): o link
+  // /promo, o idioma salvo e o alternador moram no React, que é o que o visitante usa.
+  const reactFooter = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'components', 'layout', 'Footer.jsx'), 'utf8');
+  const reactApp = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'App.jsx'), 'utf8');
+  assert.ok(reactFooter.includes('href="/promo"'), 'Home (React) deve conter links direcionando para /promo');
+  assert.ok(reactApp.includes('pyxie_lang'), 'Home (React) usa a chave local pyxie_lang');
+  assert.ok(indexHtml.includes('<div id="pyxie-app">') && indexHtml.includes('src="/dist/assets/index.js"'), 'index.html é a casca onde o React monta');
+  for (const legacy of ['setInterval', 'EventSource', 'particles-canvas', 'truthHydrator', "fetch('/api"]) {
+    assert.ok(!indexHtml.includes(legacy), `index.html (casca de SEO) sem script legado: ${legacy}`);
+  }
   assert.ok(wikiHtml.includes('href="/promo"'), 'wiki.html deve conter links direcionando para /promo');
   assert.ok(bonusHtml.includes('href="/promo"'), 'bonus.html deve conter sponsorBtn direcionando para /promo');
 
@@ -168,7 +177,7 @@ try {
   ];
 
   [indexHtml, wikiHtml, bonusHtml].forEach((htmlContent) => {
-    assert.ok(htmlContent.includes('.monetization-pt'), 'HTML deve conter estilos para modo PT');
+    if (htmlContent !== indexHtml) assert.ok(htmlContent.includes('.monetization-pt'), 'HTML deve conter estilos para modo PT');
     ADSTERRA_PATTERNS.forEach(pattern => {
       assert.ok(!htmlContent.includes(pattern), `HTML não deve conter scripts invasivos ou links do Adsterra (${pattern})`);
     });
@@ -177,7 +186,7 @@ try {
   assert.ok(!serverSrc.includes('profitableratecpmnetwork.com'), 'server.js não deve redirecionar para Adsterra');
 
   // 8. Teste de Persistência Confiável de Idioma (pyxie_lang, URL sync e Cross-page)
-  [indexHtml, wikiHtml, bonusHtml].forEach((htmlContent) => {
+  [wikiHtml, bonusHtml].forEach((htmlContent) => {
     assert.ok(htmlContent.includes('pyxie_lang'), 'Todas as páginas web devem utilizar a chave local pyxie_lang');
     assert.ok(htmlContent.includes('resolveInitialLang'), 'Todas as páginas web devem resolver idioma com hierarquia padronizada');
     assert.ok(htmlContent.includes('toggleLanguage'), 'Todas as páginas web devem fornecer alternador de idioma dinâmico');
@@ -185,9 +194,7 @@ try {
   });
 
   // 9. Validação do Footer e Assistente Flutuante (Tradução e Posição Pré-Script)
-  assert.ok(indexHtml.includes('data-i18n="footer.promo"'), 'index.html deve conter data-i18n="footer.promo" no rodapé');
   assert.ok(wikiHtml.includes('data-i18n="footerPromo"'), 'wiki.html deve conter data-i18n="footerPromo" no rodapé');
-  assert.ok(indexHtml.indexOf('id="pyxieFloatingTip"') < indexHtml.indexOf('function initLang'), '#pyxieFloatingTip deve estar posicionado antes de initLang no index.html para parsing síncrono');
   assert.ok(wikiHtml.indexOf('id="pyxieFloatingTip"') < wikiHtml.indexOf('function applyLang'), '#pyxieFloatingTip deve estar posicionado antes de applyLang no wiki.html para parsing síncrono');
 
   // 10. Validação Estrita de Sintaxe JavaScript nos Scripts de Páginas Web

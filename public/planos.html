@@ -51,6 +51,7 @@
     .donors { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px 18px; }
     .donors ol { margin:0; padding-left:20px; color:var(--muted); }
     .hint { color:var(--muted); font-size:.88rem; }
+    ul.rules { padding-left:20px; line-height:1.6; display:grid; gap:6px; }
     footer { margin-top:36px; color:var(--muted); font-size:.88rem; display:flex; gap:16px; flex-wrap:wrap; }
     footer a { color:var(--muted); }
   </style>
@@ -161,6 +162,17 @@
       <h2 class="section">Como pagar</h2>
       <p class="hint">No painel, abra <strong>Planos</strong> e escolha <strong>Pix</strong> (QR com validade de 30 minutos) ou <strong>cartão recorrente</strong>. O plano ativa sozinho quando o pagamento cai. Para cancelar, use <strong>Planos → Cancelar assinatura</strong> no painel, quando quiser. Dúvidas de cobrança ou reembolso: suporte único <a href="mailto:cringe.support@gmail.com">cringe.support@gmail.com</a>.</p>
       <p><a class="btn ghost" href="/cringelandia">Entrar na comunidade</a></p>
+    </section>
+
+    <section id="regras-planos">
+      <h2 class="section">Planos do servidor e pagamentos</h2>
+      <ul class="hint rules">
+        <li><strong>Renovação:</strong> no cartão, o plano renova sozinho a cada ciclo (mensal ou anual) até ser cancelado. No Pix, não renova sozinho e termina na data mostrada no painel.</li>
+        <li><strong>Cancelamento:</strong> a qualquer momento pelo painel (aba Planos), só pelo dono do servidor. Para a renovação, e o plano segue ativo até o fim do período já pago. Plano vitalício ou de cortesia não se cancela.</li>
+        <li><strong>Reembolso:</strong> direito de arrependimento de 7 dias após a compra (art. 49 do Código de Defesa do Consumidor), pedido pelo e-mail <a href="mailto:cringe.support@gmail.com">cringe.support@gmail.com</a>. Depois disso não há reembolso proporcional do período restante, exceto em cobrança indevida ou erro nosso. Estorno ou contestação no banco retira o tempo de plano que aquele pagamento liberou.</li>
+        <li><strong>Contato:</strong> <a href="mailto:cringe.support@gmail.com">cringe.support@gmail.com</a>.</li>
+      </ul>
+      <p class="hint"><a href="/termos#planos">Regras completas nos Termos</a></p>
     </section>
 
     <section>

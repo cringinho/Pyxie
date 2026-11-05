@@ -378,6 +378,41 @@ function detectRequestLang(req) {
   return pathname === '/en' || pathname.startsWith('/en/') ? 'en' : 'pt';
 }
 
+const PAGE_I18N_RE = /[ \t]*<script\s+type=["']application\/json["']\s+id=["']page-i18n["']>([\s\S]*?)<\/script>\s*\r?\n?/i;
+const attrEscape = (value) => String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+/**
+ * Tradução no servidor para páginas com o bloco `<script type="application/json" id="page-i18n">`
+ * (hoje, a casca de SEO da Home). Em EN troca o conteúdo de cada `[data-i18n]`, o `alt` de
+ * `[data-i18n-alt]`, o `aria-label` de `[data-i18n-aria]` e o `href` pelo `[data-href-en]`.
+ * O bloco sai do HTML nos dois idiomas: ele só serve ao servidor. Página sem o bloco passa intacta.
+ */
+function applyStaticI18n(html, lang) {
+  const match = PAGE_I18N_RE.exec(html);
+  if (!match) return html;
+  let out = html.replace(PAGE_I18N_RE, '');
+  if (lang !== 'en') return out;
+  let dict = {};
+  try {
+    dict = JSON.parse(match[1]).en || {};
+  } catch (_) {
+    return out;
+  }
+  const has = (key) => Object.prototype.hasOwnProperty.call(dict, key);
+  out = out.replace(/<([a-z][a-z0-9]*)\b([^>]*?\sdata-i18n=["']([^"']+)["'][^>]*)>([\s\S]*?)<\/\1>/gi, (full, tag, attrs, key) =>
+    has(key) ? `<${tag}${attrs}>${dict[key]}</${tag}>` : full
+  );
+  out = out.replace(/<[a-z][a-z0-9]*\b[^>]*\sdata-i18n-(alt|aria)=["']([^"']+)["'][^>]*>/gi, (tag, kind, key) => {
+    if (!has(key)) return tag;
+    const attr = kind === 'alt' ? 'alt' : 'aria-label';
+    return tag.replace(new RegExp(`(\\s${attr}=["'])[^"']*(["'])`, 'i'), (m, a, b) => `${a}${attrEscape(dict[key])}${b}`);
+  });
+  out = out.replace(/<a\b[^>]*\sdata-href-en=["']([^"']+)["'][^>]*>/gi, (tag, href) =>
+    tag.replace(/(\shref=["'])[^"']*(["'])/i, (m, a, b) => `${a}${attrEscape(href)}${b}`)
+  );
+  return out;
+}
+
 function getLocalizedHtml(pageKey, lang, publicDir) {
   const cacheKey = `${pageKey}:${lang}`;
   if (htmlCache.has(cacheKey) && process.env.NODE_ENV === 'production') {
@@ -408,6 +443,9 @@ function getLocalizedHtml(pageKey, lang, publicDir) {
       html = html.replace(/(<meta\s+name=["']twitter:image:alt["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${meta.imageAlt}$2`);
     }
   }
+
+  // Texto do corpo no idioma da URL, já no HTML (sem depender de JavaScript).
+  html = applyStaticI18n(html, lang);
 
   // Canonical, hreflang, og:url e og:locale sempre coerentes com a URL pedida.
   html = injectSeo(html, pageKey, lang);
@@ -493,6 +531,7 @@ module.exports = {
   requestPath,
   detectRequestLang,
   getLocalizedHtml,
+  applyStaticI18n,
   serveLocalizedPage,
   clearSeoCache
 };

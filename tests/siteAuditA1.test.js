@@ -111,7 +111,7 @@ const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
   // Q022/Q029/Q030/Q031/Q036: Termos e Para pais.
   const terms = read('public/terms.html');
   assert.ok(!terms.includes('cargos verificados') && !terms.includes('verified adults'), 'Termos não sugerem verificação de idade');
-  assert.ok(terms.includes('mailto:contato@pyxie.com.br') && !terms.includes('ouvidoria oficial'), 'Termos com e-mail clicável');
+  assert.ok(terms.includes('mailto:cringe.support@gmail.com') && !terms.includes('ouvidoria oficial'), 'Termos com e-mail clicável');
   assert.ok(terms.includes('tel:188') && terms.includes('tel:+351213544545') && terms.includes('tel:100') && terms.includes('tel:180'), 'linhas de ajuda com um toque');
   assert.ok(/class="terms-toc"/.test(terms) && terms.includes('href="#secao-3"'), 'Termos com índice');
   assert.ok(terms.includes('datetime="2026-11-05"') && privacy.includes('datetime="2026-11-05"'), 'data de atualização nas duas páginas');
