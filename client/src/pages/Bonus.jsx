@@ -176,7 +176,7 @@ export default function Bonus({ t, lang }) {
         <div className="flex flex-col sm:flex-row items-center gap-4 relative z-10 max-w-lg">
           <div className="relative w-20 h-20 flex-shrink-0 animate-bounce-slow">
             <img
-              src="/assets/pyxie/sticker/sticker_smile.png"
+              src="/assets/pyxie/sticker/sticker_smile-256.webp"
               alt="Mascote Pyxie"
               width="80"
               height="80"

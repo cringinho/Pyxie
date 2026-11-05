@@ -606,16 +606,18 @@ for (const pageKey of Object.keys(SEO_CONFIG)) {
 }
 app.get(/^\/en$/, (req, res) => res.redirect(301, '/en/'));
 app.get('/en/', serveLocalizedPage('index', publicDir));
-// Ranking público das doações (mês e geral). Doação anônima continua anônima.
+// Ranking público das doações (mês e geral). Doação anônima continua anônima e o ID do
+// Discord de quem doou nunca sai na resposta pública.
+const publicDonor = ({ label, amount, count, anonymous }) => ({ label: anonymous ? null : label || null, amount, count, anonymous: Boolean(anonymous) });
 app.get('/api/public/donations', (req, res) => {
   try {
     const donations = require('./src/services/donations');
     res.setHeader('Cache-Control', 'public, max-age=120');
     return res.json({
       success: true,
-      summary: donations.summary(),
-      month: donations.ranking({ period: 'month', limit: 10 }),
-      allTime: donations.ranking({ period: 'all', limit: 10 }),
+      summary: { ...donations.summary(), top: donations.summary().top.map(publicDonor) },
+      month: donations.ranking({ period: 'month', limit: 10 }).map(publicDonor),
+      allTime: donations.ranking({ period: 'all', limit: 10 }).map(publicDonor),
     });
   } catch (_) {
     return res.json({ success: true, summary: { total: 0, count: 0, monthTotal: 0, top: [] }, month: [], allTime: [] });

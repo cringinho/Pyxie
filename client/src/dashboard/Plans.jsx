@@ -6,6 +6,12 @@ import Paywall, { planFromCode } from './Paywall';
 import { Button, Card, Notice, Spinner } from './ui';
 
 // Assinatura mensal do servidor: Básico (R$ 7) e Premium (R$ 20), Pix por QR ou cartão recorrente.
+// Motivo da falha em linguagem simples (error.<código>); só cai no genérico sem texto próprio.
+function errorText(t, code) {
+  const known = t(`error.${code}`);
+  return known.startsWith('error.') ? t('error.generic', { error: code }) : known;
+}
+
 export default function Plans({ t, guildId, lang }) {
   const [info, setInfo] = useState(null);
   const [error, setError] = useState(null);
@@ -51,7 +57,7 @@ export default function Plans({ t, guildId, lang }) {
     // Recurso travado pelo plano (a API responde 403 plan_required): paywall no lugar do erro cru.
     const lockedPlan = error ? planFromCode(error) : '';
     if (lockedPlan) return <Paywall t={t} requiredPlan={lockedPlan} guildId={guildId} />;
-    return error ? <Notice tone="error">{t('error.generic', { error })}</Notice> : <Spinner label={t('app.loading')} />;
+    return error ? <Notice tone="error">{errorText(t, error)}</Notice> : <Spinner label={t('app.loading')} />;
   }
 
   const current = info.plan || {};
@@ -122,7 +128,7 @@ export default function Plans({ t, guildId, lang }) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-white/70">{t('plan.intro')}</p>
-      {error && <Notice tone="error">{t('error.generic', { error })}</Notice>}
+      {error && <Notice tone="error">{errorText(t, error)}</Notice>}
 
       <div className="dash-card flex flex-wrap items-center justify-between gap-3 rounded-2xl p-4">
         <div className="flex items-center gap-3">

@@ -22,6 +22,7 @@ const SEO_CONFIG = {
       description: 'Pyxie is the magical companion fairy for your Discord server: Living Economy with coins & beans, 78 Tarot Arcana in Canvas, 22 Careers, and rich Social Dynamics.',
       ogTitle: 'Pyxie • The Companion Fairy for Your Discord Server',
       ogDesc: 'Living Economy with magic coins and beans, 22 interactive job careers, 78 Tarot cards with dynamic Canvas art, and rich community games for your Discord server.',
+      imageAlt: 'Banner of Pyxie, the companion fairy for your Discord server',
       locale: 'en_US'
     }
   },
@@ -67,14 +68,14 @@ const SEO_CONFIG = {
     canonical: 'https://pyxie.com.br/planos',
     pt: {
       title: 'Planos da Pyxie • Básico R$ 7 e Premium R$ 20 por mês ou no anual',
-      description: 'Plano para o seu servidor no Discord: Básico por R$ 7 com perfil completo da Pyxie, cores próprias e 1 mensagem cíclica; Premium por R$ 20 com status da lojinha, 10 mensagens cíclicas e Oráculo de IA. No anual, 2 meses grátis. Extra de lojinha por R$ 3. Pix por QR ou cartão recorrente.',
+      description: 'Plano para o seu servidor no Discord: Básico por R$ 7 com perfil completo da Pyxie e cores próprias; Premium por R$ 20 com status da lojinha, 10 mensagens cíclicas e Oráculo de IA. No anual, 2 meses grátis. Extra de lojinha por R$ 3. Pix por QR ou cartão recorrente.',
       ogTitle: 'Planos da Pyxie • Básico R$ 7 e Premium R$ 20',
       ogDesc: 'Assinatura mensal ou anual (2 meses grátis) do servidor: perfil completo da Pyxie, mensagens cíclicas por plano, status da lojinha e Oráculo com IA. Extra de lojinha por R$ 3.',
       locale: 'pt_BR'
     },
     en: {
       title: 'Pyxie Plans • Basic R$ 7 and Premium R$ 20 monthly or yearly',
-      description: 'Plan for your Discord server: Basic for R$ 7 with the full Pyxie profile, custom colors and 1 cyclic message; Premium for R$ 20 with store status, 10 cyclic messages and the AI Oracle. Yearly gets 2 months free. Store extra for R$ 3. Pay by Pix QR or recurring card.',
+      description: 'Plan for your Discord server: Basic for R$ 7 with the full Pyxie profile and custom colors; Premium for R$ 20 with store status, 10 cyclic messages and the AI Oracle. Yearly gets 2 months free. Store extra for R$ 3. Pay by Pix QR or recurring card.',
       ogTitle: 'Pyxie Plans • Basic R$ 7 and Premium R$ 20',
       ogDesc: 'Monthly or yearly subscription (2 months free) for your server: full Pyxie profile, cyclic messages per plan, store status and the AI Oracle. Store extra for R$ 3.',
       locale: 'en_US'
@@ -167,6 +168,7 @@ const SEO_CONFIG = {
       description: 'Claim free magic coins for your Discord account in 10 seconds on the official Pyxie reward portal.',
       ogTitle: 'Pyxie • Enchanted Magic Bonus Portal',
       ogDesc: 'Claim free magic coins for your Discord account in 10 seconds on the official Pyxie reward portal.',
+      imageAlt: 'Banner of Pyxie, the Discord fairy, for the Daily Magic Bonus',
       locale: 'en_US'
     }
   },
@@ -257,6 +259,7 @@ const SEO_CONFIG = {
       description: 'The largest neurodivergent Discord community in Brazil: mental health support, autistic and disabled rights guide, sensory regulation, and safe space.',
       ogTitle: 'Cringelândia • Neurodivergent Community & Mental Support',
       ogDesc: 'Safe Discord sanctuary for autistics, ADHD, disabled folks, and neurodivergent minds with crisis hotlines, encylopedia, and community care.',
+      imageAlt: 'Pyxie banner for Cringelândia, a neurodivergent community with support and care',
       locale: 'en_US'
     }
   }
@@ -398,6 +401,11 @@ function getLocalizedHtml(pageKey, lang, publicDir) {
     html = html.replace(/(<meta\s+property=["']og:locale["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${meta.locale}$2`);
     html = html.replace(/(<meta\s+name=["']twitter:title["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${meta.ogTitle}$2`);
     html = html.replace(/(<meta\s+name=["']twitter:description["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${meta.ogDesc}$2`);
+    // Texto alternativo da prévia (og/twitter) no idioma da página: o HTML base é em português.
+    if (meta.imageAlt) {
+      html = html.replace(/(<meta\s+property=["']og:image:alt["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${meta.imageAlt}$2`);
+      html = html.replace(/(<meta\s+name=["']twitter:image:alt["']\s+content=["'])[\s\S]*?(["']\s*\/?>)/i, `$1${meta.imageAlt}$2`);
+    }
   }
 
   // Canonical, hreflang, og:url e og:locale sempre coerentes com a URL pedida.

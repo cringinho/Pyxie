@@ -1,6 +1,7 @@
 // Oráculo com IA — recurso do plano Premium do servidor.
 // Cota diária por servidor (aiQuota), cooldown por pessoa e fallback para as falas do i18n.
-// Em crise não há IA: a resposta é o acolhimento com CVV 188 (AGENTS §12).
+// Em crise não há IA: a resposta é o acolhimento com CVV 188 / SAMU 192 no Brasil e
+// findahelpline.com + emergência local fora dele (AGENTS §12).
 const { EmbedBuilder, SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { ORACLE } = require('./commandNames');
 const { getLanguage, t } = require('../utils/i18n');

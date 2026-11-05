@@ -14,6 +14,9 @@ const { SUPPORT_EMAIL } = require('../config/support');
 
 const MP_API = 'https://api.mercadopago.com';
 const PIX_TTL_MS = 30 * 60 * 1000;
+// O Mercado Pago lê o fuso da etiqueta: converte de verdade para -03:00 (Brasília não tem
+// horário de verão desde 2019). Trocar só o "Z" fazia o QR valer ~3h30 em vez de 30 min.
+const toBrasiliaIso = (ms) => new Date(ms - 3 * 60 * 60 * 1000).toISOString().replace('Z', '-03:00');
 const CHARGE_LIMIT = 500;
 
 let fetchImpl = (...args) => fetch(...args);
@@ -133,7 +136,7 @@ async function createPixCharge({ guildId, plan, addonId = null, cycle = 'month',
       payment_method_id: 'pix',
       external_reference: target.ref,
       notification_url: `${publicUrl()}/api/plans/webhook/mercadopago`,
-      date_of_expiration: new Date(now + PIX_TTL_MS).toISOString().replace('Z', '-03:00'),
+      date_of_expiration: toBrasiliaIso(now + PIX_TTL_MS),
       payer: { email: SUPPORT_EMAIL },
     }),
   });

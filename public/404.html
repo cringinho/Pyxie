@@ -72,38 +72,39 @@
     <div class="relative mb-6">
       <div class="w-36 h-36 rounded-full p-2 bg-gradient-to-tr from-pink-500 via-purple-600 to-cyan-400 shadow-neon-pink animate-pulse">
         <img
-          src="/assets/pyxie/pyxie_mascot.png"
-          alt="Pyxie Fadinha Perdida"
+          src="/assets/pyxie/pyxie_mascot-288.webp"
+          alt="Pyxie Fadinha Perdida" data-i18n-alt
           class="w-full h-full object-contain rounded-full bg-[#0e071a] p-3"
         />
       </div>
-      <span class="absolute -top-2 -right-2 px-3 py-1 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 font-mono font-black text-xs">
+      <span class="absolute -top-2 -right-2 px-3 py-1 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 font-mono font-black text-xs" data-i18n="badge">
         ERRO 404
       </span>
     </div>
 
-    <h1 class="font-title font-black text-3xl sm:text-4xl text-white mb-3 tracking-tight">
+    <h1 class="font-title font-black text-3xl sm:text-4xl text-white mb-3 tracking-tight" data-i18n="heading">
       Dimensão Não Encontrada!
     </h1>
 
-    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-md">
+    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-md" data-i18n="body">
       A Pyxie procurou em todas as constelações astrais e nos registros arcanos, mas essa página parece ter sumido no vácuo do espaço.
     </p>
 
     <div class="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
       <a
         href="/"
+        data-home-link
         class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-purple-500 text-white font-title font-bold text-sm shadow-neon-pink transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
       >
         <span>🔮</span>
-        <span>Voltar para um Lugar Seguro</span>
+        <span data-i18n="home">Voltar para um Lugar Seguro</span>
       </a>
       <a
         href="/wiki"
         class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-purple-500/30 text-purple-200 font-title font-semibold text-sm transition-all flex items-center justify-center gap-2"
       >
         <span>📖</span>
-        <span>Guia de Comandos</span>
+        <span data-i18n="second">Guia de Comandos</span>
       </a>
     </div>
   </div>
@@ -142,6 +143,28 @@
         requestAnimationFrame(loop);
       }
       loop();
+    })();
+  </script>
+  <script>
+    // Versão em inglês: /en/..., ?lang=en ou navegador em inglês (sem ?lang=pt). AGENTS §1.
+    (function errorPageLang() {
+      var params = new URLSearchParams(window.location.search);
+      var q = params.get('lang');
+      var isEn = q === 'en' || (q !== 'pt' && (/^\/en(\/|$)/.test(window.location.pathname) || /^en\b/i.test(navigator.language || '')));
+      if (!isEn) return;
+      var EN = {"title": "404 • Page Not Found | Pyxie Discord Bot", "description": "The page you are looking for has moved or never existed.", "alt": "Pyxie, a lost little fairy", "badge": "ERROR 404", "heading": "Page Not Found!", "body": "Pyxie searched every constellation and every magic record, but this page seems to have vanished. The link may be broken or the page may have moved.", "home": "Back to a Safe Place", "second": "Command Guide"};
+      document.documentElement.lang = 'en';
+      document.title = EN.title;
+      var desc = document.querySelector('meta[name="description"]');
+      if (desc) desc.setAttribute('content', EN.description);
+      document.querySelectorAll('[data-i18n]').forEach(function (el) {
+        var key = el.getAttribute('data-i18n');
+        if (EN[key]) el.textContent = EN[key];
+      });
+      var img = document.querySelector('[data-i18n-alt]');
+      if (img) img.setAttribute('alt', EN.alt);
+      var home = document.querySelector('[data-home-link]');
+      if (home) home.setAttribute('href', '/en/');
     })();
   </script>
 </body>

@@ -8,106 +8,74 @@ const {
   TextInputStyle,
 } = require('discord.js');
 const { getVentChannelId, updateGuildConfig, getGuildConfig } = require('./guildConfigService');
+const { t } = require('../utils/i18n');
 
 const ventDebounceTimers = new Map(); // guildId -> Timeout
 const activeStickyMessageIds = new Map(); // guildId -> messageId
 
+// O canal de desabafo existe em qualquer servidor: todo texto vem de `ventSpace.*`
+// no idioma do servidor (AGENTS §1). Sem contexto, fica em português (Cringelândia).
+const vt = (key, source, vars) => t(`ventSpace.${key}`, source || 'pt', vars);
+
 /**
  * Constrói o Embed Sticky oficial de Desabafos
  */
-function buildVentStickyEmbed() {
+function buildVentStickyEmbed(source = 'pt') {
   return new EmbedBuilder()
     .setColor('#4c1d95')
-    .setTitle('💜  ✦  Espaço de Acolhimento & Desabafos')
-    .setDescription(
-      'Um espaço seguro e acolhedor dedicado à escuta, desabafo e apoio mútuo. 🫂\n\n' +
-      'Aqui, cada pessoa merece ser ouvida com empatia, delicadeza e compreensão.\n\n' +
-
-      '### 📜 Diretrizes e Convivência\n\n' +
-
-      '💜 **1. Respeito e Empatia**\n' +
-      'Proibido qualquer tipo de julgamento, invalidação emocional, deboche ou conselhos hostis. Respeite a vulnerabilidade alheia.\n\n' +
-
-      '🕯️ **2. Gatilhos e Conteúdos Sensíveis (TW / +18)**\n' +
-      'Este canal pode conter relatos densos e temas delicados. Utilize avisos de gatilho quando necessário e cuide de sua saúde mental ao ler.\n\n' +
-
-      '🤝 **3. Acolhimento sem Pressão**\n' +
-      'Ouça sem minimizar a dor alheia. Não imponha soluções ou opiniões invasivas. Às vezes, quem desabafa só precisa de escuta.\n\n' +
-
-      '🫂 **4. Limites e Privacidade**\n' +
-      'Respeite o espaço individual. É terminantemente proibido compartilhar prints, relatos ou expor membros sem autorização prévia.\n\n' +
-
-      '🩹 **5. Apoio Comunitário**\n' +
-      'Somos uma comunidade de apoio mútuo entre amigos. Este espaço **não substitui acompanhamento psicológico ou psiquiátrico profissional**.\n\n' +
-
-      '### ✍️ Como Utilizar o Canal\n\n' +
-
-      '💬 **Desabafo Público**\n' +
-      'Envie sua mensagem diretamente no chat caso se sinta à vontade para compartilhar seu relato com a comunidade.\n\n' +
-
-      '🎭 **Desabafo Anônimo**\n' +
-      'Prefere sigilo absoluto? Utilize o botão **[ 🎭 Desabafo Anônimo ]** abaixo para publicar com identidade 100% oculta.\n\n' +
-
-      '-# 🌷 Lembre-se: você não precisa encontrar as palavras perfeitas. Este cantinho é seguro para acolher o seu momento.'
-    )
-    .setFooter({ text: 'Pyxie • Cuidado, Acolhimento & Respeito Mútuo' })
+    .setTitle(vt('stickyTitle', source))
+    .setDescription([
+      vt('stickyIntro', source),
+      vt('stickyRulesTitle', source),
+      vt('rule1', source),
+      vt('rule2', source),
+      vt('rule3', source),
+      vt('rule4', source),
+      vt('rule5', source),
+      vt('stickyHowTitle', source),
+      vt('howPublic', source),
+      vt('howAnon', source),
+      vt('stickyNote', source),
+    ].join('\n\n'))
+    .setFooter({ text: vt('stickyFooter', source) })
     .setTimestamp();
 }
 
 /**
  * Constrói os botões da mensagem Sticky
  */
-function buildVentStickyComponents() {
+function buildVentStickyComponents(source = 'pt') {
   return [
     new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('vent:help')
-        .setLabel('🆘 Receber Autoajuda (DM)')
+        .setLabel(vt('btnHelp', source))
         .setStyle(ButtonStyle.Success),
       new ButtonBuilder()
         .setCustomId('vent:anonymous')
-        .setLabel('🎭 Desabafo Anônimo')
+        .setLabel(vt('btnAnon', source))
         .setStyle(ButtonStyle.Primary)
     ),
   ];
 }
 
 /**
- * Constrói o Embed completo de Autoajuda (Brasil & Internacional)
+ * Constrói o Embed completo de Autoajuda.
+ * Em português: Brasil primeiro. Em inglês: emergência local e diretório mundial
+ * primeiro, Brasil depois. O Disque 100 fica separado, como canal de denúncia
+ * (não é linha de apoio emocional).
  */
-function buildAutohelpEmbed() {
+function buildAutohelpEmbed(source = 'pt') {
   return new EmbedBuilder()
     .setColor('#059669')
-    .setTitle('🌱  ✦  Rede de Apoio Emocional & Saúde Mental')
-    .setDescription(
-      'Se você está passando por um momento difícil, lembre-se de que você não precisa enfrentar isso sozinho(a).\n\n' +
-      'Existem profissionais prontos para te ouvir com sigilo, respeito e carinho 24 horas por dia.'
-    )
+    .setTitle(vt('helpTitle', source))
+    .setDescription([vt('helpIntro', source), vt('helpEmergency', source)].join('\n\n'))
     .addFields(
-      {
-        name: '🇧🇷 Canais de Ajuda no Brasil (Gratuitos & Confidenciais)',
-        value: [
-          '• **CVV (Centro de Valorização da Vida):** Ligue `188` ou acesse [cvv.org.br](https://www.cvv.org.br)',
-          '• **Pode Falar (UNICEF Brasil):** Ajuda online para jovens em [podefalar.org.br](https://www.podefalar.org.br)',
-          '• **Mapa da Saúde Mental:** Encontre atendimento público gratuito em [mapasaudemental.com.br](https://mapasaudemental.com.br)',
-          '• **Disque 100:** Direitos Humanos e proteção a vulneráveis',
-          '• **Ligue 180:** Central de atendimento à mulher',
-          '• **SUS / CAPS:** Procure a Unidade Básica de Saúde ou CAPS mais próximo de você.',
-        ].join('\n\n'),
-        inline: false,
-      },
-      {
-        name: '🌍 Canais Internacionais de Apoio',
-        value: [
-          '• **Portugal:** Linha SOS Voz Amiga (`21 354 45 45`) / SNS 24 (`808 24 24 24`)',
-          '• **EUA & Canadá:** Suicide & Crisis Lifeline: Ligue ou envie SMS para `988`',
-          '• **Reino Unido:** Samaritans: Ligue `116 123`',
-          '• **Diretório Global de Ajuda:** [findahelpline.com](https://findahelpline.com) e [befrienders.org](https://www.befrienders.org)',
-        ].join('\n\n'),
-        inline: false,
-      }
+      { name: vt('helpFirstTitle', source), value: vt('helpFirstValue', source), inline: false },
+      { name: vt('helpSecondTitle', source), value: vt('helpSecondValue', source), inline: false },
+      { name: vt('helpRightsTitle', source), value: vt('helpRightsValue', source), inline: false }
     )
-    .setFooter({ text: 'Você tem valor e sua vida importa para nós 💗' })
+    .setFooter({ text: vt('helpFooter', source) })
     .setTimestamp();
 }
 
@@ -133,8 +101,8 @@ function scheduleStickyReposition(guild, channel) {
 
       // 2. Envia nova sticky
       const newSticky = await channel.send({
-        embeds: [buildVentStickyEmbed()],
-        components: buildVentStickyComponents(),
+        embeds: [buildVentStickyEmbed(guildId)],
+        components: buildVentStickyComponents(guildId),
       });
 
       activeStickyMessageIds.set(guildId, newSticky.id);
@@ -157,20 +125,21 @@ async function onMessageCreate(message) {
   if (!ventChannelId || message.channel.id !== ventChannelId) return;
 
   // Se o usuário digitou no canal, envia a pergunta de preferência vinculada
+  const lang = message.guild.id;
   try {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId(`vent_pref:allow:${message.author.id}:${message.id}`)
-        .setLabel('💬 Não me importo que me respondam')
+        .setLabel(vt('prefAllow', lang))
         .setStyle(ButtonStyle.Secondary),
       new ButtonBuilder()
         .setCustomId(`vent_pref:silence:${message.author.id}:${message.id}`)
-        .setLabel('🤫 Prefiro que mantenham apenas silêncio')
+        .setLabel(vt('prefSilence', lang))
         .setStyle(ButtonStyle.Secondary)
     );
 
     await message.reply({
-      content: `${message.author}, seu desabafo foi publicado com carinho. Como você prefere que a comunidade reaja a ele?`,
+      content: vt('published', lang, { user: `${message.author}` }),
       components: [row],
       allowedMentions: { repliedUser: false, users: [message.author.id] },
     }).catch(() => null);
@@ -185,20 +154,21 @@ async function onMessageCreate(message) {
  */
 async function handleVentInteraction(interaction) {
   if (!interaction) return false;
+  const lang = interaction.guildId || interaction;
 
   // 1. Botão: Receber Autoajuda (DM)
   if (interaction.isButton() && interaction.customId === 'vent:help') {
-    const helpEmbed = buildAutohelpEmbed();
+    const helpEmbed = buildAutohelpEmbed(lang);
     try {
       await interaction.user.send({ embeds: [helpEmbed] });
       await interaction.reply({
-        content: '🌸 Te enviamos uma mensagem acolhedora com os principais canais de apoio e números de ajuda na sua **DM**!',
+        content: vt('dmSent', lang),
         ephemeral: true,
       });
     } catch (err) {
       // Fallback: se a DM estiver trancada, envia como resposta efêmera
       await interaction.reply({
-        content: 'ℹ️ Sua DM parece estar fechada para mensagens diretas. Exibindo aqui apenas para você com carinho:',
+        content: vt('dmClosed', lang),
         embeds: [helpEmbed],
         ephemeral: true,
       });
@@ -210,21 +180,21 @@ async function handleVentInteraction(interaction) {
   if (interaction.isButton() && interaction.customId === 'vent:anonymous') {
     const modal = new ModalBuilder()
       .setCustomId('vent_modal_submit')
-      .setTitle('🎭 Desabafo Anônimo');
+      .setTitle(vt('modalTitle', lang));
 
     const titleInput = new TextInputBuilder()
       .setCustomId('vent_title')
-      .setLabel('Título do Desabafo')
+      .setLabel(vt('modalTitleLabel', lang))
       .setStyle(TextInputStyle.Short)
-      .setPlaceholder('Ex: Um peso no coração / Desabafo do dia')
+      .setPlaceholder(vt('modalTitlePlaceholder', lang))
       .setRequired(true)
       .setMaxLength(100);
 
     const bodyInput = new TextInputBuilder()
       .setCustomId('vent_body')
-      .setLabel('Mensagem de Desabafo')
+      .setLabel(vt('modalBodyLabel', lang))
       .setStyle(TextInputStyle.Paragraph)
-      .setPlaceholder('Escreva seu desabafo com calma. Ninguém saberá sua identidade...')
+      .setPlaceholder(vt('modalBodyPlaceholder', lang))
       .setRequired(true)
       .setMaxLength(2000);
 
@@ -244,9 +214,9 @@ async function handleVentInteraction(interaction) {
 
     const ventEmbed = new EmbedBuilder()
       .setColor('#581c87')
-      .setTitle(`🎭  ✦  Desabafo Anônimo: ${title}`)
+      .setTitle(vt('anonTitle', lang, { title }).slice(0, 256))
       .setDescription(body)
-      .setFooter({ text: 'Desabafo Anônimo • Identidade 100% protegida pela Pyxie' })
+      .setFooter({ text: vt('anonFooter', lang) })
       .setTimestamp();
 
     const channel = interaction.channel;
@@ -257,16 +227,16 @@ async function handleVentInteraction(interaction) {
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId(`vent_pref:allow:anon:${ventMsg.id}`)
-          .setLabel('💬 Permitir respostas no meu desabafo')
+          .setLabel(vt('prefAllowAnon', lang))
           .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
           .setCustomId(`vent_pref:silence:anon:${ventMsg.id}`)
-          .setLabel('🤫 Pedir apenas silêncio no meu desabafo')
+          .setLabel(vt('prefSilenceAnon', lang))
           .setStyle(ButtonStyle.Secondary)
       );
 
       await interaction.reply({
-        content: '✅ Seu desabafo anônimo foi publicado com sucesso! Escolha como prefere que o servidor responda a ele:',
+        content: vt('anonPublished', lang),
         components: [row],
         ephemeral: true,
       });
@@ -286,15 +256,15 @@ async function handleVentInteraction(interaction) {
     // Se for desabafo direto, apenas o autor pode responder
     if (targetAuthorOrAnon !== 'anon' && interaction.user.id !== targetAuthorOrAnon) {
       await interaction.reply({
-        content: '❌ Apenas quem enviou este desabafo pode definir a preferência de respostas.',
+        content: vt('onlyAuthor', lang),
         ephemeral: true,
       });
       return true;
     }
 
     const prefText = action === 'allow'
-      ? '💬 **Preferência do Autor:** Respostas de acolhimento e escuta são muito bem-vindas.'
-      : '🤫 **Preferência do Autor:** Por favor, mantenham apenas **silêncio e respeito** perante este desabafo (sem respostas diretas).';
+      ? vt('prefAllowText', lang)
+      : vt('prefSilenceText', lang);
 
     // Se a interação foi na pergunta pública
     if (interaction.message && !interaction.message.flags?.has(64)) {
@@ -312,7 +282,7 @@ async function handleVentInteraction(interaction) {
         }).catch(() => null);
       }
       await interaction.update({
-        content: `✅ Preferência registrada com sucesso: ${prefText}`,
+        content: vt('prefSaved', lang, { pref: prefText }),
         components: [],
       });
     }

@@ -9,10 +9,15 @@ const { SUPPORT_EMAIL } = require('../config/support');
 
 const MP_API = 'https://api.mercadopago.com';
 const PIX_TTL_MS = 30 * 60 * 1000;
+// O Mercado Pago lê o fuso da etiqueta: converte de verdade para -03:00 (Brasília não tem
+// horário de verão desde 2019). Trocar só o "Z" fazia o QR valer ~3h30 em vez de 30 min.
+const toBrasiliaIso = (ms) => new Date(ms - 3 * 60 * 60 * 1000).toISOString().replace('Z', '-03:00');
 const MIN_CENTS = 200; // R$ 2,00
 const MAX_CENTS = 50000; // R$ 500,00
 const PRESETS = [500, 1000, 2500, 5000]; // R$ 5, 10, 25, 50
 const LEDGER_LIMIT = 2000;
+const PENDING_NAMES_LIMIT = 500;
+const cleanName = (name) => String(name || '').replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, 40);
 
 let fetchImpl = (...args) => fetch(...args);
 function setFetch(fn) {
@@ -38,9 +43,14 @@ const ledgerFile = () => path.join(process.env.PYXIE_DATA_DIR || path.join(__dir
 function loadLedger() {
   try {
     const data = JSON.parse(fs.readFileSync(ledgerFile(), 'utf8')) || {};
-    return { donations: Array.isArray(data.donations) ? data.donations : [], processed: Array.isArray(data.processed) ? data.processed : [] };
+    return {
+      donations: Array.isArray(data.donations) ? data.donations : [],
+      processed: Array.isArray(data.processed) ? data.processed : [],
+      // Nome de exibição guardado na criação do Pix até o webhook aprovar (paymentId -> nome).
+      pendingNames: data.pendingNames && typeof data.pendingNames === 'object' ? data.pendingNames : {},
+    };
   } catch (_) {
-    return { donations: [], processed: [] };
+    return { donations: [], processed: [], pendingNames: {} };
   }
 }
 
@@ -48,7 +58,8 @@ function saveLedger(state) {
   const file = ledgerFile();
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const donations = state.donations.slice(-LEDGER_LIMIT);
-  fs.writeFileSync(`${file}.tmp`, JSON.stringify({ version: 1, donations, processed: state.processed.slice(-LEDGER_LIMIT) }, null, 2));
+  const pendingNames = Object.fromEntries(Object.entries(state.pendingNames || {}).slice(-PENDING_NAMES_LIMIT));
+  fs.writeFileSync(`${file}.tmp`, JSON.stringify({ version: 1, donations, processed: state.processed.slice(-LEDGER_LIMIT), pendingNames }, null, 2));
   fs.renameSync(`${file}.tmp`, file);
   return state;
 }
@@ -78,7 +89,7 @@ async function createPixDonation({ userId, cents, anonymous = false, name = '', 
       payment_method_id: 'pix',
       external_reference: reference(userId, value, anonymous),
       notification_url: `${publicUrl()}/api/plans/webhook/mercadopago`,
-      date_of_expiration: new Date(now + PIX_TTL_MS).toISOString().replace('Z', '-03:00'),
+      date_of_expiration: toBrasiliaIso(now + PIX_TTL_MS),
       payer: { email: SUPPORT_EMAIL },
     }),
   });
@@ -86,6 +97,15 @@ async function createPixDonation({ userId, cents, anonymous = false, name = '', 
   if (!res.ok) return { ok: false, reason: 'provider', status: res.status, detail: data.message || data.error };
   const qr = data.point_of_interaction?.transaction_data || {};
   if (!qr.qr_code) return { ok: false, reason: 'qr_missing', status: res.status };
+  // Guarda o nome para o ranking: o webhook do Mercado Pago não traz o nome de exibição.
+  const displayName = cleanName(name);
+  if (!anonymous && displayName && data.id) {
+    withFileLock(ledgerFile(), () => {
+      const state = loadLedger();
+      state.pendingNames[String(data.id)] = displayName;
+      saveLedger(state);
+    });
+  }
   return {
     ok: true,
     id: String(data.id),
@@ -111,10 +131,12 @@ function applyDonation(payment, { name = '' } = {}) {
     const id = `mp:${payment.id}`;
     if (state.processed.includes(id)) return { ok: true, duplicate: true, donation: state.donations.find((d) => d.id === id) || null };
     state.processed.push(id);
+    const pendingName = state.pendingNames[String(payment.id)];
+    delete state.pendingNames[String(payment.id)];
     const donation = {
       id,
       userId: ref.userId,
-      name: String(name || '').slice(0, 40),
+      name: ref.anonymous ? '' : cleanName(name || pendingName),
       cents: ref.cents,
       anonymous: ref.anonymous,
       at: Date.now(),
@@ -127,7 +149,8 @@ function applyDonation(payment, { name = '' } = {}) {
 
 const dayKey = (now = Date.now()) => new Date(now - 3 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-/** Ranking de doadores (mês atual ou geral). Nomes anônimos não aparecem. */
+/** Ranking de doadores (mês atual ou geral). Nomes anônimos não aparecem, e o ID do
+ *  Discord nunca vira rótulo público: sem nome, label fica null (a tela mostra "Apoiador"). */
 function ranking({ period = 'month', limit = 10, now = Date.now() } = {}) {
   const cutoff = period === 'all' ? 0 : Date.parse(`${dayKey(now).slice(0, 7)}-01T00:00:00Z`);
   const totals = new Map();
@@ -141,7 +164,7 @@ function ranking({ period = 'month', limit = 10, now = Date.now() } = {}) {
     totals.set(key, entry);
   }
   const list = [...totals.values()]
-    .map((entry) => ({ ...entry, amount: entry.cents / 100, label: entry.anonymous ? null : entry.name || entry.userId }))
+    .map((entry) => ({ ...entry, amount: entry.cents / 100, label: entry.anonymous ? null : entry.name || null }))
     .sort((a, b) => b.cents - a.cents)
     .slice(0, Math.max(1, Math.min(25, Number(limit) || 10)));
   return list;

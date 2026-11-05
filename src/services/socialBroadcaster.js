@@ -1,6 +1,7 @@
 const https = require('node:https');
 const url = require('node:url');
 const { getDailyTarotCard } = require('./feedGenerator');
+const { creditSuffix } = require('./pyxieAssets');
 
 const SITE_URL = 'https://pyxie.com.br';
 
@@ -97,7 +98,8 @@ async function broadcastDailyTarot(webhookUrl = process.env.SOCIAL_WEBHOOK_URL, 
           url: cardImageUrl,
         },
         footer: {
-          text: isEn ? 'Pin this reading on Pinterest or draw online at pyxie.com.br/tarot' : 'Salve no Pinterest ou tire sua carta em pyxie.com.br/tarot',
+          text: (isEn ? 'Pin this reading on Pinterest or draw online at pyxie.com.br/tarot' : 'Salve no Pinterest ou tire sua carta em pyxie.com.br/tarot')
+            + creditSuffix('pyxie_pixelart_face.png', isEn ? 'en' : 'pt'),
           icon_url: `${SITE_URL}/assets/pyxie/pyxie_pixelart_face.png`,
         },
         timestamp: new Date().toISOString(),

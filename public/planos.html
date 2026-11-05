@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Planos da Pyxie • Básico R$ 7 e Premium R$ 20 por mês ou no anual</title>
-  <meta name="description" content="Plano para o seu servidor no Discord: Básico por R$ 7 com perfil completo da Pyxie, cores próprias e 1 mensagem cíclica; Premium por R$ 20 com status da lojinha, 10 mensagens cíclicas e Oráculo de IA. No anual, 2 meses grátis. Extra de lojinha por R$ 3. Pix por QR ou cartão recorrente." />
+  <link rel="stylesheet" href="/css/fonts.css" />
+  <meta name="description" content="Plano para o seu servidor no Discord: Básico por R$ 7 com perfil completo da Pyxie e cores próprias; Premium por R$ 20 com status da lojinha, 10 mensagens cíclicas e Oráculo de IA. No anual, 2 meses grátis. Extra de lojinha por R$ 3. Pix por QR ou cartão recorrente." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://pyxie.com.br/planos" />
   <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/planos" />
@@ -87,7 +88,7 @@
     </div>
 
     <h1>Planos do servidor</h1>
-    <p class="lead">Assinatura mensal ou anual, sem fidelidade. O Básico libera o <strong>perfil completo da Pyxie</strong> (apelido, foto, banner e bio) e <strong>1 mensagem cíclica</strong>; o Premium soma o <strong>status da lojinha</strong>, <strong>até 10 mensagens cíclicas</strong> e o Oráculo com IA. No anual você ganha <strong>2 meses grátis</strong>, e o Estúdio de Loja entra como extra de <strong>R$ 3</strong>. Sem pagamento no mês, as vantagens são pausadas e o dono recebe um aviso no privado — nada é apagado.</p>
+    <p class="lead">Assinatura mensal ou anual, sem fidelidade. O Básico libera o <strong>perfil completo da Pyxie</strong> (apelido, foto, banner e bio) e as cores do painel; o Premium soma o <strong>status da lojinha</strong>, <strong>até 10 mensagens cíclicas</strong> e o Oráculo com IA. No anual você ganha <strong>2 meses grátis</strong>, e o Estúdio de Loja entra como extra de <strong>R$ 3</strong>. Sem pagamento no mês, as vantagens são pausadas e o dono recebe um aviso no privado — nada é apagado.</p>
 
     <div class="grid">
       <article class="card">
@@ -96,7 +97,7 @@
         <p class="hint"><strong>R$ 70</strong> no anual — 2 meses grátis</p>
         <ul>
           <li>Perfil completo da Pyxie: apelido, foto, banner e bio no seu servidor</li>
-          <li>1 mensagem cíclica (o Estúdio repete sozinho no canal)</li>
+          <li>1 mensagem cíclica, a mesma do plano grátis (o Estúdio repete sozinho no canal)</li>
           <li>Cores e temas personalizados no painel</li>
           <li>Bônus de +50 moedinhas no <code>/py-daily</code></li>
           <li>Status da lojinha fica no Premium</li>
@@ -172,7 +173,9 @@
         const list = document.getElementById('donors');
         const rows = data.month || [];
         if (!rows.length) { list.innerHTML = '<li>Ainda não há doações registradas neste mês.</li>'; return; }
-        list.innerHTML = rows.map((row) => '<li><strong>' + (row.anonymous ? 'Anônimo' : row.label) + '</strong> — R$ ' + Number(row.amount).toFixed(2) + '</li>').join('');
+        const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const brl = (n) => Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        list.innerHTML = rows.map((row) => '<li><strong>' + esc(row.anonymous ? 'Anônimo' : row.label || 'Apoiador(a)') + '</strong> — ' + brl(row.amount) + '</li>').join('');
       })
       .catch(() => { document.getElementById('donors').innerHTML = '<li>Ranking indisponível agora.</li>'; });
   </script>

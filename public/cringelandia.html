@@ -27,11 +27,11 @@
   <meta property="og:url" content="https://pyxie.com.br/cringelandia" />
   <meta property="og:title" content="Cringelândia • Comunidade Neurodivergente & Apoio Psicológico" />
   <meta property="og:description" content="Comunidade segura e acolhedora no Discord para autistas, TDAH, PCDs e mentes neurodivergentes com canais de apoio, enciclopédia e guia de direitos." />
-  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
+  <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/og_banner_hd.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:type" content="image/png" />
-  <meta property="og:image:alt" content="Cringelândia Comunidade Neurodivergente & Apoio Psicológico" />
+  <meta property="og:image:alt" content="Banner da Pyxie para a Cringelândia, comunidade neurodivergente com apoio e acolhimento" />
   <meta property="og:site_name" content="Pyxie Discord Bot" />
   <meta property="og:locale" content="pt_BR" />
   <meta property="og:locale:alternate" content="en_US" />
@@ -42,8 +42,8 @@
   <meta name="twitter:creator" content="@PyxieBot" />
   <meta name="twitter:title" content="Cringelândia • Comunidade Neurodivergente & Apoio Psicológico" />
   <meta name="twitter:description" content="Comunidade segura e acolhedora no Discord para autistas, TDAH, PCDs e mentes neurodivergentes com canais de apoio, enciclopédia e guia de direitos." />
-  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/pyxie_mascot.png" />
-  <meta name="twitter:image:alt" content="Cringelândia Comunidade Neurodivergente & Apoio Psicológico" />
+  <meta name="twitter:image" content="https://pyxie.com.br/assets/pyxie/og_banner_hd.png" />
+  <meta name="twitter:image:alt" content="Banner da Pyxie para a Cringelândia, comunidade neurodivergente com apoio e acolhimento" />
 
   <!-- Schema.org JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -729,6 +729,19 @@
       justify-content: center;
       overflow: hidden;
       position: relative;
+    }
+
+    .product-img-missing {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 12px;
+      border: 1px dashed rgba(255, 255, 255, 0.15);
     }
 
     .product-img-box img {
@@ -1659,7 +1672,7 @@
     <!-- Navbar -->
     <header class="site-nav">
       <a href="/" class="nav-brand" aria-label="Página Inicial da Pyxie">
-        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Logotipo Oficial da Pyxie" width="44" height="44" />
+        <img src="/assets/pyxie/sticker/sticker_smile-128.webp" alt="Logotipo Oficial da Pyxie" width="44" height="44" />
         <div class="nav-brand-text">
           <span class="nav-brand-title">Pyxie & Cringelândia</span>
           <span class="nav-brand-subtitle">Comunidade & Acolhimento</span>
@@ -1749,7 +1762,7 @@
     <!-- 3. Ethical Monetization: Single Shopee Slider + Pyxie Speech Bubble -->
     <section class="shopee-section" aria-label="Vitrine de Achadinhos da Shopee">
       <div class="mascot-speech-wrap">
-        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Mascote Pyxie com balão de fala transparente" class="mascot-avatar" width="72" height="72" />
+        <img src="/assets/pyxie/sticker/sticker_smile-256.webp" alt="Mascote Pyxie com balão de fala transparente" class="mascot-avatar" width="72" height="72" />
         <div class="speech-bubble">
           <p data-i18n="shopee.speech">
             <strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee é o que viabiliza o funcionamento 100% gratuito do bot e dos nossos projetos de acolhimento, e ainda ajuda nossos membros e visitantes a encontrarem itens úteis de regulação sensorial, abafadores e presentes legais!
@@ -1772,7 +1785,7 @@
         <!-- Itens carregados dinamicamente via /api/showcase com fallback -->
         <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
           <div class="product-img-box">
-            <img src="/assets/pyxie/pyxie_mascot.png" alt="Abafador de Ruído Sensorial Confortável" />
+            <div class="product-img-missing" role="img" aria-label="Imagem do produto indisponível"><span data-i18n="shopee.noImage">Imagem indisponível</span></div>
             <span class="product-tag">Regulação Sensorial</span>
           </div>
           <div class="product-body">
@@ -1786,7 +1799,7 @@
 
         <a href="https://s.shopee.com.br/1BMdNQEU79" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
           <div class="product-img-box">
-            <img src="/assets/pyxie/pyxie_pixelart_face.png" alt="Fidget Cube e Brinquedos Antiestresse" />
+            <div class="product-img-missing" role="img" aria-label="Imagem do produto indisponível"><span data-i18n="shopee.noImage">Imagem indisponível</span></div>
             <span class="product-tag">Fidget & Foco</span>
           </div>
           <div class="product-body">
@@ -1800,7 +1813,7 @@
 
         <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
           <div class="product-img-box">
-            <img src="/assets/pyxie/pyxie_mascot.png" alt="Luminária Projetora Galáxia Relaxante" />
+            <div class="product-img-missing" role="img" aria-label="Imagem do produto indisponível"><span data-i18n="shopee.noImage">Imagem indisponível</span></div>
             <span class="product-tag">Conforto Visual</span>
           </div>
           <div class="product-body">
@@ -1814,7 +1827,7 @@
 
         <a href="https://s.shopee.com.br/BU6Bod6Sw" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
           <div class="product-img-box">
-            <img src="/assets/pyxie/pyxie_pixelart_face.png" alt="Pelúcia Macia Reversível" />
+            <div class="product-img-missing" role="img" aria-label="Imagem do produto indisponível"><span data-i18n="shopee.noImage">Imagem indisponível</span></div>
             <span class="product-tag">Pelúcias & Geek</span>
           </div>
           <div class="product-body">
@@ -2003,16 +2016,16 @@
             </div>
             <p class="help-item-info" data-i18n="br.cvv.desc">Atendimento 24 horas por dia, 100% gratuito e confidencial para apoio emocional e prevenção ao suicídio por telefone ou chat online.</p>
             <a href="https://cvv.org.br" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
-              <span>Acessar Chat CVV</span> ↗
+              <span data-i18n="help.cvv.btn">Acessar Chat CVV</span> ↗
             </a>
           </div>
 
           <div class="help-item-card">
             <div class="help-item-header">
               <span class="help-item-name">CAPS • SUS & Mapa da Saúde Mental</span>
-              <span class="help-item-phone">🏥 Rede Pública</span>
+              <span class="help-item-phone" data-i18n="help.caps.phone">🏥 Rede Pública</span>
             </div>
-            <p class="help-item-info" data-i18n="br.caps.desc">Encontre atendimento psicológico e psiquiátrico gratuito no Centros de Atenção Psicossocial (CAPS) mais próximo de sua residência.</p>
+            <p class="help-item-info" data-i18n="br.caps.desc">Encontre atendimento psicológico e psiquiátrico gratuito nos Centros de Atenção Psicossocial (CAPS) mais próximos de sua residência.</p>
             <a href="https://mapasaudemental.com.br" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
               <span>Mapa da Saúde Mental</span> ↗
             </a>
@@ -2021,7 +2034,7 @@
           <div class="help-item-card">
             <div class="help-item-header">
               <span class="help-item-name">Pode Falar • UNICEF</span>
-              <span class="help-item-phone">💬 Chat Adolescentes</span>
+              <span class="help-item-phone" data-i18n="help.unicef.phone">💬 Chat Adolescentes</span>
             </div>
             <p class="help-item-info" data-i18n="br.unicef.desc">Canal de ajuda em saúde mental voltado especialmente para jovens e adolescentes de 13 a 24 anos com especialistas do UNICEF.</p>
             <a href="https://podefalar.org.br" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
@@ -2036,7 +2049,7 @@
             </div>
             <p class="help-item-info" data-i18n="br.samu.desc">Serviço de Atendimento Móvel de Urgência para crises psiquiátricas agudas com risco iminente à vida ou intoxicação medicamentosa.</p>
             <a href="tel:192" class="help-action-btn" onclick="trackClick(this.href)">
-              <span>Ligar SAMU 192</span> 📞
+              <span data-i18n="help.samu.btn">Ligar SAMU 192</span> 📞
             </a>
           </div>
         </div>
@@ -2062,8 +2075,8 @@
 
           <div class="help-item-card">
             <div class="help-item-header">
-              <span class="help-item-name">EUA & Canadá • 988 Lifeline</span>
-              <span class="help-item-phone">📞 Ligue ou SMS 988</span>
+              <span class="help-item-name" data-i18n="help.us.name">EUA & Canadá • 988 Lifeline</span>
+              <span class="help-item-phone" data-i18n="help.us.phone">📞 Ligue ou SMS 988</span>
             </div>
             <p class="help-item-info" data-i18n="intl.us.desc">988 Suicide & Crisis Lifeline: apoio gratuito e confidencial 24h para quem vive nos Estados Unidos ou Canadá.</p>
             <a href="https://988lifeline.org" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
@@ -2073,7 +2086,7 @@
 
           <div class="help-item-card">
             <div class="help-item-header">
-              <span class="help-item-name">Reino Unido • Samaritans & Shout</span>
+              <span class="help-item-name" data-i18n="help.uk.name">Reino Unido • Samaritans & Shout</span>
               <span class="help-item-phone">📞 116 123 / SMS 85258</span>
             </div>
             <p class="help-item-info" data-i18n="intl.uk.desc">Samaritans (ligue 116 123) e Shout (envie SMS com a palavra SHOUT para 85258) no Reino Unido.</p>
@@ -2087,7 +2100,7 @@
               <span class="help-item-name" data-i18n="help.globalName">Diretório Global (+130 Países)</span>
               <span class="help-item-phone">🌐 Find A Helpline</span>
             </div>
-            <p class="help-item-info" data-i18n="intl.global.desc">Encontre canais de ajuda gratuitos, confidencias e imediatos em mais de 130 países ao redor do mundo.</p>
+            <p class="help-item-info" data-i18n="intl.global.desc">Encontre canais de ajuda gratuitos, confidenciais e imediatos em mais de 130 países ao redor do mundo.</p>
             <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" class="help-action-btn" onclick="trackClick(this.href)">
               <span>Find A Helpline Global</span> ↗
             </a>
@@ -2107,7 +2120,7 @@
               <span class="help-item-name">Disque 100 • Direitos Humanos</span>
               <span class="help-item-phone">📞 Ligue 100</span>
             </div>
-            <p class="help-item-info" data-i18n="bully.100.desc">Ouvidoria Nacional de Direitos Humanos: denúncias de violência física/psicológica contra crianças, adolescentes e vulneráveis.</p>
+            <p class="help-item-info" data-i18n="bully.100.desc">Ouvidoria Nacional de Direitos Humanos: denúncias de violência física/psicológica contra crianças, adolescentes e vulneráveis. É canal de denúncia, não de apoio emocional.</p>
             <a href="tel:100" class="help-action-btn" onclick="trackClick(this.href)">
               <span>Discar 100</span> 📞
             </a>
@@ -2520,6 +2533,48 @@
         'shopee.speech': '<strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee é o que viabiliza o funcionamento 100% gratuito do bot e dos nossos projetos de acolhimento, e ainda ajuda nossos membros e visitantes a encontrarem itens úteis de regulação sensorial, abafadores e presentes legais!',
         'shopee.title': 'Achadinhos Úteis da Shopee & Regulação Sensorial',
       'shopee.cta': 'Ver na Shopee',
+      'br.cvv.desc': "Atendimento 24 horas por dia, 100% gratuito e confidencial para apoio emocional e prevenção ao suicídio por telefone ou chat online.",
+      'br.caps.desc': "Encontre atendimento psicológico e psiquiátrico gratuito nos Centros de Atenção Psicossocial (CAPS) mais próximos de sua residência.",
+      'br.unicef.desc': "Canal de ajuda em saúde mental voltado especialmente para jovens e adolescentes de 13 a 24 anos com especialistas do UNICEF.",
+      'br.samu.desc': "Serviço de Atendimento Móvel de Urgência para crises psiquiátricas agudas com risco iminente à vida ou intoxicação medicamentosa.",
+      'intl.pt.desc': "Linhas de apoio emocional e apoio psicológico em Portugal (SOS Voz Amiga e Linha SNS 24 Saúde 24h).",
+      'intl.us.desc': "988 Suicide & Crisis Lifeline: apoio gratuito e confidencial 24h para quem vive nos Estados Unidos ou Canadá.",
+      'intl.uk.desc': "Samaritans (ligue 116 123) e Shout (envie SMS com a palavra SHOUT para 85258) no Reino Unido.",
+      'intl.global.desc': "Encontre canais de ajuda gratuitos, confidenciais e imediatos em mais de 130 países ao redor do mundo.",
+      'bully.100.desc': "Ouvidoria Nacional de Direitos Humanos: denúncias de violência física/psicológica contra crianças, adolescentes e vulneráveis. É canal de denúncia, não de apoio emocional.",
+      'bully.180.desc': "Central de Atendimento à Mulher: acolhimento, orientação jurídica e denúncias de violência doméstica ou assédio.",
+      'bully.safernet.desc': "Canal de denúncias de crimes na internet, cyberbullying, doxxing, vazamento de imagens e ódio virtual.",
+      'lgbt.legal': "⚖️ <strong>Marco Legal:</strong> Por decisão do Supremo Tribunal Federal (ADO 26 / MI 4733), a homotransfobia é equiparada ao <strong>crime inafiançável e imprescritível de racismo</strong> no Brasil (Lei nº 7.716/89).",
+      'lgbt.acolhe.desc': "Rede voluntária de terapeutas que oferece apoio psicológico humanizado e gratuito para a comunidade LGBTQIA+.",
+      'lgbt.casa1.desc': "Espaço de acolhimento para jovens expulsos de casa pela família por orientação sexual ou identidade de gênero.",
+      'lgbt.antra.desc': "Articulação e defesa jurídica dos direitos fundamentais da população trans e travesti no Brasil.",
+      'pcd.legal': "⚖️ <strong>Marco Legal:</strong> A Lei Brasileira de Inclusão (LBI nº 13.146/2015, Art. 88) e a Lei Berenice Piana (Lei nº 12.764/2012) tipificam expressamente como <strong>crime passível de reclusão de 1 a 3 anos e multa</strong> discriminar pessoa por motivo de deficiência ou autismo.",
+      'pcd.falabr.desc': "Canal oficial integrado para denunciar capacitismo institucional em escolas, órgãos públicos e empresas concessionárias.",
+      'pcd.mpf.desc': "Acionamento da Procuradoria dos Direitos do Cidadão para violações de acessibilidade e direitos difusos de pessoas autistas/PCD.",
+      'pcd.dpu.desc': "Atendimento jurídico 100% gratuito para fornecimento de remédios, terapias ABA, acompanhante terapêutico e BPC/LOAS.",
+      'laudo.c1.t': "Médico Especialista Habilitado",
+      'laudo.c1.d': "Deve ser emitido por Psiquiatra, Neurologista ou Neuropediatra com CRM ativo e preferencialmente RQE (Registro de Qualificação de Especialista).",
+      'laudo.c2.t': "Identificação Civil Completa do Paciente",
+      'laudo.c2.d': "Nome completo sem abreviações, número do CPF, RG e data de nascimento do paciente.",
+      'laudo.c3.t': "Código CID-10 e/ou CID-11 e Nível de Suporte",
+      'laudo.c3.d': "Indicação expressa do CID-10 (ex: <code>F84.0</code>) e/ou CID-11 (ex: <code>6A02</code>), acompanhado do nível de suporte necessário (Nível 1, 2 ou 3).",
+      'laudo.c4.t': "Relato Clínico Funcional Detalhado",
+      'laudo.c4.d': "Descrição técnica dos impactos funcionais, comunicação social, hipersensibilidade sensorial e histórico de desenvolvimento.",
+      'laudo.c5.t': "Assinatura, Carimbo ou Certificação Digital",
+      'laudo.c5.d': "Carimbo com CRM ativo e assinatura física, ou assinatura digital ICP-Brasil com código de verificação no portal CFM / Gov.br.",
+      'laudo.c6.t': "Caráter Permanente: Laudo Não Vence!",
+      'laudo.c6.d': "Por força da Lei nº 14.811 e jurisprudência consolidada, o autismo é uma condição neurobiológica permanente. É ilegal exigir renovação periódica de laudo de TEA.",
+      'quiz.desc': "Participe de disputas cronometradas no chat com mais de 600 perguntas bilíngues sobre cultura pop, animes, ciência, história e jogos. Ganhe Moedinhas e suba no ranking da comunidade!",
+      'work.desc': "Escolha sua carreira mágica (Programador, Alquimista, Médico, Artista, Astrônomo, Confeiteiro...) e resolva desafios práticos e dilemas profissionais a cada 3 horas para receber seu salário.",
+      'roblox.desc': "Conheça nossas criações de jogos, mapas acolhedores e experiências sensoriais relaxantes desenvolvidas no Roblox pelo time da Cringelândia!",
+      'help.cvv.btn': "Acessar Chat CVV",
+      'help.caps.phone': "🏥 Rede Pública",
+      'help.unicef.phone': "💬 Chat Adolescentes",
+      'help.samu.btn': "Ligar SAMU 192",
+      'help.us.name': "EUA & Canadá • 988 Lifeline",
+      'help.us.phone': "📞 Ligue ou SMS 988",
+      'help.uk.name': "Reino Unido • Samaritans & Shout",
+      'shopee.noImage': "Imagem indisponível",
       'help.podeFalar': 'Conversar com Pode Falar',
       'help.mpf': 'Sala de Atendimento MPF',
       'help.dpu': 'Buscar Defensoria Pública',
@@ -2611,6 +2666,48 @@
         'shopee.speech': '<strong>Psst! 🌸</strong> Here on Cringelândia\'s portal, we <em>do not display intrusive ads or pop-ups</em>. This single curated Shopee showcase is what powers our 100% free bot and mental support projects, while helping our visitors find helpful sensory toys, noise-canceling earplugs, and cool items!',
         'shopee.title': 'Helpful Shopee Finds & Sensory Regulation',
       'shopee.cta': 'View on Shopee',
+      'br.cvv.desc': "Free, confidential emotional support and suicide prevention, 24 hours a day, by phone or online chat (Brazil only).",
+      'br.caps.desc': "Find free psychological and psychiatric care at the Psychosocial Care Center (CAPS) closest to your home (Brazil's public health system).",
+      'br.unicef.desc': "Mental health help channel for young people aged 13 to 24, with UNICEF specialists (Brazil).",
+      'br.samu.desc': "Brazil's mobile emergency service for acute psychiatric crises with immediate risk to life or medication overdose. Outside Brazil, call your local emergency number.",
+      'intl.pt.desc': "Emotional and psychological support lines in Portugal (SOS Voz Amiga and SNS 24 health line, 24h).",
+      'intl.us.desc': "988 Suicide & Crisis Lifeline: free, confidential 24/7 support for people in the United States or Canada.",
+      'intl.uk.desc': "Samaritans (call 116 123) and Shout (text SHOUT to 85258) in the United Kingdom.",
+      'intl.global.desc': "Find free, confidential and immediate helplines in more than 130 countries around the world.",
+      'bully.100.desc': "Brazil's National Human Rights Ombudsman: reports of physical or psychological violence against children, teenagers and vulnerable people. It is a reporting line, not an emotional support line.",
+      'bully.180.desc': "Brazil's Women's Helpline: support, legal guidance and reports of domestic violence or harassment.",
+      'bully.safernet.desc': "Reporting channel for internet crimes, cyberbullying, doxxing, leaked images and online hate (Brazil).",
+      'lgbt.legal': "⚖️ <strong>Legal framework:</strong> By decision of Brazil's Supreme Federal Court (ADO 26 / MI 4733), homophobia and transphobia are treated as the <strong>non-bailable, imprescriptible crime of racism</strong> in Brazil (Law No. 7,716/89).",
+      'lgbt.acolhe.desc': "Volunteer network of therapists offering free, caring psychological support to the LGBTQIA+ community (Brazil).",
+      'lgbt.casa1.desc': "Shelter for young people thrown out of home by their families because of their sexual orientation or gender identity (Brazil).",
+      'lgbt.antra.desc': "Advocacy and legal defense of the fundamental rights of trans and travesti people in Brazil.",
+      'pcd.legal': "⚖️ <strong>Legal framework:</strong> Brazil's Inclusion Law (LBI No. 13,146/2015, Art. 88) and the Berenice Piana Law (Law No. 12,764/2012) expressly make discrimination based on disability or autism a <strong>crime punishable by 1 to 3 years of imprisonment and a fine</strong>.",
+      'pcd.falabr.desc': "Official integrated channel to report institutional ableism in schools, public agencies and service providers (Brazil).",
+      'pcd.mpf.desc': "Brazil's Federal Prosecutor for Citizens' Rights, for accessibility violations and collective rights of autistic and disabled people.",
+      'pcd.dpu.desc': "100% free legal help in Brazil to obtain medication, ABA therapy, therapeutic companions and BPC/LOAS benefits.",
+      'laudo.c1.t': "Qualified Specialist Physician",
+      'laudo.c1.d': "Must be issued by a Psychiatrist, Neurologist or Child Neurologist with an active CRM and, preferably, an RQE (Specialist Qualification Registration).",
+      'laudo.c2.t': "Patient's Full Civil Identification",
+      'laudo.c2.d': "Full name without abbreviations, CPF number, RG and the patient's date of birth.",
+      'laudo.c3.t': "ICD-10 and/or ICD-11 Code and Support Level",
+      'laudo.c3.d': "Explicit ICD-10 code (e.g. <code>F84.0</code>) and/or ICD-11 code (e.g. <code>6A02</code>), together with the required support level (Level 1, 2 or 3).",
+      'laudo.c4.t': "Detailed Functional Clinical Report",
+      'laudo.c4.d': "Technical description of functional impacts, social communication, sensory hypersensitivity and developmental history.",
+      'laudo.c5.t': "Signature, Stamp or Digital Certification",
+      'laudo.c5.d': "Stamp with an active CRM and a handwritten signature, or an ICP-Brasil digital signature with a verification code on the CFM / Gov.br portal.",
+      'laudo.c6.t': "Permanent Status: The Report Does Not Expire!",
+      'laudo.c6.d': "Under Law No. 14,811 and settled case law, autism is a permanent neurobiological condition. Requiring periodic renewal of an ASD report is illegal.",
+      'quiz.desc': "Join timed chat contests with more than 600 bilingual questions about pop culture, anime, science, history and games. Earn Coins and climb the community ranking!",
+      'work.desc': "Pick your magical career (Programmer, Alchemist, Doctor, Artist, Astronomer, Pastry Chef...) and solve practical challenges and work dilemmas every 3 hours to get paid.",
+      'roblox.desc': "Discover our games, cozy maps and relaxing sensory experiences built on Roblox by the Cringelândia team!",
+      'help.cvv.btn': "Open CVV chat (Brazil)",
+      'help.caps.phone': "🏥 Public health network",
+      'help.unicef.phone': "💬 Teen chat",
+      'help.samu.btn': "Call SAMU 192 (Brazil)",
+      'help.us.name': "USA & Canada • 988 Lifeline",
+      'help.us.phone': "📞 Call or text 988",
+      'help.uk.name': "United Kingdom • Samaritans & Shout",
+      'shopee.noImage': "Image unavailable",
       'help.podeFalar': 'Talk to Pode Falar',
       'help.mpf': 'MPF Service Desk',
       'help.dpu': 'Find Public Defender',
@@ -2785,12 +2882,16 @@
             const title = currentLang === 'en' ? (item.titulo_en || item.titulo || item.title) : (item.titulo || item.title);
             const price = currentLang === 'en' ? (item.preco_en || item.preco || item.price) : (item.preco || item.price);
             const tag = currentLang === 'en' ? (item.tag_en || item.tag || 'Sensorial & Geek') : (item.tag || 'Sensorial & Geek');
-            const img = item.imagem || item.image || '/assets/pyxie/pyxie_mascot.png';
+            const img = item.imagem || item.image || '';
+            const noImg = currentLang === 'en' ? 'Image unavailable' : 'Imagem indisponível';
+            const imgHtml = img
+              ? `<img src="${img}" alt="${title.replace(/"/g, '&quot;')}" loading="lazy" />`
+              : `<div class="product-img-missing" role="img" aria-label="${noImg}"><span>${noImg}</span></div>`;
             const link = item.link || item.productLink || 'https://s.shopee.com.br/BU6Bod6Sw';
             return `
               <a href="${link}" target="_blank" rel="noopener noreferrer" class="shopee-product-card" onclick="trackClick(this.href)">
                 <div class="product-img-box">
-                  <img src="${img}" alt="${title.replace(/"/g, '&quot;')}" loading="lazy" />
+                  ${imgHtml}
                   <span class="product-tag">${tag}</span>
                 </div>
                 <div class="product-body">
@@ -3035,6 +3136,7 @@
       loadCommunityArts();
     });
   </script>
+  <script src="/js/artCredits.js" defer></script>
 </body>
 </html>
 

@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pyxie Plans • Basic R$ 7 and Premium R$ 20 monthly or yearly</title>
-  <meta name="description" content="Plan for your Discord server: Basic for R$ 7 with the full Pyxie profile, custom colors and 1 cyclic message; Premium for R$ 20 with store status, 10 cyclic messages and the AI Oracle. Yearly gets 2 months free. Store extra for R$ 3. Pay by Pix QR or recurring card." />
+  <link rel="stylesheet" href="/css/fonts.css" />
+  <meta name="description" content="Plan for your Discord server: Basic for R$ 7 with the full Pyxie profile and custom colors; Premium for R$ 20 with store status, 10 cyclic messages and the AI Oracle. Yearly gets 2 months free. Store extra for R$ 3. Pay by Pix QR or recurring card." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://pyxie.com.br/en/plans" />
   <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/planos" />
@@ -87,7 +88,7 @@
     </div>
 
     <h1>Server plans</h1>
-    <p class="lead">Monthly or yearly subscription, cancel anytime. Basic unlocks the <strong>full Pyxie profile</strong> (nickname, photo, banner and bio) plus <strong>1 cyclic message</strong>; Premium adds the <strong>store status</strong>, <strong>up to 10 cyclic messages</strong> and the AI Oracle. Yearly gives you <strong>2 months free</strong>, and the Store Studio comes as a <strong>R$ 3</strong> extra. If the month is not paid, the perks are paused and the owner gets a DM — nothing is deleted.</p>
+    <p class="lead">Monthly or yearly subscription, cancel anytime. Basic unlocks the <strong>full Pyxie profile</strong> (nickname, photo, banner and bio) and the dashboard colors; Premium adds the <strong>store status</strong>, <strong>up to 10 cyclic messages</strong> and the AI Oracle. Yearly gives you <strong>2 months free</strong>, and the Store Studio comes as a <strong>R$ 3</strong> extra. If the month is not paid, the perks are paused and the owner gets a DM — nothing is deleted.</p>
 
     <div class="grid">
       <article class="card">
@@ -96,7 +97,7 @@
         <p class="hint"><strong>R$ 70</strong> yearly — 2 months free</p>
         <ul>
           <li>Full Pyxie profile: nickname, photo, banner and bio in your server</li>
-          <li>1 cyclic message (the Studio repeats it on its own)</li>
+          <li>1 cyclic message, same as the free plan (the Studio repeats it on its own)</li>
           <li>Custom colors and themes in the dashboard</li>
           <li>+50 coins bonus on <code>/py-daily</code></li>
           <li>Store status stays on Premium</li>
@@ -172,7 +173,9 @@
         const list = document.getElementById('donors');
         const rows = data.month || [];
         if (!rows.length) { list.innerHTML = '<li>No donations recorded this month yet.</li>'; return; }
-        list.innerHTML = rows.map((row) => '<li><strong>' + (row.anonymous ? 'Anonymous' : row.label) + '</strong> — R$ ' + Number(row.amount).toFixed(2) + '</li>').join('');
+        const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const brl = (n) => Number(n).toLocaleString('en-US', { style: 'currency', currency: 'BRL' });
+        list.innerHTML = rows.map((row) => '<li><strong>' + esc(row.anonymous ? 'Anonymous' : row.label || 'Supporter') + '</strong> — ' + brl(row.amount) + '</li>').join('');
       })
       .catch(() => { document.getElementById('donors').innerHTML = '<li>Leaderboard unavailable right now.</li>'; });
   </script>

@@ -84,7 +84,7 @@ export default function DiscordEmbedPreview({ command, lang = 'pt' }) {
       <div className="flex items-center gap-2.5 mb-3">
         <div className="w-8 h-8 rounded-full overflow-hidden bg-purple-900 border border-purple-500/30 flex-shrink-0">
           <img
-            src="/assets/pyxie/pyxie_pixelart_face.png"
+            src="/assets/pyxie/pyxie_pixelart_face-96.webp"
             alt="Pyxie Avatar"
             className="w-full h-full object-contain"
           />

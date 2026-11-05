@@ -9,6 +9,9 @@ const TEMPLATES = ['announcementText', 'dropEmbedFooter', 'artOfWeekWinner', 'in
 // ISO com fuso (-03:00) ↔ campo datetime-local.
 const toLocal = (iso) => (iso ? String(iso).slice(0, 16) : '');
 const fromLocal = (v) => (v ? `${v}:59-03:00` : '');
+// Mesma regra do servidor (src/modules/seasonal/imageUrl.js): https + arquivo de imagem.
+const IMAGE_URL_RE = /^https:\/\/[^\s"'<>]+\.(png|jpe?g|gif|webp)(\?[^\s"'<>]*)?$/i;
+const isImageUrl = (v) => IMAGE_URL_RE.test(String(v || '').trim()) && !/link_do_bau/i.test(String(v));
 
 // Evento sazonal da Cringelândia (era o /admin/sazonal), com as APIs que já existiam.
 export default function Seasonal({ t, guildId }) {
@@ -52,7 +55,9 @@ export default function Seasonal({ t, guildId }) {
       setNotice({ tone: 'ok', text: res?.message || t(okKey) });
       load();
     } catch (e) {
-      setNotice({ tone: 'error', text: e.data?.error || t('error.generic', { error: e.code || 'generic' }) });
+      const code = e.data?.error || e.code || 'generic';
+      const known = t(`error.${code}`);
+      setNotice({ tone: 'error', text: known.startsWith('error.') ? t('error.generic', { error: code }) : known });
     }
     setBusy(false);
   };
@@ -61,8 +66,14 @@ export default function Seasonal({ t, guildId }) {
     const [a, b] = path.split('.');
     setCfg(b ? { ...cfg, [a]: { ...cfg[a], [b]: value } } : { ...cfg, [a]: value });
   };
-  const save = () =>
-    run(
+  const chestUrl = String(cfg.assets?.chestImageUrl || '').trim();
+  const chestInvalid = Boolean(chestUrl) && !isImageUrl(chestUrl);
+  const save = () => {
+    if (chestInvalid) {
+      setNotice({ tone: 'error', text: t('seasonal.chestInvalid') });
+      return undefined;
+    }
+    return run(
       () =>
         api.saveSeasonalConfig({
           eventName: cfg.eventName,
@@ -72,7 +83,7 @@ export default function Seasonal({ t, guildId }) {
           prizes: cfg.prizes,
           templates: cfg.templates,
           assets: {
-            chestImageUrl: cfg.assets?.chestImageUrl || '',
+            chestImageUrl: chestUrl,
             emojis: {
               currency: cfg.assets?.emojis?.currency || '',
               dropDecoys: cfg.decoysText
@@ -86,6 +97,7 @@ export default function Seasonal({ t, guildId }) {
         }),
       'features.saved'
     );
+  };
 
   const channelSelect = (key) => (
     <label className="block">
@@ -162,7 +174,23 @@ export default function Seasonal({ t, guildId }) {
           {text('prizes.thirdPlace', t('seasonal.prize3'))}
           <label className="block">
             <span className="mb-1 block text-xs font-semibold text-white/70">{t('seasonal.chest')}</span>
-            <input value={cfg.assets?.chestImageUrl || ''} onChange={(e) => setCfg({ ...cfg, assets: { ...cfg.assets, chestImageUrl: e.target.value } })} className={field} />
+            <div className="flex items-center gap-3">
+              <input
+                type="url"
+                inputMode="url"
+                placeholder="https://pyxie.com.br/assets/…/bau.png"
+                aria-invalid={chestInvalid}
+                value={cfg.assets?.chestImageUrl || ''}
+                onChange={(e) => setCfg({ ...cfg, assets: { ...cfg.assets, chestImageUrl: e.target.value } })}
+                className={field}
+              />
+              {chestUrl && !chestInvalid ? (
+                <img src={chestUrl} alt={t('seasonal.chestPreview')} width="48" height="48" className="h-12 w-12 shrink-0 rounded-lg bg-black/30 object-contain" />
+              ) : null}
+            </div>
+            <span className={`mt-1 block text-xs ${chestInvalid ? 'text-rose-300' : 'text-white/50'}`}>
+              {t(chestInvalid ? 'seasonal.chestInvalid' : 'seasonal.chestHint')}
+            </span>
           </label>
           <label className="block">
             <span className="mb-1 block text-xs font-semibold text-white/70">{t('seasonal.currencyEmoji')}</span>
