@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Terminal, ArrowRight, CornerDownLeft, X, Sparkles } from 'lucide-react';
+import { Search, Terminal, CornerDownLeft, X } from 'lucide-react';
+import { cleanAliases, matchesQuery } from '../../utils/commands';
 
-export default function CommandPaletteModal({ isOpen, onClose, commands = [], onSelectCommand, t }) {
+export default function CommandPaletteModal({ isOpen, onClose, commands = [], labelOf = () => '', onSelectCommand, t }) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
@@ -14,15 +15,8 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
     }
   }, [isOpen]);
 
-  const filtered = commands.filter((cmd) => {
-    const q = query.toLowerCase().trim();
-    if (!q) return true;
-    const nameMatch = cmd.name?.toLowerCase().includes(q);
-    const descMatch = cmd.description?.toLowerCase().includes(q);
-    const aliasMatch = cmd.aliases?.some((a) => a.toLowerCase().includes(q));
-    const catMatch = cmd.category?.toLowerCase().includes(q);
-    return nameMatch || descMatch || aliasMatch || catMatch;
-  }).slice(0, 8); // Top 8 results for quick display
+  // Busca por nome, apelido, descrição (`desc` da API) e categoria (id e rótulo), sem acentos.
+  const filtered = commands.filter((cmd) => matchesQuery(cmd, query, labelOf(cmd))).slice(0, 8);
 
   // Keyboard navigation
   useEffect(() => {
@@ -56,6 +50,9 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
       onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('palette.placeholder')}
         className="relative w-full max-w-xl rounded-2xl bg-[#0e071a] border border-purple-500/30 shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -70,11 +67,14 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
               setQuery(e.target.value);
               setSelectedIndex(0);
             }}
-            placeholder={t ? t('palette.placeholder') : 'Buscar comandos por nome, palavra-chave ou categoria...'}
+            placeholder={t('palette.placeholder')}
+            aria-label={t('palette.placeholder')}
             className="w-full bg-transparent text-sm text-white placeholder-slate-400 outline-none font-sans"
           />
           <button
+            type="button"
             onClick={onClose}
+            aria-label={t('cmdModal.close')}
             className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
           >
             <X className="w-4 h-4" />
@@ -107,15 +107,15 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
                       /{ (cmd.name || '').replace(/^\/+/, '') }
                     </span>
                     <span className="text-xs text-slate-400 truncate block">
-                      {cmd.description}
+                      {cmd.desc}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-                  {cmd.aliases && cmd.aliases[0] && (
+                  {cleanAliases(cmd)[0] && (
                     <span className="hidden sm:inline-block font-mono text-[10px] px-2 py-0.5 rounded bg-white/5 text-cyan-300">
-                      py!{cmd.aliases[0]}
+                      py!{cleanAliases(cmd)[0]}
                     </span>
                   )}
                   <CornerDownLeft className="w-4 h-4 text-purple-400 opacity-60" />
@@ -124,7 +124,7 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
             ))
           ) : (
             <div className="p-8 text-center text-slate-400 text-sm">
-              {t ? t('palette.empty') : `Nenhum comando encontrado para "${query}".`}
+              {t('palette.empty')}
             </div>
           )}
         </div>
@@ -132,10 +132,10 @@ export default function CommandPaletteModal({ isOpen, onClose, commands = [], on
         {/* Footer shortcuts helper */}
         <div className="px-4 py-2.5 bg-black/40 border-t border-purple-500/15 flex items-center justify-between text-[11px] text-slate-400 font-mono">
           <div className="flex items-center gap-3">
-            <span>{t ? t('palette.navigate') : '↑↓ Navegar'}</span>
-            <span>{t ? t('palette.open') : '↵ Abrir Detalhes'}</span>
+            <span>{t('palette.navigate')}</span>
+            <span>{t('palette.open')}</span>
           </div>
-          <span>{t ? t('palette.esc') : 'ESC para fechar'}</span>
+          <span>{t('palette.esc')}</span>
         </div>
       </div>
     </div>

@@ -6,6 +6,14 @@
   color-scheme: dark;
 }
 
+/* Âncoras (#pilares, #comandos...) não ficam escondidas atrás da Navbar fixa de 64px */
+html {
+  scroll-padding-top: 72px;
+}
+section[id] {
+  scroll-margin-top: 72px;
+}
+
 body {
   background-color: #07040D;
   background-image: 

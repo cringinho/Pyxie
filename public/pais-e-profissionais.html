@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Consentimento de cookies (LGPD): precisa vir antes do GTM, gtag e AdSense -->
+  <script src="/js/consent.js"></script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -330,6 +332,18 @@
       }
     }
   </style>
+  <style id="pyxie-mobile-nav">
+    /* Celular: o menu quebra em linhas e o botão de idioma fica sempre ao lado da logo
+       (antes a página ficava mais larga que a tela; auditoria Q021). */
+    @media (max-width: 768px) {
+      header { flex-wrap: wrap; justify-content: center; gap: 8px 12px; padding: 10px 16px; }
+      header .brand { flex: 1 1 auto; }
+      header .nav-links { display: contents; }
+      header .nav-links a { order: 3; font-size: 0.9rem; padding: 4px 6px; }
+      header .lang-btn { order: 2; }
+      header::after { content: ''; order: 2; flex-basis: 100%; height: 0; }
+    }
+  </style>
   <style id="pyxie-mobile-perf">
     /* O celular tem altura dinâmica (barra de endereço): 100vh corta conteúdo. */
     @media (max-width: 768px) {
@@ -383,7 +397,7 @@
     <section class="section-card">
       <h2><span style="color: var(--purple);">02.</span> <span data-i18n="s2.title">Separação por idade (+18 / -18)</span></h2>
       <ul>
-        <li data-i18n="s2.l1"><strong>Idade na entrada:</strong> cada pessoa informa a faixa etária ao entrar, e os canais adultos ficam fechados para quem tem menos de 18.</li>
+        <li data-i18n="s2.l1"><strong>Idade na entrada:</strong> cada pessoa informa a faixa etária ao entrar (não há verificação de documentos; a staff revê casos suspeitos), e os canais adultos ficam fechados para quem tem menos de 18.</li>
         <li data-i18n="s2.l2"><strong>Sem contato privado com menores:</strong> profissionais verificados não conversam em privado com menores de idade.</li>
         <li data-i18n="s2.l3"><strong>Nada escondido dos responsáveis:</strong> não existe nenhum "modo discreto" para esconder atividade. Responsáveis podem conhecer o servidor e falar com a staff.</li>
         <li data-i18n="s2.l4"><strong>Tags sensíveis são escolha da pessoa:</strong> neurodivergência, pronomes e saúde nunca são atribuídos pelo bot.</li>
@@ -413,10 +427,10 @@
       <h2><span style="color: var(--green);">05.</span> <span data-i18n="s5.title">Ajuda de verdade</span></h2>
       <p data-i18n="s5.p1">A comunidade acolhe, mas não substitui atendimento profissional. Em crise ou situação de risco:</p>
       <ul>
-        <li data-i18n="s5.l1"><strong>CVV:</strong> ligue <strong>188</strong> (24h, gratuito) ou acesse cvv.org.br.</li>
-        <li data-i18n="s5.l2"><strong>Disque Direitos Humanos:</strong> ligue <strong>100</strong> para denunciar violência contra crianças, adolescentes e pessoas com deficiência.</li>
+        <li data-i18n="s5.l1"><strong>CVV:</strong> ligue <a href="tel:188" style="color: #38bdf8;"><strong>188</strong></a> (24h, gratuito) ou acesse <a href="https://cvv.org.br" target="_blank" rel="noopener noreferrer" style="color: #38bdf8;">cvv.org.br</a>.</li>
+        <li data-i18n="s5.l2"><strong>Disque Direitos Humanos:</strong> ligue <a href="tel:100" style="color: #38bdf8;"><strong>100</strong></a> para denunciar violência contra crianças, adolescentes e pessoas com deficiência.</li>
         <li data-i18n="s5.l3"><strong>Conselho Tutelar</strong> da sua cidade, para proteção de crianças e adolescentes.</li>
-        <li data-i18n="s5.l4"><strong>Emergência:</strong> SAMU <strong>192</strong> ou Polícia <strong>190</strong>.</li>
+        <li data-i18n="s5.l4"><strong>Emergência:</strong> SAMU <a href="tel:192" style="color: #38bdf8;"><strong>192</strong></a> ou Polícia <a href="tel:190" style="color: #38bdf8;"><strong>190</strong></a>.</li>
       </ul>
     </section>
 
@@ -443,6 +457,7 @@
     <p>© 2026 Pyxie • Cringelândia. Todos os direitos reservados. Feito com amor e magia.</p>
   </footer>
 
+  <script src="/js/pageLang.js"></script>
   <script>
     const I18N = {
   "pt": {
@@ -462,7 +477,7 @@
     "s1.p1": "A Cringelândia é um servidor no Discord para pessoas neurodivergentes (autismo, TDAH e outras) e para quem está passando por um momento difícil. Lá tem arte, estudos, jogos com a Pyxie e espaços de acolhimento.",
     "s1.p2": "Ninguém é zoado pelo jeito que é. As brincadeiras da Pyxie mexem com situações (tirou uma carta ruim, esqueceu o diário), nunca com traços da pessoa.",
     "s2.title": "Separação por idade (+18 / -18)",
-    "s2.l1": "<strong>Idade na entrada:</strong> cada pessoa informa a faixa etária ao entrar, e os canais adultos ficam fechados para quem tem menos de 18.",
+    "s2.l1": "<strong>Idade na entrada:</strong> cada pessoa informa a faixa etária ao entrar (não há verificação de documentos; a staff revê casos suspeitos), e os canais adultos ficam fechados para quem tem menos de 18.",
     "s2.l2": "<strong>Sem contato privado com menores:</strong> profissionais verificados não conversam em privado com menores de idade.",
     "s2.l3": "<strong>Nada escondido dos responsáveis:</strong> não existe nenhum \"modo discreto\" para esconder atividade. Responsáveis podem conhecer o servidor e falar com a staff.",
     "s2.l4": "<strong>Tags sensíveis são escolha da pessoa:</strong> neurodivergência, pronomes e saúde nunca são atribuídos pelo bot.",
@@ -477,10 +492,10 @@
     "s4.l3": "<a href=\"https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm\" target=\"_blank\" rel=\"noopener noreferrer\">Lei Geral de Proteção de Dados (Lei 13.709/2018)</a>. Detalhes na nossa <a href=\"/privacidade\">política de privacidade</a>.",
     "s5.title": "Ajuda de verdade",
     "s5.p1": "A comunidade acolhe, mas não substitui atendimento profissional. Em crise ou situação de risco:",
-    "s5.l1": "<strong>CVV:</strong> ligue <strong>188</strong> (24h, gratuito) ou acesse cvv.org.br.",
-    "s5.l2": "<strong>Disque Direitos Humanos:</strong> ligue <strong>100</strong> para denunciar violência contra crianças, adolescentes e pessoas com deficiência.",
+    "s5.l1": "<strong>CVV:</strong> ligue <a href='tel:188' style='color: #38bdf8;'><strong>188</strong></a> (24h, gratuito) ou acesse <a href='https://cvv.org.br' target='_blank' rel='noopener noreferrer' style='color: #38bdf8;'>cvv.org.br</a>.",
+    "s5.l2": "<strong>Disque Direitos Humanos:</strong> ligue <a href='tel:100' style='color: #38bdf8;'><strong>100</strong></a> para denunciar violência contra crianças, adolescentes e pessoas com deficiência.",
     "s5.l3": "<strong>Conselho Tutelar</strong> da sua cidade, para proteção de crianças e adolescentes.",
-    "s5.l4": "<strong>Emergência:</strong> SAMU <strong>192</strong> ou Polícia <strong>190</strong>.",
+    "s5.l4": "<strong>Emergência:</strong> SAMU <a href='tel:192' style='color: #38bdf8;'><strong>192</strong></a> ou Polícia <a href='tel:190' style='color: #38bdf8;'><strong>190</strong></a>.",
     "s6.title": "Fale com a gente",
     "s6.p1": "Pais, responsáveis, escolas e profissionais de saúde podem falar com a staff por e-mail ou por ticket no servidor. Profissionais (saúde, direito, proteção e educação) podem pedir o cargo verificado, que só é dado depois de conferirmos o registro (CRM, CRP, OAB ou equivalente)."
   },
@@ -501,7 +516,7 @@
     "s1.p1": "Cringelândia is a Discord server for neurodivergent people (autism, ADHD and others) and for anyone going through a hard time. It has art, study rooms, games with Pyxie and support spaces.",
     "s1.p2": "Nobody gets mocked for who they are. Pyxie's jokes are about situations (a bad card, a forgotten daily), never about a person's traits.",
     "s2.title": "Age separation (18+ / under 18)",
-    "s2.l1": "<strong>Age on arrival:</strong> everyone tells their age range when joining, and adult channels stay closed to anyone under 18.",
+    "s2.l1": "<strong>Age on arrival:</strong> everyone states their age range when joining (there is no document check; the staff reviews suspicious cases), and adult channels stay closed to anyone under 18.",
     "s2.l2": "<strong>No private contact with minors:</strong> verified professionals do not talk privately with minors.",
     "s2.l3": "<strong>Nothing hidden from guardians:</strong> there is no \"discreet mode\" to hide activity. Guardians can get to know the server and talk to the staff.",
     "s2.l4": "<strong>Sensitive tags are the person's choice:</strong> neurodivergence, pronouns and health are never assigned by the bot.",
@@ -516,10 +531,10 @@
     "s4.l3": "<a href=\"https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm\" target=\"_blank\" rel=\"noopener noreferrer\">Brazilian General Data Protection Law (Law 13,709/2018)</a>. Details in our <a href=\"/privacidade?lang=en\">privacy policy</a>.",
     "s5.title": "Real help",
     "s5.p1": "The community offers support, but it does not replace professional care. In a crisis or at risk:",
-    "s5.l1": "<strong>CVV (Brazil):</strong> call <strong>188</strong> (24h, free) or visit cvv.org.br.",
-    "s5.l2": "<strong>Human Rights hotline (Brazil):</strong> call <strong>100</strong> to report violence against children, teenagers and people with disabilities.",
+    "s5.l1": "<strong>CVV (Brazil):</strong> call <a href='tel:188' style='color: #38bdf8;'><strong>188</strong></a> (24h, free) or visit <a href='https://cvv.org.br' target='_blank' rel='noopener noreferrer' style='color: #38bdf8;'>cvv.org.br</a>.",
+    "s5.l2": "<strong>Human Rights hotline (Brazil):</strong> call <a href='tel:100' style='color: #38bdf8;'><strong>100</strong></a> to report violence against children, teenagers and people with disabilities.",
     "s5.l3": "<strong>Conselho Tutelar</strong> in your city, for child and teen protection in Brazil.",
-    "s5.l4": "<strong>Emergency (Brazil):</strong> SAMU <strong>192</strong> or Police <strong>190</strong>. Outside Brazil, call your local emergency number.",
+    "s5.l4": "<strong>Emergency (Brazil):</strong> SAMU <a href='tel:192' style='color: #38bdf8;'><strong>192</strong></a> or Police <a href='tel:190' style='color: #38bdf8;'><strong>190</strong></a>. Outside Brazil, call your local emergency number.",
     "s6.title": "Talk to us",
     "s6.p1": "Parents, guardians, schools and health professionals can reach the staff by email or by opening a ticket in the server. Professionals (health, law, child protection and education) can ask for the verified role, given only after we check their registration (CRM, CRP, OAB or equivalent)."
   }
@@ -545,16 +560,15 @@
 
     function toggleLanguage() {
       const next = currentLang === 'en' ? 'pt' : 'en';
+      // Vai para a URL do outro idioma (/privacidade <-> /en/privacy); sem ela, troca aqui mesmo.
+      if (window.PyxiePageLang && window.PyxiePageLang.go(next)) return;
       applyLanguage(next);
     }
 
+    // Mesma regra em todas as páginas institucionais (public/js/pageLang.js): o idioma é o
+    // da URL, que o servidor já colocou em <html lang>.
     (function init() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const queryLang = urlParams.get('lang');
-      const savedLang = localStorage.getItem('pyxie_lang');
-      const browserLang = (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'pt';
-      const initial = (queryLang === 'en' || queryLang === 'pt') ? queryLang : (savedLang || browserLang);
-      applyLanguage(initial);
+      applyLanguage(window.PyxiePageLang ? window.PyxiePageLang.initial() : 'pt');
     })();
   </script>
 </body>

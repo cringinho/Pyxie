@@ -86,7 +86,8 @@
     "node tests/storefrontFlow.test.js",
     "node tests/auditoriaCriticos.test.js",
     "node tests/economyRaces.test.js",
+    "node tests/siteAuditA1.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-11-05T12:16:35.258Z"
+  "updatedAt": "2026-11-05T13:00:00.000Z"
 }

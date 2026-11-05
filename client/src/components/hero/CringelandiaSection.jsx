@@ -1,8 +1,9 @@
 import React from 'react';
 import { HeartHandshake, Map, Palette } from 'lucide-react';
+import { localeHref } from '../../utils/localePath';
 
 // A outra metade do site (plano 5.11): a Cringelândia, casa da Pyxie.
-export default function CringelandiaSection({ t }) {
+export default function CringelandiaSection({ t, lang = 'pt' }) {
   const cards = [
     { id: 'c1', icon: HeartHandshake, iconColor: 'text-pink-400', podBg: 'bg-pink-500/10 border-pink-500/30' },
     { id: 'c2', icon: Map, iconColor: 'text-violet-300', podBg: 'bg-violet-500/10 border-violet-500/30' },
@@ -32,13 +33,13 @@ export default function CringelandiaSection({ t }) {
       </div>
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <a href="/cringelandia" className="min-h-[48px] inline-flex items-center px-6 rounded-xl bg-pyxie-pink hover:bg-pyxie-neon text-white font-semibold">
+        <a href={localeHref('/cringelandia', lang)} className="min-h-[48px] inline-flex items-center px-6 rounded-xl bg-pyxie-pink hover:bg-pyxie-neon text-white font-semibold">
           {t('cring.btnHub')}
         </a>
         <a href="/discord" target="_blank" rel="noopener" className="min-h-[48px] inline-flex items-center px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold">
           {t('cring.btnJoin')}
         </a>
-        <a href="/pais-e-profissionais" className="min-h-[48px] inline-flex items-center px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold">
+        <a href={localeHref('/pais-e-profissionais', lang)} className="min-h-[48px] inline-flex items-center px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold">
           {t('cring.btnParents')}
         </a>
       </div>

@@ -30,10 +30,15 @@ export default function Home({ t, lang, stats }) {
   return (
     <div className="space-y-6">
       {/* 1. Hero Section with 2 CTAs and Live Terminal */}
-      <HeroSection t={t} stats={stats} />
+      <HeroSection t={t} lang={lang} stats={stats} />
 
       {/* 2. 3D Holographic Community Deck (Three.js WebGL, sob demanda) */}
-      {Scene ? <Scene t={t} /> : <div className="h-64" aria-hidden="true" />}
+      {/* A reserva tem a altura real da seção do Museu, para a cena não empurrar as âncoras (#pilares, #comandos) */}
+      {Scene ? (
+        <Scene t={t} lang={lang} />
+      ) : (
+        <div className="min-h-[780px] sm:min-h-[860px] md:min-h-[920px] lg:min-h-[980px]" aria-hidden="true" />
+      )}
 
       {/* 3. 5 Official Pillars */}
       <Reveal>
@@ -42,7 +47,7 @@ export default function Home({ t, lang, stats }) {
 
       {/* 4. A outra metade: Cringelândia (50% bot / 50% comunidade) */}
       <Reveal delay={60}>
-        <CringelandiaSection t={t} />
+        <CringelandiaSection t={t} lang={lang} />
       </Reveal>
 
       {/* 5. Do blog: últimos artigos do Hyperfokus (some se não houver nenhum) */}

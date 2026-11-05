@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>500 • Perturbação Arcana | Pyxie Discord Bot</title>
-  <meta name="description" content="Ocorreu uma sobrecarga mágica nos servidores cósmicos da Pyxie. Nossos magos já foram notificados." />
+  <meta name="description" content="Algo deu errado do nosso lado. Tente de novo em alguns minutos; se continuar, avise no servidor de suporte." />
   <meta name="robots" content="noindex, follow" />
   <link rel="icon" href="/favicon.ico" sizes="48x48" />
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
@@ -82,12 +82,12 @@
       </span>
     </div>
 
-    <h1 class="font-title font-black text-3xl sm:text-4xl text-white mb-3 tracking-tight">
+    <h1 class="font-title font-black text-3xl sm:text-4xl text-white mb-3 tracking-tight" data-i18n="title">
       Sobrecarga Arcana!
     </h1>
 
-    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-md">
-      Um feitiço instável causou uma anomalia em nossos servidores cósmicos. Nossos alquimistas já estão estabilizando a rede.
+    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-md" data-i18n="desc">
+      Algo deu errado do nosso lado. Tente de novo em alguns minutos; se continuar, avise no servidor de suporte.
     </p>
 
     <div class="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
@@ -96,7 +96,7 @@
         class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-purple-500 text-white font-title font-bold text-sm shadow-neon-pink transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
       >
         <span>🔮</span>
-        <span>Voltar para um Lugar Seguro</span>
+        <span data-i18n="home">Voltar para um Lugar Seguro</span>
       </a>
       <a
         href="/discord"
@@ -105,12 +105,31 @@
         class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-purple-500/30 text-purple-200 font-title font-semibold text-sm transition-all flex items-center justify-center gap-2"
       >
         <span>💬</span>
-        <span>Servidor de Suporte</span>
+        <span data-i18n="support">Servidor de Suporte</span>
       </a>
     </div>
   </div>
 
   <script>
+    // PT na raiz, EN em /en/... (mesma regra do site); fora disso, o idioma do navegador.
+    (function initLang() {
+      const path = window.location.pathname.toLowerCase();
+      const isEn = path === '/en' || path.indexOf('/en/') === 0 ||
+        (path.indexOf('/en') !== 0 && !(navigator.language || '').toLowerCase().startsWith('pt') && (navigator.language || '').toLowerCase().startsWith('en'));
+      if (!isEn) return;
+      const en = {
+        title: 'Arcane Overload!',
+        desc: 'Something went wrong on our side. Please try again in a few minutes; if it keeps happening, let us know on the support server.',
+        home: 'Back to a Safe Place',
+        support: 'Support Server',
+      };
+      document.documentElement.lang = 'en';
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.getAttribute('data-i18n');
+        if (en[key]) el.textContent = en[key];
+      });
+    })();
+
     (function initNoise() {
       const canvas = document.getElementById('noise-canvas');
       if (!canvas) return;
@@ -131,19 +150,48 @@
         speed: Math.random() * 0.02 + 0.01,
       }));
 
-      function loop() {
+      // Quem pediu menos movimento no aparelho vê as estrelas paradas; com a aba escondida
+      // a animação para (sem gastar bateria à toa).
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+      let frame = null;
+
+      function draw(animate) {
         ctx.clearRect(0, 0, w, h);
         ctx.fillStyle = '#a855f7';
         for (const s of stars) {
-          s.alpha += Math.sin(Date.now() * s.speed) * 0.02;
+          if (animate) s.alpha += Math.sin(Date.now() * s.speed) * 0.02;
           ctx.globalAlpha = Math.max(0.1, Math.min(0.9, s.alpha));
           ctx.beginPath();
           ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
           ctx.fill();
         }
-        requestAnimationFrame(loop);
       }
-      loop();
+
+      function loop() {
+        draw(true);
+        frame = requestAnimationFrame(loop);
+      }
+
+      function stop() {
+        if (frame !== null) cancelAnimationFrame(frame);
+        frame = null;
+      }
+
+      function start() {
+        stop();
+        if ((reduceMotion && reduceMotion.matches) || document.hidden) {
+          draw(false);
+          return;
+        }
+        loop();
+      }
+
+      document.addEventListener('visibilitychange', start);
+      if (reduceMotion && reduceMotion.addEventListener) reduceMotion.addEventListener('change', start);
+      window.addEventListener('resize', () => {
+        if (frame === null) draw(false);
+      });
+      start();
     })();
   </script>
 </body>

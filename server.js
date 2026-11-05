@@ -12,6 +12,7 @@ try {
 const { spawn, execFile } = require('node:child_process');
 const { setWelcomeChannel, getWelcomeChannel, normalizeChannelValue, getEconomyConfig, setEconomyConfig } = require('./src/services/database');
 const { addLog: savePersistentLog, getLogs, getStats, updateStats, resetStats, clearLogs, flushSync } = require('./src/services/logging');
+const { buildPublicStatus, buildPublicStatsBody } = require('./src/services/publicStats');
 const { lockFilePath, isProcessAlive } = require('./src/utils/botUtils');
 const { reloadEmojiConfig } = require('./src/utils/appEmojis');
 const { escapeHtml, replaceKeep } = require('./src/utils/htmlEscape');
@@ -112,6 +113,16 @@ function getBotStatus() {
     welcomeChannelId: getWelcomeChannel('global') || null,
     uptime,
     stats,
+  };
+}
+
+// Versão pública (sem login) do status: só números agregados. Nunca a lista de IDs de
+// quem falou com a Pyxie (`uniqueUsers`), logs, PID ou canais (LGPD; auditoria Q020).
+function publicStatusInput() {
+  return {
+    running: !!botProcess && !botProcess.killed && botProcess.exitCode === null,
+    startTime: botStartTime,
+    stats: getStats() || {},
   };
 }
 
@@ -972,7 +983,7 @@ app.get('/widget/card', (req, res) => {
 
 // 1. Healthcheck e status público
 app.get('/api/status', (req, res) => {
-  res.json(getBotStatus());
+  res.json(buildPublicStatus(publicStatusInput()));
 });
 
 app.get('/api/modules/status', (req, res) => {
@@ -1032,6 +1043,39 @@ app.get('/api/commands', (req, res) => {
     lang,
     modules,
   });
+});
+
+// 2a. Vocações reais do /py-work (src/services/professions.js) para a wiki: lista e contagem
+// saem do código, nada de "16" ou "22" fixos no site (auditoria Q057).
+app.get('/api/professions', (req, res) => {
+  try {
+    const lang = req.query.lang === 'en' ? 'en' : 'pt';
+    const { t: tBot } = require('./src/utils/i18n');
+    const professions = require('./src/services/professions');
+    const list = Object.entries(professions).map(([id, p]) => {
+      const key = `profession.labels.${id}`;
+      const translated = tBot(key, { lang });
+      const rawEmoji = String(p.emoji || '');
+      return {
+        id,
+        label: translated && translated !== key ? translated : p.label,
+        emoji: rawEmoji && !rawEmoji.startsWith('<') ? rawEmoji : null,
+        magic: Boolean(p.isMagic),
+        beanCost: p.isMagic ? Number(p.beanCost || 0) : 0,
+      };
+    });
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.json({
+      success: true,
+      lang,
+      total: list.length,
+      standard: list.filter((p) => !p.magic).length,
+      magic: list.filter((p) => p.magic).length,
+      professions: list,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
 });
 
 // 2b. Vitrine Nativa de Achadinhos da Pyxie (Monetização contextual, anti-adblock e rotação dinâmica)
@@ -1744,10 +1788,10 @@ app.get('/api/logs', requireAdminAuth, (req, res) => {
   });
 });
 
+// Rota pública chamada pela Home: só agregados, nunca IDs (auditoria Q020).
 app.get('/api/stats', (req, res) => {
-  const stats = getStats();
-  const uptime = botStartTime ? Date.now() - botStartTime : 0;
-  res.json({ ...stats, uptime });
+  res.setHeader('Cache-Control', 'public, max-age=30');
+  res.json(buildPublicStatsBody(publicStatusInput()));
 });
 
 app.post('/api/stats/reset', requireAdminAuth, (req, res) => {

@@ -40,13 +40,12 @@ export default function TerminalSimulator({ t }) {
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-[10px] font-mono text-emerald-300 font-bold">READY</span>
+          <span className="text-[10px] font-mono text-purple-300 font-bold uppercase">{t('terminal.demoTag')}</span>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-purple-500/15 bg-[#0a0515]/60 px-2 pt-2 gap-1 overflow-x-auto">
+      <div className="flex flex-wrap border-b border-purple-500/15 bg-[#0a0515]/60 px-2 pt-2 gap-1">
         <button
           onClick={() => { setActiveTab('work'); setWorkSelected(null); }}
           className={`px-3 py-1.5 rounded-t-lg text-xs font-mono font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
@@ -129,7 +128,7 @@ export default function TerminalSimulator({ t }) {
         {activeTab === 'marriage' && (
           <div className="space-y-4 animate-fadeIn">
             <div className="text-purple-400 font-bold flex items-center gap-2">
-              <span className="text-slate-500">$</span> /py-casamento status
+              <span className="text-slate-500">$</span> /py-marriage
             </div>
             <div className="text-slate-200 font-bold flex items-center gap-2">
               <span>{t('terminal.marriageTitle')}</span>
@@ -161,7 +160,7 @@ export default function TerminalSimulator({ t }) {
         {activeTab === 'tarot' && (
           <div className="space-y-3 animate-fadeIn">
             <div className="text-cyan-400 font-bold flex items-center gap-2">
-              <span className="text-slate-500">$</span> /py-tarot daily
+              <span className="text-slate-500">$</span> /py-tarot
             </div>
             <div className="text-amber-300 font-bold flex items-center gap-2">
               <span>{t('terminal.tarotTitle')}</span>
@@ -181,8 +180,8 @@ export default function TerminalSimulator({ t }) {
         )}
 
         <div className="pt-3 border-t border-purple-500/10 text-[11px] text-slate-500 flex justify-between items-center">
-          <span>Pyxie Discord Engine v14</span>
-          <span className="text-purple-400/80 font-semibold">100% Interativo</span>
+          <span>{t('terminal.footerNote')}</span>
+          <span className="text-purple-400/80 font-semibold">{t('terminal.footerHint')}</span>
         </div>
       </div>
     </div>

@@ -129,19 +129,48 @@
         speed: Math.random() * 0.02 + 0.01,
       }));
 
-      function loop() {
+      // Quem pediu menos movimento no aparelho vê as estrelas paradas; com a aba escondida
+      // a animação para (sem gastar bateria à toa).
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+      let frame = null;
+
+      function draw(animate) {
         ctx.clearRect(0, 0, w, h);
         ctx.fillStyle = '#f472b6';
         for (const s of stars) {
-          s.alpha += Math.sin(Date.now() * s.speed) * 0.02;
+          if (animate) s.alpha += Math.sin(Date.now() * s.speed) * 0.02;
           ctx.globalAlpha = Math.max(0.1, Math.min(0.9, s.alpha));
           ctx.beginPath();
           ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
           ctx.fill();
         }
-        requestAnimationFrame(loop);
       }
-      loop();
+
+      function loop() {
+        draw(true);
+        frame = requestAnimationFrame(loop);
+      }
+
+      function stop() {
+        if (frame !== null) cancelAnimationFrame(frame);
+        frame = null;
+      }
+
+      function start() {
+        stop();
+        if ((reduceMotion && reduceMotion.matches) || document.hidden) {
+          draw(false);
+          return;
+        }
+        loop();
+      }
+
+      document.addEventListener('visibilitychange', start);
+      if (reduceMotion && reduceMotion.addEventListener) reduceMotion.addEventListener('change', start);
+      window.addEventListener('resize', () => {
+        if (frame === null) draw(false);
+      });
+      start();
     })();
   </script>
 </body>
