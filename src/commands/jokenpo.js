@@ -7,11 +7,86 @@ const {
 } = require('discord.js');
 const { JOKENPO } = require('./commandNames');
 const { getBalance, spendCoins, addCoins } = require('../services/economy');
-const { getLanguage } = require('../utils/i18n');
+const { getLanguage, t } = require('../utils/i18n');
 const { PYXIE_COLORS, pyxieFooter } = require('../utils/pyxieVoice');
 
 // Armazena partidas ativas em memória com timeout automático
 const activeGames = new Map();
+
+// AGENTS §5: aposta com teto (mesmo valor do /py-coinflip).
+const MIN_BET = 10;
+const MAX_BET = 5000;
+
+/**
+ * Devolve as apostas guardadas (empate, recusa ou expiração). É devolução do próprio
+ * dinheiro, então não conta no teto diário de ganhos.
+ */
+function refundEscrow(game) {
+  if (!game || !game.escrow) return;
+  for (const [playerId, amount] of Object.entries(game.escrow)) {
+    if (amount > 0) addCoins(playerId, amount, { bypassCap: true });
+  }
+  game.escrow = {};
+}
+
+/** Encerra a partida (recusa/expiração) devolvendo o que estava reservado. */
+function cancelJokenpoGame(gameId) {
+  const game = activeGames.get(gameId);
+  if (!game) return false;
+  activeGames.delete(gameId);
+  game.resolved = true;
+  refundEscrow(game);
+  return true;
+}
+
+/**
+ * Q283: registra a jogada de forma atômica (sem nenhum await no meio).
+ * - A aposta sai do saldo na hora da jogada (reserva). Sem saldo, a jogada é recusada.
+ * - Clique duplo do mesmo jogador não cobra duas vezes (a jogada já está marcada).
+ * - Quando as duas jogadas chegam, a partida sai do mapa antes de pagar: só um clique resolve.
+ * - O vencedor recebe o pote guardado; em empate cada um recebe a sua aposta de volta.
+ */
+function commitJokenpoChoice(gameId, userId, choice) {
+  const game = activeGames.get(gameId);
+  if (!game || game.resolved) return { status: 'expired' };
+  const isChallenger = userId === game.challengerId;
+  if (!isChallenger && userId !== game.opponentId) return { status: 'not_player', game };
+  if (!CHOICES[choice]) return { status: 'invalid', game };
+
+  const choiceKey = isChallenger ? 'challengerChoice' : 'opponentChoice';
+  if (game[choiceKey]) return { status: 'already_chosen', game };
+
+  if (game.bet > 0) {
+    const paid = spendCoins(userId, game.bet);
+    if (!paid.spent) return { status: 'no_funds', game, balance: paid.balance };
+    game.escrow = game.escrow || {};
+    game.escrow[userId] = (game.escrow[userId] || 0) + game.bet;
+  }
+  game[choiceKey] = choice;
+
+  if (!game.challengerChoice || !game.opponentChoice) return { status: 'waiting', game };
+
+  game.resolved = true;
+  activeGames.delete(gameId);
+
+  if (game.challengerChoice === game.opponentChoice) {
+    refundEscrow(game);
+    return { status: 'tie', game };
+  }
+
+  const challengerWins = CHOICES[game.challengerChoice].beats === game.opponentChoice;
+  const winnerId = challengerWins ? game.challengerId : game.opponentId;
+  const loserId = challengerWins ? game.opponentId : game.challengerId;
+  let prize = 0;
+  if (game.bet > 0) {
+    const pot = Object.values(game.escrow || {}).reduce((sum, v) => sum + v, 0);
+    // Transferência entre jogadores (o pote já saiu dos dois): não é moeda nova.
+    addCoins(winnerId, pot, { bypassCap: true });
+    game.escrow = {};
+    prize = pot - game.bet;
+  }
+  return { status: 'win', game, winnerId, loserId, challengerWins, prize };
+}
 
 const CHOICES = {
   pedra: {
@@ -117,7 +192,9 @@ function startJokenpoGame({ challengerId, opponentId, bet = 0, channel, lang = '
     id: gameId,
     challengerId,
     opponentId,
-    bet: Math.max(0, Number(bet) || 0),
+    bet: Math.min(MAX_BET, Math.max(0, Math.floor(Number(bet) || 0))),
+    escrow: {},
+    resolved: false,
     challengerChoice: null,
     opponentChoice: null,
     createdAt: Date.now(),
@@ -128,11 +205,8 @@ function startJokenpoGame({ challengerId, opponentId, bet = 0, channel, lang = '
 
   // Timeout automático de 60 segundos para liberar memória
   setTimeout(async () => {
-    const ongoing = activeGames.get(gameId);
-    if (ongoing) {
-      activeGames.delete(gameId);
-    }
-  }, 60000);
+    cancelJokenpoGame(gameId);
+  }, 60000).unref?.();
 
   return {
     game,
@@ -175,7 +249,7 @@ async function handleJokenpoInteraction(interaction) {
 
   // Ação de Cancelar / Recusar
   if (action === 'cancel') {
-    activeGames.delete(gameId);
+    cancelJokenpoGame(gameId);
     const cancelEmbed = new EmbedBuilder()
       .setColor('#ef4444')
       .setTitle(isEn ? '❌ Rock-Paper-Scissors Match Cancelled' : '❌ Duelo de Jokenpô Encerrado')
@@ -193,36 +267,36 @@ async function handleJokenpoInteraction(interaction) {
     return;
   }
 
-  // Validação de saldo no momento da escolha se houver aposta
-  if (game.bet > 0) {
-    const currentBalance = getBalance(userId);
-    if (currentBalance < game.bet) {
-      return interaction.reply({
-        content: isEn
-          ? `❌ You need at least **${game.bet} Coins 💰** to play this bet. Your current balance is: ${currentBalance}.`
-          : `❌ Você precisa de pelo menos **${game.bet} Moedas 💰** para jogar esta aposta. Seu saldo atual é: ${currentBalance}.`,
-        ephemeral: true,
-      });
-    }
-  }
+  // Q283: reserva da aposta + registro da jogada + resolução, tudo sem await no meio.
+  const result = commitJokenpoChoice(gameId, userId, action);
 
-  // Registra a escolha
-  if (isChallenger) {
-    if (game.challengerChoice) {
-      return interaction.reply({
-        content: isEn ? 'You already confirmed your move!' : 'Você já confirmou sua jogada!',
-        ephemeral: true,
-      });
-    }
-    game.challengerChoice = action;
-  } else {
-    if (game.opponentChoice) {
-      return interaction.reply({
-        content: isEn ? 'You already confirmed your move!' : 'Você já confirmou sua jogada!',
-        ephemeral: true,
-      });
-    }
-    game.opponentChoice = action;
+  if (result.status === 'expired') {
+    return interaction.reply({
+      content: isEn
+        ? '❌ This Rock-Paper-Scissors match has expired or ended.'
+        : '❌ Esta partida de Jokenpô já expirou ou foi encerrada.',
+      ephemeral: true,
+    });
+  }
+  if (result.status === 'already_chosen') {
+    return interaction.reply({
+      content: isEn ? 'You already confirmed your move!' : 'Você já confirmou sua jogada!',
+      ephemeral: true,
+    });
+  }
+  if (result.status === 'no_funds') {
+    return interaction.reply({
+      content: isEn
+        ? `❌ You need at least **${game.bet} Coins 💰** to play this bet. Your current balance is: ${result.balance}.`
+        : `❌ Você precisa de pelo menos **${game.bet} Moedas 💰** para jogar esta aposta. Seu saldo atual é: ${result.balance}.`,
+      ephemeral: true,
+    });
+  }
+  if (result.status !== 'waiting' && result.status !== 'tie' && result.status !== 'win') {
+    return interaction.reply({
+      content: isEn ? '❌ You are not part of this challenge.' : '❌ Você não está participando deste desafio.',
+      ephemeral: true,
+    });
   }
 
   const choiceData = CHOICES[action];
@@ -234,17 +308,15 @@ async function handleJokenpoInteraction(interaction) {
     ephemeral: true,
   });
 
-  // Se ambos jogaram, revela o resultado
-  if (game.challengerChoice && game.opponentChoice) {
-    activeGames.delete(gameId);
-
+  // Se ambos jogaram, revela o resultado (o pagamento já foi feito em commitJokenpoChoice)
+  if (result.status === 'tie' || result.status === 'win') {
     const pickA = CHOICES[game.challengerChoice];
     const pickB = CHOICES[game.opponentChoice];
     const pickAName = getChoiceLabel(game.challengerChoice, lang);
     const pickBName = getChoiceLabel(game.opponentChoice, lang);
     const resultEmbed = new EmbedBuilder().setTimestamp();
 
-    if (game.challengerChoice === game.opponentChoice) {
+    if (result.status === 'tie') {
       // Empate
       resultEmbed
         .setColor('#facc15')
@@ -268,21 +340,17 @@ async function handleJokenpoInteraction(interaction) {
         )
         .setFooter({ text: isEn ? 'Friendly tie' : 'Empate amigável' });
     } else {
-      const challengerWins = pickA.beats === game.opponentChoice;
-      const winnerId = challengerWins ? game.challengerId : game.opponentId;
-      const loserId = challengerWins ? game.opponentId : game.challengerId;
+      const { challengerWins, winnerId, loserId } = result;
       const winnerPick = challengerWins ? pickA : pickB;
       const loserPick = challengerWins ? pickB : pickA;
       const winnerPickName = challengerWins ? pickAName : pickBName;
       const loserPickName = challengerWins ? pickBName : pickAName;
 
       let betMsg = '';
-      if (game.bet > 0) {
-        spendCoins(loserId, game.bet);
-        addCoins(winnerId, game.bet);
+      if (result.prize > 0) {
         betMsg = isEn
-          ? `\n💰 **Prize Awarded:** <@${winnerId}> earned **+${game.bet} Coins** from <@${loserId}>!`
-          : `\n💰 **Prêmio Transferido:** <@${winnerId}> faturou **+${game.bet} Moedas** de <@${loserId}>!`;
+          ? `\n💰 **Prize Awarded:** <@${winnerId}> earned **+${result.prize} Coins** from <@${loserId}>!`
+          : `\n💰 **Prêmio Transferido:** <@${winnerId}> faturou **+${result.prize} Moedas** de <@${loserId}>!`;
       }
 
       resultEmbed
@@ -356,11 +424,17 @@ module.exports = {
         .setDescriptionLocalizations({
           'pt-BR': 'Quantidade opcional de moedas para apostar.',
         })
-        .setMinValue(10)
+        .setMinValue(MIN_BET)
+        .setMaxValue(MAX_BET)
         .setRequired(false)
     ),
   isJokenpoInteraction,
   handleJokenpoInteraction,
+  commitJokenpoChoice,
+  cancelJokenpoGame,
+  startJokenpoGame,
+  activeGames,
+  MAX_BET,
   async executePrefix({ message, args }) {
     const lang = getLanguage(message);
     const isEn = lang === 'en';
@@ -388,6 +462,10 @@ module.exports = {
           ? '❌ You cannot challenge a bot to Rock-Paper-Scissors.'
           : '❌ Você não pode desafiar um bot para o Jokenpô.'
       );
+    }
+
+    if (bet > MAX_BET) {
+      return message.reply(t('jokenpo.betTooHigh', message, { max: MAX_BET }));
     }
 
     if (bet > 0) {
@@ -442,6 +520,10 @@ module.exports = {
           ? '❌ You cannot challenge a bot to Rock-Paper-Scissors.'
           : '❌ Você não pode desafiar um bot para o Jokenpô.'
       );
+    }
+
+    if (bet > MAX_BET) {
+      return interaction.editReply(t('jokenpo.betTooHigh', interaction, { max: MAX_BET }));
     }
 
     if (bet > 0) {

@@ -1059,7 +1059,10 @@ const TRANSLATIONS = {
       "onlyYou": "🏷️ Só a própria pessoa escolhe o título no apelido.",
       "cannot": "😿 Não consigo mudar seu apelido (meu cargo está abaixo do seu ou estou sem permissão).",
       "enabled": "🏷️ Pronto! Seu apelido agora é **{nick}**.",
-      "disabled": "🏷️ Tirei o título do seu apelido."
+      "disabled": "🏷️ Tirei o título do seu apelido.",
+      "pagePrev": "Anterior",
+      "pageNext": "Próxima",
+      "pageInfo": "Página {page}/{total}"
     },
     "colors": {
       "groupTitle": "🎨 Cores ({part}/{total})",
@@ -1369,6 +1372,9 @@ const TRANSLATIONS = {
       "btnWebLeaderboard": "Placar & Galeria Web",
       "webLeaderboardLink": "🌐 [Abrir Placar & Galeria de Artes no Site]({url})"
     },
+    "jokenpo": {
+      "betTooHigh": "❌ Calma aí, apostador! O máximo no Jokenpô é **`{max}` moedas**. Não vou deixar você se afundar, hmpf."
+    },
     "marriage": {
       "hub": {
         "title": "💍 Casamento",
@@ -1477,6 +1483,7 @@ const TRANSLATIONS = {
       "childOnlySpouseCanAnswer": "❌ Apenas o outro cônjuge pode responder a este convite de filiação.",
       "childProposalRejected": "❌ O convite de filiação foi recusado pelo cônjuge.",
       "dateSessionExpired": "❌ Essa sessão de Date Night já expirou.",
+      "dateAlreadyOpen": "💞 Hmpf, vocês já têm um encontro aberto! Respondam esse primeiro, ué.",
       "dateNotYourSession": "❌ Você não faz parte deste encontro de casal.",
       "dateAnswerRecorded": "💌 Sua resposta foi gravada em segredo! Aguardando o parceiro(a)...",
       "dateOutcomeMatch": "🥂✨ **SINTONIA PERFEITA!** Vocês escolheram a mesma opção!\n> 💖 **+15% na Barra do Amor** (Atual: **{love}%**)\n> 🪙 **{coins}** concedidas para cada um!",
@@ -1811,6 +1818,7 @@ const TRANSLATIONS = {
       "choicePrompt": "Como você decide agir diante deste dilema ético?",
       "optAcceptDesc": "• 🕵️ **Aceitar Esquema:** 65% de chance de bônus de **+70 moedas**, mas 35% de chance de cair na Auditoria Interna (perde o salário e ganha +1 erro).",
       "optReportDesc": "• 🛡️ **Denunciar ao Conselho:** Recompensa cívica segura de **+20 moedas**, limpa todas as advertências de carreira e confere **+5% de chance de promoção**!",
+      "deadline": "-# ⏳ Decida logo! O prazo acaba {time}. Se não escolher, eu pago só o salário base, ouviu?",
       "acceptSuccessTitle": "🕵️  ✦  Esquema Concluído com Sucesso!",
       "acceptSuccessDesc": "Você aceitou a proposta sombria e realizou o esquema nas sombras sem levantar suspeitas!\n\n💰 **Lucro Ilícito:** **+{bonus} Moedas**\n🪙 **Remuneração Total:** **+{amount} Moedas**\n💳 **Novo Saldo:** **{balance}**\n\n👀 *Os fiscais e a corregedoria passaram reto... Por hoje, você escapou ileso com os bolsos cheios!*",
       "acceptAuditTitle": "🚨  ✦  FLAGRANTE! Auditoria Interna Detectada!",
@@ -4156,7 +4164,10 @@ const TRANSLATIONS = {
       "onlyYou": "🏷️ Only the person can choose the title in their nickname.",
       "cannot": "😿 I can't change your nickname (my role is below yours or I lack permission).",
       "enabled": "🏷️ Done! Your nickname is now **{nick}**.",
-      "disabled": "🏷️ I removed the title from your nickname."
+      "disabled": "🏷️ I removed the title from your nickname.",
+      "pagePrev": "Previous",
+      "pageNext": "Next",
+      "pageInfo": "Page {page}/{total}"
     },
     "colors": {
       "groupTitle": "🎨 Colors ({part}/{total})",
@@ -4466,6 +4477,9 @@ const TRANSLATIONS = {
       "btnWebLeaderboard": "Live Web Leaderboard",
       "webLeaderboardLink": "🌐 [Open Live Web Leaderboard & Gallery]({url})"
     },
+    "jokenpo": {
+      "betTooHigh": "❌ Easy there, gambler! The Rock-Paper-Scissors max bet is **`{max}` coins**. Not letting you sink yourself, hmph."
+    },
     "marriage": {
       "hub": {
         "title": "💍 Marriage",
@@ -4574,6 +4588,7 @@ const TRANSLATIONS = {
       "childOnlySpouseCanAnswer": "❌ Only the other spouse can respond to this parenthood invitation.",
       "childProposalRejected": "❌ The parenthood invitation was rejected by the spouse.",
       "dateSessionExpired": "❌ This Date Night session has already expired.",
+      "dateAlreadyOpen": "💞 Hmph, you two already have a date open! Answer that one first, duh.",
       "dateNotYourSession": "❌ You are not part of this couple date.",
       "dateAnswerRecorded": "💌 Your answer was secretly recorded! Awaiting your spouse...",
       "dateOutcomeMatch": "🥂✨ **PERFECT HARMONY!** You chose the exact same option!\n> 💖 **+15% Love Bar** (Current: **{love}%**)\n> 🪙 **{coins}** awarded to each of you!",
@@ -4908,6 +4923,7 @@ const TRANSLATIONS = {
       "choicePrompt": "How will you respond to this ethical dilemma?",
       "optAcceptDesc": "• 🕵️ **Accept Scheme:** 65% chance of an absurd **+70 coins** bonus, but 35% chance of getting caught in an Internal Audit (lose shift salary and get +1 mistake).",
       "optReportDesc": "• 🛡️ **Report to Council:** Safe civic reward of **+20 coins**, clears all career mistake marks, and grants a **+5% promotion chance boost**!",
+      "deadline": "-# ⏳ Hurry up and decide! Time runs out {time}. If you don't pick, I only pay the base salary, got it?",
       "acceptSuccessTitle": "🕵️  ✦  Scheme Successfully Executed!",
       "acceptSuccessDesc": "You accepted the shady proposal and carried out the scheme in the shadows without raising suspicion!\n\n💰 **Illicit Profit:** **+{bonus} Coins**\n🪙 **Total Shift Compensation:** **+{amount} Coins**\n💳 **New Balance:** **{balance}**\n\n👀 *The internal inspectors walked right past... For today, you got away clean with loaded pockets!*",
       "acceptAuditTitle": "🚨  ✦  BUSTED! Internal Audit Triggered!",

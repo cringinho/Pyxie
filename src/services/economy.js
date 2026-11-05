@@ -811,7 +811,7 @@ function finishWork(userId, success, amount, bonusBean = false) {
   if (!success) {
     const updated = updateUserAccount(userId, (current) => {
       if (amount > 0) {
-        current.coins = (Number(current.coins) || 0) + amount;
+        capEarnings(current, amount); // AGENTS §5: todo ganho passa pelo teto do dia
       }
       previousLevel = Math.max(1, Math.min(4, Number(current.careerLevel) || 1));
       current.careerStreak = 0;
@@ -858,7 +858,7 @@ function finishWork(userId, success, amount, bonusBean = false) {
   let nextProjectProgress = 0;
 
   const account = updateUserAccount(userId, (current) => {
-    current.coins = (Number(current.coins) || 0) + amount;
+    capEarnings(current, amount); // AGENTS §5: todo ganho passa pelo teto do dia
     current.workCount = (Number(current.workCount) || 0) + 1;
     if (bonusBean) {
       current.magicBeans = (Number(current.magicBeans) || 0) + 1;
@@ -1082,7 +1082,7 @@ function playDailyCups(userId, pick, now = Date.now()) {
     const winningCup = hashText(`${userId}:${acc.lastDailyAt}`) % DAILY_CUPS_COUNT;
     const win = choice === winningCup;
     acc.dailyCupsAt = acc.lastDailyAt;
-    if (win) acc.coins += DAILY_CUPS_PRIZE;
+    if (win) capEarnings(acc, DAILY_CUPS_PRIZE, now);
     result = { ok: true, win, pick: choice, winningCup, prize: win ? DAILY_CUPS_PRIZE : 0, balance: acc.coins };
   });
   return result;
@@ -1137,7 +1137,7 @@ function claimProjectBonus(userId, prize) {
     if (prize.type === 'beans') {
       acc.magicBeans = (Number(acc.magicBeans) || 0) + (Number(prize.amount) || 1);
     } else {
-      acc.coins = (Number(acc.coins) || 0) + (Number(prize.amount) || 0);
+      capEarnings(acc, Number(prize.amount) || 0);
     }
   });
   return {
@@ -1174,7 +1174,7 @@ function resolveCorruptionDilemma(userId, choice, baseSalary = 30) {
       let projectCompleted = false;
       let projectProgressDisplay = 0;
       const updated = updateUserAccount(userId, (acc) => {
-        acc.coins = (Number(acc.coins) || 0) + totalAmount;
+        capEarnings(acc, totalAmount);
         acc.workCount = (Number(acc.workCount) || 0) + 1;
         const prevProg = Math.max(0, Math.min(2, Number(acc.projectProgress) || 0));
         const nextProg = prevProg + 1;
@@ -1246,7 +1246,7 @@ function resolveCorruptionDilemma(userId, choice, baseSalary = 30) {
     let projectCompleted = false;
     let projectProgressDisplay = 0;
     const updated = updateUserAccount(userId, (acc) => {
-      acc.coins = (Number(acc.coins) || 0) + totalAmount;
+      capEarnings(acc, totalAmount);
       acc.workCount = (Number(acc.workCount) || 0) + 1;
       acc.careerMistakes = 0;
 

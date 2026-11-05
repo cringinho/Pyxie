@@ -21,7 +21,8 @@ const {
   claimVaultInterest,
   estimateVaultYield,
   VAULT_DAILY_CAP,
-  canStartDateNight,
+  startDateNight,
+  releaseDateNight,
   getRandomDateQuestion,
   sanitizeDateQuestionText,
   resolveDateNight,
@@ -325,8 +326,13 @@ const activeDateSessions = new Map();
 // 7. Date Night
 async function handleDateNight(source, reply) {
   const user = source.user || source.author;
-  const check = canStartDateNight(user.id);
+  const preview = getMarriage(user.id);
+  const sessionId = `date_${preview?.id || 'none'}_${Date.now()}`;
+  const check = startDateNight(user.id, sessionId);
   if (!check.allowed) {
+    if (check.reason === 'already_open') {
+      return reply(t('marriage.dateAlreadyOpen', source));
+    }
     if (check.reason === 'not_married') {
       return reply(t('marriage.notMarried', source));
     }
@@ -338,6 +344,13 @@ async function handleDateNight(source, reply) {
   }
 
   const marriage = check.marriage;
+  // Limpeza automática após 60s (Zero Memory Leak & Event Loop Friendly); também solta a trava do casal.
+  const cleanTimer = setTimeout(() => {
+    activeDateSessions.delete(sessionId);
+    releaseDateNight(marriage.id, sessionId);
+  }, 60000);
+  if (cleanTimer.unref) cleanTimer.unref();
+
   const spouseId = marriage.spouses.find((id) => id !== user.id);
   const lang = getLanguage(source);
 
@@ -350,7 +363,6 @@ async function handleDateNight(source, reply) {
     .map((opt, idx) => `**[${letters[idx] || idx + 1}]** ${opt}`)
     .join('\n');
 
-  const sessionId = `date_${marriage.id}_${Date.now()}`;
   activeDateSessions.set(sessionId, {
     marriageId: marriage.id,
     spouses: [...marriage.spouses],
@@ -360,11 +372,6 @@ async function handleDateNight(source, reply) {
     createdAt: Date.now(),
   });
 
-  // Limpeza automática após 60s (Zero Memory Leak & Event Loop Friendly)
-  const cleanTimer = setTimeout(() => {
-    activeDateSessions.delete(sessionId);
-  }, 60000);
-  if (cleanTimer.unref) cleanTimer.unref();
 
   const embed = new EmbedBuilder()
     .setColor('#FF69B4')
@@ -392,6 +399,29 @@ async function handleDateNight(source, reply) {
   });
 
   return reply({ embeds: [embed], components: [row] });
+}
+
+/**
+ * Grava a resposta de um cônjuge no Date Night e, se os dois já responderam, resolve
+ * o encontro na mesma chamada síncrona (sem await no meio). Q282: dois cliques quase
+ * juntos nunca resolvem/pagam o mesmo encontro duas vezes.
+ */
+function recordDateAnswer(sessionId, userId, optIdx) {
+  const session = activeDateSessions.get(sessionId);
+  if (!session || session.resolved) return { status: 'expired' };
+  if (!session.spouses.includes(userId)) return { status: 'not_yours' };
+
+  session.answers[userId] = optIdx;
+  const [spouseA, spouseB] = session.spouses;
+  if (session.answers[spouseA] === undefined || session.answers[spouseB] === undefined) {
+    return { status: 'recorded' };
+  }
+
+  session.resolved = true;
+  activeDateSessions.delete(sessionId);
+  const isMatch = session.answers[spouseA] === session.answers[spouseB];
+  const outcome = resolveDateNight(session.marriageId, isMatch);
+  return { status: 'resolved', isMatch, outcome };
 }
 
 // 8. Filiação (Criação de Filho)
@@ -459,6 +489,7 @@ module.exports = {
   ],
   MARRIAGE_COST,
   activeDateSessions,
+  recordDateAnswer,
   handlers: { handlePropose, handleStatus, handleTree, handleHouse, handleVault, handleDateNight, handleAffection, handleChildProposal, handleBond },
 
   data: new SlashCommandBuilder()

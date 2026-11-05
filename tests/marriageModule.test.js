@@ -246,6 +246,8 @@ try {
   if (fs.existsSync(testMarriageDataFile)) {
     fs.unlinkSync(testMarriageDataFile);
   }
+  // backup rotativo criado pela gravação protegida (Q288)
+  fs.rmSync(`${testMarriageDataFile}.bak`, { force: true });
   if (originalEconomy) {
     fs.writeFileSync(testEconomyFile, originalEconomy, 'utf8');
   }

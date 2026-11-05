@@ -292,7 +292,9 @@ async function buildStudioView(targetUser, viewerId, source = null) {
   return view;
 }
 
-function buildTitlesView(targetUser, viewerId, source = null) {
+const TITLES_PAGE_SIZE = 25; // limite do Discord para opções de um menu de seleção
+
+function buildTitlesView(targetUser, viewerId, source = null, page = 0) {
   const lang = getLanguage(source);
   const isEn = lang === 'en';
   const account = getUserAccount(targetUser.id);
@@ -388,11 +390,19 @@ function buildTitlesView(targetUser, viewerId, source = null) {
     });
   }
 
+  // Q183: o Discord aceita no máximo 25 opções por menu. O título equipado vai sempre
+  // para o topo da primeira página e o restante é paginado com ◀️ ▶️.
+  options.sort((a, b) => Number(b.default) - Number(a.default));
+  const totalPages = Math.max(1, Math.ceil(options.length / TITLES_PAGE_SIZE));
+  const currentPage = Math.min(Math.max(0, Number.parseInt(page, 10) || 0), totalPages - 1);
+  const pageOptions = options.slice(currentPage * TITLES_PAGE_SIZE, (currentPage + 1) * TITLES_PAGE_SIZE);
+  const pagePlaceholder = isEn ? '👑 Choose a title to purchase or equip...' : '👑 Escolha um título para comprar ou equipar...';
+
   const selectRow = new ActionRowBuilder().addComponents(
     new StringSelectMenuBuilder()
-      .setCustomId(`profile_select_title:${targetUser.id}:${viewerId}`)
-      .setPlaceholder(isEn ? '👑 Choose a title to purchase or equip...' : '👑 Escolha um título para comprar ou equipar...')
-      .addOptions(options)
+      .setCustomId(`profile_select_title:${targetUser.id}:${viewerId}:${currentPage}`)
+      .setPlaceholder(totalPages > 1 ? `${pagePlaceholder} (${t('titleNick.pageInfo', source, { page: currentPage + 1, total: totalPages })})`.slice(0, 150) : pagePlaceholder)
+      .addOptions(pageOptions)
   );
 
   const buttonRow = new ActionRowBuilder().addComponents(
@@ -421,7 +431,30 @@ function buildTitlesView(targetUser, viewerId, source = null) {
     );
   }
 
-  return { embeds: [embed], components: [selectRow, buttonRow], attachments: [] };
+  const components = [selectRow, buttonRow];
+  if (totalPages > 1) {
+    components.push(new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`profile_titles_page:${targetUser.id}:${viewerId}:${currentPage - 1}`)
+        .setLabel(t('titleNick.pagePrev', source))
+        .setEmoji('◀️')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(currentPage <= 0),
+      new ButtonBuilder()
+        .setCustomId(`profile_titles_pageinfo:${targetUser.id}:${viewerId}`)
+        .setLabel(t('titleNick.pageInfo', source, { page: currentPage + 1, total: totalPages }))
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true),
+      new ButtonBuilder()
+        .setCustomId(`profile_titles_page:${targetUser.id}:${viewerId}:${currentPage + 1}`)
+        .setLabel(t('titleNick.pageNext', source))
+        .setEmoji('▶️')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(currentPage >= totalPages - 1)
+    ));
+  }
+
+  return { embeds: [embed], components, attachments: [] };
 }
 
 /**
@@ -607,6 +640,13 @@ async function handleProfileInteraction(interaction) {
     return interaction.update(view);
   }
 
+  // 5b. Paginação da Galeria de Títulos (Q183)
+  if (action === 'profile_titles_page') {
+    const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
+    const view = buildTitlesView(targetUser, interaction.user.id, interaction, parts[3]);
+    return interaction.update(view);
+  }
+
   // 6. Abrir Galeria de Temas
   if (action === 'profile_open_themes') {
     await interaction.deferUpdate();
@@ -698,7 +738,7 @@ async function handleProfileInteraction(interaction) {
         return interaction.reply({ content: `❌ ${res.message}`, flags: 64 });
       }
       const targetUser = await interaction.client.users.fetch(targetId).catch(() => interaction.user);
-      const view = buildTitlesView(targetUser, interaction.user.id, interaction);
+      const view = buildTitlesView(targetUser, interaction.user.id, interaction, parts[3]);
       return interaction.update(view);
     }
   }

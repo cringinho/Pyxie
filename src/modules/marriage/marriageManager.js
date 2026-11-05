@@ -10,6 +10,9 @@ const {
   spendMagicBeans,
 } = require('../../services/economy');
 const dateQuestions = require('./dateQuestions');
+const { readJsonProtected } = require('../../utils/atomicJson');
+
+let lastMarriageBackupAt = 0;
 
 function getMarriageDataFile() {
   return (
@@ -90,18 +93,15 @@ function readData() {
     return initial;
   }
 
-  try {
-    const raw = fs.readFileSync(filePath, 'utf8');
-    const data = raw ? JSON.parse(raw) : {};
-    return {
-      marriages: data.marriages || {},
-      requests: data.requests || {},
-      childProposals: data.childProposals || {},
-      activeDates: data.activeDates || {},
-    };
-  } catch (error) {
-    return { marriages: {}, requests: {}, childProposals: {}, activeDates: {} };
-  }
+  // Q288: arquivo corrompido é guardado como .corrupt-<ts> e a leitura cai para o .bak,
+  // em vez de virar {} e apagar todos os casamentos na próxima gravação.
+  const data = readJsonProtected(filePath, {});
+  return {
+    marriages: data.marriages || {},
+    requests: data.requests || {},
+    childProposals: data.childProposals || {},
+    activeDates: data.activeDates || {},
+  };
 }
 
 /**
@@ -114,6 +114,14 @@ function writeData(data) {
 
   const tempPath = `${filePath}.tmp.${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
   fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf8');
+  // Backup rotativo (no máximo 1 por minuto) para a leitura protegida ter de onde restaurar.
+  const now = Date.now();
+  if (now - lastMarriageBackupAt >= 60 * 1000 && fs.existsSync(filePath)) {
+    try {
+      fs.copyFileSync(filePath, `${filePath}.bak`);
+      lastMarriageBackupAt = now;
+    } catch (_) {}
+  }
   fs.renameSync(tempPath, filePath);
 }
 
@@ -524,6 +532,30 @@ function canStartDateNight(userId) {
 }
 
 /**
+ * Q281: trava de "1 encontro aberto por casal". Sem ela, dava para abrir vários
+ * Date Nights antes do cooldown começar e receber o prêmio em cada um.
+ * A trava vive na memória do processo do bot, junto com as sessões (que também são em memória).
+ */
+const openDateLocks = new Map(); // marriageId -> sessionId
+
+function startDateNight(userId, sessionId) {
+  const check = canStartDateNight(userId);
+  if (!check.allowed) return check;
+  const marriageId = check.marriage.id;
+  if (openDateLocks.has(marriageId)) {
+    return { allowed: false, reason: 'already_open', marriage: check.marriage };
+  }
+  openDateLocks.set(marriageId, sessionId);
+  return check;
+}
+
+function releaseDateNight(marriageId, sessionId = null) {
+  if (!openDateLocks.has(marriageId)) return;
+  if (sessionId && openDateLocks.get(marriageId) !== sessionId) return;
+  openDateLocks.delete(marriageId);
+}
+
+/**
  * Sanitizador estrito de texto de perguntas de Date Night.
  * Previne que identificadores de lote (#123) ou espaçamentos irregulares vazem para o usuário.
  */
@@ -564,6 +596,11 @@ function resolveDateNight(marriageId, match) {
   if (!marriage) return { success: false, reason: 'not_found' };
 
   const now = Date.now();
+  releaseDateNight(marriageId);
+  // Q281: recusa pagar de novo se outro encontro deste casal já foi resolvido nas últimas 12h.
+  if (now - (marriage.lastDateAt || 0) < DATE_COOLDOWN_MS) {
+    return { success: false, reason: 'cooldown', nextAvailable: (marriage.lastDateAt || 0) + DATE_COOLDOWN_MS };
+  }
   marriage.lastDateAt = now;
 
   if (match) {
@@ -782,6 +819,8 @@ module.exports = {
   depositVault,
   claimVaultInterest,
   canStartDateNight,
+  startDateNight,
+  releaseDateNight,
   getRandomDateQuestion,
   sanitizeDateQuestionText,
   resolveDateNight,

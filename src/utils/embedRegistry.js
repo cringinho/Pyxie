@@ -405,6 +405,13 @@ function saveCurrencyEmoji(currencyKey, emojiId) {
  * Salva a alteração de um slot de embed (persistência segura em data/emojis.json)
  */
 function saveEmbedSlotEmoji(embedId, slotKey, emojiId) {
+  // AGENTS §10 / auditoria Q194: o backend recusa slot que nenhum embed registrado declara.
+  const schema = EMBED_REGISTRY.get(embedId);
+  if (!schema || !(schema.slots || []).some((slot) => slot.key === slotKey)) {
+    const err = new Error(`Slot desconhecido: ${embedId}.${slotKey}`);
+    err.code = 'unknown_slot';
+    throw err;
+  }
   loadCustomEmojis();
   const key = `${embedId}.${slotKey}`;
   let cleanId = emojiId ? String(emojiId).trim() : '';

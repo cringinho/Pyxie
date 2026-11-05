@@ -84,7 +84,8 @@
     "node tests/planCycles.test.js",
     "node tests/plansPublicSite.test.js",
     "node tests/storefrontFlow.test.js",
+    "node tests/economyRaces.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T22:05:26.506Z"
+  "updatedAt": "2026-11-05T12:52:19.030Z"
 }

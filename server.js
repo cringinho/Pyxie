@@ -1453,7 +1453,13 @@ app.post('/api/admin/embeds/slot', requireAdminAuth, (req, res) => {
       return res.status(400).json({ success: false, error: 'embedId e slotKey são obrigatórios.' });
     }
 
-    const saved = embedRegistry.saveEmbedSlotEmoji(embedId, slotKey, emojiId);
+    let saved;
+    try {
+      saved = embedRegistry.saveEmbedSlotEmoji(embedId, slotKey, emojiId);
+    } catch (err) {
+      if (err.code === 'unknown_slot') return res.status(400).json({ success: false, error: 'unknown_slot' });
+      throw err;
+    }
     sendIpcToBot({ type: 'RELOAD_EMOJIS' });
     broadcastLiveEvent('RELOAD_EMOJIS', { embedId, slotKey, emojiId });
 
