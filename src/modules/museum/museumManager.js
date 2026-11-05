@@ -1,6 +1,5 @@
 const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../../utils/dataDir');
 const path = require('path');
-const crypto = require('crypto');
 const fs = require('fs');
 const sharp = require('sharp');
 const { readJson, writeJsonAtomic } = require('../../utils/atomicJson');
@@ -12,12 +11,6 @@ const DATA_PATH = pyxieDataPath( 'museumData.json');
 const URL_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // tokens ?ex= do CDN duram ~24h; renovamos bem antes
 const AUTHOR_CACHE_TTL_MS = 60 * 60 * 1000;
 const PAGE_LIMIT_MAX = 48;
-
-function safeEqual(a, b) {
-  const x = Buffer.from(String(a || ''));
-  const y = Buffer.from(String(b || ''));
-  return x.length === y.length && crypto.timingSafeEqual(x, y);
-}
 
 function getWatermarksDir() {
   const dir = pyxieDataPath( 'museumWatermarks');
@@ -681,14 +674,9 @@ class MuseumManager {
     if (ctx && typeof ctx.sendIpc === 'function') {
       this.sendIpc = ctx.sendIpc;
     }
-    const requireToken = (req, res, next) => {
-      const secret = process.env.API_SECRET_TOKEN || process.env.PANEL_SECRET;
-      const token = req.headers['x-admin-token'];
-      if (!secret || !token || !safeEqual(token, secret)) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
-      }
-      next();
-    };
+    // Editar/apagar obra: login do dono no painel (cookie + X-Pyxie-Panel). A chave mestra
+    // não fica mais guardada no navegador (auditoria Q267).
+    const requireToken = require('../../services/adminAuth').requireAdminAuth;
 
     const { serveLocalizedPage } = require('../../utils/seoRenderer');
     app.get(['/museu', '/museum'], serveLocalizedPage('museum', path.join(process.cwd(), 'public')));

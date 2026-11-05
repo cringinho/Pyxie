@@ -85,11 +85,30 @@ function setPlan(guildId, patch = {}, now = Date.now()) {
   });
 }
 
-function grantPlan(guildId, plan, { months = 1, source = 'manual', note = '', lifetime = false, now = Date.now() } = {}) {
+function grantPlan(
+  guildId,
+  plan,
+  { months = 1, source = 'manual', note = '', lifetime = false, protectHigher = false, now = Date.now() } = {}
+) {
   if (!PLANS.includes(plan) || plan === DEFAULT_PLAN) return { ok: false, reason: 'invalid_plan' };
   if (lifetime) {
     // Vitalício: `paidUntil` fica 0 de propósito — quem decide é a flag `lifetime`.
     return setPlan(guildId, { plan, status: 'active', source, note, paidUntil: 0, lifetime: true }, now);
+  }
+  // Pagamento de um plano menor com um maior ainda ativo (ex.: Pix antigo do Básico pago
+  // durante o Premium): mantém o plano maior e converte o valor pago em dias dele, em vez
+  // de rebaixar o servidor na hora e perder os dias pagos (auditoria Q253).
+  if (protectHigher) {
+    const current = getPlan(guildId, now);
+    const { rankOf } = require('../config/planFeatures');
+    if (current.active && rankOf(current.plan) > rankOf(plan)) {
+      if (current.lifetime) return { ok: true, record: current, kept: current.plan };
+      const ratio = PRICES[current.plan] ? PRICES[plan] / PRICES[current.plan] : 1;
+      const extraDays = Math.max(1, Math.round(Math.max(1, Math.round(Number(months) || 1)) * 30 * ratio));
+      const paidUntil = Math.max(now, current.paidUntil || 0) + extraDays * DAY;
+      const kept = setPlan(guildId, { plan: current.plan, status: 'active', source, note, paidUntil, lifetime: false }, now);
+      return { ...kept, kept: current.plan, extraDays };
+    }
   }
   const base = Math.max(now, rawFor(guildId).paidUntil || 0);
   const paidUntil = base + Math.max(1, Math.round(Number(months) || 1)) * 30 * DAY;
@@ -98,6 +117,19 @@ function grantPlan(guildId, plan, { months = 1, source = 'manual', note = '', li
 
 function revokePlan(guildId, reason = 'canceled', now = Date.now()) {
   return setPlan(guildId, { plan: DEFAULT_PLAN, status: reason, paidUntil: 0, lifetime: false, note: reason }, now);
+}
+
+/**
+ * Estorno/contestação (auditoria Q245): devolve o tempo que aquele pagamento comprou.
+ * Se não sobrar tempo pago, o plano fica `refunded` (inativo). Vitalício nunca é tocado.
+ */
+function refundPlan(guildId, { months = 1, note = 'refund', now = Date.now() } = {}) {
+  const record = rawFor(guildId);
+  if (record.lifetime) return { ok: false, reason: 'lifetime' };
+  if (record.plan === DEFAULT_PLAN) return { ok: false, reason: 'no_plan' };
+  const paidUntil = Math.max(0, (record.paidUntil || 0) - Math.max(1, Math.round(Number(months) || 1)) * 30 * DAY);
+  const status = paidUntil > now ? record.status : 'refunded';
+  return setPlan(guildId, { plan: record.plan, status, paidUntil, lifetime: false, note: String(note).slice(0, 200) }, now);
 }
 
 function listPlans() {
@@ -122,6 +154,7 @@ module.exports = {
   setPlan,
   grantPlan,
   revokePlan,
+  refundPlan,
   listPlans,
   _resetCacheForTests,
 };

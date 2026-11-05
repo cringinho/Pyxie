@@ -204,7 +204,7 @@ for (const restricted of ownerRestrictedNames) {
 }
 
 // 6.2 Verificação de Exibição de Comandos do Criador para o Dono
-const { OWNER_SNOWFLAKE, createOwnerMagicToken, verifyMagicToken, isIpAllowed } = require('../src/services/adminAuth');
+const { OWNER_SNOWFLAKE, adminAccess, isMasterSecretValid } = require('../src/services/adminAuth');
 const ownerModules = getHelpModules(null, { lang: 'pt', userId: OWNER_SNOWFLAKE });
 const ownerCmdNames = ownerModules.flatMap((m) => m.commands || []).map((c) => c.name);
 for (const restricted of ownerRestrictedNames) {
@@ -224,36 +224,23 @@ const savedPanelSecret = process.env.PANEL_SECRET;
 const savedApiSecret = process.env.API_SECRET_TOKEN;
 delete process.env.PANEL_SECRET;
 delete process.env.API_SECRET_TOKEN;
-assert.equal(createOwnerMagicToken(OWNER_SNOWFLAKE).success, false, 'Sem PANEL_SECRET não pode gerar link mágico');
-assert.equal(isIpAllowed({ ip: '127.0.0.1', headers: {} }), false, 'Sem PANEL_SECRET nem localhost entra');
-assert.equal(require('../src/services/adminAuth').isMasterSecretValid('pyxie_owner_master_secret_2026'), false, 'Segredo reserva antigo não pode valer');
+assert.equal(isMasterSecretValid('pyxie_owner_master_secret_2026'), false, 'Segredo reserva antigo não pode valer');
+assert.equal(adminAccess({ ip: '127.0.0.1', method: 'GET', headers: {} }), 'denied', 'Sem PANEL_SECRET nem localhost entra');
 process.env.PANEL_SECRET = 'panel-test-secret-only-for-ci';
 
-const forbiddenRes = createOwnerMagicToken('999999999999999999');
-assert.equal(forbiddenRes.success, false, 'Usuário aleatório não pode gerar token de admin');
-
-const ownerRes = createOwnerMagicToken(OWNER_SNOWFLAKE);
-assert.equal(ownerRes.success, true, 'Proprietário deve conseguir gerar token mágico HMAC');
-assert(ownerRes.token && ownerRes.token.length > 20, 'Token HMAC deve ser gerado');
-
-const verifyRes = verifyMagicToken(ownerRes.token);
-assert.equal(verifyRes.valid, true, 'Token HMAC recém-gerado deve ser válido');
-assert.equal(verifyRes.userId, OWNER_SNOWFLAKE);
-
-const replayRes = verifyMagicToken(ownerRes.token);
-assert.equal(replayRes.valid, false, 'Anti-replay: token consumido não pode ser reutilizado');
-
-assert.equal(isIpAllowed({ ip: '127.0.0.1', headers: {} }), true, 'Localhost deve ser autorizado');
-assert.equal(isIpAllowed({ ip: '179.153.90.39', headers: {} }), true, 'IP do criador deve ser autorizado');
-assert.equal(isIpAllowed({ ip: '198.51.100.23', headers: {} }), false, 'IP desconhecido deve ser bloqueado');
-assert.equal(
-  isIpAllowed({ ip: '198.51.100.23', headers: { 'x-forwarded-for': '127.0.0.1' } }),
-  false,
-  'X-Forwarded-For enviado pelo cliente não pode liberar o painel'
-);
+// Auditoria Q263/Q279: IP da lista (nem localhost/LAN) não libera mais nada; link mágico saiu.
+assert.equal(adminAccess({ ip: '127.0.0.1', method: 'POST', headers: {} }), 'denied', 'Localhost sozinho não libera');
+assert.equal(adminAccess({ ip: '179.153.90.39', method: 'POST', headers: {} }), 'denied', 'IP antigo do criador não libera');
+assert.equal(adminAccess({ ip: '192.168.0.81', method: 'GET', headers: {} }), 'denied', 'Rede local não libera');
+assert.equal(require('../src/services/adminAuth').createOwnerMagicToken, undefined, 'Link mágico do /py-admin não existe mais');
+// Q267: chave mestra só por cabeçalho, nunca por ?token= na URL.
+assert.equal(adminAccess({ method: 'GET', query: { token: 'panel-test-secret-only-for-ci' }, headers: {} }), 'denied', 'Chave mestra na URL é recusada');
+assert.equal(adminAccess({ method: 'POST', headers: { authorization: 'Bearer panel-test-secret-only-for-ci' } }), 'ok', 'Chave mestra no cabeçalho vale (máquina)');
+assert.equal(adminAccess({ method: 'POST', headers: { 'x-api-key': 'panel-test-secret-only-for-ci' } }), 'ok', 'X-API-Key vale (máquina)');
+assert.equal(adminAccess({ method: 'POST', headers: { authorization: 'Bearer errado' } }), 'denied', 'Chave errada recusada');
 if (savedPanelSecret === undefined) delete process.env.PANEL_SECRET; else process.env.PANEL_SECRET = savedPanelSecret;
 if (savedApiSecret !== undefined) process.env.API_SECRET_TOKEN = savedApiSecret;
-console.log('✅ Segurança do Dono validada: Snowflake, HMAC Magic Tokens e IP Allowlist operando perfeitamente.');
+console.log('✅ Segurança do Dono validada: Snowflake, sessão do painel e chave mestra só por cabeçalho (sem IP nem link mágico).');
 
 // 7.1 Validação de Bloqueio em Comandos de Economia por Não-Donos
 const setecoCmd = require('../src/commands/setareconomia');
@@ -278,7 +265,7 @@ repliedMsg = '';
 ecoconfigCmd.executePrefix({ message: fakeAdminMessage, args: [] });
 assert(repliedMsg.includes('Acesso Restrito') || repliedMsg.includes('Restricted Access'), 'ecoconfig deve bloquear administrador que não seja o dono');
 
-console.log('✅ Segurança do Dono validada: Snowflake, HMAC Magic Tokens, IP Allowlist e Comandos de Economia operando perfeitamente.');
+console.log('✅ Segurança do Dono validada: Snowflake, acesso do painel e Comandos de Economia operando perfeitamente.');
 
 console.log('Auditoria de Paridade i18n e Catálogo concluída com 100% de sucesso!');
 

@@ -15,10 +15,6 @@ const { SUPPORT_EMAIL } = require('../config/support');
 const MP_API = 'https://api.mercadopago.com';
 const PIX_TTL_MS = 30 * 60 * 1000;
 
-/** Data de expiração do Pix no formato do Mercado Pago (ISO 8601 com fuso), em UTC real. */
-function pixExpiration(now = Date.now()) {
-  return new Date(now + PIX_TTL_MS).toISOString().replace(/\.\d{3}Z$/, '.000+00:00');
-}
 const CHARGE_LIMIT = 500;
 
 let fetchImpl = (...args) => fetch(...args);
@@ -119,6 +115,18 @@ const readJson = async (res) => {
   }
 };
 
+/**
+ * Validade do Pix (PIX_TTL_MS a partir de `now`) no formato que o Mercado Pago espera, no
+ * horário de Brasília. Antes o horário UTC ia rotulado como -03:00 e o Pix ficava pagável
+ * ~3h30 a mais do que a tela dizia (Q249). Usada pelos planos e pelas doações.
+ */
+function pixExpiration(now = Date.now()) {
+  return new Date(now + PIX_TTL_MS - 3 * 60 * 60 * 1000).toISOString().replace('Z', '-03:00');
+}
+
+// Status do Mercado Pago que devolvem o dinheiro: o benefício sai junto (Q245).
+const REFUND_STATUSES = new Set(['refunded', 'charged_back']);
+
 const authHeaders = (extra = {}) => ({ Authorization: `Bearer ${token()}`, 'Content-Type': 'application/json', ...extra });
 
 // ---------------------------------------------------------------- Pix
@@ -138,8 +146,6 @@ async function createPixCharge({ guildId, plan, addonId = null, cycle = 'month',
       payment_method_id: 'pix',
       external_reference: target.ref,
       notification_url: `${publicUrl()}/api/plans/webhook/mercadopago`,
-      // Validade em UTC de verdade. Antes trocava o "Z" por "-03:00" sem converter a hora,
-      // e o QR valia ~3h30 no banco em vez de 30 min (cliente podia pagar dois QRs).
       date_of_expiration: pixExpiration(now),
       payer: { email: SUPPORT_EMAIL },
     }),
@@ -155,9 +161,14 @@ async function createPixCharge({ guildId, plan, addonId = null, cycle = 'month',
     plan,
     method: 'pix',
     amount: Number(data.transaction_amount) || amount,
+    kind: target.kind,
+    addonId: target.addonId || null,
+    cycle: target.cycle,
     status: data.status || 'pending',
     createdAt: now,
     expiresAt: now + PIX_TTL_MS,
+    // Copia-e-cola guardado: o painel volta a mostrar o mesmo Pix depois de recarregar (Q249).
+    qrCode: qr.qr_code,
   };
   withFileLock(chargesFile(), () => {
     const state = loadCharges();
@@ -165,7 +176,7 @@ async function createPixCharge({ guildId, plan, addonId = null, cycle = 'month',
     saveCharges(state);
   });
 
-  return { ok: true, ...charge, qrCode: qr.qr_code, qrCodeBase64: qr.qr_code_base64 || null, ticketUrl: qr.ticket_url || null };
+  return { ok: true, ...charge, qrCodeBase64: qr.qr_code_base64 || null, ticketUrl: qr.ticket_url || null };
 }
 
 // ---------------------------------------------------------------- Cartão (Preapproval)
@@ -212,6 +223,40 @@ async function createCardSubscription({ guildId, plan, addonId = null, cycle = '
   return { ok: true, preapprovalId: String(data.id), initPoint: data.init_point, status: data.status };
 }
 
+/**
+ * Reembolso pelo painel do dono (Q245): devolve o dinheiro no Mercado Pago e já retira o
+ * benefício (plano, extra, Passe ou doação do ranking). Idempotente: repetir não devolve
+ * de novo (chave de idempotência fixa) nem retira duas vezes.
+ */
+async function refundPayment(paymentId, { now = Date.now() } = {}) {
+  if (!token()) return { ok: false, reason: 'unavailable' };
+  const id = String(paymentId || '').trim();
+  if (!/^\d{1,20}$/.test(id)) return { ok: false, reason: 'payment_id' };
+  const res = await fetchImpl(`${MP_API}/v1/payments/${id}/refunds`, {
+    method: 'POST',
+    headers: authHeaders({ 'X-Idempotency-Key': `refund-${id}` }),
+    body: JSON.stringify({}),
+  });
+  const refund = await readJson(res);
+  if (!res.ok && res.status !== 400) return { ok: false, reason: 'provider', status: res.status };
+  // 400 costuma ser "já estornado": confere o status real antes de seguir.
+  const payRes = await fetchImpl(`${MP_API}/v1/payments/${id}`, { headers: authHeaders() });
+  const payment = await readJson(payRes);
+  if (!payRes.ok) return { ok: false, reason: 'provider', status: payRes.status };
+  if (!res.ok && !REFUND_STATUSES.has(payment.status)) {
+    return { ok: false, reason: 'refund_refused', detail: refund.message || refund.error || null };
+  }
+  const refunded = { ...payment, status: REFUND_STATUSES.has(payment.status) ? payment.status : 'refunded' };
+  const passRef = require('./passPayments').parseReference(payment.external_reference);
+  if (passRef) {
+    const result = require('./battlePass').refundPremium(`mp:${id}`, { userId: passRef.userId, month: passRef.month, now });
+    return { ...result, refund: true, kind: 'pass', userId: passRef.userId, month: passRef.month };
+  }
+  const result = await applyRefundedPayment(refunded);
+  if (result.ignored) return { ok: false, reason: 'reference' };
+  return result;
+}
+
 async function cancelCardSubscription(preapprovalId) {
   if (!providers().card) return { ok: false, reason: 'unavailable' };
   const res = await fetchImpl(`${MP_API}/preapproval/${encodeURIComponent(preapprovalId)}`, {
@@ -255,19 +300,56 @@ function verifySignature({ headers = {}, dataId }) {
   return expected.length === parts.v1.length && crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(parts.v1));
 }
 
-function markProcessed(key, patch = {}) {
+/**
+ * Libera uma única vez por pagamento (auditoria Q246). A marca de "processado" só é
+ * gravada DEPOIS que o benefício foi salvo: se a gravação falhar, nada é marcado e o
+ * reenvio do Mercado Pago (ou a conferência automática) tenta de novo. Tudo dentro da
+ * trava do arquivo de cobranças, então dois avisos simultâneos não liberam em dobro.
+ */
+function grantOnce(key, chargeId, grantFn) {
   return withFileLock(chargesFile(), () => {
     const state = loadCharges();
-    if (state.processed.includes(key)) return false;
+    if (state.processed.includes(key)) return { duplicate: true };
+    let result;
+    try {
+      result = grantFn();
+    } catch (err) {
+      return { failed: true, error: err.message };
+    }
+    if (!result || result.ok === false) return { failed: true, result };
     state.processed.push(key);
-    const chargeId = key.replace(/^mp:/, '');
-    if (state.charges[chargeId]) state.charges[chargeId] = { ...state.charges[chargeId], ...patch, status: 'paid', paidAt: Date.now() };
+    if (chargeId && state.charges[chargeId]) {
+      const { qrCode, ...rest } = state.charges[chargeId];
+      state.charges[chargeId] = { ...rest, status: 'paid', paidAt: Date.now() };
+    }
     saveCharges(state);
-    return true;
+    return { result };
   });
 }
 
+const grantRef = (ref, source, note) =>
+  ref.kind === 'addon'
+    ? guildAddons.grant(ref.guildId, ref.addonId, ref.cycle === 'year' ? { years: 1, source, note } : { months: 1, source, note })
+    : plans.grantPlan(ref.guildId, ref.plan, { months: ref.cycle === 'year' ? 12 : 1, source, note, protectHigher: true });
+
+function grantResult(ref, granted) {
+  if (granted.duplicate) return { ok: true, duplicate: true, ...ref };
+  if (granted.failed) return { ok: false, reason: 'save', ...ref };
+  const record = granted.result.record || {};
+  return ref.kind === 'addon'
+    ? { ok: true, ...ref, granted: true, until: record.until || 0 }
+    : { ok: true, ...ref, plan: granted.result.kept || ref.plan, granted: true, paidUntil: record.paidUntil || 0 };
+}
+
+const donationsSvc = () => require('./donations');
+const isDonationRef = (ref) => String(ref || '').startsWith('donation|');
+
 async function applyApprovedPayment(payment) {
+  // Doação do /py-home usa o mesmo aviso: vai para o livro das doações (Q243).
+  if (isDonationRef(payment?.external_reference)) {
+    const donation = donationsSvc().applyDonation(payment);
+    return { ...donation, kind: 'donation' };
+  }
   const ref = parseReference(payment?.external_reference);
   if (!ref) return { ok: false, reason: 'reference' };
   if (payment.currency_id !== 'BRL') return { ok: false, reason: 'currency' };
@@ -276,26 +358,46 @@ async function applyApprovedPayment(payment) {
     ref.kind === 'addon' ? planAddons.priceOf(ref.addonId, ref.cycle) / 100 : priceOf(ref.plan, ref.cycle);
   if (Number(payment.transaction_amount) + 0.01 < expected) return { ok: false, reason: 'amount' };
 
-  const first = markProcessed(`mp:${payment.id}`, {});
-  if (!first) return { ok: true, duplicate: true, ...ref };
+  const granted = grantOnce(`mp:${payment.id}`, String(payment.id), () => grantRef(ref, 'mercadopago', `mp:${payment.id}`));
+  return grantResult(ref, granted);
+}
 
-  if (ref.kind === 'addon') {
-    const granted = guildAddons.grant(
-      ref.guildId,
-      ref.addonId,
-      ref.cycle === 'year'
-        ? { years: 1, source: 'mercadopago', note: `mp:${payment.id}` }
-        : { months: 1, source: 'mercadopago', note: `mp:${payment.id}` }
-    );
-    return { ok: true, ...ref, granted: granted.ok, until: granted.record?.until || 0 };
-  }
-
-  const granted = plans.grantPlan(ref.guildId, ref.plan, {
-    months: ref.cycle === 'year' ? 12 : 1,
-    source: 'mercadopago',
-    note: `mp:${payment.id}`,
+/**
+ * Estorno, devolução ou contestação (Q245): tira o tempo que aquele pagamento comprou.
+ * Idempotente (`refund:<chave>`); só retira o que de fato foi liberado por esse pagamento.
+ */
+function applyRefund(key, ref, { chargeId = null, now = Date.now() } = {}) {
+  return withFileLock(chargesFile(), () => {
+    const state = loadCharges();
+    const refundKey = `refund:${key}`;
+    if (state.processed.includes(refundKey)) return { ok: true, duplicate: true, refund: true, ...ref };
+    const wasGranted = state.processed.includes(key);
+    if (wasGranted) {
+      const result =
+        ref.kind === 'addon'
+          ? guildAddons.refund(ref.guildId, ref.addonId, ref.cycle === 'year' ? { years: 1, note: `refund:${key}`, now } : { months: 1, note: `refund:${key}`, now })
+          : plans.refundPlan(ref.guildId, { months: ref.cycle === 'year' ? 12 : 1, note: `refund:${key}`, now });
+      // Vitalício/sem registro: nada a retirar, mas o estorno fica anotado.
+      if (!result.ok && !['lifetime', 'not_found', 'no_plan'].includes(result.reason)) return { ok: false, reason: 'save', ...ref };
+    } else {
+      // Estorno antes da aprovação: reserva a chave para uma aprovação atrasada não liberar.
+      state.processed.push(key);
+    }
+    state.processed.push(refundKey);
+    if (chargeId && state.charges[chargeId]) {
+      const { qrCode, ...rest } = state.charges[chargeId];
+      state.charges[chargeId] = { ...rest, status: 'refunded', refundedAt: now };
+    }
+    saveCharges(state);
+    return { ok: true, refund: true, revoked: wasGranted, ...ref };
   });
-  return { ok: true, ...ref, granted: granted.ok, paidUntil: granted.record?.paidUntil || 0 };
+}
+
+async function applyRefundedPayment(payment) {
+  if (isDonationRef(payment?.external_reference)) return { ...donationsSvc().refundDonation(payment), kind: 'donation' };
+  const ref = parseReference(payment?.external_reference);
+  if (!ref) return { ok: true, ignored: true, reason: 'reference' };
+  return applyRefund(`mp:${payment.id}`, ref, { chargeId: String(payment.id) });
 }
 
 async function handleWebhook({ body = {}, query = {}, headers = {}, now = Date.now() } = {}) {
@@ -311,7 +413,11 @@ async function handleWebhook({ body = {}, query = {}, headers = {}, now = Date.n
     const res = await fetchImpl(`${MP_API}/v1/payments/${dataId}`, { headers: authHeaders() });
     const payment = await readJson(res);
     if (!res.ok) return { ok: false, reason: 'provider', status: res.status };
-    if (payment.status !== 'approved') return { ok: true, pending: true, status: payment.status };
+    if (REFUND_STATUSES.has(payment.status)) return applyRefundedPayment(payment);
+    if (payment.status !== 'approved') {
+      markChargeStatus(String(payment.id), payment.status);
+      return { ok: true, pending: true, status: payment.status };
+    }
     return applyApprovedPayment(payment);
   }
 
@@ -342,37 +448,38 @@ async function handleWebhook({ body = {}, query = {}, headers = {}, now = Date.n
     const res = await fetchImpl(`${MP_API}/authorized_payments/${dataId}`, { headers: authHeaders() });
     const charge = await readJson(res);
     if (!res.ok) return { ok: false, reason: 'provider', status: res.status };
-    if (charge.status !== 'approved') return { ok: true, pending: true, status: charge.status };
+    const chargeStatus = String(charge.payment?.status || charge.status || '');
+    const refunded = REFUND_STATUSES.has(chargeStatus);
+    if (charge.status !== 'approved' && !refunded) return { ok: true, pending: true, status: charge.status };
     const subRes = await fetchImpl(`${MP_API}/preapproval/${charge.preapproval_id}`, { headers: authHeaders() });
     const sub = await readJson(subRes);
+    if (!subRes.ok) return { ok: false, reason: 'provider', status: subRes.status };
     const ref = parseReference(sub.external_reference);
     if (!ref) return { ok: false, reason: 'reference' };
+    if (refunded) return applyRefund(`mp:${dataId}`, ref, { now });
     // Mesmo cuidado do Pix: moeda e valor conferidos antes de liberar.
     if (charge.currency_id && charge.currency_id !== 'BRL') return { ok: false, reason: 'currency' };
     const expectedCard =
       ref.kind === 'addon' ? planAddons.priceOf(ref.addonId, ref.cycle) / 100 : priceOf(ref.plan, ref.cycle);
     if (Number(charge.transaction_amount) + 0.01 < expectedCard) return { ok: false, reason: 'amount' };
-    const first = markProcessed(`mp:${dataId}`);
-    if (!first) return { ok: true, duplicate: true, ...ref };
-    if (ref.kind === 'addon') {
-      const granted = guildAddons.grant(
-        ref.guildId,
-        ref.addonId,
-        ref.cycle === 'year'
-          ? { years: 1, source: 'mercadopago-card', note: `mp:${dataId}` }
-          : { months: 1, source: 'mercadopago-card', note: `mp:${dataId}` }
-      );
-      return { ok: true, ...ref, granted: granted.ok, until: granted.record?.until || 0 };
-    }
-    const granted = plans.grantPlan(ref.guildId, ref.plan, {
-      months: ref.cycle === 'year' ? 12 : 1,
-      source: 'mercadopago-card',
-      note: `mp:${dataId}`,
-    });
-    return { ok: true, ...ref, granted: granted.ok, paidUntil: granted.record?.paidUntil || 0 };
+    const granted = grantOnce(`mp:${dataId}`, null, () => grantRef(ref, 'mercadopago-card', `mp:${dataId}`));
+    return grantResult(ref, granted);
   }
 
   return { ok: true, ignored: true, type };
+}
+
+/** Grava o status final de um Pix que não foi pago (expirado/cancelado/recusado). */
+function markChargeStatus(chargeId, status) {
+  if (!['cancelled', 'rejected', 'expired'].includes(String(status))) return;
+  withFileLock(chargesFile(), () => {
+    const state = loadCharges();
+    const charge = state.charges[chargeId];
+    if (!charge || charge.status !== 'pending') return;
+    const { qrCode, ...rest } = charge;
+    state.charges[chargeId] = { ...rest, status: String(status) };
+    saveCharges(state);
+  });
 }
 
 /** Rede de segurança: confere cobranças Pix pendentes direto na API (webhook pode atrasar). */
@@ -390,6 +497,10 @@ async function reconcilePending({ now = Date.now(), maxAgeMs = 2 * 24 * 60 * 60 
     if (payment.status === 'approved') {
       const applied = await applyApprovedPayment(payment);
       if (applied.ok && !applied.duplicate) activated += 1;
+    } else if (REFUND_STATUSES.has(payment.status)) {
+      await applyRefundedPayment(payment);
+    } else {
+      markChargeStatus(String(charge.id), payment.status);
     }
   }
   return { checked, activated };
@@ -433,6 +544,9 @@ module.exports = {
   parseReference,
   resolveTarget,
   applyApprovedPayment,
+  applyRefundedPayment,
+  refundPayment,
+  REFUND_STATUSES,
   priceOf,
   createPixCharge,
   createCardSubscription,

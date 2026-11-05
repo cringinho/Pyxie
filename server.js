@@ -234,38 +234,10 @@ const { getCardById, localizeCard } = require('./src/data/tarotCardsCatalog');
 const { buildGuildInviteUrl, buildUserInstallUrl, resolvePreset } = require('./src/services/inviteLinks');
 const { getBotListStatus } = require('./src/services/botListStats');
 const { verifyAndClaimBonus } = require('./src/services/bonusTimer');
-const {
-  OWNER_SNOWFLAKE,
-  isIpAllowed,
-  verifyMagicToken,
-  isValidAdminSession,
-  isMasterSecretValid,
-  createMasterAdminSession,
-  hasOwnerPanelSession,
-} = require('./src/services/adminAuth');
+// Rotas antigas do dono: só o login do painel (com X-Pyxie-Panel em pedido que muda algo)
+// ou a chave mestra por cabeçalho. Sem IP liberado e sem chave na URL (auditoria Q263/Q267).
+const { hasOwnerPanelSession, requireAdminAuth } = require('./src/services/adminAuth');
 const { getHelpModules } = require('./src/commands/commandHelpers');
-
-function getCookie(req, name) {
-  const cookieHeader = req.headers.cookie;
-  if (!cookieHeader) return null;
-  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
-function requireAdminAuth(req, res, next) {
-  const authHeader = req.headers.authorization;
-  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
-  const queryToken = req.query.token || req.headers['x-api-key'];
-  const sessionCookie = getCookie(req, 'pyxie_admin_session');
-
-  if (hasOwnerPanelSession(req)) return next();
-  if (bearerToken && isMasterSecretValid(bearerToken)) return next();
-  if (queryToken && isMasterSecretValid(queryToken)) return next();
-  if (sessionCookie && isValidAdminSession(sessionCookie)) return next();
-  if (bearerToken && isValidAdminSession(bearerToken)) return next();
-
-  return res.status(401).json({ error: 'Acesso administrativo não autorizado.' });
-}
 
 app.disable('x-powered-by');
 // O Caddy roda na mesma máquina: só ele pode informar o IP real via X-Forwarded-For.
@@ -759,22 +731,15 @@ app.post('/api/pass/webhook/mercadopago', async (req, res) => {
     // Assinatura no cartão (Preapproval) — eventos de "Planos e assinaturas"
     if (type.startsWith('subscription') || type === 'preapproval') {
       const planResult = await require('./src/services/planPayments').handleWebhook({ body, query, headers });
-      if (!planResult.ok && planResult.reason === 'signature') return res.status(401).json({ error: 'signature' });
-      if (!planResult.ok && planResult.reason === 'provider') return res.status(502).json({ error: 'provider' });
-      if (planResult.ok && !planResult.ignored && !planResult.pending && !planResult.duplicate) {
-        require('./src/modules/plans').notifyActivated(planResult.guildId, planResult.plan).catch(() => null);
-      }
-      return res.status(200).json({ received: true });
+      return answerPlanWebhook(res, planResult);
     }
 
-    // Pagamento avulso: doação, plano Pix ou Passe (decidido pelo external_reference)
+    // Pagamento avulso: doação, plano/extra Pix ou Passe (decidido pelo external_reference).
+    // A rota dos planos já entende doação, plano e extra; o que ela não reconhece é do Passe.
     if (type === 'payment') {
-      const donation = await require('./src/services/donations').handleWebhook({ body, query, headers }).catch(() => null);
-      if (donation?.ok && donation.donation) return res.status(200).json({ received: true });
-      const plan = await require('./src/services/planPayments').handleWebhook({ body, query, headers }).catch(() => null);
-      if (plan?.ok && plan.granted) {
-        require('./src/modules/plans').notifyActivated(plan.guildId, plan.plan).catch(() => null);
-        return res.status(200).json({ received: true });
+      const plan = await require('./src/services/planPayments').handleWebhook({ body, query, headers });
+      if (!(plan.ok === false && plan.reason === 'reference') && !(plan.ignored && plan.reason === 'reference')) {
+        return answerPlanWebhook(res, plan);
       }
     }
 
@@ -784,6 +749,8 @@ app.post('/api/pass/webhook/mercadopago', async (req, res) => {
     if (!result.ok && result.reason === 'signature') return res.status(401).json({ error: 'signature' });
     // Falha do lado do Mercado Pago: 502 faz o aviso ser reenviado
     if (!result.ok && result.reason === 'provider') return res.status(502).json({ error: 'provider' });
+    // Benefício não gravado (disco): 500 faz o Mercado Pago reenviar o aviso (Q246).
+    if (!result.ok && result.reason === 'save') return res.status(500).json({ error: 'save' });
     res.status(200).json({ received: true });
     return notifyPassPremium(result);
   } catch (err) {
@@ -792,19 +759,32 @@ app.post('/api/pass/webhook/mercadopago', async (req, res) => {
   }
 });
 
-// Assinatura mensal do servidor (Básico/Premium): Pix avulso e cartão recorrente.
+/**
+ * Resposta única aos avisos de plano, extra e doação. 401 assinatura falsa; 502 falha do
+ * Mercado Pago; 500 quando o benefício não foi gravado (o Mercado Pago reenvia, Q246).
+ */
+function answerPlanWebhook(res, result) {
+  if (!result.ok && result.reason === 'signature') return res.status(401).json({ error: 'signature' });
+  if (!result.ok && result.reason === 'provider') return res.status(502).json({ error: 'provider' });
+  if (!result.ok && result.reason === 'save') return res.status(500).json({ error: 'save' });
+  if (result.ok && result.kind === 'donation' && result.donation && !result.duplicate) {
+    console.log(`[donations] Doação registrada: ${result.donation.id} (${result.donation.cents / 100} BRL).`);
+  } else if (result.ok && result.refund && !result.duplicate) {
+    console.log(`[plans] Estorno processado${result.guildId ? ` em ${result.guildId}` : ''}: benefício retirado.`);
+  } else if (result.ok && result.granted && result.guildId && !result.duplicate) {
+    console.log(`[plans] Plano ativado: ${result.guildId} → ${result.plan || result.addonId} até ${new Date(result.paidUntil || result.until || Date.now()).toISOString()}`);
+    // Aviso imediato ao dono do servidor (o módulo plans também manda os lembretes).
+    if (result.kind === 'plan') require('./src/modules/plans').notifyActivated(result.guildId, result.plan).catch(() => null);
+  }
+  return res.status(200).json({ received: true });
+}
+
+// Assinatura mensal do servidor (Básico/Premium), extras e doações: Pix avulso e cartão recorrente.
 app.post('/api/plans/webhook/mercadopago', async (req, res) => {
   try {
     const payments = require('./src/services/planPayments');
     const result = await payments.handleWebhook({ body: req.body || {}, query: req.query || {}, headers: req.headers || {} });
-    if (!result.ok && result.reason === 'signature') return res.status(401).json({ error: 'signature' });
-    if (!result.ok && result.reason === 'provider') return res.status(502).json({ error: 'provider' });
-    if (result.ok && !result.ignored && !result.pending && !result.duplicate) {
-      console.log(`[plans] Plano ativado: ${result.guildId} → ${result.plan} até ${new Date(result.paidUntil || Date.now()).toISOString()}`);
-      // Aviso imediato ao dono do servidor (o módulo plans também manda os lembretes).
-      require('./src/modules/plans').notifyActivated(result.guildId, result.plan).catch(() => null);
-    }
-    return res.status(200).json({ received: true });
+    return answerPlanWebhook(res, result);
   } catch (err) {
     console.error('[plans] Falha no aviso do Mercado Pago:', err.message);
     return res.status(500).json({ error: 'webhook' });
@@ -991,7 +971,12 @@ app.get('/api/tarot/card-image', (req, res) => {
 });
 
 // Widget embutível para blogs, sites e parceiros (gera backlinks e autoridade de domínio)
+// Só esta rota pode ser embutida em outro site (Q277): é um cartão estático, sem login e
+// sem ação que mude algo. O resto do site segue com X-Frame-Options SAMEORIGIN.
 app.get('/widget/card', (req, res) => {
+  res.removeHeader('X-Frame-Options');
+  const csp = String(res.getHeader('Content-Security-Policy') || '');
+  res.setHeader('Content-Security-Policy', `${csp}${csp && !csp.trim().endsWith(';') ? ';' : ''} frame-ancestors *;`.trim());
   res.sendFile(path.join(publicDir, 'widget.html'));
 });
 
@@ -1068,10 +1053,9 @@ app.get('/api/emojis', (req, res) => {
 // 2. Catálogo Dinâmico de Comandos da Pyxie (Sincronizado diretamente com help.js)
 app.get('/api/commands', (req, res) => {
   const lang = req.query.lang === 'en' ? 'en' : 'pt';
-  const sessionCookie = getCookie(req, 'pyxie_admin_session');
-  const isOwner = (sessionCookie && isValidAdminSession(sessionCookie)) ||
-    (req.query.token && isMasterSecretValid(req.query.token));
-  const modules = getHelpModules(null, { lang, isOwner: !!isOwner });
+  // Comandos do dono só aparecem para o dono logado no painel (nunca por ?token= na URL).
+  const isOwner = hasOwnerPanelSession(req);
+  const modules = getHelpModules(null, { lang, isOwner });
   res.json({
     success: true,
     lang,
@@ -1344,20 +1328,8 @@ app.delete('/api/admin/shopee/:id', requireAdminAuth, (req, res) => {
 // O mapeador de emojis mudou para o painel novo (/dashboard → Pyxie global → Emojis).
 app.get('/admin/emojis', (req, res) => res.redirect('/dashboard#/global/emojis'));
 
-app.post('/admin/emojis', (req, res) => {
-  const token = req.query.token;
-  const sessionCookie = getCookie(req, 'pyxie_admin_session');
-
-  const isAuth =
-    hasOwnerPanelSession(req) ||
-    isIpAllowed(req) ||
-    (sessionCookie && isValidAdminSession(sessionCookie)) ||
-    (token && (isMasterSecretValid(token) || isValidAdminSession(token) || verifyMagicToken(token).valid));
-
-  if (!isAuth) {
-    return res.status(401).send('401 Unauthorized');
-  }
-
+// Formulário antigo: mesma regra das outras rotas do dono (sessão do painel + X-Pyxie-Panel).
+app.post('/admin/emojis', requireAdminAuth, (req, res) => {
   const emojisData = {};
   for (const slot of Object.keys(req.body || {})) {
     emojisData[slot] = req.body[slot] ? String(req.body[slot]).trim() : '';

@@ -131,16 +131,23 @@ async function handleOwnerAction(interaction, action, arg, owner) {
       return respond(interaction, 'update', () => views.buildDonorsView({ owner, source: interaction }));
 
     case 'dsel': {
-      const cents = Number(interaction.values?.[0] || 0);
+      // Valor "500" ou "500:anon" (doação anônima: o nome não entra no ranking).
+      const [rawCents, flag] = String(interaction.values?.[0] || '').split(':');
+      const cents = Number(rawCents || 0);
       const donation = await require('../../../services/donations')
-        .createPixDonation({ userId, cents, name: owner.displayName || owner.username || '', lang })
+        .createPixDonation({ userId, cents, anonymous: flag === 'anon', name: owner.displayName || owner.username || '', lang })
         .catch(() => ({ ok: false, reason: 'provider' }));
-      const notice = donation.ok ? null : t(`home.donate.errors.${donation.reason}`, { lang }, {});
+      // Todo erro tem texto com o próximo passo; código desconhecido cai na mensagem padrão (Q257).
+      let notice = null;
+      if (!donation.ok) {
+        notice = t(`home.donate.errors.${donation.reason}`, { lang }, {});
+        if (!notice || notice.startsWith('home.')) notice = t('home.donate.errors.generic', { lang });
+      }
       return respond(interaction, 'update', () => views.buildDonateView({
         owner,
         source: interaction,
         donation: donation.ok ? donation : null,
-        notice: notice && !notice.startsWith('home.') ? notice : null,
+        notice,
       }));
     }
 

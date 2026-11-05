@@ -72,8 +72,9 @@ pyxie.com.br {
 - **Museu de Artes da Comunidade**: [https://pyxie.com.br/museu](https://pyxie.com.br/museu)
 - **Enciclopédia & Wiki**: [https://pyxie.com.br/wiki](https://pyxie.com.br/wiki)
 - **API de Status**: [https://pyxie.com.br/api/status](https://pyxie.com.br/api/status)
-- **Painel Administrativo do Criador**: [https://pyxie.com.br/admin](https://pyxie.com.br/admin) *(requer Magic Token HMAC gerado via `/py-admin` ou chave mestra)*
-- **Mapeamento Visual de Emojis**: [https://pyxie.com.br/admin/emojis](https://pyxie.com.br/admin/emojis) *(galeria visual de slots de emojis)*
+- **Painel do Criador**: [https://pyxie.com.br/dashboard](https://pyxie.com.br/dashboard) *(login com Discord na conta do dono; `/admin` só redireciona para `/dashboard#/global/health`. Não existe mais link mágico nem liberação por IP, e a chave mestra nunca vai na URL)*
+- **Mapeamento Visual de Emojis**: [https://pyxie.com.br/dashboard#/global/emojis](https://pyxie.com.br/dashboard#/global/emojis) *(o antigo `/admin/emojis` redireciona para cá)*
+- **Acesso de máquina às rotas `/api/admin/*`**: só com a chave mestra num cabeçalho (`Authorization: Bearer <PANEL_SECRET>` ou `X-API-Key`). Pedidos do navegador usam a sessão do painel e, quando mudam algo, o cabeçalho `X-Pyxie-Panel: 1`.
 
 ---
 

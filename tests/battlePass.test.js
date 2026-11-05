@@ -189,6 +189,7 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
       if (url.includes('/v1/payments/777')) return json(200, payment);
       if (url.includes('/v1/payments/778')) return json(200, { ...payment, id: 778, transaction_amount: 1 });
       if (url.includes('/v1/payments/779')) return json(200, { ...payment, id: 779, status: 'pending' });
+      if (url.includes('/v1/payments/780')) return json(200, { ...payment, id: 777, status: 'refunded' });
       return json(404, {});
     });
     const mp = await payments.createCheckout('mercadopago', token);
@@ -214,6 +215,20 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
     assert.equal((await payments.handleMercadoPagoWebhook({ body: { type: 'merchant_order' } })).ignored, true);
     assert.equal((await payments.createCheckout('mercadopago', token)).reason, 'already', 'quem já tem Premium não paga de novo');
     console.log('  ✅ 10. Mercado Pago: checkout, assinatura, valor e aviso repetido.');
+
+    // 10b. Estorno/contestação retira o Premium daquele pagamento (auditoria Q245)
+    const refundHook = await payments.handleMercadoPagoWebhook({ body: { type: 'payment', data: { id: '780' } }, query: { 'data.id': '780' }, headers: signed('780') });
+    assert.equal(refundHook.refund, true);
+    assert.equal(refundHook.revoked, true);
+    assert.equal(battlePass.isPremium(P), false, 'Premium sai com o estorno');
+    assert.equal(battlePass.refundPremium('mp:777').duplicate, true, 'Estorno repetido não mexe de novo');
+    // Volta o Premium com outro pagamento (o resto do teste conta com ele ativo).
+    assert.equal(battlePass.activatePremium(P, battlePass.monthKey(), { paymentId: 'mp:781', provider: 'mercadopago', amount: 5, currency: 'BRL' }).ok, true);
+    // Benefício não gravado vira erro: a rota responde 500 e o Mercado Pago reenvia (Q246).
+    const serverSource = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+    const passRoute = serverSource.slice(serverSource.indexOf("app.post('/api/pass/webhook/mercadopago'"), serverSource.indexOf("app.post('/api/plans/webhook/mercadopago'"));
+    assert.ok(passRoute.includes("result.reason === 'save') return res.status(500)"), 'Passe: falha ao gravar responde 500');
+    console.log('  ✅ 10b. Estorno do Passe retira o Premium e falha ao gravar pede reenvio.');
 
     payments.setFetch(null);
     for (const key of ['MERCADOPAGO_ACCESS_TOKEN', 'MERCADOPAGO_WEBHOOK_SECRET']) delete process.env[key];

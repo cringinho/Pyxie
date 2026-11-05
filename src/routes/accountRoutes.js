@@ -40,7 +40,10 @@ function createAccountRouter() {
 
     try {
       const account = accountStore.createAccount({ email: normEmail, password: String(password) });
-      const verifyToken = accountStore.createEmailVerificationToken(account.id);
+      // O código de verificação NUNCA volta na resposta: quem cadastra o e-mail de outra
+      // pessoa não pode marcá-lo como verificado sozinho (auditoria Q262). Ele fica guardado
+      // para a rotina de envio por e-mail.
+      accountStore.createEmailVerificationToken(account.id);
 
       // Cria sessão e seta cookie HttpOnly
       const cookieVal = accountSessions.createSession(account.id);
@@ -49,7 +52,6 @@ function createAccountRouter() {
       return res.json({
         success: true,
         account,
-        verifyToken,
         message: lang === 'pt' ? 'Conta criada com sucesso!' : 'Account created successfully!',
       });
     } catch (err) {

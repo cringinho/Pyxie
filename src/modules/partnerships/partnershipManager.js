@@ -999,7 +999,7 @@ class PartnershipManager {
       res.status(status).json(body);
     });
 
-    const { requireAdminAuth, isValidAdminSession, isIpAllowed, hasOwnerPanelSession } = require('../../services/adminAuth');
+    const { requireAdminAuth } = require('../../services/adminAuth');
 
     // Rota de visualização da página administrativa dedicada (/admin/parcerias)
     // A tela de parcerias mudou para o painel novo (/dashboard → Cringelândia → Parcerias).

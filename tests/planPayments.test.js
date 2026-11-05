@@ -155,6 +155,96 @@ function mock(handler) {
   assert.equal(perks.forGuild(G, Date.now() + 31 * DAY).dailyBonus, 0, 'Plano vencido zera o bônus');
   console.log('  ✅ 7. Fila de DMs, dedupe e expiração do plano.');
 
+  // 8. Prazo do Pix no horário de Brasília e Pix pendente com o copia-e-cola (Q249)
+  assert.equal(payments.pixExpiration(Date.UTC(2026, 0, 1, 11, 30, 0)), '2026-01-01T09:00:00.000-03:00', 'Pix das 11h30 UTC vence 12h UTC = 09h em Brasília');
+  const nowPix = Date.now();
+  mock(() => json({ id: 444, status: 'pending', transaction_amount: 7, point_of_interaction: { transaction_data: { qr_code: 'PIX444' } } }));
+  plans.revokePlan(G, 'canceled');
+  await payments.createPixCharge({ guildId: G, plan: 'basic', now: nowPix });
+  const expBody = JSON.parse(requests[0].opts.body);
+  assert.equal(Date.parse(expBody.date_of_expiration), nowPix + payments.PIX_TTL_MS, 'Mercado Pago recebe o mesmo prazo que a tela mostra');
+  const pendingInfo = payments.guildPlanInfo(G, nowPix).pending;
+  assert.equal(pendingInfo.qrCode, 'PIX444', 'Painel recupera o Pix pendente depois de recarregar');
+  console.log('  ✅ 8. Prazo do Pix em Brasília e Pix pendente recuperável no painel.');
+
+  // 9. Benefício não gravado: nada é marcado e o reenvio libera (Q246)
+  mock(() => json({ id: 444, status: 'approved', transaction_amount: 7, currency_id: 'BRL', external_reference: `plan|${G}|basic` }));
+  const realGrant = plans.grantPlan;
+  plans.grantPlan = () => {
+    throw new Error('EIO disco cheio');
+  };
+  const failed = await payments.handleWebhook({ body: { type: 'payment', data: { id: '444' } } });
+  plans.grantPlan = realGrant;
+  assert.equal(failed.ok, false);
+  assert.equal(failed.reason, 'save', 'Falha ao gravar vira erro (a rota responde 500 e o Mercado Pago reenvia)');
+  assert.equal(plans.getPlan(G).active, false, 'Nada foi liberado');
+  const retried = await payments.handleWebhook({ body: { type: 'payment', data: { id: '444' } } });
+  assert.equal(retried.granted, true, 'Reenvio libera (não cai como duplicado)');
+  assert.equal(payments.guildPlanInfo(G).pending, null, 'Pix pago some da lista de pendentes');
+  const serverSrc = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+  assert.ok(/reason === 'save'\) return res\.status\(500\)/.test(serverSrc), 'Rotas do webhook respondem 500 quando o benefício não foi gravado');
+  console.log('  ✅ 9. Falha ao gravar não marca o pagamento e o reenvio libera.');
+
+  // 10. Estorno/contestação retira o tempo daquele pagamento (Q245)
+  const beforeRefund = plans.getPlan(G).paidUntil;
+  mock(() => json({ id: 444, status: 'refunded', transaction_amount: 7, currency_id: 'BRL', external_reference: `plan|${G}|basic` }));
+  const refunded = await payments.handleWebhook({ body: { type: 'payment', data: { id: '444' } } });
+  assert.equal(refunded.refund, true);
+  assert.equal(refunded.revoked, true);
+  assert.ok(plans.getPlan(G).paidUntil <= beforeRefund - 29 * DAY, 'Os 30 dias do pagamento estornado saem');
+  assert.equal(plans.getPlan(G).active, false, 'Sem tempo pago sobrando, o plano para');
+  assert.equal(plans.getPlan(G).status, 'refunded');
+  const refundAgain = await payments.handleWebhook({ body: { type: 'payment', data: { id: '444' } } });
+  assert.equal(refundAgain.duplicate, true, 'Estorno repetido não tira duas vezes');
+  // Estorno que chega antes da aprovação: a aprovação atrasada não libera.
+  mock(() => json({ id: 445, status: 'charged_back', transaction_amount: 7, currency_id: 'BRL', external_reference: `plan|${G}|basic` }));
+  await payments.handleWebhook({ body: { type: 'payment', data: { id: '445' } } });
+  mock(() => json({ id: 445, status: 'approved', transaction_amount: 7, currency_id: 'BRL', external_reference: `plan|${G}|basic` }));
+  const lateApproval = await payments.handleWebhook({ body: { type: 'payment', data: { id: '445' } } });
+  assert.equal(lateApproval.duplicate, true, 'Pagamento contestado não libera depois');
+  console.log('  ✅ 10. Estorno e contestação retiram o benefício, uma vez só.');
+
+  // 11. Pix do Básico pago com Premium ativo não rebaixa o servidor (Q253)
+  plans.revokePlan(G, 'canceled');
+  plans.grantPlan(G, 'premium', { months: 1 });
+  const premiumUntil = plans.getPlan(G).paidUntil;
+  mock(() => json({ id: 446, status: 'approved', transaction_amount: 7, currency_id: 'BRL', external_reference: `plan|${G}|basic` }));
+  const lower = await payments.handleWebhook({ body: { type: 'payment', data: { id: '446' } } });
+  assert.equal(lower.granted, true);
+  assert.equal(lower.plan, 'premium', 'O aviso diz o plano que ficou');
+  assert.equal(plans.getPlan(G).plan, 'premium', 'Premium continua');
+  assert.equal(plans.getPlan(G).paidUntil, premiumUntil + 11 * DAY, 'R$ 7 viram ~11 dias de Premium (proporcional)');
+  const routesSrc = fs.readFileSync(path.join(__dirname, '..', 'src', 'routes', 'dashboardRoutes.js'), 'utf8');
+  const checkoutRoute = routesSrc.slice(routesSrc.indexOf("'/api/dashboard/guilds/:guildId/plan/checkout'"));
+  assert.ok(checkoutRoute.slice(0, checkoutRoute.indexOf('router.', 10)).includes("'plan_downgrade'"), 'Checkout recusa plano menor com um maior ativo');
+  console.log('  ✅ 11. Plano menor com o maior ativo não perde os dias pagos.');
+
+  // 12. Doação do /py-home chega pela rota dos planos (Q243)
+  const donations = require('../src/services/donations');
+  const U = '700000000000000099';
+  const beforeDon = donations.summary().count;
+  mock(() => json({ id: 447, status: 'approved', transaction_amount: 5, currency_id: 'BRL', external_reference: `donation|${U}|500|0` }));
+  const don = await payments.handleWebhook({ body: { type: 'payment', data: { id: '447' } } });
+  assert.equal(don.ok, true);
+  assert.equal(don.kind, 'donation');
+  assert.equal(donations.summary().count, beforeDon + 1, 'Doação entra no total');
+  const donAgain = await payments.handleWebhook({ body: { type: 'payment', data: { id: '447' } } });
+  assert.equal(donAgain.duplicate, true, 'Doação não entra duas vezes');
+  console.log('  ✅ 12. Doação do /py-home registrada pela rota dos planos.');
+
+  // 13. Lembrete de quem renova no cartão não pede para pagar de novo (Q255)
+  const plansModule = require('../src/modules/plans');
+  const CARD_G = '1557399041443111025';
+  mock(() => json({ id: 'pre-card', init_point: 'https://mp/x', status: 'pending' }));
+  await payments.createCardSubscription({ guildId: CARD_G, plan: 'basic' });
+  assert.equal(plansModule.reminderKindFor(CARD_G, {}), 'card_reminder');
+  assert.equal(plansModule.reminderKindFor('1453890868980482091', {}), 'reminder');
+  const cardMsg = plansModule.payloadFor({ kind: 'card_reminder', guildId: CARD_G, plan: 'basic', paidUntil: Date.UTC(2026, 11, 10, 15) }, 'pt');
+  assert.ok(cardMsg.lines[0].includes('10/12/2026'), 'Mostra a data da cobrança automática');
+  assert.ok(!/Renove no painel/.test(cardMsg.lines[0]), 'Não pede para renovar');
+  assert.ok(plansModule.payloadFor({ kind: 'card_reminder', guildId: CARD_G, plan: 'basic', paidUntil: Date.UTC(2026, 11, 10, 15) }, 'en').lines[0].includes('automatic charge'));
+  console.log('  ✅ 13. Lembrete do cartão com a data da cobrança, sem pedir renovação.');
+
   console.log('💳 Assinaturas: tudo certo.');
 })().catch((err) => {
   console.error('❌ Falha nos testes de assinatura:', err);

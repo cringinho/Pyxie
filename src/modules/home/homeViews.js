@@ -494,7 +494,15 @@ async function buildDonateView({ owner, source, donation = null, notice = null }
       new StringSelectMenuBuilder()
         .setCustomId(id('dsel', owner.id))
         .setPlaceholder(t('home.donate.placeholder', { lang }))
-        .addOptions(donations.PRESETS.map((cents) => ({ label: `R$ ${cents / 100}`, value: String(cents) }))),
+        // Cada valor tem a versão anônima: o nome não entra no ranking público (Q244).
+        .addOptions(donations.PRESETS.flatMap((cents) => [
+          { label: t('home.donate.option', { lang }, { amount: cents / 100 }), value: String(cents) },
+          {
+            label: t('home.donate.optionAnon', { lang }, { amount: cents / 100 }),
+            description: t('home.donate.optionAnonDesc', { lang }),
+            value: `${cents}:anon`,
+          },
+        ])),
     ));
   }
   rows.push(new ActionRowBuilder().addComponents(

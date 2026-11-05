@@ -77,6 +77,50 @@ function mock(handler) {
   assert.equal(cheap.reason, 'amount');
   console.log('  ✅ 3. Ranking, anonimato e recusa de valor menor.');
 
+  // 5. Nome guardado no Pix e ID do Discord fora do ranking público (Q244)
+  mock(() => json({ id: 910, status: 'pending', transaction_amount: 50, point_of_interaction: { transaction_data: { qr_code: 'PIX910' } } }));
+  const U3 = '700000000000000013';
+  const named = await donations.createPixDonation({ userId: U3, cents: 5000, name: 'Carol' });
+  assert.equal(named.ok, true);
+  const createBody = JSON.parse(requests[0].opts.body);
+  assert.ok(/-03:00$/.test(createBody.date_of_expiration), 'Prazo no fuso de Brasília');
+  mock(() => json({ id: 910, status: 'approved', transaction_amount: 50, currency_id: 'BRL', external_reference: `donation|${U3}|5000|0` }));
+  // 6. Conferência periódica registra a doação cujo aviso se perdeu (Q243)
+  const rec = await donations.reconcilePending();
+  assert.equal(rec.registered, 1, 'Doação pendente aprovada é registrada pela conferência');
+  assert.equal((await donations.reconcilePending()).registered, 0, 'Sem registrar duas vezes');
+  const top = donations.ranking({ period: 'month' });
+  assert.equal(top[0].label, 'Carol', 'Ranking mostra o nome guardado no Pix, não o ID');
+  for (const row of [...top, ...donations.ranking({ period: 'all' })]) {
+    assert.equal('userId' in row, false, 'Ranking público não expõe o ID do Discord');
+    assert.ok(!JSON.stringify(row).includes('70000000000000001'), 'Nenhum ID vaza na linha');
+  }
+  // Doação anônima pelo menu
+  mock(() => json({ id: 911, status: 'pending', transaction_amount: 5, point_of_interaction: { transaction_data: { qr_code: 'PIX911' } } }));
+  await donations.createPixDonation({ userId: U3, cents: 500, anonymous: true, name: 'Carol' });
+  assert.equal(JSON.parse(requests[0].opts.body).external_reference, `donation|${U3}|500|1`);
+  console.log('  ✅ 4. Nome guardado, ID fora do ranking e conferência das pendentes.');
+
+  // 7. Estorno tira a doação do total e do ranking (Q245)
+  const totalBefore = donations.summary().total;
+  mock(() => json({ id: 910, status: 'refunded', transaction_amount: 50, currency_id: 'BRL', external_reference: `donation|${U3}|5000|0` }));
+  const refund = await donations.handleWebhook({ body: { type: 'payment', data: { id: '910' } } });
+  assert.equal(refund.refund, true);
+  assert.equal(donations.summary().total, totalBefore - 50, 'Doação estornada sai do total');
+  assert.ok(!donations.ranking({ period: 'month' }).some((row) => row.label === 'Carol'), 'E sai do ranking');
+  console.log('  ✅ 5. Doação estornada sai do total e do ranking.');
+
+  // 8. Botão de doação anônima e textos de erro com próximo passo (Q244/Q257)
+  const { t } = require('../src/utils/i18n');
+  for (const lang of ['pt', 'en']) {
+    for (const code of ['unavailable', 'invalid_amount', 'provider', 'qr_missing', 'invalid_user', 'generic']) {
+      assert.ok(!t(`home.donate.errors.${code}`, { lang }).startsWith('home.'), `Erro ${code} tem texto em ${lang}`);
+    }
+    assert.ok(!t('home.donate.optionAnon', { lang }, { amount: 5 }).startsWith('home.'));
+    assert.ok(!t('home.donors.supporter', { lang }).startsWith('home.'));
+  }
+  console.log('  ✅ 6. Doação anônima no menu e erros com texto em PT e EN.');
+
   console.log('💜 Doações: tudo certo.');
 })().catch((err) => {
   console.error('❌ Falha nos testes de doação:', err);

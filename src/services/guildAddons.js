@@ -149,6 +149,33 @@ function revoke(guildId, addonId, reason = 'canceled', now = Date.now()) {
   });
 }
 
+/**
+ * Estorno/contestação (auditoria Q245): tira o tempo que aquele pagamento comprou.
+ * Sem tempo pago sobrando, o extra é cancelado. Vitalício nunca é tocado.
+ */
+function refund(guildId, addonId, { months = 1, years = 0, note = 'refund', now = Date.now() } = {}) {
+  const id = String(guildId || '').trim();
+  const addon = planAddons.getAddon(addonId);
+  if (!GUILD_RE.test(id) || !addon) return { ok: false, reason: 'invalid' };
+  return withFileLock(fileFor(), () => {
+    const guilds = { ...load() };
+    const current = { ...(guilds[id] || {}) };
+    if (!current[addon.id]) return { ok: false, reason: 'not_found' };
+    const before = normalizeRecord(current[addon.id]);
+    if (before.lifetime) return { ok: false, reason: 'lifetime' };
+    const span = years > 0 ? Math.round(years * 365) * DAY : Math.max(1, Math.round(Number(months) || 1)) * 30 * DAY;
+    const until = Math.max(0, (before.until || 0) - span);
+    current[addon.id] = normalizeRecord(
+      until > now
+        ? { ...current[addon.id], until, note }
+        : { ...current[addon.id], until, status: 'canceled', note, revokedAt: now }
+    );
+    guilds[id] = current;
+    save(guilds);
+    return { ok: true, record: { guildId: id, addonId: addon.id, ...current[addon.id] } };
+  });
+}
+
 /** Todos os extras de um servidor, com estado calculado. */
 function listForGuild(guildId, now = Date.now()) {
   return planAddons.listAddons().map((addon) => {
@@ -211,6 +238,7 @@ module.exports = {
   isActive,
   grant,
   revoke,
+  refund,
   listForGuild,
   listAll,
   daysLeft,

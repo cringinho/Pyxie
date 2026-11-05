@@ -777,6 +777,8 @@ const TRANSLATIONS = {
         "activatedBody": "O plano **{plan}** do servidor está ativo.\n\n> As vantagens já valem para todo mundo.",
         "reminderTitle": "⏳ O plano vence em breve",
         "reminderBody": "O plano **{plan}** está perto de renovar.\n\n> Renove no painel para não pausar as vantagens: {link}",
+        "cardReminderTitle": "💳 Renovação automática chegando",
+        "cardReminderBody": "O plano **{plan}** renova sozinho no cartão: a cobrança automática acontece em `{date}`.\n\n> Não precisa pagar de novo. Se o cartão mudou ou você quer parar a renovação, veja no [painel]({link}).",
         "expiredTitle": "⚠️ Plano pausado",
         "expiredBody": "O plano **{plan}** venceu e as vantagens foram pausadas.\n\n> Pagando de novo, tudo volta na hora: {link}",
         "addonReminderTitle": "⏳ Seu extra vence em breve",
@@ -2468,11 +2470,17 @@ const TRANSLATIONS = {
         "intro": "Doação é apoio voluntário, sem contrapartida: nada aqui vira vantagem no jogo.",
         "benefits": "Escolha um valor abaixo. O Pix vale 30 minutos e o apoio entra no registro público de transparência.",
         "placeholder": "Escolha o valor da doação",
+        "option": "R$ {amount}",
+        "optionAnon": "R$ {amount} (anônimo)",
+        "optionAnonDesc": "Seu nome não aparece no ranking.",
         "pix": "Pix de **R$ {amount}** gerado.\n\n> Escaneie o QR ou copie o código abaixo.\n\n`{code}`\n\n-# Válido até {date}",
         "errors": {
           "unavailable": "Doações estão desligadas no momento.",
           "invalid_amount": "Esse valor não vale. Escolha entre R$ 2 e R$ 500.",
-          "provider": "O Pix não está disponível agora. Tenta de novo em alguns minutos."
+          "provider": "O Pix não está disponível agora. Tenta de novo em alguns minutos.",
+          "qr_missing": "O Mercado Pago não mandou o código do Pix. Escolha o valor de novo em alguns minutos; nada foi cobrado.",
+          "invalid_user": "Não consegui reconhecer sua conta para a doação. Abra o /py-home de novo e tente outra vez.",
+          "generic": "Algo deu errado ao gerar o Pix e nada foi cobrado. Tente de novo em alguns minutos."
         }
       },
       "donors": {
@@ -3884,6 +3892,8 @@ const TRANSLATIONS = {
         "activatedBody": "The server's **{plan}** plan is active.\n\n> The perks are already live for everyone.",
         "reminderTitle": "⏳ Your plan renews soon",
         "reminderBody": "The **{plan}** plan is about to renew.\n\n> Renew in the dashboard to keep the perks: {link}",
+        "cardReminderTitle": "💳 Automatic renewal coming up",
+        "cardReminderBody": "The **{plan}** plan renews by itself on your card: the automatic charge happens on `{date}`.\n\n> No need to pay again. If your card changed or you want to stop the renewal, check the [dashboard]({link}).",
         "expiredTitle": "⚠️ Plan paused",
         "expiredBody": "The **{plan}** plan expired and its perks were paused.\n\n> Pay again and everything comes back right away: {link}",
         "addonReminderTitle": "⏳ Your extra renews soon",
@@ -5575,11 +5585,17 @@ const TRANSLATIONS = {
         "intro": "Donations are voluntary support with no strings attached: nothing here becomes an in-game advantage.",
         "benefits": "Pick an amount below. The Pix code is valid for 30 minutes and the support shows up in the public transparency log.",
         "placeholder": "Pick the donation amount",
+        "option": "R$ {amount}",
+        "optionAnon": "R$ {amount} (anonymous)",
+        "optionAnonDesc": "Your name won't show on the leaderboard.",
         "pix": "**R$ {amount}** Pix generated.\n\n> Scan the QR or copy the code below.\n\n`{code}`\n\n-# Valid until {date}",
         "errors": {
           "unavailable": "Donations are turned off right now.",
           "invalid_amount": "That amount is not valid. Pick something between R$ 2 and R$ 500.",
-          "provider": "Pix is unavailable right now. Try again in a few minutes."
+          "provider": "Pix is unavailable right now. Try again in a few minutes.",
+          "qr_missing": "Mercado Pago didn't send the Pix code. Pick the amount again in a few minutes; nothing was charged.",
+          "invalid_user": "I couldn't recognize your account for the donation. Open /py-home again and retry.",
+          "generic": "Something went wrong creating the Pix and nothing was charged. Try again in a few minutes."
         }
       },
       "donors": {

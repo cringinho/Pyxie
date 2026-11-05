@@ -49,6 +49,11 @@ function payloadFor(notice, lang) {
   if (notice.kind === 'expired') {
     return { color: COLORS.expired, title: t('plans.dm.expiredTitle', lang), lines: [t('plans.dm.expiredBody', lang, { plan, link })] };
   }
+  if (notice.kind === 'card_reminder') {
+    // Renovação no cartão: avisa a data da cobrança automática, sem pedir para pagar de novo (Q255).
+    const date = new Date(notice.paidUntil || Date.now()).toLocaleDateString(lang === 'en' ? 'en-US' : 'pt-BR', { timeZone: 'America/Sao_Paulo' });
+    return { color: COLORS.reminder, title: t('plans.dm.cardReminderTitle', lang), lines: [t('plans.dm.cardReminderBody', lang, { plan, date, link })] };
+  }
   return { color: COLORS.reminder, title: t('plans.dm.reminderTitle', lang), lines: [t('plans.dm.reminderBody', lang, { plan, link })] };
 }
 
@@ -71,9 +76,18 @@ function addonNoticesDue({ now = Date.now(), list = [] } = {}) {
   return out;
 }
 
+/** Quem renova sozinho no cartão recebe outro texto de lembrete (Q255). Função pura: testável. */
+function reminderKindFor(guildId, info = {}) {
+  if (info.lifetime) return null;
+  return payments.activeCardSubscription?.(guildId) ? 'card_reminder' : 'reminder';
+}
+
 async function tick(client, now = Date.now()) {
   const rec = await payments.reconcilePending({ now }).catch(() => ({ checked: 0, activated: 0 }));
   if (rec.activated) console.log(`[plans] ${rec.activated} assinatura(s) ativadas por reconciliação.`);
+  // Doações do /py-home: o aviso do Mercado Pago pode se perder; confere as pendentes (Q243).
+  const don = await require('../../services/donations').reconcilePending({ now }).catch(() => ({ checked: 0, registered: 0 }));
+  if (don.registered) console.log(`[plans] ${don.registered} doação(ões) registradas por reconciliação.`);
 
   // Programa Fundador: inatividade e vencimento das 20 vagas.
   const founder = require('../../services/founderProgram').sweep({ now });
@@ -111,7 +125,14 @@ async function tick(client, now = Date.now()) {
       const days = Math.ceil((info.paidUntil - now) / DAY);
       const step = days <= 0 ? 'reminder0' : days <= 3 ? 'reminder3' : days <= 7 ? 'reminder7' : null;
       if (step && !notices.hasMark(record.guildId, step)) {
-        notices.push({ guildId: record.guildId, kind: 'reminder', plan: record.plan });
+        const card = reminderKindFor(record.guildId, info);
+        // Cartão renovando: um aviso só (D-3) com a data da cobrança; o pedido de renovação
+        // fica para quem paga por Pix ou quando a cobrança do cartão falhar e o plano vencer.
+        if (card === 'card_reminder') {
+          if (step === 'reminder3') notices.push({ guildId: record.guildId, kind: 'card_reminder', plan: record.plan, paidUntil: info.paidUntil });
+        } else {
+          notices.push({ guildId: record.guildId, kind: 'reminder', plan: record.plan });
+        }
         notices.mark(record.guildId, step, now);
       }
     } else if (info.expired && !notices.hasMark(record.guildId, 'expired')) {
@@ -149,6 +170,8 @@ module.exports = {
   commands: [pyFundadorCmd],
   notifyActivated,
   addonNoticesDue,
+  reminderKindFor,
+  payloadFor,
   tick,
   async onLoad(ctx) {
     if (!ctx.isBotProcess) return;

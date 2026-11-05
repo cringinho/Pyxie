@@ -28,7 +28,8 @@ export default function Museum({ t, lang }) {
   const [selectedUser, setSelectedUser] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'forum'
-  const [adminToken, setAdminToken] = useState('');
+  // Dono logado no painel com Discord: a chave mestra nunca fica no navegador (Q267).
+  const [isOwner, setIsOwner] = useState(false);
   const [selectedArt, setSelectedArt] = useState(null);
   const [lightboxZoom, setLightboxZoom] = useState(1);
   const [editingArt, setEditingArt] = useState(null);
@@ -37,8 +38,12 @@ export default function Museum({ t, lang }) {
   const [copiedLink, setCopiedLink] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('pyxie_admin_token') || '';
-    setAdminToken(token);
+    try {
+      localStorage.removeItem('pyxie_admin_token');
+    } catch (_) {}
+    fetch('/api/admin/modules/museum/config', { credentials: 'same-origin' })
+      .then((res) => setIsOwner(res.ok))
+      .catch(() => setIsOwner(false));
   }, []);
 
   const fetchArts = (p = 1, user = selectedUser) => {
@@ -119,7 +124,8 @@ export default function Museum({ t, lang }) {
     try {
       const res = await fetch(`/api/museum/art/${id}`, {
         method: 'DELETE',
-        headers: { 'x-admin-token': adminToken },
+        credentials: 'same-origin',
+        headers: { 'X-Pyxie-Panel': '1' },
       });
       const data = await res.json();
       if (data.success) {
@@ -138,9 +144,10 @@ export default function Museum({ t, lang }) {
     try {
       const res = await fetch(`/api/museum/art/${editingArt.id}`, {
         method: 'PATCH',
+        credentials: 'same-origin',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-token': adminToken,
+          'X-Pyxie-Panel': '1',
         },
         body: JSON.stringify({ description: newDesc }),
       });
@@ -348,7 +355,7 @@ export default function Museum({ t, lang }) {
                 </div>
 
                 {/* Admin controls */}
-                {adminToken && (
+                {isOwner && (
                   <div className="p-3 border-t border-purple-500/15 flex items-center justify-end gap-2 bg-black/30">
                     <button
                       onClick={(e) => {
