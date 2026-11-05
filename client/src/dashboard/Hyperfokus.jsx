@@ -430,7 +430,7 @@ export default function Hyperfokus({ t, lang, guildId }) {
                 </p>
                 <div className="mt-4 max-h-[160px] space-y-2 overflow-y-auto">
                   {(!analytics?.referrers || Object.keys(analytics.referrers).length === 0) ? (
-                    <p className="py-6 text-center text-xs text-white/40">
+                    <p className="py-6 text-center text-xs text-white/60">
                       {lang === 'pt' ? 'Nenhuma visita registrada ainda.' : 'No traffic recorded yet.'}
                     </p>
                   ) : (
@@ -450,7 +450,7 @@ export default function Hyperfokus({ t, lang, guildId }) {
             </div>
 
             {/* Aviso de conformidade LGPD */}
-            <p className="mt-6 text-center text-xs text-white/40">
+            <p className="mt-6 text-center text-xs text-white/60">
               {lang === 'pt'
                 ? '🔒 Coleta anônima e conforme a LGPD: sem cookies de rastreio, sem gravação de IPs crus e agregação em PostgreSQL.'
                 : '🔒 Privacy and LGPD compliant: no tracking cookies, zero raw IPs stored, salted daily aggregation in PostgreSQL.'}
@@ -479,7 +479,7 @@ export default function Hyperfokus({ t, lang, guildId }) {
 
           <div className="mt-4 space-y-3">
             {pins.length === 0 ? (
-              <div className="rounded-xl border border-white/5 bg-white/[0.02] py-12 text-center text-sm text-white/40">
+              <div className="rounded-xl border border-white/5 bg-white/[0.02] py-12 text-center text-sm text-white/60">
                 {lang === 'pt'
                   ? 'Nenhum pin na fila. Novos artigos publicados entram automaticamente.'
                   : 'No pins in queue. Newly published articles are automatically queued.'}
@@ -585,7 +585,7 @@ export default function Hyperfokus({ t, lang, guildId }) {
           >
             <div className="mt-3 space-y-3">
               {currentList.length === 0 ? (
-                <div className="rounded-xl border border-white/5 bg-white/[0.02] py-12 text-center text-sm text-white/40">
+                <div className="rounded-xl border border-white/5 bg-white/[0.02] py-12 text-center text-sm text-white/60">
                   {lang === 'pt'
                     ? 'Nenhum artigo encontrado nesta visualização.'
                     : 'No articles found in this view.'}
@@ -609,7 +609,7 @@ export default function Hyperfokus({ t, lang, guildId }) {
                         >
                           {art.status}
                         </Badge>
-                        <span className="font-mono text-xs text-white/40">/{art.slug}</span>
+                        <span className="font-mono text-xs text-white/60">/{art.slug}</span>
                         {(art.categoryTags || []).map((t) => (
                           <Badge key={t} tone="muted">
                             #{t}
@@ -725,7 +725,7 @@ export default function Hyperfokus({ t, lang, guildId }) {
                     <span>{lang === 'pt' ? 'Título de SEO (Google / Aba)' : 'SEO Title'}</span>
                     <span
                       className={
-                        editForm.seoTitle.length > 60 ? 'text-amber-400 font-bold' : 'text-white/40'
+                        editForm.seoTitle.length > 60 ? 'text-amber-400 font-bold' : 'text-white/60'
                       }
                     >
                       {editForm.seoTitle.length}/60
@@ -745,7 +745,7 @@ export default function Hyperfokus({ t, lang, guildId }) {
                   <label className="block text-xs font-semibold text-white/70">
                     {lang === 'pt' ? 'Slug URL Amigável' : 'URL Slug'}
                   </label>
-                  <div className="mt-1 flex items-center gap-1 font-mono text-xs text-white/40">
+                  <div className="mt-1 flex items-center gap-1 font-mono text-xs text-white/60">
                     <span>/hyperfokus/</span>
                     <input
                       type="text"
@@ -764,7 +764,7 @@ export default function Hyperfokus({ t, lang, guildId }) {
                       className={
                         editForm.metaDescription.length > 160
                           ? 'text-amber-400 font-bold'
-                          : 'text-white/40'
+                          : 'text-white/60'
                       }
                     >
                       {editForm.metaDescription.length}/160

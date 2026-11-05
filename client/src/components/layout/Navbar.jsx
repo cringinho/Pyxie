@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Sparkles, BookOpen, Gift, ShieldCheck, Menu, X, Globe, Terminal, User, ChevronDown, Feather, Palette, Heart } from 'lucide-react';
+import { localizedHref } from '../../utils/langPath';
 
 const linkBase =
   'whitespace-nowrap px-2.5 py-1.5 rounded-xl text-xs xl:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1.5';
@@ -9,10 +10,10 @@ const drawerLink =
 // Itens do grupo "Comunidade": o blog é um item comum aqui (o destaque da home é o "Adicionar Pyxie").
 function communityItems(lang, t) {
   return [
-    { href: `/hyperfokus?lang=${lang}`, label: t('nav.blog'), desc: t('nav.blogDesc'), Icon: Feather, color: 'text-pink-400' },
-    { href: `/museu?lang=${lang}`, label: t('nav.museum'), desc: t('nav.museumDesc'), Icon: Palette, color: 'text-fuchsia-400' },
-    { href: `/parcerias?lang=${lang}`, label: t('nav.partnerships'), desc: t('nav.partnershipsDesc'), Icon: ShieldCheck, color: 'text-emerald-400' },
-    { href: `/cringelandia?lang=${lang}`, label: t('nav.cringelandia'), desc: t('nav.cringelandiaDesc'), Icon: Heart, color: 'text-rose-400' },
+    { href: localizedHref('/hyperfokus', lang), label: t('nav.blog'), desc: t('nav.blogDesc'), Icon: Feather, color: 'text-pink-400' },
+    { href: localizedHref('/museu', lang), label: t('nav.museum'), desc: t('nav.museumDesc'), Icon: Palette, color: 'text-fuchsia-400' },
+    { href: localizedHref('/parcerias', lang), label: t('nav.partnerships'), desc: t('nav.partnershipsDesc'), Icon: ShieldCheck, color: 'text-emerald-400' },
+    { href: localizedHref('/cringelandia', lang), label: t('nav.cringelandia'), desc: t('nav.cringelandiaDesc'), Icon: Heart, color: 'text-rose-400' },
   ];
 }
 
@@ -72,16 +73,12 @@ function CommunityMenu({ lang, t }) {
   );
 }
 
-export default function Navbar({ lang, setLang, t }) {
+export default function Navbar({ lang, setLang, t, online = null }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleLang = () => {
-    const next = lang === 'pt' ? 'en' : 'pt';
-    setLang(next);
-    localStorage.setItem('pyxie_lang', next);
-    const url = new URL(window.location.href);
-    url.searchParams.set('lang', next);
-    window.history.replaceState({}, '', url);
+    // setLang leva para a URL do outro idioma (/tarot ⇄ /en/tarot).
+    setLang(lang === 'pt' ? 'en' : 'pt');
   };
   const close = () => setMobileMenuOpen(false);
 
@@ -89,7 +86,7 @@ export default function Navbar({ lang, setLang, t }) {
     <header className="sticky top-0 z-50 w-full bg-[#080410]/85 backdrop-blur-2xl border-b border-purple-500/15 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand */}
-        <a href="/" className="flex items-center gap-2.5 group shrink-0">
+        <a href={localizedHref('/', lang)} className="flex items-center gap-2.5 group shrink-0">
           <div className="relative">
             <img
               src="/assets/pyxie/sticker/sticker_smile.png"
@@ -98,33 +95,39 @@ export default function Navbar({ lang, setLang, t }) {
               height="36"
               className="w-9 h-9 object-contain transition-transform group-hover:scale-105"
             />
-            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#080410] animate-pulse" />
+            {/* Bolinha ligada ao status real (/api/widget/summary): verde só com o bot no ar. */}
+            <span
+              className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#080410] ${
+                online === true ? 'bg-emerald-400 animate-pulse' : online === false ? 'bg-rose-500' : 'bg-slate-500'
+              }`}
+              aria-hidden="true"
+            />
           </div>
           <div className="flex flex-col">
             <span className="font-title font-black text-lg tracking-tight text-white group-hover:text-pink-400 transition-colors leading-none">
               Pyxie
             </span>
             <span className="text-[9px] font-mono font-medium text-purple-300/70 tracking-wider uppercase mt-1">
-              v14 • Online
+              {online === true ? t('nav.statusOnline') : online === false ? t('nav.statusOffline') : t('nav.statusChecking')}
             </span>
           </div>
         </a>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1 xl:gap-2" aria-label={lang === 'pt' ? 'Menu principal' : 'Main menu'}>
-          <a href={`/?lang=${lang}#pilares`} className={linkBase}>
+          <a href={localizedHref('/', lang, '#pilares')} className={linkBase}>
             {t('nav.features')}
           </a>
-          <a href={`/?lang=${lang}#comandos`} className={linkBase}>
+          <a href={localizedHref('/', lang, '#comandos')} className={linkBase}>
             <Terminal className="w-3.5 h-3.5 text-pink-400 shrink-0" />
             <span>{t('nav.commands')}</span>
           </a>
           <CommunityMenu lang={lang} t={t} />
-          <a href={`/wiki?lang=${lang}`} className={linkBase}>
+          <a href={localizedHref('/wiki', lang)} className={linkBase}>
             <BookOpen className="w-3.5 h-3.5 text-purple-400 shrink-0" />
             <span>{t('nav.wiki')}</span>
           </a>
-          <a href={`/bonus?lang=${lang}`} className={`${linkBase} hidden lg:flex`}>
+          <a href={localizedHref('/bonus', lang)} className={`${linkBase} hidden lg:flex`}>
             <Gift className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <span>{t('nav.bonus')}</span>
           </a>
@@ -136,7 +139,7 @@ export default function Navbar({ lang, setLang, t }) {
         {/* Right Actions */}
         <div className="flex items-center gap-2.5 shrink-0">
           <a
-            href={`/meu-perfil?lang=${lang}`}
+            href={localizedHref('/meu-perfil', lang)}
             className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-purple-500/20 hover:border-pink-500/40 transition-all whitespace-nowrap"
           >
             <User className="w-3.5 h-3.5 text-pink-400" />
@@ -177,18 +180,18 @@ export default function Navbar({ lang, setLang, t }) {
       {/* Mobile drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden max-h-[calc(100vh-4rem)] overflow-y-auto bg-[#080410]/95 backdrop-blur-2xl border-b border-purple-500/20 px-4 pt-3 pb-6 flex flex-col gap-1 animate-fadeIn">
-          <a href={`/?lang=${lang}#pilares`} onClick={close} className={drawerLink}>
+          <a href={localizedHref('/', lang, '#pilares')} onClick={close} className={drawerLink}>
             {t('nav.features')}
           </a>
-          <a href={`/?lang=${lang}#comandos`} onClick={close} className={drawerLink}>
+          <a href={localizedHref('/', lang, '#comandos')} onClick={close} className={drawerLink}>
             <span>{t('nav.commands')}</span>
             <Terminal className="w-4 h-4 text-pink-400" />
           </a>
-          <a href={`/wiki?lang=${lang}`} onClick={close} className={drawerLink}>
+          <a href={localizedHref('/wiki', lang)} onClick={close} className={drawerLink}>
             <span>{t('nav.wiki')}</span>
             <BookOpen className="w-4 h-4 text-purple-400" />
           </a>
-          <a href={`/bonus?lang=${lang}`} onClick={close} className={drawerLink}>
+          <a href={localizedHref('/bonus', lang)} onClick={close} className={drawerLink}>
             <span>{t('nav.bonus')}</span>
             <Gift className="w-4 h-4 text-amber-400" />
           </a>
@@ -205,7 +208,7 @@ export default function Navbar({ lang, setLang, t }) {
             <a href="/discord" target="_blank" rel="noopener noreferrer" className={drawerLink}>
               {t('nav.support')}
             </a>
-            <a href={`/meu-perfil?lang=${lang}`} onClick={close} className={drawerLink}>
+            <a href={localizedHref('/meu-perfil', lang)} onClick={close} className={drawerLink}>
               <span>{t('nav.account')}</span>
               <User className="w-4 h-4 text-pink-400" />
             </a>

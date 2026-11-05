@@ -61,7 +61,16 @@ biscoitoCommand.executePrefix({
   },
 });
 assert.ok(prefixReplyResult && prefixReplyResult.embeds.length > 0, 'Comando biscoito em cooldown deve responder embed.');
-assert.ok(prefixReplyResult.components.length > 0, 'Comando biscoito em cooldown deve oferecer botão de bônus.');
+// Este usuário já pegou o biscoito extra do portal hoje: teto de 1 por 24h, sem link novo.
+assert.equal(prefixReplyResult.components.length, 0, 'Biscoito extra já usado hoje: sem botão de bônus novo.');
+
+// Quem ainda não usou o extra hoje recebe o botão do portal ao estar em cooldown.
+const freshCookieUser = `test_cookie_fresh_${Date.now()}`;
+setUserBalance(freshCookieUser, 0);
+claimCookie(freshCookieUser);
+let freshReply = null;
+biscoitoCommand.executePrefix({ message: { author: { id: freshCookieUser }, reply: (payload) => { freshReply = payload; } } });
+assert.ok(freshReply.components.length > 0, 'Comando biscoito em cooldown deve oferecer botão de bônus.');
 
 let slashReplyResult = null;
 biscoitoCommand.executeSlash({
@@ -746,6 +755,7 @@ assert.ok(sessionEn.url.includes('lang=en'), 'URL do bônus EN deve conter lang=
   process.exit(1);
 });
 } catch (e) {
+  console.error(e);
   fs.writeFileSync(economyFile, originalEconomy, 'utf8');
   process.exit(1);
 }

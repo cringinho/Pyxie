@@ -20,6 +20,9 @@ console.log('🎃 Iniciando suíte de testes de Engenharia: Módulo Sazonal Desa
 // Garante que o estado inicial esteja desligado (active: false) e limpo
 seasonalManager.stop();
 seasonalManager.saveConfig(seasonalManager.DEFAULT_CONFIG, true);
+// A data limite padrão é fixa (fim do Halloween de 2026): passada ela, o start() encerra o
+// evento na hora. O teste usa uma data no futuro para não depender do dia em que roda.
+seasonalManager.saveConfig({ dates: { endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() } });
 seasonalManager.saveData({ balances: {}, currentWeekArt: [], history: { lastDropMessageId: null, lastWinners: null } });
 assert.equal(seasonalManager.isSeasonalActive(), false, 'O evento deve nascer DESLIGADO por padrão (active: false).');
 console.log('✅ Estado padrão desligado (active: false) validado com sucesso.');

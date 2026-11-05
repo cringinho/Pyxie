@@ -2,6 +2,17 @@ import React from 'react';
 import { Sparkles, MessageCircle, Coins, Briefcase, Activity } from 'lucide-react';
 import TerminalSimulator from './TerminalSimulator';
 
+// 93784000 ms -> "1d 2h" / "26m": curto e igual nos dois idiomas.
+function formatUptime(ms) {
+  const totalMin = Math.max(1, Math.floor(ms / 60000));
+  const d = Math.floor(totalMin / 1440);
+  const h = Math.floor((totalMin % 1440) / 60);
+  const m = totalMin % 60;
+  if (d > 0) return `${d}d ${h}h`;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+
 export default function HeroSection({ t, stats }) {
   return (
     <section className="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden">
@@ -42,10 +53,13 @@ export default function HeroSection({ t, stats }) {
                 <Briefcase className="w-4 h-4 text-purple-400" />
                 <span>{t('hero.badgeCareers')}</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-emerald-500/25 text-xs font-semibold text-emerald-300">
-                <Activity className="w-4 h-4 text-emerald-400" />
-                <span>{stats?.uptime || '99.9% Uptime'}</span>
-              </div>
+              {/* Só aparece com dado real: bot no ar e tempo de atividade vindo da API. */}
+              {stats?.online && stats?.uptimeMs > 0 && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-emerald-500/25 text-xs font-semibold text-emerald-300">
+                  <Activity className="w-4 h-4 text-emerald-400" />
+                  <span>{t('hero.uptime').replace('{time}', formatUptime(stats.uptimeMs))}</span>
+                </div>
+              )}
             </div>
 
             {/* TWO CLEAN HIGH-CONVERTING CTAs */}

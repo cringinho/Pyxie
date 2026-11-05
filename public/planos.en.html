@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pyxie Plans • Basic R$ 7 and Premium R$ 20 monthly or yearly</title>
-  <meta name="description" content="Plan for your Discord server: Basic for R$ 7 with the full Pyxie profile, custom colors and 1 cyclic message; Premium for R$ 20 with store status, 10 cyclic messages and the AI Oracle. Yearly gets 2 months free. Store extra for R$ 3. Pay by Pix QR or recurring card." />
+  <meta name="description" content="Plan for your Discord server: Basic for R$ 7 with the full Pyxie profile and custom colors; Premium for R$ 20 with store status, 10 cyclic messages and the AI Oracle. Yearly gets 2 months free. Store extra for R$ 3. Pay by Pix QR or recurring card." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://pyxie.com.br/en/plans" />
   <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/planos" />
@@ -87,17 +87,29 @@
     </div>
 
     <h1>Server plans</h1>
-    <p class="lead">Monthly or yearly subscription, cancel anytime. Basic unlocks the <strong>full Pyxie profile</strong> (nickname, photo, banner and bio) plus <strong>1 cyclic message</strong>; Premium adds the <strong>store status</strong>, <strong>up to 10 cyclic messages</strong> and the AI Oracle. Yearly gives you <strong>2 months free</strong>, and the Store Studio comes as a <strong>R$ 3</strong> extra. If the month is not paid, the perks are paused and the owner gets a DM — nothing is deleted.</p>
+    <p class="lead">Monthly or yearly subscription, cancel anytime. Free already has the whole bot with no lock and <strong>1 cyclic message</strong>. Basic unlocks the <strong>full Pyxie profile</strong> (nickname, photo, banner and bio) and the dashboard colors; Premium adds the <strong>store status</strong>, <strong>up to 10 cyclic messages</strong> and the AI Oracle. Yearly gives you <strong>2 months free</strong>, and the Store Studio comes as a <strong>R$ 3</strong> extra. If the month is not paid, the perks are paused and the owner gets a DM — nothing is deleted.</p>
 
     <div class="grid">
+      <article class="card">
+        <h2>Free</h2>
+        <p class="price">R$ 0</p>
+        <p class="hint">Forever, no card needed</p>
+        <ul>
+          <li>Economy, games, tarot and every command without a plan lock</li>
+          <li>1 cyclic message (the Studio repeats it on its own)</li>
+          <li>Server dashboard with the unlocked sections</li>
+          <li>Store Studio available as a R$ 3 extra</li>
+        </ul>
+        <a class="btn ghost" href="/invite?ref=plans">Add Pyxie</a>
+      </article>
       <article class="card">
         <h2>Basic</h2>
         <p class="price">R$ 7 <small>/month</small></p>
         <p class="hint"><strong>R$ 70</strong> yearly — 2 months free</p>
         <ul>
           <li>Full Pyxie profile: nickname, photo, banner and bio in your server</li>
-          <li>1 cyclic message (the Studio repeats it on its own)</li>
           <li>Custom colors and themes in the dashboard</li>
+          <li>Cyclic messages: still 1, same as Free (more only on Premium)</li>
           <li>+50 coins bonus on <code>/py-daily</code></li>
           <li>Store status stays on Premium</li>
         </ul>
@@ -109,7 +121,7 @@
         <p class="hint"><strong>R$ 200</strong> yearly — 2 months free</p>
         <ul>
           <li>Everything from Basic, plus +120 coins on <code>/py-daily</code></li>
-          <li>Store status in the server (online, queue or closed)</li>
+          <li>Store status in the server (online, queue or closed), together with the Store Studio</li>
           <li>Up to 10 cyclic messages</li>
           <li>AI Oracle, AI quiz, seasonal events and community</li>
           <li>Custom embeds and the Hyperfokus blog</li>
@@ -130,7 +142,7 @@
             <li>Storefront published in a channel, with a product panel and a buy button</li>
             <li>Orders and purchase tickets: open, confirm delivery and mark failures</li>
             <li>Stock per product, delivery codes and low-stock alerts</li>
-            <li>Robux 1k price, Pix key and name, and the store status</li>
+            <li>Robux 1k price, Pix key and name (switching the online, queue or closed status is Premium)</li>
             <li>Customer reviews (average and count) and the reviews channel</li>
             <li>Automatic customer role and invite filter</li>
             <li>Quick replies with stock, price and status filled in by themselves</li>
@@ -146,7 +158,7 @@
 
     <section>
       <h2 class="section">How to pay</h2>
-      <p class="hint">Open <strong>Plans</strong> in the dashboard and pick <strong>Pix</strong> (QR valid for 30 minutes) or <strong>recurring card</strong>. The plan activates by itself once the payment lands. Single support: <a href="mailto:cringe.support@gmail.com">cringe.support@gmail.com</a>.</p>
+      <p class="hint">Open <strong>Plans</strong> in the dashboard and pick <strong>Pix</strong> (QR valid for 30 minutes) or <strong>recurring card</strong>. The plan activates by itself once the payment lands. To cancel, use <strong>Plans → Cancel subscription</strong> in the dashboard, anytime. Billing or refund questions: single support <a href="mailto:cringe.support@gmail.com">cringe.support@gmail.com</a>.</p>
       <p><a class="btn ghost" href="/en/cringelandia">Join the community</a></p>
     </section>
 
@@ -171,10 +183,18 @@
       .then((data) => {
         const list = document.getElementById('donors');
         const rows = data.month || [];
-        if (!rows.length) { list.innerHTML = '<li>No donations recorded this month yet.</li>'; return; }
-        list.innerHTML = rows.map((row) => '<li><strong>' + (row.anonymous ? 'Anonymous' : row.label) + '</strong> — R$ ' + Number(row.amount).toFixed(2) + '</li>').join('');
+        const item = (text) => { const li = document.createElement('li'); li.textContent = text; return li; };
+        if (!rows.length) { list.replaceChildren(item('No donations recorded this month yet.')); return; }
+        // textContent: a donor nickname never becomes HTML. Amount shown in BRL.
+        list.replaceChildren(...rows.map((row) => {
+          const li = document.createElement('li');
+          const name = document.createElement('strong');
+          name.textContent = row.anonymous ? 'Anonymous' : (row.label || 'Supporter');
+          li.append(name, ' — ' + Number(row.amount).toLocaleString('en-US', { style: 'currency', currency: 'BRL' }));
+          return li;
+        }));
       })
-      .catch(() => { document.getElementById('donors').innerHTML = '<li>Leaderboard unavailable right now.</li>'; });
+      .catch(() => { document.getElementById('donors').textContent = 'Leaderboard unavailable right now.'; });
   </script>
 </body>
 </html>

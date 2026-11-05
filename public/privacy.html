@@ -193,6 +193,15 @@
       transform: translateY(-1px);
     }
 
+    /* Celular e tablet: o menu quebra em linhas e o botão de idioma vem primeiro,
+       sempre visível (sem rolagem lateral). */
+    @media (max-width: 800px) {
+      header { flex-wrap: wrap; gap: 10px; padding: 10px 16px; }
+      .nav-links { flex-wrap: wrap; gap: 8px 14px; width: 100%; }
+      .nav-links a { padding: 6px 0; }
+      .lang-btn { order: -1; flex-basis: 100%; justify-content: center; min-height: 40px; }
+    }
+
     main {
       flex: 1;
       max-width: 900px;
@@ -612,9 +621,8 @@
     (function init() {
       const urlParams = new URLSearchParams(window.location.search);
       const queryLang = urlParams.get('lang');
-      const savedLang = localStorage.getItem('pyxie_lang');
-      const browserLang = (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'pt';
-      const initial = (queryLang === 'en' || queryLang === 'pt') ? queryLang : (savedLang || browserLang);
+      // Idioma: o caminho manda (/en/... = inglês, sem /en = português), como o canonical e o hreflang.
+      const initial = (queryLang === 'en' || queryLang === 'pt') ? queryLang : ((location.pathname === '/en' || location.pathname.startsWith('/en/')) ? 'en' : 'pt');
       applyLanguage(initial);
     })();
   </script>

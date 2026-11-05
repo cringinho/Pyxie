@@ -21,3 +21,4 @@ User-agent: Mediapartners-Google
 Allow: /
 
 Sitemap: https://pyxie.com.br/sitemap.xml
+Sitemap: https://pyxie.com.br/sitemap-hyperfokus.xml

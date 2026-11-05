@@ -1,5 +1,6 @@
 import React from 'react';
 import { Heart, ShieldCheck, Sparkles, BookOpen, Gift } from 'lucide-react';
+import { localizedHref } from '../../utils/langPath';
 
 export default function Footer({ t, lang = 'pt' }) {
   return (
@@ -20,29 +21,29 @@ export default function Footer({ t, lang = 'pt' }) {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-5 text-sm font-medium text-slate-300">
-          <a href={`/wiki?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+          <a href={localizedHref('/wiki', lang)} className="hover:text-pink-400 transition-colors">
             {t('footer.wiki')}
           </a>
-          <a href={`/hyperfokus?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+          <a href={localizedHref('/hyperfokus', lang)} className="hover:text-pink-400 transition-colors">
             {t('footer.blog')}
           </a>
-          <a href={`/museu?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+          <a href={localizedHref('/museu', lang)} className="hover:text-pink-400 transition-colors">
             {t('footer.museum')}
           </a>
-          <a href={`/bonus?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+          <a href={localizedHref('/bonus', lang)} className="hover:text-pink-400 transition-colors">
             {t('footer.bonus')}
           </a>
-          <a href={`/parcerias?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+          <a href={localizedHref('/parcerias', lang)} className="hover:text-pink-400 transition-colors">
             {t('footer.partnerships')}
           </a>
-          <a href={`/termos?lang=${lang}`} className="hover:text-pink-400 transition-colors flex items-center gap-1.5">
+          <a href={localizedHref('/termos', lang)} className="hover:text-pink-400 transition-colors flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
             {t('footer.terms')}
           </a>
-          <a href={`/pais-e-profissionais?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+          <a href={localizedHref('/pais-e-profissionais', lang)} className="hover:text-pink-400 transition-colors">
             {t('footer.parents')}
           </a>
-          <a href={`/transparencia?lang=${lang}`} className="hover:text-pink-400 transition-colors">
+          <a href={localizedHref('/transparencia', lang)} className="hover:text-pink-400 transition-colors">
             {t('footer.transparency')}
           </a>
           <a href="/promo" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">

@@ -62,10 +62,12 @@
     .status-dot {
       width: 8px;
       height: 8px;
-      background: #10b981;
+      background: #64748b;
       border-radius: 50%;
-      box-shadow: 0 0 8px #10b981;
     }
+    .status-dot.is-online { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .status-dot.is-offline { background: #f43f5e; }
+    .status-dot.is-unknown { background: #64748b; }
     .brand-tag {
       font-size: 0.75rem;
       color: #cbd5e1;
@@ -123,21 +125,56 @@
   </style>
 </head>
 <body>
-  <a href="https://pyxie.com.br/?utm_source=widget" target="_blank" rel="noopener dofollow" class="pyxie-card">
+  <a id="card" href="https://pyxie.com.br/?utm_source=widget" target="_blank" rel="noopener dofollow" class="pyxie-card">
     <div class="card-top">
-      <img src="https://pyxie.com.br/assets/pyxie/pyxie_pixelart_face.png" class="avatar-img" alt="Pyxie Bot" />
+      <img src="https://pyxie.com.br/assets/pyxie/pyxie_pixelart_face.png" class="avatar-img" alt="Pyxie Bot" width="44" height="44" />
       <div class="brand-info">
         <div class="brand-name">
           <span>Pyxie</span>
-          <span class="status-dot" title="Online no Discord"></span>
+          <span id="statusDot" class="status-dot is-unknown" role="img" aria-label="…"></span>
         </div>
-        <div class="brand-tag">Economia • 22 Carreiras • Tarot</div>
+        <div class="brand-tag" id="tagline">Economia • Carreiras • Tarot</div>
       </div>
     </div>
     <div class="card-meta">
-      <span>🔮 78 Cartas • 22 Profissões</span>
-      <span class="btn-invite">+ Adicionar</span>
+      <span id="meta">🔮 Tarot • Profissões</span>
+      <span class="btn-invite" id="cta">+ Adicionar</span>
     </div>
   </a>
+  <script>
+    (function () {
+      // Idioma: ?lang=en (o widget.js repassa o data-lang do parceiro).
+      var lang = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'pt';
+      var T = {
+        pt: { online: 'Online no Discord', offline: 'Fora do ar agora', unknown: 'Status indisponível', tag: 'Economia • {p} Carreiras • Tarot', tagNoNum: 'Economia • Carreiras • Tarot', meta: '🔮 {c} Cartas • {p} Profissões', metaNoNum: '🔮 Tarot • Profissões', cta: '+ Adicionar', title: 'Pyxie, bot do Discord' },
+        en: { online: 'Online on Discord', offline: 'Offline right now', unknown: 'Status unavailable', tag: 'Economy • {p} Careers • Tarot', tagNoNum: 'Economy • Careers • Tarot', meta: '🔮 {c} Cards • {p} Professions', metaNoNum: '🔮 Tarot • Professions', cta: '+ Add', title: 'Pyxie, Discord bot' }
+      }[lang];
+      document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+      document.title = T.title;
+      var card = document.getElementById('card');
+      if (lang === 'en') card.href = 'https://pyxie.com.br/en/?utm_source=widget';
+      var dot = document.getElementById('statusDot');
+      function setStatus(state) {
+        dot.className = 'status-dot is-' + state;
+        dot.setAttribute('aria-label', T[state]);
+        dot.title = T[state];
+      }
+      document.getElementById('cta').textContent = T.cta;
+      document.getElementById('tagline').textContent = T.tagNoNum;
+      document.getElementById('meta').textContent = T.metaNoNum;
+      setStatus('unknown');
+      fetch('/api/widget/summary', { headers: { Accept: 'application/json' } })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d || !d.success) return;
+          setStatus(d.online ? 'online' : 'offline');
+          if (d.professions > 0) document.getElementById('tagline').textContent = T.tag.replace('{p}', d.professions);
+          if (d.professions > 0 && d.tarotCards > 0) {
+            document.getElementById('meta').textContent = T.meta.replace('{c}', d.tarotCards).replace('{p}', d.professions);
+          }
+        })
+        .catch(function () { setStatus('unknown'); });
+    })();
+  </script>
 </body>
 </html>

@@ -59,6 +59,11 @@ const { generatePinterestRssXml, sanitizeDiscordText } = require(path.join(repo,
   museumManager.saveData();
   assert.equal(museumManager.getCount(), 1);
   assert.equal(museumManager.editDescription('art_1', 'nova'), true);
+  // Q088: link direto /museu?art=ID acha a obra pelo ID (rota /api/museum/art/:id).
+  const direct = await museumManager.getPublicArt('art_1');
+  assert.equal(direct?.id, 'art_1');
+  assert.ok(direct.imageUrl.includes('/api/museum/art-image/art_1'));
+  assert.equal(await museumManager.getPublicArt('nao_existe'), null);
   assert.equal(museumManager.deleteArt('art_1'), true);
   assert.equal(museumManager.deleteArt('art_1'), false);
   console.log('  ✅ 3. Museu: persistência atômica, edição e remoção.');

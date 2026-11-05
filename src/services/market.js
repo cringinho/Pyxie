@@ -310,7 +310,9 @@ function priceHistory(key, { days = 30, now = Date.now() } = {}) {
 }
 
 /** Itens e materiais mais negociados (para o site e o /admin). */
-function topTraded({ days = 30, limit = 20, now = Date.now() } = {}) {
+// `days` escolhe quais itens entram (e o gráfico); a média é sempre a de `avgDays` (7 dias),
+// que é o que a página do mercado anuncia ("Média 7 dias").
+function topTraded({ days = 30, avgDays = 7, limit = 20, now = Date.now() } = {}) {
   const counts = new Map();
   for (const sale of load().sales) {
     if (sale.at < now - days * DAY) continue;
@@ -319,7 +321,7 @@ function topTraded({ days = 30, limit = 20, now = Date.now() } = {}) {
   return [...counts.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, limit)
-    .map(([key, sales]) => ({ ...priceSummary(key, { days, now }), sales, history: priceHistory(key, { days, now }) }));
+    .map(([key, sales]) => ({ ...priceSummary(key, { days: avgDays, now }), sales, history: priceHistory(key, { days, now }) }));
 }
 
 function getMarketStats(now = Date.now()) {

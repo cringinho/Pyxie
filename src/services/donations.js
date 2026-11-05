@@ -38,9 +38,13 @@ const ledgerFile = () => path.join(process.env.PYXIE_DATA_DIR || path.join(__dir
 function loadLedger() {
   try {
     const data = JSON.parse(fs.readFileSync(ledgerFile(), 'utf8')) || {};
-    return { donations: Array.isArray(data.donations) ? data.donations : [], processed: Array.isArray(data.processed) ? data.processed : [] };
+    return {
+      donations: Array.isArray(data.donations) ? data.donations : [],
+      processed: Array.isArray(data.processed) ? data.processed : [],
+      pendingNames: data.pendingNames && typeof data.pendingNames === 'object' ? data.pendingNames : {},
+    };
   } catch (_) {
-    return { donations: [], processed: [] };
+    return { donations: [], processed: [], pendingNames: {} };
   }
 }
 
@@ -48,7 +52,16 @@ function saveLedger(state) {
   const file = ledgerFile();
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const donations = state.donations.slice(-LEDGER_LIMIT);
-  fs.writeFileSync(`${file}.tmp`, JSON.stringify({ version: 1, donations, processed: state.processed.slice(-LEDGER_LIMIT) }, null, 2));
+  // Apelidos de Pix ainda não pagos: guardados até 7 dias para o webhook usar no ranking.
+  const pendingNames = {};
+  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  for (const [id, entry] of Object.entries(state.pendingNames || {})) {
+    if (entry && Number(entry.at) > cutoff) pendingNames[id] = entry;
+  }
+  fs.writeFileSync(
+    `${file}.tmp`,
+    JSON.stringify({ version: 1, donations, processed: state.processed.slice(-LEDGER_LIMIT), pendingNames }, null, 2)
+  );
   fs.renameSync(`${file}.tmp`, file);
   return state;
 }
@@ -78,7 +91,9 @@ async function createPixDonation({ userId, cents, anonymous = false, name = '', 
       payment_method_id: 'pix',
       external_reference: reference(userId, value, anonymous),
       notification_url: `${publicUrl()}/api/plans/webhook/mercadopago`,
-      date_of_expiration: new Date(now + PIX_TTL_MS).toISOString().replace('Z', '-03:00'),
+      // Validade em UTC de verdade. Antes trocava o "Z" por "-03:00" sem converter a hora,
+      // e o QR valia ~3h30 no banco em vez de 30 min (cliente podia pagar dois QRs).
+      date_of_expiration: require('./planPayments').pixExpiration(now),
       payer: { email: SUPPORT_EMAIL },
     }),
   });
@@ -86,6 +101,14 @@ async function createPixDonation({ userId, cents, anonymous = false, name = '', 
   if (!res.ok) return { ok: false, reason: 'provider', status: res.status, detail: data.message || data.error };
   const qr = data.point_of_interaction?.transaction_data || {};
   if (!qr.qr_code) return { ok: false, reason: 'qr_missing', status: res.status };
+  const cleanName = sanitizeName(name);
+  if (!anonymous && cleanName) {
+    withFileLock(ledgerFile(), () => {
+      const state = loadLedger();
+      state.pendingNames[String(data.id)] = { name: cleanName, at: now };
+      saveLedger(state);
+    });
+  }
   return {
     ok: true,
     id: String(data.id),
@@ -97,6 +120,14 @@ async function createPixDonation({ userId, cents, anonymous = false, name = '', 
     anonymous,
     name,
   };
+}
+
+/** Apelido público: sem controle/HTML, até 40 caracteres. */
+function sanitizeName(name) {
+  return String(name || '')
+    .replace(/[\u0000-\u001f\u007f<>]/g, '')
+    .trim()
+    .slice(0, 40);
 }
 
 /** Registra a doação aprovada (idempotente por paymentId). */
@@ -111,10 +142,12 @@ function applyDonation(payment, { name = '' } = {}) {
     const id = `mp:${payment.id}`;
     if (state.processed.includes(id)) return { ok: true, duplicate: true, donation: state.donations.find((d) => d.id === id) || null };
     state.processed.push(id);
+    const pending = state.pendingNames[String(payment.id)];
+    delete state.pendingNames[String(payment.id)];
     const donation = {
       id,
       userId: ref.userId,
-      name: String(name || '').slice(0, 40),
+      name: ref.anonymous ? '' : sanitizeName(name || pending?.name),
       cents: ref.cents,
       anonymous: ref.anonymous,
       at: Date.now(),
@@ -141,7 +174,8 @@ function ranking({ period = 'month', limit = 10, now = Date.now() } = {}) {
     totals.set(key, entry);
   }
   const list = [...totals.values()]
-    .map((entry) => ({ ...entry, amount: entry.cents / 100, label: entry.anonymous ? null : entry.name || entry.userId }))
+    // Público: nunca expõe o ID do Discord. Sem apelido salvo, o site mostra "Apoiador(a)".
+    .map(({ userId, ...entry }) => ({ ...entry, amount: entry.cents / 100, label: entry.anonymous ? null : entry.name || null }))
     .sort((a, b) => b.cents - a.cents)
     .slice(0, Math.max(1, Math.min(25, Number(limit) || 10)));
   return list;

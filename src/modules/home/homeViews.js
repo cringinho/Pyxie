@@ -516,7 +516,7 @@ async function buildDonorsView({ owner, source }) {
   const rows = top.length
     ? top.map((row, index) => t('home.donors.row', { lang }, {
       pos: index + 1,
-      name: row.anonymous ? t('home.donors.anonymous', { lang }) : row.label,
+      name: row.anonymous ? t('home.donors.anonymous', { lang }) : row.label || t('home.donors.supporter', { lang }),
       amount: row.amount.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR', { minimumFractionDigits: 2 }),
     })).join('\n\n')
     : t('home.donors.empty', { lang });

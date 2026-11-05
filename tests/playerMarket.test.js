@@ -145,6 +145,11 @@ console.log('🏪 Iniciando testes do mercado entre jogadores...');
     assert.equal(market.priceHistory('chair_wood').length, 1);
     const top = market.topTraded();
     assert.ok(top.some((row) => row.key === 'chair_wood' && Array.isArray(row.history)));
+    // Q073: a média do site é a de 7 dias (o rótulo diz "Média 7 dias"), mesmo listando 30 dias.
+    const in20days = Date.now() + 20 * 24 * 60 * 60 * 1000;
+    const later = market.topTraded({ now: in20days }).find((row) => row.key === 'chair_wood');
+    assert.ok(later, 'Item vendido há 20 dias ainda aparece na lista de 30 dias');
+    assert.equal(later.avg, null, 'Sem venda nos últimos 7 dias: média de 7 dias vazia');
     const stats = market.getMarketStats();
     assert.equal(stats.sold, 3);
     assert.equal(stats.taxCollected, 10 + 2 + 2);

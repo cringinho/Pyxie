@@ -4,14 +4,13 @@ import { ShoppingBag, Sparkles, ExternalLink, Tag } from 'lucide-react';
 export default function ShopeeBentoGrid({ t, lang }) {
   const [items, setItems] = useState([]);
 
-  // Curated products in dark-kawaii / Sanrio / Goth aesthetic with matching Shopee images
+  // Reserva quando a vitrine do servidor falha: produtos reais da curadoria, SEM preço fixo
+  // (preço velho e dólar convertido à mão enganam). O card mostra "ver preço na Shopee".
   const defaultItems = [
     {
       id: '23798670825',
       titulo: 'Kuromi Sanrio Boneca de pelúcia fofa 25cm Kuromi Sanrio',
       titulo_en: 'Kuromi Sanrio 25cm Cute Plush Doll',
-      preco: 'R$ 55,99',
-      preco_en: '$10.77',
       tag: 'Pelúcia Sanrio',
       tag_en: 'Sanrio Plush',
       link: 'https://s.shopee.com.br/1BMdNQEU79',
@@ -21,8 +20,6 @@ export default function ShopeeBentoGrid({ t, lang }) {
       id: '58265449372',
       titulo: 'Camiseta Feminina Premium Hello Kitty Kuromi 100% Algodão',
       titulo_en: 'Premium Hello Kitty Kuromi 100% Cotton Women T-Shirt',
-      preco: 'R$ 34,90',
-      preco_en: '$6.71',
       tag: 'Moda & Estilo',
       tag_en: 'Fashion & Goth',
       link: 'https://s.shopee.com.br/1AfzHIvTw',
@@ -32,8 +29,6 @@ export default function ShopeeBentoGrid({ t, lang }) {
       id: '28812198611',
       titulo: 'EEBR Vintage Goth Espinhos Casal Anéis Para Homens Mulheres',
       titulo_en: 'Vintage Goth Thorn Couple Rings for Men & Women',
-      preco: 'R$ 12,06',
-      preco_en: '$2.32',
       tag: 'Acessório Goth',
       tag_en: 'Goth Jewelry',
       link: 'https://s.shopee.com.br/LnWNtHeo2',
@@ -43,8 +38,6 @@ export default function ShopeeBentoGrid({ t, lang }) {
       id: '58212898323',
       titulo: 'Anel gótico camafeu roxo pedra roxa oval moldura ornamental',
       titulo_en: 'Gothic Purple Cameo Ring with Oval Stone',
-      preco: 'R$ 29,90',
-      preco_en: '$5.75',
       tag: 'Acessório Goth',
       tag_en: 'Goth Jewelry',
       link: 'https://s.shopee.com.br/W6waCH1T5',
@@ -87,6 +80,8 @@ export default function ShopeeBentoGrid({ t, lang }) {
             <ShoppingBag className="w-3.5 h-3.5 text-amber-400" />
             <span>Setup & Lifestyle</span>
           </div>
+          {/* Publicidade às claras: são links de afiliado. */}
+          <p className="text-xs font-semibold text-amber-200/90 mb-2">{t('shopee.affiliate')}</p>
           <h2 className="font-title font-black text-3xl sm:text-4xl text-white tracking-tight">
             {t('shopee.title')}
           </h2>
@@ -99,7 +94,7 @@ export default function ShopeeBentoGrid({ t, lang }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {items.map((item, idx) => {
             const title = isPt ? item.titulo : (item.titulo_en || item.titulo);
-            const price = isPt ? item.preco : (item.preco_en || item.preco);
+            const price = (isPt ? item.preco : item.preco_en || item.preco) || t('shopee.seePrice');
             const tag = isPt ? item.tag : (item.tag_en || item.tag);
 
             return (
@@ -107,7 +102,7 @@ export default function ShopeeBentoGrid({ t, lang }) {
                 key={item.id || idx}
                 href={item.link || '/promo'}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer sponsored"
                 className="group rounded-3xl glass-panel border border-purple-500/20 hover:border-pink-500/50 p-4 transition-all duration-300 transform hover:-translate-y-1.5 hover:shadow-neon-pink flex flex-col justify-between overflow-hidden"
               >
                 <div className="relative rounded-2xl overflow-hidden aspect-square mb-4 bg-purple-950/40">

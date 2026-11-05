@@ -10,24 +10,24 @@ import Profile from './pages/Profile';
 import Partnerships from './pages/Partnerships';
 import AmbientBackground from './components/effects/AmbientBackground';
 import { I18N } from './utils/i18n';
+import { pathLang, switchLangHref } from './utils/langPath';
 
 export default function App() {
-  // Initialize language: query param > localStorage > navigator > 'pt'
-  const [lang, setLang] = useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    const queryLang = params.get('lang');
-    if (queryLang === 'pt' || queryLang === 'en') return queryLang;
-    const stored = localStorage.getItem('pyxie_lang');
-    if (stored === 'pt' || stored === 'en') return stored;
-    if (navigator.language && navigator.language.startsWith('en')) return 'en';
-    return 'pt';
-  });
+  // Idioma: o caminho manda (/en/... = inglês). Navegador e preferência salva não trocam
+  // o idioma de uma URL — senão a versão PT seria indexada em inglês (canonical/hreflang).
+  const [lang] = useState(pathLang);
+  // Trocar de idioma = ir para a URL do outro idioma (o servidor faz o 301 para /en/...).
+  const setLang = (next) => {
+    if (next === lang) return;
+    try {
+      localStorage.setItem('pyxie_lang', next);
+    } catch (_) {}
+    window.location.assign(switchLangHref(next));
+  };
 
-  const [stats, setStats] = useState({
-    guilds: 18,
-    users: 2450,
-    uptime: '99.9%',
-  });
+  // Números reais da API. `null` = ainda sem resposta ou falhou: a tela esconde o dado
+  // em vez de mostrar número inventado (AGENTS §12, zero mock).
+  const [stats, setStats] = useState({ online: null, guilds: null, members: null, uptimeMs: null });
 
   // Translation function
   const t = (key) => {
@@ -58,33 +58,27 @@ export default function App() {
     };
   }, []);
 
-  // Fetch bot stats
+  // Status real do bot (o processo está rodando?) e números do /api/stats.
   useEffect(() => {
-    fetch('/api/stats')
+    fetch('/api/widget/summary', { headers: { Accept: 'application/json' } })
       .then((res) => res.json())
       .then((data) => {
-        if (data && data.success) {
-          setStats({
-            guilds: data.guilds || 18,
-            users: data.users || 2450,
-            uptime: data.uptimeFormatted || '99.9%',
-          });
-        }
+        if (data && data.success) setStats((prev) => ({ ...prev, online: Boolean(data.online) }));
+        else setStats((prev) => ({ ...prev, online: false }));
       })
-      .catch(() => {
-        // Fallback to /api/status if /api/stats fails
-        fetch('/api/status')
-          .then((res) => res.json())
-          .then((st) => {
-            if (st && st.online) {
-              setStats((prev) => ({
-                ...prev,
-                guilds: st.guilds || prev.guilds,
-              }));
-            }
-          })
-          .catch(() => {});
-      });
+      .catch(() => setStats((prev) => ({ ...prev, online: false })));
+    fetch('/api/stats', { headers: { Accept: 'application/json' } })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data || typeof data !== 'object') return;
+        setStats((prev) => ({
+          ...prev,
+          guilds: Number(data.guildsCount) > 0 ? Number(data.guildsCount) : null,
+          members: Number(data.totalMembers) > 0 ? Number(data.totalMembers) : null,
+          uptimeMs: Number(data.uptime) > 0 ? Number(data.uptime) : null,
+        }));
+      })
+      .catch(() => {});
   }, []);
 
   // Sync html lang attribute
@@ -119,7 +113,7 @@ export default function App() {
       <AmbientBackground />
 
       <div className="relative z-10 flex flex-col min-h-screen">
-        <Navbar lang={lang} setLang={setLang} t={t} />
+        <Navbar lang={lang} setLang={setLang} t={t} online={stats.online} />
         <main className="flex-1">
           <CurrentPage t={t} lang={lang} stats={stats} userId={pageUserId} />
         </main>

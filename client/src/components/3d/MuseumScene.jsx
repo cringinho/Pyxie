@@ -23,52 +23,17 @@ export default function MuseumScene({ t }) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Fallback default artworks in case /api/museum/arts has few or 0 items
-  const defaultArts = [
-    {
-      id: 'art-01',
-      author: 'Pyxie Core',
-      description: 'Astaroth no Portal Arcano • Ilustração oficial do Bosque Violeta.',
-      imageUrl: '/assets/pyxie/pyxie_space_banner.jpg',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: 'art-02',
-      author: 'Melody Labs',
-      description: 'O Arcano O Mago • Pintura digital inspirada nos 78 arcanos da Pyxie.',
-      imageUrl: '/assets/pyxie/og_banner_hd.png',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: 'art-03',
-      author: 'Cringelândia Art',
-      description: 'Pyxie Tsundere Rebelde • Mascote da comunidade em alta resolução.',
-      imageUrl: '/assets/pyxie/pyxie_mascot.png',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: 'art-04',
-      author: 'Pixel Guild',
-      description: 'Pixelart Nostálgica • Render retrô em 32x32 da fada gótica.',
-      imageUrl: '/assets/pyxie/pyxie_pixelart.png',
-      createdAt: new Date().toISOString(),
-    },
-  ];
-
-  // Fetch arts from backend
+  // Só obras reais (AGENTS §12, zero mock). Sem obras ou com falha: aviso honesto, sem
+  // autores inventados assinando artes oficiais.
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     fetch('/api/museum/arts?limit=12')
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data && data.success && Array.isArray(data.arts) && data.arts.length > 0) {
-          setArts(data.arts);
-        } else {
-          setArts(defaultArts);
-        }
+        setArts(data && data.success && Array.isArray(data.arts) ? data.arts : []);
       })
-      .catch(() => {
-        setArts(defaultArts);
-      });
+      .catch(() => setArts([]))
+      .finally(() => setLoaded(true));
   }, []);
 
   // IntersectionObserver to lazy-initialize WebGL only when approaching viewport (Core Web Vitals LCP)
@@ -450,7 +415,9 @@ export default function MuseumScene({ t }) {
         style={{ touchAction: 'none' }}
         className="art-shield relative w-full max-w-6xl mx-auto h-[380px] sm:h-[480px] lg:h-[540px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none"
       >
-        {isWebGLSupported && !isMobile ? (
+        {loaded && arts.length === 0 ? (
+          <p className="px-6 text-center text-slate-300 text-sm max-w-md">{t('museum.emptyGallery')}</p>
+        ) : isWebGLSupported && !isMobile ? (
           <canvas ref={canvasRef} className="w-full h-full block" />
         ) : (
           /* Mobile CSS 3D Tilt Fallback */

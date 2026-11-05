@@ -237,6 +237,11 @@ function getUserAccount(userId) {
   return normalizeAccount(economy[userId]);
 }
 
+/** A conta existe no economy.json? (getUserAccount devolve uma conta vazia para qualquer ID) */
+function hasAccount(userId) {
+  return Object.prototype.hasOwnProperty.call(readEconomy(), String(userId || ''));
+}
+
 /**
  * Ler-alterar-gravar de uma conta com o economy.json travado entre processos (o web também
  * credita votos e bônus). Sem a trava, uma gravação do outro processo podia sumir.
@@ -1314,6 +1319,7 @@ function resolveCorruptionDilemma(userId, choice, baseSalary = 30) {
   }
 }
 module.exports = {
+  hasAccount,
   DAILY_COOLDOWN_MS,
   WORK_COOLDOWN_MS,
   QUIZ_COOLDOWN_MS,

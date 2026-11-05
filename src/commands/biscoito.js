@@ -7,7 +7,7 @@ const {
 } = require('discord.js');
 const { COOKIE } = require('./commandNames');
 const { getCookieStatus, claimCookie } = require('../services/cookie');
-const { createBonusSession, COOKIE_BONUS_COINS } = require('../services/bonusTimer');
+const { createBonusSession, COOKIE_BONUS_COINS, COOKIE_BONUS_COOLDOWN_MS } = require('../services/bonusTimer');
 const { formatRemaining, getLanguage, t } = require('../utils/i18n');
 const { PYXIE_COLORS } = require('../utils/pyxieVoice');
 
@@ -18,18 +18,24 @@ function buildCookieView(userId, source = null) {
   const status = getCookieStatus(userId);
 
   if (!status.canOpen) {
-    const bonusSession = createBonusSession(userId, 'cookie_bonus', {}, lang);
+    // O biscoito extra do portal tem teto de 1 por 24h (bonusTimer): já usado, sem link novo.
+    const { getUserAccount } = require('../services/economy');
+    const lastExtra = getUserAccount(userId).lastCookieWebBonusAt;
+    const extraAvailable = !lastExtra || Date.now() - new Date(lastExtra).getTime() >= COOKIE_BONUS_COOLDOWN_MS;
     const cooldownEmbed = new EmbedBuilder()
       .setColor(PYXIE_COLORS.purple || '#9b5de5')
       .setTitle(t('cookie.cooldownTitle', lang))
       .setDescription(
         [
           t('cookie.cooldownBody', lang, { time: formatRemaining(status.timeRemainingMs, lang) }),
-          t('cookie.cooldownExtraHeader', lang),
-          t('cookie.cooldownExtraBody', lang, { coins: COOKIE_BONUS_COINS, coin: coinIcon() }),
+          ...(extraAvailable
+            ? [t('cookie.cooldownExtraHeader', lang), t('cookie.cooldownExtraBody', lang, { coins: COOKIE_BONUS_COINS, coin: coinIcon() })]
+            : [t('cookie.cooldownExtraUsed', lang)]),
         ].join('\n\n')
       )
       .setFooter({ text: t('cookie.cooldownFooter', lang) });
+    if (!extraAvailable) return { embeds: [cooldownEmbed], components: [] };
+    const bonusSession = createBonusSession(userId, 'cookie_bonus', {}, lang);
 
     const { getEmoji } = require('../utils/appEmojis');
     const row = new ActionRowBuilder().addComponents(

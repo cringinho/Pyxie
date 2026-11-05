@@ -3164,17 +3164,12 @@
     function resolveInitialLang() {
       const urlParams = new URLSearchParams(window.location.search);
       const urlLang = urlParams.get('lang');
-      const savedLang = getSavedLang();
-      const browserLang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
-
+      // Idioma: o caminho manda (/en/... = inglês, sem /en = português), como o canonical e o hreflang.
       if (urlLang === 'pt' || urlLang === 'en') {
         setSavedLang(urlLang);
         return urlLang;
       }
-      if (savedLang === 'pt' || savedLang === 'en') {
-        return savedLang;
-      }
-      return browserLang;
+      return ((location.pathname === '/en' || location.pathname.startsWith('/en/')) ? 'en' : 'pt');
     }
 
     function initLang() {
