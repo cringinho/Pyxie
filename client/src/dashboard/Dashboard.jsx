@@ -84,7 +84,7 @@ function formatUptime(sec) {
 }
 
 // Asset quadrado da Pyxie servido pelo próprio site (o emoji do Discord era pequeno e saía cortado)
-const PYXIE_ICON = '/assets/pyxie/sticker/sticker_smile.png';
+const PYXIE_ICON = '/assets/pyxie/sticker/sticker_smile-256.webp';
 
 export default function Dashboard() {
   const [lang, setLang] = useState(detectLang);

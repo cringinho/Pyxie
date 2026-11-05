@@ -190,7 +190,8 @@ function refundDonation(payment, { now = Date.now() } = {}) {
 
 const dayKey = (now = Date.now()) => new Date(now - 3 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-/** Ranking de doadores (mês atual ou geral). Nomes anônimos não aparecem. */
+/** Ranking de doadores (mês atual ou geral). Nomes anônimos não aparecem, e o ID do
+ *  Discord nunca vira rótulo público: sem nome, label fica null (a tela mostra "Apoiador"). */
 function ranking({ period = 'month', limit = 10, now = Date.now() } = {}) {
   const cutoff = period === 'all' ? 0 : Date.parse(`${dayKey(now).slice(0, 7)}-01T00:00:00Z`);
   const totals = new Map();

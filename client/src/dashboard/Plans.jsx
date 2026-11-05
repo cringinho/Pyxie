@@ -4,11 +4,22 @@ import { api } from './api';
 import { go } from './Shell';
 import Paywall, { planFromCode } from './Paywall';
 import { Button, Card, Notice, Spinner } from './ui';
+import { errorText } from './i18n';
 
 // Ordem dos planos (igual a src/config/planFeatures.js): comprar um menor com um maior ativo é recusado.
 const PLAN_RANK = { free: 0, basic: 1, premium: 2, founder: 3 };
 
 // Assinatura mensal do servidor: Básico (R$ 7) e Premium (R$ 20), Pix por QR ou cartão recorrente.
+// Código de erro cru nunca aparece (Q257): primeiro o texto do plano (plan.err.<código>, com
+// o próximo passo), depois o texto geral do painel (sessão, 5xx...) e, por fim, o padrão.
+function planErrorText(t, code) {
+  const key = `plan.err.${String(code || '').split(':')[0]}`;
+  const text = t(key);
+  if (text !== key) return text;
+  const general = errorText(t, code);
+  return general !== t('error.generic') ? general : t('plan.err.unknown');
+}
+
 export default function Plans({ t, guildId, lang }) {
   const [info, setInfo] = useState(null);
   const [error, setError] = useState(null);
@@ -64,7 +75,7 @@ export default function Plans({ t, guildId, lang }) {
     // Recurso travado pelo plano (a API responde 403 plan_required): paywall no lugar do erro cru.
     const lockedPlan = error ? planFromCode(error) : '';
     if (lockedPlan) return <Paywall t={t} requiredPlan={lockedPlan} guildId={guildId} />;
-    return error ? <Notice tone="error">{t('error.generic', { error })}</Notice> : <Spinner label={t('app.loading')} />;
+    return error ? <Notice tone="error">{planErrorText(t, error)}</Notice> : <Spinner label={t('app.loading')} />;
   }
 
   const current = info.plan || {};
@@ -140,19 +151,13 @@ export default function Plans({ t, guildId, lang }) {
   };
 
   const planLabel = (plan) => t(`plan.name.${plan}`);
-  // Código de erro cru nunca aparece: cada um tem texto com o próximo passo (Q257).
-  const errorText = (code) => {
-    const key = `plan.err.${String(code || '').split(':')[0]}`;
-    const text = t(key);
-    return text !== key ? text : t('plan.err.unknown');
-  };
   // Pix já gerado e ainda válido: a tela mostra de novo depois de recarregar (Q249).
   const pending = !checkout && info.pending && info.pending.qrCode && info.pending.expiresAt > Date.now() ? info.pending : null;
 
   return (
     <div className="space-y-4">
       <p className="text-sm text-white/70">{t('plan.intro')}</p>
-      {error && <Notice tone="error">{errorText(error)}</Notice>}
+      {error && <Notice tone="error">{planErrorText(t, error)}</Notice>}
       {notice === 'paid' && <Notice tone="ok">{t('plan.paidReturn')}</Notice>}
       {notice === 'canceled' && <Notice tone="ok">{t('plan.renewalCanceled', { date: until || '—' })}</Notice>}
 

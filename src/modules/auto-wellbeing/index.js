@@ -168,14 +168,26 @@ async function unansweredTick(client, now = Date.now()) {
 
 // ---------- Cuidado em crise ----------
 function crisisEmbed(lang, serverName, customHelplineNote = '') {
-  const parts = [
-    t('autos3.crisis.dm', lang, { server: serverName }),
-    t('autos3.crisis.br', lang),
-    t('autos3.crisis.world', lang),
-    customHelplineNote.trim() ? `> ${customHelplineNote.trim()}` : null,
-    `> ${t('autos3.crisis.emergency', lang)}`,
-    t('autos3.crisis.stay', lang),
-  ].filter(Boolean);
+  const note = customHelplineNote.trim() ? `> ${customHelplineNote.trim()}` : null;
+  // Em inglês a pessoa provavelmente está fora do Brasil: primeiro a emergência
+  // local e o diretório mundial, depois o CVV (AGENTS §12).
+  const parts = (lang === 'en'
+    ? [
+      t('autos3.crisis.dm', lang, { server: serverName }),
+      `> ${t('autos3.crisis.emergency', lang)}`,
+      t('autos3.crisis.world', lang),
+      note,
+      t('autos3.crisis.br', lang),
+      t('autos3.crisis.stay', lang),
+    ]
+    : [
+      t('autos3.crisis.dm', lang, { server: serverName }),
+      t('autos3.crisis.br', lang),
+      t('autos3.crisis.world', lang),
+      note,
+      `> ${t('autos3.crisis.emergency', lang)}`,
+      t('autos3.crisis.stay', lang),
+    ]).filter(Boolean);
   return new EmbedBuilder()
     .setColor(0x10b981)
     .setTitle(t('autos3.crisis.dmTitle', lang))

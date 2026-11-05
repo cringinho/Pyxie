@@ -8,7 +8,7 @@ export default function Footer({ t, lang = 'pt' }) {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
         <div className="flex items-center gap-3">
           <img
-            src="/assets/pyxie/sticker/sticker_smile.png"
+            src="/assets/pyxie/sticker/sticker_smile-128.webp"
             alt={t('footer.mascotAlt')}
             width="32"
             height="32"

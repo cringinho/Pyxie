@@ -72,27 +72,28 @@
     <div class="relative mb-6">
       <div class="w-36 h-36 rounded-full p-2 bg-gradient-to-tr from-amber-500 via-rose-600 to-purple-600 shadow-neon-pink">
         <img
-          src="/assets/pyxie/pyxie_mascot.png"
-          alt="Pyxie Fadinha Confusa"
+          src="/assets/pyxie/pyxie_mascot-288.webp"
+          alt="Pyxie Fadinha Confusa" data-i18n-alt
           class="w-full h-full object-contain rounded-full bg-[#0e071a] p-3"
         />
       </div>
-      <span class="absolute -top-2 -right-2 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 font-mono font-black text-xs">
+      <span class="absolute -top-2 -right-2 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 font-mono font-black text-xs" data-i18n="badge">
         ERRO 500
       </span>
     </div>
 
-    <h1 class="font-title font-black text-3xl sm:text-4xl text-white mb-3 tracking-tight" data-i18n="title">
+    <h1 class="font-title font-black text-3xl sm:text-4xl text-white mb-3 tracking-tight" data-i18n="heading">
       Sobrecarga Arcana!
     </h1>
 
-    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-md" data-i18n="desc">
+    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-md" data-i18n="body">
       Algo deu errado do nosso lado. Tente de novo em alguns minutos; se continuar, avise no servidor de suporte.
     </p>
 
     <div class="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
       <a
         href="/"
+        data-home-link
         class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-purple-500 text-white font-title font-bold text-sm shadow-neon-pink transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
       >
         <span>🔮</span>
@@ -105,31 +106,12 @@
         class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-purple-500/30 text-purple-200 font-title font-semibold text-sm transition-all flex items-center justify-center gap-2"
       >
         <span>💬</span>
-        <span data-i18n="support">Servidor de Suporte</span>
+        <span data-i18n="second">Servidor de Suporte</span>
       </a>
     </div>
   </div>
 
   <script>
-    // PT na raiz, EN em /en/... (mesma regra do site); fora disso, o idioma do navegador.
-    (function initLang() {
-      const path = window.location.pathname.toLowerCase();
-      const isEn = path === '/en' || path.indexOf('/en/') === 0 ||
-        (path.indexOf('/en') !== 0 && !(navigator.language || '').toLowerCase().startsWith('pt') && (navigator.language || '').toLowerCase().startsWith('en'));
-      if (!isEn) return;
-      const en = {
-        title: 'Arcane Overload!',
-        desc: 'Something went wrong on our side. Please try again in a few minutes; if it keeps happening, let us know on the support server.',
-        home: 'Back to a Safe Place',
-        support: 'Support Server',
-      };
-      document.documentElement.lang = 'en';
-      document.querySelectorAll('[data-i18n]').forEach((el) => {
-        const key = el.getAttribute('data-i18n');
-        if (en[key]) el.textContent = en[key];
-      });
-    })();
-
     (function initNoise() {
       const canvas = document.getElementById('noise-canvas');
       if (!canvas) return;
@@ -192,6 +174,28 @@
         if (frame === null) draw(false);
       });
       start();
+    })();
+  </script>
+  <script>
+    // Versão em inglês: /en/..., ?lang=en ou navegador em inglês (sem ?lang=pt). AGENTS §1.
+    (function errorPageLang() {
+      var params = new URLSearchParams(window.location.search);
+      var q = params.get('lang');
+      var isEn = q === 'en' || (q !== 'pt' && (/^\/en(\/|$)/.test(window.location.pathname) || /^en\b/i.test(navigator.language || '')));
+      if (!isEn) return;
+      var EN = {"title": "500 • Something Went Wrong | Pyxie Discord Bot", "description": "Something went wrong on our side. Please try again in a few minutes; if it keeps happening, let us know on the support server.", "alt": "Pyxie, a confused little fairy", "badge": "ERROR 500", "heading": "Arcane Overload!", "body": "Something went wrong on our side. Please try again in a few minutes; if it keeps happening, let us know on the support server.", "home": "Back to a Safe Place", "second": "Support Server"};
+      document.documentElement.lang = 'en';
+      document.title = EN.title;
+      var desc = document.querySelector('meta[name="description"]');
+      if (desc) desc.setAttribute('content', EN.description);
+      document.querySelectorAll('[data-i18n]').forEach(function (el) {
+        var key = el.getAttribute('data-i18n');
+        if (EN[key]) el.textContent = EN[key];
+      });
+      var img = document.querySelector('[data-i18n-alt]');
+      if (img) img.setAttribute('alt', EN.alt);
+      var home = document.querySelector('[data-home-link]');
+      if (home) home.setAttribute('href', '/en/');
     })();
   </script>
 </body>

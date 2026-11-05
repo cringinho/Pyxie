@@ -1,6 +1,7 @@
 // Registro das artes da Pyxie (plano 5.9, "arte humana no lugar da IA").
 // Lista os arquivos reais de public/assets/pyxie e guarda, para cada um, a origem (ia / humana /
-// desconhecida) e o crédito do artista. O dono marca no painel; o site e os embeds leem o crédito.
+// desconhecida) e o crédito do artista. O dono marca no painel; o site lê o crédito por
+// /api/public/asset-credits (public/js/artCredits.js) e os embeds por creditSuffix().
 // Registro em src/data/pyxieAssets.json (versionado: é parte do acervo, não dado de usuário).
 const fs = require('node:fs');
 const path = require('node:path');
@@ -80,4 +81,11 @@ function creditFor(urlOrFile) {
   return entry?.origin === 'human' && entry.artist ? entry.artist : '';
 }
 
-module.exports = { listAssets, updateAsset, summary, creditFor, ORIGINS };
+// Sufixo pronto para rodapé de embed: " • Arte: Fulana" / " • Art: Fulana" (vazio se não houver crédito).
+function creditSuffix(urlOrFile, lang = 'pt') {
+  const artist = creditFor(urlOrFile);
+  if (!artist) return '';
+  return lang === 'en' ? ` • Art: ${artist}` : ` • Arte: ${artist}`;
+}
+
+module.exports = { listAssets, updateAsset, summary, creditFor, creditSuffix, ORIGINS };

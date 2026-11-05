@@ -13,7 +13,7 @@ export default function DiscordEmbedPreview({ command, t }) {
       {/* Bot Header in Discord Style */}
       <div className="flex items-center gap-2.5 mb-3">
         <div className="w-8 h-8 rounded-full overflow-hidden bg-purple-900 border border-purple-500/30 flex-shrink-0">
-          <img src="/assets/pyxie/pyxie_pixelart_face.png" alt={t('preview.avatarAlt')} className="w-full h-full object-contain" />
+          <img src="/assets/pyxie/pyxie_pixelart_face-96.webp" alt={t('preview.avatarAlt')} className="w-full h-full object-contain" />
         </div>
         <div className="flex items-center gap-1.5 leading-none">
           <span className="font-bold text-white text-sm">Pyxie</span>

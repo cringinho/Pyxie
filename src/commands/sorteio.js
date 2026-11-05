@@ -8,6 +8,7 @@ const {
 } = require('discord.js');
 const { buildHubPayload } = require('../modules/giveaways/giveawayManager');
 const { GIVEAWAY } = require('./commandNames');
+const { t } = require('../utils/i18n');
 
 const name = GIVEAWAY;
 
@@ -32,22 +33,18 @@ module.exports = {
       !message.member?.permissions?.has(PermissionFlagsBits.ManageGuild) &&
       !message.member?.permissions?.has(PermissionFlagsBits.ManageChannels)
     ) {
-      return message.reply('❌ Você não possui permissão de gerenciar canais ou o servidor para acessar os sorteios.');
+      return message.reply(t('giveawayWizard.noPermission', message));
     }
 
     const embed = new EmbedBuilder()
       .setColor('#ec4899')
-      .setTitle('🎉  ✦  Central de Sorteios Pyxie')
-      .setDescription(
-        `### 🎁 Painel Administrativo de Sorteios\n\n` +
-        `Para garantir sua privacidade e comodidade, clique no botão abaixo para abrir a Central de Sorteios de forma interativa.\n\n` +
-        `-# 🌷 Pyxie Community Engine`
-      );
+      .setTitle(t('giveawayWizard.hubTitle', message))
+      .setDescription(t('giveawayWizard.prefixBody', message));
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('gw:hub:open')
-        .setLabel('Abrir Central de Sorteios')
+        .setLabel(t('giveawayWizard.prefixOpen', message))
         .setEmoji('🎁')
         .setStyle(ButtonStyle.Primary)
     );
@@ -61,12 +58,12 @@ module.exports = {
       !interaction.member?.permissions?.has(PermissionFlagsBits.ManageChannels)
     ) {
       return interaction.reply({
-        content: '❌ Você não possui permissão de gerenciar canais ou o servidor para acessar os sorteios.',
+        content: t('giveawayWizard.noPermission', interaction),
         ephemeral: true,
       });
     }
 
-    const payload = buildHubPayload();
+    const payload = buildHubPayload(interaction.guildId || interaction);
     return interaction.reply({ ...payload, ephemeral: true });
   },
 };

@@ -47,6 +47,8 @@ function mock(handler) {
   const first = await donations.handleWebhook({ body: { type: 'payment', data: { id: '900' } } });
   assert.equal(first.ok, true);
   assert.equal(first.donation.cents, 1000);
+  assert.equal(first.donation.name, 'Ana', 'O nome guardado na criação do Pix chega ao registro pelo webhook');
+  assert.equal(donations.ranking({ period: 'month' }).find((row) => !row.anonymous)?.label, 'Ana', 'Ranking mostra o nome, não o ID do Discord');
   const again = await donations.handleWebhook({ body: { type: 'payment', data: { id: '900' } } });
   assert.equal(again.duplicate, true, 'Mesmo pagamento não entra duas vezes');
   console.log('  ✅ 2. Doação aprovada e idempotente.');

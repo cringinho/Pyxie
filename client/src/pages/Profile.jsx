@@ -108,7 +108,7 @@ export default function Profile({ t, lang, userId }) {
             {/* User Avatar */}
             <div className="relative w-24 h-24 flex-shrink-0">
               <img
-                src="/assets/pyxie/sticker/sticker_smile.png"
+                src="/assets/pyxie/sticker/sticker_smile-256.webp"
                 alt={t('profile.avatarAlt')}
                 width="96"
                 height="96"

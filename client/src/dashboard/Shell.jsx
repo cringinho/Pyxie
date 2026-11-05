@@ -49,7 +49,7 @@ import {
 import { GuildIcon, StatusDot, confirmLeave } from './ui';
 
 // Asset quadrado da Pyxie servido pelo próprio site (o emoji do Discord era pequeno e saía cortado)
-const PYXIE_ICON = '/assets/pyxie/sticker/sticker_smile.png';
+const PYXIE_ICON = '/assets/pyxie/sticker/sticker_smile-128.webp';
 
 export const go = (hash) => {
   // Rascunho sem salvar na tela atual: pergunta antes de trocar (Q140).

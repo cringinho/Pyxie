@@ -16,6 +16,13 @@ const {
   ChannelType,
   PermissionFlagsBits,
 } = require('discord.js');
+const { t } = require('../../utils/i18n');
+
+// O sorteio funciona em qualquer servidor: todo texto vem de `giveawayWizard.*`
+// no idioma do servidor (AGENTS §1). Sem contexto, português.
+const gt = (key, source, vars) => t(`giveawayWizard.${key}`, source || 'pt', vars);
+const ts = (ms, style = 'f') => `<t:${Math.floor(ms / 1000)}:${style}>`;
+const tsBoth = (ms) => `${ts(ms)} (${ts(ms, 'R')})`;
 
 const DATA_FILE = pyxieDataPath( 'giveawaysData.json');
 const wizardDrafts = new Map(); // userId -> draft
@@ -173,27 +180,21 @@ function parseDateTime(input, baseTime = Date.now()) {
 /**
  * Hub Ephemeral principal do /py-sorteio
  */
-function buildHubPayload() {
+function buildHubPayload(source = 'pt') {
   const embed = new EmbedBuilder()
     .setColor(EMBED_PINK)
-    .setTitle('🎉  ✦  Central de Sorteios Pyxie')
-    .setDescription(
-      `### 🎁 Mimos e Presentes pro Servidor!\n\n` +
-      `Crie sorteios fofos, escolha quem pode participar e deixe a sorte girar a roleta mágica! 🍀✨\n\n` +
-      `• **Criar Sorteio:** Inicie o passo a passo pra montar um sorteio novinho.\n\n` +
-      `• **Cancelar Sorteio:** Errou o prêmio ou mudou de ideia? Cancele por aqui.\n\n` +
-      `-# 🌷 Pyxie • Espalhando mimos e presentinhos pelo servidor`
-    );
+    .setTitle(gt('hubTitle', source))
+    .setDescription(gt('hubBody', source));
 
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId('gw:hub:create')
-      .setLabel('Criar Sorteio')
+      .setLabel(gt('hubCreate', source))
       .setEmoji('➕')
       .setStyle(ButtonStyle.Success),
     new ButtonBuilder()
       .setCustomId('gw:hub:cancel')
-      .setLabel('Cancelar um Sorteio')
+      .setLabel(gt('hubCancel', source))
       .setEmoji('🗑️')
       .setStyle(ButtonStyle.Danger)
   );
@@ -204,37 +205,37 @@ function buildHubPayload() {
 /**
  * Modal Passo 1 - Dados Básicos
  */
-function buildStep1Modal() {
+function buildStep1Modal(source = 'pt') {
   const modal = new ModalBuilder()
     .setCustomId('gw:modal:step1')
-    .setTitle('Novo Sorteio - Dados Básicos');
+    .setTitle(gt('step1Title', source));
 
   const titleInput = new TextInputBuilder()
     .setCustomId('title')
-    .setLabel('Título / Nome do Sorteio')
-    .setPlaceholder('Ex: Nitro Mensal 💖')
+    .setLabel(gt('fieldTitle', source))
+    .setPlaceholder(gt('fieldTitlePlaceholder', source))
     .setStyle(TextInputStyle.Short)
     .setRequired(true)
     .setMaxLength(100);
 
   const startInput = new TextInputBuilder()
     .setCustomId('startsAt')
-    .setLabel('Início: AGORA, Duração ou Data')
-    .setPlaceholder('Ex: AGORA, 10m, ou 22/10 15:00')
-    .setValue('AGORA')
+    .setLabel(gt('fieldStart', source))
+    .setPlaceholder(gt('fieldStartPlaceholder', source))
+    .setValue(gt('fieldStartDefault', source))
     .setStyle(TextInputStyle.Short)
     .setRequired(true);
 
   const endInput = new TextInputBuilder()
     .setCustomId('endsAt')
-    .setLabel('Término: Duração (1h, 30m, 2d) ou Data')
-    .setPlaceholder('Ex: 1h, 30m, 2d ou 22/10 16:00')
+    .setLabel(gt('fieldEnd', source))
+    .setPlaceholder(gt('fieldEndPlaceholder', source))
     .setStyle(TextInputStyle.Short)
     .setRequired(true);
 
   const winnersInput = new TextInputBuilder()
     .setCustomId('winnersCount')
-    .setLabel('Quantidade de Ganhadores (1 a 5)')
+    .setLabel(gt('fieldWinners', source))
     .setPlaceholder('1')
     .setValue('1')
     .setStyle(TextInputStyle.Short)
@@ -253,24 +254,24 @@ function buildStep1Modal() {
 /**
  * Modal Passo 2 - Prêmios
  */
-function buildStep2Modal(winnersCount = 1) {
+function buildStep2Modal(winnersCount = 1, source = 'pt') {
   const modal = new ModalBuilder()
     .setCustomId('gw:modal:step2')
-    .setTitle(`Prêmios (${winnersCount} Ganhador${winnersCount > 1 ? 'es' : ''})`);
+    .setTitle(winnersCount > 1 ? gt('step2TitleMany', source, { n: winnersCount }) : gt('step2TitleOne', source));
 
   if (winnersCount === 1) {
     const prizeInput = new TextInputBuilder()
       .setCustomId('prize')
-      .setLabel('Prêmio do Sorteio')
-      .setPlaceholder('Ex: Discord Nitro Mensal')
+      .setLabel(gt('fieldPrize', source))
+      .setPlaceholder(gt('fieldPrizePlaceholder', source))
       .setStyle(TextInputStyle.Short)
       .setRequired(true);
     modal.addComponents(new ActionRowBuilder().addComponents(prizeInput));
   } else {
     const prizesInput = new TextInputBuilder()
       .setCustomId('prizes_list')
-      .setLabel('Prêmios por Colocação (1 por linha)')
-      .setPlaceholder('1º Lugar: Nitro Mensal\n2º Lugar: 50.000 Moedas')
+      .setLabel(gt('fieldPrizes', source))
+      .setPlaceholder(gt('fieldPrizesPlaceholder', source))
       .setStyle(TextInputStyle.Paragraph)
       .setRequired(true);
     modal.addComponents(new ActionRowBuilder().addComponents(prizesInput));
@@ -282,19 +283,19 @@ function buildStep2Modal(winnersCount = 1) {
 /**
  * Resumo de restrições formatado
  */
-function formatRestrictionsSummary(restrictions = {}) {
+function formatRestrictionsSummary(restrictions = {}, source = 'pt') {
   const parts = [];
   if (restrictions.allowedRoles && restrictions.allowedRoles.length > 0) {
-    parts.push(`• **Cargos Permitidos:** ${restrictions.allowedRoles.map((r) => `<@&${r}>`).join(', ')}`);
+    parts.push(gt('restrictAllowed', source, { roles: restrictions.allowedRoles.map((r) => `<@&${r}>`).join(', ') }));
   }
   if (restrictions.blockedRoles && restrictions.blockedRoles.length > 0) {
-    parts.push(`• **Cargos Bloqueados:** ${restrictions.blockedRoles.map((r) => `<@&${r}>`).join(', ')}`);
+    parts.push(gt('restrictBlocked', source, { roles: restrictions.blockedRoles.map((r) => `<@&${r}>`).join(', ') }));
   }
   if (restrictions.bonusRoles && restrictions.bonusRoles.length > 0) {
-    parts.push(`• **Cargos Bônus (2x chances):** ${restrictions.bonusRoles.map((r) => `<@&${r}>`).join(', ')}`);
+    parts.push(gt('restrictBonus', source, { roles: restrictions.bonusRoles.map((r) => `<@&${r}>`).join(', ') }));
   }
   if (restrictions.minAccountAgeDays && restrictions.minAccountAgeDays > 0) {
-    parts.push(`• **Idade Mínima de Conta:** \`${restrictions.minAccountAgeDays} dias\``);
+    parts.push(gt('restrictAge', source, { days: restrictions.minAccountAgeDays }));
   }
   if (parts.length === 0) return '';
   return `${parts.join('\n\n')}\n\n`;
@@ -303,7 +304,7 @@ function formatRestrictionsSummary(restrictions = {}) {
 /**
  * Constrói payload do Card Público do Sorteio
  */
-function buildPublicCardPayload(giveaway) {
+function buildPublicCardPayload(giveaway, source = giveaway?.guildId || 'pt') {
   const isActive = giveaway.status === 'ACTIVE';
   const isFinished = giveaway.status === 'FINISHED';
   const isCancelled = giveaway.status === 'CANCELLED';
@@ -314,56 +315,51 @@ function buildPublicCardPayload(giveaway) {
     embed.setColor(EMBED_PINK);
     embed.setTitle(`${giveaway.emoji || '🎉'}  ✦  ${giveaway.title}`);
     embed.setDescription(
-      `### 🎁 Sorteio Oficial da Comunidade\n\n` +
-      `Participe agora clicando no botão abaixo para concorrer!\n\n` +
-      `• **Prêmio(s):** ${giveaway.prizes.map((p) => `\`${p}\``).join(' • ')}\n\n` +
-      `• **Ganhadores:** \`${giveaway.winnersCount}\`\n\n` +
-      `• **Criado por:** <@${giveaway.createdBy}>\n\n` +
-      `• **Encerramento:** <t:${Math.floor(giveaway.endsAt / 1000)}:f> (<t:${Math.floor(giveaway.endsAt / 1000)}:R>)\n\n` +
-      formatRestrictionsSummary(giveaway.restrictions) +
-      `-# 🍀 Boa sorte a todos os participantes! • ID: \`${giveaway.id}\``
+      gt('cardActiveBody', source, {
+        prizes: giveaway.prizes.map((p) => `\`${p}\``).join(' • '),
+        winners: giveaway.winnersCount,
+        creator: `<@${giveaway.createdBy}>`,
+        ends: tsBoth(giveaway.endsAt),
+      }) +
+      formatRestrictionsSummary(giveaway.restrictions, source) +
+      gt('cardActiveFooter', source, { id: giveaway.id })
     );
   } else if (isFinished) {
     embed.setColor(EMBED_SUCCESS);
-    embed.setTitle(`🏁  ✦  Sorteio Encerrado: ${giveaway.title}`);
+    embed.setTitle(gt('cardFinishedTitle', source, { title: giveaway.title }));
 
-    let winnersText = '*Nenhum participante elegível entrou no sorteio.*';
+    let winnersText = gt('cardNoWinners', source);
     if (giveaway.winners && giveaway.winners.length > 0) {
       winnersText = giveaway.winners
         .map((w, idx) => {
-          const prizeName = giveaway.prizes[idx] || giveaway.prizes[0] || 'Prêmio';
-          return `🏆 **${idx + 1}º Lugar:** <@${w}> — \`${prizeName}\``;
+          const prizeName = giveaway.prizes[idx] || giveaway.prizes[0] || gt('cardPrizeFallback', source);
+          return gt('cardPlace', source, { place: idx + 1, user: `<@${w}>`, prize: prizeName });
         })
         .join('\n\n');
     }
 
-    embed.setDescription(
-      `### 🎁 Resultado do Sorteio\n\n` +
-      `${winnersText}\n\n` +
-      `• **Total de Entradas:** \`${Object.keys(giveaway.participants || {}).length}\` participantes\n\n` +
-      `• **Encerrado em:** <t:${Math.floor((giveaway.endedAt || Date.now()) / 1000)}:f>\n\n` +
-      `-# 🌷 Parabéns aos sortudos da vez! A sorte brilhou pra vocês ✨`
-    );
+    embed.setDescription(gt('cardFinishedBody', source, {
+      winners: winnersText,
+      count: Object.keys(giveaway.participants || {}).length,
+      ended: ts(giveaway.endedAt || Date.now()),
+    }));
   } else if (isCancelled) {
     embed.setColor(EMBED_MUTED);
-    embed.setTitle(`🚫  ✦  Sorteio Cancelado: ${giveaway.title}`);
-    embed.setDescription(
-      `### 🛑 Este sorteio foi cancelado pela moderação.\n\n` +
-      `• **ID do Sorteio:** \`${giveaway.id}\`\n\n` +
-      `• **Cancelado em:** <t:${Math.floor(Date.now() / 1000)}:f>\n\n` +
-      `-# 🌷 Pyxie • Sorteio cancelado`
-    );
+    embed.setTitle(gt('cardCancelledTitle', source, { title: giveaway.title }));
+    embed.setDescription(gt('cardCancelledBody', source, {
+      id: giveaway.id,
+      when: ts(giveaway.cancelledAt || Date.now()),
+    }));
   } else {
     // Scheduled
     embed.setColor(EMBED_PINK);
-    embed.setTitle(`⏰  ✦  Sorteio Agendado: ${giveaway.title}`);
-    embed.setDescription(
-      `### 🎁 Este sorteio iniciará em breve!\n\n` +
-      `• **Início Previsto:** <t:${Math.floor(giveaway.startsAt / 1000)}:f> (<t:${Math.floor(giveaway.startsAt / 1000)}:R>)\n\n` +
-      `• **Prêmio(s):** ${giveaway.prizes.map((p) => `\`${p}\``).join(' • ')}\n\n` +
-      `• **Ganhadores:** \`${giveaway.winnersCount}\`\n\n` +
-      `-# 🛡️ Sorteio verificado pela Pyxie • ID: \`${giveaway.id}\``
-    );
+    embed.setTitle(gt('cardScheduledTitle', source, { title: giveaway.title }));
+    embed.setDescription(gt('cardScheduledBody', source, {
+      starts: tsBoth(giveaway.startsAt),
+      prizes: giveaway.prizes.map((p) => `\`${p}\``).join(' • '),
+      winners: giveaway.winnersCount,
+      id: giveaway.id,
+    }));
   }
 
   const participantsCount = Object.keys(giveaway.participants || {}).length;
@@ -372,20 +368,20 @@ function buildPublicCardPayload(giveaway) {
   if (isActive) {
     btn = new ButtonBuilder()
       .setCustomId(`gw:join:${giveaway.id}`)
-      .setLabel(`Participar (${participantsCount})`)
+      .setLabel(gt('btnJoin', source, { n: participantsCount }))
       .setEmoji(giveaway.emoji || '🎉')
       .setStyle(ButtonStyle.Primary);
   } else if (isFinished) {
     btn = new ButtonBuilder()
       .setCustomId(`gw:disabled:${giveaway.id}`)
-      .setLabel(`Sorteio Encerrado (${participantsCount})`)
+      .setLabel(gt('btnFinished', source, { n: participantsCount }))
       .setEmoji('🏁')
       .setStyle(ButtonStyle.Secondary)
       .setDisabled(true);
   } else {
     btn = new ButtonBuilder()
       .setCustomId(`gw:disabled:${giveaway.id}`)
-      .setLabel(`Sorteio Cancelado (${participantsCount})`)
+      .setLabel(gt('btnCancelled', source, { n: participantsCount }))
       .setEmoji('🚫')
       .setStyle(ButtonStyle.Secondary)
       .setDisabled(true);
@@ -481,12 +477,12 @@ async function finishGiveaway(giveaway, client) {
         if (winners.length > 0) {
           const mentions = winners.map((w) => `<@${w}>`).join(', ');
           await channel.send({
-            content: `🎉 Parabéns aos ganhadores: ${mentions}! Entrem em contato com <@${giveaway.createdBy}> para resgatar seus prêmios. 🎁`,
+            content: gt('announceWinners', giveaway.guildId, { mentions, creator: `<@${giveaway.createdBy}>` }),
             allowedMentions: { users: winners, parse: [] },
           }).catch(() => null);
         } else {
           await channel.send({
-            content: `🏁 O sorteio **${giveaway.title}** foi encerrado, mas não houve participantes suficientes para definir um vencedor.`,
+            content: gt('announceNoWinners', giveaway.guildId, { title: giveaway.title }),
             allowedMentions: { parse: [] },
           }).catch(() => null);
         }
@@ -539,6 +535,7 @@ async function handleGiveawayInteraction(interaction, client) {
 
   const { customId } = interaction;
   if (!customId || !customId.startsWith('gw:')) return;
+  const lang = interaction.guildId || interaction;
 
   // 0. Abrir Hub Ephemeral (a partir de comando por prefixo)
   if (customId === 'gw:hub:open') {
@@ -547,13 +544,13 @@ async function handleGiveawayInteraction(interaction, client) {
       !interaction.member?.permissions?.has(PermissionFlagsBits.ManageChannels)
     ) {
       await interaction.reply({
-        content: '❌ Você não tem permissão de gerenciar canais ou o servidor para acessar os sorteios.',
+        content: gt('noPermission', lang),
         ephemeral: true,
       });
       return;
     }
 
-    const hub = buildHubPayload();
+    const hub = buildHubPayload(lang);
     await interaction.reply({ ...hub, ephemeral: true });
     return;
   }
@@ -565,13 +562,13 @@ async function handleGiveawayInteraction(interaction, client) {
       !interaction.member?.permissions?.has(PermissionFlagsBits.ManageChannels)
     ) {
       await interaction.reply({
-        content: '❌ Você não tem permissão de gerenciar canais ou o servidor para criar sorteios.',
+        content: gt('noPermissionCreate', lang),
         ephemeral: true,
       });
       return;
     }
 
-    const modal = buildStep1Modal();
+    const modal = buildStep1Modal(lang);
     await interaction.showModal(modal);
     return;
   }
@@ -583,7 +580,7 @@ async function handleGiveawayInteraction(interaction, client) {
       !interaction.member?.permissions?.has(PermissionFlagsBits.ManageChannels)
     ) {
       await interaction.reply({
-        content: '❌ Você não tem permissão para cancelar sorteios.',
+        content: gt('noPermissionCancel', lang),
         ephemeral: true,
       });
       return;
@@ -596,7 +593,7 @@ async function handleGiveawayInteraction(interaction, client) {
 
     if (active.length === 0) {
       await interaction.reply({
-        content: 'ℹ️ Não há sorteios ativos ou agendados neste servidor no momento.',
+        content: gt('noneActive', lang),
         ephemeral: true,
       });
       return;
@@ -604,18 +601,18 @@ async function handleGiveawayInteraction(interaction, client) {
 
     const select = new StringSelectMenuBuilder()
       .setCustomId('gw:cancel:select')
-      .setPlaceholder('Escolha o sorteio que deseja cancelar...')
+      .setPlaceholder(gt('cancelPlaceholder', lang))
       .addOptions(
         active.slice(0, 25).map((g) => ({
           label: g.title.substring(0, 50),
           value: g.id,
-          description: `Status: ${g.status} | Ganhadores: ${g.winnersCount}`,
+          description: gt('cancelOption', lang, { status: g.status, winners: g.winnersCount }),
         }))
       );
 
     const row = new ActionRowBuilder().addComponents(select);
     await interaction.reply({
-      content: '🗑️ **Selecione o sorteio que deseja encerrar/cancelar:**',
+      content: gt('cancelPrompt', lang),
       components: [row],
       ephemeral: true,
     });
@@ -629,7 +626,7 @@ async function handleGiveawayInteraction(interaction, client) {
     const gw = data.giveaways?.[gwId];
 
     if (!gw) {
-      await interaction.update({ content: '❌ Sorteio não encontrado.', components: [] });
+      await interaction.update({ content: gt('notFound', lang), components: [] });
       return;
     }
 
@@ -653,7 +650,7 @@ async function handleGiveawayInteraction(interaction, client) {
     }
 
     await interaction.update({
-      content: `✅ O sorteio **${gw.title}** foi cancelado com sucesso.`,
+      content: gt('cancelled', lang, { title: gw.title }),
       components: [],
     });
     return;
@@ -671,13 +668,13 @@ async function handleGiveawayInteraction(interaction, client) {
     const winnersCount = parseInt(winnersCountRaw, 10);
 
     if (!title) {
-      await interaction.reply({ content: '❌ O título do sorteio é obrigatório.', ephemeral: true });
+      await interaction.reply({ content: gt('titleRequired', lang), ephemeral: true });
       return;
     }
 
     if (!startsAt) {
       await interaction.reply({
-        content: '❌ Data de início inválida. Use `AGORA`, uma duração (ex: `10m`, `1h`) ou uma data (`DD/MM/AAAA HH:mm`).',
+        content: gt('badStart', lang),
         ephemeral: true,
       });
       return;
@@ -685,7 +682,7 @@ async function handleGiveawayInteraction(interaction, client) {
 
     if (!endsAt) {
       await interaction.reply({
-        content: '❌ Data de término inválida. Use uma duração (ex: `1h`, `30m`, `2d`) ou uma data (`DD/MM/AAAA HH:mm`).',
+        content: gt('badEnd', lang),
         ephemeral: true,
       });
       return;
@@ -693,7 +690,7 @@ async function handleGiveawayInteraction(interaction, client) {
 
     if (endsAt <= startsAt || endsAt < Date.now() + 50000) {
       await interaction.reply({
-        content: '❌ A data de término deve ser no mínimo 1 minuto no futuro e posterior ao início.',
+        content: gt('badRange', lang),
         ephemeral: true,
       });
       return;
@@ -701,7 +698,7 @@ async function handleGiveawayInteraction(interaction, client) {
 
     if (isNaN(winnersCount) || winnersCount < 1 || winnersCount > 5) {
       await interaction.reply({
-        content: '❌ A quantidade de ganhadores deve ser um número entre 1 e 5.',
+        content: gt('badWinners', lang),
         ephemeral: true,
       });
       return;
@@ -726,17 +723,13 @@ async function handleGiveawayInteraction(interaction, client) {
 
     const step2Embed = new EmbedBuilder()
       .setColor(EMBED_PINK)
-      .setTitle('🎁  ✦  Passo 2: Definição dos Prêmios')
-      .setDescription(
-        `### 🏆 Prêmios do Sorteio\n\n` +
-        `Você configurou **${winnersCount} ganhador(es)** para este sorteio.\n\n` +
-        `Clique no botão abaixo para preencher a descrição dos prêmios!`
-      );
+      .setTitle(gt('step2EmbedTitle', lang))
+      .setDescription(gt('step2EmbedBody', lang, { n: winnersCount }));
 
     const step2Row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('gw:btn:open_step2')
-        .setLabel('Configurar Prêmios')
+        .setLabel(gt('step2Button', lang))
         .setEmoji('🎁')
         .setStyle(ButtonStyle.Primary)
     );
@@ -750,13 +743,13 @@ async function handleGiveawayInteraction(interaction, client) {
     const draft = wizardDrafts.get(interaction.user.id);
     if (!draft) {
       await interaction.reply({
-        content: '❌ Rascunho expirado. Execute `/py-sorteio` novamente.',
+        content: gt('draftExpiredRetry', lang),
         ephemeral: true,
       });
       return;
     }
 
-    const modal = buildStep2Modal(draft.winnersCount);
+    const modal = buildStep2Modal(draft.winnersCount, lang);
     await interaction.showModal(modal);
     return;
   }
@@ -765,21 +758,21 @@ async function handleGiveawayInteraction(interaction, client) {
   if (interaction.isModalSubmit() && customId === 'gw:modal:step2') {
     const draft = wizardDrafts.get(interaction.user.id);
     if (!draft) {
-      await interaction.reply({ content: '❌ Rascunho expirado.', ephemeral: true });
+      await interaction.reply({ content: gt('draftExpired', lang), ephemeral: true });
       return;
     }
 
     let prizes = [];
     if (draft.winnersCount === 1) {
       const p = interaction.fields.getTextInputValue('prize')?.trim();
-      prizes = [p || 'Prêmio Especial'];
+      prizes = [p || gt('prizeDefault', lang)];
     } else {
       const raw = interaction.fields.getTextInputValue('prizes_list')?.trim() || '';
       prizes = raw
         .split('\n')
         .map((l) => l.trim())
         .filter(Boolean);
-      if (prizes.length === 0) prizes = ['Prêmio Especial'];
+      if (prizes.length === 0) prizes = [gt('prizeDefault', lang)];
     }
 
     draft.prizes = prizes;
@@ -787,16 +780,13 @@ async function handleGiveawayInteraction(interaction, client) {
     // Passo 3: Escolher Canal
     const channelEmbed = new EmbedBuilder()
       .setColor(EMBED_PINK)
-      .setTitle('📢  ✦  Passo 3: Canal de Publicação')
-      .setDescription(
-        `### 📍 Onde o sorteio acontecerá?\n\n` +
-        `Selecione o canal de texto do servidor onde o card público do sorteio será publicado.`
-      );
+      .setTitle(gt('step3Title', lang))
+      .setDescription(gt('step3Body', lang));
 
     const channelRow = new ActionRowBuilder().addComponents(
       new ChannelSelectMenuBuilder()
         .setCustomId('gw:select:channel')
-        .setPlaceholder('Selecione o canal do sorteio...')
+        .setPlaceholder(gt('step3Placeholder', lang))
         .setChannelTypes(ChannelType.GuildText)
     );
 
@@ -808,7 +798,7 @@ async function handleGiveawayInteraction(interaction, client) {
   if (customId === 'gw:select:channel') {
     const draft = wizardDrafts.get(interaction.user.id);
     if (!draft) {
-      await interaction.update({ content: '❌ Rascunho expirado.', embeds: [], components: [] });
+      await interaction.update({ content: gt('draftExpired', lang), embeds: [], components: [] });
       return;
     }
 
@@ -818,20 +808,13 @@ async function handleGiveawayInteraction(interaction, client) {
     // Passo 4: Restrições
     const restEmbed = new EmbedBuilder()
       .setColor(EMBED_PINK)
-      .setTitle('🛡️  ✦  Passo 4: Restrições & Requisitos')
-      .setDescription(
-        `### ⚙️ Regras Opcionais de Participação\n\n` +
-        `Personalize quem pode participar e configure vantagens exclusivas.\n\n` +
-        `• **Cargos Permitidos (Whitelist):** Somente membros com esses cargos poderão entrar.\n\n` +
-        `• **Cargos Bloqueados (Blacklist):** Membros com esses cargos não poderão entrar.\n\n` +
-        `• **Cargos Bônus (2x chances):** Entradas terão peso dobrado na apuração.\n\n` +
-        `• **Idade Mínima de Conta:** Protege o sorteio contra contas recém-criadas.`
-      );
+      .setTitle(gt('step4Title', lang))
+      .setDescription(gt('step4Body', lang));
 
     const allowedRow = new ActionRowBuilder().addComponents(
       new RoleSelectMenuBuilder()
         .setCustomId('gw:roles:allowed')
-        .setPlaceholder('Cargos Permitidos (Whitelist - Opcional)')
+        .setPlaceholder(gt('allowedPlaceholder', lang))
         .setMinValues(0)
         .setMaxValues(5)
     );
@@ -839,7 +822,7 @@ async function handleGiveawayInteraction(interaction, client) {
     const blockedRow = new ActionRowBuilder().addComponents(
       new RoleSelectMenuBuilder()
         .setCustomId('gw:roles:blocked')
-        .setPlaceholder('Cargos Bloqueados (Blacklist - Opcional)')
+        .setPlaceholder(gt('blockedPlaceholder', lang))
         .setMinValues(0)
         .setMaxValues(5)
     );
@@ -847,16 +830,16 @@ async function handleGiveawayInteraction(interaction, client) {
     const bonusRow = new ActionRowBuilder().addComponents(
       new RoleSelectMenuBuilder()
         .setCustomId('gw:roles:bonus')
-        .setPlaceholder('Cargos Bônus (Chances Extras - Opcional)')
+        .setPlaceholder(gt('bonusPlaceholder', lang))
         .setMinValues(0)
         .setMaxValues(5)
     );
 
     const ageRow = new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId('gw:age:0').setLabel('Sem Mínimo').setStyle(ButtonStyle.Secondary),
-      new ButtonBuilder().setCustomId('gw:age:7').setLabel('7 Dias').setStyle(ButtonStyle.Secondary),
-      new ButtonBuilder().setCustomId('gw:age:30').setLabel('30 Dias').setStyle(ButtonStyle.Secondary),
-      new ButtonBuilder().setCustomId('gw:step:to_emoji').setLabel('Avançar').setEmoji('➡️').setStyle(ButtonStyle.Success)
+      new ButtonBuilder().setCustomId('gw:age:0').setLabel(gt('ageNone', lang)).setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder().setCustomId('gw:age:7').setLabel(gt('ageDays', lang, { n: 7 })).setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder().setCustomId('gw:age:30').setLabel(gt('ageDays', lang, { n: 30 })).setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder().setCustomId('gw:step:to_emoji').setLabel(gt('next', lang)).setEmoji('➡️').setStyle(ButtonStyle.Success)
     );
 
     await interaction.update({
@@ -900,24 +883,21 @@ async function handleGiveawayInteraction(interaction, client) {
   if (customId === 'gw:step:to_emoji') {
     const draft = wizardDrafts.get(interaction.user.id);
     if (!draft) {
-      await interaction.update({ content: '❌ Rascunho expirado.', embeds: [], components: [] });
+      await interaction.update({ content: gt('draftExpired', lang), embeds: [], components: [] });
       return;
     }
 
     const emojiEmbed = new EmbedBuilder()
       .setColor(EMBED_PINK)
-      .setTitle('🎨  ✦  Passo 5: Emoji de Participação')
-      .setDescription(
-        `### 🌟 Escolha o Emoji do Botão\n\n` +
-        `Selecione qual emoji será exibido no botão interativo de participação do card público.`
-      );
+      .setTitle(gt('step5Title', lang))
+      .setDescription(gt('step5Body', lang));
 
     const emojiRow = new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId('gw:emoji:tada').setLabel('Festa').setEmoji('🎉').setStyle(ButtonStyle.Secondary),
-      new ButtonBuilder().setCustomId('gw:emoji:gift').setLabel('Presente').setEmoji('🎁').setStyle(ButtonStyle.Secondary),
-      new ButtonBuilder().setCustomId('gw:emoji:gem').setLabel('Gema').setEmoji('💎').setStyle(ButtonStyle.Secondary),
-      new ButtonBuilder().setCustomId('gw:emoji:star').setLabel('Estrela').setEmoji('🌟').setStyle(ButtonStyle.Secondary),
-      new ButtonBuilder().setCustomId('gw:emoji:clover').setLabel('Trevo').setEmoji('🍀').setStyle(ButtonStyle.Secondary)
+      new ButtonBuilder().setCustomId('gw:emoji:tada').setLabel(gt('emojiTada', lang)).setEmoji('🎉').setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder().setCustomId('gw:emoji:gift').setLabel(gt('emojiGift', lang)).setEmoji('🎁').setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder().setCustomId('gw:emoji:gem').setLabel(gt('emojiGem', lang)).setEmoji('💎').setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder().setCustomId('gw:emoji:star').setLabel(gt('emojiStar', lang)).setEmoji('🌟').setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder().setCustomId('gw:emoji:clover').setLabel(gt('emojiClover', lang)).setEmoji('🍀').setStyle(ButtonStyle.Secondary)
     );
 
     await interaction.update({ embeds: [emojiEmbed], components: [emojiRow] });
@@ -928,7 +908,7 @@ async function handleGiveawayInteraction(interaction, client) {
   if (customId.startsWith('gw:emoji:')) {
     const draft = wizardDrafts.get(interaction.user.id);
     if (!draft) {
-      await interaction.update({ content: '❌ Rascunho expirado.', embeds: [], components: [] });
+      await interaction.update({ content: gt('draftExpired', lang), embeds: [], components: [] });
       return;
     }
 
@@ -938,31 +918,30 @@ async function handleGiveawayInteraction(interaction, client) {
 
     const confirmEmbed = new EmbedBuilder()
       .setColor(EMBED_PINK)
-      .setTitle('✅  ✦  Passo 6: Confirmação & Agendamento')
-      .setDescription(
-        `### 📋 Resumo da Configuração do Sorteio\n\n` +
-        `• **Título:** ${draft.title}\n\n` +
-        `• **Canal de Destino:** <#${draft.channelId}>\n\n` +
-        `• **Início:** <t:${Math.floor(draft.startsAt / 1000)}:f> (<t:${Math.floor(draft.startsAt / 1000)}:R>)\n\n` +
-        `• **Término:** <t:${Math.floor(draft.endsAt / 1000)}:f> (<t:${Math.floor(draft.endsAt / 1000)}:R>)\n\n` +
-        `• **Quantidade de Ganhadores:** \`${draft.winnersCount}\`\n\n` +
-        `• **Prêmio(s):** ${draft.prizes.join(', ')}\n\n` +
-        `• **Emoji do Botão:** ${draft.emoji}\n\n` +
-        `• **Idade Mínima de Conta:** ${draft.minAccountAgeDays ? `\`${draft.minAccountAgeDays} dias\`` : 'Sem restrição'}\n\n` +
-        `• **Cargos Permitidos:** ${draft.allowedRoles?.length ? draft.allowedRoles.map((r) => `<@&${r}>`).join(', ') : 'Todos os membros'}\n\n` +
-        `• **Cargos Bloqueados:** ${draft.blockedRoles?.length ? draft.blockedRoles.map((r) => `<@&${r}>`).join(', ') : 'Nenhum'}\n\n` +
-        `• **Cargos com Bônus (2x):** ${draft.bonusRoles?.length ? draft.bonusRoles.map((r) => `<@&${r}>`).join(', ') : 'Nenhum'}`
-      );
+      .setTitle(gt('step6Title', lang))
+      .setDescription(gt('step6Body', lang, {
+        title: draft.title,
+        channel: `<#${draft.channelId}>`,
+        starts: tsBoth(draft.startsAt),
+        ends: tsBoth(draft.endsAt),
+        winners: draft.winnersCount,
+        prizes: draft.prizes.join(', '),
+        emoji: draft.emoji,
+        age: draft.minAccountAgeDays ? gt('ageValue', lang, { n: draft.minAccountAgeDays }) : gt('noRestriction', lang),
+        allowed: draft.allowedRoles?.length ? draft.allowedRoles.map((r) => `<@&${r}>`).join(', ') : gt('allMembers', lang),
+        blocked: draft.blockedRoles?.length ? draft.blockedRoles.map((r) => `<@&${r}>`).join(', ') : gt('none', lang),
+        bonus: draft.bonusRoles?.length ? draft.bonusRoles.map((r) => `<@&${r}>`).join(', ') : gt('none', lang),
+      }));
 
     const confirmRow = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('gw:action:publish')
-        .setLabel('Confirmar & Publicar Sorteio')
+        .setLabel(gt('publish', lang))
         .setEmoji('✅')
         .setStyle(ButtonStyle.Success),
       new ButtonBuilder()
         .setCustomId('gw:action:discard')
-        .setLabel('Descartar')
+        .setLabel(gt('discard', lang))
         .setEmoji('❌')
         .setStyle(ButtonStyle.Secondary)
     );
@@ -975,7 +954,7 @@ async function handleGiveawayInteraction(interaction, client) {
   if (customId === 'gw:action:discard') {
     wizardDrafts.delete(interaction.user.id);
     await interaction.update({
-      content: '❌ Configuração de sorteio descartada com sucesso.',
+      content: gt('discarded', lang),
       embeds: [],
       components: [],
     });
@@ -986,7 +965,7 @@ async function handleGiveawayInteraction(interaction, client) {
   if (customId === 'gw:action:publish') {
     const draft = wizardDrafts.get(interaction.user.id);
     if (!draft) {
-      await interaction.update({ content: '❌ Rascunho expirado.', embeds: [], components: [] });
+      await interaction.update({ content: gt('draftExpired', lang), embeds: [], components: [] });
       return;
     }
 
@@ -1038,8 +1017,8 @@ async function handleGiveawayInteraction(interaction, client) {
     wizardDrafts.delete(interaction.user.id);
 
     const statusNotice = isNow
-      ? `✅ Sorteio publicado com sucesso no canal <#${draft.channelId}>!`
-      : `⏰ Sorteio agendado com sucesso para iniciar em <t:${Math.floor(draft.startsAt / 1000)}:f> no canal <#${draft.channelId}>!`;
+      ? gt('published', lang, { channel: `<#${draft.channelId}>` })
+      : gt('scheduled', lang, { starts: ts(draft.startsAt), channel: `<#${draft.channelId}>` });
 
     await interaction.update({
       content: statusNotice,
@@ -1057,7 +1036,7 @@ async function handleGiveawayInteraction(interaction, client) {
 
     if (!gw || gw.status !== 'ACTIVE') {
       await interaction.reply({
-        content: '❌ Este sorteio não está mais ativo para novas inscrições.',
+        content: gt('notActive', lang),
         ephemeral: true,
       });
       return;
@@ -1072,7 +1051,7 @@ async function handleGiveawayInteraction(interaction, client) {
       const ageDays = (Date.now() - user.createdTimestamp) / (1000 * 60 * 60 * 24);
       if (ageDays < rest.minAccountAgeDays) {
         await interaction.reply({
-          content: `❌ Sua conta no Discord precisa ter pelo menos **${rest.minAccountAgeDays} dias** para participar deste sorteio.`,
+          content: gt('accountTooNew', lang, { days: rest.minAccountAgeDays }),
           ephemeral: true,
         });
         return;
@@ -1084,7 +1063,7 @@ async function handleGiveawayInteraction(interaction, client) {
       const hasBlocked = rest.blockedRoles.some((r) => member.roles?.cache?.has(r));
       if (hasBlocked) {
         await interaction.reply({
-          content: '❌ Você possui um cargo que não tem permissão para participar deste sorteio.',
+          content: gt('roleBlocked', lang),
           ephemeral: true,
         });
         return;
@@ -1096,7 +1075,7 @@ async function handleGiveawayInteraction(interaction, client) {
       const hasAllowed = rest.allowedRoles.some((r) => member.roles?.cache?.has(r));
       if (!hasAllowed) {
         await interaction.reply({
-          content: '❌ Este sorteio é restrito a cargos específicos que você não possui.',
+          content: gt('roleRequired', lang),
           ephemeral: true,
         });
         return;
@@ -1119,7 +1098,7 @@ async function handleGiveawayInteraction(interaction, client) {
       scheduleCardUpdate(gw, client);
 
       await interaction.reply({
-        content: '👋 Você saiu do sorteio com sucesso.',
+        content: gt('left', lang),
         ephemeral: true,
       });
     } else {
@@ -1132,9 +1111,9 @@ async function handleGiveawayInteraction(interaction, client) {
       saveGiveawaysData(data);
       scheduleCardUpdate(gw, client);
 
-      const bonusNotice = weight > 1 ? '\n\n🌟 *Você possui cargo bônus: suas chances são dobradas!*' : '';
+      const bonusNotice = weight > 1 ? `\n\n${gt('bonusNotice', lang)}` : '';
       await interaction.reply({
-        content: `🎉 **Inscrição Confirmada!** Você está participando do sorteio **${gw.title}**!${bonusNotice}`,
+        content: `${gt('joined', lang, { title: gw.title })}${bonusNotice}`,
         ephemeral: true,
       });
     }

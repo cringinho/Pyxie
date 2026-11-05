@@ -1,3 +1,4 @@
+const { pickImageUrl } = require('../imageUrl');
 const {
   ActionRowBuilder,
   ButtonBuilder,
@@ -83,7 +84,7 @@ function buildInfoEventoView(userId, client) {
     .replace(/{firstPrize}/g, firstPrize);
 
   // 4. Imagem do Banner do Guia
-  const imageUrl = config.assets?.infoEventImageUrl || config.assets?.chestImageUrl || 'https://i.imgur.com/link_do_bau_halloween.png';
+  const imageUrl = pickImageUrl(config.assets?.infoEventImageUrl, config.assets?.chestImageUrl);
 
   const embed = new EmbedBuilder()
     .setColor('#7c3aed')
@@ -137,7 +138,8 @@ function buildInfoEventoView(userId, client) {
     inline: false,
   });
 
-  embed.setImage(imageUrl)
+  if (imageUrl) embed.setImage(imageUrl);
+  embed
     .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!' })
     .setTimestamp();
 

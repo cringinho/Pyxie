@@ -1,3 +1,4 @@
+const { isValidImageUrl, pickImageUrl } = require('./imageUrl');
 const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('../../utils/dataDir');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -32,7 +33,8 @@ const DEFAULT_CONFIG = {
     thirdPlace: '2.000 Moedinhas',
   },
   assets: {
-    chestImageUrl: 'https://i.imgur.com/link_do_bau_halloween.png',
+    // Sem arte padrão: o dono cadastra a imagem do baú no painel (https + png/jpg/gif/webp).
+    chestImageUrl: '',
     emojis: {
       currency: '1548443994902757427', // halloweenabobora
       dropDecoys: [
@@ -937,9 +939,10 @@ async function sendStartAnnouncement(client, config) {
     .setColor('#a855f7')
     .setTitle(`🕸️ ${config.eventName.toUpperCase()} 🕸️`)
     .setDescription(replaced)
-    .setImage(config.assets?.chestImageUrl || DEFAULT_CONFIG.assets.chestImageUrl)
     .setFooter({ text: config.templates.dropEmbedFooter || DEFAULT_CONFIG.templates.dropEmbedFooter })
     .setTimestamp();
+  const startImage = pickImageUrl(config.assets?.chestImageUrl);
+  if (startImage) startEmbed.setImage(startImage);
 
   await channel.send({ embeds: [startEmbed] }).catch(() => null);
 }
@@ -1172,6 +1175,16 @@ function setupWebRoutes(app) {
   app.post('/api/admin/sazonal/config', requireAdminAuth, (req, res) => {
     try {
       const updates = req.body || {};
+      // Imagens do evento: só https apontando para png/jpg/gif/webp (ou vazio).
+      for (const key of ['chestImageUrl', 'infoEventImageUrl']) {
+        const value = updates.assets?.[key];
+        if (value === undefined || value === null) continue;
+        const clean = String(value).trim();
+        if (clean && !isValidImageUrl(clean)) {
+          return res.status(400).json({ success: false, error: 'invalid_image_url', field: key });
+        }
+        updates.assets[key] = clean;
+      }
       const saved = saveConfig(updates);
       if (clientRef) {
         reload();

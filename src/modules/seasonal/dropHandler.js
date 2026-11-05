@@ -1,3 +1,4 @@
+const { pickImageUrl } = require('./imageUrl');
 const cron = require('node-cron');
 const { EmbedBuilder } = require('discord.js');
 const {
@@ -250,7 +251,8 @@ async function triggerDrop(client, force = false) {
   const targetObj = resolvedDecoyObjects[Math.floor(Math.random() * resolvedDecoyObjects.length)];
   const targetLabel = getEmojiDisplayName(targetObj.rawDecoy, targetObj.formatted, targetObj);
 
-  const chestImageUrl = config.assets?.chestImageUrl || 'https://i.imgur.com/link_do_bau_halloween.png';
+  // Sem imagem válida configurada no painel, o embed sai sem imagem (nada de link quebrado).
+  const chestImageUrl = pickImageUrl(config.assets?.chestImageUrl);
 
   const dropEmbed = new EmbedBuilder()
     .setColor('#7c3aed')
@@ -260,9 +262,9 @@ async function triggerDrop(client, force = false) {
       `⚡ **Rápido! Clique na reação ${targetLabel} antes dos outros para abrir o baú!**\n\n` +
       `*Apenas o primeiro a acertar leva o saque. Reações erradas só dão vergonha alheia.*`
     )
-    .setImage(chestImageUrl)
     .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-infoevento para entender a pontuação e prazos!' })
     .setTimestamp();
+  if (chestImageUrl) dropEmbed.setImage(chestImageUrl);
 
   let dropMsg = null;
   try {
@@ -388,9 +390,9 @@ async function triggerDrop(client, force = false) {
           `🌐 **Placar Geral:** [Ver Ranking e Galeria de Artes no Site](${process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br'}/ranking-sazonal)\n\n` +
           `*Os outros que fiquem comendo poeira.*`
         )
-        .setImage(chestImageUrl)
         .setFooter({ text: config.templates?.dropEmbedFooter || 'Dica: Use /py-rank ou acesse pyxie.com.br/ranking-sazonal' })
         .setTimestamp();
+      if (chestImageUrl) winEmbed.setImage(chestImageUrl);
 
       await dropMsg.edit({ embeds: [winEmbed] }).catch(() => null);
       console.log(`[Seasonal:Drop] Drop reivindicado por ${user.tag} (${user.id}): +${amount} moedas.`);

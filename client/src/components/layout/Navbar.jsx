@@ -103,7 +103,7 @@ export default function Navbar({ lang, setLang, t, stats }) {
         <a href={localeHref('/', lang)} className="flex items-center gap-2.5 group shrink-0">
           <div className="relative">
             <img
-              src="/assets/pyxie/sticker/sticker_smile.png"
+              src="/assets/pyxie/sticker/sticker_smile-128.webp"
               alt="Pyxie Mascot"
               width="36"
               height="36"
