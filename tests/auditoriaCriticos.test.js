@@ -43,7 +43,11 @@ const { escapeHtml, replaceKeep } = require('../src/utils/htmlEscape');
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: 'vitima@example.com' }),
     });
     const forgotBody = await forgot.json();
-    assert.equal(forgotBody.success, true);
+    // Sem serviço de e-mail (decisão do dono): a rota diz a verdade em vez de "instruções enviadas".
+    assert.equal(forgot.status, 501);
+    assert.equal(forgotBody.error, 'email_unavailable');
+    assert.ok(forgotBody.message.includes('cringe.support@gmail.com'), 'Indica o suporte como caminho real');
+    assert.ok(!/enviadas|have been sent/i.test(forgotBody.message), 'Não promete e-mail que não existe');
     assert.equal('token' in forgotBody, false, 'O código de redefinição nunca volta na resposta');
     assert.ok(!JSON.stringify(forgotBody).match(/[a-f0-9]{32,}/i), 'Nenhum código longo vaza na resposta');
 

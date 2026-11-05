@@ -3,6 +3,7 @@ const accountStore = require('../modules/accounts/accountStore');
 const webDraftStore = require('../modules/hyperfokus/webDraftStore');
 const { importGitHubSnippet } = require('../modules/hyperfokus/githubImporter');
 const accountSessions = require('../services/accountSessions');
+const { SUPPORT_EMAIL } = require('../config/support');
 
 function createAccountRouter() {
   const router = express.Router();
@@ -113,19 +114,18 @@ function createAccountRouter() {
   });
 
   // 5. Esqueci a Senha
+  // A Pyxie ainda não envia e-mails (decisão do dono, auditoria Q262). Em vez de dizer
+  // "instruções enviadas" sem enviar nada, a rota explica o caminho real: entrar com o
+  // Discord ou pedir ajuda ao suporte. Nenhum código é criado nem devolvido (Q261).
   router.post('/api/auth/forgot-password', (req, res) => {
-    const { email, lang = 'pt' } = req.body || {};
-    // O código de redefinição NUNCA volta na resposta: quem pede não pode ser
-    // quem recebe (senão qualquer um troca a senha de outra pessoa). Ele fica
-    // guardado para a rotina de envio por e-mail (auditoria Q261).
-    accountStore.createPasswordResetToken(email);
-
-    // Mensagem opaca por segurança (não confirma se o e-mail existe)
-    return res.json({
-      success: true,
+    const { lang = 'pt' } = req.body || {};
+    return res.status(501).json({
+      success: false,
+      error: 'email_unavailable',
+      supportEmail: SUPPORT_EMAIL,
       message: lang === 'pt'
-        ? 'Se o e-mail estiver cadastrado, as instruções para redefinição foram enviadas.'
-        : 'If the email is registered, password reset instructions have been sent.',
+        ? `Ainda não enviamos e-mails. Se a conta está ligada ao Discord, entre com o Discord. Se não, escreva para ${SUPPORT_EMAIL} a partir do e-mail da conta.`
+        : `We don't send emails yet. If your account is linked to Discord, sign in with Discord. Otherwise, write to ${SUPPORT_EMAIL} from the account's email address.`,
     });
   });
 

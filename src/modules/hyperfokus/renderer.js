@@ -1,3 +1,4 @@
+const { SUPPORT_EMAIL } = require('../../config/support');
 const { buildArticleSeo, buildHomeSeo, buildAuthorSeo, applyInternalLinks } = require('./seoEngine');
 const { getContextualProducts } = require('./shopeeContext');
 const { markdownToHtml } = require('./markdown');
@@ -1494,7 +1495,7 @@ function renderLoginPage({ lang = 'pt', redirect = '/meu-perfil', error = null, 
         <div class="form-group">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
             <label class="form-label" for="login-pass" style="margin-bottom:0;">${isEn ? 'Password' : 'Sua Senha'}</label>
-            <a href="/esqueci-senha${isEn ? '?lang=en' : ''}" style="font-size:0.75rem;">${isEn ? 'Forgot password?' : 'Esqueceu a senha?'}</a>
+            <a href="#login-forgot-help" style="font-size:0.75rem;">${isEn ? 'Forgot password?' : 'Esqueceu a senha?'}</a>
           </div>
           <input type="password" id="login-pass" class="form-input" required autocomplete="current-password" placeholder="••••••••" />
         </div>
@@ -1503,6 +1504,11 @@ function renderLoginPage({ lang = 'pt', redirect = '/meu-perfil', error = null, 
           ✨ ${isEn ? 'Enter Portal' : 'Acessar Conta'}
         </button>
       </form>
+      <p id="login-forgot-help" style="font-size:0.8rem; color:var(--text-muted); margin-top:0.9rem; line-height:1.5;">
+        ${isEn
+          ? `Forgot your password? We don't send emails yet. If your account is linked to Discord, use the Discord button above. Otherwise, write to <strong>${SUPPORT_EMAIL}</strong> from the account's email address and we'll help you get back in.`
+          : `Esqueceu a senha? Ainda não enviamos e-mails. Se a conta está ligada ao Discord, use o botão do Discord acima. Se não, escreva para <strong>${SUPPORT_EMAIL}</strong> a partir do e-mail da conta que a gente ajuda você a voltar.`}
+      </p>
 
       <div style="margin-top:1.75rem; padding-top:1.25rem; border-top:1px solid rgba(255,255,255,0.08); font-size:0.85rem; color:var(--text-muted);">
         ${isEn ? "Don't have an account yet?" : 'Ainda não tem uma conta?'}
@@ -1796,8 +1802,8 @@ function renderProfilePage({ account, stats, lang = 'pt', message = null, error 
               ${escapeHtml(account.displayName || account.email || emailPrefix)}
             </h1>
             <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; font-size:0.8rem;">
-              <span class="status-badge ${isVerified ? 'status-published' : 'status-pending'}">
-                ${isVerified ? (isEn ? 'Verified Author' : 'E-mail Verificado') : (isEn ? 'Pending Email Verification' : 'E-mail Pendente')}
+              <span class="status-badge status-published" ${isVerified ? '' : 'hidden'}>
+                ${isEn ? 'Verified Author' : 'E-mail Verificado'}
               </span>
               ${userDiscord ? `<span style="color:var(--text-muted);">Discord: <b>${escapeHtml(userDiscord)}</b></span>` : ''}
             </div>
