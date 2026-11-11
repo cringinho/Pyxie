@@ -945,6 +945,45 @@ const TRANSLATIONS = {
       "muted": "🔕 Silenciado por 7 dias.",
       "ownerOnly": "🔒 Só o dono da Pyxie mexe no monitor de links."
     },
+    "bumpReward": {
+      "title": {
+        "1": "📣 Bump anotado no caderninho",
+        "2": "🚀 Alguém lembrou do servidor",
+        "3": "📣 Bump feito, recompensa paga",
+        "4": "📈 A Cringelândia subiu de novo",
+        "5": "📣 Divulgação oficial concluída",
+        "6": "🚀 Bump entregue na hora certa"
+      },
+      "line": {
+        "1": "{user} deu bump e a Cringelândia subiu na lista. Não que eu estivesse torcendo. Eu estava.",
+        "2": "Finalmente alguém com iniciativa. {user}, seu nome saiu do caderninho de vinganças. Por hoje.",
+        "3": "{user} fez o trabalho que ninguém quis fazer. Toma suas moedinhas e não se acostuma.",
+        "4": "Bump feito por {user}. Eu ia fazer, tá? Só não fiz porque fada não tem dedo pra comando.",
+        "5": "O servidor agradece, {user}. Eu também. Baixinho. Muito baixinho.",
+        "6": "{user} apertou um botão e virou herói da divulgação. A barra é baixa, mas você passou.",
+        "7": "Olha só, {user} lembrou que o servidor existe. Vou anotar isso como gesto de carinho.",
+        "8": "Mais gente vai achar a Cringelândia graças a {user}. Vou precisar de mais cadeiras.",
+        "9": "{user} deu bump antes de todo mundo. Competitividade saudável. Ou tédio. Aceito os dois.",
+        "10": "Recebi o bump de {user} e fiquei feliz. Não conta pra ninguém. É sério.",
+        "11": "Esse bump de {user} vale mais que mil figurinhas. Tá, não vale. Mas vale moedinha.",
+        "12": "{user}, você divulgou o servidor e eu paguei. Que relação profissional bonita a nossa.",
+        "13": "Missão cumprida, {user}. A fada da divulgação aprova com um carimbo meio torto.",
+        "14": "Dois cliques e a Cringelândia brilhou de novo. Obrigada, {user}. Pronto, falei. Esquece."
+      },
+      "bean": {
+        "1": "E caiu um feijão mágico do meu bolso. Foi sem querer. Pode ficar.",
+        "2": "Sorte rara: um feijão mágico veio junto. Eu juro que não escolhi você.",
+        "3": "Feijão mágico de brinde. Isso quase nunca acontece, então finge que é normal.",
+        "4": "Um feijão mágico apareceu no pacote. Se contar pra alguém, eu nego.",
+        "5": "Bônus raro liberado: um feijão mágico. Não fica se achando. Fica um pouco."
+      },
+      "coins": "### {coin} +`{coins}` moedinhas",
+      "beans": "### {bean} +`{beans}` feijão mágico",
+      "capped": "-# Parte das moedinhas bateu no teto diário de `{cap}`. Amanhã o cofre abre de novo.",
+      "cappedAll": "-# Seu teto diário de `{cap}` moedinhas já encheu, então hoje o pagamento é em gratidão. Gratidão de fada vale muito, tá?",
+      "next": "-# Próximo bump liberado {when}.",
+      "footer": "Recompensa de bump da Cringelândia · seus bumps premiados: {n}"
+    },
     "pyxieVoice": {
       "daily": {
         "1": "Pegou o diário de novo? Não que eu tenha ficado contando os minutos, tá?",
@@ -4204,6 +4243,45 @@ const TRANSLATIONS = {
       "retestFail": "😿 Still down: {diagnosis}.",
       "muted": "🔕 Muted for 7 days.",
       "ownerOnly": "🔒 Only Pyxie's owner can manage the link monitor."
+    },
+    "bumpReward": {
+      "title": {
+        "1": "📣 Bump logged in my notebook",
+        "2": "🚀 Someone remembered the server",
+        "3": "📣 Bump done, reward paid",
+        "4": "📈 Cringelândia climbed again",
+        "5": "📣 Official promo complete",
+        "6": "🚀 Bump delivered right on time"
+      },
+      "line": {
+        "1": "{user} bumped and Cringelândia climbed the list. Not that I was rooting for it. I was.",
+        "2": "Finally, someone with initiative. {user}, your name is off my revenge notebook. For today.",
+        "3": "{user} did the job nobody wanted. Take your coins and don't get used to it.",
+        "4": "Bump by {user}. I was going to do it, okay? Fairies just don't have fingers for commands.",
+        "5": "The server thanks you, {user}. So do I. Quietly. Very quietly.",
+        "6": "{user} pressed one button and became a promo hero. The bar is low, but you cleared it.",
+        "7": "Look at that, {user} remembered the server exists. I'm logging it as an act of affection.",
+        "8": "More people will find Cringelândia thanks to {user}. I'm going to need more chairs.",
+        "9": "{user} bumped before everyone else. Healthy competition. Or boredom. I accept both.",
+        "10": "Got {user}'s bump and it made me happy. Don't tell anyone. I mean it.",
+        "11": "This bump from {user} is worth more than a thousand stickers. Okay, it isn't. But it's worth coins.",
+        "12": "{user}, you promoted the server and I paid you. What a beautiful professional relationship.",
+        "13": "Mission complete, {user}. The promo fairy approves with a slightly crooked stamp.",
+        "14": "Two clicks and Cringelândia is shining again. Thank you, {user}. There, I said it. Forget it."
+      },
+      "bean": {
+        "1": "And a magic bean fell out of my pocket. By accident. Keep it.",
+        "2": "Rare luck: a magic bean came along. I swear I didn't pick you.",
+        "3": "A free magic bean. This almost never happens, so act natural.",
+        "4": "A magic bean showed up in the package. If you tell anyone, I'll deny it.",
+        "5": "Rare bonus unlocked: a magic bean. Don't get cocky. Okay, a little."
+      },
+      "coins": "### {coin} +`{coins}` coins",
+      "beans": "### {bean} +`{beans}` magic bean",
+      "capped": "-# Some coins hit the daily cap of `{cap}`. The vault reopens tomorrow.",
+      "cappedAll": "-# Your daily cap of `{cap}` coins is already full, so today you get paid in gratitude. Fairy gratitude is worth a lot, okay?",
+      "next": "-# Next bump unlocks {when}.",
+      "footer": "Cringelândia bump reward · your rewarded bumps: {n}"
     },
     "pyxieVoice": {
       "daily": {

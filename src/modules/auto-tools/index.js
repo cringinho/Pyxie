@@ -8,6 +8,8 @@ const state = require('../../services/autoState');
 const r3 = require('../../services/autoRules3');
 const { embed, NO_PING } = require('../../services/autoAlerts');
 const bump = require('../../services/bumpReminder');
+const bumpRewards = require('../../services/bumpRewards');
+const { getEmoji } = require('../../utils/appEmojis');
 const { t, getLanguage } = require('../../utils/i18n');
 
 const MINUTE = 60000;
@@ -203,7 +205,7 @@ async function pinArchive(channel) {
 // ---------- Lembrete de bump ----------
 // O ciclo inteiro (contagem, aviso, agradecimento e marcos) vem de services/bumpReminder.js,
 // para a agenda do servidor e o painel lerem exatamente o mesmo cálculo.
-function noteBump(message, now = Date.now()) {
+function noteBump(message, now = Date.now(), { skipThanks = false } = {}) {
   if (!message?.guild || !r3.isBumpDone(message)) return false;
   const cfg = on(message.guild.id, 'bumpReminder');
   if (!cfg) return false;
@@ -223,7 +225,8 @@ function noteBump(message, now = Date.now()) {
 
   const lang = getLanguage(guild.id);
   const user = { id: result.state.lastBump.userId, name: result.state.lastBump.userName };
-  const thanks = bump.buildThanks(guild, cfg, result.state, lang, user);
+  // Na Cringelândia o cartão da recompensa já agradece; não repete o obrigado.
+  const thanks = skipThanks ? null : bump.buildThanks(guild, cfg, result.state, lang, user);
   if (thanks) message.channel?.send?.(thanks).catch(() => null);
   const milestone = bump.milestoneFor(cfg, result.total);
   if (milestone) {
@@ -283,9 +286,32 @@ async function bumpTick(client, now = Date.now()) {
   }
 }
 
+// ---------- Recompensa de bump (só Cringelândia; vale com ou sem o lembrete ligado) ----------
+function rewardBump(message, now = Date.now()) {
+  if (!message?.guild || !r3.isBumpDone(message) || !bumpRewards.eligible(message.guild.id)) return false;
+  let result;
+  try {
+    result = bumpRewards.claim(message, { now });
+  } catch (err) {
+    console.error('[AutoTools] recompensa de bump:', err);
+    return false;
+  }
+  if (!result.granted) return false;
+  const lang = getLanguage(message.guild.id);
+  const card = bumpRewards.buildMessage(result, lang, { coin: getEmoji('COIN'), bean: getEmoji('MAGIC_BEAN') });
+  message.channel?.send?.(card).catch(() => null);
+  stats.bump(message.guild.id, 'bumpReminder', 'rewards');
+  return true;
+}
+
 async function onMessage(message) {
   if (!message.guild) return;
-  if (noteBump(message)) return;
+  if (r3.isBumpDone(message)) {
+    const now = Date.now();
+    const rewarded = rewardBump(message, now);
+    noteBump(message, now, { skipThanks: rewarded });
+    return;
+  }
   if (message.author?.bot || message.webhookId) return;
   await faq(message);
 }
@@ -307,6 +333,7 @@ module.exports = {
   digestTick,
   pinArchive,
   noteBump,
+  rewardBump,
   bumpTick,
   onMessage,
   _reset: () => faqCooldown.clear(),

@@ -309,6 +309,48 @@ function BumpStats({ t, state, onReset, busy }) {
   );
 }
 
+// Recompensa de bump da Cringelândia (só chega preenchida para esse servidor).
+function BumpRewards({ t, rewards }) {
+  if (!rewards) return null;
+  const totals = rewards.totals || {};
+  const tiles = [
+    [t('auto.bumpReminder.reward.bumps'), totals.bumps || 0],
+    [t('auto.bumpReminder.reward.coins'), (totals.coins || 0).toLocaleString()],
+    [t('auto.bumpReminder.reward.beans'), totals.beans || 0],
+  ];
+  return (
+    <div className="space-y-2.5 rounded-xl border border-mystic-violet/40 bg-mystic-violet/10 px-3 py-3 text-xs">
+      <p className="font-semibold text-white">{t('auto.bumpReminder.reward.title')}</p>
+      <p className="text-white/60">
+        {t('auto.bumpReminder.reward.rule', { coins: rewards.coinsPerBump, chance: Math.round((rewards.beanChance || 0) * 100) })}
+      </p>
+      <div className="grid grid-cols-3 gap-2">
+        {tiles.map(([label, value]) => (
+          <div key={label}>
+            <p className="text-[10px] uppercase tracking-wide text-white/45">{label}</p>
+            <p className="font-title text-base font-bold text-white">{value}</p>
+          </div>
+        ))}
+      </div>
+      {rewards.top?.length > 0 ? (
+        <ol className="space-y-0.5">
+          {rewards.top.map((u, i) => (
+            <li key={u.id} className="flex items-center justify-between gap-2 text-white/70">
+              <span className="truncate">
+                <span className="mr-1 text-white/35">#{i + 1}</span>
+                {u.name || u.id}
+              </span>
+              <span className="shrink-0 text-white">{t('auto.bumpReminder.reward.row', { n: u.n, coins: u.coins, beans: u.beans })}</span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="text-white/45">{t('auto.bumpReminder.reward.empty')}</p>
+      )}
+    </div>
+  );
+}
+
 // Automações: cartões por grupo; o painel da direita edita a escolhida com prévia ao vivo.
 export default function Automations({ t, guildId }) {
   const [data, setData] = useState(null);
@@ -469,6 +511,7 @@ export default function Automations({ t, guildId }) {
           </button>
         </div>
       )}
+      {open === 'bumpReminder' && <BumpRewards t={t} rewards={data.bumpRewards} />}
       {open === 'bumpReminder' && <BumpStats t={t} state={data.bumpState} onReset={resetBump} busy={bumpBusy} />}
       {preview && (
         <div className="space-y-2">

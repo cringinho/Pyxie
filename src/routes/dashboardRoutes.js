@@ -992,6 +992,14 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     } catch (_) {
       bumpState = null;
     }
+    // Recompensa de bump: só existe na Cringelândia, então só lá o painel recebe os números.
+    let bumpRewards = null;
+    try {
+      const rewards = require('../services/bumpRewards');
+      if (rewards.eligible(req.params.guildId)) bumpRewards = rewards.insights(require('../services/autoState').read(req.params.guildId, 'bumpRewards.json'));
+    } catch (_) {
+      bumpRewards = null;
+    }
     return res.json({
       success: true,
       schema,
@@ -999,6 +1007,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       stats: autoStats.read(req.params.guildId),
       summary: autoStats.summary(req.params.guildId),
       bumpState,
+      bumpRewards,
     });
   });
 
