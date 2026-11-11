@@ -88,7 +88,9 @@
     "node tests/economyRaces.test.js",
     "node tests/siteAuditA1.test.js",
     "node tests/safeImageFetch.test.js",
+    "node tests/bumpRewards.test.js",
+    "node tests/phraseDeck.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-11-05T13:00:00.000Z"
+  "updatedAt": "2026-11-11T12:46:11.696Z"
 }

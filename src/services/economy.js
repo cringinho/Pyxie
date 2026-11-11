@@ -290,6 +290,19 @@ function addMagicBeans(userId, amount) {
   return updated.magicBeans;
 }
 
+// Recompensa de evento (ex.: bump da Cringelândia): moedas pelo teto do dia e feijões na MESMA
+// trava, para o crédito ser atômico e o chamador saber quanto entrou de verdade (AGENTS §5).
+function grantReward(userId, { coins = 0, beans = 0 } = {}, now = Date.now()) {
+  let coinsAdded = 0;
+  let beansAdded = 0;
+  const account = updateUserAccount(userId, (acc) => {
+    coinsAdded = capEarnings(acc, Math.max(0, normalizeNumber(coins, 0)), now);
+    beansAdded = Math.max(0, Math.round(normalizeNumber(beans, 0)));
+    if (beansAdded) acc.magicBeans = (acc.magicBeans || 0) + beansAdded;
+  });
+  return { coinsAdded, beansAdded, coins: account.coins, magicBeans: account.magicBeans };
+}
+
 function spendMagicBeans(userId, amount) {
   const qty = Math.max(0, normalizeNumber(amount, 0));
   return withFileLock(economyFile, () => {
@@ -1331,6 +1344,7 @@ module.exports = {
   addCoins,
   getMagicBeans,
   addMagicBeans,
+  grantReward,
   spendMagicBeans,
   getCurrencyBalances,
   spendCoins,

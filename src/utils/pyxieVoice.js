@@ -1,3 +1,5 @@
+const deck = require('./phraseDeck');
+
 const PYXIE_COLORS = {
   lilac: '#5e2b8c',
   violet: '#8a2be2',
@@ -16,26 +18,43 @@ const PYXIE_COLORS = {
 
 const PYXIE_FOOTER = 'Pyxie';
 
+// Dicas do rodapé: aberturas diferentes de propósito (o sorteio sem repetição fica no phraseDeck).
 const ROTATING_TIPS = {
   pt: [
-    '🎀 Psst: Pega logo o /py-daily antes que eu cobre taxa por você respirar no meu chat!',
-    '🎀 Psst: Vai bater ponto em /py-work! Não tolero subordinado passando fome e pedindo esmola.',
-    '🎀 Psst: Ajeita essa vergonha de perfil no /py-profile antes que alguém printe!',
-    '🎀 Psst: Cadê as 78 cartas do seu /py-album? Até uma toupeira coleciona mais rápido.',
-    '🎀 Psst: Tira um /py-tarot agora! Não que eu me importe, mas adoro ver o destino aprontar.',
-    '🎀 Psst: Quebra logo o /py-cookie... e se vier frase cafona, nem ouse ler em voz alta!',
-    '🎀 Psst: Passa no /py-ship com seu rolinho! Se a química for um desastre, eu aviso logo!',
-    '🎀 Psst: Cansou de errar sozinho? O /py-help mostra os comandos, vai ler o manual!',
+    '🎀 Já pegou o /py-daily hoje? Moeda não se coleta sozinha.',
+    '💼 O /py-work paga em moedinha e em material pra oficina.',
+    '🃏 Uma carta por dia no /py-tarot. O destino não espera.',
+    '📒 Faltam cartas no seu /py-album. Eu contei.',
+    '🍪 Biscoito da sorte no /py-cookie. Frase cafona garantida.',
+    '💘 Testa a química com alguém no /py-ship. Eu fico de fofoca.',
+    '🧭 Se perdeu? O /py-help lista tudo, até pra quem pula manual.',
+    '🪪 Seu cartão no /py-profile tá pedindo um título novo.',
+    '🏆 Quer subir no /py-rank? Diário e trabalho todo dia, sem desculpa.',
+    '🎲 Decide no /py-coinflip. A moeda nunca fica em dúvida.',
+    '🧠 Desafia alguém no /py-quiz. Perder também conta como diversão.',
+    '🔮 O /py-likely rende fofoca saudável no grupo. Usa com sabedoria.',
+    '🌙 Volta amanhã. Eu guardo o seu lugar. Não que eu queira.',
+    '📊 Cadê suas conquistas? O /py-achievements tem a lista inteira.',
+    '🗳️ Votar na Pyxie no Top.gg rende feijão mágico. Só dizendo.',
+    '🧮 O /py-math puxa pelo cérebro sem cobrar moeda nenhuma.',
   ],
   en: [
-    '🎀 Psst: Grab your /py-daily right now before I charge rent for you breathing in my chat!',
-    '🎀 Psst: Clock in at /py-work! I won\'t have my subordinates begging for spare coins.',
-    '🎀 Psst: Fix that embarrassing card in /py-profile before someone screenshots it!',
-    '🎀 Psst: Where are the 78 cards in your /py-album? Even a mole collects faster than you.',
-    '🎀 Psst: Pull a /py-tarot card right now! Not that I care, but I love seeing fate cause chaos.',
-    '🎀 Psst: Crack open a /py-cookie... and if you get cheesy advice, don\'t tell me!',
-    '🎀 Psst: Test your crush with /py-ship! If your chemistry is a disaster, I\'ll be the first to laugh.',
-    '🎀 Psst: Tired of messing up? /py-help has the commands, go read the manual!',
+    '🎀 Got your /py-daily today? Coins don\'t collect themselves.',
+    '💼 /py-work pays in coins and workshop materials.',
+    '🃏 One card a day with /py-tarot. Fate doesn\'t wait.',
+    '📒 Your /py-album is missing cards. I counted.',
+    '🍪 Fortune cookie at /py-cookie. Cheesy line guaranteed.',
+    '💘 Test the chemistry with someone at /py-ship. I\'ll gossip.',
+    '🧭 Lost? /py-help lists everything, even for people who skip manuals.',
+    '🪪 Your /py-profile card is begging for a new title.',
+    '🏆 Want to climb /py-rank? Daily and work, every day, no excuses.',
+    '🎲 Decide it with /py-coinflip. The coin is never unsure.',
+    '🧠 Challenge someone at /py-quiz. Losing counts as fun too.',
+    '🔮 /py-likely makes healthy group gossip. Use it wisely.',
+    '🌙 Come back tomorrow. I\'ll save your seat. Not that I want to.',
+    '📊 Where are your achievements? /py-achievements has the full list.',
+    '🗳️ Voting for Pyxie on Top.gg earns magic beans. Just saying.',
+    '🧮 /py-math works your brain without costing a single coin.',
   ],
 };
 
@@ -47,8 +66,8 @@ function getRandomTip(source = null) {
   } catch (e) {
     lang = 'pt';
   }
-  const list = ROTATING_TIPS[lang] || ROTATING_TIPS.pt;
-  return list[Math.floor(Math.random() * list.length)];
+  const code = ROTATING_TIPS[lang] ? lang : 'pt';
+  return deck.pick(ROTATING_TIPS[code], { key: `tip:${code}` });
 }
 
 function pyxieFooter(baseText = null, source = null) {
@@ -75,8 +94,8 @@ const PYXIE_PHRASES = {
 };
 
 function getRandomPhrase(category = 'welcome') {
-  const list = PYXIE_PHRASES[category] || PYXIE_PHRASES.welcome;
-  return list[Math.floor(Math.random() * list.length)];
+  const name = PYXIE_PHRASES[category] ? category : 'welcome';
+  return deck.pick(PYXIE_PHRASES[name], { key: `phrase:${name}` });
 }
 
 module.exports = {

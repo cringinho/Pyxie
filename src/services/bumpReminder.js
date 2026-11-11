@@ -133,9 +133,9 @@ function milestoneFor(cfg = {}, total = 0) {
 }
 
 // Quem bumpou de verdade: a mensagem do DISBOARD vem do bot, mas o Discord anexa a interação
-// (`message.interaction.user`). Sem isso, o embed costuma citar a pessoa em <@id>.
+// (`message.interaction.user`, ou `interactionMetadata.user` nas versões novas). Sem isso, o embed costuma citar a pessoa em <@id>.
 function bumperFrom(message = {}) {
-  const user = message?.interaction?.user;
+  const user = message?.interaction?.user || message?.interactionMetadata?.user;
   if (user?.id && /^\d{17,20}$/.test(String(user.id))) return { id: String(user.id), name: str(user.globalName || user.username, 40) };
   const author = message?.author;
   if (author?.id && !author.bot && /^\d{17,20}$/.test(String(author.id))) return { id: String(author.id), name: str(author.globalName || author.username, 40) };
