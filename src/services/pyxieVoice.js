@@ -8,6 +8,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { t, TRANSLATIONS } = require('../utils/i18n');
+const deck = require('../utils/phraseDeck');
 
 const DAILY_CAP = 300;
 const TIMEOUT_MS = 3000;
@@ -18,7 +19,30 @@ const EVENTS = ['daily', 'work', 'tarot'];
 // Palavras que nunca podem sair numa fala (temas proibidos e ofensas comuns).
 const BANNED = /\b(pol[ií]tic|bolsonar|lula|elei[cç]|religi|deus|igreja|sexo|sexual|gay|l[eé]sbica|trans\b|suic[ií]d|depress|ansiedad|autis|tdah|doen[cç]a|rem[eé]dio|morte|morrer|burr|idiot|retardad|feio|gord|magr)/i;
 
+// Aberturas viciadas que o banco antigo repetia em todo comando: o Groq e o gerador não podem
+// trazê-las de volta (as poucas que ficaram no banco pronto passam pelo sorteio sem repetição).
+const CRUTCH_OPENERS = /^(plot twist|to passad|i m shook|slk|hmpf|hmph|a fada|the fairy)/;
+const RECENT_GENERATED = 8;
+
 const cache = new Map();
+const recentGenerated = [];
+
+/** Fala gerada que começa com um bordão gasto (comparação sem acento nem pontuação). */
+function isCrutch(text) {
+  const start = String(text || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return CRUTCH_OPENERS.test(start);
+}
+
+function rememberGenerated(text) {
+  recentGenerated.push(text);
+  while (recentGenerated.length > RECENT_GENERATED) recentGenerated.shift();
+}
 
 function stateFile() {
   return path.join(process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data'), 'pyxieVoice.json');
@@ -43,21 +67,21 @@ function takeQuota(now = Date.now()) {
   return true;
 }
 
-// Fala pronta aleatória do banco (voiceSeederService dinâmico ou i18n).
-function fallbackLine(event, lang, vars = {}) {
+// Fala pronta do banco (voiceSeederService dinâmico ou i18n), sem repetir a recente para a pessoa.
+function fallbackLine(event, lang, vars = {}, user = null) {
   try {
     const seeder = require('./voiceSeederService');
-    const seederLine = seeder.getRandomLine(event, lang);
-    if (seederLine && Math.random() < 0.5) {
-      return seederLine.replace(/{name}/g, vars.name || '');
+    if (Math.random() < 0.5) {
+      const seederLine = seeder.getRandomLine(event, lang, user);
+      if (seederLine) return seederLine.replace(/{name}/g, vars.name || '');
     }
   } catch (_) {}
 
-  const bank = TRANSLATIONS[lang]?.pyxieVoice?.[event] || TRANSLATIONS.pt.pyxieVoice[event] || {};
-  const keys = Object.keys(bank);
+  const code = TRANSLATIONS[lang]?.pyxieVoice?.[event] ? lang : 'pt';
+  const keys = Object.keys(TRANSLATIONS[code]?.pyxieVoice?.[event] || {});
   if (!keys.length) return '';
-  const key = keys[Math.floor(Math.random() * keys.length)];
-  return t(`pyxieVoice.${event}.${key}`, lang, vars);
+  const texts = keys.map((k) => t(`pyxieVoice.${event}.${k}`, lang, vars));
+  return deck.pick(texts, { key: `voice:${event}:${code}`, user }) || '';
 }
 
 // Filtro da resposta antes de enviar: tamanho, menções, links e temas proibidos.
@@ -88,6 +112,8 @@ function buildPrompt(event, ctx, lang) {
         `Você é a Pyxie, uma fada tsundere de um servidor do Discord. Escreva UMA frase curta (até 140 caracteres) em ${lang === 'en' ? 'inglês' : 'português do Brasil'}, ` +
         'presunçosa, dramática e debochada, como quem finge não se importar. Zoe a situação ou a escolha, nunca traços da pessoa ' +
         '(aparência, inteligência, lentidão, deficiência, identidade). Proibido: política, religião, sexualidade, saúde, menções, links, emojis demais. ' +
+        'Não comece com "Plot twist", "Tô passada", "Slk", "Hmpf" nem "A fada tá". Varie a estrutura: pergunta, ordem, fofoca, ameaça teatral, comparação absurda. ' +
+        (recentGenerated.length ? `Não repita o jeito destas falas recentes: ${recentGenerated.slice(-4).map((l) => `"${l}"`).join(' | ')}. ` : '') +
         'Responda só a frase.',
     },
     { role: 'user', content: facts.join('\n') },
@@ -101,13 +127,14 @@ function buildPrompt(event, ctx, lang) {
 async function line(event, ctx = {}, { inCringelandia = false, lang = 'pt', chat = null, now = Date.now() } = {}) {
   if (!EVENTS.includes(event)) return { text: '', source: 'none' };
   const vars = { name: ctx.nickname || '' };
-  if (!inCringelandia) return { text: fallbackLine(event, lang, vars), source: 'fallback' };
+  const user = ctx.userId || null;
+  if (!inCringelandia) return { text: fallbackLine(event, lang, vars, user), source: 'fallback' };
 
   const cacheKey = `${event}:${ctx.userId || ''}:${lang}`;
   const hit = cache.get(cacheKey);
   if (hit && now - hit.at < CACHE_MS) return { text: hit.text, source: 'cache' };
 
-  if (!takeQuota(now)) return { text: fallbackLine(event, lang, vars), source: 'fallback' };
+  if (!takeQuota(now)) return { text: fallbackLine(event, lang, vars, user), source: 'fallback' };
   const groq = chat || require('./groqClient').chatCompletionNow;
   let text = null;
   try {
@@ -117,7 +144,9 @@ async function line(event, ctx = {}, { inCringelandia = false, lang = 'pt', chat
     ]);
     if (res?.ok) text = cleanLine(res.data?.choices?.[0]?.message?.content);
   } catch (_) {}
-  if (!text) return { text: fallbackLine(event, lang, vars), source: 'fallback' };
+  if (text && isCrutch(text)) text = null;
+  if (!text) return { text: fallbackLine(event, lang, vars, user), source: 'fallback' };
+  rememberGenerated(text);
   cache.set(cacheKey, { text, at: now });
   return { text, source: 'groq' };
 }
@@ -139,6 +168,7 @@ async function lineFor(event, source, ctx = {}) {
 
 function _resetCache() {
   cache.clear();
+  recentGenerated.length = 0;
 }
 
-module.exports = { line, lineFor, cleanLine, fallbackLine, DAILY_CAP, _resetCache };
+module.exports = { line, lineFor, cleanLine, fallbackLine, isCrutch, DAILY_CAP, _resetCache };

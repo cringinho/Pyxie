@@ -92,7 +92,9 @@ for (const tip of pyxieVoice.ROTATING_TIPS.en) {
 }
 
 const footer = pyxieVoice.pyxieFooter('Base Text', 'pt');
-assert(footer.startsWith('Base Text • 🎀 Psst:'), 'Footer deve anexar dica rotativa');
+assert(footer.startsWith('Base Text • '), 'Footer deve anexar dica rotativa');
+assert(pyxieVoice.ROTATING_TIPS.pt.includes(footer.slice('Base Text • '.length)), 'Footer usa uma dica da lista');
+assert.notEqual(pyxieVoice.pyxieFooter('Base Text', 'pt'), footer, 'Duas dicas seguidas não se repetem');
 console.log('    ✅ 5. Persona Kuromi e dicas de rodapé validadas com sucesso.');
 
 // 6. Testando endpoints de rotas do Dashboard

@@ -237,6 +237,9 @@ SCHEMA JSON:
     const ptClean = cleanLine(item.pt);
     const enClean = cleanLine(item.en);
     if (!ptClean || !enClean) return null;
+    // Bordões gastos ("Plot twist", "Tô passada", "Hmpf"...) não entram no banco.
+    const { isCrutch } = require('./pyxieVoice');
+    if (isCrutch(ptClean) || isCrutch(enClean)) return null;
 
     return {
       id: `voice_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
@@ -290,20 +293,14 @@ async function generateBatch({ count = 4, category = null } = {}) {
   }
 }
 
-function getRandomLine(category, lang = 'pt') {
+function getRandomLine(category, lang = 'pt', user = null) {
   const bank = loadDatabase();
-  const list = bank.lines.filter((l) => l.active && (!category || l.category === category));
-  if (!list.length) {
-    if (category) {
-      const fallbackList = bank.lines.filter((l) => l.active);
-      if (!fallbackList.length) return null;
-      const picked = fallbackList[Math.floor(Math.random() * fallbackList.length)];
-      return lang === 'en' ? picked.en : picked.pt;
-    }
-    return null;
-  }
-  const picked = list[Math.floor(Math.random() * list.length)];
-  return lang === 'en' ? picked.en : picked.pt;
+  const code = lang === 'en' ? 'en' : 'pt';
+  let list = bank.lines.filter((l) => l.active && (!category || l.category === category));
+  if (!list.length && category) list = bank.lines.filter((l) => l.active);
+  if (!list.length) return null;
+  // Sorteio sem repetição recente e sem abrir duas falas seguidas do mesmo jeito (phraseDeck).
+  return require('../utils/phraseDeck').pick(list.map((l) => l[code]).filter(Boolean), { key: `seeder:${category || '*'}:${code}`, user });
 }
 
 function toggleLine(id, active) {

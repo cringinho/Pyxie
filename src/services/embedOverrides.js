@@ -263,13 +263,13 @@ function contextFromInteraction(i) {
   const command = i.commandName ? `/${i.commandName}` : i.message?.interaction?.commandName ? `/${i.message.interaction.commandName}` : i.customId ? `botão:${String(i.customId).split(/[:_|]/)[0]}` : null;
   // Semente da fala da Pyxie: a interação que abriu a mensagem, para a fala não mudar a cada botão.
   const seed = i.message?.interactionMetadata?.id || i.message?.interaction?.id || i.id || null;
-  return { guildId: i.guildId || null, command, names, lang: langOf(i), seed };
+  return { guildId: i.guildId || null, command, names, lang: langOf(i), seed, userId: i.user?.id || null };
 }
 
 function contextFromMessage(m) {
   const names = [m.author?.username, m.author?.globalName, m.member?.nickname, m.member?.displayName].filter(Boolean);
   const word = String(m.content || '').match(/^\s*py[!.]?\s*([\w-]+)/i);
-  return { guildId: m.guildId || null, command: word ? `py!${word[1].toLowerCase()}` : 'mensagem', names, lang: langOf(m), seed: m.id || null };
+  return { guildId: m.guildId || null, command: word ? `py!${word[1].toLowerCase()}` : 'mensagem', names, lang: langOf(m), seed: m.id || null, userId: m.author?.id || null };
 }
 
 // ---------- Catálogo (processo do bot) ----------
@@ -337,7 +337,7 @@ function transformBody(guildId, body, ctx = {}) {
   if (Array.isArray(target.embeds)) {
     // Fala da Pyxie (pyxieQuips.js) só no primeiro embed dos comandos interativos, nunca em erro nem em acolhimento.
     const first = target.embeds[0];
-    const quip = first && !ctx.sensitive && !isSensitive(first) && pickMood(first) !== 'worried' ? quips.quipFor(ctx.command, ctx.lang, ctx.seed) : null;
+    const quip = first && !ctx.sensitive && !isSensitive(first) && pickMood(first) !== 'worried' ? quips.quipFor(ctx.command, ctx.lang, ctx.seed, ctx.userId) : null;
     // No canal de desabafos nada é decorado.
     const finish = (embed) => (ctx.sensitive ? embed : decorate(embed));
     next.embeds = target.embeds.map((embed, index) => {
