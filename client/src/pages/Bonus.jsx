@@ -55,6 +55,27 @@ export default function Bonus({ t, lang }) {
     }
   }, [secondsLeft]);
 
+  // Oferta da Shopee depois do prêmio: botão (padrão) ou redirecionamento em 6 s com opção de cancelar.
+  // O prêmio já foi pago; a oferta não é condição de nada.
+  const offer = claimResult?.shopee || null;
+  const [offerSeconds, setOfferSeconds] = useState(null);
+  const [offerCancelled, setOfferCancelled] = useState(false);
+  useEffect(() => {
+    if (!isClaimed || !offer || offer.mode !== 'auto' || offerCancelled) return undefined;
+    const start = Number(offer.delaySeconds) || 6;
+    setOfferSeconds((prev) => (prev === null ? start : prev));
+    return undefined;
+  }, [isClaimed, offer, offerCancelled]);
+  useEffect(() => {
+    if (offerSeconds === null || offerCancelled) return undefined;
+    if (offerSeconds <= 0) {
+      window.location.assign(offer.url);
+      return undefined;
+    }
+    const timer = setTimeout(() => setOfferSeconds((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [offerSeconds, offerCancelled]);
+
   // Particle explosion upon readiness
   const triggerConfetti = () => {
     const canvas = canvasRef.current;
@@ -274,6 +295,28 @@ export default function Bonus({ t, lang }) {
                   coins: Number(claimResult?.coinsAwarded) || 0,
                 })}
               </span>
+              {offer && (
+                <span className="mt-3 flex w-full flex-col items-center gap-2 border-t border-emerald-500/30 pt-3">
+                  <span className="text-xs font-normal text-slate-300">{t('bonus.shopee.note')}</span>
+                  <a
+                    href={offer.url}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    className="w-full rounded-xl bg-gradient-to-r from-orange-500 to-pink-500 px-4 py-3 text-center text-sm font-black text-white"
+                  >
+                    {t('bonus.shopee.cta')}
+                  </a>
+                  {offer.mode === 'auto' && offerSeconds !== null && !offerCancelled && (
+                    <button
+                      type="button"
+                      onClick={() => setOfferCancelled(true)}
+                      className="text-xs font-semibold text-slate-300 underline"
+                    >
+                      {fmt('bonus.shopee.auto', { s: Math.max(offerSeconds, 0) })}
+                    </button>
+                  )}
+                </span>
+              )}
             </div>
           ) : (
             <button

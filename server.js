@@ -17,6 +17,7 @@ const { lockFilePath, isProcessAlive } = require('./src/utils/botUtils');
 const { reloadEmojiConfig } = require('./src/utils/appEmojis');
 const { escapeHtml, replaceKeep } = require('./src/utils/htmlEscape');
 const shopeeManager = require('./src/services/shopeeManager');
+const shopeeRotator = require('./src/services/shopeeRotator');
 const workSeederService = require('./src/services/workSeederService');
 const quizSeederService = require('./src/services/quizSeederService');
 const voiceSeederService = require('./src/services/voiceSeederService');
@@ -1125,6 +1126,21 @@ app.get(['/promo', '/api/promo', '/shopee/loja'], (req, res) => {
   }
 });
 
+// 2d. Link rotativo da Shopee: /go leva a um produto diferente a cada clique (peso por ganho esperado),
+// /go/:id leva ao produto pedido (ou a outro, se estiver fora do ar). O clique é contado aqui no servidor.
+app.get(['/go', '/go/:id'], (req, res) => {
+  try {
+    const source = String(req.query.src || 'site').toLowerCase();
+    const { url } = shopeeRotator.resolve({ id: req.params.id || null, source });
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    return res.redirect(302, url);
+  } catch (err) {
+    console.error('Erro no redirect /go:', err.message);
+    return res.redirect(302, shopeeRotator.FALLBACK_LINK);
+  }
+});
+
 // 2c. Endpoint Público Unificado de Verdade Absoluta (Seção 3)
 app.get('/api/public/system-truth', async (req, res) => {
   res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=60');
@@ -1243,7 +1259,7 @@ app.get('/api/admin/shopee', requireAdminAuth, (req, res) => {
   try {
     const items = shopeeManager.getAllItems();
     const stats = shopeeManager.getSummaryStats();
-    return res.json({ success: true, items, stats });
+    return res.json({ success: true, items, stats, clicks: shopeeRotator.insights() });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }
@@ -1711,7 +1727,8 @@ app.post('/api/bonus/claim', sensitiveRouteLimiter, (req, res) => {
   }
 
   addLog(`[Bônus] Resgate concluído para o usuário ${result.userId} (Ação: ${result.action})`);
-  return res.json(result);
+  // O prêmio já foi pago acima: a oferta da Shopee vem depois e não é condição de nada.
+  return res.json({ ...result, shopee: shopeeRotator.bonusOffer() });
 });
 
 // 4. Rotas administrativas protegidas

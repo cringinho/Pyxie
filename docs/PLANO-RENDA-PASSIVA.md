@@ -120,6 +120,13 @@ Objetivo: ganhar mais por clique que já existe e colocar o link onde a pessoa d
 - **Confirme nos termos do programa de afiliados da Shopee** onde os links podem ser divulgados e se há restrições (anúncios pagos, redes sociais, grupos). Eu não afirmo as regras vigentes: elas mudam.
 - Nada de produto em áreas de acolhimento ou crise (AGENTS §12).
 
+**Já entregue (12/11/2026): link rotativo `/go`.**
+- `/go` leva a um produto diferente a cada clique (sorteio ponderado por comissão em reais x prova de venda, sem repetir os últimos 6). `/go/<id>` leva ao produto pedido, ou a outro se ele caiu. Só segue para endereços da Shopee.
+- O clique é contado no servidor por produto, origem (`?src=bonus`, `?src=pin`, `?src=discord`) e dia, em `data/shopeeClicks.json`, e aparece em `GET /api/admin/shopee` (campo `clicks`). Não depende de UTM no link curto.
+- **Portal de bônus (10 s):** depois de resgatar as moedas, a pessoa vê um botão opcional "Ver achadinho da fada". Modo no `.env` (`SHOPEE_BONUS_REDIRECT`): `button` (padrão), `auto` (abre sozinho em 6 s, dá para cancelar) ou `off`. O prêmio é pago **antes** e **não depende** do clique.
+- **Cuidado com a regra do programa:** dar prêmio para quem clica em link de afiliado pode ser tratado como tráfego incentivado e arriscar a conta de afiliado, que é a sua renda principal. Por isso o prêmio não depende do clique e o modo padrão é o botão. **Leia os termos do programa antes de usar o modo `auto`.**
+- Variedade automática de verdade (puxar produtos novos sozinho) precisa de uma API de afiliados com credenciais; hoje o catálogo cresce por cadastro em lote. Reativar os 38 produtos desligados também aumenta a variedade na hora.
+
 **Métrica que decide:** comissão por mil visitas (RPM de afiliado) por página e por origem.
 
 ### Pilar I. Reforço contra a dependência de uma plataforma

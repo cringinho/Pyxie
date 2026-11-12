@@ -4,6 +4,7 @@ Allow: /en/
 Disallow: /admin
 Disallow: /admin/
 Disallow: /api/admin/
+Disallow: /go
 Disallow: /api/pass/
 Disallow: /api/private/
 Disallow: /auth/
