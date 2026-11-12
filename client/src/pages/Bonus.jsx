@@ -60,8 +60,16 @@ export default function Bonus({ t, lang }) {
   const offer = claimResult?.shopee || null;
   const [offerSeconds, setOfferSeconds] = useState(null);
   const [offerCancelled, setOfferCancelled] = useState(false);
+  const [plannedOffer, setPlannedOffer] = useState(null);
+  // Aviso antes do clique: a pessoa sabe que o resgate abre a Shopee (link de afiliado).
   useEffect(() => {
-    if (!isClaimed || !offer || offer.mode !== 'auto' || offerCancelled) return undefined;
+    fetch('/api/bonus/offer')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setPlannedOffer(d?.shopee || null))
+      .catch(() => {});
+  }, []);
+  useEffect(() => {
+    if (!isClaimed || !offer || !['auto', 'forced'].includes(offer.mode) || offerCancelled) return undefined;
     const start = Number(offer.delaySeconds) || 6;
     setOfferSeconds((prev) => (prev === null ? start : prev));
     return undefined;
@@ -284,6 +292,10 @@ export default function Bonus({ t, lang }) {
             </div>
           )}
 
+          {!isClaimed && plannedOffer && ['auto', 'forced'].includes(plannedOffer.mode) && (
+            <p className="text-xs text-slate-300">{t('bonus.shopee.notice')}</p>
+          )}
+
           {isClaimed ? (
             <div role="status" className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-bold text-sm flex flex-col items-center justify-center gap-1">
               <span className="flex items-center gap-2">
@@ -306,6 +318,9 @@ export default function Bonus({ t, lang }) {
                   >
                     {t('bonus.shopee.cta')}
                   </a>
+                  {offer.mode === 'forced' && offerSeconds !== null && (
+                    <span className="text-xs font-semibold text-slate-200">{fmt('bonus.shopee.forced', { s: Math.max(offerSeconds, 0) })}</span>
+                  )}
                   {offer.mode === 'auto' && offerSeconds !== null && !offerCancelled && (
                     <button
                       type="button"

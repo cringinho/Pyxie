@@ -58,16 +58,19 @@ try {
   console.log('  ✅ 4. Cliques por produto, origem e dia.');
 
   // 5. Oferta depois do bônus: botão por padrão, automática só se o dono ligar.
-  assert.deepEqual(rot.bonusOffer({}), { mode: 'button', url: '/go?src=bonus', delaySeconds: 6 });
+  assert.deepEqual(rot.bonusOffer({}), { mode: 'forced', url: '/go?src=bonus', delaySeconds: 2 });
+  assert.equal(rot.bonusOffer({ SHOPEE_BONUS_REDIRECT: 'button' }).mode, 'button');
+  assert.equal(rot.bonusOffer({ SHOPEE_BONUS_REDIRECT: 'auto' }).delaySeconds, 6);
   assert.equal(rot.bonusOffer({ SHOPEE_BONUS_REDIRECT: 'off' }), null);
   assert.equal(rot.bonusOffer({ SHOPEE_BONUS_REDIRECT: 'AUTO' }).mode, 'auto');
-  assert.equal(rot.bonusOffer({ SHOPEE_BONUS_REDIRECT: 'qualquer' }).mode, 'button');
-  console.log('  ✅ 5. Oferta do bônus: botão, automática ou desligada.');
+  assert.equal(rot.bonusOffer({ SHOPEE_BONUS_REDIRECT: 'qualquer' }).mode, 'forced');
+  console.log('  ✅ 5. Oferta do bônus: forçada, automática, botão ou desligada.');
 
   // 6. A tela do bônus e a rota estão ligadas e /go fica fora dos buscadores.
   const server = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
   assert.match(server, /app\.get\(\['\/go', '\/go\/:id'\]/);
   assert.match(server, /shopee: shopeeRotator\.bonusOffer\(\)/);
+  assert.match(server, /app\.get\('\/api\/bonus\/offer'/);
   assert.match(fs.readFileSync(path.join(__dirname, '..', 'public', 'robots.txt'), 'utf8'), /Disallow: \/go/);
   const i18n = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'utils', 'i18n.js'), 'utf8');
   assert.equal((i18n.match(/'bonus\.shopee\.cta'/g) || []).length, 2, 'Texto PT e EN do botão');
