@@ -91,7 +91,8 @@
     "node tests/bumpRewards.test.js",
     "node tests/phraseDeck.test.js",
     "node tests/shopeeRotator.test.js",
+    "node tests/seasonalRestart.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-11-12T11:39:57.065Z"
+  "updatedAt": "2026-11-12T12:08:28.340Z"
 }

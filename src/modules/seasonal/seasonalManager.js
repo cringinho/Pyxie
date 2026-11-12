@@ -722,6 +722,12 @@ async function checkEndEvent(client = clientRef) {
 
   const now = Date.now();
   if (now >= endTimestamp) {
+    // Este prazo já foi encerrado e anunciado: só garante que o evento fique desligado, sem repetir o anúncio.
+    if (loadData().history?.lastWinners?.endDate === config.dates.endDate) {
+      saveConfig({ active: false });
+      stop();
+      return false;
+    }
     console.log('[Seasonal] Data limite atingida! Encerrando evento sazonal automaticamente...');
     await finalizeAndRewardEvent(client, 'Data limite de evento atingida.');
     return true;
@@ -741,6 +747,7 @@ async function finalizeAndRewardEvent(client = clientRef, reason = 'Fim do perí
   const topWinners = getTopSeasonalBalances(3);
   data.history.lastWinners = {
     date: new Date().toISOString(),
+    endDate: config.dates.endDate,
     reason,
     winners: topWinners,
   };
