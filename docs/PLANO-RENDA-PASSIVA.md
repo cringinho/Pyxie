@@ -1,21 +1,30 @@
 # Plano de renda passiva do ecossistema Pyxie
 
-Escrito em 12/11/2026. Ponto de partida: os anúncios da Shopee não estão rendendo.
+Escrito em 12/11/2026. Ponto de partida: os anúncios da Shopee não estão rendendo como deveriam e ela é a principal fonte de renda.
 
+> **Atualização:** a Shopee é a principal fonte de renda. Seção 1 e Pilar H foram refeitos em torno dela.
+>
 > **Aviso de honestidade.** Quem escreveu este plano não vê o tráfego, as assinaturas nem os cliques de produção. Os números abaixo são **cenários para fazer conta**, não previsões. Cada pilar tem uma "métrica que decide" para você conferir com dados reais antes de gastar tempo.
 
 ---
 
-## 1. Por que a Shopee não rende (diagnóstico)
+## 1. A Shopee é o pilar. O que está travando o resultado
 
-Pelo que está no código (`src/data/shopee.json`, `ShopeeBentoGrid`):
+Atualização de 12/11/2026: a Shopee é a **principal fonte de renda**, então o plano parte dela e as outras fontes ficam como reforço. A primeira versão deste plano tratava a Shopee como complemento e estava errada. A análise abaixo vem do catálogo e do código atual (`src/data/shopee.json`, `ShopeeBentoGrid`, `shopeeContext`).
 
-1. **Comissão pequena por venda.** Exemplo do catálogo: pelúcia de R$ 55,99 com 9% rende `R$ 5,04`. Para ganhar R$ 500/mês seriam ~100 vendas.
-2. **Pouco catálogo.** Dos 58 produtos, só 20 estão ativos.
-3. **Intenção de compra baixa.** Quem está no Discord ou no Pinterest veio brincar, não comprar. A conta típica de afiliado é 1 a 2 compras a cada 100 cliques (hipótese a medir), ou seja, ~5 a 10 mil cliques/mês para R$ 500.
-4. **Anúncio solto.** A vitrine fica na Home, no Bônus e em Parcerias, longe do momento em que a pessoa deseja a coisa (carta de tarô, obra do museu, fala da Pyxie).
+**O que os dados mostram**
 
-**Conclusão:** Shopee vira **complemento**, não pilar. O pilar precisa ter margem alta e repetição.
+| Achado | Impacto |
+|---|---|
+| **38 dos 58 produtos estão desligados** (`active: false`). Só 20 aparecem. | Mais da metade do catálogo não rende nada |
+| **Última checagem de preço/estoque: até 47 dias atrás.** | Link de produto esgotado ou preço velho perde a venda |
+| A vitrine do site mostra **4 produtos sorteados** (`slice(0, 4)`) e **não registra cliques**. | Você não sabe o que funciona e o melhor produto aparece por sorte |
+| O widget do blog usa UTM, mas **a vitrine do site não**. | Relatório da Shopee não diz de onde veio a venda |
+| **Quem tem prova social rende pouco por venda; quem rende muito não tem prova.** Pelúcia Kuromi: 2 mil+ vendas e `R$ 5,04` (9%). Camiseta Goth: 521 vendas e `R$ 12,78` (16%). Almofada Hello Kitty: `R$ 50,37` (28%) com 0 vendas. | Vitrine sorteada ao acaso trata tudo igual |
+| A comissão no catálogo vai de **9% a 48%**. Sanrio MINISO ~23%, Hello Kitty/Kuromi roupas ~26-33%, K-pop 38-48%. | Escolher a categoria certa vale mais que mais cliques |
+| O widget do blog sugere produtos de **autismo/setup/tecnologia**, mas o catálogo é **Sanrio/gótico/K-pop**. | Produto e público não combinam no blog |
+
+**Em uma frase:** o gargalo não é só o tráfego. É catálogo parado, vitrine aleatória e zero medição.
 
 ---
 
@@ -28,7 +37,7 @@ Pelo que está no código (`src/data/shopee.json`, `ShopeeBentoGrid`):
 
 ---
 
-## 3. Os pilares (do mais forte ao mais fraco)
+## 3. Os pilares (o H, Shopee, vem primeiro na prática; os demais são reforço)
 
 ### Pilar A. Assinaturas recorrentes (a base)
 **Já existe:** Básico R$ 7/mês, Premium R$ 20/mês, Lojinha R$ 3/mês, cobrança por Pix e cartão recorrente, cobrança com aviso D-7/D-3/D-0.
@@ -78,25 +87,56 @@ Duas formas de monetizar:
 ### Pilar G. Recursos nativos do Discord (verificar elegibilidade)
 O Discord tem **assinaturas e compras dentro do app** para bots. Há regras de região, verificação e taxa. **Confirme no Portal do Desenvolvedor se sua conta é elegível no Brasil** antes de planejar. Se for, vira mais um canal de venda do Pilar A com um clique.
 
-### Pilar H. Afiliados e Shopee (o que sobra)
-Mantém, mas:
-- Reduz para os **8 a 12 produtos com melhor comissão e preço** (menos é mais).
-- Move para **onde a pessoa deseja** (Pilar E).
-- Troca por **produtos de ticket maior** (fandom Sanrio/gótico, setup).
-- Compara com outros programas (Amazon, Mercado Livre) pelo mesmo produto.
+### Pilar H. Shopee como motor principal (o foco)
+Objetivo: ganhar mais por clique que já existe e colocar o link onde a pessoa deseja comprar.
+
+**H1. Catálogo vivo**
+- Rodar a checagem de disponibilidade nos 58 produtos (o gestor já tem a função) e **reativar os que estão de pé**. Meta: 60 a 100 produtos ativos.
+- Checagem **automática semanal**, com aviso no painel quando um produto cai. Produto esgotado sai da vitrine sozinho.
+- Cadastrar em lote (colar links) para o catálogo crescer sem esforço.
+
+**H2. Ranking por ganho esperado, não sorteio**
+- Ordenar a vitrine por `comissão em reais × força da prova social` (vendas, avaliação), e **sorteio só dentro do topo**.
+- Dois papéis no mesmo bloco: **isca** (alta venda, ex.: pelúcia Kuromi) e **destaque** (comissão alta, ex.: almofada e roupas Sanrio).
+- Mostrar mais de 4 produtos e agrupar por categoria ("Pelúcias", "Roupas", "Chaveiros").
+
+**H3. Medir de ponta a ponta**
+- Registrar o **clique por produto, por página e por posição** (o motor de analytics já aceita `shopee_click`).
+- Colocar **UTM e sub-ID** em todo link (blog, vitrine, Pinterest, Discord, tarô). Se o painel de afiliados da Shopee aceitar sub-ID, é ele que liga o clique à venda no relatório.
+- Painel do dono: cliques, páginas que mais levam à Shopee e **comissão por origem**, comparando com o relatório da Shopee.
+
+**H4. Onde a intenção de compra existe**
+- **Pinterest é rede de busca de produto.** Fazer pins **do próprio produto** ("look gótico Kuromi", "setup Sanrio") levando a uma **página de achadinhos** no site com o link de afiliado. O pipeline de pins já existe.
+- **Páginas de tarô e do museu**: bloco "combina com" (baralhos, cadernos, lápis, decoração).
+- **Discord (Cringelândia)**: "achadinho da semana" com a voz da Pyxie, em canal opcional, criado no estúdio de mensagens. Nada de spam e sempre marcado como link de afiliado.
+- **Casinha e perfil**: itens do jogo com "tem na vida real" apontando o produto parecido.
+
+**H5. Calendário da Shopee**
+- As datas grandes concentram as compras: **Black Friday (27/11)**, **12.12**, **Natal** e as campanhas mensais. Pins e achadinhos precisam estar prontos **antes** (o Pinterest leva semanas para indexar).
+- Este ano ainda dá tempo de preparar a Black Friday e o Natal. Começa por esse recorte.
+
+**H6. Regras da casa**
+- Sempre `rel="sponsored nofollow"` e aviso claro de que é link de afiliado (já é o padrão no blog).
+- **Confirme nos termos do programa de afiliados da Shopee** onde os links podem ser divulgados e se há restrições (anúncios pagos, redes sociais, grupos). Eu não afirmo as regras vigentes: elas mudam.
+- Nada de produto em áreas de acolhimento ou crise (AGENTS §12).
+
+**Métrica que decide:** comissão por mil visitas (RPM de afiliado) por página e por origem.
+
+### Pilar I. Reforço contra a dependência de uma plataforma
+Renda concentrada em um programa é frágil: se as regras ou as comissões mudarem, cai tudo de uma vez. Por isso os pilares A a F continuam no plano, **como seguro**, e não como substituição. Tente chegar a algo como 70% Shopee e 30% outras fontes, e acompanhe isso mês a mês.
 
 ---
 
-## 4. Ordem de execução
+## 4. Ordem de execução (Shopee primeiro)
 
 | Quando | Entrega | Esforço | Por que primeiro |
 |---|---|---|---|
-| **Semana 1** | Medir: cliques da Shopee por página, visitas por página, funil de planos | Baixo | Sem isso o resto é chute |
-| **Semanas 1-2** | Plano anual com desconto + faixa "apoio mensal" | Baixo-médio | Usa Pix e Mercado Pago que já existem |
-| **Semanas 2-4** | Afiliados contextuais nas páginas de tarô; enxugar Shopee | Médio | Aproveita o tráfego do Pinterest |
-| **Mês 2** | Pacote sazonal de cosméticos (Natal/Verão) | Médio | Passe e Casinha já têm a estrutura |
-| **Mês 2-3** | Destaque pago na vitrine de parcerias | Médio | Dinheiro de terceiros, entrega automática |
-| **Mês 3** | Produtos digitais (primeiro pacote) | Médio-alto | Depende de arte pronta |
+| **Esta semana** | Rodar a checagem nos 58 produtos e reativar os que estão de pé | Baixo | Dinheiro parado: 38 produtos desligados |
+| **Esta semana** | Registrar cliques por produto/página e colocar UTM na vitrine | Baixo | Sem medir você não sabe onde melhorar |
+| **Antes da Black Friday (27/11)** | Vitrine ranqueada por ganho esperado + página de achadinhos + pins de produto | Médio | Pico de compra mais próximo |
+| **Dezembro** | Achadinho da semana no Discord; bloco "combina com" no tarô e no museu | Médio | Natal e 12.12 |
+| **Janeiro** | Painel de comissão por origem e relatório de funil | Médio | Decidir com dado onde dobrar a aposta |
+| **Em paralelo, sem pressa** | Plano anual, apoio mensal, cosméticos, destaque pago | Baixo-médio | Seguro contra depender de um programa só |
 | **Quando houver volume** | Anúncios display | Baixo | Só compensa com tráfego |
 
 ---
@@ -112,10 +152,14 @@ Mantém, mas:
 
 ## 6. O que o código pode entregar (se aprovar)
 
-- Painel do dono: **funil** (visitas → clique em planos → pagamento) e **cliques de afiliado por página**.
-- **Plano anual** no catálogo de planos (`guildPlans.js`) com o mesmo webhook.
-- **Apoio mensal** com selo (preapproval do Mercado Pago já suportado).
-- **Bloco de afiliados contextual** nas páginas de tarô e do museu (PT/EN, `rel="sponsored"`, sem anúncio em páginas de acolhimento).
-- **Destaque pago** no módulo de Parcerias.
+Em ordem de prioridade:
+1. **Checagem automática semanal do catálogo da Shopee**, reativação dos links vivos e aviso de produto caído.
+2. **Rastreio de cliques** por produto, página e posição, com UTM e sub-ID em todo link.
+3. **Vitrine ranqueada** por ganho esperado, com mais de 4 produtos e grupos por categoria.
+4. **Página `/achadinhos`** (PT/EN, SEO, `rel="sponsored"`) para os pins do Pinterest apontarem.
+5. **Painel do dono**: cliques e comissão estimada por origem.
+6. **Bloco "combina com"** nas páginas de tarô e do museu.
+7. **Achadinho da semana** como mensagem periódica opcional na Cringelândia.
+8. Depois: plano anual, apoio mensal e destaque pago (seguro contra depender de uma plataforma só).
 
 Cada item segue as regras da casa: bilíngue PT/EN, teste na suíte, painel antes do site, nada fora de lugar.
