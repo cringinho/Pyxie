@@ -85,6 +85,27 @@ export default function Museum({ t, lang }) {
       .catch(() => {});
   }, []);
 
+  // Fecha a obra, limpa o ?art= da URL (link do Pinterest) e fecha com Esc.
+  const closeArt = () => {
+    setSelectedArt(null);
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('art')) {
+        url.searchParams.delete('art');
+        window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+      }
+    } catch (_) {}
+  };
+
+  useEffect(() => {
+    if (!selectedArt) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') closeArt();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedArt]);
+
   // Extract unique authors for filter pills
   const authorPills = useMemo(() => {
     const map = new Map();
@@ -129,7 +150,7 @@ export default function Museum({ t, lang }) {
       });
       const data = await res.json();
       if (data.success) {
-        if (selectedArt?.id === id) setSelectedArt(null);
+        if (selectedArt?.id === id) closeArt();
         fetchArts(page);
       } else {
         alert(t('museum.deleteFail'));
@@ -475,16 +496,25 @@ export default function Museum({ t, lang }) {
       {/* Cinematic Lightbox Modal */}
       {selectedArt && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-fade-in"
-          onClick={() => setSelectedArt(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 bg-black/90 backdrop-blur-xl animate-fade-in"
+          onClick={closeArt}
         >
+          {/* Fechar sempre visível, inclusive no celular */}
+          <button
+            onClick={closeArt}
+            className="fixed top-3 right-3 z-[60] flex h-11 w-11 items-center justify-center rounded-full bg-black/70 text-white ring-1 ring-white/30 hover:bg-rose-600"
+            title={t('museum.close')}
+            aria-label={t('museum.close')}
+          >
+            <X className="w-5 h-5" />
+          </button>
           <div
             className="relative max-w-5xl max-h-[92vh] w-full flex flex-col items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top Toolbar */}
-            <div className="w-full flex items-center justify-between mb-3 px-2 text-white">
-              <div className="flex items-center gap-3">
+            <div className="w-full flex flex-wrap items-center justify-between gap-2 mb-3 px-2 pr-14 text-white">
+              <div className="flex min-w-0 items-center gap-3">
                 <span className="font-title font-bold text-sm text-pink-300">
                   {getAuthorHandle(selectedArt)}
                 </span>
@@ -493,7 +523,7 @@ export default function Museum({ t, lang }) {
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={() => setLightboxZoom((z) => Math.min(z + 0.25, 2.5))}
                   className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white"
@@ -517,14 +547,6 @@ export default function Museum({ t, lang }) {
                 >
                   {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
                   <span>{copiedLink ? t('museum.copied') : t('museum.share')}</span>
-                </button>
-                <button
-                  onClick={() => setSelectedArt(null)}
-                  className="p-2 rounded-xl bg-white/10 hover:bg-rose-600 text-white ml-2 transition-colors"
-                  title={t('museum.close')}
-                  aria-label={t('museum.close')}
-                >
-                  <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -552,6 +574,13 @@ export default function Museum({ t, lang }) {
                 </span>
               </div>
             </div>
+
+            <button
+              onClick={closeArt}
+              className="mt-4 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-bold text-white hover:bg-white/20"
+            >
+              {t('museum.backToGallery')}
+            </button>
 
             {/* Lightbox Description */}
             {selectedArt.description && (
