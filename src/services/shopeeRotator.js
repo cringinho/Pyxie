@@ -147,13 +147,16 @@ function insights(limit = 10) {
   return { total: Number(data.total) || 0, bySource: data.bySource || {}, byDay: data.byDay || {}, top };
 }
 
-/** Oferta mostrada depois do bônus: 'button' (padrão), 'auto' (redireciona em 6 s, dá para cancelar) ou 'off'. */
+/**
+ * Oferta ligada ao bônus: 'forced' (padrão: resgata e abre a Shopee em 2 s, sem cancelar),
+ * 'auto' (6 s, dá para cancelar), 'button' (só um botão opcional) ou 'off'.
+ * A moeda é a do bônus de sempre (1 vez por dia, espera de 10 s conferida no servidor).
+ */
 function bonusOffer(env = process.env) {
-  const mode = ['off', 'button', 'auto'].includes(String(env.SHOPEE_BONUS_REDIRECT || '').toLowerCase())
-    ? String(env.SHOPEE_BONUS_REDIRECT).toLowerCase()
-    : 'button';
+  const asked = String(env.SHOPEE_BONUS_REDIRECT || '').toLowerCase();
+  const mode = ['off', 'button', 'auto', 'forced'].includes(asked) ? asked : 'forced';
   if (mode === 'off') return null;
-  return { mode, url: '/go?src=bonus', delaySeconds: 6 };
+  return { mode, url: '/go?src=bonus', delaySeconds: mode === 'forced' ? 2 : 6 };
 }
 
 module.exports = { _resetRecent, FALLBACK_LINK, safeLink, weightOf, salesOf, pickItem, targetFor, recordClick, resolve, insights, bonusOffer };

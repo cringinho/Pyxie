@@ -1718,6 +1718,12 @@ app.post('/api/topgg/webhook', (req, res) => {
 // 5. Sistema de Bônus de Recompensas (Página de Espera 10s da Pyxie)
 app.get('/bonus', serveLocalizedPage('bonus', publicDir));
 
+// Antes de resgatar, a página precisa saber se vai para a Shopee para avisar a pessoa.
+app.get('/api/bonus/offer', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.json({ success: true, shopee: shopeeRotator.bonusOffer() });
+});
+
 app.post('/api/bonus/claim', sensitiveRouteLimiter, (req, res) => {
   const { token } = req.body || {};
   const result = verifyAndClaimBonus(token);
