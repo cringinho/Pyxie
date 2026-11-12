@@ -39,8 +39,9 @@ module.exports = {
       seasonalManager.init(null, ctx.app, ctx.sendIpc);
     }
     if (ctx.client) {
+      // O init já liga os agendamentos quando o evento está ativo. Chamar start() aqui religava o
+      // evento (active: true) a cada reinício da VM e disparava de novo o encerramento e o anúncio.
       seasonalManager.init(ctx.client, ctx.app, ctx.sendIpc);
-      seasonalManager.start();
     }
   },
 
