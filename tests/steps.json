@@ -90,7 +90,8 @@
     "node tests/safeImageFetch.test.js",
     "node tests/bumpRewards.test.js",
     "node tests/phraseDeck.test.js",
+    "node tests/shopeeRotator.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-11-11T12:46:11.696Z"
+  "updatedAt": "2026-11-12T11:39:57.065Z"
 }

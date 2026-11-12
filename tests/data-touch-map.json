@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-11T12:47:19.466Z",
+  "generatedAt": "2026-11-12T11:41:05.660Z",
   "touches": {
     "tests/botUtils.test.js": [
       "bonusSecret.json",
@@ -29,9 +29,7 @@
     ],
     "tests/monetizationAndMultiplayer.test.js": [],
     "tests/bonusTimer.test.js": [],
-    "tests/lightweightGames.test.js": [
-      "voiceBank.json"
-    ],
+    "tests/lightweightGames.test.js": [],
     "tests/themeEmojis.test.js": [],
     "tests/i18nParity.test.js": [],
     "tests/seasonalEvent.test.js": [],
@@ -154,7 +152,9 @@
       "scoped_config/wellbeing.json",
       "wellbeing.json"
     ],
-    "tests/voiceSeeder.test.js": [],
+    "tests/voiceSeeder.test.js": [
+      "voiceBank.json"
+    ],
     "tests/hyperfokus.test.js": [
       "accounts.json",
       "backups/hyperfokus/backup_2026-10-29.json",
@@ -184,6 +184,7 @@
     "tests/economyRaces.test.js": [],
     "tests/siteAuditA1.test.js": [],
     "tests/bumpRewards.test.js": [],
-    "tests/phraseDeck.test.js": []
+    "tests/phraseDeck.test.js": [],
+    "tests/shopeeRotator.test.js": []
   }
 }
