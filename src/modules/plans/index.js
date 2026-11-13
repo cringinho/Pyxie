@@ -93,6 +93,11 @@ function migrateLegacy(client, now = Date.now()) {
 
 async function tick(client, now = Date.now()) {
   try { migrateLegacy(client, now); } catch (err) { console.warn('[plans] Migração vitalícia:', err.message); }
+  // Pyxie privada: depois da migração, sai de qualquer servidor sem autorização do dono.
+  try {
+    const left = await require('../../services/privateAccess').enforce(client, now);
+    if (left.length) console.log(`[plans] Saí de ${left.length} servidor(es) sem autorização.`);
+  } catch (err) { console.warn('[plans] Acesso privado:', err.message); }
   const rec = await payments.reconcilePending({ now }).catch(() => ({ checked: 0, activated: 0 }));
   if (rec.activated) console.log(`[plans] ${rec.activated} assinatura(s) ativadas por reconciliação.`);
   // Doações do /py-home: o aviso do Mercado Pago pode se perder; confere as pendentes (Q243).

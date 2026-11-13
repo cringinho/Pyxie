@@ -6,6 +6,7 @@ A Pyxie **saiu do público e não cobra por nada**. Este módulo cuida do acesso
 
 - **Servidores que já tinham a Pyxie** ganham acesso **vitalício** (plano Fundador + Estúdio de Loja), uma única vez.
 - **Chaves**: o dono da Pyxie gera chaves no painel (Pyxie global → Chaves) e entrega a quem quiser. Quem recebe resgata com `/py-fundador chave:FUND-XXXX-XXXX` e o servidor fica vitalício.
+- **Pyxie privada:** servidor sem autorização do dono (nem plano free) é recusado — `guildCreate` sai antes das boas-vindas e o `tick` sai de qualquer servidor não autorizado (só depois da migração; Cringelândia e Mary são sempre da casa). O dono autoriza *antes* do convite pelo painel (`POST /api/dashboard/global/access/allow`) ou resgatando uma chave para o ID do servidor.
 - Não existe plano pago, Pix, cartão, preço nem paywall de compra. Recurso trancado no painel só diz como pedir uma chave.
 
 ## O que ele faz

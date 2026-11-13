@@ -539,6 +539,13 @@ client.on(Events.GuildCreate, async (guild) => {
     return;
   }
 
+  // Pyxie privada: sem autorização do dono (nem plano free) ela sai sem nem dar boas-vindas.
+  if (!require('./src/services/privateAccess').isAuthorized(guild.id)) {
+    console.warn(`[Acesso privado] Servidor sem autorização tentou adicionar a Pyxie: ${guild.name} (${guild.id}). Saindo.`);
+    await guild.leave().catch(() => null);
+    return;
+  }
+
   updateLiveStats();
   growthFunnel.recordGuildJoin(guild);
 

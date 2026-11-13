@@ -3,7 +3,7 @@
   "node": "v24.18.0",
   "platform": "win32 x64",
   "totalMs": 76712,
-  "totalChecks": 638,
+  "totalChecks": 639,
   "steps": [
     {
       "index": 0,
@@ -1643,9 +1643,10 @@
         "2. Migração única: vitalício para quem já tinha a Pyxie.",
         "3. Migração espera o cliente do Discord ficar pronto.",
         "4. Cringelândia na raiz; planos, Passe e convite do bot fora do site.",
-        "5. Links importantes (Discord, Roblox, Shopee, blog, site e contato) em PT/EN."
+        "5. Links importantes (Discord, Roblox, Shopee, blog, site e contato) em PT/EN.",
+        "6. Pyxie privada: sai de servidor sem autorização do dono."
       ],
-      "checkCount": 5,
+      "checkCount": 6,
       "failures": [],
       "summaryNumbers": null,
       "summary": null

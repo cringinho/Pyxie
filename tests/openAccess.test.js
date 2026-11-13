@@ -19,6 +19,7 @@ const planPayments = require('../src/services/planPayments');
 const passPayments = require('../src/services/passPayments');
 const legacy = require('../src/services/legacyLifetime');
 const plansModule = require('../src/modules/plans');
+const privateAccess = require('../src/services/privateAccess');
 const { SEO_CONFIG, getLocalizedHtml } = require('../src/utils/seoRenderer');
 
 (async () => {
@@ -89,6 +90,22 @@ const { SEO_CONFIG, getLocalizedHtml } = require('../src/utils/seoRenderer');
   assert.ok(!/\/(install|invite)\?/.test(pt), 'sem convite do bot na página');
   assert.ok(!/R\$\s*\d/.test(pt.replace(/<script[\s\S]*?<\/script>/gi, '')), 'sem preço na página');
   console.log('  ✅ 5. Links importantes (Discord, Roblox, Shopee, blog, site e contato) em PT/EN.');
+
+  // 6. Pyxie privada: sem autorização nem plano free; casa e vitalícios ficam
+  const { CRINGELANDIA_GUILD_ID, MARY_GUILD_ID } = require('../src/config/scopes');
+  assert.equal(privateAccess.isAuthorized(CRINGELANDIA_GUILD_ID), true);
+  assert.equal(privateAccess.isAuthorized(MARY_GUILD_ID), true);
+  assert.equal(privateAccess.isAuthorized(A), true, 'vitalício autorizado');
+  assert.equal(privateAccess.isAuthorized('700000000000000099'), false, 'sem plano = sem acesso');
+  const left = [];
+  const mk = (id) => ({ id, name: id, leave: async () => left.push(id) });
+  const client = { guilds: { cache: new Map([[A, mk(A)], ['700000000000000099', mk('700000000000000099')], [CRINGELANDIA_GUILD_ID, mk(CRINGELANDIA_GUILD_ID)]]) } };
+  const gone = await privateAccess.enforce(client);
+  assert.deepEqual(gone, ['700000000000000099'], 'sai só do servidor sem autorização');
+  assert.deepEqual(left, ['700000000000000099']);
+  assert.ok(read('index.js').includes("privateAccess').isAuthorized(guild.id)"), 'guildCreate recusa servidor sem autorização antes das boas-vindas');
+  assert.ok(routes.includes('/api/dashboard/global/access/allow'), 'dono autoriza servidor pelo painel antes do convite');
+  console.log('  ✅ 6. Pyxie privada: sai de servidor sem autorização do dono.');
 
   console.log('🔑 Acesso vitalício: tudo certo.');
 })().catch((err) => {

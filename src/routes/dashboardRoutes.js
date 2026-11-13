@@ -1946,6 +1946,26 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
     return res.json({ success: true, seat: result.seat, seats: result.seats });
   });
 
+  // Autoriza um servidor ANTES de convidar a Pyxie (ela só fica onde o dono permitiu).
+  router.post('/api/dashboard/global/access/allow', requireSession, requireOwner, (req, res) => {
+    const guildId = String(req.body?.guildId || '').trim();
+    const result = require('../services/guildPlans').grantPlan(guildId, 'founder', {
+      lifetime: true,
+      source: 'owner',
+      note: String(req.body?.note || 'autorizado pelo dono').slice(0, 120),
+    });
+    if (!result.ok) return res.status(400).json({ success: false, error: result.reason });
+    require('../services/guildAddons').grant(guildId, 'lojinha', { lifetime: true, source: 'owner' });
+    return res.json({ success: true, record: result.record });
+  });
+
+  router.post('/api/dashboard/global/access/revoke', requireSession, requireOwner, (req, res) => {
+    const guildId = String(req.body?.guildId || '').trim();
+    const result = require('../services/guildPlans').revokePlan(guildId, 'canceled');
+    if (!result.ok) return res.status(400).json({ success: false, error: result.reason });
+    return res.json({ success: true });
+  });
+
   router.post('/api/dashboard/global/founder/redeem', requireSession, requireOwner, (req, res) => {
     const founder = require('../services/founderProgram');
     const result = founder.redeem(req.body?.code, req.body?.guildId, { by: req.panelSession?.userId || '' });
