@@ -102,19 +102,20 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
     assert.equal(battlePass.getStatus(P).xp - before, battlePass.XP_SOURCES.daily + battlePass.XP_SOURCES.craft, 'oficina dá XP');
     console.log('  ✅ 3. XP das atividades, níveis e teto.');
 
-    // 4. Resgate da trilha grátis (12 níveis), idempotente e sem Premium
+    // 4. Resgate das duas trilhas (12 níveis cada): a trilha premium é grátis para todo mundo
     const D = `user_test_pass_d_${runId}`;
     battlePass.addXp(D, 'x', { amount: 12 * 300, now: OCT });
     economy.setUserBalance(D, 0);
     const first = battlePass.claimAll(D, { now: OCT });
-    assert.equal(first.delivered.length, 12);
-    assert.ok(first.delivered.every((d) => d.track === 'free'));
+    assert.equal(first.delivered.length, 24, 'trilha grátis + premium, sem pagamento');
+    assert.equal(first.delivered.filter((d) => d.track === 'free').length, 12);
+    assert.equal(first.delivered.filter((d) => d.track === 'premium').length, 12);
     assert.equal(economy.getUserAccount(D).coins, 40, 'moedinhas do nível 5 (o 10 dá móvel)');
     assert.equal(battlePass.claimAll(D, { now: OCT }).delivered.length, 0, 'não entrega duas vezes');
-    const expectedEchoes = oct.slice(0, 12).filter((row) => row.free.type === 'echoes').reduce((acc, row) => acc + row.free.qty, 0);
+    const expectedEchoes = oct.slice(0, 12).reduce((acc, row) => acc + (row.free.type === 'echoes' ? row.free.qty : 0) + (row.premium.type === 'echoes' ? row.premium.qty : 0), 0);
     assert.equal(echoesOf(D), expectedEchoes);
     assert.ok(vault.listInstances(D).some((it) => it.itemId === oct[9].free.itemId), 'item do nível 10');
-    console.log('  ✅ 4. Resgate da trilha grátis.');
+    console.log('  ✅ 4. Resgate das duas trilhas sem pagar nada.');
 
     // 5. Premium: idempotente por pagamento e retroativo
     assert.equal(battlePass.activatePremium(D, '2026-10', { paymentId: null }).reason, 'payment');
@@ -124,11 +125,10 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
     assert.equal(battlePass.activatePremium(D, '2026-10', { paymentId: 'mp:1', provider: 'mercadopago', amount: 5 }).duplicate, true);
     assert.equal(battlePass.isPremium(D, '2026-10'), true);
     const premiumClaim = battlePass.claimAll(D, { now: OCT });
-    assert.equal(premiumClaim.delivered.length, 12, 'Premium libera os 12 níveis já alcançados');
-    assert.ok(premiumClaim.delivered.every((d) => d.track === 'premium'));
+    assert.equal(premiumClaim.delivered.length, 0, 'Premium já veio no primeiro resgate (grátis para todos)');
     assert.equal(economy.getUserAccount(D).magicBeans >= 1, true, 'feijão do nível 10');
     const stats = battlePass.getPassStats(OCT);
-    assert.equal(stats.premiumThisMonth, 1);
+    assert.ok(stats.premiumThisMonth >= 1);
     assert.equal(stats.revenueBRL, 5);
     console.log('  ✅ 5. Premium idempotente e retroativo.');
 
@@ -147,8 +147,8 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
     battlePass.addXp(B, 'x', { amount: 10 * 300, now: OCT });
     const blocked = battlePass.claimAll(B, { now: OCT });
     assert.equal(blocked.blocked, true);
-    assert.equal(blocked.delivered.length, 9, 'só o item do nível 10 ficou');
-    assert.equal(battlePass.getStatus(B, OCT).claimable, 1);
+    assert.equal(blocked.delivered.length, 18, 'os itens dos níveis 5 (premium) e 10 (grátis) ficaram');
+    assert.equal(battlePass.getStatus(B, OCT).claimable, 2);
     vault.removeInstance(B, vault.listInstances(B)[0].uid);
     assert.equal(battlePass.claimAll(B, { now: at(2026, 11, 5) }).delivered.length, 1, 'outubro ainda resgatável em 5/11');
     battlePass.addXp(B, 'x', { amount: 300, now: OCT });
@@ -170,68 +170,19 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
     assert.equal(payments.parseReference('pass|x|2026-1'), null);
     console.log('  ✅ 8. Link assinado e referência do pagamento.');
 
-    // 9. Sem credenciais, tudo desligado
+    // 9. Cobrança desligada: o Passe Premium é grátis para todos e nenhum checkout abre
+    assert.equal(battlePass.isPremium(U), true, 'premium para qualquer pessoa');
     assert.deepEqual(payments.providers(), { mercadopago: false });
-    assert.equal((await payments.createCheckout('mercadopago', token)).reason, 'unavailable');
-    assert.equal((await payments.createCheckout('paypal', token)).reason, 'provider', 'PayPal não existe mais');
-    assert.equal((await payments.createCheckout('mercadopago', 'lixo')).reason, 'token');
-    assert.equal((await payments.handleMercadoPagoWebhook({ body: { type: 'payment', data: { id: '1' } } })).reason, 'unavailable');
-    console.log('  ✅ 9. Pagamentos desligados sem credenciais.');
-
-    // 10. Mercado Pago (rede simulada): checkout, assinatura e aviso de pagamento
     process.env.MERCADOPAGO_ACCESS_TOKEN = 'TEST-mp';
-    process.env.MERCADOPAGO_WEBHOOK_SECRET = 'mp-secret';
-    const calls = [];
-    const payment = { id: 777, status: 'approved', currency_id: 'BRL', transaction_amount: 5, external_reference: payments.reference(P, battlePass.monthKey()) };
-    payments.setFetch(async (url, opts = {}) => {
-      calls.push({ url, opts });
-      if (url.endsWith('/checkout/preferences')) return json(201, { id: 'pref1', init_point: 'https://mp.test/checkout/pref1' });
-      if (url.includes('/v1/payments/777')) return json(200, payment);
-      if (url.includes('/v1/payments/778')) return json(200, { ...payment, id: 778, transaction_amount: 1 });
-      if (url.includes('/v1/payments/779')) return json(200, { ...payment, id: 779, status: 'pending' });
-      if (url.includes('/v1/payments/780')) return json(200, { ...payment, id: 777, status: 'refunded' });
-      return json(404, {});
-    });
-    const mp = await payments.createCheckout('mercadopago', token);
-    assert.equal(mp.url, 'https://mp.test/checkout/pref1');
-    const prefBody = JSON.parse(calls[0].opts.body);
-    assert.equal(prefBody.items[0].unit_price, 5);
-    assert.equal(prefBody.items[0].currency_id, 'BRL');
-    assert.equal(prefBody.external_reference, `pass|${P}|${battlePass.monthKey()}`);
-    assert.equal(prefBody.notification_url, 'https://pyxie.test/api/pass/webhook/mercadopago');
-    const signed = (id, requestId = 'req-1', ts = '1700000000') => ({
-      'x-request-id': requestId,
-      'x-signature': `ts=${ts},v1=${crypto.createHmac('sha256', 'mp-secret').update(`id:${id};request-id:${requestId};ts:${ts};`).digest('hex')}`,
-    });
-    assert.equal((await payments.handleMercadoPagoWebhook({ body: { type: 'payment', data: { id: '777' } }, query: { 'data.id': '777' }, headers: { 'x-signature': 'ts=1,v1=abc', 'x-request-id': 'r' } })).reason, 'signature');
-    assert.equal(battlePass.isPremium(P), false, 'assinatura errada não libera');
-    const okHook = await payments.handleMercadoPagoWebhook({ body: { type: 'payment', data: { id: '777' } }, query: { 'data.id': '777' }, headers: signed('777') });
-    assert.equal(okHook.ok, true);
-    assert.equal(okHook.userId, P);
-    assert.equal(battlePass.isPremium(P), true, 'Premium liberado pelo aviso');
-    assert.equal((await payments.handleMercadoPagoWebhook({ body: { type: 'payment', data: { id: '777' } }, query: { 'data.id': '777' }, headers: signed('777') })).duplicate, true);
-    assert.equal((await payments.handleMercadoPagoWebhook({ body: { type: 'payment', data: { id: '778' } }, query: { 'data.id': '778' }, headers: signed('778') })).reason, 'amount');
-    assert.equal((await payments.handleMercadoPagoWebhook({ body: { type: 'payment', data: { id: '779' } }, query: { 'data.id': '779' }, headers: signed('779') })).pending, true);
-    assert.equal((await payments.handleMercadoPagoWebhook({ body: { type: 'merchant_order' } })).ignored, true);
-    assert.equal((await payments.createCheckout('mercadopago', token)).reason, 'already', 'quem já tem Premium não paga de novo');
-    console.log('  ✅ 10. Mercado Pago: checkout, assinatura, valor e aviso repetido.');
-
-    // 10b. Estorno/contestação retira o Premium daquele pagamento (auditoria Q245)
-    const refundHook = await payments.handleMercadoPagoWebhook({ body: { type: 'payment', data: { id: '780' } }, query: { 'data.id': '780' }, headers: signed('780') });
-    assert.equal(refundHook.refund, true);
-    assert.equal(refundHook.revoked, true);
-    assert.equal(battlePass.isPremium(P), false, 'Premium sai com o estorno');
-    assert.equal(battlePass.refundPremium('mp:777').duplicate, true, 'Estorno repetido não mexe de novo');
-    // Volta o Premium com outro pagamento (o resto do teste conta com ele ativo).
-    assert.equal(battlePass.activatePremium(P, battlePass.monthKey(), { paymentId: 'mp:781', provider: 'mercadopago', amount: 5, currency: 'BRL' }).ok, true);
-    // Benefício não gravado vira erro: a rota responde 500 e o Mercado Pago reenvia (Q246).
+    assert.deepEqual(payments.providers(), { mercadopago: false }, 'credencial sozinha não liga a cobrança (só PYXIE_PAYMENTS=on)');
+    delete process.env.MERCADOPAGO_ACCESS_TOKEN;
+    assert.equal((await payments.createCheckout('mercadopago', token)).reason, 'already', 'ninguém precisa pagar');
+    assert.equal((await payments.createCheckout('mercadopago', 'lixo')).reason, 'token');
+    // Benefício não gravado vira erro: a rota (legada) responde 500 e o Mercado Pago reenvia (Q246).
     const serverSource = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
     const passRoute = serverSource.slice(serverSource.indexOf("app.post('/api/pass/webhook/mercadopago'"), serverSource.indexOf("app.post('/api/plans/webhook/mercadopago'"));
     assert.ok(passRoute.includes("result.reason === 'save') return res.status(500)"), 'Passe: falha ao gravar responde 500');
-    console.log('  ✅ 10b. Estorno do Passe retira o Premium e falha ao gravar pede reenvio.');
-
-    payments.setFetch(null);
-    for (const key of ['MERCADOPAGO_ACCESS_TOKEN', 'MERCADOPAGO_WEBHOOK_SECRET']) delete process.env[key];
+    console.log('  ✅ 9. Passe Premium grátis e cobrança desligada.');
 
     // 11. Telas PT/EN
     for (const locale of ['pt-BR', 'en-US']) {
@@ -250,9 +201,7 @@ console.log('💎 Iniciando testes do Passe da Pyxie...');
       assert.equal(buttons[0].data.custom_id, `bp:claim:${D}`);
       assert.ok(home.files.length === 1);
       const free = await views.buildPassView({ viewerId: U, source });
-      const link = free.components[0].components.find((c) => c.data.url);
-      assert.ok(link && link.data.url.startsWith('https://pyxie.test/passe?token='), 'botão do Premium com link assinado');
-      assert.ok(!(await views.buildPassView({ viewerId: P, source })).components[0].components.some((c) => c.data.url), 'quem já é Premium não vê o botão');
+      assert.ok(!free.components[0].components.some((c) => c.data.url), 'sem botão de compra: o Premium é de graça');
       for (let page = 0; page < 5; page++) {
         const levels = views.buildLevelsView({ viewerId: D, source, page, now: OCT });
         assert.ok(levels.embeds[0].data.description.length < 4096, `página ${page}`);

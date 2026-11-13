@@ -11,11 +11,8 @@
 </p>
 
 <p align="center">
-  <a href="https://pyxie.com.br/invite?ref=github"><strong>Add to Discord</strong></a> ·
-  <a href="https://pyxie.com.br/install?ref=github">Use on your account</a> ·
-  <a href="https://pyxie.com.br/?lang=en">Website</a> ·
-  <a href="https://pyxie.com.br/discord?ref=github">Support server</a> ·
-  <a href="https://pyxie.com.br/vote">Vote on Top.gg</a>
+  <a href="https://pyxie.com.br/en/">Website</a> ·
+  <a href="https://pyxie.com.br/discord?ref=github"><strong>Cringelândia Discord</strong></a>
 </p>
 
 <p align="center">
@@ -45,13 +42,9 @@
 
 ### Getting started
 
-1. [Add Pyxie to your server](https://pyxie.com.br/invite?ref=github), or [install it on your account](https://pyxie.com.br/install?ref=github) to use tarot and the album anywhere.
+1. Pyxie is **not a public bot** and charges nothing. She lives in the [Cringelândia Discord](https://pyxie.com.br/discord?ref=github); servers that already had her have lifetime access, and new servers join with a key from the owner (`/py-founder`).
 2. Try `/py-daily`, `/py-tarot` and `/py-work`.
 3. `/py-help` lists every command.
-
-**Permissions:** the default invite asks only for what Pyxie uses: send messages, embeds, images and reactions; manage its own event messages; create ticket channels; give the welcome auto-role. It does **not** ask for Administrator. If you only want games, economy and tarot, use [`/invite?perms=basic`](https://pyxie.com.br/invite?perms=basic&ref=github) instead. It has no management permissions at all.
-
-**Voting:** each [Top.gg vote](https://pyxie.com.br/vote) gives you 1 magic bean (2 on weekends).
 
 ---
 
@@ -69,13 +62,9 @@
 
 ### Como começar
 
-1. [Adicione a Pyxie ao servidor](https://pyxie.com.br/invite?ref=github), ou [instale na sua conta](https://pyxie.com.br/install?ref=github) para usar tarot e álbum em qualquer lugar.
+1. A Pyxie **não é um bot público** e não cobra nada. Ela mora no [Discord da Cringelândia](https://pyxie.com.br/discord?ref=github); servidores que já a tinham têm acesso vitalício e servidores novos entram com uma chave do dono (`/py-fundador`).
 2. Experimente `/py-daily`, `/py-tarot` e `/py-work`.
 3. O `/py-help` mostra todos os comandos.
-
-**Permissões:** o convite padrão pede só o que a Pyxie usa: enviar mensagens, embeds, imagens e reações; gerenciar as próprias mensagens de evento; criar canais de ticket; entregar o cargo automático de boas-vindas. **Não** pede Administrador. Se você só quer jogos, economia e tarot, use [`/invite?perms=basic`](https://pyxie.com.br/invite?perms=basic&ref=github), que não tem nenhuma permissão de gerenciamento.
-
-**Votos:** cada [voto no Top.gg](https://pyxie.com.br/vote) rende 1 feijão mágico (2 no fim de semana).
 
 ---
 

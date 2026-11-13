@@ -3,7 +3,7 @@
   "node": "v24.18.0",
   "platform": "win32 x64",
   "totalMs": 76712,
-  "totalChecks": 576,
+  "totalChecks": 638,
   "steps": [
     {
       "index": 0,
@@ -110,12 +110,12 @@
       "exitCode": 0,
       "timedOut": false,
       "checks": [
-        "1. 20 vagas com chave única e limite respeitado.",
-        "2. Chave de uso único ligada ao servidor e Básico de 12 meses.",
-        "3. Chave expira em 7 dias.",
-        "4. Checklist de contrapartida salvo na vaga.",
-        "5. Inatividade marca, pausa depois de 7 dias e limpa com atividade.",
-        "6. Revogação devolve o servidor ao Free."
+        "1. Chaves únicas, sem o limite de 20 vagas.",
+        "2. Chave de uso único liga o servidor ao acesso vitalício.",
+        "3. Chave expira em 30 dias.",
+        "4. Checklist salvo na chave.",
+        "5. Vitalício não pausa por inatividade.",
+        "6. Revogação devolve o servidor ao plano livre."
       ],
       "checkCount": 6,
       "failures": [],
@@ -1010,16 +1010,15 @@
         "1. Trilhas geradas por mês, iguais para todo mundo.",
         "2. Pet e título míticos gerados para cada mês.",
         "3. XP das atividades, níveis e teto.",
-        "4. Resgate da trilha grátis.",
+        "4. Resgate das duas trilhas sem pagar nada.",
         "5. Premium idempotente e retroativo.",
         "6. Nível 50: pet e título míticos.",
         "7. Mochila cheia e prazo do mês anterior.",
         "8. Link assinado e referência do pagamento.",
-        "9. Pagamentos desligados sem credenciais.",
-        "10. Mercado Pago: checkout, assinatura, valor e aviso repetido.",
+        "9. Passe Premium grátis e cobrança desligada.",
         "11. Telas PT/EN, níveis paginados e botões travados para a dona."
       ],
-      "checkCount": 11,
+      "checkCount": 10,
       "failures": [],
       "summary": null,
       "summaryNumbers": null
@@ -1440,29 +1439,6 @@
     },
     {
       "index": 72,
-      "file": "scripts/smoke_all_commands.js",
-      "ms": 2430,
-      "exitCode": 0,
-      "timedOut": false,
-      "checks": [
-        "resumo: 136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código."
-      ],
-      "checkCount": 1,
-      "failures": [],
-      "summary": "136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
-      "summaryNumbers": {
-        "line": "136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
-        "numbers": [
-          136,
-          136,
-          0,
-          0,
-          0
-        ]
-      }
-    },
-    {
-      "index": 72,
       "file": "tests/planAddons.test.js",
       "ms": 84,
       "exitCode": 0,
@@ -1655,6 +1631,222 @@
       "failures": [],
       "summary": null,
       "summaryNumbers": null
+    },
+    {
+      "index": 81,
+      "file": "tests/openAccess.test.js",
+      "ms": 339,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Cobrança desligada (plano, extra e Passe).",
+        "2. Migração única: vitalício para quem já tinha a Pyxie.",
+        "3. Migração espera o cliente do Discord ficar pronto.",
+        "4. Cringelândia na raiz; planos, Passe e convite do bot fora do site.",
+        "5. Links importantes (Discord, Roblox, Shopee, blog, site e contato) em PT/EN."
+      ],
+      "checkCount": 5,
+      "failures": [],
+      "summaryNumbers": null,
+      "summary": null
+    },
+    {
+      "index": 82,
+      "file": "tests/storefrontFlow.test.js",
+      "ms": 442,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Painel com menu, preço e estoque, sem código nem custo.",
+        "2. Ficha do pacote com botão de compra e volta para a vitrine.",
+        "3. Compra entrega o código, baixa o estoque e emite recibo.",
+        "4. Clique repetido em 30 s é recusado (não vende duas vezes).",
+        "5. Janela vencida libera a compra e o estoque baixo é sinalizado.",
+        "6. Pacote esgotado recusa a compra sem tocar no estoque.",
+        "7. Entrega manual fica pendente e avisa o dono com o link do painel.",
+        "8. Alerta de estoque baixo: um por dia, sem repetir na mesma janela.",
+        "9. Varredura envia a DM ao dono, sem ping e sem repetir.",
+        "10. Servidor sem a lojinha fica fora do alerta.",
+        "11. O menu da vitrine abre a ficha do pacote para quem clicou.",
+        "12. Compra manual: recibo efêmero, pedido pendente e DM sem ping para o dono.",
+        "Vitrine da lojinha e alerta de estoque: todos os testes passaram!"
+      ],
+      "checkCount": 13,
+      "failures": [],
+      "summaryNumbers": null,
+      "summary": null
+    },
+    {
+      "index": 83,
+      "file": "tests/auditoriaCriticos.test.js",
+      "ms": 438,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. escapeHtml e replaceKeep seguros.",
+        "2. Esqueci a senha sem código na resposta e sessões derrubadas.",
+        "3. Obra do Museu escapada no HTML.",
+        "4. /u/ só aceita ID numérico e escapa o HTML.",
+        "5. Cancelamento só para a renovação, do próprio servidor, sem apagar o pago.",
+        "6. Rotas do dono exigem a sessão do painel e o cabeçalho anti-CSRF (sem IP nem chave na URL).",
+        "7. Cadastro sem o código de verificação na resposta.",
+        "8. Widget embutível e vitrine Shopee escapada.",
+        "9. Reembolso pelo painel exclusivo do dono."
+      ],
+      "checkCount": 9,
+      "failures": [],
+      "summaryNumbers": null,
+      "summary": null
+    },
+    {
+      "index": 84,
+      "file": "tests/economyRaces.test.js",
+      "ms": 503,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "Jokenpô: reserva no aceite e clique duplo não paga duas vezes.",
+        "Jokenpô: sem saldo não joga, e a aposta reservada volta na expiração.",
+        "Jokenpô: empate devolve e aposta tem teto.",
+        "Date Night: 1 encontro por casal, clique duplo e cooldown não pagam de novo.",
+        "Galeria de Títulos: menu paginado com até 25 opções.",
+        "Persistência: JSON corrompido é guardado e a leitura usa o backup.",
+        "🎉 Corridas de economia: OK"
+      ],
+      "checkCount": 7,
+      "failures": [],
+      "summaryNumbers": null,
+      "summary": null
+    },
+    {
+      "index": 85,
+      "file": "tests/siteAuditA1.test.js",
+      "ms": 583,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "Q020: /api/status e /api/stats públicos só com números agregados (sem IDs, logs ou PID).",
+        "Q041/Q047: /api/commands com desc, recarga real e permissão de cada comando.",
+        "Q043/Q044/Q049/Q050: busca, apelidos e links diretos do catálogo corretos.",
+        "Q010: idioma da Home lido pela URL (/en/) e links direto para o caminho do idioma.",
+        "Q006/Q048/Q057/Q058: Museu, prévia e wiki sem artistas, valores, números ou comandos inventados.",
+        "Q024/Q026/Q034: Privacidade com /py-privacy, links do Google e consentimento antes do Analytics/AdSense.",
+        "Q022/Q025/Q027/Q029/Q030/Q031/Q036: Termos e Para pais honestos, com índice, data, contato e idioma por URL.",
+        "Q023/Q038: páginas de erro com menos movimento e texto honesto."
+      ],
+      "checkCount": 8,
+      "failures": [],
+      "summaryNumbers": null,
+      "summary": null
+    },
+    {
+      "index": 86,
+      "file": "tests/safeImageFetch.test.js",
+      "ms": 64,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "Proxy de imagens seguro (IP após DNS, faixas privadas, IPv6, sem SVG, sem porta extra): OK"
+      ],
+      "checkCount": 1,
+      "failures": [],
+      "summaryNumbers": null,
+      "summary": null
+    },
+    {
+      "index": 87,
+      "file": "tests/bumpRewards.test.js",
+      "ms": 372,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Só Cringelândia, só a mensagem do DISBOARD, quem bumpou pela interação.",
+        "2. 100 moedinhas, sem duplicar e com cooldown de 110 min.",
+        "3. Feijão mágico raro creditado junto.",
+        "4. Teto diário respeitado, aviso honesto e reserva antes de pagar.",
+        "5. Cartão bilíngue, sem ping, um emoji no título e falas sem repetir.",
+        "6. Módulo, cartão único e números do painel."
+      ],
+      "checkCount": 6,
+      "failures": [],
+      "summaryNumbers": null,
+      "summary": null
+    },
+    {
+      "index": 88,
+      "file": "tests/phraseDeck.test.js",
+      "ms": 52,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Lista vazia, item único e abertura normalizada.",
+        "2. Sem repetição dentro da janela do banco.",
+        "3. Memória de aberturas por pessoa.",
+        "4. Muletas barradas e dicas variadas."
+      ],
+      "checkCount": 4,
+      "failures": [],
+      "summaryNumbers": null,
+      "summary": null
+    },
+    {
+      "index": 89,
+      "file": "tests/shopeeRotator.test.js",
+      "ms": 42,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Peso por comissão e prova de venda.",
+        "2. Rotação sem repetir.",
+        "3. Só vai para a Shopee.",
+        "4. Cliques por produto, origem e dia.",
+        "5. Oferta do bônus: forçada, automática, botão ou desligada.",
+        "6. Rota, robots e textos PT/EN."
+      ],
+      "checkCount": 6,
+      "failures": [],
+      "summaryNumbers": null,
+      "summary": null
+    },
+    {
+      "index": 90,
+      "file": "tests/seasonalRestart.test.js",
+      "ms": 1328,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Evento encerrado continua desligado e mudo a cada reinício.",
+        "2. Encerramento tardio anuncia uma vez só.",
+        "3. Mesmo prazo não anuncia de novo.",
+        "4. Evento novo segue funcionando."
+      ],
+      "checkCount": 4,
+      "failures": [],
+      "summaryNumbers": null,
+      "summary": null
+    },
+    {
+      "index": 91,
+      "file": "scripts/smoke_all_commands.js",
+      "ms": 2430,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "resumo: 136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código."
+      ],
+      "checkCount": 1,
+      "failures": [],
+      "summary": "136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
+      "summaryNumbers": {
+        "line": "136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
+        "numbers": [
+          136,
+          136,
+          0,
+          0,
+          0
+        ]
+      }
     }
   ],
   "commands": [

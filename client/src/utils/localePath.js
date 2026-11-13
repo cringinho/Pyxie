@@ -8,16 +8,13 @@ const LOCALIZED = {
   '/wiki': '/wiki',
   '/bonus': '/bonus',
   '/tarot': '/tarot',
-  '/cringelandia': '/cringelandia',
   '/parcerias': '/partnerships',
   '/museu': '/museum',
   '/mercado': '/market',
-  '/passe': '/pass',
   '/termos': '/terms',
   '/privacidade': '/privacy',
   '/pais-e-profissionais': '/parents',
   '/transparencia': '/transparency',
-  '/planos': '/plans',
 };
 
 const EN_TO_PT = Object.fromEntries(Object.entries(LOCALIZED).map(([pt, en]) => [en, pt]));

@@ -1,3 +1,5 @@
+> ⚠️ **Histórico.** Desde 13/11/2026 a Pyxie não cobra por nada: preços, ciclos e checkout abaixo estão desligados (`PYXIE_PAYMENTS`). O bloqueio por plano continua valendo para servidores sem acesso; vitalício libera tudo. Veja [`ACESSO-FECHADO.md`](ACESSO-FECHADO.md).
+
 # Planos (mensal/anual) e bloqueio de recursos
 
 ## 1. Ciclo anual

@@ -9,7 +9,7 @@ const economy = require('./economy');
  *
  * - 50 níveis, 300 XP cada. XP vem do que a pessoa já faz: bônus diário, turnos do /py-work,
  *   descidas nas Catacumbas, ataques no chefe da semana, oficina, mercado e caixas do Festival.
- * - Trilha grátis para todo mundo; trilha premium por R$ 5 (Pix/cartão no Mercado Pago), liberada pelo pagamento confirmado (src/services/passPayments.js).
+ * - Trilha grátis e trilha premium liberadas para todo mundo (sem cobrança; passPayments fica só como legado atrás de PYXIE_PAYMENTS=on).
  * - As recompensas de cada mês saem de uma semente do próprio mês: mesmas para todo mundo,
  *   diferentes a cada mês. O nível 50 premium dá um pet mítico e um título mítico exclusivos
  *   daquele mês (nunca voltam).
@@ -83,7 +83,8 @@ function monthEntry(state, userId, month) {
   user.months = user.months && typeof user.months === 'object' ? user.months : {};
   const entry = user.months[month] || {};
   entry.xp = Math.max(0, Math.floor(Number(entry.xp) || 0));
-  entry.premium = Boolean(entry.premium);
+  // Trilha premium liberada para todo mundo: a Pyxie não cobra por nada.
+  entry.premium = true;
   entry.claimed = { free: Array.isArray(entry.claimed?.free) ? entry.claimed.free : [], premium: Array.isArray(entry.claimed?.premium) ? entry.claimed.premium : [] };
   user.months[month] = entry;
   state.users[id] = user;
@@ -427,9 +428,8 @@ function refundPremium(paymentId, { userId = '', month = '', now = Date.now() } 
   });
 }
 
-function isPremium(userId, month = monthKey()) {
-  const user = load().users[String(userId)];
-  return Boolean(user?.months?.[month]?.premium);
+function isPremium() {
+  return true; // sem paywall: trilha premium grátis para todos
 }
 
 function getPassStats(now = Date.now()) {

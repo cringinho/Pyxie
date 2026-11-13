@@ -1,4 +1,5 @@
 // E2: cobrança do extra `lojinha` (R$ 3/mês ou R$ 30/ano) pelo mesmo fluxo Pix dos planos.
+process.env.PYXIE_PAYMENTS = 'on'; // cobrança é legado: o teste liga a chave que produção nunca liga
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');

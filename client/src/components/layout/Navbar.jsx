@@ -13,7 +13,7 @@ function communityItems(lang, t) {
     { href: localeHref('/hyperfokus', lang), label: t('nav.blog'), desc: t('nav.blogDesc'), Icon: Feather, color: 'text-pink-400' },
     { href: localeHref('/museu', lang), label: t('nav.museum'), desc: t('nav.museumDesc'), Icon: Palette, color: 'text-fuchsia-400' },
     { href: localeHref('/parcerias', lang), label: t('nav.partnerships'), desc: t('nav.partnershipsDesc'), Icon: ShieldCheck, color: 'text-emerald-400' },
-    { href: localeHref('/cringelandia', lang), label: t('nav.cringelandia'), desc: t('nav.cringelandiaDesc'), Icon: Heart, color: 'text-rose-400' },
+    { href: localeHref('/', lang), label: t('nav.cringelandia'), desc: t('nav.cringelandiaDesc'), Icon: Heart, color: 'text-rose-400' },
   ];
 }
 
@@ -171,7 +171,7 @@ export default function Navbar({ lang, setLang, t, stats }) {
           </button>
 
           <a
-            href="/invite?ref=site"
+            href="/discord?ref=site"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-neon-pink transition-all transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap"
@@ -230,20 +230,12 @@ export default function Navbar({ lang, setLang, t, stats }) {
           </div>
           <div className="pt-2 flex flex-col gap-2">
             <a
-              href="/invite?ref=site-menu"
+              href="/discord?ref=site-menu"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r from-pink-600 to-purple-600 shadow-neon-pink"
             >
               {t('nav.invite')}
-            </a>
-            <a
-              href="/install?ref=site-menu"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full text-center py-3 rounded-xl font-bold text-slate-100 border border-purple-500/40 hover:bg-white/5"
-            >
-              {t('nav.install')}
             </a>
           </div>
         </div>

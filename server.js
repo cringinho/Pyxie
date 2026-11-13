@@ -492,29 +492,17 @@ const SLOT_METADATA = {
   status_fail: { title: 'Indicador de Erro / Falha', fallback: '❌', category: 'system', themeKey: null }
 };
 
-// 0. Redirecionamentos amigáveis oficiais da Pyxie
-// /invite?ref=topgg&perms=basic|full|admin → convite com permissões mínimas e origem contabilizada no funil
-app.get('/invite', (req, res) => {
-  const preset = resolvePreset(req.query.perms);
-  try { growthFunnel.recordInviteClick(req.query.ref, 'guild', { visitorKey: req.ip }); } catch (_) {}
-  res.redirect(buildGuildInviteUrl(preset));
-});
-
-// /install?ref=site → instala a Pyxie na conta do usuário (User App)
-app.get('/install', (req, res) => {
-  try { growthFunnel.recordInviteClick(req.query.ref, 'user', { visitorKey: req.ip }); } catch (_) {}
-  res.redirect(buildUserInstallUrl());
-});
+// 0. Redirecionamentos oficiais.
+// A Pyxie saiu do público: não há convite do bot, instalação na conta nem divulgação comercial.
+// Os endereços antigos continuam respondendo (links já espalhados), mas só levam à Cringelândia.
+const goHome = (req, res) => res.redirect(301, '/');
+app.get(['/invite', '/install', '/vote'], goHome);
 
 // /discord?ref=site → convite vivo da Cringelândia (os códigos fixos expiravam)
 app.get('/discord', async (req, res) => {
   try { growthFunnel.recordInviteClick(req.query.ref, 'community', { visitorKey: req.ip }); } catch (_) {}
   const url = await require('./src/services/cringelandiaInvite').getInviteUrl().catch(() => null);
-  res.redirect(url || '/cringelandia#comunidade');
-});
-
-app.get('/vote', (req, res) => {
-  res.redirect(getVoteUrl());
+  res.redirect(url || '/#links');
 });
 
 // ---------- Idioma por URL (AGENTS §8): PT na raiz, EN em /en/... ----------
@@ -573,7 +561,9 @@ app.get('/termos', serveLocalizedPage('terms', publicDir));
 
 app.get('/privacidade', serveLocalizedPage('privacy', publicDir));
 
-app.get('/cringelandia', serveLocalizedPage('cringelandia', publicDir));
+// A Cringelândia É a página inicial: o endereço antigo só redireciona.
+app.get('/cringelandia', (req, res) => res.redirect(301, String(req.query.lang || '').toLowerCase() === 'en' ? '/en/' : '/'));
+app.get('/en/cringelandia', (req, res) => res.redirect(301, '/en/'));
 app.get('/pais-e-profissionais', serveLocalizedPage('parents', publicDir));
 app.get('/transparencia', serveLocalizedPage('transparency', publicDir));
 
@@ -648,67 +638,12 @@ app.get('/api/market/prices', (req, res) => {
   }
 });
 
-// Planos do servidor: página pública com preços, QR no painel e ranking de doações.
-app.get('/planos', serveLocalizedPage('plans', publicDir));
+// Planos e Passe pagos saíram do ar: nada é cobrado. Os endereços antigos levam à página inicial.
+app.get(['/planos', '/passe', '/pass', '/plans', '/en/plans', '/en/pass'], (req, res) =>
+  res.redirect(301, req.path.startsWith('/en/') ? '/en/' : '/')
+);
+app.all(['/api/pass/info', '/api/pass/checkout'], (req, res) => res.status(410).json({ error: 'payments_disabled' }));
 
-// Passe da Pyxie: página /passe, pagamento do Premium (Mercado Pago) e avisos de pagamento
-app.get('/passe', serveLocalizedPage('pass', publicDir));
-aliasPage('/pass', 'pass');
-app.get('/api/pass/info', publicApiLimiter, (req, res) => {
-  try {
-    const battlePass = require('./src/services/battlePass');
-    const payments = require('./src/services/passPayments');
-    const { getItem, itemName } = require('./src/modules/home/homeCatalog');
-    const economy = require('./src/services/economy');
-    const lang = req.query.lang === 'en' ? 'en' : 'pt';
-    const month = battlePass.monthKey();
-    const track = battlePass.getTrack(month);
-    const finale = track[track.length - 1];
-    const theme = battlePass.themeFor(month);
-    const session = req.query.token ? payments.verifyPassToken(req.query.token) : null;
-    let user = null;
-    if (session) {
-      const status = battlePass.getStatus(session.userId);
-      user = { level: status.level, xp: status.xp, premium: status.premium, sameMonth: session.month === month };
-    }
-    res.setHeader('Cache-Control', 'no-store');
-    res.json({
-      month,
-      monthLabel: `${theme.months[lang]} ${month.slice(0, 4)}`,
-      endsAt: battlePass.monthBounds(month).end,
-      maxLevel: battlePass.MAX_LEVEL,
-      xpPerLevel: battlePass.XP_PER_LEVEL,
-      xpSources: battlePass.XP_SOURCES,
-      price: battlePass.PRICE,
-      providers: payments.providers(),
-      finale: {
-        pet: itemName(getItem(finale.premium.itemId), lang),
-        title: economy.getTitleDefinition(finale.premium.title, lang)?.display || '',
-        freeItem: itemName(getItem(finale.free.itemId), lang),
-      },
-      highlights: track
-        .filter((row) => row.premium.type === 'item' || row.free.type === 'item')
-        .map((row) => ({ level: row.level, free: row.free.itemId ? itemName(getItem(row.free.itemId), lang) : null, premium: row.premium.itemId ? itemName(getItem(row.premium.itemId), lang) : null })),
-      user,
-      tokenValid: Boolean(session),
-      support: require('./src/config/support'),
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'pass_unavailable' });
-  }
-});
-app.post('/api/pass/checkout', sensitiveRouteLimiter, async (req, res) => {
-  try {
-    const payments = require('./src/services/passPayments');
-    const { provider, token } = req.body || {};
-    const result = await payments.createCheckout(String(provider || ''), String(token || ''));
-    if (!result.ok) return res.status(result.reason === 'unavailable' ? 503 : 400).json({ error: result.reason });
-    return res.json({ url: result.url });
-  } catch (err) {
-    console.error('[pass] Falha ao abrir pagamento:', err.message);
-    return res.status(502).json({ error: 'provider' });
-  }
-});
 /**
  * Avisa a pessoa por DM quando o Premium é liberado. O site roda no supervisor (sem gateway), então
  * a DM vai pela REST do Discord; sem DM aberta, ela vê o Premium no /py-pass.

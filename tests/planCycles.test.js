@@ -1,4 +1,5 @@
 // Plano anual (10 meses) e bloqueio de recursos por plano (Básico/Premium).
+process.env.PYXIE_PAYMENTS = 'on'; // cobrança é legado: o teste liga a chave que produção nunca liga
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');

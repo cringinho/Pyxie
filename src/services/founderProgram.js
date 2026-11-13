@@ -1,6 +1,6 @@
-// Programa Fundador: 20 vagas de Básico grátis por 12 meses para servidores parceiros.
-// Cada vaga é uma chave de resgate de uso único (7 dias para resgatar) ligada a um servidor.
-// Sem atividade por 4 semanas depois do primeiro mês, a vaga é pausada.
+// Chaves de acesso vitalício: o dono da Pyxie gera e entrega a quem quiser (a Pyxie é fechada e não cobra).
+// Cada chave é de uso único (30 dias para resgatar) e, ao ser resgatada, liga o servidor ao acesso
+// vitalício (plano Fundador + Estúdio de Loja). Vitalício nunca é pausado por inatividade nem expira.
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -8,11 +8,11 @@ const plans = require('./guildPlans');
 const notices = require('./planNotices');
 const { withFileLock } = require('../utils/fileLock');
 
-const SEATS = 20;
-const MONTHS = 12;
-const KEY_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const SEATS = 1000; // teto de segurança da lista, não é mais um número de vagas
+const MONTHS = 0; // vitalício
+const KEY_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const DAY = 24 * 60 * 60 * 1000;
-const INACTIVE_GRACE_MS = 7 * DAY;
+const INACTIVE_GRACE_MS = 0; // sem pausa por inatividade (mantido por compatibilidade de exportação)
 
 const fileFor = () => path.join(process.env.PYXIE_DATA_DIR || path.join(__dirname, '..', '..', 'data'), 'founderProgram.json');
 
@@ -35,7 +35,7 @@ function save(state) {
 
 const makeCode = () => `FUND-${crypto.randomBytes(3).toString('hex').toUpperCase()}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
 
-/** Cria uma vaga com chave de resgate. Limite duro de 20 vagas no programa inteiro. */
+/** Cria uma chave de resgate. Teto de segurança de `SEATS` chaves na lista. */
 function createKey({ note = '', by = '', now = Date.now() } = {}) {
   return withFileLock(fileFor(), () => {
     const state = load();
@@ -58,7 +58,7 @@ function createKey({ note = '', by = '', now = Date.now() } = {}) {
   });
 }
 
-/** Resgata a chave: liga a vaga ao servidor e libera o Básico por 12 meses. */
+/** Resgata a chave: liga a chave ao servidor e libera o acesso vitalício. */
 function redeem(code, guildId, { now = Date.now(), by = '' } = {}) {
   const clean = String(code || '').trim().toUpperCase();
   if (!/^\d{17,20}$/.test(String(guildId || ''))) return { ok: false, reason: 'invalid_guild' };
@@ -71,14 +71,16 @@ function redeem(code, guildId, { now = Date.now(), by = '' } = {}) {
     if (state.seats.some((item) => item.guildId === String(guildId) && item.status !== 'revoked')) {
       return { ok: false, reason: 'guild_already_founder' };
     }
-    const granted = plans.grantPlan(guildId, 'founder', { months: MONTHS, source: 'founder', note: seat.note || by, now });
+    const granted = plans.grantPlan(guildId, 'founder', { lifetime: true, source: 'key', note: seat.note || by, now });
     if (!granted.ok) return { ok: false, reason: granted.reason || 'grant_failed' };
+    // Estúdio de Loja também vem no acesso vitalício (antes era um extra pago).
+    require('./guildAddons').grant(guildId, 'lojinha', { lifetime: true, source: 'key', note: seat.note || by, now });
     seat.guildId = String(guildId);
     seat.status = 'active';
     seat.redeemedAt = now;
     save(state);
     notices.resetMarks(guildId);
-    return { ok: true, seat, months: MONTHS, paidUntil: granted.record.paidUntil };
+    return { ok: true, seat, lifetime: true, months: MONTHS, paidUntil: 0 };
   });
 }
 
@@ -91,6 +93,7 @@ function revoke(guildId, { reason = 'revoked', now = Date.now() } = {}) {
     seat.revokedAt = now;
     save(state);
     plans.revokePlan(guildId, seat.status === 'paused' ? 'past_due' : 'canceled', now);
+    try { require('./guildAddons').revoke(guildId, 'lojinha', 'canceled', now); } catch (_) {}
     return { ok: true, seat };
   });
 }
@@ -125,7 +128,8 @@ function list({ now = Date.now() } = {}) {
       checklistDone: done,
       checklistTotal: 3,
       plan: plan ? { plan: plan.plan, active: plan.active, paidUntil: plan.paidUntil } : null,
-      daysLeft: plan?.paidUntil ? Math.max(0, Math.ceil((plan.paidUntil - now) / DAY)) : 0,
+      daysLeft: 0,
+      lifetime: Boolean(plan?.lifetime),
       inactiveSince: seat.inactiveSince || 0,
     };
   });
@@ -145,48 +149,24 @@ function stats({ now = Date.now() } = {}) {
 }
 
 /**
- * Manutenção: marca inatividade e pausa a vaga depois de 7 dias seguidos parada.
- * `activity` é injetável nos testes (guildActivity.summary por padrão).
+ * Manutenção: acesso vitalício não pausa por inatividade. Só reflete no registro das chaves
+ * quem perdeu o plano por outro caminho (revogação manual), sem mexer no servidor.
  */
-function sweep({ now = Date.now(), activity = null } = {}) {
-  const readActivity = activity || ((guildId) => require('./guildActivity').summary(guildId, now));
+function sweep({ now = Date.now() } = {}) {
   const result = { paused: [], flagged: [], expired: [] };
   withFileLock(fileFor(), () => {
     const state = load();
+    let changed = false;
     for (const seat of state.seats) {
       if (seat.status !== 'active' || !seat.guildId) continue;
       const plan = plans.getPlan(seat.guildId, now);
-      if (!plan.active) {
-        if (plan.expired) {
-          seat.status = 'expired';
-          result.expired.push(seat.guildId);
-        }
-        continue;
-      }
-      // Só avalia inatividade depois do primeiro mês (tempo para a comunidade organizar).
-      if (now - (seat.redeemedAt || now) < 30 * DAY) continue;
-      let quiet = false;
-      try {
-        const summary = readActivity(seat.guildId) || {};
-        quiet = Number(summary?.week?.messages || 0) === 0 && summary.hasData !== false;
-      } catch (_) {
-        quiet = false;
-      }
-      if (!quiet) {
-        seat.inactiveSince = 0;
-        continue;
-      }
-      if (!seat.inactiveSince) {
-        seat.inactiveSince = now;
-        result.flagged.push(seat.guildId);
-      } else if (now - seat.inactiveSince >= INACTIVE_GRACE_MS) {
-        seat.status = 'paused';
-        result.paused.push(seat.guildId);
-        plans.revokePlan(seat.guildId, 'past_due', now);
-        notices.push({ guildId: seat.guildId, kind: 'expired', plan: 'founder' });
+      if (!plan.active && plan.expired) {
+        seat.status = 'expired';
+        result.expired.push(seat.guildId);
+        changed = true;
       }
     }
-    save(state);
+    if (changed) save(state);
   });
   return result;
 }

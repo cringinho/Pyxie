@@ -103,7 +103,7 @@
       <div>
         <h1 data-i18n="title">Mercado da Pyxie: histórico de preços</h1>
         <p data-i18n="subtitle">Preços reais das vendas entre jogadores no Discord, atualizados a cada venda.</p>
-        <a class="add-btn" id="addBtn" href="/invite?ref=mercado" target="_blank" rel="noopener noreferrer">+ Adicionar a Pyxie</a>
+        <a class="add-btn" id="addBtn" href="/discord?ref=mercado" target="_blank" rel="noopener noreferrer">+ Entrar no Discord</a>
       </div>
       <button class="lang" id="langBtn" type="button">EN</button>
     </header>
@@ -120,7 +120,7 @@
     </main>
     <footer>
       <nav class="site-links" id="siteLinks" aria-label="Páginas da Pyxie">
-        <a href="/">Início</a><a href="/planos">Planos</a><a href="/passe">Passe</a><a href="/mercado">Mercado</a><a href="/termos">Termos</a><a href="/privacidade">Privacidade</a>
+        <a href="/">Início</a><a href="/mercado">Mercado</a><a href="/termos">Termos</a><a href="/privacidade">Privacidade</a>
       </nav>
     </footer>
     <script>
@@ -135,8 +135,8 @@
 
       // Rodapé e botão "Adicionar" no idioma da página (links para o caminho certo: /en/... em inglês).
       const SITE_LINKS = {
-        pt: [['/', 'Início'], ['/planos', 'Planos'], ['/passe', 'Passe'], ['/mercado', 'Mercado'], ['/termos', 'Termos'], ['/privacidade', 'Privacidade']],
-        en: [['/en/', 'Home'], ['/en/plans', 'Plans'], ['/en/pass', 'Pass'], ['/en/market', 'Market'], ['/en/terms', 'Terms'], ['/en/privacy', 'Privacy']],
+        pt: [['/', 'Início'], ['/mercado', 'Mercado'], ['/termos', 'Termos'], ['/privacidade', 'Privacidade']],
+        en: [['/en/', 'Home'], ['/en/market', 'Market'], ['/en/terms', 'Terms'], ['/en/privacy', 'Privacy']],
       };
       function renderSiteLinks() {
         const nav = document.getElementById('siteLinks');
@@ -150,7 +150,7 @@
           }));
         }
         const add = document.getElementById('addBtn');
-        if (add) add.textContent = lang === 'en' ? '+ Add Pyxie to Discord' : '+ Adicionar a Pyxie';
+        if (add) add.textContent = lang === 'en' ? '+ Join the Discord' : '+ Entrar no Discord';
       }
 
       function sparkline(points) {

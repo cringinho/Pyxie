@@ -1,4 +1,5 @@
-// Assinatura mensal do servidor (Básico R$ 7 / Premium R$ 20).
+// LEGADO — cobrança desligada (a Pyxie não cobra por nada; acesso é vitalício ou por chave).
+// Assinatura mensal do servidor (Básico R$ 7 / Premium R$ 20), mantida só atrás de PYXIE_PAYMENTS=on.
 // - Pix: cobrança avulsa de 30 dias, QR + copia-e-cola, renovação manual.
 // - Cartão: Mercado Pago Preapproval (cobra sozinho todo mês).
 // - O status e o valor vêm SEMPRE da API do Mercado Pago, nunca do corpo do webhook.
@@ -25,8 +26,15 @@ function setFetch(fn) {
 const publicUrl = () => String(process.env.PASS_PUBLIC_URL || process.env.PANEL_PUBLIC_URL || 'https://pyxie.com.br').replace(/\/+$/, '');
 const token = () => String(process.env.MERCADOPAGO_ACCESS_TOKEN || '').trim();
 
+/**
+ * Cobrança desligada por decisão do dono: a Pyxie é fechada e não cobra por nada.
+ * O código de pagamento fica só para ler/estornar o histórico antigo; criar cobrança nova exige
+ * `PYXIE_PAYMENTS=on` (nunca ligado em produção).
+ */
+const paymentsEnabled = () => String(process.env.PYXIE_PAYMENTS || '').toLowerCase() === 'on';
+
 function providers() {
-  const has = Boolean(token());
+  const has = paymentsEnabled() && Boolean(token());
   return { pix: has, card: has };
 }
 
@@ -539,6 +547,7 @@ module.exports = {
   setFetch,
   publicUrl,
   providers,
+  paymentsEnabled,
   reference,
   addonReference,
   parseReference,

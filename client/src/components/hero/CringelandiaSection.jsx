@@ -33,7 +33,7 @@ export default function CringelandiaSection({ t, lang = 'pt' }) {
       </div>
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <a href={localeHref('/cringelandia', lang)} className="min-h-[48px] inline-flex items-center px-6 rounded-xl bg-pyxie-pink hover:bg-pyxie-neon text-white font-semibold">
+        <a href={localeHref('/', lang)} className="min-h-[48px] inline-flex items-center px-6 rounded-xl bg-pyxie-pink hover:bg-pyxie-neon text-white font-semibold">
           {t('cring.btnHub')}
         </a>
         <a href="/discord" target="_blank" rel="noopener" className="min-h-[48px] inline-flex items-center px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold">

@@ -6,24 +6,18 @@ const CONFIG_FILE = pyxieDataPath( 'webRoutesConfig.json');
 
 const INITIAL_ROUTES = [
   // Páginas Públicas
-  { id: 'home', path: '/', name: 'Página Inicial (Portal)', type: 'public', enabled: true, httpStatus: 200 },
+  { id: 'home', path: '/', name: 'Página Inicial (Cringelândia)', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'wiki', path: '/wiki', name: 'Grimório & Wiki', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'museu', path: '/museu', name: 'Museu Comunitário', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'parcerias', path: '/parcerias', name: 'Portal de Parcerias', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'bonus', path: '/bonus', name: 'Portal de Bônus Diário', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'evento', path: '/evento', name: 'Página de Evento Sazonal', type: 'public', enabled: true, httpStatus: 200 },
-  { id: 'cringelandia', path: '/cringelandia', name: 'Cringelândia Hub', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'parents', path: '/pais-e-profissionais', name: 'Para pais e profissionais', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'transparency', path: '/transparencia', name: 'Transparência e impacto', type: 'public', enabled: true, httpStatus: 200 },
   { id: 'termos', path: '/termos', name: 'Termos de Serviço', type: 'legal', enabled: true, httpStatus: 200 },
   { id: 'privacidade', path: '/privacidade', name: 'Política de Privacidade', type: 'legal', enabled: true, httpStatus: 200 },
 
   { id: 'tarot_cards', path: '/tarot/cartas', name: 'Significado das 78 Cartas (índice)', type: 'public', enabled: true, httpStatus: 200 },
-
-  // Redirecionamentos do funil de crescimento (contam a origem ?ref= em data/growthInvites.json)
-  { id: 'invite', path: '/invite', name: 'Convite para Servidor (permissões mínimas)', type: 'public', enabled: true, httpStatus: 302 },
-  { id: 'install', path: '/install', name: 'Instalação na Conta (User App)', type: 'public', enabled: true, httpStatus: 302 },
-  { id: 'vote', path: '/vote', name: 'Voto no Top.gg (+feijão)', type: 'public', enabled: true, httpStatus: 302 },
 
   // Sub-Painéis Administrativos
   { id: 'admin_dashboard', path: '/admin', name: 'Console Master Admin', type: 'admin', enabled: true, httpStatus: 200 },

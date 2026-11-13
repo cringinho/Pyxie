@@ -16,17 +16,17 @@
   <title>Cringelândia • Comunidade Neurodivergente & Acolhimento no Discord</title>
   <meta name="description" content="O maior servidor neurodivergente do Discord brasileiro: acolhimento psicológico, triagem humanizada para autistas e PCDs, enciclopédia neurodivergente e guia CIPTEA.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <link rel="canonical" href="https://pyxie.com.br/cringelandia" />
-  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/cringelandia" />
-  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/cringelandia?lang=en" />
-  <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
+  <link rel="canonical" href="https://pyxie.com.br/" />
+  <link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/" />
+  <link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/" />
+  <link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/" />
 
   <!-- Preconnect & DNS Prefetch -->
   <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
   <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
 <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://pyxie.com.br/cringelandia" />
+  <meta property="og:url" content="https://pyxie.com.br/" />
   <meta property="og:title" content="Cringelândia • Comunidade Neurodivergente & Apoio Psicológico" />
   <meta property="og:description" content="Comunidade segura e acolhedora no Discord para autistas, TDAH, PCDs e mentes neurodivergentes com canais de apoio, enciclopédia e guia de direitos." />
   <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/og_banner_hd.png" />
@@ -65,14 +65,14 @@
             "@type": "ListItem",
             "position": 2,
             "name": "Cringelândia",
-            "item": "https://pyxie.com.br/cringelandia"
+            "item": "https://pyxie.com.br/"
           }
         ]
       },
       {
         "@type": "CommunityCenter",
         "name": "Cringelândia - Comunidade Neurodivergente & Apoio Psicológico",
-        "url": "https://pyxie.com.br/cringelandia",
+        "url": "https://pyxie.com.br/",
         "logo": "https://pyxie.com.br/assets/pyxie/pyxie_mascot.png",
         "description": "O maior servidor neurodivergente do Discord brasileiro: acolhimento psicológico, triagem humanizada para autistas e PCDs, enciclopédia neurodivergente e guia CIPTEA.",
         "inLanguage": ["pt-BR", "en"]
@@ -445,20 +445,26 @@
 
     .join-btn:hover { background: #4752c4; transform: translateY(-2px); }
 
-    .join-app {
-      color: var(--purple-light);
-      font-size: 14px;
-      font-weight: 700;
-      text-align: center;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
 
     .app-actions { display: flex; flex-direction: column; gap: 10px; }
 
     .app-secondary { background: transparent; border: 1px solid #5865f2; }
 
     .app-secondary:hover { background: rgba(88, 101, 242, 0.18); }
+
+    /* Links importantes */
+    .links-section { margin: 60px 0 20px; }
+    .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 28px; }
+    .link-card {
+      display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+      background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+      color: inherit; text-decoration: none; transition: transform 0.2s, border-color 0.2s;
+    }
+    .link-card:hover, .link-card:focus-visible { transform: translateY(-2px); border-color: var(--purple-light); }
+    .link-icon { font-size: 26px; flex: none; }
+    .link-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .link-body strong { font-size: 15px; }
+    .link-body span { font-size: 13px; opacity: 0.8; overflow-wrap: anywhere; }
 
     /* Tablet e notebook estreito: painel empilhado, botão em cima da largura toda */
     @media (max-width: 1024px) {
@@ -1687,6 +1693,7 @@
         <a href="#ciptea" class="nav-link" data-i18n="nav.ciptea">Guia CIPTEA</a>
         <a href="#laudo" class="nav-link" data-i18n="nav.laudo">Laudo Válido</a>
         <a href="#comunidade" class="nav-link" data-i18n="nav.community">Discord & Roblox</a>
+        <a href="#links" class="nav-link" data-i18n="nav.links">Links</a>
         <a href="/discord?ref=cringelandia-nav" class="nav-join" target="_blank" rel="noopener noreferrer" data-i18n="nav.join">Entrar no Discord</a>
         <button class="lang-toggle" id="langToggleBtn" onclick="toggleLanguage()" aria-label="Alternar Idioma">
           🌐 <span id="langLabel">EN</span>
@@ -1719,7 +1726,6 @@
         </div>
         <div class="join-actions">
           <a href="/discord?ref=cringelandia-hero" id="discordInviteLink" class="join-btn" target="_blank" rel="noopener noreferrer"><span data-i18n="join.cta">Entrar no Discord da Cringelândia</span></a>
-          <a href="/install?ref=cringelandia-hero" class="join-app" target="_blank" rel="noopener noreferrer" data-i18n="join.app">Usar a Pyxie em qualquer conversa (adicionar à minha conta)</a>
         </div>
       </div>
 
@@ -1767,7 +1773,7 @@
         <img src="/assets/pyxie/sticker/sticker_smile-256.webp" alt="Mascote Pyxie com balão de fala transparente" class="mascot-avatar" width="72" height="72" />
         <div class="speech-bubble">
           <p data-i18n="shopee.speech">
-            <strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee ajuda a manter o bot e os nossos projetos de acolhimento. O essencial da Pyxie é grátis; <a href="/planos">planos</a> e Passe são opcionais e também ajudam o projeto. E ainda dá para achar itens úteis de regulação sensorial, abafadores e presentes legais!
+            <strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee ajuda a manter o bot e os nossos projetos de acolhimento. Tudo na Pyxie é grátis, sem planos nem cobrança: os links de afiliados e as parcerias ajudam o projeto. E ainda dá para achar itens úteis de regulação sensorial, abafadores e presentes legais!
           </p>
         </div>
       </div>
@@ -2399,18 +2405,17 @@
           </div>
         </article>
 
-        <!-- Pyxie no seu Discord: servidor ou conta -->
+        <!-- A Pyxie mora aqui: não é bot público -->
         <article class="fun-card discord-live-card">
           <div>
             <div class="fun-card-head">
               <span class="fun-icon">🧚</span>
-              <h3 class="fun-title" data-i18n="app.title">Pyxie no seu Discord</h3>
+              <h3 class="fun-title" data-i18n="app.title">A Pyxie mora aqui</h3>
             </div>
-            <p class="fun-desc" data-i18n="app.desc">Leve a Pyxie pro seu servidor ou adicione à sua conta pra usar os jogos dela em qualquer DM ou grupo, mesmo onde ela não está.</p>
+            <p class="fun-desc" data-i18n="app.desc">A Pyxie é a fada da casa: ela vive no Discord da Cringelândia, com jogos, economia e acolhimento. Ela não é um bot público e não está à venda — tudo aqui é de graça.</p>
           </div>
           <div class="app-actions">
-            <a href="/invite?ref=cringelandia&amp;perms=basic" class="discord-join-btn" target="_blank" rel="noopener noreferrer" data-i18n="app.server">Adicionar a um servidor</a>
-            <a href="/install?ref=cringelandia" class="discord-join-btn app-secondary" target="_blank" rel="noopener noreferrer" data-i18n="app.account">Adicionar à minha conta</a>
+            <a href="/discord?ref=cringelandia-pyxie" class="discord-join-btn" target="_blank" rel="noopener noreferrer" data-i18n="app.server">Conhecer a Pyxie no Discord</a>
           </div>
         </article>
 
@@ -2439,10 +2444,82 @@
       </div>
     </section>
 
+    <!-- 9. Links importantes -->
+    <section class="links-section" id="links">
+      <div class="section-head">
+        <span class="section-pill" data-i18n="links.pill">Tudo num lugar só</span>
+        <h2 data-i18n="links.title">Links importantes</h2>
+        <p data-i18n="links.lead">Os endereços oficiais da Cringelândia e da Pyxie. Se alguém te mandar outro link dizendo ser nosso, desconfie.</p>
+      </div>
+      <div class="links-grid">
+        <a href="/discord?ref=cringelandia-links" target="_blank" rel="noopener noreferrer" class="link-card">
+          <span class="link-icon" aria-hidden="true">💬</span>
+          <span class="link-body"><strong data-i18n="links.discord.t">Discord da Cringelândia</strong><span data-i18n="links.discord.d">Entre na comunidade, no seu ritmo.</span></span>
+        </a>
+        <a href="https://www.roblox.com/share/g/35473881" target="_blank" rel="noopener noreferrer" class="link-card">
+          <span class="link-icon" aria-hidden="true">🟥</span>
+          <span class="link-body"><strong data-i18n="links.roblox.t">Grupo no Roblox</strong><span data-i18n="links.roblox.d">Nossos jogos, mapas e experiências sensoriais.</span></span>
+        </a>
+        <a href="/promo" target="_blank" rel="noopener noreferrer sponsored" class="link-card">
+          <span class="link-icon" aria-hidden="true">🛍️</span>
+          <span class="link-body"><strong data-i18n="links.shopee.t">Achadinhos da Shopee</strong><span data-i18n="links.shopee.d">Itens de regulação sensorial e presentes. Ajuda a manter o projeto.</span></span>
+        </a>
+        <a href="/hyperfokus" class="link-card">
+          <span class="link-icon" aria-hidden="true">📝</span>
+          <span class="link-body"><strong data-i18n="links.blog.t">Blog Hyperfokus</strong><span data-i18n="links.blog.d">Textos, guias e achados para mentes neurodivergentes.</span></span>
+        </a>
+        <a href="/wiki" data-href-pt="/wiki" data-href-en="/en/wiki" class="link-card">
+          <span class="link-icon" aria-hidden="true">📚</span>
+          <span class="link-body"><strong data-i18n="links.wiki.t">Grimório & Wiki</strong><span data-i18n="links.wiki.d">A enciclopédia da Cringelândia e da Pyxie.</span></span>
+        </a>
+        <a href="/museu" data-href-pt="/museu" data-href-en="/en/museum" class="link-card">
+          <span class="link-icon" aria-hidden="true">🖼️</span>
+          <span class="link-body"><strong data-i18n="links.museu.t">Museu Comunitário</strong><span data-i18n="links.museu.d">As artes feitas pela comunidade.</span></span>
+        </a>
+        <a href="/tarot" data-href-pt="/tarot" data-href-en="/en/tarot" class="link-card">
+          <span class="link-icon" aria-hidden="true">🔮</span>
+          <span class="link-body"><strong data-i18n="links.tarot.t">Tarot do Dia</strong><span data-i18n="links.tarot.d">Tire a sua carta, grátis.</span></span>
+        </a>
+        <a href="/bonus" data-href-pt="/bonus" data-href-en="/en/bonus" class="link-card">
+          <span class="link-icon" aria-hidden="true">🎁</span>
+          <span class="link-body"><strong data-i18n="links.bonus.t">Bônus Diário</strong><span data-i18n="links.bonus.d">Passe por aqui e pegue o bônus do dia.</span></span>
+        </a>
+        <a href="/mercado" data-href-pt="/mercado" data-href-en="/en/market" class="link-card">
+          <span class="link-icon" aria-hidden="true">📈</span>
+          <span class="link-body"><strong data-i18n="links.mercado.t">Mercado entre jogadores</strong><span data-i18n="links.mercado.d">Preços e vendas da economia da Pyxie.</span></span>
+        </a>
+        <a href="/parcerias" data-href-pt="/parcerias" data-href-en="/en/partnerships" class="link-card">
+          <span class="link-icon" aria-hidden="true">🤝</span>
+          <span class="link-body"><strong data-i18n="links.parcerias.t">Parcerias</strong><span data-i18n="links.parcerias.d">Quer fazer parceria com a Cringelândia?</span></span>
+        </a>
+        <a href="/pais-e-profissionais" data-href-pt="/pais-e-profissionais" data-href-en="/en/parents" class="link-card">
+          <span class="link-icon" aria-hidden="true">👪</span>
+          <span class="link-body"><strong data-i18n="links.pais.t">Para pais e profissionais</strong><span data-i18n="links.pais.d">Como a comunidade cuida de quem entra.</span></span>
+        </a>
+        <a href="/transparencia" data-href-pt="/transparencia" data-href-en="/en/transparency" class="link-card">
+          <span class="link-icon" aria-hidden="true">💜</span>
+          <span class="link-body"><strong data-i18n="links.transparencia.t">Transparência e impacto</strong><span data-i18n="links.transparencia.d">Doações para ONGs, com comprovantes.</span></span>
+        </a>
+        <a href="/termos" data-href-pt="/termos" data-href-en="/en/terms" class="link-card">
+          <span class="link-icon" aria-hidden="true">📜</span>
+          <span class="link-body"><strong data-i18n="links.termos.t">Termos de Uso</strong><span data-i18n="links.termos.d">As regras da casa.</span></span>
+        </a>
+        <a href="/privacidade" data-href-pt="/privacidade" data-href-en="/en/privacy" class="link-card">
+          <span class="link-icon" aria-hidden="true">🔒</span>
+          <span class="link-body"><strong data-i18n="links.privacidade.t">Privacidade & LGPD</strong><span data-i18n="links.privacidade.d">Como cuidamos dos seus dados.</span></span>
+        </a>
+        <a href="mailto:cringe.support@gmail.com" class="link-card">
+          <span class="link-icon" aria-hidden="true">✉️</span>
+          <span class="link-body"><strong data-i18n="links.suporte.t">Suporte</strong><span data-i18n="links.suporte.d">cringe.support@gmail.com</span></span>
+        </a>
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer class="site-footer">
       <div class="footer-links">
         <a href="/">Home</a>
+        <a href="#links" data-i18n="links.title">Links importantes</a>
         <a href="/wiki">Grimório & Wiki</a>
         <a href="/museu">Museu Comunitário</a>
         <a href="/parcerias">Parcerias</a>
@@ -2467,6 +2544,40 @@
         'nav.ciptea': 'Guia CIPTEA',
         'nav.laudo': 'Laudo Válido',
         'nav.community': 'Discord & Roblox',
+        'nav.links': 'Links',
+        'links.pill': 'Tudo num lugar só',
+        'links.title': 'Links importantes',
+        'links.lead': 'Os endereços oficiais da Cringelândia e da Pyxie. Se alguém te mandar outro link dizendo ser nosso, desconfie.',
+        'links.discord.t': 'Discord da Cringelândia',
+        'links.discord.d': 'Entre na comunidade, no seu ritmo.',
+        'links.roblox.t': 'Grupo no Roblox',
+        'links.roblox.d': 'Nossos jogos, mapas e experiências sensoriais.',
+        'links.shopee.t': 'Achadinhos da Shopee',
+        'links.shopee.d': 'Itens de regulação sensorial e presentes. Ajuda a manter o projeto.',
+        'links.blog.t': 'Blog Hyperfokus',
+        'links.blog.d': 'Textos, guias e achados para mentes neurodivergentes.',
+        'links.wiki.t': 'Grimório & Wiki',
+        'links.wiki.d': 'A enciclopédia da Cringelândia e da Pyxie.',
+        'links.museu.t': 'Museu Comunitário',
+        'links.museu.d': 'As artes feitas pela comunidade.',
+        'links.tarot.t': 'Tarot do Dia',
+        'links.tarot.d': 'Tire a sua carta, grátis.',
+        'links.bonus.t': 'Bônus Diário',
+        'links.bonus.d': 'Passe por aqui e pegue o bônus do dia.',
+        'links.mercado.t': 'Mercado entre jogadores',
+        'links.mercado.d': 'Preços e vendas da economia da Pyxie.',
+        'links.parcerias.t': 'Parcerias',
+        'links.parcerias.d': 'Quer fazer parceria com a Cringelândia?',
+        'links.pais.t': 'Para pais e profissionais',
+        'links.pais.d': 'Como a comunidade cuida de quem entra.',
+        'links.transparencia.t': 'Transparência e impacto',
+        'links.transparencia.d': 'Doações para ONGs, com comprovantes.',
+        'links.termos.t': 'Termos de Uso',
+        'links.termos.d': 'As regras da casa.',
+        'links.privacidade.t': 'Privacidade & LGPD',
+        'links.privacidade.d': 'Como cuidamos dos seus dados.',
+        'links.suporte.t': 'Suporte',
+        'links.suporte.d': 'cringe.support@gmail.com',
         'hero.tag': 'A Maior Comunidade Neurodivergente do Discord BR',
         'hero.title': 'Cringelândia: O Maior Servidor Neurodivergente do Discord Brasileiro',
         'hero.lead': 'Acolhimento humanizado, escuta atenta, inclusão autista, suporte psicológico e celebração da neurodiversidade em um refúgio acolhedor e seguro. Aqui ninguém caminha sozinho.',
@@ -2478,7 +2589,7 @@
         'pillar3.desc': 'Canais de desabafo seguro, regulação emocional mútua, escuta atenta, compartilhamento de hiperfocos e integração social no ritmo de cada mente.',
         'impact.text': '💜 A Cringelândia já direcionou e ajudou {count} pessoas através de nossos links de autoajuda e ONGs!',
         'impact.desc': 'Cada pessoa que abre um telefone de crise, órgão público, cartilha de direitos ou rede de apoio por aqui conta uma vez por dia no nosso impacto social. Se precisar de ajuda neste instante, os canais abaixo estão sempre abertos.',
-        'shopee.speech': '<strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee ajuda a manter o bot e os nossos projetos de acolhimento. O essencial da Pyxie é grátis; <a href="/planos">planos</a> e Passe são opcionais e também ajudam o projeto. E ainda dá para achar itens úteis de regulação sensorial, abafadores e presentes legais!',
+        'shopee.speech': '<strong>Psiu! 🌸</strong> Aqui na página da Cringelândia nós <em>não colocamos anúncios invasivos nem pop-ups</em>. Este único carrossel de achadinhos da Shopee ajuda a manter o bot e os nossos projetos de acolhimento. Tudo na Pyxie é grátis, sem planos nem cobrança: os links de afiliados e as parcerias ajudam o projeto. E ainda dá para achar itens úteis de regulação sensorial, abafadores e presentes legais!',
         'shopee.title': 'Achadinhos Úteis da Shopee & Regulação Sensorial',
       'shopee.cta': 'Ver na Shopee',
         'shopee.affiliate': 'Publi: são links de afiliado. A Pyxie recebe uma comissão quando você compra, sem custo extra para você. Os preços podem mudar na Shopee.',
@@ -2584,11 +2695,9 @@
         'join.members': 'membros',
         'join.desc': 'Desabafo protegido, jogos com a Pyxie, arte, amizades e acolhimento. Entra quando quiser, no seu ritmo.',
         'join.cta': 'Entrar no Discord da Cringelândia',
-        'join.app': 'Usar a Pyxie em qualquer conversa (adicionar à minha conta)',
-        'app.title': 'Pyxie no seu Discord',
-        'app.desc': 'Leve a Pyxie pro seu servidor ou adicione à sua conta pra usar os jogos dela em qualquer DM ou grupo, mesmo onde ela não está.',
-        'app.server': 'Adicionar a um servidor',
-        'app.account': 'Adicionar à minha conta',
+        'app.title': 'A Pyxie mora aqui',
+        'app.desc': 'A Pyxie é a fada da casa: ela vive no Discord da Cringelândia, com jogos, economia e acolhimento. Ela não é um bot público e não está à venda — tudo aqui é de graça.',
+        'app.server': 'Conhecer a Pyxie no Discord',
         'roblox.title': 'Grupo Roblox Oficial',
         'ciptea.pick': 'Escolha seu estado',
         'ciptea.pickHint': 'Selecione o estado para ver o órgão, os documentos e o portal oficial.',
@@ -2602,6 +2711,40 @@
         'nav.ciptea': 'CIPTEA Guide',
         'nav.laudo': 'Valid Medical Report',
         'nav.community': 'Discord & Roblox',
+        'nav.links': 'Links',
+        'links.pill': 'Everything in one place',
+        'links.title': 'Important links',
+        'links.lead': 'The official addresses of Cringelândia and Pyxie. If someone sends you a different link claiming to be ours, be suspicious.',
+        'links.discord.t': 'Cringelândia Discord',
+        'links.discord.d': 'Join the community at your own pace.',
+        'links.roblox.t': 'Roblox group',
+        'links.roblox.d': 'Our games, maps and sensory experiences.',
+        'links.shopee.t': 'Shopee finds',
+        'links.shopee.d': 'Sensory-regulation items and gifts. Helps keep the project going.',
+        'links.blog.t': 'Hyperfokus blog',
+        'links.blog.d': 'Texts, guides and finds for neurodivergent minds.',
+        'links.wiki.t': 'Grimoire & Wiki',
+        'links.wiki.d': 'The encyclopedia of Cringelândia and Pyxie.',
+        'links.museu.t': 'Community Museum',
+        'links.museu.d': 'Art made by the community.',
+        'links.tarot.t': 'Daily Tarot',
+        'links.tarot.d': 'Draw your card, free.',
+        'links.bonus.t': 'Daily Bonus',
+        'links.bonus.d': 'Stop by and grab the daily bonus.',
+        'links.mercado.t': 'Player market',
+        'links.mercado.d': 'Prices and sales in Pyxie’s economy.',
+        'links.parcerias.t': 'Partnerships',
+        'links.parcerias.d': 'Want to partner with Cringelândia?',
+        'links.pais.t': 'For parents and professionals',
+        'links.pais.d': 'How the community looks after newcomers.',
+        'links.transparencia.t': 'Transparency and impact',
+        'links.transparencia.d': 'Donations to NGOs, with receipts.',
+        'links.termos.t': 'Terms of Use',
+        'links.termos.d': 'The house rules.',
+        'links.privacidade.t': 'Privacy & LGPD',
+        'links.privacidade.d': 'How we look after your data.',
+        'links.suporte.t': 'Support',
+        'links.suporte.d': 'cringe.support@gmail.com',
         'hero.tag': 'The Largest Neurodivergent Community on Brazilian Discord',
         'hero.title': 'Cringelândia: The Largest Neurodivergent Discord Community in Brazil',
         'hero.lead': 'Humanized welcoming, active listening, autistic inclusion, psychological crisis support, and neurodiversity pride in a safe haven. Nobody walks alone here.',
@@ -2613,7 +2756,7 @@
         'pillar3.desc': 'Safe venting channels, mutual emotional co-regulation, attentive listening, hyperfocus spaces, and social integration at each person\'s unique pace.',
         'impact.text': '💜 Cringelândia has already guided and helped {count} people through our crisis hotlines and NGOs!',
         'impact.desc': 'Each person who opens a crisis hotline, public agency, rights directory or support network from here counts once per day toward our social impact. If you need help right now, our channels are always open.',
-        'shopee.speech': '<strong>Psst! 🌸</strong> Here on Cringelândia\'s portal, we <em>do not display intrusive ads or pop-ups</em>. This single curated Shopee showcase helps keep the bot and our mental support projects running. Pyxie\'s essentials are free; <a href="/en/plans">plans</a> and the Pass are optional and also help the project. Plus you can find helpful sensory toys, noise-canceling earplugs, and cool items!',
+        'shopee.speech': '<strong>Psst! 🌸</strong> Here on Cringelândia\'s portal, we <em>do not display intrusive ads or pop-ups</em>. This single curated Shopee showcase helps keep the bot and our mental support projects running. Everything in Pyxie is free, with no plans or charges: affiliate links and partnerships help the project. Plus you can find helpful sensory toys, noise-canceling earplugs, and cool items!',
         'shopee.title': 'Helpful Shopee Finds & Sensory Regulation',
       'shopee.cta': 'View on Shopee',
         'shopee.affiliate': 'Ad: these are affiliate links. Pyxie earns a commission when you buy, at no extra cost to you. Prices may change on Shopee.',
@@ -2719,11 +2862,9 @@
         'join.members': 'members',
         'join.desc': 'Safe venting, games with Pyxie, art, friendships and support. Join whenever you want, at your own pace.',
         'join.cta': 'Join the Cringelândia Discord',
-        'join.app': 'Use Pyxie in any chat (add to my account)',
-        'app.title': 'Pyxie in your Discord',
-        'app.desc': 'Bring Pyxie to your server or add her to your account to play her games in any DM or group, even where she is not.',
-        'app.server': 'Add to a server',
-        'app.account': 'Add to my account',
+        'app.title': 'Pyxie lives here',
+        'app.desc': 'Pyxie is the house fairy: she lives in the Cringelândia Discord, with games, economy and care. She is not a public bot and she is not for sale — everything here is free.',
+        'app.server': 'Meet Pyxie on Discord',
         'roblox.title': 'Official Roblox Group',
         'ciptea.pick': 'Choose your state',
         'ciptea.pickHint': 'Pick a state to see the agency, the documents and the official portal.',
@@ -2758,6 +2899,10 @@
         if (dict[key]) {
           el.innerHTML = dict[key];
         }
+      });
+
+      document.querySelectorAll('a[data-href-en]').forEach((a) => {
+        a.setAttribute('href', lang === 'en' ? a.getAttribute('data-href-en') : a.getAttribute('data-href-pt'));
       });
 
       updateImpactBanner();

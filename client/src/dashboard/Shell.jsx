@@ -13,7 +13,6 @@ import {
   DoorOpen,
   Repeat,
   Hash,
-  Home,
   Ghost,
   Handshake,
   HeartHandshake,
@@ -105,8 +104,7 @@ const GROUP_ORDER = ['core', 'mary', 'messages', 'config', 'safety', 'system', '
 // Atalhos para fora do painel: blog do Hyperfokus, site da Pyxie e a Cringelândia.
 const SITE_LINKS = [
   { key: 'hyperfokus', href: '/hyperfokus', icon: BookOpen },
-  { key: 'home', href: '/', icon: Home },
-  { key: 'cringelandia', href: '/cringelandia', icon: HeartHandshake },
+  { key: 'cringelandia', href: '/', icon: HeartHandshake },
 ];
 
 export function sectionIcon(id) {

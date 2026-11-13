@@ -60,9 +60,6 @@ export default function Footer({ t, lang = 'pt' }) {
           <a href="/promo" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">
             Shopee
           </a>
-          <a href="/install?ref=site-footer" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">
-            {t('footer.install')}
-          </a>
           <a href="/discord?ref=site-footer" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">
             {t('footer.community')}
           </a>

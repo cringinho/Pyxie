@@ -1,3 +1,4 @@
+process.env.PYXIE_PAYMENTS = 'on'; // cobrança é legado: o teste liga a chave que produção nunca liga
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
@@ -242,7 +243,7 @@ function mock(handler) {
   const cardMsg = plansModule.payloadFor({ kind: 'card_reminder', guildId: CARD_G, plan: 'basic', paidUntil: Date.UTC(2026, 11, 10, 15) }, 'pt');
   assert.ok(cardMsg.lines[0].includes('10/12/2026'), 'Mostra a data da cobrança automática');
   assert.ok(!/Renove no painel/.test(cardMsg.lines[0]), 'Não pede para renovar');
-  assert.ok(plansModule.payloadFor({ kind: 'card_reminder', guildId: CARD_G, plan: 'basic', paidUntil: Date.UTC(2026, 11, 10, 15) }, 'en').lines[0].includes('automatic charge'));
+  assert.ok(plansModule.payloadFor({ kind: 'card_reminder', guildId: CARD_G, plan: 'basic', paidUntil: Date.UTC(2026, 11, 10, 15) }, 'en').lines[0].includes('charges nothing'));
   console.log('  ✅ 13. Lembrete do cartão com a data da cobrança, sem pedir renovação.');
 
   console.log('💳 Assinaturas: tudo certo.');

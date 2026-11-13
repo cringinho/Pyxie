@@ -9,21 +9,21 @@ const path = require('path');
 
 const SEO_CONFIG = {
   index: {
-    file: 'index.html',
+    file: 'cringelandia.html',
     canonical: 'https://pyxie.com.br/',
     pt: {
-      title: 'Pyxie • A Fada Companheira do seu Servidor no Discord',
-      description: 'Pyxie é a fada mágica para o seu servidor Discord: Economia Viva com moedinhas e feijões, Tarot dos 78 Arcanos em Canvas, 28 Carreiras e Dinâmica Social completa.',
-      ogTitle: 'Pyxie • A Fada Companheira do seu Servidor no Discord',
-      ogDesc: 'Economia Viva com moedinhas e feijões mágicos, 28 carreiras com minigames interativos, Tarot dos 78 arcanos em Canvas e Entretenimento completo para seu Discord.',
+      title: 'Cringelândia • Comunidade Neurodivergente & Acolhimento no Discord',
+      description: 'O maior servidor neurodivergente do Discord brasileiro: acolhimento psicológico, triagem humanizada para autistas e PCDs, enciclopédia neurodivergente e guia CIPTEA.',
+      ogTitle: 'Cringelândia • Comunidade Neurodivergente & Apoio Psicológico',
+      ogDesc: 'Comunidade segura e acolhedora no Discord para autistas, TDAH, PCDs e mentes neurodivergentes com canais de apoio, enciclopédia e guia de direitos.',
       locale: 'pt_BR'
     },
     en: {
-      title: 'Pyxie • The Companion Fairy for Your Discord Server',
-      description: 'Pyxie is the magical companion fairy for your Discord server: Living Economy with coins & beans, 78 Tarot Arcana in Canvas, 28 Careers, and rich Social Dynamics.',
-      ogTitle: 'Pyxie • The Companion Fairy for Your Discord Server',
-      ogDesc: 'Living Economy with magic coins and beans, 22 interactive job careers, 78 Tarot cards with dynamic Canvas art, and rich community games for your Discord server.',
-      imageAlt: 'Banner of Pyxie, the companion fairy for your Discord server',
+      title: 'Cringelândia • Neurodivergent Community & Mental Support Discord',
+      description: 'The largest neurodivergent Discord community in Brazil: mental health support, autistic and disabled rights guide, sensory regulation, and safe space.',
+      ogTitle: 'Cringelândia • Neurodivergent Community & Mental Support',
+      ogDesc: 'Safe Discord sanctuary for autistics, ADHD, disabled folks, and neurodivergent minds with crisis hotlines, encylopedia, and community care.',
+      imageAlt: 'Pyxie banner for Cringelândia, a neurodivergent community with support and care',
       locale: 'en_US'
     }
   },
@@ -60,25 +60,6 @@ const SEO_CONFIG = {
       description: 'Official documentation and community guide for Pyxie Discord Bot. Explore the neurodivergent sanctuary, dynamic economy, 78 tarot cards, 28 careers, and minigames.',
       ogTitle: 'Official Wiki & Documentation • Pyxie & Cringelândia',
       ogDesc: 'Complete guide for Pyxie Discord Bot features, live economy, 78 tarot cards, 28 careers, and interactive community minigames.',
-      locale: 'en_US'
-    }
-  },
-  plans: {
-    file: 'planos.html',
-    fileEn: 'planos.en.html',
-    canonical: 'https://pyxie.com.br/planos',
-    pt: {
-      title: 'Planos da Pyxie • Básico R$ 7 e Premium R$ 20 por mês ou no anual',
-      description: 'Plano para o seu servidor no Discord: Básico por R$ 7 com perfil completo da Pyxie e cores próprias; Premium por R$ 20 com status da lojinha, 10 mensagens cíclicas e Oráculo de IA. No anual, 2 meses grátis. Extra de lojinha por R$ 3. Pix por QR ou cartão recorrente.',
-      ogTitle: 'Planos da Pyxie • Básico R$ 7 e Premium R$ 20',
-      ogDesc: 'Assinatura mensal ou anual (2 meses grátis) do servidor: perfil completo da Pyxie, mensagens cíclicas por plano, status da lojinha e Oráculo com IA. Extra de lojinha por R$ 3.',
-      locale: 'pt_BR'
-    },
-    en: {
-      title: 'Pyxie Plans • Basic R$ 7 and Premium R$ 20 monthly or yearly',
-      description: 'Plan for your Discord server: Basic for R$ 7 with the full Pyxie profile and custom colors; Premium for R$ 20 with store status, 10 cyclic messages and the AI Oracle. Yearly gets 2 months free. Store extra for R$ 3. Pay by Pix QR or recurring card.',
-      ogTitle: 'Pyxie Plans • Basic R$ 7 and Premium R$ 20',
-      ogDesc: 'Monthly or yearly subscription (2 months free) for your server: full Pyxie profile, cyclic messages per plan, store status and the AI Oracle. Store extra for R$ 3.',
       locale: 'en_US'
     }
   },
@@ -133,24 +114,6 @@ const SEO_CONFIG = {
       description: "See real prices from Pyxie's player market on Discord: Cozy Room items, handcrafted furniture and materials, with last sale, 7-day average and a chart.",
       ogTitle: "Pyxie • Market and Price History",
       ogDesc: "Real prices from Pyxie's player market: last sale, 7-day average and a 30-day chart for every item and material.",
-      locale: 'en_US'
-    }
-  },
-  pass: {
-    file: 'passe.html',
-    canonical: 'https://pyxie.com.br/passe',
-    pt: {
-      title: 'Pyxie • Passe Mensal Premium',
-      description: 'Passe mensal da Pyxie no Discord: 50 níveis com trilha grátis e Premium, pet e título míticos exclusivos de cada mês. Premium por R$ 5 no Pix ou cartão.',
-      ogTitle: 'Pyxie • Passe Mensal Premium',
-      ogDesc: '50 níveis por mês com recompensas grátis e Premium, pet e título míticos que nunca voltam.',
-      locale: 'pt_BR'
-    },
-    en: {
-      title: 'Pyxie • Monthly Premium Pass',
-      description: "Pyxie's monthly pass on Discord: 50 levels with free and Premium tracks, plus a mythic pet and title unique to each month. Premium for R$ 5 via Pix or card.",
-      ogTitle: 'Pyxie • Monthly Premium Pass',
-      ogDesc: '50 levels every month with free and Premium rewards, and a mythic pet and title that never come back.',
       locale: 'en_US'
     }
   },
@@ -245,25 +208,6 @@ const SEO_CONFIG = {
       locale: 'en_US'
     }
   },
-  cringelandia: {
-    file: 'cringelandia.html',
-    canonical: 'https://pyxie.com.br/cringelandia',
-    pt: {
-      title: 'Cringelândia • Comunidade Neurodivergente & Acolhimento no Discord',
-      description: 'O maior servidor neurodivergente do Discord brasileiro: acolhimento psicológico, triagem humanizada para autistas e PCDs, enciclopédia neurodivergente e guia CIPTEA.',
-      ogTitle: 'Cringelândia • Comunidade Neurodivergente & Apoio Psicológico',
-      ogDesc: 'Comunidade segura e acolhedora no Discord para autistas, TDAH, PCDs e mentes neurodivergentes com canais de apoio, enciclopédia e guia de direitos.',
-      locale: 'pt_BR'
-    },
-    en: {
-      title: 'Cringelândia • Neurodivergent Community & Mental Support Discord',
-      description: 'The largest neurodivergent Discord community in Brazil: mental health support, autistic and disabled rights guide, sensory regulation, and safe space.',
-      ogTitle: 'Cringelândia • Neurodivergent Community & Mental Support',
-      ogDesc: 'Safe Discord sanctuary for autistics, ADHD, disabled folks, and neurodivergent minds with crisis hotlines, encylopedia, and community care.',
-      imageAlt: 'Pyxie banner for Cringelândia, a neurodivergent community with support and care',
-      locale: 'en_US'
-    }
-  }
 };
 
 const htmlCache = new Map();
@@ -276,12 +220,10 @@ const EN_SLUGS = {
   '/parcerias': '/partnerships',
   '/museu': '/museum',
   '/mercado': '/market',
-  '/passe': '/pass',
   '/termos': '/terms',
   '/privacidade': '/privacy',
   '/pais-e-profissionais': '/parents',
   '/transparencia': '/transparency',
-  '/planos': '/plans',
 };
 
 /** Caminho público em PT (sai do canonical, fonte única de verdade). */

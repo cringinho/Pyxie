@@ -6,7 +6,7 @@ const { getLocalizedHtml, SEO_CONFIG, detectRequestLang, pageUrls } = require('.
 console.log('🌐 [TEST] Auditoria & Quality Gate de SEO Bilíngue (PT-BR & EN)...');
 
 const publicDir = path.join(__dirname, '..', 'public');
-const pages = ['index', 'tarot', 'wiki', 'partnerships', 'museum', 'bonus', 'terms', 'privacy', 'cringelandia', 'parents', 'transparency', 'plans'];
+const pages = ['index', 'tarot', 'wiki', 'partnerships', 'museum', 'bonus', 'terms', 'privacy', 'parents', 'transparency'];
 
 // 1. robots.txt
 const robotsPath = path.join(publicDir, 'robots.txt');
@@ -24,14 +24,14 @@ console.log('  ✅ 1. robots.txt validado e protegendo rotas privadas.');
 const sitemapPath = path.join(publicDir, 'sitemap.xml');
 assert.ok(fs.existsSync(sitemapPath), 'sitemap.xml deve existir');
 const sitemapContent = fs.readFileSync(sitemapPath, 'utf8');
-['https://pyxie.com.br/', 'https://pyxie.com.br/tarot', 'https://pyxie.com.br/wiki', 'https://pyxie.com.br/parcerias', 'https://pyxie.com.br/museu', 'https://pyxie.com.br/bonus', 'https://pyxie.com.br/termos', 'https://pyxie.com.br/privacidade', 'https://pyxie.com.br/cringelandia', 'https://pyxie.com.br/pais-e-profissionais', 'https://pyxie.com.br/transparencia'].forEach((url) => {
+['https://pyxie.com.br/', 'https://pyxie.com.br/tarot', 'https://pyxie.com.br/wiki', 'https://pyxie.com.br/parcerias', 'https://pyxie.com.br/museu', 'https://pyxie.com.br/bonus', 'https://pyxie.com.br/termos', 'https://pyxie.com.br/privacidade', 'https://pyxie.com.br/pais-e-profissionais', 'https://pyxie.com.br/transparencia'].forEach((url) => {
   assert.ok(sitemapContent.includes(url), `sitemap deve conter a URL ${url}`);
 });
 assert.ok(sitemapContent.includes('hreflang="pt-BR"'), 'sitemap deve ter anotação hreflang pt-BR');
 assert.ok(sitemapContent.includes('hreflang="en"'), 'sitemap deve ter anotação hreflang en');
 assert.ok(sitemapContent.includes('hreflang="x-default"'), 'sitemap deve ter anotação hreflang x-default');
 // Versões em inglês com URL própria (uma página = uma URL por idioma)
-['https://pyxie.com.br/en/', 'https://pyxie.com.br/en/tarot', 'https://pyxie.com.br/en/wiki', 'https://pyxie.com.br/en/partnerships', 'https://pyxie.com.br/en/museum', 'https://pyxie.com.br/en/bonus', 'https://pyxie.com.br/en/terms', 'https://pyxie.com.br/en/privacy', 'https://pyxie.com.br/en/cringelandia', 'https://pyxie.com.br/en/parents', 'https://pyxie.com.br/en/transparency'].forEach((url) => {
+['https://pyxie.com.br/en/', 'https://pyxie.com.br/en/tarot', 'https://pyxie.com.br/en/wiki', 'https://pyxie.com.br/en/partnerships', 'https://pyxie.com.br/en/museum', 'https://pyxie.com.br/en/bonus', 'https://pyxie.com.br/en/terms', 'https://pyxie.com.br/en/privacy', 'https://pyxie.com.br/en/parents', 'https://pyxie.com.br/en/transparency'].forEach((url) => {
   assert.ok(sitemapContent.includes(url), `sitemap deve conter versão em inglês ${url}`);
 });
 assert.ok(!sitemapContent.includes('?lang='), 'sitemap não deve listar URLs com ?lang=');
@@ -124,21 +124,27 @@ pages.forEach((key) => {
   assert.ok(enHtml.includes(`hreflang="x-default" href="${urls.pt}"`), `${key}: x-default aponta para o PT`);
   assert.ok(!/href="[^"]*\?lang=/.test(ptHtml + enHtml), `${key}: HTML servido sem ?lang=`);
 });
-// 4c. Casca de SEO da Home: o corpo sai no idioma da URL, sem depender de JavaScript.
+// 4c. A Home é a Cringelândia: um único <h1>, links importantes reais e nada de convite do bot.
 {
   const ptHome = getLocalizedHtml('index', 'pt', publicDir);
   const enHome = getLocalizedHtml('index', 'en', publicDir);
-  const h1 = (html) => (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1] || '';
-  assert.ok(/Discord/.test(h1(ptHome)) && h1(ptHome) !== h1(enHome), 'index: h1 traduzido no HTML EN');
-  assert.ok(/companion fairy/i.test(h1(enHome)), 'index: h1 em inglês em /en/');
-  for (const href of ['/en/wiki', '/en/plans', '/en/museum', '/en/terms', '/en/privacy', '/invite?ref=site']) {
-    assert.ok(enHome.includes(`href="${href}"`), `index EN: link real para ${href}`);
+  const h1s = (html) => html.match(/<h1[\s>]/gi) || [];
+  assert.equal(h1s(ptHome).length, 1, 'index PT: exatamente um <h1>');
+  assert.equal(h1s(enHome).length, 1, 'index EN: exatamente um <h1>');
+  assert.ok(/Cringelândia/.test(ptHome), 'index: é a página da Cringelândia');
+  assert.ok(ptHome.includes('rel="canonical" href="https://pyxie.com.br/"'), 'index PT: canonical na raiz');
+  assert.ok(enHome.includes('rel="canonical" href="https://pyxie.com.br/en/"'), 'index EN: canonical em /en/');
+  assert.ok(/<title>[^<]*Cringelândia/.test(ptHome) && /<title>[^<]*Cringelândia/.test(enHome), 'index: título fala da Cringelândia nos dois idiomas');
+  assert.ok(enHome.includes('lang="en"'), 'index EN: html lang=en');
+  for (const href of ['/wiki', '/museu', '/termos', '/privacidade', '/promo', '/discord?ref=cringelandia-links', 'https://www.roblox.com/share/g/35473881']) {
+    assert.ok(ptHome.includes(`href="${href}"`), `index PT: link importante para ${href}`);
   }
-  for (const href of ['/wiki', '/planos', '/museu', '/termos', '/privacidade', '/invite?ref=site']) {
-    assert.ok(ptHome.includes(`href="${href}"`), `index PT: link real para ${href}`);
+  for (const href of ['/en/wiki', '/en/museum', '/en/terms', '/en/privacy']) {
+    assert.ok(ptHome.includes(`data-href-en="${href}"`) && enHome.includes(`data-href-en="${href}"`), `index: versão em inglês de ${href} nos links`);
   }
-  assert.ok(!/id=["']page-i18n["']/.test(ptHome + enHome), 'index: dicionário do servidor não vai para o navegador');
-  assert.ok(ptHome.includes('<div id="pyxie-app">') && enHome.includes('src="/dist/assets/index.js"'), 'index: o React continua montando em #pyxie-app');
+  for (const gone of ['/invite', '/install', '/planos', '/passe', '/en/plans']) {
+    assert.ok(!ptHome.includes(`href="${gone}`) && !enHome.includes(`href="${gone}`), `index: sem link para ${gone} (bot fechado, sem cobrança)`);
+  }
 }
 console.log('  ✅ 4b. Canonical e hreflang recíprocos por idioma no HTML servido.');
 

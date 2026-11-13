@@ -66,7 +66,7 @@ export default function HeroSection({ t, lang = 'pt', stats }) {
             {/* TWO CLEAN HIGH-CONVERTING CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
               <a
-                href="/invite?ref=site-hero"
+                href="/discord?ref=site-hero"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="shimmer w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-extrabold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-neon-pink transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-3 border border-pink-400/30"
@@ -77,19 +77,13 @@ export default function HeroSection({ t, lang = 'pt', stats }) {
 
               {/* 50/50 (plano 5.11): o segundo botão do topo leva para a Cringelândia */}
               <a
-                href={localeHref('/cringelandia', lang)}
+                href={localeHref('/', lang)}
                 className="w-full sm:w-auto px-7 py-4 rounded-2xl text-base font-bold text-slate-200 bg-white/5 hover:bg-white/10 border border-purple-500/30 hover:border-purple-500/60 transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2.5 backdrop-blur-xl"
               >
                 <MessageCircle className="w-5 h-5 text-purple-400" />
                 <span>{t('hero.btnSupport')}</span>
               </a>
             </div>
-            <p className="text-sm text-slate-400 text-center lg:text-left">
-              {t('hero.installLine')}{' '}
-              <a href="/install?ref=site-hero" target="_blank" rel="noopener noreferrer" className="font-semibold text-purple-300 underline underline-offset-4 hover:text-pink-300">
-                {t('hero.installCta')}
-              </a>
-            </p>
           </div>
 
           {/* Right Column: Live Bot Terminal Simulator */}

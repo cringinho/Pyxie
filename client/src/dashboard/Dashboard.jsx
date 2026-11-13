@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Boxes, Check, Feather, UserPlus, Gauge, Timer, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, Lock, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
+import { ArrowRight, Boxes, Check, Feather, Gauge, Timer, DoorOpen, LogIn, MessageCircle, Terminal, Clock, Cpu, Crown, HardDrive, Layers, Lock, MapPin, Server, Sparkles, UsersRound, Wifi } from 'lucide-react';
 import { api } from './api';
 import { detectLang, makeT, errorText } from './i18n';
 import { Badge, Button, Card, GuildIcon, MemberChip, MultiSelect, Notice, Spinner, StatTile, StatusDot, Switch, Toggle, useMemberLookup } from './ui';
@@ -325,11 +325,8 @@ function Picker({ shell }) {
               <span className="block text-sm text-white/60">{t('picker.appDesc')}</span>
             </span>
             <span className="flex flex-col gap-2 sm:flex-row">
-              <a href="/invite?ref=dashboard&perms=basic" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#5865f2] px-4 text-sm font-semibold hover:bg-[#4752c4]">
+              <a href="/discord?ref=dashboard" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#5865f2] px-4 text-sm font-semibold hover:bg-[#4752c4]">
                 <Server size={16} aria-hidden="true" /> {t('picker.addServer')}
-              </a>
-              <a href="/install?ref=dashboard" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[#5865f2] px-4 text-sm font-semibold hover:bg-[#5865f2]/20">
-                <UserPlus size={16} aria-hidden="true" /> {t('picker.addAccount')}
               </a>
             </span>
           </div>

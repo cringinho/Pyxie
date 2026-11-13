@@ -385,6 +385,7 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
       return res.status(409).json({ success: false, error: 'addon_lifetime' });
     }
     const payments = require('../services/planPayments');
+    if (!payments.paymentsEnabled()) return res.status(410).json({ success: false, error: 'payments_disabled' });
     const gateway = method === 'card' ? payments.createCardSubscription : payments.createPixCharge;
     const checkout = await gateway({ guildId: req.params.guildId, addonId: catalog.id, cycle }).catch(() => ({
       ok: false,
@@ -1094,6 +1095,8 @@ function createDashboardRouter({ bridge, fetchImpl, moduleManager, sendIpcToBot,
 
   router.post('/api/dashboard/guilds/:guildId/plan/checkout', requireSession, requireGuild, async (req, res) => {
     const payments = require('../services/planPayments');
+    // A Pyxie não cobra por nada: acesso é vitalício ou por chave (/py-fundador).
+    if (!payments.paymentsEnabled()) return res.status(410).json({ success: false, error: 'payments_disabled' });
     const plan = String(req.body?.plan || '');
     const method = String(req.body?.method || 'pix');
     const lang = req.body?.lang === 'en' ? 'en' : 'pt';

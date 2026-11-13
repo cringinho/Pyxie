@@ -37,9 +37,12 @@ function tokenSecret() {
   return fallbackSecret;
 }
 
+// Cobrança desligada: o Passe Premium é grátis para todo mundo. Só `PYXIE_PAYMENTS=on` religa.
+const paymentsEnabled = () => String(process.env.PYXIE_PAYMENTS || '').toLowerCase() === 'on';
+
 function providers() {
   return {
-    mercadopago: Boolean(process.env.MERCADOPAGO_ACCESS_TOKEN),
+    mercadopago: paymentsEnabled() && Boolean(process.env.MERCADOPAGO_ACCESS_TOKEN),
   };
 }
 
@@ -172,6 +175,7 @@ async function createCheckout(provider, token, now = Date.now()) {
 }
 
 module.exports = {
+  paymentsEnabled,
   REFUND_STATUSES,
   setFetch,
   providers,

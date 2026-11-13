@@ -58,24 +58,6 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/wiki" />
   </url>
   <url>
-    <loc>https://pyxie.com.br/planos</loc>
-    <lastmod>2026-10-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/planos" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/plans" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/planos" />
-  </url>
-  <url>
-    <loc>https://pyxie.com.br/en/plans</loc>
-    <lastmod>2026-10-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/planos" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/plans" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/planos" />
-  </url>
-  <url>
     <loc>https://pyxie.com.br/parcerias</loc>
     <lastmod>2026-10-31</lastmod>
     <changefreq>monthly</changefreq>
@@ -128,24 +110,6 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/mercado" />
     <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/market" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/mercado" />
-  </url>
-  <url>
-    <loc>https://pyxie.com.br/passe</loc>
-    <lastmod>2026-10-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/passe" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/pass" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/passe" />
-  </url>
-  <url>
-    <loc>https://pyxie.com.br/en/pass</loc>
-    <lastmod>2026-10-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/passe" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/pass" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/passe" />
   </url>
   <url>
     <loc>https://pyxie.com.br/bonus</loc>
@@ -236,24 +200,6 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/transparencia" />
     <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/transparency" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/transparencia" />
-  </url>
-  <url>
-    <loc>https://pyxie.com.br/cringelandia</loc>
-    <lastmod>2026-10-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/cringelandia" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/cringelandia" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
-  </url>
-  <url>
-    <loc>https://pyxie.com.br/en/cringelandia</loc>
-    <lastmod>2026-10-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/cringelandia" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/cringelandia" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
   </url>
 
   <!-- tarot-cards:start (gerado por scripts/generate_tarot_sitemap.js) -->

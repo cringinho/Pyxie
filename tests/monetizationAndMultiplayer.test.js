@@ -152,7 +152,7 @@ try {
   assert.ok(serverSrc.includes('/promo'), 'server.js deve implementar rota /promo');
   assert.ok(serverSrc.includes('/api/shopee/hourly-promo'), 'server.js deve implementar rota /api/shopee/hourly-promo');
 
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'cringelandia.html'), 'utf8');
   const wikiHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'wiki.html'), 'utf8');
   // A Home estática virou casca de SEO (o React monta em #pyxie-app e troca tudo): o link
   // /promo, o idioma salvo e o alternador moram no React, que é o que o visitante usa.
@@ -160,10 +160,9 @@ try {
   const reactApp = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'App.jsx'), 'utf8');
   assert.ok(reactFooter.includes('href="/promo"'), 'Home (React) deve conter links direcionando para /promo');
   assert.ok(reactApp.includes('pyxie_lang'), 'Home (React) usa a chave local pyxie_lang');
-  assert.ok(indexHtml.includes('<div id="pyxie-app">') && indexHtml.includes('src="/dist/assets/index.js"'), 'index.html é a casca onde o React monta');
-  for (const legacy of ['setInterval', 'EventSource', 'particles-canvas', 'truthHydrator', "fetch('/api"]) {
-    assert.ok(!indexHtml.includes(legacy), `index.html (casca de SEO) sem script legado: ${legacy}`);
-  }
+  // A Cringelândia é a página inicial: leva o link do carrossel da Shopee (/promo) e o dos links importantes.
+  assert.ok(indexHtml.includes('href="/promo"'), 'página inicial (Cringelândia) deve conter o link /promo');
+  assert.ok(indexHtml.includes('id="links"'), 'página inicial (Cringelândia) deve ter a seção de links importantes');
   assert.ok(wikiHtml.includes('href="/promo"'), 'wiki.html deve conter links direcionando para /promo');
   assert.ok(bonusHtml.includes('href="/promo"'), 'bonus.html deve conter sponsorBtn direcionando para /promo');
 
@@ -200,7 +199,7 @@ try {
   // 10. Validação Estrita de Sintaxe JavaScript nos Scripts de Páginas Web
   const vm = require('node:vm');
   [
-    { name: 'index.html', content: indexHtml },
+    { name: 'cringelandia.html', content: indexHtml },
     { name: 'wiki.html', content: wikiHtml },
     { name: 'bonus.html', content: bonusHtml },
   ].forEach(({ name, content }) => {

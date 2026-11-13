@@ -68,7 +68,7 @@ console.log('  ✅ 3. `?lang=` vira 301 permanente (preservando os outros parâm
 // 4. Sitemap: sem query, com cluster hreflang recíproco
 const sitemap = fs.readFileSync(path.join(publicDir, 'sitemap.xml'), 'utf8');
 const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-assert.ok(locs.length >= 184, `sitemap com todas as URLs (${locs.length})`);
+assert.ok(locs.length >= 180, `sitemap com todas as URLs (${locs.length})`);
 assert.equal(new Set(locs).size, locs.length, 'sitemap sem duplicatas');
 assert.ok(!sitemap.includes('?lang='), 'sitemap sem URLs com ?lang=');
 const blocks = sitemap.split('<url>').slice(1);

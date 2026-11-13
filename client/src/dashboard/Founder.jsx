@@ -4,7 +4,7 @@ import { api } from './api';
 import { Badge, Button, Notice, Spinner, StatTile } from './ui';
 import { errorText } from './i18n';
 
-// Programa Fundador: 20 vagas de Básico grátis por 12 meses para servidores parceiros.
+// Chaves de acesso vitalício: o dono gera e entrega a quem quiser; resgatada, a chave liga o servidor para sempre.
 // Painel do dono: gerar chave, resgatar, checklist de contrapartida e revogar.
 const CHECKS = ['channel', 'announcement', 'activity'];
 

@@ -8,7 +8,6 @@ const { getLanguage, t } = require('../utils/i18n');
 const perks = require('../services/guildPerks');
 const quota = require('../services/aiQuota');
 const oracle = require('../services/oracle');
-const { publicUrl } = require('../services/planPayments');
 
 const EPHEMERAL = MessageFlags.Ephemeral;
 const color = { answer: 0x8b5cf6, crisis: 0x10b981, warn: 0xf59e0b };
@@ -47,7 +46,7 @@ async function run({ guild, userId, question, source = null, chat = null, now = 
 
 function errorText(result, lang) {
   const messages = {
-    premium: t('oracle.premiumOnly', lang, { link: `${publicUrl()}/planos` }),
+    premium: t('oracle.premiumOnly', lang),
     cooldown: t('oracle.cooldown', lang, { time: `\`${Math.ceil((result.retryMs || 0) / 60000)}\`` }),
     guild_cap: t('oracle.guildCap', lang),
     user_cap: t('oracle.userCap', lang),

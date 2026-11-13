@@ -69,7 +69,8 @@ const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
   assert.strictEqual(loc.langFromPath('/u/123'), null);
   assert.strictEqual(loc.localeHref('/museu', 'en'), '/en/museum');
   assert.strictEqual(loc.localeHref('/#pilares', 'en'), '/en/#pilares');
-  assert.strictEqual(loc.localeHref('/cringelandia', 'pt'), '/cringelandia');
+  assert.strictEqual(loc.localeHref('/', 'pt'), '/');
+  assert.strictEqual(loc.localeHref('/', 'en'), '/en/');
   assert.strictEqual(loc.localeHref('/hyperfokus', 'en'), '/hyperfokus?lang=en');
   assert.strictEqual(loc.switchLangHref({ pathname: '/en/terms', search: '?lang=en&x=1', hash: '#a' }, 'pt'), '/termos?x=1#a');
   console.log('✅ Q010: idioma da Home lido pela URL (/en/) e links direto para o caminho do idioma.');
@@ -94,7 +95,7 @@ const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
   const p3 = [...privacy.matchAll(/'sec3\.p3': '([^\n]*)',/g)].map((m) => m[1]);
   assert.strictEqual(p3.length, 2);
   for (const txt of p3) assert.ok(txt.includes('google.com/settings/ads') && txt.includes('aboutads.info'), 'links do Google nos dois idiomas');
-  const gPages = ['index', 'wiki', 'bonus', 'tarot', 'museum', 'partnerships', 'cringelandia', 'u', 'privacy', 'terms', 'transparencia', 'pais-e-profissionais'];
+  const gPages = ['wiki', 'bonus', 'tarot', 'museum', 'partnerships', 'cringelandia', 'u', 'privacy', 'terms', 'transparencia', 'pais-e-profissionais'];
   for (const name of gPages) {
     const html = read(`public/${name}.html`);
     const c = html.indexOf('/js/consent.js');

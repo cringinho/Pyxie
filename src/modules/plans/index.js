@@ -82,7 +82,17 @@ function reminderKindFor(guildId, info = {}) {
   return payments.activeCardSubscription?.(guildId) ? 'card_reminder' : 'reminder';
 }
 
+/** Migração única: todo servidor que já tem a Pyxie ganha acesso vitalício (roda só com o gateway pronto). */
+function migrateLegacy(client, now = Date.now()) {
+  const legacy = require('../../services/legacyLifetime');
+  if (legacy.isDone() || !client?.isReady?.() || !client.guilds?.cache?.size) return null;
+  const result = legacy.run([...client.guilds.cache.keys()], { now });
+  if (!result.skipped) console.log(`[plans] Acesso vitalício concedido a ${result.granted.length} servidor(es) existente(s).`);
+  return result;
+}
+
 async function tick(client, now = Date.now()) {
+  try { migrateLegacy(client, now); } catch (err) { console.warn('[plans] Migração vitalícia:', err.message); }
   const rec = await payments.reconcilePending({ now }).catch(() => ({ checked: 0, activated: 0 }));
   if (rec.activated) console.log(`[plans] ${rec.activated} assinatura(s) ativadas por reconciliação.`);
   // Doações do /py-home: o aviso do Mercado Pago pode se perder; confere as pendentes (Q243).
@@ -160,12 +170,12 @@ async function tick(client, now = Date.now()) {
 
 module.exports = {
   id: 'plans',
-  name: { 'pt-BR': 'Assinatura dos Servidores', en: 'Server Subscription' },
+  name: { 'pt-BR': 'Acesso Vitalício dos Servidores', en: 'Server Lifetime Access' },
   description: {
-    'pt-BR': 'Plano mensal do servidor (Básico/Premium): avisa por DM antes e depois do vencimento.',
-    en: 'Monthly server plan (Basic/Premium): DMs before and after the due date.',
+    'pt-BR': 'Acesso vitalício dos servidores (existentes e por chave): sem cobrança, sem vencimento.',
+    en: 'Lifetime server access (existing servers and keys): no charges, no expiry.',
   },
-  icon: '💳',
+  icon: '🔑',
   defaultEnabled: true,
   commands: [pyFundadorCmd],
   notifyActivated,
@@ -173,6 +183,7 @@ module.exports = {
   reminderKindFor,
   payloadFor,
   tick,
+  migrateLegacy,
   async onLoad(ctx) {
     if (!ctx.isBotProcess) return;
     const safe = () => tick(ctx.client).catch((err) => console.error('[Plans] tick:', err));

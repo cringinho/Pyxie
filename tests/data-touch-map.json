@@ -178,7 +178,7 @@
     "tests/storeProducts.test.js": [],
     "tests/automationsUpgrade.test.js": [],
     "tests/planCycles.test.js": [],
-    "tests/plansPublicSite.test.js": [],
+    "tests/openAccess.test.js": [],
     "tests/storefrontFlow.test.js": [],
     "tests/auditoriaCriticos.test.js": [],
     "tests/economyRaces.test.js": [],

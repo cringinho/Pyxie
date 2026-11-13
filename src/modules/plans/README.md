@@ -1,35 +1,40 @@
-# 💳 Assinatura dos Servidores
+# 🔑 Acesso Vitalício dos Servidores
 
 ## O que é este módulo?
 
-O plano mensal do servidor: **Básico (R$ 7)** e **Premium (R$ 20)**, pagos por **Pix** (renovação manual) ou **cartão** (Mercado Pago Preapproval, cobra sozinho). Sem pagamento, os benefícios são pausados e o dono recebe DM.
+A Pyxie **saiu do público e não cobra por nada**. Este módulo cuida do acesso dos servidores:
+
+- **Servidores que já tinham a Pyxie** ganham acesso **vitalício** (plano Fundador + Estúdio de Loja), uma única vez.
+- **Chaves**: o dono da Pyxie gera chaves no painel (Pyxie global → Chaves) e entrega a quem quiser. Quem recebe resgata com `/py-fundador chave:FUND-XXXX-XXXX` e o servidor fica vitalício.
+- Não existe plano pago, Pix, cartão, preço nem paywall de compra. Recurso trancado no painel só diz como pedir uma chave.
 
 ## O que ele faz
 
-- A cada 30 min, reconcilia cobranças **Pix pendentes** direto na API do Mercado Pago (webhook pode atrasar) e ativa o plano quando o pagamento é aprovado.
-- Na mesma passada, confere as **doações Pix pendentes** do `/py-home` (`donations.reconcilePending`) e registra as aprovadas no ranking.
-- Marca **D-7, D-3, D-0** e o **corte** no `data/planNotices.json` e envia **DM ao dono** (PT/EN, sem pings).
-- Quem renova no **cartão** recebe um aviso só (D-3) com a data da cobrança automática, sem pedido de renovação.
-- **Estorno/contestação** (`refunded`/`charged_back`) retira o tempo daquele pagamento (plano, extra, Passe e doação). O dono também reembolsa pelo painel (Pyxie global → Economia → Reembolsar pagamento).
-- O benefício é gravado **antes** de marcar o pagamento como processado: se a gravação falhar, a rota responde 500 e o Mercado Pago reenvia.
-- Entrega a fila de avisos gravada pelo webhook (plano ativado) — o processo web só enfileira, quem manda é o bot.
-- **Nunca apaga dados**: plano vencido volta ao Free e as vantagens voltam ao normal; pagar de novo reativa na hora.
+- **Migração única** (`src/services/legacyLifetime.js`): quando o bot fica pronto, todo servidor do cache sem plano ativo recebe vitalício (`source: legacy`). O marcador fica em `data/legacyLifetime.json`; servidor que entrar depois **não** é migrado e precisa de chave.
+- Nunca rebaixa nem sobrescreve plano que já existe.
+- Avisa o dono por DM (PT/EN, sem pings) só de concessões antigas **com prazo** que ainda estejam correndo.
+- Vitalício **não pausa por inatividade** e não vence.
+- O Passe da Pyxie tem a trilha premium liberada para todo mundo.
 
 ## Onde ficam as regras
 
-- Catálogo/preços/validade: `src/services/guildPlans.js` e `src/services/guildPerks.js`.
-- Cobrança (Pix, cartão, webhook, reconciliação): `src/services/planPayments.js`.
-- Fila e marcações: `src/services/planNotices.js`.
-- Tela: painel → servidor → **Planos** (`/api/dashboard/guilds/:id/plan`).
+- Chaves: `src/services/founderProgram.js` (uso único, vale 30 dias para resgatar; resgate liga o servidor ao vitalício).
+- Plano efetivo: `src/services/guildPlans.js` (`lifetime: true` nunca expira).
+- Recursos por plano: `src/config/planFeatures.js` (bloqueio vale para servidor sem acesso; vitalício passa).
+- Tela: painel → servidor → **Planos** (`/api/dashboard/guilds/:id/plan`), só leitura.
+
+## Cobrança (legado, desligada)
+
+`planPayments.js` e `passPayments.js` ficam só para ler e estornar histórico antigo. Criar cobrança nova exige `PYXIE_PAYMENTS=on`, que **nunca** é ligado em produção; os checkouts do painel respondem `410 payments_disabled` e `/planos`, `/passe` e `/invite` apenas redirecionam para a página inicial.
 
 ## Canais, cargos e permissões
 
-Nenhuma permissão do Discord é necessária. A cobrança usa `MERCADOPAGO_ACCESS_TOKEN`; o webhook fica em `/api/plans/webhook/mercadopago` e deve ter `MERCADOPAGO_WEBHOOK_SECRET` configurado no Mercado Pago.
+Nenhuma permissão do Discord é necessária. `/py-fundador` exige `Gerenciar Servidor`.
 
 ## Recursos no site e web
 
-Painel → **Planos** (QR Pix, cartão, status e cancelamento). Suporte único: `cringe.support@gmail.com`.
+Página inicial = Cringelândia (`/`), com a seção **Links importantes** (`#links`). Suporte único: `cringe.support@gmail.com`.
 
 ## Ferramentas e bibliotecas usadas
 
-`discord.js` (DM), `node:crypto` (assinatura HMAC), `fetch` (API do Mercado Pago), `withFileLock`/`atomicJson` para escrita segura.
+`discord.js` (DM), `withFileLock`/escrita atômica para os JSON.

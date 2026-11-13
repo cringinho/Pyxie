@@ -82,7 +82,7 @@
     "node tests/automationsUpgrade.test.js",
     "node tests/storeProducts.test.js",
     "node tests/planCycles.test.js",
-    "node tests/plansPublicSite.test.js",
+    "node tests/openAccess.test.js",
     "node tests/storefrontFlow.test.js",
     "node tests/auditoriaCriticos.test.js",
     "node tests/economyRaces.test.js",

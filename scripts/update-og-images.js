@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const targetFiles = [
-  'public/index.html',
+  'public/cringelandia.html',
   'public/terms.html',
   'public/wiki.html',
   'public/tarot.html'
