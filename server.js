@@ -232,7 +232,6 @@ const { processTopggVote, verifyWebhookRequest, getVoteUrl } = require('./src/se
 const growthFunnel = require('./src/services/growthFunnel');
 const tarotCardPages = require('./src/services/tarotCardPages');
 const { getCardById, localizeCard } = require('./src/data/tarotCardsCatalog');
-const { buildGuildInviteUrl, buildUserInstallUrl, resolvePreset } = require('./src/services/inviteLinks');
 const { getBotListStatus } = require('./src/services/botListStats');
 const { verifyAndClaimBonus } = require('./src/services/bonusTimer');
 // Rotas antigas do dono: só o login do painel (com X-Pyxie-Panel em pedido que muda algo)

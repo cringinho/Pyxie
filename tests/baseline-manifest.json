@@ -3,7 +3,7 @@
   "node": "v24.18.0",
   "platform": "win32 x64",
   "totalMs": 76712,
-  "totalChecks": 639,
+  "totalChecks": 638,
   "steps": [
     {
       "index": 0,
@@ -203,7 +203,7 @@
       "exitCode": 0,
       "timedOut": false,
       "checks": [
-        "Verificação dos comandos leves e convite bilíngue (Biscoito, Jokenpô, Provável, Dados, Coinflip, Convite e Bônus Web): OK",
+        "Verificação dos comandos leves (Biscoito, Jokenpô, Provável, Dados, Coinflip e Bônus Web; sem comando de convite): OK",
         "Verificação dos comandos leves, convite bilíngue e desafios de trabalho em PT/EN: OK",
         "Verificação do Quiz Cultural (600 Questões, 10 Moedas/Questão, Cooldown 3h e Tiers): OK"
       ],
@@ -762,14 +762,13 @@
       "exitCode": 0,
       "timedOut": false,
       "checks": [
-        "1. Convite sem Administrador, preset basic e link de User App.",
         "2. Cliques por origem com deduplicação por visitante.",
         "3. Entradas, saídas, ativação 24h e retenção D1/D7/D30.",
         "4. Contagem de servidores enviada só às listas configuradas.",
         "5. Boas-vindas PT/EN com menções clicáveis e troca de idioma restrita a Gerenciar Servidor.",
-        "6. User App: idioma pela conta e comandos de módulo instaláveis."
+        "6. Idioma pela conta e comandos só de servidor (sem User App)."
       ],
-      "checkCount": 6,
+      "checkCount": 5,
       "failures": [],
       "summary": null,
       "summaryNumbers": null
@@ -1833,16 +1832,16 @@
       "exitCode": 0,
       "timedOut": false,
       "checks": [
-        "resumo: 136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código."
+        "resumo: 134 execuções: 134 ok, 0 avisos, 0 sem resposta, 0 erros de código."
       ],
       "checkCount": 1,
       "failures": [],
       "summary": "136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
       "summaryNumbers": {
-        "line": "136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
+        "line": "134 execuções: 134 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
         "numbers": [
-          136,
-          136,
+          134,
+          134,
           0,
           0,
           0

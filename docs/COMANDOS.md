@@ -100,9 +100,6 @@ Verifica a latência da conexão e o status operacional da Pyxie.
 ### `/py-help [module]` (ou `py!help` / `py!ajuda`)
 Menu interativo de ajuda com navegação temática por botões e menus de seleção.
 
-### `/py-invite` (ou `py!invite` / `py!convite`)
-Gera o link de convite oficial para adicionar a Pyxie a qualquer servidor com permissões mínimas seguras.
-
 ### `/py-welcome [#channel]` *(Admin)* (ou `py!welcome` / `py!setwelcome`)
 Define o canal onde as mensagens de boas-vindas ilustradas serão enviadas.
 

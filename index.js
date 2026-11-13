@@ -616,6 +616,8 @@ client.on(Events.GuildMemberAdd, async (member) => {
 // Procura o comando na pasta commands e mantém o index focado na infraestrutura.
 client.on(Events.MessageCreate, async (message) => {
   if (message.author?.bot) return;
+  // Pyxie privada: nada de DM nem grupo; só servidor autorizado.
+  if (!message.guildId) return;
 
   const bl = isBlacklisted({ guildId: message.guildId, userId: message.author?.id });
   if (bl.blacklisted) return;
@@ -717,6 +719,13 @@ client.on(Events.MessageCreate, async (message) => {
 
 // O registro compartilhado também encaminha cada slash command ao próprio arquivo.
 client.on(Events.InteractionCreate, async (interaction) => {
+  // Pyxie privada: sem DM, sem User App e sem servidor fora da lista do dono.
+  if (!interaction.guildId || !require('./src/services/privateAccess').isAllowedNow(interaction.guildId)) {
+    if (interaction.isRepliable?.()) {
+      return interaction.reply({ content: t('common.privateOnly', interaction), flags: MessageFlags.Ephemeral }).catch(() => null);
+    }
+    return;
+  }
   const bl = isBlacklisted({ guildId: interaction.guildId, userId: interaction.user?.id });
   if (bl.blacklisted) {
     if (interaction.isRepliable()) {

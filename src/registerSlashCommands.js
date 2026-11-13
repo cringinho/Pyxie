@@ -8,10 +8,7 @@ const moduleManager = require('./services/moduleManager');
 
 const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
 
-// Comandos de módulos que também funcionam instalados na conta do usuário (User App),
-// em servidores sem a Pyxie, grupos e DMs. Os comandos da raiz já são marcados em src/commands/index.js.
-// Os comandos da Cringelândia (Catacumbas, Casinha, Oficina, Mercado, Festival, Passe) são de servidor: não entram aqui.
-const USER_INSTALLABLE_MODULE_COMMANDS = new Set(['py-tarot', 'py-album']);
+// Pyxie privada: nenhum comando é instalável na conta nem roda em DM; tudo é de servidor autorizado.
 const TARGET_GUILD_ID = process.env.CRINGELANDIA_GUILD_ID || CRINGELANDIA_GUILD_ID || '1453890868980482090';
 
 // Impressão digital do último payload enviado ao Discord. O deploy roda este script sempre;
@@ -48,10 +45,6 @@ const FORCE = process.argv.includes('--force');
       if (!cmd || !cmd.data || typeof cmd.data.toJSON !== 'function') continue;
       const json = cmd.data.toJSON();
       if (!json || !json.name) continue;
-      if (USER_INSTALLABLE_MODULE_COMMANDS.has(json.name)) {
-        json.integration_types = [0, 1];
-        json.contexts = [0, 1, 2];
-      }
 
       const scope = Array.isArray(cmd.guildScope) ? cmd.guildScope.filter(Boolean).map(String) : [];
       if (scope.length > 0) {

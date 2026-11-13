@@ -13,6 +13,9 @@ function isAuthorized(guildId, now = Date.now()) {
   return plans.getPlan(id, now).active === true;
 }
 
+/** Para interações: até a migração dos servidores existentes rodar, ninguém é barrado por engano. */
+const isAllowedNow = (guildId, now = Date.now()) => !legacy.isDone() || isAuthorized(guildId, now);
+
 /** Servidores do cliente sem autorização. Só avalia depois da migração dos servidores existentes. */
 function unauthorizedGuilds(client, now = Date.now()) {
   if (!legacy.isDone() || !client?.guilds?.cache) return [];
@@ -32,4 +35,4 @@ async function enforce(client, now = Date.now()) {
   return left;
 }
 
-module.exports = { isAuthorized, unauthorizedGuilds, enforce };
+module.exports = { isAuthorized, isAllowedNow, unauthorizedGuilds, enforce };

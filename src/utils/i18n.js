@@ -1212,6 +1212,7 @@ const TRANSLATIONS = {
       "ranking": "Ranking",
       "unranked": "Ainda sem colocação",
       "blacklisted": "🚫 Você ou este servidor estão na blacklist global da Pyxie.",
+      "privateOnly": "🔒 A Pyxie é privada: ela só funciona dentro dos servidores autorizados.",
       "ownerPanelOnly": "❌ Só o criador da Pyxie pode mexer neste painel.",
       "commandUnavailable": "Esse comando ainda não está disponível. Não olhe para mim assim; eu também estou investigando.",
       "guildScopeOnly": "❌ Este comando é exclusivo do laboratório da Cringelândia.",
@@ -1289,25 +1290,6 @@ const TRANSLATIONS = {
         "already": "Você já jogou as xícaras hoje. Amanhã eu escondo de novo.",
         "notClaimed": "Primeiro pega o diário com `/py-daily`, depois a gente joga."
       }
-    },
-    "invite": {
-      "title": "✨ Convide a Pyxie… se quiser",
-      "desc": "Se você quiser… eu posso ir pro seu servidor. Levo moedinhas, carreiras, minigames, tarot ilustrado, as Catacumbas e uma casinha pra cada pessoa. N-não precisa, mas eu ia gostar.",
-      "dungeonsTitle": "🎮 Minigames & Diversão",
-      "dungeonsDesc": "Jokenpô PvP com apostas, enquetes ao vivo de \"Quem é mais provável\", cara ou coroa, dados de RPG e biscoito da sorte.",
-      "economyTitle": "🪙 Economia, Carreiras & Mochila",
-      "economyDesc": "Expedientes de trabalho com minigames, loja mágica, baús lendários, feijões mágicos e recompensas diárias.",
-      "tarotTitle": "🔮 Tarot Místico & Romance",
-      "tarotDesc": "Tiragem de 78 cartas de tarot com arte em Canvas, calculadora de afinidade (ship) e sistema de casamentos.",
-      "btnRecommended": "Adicionar Pyxie (Recomendado)",
-      "btnAdmin": "Convite Administrador",
-      "btnUserInstall": "Instalar na minha conta",
-      "btnWebBonus": "Bônus Web (10s)",
-      "btnSupport": "Servidor de Suporte",
-      "btnVote": "Votar no Top.gg",
-      "footer": "Pyxie • prometo me comportar (quase sempre)",
-      "careersTitle": "💼 Carreiras & Vocações",
-      "careersDesc": "Escolha sua profissão, cumpra expedientes diários, ganhe moedinhas e suba de nível profissional!"
     },
     "languageCmd": {
       "current": "🌐 Aqui eu falo **Português 🇧🇷**.",
@@ -4511,6 +4493,7 @@ const TRANSLATIONS = {
       "ranking": "Leaderboard",
       "unranked": "Not ranked yet",
       "blacklisted": "🚫 You or this server are on Pyxie's global blacklist.",
+      "privateOnly": "🔒 Pyxie is private: she only works inside authorized servers.",
       "ownerPanelOnly": "❌ Only Pyxie's creator can use this panel.",
       "commandUnavailable": "This command isn't available yet. Don't look at me like that; I'm investigating too.",
       "guildScopeOnly": "❌ This command is exclusive to the Cringelândia lab.",
@@ -4588,25 +4571,6 @@ const TRANSLATIONS = {
         "already": "You already played the cups today. I'll hide it again tomorrow.",
         "notClaimed": "Get your daily with `/py-daily` first, then we'll play."
       }
-    },
-    "invite": {
-      "title": "✨ Invite Pyxie… if you want",
-      "desc": "If you want… I could come to your server. I'd bring coins, careers, minigames, illustrated tarot, the Catacombs and a cozy room for everyone. Y-you don't have to, but I'd like that.",
-      "dungeonsTitle": "🎮 Community Minigames & Fun",
-      "dungeonsDesc": "PvP Rock-Paper-Scissors with coin bets, live \"Who is most likely to\" polls, coinflip, dice rolls, and fortune cookies.",
-      "economyTitle": "🪙 Economy, Careers & Inventory",
-      "economyDesc": "Interactive career shifts with minigames, magical shop, mythical chests, magic beans, and daily rewards.",
-      "tarotTitle": "🔮 Mystical Tarot & Romance",
-      "tarotDesc": "Full 78-card tarot spreads with rendered canvas art, love compatibility ship meter, and marriage system.",
-      "btnRecommended": "Add Pyxie (Recommended)",
-      "btnAdmin": "Admin Invite",
-      "btnUserInstall": "Install on my account",
-      "btnWebBonus": "Web Bonus (10s)",
-      "btnSupport": "Support Server",
-      "btnVote": "Vote on Top.gg",
-      "footer": "Pyxie • I promise to behave (mostly)",
-      "careersTitle": "💼 Careers & Vocations",
-      "careersDesc": "Choose your profession, complete work shifts, earn coins, and advance your career level!"
     },
     "languageCmd": {
       "current": "🌐 I speak **English 🇺🇸** here.",

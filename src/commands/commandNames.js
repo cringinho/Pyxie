@@ -21,7 +21,6 @@ module.exports = {
   SETUP: 'py-setup',
   AGENDA: 'py-schedule',
   EMOJIS: 'py-emojis',
-  INVITE: 'py-invite',
   TAROT: 'py-tarot',
   ORACLE: 'py-oracle',
   VOTE: 'py-vote',

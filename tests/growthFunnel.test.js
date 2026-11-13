@@ -14,7 +14,6 @@ const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pyxie-growth-'));
 process.env.PYXIE_DATA_DIR = tmpDir;
 
 const growthFunnel = require('../src/services/growthFunnel');
-const inviteLinks = require('../src/services/inviteLinks');
 const botListStats = require('../src/services/botListStats');
 const onboarding = require('../src/services/guildOnboarding');
 const { getLanguage, t } = require('../src/utils/i18n');
@@ -27,28 +26,6 @@ const DAY = 24 * 60 * 60 * 1000;
 console.log('📈 Iniciando testes do funil de crescimento...');
 
 async function run() {
-  // 1. Convites
-  const fullUrl = new URL(inviteLinks.buildGuildInviteUrl());
-  const fullPerms = new PermissionsBitField(BigInt(fullUrl.searchParams.get('permissions')));
-  assert.equal(fullPerms.has(PermissionFlagsBits.Administrator), false, 'Convite padrão não pede Administrador.');
-  for (const flag of ['SendMessages', 'EmbedLinks', 'AttachFiles', 'ManageChannels', 'ManageRoles']) {
-    assert.ok(fullPerms.has(PermissionFlagsBits[flag]), `Convite padrão inclui ${flag}.`);
-  }
-  assert.equal(fullUrl.searchParams.get('scope'), 'bot applications.commands');
-  assert.equal(fullUrl.searchParams.get('integration_type'), '0');
-
-  const basicPerms = new PermissionsBitField(BigInt(new URL(inviteLinks.buildGuildInviteUrl('basic')).searchParams.get('permissions')));
-  assert.equal(basicPerms.has(PermissionFlagsBits.ManageRoles), false, 'Convite basic não gerencia cargos.');
-  assert.equal(basicPerms.has(PermissionFlagsBits.ManageChannels), false, 'Convite basic não gerencia canais.');
-  assert.equal(inviteLinks.permissionsFor('admin'), '8', 'Preset admin mantém o convite antigo.');
-  assert.equal(inviteLinks.resolvePreset('qualquer'), 'full');
-
-  const userUrl = new URL(inviteLinks.buildUserInstallUrl());
-  assert.equal(userUrl.searchParams.get('integration_type'), '1', 'Instalação na conta usa integration_type=1.');
-  assert.equal(userUrl.searchParams.get('scope'), 'applications.commands');
-  assert.equal(userUrl.searchParams.has('permissions'), false);
-  console.log('  ✅ 1. Convite sem Administrador, preset basic e link de User App.');
-
   // 2. Origem dos convites
   assert.equal(growthFunnel.normalizeRef('TopGG'), 'topgg');
   assert.equal(growthFunnel.normalizeRef('<script>'), 'direct');
@@ -192,15 +169,11 @@ async function run() {
   assert.equal(getLanguage({ guildId: '900000000000000002', guild: null, locale: 'en-US' }), 'en');
   assert.equal(getLanguage({ guildId: '900000000000000002', locale: 'pt-BR' }), 'en', 'Servidor com a Pyxie mantém o padrão do servidor.');
   const registerSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'registerSlashCommands.js'), 'utf8');
-  for (const name of ['py-tarot', 'py-album']) {
-    assert.ok(registerSource.includes(`'${name}'`), `${name} instalável na conta.`);
-  }
-  // Comandos da Cringelândia são de servidor (plano D5): fora da instalação na conta.
-  const installLine = registerSource.split('\n').find((l) => l.includes('USER_INSTALLABLE_MODULE_COMMANDS = new Set'));
-  for (const name of ['py-dungeon', 'py-home', 'py-pass']) {
-    assert.ok(!installLine.includes(`'${name}'`), `${name} não é instalável na conta.`);
-  }
-  console.log('  ✅ 6. User App: idioma pela conta e comandos de módulo instaláveis.');
+  assert.ok(!registerSource.includes('USER_INSTALLABLE'), 'Nenhum comando é instalável na conta (Pyxie privada).');
+  const indexSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'commands', 'index.js'), 'utf8');
+  assert.ok(indexSource.includes('setContexts([0])') && indexSource.includes('setIntegrationTypes([0])'), 'Todos os comandos são só de servidor.');
+  assert.ok(!indexSource.includes('setContexts([0, 1, 2])') && !indexSource.includes('setIntegrationTypes([0, 1])'), 'Sem DM nem User App.');
+  console.log('  ✅ 6. Idioma pela conta e comandos só de servidor (sem User App).');
 }
 
 run()
