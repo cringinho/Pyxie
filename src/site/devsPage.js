@@ -208,7 +208,7 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
     '@id': `${SITE_ORIGIN}/devs#org`,
     name: 'Pyxie Devs',
     url: urlFor(DEFAULT_LANG),
-    logo: `${SITE_ORIGIN}/assets/brand/pyxie-devs-logo.png?v=2`,
+    logo: `${SITE_ORIGIN}/assets/brand/pyxie-devs-logo.png?v=3`,
     description: c.description,
     knowsAbout: ['Roblox', 'Luau', 'Game development'],
   };
@@ -228,7 +228,7 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
   <meta property="og:url" content="${canonical}" />
   <meta property="og:title" content="${escapeHtml(c.title)}" />
   <meta property="og:description" content="${escapeHtml(c.description)}" />
-  <meta property="og:image" content="${SITE_ORIGIN}/assets/brand/og-devs.png?v=2" />
+  <meta property="og:image" content="${SITE_ORIGIN}/assets/brand/og-devs.png?v=3" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="${escapeHtml(c.logoAlt)}" />
@@ -238,9 +238,9 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(c.title)}" />
   <meta name="twitter:description" content="${escapeHtml(c.description)}" />
-  <meta name="twitter:image" content="${SITE_ORIGIN}/assets/brand/og-devs.png?v=2" />
+  <meta name="twitter:image" content="${SITE_ORIGIN}/assets/brand/og-devs.png?v=3" />
   <script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>
-  <link rel="icon" type="image/png" href="/assets/brand/pyxie-devs-icon.png?v=2" />
+  <link rel="icon" type="image/png" href="/assets/brand/pyxie-devs-icon.png?v=3" />
   <link rel="preload" as="image" href="/assets/brand/pyxie-hero.webp" type="image/webp" />
   <link rel="stylesheet" href="/css/fonts.css" />
   <link rel="stylesheet" href="/css/site.css?v=1" />
@@ -295,7 +295,7 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
   <header class="site-header">
     <div class="wrap">
       <a class="brand devs-brand" href="${meta.path}">
-        <img src="/assets/brand/pyxie-devs-logo.svg?v=2" width="102" height="34" alt="Pyxie Devs" />
+        <img src="/assets/brand/pyxie-devs-logo.svg?v=3" width="110" height="34" alt="Pyxie Devs" />
       </a>
       <nav class="nav" aria-label="${escapeHtml(c.navLabel)}">
         <a class="nav-link" href="#what">${escapeHtml(c.navWhat)}</a>
@@ -309,7 +309,7 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
   <main id="content">
     <section class="wrap hero">
       <div>
-        <img class="hero-logo" src="/assets/brand/pyxie-devs-logo.svg?v=2" width="684" height="228" alt="${escapeHtml(c.logoAlt)}" />
+        <img class="hero-logo" src="/assets/brand/pyxie-devs-logo.svg?v=3" width="684" height="212" alt="${escapeHtml(c.logoAlt)}" />
         <span class="eyebrow">${escapeHtml(c.eyebrow)}</span>
         <h1>${c.h1}</h1>
         <p class="lead">${escapeHtml(c.lead)}</p>

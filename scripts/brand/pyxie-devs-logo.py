@@ -1,8 +1,8 @@
 """
 Marca da Pyxie Devs em pixel art (paleta da Pyxie).
 
-Ícone: a Pyxie como gato-morcego-fada, com orelhas de gato, presas de morcego,
-asas de fada e o lacinho dela. Logo: ícone + PYXIE DEVS em letras de pixel.
+Ícone: a Pyxie como gata-morcego-fada: cabeça grande de gata, presinha de morcego,
+asas de fada atrás e o laço dela. Logo: ícone + PYXIE DEVS em letras de pixel.
 
 Uso: python scripts/brand/pyxie-devs-logo.py public/assets/brand
 Gera pyxie-devs-icon.{svg,png}, pyxie-devs-logo{,-light}.{svg,png}.
@@ -69,109 +69,80 @@ def line(x0, y0, x1, y1, c, mask=None):
             g[y][x] = c
 
 
-# --- Asas de fada (atrás): superior grande e inferior menor
-root = (26, 37)
-up = rot_ellipse(13, 23, 10.5, 16.5, -40)
-low = rot_ellipse(15.5, 47, 7.5, 10.5, 42)
+# --- Asas de fada, atrás da cabeça e menores que ela (para não virar inseto)
+root = (22, 38)
+up = rot_ellipse(10.5, 26, 8, 13, -52)
+low = rot_ellipse(12, 47, 5.5, 8, 50)
 
 
 def wing_fill(mask):
     def fn(x, y):
-        d = math.hypot(x - root[0], y - root[1])
         edge = any((x + dx, y + dy) not in mask for dx, dy in ((2, 0), (-2, 0), (0, 2), (0, -2)))
-        if d < 10:
-            return 'L'
-        return 'L' if edge else 'W'
+        return 'L' if edge or math.hypot(x - root[0], y - root[1]) < 8 else 'W'
     return fn
 
 
 put_layer(low, wing_fill(low))
-for tip in ((9, 54), (6, 48)):
-    line(root[0] - 5, root[1] + 7, tip[0], tip[1], 'H', low)
+line(root[0] - 4, root[1] + 5, 7, 52, 'H', low)
 put_layer(up, wing_fill(up))
-for tip in ((5, 11), (3, 21), (7, 29)):
-    line(root[0] - 5, root[1] - 4, tip[0], tip[1], 'H', up)
-for (x, y) in ((9, 13), (6, 18), (11, 20), (8, 25)):
-    if (x, y) in up and g[y][x] == 'W':
-        g[y][x] = 'H'
+line(root[0] - 4, root[1] - 4, 3, 17, 'H', up)
 
-# --- Orelhas de gato-morcego: triângulo inclinado com recorte de morcego na borda de fora
-ear = polygon([(17, 34), (12, 9), (14, 8.5), (23, 17), (29, 27)])
+# --- Orelhas de gata-morcego: curtas, largas na base, presas ao alto da cabeça
+ear = polygon([(15, 34), (13.5, 11.5), (29, 27)])
 put_layer(ear, lambda x, y: 'P')
-inner = polygon([(18.5, 29.5), (14.2, 13), (25, 25.5)])
+inner = polygon([(17.5, 30), (15.5, 16.5), (25, 27)])
 for (x, y) in inner:
     if g[y][x] != 'D':
         g[y][x] = 'Q'
-for (x, y) in inner:
-    if g[y][x] == 'Q' and (x + 1, y) not in inner:
-        g[y][x] = 'H'
 
-# --- Cabeça
+# --- Cabeça grande, no centro
 head = set()
 for y in range(N):
     for x in range(32):
-        dx, dy = x + .5 - 32, y + .5 - 39
-        if (dx / 15.5) ** 2 + (dy / 12.5) ** 2 <= 1:
+        dx, dy = x + .5 - 32, y + .5 - 39.5
+        if (dx / 18) ** 2 + (dy / 14) ** 2 <= 1:
             head.add((x, y))
-# tufos das bochechas
-for (x, y) in ((16, 40), (15, 41), (16, 41), (16, 42), (15, 43), (16, 43), (16, 44)):
-    head.add((x, y))
-
-
-def head_color(x, y):
-    if y >= 46 or (y >= 44 and x < 21):
-        return 'Q'
-    return 'P'
-
-
-put_layer(head, head_color)
-# brilho da testa
-for (x, y) in ((22, 30), (23, 29), (24, 29), (25, 28), (20, 32)):
-    if (x, y) in head and g[y][x] != 'D':
+put_layer(head, lambda x, y: 'Q' if y >= 49 else 'P')
+for (x, y) in ((21, 30), (22, 29), (23, 29), (24, 28), (25, 28), (19, 32)):
+    if g[y][x] == 'P':
         g[y][x] = 'H'
 
 # --- Rosto (metade esquerda; espelhado)
-eye = [(21, 35), (22, 35), (21, 36), (22, 36), (23, 36), (24, 36), (22, 37), (23, 37), (24, 37), (25, 37), (26, 37),
-       (23, 38), (24, 38), (25, 38), (26, 38), (27, 38), (25, 39), (26, 39), (27, 39)]
-for (x, y) in eye:
+for (x, y) in ((20, 36), (21, 36), (21, 37), (22, 37), (23, 37), (24, 37), (22, 38), (23, 38), (24, 38),
+               (25, 38), (26, 38), (24, 39), (25, 39), (26, 39), (27, 39)):
     g[y][x] = 'D'
-g[37][23] = 'W'  # brilho no olho
-g[36][22] = 'D'
-# bochecha corada
-for (x, y) in ((21, 41), (22, 41), (23, 41), (22, 42)):
-    g[y][x] = 'K'
-# nariz
-g[41][31] = 'K'
-g[40][31] = 'K'
-# boca em "w"
-for (x, y) in ((27, 43), (28, 43), (29, 44), (30, 44), (31, 43)):
+g[38][23] = 'W'                      # brilho no olho
+for x in (20, 21, 22):                # bochecha corada: traço simples
+    g[43][x] = 'K'
+g[42][31] = 'K'                       # nariz
+for (x, y) in ((28, 44), (29, 45), (30, 45), (31, 44)):   # boca em "ω"
     g[y][x] = 'D'
-
-# presinhas de morcego
-for (x, y, c) in ((27, 44, 'D'), (28, 44, 'W'), (28, 45, 'W'), (27, 45, 'D'), (29, 45, 'D'), (28, 46, 'D')):
-    g[y][x] = c
-# bigodes
-line(15, 40, 9, 38, 'D')
-line(15, 43, 9, 44, 'D')
 
 # --- Espelha
 for y in range(N):
     for x in range(32):
         g[y][63 - x] = g[y][x]
 
-# --- Detalhes assimétricos: lacinho da Pyxie na orelha direita, presa de morcego e brilhos
-BOW = ["DD.....DD", "DLDD.DDLD", "DLLWDLLLD", "DLLDKDLLD", "DHLLDLLHD", "DHHD.DHHD", "DD.....DD"]
+# --- Presinha de morcego (um lado só) e o laço da Pyxie no alto da cabeça
+g[46][34] = 'W'
+g[47][34] = 'W'
+g[48][34] = 'D'
+g[46][35] = 'D'
+g[47][35] = 'D'
+g[47][33] = 'D'
+BOW = [
+    "DD........DD",
+    "DLDD....DDLD",
+    "DLLLDDDDLLLD",
+    "DLLHDKKDHLLD",
+    "DLHHDDDDHHLD",
+    "DHDD....DDHD",
+    "DD........DD",
+]
 for j, row in enumerate(BOW):
     for i, c in enumerate(row):
         if c != '.':
-            g[23 + j][40 + i] = c
-
-for (cx, cy) in ((57, 8), (4, 58)):
-    for (dx, dy) in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)):
-        if g[cy + dy][cx + dx] == '.':
-            g[cy + dy][cx + dx] = 'W' if (dx, dy) == (0, 0) else 'H'
-
-
+            g[20 + j][26 + i] = c
 
 
 # ---------------------------------------------------------------- logo
