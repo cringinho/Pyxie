@@ -82,7 +82,7 @@ const { SEO_CONFIG, getLocalizedHtml } = require('../src/utils/seoRenderer');
   // 5. Links importantes na página da Cringelândia, nos dois idiomas
   const pt = getLocalizedHtml('cringelandia', 'pt', path.join(root, 'public'));
   const en = getLocalizedHtml('cringelandia', 'en', path.join(root, 'public'));
-  for (const href of ['/discord?ref=cringelandia-links', 'https://www.roblox.com/share/g/35473881', '/promo', '/hyperfokus', '/wiki', '/museu', '/tarot', '/bonus', '/mercado', '/parcerias', '/pais-e-profissionais', '/transparencia', '/termos', '/privacidade', 'mailto:cringe.support@gmail.com']) {
+  for (const href of ['/discord?ref=cringelandia-links', '/devs/pt', '/promo', '/hyperfokus', '/wiki', '/museu', '/tarot', '/bonus', '/mercado', '/parcerias', '/pais-e-profissionais', '/transparencia', '/termos', '/privacidade', 'mailto:cringe.support@gmail.com']) {
     assert.ok(pt.includes(`href="${href}"`), `link importante ${href}`);
   }
   assert.ok(/id="links"/.test(pt) && /id="links"/.test(en));

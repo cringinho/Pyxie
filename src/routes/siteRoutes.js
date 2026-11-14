@@ -14,6 +14,8 @@ const LINKS = {
   },
   roblox: {
     env: 'PYXIE_DEVS_ROBLOX_URL',
+    // Grupo oficial da Pyxie Devs (confirmado pelo dono); o .env pode trocar.
+    fallback: 'https://www.roblox.com/share/g/35473881',
     hosts: ['www.roblox.com', 'roblox.com'],
   },
 };
@@ -21,7 +23,7 @@ const LINKS = {
 function linkFor(key, env = process.env) {
   const conf = LINKS[key];
   if (!conf) return null;
-  const raw = String(env[conf.env] || '').trim();
+  const raw = String(env[conf.env] || conf.fallback || '').trim();
   if (!raw) return null;
   try {
     const url = new URL(raw);

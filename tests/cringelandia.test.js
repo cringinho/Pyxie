@@ -67,7 +67,7 @@ assert.ok(html.includes('shopee.affiliate'), 'Vitrine deve avisar que são links
 assert.ok(!html.includes('100% gratuito do bot') && !html.includes('100% free bot'), 'Sem a promessa de bot 100% gratuito');
 assert.ok(html.includes('mascot-avatar'), 'Deve conter mascote Pyxie com balão de fala');
 assert.ok(html.includes('tenorioadvogados.com/laudo-de-autista'), 'Deve conter link de referência jurídica de Tenório Advogados');
-assert.ok(html.includes('roblox.com/share/g/35473881'), 'Deve conter link oficial do grupo Roblox da Cringelândia');
+assert.ok(html.includes('href="/devs/pt"') && !html.includes('roblox.com/share/g/35473881'), 'O Roblox é da Pyxie Devs: a Cringelândia aponta para a página dela');
 assert.ok(html.includes('cvv.org.br') && html.includes('188'), 'Deve conter CVV 188');
 assert.ok(html.includes('192'), 'Deve conter SAMU 192');
 assert.ok(html.includes('Ligue 100') || html.includes('Disque 100'), 'Deve conter Disque 100');

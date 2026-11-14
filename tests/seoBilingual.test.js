@@ -137,7 +137,7 @@ pages.forEach((key) => {
   assert.ok(enHome.includes('rel="canonical" href="https://pyxie.com.br/en/cringelandia"'), 'cringelandia EN: canonical em /en/cringelandia');
   assert.ok(/<title>[^<]*Cringelândia/.test(ptHome) && /<title>[^<]*Cringelândia/.test(enHome), 'index: título fala da Cringelândia nos dois idiomas');
   assert.ok(enHome.includes('lang="en"'), 'index EN: html lang=en');
-  for (const href of ['/wiki', '/museu', '/termos', '/privacidade', '/promo', '/discord?ref=cringelandia-links', 'https://www.roblox.com/share/g/35473881']) {
+  for (const href of ['/wiki', '/museu', '/termos', '/privacidade', '/promo', '/discord?ref=cringelandia-links', '/devs/pt']) {
     assert.ok(ptHome.includes(`href="${href}"`), `index PT: link importante para ${href}`);
   }
   for (const href of ['/en/wiki', '/en/museum', '/en/terms', '/en/privacy']) {

@@ -49,6 +49,7 @@ const renderer = require('../src/modules/hyperfokus/renderer');
     assert.ok(/application\/ld\+json/.test(html), `${lang}: JSON-LD`);
     assert.ok(!/cringel|hyperfokus|brasil|brazil|cvv|\/discord\?ref/i.test(html), `${lang}: nada das comunidades brasileiras`);
     assert.ok(html.includes('aria-disabled="true"'), `${lang}: sem link configurado, botão fica "em breve"`);
+    if (lang === 'en') assert.ok(renderDevsPage({ lang, links: currentLinks({}) }).includes('href="/devs/roblox"'), 'Grupo oficial no botão do Roblox');
   }
   const withLinks = renderDevsPage({ lang: 'es', links: { discord: 'https://discord.gg/x', roblox: 'https://www.roblox.com/communities/1' } });
   assert.ok(withLinks.includes('href="/devs/discord?from=es"') && withLinks.includes('href="/devs/roblox?from=es"'), 'Com links, botões apontam para as saídas');
@@ -60,7 +61,7 @@ const renderer = require('../src/modules/hyperfokus/renderer');
   assert.equal(linkFor('discord', { PYXIE_DEVS_DISCORD_INVITE: 'http://discord.gg/abc' }), null);
   assert.equal(linkFor('roblox', { PYXIE_DEVS_ROBLOX_URL: 'https://www.roblox.com/communities/123/pyxie-devs' }), 'https://www.roblox.com/communities/123/pyxie-devs');
   assert.equal(linkFor('roblox', { PYXIE_DEVS_ROBLOX_URL: 'javascript:alert(1)' }), null);
-  assert.deepEqual(currentLinks({}), { discord: null, roblox: null });
+  assert.deepEqual(currentLinks({}), { discord: null, roblox: 'https://www.roblox.com/share/g/35473881' }, 'Sem .env, o Roblox usa o grupo oficial da Devs');
   console.log('  ✅ 3. Links da Pyxie Devs validados por domínio.');
 
   // 4. Hyperfokus: só membro da Cringelândia escreve
