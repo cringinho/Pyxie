@@ -27,7 +27,7 @@ const COPY = {
     soon: 'soon',
     bubble: 'I\'m the mascot, not the QA team. …Fine. I\'ll test it. Just this once.',
     heroAlt: 'Pyxie, the Pyxie Devs mascot: a fairy in a black bear-ear beanie, a jacket and a purple skirt, winking and holding a wand',
-    logoAlt: 'Pyxie Devs logo: a winged purple pixel cat mask',
+    logoAlt: 'Pyxie Devs logo: Pyxie as a purple cat-bat-fairy with fairy wings, in pixel art',
     whatTitle: 'What we do',
     whatLead: 'Small team, big ideas, and a lot of playtesting.',
     cards: [
@@ -63,7 +63,7 @@ const COPY = {
     soon: 'pronto',
     bubble: 'Soy la mascota, no el equipo de QA. …Bueno. Lo pruebo yo. Solo esta vez.',
     heroAlt: 'Pyxie, la mascota de Pyxie Devs: un hada con gorro negro de orejitas de oso, chaqueta y falda morada, guiñando un ojo y con una varita',
-    logoAlt: 'Logo de Pyxie Devs: una máscara de gatito morada con alas, en pixel art',
+    logoAlt: 'Logo de Pyxie Devs: Pyxie como una gata-murciélago-hada morada con alas de hada, en pixel art',
     whatTitle: 'Qué hacemos',
     whatLead: 'Equipo pequeño, ideas grandes y muchas pruebas.',
     cards: [
@@ -99,7 +99,7 @@ const COPY = {
     soon: 'em breve',
     bubble: 'Eu sou a mascote, não a equipe de testes. …Tá bom. Eu testo. Só dessa vez.',
     heroAlt: 'Pyxie, a mascote da Pyxie Devs: uma fada de gorro preto com orelhinhas de urso, jaqueta e saia roxa, piscando e segurando uma varinha',
-    logoAlt: 'Logo da Pyxie Devs: máscara de gatinho roxa com asas, em pixel art',
+    logoAlt: 'Logo da Pyxie Devs: a Pyxie como gata-morcego-fada roxa com asas de fada, em pixel art',
     whatTitle: 'O que fazemos',
     whatLead: 'Equipe pequena, ideias grandes e muito teste.',
     cards: [
@@ -208,7 +208,7 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
     '@id': `${SITE_ORIGIN}/devs#org`,
     name: 'Pyxie Devs',
     url: urlFor(DEFAULT_LANG),
-    logo: `${SITE_ORIGIN}/assets/brand/pyxie-devs-logo.png`,
+    logo: `${SITE_ORIGIN}/assets/brand/pyxie-devs-logo.png?v=2`,
     description: c.description,
     knowsAbout: ['Roblox', 'Luau', 'Game development'],
   };
@@ -228,7 +228,7 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
   <meta property="og:url" content="${canonical}" />
   <meta property="og:title" content="${escapeHtml(c.title)}" />
   <meta property="og:description" content="${escapeHtml(c.description)}" />
-  <meta property="og:image" content="${SITE_ORIGIN}/assets/brand/og-devs.png" />
+  <meta property="og:image" content="${SITE_ORIGIN}/assets/brand/og-devs.png?v=2" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="${escapeHtml(c.logoAlt)}" />
@@ -238,9 +238,9 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(c.title)}" />
   <meta name="twitter:description" content="${escapeHtml(c.description)}" />
-  <meta name="twitter:image" content="${SITE_ORIGIN}/assets/brand/og-devs.png" />
+  <meta name="twitter:image" content="${SITE_ORIGIN}/assets/brand/og-devs.png?v=2" />
   <script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>
-  <link rel="icon" type="image/png" href="/assets/brand/pyxie-devs-icon.png" />
+  <link rel="icon" type="image/png" href="/assets/brand/pyxie-devs-icon.png?v=2" />
   <link rel="preload" as="image" href="/assets/brand/pyxie-hero.webp" type="image/webp" />
   <link rel="stylesheet" href="/css/fonts.css" />
   <link rel="stylesheet" href="/css/site.css?v=1" />
@@ -295,7 +295,7 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
   <header class="site-header">
     <div class="wrap">
       <a class="brand devs-brand" href="${meta.path}">
-        <img src="/assets/brand/pyxie-devs-logo.svg" width="70" height="34" alt="Pyxie Devs" />
+        <img src="/assets/brand/pyxie-devs-logo.svg?v=2" width="102" height="34" alt="Pyxie Devs" />
       </a>
       <nav class="nav" aria-label="${escapeHtml(c.navLabel)}">
         <a class="nav-link" href="#what">${escapeHtml(c.navWhat)}</a>
@@ -309,7 +309,7 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
   <main id="content">
     <section class="wrap hero">
       <div>
-        <img class="hero-logo" src="/assets/brand/pyxie-devs-logo.svg" width="560" height="272" alt="${escapeHtml(c.logoAlt)}" />
+        <img class="hero-logo" src="/assets/brand/pyxie-devs-logo.svg?v=2" width="684" height="228" alt="${escapeHtml(c.logoAlt)}" />
         <span class="eyebrow">${escapeHtml(c.eyebrow)}</span>
         <h1>${c.h1}</h1>
         <p class="lead">${escapeHtml(c.lead)}</p>
