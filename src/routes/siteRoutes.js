@@ -4,12 +4,14 @@ const { renderDevsPage, LANGS } = require('../site/devsPage');
 /**
  * Pyxie Devs: página em /devs (inglês, idioma principal), /devs/es e /devs/pt,
  * e as saídas para o grupo no Roblox e o Discord dos Devs.
- * Os endereços vêm do .env e só valem no domínio esperado; sem endereço, o botão
- * aparece como "em breve" e a rota volta para a página.
+ * Os endereços oficiais ficam aqui; o .env pode trocar (só vale no domínio esperado).
+ * Sem endereço válido, o botão aparece como "em breve" e a rota volta para a página.
  */
 const LINKS = {
   discord: {
     env: 'PYXIE_DEVS_DISCORD_INVITE',
+    // Convite oficial do Discord da Pyxie Devs (passado pelo dono); o .env pode trocar.
+    fallback: 'https://discord.gg/veaRCgvZCT',
     hosts: ['discord.gg', 'discord.com', 'www.discord.com'],
   },
   roblox: {
