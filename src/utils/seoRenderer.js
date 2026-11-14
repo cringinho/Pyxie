@@ -9,8 +9,27 @@ const path = require('path');
 
 const SEO_CONFIG = {
   index: {
-    file: 'cringelandia.html',
+    file: 'index.html',
     canonical: 'https://pyxie.com.br/',
+    pt: {
+      title: 'Pyxie • Pyxie Devs, Cringelândia e o blog Hyperfokus',
+      description: 'A casa da Pyxie na internet: a Pyxie Devs, grupo de desenvolvimento de jogos no Roblox, e a Cringelândia, comunidade brasileira de autoajuda no Discord com o blog Hyperfokus.',
+      ogTitle: 'Pyxie • Pyxie Devs, Cringelândia e o blog Hyperfokus',
+      ogDesc: 'Jogos no Roblox com a Pyxie Devs; acolhimento na Cringelândia, comunidade brasileira de autoajuda no Discord, e textos no blog Hyperfokus.',
+      locale: 'pt_BR'
+    },
+    en: {
+      title: 'Pyxie • Pyxie Devs, Cringelândia and the Hyperfokus blog',
+      description: "Pyxie's home on the internet: Pyxie Devs, a Roblox game development group, and Cringelândia, a Brazilian self-help community on Discord with the Hyperfokus blog.",
+      ogTitle: 'Pyxie • Pyxie Devs, Cringelândia and the Hyperfokus blog',
+      ogDesc: 'Roblox games with Pyxie Devs; support at Cringelândia, a Brazilian self-help community on Discord, and stories on the Hyperfokus blog.',
+      imageAlt: 'Pyxie, the mascot, next to the Pyxie Devs, Cringelândia and Hyperfokus brands',
+      locale: 'en_US'
+    }
+  },
+  cringelandia: {
+    file: 'cringelandia.html',
+    canonical: 'https://pyxie.com.br/cringelandia',
     pt: {
       title: 'Cringelândia • Comunidade Neurodivergente & Acolhimento no Discord',
       description: 'O maior servidor neurodivergente do Discord brasileiro: acolhimento psicológico, triagem humanizada para autistas e PCDs, enciclopédia neurodivergente e guia CIPTEA.',
@@ -349,6 +368,9 @@ function applyStaticI18n(html, lang) {
     const attr = kind === 'alt' ? 'alt' : 'aria-label';
     return tag.replace(new RegExp(`(\\s${attr}=["'])[^"']*(["'])`, 'i'), (m, a, b) => `${a}${attrEscape(dict[key])}${b}`);
   });
+  out = out.replace(/<a\b[^>]*\sdata-en-current=["'](true|false)["'][^>]*>/gi, (tag, cur) =>
+    tag.replace(/(\saria-current=["'])[^"']*(["'])/i, (m, a, b) => `${a}${cur}${b}`)
+  );
   out = out.replace(/<a\b[^>]*\sdata-href-en=["']([^"']+)["'][^>]*>/gi, (tag, href) =>
     tag.replace(/(\shref=["'])[^"']*(["'])/i, (m, a, b) => `${a}${attrEscape(href)}${b}`)
   );

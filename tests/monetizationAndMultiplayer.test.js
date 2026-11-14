@@ -163,6 +163,9 @@ try {
   // A Cringelândia é a página inicial: leva o link do carrossel da Shopee (/promo) e o dos links importantes.
   assert.ok(indexHtml.includes('href="/promo"'), 'página inicial (Cringelândia) deve conter o link /promo');
   assert.ok(indexHtml.includes('id="links"'), 'página inicial (Cringelândia) deve ter a seção de links importantes');
+  // A raiz é o portal da Pyxie Devs e da Cringelândia: sem vitrine de afiliados.
+  const portalHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
+  assert.ok(!portalHtml.includes('href="/promo"'), 'index.html (portal) não exibe vitrine de afiliados');
   assert.ok(wikiHtml.includes('href="/promo"'), 'wiki.html deve conter links direcionando para /promo');
   assert.ok(bonusHtml.includes('href="/promo"'), 'bonus.html deve conter sponsorBtn direcionando para /promo');
 

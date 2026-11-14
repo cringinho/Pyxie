@@ -2718,7 +2718,74 @@ function renderPartnerFormPage({ account, schemas = {}, lang = 'pt' } = {}) {
 </html>`;
 }
 
+/**
+ * Portão do editor (/meu-perfil/escrever): o Hyperfokus é o blog da Cringelândia,
+ * então só quem está no servidor escreve. Ler continua aberto a todos.
+ */
+function renderWriterGatePage({ reason = 'not_member', lang = 'pt' } = {}) {
+  const isEn = lang === 'en';
+  const q = isEn ? '?lang=en' : '';
+  const next = encodeURIComponent(`/meu-perfil/escrever${q}`);
+  const copy = {
+    discord_not_linked: {
+      sticker: 'worried',
+      title: isEn ? 'Sign in with Discord to write' : 'Entre com o Discord para escrever',
+      text: isEn
+        ? 'Hyperfokus is the Cringelândia blog: only server members write here. Sign in with Discord so I can check, okay? It takes a second.'
+        : 'O Hyperfokus é o blog da Cringelândia: aqui só escreve quem é do servidor. Entre com o Discord para eu conferir, tá? É rapidinho.',
+      actions: [[`/auth/discord?next=${next}`, isEn ? 'Sign in with Discord' : 'Entrar com Discord', 'btn-pink']],
+    },
+    not_member: {
+      sticker: 'sad',
+      title: isEn ? 'Writing is for Cringelândia members' : 'Escrever é para quem está na Cringelândia',
+      text: isEn
+        ? 'I looked and didn\'t find you on the server. Join Cringelândia first, then come back here. I\'ll wait. Not because I care, it\'s just my job.'
+        : 'Procurei e não achei você no servidor. Entra na Cringelândia primeiro e volta aqui. Eu espero. Não é carinho, é meu trabalho.',
+      actions: [
+        ['/discord?ref=blog', isEn ? 'Join Cringelândia' : 'Entrar na Cringelândia', 'btn-pink'],
+        [`/meu-perfil/escrever${q}`, isEn ? 'I joined, check again' : 'Já entrei, conferir de novo', 'btn-outline'],
+      ],
+    },
+    membership_unavailable: {
+      sticker: 'worried',
+      title: isEn ? 'I couldn\'t check right now' : 'Não consegui conferir agora',
+      text: isEn
+        ? 'I need to ask the server if you\'re a member, and it didn\'t answer. Try again in a few minutes. Your drafts are safe.'
+        : 'Preciso perguntar ao servidor se você é membro, e ele não respondeu. Tenta de novo em alguns minutos. Seus rascunhos estão guardados.',
+      actions: [[`/meu-perfil/escrever${q}`, isEn ? 'Try again' : 'Tentar de novo', 'btn-pink']],
+    },
+  };
+  const c = copy[reason] || copy.not_member;
+  const actions = c.actions
+    .map(([href, label, cls]) => `<a href="${escapeHtml(href)}" class="btn ${cls}" style="justify-content:center; min-width:220px;">${escapeHtml(label)}</a>`)
+    .join('\n        ');
+
+  return `<!DOCTYPE html>
+<html lang="${isEn ? 'en' : 'pt-BR'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${isEn ? 'Write on Hyperfokus' : 'Escrever no Hyperfokus'} • Cringelândia</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>${getSharedStyles()}</style>
+</head>
+<body>
+  ${renderSiteHeader({ lang, path: '/meu-perfil/escrever' })}
+  <main class="main-container" style="max-width:640px; text-align:center; padding-top:2.5rem;">
+    <img src="/assets/brand/stickers/${c.sticker}.webp" alt="${isEn ? 'Pyxie, the Cringelândia mascot' : 'Pyxie, mascote da Cringelândia'}" width="120" height="120" style="margin:0 auto 1rem; object-fit:contain;" />
+    <h1 style="font-size:clamp(1.5rem, 4.5vw, 2rem); font-weight:900; color:#fff;">${escapeHtml(c.title)}</h1>
+    <p style="color:var(--text-muted); margin:0.75rem auto 1.5rem; max-width:52ch; line-height:1.6;">${escapeHtml(c.text)}</p>
+    <div style="display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center;">
+        ${actions}
+    </div>
+    <p style="margin-top:1.5rem;"><a href="/hyperfokus${q}" style="color:var(--accent-pink);">${isEn ? 'Keep reading the blog' : 'Continuar lendo o blog'}</a></p>
+  </main>
+</body>
+</html>`;
+}
+
 module.exports = {
+  renderWriterGatePage,
   renderPartnerFormPage,
   renderWelcomePage,
   renderAuthorPage,

@@ -99,7 +99,9 @@ function getDefaultUrlList() {
     const links = languageLinks(key);
     return links ? [links.urls.pt, links.urls.en] : [];
   });
-  const urls = [...pages, `https://${INDEXNOW_HOST}/rss.xml`, ...require('./tarotCardPages').getAllTarotPageUrls()];
+  // Pyxie Devs: inglês, espanhol e português, fora do SEO_CONFIG (renderizada no servidor).
+  const devs = Object.values(require('../site/devsPage').LANGS).map((l) => `https://${INDEXNOW_HOST}${l.path}`);
+  const urls = [...pages, ...devs, `https://${INDEXNOW_HOST}/rss.xml`, ...require('./tarotCardPages').getAllTarotPageUrls()];
   return [...new Set(urls)];
 }
 

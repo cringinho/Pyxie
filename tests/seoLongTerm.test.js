@@ -79,7 +79,9 @@ for (const block of blocks) {
   cluster.set(loc, alternates);
 }
 for (const [loc, alternates] of cluster) {
-  assert.equal(alternates.length, 3, `${loc}: 3 hreflang no sitemap`);
+  // Páginas PT/EN têm 3 (pt-BR, en, x-default); a Pyxie Devs tem 4 (en, es, pt-BR, x-default).
+  const expected = /^https:\/\/pyxie\.com\.br\/devs(\/|$)/.test(loc) ? 4 : 3;
+  assert.equal(alternates.length, expected, `${loc}: ${expected} hreflang no sitemap`);
   for (const href of alternates) assert.ok(cluster.has(href), `${loc}: hreflang ${href} também está no sitemap`);
 }
 console.log(`  ✅ 4. Sitemap com ${locs.length} URLs e hreflang recíproco em todo o cluster.`);
@@ -93,6 +95,7 @@ assert.ok(pages.renderHubPage('en').includes('href="/en/tarot/carta/'), 'links d
 assert.ok(!pages.renderCardPage(require('../src/data/tarotCardsCatalog').TAROT_CATALOG[0], 'en').includes('?lang='), 'carta EN sem ?lang=');
 const indexNow = getDefaultUrlList();
 assert.ok(indexNow.includes('https://pyxie.com.br/en/tarot'), 'IndexNow com a versão EN');
+['https://pyxie.com.br/devs', 'https://pyxie.com.br/devs/es', 'https://pyxie.com.br/devs/pt'].forEach((u) => assert.ok(indexNow.includes(u), `IndexNow com ${u}`));
 assert.ok(indexNow.every((url) => !url.includes('?lang=')), 'IndexNow sem ?lang=');
 const robots = fs.readFileSync(path.join(publicDir, 'robots.txt'), 'utf8');
 assert.ok(robots.includes('Allow: /en/'), 'robots libera /en/');

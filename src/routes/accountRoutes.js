@@ -4,9 +4,12 @@ const webDraftStore = require('../modules/hyperfokus/webDraftStore');
 const { importGitHubSnippet } = require('../modules/hyperfokus/githubImporter');
 const accountSessions = require('../services/accountSessions');
 const { SUPPORT_EMAIL } = require('../config/support');
+const { requireCringelandiaWriter } = require('../services/cringelandiaMembership');
 
-function createAccountRouter() {
+function createAccountRouter({ bridge = null } = {}) {
   const router = express.Router();
+  // Escrever no Hyperfokus é para membros da Cringelândia (ler continua aberto a todos).
+  const requireWriter = requireCringelandiaWriter(bridge);
 
   // Middleware para extrair a conta autenticada do usuário (se houver)
   router.use((req, res, next) => {
@@ -196,7 +199,7 @@ function createAccountRouter() {
     return res.json({ success: true, drafts });
   });
 
-  router.post('/api/hyperfokus/web-drafts', requireAuth, (req, res) => {
+  router.post('/api/hyperfokus/web-drafts', requireAuth, requireWriter, (req, res) => {
     const { title, contentMarkdown, categoryTags, coverImage } = req.body || {};
     const draft = webDraftStore.createWebDraft(req.account.id, {
       title,
@@ -213,7 +216,7 @@ function createAccountRouter() {
     return res.json({ success: true, draft });
   });
 
-  router.put('/api/hyperfokus/web-drafts/:id', requireAuth, (req, res) => {
+  router.put('/api/hyperfokus/web-drafts/:id', requireAuth, requireWriter, (req, res) => {
     try {
       const draft = webDraftStore.updateWebDraft(req.params.id, req.account.id, req.body || {});
       return res.json({ success: true, draft });
@@ -232,7 +235,7 @@ function createAccountRouter() {
   });
 
   // Enviar Rascunho Web para Análise Editorial
-  router.post('/api/hyperfokus/web-drafts/:id/submit', requireAuth, async (req, res) => {
+  router.post('/api/hyperfokus/web-drafts/:id/submit', requireAuth, requireWriter, async (req, res) => {
     try {
       const authorUsername = req.account.email ? req.account.email.split('@')[0] : 'Autor Web';
       const result = await webDraftStore.submitWebDraft(req.params.id, req.account.id, {

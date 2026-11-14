@@ -186,6 +186,7 @@
     "tests/bumpRewards.test.js": [],
     "tests/phraseDeck.test.js": [],
     "tests/shopeeRotator.test.js": [],
-    "tests/seasonalRestart.test.js": []
+    "tests/seasonalRestart.test.js": [],
+    "tests/sitePortal.test.js": []
   }
 }

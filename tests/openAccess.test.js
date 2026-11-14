@@ -57,26 +57,31 @@ const { SEO_CONFIG, getLocalizedHtml } = require('../src/utils/seoRenderer');
   assert.equal(plansModule.migrateLegacy(notReady), null);
   console.log('  ✅ 3. Migração espera o cliente do Discord ficar pronto.');
 
-  // 4. Site: Cringelândia na raiz, sem páginas de plano/Passe, sem convite do bot
-  assert.equal(SEO_CONFIG.index.file, 'cringelandia.html');
+  // 4. Site: portal na raiz (Pyxie Devs + Cringelândia), Cringelândia em /cringelandia,
+  // sem páginas de plano/Passe e sem convite do bot
+  assert.equal(SEO_CONFIG.index.file, 'index.html');
   assert.equal(SEO_CONFIG.index.canonical, 'https://pyxie.com.br/');
-  for (const gone of ['plans', 'pass', 'cringelandia']) assert.equal(SEO_CONFIG[gone], undefined, `${gone} saiu do SEO_CONFIG`);
-  for (const file of ['planos.html', 'planos.en.html', 'passe.html', 'index.html']) {
+  assert.equal(SEO_CONFIG.cringelandia.file, 'cringelandia.html');
+  assert.equal(SEO_CONFIG.cringelandia.canonical, 'https://pyxie.com.br/cringelandia');
+  for (const gone of ['plans', 'pass']) assert.equal(SEO_CONFIG[gone], undefined, `${gone} saiu do SEO_CONFIG`);
+  for (const file of ['planos.html', 'planos.en.html', 'passe.html']) {
     assert.equal(fs.existsSync(path.join(root, 'public', file)), false, `${file} removido`);
   }
   const server = read('server.js');
   assert.ok(server.includes("app.get(['/invite', '/install', '/vote'], goHome)"), 'convite do bot só redireciona');
   assert.ok(server.includes("'/planos', '/passe', '/pass', '/plans'"), 'planos e Passe redirecionam');
   assert.ok(server.includes("app.get('/', serveLocalizedPage('index', publicDir))"));
+  assert.ok(server.includes("app.get('/cringelandia', serveLocalizedPage('cringelandia', publicDir))"));
   const sitemap = read('public', 'sitemap.xml');
-  for (const gone of ['/planos', '/passe', '/en/plans', '/en/pass', '/cringelandia']) {
+  for (const gone of ['/planos', '/passe', '/en/plans', '/en/pass']) {
     assert.ok(!sitemap.includes(`<loc>https://pyxie.com.br${gone}</loc>`), `sitemap sem ${gone}`);
   }
-  console.log('  ✅ 4. Cringelândia na raiz; planos, Passe e convite do bot fora do site.');
+  assert.ok(sitemap.includes('<loc>https://pyxie.com.br/cringelandia</loc>'), 'sitemap com /cringelandia');
+  console.log('  ✅ 4. Portal na raiz, Cringelândia em /cringelandia; planos, Passe e convite do bot fora do site.');
 
-  // 5. Links importantes na página inicial, nos dois idiomas
-  const pt = getLocalizedHtml('index', 'pt', path.join(root, 'public'));
-  const en = getLocalizedHtml('index', 'en', path.join(root, 'public'));
+  // 5. Links importantes na página da Cringelândia, nos dois idiomas
+  const pt = getLocalizedHtml('cringelandia', 'pt', path.join(root, 'public'));
+  const en = getLocalizedHtml('cringelandia', 'en', path.join(root, 'public'));
   for (const href of ['/discord?ref=cringelandia-links', 'https://www.roblox.com/share/g/35473881', '/promo', '/hyperfokus', '/wiki', '/museu', '/tarot', '/bonus', '/mercado', '/parcerias', '/pais-e-profissionais', '/transparencia', '/termos', '/privacidade', 'mailto:cringe.support@gmail.com']) {
     assert.ok(pt.includes(`href="${href}"`), `link importante ${href}`);
   }

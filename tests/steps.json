@@ -20,6 +20,7 @@
     "node tests/moduleSystem.test.js",
     "node tests/museumPartnerships.test.js",
     "node tests/seoBilingual.test.js",
+    "node tests/sitePortal.test.js",
     "node tests/seoLongTerm.test.js",
     "node tests/marriageModule.test.js",
     "node tests/postgresDrizzle.test.js",

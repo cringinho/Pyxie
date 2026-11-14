@@ -37,6 +37,7 @@ const acervoAuditService = require('./src/services/acervoAuditService');
 const { createAdminMasterRouter } = require('./src/routes/adminMasterRoutes');
 const { createDashboardRouter } = require('./src/routes/dashboardRoutes');
 const { createHyperfokusRouter } = require('./src/routes/hyperfokusRoutes');
+const { createSiteRouter } = require('./src/routes/siteRoutes');
 const { createAccountRouter } = require('./src/routes/accountRoutes');
 const { createBotBridge } = require('./src/services/botBridge');
 const { createExpressTelemetryMiddleware } = require('./src/services/resourceTelemetry');
@@ -337,8 +338,9 @@ app.use(
   })
 );
 
-app.use('/', createAccountRouter());
-app.use('/', createHyperfokusRouter({ publicDir }));
+app.use('/', createAccountRouter({ bridge: botBridge }));
+app.use('/', createHyperfokusRouter({ publicDir, bridge: botBridge }));
+app.use('/', createSiteRouter());
 
 // Tratamento gracioso de payloads JSON malformados
 app.use((err, req, res, next) => {
@@ -501,7 +503,7 @@ app.get(['/invite', '/install', '/vote'], goHome);
 app.get('/discord', async (req, res) => {
   try { growthFunnel.recordInviteClick(req.query.ref, 'community', { visitorKey: req.ip }); } catch (_) {}
   const url = await require('./src/services/cringelandiaInvite').getInviteUrl().catch(() => null);
-  res.redirect(url || '/#links');
+  res.redirect(url || '/cringelandia#links');
 });
 
 // ---------- Idioma por URL (AGENTS §8): PT na raiz, EN em /en/... ----------
@@ -560,9 +562,8 @@ app.get('/termos', serveLocalizedPage('terms', publicDir));
 
 app.get('/privacidade', serveLocalizedPage('privacy', publicDir));
 
-// A Cringelândia É a página inicial: o endereço antigo só redireciona.
-app.get('/cringelandia', (req, res) => res.redirect(301, String(req.query.lang || '').toLowerCase() === 'en' ? '/en/' : '/'));
-app.get('/en/cringelandia', (req, res) => res.redirect(301, '/en/'));
+// A raiz é o portal (Pyxie Devs + Cringelândia); a Cringelândia tem a página dela.
+app.get('/cringelandia', serveLocalizedPage('cringelandia', publicDir));
 app.get('/pais-e-profissionais', serveLocalizedPage('parents', publicDir));
 app.get('/transparencia', serveLocalizedPage('transparency', publicDir));
 

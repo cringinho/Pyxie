@@ -6,7 +6,7 @@ const { getLocalizedHtml, SEO_CONFIG, detectRequestLang, pageUrls } = require('.
 console.log('🌐 [TEST] Auditoria & Quality Gate de SEO Bilíngue (PT-BR & EN)...');
 
 const publicDir = path.join(__dirname, '..', 'public');
-const pages = ['index', 'tarot', 'wiki', 'partnerships', 'museum', 'bonus', 'terms', 'privacy', 'parents', 'transparency'];
+const pages = ['index', 'cringelandia', 'tarot', 'wiki', 'partnerships', 'museum', 'bonus', 'terms', 'privacy', 'parents', 'transparency'];
 
 // 1. robots.txt
 const robotsPath = path.join(publicDir, 'robots.txt');
@@ -124,16 +124,17 @@ pages.forEach((key) => {
   assert.ok(enHtml.includes(`hreflang="x-default" href="${urls.pt}"`), `${key}: x-default aponta para o PT`);
   assert.ok(!/href="[^"]*\?lang=/.test(ptHtml + enHtml), `${key}: HTML servido sem ?lang=`);
 });
-// 4c. A Home é a Cringelândia: um único <h1>, links importantes reais e nada de convite do bot.
+// 4c. A Cringelândia (/cringelandia): um único <h1>, links importantes reais e nada de convite do bot.
+// A raiz virou o portal (Pyxie Devs + Cringelândia), coberto em tests/sitePortal.test.js.
 {
-  const ptHome = getLocalizedHtml('index', 'pt', publicDir);
-  const enHome = getLocalizedHtml('index', 'en', publicDir);
+  const ptHome = getLocalizedHtml('cringelandia', 'pt', publicDir);
+  const enHome = getLocalizedHtml('cringelandia', 'en', publicDir);
   const h1s = (html) => html.match(/<h1[\s>]/gi) || [];
   assert.equal(h1s(ptHome).length, 1, 'index PT: exatamente um <h1>');
   assert.equal(h1s(enHome).length, 1, 'index EN: exatamente um <h1>');
   assert.ok(/Cringelândia/.test(ptHome), 'index: é a página da Cringelândia');
-  assert.ok(ptHome.includes('rel="canonical" href="https://pyxie.com.br/"'), 'index PT: canonical na raiz');
-  assert.ok(enHome.includes('rel="canonical" href="https://pyxie.com.br/en/"'), 'index EN: canonical em /en/');
+  assert.ok(ptHome.includes('rel="canonical" href="https://pyxie.com.br/cringelandia"'), 'cringelandia PT: canonical próprio');
+  assert.ok(enHome.includes('rel="canonical" href="https://pyxie.com.br/en/cringelandia"'), 'cringelandia EN: canonical em /en/cringelandia');
   assert.ok(/<title>[^<]*Cringelândia/.test(ptHome) && /<title>[^<]*Cringelândia/.test(enHome), 'index: título fala da Cringelândia nos dois idiomas');
   assert.ok(enHome.includes('lang="en"'), 'index EN: html lang=en');
   for (const href of ['/wiki', '/museu', '/termos', '/privacidade', '/promo', '/discord?ref=cringelandia-links', 'https://www.roblox.com/share/g/35473881']) {

@@ -13,10 +13,12 @@ const {
   renderRegisterPage,
   renderProfilePage,
   renderWebEditorPage,
+  renderWriterGatePage,
   renderAuthorPage,
   renderWelcomePage,
   renderPartnerFormPage,
 } = require('../modules/hyperfokus/renderer');
+const { checkWriter } = require('../services/cringelandiaMembership');
 const { generateBlogRssXml, generateSitemapXml } = require('../modules/hyperfokus/seoEngine');
 const { generateOgCard, generatePinterestPin, generateWatermarkedShareImage } = require('../modules/hyperfokus/imageCards');
 
@@ -44,7 +46,7 @@ function cacheFor(req, seconds) {
   return req.account ? 'private, no-cache' : `public, max-age=${seconds}`;
 }
 
-function createHyperfokusRouter({ publicDir } = {}) {
+function createHyperfokusRouter({ publicDir, bridge = null } = {}) {
   const router = express.Router();
   const fallback404 = publicDir ? path.join(publicDir, '404.html') : null;
 
@@ -384,7 +386,7 @@ function createHyperfokusRouter({ publicDir } = {}) {
     return res.send(renderProfilePage({ account, stats, lang }));
   });
 
-  router.get('/meu-perfil/escrever', (req, res) => {
+  router.get('/meu-perfil/escrever', async (req, res) => {
     const lang = req.query.lang === 'en' ? 'en' : 'pt';
     const cookie = accountSessions.getCookie(req);
     const session = accountSessions.readSession(cookie);
@@ -396,6 +398,14 @@ function createHyperfokusRouter({ publicDir } = {}) {
     if (!account) {
       accountSessions.clearCookie(res);
       return res.redirect('/login');
+    }
+
+    // O blog é da Cringelândia: quem não é membro vê o portão em vez do editor.
+    const writer = await checkWriter(account, bridge);
+    if (!writer.ok) {
+      res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+      res.setHeader('Cache-Control', 'private, no-cache');
+      return res.status(403).send(renderWriterGatePage({ reason: writer.reason, lang }));
     }
 
     let draft = null;

@@ -5,7 +5,7 @@
   <!-- Páginas geradas por scripts/generate_sitemap.js a partir do SEO_CONFIG (uma URL por idioma). -->
   <url>
     <loc>https://pyxie.com.br/</loc>
-    <lastmod>2026-10-31</lastmod>
+    <lastmod>2026-11-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/" />
@@ -14,12 +14,60 @@
   </url>
   <url>
     <loc>https://pyxie.com.br/en/</loc>
-    <lastmod>2026-10-31</lastmod>
+    <lastmod>2026-11-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/" />
+  </url>
+  <url>
+    <loc>https://pyxie.com.br/devs</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/devs" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://pyxie.com.br/devs/es" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/devs/pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/devs" />
+  </url>
+  <url>
+    <loc>https://pyxie.com.br/devs/es</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/devs" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://pyxie.com.br/devs/es" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/devs/pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/devs" />
+  </url>
+  <url>
+    <loc>https://pyxie.com.br/devs/pt</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/devs" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://pyxie.com.br/devs/es" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/devs/pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/devs" />
+  </url>
+  <url>
+    <loc>https://pyxie.com.br/cringelandia</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/cringelandia" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/cringelandia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
+  </url>
+  <url>
+    <loc>https://pyxie.com.br/en/cringelandia</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pyxie.com.br/cringelandia" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pyxie.com.br/en/cringelandia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pyxie.com.br/cringelandia" />
   </url>
   <url>
     <loc>https://pyxie.com.br/tarot</loc>
