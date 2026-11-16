@@ -24,11 +24,27 @@ const opt = (n) => {
 const guildId = opt('--guild') || process.env.PYXIE_DEVS_GUILD_ID;
 const APPLY = flag('--apply');
 const PRUNE = flag('--prune');
+const ONLY_PRUNE = flag('--only-prune'); // só apaga os canais fora da planta, sem criar nada
 const NO_MENTIONS = { parse: [] }; // as mensagens de boas-vindas não pingam ninguém
 
 function fail(msg) {
   console.error(`✖ ${msg}`);
   process.exit(1);
+}
+
+/** Apaga canais e depois categorias. Falhas (ex.: canal exigido pelo modo Comunidade) são listadas, não escondidas. */
+async function prune(rest, extras) {
+  const failed = [];
+  const order = [...extras.filter((x) => x.type !== bp.CHANNEL_TYPE.category), ...extras.filter((x) => x.type === bp.CHANNEL_TYPE.category)];
+  for (const c of order) {
+    try {
+      await rest.delete(Routes.channel(c.id), { reason: 'Pyxie Devs: limpeza' });
+      console.log(`🗑 apagado: ${c.name}`);
+    } catch (e) {
+      failed.push(`${c.name} (${e.message})`);
+    }
+  }
+  if (failed.length) console.log(`\n⚠ Não consegui apagar ${failed.length}:\n${failed.map((f) => `   - ${f}`).join('\n')}`);
 }
 
 async function main() {
@@ -50,6 +66,12 @@ async function main() {
   if (extras.length) console.log(`\n⚠ ${extras.length} canal(is) fora da planta:\n${extras.map((c) => `   - #${c.name}`).join('\n')}`);
   if (!APPLY) {
     console.log('\nSimulação concluída. Nada foi alterado. Rode com --apply para executar.');
+    return;
+  }
+
+  if (ONLY_PRUNE) {
+    if (!PRUNE) fail('--only-prune exige --prune.');
+    await prune(rest, extras);
     return;
   }
 
@@ -133,18 +155,8 @@ async function main() {
   }
 
   // 5) Limpeza opcional: só com --prune + --confirm.
-  if (PRUNE) {
-    for (const c of extras.filter((x) => x.type !== bp.CHANNEL_TYPE.category)) {
-      await rest.delete(Routes.channel(c.id), { reason: 'Pyxie Devs: limpeza' });
-      console.log(`🗑 canal apagado: #${c.name}`);
-    }
-    for (const c of extras.filter((x) => x.type === bp.CHANNEL_TYPE.category)) {
-      await rest.delete(Routes.channel(c.id), { reason: 'Pyxie Devs: limpeza' });
-      console.log(`🗑 categoria apagada: ${c.name}`);
-    }
-  } else if (extras.length) {
-    console.log('\nCanais extras foram mantidos. Para removê-los: --apply --prune --confirm <ID>.');
-  }
+  if (PRUNE) await prune(rest, extras);
+  else if (extras.length) console.log('\nCanais extras foram mantidos. Para removê-los: --apply --prune --confirm <ID>.');
   console.log('\nPronto. Falta só atribuir o cargo "Pyxie Devs" à equipe e ligar o Onboarding (perguntar o idioma) no Discord.');
 }
 
