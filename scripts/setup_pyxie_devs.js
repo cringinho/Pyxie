@@ -107,7 +107,8 @@ async function main() {
       if (byChannel(ch.name, category.id)) continue;
       // Canal de anúncios só existe com o modo Comunidade ligado; sem ele cai para texto comum.
       const wantType = bp.CHANNEL_TYPE[ch.type || 'text'];
-      const type = wantType === bp.CHANNEL_TYPE.announcement && !hasCommunity ? bp.CHANNEL_TYPE.text : wantType;
+      const type = !hasCommunity && wantType === bp.CHANNEL_TYPE.announcement ? bp.CHANNEL_TYPE.text
+        : !hasCommunity && wantType === bp.CHANNEL_TYPE.stage ? bp.CHANNEL_TYPE.voice : wantType;
       const made = await rest.post(Routes.guildChannels(guildId), {
         body: { name: ch.name, type, parent_id: category.id, topic: ch.topic, permission_overwrites: bp.overwritesFor(ch.access, roleIds) },
         reason: 'Pyxie Devs: configuração inicial',

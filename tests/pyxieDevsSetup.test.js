@@ -11,11 +11,21 @@ for (const required of ['welcome', 'rules', 'announcements', 'anuncios-es', 'anu
   assert.ok(names.includes(required), `canal ausente: ${required}`);
 }
 assert.strictEqual(new Set(names).size, names.length, 'nomes de canal duplicados');
-for (const n of names) assert.match(n, /^[a-z0-9-]{1,100}$/, `nome inválido para o Discord: ${n}`);
+for (const cat of bp.CATEGORIES) {
+  for (const ch of cat.channels) {
+    const voice = ch.type === 'voice' || ch.type === 'stage';
+    if (!voice) assert.match(ch.name, /^[a-z0-9-]{1,100}$/, `nome inválido para canal de texto: ${ch.name}`);
+    if (voice) assert.ok(!ch.topic, `canal de voz não leva tópico: ${ch.name}`);
+    assert.ok(ch.name.length <= 100);
+  }
+}
+for (const v of ['Lounge EN', 'Lounge ES', 'Lounge PT-BR', 'Game Party', 'Dev Talks']) assert.ok(names.includes(v), `canal de voz ausente: ${v}`);
+for (const k of ['report-an-issue', 'safety', 'rules', 'bug-reports']) assert.ok(names.includes(k), `canal de segurança ausente: ${k}`);
+assert.ok(bp.RULES_TEXT.includes('13+'), 'regras devem citar a idade mínima do Discord');
 for (const key of ['en', 'es', 'pt']) assert.ok(bp.ROLES.some((r) => r.key === key), `cargo de idioma ausente: ${key}`);
 
 // Textos fixados: os três idiomas, sem menção em massa.
-for (const text of [bp.WELCOME_TEXT, bp.RULES_TEXT]) {
+for (const text of [bp.WELCOME_TEXT, bp.RULES_TEXT, bp.SAFETY_TEXT, bp.FAQ_TEXT]) {
   assert.ok(text.length < 2000, 'mensagem acima do limite do Discord');
   assert.ok(!/@everyone|@here/.test(text));
 }

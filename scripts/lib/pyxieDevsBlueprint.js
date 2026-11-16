@@ -5,7 +5,7 @@
  */
 const { PermissionFlagsBits: P } = require('discord.js');
 
-const CHANNEL_TYPE = { text: 0, voice: 2, category: 4, announcement: 5 };
+const CHANNEL_TYPE = { text: 0, voice: 2, category: 4, announcement: 5, stage: 13 };
 
 const GUILD_SETTINGS = {
   name: 'Pyxie Devs',
@@ -19,15 +19,20 @@ const GUILD_SETTINGS = {
 const ROLES = [
   {
     key: 'devs', name: 'Pyxie Devs', color: 0xe60067, hoist: true, mentionable: false,
-    permissions: [P.ManageMessages, P.ManageThreads, P.MentionEveryone, P.ViewAuditLog, P.ManageNicknames, P.ModerateMembers],
+    permissions: [P.ManageMessages, P.ManageThreads, P.MentionEveryone, P.ViewAuditLog, P.ManageNicknames, P.ModerateMembers, P.MuteMembers, P.MoveMembers],
   },
   {
     key: 'mods', name: 'Moderator', color: 0x8b5cf6, hoist: true, mentionable: false,
-    permissions: [P.ManageMessages, P.ManageThreads, P.ModerateMembers, P.KickMembers, P.ManageNicknames],
+    permissions: [P.ManageMessages, P.ManageThreads, P.ModerateMembers, P.KickMembers, P.ManageNicknames, P.MuteMembers, P.MoveMembers],
   },
+  { key: 'tester', name: 'Playtester', color: 0xf59e0b, hoist: false, mentionable: false, permissions: [] },
+  // Idiomas (o membro escolhe no Onboarding)
   { key: 'en', name: 'English', color: 0x38bdf8, hoist: false, mentionable: false, permissions: [] },
   { key: 'es', name: 'Español', color: 0xfbbf24, hoist: false, mentionable: false, permissions: [] },
   { key: 'pt', name: 'Português (BR)', color: 0x10b981, hoist: false, mentionable: false, permissions: [] },
+  // Avisos opt-in: ninguém precisa de @everyone, só quem quer é chamado
+  { key: 'pingUpdates', name: 'Updates Ping', color: 0x64748b, hoist: false, mentionable: true, permissions: [] },
+  { key: 'pingEvents', name: 'Events Ping', color: 0x64748b, hoist: false, mentionable: true, permissions: [] },
 ];
 
 // Quem pode ver/escrever. `readonly`: todos leem, só a equipe escreve. `staff`: só a equipe vê.
@@ -49,31 +54,56 @@ const WELCOME_TEXT = [
 
 const RULES_TEXT = [
   '### 📜 Rules',
-  '- Be kind and respectful. No harassment, hate speech or discrimination.',
-  '- No spam, self-promotion or unsolicited links.',
-  '- No exploits, cheats or leaks. Report bugs in the feedback channel.',
-  '- Keep each language channel in its own language.',
+  '- **13+ only** (Discord rule). Be kind: no harassment, hate or discrimination.',
+  '- Keep it friendly for all ages: no NSFW, gore or graphic content.',
+  '- Never share personal info (address, school, phone, passwords). Staff will never ask for your password.',
+  '- No scams, "free Robux", account trading or unsolicited links. No exploits, cheats or leaks.',
+  '- No spam. Keep each language channel in its own language.',
+  '- Need help? Ask a Moderator or use the report channel.',
   '',
   '### 📜 Reglas',
-  '- Sé amable y respetuoso. Nada de acoso, odio ni discriminación.',
-  '- Nada de spam, autopromoción ni enlaces no solicitados.',
-  '- Nada de exploits, trampas ni filtraciones. Reporta errores en el canal de feedback.',
-  '- Cada canal de idioma se mantiene en su idioma.',
+  '- **Solo 13+** (regla de Discord). Sé amable: nada de acoso, odio ni discriminación.',
+  '- Contenido apto para todas las edades: nada de NSFW ni contenido gráfico.',
+  '- Nunca compartas datos personales (dirección, escuela, teléfono, contraseñas). El staff jamás pide tu contraseña.',
+  '- Nada de estafas, "Robux gratis", venta de cuentas ni enlaces no solicitados. Nada de exploits, trampas ni filtraciones.',
+  '- Nada de spam. Cada canal de idioma se mantiene en su idioma.',
+  '- ¿Necesitas ayuda? Habla con un Moderator o usa el canal de reportes.',
   '',
   '### 📜 Regras',
-  '- Seja gentil e respeitoso(a). Nada de assédio, ódio ou discriminação.',
-  '- Nada de spam, autopromoção ou links não solicitados.',
-  '- Nada de exploits, cheats ou vazamentos. Reporte bugs no canal de feedback.',
-  '- Cada canal de idioma fica no seu idioma.',
+  '- **Apenas 13+** (regra do Discord). Seja gentil: nada de assédio, ódio ou discriminação.',
+  '- Conteúdo para todas as idades: nada de NSFW ou conteúdo gráfico.',
+  '- Nunca compartilhe dados pessoais (endereço, escola, telefone, senhas). A equipe jamais pede sua senha.',
+  '- Nada de golpes, "Robux grátis", venda de contas ou links não solicitados. Nada de exploits, cheats ou vazamentos.',
+  '- Nada de spam. Cada canal de idioma fica no seu idioma.',
+  '- Precisa de ajuda? Fale com um Moderator ou use o canal de denúncias.',
+].join('\n');
+
+const SAFETY_TEXT = [
+  '### 🛡️ Stay safe · Mantente seguro · Fique seguro(a)',
+  '**EN** – Report anything that makes you uncomfortable to a Moderator. Be careful with strangers who ask you to move to private chats, send links or share personal info. Turn off DMs from server members if you prefer: Server name > Privacy Settings.',
+  '**ES** – Reporta a un Moderator cualquier cosa que te incomode. Ten cuidado con desconocidos que piden pasar a chats privados, enviar enlaces o datos personales. Puedes desactivar los mensajes directos del servidor en Ajustes de privacidad.',
+  '**PT** – Avise um Moderator sobre qualquer coisa que te deixe desconfortável. Cuidado com desconhecidos que pedem para conversar no privado, mandar links ou dados pessoais. Você pode desativar as mensagens diretas do servidor em Configurações de privacidade.',
+  '',
+  '-# Pyxie Devs will never ask for your Roblox password, 2-step codes or Robux.',
+].join('\n');
+
+const FAQ_TEXT = [
+  '### ❓ FAQ',
+  '**EN** – Pick your language and pings in Channels & Roles. Official news is in the Announcements channels. Found a bug? Use the bug-reports channel.',
+  '**ES** – Elige tu idioma y avisos en Canales y roles. Las noticias oficiales están en los canales de anuncios. ¿Encontraste un error? Usa el canal de bug-reports.',
+  '**PT** – Escolha seu idioma e avisos em Canais e cargos. As novidades oficiais ficam nos canais de anúncios. Achou um bug? Use o canal bug-reports.',
 ].join('\n');
 
 // Categorias e canais, na ordem em que aparecem. `post` marca o texto fixado ao criar.
+// Canais de voz/palco ficam sem `topic`. Todos os nomes de texto: minúsculas e hífen.
 const CATEGORIES = [
   {
     name: 'START HERE',
     channels: [
       { name: 'welcome', access: ACCESS.readonly, topic: 'Welcome · Bienvenido · Bem-vindo', post: WELCOME_TEXT },
       { name: 'rules', access: ACCESS.readonly, topic: 'Server rules · Reglas · Regras', post: RULES_TEXT },
+      { name: 'safety', access: ACCESS.readonly, topic: 'Stay safe · Seguridad · Segurança', post: SAFETY_TEXT },
+      { name: 'faq', access: ACCESS.readonly, topic: 'Quick answers · Respuestas rápidas · Respostas rápidas', post: FAQ_TEXT },
     ],
   },
   {
@@ -82,7 +112,9 @@ const CATEGORIES = [
       { name: 'announcements', type: 'announcement', access: ACCESS.readonly, topic: 'Official news (English)' },
       { name: 'anuncios-es', type: 'announcement', access: ACCESS.readonly, topic: 'Noticias oficiales (Español)' },
       { name: 'anuncios-pt-br', type: 'announcement', access: ACCESS.readonly, topic: 'Novidades oficiais (Português BR)' },
-      { name: 'game-updates', type: 'announcement', access: ACCESS.readonly, topic: 'Patch notes, releases and events · Notas de versión · Notas de atualização' },
+      { name: 'game-updates', type: 'announcement', access: ACCESS.readonly, topic: 'Patch notes and releases · Notas de versión · Notas de atualização' },
+      { name: 'devlog', access: ACCESS.readonly, topic: 'Behind the scenes of our games · Detrás de cámaras · Bastidores' },
+      { name: 'events', access: ACCESS.readonly, topic: 'Events, codes and giveaways · Eventos y códigos · Eventos e códigos' },
     ],
   },
   {
@@ -91,7 +123,34 @@ const CATEGORIES = [
       { name: 'general', access: ACCESS.open, topic: 'Chat in English' },
       { name: 'comunidad-es', access: ACCESS.open, topic: 'Charla en Español' },
       { name: 'comunidade-pt-br', access: ACCESS.open, topic: 'Bate-papo em Português (BR)' },
-      { name: 'feedback-and-bugs', access: ACCESS.open, topic: 'Ideas and bug reports · Ideas y errores · Ideias e bugs' },
+      { name: 'showcase', access: ACCESS.open, topic: 'Share screenshots, builds and fan art · Comparte capturas y arte · Compartilhe prints e artes' },
+      { name: 'looking-for-group', access: ACCESS.open, topic: 'Find people to play with · Busca equipo · Procure galera para jogar' },
+      { name: 'off-topic', access: ACCESS.open, topic: 'Everything else, kept friendly · Todo lo demás · Todo o resto' },
+    ],
+  },
+  {
+    name: 'CREATORS',
+    channels: [
+      { name: 'creators-corner', access: ACCESS.open, topic: 'Scripting, building and Roblox Studio help · Ayuda de Studio · Ajuda com Studio' },
+    ],
+  },
+  {
+    name: 'HELP & FEEDBACK',
+    channels: [
+      { name: 'support', access: ACCESS.open, topic: 'Questions about our games · Preguntas · Dúvidas sobre os jogos' },
+      { name: 'bug-reports', access: ACCESS.open, topic: 'Found a bug? Tell us what happened and where · Reporta errores · Reporte bugs' },
+      { name: 'suggestions', access: ACCESS.open, topic: 'Ideas for our games · Ideas · Ideias' },
+      { name: 'report-an-issue', access: ACCESS.open, topic: 'Report a user or a safety concern to the team · Reportes · Denúncias' },
+    ],
+  },
+  {
+    name: 'VOICE',
+    channels: [
+      { name: 'Lounge EN', type: 'voice', access: ACCESS.open },
+      { name: 'Lounge ES', type: 'voice', access: ACCESS.open },
+      { name: 'Lounge PT-BR', type: 'voice', access: ACCESS.open },
+      { name: 'Game Party', type: 'voice', access: ACCESS.open },
+      { name: 'Dev Talks', type: 'stage', access: ACCESS.readonly },
     ],
   },
   {
@@ -99,6 +158,7 @@ const CATEGORIES = [
     channels: [
       { name: 'staff-chat', access: ACCESS.staff, topic: 'Team only' },
       { name: 'mod-log', access: ACCESS.staff, topic: 'Moderation log' },
+      { name: 'reports-inbox', access: ACCESS.staff, topic: 'Reports to review' },
     ],
   },
 ];
@@ -163,6 +223,7 @@ function findExtras(existing) {
 }
 
 module.exports = {
+  SAFETY_TEXT, FAQ_TEXT,
   CHANNEL_TYPE, GUILD_SETTINGS, ROLES, ACCESS, CATEGORIES, COMMUNITY_CHANNELS,
   WELCOME_TEXT, RULES_TEXT, allChannelNames, overwritesFor, planChanges, findExtras,
 };

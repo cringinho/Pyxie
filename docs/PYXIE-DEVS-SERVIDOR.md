@@ -3,11 +3,15 @@
 Servidor enxuto para comunicar os jogos e projetos Roblox. **Idioma padrão: inglês**, com suporte a espanhol e português (BR). O ecossistema Pyxie Devs é em inglês; a Cringelândia continua em PT-BR.
 
 ## Estrutura (fonte: `scripts/lib/pyxieDevsBlueprint.js`)
-- **START HERE**: `#welcome`, `#rules` (leitura, texto nos 3 idiomas, fixado).
-- **ANNOUNCEMENTS**: `#announcements` (EN), `#anuncios-es`, `#anuncios-pt-br`, `#game-updates` (leitura; só a equipe publica).
-- **COMMUNITY**: `#general` (EN), `#comunidad-es`, `#comunidade-pt-br`, `#feedback-and-bugs`.
-- **STAFF** (privado): `#staff-chat`, `#mod-log`.
-- Cargos: `Pyxie Devs`, `Moderator` (sem Administrador), `English`, `Español`, `Português (BR)`.
+- **START HERE**: `#welcome`, `#rules`, `#safety`, `#faq` (leitura, 3 idiomas, fixados).
+- **ANNOUNCEMENTS**: `#announcements` (EN), `#anuncios-es`, `#anuncios-pt-br`, `#game-updates`, `#devlog`, `#events`.
+- **COMMUNITY**: `#general`, `#comunidad-es`, `#comunidade-pt-br`, `#showcase`, `#looking-for-group`, `#off-topic`.
+- **CREATORS**: `#creators-corner`.
+- **HELP & FEEDBACK**: `#support`, `#bug-reports`, `#suggestions`, `#report-an-issue`.
+- **VOICE**: `Lounge EN`, `Lounge ES`, `Lounge PT-BR`, `Game Party`, palco `Dev Talks` (só a equipe fala).
+- **STAFF** (privado): `#staff-chat`, `#mod-log`, `#reports-inbox`.
+- Cargos: `Pyxie Devs`, `Moderator` (sem Administrador), `Playtester`, `English`, `Español`, `Português (BR)`, `Updates Ping`, `Events Ping`.
+- Segurança: idade mínima 13+ (regra do Discord), sem dados pessoais, sem golpes de Robux, denúncia fácil.
 
 ## Como aplicar
 ```bash
