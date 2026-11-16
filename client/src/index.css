@@ -363,3 +363,251 @@ body {
     display: none;
   }
 }
+
+/* ==========================================================================
+   Header: encolhe ao rolar, esconde ao descer, barra de progresso e menu lateral
+   ========================================================================== */
+.pyx-header {
+  background: rgba(8, 4, 16, 0.55);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(168, 85, 247, 0.1);
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+.pyx-header.is-scrolled {
+  background: rgba(8, 4, 16, 0.9);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border-bottom-color: rgba(168, 85, 247, 0.22);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+.pyx-header.is-hidden {
+  transform: translateY(-101%);
+}
+/* No desktop o menu não some: só encolhe */
+@media (min-width: 1024px) {
+  .pyx-header.is-hidden {
+    transform: none;
+  }
+}
+.pyx-header-inner {
+  height: 4.5rem;
+  transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pyx-header.is-scrolled .pyx-header-inner {
+  height: 3.5rem;
+}
+.pyx-logo {
+  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+.pyx-header.is-scrolled .pyx-logo {
+  width: 2rem;
+  height: 2rem;
+}
+
+.pyx-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  pointer-events: none;
+}
+.pyx-progress-bar {
+  height: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, #ec4899, #a855f7, #38bdf8);
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.7);
+  will-change: transform;
+}
+
+/* Links do desktop com sublinhado que cresce do centro */
+.nav-link {
+  position: relative;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.15rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ec4899, #a855f7);
+  transform: scaleX(0);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Submenu "Comunidade": sempre montado, desce com fade e escala */
+.nav-pop {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.97);
+  transform-origin: top left;
+  transition:
+    opacity 0.22s ease,
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 0.28s;
+}
+.nav-pop.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+/* Hambúrguer que vira X */
+.pyx-burger {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 14px;
+}
+.pyx-burger > span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s ease,
+    top 0.3s ease;
+}
+.pyx-burger > span:nth-child(1) {
+  top: 0;
+}
+.pyx-burger > span:nth-child(2) {
+  top: 6px;
+}
+.pyx-burger > span:nth-child(3) {
+  top: 12px;
+}
+.pyx-burger.is-open > span:nth-child(1) {
+  top: 6px;
+  transform: rotate(45deg);
+}
+.pyx-burger.is-open > span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0.2);
+}
+.pyx-burger.is-open > span:nth-child(3) {
+  top: 6px;
+  transform: rotate(-45deg);
+}
+
+/* Menu lateral */
+.pyx-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(4, 2, 10, 0.66);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+.pyx-scrim.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.pyx-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 70;
+  width: min(88vw, 360px);
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(236, 72, 153, 0.16), transparent 55%),
+    radial-gradient(ellipse at 0% 100%, rgba(139, 92, 246, 0.18), transparent 55%),
+    #0a0516;
+  border-left: 1px solid rgba(168, 85, 247, 0.28);
+  box-shadow: -24px 0 60px rgba(0, 0, 0, 0.55);
+  transform: translateX(104%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.4s;
+  visibility: hidden;
+  will-change: transform;
+}
+.pyx-drawer.is-open {
+  transform: none;
+  visibility: visible;
+  transition-delay: 0s;
+}
+/* Itens entram em cascata quando o menu abre */
+.pyx-drawer .drawer-item {
+  opacity: 0;
+  transform: translateX(18px);
+}
+.pyx-drawer.is-open .drawer-item {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.4s ease calc(var(--i, 0) * 45ms + 120ms),
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i, 0) * 45ms + 120ms),
+    background-color 0.2s ease;
+}
+
+/* Entrada em cascata do topo da home */
+.hero-in {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: hero-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+@keyframes hero-in {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Alvos de toque confortáveis e sem rolagem lateral em telas pequenas */
+@media (max-width: 640px) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pyx-header,
+  .pyx-header-inner,
+  .pyx-drawer,
+  .pyx-scrim,
+  .nav-pop,
+  .nav-link::after,
+  .pyx-burger > span {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+  .pyx-drawer .drawer-item,
+  .pyx-drawer.is-open .drawer-item {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .hero-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .pyx-header.is-hidden {
+    transform: none;
+  }
+}

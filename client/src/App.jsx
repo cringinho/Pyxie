@@ -10,18 +10,11 @@ import Profile from './pages/Profile';
 import Partnerships from './pages/Partnerships';
 import AmbientBackground from './components/effects/AmbientBackground';
 import { I18N } from './utils/i18n';
+import { resolveInitialLang } from './utils/zone';
 
 export default function App() {
-  // Initialize language: query param > localStorage > navigator > 'pt'
-  const [lang, setLang] = useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    const queryLang = params.get('lang');
-    if (queryLang === 'pt' || queryLang === 'en') return queryLang;
-    const stored = localStorage.getItem('pyxie_lang');
-    if (stored === 'pt' || stored === 'en') return stored;
-    if (navigator.language && navigator.language.startsWith('en')) return 'en';
-    return 'pt';
-  });
+  // Idioma: ?lang= > prefixo /en > escolha salva > padrão da zona (portal = EN, Cringelândia = PT-BR)
+  const [lang, setLang] = useState(() => resolveInitialLang(window.location, window.localStorage));
 
   const [stats, setStats] = useState({
     guilds: 18,
@@ -31,7 +24,7 @@ export default function App() {
 
   // Translation function
   const t = (key) => {
-    return I18N[lang]?.[key] || I18N.pt?.[key] || key;
+    return I18N[lang]?.[key] || I18N.en?.[key] || I18N.pt?.[key] || key;
   };
 
   // Lenis smooth scroll
