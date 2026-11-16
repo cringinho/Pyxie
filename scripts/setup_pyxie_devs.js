@@ -133,6 +133,11 @@ async function main() {
     default_message_notifications: s.defaultMessageNotifications,
     system_channel_id: idOf(bp.COMMUNITY_CHANNELS.system) || null,
   };
+  // Servidor que já é Comunidade: regras e avisos oficiais apontam para os canais novos (libera apagar os antigos).
+  if (hasCommunity) {
+    patch.rules_channel_id = idOf(bp.COMMUNITY_CHANNELS.rules);
+    patch.public_updates_channel_id = idOf(bp.COMMUNITY_CHANNELS.publicUpdates) || idOf('welcome');
+  }
   await rest.patch(Routes.guild(guildId), { body: patch, reason: 'Pyxie Devs: configuração inicial' });
   console.log('✔ ajustes do servidor aplicados (idioma padrão: inglês).');
 
