@@ -726,7 +726,9 @@
     let lang = (qLang === 'pt' || qLang === 'en') ? qLang : ((location.pathname === '/en' || location.pathname.startsWith('/en/')) ? 'en' : 'pt');
     let page = 1, totalPages = 1;
 
-    const $ = (id) => document.getElementById(id);
+    // Esta versão sem React fica sob #pyxie-app: quando o React monta, os elementos somem.
+    // Um elemento solto no lugar evita o erro quando a busca assíncrona termina depois disso.
+    const $ = (id) => document.getElementById(id) || document.createElement('div');
     const tr = (k, r = {}) => Object.entries(r).reduce((s, [a, b]) => s.replaceAll('{' + a + '}', b), I18N[lang][k]);
 
     function applyLang() {

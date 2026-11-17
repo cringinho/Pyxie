@@ -95,7 +95,8 @@
     "node tests/seasonalRestart.test.js",
     "node tests/pyxieDevsSetup.test.js",
     "node tests/siteChrome.test.js",
+    "node tests/siteNav.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-11-17T12:26:43.051Z"
+  "updatedAt": "2026-11-17T12:59:30.572Z"
 }

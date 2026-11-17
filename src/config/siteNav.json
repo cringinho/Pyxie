@@ -1,0 +1,48 @@
+{
+  "_comment": "Fonte única do menu e do rodapé do site: lida pelo React (client/src/components/layout) e pelas páginas estáticas (src/utils/siteChrome.js). Caminhos em PT; cada lado converte para /en/... Textos: client/src/utils/i18n.js (nav.<id>, nav.<id>Desc, footer.<id>, footer.group<Grupo>) e src/utils/i18n.js (siteChrome.*). O teste tests/siteNav.test.js garante que os dois lados têm todos os textos.",
+  "header": [
+    { "id": "commands", "href": "/wiki#comandos", "icon": "terminal", "tone": "pink" },
+    { "id": "community", "menu": true, "icon": "sparkles", "tone": "pink" },
+    { "id": "wiki", "href": "/wiki", "icon": "book", "tone": "purple" },
+    { "id": "bonus", "href": "/bonus", "icon": "gift", "tone": "amber" },
+    { "id": "support", "href": "/discord", "external": true }
+  ],
+  "community": [
+    { "id": "blog", "href": "/hyperfokus", "icon": "feather", "tone": "pink" },
+    { "id": "museum", "href": "/museu", "icon": "palette", "tone": "fuchsia" },
+    { "id": "partnerships", "href": "/parcerias", "icon": "shield", "tone": "emerald" },
+    { "id": "cringelandia", "href": "/cringelandia", "icon": "heart", "tone": "rose" }
+  ],
+  "account": { "href": "/meu-perfil" },
+  "cta": { "href": "/discord?ref=site", "menuHref": "/discord?ref=site-menu" },
+  "footer": [
+    {
+      "id": "explore",
+      "links": [
+        { "id": "wiki", "href": "/wiki" },
+        { "id": "bonus", "href": "/bonus" },
+        { "id": "tarot", "href": "/tarot" },
+        { "id": "shopee", "href": "/promo", "external": true }
+      ]
+    },
+    {
+      "id": "community",
+      "links": [
+        { "id": "blog", "href": "/hyperfokus" },
+        { "id": "museum", "href": "/museu" },
+        { "id": "partnerships", "href": "/parcerias" },
+        { "id": "community", "href": "/discord?ref=site-footer", "external": true }
+      ]
+    },
+    {
+      "id": "trust",
+      "links": [
+        { "id": "terms", "href": "/termos" },
+        { "id": "privacy", "href": "/privacidade" },
+        { "id": "cookies", "action": "cookies" },
+        { "id": "parents", "href": "/pais-e-profissionais" },
+        { "id": "transparency", "href": "/transparencia" }
+      ]
+    }
+  ]
+}

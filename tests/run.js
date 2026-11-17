@@ -59,6 +59,24 @@ const TEST_ENV = {
   PANEL_SECRET: '',
   API_SECRET_TOKEN: '',
   MARY_STUDIO_SECRET: '',
+  // Variáveis da máquina que mudam o comportamento do bot e quebravam 7 testes fora do CI:
+  // a pasta de dados apontava para outro lugar (os testes leem data/), o modo "bot de teste"
+  // troca o arquivo de trava, e IDs de canal de outro servidor viravam o valor esperado.
+  // Vazias (e não apagadas) para o dotenv não as trazer de volta do .env.
+  PYXIE_DATA_DIR: '',
+  PYXIE_TEST_BOT: '',
+  BOT_NAME: '',
+  HOMOLOGATION_CHANNEL_ID: '',
+  STARTUP_CHANNEL_ID: '',
+  TAROT_LOG_CHANNEL_ID: '',
+  // Chaves de APIs reais (pagamento e listas de bots): os testes simulam as respostas, e uma
+  // chave de verdade no ambiente faria um teste mal isolado chamar a API real. Igual ao CI.
+  MERCADOPAGO_ACCESS_TOKEN: '',
+  MERCADOPAGO_WEBHOOK_SECRET: '',
+  TOPGG_API_TOKEN: '',
+  DISCORDBOTLIST_TOKEN: '',
+  DISCORDS_TOKEN: '',
+  DISCORD_BOTS_GG_TOKEN: '',
   PYXIE_CI_FIXTURES: '1',
   FORCE_COLOR: '0',
   NO_COLOR: '1',

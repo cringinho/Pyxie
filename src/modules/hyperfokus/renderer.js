@@ -1,6 +1,6 @@
 const { renderFooter } = require('../../utils/siteChrome');
 // Rodapé e fontes iguais aos do resto do site.
-const SITE_CHROME_ASSETS = '<link rel="stylesheet" href="/css/fonts.css" /><link rel="stylesheet" href="/css/site-chrome.css?v=1" /><script src="/js/site-chrome.js?v=1" defer></script>';
+const SITE_CHROME_ASSETS = '<link rel="stylesheet" href="/css/fonts.css" /><link rel="stylesheet" href="/css/site-chrome.css?v=2" /><script src="/js/site-chrome.js?v=2" defer></script>';
 const { SUPPORT_EMAIL } = require('../../config/support');
 const { buildArticleSeo, buildHomeSeo, buildAuthorSeo, applyInternalLinks } = require('./seoEngine');
 const { getContextualProducts } = require('./shopeeContext');
@@ -104,8 +104,13 @@ function getSharedStyles() {
       .hf-hide-sm { display: none; }
       .hf-auth, .hf-lang { padding: 6px 10px; font-size: 0.75rem; }
       .brand { font-size: 1rem; gap: 0.4rem; }
-      .brand > span { display: none; }
+      /* No celular some só o "Pyxie": o nome da seção (Hyperfokus, Editor) continua visível */
+      .hf-brand-prefix { display: none; }
       .header-inner { gap: 0.5rem; }
+    }
+    /* Telas bem estreitas: o cadastro sai do topo (a tela de entrar leva até ele) */
+    @media (max-width: 480px) {
+      .nav-actions .hf-signup { display: none; }
     }
     .header-inner {
       gap: 1rem;
@@ -504,13 +509,13 @@ function renderSiteHeader({ lang = 'pt', user = null, path = '/hyperfokus', bran
     ? `<a href="/meu-perfil/escrever${q}" class="btn btn-pink hf-auth">✍️ <span class="hf-hide-sm">${isEn ? 'Write' : 'Escrever'}</span></a>
         <a href="/meu-perfil${q}" class="btn btn-outline hf-auth">${isEn ? 'My profile' : 'Meu perfil'}</a>`
     : `<a href="/login?redirect=${encodeURIComponent(here)}${isEn ? '&lang=en' : ''}" class="btn btn-outline hf-auth">${isEn ? 'Sign in' : 'Entrar'}</a>
-        <a href="/cadastro?redirect=${encodeURIComponent(here)}${isEn ? '&lang=en' : ''}" class="btn btn-pink hf-auth">${isEn ? 'Create account' : 'Criar conta'}</a>`;
+        <a href="/cadastro?redirect=${encodeURIComponent(here)}${isEn ? '&lang=en' : ''}" class="btn btn-pink hf-auth hf-signup">${isEn ? 'Create account' : 'Criar conta'}</a>`;
   return `
   <header class="site-header">
     <div class="header-inner">
       <a href="/hyperfokus${q}" class="brand">
         <img src="/assets/pyxie/sticker/sticker_smile.png" alt="${isEn ? 'Pyxie, the blog mascot' : 'Pyxie, mascote do blog'}" width="34" height="34" />
-        <span>Pyxie <span style="color:var(--accent-pink);">${escapeHtml(brandLabel)}</span></span>
+        <span><span class="hf-brand-prefix">Pyxie </span><span style="color:var(--accent-pink);">${escapeHtml(brandLabel)}</span></span>
       </a>
       <nav class="hf-nav" aria-label="${isEn ? 'Blog navigation' : 'Navegação do blog'}">
         <a href="/${q}">${isEn ? 'Pyxie home' : 'Início da Pyxie'}</a>
@@ -1450,7 +1455,7 @@ function renderLoginPage({ lang = 'pt', redirect = '/meu-perfil', error = null, 
     <div class="header-inner">
       <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
         <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
-        <span>Pyxie <span style="color:var(--accent-pink);">Hyperfokus</span></span>
+        <span><span class="hf-brand-prefix">Pyxie </span><span style="color:var(--accent-pink);">Hyperfokus</span></span>
       </a>
       <div class="nav-actions">
         <a href="${isEn ? '/login' : '/login?lang=en'}" class="btn btn-outline" style="font-size:0.75rem;">
@@ -1607,7 +1612,7 @@ function renderRegisterPage({ lang = 'pt', redirect = '/meu-perfil', error = nul
     <div class="header-inner">
       <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
         <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
-        <span>Pyxie <span style="color:var(--accent-pink);">Hyperfokus</span></span>
+        <span><span class="hf-brand-prefix">Pyxie </span><span style="color:var(--accent-pink);">Hyperfokus</span></span>
       </a>
       <div class="nav-actions">
         <a href="${isEn ? '/cadastro' : '/cadastro?lang=en'}" class="btn btn-outline" style="font-size:0.75rem;">
@@ -1780,7 +1785,7 @@ function renderProfilePage({ account, stats, lang = 'pt', message = null, error 
     <div class="header-inner">
       <a href="/hyperfokus${isEn ? '?lang=en' : ''}" class="brand">
         <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
-        <span>Pyxie <span style="color:var(--accent-pink);">Hyperfokus</span></span>
+        <span><span class="hf-brand-prefix">Pyxie </span><span style="color:var(--accent-pink);">Hyperfokus</span></span>
       </a>
       <div class="nav-actions">
         <a href="/meu-perfil/escrever${isEn ? '?lang=en' : ''}" class="btn btn-pink">
@@ -2207,7 +2212,7 @@ function renderWebEditorPage({ account, draft = null, lang = 'pt' } = {}) {
     <div class="header-inner">
       <a href="/meu-perfil${isEn ? '?lang=en' : ''}" class="brand">
         <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Pyxie Mascot" width="34" height="34" />
-        <span>Pyxie <span style="color:var(--accent-pink);">Editor</span></span>
+        <span><span class="hf-brand-prefix">Pyxie </span><span style="color:var(--accent-pink);">Editor</span></span>
       </a>
       <div class="nav-actions">
         <a href="/meu-perfil${isEn ? '?lang=en' : ''}" class="btn btn-outline" style="font-size:0.8rem;">

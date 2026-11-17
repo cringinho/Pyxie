@@ -53,4 +53,24 @@ assert.deepStrictEqual(bp.planChanges(full), []);
 full.channels.push({ id: 'x', name: 'old-stuff', type: 0 });
 assert.deepStrictEqual(bp.findExtras(full).map((c) => c.name), ['old-stuff']);
 
+// Onboarding e AutoMod dentro dos limites da API do Discord.
+const accessOf = Object.fromEntries(bp.CATEGORIES.flatMap((c) => c.channels.map((ch) => [ch.name, ch.access])));
+const defaults = bp.ONBOARDING.defaultChannels;
+assert.ok(defaults.length >= 7, 'Onboarding exige 7+ canais padrão');
+assert.ok(defaults.filter((n) => accessOf[n] === bp.ACCESS.open).length >= 5, 'Onboarding exige 5+ canais padrão com escrita liberada');
+for (const prompt of bp.ONBOARDING.prompts) {
+  assert.ok(prompt.title.length <= 100, `pergunta longa: ${prompt.title}`);
+  for (const o of prompt.options) {
+    assert.ok(o.title.length <= 50 && (o.description || '').length <= 100, `opção fora do limite: ${o.title}`);
+    for (const r of o.roles) assert.ok(bp.ROLES.some((x) => x.key === r), `cargo inexistente: ${r}`);
+    for (const c of o.channels) assert.ok(names.includes(c), `canal inexistente: ${c}`);
+  }
+}
+for (const c of defaults) assert.ok(names.includes(c), `canal padrão inexistente: ${c}`);
+assert.ok(bp.ONBOARDING.prompts[0].required, 'o idioma é obrigatório');
+assert.ok(bp.AUTOMOD_MESSAGE.length <= 150, 'mensagem do AutoMod acima de 150 caracteres');
+assert.ok(names.includes(bp.AUTOMOD_ALERT_CHANNEL) && accessOf[bp.AUTOMOD_ALERT_CHANNEL] === bp.ACCESS.staff, 'alertas do AutoMod em canal da equipe');
+assert.deepStrictEqual(bp.AUTOMOD.map((r) => r.triggerType).sort(), [1, 3, 4, 5]);
+for (const r of bp.AUTOMOD) assert.ok(r.name.length <= 100);
+
 console.log('✔ Planta do Pyxie Devs ok.');

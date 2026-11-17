@@ -163,6 +163,60 @@ const CATEGORIES = [
   },
 ];
 
+/**
+ * Onboarding do Discord: o membro escolhe o idioma (obrigatório) e os avisos (opcional).
+ * Cada opção entrega cargos (`roles`, pelas chaves de ROLES) e canais (`channels`, por nome).
+ * O Discord exige 7+ canais padrão, 5+ com escrita liberada para @everyone.
+ */
+const ONBOARDING = {
+  defaultChannels: [
+    'welcome', 'rules', 'safety', 'faq', 'announcements', 'game-updates', 'devlog', 'events',
+    'showcase', 'looking-for-group', 'off-topic', 'creators-corner', 'support', 'bug-reports', 'suggestions', 'report-an-issue',
+  ],
+  prompts: [
+    {
+      title: 'Which language do you speak? · ¿Qué idioma hablas? · Qual idioma você fala?',
+      required: true,
+      singleSelect: false,
+      options: [
+        { title: 'English', description: 'Chat and news in English', emoji: '🇬🇧', roles: ['en'], channels: ['general', 'announcements', 'Lounge EN'] },
+        { title: 'Español', description: 'Charla y noticias en español', emoji: '🇪🇸', roles: ['es'], channels: ['comunidad-es', 'anuncios-es', 'Lounge ES'] },
+        { title: 'Português (BR)', description: 'Conversa e novidades em português', emoji: '🇧🇷', roles: ['pt'], channels: ['comunidade-pt-br', 'anuncios-pt-br', 'Lounge PT-BR'] },
+      ],
+    },
+    {
+      title: 'Which pings do you want? · ¿Qué avisos quieres? · Quais avisos você quer?',
+      required: false,
+      singleSelect: false,
+      options: [
+        { title: 'Game updates', description: 'New versions and patch notes', emoji: '🛠️', roles: ['pingUpdates'], channels: ['game-updates'] },
+        { title: 'Events & codes', description: 'Events, codes and giveaways', emoji: '🎉', roles: ['pingEvents'], channels: ['events'] },
+      ],
+    },
+  ],
+};
+
+/**
+ * AutoMod: uma regra por tipo de gatilho do Discord. O script atualiza a regra que já existe
+ * daquele tipo (ou cria), manda alertas para #mod-log e isenta a equipe.
+ * Tipos: 1 palavras-chave, 3 spam, 4 listas prontas, 5 menção em massa.
+ */
+const AUTOMOD_ALERT_CHANNEL = 'mod-log';
+const AUTOMOD_MESSAGE = 'Pyxie Devs blocked this message to keep the server safe. Questions? Ask a Moderator.';
+const AUTOMOD = [
+  { triggerType: 4, name: 'Pyxie Devs • Slurs and sexual content', triggerMetadata: { presets: [2, 3], allow_list: [] } },
+  { triggerType: 3, name: 'Pyxie Devs • Suspected spam', triggerMetadata: {} },
+  {
+    triggerType: 1,
+    name: 'Pyxie Devs • Scams and invite links',
+    // Mantém as palavras da regra antiga se ela existir; estas são o mínimo.
+    triggerMetadata: {
+      keyword_filter: ['*discord.gg/*', '*discord.com/invite/*', '*discordapp.com/invite/*', 'free nitro', 'nitro gift', 'free robux', 'robux generator', 'steam gift', '*bit.ly/*'],
+    },
+  },
+  { triggerType: 5, name: 'Pyxie Devs • Mention spam', triggerMetadata: { mention_total_limit: 8, mention_raid_protection_enabled: true } },
+];
+
 /** Canais que o Discord Community usa (regras e avisos oficiais). */
 const COMMUNITY_CHANNELS = { rules: 'rules', publicUpdates: 'announcements', system: 'welcome' };
 
@@ -223,6 +277,7 @@ function findExtras(existing) {
 }
 
 module.exports = {
+  ONBOARDING, AUTOMOD, AUTOMOD_ALERT_CHANNEL, AUTOMOD_MESSAGE,
   SAFETY_TEXT, FAQ_TEXT,
   CHANNEL_TYPE, GUILD_SETTINGS, ROLES, ACCESS, CATEGORIES, COMMUNITY_CHANNELS,
   WELCOME_TEXT, RULES_TEXT, allChannelNames, overwritesFor, planChanges, findExtras,

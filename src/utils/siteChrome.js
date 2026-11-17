@@ -8,8 +8,10 @@
  * troca os marcadores e injeta o CSS/JS compartilhados (public/css e public/js/site-chrome.*).
  */
 const { t } = require('./i18n');
+// Fonte única dos links (a mesma lista que o React usa).
+const NAV = require('../config/siteNav.json');
 
-const ASSET_VERSION = '1';
+const ASSET_VERSION = '2';
 
 const esc = (value) =>
   String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -39,155 +41,135 @@ function icon(name, cls = '') {
   return `<svg class="pxc-icon ${cls}" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${ICONS[name] || ''}</svg>`;
 }
 
-/** URL de uma página no idioma pedido. Páginas com SEO usam o caminho definitivo (/en/...). */
-function hrefFor(target, lang) {
-  const isEn = lang === 'en';
-  const seoKey = { home: 'index', wiki: 'wiki', bonus: 'bonus', museum: 'museum', partnerships: 'partnerships', cringelandia: 'cringelandia', terms: 'terms', privacy: 'privacy', parents: 'parents', transparency: 'transparency', tarot: 'tarot', market: 'market' }[target];
-  if (seoKey) {
-    // Carregado na hora: seoRenderer também usa este módulo.
-    const { pageUrls } = require('./seoRenderer');
-    const urls = pageUrls(seoKey);
-    if (urls) return new URL(isEn ? urls.en : urls.pt).pathname;
-  }
-  // Blog e conta só trocam de idioma via ?lang=. O HTML servido leva a URL limpa (regra de SEO:
-  // nada de ?lang= no índice) e o public/js/site-chrome.js acrescenta lang=en nas páginas em inglês.
-  switch (target) {
-    case 'blog':
-      return '/hyperfokus';
-    case 'account':
-      return '/meu-perfil';
-    default:
-      return isEn ? '/en/' : '/';
-  }
+/**
+ * Caminho em PT (como está no siteNav.json) para o idioma pedido.
+ * Páginas com SEO bilíngue vão para o caminho definitivo (/wiki -> /en/wiki); as demais
+ * (/hyperfokus, /meu-perfil, /discord...) seguem limpas: o public/js/site-chrome.js
+ * acrescenta lang=en no blog e na conta (regra de SEO: nada de ?lang= no HTML servido).
+ */
+function localizePath(ptHref, lang) {
+  const raw = String(ptHref || '/');
+  if (lang !== 'en' || /^https?:/i.test(raw)) return raw;
+  const m = raw.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/);
+  const base = (m[1] || '/').replace(/\/+$/, '') || '/';
+  const rest = `${m[2] || ''}${m[3] || ''}`;
+  // Carregado na hora: o seoRenderer também usa este módulo.
+  const { SEO_CONFIG, pagePath, pageUrls } = require('./seoRenderer');
+  const key = Object.keys(SEO_CONFIG).find((k) => pagePath(k) === base);
+  const urls = key && pageUrls(key);
+  return urls ? `${new URL(urls.en).pathname}${rest}` : raw;
 }
 
-function communityItems(lang) {
-  const L = (k) => t(`siteChrome.${k}`, lang);
-  return [
-    { key: 'blog', label: L('blog'), desc: L('blogDesc'), icon: 'feather', tone: 'pink' },
-    { key: 'museum', label: L('museum'), desc: L('museumDesc'), icon: 'palette', tone: 'fuchsia' },
-    { key: 'partnerships', label: L('partnerships'), desc: L('partnershipsDesc'), icon: 'shield', tone: 'emerald' },
-    { key: 'cringelandia', label: L('cringelandia'), desc: L('cringelandiaDesc'), icon: 'heart', tone: 'rose' },
-  ];
+/** Compatibilidade: link de uma página por nome (home, wiki, museum...). */
+function hrefFor(target, lang) {
+  const byId = { home: '/', account: NAV.account.href };
+  for (const it of [...NAV.header, ...NAV.community]) if (it.href) byId[it.id] = it.href;
+  for (const g of NAV.footer) for (const l of g.links) if (l.href && !byId[l.id]) byId[l.id] = l.href;
+  return localizePath(byId[target] || '/', lang);
 }
+
+const ext = (it) => (it.external ? ' target="_blank" rel="noopener noreferrer"' : '');
 
 /**
- * Cabeçalho. `active` = chave do link atual (wiki, bonus, cringelandia...) para `aria-current`.
+ * Cabeçalho. `active` = id do link atual no siteNav.json (wiki, bonus, cringelandia...) para `aria-current`.
  * `altHref` = a mesma página no outro idioma (o botão de idioma leva para lá).
  */
 function renderHeader({ lang = 'pt', active = '', altHref = '' } = {}) {
   const isEn = lang === 'en';
-  const L = (k) => esc(t(`siteChrome.${k}`, lang));
-  const home = hrefFor('home', lang);
-  const cur = (key) => (key === active ? ' aria-current="page"' : '');
-  const switchHref = altHref || hrefFor('home', isEn ? 'pt' : 'en');
-  const community = communityItems(lang);
+  const T = (k) => esc(t(`siteChrome.${k}`, lang));
+  const home = localizePath('/', lang);
+  const cur = (id) => (id && id === active ? ' aria-current="page"' : '');
+  const switchHref = altHref || localizePath('/', isEn ? 'pt' : 'en');
+  const tone = (it) => (it.tone ? `pxc-tone-${it.tone}` : '');
 
-  const desktopCommunity = community
-    .map(
-      (it) => `<li><a class="pxc-pop-link" href="${esc(hrefFor(it.key, lang))}"${cur(it.key)}>${icon(it.icon, `pxc-tone-${it.tone}`)}<span><strong>${esc(it.label)}</strong><small>${esc(it.desc)}</small></span></a></li>`,
-    )
+  const popItems = NAV.community
+    .map((it) => `<li><a class="pxc-pop-link" href="${esc(localizePath(it.href, lang))}"${cur(it.id)}>${icon(it.icon, tone(it))}<span><strong>${T(`nav.${it.id}`)}</strong><small>${T(`navDesc.${it.id}`)}</small></span></a></li>`)
     .join('');
 
+  const desktop = NAV.header
+    .map((it) => {
+      if (it.menu) {
+        return `<div class="pxc-pop" data-pxc-pop>
+        <button type="button" class="pxc-link" aria-expanded="false" aria-haspopup="true">${icon(it.icon, tone(it))}<span>${T(`nav.${it.id}`)}</span>${icon('chevron', 'pxc-chevron')}</button>
+        <div class="pxc-pop-panel"><ul>${popItems}</ul></div>
+      </div>`;
+      }
+      return `<a class="pxc-link" href="${esc(localizePath(it.href, lang))}"${cur(it.id)}${ext(it)}>${it.icon ? icon(it.icon, tone(it)) : ''}<span>${T(`nav.${it.id}`)}</span></a>`;
+    })
+    .join('\n      ');
+
   let i = 0;
-  const drawerLink = (href, label, iconName, tone, key = '', extra = '') =>
-    `<a class="pxc-drawer-link" style="--i:${i++}" href="${esc(href)}"${key ? cur(key) : ''}${extra}><span>${esc(label)}</span>${iconName ? icon(iconName, `pxc-tone-${tone}`) : ''}</a>`;
+  const drawerLink = (it) =>
+    `<a class="pxc-drawer-link" style="--i:${i++}" href="${esc(localizePath(it.href, lang))}"${cur(it.id)}${ext(it)}><span>${T(`nav.${it.id}`)}</span>${it.icon ? icon(it.icon, tone(it)) : ''}</a>`;
+  const drawerMain = NAV.header.filter((it) => !it.menu && !it.external).map(drawerLink).join('');
+  const communityLabel = NAV.header.find((it) => it.menu);
+  const drawerLabel = communityLabel ? `<p class="pxc-drawer-label" style="--i:${i++}">${T(`nav.${communityLabel.id}`)}</p>` : '';
+  const drawerCommunity = NAV.community.map(drawerLink).join('');
+  const drawerMore =
+    NAV.header.filter((it) => it.external).map(drawerLink).join('') +
+    `<a class="pxc-drawer-link" style="--i:${i++}" href="${esc(localizePath(NAV.account.href, lang))}"><span>${T('ui.account')}</span>${icon('user', 'pxc-tone-pink')}</a>`;
 
-  const drawerMain = [
-    drawerLink(`${home}#pilares`, t('siteChrome.features', lang), 'sparkles', 'pink'),
-    drawerLink(`${home}#comandos`, t('siteChrome.commands', lang), 'terminal', 'pink'),
-    drawerLink(hrefFor('wiki', lang), t('siteChrome.wiki', lang), 'book', 'purple', 'wiki'),
-    drawerLink(hrefFor('bonus', lang), t('siteChrome.bonus', lang), 'gift', 'amber', 'bonus'),
-  ].join('');
-  const drawerLabel = `<p class="pxc-drawer-label" style="--i:${i++}">${L('community')}</p>`;
-  const drawerCommunity = community.map((it) => drawerLink(hrefFor(it.key, lang), it.label, it.icon, it.tone, it.key)).join('');
-  const drawerMore = [
-    drawerLink('/discord', t('siteChrome.support', lang), '', '', '', ' target="_blank" rel="noopener noreferrer"'),
-    drawerLink(hrefFor('account', lang), t('siteChrome.account', lang), 'user', 'pink'),
-  ].join('');
-
-  return `<a class="pxc-skip" href="#pxc-main">${L('skip')}</a>
+  return `<a class="pxc-skip" href="#pxc-main">${T('ui.skip')}</a>
 <header class="pxc-header" data-pxc-header>
   <div class="pxc-header-inner">
     <a class="pxc-brand" href="${esc(home)}">
       <span class="pxc-brand-logo"><img src="/assets/pyxie/sticker/sticker_smile-128.webp" alt="Pyxie Mascot" width="36" height="36" /><span class="pxc-brand-dot" data-pxc-dot aria-hidden="true" hidden></span></span>
-      <span class="pxc-brand-text"><span class="pxc-brand-name">Pyxie</span><span class="pxc-brand-status" data-pxc-status data-online="${L('statusOnline')}" data-offline="${L('statusOffline')}" hidden></span></span>
+      <span class="pxc-brand-text"><span class="pxc-brand-name">Pyxie</span><span class="pxc-brand-status" data-pxc-status data-online="${T('ui.statusOnline')}" data-offline="${T('ui.statusOffline')}" hidden></span></span>
     </a>
-    <nav class="pxc-nav" aria-label="${L('mainMenu')}">
-      <a class="pxc-link" href="${esc(home)}#pilares">${L('features')}</a>
-      <a class="pxc-link" href="${esc(home)}#comandos">${icon('terminal', 'pxc-tone-pink')}<span>${L('commands')}</span></a>
-      <div class="pxc-pop" data-pxc-pop>
-        <button type="button" class="pxc-link" aria-expanded="false" aria-haspopup="true">${icon('sparkles', 'pxc-tone-pink')}<span>${L('community')}</span>${icon('chevron', 'pxc-chevron')}</button>
-        <div class="pxc-pop-panel"><ul>${desktopCommunity}</ul></div>
-      </div>
-      <a class="pxc-link" href="${esc(hrefFor('wiki', lang))}"${cur('wiki')}>${icon('book', 'pxc-tone-purple')}<span>${L('wiki')}</span></a>
-      <a class="pxc-link" href="${esc(hrefFor('bonus', lang))}"${cur('bonus')}>${icon('gift', 'pxc-tone-amber')}<span>${L('bonus')}</span></a>
-      <a class="pxc-link" href="/discord" target="_blank" rel="noopener noreferrer">${L('support')}</a>
+    <nav class="pxc-nav" aria-label="${T('ui.mainMenu')}">
+      ${desktop}
     </nav>
     <div class="pxc-actions">
-      <a class="pxc-chip pxc-hide-lt-lg" href="${esc(hrefFor('account', lang))}">${icon('user', 'pxc-tone-pink')}<span>${L('account')}</span></a>
-      <a class="pxc-chip" href="${esc(switchHref)}" hreflang="${isEn ? 'pt-BR' : 'en'}" data-pxc-lang="${isEn ? 'pt' : 'en'}" aria-label="${L('langSwitch')}" title="${L('langSwitch')}">${icon('globe', 'pxc-tone-pink')}<span>${L('langCurrent')}</span></a>
-      <a class="pxc-cta pxc-hide-lt-sm" href="/discord?ref=site" target="_blank" rel="noopener noreferrer">${icon('sparkles')}<span>${L('invite')}</span></a>
-      <button type="button" class="pxc-burger" data-pxc-open aria-controls="pxc-drawer" aria-expanded="false" aria-label="${L('openMenu')}"><span></span><span></span><span></span></button>
+      <a class="pxc-chip pxc-hide-lt-lg" href="${esc(localizePath(NAV.account.href, lang))}">${icon('user', 'pxc-tone-pink')}<span>${T('ui.account')}</span></a>
+      <a class="pxc-chip" href="${esc(switchHref)}" hreflang="${isEn ? 'pt-BR' : 'en'}" data-pxc-lang="${isEn ? 'pt' : 'en'}" aria-label="${T('ui.langSwitch')}" title="${T('ui.langSwitch')}">${icon('globe', 'pxc-tone-pink')}<span>${T('ui.langCurrent')}</span></a>
+      <a class="pxc-cta pxc-hide-lt-sm" href="${esc(NAV.cta.href)}" target="_blank" rel="noopener noreferrer">${icon('sparkles')}<span>${T('ui.invite')}</span></a>
+      <button type="button" class="pxc-burger" data-pxc-open aria-controls="pxc-drawer" aria-expanded="false" aria-label="${T('ui.openMenu')}"><span></span><span></span><span></span></button>
     </div>
   </div>
   <div class="pxc-progress" aria-hidden="true"><div class="pxc-progress-bar" data-pxc-progress></div></div>
 </header>
 <div class="pxc-scrim" data-pxc-scrim aria-hidden="true"></div>
-<aside class="pxc-drawer" id="pxc-drawer" data-pxc-drawer aria-label="${L('menu')}" aria-hidden="true" inert>
+<aside class="pxc-drawer" id="pxc-drawer" data-pxc-drawer aria-label="${T('ui.menu')}" aria-hidden="true" inert>
   <div class="pxc-drawer-head">
     <span class="pxc-brand-name">Pyxie</span>
-    <button type="button" class="pxc-icon-btn" data-pxc-close aria-label="${L('closeMenu')}">${icon('close')}</button>
+    <button type="button" class="pxc-icon-btn" data-pxc-close aria-label="${T('ui.closeMenu')}">${icon('close')}</button>
   </div>
-  <nav class="pxc-drawer-nav" aria-label="${L('mainMenu')}">
+  <nav class="pxc-drawer-nav" aria-label="${T('ui.mainMenu')}">
     ${drawerMain}${drawerLabel}${drawerCommunity}
     <div class="pxc-drawer-sep"></div>
     ${drawerMore}
   </nav>
   <div class="pxc-drawer-foot">
-    <a class="pxc-cta pxc-cta-block" href="/discord?ref=site-menu" target="_blank" rel="noopener noreferrer">${L('invite')}</a>
+    <a class="pxc-cta pxc-cta-block" href="${esc(NAV.cta.menuHref)}" target="_blank" rel="noopener noreferrer">${T('ui.invite')}</a>
   </div>
 </aside>`;
 }
 
 /** Rodapé em colunas (2 no celular, 4 no desktop), igual ao do React. */
 function renderFooter({ lang = 'pt' } = {}) {
-  const L = (k) => esc(t(`siteChrome.${k}`, lang));
-  const link = (href, label, external = false) =>
-    `<a href="${esc(href)}"${external ? ' target="_blank" rel="noopener noreferrer"' : ''}>${label}</a>`;
-  const groups = [
-    [L('groupExplore'), [
-      link(hrefFor('wiki', lang), L('footerWiki')),
-      link(hrefFor('bonus', lang), L('footerBonus')),
-      link(hrefFor('tarot', lang), L('footerTarot')),
-      link('/promo', 'Shopee', true),
-    ]],
-    [L('groupCommunity'), [
-      link(hrefFor('blog', lang), L('blog')),
-      link(hrefFor('museum', lang), L('footerMuseum')),
-      link(hrefFor('partnerships', lang), L('footerPartnerships')),
-      link('/discord?ref=site-footer', L('footerDiscord'), true),
-    ]],
-    [L('groupTrust'), [
-      link(hrefFor('terms', lang), L('footerTerms')),
-      link(hrefFor('privacy', lang), L('footerPrivacy')),
-      `<button type="button" class="pxc-footer-btn" data-pxc-cookies>${L('footerCookies')}</button>`,
-      link(hrefFor('parents', lang), L('footerParents')),
-      link(hrefFor('transparency', lang), L('footerTransparency')),
-    ]],
-  ];
-  const cols = groups
-    .map(([title, links]) => `<nav class="pxc-footer-col" aria-label="${title}"><p class="pxc-footer-title">${title}</p>${links.join('')}</nav>`)
+  const T = (k) => esc(t(`siteChrome.${k}`, lang));
+  const cols = NAV.footer
+    .map((group) => {
+      const title = T(`footerGroup.${group.id}`);
+      const links = group.links
+        .map((l) =>
+          l.action === 'cookies'
+            ? `<button type="button" class="pxc-footer-btn" data-pxc-cookies>${T(`footer.${l.id}`)}</button>`
+            : `<a href="${esc(localizePath(l.href, lang))}"${ext(l)}>${T(`footer.${l.id}`)}</a>`,
+        )
+        .join('');
+      return `<nav class="pxc-footer-col" aria-label="${title}"><p class="pxc-footer-title">${title}</p>${links}</nav>`;
+    })
     .join('');
   return `<footer class="pxc-footer">
   <div class="pxc-footer-grid">
     <div class="pxc-footer-brand">
-      <a class="pxc-footer-logo" href="${esc(hrefFor('home', lang))}"><img src="/assets/pyxie/sticker/sticker_smile-128.webp" alt="Pyxie Mascot Mini" width="40" height="40" loading="lazy" /><span>Pyxie</span></a>
-      <p>${L('tagline')}</p>
+      <a class="pxc-footer-logo" href="${esc(localizePath('/', lang))}"><img src="/assets/pyxie/sticker/sticker_smile-128.webp" alt="Pyxie Mascot Mini" width="40" height="40" loading="lazy" /><span>Pyxie</span></a>
+      <p>${T('ui.tagline')}</p>
     </div>
     ${cols}
   </div>
-  <p class="pxc-footer-rights">${L('rights')}</p>
+  <p class="pxc-footer-rights">${T('ui.rights')}</p>
 </footer>`;
 }
 
@@ -213,4 +195,4 @@ function applySiteChrome(html, { lang = 'pt', active = '', altHref = '' } = {}) 
   return out;
 }
 
-module.exports = { renderHeader, renderFooter, applySiteChrome, hrefFor };
+module.exports = { renderHeader, renderFooter, applySiteChrome, hrefFor, localizePath, NAV };

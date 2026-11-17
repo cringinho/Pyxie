@@ -154,88 +154,6 @@
     }
 
     /* Navbar */
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(7, 4, 14, 0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border-glass);
-      padding: 14px 0;
-    }
-    .nav-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: #fff;
-    }
-    .brand-icon {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-      filter: drop-shadow(0 2px 10px rgba(236, 72, 153, 0.5));
-    }
-    .brand-text {
-      font-family: var(--font-title);
-      font-size: 1.35rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #fff, #f472b6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .btn-nav {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.25s ease;
-      cursor: pointer;
-    }
-    .btn-home {
-      background: rgba(255, 255, 255, 0.08);
-      color: #cbd5e1;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-    .btn-home:hover {
-      background: rgba(255, 255, 255, 0.16);
-      color: #fff;
-    }
-    .btn-lang {
-      background: rgba(139, 92, 246, 0.18);
-      color: #d8b4fe;
-      border: 1px solid rgba(168, 85, 247, 0.4);
-    }
-    .btn-lang:hover {
-      background: rgba(139, 92, 246, 0.35);
-      border-color: #c084fc;
-    }
-    .btn-discord {
-      background: linear-gradient(135deg, #5865F2, #4752c4);
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(88, 101, 242, 0.35);
-    }
-    .btn-discord:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(88, 101, 242, 0.55);
-    }
 
     /* Hero / Header dos Termos */
     .terms-header {
@@ -489,33 +407,6 @@
     }
 
     /* Footer */
-    .footer {
-      margin-top: auto;
-      border-top: 1px solid var(--border-glass);
-      background: rgba(7, 4, 14, 0.95);
-      padding: 32px 0;
-      text-align: center;
-    }
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-    .footer-link {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.88rem;
-      transition: color 0.2s;
-    }
-    .footer-link:hover {
-      color: var(--pink-glow);
-    }
-    .footer-credits {
-      color: var(--text-dim);
-      font-size: 0.82rem;
-    }
   </style>
   <style id="pyxie-text-fallback">
     /* Defesa: se o navegador não honrar texto com gradiente, volta para cor sólida. */
@@ -545,14 +436,6 @@
     .helpline-phone a, .helpline-card p a { text-decoration: underline; text-underline-offset: 3px; }
     /* Celular: topo numa linha só (só ícones; o texto fica para leitor de tela) e sem grudar no alto */
     @media (max-width: 640px) {
-      .navbar { position: static; padding: 8px 0; }
-      .nav-wrapper { gap: 8px; }
-      .nav-actions { flex-wrap: nowrap; gap: 6px; }
-      .btn-nav { padding: 6px 10px; }
-      .brand-text { display: none; }
-      .btn-home span[data-i18n], .btn-discord span:last-child {
-        position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
-      }
       .terms-section { scroll-margin-top: 12px; }
     }
   </style>

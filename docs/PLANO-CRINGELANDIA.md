@@ -161,7 +161,7 @@
 | Cringelândia | `1453890868980482090` |
 | Servidor da Mary | `1557399041443111025` |
 | Usuária Mary | `1463644930080637140` |
-| Pyxie's Realm (servidor a abandonar) | `1564375898851909653` |
+| Pyxie Devs (antigo Pyxie's Realm; ver `docs/PYXIE-DEVS-SERVIDOR.md`) | `1564375898851909653` |
 | Canal de homologação (prévias) | `1461937203214024891` |
 | Canal da staff para remoção de arte | `1557534749310976141` |
 
@@ -706,7 +706,8 @@ Conferir os links antes de usar em mensagens públicas (é o próprio caso de us
    troca)?
 5. **`AGENTS.md` enxuto:** pode dividir em núcleo + `docs/`?
 6. **Música:** resultado da enquete (5.10).
-7. **Servidor Pyxie's Realm no Discord** (`1564375898851909653`): o dono apaga, arquiva ou deixa
-   parado? (Ação do dono no Discord; o código sai de qualquer jeito.)
+7. **Servidor Pyxie's Realm no Discord** (`1564375898851909653`): ~~o dono apaga, arquiva ou deixa
+   parado?~~ **Decidido (17/11/2026):** virou o servidor da **Pyxie Devs** (EN, com ES e PT-BR),
+   montado por `scripts/setup_pyxie_devs.js` (ver `docs/PYXIE-DEVS-SERVIDOR.md`). A lore do Realm continua só lore.
 8. **`roleplay`:** depois de desligado, apagar o código e as fichas (`data/roleplay.json`) ou guardar
    para um RP futuro com mestres humanos?

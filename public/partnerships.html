@@ -1232,7 +1232,9 @@
     // Idioma: o caminho manda (/en/... = inglês, sem /en = português), como o canonical e o hreflang.
     let lang = (qLang === 'pt' || qLang === 'en') ? qLang : ((location.pathname === '/en' || location.pathname.startsWith('/en/')) ? 'en' : 'pt');
     let category = null;
-    const $ = (id) => document.getElementById(id);
+    // Esta versão sem React fica sob #pyxie-app: quando o React monta, os elementos somem.
+    // Um elemento solto no lugar evita o erro quando a busca assíncrona termina depois disso.
+    const $ = (id) => document.getElementById(id) || document.createElement('div');
 
     function toast(text) {
       const el = $('toast');

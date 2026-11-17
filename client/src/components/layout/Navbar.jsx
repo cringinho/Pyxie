@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Sparkles, BookOpen, Gift, ShieldCheck, X, Globe, Terminal, User, ChevronDown, Feather, Palette, Heart } from 'lucide-react';
 import { localeHref, switchLangHref } from '../../utils/localePath';
+// Fonte única dos links (a mesma lista que as páginas estáticas usam em src/utils/siteChrome.js).
+import NAV from '../../../../src/config/siteNav.json';
+
+const ICONS = { terminal: Terminal, book: BookOpen, gift: Gift, feather: Feather, palette: Palette, shield: ShieldCheck, heart: Heart, sparkles: Sparkles };
+const TONES = { pink: 'text-pink-400', purple: 'text-purple-400', amber: 'text-amber-400', fuchsia: 'text-fuchsia-400', emerald: 'text-emerald-400', rose: 'text-rose-400' };
+const extProps = (it) => (it.external ? { target: '_blank', rel: 'noopener noreferrer' } : {});
 
 // Links do desktop: sublinhado em gradiente que cresce no hover (classe .nav-link no index.css).
 const linkBase =
@@ -8,14 +14,15 @@ const linkBase =
 const drawerLink =
   'drawer-item px-4 py-3 rounded-xl text-base font-semibold text-slate-200 hover:bg-white/5 active:bg-white/10 flex items-center justify-between';
 
-// Itens do grupo "Comunidade": o blog é um item comum aqui (o destaque da home é o "Adicionar Pyxie").
+// Itens do grupo "Comunidade" (siteNav.json → community).
 function communityItems(lang, t) {
-  return [
-    { href: localeHref('/hyperfokus', lang), label: t('nav.blog'), desc: t('nav.blogDesc'), Icon: Feather, color: 'text-pink-400' },
-    { href: localeHref('/museu', lang), label: t('nav.museum'), desc: t('nav.museumDesc'), Icon: Palette, color: 'text-fuchsia-400' },
-    { href: localeHref('/parcerias', lang), label: t('nav.partnerships'), desc: t('nav.partnershipsDesc'), Icon: ShieldCheck, color: 'text-emerald-400' },
-    { href: localeHref('/cringelandia', lang), label: t('nav.cringelandia'), desc: t('nav.cringelandiaDesc'), Icon: Heart, color: 'text-rose-400' },
-  ];
+  return NAV.community.map((it) => ({
+    href: localeHref(it.href, lang),
+    label: t(`nav.${it.id}`),
+    desc: t(`nav.${it.id}Desc`),
+    Icon: ICONS[it.icon] || Sparkles,
+    color: TONES[it.tone] || '',
+  }));
 }
 
 function CommunityMenu({ lang, t }) {
@@ -139,7 +146,26 @@ export default function Navbar({ lang, setLang, t, stats }) {
     if (!menuOpen) return undefined;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    const onKey = (e) => e.key === 'Escape' && setMenuOpen(false);
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+        return;
+      }
+      // Trava de foco: com o menu aberto, Tab e Shift+Tab circulam só dentro dele.
+      if (e.key !== 'Tab' || !drawerRef.current) return;
+      const items = [...drawerRef.current.querySelectorAll('a[href], button:not([disabled])')];
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const inside = drawerRef.current.contains(document.activeElement);
+      if (e.shiftKey && (document.activeElement === first || !inside)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !inside)) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
     const onResize = () => window.innerWidth >= 1024 && setMenuOpen(false);
     document.addEventListener('keydown', onKey);
     window.addEventListener('resize', onResize);
@@ -166,6 +192,10 @@ export default function Navbar({ lang, setLang, t, stats }) {
   };
 
   const headerState = `${scrolled ? 'is-scrolled' : ''} ${hidden && !menuOpen ? 'is-hidden' : ''}`;
+  // Menu lateral: links internos, depois a comunidade, depois os externos e a conta.
+  const mainLinks = NAV.header.filter((it) => !it.menu && !it.external);
+  const externalLinks = NAV.header.filter((it) => it.external);
+  const tailStart = mainLinks.length + 1 + NAV.community.length;
   const hasStatus = online !== null && online !== undefined;
 
   return (
@@ -203,31 +233,22 @@ export default function Navbar({ lang, setLang, t, stats }) {
 
           {/* Navegação desktop (a partir de 1024px; abaixo disso entra o menu lateral) */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2" aria-label={t('nav.mainMenu')}>
-            <a href={localeHref('/#pilares', lang)} className={linkBase}>
-              {t('nav.features')}
-            </a>
-            <a href={localeHref('/#comandos', lang)} className={linkBase}>
-              <Terminal className="w-3.5 h-3.5 text-pink-400 shrink-0" />
-              <span>{t('nav.commands')}</span>
-            </a>
-            <CommunityMenu lang={lang} t={t} />
-            <a href={localeHref('/wiki', lang)} className={linkBase}>
-              <BookOpen className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-              <span>{t('nav.wiki')}</span>
-            </a>
-            <a href={localeHref('/bonus', lang)} className={linkBase}>
-              <Gift className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span>{t('nav.bonus')}</span>
-            </a>
-            <a href="/discord" target="_blank" rel="noopener noreferrer" className={linkBase}>
-              {t('nav.support')}
-            </a>
+            {NAV.header.map((it) => {
+              if (it.menu) return <CommunityMenu key={it.id} lang={lang} t={t} />;
+              const Icon = ICONS[it.icon];
+              return (
+                <a key={it.id} href={it.external ? it.href : localeHref(it.href, lang)} className={linkBase} {...extProps(it)}>
+                  {Icon && <Icon className={`w-3.5 h-3.5 shrink-0 ${TONES[it.tone] || ''}`} />}
+                  <span>{t(`nav.${it.id}`)}</span>
+                </a>
+              );
+            })}
           </nav>
 
           {/* Ações */}
           <div className="flex items-center gap-2 shrink-0">
             <a
-              href={localeHref('/meu-perfil', lang)}
+              href={localeHref(NAV.account.href, lang)}
               className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-purple-500/20 hover:border-pink-500/40 transition-all whitespace-nowrap"
             >
               <User className="w-3.5 h-3.5 text-pink-400" />
@@ -245,7 +266,7 @@ export default function Navbar({ lang, setLang, t, stats }) {
             </button>
 
             <a
-              href="/discord?ref=site"
+              href={NAV.cta.href}
               target="_blank"
               rel="noopener noreferrer"
               className="shimmer hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 shadow-neon-pink transition-all transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap"
@@ -304,38 +325,33 @@ export default function Navbar({ lang, setLang, t, stats }) {
         </div>
 
         <nav className="flex-1 overflow-y-auto overscroll-contain px-3 py-4 flex flex-col gap-1" aria-label={t('nav.mainMenu')}>
-          <a href={localeHref('/#pilares', lang)} onClick={close} className={drawerLink} style={{ '--i': 0 }}>
-            <span>{t('nav.features')}</span>
-            <Sparkles className="w-4 h-4 text-pink-400" />
-          </a>
-          <a href={localeHref('/#comandos', lang)} onClick={close} className={drawerLink} style={{ '--i': 1 }}>
-            <span>{t('nav.commands')}</span>
-            <Terminal className="w-4 h-4 text-pink-400" />
-          </a>
-          <a href={localeHref('/wiki', lang)} onClick={close} className={drawerLink} style={{ '--i': 2 }}>
-            <span>{t('nav.wiki')}</span>
-            <BookOpen className="w-4 h-4 text-purple-400" />
-          </a>
-          <a href={localeHref('/bonus', lang)} onClick={close} className={drawerLink} style={{ '--i': 3 }}>
-            <span>{t('nav.bonus')}</span>
-            <Gift className="w-4 h-4 text-amber-400" />
-          </a>
+          {mainLinks.map((it, idx) => {
+            const Icon = ICONS[it.icon];
+            return (
+              <a key={it.id} href={localeHref(it.href, lang)} onClick={close} className={drawerLink} style={{ '--i': idx }}>
+                <span>{t(`nav.${it.id}`)}</span>
+                {Icon && <Icon className={`w-4 h-4 ${TONES[it.tone] || ''}`} />}
+              </a>
+            );
+          })}
 
-          <p className="drawer-item mt-4 mb-1 px-4 text-[11px] font-bold uppercase tracking-wider text-purple-300/70" style={{ '--i': 4 }}>
+          <p className="drawer-item mt-4 mb-1 px-4 text-[11px] font-bold uppercase tracking-wider text-purple-300/70" style={{ '--i': mainLinks.length }}>
             {t('nav.community')}
           </p>
           {communityItems(lang, t).map(({ href, label, Icon, color }, idx) => (
-            <a key={href} href={href} onClick={close} className={drawerLink} style={{ '--i': 5 + idx }}>
+            <a key={href} href={href} onClick={close} className={drawerLink} style={{ '--i': mainLinks.length + 1 + idx }}>
               <span>{label}</span>
               <Icon className={`w-4 h-4 ${color}`} />
             </a>
           ))}
 
           <div className="mt-3 pt-3 border-t border-purple-500/15 flex flex-col gap-1">
-            <a href="/discord" target="_blank" rel="noopener noreferrer" className={drawerLink} style={{ '--i': 9 }}>
-              <span>{t('nav.support')}</span>
-            </a>
-            <a href={localeHref('/meu-perfil', lang)} onClick={close} className={drawerLink} style={{ '--i': 10 }}>
+            {externalLinks.map((it, idx) => (
+              <a key={it.id} href={it.href} className={drawerLink} style={{ '--i': tailStart + idx }} {...extProps(it)}>
+                <span>{t(`nav.${it.id}`)}</span>
+              </a>
+            ))}
+            <a href={localeHref(NAV.account.href, lang)} onClick={close} className={drawerLink} style={{ '--i': tailStart + externalLinks.length }}>
               <span>{t('nav.account')}</span>
               <User className="w-4 h-4 text-pink-400" />
             </a>
@@ -344,7 +360,7 @@ export default function Navbar({ lang, setLang, t, stats }) {
 
         <div className="shrink-0 px-4 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-purple-500/15 bg-[#0a0516]/80">
           <a
-            href="/discord?ref=site-menu"
+            href={NAV.cta.menuHref}
             target="_blank"
             rel="noopener noreferrer"
             className="shimmer block w-full text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r from-pink-600 to-purple-600 shadow-neon-pink"

@@ -1,41 +1,12 @@
 import React from 'react';
 import { localeHref } from '../../utils/localePath';
+// Fonte única dos links (a mesma lista que as páginas estáticas usam em src/utils/siteChrome.js).
+import NAV from '../../../../src/config/siteNav.json';
 
 const linkClass = 'block py-1.5 text-sm font-medium text-slate-300 hover:text-pink-400 transition-colors text-left';
+const groupTitleKey = (id) => `footer.group${id.charAt(0).toUpperCase()}${id.slice(1)}`;
 
-// Mesmos grupos e links do rodapé das páginas estáticas (src/utils/siteChrome.js).
 export default function Footer({ t, lang = 'pt' }) {
-  const groups = [
-    {
-      id: 'explore',
-      title: t('footer.groupExplore'),
-      links: [
-        { href: localeHref('/wiki', lang), label: t('footer.wiki') },
-        { href: localeHref('/bonus', lang), label: t('footer.bonus') },
-        { href: localeHref('/tarot', lang), label: t('footer.tarot') },
-      ],
-    },
-    {
-      title: t('footer.groupCommunity'),
-      links: [
-        { href: localeHref('/hyperfokus', lang), label: t('footer.blog') },
-        { href: localeHref('/museu', lang), label: t('footer.museum') },
-        { href: localeHref('/parcerias', lang), label: t('footer.partnerships') },
-        { href: '/discord?ref=site-footer', label: t('footer.community'), external: true },
-      ],
-    },
-    {
-      title: t('footer.groupTrust'),
-      links: [
-        { href: localeHref('/termos', lang), label: t('footer.terms') },
-        { href: localeHref('/privacidade', lang), label: t('footer.privacy') },
-        { action: 'cookies', label: t('footer.cookies') },
-        { href: localeHref('/pais-e-profissionais', lang), label: t('footer.parents') },
-        { href: localeHref('/transparencia', lang), label: t('footer.transparency') },
-      ],
-    },
-  ];
-
   return (
     <footer className="w-full bg-[#06030c]/95 border-t border-purple-500/15 pt-12 pb-[max(2rem,env(safe-area-inset-bottom))] px-4 sm:px-6 lg:px-8 mt-16 sm:mt-20">
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
@@ -54,34 +25,29 @@ export default function Footer({ t, lang = 'pt' }) {
           <p className="text-sm text-slate-400 max-w-[16rem]">{t('footer.tagline')}</p>
         </div>
 
-        {groups.map((group) => (
-          <nav key={group.title} aria-label={group.title}>
-            <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-purple-300/70">{group.title}</p>
+        {NAV.footer.map((group) => (
+          <nav key={group.id} aria-label={t(groupTitleKey(group.id))}>
+            <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-purple-300/70">{t(groupTitleKey(group.id))}</p>
             {group.links.map((link) =>
               link.action === 'cookies' ? (
                 <button
-                  key="cookies"
+                  key={link.id}
                   type="button"
                   onClick={() => window.PyxieConsent && window.PyxieConsent.open()}
                   className={linkClass}
                 >
-                  {link.label}
+                  {t(`footer.${link.id}`)}
                 </button>
               ) : (
                 <a
-                  key={link.href}
-                  href={link.href}
+                  key={link.id}
+                  href={link.external ? link.href : localeHref(link.href, lang)}
                   className={linkClass}
                   {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                 >
-                  {link.label}
+                  {t(`footer.${link.id}`)}
                 </a>
               ),
-            )}
-            {group.id === 'explore' && (
-              <a href="/promo" target="_blank" rel="noopener noreferrer" className={linkClass}>
-                Shopee
-              </a>
             )}
           </nav>
         ))}

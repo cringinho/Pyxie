@@ -158,7 +158,10 @@ try {
   // /promo, o idioma salvo e o alternador moram no React, que é o que o visitante usa.
   const reactFooter = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'components', 'layout', 'Footer.jsx'), 'utf8');
   const reactApp = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'App.jsx'), 'utf8');
-  assert.ok(reactFooter.includes('href="/promo"'), 'Home (React) deve conter links direcionando para /promo');
+  // Os links do rodapé moram em src/config/siteNav.json (fonte única com as páginas estáticas).
+  const siteNav = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'config', 'siteNav.json'), 'utf8'));
+  const footerHrefs = siteNav.footer.flatMap((g) => g.links.map((l) => l.href));
+  assert.ok(reactFooter.includes('siteNav.json') && footerHrefs.includes('/promo'), 'Home (React) deve conter links direcionando para /promo');
   assert.ok(reactApp.includes('pyxie_lang'), 'Home (React) usa a chave local pyxie_lang');
   // A Cringelândia é a página inicial: leva o link do carrossel da Shopee (/promo) e o dos links importantes.
   assert.ok(indexHtml.includes('href="/promo"'), 'página inicial (Cringelândia) deve conter o link /promo');

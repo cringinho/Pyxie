@@ -204,94 +204,11 @@
     }
 
     /* Header Nav */
-    .site-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 0;
-      border-bottom: 1px solid var(--border-subtle);
-      margin-bottom: 35px;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: var(--text-main);
-    }
-
-    .nav-brand img {
-      width: 44px;
-      height: 44px;
-      object-fit: contain;
-    }
-
-    .nav-brand-text {
-      display: flex;
-      flex-direction: column;
-    }
 
     /* Marca: cor sólida de propósito.
        Gradiente em texto depende de -webkit-text-fill-color; em modo noturno forçado
        (Brave/Android) e em contraste forçado o texto fica escuro sobre fundo escuro.
        Legibilidade > efeito. */
-    .nav-brand-title {
-      font-weight: 800;
-      font-size: 18px;
-      letter-spacing: -0.3px;
-      color: #ffffff;
-      text-shadow: 0 0 18px rgba(192, 132, 252, 0.35);
-    }
-
-    .nav-brand-subtitle {
-      font-size: 11px;
-      color: var(--accent-pink);
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .nav-link {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: var(--radius-sm);
-      transition: all 0.2s;
-    }
-
-    .nav-link:hover {
-      color: #fff;
-      background: rgba(168, 85, 247, 0.15);
-    }
-
-    .lang-toggle {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      color: var(--purple-light);
-      padding: 6px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-
-    .lang-toggle:hover {
-      border-color: var(--purple-light);
-      box-shadow: 0 0 12px var(--purple-glow);
-    }
 
     /* Hero Section */
     .hero-section {
@@ -448,7 +365,6 @@
 
     .join-btn:hover { background: #4752c4; transform: translateY(-2px); }
 
-
     .app-actions { display: flex; flex-direction: column; gap: 10px; }
 
     .app-secondary { background: transparent; border: 1px solid #5865f2; }
@@ -477,14 +393,7 @@
 
     @media (max-width: 820px) {
       /* Celular: menu numa linha só (logo, entrar, idioma) e o convite como primeira coisa da página */
-      .site-nav { gap: 10px; padding: 12px 0; margin-bottom: 16px; }
-      .nav-brand { gap: 8px; min-width: 0; }
-      .nav-brand-title { font-size: 15px; }
-      .nav-brand-subtitle { display: none; }
-      .nav-links { flex-wrap: nowrap; gap: 8px; }
-      .nav-link { display: none; }
       .nav-join { padding: 9px 12px; font-size: 13px; white-space: nowrap; }
-      .lang-toggle { padding: 7px 10px; }
       .hero-section { padding: 4px 0 30px; }
       .join-dot { display: none; }
       .join-live { column-gap: 14px; }
@@ -1615,33 +1524,6 @@
     }
 
     /* Footer */
-    .site-footer {
-      border-top: 1px solid var(--border-subtle);
-      margin-top: 70px;
-      padding-top: 35px;
-      text-align: center;
-      font-size: 13px;
-      color: var(--text-dim);
-      line-height: 1.8;
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-
-    .footer-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover {
-      color: var(--purple-light);
-    }
 
     .footer-disclaimer {
       max-width: 800px;

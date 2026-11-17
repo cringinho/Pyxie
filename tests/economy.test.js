@@ -6,7 +6,8 @@ const economyFile = path.join(__dirname, '..', 'data', 'economy.json');
 const settingsFile = path.join(__dirname, '..', 'data', 'settings.json');
 const marriageFile = path.join(__dirname, '..', 'data', 'marriages.json');
 const originalEconomy = fs.existsSync(economyFile) ? fs.readFileSync(economyFile, 'utf8') : '{}';
-const originalSettings = fs.readFileSync(settingsFile, 'utf8');
+// Numa pasta data/ limpa o arquivo ainda não existe (o database.js cria ao carregar).
+const originalSettings = fs.existsSync(settingsFile) ? fs.readFileSync(settingsFile, 'utf8') : null;
 const originalMarriage = fs.existsSync(marriageFile) ? fs.readFileSync(marriageFile, 'utf8') : null;
 
 const { setEconomyConfig } = require('../src/services/database');
@@ -451,7 +452,8 @@ try {
   console.log('Verificação da economia, cooldown, ranking, Feijões Mágicos e Títulos: OK');
 } finally {
   fs.writeFileSync(economyFile, originalEconomy, 'utf8');
-  fs.writeFileSync(settingsFile, originalSettings, 'utf8');
+  if (originalSettings === null) fs.rmSync(settingsFile, { force: true });
+  else fs.writeFileSync(settingsFile, originalSettings, 'utf8');
   if (originalMarriage === null) {
     if (fs.existsSync(marriageFile)) fs.unlinkSync(marriageFile);
   } else {

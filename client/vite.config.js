@@ -21,6 +21,8 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    // O menu e o rodapé leem ../src/config/siteNav.json (fonte única com o servidor).
+    fs: { allow: ['..'] },
     proxy: {
       '/api': 'http://localhost:3000',
       '/assets': 'http://localhost:3000',

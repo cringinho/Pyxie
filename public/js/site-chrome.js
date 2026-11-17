@@ -148,9 +148,25 @@
     if (e.target.closest && e.target.closest('a')) setMenu(false);
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && body.classList.contains('pxc-menu-open')) {
+    if (!body.classList.contains('pxc-menu-open')) return;
+    if (e.key === 'Escape') {
       setMenu(false);
       openBtn.focus();
+      return;
+    }
+    // Trava de foco: com o menu aberto, Tab e Shift+Tab circulam só dentro dele.
+    if (e.key !== 'Tab') return;
+    var items = drawer.querySelectorAll('a[href], button:not([disabled])');
+    if (!items.length) return;
+    var first = items[0];
+    var last = items[items.length - 1];
+    var inside = drawer.contains(document.activeElement);
+    if (e.shiftKey && (document.activeElement === first || !inside)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && (document.activeElement === last || !inside)) {
+      e.preventDefault();
+      first.focus();
     }
   });
   window.addEventListener('resize', function () {

@@ -149,71 +149,6 @@
     }
 
     /* Navbar */
-    .navbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 24px;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-      border-bottom: 1px solid var(--border-glass);
-    }
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: #fff;
-    }
-    .brand-img {
-      width: 38px;
-      height: 38px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.5));
-    }
-    .brand-title {
-      font-family: var(--font-title);
-      font-size: 1.4rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      background: linear-gradient(135deg, #fff, var(--pink-glow));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .btn-lang {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--border-glass);
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-lang:hover {
-      background: rgba(255, 255, 255, 0.16);
-      border-color: var(--purple-glow);
-    }
-    .btn-home {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.9rem;
-      padding: 6px 12px;
-      border-radius: 12px;
-      transition: all 0.2s;
-    }
-    .btn-home:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.08);
-    }
 
     /* Container */
     .container {
@@ -533,21 +468,6 @@
     }
 
     /* Footer */
-    .footer {
-      border-top: 1px solid var(--border-glass);
-      padding: 30px 20px;
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--text-dim);
-    }
-    .footer a {
-      color: var(--pink-glow);
-      text-decoration: none;
-      margin: 0 8px;
-    }
-    .footer a:hover {
-      text-decoration: underline;
-    }
 
     @media (max-width: 600px) {
       .oracle-title { font-size: 1.9rem; }
@@ -771,7 +691,6 @@
       document.title = S.metaTitle;
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) metaDesc.setAttribute('content', S.metaDesc);
-
 
       document.getElementById('lblOracleBadge').textContent = S.badge;
       document.getElementById('lblTitlePrefix').textContent = S.titlePrefix;
