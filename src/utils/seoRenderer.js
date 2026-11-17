@@ -5,6 +5,10 @@ const { dataDir: pyxieDataDir, dataPath: pyxieDataPath } = require('./dataDir');
  * Garante paridade de SEO e entrega imediata de HTML localizado para crawlers e usuários.
  */
 const fs = require('fs');
+const { applySiteChrome } = require('./siteChrome');
+
+// Link do menu marcado como atual em cada página.
+const CHROME_ACTIVE = { wiki: 'wiki', bonus: 'bonus', museum: 'museum', partnerships: 'partnerships', cringelandia: 'cringelandia' };
 const path = require('path');
 
 const SEO_CONFIG = {
@@ -413,6 +417,14 @@ function getLocalizedHtml(pageKey, lang, publicDir) {
 
   // Canonical, hreflang, og:url e og:locale sempre coerentes com a URL pedida.
   html = injectSeo(html, pageKey, lang);
+
+  // Cabeçalho e rodapé únicos (só nas páginas que têm os marcadores <!--pyx:header/footer-->).
+  const urls = pageUrls(pageKey);
+  html = applySiteChrome(html, {
+    lang,
+    active: CHROME_ACTIVE[pageKey] || '',
+    altHref: urls ? new URL(lang === 'en' ? urls.pt : urls.en).pathname : '',
+  });
 
   htmlCache.set(cacheKey, html);
   return html;

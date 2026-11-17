@@ -3,112 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>404 • Dimensão Perdida | Pyxie Discord Bot</title>
-  <meta name="description" content="A página que você está procurando viajou para outra dimensão astral ou nunca existiu." />
+  <title>404 • Dimensão Perdida | Pyxie</title>
+  <meta name="description" content="A página que você está procurando viajou para outra dimensão ou nunca existiu." />
   <meta name="robots" content="noindex, follow" />
   <link rel="icon" href="/favicon.ico" sizes="48x48" />
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
-  <link rel="preload" as="style" href="/css/fonts.css" />
   <link rel="stylesheet" href="/css/fonts.css" />
-<link rel="stylesheet" href="/dist/assets/index.css?v=2.3.4" />
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      background-color: #080410;
-      color: #f8fafc;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      overflow-x: hidden;
       min-height: 100vh;
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 50% -15%, #3b1464 0%, rgba(14, 7, 26, 0.98) 45%, #07040d 100%),
+        #07040d;
+      overflow-x: hidden;
+    }
+    #noise-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; pointer-events: none; z-index: 0; opacity: 0.25; }
+    .err {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
+      padding: 56px 20px;
     }
-    #noise-canvas {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.25;
+    .err-card { max-width: 32rem; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .err-art { position: relative; margin-bottom: 24px; }
+    .err-ring {
+      width: 144px; height: 144px; padding: 8px; border-radius: 999px;
+      background: linear-gradient(45deg, #ec4899, #9333ea, #22d3ee);
+      box-shadow: 0 0 30px rgba(230, 0, 103, 0.4);
     }
-  </style>
-  <style id="pyxie-text-fallback">
-    /* Defesa: se o navegador não honrar texto com gradiente, volta para cor sólida. */
-    @media (forced-colors: active), (prefers-contrast: more) {
-      h1, h2, h3, [class*="title"], [class*="gradient"] {
-        -webkit-text-fill-color: currentColor !important;
-        background-image: none !important;
-      }
+    .err-ring img { width: 100%; height: 100%; object-fit: contain; border-radius: 999px; background: #0e071a; padding: 12px; }
+    .err-code {
+      position: absolute; top: -8px; right: -12px;
+      padding: 4px 12px; border-radius: 999px;
+      font: 800 12px/1.4 'JetBrains Mono', ui-monospace, monospace;
+      color: #f9a8d4; background: rgba(236, 72, 153, 0.2); border: 1px solid rgba(236, 72, 153, 0.4);
     }
-    @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-      h1, h2, h3, [class*="title"], [class*="gradient"] {
-        -webkit-text-fill-color: currentColor !important;
-        background-image: none !important;
-      }
+    h1 { margin: 0 0 12px; font: 900 clamp(1.8rem, 6vw, 2.4rem)/1.15 'Outfit', sans-serif; letter-spacing: -0.02em; }
+    .err-card p { margin: 0 0 32px; color: #cbd5e1; line-height: 1.7; }
+    .err-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; }
+    .err-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px 22px; border-radius: 16px; font: 700 14px/1 'Outfit', sans-serif; text-decoration: none;
+      transition: transform 0.2s ease, background-color 0.2s ease;
     }
-  </style>
-  <style id="pyxie-mobile-perf">
-    /* O celular tem altura dinâmica (barra de endereço): 100vh corta conteúdo. */
-    @media (max-width: 768px) {
-      * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-    }
-    /* Blur é caro no GPU de celular modesto e trava o scroll. */
-    @media (prefers-reduced-transparency: reduce) {
-      * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-    }
+    .err-btn:hover { transform: translateY(-2px); }
+    .err-btn-main { color: #fff; background: linear-gradient(90deg, #db2777, #9333ea, #4f46e5); box-shadow: 0 0 25px rgba(230, 0, 103, 0.45); }
+    .err-btn-ghost { color: #e9d5ff; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(168, 85, 247, 0.3); }
+    .err-btn-ghost:hover { background: rgba(255, 255, 255, 0.1); }
+    @media (max-width: 480px) { .err-btn { width: 100%; } }
+    @media (prefers-reduced-motion: reduce) { .err-btn { transition: none; } }
   </style>
 </head>
-<body class="selection:bg-pink-500 selection:text-white">
-  <canvas id="noise-canvas"></canvas>
-
-  <div class="relative z-10 max-w-lg mx-auto px-6 py-12 text-center flex flex-col items-center">
-    <div class="relative mb-6">
-      <div class="w-36 h-36 rounded-full p-2 bg-gradient-to-tr from-pink-500 via-purple-600 to-cyan-400 shadow-neon-pink animate-pulse">
-        <img
-          src="/assets/pyxie/pyxie_mascot-288.webp"
-          alt="Pyxie Fadinha Perdida" data-i18n-alt
-          class="w-full h-full object-contain rounded-full bg-[#0e071a] p-3"
-        />
+<body>
+  <canvas id="noise-canvas" aria-hidden="true"></canvas>
+  <!--pyx:header-->
+  <main class="err" id="pxc-main">
+    <div class="err-card">
+      <div class="err-art">
+        <div class="err-ring"><img src="/assets/pyxie/pyxie_mascot-288.webp" alt="Pyxie, a fadinha, perdida" data-en-alt="Pyxie, the fairy, lost" width="128" height="128" /></div>
+        <span class="err-code" data-i18n-err>ERRO 404</span>
       </div>
-      <span class="absolute -top-2 -right-2 px-3 py-1 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 font-mono font-black text-xs" data-i18n="badge">
-        ERRO 404
-      </span>
+      <h1 data-i18n-err>Dimensão não encontrada!</h1>
+      <p data-i18n-err>A Pyxie procurou em todas as constelações astrais e nos registros arcanos, mas essa página parece ter sumido no vácuo do espaço.</p>
+      <div class="err-actions">
+        <a class="err-btn err-btn-main" href="/" data-en-href="/en/"><span aria-hidden="true">🔮</span><span data-i18n-err>Voltar para um lugar seguro</span></a>
+        <a class="err-btn err-btn-ghost" href="/wiki" data-en-href="/en/wiki"><span aria-hidden="true">📖</span><span data-i18n-err>Guia de comandos</span></a>
+      </div>
     </div>
-
-    <h1 class="font-title font-black text-3xl sm:text-4xl text-white mb-3 tracking-tight" data-i18n="heading">
-      Dimensão Não Encontrada!
-    </h1>
-
-    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-md" data-i18n="body">
-      A Pyxie procurou em todas as constelações astrais e nos registros arcanos, mas essa página parece ter sumido no vácuo do espaço.
-    </p>
-
-    <div class="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
-      <a
-        href="/"
-        data-home-link
-        class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 hover:from-pink-500 hover:to-purple-500 text-white font-title font-bold text-sm shadow-neon-pink transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
-      >
-        <span>🔮</span>
-        <span data-i18n="home">Voltar para um Lugar Seguro</span>
-      </a>
-      <a
-        href="/wiki"
-        class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-purple-500/30 text-purple-200 font-title font-semibold text-sm transition-all flex items-center justify-center gap-2"
-      >
-        <span>📖</span>
-        <span data-i18n="second">Guia de Comandos</span>
-      </a>
-    </div>
-  </div>
-
+  </main>
+  <!--pyx:footer-->
   <script>
     (function initNoise() {
       const canvas = document.getElementById('noise-canvas');
@@ -175,27 +150,18 @@
     })();
   </script>
   <script>
-    // Versão em inglês: /en/..., ?lang=en ou navegador em inglês (sem ?lang=pt). AGENTS §1.
-    (function errorPageLang() {
-      var params = new URLSearchParams(window.location.search);
-      var q = params.get('lang');
-      var isEn = q === 'en' || (q !== 'pt' && (/^\/en(\/|$)/.test(window.location.pathname) || /^en\b/i.test(navigator.language || '')));
-      if (!isEn) return;
-      var EN = {"title": "404 • Page Not Found | Pyxie Discord Bot", "description": "The page you are looking for has moved or never existed.", "alt": "Pyxie, a lost little fairy", "badge": "ERROR 404", "heading": "Page Not Found!", "body": "Pyxie searched every constellation and every magic record, but this page seems to have vanished. The link may be broken or the page may have moved.", "home": "Back to a Safe Place", "second": "Command Guide"};
-      document.documentElement.lang = 'en';
-      document.title = EN.title;
-      var desc = document.querySelector('meta[name="description"]');
-      if (desc) desc.setAttribute('content', EN.description);
-      document.querySelectorAll('[data-i18n]').forEach(function (el) {
-        var key = el.getAttribute('data-i18n');
-        if (EN[key]) el.textContent = EN[key];
-      });
-      var img = document.querySelector('[data-i18n-alt]');
-      if (img) img.setAttribute('alt', EN.alt);
-      var home = document.querySelector('[data-home-link]');
-      if (home) home.setAttribute('href', '/en/');
+    // Versão em inglês quando a URL é /en/... (o servidor escreve <html lang="en">).
+    (function () {
+      if (!document.documentElement.lang.toLowerCase().startsWith('en')) return;
+      var EN = ["ERROR 404", "Page not found!", "Pyxie searched every constellation and every magic record, but this page seems to have vanished. The link may be broken or the page may have moved.", "Back to a safe place", "Command guide"];
+      var nodes = document.querySelectorAll('[data-i18n-err]');
+      for (var i = 0; i < nodes.length && i < EN.length; i++) nodes[i].textContent = EN[i];
+      document.title = "404 • Page Not Found | Pyxie";
+      var links = document.querySelectorAll('[data-en-href]');
+      for (var j = 0; j < links.length; j++) links[j].setAttribute('href', links[j].getAttribute('data-en-href'));
+      var img = document.querySelector('[data-en-alt]');
+      if (img) img.alt = img.getAttribute('data-en-alt');
     })();
   </script>
 </body>
 </html>
-

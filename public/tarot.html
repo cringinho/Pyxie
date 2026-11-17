@@ -555,6 +555,9 @@
       .btn-draw { width: 100%; justify-content: center; }
       .btn-share { width: 100%; justify-content: center; }
     }
+    .tarot-related { max-width: 960px; margin: 48px auto 0; padding: 0 16px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .tarot-related a { padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(168, 85, 247, 0.3); background: rgba(255, 255, 255, 0.04); color: #e9d5ff; font-weight: 600; font-size: 0.9rem; text-decoration: none; }
+    .tarot-related a:hover { border-color: rgba(236, 72, 153, 0.6); color: #fff; }
   </style>
   <style id="pyxie-text-fallback">
     /* Defesa: se o navegador não honrar texto com gradiente, volta para cor sólida. */
@@ -589,17 +592,7 @@
   <!-- End Google Tag Manager (noscript) -->
 
   <!-- Navbar -->
-  <header class="navbar">
-    <a href="/" class="nav-brand">
-      <img src="/assets/pyxie/pyxie_pixelart_face-96.webp" class="brand-img" alt="Pyxie" width="38" height="38" />
-      <span class="brand-title">Pyxie</span>
-    </a>
-    <div class="nav-actions">
-      <a href="/" class="btn-home" id="navHome">Início</a>
-      <a href="/wiki" class="btn-home" id="navWiki">Wiki</a>
-      <button class="btn-lang" id="langBtn" onclick="toggleLanguage()">EN / PT</button>
-    </div>
-  </header>
+  <!--pyx:header-->
 
   <!-- Main Container -->
   <main class="container">
@@ -686,18 +679,12 @@
   </main>
 
   <!-- Footer -->
-  <footer class="footer">
-    <p>© 2026 Pyxie Bot • Feito com magia pela Cringelândia.</p>
-    <p>
-      <a href="/">Página Principal</a> •
-      <a href="/wiki">Wiki & Documentação</a> •
-      <a href="/parcerias">Parcerias</a> •
-      <a href="/museu">Museu</a> •
-      <a href="/bonus">Bônus Diário</a> •
-      <a href="/tarot/cartas" id="footerCards">Significado das 78 cartas</a> •
-      <a href="/rss.xml">Feed RSS</a>
-    </p>
-  </footer>
+  <!-- Links próprios do tarot (o resto do rodapé é o compartilhado) -->
+  <nav class="tarot-related" aria-label="Tarot">
+    <a href="/tarot/cartas" id="footerCards">Significado das 78 cartas</a>
+    <a href="/rss.xml">Feed RSS</a>
+  </nav>
+  <!--pyx:footer-->
 
   <script>
     const I18N = {
@@ -785,11 +772,6 @@
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) metaDesc.setAttribute('content', S.metaDesc);
 
-      document.getElementById('navHome').textContent = S.navHome;
-      document.getElementById('navHome').href = `/?lang=${currentLang}`;
-      document.getElementById('navWiki').textContent = S.navWiki;
-      document.getElementById('navWiki').href = `/wiki?lang=${currentLang}`;
-      document.getElementById('langBtn').textContent = currentLang === 'pt' ? '🇺🇸 EN' : '🇧🇷 PT-BR';
 
       document.getElementById('lblOracleBadge').textContent = S.badge;
       document.getElementById('lblTitlePrefix').textContent = S.titlePrefix;

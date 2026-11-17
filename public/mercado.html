@@ -43,13 +43,14 @@
       }
     </script>
     <style>
-      :root { --bg: #120b1f; --card: #1d1330; --line: #33244d; --text: #f3e8ff; --muted: #b9a7d6; --accent: #2dd4bf; --gold: #fbbf24; }
+      :root { --bg: #07040d; --card: #1d1330; --line: #33244d; --text: #f3e8ff; --muted: #b9a7d6; --accent: #2dd4bf; --gold: #fbbf24; }
       * { box-sizing: border-box; }
-      body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
-      header { max-width: 980px; margin: 0 auto; padding: 32px 16px 8px; display: flex; gap: 16px; align-items: center; }
-      header img { width: 72px; height: 72px; border-radius: 18px; }
-      h1 { font-size: 1.8rem; margin: 0; }
-      header p { margin: 4px 0 0; color: var(--muted); }
+      body { margin: 0; background: radial-gradient(circle at 50% -15%, #3b1464 0%, rgba(14, 7, 26, 0.98) 45%, var(--bg) 100%) fixed, var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+      .page-hero { max-width: 980px; margin: 0 auto; padding: 32px 16px 8px; display: flex; gap: 16px; align-items: center; }
+      .page-hero img { width: 72px; height: 72px; border-radius: 18px; }
+      h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 5vw, 2.1rem); line-height: 1.15; margin: 0; }
+      h2, h3 { font-family: 'Outfit', sans-serif; }
+      .page-hero p { margin: 4px 0 0; color: var(--muted); }
       main { max-width: 980px; margin: 0 auto; padding: 8px 16px 48px; }
       .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 16px 0 24px; }
       .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
@@ -62,7 +63,6 @@
       .card svg { width: 100%; height: 56px; margin-top: 8px; }
       .empty { color: var(--muted); }
       a { color: var(--accent); }
-      .lang { margin-left: auto; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; cursor: pointer; }
     </style>
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
@@ -92,21 +92,19 @@
     @media (prefers-reduced-transparency: reduce) {
       * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
     }
-      .site-links { display: flex; flex-wrap: wrap; gap: 10px 18px; justify-content: center; margin: 32px 0 8px; font-size: .95rem; }
-      .site-links a { color: inherit; opacity: .85; }
       .add-btn { display: inline-block; margin-top: 8px; padding: 8px 14px; border-radius: 12px; background: #db2777; color: #fff; font-weight: 700; text-decoration: none; }
   </style>
 </head>
   <body>
-    <header>
+    <!--pyx:header-->
+    <section class="page-hero">
       <img src="/assets/pyxie/pyxie_pixelart.png" alt="Pyxie em pixel art" width="72" height="72" />
       <div>
         <h1 data-i18n="title">Mercado da Pyxie: histórico de preços</h1>
         <p data-i18n="subtitle">Preços reais das vendas entre jogadores no Discord, atualizados a cada venda.</p>
         <a class="add-btn" id="addBtn" href="/discord?ref=mercado" target="_blank" rel="noopener noreferrer">+ Entrar no Discord</a>
       </div>
-      <button class="lang" id="langBtn" type="button">EN</button>
-    </header>
+    </section>
     <main>
       <section class="stats" aria-live="polite">
         <div class="stat"><b id="statActive">–</b><span data-i18n="active">anúncios na vitrine</span></div>
@@ -118,11 +116,7 @@
       <h2 data-i18n="howTitle">Como funciona</h2>
       <p data-i18n="how">Use /py-market no Discord para anunciar itens e materiais. O item fica guardado em garantia até ser vendido, e cada venda paga uma taxa de 5% que sai da economia.</p>
     </main>
-    <footer>
-      <nav class="site-links" id="siteLinks" aria-label="Páginas da Pyxie">
-        <a href="/">Início</a><a href="/mercado">Mercado</a><a href="/termos">Termos</a><a href="/privacidade">Privacidade</a>
-      </nav>
-    </footer>
+    <!--pyx:footer-->
     <script>
       const I18N = {
         pt: { title: 'Mercado da Pyxie: histórico de preços', subtitle: 'Preços reais das vendas entre jogadores no Discord, atualizados a cada venda.', active: 'anúncios na vitrine', sales7d: 'vendas em 7 dias', fee: 'moedinhas retiradas pela taxa', topTitle: 'Mais negociados nos últimos 30 dias', loading: 'Carregando…', loadError: 'Não consegui carregar os preços agora. Tente de novo em alguns minutos.', empty: 'Ainda não teve venda no mercado. Que tal ser a primeira pessoa?', howTitle: 'Como funciona', how: 'Use /py-market no Discord para anunciar itens e materiais. O item fica guardado em garantia até ser vendido, e cada venda paga uma taxa de 5% que sai da economia.', last: 'Última venda', avg: 'Média 7 dias', sales: 'vendas', coins: 'moedinhas', btn: 'EN' },
@@ -171,7 +165,6 @@
         const dict = I18N[lang];
         document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
         document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = dict[el.dataset.i18n] || el.textContent; });
-        document.getElementById('langBtn').textContent = dict.btn;
         renderSiteLinks();
         try {
           const res = await fetch(`/api/market/prices?lang=${lang}`);
@@ -190,11 +183,6 @@
         }
       }
 
-      document.getElementById('langBtn').addEventListener('click', () => {
-        lang = lang === 'pt' ? 'en' : 'pt';
-        history.replaceState(null, '', `?lang=${lang}`);
-        render();
-      });
       render();
     </script>
   </body>

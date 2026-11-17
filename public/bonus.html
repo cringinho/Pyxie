@@ -1351,7 +1351,6 @@
 
       function applyLang(lang) {
         userLang = (lang === 'en' || lang === 'pt') ? lang : 'pt';
-        setSavedLang(userLang);
         document.documentElement.lang = userLang === 'pt' ? 'pt-BR' : 'en';
         document.body.classList.toggle('lang-pt', userLang === 'pt');
         document.body.classList.toggle('lang-en', userLang === 'en');

@@ -37,6 +37,7 @@ export default {
         },
       },
       fontFamily: {
+        sans: ['Plus Jakarta Sans', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
         title: ['Outfit', 'sans-serif'],
         body: ['Plus Jakarta Sans', 'sans-serif'],
         mystic: ['Cinzel', 'serif'],

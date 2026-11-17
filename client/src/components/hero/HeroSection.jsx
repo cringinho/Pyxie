@@ -17,36 +17,36 @@ export function formatUptime(ms, t) {
 export default function HeroSection({ t, lang = 'pt', stats }) {
   const uptimeLabel = stats?.online ? formatUptime(stats.uptimeMs, t) : null;
   return (
-    <section className="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+    <section className="relative pt-8 pb-14 sm:pt-12 sm:pb-20 md:pt-20 md:pb-28 overflow-hidden">
       {/* Background ambient glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/15 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/3 right-10 w-[450px] h-[450px] bg-pink-600/15 rounded-full blur-[130px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] sm:w-[600px] h-[420px] sm:h-[600px] bg-purple-600/15 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/3 right-10 w-[300px] sm:w-[450px] h-[300px] sm:h-[450px] bg-pink-600/15 rounded-full blur-[90px] sm:blur-[130px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
           {/* Left Column: Hero Narrative & Clean CTAs */}
-          <div className="lg:col-span-7 text-center lg:text-left space-y-6">
+          <div className="lg:col-span-7 text-center lg:text-left space-y-5 sm:space-y-6">
             {/* Selo de benefício (o status real fica no selo de tempo no ar, abaixo) */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-200 text-xs font-bold tracking-wide shadow-sm">
+            <div style={{ '--d': 60 }} className="hero-in inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-200 text-xs font-bold tracking-wide shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-pink-400" aria-hidden="true" />
               <span>{t('hero.badge')}</span>
             </div>
 
             {/* Semantic H1 Header */}
-            <h1 className="font-title font-black text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.12]">
+            <h1 style={{ '--d': 160 }} className="hero-in font-title font-black text-[clamp(2rem,8.5vw,3.75rem)] tracking-tight leading-[1.12] text-balance break-words">
               <span className="text-white">Pyxie</span> •{' '}
               <span className="text-slate-200">{t('hero.titlePrefix')}</span>{' '}
               <span className="gradient-text-pink pyx-gradient-anim">{t('hero.titleHighlight')}</span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal">
+            <p style={{ '--d': 260 }} className="hero-in text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal">
               {t('hero.subtitle')}
             </p>
 
             {/* Semantic Badges */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 pt-2">
+            <div style={{ '--d': 340 }} className="hero-in flex flex-wrap items-center justify-center lg:justify-start gap-2.5 pt-2">
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-amber-500/25 text-xs font-semibold text-amber-300">
                 <Coins className="w-4 h-4 text-amber-400" />
                 <span>{t('hero.badgeEconomy')}</span>
@@ -64,7 +64,7 @@ export default function HeroSection({ t, lang = 'pt', stats }) {
             </div>
 
             {/* TWO CLEAN HIGH-CONVERTING CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+            <div style={{ '--d': 420 }} className="hero-in flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-4">
               <a
                 href="/discord?ref=site-hero"
                 target="_blank"
@@ -87,7 +87,7 @@ export default function HeroSection({ t, lang = 'pt', stats }) {
           </div>
 
           {/* Right Column: Live Bot Terminal Simulator */}
-          <div className="lg:col-span-5 flex justify-center">
+          <div style={{ '--d': 300 }} className="hero-in lg:col-span-5 flex justify-center min-w-0">
             <TerminalSimulator t={t} />
           </div>
 

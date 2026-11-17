@@ -5,6 +5,7 @@
 // Páginas com versão própria em cada idioma (canonical PT -> slug EN).
 const LOCALIZED = {
   '/': '/',
+  '/cringelandia': '/cringelandia',
   '/wiki': '/wiki',
   '/bonus': '/bonus',
   '/tarot': '/tarot',
