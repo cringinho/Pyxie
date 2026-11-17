@@ -1,10 +1,10 @@
-// Recompensa por bump no DISBOARD, só na Cringelândia: `25` moedinhas (pelo teto diário) e mais nada.
-// Regras de economia (docs/agents/05-economia.md):
+// Recompensa por bump no DISBOARD, só na Cringelândia: `25` moedinhas (pelo teto diário) e, raramente,
+// um feijão mágico. Regras de economia (docs/agents/05-economia.md):
 // - permissão: só conta a mensagem "Bump done" do próprio DISBOARD (autoRules3.isBumpDone);
 // - cooldown: um bump premiado a cada 110 min por servidor (o DISBOARD libera de 2 em 2 h), então no
 //   máximo 13 por dia; cada pessoa ainda passa pelo teto diário de moedas da economia;
 // - atomicidade: o estado é gravado ANTES do crédito (reinício no meio não paga duas vezes) e o
-//   crédito sai numa trava só (economy.grantReward).
+//   crédito de moedas + feijão sai numa trava só (economy.grantReward).
 // Estado em data/guilds/<id>/bumpRewards.json. Texto com a voz da Pyxie, sorteado sem repetir (phraseDeck).
 const { EmbedBuilder } = require('discord.js');
 const { CRINGELANDIA_GUILD_ID } = require('../config/scopes');
@@ -14,6 +14,8 @@ const { bumperFrom } = require('./bumpReminder');
 
 const MINUTE = 60000;
 const COINS = 25;
+const BEANS = 1;
+const BEAN_CHANCE = 0.05;
 const MIN_GAP_MS = 110 * MINUTE;
 const NEXT_BUMP_MS = 120 * MINUTE;
 const USER_CAP = 200;
@@ -53,7 +55,7 @@ function normalize(raw = {}) {
 
 // Decide e paga. Síncrono: o envio da mensagem fica com quem chama.
 // Devolve { granted: false, reason } ou { granted: true, userId, coins, beans, capped, nextAt, n }.
-function claim(message, { now = Date.now(), store = require('./autoState'), economy = require('./economy') } = {}) {
+function claim(message, { now = Date.now(), rng = Math.random, store = require('./autoState'), economy = require('./economy') } = {}) {
   const guildId = message?.guild?.id;
   if (!eligible(guildId)) return { granted: false, reason: 'zone' };
   const bumper = bumperFrom(message);
@@ -69,8 +71,8 @@ function claim(message, { now = Date.now(), store = require('./autoState'), econ
   if (messageId) s.recentIds = [...s.recentIds, messageId].slice(-RECENT_IDS);
   store.write(guildId, 'bumpRewards.json', s);
 
-  // Só moedinhas: o bump não sorteia feijão mágico.
-  const paid = economy.grantReward(bumper.id, { coins: COINS, beans: 0 }, now);
+  const beans = rng() < BEAN_CHANCE ? BEANS : 0;
+  const paid = economy.grantReward(bumper.id, { coins: COINS, beans }, now);
 
   const prev = s.byUser[bumper.id] || { n: 0, coins: 0, beans: 0, lastAt: 0, name: '' };
   const name = String(bumper.name || message?.interaction?.user?.username || prev.name || '').slice(0, 40);
@@ -139,6 +141,7 @@ function insights(raw = {}, now = Date.now()) {
   const readyAt = s.lastAt ? s.lastAt + MIN_GAP_MS : 0;
   return {
     coinsPerBump: COINS,
+    beanChance: BEAN_CHANCE,
     totals: s.totals,
     lastAt: s.lastAt || null,
     readyAt: readyAt > now ? readyAt : null,
@@ -146,4 +149,4 @@ function insights(raw = {}, now = Date.now()) {
   };
 }
 
-module.exports = { COINS, MIN_GAP_MS, NEXT_BUMP_MS, USER_CAP, eligible, normalize, claim, buildMessage, insights };
+module.exports = { COINS, BEANS, BEAN_CHANCE, MIN_GAP_MS, NEXT_BUMP_MS, USER_CAP, eligible, normalize, claim, buildMessage, insights };

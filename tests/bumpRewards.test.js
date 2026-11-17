@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-console.log('📣 Testes da recompensa de bump da Cringelândia (25 moedinhas, sem feijão, cooldown e voz)...');
+console.log('📣 Testes da recompensa de bump da Cringelândia (moedas, feijão raro, cooldown e voz)...');
 process.env.PYXIE_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'pyxie-bumpreward-'));
 
 const rewards = require('../src/services/bumpRewards');
@@ -59,7 +59,7 @@ const flat = (embed) => {
     assert.equal(metaResult.userId, USER2);
     console.log('  ✅ 1. Só Cringelândia, só a mensagem do DISBOARD, quem bumpou pela interação.');
 
-    // 2. Paga 25 moedinhas pelo teto, nada de feijão, e cooldown de 110 min por servidor.
+    // 2. Paga 25 moedinhas pelo teto, nada de feijão sem sorte, e cooldown de 110 min por servidor.
     const before = economy.getUserAccount(USER);
     const t1 = T0 + rewards.MIN_GAP_MS;
     const first = rewards.claim(disboard(3), { now: t1, rng: never });
@@ -76,13 +76,13 @@ const flat = (embed) => {
     assert.equal(rewards.claim(disboard(4), { now: t1 + rewards.MIN_GAP_MS - 1 }).reason, 'cooldown');
     console.log('  ✅ 2. 25 moedinhas, sem duplicar e com cooldown de 110 min.');
 
-    // 3. Só moedinhas: nem com o sorteio mais favorável sai feijão mágico.
+    // 3. Feijão raro: ~5% e entra na mesma trava das moedas.
+    assert.equal(rewards.BEAN_CHANCE, 0.05);
     const t2 = t1 + rewards.MIN_GAP_MS;
     const lucky = rewards.claim(disboard(5), { now: t2, rng: always });
-    assert.equal(lucky.coins, 25);
-    assert.equal(lucky.beans, 0);
-    assert.equal(economy.getUserAccount(USER).magicBeans, before.magicBeans);
-    console.log('  ✅ 3. Bump paga só moedinhas (sem feijão mágico).');
+    assert.equal(lucky.beans, 1);
+    assert.equal(economy.getUserAccount(USER).magicBeans, before.magicBeans + 1);
+    console.log('  ✅ 3. Feijão mágico raro creditado junto.');
 
     // 4. Teto diário da economia continua valendo e a mensagem conta a verdade.
     const fake = {
@@ -129,7 +129,7 @@ const flat = (embed) => {
     const body = card.embeds[0].data.description;
     assert.match(body, new RegExp(`<@${USER}>`));
     assert.match(body, /### 🪙 \+`25` moedinhas/);
-    assert.doesNotMatch(body, /feijão mágico/);
+    assert.match(body, /### 🌱 \+`1` feijão mágico/);
     assert.match(body, /<t:\d+:R>/);
     assert.ok(body.includes('\n\n'));
     assert.ok(card.embeds[0].data.footer.text.length > 0);
