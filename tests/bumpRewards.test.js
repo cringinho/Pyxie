@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-console.log('📣 Testes da recompensa de bump da Cringelândia (moedas, feijão raro, cooldown e voz)...');
+console.log('📣 Testes da recompensa de bump da Cringelândia (25 moedinhas, sem feijão, cooldown e voz)...');
 process.env.PYXIE_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'pyxie-bumpreward-'));
 
 const rewards = require('../src/services/bumpRewards');
@@ -59,7 +59,7 @@ const flat = (embed) => {
     assert.equal(metaResult.userId, USER2);
     console.log('  ✅ 1. Só Cringelândia, só a mensagem do DISBOARD, quem bumpou pela interação.');
 
-    // 2. Paga 100 moedinhas pelo teto, nada de feijão sem sorte, e cooldown de 110 min por servidor.
+    // 2. Paga 25 moedinhas pelo teto, nada de feijão, e cooldown de 110 min por servidor.
     const before = economy.getUserAccount(USER);
     const t1 = T0 + rewards.MIN_GAP_MS;
     const first = rewards.claim(disboard(3), { now: t1, rng: never });
@@ -69,31 +69,33 @@ const flat = (embed) => {
     assert.equal(first.capped, false);
     assert.equal(first.nextAt, t1 + rewards.NEXT_BUMP_MS);
     const after = economy.getUserAccount(USER);
-    assert.equal(after.coins - before.coins, 100);
+    assert.equal(rewards.COINS, 25);
+    assert.equal(after.coins - before.coins, 25);
     assert.equal(after.magicBeans, before.magicBeans);
     assert.equal(rewards.claim(disboard(3), { now: t1 + 1 }).reason, 'duplicate', 'Mesma mensagem não paga duas vezes');
     assert.equal(rewards.claim(disboard(4), { now: t1 + rewards.MIN_GAP_MS - 1 }).reason, 'cooldown');
-    console.log('  ✅ 2. 100 moedinhas, sem duplicar e com cooldown de 110 min.');
+    console.log('  ✅ 2. 25 moedinhas, sem duplicar e com cooldown de 110 min.');
 
-    // 3. Feijão raro: ~5% e entra na mesma trava das moedas.
-    assert.equal(rewards.BEAN_CHANCE, 0.05);
+    // 3. Só moedinhas: nem com o sorteio mais favorável sai feijão mágico.
     const t2 = t1 + rewards.MIN_GAP_MS;
     const lucky = rewards.claim(disboard(5), { now: t2, rng: always });
-    assert.equal(lucky.beans, 1);
-    assert.equal(economy.getUserAccount(USER).magicBeans, before.magicBeans + 1);
-    console.log('  ✅ 3. Feijão mágico raro creditado junto.');
+    assert.equal(lucky.coins, 25);
+    assert.equal(lucky.beans, 0);
+    assert.equal(economy.getUserAccount(USER).magicBeans, before.magicBeans);
+    console.log('  ✅ 3. Bump paga só moedinhas (sem feijão mágico).');
 
     // 4. Teto diário da economia continua valendo e a mensagem conta a verdade.
     const fake = {
       dailyCoinCap: () => 500,
-      grantReward: (_id, { beans }) => ({ coinsAdded: 30, beansAdded: beans, coins: 530, magicBeans: 0 }),
+      // Pagamento parcial: o teto diário só deixou entrar parte das 25 moedinhas.
+      grantReward: (_id, { beans }) => ({ coinsAdded: 10, beansAdded: beans, coins: 510, magicBeans: 0 }),
     };
     const store = { data: {}, read: (g, n) => store.data[`${g}/${n}`] || {}, write: (g, n, v) => (store.data[`${g}/${n}`] = JSON.parse(JSON.stringify(v))) };
     const partial = rewards.claim(disboard(6), { now: T0, rng: never, store, economy: fake });
-    assert.equal(partial.coins, 30);
+    assert.equal(partial.coins, 10);
     assert.equal(partial.capped, true);
     const partialCard = flat(rewards.buildMessage(partial, 'pt').embeds[0]);
-    assert.match(partialCard, /`30`/);
+    assert.match(partialCard, /`10`/);
     assert.match(partialCard, /teto diário de `500`/);
     const zero = rewards.buildMessage({ ...partial, coins: 0 }, 'en').embeds[0];
     assert.match(flat(zero), /paid in gratitude/);
@@ -126,13 +128,13 @@ const flat = (embed) => {
     assert.deepEqual(card.allowedMentions, { parse: [], users: [], roles: [], repliedUser: false });
     const body = card.embeds[0].data.description;
     assert.match(body, new RegExp(`<@${USER}>`));
-    assert.match(body, /### 🪙 \+`100` moedinhas/);
-    assert.match(body, /### 🌱 \+`1` feijão mágico/);
+    assert.match(body, /### 🪙 \+`25` moedinhas/);
+    assert.doesNotMatch(body, /feijão mágico/);
     assert.match(body, /<t:\d+:R>/);
     assert.ok(body.includes('\n\n'));
     assert.ok(card.embeds[0].data.footer.text.length > 0);
     const enBody = rewards.buildMessage(first, 'en').embeds[0].data.description;
-    assert.match(enBody, /\+`100` coins/);
+    assert.match(enBody, /\+`25` coins/);
     assert.doesNotMatch(enBody, /magic bean/);
     deck._reset();
     const seen = [];
@@ -150,9 +152,9 @@ const flat = (embed) => {
     assert.ok(sent[0].embeds?.length === 1);
     assert.deepEqual(sent[0].allowedMentions.parse, []);
     const panel = rewards.insights(saved, Date.now());
-    assert.equal(panel.coinsPerBump, 100);
+    assert.equal(panel.coinsPerBump, 25);
     assert.ok(panel.top.find((u) => u.id === USER));
-    assert.ok(panel.totals.coins >= 300);
+    assert.ok(panel.totals.coins >= 75);
     console.log('  ✅ 6. Módulo, cartão único e números do painel.');
 
     console.log('📣 Recompensa de bump: tudo certo.');

@@ -322,7 +322,7 @@ function BumpRewards({ t, rewards }) {
     <div className="space-y-2.5 rounded-xl border border-mystic-violet/40 bg-mystic-violet/10 px-3 py-3 text-xs">
       <p className="font-semibold text-white">{t('auto.bumpReminder.reward.title')}</p>
       <p className="text-white/60">
-        {t('auto.bumpReminder.reward.rule', { coins: rewards.coinsPerBump, chance: Math.round((rewards.beanChance || 0) * 100) })}
+        {t('auto.bumpReminder.reward.rule', { coins: rewards.coinsPerBump })}
       </p>
       <div className="grid grid-cols-3 gap-2">
         {tiles.map(([label, value]) => (
