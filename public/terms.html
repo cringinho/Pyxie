@@ -547,29 +547,7 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
   <!-- Header / Navbar -->
-  <header class="navbar">
-    <div class="container nav-wrapper">
-      <a href="/" class="nav-brand" title="Voltar à página inicial">
-        <img src="/assets/pyxie/pyxie_pixelart_face.png" class="brand-icon" alt="Pyxie" />
-        <span class="brand-text">Pyxie</span>
-      </a>
-
-      <div class="nav-actions">
-        <a href="/" class="btn-nav btn-home">
-          <span>🏠</span> <span data-i18n="nav.home">Página Inicial</span>
-        </a>
-        <a href="/wiki" class="btn-nav btn-home">
-          <span>📖</span> <span data-i18n="nav.wiki">Wiki Oficial</span>
-        </a>
-        <button id="langToggle" class="btn-nav btn-lang" onclick="toggleLanguage()">
-          <span>🇧🇷</span> <span>PT-BR</span>
-        </button>
-        <a href="/discord" target="_blank" rel="noopener noreferrer" class="btn-nav btn-discord">
-          <span>💬</span> <span>Cringelândia</span>
-        </a>
-      </div>
-    </div>
-  </header>
+  <!--pyx:header-->
 
   <!-- Main Container -->
   <main class="container">
@@ -780,20 +758,7 @@
   </main>
 
   <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-links">
-        <a href="/" class="footer-link" data-i18n="nav.home">Página Inicial</a>
-        <a href="/wiki" class="footer-link" data-i18n="nav.wiki">Wiki Oficial</a>
-        <a href="/tarot" class="footer-link">Tarot Online</a>
-        <a href="/termos" class="footer-link" style="color: var(--pink-glow); font-weight: 700;">Termos & Segurança</a>
-        <a href="/discord" target="_blank" rel="noopener noreferrer" class="footer-link">Cringelândia Discord</a>
-      </div>
-      <p class="footer-credits" data-i18n="footer.credits">
-        Pyxie &copy; 2026 • Comunidade Cringelândia. Um lugar seguro para quem acha que o mundo é barulhento demais.
-      </p>
-    </div>
-  </footer>
+  <!--pyx:footer-->
 
   <script>
     const I18N = {
@@ -872,9 +837,8 @@
     function initLang() {
       const urlParams = new URLSearchParams(window.location.search);
       const urlLang = urlParams.get('lang');
-      const savedLang = localStorage.getItem('pyxie_lang');
-      const browserLang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
-      currentLang = urlLang || savedLang || browserLang;
+      // A URL decide o idioma (o servidor já escreveu <html lang>), igual ao cabeçalho.
+      currentLang = urlLang || (document.documentElement.lang.toLowerCase().startsWith('en') ? 'en' : 'pt');
       if (currentLang !== 'en') currentLang = 'pt';
       applyLang(currentLang);
     }
@@ -892,7 +856,6 @@
       if (langBtn) {
         langBtn.innerHTML = lang === 'en' ? '<span>🇺🇸</span> <span>EN-US</span>' : '<span>🇧🇷</span> <span>PT-BR</span>';
       }
-      localStorage.setItem('pyxie_lang', lang);
     }
 
     function toggleLanguage() {

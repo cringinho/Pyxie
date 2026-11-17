@@ -611,3 +611,14 @@ body {
     transform: none;
   }
 }
+
+/* Página hospedeira do app React: o <body> antigo não pode centralizar nem acolchoar o app */
+body.pyx-react-root {
+  display: block !important;
+  padding: 0 !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+body.pyx-react-root > #pyxie-app {
+  width: 100%;
+}

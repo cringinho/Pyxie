@@ -3,15 +3,16 @@ import React from 'react';
 const linkClass = 'block py-1.5 text-sm font-medium text-slate-300 hover:text-pink-400 transition-colors';
 
 export default function Footer({ t, lang = 'pt' }) {
-  // Grupos de links: 2 colunas no celular, 3 no tablet/desktop.
+  // Mesmos grupos e links do rodapé das páginas estáticas (src/utils/siteChrome.js).
   const groups = [
     {
       title: t('footer.groupExplore'),
       links: [
         { href: `/wiki?lang=${lang}`, label: t('footer.wiki') },
         { href: `/bonus?lang=${lang}`, label: t('footer.bonus') },
+        { href: `/planos?lang=${lang}`, label: t('footer.plans') },
+        { href: `/tarot?lang=${lang}`, label: t('footer.tarot') },
         { href: '/install?ref=site-footer', label: t('footer.install'), external: true },
-        { href: '/promo', label: 'Shopee', external: true },
       ],
     },
     {
@@ -27,6 +28,7 @@ export default function Footer({ t, lang = 'pt' }) {
       title: t('footer.groupTrust'),
       links: [
         { href: `/termos?lang=${lang}`, label: t('footer.terms') },
+        { href: `/privacidade?lang=${lang}`, label: t('footer.privacy') },
         { href: `/pais-e-profissionais?lang=${lang}`, label: t('footer.parents') },
         { href: `/transparencia?lang=${lang}`, label: t('footer.transparency') },
       ],

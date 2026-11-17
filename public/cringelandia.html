@@ -86,7 +86,7 @@
 
   <style>
     :root {
-      --bg-dark: #0b0714;
+      --bg-dark: #07040d;
       --bg-surface: #140d24;
       --bg-card: #1c1333;
       --bg-card-hover: #261944;
@@ -105,7 +105,7 @@
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 20px;
-      --font-stack: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-stack: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     }
 
     * {
@@ -123,6 +123,9 @@
       overflow-x: hidden;
       position: relative;
     }
+
+    /* Títulos em Outfit, como no resto do site */
+    h1, h2, h3 { font-family: 'Outfit', var(--font-stack); }
 
     @media (prefers-reduced-motion: reduce) {
       *, ::before, ::after {
@@ -1625,6 +1628,56 @@
       font-size: 12px;
       color: #64748b;
     }
+    /* Barra de seções (rola na horizontal no celular) */
+    .crg-sections {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0 28px;
+      padding: 8px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      background: rgba(18, 10, 34, 0.6);
+    }
+    .crg-sections-track {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+      mask-image: linear-gradient(90deg, #000 88%, transparent);
+    }
+    .crg-sections-track::-webkit-scrollbar { display: none; }
+    .crg-sec-link {
+      flex-shrink: 0;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color 0.2s, background-color 0.2s;
+    }
+    .crg-sec-link:hover,
+    .crg-sec-link:focus-visible { color: #fff; background: rgba(168, 85, 247, 0.15); }
+    .crg-sections .nav-join { flex-shrink: 0; white-space: nowrap; }
+    @media (max-width: 640px) {
+      .crg-sections { margin: 12px 0 20px; }
+      /* No celular o convite grande do topo já cumpre esse papel: sem botão repetido */
+      .crg-sections .nav-join { display: none; }
+    }
+    .crg-disclaimer {
+      margin-top: 56px;
+      padding: 18px 20px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background: rgba(18, 10, 34, 0.55);
+      text-align: center;
+    }
+    .crg-disclaimer .footer-disclaimer { margin: 0 auto; font-size: 13px; color: var(--text-muted); line-height: 1.7; }
   </style>
   <script src="/js/truthHydrator.js" defer></script>
   <style id="pyxie-text-fallback">
@@ -1655,29 +1708,21 @@
 </head>
 <body>
 
+  <!--pyx:header-->
+
   <div class="page-wrap">
-    <!-- Navbar -->
-    <header class="site-nav">
-      <a href="/" class="nav-brand" aria-label="Página Inicial da Pyxie">
-        <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Logotipo Oficial da Pyxie" width="44" height="44" />
-        <div class="nav-brand-text">
-          <span class="nav-brand-title">Pyxie & Cringelândia</span>
-          <span class="nav-brand-subtitle">Comunidade & Acolhimento</span>
-        </div>
-      </a>
-      <nav class="nav-links">
-        <a href="#manifesto" class="nav-link" data-i18n="nav.manifesto">Manifesto</a>
-        <a href="#enciclopedia" class="nav-link" data-i18n="nav.enciclopedia">Enciclopédia</a>
-        <a href="#autoajuda" class="nav-link" data-i18n="nav.help">Canais de Apoio</a>
-        <a href="#ciptea" class="nav-link" data-i18n="nav.ciptea">Guia CIPTEA</a>
-        <a href="#laudo" class="nav-link" data-i18n="nav.laudo">Laudo Válido</a>
-        <a href="#comunidade" class="nav-link" data-i18n="nav.community">Discord & Roblox</a>
-        <a href="/discord?ref=cringelandia-nav" class="nav-join" target="_blank" rel="noopener noreferrer" data-i18n="nav.join">Entrar no Discord</a>
-        <button class="lang-toggle" id="langToggleBtn" onclick="toggleLanguage()" aria-label="Alternar Idioma">
-          🌐 <span id="langLabel">EN</span>
-        </button>
-      </nav>
-    </header>
+    <!-- Seções desta página (o menu do site é o cabeçalho global) -->
+    <nav class="crg-sections" aria-label="Seções da Cringelândia">
+      <div class="crg-sections-track">
+        <a href="#manifesto" class="crg-sec-link" data-i18n="nav.manifesto">Manifesto</a>
+        <a href="#enciclopedia" class="crg-sec-link" data-i18n="nav.enciclopedia">Enciclopédia</a>
+        <a href="#autoajuda" class="crg-sec-link" data-i18n="nav.help">Canais de Apoio</a>
+        <a href="#ciptea" class="crg-sec-link" data-i18n="nav.ciptea">Guia CIPTEA</a>
+        <a href="#laudo" class="crg-sec-link" data-i18n="nav.laudo">Laudo Válido</a>
+        <a href="#comunidade" class="crg-sec-link" data-i18n="nav.community">Discord & Roblox</a>
+      </div>
+      <a href="/discord?ref=cringelandia-nav" class="nav-join" target="_blank" rel="noopener noreferrer" data-i18n="nav.join">Entrar no Discord</a>
+    </nav>
 
     <!-- 1. Hero & Institutional Positioning -->
     <section class="hero-section" id="manifesto">
@@ -2479,22 +2524,15 @@
     </section>
 
     <!-- Footer -->
-    <footer class="site-footer">
-      <div class="footer-links">
-        <a href="/">Home</a>
-        <a href="/wiki">Grimório & Wiki</a>
-        <a href="/museu">Museu Comunitário</a>
-        <a href="/parcerias">Parcerias</a>
-        <a href="/bonus">Bônus Diário</a>
-        <a href="/termos">Termos de Uso</a>
-        <a href="/privacidade">Privacidade & LGPD</a>
-      </div>
-      <p>© 2026 Cringelândia & Pyxie Bot • Desenvolvido com carinho e acolhimento para mentes neurodivergentes.</p>
+    <!-- Aviso de utilidade pública (segurança): fica visível acima do rodapé global -->
+    <aside class="crg-disclaimer" role="note">
       <p class="footer-disclaimer">
         Aviso de Utilidade Pública: A Cringelândia é uma iniciativa comunitária de suporte mútuo e acolhimento voluntário. Nossos canais não substituem acompanhamento médico, psiquiátrico ou psicológico individualizado. Em caso de emergência, acione o SAMU (192) ou o CVV (188).
       </p>
-    </footer>
+    </aside>
   </div>
+
+  <!--pyx:footer-->
 
   <script>
     // Dicionário Front-end de Paridade Bilíngue (PT-BR & EN)
@@ -2693,8 +2731,8 @@
       const urlParams = new URLSearchParams(window.location.search);
       const queryLang = urlParams.get('lang');
       if (queryLang === 'en' || queryLang === 'pt') return queryLang;
-      const navLang = navigator.language || navigator.userLanguage || '';
-      return navLang.toLowerCase().startsWith('en') ? 'en' : 'pt';
+      // A URL decide o idioma (o servidor já escreveu <html lang>), igual ao cabeçalho.
+      return document.documentElement.lang.toLowerCase().startsWith('en') ? 'en' : 'pt';
     }
 
     function applyLanguage(lang) {

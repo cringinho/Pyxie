@@ -86,7 +86,8 @@
     "node tests/storefrontFlow.test.js",
     "node tests/pyxieDevsSetup.test.js",
     "node tests/siteLangZone.test.js",
+    "node tests/siteChrome.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-11-16T14:20:28.937Z"
+  "updatedAt": "2026-11-17T12:17:54.979Z"
 }

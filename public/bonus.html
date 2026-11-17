@@ -1309,16 +1309,18 @@
       function resolveInitialLang() {
         const langParam = urlParams.get('lang');
         const savedLang = getSavedLang();
-        const browserLang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
+        // Mesma regra do app React (client/src/utils/zone.js): ?lang > /en > escolha salva > inglês, o padrão do portal.
+        const pathLang = /^\/en(\/|$)/i.test(window.location.pathname) ? 'en' : null;
 
         if (langParam === 'pt' || langParam === 'en') {
           setSavedLang(langParam);
           return langParam;
         }
+        if (pathLang) return pathLang;
         if (savedLang === 'pt' || savedLang === 'en') {
           return savedLang;
         }
-        return browserLang;
+        return 'en';
       }
 
       let userLang = resolveInitialLang();
@@ -1354,7 +1356,6 @@
 
       function applyLang(lang) {
         userLang = (lang === 'en' || lang === 'pt') ? lang : 'pt';
-        setSavedLang(userLang);
         document.documentElement.lang = userLang === 'pt' ? 'pt-BR' : 'en';
         document.body.classList.toggle('lang-pt', userLang === 'pt');
         document.body.classList.toggle('lang-en', userLang === 'en');

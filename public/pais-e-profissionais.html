@@ -120,13 +120,16 @@
     body {
       background: radial-gradient(circle at top center, #1b0c2e 0%, #07040d 70%);
       color: var(--text);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.65;
       min-height: 100vh;
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
     }
+
+    /* Tipografia padrão do site: Plus Jakarta Sans no texto, Outfit nos títulos */
+    h1, h2, h3 { font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; letter-spacing: -0.01em; }
 
     header {
       background: rgba(7, 4, 13, 0.85);
@@ -347,25 +350,7 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
 
-  <header>
-    <a href="/" class="brand">
-      <img src="/assets/pyxie/sticker/sticker_smile.png" alt="Avatar da Pyxie" width="36" height="36" />
-      <span>Pyxie</span>
-    </a>
-    <div class="nav-links">
-      <a href="/" data-i18n="nav.home">Início</a>
-      <a href="/tarot" data-i18n="nav.tarot">Tarot</a>
-      <a href="/wiki" data-i18n="nav.wiki">Wiki</a>
-      <a href="/parcerias" data-i18n="nav.partners">Parcerias</a>
-      <a href="/museu" data-i18n="nav.museum">Museu</a>
-      <a href="/termos" data-i18n="nav.terms">Termos</a>
-      <a href="/pais-e-profissionais" data-i18n="nav.parents">Para pais</a>
-      <a href="/transparencia" data-i18n="nav.transparency">Transparência</a>
-      <button id="langToggleBtn" class="lang-btn" onclick="toggleLanguage()">
-        🌐 <span id="langBtnText">EN</span>
-      </button>
-    </div>
-  </header>
+  <!--pyx:header-->
 
   <main>
     <div class="hero-box">
@@ -428,20 +413,7 @@
 
   </main>
 
-  <footer>
-    <div class="footer-links">
-      <a href="/" data-i18n="nav.home">Início</a>
-      <a href="/tarot" data-i18n="nav.tarot">Tarot</a>
-      <a href="/wiki" data-i18n="nav.wiki">Wiki</a>
-      <a href="/parcerias" data-i18n="nav.partners">Parcerias</a>
-      <a href="/museu" data-i18n="nav.museum">Museu</a>
-      <a href="/termos" data-i18n="nav.terms">Termos de Uso</a>
-      <a href="/privacidade" data-i18n="nav.privacy">Política de Privacidade</a>
-      <a href="/pais-e-profissionais" data-i18n="nav.parents">Para pais</a>
-      <a href="/transparencia" data-i18n="nav.transparency">Transparência</a>
-    </div>
-    <p>© 2026 Pyxie • Cringelândia. Todos os direitos reservados. Feito com amor e magia.</p>
-  </footer>
+  <!--pyx:footer-->
 
   <script>
     const I18N = {
@@ -539,7 +511,6 @@
       document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
       const btnText = document.getElementById('langBtnText');
       if (btnText) btnText.textContent = lang === 'en' ? 'PT' : 'EN';
-      try { localStorage.setItem('pyxie_lang', lang); } catch (_) {}
       document.dispatchEvent(new CustomEvent('pyxie:lang', { detail: lang }));
     }
 
@@ -551,9 +522,8 @@
     (function init() {
       const urlParams = new URLSearchParams(window.location.search);
       const queryLang = urlParams.get('lang');
-      const savedLang = localStorage.getItem('pyxie_lang');
-      const browserLang = (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'pt';
-      const initial = (queryLang === 'en' || queryLang === 'pt') ? queryLang : (savedLang || browserLang);
+      // A URL decide o idioma (o servidor já escreveu <html lang>), igual ao cabeçalho.
+      const initial = (queryLang === 'en' || queryLang === 'pt') ? queryLang : (document.documentElement.lang.toLowerCase().startsWith('en') ? 'en' : 'pt');
       applyLanguage(initial);
     })();
   </script>

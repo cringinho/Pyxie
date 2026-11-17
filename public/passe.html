@@ -44,13 +44,14 @@
       }
     </script>
     <style>
-      :root { --bg: #120b1f; --card: #1d1330; --line: #33244d; --text: #f3e8ff; --muted: #b9a7d6; --accent: #a78bfa; --pink: #f472b6; --ok: #34d399; --warn: #fbbf24; }
+      :root { --bg: #07040d; --card: #1d1330; --line: #33244d; --text: #f3e8ff; --muted: #b9a7d6; --accent: #a78bfa; --pink: #f472b6; --ok: #34d399; --warn: #fbbf24; }
       * { box-sizing: border-box; }
-      body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; }
-      header { max-width: 900px; margin: 0 auto; padding: 32px 16px 8px; display: flex; gap: 16px; align-items: center; }
-      header img { width: 72px; height: 72px; border-radius: 18px; }
-      h1 { font-size: 1.8rem; margin: 0; }
-      header p { margin: 4px 0 0; color: var(--muted); }
+      body { margin: 0; background: radial-gradient(circle at 50% -15%, #3b1464 0%, rgba(14, 7, 26, 0.98) 45%, var(--bg) 100%) fixed, var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; }
+      .page-hero { max-width: 900px; margin: 0 auto; padding: 32px 16px 8px; display: flex; gap: 16px; align-items: center; }
+      .page-hero img { width: 72px; height: 72px; border-radius: 18px; }
+      h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 5vw, 2.1rem); line-height: 1.15; margin: 0; }
+      h2, h3 { font-family: 'Outfit', sans-serif; }
+      .page-hero p { margin: 4px 0 0; color: var(--muted); }
       main { max-width: 900px; margin: 0 auto; padding: 8px 16px 48px; }
       h2 { font-size: 1.2rem; margin: 28px 0 12px; }
       .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
@@ -68,7 +69,6 @@
       ul { padding-left: 20px; }
       li { margin-bottom: 8px; }
       a { color: var(--accent); }
-      .lang { margin-left: auto; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; cursor: pointer; }
     </style>
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
@@ -101,14 +101,14 @@
   </style>
 </head>
   <body>
-    <header>
+    <!--pyx:header-->
+    <section class="page-hero">
       <img src="/assets/pyxie/pyxie_pixelart.png" alt="Pyxie em pixel art segurando o Passe" width="72" height="72" />
       <div>
         <h1 data-i18n="title">Passe da Pyxie: 50 níveis todo mês</h1>
         <p id="subtitle" class="muted">…</p>
       </div>
-      <button class="lang" id="langBtn" type="button">EN</button>
-    </header>
+    </section>
     <main>
       <div id="statusBox"></div>
 
@@ -219,7 +219,8 @@
       const params = new URLSearchParams(location.search);
       const token = params.get('token') || '';
       const status = params.get('status') || '';
-      let lang = params.get('lang') || ((navigator.language || 'pt').toLowerCase().startsWith('pt') ? 'pt' : 'en');
+      // A URL decide o idioma (o servidor já escreveu <html lang>), igual ao cabeçalho.
+      let lang = params.get('lang') || (document.documentElement.lang.toLowerCase().startsWith('en') ? 'en' : 'pt');
       if (!I18N[lang]) lang = 'pt';
 
       const fill = (text, values) => text.replace(/\{(\w+)\}/g, (_, key) => (values[key] ?? `{${key}}`));
@@ -249,7 +250,6 @@
         const dict = I18N[lang];
         document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
         document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = dict[el.dataset.i18n] || el.textContent; });
-        document.getElementById('langBtn').textContent = dict.btn;
         const statusKey = { ok: 'statusOk', pending: 'statusPending', fail: 'statusFail', cancel: 'statusCancel' }[status];
         document.getElementById('statusBox').innerHTML = statusKey ? `<div class="notice ${status === 'ok' ? 'ok' : 'warn'}">${dict[statusKey]}</div>` : '';
         try {
@@ -290,14 +290,8 @@
         }
       }
 
-      document.getElementById('langBtn').addEventListener('click', () => {
-        lang = lang === 'pt' ? 'en' : 'pt';
-        const next = new URLSearchParams(location.search);
-        next.set('lang', lang);
-        history.replaceState(null, '', `?${next.toString()}`);
-        render();
-      });
       render();
     </script>
+    <!--pyx:footer-->
   </body>
 </html>

@@ -31,27 +31,23 @@
   <style>
     :root { --bg:#0b0614; --card:#170f26; --line:rgba(168,85,247,.28); --pink:#ec4899; --violet:#8b5cf6; --text:#f8fafc; --muted:#c2b8d8; }
     * { box-sizing: border-box; }
-    body { margin:0; background: radial-gradient(circle at 15% 0%, #24103d 0%, var(--bg) 55%); color:var(--text); font-family: 'Outfit', system-ui, sans-serif; line-height:1.6; }
+    body { margin:0; background: radial-gradient(circle at 15% 0%, #24103d 0%, var(--bg) 55%); color:var(--text); font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height:1.6; }
     .wrap { max-width: 980px; margin: 0 auto; padding: 32px 18px 56px; }
-    .top { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
-    .lang { border:1px solid var(--line); border-radius:999px; padding:6px 14px; color:var(--text); text-decoration:none; font-size:.9rem; }
-    h1 { font-family:'Cinzel', serif; font-size: clamp(1.7rem, 5vw, 2.5rem); margin: 22px 0 10px; }
+    h1 { font-family:'Outfit', sans-serif; font-weight:800; letter-spacing:-0.02em; font-size: clamp(1.7rem, 5vw, 2.5rem); margin: 22px 0 10px; }
     p.lead { color:var(--muted); max-width: 62ch; margin:0 0 26px; }
     .grid { display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
     .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px; }
-    .card h2 { margin:0 0 4px; font-size:1.25rem; }
+    .card h2 { font-family:'Outfit', sans-serif; margin:0 0 4px; font-size:1.25rem; }
     .price { font-size:1.6rem; font-weight:700; margin:6px 0 12px; }
     .price small { font-size:.85rem; color:var(--muted); font-weight:400; }
     ul { margin:0 0 16px; padding-left:18px; color:var(--muted); }
     .btn { display:inline-block; padding:11px 18px; border-radius:12px; font-weight:700; color:#fff; text-decoration:none; background:linear-gradient(135deg,var(--violet),var(--pink)); }
     .btn.ghost { background:transparent; border:1px solid var(--line); }
     section { margin-top:30px; }
-    h2.section { font-family:'Cinzel', serif; font-size:1.2rem; margin:0 0 10px; }
+    h2.section { font-family:'Outfit', sans-serif; font-size:1.2rem; margin:0 0 10px; }
     .donors { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px 18px; }
     .donors ol { margin:0; padding-left:20px; color:var(--muted); }
     .hint { color:var(--muted); font-size:.88rem; }
-    footer { margin-top:36px; color:var(--muted); font-size:.88rem; display:flex; gap:16px; flex-wrap:wrap; }
-    footer a { color:var(--muted); }
   </style>
   <style id="pyxie-text-fallback">
     /* Defesa: se o navegador não honrar texto com gradiente, volta para cor sólida. */
@@ -80,12 +76,8 @@
   </style>
 </head>
 <body>
+  <!--pyx:header-->
   <main class="wrap">
-    <div class="top">
-      <a class="lang" href="/planos?lang=pt" hreflang="pt-BR">Português</a>
-      <a class="lang" href="/en/">← Pyxie</a>
-    </div>
-
     <h1>Server plans</h1>
     <p class="lead">Monthly or yearly subscription, cancel anytime. Basic unlocks the <strong>full Pyxie profile</strong> (nickname, photo, banner and bio) plus <strong>1 cyclic message</strong>; Premium adds the <strong>store status</strong>, <strong>up to 10 cyclic messages</strong> and the AI Oracle. Yearly gives you <strong>2 months free</strong>, and the Store Studio comes as a <strong>R$ 3</strong> extra. If the month is not paid, the perks are paused and the owner gets a DM — nothing is deleted.</p>
 
@@ -157,14 +149,8 @@
         <p class="hint" style="margin-top:12px">Donations are voluntary support with no in-game advantage. Anonymous donors are not named.</p>
       </div>
     </section>
-
-    <footer>
-      <a href="/en/terms">Terms</a>
-      <a href="/en/privacy">Privacy</a>
-      <a href="/en/transparency">Transparency</a>
-      <a href="/en/pass">Pyxie Pass</a>
-    </footer>
   </main>
+  <!--pyx:footer-->
   <script>
     fetch('/api/public/donations', { headers: { Accept: 'application/json' } })
       .then((r) => r.json())

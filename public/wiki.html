@@ -1723,16 +1723,18 @@
       const urlParams = new URLSearchParams(window.location.search);
       const urlLang = urlParams.get('lang');
       const savedLang = getSavedLang();
-      const browserLang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
+      // Mesma regra do app React (client/src/utils/zone.js): ?lang > /en > escolha salva > inglês, o padrão do portal.
+      const pathLang = /^\/en(\/|$)/i.test(window.location.pathname) ? 'en' : null;
 
       if (urlLang === 'pt' || urlLang === 'en') {
         setSavedLang(urlLang);
         return urlLang;
       }
+      if (pathLang) return pathLang;
       if (savedLang === 'pt' || savedLang === 'en') {
         return savedLang;
       }
-      return browserLang;
+      return 'en';
     }
 
     function updateWikiSEO(lang) {
@@ -1766,7 +1768,6 @@
 
     function applyLang(lang) {
       currentLang = (lang === 'en' || lang === 'pt') ? lang : 'pt';
-      setSavedLang(currentLang);
       updateWikiSEO(currentLang);
       const dict = I18N[currentLang] || I18N.pt;
       document.querySelectorAll('[data-i18n]').forEach((el) => {

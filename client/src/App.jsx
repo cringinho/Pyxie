@@ -106,8 +106,9 @@ export default function App() {
     }
   }
 
+  // overflow-x-clip (e não hidden): hidden quebra o position: sticky do cabeçalho.
   return (
-    <div className="bg-[#080410] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-pink-500 selection:text-white relative overflow-x-hidden">
+    <div className="bg-[#080410] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-pink-500 selection:text-white relative overflow-x-clip">
       {/* Camada de ambiente: aurora animada, grade e glifos (CSS puro) */}
       <AmbientBackground />
 

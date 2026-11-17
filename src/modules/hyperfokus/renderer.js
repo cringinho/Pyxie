@@ -1,3 +1,6 @@
+const { renderFooter } = require('../../utils/siteChrome');
+// Rodapé e fontes iguais aos do resto do site.
+const SITE_CHROME_ASSETS = '<link rel="stylesheet" href="/css/fonts.css" /><link rel="stylesheet" href="/css/site-chrome.css?v=1" /><script src="/js/site-chrome.js?v=1" defer></script>';
 const { buildArticleSeo, buildHomeSeo, buildAuthorSeo, applyInternalLinks } = require('./seoEngine');
 const { getContextualProducts } = require('./shopeeContext');
 const { markdownToHtml } = require('./markdown');
@@ -34,7 +37,7 @@ function getSharedStyles() {
       --accent-purple: #8B5CF6;
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
-      --reader-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --reader-font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --reader-font-size: 1.125rem;
       --reader-line-height: 1.75;
       --reader-max-width: 780px;
@@ -79,10 +82,12 @@ function getSharedStyles() {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(8, 4, 16, 0.88);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--card-border);
-      height: 64px;
+      background: rgba(8, 4, 16, 0.9);
+      -webkit-backdrop-filter: blur(24px);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(168, 85, 247, 0.22);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      height: 4.5rem;
       display: flex;
       align-items: center;
       padding: 0 1rem;
@@ -437,6 +442,9 @@ function getSharedStyles() {
       padding: 1.5rem;
     }
 
+    .hf-feed { text-align: center; margin: 48px 0 -40px; font-size: 0.85rem; }
+    .hf-feed a { color: var(--text-muted); }
+
     /* Footer */
     .site-footer {
       border-top: 1px solid var(--card-border);
@@ -670,6 +678,7 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
   <style>
     ${getSharedStyles()}
   </style>
+  ${SITE_CHROME_ASSETS}
 </head>
 <body>
   ${renderSiteHeader({ lang, user, path: activeTag ? `/hyperfokus/categoria/${encodeURIComponent(activeTag)}` : '/hyperfokus' })}
@@ -828,17 +837,8 @@ function renderHomePage({ articles = [], total = 0, page = 1, totalPages = 1, ac
     </div>
   </aside>
 
-  <footer class="site-footer">
-    <div class="footer-links">
-      <a href="/">${isEn ? 'Home' : 'Início'}</a>
-      <a href="/hyperfokus${isEn ? '?lang=en' : ''}">Blog Hyperfokus</a>
-      <a href="/wiki${isEn ? '?lang=en' : ''}">Wiki</a>
-      <a href="/termos${isEn ? '?lang=en' : ''}">${isEn ? 'Terms' : 'Termos'}</a>
-      <a href="/privacidade${isEn ? '?lang=en' : ''}">${isEn ? 'Privacy' : 'Privacidade'}</a>
-      <a href="/hyperfokus/rss.xml${isEn ? '?lang=en' : ''}">RSS Feed</a>
-    </div>
-    <p>Pyxie Hyperfokus • Santuário de Mentes Livres & Conteúdo Autêntico</p>
-  </footer>
+  <p class="hf-feed"><a href="/hyperfokus/rss.xml${isEn ? '?lang=en' : ''}">RSS Feed</a></p>
+  ${renderFooter({ lang })}
   ${getTrackingScript('global')}
 </body>
 </html>`;
@@ -890,6 +890,7 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
   <style>
     ${getSharedStyles()}
   </style>
+  ${SITE_CHROME_ASSETS}
 </head>
 <body>
   <!-- Header do Site -->
@@ -1098,9 +1099,7 @@ function renderArticlePage({ article, lang = 'pt', user = null } = {}) {
     </div>
   </aside>
 
-  <footer class="site-footer">
-    <p>Pyxie Hyperfokus • Santuário de Mentes Livres</p>
-  </footer>
+  ${renderFooter({ lang })}
 
   ${getReaderScript()}
 
@@ -1356,6 +1355,7 @@ function renderStaticInfoPage({ pageKey = 'como-participar', lang = 'pt', user =
   <meta property="og:image" content="https://pyxie.com.br/assets/pyxie/sticker/sticker_smile.png">
   <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: title, description, url: canonical, inLanguage: isEn ? 'en' : 'pt-BR' })}</script>
   <style>${getSharedStyles()}</style>
+  ${SITE_CHROME_ASSETS}
 </head>
 <body>
   ${renderSiteHeader({ lang, user, path: `/hyperfokus/${pageKey}` })}
@@ -1388,9 +1388,7 @@ function renderStaticInfoPage({ pageKey = 'como-participar', lang = 'pt', user =
     </div>
   </aside>
 
-  <footer class="site-footer">
-    <p>Pyxie Hyperfokus • Santuário de Mentes Livres</p>
-  </footer>
+  ${renderFooter({ lang })}
 </body>
 </html>`;
 }
@@ -1441,6 +1439,7 @@ function renderLoginPage({ lang = 'pt', redirect = '/meu-perfil', error = null, 
     .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
     .alert-success { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; }
   </style>
+  ${SITE_CHROME_ASSETS}
 </head>
 <body>
   <header class="site-header">
@@ -1592,6 +1591,7 @@ function renderRegisterPage({ lang = 'pt', redirect = '/meu-perfil', error = nul
     .alert-box { padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 0.85rem; margin-bottom: 1.5rem; text-align: left; }
     .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
   </style>
+  ${SITE_CHROME_ASSETS}
 </head>
 <body>
   <header class="site-header">
@@ -1764,6 +1764,7 @@ function renderProfilePage({ account, stats, lang = 'pt', message = null, error 
     .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
     .status-draft { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
   </style>
+  ${SITE_CHROME_ASSETS}
 </head>
 <body>
   <header class="site-header">
@@ -2190,6 +2191,7 @@ function renderWebEditorPage({ account, draft = null, lang = 'pt' } = {}) {
       margin-bottom: 1.25rem;
     }
   </style>
+  ${SITE_CHROME_ASSETS}
 </head>
 <body>
   <header class="site-header">
@@ -2466,6 +2468,7 @@ function renderAuthorPage({ author, articles = [], lang = 'pt', user = null } = 
   <meta name="twitter:card" content="summary">
   <script type="application/ld+json">${JSON.stringify(seo.jsonLd).replace(/</g, '\\u003c')}</script>
   <style>${getSharedStyles()}</style>
+  ${SITE_CHROME_ASSETS}
 </head>
 <body>
   ${renderSiteHeader({ lang, user, path: `/hyperfokus/autor/${encodeURIComponent(author.userId)}` })}
@@ -2485,13 +2488,7 @@ function renderAuthorPage({ author, articles = [], lang = 'pt', user = null } = 
     <h2 style="font-size:1.5rem; font-weight:900; color:#fff; margin-bottom:1rem;">${isEn ? `Articles by ${escapeHtml(name)}` : `Artigos de ${escapeHtml(name)}`}</h2>
     <div class="bento-grid">${cardsHtml}</div>
   </main>
-  <footer class="site-footer">
-    <div class="footer-links">
-      <a href="/${q}">${isEn ? 'Pyxie home' : 'Início da Pyxie'}</a>
-      <a href="/hyperfokus${q}">Blog Hyperfokus</a>
-      <a href="/hyperfokus/como-participar${q}">${isEn ? 'How to publish' : 'Como publicar'}</a>
-    </div>
-  </footer>
+  ${renderFooter({ lang })}
 </body>
 </html>`;
 }
@@ -2528,6 +2525,7 @@ function renderWelcomePage({ account, next = '/meu-perfil', lang = 'pt' } = {}) 
     .pyx-option img { flex:none; object-fit:contain; }
     @media (prefers-reduced-motion: reduce) { .pyx-option { transition:none; } .pyx-option:hover { transform:none; } }
   </style>
+  ${SITE_CHROME_ASSETS}
 </head>
 <body>
   <main class="main-container" style="max-width:680px;">
@@ -2605,6 +2603,7 @@ function renderPartnerFormPage({ account, schemas = {}, lang = 'pt' } = {}) {
     textarea.pf-input { min-height: 110px; resize: vertical; }
     .pf-error { display: none; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); color: #fecaca; border-radius: 0.75rem; padding: 0.75rem 1rem; margin-bottom: 1rem; }
   </style>
+  ${SITE_CHROME_ASSETS}
 </head>
 <body>
   ${renderSiteHeader({ lang, user: account, path: '/meu-perfil/divulgar' })}

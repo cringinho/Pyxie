@@ -50,6 +50,22 @@ const HOST = process.env.HOST || '127.0.0.1';
 const appRoot = __dirname;
 const publicDir = path.join(__dirname, 'public');
 
+// Páginas de erro (404/500) com o cabeçalho e o rodapé do site, no idioma da URL.
+const { applySiteChrome } = require('./src/utils/siteChrome');
+function sendErrorPage(req, res, status) {
+  const fallback = status === 404 ? '404 Not Found' : '500 Internal Server Error';
+  try {
+    const file = path.join(publicDir, `${status}.html`);
+    if (!fs.existsSync(file)) return res.status(status).send(fallback);
+    const lang = /^\/en(\/|$)/i.test(String(req.path || '')) ? 'en' : 'pt';
+    let html = fs.readFileSync(file, 'utf8');
+    if (lang === 'en') html = html.replace(/<html\s+lang=["']pt-BR["']/i, '<html lang="en"');
+    return res.status(status).type('html').send(applySiteChrome(html, { lang }));
+  } catch (_) {
+    return res.status(status).send(fallback);
+  }
+}
+
 let botProcess = null;
 let botLogs = [];
 let botStartTime = null;
@@ -549,7 +565,7 @@ const tarotCardPage = (lang) => (req, res) => {
   const asked = String(req.query.lang || '').toLowerCase();
   const resolved = tarotCardPages.resolveCardRequest(req.params.slug);
   if (resolved.redirect) return res.redirect(301, resolved.redirect);
-  if (!resolved.card) return res.status(404).sendFile(path.join(publicDir, '404.html'));
+  if (!resolved.card) return sendErrorPage(req, res, 404);
   const wanted = asked === 'en' ? 'en' : asked === 'pt' ? 'pt' : lang;
   if (wanted !== lang) {
     return res.redirect(301, `${wanted === 'en' ? '/en' : ''}/tarot/carta/${resolved.card.slug}`);
@@ -806,7 +822,7 @@ app.get('/u/:userId', (req, res) => {
   const userId = String(req.params.userId || '').trim();
   const uHtmlPath = path.join(publicDir, 'u.html');
   if (!fs.existsSync(uHtmlPath)) {
-    return res.status(404).sendFile(path.join(publicDir, '404.html'));
+    return sendErrorPage(req, res, 404);
   }
 
   let html = fs.readFileSync(uHtmlPath, 'utf8');
@@ -1776,9 +1792,7 @@ app.use((req, res) => {
 
   // Fim das rotas conhecidas: 404 de verdade (antes a home respondia 200 aqui, o que
   // gerava "soft 404" no Search Console).
-  const file404 = path.join(publicDir, '404.html');
-  if (fs.existsSync(file404)) return res.status(404).sendFile(file404);
-  return res.status(404).send('404 Not Found');
+  return sendErrorPage(req, res, 404);
 });
 
 function ensureSshKeys() {
@@ -1831,11 +1845,7 @@ app.use((req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ success: false, error: 'Endpoint não encontrado.' });
   }
-  const file404 = path.join(publicDir, '404.html');
-  if (fs.existsSync(file404)) {
-    return res.status(404).sendFile(file404);
-  }
-  return res.status(404).send('404 Not Found');
+  return sendErrorPage(req, res, 404);
 });
 
 // Handler para erros internos do servidor (500)
@@ -1844,11 +1854,7 @@ app.use((err, req, res, next) => {
   if (req.path.startsWith('/api/')) {
     return res.status(500).json({ success: false, error: 'Erro interno no servidor.' });
   }
-  const file500 = path.join(publicDir, '500.html');
-  if (fs.existsSync(file500)) {
-    return res.status(500).sendFile(file500);
-  }
-  return res.status(500).send('500 Internal Server Error');
+  return sendErrorPage(req, res, 500);
 });
 
 const server = app.listen(PORT, HOST, () => {
