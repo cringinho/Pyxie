@@ -63,6 +63,7 @@ const { sendGuildWelcome, isWelcomeLanguageButton, handleWelcomeLanguageButton }
 const { startBotListStats } = require('./src/services/botListStats');
 const achievements = require('./src/services/achievements');
 const guildFeatures = require('./src/services/guildFeatures');
+const restrictedMode = require('./src/services/restrictedMode');
 const achievementsCommand = require('./src/commands/conquistas');
 const {
   onGuildMemberAdd: onCheckinMemberAdd,
@@ -277,7 +278,35 @@ async function postTarotDailyAnnouncement(now = Date.now(), { force = false } = 
   console.log(`[TarotScheduler] Anúncio do Tarot publicado com sucesso para o ciclo ${currentCycle}.`);
 }
 
+/** Modo restrito: o botão/menu é de um recurso que grava progresso (tarot, perfil, diário, quiz...)? */
+function isRestrictedComponent(interaction) {
+  const checks = [
+    () => tarotCommand.isTarotButton(interaction),
+    () => profileCommand?.isProfileInteraction?.(interaction),
+    () => dailyCommand?.isDailyInteraction?.(interaction),
+    () => rankingCommand?.isRankingInteraction?.(interaction),
+    () => workCommand?.isWorkInteraction?.(interaction),
+    () => quizCommand?.isQuizInteraction?.(interaction),
+    () => commandsByName.get('py-duel')?.isDuelInteraction?.(interaction),
+    () => commandsByName.get('py-challenge')?.isChallengeInteraction?.(interaction),
+    () => commandsByName.get('py-anime')?.isAnimeInteraction?.(interaction),
+    () => (commandsByName.get('py-album') || commandsByName.get('album'))?.isAlbumInteraction?.(interaction),
+  ];
+  return checks.some((check) => {
+    try {
+      return Boolean(check());
+    } catch (_) {
+      return false;
+    }
+  });
+}
+
 function startTarotScheduler() {
+  // Modo restrito (dados provisórios): o tarot está pausado, então não há anúncio nem reset diário.
+  if (restrictedMode.isActive()) {
+    console.log('[TarotScheduler] Modo restrito ativo: agendador do Tarot pausado.');
+    return;
+  }
   const currentCycle = getBrasiliaDate();
 
   // Só dispara na inicialização se o anúncio do ciclo atual AINDA NÃO tiver sido postado
@@ -425,6 +454,7 @@ client.once(Events.ClientReady, async () => {
   } catch (_) {}
   await checkPostCrash(client, {
     reconcileTasks: async () => {
+      if (restrictedMode.isActive()) return;
       if (!wasAnnouncedToday()) {
         console.log('[schedulerWatchdog] Conciliação pós-queda: Anúncio do Tarot ainda pendente para o dia. Publicando...');
         await postTarotDailyAnnouncement().catch(() => null);
@@ -439,7 +469,12 @@ client.once(Events.ClientReady, async () => {
   setInterval(() => {
     checkAndDispatchBatch(client).catch((err) => console.error('[welcomeCheckin] Erro no agendador:', err.message));
   }, 15 * 60 * 1000);
-  seasonalManager.init(client, null);
+  // Modo restrito: o evento sazonal paga moedas por atividade, então fica parado.
+  if (restrictedMode.isActive()) {
+    console.log('[RestrictedMode] Ativo: economia, tarot, social e eventos sazonais pausados.');
+  } else {
+    seasonalManager.init(client, null);
+  }
   moduleManager.init({
     client,
     commandsByName,
@@ -653,6 +688,12 @@ client.on(Events.MessageCreate, async (message) => {
   const args = message.content.slice(prefix.length).trim().split(/\s+/);
   const cmd = args.shift().toLowerCase();
 
+  // Modo restrito: recursos que gravam progresso respondem com o aviso de instabilidade.
+  if (restrictedMode.shouldBlockCommand(cmd, commandsByName.get(cmd)?.category)) {
+    await message.reply(restrictedMode.notice(message)).catch(() => null);
+    return;
+  }
+
   const command = commandsByName.get(cmd);
   if (!command || typeof command.executePrefix !== 'function') return;
 
@@ -837,6 +878,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
       if (handled) return;
     }
 
+    // Modo restrito: botões e menus de recursos que gravam progresso ficam pausados.
+    if (restrictedMode.isActive() && interaction.isRepliable?.() && isRestrictedComponent(interaction)) {
+      await interaction.reply({ ...restrictedMode.notice(interaction), flags: MessageFlags.Ephemeral }).catch(() => null);
+      return;
+    }
+
     if (tarotCommand.isTarotButton(interaction)) {
       incrementCommand();
       recordUniqueUser(interaction.user.id);
@@ -961,6 +1008,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
     recordUniqueUser(interaction.user.id);
 
     const command = commandsByName.get(interaction.commandName);
+
+    if (restrictedMode.shouldBlockCommand(interaction.commandName, command?.category)) {
+      await interaction.reply({ ...restrictedMode.notice(interaction), flags: MessageFlags.Ephemeral }).catch(() => null);
+      return;
+    }
 
     const ephemeralCommands = new Set([
       'tarot', 'py-tarot',

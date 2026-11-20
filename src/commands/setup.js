@@ -303,6 +303,13 @@ function handleAccessDenied(access, source, member, now = Date.now()) {
  * devolve true para o módulo parar.
  */
 async function denyInteractionIfBlocked(interaction, commandName) {
+  const restrictedMode = require('../services/restrictedMode');
+  if (restrictedMode.shouldBlockCommand(commandName)) {
+    const notice = { ...restrictedMode.notice(interaction), ephemeral: true };
+    if (interaction.replied || interaction.deferred) await interaction.followUp(notice).catch(() => null);
+    else await interaction.reply(notice).catch(() => null);
+    return true;
+  }
   const roleIds = interaction.member?.roles?.cache
     ? [...interaction.member.roles.cache.keys()]
     : Array.isArray(interaction.member?.roles)

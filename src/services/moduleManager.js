@@ -169,6 +169,12 @@ class ModuleManager extends EventEmitter {
 
     // Ativa módulos habilitados na configuração
     for (const [id, mod] of this.modules.entries()) {
+      // Modo restrito (dados provisórios): módulos que gravam progresso não sobem.
+      if (require('./restrictedMode').shouldSkipModule(mod)) {
+        require('./restrictedMode').registerSkippedModule(mod);
+        console.log(`[ModuleManager] Modo restrito: módulo '${id}' pausado.`);
+        continue;
+      }
       const isEnabled = this.isModuleEnabled(id);
       if (isEnabled && !this.activeScopes.has(id)) {
         Promise.resolve(this.enableModule(id, false)).catch((err) => {

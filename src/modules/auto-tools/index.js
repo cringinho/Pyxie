@@ -288,6 +288,8 @@ async function bumpTick(client, now = Date.now()) {
 
 // ---------- Recompensa de bump (só Cringelândia; vale com ou sem o lembrete ligado) ----------
 function rewardBump(message, now = Date.now()) {
+  // Modo restrito (dados provisórios): bump não paga moedas, para não gravar saldo num banco temporário.
+  if (require('../../services/restrictedMode').isActive()) return false;
   if (!message?.guild || !r3.isBumpDone(message) || !bumpRewards.eligible(message.guild.id)) return false;
   let result;
   try {

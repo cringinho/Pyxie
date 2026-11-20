@@ -80,6 +80,8 @@ const readJson = async (res) => {
 
 /** Cria a cobrança Pix de uma doação. Valor livre, mas sempre validado no servidor. */
 async function createPixDonation({ userId, cents, anonymous = false, name = '', lang = 'pt', now = Date.now() } = {}) {
+  // Modo restrito (dados provisórios): o registro da doação se perderia na restauração, então a cobrança fica fechada.
+  if (require('./restrictedMode').isActive()) return { ok: false, reason: 'unavailable' };
   if (!providers().pix) return { ok: false, reason: 'unavailable' };
   if (!/^\d{17,20}$/.test(String(userId || ''))) return { ok: false, reason: 'invalid_user' };
   const value = Math.round(Number(cents));

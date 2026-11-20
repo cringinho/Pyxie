@@ -163,6 +163,9 @@ function formatRemaining(remainingMs, source = null) {
 
 const TRANSLATIONS = {
   "pt": {
+    "restricted": {
+      "notice": "🛠️ **Estou passando por uma instabilidade.** Por segurança, os recursos que guardam o progresso de vocês (moedas, diário, quiz, tarot, casamento, casinha, passe e afins) estão pausados até eu terminar de recuperar os dados.\n\n-# Moderação, boas-vindas, registros e cores seguem funcionando. Nada que você já tinha foi perdido: volta tudo assim que eu me ajeitar."
+    },
     "siteChrome": {
       "ui": {
         "skip": "Pular para o conteúdo",
@@ -3503,6 +3506,9 @@ const TRANSLATIONS = {
     }
   },
   "en": {
+    "restricted": {
+      "notice": "🛠️ **I am going through some instability.** To keep things safe, features that store your progress (coins, daily, quiz, tarot, marriage, home, pass and the like) are paused until I finish recovering the data.\n\n-# Moderation, welcome, logs and colors keep working. Nothing you already had is lost: it all comes back as soon as I am sorted out."
+    },
     "siteChrome": {
       "ui": {
         "skip": "Skip to content",
