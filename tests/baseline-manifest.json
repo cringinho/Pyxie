@@ -2,8 +2,8 @@
   "generatedAt": "2026-10-31T16:42:55.898Z",
   "node": "v24.18.0",
   "platform": "win32 x64",
-  "totalMs": 76712,
-  "totalChecks": 638,
+  "totalMs": 81818,
+  "totalChecks": 643,
   "steps": [
     {
       "index": 0,
@@ -727,9 +727,27 @@
       "summaryNumbers": null
     },
     {
-      "index": 38,
+      "index": 39,
+      "file": "tests/growthFunnel.test.js",
+      "ms": 416,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "2. Cliques por origem com deduplicação por visitante.",
+        "3. Entradas, saídas, ativação 24h e retenção D1/D7/D30.",
+        "4. Contagem de servidores enviada só às listas configuradas.",
+        "5. Boas-vindas PT/EN com menções clicáveis e troca de idioma restrita a Gerenciar Servidor.",
+        "6. Idioma pela conta e comandos só de servidor (sem User App)."
+      ],
+      "checkCount": 5,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
+    },
+    {
+      "index": 39,
       "file": "tests/dungeonCrawler.test.js",
-      "ms": 3878,
+      "ms": 4453,
       "exitCode": 0,
       "timedOut": false,
       "checks": [
@@ -751,24 +769,6 @@
         "14. Botões com emojis do bot e reserva Unicode automática."
       ],
       "checkCount": 16,
-      "failures": [],
-      "summary": null,
-      "summaryNumbers": null
-    },
-    {
-      "index": 39,
-      "file": "tests/growthFunnel.test.js",
-      "ms": 416,
-      "exitCode": 0,
-      "timedOut": false,
-      "checks": [
-        "2. Cliques por origem com deduplicação por visitante.",
-        "3. Entradas, saídas, ativação 24h e retenção D1/D7/D30.",
-        "4. Contagem de servidores enviada só às listas configuradas.",
-        "5. Boas-vindas PT/EN com menções clicáveis e troca de idioma restrita a Gerenciar Servidor.",
-        "6. Idioma pela conta e comandos só de servidor (sem User App)."
-      ],
-      "checkCount": 5,
       "failures": [],
       "summary": null,
       "summaryNumbers": null
@@ -816,28 +816,6 @@
       "summaryNumbers": null
     },
     {
-      "index": 42,
-      "file": "tests/serverSetup.test.js",
-      "ms": 978,
-      "exitCode": 0,
-      "timedOut": false,
-      "checks": [
-        "1. Mundo Pyxie só na Cringelândia; o resto segue global.",
-        "3. Minigames, casamento e tarot ligam e desligam por servidor.",
-        "4. Canais do RPG/MMO e threads.",
-        "5. Procura dos membros com janela de 7 dias.",
-        "6. Grupos ligados a comandos reais.",
-        "7. Seções do painel em PT/EN dentro dos limites.",
-        "8. Fora da Cringelândia: aviso de exclusividade, sem propaganda.",
-        "9. Botões e menus do painel.",
-        "10. /py-setup é a central única (py-set e painel redirecionam)."
-      ],
-      "checkCount": 9,
-      "failures": [],
-      "summary": null,
-      "summaryNumbers": null
-    },
-    {
       "index": 43,
       "file": "tests/dailyRevamp.test.js",
       "ms": 437,
@@ -853,6 +831,28 @@
         "7. Falas e marcos nos dois idiomas."
       ],
       "checkCount": 7,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
+    },
+    {
+      "index": 43,
+      "file": "tests/serverSetup.test.js",
+      "ms": 951,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Mundo Pyxie só na Cringelândia; o resto segue global.",
+        "3. Minigames, casamento e tarot ligam e desligam por servidor.",
+        "4. Canais do RPG/MMO e threads.",
+        "5. Procura dos membros com janela de 7 dias.",
+        "6. Grupos ligados a comandos reais.",
+        "7. Seções do painel em PT/EN dentro dos limites.",
+        "8. Fora da Cringelândia: aviso de exclusividade, sem propaganda.",
+        "9. Botões e menus do painel.",
+        "10. /py-setup é a central única (py-set e painel redirecionam)."
+      ],
+      "checkCount": 9,
       "failures": [],
       "summary": null,
       "summaryNumbers": null
@@ -876,26 +876,6 @@
       "summaryNumbers": null
     },
     {
-      "index": 45,
-      "file": "tests/homeMarriage.test.js",
-      "ms": 592,
-      "exitCode": 0,
-      "timedOut": false,
-      "checks": [
-        "1. Ninguém ganha casa só por abrir o comando.",
-        "2. Andar 3 das Catacumbas dá a chave de graça.",
-        "3. Compra por 2000 moedinhas + 2 feijões, sem cobrar pela metade.",
-        "4. Casados moram junto; o convite é só do cônjuge.",
-        "5. Casa compartilhada: cada item lembra quem colocou.",
-        "6. Divórcio separa os bens: casa com a dona, itens com quem colocou.",
-        "7. Compras da casa antiga do casamento são honradas."
-      ],
-      "checkCount": 7,
-      "failures": [],
-      "summary": null,
-      "summaryNumbers": null
-    },
-    {
       "index": 46,
       "file": "tests/dungeonCoop.test.js",
       "ms": 657,
@@ -910,6 +890,26 @@
         "6. Títulos de oração e de ajuda evoluem em 4 degraus."
       ],
       "checkCount": 6,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
+    },
+    {
+      "index": 46,
+      "file": "tests/homeMarriage.test.js",
+      "ms": 553,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Ninguém ganha casa só por abrir o comando.",
+        "2. Chave grátis aposentada; casinha só por moedinhas.",
+        "3. Compra por 2000 moedinhas, sem cobrar pela metade.",
+        "4. Casados moram junto; o convite é só do cônjuge.",
+        "5. Casa compartilhada: cada item lembra quem colocou.",
+        "6. Divórcio separa os bens: casa com a dona, itens com quem colocou.",
+        "7. Compras da casa antiga do casamento são honradas."
+      ],
+      "checkCount": 7,
       "failures": [],
       "summary": null,
       "summaryNumbers": null
@@ -935,24 +935,6 @@
       "summaryNumbers": null
     },
     {
-      "index": 48,
-      "file": "tests/craftingProfessions.test.js",
-      "ms": 515,
-      "exitCode": 0,
-      "timedOut": false,
-      "checks": [
-        "1. Seis profissões novas completas em PT/EN.",
-        "2. /py-profession com autocompletar.",
-        "3. Materiais do trabalho.",
-        "4. Oficina gasta sob trava e entrega móveis exclusivos.",
-        "5. Telas e botões da oficina."
-      ],
-      "checkCount": 5,
-      "failures": [],
-      "summary": null,
-      "summaryNumbers": null
-    },
-    {
       "index": 49,
       "file": "tests/playerMarket.test.js",
       "ms": 597,
@@ -972,6 +954,24 @@
         "11. Botões travados para a dona da tela e DM de venda."
       ],
       "checkCount": 11,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
+    },
+    {
+      "index": 49,
+      "file": "tests/craftingProfessions.test.js",
+      "ms": 458,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "1. Seis profissões novas completas em PT/EN.",
+        "2. /py-profession com autocompletar.",
+        "3. Materiais do trabalho.",
+        "4. Oficina gasta sob trava e entrega móveis exclusivos.",
+        "5. Oficina aposentada; artesanato vendido na py!loja."
+      ],
+      "checkCount": 5,
       "failures": [],
       "summary": null,
       "summaryNumbers": null
@@ -1826,22 +1826,40 @@
       "summary": null
     },
     {
-      "index": 91,
-      "file": "scripts/smoke_all_commands.js",
-      "ms": 2430,
+      "index": 96,
+      "file": "tests/homeLoja.test.js",
+      "ms": 455,
       "exitCode": 0,
       "timedOut": false,
       "checks": [
-        "resumo: 134 execuções: 134 ok, 0 avisos, 0 sem resposta, 0 erros de código."
+        "1. 362 itens à venda, cada um com preço.",
+        "2. Débito antes da entrega, sem cobrar sem saldo.",
+        "3. Vitrine PT/EN com menus e paginação.",
+        "4. Só a dona mexe; compra pelo menu.",
+        "5. Catálogo, apelidos e slash localizado."
+      ],
+      "checkCount": 5,
+      "failures": [],
+      "summary": null,
+      "summaryNumbers": null
+    },
+    {
+      "index": 97,
+      "file": "scripts/smoke_all_commands.js",
+      "ms": 2466,
+      "exitCode": 0,
+      "timedOut": false,
+      "checks": [
+        "resumo: 132 execuções: 132 ok, 0 avisos, 0 sem resposta, 0 erros de código."
       ],
       "checkCount": 1,
       "failures": [],
-      "summary": "136 execuções: 136 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
+      "summary": "132 execuções: 132 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
       "summaryNumbers": {
-        "line": "134 execuções: 134 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
+        "line": "132 execuções: 132 ok, 0 avisos, 0 sem resposta, 0 erros de código.",
         "numbers": [
-          134,
-          134,
+          132,
+          132,
           0,
           0,
           0
@@ -1923,7 +1941,7 @@
     "node tests/hyperfokus.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-10-31T20:38:52.794Z",
+  "updatedAt": "2026-11-20T15:56:51.889Z",
   "wallClockMs": 73933,
   "cpusCount": 16
 }

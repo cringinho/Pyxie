@@ -163,6 +163,32 @@ function formatRemaining(remainingMs, source = null) {
 
 const TRANSLATIONS = {
   "pt": {
+    "loja": {
+      "intro": "Bem-vindo à minha lojinha. Tudo tem preço fixo, sem raridade e sem estoque acabando: escolhe, paga e vai pra sua mochila. Depois é só colocar pelo `py!home`.",
+      "title": "🛍️ py!loja",
+      "footer": "Página {page}/{pages} · Saldo: {balance} moedinhas",
+      "pickKind": "Escolha o tipo de item",
+      "pickItem": "Escolha o que comprar",
+      "optionPrice": "{price} moedinhas",
+      "prev": "Anterior",
+      "next": "Próxima",
+      "kinds": {
+        "floor": "Móveis",
+        "wall": "Parede",
+        "rug": "Tapetes",
+        "pet": "Pets",
+        "wallpaper": "Papéis de parede",
+        "flooring": "Pisos"
+      },
+      "reasons": {
+        "coins": "Custa `{price}` moedinhas e você tem `{balance}`. Hmpf, volta quando tiver juntado.",
+        "full": "Sua mochila tá lotada. Arruma a casinha primeiro, bagunceira.",
+        "soldOut": "Esse é numerado e todas as unidades já têm dona. Escolhe outro, vai.",
+        "generic": "Deu um problema aqui na loja e nada foi cobrado. Tenta de novo daqui a pouco."
+      },
+      "bought": "Comprado: **{item}** por `{price}` moedinhas. Sobrou `{balance}`. N-não foi uma escolha ruim, tá?",
+      "notYours": "Essa vitrine é de outra pessoa. Abre a sua com `py!loja`."
+    },
     "restricted": {
       "notice": "🛠️ **Estou passando por uma instabilidade.** Por segurança, os recursos que guardam o progresso de vocês (moedas, diário, quiz, tarot, casamento, casinha, passe e afins) estão pausados até eu terminar de recuperar os dados.\n\n-# Moderação, boas-vindas, registros e cores seguem funcionando. Nada que você já tinha foi perdido: volta tudo assim que eu me ajeitar."
     },
@@ -2592,7 +2618,7 @@ const TRANSLATIONS = {
         "myHome": "Minha casinha",
         "decorate": "Decorar",
         "arrange": "Arrumar",
-        "shop": "Loja do dia",
+        "shop": "py!loja",
         "bag": "Mochila",
         "surface": "Parede e piso",
         "rank": "Ranking",
@@ -2678,6 +2704,7 @@ const TRANSLATIONS = {
         "already_liked": "Você já curtiu essa casinha hoje. Volte amanhã!",
         "has_home": "Você já tem uma casinha.",
         "need_dungeon": "A chave fica no **Andar {floor}** das Catacumbas. Ainda não deu…",
+        "retired": "A chave grátis das Catacumbas saiu junto com a dungeon. Agora a casinha sai por moedinhas, tá?",
         "house_coins": "A casinha custa `{price}` moedinhas e você tem `{balance}`.",
         "house_beans": "A casinha também pede `{price}` feijões mágicos e você tem `{balance}`. Nada foi cobrado.",
         "not_spouse": "Só dá pra dividir a casinha com quem é casado com você.",
@@ -2724,9 +2751,9 @@ const TRANSLATIONS = {
       },
       "nohome": {
         "title": "🏡 Você ainda não tem casinha",
-        "intro": "E-eu queria te mostrar sua casinha, mas… você ainda não tem uma. Tem três jeitos de conseguir:",
+        "intro": "E-eu queria te mostrar sua casinha, mas… você ainda não tem uma. Tem dois jeitos de conseguir:",
         "dungeon": "• **Catacumbas:** chegue ao **Andar {floor}** e a chave é sua, de graça. Seu recorde: Andar `{best}`.",
-        "buy": "• **Comprar:** `{coins}` {coin} + `{beans}` {bean}, as mesmas condições da casa do casamento.",
+        "buy": "• **Comprar:** `{coins}` {coin}. Depois é só mobiliar com o que quiser da `py!loja`.",
         "marry": "• **Morar junto:** casando com alguém que tem casinha, a pessoa pode te chamar pra morar lá.",
         "ready": "-# 🗝️ Você já chegou ao Andar {floor}! A chave tá te esperando."
       },
@@ -3506,6 +3533,32 @@ const TRANSLATIONS = {
     }
   },
   "en": {
+    "loja": {
+      "intro": "Welcome to my little shop. Fixed prices, no rarity and nothing sells out: pick it, pay and it goes to your backpack. Then place it with `py!home`.",
+      "title": "🛍️ py!shop",
+      "footer": "Page {page}/{pages} · Balance: {balance} coins",
+      "pickKind": "Pick an item type",
+      "pickItem": "Pick what to buy",
+      "optionPrice": "{price} coins",
+      "prev": "Previous",
+      "next": "Next",
+      "kinds": {
+        "floor": "Furniture",
+        "wall": "Wall",
+        "rug": "Rugs",
+        "pet": "Pets",
+        "wallpaper": "Wallpapers",
+        "flooring": "Floors"
+      },
+      "reasons": {
+        "coins": "It costs `{price}` coins and you have `{balance}`. Hmph, come back when you have saved up.",
+        "full": "Your backpack is full. Tidy up your room first, you messy thing.",
+        "soldOut": "That one is numbered and every copy already has an owner. Pick another one, go on.",
+        "generic": "Something broke in the shop and nothing was charged. Try again in a bit."
+      },
+      "bought": "Bought: **{item}** for `{price}` coins. You have `{balance}` left. I-it wasn't a bad pick, okay?",
+      "notYours": "This shop window belongs to someone else. Open yours with `py!shop`."
+    },
     "restricted": {
       "notice": "🛠️ **I am going through some instability.** To keep things safe, features that store your progress (coins, daily, quiz, tarot, marriage, home, pass and the like) are paused until I finish recovering the data.\n\n-# Moderation, welcome, logs and colors keep working. Nothing you already had is lost: it all comes back as soon as I am sorted out."
     },
@@ -5930,7 +5983,7 @@ const TRANSLATIONS = {
         "myHome": "My room",
         "decorate": "Decorate",
         "arrange": "Arrange",
-        "shop": "Daily shop",
+        "shop": "py!shop",
         "bag": "Bag",
         "surface": "Wall & floor",
         "rank": "Ranking",
@@ -6016,6 +6069,7 @@ const TRANSLATIONS = {
         "already_liked": "You already liked this room today. Come back tomorrow!",
         "has_home": "You already have a room.",
         "need_dungeon": "The key is on **Floor {floor}** of the Catacombs. Not there yet…",
+        "retired": "The free Catacombs key left along with the dungeon. Now the room is bought with coins, okay?",
         "house_coins": "The room costs `{price}` coins and you have `{balance}`.",
         "house_beans": "The room also needs `{price}` magic beans and you have `{balance}`. Nothing was charged.",
         "not_spouse": "You can only share your room with your spouse.",
@@ -6062,9 +6116,9 @@ const TRANSLATIONS = {
       },
       "nohome": {
         "title": "🏡 You don't have a cozy room yet",
-        "intro": "I-I wanted to show you your room, but… you don't have one yet. There are three ways to get one:",
+        "intro": "I-I wanted to show you your room, but… you don't have one yet. There are two ways to get one:",
         "dungeon": "• **Catacombs:** reach **Floor {floor}** and the key is yours, for free. Your best: Floor `{best}`.",
-        "buy": "• **Buy it:** `{coins}` {coin} + `{beans}` {bean}, the same terms as the old marriage house.",
+        "buy": "• **Buy it:** `{coins}` {coin}. Then furnish it with anything you like from the `py!shop`.",
         "marry": "• **Move in together:** marry someone who has a room and they can invite you to live there.",
         "ready": "-# 🗝️ You already reached Floor {floor}! The key is waiting for you."
       },

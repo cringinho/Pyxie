@@ -238,8 +238,9 @@ async function handleOwnerAction(interaction, action, arg, owner) {
       return respond(interaction, 'update', () => views.buildPlaceView({ owner, source: interaction, session: placeSession }));
     }
 
+    // Desde nov/2026 o botão da loja abre a py!loja (catálogo completo, sem raridade nem rotação).
     case 'shop':
-      return respond(interaction, 'update', () => views.buildShopView({ owner, source: interaction }));
+      return interaction.update(require('./pyLoja').buildStoreView({ userId, source: interaction }));
 
     case 'sel_buy':
       return respond(interaction, 'update', () => views.buildShopView({ owner, source: interaction, selected: interaction.values?.[0] }));

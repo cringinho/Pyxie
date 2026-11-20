@@ -19,7 +19,6 @@ const professions = require('../src/services/professions');
 const { CAREER_HIERARCHIES } = require('../src/services/careerHierarchy');
 const trabalho = require('../src/commands/trabalho');
 const profissao = require('../src/commands/profissao');
-const pyCraft = require('../src/modules/home/commands/pyCraft');
 const { getItem } = require('../src/modules/home/homeCatalog');
 const { t } = require('../src/utils/i18n');
 const { emojify } = require('../src/utils/emojify');
@@ -86,34 +85,18 @@ console.log('🛠️ Iniciando testes da oficina e das profissões novas...');
     }
     console.log('  ✅ 4. Oficina gasta sob trava e entrega móveis exclusivos.');
 
-    // 5. Telas da oficina
-    crafting.addMaterials(U, { fabric: 4 });
-    const view = await pyCraft.buildWorkshopView({ owner: { id: U }, source: { lang: 'pt' } });
-    assert.equal(view.embeds[0].data.title, emojify(t('craft.title', 'pt')));
-    assert.equal(view.embeds[0].data.fields.filter((f) => f.inline).length, 2, 'materiais em duas colunas');
-    assert.equal(view.components[0].toJSON().components[0].options.length, crafting.RECIPES.length);
-    assert.equal(view.files.length, 1, 'Vitrine das receitas renderizada');
-    const recipe = await pyCraft.buildRecipeView({ owner: { id: U }, source: { lang: 'en' }, itemId: 'craft_quilt' });
-    const make = recipe.components[1].toJSON().components[0];
-    assert.equal(make.custom_id, `craft:make:${U}:craft_quilt`);
-    assert.equal(make.disabled, false, 'Com material, o botão Fazer libera');
-    const calls = [];
-    await pyCraft.handleCraftInteraction({
-      customId: `craft:make:${U}:craft_quilt`, user: { id: U }, lang: 'pt',
-      isButton: () => true, isStringSelectMenu: () => false,
-      update: async (p) => calls.push(['update', p]), reply: async (p) => calls.push(['reply', p]),
-    });
-    assert.ok(calls[0][1].embeds[0].data.description.includes('Pronto, fiz'));
-    assert.ok(vault.ownsItem(U, 'craft_quilt'));
-    await pyCraft.handleCraftInteraction({
-      customId: `craft:back:${U}`, user: { id: 'outra_pessoa' }, lang: 'pt',
-      isButton: () => true, isStringSelectMenu: () => false,
-      update: async (p) => calls.push(['update', p]), reply: async (p) => calls.push(['reply', p]),
-    });
-    assert.equal(calls[1][1].content, t('craft.notYours', 'pt'));
-    console.log('  ✅ 5. Telas e botões da oficina.');
+    // 5. A oficina (/py-craft) saiu em nov/2026: os móveis de artesanato agora estão na py!loja
+    const homeModule = require('../src/modules/home');
+    const homeCommands = homeModule.commands.map((c) => c.name);
+    assert.ok(!homeCommands.includes('py-craft'), 'Oficina não volta como comando');
+    assert.ok(homeCommands.includes('py-loja'), 'py!loja no lugar');
+    const homeStore = require('../src/modules/home/homeStore');
+    for (const recipe of crafting.RECIPES) {
+      assert.ok(homeStore.storePrice(getItem(recipe.itemId)) > 0, `${recipe.itemId} à venda na py!loja`);
+    }
+    console.log('  ✅ 5. Oficina aposentada; artesanato vendido na py!loja.');
 
-    console.log('✨ Oficina e profissões novas validadas.');
+    console.log('✨ Profissões, materiais e aposentadoria da oficina validados.');
   } catch (err) {
     console.error('❌ Falha nos testes da oficina:', err);
     process.exitCode = 1;

@@ -4,8 +4,8 @@ const os = require('node:os');
 const path = require('node:path');
 
 /**
- * Casinha e casamento: ninguém ganha casa só por abrir o /py-home; a chave sai no Andar 3 das
- * Catacumbas ou a casa é comprada nas condições do casamento (2000 moedinhas + 2 feijões).
+ * Casinha e casamento: ninguém ganha casa só por abrir o /py-home; desde nov/2026 a casa sai só
+ * por 2000 moedinhas (a chave grátis das Catacumbas saiu com a dungeon).
  * Casados moram junto na casa de quem tem; no divórcio a casa fica com a dona original e os
  * itens da outra pessoa voltam para ela (separar bens).
  */
@@ -49,35 +49,31 @@ console.log('💞 Iniciando testes da Casinha com casamento...');
 
 (async () => {
   try {
-    // 1. Sem casa grátis: a tela mostra os três caminhos
+    // 1. Sem casa grátis: a tela mostra a compra por moedinhas e o atalho da py!loja
     const access = store.getHomeAccess(A);
     assert.equal(access.hasAccess, false);
     assert.equal(access.canClaimFree, false);
     const owner = { id: A, username: 'ana', displayName: 'Ana' };
     const noHome = await views.buildHomeView({ owner, viewer: owner, source: { lang: 'pt' } });
     assert.equal(noHome.embeds[0].data.title, t('home.nohome.title', 'pt'));
+    assert.ok(!noHome.embeds[0].data.description.includes('Catacumbas'), 'Sem menção à dungeon aposentada');
     const ids = noHome.components[0].toJSON().components;
-    assert.deepEqual(ids.map((c) => c.custom_id), [`home:claim:${A}`, `home:buyhouse:${A}`]);
-    assert.equal(ids[0].disabled, true, 'Sem o Andar 3, a chave fica trancada');
+    assert.deepEqual(ids.map((c) => c.custom_id), [`home:buyhouse:${A}`, `home:shop:${A}`]);
     assert.equal(store.getHome(A), null, 'Abrir o /py-home não cria casa');
-    assert.equal(store.claimFreeHome(A).reason, 'need_dungeon');
     console.log('  ✅ 1. Ninguém ganha casa só por abrir o comando.');
 
-    // 2. Chave grátis no Andar 3 das Catacumbas
+    // 2. A chave grátis das Catacumbas saiu com a dungeon (nov/2026), mesmo para quem chegou ao Andar 3
     setDungeonBest(A, 3);
-    assert.equal(store.getHomeAccess(A).canClaimFree, true);
-    const claimed = store.claimFreeHome(A);
-    assert.equal(claimed.ok, true);
-    assert.equal(claimed.home.acquired, 'dungeon');
-    assert.ok(claimed.home.placements.length > 0, 'Kit inicial dentro da casa');
+    assert.equal(store.getHomeAccess(A).canClaimFree, false);
+    assert.equal(store.claimFreeHome(A).reason, 'retired');
+    assert.equal(store.getHome(A), null);
+    economy.setUserBalance(A, 2000);
+    assert.equal(store.buyHouse(A).ok, true);
     assert.equal(store.claimFreeHome(A).reason, 'has_home');
-    console.log('  ✅ 2. Andar 3 das Catacumbas dá a chave de graça.');
+    console.log('  ✅ 2. Chave grátis aposentada; casinha só por moedinhas.');
 
-    // 3. Compra nas condições do casamento (moedinhas e feijões, com devolução se faltar feijão)
+    // 3. Compra só com moedinhas, sem feijão e sem cobrar pela metade
     economy.setUserBalance(B, 2500);
-    assert.equal(store.buyHouse(B).reason, 'house_beans');
-    assert.equal(economy.getBalance(B), 2500, 'Sem feijões, as moedinhas voltam');
-    economy.addMagicBeans(B, 2);
     const bought = store.buyHouse(B);
     assert.equal(bought.ok, true);
     assert.equal(economy.getBalance(B), 500);
@@ -85,7 +81,8 @@ console.log('💞 Iniciando testes da Casinha com casamento...');
     assert.equal(bought.home.acquired, 'purchase');
     economy.setUserBalance(C, 100);
     assert.equal(store.buyHouse(C).reason, 'house_coins');
-    console.log('  ✅ 3. Compra por 2000 moedinhas + 2 feijões, sem cobrar pela metade.');
+    assert.equal(economy.getBalance(C), 100, 'Sem moedinhas suficientes, nada é cobrado');
+    console.log('  ✅ 3. Compra por 2000 moedinhas, sem cobrar pela metade.');
 
     // 4. Só casados dividem a casa
     assert.equal(store.moveIn(A, C).reason, 'not_spouse');

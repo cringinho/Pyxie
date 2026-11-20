@@ -105,10 +105,8 @@ function buildNoHomeView({ owner, source, notice = null }) {
   const lines = [
     notice ? `> ${notice}` : null,
     t('home.nohome.intro', { lang }),
-    t('home.nohome.dungeon', { lang }, { floor: access.freeFloor, best: access.bestFloor }),
-    t('home.nohome.buy', { lang }, { coins: access.price.coins, beans: access.price.beans, coin: icon('COIN', '🪙'), bean: icon('MAGIC_BEAN', '🌱') }),
+    t('home.nohome.buy', { lang }, { coins: access.price.coins, coin: icon('COIN', '🪙') }),
     t('home.nohome.marry', { lang }),
-    access.canClaimFree ? t('home.nohome.ready', { lang }, { floor: access.freeFloor }) : null,
   ].filter(Boolean);
   const embed = new EmbedBuilder()
     .setColor(COLOR)
@@ -116,8 +114,8 @@ function buildNoHomeView({ owner, source, notice = null }) {
     .setDescription(lines.join('\n\n'))
     .setFooter(footer(source, lang));
   const row = new ActionRowBuilder().addComponents(
-    button('claim', owner.id, t('home.btn.claim', { lang }), '🗝️', access.canClaimFree ? ButtonStyle.Success : ButtonStyle.Secondary, null, !access.canClaimFree),
-    button('buyhouse', owner.id, t('home.btn.buyHouse', { lang }), btnEmoji('73584mushroomhouses', '🏡'), ButtonStyle.Primary)
+    button('buyhouse', owner.id, t('home.btn.buyHouse', { lang }), btnEmoji('73584mushroomhouses', '🏡'), ButtonStyle.Primary),
+    button('shop', owner.id, t('home.btn.shop', { lang }), '🛍️', ButtonStyle.Secondary)
   );
   return { content: null, embeds: [embed], components: [row], files: [], attachments: [], allowedMentions: { parse: [] } };
 }

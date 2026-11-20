@@ -28,9 +28,12 @@ module.exports = {
   icon: '🕯️',
   version: '1.0.0',
   author: 'Pyxie Team',
-  defaultEnabled: true,
+  // Aposentado em nov/2026 (decisão do dono): não sobe e não registra /py-dungeon. A pasta fica porque
+  // o Chefe Semanal (src/modules/guildBoss) reaproveita dungeonData e o calendário da semana.
+  retired: true,
+  defaultEnabled: false,
 
-  commands: [pyDungeon],
+  commands: [],
 
   async onLoad(ctx) {
     if (!ctx.client) return;

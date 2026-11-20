@@ -23,7 +23,8 @@ const engine = require('./homeEngine');
 
 const PREMIUM_DAILY_LIMIT = 1;
 // Mesmas condições da antiga casa do casamento
-const HOUSE_PRICE = { coins: 2000, beans: 2 };
+// Desde nov/2026 a casinha sai só por moedas (sem feijões) e não há mais chave grátis da dungeon.
+const HOUSE_PRICE = { coins: 2000, beans: 0 };
 // Andar das Catacumbas que dá a chave da casinha de graça
 const FREE_HOUSE_FLOOR = 3;
 
@@ -148,20 +149,16 @@ function getHomeAccess(userId) {
     hasAccess: Boolean(state.homes[ownerId]),
     bestFloor,
     freeFloor: FREE_HOUSE_FLOOR,
-    canClaimFree: !state.homes[id] && bestFloor >= FREE_HOUSE_FLOOR,
+    // Dungeon Crawler aposentado (nov/2026): a chave grátis do Andar 3 não existe mais.
+    canClaimFree: false,
     price: { ...HOUSE_PRICE },
   };
 }
 
-/** Chave achada nas Catacumbas: casinha de graça para quem chegou ao Andar 3. */
-function claimFreeHome(userId, now = Date.now()) {
-  const state = load();
-  const id = String(userId);
-  if (state.homes[id]) return { ok: false, reason: 'has_home' };
-  if (dungeonBestFloor(id) < FREE_HOUSE_FLOOR) return { ok: false, reason: 'need_dungeon', floor: FREE_HOUSE_FLOOR };
-  const home = createHome(state, id, now, 'dungeon');
-  if (!save(state)) return { ok: false, reason: 'save' };
-  return { ok: true, home };
+/** A chave grátis vinha das Catacumbas, aposentadas em nov/2026: botões antigos recebem a explicação. */
+function claimFreeHome(userId) {
+  if (load().homes[String(userId)]) return { ok: false, reason: 'has_home' };
+  return { ok: false, reason: 'retired' };
 }
 
 /** Compra da casinha nas condições do casamento. Debita antes; se algo falhar, devolve. */
@@ -170,7 +167,7 @@ function buyHouse(userId, now = Date.now()) {
   if (load().homes[id]) return { ok: false, reason: 'has_home' };
   const coins = economy.spendCoins(id, HOUSE_PRICE.coins);
   if (!coins.spent) return { ok: false, reason: 'house_coins', price: HOUSE_PRICE.coins, balance: coins.balance };
-  const beans = economy.spendMagicBeans(id, HOUSE_PRICE.beans);
+  const beans = HOUSE_PRICE.beans > 0 ? economy.spendMagicBeans(id, HOUSE_PRICE.beans) : { spent: true };
   if (!beans.spent) {
     economy.addCoins(id, HOUSE_PRICE.coins);
     return { ok: false, reason: 'house_beans', price: HOUSE_PRICE.beans, balance: economy.getMagicBeans(id) };
@@ -182,7 +179,7 @@ function buyHouse(userId, now = Date.now()) {
   state.totals.housesBought = (state.totals.housesBought || 0) + 1;
   if (!save(state)) {
     economy.addCoins(id, HOUSE_PRICE.coins);
-    economy.addMagicBeans(id, HOUSE_PRICE.beans);
+    if (HOUSE_PRICE.beans > 0) economy.addMagicBeans(id, HOUSE_PRICE.beans);
     return { ok: false, reason: 'save' };
   }
   return { ok: true, home };
@@ -406,6 +403,51 @@ function buyItem(userId, itemId, now = Date.now()) {
   return { ok: true, instance: granted.instance, entry };
 }
 
+// ---------------------------------------------------------------------------
+// py!loja: todo o catálogo à venda por moedinhas, sem raridade nem rotação diária
+// ---------------------------------------------------------------------------
+
+/** Preço por tipo para itens que nunca tiveram preço em moedas (eram de festival, conquista, chefe...). */
+const STORE_PRICE_BY_KIND = { floor: 250, wall: 250, rug: 300, pet: 400, wallpaper: 300, flooring: 300 };
+const STORE_KINDS = Object.keys(STORE_PRICE_BY_KIND);
+
+/** Preço na py!loja: o preço em moedas do item, ou o da tabela do tipo. */
+function storePrice(entry) {
+  if (!entry) return null;
+  const coins = Number(entry.price?.coins);
+  if (Number.isFinite(coins) && coins > 0) return coins;
+  return STORE_PRICE_BY_KIND[entry.kind] || STORE_PRICE_BY_KIND.floor;
+}
+
+/** Itens da py!loja de um tipo, em ordem alfabética do idioma pedido. */
+function storeItems(kind, lang = 'pt') {
+  const { ITEMS } = require('./homeCatalog');
+  const key = lang === 'en' ? 'en' : 'pt';
+  return ITEMS
+    .filter((entry) => entry.kind === kind && !String(entry.id).startsWith('pass_pet_'))
+    .map((entry) => ({ entry, price: storePrice(entry) }))
+    .sort((a, b) => String(a.entry.name[key]).localeCompare(String(b.entry.name[key]), key));
+}
+
+/** Compra na py!loja. Debita antes de entregar; se a entrega falhar, devolve. */
+function buyFromStore(userId, itemId, now = Date.now()) {
+  const entry = getItem(itemId);
+  if (!entry || String(itemId).startsWith('pass_pet_')) return { ok: false, reason: 'not_in_shop' };
+  const price = storePrice(entry);
+  const paid = economy.spendCoins(userId, price);
+  if (!paid.spent) return { ok: false, reason: 'coins', balance: paid.balance, price };
+  const granted = vault.grantItem(userId, itemId, { source: 'store', detail: 'py-loja' }, now);
+  if (!granted.ok) {
+    economy.addCoins(userId, price, { bypassCap: true });
+    return { ok: false, reason: granted.reason };
+  }
+  const state = load();
+  state.totals.purchases = (state.totals.purchases || 0) + 1;
+  state.totals.coinsSpent = (state.totals.coinsSpent || 0) + price;
+  save(state);
+  return { ok: true, instance: granted.instance, entry, price, balance: economy.getBalance(userId) };
+}
+
 /** Curtida de visita: 1 por visitante por casinha por dia, nunca na própria casa. */
 function likeHome(visitorId, ownerId, now = Date.now()) {
   if (String(visitorId) === String(ownerId)) return { ok: false, reason: 'own_home' };
@@ -492,6 +534,11 @@ module.exports = {
   storeItem,
   applySurface,
   buyItem,
+  STORE_PRICE_BY_KIND,
+  STORE_KINDS,
+  storePrice,
+  storeItems,
+  buyFromStore,
   likeHome,
   recordVisit,
   getLeaderboard,

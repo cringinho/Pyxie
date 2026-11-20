@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-20T15:36:22.932Z",
+  "generatedAt": "2026-11-20T15:55:59.902Z",
   "touches": {
     "tests/botUtils.test.js": [
       "bonusSecret.json",
@@ -191,6 +191,7 @@
     "tests/pyxieDevsSetup.test.js": [],
     "tests/siteChrome.test.js": [],
     "tests/siteNav.test.js": [],
-    "tests/restrictedMode.test.js": []
+    "tests/restrictedMode.test.js": [],
+    "tests/homeLoja.test.js": []
   }
 }

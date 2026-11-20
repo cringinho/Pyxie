@@ -1,44 +1,35 @@
 const { ActivityType } = require('discord.js');
 
 /**
- * Atividades dinâmicas da Pyxie para Rich Presence rotativo.
- * Combina chamadas de RPG, Tarot, Empregos, Wiki, Site e convite universal em inglês.
+ * Status rotativo da Pyxie. Desde nov/2026 ela é privada: mascote da Pyxie Devs (estúdio indie de
+ * jogos no Roblox) e guardiã da Cringelândia. Sem convite público; alterna PT e EN porque o status do
+ * Discord é um texto só para todo mundo.
  */
 const PRESENCE_ACTIVITIES = [
   {
+    name: 'Pyxie Devs ✦ pyxie.com.br/devs',
+    type: ActivityType.Playing,
+    state: 'Mascote oficial. Não a equipe de testes. …Tá, eu testo.',
+  },
+  {
+    name: 'Sanctum Obscura',
+    type: ActivityType.Watching,
+    state: 'Spying on the Alpha builds. Purely for quality reasons.',
+  },
+  {
+    name: 'a Cringelândia',
+    type: ActivityType.Watching,
+    state: 'De olho em quem quebra as regras. Anotado no caderninho.',
+  },
+  {
+    name: 'Roblox playtests',
+    type: ActivityType.Competing,
+    state: 'Breaking things on purpose. Somebody has to.',
+  },
+  {
     name: '/py-help ✦ pyxie.com.br',
     type: ActivityType.Playing,
-    state: 'Add me: pyxie.com.br',
-  },
-  {
-    name: '78 Tarot Cards Album | /py-album',
-    type: ActivityType.Watching,
-    state: 'Collect cards & achievements',
-  },
-  {
-    name: '78 Canvas Tarot Cards | /py-tarot',
-    type: ActivityType.Listening,
-    state: 'Draw your destiny daily',
-  },
-  {
-    name: '10 Career Minigames | /py-work',
-    type: ActivityType.Competing,
-    state: 'Technical job challenges',
-  },
-  {
-    name: 'Add to Server ➔ pyxie.com.br',
-    type: ActivityType.Playing,
-    state: 'Type /py-help to start!',
-  },
-  {
-    name: 'Official Wiki ✦ pyxie.com.br/wiki',
-    type: ActivityType.Watching,
-    state: 'Guides, economy & jobs',
-  },
-  {
-    name: 'Fun Minigames ✦ /py-coinflip',
-    type: ActivityType.Playing,
-    state: 'Jokenpô, Cookie & Coinflip',
+    state: 'Fala comigo se precisar. Não que eu me importe.',
   },
 ];
 

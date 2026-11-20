@@ -27,12 +27,12 @@ console.log('⚙️ Iniciando testes da Central do servidor (/py-setup)...');
 // 1. Mundo Pyxie é da Cringelândia (plano D5): sempre ligado lá, desligado nos outros, sem modo nem teste
 const { CRINGELANDIA_GUILD_ID } = require('../src/config/scopes');
 assert.equal(guildFeatures.getMmoState(CRINGELANDIA_GUILD_ID, now), 'full');
-assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, command: 'py-dungeon', now }).allowed, true);
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, command: 'py-loja', now }).allowed, true);
 assert.equal(guildFeatures.getMmoState(G, now), 'classic');
 guildFeatures.setMmoMode(G, 'full', { by: 'admin1', now });
 assert.equal(guildFeatures.getMmoState(G, now), 'classic', 'Nenhum modo liga o Mundo Pyxie fora da Cringelândia');
 assert.deepEqual(
-  guildFeatures.checkCommandAccess({ guildId: G, command: 'py-dungeon', now }),
+  guildFeatures.checkCommandAccess({ guildId: G, command: 'py-loja', now }),
   { allowed: false, reason: 'classic', group: 'mmo' }
 );
 assert.equal(guildFeatures.checkCommandAccess({ guildId: G, command: 'py-daily', now }).allowed, true, 'Moedinhas do diário seguem globais');
@@ -51,12 +51,12 @@ console.log('  ✅ 3. Minigames, casamento e tarot ligam e desligam por servidor
 // 4. Canais permitidos (threads herdam o canal pai)
 guildFeatures.setGroupChannels(CRINGELANDIA_GUILD_ID, 'mmo', ['111111', 'lixo', '111111']);
 assert.deepEqual(guildFeatures.getGuildFeatures(CRINGELANDIA_GUILD_ID).channels.mmo, ['111111'], 'Ids inválidos e repetidos saem');
-assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '222222' }, command: 'py-dungeon', now }).reason, 'channel');
-assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '111111' }, command: 'py-dungeon', now }).allowed, true);
-assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '333333', parentId: '111111' }, command: 'py-dungeon', now }).allowed, true);
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '222222' }, command: 'py-loja', now }).reason, 'channel');
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '111111' }, command: 'py-loja', now }).allowed, true);
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '333333', parentId: '111111' }, command: 'py-loja', now }).allowed, true);
 assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '222222' }, command: 'py-tarot', now }).allowed, true, 'Tarot não é limitado por canal');
 guildFeatures.setGroupChannels(CRINGELANDIA_GUILD_ID, 'mmo', []);
-assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '222222' }, command: 'py-dungeon', now }).allowed, true);
+assert.equal(guildFeatures.checkCommandAccess({ guildId: CRINGELANDIA_GUILD_ID, channel: { id: '222222' }, command: 'py-loja', now }).allowed, true);
 console.log('  ✅ 4. Canais do RPG/MMO e threads.');
 
 // 5. Procura: pessoas diferentes nos últimos 7 dias
@@ -82,7 +82,7 @@ for (const cmd of [...commands, ...moduleCommands]) {
 for (const [group, def] of Object.entries(guildFeatures.FEATURE_GROUPS)) {
   for (const n of def.names) assert.ok(knownNames.has(n), `${group}: ${n} não é um comando`);
 }
-assert.equal(guildFeatures.getCommandGroup(moduleCommands.find((c) => c.name === 'py-dungeon')), 'mmo');
+assert.equal(guildFeatures.getCommandGroup(moduleCommands.find((c) => c.name === 'py-loja')), 'mmo');
 assert.equal(guildFeatures.getCommandGroup(moduleCommands.find((c) => c.name === 'py-home')), 'mmo');
 console.log('  ✅ 6. Grupos ligados a comandos reais.');
 
@@ -121,7 +121,7 @@ const C = 'guild_classic_view';
 const adminMember = { id: 'adm', permissions: { has: () => true } };
 const plainMember = { id: 'm1', user: { id: 'm1' }, permissions: { has: () => false } };
 const source = { guildId: C, guild: { id: C, name: 'Outro servidor' }, lang: 'pt' };
-const access = guildFeatures.checkCommandAccess({ guildId: C, command: 'py-dungeon', now });
+const access = guildFeatures.checkCommandAccess({ guildId: C, command: 'py-loja', now });
 for (const member of [adminMember, plainMember]) {
   const view = setup.handleAccessDenied(access, source, member, now);
   assert.equal(view.content, t('setup.blocked.cringelandiaOnly', 'pt'));

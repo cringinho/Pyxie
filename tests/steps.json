@@ -97,7 +97,8 @@
     "node tests/siteChrome.test.js",
     "node tests/siteNav.test.js",
     "node tests/restrictedMode.test.js",
+    "node tests/homeLoja.test.js",
     "node scripts/smoke_all_commands.js"
   ],
-  "updatedAt": "2026-11-20T15:34:41.552Z"
+  "updatedAt": "2026-11-20T15:54:41.236Z"
 }

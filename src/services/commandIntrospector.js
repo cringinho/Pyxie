@@ -179,6 +179,9 @@ function scanAllCommands(forceRefresh = false) {
         }
       } catch (_) {}
 
+      // Módulo aposentado (ex.: Dungeon Crawler) some da ajuda e do catálogo, mesmo com a pasta no lugar
+      if (modExport?.retired) continue;
+
       const modInfo = {
         name: (typeof modExport?.name === 'object' ? modExport.name['pt-BR'] : modExport?.name) || modId,
         category: modExport?.category || 'utilidades',

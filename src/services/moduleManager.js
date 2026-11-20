@@ -85,6 +85,8 @@ class ModuleManager extends EventEmitter {
    * Obtém o estado de ativação de um módulo específico
    */
   isModuleEnabled(moduleId) {
+    // Módulo aposentado (ex.: Dungeon Crawler) nunca sobe, nem que data/modulesConfig.json diga o contrário.
+    if (this.modules.get(moduleId)?.retired) return false;
     const config = this.loadConfig();
     if (config.modules && config.modules[moduleId] !== undefined) {
       return Boolean(config.modules[moduleId].enabled);

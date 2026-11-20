@@ -570,38 +570,36 @@ function checkComponents(rows, label) {
 }
 console.log('  ✅ 9. Embeds (título curto, emoji, sem ASCII, footer) e botões mobile-friendly em PT e EN.');
 
-// 10. Catálogo, módulo, introspector, embeds registrados e slash localizado
+// 10. Aposentado em nov/2026: o módulo existe (o Chefe Semanal usa os dados), mas não sobe nem registra slash
 {
   const moduleManager = require('../src/services/moduleManager');
   const discovered = moduleManager.discoverModules();
   assert.ok(discovered.has('dungeon'), 'Módulo dungeon descoberto em src/modules/');
   const mod = discovered.get('dungeon');
-  assert.equal(mod.defaultEnabled, true);
-  assert.equal(mod.commands[0].name, 'py-dungeon');
+  assert.equal(mod.retired, true);
+  assert.equal(mod.defaultEnabled, false);
+  assert.deepEqual(mod.commands, [], 'Sem /py-dungeon no registro');
+  const pyDungeon = require('../src/modules/dungeon/commands/pyDungeon');
+  assert.equal(moduleManager.isModuleEnabled('dungeon'), false, 'Aposentado vence o modulesConfig');
   const meta = moduleManager.getAllModules().find((m) => m.id === 'dungeon');
-  assert.equal(meta.commandsCount, 1);
+  assert.equal(meta.commandsCount, 0);
   assert.equal(meta.nameLocalized.en, 'Velvet Catacombs');
 
   const { COMMAND_CATEGORY_MAP } = require('../src/commands/commandHelpers');
-  for (const alias of ['py-dungeon', ...mod.commands[0].aliases]) assert.equal(COMMAND_CATEGORY_MAP[alias], 'economia', `${alias} no catálogo`);
-  assert.ok(mod.commands[0].aliases.includes('masmorra') && mod.commands[0].aliases.includes('dungeon'), 'Aliases PT e EN');
+  for (const alias of ['py-dungeon', ...pyDungeon.aliases]) assert.equal(COMMAND_CATEGORY_MAP[alias], 'economia', `${alias} segue no catálogo (aviso de modo restrito)`);
 
-  const json = mod.commands[0].data.toJSON();
+  const json = pyDungeon.data.toJSON();
   assert.ok(json.description.length <= 100 && json.description_localizations['pt-BR'].length <= 100);
 
   const { getIntrospectedCommandMap } = require('../src/services/commandIntrospector');
-  const introspected = getIntrospectedCommandMap(true).get('py-dungeon');
-  assert.ok(introspected, 'Introspector enxerga o comando');
-  assert.equal(introspected.moduleId, 'dungeon');
-  assert.equal(introspected.discordScope, 'cringelandia', 'Catacumbas são exclusivas da Cringelândia (plano D5)');
-  assert.equal(introspected.accessLevel, 'public');
+  assert.equal(getIntrospectedCommandMap(true).get('py-dungeon'), undefined, 'Introspector não lista comando aposentado');
 
   const { EMBED_REGISTRY } = require('../src/utils/embedRegistry');
   for (const id of ['dungeon_lobby', 'dungeon_explore', 'dungeon_combat', 'dungeon_end']) assert.ok(EMBED_REGISTRY.has(id), `Embed ${id} registrado`);
 
   const { queryPartition, METADATA_DICTIONARY } = require('../src/services/visualDbExplorer');
   const record = queryPartition({ partition: 'global' }).records.find((r) => r.id === 'dungeon_state');
-  assert.ok(record && record.status.includes('Ativo'), 'Visual DB expõe o estado real da dungeon');
+  assert.ok(record, 'Visual DB segue mostrando o estado guardado da dungeon');
   assert.ok(METADATA_DICTIONARY.dungeonCoinsOut, 'Dicionário de metadados documenta os campos');
 }
 console.log('  ✅ 10. Módulo, catálogo, introspector, embeds e Visual DB sincronizados.');
