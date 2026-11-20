@@ -861,6 +861,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     // Interações modulares da Central de Parcerias (botões, seletores e modais)
     if (interaction.customId && (interaction.customId.startsWith('part:') || interaction.customId.startsWith('part_staff:'))) {
+      // Modo restrito: parcerias gravam pedidos e aprovações; sem os dados antigos, ficam pausadas com aviso.
+      if (restrictedMode.isActive() && interaction.isRepliable?.()) {
+        await interaction.reply({ ...restrictedMode.notice(interaction), flags: MessageFlags.Ephemeral }).catch(() => null);
+        return;
+      }
       const partnershipManager = require('./src/modules/partnerships/partnershipManager');
       await partnershipManager.handleInteraction(interaction);
       return;
