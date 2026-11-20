@@ -37,8 +37,20 @@ const COPY = {
       ['flask', 'Open playtests', 'New builds land on our Discord first. Players help shape every update.'],
     ],
     gamesTitle: 'Our games',
-    gamesStatus: 'Loading first game',
-    gamesText: 'Our first game is in the works. Join the Roblox group to be among the first to play it and to get playtest invites.',
+    gamesLead: 'What we are building right now.',
+    projectStatus: 'In development · Alpha',
+    projectTagline: 'From the ashes of humanity, a spark was born. Of hope. Or of revenge.',
+    projectSummary: 'A horror roguelike set in an open world on Roblox, with deck-building combat. You explore the world from an isometric view, go down into dungeons in first person and fight on a 3D board with cards taken from the essence of the enemies you defeat.',
+    projectScope: 'The Alpha covers the surface (Tiers 1 to 6) and the Salt Caves, with one target: the Necromancer Skeleton King.',
+    projectTags: ['Roguelike', 'Deck-builder', 'Open world', 'Horror'],
+    loreTitle: 'The lore',
+    loreText: 'A war from Avalon came through portals and reached Earth. Colossal beasts, strong enough to survive even atomic bombs, wiped out humanity. The last human woman gave birth to the first Pilgrim, a new species marked by the magic of the beasts. Centuries later, the Pilgrims built Ashen Hold, a gothic kingdom with Obscura as its capital. You are an Altair: you protect the kingdom, absorb the essence of your enemies and dig up relics to find out how humanity came to an end.',
+    trailersLabel: 'Trailers',
+    trailerPlay: 'Play trailer',
+    trailerReplay: 'Watch again',
+    trailerFallback: 'Your browser can\'t play this video.',
+    trailerDownload: 'Download the trailer',
+    trailers: { rocklings: ['Rocklings dance', 'The rocklings take over the dance floor in a voxel cave.'] },
     joinTitle: 'Join the crew',
     joinText: 'Scripters, builders, artists, animators and players who love to break things (on purpose). If you want to make games, there is room for you.',
     mascotTitle: 'Meet Pyxie',
@@ -73,8 +85,20 @@ const COPY = {
       ['flask', 'Pruebas abiertas', 'Las versiones nuevas llegan primero a nuestro Discord. Los jugadores ayudan a dar forma a cada actualización.'],
     ],
     gamesTitle: 'Nuestros juegos',
-    gamesStatus: 'Cargando el primer juego',
-    gamesText: 'Nuestro primer juego está en desarrollo. Únete al grupo de Roblox para estar entre los primeros en jugarlo y recibir invitaciones a las pruebas.',
+    gamesLead: 'Lo que estamos construyendo ahora mismo.',
+    projectStatus: 'En desarrollo · Alpha',
+    projectTagline: 'De las cenizas de la humanidad nació una chispa de esperanza. O de venganza.',
+    projectSummary: 'Un roguelike de terror en mundo abierto en Roblox, con combate de construcción de mazos. Exploras el mundo en vista isométrica, bajas a las mazmorras en primera persona y luchas en un tablero 3D con cartas sacadas de la esencia de los enemigos que derrotas.',
+    projectScope: 'La Alpha abarca la superficie (Tiers 1 a 6) y las Cuevas de Sal, con un objetivo: el Rey Esqueleto Nigromante.',
+    projectTags: ['Roguelike', 'Construcción de mazos', 'Mundo abierto', 'Terror'],
+    loreTitle: 'La historia',
+    loreText: 'Una guerra de Avalon atravesó portales y llegó a la Tierra. Bestias colosales, capaces de sobrevivir incluso a bombas atómicas, acabaron con la humanidad. La última mujer humana dio a luz al primer Pilgrim, una especie nueva marcada por la magia de las bestias. Siglos después, los Pilgrims levantaron Ashen Hold, un reino gótico con capital en Obscura. Tú eres un Altair: proteges el reino, absorbes la esencia de tus enemigos y desentierras reliquias para descubrir cómo terminó la humanidad.',
+    trailersLabel: 'Tráilers',
+    trailerPlay: 'Ver tráiler',
+    trailerReplay: 'Ver de nuevo',
+    trailerFallback: 'Tu navegador no puede reproducir este video.',
+    trailerDownload: 'Descargar el tráiler',
+    trailers: { rocklings: ['El baile de los rocklings', 'Los rocklings se adueñan de la pista de baile en una cueva de vóxeles.'] },
     joinTitle: 'Únete al equipo',
     joinText: 'Scripters, builders, artistas, animadores y jugadores a los que les encanta romper cosas (a propósito). Si quieres hacer juegos, aquí hay lugar para ti.',
     mascotTitle: 'Conoce a Pyxie',
@@ -109,8 +133,20 @@ const COPY = {
       ['flask', 'Testes abertos', 'Versões novas chegam primeiro no nosso Discord. Quem joga ajuda a moldar cada atualização.'],
     ],
     gamesTitle: 'Nossos jogos',
-    gamesStatus: 'Carregando o primeiro jogo',
-    gamesText: 'Nosso primeiro jogo está em produção. Entre no grupo do Roblox para estar entre os primeiros a jogar e receber os convites dos testes.',
+    gamesLead: 'O que estamos construindo agora.',
+    projectStatus: 'Em andamento · Alpha',
+    projectTagline: 'Das cinzas da humanidade nasceu uma centelha de esperança. Ou de vingança.',
+    projectSummary: 'Um roguelike de terror em mundo aberto no Roblox, com combate de deck-builder. Você explora o mundo em visão isométrica, desce às masmorras em primeira pessoa e luta num tabuleiro 3D com cartas tiradas da essência dos inimigos que derrota.',
+    projectScope: 'A Alpha cobre a superfície (Tiers 1 a 6) e as Cavernas de Sal, com um alvo: o Rei Esqueleto Necromante.',
+    projectTags: ['Roguelike', 'Deck-builder', 'Mundo aberto', 'Terror'],
+    loreTitle: 'A lore',
+    loreText: 'Uma guerra de Avalon atravessou portais e chegou à Terra. Bestas colossais, que resistiram até a bombas atômicas, acabaram com a humanidade. Da última mulher humana nasceu o primeiro Pilgrim, uma espécie nova marcada pela magia das bestas. Séculos depois, os Pilgrims ergueram Ashen Hold, um reino gótico com capital em Obscura. Você é um Altair: protege o reino, absorve a essência dos inimigos e escava relíquias para descobrir como a humanidade chegou ao fim.',
+    trailersLabel: 'Trailers',
+    trailerPlay: 'Ver trailer',
+    trailerReplay: 'Ver de novo',
+    trailerFallback: 'Seu navegador não consegue tocar este vídeo.',
+    trailerDownload: 'Baixar o trailer',
+    trailers: { rocklings: ['A dança dos rocklings', 'Os rocklings tomam conta da pista de dança numa caverna de voxel.'] },
     joinTitle: 'Faça parte da equipe',
     joinText: 'Scripters, builders, artistas, animadores e jogadores que adoram quebrar coisas (de propósito). Se você quer fazer jogos, tem lugar para você.',
     mascotTitle: 'Conheça a Pyxie',
@@ -145,6 +181,100 @@ function escapeHtml(value) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+// Projeto em andamento. Trailer novo: arquivo em public/assets/devs/sanctum/ (MP4 H.264 com
+// +faststart e capa .webp + .jpg), uma entrada aqui e o título/descrição em COPY[lang].trailers.
+// Com mais de um trailer, a página mostra os botões para trocar de vídeo.
+const SANCTUM = {
+  name: 'Sanctum Obscura',
+  trailers: [
+    {
+      id: 'rocklings',
+      src: '/assets/devs/sanctum/rocklings-dance-trailer.mp4',
+      poster: '/assets/devs/sanctum/rocklings-dance-poster.webp',
+      posterJpg: '/assets/devs/sanctum/rocklings-dance-poster.jpg',
+      seconds: 30,
+      uploadDate: '2026-11-20',
+    },
+  ],
+};
+
+function clock(seconds) {
+  const s = Math.max(0, Math.round(seconds));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
+const PLAY_ICON = '<svg viewBox="0 0 8 8" width="28" height="28" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true" focusable="false"><rect x="2" y="1" width="1" height="6"/><rect x="3" y="2" width="1" height="4"/><rect x="4" y="2" width="1" height="4"/><rect x="5" y="3" width="1" height="2"/><rect x="6" y="3.5" width="1" height="1"/></svg>';
+
+function renderProject(c) {
+  const [first] = SANCTUM.trailers;
+  const meta = (t) => c.trailers[t.id] || [t.id, ''];
+  const [firstTitle] = meta(first);
+  const label = (t) => `${meta(t)[0]} · ${clock(t.seconds)}`;
+
+  const list = SANCTUM.trailers.length > 1
+    ? `<div class="trailer-list" role="group" aria-label="${escapeHtml(c.trailersLabel)}">${SANCTUM.trailers.map((t, i) => `
+            <button type="button" class="trailer-pick" data-src="${t.src}" data-poster="${t.poster}" data-label="${escapeHtml(label(t))}" data-title="${escapeHtml(meta(t)[0])}" aria-pressed="${i === 0}">
+              <img src="${t.poster}" width="160" height="90" alt="${escapeHtml(meta(t)[0])}" loading="lazy" />
+              <span>${escapeHtml(label(t))}</span>
+            </button>`).join('')}
+          </div>`
+    : '';
+
+  const tags = c.projectTags.map((t) => `<li>${escapeHtml(t)}</li>`).join('');
+
+  return `
+      <article class="project reveal" aria-labelledby="sanctumTitle">
+        <div class="project-media">
+          <div class="player" data-player>
+            <span class="player-badge" aria-hidden="true">TRAILER</span>
+            <video class="player-video" controls playsinline preload="none" poster="${first.poster}" aria-label="${escapeHtml(`${SANCTUM.name}: ${firstTitle}`)}">
+              <source src="${first.src}" type="video/mp4" />
+              <p>${escapeHtml(c.trailerFallback)} <a href="${first.src}" download>${escapeHtml(c.trailerDownload)}</a></p>
+            </video>
+            <button type="button" class="player-play" data-play data-replay="${escapeHtml(c.trailerReplay)}" aria-label="${escapeHtml(`${c.trailerPlay}: ${firstTitle}`)}">
+              <span class="player-icon">${PLAY_ICON}</span>
+              <span class="player-text"><strong>${escapeHtml(c.trailerPlay)}</strong><small data-label>${escapeHtml(label(first))}</small></span>
+            </button>
+          </div>
+          ${list}
+        </div>
+        <div class="project-info">
+          <p class="project-status"><span class="dot" aria-hidden="true"></span>${escapeHtml(c.projectStatus)}</p>
+          <h3 id="sanctumTitle" class="project-title">${escapeHtml(SANCTUM.name)}</h3>
+          <p class="project-tagline">“${escapeHtml(c.projectTagline)}”</p>
+          <p>${escapeHtml(c.projectSummary)}</p>
+          <p>${escapeHtml(c.projectScope)}</p>
+          <ul class="project-tags">${tags}</ul>
+        </div>
+        <div class="project-lore">
+          <h4>${escapeHtml(c.loreTitle)}</h4>
+          <p>${escapeHtml(c.loreText)}</p>
+        </div>
+      </article>`;
+}
+
+function projectJsonLd(c, lang) {
+  return {
+    '@type': 'VideoGame',
+    '@id': `${SITE_ORIGIN}/devs#sanctum-obscura`,
+    name: SANCTUM.name,
+    inLanguage: LANGS[lang].htmlLang,
+    description: `${c.projectSummary} ${c.projectScope}`,
+    genre: c.projectTags,
+    gamePlatform: 'Roblox',
+    author: { '@id': `${SITE_ORIGIN}/devs#org` },
+    trailer: SANCTUM.trailers.map((t) => ({
+      '@type': 'VideoObject',
+      name: `${SANCTUM.name}: ${(c.trailers[t.id] || [t.id])[0]}`,
+      description: (c.trailers[t.id] || ['', ''])[1],
+      thumbnailUrl: `${SITE_ORIGIN}${t.posterJpg}`,
+      contentUrl: `${SITE_ORIGIN}${t.src}`,
+      uploadDate: t.uploadDate,
+      duration: `PT${t.seconds}S`,
+    })),
+  };
 }
 
 /** Idioma a partir do caminho: /devs/es, /devs/pt ou o padrão (inglês). */
@@ -204,13 +334,18 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
-    '@id': `${SITE_ORIGIN}/devs#org`,
-    name: 'Pyxie Devs',
-    url: urlFor(DEFAULT_LANG),
-    logo: `${SITE_ORIGIN}/assets/brand/pyxie-devs-logo.png?v=3`,
-    description: c.description,
-    knowsAbout: ['Roblox', 'Luau', 'Game development'],
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': `${SITE_ORIGIN}/devs#org`,
+        name: 'Pyxie Devs',
+        url: urlFor(DEFAULT_LANG),
+        logo: `${SITE_ORIGIN}/assets/brand/pyxie-devs-logo.png?v=3`,
+        description: c.description,
+        knowsAbout: ['Roblox', 'Luau', 'Game development'],
+      },
+      projectJsonLd(c, L),
+    ],
   };
 
   return `<!DOCTYPE html>
@@ -268,15 +403,41 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
     .pcard h3 { font-size: 1.15rem; font-weight: 800; margin: .9rem 0 .4rem; }
     .pcard p { color: var(--muted); font-size: .95rem; }
     .pcard-icon { display: inline-grid; place-items: center; width: 52px; height: 52px; background: #241544; color: var(--violet-soft); border-radius: 4px; }
-    .games { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center; margin-top: 1.5rem; padding: clamp(1.25rem, 3vw, 2rem); background: #120a22; border: 2px dashed #3b2667; border-radius: 6px; }
-    .games p { color: var(--muted); max-width: 62ch; }
-    .loading { font-family: var(--font-mono); font-weight: 700; color: var(--violet-soft); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
-    .bar { display: flex; gap: 4px; margin-top: .5rem; }
-    .bar i { width: 18px; height: 18px; background: #2d1d4f; }
-    .bar i.on { background: var(--violet); animation: blink 1.6s steps(1) infinite; }
-    .bar i.on:nth-child(2) { animation-delay: .2s; } .bar i.on:nth-child(3) { animation-delay: .4s; }
-    @keyframes blink { 50% { opacity: .35; } }
-    @media (max-width: 640px) { .games { grid-template-columns: 1fr; } }
+    /* Projeto em andamento: Sanctum Obscura (paleta do jogo: preto, roxo, ouro, ametista e vinho) */
+    .project { --sanctum-gold: #e3c27a; --sanctum-wine: #5a1530; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: clamp(1.25rem, 3vw, 2.25rem); align-items: start;
+      margin-top: 1.75rem; padding: clamp(1rem, 2.6vw, 1.75rem); background: linear-gradient(160deg, #150b26 0%, #0f0818 60%, #1a0a17 100%); border: 2px solid #3b2667; border-radius: 6px; box-shadow: 8px 8px 0 #05020a; }
+    .player { position: relative; aspect-ratio: 16 / 9; background: #05020a; border: 2px solid #4c2c95; border-radius: 4px; overflow: hidden; box-shadow: 0 0 0 4px #0b0614, 0 24px 60px -24px rgba(139, 92, 246, .55); }
+    .player-video { display: block; width: 100%; height: 100%; object-fit: cover; background: #05020a; }
+    .player-badge { position: absolute; z-index: 2; top: .75rem; left: .75rem; padding: .25rem .55rem; font-family: var(--font-mono); font-size: .7rem; font-weight: 700; letter-spacing: .12em; color: #120a22; background: var(--sanctum-gold); box-shadow: 3px 3px 0 #05020a; pointer-events: none; transition: opacity .25s; }
+    .player-play { display: none; }
+    .js .player-play { position: absolute; z-index: 1; inset: 0; display: flex; align-items: flex-end; gap: 1rem; padding: clamp(1rem, 3vw, 1.6rem); border: 0; cursor: pointer; text-align: left; color: #fff; font: inherit;
+      background: linear-gradient(to top, rgba(7, 3, 14, .9) 0%, rgba(7, 3, 14, .35) 45%, rgba(7, 3, 14, 0) 70%); transition: opacity .25s; }
+    .player-icon { display: grid; place-items: center; flex: none; width: clamp(56px, 8vw, 76px); height: clamp(56px, 8vw, 76px); background: var(--violet); color: #fff; border-radius: 4px; box-shadow: 5px 5px 0 #05020a, 0 0 0 3px rgba(196, 181, 253, .25); transition: transform .2s, background .2s; }
+    .player-play:hover .player-icon, .player-play:focus-visible .player-icon { transform: translate(-2px, -2px); background: #9d74ff; }
+    .player-play:focus-visible { outline: 3px solid var(--violet-soft); outline-offset: -6px; }
+    .player-text { display: grid; gap: .15rem; }
+    .player-text strong { font-family: var(--font-title); font-size: clamp(1.1rem, 2.2vw, 1.45rem); font-weight: 800; text-shadow: 2px 2px 0 #05020a; }
+    .player-text small { font-family: var(--font-mono); font-size: .78rem; color: var(--sanctum-gold); letter-spacing: .04em; }
+    .player.is-playing .player-play, .player.is-playing .player-badge { opacity: 0; pointer-events: none; }
+    .trailer-list { display: flex; gap: .6rem; margin-top: .8rem; overflow-x: auto; padding-bottom: .25rem; }
+    .trailer-pick { flex: none; display: grid; gap: .3rem; width: 160px; padding: 0; background: none; border: 0; color: var(--muted); font: .75rem var(--font-mono); text-align: left; cursor: pointer; }
+    .trailer-pick img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border: 2px solid #2d1d4f; border-radius: 3px; }
+    .trailer-pick[aria-pressed="true"] { color: var(--sanctum-gold); }
+    .trailer-pick[aria-pressed="true"] img { border-color: var(--sanctum-gold); }
+    .project-info p { color: var(--muted); margin-top: .75rem; }
+    .project-status { display: inline-flex; align-items: center; gap: .5rem; margin: 0 !important; padding: .3rem .65rem; font-family: var(--font-mono); font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--sanctum-gold) !important; background: rgba(227, 194, 122, .08); border: 1px solid rgba(227, 194, 122, .35); border-radius: 3px; }
+    .project-status .dot { width: 8px; height: 8px; background: var(--sanctum-gold); animation: pulse 1.6s steps(2) infinite; }
+    @keyframes pulse { 50% { opacity: .25; } }
+    .project-title { font-size: clamp(1.8rem, 3.6vw, 2.6rem); font-weight: 900; margin-top: .8rem; letter-spacing: .01em; color: #f6ecd2; text-shadow: 3px 3px 0 var(--sanctum-wine); }
+    .project-info .project-tagline { color: var(--violet-soft); font-style: italic; font-size: 1.02rem; border-left: 3px solid var(--violet); padding-left: .8rem; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: .45rem; list-style: none; padding: 0; margin: 1.1rem 0 0; }
+    .project-tags li { padding: .25rem .6rem; font-family: var(--font-mono); font-size: .75rem; color: #e4dafb; background: #241544; border: 1px solid #3b2667; border-radius: 3px; }
+    .project-lore { grid-column: 1 / -1; padding-top: 1.25rem; border-top: 2px dashed rgba(227, 194, 122, .25); }
+    .project-lore h4 { font-family: var(--font-mono); font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--sanctum-gold); }
+    .project-lore p { margin-top: .6rem; color: #d9cfee; max-width: 92ch; line-height: 1.7; }
+    @media (max-width: 900px) { .project { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) { .project-status .dot { animation: none; } .player-icon, .player-play, .player-badge { transition: none; } }
     .join { margin-top: 1.5rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.25rem; padding: clamp(1.5rem, 4vw, 2.5rem); border-radius: 6px;
       background: linear-gradient(120deg, #3b1d7a, #1c0f38); border: 2px solid #4c2c95; box-shadow: 8px 8px 0 #05020a; }
     .join p { color: #e4dafb; max-width: 60ch; }
@@ -298,8 +459,8 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
         <img src="/assets/brand/pyxie-devs-logo.svg?v=3" width="110" height="34" alt="Pyxie Devs" />
       </a>
       <nav class="nav" aria-label="${escapeHtml(c.navLabel)}">
-        <a class="nav-link" href="#what">${escapeHtml(c.navWhat)}</a>
         <a class="nav-link" href="#games">${escapeHtml(c.navGames)}</a>
+        <a class="nav-link" href="#what">${escapeHtml(c.navWhat)}</a>
         <a class="nav-link" href="#join">${escapeHtml(c.navJoin)}</a>
         <span class="lang-switch" role="group" aria-label="${escapeHtml(c.langLabel)}">${langSwitch}</span>
       </nav>
@@ -326,21 +487,15 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
       </figure>
     </section>
 
+    <section class="wrap section" id="games" aria-labelledby="gamesTitle">
+      <h2 id="gamesTitle">${escapeHtml(c.gamesTitle)}</h2>
+      <p class="sub">${escapeHtml(c.gamesLead)}</p>${renderProject(c)}
+    </section>
+
     <section class="wrap section" id="what" aria-labelledby="whatTitle">
       <h2 id="whatTitle">${escapeHtml(c.whatTitle)}</h2>
       <p class="sub">${escapeHtml(c.whatLead)}</p>
       <div class="pgrid">${cards}
-      </div>
-    </section>
-
-    <section class="wrap section" id="games" aria-labelledby="gamesTitle">
-      <h2 id="gamesTitle">${escapeHtml(c.gamesTitle)}</h2>
-      <div class="games reveal">
-        <div>
-          <p class="loading">${escapeHtml(c.gamesStatus)}</p>
-          <div class="bar" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
-        </div>
-        <p>${escapeHtml(c.gamesText)}</p>
       </div>
     </section>
 
@@ -382,6 +537,44 @@ function renderDevsPage({ lang = DEFAULT_LANG, links = {} } = {}) {
         entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
       }, { threshold: 0.12 });
       items.forEach(function (el) { io.observe(el); });
+    })();
+    // Player do trailer: sem JS, o vídeo fica com os controles nativos; com JS, a capa vira um botão grande.
+    (function () {
+      document.querySelectorAll('[data-player]').forEach(function (player) {
+        var video = player.querySelector('video');
+        var play = player.querySelector('[data-play]');
+        if (!video || !play) return;
+        var title = play.querySelector('strong');
+        var label = play.querySelector('[data-label]');
+        var playText = title.textContent;
+        video.controls = false;
+        function idle(text) {
+          video.controls = false;
+          title.textContent = text;
+          player.classList.remove('is-playing');
+        }
+        play.addEventListener('click', function () {
+          player.classList.add('is-playing');
+          video.controls = true;
+          var p = video.play();
+          if (p && p.catch) p.catch(function () { idle(playText); });
+          video.focus();
+        });
+        video.addEventListener('ended', function () { idle(play.dataset.replay); play.focus(); });
+        var picks = player.parentNode.querySelectorAll('.trailer-pick');
+        picks.forEach(function (pick) {
+          pick.addEventListener('click', function () {
+            picks.forEach(function (b) { b.setAttribute('aria-pressed', String(b === pick)); });
+            video.pause();
+            video.poster = pick.dataset.poster;
+            video.querySelector('source').src = pick.dataset.src;
+            video.load();
+            label.textContent = pick.dataset.label;
+            play.setAttribute('aria-label', playText + ': ' + pick.dataset.title);
+            idle(playText);
+          });
+        });
+      });
     })();
   </script>
 </body>

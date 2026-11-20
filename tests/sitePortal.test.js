@@ -49,6 +49,14 @@ const renderer = require('../src/modules/hyperfokus/renderer');
     assert.ok(/application\/ld\+json/.test(html), `${lang}: JSON-LD`);
     assert.ok(!/cringel|hyperfokus|brasil|brazil|cvv|\/discord\?ref/i.test(html), `${lang}: nada das comunidades brasileiras`);
     assert.ok(html.includes('aria-disabled="true"'), `${lang}: sem link configurado, botão fica "em breve"`);
+    // Sanctum Obscura em andamento, com o trailer dos rocklings tocando no próprio site.
+    assert.ok(html.includes('id="sanctumTitle"') && html.includes(COPY[lang].loreTitle) && html.includes('"@type":"VideoGame"'), `${lang}: projeto Sanctum com lore e JSON-LD`);
+    const trailerSrc = (html.match(/<source src="([^"]+\.mp4)"/) || [])[1];
+    assert.ok(trailerSrc && /<video[^>]+poster="[^"]+"/.test(html), `${lang}: player com vídeo e capa`);
+    assert.ok(html.indexOf('id="games"') < html.indexOf('id="what"'), `${lang}: jogos logo depois da abertura`);
+    for (const asset of [trailerSrc, ...html.match(/poster="([^"]+)"/).slice(1)]) {
+      assert.ok(fs.existsSync(path.join(__dirname, '..', 'public', asset)), `${lang}: arquivo ${asset} existe`);
+    }
     if (lang === 'en') assert.ok(renderDevsPage({ lang, links: currentLinks({}) }).includes('href="/devs/roblox"') && renderDevsPage({ lang, links: currentLinks({}) }).includes('href="/devs/discord"'), 'Links oficiais nos botões');
   }
   const withLinks = renderDevsPage({ lang: 'es', links: { discord: 'https://discord.gg/x', roblox: 'https://www.roblox.com/communities/1' } });
