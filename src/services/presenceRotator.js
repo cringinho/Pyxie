@@ -2,35 +2,22 @@ const { ActivityType } = require('discord.js');
 
 /**
  * Status rotativo da Pyxie. Desde nov/2026 ela é privada: mascote da Pyxie Devs (estúdio indie de
- * jogos no Roblox) e guardiã da Cringelândia. Sem convite público; alterna PT e EN porque o status do
- * Discord é um texto só para todo mundo.
+ * jogos no Roblox) e guardiã da Cringelândia.
+ *
+ * Usa status personalizado (ActivityType.Custom): o Discord mostra o texto de `state` inteiro, sem o
+ * prefixo "Jogando/Assistindo" (que traduzia só metade da frase) e sem esconder o `state`, que bots
+ * nos outros tipos não exibem. O status é um texto só para todo mundo, então as frases alternam PT e EN.
  */
+const custom = (state) => ({ name: 'Custom Status', type: ActivityType.Custom, state });
+
 const PRESENCE_ACTIVITIES = [
-  {
-    name: 'Pyxie Devs ✦ pyxie.com.br/devs',
-    type: ActivityType.Playing,
-    state: 'Mascote oficial. Não a equipe de testes. …Tá, eu testo.',
-  },
-  {
-    name: 'Sanctum Obscura',
-    type: ActivityType.Watching,
-    state: 'Spying on the Alpha builds. Purely for quality reasons.',
-  },
-  {
-    name: 'a Cringelândia',
-    type: ActivityType.Watching,
-    state: 'De olho em quem quebra as regras. Anotado no caderninho.',
-  },
-  {
-    name: 'Roblox playtests',
-    type: ActivityType.Competing,
-    state: 'Breaking things on purpose. Somebody has to.',
-  },
-  {
-    name: '/py-help ✦ pyxie.com.br',
-    type: ActivityType.Playing,
-    state: 'Fala comigo se precisar. Não que eu me importe.',
-  },
+  custom('🦇 Mascote da Pyxie Devs · pyxie.com.br/devs'),
+  custom('🎮 Pyxie Devs mascot · pyxie.com.br/devs'),
+  custom('🕯️ Espiando o Sanctum Obscura. Só por controle de qualidade.'),
+  custom('🕯️ Watching Sanctum Obscura grow. For quality reasons, obviously.'),
+  custom('🏰 De olho na Cringelândia. Caderninho de vinganças aberto.'),
+  custom('🏰 Guarding Cringelândia. Revenge notebook open.'),
+  custom('💜 Precisa de ajuda? Usa /py-help. Não que eu me importe.'),
 ];
 
 let currentIndex = 0;
